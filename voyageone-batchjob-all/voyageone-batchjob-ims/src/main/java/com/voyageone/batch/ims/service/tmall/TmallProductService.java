@@ -1512,6 +1512,7 @@ public class TmallProductService implements PlatformServiceInterface {
                     MultiCheckField field = (MultiCheckField) FieldTypeEnum.createField(FieldTypeEnum.MULTICHECK);
                     String platformPropId = platformProp.getPlatformPropId();
                     List<ConditionPropValue> conditionPropValues = conditionPropValueDao.selectConditionPropValue(workLoadBean.getOrder_channel_id(), platformPropId);
+                    field.setId(platformPropId);
                     if (conditionPropValues != null && !conditionPropValues.isEmpty()) {
                         RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
                         for (ConditionPropValue conditionPropValue : conditionPropValues) {
