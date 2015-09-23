@@ -12,5 +12,6 @@ test
 node_modules/
 target/
 .externalToolBuilders/
+dependency-reduced-pom.xml
 
 
