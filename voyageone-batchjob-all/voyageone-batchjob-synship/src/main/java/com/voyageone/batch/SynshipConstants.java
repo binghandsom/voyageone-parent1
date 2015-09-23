@@ -9,9 +9,9 @@ public interface SynshipConstants {
      */
     final class ACTIVE {
         //可用
-        public final static String  USABLE = "1";
+        public final static String USABLE = "1";
         //不可用
-        public final static String  Disabled = "0";
+        public final static String Disabled = "0";
     }
 
     /**
@@ -39,7 +39,7 @@ public interface SynshipConstants {
      */
     final class SMS_CHECK {
         // 基础内容
-        public static final String SIGN_NAME  = "【%s】";
+        public static final String SIGN_NAME = "【%s】";
         // 短信账户余额情报
         public static final Double ACCOUNT_BALANCE = 800d;
         // 短信限制次数
@@ -70,6 +70,80 @@ public interface SynshipConstants {
         public static final String CLIENT = "1";
         public static final String WEB = "2";
     }
+
+    /**
+     * 身份证审核状态
+     */
+    interface IdCardStatus {
+        /**
+         * 未审核
+         */
+        String UNAUDITED = "0";
+        /**
+         * 批准
+         */
+        String APPROVED = "1";
+        /**
+         * 拒绝
+         */
+        String REJECTED = "2";
+        /**
+         * 删除
+         */
+        String DELETE = "3";
+        /**
+         * 等待后台审核
+         */
+        String WAITING_AUTO = "4";
+    }
+
+    /**
+     * 对应表 tt_idcard_history 的 reason 字段
+     * <ul>
+     * <li>01：IdCard中已存在</li>
+     * <li>02：跨境易中已存在</li>
+     * <li>03：跨境易中验证通过</li>
+     * <li>04：身份证格式错误</li>
+     * <li>05：跨境易中验证不通过</li>
+     * <li>06：调用出现网络错误，不同于 10，06只特指 axis 的错误</li>
+     * <li>07：历史记录存在失败记录</li>
+     * <li>08：与原单信息不同</li>
+     * <li>09：历史记录存在成功记录</li>
+     * <li>10：调用出现错误</li>
+     * <li>11：验证通过但没有图片</li>
+     * <li>12：IDCARD中已存在同一手机号码、姓名的审核通过记录</li>
+     * </ul>
+     *
+     * @author jonas gao
+     */
+    interface Reason {
+        String ID_CARD_EXISTS = "01";
+        String EMS_EXISTS = "02";
+        String EMS_PASS = "03";
+        String ID_CARD_FORMAT_ERROR = "04";
+        String EMS_FAIL = "05";
+        String CALL_EMS_FAIL = "06";
+        String HISTORY_EXISTS_FAIL = "07";
+        String DIFF_FROM_ORDER = "08";
+        String HISTORY_EXISTS = "09";
+        String CALL_ERROR = "10";
+        String IMAGE_NOT_EXISTS = "11";
+        String PHONE_NAME_EXISTS = "12";
+    }
+
+    /**
+     * 对应表 tt_idcard_history 的 audit_result 字段
+     * 0：审核不通过, 1：审核通过
+     * <p>同时也可以用于 isSuccess 字段</p>
+     *
+     * @author jonas gao
+     */
+    interface AuditResult {
+        String PASS = "1";
+        String FAIL = "0";
+        String Force = "2";
+    }
+
     /**
      * 短信发送返回错误信息
      */
@@ -144,4 +218,21 @@ public interface SynshipConstants {
         };
     }
 
+    String SHORTURL_PRE_SALE = "9";
+
+    String SMS_WORDS = "WORDS";
+
+    String SMS_COST = "COST";
+
+    String SMS_INFO = "SMS_INFO";
+
+    String SMS_CONTENT_VALID_NO_MATCH = "02"; //身份证上传短信（不匹配时的重发）
+
+    String SMS_CONTENT_VALID_NO_IMAGE = "03"; //身份证上传短信（无图片、查无此人时的重发）
+
+    String SMS_SNET_TYPE_CLIENT = "1";
+
+    String SMS_STATUS_NOT_SENT = "0";
+
+    String SMS_TYPE_CLOUD_CLIENT = "cloud_client";
 }

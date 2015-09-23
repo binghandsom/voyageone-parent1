@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.batch.synship.sql">
+    <select id="tm_sms_config_getDataListFromSmsConfigByOrderChannelId"
+            resultType="com.voyageone.batch.synship.modelbean.SmsConfigBean">
+        SELECT
+            a.order_channel_id,
+            a.sms_type,
+            a.sms_code1,
+            a.sms_code2,
+            a.content,
+            a.`describe`,
+            a.del_flg
+        FROM
+            tm_sms_config a
+        WHERE
+            a.order_channel_id = #{orderChannelId}
+            AND a.sms_type = #{smsType}
+        ORDER BY a.sms_code2;
+    </select>
+</mapper>
+
+
+
