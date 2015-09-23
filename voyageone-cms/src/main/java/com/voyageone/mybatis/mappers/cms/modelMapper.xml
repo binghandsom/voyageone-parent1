@@ -1601,41 +1601,41 @@
 		<result column="modified" property="modified"/>
 		<result column="modifier" property="modifier"/>
 		<result column="usOfficialSneakerSales7Days" property="usOfficialSneakerSales7Days"/>
-		<result column="usOfficialSneakerSales7DaysPercent" property="usOfficialSneakerSales7DaysPercent"/>
+		<result column="usOfficialSneakerSales7DaysPercent" property="usOfficialSneakerSales7DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="usOfficialSneakerSales30Days" property="usOfficialSneakerSales30Days"/>
-		<result column="usOfficialSneakerSales30DaysPercent" property="usOfficialSneakerSales30DaysPercent"/>
+		<result column="usOfficialSneakerSales30DaysPercent" property="usOfficialSneakerSales30DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="usOfficialSneakerSalesInThisYear" property="usOfficialSneakerSalesInThisYear"/>
-		<result column="usOfficialSneakerSalesInThisYearPercent" property="usOfficialSneakerSalesInThisYearPercent"/>
+		<result column="usOfficialSneakerSalesInThisYearPercent" property="usOfficialSneakerSalesInThisYearPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="usAmazonSales7Days" property="usAmazonSales7Days"/>
-		<result column="usAmazonSales7DaysPercent" property="usAmazonSales7DaysPercent"/>
+		<result column="usAmazonSales7DaysPercent" property="usAmazonSales7DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="usAmazonSales30Days" property="usAmazonSales30Days"/>
-		<result column="usAmazonSales30DaysPercent" property="usAmazonSales30DaysPercent"/>
+		<result column="usAmazonSales30DaysPercent" property="usAmazonSales30DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="usAmazonSalesInThisYear" property="usAmazonSalesInThisYear"/>
-		<result column="usAmazonSalesInThisYearPercent" property="usAmazonSalesInThisYearPercent"/>
+		<result column="usAmazonSalesInThisYearPercent" property="usAmazonSalesInThisYearPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="cnSales7Days" property="cnSales7Days"/>
-		<result column="cnSales7DaysPercent" property="cnSales7DaysPercent"/>
+		<result column="cnSales7DaysPercent" property="cnSales7DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="cnSales30Days" property="cnSales30Days"/>
-		<result column="cnSales30DaysPercent" property="cnSales30DaysPercent"/>
+		<result column="cnSales30DaysPercent" property="cnSales30DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="cnSalesInThisYear" property="cnSalesInThisYear"/>
-		<result column="cnSalesInThisYearPercent" property="cnSalesInThisYearPercent"/>
+		<result column="cnSalesInThisYearPercent" property="cnSalesInThisYearPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="usOfficialSneakerRXSales7Days" property="usOfficialSneakerRXSales7Days"/>
-		<result column="usOfficialSneakerRXSales7DaysPercent" property="usOfficialSneakerRXSales7DaysPercent"/>
+		<result column="usOfficialSneakerRXSales7DaysPercent" property="usOfficialSneakerRXSales7DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="usOfficialSneakerRXSales30Days" property="usOfficialSneakerRXSales30Days"/>
-		<result column="usOfficialSneakerRXSales30DaysPercent" property="usOfficialSneakerRXSales30DaysPercent"/>
+		<result column="usOfficialSneakerRXSales30DaysPercent" property="usOfficialSneakerRXSales30DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="usOfficialSneakerRXSalesInThisYear" property="usOfficialSneakerRXSalesInThisYear"/>
-		<result column="usOfficialSneakerRXSalesInThisYearPercent" property="usOfficialSneakerRXSalesInThisYearPercent"/>
+		<result column="usOfficialSneakerRXSalesInThisYearPercent" property="usOfficialSneakerRXSalesInThisYearPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="usOfficialSneakerWSSales7Days" property="usOfficialSneakerWSSales7Days"/>
-		<result column="usOfficialSneakerWSSales7DaysPercent" property="usOfficialSneakerWSSales7DaysPercent"/>
+		<result column="usOfficialSneakerWSSales7DaysPercent" property="usOfficialSneakerWSSales7DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="usOfficialSneakerWSSales30Days" property="usOfficialSneakerWSSales30Days"/>
-		<result column="usOfficialSneakerWSSales30DaysPercent" property="usOfficialSneakerWSSales30DaysPercent"/>
+		<result column="usOfficialSneakerWSSales30DaysPercent" property="usOfficialSneakerWSSales30DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="usOfficialSneakerWSSalesInThisYear" property="usOfficialSneakerWSSalesInThisYear"/>
 		<result column="usOfficialSneakerWSSalesInThisYearPercent" property="usOfficialSneakerWSSalesInThisYearPercent"/>
 		<result column="usOfficialSneakerMobileSales7Days" property="usOfficialSneakerMobileSales7Days"/>
-		<result column="usOfficialSneakerMobileSales7DaysPercent" property="usOfficialSneakerMobileSales7DaysPercent"/>
+		<result column="usOfficialSneakerMobileSales7DaysPercent" property="usOfficialSneakerMobileSales7DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="usOfficialSneakerMobileSales30Days" property="usOfficialSneakerMobileSales30Days"/>
-		<result column="usOfficialSneakerMobileSales30DaysPercent" property="usOfficialSneakerMobileSales30DaysPercent"/>
+		<result column="usOfficialSneakerMobileSales30DaysPercent" property="usOfficialSneakerMobileSales30DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="usOfficialSneakerMobileSalesInThisYear" property="usOfficialSneakerMobileSalesInThisYear"/>
-		<result column="usOfficialSneakerMobileSalesInThisYearPercent" property="usOfficialSneakerMobileSalesInThisYearPercent"/>
+		<result column="usOfficialSneakerMobileSalesInThisYearPercent" property="usOfficialSneakerMobileSalesInThisYearPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 
 	</resultMap>
 	<select id="cms_get_USModelProductList"  resultMap="ModelProductResultMap" parameterType="HashMap">
@@ -1672,11 +1672,11 @@
 		b.usOfficialIsOnSale,
 		b.usOfficialIsApproved,
 		0 as usOfficialSneakerRXSales7Days,
-		0 as usOfficialSneakerRXSales7DaysPercent,
+		'' as usOfficialSneakerRXSales7DaysPercent,
 		0 as usOfficialSneakerRXSales30Days,
-		0 as usOfficialSneakerRXSales30DaysPercent,
+		'' as usOfficialSneakerRXSales30DaysPercent,
 		0 as usOfficialSneakerRXSalesInThisYear,
-		0 as usOfficialSneakerRXSalesInThisYearPercent,
+		'' as usOfficialSneakerRXSalesInThisYearPercent,
 		b.usOfficialSneakerSales7Days,
 		b.usOfficialSneakerSales7DaysPercent,
 		b.usOfficialSneakerSales30Days,
@@ -1684,17 +1684,17 @@
 		b.usOfficialSneakerSalesInThisYear,
 		b.usOfficialSneakerSalesInThisYearPercent,
 		0 as usOfficialSneakerWSSales7Days,
-		0 as usOfficialSneakerWSSales7DaysPercent,
+		'' as usOfficialSneakerWSSales7DaysPercent,
 		0 as usOfficialSneakerWSSales30Days,
-		0 as usOfficialSneakerWSSales30DaysPercent,
+		'' as usOfficialSneakerWSSales30DaysPercent,
 		0 as usOfficialSneakerWSSalesInThisYear,
-		0 as usOfficialSneakerWSSalesInThisYearPercent,
+		'' as usOfficialSneakerWSSalesInThisYearPercent,
 		0 as usOfficialSneakerMobileSales7Days,
-		0 as usOfficialSneakerMobileSales7DaysPercent,
+		'' as usOfficialSneakerMobileSales7DaysPercent,
 		0 as usOfficialSneakerMobileSales30Days,
-		0 as usOfficialSneakerMobileSales30DaysPercent,
+		'' as usOfficialSneakerMobileSales30DaysPercent,
 		0 as usOfficialSneakerMobileSalesInThisYear,
-		0 as usOfficialSneakerMobileSalesInThisYearPercent,
+		'' as usOfficialSneakerMobileSalesInThisYearPercent,
 		b.usAmazonPrice,
 		b.usAmazonFreeShippingType,
 		b.usAmazonIsOnSale,
@@ -1826,61 +1826,61 @@
 		<result column="quantity" property="quantity"/>
 		<result column="cn_is_primary_product" property="cnIsPrimaryProduct"  jdbcType="BOOLEAN"/>
 		<result column="cnSales30Days" property="cnSales30Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="cnSales30DaysPercent" property="cnSales30DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="cnSales30DaysPercent" property="cnSales30DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="cnSales7Days" property="cnSales7Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="cnSales7DaysPercent" property="cnSales7DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="cnSales7DaysPercent" property="cnSales7DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="cnSalesAllDays" property="cnSalesAllDays" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="cnSalesAllDaysPercent" property="cnSalesAllDaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="cnSalesAllDaysPercent" property="cnSalesAllDaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="cnOfficialSales30Days" property="cnOfficialSales30Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="cnOfficialSales30DaysPercent" property="cnOfficialSales30DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="cnOfficialSales30DaysPercent" property="cnOfficialSales30DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="cnOfficialSales7Days" property="cnOfficialSales7Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="cnOfficialSales7DaysPercent" property="cnOfficialSales7DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="cnOfficialSales7DaysPercent" property="cnOfficialSales7DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="cnOfficialSalesAllDays" property="cnOfficialSalesAllDays" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="cnOfficialSalesAllDaysPercent" property="cnOfficialSalesAllDaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="cnOfficialSalesAllDaysPercent" property="cnOfficialSalesAllDaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="tbSales30Days" property="tbSales30Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="tbSales30DaysPercent" property="tbSales30DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tbSales30DaysPercent" property="tbSales30DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="tbSales7Days" property="tbSales7Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="tbSales7DaysPercent" property="tbSales7DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tbSales7DaysPercent" property="tbSales7DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="tbSalesAllDays" property="tbSalesAllDays" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="tbSalesAllDaysPercent" property="tbSalesAllDaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tbSalesAllDaysPercent" property="tbSalesAllDaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="tmSales30Days" property="tmSales30Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="tmSales30DaysPercent" property="tmSales30DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tmSales30DaysPercent" property="tmSales30DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="tmSales7Days" property="tmSales7Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="tmSales7DaysPercent" property="tmSales7DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tmSales7DaysPercent" property="tmSales7DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="tmSalesAllDays" property="tmSalesAllDays" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="tmSalesAllDaysPercent" property="tmSalesAllDaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tmSalesAllDaysPercent" property="tmSalesAllDaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="tgSales30Days" property="tgSales30Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="tgSales30DaysPercent" property="tgSales30DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tgSales30DaysPercent" property="tgSales30DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="tgSales7Days" property="tgSales7Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="tgSales7DaysPercent" property="tgSales7DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tgSales7DaysPercent" property="tgSales7DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="tgSalesAllDays" property="tgSalesAllDays" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="tgSalesAllDaysPercent" property="tgSalesAllDaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tgSalesAllDaysPercent" property="tgSalesAllDaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="jdSales30Days" property="jdSales30Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="jdSales30DaysPercent" property="jdSales30DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="jdSales30DaysPercent" property="jdSales30DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="jdSales7Days" property="jdSales7Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="jdSales7DaysPercent" property="jdSales7DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="jdSales7DaysPercent" property="jdSales7DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="jdSalesAllDays" property="jdSalesAllDays" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="jdSalesAllDaysPercent" property="jdSalesAllDaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="jdSalesAllDaysPercent" property="jdSalesAllDaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="jgSales30Days" property="jgSales30Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="jgSales30DaysPercent" property="jgSales30DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="jgSales30DaysPercent" property="jgSales30DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="jgSales7Days" property="jgSales7Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="jgSales7DaysPercent" property="jgSales7DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="jgSales7DaysPercent" property="jgSales7DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="jgSalesAllDays" property="jgSalesAllDays" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="jgSalesAllDaysPercent" property="jgSalesAllDaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="jgSalesAllDaysPercent" property="jgSalesAllDaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="cnSalesInThisYear" property="cnSalesInThisYear" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="cnSalesInThisYearPercent" property="cnSalesInThisYearPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="cnSalesInThisYearPercent" property="cnSalesInThisYearPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="cnOfficialSalesInThisYear" property="cnOfficialSalesInThisYear" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="cnOfficialSalesInThisYearPercent" property="cnOfficialSalesInThisYearPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="cnOfficialSalesInThisYearPercent" property="cnOfficialSalesInThisYearPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="tbSalesInThisYear" property="tbSalesInThisYear" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="tbSalesInThisYearPercent" property="tbSalesInThisYearPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tbSalesInThisYearPercent" property="tbSalesInThisYearPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="tmSalesInThisYear" property="tmSalesInThisYear" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="tmSalesInThisYearPercent" property="tmSalesInThisYearPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tmSalesInThisYearPercent" property="tmSalesInThisYearPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="tgSalesInThisYear" property="tgSalesInThisYear" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="tgSalesInThisYearPercent" property="tgSalesInThisYearPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tgSalesInThisYearPercent" property="tgSalesInThisYearPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="jdSalesInThisYear" property="jdSalesInThisYear" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="jdSalesInThisYearPercent" property="jdSalesInThisYearPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="jdSalesInThisYearPercent" property="jdSalesInThisYearPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="jgSalesInThisYear" property="jgSalesInThisYear" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="jgSalesInThisYearPercent" property="jgSalesInThisYearPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="jgSalesInThisYearPercent" property="jgSalesInThisYearPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 
 	</resultMap>
 	<select id="cms_get_CNModelProductList" resultMap="ModelCNProductResultMap" parameterType="HashMap">
