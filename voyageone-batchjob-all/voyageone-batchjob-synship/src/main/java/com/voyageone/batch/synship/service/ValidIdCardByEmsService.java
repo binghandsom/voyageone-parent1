@@ -3,14 +3,16 @@ package com.voyageone.batch.synship.service;
 import com.voyageone.batch.SynshipConstants;
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
-import com.voyageone.batch.synship.dao.*;
+import com.voyageone.batch.synship.dao.IdCardDao;
+import com.voyageone.batch.synship.dao.IdCardHistoryDao;
+import com.voyageone.batch.synship.dao.ShortUrlDao;
+import com.voyageone.batch.synship.dao.SmsHistoryDao;
 import com.voyageone.batch.synship.modelbean.*;
 import com.voyageone.common.components.ems.B2COrderServiceStub;
 import com.voyageone.common.components.ems.EmsService;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
-import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import org.apache.axis2.AxisFault;
@@ -20,17 +22,14 @@ import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.voyageone.batch.SynshipConstants.AuditResult.FAIL;
+import static com.voyageone.batch.SynshipConstants.AuditResult.PASS;
 import static com.voyageone.batch.SynshipConstants.IdCardStatus.*;
 import static com.voyageone.batch.SynshipConstants.Reason.*;
-import static com.voyageone.batch.SynshipConstants.AuditResult.*;
-import static com.voyageone.batch.SynshipConstants.SHORTURL_PRE_SALE;
-import static com.voyageone.batch.SynshipConstants.SMS_WORDS;
-import static com.voyageone.batch.SynshipConstants.SMS_INFO;
-import static com.voyageone.batch.SynshipConstants.SMS_COST;
+import static com.voyageone.batch.SynshipConstants.*;
 
 /**
  * 从 Synship CloudClient 迁移的身份证验证任务
@@ -59,7 +58,7 @@ public class ValidIdCardByEmsService extends BaseTaskService {
     private SmsHistoryDao smsHistoryDao;
 
     @Autowired
-    private SmsConfigDao smsConfigDao;
+    private SmsConfigService smsConfigService;
 
     /**
      * 获取子系统
@@ -85,14 +84,26 @@ public class ValidIdCardByEmsService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
+        // 获取等待验证的数据
         List<IdCardBean> idCardBeans = idCardDao.selectNewestByApproved(WAITING_AUTO);
 
+        // 如果木有数据，那自然就结束掉
         if (idCardBeans == null || idCardBeans.size() == 0) {
             $info("没有找到需要验证的记录");
             return;
         }
 
-        Map<String, List<SmsConfigBean>> smsConfigs = getSmsConfigs();
+        // 有数据的话，那么开始加载一些固定的配置
+
+        // 短信花费计算的配置
+        Map<String, String> smsInfoMap = Codes.getCodeMap(SMS_INFO);
+        String strSmsWords = smsInfoMap.get(SMS_WORDS);
+        String smsCost = smsInfoMap.get(SMS_COST);
+        double smsWords = Double.valueOf(strSmsWords);
+        double eachFee = Double.valueOf(smsCost);
+
+        // 短信内容的配置
+        SmsConfig smsConfig = smsConfigService.getSmsConfigs(SynshipConstants.SMS_TYPE_CLOUD_CLIENT);
 
         $info("准备开始");
 
@@ -104,17 +115,21 @@ public class ValidIdCardByEmsService extends BaseTaskService {
             $prop("idCardBean", "source_order_id", idCardBean.getSource_order_id());
 
             // 根据收货人和手机，查询之前的验证记录
+            // 如果已经过了，那么继续下一个
             if (isAlreadyApproved(idCardBean)) continue;
 
+            // 调用跨境易的接口，验证身份证信息的有效性
             IdCardHistory idCardHistory = callEmsValid(idCardBean);
 
             // 获取 ShortUrl，尝试从其中获取 channel
+            // 后续多处使用
             ShortUrlBean shortUrlBean = shortUrlDao.getInfosBySourceOrderId(idCardHistory.getSource_order_id());
 
             trySetChannel(idCardHistory, shortUrlBean);
 
             idCardHistoryDao.insert(idCardHistory);
 
+            // 如果通过了，继续执行一些后续逻辑，然后继续下一个
             if (isPass(idCardHistory)) {
                 afterPass(idCardHistory, idCardBean, shortUrlBean);
                 continue;
@@ -128,7 +143,6 @@ public class ValidIdCardByEmsService extends BaseTaskService {
 
             // 如果信息错误，直接转人工
             // 并在备注表明
-
             $info("身份证信息验证失败，直接转人工");
 
             // 暂时屏蔽数据
@@ -137,86 +151,77 @@ public class ValidIdCardByEmsService extends BaseTaskService {
             if (shortUrlBean == null || StringUtils.isEmpty(shortUrlBean.getComment())) {
                 continue;
             }
-            // 发送短信通知顾客
-            Map<String, String> smsInfoMap = Codes.getCodeMap(SMS_INFO);
-            String smsWords = smsInfoMap.get(SMS_WORDS);
-            String smsCost = smsInfoMap.get(SMS_COST);
-            double eachFee=Double.valueOf(smsCost);
-            // 短信内容
-            List<SmsConfigBean> list = smsConfigs.get(idCardHistory.getOrder_channel_id());
-            SmsConfigBean smsConfigBean;
-            // 身份证上传短信（不匹配时的重发）
-            String SMS_CONTENT_VALID_NO_MATCH = "";
-            String SMS_CONTENT_VALID_NO_MATCH_DEL_FLG = "";
-            // 身份证上传短信（无图片、查无此人时的重发）
-            String SMS_CONTENT_VALID_NO_IMAGE = "";
-            String SMS_CONTENT_VALID_NO_IMAGE_DEL_FLG = "";
 
-            for (int i = 0; i < list.size(); i++) {
-                smsConfigBean = list.get(i);
-                //02短信内容取得
-                if (smsConfigBean.getSms_code1().equals(SynshipConstants.SMS_CONTENT_VALID_NO_MATCH)) {
-                    SMS_CONTENT_VALID_NO_MATCH = smsConfigBean.getContent();
-                    // 身份证上传短信（不匹配时的重发）有效
-                    SMS_CONTENT_VALID_NO_MATCH_DEL_FLG = smsConfigBean.getDel_flg();
-                }
-                //03短信内容取得
-                if (smsConfigBean.getSms_code1().equals(SynshipConstants.SMS_CONTENT_VALID_NO_IMAGE)) {
-                    SMS_CONTENT_VALID_NO_IMAGE = smsConfigBean.getContent();
-                    // 身份证上传短信（无图片、查无此人时的重发）有效
-                    SMS_CONTENT_VALID_NO_IMAGE_DEL_FLG = smsConfigBean.getDel_flg();
-                }
-                if (SMS_CONTENT_VALID_NO_MATCH != "" && SMS_CONTENT_VALID_NO_IMAGE != "") {
-                    break;
-                }
-            }
-
-            String smsContent;
-            String smsDelFlg;
-            if (idCardHistory.getMessage().contains("不匹配") ||
-                    idCardHistory.getMessage().contains("不正确")) {
-
-                smsContent = SMS_CONTENT_VALID_NO_MATCH;
-                smsDelFlg = SMS_CONTENT_VALID_NO_MATCH_DEL_FLG;
-            } else {
-                smsContent = SMS_CONTENT_VALID_NO_IMAGE;
-                smsDelFlg = SMS_CONTENT_VALID_NO_IMAGE_DEL_FLG;
-            }
-
-            if (smsDelFlg.equals("0")) {
-                $info("发送短信");
-                // 短信内容中各参数的设定
-                smsContent = String.format(smsContent, Channel.valueOfId(idCardHistory.getOrder_channel_id()).getFullName(), idCardBean.getReceive_name(), shortUrlBean.getShort_key());
-
-                $info("短消息发送成功的场合，更新发送履历 ");
-
-                // 发送履历的做成
-                SmsHistoryBean smsHistoryBean = new SmsHistoryBean();
-
-                String dateTime = DateTimeUtil.getNow();
-
-                double count = Math.ceil((double) smsContent.length() / Double.valueOf(smsWords));
-                double smsFee = count * eachFee;
-
-                smsHistoryBean.setSource_order_id(shortUrlBean.getSource_order_id());
-                smsHistoryBean.setShip_phone(idCardBean.getPhone());
-                smsHistoryBean.setShip_name(idCardBean.getReceive_name());
-                smsHistoryBean.setSent_type(SynshipConstants.SMS_SNET_TYPE_CLIENT);
-                smsHistoryBean.setSent_person(getTaskName());
-                smsHistoryBean.setSent_time(dateTime);
-                smsHistoryBean.setSent_conent(smsContent);
-                smsHistoryBean.setSent_cost(String.valueOf(smsFee));
-                smsHistoryBean.setStatus("00");
-                smsHistoryBean.setSms_flg(SynshipConstants.SMS_STATUS_NOT_SENT);
-                smsHistoryBean.setOrder_channel_id(idCardHistory.getOrder_channel_id());
-                smsHistoryBean.setCreate_time(dateTime);
-                smsHistoryBean.setUpdate_time(dateTime);
-                smsHistoryBean.setCreate_person(getTaskName());
-                smsHistoryBean.setUpdate_person(getTaskName());
-
-                smsHistoryDao.insertSmsHistory(smsHistoryBean);
-            }
+            // 如果短链接是有内容的，则尝试发送短信通知客户
+            sendSmsToCustomer(idCardHistory, smsConfig, idCardBean, shortUrlBean, smsWords, eachFee);
         }
+    }
+
+    private void sendSmsToCustomer(IdCardHistory idCardHistory, SmsConfig smsConfig, IdCardBean idCardBean, ShortUrlBean shortUrlBean, double smsWords, double eachFee ) {
+
+        String targetCode1;
+
+        if (idCardHistory.getMessage().contains("不匹配") ||
+                idCardHistory.getMessage().contains("不正确")) {
+            targetCode1 = SynshipConstants.SMS_CONTENT_VALID_NO_MATCH;
+        } else {
+            targetCode1 = SynshipConstants.SMS_CONTENT_VALID_NO_IMAGE;
+        }
+
+        Channel channel = Channel.valueOfId(idCardHistory.getOrder_channel_id());
+
+        if (channel == null) {
+            logIssue(String.format("发送短信前，获取渠道失败。参数 [ %s ]", idCardHistory.getOrder_channel_id()));
+            // 渠道的数据不对，无法继续
+            return;
+        }
+
+        SmsConfigBean configBean = smsConfig.get(channel, targetCode1);
+
+        if (configBean == null || StringUtils.isEmpty(configBean.getContent())) {
+            // 如果短信内容的配置，完全没有获取到的话，说明配置错误，不能继续
+            logIssue(String.format("短信内容没有配置，渠道 [ %s ]，Code1 [ %s ]", channel, targetCode1));
+            return;
+        }
+
+        // del flg 为 0，放弃发送
+        if (!configBean.getDel_flg().equals("0"))
+            return;
+
+        $info("发送短信");
+
+        String smsContent = configBean.getContent();
+
+        // 短信内容中各参数的设定
+        smsContent = String.format(smsContent, channel.getFullName(), idCardBean.getReceive_name(), shortUrlBean.getShort_key());
+
+        $info("短消息发送成功的场合，更新发送履历 ");
+
+        // 发送履历的做成
+        SmsHistoryBean smsHistoryBean = new SmsHistoryBean();
+
+        String dateTime = DateTimeUtil.getNow();
+
+        double count = Math.ceil((double) smsContent.length() / smsWords);
+        double smsFee = count * eachFee;
+
+        smsHistoryBean.setSource_order_id(shortUrlBean.getSource_order_id());
+        smsHistoryBean.setShip_phone(idCardBean.getPhone());
+        smsHistoryBean.setShip_name(idCardBean.getReceive_name());
+        smsHistoryBean.setSent_type(SynshipConstants.SMS_SNET_TYPE_CLIENT);
+        smsHistoryBean.setSent_person(getTaskName());
+        smsHistoryBean.setSent_time(dateTime);
+        smsHistoryBean.setSent_conent(smsContent);
+        smsHistoryBean.setSent_cost(String.valueOf(smsFee));
+        smsHistoryBean.setStatus("00");
+        smsHistoryBean.setSms_flg(SynshipConstants.SMS_STATUS_NOT_SENT);
+        smsHistoryBean.setOrder_channel_id(idCardHistory.getOrder_channel_id());
+        smsHistoryBean.setCreate_time(dateTime);
+        smsHistoryBean.setUpdate_time(dateTime);
+        smsHistoryBean.setCreate_person(getTaskName());
+        smsHistoryBean.setUpdate_person(getTaskName());
+
+        smsHistoryDao.insertSmsHistory(smsHistoryBean);
     }
 
     private String getRejectedMsg(IdCardHistory idCardHistory) {
@@ -410,17 +415,5 @@ public class ValidIdCardByEmsService extends BaseTaskService {
         idCardHistory.setIsSuccess(result);
 
         return idCardHistory;
-    }
-
-    private Map<String, List<SmsConfigBean>> getSmsConfigs() {
-
-        Map<String, List<SmsConfigBean>> mapSmsConfig = new HashMap<>();
-
-        for (Channel channel : Channel.values()) {
-            List<SmsConfigBean> list = smsConfigDao.getDataListFromSmsConfigByOrderChannelId(channel.getId(), SynshipConstants.SMS_TYPE_CLOUD_CLIENT);
-            mapSmsConfig.put(channel.getId(), list);
-        }
-
-        return mapSmsConfig;
     }
 }

@@ -226,4 +226,15 @@ public abstract class BaseTaskService {
     protected void $info(String template, Object... args) {
         logger.info(format(template, args));
     }
+
+    /**
+     * logger.info 的辅助方法
+     *
+     * @param obj 属性的对象类型
+     * @param name 属性的名称
+     * @param value 属性的值
+     */
+    protected void $prop(String obj, String name, Object value) {
+        $info(String.format("\"%s\" . \"%s\" : \"%s\"", obj, name, value));
+    }
 }
