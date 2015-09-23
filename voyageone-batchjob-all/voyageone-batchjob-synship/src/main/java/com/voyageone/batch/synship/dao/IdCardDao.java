@@ -28,8 +28,8 @@ public class IdCardDao extends BaseDao {
     /**
      * 查询审核记录
      */
-    public List<IdCardBean> selectNewestByApproved(String approved) {
-        return selectList("tt_idcard_selectNewestByApproved", parameters("approved", approved));
+    public List<IdCardBean> selectNewestByApproved(String approved, int limit) {
+        return selectList("tt_idcard_selectNewestByApproved", parameters("approved", approved, "limit", limit));
     }
 
     /**

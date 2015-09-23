@@ -22,6 +22,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -44,6 +45,10 @@ public class ValidIdCardByEmsService extends BaseTaskService {
                     "身份证号码：%s \r\n" +
                     "姓名：%s \r\n" +
                     "拒绝原因：%s";
+
+    private final static int THREAD_COUNT = 1;
+
+    private final static int EVERY_THREAD_COUNT = 30;
 
     @Autowired
     private IdCardDao idCardDao;
@@ -84,8 +89,10 @@ public class ValidIdCardByEmsService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
+        int limit = THREAD_COUNT * EVERY_THREAD_COUNT;
+
         // 获取等待验证的数据
-        List<IdCardBean> idCardBeans = idCardDao.selectNewestByApproved(WAITING_AUTO);
+        List<IdCardBean> idCardBeans = idCardDao.selectNewestByApproved(WAITING_AUTO, limit);
 
         // 如果木有数据，那自然就结束掉
         if (idCardBeans == null || idCardBeans.size() == 0) {
@@ -93,6 +100,29 @@ public class ValidIdCardByEmsService extends BaseTaskService {
             return;
         }
 
+        List<Runnable> runnable = new ArrayList<>();
+
+        // 将集合拆分到线程
+        for (int i = 0; i < THREAD_COUNT; i++) {
+
+            int start = i * EVERY_THREAD_COUNT;
+            int end = start + EVERY_THREAD_COUNT;
+
+            List<IdCardBean> subList = idCardBeans.subList(start, end);
+
+            runnable.add(() -> {
+                try {
+                    validOnThread(subList);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+
+        runWithThreadPool(runnable, taskControlList);
+    }
+
+    private void validOnThread(List<IdCardBean> idCardBeans) throws JSONException {
         // 有数据的话，那么开始加载一些固定的配置
 
         // 短信花费计算的配置

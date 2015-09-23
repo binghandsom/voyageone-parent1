@@ -24,7 +24,7 @@
         FROM tt_idcard
         WHERE approved = #{approved}
         ORDER BY update_time ASC
-        LIMIT 30
+        LIMIT #{limit}
     </select>
 
     <select id="tt_idcard_selectCountByPhoneName" resultType="int">
