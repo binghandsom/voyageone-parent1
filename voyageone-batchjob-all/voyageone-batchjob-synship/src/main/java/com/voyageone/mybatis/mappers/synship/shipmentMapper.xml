@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.batch.synship.sql">
+
+
+    <select id="synShip_getShipmentDelay" resultType="com.voyageone.batch.synship.modelbean.ShipmentBean">
+        SELECT
+            *
+        FROM
+            tt_shipment
+        WHERE
+            order_channel_id = #{order_channel_id}
+        AND
+            shipment_name = #{shipment_name}
+    </select>
+
+    <!-- Shipment信息追加 -->
+    <insert id="synShip_InsertShipment">
+        insert into
+            tt_shipment
+        (
+            shipment_id,
+            order_channel_id,
+            shipment_name,
+            shipdate,
+            port,
+            status,
+            declaration_number,
+            way_bill_number,
+            ship_price,
+            tracking_type,
+            tracking_no,
+            comments,
+            warehouse_id,
+            customs_declaration,
+            po_number,
+            delay_flg,
+            contract_ref,
+            create_time,
+            update_time,
+            create_person,
+            update_person
+        )
+        values
+        (
+            #{shipment_id},
+            #{order_channel_id},
+            #{shipment_name},
+            #{shipdate},
+            #{port},
+            #{status},
+            #{declaration_number},
+            #{way_bill_number},
+            #{ship_price},
+            #{tracking_type},
+            #{tracking_no},
+            #{comments},
+            #{warehouse_id},
+            #{customs_declaration},
+            #{po_number},
+            #{delay_flg},
+            #{contract_ref},
+            #{create_time},
+            #{update_time},
+            #{create_person},
+            #{update_person}
+        )
+    </insert>
+
+    <!-- ShipInfoment信息追加 -->
+    <insert id="synShip_InsertShipmentInfo">
+        insert into
+            tt_shipment_info
+        (
+            shipment_id,
+            order_channel_id,
+            tracking_status,
+            proccess_type,
+            proccess_time,
+            msg,
+            create_time,
+            update_time,
+            create_person,
+            update_person
+        )
+        values
+        (
+            #{shipment_id},
+            #{order_channel_id},
+            #{tracking_status},
+            #{proccess_type},
+            #{proccess_time},
+            #{msg},
+            #{create_time},
+            #{update_time},
+            #{create_person},
+            #{update_person}
+        )
+    </insert>
+
+    <select id="synShip_getPackage" resultType="com.voyageone.batch.synship.modelbean.PackageBean">
+        SELECT
+          *
+        FROM
+          tt_package
+        WHERE
+          shipment_id = #{shipment_id}
+        AND
+          tracking_no = #{tracking_no}
+    </select>
+
+    <!-- Package信息追加 -->
+    <insert id="synShip_InsertPackage">
+        insert into
+            tt_package
+        (
+            shipment_id,
+            package_id,
+            package_name,
+            tracking_no,
+            limit_weight,
+            weight_kg,
+            weight_lb,
+            status,
+            comments,
+            create_time,
+            update_time,
+            create_person,
+            update_person
+        )
+        values
+        (
+            #{shipment_id},
+            #{package_id},
+            #{package_name},
+            #{tracking_no},
+            #{limit_weight},
+            #{weight_kg},
+            #{weight_lb},
+            #{status},
+            #{comments},
+            #{create_time},
+            #{update_time},
+            #{create_person},
+            #{update_person}
+        )
+    </insert>
+
+    <select id="synShip_getPackageItem" resultType="com.voyageone.batch.synship.modelbean.PackageItemBean">
+        SELECT
+          *
+        FROM
+          tt_package_items
+        WHERE
+          shipment_id = #{shipment_id}
+        AND
+          package_id = #{package_id}
+        AND
+          syn_ship_no = #{syn_ship_no}
+    </select>
+
+    <!-- PackageItem信息追加 -->
+    <insert id="synShip_InsertPackageItem">
+        insert into
+            tt_package_items
+        (
+            shipment_id,
+            package_id,
+            package_item_id,
+            syn_ship_no,
+            ordernum,
+            reservation_id,
+            package_type,
+            comments,
+            del_flg,
+            create_time,
+            update_time,
+            create_person,
+            update_person
+        )
+        values
+        (
+            #{shipment_id},
+            #{package_id},
+            #{package_item_id},
+            #{syn_ship_no},
+            #{ordernum},
+            #{reservation_id},
+            #{package_type},
+            #{comments},
+            #{del_flg},
+            #{create_time},
+            #{update_time},
+            #{create_person},
+            #{update_person}
+        )
+    </insert>
+
+</mapper>

@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.wms.sql">
+
+    <!-- 删除临时库存表数据-->
+    <delete id="wms_deleteClientInventory">
+        DELETE FROM
+        wms_bt_client_inventory
+        WHERE
+        order_channel_id = #{order_channel_id}
+     </delete>
+
+    <!-- 删除临时库存表所有数据-->
+    <delete id="wms_deleteClientInventoryByAll">
+        DELETE FROM
+        wms_bt_client_inventory
+    </delete>
+
+    <!-- 删除临时库存表中已经处理完毕的数据-->
+    <delete id="wms_deleteProcessedClientInventor">
+        DELETE FROM
+          wms_bt_client_inventory
+        WHERE
+          order_channel_id = #{order_channel_id}
+        AND
+          syn_flg = #{syn_flg}
+        AND
+          sim_flg = #{sim_flg}
+    </delete>
+
+    <!-- 批处理插入临时库存表数据(字符串拼接)-->
+    <insert id="wms_insertClientInventory" parameterType="HashMap">
+        insert into wms_bt_client_inventory
+        (
+          order_channel_id,
+          client_sku,
+          sku,
+          qty,
+          store_id,
+          barcode,
+          syn_flg,
+          sim_flg,
+          active,
+          created,
+          creater,
+          modified,
+          modifier
+        )
+        values ${values}
+    </insert>
+
+    <!-- 更新SKU-->
+    <update id="wms_updateSKUBySizeMapping">
+        update wms_bt_client_inventory client
+         inner join wms_bt_item_details mapping
+            on mapping.client_sku = client.client_sku and mapping.order_channel_id = client.order_channel_id
+            and client.order_channel_id = #{order_channel_id}
+            and mapping.is_sale = '1'
+           set client.sku = mapping.sku,
+               client.size = mapping.size,
+               client.ItemCode = mapping.itemCode,
+               client.modified = now(),
+               client.modifier = #{task_id}
+         where client.order_channel_id =#{order_channel_id}
+    </update>
+
+    <!-- 更新Size,Barcode-->
+    <update id="wms_updateItemDetailsSizeBarcode">
+        update wms_bt_item_details item
+         inner join wms_bt_client_inventory client
+           on client.sku = item.sku and client.order_channel_id = item.order_channel_id
+          set item.size = client.size,
+              item.barcode = client.barcode,
+              item.active = #{active},
+              item.modified = now(),
+              item.modifier = #{task_id}
+        where item.order_channel_id = #{order_channel_id}
+    </update>
+
+    <!-- 取得临时库存表中在SizeMapping表中不存在的记录集-->
+    <!--<select id="wms_getNotExistsSizeMapping" resultType="com.voyageone.batch.wms.modelbean.ClientInventoryBean">-->
+        <!--select client.order_channel_id,-->
+               <!--client.client_sku,-->
+               <!--client.qty,-->
+               <!--client.store_id,-->
+               <!--client.itemcode,-->
+               <!--client.sku,-->
+               <!--client.size-->
+          <!--from wms_bt_client_inventory client-->
+         <!--where order_channel_id = #{order_channel_id}-->
+           <!--and not exists-->
+               <!--(-->
+                 <!--select 1-->
+                   <!--from wms_bt_item_details detail-->
+                  <!--where detail.client_sku = client.client_sku-->
+                    <!--and detail.order_channel_id = client.order_channel_id-->
+                    <!--and detail.is_sale = '1'-->
+               <!--)-->
+    <!--</select>-->
+
+    <!-- 取得临时库存表中在wms_bt_item_details表中不存在的记录集-->
+    <select id="wms_getNotExistsItemDetails" resultType="com.voyageone.batch.wms.modelbean.ClientInventoryBean">
+        select client.order_channel_id,
+               client.client_sku,
+               client.qty,
+               client.store_id,
+               client.ItemCode,
+               client.sku,
+               client.size
+          from wms_bt_client_inventory client
+         where order_channel_id = #{order_channel_id}
+           and not exists
+               (
+                 select 1
+                   from wms_bt_item_details item
+                  where client.sku = item.sku
+                    and item.order_channel_id = #{order_channel_id}
+               )
+    </select>
+
+    <!-- 临时库存表中在SizeMapping表中不存在的记录，更新临时库存表的syn_flg（更新忽略）-->
+    <update id="wms_updateClientInventorySynflgIgnore">
+        UPDATE wms_bt_client_inventory client
+        SET client.syn_flg = #{syn_flg},
+        client.modified = now(),
+        client.modifier = #{task_id}
+        WHERE
+        client.order_channel_id =#{order_channel_id}
+        AND client.sku = '0'
+        AND client.syn_flg != '4'
+    </update>
+
+    <!-- 对wms_bt_item_details表中更新成功的记录，更新临时库存表的syn_flg（更新成功）-->
+    <update id="wms_updateClientInventorySynflgSucc">
+        update wms_bt_client_inventory client
+         inner join wms_bt_item_details item
+            on client.order_channel_id = item.order_channel_id and client.sku = item.sku
+           set client.syn_flg = #{syn_flg},
+               client.modified = now(),
+               client.modifier = #{task_id}
+         where client.order_channel_id = #{order_channel_id}
+         AND client.syn_flg = '0'
+    </update>
+
+    <!-- 获取Job运行时间 -->
+    <select id="wms_getTaskRunTime" resultType="String">
+        select max(process_time) taskRunTime
+          from com_bt_task_history tt1
+         where tt1.process_type = '0'
+           and tt1.task_id = (
+                              select t.task_id
+                                from com_mt_task t
+                               where t.task_name = #{taskName}
+                             )
+        <include refid="wms_getTaskRunTime_condition"/>
+    </select>
+    <sql id="wms_getTaskRunTime_condition">
+        <if test="dateTimeFlg != 'CUR'">
+            and tt1.process_time &lt;= (
+                                         select max(taskHis.process_time) maxSucTime
+                                           from com_bt_task_history taskHis
+                                          where taskHis.process_type = '1'
+                                            and taskHis.task_id = (
+                                                                    select t.task_id
+                                                                      from com_mt_task t
+                                                                     where t.task_name = #{taskName}
+                                                                  )
+                                            )
+            </if>
+    </sql>
+
+    <resultMap id="inventoryMap" type="com.voyageone.batch.wms.modelbean.ClientInventoryBean">
+        <result column="client_sku" property="client_sku"/>
+        <result column="sku" property="sku"/>
+        <result column="qty" property="qty"/>
+        <result column="barcode" property="barcode"/>
+        <result column="itemCode" property="ItemCode"/>
+        <result column="size" property="size"/>
+    </resultMap>
+    <!--用webService获取的数据关联detail表获取相关的要插入Client_inventory表的数据-->
+    <select id="wms_getInsertClientInvData" resultMap="inventoryMap">
+        select del.client_sku,
+               del.sku,
+               tempT.qty,
+               del.barcode,
+               del.itemCode,
+               del.size
+          from wms_bt_item_details del,
+               (${tempTable}) tempT
+        where del.order_channel_id = tempT.order_channel_id
+              and del.client_sku = tempT.client_sku
+              and del.is_sale = '1'
+    </select>
+
+    <!-- 获取最后全量库存更新时间配置 -->
+    <select id="wms_getFullUpdtConfig" resultType="com.voyageone.common.configs.beans.ThirdPartyConfigBean">
+        select *
+        from com_mt_third_party_config t
+        where t.channel_id = #{order_channel_id}
+              and t.prop_name = #{propName}
+    </select>
+
+    <!-- pv3:更新最后全量更新时间、pv1:全量更新标识、pv4:pv4为0(上一次任务失败的起始时间（正常结束时，清空为0）);pv5、pv5为1（下一次更新的起始pageIndex,pv4非0时使用） -->
+    <update id="wms_getClientInv_setLastFullUpdateTime">
+        update com_mt_third_party_config t
+           set t.prop_val1 = #{fullUpdateFlg},
+               t.prop_val3 = #{currDate},
+               t.prop_val4 = #{perFaildStartTime},
+               t.prop_val5 = #{nextTimeStartPageIndex},
+               t.modifier = #{modifier},
+               t.modified = now()
+         where t.channel_id = #{order_channel_id}
+           and t.prop_name = #{propName}
+    </update>
+
+    <!-- pv4:pv4为上一次获取库存失败时间; pv5、pv5为上一次获取库存失败时候的pageIndex -->
+    <update id="wms_getClientInv_setFaildConfig">
+        update com_mt_third_party_config t
+           set t.prop_val4 = #{perFaildStartTime},
+               t.prop_val5 = #{nextTimeStartPageIndex},
+               t.modifier = #{modifier},
+               t.modified = now()
+         where t.channel_id = #{order_channel_id}
+           and t.prop_name = #{propName}
+    </update>
+
+    <insert id="wms_insertClientInventory_commonly" parameterType="HashMap">
+        insert into wms_bt_client_inventory
+        (
+            order_channel_id,
+            client_sku,
+            qty,
+            store_id,
+            ItemCode,
+            sku,
+            size,
+            barcode,
+            syn_flg,
+            sim_flg,
+            active,
+            created,
+            creater,
+            modified,
+            modifier
+        )
+        values ${values}
+    </insert>
+</mapper>

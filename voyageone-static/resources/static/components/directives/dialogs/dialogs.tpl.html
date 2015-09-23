@@ -1,0 +1,6 @@
+<div class="dialog-contents">
+    <h4 ng-bind-html="title"></h4>
+    <p ng-bind-html="content"></p>
+    <button class="btn btn-info btn-sm" ng-click="confirm()" translate="BUTTON_OK"></button>
+    <button class="btn btn-default btn-sm" ng-if="!isAlert" ng-click="closeThisDialog()" translate="BUTTON_CANCEL"></button>
+</div>

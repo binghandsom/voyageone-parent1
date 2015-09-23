@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.wsdl.oms.sql">
+	<!-- 新付款订单json信息表追加 -->
+	<insert id="oms_new_order_info_json_insertNewOrdersJsonInfo" parameterType="HashMap">
+		insert into 
+			oms_new_order_info_json
+			(
+				id,
+				json_data,
+				sent_flag,
+				creater,
+				created,
+				modifier,
+				modified
+			)
+		value 
+			(
+				#{id},
+				#{jsonData},
+				0,
+				'wsdl',
+				now(),
+				'wsdl',
+				now()
+			)
+	</insert>
+	
+	<!-- 状态变化订单json信息表追加 -->
+	<insert id="oms_changed_order_info_json_insertChangedOrdersInfo" parameterType="HashMap">
+		insert into 
+			oms_changed_order_info_json
+			(
+				id,
+				json_data,
+				sent_flag,
+				creater,
+				created,
+				modifier,
+				modified
+			)
+		value 
+			(
+				#{id},
+				#{jsonData},
+				0,
+				'wsdl',
+				now(),
+				'wsdl',
+				now()
+			)
+	</insert>
+	
+</mapper>

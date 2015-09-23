@@ -1,0 +1,712 @@
+@charset "utf-8";
+/* 初始化样式 */
+* {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, "宋体", "微软雅黑";
+    list-style: none;
+    text-decoration: none;
+}
+
+html {
+    _text-overflow: ellipsis;
+    /*background: #eee;*/
+    background: #ddd url('../../images/voyageOne/bg_body.jpg') repeat top left;
+}
+
+a img {
+    border: 0;
+}
+
+a.linkScroll {
+    position: relative;
+    z-index: 0;
+}
+
+a:hover {
+    color: #d90000;
+}
+
+.clear {
+    clear: both;
+    overflow: hidden;
+    visibility: hidden;
+    height: 0;
+}
+
+
+
+body {
+    position: relative;
+    overflow:auto;
+}
+
+
+
+footer{
+    text-align: center;
+    font-size: 12px;
+    color:#666;
+    padding-top:10px;
+    border-top:1px solid #ccc;
+    margin:10px 0;
+    width:100%;
+    min-width:1060px;
+    /*width:expression_r(document.body.clientWidth <= 1060? "1060px": "auto");*/
+}
+
+
+
+/* 头部 */
+.head {
+    left: 0;
+    right: 0;
+    top: 0;
+    position:relative;
+    width:100%;
+    min-width:1060px;
+    /*width:expression_r(document.body.clientWidth <= 1060? "1060px": "auto");*/
+    font-size: 12px;
+    z-index: 10;
+    background: url('../../images/voyageOne/bg.gif') repeat-x left top;
+    padding-top: 12px;
+    _padding-top: 9px;
+    _position: absolute;
+    _top: expression(eval(document.documentElement.scrollTop)+0);
+}
+.center {
+    width: 1060px;
+    margin: 0 auto;
+}
+
+#logoWrapper {
+    position: relative;
+    height: 62px;
+}
+
+#logowraper img{
+    width:240px;
+}
+
+#topQQ {
+    position: absolute;
+    right: 0;
+    top: -1px;
+    _width: 230px;
+    height: 21px;
+    background: #000 url('../../images/voyageOne/topQQ.gif') no-repeat 0 0;
+}
+
+#topQQ div {
+    background: url('../../images/voyageOne/topQQ.gif') no-repeat right -21px;
+    height: 21px;
+}
+
+#topQQ span {
+    display: block;
+    height: 21px;
+    text-align: center;
+    margin: 0 14px;
+    border-bottom: 1px solid #233547;
+    color:#fff;
+}
+
+#topQQ a {
+    display: inline-block;
+    color: #fff;
+    padding: 0 5px;;
+}
+
+#topQQ a:hover {
+    color: #31b0d5;
+}
+
+/* 导航 */
+/*#navWrapper {*/
+    /*height: 42px;*/
+    /*position: relative;*/
+    /*z-index: 49;*/
+/*}*/
+
+/*#nav {*/
+    /*height: 42px;*/
+    /*float: left;*/
+    /*width: 905px;*/
+    /*position: relative;*/
+    /*overflow: hidden;*/
+/*}*/
+
+/*#nav dd, #nav dt {*/
+    /*float: left;*/
+    /*height: 42px;*/
+    /*width: 95px;*/
+    /*position: relative;*/
+/*}*/
+
+/*#nav dd a {*/
+    /*display: block;*/
+    /*width: 95px;*/
+    /*line-height: 42px;*/
+    /*height: 42px;*/
+    /*text-align: center;*/
+    /*color: #fff;*/
+    /*text-shadow: -1px -1px 0 #21546d;*/
+    /*cursor: pointer;*/
+/*}*/
+
+/*#nav dd a:hover {*/
+    /*text-shadow: -1px -1px 0 #9a5a17;*/
+/*}*/
+
+/*#nav dd b {*/
+    /*overflow: hidden;*/
+    /*background: url('../../images/voyageOne/ico21.gif') no-repeat;*/
+    /*display: block;*/
+    /*height: 20px;*/
+    /*width: 18px;*/
+    /*position: absolute;*/
+    /*left: 78%;*/
+    /*top: -18%;*/
+    /*z-index: 2;*/
+/*}*/
+
+/*#nav dt {*/
+    /*position: absolute;*/
+    /*z-index: -1;*/
+    /*left: 0;*/
+    /*top: 0;*/
+    /*width: 95px;*/
+    /*background: url('../../images/voyageOne/navhover.gif') no-repeat 0 0;*/
+    /*text-shadow: -1px -1px 0 #9a5a17;*/
+/*}*/
+
+/*#nav dt a span {*/
+    /*text-align: center;*/
+    /*line-height: 42px;*/
+    /*display: block;*/
+    /*color: #fff;*/
+    /*float: left;*/
+    /*width: 95px;*/
+/*}*/
+
+/*#nav dt a em {*/
+    /*background: url('../../images/voyageOne/navhover.gif') no-repeat right 0;*/
+    /*display: block;*/
+    /*width: 2px;*/
+    /*height: 42px;*/
+    /*position: absolute;*/
+    /*right: 0;*/
+    /*top: 0;*/
+/*}*/
+
+/*#navMenu {*/
+    /*position: absolute;*/
+    /*left: 0;*/
+    /*top: 42px;*/
+    /*z-index: 2;*/
+/*}*/
+
+/*#navMenu dl {*/
+    /*background: url('../../images/voyageOne/navMenu.png') no-repeat 0 5px;*/
+    /*position: absolute;*/
+    /*left: 0;*/
+    /*top: 0;*/
+    /*width: 171px;*/
+    /*display: none;*/
+/*}*/
+
+/*#navMenu dd {*/
+    /*background: url('../../images/voyageOne/navMenu.png') repeat-y -171px 0;*/
+    /*height: 30px;*/
+    /*padding: 0 15px;*/
+/*}*/
+
+/*#navMenu dd a {*/
+    /*display: block;*/
+    /*line-height: 30px;*/
+    /*height: 30px;*/
+    /*background: url('../../images/voyageOne/navMenuline.gif') repeat-x 0 bottom;*/
+    /*cursor: pointer;*/
+    /*color:#333;*/
+/*}*/
+
+/*#navMenu dd a:hover{*/
+    /*color:#008CB5;*/
+/*}*/
+
+/*#navMenu dt {*/
+    /*background: url('../../images/voyageOne/navMenu.png') no-repeat -342px 0;*/
+    /*height: 3px;*/
+/*}*/
+
+/*#navMenu dt, #navMenu dd, #navMenu dl {*/
+    /*_background-image: url('../../images/voyageOne/navMenuie6.gif');*/
+/*}*/
+
+
+
+/*用户信息*/
+.userInfo {
+    position: absolute;
+    right: 130px;
+    top: 3px;
+    color: #fff;
+}
+
+.userInfo a{
+    display:inline-block;
+    color:#E48E47;
+}
+.userInfo a:hover{
+    color:#31b0d5;
+}
+
+.userInfo span{
+    display:inline-block;
+    margin-left:10px;
+}
+
+
+/*公司信息*/
+.companies{
+    float: right;
+    width:155px;
+    height: 24px;
+    position: relative;
+    top: 10px;
+    overflow: hidden;
+}
+
+
+/*面包屑*/
+#mbx{
+    margin:5px auto;
+    font-size: 12px;
+    color:#666;
+}
+#mbx a{
+    color:#666;
+}
+.companies select{
+    width:155px;
+    height: 24px;
+    line-height: 24px;
+    border-radius:4px;
+}
+
+/*voyageone Contents*/
+
+.voContents{
+    min-height: 420px;
+    position:relative;
+}
+
+button.buttonStyle {
+    padding:3px 5px;
+    cursor:pointer;
+    background:#666;
+    color:#fff;
+    border:none;
+    border-radius:4px;
+    min-width: 65px;
+    font-size: 12px;
+    text-align: center;
+}
+
+button.buttonStyle:hover{
+    background:#00a835;
+}
+
+button.buttonStyle_2 {
+    padding:3px 5px;
+    cursor:pointer;
+    background:#00a835;
+    color:#fff;
+    border:none;
+    border-radius:4px;
+    font-size: 12px;
+    text-align: center;
+}
+
+.button:hover{
+    cursor:pointer;
+    background:#F0750A;
+    color:#fff;
+    text-shadow:0 0 1px #ccc;
+}
+
+.errorMes{
+    width:1060px;
+    margin:0 auto;
+    text-align: left;
+}
+
+.errorMes_success{
+    text-align: left;
+    font-weight:700;
+    /*color:#096A00;*/
+    color:#1CC128;
+    padding:5px;
+}
+.errorMes_error{
+    text-align: left;
+    font-weight:700;
+    color: #FF0000;
+    padding:5px;
+}
+.errorMes_warn{
+    text-align: left;
+    font-weight:700;
+    /*color:#333;*/
+    /*color: #ECEC00;*/
+    color: #FF0000;
+    padding:5px;
+}
+
+.pageChange {
+    /*background-color: #fff;*/
+    padding: 0;
+    /*border-top: 1px solid #d4d4d4;*/
+    position: relative;
+    width: 100%;
+    border-top: 1px solid rgb(212,212,212);
+}
+
+/*选项卡1*/
+#lib_Tab1 {
+    margin: 0px;
+    padding: 0px;
+    margin-bottom: 15px;
+    margin-top: 10px;
+}
+
+.lib_MenuBox {
+    height: 28px;
+    line-height: 28px;
+    position: relative;
+}
+
+.lib_MenuBox ul {
+    margin: 0px;
+    padding: 0px;
+    list-style: none;
+    position: absolute;
+    top: 3px;
+    left: 0;
+    height: 25px;
+    text-align: center;
+}
+
+.lib_MenuBox li {
+    float: left;
+    display: block;
+    cursor: pointer;
+    color: #333;
+    font-weight: bold;
+    margin-right: 2px;
+    height: 25px;
+    line-height: 25px;
+    background-color: #d5d5d5;
+    padding: 0px 15px;
+}
+
+.lib_MenuBox li.hover {
+    padding: 0px;
+    background: #fff;
+    border-left: 1px solid #95C9E1;
+    border-top: 1px solid #95C9E1;
+    border-right: 1px solid #95C9E1;
+    color: #3091C2;
+    height: 26px;
+    line-height: 26px;
+    padding: 0px 20px;
+}
+
+/*菜单class*/
+.lib_tabBorder {
+}
+
+.lib_ContentBox {
+    clear: both;
+    margin-top: 0px;
+    border-top: none;
+    border: 1px solid #95C9E1;
+    height: 490px;
+    overflow: auto;
+    text-align: center;
+    padding-top: 8px;
+    background: #fff;
+}
+
+.navigationName {
+    text-decoration: underline;
+}
+
+.navigationIsolation {
+    margin: 2px 4px;
+}
+
+/* 导航 */
+#navwraper {
+    height: 42px;
+    position: relative;
+    z-index: 49;
+}
+
+/*导航 new*/
+#navMenu{
+    height: 42px;
+    float: left;
+    width: 900px;
+    position: relative;
+}
+.menu1{
+    margin-left:3px;
+}
+.menu1>li,.menu1 a{
+    height: 42px;
+    line-height: 42px;
+    display:inline-block;
+}
+.menu1>li{
+    margin-left:-3px;
+}
+
+.menu1 a{
+    display: block;
+    font-weight: normal;
+    font-size: 12px;
+    margin: 0px;
+    text-transform: uppercase;
+    width: 111px;
+    color:#fff;
+    font-family: arial, Helvetica, sans-serif;
+    text-align: center;
+}
+.menu1>li>a{
+    text-shadow: -1px -1px 0 #21546d;
+}
+.menu1>li:hover {
+    /*back:#FF7B0E;*/
+    /*background-color: #1CC128;*/
+    /*background-image: url('../../images/voyageOne/navhover.gif');*/
+    /*background-repeat:repeat-x;*/
+    /*background-position: center top;*/
+}
+.menu1 li a:hover {
+    text-decoration: none;
+    color:#fff;
+}
+
+.menu1 li ul li a:hover{
+    background-image:none;
+}
+.menu1 li ul {
+    margin-left: -999em;
+    position: absolute}
+.menu1 li ul li,.menu1 li ul li a{
+    background: url('../../images/voyageOne/navMenu.png') repeat-y -171px 0;
+    height: 30px;
+    padding: 0 15px;
+}
+.menu1>li>a:hover{
+    text-decoration: underline;
+}
+.menu1 li:hover ul{
+    margin-top: -1px;
+    z-index: 5;
+    margin-left: 0px;
+    width: 171px;
+    position: absolute;
+    background: url('../../images/voyageOne/navMenu.png') no-repeat 0 5px;
++clear: both;
++margin-top: 0px;
+    _clear:both;
+    _margin-top:0px;
+    border-top: 2px solid #D67A1C;
+}
+
+.menu1 li>ul>li:hover ul{
+    display:block;
+    margin-left:156px;
+    margin-top:-32px;
+}
+.menu1 li:hover ul li a{
+    display: block;
+    font-weight: normal;
+    font-size: 12px;
+    margin: 0px;
+    text-transform: none;
+    color:#333;
+    text-align: left;
+    line-height: 30px;
+    height: 30px;
+    background: url('../../images/voyageOne/navMenuline.gif') repeat-x 0 bottom;
+}
+.menu1 li:hover ul li a:hover{
+    color:#008CB5;
+    text-decoration:underline;
+    text-indent:1px;
+}
+.menu1 ul li ul {
+    display: none;
+}
+
+
+.menu1 a.menuNow{
+    background-image: url('../../images/voyageOne/navhover.gif');
+    background-repeat:repeat-x;
+    background-position: center top;
+}
+
+.menu1 li.navBtm{
+    background: url('../../images/voyageOne/navMenu.png') no-repeat -342px 0;
+    height: 3px;
+    line-height:3px;
+    padding:0;
+}
+
+
+.leftMenuOnFocus {
+    display: block;
+}
+
+.leftMenuLostFocus {
+    display: none;
+}
+
+.leftMenuSubItemOnFocus {
+    color: #009900;
+    font-width: bold;
+}
+
+
+.bigImg{
+    position:fixed;
+    width:100%;
+    height:100%;
+    left:0;
+    top:0;
+    background: rgba(0,0,0,.8);
+    text-align:center;
+    z-index: 99999;
+}
+
+.bigImg .bigImgBox{
+    height:500px;
+    width:100%;
+    position:absolute;
+    top:50%;
+    margin-top:-250px;
+    text-align:center;
+
+}
+.bigImg .bigImgBox img{
+    height:100%;
+    max-width:1000px;
+}
+
+.bigImg .bigImgBox button{
+    width:50px;
+    position:absolute;
+    cursor:pointer;
+    border:none;
+
+}
+
+.bigImg .bigImgBox button img{
+    position:relative;
+    width:100%;
+    right:0;
+}
+
+.orderSearch{font-size:12px;}
+
+.tableSelectItem {
+    background: #c9dde1 !important;
+}
+
+
+/*popUp*/
+.popUp{
+    width:100%;
+    height:100%;
+    position:fixed;
+    left:0;
+    top:0;
+    background:rgba(0,0,0,.8);
+    z-index:999;
+}
+.orderPopTit{
+    height:30px;
+    line-height: 30px;
+    background:#666;
+    color:#fff;
+    text-indent:10px;
+}
+
+.popUpCons{
+    overflow:auto;
+    background:#fff;
+    border-radius:5px;
+    box-shadow:0 1px 0 #000;
+    position:relative;
+    left:50%;
+    top:50%;
+}
+
+textarea{
+	resize:none;
+}
+
+.table>thead>tr>th {
+    font-weight: bold;
+    background-image: linear-gradient(rgb(248, 248, 248) 0px, rgb(236, 236, 236) 100%);
+    vertical-align: middle;
+}
+
+.table>tbody>tr>th {
+    font-weight: bold;
+    background-image: linear-gradient(rgb(248, 248, 248) 0px, rgb(236, 236, 236) 100%);
+    vertical-align: middle;
+}
+
+.table>thead>tr>th {
+	vertical-align: middle;
+}
+
+.table>tbody>tr>th {
+	vertical-align: middle;
+}
+
+.table>tbody>tr>tb {
+	vertical-align: middle;
+}
+
+.row-pop{
+	margin-left:0;
+	margin-right:0;
+	margin-top:10px;
+}
+
+.row-flow {
+	margin-bottom: 10px;
+}
+
+.orderPopTit {
+	height: 30px;
+	line-height: 30px;
+	background: #666;
+	color: #fff;
+	text-indent: 10px;
+}
+
+.searchWrap{
+    position:relative;
+}
+
+.main-top {
+    background: #fff;
+    padding: 15px;
+}
+

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+          
+	<!-- ===================== 独立域名定时任务 start ===================== -->
+	<bean id="selfOrderStatusPostJob"
+		class="com.voyageone.batch.oms.job.SelfOrderStatusPostJob">
+	</bean>
+	<bean id="selfSpaldingOrderStatusPostTask"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref local="selfOrderStatusPostJob" />
+		</property>
+		<property name="targetMethod">
+			<value>run</value>
+		</property>
+		<property name="arguments">
+			<value>005</value>
+		</property>
+	</bean>
+	<bean id="selfSpaldingOrderStatusPostTaskContri"
+		name="selfSpaldingOrderStatusPostTaskContri"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="selfSpaldingOrderStatusPostTask" />
+		</property>
+		<property name="cronExpression">
+			<value>${quartz.self.orderstatus.spalding.post}</value>
+		</property>
+	</bean>
+	
+	<bean id="selfSneakerheadOrderStatusPostTask"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref local="selfOrderStatusPostJob" />
+		</property>
+		<property name="targetMethod">
+			<value>run</value>
+		</property>
+		<property name="arguments">
+			<value>001</value>
+		</property>
+	</bean>
+	<bean id="selfSneakerheadOrderStatusPostTaskContri"
+		name="selfSneakerheadOrderStatusPostTaskContri"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="selfSneakerheadOrderStatusPostTask" />
+		</property>
+		<property name="cronExpression">
+			<value>${quartz.self.orderstatus.sneakerhead.post}</value>
+		</property>
+	</bean>
+	<!-- ===================== 独立域名国际定时任务 end ===================== -->
+	
+</beans>

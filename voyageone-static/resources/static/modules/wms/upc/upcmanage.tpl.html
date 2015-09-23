@@ -1,0 +1,87 @@
+<div class="container-fluid content-wrapper" ng-controller="wmsUpcManageController" ng-init="init()">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="form-inline mb10">
+                <span class="input-group">
+                    <label for="location-bind-store" class="input-group-addon" translate="WMS_CHANNEL"></label>
+                    <select id="location-bind-store" class="form-control" ng-model="vm.search.channel"
+                            chosen style="width: 200px" ng-disabled="!isMode(vm.mode.search)"
+                            ng-options="i.id as i.name for i in vm.channels">
+                    </select>
+                </span>
+                <span class="input-group">
+                    <label for="location-bind-code" class="input-group-addon" translate="WMS_PRODUCTCODE"></label>
+                    <input id="location-bind-code" type="text" class="form-control" maxlength="25" ng-disabled="!isMode(vm.mode.search)" ng-model="vm.search.code" enter-click="#wms-upc-search-code"/>
+                </span>
+                <button id="wms-upc-search-code" class="btn btn-success btn-sm" ng-disabled="!isMode(vm.mode.search)" ng-click="getProduct()" translate="WMS_SEARCH"></button>
+                <button id="wms-upc-search-reset" class="btn btn-primary btn-sm" ng-disabled="isMode(vm.mode.search)" ng-click="closeProduct()" translate="WMS_CLOSE"></button>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading" translate="WMS_ITEMINFO"></div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label translate="WMS_PRODUCTCODE"></label>
+                                :&nbsp;
+                                <strong> {{ vm.product.code }} </strong>
+                            </div>
+                            <div class="form-group">
+                                <label for="upc-product-name" translate="WMS_NAME"></label>
+                                <input id="upc-product-name" type="text" class="form-control" ng-model="vm.product.name" ng-disabled="!editable()"/>
+                            </div>
+                            <div class="form-group">
+                                <label translate="WMS_TYPE"></label>
+                                <ui-select ng-model="vm.product.product_type_id" on-select="changeSizes($item, $model)" ng-disabled="!editable() || vm.itemDetailContexts.length > 0">
+                                    <ui-select-match placeholder="select a type">{{$select.selected.product_type_name}}</ui-select-match>
+                                    <ui-select-choices repeat="i.product_type_id as i in vm.productTypes | filter: $select.search">
+                                        <div ng-bind-html="i.product_type_name"></div>
+                                    </ui-select-choices>
+                                </ui-select>
+                            </div>
+                            <div class="form-group">
+                                <label for="upc-product-color" translate="WMS_COLOR"></label>
+                                <input id="upc-product-color" type="text" class="form-control" ng-model="vm.product.color" ng-disabled="!editable()"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="upc-product-msrp" translate="WMS_MSRP"></label>
+                                <input id="upc-product-msrp" type="text" class="form-control" ng-model="vm.product.msrp" ng-disabled="!editable() "/>
+                            </div>
+                            <div ng-hide="isMode(vm.mode.bind, vm.mode.search)">
+                                <button class="btn btn-sm btn-info" ng-disabled="!editable()" ng-click="saveProduct()" translate="{{isMode(vm.mode.create)?'WMS_CREATE':'WMS_SAVE' }}"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-8">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            UPC Bind @ <strong class="unl">{{ currChannelName() }}</strong>
+                        </div>
+                        <div class="panel-body">
+                            <span ng-show="isNoType()" translate="WMS_PLEASESELECTATYPEFORPRODUCT"></span>
+
+                            <b ng-show="isNotFoundSizes()">
+                                <span translate="WMS_UPC_NOTFOUNDSIZES"></span>
+                                <span>!!!</span>
+                            </b>
+
+                            <div class="input-group mb10" ng-repeat="itemDetailContext in vm.itemDetailContexts">
+                                <label for="{{$index}}" class="input-group-addon">{{ itemDetailContext.bean.sku }}</label>
+                                <input id="{{$index}}" class="form-control" type="text" ng-model="itemDetailContext.bean.barcode"/>
+                                <div class="input-group-btn" ng-show="needSaveItemDetail(itemDetailContext)">
+                                    <button class="btn btn-success" ng-click="saveItemDetail(itemDetailContext)">
+                                        <span class="fa fa-check"></span>
+                                    </button>
+                                    <button class="btn btn-default" ng-click="resetItemDetail(itemDetailContext)">
+                                        <span class="fa fa-times text-muted"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

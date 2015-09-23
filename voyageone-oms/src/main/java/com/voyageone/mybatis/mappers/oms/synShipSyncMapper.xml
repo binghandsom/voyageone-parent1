@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.oms.sql">
+
+	<!-- tt_orders 表 地址更新 -->
+	<update id="tt_orders_updateAddressInfo" parameterType="com.voyageone.oms.formbean.OutFormOrderdetailOrders" >
+		update tt_orders
+			set 
+				ship_nick = #{shipName},
+				ship_district = #{synShipShipDistrict},
+				ship_address = #{synShipShipAddress},
+				ship_city = #{shipCity},
+				ship_state = #{shipState},
+				ship_zip = #{shipZip},
+				ship_country = #{shipCountry},
+				ship_phone = #{shipPhone},
+				
+				update_time = now(),
+				update_person = #{modifier}
+		where
+			order_number = #{orderNumber}
+	</update>
+	
+	<!-- tt_orders 表 shipping更新 -->
+	<update id="tt_orders_updateShippingInfo" parameterType="com.voyageone.oms.formbean.OutFormOrderdetailOrders" >
+		update tt_orders
+			set 
+				shipping = #{shippingName},
+				
+				update_time = now(),
+				update_person = #{modifier}
+		where
+			order_number = #{orderNumber}
+	</update>
+	
+	<!-- tt_orders 表 isLocked更新 -->
+	<update id="tt_orders_updateIsLockedInfo" parameterType="com.voyageone.oms.modelbean.OrdersBean" >
+		update tt_orders
+			set 
+				isLocked = #{localShipOnHold},
+				
+				update_time = now(),
+				update_person = #{modifier}
+		where
+			order_number = #{orderNumber}
+	</update>
+	
+	<!-- tt_orders 表 order_instructions更新 -->
+	<update id="tt_orders_updateCustomerComment" parameterType="com.voyageone.oms.formbean.OutFormOrderdetailOrders" >
+		update tt_orders
+			set 
+				customer_comments = #{customerComment},
+				
+				update_time = now(),
+				update_person = #{modifier}
+		where
+			order_number = #{orderNumber}
+	</update>
+	
+	<!-- tt_orders 表 customer_comments更新 -->
+	<update id="tt_orders_updateInternalMessage" parameterType="com.voyageone.oms.formbean.OutFormOrderdetailOrders" >
+		update tt_orders
+			set 
+				gift_message = #{internalMessage},
+				
+				update_time = now(),
+				update_person = #{modifier}
+		where
+			order_number = #{orderNumber}
+	</update>
+	
+	<!-- tt_orders 表 customer_comments更新 -->
+	<update id="tt_orders_updateNoteToCustInfo" parameterType="com.voyageone.oms.formbean.OutFormOrderdetailOrders" >
+		update tt_orders
+			set 
+				note_to_customer = #{invoiceInfo},
+				
+				update_time = now(),
+				update_person = #{modifier}
+		where
+			order_number = #{orderNumber}
+	</update>
+	
+	<!-- tt_orders 表 final_grand_total更新 -->
+	<update id="tt_orders_updateFinalGrandTotalInfo" parameterType="com.voyageone.oms.formbean.OutFormOrderdetailOrders" >
+		update tt_orders
+			set
+				<if test="orderStatus != null and orderStatus != '' ">
+					se_order_status = #{orderStatus},
+				</if>
+				final_grand_total = #{finalGrandTotal},
+				
+				update_time = now(),
+				update_person = #{modifier}
+		where
+			order_number = #{orderNumber}
+	</update>
+	
+	<!-- tt_orders 表 isLocked更新 -->
+	<update id="tt_orders_updateOrderStatus" parameterType="com.voyageone.oms.modelbean.OrdersBean" >
+		update tt_orders
+			set 
+				se_order_status = #{orderStatus},
+				
+				update_time = now(),
+				update_person = #{modifier}
+		where
+			order_number = #{orderNumber}
+	</update>
+	
+	<!-- tt_orders 表 freight_collect更新 -->
+	<update id="tt_orders_updateFreightCollectInfo" parameterType="com.voyageone.oms.formbean.OutFormOrderdetailOrders" >
+		update tt_orders
+			set 
+				freight_collect = #{freightCollect},
+				
+				update_time = now(),
+				update_person = #{modifier}
+		where
+			order_number = #{orderNumber}
+	</update>
+</mapper>

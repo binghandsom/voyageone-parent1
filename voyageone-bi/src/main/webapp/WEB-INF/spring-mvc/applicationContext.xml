@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:p="http://www.springframework.org/schema/p"
+	   xmlns:tx="http://www.springframework.org/schema/tx"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:mvc="http://www.springframework.org/schema/mvc"  
+    xsi:schemaLocation="http://www.springframework.org/schema/beans  
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd  
+     http://www.springframework.org/schema/context  
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd  
+     http://www.springframework.org/schema/mvc  
+     http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+     http://www.springframework.org/schema/tx
+     http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
+      
+    <mvc:annotation-driven/>
+	 <!-- 扫描类包，将标注Spring注解的类自动转化Bean，同时完成Bean的注入 -->
+    <context:component-scan base-package="com.voyageone.bi.dao"/>
+    <context:component-scan base-package="com.voyageone.bi.task"/>
+	<context:component-scan base-package="com.voyageone.bi.mapper"/>
+	<context:component-scan base-package="com.voyageone.batch.bi.mapper"/>
+	<context:component-scan base-package="com.voyageone.batch.bi.etl"/>
+	<context:component-scan base-package="com.voyageone.bi.mybatis"/>
+    
+    <!-- 配置数据源 -->
+	
+	<!-- 测试环境  -->
+	<bean id="dataSource_Master"
+	    class="com.voyageone.bi.commonutils.ProxoolDataSource">
+	    <property name="driver">
+	        <value>com.mysql.jdbc.Driver</value>
+	    </property>
+	    <property name="driverUrl">
+	        <value>jdbc:mysql://10.0.0.59:3306/bi_master?user=biuser&amp;password=packpen&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8</value>
+	        <!-- <value>jdbc:mysql://10.0.1.91:3306/bigdata?user=root&amp;password=123456&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8</value> -->
+	    </property>
+	    <property name="user" value="biuser" />
+	    <property name="password" value="packpen" />
+	    <!-- <property name="password" value="123456" />本地DB对应 -->	    
+	    <!-- <property name="password" value="Sneakerhead2014" />--><!-- 园区云DB对应 -->
+	    <property name="alias" value="Pool_BI" />
+	    <property name="houseKeepingSleepTime" value="90000" />
+	    <property name="prototypeCount" value="4" />
+	    <property name="maximumConnectionCount" value="50" />
+	    <property name="minimumConnectionCount" value="2" />
+	    <property name="simultaneousBuildThrottle" value="50" />
+	    <property name="maximumConnectionLifetime" value="14400000" />
+	    <property name="houseKeepingTestSql" value="select CURRENT_DATE" />
+	</bean>
+	<bean id="dataSource_Stores"
+	    class="com.voyageone.bi.commonutils.ProxoolDataSource">
+	    <property name="driver">
+	        <value>com.mysql.jdbc.Driver</value>
+	    </property>
+	    <property name="driverUrl">
+	        <value>jdbc:mysql://10.0.0.59:8066/bi_stores?user=biuser&amp;password=packpen&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8</value>
+	        <!-- <value>jdbc:mysql://10.0.1.91:3306/bigdata?user=root&amp;password=123456&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8</value> -->
+	    </property>
+	    <property name="user" value="biuser" />
+	    <property name="password" value="packpen" />
+	    <!-- <property name="password" value="123456" />本地DB对应 -->	    
+	    <!-- <property name="password" value="Sneakerhead2014" />--><!-- 园区云DB对应 -->
+	    <property name="alias" value="Pool_stores" />
+	    <property name="houseKeepingSleepTime" value="90000" />
+	    <property name="prototypeCount" value="4" />
+	    <property name="maximumConnectionCount" value="50" />
+	    <property name="minimumConnectionCount" value="2" />
+	    <property name="simultaneousBuildThrottle" value="50" />
+	    <property name="maximumConnectionLifetime" value="14400000" />
+	    <property name="houseKeepingTestSql" value="select CURRENT_DATE" />
+	</bean>
+	
+	<!-- 阿里云环境  -->   
+	<!--<bean id="dataSource"
+	    class="com.sneakerhead.synship.commonutils.ProxoolDataSource">
+	    <property name="driver">
+	        <value>com.mysql.jdbc.Driver</value>
+	    </property>
+	    <property name="driverUrl">
+	        <value>jdbc:mysql://localhost:3306/Synship?user=app&amp;password=ZAQ!2wsx;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8</value>
+	    </property>
+	    <property name="user" value="app" />
+	    <property name="password" value="ZAQ!2wsx" />
+	    <property name="alias" value="Pool_BI" />
+	    <property name="houseKeepingSleepTime" value="90000" />
+	    <property name="prototypeCount" value="4" />
+	    <property name="maximumConnectionCount" value="200" />
+	    <property name="minimumConnectionCount" value="2" />
+	    <property name="simultaneousBuildThrottle" value="50" />
+	    <property name="maximumConnectionLifetime" value="14400000" />
+	    <property name="houseKeepingTestSql" value="select CURRENT_DATE" />
+	</bean> -->
+
+	<!-- 配置Jdbc模板  -->
+	<bean id="jdbcTemplate"				class="org.springframework.jdbc.core.JdbcTemplate"  p:dataSource-ref="dataSource_Master" />
+	<bean id="jdbcTemplate_Stores"	class="org.springframework.jdbc.core.JdbcTemplate"  p:dataSource-ref="dataSource_Stores" />
+	
+	<!-- JDBC事务管理器 -->  
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"  p:dataSource-ref="dataSource_Master" />
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+	
+	<bean id="salesMondrianTemp" class="com.voyageone.bi.dao.mondrian.MondrianDaoSupport">
+		<property name="connectStr">
+			<value>jdbc:mysql://10.0.0.59:8066/bi_stores?user=biuser&amp;password=packpen&amp;useUnicode=true&amp;characterEncoding=UTF-8</value>
+	    </property>
+		<property name="schemaXml" value="/WEB-INF/mondrian/schema/sales.xml"/>
+	</bean>
+
+	<bean id="sqlSessionFactoryBI"
+		  class="org.mybatis.spring.SqlSessionFactoryBean"
+		  p:dataSource-ref="dataSource_Master"
+		  p:configLocation="classpath:com/voyageone/bi/mybatis/myBatisConfig.xml"
+		  p:mapperLocations="classpath*:com/voyageone/bi/mapper/*Mapper.xml"/>
+
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.voyageone.bi.mapper"/>
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryBI"/>
+	</bean>
+
+	<bean id="sqlSessionFactoryETL"
+		  class="org.mybatis.spring.SqlSessionFactoryBean"
+		  p:dataSource-ref="dataSource_Master"
+		  p:configLocation="classpath:com/voyageone/batch/bi/mybatis/myBatisConfig.xml"
+		  p:mapperLocations="classpath*:com/voyageone/batch/bi/mapper/*Mapper.xml"/>
+
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.voyageone.batch.bi.mapper"/>
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryETL"/>
+	</bean>
+
+	<!--国际化资源  -->
+	<bean id="messageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<value>conf/i18n/messages</value>
+				<value>conf/i18n/items</value>
+			</list>
+		</property>
+		<property name="cacheSeconds" value="-1"/>
+	</bean>
+	
+	<bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
+	</bean>
+	
+	<!-- 链接式i18n国际化、网址拦截器 -->
+	<mvc:interceptors>  
+    <!-- Changes the locale when a 'locale' request parameter is sent; e.g. /?locale=de -->  
+    <bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor" />  
+	</mvc:interceptors>  
+  
+  	<bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver"
+          p:defaultEncoding="UTF-8"
+          p:maxUploadSize="5242880"
+          p:uploadTempDir="upload/temp"/>
+          
+	<!-- 对静态资源文件的访问  方案二 （二选一）-->  
+    <mvc:resources mapping="/resource/**" location="/WEB-INF/resource/" />
+
+</beans>

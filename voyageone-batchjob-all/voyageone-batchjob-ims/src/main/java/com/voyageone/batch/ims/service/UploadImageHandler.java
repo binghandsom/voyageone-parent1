@@ -1,0 +1,199 @@
+package com.voyageone.batch.ims.service;
+
+import com.taobao.api.ApiException;
+import com.taobao.api.domain.Picture;
+import com.taobao.api.response.PictureUploadResponse;
+import com.voyageone.batch.ims.bean.UploadImageParam;
+import com.voyageone.batch.ims.bean.UploadImageResult;
+import com.voyageone.batch.ims.bean.tcb.TaskControlBlock;
+import com.voyageone.batch.ims.bean.tcb.UploadImageTcb;
+import com.voyageone.batch.ims.bean.tcb.UploadProductTcb;
+import com.voyageone.batch.ims.enums.TmallWorkloadStatus;
+import com.voyageone.batch.ims.modelbean.WorkLoadBean;
+import com.voyageone.common.components.issueLog.IssueLog;
+import com.voyageone.common.components.tmall.TbPictureService;
+import com.voyageone.common.configs.beans.ShopBean;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Set;
+
+/**
+ * Created by Leo on 2015/5/28.
+ */
+public class UploadImageHandler extends UploadWorkloadHandler{
+    private static Log logger = LogFactory.getLog(UploadProductHandler.class);
+    private UploadJob uploadJob;
+    private TbPictureService tbPictureService;
+
+    public UploadImageHandler(UploadJob uploadJob, IssueLog issueLog) {
+        super(issueLog);
+        this.uploadJob = uploadJob;
+        tbPictureService = new TbPictureService();
+
+        this.setName(this.getClass().getSimpleName() + "_" + uploadJob.getChannel_id() + "_" + uploadJob.getCart_id());
+    }
+
+    //添加一个suspend的job防止该线程一启动，就结束
+    public void startJob()
+    {
+        TaskControlBlock suspendTcb = new TaskControlBlock();
+        addSuspendTask(suspendTcb);
+        start();
+    }
+
+    @Override
+    protected void doJob(TaskControlBlock tcb) {
+        UploadImageTcb uploadImageTcb = (UploadImageTcb) tcb;
+        UploadImageParam uploadImageParam = uploadImageTcb.getUploadImageParam();
+
+        logger.debug(String.format("Start uploadImage Job(%s): %s", uploadImageTcb.getUploadProductTcb().getWorkLoadBean().getModelId(), uploadImageParam));
+
+        uploadImage(tcb);
+        logger.debug("after uploadImage");
+        stopCurrentTcb();
+        logger.debug("after stopCurrentTcb");
+
+        UploadImageResult uploadImageResult = uploadImageTcb.getUploadImageResult();
+        logger.debug(String.format("End uploadImage Job(%s): %s", uploadImageTcb.getUploadProductTcb().getWorkLoadBean().getModelId(), uploadImageResult));
+        uploadJob.uploadImageComplete(uploadImageTcb);
+    }
+
+    public void uploadImage(TaskControlBlock tcb)
+    {
+        UploadImageTcb uploadImageTcb = (UploadImageTcb) tcb;
+        UploadImageParam uploadImageParam = uploadImageTcb.getUploadImageParam();
+        Set<String> imageUrlSet = uploadImageParam.getSrcUrlSet();
+        ShopBean shopBean = uploadImageParam.getShopBean();
+
+
+        UploadImageResult uploadImageResult = new UploadImageResult();
+
+        try {
+            for (String srcUrl : imageUrlSet) {
+                String destUrl = uploadImageByUrl(srcUrl, shopBean);
+                uploadImageResult.add(srcUrl, destUrl);
+            }
+            uploadImageResult.setUploadSuccess(true);
+        } catch (Exception e) {
+            uploadImageResult.setUploadSuccess(false);
+            uploadImageResult.setFailCause(e.getMessage());
+            logger.error("Fail to upload image", e);
+            logger.error(e.getMessage());
+        }
+
+        uploadImageTcb.setUploadImageResult(uploadImageResult);
+        uploadImageTcb.getUploadProductTcb().setUploadImageResult(uploadImageResult);
+        updateWorkloadStatus(uploadImageTcb.getUploadProductTcb().getWorkLoadBean());
+    }
+
+    private void updateWorkloadStatus(WorkLoadBean workLoadBean)
+    {
+        TmallWorkloadStatus tmallWorkloadStatus = (TmallWorkloadStatus)workLoadBean.getWorkload_status();
+        switch (tmallWorkloadStatus.getValue())
+        {
+            case TmallWorkloadStatus.ADD_WAIT_PRODUCT_PIC:
+                workLoadBean.setWorkload_status(new TmallWorkloadStatus(TmallWorkloadStatus.ADD_PRODUCT_PIC_UPLOADED));
+                break;
+            case TmallWorkloadStatus.ADD_WAIT_ITEM_PIC:
+                workLoadBean.setWorkload_status(new TmallWorkloadStatus(TmallWorkloadStatus.ADD_ITEM_PIC_UPLOADED));
+                break;
+            case TmallWorkloadStatus.UPDATE_WAIT_ITEM_PIC:
+                workLoadBean.setWorkload_status(new TmallWorkloadStatus(TmallWorkloadStatus.UPDATE_ITEM_PIC_UPLOADED));
+                break;
+        }
+    }
+    public String uploadImageByUrl(String url, ShopBean shopBean) throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        int TIMEOUT_TIME = 10*1000;
+        int waitTime = 0;
+        int retry_times = 0;
+        int max_retry_times = 3;
+        InputStream is = null;
+        do {
+            try {
+                URL imgUrl = new URL(url);
+                is = imgUrl.openStream();
+                byte[] byte_buf = new byte[1024];
+                int readBytes = 0;
+
+                while (true) {
+                    while (is.available() >= 0) {
+                        readBytes = is.read(byte_buf, 0, 1024);
+                        if (readBytes < 0)
+                            break;
+                        logger.debug("read " + readBytes + " bytes");
+                        waitTime = 0;
+                        baos.write(byte_buf, 0, readBytes);
+                    }
+                    if (readBytes < 0)
+                        break;
+
+                    Thread.sleep(1000);
+                    waitTime += 1000;
+
+                    if (waitTime >= TIMEOUT_TIME) {
+                        logger.error("fail to download image:" + url);
+                        return null;
+                    }
+                }
+            } catch (Exception e) {
+                logger.error("exception when upload image", e);
+                if ("Connection reset".equals(e.getMessage())) {
+                    if (++retry_times < max_retry_times)
+                        continue;
+                }
+                throw new Exception(String.format("Fail to upload image[%s]: %s", url, e.getMessage()));
+            } finally {
+                if (is != null) {
+                    is.close();
+                }
+            }
+            break;
+        } while (true);
+        logger.info("read complete, begin to upload image");
+        String pictureUrl = null;
+        try {
+            PictureUploadResponse pictureUploadResponse = tbPictureService.uploadPicture(shopBean, baos.toByteArray(), "image_title", "0");
+            if (pictureUploadResponse.getErrorCode() != null) {
+                logger.error("上传图片到天猫时，错误:" + pictureUploadResponse.getErrorCode() + ", " + pictureUploadResponse.getMsg());
+                logger.error("上传图片到天猫时，sub错误:" + pictureUploadResponse.getSubCode() + ", " + pictureUploadResponse.getSubMsg());
+                return null;
+            }
+            Picture picture = pictureUploadResponse.getPicture();
+            if (picture != null)
+                pictureUrl = picture.getPicturePath();
+        } catch (ApiException e) {
+            logIssue("上传图片到天猫国际时出错！ msg:" + e.getMessage());
+            logger.error("errCode: " + e.getErrCode());
+            logger.error("errMsg: " + e.getErrMsg());
+        }
+        logger.info(String.format("Success to upload image[%s -> %s]", url, pictureUrl));
+
+        return pictureUrl;
+    }
+
+    @Override
+    protected void abortTcb(TaskControlBlock currentTcb, RuntimeException re) {
+        super.abortTcb(currentTcb, re);
+        UploadImageTcb tcb = (UploadImageTcb) currentTcb;
+        UploadProductTcb uploadProductTcb = tcb.getUploadProductTcb();
+
+        tcb.setUploadProductTcb(null);
+        if (uploadProductTcb != null) {
+            uploadJob.getUploadProductHandler().stopTcb(uploadProductTcb);
+        }
+    }
+
+    public void addTask(TaskControlBlock tcb) {
+        synchronized (running_queue) {
+            running_queue.add(tcb);
+        }
+        wakeSelf();
+    }
+
+}

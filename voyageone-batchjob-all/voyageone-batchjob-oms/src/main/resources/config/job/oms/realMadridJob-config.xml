@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+          
+	<!-- ===================== 皇马定时任务 start ===================== -->
+	<bean id="postRMOrderJob"
+		class="com.voyageone.batch.oms.job.PostRMOrderJob">
+	</bean>
+	
+	<bean id="postRMNormalOrderJobTask"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref local="postRMOrderJob" />
+		</property>
+		<property name="targetMethod">
+			<value>postRMNormalOrder</value>
+		</property>
+	</bean>
+	<bean id="postRMNormalOrderJobTaskContri"
+		name="postRMNormalOrderJobTaskContri"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="postRMNormalOrderJobTask" />
+		</property>
+		<property name="cronExpression">
+			<value>${quartz.post.normal.realmadrid.order}</value>
+		</property>
+	</bean>
+	
+	<bean id="postRMPendingCancelOrderJobTask"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref local="postRMOrderJob" />
+		</property>
+		<property name="targetMethod">
+			<value>postRMPendingCancelOrder</value>
+		</property>
+	</bean>
+	<bean id="postRMPendingCancelOrderJobTaskContri"
+		name="postRMPendingCancelOrderJobTaskContri"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="postRMPendingCancelOrderJobTask" />
+		</property>
+		<property name="cronExpression">
+			<value>${quartz.post.pendingcancel.realmadrid.order}</value>
+		</property>
+	</bean>
+
+	<bean id="postRMReturnOrderJobTask"
+		  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref local="postRMOrderJob" />
+		</property>
+		<property name="targetMethod">
+			<value>postRMReturnOrder</value>
+		</property>
+	</bean>
+	<bean id="postRMReturnOrderJobTaskContri"
+		  name="postRMReturnOrderJobTaskContri"
+		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="postRMReturnOrderJobTask" />
+		</property>
+		<property name="cronExpression">
+			<value>${quartz.post.return.realmadrid.order}</value>
+		</property>
+	</bean>
+
+	<bean id="downloadRMCancelOrderJobTask"
+		  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref local="postRMOrderJob" />
+		</property>
+		<property name="targetMethod">
+			<value>downloadRMCancelOrder</value>
+		</property>
+	</bean>
+	<bean id="downloadRMCancelOrderJobTaskContri"
+		  name="downloadRMCancelOrderJobTaskContri"
+		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="downloadRMCancelOrderJobTask" />
+		</property>
+		<property name="cronExpression">
+			<value>${quartz.download.cancel.realmadrid.order}</value>
+		</property>
+	</bean>
+
+	<bean id="downloadRMUpdateOrderJobTask"
+		  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref local="postRMOrderJob" />
+		</property>
+		<property name="targetMethod">
+			<value>downloadRMUpdateOrder</value>
+		</property>
+	</bean>
+	<bean id="downloadRMUpdateOrderJobTaskContri"
+		  name="downloadRMUpdateOrderJobTaskContri"
+		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="downloadRMUpdateOrderJobTask" />
+		</property>
+		<property name="cronExpression">
+			<value>${quartz.download.update.realmadrid.order}</value>
+		</property>
+	</bean>
+	
+	<!-- ===================== 皇马国际定时任务 end ===================== -->
+	
+</beans>

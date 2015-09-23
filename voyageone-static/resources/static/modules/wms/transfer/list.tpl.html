@@ -1,0 +1,104 @@
+<div class="container-fluid content-wrapper" ng-controller="transferListCtrl">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="row mb10">
+                <div class="col-sm-2">
+                    <div class="input-group">
+                        <label for="op" class="input-group-addon" translate="WMS_PONUMBER"></label>
+                        <input id="op" class="form-control" type="text" ng-model="gridOptions.po"/>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="input-group">
+                        <label for="transfer-store-filter" class="input-group-addon" translate="WMS_STORE"></label>
+                        <select chosen
+                                id="transfer-store-filter"
+                                class="form-control"
+                                ng-model="gridOptions.store"
+                                ng-options="i.store_id as i.store_name for i in stores">
+                        </select>
+                    </div>
+                </div>
+                </span>
+                <div class="col-sm-2">
+                    <div class="input-group">
+                        <label for="transfer-status-filter" class="input-group-addon" translate="WMS_STATUS"></label>
+                        <select chosen
+                                id="transfer-status-filter"
+                                class="form-control"
+                                ng-model="gridOptions.status"
+                                ng-options="i.id as i.name for i in byStatus">
+                            <option value="">All</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="input-group">
+                        <label class="input-group-addon" translate="WMS_FROM"></label>
+                        <input class="form-control" type="text" ng-model="gridOptions.fromDate" is-open="fromOpened" max-date="gridOptions.toDate"  ng-click="fromOpened = true"
+                               placeholder="Select a date" datepicker-popup="yyyy-MM-dd" datepicker-append-to-body="1"/>
+                        <label class="input-group-addon" translate="WMS_TO"></label>
+                        <input class="form-control" type="text" ng-model="gridOptions.toDate" is-open="toOpened"  min-date="gridOptions.fromDate"  ng-click="toOpened = true"
+                               placeholder="Select a date" datepicker-popup="yyyy-MM-dd" datepicker-append-to-body="1"/>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb10">
+                <div class="col-sm-12">
+                    <!--操作按钮组-->
+                    <a href="#/wms/transfer/add/out" class="btn btn-sm btn-success" translate="WMS_NEWTRANSFEROUT"></a>
+                    <a href="#/wms/transfer/add/in" class="btn btn-sm btn-info" translate="WMS_NEWTRANSFERIN"></a>
+                    <a href="#/wms/transfer/add/po" class="btn btn-sm btn-warning" translate="WMS_NEWPURCHASEORDER"></a>
+                    <a href="#/wms/transfer/add/re" class="btn btn-sm btn-danger" translate="WMS_NEWWITHDRAWAL"></a>
+                    <button class="btn btn-sm btn-primary ml10" ng-click="search()">
+                        <i class="fa fa-search"></i>&nbsp;<span translate="WMS_SEARCH"></span>
+                    </button>
+                </div>
+            </div>
+            <!--表格主体-->
+            <div class="table-responsive mb10">
+                <span translate="WMS_RECORDNUMBER"></span><span ng-bind="pageOption.total"></span>
+                <table if-no-rows="transfers" id="transferTable" class="table table-striped table-bordered table-hover table-condensed">
+                    <thead>
+                    <tr>
+                        <th class="col-fix-no">#</th>
+                        <th translate="WMS_NAME"></th>
+                        <th translate="WMS_PONUMBER"></th>
+                        <th translate="WMS_STORE"></th>
+                        <th translate="WMS_TRANSFER_TYPE"></th>
+                        <th translate="WMS_STATUS"></th>
+                        <th translate="WMS_LASTUPDATEUSER"></th>
+                        <th translate="WMS_LASTUPDATETIME"></th>
+                        <th class="col-fix-op" translate="WMS_OPERATION"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="t in transfers">
+                        <td class="col-fix-no">{{ $index | dbIndex:pageOption }}</td>
+                        <td>{{ t.transfer_name }}</td>
+                        <td>{{ t.po_number }}</td>
+                        <td>{{ t.store_name }}</td>
+                        <td>{{ t.transfer_type_name }}</td>
+                        <td>{{ t.transfer_status_name }}</td>
+                        <td>{{ t.modifier }}</td>
+                        <td>{{ t.modified_local }}</td>
+                        <td class="col-fix-op">
+                            <button class="btn btn-xs btn-block btn-success fix-sel" context-menu="operations" ng-click="setValue($index)">
+                                <span translate="WMS_OPERATION"></span>
+                                <span class="caret"></span>
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-center" paging="pageOption"></div>
+            <ul id="operations"  role="menu" class="dropdown-menu">
+                <li><a href="javascript:" ng-click="editRow()" translate="{{liViewCtl.edit?'WMS_EDIT':'WMS_DETAIL'}}"></a></li>
+                <li ng-show="liViewCtl.delete"><a href="javascript:" ng-click="delRow()" translate="WMS_DELETE"></a></li>
+                <li ng-show="liViewCtl.download" class="divider"></li>
+                <li ng-show="liViewCtl.download"><a  href="javascript:" ng-click="download()" translate="WMS_DOWNLOAD"></a></li>
+            </ul>
+        </div>
+    </div>
+</div>

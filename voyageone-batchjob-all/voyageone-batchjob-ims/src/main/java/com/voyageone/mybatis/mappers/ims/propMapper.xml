@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.ims.sql">
+
+    <!-- 插入主数据（属性）-->
+    <insert id="ims_insertProp" useGeneratedKeys="true" keyProperty="prop.propId" parameterType="java.util.HashMap">
+        insert into voyageone_ims.ims_mt_prop
+        (
+                prop_id
+              , category_id
+              , prop_name
+              , prop_type
+              , prop_value_default
+              , is_top_prop
+              , is_parent
+              , is_required
+              , parent_prop_id
+              , content
+              , created
+              , creater
+              , modified
+              , modifier
+        )
+        values
+        (
+                getNextVal('MdPropId')
+              , #{prop.categoryId}
+              , #{prop.propName}
+              , #{prop.propType}
+              , #{prop.propValueDefault}
+              , #{prop.isTopProp}
+              , #{prop.isParent}
+              , #{prop.isRequired}
+              , #{prop.parentPropId}
+              , #{prop.content}
+              , now()
+              , #{task_name}
+              , now()
+              , #{task_name}
+        );
+    </insert>
+
+    <!-- 插入主数据（属性匹配）-->
+    <insert id="ims_insertPropMapping">
+        insert into voyageone_ims.ims_mt_prop_mapping
+        (
+                platform_prop_hash
+              , prop_id
+              , mapping_type
+              , mapping_value
+              , created
+              , creater
+              , modified
+              , modifier
+        )
+        values
+        (
+                #{mapping.platformPropHash}
+              , #{mapping.propId}
+              , #{mapping.mappingType}
+              , #{mapping.mappingValue}
+              , now()
+              , #{task_name}
+              , now()
+              , #{task_name}
+        );
+    </insert>
+
+    <!-- 插入主数据（属性可选项）-->
+    <insert id="ims_insertPropOption" useGeneratedKeys="true" keyProperty="option.propOptionId" parameterType="java.util.HashMap">
+        insert into voyageone_ims.ims_mt_prop_option
+        (
+                prop_option_id
+              , prop_id
+              , prop_option_name
+              , prop_option_value
+              , created
+              , creater
+              , modified
+              , modifier
+        )
+        values
+        (
+                getNextVal('MdPropOptionId')
+              , #{option.propId}
+              , #{option.propOptionName}
+              , #{option.propOptionValue}
+              , now()
+              , #{task_name}
+              , now()
+              , #{task_name}
+        );
+    </insert>
+
+    <!-- 插入主数据（属性可选项匹配）-->
+    <insert id="ims_insertPropOptionMapping">
+        insert into voyageone_ims.ims_mt_prop_option_mapping
+        (
+                platform_prop_option_hash
+              , prop_option_id
+              , created
+              , creater
+              , modified
+              , modifier
+        )
+        values
+        (
+                #{mapping.platformPropOptionHash}
+              , #{mapping.propOptionId}
+              , now()
+              , #{task_name}
+              , now()
+              , #{task_name}
+        );
+    </insert>
+
+    <!-- 插入主数据（属性规则）-->
+    <insert id="ims_insertPropRule">
+        insert into voyageone_ims.ims_mt_prop_rule
+        (
+              prop_rule_id
+            , prop_id
+            , prop_rule_name
+            , prop_rule_value
+            , prop_rule_unit
+            , prop_rule_url
+            , prop_rule_exProperty
+            , prop_rule_relationship
+            , prop_rule_relationship_operator
+            , created
+            , creater
+            , modified
+            , modifier
+        )
+        values
+        (
+              getNextVal('MdPropRuleId')
+            , #{rule.propId}
+            , #{rule.propRuleName}
+            , #{rule.propRuleValue}
+            , #{rule.propRuleUnit}
+            , #{rule.propRuleUrl}
+            , #{rule.propRuleExProperty}
+            , #{rule.propRuleRelationship}
+            , #{rule.propRuleRelationshipOperator}
+            , now()
+            , #{task_name}
+            , now()
+            , #{task_name}
+        );
+    </insert>
+
+    <!-- 根据主数据类目id， 获取该类目在主数据属性表中，已经保存过的那些属性的（第三方平台的）属性id列表 -->
+    <select id="ims_selectPlatformPropIdListByCategoryId" resultType="java.util.HashMap">
+        select pp.platform_prop_id platformPropId, p.prop_id propId, pm.platform_prop_hash platformPropHash
+        from voyageone_ims.ims_mt_prop p
+            join voyageone_ims.ims_mt_prop_mapping pm
+                on pm.prop_id = p.prop_id
+            join voyageone_ims.ims_mt_platform_prop pp
+                on pm.platform_prop_hash = pp.platform_prop_hash
+        where p.category_id = #{category_id};
+    </select>
+
+    <!-- 根据主数据类目id， 获取该类目在主数据属性可选项表中的数据 -->
+    <select id="ims_selectPropOptionListByCategoryId" resultType="java.util.HashMap">
+        select concat(p.prop_id, ':', po.prop_option_value) optionKey, po.prop_option_id optionId, pom.platform_prop_option_hash platformPropOptionHash
+        from voyageone_ims.ims_mt_prop p
+            join voyageone_ims.ims_mt_prop_option po
+                on p.prop_id = po.prop_id
+            join voyageone_ims.ims_mt_prop_option_mapping pom
+                on po.prop_option_id = pom.prop_option_id
+        where p.category_id = #{category_id};
+    </select>
+
+    <!-- 查询主数据属性 @Leo -->
+    <select id="ims_selectPropByPropId" resultType="com.voyageone.batch.ims.modelbean.PropBean">
+        SELECT
+            prop_id as propId,
+            category_id as categoryId,
+            prop_name as propName,
+            prop_type as propType,
+            prop_value_default as propValueDefault,
+            is_top_prop as isTopProp,
+            is_parent as isParent,
+            is_required as isRequired,
+            parent_prop_id as parentPropId,
+            content as Content
+        FROM voyageone_ims.ims_mt_prop
+        WHERE prop_id = #{prop_id}
+    </select>
+
+     <!-- 查询主数据属性 @Leo -->
+    <select id="ims_selectPropByPropName" resultType="com.voyageone.batch.ims.modelbean.PropBean">
+        SELECT
+            prop_id as propId,
+            category_id as categoryId,
+            prop_name as propName,
+            prop_type as propType,
+            prop_value_default as propValueDefault,
+            is_top_prop as isTopProp,
+            is_parent as isParent,
+            is_required as isRequired,
+            parent_prop_id as parentPropId,
+            content as Content
+        FROM voyageone_ims.ims_mt_prop
+        WHERE
+            prop_name = #{prop_name}
+        AND
+            category_id = #{category_id}
+    </select>
+
+    <!-- 根据主属性id和主属性选项的值查询主属性选项bean @Leo -->
+    <select id="ims_selectPropOptionByPropIdAndOptionValue" resultType="com.voyageone.batch.ims.modelbean.PropOptionBean">
+        SELECT
+            prop_option_id AS propOptionId,
+            prop_id AS propId,
+            prop_option_name AS propOptionName,
+            prop_option_value AS propOptionValue
+        FROM voyageone_ims.ims_mt_prop_option
+        WHERE prop_id=#{prop_id}
+        AND prop_option_value=#{prop_option_value}
+    </select>
+
+    <!-- 根据主属性选项ID查找匹配的平台属性选项hash值 @Leo -->
+    <select id="ims_selectPlatformPropOptionHashByPropOptionId" parameterType="int" resultType="String">
+        SELECT
+            platform_prop_option_hash
+        FROM voyageone_ims.ims_mt_prop_option_mapping
+        WHERE prop_option_id = #{prop_option_id}
+    </select>
+
+    <!-- 根据平台选项hash值查询平台选项的值 @Leo -->
+    <select id="ims_selectPlatformPropOptionValueByOptionHash" parameterType="String" resultType="String">
+        SELECT
+            platform_prop_option_value
+        FROM voyageone_ims.ims_mt_platform_prop_option
+        WHERE platform_prop_option_hash = #{platform_prop_option_hash}
+    </select>
+
+</mapper>

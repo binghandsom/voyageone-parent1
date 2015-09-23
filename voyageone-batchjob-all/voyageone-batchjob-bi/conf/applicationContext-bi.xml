@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+          http://www.springframework.org/schema/task
+          http://www.springframework.org/schema/task/spring-task.xsd">
+
+    <task:scheduled-tasks scheduler="bi-job-scheduler">
+
+		<!--每天凌晨1点刷新Master-->
+        <task:scheduled ref="biVmMasterSyncJob" method="repRun" cron="0 0 1 * * ?"/>
+        
+        <!--每天凌晨1点刷新ProductIID -->
+        <task:scheduled ref="biVsProductIIDSyncJob" method="repRun" cron="0 0 1 * * ?"/>
+
+        <!--每天凌晨1点30分刷新SynShip仓库中Tax和Transpotation相关数据-->
+        <task:scheduled ref="biVfShipmentPackageJob" method="run" cron="0 30 1 * * ?"/>
+        <!--每天中午11点30分刷新SynShip订单中Tax和Transpotation相关数据-->
+        <task:scheduled ref="biVfTrackOrdersJob" method="run" cron="0 30 11 * * ?"/>
+
+        <!--每隔1小时更新Orders -->
+        <task:scheduled ref="biVtOrderSyncJob" method="repRun" cron="0 0/60 0-23 * * ?"/>
+        
+        <!--每隔1小时更新SpiderShop -->
+        <task:scheduled ref="biSpiderShopDataJob" method="run" cron="0 30/60 0-23 * * ?"/>
+        
+        <!--每天凌晨0:30点刷新SpiderProduct -->
+        <!-- <task:scheduled ref="biSpiderProductDataJob" method="run" cron="0 30 0 * * ?"/> -->
+
+        <!--每天晚上9点刷新ViewProductLifeCircle-->
+        <task:scheduled ref="biSpiderViewProductDataJob" method="run" cron="0 0 21 * * ?"/>
+        
+        <!--每天凌晨23:45点刷新stock -->
+		<task:scheduled ref="biVtStockSyncJob" method="run" cron="0 45 23 * * ?"/>
+		
+    </task:scheduled-tasks>
+
+    <!-- 必须需要 -->
+    <task:scheduler id="bi-job-scheduler" pool-size="10"/>
+
+</beans>

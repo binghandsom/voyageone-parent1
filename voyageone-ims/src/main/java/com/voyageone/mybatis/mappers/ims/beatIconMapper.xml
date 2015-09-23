@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.ims.sql">
+    <insert id="ims_bt_beat_insert" parameterType="com.voyageone.ims.model.ImsBeat">
+        INSERT INTO `voyageone_ims`.`ims_bt_beat`
+        (`beat_id`, `description`, `channel_id`, `cart_id`, `end`, `template_url`, `created`, `creater`, `modified`,
+         `modifier`)
+        VALUES
+            (#{beat_id}, #{description}, #{channel_id}, #{cart_id}, #{end}, #{template_url}, NOW(), #{creater}, NOW(),
+             #{modifier})
+    </insert>
+
+    <select id="ims_bt_beat_selectByFinger" parameterType="com.voyageone.ims.model.ImsBeat"
+            resultType="com.voyageone.ims.model.ImsBeat">
+        SELECT
+            beat_id,
+            description,
+            channel_id,
+            cart_id,
+            end,
+            template_url,
+            created,
+            creater,
+            modified,
+            modifier
+        FROM voyageone_ims.ims_bt_beat
+        WHERE description = #{description}
+    </select>
+
+    <select id="ims_bt_beat_selectCountByDescription" parameterType="com.voyageone.ims.model.ImsBeat"
+            resultType="int">
+        SELECT COUNT(1)
+        FROM voyageone_ims.ims_bt_beat
+        WHERE description = #{description}
+    </select>
+
+    <select id="ims_bt_beat_selectById" resultType="com.voyageone.ims.model.ImsBeat">
+        SELECT
+            beat_id,
+            description,
+            channel_id,
+            cart_id,
+            end,
+            template_url,
+            created,
+            creater,
+            modified,
+            modifier
+        FROM voyageone_ims.ims_bt_beat
+        WHERE beat_id = #{beat_id}
+    </select>
+
+    <insert id="ims_bt_beat_item_temp_insertTempItems">
+        INSERT INTO voyageone_ims.ims_bt_beat_item_temp (beat_id, code, num_iid) VALUES
+        <foreach collection="items" separator="," item="ii">
+            (#{ii.beat_id}, #{ii.code}, #{ii.num_iid})
+        </foreach>
+    </insert>
+
+    <select id="ims_bt_beat_item_temp_selectProductsByCode" resultType="com.voyageone.ims.model.ImsBeatItemTemp">
+        SELECT
+            imsProduct.src,
+            imsProducts.num_iid,
+            imsProducts.code,
+            pi.image_name,
+            cmsProducts.url_key,
+            b.description
+        FROM (SELECT
+                  item.code src,
+                  beat.channel_id,
+                  beat.cart_id,
+                  p.num_iid
+              FROM voyageone_ims.ims_bt_beat beat
+                  JOIN voyageone_ims.ims_bt_beat_item_temp item ON beat.beat_id = item.beat_id
+                  JOIN voyageone_ims.ims_bt_product p
+                      ON item.code = p.code
+                         AND beat.channel_id = p.channel_id
+                         AND beat.cart_id = p.cart_id
+              WHERE beat.beat_id = #{beat_id}) imsProduct
+            LEFT JOIN voyageone_ims.ims_bt_product imsProducts
+                ON imsProduct.cart_id = imsProducts.cart_id
+                   AND imsProduct.channel_id = imsProducts.channel_id
+                   AND imsProduct.num_iid = imsProducts.num_iid
+                   AND imsProducts.main_product_flg = 1
+            LEFT JOIN voyageone_cms.cms_bt_product cmsProducts
+                ON imsProducts.code = cmsProducts.code
+                   AND imsProducts.channel_id = cmsProducts.channel_id
+            LEFT JOIN voyageone_cms.cms_bt_product_image pi
+                ON pi.product_id = cmsProducts.product_id
+                   AND pi.image_type_id = 1
+                   AND pi.image_id = 1
+            LEFT JOIN voyageone_ims.ims_bt_beat_item item ON imsProducts.code = item.code
+            LEFT JOIN voyageone_ims.ims_bt_beat b
+                ON item.beat_id = b.beat_id AND imsProduct.channel_id = b.channel_id AND imsProduct.cart_id = b.cart_id
+                   AND b.end &lt; #{now}
+    </select>
+
+    <delete id="ims_bt_beat_item_temp_deleteTempItems">
+        DELETE FROM voyageone_ims.ims_bt_beat_item_temp
+        WHERE beat_id = #{beat_id}
+    </delete>
+
+    <select id="ims_bt_beat_item_temp_selectProductsByNumiid" resultType="com.voyageone.ims.model.ImsBeatItemTemp">
+        SELECT
+            temp.num_iid src,
+            imsProducts.num_iid,
+            imsProducts.code,
+            pi.image_name,
+            cmsProducts.url_key,
+            b.description
+        FROM voyageone_ims.ims_bt_beat beat
+            JOIN voyageone_ims.ims_bt_beat_item_temp temp ON beat.beat_id = temp.beat_id
+            LEFT JOIN voyageone_ims.ims_bt_product imsProducts
+                ON beat.cart_id = imsProducts.cart_id
+                   AND beat.channel_id = imsProducts.channel_id
+                   AND temp.num_iid = imsProducts.num_iid
+                   AND imsProducts.main_product_flg = 1
+            LEFT JOIN voyageone_cms.cms_bt_product cmsProducts
+                ON imsProducts.code = cmsProducts.code
+                   AND imsProducts.channel_id = cmsProducts.channel_id
+            LEFT JOIN voyageone_cms.cms_bt_product_image pi
+                ON pi.product_id = cmsProducts.product_id
+                   AND pi.image_type_id = 1
+                   AND pi.image_id = 1
+            LEFT JOIN voyageone_ims.ims_bt_beat_item item ON imsProducts.code = item.code
+            LEFT JOIN voyageone_ims.ims_bt_beat b
+                ON item.beat_id = b.beat_id AND beat.channel_id = b.channel_id AND beat.cart_id = b.cart_id AND
+                   b.end &lt; #{now}
+        WHERE
+            beat.beat_id = #{beat_id}
+    </select>
+
+    <select id="ims_bt_beat_item_selectItems_byBeatId" resultType="com.voyageone.ims.model.ImsBeatItem">
+        SELECT beat_item_id, beat_id, code, num_iid, url_key, image_name, price, beat_flg, comment, created, creater,
+        modified, modifier
+        FROM voyageone_ims.ims_bt_beat_item
+        WHERE beat_id = #{beat_id}
+        <if test="num_iid!=null and num_iid!=''">
+            AND num_iid like '${num_iid}%'
+        </if>
+        <if test="beat_flg!=null">
+            AND beat_flg = #{beat_flg}
+        </if>
+        <if test="limit!=null and offset!=null">
+            LIMIT #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="ims_bt_beat_item_selectItemsCount_byBeatId" resultType="int">
+        SELECT COUNT(1)
+        FROM voyageone_ims.ims_bt_beat_item
+        WHERE beat_id = #{beat_id}
+        <if test="num_iid!=null and num_iid!=''">
+            AND num_iid like '${num_iid}%'
+        </if>
+        <if test="beat_flg!=null">
+            AND beat_flg = #{beat_flg}
+        </if>
+    </select>
+
+    <select id="ims_bt_beat_item_selectCountInRunning" resultType="int">
+        SELECT COUNT(1)
+        FROM voyageone_ims.ims_bt_beat beat
+            JOIN voyageone_ims.ims_bt_beat_item item ON beat.beat_id = item.beat_id
+        WHERE beat.beat_id = #{beat_id} AND beat.end > #{now} AND item.beat_flg > 0
+    </select>
+
+    <insert id="ims_bt_beat_item_insertItems">
+        INSERT INTO voyageone_ims.ims_bt_beat_item (beat_id, code, num_iid, url_key, image_name, price, beat_flg,
+        comment, created, creater, modified, modifier) VALUES
+        <foreach collection="items" separator="," item="ii">
+            (#{ii.beat_id}, #{ii.code}, #{ii.num_iid}, #{ii.url_key}, #{ii.image_name}, #{ii.price}, #{ii.beat_flg},
+            #{ii.comment}, NOW(), #{ii.creater}, NOW(), #{ii.modifier})
+        </foreach>
+    </insert>
+
+    <delete id="ims_bt_beat_item_deleteItems" parameterType="com.voyageone.ims.model.ImsBeat">
+        DELETE FROM voyageone_ims.ims_bt_beat_item
+        WHERE beat_id = #{beat_id}
+    </delete>
+
+    <select id="ims_bt_beat_selectByChannel" resultType="com.voyageone.ims.model.ImsBeat">
+        SELECT beat_id, description, channel_id, cart_id, end, template_url, created, creater, modified, modifier FROM
+        voyageone_ims.ims_bt_beat WHERE channel_id = #{channel_id}
+        <if test="cart_id != null and cart_id != ''">AND cart_id = #{cart_id}</if>
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="ims_bt_beat_selectCountByChannel" resultType="int">
+        SELECT COUNT(1) FROM voyageone_ims.ims_bt_beat WHERE channel_id = #{channel_id}
+        <if test="cart_id != null and cart_id != ''">AND cart_id = #{cart_id}</if>
+    </select>
+
+    <select id="ims_bt_beat_item_selectItem" resultType="com.voyageone.ims.model.ImsBeatItem">
+        SELECT
+            beat_item_id,
+            beat_id,
+            code,
+            num_iid,
+            url_key,
+            image_name,
+            price,
+            beat_flg,
+            comment,
+            created,
+            creater,
+            modified,
+            modifier
+        FROM voyageone_ims.ims_bt_beat_item
+        WHERE beat_item_id = #{item_id} AND beat_id = #{beat_id}
+    </select>
+
+    <update id="ims_bt_beat_item_updateBeatFlg" parameterType="com.voyageone.ims.model.ImsBeatItem">
+        UPDATE voyageone_ims.ims_bt_beat_item
+        SET beat_flg = #{beat_flg}, price = #{price}, modified = NOW()
+        WHERE beat_item_id = #{beat_item_id} AND modified = #{modified}
+    </update>
+
+    <select id="ims_bt_beat_item_selectInfo" parameterType="com.voyageone.ims.model.ImsBeat" resultType="com.voyageone.ims.model.ImsBeatInfo">
+        SELECT
+            beat_flg beatFlg,
+            count(1) count
+        FROM voyageone_ims.ims_bt_beat_item
+        WHERE beat_id = #{beat_id}
+        GROUP BY beat_flg
+    </select>
+</mapper>

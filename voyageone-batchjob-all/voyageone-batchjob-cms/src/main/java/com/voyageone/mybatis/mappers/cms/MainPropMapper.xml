@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.cms.sql">
+
+  <!-- 查找未处理的商品 -->
+  <select id="cms_mt_product_attribute_selectTodoList" parameterType="HashMap"
+          resultType="com.voyageone.batch.cms.bean.MainPropTodoListBean">
+    select
+      attr.channel_id channel_id,
+      c.category_id category_id,
+      m.model_id model_id,
+      p.product_id product_id
+    from
+      (
+        select distinct
+          attr.channel_id,
+          attr.category_url_key,
+          attr.model_url_key,
+          attr.product_url_key
+        from voyageone_cms_feedtest.cms_mt_product_attribute attr
+        where attr.channel_id = #{channel_id}
+              and attr.deal_flag = 0 limit 10
+      ) attr
+      left join voyageone_cms_feedtest.cms_bt_category c on c.url_key = attr.category_url_key
+      left join voyageone_cms_feedtest.cms_bt_model m on m.url_key = attr.model_url_key
+      left join voyageone_cms_feedtest.cms_bt_product p on p.url_key = attr.product_url_key
+    ;
+  </select>
+
+    <!-- 设置完成标记 -->
+    <update id="cms_mt_product_attribute_setFinished" parameterType="HashMap">
+        update voyageone_cms_feedtest.cms_mt_product_attribute attr
+        left join voyageone_cms_feedtest.cms_bt_product p on p.url_key = attr.product_url_key
+        set attr.deal_flag = 1
+        where attr.channel_id = #{channel_id}
+              and p.product_id = #{product_id}
+    </update>
+
+  <!-- 查看指定商品是否已经存在于值表 -->
+  <select id="ims_mt_prop_value_selectMainValue" parameterType="HashMap"
+          resultType="Integer">
+    select
+      count(1) cnt
+    from voyageone_ims.ims_mt_prop_value
+    where channel_id = #{channel_id}
+          and level = #{level}
+          and level_value = #{level_value}
+    ;
+  </select>
+
+  <!-- 根据类目id，获取主数据的属性 -->
+  <select id="ims_mt_prop_selectMainProp" parameterType="HashMap"
+          resultType="com.voyageone.batch.cms.bean.ImsPropBean">
+    select
+       prop_id as propId,
+       prop_type as propType,
+       parent_prop_id as parentPropId,
+       prop_name as propName
+     from voyageone_ims.ims_mt_prop
+     where category_id = #{category_id}
+     order by prop_id asc;
+  </select>
+
+  <!-- 根据channel_id和product_id，获取feed的值 -->
+  <select id="cms_mt_product_attribute_selectFeed" parameterType="HashMap"
+          resultType="com.voyageone.batch.cms.bean.MainPropTodoItemListBean">
+    select
+      attr.attribute_name,
+      attr.attribute_value
+    from voyageone_cms_feedtest.cms_mt_product_attribute attr
+      left join voyageone_cms_feedtest.cms_bt_product p on p.url_key = attr.product_url_key
+    where attr.channel_id = #{channel_id}
+      and p.product_id = #{product_id}
+    ;
+  </select>
+
+    <!-- 根据channel_id，获取feed mapping default的值 -->
+    <select id="ims_bt_feed_prop_mapping_default_select" parameterType="HashMap"
+            resultType="com.voyageone.batch.cms.bean.FeedMappingDefaultBean">
+        select
+            channel_id,
+            prop_name,
+            prop_type,
+            prop_value
+        from voyageone_ims.ims_bt_feed_prop_mapping_default
+        where channel_id = #{channel_id}
+        ;
+    </select>
+
+    <!-- 根据channel_id和main_category_id，获取feed mapping的值 -->
+    <select id="ims_bt_feed_prop_mapping_select" parameterType="HashMap"
+            resultType="com.voyageone.batch.cms.bean.FeedMappingBean">
+        select
+            `channel_id`,
+            `main_category_id`,
+            `prop_id`,
+            `conditions`,
+            `type`,
+            `value`
+        from voyageone_ims.ims_bt_feed_prop_mapping
+        where channel_id = #{channel_id}
+          and main_category_id = #{main_category_id}
+        ;
+    </select>
+
+    <!-- 批量插入（第三方平台）类目的属性 -->
+    <insert id="ims_insertPropValue">
+        insert into voyageone_ims.ims_mt_prop_value
+        (
+            `uuid`,
+            `channel_id`,
+            `level`,
+            `level_value`,
+            `prop_id`,
+            `prop_value`,
+            `parent`,
+            `created`,
+            `creater`,
+            `modified`,
+            `modifier`
+        ) values
+        <foreach collection="imsPropValueBeanList" item="valueBean" separator=",">
+            (
+            #{valueBean.uuid}
+            , #{valueBean.channelId}
+            , #{valueBean.level}
+            , #{valueBean.levelValue}
+            , #{valueBean.propId}
+            , #{valueBean.propValue}
+            , #{valueBean.parent}
+            , now()
+            , #{task_name}
+            , now()
+            , #{task_name}
+            )
+        </foreach>
+    </insert>
+
+
+
+
+
+</mapper>

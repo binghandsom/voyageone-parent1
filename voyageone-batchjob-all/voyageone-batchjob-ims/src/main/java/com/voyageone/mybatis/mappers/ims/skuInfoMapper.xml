@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.ims.sql">
+
+    <select id="ims_selectInventoryByCondition" resultType="String" parameterType="Map">
+        SELECT qty_china
+        FROM wms_bt_inventory_center_logic
+        WHERE code = #{code}
+        <if test="sku != null">
+            AND sku = #{sku}
+        </if>
+        AND order_channel_id = #{channel_id}
+    </select>
+
+    <select id="ims_selectSkuInfoByCode" resultType="com.voyageone.batch.ims.modelbean.SkuInfoBean" parameterType="Map">
+        SELECT itemCode as code, order_channel_id, sku
+        FROM wms_bt_item_details
+        WHERE itemCode = #{code}
+        AND order_channel_id = #{channel_id}
+    </select>
+
+    <select id="ims_selectSkuSizeBySku" resultType="String" parameterType="String">
+        SELECT
+        size
+        FROM wms_bt_item_details
+        Where sku = #{sku}
+    </select>
+</mapper>

@@ -1,0 +1,55 @@
+<div class="ngdialog-message">
+    <h3 class="mt0 p-sm border-bottom-1" translate="TXT_OMS_ADJUSTMENT_SHIPPING"></h3>
+    <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+    <form name="popForm" class="form-validate" novalidate="">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="form-group form-horizontal">
+                    <label class="col-xs-5 control-label pt7" translate="TXT_OMS_REVISED_AMOUNT"></label>
+
+                    <div class="col-xs-7 mt-sm">
+                        <div class="form-group">
+                            <input type="text" placeholder="{{popShippingOrderToUseInfo.currencyType}}{{popShippingOrderToUseInfo.finalShippingTotal | number:2}}" disabled="" class="form-control input-sm text-right"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group form-horizontal">
+                    <label class="col-xs-5 control-label pt7" translate="TXT_OMS_AMOUNT_TO_EDIT"></label>
+
+                    <div class="col-xs-7 mt-sm">
+                        <div class="form-group">
+                            <input type="text" ng-model="popShippingOrderToUseInfo.amount" class="form-control input-sm text-right" ng-change="calculatePrice()" required="" ng-pattern="/^(-?\d+)(\.[0-9]{0,2})?$/"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group form-horizontal">
+                    <label class="col-xs-5 control-label pt7" translate="TXT_OMS_FINAL_AMOUNT"></label>
+
+                    <div class="col-xs-7 mt-sm">
+                        <div class="form-group">
+                            <input type="text" placeholder="{{popShippingOrderToUseInfo.currencyType}}{{popShippingOrderToUseInfo.newFinalShippingTotal || popShippingOrderToUseInfo.finalShippingTotal | number: 2}}" disabled="" class="form-control input-sm text-right"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12 mt-sm">
+                <span class="label label-info " translate="TXT_OMS_ENTER_REASON"></span>
+            </div>
+            <div class="col-xs-12 mt-sm">
+                <textarea class="form-control input-sm no-resize" rows="3" ng-model="popShippingOrderToUseInfo.reason" required=""></textarea>
+            </div>
+        </div>
+
+        <div class="row mt20">
+            <div class="col-xs-3 col-xs-offset-3">
+                <button class="btn btn-primary btn-sm form-control" translate="BUTTON_OK" ng-click="doOk()" ng-disabled="popForm.$invalid"></button>
+            </div>
+            <div class="col-xs-3">
+                <button class="btn btn-primary btn-sm form-control" translate="BUTTON_SUB_CANCEL" ng-click="doClose()"></button>
+            </div>
+        </div>
+    </form>
+</div>

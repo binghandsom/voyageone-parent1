@@ -1,0 +1,37 @@
+<div class="ngdialog-message" ng-init="initialize()">
+	<h3 class="mt0 p-sm border-bottom-1" translate="Add Batch"></h3>
+	<div>
+		<div class="row">
+			<div class="col-md-12">
+				<form name="batchForm" id="batchForm">
+					<table class="table table-bordered">
+						<tbody>
+							<tr>
+								<th translate="task"></th>
+								<td><input type="text" id="task" ng-model="pop.task"
+									class="form-control" required=" "></td>
+							</tr>
+							<tr>
+								<th translate="type"></th>
+								<td><input type="text" id="type" ng-model="pop.type"
+									class="form-control" required=" "></td>
+							</tr>
+							<tr>
+								<th translate="comment"></th>
+								<td><input type="text" id="comment" ng-model="pop.comment"
+									class="form-control" required=" " /></td>
+							</tr>
+						<tbody>
+					</table>
+					<div class="text-right">
+						<button style="width: 70px" class="btn btn-primary"
+							ng-click="doOk()" ng-disabled="batchForm.$invalid">Save</button>
+						<button class="btn btn-primary" ng-click="closeThisDialog()">Cancel</button>
+					</div>
+
+				</form>
+			</div>
+
+		</div>
+	</div>
+</div>

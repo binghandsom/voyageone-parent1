@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.oms.sql">
+
+	<!-- 结算表插入 -->
+	<insert id="oms_bt_settlement_insertSettlementInfo" parameterType="HashMap">
+		INSERT INTO
+			oms_bt_settlement
+			(
+				order_channel_id,
+				cart_id,
+				payment_time,
+				settlement_time,
+				source_order_id,
+				origin_source_order_id,
+				business_type,
+				comment,
+				pay_type,
+				debit,
+				debit_foreign,
+				credit,
+				credit_foreign,
+				rate,
+				currency,
+				fee,
+				fee_rate,
+				pay_no,
+				pay_account,
+				description,
+				settlement_file_id,
+				pay_type_detail,
+				settlement,
+				settlement_foreign,
+				process_flag,
+				trade_type,
+				trade_status,
+				ali_int_stem_from,
+				wx_public_account_id,
+				wx_shop_id,
+				wx_special_shop_id,
+				wx_device_id,
+				wx_weixin_order_id,
+				shop_order_id,
+				wx_user_id,
+				payment_channel,
+				wx_company_bonus,
+				wx_weixin_refund_id,
+				wx_shop_refund_id,
+				wx_company_bonus_refund,
+				wx_refund_type,
+				wx_refund_status,
+				wx_shop_data_package,
+				goods_name,
+				ali_accounting_no,
+				ali_pay_account_full,
+				ali_account_balance,
+				jg_order_time,
+				jg_product_total,
+				jg_shipping_total,
+				jg_order_total,
+				jg_sales_total,
+				jg_more_off_sales_total,
+				jg_coupon_jing_total,
+				jg_coupon_dong_total,
+				jg_refund_time,
+				jg_refund_id,
+				jg_class1_category,
+				jg_class2_category,
+				jg_class3_category,
+				jg_sku_no,
+				jg_goods_no,
+				jg_sku_price_unit,
+				jg_ticket_no,
+				jg_fee_type,
+				jg_adjustment_type,
+				created,
+				modified,
+				creater,
+				modifier
+			)
+		values
+			${values}
+	</insert>
+
+	<!-- 结算表source_order_id更新（价差订单对应） -->
+	<update id="oms_bt_settlement_updateSettlementInfo" parameterType="HashMap">
+		update oms_bt_settlement a
+		set a.source_order_id =
+				(select source_order_id
+					from oms_bt_orders o
+					where o.origin_source_order_id = a.origin_source_order_id and o.order_kind = '0')
+		where
+			<if test="originSourceOrderList != null ">
+				a.origin_source_order_id in
+				<foreach item="item" index="index" collection="originSourceOrderList" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+	</update>
+
+	<!-- 算文件表插入 -->
+	<insert id="oms_bt_settlement_file_insertSettlementFileInfo" parameterType="com.voyageone.oms.modelbean.SettlementFileBean">
+		insert into
+			oms_bt_settlement_file
+			(
+				order_channel_id,
+				cart_id,
+				pay_type,
+				upload_time,
+				settlement_file_id,
+				account_no,
+				begin_time,
+				end_time,
+				export_time,
+				total_income,
+				total_expense,
+				creater,
+				created,
+				modifier,
+				modified
+			)
+		values
+			(
+				#{orderChannelId},
+				#{cartId},
+				#{payType},
+				now(),
+				#{settlementFileId},
+				#{account_no},
+				#{begin_time},
+				#{end_time},
+				#{export_time},
+				#{total_income},
+				#{total_expense},
+				#{creater},
+				now(),
+				#{modifier},
+				now()
+			)
+	</insert>
+
+	<!-- 取得结算文件信息 -->
+	<resultMap id="settlementFileInfoMap" type="com.voyageone.oms.modelbean.SettlementFileBean">
+		<result column="upload_time" property="uploadTime"/>
+		<result column="settlement_file_id" property="settlementFileId"/>
+	</resultMap>
+	<select id="oms_bt_settlement_file_getSettlementFileInfo" parameterType="String" resultMap="settlementFileInfoMap" >
+		select
+			upload_time,
+			settlement_file_id
+		from
+			oms_bt_settlement_file
+		where
+			settlement_file_id = #{settlementFileId}
+	</select>
+
+	<!-- Settlement文件检索 -->
+	<resultMap id="searchSettlementFileInfoMap" type="com.voyageone.oms.formbean.OutFormSearchSettlementFile">
+		<result column="upload_time" property="uploadTime"/>
+		<result column="settlement_file_id" property="settlementFileId"/>
+		<result column="total_income" property="totalIncome"/>
+		<result column="total_expense" property="totalExpense"/>
+		<result column="cart_id" property="cartId"/>
+		<result column="cart_name" property="cartName"/>
+		<result column="order_channel_id" property="orderChannelId"/>
+		<result column="order_channel_name" property="orderChannelName"/>
+	</resultMap>
+	<select id="oms_bt_settlement_file_search" parameterType="HashMap" resultMap="searchSettlementFileInfoMap">
+		SELECT
+			t.upload_time,
+			t.settlement_file_id,
+			t.total_income,
+			t.total_expense,
+			t.order_channel_id,
+			t.cart_id,
+			c.short_name as cart_name,
+			p.name as order_channel_name
+		FROM
+			oms_bt_settlement_file t
+			left join ct_cart c
+				on t.cart_id = c.cart_id
+			left join tm_order_channel p
+				on t.order_channel_id = p.order_channel_id
+		<where>
+			<if test="storeId != null ">
+				t.order_channel_id in
+				<foreach item="item" index="index" collection="storeId" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="channelId != null ">
+				and t.cart_id in
+				<foreach item="item" index="index" collection="channelId" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			and t.upload_time between #{searchDateFrom} and #{searchDateTo}
+		</where>
+		order by t.upload_time desc
+		limit #{offset}, #{size}
+	</select>
+
+	<!-- Settlement文件件数检索 -->
+	<select id="oms_bt_settlement_file_search_count" parameterType="HashMap" resultType="int">
+		select count(1) from oms_bt_settlement_file t
+		<where>
+			<if test="storeId != null ">
+				t.order_channel_id in
+				<foreach item="item" index="index" collection="storeId" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="channelId != null ">
+				and t.cart_id in
+				<foreach item="item" index="index" collection="channelId" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			and t.upload_time between #{searchDateFrom} and #{searchDateTo}
+		</where>
+	</select>
+</mapper>

@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.oms.sql">
+	
+	<sql id="customerSerch_condition">
+		<where>
+		<if test="orderNumber != null and orderNumber != '' ">
+			t.customer_id = 
+			( 
+				select customer_id
+				  from oms_bt_orders
+				 where order_number = #{orderNumber}
+			)
+			</if>
+			<if test="order_channel_id != null ">
+				and t.order_channel_id in 
+				<foreach item="item" index="index" collection="order_channel_id" open="(" separator="," close=")">  
+					#{item}
+				</foreach>
+			</if>
+			<if test="customerId != null and customerId != '' ">
+				and t.customer_id = #{customerId}
+			</if>
+			<if test="firstName != null and firstName != '' ">
+				and t.first_name like CONCAT(#{firstName}, '%')
+			</if>
+			<if test="lastName != null and lastName != '' ">
+				and t.last_name like CONCAT(#{lastName}, '%')
+			</if>
+			<!-- <if test="company != null and company != '' ">
+				and company like CONCAT(#{company}, '%')
+			</if> -->
+			<if test="email != null and email != '' ">
+				and t.email like CONCAT(#{email}, '%')
+			</if>
+			<if test="city != null and city != '' ">
+				and t.city like CONCAT(#{city}, '%')
+			</if>
+			<if test="state != null and state != '' ">
+				and t.state like CONCAT(#{state}, '%')
+			</if>
+			<if test="zip != null and zip != '' ">
+				and t.zip like CONCAT(#{zip}, '%')
+			</if>
+			<if test="country != null and country != '' ">
+				and t.country like CONCAT(#{country}, '%')
+			</if>
+			<if test="phone != null and phone != '' ">
+				and t.phone like CONCAT(#{phone}, '%')
+			</if>
+		</where>
+	</sql>
+	<!-- 检索客户信息  -->
+	<resultMap id="customerInfo" type="com.voyageone.oms.formbean.OutFormCustomer">
+		<result column="customer_id" property="customerId"/>
+		<result column="full_name" property="fullName"/>
+		<result column="last_name" property="lastName"/>
+		<result column="phone" property="phone"/>
+		<result column="email" property="email"/>
+		<result column="company" property="company"/>
+		<result column="address" property="address"/>
+		<result column="address2" property="address2"/>
+		<result column="city" property="city"/>
+		<result column="country" property="country"/>
+		<result column="last_order_date" property="lastOrderDate"/>
+		<result column="state" property="state"/>
+		<result column="name" property="store"/>
+	</resultMap>
+	<select id="oms_customer_getCustomerCount" parameterType="com.voyageone.oms.formbean.InFormAddNewOrderCustomer" resultType="int" >
+		select count(0) 
+		  from oms_bt_customer t
+		  <include refid="customerSerch_condition"/>
+	</select>
+	<select id="oms_customer_getCustomerInfo" parameterType="com.voyageone.oms.formbean.InFormAddNewOrderCustomer" resultMap="customerInfo" >
+		<!-- select tt1.customer_id,
+			   tt1.full_name,
+			   tt1.phone,
+			   tt1.email,
+		       tt1.company,
+		       tt1.address,
+			   tt1.address2,
+		       tt1.city,
+		       tt2.last_order_date,
+		       tt1.state
+	      from ( -->
+			     select	t.customer_id,
+				        t.full_name,
+				        t.last_name,
+						t.phone,
+						t.state,
+						t.email,
+						t.company,
+						t.city,
+						t.address,
+						t.address2,
+						t.country,
+						p.name
+				   from 
+				   		oms_bt_customer t 
+				   		
+				   left join 
+			   			tm_order_channel p 
+				   on t.order_channel_id = p.order_channel_id 
+				        <include refid="customerSerch_condition"/>
+			   order by t.customer_id
+		  <!--      ) tt1
+	      left join
+	           (
+			     select t.customer_id,
+			            max(t.order_date_time) last_order_date
+		           from	oms_bt_orders t
+		          group by t.customer_id
+	           ) tt2 
+	        on tt1.customer_id = tt2.customer_id
+	     order by tt2.last_order_date desc-->
+
+	<if test="rows != 0">
+		limit #{offset}, #{rows}
+	</if>
+	</select>
+	
+	<!-- 检索客户的订单信息  -->
+	<resultMap id="customerOrders" type="com.voyageone.oms.formbean.OutFormCustomerOrders">
+		<result column="order_number" property="orderNumber"/>
+		<result column="source_order_id" property="sourceOrderId"/>
+		<result column="name" property="marketName"/>
+		<result column="order_date_time" property="orderDate"/>
+		<result column="final_grand_total" property="finalGrandTotal"/>
+		<result column="balance_due" property="balanceDue"/>		
+	</resultMap>
+	<select id="oms_customer_getCustomerOrders" parameterType="String" resultMap="customerOrders" >
+		select t.order_number,
+  		       t.source_order_id,
+		       t1.name,
+		       t.order_date_time,
+		       round(t.final_grand_total, 2) final_grand_total,
+		       round(t.balance_due, 2) balance_due
+	      from oms_bt_orders t
+	      left join ct_cart t1
+	        on t.cart_id = t1.cart_id
+	     where t.customer_id = #{customerId}
+	     order by t.order_date_time desc
+	</select>
+	
+	<!-- 检索客户的交易信息  -->
+	<resultMap id="customerTransactions" type="com.voyageone.oms.formbean.OutFormCustomerTransactions">
+		<result column="order_number" property="order_number"/>
+		<result column="customer_id" property="customer_id"/>
+		<result column="date" property="date"/>
+		<result column="description" property="description"/>
+		<result column="amount" property="amount"/>
+		<result column="name" property="type"/>		
+	</resultMap>
+	<select id="oms_customer_getCustomerTransactions" parameterType="String" resultMap="customerTransactions" >
+		select tt1.order_number,
+		   	   tt1.customer_id,
+		   	   tt2.transaction_time date,
+	 	       tt2.description,
+		   	   round(tt2.debit - tt2.credit, 2) amount
+	      from oms_bt_orders tt1,
+		       oms_bt_transactions tt2
+	     where tt1.customer_id = #{customerId} 
+	       and tt1.order_number = tt2.order_number
+	     order by tt2.transaction_time desc
+	</select>
+	
+	<!-- 客户notes信息追加 -->
+	<insert id="oms_customer_addNotes" parameterType="com.voyageone.oms.modelbean.NotesBean">
+		insert into 
+			   oms_bt_customer_notes 
+			   (
+			     type,
+				 numeric_key,
+				 entry_date,
+				 Notes,	
+				 entered_by
+			   )
+		 value (
+			     'C',
+			     #{numericKey},
+			     now(),
+			     #{notes},
+			     #{enteredBy}
+		       )
+	</insert>
+	
+		<!-- 检索客户的Notes信息  -->
+	<resultMap id="OutFormCustomerNotes" type="com.voyageone.oms.formbean.OutFormCustomerNotes">
+		<result column="id" property="id"/>
+		<result column="entry_date_Ymd" property="entryDate"/>
+		<result column="notes" property="notes"/>
+		<result column="entered_by" property="enteredBy"/>
+		<result column="entry_date_YmdHis" property="entryTime"/>
+	</resultMap>
+	<select id="oms_customer_getCustomerNotes" parameterType="String" resultMap="OutFormCustomerNotes" >
+		select t.id,
+		       DATE_FORMAt(t.entry_date,'%Y-%m-%d') entry_date_Ymd,
+		   	   t.notes,
+		       t.entered_by,
+		       DATE_FORMAt(t.entry_date,'%Y-%m-%d %H:%i:%s') entry_date_YmdHis
+	      from oms_bt_customer_notes t
+         where t.type = 'C'
+  	       and t.numeric_Key = #{customerId} 
+  	     order by t.entry_date desc
+	</select>
+	
+    <!-- 客户notes信息更新 -->
+	<update id="oms_customer_updateNotes" parameterType="com.voyageone.oms.modelbean.NotesBean" >
+		update oms_bt_customer_notes
+		   set entry_date = now(),
+			   Notes = #{notes},
+			   entered_by = #{enteredBy}
+		 where id = #{id} 
+	</update>
+</mapper>

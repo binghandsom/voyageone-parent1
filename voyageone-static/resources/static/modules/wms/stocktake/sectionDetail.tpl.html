@@ -1,0 +1,56 @@
+<div class="container-fluid" ng-controller="sectionDetailCtrl" ng-init="init()" ng-cloak>
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                <a href="#wms/stockTake/list" style="text-decoration: underline">Session List</a> >
+                <a href="#wms/stockTake/sectionList" style="text-decoration: underline">Section List</a> > Section Detail
+            </h3>
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="input-group">
+                            <label class="input-group-addon" translate="WMS_SESSIONNAME"></label>
+                            <span class="form-control">{{vm.sessionName}}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="input-group">
+                            <label class="input-group-addon" translate="WMS_LOCATION"></label>
+                            <span class="form-control">{{vm.sectionName}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="table-responsive mb10">
+                <span translate="WMS_RECORDNUMBER"></span><span ng-bind="pageOption.total"></span>
+                <!--表格主体-->
+                <table if-no-rows="vm.itemList" class="table table-bordered table-hover table-condensed">
+                    <thead>
+                    <tr>
+                        <th class="col-fix-no">#</th>
+                        <th translate="WMS_PRODUCTCODE"></th>
+                        <th translate="WMS_SKU"></th>
+                        <th translate="WMS_PRODUCTNAME"></th>
+                        <th translate="WMS_BARCODE"></th>
+                        <th translate="WMS_QTY"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="iteminfo in vm.itemList">
+                        <td class="col-fix-no">{{(pageOption.curr - 1) * pageOption.size + $index + 1}}</td>
+                        <td>{{iteminfo.code}}</td>
+                        <td>{{iteminfo.sku}}</td>
+                        <td>{{iteminfo.productName}}</td>
+                        <td>{{iteminfo.upc}}</td>
+                        <td>{{iteminfo.stocktake_qty}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-center" paging="pageOption"></div>
+        </div>
+    </div>
+</div>
+

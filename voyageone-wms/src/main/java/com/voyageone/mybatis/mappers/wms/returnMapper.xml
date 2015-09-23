@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.wms.sql">
+
+    <!-- 获得returnList信息 -->
+    <resultMap id="returnMap" type="com.voyageone.wms.formbean.FormReturn">
+        <result column="rowno" property="rowNo"/>
+        <result column="return_id" property="return_id"/>
+        <result column="res_id" property="res_id"/>
+        <result column="order_num" property="order_num"/>
+        <result column="sku" property="sku"/>
+		<result column="size" property="size"/>
+		<result column="product_name" property="product_name"/>
+        <result column="condition" property="condition"/>
+        <result column="condition_id" property="condition_id"/>
+       	<result column="return_status_id" property="return_status_id"/>
+        <result column="status_name" property="status_name"/>
+        <result column="reason_name" property="reason_name"/>
+        <result column="reason" property="reason"/>
+        <result column="received_from" property="received_from"/>
+        <result column="received_from_id" property="received_from_id"/>
+        <result column="tracking_no" property="tracking_no"/>
+        <result column="notes" property="notes"/>
+        <result column="store_name" property="store_name"/>
+		<result column="store_id" property="store_id"/>
+        <result column="modifier" property="modifier"/>
+        <result column="modified" property="modified"/> 
+        <result column="barCode" property="barCode"/>  
+        <result column="return_session_id" property="return_session_id"/>    
+        <result column="close_day_flg" property="close_day_flg"/>         
+        <result column="created" property="created"/>      
+        <result column="creater" property="creater"/>
+		<result column="order_channel_id" property="order_channel_id"/>
+	</resultMap>
+    <select id="wms_return_getReturnList" parameterType="com.voyageone.wms.formbean.FormReturn" resultMap="returnMap">
+    	select rtn.return_id,
+               rtn.res_id,
+         	   rtn.order_num,
+         	   rtn.sku,
+			   rtn.`condition` condition_id,
+         	   if(rtn.`condition` = '01', 'Good','Damaged')  'condition',
+         	   cmv_stauts.name status_name,
+         	   cmv_reason.`name` reason_name,
+			   cmv_receivedFrom.`name` received_from,
+			   rtn.tracking_no,
+         	   rtn.notes,
+         	   store.store_name,
+			   itemDel.barcode,
+			   itemDel.size,
+			   reservation.product,
+			   store.label_type,
+         	   rtn.modifier,
+			   date_format(rtn.modified, '%Y-%m-%d %H:%i:%s') modified
+          from wms_bt_return rtn
+		  left join
+				wms_bt_item_details itemDel
+		    on rtn.order_channel_id = itemDel.order_channel_id
+		    and rtn.sku = itemDel.sku
+		  left join
+				tt_reservation reservation
+		    on rtn.res_id = reservation.id
+		  left join
+		       (select t.value, t.name from com_mt_value t where t.type_id = #{typeIdMap.returnExpress}) cmv_receivedFrom
+		    on rtn.received_from = cmv_receivedFrom.`value`,
+        	   (select t.value, t.name from com_mt_value t where t.type_id = #{typeIdMap.returnStatus}) cmv_stauts,
+         	   (select t.value, t.name from com_mt_value t where t.type_id = #{typeIdMap.returnReason}) cmv_reason,
+          wms_mt_store store
+         where cmv_stauts.`value`  = rtn.return_status
+       		   and cmv_reason.`value` = rtn.reason
+       		   and rtn.store_id = store.store_id
+			<if test="orderChannelId != null and orderChannelId.size() != 0 ">
+				and rtn.order_channel_id in
+				<foreach item="item" index="index" collection="orderChannelId" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="order_num != null and order_num != '' ">
+  	           and rtn.order_num = #{order_num}
+		   </if>
+		   <if test="updateTime_s != null and updateTime_s != '' ">
+  	       	   and rtn.modified &gt;= #{updateTime_s}
+		   </if>
+		   <if test="updateTime_e != null and updateTime_e != '' ">
+  	       	   and rtn.modified &lt;= #{updateTime_e}
+		   </if>
+  	     order by rtn.modified desc
+ 		   <if test="rows != 0">
+		       limit #{offset}, #{rows}
+		   </if>
+    </select>
+    
+    <select id="wms_return_getReturnListSize" parameterType="com.voyageone.wms.formbean.FormReturn" resultType="int">
+        select count(1)
+		from wms_bt_return rtn
+		left join
+		(select t.value, t.name from com_mt_value t where t.type_id = #{typeIdMap.returnExpress}) cmv_receivedFrom
+		on rtn.received_from = cmv_receivedFrom.`value`,
+		(select t.value, t.name from com_mt_value t where t.type_id = #{typeIdMap.returnStatus}) cmv_stauts,
+		(select t.value, t.name from com_mt_value t where t.type_id = #{typeIdMap.returnReason}) cmv_reason,
+		wms_mt_store store
+		where cmv_stauts.`value`  = rtn.return_status
+		and cmv_reason.`value` = rtn.reason
+		and rtn.store_id = store.store_id
+		<if test="orderChannelId != null and orderChannelId.size() != 0 ">
+			and rtn.order_channel_id in
+			<foreach item="item" index="index" collection="orderChannelId" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="order_num != null and order_num != '' ">
+			and rtn.order_num = #{order_num}
+		</if>
+		<if test="updateTime_s != null and updateTime_s != '' ">
+			and rtn.modified &gt;= #{updateTime_s}
+		</if>
+		<if test="updateTime_e != null and updateTime_e != '' ">
+			and rtn.modified &lt;= #{updateTime_e}
+		</if>
+    </select>
+    
+    <update id="wms_return_changeStatus" parameterType="com.voyageone.wms.formbean.FormReturn">
+		update wms_bt_return retn
+		   set retn.return_status = #{return_status}, 
+		   	   modified = now(),
+		       modifier = #{modifier}
+	     where retn.return_id = #{return_id, jdbcType = INTEGER};
+    </update>
+    
+    <resultMap id="processingSessionMap" type="com.voyageone.wms.formbean.FormReturn">
+        <result column="return_session_id" property="return_session_id"/>
+        <result column="created" property="created"/>                             
+    </resultMap>
+    <select id="wms_return_getProcessingSessionName"  resultMap="processingSessionMap" parameterType="com.voyageone.wms.formbean.FormReturn">
+		select rtnsession.return_session_id,
+			   date_format(rtnsession.created, '%Y-%m-%d %H:%i:%s') created,
+			   rtnsession.store_id
+  	 	  from wms_bt_return_session rtnsession
+ 		 where rtnsession.return_session_status = '0'
+		<if test="return_type != null and return_type != '' ">
+			and rtnsession.return_type = #{return_type}
+		</if>
+ 		   and rtnsession.order_channel_id in 
+     <foreach collection="orderChannelId" item="item"  open="(" separator="," close=")">
+        #{item}
+     </foreach>  
+         order by rtnsession.created desc
+    </select>
+    
+    <select id="wms_return_getSessionInfo"  parameterType="com.voyageone.wms.formbean.FormReturn"  resultMap="returnMap">
+		select retn.return_id,
+			   retn.res_id,
+			   retn.order_num,
+			   retn.sku,
+			   retn.`condition` condition_id,
+			   cmv_returnCondition.name `condition`,
+			   retn.return_status return_status_id,
+			   cmv_returnStatus.name status_name,
+			   retn.reason,
+			   cmv_reason.name reason_name,
+			   retn.received_from received_from_id,
+		       cmv_returnExpress.`name` received_from,
+			   retn.tracking_no,
+			   retn.notes,
+			   store.store_name,
+			   date_format(retn.modified, '%Y-%m-%d %H:%i:%s') modified,
+			   retn.modifier,
+			   retn.store_id,
+			   itemDel.barcode,
+			   itemDel.size,
+			   reservation.product,
+			   retn.order_channel_id,
+			   store.label_type
+          from wms_bt_return retn
+          left join
+		       (select t.value, t.name from com_mt_value t where t.type_id = #{typeIdMap.returnExpress}) cmv_returnExpress
+			on retn.received_from = cmv_returnExpress.`value`
+		  left join
+			  wms_bt_item_details itemDel
+			on retn.order_channel_id = itemDel.order_channel_id
+			and retn.sku = itemDel.sku
+		  left join
+			  tt_reservation reservation
+			on retn.res_id = reservation.id,
+          	wms_mt_store store,
+		   (select t.value, t.name from com_mt_value t where t.type_id = #{typeIdMap.returnStatus}) cmv_returnStatus,
+		   (select t.value, t.name from com_mt_value t where t.type_id = #{typeIdMap.returnCondition}) cmv_returnCondition,
+		   (select t.value, t.name from com_mt_value t where t.type_id = #{typeIdMap.returnReason}) cmv_reason
+         where retn.reason = cmv_reason.`value`
+  	       and retn.return_session_id = #{return_session_id, jdbcType = INTEGER}
+		   and retn.return_status = cmv_returnStatus.`value`
+		   and retn.`condition` = cmv_returnCondition.`value`
+		   and retn.store_id = store.store_id
+
+         order by retn.modified desc
+    </select>
+    
+    <select id="wms_return_getOrderInfo"  parameterType="com.voyageone.wms.formbean.FormReturn"  resultMap="returnMap">
+		select res.id res_id,
+			   res.sku,
+			   itemDetl.barcode,
+			   res.close_day_flg,
+			   res.order_channel_id,
+			   res.order_number order_num,
+			   IFNULL(retn.`condition`,'01') `condition`,
+			   IFNULL(retn.return_session_id, -1) return_session_id,
+               res.product product_name,
+               itemDetl.size `size`,
+               res.store store_name,
+			   store.label_type
+		  from tt_reservation res
+          left join wms_bt_return retn on res.id = retn.res_id
+          left join wms_bt_item_details itemDetl on res.sku = itemDetl.sku and res.order_channel_id = itemDetl.order_channel_id
+          left join wms_mt_store store on res.store_id = store.store_id
+		 where res.order_number = #{order_num, jdbcType = INTEGER}
+		<if test="orderChannelId != null and orderChannelId.size() != 0 ">
+			and res.order_channel_id in
+			<foreach item="item" index="index" collection="orderChannelId" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+    </select>
+    
+    <insert id="wms_return_insertReturnInfo" parameterType="java.util.List">
+		insert into wms_bt_return 
+				  (
+				    return_session_id,
+					order_channel_id,
+					store_id,
+					res_id,
+					sku,
+					order_num,
+					`condition`,
+					reason,
+  					notes,
+  					received_from,
+					tracking_no,
+					created,
+					creater,
+					modified,
+  					modifier
+			      )
+			<foreach collection="list" item="item" index="index" separator="union all">
+		    	select 
+					#{item.return_session_id, jdbcType = INTEGER},
+					#{item.order_channel_id, jdbcType = VARCHAR},
+  					#{item.store_id, jdbcType = INTEGER},
+					#{item.res_id, jdbcType = VARCHAR},
+					#{item.sku, jdbcType = VARCHAR},
+					#{item.order_num, jdbcType = VARCHAR},
+					#{item.condition, jdbcType = VARCHAR},
+					#{item.reason, jdbcType = VARCHAR},
+					#{item.notes, jdbcType = VARCHAR},
+					#{item.received_from, jdbcType = VARCHAR},
+					#{item.tracking_no, jdbcType = VARCHAR},
+					now(),
+					#{item.user, jdbcType = VARCHAR},
+					now(),
+					#{item.user, jdbcType = VARCHAR}
+			</foreach>
+    </insert>
+    
+    <insert id="wms_return_createReturnSession" parameterType="com.voyageone.wms.formbean.FormReturn" useGeneratedKeys="true" keyProperty="return_session_id" >
+     insert into wms_bt_return_session 
+			(
+			  order_channel_id,
+			  store_id,
+			  return_type,
+			  syn_flg,
+			  created,
+			  creater,
+			  modified,
+			  modifier
+		    )
+			values
+			(
+			  #{order_channel_id, jdbcType = VARCHAR},
+			  #{store_id, jdbcType = INTEGER},
+			  #{return_type, jdbcType = VARCHAR},
+			  #{syn_flg, jdbcType = VARCHAR},
+			  now(),
+			  #{user, jdbcType = VARCHAR},
+			  now(),
+			  #{user, jdbcType = VARCHAR}
+			)
+    </insert>
+    
+	<select id="wms_return_checkCloseDayFlg" parameterType="String" resultType="int">
+		select count(1)
+		  from tt_reservation res,
+			   wms_bt_return  retn
+		 where res.id  = retn.res_id
+		   and retn.return_session_id = #{return_session_id}
+           and res.close_day_flg in ('0','1');
+    </select>
+    
+	<update id="wms_return_changeSessionStatus" parameterType="com.voyageone.wms.formbean.FormReturn">
+		update wms_bt_return_session t
+  		   set t.return_session_status = '1',
+			   t.modified = now(),
+			   t.modifier = #{user}
+ 	     where t.return_session_id = #{return_session_id}
+    </update>
+    
+	<update id="wms_return_changeReservationStatus" parameterType="com.voyageone.wms.formbean.FormReturn">
+		update tt_reservation res INNER JOIN wms_bt_return retn
+		  set res.`status` = '97',
+		      res.update_person = #{user},
+			  res.update_time = now()
+        where res.id = retn.res_id
+          and retn.return_session_id = #{return_session_id};
+    </update>  
+    
+    <update id="wms_return_saveItemEdit" parameterType="com.voyageone.wms.formbean.FormReturn">
+		update wms_bt_return retn
+		   set retn.`condition` = #{condition_id, jdbcType = VARCHAR },
+			   retn.return_status = #{return_status_id, jdbcType = VARCHAR},
+			   retn.reason = #{reason, jdbcType = VARCHAR},
+			   retn.received_from = #{received_from_id, jdbcType = VARCHAR},
+			   retn.tracking_no = #{tracking_no, jdbcType = VARCHAR}, 
+			   retn.notes = #{notes, jdbcType = VARCHAR},
+			   retn.modified = now(),
+			   retn.modifier = #{user, jdbcType = VARCHAR}
+	     where retn.res_id = #{res_id, jdbcType = VARCHAR}   	
+    </update>
+    
+	<delete id="wms_return_removeReturnInfo" parameterType="String">
+		delete from wms_bt_return
+		 where res_id = #{resId}
+    </delete>
+
+	<select id="wms_return_sessionListSearch" parameterType="com.voyageone.wms.formbean.FormReturn" resultMap="returnMap">
+		select retnSession.return_session_id,
+			   date_format(retnSession.created, '%Y-%m-%d %H:%i:%s') created,
+			   retnSession.creater,
+				sessionStatus.name status_name,
+				returnType.name returnType_name,
+			   store.store_name,
+		       retnSession.store_id
+		  from wms_bt_return_session retnSession,
+			   (select cmv.value, cmv.name from com_mt_value cmv where  cmv.type_id = #{typeIdMap.returnSessionStatus}) sessionStatus,
+				(select cmv.value, cmv.name from com_mt_value cmv where  cmv.type_id = #{typeIdMap.returnType}) returnType,
+			   wms_mt_store store
+		 where retnSession.return_session_status = sessionStatus.`value`
+			and retnSession.return_type = returnType.`value`
+		   and retnSession.store_id = store.store_id
+		 <if test="orderChannelId != null and orderChannelId.size() != 0 ">
+			and retnSession.order_channel_id in
+			<foreach item="item" index="index" collection="orderChannelId" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		 </if>
+         <if test="return_session_status != null and return_session_status != '' ">
+  	     and retnSession.return_session_status = #{return_session_status, jdbcType = INTEGER}
+		 </if>
+		 <if test="createTime_s != null and createTime_s != '' ">
+  	     and retnSession.created &gt;= #{createTime_s}
+		 </if>
+		 <if test="createTime_e != null and createTime_e != '' ">
+  	     and retnSession.created &lt;= #{createTime_e}
+		 </if>		
+		 order by retnSession.created desc
+ 		 <if test="rows != 0">
+		 	 limit #{offset}, #{rows}
+		 </if> 
+    </select>
+    
+	<select id="wms_return_getSessionListSizeSize" parameterType="com.voyageone.wms.formbean.FormReturn" resultType="int">
+      select count(1)
+        from wms_bt_return_session retnSession,
+			 com_mt_value cmv
+       where cmv.type_id = #{typeIdMap.returnSessionStatus}
+   	     and retnSession.return_session_status = cmv.`value`
+		 <if test="orderChannelId != null and orderChannelId.size() != 0 ">
+			and retnSession.order_channel_id in
+			<foreach item="item" index="index" collection="orderChannelId" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		 </if>
+         <if test="return_session_status != null and return_session_status != '' ">
+  	     and retnSession.return_session_status = #{return_session_status, jdbcType = INTEGER}
+		 </if>
+		 <if test="createTime_s != null and createTime_s != '' ">
+  	     and retnSession.created &gt;= #{createTime_s}
+		 </if>
+		 <if test="createTime_e != null and createTime_e != '' ">
+  	     and retnSession.created &lt;= #{createTime_e}
+		 </if>		
+    </select>
+
+</mapper>

@@ -1,0 +1,1168 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <meta name="ProgId" content="Excel.Sheet"/>
+  <meta name="Generator" content="WPS Office ET"/>
+  <!--[if gte mso 9]>
+   <xml>
+    <o:DocumentProperties>
+     <o:Author>Administrator</o:Author>
+     <o:Created>2015-06-18T14:11:09</o:Created>
+     <o:LastSaved>2015-06-18T14:11:54</o:LastSaved>
+    </o:DocumentProperties>
+    <o:CustomDocumentProperties>
+     <o:KSOProductBuildVer dt:dt="string">2052-9.1.0.4883</o:KSOProductBuildVer>
+    </o:CustomDocumentProperties>
+   </xml>
+  <![endif]-->
+  <style>
+<!-- @page
+	{margin:0.98in 0.75in 0.98in 0.75in;
+	mso-header-margin:0.51in;
+	mso-footer-margin:0.51in;}
+tr
+	{mso-height-source:auto;
+	mso-ruby-visibility:none;}
+col
+	{mso-width-source:auto;
+	mso-ruby-visibility:none;}
+br
+	{mso-data-placement:same-cell;}
+.font0
+	{color:windowtext;
+	font-size:12.0pt;
+	font-weight:400;
+	font-style:normal;
+	text-decoration:none;
+	font-family:"宋体";
+	mso-generic-font-family:auto;
+	mso-font-charset:134;}
+.font1
+	{color:windowtext;
+	font-size:12.0pt;
+	font-weight:700;
+	font-style:normal;
+	text-decoration:none;
+	font-family:"宋体";
+	mso-generic-font-family:auto;
+	mso-font-charset:134;}
+.font2
+	{color:#000000;
+	font-size:11.0pt;
+	font-weight:400;
+	font-style:normal;
+	text-decoration:none;
+	font-family:"宋体";
+	mso-generic-font-family:auto;
+	mso-font-charset:134;}
+.font3
+	{color:#800080;
+	font-size:12.0pt;
+	font-weight:400;
+	font-style:normal;
+	text-decoration:underline;
+	text-underline-style:single;
+	font-family:"宋体";
+	mso-generic-font-family:auto;
+	mso-font-charset:134;}
+.font4
+	{color:#0000FF;
+	font-size:12.0pt;
+	font-weight:400;
+	font-style:normal;
+	text-decoration:underline;
+	text-underline-style:single;
+	font-family:"宋体";
+	mso-generic-font-family:auto;
+	mso-font-charset:134;}
+.style0
+	{mso-number-format:"General";
+	text-align:general;
+	vertical-align:middle;
+	white-space:nowrap;
+	mso-rotate:0;
+	mso-pattern:auto;
+	mso-background-source:auto;
+	color:windowtext;
+	font-size:12.0pt;
+	font-weight:400;
+	font-style:normal;
+	text-decoration:none;
+	font-family:宋体;
+	mso-generic-font-family:auto;
+	mso-font-charset:134;
+	border:none;
+	mso-protection:locked visible;
+	mso-style-name:"Normal";
+	mso-style-id:0;}
+.style16
+	{mso-number-format:"_ * \#\,\#\#0\.00_ \;_ * \\-\#\,\#\#0\.00_ \;_ * \0022-\0022??_ \;_ \@_ ";
+	mso-style-name:"Comma";
+	mso-style-id:3;}
+.style17
+	{mso-number-format:"_ \0022\00A5\0022* \#\,\#\#0\.00_ \;_ \0022\00A5\0022* \\-\#\,\#\#0\.00_ \;_ \0022\00A5\0022* \0022-\0022??_ \;_ \@_ ";
+	mso-style-name:"Currency";
+	mso-style-id:4;}
+.style18
+	{mso-number-format:"_ * \#\,\#\#0_ \;_ * \\-\#\,\#\#0_ \;_ * \0022-\0022_ \;_ \@_ ";
+	mso-style-name:"Comma[0]";
+	mso-style-id:6;}
+.style19
+	{mso-number-format:"0%";
+	mso-style-name:"Percent";
+	mso-style-id:5;}
+.style20
+	{mso-number-format:"_ \0022\00A5\0022* \#\,\#\#0_ \;_ \0022\00A5\0022* \\-\#\,\#\#0_ \;_ \0022\00A5\0022* \0022-\0022_ \;_ \@_ ";
+	mso-style-name:"Currency[0]";
+	mso-style-id:7;}
+.style21
+	{color:#0000FF;
+	font-size:12.0pt;
+	text-decoration:underline;
+	text-underline-style:single;
+	font-family:宋体;
+	mso-style-name:"Hyperlink";
+	mso-style-id:8;}
+.style22
+	{color:#800080;
+	font-size:12.0pt;
+	text-decoration:underline;
+	text-underline-style:single;
+	font-family:宋体;
+	mso-style-name:"Followed Hyperlink";
+	mso-style-id:9;}
+td
+	{mso-style-parent:style0;
+	padding-top:1px;
+	padding-right:1px;
+	padding-left:1px;
+	mso-ignore:padding;
+	mso-number-format:"General";
+	text-align:general;
+	vertical-align:middle;
+	white-space:nowrap;
+	mso-rotate:0;
+	mso-pattern:auto;
+	mso-background-source:auto;
+	color:windowtext;
+	font-size:12.0pt;
+	font-weight:400;
+	font-style:normal;
+	text-decoration:none;
+	font-family:宋体;
+	mso-generic-font-family:auto;
+	mso-font-charset:134;
+	border:none;
+	mso-protection:locked visible;}
+.xl24
+	{mso-style-parent:style0;
+	text-align:center;
+	white-space:normal;
+	mso-pattern:auto none;
+	background:#FFFFFF;
+	font-weight:700;
+	mso-font-charset:134;
+	border:.5pt solid windowtext;}
+.xl25
+	{mso-style-parent:style0;
+	text-align:center;
+	white-space:normal;
+	mso-pattern:auto none;
+	background:#FFFFFF;
+	mso-font-charset:134;
+	border:.5pt solid windowtext;}
+.xl26
+	{mso-style-parent:style0;
+	mso-number-format:"\@";
+	mso-pattern:auto none;
+	background:#FFFFFF;
+	color:#000000;
+	font-size:11.0pt;
+	mso-font-charset:134;
+	border:.5pt solid windowtext;}
+ -->  </style>
+  <!--[if gte mso 9]>
+   <xml>
+    <x:ExcelWorkbook>
+     <x:ExcelWorksheets>
+      <x:ExcelWorksheet>
+       <x:Name>00978415578474 税单</x:Name>
+       <x:WorksheetOptions>
+        <x:DefaultRowHeight>285</x:DefaultRowHeight>
+        <x:Selected/>
+        <x:TopRowVisible>135</x:TopRowVisible>
+        <x:Panes>
+         <x:Pane>
+          <x:Number>3</x:Number>
+          <x:ActiveCol>0</x:ActiveCol>
+          <x:ActiveRow>155</x:ActiveRow>
+          <x:RangeSelection>A156:D156</x:RangeSelection>
+         </x:Pane>
+        </x:Panes>
+        <x:DoNotDisplayGridlines/>
+        <x:ProtectContents>False</x:ProtectContents>
+        <x:ProtectObjects>False</x:ProtectObjects>
+        <x:ProtectScenarios>False</x:ProtectScenarios>
+        <x:Print>
+         <x:ValidPrinterInfo/>
+         <x:PaperSizeIndex>9</x:PaperSizeIndex>
+        </x:Print>
+       </x:WorksheetOptions>
+      </x:ExcelWorksheet>
+     </x:ExcelWorksheets>
+     <x:ProtectStructure>False</x:ProtectStructure>
+     <x:ProtectWindows>False</x:ProtectWindows>
+     <x:WindowHeight>8520</x:WindowHeight>
+     <x:WindowWidth>20310</x:WindowWidth>
+    </x:ExcelWorkbook>
+   </xml>
+  <![endif]-->
+ </head>
+ <body link="blue" vlink="purple">
+  <table width="1279" border="0" cellpadding="0" cellspacing="0" style='width:959.25pt;border-collapse:collapse;table-layout:fixed;'>
+   <col width="377" span="2" style='mso-width-source:userset;mso-width-alt:12064;'/>
+   <col width="351" style='mso-width-source:userset;mso-width-alt:11232;'/>
+   <col width="174" style='mso-width-source:userset;mso-width-alt:5568;'/>
+   <tr height="19" style='height:14.25pt;mso-height-source:userset;mso-height-alt:285;'>
+    <td class="xl24" height="19" width="1279" colspan="4" style='height:14.25pt;width:959.25pt;border-right:.5pt solid windowtext;border-bottom:.5pt solid windowtext;' x:str>税单数据</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl25" height="19" style='height:14.25pt;' x:str>总运单</td>
+    <td class="xl25" x:str>税单单号</td>
+    <td class="xl26" x:str>快件单号</td>
+    <td class="xl25" x:str>税款</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415578474</td>
+    <td class="xl26" x:str>20150612003983</td>
+    <td class="xl26" x:str>BE340348830US</td>
+    <td class="xl26" x:str>68.08</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415578474</td>
+    <td class="xl26" x:str>20150612003984</td>
+    <td class="xl26" x:str>BE340348865US</td>
+    <td class="xl26" x:str>55.2</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415578474</td>
+    <td class="xl26" x:str>20150612003985</td>
+    <td class="xl26" x:str>BE340348928US</td>
+    <td class="xl26" x:str>55.2</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415578474</td>
+    <td class="xl26" x:str>20150612003986</td>
+    <td class="xl26" x:str>BE340348976US</td>
+    <td class="xl26" x:str>55.2</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415578474</td>
+    <td class="xl26" x:str>20150612003987</td>
+    <td class="xl26" x:str>BE340347851US</td>
+    <td class="xl26" x:str>158.47</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415578474</td>
+    <td class="xl26" x:str>20150612003911</td>
+    <td class="xl26" x:str>BE340351635US</td>
+    <td class="xl26" x:str>62.56</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415578474</td>
+    <td class="xl26" x:str>20150612003912</td>
+    <td class="xl26" x:str>BE340349101US</td>
+    <td class="xl26" x:str>51.52</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415578474</td>
+    <td class="xl26" x:str>20150612003913</td>
+    <td class="xl26" x:str>BE340349574US</td>
+    <td class="xl26" x:str>145.22</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415578474</td>
+    <td class="xl26" x:str>20150612003914</td>
+    <td class="xl26" x:str>BE340349092US</td>
+    <td class="xl26" x:str>55.2</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415578474</td>
+    <td class="xl26" x:str>20150612003915</td>
+    <td class="xl26" x:str>BE340349185US</td>
+    <td class="xl26" x:str>55.2</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415578474</td>
+    <td class="xl26" x:str>20150612003916</td>
+    <td class="xl26" x:str>BE340349659US</td>
+    <td class="xl26" x:str>100</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415578474</td>
+    <td class="xl26" x:str>20150612003917</td>
+    <td class="xl26" x:str>BE340349662US</td>
+    <td class="xl26" x:str>100</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415578474</td>
+    <td class="xl26" x:str>20150612003918</td>
+    <td class="xl26" x:str>BE340349680US</td>
+    <td class="xl26" x:str>100</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415578474</td>
+    <td class="xl26" x:str>20150612003919</td>
+    <td class="xl26" x:str>BE340350569US</td>
+    <td class="xl26" x:str>60.11</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415578474</td>
+    <td class="xl26" x:str>20150612003920</td>
+    <td class="xl26" x:str>BE340350590US</td>
+    <td class="xl26" x:str>61.34</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415578474</td>
+    <td class="xl26" x:str>20150612003921</td>
+    <td class="xl26" x:str>BE340351136US</td>
+    <td class="xl26" x:str>55.2</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415578474</td>
+    <td class="xl26" x:str>20150612003922</td>
+    <td class="xl26" x:str>BE340351167US</td>
+    <td class="xl26" x:str>69.92</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415578474</td>
+    <td class="xl26" x:str>20150612003923</td>
+    <td class="xl26" x:str>BE340350161US</td>
+    <td class="xl26" x:str>73.6</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415578474</td>
+    <td class="xl26" x:str>20150612003924</td>
+    <td class="xl26" x:str>BE340350793US</td>
+    <td class="xl26" x:str>58.88</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415578474</td>
+    <td class="xl26" x:str>20150612003925</td>
+    <td class="xl26" x:str>BE340351175US</td>
+    <td class="xl26" x:str>80.96</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415578474</td>
+    <td class="xl26" x:str>20150612003926</td>
+    <td class="xl26" x:str>BE340351462US</td>
+    <td class="xl26" x:str>53.36</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415578474</td>
+    <td class="xl26" x:str>20150612003927</td>
+    <td class="xl26" x:str>BE340348503US</td>
+    <td class="xl26" x:str>53.36</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415578474</td>
+    <td class="xl26" x:str>20150612003928</td>
+    <td class="xl26" x:str>BE340348605US</td>
+    <td class="xl26" x:str>71.22</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415578474</td>
+    <td class="xl26" x:str>20150612003929</td>
+    <td class="xl26" x:str>BE340348724US</td>
+    <td class="xl26" x:str>58.88</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415578474</td>
+    <td class="xl26" x:str>20150612003930</td>
+    <td class="xl26" x:str>BE340347896US</td>
+    <td class="xl26" x:str>60</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415578474</td>
+    <td class="xl26" x:str>20150612003931</td>
+    <td class="xl26" x:str>BE340347905US</td>
+    <td class="xl26" x:str>100</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415578474</td>
+    <td class="xl26" x:str>20150612003932</td>
+    <td class="xl26" x:str>BE340347919US</td>
+    <td class="xl26" x:str>60</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415578474</td>
+    <td class="xl26" x:str>20150612003933</td>
+    <td class="xl26" x:str>BE340347998US</td>
+    <td class="xl26" x:str>55.2</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415578474</td>
+    <td class="xl26" x:str>20150612003934</td>
+    <td class="xl26" x:str>BE340348004US</td>
+    <td class="xl26" x:str>103.05</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415578474</td>
+    <td class="xl26" x:str>20150612003935</td>
+    <td class="xl26" x:str>BE340348327US</td>
+    <td class="xl26" x:str>53.36</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415578474</td>
+    <td class="xl26" x:str>20150612003936</td>
+    <td class="xl26" x:str>BE340348401US</td>
+    <td class="xl26" x:str>55.2</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415578474</td>
+    <td class="xl26" x:str>20150612003937</td>
+    <td class="xl26" x:str>BE340348415US</td>
+    <td class="xl26" x:str>55.2</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003988</td>
+    <td class="xl26" x:str>BE340345060US</td>
+    <td class="xl26" x:str>51.52</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003989</td>
+    <td class="xl26" x:str>BE340345572US</td>
+    <td class="xl26" x:str>62.56</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003990</td>
+    <td class="xl26" x:str>BE340345816US</td>
+    <td class="xl26" x:str>66.24</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003991</td>
+    <td class="xl26" x:str>BE340345820US</td>
+    <td class="xl26" x:str>51.52</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003992</td>
+    <td class="xl26" x:str>BE340345878US</td>
+    <td class="xl26" x:str>53.36</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003993</td>
+    <td class="xl26" x:str>BE340344104US</td>
+    <td class="xl26" x:str>55.2</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003638</td>
+    <td class="xl26" x:str>BE340347485US</td>
+    <td class="xl26" x:str>68.08</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003639</td>
+    <td class="xl26" x:str>BE340347556US</td>
+    <td class="xl26" x:str>62.56</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003640</td>
+    <td class="xl26" x:str>BE340347825US</td>
+    <td class="xl26" x:str>55.2</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003641</td>
+    <td class="xl26" x:str>BE340345881US</td>
+    <td class="xl26" x:str>51.52</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003642</td>
+    <td class="xl26" x:str>BE340346065US</td>
+    <td class="xl26" x:str>53.36</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003643</td>
+    <td class="xl26" x:str>BE340345382US</td>
+    <td class="xl26" x:str>62.56</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003644</td>
+    <td class="xl26" x:str>BE340345422US</td>
+    <td class="xl26" x:str>62.56</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003645</td>
+    <td class="xl26" x:str>BE340346184US</td>
+    <td class="xl26" x:str>92</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003646</td>
+    <td class="xl26" x:str>BE340346357US</td>
+    <td class="xl26" x:str>58.88</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003647</td>
+    <td class="xl26" x:str>BE340346414US</td>
+    <td class="xl26" x:str>188.63</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003648</td>
+    <td class="xl26" x:str>BE340346476US</td>
+    <td class="xl26" x:str>62.56</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003649</td>
+    <td class="xl26" x:str>BE340346621US</td>
+    <td class="xl26" x:str>53.36</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003650</td>
+    <td class="xl26" x:str>BE340344064US</td>
+    <td class="xl26" x:str>55.2</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003651</td>
+    <td class="xl26" x:str>BE340347128US</td>
+    <td class="xl26" x:str>55.2</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003652</td>
+    <td class="xl26" x:str>BE340344166US</td>
+    <td class="xl26" x:str>66.24</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003653</td>
+    <td class="xl26" x:str>BE340344183US</td>
+    <td class="xl26" x:str>260</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003654</td>
+    <td class="xl26" x:str>BE340344197US</td>
+    <td class="xl26" x:str>120</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003655</td>
+    <td class="xl26" x:str>BE340344223US</td>
+    <td class="xl26" x:str>60</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003656</td>
+    <td class="xl26" x:str>BE340344254US</td>
+    <td class="xl26" x:str>100</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003657</td>
+    <td class="xl26" x:str>BE340344285US</td>
+    <td class="xl26" x:str>60</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003658</td>
+    <td class="xl26" x:str>BE340344299US</td>
+    <td class="xl26" x:str>100</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003659</td>
+    <td class="xl26" x:str>BE340344311US</td>
+    <td class="xl26" x:str>87.1</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003660</td>
+    <td class="xl26" x:str>BE340347281US</td>
+    <td class="xl26" x:str>80.96</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003661</td>
+    <td class="xl26" x:str>BE340344360US</td>
+    <td class="xl26" x:str>140</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003662</td>
+    <td class="xl26" x:str>BE340344373US</td>
+    <td class="xl26" x:str>80</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003663</td>
+    <td class="xl26" x:str>BE340347471US</td>
+    <td class="xl26" x:str>60</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003664</td>
+    <td class="xl26" x:str>BE340347499US</td>
+    <td class="xl26" x:str>60</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003665</td>
+    <td class="xl26" x:str>BE340347511US</td>
+    <td class="xl26" x:str>100</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003666</td>
+    <td class="xl26" x:str>BE340347658US</td>
+    <td class="xl26" x:str>120</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003667</td>
+    <td class="xl26" x:str>BE340347675US</td>
+    <td class="xl26" x:str>82.8</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003668</td>
+    <td class="xl26" x:str>BE340346706US</td>
+    <td class="xl26" x:str>69.92</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003669</td>
+    <td class="xl26" x:str>BE340346935US</td>
+    <td class="xl26" x:str>62.56</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415747900</td>
+    <td class="xl26" x:str>20150612003670</td>
+    <td class="xl26" x:str>BE340347114US</td>
+    <td class="xl26" x:str>51.52</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753323</td>
+    <td class="xl26" x:str>20150616002294</td>
+    <td class="xl26" x:str>BE340356751US</td>
+    <td class="xl26" x:str>100</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753323</td>
+    <td class="xl26" x:str>20150616002295</td>
+    <td class="xl26" x:str>BE340356805US</td>
+    <td class="xl26" x:str>80</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753323</td>
+    <td class="xl26" x:str>20150616002296</td>
+    <td class="xl26" x:str>BE340356822US</td>
+    <td class="xl26" x:str>100</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753323</td>
+    <td class="xl26" x:str>20150616002297</td>
+    <td class="xl26" x:str>BE340356907US</td>
+    <td class="xl26" x:str>184.02</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753323</td>
+    <td class="xl26" x:str>20150616002199</td>
+    <td class="xl26" x:str>BE340358094US</td>
+    <td class="xl26" x:str>62.56</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753323</td>
+    <td class="xl26" x:str>20150616002200</td>
+    <td class="xl26" x:str>BE340358125US</td>
+    <td class="xl26" x:str>80</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753323</td>
+    <td class="xl26" x:str>20150616002201</td>
+    <td class="xl26" x:str>BE340358222US</td>
+    <td class="xl26" x:str>82.8</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753323</td>
+    <td class="xl26" x:str>20150616002202</td>
+    <td class="xl26" x:str>BE340358372US</td>
+    <td class="xl26" x:str>51.52</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753323</td>
+    <td class="xl26" x:str>20150616002203</td>
+    <td class="xl26" x:str>BE340358386US</td>
+    <td class="xl26" x:str>53.36</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753323</td>
+    <td class="xl26" x:str>20150616002204</td>
+    <td class="xl26" x:str>BE340358430US</td>
+    <td class="xl26" x:str>58.88</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753323</td>
+    <td class="xl26" x:str>20150616002205</td>
+    <td class="xl26" x:str>BE340358633US</td>
+    <td class="xl26" x:str>51.52</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753323</td>
+    <td class="xl26" x:str>20150616002206</td>
+    <td class="xl26" x:str>BE340358647US</td>
+    <td class="xl26" x:str>55.2</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753323</td>
+    <td class="xl26" x:str>20150616002207</td>
+    <td class="xl26" x:str>BE340358678US</td>
+    <td class="xl26" x:str>54.59</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753323</td>
+    <td class="xl26" x:str>20150616002208</td>
+    <td class="xl26" x:str>BE340358681US</td>
+    <td class="xl26" x:str>53.98</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753323</td>
+    <td class="xl26" x:str>20150616002209</td>
+    <td class="xl26" x:str>BE340358704US</td>
+    <td class="xl26" x:str>164.39</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753323</td>
+    <td class="xl26" x:str>20150616002210</td>
+    <td class="xl26" x:str>BE340358749US</td>
+    <td class="xl26" x:str>100</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753323</td>
+    <td class="xl26" x:str>20150616002211</td>
+    <td class="xl26" x:str>BE340358770US</td>
+    <td class="xl26" x:str>53.98</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753323</td>
+    <td class="xl26" x:str>20150616002212</td>
+    <td class="xl26" x:str>BE340358783US</td>
+    <td class="xl26" x:str>100</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753323</td>
+    <td class="xl26" x:str>20150616002213</td>
+    <td class="xl26" x:str>BE340358837US</td>
+    <td class="xl26" x:str>55.2</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753323</td>
+    <td class="xl26" x:str>20150616002214</td>
+    <td class="xl26" x:str>BE340358925US</td>
+    <td class="xl26" x:str>62.56</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753323</td>
+    <td class="xl26" x:str>20150616002215</td>
+    <td class="xl26" x:str>BE340359024US</td>
+    <td class="xl26" x:str>95.68</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753323</td>
+    <td class="xl26" x:str>20150616002216</td>
+    <td class="xl26" x:str>BE340359126US</td>
+    <td class="xl26" x:str>112.1</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753323</td>
+    <td class="xl26" x:str>20150616002217</td>
+    <td class="xl26" x:str>BE340359130US</td>
+    <td class="xl26" x:str>116.5</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753323</td>
+    <td class="xl26" x:str>20150616002218</td>
+    <td class="xl26" x:str>BE340359143US</td>
+    <td class="xl26" x:str>193.96</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753323</td>
+    <td class="xl26" x:str>20150616002219</td>
+    <td class="xl26" x:str>BE340359231US</td>
+    <td class="xl26" x:str>57.04</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753323</td>
+    <td class="xl26" x:str>20150616002220</td>
+    <td class="xl26" x:str>BE340359262US</td>
+    <td class="xl26" x:str>51.52</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753323</td>
+    <td class="xl26" x:str>20150616002221</td>
+    <td class="xl26" x:str>BE340356734US</td>
+    <td class="xl26" x:str>201.2</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753323</td>
+    <td class="xl26" x:str>20150616002222</td>
+    <td class="xl26" x:str>BE340356748US</td>
+    <td class="xl26" x:str>65.76</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753323</td>
+    <td class="xl26" x:str>20150616002223</td>
+    <td class="xl26" x:str>BE340356867US</td>
+    <td class="xl26" x:str>80</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753323</td>
+    <td class="xl26" x:str>20150616002224</td>
+    <td class="xl26" x:str>BE340356915US</td>
+    <td class="xl26" x:str>51.53</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753323</td>
+    <td class="xl26" x:str>20150616002225</td>
+    <td class="xl26" x:str>BE340356924US</td>
+    <td class="xl26" x:str>80</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753323</td>
+    <td class="xl26" x:str>20150616002226</td>
+    <td class="xl26" x:str>BE340357669US</td>
+    <td class="xl26" x:str>55.2</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753323</td>
+    <td class="xl26" x:str>20150616002227</td>
+    <td class="xl26" x:str>BE340357859US</td>
+    <td class="xl26" x:str>58.88</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753323</td>
+    <td class="xl26" x:str>20150616002228</td>
+    <td class="xl26" x:str>BE340357880US</td>
+    <td class="xl26" x:str>66.24</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753323</td>
+    <td class="xl26" x:str>20150616002229</td>
+    <td class="xl26" x:str>BE340357916US</td>
+    <td class="xl26" x:str>58.88</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000367</td>
+    <td class="xl26" x:str>BE340353962US</td>
+    <td class="xl26" x:str>73.6</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000474</td>
+    <td class="xl26" x:str>BE340352383US</td>
+    <td class="xl26" x:str>87.85</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000475</td>
+    <td class="xl26" x:str>BE340352406US</td>
+    <td class="xl26" x:str>60</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000476</td>
+    <td class="xl26" x:str>BE340352410US</td>
+    <td class="xl26" x:str>60</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000477</td>
+    <td class="xl26" x:str>BE340353211US</td>
+    <td class="xl26" x:str>92</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000325</td>
+    <td class="xl26" x:str>BE340354013US</td>
+    <td class="xl26" x:str>62.56</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000326</td>
+    <td class="xl26" x:str>BE340354089US</td>
+    <td class="xl26" x:str>88.32</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000327</td>
+    <td class="xl26" x:str>BE340354248US</td>
+    <td class="xl26" x:str>66.24</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000328</td>
+    <td class="xl26" x:str>BE340354384US</td>
+    <td class="xl26" x:str>62.56</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000329</td>
+    <td class="xl26" x:str>BE340354526US</td>
+    <td class="xl26" x:str>51.52</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000330</td>
+    <td class="xl26" x:str>BE340354530US</td>
+    <td class="xl26" x:str>55.2</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000331</td>
+    <td class="xl26" x:str>BE340354557US</td>
+    <td class="xl26" x:str>51.52</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000332</td>
+    <td class="xl26" x:str>BE340354574US</td>
+    <td class="xl26" x:str>110.41</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000333</td>
+    <td class="xl26" x:str>BE340354588US</td>
+    <td class="xl26" x:str>55.2</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000334</td>
+    <td class="xl26" x:str>BE340354591US</td>
+    <td class="xl26" x:str>110.41</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000335</td>
+    <td class="xl26" x:str>BE340354662US</td>
+    <td class="xl26" x:str>80.96</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000336</td>
+    <td class="xl26" x:str>BE340354747US</td>
+    <td class="xl26" x:str>99.36</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000337</td>
+    <td class="xl26" x:str>BE340355288US</td>
+    <td class="xl26" x:str>51.52</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000338</td>
+    <td class="xl26" x:str>BE340355291US</td>
+    <td class="xl26" x:str>51.52</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000339</td>
+    <td class="xl26" x:str>BE340355305US</td>
+    <td class="xl26" x:str>60.72</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000340</td>
+    <td class="xl26" x:str>BE340355380US</td>
+    <td class="xl26" x:str>55.2</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000341</td>
+    <td class="xl26" x:str>BE340355699US</td>
+    <td class="xl26" x:str>66.24</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000342</td>
+    <td class="xl26" x:str>BE340355212US</td>
+    <td class="xl26" x:str>55.2</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000343</td>
+    <td class="xl26" x:str>BE340352851US</td>
+    <td class="xl26" x:str>62.56</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000344</td>
+    <td class="xl26" x:str>BE340352905US</td>
+    <td class="xl26" x:str>55.2</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000345</td>
+    <td class="xl26" x:str>BE340355566US</td>
+    <td class="xl26" x:str>55.2</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000346</td>
+    <td class="xl26" x:str>BE340355827US</td>
+    <td class="xl26" x:str>66.24</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000347</td>
+    <td class="xl26" x:str>BE340355892US</td>
+    <td class="xl26" x:str>53.36</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000348</td>
+    <td class="xl26" x:str>BE340355915US</td>
+    <td class="xl26" x:str>53.36</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000349</td>
+    <td class="xl26" x:str>BE340353168US</td>
+    <td class="xl26" x:str>64.4</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000350</td>
+    <td class="xl26" x:str>BE340353185US</td>
+    <td class="xl26" x:str>55.2</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000351</td>
+    <td class="xl26" x:str>BE340353199US</td>
+    <td class="xl26" x:str>51.52</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000352</td>
+    <td class="xl26" x:str>BE340353300US</td>
+    <td class="xl26" x:str>69.92</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000353</td>
+    <td class="xl26" x:str>BE340356028US</td>
+    <td class="xl26" x:str>58.88</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000354</td>
+    <td class="xl26" x:str>BE340353375US</td>
+    <td class="xl26" x:str>55.2</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000355</td>
+    <td class="xl26" x:str>BE340356221US</td>
+    <td class="xl26" x:str>80.96</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000356</td>
+    <td class="xl26" x:str>BE340353675US</td>
+    <td class="xl26" x:str>58.88</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000357</td>
+    <td class="xl26" x:str>BE340356439US</td>
+    <td class="xl26" x:str>55.2</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000358</td>
+    <td class="xl26" x:str>BE340353755US</td>
+    <td class="xl26" x:str>64.4</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000359</td>
+    <td class="xl26" x:str>BE340356535US</td>
+    <td class="xl26" x:str>55.2</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000360</td>
+    <td class="xl26" x:str>BE340355107US</td>
+    <td class="xl26" x:str>55.86</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000361</td>
+    <td class="xl26" x:str>BE340355115US</td>
+    <td class="xl26" x:str>93.96</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000362</td>
+    <td class="xl26" x:str>BE340356717US</td>
+    <td class="xl26" x:str>86.48</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000363</td>
+    <td class="xl26" x:str>BE340356725US</td>
+    <td class="xl26" x:str>58.88</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000364</td>
+    <td class="xl26" x:str>BE340353843US</td>
+    <td class="xl26" x:str>58.88</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000365</td>
+    <td class="xl26" x:str>BE340353865US</td>
+    <td class="xl26" x:str>64.4</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>00978415753474</td>
+    <td class="xl26" x:str>20150615000366</td>
+    <td class="xl26" x:str>BE340353874US</td>
+    <td class="xl26" x:str>51.52</td>
+   </tr>
+   <tr height="19" style='height:14.25pt;'>
+    <td class="xl26" height="19" style='height:14.25pt;' x:str>10978415747900</td>
+    <td class="xl26" x:str>20150616000242</td>
+    <td class="xl26" x:str>1BE340346480US</td>
+    <td class="xl26" x:str>60</td>
+   </tr>
+   <![if supportMisalignedColumns]>
+    <tr width="0" style='display:none;'>
+     <td width="377" style='width:283;'></td>
+     <td width="351" style='width:263;'></td>
+     <td width="174" style='width:131;'></td>
+    </tr>
+   <![endif]>
+  </table>
+ </body>
+</html>

@@ -1,0 +1,12 @@
+
+<div ng-if="alerts.length > 0" class="w40p hint" ng-repeat="alert in alerts" close="closeAlert($index)" ng-bind="alert.msg"></div>
+
+<div class="mainBanners" ng-controller="loginController" ng-init="initialize()" ng-cloak="">
+    <form name="loginForm"  novalidate="">
+        <!--<div class="form-text">-->
+        <input type="text" name="txtUserName" id="txtUserName" class="text" ng-model="user.userName" value="USERNAME" placeholder="username or email" required="">
+        <input type="password" name="txtPassword" id="txtPassword" ng-model="user.password" value="Password" placeholder="Password" required="">
+        <!--</div>-->
+        <a href="" class="button logins" ng-disabled="loginForm.$invalid" translate="CORE_BUTTON_SIGN_IN" ng-click="doLogin()" ></a>
+    </form>
+</div>

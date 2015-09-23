@@ -1,0 +1,90 @@
+
+<div class="container" ng-controller="rtnItemEditCtrl"  ng-init="initialize()" ng-cloak>
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                Return Item Detail
+            </h3>
+        </div>
+        <div class="panel-body">
+            <div class="row row-flow form-horizontal">
+                <div class="col-md-12">
+                    <div class="row form-group">
+                        <label class="control-label col-md-4" for="txtRtnEditRsvID" translate="WMS_RESID"></label>
+                        <div class="col-md-8">
+                            <input class="form-control" id="txtRtnEditRsvID" type="text" maxlength="20" placeholder="Reservation ID" ng-model="returnInfo.res_id" readonly>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <label class="control-label col-md-4" for="txtRtnEditOrderNum" translate="WMS_ORDERNUMBER"></label>
+                        <div class="col-md-8">
+                            <input class="form-control" id="txtRtnEditOrderNum" type="text" maxlength="100" placeholder="Order Number" ng-model="returnInfo.order_num" readonly>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <label class="control-label col-md-4" for="txtRtnEditSku" translate="WMS_SKU"></label>
+                        <div class="col-md-8">
+                            <input class="form-control" id="txtRtnEditSku" type="text" maxlength="200" placeholder="SKU" ng-model="returnInfo.sku" readonly>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <label class="control-label col-md-4" translate="WMS_STATUS"></label>
+                        <div class="col-md-8">
+                            <input class="form-control" type="text" maxlength="200" placeholder="SKU" ng-model="returnInfo.status_name" readonly>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <label class="control-label col-md-4" translate="WMS_CONDITION"></label>
+                        <div class="col-md-8">
+                            <ui-select ng-model="returnInfo.condition_id" style="min-width: 150px">
+                                <ui-select-match placeholder="select a store">{{$select.selected.name}}</ui-select-match>
+                                <ui-select-choices repeat="i.id as i in returnCondition | filter: $select.search">
+                                    <div ng-bind-html="i.name"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <label class="control-label col-md-4" translate="WMS_REASON"></label>
+                        <div class="col-md-8">
+                            <ui-select ng-model="returnInfo.reason" style="min-width: 150px">
+                                <ui-select-match placeholder="select a store">{{$select.selected.name}}</ui-select-match>
+                                <ui-select-choices repeat="i.id as i in returnReason | filter: $select.search">
+                                    <div ng-bind-html="i.name"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <label class="control-label col-md-4" translate="WMS_EXPRESSCOMPANY"></label>
+                        <div class="col-md-4">
+                            <ui-select ng-model="returnInfo.received_from_id" style="min-width: 150px">
+                                <ui-select-match placeholder="select a store">{{$select.selected.name}}</ui-select-match>
+                                <ui-select-choices repeat="i.id as i in returnExpress | filter: $select.search">
+                                    <div ng-bind-html="i.name"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                        <div class="col-md-4">
+                            <input class="form-control" id="txtRtnEditTrackingNum" type="text" maxlength="50" placeholder="Tracking Number" ng-model="returnInfo.tracking_no">
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <label class="control-label col-md-4" for="txtRtnEditNote" translate="WMS_NOTE"></label>
+                        <div class="col-md-8">
+                            <textarea class="form-control" id="txtRtnEditNote" maxlength="200" placeholder="Note" ng-model="returnInfo.notes"
+                                      rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-12 text-right">
+                            <a class="btn btn-sm btn-primary" type="button" ng-click="doSaveReturnInfo()" translate="WMS_SAVE"></a>
+                            <a class="btn btn-sm btn-default" type="button" ng-click="doColoseEditeWindow()" translate="WMS_CLOSE"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

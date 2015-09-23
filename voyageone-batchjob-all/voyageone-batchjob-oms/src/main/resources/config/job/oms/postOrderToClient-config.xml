@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+    <!-- ============================BHFO=================================================== --> 
+    <bean id="Channle_BHFO" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+		<property name="staticField" value="com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.BHFO" />
+	</bean>	
+   	<bean id="PostOrderBHFO" class="com.voyageone.batch.oms.job.logic.PostOrderBHFO">
+	</bean>	        
+   <bean id="PostOrderBHFOJob"
+		class="com.voyageone.batch.oms.job.PostOrderToClientJob">
+		<property name="taskCheck">
+			<value>PostOrderBHFOJob</value>
+		</property>
+		<property name="postOrderLogic">
+			<ref local="PostOrderBHFO"/>
+		</property>  
+		<property name="channel" >
+			<ref local="Channle_BHFO"/>
+		</property> 
+	</bean>	
+	<bean id="PostOrderBHFOTask"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref local="PostOrderBHFOJob" />
+		</property>
+		<property name="targetMethod">
+			<value>postOrderJob</value>
+		</property>
+	</bean>	
+	<bean id="PostOrderBHFOTaskContri" 
+		name="PostOrderBHFOTaskContri"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="PostOrderBHFOTask" />
+		</property>
+		<property name="cronExpression">
+			<value>${quartz.order.postorder.transfer}</value>
+		</property>
+	</bean>
+	<!-- ============================JC=================================================== --> 
+    <bean id="Channle_JC" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+		<property name="staticField" value="com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.JC" />
+	</bean>	
+   	<bean id="PostOrderJC" class="com.voyageone.batch.oms.job.logic.PostOrderJC">
+	</bean>	        
+   <bean id="PostOrderJCJob"
+		class="com.voyageone.batch.oms.job.PostOrderToClientJob">
+		<property name="taskCheck">
+			<value>PostOrderJCJob</value>
+		</property>
+		<property name="postOrderLogic">
+			<ref local="PostOrderJC"/>
+		</property>  
+		<property name="channel" >
+			<ref local="Channle_JC"/>
+		</property> 
+	</bean>	
+	<bean id="PostOrderJCTask"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref local="PostOrderJCJob" />
+		</property>
+		<property name="targetMethod">
+			<value>postOrderJob</value>
+		</property>
+	</bean>	
+	<bean id="PostOrderJCTaskContri" 
+		name="PostOrderJCTaskContri"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="PostOrderJCTask" />
+		</property>
+		<property name="cronExpression">
+			<value>${quartz.order.postorder.transfer}</value>
+		</property>
+	</bean>
+ <!-- ============================JEWELRY=================================================== --> 
+    <bean id="Channle_JEWELRY" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+		<property name="staticField" value="com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.JEWELRY" />
+	</bean>	
+   	<bean id="PostOrderJEWELRY" class="com.voyageone.batch.oms.job.logic.PostOrderBHFO">
+	</bean>	        
+   <bean id="PostOrderJEWELRYJob"
+		class="com.voyageone.batch.oms.job.PostOrderToClientJob">
+		<property name="taskCheck">
+			<value>PostOrderJEWELRYJob</value>
+		</property>
+		<property name="postOrderLogic">
+			<ref local="PostOrderJEWELRY"/>
+		</property>  
+		<property name="channel" >
+			<ref local="Channle_JEWELRY"/>
+		</property> 
+	</bean>	
+	<bean id="PostOrderJEWELRYTask"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref local="PostOrderJEWELRYJob" />
+		</property>
+		<property name="targetMethod">
+			<value>postOrderJob</value>
+		</property>
+	</bean>	
+	<bean id="PostOrderJEWELRYTaskContri" 
+		name="PostOrderJEWELRYTaskContri"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="PostOrderJEWELRYTask" />
+		</property>
+		<property name="cronExpression">
+			<value>${quartz.order.postorder.transfer}</value>
+		</property>
+	</bean>
+</beans>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+          
+	<!-- ===================== 聚美定时任务 start ===================== -->
+	<bean id="jumeiOrderImportJob"
+		class="com.voyageone.batch.oms.job.JuMeiOrderImportJob">
+	</bean>
+	
+	<bean id="jumeiOrderImportJobTask"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref local="jumeiOrderImportJob" />
+		</property>
+		<property name="targetMethod">
+			<value>jmNewOrderImport</value>
+		</property>
+	</bean>
+	<bean id="jumeiOrderImportJobTaskContri"
+		name="jumeiOrderImportJobTaskContri"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="jumeiOrderImportJobTask" />
+		</property>
+		<property name="cronExpression">
+			<value>${quartz.jm.new.order.get}</value>
+		</property>
+	</bean>
+	<bean id="jumeiShortUrlGenerateJobTask"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref local="jumeiOrderImportJob" />
+		</property>
+		<property name="targetMethod">
+			<value>shortUrlGenerate</value>
+		</property>
+	</bean>
+	<bean id="jumeiShortUrlGenerateJobTaskContri"
+		name="jumeiShortUrlGenerateJobTaskContri"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="jumeiShortUrlGenerateJobTask" />
+		</property>
+		<property name="cronExpression">
+			<value>${quartz.jm.short.url.generate}</value>
+		</property>
+	</bean>
+	
+	<!-- ===================== 聚美定时任务 end ===================== -->
+	
+</beans>

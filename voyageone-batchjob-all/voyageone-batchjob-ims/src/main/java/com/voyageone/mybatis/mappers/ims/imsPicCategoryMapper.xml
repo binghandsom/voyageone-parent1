@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.ims.sql">
+    <select id="ims_bt_pic_category_select" resultType="com.voyageone.batch.ims.modelbean.ImsPicCategory">
+        SELECT
+            category_id,
+            category_tid,
+            category_name,
+            type,
+            channel_id,
+            cart_id,
+            created,
+            creater,
+            modified,
+            modifier
+        FROM voyageone_ims.ims_bt_pic_category
+    </select>
+
+    <update id="ims_bt_pic_category_updateTid" parameterType="com.voyageone.batch.ims.modelbean.ImsPicCategory">
+        UPDATE voyageone_ims.ims_bt_pic_category
+        SET category_tid = #{category_tid}, modified = NOW(), modifier = #{modifier}
+        WHERE category_id = #{category_id}
+              AND modified = #{modified}
+    </update>
+
+    <select id="ims_bt_pic_category_select_byCart" resultType="com.voyageone.batch.ims.modelbean.ImsPicCategory">
+        SELECT
+            category_id,
+            category_tid,
+            category_name,
+            type,
+            channel_id,
+            cart_id,
+            created,
+            creater,
+            modified,
+            modifier
+        FROM voyageone_ims.ims_bt_pic_category
+        WHERE cart_id = #{cart_id} AND channel_id = #{channel_id} AND type = #{type}
+    </select>
+</mapper>

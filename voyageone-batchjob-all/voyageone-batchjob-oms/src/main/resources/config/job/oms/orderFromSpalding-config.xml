@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+    <!-- ============================SPALDING_MOB==================================================== --> 
+    <bean id="SPALDING_MOB" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+		<property name="staticField" value="com.voyageone.batch.oms.emum.MagentoType.SPALDING_MOB" />
+	</bean>  
+	<bean id="OrderFromSpaldingMobJob"
+		class="com.voyageone.batch.oms.job.NewOrderMagentoImportJob">
+		<property name="taskCheck">
+			<value>OrderFromSpaldingMobJob</value>
+		</property>
+		<property name="magentoType" ref="SPALDING_MOB" /> 
+		
+	</bean>	
+	<bean id="OrderFromSpaldingMobTask"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref local="OrderFromSpaldingMobJob" />
+		</property>
+		<property name="targetMethod">
+			<value>CreateMagentoOrder</value>
+		</property>
+	</bean>	
+	<bean id="OrderFromSpaldingMobContri" 
+		name="OrderFromSpaldingMobContri"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="OrderFromSpaldingMobTask" />
+		</property>
+		<property name="cronExpression">
+			<value>${quartz.order.postorder.transfer}</value>
+		</property>
+	</bean>
+	
+    <!-- =================================SPALDING_WEB============================================== -->      
+	<bean id="SPALDING_WEB" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+		<property name="staticField" value="com.voyageone.batch.oms.emum.MagentoType.SPALDING_WEB" />
+	</bean>	  
+	<bean id="OrderFromSpaldingWebJob"
+		class="com.voyageone.batch.oms.job.NewOrderMagentoImportJob">
+		<property name="taskCheck">
+			<value>OrderFromSpaldingWebJob</value>
+		</property>
+		<property name="magentoType" ref="SPALDING_WEB" /> 
+		
+	</bean>	
+	<bean id="OrderFromSpaldingWebTask"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref local="OrderFromSpaldingWebJob" />
+		</property>
+		<property name="targetMethod">
+			<value>CreateMagentoOrder</value>
+		</property>
+	</bean>	
+	<bean id="OrderFromSpaldingWebContri" 
+		name="OrderFromSpaldingWebContri"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="OrderFromSpaldingWebTask" />
+		</property>
+		<property name="cronExpression">
+			<value>${quartz.order.magento.transfer}</value>
+		</property>
+	</bean>
+
+
+</beans>

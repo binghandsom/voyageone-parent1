@@ -1,0 +1,200 @@
+<div class="ngdialog-message" ng-init="initialize()">
+	<!-- app±à¼­»­Ãæ -->
+	<div class="popUpCons popEditUserCons2" ng-show="popInfo.isShow == 1">
+		<h3 class="mt0 p-sm border-bottom-1" translate="Edit App"></h3>
+		<div class="row row-pop row-flow">
+			<div class="col-md-12">
+				<form name="appForm" id="appForm">
+					<input type="hidden" ng-model="popInfo.id" id='id'>
+					<table class="table table-bordered">
+						<tbody>
+							<tr>
+								<th translate="TITLE_TXT_APPLICATION"></th>
+								<td><input type="text" id="application"
+									ng-model="popInfo.application" class="form-control" required></td>
+							</tr>
+							<tr>
+								<th translate="GRID_TITLE_TXT_USER_MANATER_DESCRIPTION"></th>
+								<td><input type="text" id="description"
+									ng-model="popInfo.description" class="form-control"></td>
+							</tr>
+							<tr>
+								<th translate="TITLE_TXT_DEFAULT_URL"></th>
+								<td><input type="text" id="default_url"
+									ng-model="popInfo.default_url" class="form-control"></td>
+							</tr>
+							<tr>
+								<th translate="TITLE_TXT_SHOW_IN_MENU"></th>
+								<td><input type="checkbox" id="show_in_menu"
+									ng-model="popInfo.show_in_menu" /></td>
+							</tr>
+							<tr>
+								<th translate="TITLE_TXT_MENU_TITLE"></th>
+								<td><input type="text" id="menu_title"
+									ng-model="popInfo.menu_title" class="form-control"></td>
+							</tr>
+							<tr>
+								<th translate="TITLE_TXT_ORDER_BY"></th>
+								<td><input type="text" id="order_by"
+									ng-model="popInfo.order_by" class="form-control"></td>
+							</tr>
+							<tr>
+								<th translate="TITLE_TXT_ACTIVE"></th>
+								<td><input type="checkbox" id="active"
+									ng-model="popInfo.active" /></td>
+							</tr>
+						<tbody>
+					</table>
+					<div class="text-right">
+						<button style="width: 70px" class="btn btn-primary"
+							ng-click="doOk()">Save</button>
+						<button class="btn btn-primary" ng-click="closeThisDialog()">Cancel</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- Module±à¼­»­Ãæ  ----------------------------------------------------------------------------------------- -->
+	<div class="popUpCons popEditUserCons2" ng-show="popInfo.isShow == 2">
+		<h3 class="mt0 p-sm border-bottom-1" translate="Edit Module"></h3>
+		<div class="row row-pop row-flow">
+			<div class="col-md-12">
+				<form name="moduleForm" id="moduleForm">
+					<input type="hidden" ng-model="popInfo.id" id='id'> <input
+						type="hidden" ng-model="popInfo.application_id" id='application_id'>
+					<table class="table table-bordered">
+						<tbody>
+							<tr>
+								<th translate="TITLE_TXT_MODULE"></th>
+								<td><input type="text" id="module" ng-model="popInfo.module"
+									class="form-control" required></td>
+							</tr>
+							<tr>
+								<th translate="GRID_TITLE_TXT_USER_MANATER_DESCRIPTION"></th>
+								<td><input type="text" id="description"
+									ng-model="popInfo.description" class="form-control"></td>
+							</tr>
+							<tr>
+								<th translate="TITLE_TXT_DEFAULT_URL"></th>
+								<td><input type="text" id="default_url"
+									ng-model="popInfo.default_url" class="form-control"></td>
+							</tr>
+							<tr>
+								<th translate="TITLE_TXT_SHOW_IN_MENU"></th>
+								<td><input type="checkbox" id="show_in_menu"
+									ng-model="popInfo.show_in_menu" /></td>
+							</tr>
+							<tr>
+								<th translate="TITLE_TXT_MENU_TITLE"></th>
+								<td><input type="text" id="menu_title"
+									ng-model="popInfo.menu_title" class="form-control"></td>
+							</tr>
+							<tr>
+								<th translate="TITLE_TXT_ACTIVE"></th>
+								<td><input type="checkbox" id="active"
+									ng-model="popInfo.active" /></td>
+							</tr>
+						<tbody>
+					</table>
+					<div class="text-right">
+						<button style="width: 70px" class="btn btn-primary"
+							ng-click="doOk()">Save</button>
+						<button class="btn btn-primary" ng-click="closeThisDialog()">Cancel</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- Controller±à¼­»­Ãæ  ----------------------------------------------------------------------------------------- -->
+	<div class="popUpCons popEditUserCons2" ng-show="popInfo.isShow == 3">
+		<h3 class="mt0 p-sm border-bottom-1" translate="Edit Controller"></h3>
+		<div class="row row-pop row-flow">
+			<div class="col-md-12">
+				<form name="controllerForm" id="controllerForm">
+					<input type="hidden" ng-model="popInfo.id" id='id'> <input
+						type="hidden" ng-model="popInfo.module_id" id='module_id'>
+					<table class="table table-bordered">
+						<tbody>
+							<tr>
+								<th translate="GRID_TITLE_TXT_USER_MANATER_CONTROLLER"></th>
+								<td><input type="text" id="controller"
+									ng-model="popInfo.controller" class="form-control" required></td>
+							</tr>
+							<tr>
+								<th translate="GRID_TITLE_TXT_USER_MANATER_DESCRIPTION"></th>
+								<td><input type="text" id="description"
+									ng-model="popInfo.description" class="form-control"></td>
+							</tr>
+							<tr>
+								<th translate="TITLE_TXT_DEFAULT_URL"></th>
+								<td><input type="text" id="default_url"
+									ng-model="popInfo.default_url" class="form-control"></td>
+							</tr>
+							<tr>
+								<th translate="TITLE_TXT_SHOW_IN_MENU"></th>
+								<td><input type="checkbox" id="show_in_menu"
+									ng-model="popInfo.show_in_menu" /></td>
+							</tr>
+							<tr>
+								<th translate="TITLE_TXT_MENU_TITLE"></th>
+								<td><input type="text" id="menu_title"
+									ng-model="popInfo.menu_title" class="form-control"></td>
+							</tr>
+							<tr>
+								<th translate="TITLE_TXT_ACTIVE"></th>
+								<td><input type="checkbox" id="active"
+									ng-model="popInfo.active" /></td>
+							</tr>
+						<tbody>
+					</table>
+					<div class="text-right">
+						<button style="width: 70px" class="btn btn-primary"
+							ng-click="doOk()">Save</button>
+						<button class="btn btn-primary" ng-click="closeThisDialog()">Cancel</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- Action±à¼­»­Ãæ  ----------------------------------------------------------------------------------------- -->
+	<div class="popUpCons popEditUserCons2" ng-show="popInfo.isShow == 4">
+		<h3 class="mt0 p-sm border-bottom-1" translate="Edit Action"></h3>
+		<div class="row row-pop row-flow">
+			<div class="col-md-12">
+				<form name="actionForm" id="actionForm">
+					<input type="hidden" ng-model="popInfo.id" id='id'> <input
+						type="hidden" ng-model="popInfo.controller_id" id='controller_id'>
+					<table class="table table-bordered">
+						<tbody>
+							<tr>
+								<th translate="TITLE_TXT_ACTION"></th>
+								<td><input type="text" id="name" ng-model="popInfo.name"
+									class="form-control" required></td>
+							</tr>
+							<tr>
+								<th translate="GRID_TITLE_TXT_USER_MANATER_DESCRIPTION"></th>
+								<td><input type="text" id="description"
+									ng-model="popInfo.description" class="form-control"></td>
+							</tr>
+							<tr>
+								<th translate="TITLE_TXT_ORDER_BY"></th>
+								<td><input type="text" id="order_by"
+									ng-model="popInfo.order_by" class="form-control"></td>
+							</tr>
+							<tr>
+								<th translate="TITLE_TXT_ACTIVE"></th>
+								<td><input type="checkbox" id="active"
+									ng-model="popInfo.active" /></td>
+							</tr>
+						<tbody>
+					</table>
+					<div class="text-right">
+						<button style="width: 70px" class="btn btn-primary"
+							ng-click="doOk()">Save</button>
+						<button class="btn btn-primary" ng-click="closeThisDialog()">Cancel</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

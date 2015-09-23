@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+          
+	<!-- ===================== 手工倒入订单定时任务 start ===================== -->
+	<bean id="manualNewOrderInfoBatchImportJob"
+		class="com.voyageone.batch.oms.job.ManualNewOrderInfoBatchImportJob">
+	</bean>
+	
+	<bean id="manualNewOrderInfoBatchImportJobTask"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref local="manualNewOrderInfoBatchImportJob" />
+		</property>
+		<property name="targetMethod">
+			<value>run</value>
+		</property>
+	</bean>
+	<bean id="manualNewOrderInfoBatchImportJobTaskContri"
+		name="manualNewOrderInfoBatchImportJobTaskContri"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="manualNewOrderInfoBatchImportJobTask" />
+		</property>
+		<property name="cronExpression">
+			<value>${quartz.manual.new.order.import}</value>
+		</property>
+	</bean>
+	
+	<!-- ===================== 手工倒入订单定时任务 end ===================== -->
+	
+</beans>

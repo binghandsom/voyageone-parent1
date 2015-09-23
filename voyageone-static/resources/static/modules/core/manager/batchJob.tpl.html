@@ -1,0 +1,47 @@
+<!--<link rel="stylesheet" type="text/css" href="modules/core/setting/user.css" />-->
+<!--contents-->
+<div class="container" ng-controller="batchJobController"
+	ng-init="initialize()">
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="table-responsive mah500px border-bottom-1">
+				<table class="table table-bordered mb-sm">
+					<thead>
+						<tr>
+							<th class="w10p" translate="id"></th>
+							<th class="w10p" translate="type"></th>
+							<th class="w30p" translate="task"></th>
+							<th class="w25p" translate="comment"></th>
+							<th class="w25p" translate="run"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="item in batchList" class="carousel">
+							<td>{{item.id}}</td>
+							<td>{{item.type}}</td>
+							<td>{{item.task}}</td>
+							<td>{{item.comment}}</td>
+							<td>
+								<button type="button" ng-model="item.cfg_val1"
+									btn-checkbox="btn-checkbox" btn-checkbox-true="1" ng-change="update(item)"
+									btn-checkbox-false="0"
+									class="btn ng-valid ng-dirty ng-valid-parse ng-touched"
+									ng-class="{'1':'active btn-primary','0':'btn-inverse'}[item.cfg_val1]">
+									<span ng-show="item.cfg_val1 == '1'">open</span><span
+										ng-show="item.cfg_val1 == '0'">close</span>
+								</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="row">
+			<!-- <div class="col-xs-10"></div> -->
+			<div class="text-right">
+				<button style="width: 70px" class="btn btn-primary"
+								ng-click="doAdd()">Add</button>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.batch.bi.mapper.ShopMapper">
+
+    <!-- 获得vm_shop信息结构 -->
+    <resultMap id="shopMap" type="batch.bi.ShopBean">
+        <result column="id" property="id"/>
+        <result column="code" property="code"/>
+        <result column="name" property="name"/>
+        <result column="name_en" property="name_en"/>
+        <result column="name_cn" property="name_cn"/>
+        <result column="channel_id" property="channel_id"/>
+        <result column="ecomm_id" property="ecomm_id"/>
+        <result column="enable" property="enable"/>
+        <result column="shop_user" property="shop_user"/>
+        <result column="shop_ps" property="shop_ps"/>
+        <result column="create_time" property="create_time"/>
+        <result column="create_user" property="create_user"/>
+        <result column="update_time" property="update_time"/>
+        <result column="update_user" property="update_user"/>
+    </resultMap>
+
+    <!-- 设定vm_shop检索条件 -->
+    <sql id="vm_shop_condition">
+        <where>
+            <if test="id != null and id != '' ">
+                and id = #{id}
+            </if>
+            <if test="code != null and code != '' ">
+                and code = #{code}
+            </if>
+            <if test="channel_id != null and channel_id != '' ">
+                and channel_id = #{channel_id}
+            </if>
+            <if test="ecomm_id != null and ecomm_id != '' ">
+                and ecomm_id = #{ecomm_id}
+            </if>
+            <if test="shop_user != null and shop_user != '' ">
+                and shop_user = #{shop_user}
+            </if>
+            <if test="enable != null and enable != '' ">
+                and enable = #{enable}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 获得vm_shop数量 -->
+    <select id="select_count_vm_shop" parameterType="batch.bi.ShopBean" resultType="int">
+        select
+        count(1)
+        from bi_master.vm_shop
+        <include refid="vm_shop_condition"/>
+    </select>
+
+    <!-- 检索vm_shop信息 -->
+    <select id="select_record_vm_shop" parameterType="Map" resultMap="shopMap">
+        select
+        code,
+        name,
+        name_en,
+        name_cn,
+        shop_user,
+        shop_ps
+        from bi_master.vm_shop
+        <include refid="vm_shop_condition"/>
+    </select>
+
+    <select id="select_list_vm_shop" parameterType="int" resultType="com.voyageone.batch.bi.bean.modelbean.ShopBean">
+		select
+        id,
+        code,
+        name,
+        name_en,
+        name_cn,
+        channel_id,
+        ecomm_id,
+        enable,
+        shop_user,
+        shop_ps,
+        create_time,
+        create_user,
+        update_time,
+        update_user
+		from bi_master.vm_shop
+		WHERE
+		enable = #{enable}
+	</select>
+
+    <!-- 更新vm_shop信息 -->
+    <update id="update_vm_shop" parameterType="batch.bi.ShopBean">
+        UPDATE bi_master.vm_shop
+        SET name = #{name},
+        name_en = #{name_en},
+        name_cn = #{name_cn},
+        enable = #{enable},
+        shop_user = #{shop_user},
+        shop_ps = #{shop_ps},
+        update_time = #{update_time},
+        update_user = #{update_user}
+        <include refid="vm_shop_condition"/>
+    </update>
+
+    <!-- 插入vm_shop信息 -->
+    <insert id="insert_vm_shop" parameterType="batch.bi.ShopBean">
+		INSERT INTO bi_master.vm_shop (
+			code,
+			name,
+			name_en,
+			name_cn,
+			channel_id,
+			ecomm_id,
+			enable,
+			shop_user,
+			shop_ps,
+			create_time,
+			create_user,
+			update_time,
+			update_user
+		)
+		VALUES
+		(
+			#{code},
+			#{name},
+			#{name_en},
+			#{name_cn},
+			#{channel_id},
+			#{ecomm_id},
+			#{enable},
+			#{shop_user},
+			#{shop_ps},
+			#{create_time},
+			#{create_user},
+			#{update_time},
+			#{update_user}
+		)
+	</insert>
+
+</mapper>

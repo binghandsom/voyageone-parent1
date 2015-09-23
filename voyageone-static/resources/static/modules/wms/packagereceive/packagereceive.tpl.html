@@ -1,0 +1,66 @@
+<div class="container-fluid" ng-controller="packagereceiveCtrl">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                Package Receive
+            </h4>
+        </div>
+        <div class="panel-body ng-binding form-inline">
+            <div class="form-group">
+                <!-- 外部订单号 -->
+                <div class="input-group">
+                    <label class="input-group-addon">Order Number</label>
+                    <input class="form-control" type="text" ng-model="txtOrderNumber" placeholder="Order Number"/>
+                </div>
+                <input class="btn btn-primary" type="button" value="Scan"/>
+                <a href="#wms/packagereceive/list" class="btn btn-primary">View History</a>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-condensed">
+                    <thead>
+                    <tr>
+                        <th class="col-fix-no">#</th>
+                        <th>Web Order Number</th>
+                        <th>Order Number</th>
+                        <th>Order Item</th>
+                        <th>Updated Date</th>
+                        <th>ReLabel</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td class="col-fix-no">1</td>
+                        <td>JCTR-26160601</td>
+                        <td>500004013</td>
+                        <td>(1) 1448-2322-ONESIZE</td>
+                        <td>2015-04-08 14:55:21 </td>
+                        <td class="text-center"><button class="btn btn-xs btn-primary">ReLabel</button></td>
+                    </tr>
+                    <tr>
+                        <td class="col-fix-no">2</td>
+                        <td>JCTR-26160601</td>
+                        <td>500004013</td>
+                        <td>(3) 2437-7245-M,2445-7323-M,2446-7335-M</td>
+                        <td>2015-04-08 14:55:21 </td>
+                        <td class="text-center"><button class="btn btn-xs btn-primary">ReLabel</button></td>
+                    </tr>
+                    <tr>
+                        <td class="col-fix-no">3</td>
+                        <td>JCTR-26160601</td>
+                        <td>500004013</td>
+                        <td>(3) 2437-7245-M,2445-7323-M,2446-7335-M</td>
+                        <td>2015-04-08 14:55:21 </td>
+                        <td class="text-center"><button class="btn btn-xs btn-primary">ReLabel</button></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-center">
+                <v-paging curr="1" size="10" rows="25" call="getData"></v-paging>
+            </div>
+        </div>
+    </div>
+</div>
+

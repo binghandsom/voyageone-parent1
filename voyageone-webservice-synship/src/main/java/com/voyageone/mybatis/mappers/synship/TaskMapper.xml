@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.synship.sql">
+
+    <select id="taskControl_getCfg_val2" resultType="String">
+        select
+            cfg_val2
+        from
+            tm_task_control
+        where task_id = #{task_id}
+          and cfg_name = #{cfg_name}
+          and cfg_val1 = #{cfg_val1}
+    </select>
+
+
+</mapper>

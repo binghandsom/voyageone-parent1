@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.synship.sql">
+
+    <insert id="wms_insertItemDetail">
+        insert into
+            Synship.wms_bt_item_details
+            (
+                order_channel_id,
+                sku,
+                product_id,
+                itemcode,
+                size,
+                barcode,
+                is_sale,
+                client_sku,
+                active,
+                created,
+                creater,
+                modified,
+                modifier
+            )
+            VALUES
+            (
+                #{order_channel_id},
+                #{sku},
+                #{product_id},
+                #{itemcode},
+                #{size},
+                #{barcode},
+                #{is_sale},
+                #{client_sku},
+                #{active},
+                #{created},
+                #{creater},
+                #{modified},
+                #{modifier}
+            )
+            on duplicate key update
+                itemcode = #{itemcode},
+                size = #{size},
+                barcode = #{barcode},
+                is_sale = #{is_sale},
+                client_sku = #{client_sku},
+                active = #{active},
+                created = #{created},
+                creater =  #{creater},
+                modified = #{modified},
+                modifier = #{modifier}
+    </insert>
+
+
+</mapper>

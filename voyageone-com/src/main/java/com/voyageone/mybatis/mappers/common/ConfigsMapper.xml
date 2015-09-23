@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.common.sql">
+
+    <select id="tm_code_getAll" resultType="com.voyageone.common.configs.beans.CodeBean">
+        SELECT * FROM tm_code ORDER BY id
+    </select>
+
+    <select id="cms_mt_feed_config_getAll" resultType="com.voyageone.common.configs.beans.FeedBean">
+        SELECT * FROM voyageone_cms.cms_mt_feed_config ORDER BY order_channel_id, cfg_name, cfg_val1
+    </select>
+
+    <select id="tm_order_channel_config_getAll" resultType="com.voyageone.common.configs.beans.OrderChannelConfigBean">
+        SELECT * FROM tm_order_channel_config ORDER BY order_channel_id, cfg_name, cfg_val1
+    </select>
+
+    <select id="tm_port_config_getAll" resultType="com.voyageone.common.configs.beans.PortConfigBean">
+        SELECT * FROM tm_port_config ORDER BY port, cfg_name, cfg_val1
+    </select>
+
+    <select id="tm_order_channel_getAll" resultType="com.voyageone.common.configs.beans.OrderChannelBean">
+        SELECT * FROM tm_order_channel ORDER BY order_channel_id
+    </select>
+
+    <select id="viw_com_cart_shop_channel_mapping_getAll" resultType="com.voyageone.common.configs.beans.ShopBean">
+        SELECT
+          *
+        FROM
+          viw_com_cart_shop_channel_mapping
+      </select>
+
+    <select id="tm_channel_shop_config_getAll" resultType="com.voyageone.common.configs.beans.ShopConfigBean">
+        select * from tm_channel_shop_config order by order_channel_id,cart_id,cfg_name,cfg_val1
+    </select>
+
+    <select id="com_mt_value_getAll" resultType="com.voyageone.common.configs.beans.TypeBean">
+        SELECT
+          mt_value.type_id,
+          mt_type.name as type_code,
+          mt_value.value,
+          mt_value.name,
+          mt_value.add_name1,
+          mt_value.add_name2,
+          mt_value.lang_id,
+          mt_type.comment
+        FROM
+          com_mt_value mt_value,
+          com_mt_type mt_type
+        WHERE
+          mt_value.type_id = mt_type.id
+         ORDER BY
+          mt_value.type_id,
+          mt_value.value
+    </select>
+
+    <select id="tm_discount_rate_getDiscountRate" resultType="com.voyageone.common.configs.beans.DiscountRateBean">
+        select * from tm_discount_rate order by order_channel_id,ship_channel
+    </select>
+
+    <select id="wms_mt_store_getAll" resultType="com.voyageone.common.configs.beans.StoreBean">
+        select
+            store_id,
+            order_channel_id,
+            store_name,
+            store_type,
+            store_location,
+            store_kind,
+            parent_store_id,
+            label_type,
+            rsv_sort,
+            is_sale,
+            inventory_manager,
+            inventory_hold,
+            inventory_syn_type
+        from
+            wms_mt_store
+        WHERE
+            active = '1'
+        order by
+            order_channel_id,store_id
+    </select>
+
+    <select id="ct_cart_getAll" resultType="com.voyageone.common.configs.beans.CartBean">
+        select
+            cart_id,
+            name,
+            short_name,
+            description,
+            platform_id,
+            cart_type
+        from
+            ct_cart
+        WHERE
+            active = '1'
+        order by
+            cart_id
+    </select>
+
+    <select id="com_mt_third_party_config_getAll" resultType="com.voyageone.common.configs.beans.ThirdPartyConfigBean">
+        select
+            seq,
+            channel_id,
+            prop_name,
+            prop_val1,
+            prop_val2,
+            prop_val3,
+            prop_val4,
+            prop_val5,
+            prop_val6
+        from com_mt_third_party_config
+        order by channel_id,prop_name
+    </select>
+
+    <select id="ct_store_config_getAll" resultType="com.voyageone.common.configs.beans.StoreConfigBean">
+        SELECT * FROM ct_store_config ORDER BY store_id, cfg_name, cfg_val1
+    </select>
+    
+    <resultMap type="com.voyageone.common.configs.beans.ImsCategoryBean" id="ImsCategoryMap">
+		<id property="categoryId" column="category_id"/>
+		<result property="parentCid" column="parent_cid"/>
+		<result property="isParent" column="is_parent"/>
+		<result property="categoryName" column="category_name"/>
+		<result property="categoryPath" column="category_path"/>
+		<result property="sortOrder" column="sort_order"/>
+	</resultMap>
+    
+    <select id="ims_categories_getAll" resultMap="ImsCategoryMap">
+        SELECT category_id,
+        	   parent_cid,
+        	   is_parent,
+        	   category_name,
+        	   category_path,
+        	   sort_order
+          FROM voyageone_ims.ims_mt_categories
+    </select>
+	<select id="com_platform_info" resultType="com.voyageone.common.bussiness.platformInfo.model.PlatformInfoModel" parameterType="int">
+		SELECT DISTINCT
+			m.category_id as categoryId,
+			m.platform_cid as platformCid,
+			v.platform_id as platformId,
+			v.cart_id as cartId,
+			v.platform as platformCode,
+			t.`comment` as platformName
+		FROM
+			voyageone_ims.ims_mt_category_mapping m
+		LEFT JOIN Synship.viw_com_cart_shop_channel_mapping v ON v.cart_id = m.platform_cart_id 
+		LEFT JOIN Synship.tm_platform t on t.platform_id = v.platform_id
+		WHERE
+			m.category_id = #{categoryId}
+	</select>
+</mapper>

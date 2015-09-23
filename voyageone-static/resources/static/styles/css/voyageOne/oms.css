@@ -1,0 +1,106 @@
+@charset "utf-8";
+
+.addOrderPopCons {
+	width: 850px;
+	margin-left: -450px;
+	margin-top: -250px;
+}
+  
+.popDeleteCons{
+    width:450px;
+    margin-left:-225px;
+    margin-top:-110px;
+}
+
+.popAddNoteCons{
+    width:460px;
+    margin-top:-150px;
+    margin-left:-230px;
+}
+
+.popLogCreditCons{
+    width:500px;
+    overflow:auto;
+    margin-top:-300px;
+    margin-left:-200px;
+}
+
+.popSearchSkusCons{
+    width:1000px;
+    margin-left:-500px;
+    margin-top:-350px;
+}
+
+.popReturnCons {
+    width: 1000px;
+    margin-left: -500px;
+    margin-top: -300px;
+}
+
+.ChargesEditCons{
+    width:310px;
+    margin-left:-155px;
+    margin-top:-100px;
+}
+
+.shippingEditCons{
+    width:360px;
+    margin-left:-180px;
+    margin-top:-130px;
+}
+
+.discountsEditCons{
+    width:400px;
+    margin-left:-200px;
+    margin-top:-150px;
+
+}
+
+.cancelCons{
+    width:300px;
+    top:50%;
+    left:50%;
+    margin-top:-65px;
+    margin-left:-150px;
+}
+
+/* chenkai */
+.popEditSoldtoCons{
+    width:1000px;
+   
+    top:50%;
+    left:50%;
+    margin-top:-300px;
+    margin-left:-410px;
+}
+.popEditShiptoCons{
+	width:400px;
+   
+    top:50%;
+    left:50%;
+    margin-top:-300px;
+    margin-left:-210px;
+}
+.popSearchCustomerCons{
+	width:1000px;
+   
+    top:50%;
+    left:50%;
+    margin-top:-400px;
+    margin-left:-450px;
+}
+.popShipChangeCons{
+	width:400px;
+   
+    top:50%;
+    left:50%;
+    margin-top:-150px;
+    margin-left:-350px;
+}
+
+.gridStyle{
+	border:1px solid #d4d4d4;
+	width:1138px;
+	height:390px
+}
+

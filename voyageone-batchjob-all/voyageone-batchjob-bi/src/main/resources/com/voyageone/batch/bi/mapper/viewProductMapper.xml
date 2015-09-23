@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.batch.bi.mapper.ViewProductMapper">
+
+    <!-- 获得vs_view_sales_product_lift_cycle信息结构 -->
+    <resultMap id="viewProductMap" type="batch.bi.ViewProductBean">
+        <result column="shop_id" property="shop_id"/>
+        <result column="num_iid" property="num_iid"/>
+        <result column="num" property="num"/>
+        <result column="price" property="price"/>
+        <result column="approve_status" property="approve_status"/>
+        <result column="list_time" property="list_time"/>
+        <result column="modified" property="modified"/>
+        <result column="delist_time" property="delist_time"/>
+        <result column="cid" property="cid"/>
+    </resultMap>
+
+    <resultMap id="Item" type="taobao.Item">
+        <result column="num_iid" property="num_iid"/>
+        <result column="num" property="num"/>
+        <result column="price" property="price"/>
+        <result column="approve_status" property="approve_status"/>
+        <result column="list_time" property="list_time"/>
+        <result column="modified" property="modified"/>
+        <result column="delist_time" property="delist_time"/>
+        <result column="cid" property="cid"/>
+    </resultMap>
+
+    <resultMap id="Ware" type="jingdong.Ware">
+        <result column="num_iid" property="ware_id"/>
+        <result column="num" property="item_num"/>
+        <result column="price" property="jd_price"/>
+        <result column="approve_status" property="status"/>
+        <result column="list_time" property="online_time"/>
+        <result column="modified" property="modified"/>
+        <result column="delist_time" property="offline_time"/>
+        <result column="cid" property="cid"/>
+    </resultMap>
+
+    <!-- 设定vs_view_sales_product_lift_cycle检索条件 -->
+    <sql id="vs_view_sales_product_lift_cycle_condition">
+        <where>
+            <if test="shop_id != null and shop_id != '' ">
+                and shop_id = #{shop_id}
+            </if>
+            <if test="num_iid != null and num_iid != '' ">
+                and num_iid = #{num_iid}
+            </if>
+            <if test="list_time_from != null and list_time_from != '' ">
+                and list_time <![CDATA[>=]]> convert(#{list_time_from}, datetime)
+            </if>
+            <if test="list_time_to != null and list_time_to != '' ">
+                and list_time  <![CDATA[<=]]> convert(#{list_time_to}, datetime)
+            </if>
+            <if test="delist_time_from != null and delist_time_from != '' ">
+                and delist_time <![CDATA[>=]]> convert(#{delist_time_from}, datetime)
+            </if>
+            <if test="delist_time_to != null and delist_time_to != '' ">
+                and delist_time  <![CDATA[<=]]> convert(#{delist_time_to}, datetime)
+            </if>
+            <if test="cid != null and cid != '' ">
+                and cid = #{cid}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 获得vs_view_sales_product_lift_cycle数量 -->
+    <select id="select_count_vs_view_sales_product_lift_cycle" parameterType="Map" resultType="int">
+        select
+        count(1)
+        from ${db_name}.vs_view_sales_product_lift_cycle
+        <include refid="vs_view_sales_product_lift_cycle_condition"/>
+    </select>
+
+    <select id="select_record_vs_view_sales_product_lift_cycle" parameterType="Map"
+            resultMap="viewProductMap">
+        SELECT
+        shop_id,
+        num_iid,
+        num,
+        price,
+        approve_status,
+        list_time,
+        modified,
+        delist_time,
+        cid
+        FROM ${db_name}.vs_view_sales_product_lift_cycle
+        <include refid="vs_view_sales_product_lift_cycle_condition"/>
+    </select>
+
+    <!-- 检索vs_view_sales_product_lift_cycle信息 -->
+    <select id="select_list_vs_view_sales_product_lift_cycle" parameterType="Map" resultMap="viewProductMap">
+        SELECT
+        shop_id,
+        num_iid,
+        num,
+        price,
+        approve_status,
+        list_time,
+        modified,
+        delist_time,
+        cid
+        FROM ${db_name}.vs_view_sales_product_lift_cycle
+        <include refid="vs_view_sales_product_lift_cycle_condition"/>
+    </select>
+
+    <select id="select_list_iid_vs_view_sales_product_lift_cycle" parameterType="Map" resultType="String">
+        SELECT
+        num_iid
+        FROM ${db_name}.vs_view_sales_product_lift_cycle
+        <include refid="vs_view_sales_product_lift_cycle_condition"/>
+		LIMIT #{init_index}, #{get_size}
+    </select>
+
+    <insert id="duplicate_vs_view_sales_product_lift_cycle_tm" parameterType="Map" useGeneratedKeys="true">
+        INSERT INTO ${db_name}.vs_view_sales_product_lift_cycle
+        (
+        shop_id,
+        num_iid,
+        num,
+        price,
+        approve_status,
+        list_time,
+        modified,
+        delist_time,
+        cid
+        )
+        VALUES
+        <foreach collection="value" index="index" item="Item" separator=",">
+            (
+            ${shop_id},
+            &apos;${Item.numIid}&apos;,
+            ${Item.num},
+            ${Item.price},
+            &apos;${Item.approveStatus}&apos;,
+            STR_To_DATE(&apos;${Item.listTime}&apos;,'%a %b %d %H:%i:%s CST %Y'),
+            STR_To_DATE(&apos;${Item.modified}&apos;,'%a %b %d %H:%i:%s CST %Y'),
+            STR_To_DATE(&apos;${Item.delistTime}&apos;,'%a %b %d %H:%i:%s CST %Y'),
+            &apos;${Item.cid}&apos;
+            )
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        num = VALUES(num),
+        price = VALUES(price),
+        approve_status = VALUES(approve_status),
+        list_time = VALUES(list_time),
+        modified = VALUES(modified),
+        delist_time = VALUES(delist_time),
+        cid = VALUES(cid)
+    </insert>
+
+    <insert id="duplicate_vs_view_sales_product_lift_cycle_jd_on" parameterType="Map" useGeneratedKeys="true">
+        INSERT INTO ${db_name}.vs_view_sales_product_lift_cycle
+        (
+        shop_id,
+        num_iid,
+        num,
+        price,
+        approve_status,
+        list_time,
+        modified,
+        delist_time,
+        cid
+        )
+        VALUES
+        <foreach collection="value" index="index" item="Ware" separator=",">
+            (
+            ${shop_id},
+            &apos;${Ware.wareId}&apos;,
+            ${Ware.stockNum},
+            ${Ware.jdPrice},
+            &apos;${Ware.status}&apos;,
+            STR_To_DATE(&apos;${Ware.onlineTime}&apos;,'%Y-%m-%d %H:%i:%s'),
+            STR_To_DATE(&apos;${Ware.modified}&apos;,'%Y-%m-%d %H:%i:%s'),
+            STR_To_DATE(&apos;${Ware.offlineTime}&apos;,'%Y-%m-%d %H:%i:%s'),
+            &apos;${Ware.categoryId}&apos;
+            )
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        num = VALUES(num),
+        price = VALUES(price),
+        approve_status = VALUES(approve_status),
+        list_time = VALUES(list_time),
+        modified = VALUES(modified),
+        delist_time = VALUES(delist_time),
+        cid = VALUES(cid)
+    </insert>
+
+    <insert id="duplicate_vs_view_sales_product_lift_cycle_jd_de" parameterType="Map" useGeneratedKeys="true">
+        INSERT INTO ${db_name}.vs_view_sales_product_lift_cycle
+        (
+        shop_id,
+        num_iid,
+        num,
+        price,
+        approve_status,
+        list_time,
+        modified,
+        delist_time,
+        cid
+        )
+        VALUES
+        <foreach collection="value" index="index" item="Ware" separator=",">
+            (
+            ${shop_id},
+            &apos;${Ware.wareId}&apos;,
+            ${Ware.stockNum},
+            ${Ware.jdPrice},
+            &apos;${Ware.status}&apos;,
+            STR_To_DATE(&apos;${Ware.onlineTime}&apos;,'%Y-%m-%d %H:%i:%s'),
+            STR_To_DATE(&apos;${Ware.modified}&apos;,'%Y-%m-%d %H:%i:%s'),
+            STR_To_DATE(&apos;${Ware.offlineTime}&apos;,'%Y-%m-%d %H:%i:%s'),
+            &apos;${Ware.categoryId}&apos;
+            )
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        num = VALUES(num),
+        price = VALUES(price),
+        approve_status = VALUES(approve_status),
+        list_time = VALUES(list_time),
+        modified = VALUES(modified),
+        delist_time = VALUES(delist_time),
+        cid = VALUES(cid)
+    </insert>
+
+    <insert id="replace_vs_view_sales_product_lift_cycle" parameterType="Map" useGeneratedKeys="true">
+        REPLACE INTO ${db_name}.vs_view_sales_product_lift_cycle
+        <foreach collection="column" index="index" item="columnname" open="(" separator="," close=")">
+            ${columnname}
+        </foreach>
+        VALUES
+        <foreach collection="value" index="index" item="SalesProductValuesList" separator=",">
+            (
+            ${ViewProductBean.shop_id},
+            ${ViewProductBean.num_iid},
+            ${ViewProductBean.num},
+            ${ViewProductBean.price},
+            ${ViewProductBean.approve_status},
+            ${ViewProductBean.list_time},
+            ${ViewProductBean.modified},
+            ${ViewProductBean.delist_time},
+            ${ViewProductBean.cid}
+            )
+        </foreach>
+
+    </insert>
+
+    <update id="update_vs_view_sales_product_lift_cycle" parameterType="Map">
+        UPDATE ${db_name}.vs_view_sales_product_lift_cycle
+        SET
+        num = ${ViewProductBean.num},
+        price = ${ViewProductBean.price},
+        approve_status = ${ViewProductBean.approve_status},
+        list_time = ${ViewProductBean.list_time},
+        modified = ${ViewProductBean.modified},
+        delist_time = ${ViewProductBean.delist_time},
+        cid = ${ViewProductBean.cid}
+        <include refid="vs_view_sales_product_lift_cycle_condition"/>
+    </update>
+
+    <insert id="insert_vs_view_sales_product_lift_cycle" parameterType="Map">
+        INSERT INTO ${db_name}.vs_view_sales_product_lift_cycle (
+        shop_id,
+        num_iid,
+        num,
+        price,
+        approve_status,
+        list_time,
+        modified,
+        delist_time,
+        cid
+        )
+        VALUES
+        <foreach collection="value" item="ViewProductBean" separator=",">
+            (
+            ${ViewProductBean.shop_id},
+            ${ViewProductBean.num_iid},
+            ${ViewProductBean.num},
+            ${ViewProductBean.price},
+            ${ViewProductBean.approve_status},
+            ${ViewProductBean.list_time},
+            ${ViewProductBean.modified},
+            ${ViewProductBean.delist_time},
+            ${ViewProductBean.cid}
+            )
+        </foreach>
+    </insert>
+
+</mapper>

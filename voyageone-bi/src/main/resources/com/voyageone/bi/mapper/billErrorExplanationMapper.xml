@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.bi.mapper.BillErrorExplanationMapper">
+
+    <!-- 获得vf_bill信息结构 -->
+    <resultMap id="billErrorExplanationBeanMap" type="bi.BillErrorExplanationBean">
+        <result column="seq" property="seq"/>
+        <result column="invoice_num" property="invoice_num"/>
+        <result column="main_no" property="main_no"/>
+        <result column="bill_related_no" property="bill_related_no"/>
+        <result column="db_related_no" property="db_related_no"/>
+        <result column="error_type_id" property="error_type_id"/>
+        <result column="error_description" property="error_description"/>
+        <result column="error_reason" property="error_reason"/>
+        <result column="error_deal" property="error_deal"/>
+        <result column="order_num" property="order_num"/>
+        <result column="related_order_num" property="related_order_num"/>
+        <result column="tracking_no" property="tracking_no"/>
+        <result column="related_tracking_no" property="related_tracking_no"/>
+        <result column="main_waybill_num" property="main_waybill_num"/>
+        <result column="related_main_waybill_num" property="related_main_waybill_num"/>
+        <result column="error_process" property="error_process"/>
+        <result column="error_status" property="error_status"/>
+    </resultMap>
+
+    <sql id="vf_bill_error_explanation_condition_fuzzy">
+        <where>
+            <if test="invoice_num != null and invoice_num != '' ">
+                AND error.invoice_num LIKE CONCAT('%',#{invoice_num},'%' )
+            </if>
+            <if test="tracking_no != null and tracking_no != '' ">
+                AND (error.main_no LIKE CONCAT('%',#{tracking_no},'%' ) OR error.bill_related_no LIKE
+                CONCAT('%',#{tracking_no},'%' ) OR error.db_related_no LIKE CONCAT('%',#{tracking_no},'%' ))
+            </if>
+            <if test="main_waybill_num != null and main_waybill_num != '' ">
+                AND (error.main_no LIKE CONCAT('%',#{main_waybill_num},'%' ) OR error.bill_related_no LIKE
+                CONCAT('%',#{main_waybill_num},'%' ) OR error.db_related_no LIKE CONCAT('%',#{main_waybill_num},'%' ))
+            </if>
+            <if test="pay_in_warrant_num != null and pay_in_warrant_num != '' ">
+                AND (error.main_no LIKE CONCAT('%',#{pay_in_warrant_num},'%' ) OR error.bill_related_no LIKE
+                CONCAT('%',#{pay_in_warrant_num},'%' ) OR error.db_related_no LIKE CONCAT('%',#{pay_in_warrant_num},'%'
+                ))
+            </if>
+            <if test="error_type_id != null and error_type_id != '' ">
+                AND error.error_type_id = #{error_type_id}
+            </if>
+            <if test="error_status != null and error_status != '' ">
+                AND error.error_status = #{error_status}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 获得vf_bill数量 -->
+    <select id="select_count_vf_bill_error_explanation" parameterType="Map" resultType="int">
+        select
+        count(1)
+        FROM
+        bi_master.vf_bill_error_explanation AS error
+        <include refid="vf_bill_error_explanation_condition_fuzzy"/>
+    </select>
+
+    <!-- 检索vf_bill信息 -->
+    <select id="select_list_vf_bill_error_explanation" parameterType="Map" resultMap="billErrorExplanationBeanMap">
+        SELECT
+        error.invoice_num AS invoice_num,
+        error.main_no AS main_no,
+        error.bill_related_no AS bill_related_no,
+        error.db_related_no AS db_related_no,
+        error.error_type_id AS error_type_id,
+        error.error_description AS error_description,
+        error.error_reason AS error_reason,
+        error.error_deal AS error_deal,
+        error.order_num AS order_num,
+        error.related_order_num AS related_order_num,
+        error.tracking_no AS tracking_no,
+        error.related_tracking_no AS related_tracking_no,
+        error.main_waybill_num AS main_waybill_num,
+        error.related_main_waybill_num AS related_main_waybill_num,
+        error.error_process AS error_process,
+        error.error_status AS error_status
+        FROM
+        bi_master.vf_bill_error_explanation AS error
+        <include refid="vf_bill_error_explanation_condition_fuzzy"/>
+        <if test="init_index != null and init_index != '' ">
+            LIMIT #{init_index} , #{get_size}
+        </if>
+    </select>
+
+    <insert id="insert_vf_bill_error_explanation" parameterType="Map" useGeneratedKeys="true">
+		INSERT INTO bi_master.vf_bill_error_explanation(
+            seq,
+            invoice_num,
+            main_no,
+            bill_related_no,
+            db_related_no,
+            error_type_id,
+            error_description,
+            error_reason,
+            error_deal,
+            order_num,
+            related_order_num,
+            tracking_no,
+            related_tracking_no,
+            main_waybill_num,
+            related_main_waybill_num,
+            error_process,
+            error_status
+		)
+		VALUES
+			(
+			NULL,
+			&apos;${invoice_num}&apos;,
+			&apos;${main_no}&apos;,
+			&apos;${bill_related_no}&apos;,
+			&apos;${db_related_no}&apos;,
+			&apos;${error_type_id}&apos;,
+			&apos;${error_description}&apos;,
+			&apos;${error_reason}&apos;,
+			&apos;${error_deal}&apos;,
+			&apos;${order_num}&apos;,
+			&apos;${related_order_num}&apos;,
+			&apos;${tracking_no}&apos;,
+			&apos;${related_tracking_no}&apos;,
+			&apos;${main_waybill_num}&apos;,
+			&apos;${related_main_waybill_num}&apos;,
+			&apos;${error_process}&apos;,
+			&apos;${error_status}&apos;
+			)
+	</insert>
+
+    <!-- 检索vf_bill信息 -->
+    <delete id="delete_record_vf_bill" parameterType="Map">
+        DELETE FROM bi_master.vf_bill
+        <include refid="vf_bill_error_explanation_condition_fuzzy"/>
+    </delete>
+</mapper>

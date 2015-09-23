@@ -1,0 +1,50 @@
+<div class="modal-header panel-heading" >
+    <button type="button" class="close" aria-label="Close" ng-click="close()"> <span aria-hidden="true">&times;</span> </button>
+    <h4 class="modal-title" ng-model="title">Change Reservation</h4>
+</div>
+<div class="modal-body">
+
+    <table class="table table-bordered">
+        <tbody>
+        <tr ng-show="viewCtl.changeStore">
+            <td>
+                <span class="input-group">
+                    <label class="input-group-addon" translate="WMS_STORE"></label>
+                    <ui-select ng-model="vm.change.store">
+                        <ui-select-match placeholder="Select a Store">
+                            {{$select.selected.store_name}}
+                        </ui-select-match>
+                        <ui-select-choices repeat="i.store_id as i in vm.stores | filter: $select.search">
+                            <div ng-bind-html="i.store_name"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </span>
+            </td>
+        </tr>
+        <tr ng-show="viewCtl.updateStatus">
+            <td>
+                <span class="input-group">
+                    <label class="input-group-addon" translate="WMS_SKU"></label>
+                    <input id="change-sku" class="form-control" type="text" readonly="readonly" ng-model="vm.change.sku" />
+                 </span>
+                <span class="input-group">
+                    <label  class="input-group-addon" translate="WMS_STATUS"></label>
+                    <input id="change-status" class="form-control" type="text" readonly="readonly" ng-model="vm.change.status" />
+                 </span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+               <span class="input-group">
+                   <label class="input-group-addon" translate="WMS_NOTE"></label>
+                   <textarea class="form-control" id="txtEditNote" maxlength="300" placeholder="Please Input Notes" ng-model="vm.change.notes" rows="3"></textarea>
+                </span>
+            </td>
+        </tr>
+        <tbody>
+    </table>
+</div>
+<div class="modal-footer">
+    <input class="btn btn-primary" type="button" ng-click="doChange()" value="Change"/>
+    <button type="button" class="btn btn-sm btn-default" ng-click="close()" translate="WMS_CLOSE"></button>
+</div>

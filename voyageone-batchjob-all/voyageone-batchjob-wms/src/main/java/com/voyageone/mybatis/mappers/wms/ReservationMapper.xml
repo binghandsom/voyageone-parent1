@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.wms.sql">
+
+    <!-- 待库存分配记录取出 -->
+    <select id="wms_selectNotExistsItemCode" resultType="String">
+        SELECT
+            DISTINCT
+            details.sku
+        FROM
+            oms_bt_orders orders,
+            oms_bt_order_details details
+        WHERE
+            orders.order_channel_id = #{order_channel_id}
+        AND
+            orders.approved = 1
+        AND
+            orders.cancelled = 0
+        AND
+            orders.order_number = details.order_number
+        AND
+            details.res_allot_flg = '0'
+        AND
+            details.adjustment = 0
+        AND
+            details.quantity_shipped = 1
+        AND
+            details.res_id = 0
+        AND
+            not exists
+            (select 1
+             from wms_bt_item_details itemdel
+             where orders.order_channel_id = itemdel.order_channel_id
+             and details.sku = itemdel.sku)
+        ORDER BY
+            details.sku
+    </select>
+
+    <!-- 待库存分配记录取出 -->
+    <select id="wms_selectAllotInventoryInto" resultType="com.voyageone.batch.wms.modelbean.ReservationBean">
+        SELECT
+            orders.order_number,
+            details.item_number,
+            orders.source_order_id,
+            orders.order_channel_id,
+            details.product,
+            orders.cart_id,
+            details.sku,
+            itemdel.itemcode
+        FROM
+            oms_bt_orders orders,
+            oms_bt_order_details details,
+            wms_bt_item_details itemdel
+        WHERE
+            orders.order_channel_id = #{order_channel_id}
+        AND
+            orders.approved = 1
+        AND
+            orders.cancelled = 0
+        AND
+            orders.order_number = details.order_number
+        AND
+            details.res_allot_flg = '0'
+        AND
+            details.adjustment = 0
+        AND
+            details.quantity_shipped = 1
+        AND
+            details.res_id = 0
+        AND
+            orders.order_channel_id = itemdel.order_channel_id
+        AND
+            details.sku = itemdel.sku
+        AND
+            NOT EXISTS (SELECT
+                                1
+                            FROM
+                                oms_bt_orders orders1,
+                                oms_bt_order_details details1
+                            WHERE
+                                orders1.order_number = orders.order_number
+                            AND
+                                orders1.approved = 1
+                            AND
+                                orders1.cancelled = 0
+                            AND
+                                orders1.order_number = details1.order_number
+                            AND
+                                details1.res_allot_flg = '0'
+                            AND
+                                details1.adjustment = 0
+                            AND
+                                details1.quantity_shipped = 1
+                            AND
+                                details1.res_id = 0
+                            AND
+                                not exists
+                                (select 1
+                                 from wms_bt_item_details itemdel1
+                                 where orders1.order_channel_id = itemdel.order_channel_id
+                                       and details1.sku = itemdel1.sku))
+        ORDER BY
+            orders.order_number,
+            details.item_number
+        LIMIT #{limit}
+  </select>
+
+    <!-- 仓库取得-->
+    <select id="wms_getAllotStore" resultType="long">
+        select wms_getAllotStore(#{order_channel_id}, #{cart_id},#{sku})
+    </select>
+
+    <!-- 插入Reservation-->
+    <insert id="wms_reservation_insert" useGeneratedKeys="true"  keyProperty="id">
+        INSERT INTO
+            tt_reservation
+            (
+                id,
+                order_channel_id,
+                order_number,
+                sku,
+                product,
+                store_id,
+                store,
+                status,
+                reference,
+                upload_time,
+                date,
+                printed,
+                note,
+                cart_id,
+                srcCart_id,
+                source_order_id,
+                pos_processed,
+                syn_ship_no,
+                ship_channel,
+                declare_price,
+                description_inner,
+                description_short,
+                description,
+                brand,
+                gender,
+                upper_material,
+                sole_material,
+                origin,
+                price,
+                price_unit,
+                sale_price,
+                sale_price_unit,
+                original_price,
+                original_price_unit,
+                weight_kg,
+                weight_lb,
+                unit,
+                hs_code,
+                hs_code_pu,
+                unit_pu,
+                hs_description_pu,
+                hs_description,
+                sent_flg,
+                close_day_flg,
+                create_time,
+                update_time,
+                create_person,
+                update_person
+            ) values (
+                null,
+                #{order_channel_id},
+                #{order_number},
+                #{sku},
+                #{product},
+                #{store_id},
+                #{store},
+                #{status},
+                #{reference},
+                #{upload_time},
+                #{date},
+                #{printed},
+                #{note},
+                #{cart_id},
+                #{srcCart_id},
+                #{source_order_id},
+                #{pos_processed},
+                #{syn_ship_no},
+                #{ship_channel},
+                #{declare_price},
+                #{description_inner},
+                #{description_short},
+                #{description},
+                #{brand},
+                #{gender},
+                #{upper_material},
+                #{sole_material},
+                #{origin},
+                #{price},
+                #{price_unit},
+                #{sale_price},
+                #{sale_price_unit},
+                #{original_price},
+                #{original_price_unit},
+                #{weight_kg},
+                #{weight_lb},
+                #{unit},
+                #{hs_code},
+                #{hs_code_pu},
+                #{unit_pu},
+                #{hs_description_pu},
+                #{hs_description},
+                #{sent_flg},
+                #{close_day_flg},
+                #{create_time},
+                #{update_time},
+                #{create_person},
+                #{update_person}
+            )
+    </insert>
+
+    <!-- OrderDetails的更新-->
+    <update id="wms_updateOrderDetails">
+        UPDATE
+            oms_bt_order_details details
+        SET
+            details.res_id = #{reservationID},
+            details.res_allot_flg = '1',
+            details.modified = now(),
+            details.modifier = #{takeName}
+        WHERE
+            details.order_number = #{orderNumber}
+            AND
+            details.item_number = #{itemNumber};
+    </update>
+
+    <update id="wms_updateReservationCloseDay">
+        UPDATE
+            tt_reservation reservation,
+            wms_bt_transfer_item item
+        SET
+            reservation.close_day_flg = '2',
+            reservation.update_time = now(),
+            reservation.update_person = #{task_name}
+        WHERE
+            item.transfer_id = #{transfer_id}
+        AND
+            item.transfer_item_id &lt;= #{transfer_item_id}
+        AND
+            item.syn_flg = '0'
+        AND
+            reservation.id = item.reservation_id
+        AND
+            reservation.order_number = item.order_number
+    </update>
+
+</mapper>

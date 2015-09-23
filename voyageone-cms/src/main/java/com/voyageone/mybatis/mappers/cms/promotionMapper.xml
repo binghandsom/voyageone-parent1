@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.cms.sql">
+  <resultMap id="PromotionResultMap" type="com.voyageone.cms.modelbean.Promotion" >
+    <result column="promotion_id" property="promotionId" jdbcType="INTEGER" />
+    <result column="channel_id" property="channelId" jdbcType="VARCHAR" />
+    <result column="cart_id" property="cartId" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="preheat_date_start" property="preheatDateStart" jdbcType="DATE" />
+    <result column="preheat_date_end" property="preheatDateEnd" jdbcType="DATE" />
+    <result column="effective_date_start" property="effectiveDateStart" jdbcType="DATE" />
+    <result column="effective_date_end" property="effectiveDateEnd" jdbcType="DATE" />
+    <result column="promotion_year" property="promotionYear"/>
+    <result column="promotion_month" property="promotionMonth"/>
+    <result column="is_effective" property="isEffective" jdbcType="BOOLEAN" />
+    <result column="is_selection_over" property="isSelectionOver" jdbcType="BOOLEAN" />
+    <result column="is_sign_up_over" property="isSignUpOver" jdbcType="BOOLEAN" />
+    <result column="is_isolation_stock_over" property="isIsolationStockOver" jdbcType="BOOLEAN" />
+    <result column="is_activity_over" property="isActivityOver" jdbcType="BOOLEAN" />
+    <result column="attribute_value" property="cart"/>
+    <result column="attachment" property="attachment"/>
+    <result column="comment" property="comment" />
+    <result column="created" property="created" jdbcType="TIMESTAMP" />
+    <result column="creater" property="creater" jdbcType="VARCHAR" />
+    <result column="modified" property="modified" jdbcType="TIMESTAMP" />
+    <result column="modifier" property="modifier" jdbcType="VARCHAR" />
+  </resultMap>
+   <resultMap id="PromotionListResultMap" type="com.voyageone.cms.formbean.PromotionYearList" >
+    <result column="promotion_year" property="promotionYear"/>
+    <collection property="promotionMonthList" ofType="com.voyageone.cms.formbean.PromotionMonthList">
+      	 <result column="promotion_month" property="promotionMonth"/>
+      	 <collection property="promotionInfo" ofType="com.voyageone.cms.modelbean.Promotion">
+      	 		<result column="promotion_id" property="promotionId" jdbcType="INTEGER" />
+      	     	<result column="channel_id" property="channelId" jdbcType="VARCHAR" />
+			    <result column="cart_id" property="cartId" jdbcType="INTEGER" />
+			    <result column="name" property="name" jdbcType="VARCHAR" />
+			    <result column="preheat_date_start" property="preheatDateStart" jdbcType="DATE" />
+			    <result column="preheat_date_end" property="preheatDateEnd" jdbcType="DATE" />
+			    <result column="effective_date_start" property="effectiveDateStart" jdbcType="DATE" />
+			    <result column="effective_date_end" property="effectiveDateEnd" jdbcType="DATE" />
+			    <result column="promotion_year" property="promotionYear"/>
+			    <result column="promotion_month" property="promotionMonth"/>
+			    <result column="attachment" property="attachment"/>
+			    <result column="is_effective" property="isEffective" jdbcType="CHAR" />
+			    <result column="is_selection_over" property="isSelectionOver" jdbcType="CHAR" />
+			    <result column="is_sign_up_over" property="isSignUpOver" jdbcType="CHAR" />
+			    <result column="is_isolation_stock_over" property="isIsolationStockOver" jdbcType="CHAR" />
+			    <result column="is_activity_over" property="isActivityOver" jdbcType="CHAR" />
+			    <result column="comment" property="comment" />
+			    <result column="created" property="created" jdbcType="TIMESTAMP" />
+			    <result column="creater" property="creater" jdbcType="VARCHAR" />
+			    <result column="modified" property="modified" jdbcType="TIMESTAMP" />
+			    <result column="modifier" property="modifier" jdbcType="VARCHAR" />	      	 
+      	 </collection>
+    </collection>
+  </resultMap>
+  <sql id="Promotion_Column_List" >
+    promotion_id, channel_id, cart_id, name, preheat_date_start, preheat_date_end, effective_date_start, 
+    effective_date_end,promotion_year,promotion_month, attachment,comment,is_effective, is_selection_over, is_sign_up_over, is_isolation_stock_over, 
+    is_activity_over, created, creater, modified, modifier
+  </sql>
+ 
+  <select id="cms_get_Promotion" resultMap="PromotionResultMap" parameterType="HashMap" >
+    select 
+    	<include refid="Promotion_Column_List" />
+    from 
+    	cms_bt_promotion
+    where 
+    	promotion_id = #{promotionId}
+      	and channel_id = #{channelId}
+  </select>
+  <select id="cms_get_PromotionList" resultMap="PromotionResultMap" parameterType="HashMap" >
+    select 
+    	<include refid="Promotion_Column_List" />
+    from 
+    	cms_bt_promotion
+    where 
+      	channel_id = #{channelId}
+    order by promotion_year,promotion_month,promotion_id
+  </select>
+    <select id="cms_get_IsPromotion" resultMap="PromotionResultMap" parameterType="HashMap" >
+    select 
+    	<include refid="Promotion_Column_List" />
+    from 
+    	cms_bt_promotion
+    where 
+    	cart_id = #{cartId}
+      	and name = #{name}
+      	and effective_date_start = #{effectiveDateStart}
+      	and effective_date_end = #{effectiveDateEnd}
+  </select>
+   <select id="cms_get_PromotionMenuList" resultMap="PromotionListResultMap" parameterType="String" >
+    select 
+    	<include refid="Promotion_Column_List" />
+    from 
+    	cms_bt_promotion
+    where 
+      	channel_id = #{channelId}
+    order by promotion_year,promotion_month,promotion_id
+  </select>
+   <select id="cms_get_SubPromotionList" resultMap="PromotionResultMap" parameterType="HashMap" >
+    select 
+	    a.name,
+	    a.cart_id,
+	    b.attribute_value,
+	    a.effective_date_start,
+	    a.effective_date_end,
+	    a.comment,
+	    a.attachment,
+	    a.is_effective,
+	    concat(a.effective_date_start,' / ',a.effective_date_end) as effectiveDate,
+	    a.promotion_id,
+	    concat(a.preheat_date_start,' / ',a.preheat_date_end) as preheatDate,
+	    a.is_selection_over,
+	    a.is_sign_up_over,
+	    a.is_isolation_stock_over,
+	    a.is_activity_over,
+	    a.created,
+	    a.modified
+	    
+    from 
+    	cms_bt_promotion a
+    LEFT JOIN cms_mt_attribute_value b on b.attribute_value_id=a.cart_id and b.channel_id=a.channel_id
+    where 
+     	<if test = "promotionYear != null">
+    	a.promotion_year = #{promotionYear}
+    	</if>
+    	<if test = "promotionMonth != null">
+      	a.promotion_month = #{promotionMonth}
+      	</if>
+    	
+  </select>
+  <select id="cms_get_PromotionProductCount"  resultType="int" parameterType="HashMap">
+	SELECT 
+	  	count(1) 
+	from 
+	  	cms_bt_relation_promotion_product
+	WHERE 
+		promotion_id=#{promotionId}
+	 	and channel_id=#{channelId}
+  </select>
+  <select id="cms_get_PromotionProduct" resultType="com.voyageone.cms.formbean.PromotionProduct" parameterType="HashMap">
+	SELECT
+		a.promotion_id AS promotionId,
+		a.product_id AS productId,
+		c. CODE,
+		e.image_name as imageName,
+		c. NAME,
+		a.discount_sale_price AS discountSalePrice,
+		CONCAT(a.discount_percent ,'%Off')AS discountPercent,
+		IF(a.current_price > 0.00,a.current_price,d.cn_price_final_rmb) as price,
+		f.category_id as categoryId,
+		f.model_id as modelId,
+    	a.created,
+    	a.modified
+	FROM
+		cms_bt_relation_promotion_product a
+	LEFT JOIN cms_bt_promotion b ON a.promotion_id = b.promotion_id
+	LEFT JOIN cms_bt_product c ON c.product_id = a.product_id
+	LEFT JOIN cms_bt_cn_product_share d ON d.product_id = a.product_id
+	AND d.cart_id = b.cart_id
+	LEFT JOIN cms_bt_product_image e ON e.channel_id = a.channel_id
+	AND a.product_id = e.product_id
+	AND e.image_type_id = '1'
+	AND e.image_id = '1'
+  	LEFT JOIN view_product_info_list f on f.channel_id = a.channel_id and f.product_id = a.product_id 
+    where 
+    	a.promotion_id = #{promotionId,jdbcType=INTEGER}
+      	and a.channel_id = #{channelId,jdbcType=VARCHAR}
+     <if test="productId != null">
+        and a.product_id = #{productId}
+     </if>
+     <if test="offset != null and pageCount != null">
+        LIMIT #{offset}, #{pageCount}
+     </if> 
+    
+  </select>
+  <delete id="cms_delete_Promotion" parameterType="HashMap" >
+    delete from 
+    	cms_bt_promotion
+    where 
+        promotion_id = #{promotionId,jdbcType=INTEGER}
+      	and channel_id = #{channelId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="cms_insert_Promotion" parameterType="com.voyageone.cms.modelbean.Promotion" useGeneratedKeys="true" keyProperty="promotionId" >
+    insert into 
+    	cms_bt_promotion 
+    	(promotion_id, 
+    	channel_id, 
+    	cart_id, 
+      	name, 
+      	preheat_date_start, 
+      	preheat_date_end, 
+      	effective_date_start, 
+      	effective_date_end, 
+      	is_effective, 
+      	is_selection_over, 
+      	is_sign_up_over, 
+      	is_isolation_stock_over, 
+      	is_activity_over,
+      	promotion_year,
+      	promotion_month,
+      	attachment,
+      	created, 
+      	creater, 
+      	modified, 
+      	modifier, 
+      	comment)
+    values 
+    	(#{promotionId,jdbcType=INTEGER}, 
+    	#{channelId,jdbcType=VARCHAR}, 
+    	#{cartId,jdbcType=INTEGER}, 
+      	#{name,jdbcType=VARCHAR}, 
+      	#{preheatDateStart,jdbcType=DATE}, 
+      	#{preheatDateEnd,jdbcType=DATE}, 
+      	#{effectiveDateStart,jdbcType=DATE}, 
+      	#{effectiveDateEnd,jdbcType=DATE}, 
+      	#{isEffective,jdbcType=BOOLEAN}, 
+      	#{isSelectionOver,jdbcType=BOOLEAN}, 
+      	#{isSignUpOver,jdbcType=BOOLEAN}, 
+      	#{isIsolationStockOver,jdbcType=BOOLEAN}, 
+      	#{isActivityOver,jdbcType=BOOLEAN},
+      	#{promotionYear,jdbcType=VARCHAR},  
+      	#{promotionMonth,jdbcType=VARCHAR}, 
+      	#{attachment,jdbcType=VARCHAR},  
+      	now(), 
+      	#{creater,jdbcType=VARCHAR}, 
+      	now(), 
+      	#{modifier,jdbcType=VARCHAR}, 
+      	#{comment,jdbcType=LONGVARCHAR})
+  </insert>
+  
+  <update id="cms_update_promotion" parameterType="com.voyageone.cms.modelbean.Promotion" >
+    update cms_bt_promotion
+    <set >
+      <if test="cartId != null" >
+        cart_id = #{cartId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="preheatDateStart != null" >
+        preheat_date_start = #{preheatDateStart,jdbcType=DATE},
+      </if>
+      <if test="preheatDateEnd != null" >
+        preheat_date_end = #{preheatDateEnd,jdbcType=DATE},
+      </if>
+      <if test="effectiveDateStart != null" >
+        effective_date_start = #{effectiveDateStart,jdbcType=DATE},
+      </if>
+      <if test="effectiveDateEnd != null" >
+        effective_date_end = #{effectiveDateEnd,jdbcType=DATE},
+      </if>
+      <if test="isEffective != null" >
+        is_effective = #{isEffective,jdbcType=CHAR},
+      </if>
+      <if test="isSelectionOver != null" >
+        is_selection_over = #{isSelectionOver,jdbcType=CHAR},
+      </if>
+      <if test="isSignUpOver != null" >
+        is_sign_up_over = #{isSignUpOver,jdbcType=CHAR},
+      </if>
+      <if test="isIsolationStockOver != null" >
+        is_isolation_stock_over = #{isIsolationStockOver,jdbcType=CHAR},
+      </if>
+      <if test="isActivityOver != null" >
+        is_activity_over = #{isActivityOver,jdbcType=CHAR},
+      </if>
+      <if test="created != null" >
+        created = #{created},
+      </if>
+       <if test="promotionMonth != null" >
+      	promotion_month = #{promotionMonth,jdbcType=VARCHAR}, 
+       </if>
+       <if test="promotionYear != null">
+       promotion_year = #{promotionYear,jdbcType=VARCHAR},  
+       </if>
+       <if test="attachment != null" >
+       attachment =#{attachment,jdbcType=VARCHAR},  
+       </if>
+      <if test="creater != null" >
+        creater = #{creater,jdbcType=VARCHAR},
+      </if>
+      <if test="modified != null" >
+        modified = now(),
+      </if>
+      <if test="modifier != null" >
+        modifier = #{modifier,jdbcType=VARCHAR},
+      </if>
+      <if test="comment != null" >
+        comment = #{comment,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where 
+    	promotion_id = #{promotionId,jdbcType=INTEGER}
+      	and channel_id = #{channelId,jdbcType=VARCHAR}
+  </update>
+  <!-- <update id="cms_update_promotioneffective" parameterType="List">
+      update cms_bt_promotion 
+        set  is_effective
+  
+  </update> -->
+
+  <select id="cms_get_promotionMonth" resultType="String">
+    select distinct t.promotion_month promMonth
+    from cms_bt_promotion t
+    where t.is_effective = '1'
+    and t.is_activity_over = '0'
+    and t.channel_id = #{channelId}
+    and t.cart_id in (
+    <foreach collection="cartsId" item="cartId" separator=",">
+      #{cartId}
+    </foreach>
+    )
+    order by t.promotion_month
+  </select>
+
+  <select id="cms_get_promotionInfo" resultMap="PromotionResultMap">
+    select promotion_id,
+    name,
+    promotion_year,
+    promotion_month
+    from cms_bt_promotion t
+    where t.channel_id = #{channelId}
+    and t.is_effective = '1'
+    and t.cart_id in (
+    <foreach collection="cartsId" item="cartId" separator=",">
+      #{cartId}
+    </foreach>
+    )
+  </select>
+
+  <resultMap id="PromotionInfotMap" type="com.voyageone.cms.formbean.PromotionProduct" >
+    <result column="promotion_id" property="promotionId" jdbcType="INTEGER" />
+    <result column="promotion_year" property="promotionYear" jdbcType="VARCHAR" />
+    <result column="promotion_month" property="promotionMonth" jdbcType="INTEGER" />
+    <result column="channel_id" property="channelId" jdbcType="INTEGER" />
+  </resultMap>
+  <select id="cms_get_promotionInfoById" resultMap="PromotionInfotMap">
+    select promotion_id,
+           promotion_year,
+           promotion_month,
+           channel_id
+    from cms_bt_promotion t
+    where t.promotion_id in (
+    <foreach collection="promotionIdList" item="promotionId" separator=",">
+      #{promotionId}
+    </foreach>
+    )
+  </select>
+
+  <insert id="cms_create_promotion_product_relation">
+    insert ignore into cms_bt_relation_promotion_product
+    (promotion_id, product_id, promotion_year, promotion_month, created, creater, modified, modifier, channel_id)
+    values
+    <foreach collection="promotionProducts" item="item" separator=",">
+      (
+      #{item.promotionId},
+      #{item.productId},
+      #{item.promotionYear},
+      #{item.promotionMonth},
+      now(),
+      #{item.modifier},
+      now(),
+      #{item.modifier},
+      #{item.channelId}
+      )
+    </foreach>
+  </insert>
+
+
+    <update id="cms_update_promotionProduct" parameterType="com.voyageone.cms.modelbean.RelationPromotionProduct" >
+    update 
+    	cms_bt_relation_promotion_product
+    <set >
+      <if test="discountPercent != null" >
+        discount_percent = #{discountPercent,jdbcType=DECIMAL},
+      </if>
+      <if test="discountSalePrice != null" >
+        discount_sale_price = #{discountSalePrice,jdbcType=DECIMAL},
+      </if>
+      <if test = "currentPrice != null" >
+         current_price = #{currentPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="created != null" >
+        created = #{created,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creater != null" >
+        creater = #{creater,jdbcType=VARCHAR},
+      </if>
+        modified = now(),
+      <if test="modifier != null" >
+        modifier = #{modifier,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where promotion_id = #{promotionId}
+      and product_id = #{productId}
+ 
+  </update>
+  <delete id="cms_delete_promotionproduct" parameterType="HashMap">
+    delete from 
+    	cms_bt_relation_promotion_product
+    where 
+        promotion_id = #{promotionId}
+      	and product_id in
+      	(
+      	<foreach collection="productIdList" item="productId" separator=",">
+      	 #{productId}
+      	</foreach>
+      	)
+  
+  </delete>
+</mapper>

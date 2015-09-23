@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.wms.sql">
+
+    <!-- 取得需要模拟入出库记录 -->
+    <select id="wms_selectSimTransferInfo" parameterType="String" resultType="com.voyageone.batch.wms.modelbean.SimTransferBean">
+        SELECT
+          *
+        FROM
+          (
+            SELECT
+                transfer_id as process_id,
+                transfer_to_store as store_id,
+                transfer_from_store,
+                transfer_to_store,
+                '0' as transfer_origin
+            FROM
+                wms_bt_transfer
+            WHERE
+                order_channel_id = #{order_channel_id}
+            AND
+                <!-- CLose状态 -->
+                transfer_status = '1'
+            AND
+                <!-- 未模拟 -->
+                sim_flg = '0'
+            AND
+                <!-- TransferOut -->
+                transfer_type = '2'
+
+          UNION
+
+            SELECT
+                id as process_id,
+                store_id,
+                store_id as transfer_from_store,
+                store_id as transfer_to_store,
+                '1' as transfer_origin
+            FROM
+                tt_reservation
+            WHERE
+                order_channel_id = #{order_channel_id}
+            AND
+                <!-- Reserved状态：防止捡货后没有及时处理，将发货状态、退货等也判断其中-->
+                status in ('12','13','14','15','16','17','97')
+            AND
+                <!-- 未模拟 -->
+                close_day_flg = '0'
+
+          UNION
+
+            SELECT
+                return_session_id as process_id,
+                store_id,
+                store_id as transfer_from_store,
+                store_id as transfer_to_store,
+                '2' as transfer_origin
+            FROM
+                wms_bt_return_session bt_session
+            WHERE
+                order_channel_id = #{order_channel_id}
+            AND
+                <!-- CLose状态 -->
+                return_session_status = '1'
+            AND
+            <!-- 需要入库 -->
+            return_type = '0'
+            AND
+                <!-- 未模拟 -->
+                syn_flg = '0'
+            AND
+                <!-- 退货中存在好物品good -->
+                EXISTS
+                  (SELECT 1
+                    FROM wms_bt_return bt_return
+                    WHERE bt_session.order_channel_id =  bt_return.order_channel_id
+                    AND bt_session.return_session_id = bt_return.return_session_id
+                    AND bt_return.condition = '01')
+
+          UNION
+
+            SELECT
+                return_session_id as process_id,
+                store_id,
+                store_id as transfer_from_store,
+                store_id as transfer_to_store,
+                '5' as transfer_origin
+            FROM
+                wms_bt_return_session bt_session
+            WHERE
+                order_channel_id = #{order_channel_id}
+            AND
+                <!-- CLose状态 -->
+                return_session_status = '1'
+            AND
+                <!-- 直接退回品牌方 -->
+                return_type = '1'
+            AND
+                <!-- 未模拟 -->
+                syn_flg = '0'
+
+          UNION
+
+            SELECT
+                take_stock_id as process_id,
+                store_id,
+                store_id as transfer_from_store,
+                store_id as transfer_to_store,
+                '3' as transfer_origin
+            FROM
+                wms_bt_take_stock stock
+            WHERE
+                order_channel_id = #{order_channel_id}
+            AND
+                <!-- Done状态-->
+                take_stock_status = '3'
+            AND
+                <!-- 未模拟 -->
+                syn_flg = '0'
+            AND
+                <!-- 存在盘点偏移值大于0的记录  -->
+                EXISTS
+                  (SELECT 1
+                    FROM wms_bt_take_stock_compare_result compare_result
+                    WHERE stock.take_stock_id = compare_result.take_stock_id
+                    AND compare_result.is_fixed = '1'
+                    AND compare_result.qty_offsets > 0)
+
+          UNION
+
+            SELECT
+                take_stock_id as process_id,
+                store_id,
+                store_id as transfer_from_store,
+                store_id as transfer_to_store,
+                '4' as transfer_origin
+            FROM
+                wms_bt_take_stock stock
+            WHERE
+                order_channel_id = #{order_channel_id}
+            AND
+                <!-- Done状态-->
+                take_stock_status = '3'
+            AND
+                <!-- 未模拟 -->
+                syn_flg = '0'
+            AND
+                <!-- 存在盘点偏移值小于0的记录  -->
+                EXISTS
+                  (SELECT 1
+                    FROM wms_bt_take_stock_compare_result compare_result
+                    WHERE stock.take_stock_id = compare_result.take_stock_id
+                    AND compare_result.is_fixed = '1'
+                    AND compare_result.qty_offsets &lt; 0)
+
+          UNION
+
+            SELECT
+                max(seq) as process_id,
+                store_id,
+                store_id as transfer_from_store,
+                store_id as transfer_to_store,
+                '6' as transfer_origin
+            FROM
+                wms_bt_client_inventory
+            WHERE
+                order_channel_id = #{order_channel_id}
+            AND
+                NOT EXISTS
+                    (SELECT 1
+                     FROM wms_bt_client_inventory
+                     WHERE order_channel_id = #{order_channel_id}
+                     AND syn_flg = '0')
+            AND
+                EXISTS
+                    (SELECT 1
+                    FROM wms_bt_client_inventory
+                    WHERE order_channel_id = #{order_channel_id}
+                    AND syn_flg = '1')
+            AND
+                EXISTS
+                    (SELECT 1
+                     FROM wms_bt_client_inventory
+                     WHERE order_channel_id = #{order_channel_id}
+                     AND sim_flg = '0')
+          ) transfer_sim
+        WHERE process_id IS NOT NULL
+    </select>
+
+    <!-- 逻辑库存计算-->
+    <update id="wms_simTransferInfo" statementType="CALLABLE" parameterType="com.voyageone.batch.wms.modelbean.SimTransferBean">
+        call wms_simTransferInfo(#{process_id},
+                                    #{order_channel_id},
+                                    #{store_id},
+                                    #{transfer_status},
+                                    #{transfer_type},
+                                    #{transfer_name},
+                                    #{transfer_from_store},
+                                    #{transfer_to_store},
+                                    #{transfer_origin},
+                                    #{origin_id},
+                                    #{comment})
+    </update>
+
+    <!-- 取得需要第三方渠道库存计算的记录 -->
+    <select id="wms_selectClientInventory" parameterType="HashMap" resultType="com.voyageone.batch.wms.modelbean.TransferBean">
+        SELECT
+            transfer.*,
+            (select max(transfer_item_id) from wms_bt_transfer_item item where transfer.transfer_id = item.transfer_id) as transfer_item_id
+        FROM
+            wms_bt_transfer transfer
+        WHERE
+            transfer.order_channel_id = #{order_channel_id}
+        AND
+            transfer.transfer_status = '1'
+        AND
+            EXISTS (SELECT 1
+                      FROM wms_bt_transfer_item item
+                      WHERE transfer.transfer_id = item.transfer_id
+                      AND item.syn_flg = '0')
+        ORDER BY transfer_id
+    </select>
+
+    <update id="wms_updateTransfer">
+        UPDATE
+            wms_bt_transfer_item
+        SET
+            syn_flg = '1',
+            modified = now(),
+            modifier = #{task_name}
+        WHERE
+            transfer_id = #{transfer_id}
+        AND
+            transfer_item_id &lt;= #{transfer_item_id}
+        AND
+            syn_flg = '0'
+    </update>
+
+    <insert id="wms_insertTransferItemHistory">
+        INSERT INTO
+            wms_bt_transfer_item_history
+            (
+                transfer_id,
+                transfer_package_id,
+                transfer_barcode,
+                transfer_sku,
+                transfer_qty,
+                order_number,
+                reservation_id,
+                calc_qty,
+                syn_flg,
+                active,
+                created,
+                creater,
+                modified,
+                modifier
+            )
+            (
+              select
+                  transfer_id,
+                  transfer_package_id,
+                  transfer_barcode,
+                  transfer_sku,
+                  transfer_qty,
+                  order_number,
+                  reservation_id,
+                  calc_qty,
+                  syn_flg,
+                  active,
+                  created,
+                  creater,
+                  modified,
+                  modifier
+              from
+                wms_bt_transfer_item
+              where
+                transfer_id = #{transfer_id}
+              and
+                transfer_item_id &lt;= #{transfer_item_id}
+              and
+                syn_flg = '1'
+            );
+    </insert>
+
+    <delete id="wms_deleteTransferItem">
+        DELETE FROM
+          wms_bt_transfer_item
+        WHERE
+          transfer_id = #{transfer_id}
+        AND
+          transfer_item_id &lt;= #{transfer_item_id}
+        AND
+          syn_flg = '1'
+    </delete>
+
+    <delete id="wms_deleteTransferHistory">
+        DELETE FROM
+            wms_bt_transfer_item_history
+        WHERE
+            created &lt;= #{process_time}
+    </delete>
+</mapper>

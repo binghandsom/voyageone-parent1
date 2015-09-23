@@ -1,0 +1,183 @@
+<div class="vo_modal">
+    <div class="modal-header">
+        <button ng-hide="vm.editing" type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss('cancel')">
+            <span aria-hidden="true"><i class="fa fa-close"></i></span>
+        </button>
+        <h4 class="modal-title"><i class="fa fa-crosshairs"></i> 值匹配</h4>
+    </div>
+    <div class="modal-body wrapper-lg">
+        <div class="row">
+            <div class="col-sm-12">
+                <h5>当前属性可检索到的默认值：“ {{ vm.selected.default }} ”</h5>
+            </div>
+            <div class="col-sm-12" collapse="vm.editing">
+                <div class="panel vo_panel tab_panel">
+                    <div class="table-responsive">
+                        <table if-no-rows="vm.mappings" class="table table-striped b-t b-light vo_table vo_models">
+                            <thead>
+                            <tr>
+                                <th class="vo_a_ce col-sm-1"></th>
+                                <th class="col-sm-4" translate="CMS_TXT_TH_CONDITION"></th>
+                                <th class="col-sm-2" translate="CMS_TXT_TH_TYPE"></th>
+                                <th class="col-sm-3" translate="CMS_TXT_TH_VALUE"></th>
+                                <th class="col-sm-2" translate="CMS_TXT_ACTIONS"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="m in vm.mappings">
+                                <td class="vo_a_ce col-sm-1">{{ $index + 1 }}</td>
+                                <td>{{ vm.formatCondition(m.conditions) }}</td>
+                                <td>{{ m.etype }}</td>
+                                <td>{{ m.value }}</td>
+                                <td>
+                                    <button title="编辑" class="btn btn-success btn-xs" ng-click="vm.edit($index)"><i class="fa fa-pencil"></i></button>
+                                    <button title="删除" class="btn btn-danger btn-xs" ng-click="vm.del($index)"><i class="fa fa-trash-o"></i></button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div><!-- .table-responsive -->
+                </div> <!-- .panel -->
+                <p>
+                    <button class="btn m-b-xs btn-sm btn-success btn-addon" ng-click="vm.add()">
+                        <i class="fa fa-plus"></i>
+                        <span translate="CORE_BTN_ADD"></span>
+                    </button>
+                </p>
+            </div>
+            <!--add tab-->
+            <div class="col-sm-12" collapse="!vm.editing">
+                <!-- START TABS-->
+                <tabset class="tab-container_attribute vo_nav-tabs">
+                    <tab>
+                        <tab-heading>{{vm.category.path + " > " + vm.currProp.prop_name}}</tab-heading>
+                        <form role="form" class="form-horizontal">
+                            <div class="form-group">
+                                <label class="col-sm-1 checkbox-inline c-radio needsclick">
+                                    <input id="pop-set-match-val-radios-feed" type="radio" name="pop-set-match-val-radios-1" ng-model="vm.curr.type" ng-value="vm.feedPropMappingType.feed"/>
+                                    <span class="fa fa-check"></span>
+                                </label>
+                                <label for="pop-set-match-val-radios-feed" class="col-sm-2 control-label" translate="CMS_TXT_LABEL_FEED"></label>
+
+                                <div class="col-sm-5" ng-show="vm.curr.type == vm.feedPropMappingType.feed">
+                                    <ui-select ng-model="vm.selected.feed">
+                                        <ui-select-match placeholder="Please select a Feed Prop">{{$select.selected.cfg_val2}}
+                                        </ui-select-match>
+                                        <ui-select-choices repeat="i.cfg_val1 as i in vm.feedProps | filter: $select.search">
+                                            <div ng-bind-html="i.cfg_val2"></div>
+                                        </ui-select-choices>
+                                    </ui-select>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-show="vm.isTextProp()">
+                                <label class="col-sm-1 checkbox-inline c-radio needsclick">
+                                    <input id="pop-set-match-val-radios-value" type="radio" name="pop-set-match-val-radios-1" ng-model="vm.curr.type" ng-value="vm.feedPropMappingType.value"/>
+                                    <span class="fa fa-check"></span>
+                                </label>
+                                <label for="pop-set-match-val-radios-value" class="col-sm-2 control-label" translate="CMS_TXT_LABEL_VALUE"></label>
+
+                                <div class="col-sm-5" ng-show="vm.curr.type == vm.feedPropMappingType.value">
+                                    <input type="text" class="form-control input-group" ng-model="vm.selected.value">
+                                </div>
+                            </div>
+                            <div class="form-group" ng-show="vm.currProp.prop_type == vm.masterPropType.option">
+                                <label class="col-sm-1 checkbox-inline c-radio needsclick">
+                                    <input id="pop-set-match-val-radios-option" type="radio" name="pop-set-match-val-radios-1" ng-model="vm.curr.type" ng-value="vm.feedPropMappingType.options"/>
+                                    <span class="fa fa-check"></span>
+                                </label>
+                                <label for="pop-set-match-val-radios-option" class="col-sm-2 control-label" translate="CMS_TXT_LABEL_OPTIONS"></label>
+
+                                <div class="col-sm-5" ng-show="vm.isCheckProp()">
+                                    <ui-select ng-if="vm.currProp.prop_type == vm.masterPropType.singleCheck" ng-model="vm.selected.options">
+                                        <ui-select-match placeholder="Please select a option">{{$select.selected.prop_option_name}}
+                                        </ui-select-match>
+                                        <ui-select-choices repeat="i.prop_option_id as i in vm.options | filter: $select.search">
+                                            <div ng-bind-html="i.prop_option_name"></div>
+                                        </ui-select-choices>
+                                    </ui-select>
+                                    <ui-select ng-if="vm.currProp.prop_type == vm.masterPropType.multiCheck" multiple ng-model="vm.selected.options">
+                                        <ui-select-match placeholder="Please select a option">{{$select.selected.prop_option_name}}
+                                        </ui-select-match>
+                                        <ui-select-choices repeat="i.prop_option_id as i in vm.options | filter: $select.search">
+                                            <div ng-bind-html="i.prop_option_name"></div>
+                                        </ui-select-choices>
+                                    </ui-select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-1 checkbox-inline c-radio needsclick">
+                                    <input id="pop-set-match-val-radios-cms" type="radio" name="pop-set-match-val-radios-1" ng-model="vm.curr.type" ng-value="vm.feedPropMappingType.cms"/>
+                                    <span class="fa fa-check"></span>
+                                </label>
+                                <label for="pop-set-match-val-radios-cms" class="col-sm-2 control-label" translate="CMS_TXT_LABEL_CMS"></label>
+
+                                <div class="col-sm-5" ng-show="vm.curr.type == vm.feedPropMappingType.cms">
+                                    <ui-select ng-model="vm.selected.cms">
+                                        <ui-select-match placeholder="Please select a Cms Prop">{{$select.selected}}
+                                        </ui-select-match>
+                                        <ui-select-choices repeat="i in vm.cmsProps | filter: $select.search">
+                                            <div ng-bind-html="i"></div>
+                                        </ui-select-choices>
+                                    </ui-select>
+                                </div>
+                            </div>
+                            <div collapse="vm.curr.type == vm.feedPropMappingType.feed">
+                                <div class="form-group attribute_bg">
+                                    <label class="col-sm-1 checkbox-inline c-checkbox needsclick">
+                                        <input id="pop-set-match-val-condition" type="checkbox" ng-model="vm.conditionChecked"/>
+                                        <span class="fa fa-check"></span>
+                                    </label>
+                                    <label for="pop-set-match-val-condition" class="col-sm-2 control-label" translate="CMS_TXT_TH_CONDITION"></label>
+                                    <div ng-show="vm.conditionChecked">
+                                        <div class="col-sm-3">
+                                            <ui-select ng-model="vm.condition.property" on-select="vm.getFeedValues($item, $model)">
+                                                <ui-select-match placeholder="Prop">{{$select.selected.cfg_val2}}
+                                                </ui-select-match>
+                                                <ui-select-choices repeat="i.cfg_val1 as i in vm.feedProps | filter: $select.search">
+                                                    <div ng-bind-html="i.cfg_val2"></div>
+                                                </ui-select-choices>
+                                            </ui-select>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <ui-select ng-model="vm.condition.operation">
+                                                <ui-select-match placeholder="Operation">{{$select.selected.desc}}
+                                                </ui-select-match>
+                                                <ui-select-choices repeat="i in vm.operations | filter: $select.search">
+                                                    <div ng-bind-html="i.desc"></div>
+                                                </ui-select-choices>
+                                            </ui-select>
+                                        </div>
+                                        <div class="col-sm-3" ng-hide="!vm.condition.operation || vm.condition.operation.single">
+                                            <ui-select ng-model="vm.condition.value">
+                                                <ui-select-match placeholder="Value">{{$select.selected.attribute_value}}
+                                                </ui-select-match>
+                                                <ui-select-choices repeat="i.attribute_value as i in vm.feedValues | filter: $select.search">
+                                                    <div ng-bind-html="i.attribute_value"></div>
+                                                </ui-select-choices>
+                                            </ui-select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </tab>
+                    <!-- / tab -->
+                </tabset>
+                <p class="row">
+                    <span class="col-sm-3">
+                        <button type="submit" class="btn btn-vo" ng-click="vm.save()" translate="CORE_BTN_OK"></button>
+                        <button class="btn btn-default" ng-click="vm.cancel()" translate="CORE_BTN_CANCEL"></button>
+                    </span>
+                </p>
+            </div>
+            <div class="col-sm-12"><hr/></div>
+            <div class="col-sm-12">
+                值设定说明：
+                <ul>
+                    <li>如果不对属性进行任何值设定，则会使用默认值。</li>
+                    <li>如果对属性进行了多个值设定，则会顺序验证可用性。即如果条件，则先验证条件。无条件的，直接为可用。一旦某一条设定生效（可用）则顺序后方的都将失效。</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div><!-- .vo_modal -->

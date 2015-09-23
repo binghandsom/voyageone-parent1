@@ -1,0 +1,35 @@
+<!--
+<div class="aside-wrap">
+    &lt;!&ndash; if you want to use a custom scroll when aside fixed, use the slimScroll
+      <div class="navi-wrap" ui-jq="slimScroll" ui-options="{height:'100%', size:'8px'}">
+    &ndash;&gt;
+    <div class="navi-wrap" ui-options="{height:'100%', size:'8px'}">
+
+        &lt;!&ndash; expand/collpase button &ndash;&gt;
+        <div class="vo_a_ce clearfix hidden-xs">
+            <div class="hidden-xs">
+                <a href class="btn no-shadow" ng-click="app.settings.asideFolded = !app.settings.asideFolded">
+
+                    <i class="h4 glyphicons {{app.settings.asideFolded ? 'glyphicons-menu-hamburger' : 'glyphicons-right-indent'}} pull-right-xs"></i>
+                </a>
+            </div>
+        </div>
+        &lt;!&ndash; / expand/collpase buttons &ndash;&gt;
+
+        &lt;!&ndash; nav &ndash;&gt;
+        <nav ui-nav="" class="navi clearfix" ng-include="'modules/app/systemMenu/cms.nav.tpl.html'" ng-if="userInfo.selMenu === 'CMS'"></nav>
+        &lt;!&ndash; nav &ndash;&gt;
+
+    </div>
+</div>-->
+<!--left flex-->
+<div class="menu_main">
+    <div class="vo_a_ce clearfix hidden-xs vo_nav">
+        <a href class="btn nshadow" ng-click="app.settings.asideFolded = !app.settings.asideFolded">
+            <i class="h4 glyphicons {{app.settings.asideFolded ? 'glyphicons-menu-hamburger' : 'glyphicons-right-indent'}} pull-right-xs"></i>
+        </a>
+    </div>
+    <!--nav-->
+    <nav class="clearfix" ng-include="'modules/app/systemMenu/cms.nav.tpl.html'"></nav>
+    <!--/nav-->
+</div>

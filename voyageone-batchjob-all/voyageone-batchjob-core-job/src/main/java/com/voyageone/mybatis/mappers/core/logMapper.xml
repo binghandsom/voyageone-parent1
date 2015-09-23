@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.core.sql">
+
+	<sql id="exception_column">
+		user_name, 
+		url, 
+		exception_type, 
+		description, 
+		date_time, 
+		created
+	</sql>
+	
+	<select id="insertException" parameterType="com.voyageone.batch.core.modelbean.ExceptionLogBean" resultType="int" >
+		insert into ct_exception_log 
+			(<include refid="exception_column"/>)
+		values 
+			(
+			#{userName},
+			#{url},
+			#{exceptionType},
+			#{description},
+			#{dateTime},
+			#{created}
+			)
+	</select>
+	
+</mapper>

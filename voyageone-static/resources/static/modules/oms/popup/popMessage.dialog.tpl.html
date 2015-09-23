@@ -1,0 +1,16 @@
+<div class="ngdialog-message">
+    <h3 class="mt0 p-sm border-bottom-1" translate="CORE_TXT_CONFIRM_MESSAGE"></h3>
+    <form name="popForm" class="form-validate" novalidate="">
+        <div class="row">
+            <h3 class="col-xs-12" ng-bind="popupMessage.message"></h3>
+        </div>
+        <div class="row mt20">
+            <div class="col-xs-3 col-xs-offset-3">
+                <button class="btn btn-primary btn-sm form-control" translate="BUTTON_OK" ng-click="doOk()"></button>
+            </div>
+            <div class="col-xs-3">
+                <button class="btn btn-primary btn-sm form-control" translate="BUTTON_SUB_CANCEL" ng-click="doClose()"></button>
+            </div>
+        </div>
+    </form>
+</div>

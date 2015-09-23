@@ -1,0 +1,24 @@
+<div class="ngdialog-message">
+	<h3 class="mt0 p-sm border-bottom-1" translate="BUTTON_ADD_NOTES"></h3>
+	<form name="notes_form">
+	     <div class="row">
+            <div class="col-xs-12">
+		<textarea name="notesArea" class="form-control mb10 no-resize" ng-model='newNotes' required
+	                           ng-minlength="1" ng-maxlength="5000" placeholder="required"></textarea>
+              </div>
+          </div>
+        <div class="row">    	
+        		<div class="col-xs-3">	
+        		</div>
+    			<div class="col-xs-3">	
+				<button type="button" ng-click="saveItem()" class="btn btn-primary" translate="BUTTON_SAVE"></button>
+				</div>
+				
+				<div class="col-xs-3">
+				<button type="button" ng-click="closeThisDialog()" class="btn btn-primary" translate="BUTTON_CLOSE"></button>
+				</div>
+				<div class="col-xs-3">
+				</div>
+	 	</div>
+	</form>
+</div>

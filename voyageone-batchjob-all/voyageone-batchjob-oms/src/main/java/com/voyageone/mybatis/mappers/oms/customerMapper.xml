@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.oms.sql">
+	
+	<!-- 批量插入顾客表(字符串拼接)-->
+	<insert id="oms_bt_customer_insertCustomerBatchData_Str" parameterType="HashMap">
+		insert ignore into oms_bt_customer
+			(
+				full_name,
+				last_name,
+				email,
+				address,
+				address2,
+				city,
+				state,
+				zip,
+				country,
+				platform_id,
+				order_channel_id,
+				created,
+				creater,
+				modified,
+				modifier
+			)
+		values
+			${values}
+	</insert>
+	
+	<!-- 批量插入顾客表（集合）-->
+	<!-- 
+	<insert id="oms_bt_customer_insertCustomerBatchData" parameterType="List">
+		insert ignore into oms_bt_customer
+			(
+				full_name,
+				last_name,
+				email,
+				address,
+				address2,
+				city,
+				state,
+				zip,
+				country,
+				platform_id,
+				created,
+				creater,
+				modified,
+				modifier
+			)
+		values
+			<foreach collection="list" item="item" index="index" separator="," >
+				(
+					#{item.billingBuyerNick},
+					#{item.billingBuyerNick},
+					#{item.billingBuyerEmail},
+					#{item.billingAddressStreet1},
+					#{item.billingAddressStreet2},
+					#{item.billingAddressCity},
+					#{item.billingAddressState},
+					#{item.billingAddressZip},
+					#{item.billingAddressCountry},
+					#{item.cartId} TODO
+				)
+			</foreach>
+	</insert>
+	 -->
+	
+	<!-- 一次性取出要插入的订单对应的customerId列表 -->
+	<select id="oms_bt_customer_selectCustomerIdList" parameterType="List" resultType="String">
+		<foreach item="item" index="index" collection="list" separator=" union all " >
+			select 
+				customer_id as customerId
+			from
+				oms_bt_customer
+			where
+				last_name = #{item.lastName} and
+				platform_id = #{item.platformId} and
+				order_channel_id = #{item.orderChannelId}
+		</foreach>
+	</select>
+	
+	<!-- 单条插入顾客表-->
+	<insert id="oms_bt_customer_insertCustomerData" parameterType="HashMap">
+		insert ignore into oms_bt_customer
+			(
+				full_name,
+				last_name,
+				email,
+				address,
+				address2,
+				city,
+				state,
+				zip,
+				country,
+				platform_id,
+				created,
+				creater,
+				modified,
+				modifier
+			)
+		values
+			(
+				#{billingBuyerNick},
+				#{billingBuyerNick},
+				#{billingBuyerEmail},
+				#{billingAddressStreet1},
+				#{billingAddressStreet2},
+				#{billingAddressCity},
+				#{billingAddressState},
+				#{billingAddressZip},
+				#{billingAddressCountry},
+				#{platformId},
+				now(),
+				#{taskName},
+				now(),
+				#{taskName}
+			)
+	</insert>
+	
+	<!-- 取出要插入的订单对应的customerId -->
+	<select id="oms_bt_customer_selectCustomerId" parameterType="HashMap" resultType="String">
+		select 
+			customer_id as customerId
+		from
+			oms_bt_customer
+		where
+			last_name = #{lastName} and
+			platform_id = #{platformId}
+	</select>
+	
+	<!-- 获取订单的顾客在顾客表中是否已经存在 -->
+	<select id="oms_bt_customer_getRegularCustomer" parameterType="HashMap" resultType="int">
+		select 
+			count(0)
+		from
+			oms_bt_customer cu
+			inner join oms_bt_orders o on cu.last_name = o.name and cu.order_channel_id = o.order_channel_id
+			inner join ct_cart c on o.cart_id = c.cart_id and c.platform_id = cu.platform_id
+		where
+			o.name = #{lastName} and
+			o.order_channel_id = #{orderChannelId} and
+			o.cart_id = #{cartId} and
+			o.order_status not in ('Returned','Canceled') and
+			'2015-08-07 15:59:59' >= o.order_date_time and
+			c.active = '1'
+	</select>
+	
+</mapper>

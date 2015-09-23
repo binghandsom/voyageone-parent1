@@ -1,0 +1,72 @@
+<div class="ngdialog-message">
+    <h3 class="mt0 p-sm border-bottom-1" translate="TXT_OMS_CURRENT_CUSTOMER_INFO_AND_OPTIONS"></h3>
+    <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+    <div class="row">
+        <div class="col-xs-9">
+            <table class="table table-bordered mb-sm">
+                <tbody>
+                <tr>
+                    <td>
+                        <h4 translate="TXT_OMS_USE_SHIP_TO_ADDRESS_FORM_PREVIOUS_ORDER" class=" mb-sm mt-sm"></h4>
+                        <span ng-bind="curOrderShipInfo.name"></span><br>
+                        <span ng-bind="curOrderShipInfo.address"></span><br>
+                        <span ng-bind="curOrderShipInfo.address2"></span><br>
+                        <span ng-bind="curOrderShipInfo.city"></span>&nbsp;/&nbsp;<span ng-bind="curOrderShipInfo.state"></span>&nbsp;/&nbsp;<span ng-bind="curOrderShipInfo.zip"></span>&nbsp;/&nbsp;
+                        <span ng-bind="curOrderShipInfo.country"></span><br>
+
+                        <div class="input-group ms-fr col-xs-7 col-xs-offset-5">
+                            <span class="input-group-addon"><input type="checkbox" ng-model="chkUseThisShipToAddress"></span>
+                            <span class="form-control" translate="TXT_OMS_USE_THIS_SHIP_TO_ADDRESS"></span>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-xs-3">
+            <div class="ms-fr">
+                <button class="btn btn-primary btn-sm" translate="BUTTON_CONTINUE" ng-click="doSetCustomer()"></button>
+                <button class="btn btn-primary btn-sm" translate="BUTTON_SUB_CANCEL" ng-click="doClose()"></button>
+            </div>
+        </div>
+    </div>
+    <div class="border-bottom-1"></div>
+    <div class="row mt-sm">
+        <div class="col-xs-4 input-group col-xs-offset-8 ms-fr">
+            <span class="input-group-addon"><input type="checkbox" ng-model="chkUseSelectAddress" ng-disabled="isSelectHisotyInfo"></span>
+            <span class="form-control" translate="TXT_OMS_USE_SELECTED_ADDRESS"></span>
+        </div>
+        <div class="col-xs-12 mt-sm">
+            <div class="table-responsive mah250px">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th class="w10p" translate="TXT_ORDERS_SEARCH_SEARCH_ORDER_NUMBER"></th>
+                        <th class="w15p" translate="TXT_ORDERS_SEARCH_SEARCH_ORDER_DATE"></th>
+                        <th class="w10p" translate="TXT_OMS_SHIP_TO"></th>
+                        <th class="w15p" translate="TXT_OMS_PHONE"></th>
+                        <th class="w30p" translate="TXT_OMS_ADDRESS"></th>
+                        <th class="w20p" translate="TXT_OMS_CITY_STATE_ZIP"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-click="selectOrderHistory(orderHistoryInfo, $index)" ng-repeat="orderHistoryInfo in orderHistoryList" ng-class="{'success': $index == selectShiptoInfo.index}" class="carousel">
+                        <td ng-bind="orderHistoryInfo.orderNumber"></td>
+                        <td ng-bind="orderHistoryInfo.orderDate"></td>
+                        <td ng-bind="orderHistoryInfo.name"></td>
+                        <td ng-bind="orderHistoryInfo.phone"></td>
+                        <td><span ng-bind="orderHistoryInfo.address"></span>&nbsp;<span ng-bind="orderHistoryInfo.address2"></span></td>
+                        <td>
+                            <span ng-bind="orderHistoryInfo.city"></span>&nbsp;/&nbsp;
+                            <span ng-bind="orderHistoryInfo.state"></span>&nbsp;/&nbsp;
+                            <span ng-bind="orderHistoryInfo.zip"></span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+

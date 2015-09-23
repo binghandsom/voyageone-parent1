@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+          
+<!-- ===================add by eric for sendOrderMail start=========== -->
+	<bean id="SendOrderMailJob"
+		class="com.voyageone.batch.oms.job.SendOrderMailJob">
+	</bean>
+	
+	<bean id="SendOrderMailTask"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref local="SendOrderMailJob" />
+		</property>
+		<property name="targetMethod">
+			<value>run</value>
+		</property>
+	</bean>
+	<bean id="SendOrderMailTaskContri"
+		name="SendOrderMailTaskContri"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="SendOrderMailTask" />
+		</property>
+		<property name="cronExpression">
+			<value>${quartz.order.send.csv.mail}</value>
+		</property>
+	</bean>
+	<bean id="SendSameOrderMailJob"
+		class="com.voyageone.batch.oms.job.SendSameOrderMailJob">
+	</bean>
+	
+	<bean id="SendSameOrderMailTask"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref local="SendSameOrderMailJob" />
+		</property>
+		<property name="targetMethod">
+			<value>run</value>
+		</property>
+	</bean>
+	<bean id="sendSameOrderTaskContri"
+		name="sendSameOrderTaskContri"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="SendSameOrderMailTask" />
+		</property>
+		<property name="cronExpression">
+			<value>${quartz.order.send.sameorder.mail}</value>
+		</property>
+	</bean>
+	
+<!-- ===================add by eric for sendOrderMail end=========== -->
+
+	<bean id="Sneakerhead88Top10Task"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref local="SendOrderMailJob" />
+		</property>
+		<property name="targetMethod">
+			<value>sneakerhead88Top10</value>
+		</property>
+	</bean>
+	<bean id="Sneakerhead88Top10TaskContri"
+		name="Sneakerhead88Top10TaskContri"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="Sneakerhead88Top10Task" />
+		</property>
+		<property name="cronExpression">
+			<value>${quartz.sneakerhead.88.top10.mail}</value>
+		</property>
+	</bean>
+	
+</beans>

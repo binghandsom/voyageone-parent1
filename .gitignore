@@ -1,0 +1,16 @@
+out/
+.idea/
+classes/
+.project/
+.settings/
+.classpath
+.tern-project
+*.iml
+*.patch
+*.diff
+test
+node_modules/
+target/
+.externalToolBuilders/
+
+

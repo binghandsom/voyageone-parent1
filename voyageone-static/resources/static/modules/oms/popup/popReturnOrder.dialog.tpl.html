@@ -1,0 +1,66 @@
+<div class="ngdialog-message">
+    <h3 class="mt0 p-sm border-bottom-1" translate="TXT_OMS_RETURN"></h3>
+    <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+    <form name="popForm" class="form-validate" novalidate="">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="table-responsive mah300px border-bottom-1">
+                    <table class="table table-bordered mb-sm">
+                        <thead>
+                        <tr>
+                            <th class="w10p"></th>
+                            <th class="w50p" translate="TXT_ORDER_SKU"></th>
+                            <th class="w40p" translate="TXT_ORDER_UNIT_PRICE_DISCOUNT"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="skuInfo in popReturnOrderToUseInfo.skuInfoList" class="carousel">
+                            <td>
+                                <div class="checkbox c-checkbox needsclick">
+                                    <label class="needsclick">
+                                        <input type="checkbox" class="needsclick" ng-model="skuInfo.isSelected"/>
+                                        <span class="fa fa-check"></span></label>
+                                </div>
+                            </td>
+                            <td>
+                                <img class="media" show-image="skuInfo.imgPath" ng-if="skuInfo.skuTmallPath != null"/>&nbsp;
+                                <a pop-href="skuInfo.skuTmallPath" ng-bind="skuInfo.sku" ng-if="skuInfo.skuTmallPath != null"></a>
+                                <span ng-bind="skuInfo.sku" ng-if="skuInfo.skuTmallPath == null"></span>
+                                <a href="" popover="{{skuInfo.product}}" popover-trigger="mouseenter" class="ms-fr fa fa-book c_green"></a>
+                            </td>
+                            <td class="text-right pt0 pb0">
+                                <div class="border-bottom-1">
+                                    <span ng-bind="skuInfo.pricePerUnit | number:2"></span>
+                                    <span ng-if="skuInfo.discount &gt; 0"><span class="c_green">(<span class="fa fa-sort-asc" ng-bind="skuInfo.discount | number:2"></span>)</span></span>
+                                    <span ng-if="skuInfo.discount &lt; 0"><span class="c_red">(<span class="fa fa-sort-down" ng-bind="-skuInfo.discount | number:2"></span>)</span></span>
+                                </div>
+                                <div class="fb" ng-class="{'c_green': skuInfo.price &gt;= 0, 'c_red': skuInfo.price &lt; 0}">
+                                    {{popReturnOrderToUseInfo.currencyType}}<span ng-bind="skuInfo.price | number:2"></span>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12 mt-sm">
+                <span class="label label-info " translate="TXT_OMS_ENTER_REASON"></span>
+            </div>
+            <div class="col-xs-12 mt-sm">
+                <textarea class="form-control input-sm no-resize" rows="3" ng-model="popReturnOrderToUseInfo.reason" required=""></textarea>
+            </div>
+        </div>
+
+        <div class="row mt20">
+            <div class="col-md-3 col-md-offset-3">
+                <button class="btn btn-primary btn-sm form-control" translate="BUTTON_OK" ng-click="doOk()" ng-disabled="popForm.$invalid"></button>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-primary btn-sm form-control" translate="BUTTON_SUB_CANCEL" ng-click="doClose()"></button>
+            </div>
+        </div>
+    </form>
+</div>

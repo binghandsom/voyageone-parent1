@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.common.sql">
+    <insert id="com_issue_log_insert">
+        insert into com_issue_log (
+            id,
+            error_location,
+            sub_system,
+            error_type,
+            description,
+            description_add,
+            date_time,
+            send_flg
+        ) values (
+            NULL,
+            #{error_location},
+            #{sub_system_value},
+            #{error_type_value},
+            #{description},
+            #{description_add},
+            #{date_time},
+            #{send_flg}
+        )
+    </insert>
+
+    <select id="com_issue_log_selectBySendflg" resultType="com.voyageone.common.components.issueLog.beans.IssueLogBean">
+        SELECT
+            id,
+            error_location,
+            sub_system AS sub_system_value,
+            error_type AS error_type_value,
+            description,
+            description_add,
+            date_time,
+            send_flg
+        FROM
+            com_issue_log
+        WHERE
+            send_flg = #{send_flg}
+        AND
+            sub_system = #{sub_system}
+        ORDER BY
+            date_time
+        LIMIT #{offset}, #{limit}
+    </select>
+
+
+    <update id="com_issue_log_updateSendflgByIds" parameterType="String">
+        update com_issue_log
+        set
+        send_flg = #{send_flg}
+        where
+        id in ${ids}
+    </update>
+</mapper>

@@ -1,0 +1,158 @@
+<div class="vo_modal">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h4 class="modal-title"><i class="glyphicons glyphicons-edit"></i>&nbsp;<span translate="CMS_TXT_APPROVE_SETTING"></span></h4>
+    </div>
+    <div class="modal-body wrapper-lg">
+        <div class="row">
+            <!--<div class="col-sm-12">-->
+                <!-- START TABS-->
+                <form class="form-horizontal" name="setProductShareFrom" novalidate="">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label" translate="CMS_TXT_CART"></label>
+                        <div class="col-sm-8">
+                            <div class="input-group">
+                                <ui-select ng-model="vm.cartId" theme="bootstrap" ng-disabled="disabled" class="text-left">
+                                    <ui-select-match placeholder="Select..." class="text-left">{{$select.selected.cart_name}}</ui-select-match>
+                                    <ui-select-choices repeat="cart.cart_id as cart in $root.cmsMaster.cartList | filter: $select.search">
+                                        <span ng-bind-html="cart.cart_name | highlight: $select.search"></span>
+                                    </ui-select-choices>
+                                </ui-select>
+					        <span class="input-group-btn">
+                                <button type="button" ng-click="vm.cartId = ''" class="btn btn-default">
+                                    <small>
+                                        <em class="fa fa-times text-muted"></em>
+                                    </small>
+                                </button>
+					        </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label" translate="CMS_TXT_SHIPPING_TYPE"></label>
+                        <div class="col-sm-8">
+                            <div class="input-group">
+                                <ui-select ng-model="vm.freeShippingTypeId" theme="bootstrap" ng-disabled="disabled" class="text-left" name="selCNlPriceShippingType">
+                                    <ui-select-match placeholder="Select..." class="text-left">{{$select.selected.attributeValue}}</ui-select-match>
+                                    <ui-select-choices repeat="shippingType.attributeValueId as shippingType in $root.cmsMaster.shippingTypeList | filter: $select.search">
+                                        <span ng-bind-html="shippingType.attributeValue | highlight: $select.search"></span>
+                                    </ui-select-choices>
+                                </ui-select>
+                                <span class="input-group-btn">
+                                    <button type="button" ng-click="vm.freeShippingTypeId = ''" class="btn btn-default">
+                                        <small>
+                                            <em class="fa fa-times text-muted"></em>
+                                        </small>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- .form-group -->
+
+                    <div class="form-group">
+                        <label for="txtCNFinalPriceTempDiscount" class="col-sm-4 control-label" translate="CMS_TXT_FINAL_PRICE"></label>
+                        <div class="col-sm-8">
+                            <div class="input-group">
+                                <input type="text" class="form-control text-right" name="txtCNFinalPriceTempDiscount"
+                                       id="txtCNFinalPriceTempDiscount" ng-model="vm.percent" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/">
+                                <span class="input-group-addon" translate="CMS_TXT_OFF_PERCENT"></span>
+                            </div>
+                            <va-check ng-show="setProductShareFrom.txtCNFinalPriceTempDiscount.$error.pattern" check-type="currency"></va-check>
+                        </div>
+                    </div>
+                    <!-- .form-group -->
+
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label" translate="CMS_TXT_IS_OUTLETS_ON_SALE"></label>
+                        <div class="col-sm-8">
+                            <div class="col-sm-7 p-l-none p-r-none">
+                                <label class="checkbox-inline c-checkbox">
+                                    <input type="checkbox" name="isOutletsOnSale" ng-model="vm.isOutletsOnSale" ng-true-value="'1'" ng-false-value="''" ng-change="changeIsOutletsOnSale()"><span class="fa fa-check"></span>&nbsp;<label translate="CMS_TXT_YES"></label>
+                                </label>
+                                <label class="checkbox-inline c-checkbox">
+                                    <input type="checkbox" name="isOutletsOnSale" ng-model="vm.isOutletsOnSale" ng-true-value="'0'" ng-false-value="''" ng-change="changeIsOutletsOnSale()"><span class="fa fa-check"></span>&nbsp;<label translate="CMS_TXT_NO"></label>
+                                </label>
+                            </div>
+                            <div class="col-sm-5 p-l-none p-r-none">
+                                <div class="input-group">
+                                    <input type="text" class="form-control text-right" name="txtCNPriceDiscount" id="txtCNPriceDiscount"  ng-model="vm.discount"
+                                           ng-pattern="/^[0-9]{1,2}(\.[0-9]{0,2})?$/" ng-disabled="vm.isOutletsOnSale != '1'">
+                                    <span class="input-group-addon" translate="CMS_TXT_OFF_PERCENT"></span>
+                                </div>
+                            </div>
+                            <va-check ng-show="setProductShareFrom.txtCNPriceDiscount.$error.pattern" check-type="currency"></va-check>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label" translate="CMS_TXT_IS_ON_SALE"></label>
+
+                        <div class="col-sm-8">
+                            <label class="checkbox-inline c-checkbox">
+                                <input type="checkbox" name="isOnSale" ng-model="vm.isOnSale" ng-true-value="'1'" ng-false-value="''"><span class="fa fa-check"></span>&nbsp;<label translate="CMS_TXT_YES"></label>
+                            </label>
+                            <label class="checkbox-inline c-checkbox">
+                                <input type="checkbox" name="isOnSale" ng-model="vm.isOnSale" ng-true-value="'0'" ng-false-value="''"><span class="fa fa-check"></span>&nbsp;<label translate="CMS_TXT_NO"></label>
+                            </label>
+                        </div>
+                    </div>
+                    <!--.form-group -->
+
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label" translate="CMS_TXT_IS_APPROVED"></label>
+
+                        <div class="col-sm-8">
+                            <label class="checkbox-inline c-checkbox">
+                                <input type="checkbox" name="isApproved" ng-model="vm.isApproved" ng-true-value="'1'" ng-false-value="''"><span class="fa fa-check"></span>&nbsp;<label translate="CMS_TXT_YES"></label>
+                            </label>
+                        </div>
+                    </div>
+                    <!--.form-group -->
+
+                    <div class="form-group" ng-if="vm.isApproved">
+                        <label class="col-sm-4 control-label" translate="CMS_TXT_PRE_PUBLISH_TIME"></label>
+                        <div for="txtCNOfficialPrePublishTime" class="col-sm-8" ng-controller="datePickerController">
+                            <div class="input-group">
+                                <input type="text" name="txtCNOfficialPrePublishTime" ng-model="vm.prePublishDatetime"
+                                       id="txtCNOfficialPrePublishTime" class="form-control" datepicker-popup="{{$root.dateFormat}}"
+                                       is-open="cnPublishTime" datepicker-options="dateOptions" close-text="Close"/>
+                                        <span class="input-group-btn">
+                                            <button type="button" class="btn btn-default" ng-click="openDatePicker($event, 'cnPublishTime')">
+                                                <i class="glyphicon glyphicon-calendar"></i>
+                                            </button>
+                                        </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group" ng-if="vm.percent">
+                        <label for="txtCNComment" class="col-sm-4 control-label" translate="CMS_TXT_COMMENT"></label>
+                        <div class="col-sm-8">
+                            <textarea class="form-control no-resize" rows="3" id="txtCNComment" name="txtCNComment" ng-model="vm.comment"></textarea>
+                        </div>
+                    </div>
+
+                    <!--<div class="control-savebar text-center form-group"-->
+                         <!--ng-if="(vm.freeShippingTypeId || vm.percent || vm.isOnSale || vm.isApproved || vm.isOutletsOnSale)-->
+                                <!--&& vm.cartId-->
+                                <!--&& !setProductShareFrom.txtCNPriceDiscount.$error.pattern-->
+                                <!--&& !setProductShareFrom.txtCNFinalPriceTempDiscount.$error.pattern">-->
+                        <!--<button type="button" class="btn btn-default" translate="CMS_BTN_CANCEL" ng-click="clearVm()"></button>-->
+                        <!--<button type="button" class="btn btn-vo" translate="CMS_BTN_SAVE" ng-disabled="formCNPriceInfo.$invalid" ng-click="doSetCnProductShare()"></button>-->
+                    <!--</div>-->
+                </form>
+            </div>
+            <!-- .col-sm-6 -->
+        <!--</div>-->
+        <!-- .row -->
+    </div>
+
+<div class="modal-footer">
+    <button class="btn btn-default" ng-click="close()" translate="CMS_BTN_CANCEL" ></button>
+    <button type="button" class="btn btn-vo" translate="CMS_BTN_SAVE"
+            ng-click="doSetCnProductShare()" ng-if="(vm.freeShippingTypeId || vm.percent || vm.isOnSale || vm.isOnSale == '0' || vm.isApproved || vm.isOutletsOnSale || vm.isOutletsOnSale == '0') && vm.cartId"></button>
+</div>
+</div><!-- .vo_modal -->

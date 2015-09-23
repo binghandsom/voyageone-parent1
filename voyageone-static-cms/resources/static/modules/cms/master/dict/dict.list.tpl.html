@@ -1,0 +1,25 @@
+<div ng-controller="DictListController as vm">
+    <div class="bg-light lter b-b wrapper-md vo_page_header clearfix">
+        <div class="row">
+            <div class="vo_page_title col-sm-7">
+                <h1 class="m-n font-thin h3 text-vo" translate="CMS_TXT_HEAD_DICT"></h1>
+            </div>
+        </div>
+    </div>
+    <div class="wrapper-md">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="pull-right-xs">
+                    <button class="btn m-b-xs btn-sm btn-success btn-addon" ng-click="vm.addItem()">
+                        <i class="fa fa-plus"></i><span translate="CMS_BTN_NEW_DICT"></span>
+                    </button>
+                </div>
+                <div class="panel vo_panel tab_panel">
+                    <table datatable dt-options="vm.dtDict.options" dt-columns="vm.dtDict.columns"
+                           dt-instance="vm.dtDict.instance" class="table table-striped b-t b-light vo_table vo_models">
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,108 @@
+/* Add here all your css styles (customizations) */
+
+/* 【重写】超链接 */
+a {
+	color: #72c02c;
+}
+
+/* 【重写】导航超链接 */
+.sidebar-nav-v1 ul li:hover a,
+.sidebar-nav-v1 ul li.active a {
+	background-color: #3498db;
+	color: #FFFFFF;
+}
+.sidebar-nav-v1 > li,
+.sidebar-nav-v1 > li:hover,
+.sidebar-nav-v1 > li a,
+.sidebar-nav-v1 > li a:hover,
+.sidebar-nav-v1 > li.active,
+.sidebar-nav-v1 > li.active:hover {
+  background: #717984;
+  color: #FFFFFF;
+}
+
+/* 【重写】页面级标题 */
+.heading-sm {
+	font-size: 24px;
+	font-weight: 700;
+	border-bottom: 3px solid #72c02c;
+}
+
+/* 表格背景色 */
+.bg-table-title {
+  background-color: #F07027;
+  color: #FFFFFF;
+}
+
+.bg-table-title2 {
+  background-color: #009AD6;
+  color: #FFFFFF;
+}
+
+/* 废止 */
+.bg-PACKAGED {
+  background-color: #838383;
+  color: #FFFFFF;
+}
+.bg-Open {
+  background-color: #B6DDE8;
+  color: #000000;
+}
+.bg-Reserved {
+  background-color: #83C8DA;
+  color: #000000;
+}
+.bg-ShippedUS {
+  background-color: #F3F3F3;
+  color: #000000;
+}
+.bg-ShippedCN {
+  background-color: #F3F3F3;
+  color: #000000;
+}
+.bg-Missed {
+  background-color: #FFFFCC;
+  color: #000000;
+}
+.bg-Backordered {
+  background-color: #FF9696;
+  color: #000000;
+}
+.bg-Cancelled {
+  background-color: #B7B7B7;
+  color: #000000;
+}
+.bg-Waiting {
+  background-color: #83C8DA;
+  color: #000000;
+}
+.bg-Approved {
+  background-color: #F3F3F3;
+  color: #000000;
+}
+.bg-Rejected {
+  background-color: #FF9696;
+  color: #000000;
+}
+.bg-Deleted {
+  background-color: #B7B7B7;
+  color: #000000;
+}
+
+/* 订单默认颜色 */
+.bg-pass0 {
+  background-color: #FFFFFF;
+  color: #000000;
+}
+
+/* 订单经过1天*/
+.bg-pass1 {
+  background-color: #EEEE00;
+  color: #000000;
+}
+
+/* 订单经过2天*/
+.bg-pass2 {
+  background-color: #EE6363;
+  color: #000000;
+}

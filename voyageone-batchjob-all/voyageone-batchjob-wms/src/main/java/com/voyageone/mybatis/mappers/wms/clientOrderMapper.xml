@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.wms.sql">
+
+    <resultMap id="resMap" type="com.voyageone.batch.wms.modelbean.OrderUpdateBean">
+        <result column="source_order_id" property="source_order_id"/>
+        <result column="trankingNo" property="trackingNo"/>
+        <result column="created" property="created"/>
+        <result column="creater" property="creater"/>
+    </resultMap>
+
+    <!-- 更新 tt_orders (11（Open），12（Reserved）或99（Cancelled）时修改状态为 13（装箱）)表-->
+    <update id="wms_updateTTOrdersStatus">
+        update tt_orders t inner join (${tempTable}) t1
+            on t.source_order_id = t1.source_order_id
+           set t.order_status = #{status},
+               t.update_time = now(),
+               t.update_person = #{task_name}
+         where t.order_status in ${prerequisite}
+           and t.order_channel_id = #{orderChannelId};
+    </update>
+
+    <!-- 更新 tt_reservation表的状态-->
+    <update id="wms_updateTTReservationStatus">
+        update tt_reservation t inner join (${tempTable}) t1
+            on t.source_order_id = t1.source_order_id
+           set t.status = #{status},
+               t.update_time = now(),
+               t.update_person = #{task_name}
+         where t.status in ${prerequisite}
+           and t.order_channel_id = #{orderChannelId}
+    </update>
+
+    <select id="wms_insertTTResTracking_check" resultMap="resMap">
+        select tt1.source_order_id,
+               tt1.trankingNo,
+               tt1.created,
+               tt1.creater
+          from (
+                 select temp.source_order_id,
+                        temp.trankingNo,
+                        temp.created,
+                        temp.creater,
+                        res.id
+                   from (
+                          tt_reservation res,
+                          (${tempTable}) temp
+                        )
+                  where temp.source_order_id = res.source_order_id
+                    and res.order_channel_id = #{orderChannelId}
+               ) tt1,
+               tt_res_tracking tt2
+         where tt1.id = tt2.reservation_id
+           and tt1.trankingNo = tt2.tracking_no
+    </select>
+
+    <insert id="wms_insertTTResTracking">
+        insert into tt_res_tracking
+               (syn_ship_no, tracking_no, tracking_type, order_number, reservation_id, create_time, create_person, update_time, update_person, sent_flg)
+        select syn_ship_no, trankingNo, 'SYB', order_number, id, created, creater, now(), #{task_name}, '1'
+          from (
+                   tt_reservation res,
+                  (${tempTable}) temp
+               )
+         where temp.source_order_id = res.source_order_id
+           and res.order_channel_id = #{orderChannelId}
+    </insert>
+
+    <select id="wms_insertTTTracking_check" resultMap="resMap">
+        select tt1.source_order_id,
+               tt1.trankingNo,
+               tt1.created,
+               tt1.creater
+          from (
+                 select temp.source_order_id,
+                        temp.trankingNo,
+                        orders.syn_ship_no,
+                        temp.created,
+                        temp.creater
+                   from (
+                           tt_orders orders,
+                          (${tempTable}) temp
+                        )
+                  where temp.source_order_id = orders.source_order_id
+                    and orders.order_channel_id = #{orderChannelId}
+               ) tt1,
+               tt_tracking tt2
+         where tt1.syn_ship_no = tt2.syn_ship_no
+           and tt1.trankingNo = tt2.tracking_no
+    </select>
+
+    <insert id="wms_insertTTTracking">
+        insert into tt_tracking
+               (syn_ship_no, order_channel_id, tracking_no, tracking_type, tracking_kind, use_flg, create_time, create_person, update_time, update_person, `status`)
+        select syn_ship_no, #{orderChannelId}, trankingNo, 'SYB', '0', '1', created, creater, now(), #{task_name}, '01'
+          from (
+                  tt_orders orders,
+                 (${tempTable}) temp
+               )
+         where temp.source_order_id = orders.source_order_id
+           and orders.order_channel_id = #{orderChannelId}
+    </insert>
+
+    <select id="wms_insertTTTrackingInfo_check" resultMap="resMap">
+        select tt1.source_order_id,
+               tt1.trankingNo,
+               tt1.created,
+               tt1.creater
+          from (
+                 select temp.source_order_id,
+                        temp.trankingNo,
+                        temp.created,
+                        temp.creater,
+                        res.id
+                   from (
+                          tt_reservation res,
+                          (${tempTable}) temp
+                        )
+                  where temp.source_order_id = res.source_order_id
+                    and res.order_channel_id = #{orderChannelId}
+               ) tt1,
+               tt_tracking_info tt2
+         where tt1.id = tt2.reservation_id
+           and tt2.tracking_status = '040'
+    </select>
+
+    <insert id="wms_insertTTTrackingInfo">
+        insert into tt_tracking_info
+               (syn_ship_no, tracking_status, reservation_id, tracking_no, process_time, create_time, create_person, update_time, update_person)
+         select syn_ship_no, '040', res.id, trankingNo, created, created, creater, now(), #{task_name}
+           from (
+                  tt_reservation res,
+                  (${tempTable}) temp
+                )
+          where temp.source_order_id = res.source_order_id
+            and res.order_channel_id = #{orderChannelId}
+    </insert>
+
+    <insert id="wms_insertReservationLog">
+        insert into wms_bt_reservation_log
+               (order_channel_id, reservation_id, store_id, order_number, sku, product, res_status, ship_channel, res_note, created, creater, modified, modifier)
+        select t.order_channel_id, t.id, t.store_id, t.order_number, t.sku, t.product, #{status}, t.ship_channel, #{notes}, now(), #{task_name}, now(), #{task_name}
+          from tt_reservation t
+         inner join (${tempTable}) t1
+            on t.source_order_id = t1.source_order_id
+         where t.status = #{status}
+           and t.order_channel_id = #{orderChannelId}
+           and not exists
+               (
+                 select 1 from wms_bt_reservation_log resLog
+                  where t.id = resLog.reservation_id
+                    and t.order_channel_id = resLog.order_channel_id
+                    and res_status = #{status}
+               )
+    </insert>
+
+    <update id="wms_updateTTResStat2Backorder">
+        update tt_reservation tt INNER JOIN
+            (
+                select
+                    omsOrd.order_number,
+                    itemDel.sku,
+                    resId.id
+                from
+                    (
+                        ${tempTable}
+                    ) tempT,
+                    (
+                        select
+                            t.sku,
+                            t.barcode
+                        from wms_bt_item_details t
+                        where t.order_channel_id = #{orderChannelId}
+                    ) itemDel,
+                    (
+                        select
+                            t.order_number,
+                            client_order_id,
+                            source_order_id
+                        from Oms_bt_orders t
+                        where t.order_channel_id = #{orderChannelId}
+                    ) omsOrd,
+                    (
+                        select
+                            id,
+                            order_number
+                        from tt_reservation main
+                        where (select count(1)
+                               from tt_reservation sub
+                               where main.order_number = sub.order_number
+                                     and main.sku = sub.sku
+                                     and main.id &lt;= sub.id) = 1
+                              and main.order_channel_id = #{orderChannelId}
+                    ) resId
+                where tempT.client_order_id = omsOrd.client_order_id
+                      and tempT.source_order_id = omsOrd.source_order_id
+                      and tempT.barcode = itemDel.barcode
+                      and omsOrd.order_number = resId.order_number
+            ) tt1
+                on tt.order_number = tt1.order_number and tt.sku = tt1.sku and tt.id = tt1.id
+        set tt.status        = #{status},
+            tt.update_time   = now(),
+            tt.update_person = #{task_name}
+        where tt.order_channel_id = #{orderChannelId}
+              and tt.status in ${prerequisite}
+    </update>
+</mapper>

@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.cms.sql" >
+
+  <select id="get_binded_size_chartlist" resultType="com.voyageone.cms.formbean.SizeChartInfo"  parameterType="HashMap" >
+	SELECT
+		DISTINCT(b.size_chart_id) as sizeChartId,
+		b.channel_id as channelId,
+		b.size_chart_name as sizeChartName,
+		b.cart_id as cartId,
+		b.size_chart_model_id as sizeChartModelId,
+		b.size_chart_image_url as sizeChartImageUrl,
+    	b.created
+	FROM
+		cms_mt_size_chart  b
+		LEFT JOIN  cms_bt_bind_size_chart  a ON a.size_chart_id = b.size_chart_id AND a.channel_id = b.channel_id
+	<where>
+		<if test="productTypeId != null and productTypeId != '' ">
+			a.product_type_id =  #{productTypeId}
+		</if>
+		<if test="brandId != null and brandId != '' ">
+			and a.brand_id =  #{brandId}
+		</if>
+		<if test="sizeTypeId != null and sizeTypeId != '' ">
+			and a.size_type_id =  #{sizeTypeId}
+		</if>
+		<if test="channelId != null">
+			and a.channel_id =  #{channelId}
+		</if>
+	</where>
+     <if test="offset != null and pageCount != null">
+        LIMIT #{offset}, #{pageCount}
+     </if> 
+	
+  </select>
+  <select id="cms_get_BindSizeChartCount" parameterType="String" resultType="int">
+ 		SELECT 
+ 			count(1) 
+ 		from 
+ 			cms_bt_bind_size_chart
+ 		WHERE channel_id = #{channelId}
+  </select>
+  <select id="get_other_size_chart_list" resultType="com.voyageone.cms.formbean.SizeChartInfo" parameterType="HashMap">
+	SELECT
+		DISTINCT(b.size_chart_id) as sizeChartId,
+		b.channel_id as channelId,
+		b.size_chart_name as sizeChartName,
+		b.cart_id as cartId,
+		b.size_chart_model_id as sizeChartModelId,
+		b.size_chart_image_url as sizeChartImageUrl
+	FROM
+		cms_mt_size_chart  b
+	LEFT JOIN  cms_mt_size_chart_detail  a  ON a.size_chart_id = b.size_chart_id AND a.channel_id = b.channel_id
+  	<where>
+		<if test="sizeValue != null and sizeValue != '' ">
+			a.size =  #{sizeValue}
+		</if>	
+		<if test="sizeCn != null and sizeCn != '' ">
+		   and  a.size_cn = #{sizeCn}
+		</if>
+		<if test="channelId != null">
+		  and  b.channel_id = #{channelId}
+		</if>
+		
+	</where>
+  </select>
+  <select id="cms_get_SizeChartCount" parameterType="String" resultType="int">
+       SELECT 
+       		count(1) 
+       from 
+       		cms_mt_size_chart 
+       WHERE channel_id = #{channelId}
+  </select>
+  <resultMap type="com.voyageone.cms.formbean.SizeChartInfo" id="SizeChartMap">
+      <result column="size_chart_id"  property="sizeChartId"/>
+      <result column="channel_id" property="channelId"/>
+      <result column="size_chart_model_id" property="sizeChartModelId"/>
+      <result column="size_chart_image_url" property="sizeChartImageUrl"/>
+      <result column="size_chart_name" property="sizeChartName"/>
+      <collection property="sizeList" ofType="com.voyageone.cms.modelbean.SizeChartDetail">
+         <result column="channel_id" property="channelId"/>
+         <result column="size_chart_id" property="sizeChartId"/>
+         <result column="size" property="sizeValue"/>
+         <result column="size_cn" property="sizeCn"/>
+      </collection>
+  </resultMap>
+   <select id="cms_get_SizeChartDetailInfo" resultMap="SizeChartMap" parameterType="HashMap">
+	  SELECT
+		a.size_chart_id,
+    	a.channel_id ,
+		a.size_chart_name ,
+		a.size_chart_model_id,
+    	a.size_chart_image_url,
+		b.size ,
+		b.size_cn
+	FROM                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+		cms_mt_size_chart_detail b
+	LEFT JOIN cms_mt_size_chart a  ON a.size_chart_id = b.size_chart_id
+			AND a.channel_id = b.channel_id
+	where 
+		b.size_chart_id=#{sizeChartId}
+	    and b.channel_id=#{channelId}
+  </select>
+  <select id="cms_get_SizeChartBindList"  resultType="com.voyageone.cms.formbean.BindSizeChartBean" parameterType="HashMap">
+	SELECT
+		a.size_chart_id as sizeChartId,
+  		a.channel_id as channelId,
+		a.product_type_id as productTypeId ,
+		a.size_type_id as sizeTypeId,
+		a.brand_id as brandId,
+		b.brand_name as brandName,
+		c.product_type_name as productTypeName,
+		d.size_chart_name as sizeChartName
+	FROM
+		cms_bt_bind_size_chart a
+	LEFT JOIN cms_mt_brand b ON a.brand_id = b.brand_id
+	LEFT JOIN cms_mt_product_type c ON c.product_type_id = a.product_type_id
+	LEFT JOIN cms_mt_size_chart d ON d.size_chart_id = a.size_chart_id
+	where 
+		a.size_chart_id=#{sizeChartId}
+	    and a.channel_id=#{channelId}
+  </select>
+  <select id="cms_get_SizeChartInfo" resultType="com.voyageone.cms.formbean.SizeChartInfo"  parameterType="HashMap">
+       SELECT
+		a.size_chart_id as sizeChartId,
+    	a.channel_id as channelId ,
+		a.size_chart_name as sizeChartName ,
+		a.size_chart_model_id as sizeChartModelId,
+    	a.size_chart_image_url as sizeChartImageUrl
+	FROM                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+		cms_mt_size_chart a
+	where 
+		a.size_chart_id=#{sizeChartId}
+	    and a.channel_id=#{channelId}
+  
+  </select>
+    <insert id="cms_insert_SizeChart" parameterType="com.voyageone.cms.modelbean.SizeChart" useGeneratedKeys="true" keyProperty="sizeChartId" >
+    insert into 
+    	cms_mt_size_chart 
+    	(size_chart_id, 
+    	channel_id, 
+    	size_chart_name, 
+      	cart_id, 
+      	size_chart_model_id, 
+      	created, 
+      	creater, 
+      	modified, 
+      	modifier, 
+      	size_chart_image_url)
+    values 
+    	(#{sizeChartId,jdbcType=INTEGER}, 
+    	#{channelId,jdbcType=VARCHAR}, 
+    	#{sizeChartName,jdbcType=VARCHAR}, 
+      	#{cartId,jdbcType=INTEGER}, 
+      	#{sizeChartModelId,jdbcType=INTEGER}, 
+      	now(), 
+      	#{creater,jdbcType=VARCHAR}, 
+      	now(), 
+      	#{modifier,jdbcType=VARCHAR}, 
+      	#{sizeChartImageUrl,jdbcType=LONGVARCHAR})
+  </insert>
+	<update id="cms_update_SizeChart" parameterType="com.voyageone.cms.modelbean.SizeChart" >
+	    update cms_mt_size_chart
+	    <set >
+	      <if test="sizeChartName != null" >
+	        size_chart_name = #{sizeChartName,jdbcType=VARCHAR},
+	      </if>
+	      <if test="cartId != null" >
+	        cart_id = #{cartId,jdbcType=INTEGER},
+	      </if>
+	      <if test="sizeChartModelId != null" >
+	        size_chart_model_id = #{sizeChartModelId,jdbcType=INTEGER},
+	      </if>
+	      <if test="isActive != null" >
+	        is_active = #{isActive,jdbcType=CHAR},
+	      </if>
+	      <if test="created != null" >
+	        created = #{created,jdbcType=TIMESTAMP},
+	      </if>
+	      <if test="creater != null" >
+	        creater = #{creater,jdbcType=VARCHAR},
+	      </if>
+	      <if test="modified != null" >
+	        modified = #{modified,jdbcType=TIMESTAMP},
+	      </if>
+	      <if test="modifier != null" >
+	        modifier = #{modifier,jdbcType=VARCHAR},
+	      </if>
+	      <if test="sizeChartImageUrl != null" >
+	        size_chart_image_url = #{sizeChartImageUrl,jdbcType=LONGVARCHAR},
+	      </if>
+	    </set>
+	    where size_chart_id = #{sizeChartId,jdbcType=INTEGER}
+	    and channel_id = #{channelId,jdbcType=VARCHAR}
+  	</update>
+    <insert id="cms_insert_SizeChartDetail" parameterType="java.util.List" >
+    insert into 
+    	cms_mt_size_chart_detail 
+    	(channel_id, 
+    	size_chart_id, 
+    	size, 
+      	size_cn, 
+      	created, 
+      	creater, 
+      	modified, 
+      	modifier)
+    values 
+      <foreach collection="list" item="item" index="index" separator="," >  
+        (#{item.channelId},
+        #{item.sizeChartId},
+        #{item.sizeValue},
+        #{item.sizeCn},
+        now(),
+        #{item.creater},
+        now(),
+        #{item.modifier})  
+    </foreach>  
+    	
+  </insert>
+   <update id="cms_update_SizeChartDetail" parameterType="HashMap" >
+    update cms_mt_size_chart_detail
+    set 
+  	  size_cn = #{sizeCn,jdbcType=VARCHAR},
+      size = #{sizeValue},
+      temp_value_1 = #{tempValue1,jdbcType=VARCHAR},
+      temp_value_2 = #{tempValue2,jdbcType=VARCHAR},
+      temp_value_3 = #{tempValue3,jdbcType=VARCHAR},
+      temp_value_4 = #{tempValue4,jdbcType=VARCHAR},
+      temp_value_5 = #{tempValue5,jdbcType=VARCHAR},
+      created = #{created,jdbcType=TIMESTAMP},
+      creater = #{creater,jdbcType=VARCHAR},
+      modified = now(),
+      modifier = #{modifier,jdbcType=VARCHAR}
+    where id = #{id}
+  </update>
+  <update id="cms_batchUpdate_SizeChartDetail" parameterType="List">
+      <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+                update cms_mt_size_chart_detail 
+                <set>
+                  size_cn = #{item.sizeCn,jdbcType=VARCHAR},
+			      size = #{item.sizeValue,jdbcType=VARCHAR},
+			      temp_value_1 = #{item.tempValue1,jdbcType=VARCHAR},
+			      temp_value_2 = #{item.tempValue2,jdbcType=VARCHAR},
+			      temp_value_3 = #{item.tempValue3,jdbcType=VARCHAR},
+			      temp_value_4 = #{item.tempValue4,jdbcType=VARCHAR},
+			      temp_value_5 = #{item.tempValue5,jdbcType=VARCHAR},
+			      created = #{item.created,jdbcType=TIMESTAMP},
+			      creater = #{item.creater,jdbcType=VARCHAR},
+			      modified = now(),
+			      modifier = #{item.modifier,jdbcType=VARCHAR}
+                </set>
+                where id = #{item.id}
+       </foreach>
+  </update>
+   <insert id="cms_insert_BindSizeChart" parameterType="com.voyageone.cms.modelbean.BindSizeChart" >
+    insert into 
+    	cms_bt_bind_size_chart 
+    	(product_type_id, 
+    	brand_id, 
+    	size_type_id, 
+      	channel_id, 
+      	size_chart_id, 
+      	created, 
+      	creater, 
+      	modified, 
+      	modifier
+      )
+    values 
+    	(#{productTypeId,jdbcType=INTEGER}, 
+    	#{brandId,jdbcType=INTEGER}, 
+    	#{sizeTypeId,jdbcType=INTEGER}, 
+      	#{channelId,jdbcType=VARCHAR}, 
+      	#{sizeChartId,jdbcType=INTEGER}, 
+      	now(), 
+      	#{creater,jdbcType=VARCHAR}, 
+      	now(), 
+      	#{modifier,jdbcType=VARCHAR}
+      )
+  </insert>
+  <delete id="cms_delete_SizeChartDetail" parameterType="String">
+      delete from cms_mt_size_chart_detail
+      where size_chart_id = #{sizeChartId}
+    
+  </delete>
+  <select id="cms_get_SizeChartModel" resultType="com.voyageone.cms.formbean.SizeChartModelBean" parameterType="String">
+        SELECT
+            a.channel_id as channelId,
+			a.size_chart_model_id as sizeChartModelId ,
+			a.size_chart_model_name as sizeChartModelName,
+			a.size_chart_model_url as sizeChartModelUrl
+		FROM
+			cms_mt_size_chart_model a
+		WHERE
+			a.channel_id = #{channelId,jdbcType=VARCHAR}
+  </select>
+ 
+</mapper>

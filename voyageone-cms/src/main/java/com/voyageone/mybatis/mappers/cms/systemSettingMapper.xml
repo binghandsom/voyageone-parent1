@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.cms.sql" >
+<resultMap id="MtTypeResultMap" type="com.voyageone.cms.modelbean.MtType" >
+    <result column="type_id" property="typeId" jdbcType="INTEGER" />
+    <result column="channel_id" property="channelId" jdbcType="VARCHAR" />
+    <result column="type_name" property="typeName" jdbcType="VARCHAR" />
+    <result column="attribute_id" property="attributeId" jdbcType="INTEGER" />
+    <result column="is_edit" property="isEdit" jdbcType="CHAR" />
+    <result column="is_active" property="isActive" jdbcType="CHAR" />
+    <result column="created" property="created" jdbcType="TIMESTAMP" />
+    <result column="creater" property="creater" jdbcType="VARCHAR" />
+    <result column="modified" property="modified" jdbcType="TIMESTAMP" />
+    <result column="modifier" property="modifier" jdbcType="VARCHAR" />
+      <result column="comment" property="comment" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="MtType_Column_List" >
+    type_id, channel_id, type_name, attribute_id, is_edit, is_active, created, creater, 
+    modified, modifier,comment
+  </sql>
+  <select id="cms_get_CmsMtType" resultMap="MtTypeResultMap" parameterType="HashMap" >
+    select 
+    	<include refid="MtType_Column_List" />
+    from 
+    	cms_mt_type
+    where
+         
+    	type_id = #{typeId,jdbcType=INTEGER}
+      	and channel_id = #{channelId,jdbcType=VARCHAR}
+     <if test="offset != null and pageCount != null">
+        LIMIT #{offset}, #{pageCount}
+     </if> 
+  </select>
+  <select id="cms_get_CmsMtTypeCount" resultType="int">
+      select 
+    	count(1)
+    from 
+    	cms_mt_type
+  </select>
+ <insert id="cms_insert_CmsMtType" parameterType="com.voyageone.cms.modelbean.MtType" >
+    insert into 
+    	cms_mt_type 
+    	(type_id, 
+    	channel_id, 
+    	type_name, 
+      	attribute_id, 
+      	is_edit, 
+      	is_active, 
+      	created, 
+      	creater, 
+      	modified, 
+      	modifier, comment)
+    values 
+    	(#{typeId,jdbcType=INTEGER}, 
+    	#{channelId,jdbcType=VARCHAR}, 
+    	#{typeName,jdbcType=VARCHAR}, 
+      	#{attributeId,jdbcType=INTEGER}, 
+      	#{isEdit,jdbcType=CHAR}, 
+      	#{isActive,jdbcType=CHAR}, 
+      	#{created,jdbcType=TIMESTAMP}, 
+      	#{creater,jdbcType=VARCHAR}, 
+      	#{modified,jdbcType=TIMESTAMP}, 
+      	#{modifier,jdbcType=VARCHAR}, 
+      	#{comment,jdbcType=LONGVARCHAR})
+  </insert>
+  <update id="cms_update_CmsMtType" parameterType="com.voyageone.cms.modelbean.MtType" >
+    update cms_mt_type
+    <set >
+      <if test="typeName != null" >
+        type_name = #{typeName,jdbcType=VARCHAR},
+      </if>
+      <if test="attributeId != null" >
+        attribute_id = #{attributeId,jdbcType=INTEGER},
+      </if>
+      <if test="isEdit != null" >
+        is_edit = #{isEdit,jdbcType=CHAR},
+      </if>
+      <if test="isActive != null" >
+        is_active = #{isActive,jdbcType=CHAR},
+      </if>
+      <if test="created != null" >
+        created = #{created,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creater != null" >
+        creater = #{creater,jdbcType=VARCHAR},
+      </if>
+      <if test="modified != null" >
+        modified = #{modified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifier != null" >
+        modifier = #{modifier,jdbcType=VARCHAR},
+      </if>
+      <if test="comment != null" >
+        comment = #{comment,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where type_id = #{typeId,jdbcType=INTEGER}
+      	  and channel_id = #{channelId,jdbcType=VARCHAR}
+  </update>
+ 	<resultMap id="MtValueResultMap" type="com.voyageone.cms.modelbean.MtValue" >
+    <result column="type_id" property="typeId" jdbcType="INTEGER" />
+    <result column="channel_id" property="channelId" jdbcType="VARCHAR" />
+    <result column="is_active" property="isActive" jdbcType="CHAR" />
+    <result column="created" property="created" jdbcType="TIMESTAMP" />
+    <result column="creater" property="creater" jdbcType="VARCHAR" />
+    <result column="modified" property="modified" jdbcType="TIMESTAMP" />
+    <result column="modifier" property="modifier" jdbcType="VARCHAR" />
+    <result column="value" property="value" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="MtValue_Column_List" >
+    type_id, channel_id, is_active, created, creater, modified, modifier,value
+  </sql>
+  <select id="cms_get_CmsMtValue" resultMap="MtValueResultMap" parameterType="HashMap" >
+    select 
+    	<include refid="MtValue_Column_List" />
+    from 
+    	cms_mt_value
+    where 
+    	type_id = #{typeId,jdbcType=INTEGER}
+      	and channel_id = #{channelId,jdbcType=VARCHAR}
+     <if test="offset != null and pageCount != null">
+        LIMIT #{offset}, #{pageCount}
+     </if> 
+  </select>
+  <insert id="cms_insert_MtValue" parameterType="com.voyageone.cms.modelbean.MtValue" >
+    insert into 
+    	cms_mt_value 
+    	(type_id, 
+    	channel_id, 
+    	is_active, 
+      	created, 
+      	creater, 
+      	modified, 
+      	modifier, 
+      	value)
+    values 
+    	(#{typeId,jdbcType=INTEGER}, 
+    	#{channelId,jdbcType=VARCHAR}, 
+    	#{isActive,jdbcType=CHAR}, 
+      	#{created,jdbcType=TIMESTAMP}, 
+      	#{creater,jdbcType=VARCHAR}, 
+      	#{modified,jdbcType=TIMESTAMP}, 
+      	#{modifier,jdbcType=VARCHAR}, 
+      	#{value,jdbcType=LONGVARCHAR})
+  </insert>
+   <update id="cms_update_MtValue" parameterType="com.voyageone.cms.modelbean.MtValue" >
+    update cms_mt_value
+    <set >
+      <if test="isActive != null" >
+        is_active = #{isActive,jdbcType=CHAR},
+      </if>
+      <if test="created != null" >
+        created = #{created,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creater != null" >
+        creater = #{creater,jdbcType=VARCHAR},
+      </if>
+      <if test="modified != null" >
+        modified = #{modified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifier != null" >
+        modifier = #{modifier,jdbcType=VARCHAR},
+      </if>
+      <if test="value != null" >
+        value = #{value,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where 
+    	type_id = #{typeId,jdbcType=INTEGER}
+      	and channel_id = #{channelId,jdbcType=VARCHAR}
+  </update>
+   <resultMap id="MtAttributeResultMap" type="com.voyageone.cms.modelbean.MtAttribute" >
+    <result column="attribute_id" property="attributeId" jdbcType="INTEGER" />
+    <result column="channel_id" property="channelId" jdbcType="VARCHAR" />
+    <result column="attribute_name" property="attributeName" jdbcType="VARCHAR" />
+    <result column="attribute_type" property="attributeType" jdbcType="CHAR" />
+    <result column="is_active" property="isActive" jdbcType="CHAR" />
+    <result column="created" property="created" jdbcType="TIMESTAMP" />
+    <result column="creater" property="creater" jdbcType="VARCHAR" />
+    <result column="modified" property="modified" jdbcType="TIMESTAMP" />
+    <result column="modifier" property="modifier" jdbcType="VARCHAR" />
+    <result column="comment" property="comment" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="MtAttribute_Column_List" >
+    attribute_id, channel_id, attribute_name, attribute_type, is_active, created, creater, 
+    modified, modifier,comment
+  </sql>
+  <select id="cms_get_CmsMtAttribute" resultMap="MtAttributeResultMap" parameterType="HashMap" >
+    select 
+    	<include refid="MtAttribute_Column_List" />
+    from 
+    	cms_mt_attribute
+    where 
+    	attribute_id = #{attributeId,jdbcType=INTEGER}
+      	and channel_id = #{channelId,jdbcType=VARCHAR}
+  </select>
+  <insert id="cms_insert_CmsMtValue" parameterType="com.voyageone.cms.modelbean.MtAttribute" >
+    insert into 
+    	cms_mt_attribute 
+    	(attribute_id, 
+    	channel_id, 
+    	attribute_name, 
+      	attribute_type, 
+      	is_active, 
+      	created, 
+      	creater, 
+      	modified, 
+      	modifier, 
+      	comment)
+    values 
+    	(#{attributeId,jdbcType=INTEGER}, 
+    	#{channelId,jdbcType=VARCHAR}, 
+    	#{attributeName,jdbcType=VARCHAR}, 
+      	#{attributeType,jdbcType=CHAR}, 
+      	#{isActive,jdbcType=CHAR}, 
+      	#{created,jdbcType=TIMESTAMP}, 
+      	#{creater,jdbcType=VARCHAR}, 
+      	#{modified,jdbcType=TIMESTAMP}, 
+      	#{modifier,jdbcType=VARCHAR}, 
+      	#{comment,jdbcType=LONGVARCHAR})
+  </insert>
+    <update id="cms_update_CmsMtAttribute" parameterType="com.voyageone.cms.modelbean.MtAttribute" >
+    update cms_mt_attribute
+    <set >
+      <if test="attributeName != null" >
+        attribute_name = #{attributeName,jdbcType=VARCHAR},
+      </if>
+      <if test="attributeType != null" >
+        attribute_type = #{attributeType,jdbcType=CHAR},
+      </if>
+      <if test="isActive != null" >
+        is_active = #{isActive,jdbcType=CHAR},
+      </if>
+      <if test="created != null" >
+        created = #{created,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creater != null" >
+        creater = #{creater,jdbcType=VARCHAR},
+      </if>
+      <if test="modified != null" >
+        modified = #{modified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifier != null" >
+        modifier = #{modifier,jdbcType=VARCHAR},
+      </if>
+      <if test="comment != null" >
+        comment = #{comment,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where attribute_id = #{attributeId,jdbcType=INTEGER}
+      and channel_id = #{channelId,jdbcType=VARCHAR}
+  </update>
+  <resultMap id="MtAttributeValueResultMap" type="com.voyageone.cms.modelbean.MtAttributeValue" >
+    <result column="attribute_id" property="attributeId" jdbcType="INTEGER" />
+    <result column="attribute_value_id" property="attributeValueId" jdbcType="VARCHAR" />
+    <result column="channel_id" property="channelId" jdbcType="VARCHAR" />
+    <result column="attribute_value" property="attributeValue" jdbcType="VARCHAR" />
+    <result column="is_active" property="isActive" jdbcType="CHAR" />
+    <result column="created" property="created" jdbcType="TIMESTAMP" />
+    <result column="creater" property="creater" jdbcType="VARCHAR" />
+    <result column="modified" property="modified" jdbcType="TIMESTAMP" />
+    <result column="modifier" property="modifier" jdbcType="VARCHAR" />
+    <result column="comment" property="comment" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="MtAttributeValue_Column_List" >
+    attribute_id, attribute_value_id, channel_id, attribute_value, is_active, created, 
+    creater, modified, modifier, comment
+  </sql>
+  <select id="cms_get_MtAttributeValue" resultMap="MtAttributeValueResultMap" parameterType="HashMap" >
+    select 
+    	<include refid="MtAttributeValue_Column_List" />
+    from 
+    	cms_mt_attribute_value
+    where 
+    	attribute_id = #{attributeId,jdbcType=INTEGER}
+      	and attribute_value_id = #{attributeValueId,jdbcType=VARCHAR}
+      	and channel_id = #{channelId,jdbcType=VARCHAR}
+  </select>
+  <insert id="cms_insert_MtAttributeValue" parameterType="com.voyageone.cms.modelbean.MtAttributeValue" >
+    insert into 
+    	cms_mt_attribute_value 
+    	(attribute_id, 
+    	attribute_value_id, 
+    	channel_id, 
+      	attribute_value, 
+      	is_active, 
+      	created, 
+      	creater, 
+      	modified, 
+      	modifier, 
+      	comment)
+    values 
+    	(#{attributeId,jdbcType=INTEGER}, 
+    	#{attributeValueId,jdbcType=VARCHAR}, 
+    	#{channelId,jdbcType=VARCHAR}, 
+      	#{attributeValue,jdbcType=VARCHAR}, 
+      	#{isActive,jdbcType=CHAR}, 
+      	#{created,jdbcType=TIMESTAMP}, 
+      	#{creater,jdbcType=VARCHAR}, 
+      	#{modified,jdbcType=TIMESTAMP}, 
+      	#{modifier,jdbcType=VARCHAR}, 
+      	#{comment,jdbcType=LONGVARCHAR})
+  </insert>
+    <update id="cms_update_CmsMtAttributeValue" parameterType="com.voyageone.cms.modelbean.MtAttributeValue" >
+    update cms_mt_attribute_value
+    <set >
+      <if test="attributeValue != null" >
+        attribute_value = #{attributeValue,jdbcType=VARCHAR},
+      </if>
+      <if test="isActive != null" >
+        is_active = #{isActive,jdbcType=CHAR},
+      </if>
+      <if test="created != null" >
+        created = #{created,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creater != null" >
+        creater = #{creater,jdbcType=VARCHAR},
+      </if>
+      <if test="modified != null" >
+        modified = #{modified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifier != null" >
+        modifier = #{modifier,jdbcType=VARCHAR},
+      </if>
+      <if test="comment != null" >
+        comment = #{comment,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where 
+   		attribute_id = #{attributeId,jdbcType=INTEGER}
+      	and attribute_value_id = #{attributeValueId,jdbcType=VARCHAR}
+      	and channel_id = #{channelId,jdbcType=VARCHAR}
+  </update>
+  
+  
+</mapper>

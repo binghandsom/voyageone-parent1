@@ -1,0 +1,171 @@
+<!--<link rel="stylesheet" type="text/css"href="modules/oms/customer/custom.css" />-->
+<div class="container searchWrap" id="oms_customers_search" ng-controller="customerSearchController" ng-init="initialize()" ng-cloak>
+
+    <div id="search_items" class="panel panel-primary">
+        <div class="panel-heading" ng-class="{'panel-heading-collapsed':search_items}">
+        	<span translate="TXT_TITLE_CUSTOMER_SEARCH"></span>
+        	<paneltool tool-collapse="tool-collapse"></paneltool>
+        </div>
+        <div collapse="search_items" class="panel-wrapper">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-xs-4 form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-xs-4"
+                                   translate="TXT_CUSTOMER_SEARCH_CUSTMERID"></label>
+
+                            <div class="col-xs-8">
+                                <input type="text" class="form-control" ng-model="search.customerId"
+                                       placeholder="customerId">
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-xs-4 form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-xs-4"
+                                   translate="TXT_ORDERS_SEARCH_SEARCH_ORDER_NUMBER"></label>
+
+                            <div class="col-xs-8">
+                                <input type="text" class="form-control" ng-model="search.orderNumber"
+                                       placeholder="orderNumber">
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- <div class="col-xs-4 form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-xs-4"
+                                   translate="GRID_TITLE_TXT_USER_MANATER_COMPANY"></label>
+
+                            <div class="col-xs-8">
+                                <input type="text" class="form-control" ng-model="search.company"
+                                       placeholder="company">
+                            </div>
+
+                        </div>
+                    </div>
+                    -->
+                    <div class="col-xs-4 form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-xs-4"
+                                   translate="GRID_TITLE_TXT_USER_MANATER_LAST_NAME"></label>
+
+                            <div class="col-xs-8">
+                                <input type="text" class="form-control" ng-model="search.lastName"
+                                       placeholder="lastName">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-4 form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-xs-4"
+                                   translate="GRID_TITLE_TXT_USER_MANATER_FIRST_NAME"></label>
+
+                            <div class="col-xs-8">
+                                <input type="text" class="form-control" ng-model="search.firstName"
+                                       placeholder="firstName">
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-xs-4 form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-xs-4"
+                                   translate="GRID_TITLE_TXT_USER_MANATER_EMAIL"></label>
+
+                            <div class="col-xs-8">
+                                <input type="text" class="form-control" ng-model="search.email"
+                                       placeholder="email">
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-xs-4 form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-xs-4"
+                                   translate="TXT_ORDERS_SEARCH_SEARCH_COUNTRY"></label>
+
+                            <div class="col-xs-8">
+                                <input type="text" class="form-control" ng-model="search.country"
+                                       placeholder="country">
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-xs-4 form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-xs-4"
+                                   translate="TXT_ORDERS_SEARCH_SEARCH_STATE"></label>
+
+                            <div class="col-xs-8">
+                                <input type="text" class="form-control" ng-model="search.state"
+                                       placeholder="state">
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-xs-4 form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-xs-4"
+                                   translate="TXT_ORDERS_SEARCH_SEARCH_CITY"></label>
+
+                            <div class="col-xs-8">
+                                <input type="text" class="form-control" ng-model="search.city"
+                                       placeholder="city">
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-xs-4 form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-xs-4" translate="TXT_OMS_ZIP"></label>
+
+                            <div class="col-xs-8">
+                                <input type="text" class="form-control" ng-model="search.zip"
+                                       placeholder="zip">
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-xs-4 form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-xs-4"
+                                   translate="TXT_ORDERS_SEARCH_SEARCH_PHONE"></label>
+
+                            <div class="col-xs-8">
+                                <input type="text" class="form-control" ng-model="search.phone"
+                                       placeholder="phone">
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-xs-4 form-horizontal">
+                        <div class="form-group">
+                         <label class="control-label col-xs-4" translate="TXT_ORDERS_SEARCH_SEARCH_STORE"></label>                  
+                         
+                         <div class="col-xs-8">
+                         <select ng-model="search.channelIdSelected" class="form-control ng-pristine ng-invalid ng-invalid-required ng-touched"
+                                         ng-options="propertyInfo.propertyId as propertyInfo.propertyName for propertyInfo in propertyList">
+                         </select>
+                         </div>
+                       </div>
+                    </div>
+                	<div class="col-xs-12 form-horizontal">
+                		<div class="form-group">
+                			<div class="col-xs-12 btn-group-sm text-right">
+					            <button class="btn btn-primary btn-sm" ng-click="doSearch(1)" translate="BUTTON_SEARCH"></button>
+                			</div>
+                		</div>
+                	</div>
+                </div>
+            </div>
+        </div>
+    </div>
+       
+    <div id="customerSearchList" ng-show="showHiddenStyle_SearchList">
+        <div>
+            <div class="gridStyle" ng-grid="gridOptions"></div>
+        </div>
+    </div>
+</div>

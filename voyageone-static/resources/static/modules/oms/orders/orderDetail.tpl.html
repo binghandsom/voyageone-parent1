@@ -1,0 +1,779 @@
+<div class="container bg-white" id="oms_orders_orderDetail" ng-controller="orderDetailController" ng-init="initialize()" ng-cloak>
+    <div class="row">
+        <div class="col-xs-2 pl-sm pr-sm mt-sm">
+            <div class="panel panel-info mah500px">
+                <div class="panel-heading" translate="TXT_OMS_ORDER_HISTORY"></div>
+                <div class="panel-body p-sm">
+                    <abn-tree tree-controller="orderHistoryTreeList" tree-data="orderHistoryTreeList" icon-leaf="" tree-control="orderHistoryTreeList" on-select="changeOrderNumber(branch)" expand-level="3" initial-selection="currentOrderNumber"></abn-tree>
+                </div>
+            </div>
+            <div class="panel panel-info mah500px" ng-if="searchOrder.orderInfoListForOrderDetail.length &gt; 0">
+                <div class="panel-heading" translate="TXT_OMS_ORDER_LIST"></div>
+                <div class="panel-body pl-sm pr-sm">
+                    <ul class="list-group p-sm note mb0">
+                        <li class="list-group-item p-sm" ng-class="{'active': searchOrderInfo.sourceOrderId == currentSourceOrderId}" ng-repeat="searchOrderInfo in searchOrder.orderInfoListForOrderDetail">
+                            <a href="" ng-bind="searchOrderInfo.orderNumber" ng-click="changeOrderByOrderList(searchOrderInfo.sourceOrderId)"></a>
+                        </li>
+                    </ul>
+                    <div class="col-xs-12 pl-sm pr-sm">
+                        <button class="btn btn-xs btn-primary ms-fl" ng-disabled="searchOrder.searOrderCurrentPage &lt;= 1" ng-click="doSearchOrderList(searchOrder.searOrderCurrentPage - 1)"><i class="fa fa-arrow-left"></i></button>
+                        <button class="btn btn-xs btn-primary ms-fr" ng-disabled="searchOrder.searOrderCurrentPage == searchOrder.searchOrderCurrentPageCount" ng-click="doSearchOrderList(searchOrder.searOrderCurrentPage + 1)"><i class="fa fa-arrow-right"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-10 pl-sm pl-lg border-left-1 mt-sm">
+            <div class="row mb10 border-bottom-1"><!--ng-src="{{mainOrderInfo.popWangWangUrl}}"-->
+                <div class="mb10 ml-lg">
+                    <img class="carousel" src="" pop-wangwang="" wangwang-id="mainOrderInfo.wangwangId" source-order-id="mainOrderInfo.sourceOrderId"/>
+                    <span class="label label-default bg-white c_blue" ng-bind="mainOrderInfo.wangwangId"></span>
+                </div>
+                <div class="col-xs-4 form-horizontal">
+                    <div class="form-group">
+                        <label class="col-xs-5 control-label" translate="TXT_ORDER_WEBORDERNUMBBER"></label>
+
+                        <div class="col-xs-7">
+                            <input type="text" ng-model="mainOrderInfo.sourceOrderId" readonly class="form-control input-sm c_gray"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-4 form-horizontal">
+                    <div class="msg-group mt5">
+                        <span class="label bg-yellow-dark mr10" ng-bind="mainOrderInfo.orderChannelName"></span>
+                        <span class="label label-info mr10" ng-bind="mainOrderInfo.cartName"></span>
+                        <span class="label label-danger mr10" ng-show="mainOrderInfo.localShipOnHold" translate="TXT_ORDER_LOCKED"></span>
+                    </div>
+                </div>
+                <div class="col-xs-4 form-horizontal">
+                    <div class="btn-group-sm text-right">
+                        <button class="btn btn-primary" translate="BUTTON_RELOAD" ng-click="doReLoadOrder()"></button>
+                        <button class="btn btn-primary" translate="BUTTON_BIND" ng-click="doPopupBindOrder()" ng-if="mainOrderInfo.priceDifferenceFlag"></button>
+                        <button class="btn btn-primary" translate="BUTTON_ADD" ng-click="doPopupAddManualOrder()" ng-if="!mainOrderInfo.priceDifferenceFlag"></button>
+                        <button class="btn btn-primary" translate="BUTTON_LOCK" ng-if="!mainOrderInfo.localShipOnHold" ng-click="doLockOrder()"></button>
+                        <button class="btn btn-primary" translate="BUTTON_UNLOCK" ng-if="mainOrderInfo.localShipOnHold" ng-click="doLockOrder()"></button>
+                        <button class="btn btn-primary" translate="BUTTON_BACK" ng-click="doBack()"></button>
+                    </div>
+                </div>
+            </div>
+            <div ng-repeat="orderInfo in ordersList" ng-class="{'border-bottom-1': $last }">
+                <div class="row">
+                    <div class="col-xs-7">
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                <input type="radio" name="order-group" ng-model="selectedOrder.orderInfo" ng-value="orderInfo"/>
+                            </span>
+                            <span class="input-group-addon" translate="TXT_ORDER_ORDERNUMBER"></span>
+                            <input type="text" ng-model="orderInfo.orderNumber" readonly class="form-control input-sm c_gray"/>
+                            <span class="input-group-addon" translate="TXT_ORDER_ORDERDATE"></span>
+                            <input type="text" ng-model="orderInfo.orderDateTime" readonly class="form-control input-sm c_gray"/>
+                        </div>
+                    </div>
+                    <div class="col-xs-2">
+                        <div class="input-group">
+                            <span class="label label-success" ng-bind="orderInfo.orderStatusName"></span>
+                        </div>
+                    </div>
+                    <div class="col-xs-3">
+                        <div dropdown="dropdown" class="btn-group-xs ms-fr" ng-if="!orderInfo.cancelled && !orderInfo.priceDifferenceFlag">
+                            <button ng-disabled="disabled" dropdown-toggle="" class="btn dropdown-toggle btn-primary"><span translate="BUTTON_SUB_ACTION"></span><span class="caret"></span></button>
+                            <ul role="menu" class="dropdown-menu w100" ng-if="!orderInfo.cancelled">
+                                <li ng-show="!orderInfo.approved && !mainOrderInfo.priceDifferenceFlag"><a href="" translate="BUTTON_SUB_APPROVE" ng-click="doApprove(orderInfo, $index)"></a></li>
+                                <li ng-show="!orderInfo.cancelled"><a href="" translate="BUTTON_SUB_CANCEL" ng-click="doPopupCancel(orderInfo, $index)"></a></li>
+                                <li><a href="" translate="TXT_OMS_RETURN" ng-click="doPopupReturn(orderInfo, $index)"></a></li>
+                                <li class="divider"></li>
+                                <li><a href="" translate="BUTTON_SUB_DISCOUNT" ng-click="doPopupDiscount(orderInfo, $index)"></a></li>
+                                <li><a href="" translate="BUTTON_SUB_SHIP" ng-click="doPopupShipment(orderInfo, $index)"></a>
+                                </li>
+                            </ul>
+                        </div>
+                        <button disabled dropdown-toggle="" class="btn dropdown-toggle btn-primary btn-xs ms-fr" ng-if="orderInfo.cancelled || orderInfo.priceDifferenceFlag"><span translate="BUTTON_SUB_ACTION"></span><span class="caret"></span></button>
+                    </div>
+                    <div class="col-xs-12">
+                        <div class="table-responsive">
+                            <table class="table table-bordered ">
+                                <thead>
+                                <tr>
+                                    <th class="w5p">#</th>
+                                    <th class="w20p" translate="TXT_ORDER_SKU"></th>
+                                    <th class="w25p" translate="TXT_ORDER_PRODUCT"></th>
+                                    <th class="w20p" translate="TXT_ORDER_UNIT_PRICE_DISCOUNT"></th>
+                                    <th class="w10p" translate="TXT_ORDER_STATUS"></th>
+                                    <th class="w10p" translate="TXT_ORDER_SYNSHIP_STATUS"></th>
+                                    <th class="w5p" translate="TXT_ORDER_STORE"></th>
+                                    <th class="w5p" translate="TXT_ORDER_INVENTORY"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="orderDetailInfo in orderInfo.orderDetailsList">
+                                    <td ng-bind="$index + 1"></td>
+                                    <td>
+                                        <img class="media" show-image="orderDetailInfo.imgPath" ng-if="orderDetailInfo.skuTmallPath != null"/>
+                                        &nbsp;<a pop-href="orderDetailInfo.skuTmallPath" ng-bind="orderDetailInfo.sku" ng-if="orderDetailInfo.skuTmallPath != null"></a>
+                                        <span ng-bind="orderDetailInfo.sku" ng-if="orderDetailInfo.skuTmallPath == null"></span>
+                                    </td>
+                                    <td ng-bind="orderDetailInfo.product"></td>
+                                    <td class="text-right pt0 pb0" ng-if="!orderDetailInfo.adjustment">
+                                        <div class="border-bottom-1">
+                                            <span ng-bind="orderDetailInfo.pricePerUnit | number:2"></span>
+                                            <span ng-if="orderDetailInfo.discount &gt; 0"><span class="c_green">(<span class="fa fa-sort-asc" ng-bind="orderDetailInfo.discount | number:2"></span>)</span></span>
+                                            <span ng-if="orderDetailInfo.discount &lt; 0"><span class="c_red">(<span class="fa fa-sort-down" ng-bind="-orderDetailInfo.discount | number:2"></span>)</span></span>
+                                        </div>
+                                        <div class="fb" ng-class="{'c_green': orderDetailInfo.price &gt;= 0, 'c_red': orderDetailInfo.price &lt; 0}">
+                                            {{orderInfo.currencyType}}<span ng-bind="orderDetailInfo.price | number:2"></span>
+                                        </div>
+                                    </td>
+                                    <td class="text-right pt0 pb0" ng-if="orderDetailInfo.adjustment">
+                                        <div class="fb" ng-class="{'c_green': orderDetailInfo.pricePerUnit &gt;= 0, 'c_red': orderDetailInfo.pricePerUnit &lt; 0}">
+                                            {{orderInfo.currencyType}}<span ng-bind="orderDetailInfo.pricePerUnit | number:2"></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <a pop-href="orderDetailInfo.synShipPath" ng-bind="orderDetailInfo.statusName" ng-if="orderDetailInfo.synShipPath != null"></a>
+                                        <span ng-bind="orderDetailInfo.statusName" ng-if="orderDetailInfo.synShipPath == null"></span>
+                                    </td>
+                                    <td>
+                                        <span ng-bind="orderDetailInfo.resStatusName"></span>
+                                    </td>
+                                    <td ng-bind="orderDetailInfo.storehouse"></td>
+                                    <td><a ng-bind="orderDetailInfo.inventory" href=""></a></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <tabset class="mt-sm mb-lg">
+                <tab heading="TXT_ORDER_MAIN">
+                    <div class="row">
+                        <div class="col-xs-4 p-sm">
+                            <div class="panel panel-info">
+                                <div class="panel-heading" translate="TXT_ORDER_PRICING"></div>
+                                <div class="panel-body pt-sm">
+                                    <div class="row mb-sm">
+                                        <div class="col-xs-12 input-group pl-sm pr-sm">
+                                            <label class="input-group-addon w40p" translate="TXT_ORDER_PRODUCT_EXPECTED"></label>
+                                            <span ng-bind="mainOrderInfo.expected | number:2" readonly class="form-control text-right input-sm c_gray"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-12 table-responsive p-sm">
+                                            <table class="table">
+                                                <tbody>
+                                                <tr>
+                                                    <th class="w40p" scope="row"><span class="ms-fr small" translate="TXT_ORDER_PRODUCT_TOTAL"></span></label></th>
+                                                    <td class="text-right w60p">{{selectedOrder.orderInfo.currencyType}}<span ng-bind="mainOrderInfo.finalProductTotal | number:2"></span></td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row"><label class="ms-fr small" translate="TXT_ORDER_CHARGES"></label></th>
+                                                    <td class="text-right" ng-bind="mainOrderInfo.revisedSurcharge | number:2"></td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row"><label class="ms-fr small" translate="TXT_ORDER_DISCOUNTS"></label></th>
+                                                    <td class="text-right" ng-bind="mainOrderInfo.revisedDiscount | number:2"></td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row"><label class="ms-fr small" translate="TXT_ORDER_COUPON"></label></th>
+                                                    <td class="text-right" ng-bind="mainOrderInfo.revisedCouponDiscount | number:2"></td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row"><label class="ms-fr small" translate="TXT_ORDER_SHIPMENT"></label></th>
+                                                    <td class="text-right" ng-bind="mainOrderInfo.finalShippingTotal | number:2"></td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row"><label class="ms-fr small" translate="TXT_ORDER_GRAND_TOTAL"></label></th>
+                                                    <td class="text-right c_green f16 fb">{{selectedOrder.orderInfo.currencyType}}<span ng-bind="mainOrderInfo.finalGrandTotal | number:2"></span></td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class=" panel panel-info mb0">
+                                <div class="panel-heading" translate="TXT_ORDER_REFUND"></div>
+                                <div class="panel-body pt-sm">
+                                    <div class="row mb-sm">
+                                        <span class="col-xs-7 small pl-sm pr-sm" translate="TXT_ORDER_CUSTOMER_REFUND_REQUEST"></span>
+                                        <label class="col-xs-5 c_red text-right f16 fb" ng-if="mainOrderInfo.customerRefund &gt; 0">{{selectedOrder.orderInfo.currencyType}}{{mainOrderInfo.customerRefund | number:2}}</label>
+                                    </div>
+                                    <div class="row mb-sm">
+                                        <div class="input-group col-xs-12 p-sm">
+                                            <label class="input-group-addon w40p" translate="TXT_ORDER_REFUND"></label>
+                                            <span ng-bind="mainOrderInfo.expected - mainOrderInfo.finalGrandTotal | number:2" readonly="" class="form-control text-right input-sm c_gray"
+                                                  ng-if="mainOrderInfo.expected - mainOrderInfo.finalGrandTotal &gt; 0"></span>
+                                            <span readonly="" class="form-control text-right input-sm c_gray"
+                                                  ng-if="mainOrderInfo.expected - mainOrderInfo.finalGrandTotal &lt;= 0">0.00</span>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <!--<button class="btn-sm btn btn-primary ms-fr fa fa-reply" translate="TXT_OMS_REFUND_HISTORY" ng-click="doPopupRefund(mainOrderInfo,true)"
+                                                    ng-disabled="!mainOrderInfo.isHaveRefundHistory"></button>-->
+                                            <a class="small" translate="TXT_OMS_REFUND_HISTORY" ng-click="doPopupRefund(mainOrderInfo,true)"
+                                               ng-if="mainOrderInfo.isHaveRefundHistory"></a>
+                                        </div>
+                                        <div class="col-md-2"></div>
+                                        <div class="col-md-3"></div>
+                                        <div class="col-md-3">
+                                            <!--<button class="btn-sm btn btn-primary ms-fr fa fa-reply" translate="TXT_ORDER_REFUND" ng-click="doPopupRefund(mainOrderInfo,false)"
+                                                    ng-disabled="mainOrderInfo.customerRefund &lt;= 0 || mainOrderInfo.expected - mainOrderInfo.finalGrandTotal &lt; 0" ng-if="mainOrderInfo.platformId == platformId.Ali"></button>-->
+                                            <button class="btn-sm btn btn-primary ms-fr fa fa-reply" translate="TXT_ORDER_REFUND" ng-click="doPopupRefund(mainOrderInfo,false)"
+                                                    ng-disabled="mainOrderInfo.customerRefund &lt;= 0" ng-if="mainOrderInfo.platformId == platformId.Ali"></button>
+                                            <button class="btn-sm btn btn-primary ms-fr fa fa-reply" translate="TXT_ORDER_REFUND" ng-click="doPopupRefundCN(mainOrderInfo,false)"
+                                                    ng-disabled="mainOrderInfo.expected - mainOrderInfo.finalGrandTotal &lt;= 0" ng-if="mainOrderInfo.platformId != platformId.Ali"></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-8 p-sm">
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div id="transactionPanel" class="panel panel-info">
+                                        <div ng-class="{'panel-heading-collapsed':transactionPanel}" class="panel-heading"><span translate="TXT_ORDER_TRANSACTION_INFO"></span>
+                                            <paneltool tool-collapse="tool-collapse"></paneltool>
+                                        </div>
+                                        <div collapse="transactionPanel" class="panel-wrapper">
+                                            <div class="panel-body pt-sm">
+                                                <div class="row mb-sm">
+                                                    <div class="input-group col-xs-12 pl-sm pr-sm">
+                                                        <label class="input-group-addon w20p" translate="TXT_ORDER_TRANSACTION_DEBT_TOTAL"></label>
+                                                        <span ng-bind="mainOrderInfo.debitTotal | number:2" readonly class="form-control text-right input-sm w30p c_gray"></span>
+                                                        <label class="input-group-addon w20p" translate="TXT_ORDER_TRANSACTION_CREDIT_TOTAL"></label>
+                                                        <span ng-bind="mainOrderInfo.creditTotal | number:2" readonly class="form-control text-right input-sm w30p c_gray"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-xs-12 pl-sm pr-sm">
+                                                        <div class="table-responsive mah350px">
+                                                            <table class="table table-bordered">
+                                                                <thead>
+                                                                <tr>
+                                                                    <th class="w30p" translate="TXT_ORDER_TRANSACTION_OPERATION_TIME"></th>
+                                                                    <th class="w40p" translate="TXT_ORDER_TRANSACTION_NAME"></th>
+                                                                    <th class="w15p" translate="TXT_ORDER_TRANSACTION_PRICE_DEBT"></th>
+                                                                    <th class="w15p" translate="TXT_ORDER_TRANSACTION_PRICE_CREDIT"></th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                <tr ng-repeat="transactionInfo in orderTransactionsList">
+                                                                    <td>
+                                                                        <span ng-bind="transactionInfo.transactionTime"></span>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span ng-if="transactionInfo.sku == transactionInfo.description">{{transactionInfo.sku}}</span>
+                                                                        <span ng-if="transactionInfo.sku != transactionInfo.description">{{transactionInfo.sku}}({{transactionInfo.description}})</span>
+                                                                        <a href="" popover="{{transactionInfo.note}}" popover-trigger="mouseenter" class="ms-fr fa fa-book c_green" ng-if="transactionInfo.note != null"></a>
+                                                                    </td>
+                                                                    <td><span class="text-right" ng-bind="transactionInfo.debit | number: 2" ng-if="transactionInfo.debit != 0"></span></td>
+                                                                    <td><span class="text-right" ng-bind="transactionInfo.credit | number: 2" ng-if="transactionInfo.credit != 0"></span></td>
+                                                                </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div id="paymentPanel" class="panel panel-info">
+                                        <div ng-class="{'panel-heading-collapsed':paymentPanel}" class="panel-heading"><span translate="TXT_OMS_PAYMENT_INFO"></span>
+                                            <paneltool tool-collapse="tool-collapse"></paneltool>
+                                        </div>
+                                        <div collapse="paymentPanel" class="panel-wrapper">
+                                            <div class="panel-body pt-sm">
+                                                <div class="row mb-sm">
+                                                    <div class="col-xs-6 mt-sm pl-sm">
+                                                        <span class="label label-default c_black mr-lg f16" ng-bind="mainOrderInfo.payTitleText"
+                                                              ng-class="{'label-success': mainOrderInfo.balanceDue &gt; 0,'label-danger':  mainOrderInfo.balanceDue &lt; 0}"></span>
+                                                        <span ng-class="{'c_green': mainOrderInfo.balanceDue &gt; 0,'c_red':  mainOrderInfo.balanceDue &lt; 0}" class="f16 fb"
+                                                              ng-bind="mainOrderInfo.balanceDue | number: 2"></span>
+                                                    </div>
+                                                    <div class="input-group col-xs-6 pl-sm pr-sm">
+                                                        <label class="input-group-addon w40p" translate="TXT_ORDER_PAYMENT_TOTAL"></label>
+                                                        <span ng-bind="mainOrderInfo.paymentTotal | number: 2" readonly class="form-control text-right input-sm w60p c_gray"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-xs-12 pl-sm pr-sm">
+                                                        <div class="table-responsive mah350px">
+                                                            <table class="table table-bordered ">
+                                                                <thead>
+                                                                <tr>
+                                                                    <th class="w30p" translate="TXT_ORDER_TRANSACTION_OPERATION_TIME"></th>
+                                                                    <th class="w40p" translate="TXT_ORDER_TRANSACTION_NAME"></th>
+                                                                    <th class="w15p" translate="TXT_ORDER_TRANSACTION_PRICE_DEBT"></th>
+                                                                    <th class="w15p" translate="TXT_ORDER_TRANSACTION_PRICE_CREDIT"></th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                <tr ng-repeat="paymentInfo in orderPaymentsList">
+                                                                    <td ng-bind="paymentInfo.paymentTime"></td>
+                                                                    <td ng-bind="paymentInfo.description"></td>
+                                                                    <td class="text-right" ng-bind="paymentInfo.debit | number: 2"></td>
+                                                                    <td class="text-right" ng-bind="paymentInfo.credit | number: 2"></td>
+                                                                </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </tab>
+                <tab heading="TXT_ORDER_ADDRESS">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <div class="row mt-sm form-horizontal">
+                                <div class="col-xs-6">
+                                    <span class="label label-info mr-lg" translate="TXT_ORDER_SOLD_TO"></span>
+                                </div>
+                                <div class="col-xs-6 pr0">
+                                    <button class="btn btn-primary btn-sm fa fa-pencil ms-fr" translate="BUTTON_SUB_EDIT" ng-disabled="selectedOrder.orderInfo.cancelled" ng-click="doPopupEditSoldToAddress()"></button>
+                                </div>
+                            </div>
+                            <div class="row ml-sm mt-sm form-horizontal">
+                                <div class="form-group mb-sm">
+                                    <label class="col-xs-4 control-label" translate="TXT_OMS_NAME"></label>
+
+                                    <div class="col-xs-8">
+                                        <input type="text" ng-model="selectedOrder.orderInfo.name" readonly class="form-control input-sm c_gray"/>
+                                    </div>
+                                </div>
+                                <div class="form-group mb-sm">
+                                    <label class="col-xs-4 control-label" translate="TXT_OMS_EMAIL"></label>
+
+                                    <div class="col-xs-8">
+                                        <input type="text" ng-model="selectedOrder.orderInfo.email" readonly class="form-control input-sm c_gray"/>
+                                    </div>
+                                </div>
+                                <div class="form-group mb-sm">
+                                    <label class="col-xs-4 control-label" translate="TXT_OMS_PHONE"></label>
+
+                                    <div class="col-xs-8">
+                                        <input type="text" ng-model="selectedOrder.orderInfo.phone" readonly class="form-control input-sm c_gray"/>
+                                    </div>
+                                </div>
+                                <div class="form-group mb-sm">
+                                    <label class="col-xs-4 control-label" translate="TXT_OMS_COMPANY"></label>
+
+                                    <div class="col-xs-8">
+                                        <input type="text" ng-model="selectedOrder.orderInfo.company" readonly class="form-control input-sm c_gray"/>
+                                    </div>
+                                </div>
+                                <div class="form-group mb-sm">
+                                    <label class="col-xs-4 control-label" translate="TXT_OMS_ADDRESS_1"></label>
+
+                                    <div class="col-xs-8">
+                                        <textarea rows="2" ng-model="selectedOrder.orderInfo.address" readonly class="form-control input-sm no-resize c_gray"/>
+                                    </div>
+                                </div>
+                                <div class="form-group mb-sm">
+                                    <label class="col-xs-4 control-label" translate="TXT_OMS_ADDRESS_2"></label>
+
+                                    <div class="col-xs-8">
+                                        <textarea rows="2" ng-model="selectedOrder.orderInfo.address2" readonly class="form-control input-sm no-resize c_gray"/>
+                                    </div>
+                                </div>
+                                <div class="form-group mb-sm">
+                                    <label class="col-xs-4 control-label" translate="TXT_OMS_CITY_STATE_ZIP"></label>
+
+                                    <div class="col-xs-8">
+                                        <input type="text" placeholder="{{selectedOrder.orderInfo.city}} / {{selectedOrder.orderInfo.state}} / {{selectedOrder.orderInfo.zip}}" readonly class="form-control input-sm c_gray"/>
+                                    </div>
+                                </div>
+                                <div class="form-group mb-sm">
+                                    <label class="col-xs-4 control-label" translate="TXT_OMS_COUNTRY"></label>
+
+                                    <div class="col-xs-8">
+                                        <input type="text" placeholder="{{selectedOrder.orderInfo.country}}" readonly class="form-control input-sm c_gray"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="row mt-sm form-horizontal">
+                                <div class="col-xs-6">
+                                    <span class="label label-info mr-lg" translate="TXT_OMS_SHIP_TO"></span>
+                                </div>
+                                <div class="col-xs-6 pr0">
+                                    <button class="btn btn-primary btn-sm fa fa-pencil ms-fr" translate="BUTTON_SUB_EDIT" ng-disabled="selectedOrder.orderInfo.cancelled" ng-click="doPopupEditShipToAddress()"></button>
+                                </div>
+                            </div>
+                            <div class="row ml-sm mt-sm form-horizontal">
+                                <div class="form-group mb-sm">
+                                    <label class="col-xs-4 control-label" translate="TXT_OMS_NAME"></label>
+
+                                    <div class="col-xs-8">
+                                        <input type="text" ng-model="selectedOrder.orderInfo.shipName" readonly class="form-control input-sm c_gray"/>
+                                    </div>
+                                </div>
+                                <div class="form-group mb-sm">
+                                    <label class="col-xs-4 control-label" translate="TXT_OMS_EMAIL"></label>
+
+                                    <div class="col-xs-8">
+                                        <input type="text" ng-model="selectedOrder.orderInfo.shipEmail" readonly class="form-control input-sm c_gray"/>
+                                    </div>
+                                </div>
+                                <div class="form-group mb-sm">
+                                    <label class="col-xs-4 control-label" translate="TXT_OMS_PHONE"></label>
+
+                                    <div class="col-xs-8">
+                                        <input type="text" ng-model="selectedOrder.orderInfo.shipPhone" readonly class="form-control input-sm c_gray"/>
+                                    </div>
+                                </div>
+                                <div class="form-group mb-sm">
+                                    <label class="col-xs-4 control-label" translate="TXT_OMS_COMPANY"></label>
+
+                                    <div class="col-xs-8">
+                                        <input type="text" ng-model="selectedOrder.orderInfo.shipCompany" readonly class="form-control input-sm c_gray"/>
+                                    </div>
+                                </div>
+                                <div class="form-group mb-sm">
+                                    <label class="col-xs-4 control-label" translate="TXT_OMS_ADDRESS_1"></label>
+
+                                    <div class="col-xs-8">
+                                        <textarea rows="2" ng-model="selectedOrder.orderInfo.shipAddress" readonly class="form-control input-sm no-resize c_gray"/>
+                                    </div>
+                                </div>
+                                <div class="form-group mb-sm">
+                                    <label class="col-xs-4 control-label" translate="TXT_OMS_ADDRESS_2"></label>
+
+                                    <div class="col-xs-8">
+                                        <textarea rows="2" ng-model="selectedOrder.orderInfo.shipAddress2" readonly class="form-control input-sm no-resize c_gray"/>
+                                    </div>
+                                </div>
+                                <div class="form-group mb-sm">
+                                    <label class="col-xs-4 control-label" translate="TXT_OMS_CITY_STATE_ZIP"></label>
+
+                                    <div class="col-xs-8">
+                                        <input type="text" placeholder="{{selectedOrder.orderInfo.shipCity}} / {{selectedOrder.orderInfo.shipState}} / {{selectedOrder.orderInfo.shipZip}}" readonly class="form-control input-sm c_gray"/>
+                                    </div>
+                                </div>
+                                <div class="form-group mb-sm">
+                                    <label class="col-xs-4 control-label" translate="TXT_OMS_COUNTRY"></label>
+
+                                    <div class="col-xs-8">
+                                        <input type="text" placeholder="{{selectedOrder.orderInfo.shipCountry}}" readonly class="form-control input-sm c_gray"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </tab>
+                <tab heading="TXT_ORDER_COMMENT">
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <div class="row mt-sm form-horizontal">
+                                <div class="col-xs-6">
+                                    <span class="label label-info mr-lg" translate="TXT_ORDER_CUSTOMER_COMMENT"></span>
+                                </div>
+                                <div class="col-xs-6 pr0">
+                                    <button class="btn btn-primary btn-sm fa fa-save ms-fr" translate="BUTTON_SUB_SAVE" ng-click="doUpdateCustomerComment()"
+                                            ng-disabled="selectedOrder.orderInfo.customerComment == selectedOrder.orderInfo.origCustomerComment || selectedOrder.orderInfo.cancelled"></button>
+                                </div>
+                            </div>
+                            <div class="row ml-sm mt-sm form-horizontal">
+                                <div class="form-group">
+                                    <div class="col-xs-12 pl">
+                                        <textarea rows="15" ng-model="selectedOrder.orderInfo.customerComment" class="form-control input-sm no-resize" ng-disabled="selectedOrder.orderInfo.cancelled"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-4">
+                            <div class="row mt-sm form-horizontal">
+                                <div class="col-xs-6">
+                                    <span class="label label-info mr-lg" translate="TXT_ORDER_INTERNAL_MESSAGE"></span>
+                                </div>
+                                <div class="col-xs-6 pr0">
+                                    <button class="btn btn-primary btn-sm fa fa-save ms-fr" translate="BUTTON_SUB_SAVE" ng-click="doUpdateInternalMessage()"
+                                            ng-disabled="selectedOrder.orderInfo.internalMessage == selectedOrder.orderInfo.origInternalMessage || selectedOrder.orderInfo.cancelled"></button>
+                                </div>
+                            </div>
+                            <div class="row ml-sm mt-sm form-horizontal">
+                                <div class="form-group">
+                                    <div class="col-xs-12 pl">
+                                        <textarea rows="15" ng-model="selectedOrder.orderInfo.internalMessage" class="form-control input-sm no-resize" ng-disabled="selectedOrder.orderInfo.cancelled"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-4">
+                            <div class="row mt-sm form-horizontal">
+                                <div class="col-xs-6">
+                                    <span class="label label-info mr-lg" translate="TXT_ORDER_GIFTMESSAGE"></span>
+                                </div>
+                                <div class="col-xs-6 pr0">
+                                    <button class="btn btn-primary btn-sm fa fa-save ms-fr" translate="BUTTON_SUB_SAVE" ng-click="doUpdateGiftMessage()"
+                                            ng-disabled="selectedOrder.orderInfo.giftMessage == selectedOrder.orderInfo.origGiftMessage || selectedOrder.orderInfo.cancelled"></button>
+                                </div>
+                            </div>
+                            <div class="row ml-sm mt-sm form-horizontal">
+                                <div class="form-group">
+                                    <div class="col-xs-12 pl">
+                                        <textarea rows="15" ng-model="selectedOrder.orderInfo.giftMessage" class="form-control input-sm no-resize" ng-disabled="selectedOrder.orderInfo.cancelled"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </tab>
+                <tab heading="TXT_ORDER_NOTES">
+                    <div class="row">
+                        <div class="col-xs-5 p-sm mah300px table-responsive">
+                            <ul class="list-group note">
+                                <li class="list-group-item" is-Selected="$index == isSelected" ng-repeat="orderNoteInfo in orderNotesList" ng-class="{'active': selectedNoteInfo.id == orderNoteInfo.id}">
+                                    <a ng-click="selectNoteInfo(orderNoteInfo)" href="" title="{{orderNoteInfo.entryTime}}: {{orderNoteInfo.notes}}"><span ng-bind="orderNoteInfo.entryDate"></span>:&nbsp<span ng-bind="orderNoteInfo.shortNotes"></span></a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-xs-7">
+                            <div class="row p-sm">
+                                <button class="btn btn-primary fa fa-plus-circle btn-sm ms-fr" translate="BUTTON_SUB_ADD" ng-click="doPopupAddNote()"></button>
+                            </div>
+                            <div class="row p-sm form-horizontal">
+                                <div class="form-group">
+                                    <div class="col-xs-7">
+                                        <textarea rows="8" ng-model="selectedNoteInfo.notes" readonly class="form-control input-sm no-resize c_gray"/>
+                                    </div>
+                                    <div class="col-xs-5">
+                                        <img show-image="selectedNoteInfo.imgPath" ng-if="selectedNoteInfo != null" class="w100p"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row p-sm form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-xs-4 control-label" translate="TXT_ORDER_ENTERED"></label>
+
+                                    <div class="col-xs-8">
+                                        <input type="text" ng-model="selectedNoteInfo.entryTime" readonly class="form-control input-sm c_gray"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-xs-4 control-label" translate="TXT_ORDER_CREATED_BY"></label>
+
+                                    <div class="col-xs-8">
+                                        <input type="text" ng-model="selectedNoteInfo.enteredBy" readonly class="form-control input-sm c_gray"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </tab>
+                <tab heading="TXT_ORDER_SHIPPING">
+                    <div class="row">
+                        <div class="col-xs-12 form-horizontal">
+                            <div class="form-group mt-sm">
+                                <label class="col-xs-2 control-label" translate="TXT_OMS_SHIPPING_CHANNEL"></label>
+                                <div class="col-xs-2">
+                                    <input type="text" ng-model="selectedOrder.orderInfo.shipChannel" readonly class="form-control input-sm c_gray"/>
+                                </div>
+                                <label class="col-xs-2 control-label" translate="TXT_OMS_SHIPPING_METHOD"></label>
+                                
+                                <!--shipChannel != 'GZ'�ĳ���-->
+                                <div class="col-xs-4" ng-if="selectedOrder.orderInfo.shipChannel != 'GZ'">
+                                    <select class="form-control input-sm" ng-model="selectedOrder.orderInfo.shipping" ng-options="shippingMethodInfo.id as shippingMethodInfo.name for shippingMethodInfo in shippingMethodList"
+                                            ng-disabled="selectedOrder.orderInfo.cancelled"></select>
+                                </div>
+
+                                <div class="col-xs-2" ng-if="selectedOrder.orderInfo.shipChannel != 'GZ'">
+                                	<button class="btn btn-primary btn-sm fa fa-save ms-fr" translate="BUTTON_SUB_SAVE" ng-click="doUpdateShippingMethod()"
+                                            ng-disabled="(selectedOrder.orderInfo.shipping == selectedOrder.orderInfo.origShipping) || selectedOrder.orderInfo.cancelled"></button>
+                                </div>
+                                
+                                <!--shipChannel == 'GZ'�ĳ���-->
+                                <div class="col-xs-2" ng-if="selectedOrder.orderInfo.shipChannel == 'GZ'">
+                                	<input type="text" value="EMS" readonly class="form-control input-sm c_gray"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6 form-horizontal">
+                            <!--<div class="form-group mt-sm">-->
+                            <!--<label class="col-xs-5 control-label" translate="TXT_OMS_SHIPPING_METHOD"></label>-->
+
+                            <!--<div class="col-xs-7">-->
+                            <!--<input type="text" placeholder="{{selectedOrder.orderInfo.shippingName}}" disabled="" class="form-control input-sm"/>-->
+                            <!--</div>-->
+                            <!--</div>-->
+                        </div>
+                        <div class="col-xs-12">
+                            <div class="table-responsive mah350px">
+                                <table class="table table-bordered">
+                                    <thead>
+                                    <tr>
+                                        <th translate="TXT_ORDER_SHIP_DATE"></th>
+                                        <th translate="TXT_ORDER_RESERVATION_ID"></th>
+                                        <th translate="TXT_ORDER_SKU"></th>
+                                        <th translate="TXT_ORDER_TRACKING_AREA"></th>
+                                        <th translate="TXT_ORDER_TRACKING_CARRIER"></th>
+                                        <th translate="TXT_ORDER_TRACKING_NO"></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr ng-repeat="orderShippingInfo in selectedOrder.orderInfo.orderShippingList">
+                                        <td ng-bind="orderShippingInfo.dateShipped"></td>
+                                        <td ng-bind="orderShippingInfo.resId"></td>
+                                        <td ng-bind="orderShippingInfo.sku"></td>
+                                        <td ng-bind="orderShippingInfo.trackingArea"></td>
+                                        <td ng-bind="orderShippingInfo.trackingType"></td>
+                                        <td ng-bind="orderShippingInfo.trackingNo"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </tab>
+                <tab heading="TXT_ORDER_INVOICE_INFO">
+                    <div class="row">
+                        <div class="col-xs-8">
+                            <div class="row mt-sm form-horizontal">
+                                <div class="col-xs-3">
+                                    <span class="label label-info mr-lg" translate="TXT_ORDER_INVOICE_INFO"></span>
+                                </div>
+                                <div class="col-xs-3 pr0">
+                                    <button class="btn btn-primary btn-sm fa fa-save ms-fr" translate="BUTTON_SUB_SAVE" ng-click="doUpdateInvoiceComments()"
+                                            ng-disabled="selectedOrder.orderInfo.invoiceInfo == selectedOrder.orderInfo.origInvoiceInfo && selectedOrder.orderInfo.invoice == selectedOrder.orderInfo.origInvoice && selectedOrder.orderInfo.invoiceKind == selectedOrder.orderInfo.origInvoiceKind"></button>
+                                </div>
+                            </div>
+                            <div class="row ml-sm mt-sm form-horizontal">
+                                <div class="form-group">
+                                    <div class="col-xs-6 pl">
+                                        <textarea rows="10" ng-model="selectedOrder.orderInfo.invoiceInfo" class="form-control input-sm no-resize" ng-disabled="selectedOrder.orderInfo.cancelled"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-xs-3 control-label" translate="TXT_ORDER_INVOICE_STATUS"></label>
+
+                                    <div class="col-xs-3">
+                                        <select class="form-control input-sm" ng-model="selectedOrder.orderInfo.invoice" ng-options="invoiceInfo.id as invoiceInfo.name for invoiceInfo in invoiceStatusList"
+                                                ></select>
+                                    </div>
+                                    
+                                    <label class="col-xs-3 control-label" translate="TXT_ORDER_INVOICE_KIND"></label>
+
+                                    <div class="col-xs-3">
+                                        <select class="form-control input-sm" ng-model="selectedOrder.orderInfo.invoiceKind" ng-options="invoiceKind.id as invoiceKind.name for invoiceKind in invoiceKindList"
+                                                ng-disabled="selectedOrder.orderInfo.cancelled"></select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </tab>
+                <tab heading="TXT_ORDER_OTHER_INFO">
+                    <div class="row">
+                        <div class="col-xs-8">
+                            <div class="row mt-sm form-horizontal">
+                                <label class="col-xs-3 control-label" translate="TXT_ORDER_CLIENT_ORDER_NUMBER"></label>
+                                
+                                <div class="col-xs-5">
+                                	<input type="text" ng-model="selectedOrder.orderInfo.clientOrderId" readonly class="form-control input-sm c_gray"/>
+                                </div>
+                            </div>
+
+                            <div class="row mt-sm form-horizontal">
+                                <label class="col-xs-3 control-label" translate="TXT_ORDER_FREIGHT_COLLECT"></label>
+
+                                <div class="form-group">
+                                	<div class="col-xs-1">
+                                		<span class="input-group-addon">
+                                    		<input type="checkbox" name="freightCollect" ng-model="selectedOrder.orderInfo.freightCollect"/>
+                                    	</span>
+                                    </div>
+									<div class="col-xs-2">
+										<button class="btn btn-primary btn-sm fa fa-save ms-fr" translate="BUTTON_SUB_SAVE" ng-click="doUpdateOrderOtherProp()"
+                                            ng-disabled="(selectedOrder.orderInfo.freightCollect == selectedOrder.orderInfo.origFreightCollect) || selectedOrder.orderInfo.cancelled"></button>
+									</div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-sm form-horizontal">
+                                <label class="col-xs-3 control-label" translate="TXT_ORDER_CUSTOMER_REFUSED"></label>
+
+                                <div class="form-group">
+                                    <div class="col-xs-1">
+                                		<span class="input-group-addon">
+                                    		<input type="checkbox" name="customerRefused" ng-model="selectedOrder.orderInfo.customerRefused"/>
+                                    	</span>
+                                    </div>
+                                    <div class="col-xs-2">
+                                        <button class="btn btn-primary btn-sm fa fa-save ms-fr" translate="BUTTON_SUB_SAVE" ng-click="doUpdateOrderCustomerRefused()"
+                                                ng-disabled="(selectedOrder.orderInfo.customerRefused == selectedOrder.orderInfo.origCustomerRefused) || selectedOrder.orderInfo.cancelled || (selectedOrder.orderInfo.orderStatus != orderStatus.Shipped)"></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-sm form-horizontal" ng-if="selectedOrder.orderInfo.orderChannelId == '008'">
+                                <label class="col-xs-3 control-label" translate="TXT_ORDER_CANCEL_RM_ORDER"></label>
+
+                                <div class="form-group">
+                                    <div class="col-xs-1">
+                                		<span class="input-group-addon">
+                                    		<input type="checkbox" name="cancelClientOrderFlag" ng-model="selectedOrder.orderInfo.cancelClientOrderFlag" ng-disabled="selectedOrder.orderInfo.origCancelClientOrderFlag || selectedOrder.orderInfo.cancelled || !selectedOrder.orderInfo.clientOrderSendFlag"/>
+                                    	</span>
+                                    </div>
+                                    <div class="col-xs-2">
+                                        <button class="btn btn-primary btn-sm fa fa-save ms-fr" translate="BUTTON_APPLY" ng-click="doCancelClientOrder()"
+                                                ng-disabled="(selectedOrder.orderInfo.cancelClientOrderFlag == selectedOrder.orderInfo.origCancelClientOrderFlag) || selectedOrder.orderInfo.origCancelClientOrderFlag || selectedOrder.orderInfo.cancelled || !selectedOrder.orderInfo.clientOrderSendFlag"></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-sm form-horizontal" ng-if="selectedOrder.orderInfo.orderChannelId == '008'">
+                                <div class="form-group">
+                                    <div class="col-xs-8">
+                                        <span class="col-xs-7 small pl-sm pr-sm" translate="TXT_ORDER_CANCEL_RM_ORDER_EXPLAIN"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-sm form-horizontal" ng-if="selectedOrder.orderInfo.orderChannelId == '008'">
+                                <label class="col-xs-3 control-label" translate="TXT_ORDER_SEND_RM_ORDER"></label>
+
+                                <div class="form-group">
+                                    <div class="col-xs-1">
+                                		<span class="input-group-addon">
+                                    		<input type="checkbox" name="cancelClientOrderFlag" ng-model="selectedOrder.orderInfo.clientOrderSendFlag" ng-disabled="true"/>
+                                    	</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-sm form-horizontal" ng-if="selectedOrder.orderInfo.orderChannelId == '008'">
+                                <label class="col-xs-3 control-label" translate="TXT_ORDER_PARTNER_CANCEL_RM_ORDER"></label>
+
+                                <div class="form-group">
+                                    <div class="col-xs-1">
+                                		<span class="input-group-addon">
+                                    		<input type="checkbox" name="cancelClientOrderFlag" ng-model="selectedOrder.orderInfo.thirdPartyCancelOrderFlag" ng-disabled="true"/>
+                                    	</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-sm form-horizontal" ng-if="selectedOrder.orderInfo.orderChannelId == '008'">
+                                <div class="form-group">
+                                    <div class="col-xs-8">
+                                        <span class="col-xs-7 small pl-sm pr-sm" translate="TXT_ORDER_PARTNER_CANCEL_RM_ORDER_EXPLAIN"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </tab>                
+            </tabset>
+        </div>
+    </div>
+</div>

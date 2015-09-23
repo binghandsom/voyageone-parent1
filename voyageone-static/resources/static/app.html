@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Voyage One</title>
+    <link rel="stylesheet" type="text/css" href="dep/app.css"/>
+    <link rel="stylesheet" type="text/css" href="dep/angular-bootstrap-nav-tree/abn_tree.css"/>
+    <link rel="stylesheet" type="text/css" href="dep/angular-ui-select/select.css"/>
+    <link rel="stylesheet" type="text/css" href="dep/angular-xeditable/xeditable.css"/>
+    <link rel="stylesheet" type="text/css" href="dep/ngDialog/ngDialog.min.css"/>
+    <link rel="stylesheet" type="text/css" href="dep/ng-grid/ng-grid.css"/>
+    <link rel="stylesheet" type="text/css" href="dep/ngDialog/ngDialog-theme-default.min.css"/>
+    <link rel="stylesheet" type="text/css" href="dep/angular-block-ui/angular-block-ui.min.css"/>
+
+    <link rel="stylesheet" type="text/css" href="styles/css/font-awesome.min.css"/>
+    <link rel="stylesheet" type="text/css" href="styles/css/basic.css"/>
+    <link rel="stylesheet" type="text/css" href="styles/css/main.css"/>
+
+    <!--<link rel="stylesheet" type="text/css" href="styles/css/voyageOne/core.css"/>-->
+    <!--<link rel="stylesheet" type="text/css" href="styles/css/voyageOne/oms.css"/>-->
+    <link rel="stylesheet" type="text/css" href="modules/wms/wms.css"/>
+    <link rel="stylesheet" type="text/css" href="modules/ims/ims.css"/>
+    <!-- stylesheet end -->
+
+    <!-- stylesheet business start -->
+    <!-- oms/orders -->
+    <!--<link rel="stylesheet" type="text/css" href="modules/oms/orders/search.min.css" />-->
+    <!--<link rel="stylesheet" type="text/css" href="modules/oms/orders/orderDetail.min.css" />-->
+    <!--<link rel="stylesheet" type="text/css" href="modules/oms/orders/addNewOrder.min.css" />-->
+    <!--<link rel="stylesheet" type="text/css" href="modules/oms/orders/orders.min.css" />-->
+    <!--<link rel="stylesheet" type="text/css" href="modules/core/menu/home.min.css" />-->
+    <!--<link rel="stylesheet" type="text/css" href="modules/oms/orders/orderPop.min.css" />-->
+    <!--<link rel="stylesheet" type="text/css" href="modules/oms/orders/addOrder.min.css" />-->
+    <!--<link rel="stylesheet" type="text/css" href="modules/core/setting/user.min.css" /> -->
+    <!-- stylesheet business end -->
+
+    <!-- oms/customer start -->
+    <!--<link rel="stylesheet" type="text/css" href="modules/oms/customer/custom.css" />-->
+    <!-- oms/customer end -->
+
+</head>
+<body ng-controller="commonController" ng-init="initialize()" class="body-color" ng-cloak>
+<!--<body class="body-color" ng-cloak>-->
+<!-- head start -->
+<div id="head" class="head">
+
+    <div class="has-feedback DivH60">
+        <a href="#"><img class="wd-md" src="styles/images/voyage_one_logo_3.png" alt=""/></a>
+
+        <div class="menu-top">
+            <div>
+            <span>
+                <a href="" translate="CORE_TXT_LANGUAGE_ZH" ng-click="doSelectLanguage('zh')"></a>|
+                <a href="" translate="CORE_TXT_LANGUAGE_EN" ng-click="doSelectLanguage('en')"></a>
+            </span>
+            </div>
+        </div>
+        <div class="menu-user-info">
+            <span class="mr10" ng-bind="userInfo.userName"></span>
+            <span class="mr10" ng-bind="userInfo.loginTime | date:'MM-dd-yyyy HH:mm:ss'"></span>
+            <a class="mr10" ng-click="doChgPassword()" translate="CORE_TXT_CHANGE_PASSWORD" href=""></a>
+            <a ng-click="doLogout()" translate="CORE_TXT_LOGOUT" href=""></a>
+        </div>
+    </div>
+
+    <div class="center">
+        <!-- menu list -->
+        <div class="nav-menu">
+            <UL class="menu">
+                <li ng-repeat="menuInfo in menuList">
+                    <a ng-href="#{{menuInfo.menuUrl}}" ng-bind="menuInfo.menuName" ng-click="selectMenu(menuInfo.menuName)" ng-class="{'menu-now': menuInfo.menuName == userInfo.selMenu}"></a>
+                    <ul ng-if="menuInfo.hasSubMenuList">
+                        <li ng-repeat="secMenuInfo in menuInfo.subMenuList">
+                            <a ng-href="#{{secMenuInfo.menuUrl}}" ng-bind="secMenuInfo.menuName" ng-click="selectMenu(menuInfo.menuName)"></a>
+                            <ul ng-if="secMenuInfo.hasSubMenuList">
+                                <li ng-repeat="thiMenuInfo in secMenuInfo.subMenuList">
+                                    <a ng-href="#{{thiMenuInfo.menuUrl}}" ng-bind="thiMenuInfo.menuName" ng-click="selectMenu(menuInfo.menuName)"></a>
+                                </li>
+                                <li class="nav-btm"></li>
+                            </ul>
+                        </li>
+                        <li class="nav-btm"></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <!--companies select-->
+        <div class="companies">
+            <select class="form-control input-sm" ng-model="userInfo.selCompanyId" ng-options="companyInfo.companyId as companyInfo.companyName for companyInfo in companyList" ng-change="doSelectCompany()">
+            </select>
+        </div>
+    </div>
+
+    <ol class="breadcrumb">
+        <li ng-repeat="navigation in navigationInfo">
+            <a ng-href="#{{navigation.menuUrl}}" ng-bind="navigation.menuName"></a>
+        </li>
+    </ol>
+</div>
+<!-- head end -->
+
+<!-- show message start -->
+<div class="ml-lg mr-lg">
+    <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+</div>
+<!-- show message end -->
+
+<!-- ng-view start -->
+<div ng-view></div>
+<!-- ng-view end -->
+
+<!-- footer start -->
+<footer>Copyright © 2015 VoyageOne. All Rights Reserved. | 16724 Marquardt Ave. Cerritos, CA 90703, USA</footer>
+<!-- footer end -->
+
+<!-- javascript start -->
+<script data-main="main.js" src="dep/require/require.min.js" defer async="true"></script>
+<!--<script language="javascript" type="text/javascript" src="dep/ui/plUpload/plupload.full.min.js"></script>-->
+<!-- javascript end -->
+</body>
+</html>

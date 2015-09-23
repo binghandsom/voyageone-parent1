@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+          http://www.springframework.org/schema/task
+          http://www.springframework.org/schema/task/spring-task.xsd">
+
+    <task:scheduled-tasks scheduler="wms-job-scheduler">
+
+        <!--每隔1分钟进行入出库模拟计算-->
+        <task:scheduled ref="wmsSimTransferInfoTask" method="run" cron="0 0/1 0-23 * * ?"/>
+        <!--每隔1分钟进行物理库存计算（通过wmsSetClientInventoryTask来计算，该任务废止）-->
+        <!--<task:scheduled ref="wmsSetPhysicsInventoryTask" method="run" cron="0 0/1 0-23 * * ?"/>-->
+        <!--每隔1分钟进行逻辑库存计算（通过wmsSetClientInventoryTask来计算，该任务废止）-->
+        <!--<task:scheduled ref="wmsSetLogicInventoryTask" method="run" cron="0 0/1 0-23 * * ?"/>-->
+        <!--每隔30秒进行库存分配（由于CMS情报通过Webservice来取得，该任务废止）-->
+        <!--<task:scheduled ref="wmsSetAllotInventoryTask" method="run" cron="0/30 * 0-23 * * ?"/>-->
+        <!--每隔1分钟进行盘点比较-->
+        <task:scheduled ref="wmsCompareStockTask" method="run" cron="0 0/1 0-23 * * ?"/>
+        <!--每隔1分钟同步物品变化信息到synship-->
+        <task:scheduled ref="wmsSyncChangeToSynShipTask" method="run" cron="0 0/1 0-23 * * ?"/>
+        <!--每1分钟同步一次库存-->
+        <task:scheduled ref="wmsSyncInventoryJobTask" method="run" cron="0 0/1 0-23 * * ?"/>
+        <!--每天凌晨4点刷新一次斯伯丁的库存-->
+        <task:scheduled ref="wmsReflushInventoryJobTask" method="run" cron="0 0 20 * * ?"/>
+        <!--每2分钟与第三方ftp服务连接-->
+        <task:scheduled ref="wmsThirdFtpDownloadFileJobTask" method="run" cron="0 0/5 0-23 * * ?"/>
+        <!--每1分钟将下载的ftp库存文件，进行数据处理-->
+        <task:scheduled ref="wmsThirdFileDataProcessingJobTask" method="run" cron="0 0/2 0-23 * * ?"/>
+        <!--每隔1分钟计算库存计算-->
+        <task:scheduled ref="wmsSetClientInventoryTask" method="run" cron="0 0/1 0-23 * * ?"/>
+        <!--每隔30秒进行库存分配-->
+        <task:scheduled ref="wmsAllotInventoryTask" method="run" cron="0/30 * 0-23 * * ?"/>
+        <!--每月月初1号，中午12点运行-->
+        <task:scheduled ref="wmsInvHisCalcJobTask" method="run" cron="0 0 12 1 * ?"/>
+        <!--通过webservice获取第三方库存同步job， 每5分钟运行一次　-->
+        <task:scheduled ref="wmsGetClientInvTask" method="run" cron="0 0/5 0-23 * * ?"/>
+        <!--第三方销售退货日报， 每5分钟运行一次　-->
+        <task:scheduled ref="wmsCreateReportJobTask" method="run" cron="0 0/5 0-23 * * ?"/>
+        <!--第三方销售文件， 上传FTP服务器　-->
+        <task:scheduled ref="wmsUploadFileToThirdJobTask" method="run" cron="0 0 0/1 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!-- 必须需要 -->
+    <task:scheduler id="wms-job-scheduler" pool-size="3"/>
+
+</beans>

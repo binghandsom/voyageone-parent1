@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Voyage One</title>
+    <link rel="stylesheet" type="text/css" href="dep/app.css"/>
+    <!--<link rel="stylesheet" type="text/css" href="dep/font-awesome.min"/>-->
+    <link rel="stylesheet" type="text/css" href="dep/angular-bootstrap-nav-tree/abn_tree.css"/>
+    <link rel="stylesheet" type="text/css" href="dep/angular-ui-select/select.css"/>
+    <link rel="stylesheet" type="text/css" href="dep/angular-xeditable/xeditable.css"/>
+    <link rel="stylesheet" type="text/css" href="dep/ngDialog/ngDialog.min.css"/>
+    <link rel="stylesheet" type="text/css" href="dep/ngDialog/ngDialog-theme-default.min.css"/>
+    <link rel="stylesheet" type="text/css" href="dep/angular-block-ui/angular-block-ui.min.css"/>
+
+    <!-- define css start -->
+    <link rel="stylesheet" type="text/css" href="styles/css/font-awesome.min.css"/>
+    <link rel="stylesheet" type="text/css" href="styles/css/basic.css"/>
+    <link rel="stylesheet" type="text/css" href="styles/css/index.css"/>
+    <link rel="stylesheet" type="text/css" href="modules/core/account/login.min.css"/>
+    <link rel="stylesheet" type="text/css" href="modules/core/account/company.min.css"/>
+    <!-- define css end -->
+</head>
+<body class="body-color" ng-cloak>
+<div class="container">
+
+    <!-- header start -->
+    <header><img src="styles/images/voyage_one_logo_3.png"></header>
+    <!-- header end -->
+
+    <!-- show message start -->
+    <div class="w40p center-block">
+        <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+    </div>
+    <!-- show message end -->
+
+    <!-- ng-view start -->
+    <div ng-view></div>
+    <!-- ng-view end -->
+
+</div>
+<script data-main="main.js" src="dep/require/require.min.js" defer async="true"></script>
+</body>
+</html>

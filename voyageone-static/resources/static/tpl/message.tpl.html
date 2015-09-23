@@ -1,0 +1,6 @@
+
+<div class="errorMes">
+    <div ng-repeat="alert in alerts" close="closeAlert($index)">
+        <div ng-bind-html="messageBox" class="{{alert.type}}" ></div>
+    </div>
+</div>

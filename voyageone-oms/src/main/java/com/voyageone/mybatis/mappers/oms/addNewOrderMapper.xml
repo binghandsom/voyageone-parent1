@@ -1,0 +1,512 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.oms.sql">
+	
+	<!-- 获得客户信息 -->
+	<resultMap id="customerInfoMap" type="com.voyageone.oms.formbean.OutFormAddNewOrderCustomer">
+		<result column="customer_id" property="customerId"/>
+		<result column="first_name" property="firstName"/>
+		<result column="last_name" property="lastName"/>
+		<result column="company" property="company"/>
+		<result column="email" property="email"/>
+		<result column="address" property="address"/>
+		<result column="address2" property="address2"/>
+		<result column="city" property="city"/>
+		<result column="state" property="state"/>
+		<result column="zip" property="zip"/>
+		<result column="country" property="country"/>
+		<result column="phone" property="phone"/>
+	</resultMap>
+	<select id="oms_bt_customer_getCustomerInfo" parameterType="String" resultMap="customerInfoMap" >
+		select
+			customer_id,
+			first_name,
+			last_name,
+			company,
+			email,
+			address,
+			address2,
+			city,
+			state,
+			zip,
+			country,
+			phone
+		from 
+			oms_bt_customer c
+		where 
+			c.customer_id = ( 
+				select 
+					customer_id
+				from
+					oms_bt_orders
+				where 
+				 	order_number = #{orderNumber}
+			)
+	</select>
+	<select id="oms_bt_customer_customerInfo" parameterType="String" resultMap="customerInfoMap" >
+		select
+			customer_id,
+			first_name,
+			last_name,
+			company,
+			email,
+			address,
+			address2,
+			city,
+			state,
+			zip,
+			country,
+			phone
+		from 
+			oms_bt_customer c
+		where 
+			c.customer_id = #{customerId}
+			
+	</select>
+
+	<!-- 订单信息追加 -->
+	<insert id="oms_bt_orders_insertOrdersInfo" parameterType="com.voyageone.oms.modelbean.OrdersBean">
+		insert into 
+			oms_bt_orders
+			(
+				order_number,
+				order_date_time,
+				customer_id,				
+				
+				/* address*/
+				/*	bill to*/
+				name,
+				company,
+				email,
+				address,
+				address2,
+				city,
+				state,
+				zip,
+				country,
+				phone,
+				
+				/*	ship to*/
+				ship_name,
+				ship_company,
+				ship_email,
+				ship_address,
+				ship_address2,
+				ship_city,
+				ship_state,
+				ship_zip,
+				ship_country,
+				ship_phone,
+				
+				/* custom fields*/
+				lock_ship,					/*		local ship on hold*/
+				need_invoice,				/*		invoice*/
+				freight_collect,			/*		freight_collect*/
+				<if test="useTmallPointFee != null and useTmallPointFee != '' ">
+					channel_point_fee,		/*		useTmallPointFee*/
+				</if>
+				
+				/* message and notes*/
+				customer_comments,
+				internal_message,
+				gift_message,
+				invoice_info,
+				
+				/* payment*/
+				shipping,
+				cart_id,
+				pay_no,
+				
+				/* server set field*/
+				approved,
+				cancelled,
+				source_order_id,
+				origin_source_order_id,
+				order_status,
+				approval_date,
+				order_channel_id,
+				
+				/* calu field*/
+				product_total,
+				shipping_total,
+				grand_total,
+				discount,
+				revised_discount,
+				coupon,
+				coupon_discount,
+				coupon_ok,
+				surcharge,
+				revised_surcharge,
+				final_product_total,
+				final_shipping_total,
+				final_grand_total,
+
+				
+
+				
+
+				
+				discount_type,
+				discount_percent,
+				
+				order_kind,
+				sub_source_order_id,
+				
+				/* timestamp*/
+				created,
+				creater,
+				modified,
+				modifier
+			)
+		value (
+			#{orderNumber},
+
+			now(),
+			#{customerId},
+			
+			/* address*/
+			/*	bill to*/
+			#{name},
+			#{company},
+			#{email},
+			#{address},
+			#{address2},
+			#{city},
+			#{state},
+			#{zip},
+			#{country},
+			#{phone},
+
+			/*	ship to*/				
+			#{shipName},
+			#{shipCompany},
+			#{shipEmail},
+			#{shipAddress},
+			#{shipAddress2},
+			#{shipCity},
+			#{shipState},
+			#{shipZip},
+			#{shipCountry},
+			#{shipPhone},
+			
+			/* custom fields*/
+			#{lockShip},
+			#{invoice},
+			#{freightCollect},
+			<if test="useTmallPointFee != null and useTmallPointFee != '' ">
+				#{useTmallPointFee},
+			</if>
+			
+			/* message and notes*/
+			#{customerComment},
+			#{internalMessage},
+			#{giftMessage},
+			#{invoiceInfo},
+			
+			/* payment*/
+			#{shipping},
+			#{cartId},
+			#{poNumber},
+			
+			/* server set field*/
+			#{approved},
+			#{cancelled},
+			#{sourceOrderId},
+			#{originSourceOrderId},
+			#{orderStatus},
+			now(),
+			#{orderChannelId},
+			
+			/* calu field*/
+			#{productTotal},
+			#{shippingTotal},
+			#{grandTotal},
+			#{discount},
+			#{revisedDiscount},
+			#{coupon},
+			#{couponDiscount},
+			#{couponOk},
+			#{surcharge},
+			#{revisedSurcharge},
+			#{finalProductTotal},
+			#{finalShippingTotal},
+			#{finalGrandTotal},
+
+
+
+
+
+			
+			#{discountType},
+			#{discountPercent},
+			
+			#{orderKind},
+			#{subSourceOrderId},
+			
+			/* timestamp*/
+			now(),
+			#{creater},
+			now(),
+			#{modifier}
+		)
+	</insert>
+	
+	<!-- 订单明细信息追加 -->
+	<insert id="oms_bt_order_details_insertOrderDetailsInfo" parameterType="com.voyageone.oms.modelbean.OrderDetailsBean">
+		insert into 
+			oms_bt_order_details
+			(
+				order_number,
+				item_number,
+				detail_date,
+				adjustment,
+				product,
+				<if test="subItemNumber != null and subItemNumber != '' ">
+					sub_item_number,
+				</if>
+				price_per_unit,
+				quantity_ordered,
+				quantity_shipped,
+				quantity_returned,
+				sku,
+				status,
+				res_allot_flg,
+				synship_flg,
+				res_id,
+				created,
+				creater,
+				modified,
+				modifier
+			)
+		value (
+			#{orderNumber},
+			#{itemNumber},
+			now(),
+			#{adjustment},
+			#{product},
+			<if test="subItemNumber != null and subItemNumber != '' ">
+				#{subItemNumber},
+			</if>
+			#{pricePerUnit},
+			#{quantityOrdered},
+			#{quantityShipped},
+			#{quantityReturned},
+			#{sku},
+			#{status},
+			#{resAllotFlg},
+			#{syncSynship},
+			#{resId},
+			now(),
+			#{creater},
+			now(),
+			#{modifier}
+		)
+	</insert>
+	
+	<!-- 获得客户信息 -->
+	<resultMap id="customerInfoMapByKey" type="com.voyageone.oms.modelbean.CustomerBean">
+		<result column="customer_id" property="customerId"/>
+	</resultMap>
+	<select id="oms_bt_customer_getCustomerInfoByKey" parameterType="HashMap" resultMap="customerInfoMapByKey" >
+		select
+			customer_id
+		from 
+			oms_bt_customer c
+		where
+			c.last_name = #{last_name} and
+			c.phone = #{phone} and
+			c.platform_id = ( 
+				select 
+					platform_id
+				from
+					ct_cart
+				where 
+				 	cart_id = #{cart_id}
+			)
+	</select>
+	
+	<!-- 客户信息追加 -->
+	<insert id="oms_bt_customer_insertCustomerInfo" parameterType="com.voyageone.oms.modelbean.CustomerBean">
+		insert into 
+			oms_bt_customer
+			(
+				order_channel_id,
+				full_name,
+				last_name,
+				company,
+				email,
+				address,
+				address2,
+				city,
+				state,
+				zip,
+				country,
+				phone,
+				platform_id		
+			)
+			value (
+				#{orderChannelId},
+				#{fullName},
+				#{lastName},
+				#{company},
+				#{email},
+				#{address},
+				#{address2},
+				#{city},
+				#{state},
+				#{zip},
+				#{country},
+				#{phone},
+				#{sourceId}
+			)
+	</insert>
+	
+	<!-- 根据cart_id 取得 Source_id -->
+	<select id="ct_property_channel_getsourceId" resultType="int" parameterType="int">
+		select 
+			platform_id			 
+		from ct_cart c
+		where c.cart_id = #{id}			
+	</select>
+	
+	<!-- 订单Transaction信息追加 -->
+	<insert id="oms_bt_transactions_insertTransactionInfo" parameterType="com.voyageone.oms.modelbean.TransactionsBean">
+		insert into 
+			oms_bt_transactions
+			(
+				source_order_id,
+				origin_source_order_id,
+				order_number,
+				transaction_time,
+				sku,
+				description,
+				item_number,
+				debit,
+				credit,
+				note_id,
+				type,
+				created,
+				modified,
+				modifier,
+				creater
+			)
+			value (
+				#{sourceOrderId},
+				#{originSourceOrderId},
+				#{orderNumber},
+				now(),
+				#{sku},
+				#{description},
+				#{itemNumber},
+				#{debit},
+				#{credit},
+				#{noteId},
+				#{type},
+				now(),
+				now(),
+				#{modifier},
+				#{creater}
+			)
+	</insert>
+	
+	<!-- 检索客户信息  -->
+	<resultMap id="customerInfoMapBySearch" type="com.voyageone.oms.formbean.OutFormAddNewOrderCustomer">
+		<result column="customer_id" property="customerId"/>
+		<result column="first_name" property="firstName"/>
+		<result column="last_name" property="lastName"/>
+		<result column="company" property="company"/>
+		<result column="email" property="email"/>
+		<result column="address" property="address"/>
+		<result column="address2" property="address2"/>
+		<result column="city" property="city"/>
+		<result column="state" property="state"/>
+		<result column="zip" property="zip"/>
+		<result column="country" property="country"/>
+		<result column="phone" property="phone"/>
+	</resultMap>
+	<select id="oms_bt_customer_getCustomerInfoForSearch" parameterType="com.voyageone.oms.formbean.InFormAddNewOrderCustomer" resultMap="customerInfoMapBySearch" >
+		select
+			customer_id,
+			first_name,
+			last_name,
+			company,
+			email,
+			address,
+			address2,
+			city,
+			state,
+			zip,
+			country,
+			phone
+		from 
+			oms_bt_customer c
+		<where>			
+			<if test="order_channel_id != null ">
+				order_channel_id in 
+				<foreach item="item" index="index" collection="order_channel_id" open="(" separator="," close=")">  
+					#{item}
+				</foreach>
+			</if>
+			<if test="orderNumber != null and orderNumber != '' ">
+				and c.customer_id = ( 
+					select 
+						customer_id
+					from
+						oms_bt_orders
+					where 
+					 	order_number = #{orderNumber}
+				)
+			</if>
+			<if test="customerId != null and customerId != '' ">
+				and customer_id = #{customerId}
+			</if>
+			<if test="firstName != null and firstName != '' ">
+				and first_name like CONCAT(#{firstName}, '%')
+			</if>
+			<if test="lastName != null and lastName != '' ">
+				and last_name like CONCAT(#{lastName}, '%')
+			</if>
+			<if test="company != null and company != '' ">
+				and company like CONCAT(#{company}, '%')
+			</if>
+			<if test="email != null and email != '' ">
+				and email like CONCAT(#{email}, '%')
+			</if>
+			<if test="city != null and city != '' ">
+				and city like CONCAT(#{city}, '%')
+			</if>
+			<if test="state != null and state != '' ">
+				and state like CONCAT(#{state}, '%')
+			</if>
+			<if test="zip != null and zip != '' ">
+				and zip like CONCAT(#{zip}, '%')
+			</if>
+			<if test="country != null and country != '' ">
+				and country like CONCAT(#{country}, '%')
+			</if>
+			<if test="phone != null and phone != '' ">
+				and phone like CONCAT(#{phone}, '%')
+			</if>
+		</where>
+		limit 0, 50
+	</select>
+	
+	<!-- 获取最新订单号采番 -->
+	<insert id="oms_sequence_order_number_getOrderNumber" parameterType="HashMap" useGeneratedKeys="true" keyProperty="orderNumber" >
+		insert into oms_sequence_order_number
+			(created)
+		values
+			(now())
+	</insert>
+
+	<!-- 子订单采番 -->
+	<select id="oms_bt_order_getOrdersMaxSubSourceOrderId" parameterType="String" resultType="String" >
+		select 
+			max(sub_source_order_id)
+		from 
+			oms_bt_orders o
+		where 
+			o.source_order_id = #{sourceOrderId}
+	</select>
+
+</mapper>

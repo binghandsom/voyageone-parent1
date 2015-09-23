@@ -1,0 +1,1097 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.oms.sql">
+
+	<!-- 获得订单数 TODO-->
+	<select id="omst_orders_getCounts" resultType="int">
+		select 
+			count(0) as count
+		from 
+			ct_message_info
+	</select>
+	
+	<!-- 获得订单数 -->
+	<!-- oms_bt_payments -> oms_bt_settlement 20150824 -->
+	<!-- oms_bt_group_orders payment_total -> payment_total_settle 20150824 -->
+	<select id="oms_bt_orders_getOrderCount" parameterType="com.voyageone.oms.formbean.InFormSearch" resultType="int" >
+		select count(1)
+		from (select distinct o.order_number,
+					o.cart_id,
+					o.order_channel_id
+				from 
+			oms_bt_orders o 
+			<if test="
+				(skuStartsWith != null and skuStartsWith != '') or 
+				(skuIncludes != null and skuIncludes != '') " >
+				inner join oms_bt_order_details d on o.order_number = d.order_number 
+			</if>
+
+			<if test="(customerId != null and customerId != '')" >
+				left join oms_bt_customer cu on o.customer_id = cu.customer_id
+			</if>
+			<if test="orderWithOverSold != null and orderWithOverSold != '' ">
+				<if test="orderWithOverSold == '1'.toString() ">
+					left join synship.tt_reservation syn_re on o.order_number = syn_re.order_number
+				</if>
+			</if>
+			<if test="trackingNumber != null and trackingNumber != '' ">
+				left join oms_bt_tracking tr on o.order_number = tr.order_num
+			</if>
+			<if test="quickFilter == '01' ">
+			    INNER JOIN oms_bt_order_refunds r ON o.source_order_id=r.source_order_id 
+			</if>
+			    INNER JOIN oms_bt_group_orders go ON o.source_order_id = go.source_order_id
+			<if test="paymentMethod != null and paymentMethod != '' ">
+			    INNER JOIN oms_bt_settlement p ON o.source_order_id = p.source_order_id
+			</if>
+		<where>		
+
+			<if test="storeId != null ">
+				o.order_channel_id in 
+				<foreach item="item" index="index" collection="storeId" open="(" separator="," close=")">  
+					#{item}
+				</foreach>
+			</if>
+			<if test="channelId != null ">
+				and o.cart_id in 
+				<foreach item="item" index="index" collection="channelId" open="(" separator="," close=")">  
+					#{item}
+				</foreach>
+			</if>
+			<if test="(skuStartsWith != null and skuStartsWith != '') or
+				(skuIncludes != null and skuIncludes != '') " >
+				and d.adjustment = 0 
+			</if>
+			<if test="orderNumber != null and orderNumber != '' ">
+				and o.order_number = #{orderNumber}
+			</if>
+			<if test="sourceOrderId != null and sourceOrderId != '' ">
+				and o.source_order_id = #{sourceOrderId}
+			</if>
+			<if test="orderDateFrom != null and orderDateFrom != '' ">
+				and o.order_date_time >= #{orderDateFrom}
+			</if>
+			<if test="orderDateTo != null and orderDateTo != '' ">
+				and #{orderDateTo} >= o.order_date_time
+			</if>
+			<if test="name != null and name != '' ">
+				and o.name = #{name}
+			</if>
+			<if test="shipName != null and shipName != '' ">
+				and o.ship_name = #{shipName}
+			</if>
+			<if test="city != null and city != '' ">
+				and o.city like CONCAT(#{city}, '%')
+			</if>
+			<if test="shipCity != null and shipCity != '' ">
+				and o.ship_city like CONCAT(#{shipCity}, '%')
+			</if>
+			<if test="state != null and state != '' ">
+				and o.state like CONCAT(#{state}, '%')
+			</if>
+			<if test="shipState != null and shipState != '' ">
+				and o.ship_state like CONCAT(#{shipState}, '%')
+			</if>
+			<if test="paymentStatus != null and paymentStatus != '' ">
+				<choose>
+					<!-- creadit due -->
+					<when test="paymentStatus == 'c'.toString() ">
+						and (go.payment_total_settle - go.expected) > 0
+					</when>
+					<!-- balance due -->
+					<when test="paymentStatus == 'b'.toString() ">
+						and  0 > (go.payment_total_settle - go.expected)
+					</when>
+					<!-- paid in full -->
+					<when test="paymentStatus == 'p'.toString() ">
+						and  (go.payment_total_settle - go.expected) = 0
+					</when>
+				</choose>
+			</if>
+			<if test="transactionStatus != null and transactionStatus != '' ">
+				<choose>
+					<!-- creadit due -->
+					<when test="transactionStatus == 'c'.toString() ">
+						and (go.final_grand_total - go.expected) > 0
+					</when>
+					<!-- balance due -->
+					<when test="transactionStatus == 'b'.toString() ">
+						and  (0 > go.final_grand_total - go.expected)
+					</when>
+					<!-- paid in full -->
+					<when test="transactionStatus == 'p'.toString() ">
+						and  (go.final_grand_total - go.expected) = 0
+					</when>
+				</choose>
+			</if>
+			<if test="paymentMethod != null and paymentMethod != '' ">
+				and p.pay_type = #{paymentMethod}
+			</if>
+			<if test="orderWithOverSold != null and orderWithOverSold != '' ">
+				<if test="orderWithOverSold == '1'.toString() ">
+					and syn_re.store = 'CH'
+				</if>
+			</if>
+			<if test="orderWithCanceled != null and orderWithCanceled != '' ">
+				<if test="orderWithCanceled == '1'.toString() ">
+					and o.cancelled = 1
+				</if>
+			</if>
+			<if test="quickFilter != null and quickFilter != '' ">
+				<choose>
+					<!-- Today's Orders -->
+					<when test="quickFilter == '04'">
+						and o.order_date_time>=#{fromTime} 
+						and #{endTime}>=o.order_date_time
+					</when>
+					<!-- All Orders missing Date Shipped -->
+					<!-- <when test="quickFilter == '05' ">
+						and NOT EXISTS (
+								select tr2.order_num
+								from oms_bt_tracking tr2
+								where tr2.order_num = o.order_number
+								and tr2.carrier != 'SynShip'
+								)
+					</when> -->
+					<when test="quickFilter == '01' ">
+						and r.refund_status = #{orderStatusReturnRequested}
+						and r.process_flag = 0
+					</when>
+					<when test="quickFilter == '02' ">
+					   and o.customer_comments is not NULL 
+					   and o.customer_comments !=''
+					</when>
+					<when test="quickFilter == '03' ">
+						and o.grand_total >=2000
+					</when>
+					<when test="quickFilter == '05' ">
+						and go.payment_total_settle > 0 and go.payment_total_settle!=go.final_grand_total
+					</when>
+				</choose>
+			</if>
+			<if test="shippingMethod != null and shippingMethod != '' ">
+				and o.shipping = #{shippingMethod}
+			</if>
+			<if test="trackingNumber != null and trackingNumber != '' ">
+				and tr.tracking_id = #{trackingNumber}
+			</if>
+			<if test="customerId != null and customerId != '' ">
+				and cu.customer_id = #{customerId}
+			</if>
+			<if test="skuStartsWith != null and skuStartsWith != '' ">
+				and d.sku like CONCAT(#{skuStartsWith}, '%')
+			</if>
+			<if test="skuIncludes != null and skuIncludes != '' ">
+				and d.sku like CONCAT('%', CONCAT(#{skuIncludes}, '%'))
+			</if>
+			<if test="orderStatus != null and orderStatus != '' ">
+				and o.order_status = #{orderStatus}
+			</if>
+			<!-- 锁定 -->
+			<if test="localShipOnHold != null and localShipOnHold != '' ">
+				<choose>
+					<!-- lock -->
+					<when test="localShipOnHold == 'YES'.toString() ">
+						and o.lock_ship = 'YES'
+					</when>
+					<!-- unlock -->
+					<otherwise>
+						and IFNULL(o.lock_ship, '') != 'YES'
+					</otherwise>
+				</choose>
+			</if>
+			<!-- 发票 -->
+			<if test="invoice != null and invoice != '' ">
+				<choose>
+					<!-- YES -->
+					<when test="invoice == 'YES'.toString() ">
+						and o.need_invoice = 'YES'
+					</when>
+					<!-- POSTED -->
+					<when test="invoice == 'POSTED'.toString() ">
+						and o.need_invoice = 'POSTED'
+					</when>
+					<!-- MARKED -->
+					<when test="invoice == 'MARKED'.toString() ">
+						and o.need_invoice = 'MARKED'
+					</when>
+					<!-- 不要 -->
+					<otherwise>
+						and (IFNULL(o.need_invoice, 'NO') = 'NO'
+							or o.need_invoice = '')
+					</otherwise>
+				</choose>
+			</if>
+			<if test="phone != null and phone != '' ">
+				and o.phone = #{phone}
+			</if>
+			<if test="shipPhone != null and shipPhone != '' ">
+				and o.ship_phone = #{shipPhone}
+			</if>
+			<if test="grandTotalAmountFrom != null and grandTotalAmountFrom != '' ">
+				and go.expected >= #{grandTotalAmountFrom}
+			</if>
+			<if test="grandTotalAmountTo != null and grandTotalAmountTo != '' ">
+				and #{grandTotalAmountTo} >= go.expected
+			</if>
+			<if test="orderKindList !=null and orderKindList !='' ">
+			 	and o.order_kind in
+			 	<foreach item="item" index="index" collection="orderKindList" open="(" separator="," close=")">  
+					#{item}
+				</foreach>
+			</if>
+			<if test="clientOrderId != null and clientOrderId !='' ">
+			   and o.client_order_id = #{clientOrderId}
+			</if>
+		
+		<!-- 	<if test="approved !=null and approved !=''">
+			      and o.approved= 0
+			</if> -->
+		<!-- 	<if test="orderStatusReturnRequested !=null and orderStatusReturnRequested !=''">
+				and r.refund_status = #{orderStatusReturnRequested}
+				and r.process_flag = 0
+			</if> -->
+			<!-- <if test="fromTime!=null and fromTime!=''">
+				and o.order_date_time>=#{fromTime}
+			</if>
+  			<if test="endTime!=null and endTime!=''">
+				and #{endTime}>=o.order_date_time
+			</if> -->
+			<!--<if test="balanceDueFrom != null and balanceDueFrom != '' ">
+				and o.balance_due >= #{balanceDueFrom}
+			</if>
+			<if test="balanceDueTo != null and balanceDueTo != '' ">
+				and #{balanceDueTo} >= o.balance_due
+			</if>
+			<if test="transactionAmountFrom != null and transactionAmountFrom != '' ">
+				and t.amount >= #{transactionAmountFrom}
+			</if>
+			<if test="transactionAmountTo != null and transactionAmountTo != '' ">
+				and #{transactionAmountTo} >= t.amount
+			</if>
+			<if test="expectedNetFrom != null and expectedNetFrom != '' ">
+				and o.expected_net >= #{expectedNetFrom}
+			</if>
+			<if test="expectedNetTo != null and expectedNetTo != '' ">
+				and #{expectedNetTo} >= o.expected_net
+			</if>
+			<if test="actualNetFrom != null and actualNetFrom != '' ">
+				and o.actual_net >= #{actualNetFrom}
+			</if>
+			<if test="actualNetTo != null and actualNetTo != '' ">
+				and #{actualNetTo} >= o.actual_net
+			</if>
+			<if test="couponId != null and couponId != '' ">
+				and o.coupon = #{couponId}
+			</if>-->
+		</where>
+		order by o.order_number desc) o left join ct_cart c on o.cart_id = c.cart_id 
+		left join tm_order_channel p on o.order_channel_id = p.order_channel_id 
+	</select>
+	
+	<!-- 获得订单号列表 -->
+	<!-- oms_bt_payments -> oms_bt_settlement 20150824 -->
+	<!-- oms_bt_group_orders payment_total -> payment_total_settle 20150824 -->
+	<select id="oms_bt_orders_getOrderNumbers" parameterType="com.voyageone.oms.formbean.InFormSearch" resultType="String" >
+		select distinct o.order_number
+		from 
+			oms_bt_orders o 
+			<if test="
+				(skuStartsWith != null and skuStartsWith != '') or 
+				(skuIncludes != null and skuIncludes != '') " >
+				inner join oms_bt_order_details d on o.order_number = d.order_number 
+			</if>
+			<if test="
+				(customerId != null and customerId != '')" >
+				left join oms_bt_customer cu on o.customer_id = cu.customer_id
+			</if>
+			<if test="orderWithOverSold != null and orderWithOverSold != '' ">
+				<if test="orderWithOverSold == '1'.toString() ">
+					left join synship.tt_reservation syn_re on o.order_number = syn_re.order_number
+				</if>
+			</if>
+			<if test="trackingNumber != null and trackingNumber != '' ">
+				left join oms_bt_tracking tr on o.order_number = tr.order_num
+			</if>
+			<if test="quickFilter == '01' ">
+			    left JOIN oms_bt_order_refunds r ON o.source_order_id=r.source_order_id 
+			</if>
+			<if test="(paymentStatus != null and paymentStatus != '') or
+				(transactionStatus != null and transactionStatus != '') or
+				(grandTotalAmountFrom != null and grandTotalAmountFrom != '') or
+				(grandTotalAmountTo != null and grandTotalAmountTo != '')">
+			    INNER JOIN oms_bt_group_orders go ON o.source_order_id = go.source_order_id 
+			</if>
+			<if test="paymentMethod != null and paymentMethod != '' ">
+			    INNER JOIN oms_bt_settlement p ON o.source_order_id = p.source_order_id
+			</if>
+		<where>
+
+			<if test="storeId != null ">
+				o.order_channel_id in 
+				<foreach item="item" index="index" collection="storeId" open="(" separator="," close=")">  
+					#{item}
+				</foreach>
+			</if>
+			<if test="channelId != null ">
+				and o.cart_id in 
+				<foreach item="item" index="index" collection="channelId" open="(" separator="," close=")">  
+					#{item}
+				</foreach>
+			</if>
+			<if test="
+				(skuStartsWith != null and skuStartsWith != '') or 
+				(skuIncludes != null and skuIncludes != '') " >
+				and d.adjustment = 0 
+			</if>
+			<if test="orderNumber != null and orderNumber != '' ">
+				and o.order_number = #{orderNumber}
+			</if>
+			<if test="sourceOrderId != null and sourceOrderId != '' ">
+				and o.source_order_id = #{sourceOrderId}
+			</if>
+			<if test="orderDateFrom != null and orderDateFrom != '' ">
+				and o.order_date_time >= #{orderDateFrom}
+			</if>
+			<if test="orderDateTo != null and orderDateTo != '' ">
+				and #{orderDateTo} >= o.order_date_time
+			</if>
+			<if test="name != null and name != '' ">
+				and o.name = #{name}
+			</if>
+			<if test="shipName != null and shipName != '' ">
+				and o.ship_name = #{shipName}
+			</if>
+			<if test="city != null and city != '' ">
+				and o.city like CONCAT(#{city}, '%')
+			</if>
+			<if test="shipCity != null and shipCity != '' ">
+				and o.ship_city like CONCAT(#{shipCity}, '%')
+			</if>
+			<if test="state != null and state != '' ">
+				and o.state like CONCAT(#{state}, '%')
+			</if>
+			<if test="shipState != null and shipState != '' ">
+				and o.ship_state like CONCAT(#{shipState}, '%')
+			</if>
+			<if test="paymentStatus != null and paymentStatus != '' ">
+				<choose>
+					<!-- creadit due -->
+					<when test="paymentStatus == 'c'.toString() ">
+						and (go.payment_total_settle - go.expected) > 0
+					</when>
+					<!-- balance due -->
+					<when test="paymentStatus == 'b'.toString() ">
+						and  0 > (go.payment_total_settle - go.expected)
+					</when>
+					<!-- paid in full -->
+					<when test="paymentStatus == 'p'.toString() ">
+						and  (go.payment_total_settle - go.expected) = 0
+					</when>
+					
+				</choose>
+			</if>
+			<if test="transactionStatus != null and transactionStatus != '' ">
+				<choose>
+					<!-- creadit due -->
+					<when test="transactionStatus == 'c'.toString() ">
+						and (go.final_grand_total - go.expected) > 0
+					</when>
+					<!-- balance due -->
+					<when test="transactionStatus == 'b'.toString() ">
+						and  (0 > go.final_grand_total - go.expected)
+					</when>
+					<!-- paid in full -->
+					<when test="transactionStatus == 'p'.toString() ">
+						and  (go.final_grand_total - go.expected) = 0
+					</when>
+				</choose>
+			</if>
+			<if test="paymentMethod != null and paymentMethod != '' ">
+				and p.pay_type = #{paymentMethod}
+			</if>
+			<if test="orderWithOverSold != null and orderWithOverSold != '' ">
+				<if test="orderWithOverSold == '1'.toString() ">
+					and syn_re.store = 'CH'
+				</if>
+			</if>
+			<if test="orderWithCanceled != null and orderWithCanceled != '' ">
+				<if test="orderWithCanceled == '1'.toString() ">
+					and o.cancelled = 1
+				</if>
+			</if>
+			<if test="quickFilter != null and quickFilter != '' ">
+				<choose>
+					<!-- Today's Orders -->
+					<when test="quickFilter == '04'">
+							and o.order_date_time>=#{fromTime} 
+							and #{endTime}>=o.order_date_time
+					</when>
+					<!-- All Orders missing Date Shipped -->
+					<!-- <when test="quickFilter == '05' ">
+						and NOT EXISTS (
+								select tr2.order_num
+								from oms_bt_tracking tr2
+								where tr2.order_num = o.order_number
+								and tr2.carrier != 'SynShip'
+								)
+					</when> -->
+					<when test="quickFilter == '01' ">
+						and r.refund_status = #{orderStatusReturnRequested}
+						and r.process_flag = 0
+					</when>
+					<when test="quickFilter == '02' ">
+					   and o.customer_comments is not NULL 
+					   and o.customer_comments !=''
+					</when>
+					<when test="quickFilter == '03' ">
+						and o.grand_total >=2000
+					</when>
+					<when test="quickFilter == '05' ">
+						and go.payment_total_settle > 0 and go.payment_total_settle!=go.final_grand_total
+					</when>
+				</choose>
+			</if>
+			<if test="shippingMethod != null and shippingMethod != '' ">
+				and o.shipping = #{shippingMethod}
+			</if>
+			<if test="trackingNumber != null and trackingNumber != '' ">
+				and tr.tracking_id = #{trackingNumber}
+			</if>
+			<if test="customerId != null and customerId != '' ">
+				and cu.customer_id = #{customerId}
+			</if>
+			<if test="skuStartsWith != null and skuStartsWith != '' ">
+				and d.sku like CONCAT(#{skuStartsWith}, '%')
+			</if>
+			<if test="skuIncludes != null and skuIncludes != '' ">
+				and d.sku like CONCAT('%', CONCAT(#{skuIncludes}, '%'))
+			</if>
+			<if test="orderStatus != null and orderStatus != '' ">
+				and o.order_status = #{orderStatus}
+			</if>
+			<!-- 锁定 -->
+			<if test="localShipOnHold != null and localShipOnHold != '' ">
+				<choose>
+					<!-- lock -->
+					<when test="localShipOnHold == 'YES'.toString() ">
+						and o.lock_ship = 'YES'
+					</when>
+					<!-- unlock -->
+					<otherwise>
+						and IFNULL(o.lock_ship, '') != 'YES'
+					</otherwise>
+				</choose>
+			</if>
+			<!-- 发票 -->
+			<if test="invoice != null and invoice != '' ">
+				<choose>
+					<!-- YES -->
+					<when test="invoice == 'YES'.toString() ">
+						and o.need_invoice = 'YES'
+					</when>
+					<!-- POSTED -->
+					<when test="invoice == 'POSTED'.toString() ">
+						and o.need_invoice = 'POSTED'
+					</when>
+					<!-- MARKED -->
+					<when test="invoice == 'MARKED'.toString() ">
+						and o.need_invoice = 'MARKED'
+					</when>
+					<!-- 不要 -->
+					<otherwise>
+						and (IFNULL(o.need_invoice, 'NO') = 'NO'
+							or o.need_invoice = '')
+					</otherwise>
+				</choose>
+			</if>
+			<if test="phone != null and phone != '' ">
+				and o.phone = #{phone}
+			</if>
+			<if test="shipPhone != null and shipPhone != '' ">
+				and o.ship_phone = #{shipPhone}
+			</if>
+			<if test="grandTotalAmountFrom != null and grandTotalAmountFrom != '' ">
+				and go.expected >= #{grandTotalAmountFrom}
+			</if>
+			<if test="grandTotalAmountTo != null and grandTotalAmountTo != '' ">
+				and #{grandTotalAmountTo} >= go.expected
+			</if>
+			<if test="orderKindList !=null and orderKindList !='' ">
+			 	and o.order_kind in
+			 	<foreach item="item" index="index" collection="orderKindList" open="(" separator="," close=")">  
+					#{item}
+				</foreach>
+			</if>
+			<if test="clientOrderId != null and clientOrderId !='' ">
+			   and o.client_order_id = #{clientOrderId}
+			</if>
+			<!-- <if test="approved !=null and approved !=''">
+			      and o.approved= 0
+			</if> -->
+			<!-- 	<if test="orderStatusReturnRequested !=null and orderStatusReturnRequested !=''">
+				and r.refund_status = #{orderStatusReturnRequested}
+				and r.process_flag = 0
+			</if> -->
+			<!-- <if test="fromTime!=null and fromTime!=''">
+				and o.order_date_time>=#{fromTime}
+			</if>
+  			<if test="endTime!=null and endTime!=''">
+				and #{endTime}>=o.order_date_time
+			</if> -->
+			<!--<if test="transactionAmountFrom != null and transactionAmountFrom != '' ">
+				and t.amount >= #{transactionAmountFrom}
+			</if>
+			<if test="transactionAmountTo != null and transactionAmountTo != '' ">
+				and #{transactionAmountTo} >= t.amount
+			</if>
+			<if test="expectedNetFrom != null and expectedNetFrom != '' ">
+				and o.expected_net >= #{expectedNetFrom}
+			</if>
+			<if test="expectedNetTo != null and expectedNetTo != '' ">
+				and #{expectedNetTo} >= o.expected_net
+			</if>
+			<if test="actualNetFrom != null and actualNetFrom != '' ">
+				and o.actual_net >= #{actualNetFrom}
+			</if>
+			<if test="actualNetTo != null and actualNetTo != '' ">
+				and #{actualNetTo} >= o.actual_net
+			</if>
+			<if test="couponId != null and couponId != '' ">
+				and o.coupon = #{couponId}
+			</if>-->
+		</where>
+		order by o.order_number desc
+	</select>
+	
+	<!-- 获得订单信息 -->
+	<!-- oms_bt_payments -> oms_bt_settlement 20150824 -->
+	<!-- oms_bt_group_orders payment_total -> payment_total_settle 20150824 -->
+	<resultMap id="ordersInfoMap" type="com.voyageone.oms.formbean.OutFormSearch">
+		<result column="order_number" property="orderNumber"/>
+		<result column="source_order_id" property="sourceOrderId"/>
+		<result column="order_date_time" property="orderDate"/>
+		<result column="final_grand_total" property="finalGrandTotal"/>
+		<result column="paymentBalanceDue" property="paymentBalanceDue"/>
+		<result column="transactionBalanceDue" property="transactionBalanceDue"/>
+		<result column="order_status" property="orderStatus"/>
+		<result column="channel" property="channel"/>
+		<result column="store" property="store"/>
+		<result column="wangwangId" property="wangwangId"/>
+	</resultMap>
+	<sql id="orders_column">
+		distinct o.order_number, 
+		o.source_order_id, 
+		o.order_date_time, 
+		o.final_grand_total,
+		o.paymentBalanceDue,
+		o.transactionBalanceDue,
+		o.order_status, 
+		c.name as channel, 
+		p.name as store,
+		o.name as wangwangId
+	</sql>
+	<select id="oms_bt_orders_getOrdersInfo" parameterType="com.voyageone.oms.formbean.InFormSearch" resultMap="ordersInfoMap" >
+		select <include refid="orders_column"/>
+		from ( select 
+					distinct o.order_number,
+					o.source_order_id,
+					o.order_date_time,
+					go.final_grand_total,
+					(go.payment_total_settle - go.expected) as paymentBalanceDue,
+					(go.final_grand_total - go.expected) as transactionBalanceDue,
+					o.order_status,
+					o.name,
+					o.cart_id,
+					o.order_channel_id
+				from 
+			oms_bt_orders o 
+			<if test="
+				(skuStartsWith != null and skuStartsWith != '') or 
+				(skuIncludes != null and skuIncludes != '') " >
+				inner join oms_bt_order_details d on o.order_number = d.order_number 
+			</if>
+
+			<if test="(customerId != null and customerId != '')" >
+				left join oms_bt_customer cu on o.customer_id = cu.customer_id
+			</if>
+			<if test="orderWithOverSold != null and orderWithOverSold != '' ">
+				<if test="orderWithOverSold == '1'.toString() ">
+					left join synship.tt_reservation syn_re on o.order_number = syn_re.order_number
+				</if>
+			</if>
+			<if test="trackingNumber != null and trackingNumber != '' ">
+				left join oms_bt_tracking tr on o.order_number = tr.order_num
+			</if>
+			<if test="quickFilter == '01' ">
+			    INNER JOIN oms_bt_order_refunds r ON o.source_order_id=r.source_order_id 
+			</if>
+			    INNER JOIN oms_bt_group_orders go ON o.source_order_id = go.source_order_id
+			<if test="paymentMethod != null and paymentMethod != '' ">
+			    INNER JOIN oms_bt_settlement p ON o.source_order_id = p.source_order_id
+			</if>
+		<where>		
+
+			<if test="storeId != null ">
+				o.order_channel_id in 
+				<foreach item="item" index="index" collection="storeId" open="(" separator="," close=")">  
+					#{item}
+				</foreach>
+			</if>
+			<if test="channelId != null ">
+				and o.cart_id in 
+				<foreach item="item" index="index" collection="channelId" open="(" separator="," close=")">  
+					#{item}
+				</foreach>
+			</if>
+			<if test="(skuStartsWith != null and skuStartsWith != '') or
+				(skuIncludes != null and skuIncludes != '') " >
+				and d.adjustment = 0 
+			</if>
+			<if test="orderNumber != null and orderNumber != '' ">
+				and o.order_number = #{orderNumber}
+			</if>
+			<if test="sourceOrderId != null and sourceOrderId != '' ">
+				and o.source_order_id = #{sourceOrderId}
+			</if>
+			<if test="orderDateFrom != null and orderDateFrom != '' ">
+				and o.order_date_time >= #{orderDateFrom}
+			</if>
+			<if test="orderDateTo != null and orderDateTo != '' ">
+				and #{orderDateTo} >= o.order_date_time
+			</if>
+			<if test="name != null and name != '' ">
+				and o.name = #{name}
+			</if>
+			<if test="shipName != null and shipName != '' ">
+				and o.ship_name = #{shipName}
+			</if>
+			<if test="city != null and city != '' ">
+				and o.city like CONCAT(#{city}, '%')
+			</if>
+			<if test="shipCity != null and shipCity != '' ">
+				and o.ship_city like CONCAT(#{shipCity}, '%')
+			</if>
+			<if test="state != null and state != '' ">
+				and o.state like CONCAT(#{state}, '%')
+			</if>
+			<if test="shipState != null and shipState != '' ">
+				and o.ship_state like CONCAT(#{shipState}, '%')
+			</if>
+			<if test="paymentStatus != null and paymentStatus != '' ">
+				<choose>
+					<!-- creadit due -->
+					<when test="paymentStatus == 'c'.toString() ">
+						and (go.payment_total_settle - go.expected) > 0
+					</when>
+					<!-- balance due -->
+					<when test="paymentStatus == 'b'.toString() ">
+						and  0 > (go.payment_total_settle - go.expected)
+					</when>
+					<!-- paid in full -->
+					<when test="paymentStatus == 'p'.toString() ">
+						and  (go.payment_total_settle - go.expected) = 0
+					</when>
+					
+				</choose>
+			</if>
+			<if test="transactionStatus != null and transactionStatus != '' ">
+				<choose>
+					<!-- creadit due -->
+					<when test="transactionStatus == 'c'.toString() ">
+						and (go.final_grand_total - go.expected) > 0
+					</when>
+					<!-- balance due -->
+					<when test="transactionStatus == 'b'.toString() ">
+						and  (0 > go.final_grand_total - go.expected)
+					</when>
+					<!-- paid in full -->
+					<when test="transactionStatus == 'p'.toString() ">
+						and  (go.final_grand_total - go.expected) = 0
+					</when>
+				</choose>
+			</if>
+			<if test="paymentMethod != null and paymentMethod != '' ">
+				and p.pay_type = #{paymentMethod}
+			</if>
+			<if test="orderWithOverSold != null and orderWithOverSold != '' ">
+				<if test="orderWithOverSold == '1'.toString() ">
+					and syn_re.store = 'CH'
+				</if>
+			</if>
+			<if test="orderWithCanceled != null and orderWithCanceled != '' ">
+				<if test="orderWithCanceled == '1'.toString() ">
+					and o.cancelled = 1
+				</if>
+			</if>
+			<if test="quickFilter != null and quickFilter != '' ">
+				<choose>
+					<!-- Today's Orders -->
+					<when test="quickFilter == '04'">
+						and o.order_date_time>=#{fromTime} 
+						and #{endTime}>=o.order_date_time
+					</when>
+					<!-- All Orders missing Date Shipped -->
+					<!-- <when test="quickFilter == '05' ">
+						and NOT EXISTS (
+								select tr2.order_num
+								from oms_bt_tracking tr2
+								where tr2.order_num = o.order_number
+								and tr2.carrier != 'SynShip'
+								)
+					</when> -->
+					<when test="quickFilter == '01' ">
+						and r.refund_status = #{orderStatusReturnRequested}
+						and r.process_flag = 0
+					</when>
+					<when test="quickFilter == '02' ">
+					   and o.customer_comments is not NULL 
+					   and o.customer_comments !=''
+					</when>
+					<when test="quickFilter == '03' ">
+						and o.grand_total >=2000
+					</when>
+					<when test="quickFilter == '05' ">
+						and go.payment_total_settle > 0 and go.payment_total_settle!=go.final_grand_total
+					</when>
+				</choose>
+			</if>
+			<if test="shippingMethod != null and shippingMethod != '' ">
+				and o.shipping = #{shippingMethod}
+			</if>
+			<if test="trackingNumber != null and trackingNumber != '' ">
+				and tr.tracking_id = #{trackingNumber}
+			</if>
+			<if test="customerId != null and customerId != '' ">
+				and cu.customer_id = #{customerId}
+			</if>
+			<if test="skuStartsWith != null and skuStartsWith != '' ">
+				and d.sku like CONCAT(#{skuStartsWith}, '%')
+			</if>
+			<if test="skuIncludes != null and skuIncludes != '' ">
+				and d.sku like CONCAT('%', CONCAT(#{skuIncludes}, '%'))
+			</if>
+			<if test="orderStatus != null and orderStatus != '' ">
+				and o.order_status = #{orderStatus}
+			</if>
+			<!-- 锁定 -->
+			<if test="localShipOnHold != null and localShipOnHold != '' ">
+				<choose>
+					<!-- lock -->
+					<when test="localShipOnHold == 'YES'.toString() ">
+						and o.lock_ship = 'YES'
+					</when>
+					<!-- unlock -->
+					<otherwise>
+						and IFNULL(o.lock_ship, '') != 'YES'
+					</otherwise>
+				</choose>
+			</if>
+			<!-- 发票 -->
+			<if test="invoice != null and invoice != '' ">
+				<choose>
+					<!-- YES -->
+					<when test="invoice == 'YES'.toString() ">
+						and o.need_invoice = 'YES'
+					</when>
+					<!-- POSTED -->
+					<when test="invoice == 'POSTED'.toString() ">
+						and o.need_invoice = 'POSTED'
+					</when>
+					<!-- MARKED -->
+					<when test="invoice == 'MARKED'.toString() ">
+						and o.need_invoice = 'MARKED'
+					</when>
+					<!-- 不要 -->
+					<otherwise>
+						and (IFNULL(o.need_invoice, 'NO') = 'NO'
+							or o.need_invoice = '')
+					</otherwise>
+				</choose>
+			</if>
+			<if test="phone != null and phone != '' ">
+				and o.phone = #{phone}
+			</if>
+			<if test="shipPhone != null and shipPhone != '' ">
+				and o.ship_phone = #{shipPhone}
+			</if>
+			<if test="grandTotalAmountFrom != null and grandTotalAmountFrom != '' ">
+				and go.expected >= #{grandTotalAmountFrom}
+			</if>
+			<if test="grandTotalAmountTo != null and grandTotalAmountTo != '' ">
+				and #{grandTotalAmountTo} >= go.expected
+			</if>
+			<if test="orderKindList !=null and orderKindList !='' ">
+			 	and o.order_kind in
+			 	<foreach item="item" index="index" collection="orderKindList" open="(" separator="," close=")">  
+					#{item}
+				</foreach>
+			</if>
+			<if test="clientOrderId != null and clientOrderId !='' ">
+			   and o.client_order_id = #{clientOrderId}
+			</if>
+			<!-- <if test="approved !=null and approved !=''">
+			      and o.approved = 0 
+			</if> -->
+		<!-- 	<if test="orderStatusReturnRequested !=null and orderStatusReturnRequested !=''">
+				and r.refund_status = #{orderStatusReturnRequested}
+				and r.process_flag = 0
+			</if> -->
+			<!-- <if test="fromTime!=null and fromTime!=''">
+				and o.order_date_time>=#{fromTime}
+			</if>
+  			<if test="endTime!=null and endTime!=''">
+				and #{endTime}>=o.order_date_time
+			</if> -->
+			<!--<if test="balanceDueFrom != null and balanceDueFrom != '' ">
+				and o.balance_due >= #{balanceDueFrom}
+			</if>
+			<if test="balanceDueTo != null and balanceDueTo != '' ">
+				and #{balanceDueTo} >= o.balance_due
+			</if>
+			<if test="transactionAmountFrom != null and transactionAmountFrom != '' ">
+				and t.amount >= #{transactionAmountFrom}
+			</if>
+			<if test="transactionAmountTo != null and transactionAmountTo != '' ">
+				and #{transactionAmountTo} >= t.amount
+			</if>
+			<if test="expectedNetFrom != null and expectedNetFrom != '' ">
+				and o.expected_net >= #{expectedNetFrom}
+			</if>
+			<if test="expectedNetTo != null and expectedNetTo != '' ">
+				and #{expectedNetTo} >= o.expected_net
+			</if>
+			<if test="actualNetFrom != null and actualNetFrom != '' ">
+				and o.actual_net >= #{actualNetFrom}
+			</if>
+			<if test="actualNetTo != null and actualNetTo != '' ">
+				and #{actualNetTo} >= o.actual_net
+			</if>
+			<if test="couponId != null and couponId != '' ">
+				and o.coupon = #{couponId}
+			</if>-->
+		</where>
+		order by o.order_number desc
+		limit #{offset}, #{rows}
+		)o left join ct_cart c on o.cart_id = c.cart_id 
+		left join tm_order_channel p on o.order_channel_id = p.order_channel_id 
+	</select>
+	
+	<update id="oms_bt_orders_updateGiftMessage" parameterType="com.voyageone.oms.modelbean.OrdersBean">
+		update oms_bt_orders
+		   set gift_message = #{giftMessage},
+		       modified = now(),
+		       modifier = #{modifier}
+		 where order_number = #{orderNumber} 	   
+	</update>
+ 
+ <update id="oms_bt_orders_updateAddress" parameterType="com.voyageone.oms.modelbean.OrdersBean" >
+    update oms_bt_orders o
+    <set>
+    	<if test="name != null and name != '' ">
+				 o.name = #{name},
+			</if>
+			<if test="shipName != null and shipName != '' ">
+				 o.ship_name = #{shipName},
+			</if>
+			<if test="company != null and company != '' ">
+				 o.company = #{company},
+			</if>
+			<if test="shipCompany != null and shipCompany != '' ">
+				 o.ship_company = #{shipCompany},
+			</if>
+			<if test="email != null and email != '' ">
+				 o.email = #{email},
+			</if>
+			<if test="shipEmail != null and shipEmail != '' ">
+				 o.ship_email = #{shipEmail},
+			</if>
+			<if test="address != null and address != '' ">
+				 o.address = #{address},
+			</if>
+			<if test="address2 != null and address2 != '' ">
+				 o.address2 = #{address2},
+			</if>
+			<if test="shipAddress != null and shipAddress != '' ">
+				 o.ship_address = #{shipAddress},
+			</if>
+			<if test="shipAddress2 != null and shipAddress2 != '' ">
+				 o.ship_address2 = #{shipAddress2},
+			</if>
+			<if test="zip != null and zip != '' ">
+				 o.zip = #{zip},
+			</if>
+			<if test="shipZip != null and shipZip != '' ">
+				 o.ship_zip = #{shipZip},
+			</if>
+			<if test="city != null and city != '' ">
+				 o.city = #{city},
+			</if>
+			<if test="shipCity != null and shipCity != '' ">
+				 o.ship_city = #{shipCity},
+			</if>
+			<if test="state != null and state != '' ">
+				 o.state = #{state},
+			</if>
+			<if test="shipState != null and shipState != '' ">
+				 o.ship_state = #{shipState},
+			</if>
+			<if test="country != null and country != '' ">
+			     o.country = #{country},
+			</if>
+			<if test="shipCountry != null and shipCountry != '' ">
+				 o.ship_country = #{shipCountry},
+			</if>
+			<if test="phone != null and phone != '' ">
+				 o.phone = #{phone},
+			</if>
+			<if test="shipPhone != null and shipPhone != '' ">
+
+				 o.ship_phone = #{shipPhone},
+			</if>
+			<if test="customerComment != null and customerComment != '' ">
+				 o.customer_comments = #{customerComment},
+			</if>
+			<if test="internalMessage != null and internalMessage != '' ">
+				 o.internal_message = #{internalMessage},
+			</if>
+			<if test="invoice != null and invoice != '' ">
+				 o.need_invoice = #{invoice},
+			</if>
+			<if test="invoiceInfo != null and invoiceInfo != '' ">
+				 o.invoice_info = #{invoiceInfo},
+			</if>
+			<if test="shipping != null and shipping != '' ">
+				 o.shipping = #{shipping},
+			</if>
+			modified = now(),
+			modifier = #{modifier}
+       </set>
+       
+    where order_number = #{orderNumber,jdbcType=INTEGER}
+  </update>
+  
+  <!-- SoldToAddress信息更新 -->
+  <update id="oms_bt_orders_updateSoldToAddress" parameterType="com.voyageone.oms.modelbean.OrdersBean" >
+	    update oms_bt_orders o
+    	set
+			o.name = #{name},
+			o.company = #{company},
+			o.email = #{email},
+			o.address = #{address},
+			o.address2 = #{address2},
+			o.zip = #{zip},
+			o.city = #{city},
+			o.state = #{state},
+			o.country = #{country},
+			o.phone = #{phone},
+			modified = now(),
+			modifier = #{modifier}       
+    	where order_number = #{orderNumber}
+  </update>
+  
+  <!-- ShipToAddress信息更新 -->  
+  <update id="oms_bt_orders_updateShipToAddress" parameterType="com.voyageone.oms.modelbean.OrdersBean" >
+    	update oms_bt_orders o
+    	set
+    		o.ship_name = #{shipName},
+			o.ship_company = #{shipCompany},
+			o.ship_email = #{shipEmail},
+			o.ship_address = #{shipAddress},
+			o.ship_address2 = #{shipAddress2},
+			o.ship_zip = #{shipZip},
+			o.ship_city = #{shipCity},
+			o.ship_state = #{shipState},
+			o.ship_country = #{shipCountry},
+			o.ship_phone = #{shipPhone},
+			modified = now(),
+			modifier = #{modifier}       
+    	where order_number = #{orderNumber}
+  </update>
+  
+  <!-- Invoice信息更新 -->  
+  <update id="oms_bt_orders_updateInvoice" parameterType="com.voyageone.oms.modelbean.OrdersBean" >
+    	update oms_bt_orders o
+    	set
+			o.need_invoice = #{invoice},
+			o.invoice_info = #{invoiceInfo},
+			o.invoice_kind = #{invoiceKind},
+			modified = now(),
+			modifier = #{modifier}       
+    	where order_number = #{orderNumber}
+  </update>
+  
+  <select id="tm_channel_shop_getshoppingCarts" resultType="com.voyageone.core.modelbean.MasterInfoBean" parameterType="String">
+		select
+			c.cart_id as id,
+			c.name
+		from ct_cart c, tm_channel_shop t
+		where c.cart_id = t.cart_id
+			and t.order_channel_id = #{propertyId}
+  </select>
+ 
+  <select id="oms_bt_orders_getOrdersUnApprovedCount"  parameterType="HashMap" resultType="HashMap" >
+  	<if test="channelId != null and channelId!=''">
+  		<foreach item="item" index="index" collection="channelId" open="" separator="union" close="">  
+	  		select
+	   			#{item} as channelId,
+	   			count(1) as count
+	  		from 
+	   			oms_bt_orders o 
+	   		<where>
+				o.order_kind in ('0','4')
+		       	<!-- and o.approved = 0 -->
+		    <if test="orderStatusInProcessing !=null and orderStatusInProcessing !=''">
+		    	and o.order_status=#{orderStatusInProcessing}
+		    </if>
+				and o.order_channel_id =#{item}
+	   		</where>
+	 	</foreach>
+	 </if>
+  </select>
+  
+  <select  id="oms_bt_orders_getOrderCurrentDayCount" parameterType="HashMap" resultType="HashMap">
+  	<if test="channelId != null and channelId!=''">
+  		<foreach item="item" index="index" collection="channelId" open="" separator="union" close="">  
+	  		select 
+	  			#{item} as channelId,
+	  			count(1) as count,
+	  			IFNULL(sum(o.grand_total),0) as totalPrice
+	  		from 
+	  			oms_bt_orders o
+	  		<where>
+				o.order_kind in ('0','4')
+				and o.order_channel_id = #{item}
+				 
+			<if test="fromTime!=null and fromTime!=''">
+				and o.order_date_time>=#{fromTime}
+			</if>
+	  		<if test="endTime!=null and endTime!=''">
+				and #{endTime}>=o.order_date_time
+			</if>
+	  		</where> 
+  		</foreach>
+	</if>
+  </select>
+  
+  <select id="oms_bt_orders_getRefundOrdersCount" parameterType="HashMap" resultType="HashMap">
+	<if test="channelId != null and channelId !=''">
+  		<foreach item="item" index="index" collection="channelId" open="" separator="union" close="">  
+				select 
+			    #{item} as channelId,
+				count(DISTINCT r.source_order_id) as count
+	  	 		from 
+	  	 		
+	     		oms_bt_order_refunds r 
+	  
+	  	 	<where>
+	  	    <if test="orderStatusReturnRequested !=null and orderStatusReturnRequested !=''">
+	  	   		r.refund_status = #{orderStatusReturnRequested}
+	  	   	  </if>
+				and r.order_channel_id = #{item} 
+				and r.process_flag = 0
+	 		</where>
+	   	</foreach>
+   	</if>
+  </select>
+</mapper>

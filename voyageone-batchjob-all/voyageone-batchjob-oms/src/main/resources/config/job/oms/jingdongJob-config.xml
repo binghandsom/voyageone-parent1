@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+          
+	<!-- ===================== 京东、京东国际定时任务 start ===================== -->
+	<bean id="jingdongOrderImportJob"
+		class="com.voyageone.batch.oms.job.JingdongOrderImportJob">
+	</bean>
+	
+	<bean id="jdNewOrderImportJobTask"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref local="jingdongOrderImportJob" />
+		</property>
+		<property name="targetMethod">
+			<value>jdNewOrderImport</value>
+		</property>
+	</bean>
+	<bean id="jdNewOrderImportJobTaskContri"
+		name="jdNewOrderImportJobTaskContri"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="jdNewOrderImportJobTask" />
+		</property>
+		<property name="cronExpression">
+			<value>${quartz.jd.new.order.get}</value>
+		</property>
+	</bean>
+	
+	<bean id="jdChangedOrderImportJobTask"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref local="jingdongOrderImportJob" />
+		</property>
+		<property name="targetMethod">
+			<value>jdChangedOrderImport</value>
+		</property>
+	</bean>
+	<bean id="jdChangedOrderImportJobTaskContri"
+		name="jdChangedOrderImportJobTaskContri"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="jdChangedOrderImportJobTask" />
+		</property>
+		<property name="cronExpression">
+			<value>${quartz.jd.changed.order.get}</value>
+		</property>
+	</bean>
+	
+	<bean id="jdGjNewOrderImportJobTask"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref local="jingdongOrderImportJob" />
+		</property>
+		<property name="targetMethod">
+			<value>jdInternationalNewOrderImport</value>
+		</property>
+	</bean>
+	<bean id="jdGjNewOrderImportJobTaskContri"
+		name="jdGjNewOrderImportJobTaskContri"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="jdGjNewOrderImportJobTask" />
+		</property>
+		<property name="cronExpression">
+			<value>${quartz.jdgj.new.order.get}</value>
+		</property>
+	</bean>
+	
+	<bean id="jdGjChangedOrderImportJobTask"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref local="jingdongOrderImportJob" />
+		</property>
+		<property name="targetMethod">
+			<value>jdInternationalChangedOrderImport</value>
+		</property>
+	</bean>
+	<bean id="jdGjChangedOrderImportJobTaskContri"
+		name="jdGjChangedOrderImportJobTaskContri"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="jdGjChangedOrderImportJobTask" />
+		</property>
+		<property name="cronExpression">
+			<value>${quartz.jdgj.changed.order.get}</value>
+		</property>
+	</bean>
+	
+	<bean id="shortUrlGenerateJobTask"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref local="jingdongOrderImportJob" />
+		</property>
+		<property name="targetMethod">
+			<value>shortUrlGenerate</value>
+		</property>
+	</bean>
+	<bean id="shortUrlGenerateTaskContri"
+		name="shortUrlGenerateTaskContri"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="shortUrlGenerateJobTask" />
+		</property>
+		<property name="cronExpression">
+			<value>${quartz.short.url.generate}</value>
+		</property>
+	</bean>
+	<!-- ===================== 京东、京东国际定时任务 end ===================== -->
+	
+</beans>

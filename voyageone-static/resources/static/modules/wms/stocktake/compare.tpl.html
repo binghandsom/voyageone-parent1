@@ -1,0 +1,61 @@
+<div class="container-fluid" ng-controller="compareCtrl" ng-init="init()" ng-cloak
+     xmlns:width="http://www.w3.org/1999/xhtml">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+               Inventory
+            </h3>
+        </div>
+        <div class="panel-body ng-binding form-inline">
+            <div class="input-group">
+                <label class="input-group-addon" translate="WMS_SESSIONNAME"></label>
+                <span class="form-control" >{{vm.sessionName}}</span>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-sm btn-danger" ng-click="fixed()" ng-disabled="vm.disableFlg" translate="WMS_FIXED"></button>
+            </div>
+            <div class="form-group">
+                <a class="btn btn-sm btn-success"  ng-href="./wms/stockTake/compare/compResdownload?param={{vm}}" target="_blank" ><i class="fa fa-download"></i>&nbsp;<span translate="WMS_DOWNLOAD"></span></a>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="table-responsive mb10">
+                <span translate="WMS_RECORDNUMBER"></span><span ng-bind="pageOption.total"></span>
+                <!--表格主体-->
+                <table if-no-rows="compareInfoList" class="table table-bordered table-hover table-condensed">
+                    <thead>
+                    <tr>
+                        <th class="col-fix-no">#</th>
+                        <th class="text-center" style="width: 8%" translate="WMS_ISFIXED"></th>
+                        <th translate="WMS_SKU"></th>
+                        <th translate="WMS_INVENTORY"></th>
+                        <th translate="WMS_STOCKTAKEQRY"></th>
+                        <th translate="WMS_QTYOFFSETS"></th>
+                        <th translate="WMS_LASTUPDATETIME"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="compareInfo in compareInfoList">
+                        <td class="col-fix-no">{{(pageOption.curr -1) * pageOption.size + $index + 1}}</td>
+                        <td>
+                            <div class="checkbox c-checkbox">
+                                <label>
+                                    <input name="isFixed" ng-model="compareInfo.isFixed" ng-true-value="'1'" ng-false-value="'0'" ng-disabled="vm.disableFlg" ng-change="doCheckBoxValueChange(compareInfo)" type="checkbox" />
+                                    <span class="fa fa-check"></span>
+                                </label>
+                            </div>
+                        </td> <!--{{compareInfo.isFixed}}-->
+                        <td>{{compareInfo.sku}}</td>
+                        <td>{{compareInfo.inventory}}</td>
+                        <td>{{compareInfo.stocktake_qty}}</td>
+                        <td  class="text-warning">{{compareInfo.stocktake_qty_offset}}</td>
+                        <td>{{compareInfo.modified_local}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-center" paging="pageOption"></div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.core.sql">
+
+	<select id="ct_user_getUserList" resultType="HashMap"
+		parameterType="HashMap">
+		SELECT t.*,IFNULL(t2.cfg_val1,8) as timezone from(
+		SELECT 
+			t.id as user_id,
+			t.username,
+			t.first_name,
+			t.last_name,
+			t.email,
+			t2.company,
+			t.company_id,
+			t.active,
+			t.is_superuser
+		FROM ct_user t, ct_company t2
+		WHERE t.company_id = t2.id 
+			<if test="active != null and active != '' ">
+			AND t.active = #{active}
+			</if>
+			<if test="username != null and username != '' ">
+			AND t.username = #{username}
+			</if>
+			<if test="company_id != null and company_id != '' ">
+			AND t.company_id = #{company_id}
+			</if>
+			<if test="like_name != null and like_name != '' ">
+			AND t.username like CONCAT('%',#{like_name},'%' ) 
+			</if>
+			<if test="like_company != null and like_company != '' ">
+			AND t2.company like CONCAT('%',#{like_company},'%' ) 
+			</if>)  t
+				LEFT JOIN (
+					SELECT
+						b.user_id,
+						b.cfg_val1
+					FROM
+						ct_user_config b
+					WHERE
+						b.cfg_name = 'timezone'
+				) t2 ON t.user_id = t2.user_id
+	</select>
+	<insert id="ct_user_insert_user" parameterType="com.voyageone.core.formbean.InFormUser">
+		INSERT INTO ct_user(username,
+			password,
+			<if test="first_name != null and first_name != '' ">
+			first_name,
+			</if>
+			<if test="last_name != null and last_name != '' ">
+			last_name,
+			</if>
+			<if test="email != null and email != '' ">
+			email,
+			</if>
+			company_id,
+			active,
+			<if test="is_superuser != null">
+			is_superuser,
+			</if>
+			created,
+            creater,
+            modified,
+            modifier)
+			VALUES (#{username},
+			#{password},
+			<if test="first_name != null and first_name != '' ">
+			#{first_name},
+			</if>
+			<if test="last_name != null and last_name != '' ">
+			#{last_name},
+			</if>
+			<if test="email != null and email != '' ">
+			#{email},
+			</if>
+			#{company_id},
+			#{active},
+			<if test="is_superuser != null">
+			#{is_superuser},
+			</if>
+			now(),
+        	#{modifier},
+       	 	now(),
+        	#{modifier})
+	</insert>
+	<update id="ct_user_update_user"  parameterType="com.voyageone.core.formbean.InFormUser">
+		UPDATE ct_user
+		SET username = #{username},
+			<if test="password != null and password != '' ">
+			password = #{password},
+			</if>
+			<if test="first_name != null and first_name != '' ">
+			first_name = #{first_name},
+			</if>
+			<if test="last_name != null and last_name != '' ">
+			last_name = #{last_name},
+			</if>
+			<if test="email != null and email != '' ">
+			email = #{email},
+			</if>
+			<if test="company_id != null and company_id != '' ">
+			company_id = #{company_id},
+			</if>
+			<if test="active != null">
+			active = #{active},
+			</if>
+			<if test="is_superuser != null">
+			is_superuser = #{is_superuser},
+			</if>
+            modified=now(),
+            modifier=#{modifier}
+		<where>
+			<if test="user_id != null and user_id != 0 ">
+			and id = #{user_id}
+			</if>
+		</where>
+	</update>
+	<update id="ct_user_del_user" parameterType="int">
+		UPDATE ct_user
+		SET
+			active = 0,
+			modified = now()
+		WHERE
+			id = #{userId}
+	</update>
+	<select id="ct_user_get_UserRole" resultType="HashMap"
+		parameterType="int">
+		SELECT t1.id,
+			t1.role_id,
+			t2.role,
+			t1.property_id,
+			t1.description,
+			t1.active,
+			t3.full_name as property
+		FROM ct_user_role_property t1, ct_role t2, tm_order_channel t3
+		WHERE t1.role_id = t2.id
+			AND t1.property_id = t3.order_channel_id
+			AND t2.active = 1
+			AND t1.user_id=#{userId}
+		ORDER BY t1.property_id,t1.role_id
+	</select>
+	<select id="ct_user_get_UserPermission" resultType="HashMap"
+		parameterType="int">
+		SELECT t1.id,
+		       t1.property_id,
+		       t3.full_name as property,
+		       t2.id as controller_id,
+		       t2.controller,
+		       t1.action_id,
+		       t4.name as action,
+     		   t2.module_id,
+               t5.module,
+               t5.application_id,
+               t6.application,
+		       t1.active,
+		       t1.value
+		  FROM ct_user_permission t1, ct_controller t2, tm_order_channel t3,ct_action t4,ct_module t5,ct_application t6
+		 WHERE t1.action_id=t4.id
+           and t4.controller_id = t2.id
+		       AND t1.property_id = t3.order_channel_id
+		       AND t1.action_id = t4.id
+           AND t2.module_id = t5.id
+           AND t5.application_id = t6.id
+		       AND t1.user_id=#{userId}
+		       ORDER BY t1.property_id 
+	</select>
+	<!-- **********************user_role************************************** -->
+	<update id="ct_user_update_UserRole" parameterType="HashMap">
+	UPDATE ct_user_role_property
+   	SET 
+   	<if test="user_id != null and user_id != ''">
+   		user_id = #{user_id},
+   		role_id = #{role_id},
+        property_id = #{property_id},
+        description = #{description},
+   	</if>
+       active = #{active},
+       modified = now()
+    WHERE id=#{id}
+	</update>
+	<select id="ct_user_select_UserRole" resultType="HashMap" parameterType="HashMap">
+	SELECT id,
+	       user_id,
+	       role_id,
+	       property_id,
+	       active
+	  FROM ct_user_role_property
+	  <where>
+	  	<if test="user_id != null and user_id != ''">
+			user_id = #{user_id}
+		</if>
+		<if test="role_id != null and role_id != '' ">
+			and role_id = #{role_id}
+		</if>
+		<if test="property_id != null and property_id != '' ">
+			and property_id = #{property_id}
+		</if>
+		<if test="id != null and id != '' ">
+			and id != #{id}
+		</if>
+	  </where>
+	</select>
+	<insert id="ct_user_insert_UserRole"  parameterType="HashMap">
+	INSERT INTO ct_user_role_property(
+				user_id,
+				role_id,
+				property_id,
+				<if test="description != null and description != '' ">
+				description,
+				</if>
+				active,
+				created)
+	VALUES (#{user_id},
+	        #{role_id},
+	        #{property_id},
+	        <if test="description != null and description != '' ">
+	        #{description},
+	        </if>
+	        1,
+	        now())
+	</insert>	
+	<!-- **********************user_permission************************************** -->
+	<update id="ct_user_update_UserPermission"  parameterType="HashMap">
+		UPDATE ct_user_permission
+	   	SET 
+	   	<if test="user_id != null and user_id != ''">
+	   		user_id = #{user_id},
+	   		property_id = #{property_id},
+	        controller_id = #{controller_id},
+	        action_id = #{action_id},
+	        value = #{value},
+	   	</if>
+	       active = #{active},
+	       modified = now()
+	    WHERE id=#{id}
+	</update>
+	<select id="ct_user_select_UserPermission" resultType="HashMap" parameterType="HashMap">
+		SELECT id,
+		       user_id,
+		       property_id,
+		       controller_id,
+		       action_id,
+		       value,
+		       active
+		  FROM ct_user_permission
+		  <where>
+		  	<if test="user_id != null and user_id != ''">
+				user_id = #{user_id}
+			</if>
+			<if test="controller_id != null and controller_id != '' ">
+				and controller_id = #{controller_id}
+			</if>
+			<if test="property_id != null and property_id != '' ">
+				and property_id = #{property_id}
+			</if>
+			<if test="action_id != null and action_id != '' ">
+				and action_id = #{action_id}
+			</if>
+		  </where>
+	</select>	
+	<insert id="ct_user_insert_UserPermission" parameterType="HashMap">
+	INSERT 
+		INTO ct_user_permission
+			(	user_id,
+	            property_id,
+	            controller_id,
+	            action_id,
+	            value,
+	            active,
+            	created)
+	VALUES (#{user_id},
+	        #{property_id},
+	        #{controller_id},
+	        #{action_id},
+	        #{value},
+	        1,
+	        now())
+	</insert>
+	<insert id="ct_user_insert_UserPermission_All" parameterType="HashMap">
+	INSERT IGNORE 
+		INTO ct_user_permission
+			(	user_id,
+	            property_id,
+	            controller_id,
+	            action_id,
+	            value,
+	            active,
+				created,
+				creater,
+				modified,
+				modifier)
+			SELECT
+			#{user_id},
+			#{property_id},
+			t.controller_id,
+			t.id,
+			1,
+			1,
+			now(),
+			#{modifier},
+			now(),
+			#{modifier}
+		FROM
+			ct_action t,
+			ct_controller t2,
+			ct_module t3,
+			ct_application t4
+		WHERE
+			t.controller_id = t2.id
+			AND t2.module_id = t3.id
+			AND t3.application_id = t4.id
+			<if test="application_id != null and application_id != '' ">
+			AND t4.id = #{application_id}
+			</if>
+			<if test="module_id != null and module_id != '' and module_id != '-1'">
+			AND t3.id = #{module_id}
+			</if>
+			<if test="controller_id != null and controller_id != '' and controller_id != '-1'">
+			AND t2.id = #{controller_id}
+			</if>
+			<if test="action_id != null and action_id != '' and action_id != '-1'">
+			AND t.id = #{action_id}
+			</if>
+	</insert>		
+	<!-- **********************获取所有的公司 role property ************************************** -->
+	<select id="ct_user_select_all_role" resultType="HashMap">
+			SELECT t.id,
+		       t.role,
+		       t.default_view,
+		       t.is_admin,
+		       t.active
+		  FROM ct_role t
+	</select>
+	<select id="ct_user_select_all_property" resultType="HashMap">
+			SELECT t.order_channel_id as id,
+		       t.full_name as name
+		  FROM tm_order_channel t
+		 WHERE company_id > 0
+	</select>
+	<select id="ct_user_select_all_company" resultType="HashMap">
+			SELECT t.id,
+		       t.company
+		  FROM ct_company t
+	</select>
+	
+	<insert id="insert_ct_user_config" parameterType="HashMap" >
+    insert into ct_user_config
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="cfgName != null" >
+        cfg_name,
+      </if>
+      <if test="cfgVal1 != null" >
+        cfg_val1,
+      </if>
+      <if test="cfgVal2 != null" >
+        cfg_val2,
+      </if>
+      <if test="comment != null" >
+        comment,
+      </if>
+      <if test="active != null" >
+        active,
+      </if>
+        created,
+      <if test="modifier != null" >
+        creater,
+      </if>
+        modified,
+      <if test="modifier != null" >
+        modifier,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="cfgName != null" >
+        #{cfgName,jdbcType=VARCHAR},
+      </if>
+      <if test="cfgVal1 != null" >
+        #{cfgVal1,jdbcType=VARCHAR},
+      </if>
+      <if test="cfgVal2 != null" >
+        #{cfgVal2,jdbcType=VARCHAR},
+      </if>
+      <if test="comment != null" >
+        #{comment,jdbcType=VARCHAR},
+      </if>
+      <if test="active != null" >
+        #{active,jdbcType=BIT},
+      </if>
+        now(),
+      <if test="modifier != null" >
+        #{modifier,jdbcType=VARCHAR},
+      </if>
+        now(),
+      <if test="modifier != null" >
+        #{modifier,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="update_ct_user_config" parameterType="HashMap" >
+    update ct_user_config
+    <set >
+      <if test="cfgVal1 != null" >
+        cfg_val1 = #{cfgVal1,jdbcType=VARCHAR},
+      </if>
+      <if test="cfgVal2 != null" >
+        cfg_val2 = #{cfgVal2,jdbcType=VARCHAR},
+      </if>
+      <if test="comment != null" >
+        comment = #{comment,jdbcType=VARCHAR},
+      </if>
+      <if test="active != null" >
+        active = #{active,jdbcType=BIT},
+      </if>
+		modified = now(),
+      <if test="modifier != null" >
+        modifier = #{modifier,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where user_id = #{userId,jdbcType=INTEGER} 
+    and cfg_name = #{cfgName,jdbcType=VARCHAR}
+  </update>	
+</mapper>

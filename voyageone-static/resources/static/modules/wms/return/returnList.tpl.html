@@ -1,0 +1,97 @@
+<div class="container-fluid" ng-controller="returnListCtrl" ng-init="initialize()"
+     ng-cloak>
+    <div>
+        <object id="AutoScale" classid="clsid:0F8E58C5-FB1B-11E3-B02E-74867A50EFA7" style="display: none;"></object>
+    </div>
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                Goods Return
+            </h3>
+        </div>
+        <div class="panel-body ng-binding form-inline">
+            <div class="form-group">
+                <div class="input-group">
+                    <label class="input-group-addon" translate="WMS_ORDERNUMBER"></label>
+                    <input class="form-control" ng-model="search.order_num" type="text" title=""/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="input-group">
+                    <label class="input-group-addon" translate="WMS_FROM"></label>
+                    <input class="form-control" type="text" ng-model="search.updateTime_s"
+                           is-open="fromOpened" ng-click="fromOpened = true" placeholder="Select a date"
+                           datepicker-popup="yyyy-MM-dd" datepicker-append-to-body="1" max-date="search.updateTime_e" />
+                    <label class="input-group-addon" translate="WMS_TO"></label>
+                    <input class="form-control" type="text" ng-model="search.updateTime_e" min-date="search.updateTime_s"
+                           is-open="toOpened" ng-click="toOpened = true" placeholder="Select a date"
+                           datepicker-popup="yyyy-MM-dd" datepicker-append-to-body="1" />
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="input-group">
+                    <button class="btn btn-sm btn-primary" ng-click="doSearch(1)"><i class="fa fa-search"></i>&nbsp;<span translate="WMS_SEARCH"></span></button>
+                </div>
+                <div class="input-group">
+                    <button class="btn btn-sm btn-primary btn-success" ng-click="changeToNewEditSessionPage()" translate="WMS_NEWEDITSESSION"></button>
+                </div>
+                <div class="input-group">
+                    <button class="btn btn-sm btn-primary btn-warning" ng-click="changeToSessionListPage()" translate="WMS_SESSIONLIST"></button>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="table-responsive mb10">
+                <span translate="WMS_RECORDNUMBER"></span><span ng-bind="pageOption.total"></span>
+                <!--表格主体-->
+                <table if-no-rows="returnList" class="table table-bordered table-hover table-condensed">
+                    <thead>
+                    <tr>
+                        <th class="col-fix-no">#</th>
+                        <th translate="WMS_RESID"></th>
+                        <th translate="WMS_ORDERNUMBER"></th>
+                        <th translate="WMS_SKU"></th>
+                        <th translate="WMS_CONDITION"></th>
+                        <th translate="WMS_STATUS"></th>
+                        <th translate="WMS_REASON"></th>
+                        <th translate="WMS_EXPRESSCOMPANY"></th>
+                        <th translate="WMS_TRACKINGNO"></th>
+                        <th translate="WMS_NOTE"></th>
+                        <th translate="WMS_STORE"></th>
+                        <th translate="WMS_LASTUPDATEUSER"></th>
+                        <th translate="WMS_LASTUPDATETIME"></th>
+                        <th class="col-fix-op" translate="WMS_OPERATION"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="returnInfo in returnList">
+                        <td class="col-fix-no">{{$index + 1 + (pageOption.curr - 1) * pageOption.size}}</td>
+                        <td>{{returnInfo.res_id}}</td>
+                        <td>{{returnInfo.order_num}}</td>
+                        <td>{{returnInfo.sku}}</td>
+                        <td>{{returnInfo.condition}}</td>
+                        <td>{{returnInfo.status_name}}</td>
+                        <td>{{returnInfo.reason_name}}</td>
+                        <td>{{returnInfo.received_from}}</td>
+                        <td>{{returnInfo.tracking_no}}</td>
+                        <td>{{returnInfo.notes}}</td>
+                        <td>{{returnInfo.store_name}}</td>
+                        <td>{{returnInfo.modifier}}</td>
+                        <td>{{returnInfo.modified_local}}</td>
+                        <td class="col-fix-op">
+                            <button class="btn btn-xs btn-success" context-menu="session-info-operations" ng-click="returnList.selected = returnInfo">
+                                <label translate="WMS_OPERATION"></label>
+                                <span class="caret"></span>
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-center" paging="pageOption"></div>
+        </div>
+    </div>
+    <ul id="session-info-operations" role="menu" class="dropdown-menu">
+        <li><a href="javascript:" ng-click="printRow()"><i class="fa fa-print"></i>&nbsp;<span translate="WMS_PRINT"></span></a></li>
+    </ul>
+</div>

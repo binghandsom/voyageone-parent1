@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.batch.bi.mapper.UserMapper">
+
+    <!-- 获得vm_shop信息结构 -->
+    <resultMap id="userMap" type="batch.bi.FormUser">
+        <result column="channel_id" property="channel_id"/>
+        <result column="ecomm_id" property="ecomm_id"/>
+        <result column="shop_id" property="shop_id"/>
+        <result column="shop_code" property="shop_code"/>
+        <result column="user_name" property="user_name"/>
+        <result column="user_ps" property="user_ps"/>
+        <result column="db_name" property="db_name"/>
+        <result column="table_title_name" property="table_title_name"/>
+        <result column="enable" property="enable"/>
+
+    </resultMap>
+
+    <!-- 设定vm_shop检索条件 -->
+    <sql id="vm_user_condition">
+        <where>
+            <if test="channel_id != null and channel_id != '' ">
+                and vm_shop.channel_id = #{channel_id}
+            </if>
+            <if test="ecomm_id != null and ecomm_id != '' ">
+                and vm_shop.ecomm_id = #{ecomm_id}
+            </if>
+            <if test="user_name != null and user_name != '' ">
+                and vm_shop.id = #{shop_id}
+            </if>
+            <if test="enable != null and enable != '' ">
+                and vm_shop.enable = #{enable}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 检索vm_shop信息 -->
+    <select id="select_list_vm_shop_user"  parameterType="int" resultMap="userMap">
+		select
+		vm_shop.channel_id AS channel_id,
+		vm_shop.ecomm_id AS ecomm_id,
+		vm_shop.id AS shop_id,
+		vm_shop.code AS shop_code,
+		vm_shop.shop_user AS user_name,
+		vm_shop.shop_ps AS user_ps,
+		vm_channel_db.db_name AS db_name,
+		vm_channel_db.table_title_name AS table_title_name,
+		vm_shop.enable AS enable
+		from bi_master.vm_shop AS vm_shop
+		LEFT OUTER JOIN bi_master.vm_channel_db AS vm_channel_db ON vm_shop.channel_id = vm_channel_db.channel_id
+		WHERE vm_shop.enable = #{enable}
+	</select>
+
+</mapper>

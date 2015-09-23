@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.batch.bi.mapper.SalesProductMapper">
+
+    <!-- 获得vt_sales_product信息结构 -->
+    <resultMap id="salesProductMap" type="batch.bi.SalesProductBean">
+        <result column="shop_id" property="shop_id"/>
+        <result column="num_iid" property="num_iid"/>
+        <result column="process_date" property="process_date"/>
+        <result column="uv_pc" property="uv_pc"/>
+        <result column="uv_mobile" property="uv_mobile"/>
+        <result column="uv" property="uv"/>
+        <result column="pv_pc" property="pv_pc"/>
+        <result column="pv_mobile" property="pv_mobile"/>
+        <result column="pv" property="pv"/>
+        <result column="bounce_rate_pc" property="bounce_rate_pc"/>
+        <result column="bounce_rate_mobile" property="bounce_rate_mobile"/>
+        <result column="bounce_rate" property="bounce_rate"/>
+        <result column="visit_time_avg_pc" property="visit_time_avg_pc"/>
+        <result column="visit_time_avg_mobile" property="visit_time_avg_mobile"/>
+        <result column="visit_time_avg" property="visit_time_avg"/>
+        <result column="pay_cvr_pc" property="pay_cvr_pc"/>
+        <result column="pay_cvr_mobile" property="pay_cvr_mobile"/>
+        <result column="order_cvr" property="order_cvr"/>
+        <result column="pay_cvr" property="pay_cvr"/>
+        <result column="product_cart_increment_pc" property="product_cart_increment_pc"/>
+        <result column="product_cart_increment_mobile" property="product_cart_increment_mobile"/>
+        <result column="product_cart_increment" property="product_cart_increment"/>
+        <result column="customer_cart_increment" property="customer_cart_increment"/>
+        <result column="product_collector_number" property="product_collector_number"/>
+        <result column="order_increment_pc" property="order_increment_pc"/>
+        <result column="order_increment_mobile" property="order_increment_mobile"/>
+        <result column="order_increment" property="order_increment"/>
+        <result column="pay_product_qty_pc" property="pay_product_qty_pc"/>
+        <result column="pay_product_qty_mobile" property="pay_product_qty_mobile"/>
+        <result column="pay_product_qty" property="pay_product_qty"/>
+        <result column="pay_buyer_number_pc" property="pay_buyer_number_pc"/>
+        <result column="pay_buyer_number_mobile" property="pay_buyer_number_mobile"/>
+        <result column="pay_buyer_number" property="pay_buyer_number"/>
+        <result column="pay_amt_pc" property="pay_amt_pc"/>
+        <result column="pay_amt_mobile" property="pay_amt_mobile"/>
+        <result column="pay_amt" property="pay_amt"/>
+        <result column="order_amt" property="order_amt"/>
+        <result column="order_buyer_number" property="order_buyer_number"/>
+        <result column="order_product_number" property="order_product_number"/>
+    </resultMap>
+
+    <!-- 设定vt_sales_product检索条件 -->
+    <sql id="vt_sales_product_condition">
+        <where>
+            <if test="shop_id != null and shop_id != '' ">
+                and shop_id = #{shop_id}
+            </if>
+            <if test="num_iid != null and num_iid != '' ">
+                and num_iid = #{num_iid}
+            </if>
+            <if test="process_date != null and process_date != '' ">
+                and process_date = #{process_date}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 获得vt_sales_product数量 -->
+    <select id="select_count_vt_sales_product" parameterType="Map" resultType="int">
+        select
+        count(1)
+        from bi_source.${table_title_name}_product
+        <include refid="vt_sales_product_condition"/>
+    </select>
+
+    <select id="select_record_vt_sales_product" parameterType="Map"
+            resultMap="salesProductMap">
+        SELECT
+        shop_id,
+        num_iid,
+        process_date,
+        uv_pc,
+        uv_mobile,
+        uv,
+        pv_pc,
+        pv_mobile,
+        pv,
+        bounce_rate_pc,
+        bounce_rate_mobile,
+        bounce_rate,
+        visit_time_avg_pc,
+        visit_time_avg_mobile,
+        visit_time_avg,
+        pay_cvr_pc,
+        pay_cvr_mobile,
+        order_cvr,
+        pay_cvr,
+        product_cart_increment_pc,
+        product_cart_increment_mobile,
+        product_cart_increment,
+        customer_cart_increment,
+        product_collector_number,
+        order_increment_pc,
+        order_increment_mobile,
+        order_increment,
+        pay_product_qty_pc,
+        pay_product_qty_mobile,
+        pay_product_qty,
+        pay_buyer_number_pc,
+        pay_buyer_number_mobile,
+        pay_buyer_number,
+        pay_amt_pc,
+        pay_amt_mobile,
+        pay_amt,
+        order_amt,
+        order_buyer_number,
+        order_product_number
+        FROM bi_source.${table_title_name}_product
+        <include refid="vt_sales_product_condition"/>
+    </select>
+
+    <!-- 检索vt_sales_product信息 -->
+    <select id="select_list_vt_sales_product" parameterType="Map" resultMap="salesProductMap">
+        SELECT
+        shop_id,
+        num_iid,
+        process_date,
+        uv_pc,
+        uv_mobile,
+        uv,
+        pv_pc,
+        pv_mobile,
+        pv,
+        bounce_rate_pc,
+        bounce_rate_mobile,
+        bounce_rate,
+        visit_time_avg_pc,
+        visit_time_avg_mobile,
+        visit_time_avg,
+        pay_cvr_pc,
+        pay_cvr_mobile,
+        order_cvr,
+        pay_cvr,
+        product_cart_increment_pc,
+        product_cart_increment_mobile,
+        product_cart_increment,
+        customer_cart_increment,
+        product_collector_number,
+        order_increment_pc,
+        order_increment_mobile,
+        order_increment,
+        pay_product_qty_pc,
+        pay_product_qty_mobile,
+        pay_product_qty,
+        pay_buyer_number_pc,
+        pay_buyer_number_mobile,
+        pay_buyer_number,
+        pay_amt_pc,
+        pay_amt_mobile,
+        pay_amt,
+        order_amt,
+        order_buyer_number,
+        order_product_number
+        FROM bi_source.${table_title_name}_product
+        <include refid="vt_sales_product_condition"/>
+    </select>
+
+    <insert id="duplicate_vt_sales_product" parameterType="Map" useGeneratedKeys="true">
+        INSERT INTO bi_source.${table_title_name}_product
+        <foreach collection="column" index="index" item="columnname" open="(" separator="," close=")">
+            ${columnname}
+        </foreach>
+        VALUES
+        <foreach collection="value" index="index" item="SalesProductList" separator=",">
+            ${SalesProductList}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        uv_pc = VALUES(uv_pc),
+        uv_mobile = VALUES(uv_mobile),
+        uv = VALUES(uv),
+        pv_pc = VALUES(pv_pc),
+        pv_mobile = VALUES(pv_mobile),
+        pv = VALUES(pv),
+        bounce_rate_pc = VALUES(bounce_rate_pc),
+        bounce_rate_mobile = VALUES(bounce_rate_mobile),
+        bounce_rate = VALUES(bounce_rate),
+        visit_time_avg_pc = VALUES(visit_time_avg_pc),
+        visit_time_avg_mobile = VALUES(visit_time_avg_mobile),
+        visit_time_avg = VALUES(visit_time_avg),
+        pay_cvr_pc = VALUES(pay_cvr_pc),
+        pay_cvr_mobile = VALUES(pay_cvr_mobile),
+        order_cvr = VALUES(order_cvr),
+        pay_cvr = VALUES(pay_cvr),
+        product_cart_increment_pc = VALUES(product_cart_increment_pc),
+        product_cart_increment_mobile = VALUES(product_cart_increment_mobile),
+        product_cart_increment = VALUES(product_cart_increment),
+        customer_cart_increment = VALUES(customer_cart_increment),
+        product_collector_number = VALUES(product_collector_number),
+        order_increment_pc = VALUES(order_increment_pc),
+        order_increment_mobile = VALUES(order_increment_mobile),
+        order_increment = VALUES(order_increment),
+        pay_product_qty_pc = VALUES(pay_product_qty_pc),
+        pay_product_qty_mobile = VALUES(pay_product_qty_mobile),
+        pay_product_qty = VALUES(pay_product_qty),
+        pay_buyer_number_pc = VALUES(pay_buyer_number_pc),
+        pay_buyer_number_mobile = VALUES(pay_buyer_number_mobile),
+        pay_buyer_number = VALUES(pay_buyer_number),
+        pay_amt_pc = VALUES(pay_amt_pc),
+        pay_amt_mobile = VALUES(pay_amt_mobile),
+        pay_amt = VALUES(pay_amt),
+        order_amt = VALUES(order_amt),
+        order_buyer_number = VALUES(order_buyer_number),
+        order_product_number = VALUES(order_product_number)
+    </insert>
+
+    <insert id="duplicate_vt_sales_product_total" parameterType="Map" useGeneratedKeys="true">
+        INSERT INTO bi_source.${table_title_name}_product
+        <foreach collection="column" index="index" item="columnname" open="(" separator="," close=")">
+            ${columnname}
+        </foreach>
+        VALUES
+        <foreach collection="value" index="index" item="SalesProductList" separator=",">
+            ${SalesProductList}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        uv = VALUES(uv),
+        pv = VALUES(pv),
+        bounce_rate = VALUES(bounce_rate),
+        order_cvr = VALUES(order_cvr),
+        pay_cvr = VALUES(pay_cvr),
+        customer_cart_increment = VALUES(customer_cart_increment),
+        product_collector_number = VALUES(product_collector_number),
+        order_increment = VALUES(order_increment),
+        pay_product_qty = VALUES(pay_product_qty),
+        pay_buyer_number = VALUES(pay_buyer_number),
+        pay_amt = VALUES(pay_amt),
+        order_amt = VALUES(order_amt),
+        order_buyer_number = VALUES(order_buyer_number),
+        order_product_number = VALUES(order_product_number)
+    </insert>
+
+
+    <insert id="duplicate_vt_sales_product_pc" parameterType="Map" useGeneratedKeys="true">
+        INSERT INTO bi_source.${table_title_name}_product
+        <foreach collection="column" index="index" item="columnname" open="(" separator="," close=")">
+            ${columnname}
+        </foreach>
+        VALUES
+        <foreach collection="value" index="index" item="SalesProductList" separator=",">
+            ${SalesProductList}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        uv_pc = VALUES(uv_pc),
+        pv_pc = VALUES(pv_pc),
+        pay_cvr_pc = VALUES(pay_cvr_pc),
+        order_increment_pc = VALUES(order_increment_pc),
+        pay_product_qty_pc = VALUES(pay_product_qty_pc),
+        pay_buyer_number_pc = VALUES(pay_buyer_number_pc),
+        pay_amt_pc = VALUES(pay_amt_pc)
+    </insert>
+
+    <insert id="duplicate_vt_sales_product_mobile" parameterType="Map" useGeneratedKeys="true">
+        INSERT INTO bi_source.${table_title_name}_product
+        <foreach collection="column" index="index" item="columnname" open="(" separator="," close=")">
+            ${columnname}
+        </foreach>
+        VALUES
+        <foreach collection="value" index="index" item="SalesProductList" separator=",">
+            ${SalesProductList}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        uv_mobile = VALUES(uv_mobile),
+        pv_mobile = VALUES(pv_mobile),
+        bounce_rate_mobile = VALUES(bounce_rate_mobile),
+        pay_cvr_mobile = VALUES(pay_cvr_mobile),
+        order_increment_mobile = VALUES(order_increment_mobile),
+        pay_product_qty_mobile = VALUES(pay_product_qty_mobile),
+        pay_amt_mobile = VALUES(pay_amt_mobile)
+    </insert>
+
+    <insert id="replace_vt_sales_product" parameterType="Map" useGeneratedKeys="true">
+        REPLACE INTO bi_source.${table_title_name}_product
+        <foreach collection="column" index="index" item="columnname" open="(" separator="," close=")">
+            ${columnname}
+        </foreach>
+        VALUES
+        <foreach collection="value" index="index" item="SalesProductValuesList" separator=",">
+            #{SalesProductValuesList}
+        </foreach>
+
+    </insert>
+
+    <update id="update_vt_sales_product" parameterType="Map">
+        UPDATE bi_source.${table_title_name}_product
+        SET
+        uv_pc = #{SalesProductBean.uv_pc},
+        uv_mobile = #{SalesProductBean.uv_mobile},
+        uv = #{SalesProductBean.uv},
+        pv_pc = #{SalesProductBean.pv_pc},
+        pv_mobile = #{SalesProductBean.pv_mobile},
+        pv = #{SalesProductBean.pv},
+        bounce_rate_pc = #{SalesProductBean.bounce_rate_pc},
+        bounce_rate_mobile = #{SalesProductBean.bounce_rate_mobile},
+        bounce_rate = #{SalesProductBean.bounce_rate},
+        visit_time_avg_pc = #{SalesProductBean.visit_time_avg_pc},
+        visit_time_avg_mobile = #{SalesProductBean.visit_time_avg_mobile},
+        visit_time_avg = #{SalesProductBean.visit_time_avg},
+        pay_cvr_pc = #{SalesProductBean.pay_cvr_pc},
+        pay_cvr_mobile = #{SalesProductBean.pay_cvr_mobile},
+        order_cvr = #{SalesProductBean.order_cvr},
+        pay_cvr = #{SalesProductBean.pay_cvr},
+        product_cart_increment_pc = #{SalesProductBean.product_cart_increment_pc},
+        product_cart_increment_mobile = #{SalesProductBean.product_cart_increment_mobile},
+        product_cart_increment = #{SalesProductBean.product_cart_increment},
+        customer_cart_increment = #{SalesProductBean.customer_cart_increment},
+        product_collector_number = #{SalesProductBean.product_collector_number},
+        order_increment_pc = #{SalesProductBean.order_increment_pc},
+        order_increment_mobile = #{SalesProductBean.order_increment_mobile},
+        order_increment = #{SalesProductBean.order_increment},
+        pay_product_qty_pc = #{SalesProductBean.pay_product_qty_pc},
+        pay_product_qty_mobile = #{SalesProductBean.pay_product_qty_mobile},
+        pay_product_qty = #{SalesProductBean.pay_product_qty},
+        pay_buyer_number_pc = #{SalesProductBean.pay_buyer_number_pc},
+        pay_buyer_number_mobile = #{SalesProductBean.pay_buyer_number_mobile},
+        pay_buyer_number = #{SalesProductBean.pay_buyer_number},
+        pay_amt_pc = #{SalesProductBean.pay_amt_pc},
+        pay_amt_mobile = #{SalesProductBean.pay_amt_mobile},
+        pay_amt = #{SalesProductBean.pay_amt},
+        order_amt = #{SalesProductBean.order_amt},
+        order_buyer_number = #{SalesProductBean.order_buyer_number},
+        order_product_number = #{SalesProductBean.order_product_number}
+        <include refid="vt_sales_product_condition"/>
+    </update>
+
+    <insert id="insert_vt_sales_product" parameterType="Map">
+        INSERT INTO bi_source.${table_title_name}_product (
+        shop_id,
+        num_iid,
+        process_date,
+        uv_pc,
+        uv_mobile,
+        uv,
+        pv_pc,
+        pv_mobile,
+        pv,
+        bounce_rate_pc,
+        bounce_rate_mobile,
+        bounce_rate,
+        visit_time_avg_pc,
+        visit_time_avg_mobile,
+        visit_time_avg,
+        pay_cvr_pc,
+        pay_cvr_mobile,
+        order_cvr,
+        pay_cvr,
+        product_cart_increment_pc,
+        product_cart_increment_mobile,
+        product_cart_increment,
+        customer_cart_increment,
+        product_collector_number,
+        order_increment_pc,
+        order_increment_mobile,
+        order_increment,
+        pay_product_qty_pc,
+        pay_product_qty_mobile,
+        pay_product_qty,
+        pay_buyer_number_pc,
+        pay_buyer_number_mobile,
+        pay_buyer_number,
+        pay_amt_pc,
+        pay_amt_mobile,
+        pay_amt,
+        order_amt,
+        order_buyer_number,
+        order_product_number
+        )
+        VALUES
+        <foreach collection="value" item="SalesProductBean" separator=",">
+            (
+            #{SalesProductBean.shop_id},
+            #{SalesProductBean.num_iid},
+            #{SalesProductBean.process_date},
+            #{SalesProductBean.uv_pc},
+            #{SalesProductBean.uv_mobile},
+            #{SalesProductBean.uv},
+            #{SalesProductBean.pv_pc},
+            #{SalesProductBean.pv_mobile},
+            #{SalesProductBean.pv},
+            #{SalesProductBean.bounce_rate_pc},
+            #{SalesProductBean.bounce_rate_mobile},
+            #{SalesProductBean.bounce_rate},
+            #{SalesProductBean.visit_time_avg_pc},
+            #{SalesProductBean.visit_time_avg_mobile},
+            #{SalesProductBean.visit_time_avg},
+            #{SalesProductBean.pay_cvr_pc},
+            #{SalesProductBean.pay_cvr_mobile},
+            #{SalesProductBean.order_cvr},
+            #{SalesProductBean.pay_cvr},
+            #{SalesProductBean.product_cart_increment_pc},
+            #{SalesProductBean.product_cart_increment_mobile},
+            #{SalesProductBean.product_cart_increment},
+            #{SalesProductBean.customer_cart_increment},
+            #{SalesProductBean.product_collector_number},
+            #{SalesProductBean.order_increment_pc},
+            #{SalesProductBean.order_increment_mobile},
+            #{SalesProductBean.order_increment},
+            #{SalesProductBean.pay_product_qty_pc},
+            #{SalesProductBean.pay_product_qty_mobile},
+            #{SalesProductBean.pay_product_qty},
+            #{SalesProductBean.pay_buyer_number_pc},
+            #{SalesProductBean.pay_buyer_number_mobile},
+            #{SalesProductBean.pay_buyer_number},
+            #{SalesProductBean.pay_amt_pc},
+            #{SalesProductBean.pay_amt_mobile},
+            #{SalesProductBean.pay_amt},
+            #{SalesProductBean.order_amt},
+            #{SalesProductBean.order_buyer_number},
+            #{SalesProductBean.order_product_number}
+            )
+        </foreach>
+    </insert>
+
+</mapper>

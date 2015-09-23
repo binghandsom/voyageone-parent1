@@ -1,0 +1,33 @@
+<div class="vo_modal" ng-init="initialize()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h4 class="modal-title">
+            <i class="glyphicons glyphicons-edit"></i>&nbsp;<span translate="CMS_TXT_TITLE_DISCOUNT_SETTING"></span>
+        </h4>
+    </div>
+    <div class="modal-body wrapper-lg">
+        <div class="row">
+            <div class="col-sm-12">
+                <form role="form" class="form-horizontal" name="formPromotionDiscountInfo">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label" translate="CMS_TXT_TITLE_DISCOUNT_SETTING"></label>
+                        <div class="col-sm-8">
+                            <div class="input-group">
+                                <input type="text"  name="txtDiscountPercent" id="txtDiscountPercent" class="form-control" ng-model="discountPercent"
+                                       required="" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/">
+                                <span class="input-group-addon" translate="CMS_TXT_OFF_PERCENT"></span>
+                            </div>
+                            <va-check ng-show="formPromotionDiscountInfo.txtDiscountPercent.$error.required" check-type="required"></va-check>
+                            <va-check ng-show="formPromotionDiscountInfo.txtDiscountPercent.$error.pattern" check-type="currency"></va-check>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="close()" translate="CMS_BTN_CANCEL"></button>
+        <button class="btn btn-vo" ng-click="updatePromotionProduct()" ng-if="discountPercent !=null" translate="CMS_BTN_SAVE"></button>
+    </div>
+</div><!-- .vo_modal -->

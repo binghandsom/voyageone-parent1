@@ -1,0 +1,85 @@
+<div ng-controller="searchComplexController" ng-init="initialize()" ng-cloak="">
+    <div class="bg-light lter b-b wrapper-md vo_page_header clearfix">
+        <div class="row">
+            <!-- .vo_page_title -->
+            <div class="col-sm-7 text-left hidden-xs">
+                <div class="form-inline">
+                    <div class="form-group wtab-sm">
+                        <h1 class="m-n font-thin h3 text-vo" translate="CMS_TXT_TITLE_COMPLEX_SEARCH"></h1>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" ng-model="searchValue" typeahead-loading="loadingLocations" class="form-control">
+                        <span class="input-group-btn"><button class="btn btn-vo" type="button" ng-click="doSearch()" translate="CMS_BTN_SEARCH"></button></span>
+                    </div>
+                </div>
+            </div>
+            <!-- .col-sm-6 -->
+            <div class="col-sm-3 text-right"></div>
+        </div>
+        <!-- .row -->
+    </div>
+    <!-- .wrapper-md .vo_page_header -->
+
+    <div class="wrapper-md">
+        <div class="row">
+            <div class="col-lg-12">
+                <div>
+                    <tabset class="tab-container vo_nav-tabs">
+                        <!-- categories list -->
+                        <tab>
+                            <tab-heading><i class="glyphicons glyphicons-show-big-thumbnails"></i>&nbsp;<span translate="CMS_TXT_CATEGORIES"></span></tab-heading>
+                            <!-- Models table and controls -->
+                            <div class="panel panel-default">
+                                <div class="table-responsive">
+                                	<div ng-controller="navigationController">
+                                    <table datatable dt-options="dtCategoryList.options" dt-columns="dtCategoryList.columns" dt-instance="dtCategoryList.dtInstance" class="table table-striped hover b-t b-b vo_table">
+                                    </table>
+                                    </div>
+                                </div>
+                                <!-- .table-responsive -->
+                            </div>
+                            <!-- .panel -->
+
+                        </tab>
+
+                        <!-- models list -->
+                        <tab>
+                            <tab-heading><i class="glyphicons glyphicons-more-items"></i>&nbsp;<span translate="CMS_TXT_MODELS"></span></tab-heading>
+                            <!-- Products table and controls -->
+                            <div class="panel vo_panel tab_panel">
+
+                                <div class="table-responsive">
+                                	<table datatable dt-options="dtModelList.options" dt-columns="dtModelList.columns" dt-instance="dtModelList.dtInstance" class="table table-striped hover b-t b-b vo_table">
+                                    </table>
+                                </div>
+                                <!-- .table-responsive -->
+                            </div>
+                            <!-- .panel -->
+                        </tab>
+
+                        <!-- products list -->
+                        <tab>
+                            <tab-heading><i class="glyphicons glyphicons-sort"></i>&nbsp;<span translate="CMS_TXT_PRODUCTS"></span></tab-heading>
+                            <!-- Products table and controls -->
+                            <div class="panel vo_panel tab_panel">
+
+                                <div class="table-responsive">
+                                  	<table datatable dt-options="dtProductList.options" dt-columns="dtProductList.columns" dt-instance="dtProductList.dtInstance" class="table table-striped hover b-t b-b vo_table">
+                                    </table>
+                                </div>
+                                <!-- .table-responsive -->
+                            </div>
+                            <!-- .panel -->
+                        </tab>
+
+                    </tabset>
+                    <!-- tabset -->
+                </div>
+                <!-- tabs ng-controller -->
+            </div>
+            <!-- .col-lg-12 -->
+        </div>
+        <!-- .row -->
+    </div>
+    <!-- end .wrapper-md -->
+</div>

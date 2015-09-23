@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.ims.sql">
+    <select id="ims_beatPic_getBeatPicInfo" resultType="com.voyageone.batch.ims.bean.BeatPicBean">
+        select beat.channel_id,
+               beat.cart_id,
+               item.`code`,
+               item.url_key,
+               item.image_name,
+               item.num_iid,
+               item.price,
+               beat.template_url temp_url,
+               item.beat_flg dbBeat_flg,
+               item.modified,
+               item.modifier,
+               beat.`end`,
+               item.beat_item_id
+          from voyageone_ims.ims_bt_beat beat,
+               voyageone_ims.ims_bt_beat_item item
+         where beat.beat_id = item.beat_id
+           and (
+                item.beat_flg = 1
+                or (item.beat_flg = 2 and now() > beat.`end`)
+                or item.beat_flg = 10
+               )
+        limit #{limit};
+    </select>
+
+    <update id="ims_bt_beat_item_updateItem" parameterType="com.voyageone.batch.ims.bean.BeatPicBean">
+        update voyageone_ims.ims_bt_beat_item item
+           set item.beat_flg = #{beat_flg.value},
+               item.`comment` =  #{comment},
+               item.modified = now(),
+               item.modifier = #{modifier}
+         where item.beat_item_id = #{beat_item_id} and modified = #{modified}
+    </update>
+</mapper>

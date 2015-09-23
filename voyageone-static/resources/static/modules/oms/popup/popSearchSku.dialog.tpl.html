@@ -1,0 +1,119 @@
+<div class="ngdialog-message">
+    <h3 class="mt0 p-sm border-bottom-1" translate="TXT_OMS_SELECT_SKU_SEARCH_SKU_AND_PRICE"></h3>
+    <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+    <form name="formSearchSku" class="form-validate" novalidate="">
+        <div class="row">
+            <div class="col-xs-5 pl-lg pr-lg form-horizontal">
+                <div class="form-group">
+                    <label class="col-xs-4 control-label" translate="TXT_ORDER_SKU"></label>
+
+                    <div class="col-xs-8">
+                        <input type="text" ng-model="searchInfo.skuIncludes" class="form-control input-sm"/>
+                    </div>
+                </div>
+                <div class="form-group mt-sm form-horizontal">
+                    <label class="col-xs-4 control-label" translate="TXT_OMS_SELECT_SKU_NAME"></label>
+
+                    <div class="col-xs-8 mt-sm">
+                        <textarea rows="2" ng-model="searchInfo.nameIncludes" class="form-control input-sm no-resize"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-7 pl-lg pr-lg form-horizontal">
+                <div class="form-group">
+                    <label class="col-xs-4 control-label" translate="TXT_OMS_SELECT_SKU_DESCRIPTION"></label>
+
+                    <div class="col-xs-8 pl-sm">
+                        <textarea rows="2" ng-model="searchInfo.descriptionIncludes" class="form-control input-sm no-resize"/>
+                    </div>
+                </div>
+                <div class="form-group mt-sm form-horizontal">
+                    <div class="col-xs-12">
+                        <div class="ms-fr btn-group-sm">
+                            <button class="btn btn-primary mt-sm" translate="BUTTON_SEARCH" ng-click="doSearch()"></button>
+                            <button class="btn btn-primary mt-sm" ng-click="doClose()" translate="BUTTON_SUB_CANCEL"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="border-bottom-1"></div>
+        <div class="row">
+            <div class="col-xs-9 pt-sm">
+                <div class="table-responsive mah250px">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th class="w5p">#</th>
+                            <th class="w30p" translate="TXT_ORDER_SKU"></th>
+                            <th class="w40p" translate="TXT_ORDER_PRODUCT"></th>
+                            <th class="w15p" translate="TXT_ORDER_UNIT_PRICE"></th>
+                            <th class="w10p" translate="TXT_ORDER_INVENTORY"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="skuInfo in skuInfoList" ng-click="doSelectSku(skuInfo)" ng-class="{'success': skuInfo.sku == selectSkuInfo.sku}" class="carousel">
+                            <td ng-bind="$index + 1"></td>
+                            <td>
+                                <img class="media mr-sm" show-image="skuInfo.imgPath"/>&nbsp;<a pop-href="skuInfo.skuTmallUrl" ng-bind="skuInfo.sku"></a>
+                            </td>
+                            <td>
+                                <span ng-bind="skuInfo.product"></span>
+                                <a href="" popover="{{skuInfo.description}}" popover-trigger="mouseenter" class="ms-fr fa fa-book c_green"></a>
+                            </td>
+                            <td class="text-right"><span ng-bind="skuInfo.pricePerUnit | number:2"></span></td>
+                            <td ng-bind="skuInfo.inventory"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-xs-3 p-sm" ng-show="isSelectSkuInfo">
+                <label class="col-xs-6 mb-sm control-label label label-info" translate="TXT_OMS_PRICE"></label>
+
+                <div class="row">
+                    <div class="col-xs-12 form-group form-horizontal">
+                        <div class="col-xs-12 text-right">
+                            <label class="control-label f12" ng-bind="selectSkuInfo.pricePerUnit | number:2"></label><br>
+                            <span class="fa fa-sort-asc w80p c_green fb pt-sm DivH25" ng-bind="-selectSkuInfo.discount | number:2" ng-if="selectSkuInfo.discount &lt; 0"></span>
+                            <span class="fa fa-sort-down w80p c_red fb pt-sm DivH25" ng-bind="selectSkuInfo.discount | number:2" ng-if="selectSkuInfo.discount &gt; 0"></span>
+                            <br>
+                            <div class="ms-fr w80p border-bottom-1"></div>
+                            <label class="control-label f16" ng-bind="selectSkuInfo.price || selectSkuInfo.pricePerUnit | number:2"></label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label class="col-xs-4 control-label pt7" translate="TXT_ORDER_DISCOUNTS"></label>
+
+                        <div class="col-xs-8">
+                            <div class="input-group mb-sm">
+                                <span class="input-group-addon">-</span><input type="text" ng-model="selectSkuInfo.discount" class="form-control input-sm text-right" ng-pattern="/^(-?\d+)(\.[0-9]{0,2})?$/" ng-blur="calculatePrice()"/>
+                            </div>
+                            <div class="input-group">
+                                <!--<input type="text" class="form-control input-sm" ng-model="selectSkuInfo.discountPercent" ng-pattern="/^([0-9]{1,2})(\.[0-9]{0,2})?$/" ng-blur="calculatePercent()"><span class="input-group-addon">%</span>-->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-4 control-label pt7" translate="TXT_OMS_SELECT_SKU_QTY_TO_ORDER"></label>
+
+                        <div class="col-xs-8 mt-sm">
+                            <div class="form-group">
+                                <input type="number" ng-model="selectSkuInfo.quantityOrdered" class="form-control input-sm"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-sm">
+                    <div class="col-xs-12">
+                        <div class="ms-fr">
+                            <button class="btn btn-primary btn-sm form-control" ng-click="doAddSkuToNewOrder()" translate="BUTTON_SUB_SAVE" ng-disabled="selectSkuInfo.quantityOrdered &lt;= 0"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

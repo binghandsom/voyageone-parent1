@@ -1,0 +1,113 @@
+
+<div class="container" ng-controller="userDetailController"
+	ng-init="initialize()" ng-cloak>
+	<div class="row">
+		<div class="col-md-6">
+			<form class="form-horizontal" name="form_user">
+				<div class="form-group">
+					<label for="setting_username" class="col-md-4 control-label"
+						translate="GRID_TITLE_TXT_USER_MANATER_USERNAME"></label>
+					<div class="col-md-8">
+						<input type="text" class="form-control" id="setting_username"
+							ng-disabled="userinfo != null" ng-model="user.username" required>
+					</div>
+				</div>
+				<div class="form-group" ng-show="userinfo == null">
+					<label for="setting_password" class="col-md-4 control-label"
+						translate="CORE_TXT_PASSWORD"></label>
+					<div class="col-md-8">
+						<input type="text" class="form-control" id="setting_password"
+							ng-model="user.password" >
+					</div>
+				</div>
+				<div class="form-group	">
+					<label for="companyData" class="col-md-4 control-label"
+						translate="GRID_TITLE_TXT_USER_MANATER_COMPANY"></label>
+					<div class="col-md-8">
+						<select class="form-control fix-sel" style="text-align: left" id="companyData" ng-model="user.company_id"
+							ng-options="o.id as o.company for o in companyData" required>
+						</select>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="first_name" class="col-md-4 control-label"
+						translate="GRID_TITLE_TXT_USER_MANATER_FIRST_NAME"></label>
+					<div class="col-md-8">
+						<input type="text" id="first_name" class="form-control"
+							ng-model="user.first_name" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="last_name" class="col-md-4 control-label"
+						translate="GRID_TITLE_TXT_USER_MANATER_LAST_NAME"></label>
+					<div class="col-md-8">
+						<input type="text" id="last_name" ng-model="user.last_name"
+							class="form-control" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="email" class="col-md-4 control-label"
+						translate="GRID_TITLE_TXT_USER_MANATER_EMAIL"></label>
+					<div class="col-md-8">
+						<input type="email" id="email" class="form-control"
+							ng-model="user.email" />
+					</div>
+				</div>
+<!-- 				<div class="form-group">
+					<label for="timezone" class="col-md-4 control-label"
+						translate="timezone"></label>
+					<div class="col-md-8">
+						<input type="number" id="timezone" class="form-control"
+							ng-model="user.timezone"  min="-12" max="12"/>
+					</div>
+				</div>		 -->		
+				<div class="form-group">
+					<label for="active" class="col-md-4 control-label"
+						translate="TITLE_TXT_ACTIVE"></label>
+					<div class="col-md-1">
+						<input type="checkbox" id="active" ng-model="user.active"
+							class="form-control" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="is_superuser" class="col-md-4 control-label"
+						translate="GRID_TITLE_TXT_USER_MANATER_SUPERUSER"></label>
+					<div class="col-md-1">
+						<input type="checkbox" id="is_superuser"
+							ng-model="user.is_superuser" class="form-control" />
+					</div>
+				</div>
+			</form>
+			<div class=" col-md-3 col-md-offset-5">
+				<button class="btn btn-primary form-control" ng-show="userinfo != null" ng-click="chgPassword()">Password</button>
+			</div>
+			<div class=" col-md-2 col-md-offset-2">
+				<button class="btn btn-primary form-control" ng-click="update()">Save</button>
+			</div>
+		</div>
+		<div class="col-md-6" id="form_role_permission"
+			ng-show="userinfo != null">
+			<div>
+				<div style="min-height:0px;max-height:200px"
+					ng-grid="gridUserRoleOptions"></div>
+				<div class="col-md-2 col-md-offset-10">
+					<button class="btn btn-primary form-control" ng-click="addRole()">Add</button>
+				</div>
+			</div>
+			<div style="float: left;">
+				<div style="min-height:0px;max-height:200px"
+					ng-grid="gridUserPermissionOptions"></div>
+				<div class="col-md-2 col-md-offset-10">
+					<button class="btn btn-primary form-control" ng-click="addPermission()">Add</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- <pop-user-role user-rolecharge-info="popUserRole"
+		ng-show="popUserRole.isShow" do-rolecharge="doUpdateRole()"></pop-user-role>
+	<pop-user-permission user-permissioncharge-info="popUserPermission"
+		ng-show="popUserPermission.isShow"
+		do-permissioncharge="doUpdatePermission()"></pop-user-permission>
+	<pop-user-password user-password-info="popUserPassword"
+		ng-show="popUserPassword.isShow" do-passwordcharge="updatePassword()"></pop-user-password> -->
+</div>

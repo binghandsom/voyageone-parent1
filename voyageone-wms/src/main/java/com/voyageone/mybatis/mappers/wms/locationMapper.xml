@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.wms.sql">
+    <resultMap id="location_result_map" type="com.voyageone.wms.formbean.LocationFormBean">
+        <result column="location_id" property="location_id"/>
+        <result column="order_channel_id" property="order_channel_id"/>
+        <result column="store_id" property="store_id"/>
+        <result column="location_name" property="location_name"/>
+    </resultMap>
+
+    <sql id="location_select_cols">
+        location_id, order_channel_id, store_id, location_name
+    </sql>
+
+    <resultMap id="item_location_result_map" type="com.voyageone.wms.modelbean.ItemLocationBean">
+        <result column="item_location_id" property="item_location_id"/>
+        <result column="order_channel_id" property="order_channel_id"/>
+        <result column="store_id" property="store_id"/>
+        <result column="code" property="code"/>
+        <result column="location_id" property="location_id"/>
+    </resultMap>
+
+    <sql id="item_location_select_cols">
+        wms_bt_item_location.item_location_id,
+        wms_bt_item_location.order_channel_id,
+        wms_bt_item_location.store_id,
+        wms_bt_item_location.`code`,
+        wms_bt_item_location.location_id
+    </sql>
+
+    <resultMap id="item_location_log_result_map" type="com.voyageone.wms.modelbean.ItemLocationLogBean">
+        <result column="seq" property="seq"/>
+        <result column="order_channel_id" property="order_channel_id"/>
+        <result column="store_id" property="store_id"/>
+        <result column="code" property="code"/>
+        <result column="location_id" property="location_id"/>
+        <result column="comment" property="comment"/>
+    </resultMap>
+
+    <sql id="item_location_log_select_cols">
+        wms_bt_item_location_log.seq,
+        wms_bt_item_location_log.order_channel_id,
+        wms_bt_item_location_log.store_id,
+        wms_bt_item_location_log.`code`,
+        wms_bt_item_location_log.location_id,
+        wms_bt_item_location_log.`comment`
+    </sql>
+
+    <insert id="wms_mt_location_insert">
+        insert into wms_mt_location (
+            location_id,
+            order_channel_id,
+            store_id,
+            location_name,
+            active,
+            created,
+            creater,
+            modified,
+            modifier
+        ) values (
+            NULL,
+            #{order_channel_id},
+            #{store_id},
+            #{location_name},
+            #{active},
+            #{created},
+            #{creater},
+            #{modified},
+            #{modifier}
+        )
+    </insert>
+
+    <select id="wms_bt_item_location_item_count_in_location" resultType="int">
+        select count(1) from wms_bt_item_location where location_id = #{location_id} and store_id = #{store_id}
+    </select>
+
+    <delete id="wms_mt_location_delete">
+        delete from wms_mt_location where location_id = #{location_id} and store_id = #{store_id} and modified = #{modified}
+    </delete>
+
+    <select id="wms_mt_location_search_by_name" resultMap="location_result_map">
+        SELECT
+        <include refid="location_select_cols"></include>,
+        <include refid="common_select_cols"></include>
+        FROM
+        wms_mt_location
+        WHERE
+        order_channel_id in
+        <foreach collection="orderChannelList" item="orderChannelId"  open="(" separator="," close=")">
+            #{orderChannelId}
+        </foreach>
+        <if test="store_id != null and store_id != 0">
+            AND store_id = #{store_id}
+        </if>
+        <if test="storeList != null and storeList.size() != 0">
+            AND store_id in
+            <foreach collection="storeList" item="store"  open="(" separator="," close=")">
+                #{store.store_id}
+            </foreach>
+        </if>
+        <if test="location_name != null and location_name != ''">
+            AND location_name like #{location_name}
+        </if>
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <select id="wms_mt_location_search_by_name_count" resultType="int">
+        SELECT count(1)
+        FROM
+        wms_mt_location
+        WHERE
+          order_channel_id in
+        <foreach collection="orderChannelList" item="orderChannelId"  open="(" separator="," close=")">
+            #{orderChannelId}
+        </foreach>
+        <if test="store_id != null and store_id != 0">
+            AND store_id = #{store_id}
+        </if>
+        <if test="storeList != null and storeList.size() != 0">
+            AND store_id in
+            <foreach collection="storeList" item="store"  open="(" separator="," close=")">
+                #{store.store_id}
+            </foreach>
+        </if>
+        <if test="location_name != null and location_name != ''">
+            AND location_name like #{location_name}
+        </if>
+    </select>
+
+    <select id="wms_mt_location_isNameExists" resultType="int">
+        select count(1) from wms_mt_location where location_name = #{location_name} and store_id = #{store_id}
+    </select>
+
+    <select id="wms_bt_item_location_select_item_locations" resultType="com.voyageone.wms.formbean.ItemLocationFormBean">
+        SELECT
+            <include refid="item_location_select_cols"></include>,
+            wms_bt_item_location.active,
+            wms_bt_item_location.created,
+            wms_bt_item_location.creater,
+            wms_bt_item_location.modified,
+            wms_bt_item_location.modifier,
+            location.location_name
+        FROM
+            wms_bt_item_location
+        JOIN
+            wms_mt_location location ON wms_bt_item_location.location_id = location.location_id
+        WHERE
+            wms_bt_item_location.store_id = #{store_id}
+        AND wms_bt_item_location.`code` = #{code}
+    </select>
+
+    <select id="wms_bt_item_location_logs_select_item_location_logs" resultType="com.voyageone.wms.formbean.ItemLocationLogFormBean">
+        SELECT
+            <include refid="item_location_log_select_cols"></include>,
+            wms_bt_item_location_log.active,
+            wms_bt_item_location_log.created,
+            wms_bt_item_location_log.creater,
+            wms_bt_item_location_log.modified,
+            wms_bt_item_location_log.modifier,
+            location.location_name
+        FROM
+            wms_bt_item_location_log
+        JOIN
+            wms_mt_location location ON wms_bt_item_location_log.location_id = location.location_id
+        WHERE
+            wms_bt_item_location_log.store_id = #{store_id}
+        AND wms_bt_item_location_log.`code` = #{code}
+        ORDER BY wms_bt_item_location_log.modified DESC
+    </select>
+
+    <insert id="wms_bt_item_location_insert">
+        INSERT wms_bt_item_location (
+            item_location_id,
+            order_channel_id,
+            store_id,
+            `code`,
+            location_id,
+            active,
+            created,
+            creater,
+            modified,
+            modifier
+        )
+        VALUES
+            (
+                NULL,
+                #{order_channel_id},
+                #{store_id},
+                #{code},
+                #{location_id},
+                #{active},
+                now(),
+                #{creater},
+                now(),
+                #{modifier}
+            )
+    </insert>
+
+    <select id="wms_bt_item_location_get_by_location" resultType="com.voyageone.wms.formbean.ItemLocationFormBean">
+        SELECT
+            <include refid="item_location_select_cols"></include>,
+            wms_bt_item_location.active,
+            wms_bt_item_location.created,
+            wms_bt_item_location.creater,
+            wms_bt_item_location.modified,
+            wms_bt_item_location.modifier,
+            location.location_name
+        FROM
+            wms_bt_item_location
+        JOIN
+            wms_mt_location location ON wms_bt_item_location.location_id = location.location_id
+        WHERE
+            wms_bt_item_location.store_id = #{store_id}
+        AND wms_bt_item_location.`code` = #{code}
+        AND wms_bt_item_location.location_id = #{location_id}
+    </select>
+
+    <delete id="wms_bt_item_location_delete">
+        DELETE
+        FROM
+            wms_bt_item_location
+        WHERE
+            item_location_id = #{item_location_id}
+        AND modified = #{modified}
+    </delete>
+
+    <select id="wms_bt_item_location_get" resultMap="item_location_result_map">
+        SELECT
+        <include refid="item_location_select_cols"></include>,
+        <include refid="common_select_cols"></include>
+        FROM
+        wms_bt_item_location
+        WHERE
+        item_location_id = #{item_location_id};
+    </select>
+
+    <insert id="wms_bt_item_location_log_insert">
+        INSERT wms_bt_item_location_log (
+            seq,
+            order_channel_id,
+            store_id,
+            `code`,
+            location_id,
+            `comment`,
+            active,
+            created,
+            creater,
+            modified,
+            modifier
+        )
+        VALUES
+            (
+                NULL,
+                #{order_channel_id},
+                #{store_id},
+                #{code},
+                #{location_id},
+                #{comment},
+                #{active},
+                now(),
+                #{creater},
+                now(),
+                #{modifier}
+            )
+    </insert>
+
+    <select id="wms_mt_location_getLocationByName" resultMap="location_result_map">
+        SELECT
+            <include refid="location_select_cols"></include>,
+            <include refid="common_select_cols"></include>
+        FROM
+            wms_mt_location
+        WHERE
+            store_id = #{store_id}
+        AND location_name = #{location_name}
+    </select>
+
+    <select id="wms_mt_location_getLocation" resultMap="location_result_map">
+        SELECT
+            <include refid="location_select_cols"></include>,
+            <include refid="common_select_cols"></include>
+        FROM
+            wms_mt_location
+        WHERE location_id = #{location_id}
+    </select>
+
+    <select id="wms_bt_item_location_log_getInsertedLog" resultType="com.voyageone.wms.formbean.ItemLocationLogFormBean">
+        SELECT
+            <include refid="item_location_log_select_cols"></include>,
+            wms_bt_item_location_log.active,
+            wms_bt_item_location_log.created,
+            wms_bt_item_location_log.creater,
+            wms_bt_item_location_log.modified,
+            wms_bt_item_location_log.modifier,
+            location.location_name
+        FROM
+            wms_bt_item_location_log
+        JOIN
+            wms_mt_location location ON wms_bt_item_location_log.location_id = location.location_id
+        WHERE
+            wms_bt_item_location_log.store_id = #{store_id}
+        AND wms_bt_item_location_log.`code` = #{code}
+        ORDER BY
+            modified DESC
+        LIMIT 1
+    </select>
+</mapper>

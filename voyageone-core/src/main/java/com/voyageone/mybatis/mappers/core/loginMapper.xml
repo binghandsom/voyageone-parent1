@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.core.sql">
+	<select id="ct_user_getUserByUserName" resultType="HashMap" parameterType="String">
+		select 
+			   id as userId
+		      ,username as userName
+		      ,password
+		      ,is_superuser
+		  from ct_user
+	     where username = #{userName}
+	     	and active = 1
+	</select>
+	<select id="ct_user_getCompanyByUserName" resultType="HashMap" parameterType="String">
+		select distinct
+		       a.username
+		      ,a.company_id as self_company_id
+		      ,g.company as self_company
+		      ,d.company_id 
+		      ,e.company
+		  from ct_user a
+		      ,ct_user_role_property b
+		      ,ct_role c
+		      ,tm_order_channel d
+		      ,ct_company e
+		      ,ct_company g
+		where a.username = #{userName}
+		  and a.id = b.user_id
+		  and a.company_id = g.id
+		  and b.role_id = c.id
+		  and b.property_id = d.order_channel_id
+		  and d.company_id = e.id
+		  and a.active = 1
+		  and b.active = 1
+		  and c.active = 1
+		  and e.active = 1
+		  and g.active = 1
+	</select>
+	<select id="ct_user_getCompanyForSuperUser" resultType="HashMap" parameterType="String">
+	select distinct
+		       a.username
+		      ,a.company_id as self_company_id
+		      ,g.company as self_company
+		      ,d.company_id 
+		      ,e.company
+		  from ct_user a
+		      ,tm_order_channel d
+		      ,ct_company e
+		      ,ct_company g
+		where a.username = 'superuser'
+		  and a.company_id = g.id
+		  and d.company_id = e.id
+		  and a.active = 1
+		  and e.active = 1
+		  and g.active = 1
+	</select>
+	<select id="ct_role_permission_getPermissionByRole" resultType="HashMap" parameterType="HashMap">
+		select 
+		       a.username
+		      ,c.role
+		      ,d.order_channel_id as property_id
+		      ,d.full_name as property_name
+		      ,d.company_id 
+		      ,e.company
+		      ,k.application
+		      ,j.module
+		      ,i.controller
+		      ,l.name as action
+		      ,h.value
+		  from ct_user a
+		      ,ct_user_role_property b
+		      ,ct_role c
+		      ,tm_order_channel d
+		      ,ct_company e
+		      ,ct_role_permission h
+		      ,ct_controller i
+		      ,ct_module j
+		      ,ct_application k
+		      ,ct_action l		
+		where a.username = #{userName}
+		  and d.company_id = #{companyId}
+		  and a.id = b.user_id
+		  and b.role_id = c.id
+		  and b.property_id = d.order_channel_id
+		  and d.company_id = e.id
+		  and h.property_id = b.property_id
+		  and h.role_id = b.role_id
+		  and h.value = 1
+		  and h.action_id = l.id
+		  and l.controller_id = i.id
+		  and i.module_id = j.id
+		  and j.application_id = k.id
+		  and a.active = 1
+		  and b.active = 1
+		  and c.active = 1
+		  and e.active = 1
+		  and h.active = 1
+		  and i.active = 1
+		  and j.active = 1
+		  and k.active = 1
+		  and l.active = 1
+	</select>
+	<select id="ct_role_permission_getPermissionForSuperUser" resultType="HashMap" parameterType="HashMap">
+		select distinct
+		       d.order_channel_id as property_id
+		      ,d.full_name as property_name
+		      ,d.company_id 
+		      ,e.company
+		      ,k.application
+		      ,j.module
+		      ,i.controller
+		      ,l.name as action
+		      ,h.value
+		  from tm_order_channel d
+		      ,ct_company e
+		      ,ct_role_permission h
+		      ,ct_controller i
+		      ,ct_module j
+		      ,ct_application k
+		      ,ct_action l		
+		where d.company_id = #{companyId}
+		  and d.company_id = e.id
+		  and h.property_id = d.order_channel_id
+		  and h.value = 1
+		  and h.action_id = l.id
+		  and l.controller_id = i.id
+		  and i.module_id = j.id
+		  and j.application_id = k.id
+		  and e.active = 1
+		  and h.active = 1
+		  and i.active = 1
+		  and j.active = 1
+		  and k.active = 1
+		  and l.active = 1
+	</select>
+	<select id="ct_user_permission_getPermissionByUser" resultType="HashMap" parameterType="HashMap">
+		select 
+		       a.username
+		      ,d.order_channel_id as property_id
+		      ,d.full_name as property_name
+		      ,d.company_id 
+		      ,e.company
+		      ,k.application
+		      ,j.module
+		      ,i.controller
+		      ,l.name as action
+		      ,h.value
+		  from ct_user a
+		      ,tm_order_channel d
+		      ,ct_company e
+		      ,ct_user_permission h
+		      ,ct_controller i
+		      ,ct_module j
+		      ,ct_application k
+		      ,ct_action l
+		where a.username = #{userName}
+		  and d.company_id = #{companyId}
+		  and a.id = h.user_id
+		  and h.property_id = d.order_channel_id
+		  and d.company_id = e.id
+		  and l.controller_id = i.id
+		  and i.module_id = j.id
+		  and j.application_id = k.id
+		  and h.action_id = l.id
+		  and a.active = 1
+		  and e.active = 1
+		  and h.active = 1
+		  and i.active = 1
+		  and j.active = 1
+		  and k.active = 1
+		  and l.active = 1
+	</select>
+	<select id="ct_role_permission_getCommonPermission" resultType="HashMap" parameterType="HashMap">
+		select distinct
+		       a.username
+		      ,g.application
+		      ,f.module
+		      ,e.controller
+		      ,h.name as action
+		      ,d.value
+		  from ct_user a
+		      ,ct_user_role_property b
+		      ,ct_role c
+		      ,ct_role_permission d
+		      ,ct_controller e
+		      ,ct_module f
+		      ,ct_application g
+		      ,ct_action h		
+		where a.username = #{userName}
+		  and a.id = b.user_id
+		  and b.role_id = c.id
+		  and d.property_id = '000'
+		  and d.role_id = b.role_id
+		  and h.controller_id = e.id
+		  and e.module_id = f.id
+		  and f.application_id = g.id
+		  and d.action_id = h.id
+		  and a.active = 1
+		  and b.active = 1
+		  and c.active = 1
+		  and d.active = 1
+		  and e.active = 1
+		  and f.active = 1
+		  and g.active = 1
+		  and h.active = 1
+	</select>
+	<select id="ct_controller_getHomeMenuInfo" resultType="HashMap">
+		select 
+		       id
+		      ,controller
+		      ,default_url
+		      ,menu_title
+		 from ct_controller
+		where active = 1
+		  and id = 0
+	</select>
+	<select id="ct_application_getMenuInfo" resultType="HashMap">
+		select 
+		       id
+		      ,application
+		      ,default_url
+		      ,menu_title
+		 from ct_application
+		where active = 1
+		  and show_in_menu = 1
+	 order by order_by
+	</select>
+	<select id="ct_module_getMenuInfo" resultType="HashMap" parameterType="Integer">
+		select 
+		       id
+		      ,module
+		      ,default_url
+		      ,menu_title
+		 from ct_module
+		where application_id = #{applicationId}
+		  and active = 1
+		  and show_in_menu = 1
+	 order by order_by
+	</select>
+	<select id="ct_controller_getMenuInfo" resultType="HashMap" parameterType="Integer">
+		select 
+		       id
+		      ,controller
+		      ,default_url
+		      ,menu_title
+		 from ct_controller
+		where module_id = #{moduleId}
+		  and active = 1
+		  and show_in_menu = 1
+	 order by order_by
+	</select>
+	<select id="ct_user_config_getConfigInfo" resultType="com.voyageone.core.modelbean.UserConfigBean" parameterType="Integer">
+		select 
+		       user_id
+		      ,cfg_name
+		      ,cfg_val1
+		      ,ifnull(cfg_val2, '') as cfg_val2
+		      ,ifnull(comment, '') as comment
+		 from ct_user_config
+		where user_id = #{userId}
+		  and active = 1
+	 order by cfg_name
+	</select>
+
+    <select id="ct_user_config_getUserShopList" resultType="com.voyageone.core.modelbean.ChannelShopBean" parameterType="Integer">
+        select DISTINCT
+        	shop.order_channel_id,
+        	shop.cart_id,
+            concat(shop.order_channel_id , '-' , shop.cart_id) shop_id,
+            concat(shop.shop_name,'(',shop.`comment`,')') shop_name
+        from ct_user_role_property channel
+                    ,tm_channel_shop shop
+        where channel.user_id = #{userId}
+        and channel.property_id = shop.order_channel_id
+    </select>
+
+    <select id="ct_user_config_getUserStoreToList" resultType="com.voyageone.core.modelbean.ChannelStoreBean" parameterType="Integer">
+        select  DISTINCT store.order_channel_id,store.store_id,store.store_name,store.store_kind
+        from wms_mt_store store,
+            (select   store.store_type,
+                store.parent_store_id,
+				 store.order_channel_id
+                from wms_mt_store store
+                         ,ct_user_config config
+                where store.store_id = config.cfg_val1
+                and config.cfg_name = 'store_id'
+                and config.user_id = #{userId}
+            ) store_self
+        where
+         --  去除虚拟超买库，如果所属仓库是自营仓库的话，那么就可以向所有自营仓库移库
+         (store_self.store_type = '0' and store.order_channel_id = store_self.order_channel_id and store.store_type = '0' and store.store_kind = '0')
+         --  去除虚拟超买库，如果所属仓库是第三方仓库的话，那么只能向自己所属仓库移库
+        or (store_self.store_type = '1' and store.order_channel_id = store_self.order_channel_id and store.parent_store_id = store_self.parent_store_id and store.store_kind = '0')
+    </select>
+
+    <select id="ct_user_config_getUserStoreList" resultType="com.voyageone.core.modelbean.ChannelStoreBean" parameterType="Integer">
+        select
+        store.store_id,
+        store.store_name,
+        store.order_channel_id,
+        store.store_type,
+        store.store_location,
+        store.store_kind,
+        store.parent_store_id,
+        store.label_type,
+        store.rsv_sort
+        from ct_user_config config,
+        wms_mt_store store
+        where config.user_id = #{userId}
+        and config.cfg_name = 'store_id'
+        and config.cfg_val1 = store.store_id
+    </select>
+	<select id="ct_user_config_getChannelStoreList" resultType="com.voyageone.core.modelbean.ChannelStoreBean" >
+		select
+		store.store_id,
+		store.store_name,
+		store.order_channel_id,
+		store.store_type,
+		store.store_location,
+		store.store_kind,
+		store.parent_store_id,
+		store.label_type,
+		store.rsv_sort
+		from
+			wms_mt_store store
+		where
+		<if test="channelList != null and channelList.size() != 0">
+			order_channel_id in
+			<foreach collection="channelList" item="orderChannelId"  open="(" separator="," close=")">
+				#{orderChannelId}
+			</foreach>
+		</if>
+	</select>
+    <select id="ct_user_hardware_config_getConfig" resultType="com.voyageone.core.modelbean.UserHardwareConfigBean" parameterType="Integer">
+        select
+            config.user_id,
+            config.hardware_key,
+            config.hardware_name,
+            config.fix_val1,
+            config.fix_val2
+        from ct_user_hardware_config config
+        where config.user_id = #{userId}
+    </select>
+    <resultMap type="com.voyageone.core.modelbean.CompanyBean" id="ctUserCompanyPermissionMap">
+   	<result column="company_id" property="companyId"/>
+   	<result column="company" property="companyName"/>
+   	<collection property="channelList" javaType="ArrayList" ofType="com.voyageone.core.modelbean.ChannelPermissionBean" >
+	    <result column="property_id" property="channelId"/>
+	    <result column="full_name" property="channelName"/>
+	    <result column="img_url" property="channelImgUrl"/>
+		<collection property="menuList" javaType="ArrayList" ofType="String" >
+			<result column="application" />
+		</collection>
+    </collection>
+    </resultMap>
+    <select id = "ct_user_company_permission" resultMap="ctUserCompanyPermissionMap" parameterType="String">
+	 select * from (SELECT
+		a.username,
+		g.application,
+		b.property_id,
+		h.full_name,
+		ifnull(h.img_url,'') as img_url,
+	  	h.company_id,
+	  	i.company
+		FROM
+			ct_user AS a
+		INNER JOIN ct_user_role_property AS b ON a.id = b.user_id
+		INNER JOIN ct_role_permission AS c ON b.role_id = c.role_id  and b.property_id = c.property_id
+		INNER JOIN ct_action AS d ON c.action_id = d.id
+		INNER JOIN ct_controller AS e ON d.controller_id = e.id
+		INNER JOIN ct_module AS f ON e.module_id = f.id
+		INNER JOIN ct_application AS g ON f.application_id = g.id
+		INNER JOIN tm_order_channel AS h on b.property_id = h.order_channel_id
+		INNER JOIN ct_company AS i on i.id = h.company_id
+		where b.active = 1 and c.active = 1 and d.active = 1 and e.active = 1 and f.active = 1 and g.active = 1
+			  and a.username = #{userName}
+		UNION
+		SELECT
+			a.username,
+			g.application,
+			b.property_id,
+			h.full_name,
+			ifnull(h.img_url,'') as img_url,
+		  	h.company_id,
+		 	i.company
+		FROM
+			ct_user AS a
+		INNER JOIN ct_user_permission AS b ON a.id = b.user_id
+		
+		INNER JOIN ct_action AS d ON b.action_id = d.id
+		INNER JOIN ct_controller AS e ON d.controller_id = e.id
+		INNER JOIN ct_module AS f ON e.module_id = f.id
+		INNER JOIN ct_application AS g ON f.application_id = g.id
+		INNER JOIN tm_order_channel AS h on b.property_id = h.order_channel_id
+		INNER JOIN ct_company AS i on i.id = h.company_id
+		where b.active = 1  and d.active = 1 and e.active = 1 and f.active = 1 and g.active = 1
+		     and a.username = #{userName}
+		) t
+		
+		GROUP BY
+			t.username,
+			t.application,
+			t.property_id
+		ORDER BY t.company_id,t.property_id,t.application
+    </select>
+</mapper>

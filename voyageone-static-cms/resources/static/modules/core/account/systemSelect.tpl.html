@@ -1,0 +1,35 @@
+<div ng-controller="systemSelectController" ng-init="initialize()" ng-cloak="">
+    <!-- Header -->
+    <header id="header" class="alt">
+        <div id="nav">
+            <ul class="nav navbar-nav hidden-sm">
+                <li class="submenu dropdown vo_h_system" dropdown>
+                    <a href="" ng-repeat="companyInfo in companyList" dropdown-toggle ng-if="currentCompanyId === companyInfo.companyId" ng-bind="companyInfo.companyName"></a>
+                    <ul class="arrow_box dropdown-menu left" role="menu">
+                        <li ng-repeat="companyInfo in companyList" ng-if="currentCompanyId !== companyInfo.companyId">
+                            <a href="" ng-bind="companyInfo.companyName" ng-click="doSelectCompany(companyInfo.companyId)"></a>
+                            <!--</li>-->
+                    </ul>
+                </li>
+                <li><a href="" class="button special" translate="CORE_BUTTON_LOG_OUT" ng-click="doLogout()"></a></li>
+            </ul>
+        </div>
+        <!-- / navbar right -->
+    </header>
+
+    <!-- company -->
+    <section id="banner" ng-repeat="companyInfo in companyList" ng-if="currentCompanyId === companyInfo.companyId">
+        <!-- store1 -->
+        <div class="mainBanner" ng-repeat="channelInfo in companyInfo.channelList">
+            <header>
+                <h2 ng-bind="channelInfo.channelName"></h2>
+            </header>
+            <p><img src="{{channelInfo.channelImgUrl}}"></p>
+
+            <p>
+                <a href="" class="button" ng-repeat="menu in channelInfo.menuList" ng-bind="menu" ng-click="doSelectSystem(channelInfo.channelId, menu)"></a>
+            </p>
+        </div>
+    </section>
+    <!-- /company -->
+</div>

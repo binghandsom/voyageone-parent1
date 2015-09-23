@@ -1,0 +1,148 @@
+<div class="vo_modal" ng-init="initialize()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()">
+            <span aria-hidden="true"><i class="fa fa-close"></i></span>
+        </button>
+        <h4 class="modal-title"><i class="glyphicons glyphicons-edit"></i>&nbsp;<span translate="CMS_TXT_TITLE_SIZE_CHART_DETAIL"></span></h4>
+    </div>
+    <div class="modal-body wrapper-lg">
+        <div class="row">
+            <div class="col-sm-12">
+                <!-- START panel-->
+                <!--<tabset class="tab-container vo_nav-tabs">-->
+                    <!--<tab>-->
+                        <!--<tab-heading class="font-bold">&nbsp;<span translate="CMS_TXT_TITLE_SIZE_CHART_DETAIL"></span></tab-heading>-->
+                        <div class="panel panel-default">
+
+                            <div class="panel-footer">
+
+                                <form name="formSizeChartDetailInfo" class="form-validate form-horizontal">
+                                    <fieldset>
+                                        <div class="form-group">
+                                            <div class="col-sm-8">
+                                                <div class="form-group">
+                                                    <label class="col-sm-4 control-label vo_reqfield" translate="CMS_TXT_NAME"></label>
+
+                                                    <div class="col-sm-8">
+                                                        <input class="form-control" id="txtSizeChartDetailName" name="txtSizeChartDetailName" type="text"
+                                                               ng-model="sizeChartDetail.sizeChartName" required="" maxlength="100" ng-change="sizeChartDetailChanged()"/>
+                                                        <va-check ng-show="formSizeChartDetailInfo.txtSizeChartDetailName.$error.required" check-type="required"></va-check>
+                                                        <va-check ng-show="formSizeChartDetailInfo.txtSizeChartDetailName.$error.maxlength" check-type="maxlength" check-param="100"></va-check>
+                                                    </div>
+                                                </div>
+                                                <div class="panel vo_panel tab_panel">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-striped hover b-t b-b vo_table">
+                                                            <thead>
+                                                            <tr>
+                                                                <th class="wtab-xs" translate="CMS_TXT_SIZE"></th>
+                                                                <th class="wtab-xs" translate="CMS_TXT_CN_SIZE"></th>
+                                                                <th class="">
+                                                                    <span translate="CMS_TXT_EDIT"></span>&nbsp;
+                                                                    <button title="add aline" class="btn btn-vo btn-xs" ng-click="addNewSize()" ng-disabled="!sizeChartDetail.sizeChartName">
+                                                                        <i class="fa fa-pencil"></i><span translate="CMS_BTN_ADD"></span>
+                                                                    </button>
+                                                                </th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            <tr ng-repeat="sizeInfo in sizeChartDetail.sizeList">
+                                                                <td class="wtab-xs"><input class="form-control" type="text" ng-model="sizeInfo.sizeValue"></td>
+                                                                <td class="wtab-xs"><input class="form-control" type="text" ng-model="sizeInfo.sizeCn"></td>
+                                                                <td>
+                                                                    <button class="btn btn-danger btn-xs" translate="CMS_BTN_DELETE" ng-click="deleteSize(sizeInfo)"><i class="fa fa-trash-o"></i></button>
+                                                                </td>
+                                                            </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-4 form-horizontal">
+                                                <div class="form-group">
+                                                    <label class="col-sm-12 font-bold" translate="CMS_TXT_SIZE_CHART_MODEL"></label>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-sm-12">
+                                                        <div class="input-group">
+                                                            <ui-select ng-model="sizeChartDetail.sizeChartModelId" theme="bootstrap" ng-disabled="disabled" class="text-left" name="selSizeChartModelId" required="" ng-change="sizeChartModelChanged($select.selected.sizeChartModelUrl)">
+                                                                <ui-select-match placeholder="Select..." class="text-left">{{$select.selected.sizeChartModelName}}</ui-select-match>
+                                                                <ui-select-choices repeat="sizeChartModel.sizeChartModelId as sizeChartModel in sizeChartModelList | filter: $select.search">
+                                                                    <span ng-bind-html="sizeChartModel.sizeChartModelName | highlight: $select.search"></span>
+                                                                </ui-select-choices>
+                                                            </ui-select>
+                                                            <span class="input-group-btn">
+                                                                <button type="button" ng-click="clearSizeChartModelId()" class="btn btn-default">
+                                                                    <small>
+                                                                        <em class="fa fa-times text-muted"></em>
+                                                                    </small>
+                                                                </button>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <va-check ng-show="formSizeChartDetailInfo.selSizeChartModelId.$error.required" check-type="required"></va-check>
+                                                </div>
+                                                <div class="form-group" ng-show="sizeChartDetail.sizeChartModelUrl != null">
+                                                    <div class="col-sm-12">
+                                                        <div class="input-group">
+                                                            <img class="img-thumbnail" width="250px" ng-src="{{cmsMaster.imageUrl}}{{sizeChartDetail.sizeChartModelUrl}}">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!--<div class="form-group">-->
+                                            <!--<div class="col-lg-offset-4 col-lg-12">-->
+                                                <!--<button class="btn m-b-xs  btn btn-vo btn-sm" ng-click="doUpdateSizeChartDetail()" translate="CMS_BTN_SAVE"></button>-->
+                                                <!--<button class="btn m-b-xs btn-sm btn-success btn-addon"><i class="fa fa-plus"></i>Copy To New</button>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                    </fieldset>
+
+                                    <!-- END fieldset-->
+                                    <!-- END panel-->
+                                </form>
+                            </div>
+                        </div>
+                    <!--</tab>-->
+                    <!--<tab>-->
+                        <!--<tab-heading class="font-bold">&nbsp;<span translate="CMS_TXT_BOUND_SIZE_CHART"></span></tab-heading>-->
+                        <!--<div class="panel vo_panel tab_panel" ng-if="bindSizeList.length">-->
+                            <!--<div class="table-responsive">-->
+                                <!--<table datatable="ng" class="table table-striped hover b-t b-b vo_table" dt-options="dtSizeChartList.options">-->
+                                    <!--<thead>-->
+                                    <!--<tr class="">-->
+                                        <!--&lt;!&ndash;<th class="wtab-check text-center"></th>&ndash;&gt;-->
+                                        <!--<th class="wtab-xl" translate="CMS_TXT_NAME"></th>-->
+                                        <!--<th class="wtab-sm text-center" translate="CMS_TXT_IMAGE"></th>-->
+                                        <!--<th class="wtab-xsm" translate="CMS_TXT_CREATED_ON"></th>-->
+                                    <!--</tr>-->
+                                    <!--</thead>-->
+                                    <!--<tbody>-->
+                                    <!--<tr ng-repeat="bindSizeInfo in bindSizeChartList" ng-controller="cmsPopupController">-->
+                                        <!--&lt;!&ndash;<td class="wtab-check text-center"><input  type="checkbox" ng-click="selSizeChartId(bindSizeInfo.sizeChartId)" ng-checked="currentSizeChartId == bindSizeInfo.sizeChartId"></td>&ndash;&gt;-->
+                                        <!--<td class="wtab-xl" ng-bind="bindSizeInfo.sizeChartName"></td>-->
+                                        <!--<td class="wtab-sm text-center"><img class="prodImg" ng-src="{{cmsMaster.imageUrl}}{{bindSizeInfo.sizeChartImageUrl}}"></td>-->
+                                        <!--<td class="wtab-xsm" ng-bind="bindSizeInfo.created"></td>-->
+                                    <!--</tr>-->
+                                    <!--</tbody>-->
+                                <!--</table>-->
+                            <!--</div>-->
+                            <!--&lt;!&ndash; .table&ndash;&gt;-->
+                        <!--</div>-->
+                        <!--&lt;!&ndash; pagination ng-controller &ndash;&gt;-->
+                        <!--&lt;!&ndash; .panel &ndash;&gt;-->
+                    <!--</tab>-->
+                    <!-- .tab -->
+                </tabset>
+            <!-- .col-lg-12 -->
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="close()" translate="CMS_BTN_CANCEL"></button>
+        <button class="btn btn-vo" ng-click="doUpdateSizeChartDetail()" translate="CMS_BTN_SAVE" ng-if="sizeChartDetailIsChanged && sizeChartDetail.sizeChartName != '' && sizeChartDetail.sizeList.length && sizeChartDetail.sizeChartModelId != null"></button>
+    </div>
+</div><!-- .vo_modal -->

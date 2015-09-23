@@ -1,0 +1,568 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.wms.sql">
+    <sql id="common_select_cols">
+        active, created, creater, modified, modifier
+    </sql>
+
+    <!-- 获得Transfer信息 -->
+    <resultMap id="transferInfoMap" type="com.voyageone.wms.modelbean.TransferBean">
+        <result column="transfer_id" property="transfer_id"/>
+        <result column="order_channel_id" property="order_channel_id"/>
+        <result column="store_id" property="store_id"/>
+        <result column="transfer_type" property="transfer_type"/>
+        <result column="transfer_name" property="transfer_name"/>
+        <result column="po_number" property="po_number"/>
+        <result column="transfer_from_store" property="transfer_from_store"/>
+        <result column="transfer_to_store" property="transfer_to_store"/>
+        <result column="syn_flg" property="syn_flg"/>
+        <result column="syn_time" property="syn_time"/>
+        <result column="active" property="active"/>
+        <result column="created" property="created"/>
+        <result column="creater" property="creater"/>
+        <result column="modified" property="modified"/>
+        <result column="modifier" property="modifier"/>
+    </resultMap>
+
+    <sql id="transfer_all_select_cols">
+        transfer_id,
+        order_channel_id,
+        store_id,
+        transfer_status,
+        transfer_type,
+        transfer_name,
+        po_number,
+        transfer_from_store,
+        transfer_to_store,
+        transfer_origin,
+        sim_flg,
+        comment
+    </sql>
+
+    <resultMap id="transferDetailMap" type="com.voyageone.wms.modelbean.TransferDetailBean">
+        <result column="transfer_package_id" property="transfer_package_id"/>
+        <result column="transfer_id" property="transfer_id"/>
+        <result column="transfer_package_name" property="transfer_package_name"/>
+        <result column="transfer_package_qty" property="transfer_package_qty"/>
+        <result column="package_status" property="package_status"/>
+    </resultMap>
+
+    <sql id="transfer_detail_all_select_cols">
+        transfer_package_id, transfer_id, transfer_package_name, package_status
+    </sql>
+
+    <resultMap id="transferItemMap" type="com.voyageone.wms.modelbean.TransferItemBean">
+        <result column="transfer_item_id" property="transfer_item_id"/>
+        <result column="transfer_id" property="transfer_id"/>
+        <result column="transfer_package_id" property="transfer_package_id"/>
+        <result column="transfer_barcode" property="transfer_barcode"/>
+        <result column="transfer_sku" property="transfer_sku"/>
+        <result column="transfer_qty" property="transfer_qty"/>
+        <result column="order_number" property="order_number"/>
+        <result column="reservation_id" property="reservation_id"/>
+        <result column="calc_qty" property="calc_qty"/>
+        <result column="syn_flg" property="syn_flg"/>
+    </resultMap>
+
+    <sql id="transfer_item_all_select_cols">
+        transfer_item_id, transfer_id, transfer_package_id, transfer_barcode, transfer_sku, transfer_qty, order_number, reservation_id, calc_qty, syn_flg
+    </sql>
+
+    <!-- 主 SQL语句 -->
+
+    <select id="wms_bt_transfer_getTransferInfo" parameterType="com.voyageone.wms.modelbean.TransferBean" resultMap="transferInfoMap">
+        select
+        <include refid="transfer_all_select_cols"></include>,
+        <include refid="common_select_cols"></include>
+        from wms_bt_transfer
+        where
+            transfer_id = #{transfer_id}
+        order by
+            transfer_id asc
+    </select>
+
+    <!-- Transfer信息追加 -->
+    <insert id="wms_bt_transfer_insertTransferInfo" parameterType="com.voyageone.wms.modelbean.TransferBean">
+        insert into
+            wms_bt_transfer
+            (
+            transfer_id,
+            order_channel_id,
+            store_id,
+            transfer_status,
+            transfer_type,
+            transfer_name,
+            po_number,
+            transfer_from_store,
+            transfer_to_store,
+            transfer_origin,
+            origin_id,
+            sim_flg,
+            comment,
+            active,
+            created,
+            creater,
+            modified,
+            modifier
+            )
+        value
+            (
+            NULL,
+            #{order_channel_id},
+            #{store_id},
+            #{transfer_status},
+            #{transfer_type},
+            #{transfer_name},
+            #{po_number},
+            #{transfer_from_store},
+            #{transfer_to_store},
+            #{transfer_origin},
+            #{origin_id},
+            #{sim_flg},
+            #{comment},
+            #{active},
+            #{created},
+            #{creater},
+            #{modified},
+            #{modifier}
+            )
+    </insert>
+
+    <!-- Transfer信息更新 -->
+    <update id="wms_bt_transfer_updateTransferInfo" parameterType="com.voyageone.wms.modelbean.TransferBean">
+        update wms_bt_transfer
+        set
+            order_channel_id = #{transfer.order_channel_id},
+            store_id = #{transfer.store_id},
+            transfer_name = #{transfer.transfer_name},
+            po_number = #{transfer.po_number},
+            <if test="transfer.transfer_status!=null and transfer.transfer_status!=''">transfer_status = #{transfer.transfer_status},</if>
+            transfer_from_store = #{transfer.transfer_from_store},
+            transfer_to_store = #{transfer.transfer_to_store},
+            comment = #{transfer.comment},
+            modified = #{transfer.modified},
+            modifier = #{transfer.modifier}
+        where transfer_id = #{transfer.transfer_id} and modified = #{lastModified}
+    </update>
+
+    <!-- 获得Transfer数-->
+    <select id="wms_bt_transfer_getCounts" resultType="int">
+        select
+            count(1) as count
+        from
+            wms_bt_transfer
+    </select>
+
+    <select id="wms_bt_transfer_search" parameterType="HashMap" resultType="com.voyageone.wms.formbean.TransferFormBean">
+        SELECT
+            transfer_id,
+            t.order_channel_id,
+            s.store_id,
+            s.store_name,
+            transfer_status,
+            vs.name transfer_status_name,
+            transfer_type,
+            vt.name transfer_type_name,
+            transfer_name,
+            po_number,
+            transfer_from_store,
+            transfer_to_store,
+            transfer_origin,
+            sim_flg,
+            comment,
+            t.active,
+            t.created,
+            t.creater,
+            t.modified,
+            t.modifier
+        FROM
+            wms_bt_transfer t
+        LEFT JOIN
+            com_mt_value vs ON vs.type_id = #{status_type_id}
+              AND t.transfer_status = vs.value
+        LEFT JOIN
+            com_mt_value vt ON vt.type_id = #{type_type_id}
+              AND t.transfer_type = vt.value
+        LEFT JOIN
+            wms_mt_store s ON s.store_id = t.store_id
+        <where>
+            t.created between #{fromDate} and #{toDate}
+            and t.transfer_origin = '0'
+            <if test=" po_number != null and po_number != '' ">AND t.po_number like #{po_number}</if>
+            <if test="store_id != null and store_id != 0"> AND t.store_id = #{store_id}</if>
+            <if test=" transfer_status != null and transfer_status != '' ">AND t.transfer_status = #{transfer_status}</if>
+            <if test="storeList != null and storeList.size() != 0">
+                AND t.store_id in
+                <foreach collection="storeList" item="store"  open="(" separator="," close=")">
+                    #{store.store_id}
+                </foreach>
+            </if>
+        </where>
+        order by t.created desc
+        limit #{offset}, #{size}
+    </select>
+
+    <select id="wms_bt_transfer_search_count" parameterType="HashMap" resultType="int">
+        select count(1) from wms_bt_transfer
+        <where>
+            created between #{fromDate} and #{toDate}
+            and transfer_origin = '0'
+            <if test=" po_number != null and po_number != '' ">AND po_number like #{po_number}</if>
+            <if test="store_id != null and store_id != 0"> AND store_id = #{store_id}</if>
+            <if test=" transfer_status != null and transfer_status != '' ">AND transfer_status = #{transfer_status}</if>
+            <if test="storeList != null and storeList.size() != 0">
+                AND store_id in
+                <foreach collection="storeList" item="store"  open="(" separator="," close=")">
+                    #{store.store_id}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <delete id="wms_bt_transfer_delete" parameterType="HashMap">
+      delete from wms_bt_transfer where transfer_id = #{transfer_id} and modified = #{modified} and transfer_status = 0
+    </delete>
+
+    <delete id="wms_bt_transfer_deletePackage">
+      delete from wms_bt_transfer_detail where transfer_package_id = #{package_id} and modified = #{modified} and package_status = '0'
+    </delete>
+
+    <delete id="wms_bt_transfer_deleteDetails">
+        delete from wms_bt_transfer_detail where transfer_id = #{transfer_id}
+    </delete>
+
+    <delete id="wms_bt_transfer_deleteItemsByTransfer">
+      delete from wms_bt_transfer_item where transfer_id = #{transfer_id}
+    </delete>
+
+    <delete id="wms_bt_transfer_deleteItemsByPackage">
+        delete from wms_bt_transfer_item where transfer_package_id = #{package_id}
+    </delete>
+
+    <select id="wms_bt_transfer_get_by_name_modified" parameterType="HashMap" resultMap="transferInfoMap">
+        SELECT
+            <include refid="transfer_all_select_cols"></include>,
+            <include refid="common_select_cols"></include>
+        FROM
+            wms_bt_transfer
+        WHERE
+            transfer_name = #{transfer_name}
+        AND modified = #{modified}
+    </select>
+
+    <select id="wms_bt_transfer_get_by_name" resultMap="transferInfoMap">
+        SELECT
+            <include refid="transfer_all_select_cols"></include>,
+            <include refid="common_select_cols"></include>
+        FROM
+            wms_bt_transfer
+        WHERE
+            transfer_name = #{transfer_name}
+    </select>
+
+    <select id="wms_bt_transfer_detail_get_packages" resultMap="transferDetailMap">
+        select detail.*, ifnull(item.transfer_qty,0) transfer_package_qty
+          from (
+                 select <include refid="transfer_detail_all_select_cols"></include>,
+                        <include refid="common_select_cols"></include>
+                   from wms_bt_transfer_detail
+                  where transfer_id = #{transfer_id}
+                ) detail
+                left join
+                (
+                  select transfer_package_id,
+                         sum(transfer_qty) transfer_qty
+                    from wms_bt_transfer_item
+                   group by transfer_package_id
+                ) item
+                on  detail.transfer_package_id = item.transfer_package_id
+    </select>
+
+    <select id="wms_bt_transfer_detail_get_package" resultMap="transferDetailMap">
+        select
+        <include refid="transfer_detail_all_select_cols"></include>,
+        <include refid="common_select_cols"></include>
+        from wms_bt_transfer_detail
+        where transfer_id = #{transfer_id} and transfer_package_name = #{package_name}
+    </select>
+
+    <select id="wms_bt_transfer_detail_get_package_by_id" resultMap="transferDetailMap">
+        select
+        <include refid="transfer_detail_all_select_cols"></include>,
+        <include refid="common_select_cols"></include>
+        from wms_bt_transfer_detail
+        where transfer_package_id = #{package_id}
+    </select>
+
+    <select id="wms_bt_transfer_detail_get_max" resultType="int">
+        select count(1) from wms_bt_transfer_detail where transfer_id = #{transfer_id}
+    </select>
+
+    <insert id="wms_bt_transfer_detail_insert">
+        INSERT INTO wms_bt_transfer_detail (
+            transfer_id,
+            transfer_package_name,
+            package_status,
+            active,
+            created,
+            creater,
+            modified,
+            modifier
+        )
+        VALUES
+            (
+                #{transfer_id},
+                #{transfer_package_name},
+                #{package_status},
+                #{active},
+                #{created},
+                #{creater},
+                #{modified},
+                #{modifier}
+            )
+    </insert>
+    
+    <select id="wms_bt_transfer_item_get_by_barcode" resultMap="transferItemMap">
+        select
+        <include refid="transfer_item_all_select_cols"></include>
+        <include refid="common_select_cols"></include>
+        from wms_bt_transfer_item where transfer_package_id = #{package_id} and transfer_barcode = #{barcode}
+    </select>
+
+    <insert id="wms_bt_transfer_item_insert">
+        INSERT INTO wms_bt_transfer_item (
+            transfer_id,
+            transfer_package_id,
+            transfer_barcode,
+            transfer_sku,
+            transfer_qty,
+            order_number,
+            reservation_id,
+            calc_qty,
+            syn_flg,
+            active,
+            created,
+            creater,
+            modified,
+            modifier
+        )
+        VALUES
+            (
+                #{transfer_id},
+                #{transfer_package_id},
+                #{transfer_barcode},
+                #{transfer_sku},
+                #{transfer_qty},
+                #{order_number},
+                #{reservation_id},
+                #{calc_qty},
+                #{syn_flg},
+                #{active},
+                #{created},
+                #{creater},
+                #{modified},
+                #{modifier}
+            )
+    </insert>
+
+    <delete id="wms_bt_transfer_item_delete">
+        delete from wms_bt_transfer_item where transfer_item_id = #{item_id}
+    </delete>
+
+    <update id="wms_bt_transfer_item_update_qty">
+      update wms_bt_transfer_item
+      set
+        transfer_qty = #{item.transfer_qty}, calc_qty = #{item.calc_qty},
+        modified = #{item.modified}, modifier = #{item.modifier}
+      where transfer_item_id = #{item.transfer_item_id} and modified = #{lastModified}
+    </update>
+
+    <select id="wms_bt_transfer_has_name" resultType="int">
+        select count(1) from wms_bt_transfer where transfer_name = #{transfer_name}
+    </select>
+
+    <select id="wms_bt_transfer_detail_has_name" resultType="int">
+        select count(1) from wms_bt_transfer_detail where transfer_package_name = #{package_name} and transfer_id = #{transfer_id}
+    </select>
+
+    <insert id="wms_bt_transfer_mapping_insert">
+        INSERT INTO wms_bt_transfer_mapping (
+            transfer_in_id,
+            transfer_out_id,
+            mapping_status,
+            active,
+            created,
+            creater,
+            modified,
+            modifier
+        )
+        VALUES (
+            #{transfer_in_id},
+            #{transfer_out_id},
+            #{mapping_status},
+            #{active},
+            #{created},
+            #{creater},
+            #{modified},
+            #{modifier}
+        )
+    </insert>
+
+    <delete id="wms_bt_transfer_mapping_delete_in">
+        delete from wms_bt_transfer_mapping
+        <where>
+            transfer_in_id = #{transfer_in_id}
+            <if test="modified!=null and modified!=''">
+                and modified = #{modified}
+            </if>
+        </where>
+    </delete>
+
+    <delete id="wms_bt_transfer_mapping_delete_out">
+        delete from wms_bt_transfer_mapping
+        <where>
+            transfer_out_id = #{transfer_out_id}
+            <if test="modified!=null and modified!=''">
+                and modified = #{modified}
+            </if>
+        </where>
+    </delete>
+
+    <update id="wms_bt_transfer_detail_update_status">
+        UPDATE wms_bt_transfer_detail
+        SET package_status = #{detail.package_status},
+         modified = #{detail.modified},
+         modifier = #{detail.modifier}
+        WHERE
+            transfer_package_id = #{detail.transfer_package_id}
+        AND modified = #{lastModified}
+    </update>
+
+    <select id="wms_bt_transfer_mapping_check_status" resultType="int">
+        select count(1) from wms_bt_transfer_mapping where transfer_in_id = #{transfer_in_id} and mapping_status = #{mapping_status}
+    </select>
+
+    <select id="wms_bt_transfer_item_all_in_transfer" resultMap="transferItemMap">
+        select
+            <include refid="transfer_item_all_select_cols"></include>
+            <include refid="common_select_cols"></include>
+        from wms_bt_transfer_item
+        where transfer_id = #{transfer_id}
+    </select>
+
+    <select id="wms_bt_transfer_item_count_in_transfer" resultType="int">
+        select count(1) from wms_bt_transfer_item where transfer_id = #{transfer_id}
+    </select>
+
+    <select id="wms_bt_transfer_item_all_in_package" resultMap="transferItemMap">
+        select
+        <include refid="transfer_item_all_select_cols"></include>
+        <include refid="common_select_cols"></include>
+        from wms_bt_transfer_item
+        where transfer_package_id = #{package_id}
+    </select>
+
+    <select id="wms_bt_transfer_item_count_in_package" resultType="int">
+        select count(1) from wms_bt_transfer_item where transfer_package_id = #{package_id}
+    </select>
+
+    <select id="wms_bt_transfer_mapping_get_target" resultType="int">
+        select transfer_out_id from wms_bt_transfer_mapping where transfer_in_id = #{transfer_id}
+    </select>
+
+    <select id="wms_bt_transfer_mapping_count_mapping_other" resultType="int">
+        select count(1) from wms_bt_transfer_mapping where transfer_in_id != #{transfer_in_id} and transfer_out_id = #{transfer_out_id}
+    </select>
+
+    <select id="wms_bt_transfer_mapping_count_mapping_right" resultType="int">
+        select count(1) from wms_bt_transfer_mapping where transfer_in_id = #{transfer_in_id} and transfer_out_id = #{transfer_out_id}
+    </select>
+
+    <select id="wms_bt_transfer_mapping_count_compare_right" resultType="int">
+        SELECT
+            count(1)
+        FROM
+            wms_bt_transfer_item i
+        JOIN wms_bt_transfer_item o ON i.transfer_id = #{transfer_in_id}
+        AND o.transfer_id = #{transfer_out_id}
+        AND i.transfer_sku = o.transfer_sku
+        AND i.transfer_qty = o.transfer_qty
+    </select>
+
+    <select id="wms_bt_transfer_detail_count_unclosed" resultType="int">
+        select count(1) from wms_bt_transfer_detail where transfer_id = #{transfer_id} and package_status = "0"
+    </select>
+
+    <update id="wms_bt_transfer_mapping_close">
+        update wms_bt_transfer_mapping set mapping_status = "1" where transfer_in_id = #{transfer_id}
+    </update>
+
+    <select id="wms_bt_transfer_downloadTransferItems" resultType="com.voyageone.wms.formbean.TransferFormBean">
+        select
+            transfer.transfer_id,
+            transfer.order_channel_id,
+            transfer.store_id,
+            transfer.transfer_type,
+            transfer.transfer_name,
+            transfer.po_number,
+            transfer.transfer_from_store,
+            transfer.transfer_to_store,
+            transfer.comment,
+            transfer.created,
+            transfer.transfer_sku,
+            item_details.itemcode,
+            item_details.size,
+            transfer.transfer_qty,
+            (select count(1) from wms_bt_transfer_detail details where transfer.transfer_id = details.transfer_id) as details_num
+        from
+            (select
+                transfer_id,
+                order_channel_id,
+                store_id,
+                transfer_type,
+                transfer_name,
+                po_number,
+                transfer_from_store,
+                transfer_to_store,
+                comment,
+                created,
+                transfer_sku,
+                sum(transfer_qty) as transfer_qty
+            from
+                viw_wms_transfer_item transfer
+            WHERE
+                transfer_id = #{transferId}
+            group by
+                transfer_id,
+                order_channel_id,
+                store_id,
+                transfer_type,
+                transfer_name,
+                po_number,
+                transfer_from_store,
+                transfer_to_store,
+                comment,
+                created,
+                transfer_sku) transfer,
+            wms_bt_item_details  item_details
+        where
+            transfer.order_channel_id = item_details.order_channel_id
+        AND
+            transfer.transfer_sku = item_details.sku
+            <if test="storeList != null and storeList.size() != 0">
+                AND transfer.store_id in
+                <foreach collection="storeList" item="store"  open="(" separator="," close=")">
+                    #{store.store_id}
+                </foreach>
+            </if>
+            <if test="orderChannelList != null and orderChannelList.size() != 0">
+                AND transfer.order_channel_id in
+                <foreach collection="orderChannelList" item="orderChannelId"  open="(" separator="," close=")">
+                    #{orderChannelId}
+                </foreach>
+            </if>
+        order by
+            item_details.itemcode,abs(item_details.size)
+    </select>
+
+</mapper>

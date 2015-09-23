@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.core.sql">
+
+	<select id="ct_announcement_getAnnouncements" resultType="HashMap" parameterType="HashMap">
+		select 
+			id, 
+			title 
+		from ct_announcement 
+		where lang=#{lang} 
+			and company_id = #{companyId} 
+			and created >= #{created}
+	</select>
+	
+	<select id="ct_announcement_getAnnouncementContent" resultType="String" parameterType="HashMap">
+		select 
+			content 
+		from ct_announcement 
+		where id = #{id} 
+			and lang=#{lang}
+	</select>
+</mapper>

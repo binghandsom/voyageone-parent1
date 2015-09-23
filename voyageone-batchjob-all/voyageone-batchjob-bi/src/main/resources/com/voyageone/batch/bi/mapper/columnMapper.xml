@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.batch.bi.mapper.ColumnMapper">
+
+	<!-- 获得vm_column信息结构 -->
+	<resultMap id="columeMap" type="batch.bi.ColumnBean">
+		<result column="ecomm_id" property="ecomm_id"/>
+		<result column="column_web_name" property="column_web_name"/>
+		<result column="column_web_type" property="column_web_type"/>
+		<result column="cor_table_name" property="cor_table_name"/>
+		<result column="cor_column_table_name" property="cor_column_table_name"/>
+	</resultMap>
+
+	<!-- 设定vm_column检索条件 -->
+	<sql id="vm_column_condition">
+		<where>
+			<if test="ecomm_id != null and ecomm_id != '' ">
+				and ecomm_id = #{ecomm_id}
+			</if>
+			<if test="column_web_name != null and column_web_name != '' ">
+				and column_web_name = #{column_web_name}
+			</if>
+			<if test="column_web_type != null and column_web_type != '' ">
+				and column_web_type = #{column_web_type}
+			</if>
+			<if test="cor_table_name != null and cor_table_name != '' ">
+				and cor_table_name = #{cor_table_name}
+			</if>
+		</where>
+	</sql>
+
+	<!-- 获得vm_column数量 -->
+	<select id="vm_column_count"  parameterType="batch.bi.ColumnBean" resultType="int">
+		select
+		count(1)
+		from bi_master.vm_column
+		<include refid="vm_column_condition"/>
+	</select>
+
+	<!-- 检索vm_column信息 -->
+	<select id="select_record_vm_column"  parameterType="Map" resultType="String">
+		select
+		cor_column_table_name
+		from bi_master.vm_column
+		<include refid="vm_column_condition"/>
+	</select>
+
+	<select id="select_list_vm_column"  parameterType="batch.bi.ColumnBean" resultMap="columeMap">
+		select
+			ecomm_id,
+			column_web_name,
+			column_web_type,
+			cor_table_name,
+			cor_column_table_name
+		from bi_master.vm_column
+		<include refid="vm_column_condition"/>
+	</select>
+
+	<!-- 设定vm_column检索条件 -->
+	<sql id="vm_column_condition_jd">
+		<where>
+			<if test="ecomm_id != null and ecomm_id != '' ">
+				and ecomm_id = #{ecomm_id}
+			</if>
+			<if test="column_web_name != null and column_web_name != '' ">
+				and column_web_name = #{column_web_name}
+			</if>
+			<if test="column_web_type != null and column_web_type != '' ">
+				and (column_web_type = #{column_web_type} OR column_web_type = '')
+			</if>
+			<if test="cor_table_name != null and cor_table_name != '' ">
+				and cor_table_name = #{cor_table_name}
+			</if>
+		</where>
+	</sql>
+
+	<select id="select_list_jd_vm_column"  parameterType="batch.bi.ColumnBean" resultType="Map">
+		SELECT
+		cor_column_table_name,
+		column_web_type,
+		column_web_name
+		FROM bi_master.vm_column
+		<include refid="vm_column_condition_jd"/>
+		ORDER BY
+		column_web_type,
+		cor_column_table_name,
+		column_web_name
+	</select>
+
+	<insert id="replace_vm_column" parameterType="Map" useGeneratedKeys="true">
+		REPLACE INTO bi_master.vm_column
+		<foreach collection="column" index="index" item="columnname" open="(" separator="," close=")">
+			${columnname}
+		</foreach>
+		VALUES
+		<foreach collection="value" item="ColumnBean" separator=",">
+			(
+			#{ColumnBean.ecomm_id},
+			#{ColumnBean.column_web_name},
+			#{ColumnBean.column_web_type},
+			#{ColumnBean.cor_table_name},
+			#{ColumnBean.cor_column_table_name}
+			)
+		</foreach>
+
+	</insert>
+
+	<!-- 更新vm_column信息 -->
+	<update id="update_vm_column"  parameterType="batch.bi.ColumnBean">
+		UPDATE bi_master.vm_column
+		SET
+		cor_column_table_name = #{cor_column_table_name}
+		<include refid="vm_column_condition"/>
+	</update>
+
+	<!-- 插入vm_column信息 -->
+	<insert id="insert_vm_column"  parameterType="batch.bi.ColumnBean">
+		INSERT INTO bi_master.vm_column (
+		ecomm_id,
+		column_web_name,
+		column_web_type,
+		cor_table_name,
+		cor_column_table_name
+		)
+		VALUES
+		(
+		#{ecomm_id},
+		#{column_web_name},
+		#{column_web_type},
+		#{cor_table_name},
+		#{cor_column_table_name}
+		)
+	</insert>
+
+
+</mapper>

@@ -1,0 +1,36 @@
+package com.voyageone.bi.commonutils;
+
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
+
+public class SpringBeanFactoryUtils implements BeanFactoryAware {
+	
+	private static BeanFactory beanFactory = null;
+	private static SpringBeanFactoryUtils factoryUtils = null;
+
+	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+		SpringBeanFactoryUtils.beanFactory = beanFactory;
+	}
+
+	public static BeanFactory getBeanFactory() {
+		return beanFactory;
+	}
+
+	public static SpringBeanFactoryUtils getInstance() {
+		if (factoryUtils == null) {
+			// factoryUtils =
+			// (SpringBeanFactoryUtils)beanFactory.getBean("springBeanFactoryUtils");
+			factoryUtils = new SpringBeanFactoryUtils();
+		}
+		return factoryUtils;
+	}
+
+	public static Object getBeanByName(String name) {
+		return beanFactory.getBean(name);
+	}
+	
+	public static <T> T getBean(Class<T> paramClass) {
+		return beanFactory.getBean(paramClass);
+	}
+}

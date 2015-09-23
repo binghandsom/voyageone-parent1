@@ -1,0 +1,349 @@
+<div class="ngdialog-message">
+    <h3 class="mt0 p-sm border-bottom-1" translate="TXT_ORDER_REFUND"></h3>
+    <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+    <!--<form name="popForm" class="form-validate" novalidate="">-->
+        <div class="row">
+            <div class="col-xs-3">
+                <div class="panel panel-info mah500px" ng-if="popRefundOrderToUseInfo.refundList.length &gt; 0">
+                    <div class="panel-heading" translate="TXT_OMS_REFUND_LIST"></div>
+                    <div class="panel-body pl-sm pr-sm">
+                        <ul class="list-group p-sm note mb0">
+                            <li class="list-group-item p-sm" ng-class="{'active': refundInfo.refundId == currentrefundId}" ng-repeat="refundInfo in popRefundOrderToUseInfo.refundList">
+                                <a href="" ng-bind="refundInfo.refundId" ng-click="changeRefund(refundInfo)"></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-8 pre-scrollable">
+                <div class="row">
+                    <div class="col-xs-8">
+                        <div class="table-responsive p-sm">
+                            <table class="table">
+                                <tbody>
+                                <tr>
+                                    <th class="w45p" scope="row"><span class="ms-fr small" translate="TXT_OMS_REFUND_STATUS"></span></label></th>
+                                    <td class="text-left" ng-bind="popRefundOrderToUseInfo.refundInfo.refundStatus"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><label class="ms-fr small" translate="TXT_OMS_REFUND_TYPE"></label></th>
+                                    <td class="text-left" ng-bind="popRefundOrderToUseInfo.refundInfo.refundKind"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><label class="ms-fr small" translate="TXT_OMS_REFUND_AMOUNT"></label></th>
+                                    <td class="text-right w60p">{{popRefundOrderToUseInfo.refundInfo.currencyType}}<span ng-bind="popRefundOrderToUseInfo.refundInfo.refundFee | number:2"></span></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><label class="ms-fr small" translate="TXT_OMS_REFUND_REASON"></label></th>
+                                    <td class="text-left" ng-bind="popRefundOrderToUseInfo.refundInfo.refundReason"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><label class="ms-fr small" translate="TXT_OMS_REFUND_ID"></label></th>
+                                    <td class="text-left" ng-bind="popRefundOrderToUseInfo.refundInfo.refundId"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><label class="ms-fr small" translate="TXT_OMS_REFUND_TIME"></label></th>
+                                    <td class="text-left" ng-bind="popRefundOrderToUseInfo.refundInfo.refundTime"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><label class="ms-fr small" translate="TXT_OMS_REFUND_COMMENT"></label></th>
+                                    <td class="text-left" ng-bind="popRefundOrderToUseInfo.refundInfo.refundComment"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-xs-4"></div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div ng-repeat="refundMessage in popRefundOrderToUseInfo.refundMessagesList">
+                            <div class="panel panel-info">
+                                <div class="panel-heading">
+                                	<span ng-if="refundMessage.ownerRole == 20" translate="TXT_OMS_SELLER"></span>
+                                	<span ng-if="refundMessage.ownerRole == 10" translate="TXT_OMS_BUYER"></span>
+                                	&nbsp;<span ng-bind="refundMessage.created"></span>
+                                </div>
+                                <div class="panel-body pl-sm pr-sm">
+                                    <div class="row">
+                                    	<div class="col-xs-12">
+                                        	<span ng-bind-html="refundMessage.content"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row" ng-if="refundMessage.picUrls.length &gt; 0">
+                                        <div ng-repeat="picUrl in refundMessage.picUrls">
+                                    		<div class="col-xs-3">
+                                            	<img class="w50 mih50px" show-image="picUrl.url"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="col-xs-1">
+            </div>
+        </div>
+
+		<div class="row mt">
+			<div class="col-md-3"></div>
+			<div class="col-md-8">
+		        <h3 class="mt0 p-sm border-bottom-1"></h3>
+		        <div class="row" ng-show="appContent">
+		            <div class="col-md-2"></div>
+		        	<div class="col-md-4">
+		                <button class="btn btn-primary btn-sm form-control" translate="TXT_OMS_RETURN_GOODS_AGREE" ng-click="showAgreeRefund()"
+		                        ng-disabled="popRefundOrderToUseInfo.refundInfo.processFlag" ng-if="isShowReturnGoodsAgree"></button>
+                        <button class="btn btn-primary btn-sm form-control" translate="TXT_OMS_REFUND_AGREE" ng-click="showAgreeRefund()"
+                                ng-disabled="popRefundOrderToUseInfo.refundInfo.processFlag" ng-if="isShowRefundAgree"></button>
+                        <button class="btn btn-primary btn-sm form-control" translate="TXT_OMS_REFUND_AGREE_SYNOMS" ng-click="showAgreeRefund()"
+                                ng-disabled="popRefundOrderToUseInfo.refundInfo.processFlag" ng-if="isShowRefundAgreeSynOms"></button>
+                        <button class="btn btn-primary btn-sm form-control" translate="TXT_OMS_RETURN_GOODS_REFILL" ng-click="showAgreeRefund()"
+                                ng-disabled="popRefundOrderToUseInfo.refundInfo.processFlag" ng-if="isShowReturnGoodsRefill"></button>
+                        <button class="btn btn-primary btn-lg form-control" translate="TXT_OMS_REFUND_AGREE_IN_SERVER" ng-click="showAgreeRefund()"
+                                ng-disabled="popRefundOrderToUseInfo.refundInfo.processFlag" ng-if="isShowLocalRefundAgree"></button>
+		        	</div>
+		            <div class="col-md-4">
+		                <button class="btn btn-primary btn-sm form-control" translate="TXT_OMS_REFUND_REFUSE" ng-click="showRefuseRefund()"
+		                        ng-disabled="popRefundOrderToUseInfo.refundInfo.processFlag" ng-if="isShowRefundRefuse"></button>
+                        <button class="btn btn-primary btn-sm form-control" translate="TXT_OMS_RETURN_GOODS_REFUSE" ng-click="showRefuseRefund()"
+                                ng-disabled="popRefundOrderToUseInfo.refundInfo.processFlag" ng-if="isShowReturnGoodsRefuse"></button>
+                        <button class="btn btn-primary btn-sm form-control" translate="TXT_OMS_REFUND_SHIP" disabled ng-if="isShowShipping"></button>
+                        <button class="btn btn-primary btn-lg form-control" translate="TXT_OMS_REFUND_REFUSE_IN_SERVER" ng-click="showRefuseRefund()"
+                                ng-disabled="popRefundOrderToUseInfo.refundInfo.processFlag" ng-if="isShowLocalRefundRefuse"></button>
+		            </div>
+		            <div class="col-md-2"></div>
+		        </div>
+
+                <!--同意退款（阿里）-->
+		        <div ng-show="appNotSend || appSentNoReturn || appReturnRefund">
+		            <div class="row">
+		            	<div class="col-md-3"><input type="text" ng-model="popRefundOrderToUseInfo.refundInfo.code" maxlength="6" class="form-control input-sm" ng-show="showVerifyCode"/></div>
+		            	<div class="col-md-3">
+		                 <button class="btn btn-primary btn-sm form-control" translate="BUTTON_OK" ng-click="doAgreeRefund()"></button>
+		             </div>
+		            	<div class="col-md-3">
+		                 <button class="btn btn-primary btn-sm form-control" translate="BUTTON_SUB_CANCEL" ng-click="doCancel()"></button>
+		            	</div>
+		            	<div class="col-md-3"></div>
+		            </div>
+		        </div>
+
+                <!--同意退款（阿里以外）-->
+                <div ng-show="refundAgreeInLocal">
+                    <div class="row">
+                        <div class="col-md-3">
+                        </div>
+                        <div class="col-md-6">
+                            <h3><span translate="TXT_OMS_REFUND_AGREE_IN_SERVER_PROMPT"></span></h3>
+                        </div>
+                        <div class="col-md-3">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-3">
+                            <button class="btn btn-primary btn-sm form-control" translate="BUTTON_OK" ng-click="doAgreeRefund()"></button>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-primary btn-sm form-control" translate="BUTTON_SUB_CANCEL" ng-click="doCancel()"></button>
+                        </div>
+                        <div class="col-md-3"></div>
+                    </div>
+                </div>
+
+                <!--同意退款（同步ＯＭＳ）-->
+                <div ng-show="appReturnRefundSynOMS">
+                    <div class="row">
+                        <div class="col-md-3">
+                        </div>
+                        <div class="col-md-6">
+                            <h3><span translate="TXT_OMS_REFUND_AGREE_IN_SERVER_PROMPT"></span></h3>
+                        </div>
+                        <div class="col-md-3">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-3">
+                            <button class="btn btn-primary btn-sm form-control" translate="BUTTON_OK" ng-click="doAgreeRefundSynOMS()"></button>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-primary btn-sm form-control" translate="BUTTON_SUB_CANCEL" ng-click="doCancel()"></button>
+                        </div>
+                        <div class="col-md-3"></div>
+                    </div>
+                </div>
+
+                <!--拒绝退款（阿里以外）-->
+                <div ng-show="refundRefuseInLocal">
+                    <div class="row">
+                        <div class="col-md-3">
+                        </div>
+                        <div class="col-md-6">
+                            <h3><span translate="TXT_OMS_REFUND_REFUSE_IN_SERVER_PROMPT"></span></h3>
+                        </div>
+                        <div class="col-md-3">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-3">
+                            <button class="btn btn-primary btn-sm form-control" translate="BUTTON_OK" ng-click="doRefundRefuseOther()"></button>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-primary btn-sm form-control" translate="BUTTON_SUB_CANCEL" ng-click="doCancel()"></button>
+                        </div>
+                        <div class="col-md-3"></div>
+                    </div>
+                </div>
+		        
+		        <div ng-show="refuseNotSend">
+		            <div class="row">
+		            	<div class="col-md-3"></div>
+		            	<div class="col-md-3">
+		                 <button class="btn btn-primary btn-sm form-control" translate="TXT_OMS_REFUND_SHIP" disabled></button>
+		            	</div>
+		            	<div class="col-md-3">
+		                 <button class="btn btn-primary btn-sm form-control" translate="BUTTON_SUB_CANCEL" ng-click="doCancel()"></button>
+		            	</div>
+		            	<div class="col-md-3"></div>
+		            </div>
+		        </div>
+
+                <!--同意退货-->
+                <div ng-show="appReturnGoods">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <span translate="TXT_OMS_AGREE_RETURN_GOODS_REASON"></span>
+                        </div>
+                        <div class="col-md-8">
+                            <textarea class="form-control mb10 no-resize input-sm" rows="2" ng-model="popRefundOrderToUseInfo.refundInfo.content" required></textarea>
+                        </div>
+                    </div>
+                    <div class="row mt-sm">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-3">
+                            <button class="btn btn-primary btn-sm form-control" translate="BUTTON_OK" ng-click="doAgreeReturnGoods()"></button>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-primary btn-sm form-control" translate="BUTTON_SUB_CANCEL" ng-click="doCancel()"></button>
+                        </div>
+                        <div class="col-md-3"></div>
+                    </div>
+                </div>
+
+              <!-- 卖家回填物流信息  -->
+              <div ng-show="refillReturnAddress">
+                    <form name="frmFillReturnAddress" class="form-validate" novalidate="">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <span translate="TXT_ORDER_TRACKING_CARRIER"></span>
+                            </div>
+                            <div class="col-md-3">
+                                <!--<select class="form-control input-sm" ng-model="popRefundOrderToUseInfo.refundInfo.logisticsCompanyCode" ng-options="expressCodeInfo.id as expressCodeInfo.name for expressCodeInfo in expressCodeList"></select>-->
+                                <input type="text" ng-model="popRefundOrderToUseInfo.refundInfo.logisticsCompanyCode" class="form-control input-sm" required/>
+                            </div>
+                            <div class="col-md-2">
+                                <span translate="TXT_ORDER_TRACKING_NO"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="text" ng-model="popRefundOrderToUseInfo.refundInfo.logisticsWaybillNo" class="form-control input-sm" required/>
+                            </div>
+                        </div>
+                        <div class="row mt-sm">
+                            <div class="col-md-3"></div>
+                            <div class="col-md-3">
+                                <button class="btn btn-primary btn-sm form-control" translate="BUTTON_OK" ng-click="doRefillReturnGoods()"></button>
+                            </div>
+                            <div class="col-md-3">
+                                <button class="btn btn-primary btn-sm form-control" translate="BUTTON_SUB_CANCEL" ng-click="doCancel()"></button>
+                            </div>
+                            <div class="col-md-3"></div>
+                        </div>
+                    </form>
+                </div>
+
+                <!--拒绝退款-->
+		        <div ng-show="refuseSentNoReturn || refuseReturnRefund">
+                    <form name="frmRefundRefuse" class="form-validate" novalidate="">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="col-md-12">
+                                    <span translate="TXT_OMS_REFUSE_REASON"></span>
+                                </div>
+                                <div class="col-md-12">
+                                    <textarea class="form-control mb10 no-resize input-sm" rows="9" ng-model="popRefundOrderToUseInfo.refundInfo.content" required></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-6"
+                                 flow-init ="{singleFile:false}"
+                                 flow-file-added="!!{png:1,gif:1,jpg:1,jpeg:1}[$file.getExtension()]"
+                                 flow-name="$parent.uploader.flow">
+                                <span ng-bind="$parent.uploader.flow.files[0].name" class="ms-fl"></span><br>
+                                <img class="w100p mih150px" src="styles/images/no_image.gif" ng-hide="$parent.uploader.flow.files.length"/>
+                                <img class="w100p mih150px" flow-img="$parent.uploader.flow.files[0]" ng-show="$parent.uploader.flow.files.length"/>
+                                <div class="btn-group-sm ms-fr mt-sm">
+                                    <button class="btn btn-primary" type="button" flow-btn flow-attrs="{accept:'image/*'}" translate="BUTTON_SELECT_FILE"></button>
+                                    <button class="btn btn-primary" type="button" ng-show="$parent.uploader.flow.files.length" ng-click="$parent.uploader.flow.cancel()" translate="BUTTON_SUB_DELETE"></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-sm">
+                            <div class="col-md-3"></div>
+                            <div class="col-md-3">
+                             <button class="btn btn-primary btn-sm form-control" translate="BUTTON_OK" ng-click="doRefundRefuse()"></button>
+                            </div>
+                            <div class="col-md-3">
+                             <button class="btn btn-primary btn-sm form-control" translate="BUTTON_SUB_CANCEL" ng-click="doCancel()"></button>
+                            </div>
+                            <div class="col-md-3"></div>
+                        </div>
+                    </form>
+		        </div>
+
+                <!--拒绝退货-->
+                <div ng-show="refuseReturnGoods">
+                    <form name="frmRefuseReturnGoods" class="form-validate" novalidate="">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="col-md-12">
+                                    <span translate="TXT_OMS_REFUSE_REASON"></span>
+                                </div>
+                                <div class="col-md-12   "
+                                     flow-init ="{singleFile:false}"
+                                     flow-file-added="!!{png:1,gif:1,jpg:1,jpeg:1}[$file.getExtension()]"
+                                     flow-name="$parent.uploader.flow2">
+                                    <span ng-bind="$parent.uploader.flow2.files[0].name" class="ms-fl"></span><br>
+                                    <img class="w100p mih150px" src="styles/images/no_image.gif" ng-hide="$parent.uploader.flow2.files.length"/>
+                                    <img class="w100p mih150px" flow-img="$parent.uploader.flow2.files[0]" ng-show="$parent.uploader.flow2.files.length"/>
+                                    <div class="btn-group-sm ms-fr mt-sm">
+                                        <button class="btn btn-primary" type="button" flow-btn flow-attrs="{accept:'image/*'}" translate="BUTTON_SELECT_FILE"></button>
+                                        <button class="btn btn-primary" type="button" ng-show="$parent.uploader.flow2.files.length" ng-click="$parent.uploader.flow2.cancel()" translate="BUTTON_SUB_DELETE"></button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6"></div>
+                        </div>
+                        <div class="row mt-sm">
+                            <div class="col-md-3"></div>
+                            <div class="col-md-3">
+                                <button class="btn btn-primary btn-sm form-control" translate="BUTTON_OK" ng-click="doRefuseReturnGoods()"></button>
+                            </div>
+                            <div class="col-md-3">
+                                <button class="btn btn-primary btn-sm form-control" translate="BUTTON_SUB_CANCEL" ng-click="doCancel()"></button>
+                            </div>
+                            <div class="col-md-3"></div>
+                        </div>
+                    </form>
+                </div>
+
+        	</div>
+			<div class="col-md-1"></div>
+        </div>
+
+    <!--</form>-->
+</div>

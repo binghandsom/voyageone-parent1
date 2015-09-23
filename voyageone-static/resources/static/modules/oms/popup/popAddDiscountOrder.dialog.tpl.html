@@ -1,0 +1,101 @@
+<div class="ngdialog-message">
+    <h3 class="mt0 p-sm border-bottom-1" translate="TXT_OMS_DISCOUNT_TITLE"></h3>
+    <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+    <form name="popForm" class="form-validate" novalidate="">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="form-group form-horizontal">
+                    <label class="radio-inline c-radio col-xs-4">
+                        <input type="radio" name="selectOrderOrSku" value="1" ng-model="popDiscountOrderToUseInfo.type"/>
+                        <span class="fa fa-circle"></span><label translate="TXT_OMS_ORDER_DISCOUNT"></label>
+                    </label>
+
+                    <div class="col-xs-5">
+                        <div class="input-group mb-sm">
+                            <span class="input-group-addon">-</span><input type="text" ng-model="popDiscountOrderToUseInfo.discount" class="form-control input-sm text-right" ng-disabled="popDiscountOrderToUseInfo.type != 1"
+                                                                           ng-pattern="/^(-?\d+)(\.[0-9]{0,2})?$/"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group form-horizontal">
+                    <label class="radio-inline c-radio col-xs-4">
+                        <input type="radio" name="selectOrderOrSku" value="2" ng-model="popDiscountOrderToUseInfo.type"/>
+                        <span class="fa fa-circle"></span><label translate="TXT_OMS_PRODUCT_DISCOUNT"></label>
+                    </label>
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <div class="table-responsive mah300px border-bottom-1">
+                    <table class="table table-bordered mb-sm">
+                        <thead>
+                        <tr>
+                            <th class="w30p" translate="TXT_ORDER_SKU"></th>
+                            <th class="w25p" translate="TXT_OMS_OLD_PRICE"></th>
+                            <th class="w25p" translate="TXT_ORDER_PRICING"></th>
+                            <th class="w20p" translate="TXT_OMS_DISCOUNT"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="skuInfo in popDiscountOrderToUseInfo.skuInfoList" class="carousel">
+                            <td>
+                                <img class="media" show-image="skuInfo.imgPath" ng-if="skuInfo.skuTmallPath != null"/>&nbsp;
+                                <a pop-href="skuInfo.skuTmallPath" ng-bind="skuInfo.sku" ng-if="skuInfo.skuTmallPath != null"></a>
+                                <span ng-bind="skuInfo.sku" ng-if="skuInfo.skuTmallPath == null"></span>
+                                <a href="" popover="{{skuInfo.product}}" popover-trigger="mouseenter" class="ms-fr fa fa-book c_green"></a>
+                            </td>
+                            <td class="text-right pt0 pb0">
+                                <div class="border-bottom-1">
+                                    <span ng-bind="skuInfo.pricePerUnit | number:2"></span>
+                                    <span ng-if="skuInfo.discount &gt; 0"><span class="c_green">(<span class="fa fa-sort-asc" ng-bind="skuInfo.discount | number:2"></span>)</span></span>
+                                    <span ng-if="skuInfo.discount &lt; 0"><span class="c_red">(<span class="fa fa-sort-down" ng-bind="-skuInfo.discount | number:2"></span>)</span></span>
+                                </div>
+                                <div ng-if="skuInfo.price &gt;= 0" class="fb c_green">
+                                    {{popDiscountOrderToUseInfo.currencyType}}<span ng-bind="skuInfo.price | number:2"></span>
+                                </div>
+                                <div ng-if="skuInfo.price &lt; 0" class="fb c_red">
+                                    {{popDiscountOrderToUseInfo.currencyType}}<span ng-bind="skuInfo.price | number:2"></span>
+                                </div>
+                            </td>
+                            <td class="text-right pt0 pb0">
+                                <div class="border-bottom-1">
+                                    <span ng-bind="skuInfo.pricePerUnit | number:2"></span>
+                                    <span ng-if="skuInfo.finalDiscount &gt; 0"><span class="c_green">(<span class="fa fa-sort-asc" ng-bind="skuInfo.finalDiscount | number:2"></span>)</span></span>
+                                    <span ng-if="skuInfo.finalDiscount &lt; 0"><span class="c_red">(<span class="fa fa-sort-down" ng-bind="-skuInfo.finalDiscount | number:2"></span>)</span></span>
+                                </div>
+                                <div class="fb" ng-class="{'c_green': skuInfo.finalPrice &gt;= 0, 'c_red': skuInfo.finalPrice &lt; 0}">
+                                    {{popDiscountOrderToUseInfo.currencyType}}<span ng-bind="skuInfo.finalPrice | number:2"></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <span class="input-group-addon">-</span><input type="text" ng-model="skuInfo.newDiscount" class="form-control input-sm text-right" ng-disabled="popDiscountOrderToUseInfo.type != 2"
+                                                                                   ng-blur="calculatePrice($index)" ng-pattern="/^(-?\d+)(\.[0-9]{0,2})?$/"/>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12 mt-sm">
+                <span class="label label-info " translate="TXT_OMS_ENTER_REASON"></span>
+            </div>
+            <div class="col-xs-12 mt-sm">
+                <textarea class="form-control input-sm no-resize" rows="3" ng-model="popDiscountOrderToUseInfo.reason" required=""></textarea>
+            </div>
+        </div>
+
+        <div class="row mt20">
+            <div class="col-xs-3 col-xs-offset-3">
+                <button class="btn btn-primary btn-sm form-control" translate="BUTTON_OK" ng-click="doOk()" ng-disabled="popForm.$invalid"></button>
+            </div>
+            <div class="col-xs-3">
+                <button class="btn btn-primary btn-sm form-control" translate="BUTTON_SUB_CANCEL" ng-click="doClose()"></button>
+            </div>
+        </div>
+    </form>
+
+</div>

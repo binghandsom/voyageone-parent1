@@ -1,0 +1,51 @@
+<div class="ngdialog-message" ng-init="initialize()">
+	<h3 class="mt0 p-sm border-bottom-1" translate="Edit Role"></h3>
+	<div class="popUpCons popEditUserCons2">
+		<div>
+			<div class="row row-pop row-flow">
+				<div class="col-md-12">
+					<form name="userRoleForm" id="userRoleForm">
+						<table class="table table-bordered">
+							<tbody>
+								<tr>
+									<th translate="GRID_TITLE_TXT_USER_MANATER_ROLE"></th>
+									<td><select class="form-control"
+										id="s1_text1_bold" ng-model="popUserRole.role.role_id"
+										ng-options="r.id as r.role for r in popUserRole.roleData"
+										required>
+									</select></td>
+								</tr>
+								<tr>
+									<th translate="GRID_TITLE_TXT_USER_MANATER_PROPERTY"></th>
+									<td><select class="form-control"
+										id="s1_text1_bold"
+										ng-model="popUserRole.role.property_id"
+										ng-options="p.id as p.name for p in popUserRole.propertyData"
+										required>
+									</select></td>
+								</tr>
+								<tr>
+									<th translate="GRID_TITLE_TXT_USER_MANATER_DESCRIPTION"></th>
+									<td><input type="text" id="description"
+										class="form-control"
+										ng-model="popUserRole.role.description"></td>
+								</tr>
+								<tr>
+									<th translate="TITLE_TXT_ACTIVE"></th>
+									<td><input type="checkbox" id="active"
+										ng-model="popUserRole.role.active" /></td>
+								</tr>
+							<tbody>
+						</table>
+						<div class="text-right">
+							<button style="width: 70px" class="btn btn-primary"
+								ng-click="doOk()">Save</button>
+							<button class="btn btn-primary" ng-click="closeThisDialog()">Cancel</button>
+						</div>
+					</form>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>

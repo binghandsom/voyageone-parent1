@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.wms.sql">
+
+
+
+    <!-- 取得wms_bt_transfer_item表中要做报告的销售记录集-->
+    <select id="wms_getCreateReportData" resultType="com.voyageone.batch.wms.modelbean.ThirdReportBean">
+        SELECT
+            transferitem.transfer_id,
+            transferitem.order_number,
+            transferitem.transfer_sku,
+            count(transferitem.transfer_id) AS sales_unit,
+            transfer.order_channel_id,
+            transfer.created,
+            orders.source_order_id,
+            orders.cart_id,
+            itemdetails.itemcode,
+	        itemdetails.size
+        FROM
+            wms_bt_transfer_item transferitem
+        INNER JOIN wms_bt_transfer transfer ON transfer.transfer_id = transferitem.transfer_id
+        AND transfer.order_channel_id = #{order_channel_id}
+        AND transfer.transfer_status =  #{transfer_status}
+        AND transfer.transfer_type =  #{transfer_type}
+        AND transfer.transfer_origin =  #{transfer_origin}
+        INNER JOIN oms_bt_orders orders ON orders.order_number = transferitem.order_number
+        AND orders.cart_id = #{cart_id}
+        INNER JOIN wms_bt_item_details itemdetails on itemdetails.sku =  transferitem.transfer_sku
+        WHERE
+            transfer.created BETWEEN #{start_created}
+        AND #{end_created}
+        AND EXISTS (SELECT
+                      1
+                    FROM
+                      tm_task_control
+                    WHERE
+                      task_id = #{task_name}
+                    AND cfg_name = 'order_channel_id')
+        AND NOT EXISTS (SELECT
+                        1
+                      FROM
+                          voyageone_ims.ims_bt_product_except except
+                      WHERE
+                        except.order_channel_id = #{order_channel_id}
+                      AND except.cart_id = #{cart_id}
+                      AND except.except_sku = transferitem.transfer_sku)
+        GROUP BY
+            transferitem.transfer_id,
+            transferitem.order_number,
+            transferitem.transfer_sku
+        ORDER BY
+            transferitem.transfer_id,
+            transferitem.order_number,
+            transferitem.transfer_sku
+    </select>
+
+
+    <!-- 取得wms_bt_transfer_item表中要做报告退货(退回TM)的记录集-->
+    <select id="wms_getCreateReportDataByTM" resultType="com.voyageone.batch.wms.modelbean.ThirdReportBean">
+        SELECT
+        transferitem.transfer_id,
+        transferitem.order_number,
+        transferitem.transfer_sku,
+        count(transferitem.transfer_id) AS sales_unit,
+        transfer.order_channel_id,
+        transfer.created,
+        orders.source_order_id,
+        orders.cart_id,
+        itemdetails.itemcode,
+        itemdetails.size
+        FROM
+        wms_bt_transfer_item transferitem
+        INNER JOIN wms_bt_transfer transfer ON transfer.transfer_id = transferitem.transfer_id
+        AND transfer.order_channel_id = #{order_channel_id}
+        AND transfer.transfer_status =  #{transfer_status}
+        AND transfer.transfer_type =  #{transfer_type}
+        AND transfer.transfer_origin =  #{transfer_origin}
+        AND NOT EXISTS (SELECT
+                            1
+                          FROM
+                            wms_bt_transfer transfer1
+                          WHERE
+                            transfer1.transfer_type = #{transfer_type_out}
+                          AND transfer1.transfer_origin = #{transfer_origin_out}
+                          AND transfer1.origin_id  = transfer.origin_id)
+        AND NOT EXISTS (SELECT
+                        1
+                      FROM
+                          voyageone_ims.ims_bt_product_except except
+                      WHERE
+                        except.order_channel_id = #{order_channel_id}
+                      AND except.cart_id = #{cart_id}
+                      AND except.except_sku = transferitem.transfer_sku)
+        INNER JOIN oms_bt_orders orders ON orders.order_number = transferitem.order_number
+        AND orders.cart_id = #{cart_id}
+        INNER JOIN wms_bt_item_details itemdetails on itemdetails.sku =  transferitem.transfer_sku
+        WHERE
+        transfer.created BETWEEN #{start_created}
+        AND #{end_created}
+        AND EXISTS (SELECT
+        1
+        FROM
+        tm_task_control
+        WHERE
+        task_id = #{task_name}
+        AND cfg_name = 'order_channel_id')
+        GROUP BY
+        transferitem.transfer_id,
+        transferitem.order_number,
+        transferitem.transfer_sku
+        ORDER BY
+        transferitem.transfer_id,
+        transferitem.order_number,
+        transferitem.transfer_sku
+    </select>
+
+    <!-- 汇总价格取得-->
+    <select id="wms_getPriceData" resultType="com.voyageone.batch.wms.modelbean.SpaldingPriceBean">
+        select
+            orders.source_order_id,
+            orders.order_date_time,
+            orders.cart_id,
+            details.sku,
+            SUM(details.price_per_unit + ifnull((select SUM(price_per_unit)
+                                            from oms_bt_order_details discount
+                                            where details.order_number = discount.order_number
+                                            and details.item_number = discount.sub_item_number),0)) as price,
+            ifnull((select SUM(price_per_unit)
+                    from oms_bt_order_details shipdetails
+                    where shipdetails.order_number	= #{order_number}
+                        and shipdetails.adjustment = 1
+                        and shipdetails.sub_item_number = 0),0) as shipping_price
+        from
+            oms_bt_orders orders,
+            oms_bt_order_details details
+        where
+            orders.order_channel_id = #{order_channel_id}
+            and orders.order_number = details.order_number
+            and details.synship_flg = '1'
+            and details.res_allot_flg = '1'
+            and details.adjustment = 0
+            and details.res_id > 0
+            and details.order_number = #{order_number}
+        GROUP BY details.sku
+    </select>
+</mapper>

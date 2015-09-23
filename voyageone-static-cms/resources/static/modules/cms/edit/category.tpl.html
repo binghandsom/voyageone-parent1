@@ -1,0 +1,1088 @@
+<div ng-controller="editCategoryController" ng-init="initialize()" ng-cloak="">
+    <div class="bg-light lter b-b wrapper-md vo_page_header clearfix">
+        <div class="row">
+            <!--<div class="vo_page_title col-sm-1"><h1 class="m-n font-thin h3 text-vo" translate="CMS_TXT_CATEGORY"></h1></div>-->
+            <!-- .vo_page_title -->
+            <div class="col-sm-9 text-left hidden-xs">
+                <div class="form-inline"  ng-controller="navigationController">
+                    <div class="form-group wtab-sm">
+                        <h1 class="m-n font-thin h3 text-vo" translate="CMS_TXT_CATEGORY"></h1>
+                    </div>
+                    <div class="form-group">
+                        <select chosen="" ng-model="categoryId" ng-options="category.categoryId as category.name for category in $root.cmsMaster.categoryList" class="chosen-select input-md w-md" ng-change="goCategoryPageForBtn(categoryId)">
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <ul class="vo_prodcrumbs" id="style1">
+                            <li ng-repeat="navigationCategoryInfo in navigationCategoryList" ng-if="navigationCategoryInfo.categoryId != categoryId">
+                                <a href="" ng-bind="navigationCategoryInfo.categoryName" ng-href="{{goCategoryPage(navigationCategoryInfo.categoryId)}}"></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- .col-sm-6 -->
+            <div class="col-sm-3 text-right">
+                <button  class="btn m-b-xs btn-sm btn-default btn-addon" ng-click="doAddCategory()"><i class="fa fa-plus"></i><span translate="CMS_BTN_ADD_CATEGORY"></span></button>
+                &nbsp;&nbsp;
+                <button class="btn m-b-xs btn-sm btn-default btn-addon" ng-click="doAddModel()"><i class="fa fa-plus"></i><span translate="CMS_BTN_ADD_MODEL"></span></button>
+            </div>
+            <!-- .col-sm-5 -->
+        </div>
+        <!-- .row -->
+    </div>
+    <!-- .wrapper-md .vo_page_header -->
+
+    <div class="wrapper-md">
+        <div class="row">
+
+            <div class="col-lg-12">
+
+                <div>
+                    <accordion class="vo_accordion vo_attr" close-others="oneAtATime">
+                        <accordion-group is-open="status.open">
+                            <accordion-heading>{{categoryName}}
+                                <i class="pull-right glyphicon glyphicon-menu-down" ng-class="{'glyphicon-menu-up': status.open, 'glyphicon-menu-down': !status.open}"></i>
+                            </accordion-heading>
+                            <!-- effective toggle -->
+                            <div class="m-b-sm vo_effToggle">
+                                <div class="onoffswitch eff">
+                                    <input type="checkbox" name="usCategoryEffective" class="onoffswitch-checkbox" id="usCategoryEffective" ng-model="usCategoryInfo.isEffective" ng-change="doUpdateEffective()">
+                                    <label class="onoffswitch-label" for="usCategoryEffective">
+                                        <span class="onoffswitch-inner"></span>
+                                        <span class="onoffswitch-switch"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <!-- tab -->
+                            <div>
+                                <tabset class="tab-container">
+                                    <!-- US Category Info -->
+                                    <tab>
+                                        <tab-heading><span class="flag-icon flag-icon-us"></span>&nbsp;<span translate="CMS_TXT_TAB_NAME_AMERICAN"></span></tab-heading>
+                                        <div class="container-fluid">
+                                            <form name="formUSCategoryInfo" class="form-horizontal" novalidate="">
+                                                <div class="row">
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group">
+                                                            <label for="txtUSCategoryName" class="col-sm-4 control-label vo_reqfield" translate="CMS_TXT_NAME"></label>
+
+                                                            <div class="col-sm-8">
+                                                                <input type="text" class="form-control" name="txtUSCategoryName" id="txtUSCategoryName" ng-model="usCategoryInfo.name" required="" ng-maxlength="50" ng-change="usCategoryChanged()">
+                                                                <va-check ng-show="formUSCategoryInfo.txtUSCategoryName.$error.required" check-type="required"></va-check>
+                                                                <va-check ng-show="formUSCategoryInfo.txtUSCategoryName.$error.maxlength" check-type="maxlength" check-param="50"></va-check>
+                                                            </div>
+                                                        </div>
+                                                        <!-- .form-group -->
+                                                        <div class="form-group">
+                                                            <label for="txtUSCategoryHeaderTitle" class="col-sm-4 control-label" translate="CMS_TXT_HEADER_TITLE"></label>
+
+                                                            <div class="col-sm-8">
+                                                                <input type="text" class="form-control" id="txtUSCategoryHeaderTitle" name="txtUSCategoryHeaderTitle" ng-model="usCategoryInfo.headerTitle" ng-maxlength="100"
+                                                                       ng-change="usCategoryChanged()">
+                                                                <va-check ng-show="formUSCategoryInfo.txtUSCategoryHeaderTitle.$error.maxlength" check-type="maxlength" check-param="100"></va-check>
+                                                            </div>
+                                                        </div>
+                                                        <!-- .form-group -->
+                                                        <div class="form-group">
+                                                            <label for="txtUSCategoryUrlKey" class="col-sm-4 control-label" translate="CMS_TXT_URL_KEY"></label>
+
+                                                            <div class="col-sm-8">
+                                                                <input type="text" class="form-control" id="txtUSCategoryUrlKey" readonly ng-model="usCategoryInfo.urlKey">
+                                                            </div>
+                                                        </div>
+                                                        <!-- .form-group -->
+                                                    </div>
+                                                    <!--.col -->
+
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label" translate="CMS_TXT_VISIBLE_ON_MENU"></label>
+
+                                                            <div class="col-sm-8">
+                                                                <div class="onoffswitch">
+                                                                    <input type="checkbox" name="ridUSCategoryVisibleOnMenu" class="onoffswitch-checkbox" id="ridUSCategoryVisibleOnMenu" ng-model="usCategoryInfo.isVisibleOnMenu"
+                                                                           ng-change="usCategoryChanged()">
+                                                                    <label class="onoffswitch-label" for="ridUSCategoryVisibleOnMenu">
+                                                                        <span class="onoffswitch-inner"></span>
+                                                                        <span class="onoffswitch-switch"></span>
+                                                                    </label>
+                                                                </div>
+                                                                <!-- onoff switch -->
+                                                            </div>
+                                                        </div>
+                                                        <!--.form-group -->
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label" translate="CMS_TXT_ENABLE_FILTER"></label>
+
+                                                            <div class="col-sm-8">
+                                                                <div class="onoffswitch">
+                                                                    <input type="checkbox" name="ridUSCategoryEnableFilter" class="onoffswitch-checkbox" id="ridUSCategoryEnableFilter" ng-model="usCategoryInfo.isEnableFilter"
+                                                                           ng-change="usCategoryChanged()">
+                                                                    <label class="onoffswitch-label" for="ridUSCategoryEnableFilter">
+                                                                        <span class="onoffswitch-inner"></span>
+                                                                        <span class="onoffswitch-switch"></span>
+                                                                    </label>
+                                                                </div>
+                                                                <!-- onoff switch -->
+                                                            </div>
+                                                        </div>
+                                                        <!--.form-group -->
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label" translate="CMS_TXT_PUBLISH"></label>
+
+                                                            <div class="col-sm-8">
+                                                                <div class="onoffswitch">
+                                                                    <input type="checkbox" name="ridUSCategoryPublish" class="onoffswitch-checkbox" id="ridUSCategoryPublish" ng-model="usCategoryInfo.isPublished" ng-change="usCategoryChanged()">
+                                                                    <label class="onoffswitch-label" for="ridUSCategoryPublish">
+                                                                        <span class="onoffswitch-inner"></span>
+                                                                        <span class="onoffswitch-switch"></span>
+                                                                    </label>
+                                                                </div>
+                                                                <!-- onoff switch -->
+                                                            </div>
+                                                        </div>
+                                                        <!--.form-group -->
+                                                    </div>
+                                                    <!-- .col -->
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group">
+                                                            <h4 class="col-sm-4 control-title" translate="CMS_TXT_TITLE_SEO"></h4>
+
+                                                            <div class="col-sm-8"></div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="txtUSCategorySeoTitle" class="col-sm-4 control-label" translate="CMS_TXT_SEO_TITLE"></label>
+
+                                                            <div class="col-sm-8">
+                                                                <input type="text" class="form-control" id="txtUSCategorySeoTitle" name="txtUSCategorySeoTitle" ng-model="usCategoryInfo.seoTitle" ng-maxlength="100"
+                                                                       ng-change="usCategoryChanged()">
+                                                                <va-check ng-show="formUSCategoryInfo.txtUSCategorySeoTitle.$error.maxlength" check-type="maxlength" check-param="100"></va-check>
+                                                            </div>
+                                                        </div>
+                                                        <!--.form-group -->
+                                                        <div class="form-group">
+                                                            <label for="txtUSCategorySeoDescription" class="col-sm-4 control-label" translate="CMS_TXT_SEO_DESCRIPTION"></label>
+
+                                                            <div class="col-sm-8">
+                                                                <textarea rows="3" class="form-control no-resize" id="txtUSCategorySeoDescription" name="txtUSCategorySeoDescription" ng-model="usCategoryInfo.seoDescription" ng-maxlength="300"
+                                                                          ng-change="usCategoryChanged()"></textarea>
+                                                                <va-check ng-show="formUSCategoryInfo.txtUSCategorySeoDescription.$error.maxlength" check-type="maxlength" check-param="300"></va-check>
+                                                            </div>
+                                                        </div>
+                                                        <!--.form-group -->
+                                                        <div class="form-group">
+                                                            <label for="txtUSCategorySeoKeywords" class="col-sm-4 control-label" translate="CMS_TXT_SEO_KEY_WORDS"></label>
+
+                                                            <div class="col-sm-8">
+                                                                <textarea rows="3" class="form-control no-resize" id="txtUSCategorySeoKeywords" name="txtUSCategorySeoKeywords" ng-model="usCategoryInfo.seoKeywords" ng-maxlength="200"
+                                                                          ng-change="usCategoryChanged()"></textarea>
+                                                                <va-check ng-show="formUSCategoryInfo.txtUSCategorySeoKeywords.$error.maxlength" check-type="maxlength" check-param="200"></va-check>
+                                                            </div>
+                                                        </div>
+                                                        <!--.form-group -->
+                                                        <div class="form-group">
+                                                            <label for="txtUSCategorySeoCanonical" class="col-sm-4 control-label" translate="CMS_TXT_SEO_CANONICAL"></label>
+
+                                                            <div class="col-sm-8">
+                                                                <input type="text" class="form-control" id="txtUSCategorySeoCanonical" name="txtUSCategorySeoCanonical" ng-model="usCategoryInfo.seoCanonical" ng-maxlength="200"
+                                                                       ng-change="usCategoryChanged()">
+                                                                <va-check ng-show="formUSCategoryInfo.txtUSCategorySeoCanonical.$error.maxlength" check-type="maxlength" check-param="200"></va-check>
+                                                            </div>
+                                                        </div>
+                                                        <!--.form-group -->
+                                                    </div>
+                                                    <!-- .col -->
+
+                                                    <div class="col-sm-6">
+                                                        <!--<div class="form-group">
+                                                            <h4 class="col-sm-4 control-title" translate="CMS_TXT_TITLE_MAIN_CATEGORY"></h4>
+
+                                                            <div class="col-sm-8"></div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label" translate="CMS_TXT_CATEGORY"></label>
+
+                                                            <div class="col-sm-8">
+                                                                <div class="input-group">
+                                                                    <ui-select ng-model="usCategoryInfo.mainCategoryId" theme="bootstrap" ng-disabled="disabled" class="text-left" name="selUSCategoryMainCategory" ng-change="usCategoryChanged()">
+                                                                        <ui-select-match placeholder="Select..." class="text-left">{{$select.selected.name}}</ui-select-match>
+                                                                        <ui-select-choices repeat="mainCategory.id as mainCategory in mainCategoryList | filter: $select.search">
+                                                                            <span ng-bind-html="mainCategory.name | highlight: $select.search"></span>
+                                                                        </ui-select-choices>
+                                                                    </ui-select>
+                                                                    <span class="input-group-btn">
+                                                                        <button type="button" ng-click="clearUSMainCategoryId()" class="btn btn-default">
+                                                                            <small>
+                                                                                <em class="fa fa-times text-muted"></em>
+                                                                            </small>
+                                                                        </button>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>-->
+                                                        <!-- .form-group -->
+                                                        <div class="form-group">
+                                                            <h4 class="col-sm-4 control-title" translate="CMS_TXT_TITLE_AMAZON"></h4>
+
+                                                            <div class="col-sm-8"></div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label" translate="CMS_TXT_CATEGORY"></label>
+
+                                                            <div class="col-sm-8">
+                                                                <div class="input-group">
+                                                                    <ui-select ng-model="usCategoryInfo.amazonBrowseCategoryId" theme="bootstrap" ng-disabled="disabled" class="text-left" name="selUSCategoryAmazonCategory"
+                                                                               ng-change="usCategoryChanged()">
+                                                                        <ui-select-match placeholder="Select..." class="text-left">{{$select.selected.nodePath}}</ui-select-match>
+                                                                        <ui-select-choices repeat="amazonCategory.amazonCategoryId as amazonCategory in $root.cmsMaster.amazonCategoryList | filter: $select.search">
+                                                                            <span ng-bind-html="amazonCategory.nodePath | highlight: $select.search"></span>
+                                                                        </ui-select-choices>
+                                                                    </ui-select>
+                                                                    <span class="input-group-btn">
+                                                                        <button type="button" ng-click="clearAmazonBrowseCategoryId()" class="btn btn-default">
+                                                                            <small>
+                                                                                <em class="fa fa-times text-muted"></em>
+                                                                            </small>
+                                                                        </button>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- .form-group -->
+                                                        <div class="form-group">
+                                                            <h4 class="col-sm-4 control-title" translate="CMS_TXT_TITLE_GOOGLE"></h4>
+
+                                                            <div class="col-sm-8"></div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label" translate="CMS_TXT_CATEGORY"></label>
+
+                                                            <div class="col-sm-8">
+                                                                <div class="input-group">
+                                                                    <ui-select ng-model="usCategoryInfo.googleCategoryId" theme="bootstrap" ng-disabled="disabled" class="text-left" name="selUSCategoryGoogleCategory" ng-change="usCategoryChanged()">
+                                                                        <ui-select-match placeholder="Select..." class="text-left">{{$select.selected.attributeValue}}</ui-select-match>
+                                                                        <ui-select-choices repeat="googleCategory.attributeId as googleCategory in $root.cmsMaster.googleCategoryList | filter: $select.search">
+                                                                            <span ng-bind-html="googleCategory.attributeValue | highlight: $select.search"></span>
+                                                                        </ui-select-choices>
+                                                                    </ui-select>
+                                                                    <span class="input-group-btn">
+                                                                        <button type="button" ng-click="clearGoogleCategoryId()" class="btn btn-default">
+                                                                            <small>
+                                                                                <em class="fa fa-times text-muted"></em>
+                                                                            </small>
+                                                                        </button>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- .form-group -->
+                                                        <div class="form-group">
+                                                            <h4 class="col-sm-4 control-title" translate="CMS_TXT_TITLE_PRICE_GRABBER"></h4>
+
+                                                            <div class="col-sm-8"></div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label" translate="CMS_TXT_CATEGORY"></label>
+
+                                                            <div class="col-sm-8">
+                                                                <div class="input-group">
+                                                                    <ui-select ng-model="usCategoryInfo.priceGrabberCategoryId" theme="bootstrap" ng-disabled="disabled" class="text-left" name="selUSCategoryPriceGrabberCategory"
+                                                                               ng-change="usCategoryChanged()">
+                                                                        <ui-select-match placeholder="Select..." class="text-left">{{$select.selected.categoryName}}</ui-select-match>
+                                                                        <ui-select-choices repeat="priceGrabberCategory.pricegrabberCategoryId as priceGrabberCategory in $root.cmsMaster.priceGrabberCategoryList | filter: $select.search">
+                                                                            <span ng-bind-html="priceGrabberCategory.categoryName | highlight: $select.search"></span>
+                                                                        </ui-select-choices>
+                                                                    </ui-select>
+                                                                    <span class="input-group-btn">
+                                                                        <button type="button" ng-click="clearPriceGrabberCategoryId()" class="btn btn-default">
+                                                                            <small>
+                                                                                <em class="fa fa-times text-muted"></em>
+                                                                            </small>
+                                                                        </button>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- .form-group -->
+                                                    </div>
+                                                    <!-- .col -->
+                                                </div>
+
+                                                <div class="col-sm-12 control-savebar" ng-if="usCategoryIsChanged && usCategoryInfo.isEffective">
+                                                    <div class="col-sm-12 text-center">
+                                                        <div class="form-group">
+                                                            <button type="button" class="btn btn-default" translate="CMS_BTN_CANCEL" data-ng-click="undoUpdateUSCategoryInfo()"></button>
+                                                            <button type="button" class="btn btn-vo" translate="CMS_BTN_SAVE" ng-disabled="formUSCategoryInfo.$invalid" data-ng-click="doUpdateUSCategoryInfo()"></button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- .col -->
+                                            </form>
+                                        </div>
+                                        <!-- .container-fluid -->
+                                    </tab>
+                                    <!-- .tab -->
+
+                                    <!-- CN Category Info -->
+                                    <tab>
+                                        <tab-heading><span class="flag-icon flag-icon-cn"></span>&nbsp;<span translate="CMS_TXT_TAB_NAME_CHINA"></span></tab-heading>
+                                        <div class="container-fluid">
+                                            <form name="formCNCategoryInfo" class="form-horizontal" novalidate="">
+                                                <div class="row">
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group">
+                                                            <label for="txtCNCategoryName" class="col-sm-4 control-label vo_reqfield" translate="CMS_TXT_NAME"></label>
+
+                                                            <div class="col-sm-8">
+                                                                <input type="text" class="form-control" id="txtCNCategoryName" name="txtCNCategoryName" ng-model="cnCategoryInfo.cnName" required="" ng-maxlength="50" ng-change="cnCategoryChanged()">
+                                                                <va-check ng-show="formCNCategoryInfo.txtCNCategoryName.$error.required" check-type="required"></va-check>
+                                                                <va-check ng-show="formCNCategoryInfo.txtCNCategoryName.$error.maxlength" check-type="maxlength" check-param="50"></va-check>
+                                                            </div>
+                                                        </div>
+                                                        <!-- .form-group -->
+                                                        <div class="form-group">
+                                                            <label for="txtCNCategoryHeaderTitle" class="col-sm-4 control-label" translate="CMS_TXT_HEADER_TITLE"></label>
+
+                                                            <div class="col-sm-8">
+                                                                <input type="text" class="form-control" id="txtCNCategoryHeaderTitle" name="txtCNCategoryHeaderTitle" ng-model="cnCategoryInfo.cnHeaderTitle" ng-maxlength="100"
+                                                                       ng-change="cnCategoryChanged()">
+                                                                <va-check ng-show="formCNCategoryInfo.txtCNCategoryHeaderTitle.$error.maxlength" check-type="maxlength" check-param="100"></va-check>
+                                                            </div>
+                                                        </div>
+                                                        <!-- .form-group -->
+                                                        <div class="form-group">
+                                                            <label for="txtCNCategoryUrlKey" class="col-sm-4 control-label" translate="CMS_TXT_URL_KEY"></label>
+
+                                                            <div class="col-sm-8">
+                                                                <input type="text" class="form-control" id="txtCNCategoryUrlKey" readonly ng-model="cnCategoryInfo.urlKey">
+                                                            </div>
+                                                        </div>
+                                                        <!-- .form-group -->
+                                                    </div>
+                                                    <!--.col -->
+
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label" translate="CMS_TXT_VISIBLE_ON_MENU"></label>
+
+                                                            <div class="col-sm-8">
+                                                                <div class="onoffswitch">
+                                                                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="ridCNCategoryVisibleOnMenu" ng-model="cnCategoryInfo.cnIsVisibleOnMenu" ng-change="cnCategoryChanged()">
+                                                                    <label class="onoffswitch-label" for="ridCNCategoryVisibleOnMenu">
+                                                                        <span class="onoffswitch-inner"></span>
+                                                                        <span class="onoffswitch-switch"></span>
+                                                                    </label>
+                                                                </div>
+                                                                <!-- onoff switch -->
+                                                            </div>
+                                                        </div>
+                                                        <!-- .form-group -->
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label" translate="CMS_TXT_ENABLE_FILTER"></label>
+
+                                                            <div class="col-sm-8">
+                                                                <div class="onoffswitch">
+                                                                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="ridCNCategoryEnableFilter" ng-model="cnCategoryInfo.cnIsEnableFilter" ng-change="cnCategoryChanged()">
+                                                                    <label class="onoffswitch-label" for="ridCNCategoryEnableFilter">
+                                                                        <span class="onoffswitch-inner"></span>
+                                                                        <span class="onoffswitch-switch"></span>
+                                                                    </label>
+                                                                </div>
+                                                                <!-- onoff switch -->
+                                                            </div>
+                                                        </div>
+                                                        <!--.form-group -->
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label" translate="CMS_TXT_PUBLISH"></label>
+
+                                                            <div class="col-sm-8">
+                                                                <div class="onoffswitch">
+                                                                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="ridCNCategoryPublish" ng-model="cnCategoryInfo.cnIsPublished" ng-change="cnCategoryChanged()">
+                                                                    <label class="onoffswitch-label" for="ridCNCategoryPublish">
+                                                                        <span class="onoffswitch-inner"></span>
+                                                                        <span class="onoffswitch-switch"></span>
+                                                                    </label>
+                                                                </div>
+                                                                <!-- onoff switch -->
+                                                            </div>
+                                                        </div>
+                                                        <!--.form-group -->
+                                                    </div>
+                                                    <!-- .col -->
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group">
+                                                            <h4 class="col-sm-4 control-title" translate="CMS_TXT_TITLE_SEO"></h4>
+
+                                                            <div class="col-sm-8"></div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="txtCNCategorySeoTitle" class="col-sm-4 control-label" translate="CMS_TXT_SEO_TITLE"></label>
+
+                                                            <div class="col-sm-8">
+                                                                <input type="text" class="form-control" id="txtCNCategorySeoTitle" name="txtCNCategorySeoTitle" ng-model="cnCategoryInfo.cnSeoTitle" ng-maxlength="100"
+                                                                       ng-change="cnCategoryChanged()">
+                                                                <va-check ng-show="formCNCategoryInfo.txtCNCategorySeoTitle.$error.maxlength" check-type="maxlength" check-param="100"></va-check>
+                                                            </div>
+                                                        </div>
+                                                        <!--.form-group -->
+                                                        <div class="form-group">
+                                                            <label for="txtCNCategorySeoDescription" class="col-sm-4 control-label" translate="CMS_TXT_SEO_DESCRIPTION"></label>
+
+                                                            <div class="col-sm-8">
+                                                                <textarea rows="3" class="form-control no-resize" id="txtCNCategorySeoDescription" name="txtCNCategorySeoDescription" ng-model="cnCategoryInfo.cnSeoDescription" ng-maxlength="300"
+                                                                          ng-change="cnCategoryChanged()"></textarea>
+                                                                <va-check ng-show="formCNCategoryInfo.txtCNCategorySeoDescription.$error.maxlength" check-type="maxlength" check-param="300"></va-check>
+                                                            </div>
+                                                        </div>
+                                                        <!--.form-group -->
+                                                        <div class="form-group">
+                                                            <label for="txtCNCategorySeoKeywords" class="col-sm-4 control-label" translate="CMS_TXT_SEO_KEY_WORDS"></label>
+
+                                                            <div class="col-sm-8">
+                                                                <textarea rows="3" class="form-control no-resize" id="txtCNCategorySeoKeywords" name="txtCNCategorySeoKeywords" ng-model="cnCategoryInfo.cnSeoKeywords" ng-maxlength="200"
+                                                                          ng-change="cnCategoryChanged()"></textarea>
+                                                                <va-check ng-show="formCNCategoryInfo.txtCNCategorySeoKeywords.$error.maxlength" check-type="maxlength" check-param="300"></va-check>
+                                                            </div>
+                                                        </div>
+                                                        <!--.form-group -->
+                                                        <div class="form-group">
+                                                            <h4 class="col-sm-4 control-title" translate="CMS_TXT_TITLE_HS_CODE"></h4>
+
+                                                            <div class="col-sm-8"></div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label" translate="CMS_TXT_HS_CODE_SH"></label>
+
+                                                            <div class="col-sm-8">
+                                                                <div class="input-group">
+                                                                    <ui-select ng-model="cnCategoryInfo.hsCodeId" theme="bootstrap" ng-disabled="disabled" class="text-left" ng-change="cnCategoryChanged()">
+                                                                        <ui-select-match placeholder="Select..." class="text-left">{{$select.selected.name}}</ui-select-match>
+                                                                        <ui-select-choices repeat="hsCode.hsCodeId as hsCode in $root.cmsMaster.hsCodeShList | filter: $select.search">
+                                                                            <span ng-bind-html="hsCode.name | highlight: $select.search"></span>
+                                                                        </ui-select-choices>
+                                                                    </ui-select>
+                                                                    <span class="input-group-btn">
+                                                                        <button type="button" ng-click="clearHsCodeId()" class="btn btn-default">
+                                                                            <small>
+                                                                                <em class="fa fa-times text-muted"></em>
+                                                                            </small>
+                                                                        </button>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!--.form-group -->
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label" translate="CMS_TXT_HS_CODE_GZ"></label>
+
+                                                            <div class="col-sm-8">
+                                                                <div class="input-group">
+                                                                    <ui-select ng-model="cnCategoryInfo.hsCodePuId" theme="bootstrap" ng-disabled="disabled" class="text-left" ng-change="cnCategoryChanged()">
+                                                                        <ui-select-match placeholder="Select..." class="text-left">{{$select.selected.name}}</ui-select-match>
+                                                                        <ui-select-choices repeat="hsCodePu.hsCodePuId as hsCodePu in $root.cmsMaster.hsCodeGzList | filter: $select.search">
+                                                                            <span ng-bind-html="hsCodePu.name | highlight: $select.search"></span>
+                                                                        </ui-select-choices>
+                                                                    </ui-select>
+                                                                    <span class="input-group-btn">
+                                                                        <button type="button" ng-click="clearHsCodePuId()" class="btn btn-default">
+                                                                            <small>
+                                                                                <em class="fa fa-times text-muted"></em>
+                                                                            </small>
+                                                                        </button>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!--.form-group -->
+                                                    </div>
+                                                    <!--.col -->
+
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group">
+                                                            <h4 class="col-sm-4 control-title" translate="CMS_TXT_TITLE_MAIN_CATEGORY"></h4>
+
+                                                            <div class="col-sm-8"></div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label" translate="CMS_TXT_CATEGORY"></label>
+
+                                                            <div class="col-sm-8 control-label text-left" ng-if="cnCategoryInfo.mainCategoryId != null">
+                                                                <a ng-click="goMainCategoryPage()" href="" class="btn-main" ng-bind="cnCategoryInfo.mainCategoryName"></a>
+                                                                <!--<textarea rows="2" class="form-control no-resize" id="txtCNMainCategory" name="txtCNMainCategory" ng-model="cnCategoryInfo.mainCategoryName" readonly=""/>-->
+                                                            </div>
+                                                            <div class="col-sm-8 control-label text-left" ng-if="cnCategoryInfo.mainCategoryId === null">
+                                                                <a href="" class="btn-main" ng-click="goMainCategoryPage()" translate="CMS_BTN_SETTING"></a>
+                                                                <!--<button class="btn-sm btn-addon btn btn-success" ng-click="goMainCategoryPage()"><i class="fa fa-edit"></i><span translate="CMS_BTN_SETTING"></span></button>-->
+                                                            </div>
+                                                        </div>
+                                                        <!-- .form-group -->
+                                                        <div class="form-group">
+                                                            <h4 class="col-sm-4 control-title" translate="CMS_TXT_TITLE_TM"></h4>
+
+                                                            <div class="col-sm-8"></div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label" translate="CMS_TXT_CATEGORY"></label>
+
+                                                            <div class="col-sm-8 control-label text-left">
+                                                                <a ng-click="" href="" ng-bind="cnCategoryInfo.tmCategoryName"></a>
+                                                                <!--<input type="text" class="form-control" id="txtCNCategoryTMCategory" readonly ng-model="cnCategoryInfo.tmCategoryName">-->
+                                                                <!--<div class="input-group">
+                                                                    <ui-select ng-model="cnCategoryInfo.tmCategoryId" theme="bootstrap" ng-disabled="disabled" class="text-left" ng-change="cnCategoryChanged()">
+                                                                        <ui-select-match placeholder="Select..." class="text-left">{{$select.selected.name}}</ui-select-match>
+                                                                        <ui-select-choices repeat="tmCategory.id as tmCategory in tmCategoryList | filter: $select.search">
+                                                                            <span ng-bind-html="tmCategory.name | highlight: $select.search"></span>
+                                                                        </ui-select-choices>
+                                                                    </ui-select>
+                                                                    <span class="input-group-btn">
+                                                                        <button type="button" class="btn btn-default">
+                                                                            <small>
+                                                                                <em class="fa fa-times text-muted"></em>
+                                                                            </small>
+                                                                        </button>
+                                                                    </span>
+                                                                </div>-->
+                                                            </div>
+                                                        </div>
+                                                        <!-- .form-group -->
+                                                        <div class="form-group">
+                                                            <h4 class="col-sm-4 control-title" translate="CMS_TXT_TITLE_JD"></h4>
+
+                                                            <div class="col-sm-8"></div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label" translate="CMS_TXT_CATEGORY"></label>
+
+                                                            <div class="col-sm-8 control-label text-left">
+                                                                <a ng-click="" href="" ng-bind="cnCategoryInfo.jdCategoryName"></a>
+                                                                <!--<input type="text" class="form-control" id="txtCNCategoryJDCategory" readonly ng-model="cnCategoryInfo.jdCategoryName">-->
+                                                                <!--<div class="input-group">
+                                                                    <ui-select ng-model="cnCategoryInfo.jdCategoryId" theme="bootstrap" ng-disabled="disabled" class="text-left" ng-change="cnCategoryChanged()">
+                                                                        <ui-select-match placeholder="Select..." class="text-left">{{$select.selected.name}}</ui-select-match>
+                                                                        <ui-select-choices repeat="jdCategory.id as jdCategory in jdCategoryList | filter: $select.search">
+                                                                            <span ng-bind-html="jdCategory.name | highlight: $select.search"></span>
+                                                                        </ui-select-choices>
+                                                                    </ui-select>
+                                                                    <span class="input-group-btn">
+                                                                        <button type="button" ng-click="cnCategoryInfo.jdCategoryId = ''" class="btn btn-default">
+                                                                            <small>
+                                                                                <em class="fa fa-times text-muted"></em>
+                                                                            </small>
+                                                                        </button>
+                                                                    </span>
+                                                                </div>-->
+                                                            </div>
+                                                        </div>
+                                                        <!-- .form-group -->
+                                                        <div class="form-group">
+                                                            <h4 class="col-sm-4 control-title" translate="CMS_BTN_TITLE_SIZE_CHART"></h4>
+
+                                                            <div class="col-sm-8"></div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label" translate="CMS_TXT_NAME"></label>
+
+                                                            <div class="col-sm-8 control-label text-left" ng-controller="cmsPopupController">
+                                                                <a ng-click="openSizeChart(categoryId, '1', cnCategoryInfo.sizeChartId, reFreshFunc.doRefreshCnCategoryInfo, null)" href="" ng-bind="cnCategoryInfo.sizeChartName" class="btn-main" ng-if="cnCategoryInfo.sizeChartId != null"></a>
+                                                                <a href="" class="btn-main" ng-click="openSizeChart(categoryId, '1', cnCategoryInfo.sizeChartId, reFreshFunc.doRefreshCnCategoryInfo, null)" translate="CMS_BTN_SETTING" ng-if="cnCategoryInfo.sizeChartId === null"></a>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group" ng-if="cnCategoryInfo.sizeChartUrl !== null">
+                                                            <label class="col-sm-4 control-label"></label>
+
+                                                            <div class="col-sm-8">
+                                                                <!--<img class="media" show-image="{{cmsMaster.imageUrl}}{{cnCategoryInfo.sizeChartUrl}}" style="width: 100px;" class="img-thumbnail" alt="img"/>-->
+                                                                <img ng-src="{{cmsMaster.imageUrl}}{{cnCategoryInfo.sizeChartUrl}}" style="width: 100px;" class="img-thumbnail" alt="img"/>
+                                                            </div>
+                                                        </div>
+                                                        <!-- .form-group -->
+                                                    </div>
+                                                    <!--.col -->
+                                                </div>
+
+                                                <div class="col-sm-12 control-savebar" ng-if="cnCategoryIsChanged && usCategoryInfo.isEffective">
+                                                    <div class="col-sm-12 text-center">
+                                                        <div class="form-group">
+                                                            <button type="button" class="btn btn-default" translate="CMS_BTN_CANCEL" ng-click="undoUpdateCNCategoryInfo()"></button>
+                                                            <button type="button" class="btn btn-vo" translate="CMS_BTN_SAVE" ng-disabled="formCNCategoryInfo.$invalid" ng-click="doUpdateCNCategoryInfo()"></button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- .col -->
+                                            </form>
+                                        </div>
+                                        <!-- .container-fluid -->
+                                    </tab>
+                                    <!-- .tab -->
+
+                                    <!-- Statistics Info -->
+                                    <!--<tab>-->
+                                        <!--<tab-heading><i class="glyphicons glyphicons-charts"></i><span translate="CMS_TXT_TAB_NAME_STATISTICS"></span></tab-heading>-->
+                                        <!--&lt;!&ndash; TODO &ndash;&gt;-->
+                                    <!--</tab>-->
+                                    <!-- .tab -->
+
+                                    <!-- Price Setting Info -->
+                                    <tab ng-if="$root.cmsMaster.priceSettingIsActive">
+                                        <tab-heading><i class="glyphicons glyphicons-usd"></i><span translate="CMS_TXT_TAB_NAME_PRICE_SETTINGS"></span></tab-heading>
+                                        <div class="container-fluid">
+                                            <form name="formCNPriceSettingInfo" class="form-horizontal" novalidate="">
+                                                <div class="col-sm-6">
+                                                    <form class="form-horizontal">
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label" translate="CMS_TXT_BASE_PRICE"></label>
+
+                                                            <div class="col-sm-8">
+                                                                <div class="input-group">
+                                                                    <ui-select ng-model="cnPriceSettingInfo.basePriceId" theme="bootstrap" ng-disabled="disabled" class="text-left" ng-change="cnPriceSettingChanged()">
+                                                                        <ui-select-match placeholder="Select..." class="text-left">{{$select.selected.attributeValue}}</ui-select-match>
+                                                                        <ui-select-choices repeat="basePrice.attributeValueId as basePrice in $root.cmsMaster.basePriceList | filter: $select.search">
+                                                                            <span ng-bind-html="basePrice.attributeValue | highlight: $select.search"></span>
+                                                                        </ui-select-choices>
+                                                                    </ui-select>
+                                                                    <span class="input-group-btn">
+                                                                        <button type="button" ng-click="clearBasePriceId()" class="btn btn-default">
+                                                                            <small>
+                                                                                <em class="fa fa-times text-muted"></em>
+                                                                            </small>
+                                                                        </button>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- .form-group -->
+                                                        <div class="form-group">
+                                                            <label for="txtCNPriceSettingPricingFactor" class="col-sm-4 control-label" translate="CMS_TXT_PRICING_FACTOR"></label>
+
+                                                            <div class="col-sm-8">
+                                                                <input type="text" class="form-control" id="txtCNPriceSettingPricingFactor" name="txtCNPriceSettingPricingFactor" ng-model="cnPriceSettingInfo.pricingFactor"
+                                                                       ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/" ng-change="cnPriceSettingChanged()">
+                                                                <va-check ng-show="formCNPriceSettingInfo.txtCNPriceSettingPricingFactor.$error.pattern" check-type="currency"></va-check>
+                                                            </div>
+                                                        </div>
+                                                        <!-- .form-group -->
+                                                        <!--<div class="form-group">-->
+                                                            <!--<label for="txtCNPriceSettingExchangeRate" class="col-sm-4 control-label" translate="CMS_TXT_EXCHANGE_RATE"></label>-->
+
+                                                            <!--<div class="col-sm-8">-->
+                                                                <!--<input type="text" class="form-control" id="txtCNPriceSettingExchangeRate" name="txtCNPriceSettingExchangeRate" ng-model="cnPriceSettingInfo.exchangeRate"-->
+                                                                       <!--ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/" ng-change="cnPriceSettingChanged()">-->
+                                                                <!--<va-check ng-show="formCNPriceSettingInfo.txtCNPriceSettingExchangeRate.$error.pattern" check-type="currency"></va-check>-->
+                                                            <!--</div>-->
+                                                        <!--</div>-->
+                                                        <!--.form-group -->
+                                                        <!--<div class="form-group">-->
+                                                            <!--<label class="col-sm-4 control-label" translate="CMS_TXT_OVER_HEAD_1"></label>-->
+
+                                                            <!--<div class="col-sm-8">-->
+                                                                <!--<div class="input-group">-->
+                                                                    <!--<ui-select ng-model="cnPriceSettingInfo.overHeard1" theme="bootstrap" ng-disabled="disabled" class="text-left" ng-change="cnPriceSettingChanged()">-->
+                                                                        <!--<ui-select-match placeholder="Select..." class="text-left">{{$select.selected.attributeValue}}</ui-select-match>-->
+                                                                        <!--<ui-select-choices repeat="overHeard1.attributeValueId as overHeard1 in $root.cmsMaster.percentList | filter: $select.search">-->
+                                                                            <!--<span ng-bind-html="overHeard1.attributeValue | highlight: $select.search"></span>-->
+                                                                        <!--</ui-select-choices>-->
+                                                                    <!--</ui-select>-->
+                                                                    <!--<span class="input-group-btn">-->
+                                                                        <!--<button type="button" ng-click="clearOverHeard1()" class="btn btn-default">-->
+                                                                            <!--<small>-->
+                                                                                <!--<em class="fa fa-times text-muted"></em>-->
+                                                                            <!--</small>-->
+                                                                        <!--</button>-->
+                                                                    <!--</span>-->
+                                                                <!--</div>-->
+                                                            <!--</div>-->
+                                                        <!--</div>-->
+                                                        <!--.form-group -->
+                                                        <!--<div class="form-group">-->
+                                                            <!--<label class="col-sm-4 control-label" translate="CMS_TXT_OVER_HEAD_2"></label>-->
+
+                                                            <!--<div class="col-sm-8">-->
+                                                                <!--<div class="input-group">-->
+                                                                    <!--<ui-select ng-model="cnPriceSettingInfo.overHeard2" theme="bootstrap" ng-disabled="disabled" class="text-left" ng-change="cnPriceSettingChanged()">-->
+                                                                        <!--<ui-select-match placeholder="Select..." class="text-left">{{$select.selected.attributeValue}}</ui-select-match>-->
+                                                                        <!--<ui-select-choices repeat="overHeard2.attributeValueId as overHeard2 in $root.cmsMaster.percentList | filter: $select.search">-->
+                                                                            <!--<span ng-bind-html="overHeard2.attributeValue | highlight: $select.search"></span>-->
+                                                                        <!--</ui-select-choices>-->
+                                                                    <!--</ui-select>-->
+                                                                    <!--<span class="input-group-btn">-->
+                                                                        <!--<button type="button" ng-click="clearOverHeard2()" class="btn btn-default">-->
+                                                                            <!--<small>-->
+                                                                                <!--<em class="fa fa-times text-muted"></em>-->
+                                                                            <!--</small>-->
+                                                                        <!--</button>-->
+                                                                    <!--</span>-->
+                                                                <!--</div>-->
+                                                            <!--</div>-->
+                                                        <!--</div>-->
+                                                        <!--.form-group -->
+                                                        <!--<div class="form-group">-->
+                                                            <!--<label for="txtCNPriceSettingShippingCompensation" class="col-sm-4 control-label" translate="CMS_TXT_SHIPPING_COMPENSATION"></label>-->
+
+                                                            <!--<div class="col-sm-8">-->
+                                                                <!--<div class="input-group">-->
+                                                                    <!--<span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>-->
+                                                                    <!--<input type="text" class="form-control" id="txtCNPriceSettingShippingCompensation" name="txtCNPriceSettingShippingCompensation"-->
+                                                                           <!--ng-model="cnPriceSettingInfo.shippingCompensation" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/" ng-change="cnPriceSettingChanged()">-->
+                                                                <!--</div>-->
+                                                                <!--<va-check ng-show="formCNPriceSettingInfo.txtCNPriceSettingShippingCompensation.$error.pattern" check-type="currency"></va-check>-->
+                                                            <!--</div>-->
+                                                        <!--</div>-->
+                                                        <!--.form-group -->
+                                                        <div class="form-group" ng-if="cnPriceSettingIsChanged && usCategoryInfo.isEffective">
+                                                            <label for="txtCNPriceSettingComment" class="col-sm-4 control-label vo_reqfield" translate="CMS_TXT_COMMENT"></label>
+
+                                                            <div class="col-sm-8">
+                                                                <textarea rows="3" class="form-control no-resize" id="txtCNPriceSettingComment" name="txtCNPriceSettingComment" ng-model="cnPriceSettingInfo.comment" required=""
+                                                                          ng-change="cnPriceSettingChanged()"></textarea>
+                                                                <va-check ng-show="formCNPriceSettingInfo.txtCNPriceSettingComment.$error.required" check-type="required"></va-check>
+                                                            </div>
+                                                        </div>
+                                                        <!--.form-group -->
+                                                    </form>
+                                                    <!-- .form -->
+                                                </div>
+                                                <!--.col -->
+
+                                                <div class="col-sm-12 control-savebar" ng-if="cnPriceSettingIsChanged && usCategoryInfo.isEffective">
+                                                    <div class="col-sm-12 text-center">
+                                                        <div class="form-group">
+                                                            <button type="button" class="btn btn-default" translate="CMS_BTN_CANCEL" ng-click="undoUpdateCategoryCNPriceSettingInfo()"></button>
+                                                            <button type="button" class="btn btn-vo" translate="CMS_BTN_SAVE" ng-disabled="formCNPriceSettingInfo.$invalid" ng-click="doUpdateCategoryCNPriceSettingInfo()"></button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- .col -->
+                                            </form>
+                                        </div>
+                                    </tab>
+                                    <!-- .tab -->
+
+                                    <!-- Custom Info -->
+                                    <!--<tab>-->
+                                        <!--<tab-heading><i class="glyphicons glyphicons-cogwheel"></i><span translate="CMS_TXT_TAB_NAME_CUSTOM"></span></tab-heading>-->
+                                        <!--&lt;!&ndash; TODO &ndash;&gt;-->
+                                    <!--</tab>-->
+                                    <!-- .tab -->
+                                </tabset>
+                            </div>
+                            <!-- / tab -->
+                        </accordion-group>
+                    </accordion>
+                    <!-- .accordion -->
+                </div>
+                <!-- accordion ng-controller -->
+            </div>
+            <!-- .col-lg-12 -->
+
+            <div class="col-lg-12">
+                <div>
+                    <tabset class="tab-container vo_nav-tabs">
+
+                        <!-- Sub US Category List -->
+                        <tab ng-if="usSubCategoryList.length > 0 || cnSubCategoryList.length > 0">
+                            <tab-heading><i class="glyphicons glyphicons-show-big-thumbnails"></i>&nbsp;<span translate="CMS_TXT_CATEGORIES"></span></tab-heading>
+                            <!-- sub category table and controls -->
+                            <div class="panel vo_panel tab_panel">
+                                <div class="row wrapper">
+                                    <div class="col-sm-5 m-b-xs">
+                                        <div class="btn-group dropdown" dropdown="">
+                                            <button class="btn btn-vo" dropdown-toggle="" aria-haspopup="true" aria-expanded="false"><i class="fa fa-edit"></i>
+                                                &nbsp;<span ng-if="showCategoryListFlag === 'us'" translate="CMS_TXT_TAB_NAME_AMERICAN"></span><span ng-if="showCategoryListFlag === 'cn'" translate="CMS_TXT_TAB_NAME_CHINA"></span>
+                                                &nbsp;<span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="" ng-click="doShowCategoryList('us')" translate="CMS_TXT_TAB_NAME_AMERICAN"></a></li>
+                                                <li><a href="" ng-click="doShowCategoryList('cn')" translate="CMS_TXT_TAB_NAME_CHINA"></a></li>
+                                            </ul>
+                                        </div>
+                                        <!--<div class="btn-group dropdown" dropdown="" ng-if="usCategoryInfo.isEffective">-->
+                                            <!--<button class="btn btn-vo" dropdown-toggle="" aria-haspopup="true" aria-expanded="false"><i class="fa fa-edit"></i>&nbsp;<span translate="CMS_BTN_BATCH_EDIT"></span>&nbsp;<span class="caret"></span>-->
+                                            <!--</button>-->
+                                            <!--<ul class="dropdown-menu">-->
+                                                <!--<li><a href="" ng-click="open('lg')" translate="CMS_BTN_RESET_DISPLAY_ORDER"></a></li>-->
+                                                <!--<li><a href="" ng-click="open('lg')" translate="CMS_BTN_SET_PROPERTY"></a></li>-->
+                                            <!--</ul>-->
+                                        <!--</div>-->
+                                    </div>
+                                    <div class="col-sm-4"></div>
+                                    <div class="col-sm-3 text-right">
+                                        <button type="button" class="btn btn-vo" translate="CMS_BTN_REFRESH" ng-click="doShowCategoryList(showCategoryListFlag)"></button>
+                                    </div>
+                                </div>
+                                <!-- .row wrapper -->
+
+                                <div ng-if="showCategoryListFlag === 'us'" class="table-responsive">
+                                    <!--<table datatable="" dt-options="dtUsSubCategoryOptions" dt-columns="dtUsSubCategoryColumns" class="table table-striped hover b-t b-b vo_table"></table>-->
+                                    <table datatable="ng" class="table table-striped hover b-t b-b vo_table">
+                                        <thead>
+                                        <tr class="">
+                                            <!--<th>-->
+                                                <!--<label class="i-checks-sm m-b-none">-->
+                                                    <!--<input type="checkbox"><i></i>-->
+                                                <!--</label>-->
+                                            <!--</th>-->
+                                            <th translate="CMS_TXT_NAME"></th>
+                                            <th class="text-center" style="" translate="CMS_TXT_DISPLAY_ORDER"></th>
+                                            <th class="text-center" translate="CMS_TXT_ENABLE_FILTER"></th>
+                                            <th class="text-center" translate="CMS_TXT_VISIBLE_ON_MENU"></th>
+                                            <th class="text-center" translate="CMS_TXT_PUBLISH"></th>
+                                            <th translate="CMS_TXT_PUBLISH_DATETIME"></th>
+                                            <th translate="CMS_TXT_CREATED_ON"></th>
+                                            <th translate="CMS_TXT_LAST_UPDATED_ON"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr ng-repeat="usSubCategoryInfo in usSubCategoryList">
+                                            <!--<td class="wtab-check"><label class="i-checks-sm m-b-none"><input type="checkbox" name="post[]"><i></i></label></td>-->
+                                            <td class="wtab-xsm" ng-controller="navigationController"><a href="" class="btn-main" ng-bind="usSubCategoryInfo.name" ng-href="{{goCategoryPage(usSubCategoryInfo.categoryId)}}"></a></td>
+                                            <td class="text-center" ng-bind="usSubCategoryInfo.displayOrder"></td>
+                                            <td class="text-center"><input type="checkbox" ng-model="usSubCategoryInfo.isEnableFilter" ng-change="doBatchUpdateUSCategory(usSubCategoryInfo)"></td>
+                                            <td class="text-center"><input type="checkbox" ng-model="usSubCategoryInfo.isVisibleOnMenu" ng-change="doBatchUpdateUSCategory(usSubCategoryInfo)"></td>
+                                            <td class="text-center"><input type="checkbox" ng-model="usSubCategoryInfo.isPublished" ng-change="doBatchUpdateUSCategory(usSubCategoryInfo)"></td>
+                                            <td class="wtab-sm" ng-bind="usSubCategoryInfo.publishDatetime"></td>
+                                            <td class="wtab-sm" ng-bind="usSubCategoryInfo.created"></td>
+                                            <td class="wtab-sm" ng-bind="usSubCategoryInfo.modified"></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div ng-if="showCategoryListFlag === 'cn'" class="table-responsive">
+                                    <table datatable="ng" class="table table-striped hover b-t b-b vo_table">
+                                        <thead>
+                                        <tr class="">
+                                            <!--<th>-->
+                                                <!--<label class="i-checks-sm m-b-none">-->
+                                                    <!--<input type="checkbox"><i></i>-->
+                                                <!--</label>-->
+                                            <!--</th>-->
+                                            <th translate="CMS_TXT_NAME"></th>
+                                            <th class="text-center" translate="CMS_TXT_DISPLAY_ORDER"></th>
+                                            <th class="text-center" translate="CMS_TXT_ENABLE_FILTER"></th>
+                                            <th class="text-center" translate="CMS_TXT_VISIBLE_ON_MENU"></th>
+                                            <th class="text-center" translate="CMS_TXT_PUBLISH"></th>
+                                            <th translate="CMS_TXT_PUBLISH_DATETIME"></th>
+                                            <th translate="CMS_TXT_CREATED_ON"></th>
+                                            <th translate="CMS_TXT_LAST_UPDATED_ON"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr ng-repeat="cnSubCategoryInfo in cnSubCategoryList">
+                                            <!--<td class="wtab-check"><label class="i-checks-sm m-b-none"><input type="checkbox" name="post[]"><i></i></label></td>-->
+                                            <td class="wtab-xsm" ng-controller="navigationController"><a href="" class="btn-main" ng-bind="cnSubCategoryInfo.cnName" ng-href="{{goCategoryPage(cnSubCategoryInfo.categoryId)}}"></a></td>
+                                            <td class="text-center" ng-bind="cnSubCategoryInfo.displayOrder"></td>
+                                            <td class="text-center"><input type="checkbox" ng-model="cnSubCategoryInfo.cnIsEnableFilter" ng-change="doBatchUpdateCNCategory(cnSubCategoryInfo)"></td>
+                                            <td class="text-center"><input type="checkbox" ng-model="cnSubCategoryInfo.cnIsVisibleOnMenu" ng-change="doBatchUpdateCNCategory(cnSubCategoryInfo)"></td>
+                                            <td class="text-center"><input type="checkbox" ng-model="cnSubCategoryInfo.cnIsPublished" ng-change="doBatchUpdateCNCategory(cnSubCategoryInfo)"></td>
+                                            <td class="wtab-sm" ng-bind="cnSubCategoryInfo.publishDatetime"></td>
+                                            <td class="wtab-sm" ng-bind="cnSubCategoryInfo.created"></td>
+                                            <td class="wtab-sm" ng-bind="cnSubCategoryInfo.modified"></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- .table-responsive -->
+                            </div>
+                            <!-- .panel -->
+                        </tab>
+
+                        <!-- US Model List -->
+                        <tab ng-if="usModelList.length > 0 || cnModelList.length > 0">
+                            <tab-heading><i class="glyphicons glyphicons-more-items"></i>&nbsp;<span translate="CMS_TXT_MODELS"></span></tab-heading>
+                            <!-- Models table and controls -->
+                            <div class="panel vo_panel tab_panel">
+                                <div class="row wrapper">
+                                    <div class="col-sm-5 m-b-xs">
+                                        <div class="btn-group dropdown" dropdown="">
+                                            <button class="btn btn-vo" dropdown-toggle="" aria-haspopup="true" aria-expanded="false"><i class="fa fa-edit"></i>
+                                                &nbsp;<span ng-if="showModelListFlag === 'us'" translate="CMS_TXT_TAB_NAME_AMERICAN"></span><span ng-if="showModelListFlag === 'cn'" translate="CMS_TXT_TAB_NAME_CHINA"></span>
+                                                &nbsp;<span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="" ng-click="doShowModelList('us')" translate="CMS_TXT_TAB_NAME_AMERICAN"></a></li>
+                                                <li><a href="" ng-click="doShowModelList('cn')" translate="CMS_TXT_TAB_NAME_CHINA"></a></li>
+                                            </ul>
+                                        </div>
+                                        <!--<div class="btn-group dropdown" dropdown="" ng-if="usCategoryInfo.isEffective">-->
+                                            <!--<button class="btn btn-vo" dropdown-toggle="" aria-haspopup="true" aria-expanded="false"><i class="fa fa-edit"></i>&nbsp;<span translate="CMS_BTN_BATCH_EDIT"></span>&nbsp;<span class="caret"></span>-->
+                                            <!--</button>-->
+                                            <!--<ul class="dropdown-menu">-->
+                                                <!--<li><a href="" ng-click="open('lg')" translate="CMS_BTN_MOVE_TO_CATEGORY"></a></li>-->
+                                                <!--<li><a href="" ng-click="open('lg')" translate="CMS_BTN_COPY_TO_CATEGORY"></a></li>-->
+                                                <!--<li><a href="" ng-click="open('lg')" translate="CMS_BTN_SET_PROPERTY"></a></li>-->
+                                            <!--</ul>-->
+                                        <!--</div>-->
+                                    </div>
+                                    <div class="col-sm-4"></div>
+                                    <div class="col-sm-3 text-right">
+                                        <button type="button" class="btn btn-vo" translate="CMS_BTN_REFRESH" ng-click="doShowModelList(showModelListFlag)"></button>
+                                    </div>
+                                </div>
+                                <!-- .row wrapper -->
+
+                                <div ng-if="showModelListFlag === 'us'" class="table-responsive">
+                                    <table datatable="ng" class="table table-striped hover b-t b-b vo_table">
+                                        <thead>
+                                        <tr>
+                                            <!--<th>-->
+                                                <!--<label class="i-checks-sm m-b-none">-->
+                                                    <!--<input type="checkbox"><i></i>-->
+                                                <!--</label>-->
+                                            <!--</th>-->
+                                            <th translate="CMS_TXT_MODEL"></th>
+                                            <th translate="CMS_TXT_NAME"></th>
+                                            <th translate="CMS_TXT_PRIMARY_PRODUCT"></th>
+                                            <th translate="CMS_TXT_PRODUCT_TYPE"></th>
+                                            <th translate="CMS_TXT_BRAND"></th>
+                                            <th translate="CMS_TXT_SIZE_TYPE"></th>
+                                            <th translate="CMS_TXT_CREATED_ON"></th>
+                                            <th translate="CMS_TXT_LAST_UPDATED_ON"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr ng-repeat="usModelInfo in usModelList">
+                                            <!--<td class="wtab-check"><label class="i-checks-sm m-b-none"><input type="checkbox" name="post[]"><i></i></label></td>-->
+                                            <td class="wtab-xsm" ng-controller="navigationController"><a href="" class="btn-main" ng-bind="usModelInfo.model" ng-href="{{goModelPage(categoryId, usModelInfo.modelId)}}"></a></td>
+                                            <td class="wtab-xsm" ng-bind="usModelInfo.name"></td>
+                                            <td class="wtab-sm text-center" ng-controller="navigationController">
+                                                <img class="prodImg" ng-src="{{cmsMaster.imageUrl}}{{usModelInfo.primaryProductUrl}}"><br>
+                                                <a href="" class="btn-main" ng-bind="usModelInfo.primaryProductCode" ng-href="{{goProductPage(categoryId, usModelInfo.modelId, usModelInfo.primaryProductId)}}"></a>
+                                            </td>
+                                            <td class="wtab-xsm" ng-bind="usModelInfo.productType"></td>
+                                            <td class="wtab-xsm" ng-bind="usModelInfo.brand"></td>
+                                            <td class="wtab-sm" ng-bind="usModelInfo.sizeType"></td>
+                                            <td class="wtab-xsm" ng-bind="usModelInfo.created"></td>
+                                            <td class="wtab-xsm" ng-bind="usModelInfo.modified"></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div ng-if="showModelListFlag === 'cn'" class="table-responsive">
+                                    <table datatable="ng" class="table table-striped hover b-t b-b vo_table">
+                                        <thead>
+                                        <tr>
+                                            <!--<th>-->
+                                                <!--<label class="i-checks-sm m-b-none">-->
+                                                    <!--<input type="checkbox"><i></i>-->
+                                                <!--</label>-->
+                                            <!--</th>-->
+                                            <th translate="CMS_TXT_MODEL"></th>
+                                            <th translate="CMS_TXT_NAME"></th>
+                                            <th translate="CMS_TXT_PRIMARY_PRODUCT"></th>
+                                            <th translate="CMS_TXT_PRODUCT_TYPE"></th>
+                                            <th translate="CMS_TXT_BRAND"></th>
+                                            <th translate="CMS_TXT_SIZE_TYPE"></th>
+                                            <th translate="CMS_TXT_CREATED_ON"></th>
+                                            <th translate="CMS_TXT_LAST_UPDATED_ON"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr ng-repeat="cnModelInfo in cnModelList">
+                                            <!--<td class="wtab-check"><label class="i-checks-sm m-b-none"><input type="checkbox" name="post[]"><i></i></label></td>-->
+                                            <td class="wtab-xsm" ng-controller="navigationController"><a href="" class="btn-main" ng-bind="cnModelInfo.model" ng-href="{{goModelPage(categoryId, cnModelInfo.modelId)}}"></a></td>
+                                            <td class="wtab-xsm" ng-bind="cnModelInfo.cnName"></td>
+                                            <td class="wtab-sm text-center"ng-controller="navigationController">
+                                                <img class="prodImg" ng-src="{{cmsMaster.imageUrl}}{{cnModelInfo.cnPrimaryProductUrl}}"><br>
+                                                <a href="" class="btn-main" ng-bind="cnModelInfo.cnPrimaryProductCode" ng-href="{{goProductPage(categoryId, cnModelInfo.modelId, cnModelInfo.cnPrimaryProductId)}}"></a>
+                                            </td>
+                                            <td class="wtab-xsm" ng-bind="cnModelInfo.productType"></td>
+                                            <td class="wtab-xsm" ng-bind="cnModelInfo.brand"></td>
+                                            <td class="wtab-sm" ng-bind="cnModelInfo.cnSizeType"></td>
+                                            <td class="wtab-xsm" ng-bind="cnModelInfo.created"></td>
+                                            <td class="wtab-xsm" ng-bind="cnModelInfo.modified"></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- .table-responsive -->
+                            </div>
+                            <!-- .panel -->
+                        </tab>
+
+                        <!-- US Product List -->
+                        <tab>
+                            <tab-heading><i class="glyphicons glyphicons-sort"></i>&nbsp;<span translate="CMS_TXT_PRODUCTS"></span></tab-heading>
+                            <!-- Products table and controls -->
+                            <div class="panel vo_panel tab_panel">
+                                <div class="row wrapper">
+                                    <div class="col-sm-5 m-b-xs">
+                                        <div class="">
+                                            <div class="btn-group dropdown" dropdown="">
+                                                <button class="btn btn-vo" dropdown-toggle="" aria-haspopup="true" aria-expanded="false"><i class="fa fa-edit"></i>
+                                                    &nbsp;<span ng-if="showProductListFlag === 'us'" translate="CMS_TXT_TAB_NAME_AMERICAN"></span><span ng-if="showProductListFlag === 'cn'" translate="CMS_TXT_TAB_NAME_CHINA"></span>
+                                                    &nbsp;<span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a href="" ng-click="doShowProductList('us')" translate="CMS_TXT_TAB_NAME_AMERICAN"></a></li>
+                                                    <li><a href="" ng-click="doShowProductList('cn')" translate="CMS_TXT_TAB_NAME_CHINA"></a></li>
+                                                </ul>
+                                            </div>
+                                            <!--<button class="btn btn-vo" ng-click="open('lg')"><i class="fa fa-filter"></i>&nbsp;<span translate="CMS_BTN_FILTER_RESULTS"></span></button>-->
+                                            <button class="btn btn-vo" ng-controller="cmsPopupController"
+                                                    ng-click="openSetProductColumns(reFreshFunc.doRefreshUsProductInfo, reFreshFunc.doRefreshCnProductInfo, showProductListFlag)" >
+                                                <i class="fa fa-table"></i>&nbsp;<span translate="CMS_BTN_CUSTOMIZE_COLUMNS"></span>
+                                            </button>
+                                            <div class="btn-group dropdown" dropdown="">
+                                                <button class="btn btn-vo" dropdown-toggle="" aria-haspopup="true" aria-expanded="false"><i class="fa fa-edit"></i>&nbsp;<span translate="CMS_BTN_BATCH_EDIT"></span>&nbsp;<span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu" ng-controller="cmsPopupController" ng-show="showProductListFlag == 'us'">
+                                                    <!--<li><a href="" ng-click="open('lg')" translate="CMS_BTN_SET_DISPLAY_ORDER"></a></li>-->
+                                                    <!--<li><a href="" ng-click="open('lg')" translate="CMS_BTN_RESET_DISPLAY_ORDER"></a></li>-->
+                                                    <!--<li><a href="" ng-click="openSetCnProductProperty(usProductInfo.selectIdList)" translate="CMS_BTN_SET_PROPERTY"></a></li>-->
+                                                    <!--<li><a href="" ng-click="open('lg')" translate="CMS_BTN_SET_APPROVED"></a></li>-->
+                                                    <li><a href="" ng-click="openAddToPromotion(usProductInfo.selectIdList)"  translate="CMS_BTN_ADD_TO_PROMOTION"></a></li>
+                                                    <!--<li><a href="" ng-click="open('lg')" translate="CMS_BTN_EXPORT_FILE"></a></li>-->
+                                                </ul>
+                                                <ul class="dropdown-menu" ng-controller="cmsPopupController" ng-show="showProductListFlag == 'cn'">
+                                                    <!--<li><a href="" ng-click="open('lg')" translate="CMS_BTN_SET_DISPLAY_ORDER"></a></li>-->
+                                                    <!--<li><a href="" ng-click="open('lg')" translate="CMS_BTN_RESET_DISPLAY_ORDER"></a></li>-->
+                                                    <li><a href="" ng-click="openSetCnProductProperty(cnProductInfo.selectIdList)" translate="CMS_BTN_SET_PROPERTY"></a></li>
+                                                    <li><a href="" ng-click="openSetCnProductShare(cnProductInfo.selectIdList)" translate="CMS_BTN_SET_APPROVED"></a></li>
+                                                    <li><a href="" ng-click="openAddToPromotion(cnProductInfo.selectIdList)"  translate="CMS_BTN_ADD_TO_PROMOTION"></a></li>
+                                                    <!--<li><a href="" ng-click="open('lg')" translate="CMS_BTN_EXPORT_FILE"></a></li>-->
+                                                </ul>
+                                            </div>
+                                            <!-- btn-group -->
+                                        </div>
+                                        <!-- modal ng-controller -->
+                                    </div>
+                                    <div class="col-sm-4"></div>
+                                    <div class="col-sm-3 text-right">
+                                        <button type="button" class="btn btn-vo" translate="CMS_BTN_REFRESH" ng-click="doShowProductList(showProductListFlag)"></button>
+                                    </div>
+                                </div>
+                                <!-- .row wrapper -->
+
+                                <div ng-show="showProductListFlag === 'us'" class="table-responsive">
+                                    <table datatable="" dt-instance="dtUsProductList.dtInstance" dt-options="dtUsProductList.options" dt-columns="dtUsProductList.columns" class="table table-striped hover b-t b-b vo_table">
+                                    </table>
+                                </div>
+
+                                <div ng-show="showProductListFlag === 'cn'" class="table-responsive">
+                                    <table datatable="" dt-instance="dtCnProductList.dtInstance" dt-options="dtCnProductList.options" dt-columns="dtCnProductList.columns" class="table table-striped hover b-t b-b vo_table">
+                                    </table>
+                                </div>
+                                <!-- .table-responsive -->
+                            </div>
+                            <!-- .panel -->
+                        </tab>
+                    </tabset>
+                    <!-- tabset -->
+                </div>
+                <!-- tabs ng-controller -->
+            </div>
+            <!-- .col-lg-12 -->
+
+        </div>
+        <!-- .row -->
+    </div>
+    <!-- end .wrapper-md -->
+</div>

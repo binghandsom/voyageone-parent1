@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.core.sql">
+
+	<select id="tm_task_control_getBarchJobList" resultType="HashMap">
+		SELECT 
+			t2.task_id as id,
+			t2.task_type as type,
+			t.task_id as task ,
+			t.cfg_val1,
+			t.comment
+		FROM tm_task_control t left join com_mt_task t2 on t.task_id = t2.task_name
+		WHERE t.cfg_name='run_flg'
+		ORDER BY t2.task_id
+	</select>
+	<update id="tm_task_control_updateRunFlg" parameterType="HashMap">
+		UPDATE 
+			tm_task_control t
+		SET 
+			t.cfg_val1 = #{cfg_val1}
+		WHERE
+			t.cfg_name = 'run_flg'
+			AND t.task_id = #{task}
+	</update>
+	<insert  id="com_mt_task_insert_batch" parameterType="HashMap" useGeneratedKeys="true" keyProperty="id" >
+		INSERT INTO com_mt_task(
+				 task_type,
+				 task_name,
+				 task_comment)
+		VALUES (#{type},
+				#{task},
+				#{comment})
+	</insert>
+	<insert  id="tm_task_control_insert_batch" parameterType="HashMap" >
+		INSERT INTO tm_task_control(
+				 task_id,
+				 cfg_name,
+				 cfg_val1,
+				 comment)
+		VALUES (#{task},
+				'run_flg',
+				'1',
+				#{comment})
+	</insert>
+</mapper>

@@ -1,0 +1,47 @@
+<!--<link rel="stylesheet" type="text/css" href="modules/core/setting/user.css" />-->
+<!--contents-->
+
+<div class="container" ng-controller="applicationController" ng-init="initialize()">
+	<div class="row">
+		<div class="col-md-3">
+	          <div class="text-right">
+	            <button class="btn btn-primary" ng-click="doAddApp()" id="">Add</button>
+	          </div>
+			<div class="customerTableBox_4" ng-grid="gridApplicationInfo"></div>
+		</div>
+		<div class="col-md-3">
+	          <div class="text-right" style="height: 34px">
+	            <button class="btn btn-primary" ng-click="doAddModule()" ng-disabled="currentAppId==undefined" id="">Add</button>
+	          </div>
+			<div class="customerTableBox_4" ng-grid="gridModuleInfo"></div>
+		</div>
+		<div class="col-md-3">
+	          <div class="text-right" style="height: 34px">
+	            <!-- <button class="buttonStyle" ng-click="doDelRole()">Delete</button> -->
+	            <button class="btn btn-primary" ng-click="doAddController()" ng-disabled="currentModuleItem==null" id="">Add</button>
+	          </div>
+			<div class="customerTableBox_4" ng-grid="grid_controller"></div>
+		</div>	
+		<div class="col-md-3">
+	          <div class="text-right" style="height: 34px">
+	            <button class="btn btn-primary" ng-click="doAddAction()" ng-disabled="currentController==null" id="">Add</button>
+	          </div>
+			<div class="customerTableBox_4" ng-grid="grid_action"></div>
+		</div>				
+	</div>
+			<div >
+				<a ng-click="batchAppshow()" style="display:inline-block; width:20px; height:10px;">  </a>
+			</div>
+	<div class="row">
+		<div  class="col-md-10" ng-show="batchAppShow" >
+			<div >
+				<textarea ng-model="batchUrl" rows="20" cols="50"></textarea>
+			</div>
+			<div>
+				<button class="btn btn-primary" ng-click="batchApp()">Save</button>
+			</div>
+		</div>
+	</div>
+	<div class="clear"></div>
+	<!-- <pop-app info="popInfo" ng-show="popInfo.isShow>0" do-Charge="doUpdate()"></pop-app> -->
+</div>

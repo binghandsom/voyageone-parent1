@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.batch.bi.mapper.JumeiMapper">
+
+    <!-- 获得ims_jumei_vl_product信息结构 -->
+    <resultMap id="jumeiProductMap" type="batch.bi.JumeiProductBean">
+        <result column="channel_id" property="channel_id"/>
+        <result column="task_id" property="task_id"/>
+        <result column="product_code" property="product_code"/>
+        <result column="jumei_product_name_cn" property="jumei_product_name_cn"/>
+        <result column="jumei_product_name_en" property="jumei_product_name_en"/>
+        <result column="jumei_product_name_cn_real" property="jumei_product_name_cn_real"/>
+        <result column="jumei_product_name_en_real" property="jumei_product_name_en_real"/>
+        <result column="cms_category_name" property="cms_category_name"/>
+        <result column="jumei_category1" property="jumei_category1"/>
+        <result column="jumei_category2" property="jumei_category2"/>
+        <result column="jumei_category3" property="jumei_category3"/>
+        <result column="jumei_category4" property="jumei_category4"/>
+        <result column="cms_brand_name" property="cms_brand_name"/>
+        <result column="jumei_brand" property="jumei_brand"/>
+        <result column="product_image1" property="product_image1"/>
+        <result column="product_image2" property="product_image2"/>
+        <result column="product_image3" property="product_image3"/>
+        <result column="product_image4" property="product_image4"/>
+        <result column="product_image5" property="product_image5"/>
+        <result column="product_image6" property="product_image6"/>
+        <result column="image_url_from1" property="image_url_from1"/>
+        <result column="image_url_from2" property="image_url_from2"/>
+        <result column="image_url_from3" property="image_url_from3"/>
+        <result column="image_url_from4" property="image_url_from4"/>
+        <result column="image_url_from5" property="image_url_from5"/>
+        <result column="image_url_from6" property="image_url_from6"/>
+        <result column="product_image_url_from1" property="product_image_url_from1"/>
+        <result column="product_image_url_from2" property="product_image_url_from2"/>
+        <result column="product_image_url_from3" property="product_image_url_from3"/>
+        <result column="product_image_url_from4" property="product_image_url_from4"/>
+        <result column="product_image_url_from5" property="product_image_url_from5"/>
+        <result column="product_image_url_from6" property="product_image_url_from6"/>
+        <result column="status" property="status"/>
+    </resultMap>
+
+    <!-- 获得ims_jumei_vl_sku信息结构 -->
+    <resultMap id="jumeiSkuMap" type="batch.bi.JumeiSkuBean">
+        <result column="channel_id" property="channel_id"/>
+        <result column="task_id" property="task_id"/>
+        <result column="product_code" property="product_code"/>
+        <result column="sku" property="sku"/>
+        <result column="cms_size" property="cms_size"/>
+        <result column="jumei_size" property="jumei_size"/>
+        <result column="cms_color" property="cms_color"/>
+        <result column="jumei_color" property="jumei_color"/>
+        <result column="cms_oversea_official_price" property="cms_oversea_official_price"/>
+        <result column="trade_price" property="trade_price"/>
+        <result column="market_price" property="market_price"/>
+        <result column="inventory" property="inventory"/>
+        <result column="status" property="status"/>
+    </resultMap>
+
+    <!-- 获得ims_jumei_vl_deal信息结构 -->
+    <resultMap id="jumeiDealMap" type="batch.bi.jumeiDealBean">
+        <result column="channel_id" property="channel_id"/>
+        <result column="task_id" property="task_id"/>
+        <result column="product_code" property="product_code"/>
+        <result column="cms_brand_name" property="cms_brand_name"/>
+        <result column="usage" property="usage"/>
+        <result column="on_sale_time" property="on_sale_time"/>
+        <result column="off_list_time" property="off_list_time"/>
+        <result column="delivery" property="delivery"/>
+        <result column="limit" property="limit"/>
+        <result column="title_long" property="title_long"/>
+        <result column="title_middle" property="title_middle"/>
+        <result column="title_short" property="title_short"/>
+        <result column="cms_production_place" property="cms_production_place"/>
+        <result column="jumei_production_place" property="jumei_production_place"/>
+        <result column="quality_period" property="quality_period"/>
+        <result column="applicable_crowd" property="applicable_crowd"/>
+        <result column="special_description" property="special_description"/>
+        <result column="custom_sear_label" property="custom_sear_label"/>
+        <result column="cms_long_description" property="cms_long_description"/>
+        <result column="detail" property="detail"/>
+        <result column="product_image_url_from1" property="product_image_url_from1"/>
+        <result column="product_image_url_from2" property="product_image_url_from2"/>
+        <result column="product_image_url_from3" property="product_image_url_from3"/>
+        <result column="product_image_url_from4" property="product_image_url_from4"/>
+        <result column="product_image_url_from5" property="product_image_url_from5"/>
+        <result column="product_image_url_from6" property="product_image_url_from6"/>
+        <result column="buy_process1" property="buy_process1"/>
+        <result column="buy_process2" property="buy_process2"/>
+        <result column="buy_process3" property="buy_process3"/>
+        <result column="buy_process4" property="buy_process4"/>
+        <result column="status" property="status"/>
+    </resultMap>
+
+    <!-- 获得ims_jumei_product_vl_added信息结构 -->
+    <resultMap id="jumeiProductAddedMap" type="batch.bi.JumeiProductAddedBean">
+        <result column="code" property="code"/>
+        <result column="name" property="name"/>
+        <result column="name_en" property="nameEn"/>
+        <result column="brand" property="brand"/>
+        <result column="category" property="category"/>
+        <result column="jumei_id" property="jumeiId"/>
+        <result column="jumei_status" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_user" property="createUser"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="update_user" property="updateUser"/>
+    </resultMap>
+
+    <!-- 设定ims_jumei_vl_product检索条件 -->
+    <sql id="ims_jumei_vl_product_condition">
+        <where>
+            <if test="channel_id != null and channel_id != '' ">
+                and channel_id = #{channel_id}
+            </if>
+            <if test="task_id != null and task_id != '' ">
+                and task_id = #{task_id}
+            </if>
+            <if test="product_code != null and product_code != '' ">
+                and product_code = #{product_code}
+            </if>
+            <if test="status != null and status != '' ">
+                and status = #{status}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 设定ims_jumei_vl_product检索条件 -->
+    <sql id="ims_jumei_vl_product_condition_fuzzy">
+        <where>
+            <if test="channel_id != null and channel_id != '' ">
+                and channel_id LIKE CONCAT('%',#{channel_id},'%' )
+            </if>
+            <if test="task_id != null and task_id != '' ">
+                and task_id = #{task_id}
+            </if>
+            <if test="product_code != null and product_code != '' ">
+                and product_code LIKE CONCAT('%',#{product_code},'%' )
+            </if>
+            <if test="status != null and status != '' ">
+                and status = #{status}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 设定ims_jumei_vl_sku检索条件 -->
+    <sql id="ims_jumei_vl_sku_condition">
+        <where>
+            <if test="channel_id != null and channel_id != '' ">
+                and channel_id = #{channel_id}
+            </if>
+            <if test="task_id != null and task_id != '' ">
+                and task_id = #{task_id}
+            </if>
+            <if test="product_code != null and product_code != '' ">
+                and product_code = #{product_code}
+            </if>
+            <if test="sku != null and sku != '' ">
+                and sku = #{sku}
+            </if>
+            <if test="status != null and status != '' ">
+                and status = #{status}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 设定ims_jumei_vl_sku检索条件 -->
+    <sql id="ims_jumei_vl_sku_condition_fuzzy">
+        <where>
+            <if test="channel_id != null and channel_id != '' ">
+                and channel_id LIKE CONCAT('%',#{channel_id},'%' )
+            </if>
+            <if test="task_id != null and task_id != '' ">
+                and task_id = #{task_id}
+            </if>
+            <if test="product_code != null and product_code != '' ">
+                and product_code LIKE CONCAT('%',#{product_code},'%' )
+            </if>
+            <if test="sku != null and sku != '' ">
+                and sku LIKE CONCAT('%',#{sku},'%' )
+            </if>
+            <if test="status != null and status != '' ">
+                and status = #{status}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 设定ims_jumei_vl_deal检索条件 -->
+    <sql id="ims_jumei_vl_deal_condition">
+        <where>
+            <if test="channel_id != null and channel_id != '' ">
+                and deal.channel_id = #{channel_id}
+            </if>
+            <if test="task_id != null and task_id != '' ">
+                and deal.task_id = #{task_id}
+            </if>
+            <if test="product_code != null and product_code != '' ">
+                and deal.product_code = #{product_code}
+            </if>
+            <if test="status != null and status != '' ">
+                and deal.status = #{status}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 设定ims_jumei_vl_deal检索条件 -->
+    <sql id="ims_jumei_vl_deal_condition_fuzzy">
+        <where>
+            <if test="channel_id != null and channel_id != '' ">
+                and deal.channel_id LIKE CONCAT('%',#{channel_id},'%' )
+            </if>
+            <if test="task_id != null and task_id != '' ">
+                and deal.task_id = #{task_id}
+            </if>
+            <if test="product_code != null and product_code != '' ">
+                and deal.product_code LIKE CONCAT('%',#{product_code},'%' )
+            </if>
+            <if test="status != null and status != '' ">
+                and deal.status = #{status}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 设定ims_jumei_product_vl_added检索条件 -->
+    <sql id="ims_jumei_product_vl_added_condition">
+        <where>
+            <if test="code != null and code != '' ">
+                and code = #{code}
+            </if>
+            <if test="name != null and name != '' ">
+                and name = #{name}
+            </if>
+            and jumei_status = '正常'
+        </where>
+    </sql>
+
+    <!-- 获得ims_jumei_vl_product数量 -->
+    <select id="ims_jumei_vl_product_count" parameterType="batch.bi.JumeiProductBean" resultType="int">
+        select
+        count(1)
+        from test.ims_jumei_vl_product
+        <include refid="ims_jumei_vl_product_condition_fuzzy"/>
+    </select>
+
+    <!-- 获得ims_jumei_vl_product数量 -->
+    <select id="select_list_ims_jumei_vl_product" parameterType="batch.bi.JumeiProductBean" resultMap="jumeiProductMap">
+        select
+        channel_id,
+        task_id,
+        product_code,
+        jumei_product_name_cn,
+        jumei_product_name_en,
+        jumei_product_name_cn_real,
+        jumei_product_name_en_real,
+        cms_category_name,
+        jumei_category1,
+        jumei_category2,
+        jumei_category3,
+        jumei_category4,
+        cms_brand_name,
+        jumei_brand,
+        product_image1,
+        product_image2,
+        product_image3,
+        product_image4,
+        product_image5,
+        product_image6,
+        image_url_from1,
+        image_url_from2,
+        image_url_from3,
+        image_url_from4,
+        image_url_from5,
+        image_url_from6,
+        product_image_url_from1,
+        product_image_url_from2,
+        product_image_url_from3,
+        product_image_url_from4,
+        product_image_url_from5,
+        product_image_url_from6,
+        status
+        from test.ims_jumei_vl_product
+        <include refid="ims_jumei_vl_product_condition_fuzzy"/>
+        GROUP BY channel_id, task_id, product_code
+        ORDER BY channel_id, task_id, product_code
+    </select>
+
+    <!-- 获得ims_jumei_vl_sku数量 -->
+    <select id="ims_jumei_vl_sku_count" parameterType="batch.bi.JumeiSkuBean" resultType="int">
+        select
+        count(1)
+        from test.ims_jumei_vl_sku
+        <include refid="ims_jumei_vl_sku_condition_fuzzy"/>
+        ORDER BY channel_id, task_id, product_code
+    </select>
+
+    <!-- 获得ims_jumei_vl_sku数量 -->
+    <select id="select_list_ims_jumei_vl_sku" parameterType="batch.bi.JumeiSkuBean" resultMap="jumeiSkuMap">
+        select
+        channel_id,
+        task_id,
+        product_code,
+        sku,
+        cms_size,
+        jumei_size,
+        cms_color,
+        jumei_color,
+        cms_oversea_official_price,
+        trade_price,
+        market_price,
+        inventory,
+        status
+        from test.ims_jumei_vl_sku
+        <include refid="ims_jumei_vl_sku_condition_fuzzy"/>
+        GROUP BY channel_id, task_id, product_code, sku
+        ORDER BY channel_id, task_id, product_code, sku
+    </select>
+
+    <!-- 获得ims_jumei_vl_sku数量 -->
+    <select id="select_sku_ims_jumei_vl_sku" parameterType="Map" resultType="String">
+        select
+        sku
+        from test.ims_jumei_vl_sku
+        <include refid="ims_jumei_vl_sku_condition_fuzzy"/>
+        ORDER BY channel_id, task_id, product_code, sku
+    </select>
+
+    <!-- 获得ims_jumei_vl_deal数量 -->
+    <select id="ims_jumei_vl_deal_count" parameterType="batch.bi.JumeiDealBean" resultType="int">
+        select
+        count(1)
+        from test.ims_jumei_vl_deal
+        <include refid="ims_jumei_vl_deal_condition_fuzzy"/>
+        ORDER BY channel_id, task_id, product_code
+    </select>
+
+    <!-- 获得ims_jumei_vl_deal数量 -->
+    <select id="select_list_ims_jumei_vl_deal" parameterType="batch.bi.JumeiDealBean" resultMap="jumeiDealMap">
+        select
+        deal.channel_id,
+        deal.task_id,
+        deal.product_code,
+        deal.cms_brand_name,
+        deal.on_sale_time,
+        deal.off_list_time,
+        deal.delivery,
+        deal.limit_num,
+        deal.title_long,
+        deal.title_middle,
+        deal.title_short,
+        deal.cms_production_place,
+        deal.jumei_production_place,
+        deal.quality_period,
+        deal.applicable_crowd,
+        deal.special_description,
+        deal.custom_sear_label,
+        deal.cms_long_description,
+        deal.usage,
+        deal.detail,
+        product.product_image_url_from1,
+        product.product_image_url_from2,
+        product.product_image_url_from3,
+        product.product_image_url_from4,
+        product.product_image_url_from5,
+        product.product_image_url_from6,
+        deal.buy_process1,
+        deal.buy_process2,
+        deal.buy_process3,
+        deal.buy_process4,
+        deal.status
+        from test.ims_jumei_vl_deal AS deal
+        INNER JOIN test.ims_jumei_vl_product AS product
+        ON deal.channel_id = product.channel_id AND deal.task_id = product.task_id AND deal.product_code =
+        product.product_code
+        <include refid="ims_jumei_vl_deal_condition_fuzzy"/>
+        GROUP BY channel_id, task_id, product_code
+        ORDER BY channel_id, task_id, product_code
+    </select>
+
+    <insert id="insert_ims_jumei_product_added" parameterType="Map">
+        INSERT INTO test.ims_jumei_product_vl_added (
+        code,
+        name,
+        name_en,
+        brand,
+        category,
+        jumei_id,
+        jumei_status,
+        create_time,
+        create_user,
+        update_time,
+        update_user
+        )
+        VALUES
+        <foreach collection="value" item="JumeiProductBean" separator=",">
+            (
+            #{JumeiProductBean.code},
+            #{JumeiProductBean.name},
+            #{JumeiProductBean.nameEn},
+            #{JumeiProductBean.brand},
+            #{JumeiProductBean.category},
+            #{JumeiProductBean.jumeiId},
+            #{JumeiProductBean.status},
+            #{JumeiProductBean.createTime},
+            #{JumeiProductBean.createUser},
+            #{JumeiProductBean.updateTime},
+            #{JumeiProductBean.updateUser}
+            )
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        code=VALUES(code),
+        name=VALUES(name),
+        brand=VALUES(brand),
+        category=VALUES(category),
+        jumei_id=VALUES(jumei_id),
+        jumei_status=VALUES(jumei_status),
+        update_time=VALUES(update_time),
+        update_user=VALUES(update_user)
+    </insert>
+
+    <!-- 获得ims_jumei_product_vl_added的jumei_id数量 -->
+    <select id="select_jumeiid_ims_jumei_product_vl_added" parameterType="Map" resultType="String">
+        select
+        jumei_id
+        from test.ims_jumei_product_vl_added
+        <include refid="ims_jumei_product_vl_added_condition"/>
+    </select>
+
+    <insert id="insert_ims_jumei_vl_record" parameterType="batch.bi.JumeiRecordBean">
+		INSERT INTO test.ims_jumei_vl_record (
+		channel_id,
+		task_id,
+		product_code,
+		jumei_product_name_cn_real,
+		error_type_id,
+		error_message
+		)
+		VALUES
+		(
+		#{channel_id},
+		#{task_id},
+		#{product_code},
+		#{jumei_product_name_cn_real},
+		#{error_type_id},
+		#{error_message}
+		)
+		ON DUPLICATE KEY UPDATE
+		channel_id=VALUES(channel_id),
+		task_id=VALUES(task_id),
+		product_code=VALUES(product_code),
+		error_message=VALUES(error_message)
+	</insert>
+
+</mapper>

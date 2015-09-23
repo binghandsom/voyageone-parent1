@@ -1,0 +1,43 @@
+<div class="ngdialog-message" ng-init="initialize()">
+	<h3 class="mt0 p-sm border-bottom-1" translate="Edit Role"></h3>
+	<div class="popUpCons popEditUserCons2">
+		<div>
+			<div class="row row-pop row-flow">
+				<div class="col-md-12">
+					<form name="userRoleForm" id="userRoleForm">
+						<table class="table table-bordered">
+							<tbody>
+								<tr>
+									<th translate="GRID_TITLE_TXT_USER_MANATER_ROLE"></th>
+									<td><input type="text" id="role"
+										ng-model="popRole.role" class="form-control" required></td>
+								</tr>
+								<tr>
+									<th translate="default_view"></th>
+									<td><input type="text" id="default_view"
+								ng-model="popRole.default_view" class="form-control"></td>
+								</tr>
+								<tr>
+									<th translate="is_admin"></th>
+									<td><input type="checkbox" id="is_admin"
+									ng-model="popRole.is_admin" /></td>
+								</tr>
+								<tr>
+									<th translate="TITLE_TXT_ACTIVE"></th>
+									<td><input type="checkbox" id="active"
+										ng-model="popRole.active" /></td>
+								</tr>
+							<tbody>
+						</table>
+						<div class="text-right">
+							<button style="width: 70px" class="btn btn-primary"
+								ng-click="doOk()">Save</button>
+							<button class="btn btn-primary" ng-click="closeThisDialog()">Cancel</button>
+						</div>
+					</form>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,70 @@
+<!--Package 信息表格-->
+<div class="panel panel-primary">
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th translate="WMS_PACKAGENAME"></th>
+            <th translate="WMS_QTY"></th>
+            <th translate="WMS_LASTUPDATEUSER"></th>
+            <th translate="WMS_LASTUPDATETIME"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>{{ vm.package.transfer_package_name }}</td>
+            <td>{{ vm.package.transfer_package_qty }}</td>
+            <td>{{ vm.package.modifier }}</td>
+            <td>{{ vm.package.modified_local }}</td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="panel-footer">
+        <a href="javascript:" ng-hide="isPackageClosed()" ng-click="closePackage()" class="btn btn-sm btn-warning" translate="WMS_CLOSEPACKAGE"></a>
+        <a href="javascript:" ng-click="isEditingPackage(false)" class="btn btn-sm btn-info" translate="WMS_BACK"></a>
+    </div>
+</div>
+<!--Package Items 扫描按钮组 & Package Items 表格-->
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            Contents
+        </h3>
+    </div>
+    <!--Package Items 扫描按钮组-->
+    <div class="panel-body form-inline" ng-hide="isPackageClosed()">
+        <div class="input-group col-4">
+            <label for="transfer-item-barcode" class="input-group-addon" translate="WMS_SCAN"></label>
+            <input id="transfer-item-barcode" placeholder="scan or type, barcode" class="form-control" type="text" ng-model="vm.itemInput.code" enter-click="#item-accept"/>
+        </div>
+        <div class="input-group col-2">
+            <label for="item-num" class="input-group-addon" translate="WMS_QTY"></label>
+            <input id="item-num" class="form-control" type="text" ng-model="vm.itemInput.num" enter-click="#item-accept" maxlength="6" />
+        </div>
+        <button id="item-accept" class="btn btn-sm btn-primary" ng-click="acceptItem()" translate="WMS_ACCCEPT"></button>
+    </div>
+    <!--Package Items 表格-->
+    <div class="table-responsive">
+        <table if-no-rows="vm.packageItems" class="table table-bordered table-hover table-condensed">
+            <thead>
+            <tr>
+                <th class="col-fix-no">#</th>
+                <th translate="WMS_SKU"></th>
+                <th translate="WMS_BARCODE"></th>
+                <th translate="WMS_QTY"></th>
+                <th class="col-fix-op" translate="WMS_OPERATION"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="i in vm.packageItems">
+                <th class="col-fix-no" scope="row">{{ $index + 1 }}</th>
+                <td>{{ i.transfer_sku }}</td>
+                <td>{{ i.transfer_barcode }}</td>
+                <td>{{ i.transfer_qty }}</td>
+                <td class="col-fix-op">
+                    <button class="btn btn-xs btn-danger" ng-click="deleteItem($index)" ng-disabled="isPackageClosed()" translate="WMS_DELETE"></button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

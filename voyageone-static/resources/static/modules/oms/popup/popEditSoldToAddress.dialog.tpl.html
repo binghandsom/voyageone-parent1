@@ -1,0 +1,123 @@
+<div class="ngdialog-message">
+    <h3 class="mt0 p-sm border-bottom-1" translate="TXT_ORDER_SHIP_EDIT"></h3>
+    <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+    <form name="popForm" class="form-validate" novalidate="">
+        <div class="row">
+            <div class="col-xs-12 form-horizontal">
+                <div class="form-group mb-sm">
+                    <label class="col-xs-3 control-label"></label>
+
+                    <div class="col-xs-5 pl-sm pr-sm">
+                        <span class="label label-info " translate="TXT_ORDER_SOLD_TO"></span>
+                    </div>
+                    <div class="col-xs-4 pl-sm">
+                        <span class="label label-info " translate="TXT_OMS_CUSTOMER_INFORMATION"></span>
+                    </div>
+                </div>
+                <div class="form-group mb-sm">
+                    <label class="col-xs-3 control-label"><span translate="TXT_OMS_NAME"></span><span translate="COMMON_INPUT_MUST"></span></label>
+
+                    <div class="col-xs-5 pl-sm pr-sm">
+                        <input type="text" ng-model="soldToOrderInfo.name" class="form-control input-sm" required=""/>
+                    </div>
+                    <div class="col-xs-4 pl-sm">
+                        <span ng-bind="currentCustomerInfo.lastName" readonly="" class="form-control input-sm c_gray"></span>
+                    </div>
+                </div>
+                <div class="form-group mb-sm">
+                    <label class="col-xs-3 control-label" translate="TXT_OMS_EMAIL"></label>
+
+                    <div class="col-xs-5 pl-sm pr-sm">
+                        <input type="text" ng-model="soldToOrderInfo.email" class="form-control input-sm"/>
+                    </div>
+                    <div class="col-xs-4 pl-sm">
+                        <span ng-bind="currentCustomerInfo.email" readonly="" class="form-control input-sm c_gray"></span>
+                    </div>
+                </div>
+                <div class="form-group mb-sm">
+                    <label class="col-xs-3 control-label"><span translate="TXT_OMS_PHONE"></span><span translate="COMMON_INPUT_MUST"></span></label>
+
+                    <div class="col-xs-5 pl-sm pr-sm">
+                        <input type="text" ng-model="soldToOrderInfo.phone" class="form-control input-sm" required=""/>
+                    </div>
+                    <div class="col-xs-4 pl-sm">
+                        <span ng-bind="currentCustomerInfo.phone" readonly="" class="form-control input-sm c_gray"></span>
+                    </div>
+                </div>
+                <div class="form-group mb-sm">
+                    <label class="col-xs-3 control-label" translate="TXT_OMS_COMPANY"></label>
+
+                    <div class="col-xs-5 pl-sm pr-sm">
+                        <input type="text" ng-model="soldToOrderInfo.company" class="form-control input-sm"/>
+                    </div>
+                    <div class="col-xs-4 pl-sm">
+                        <span ng-bind="currentCustomerInfo.company" readonly="" class="form-control input-sm c_gray"></span>
+                    </div>
+                </div>
+                <div class="form-group mb-sm">
+                    <label class="col-xs-3 control-label"><span translate="TXT_OMS_ADDRESS_1"></span><span translate="COMMON_INPUT_MUST"></span></label>
+
+                    <div class="col-xs-5 pl-sm pr-sm">
+                        <textarea rows="2" ng-model="soldToOrderInfo.address" class="form-control input-sm no-resize" required=""/>
+                    </div>
+                    <div class="col-xs-4 pl-sm">
+                        <textarea rows="2" ng-bind="currentCustomerInfo.address" readonly="" class="form-control input-sm c_gray no-resize" />
+                    </div>
+                </div>
+                <div class="form-group mb-sm">
+                    <label class="col-xs-3 control-label" translate="TXT_OMS_ADDRESS_2"></label>
+
+                    <div class="col-xs-5 pl-sm pr-sm">
+                        <textarea rows="2" ng-model="soldToOrderInfo.address2" class="form-control input-sm no-resize"/>
+                    </div>
+                    <div class="col-xs-4 pl-sm">
+                        <textarea rows="2" ng-bind="currentCustomerInfo.address2" readonly="" class="form-control input-sm c_gray no-resize" />
+                    </div>
+                </div>
+                <div class="form-group mb-sm">
+                    <label class="col-xs-3 control-label"><span translate="TXT_OMS_CITY_STATE_ZIP"></span><span translate="COMMON_INPUT_MUST"></span></label>
+
+                    <div class="col-xs-2 pl-sm pr-sm">
+                        <input type="text" ng-model="soldToOrderInfo.city" class="form-control input-sm" required=""/>
+                    </div>
+                    <div class="col-xs-2 pl0 pr-sm">
+                        <input type="text" ng-model="soldToOrderInfo.state" class="form-control input-sm" required=""/>
+                    </div>
+                    <div class="col-xs-1 pl0 pr-sm">
+                        <input type="text" ng-model="soldToOrderInfo.zip" class="form-control input-sm" ng-pattern="/^[0-9]*$/"/>
+                    </div>
+                    <div class="col-xs-4 pl-sm">
+                        <span readonly="" class="form-control input-sm c_gray">{{currentCustomerInfo.city}}&nbsp;/&nbsp;{{currentCustomerInfo.state}}&nbsp;/&nbsp;{{currentCustomerInfo.zip}}</span>
+                    </div>
+                </div>
+                <div class="form-group mb-sm">
+                    <label class="col-xs-3 control-label"><span translate="TXT_OMS_COUNTRY"></span><span translate="COMMON_INPUT_MUST"></span></label>
+
+                    <div class="col-xs-5 pl-sm pr-sm">
+                        <select class="form-control input-sm" ng-model="soldToOrderInfo.country" ng-options="countryInfo.id as countryInfo.name for countryInfo in countryList" required=""></select>
+                    </div>
+                    <div class="col-xs-4 pl-sm">
+                        <span ng-bind="currentCustomerInfo.country" readonly="" class="form-control input-sm c_gray"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-sm">
+            <div class="col-xs-6 input-group col-xs-offset-6 ms-fr">
+                <span class="input-group-addon"><input type="checkbox" ng-model="soldToOrderInfo.copyToCustomer"></span>
+                <span class="form-control" translate="TXT_OMS_EDIT_SOLD_TO_COMMENT"></span>
+            </div>
+        </div>
+
+        <div class="row mt20">
+            <div class="col-xs-3 col-xs-offset-3">
+                <button class="btn btn-primary btn-sm form-control" translate="BUTTON_OK" ng-click="doOk()" ng-disabled="popForm.$invalid"></button>
+            </div>
+            <div class="col-xs-3">
+                <button class="btn btn-primary btn-sm form-control" translate="BUTTON_SUB_CANCEL" ng-click="doClose()"></button>
+            </div>
+        </div>
+    </form>
+
+</div>

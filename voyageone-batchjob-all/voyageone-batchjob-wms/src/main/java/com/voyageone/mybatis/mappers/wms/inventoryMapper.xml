@@ -1,0 +1,512 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.wms.sql">
+
+    <!-- 物理库存计算-->
+    <update id="wms_setPhysicsInventory" statementType="CALLABLE" parameterType="String">
+        call wms_setPhysicsInventory(#{order_channel_id})
+    </update>
+
+    <!-- 逻辑库存计算-->
+    <update id="wms_setLogicInventory" statementType="CALLABLE" parameterType="String">
+        call wms_setLogicInventory(#{order_channel_id})
+    </update>
+
+    <!-- 库存分配-->
+    <update id="wms_setAllotInventory" statementType="CALLABLE" parameterType="HashMap">
+        call wms_setAllotInventory(#{order_channel_id},#{row_count})
+    </update>
+
+    <!-- 错误的SKU记录取得-->
+    <select id="wms_selectErrorSkuInfo" resultType="com.voyageone.batch.wms.modelbean.AllotInventoryDetailBean">
+        SELECT
+          log_details.order_number,
+          log_details.item_number,
+          log_details.source_order_id,
+          log_details.order_channel_id,
+          log_details.product,
+          log_details.cart_id,
+          log_details.sku,
+          details.res_allot_flg,
+          details.res_id,
+          log_details.sku_error_flg
+        FROM
+          wms_bt_log_order_details log_details,
+          oms_bt_order_details details
+        WHERE
+          log_details.order_number = details.order_number
+        AND
+          log_details.item_number = details.item_number
+        AND
+          log_details.sku_error_flg = '1'
+        ORDER BY
+          log_details.order_channel_id,
+          log_details.cart_id,
+          log_details.order_number,
+          log_details.item_number
+    </select>
+
+    <select id="wms_selectInventoryExceptSynLogs" resultType="com.voyageone.batch.wms.modelbean.InventorySynLogBean">
+        SELECT
+            i.seq,
+            i.order_channel_id,
+            i.cart_id,
+            i.sku,
+            i.qty,
+            i.syn_flg,
+            i.syn_type,
+            i.modified,
+            i.modifier,
+            i.created,
+            i.creater
+        FROM
+            voyageone_ims.ims_bt_log_syn_inventory i
+        WHERE
+            i.order_channel_id = #{order_channel_id}
+        AND i.cart_id = #{cart_id}
+        AND i.syn_flg = #{syn_flg}
+        AND EXISTS (SELECT
+                      1
+                    FROM
+                      tm_task_control
+                    WHERE
+                      task_id = #{task_name}
+                    AND cfg_name = 'order_channel_id'
+                    AND cfg_val1 = #{order_channel_id})
+        AND EXISTS (SELECT
+                        1
+                      FROM
+                          voyageone_ims.ims_bt_product_except except
+                      WHERE
+                        except.order_channel_id = i.order_channel_id
+                      AND except.cart_id = i.cart_id
+                      AND except.except_sku = i.sku)
+    </select>
+
+    <select id="wms_selectInventorySynLogs" resultType="com.voyageone.batch.wms.modelbean.InventorySynLogBean">
+        SELECT
+            i.seq,
+            i.order_channel_id,
+            i.cart_id,
+            i.sku,
+            i.qty,
+            i.syn_flg,
+            i.syn_type,
+            i.modified,
+            i.modifier,
+            i.created,
+            i.creater,
+            d.barcode,
+            d.itemcode,
+            p.num_iid,
+            p.quantity_update_type
+        FROM
+            (SELECT
+                MAX(i.seq) seq
+            FROM
+                voyageone_ims.ims_bt_log_syn_inventory i
+            WHERE
+                i.order_channel_id = #{order_channel_id}
+                    AND i.cart_id = #{cart_id}
+                    AND i.syn_flg = #{syn_flg}
+                    AND EXISTS( SELECT
+                        1
+                    FROM
+                        tm_task_control
+                    WHERE
+                        task_id = #{task_name}
+                            AND cfg_name = 'order_channel_id'
+                            AND cfg_val1 = #{order_channel_id})
+            GROUP BY i.sku) ii
+                JOIN
+            voyageone_ims.ims_bt_log_syn_inventory i ON i.seq = ii.seq
+                JOIN
+            wms_bt_item_details d ON i.order_channel_id = d.order_channel_id
+                AND i.sku = d.sku
+                LEFT JOIN
+            voyageone_ims.ims_bt_product p ON i.order_channel_id = p.channel_id
+                AND i.cart_id = p.cart_id
+                AND d.itemcode = p.code
+             LIMIT #{limit};
+    </select>
+
+    <select id="wms_selectInventorySynLogsForTM" resultType="com.voyageone.batch.wms.modelbean.InventorySynLogBean">
+        SELECT
+            i.seq,
+            i.order_channel_id,
+            i.cart_id,
+            i.sku,
+            i.qty,
+            i.syn_flg,
+            i.syn_type,
+            i.modified,
+            i.modifier,
+            i.created,
+            i.creater,
+            d.barcode,
+            d.itemcode,
+            p.num_iid,
+            p.quantity_update_type
+        FROM
+            (SELECT
+              MAX(i.seq) seq
+            FROM
+                voyageone_ims.ims_bt_log_syn_inventory i
+            WHERE
+              i.order_channel_id = #{order_channel_id}
+            AND i.cart_id = #{cart_id}
+            AND i.syn_flg = #{syn_flg}
+            AND EXISTS( SELECT
+                          1
+                        FROM
+                          tm_task_control
+                        WHERE
+                          task_id = #{task_name}
+                        AND cfg_name = 'order_channel_id'
+                        AND cfg_val1 = #{order_channel_id})
+                        GROUP BY i.sku) ii
+        JOIN
+            voyageone_ims.ims_bt_log_syn_inventory i ON i.seq = ii.seq
+        JOIN
+            wms_bt_item_details d ON i.order_channel_id = d.order_channel_id
+        AND i.sku = d.sku
+        JOIN
+            voyageone_ims.ims_bt_product p ON i.order_channel_id = p.channel_id
+        AND i.cart_id = p.cart_id
+        AND d.itemcode = p.code
+        WHERE
+            ifnull(p.num_iid,'') != ''
+        LIMIT #{limit};
+    </select>
+
+    <delete id="wms_deleteInventorySynLog">
+        DELETE FROM
+          voyageone_ims.ims_bt_log_syn_inventory
+        WHERE
+          order_channel_id = #{order_channel_id}
+        AND
+          cart_id = #{cart_id}
+        AND
+          sku = #{sku}
+        AND
+          seq &lt;= #{seq};
+    </delete>
+
+    <insert id="wms_insertInventorySynLogHistory">
+        INSERT voyageone_ims.ims_bt_log_syn_inventory_history
+          ( order_channel_id, cart_id, sku, qty, syn_flg, syn_type, remarks, active, created, creater, modified, modifier )
+        VALUES
+            (
+            #{order_channel_id},
+            #{cart_id},
+            #{sku},
+            #{qty},
+            #{syn_flg},
+            #{syn_type},
+            #{remarks},
+            1,
+            #{created},
+            #{creater},
+            now(),
+            #{modifier}
+        );
+    </insert>
+
+    <select id="wms_getLogicInventory" resultType="com.voyageone.batch.wms.modelbean.ViwLogicInventoryBean">
+        SELECT
+            logic.code, logic.sku, logic.qty_china as qty_china_logic, logic.qty_orgin as qty_orgin_logic
+        FROM
+            wms_bt_inventory_center_logic logic
+        WHERE
+            logic.order_channel_id = #{order_channel_id}
+        AND EXISTS (SELECT
+                        1
+                      FROM
+                        tm_task_control
+                      WHERE
+                        task_id = #{task_name}
+                      AND cfg_name = 'order_channel_id'
+                      AND cfg_val1 = #{order_channel_id})
+        AND NOT EXISTS (SELECT
+                            1
+                          FROM
+                            voyageone_ims.ims_bt_product_except except
+                          WHERE
+                            except.order_channel_id = logic.order_channel_id
+                          AND except.cart_id = #{cart_id}
+                          AND except.except_sku = logic.sku);
+    </select>
+
+    <update id="wms_clearPhysicsInventoryByAll">
+        UPDATE
+            wms_bt_inventory_center
+        SET
+            qty = 0,
+            modified = now(),
+            modifier = #{task_name}
+        WHERE
+            order_channel_id = #{order_channel_id}
+        AND
+            store_id = #{store_id}
+    </update>
+
+    <update id="wms_clearPhysicsInventoryBySku">
+        UPDATE
+          wms_bt_inventory_center inventory,
+          wms_bt_transfer_item item
+        SET
+            inventory.qty = 0,
+            inventory.modified = now(),
+            inventory.modifier = #{task_name}
+        WHERE
+            inventory.order_channel_id = #{order_channel_id}
+        AND
+            inventory.store_id = #{store_id}
+        AND
+            item.transfer_id = #{transfer_id}
+        AND
+            item.transfer_item_id &lt;= #{transfer_item_id}
+        AND
+            item.syn_flg = '0'
+        AND
+            inventory.sku = item.transfer_sku
+    </update>
+
+    <insert id="wms_calcPhysicsInventory">
+        insert into wms_bt_inventory_center
+        (
+            order_channel_id,
+            store_id,
+            code,
+            sku,
+            qty,
+            is_shared,
+            active,
+            created,
+            creater,
+            modified,
+            modifier
+        )
+            select *
+            from (
+                 select #{order_channel_id} order_channel_id,
+                         #{store_id} store_id,
+                        itemdel.itemcode,
+                        syn.transfer_sku sku,
+                        if (syn.calc_qty  - #{client_inventory_hold} &lt; 0 , 0, syn.calc_qty - #{client_inventory_hold}) transfer_qty,
+                        '1' is_shared,
+                        1 active,
+                        now() createTime,
+                        #{task_name} creater,
+                        now() modifyTime,
+                        #{task_name} modifier
+                 from wms_bt_transfer_item syn,
+                       wms_bt_item_details itemdel
+                 where syn.transfer_id = #{transfer_id}
+                  and syn.transfer_item_id &lt;= #{transfer_item_id}
+                  and syn.syn_flg = '0'
+                  and syn.transfer_sku != ''
+                  and itemdel.order_channel_id = #{order_channel_id}
+                  and syn.transfer_sku = itemdel.sku
+             ) transfer
+        on duplicate key update
+            qty = qty + transfer.transfer_qty,
+            modified = now(),
+            modifier = #{task_name};
+    </insert>
+
+    <insert id="wms_calcPhysicsInventoryByIncrement">
+        insert into wms_bt_inventory_center
+        (
+            order_channel_id,
+            store_id,
+            code,
+            sku,
+            qty,
+            is_shared,
+            active,
+            created,
+            creater,
+            modified,
+            modifier
+        )
+            select *
+            from (
+                select #{order_channel_id} order_channel_id,
+                    #{store_id} store_id,
+                    itemdel.itemcode,
+                    syn.transfer_sku sku,
+                    sum(syn.calc_qty) transfer_qty,
+                    '1' is_shared,
+                    1 active,
+                    now() createTime,
+                    #{task_name} creater,
+                    now() modifyTime,
+                    #{task_name} modifier
+                from wms_bt_transfer_item syn,
+                    wms_bt_item_details itemdel
+                where syn.transfer_id = #{transfer_id}
+                and syn.transfer_item_id &lt;= #{transfer_item_id}
+                and syn.syn_flg = '0'
+                and syn.transfer_sku != ''
+                and itemdel.order_channel_id = #{order_channel_id}
+                and syn.transfer_sku = itemdel.sku
+                group by itemdel.itemcode,syn.transfer_sku
+            ) transfer
+        on duplicate key update
+        qty = qty + transfer.transfer_qty,
+        modified = now(),
+        modifier = #{task_name};
+    </insert>
+
+    <insert id="wms_insertNonexistentSku">
+        insert into wms_bt_inventory_history
+               (order_channel_id, store_id, code, sku, qty, history_time, active, created, creater, modified, modifier)
+        select order_channel_id, ifnull(store_id, 0), code, sku, ifnull(qty, 0), history_time, active, created, creater, modified, modifier
+          from (
+                 select details.order_channel_id,
+                        details.sku,
+                        details.itemcode code,
+                        #{calTimeS} history_time,
+                        '1' active,
+                        now() created,
+                        #{taskName} creater,
+                        now() modified,
+                        #{taskName} modifier
+                   from wms_bt_item_details details
+                  where details.order_channel_id = #{orderChannelId}
+                    and not exists (
+                                     select 1 from wms_bt_inventory_history t
+                                      where t.sku = details.sku
+                                        and t.order_channel_id = details.order_channel_id
+                                        and t.history_time = #{calTimeS}
+                                   )
+                ) details
+                inner join
+                (
+                  select transfer.order_channel_id channelId,
+                         transfer.store_id,
+                         item.transfer_sku,
+                         sum(item.calc_qty) qty
+                    from wms_bt_transfer transfer,
+                         wms_bt_transfer_item item
+                   where transfer.order_channel_id = #{orderChannelId}
+                     and transfer.created &lt; #{calTimeS}
+                     and transfer.transfer_id = item.transfer_id
+                   group by transfer.order_channel_id, item.transfer_sku, transfer.store_id
+                 ) transfer
+              on details.order_channel_id = transfer.channelId and details.sku = transfer.transfer_sku
+    </insert>
+
+    <insert id="wms_insertInvHis">
+        insert into wms_bt_inventory_history(order_channel_id, store_id, code, sku, qty, history_time, active, created, creater, modified, modifier)
+        select details.order_channel_id,
+               ifnull(calcTable.store_id, 0),
+               details.itemCode,
+               details.sku,
+               ifnull(calcTable.qty, 0),
+               #{calTimeE} histime,
+               '1' active,
+               now() created,
+               #{taskName} creater,
+               now() modified,
+               #{taskName} modifier
+          from wms_bt_item_details details
+          inner join (
+                      select order_channel_id, store_id, transfer_sku, sum(qty) qty
+                        from (
+                               select transfer.order_channel_id, transfer.store_id, item.transfer_sku, item.calc_qty qty
+                                 from wms_bt_transfer transfer,
+                                      wms_bt_transfer_item item
+                                where transfer.order_channel_id = #{orderChannelId}
+                                  and transfer.created &lt; #{calTimeE}
+                                  and transfer.created &gt;=  #{calTimeS}
+                                  and transfer.transfer_id = item.transfer_id
+                                union ALL
+                               select t.order_channel_id, t.store_id, t.sku, t.qty
+                                 from wms_bt_inventory_history t
+                                where t.order_channel_id = #{orderChannelId}
+                                  and t.store_id != 0
+                                  and t.history_time = #{calTimeS}
+                             ) tempTable
+                      group by order_channel_id, transfer_sku, store_id
+                    ) calcTable
+            on details.order_channel_id = calcTable.order_channel_id and details.sku = calcTable.transfer_sku
+         where details.order_channel_id = #{orderChannelId}
+           and not exists(
+                           select 1 from wms_bt_inventory_history t
+                            where t.history_time = #{calTimeE}
+                         )
+    </insert>
+
+    <update id="wms_truncateInventorySynTable">
+        DELETE FROM wms_bt_inventory_center_logic_syn
+    </update>
+
+    <update id="wms_updateBackOrder">
+        UPDATE
+            wms_bt_backorder backorder,
+            wms_bt_transfer transfer
+        SET
+            backorder.active = '0',
+            backorder.modified = now(),
+            backorder.modifier = #{task_name}
+        WHERE
+            transfer.transfer_id = #{transfer_id}
+        AND
+            backorder.order_channel_id = transfer.order_channel_id
+        AND
+            backorder.store_id = transfer.store_id
+        AND
+            backorder.active = '1'
+        AND
+            exists (SELECT 1
+                      FROM
+                          wms_bt_transfer_item item
+                     WHERE
+                         item.transfer_id = #{transfer_id}
+                      AND
+                         item.transfer_item_id &lt;= #{transfer_item_id}
+                      AND
+                         item.transfer_sku = backorder.sku
+                      AND
+                         item.calc_qty > 0);
+    </update>
+
+    <select id="wms_selectInventoryHistorySynLog" resultType="com.voyageone.batch.wms.modelbean.InventorySynLogBean">
+        select
+            max(i.seq) seq,
+            i.order_channel_id,
+            i.cart_id,
+            i.sku,
+            i.qty,
+            i.syn_flg,
+            i.syn_type,
+            i.modified,
+            i.modifier,
+            i.created,
+            i.creater
+        FROM
+            voyageone_ims.ims_bt_log_syn_inventory i,
+            (select order_channel_id,
+                    cart_id,sku,
+                    max(seq) seq
+            from voyageone_ims.ims_bt_log_syn_inventory
+            where order_channel_id = #{order_channel_id}
+            and cart_id = #{cart_id}
+            and syn_flg = #{syn_flg}
+            group by order_channel_id,cart_id,sku) ii
+        where
+            i.order_channel_id = ii.order_channel_id
+        and
+            i.cart_id = ii.cart_id
+        and
+            i.sku = ii.sku
+        and
+            i.syn_flg = #{syn_flg}
+        and
+            i.seq &lt; ii.seq
+        group by i.order_channel_id,i.cart_id,i.sku
+        LIMIT #{limit};
+    </select>
+</mapper>

@@ -1,0 +1,49 @@
+<div ng-controller='feedDefaultPropSettingController'
+	ng-init="getDefaultProps()"
+	class="ng-pristine category-search ng-valid" ng-cloak="">
+	<div class="bg-light lter b-b wrapper-md vo_page_header clearfix">
+		<div class="row">
+			<div class="vo_page_title col-sm-4">
+				<h1 class="m-n font-thin h3 text-vo">默认属性值设定</h1>
+			</div>
+		</div>
+
+	</div>
+	<div class="wrapper-md">
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="panel panel-default">
+					<div class="categoryList">
+						<fieldset ng-repeat="comProp in defaultPropList" ng-class="comProp.ngClass">
+							<legend>{{comProp.propName}}</legend>
+							<div
+								ng-if="comProp.propType === inputType.INPUT||comProp.propType === inputType.lABEL" >
+								<label>{{comProp.propName}}:&nbsp;</label><input
+									ng-mousedown="openValueSetPopup(comProp)" type="text"
+									ng-model="comProp.propValue" />
+							</div>
+							<div ng-if="comProp.propType === inputType.SINGLECHECK">
+								<label ng-repeat="option in comProp.options"> <input
+									type="radio" ng-model="comProp.propValue"
+									ng-value="option.optionValue" />{{option.optionName}}
+								</label>
+							</div>
+							<div ng-if="comProp.propType === inputType.MULTICHECK">
+								<label ng-repeat="option in comProp.options"> <input
+									type="checkbox" ng-model="comProp.propValue"
+									ng-true-value="option.optionValue" />{{option.optionName}}
+								</label>
+							</div>
+						</fieldset>
+					</div>
+				</div>
+				<div>
+					<button class="btn btn-vo pull-right" ng-if="isUpdate" type="button"
+						ng-click="submit(defaultPropList)">更新</button>
+					<button class="btn btn-vo pull-right" ng-if="!isUpdate" type="button"
+						ng-click="submit(defaultPropList)">提交</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

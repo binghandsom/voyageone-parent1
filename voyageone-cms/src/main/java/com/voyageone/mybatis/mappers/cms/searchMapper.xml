@@ -1,0 +1,599 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.cms.sql" >
+
+  <resultMap id="SearchCategoryResultMap" type="HashMap" >
+    <result column="category_id" property="categoryId" jdbcType="VARCHAR" />
+    <result column="channel_id" property="channelId" jdbcType="VARCHAR" />
+    <result column="cn_name" property="cnName" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="is_effective" property="isEffective" javaType="BOOLEAN" jdbcType="BOOLEAN" />
+    <result column="subCategoryCount" property="subCategoryCount" jdbcType="VARCHAR" />
+    <result column="modelCount" property="modelCount" jdbcType="VARCHAR" />
+    <result column="parent_category_id" property="parentCategoryId" jdbcType="VARCHAR" />
+    <result column="parentCategoryName" property="parentCategoryName" jdbcType="VARCHAR" />
+    <result column="created" property="created" jdbcType="VARCHAR" />
+    <result column="modified" property="modified" jdbcType="VARCHAR" />
+  </resultMap>
+	<select id="search_category" resultMap="SearchCategoryResultMap" parameterType="HashMap">
+	SELECT
+		t1.category_id, 
+		t1.channel_id,
+		t1.cn_name,
+		t1.name,
+		t1.is_effective,
+		IFNULL(t2.subCategoryCount, 0) AS subCategoryCount,
+		IFNULL(t3.modelCount, 0) AS modelCount,
+		t4.parent_category_id,
+		t4.name as parentCategoryName,
+		t1.created,
+		t1.modified
+	FROM
+		(
+			SELECT
+				a.category_id,
+				a.channel_id,
+				a.cn_name,
+				b.`name`,
+				b.is_effective,
+				date_format(b.created,'%Y-%m-%d %T' ) as created, 
+				date_format(b.modified,'%Y-%m-%d %T' ) as modified
+			FROM
+				cms_bt_cn_category AS a
+			INNER JOIN cms_bt_category AS b ON a.category_id = b.category_id
+			AND a.channel_id = b.channel_id
+			WHERE
+				(
+					a.cn_name LIKE CONCAT('%','${key}','%' )  
+					OR b.name LIKE CONCAT('%','${key}','%' )
+				)
+			AND a.channel_id = #{channelId}
+			<if test="start != null and length != null">
+			LIMIT #{start}, #{length}
+			</if>
+		) t1
+	LEFT JOIN (
+		SELECT
+			c.parent_category_id,
+			count(c.parent_category_id) AS subCategoryCount
+		FROM
+			cms_bt_relation_category c
+		WHERE
+			c.channel_id = #{channelId}
+		GROUP BY
+			c.parent_category_id
+	) t2 ON t1.category_id = t2.parent_category_id
+	LEFT JOIN (
+		SELECT
+			d.category_id,
+			count(d.model_id) AS modelCount
+		FROM
+			cms_bt_relation_category_model d
+		WHERE
+			d.channel_id = #{channelId}
+		GROUP BY
+			d.category_id
+	) t3 ON t1.category_id = t3.category_id
+	Left join(
+			SELECT
+			c.category_id,
+			c.parent_category_id,
+			d.name
+		FROM
+			cms_bt_relation_category c
+			left join cms_bt_category d on c.parent_category_id = d.category_id and c.channel_id = d.channel_id
+		WHERE
+			c.channel_id =#{channelId}
+		
+		)t4 on t4.category_id = t1.category_id
+	</select>	
+	<select id="search_category_count" resultType="Integer"  parameterType="HashMap">
+		SELECT
+			count(1)
+		FROM
+			cms_bt_cn_category AS a
+		INNER JOIN cms_bt_category AS b ON a.category_id = b.category_id
+		AND a.channel_id = b.channel_id
+		WHERE
+			(
+				a.cn_name LIKE CONCAT('%','${key}','%' )  
+				OR b.name LIKE CONCAT('%','${key}','%' )
+			)
+		AND a.channel_id = #{channelId}
+	</select>
+  <resultMap id="SearchModelResultMap" type="HashMap" >
+  	<result column="model" property="model" jdbcType="VARCHAR" />
+    <result column="model_id" property="modelId" jdbcType="VARCHAR" />
+    <result column="channel_id" property="channelId" jdbcType="VARCHAR" />
+    <result column="cn_name" property="cnName" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="is_effective" property="isEffective" javaType="BOOLEAN" jdbcType="BOOLEAN" />
+    <result column="url_key" property="urlKey" jdbcType="VARCHAR" />
+    <result column="productCount" property="productCount" jdbcType="VARCHAR" />
+    <result column="category_id" property="primaryCategoryId" jdbcType="VARCHAR" />
+    <result column="image_name" property="imageName" jdbcType="VARCHAR" />
+    <result column="product_id" property="primaryProductId" jdbcType="VARCHAR" />
+    <result column="code" property="primaryProductCode" jdbcType="VARCHAR" />
+    <result column="created" property="created" jdbcType="VARCHAR" />
+    <result column="modified" property="modified" jdbcType="VARCHAR" />
+  </resultMap>	
+	<select id="search_model" resultMap="SearchModelResultMap" parameterType="HashMap">
+	SELECT
+		t1.*, ifnull(t2.productCount,0) as productCount,
+		t3.category_id,
+		ifnull(t4.code,'') as code,
+		ifnull(t4.product_id,'') as product_id,
+		ifnull(t4.image_name,'') as image_name,
+		t1.created,
+		t1.modified
+	FROM
+		(
+			SELECT
+				b.model,
+				b.model_id,
+				b.channel_id,
+				b.`name`,
+				a.cn_name,
+				a.url_key,
+				b.is_effective,
+				date_format(b.created,'%Y-%m-%d %T' ) as created, 
+				date_format(b.modified,'%Y-%m-%d %T' ) as modified
+			FROM
+				cms_bt_cn_model AS a
+			INNER JOIN cms_bt_model AS b ON a.model_id = b.model_id
+			AND a.channel_id = b.channel_id
+			WHERE
+				(
+					a.cn_name LIKE CONCAT('%','${key}','%' )
+					OR b.name LIKE CONCAT('%','${key}','%' )
+					OR b.model LIKE CONCAT('%','${key}','%' )
+				)
+			AND a.channel_id = #{channelId}
+			<if test="start != null and length != null">
+			LIMIT #{start}, #{length}
+			</if>
+		) t1
+	LEFT JOIN (
+		SELECT
+			c.model_id,
+			count(c.product_id) AS productCount
+		FROM
+			cms_bt_relation_model_product c
+		WHERE
+			c.channel_id = #{channelId}
+		GROUP BY
+			c.model_id
+	) t2 ON t1.model_id = t2.model_id
+	LEFT JOIN (
+		SELECT
+			d.category_id,
+			d.model_id
+		FROM
+			cms_bt_relation_category_model d
+		WHERE
+			d.channel_id = #{channelId}
+	) t3 ON t1.model_id = t3.model_id 
+	LEFT JOIN (
+		SELECT
+			e.model_id,
+			e.product_id,
+			f.image_name,
+			g.code
+		FROM
+			cms_bt_relation_model_product e 
+			left join cms_bt_product_image f on e.product_id = f.product_id and e.channel_id=f.channel_id
+			left join cms_bt_cn_product g on e.product_id = g.product_id and e.channel_id=g.channel_id
+		WHERE
+			e.is_primary_product = 1
+			AND e.channel_id = #{channelId}
+			and f.image_type_id =1 
+			and f.image_id = 1
+	) t4 on t4.model_id = t1.model_id
+	</select>
+	<select id="search_model_count" resultType="Integer"  parameterType="HashMap">
+		SELECT
+			count(1)
+		FROM
+			cms_bt_cn_model AS a
+		INNER JOIN cms_bt_model AS b ON a.model_id = b.model_id
+		AND a.channel_id = b.channel_id
+		WHERE
+			(
+				a.cn_name LIKE CONCAT('%','${key}','%' )
+				OR b.name LIKE CONCAT('%','${key}','%' )
+				OR b.model LIKE CONCAT('%','${key}','%' )
+			)
+		AND a.channel_id = #{channelId}
+	</select>
+	<resultMap id="SearchProductResultMap" type="HashMap" >
+    <result column="model_id" property="modelId" jdbcType="VARCHAR" />
+    <result column="channel_id" property="channelId" jdbcType="VARCHAR" />
+    <result column="cn_name" property="cnName" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="is_effective" property="isEffective" javaType="BOOLEAN" jdbcType="BOOLEAN" />
+    <result column="is_outlets_on_sale" property="isOnSale" javaType="BOOLEAN" jdbcType="CHAR" />
+    <result column="url_key" property="urlKey" jdbcType="VARCHAR" />
+    <result column="modelCnName" property="modelCnName" jdbcType="VARCHAR" />
+    <result column="modelName" property="modelName" jdbcType="VARCHAR" />
+    <result column="model" property="model" jdbcType="VARCHAR" />
+    <result column="category_id" property="primaryCategoryId" jdbcType="VARCHAR" />
+    <result column="product_id" property="productId" jdbcType="VARCHAR" />
+    <result column="modified" property="modified" jdbcType="VARCHAR" />
+    <result column="created" property="created" jdbcType="VARCHAR" />
+    <result column="color" property="color" jdbcType="VARCHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="cn_color" property="cnColor" jdbcType="VARCHAR" />
+    <result column="image_name" property="imageName" jdbcType="VARCHAR" />
+    <result column="quantity" property="quantity" jdbcType="VARCHAR" />
+  </resultMap>	
+	<select id="search_product" resultMap="SearchProductResultMap" parameterType="HashMap">
+		SELECT
+		t.product_id,
+		t.channel_id,
+		t.name,
+		t.cn_name,
+		t.color,
+		t.code,
+		t.cn_color,
+		t.url_key,
+		t.is_effective,
+		t.is_outlets_on_sale,
+		date_format(t.created,'%Y-%m-%d %T' ) as created, 
+		date_format(t.modified,'%Y-%m-%d %T' ) as modified,
+		c.model_id,
+		d.cn_name as modelCnName,
+		e.name as modelName,
+		e.model,
+		f.category_id,
+		ifnull(g.image_name,'') as image_name,
+		sum(ifnull(h.qty_china,'0')) as quantity
+		FROM
+		(
+		SELECT 
+			a.product_id,
+			a.channel_id,
+			b.`name`,
+			a.cn_name,
+			a.cn_color,
+			b.color,
+			b.`code`,
+			b.is_effective,
+			b.is_outlets_on_sale,
+			a.url_key,
+			b.created,
+			b.modified
+		from
+		cms_bt_cn_product AS a
+		INNER JOIN cms_bt_product AS b ON a.product_id = b.product_id AND a.channel_id = b.channel_id
+				WHERE
+					(
+						a.cn_name LIKE CONCAT('%','${key}','%' )
+						OR b.name LIKE CONCAT('%','${key}','%' )
+						OR b.code LIKE CONCAT('%','${key}','%' )
+					)
+				AND a.channel_id = #{channelId}
+			<if test="start != null and length != null">
+			LIMIT #{start}, #{length}
+			</if>
+		) t
+		LEFT JOIN cms_bt_relation_model_product AS c ON t.channel_id = c.channel_id AND t.product_id = c.product_id
+		LEFT JOIN cms_bt_cn_model AS d ON c.channel_id = d.channel_id AND c.model_id = d.model_id
+		LEFT JOIN cms_bt_model AS e ON d.model_id = e.model_id AND d.channel_id = e.channel_id
+		LEFT JOIN cms_bt_relation_category_model AS f ON e.model_id = f.model_id AND e.channel_id = f.channel_id
+		LEFT JOIN cms_bt_product_image g on t.product_id = g.product_id and t.channel_id=g.channel_id
+				and g.image_type_id =1 
+				and g.image_id = 1
+		LEFT JOIN Synship.wms_bt_inventory_center_logic h on h.order_channel_id = t.channel_id and t.code = h.code
+		GROUP BY t.code
+	</select>
+	<select id="search_product_count" resultType="Integer"  parameterType="HashMap">
+		SELECT 
+			count(1)
+		from
+		cms_bt_cn_product AS a
+		INNER JOIN cms_bt_product AS b ON a.product_id = b.product_id AND a.channel_id = b.channel_id
+				WHERE
+					(
+						a.cn_name LIKE CONCAT('%','${key}','%' )
+						OR b.name LIKE CONCAT('%','${key}','%' )
+						OR b.code LIKE CONCAT('%','${key}','%' )
+					)
+		AND a.channel_id = #{channelId}
+	</select>
+ 	<resultMap type="HashMap" id="AdvanceSearchResultMap">
+ 	 <result column="category_id" property="categoryId"/>
+  	 <result column="model_id" property="modelId"/>
+     <result column="product_id" property="productId"/>
+     <result column="channel_id" property="channelId"/>
+     <result column="code" property="code"/>
+     <result column="cn_name" property="cnName" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="cn_display_order" property="cnDisplayOrder" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="product_type_name" property="productType" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="brand_name" property="brand" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="size_type_name" property="cnSizeType" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="is_approved_description" property="isApprovedDescription"  javaType="BOOLEAN" jdbcType="BOOLEAN" />
+     <result column="is_effective" property="isEffective"  javaType="BOOLEAN" jdbcType="BOOLEAN" />
+     <result column="color_name" property="colorMap" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="cn_color" property="cnColor" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="madeInCountry" property="madeInCountry" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="materialFabric1" property="materialFabric1" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="materialFabric2" property="materialFabric2" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="materialFabric3" property="materialFabric3" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="cnLongDescription" property="cnLongDescription" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="cnShortDescription" property="cnShortDescription" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="urlKey" property="urlKey" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="created" property="created" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="modified" property="modified" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="referenceMsrp" property="referenceMsrp" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="referencePrice" property="referencePrice" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="firstSalePrice" property="firstSalePrice" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="cnPrice" property="cnPrice" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="effectivePrice" property="effectivePrice" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="cnPriceRmb" property="cnPriceRmb" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="cnPriceAdjustmentRmb" property="cnPriceAdjustmentRmb" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="cnPriceFinalRmb" property="cnPriceFinalRmb" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="cnIsOnSale" property="cnIsOnSale" javaType="BOOLEAN" jdbcType="BOOLEAN" />
+     <result column="cnIsApproved" property="cnIsApproved" javaType="BOOLEAN" jdbcType="BOOLEAN" />
+     <result column="cnPublishStatus" property="cnPublishStatus" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="cnNumIid" property="cnNumIid" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="cnPublishFaildComment" property="cnPublishFaildComment" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+	 <result column="cnOfficialPriceAdjustmentRmb" property="cnOfficialPriceAdjustmentRmb" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="cnOfficialPriceFinalRmb" property="cnOfficialPriceFinalRmb" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="cnOfficialFreeShippingType" property="cnOfficialFreeShippingType" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="cnOfficialIsOnSale" property="cnOfficialIsOnSale" javaType="BOOLEAN" jdbcType="BOOLEAN"/>
+     <result column="cnOfficialIsApproved" property="cnOfficialIsApproved" javaType="BOOLEAN" jdbcType="BOOLEAN"/>
+     <result column="cnOfficialPrePublishDateTime" property="cnOfficialPrePublishDateTime" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="cnOfficialPublishStatus" property="cnOfficialPublishStatus" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="cnOfficialNumIid" property="cnOfficialNumIid" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="cnOfficialPublishFaildComment" property="cnOfficialPublishFaildComment" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="tbPriceAdjustmentRmb" property="tbPriceAdjustmentRmb" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="tbPriceFinalRmb" property="tbPriceFinalRmb" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="tbFreeShippingType" property="tbFreeShippingType" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="tbIsOnSale" property="tbIsOnSale" javaType="BOOLEAN" jdbcType="BOOLEAN" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="tbIsApproved" property="tbIsApproved" javaType="BOOLEAN" jdbcType="BOOLEAN" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="tbPrePublishDateTime" property="tbPrePublishDateTime" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="tbPublishStatus" property="tbPublishStatus" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="tbNumIid" property="tbNumIid" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="tbPublishFaildComment" property="tbPublishFaildComment" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="tmPriceAdjustmentRmb" property="tmPriceAdjustmentRmb" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="tmPriceFinalRmb" property="tmPriceFinalRmb" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="tmFreeShippingType" property="tmFreeShippingType" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="tmIsOnSale" property="tmIsOnSale" javaType="BOOLEAN" jdbcType="BOOLEAN"/>
+     <result column="tmIsApproved" property="tmIsApproved" javaType="BOOLEAN" jdbcType="BOOLEAN"/>
+     <result column="tmPrePublishDateTime" property="tmPrePublishDateTime" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="tmPublishStatus" property="tmPublishStatus" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="tmNumIid" property="tmNumIid" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="tmPublishFaildComment" property="tmPublishFaildComment" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="tgPriceAdjustmentRmb" property="tgPriceAdjustmentRmb" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="tgPriceFinalRmb" property="tgPriceFinalRmb" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="tgFreeShippingType" property="tgFreeShippingType" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="tgIsOnSale" property="tgIsOnSale" javaType="BOOLEAN" jdbcType="BOOLEAN"/>
+     <result column="tgIsApproved" property="tgIsApproved" javaType="BOOLEAN" jdbcType="BOOLEAN"/>
+     <result column="tgPrePublishDateTime" property="tgPrePublishDateTime" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="tgPublishStatus" property="tgPublishStatus" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="tgNumIid" property="tgNumIid" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="tgPublishFaildComment" property="tgPublishFaildComment" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="jdPriceAdjustmentRmb" property="jdPriceAdjustmentRmb" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="jdPriceFinalRmb" property="jdPriceFinalRmb" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="jdFreeShippingType" property="jdFreeShippingType" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="jdIsOnSale" property="jdIsOnSale" javaType="BOOLEAN" jdbcType="BOOLEAN"/>
+     <result column="jdIsApproved" property="jdIsApproved" javaType="BOOLEAN" jdbcType="BOOLEAN"/>
+     <result column="jdPrePublishDateTime" property="jdPrePublishDateTime" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="jdPublishStatus" property="jdPublishStatus" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="jdNumIid" property="jdNumIid" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="jdPublishFaildComment" property="jdPublishFaildComment" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="jgPriceAdjustmentRmb" property="jgPriceAdjustmentRmb" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="jgPriceFinalRmb" property="jgPriceFinalRmb" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="jgFreeShippingType" property="jgFreeShippingType" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="jgIsOnSale" property="jgIsOnSale" javaType="BOOLEAN" jdbcType="BOOLEAN" />
+     <result column="jgIsApproved" property="jgIsApproved" javaType="BOOLEAN" jdbcType="BOOLEAN"/>
+     <result column="jgPrePublishDateTime" property="jgPrePublishDateTime" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>    
+     <result column="jgPublishStatus" property="jgPublishStatus" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="jgNumIid" property="jgNumIid" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="jgPublishFaildComment" property="jgPublishFaildComment" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/> 
+     <result column="image_name" property="productImgUrl" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     <result column="quantity" property="quantity" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+     </resultMap>	
+	<select id="advance_search" resultMap="AdvanceSearchResultMap" parameterType="HashMap">
+	SELECT
+		a.category_id,
+		a.model_id,
+		a.product_id,
+		a.channel_id,
+		a.CODE,
+		ifnull(a.cn_name,'') as cn_name,
+		a.cn_display_order,
+		a.product_type_name,
+		a.brand_name,
+		a.size_type_name,
+		a.is_approved_description,
+		a.is_effective,
+		a.color_name,
+		a.cn_color,
+		a.madeInCountry,
+		a.materialFabric1,
+		a.materialFabric2,
+		a.materialFabric3,
+		a.cnAbstract,
+		a.cnShortDescription,
+		a.cnLongDescription,
+		a.urlKey,
+		a.created,
+		a.modified,
+		a.referenceMsrp,
+		a.referencePrice,		
+		a.firstSalePrice,
+		a.cnPrice,
+		a.effectivePrice,
+		a.cnPriceRmb,
+		a.cnPriceAdjustmentRmb,
+		a.cnPriceFinalRmb,
+		a.cnIsOnSale,
+		a.cnIsApproved,
+		case a.cnPublishStatus
+		when 0 then 'Pending'
+		when 1 then 'Success'
+		when 2 then 'Faild'
+		else a.cnPublishStatus 
+		end as cnPublishStatus,
+		a.cnNumIid,
+		a.cnPublishFaildComment,
+		a.cnOfficialPriceAdjustmentRmb,
+		a.cnOfficialPriceFinalRmb,
+		a.cnOfficialFreeShippingType,
+		a.cnOfficialIsOnSale,
+		a.cnOfficialIsApproved,
+		a.cnOfficialPrePublishDateTime,
+		case a.cnOfficialPublishStatus
+		when 0 then 'Pending'
+		when 1 then 'Success'
+		when 2 then 'Faild'
+		else a.cnOfficialPublishStatus
+		end as cnOfficialPublishStatus,
+		a.cnOfficialNumIid,
+		a.cnOfficialPublishFaildComment,
+		a.tbPriceAdjustmentRmb,
+		a.tbPriceFinalRmb,
+		a.tbFreeShippingType,
+		a.tbIsOnSale,
+		a.tbIsApproved,
+		a.tbPrePublishDateTime,
+		case a.tbPublishStatus
+		when 0 then 'Pending'
+		when 1 then 'Success'
+		when 2 then 'Faild'
+		else a.tbPublishStatus
+		end as tbPublishStatus,
+		a.tbNumIid,
+		a.tbPublishFaildComment,
+		a.tmPriceAdjustmentRmb,
+		a.tmPriceFinalRmb, 
+		a.tmFreeShippingType,
+		a.tmIsOnSale,
+		a.tmIsApproved,
+		a.tmPrePublishDateTime,
+		case a.tmPublishStatus
+		when 0 then 'Pending'
+		when 1 then 'Success'
+		when 2 then 'Faild'
+		else a.tmPublishStatus
+		end as tmPublishStatus,
+		a.tmNumIid,
+		a.tmPublishFaildComment,
+		a.tgPriceAdjustmentRmb,
+		a.tgPriceFinalRmb,
+		a.tgFreeShippingType,
+		a.tgIsOnSale,
+		a.tgIsApproved,
+		a.tgPrePublishDateTime,
+		case a.tgPublishStatus
+		when 0 then 'Pending'
+		when 1 then 'Success'
+		when 2 then 'Faild'
+		else a.tgPublishStatus
+		end as tgPublishStatus,
+		a.tgNumIid,
+		a.tgPublishFaildComment,
+		a.jdPriceAdjustmentRmb,
+		a.jdPriceFinalRmb,
+		a.jdFreeShippingType,
+		a.jdIsOnSale,
+		a.jdIsApproved,
+		a.jdPrePublishDateTime,
+		case a.jdPublishStatus
+		when 0 then 'Pending'
+		when 1 then 'Success'
+		when 2 then 'Faild'
+		else a.jdPublishStatus
+		end as jdPublishStatus,
+		a.jdNumIid,
+		a.jdPublishFaildComment,
+		a.jgPriceAdjustmentRmb,
+		a.jgPriceFinalRmb,
+		a.jgFreeShippingType,
+		a.jgIsOnSale,
+		a.jgIsApproved,
+		case a.jgPublishStatus
+		when 0 then 'Pending'
+		when 1 then 'Success'
+		when 2 then 'Faild'
+		else a.jgPublishStatus
+		end as jgPublishStatus,
+		a.jgNumIid,
+		a.jgPublishFaildComment,
+		a.jgPrePublishDateTime,
+		a.image_name,
+		SUM(IFNULL(t2.qty_china,0)) as quantity
+	FROM
+		(
+			SELECT
+				r.product_id,
+				r.channel_id
+			FROM
+				cms_bt_cn_product_share r 
+				<if test="publishStatus != null and publishStatus != ''">
+				left join voyageone_ims.ims_bt_product s on r.product_id = s.product_id and r.channel_id = s.channel_id and r.cart_id = s.cart_id
+				</if>
+				<if test="isApprovedDescription != null and isApprovedDescription != ''">
+				left join cms_bt_cn_product t on r.product_id = t.product_id and r.channel_id = t.channel_id
+				</if>
+			WHERE
+				r.channel_id = #{channelId}
+				<if test="isOnSale != null and isOnSale != ''">
+				AND r.is_on_sale = #{isOnSale}
+				</if>
+				<if test="cartId != null and cartId != ''">
+				AND r.cart_id = #{cartId}
+				</if>
+				<if test="isApproved != null and isApproved != ''">
+				AND r.is_approved = #{isApproved}
+				</if>
+				<if test="publishStatus != null and publishStatus != ''">
+				AND s.publish_status = #{publishStatus}
+				</if>
+				<if test="isApprovedDescription != null and isApprovedDescription != ''">
+				AND t.cn_is_approved_description = #{isApprovedDescription}
+				</if>					
+			GROUP BY r.product_id, r.channel_id
+			<if test="start != null and length != null">
+			LIMIT #{start}, #{length}
+			</if>
+		) t1
+	LEFT JOIN view_cn_product_info_list a ON t1.channel_id = a.channel_id AND t1.product_id = a.product_id
+	LEFT JOIN Synship.wms_bt_inventory_center_logic t2 ON t2.code = a.CODE and t2.order_channel_id = a.channel_id 
+		GROUP BY a.CODE,a.channel_id 
+	</select>
+	<select id="advance_search_count" resultType="Integer"  parameterType="HashMap">
+		select count(1) from 
+		(SELECT
+			r.product_id
+		FROM
+			cms_bt_cn_product_share r 
+			<if test="publishStatus != null and publishStatus != ''">
+			left join voyageone_ims.ims_bt_product s on r.product_id = s.product_id and r.channel_id = s.channel_id and r.cart_id = s.cart_id
+			</if>
+			<if test="isApprovedDescription != null and isApprovedDescription != ''">
+			left join cms_bt_cn_product t on r.product_id = t.product_id and r.channel_id = t.channel_id
+			</if>
+		WHERE
+			r.channel_id = #{channelId}
+			<if test="isOnSale != null and isOnSale != ''">
+			AND r.is_on_sale = #{isOnSale}
+			</if>
+			<if test="cartId != null and cartId != ''">
+			AND r.cart_id = #{cartId}
+			</if>
+			<if test="isApproved != null and isApproved != ''">
+			AND r.is_approved = #{isApproved}
+			</if>
+			<if test="publishStatus != null and publishStatus != ''">
+			AND s.publish_status = #{publishStatus}
+			</if>
+			<if test="isApprovedDescription != null and isApprovedDescription != ''">
+			AND t.cn_is_approved_description = #{isApprovedDescription}
+			</if>			
+			
+		GROUP BY r.product_id, r.channel_id
+		) a
+	</select>
+</mapper>

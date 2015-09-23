@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.ims.sql">
+	
+	<select id="ims_mt_prop_value_get_value" parameterType="Map" resultType="com.voyageone.batch.ims.modelbean.PropValueBean">
+		select
+		uuid, channel_id, level, level_value, prop_id, prop_value, parent
+		from
+		voyageone_ims.ims_mt_prop_value
+		where
+		prop_id=#{prop_id}
+		AND
+		channel_id=#{channel_id}
+		AND
+		level = #{level}
+		AND level_value = #{level_value}
+	</select>
+	<select id="ims_mt_prop_value_get_value_by_uuid" parameterType="Map" resultType="com.voyageone.batch.ims.modelbean.PropValueBean">
+		SELECT
+			uuid,
+			channel_id,
+			level,
+			level_value,
+			prop_id,
+			prop_value,
+			parent
+		from voyageone_ims.ims_mt_prop_value
+		WHERE uuid = #{prop_hash}
+	</select>
+
+	<insert id="ims_mt_prop_value_insert_value">
+		INSERT INTO
+			voyageone_ims.ims_mt_prop_value
+			(uuid, channel_id, level, level_value, prop_id, prop_value, parent)
+		VALUES (#{uuid}, #{channel_id}, #{level}, #{level_value}, #{prop_id}, #{prop_value}, #{parent})
+	</insert>
+</mapper>

@@ -1,0 +1,2306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.oms.sql">
+	<!-- 获得平台渠道信息 -->
+	<select id="ct_cart_getPlatformId" resultType="HashMap">
+		select	
+			cart_id as cartId,
+			platform_id as platformId
+		from ct_cart
+	</select>
+	
+	<!-- 获得需批处理新付款订单json信息 -->
+	<select id="oms_new_order_info_json_getNewOrderInfoFromJson" resultType="HashMap">
+		select 
+				id,
+				target,
+				json_data as jsonData
+		from	
+			oms_new_order_info_json
+		where 
+			sent_flag = 0
+		order by id asc limit 10
+	</select>
+	
+	<!-- 新付款订单信息流水表追加 -->
+	<insert id="oms_new_orders_import_history_insertNewOrdersInfo" parameterType="HashMap">
+		insert ignore into 
+			oms_new_orders_import_history
+			(
+				order_channel_id,
+				cart_id,
+				tid,
+				modified_time,
+				pay_time,
+				market_name,
+				billing_buyer_nick,
+				billing_buyer_company,
+				billing_buyer_phone,
+				billing_buyer_email,
+				billing_address_street1,
+				billing_address_street2,
+				billing_address_city,
+				billing_address_state,
+				billing_address_zip,
+				billing_address_country,
+				shipping_receiver_name,
+				shipping_receiver_company,
+				shipping_receiver_phone,
+				shipping_address_street1,
+				shipping_address_street2,
+				shipping_address_city,
+				shipping_address_state,
+				shipping_address_zip,
+				shipping_address_country,
+				product_sku,
+				product_name,
+				product_item_price,
+				product_quantity,
+				product_size,
+				product_price,
+				product_extra_currency5,
+				payment_generic1_name,
+				payment_generic1_description,
+				payment_generic1_field1,
+				payment_generic1_field2,
+				totals_total_fee,
+				totals_payment,
+				totals_tax_amount,
+				totals_post_fee,
+				totals_shipping_type,
+				discount_description,
+				discount_amount,
+				surcharge_description,
+				surcharge_amount,
+				other_invoice_info,
+				other_comments,
+				sent_flag,
+				sent_time,
+				id_card,
+				creater,
+				created,
+				modifier,
+				modified
+			)
+		values 
+			${values}
+	</insert>
+	
+	<!-- 将oms_new_order_info_json表的发送标志置位->1-->
+	<update id="oms_new_order_info_json_updateNewSendFlag4Json" parameterType="String">
+		update oms_new_order_info_json
+			set 
+				sent_flag = 1,
+				sent_time = now(),
+				modified = now(),
+				modifier = #{taskName}
+		where 
+			id = #{jsonId} and
+			target = #{target}
+	</update>
+	
+	<!-- 批处理异常时将oms_new_order_info_json表的发送标志置位->2-->
+	<update id="oms_new_order_info_json_updateNewSendFlag4Json2" parameterType="HashMap">
+		update oms_new_order_info_json
+			set 
+				sent_flag = 2,
+				sent_time = now(),
+				modified = now(),
+				modifier = #{taskName}
+		where 
+			id = #{jsonId} and
+			target = #{target}
+	</update>
+	
+	<!-- 获得需批处理状态变化订单json信息 -->
+	<select id="oms_changed_order_info_json_getChangedOrderInfoFromJson" resultType="HashMap">
+		select 
+				id,
+				target,
+				json_data as jsonData
+		from	
+			oms_changed_order_info_json
+		where 
+			sent_flag = 0
+		order by id asc limit 10
+	</select>
+	
+	<!-- 订单信息状态变化流水表追加 -->
+	<insert id="oms_changed_orders_import_history_insertChangedOrdersInfo" parameterType="HashMap">
+		insert ignore into 
+			oms_changed_orders_import_history
+			(
+				order_channel_id,
+				cart_id,
+				tid,
+				status,
+				modified_time,
+				buyer_nick,
+				oid,
+				sent_flag,
+				sent_time,
+				rid,
+				refund_time,
+				refund_flag,
+				target,
+				fee,
+				refund_phase,
+				creater,
+				created,
+				modifier,
+				modified
+			)
+		values 
+			${values}
+	</insert>
+	
+	<!-- 将oms_changed_order_info_json表的发送标志置位->2-->
+	<update id="oms_changed_order_info_json_updateChangedSendFlag4Json" parameterType="HashMap">
+		update oms_changed_order_info_json
+			set 
+				sent_flag = 1,
+				sent_time = now(),
+				modified = now(),
+				modifier = #{taskName}
+		 where id = #{jsonId} and
+		 	   target = #{target}
+	</update>
+	
+	<!-- 批处理异常时将oms_changed_order_info_json表的发送标志置位->2-->
+	<update id="oms_changed_order_info_json_updateChangedSendFlag4Json2" parameterType="String">
+		update oms_changed_order_info_json
+			set 
+				sent_flag = 2,
+				sent_time = now(),
+				modified = now(),
+				modifier = #{taskName}
+		 where id = #{jsonId} and
+		 	   target = #{target}
+	</update>
+
+	<!-- 获取最新订单号采番 -->
+	<insert id="oms_sequence_order_number_getOrderNumber" parameterType="HashMap" useGeneratedKeys="true" keyProperty="orderNumber" >
+		insert into oms_sequence_order_number
+			(created)
+		values
+			(now())
+	</insert>
+	
+	<!-- 获得需批处理新付款订单信息 -->
+	<select id="oms_new_orders_import_history_getNewOrderInfo4BatchFromLog" resultType="com.voyageone.batch.oms.modelbean.NewOrderInfo4Log">
+		select 
+				order_channel_id as orderChannelId,
+				cart_id as cartId,
+				tid,
+				pay_time as payTime,
+				billing_buyer_nick as billingBuyerNick,
+				billing_buyer_company as billingBuyerCompany,
+				billing_buyer_phone as billingBuyerPhone,
+				billing_buyer_email as billingBuyerEmail,
+				billing_address_street1 as billingAddressStreet1,
+				billing_address_street2 as billingAddressStreet2,
+				billing_address_city as billingAddressCity,
+				billing_address_state as billingAddressState,
+				billing_address_zip as billingAddressZip,
+				billing_address_country as billingAddressCountry,
+				shipping_receiver_name as shippingReceiverName,
+				shipping_receiver_company as shippingReceiverCompany,
+				shipping_receiver_phone as shippingReceiverPhone,
+				shipping_address_street1 as shippingAddressStreet1,
+				shipping_address_street2 as shippingAddressStreet2,
+				shipping_address_city as shippingAddressCity,
+				shipping_address_state as shippingAddressState,
+				shipping_address_zip as shippingAddressZip,
+				shipping_address_country as shippingAddressCountry,
+				product_sku as productSku,
+				product_name as productName,
+				product_item_price as productItemPrice,
+				product_quantity as productQuantity,
+				product_size as productSize,
+				product_price as productPrice,
+				product_extra_currency5 as productExtraCurrency5,
+				payment_generic1_name as paymentGeneric1Name,
+				payment_generic1_description as paymentGeneric1Description,
+				payment_generic1_field1 as paymentGeneric1Field1,
+				payment_generic1_field2 as paymentGeneric1Field2,
+				totals_total_fee as totalsTotalFee,
+				totals_payment as totalsPayment,
+				totals_tax_amount as totalsTaxAmount,
+				totals_post_fee as totalsPostFee,
+				totals_shipping_type as totalsShippingType,
+				discount_description as discountDescription,
+				discount_amount as discountAmount,
+				surcharge_description as surchargeDescription,
+				surcharge_amount as surchargeAmount,
+				other_invoice_info otherInvoiceInfo,
+				other_comments as otherComments,
+				market_name as marketName
+		from	
+			oms_new_orders_import_history
+		where 
+			sent_flag = 0
+		order by modified_time asc limit 200
+	</select>
+	
+	<!-- 获得需批处理新付款订单信息（手工） -->
+	<select id="oms_manual_new_orders_import_history_getManualNewOrderInfo4BatchFromLog" resultType="com.voyageone.batch.oms.modelbean.NewOrderInfo4Log">
+		select 
+			order_channel_id as orderChannelId,
+			cart_id as cartId,
+			tid,
+			pay_time as payTime,
+			billing_buyer_nick as billingBuyerNick,
+			billing_buyer_company as billingBuyerCompany,
+			billing_buyer_phone as billingBuyerPhone,
+			billing_buyer_email as billingBuyerEmail,
+			billing_address_street1 as billingAddressStreet1,
+			billing_address_street2 as billingAddressStreet2,
+			billing_address_city as billingAddressCity,
+			billing_address_state as billingAddressState,
+			billing_address_zip as billingAddressZip,
+			billing_address_country as billingAddressCountry,
+			shipping_receiver_name as shippingReceiverName,
+			shipping_receiver_company as shippingReceiverCompany,
+			shipping_receiver_phone as shippingReceiverPhone,
+			shipping_address_street1 as shippingAddressStreet1,
+			shipping_address_street2 as shippingAddressStreet2,
+			shipping_address_city as shippingAddressCity,
+			shipping_address_state as shippingAddressState,
+			shipping_address_zip as shippingAddressZip,
+			shipping_address_country as shippingAddressCountry,
+			product_sku as productSku,
+			product_name as productName,
+			product_item_price as productItemPrice,
+			product_quantity as productQuantity,
+			product_size as productSize,
+			product_price as productPrice,
+			product_extra_currency5 as productExtraCurrency5,
+			payment_generic1_name as paymentGeneric1Name,
+			payment_generic1_description as paymentGeneric1Description,
+			payment_generic1_field1 as paymentGeneric1Field1,
+			payment_generic1_field2 as paymentGeneric1Field2,
+			totals_total_fee as totalsTotalFee,
+			totals_payment as totalsPayment,
+			totals_tax_amount as totalsTaxAmount,
+			totals_post_fee as totalsPostFee,
+			totals_shipping_type as totalsShippingType,
+			discount_description as discountDescription,
+			discount_amount as discountAmount,
+			surcharge_description as surchargeDescription,
+			surcharge_amount as surchargeAmount,
+			other_invoice_info otherInvoiceInfo,
+			other_comments as otherComments,
+			market_name as marketName,
+			order_kind as orderKind
+		from	
+			oms_manual_new_orders_import_history
+		where 
+			sent_flag = 0
+		order by modified_time asc limit 200
+	</select>
+	
+	<!-- 获得需循环单条处理新付款订单信息 -->
+	<select id="oms_new_orders_import_history_getNewOrderInfo4EachFromLog" resultType="com.voyageone.batch.oms.modelbean.NewOrderInfo4Log">
+		select 
+				order_channel_id as orderChannelId,
+				cart_id as cartId,
+				tid,
+				pay_time as payTime,
+				billing_buyer_nick as billingBuyerNick,
+				billing_buyer_company as billingBuyerCompany,
+				billing_buyer_phone as billingBuyerPhone,
+				billing_buyer_email as billingBuyerEmail,
+				billing_address_street1 as billingAddressStreet1,
+				billing_address_street2 as billingAddressStreet2,
+				billing_address_city as billingAddressCity,
+				billing_address_state as billingAddressState,
+				billing_address_zip as billingAddressZip,
+				billing_address_country as billingAddressCountry,
+				shipping_receiver_name as shippingReceiverName,
+				shipping_receiver_company as shippingReceiverCompany,
+				shipping_receiver_phone as shippingReceiverPhone,
+				shipping_address_street1 as shippingAddressStreet1,
+				shipping_address_street2 as shippingAddressStreet2,
+				shipping_address_city as shippingAddressCity,
+				shipping_address_state as shippingAddressState,
+				shipping_address_zip as shippingAddressZip,
+				shipping_address_country as shippingAddressCountry,
+				product_sku as productSku,
+				product_name as productName,
+				product_item_price as productItemPrice,
+				product_quantity as productQuantity,
+				product_size as productSize,
+				product_price as productPrice,
+				product_extra_currency5 as productExtraCurrency5,
+				payment_generic1_name as paymentGeneric1Name,
+				payment_generic1_description as paymentGeneric1Description,
+				payment_generic1_field1 as paymentGeneric1Field1,
+				payment_generic1_field2 as paymentGeneric1Field2,
+				totals_total_fee as totalsTotalFee,
+				totals_payment as totalsPayment,
+				totals_tax_amount as totalsTaxAmount,
+				totals_post_fee as totalsPostFee,
+				totals_shipping_type as totalsShippingType,
+				discount_description as discountDescription,
+				discount_amount as discountAmount,
+				surcharge_description as surchargeDescription,
+				surcharge_amount as surchargeAmount,
+				other_invoice_info otherInvoiceInfo,
+				other_comments as otherComments,
+				pre_order_number as preOrderNumber
+		from	
+			oms_new_orders_import_history
+		where 
+			sent_flag = 2
+		order by modified_time asc limit 200
+	</select>
+	
+	<!-- 批处理插入订单表数据(字符串拼接)-->
+	<insert id="oms_bt_orders_insertOrdersBatchData" parameterType="HashMap">
+		insert into oms_bt_orders
+			(
+				order_number,
+				order_date_time,
+				customer_id,
+				name,
+				company,
+				email,
+				address,
+				address2,
+				city,
+				state,
+				zip,
+				country,
+				phone,
+				ship_name,
+				ship_company,
+				ship_address,
+				ship_address2,
+				ship_city,
+				ship_state,
+				ship_zip,
+				ship_country,
+				ship_phone,
+				pay_type,
+				pay_no,
+				pay_account,
+				customer_comments,
+				product_total,
+				shipping_total,
+				grand_total,
+				shipping,
+				discount,
+				revised_discount,
+				surcharge,
+				revised_surcharge,
+				approved,
+				cancelled,
+				final_product_total,
+				final_shipping_total,
+				final_grand_total,
+				balance_due,
+				discount_type,
+				lock_ship,
+				source_order_id,
+				origin_source_order_id,
+				order_status,
+				cart_id,
+				approval_date,
+				order_channel_id,
+				invoice_info,
+				need_invoice,
+				order_kind,
+				price_difference_flag,
+				creater,
+				created,
+				modifier,
+				modified
+			)
+		values
+			${values}
+	</insert>
+	
+	<!-- 批处理插入订单详细表数据(字符串拼接)-->
+	<insert id="oms_bt_order_details_insertOrderDetailsBatchData" parameterType="HashMap">
+		insert into oms_bt_order_details
+			(
+				order_number,
+				item_number,
+				detail_date,
+				adjustment,
+				product,
+				sub_item_number,
+				price_per_unit,
+				quantity_ordered,
+				quantity_shipped,
+				quantity_returned,
+				sku,
+				status,
+				res_allot_flg,
+				synship_flg,
+				creater,
+				created,
+				modifier,
+				modified
+			)
+		values
+			${values}
+	</insert>
+	
+	<!-- 批处理插入notes表数据(字符串拼接)-->
+	<insert id="oms_bt_notes_insertNotesBatchData" parameterType="HashMap">
+		insert into oms_bt_notes
+			(
+				type,
+				numeric_key,
+				item_number,
+				entry_date,
+				entry_time,
+				notes,
+				entered_by,
+				parent_type,
+				parent_key,
+				source_order_id,
+				creater,
+				created,
+				modifier,
+				modified
+			)
+		values
+			${values}
+	</insert>
+	
+	<!-- 批处理插入交易明细表数据(字符串拼接)-->
+	<insert id="oms_bt_transactions_insertTransactionsBatchData" parameterType="HashMap">
+		insert into oms_bt_transactions
+			(
+				order_number,
+				transaction_time,
+				sku,
+				description,
+				item_number,
+				debit,
+				credit,
+				source_order_id,
+				origin_source_order_id,
+				type,
+				creater,
+				created,
+				modifier,
+				modified
+			)
+		values
+			${values}
+	</insert>
+	
+	<!-- 批处理插入组订单表数据(字符串拼接)-->
+	<insert id="oms_bt_group_orders_insertGroupOrderBatchData" parameterType="HashMap">
+		insert into oms_bt_group_orders
+			(
+				source_order_id,
+				final_product_total,
+				final_shipping_total,
+				revised_discount,
+				revised_surcharge,
+				final_grand_total,
+				expected,
+				payment_total,
+				creater,
+				created,
+				modifier,
+				modified
+			)
+		values
+			${values}
+	</insert>
+	
+	<!-- 批处理插入支付表数据(字符串拼接) 独立域名专用-->
+	<insert id="oms_bt_payments_insertPaymentBatchData" parameterType="HashMap">
+		insert into oms_bt_payments
+			(
+				order_number,
+				source_order_id,
+				origin_source_order_id,
+				payment_time,
+				description,
+				pay_type,
+				pay_no,
+				pay_account,
+				debit,
+				creater,
+				created,
+				modifier,
+				modified
+			)
+		values
+			${values}
+	</insert>
+	
+	<!-- 批处理插入扩展订单表(字符串拼接) 目前是皇马专用-->
+	<insert id="oms_bt_ext_orders_insertExtOrdersBatchData" parameterType="HashMap">
+		insert into oms_bt_ext_orders
+			(
+				origin_source_order_id,
+				order_channel_id,
+				cart_id,
+				order_number,
+				creater,
+				created,
+				modifier,
+				modified
+			)
+		values
+			${values}
+	</insert>
+	
+	<!-- 批处理插入扩展订单详细表(字符串拼接) 目前是皇马专用-->
+	<insert id="oms_bt_ext_order_details_insertExtOrderDetailsBatchData" parameterType="HashMap">
+		insert into oms_bt_ext_order_details
+			(
+				order_number,
+				item_number,
+				creater,
+				created,
+				modifier,
+				modified
+			)
+		values
+			${values}
+	</insert>
+	
+	<!-- 将oms_new_orders_import_history表的发送标志置位（1：正常结束） -->
+	<update id="oms_new_orders_import_history_resetNewHistoryOrders" parameterType="HashMap">
+		update oms_new_orders_import_history t inner join (${subSql}) t1
+			set 
+				t.sent_flag = 1,
+				t.sent_time = now(),
+				t.modified = now(),
+				t.modifier = #{taskName}
+		 where t.order_channel_id = t1.order_channel_id
+			and t.cart_id = t1.cart_id
+			and t.tid = t1.tid
+	</update>
+	
+	<!-- 将oms_manual_new_orders_import_history表的发送标志置位（1：正常结束） -->
+	<update id="oms_manual_new_orders_import_history_resetNewHistoryOrders" parameterType="HashMap">
+		update oms_manual_new_orders_import_history t inner join (${subSql}) t1
+			set 
+				t.sent_flag = 1,
+				t.sent_time = now(),
+				t.modified = now(),
+				t.modifier = #{taskName}
+		 where t.order_channel_id = t1.order_channel_id
+			and t.cart_id = t1.cart_id
+			and t.tid = t1.tid
+	</update>
+	
+	<!-- 将oms_new_orders_import_history表的发送标志置位（2：批处理失败，转单条处理） -->
+	<update id="oms_new_orders_import_history_resetHistoryOrdersForeach" parameterType="HashMap">
+		update oms_new_orders_import_history t inner join (${subSql}) t1
+			set 
+				t.pre_order_number = t1.pre_order_number,
+				t.sent_flag = 2,
+				t.sent_time = now(),
+				t.modified = now(),
+				t.modifier = #{taskName}
+		 where t.order_channel_id = t1.order_channel_id
+			and t.cart_id = t1.cart_id
+			and t.tid = t1.tid
+	</update>
+	
+	<!-- 将oms_manual_new_orders_import_history表的发送标志置位（2：批处理失败，转单条处理） -->
+	<update id="oms_manual_new_orders_import_history_resetManualHistoryOrdersForeach" parameterType="HashMap">
+		update oms_manual_new_orders_import_history t inner join (${subSql}) t1
+			set 
+				t.pre_order_number = t1.pre_order_number,
+				t.sent_flag = 2,
+				t.sent_time = now(),
+				t.modified = now(),
+				t.modifier = #{taskName}
+		 where t.order_channel_id = t1.order_channel_id
+			and t.cart_id = t1.cart_id
+			and t.tid = t1.tid
+	</update>
+	
+	<!-- 将oms_new_orders_import_history表的发送标志置位（3：单条处理失败，转人工处理） -->
+	<update id="oms_new_orders_import_history_resetHistoryOrdersForManual" parameterType="HashMap">
+		update oms_new_orders_import_history t inner join (${subSql}) t1
+			set 
+				t.pre_order_number = t1.pre_order_number,
+				t.sent_flag = 3,
+				t.sent_time = now(),
+				t.modified = now(),
+				t.modifier = #{taskName}
+		 where t.order_channel_id = t1.order_channel_id
+			and t.cart_id = t1.cart_id
+			and t.tid = t1.tid
+	</update>
+	
+	<!-- 获得需处理状态变化订单信息 -->
+	<select id="oms_changed_orders_import_history_getChangedOrderInfoFromLog" resultType="com.voyageone.batch.oms.modelbean.ChangedOrderInfo4Log">
+		select 
+				h.order_channel_id as orderChannelId,
+				h.cart_id as cartId,
+				h.tid,
+				h.status,	
+				h.modified_time as modifiedTime,
+				h.buyer_nick as buyerNick,
+				h.oid,
+				h.rid,
+				h.target,
+				h.fee,
+				h.refund_phase as refundPhase
+		from	
+			oms_changed_orders_import_history h, oms_bt_orders o
+		where 
+			h.sent_flag = 0
+			and h.order_channel_id = o.order_channel_id
+			and h.cart_id = o.cart_id
+			and h.tid = o.origin_source_order_id
+			and o.order_kind in ('0', '4')
+		order by h.modified_time asc limit 200
+	</select>
+	
+	<!-- 根据原始订单号tid 获取内部订单号及订单状态 -->
+	<select id="oms_bt_orders_getOrderNumberAndStatusByTid" parameterType="com.voyageone.batch.oms.modelbean.ChangedOrderInfo4Log" resultType="HashMap">
+		select 
+			order_number as orderNumber,
+			order_status as orderStatus,
+			order_kind as orderKind,
+			pay_type as payType,
+			pay_no as payNo,
+			pay_account as payAccount,
+			source_order_id as sourceOrderId
+		from 
+			oms_bt_orders
+		where 
+			order_channel_id = #{orderChannelId}
+			and cart_id = #{cartId}
+			and origin_source_order_id = #{tid}
+	</select>
+	
+	<!-- tradeSuccess状态消息重复判断 -->
+	<select id="oms_bt_payments_isRepeatTradeSuccess" parameterType="HashMap" resultType="HashMap">
+		select 
+			source_order_id
+		from 
+			oms_bt_payments
+		where 
+			origin_source_order_id = #{originSourceOrderId}
+	</select>
+	
+	<!-- 获得需退款订单价格信息 -->
+	<select id="oms_bt_orders_getOrderPrice4Refund" parameterType="com.voyageone.batch.oms.modelbean.ChangedOrderInfo4Log" resultType="HashMap">
+		select 
+			a.final_product_total as finalProductTotal,
+			b.price_per_unit as pricePerUnit,
+			a.final_grand_total as finalGrandTotal
+		from 
+			oms_bt_orders a left join oms_bt_order_details b 
+			on a.order_number = b.order_number 
+			and b.sku = 'Shipping' 
+			and b.price_per_unit > 0
+		where 
+			a.order_channel_id = #{orderChannelId}
+			and a.cart_id = #{cartId}
+			and a.origin_source_order_id = #{tid}
+			and a.order_kind = '0'
+	</select>
+	
+	<!-- 更新oms_bt_orders表（状态变化订单） -->
+	<update id="oms_bt_orders_updateChangedOrdersData" parameterType="HashMap">
+		update oms_bt_orders
+		set 
+			order_status = #{orderStatus},
+			<!-- 
+			<if test="confirmDate != null and confirmDate != '' ">
+				local_sort_date1 = #{confirmDate},
+			</if>
+			 -->
+			<if test="sourceOrderStatus == 'RefundCreated'.toString() ">
+				lock_ship = 'YES',
+			</if>
+			modified = now(),
+			modifier = #{taskName}
+		where order_channel_id = #{orderChannelId}
+			and cart_id = #{cartId}
+			and source_order_id = #{sourceOrderId}
+			and order_number = #{orderNumber}
+	</update>
+	
+	<!-- 根据状态变化信息更新orderDetails表 -->
+	<update id="oms_bt_order_details_updateChangedOrderDetailsData" parameterType="HashMap">
+		update oms_bt_order_details
+		set 
+			status = #{orderStatus},
+			modified = now(),
+			modifier = #{taskName}
+		where order_number = #{orderNumber}
+			and adjustment = 0
+			and status != #{statusReturned}
+			and status != #{statusCanceled}
+			and status != #{statusConfirmed}
+	</update>
+	
+	<!-- 根据状态变化信息插入Notes表-->
+	<insert id="oms_bt_notes_insertChangedNotesData" parameterType="HashMap">
+		insert into oms_bt_notes
+			(
+				type,
+				numeric_key,
+				item_number,
+				entry_date,
+				entry_time,
+				notes,
+				entered_by,
+				parent_type,
+				parent_key,
+				source_order_id,
+				creater,
+				created,
+				modifier,
+				modified
+			)
+		values
+			(
+				#{type},
+				#{orderNumber},
+				#{itemNumber},
+				#{entryDate},
+				#{entryTime},
+				#{notes},
+				#{enteredBy},
+				#{parentType},
+				#{parentKey},
+				#{sourceOrderId},
+				#{taskName},
+				now(),
+				#{taskName},
+				now()
+			)
+	</insert>
+
+	<!-- 根据原始订单号tid 获取内部订单号及订单状态 -->
+	<select id="oms_bt_order_refunds_getOnSaleRefundTotalFee" parameterType="HashMap" resultType="Double">
+		select 
+			IFNULL(sum(refund_fee), 0) refundTotal
+		from 
+			oms_bt_order_refunds
+		where 
+			order_channel_id = #{orderChannelId}
+			and cart_id = #{cartId}
+			and origin_source_order_id = #{tid}
+			and source_order_id = #{sourceOrderId}
+			and refund_status = 'SUCCESS'
+			and refund_phase = 'onsale'
+			and process_flag = 1
+	</select>
+		
+	<!-- 根据交易成功信息插入Payments表-->
+	<insert id="oms_bt_payments_insertPaymentsData" parameterType="HashMap">
+		insert into oms_bt_payments
+			(
+				order_number,
+				source_order_id,
+				origin_source_order_id,
+				payment_time,
+				description,
+				pay_type,
+				pay_no,
+				pay_account,
+				<if test="abs == '0'.toString() ">
+					debit,
+				</if>
+				<if test="abs == '1'.toString() ">
+					credit,
+				</if>
+				creater,
+				created,
+				modifier,
+				modified
+			)
+		values
+			(
+				#{orderNumber},
+				#{sourceOrderId},
+				#{originSourceOrderId},
+				#{paymentTime},
+				#{description},
+				#{payType},
+				#{payNo},
+				#{payAccount},
+				<if test="abs == '0'.toString() ">
+					#{debit, jdbcType = DOUBLE},
+				</if>
+				<if test="abs == '1'.toString() ">
+					#{credit, jdbcType = DOUBLE},
+				</if>
+				#{taskName},
+				now(),
+				#{taskName},
+				now()
+			)
+	</insert>
+	
+	<!-- 更新组订单表PaymentTotal-->
+	<update id="oms_bt_group_orders_updateGroupPaymentTotal" parameterType="HashMap">
+		update oms_bt_group_orders
+		set
+			payment_total = 
+				(
+					select IFNULL(
+						(
+						select IFNULL(sum(debit), 0) - IFNULL(sum(credit), 0) 
+						from oms_bt_payments 
+						where source_order_id = #{sourceOrderId} 
+						group by source_order_id
+						), 0
+					) from dual
+				),
+			modifier = #{taskName},
+			modified = now()
+		where
+			source_order_id = #{sourceOrderId}
+	</update>
+	
+	<!-- 更新oms_bt_order_refunds表的process_flag-->
+	<update id="oms_bt_order_refunds_updateRefundProcessFlag" parameterType="HashMap">
+		update oms_bt_order_refunds
+		set
+			process_flag = 1,
+			refund_status = 'CLOSED',
+			modifier = #{taskName},
+			modified = now()
+		where
+			source_order_id = #{sourceOrderId} and
+			origin_source_order_id = #{originSourceOrderId} and
+			order_channel_id = #{orderChannelId} and
+			cart_id = #{cartId} and
+			refund_id = #{refundId} and
+			process_flag = 0
+	</update>
+	
+	<!-- 更新组订单refund_total group表的refund_total - 退款关闭的金额 -->
+	<update id="oms_bt_group_orders_updateGroupRefundTotal4Closed" parameterType="HashMap">
+		update oms_bt_group_orders
+		set
+			refund_total = refund_total - #{fee, jdbcType = DOUBLE},
+			modifier = #{taskName},
+			modified = now()
+		where
+			source_order_id = #{sourceOrderId}
+	</update>
+	
+	<!-- 更新组订单refund_total 根据rufund表中未处理的记录统计退款金额更新group表的refund_total-->
+	<update id="oms_bt_group_orders_updateGroupRefundTotal" parameterType="HashMap">
+		update oms_bt_group_orders
+		set
+			refund_total = (select sum(refund_fee) from oms_bt_order_refunds where process_flag = 0 and source_order_id = #{sourceOrderId} group by source_order_id),
+			modifier = #{taskName},
+			modified = now()
+		where
+			source_order_id = #{sourceOrderId}
+	</update>
+	
+	<!-- 退款创建信息插入oms_bt_order_refunds表-->
+	<insert id="oms_bt_order_refunds_insertRefundData" parameterType="HashMap">
+		insert into oms_bt_order_refunds
+			(
+				source_order_id,
+				origin_source_order_id,
+				order_channel_id,
+				cart_id,
+				refund_status,
+				refund_id,
+				refund_fee,
+				refund_time,
+				refund_phase,
+				creater,
+				created,
+				modifier,
+				modified
+			)
+		values
+			(
+				#{sourceOrderId},
+				#{originSourceOrderId},
+				#{orderChannelId},
+				#{cartId},
+				#{orderStatus},
+				#{refundId},
+				#{refundFee, jdbcType = DOUBLE},
+				#{refundTime},
+				#{refundPhase},
+				#{taskName},
+				now(),
+				#{taskName},
+				now()
+			)
+	</insert>
+	
+	<!-- 买家修改退款协议信息更新oms_bt_order_refunds表-->
+	<insert id="oms_bt_order_refunds_updateRefundData" parameterType="HashMap">
+		update oms_bt_order_refunds
+		set
+				refund_fee = #{refundFee, jdbcType = DOUBLE},
+				refund_time = #{refundTime},
+				refund_phase = #{refundPhase},
+				modifier = #{taskName},
+				modified = now()
+		where
+				source_order_id = #{sourceOrderId} and
+				origin_source_order_id = #{originSourceOrderId} and
+				order_channel_id = #{orderChannelId} and
+				cart_id = #{cartId} and
+				refund_id = #{refundId}
+	</insert>
+	
+	<!-- 锁单操作 -->
+	<update id="oms_bt_orders_lockOrders" parameterType="HashMap">
+		update oms_bt_orders
+			set 
+				lock_ship = 'YES',
+				modified = now(),
+				modifier = #{taskName}
+		 where source_order_id = #{sourceOrderId}
+			and cart_id = #{cartId}
+			and order_channel_id = #{orderChannelId}
+	</update>
+	
+	<!-- 置位订单状态变化历史临时表发送标志（->1） -->
+	<update id="oms_changed_orders_import_history_resetChangedHistoryOrders" parameterType="HashMap">
+		update oms_changed_orders_import_history
+			set 
+				sent_flag = 1,
+				sent_time = now(),
+				modified = now(),
+				modifier = #{taskName}
+		 where order_channel_id = #{orderChannelId}
+			and cart_id = #{cartId}
+			and tid = #{tid}
+			and status = #{status}
+			and rid = #{rid}
+			and modified_time = #{modifiedTime}
+	</update>
+	
+	<!-- 锁定synship tt_orders表 -->
+	<update id="tt_orders_updateSynShipOrdersLock" parameterType="HashMap">
+		update tt_orders
+		set 
+			isLocked = 1,
+			update_time = now(),
+			update_person = #{taskName}
+		where source_order_id = #{sourceOrderId}
+			and order_number in ${orderNumber}
+	</update>
+	
+	<!-- 根据状态变化信息更新synship tt_orders表 -->
+	<update id="tt_orders_updateSynShipOrdersStatus" parameterType="HashMap">
+		update tt_orders
+		set 
+			se_order_status = #{orderStatus},
+			<if test="sourceOrderStatus == 'RefundCreated'.toString() ">
+				isLocked = 1,
+			</if>
+			modified = now(),
+			modifier = #{taskName}
+		where order_channel_id = #{orderChannelId}
+			and cart_id = #{cartId}
+			and order_number = #{orderNumber}
+	</update>
+	
+	<!--  获得已经导入新订单history表最新一条更新时间 -->
+	<select id="oms_new_orders_import_history_getLastHistoryNewOrderTime" parameterType="HashMap" resultType="String">
+		select 
+			modified_time as modified
+		from	
+			oms_new_orders_import_history
+		where 
+			order_channel_id = #{orderChannelId} and
+			cart_id = #{cartId}
+		order by
+			modified_time desc
+		limit 1
+	</select>
+	
+	<!--  获得已经导入新订单history表最新一条更新时间（聚美） -->
+	<select id="oms_new_orders_import_history_getLastHistoryNewOrderTime4Jumei" parameterType="HashMap" resultType="String">
+		select 
+			modified_time as modified
+		from	
+			oms_new_orders_import_history
+		where 
+			cart_id = #{cartId}
+		order by
+			modified_time desc
+		limit 1
+	</select>
+	
+	<!--  获得已经导入状态变化订单history表最新一条更新时间 -->
+	<select id="oms_new_orders_import_history_getLastHistoryChangedOrderTime" parameterType="HashMap" resultType="String">
+		select 
+			modified_time as modified
+		from	
+			oms_changed_orders_import_history
+		where 
+			order_channel_id = #{orderChannelId} and
+			cart_id = #{cartId}
+		order by
+			modified_time desc
+		limit 1
+	</select>
+	
+	<!-- 从OMS取出需要同步到synship的订单记录 -->
+	<select id="oms_bt_orders_getSynShipNewOrderInfo" resultType="HashMap">
+		select
+			o.order_number as orderNumber, 
+			o.order_channel_id as orderChannelId,
+			o.order_date_time as orderDateTime, 
+			o.source_order_id as sourceOrderId,
+			o.ship_name as shipName,
+			o.ship_company as shipCompany, 
+			o.ship_address as shipAddress, 
+			o.ship_address2 as shipAddress2, 
+			o.ship_city as shipCity, 
+			o.ship_state as shipState,
+			o.ship_zip as shipZip, 
+			o.ship_country as shipCountry, 
+			o.ship_phone as shipPhone, 
+			o.customer_comments as customerComments, 
+			o.shipping as shipping, 
+			o.lock_ship as lockShip,
+			o.cart_id as cartId, 
+			o.client_order_id as clientOrderId, 
+			o.order_status as orderStatus, 
+			o.pay_no as payNo, 
+			o.pay_account as payAccount, 
+			o.name as wwId, 
+			'' as orderInst, 
+			o.internal_message as internalMessage,
+			'' as noteToCustomer, 
+			o.freight_collect as freightCollect,
+			o.grand_total as grandTotal,
+			o.final_grand_total as finalGrandTotal,
+			o.order_kind as orderKind,
+			d.status as status, 
+			d.product as product, 
+			d.sku as sku,
+			d.res_id as resId, 
+			d.quantity_ordered as quantityOrdered
+		from 
+			oms_bt_order_details d inner join 
+			oms_bt_orders o on d.order_number = o.order_number
+		where 
+			d.synship_flg = '0'
+			and d.res_allot_flg = '1'
+			and d.res_id > 0
+			and d.adjustment = 0
+			and d.sku != 'price-difference-001'
+		order by d.order_number 
+		limit 100;
+	</select>
+	
+	<!-- 批处理插入订单表数据(字符串拼接)-->
+	<insert id="oms_having_gifted_customer_setting_recordHavingGiftedCustomerInfo" parameterType="HashMap">
+		insert into oms_having_gifted_customer_setting
+			(
+			platform_id,
+			order_channel_id,
+			buyer_nick,
+			type
+			)
+		values
+			${values}
+	</insert>
+	
+	<!-- 置位synship发送标志（->1） -->
+	<update id="oms_bt_order_details_resetSynShipFlag" parameterType="HashMap">
+		update oms_bt_order_details
+			set 
+				synship_flg = 1,
+				modified = now(),
+				modifier = #{taskName}
+		where order_number = #{orderNumber}
+			and res_id = #{reservationId}
+			and adjustment = 0
+			and sku != 'price-difference-001'
+	</update>
+	
+	<!-- reservationInfo  -->
+	<resultMap id="reservationInfo" type="com.voyageone.batch.oms.formbean.OutFormReservationInfo">
+		<result column="order_number" property="order_number"/>
+		<result column="sourceorderid" property="sourceorderid"/>
+		<result column="sku" property="sku"/>
+		<result column="name" property="name"/>
+		<result column="quantity" property="quantity"/>
+		<result column="cart_id" property="cart_id"/>
+		<result column="orderStatus" property="orderStatus"/>
+		<result column="item_number" property="item_number"/>
+	</resultMap>
+	<!-- 获取reservation信息 -->
+	<select id="wsdl_transfer_reservationInfo" resultMap="reservationInfo" parameterType="String">
+        select tt1.order_number,                                    
+        	   ifnull(tt1.source_order_id, '') sourceorderid,                         
+        	   tt2.sku,                                    
+               '' name,                                    
+        	   tt2.quantity_shipped quantity,                                    
+        	   tt1.cart_id,                                    
+        	   'approved' as orderStatus,                                    
+        	   tt2.item_number                                    
+          from                                     
+             (                                    
+               select t.order_number,                                    
+        			  t.source_order_id,                                    
+        			  t.cart_id                                    
+                 from oms_bt_orders t                                     
+                where t.approved = 1                                    
+                  and t.cancelled = 0                                    
+                  and t.order_channel_id = #{order_channel_id}  
+				  and exists(select 1 from oms_bt_order_details t1 
+							  where t1.quantity_shipped = 1
+							  	and t1.res_allot_flg = '0'
+								and t.order_number = t1.order_number)
+                limit 50
+             ) tt1,                                    
+             (                                    
+        	   select t.order_number,                                    
+        		  	  t.sku,                                    
+        		      t.quantity_shipped,                                    
+        			  t.item_number                                    
+                 from oms_bt_order_details t                                    
+                where t.quantity_shipped = 1                                    
+                  and t.res_allot_flg = '0'                                    
+             ) tt2                                    
+         where tt1.order_number = tt2.order_number;   
+	</select>	
+	<!-- 将reservationId信息更新到oms_order_details表 -->
+	<update id="wsdl_update_reservationId" parameterType="HashMap">
+		update oms_bt_order_details t inner join (${strSql}) t1
+		   set t.res_id = t1.rsv_id, 
+		   	   t.res_allot_flg = '1',
+		   	   t.modifier = 'resTransferJob',
+		   	   t.modified = now()
+		 where t.order_number = t1.order_number
+		   and t.item_number = t1.item_number
+	</update>	
+
+	<resultMap type="com.voyageone.batch.oms.formbean.OutFormSendOrderMail" id="sendOrderMail">
+	<result column="order_date_time"  property="paytime"/>
+	<result column="source_order_id"  property="sourceId"/>
+	<result column="order_channel_id" property="OrderChannelId"/>
+	<result column="final_grand_total"  property="grandTotal"/>
+	<result column="cart_id"  property="cartId"/>
+	<result column="name"  property="name"/>
+		<collection property="orderDetailList" ofType="com.voyageone.batch.oms.formbean.OutFormSendOrderDetailMail">
+		   <result column="sku" property="sku"/>
+		   <result column="product" property="product"/>
+		   <result column="price_per_unit" property="price"/>
+		   <result column="quantity_ordered" property="num"/>
+		</collection>
+	</resultMap>
+	<select id="oms_bt_orders_sendOrderMail"  resultMap="sendOrderMail"  parameterType="HashMap">
+		select 
+			o.order_date_time,
+			o.source_order_id,
+			o.name,
+			o.order_channel_id,
+			o.cart_id,
+			d.sku,
+		 	d.product,
+		 	d.quantity_ordered,
+		 	d.price_per_unit,
+		 	o.final_grand_total 
+	  	from 
+	  		oms_bt_order_details d 
+	  	LEFT JOIN oms_bt_orders o 
+	  		on d.order_number = o.order_number
+	 <where>
+	 		d.adjustment='0'
+	 		and o.order_kind in ('0','4')
+			<if test="fromTime != null and fromTime !=''">
+			and o.order_date_time >= #{fromTime}
+			</if>
+  			<if test="endTime != null and endTime != ''">
+			and #{endTime} >= o.order_date_time
+			</if>
+			<if  test="channelId != null and channelId != ''">
+			and o.order_channel_id = #{channelId}
+			</if>
+			<if  test="cartId != null and cartId != ''">
+			and o.cart_id = #{cartId}
+			</if>
+	 </where>  
+	</select>
+
+	
+	<select id="oms_new_orders_import_history_getOrderInfoByTid" resultType="HashMap" parameterType="HashMap">
+		select 	order_channel_id,
+				cart_id,
+				tid
+		from	oms_new_orders_import_history
+		where	order_channel_id = #{order_channel_id}
+				and cart_id = #{cart_id}
+				and tid = #{tid}
+	</select>
+	
+	<!-- 根据cartId ChannelId 和时间找出改时间段的所有订单 -->
+	<select id="oms_bt_orders_getSourceNumberByChannelId" parameterType="HashMap" resultType="String">
+		SELECT
+			case IFNULL(t.origin_source_order_id,'')
+			when '' then t.source_order_id
+			else t.origin_source_order_id
+			end as source_order_id
+		FROM
+			oms_bt_orders t
+		WHERE
+			t.order_channel_id = #{order_channel_id}
+		AND t.order_date_time >= #{start_time}
+		<if  test="end_time != null and end_time != ''">
+		AND #{end_time} >= t.order_date_time 
+		</if>
+		AND t.cart_id = #{cart_id}
+	</select>
+	<select id="oms_bt_orders_getSameSourceOrderId" resultType="HashMap">
+		select 
+			o.order_number as orderNumber,
+			o.source_order_id as sourceOrderId
+		from 
+			oms_bt_orders o, (
+				select 			
+				source_order_id
+				from
+					oms_bt_orders
+				where 
+					order_kind = '0'
+					and not ISNULL(source_order_id)
+					and source_order_id !=''
+				group  by 
+					source_order_id 
+				having count(0) > 1
+			) b where o.source_order_id = b.source_order_id
+	</select>
+	<select id="oms_bt_orders_sendOrderMailTotal"  parameterType="HashMap" resultType="HashMap">
+		select
+			o.cart_id  as cartId,
+			ifNull(count(d.sku),0) as skuCount,
+			ifNull(count(DISTINCT d.sku),0) as skutypeCount
+		from
+			oms_bt_order_details d
+		left join oms_bt_orders o ON d.order_number = o.order_number
+	 	<where>
+	 		d.adjustment='0'
+	 		and o.order_kind in ('0','4')
+	 		and d.sku != 'price-difference-001' 
+			<if test="fromTime!=null and fromTime!=''">
+			and o.order_date_time>=#{fromTime}
+			</if>
+  			<if test="endTime!=null and endTime!=''">
+			and #{endTime}>=o.order_date_time
+			</if>
+			<if  test="channelId != null and channelId != ''">
+			and o.order_channel_id = #{channelId}
+			</if>
+			
+	 </where> 
+	 		GROUP BY o.cart_id
+	 		ORDER BY o.cart_id ASC
+	</select>
+	<select id="oms_bt-orders_sendOrderMailOrderTotal"  parameterType="HashMap" resultType="HashMap">
+		select
+			o.cart_id as cartId,
+			ifNull(count(DISTINCT o.order_number),0) as orderCount,
+			ifNull(count(DISTINCT o. NAME),0) as nameCount,
+		    ifNull(sum(o.final_grand_total),0) as totalPrice
+		from
+			oms_bt_orders  o
+	
+ 		<where>
+		 	o.order_kind in ('0','4')
+			<if test="fromTime!=null and fromTime!=''">
+			and o.order_date_time>=#{fromTime}
+			</if>
+  			<if test="endTime!=null and endTime!=''">
+			and #{endTime}>=o.order_date_time
+			</if>
+			<if  test="channelId != null and channelId != ''">
+			and o.order_channel_id = #{channelId}
+			</if>
+				
+	 	</where> 
+ 			GROUP BY o.cart_id
+ 			ORDER BY o.cart_id ASC
+	</select>
+	
+	<!-- 获取买就送赠品 废止-->
+	<select id="oms_buy_than_gift_setting_getBuyThanGiftBySku" parameterType="HashMap" resultType="String">
+		<if test="skuTotalList != null and skuTotalList.size > 0">
+			<foreach item="sku" index="index" collection="skuTotalList" open="" separator="union all" close="">
+				select
+					gift_sku as giftSku
+				from
+					oms_buy_than_gift_setting
+				where
+					order_channel_id = #{orderChannelId}
+					and cart_id = #{cartId}
+					and sku = #{sku}
+					and now() >= ifNull(exp_date_time_start, now())
+					and ifNull(exp_date_time_end, now()) >= now()
+			</foreach>
+		</if>
+	</select>
+	
+	<!-- 获取买就送赠品-->
+	<select id="oms_buy_than_gift_setting_getBuyThanGiftSetting" resultType="HashMap">
+		select
+			order_channel_id as orderChannelId,
+			cart_id as cartId,
+			sku as sku,
+			gift_sku as giftSku
+		from
+			oms_buy_than_gift_setting
+		where
+			now() >= ifNull(exp_date_time_start, now())
+			and ifNull(exp_date_time_end, now()) >= now()
+	</select>
+	
+	<!-- 获取满就送排除商品 -->
+	<select id="oms_price_than_gift_except_setting_getPriceThanGiftExceptSetting" resultType="HashMap">
+		select
+			order_channel_id as orderChannelId,
+			cart_id as cartId,
+			except_sku as exceptSku
+		from
+			oms_price_than_gift_except_setting
+		where
+			now() >= ifNull(exp_date_time_start, now())
+			and ifNull(exp_date_time_end, now()) >= now()
+	</select>
+	
+	<!-- 获取满就送商品-->
+	<select id="oms_price_than_gift_setting_getPriceThanGiftSetting" resultType="HashMap">
+		select
+			order_channel_id as orderChannelId,
+			cart_id as cartId,
+			price,
+			gift_sku as giftSku
+		from
+			oms_price_than_gift_setting
+		where
+			now() >= ifNull(exp_date_time_start, now())
+			and ifNull(exp_date_time_end, now()) >= now()
+	</select>
+	
+	<!-- 获取老顾客赠品 -->
+	<select id="oms_regular_customer_gift_setting_getRegularCustomerGiftSetting" resultType="HashMap">
+		select
+			order_channel_id as orderChannelId,
+			cart_id as cartId,
+			gift_sku as giftSku
+		from
+			oms_regular_customer_gift_setting
+		where
+			now() >= ifNull(exp_date_time_start, now())
+			and ifNull(exp_date_time_end, now()) >= now()
+	</select>
+	
+	<!-- 优先下单前多少名赠品设定 -->
+	<select id="oms_prior_count_gift_setting_getPriorCountGiftSetting" resultType="HashMap">
+		select
+			order_channel_id as orderChannelId,
+			cart_id as cartId,
+			gift_sku as giftSku
+		from
+			oms_prior_count_gift_setting
+		where
+			now() >= ifNull(exp_date_time_start, now())
+			and ifNull(exp_date_time_end, now()) >= now()
+	</select>
+	
+	<!-- 已获赠品顾客信息 -->
+	<select id="oms_having_gifted_customer_setting_getHavingGiftedCustomerInfo" resultType="HashMap">
+		select
+			order_channel_id as orderChannelId,
+			platform_id as platformId,
+			buyer_nick as buyerNick,
+			type as type
+		from
+			oms_having_gifted_customer_setting
+	</select>
+	
+	<!-- 赠品类型信息设置表信息获得 -->
+	<select id="oms_gifted_property_setting_getGiftedPropertySetting" resultType="HashMap">
+		select
+			order_channel_id as orderChannelId,
+			cart_platform_id as cartPlatformId,
+			type as type,
+			value as value
+		from
+			oms_gifted_property_setting
+		where
+			now() >= ifNull(exp_date_time_start, now())
+			and ifNull(exp_date_time_end, now()) >= now()
+	</select>
+
+	<!-- 获取满就送金额限制  废止 -->
+	<select id="oms_price_than_gift_setting_getPriceOfPriceThanGift" parameterType="HashMap" resultType="Double">
+		select
+			distinct price
+		from
+			oms_price_than_gift_setting
+		where
+			order_channel_id = #{orderChannelId}
+			and cart_id = #{cartId}
+			and now() >= ifNull(exp_date_time_start, now())
+			and ifNull(exp_date_time_end, now()) >= now()
+		order by price desc
+	</select>
+
+	<!-- 获取满就送商品  废止-->
+	<select id="oms_price_than_gift_setting_getPriceThanGiftByPrice" parameterType="HashMap" resultType="String">
+		select
+			gift_sku as giftSku
+		from
+			oms_price_than_gift_setting
+		where
+			order_channel_id = #{orderChannelId}
+			and cart_id = #{cartId}
+			and price = #{price}
+			and now() >= ifNull(exp_date_time_start, now())
+			and ifNull(exp_date_time_end, now()) >= now()
+	</select>
+
+	<!-- 获取满就送排除商品  废止-->
+	<select id="oms_price_than_gift_except_setting_getExceptOfPriceThanGift" parameterType="HashMap" resultType="String">
+		select
+			except_sku as exceptSku
+		from
+			oms_price_than_gift_except_setting
+		where
+			order_channel_id = #{orderChannelId}
+			and cart_id = #{cartId}
+			and now() >= ifNull(exp_date_time_start, now())
+			and ifNull(exp_date_time_end, now()) >= now()
+	</select>
+	
+	<!-- 获取老顾客赠品  废止-->
+	<select id="oms_regular_customer_gift_setting_getRegularCustomerGifts" parameterType="HashMap" resultType="String">
+		select
+			gift_sku as giftSku
+		from
+			oms_regular_customer_gift_setting
+		where
+			order_channel_id = #{orderChannelId}
+			and cart_id = #{cartId}
+			and now() >= ifNull(exp_date_time_start, now())
+			and ifNull(exp_date_time_end, now()) >= now()
+	</select>
+	
+	<!-- 获取独立域名已发货订单信息 -->
+	<select id="oms_bt_orders_getSelfShippedOrderInfo" parameterType="HashMap" resultType="HashMap">
+		select 
+			o.source_order_id,
+			o.order_number,
+			o.order_date_time,
+			d.item_number,
+			d.sku,
+			t.tracking_no,
+			t.tracking_type
+		from 
+			oms_bt_orders o, 
+			oms_bt_order_details d,
+			tt_res_tracking t
+		where 
+			o.order_channel_id = #{orderChannelId}
+			and o.cart_id = #{cartId}
+			and o.order_number = d.order_number
+			and o.order_kind = '0'
+			and d.adjustment = 0
+			and d.status = 'Shipped'
+			and d.sku != 'price-difference-001'
+			and d.res_id = t.reservation_id
+			and o.source_order_id 
+			in (
+				select g.source_order_id 
+				from oms_bt_group_orders g 
+				where g.self_send_flag = '0'
+				order by g.created asc
+			)
+	</select>
+	
+	<!-- 获取独立域名已取消原始订单信息 -->
+	<select id="oms_bt_orders_getSelfCanceledOriginalOrderInfo" parameterType="HashMap" resultType="HashMap">
+		select 
+			o.source_order_id,
+			o.order_number,
+			o.order_date_time,
+			d.item_number,
+			d.sku
+		from 
+			oms_bt_orders o, 
+			oms_bt_order_details d 
+		where 
+			o.order_channel_id = #{orderChannelId}
+			and o.cart_id = #{cartId}
+			and o.order_number = d.order_number 
+			and (o.order_status = 'Canceled' or o.order_status = 'Returned')
+			and o.order_kind = '0'
+			and d.adjustment = 0
+			and d.sku != 'price-difference-001'
+			and o.source_order_id 
+			in (
+				select g.source_order_id 
+				from oms_bt_group_orders g 
+				where g.self_send_flag = '0'
+				order by g.created asc
+			)
+	</select>
+	
+	<!-- 获取独立域名已取消原始订单对应 子订单没有取消信息 -->
+	<select id="oms_bt_orders_getSelfCanceledChildOrderInfo" parameterType="HashMap" resultType="HashMap">
+		select 
+			oo.order_number, 
+			oo.source_order_id
+		from 
+			oms_bt_orders oo 
+		where 
+			oo.source_order_id in
+			(
+				select 
+					o.source_order_id
+				from 
+					oms_bt_orders o
+				where 
+					o.order_channel_id = #{orderChannelId}
+					and o.cart_id = #{cartId}
+					and (o.order_status = 'Canceled' or o.order_status = 'Returned')
+					and o.order_kind = '0'
+					and o.source_order_id 
+					in (
+						select g.source_order_id 
+						from oms_bt_group_orders g 
+						where g.self_send_flag = '0'
+						order by g.created asc
+					)
+			) 
+			and oo.order_kind != '0'
+			and ifnull(oo.order_status, '') != 'Canceled'
+            and ifnull(oo.order_status, '') != 'Returned'
+	</select>
+	
+	<!-- 置位oms_bt_group_orders发送独立域名标志（->1） -->
+	<update id="oms_bt_group_orders_resetGroupSelfSendFlag" parameterType="HashMap">
+		update oms_bt_group_orders
+			set 
+				self_send_flag = 1,
+				modified = now(),
+				modifier = #{taskName}
+		 where source_order_id = #{source_order_id}
+	</update>
+	
+	<!-- 获取京东、京东国际需要推送短链接的订单信息 -->
+	<select id="oms_new_orders_import_history_getNeedShortUrlJdNewOrder" parameterType="HashMap" resultType="com.voyageone.batch.oms.modelbean.TaobaoTradeBean">
+		select 
+			tid,
+			shipping_receiver_name as receiver_name,
+			shipping_receiver_phone as receiver_mobile,
+			pay_time,
+			order_channel_id,
+			cart_id as cartId,
+			totals_payment as payment,
+			billing_buyer_nick as buyer_nick,
+			product_sku,
+			product_quantity
+		from 
+			oms_new_orders_import_history
+		where 
+			short_url_send_flag = 0
+			and order_channel_id = #{orderChannelId}
+			and cart_id in ${cartId}
+		order by pay_time asc limit 100
+	</select>
+	
+	<!-- 获取聚美需要推送短链接的订单信息 -->
+	<select id="oms_new_orders_import_history_getNeedShortUrlJmNewOrder" parameterType="HashMap" resultType="com.voyageone.batch.oms.modelbean.TaobaoTradeBean">
+		select 
+			tid,
+			shipping_receiver_name as receiver_name,
+			shipping_receiver_phone as receiver_mobile,
+			pay_time,
+			order_channel_id,
+			cart_id as cartId,
+			totals_payment as payment,
+			billing_buyer_nick as buyer_nick,
+			product_sku,
+			product_quantity,
+			id_card
+		from 
+			oms_new_orders_import_history
+		where 
+			short_url_send_flag = 0
+			and cart_id in ${cartId}
+		order by pay_time asc limit 100
+	</select>
+	
+	<!-- 置位oms_new_orders_import_history发送短域名标志（->1） -->
+	<update id="oms_new_orders_import_history_resetShortUrlSendFlag" parameterType="HashMap">
+		update oms_new_orders_import_history
+			set 
+				short_url_send_flag = 1,
+				modified = now(),
+				modifier = #{taskName}
+		where order_channel_id = #{order_channel_id}
+			and cart_id = #{cart_id}
+			and tid = #{tid}
+	</update>
+	
+	<!-- 聚美重复新订单判断 -->
+	<select id="oms_new_orders_import_history_isJuMeiOrderExist" parameterType="HashMap" resultType="int">
+		select 
+			count(0)
+		from 
+			oms_new_orders_import_history
+		where 
+			tid like #{orderNumber}
+			and cart_id = #{cartId}
+	</select>
+	
+	<!-- sneakerhead 88店庆每小时统计消费前10顾客-->
+	<select id="oms_bt_orders_getSendSneakerhead88Top10" resultType="HashMap">
+		select 
+			name as wangwangId,
+			sum(final_grand_total) as consumeMoney
+		from
+			(
+				select 
+					name, 
+					final_grand_total
+				from
+					oms_bt_orders
+				where
+					order_channel_id = '001' and
+					cart_id in ('20', '21', '23') and
+					order_date_time >= '2015-08-07 16:00:00' and
+					'2015-08-10 15:59:59' >= order_date_time and
+					order_status not in ('Returned','Canceled')
+			) order88
+		group by name
+		order by sum(final_grand_total) desc
+		limit 10
+	</select>
+	
+	<!-- 根据省市获得邮编 -->
+	<select id="tm_zip_getZip" parameterType="HashMap" resultType="String">
+		select 
+			zip
+		from
+			tm_zip
+		where 
+			state = #{state} and
+			city = #{city}
+	</select>
+
+	<!-- 获得订单信息 -->
+	<resultMap id="ordersInfoMapforDetail" type="com.voyageone.batch.oms.modelbean.OrderExtend">
+		<result column="order_number" property="orderNumber"/>
+		<result column="order_date_time" property="orderDateTime"/>
+		<result column="customer_id" property="customerId"/>
+		<result column="name" property="name"/>
+		<result column="company" property="company"/>
+		<result column="email" property="email"/>
+		<result column="address" property="address"/>
+		<result column="address2" property="address2"/>
+		<result column="city" property="city"/>
+		<result column="state" property="state"/>
+		<result column="zip" property="zip"/>
+		<result column="country" property="country"/>
+		<result column="phone" property="phone"/>
+		<result column="ship_name" property="shipName"/>
+		<result column="ship_company" property="shipCompany"/>
+		<result column="ship_email" property="shipEmail"/>
+		<result column="ship_address" property="shipAddress"/>
+		<result column="ship_address2" property="shipAddress2"/>
+		<result column="ship_city" property="shipCity"/>
+		<result column="ship_state" property="shipState"/>
+		<result column="ship_zip" property="shipZip"/>
+		<result column="ship_country" property="shipCountry"/>
+		<result column="ship_phone" property="shipPhone"/>
+		<result column="account" property="account"/>
+		<result column="customerComment" property="customerComment"/>
+		<result column="internalMessage" property="internalMessage"/>
+		<result column="giftMessage" property="giftMessage"/>
+		<result column="product_total" property="productTotal"/>
+		<result column="shipping_total" property="shippingTotal"/>
+		<result column="grand_total" property="grandTotal"/>
+		<result column="shipping" property="shipping"/>
+		<result column="shipping_name" property="shippingName"/>
+		<result column="discount" property="discount"/>
+		<result column="revised_discount" property="revisedDiscount"/>
+		<result column="coupon" property="coupon"/>
+		<result column="coupon_discount" property="couponDiscount"/>
+		<result column="coupon_ok" property="couponOk"/>
+		<result column="surcharge" property="surcharge"/>
+		<result column="revised_surcharge" property="revisedSurcharge"/>
+		<result column="approved" property="approved"/>
+		<result column="cancelled" property="cancelled"/>
+		<result column="final_product_total" property="finalProductTotal"/>
+		<result column="final_shipping_total" property="finalShippingTotal"/>
+		<result column="final_grand_total" property="finalGrandTotal"/>
+		<result column="lock_ship" property="lockShip"/>
+		<result column="invoice" property="invoice"/>
+		<result column="invoice_kind" property="invoiceKind"/>
+		<result column="invoice_info" property="invoiceInfo"/>
+		<result column="source_order_id" property="sourceOrderId"/>
+		<result column="origin_source_order_id" property="originSourceOrderId"/>
+		<result column="use_tmall_point_fee" property="useTmallPointFee"/>
+		<result column="order_status" property="orderStatus"/>
+		<result column="order_status_name" property="orderStatusName"/>
+		<result column="cart_id" property="cartId"/>
+		<result column="approval_date" property="approvalDate"/>
+		<result column="pay_no" property="poNumber"/>
+		<result column="order_channel_id" property="orderChannelId"/>
+		<result column="cart_name" property="cartName"/>
+		<result column="order_channel_name" property="orderChannelName"/>
+		<result column="discount_type" property="discountType"/>
+		<result column="discount_percent" property="discountPercent"/>
+		<result column="order_kind" property="orderKind"/>
+		<result column="sub_source_order_id" property="subSourceOrderId"/>
+		<result column="price_difference_flag" property="priceDifferenceFlag"/>
+		<result column="client_order_id" property="clientOrderId"/>
+		<result column="freight_collect" property="freightCollect"/>
+		<result column="freight_collect" property="origFreightCollect"/>
+		<result column="pay_no" property="payNo"/>
+
+		<result column="price_per_unit" property="pricePerUnit"/>
+		<result column="product" property="product"/>
+		<result column="quantity_ordered" property="quantityOrdered"/>
+
+		<result column="client_sku" property="clientSku"/>
+		<result column="taobao_logistics_id" property="taobaoLogisticsId"/>
+	</resultMap>
+	<sql id="orders_columnforDetail">
+		o.order_number,
+		o.order_date_time,
+		o.customer_id,
+		IFNULL(o.name,'') as name,
+		IFNULL(o.company,'') as company,
+		IFNULL(o.email,'') as email,
+		IFNULL(o.address,'') as address,
+		IFNULL(o.address2,'') as address2,
+		IFNULL(o.city,'') as city,
+		IFNULL(o.state,'') as state,
+		IFNULL(o.zip,'') as zip,
+		IFNULL(o.country,'') as country,
+		IFNULL(o.phone,'') as phone,
+		IFNULL(o.ship_name,'') as ship_name,
+		IFNULL(o.ship_company,'') as ship_company,
+		IFNULL(o.ship_email,'') as ship_email,
+		IFNULL(o.ship_address,'') as ship_address,
+		IFNULL(o.ship_address2,'') as ship_address2,
+		IFNULL(o.ship_city,'') as ship_city,
+		IFNULL(o.ship_state,'') as ship_state,
+		IFNULL(o.ship_zip,'') as ship_zip,
+		IFNULL(o.ship_country,'') as ship_country,
+		IFNULL(o.ship_phone,'') as ship_phone,
+		o.pay_account as account,
+		IFNULL(o.customer_comments,'') as customerComment,
+		IFNULL(o.internal_message,'') as internalMessage,
+		IFNULL(o.gift_message,'') as giftMessage,
+		o.product_total,
+		o.shipping_total,
+		o.grand_total,
+		IFNULL(o.shipping,'') as shipping,
+		o.discount,
+		o.revised_discount,
+		o.coupon,
+		o.coupon_discount,
+		o.coupon_ok,
+		o.surcharge,
+		o.revised_surcharge,
+		o.approved,
+		o.cancelled,
+		o.final_product_total,
+		o.final_shipping_total,
+		o.final_grand_total,
+		o.lock_ship as lock_ship,
+		IFNULL(o.need_invoice,'') as invoice,
+		o.source_order_id,
+		o.origin_source_order_id,
+		o.channel_point_fee as use_tmall_point_fee,
+		o.order_status,
+		o.cart_id,
+		o.approval_date,
+		o.pay_no as po_number,
+		o.order_channel_id,
+		IFNULL(o.invoice_info, '') as invoice_info,
+		c.name as cart_name,
+
+		o.discount_type,
+		o.discount_percent,
+		o.order_kind,
+		o.sub_source_order_id,
+		o.price_difference_flag,
+		IFNULL(o.invoice_kind, '') as invoice_kind,
+		IFNULL(o.client_order_id, '') as client_order_id,
+		o.freight_collect,
+		o.pay_no,
+
+		od.price_per_unit,
+		od.product,
+		od.quantity_ordered,
+
+		s.client_sku,
+		co.taobao_logistics_id
+	</sql>
+	<!-- 获得向RM 推送正常订单信息 废止-->
+	<select id="oms_bt_order_details_getPushNormalOrdersInfo" parameterType="String" resultMap="ordersInfoMapforDetail" >
+		select <include refid="orders_columnforDetail"/>
+		from
+			oms_bt_orders o
+		left join oms_bt_order_details od
+			on o.order_number = od.order_number
+		left join oms_bt_ext_orders ox
+			on o.order_number = ox.order_number
+		left join cms_mt_size_mapping s
+			on od.sku = s.sku
+		left join tt_cainiao_order co
+			on o.order_number = co.order_number
+		inner join ct_cart c
+			on o.cart_id = c.cart_id
+		where
+			o.order_channel_id = #{orderChannelId} and
+			o.order_status != 'Canceled' and
+			o.approved = true and
+			o.lock_ship != 'YES' and
+			od.adjustment = false and
+			ox.send_flg = false and
+			co.taobao_logistics_id != '0'
+	</select>
+
+	<!-- 获得向RM 推送取消订单信息 -->
+	<select id="oms_bt_order_details_getPushPendingCancelOrdersInfo" parameterType="String" resultMap="ordersInfoMapforDetail" >
+		select <include refid="orders_columnforDetail"/>
+		from
+			oms_bt_orders o
+		left join oms_bt_order_details od
+			on o.order_number = od.order_number
+		left join oms_bt_ext_orders ox
+			on o.order_number = ox.order_number
+		left join wms_bt_item_details s
+			on o.order_channel_id = s.order_channel_id and od.sku = s.sku
+		left join tt_cainiao_order co
+			on o.order_number = co.order_number
+		inner join ct_cart c
+			on o.cart_id = c.cart_id
+		where
+			o.order_channel_id = #{orderChannelId} and
+			o.order_status != 'Canceled' and
+			od.adjustment = false and
+			ox.send_flg = true and
+			ox.ext_flg1 = true and
+			ox.ext_flg2 = false and
+			co.taobao_logistics_id != '0'
+	</select>
+
+	<!-- 获得向RM 推送退货订单信息 -->
+	<resultMap id="orderDetailsInfoMapForReturn" type="com.voyageone.batch.oms.modelbean.OrderExtend">
+		<result column="source_order_id" property="sourceOrderId"/>
+		<result column="order_number" property="orderNumber"/>
+		<result column="item_number" property="itemNumber"/>
+		<result column="quantity_ordered" property="quantityOrdered"/>
+		<result column="client_sku" property="clientSku"/>
+	</resultMap>
+	<select id="oms_bt_order_details_getPushReturnOrdersInfo" parameterType="String" resultMap="orderDetailsInfoMapForReturn" >
+		select
+			o.source_order_id,
+			od.order_number,
+			od.item_number,
+			od.quantity_ordered,
+			s.client_sku
+		from
+			oms_bt_orders o
+		left join oms_bt_order_details od
+			on o.order_number = od.order_number
+		left join oms_bt_ext_order_details odx
+			on od.order_number = odx.order_number and
+				od.item_number = odx.item_number
+		left join wms_bt_item_details s
+			on o.order_channel_id = s.order_channel_id and od.sku = s.sku
+		where
+			o.order_channel_id = #{orderChannelId} and
+			od.status = 'Returned' and
+			od.adjustment = false and
+			odx.send_flg = false
+	</select>
+
+	<!-- 将oms_bt_ext_orders表的 订单发送标志置位->1-->
+	<update id="oms_bt_ext_orders_updateSendFlag" parameterType="HashMap">
+		update oms_bt_ext_orders
+		set
+		    send_flg = true,
+		    modified = now(),
+		    modifier = #{taskName}
+		where
+		<if test="orderNumberList != null ">
+			order_number in
+			<foreach item="item" index="index" collection="orderNumberList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</update>
+
+	<!-- 将oms_bt_ext_orders表的 取消订单发送标志置位->1-->
+	<update id="oms_bt_ext_orders_updatePendingCancelSendFlag" parameterType="HashMap">
+		update oms_bt_ext_orders
+		set
+			ext_flg2 = true,
+			modified = now(),
+			modifier = #{taskName}
+		where
+		<if test="orderNumberList != null ">
+			order_number in
+			<foreach item="item" index="index" collection="orderNumberList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</update>
+
+	<!-- 将oms_bt_ext_order_details表的 退货订单发送标志置位->1-->
+	<update id="oms_bt_ext_order_details_updateReturnSendFlag" parameterType="HashMap">
+		update oms_bt_ext_order_details
+		set
+			send_flg = true,
+			modified = now(),
+			modifier = #{taskName}
+		where
+			order_number = #{orderNumber} and
+			item_number = #{itemNumber}
+	</update>
+
+	<!-- 根据source_order_id 取订单信息-->
+	<resultMap id="ordersInfoMapForNotes" type="com.voyageone.batch.oms.modelbean.OrderExtend">
+		<result column="source_order_id" property="sourceOrderId"/>
+		<result column="order_number" property="orderNumber"/>
+	</resultMap>
+	<select id="oms_bt_orders_getOrderInfoBySourceOrderId" parameterType="HashMap" resultMap="ordersInfoMapForNotes">
+		select
+			source_order_id,
+			order_number
+		from oms_bt_orders
+		where
+		<if test="sourceOrderIdList != null ">
+			source_order_id in
+			<foreach item="item" index="index" collection="sourceOrderIdList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</select>
+
+	<!-- 将oms_bt_ext_orders表的 第三方取消订单标志置位->1-->
+	<update id="oms_bt_ext_orders_updatePaternCancelFlag" parameterType="HashMap">
+		update oms_bt_ext_orders
+		set
+		    ext_flg3 = true,
+		    modified = now(),
+		    modifier = #{taskName}
+		where
+		<if test="sourceOrderIdList != null ">
+			origin_source_order_id in
+			<foreach item="item" index="index" collection="sourceOrderIdList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</update>
+
+	<!-- 获得订单详细信息 -->
+	<resultMap id="orderDetailsInfoMap" type="com.voyageone.batch.oms.formbean.OutFormOrderDetailOrderDetail">
+		<result column="order_number" property="orderNumber"/>
+		<result column="item_number" property="itemNumber"/>
+		<result column="sub_item_number" property="subItemNumber"/>
+		<result column="adjustment" property="adjustment"/>
+		<result column="product" property="product"/>
+		<result column="price_per_unit" property="pricePerUnit"/>
+		<result column="quantity_ordered" property="quantityOrdered"/>
+		<result column="quantity_shipped" property="quantityShipped"/>
+		<result column="quantity_returned" property="quantityReturned"/>
+		<result column="sku" property="sku"/>
+		<result column="status" property="status"/>
+		<result column="sync_synship" property="syncSynship"/>
+		<result column="res_id" property="resId"/>
+		<result column="syn_ship_no" property="synShipNo"/>
+		<result column="client_sku" property="clientSku"/>
+	</resultMap>
+	<sql id="orderDetails_column">
+		od.order_number,
+		od.item_number,
+		od.sub_item_number,
+		od.adjustment,
+		od.product,
+		od.price_per_unit,
+		od.quantity_ordered,
+		od.quantity_shipped,
+		od.quantity_returned,
+		od.sku,
+		IFNULL(od.status,'') as status,
+		od.synship_flg as sync_synship,
+		od.res_id as res_id,
+		od.syn_ship_no as syn_ship_no,
+		s.client_sku
+	</sql>
+	<select id="oms_bt_order_details_getOrderDetailsInfoByOrderNumList" parameterType="HashMap" resultMap="orderDetailsInfoMap" >
+		select <include refid="orderDetails_column"/>
+		from
+			oms_bt_order_details od
+		left join oms_bt_orders o
+			on o.order_number = od.order_number
+		left join wms_bt_item_details s
+			on o.order_channel_id = s.order_channel_id and od.sku = s.sku
+		where
+		o.order_channel_id = #{orderChannelId}
+		<if test="orderNumberList != null ">
+			and od.order_number in
+			<foreach item="item" index="index" collection="orderNumberList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		order by
+		od.order_number, od.adjustment, od.item_number
+	</select>
+
+	<!-- 获得订单详细信息 （根据订单渠道）-->
+	<resultMap id="ordersInfoMapforPush" type="com.voyageone.batch.oms.formbean.OutFormOrderdetailOrders">
+		<result column="order_number" property="orderNumber"/>
+		<result column="order_date_time" property="orderDateTime"/>
+		<result column="customer_id" property="customerId"/>
+		<result column="name" property="name"/>
+		<result column="company" property="company"/>
+		<result column="email" property="email"/>
+		<result column="address" property="address"/>
+		<result column="address2" property="address2"/>
+		<result column="city" property="city"/>
+		<result column="state" property="state"/>
+		<result column="zip" property="zip"/>
+		<result column="country" property="country"/>
+		<result column="phone" property="phone"/>
+		<result column="ship_name" property="shipName"/>
+		<result column="ship_company" property="shipCompany"/>
+		<result column="ship_email" property="shipEmail"/>
+		<result column="ship_address" property="shipAddress"/>
+		<result column="ship_address2" property="shipAddress2"/>
+		<result column="ship_city" property="shipCity"/>
+		<result column="ship_state" property="shipState"/>
+		<result column="ship_zip" property="shipZip"/>
+		<result column="ship_country" property="shipCountry"/>
+		<result column="ship_phone" property="shipPhone"/>
+		<result column="account" property="account"/>
+		<result column="customerComment" property="customerComment"/>
+		<result column="internalMessage" property="internalMessage"/>
+		<result column="giftMessage" property="giftMessage"/>
+		<result column="product_total" property="productTotal"/>
+		<result column="shipping_total" property="shippingTotal"/>
+		<result column="grand_total" property="grandTotal"/>
+		<result column="shipping" property="shipping"/>
+
+		<result column="discount" property="discount"/>
+		<result column="revised_discount" property="revisedDiscount"/>
+		<result column="coupon" property="coupon"/>
+		<result column="coupon_discount" property="couponDiscount"/>
+		<result column="coupon_ok" property="couponOk"/>
+		<result column="surcharge" property="surcharge"/>
+		<result column="revised_surcharge" property="revisedSurcharge"/>
+		<result column="approved" property="approved"/>
+		<result column="cancelled" property="cancelled"/>
+		<result column="final_product_total" property="finalProductTotal"/>
+		<result column="final_shipping_total" property="finalShippingTotal"/>
+		<result column="final_grand_total" property="finalGrandTotal"/>
+
+
+
+
+		<result column="lock_ship" property="lockShip"/>
+		<result column="invoice" property="invoice"/>
+		<result column="invoice_kind" property="invoiceKind"/>
+		<result column="invoice_info" property="invoiceInfo"/>
+
+		<result column="source_order_id" property="sourceOrderId"/>
+		<result column="origin_source_order_id" property="originSourceOrderId"/>
+		<result column="use_tmall_point_fee" property="useTmallPointFee"/>
+		<result column="order_status" property="orderStatus"/>
+
+		<result column="cart_id" property="cartId"/>
+		<result column="approval_date" property="approvalDate"/>
+		<result column="pay_no" property="poNumber"/>
+
+		<result column="order_channel_id" property="orderChannelId"/>
+		<!-- <result column="channel" property="channel"/> -->
+		<!-- <result column="store" property="store"/> -->
+
+
+
+		<result column="discount_type" property="discountType"/>
+		<result column="discount_percent" property="discountPercent"/>
+		<result column="order_kind" property="orderKind"/>
+		<result column="sub_source_order_id" property="subSourceOrderId"/>
+
+		<result column="customerComment" property="origCustomerComment"/>
+		<result column="internalMessage" property="origInternalMessage"/>
+		<result column="giftMessage" property="origGiftMessage"/>
+
+		<result column="invoice" property="origInvoice"/>
+		<result column="invoice_info" property="origInvoiceInfo"/>
+		<result column="invoice_kind" property="origInvoiceKind"/>
+
+		<result column="shipping" property="origShipping"/>
+
+
+		<result column="name" property="origName"/>
+		<result column="company" property="origCompany"/>
+		<result column="email" property="origEmail"/>
+		<result column="address" property="origAddress"/>
+		<result column="address2" property="origAddress2"/>
+		<result column="city" property="origCity"/>
+		<result column="state" property="origState"/>
+		<result column="zip" property="origZip"/>
+		<result column="country" property="origCountry"/>
+		<result column="phone" property="origPhone"/>
+
+		<result column="ship_name" property="origShipName"/>
+		<result column="ship_company" property="origShipCompany"/>
+		<result column="ship_email" property="origShipEmail"/>
+		<result column="ship_address" property="origShipAddress"/>
+		<result column="ship_address2" property="origShipAddress2"/>
+		<result column="ship_city" property="origShipCity"/>
+		<result column="ship_state" property="origShipState"/>
+		<result column="ship_zip" property="origShipZip"/>
+		<result column="ship_country" property="origShipCountry"/>
+		<result column="ship_phone" property="origShipPhone"/>
+
+		<result column="price_difference_flag" property="priceDifferenceFlag"/>
+
+		<result column="client_order_id" property="clientOrderId"/>
+		<result column="freight_collect" property="freightCollect"/>
+		<result column="freight_collect" property="origFreightCollect"/>
+		<result column="cancelClientOrderFlag" property="cancelClientOrderFlag"/>
+		<result column="cancelClientOrderFlag" property="origCancelClientOrderFlag"/>
+		<result column="clientOrderSendFlag" property="clientOrderSendFlag"/>
+		<result column="thirdPartyCancelOrderFlag" property="thirdPartyCancelOrderFlag"/>
+		<result column="taobao_logistics_id" property="taobaoLogisticsId"/>
+	</resultMap>
+	<sql id="orders_columnforpush">
+		o.order_number,
+		o.order_date_time,
+		o.customer_id,
+		IFNULL(o.name,'') as name,
+		IFNULL(o.company,'') as company,
+		IFNULL(o.email,'') as email,
+		IFNULL(o.address,'') as address,
+		IFNULL(o.address2,'') as address2,
+		IFNULL(o.city,'') as city,
+		IFNULL(o.state,'') as state,
+		IFNULL(o.zip,'') as zip,
+		IFNULL(o.country,'') as country,
+		IFNULL(o.phone,'') as phone,
+		IFNULL(o.ship_name,'') as ship_name,
+		IFNULL(o.ship_company,'') as ship_company,
+		IFNULL(o.ship_email,'') as ship_email,
+		IFNULL(o.ship_address,'') as ship_address,
+		IFNULL(o.ship_address2,'') as ship_address2,
+		IFNULL(o.ship_city,'') as ship_city,
+		IFNULL(o.ship_state,'') as ship_state,
+		IFNULL(o.ship_zip,'') as ship_zip,
+		IFNULL(o.ship_country,'') as ship_country,
+		IFNULL(o.ship_phone,'') as ship_phone,
+		o.pay_account as account,
+		IFNULL(o.customer_comments,'') as customerComment,
+		IFNULL(o.internal_message,'') as internalMessage,
+		IFNULL(o.gift_message,'') as giftMessage,
+		o.product_total,
+		o.shipping_total,
+		o.grand_total,
+		IFNULL(o.shipping,'') as shipping,
+
+		o.discount,
+		o.revised_discount,
+		o.coupon,
+		o.coupon_discount,
+		o.coupon_ok,
+		o.surcharge,
+		o.revised_surcharge,
+		o.approved,
+		o.cancelled,
+		o.final_product_total,
+		o.final_shipping_total,
+		o.final_grand_total,
+
+
+
+
+		o.lock_ship as lock_ship,
+		IFNULL(o.need_invoice,'') as invoice,
+
+		o.source_order_id,
+		o.origin_source_order_id,
+		o.channel_point_fee as use_tmall_point_fee,
+		o.order_status,
+
+		o.cart_id,
+		o.approval_date,
+		o.pay_no,
+
+		o.order_channel_id,
+		IFNULL(o.invoice_info, '') as invoice_info,
+
+
+		o.discount_type,
+		o.discount_percent,
+		o.order_kind,
+		o.sub_source_order_id,
+		o.price_difference_flag,
+		IFNULL(o.invoice_kind, '') as invoice_kind,
+
+		IFNULL(o.client_order_id, '') as client_order_id,
+		freight_collect,
+		IFNULL(ox.send_flg, false) as clientOrderSendFlag,
+		IFNULL(ox.ext_flg1, false) as cancelClientOrderFlag,
+		IFNULL(ox.ext_flg3, false) as thirdPartyCancelOrderFlag,
+
+		co.taobao_logistics_id
+	</sql>
+	<select id="oms_bt_orders_getOrdersListByOrderChannelId" parameterType="String" resultMap="ordersInfoMapforPush" >
+		select <include refid="orders_columnforpush"/>
+		from
+			oms_bt_orders o
+		left join oms_bt_ext_orders ox
+			on o.order_number = ox.order_number
+		left join tt_cainiao_order co
+			on o.order_number = co.order_number
+		where
+			o.order_channel_id = #{orderChannelId} and
+			o.order_status != 'Canceled' and
+			o.approved = true and
+			o.lock_ship != 'YES' and
+			ox.send_flg = false and
+			co.taobao_logistics_id != '0'
+	</select>
+
+
+	<!-- 发货订单取得-->
+	<resultMap id="ordersInfoMapForShipping" type="com.voyageone.batch.oms.modelbean.OrderExtend">
+		<result column="source_order_id" property="sourceOrderId"/>
+		<result column="taobao_logistics_id" property="taobaoLogisticsId"/>
+	</resultMap>
+	<select id="oms_bt_orders_getOrdersInfoForShipping" parameterType="String" resultMap="ordersInfoMapForShipping" >
+		select o.source_order_id,
+				co.taobao_logistics_id
+		from
+			oms_bt_orders o
+		left join tt_cainiao_order co
+			on o.order_number = co.order_number
+		where
+		<if test="sourceOrderIdList != null ">
+			o.source_order_id in
+			<foreach item="item" index="index" collection="sourceOrderIdList" open="(" separator="," close=")">
+				#{item.sourceOrderId}
+			</foreach>
+		</if>
+	</select>
+</mapper>

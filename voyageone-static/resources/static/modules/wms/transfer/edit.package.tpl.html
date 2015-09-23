@@ -1,0 +1,48 @@
+<!--Package 创建按钮 & 扫描按钮组-->
+<div class="form-inline margin-bottom-10">
+    <div class="input-group col-6">
+        <label for="transfer-package-name" class="input-group-addon" translate="WMS_PACKAGENAME"></label>
+        <input class="form-control" type="text" id="transfer-package-name" ng-model="vm.packageInput.name"  ng-disabled="isTransferClosed()"
+               enter-click="#transfer-package-accept" placeholder="Scan or type package, for open or new"/>
+    </div>
+    <button id="transfer-package-accept" class="btn btn-sm btn-primary" ng-click="acceptPackage()" ng-disabled="isTransferClosed()" translate="WMS_CREATE"></button>
+    <button id="transfer-package-print" class="btn btn-sm btn-primary" ng-click="printPackage()" translate="WMS_PRINT"></button>
+</div>
+<hr />
+<!--Package 表格-->
+<div class="table-responsive">
+    <table if-no-rows="vm.packages" class="table table-bordered table-hover table-condensed">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th translate="WMS_PACKAGENAME"></th>
+            <th translate="WMS_QTY"></th>
+            <th translate="WMS_STATUS"></th>
+            <th translate="WMS_LASTUPDATEUSER"></th>
+            <th translate="WMS_LASTUPDATETIME"></th>
+            <th class="col-fix-op" translate="WMS_OPERATION"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="p in vm.packages">
+            <th scope="row">{{ $index + 1 }}</th>
+            <td>{{ p.transfer_package_name }}</td>
+            <td>{{ p.transfer_package_qty }}</td>
+            <td>{{ p.package_status | statusName }}</td>
+            <td>{{ p.modifier }}</td>
+            <td>{{ p.modified_local }}</td>
+            <td>
+                <!--<button class="btn btn-xs btn-success" context-menu="package-item-operation" ng-click="vm.packages.selected = $index">-->
+                <button class="btn btn-xs btn-success" context-menu="package-item-operation" ng-click="setVal($index)">
+                    <span translate="WMS_OPERATION"></span>
+                    <span class="caret"></span>
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<ul role="menu" id="package-item-operation" class="dropdown-menu">
+    <li><a href="javascript:" ng-click="editPackage()"><i class="fa fa-edit"></i>&nbsp;<span translate="{{vm.isColose ?'WMS_DETAIL':'WMS_EDIT'}}"></span></a></li>
+    <li ng-hide="vm.isColose"><a href="javascript:" ng-click="deletePackage()"><i class="fa fa-trash"></i>&nbsp;<span translate="WMS_DELETE"></span></a></li>
+</ul>

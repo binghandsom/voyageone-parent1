@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.ims.sql">
+	
+	<select id="ims_bt_product_select_by_criteria" parameterType="com.voyageone.batch.ims.modelbean.ProductBean" resultType="com.voyageone.batch.ims.modelbean.ProductBean">
+		select
+		channel_id,
+		cart_id,
+		code,
+		num_iid,
+		product_code,
+		main_product_flg,
+		product_type
+		from
+			voyageone_ims.ims_bt_product
+		where
+			cart_id=#{cart_id}
+		AND
+			channel_id=#{channel_id}
+		AND
+			code=#{code}
+	</select>
+	
+</mapper>

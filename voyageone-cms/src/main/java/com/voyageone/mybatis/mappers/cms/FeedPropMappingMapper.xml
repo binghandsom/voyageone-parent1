@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.cms.sql">
+    <!-- 功能用 mapper 文件 -->
+    <select id="ims_mt_prop_selectProps" resultType="com.voyageone.cms.modelbean.FeedMappingProp">
+        SELECT
+        a.prop_id,
+        a.category_id,
+        a.prop_name,
+        a.prop_type,
+        a.prop_value_default,
+        a.is_top_prop,
+        a.is_parent,
+        a.is_required,
+        a.parent_prop_id,
+        a.content,
+        a.created,
+        a.creater,
+        a.modified,
+        a.modifier,
+        b.is_ignore
+        FROM voyageone_ims.ims_mt_prop a
+        LEFT JOIN voyageone_ims.ims_bt_feed_prop_ignore b
+        ON b.channel_id = #{channel_id}
+        AND a.prop_id = b.prop_id
+        WHERE a.category_id = #{categoryId}
+        AND a.prop_type IN (<foreach item="typeValue" collection="types" separator=",">#{typeValue}</foreach>)
+        <if test="is_ignored != null and is_ignored != ''">AND IFNULL(b.is_ignore, 0) = #{is_ignored}</if>
+        <if test="is_required != null and is_required != ''">AND a.is_required = #{is_required}</if>
+        LIMIT #{start}, #{length}
+    </select>
+
+    <select id="ims_mt_prop_selectPropsCount" resultType="int">
+        SELECT count(1)
+        FROM voyageone_ims.ims_mt_prop a
+        LEFT JOIN voyageone_ims.ims_bt_feed_prop_ignore b
+        ON b.channel_id = #{channel_id}
+        AND a.prop_id = b.prop_id
+        WHERE a.category_id = #{categoryId}
+        AND a.prop_type IN (<foreach item="typeValue" collection="types" separator=",">#{typeValue}</foreach>)
+        <if test="is_ignored != null and is_ignored != ''">AND IFNULL(b.is_ignore, 0) = #{is_ignored}</if>
+        <if test="is_required != null and is_required != ''">AND a.is_required = #{is_required}</if>
+    </select>
+
+    <select id="ims_mt_categories_selectCategoryPath" resultType="String">
+        SELECT category_path
+        FROM voyageone_ims.ims_mt_categories
+        WHERE category_id = #{categoryId}
+    </select>
+
+    <insert id="ims_bt_feed_prop_mapping_insertMapping" parameterType="com.voyageone.cms.modelbean.FeedPropMapping">
+        INSERT INTO voyageone_ims.ims_bt_feed_prop_mapping (channel_id, main_category_id, prop_id, conditions, type, value, created, creater, modified, modifier)
+        VALUES
+            (#{channel_id}, #{main_category_id}, #{prop_id}, #{conditions}, #{type}, #{value}, NOW(), #{creater}, NOW(),
+             #{modifier})
+    </insert>
+
+    <select id="ims_bt_feed_prop_mapping_selectMappingByFinger"
+            parameterType="com.voyageone.cms.modelbean.FeedPropMapping"
+            resultType="com.voyageone.cms.modelbean.FeedPropMapping">
+        SELECT
+            id,
+            channel_id,
+            main_category_id,
+            prop_id,
+            conditions,
+            type,
+            value,
+            created,
+            creater,
+            modified,
+            modifier
+        FROM voyageone_ims.ims_bt_feed_prop_mapping
+        WHERE channel_id = #{channel_id} AND prop_id = #{prop_id} AND value = #{value} AND type = #{type} AND
+              creater = #{creater}
+        ORDER BY created DESC
+        LIMIT 1
+    </select>
+
+    <select id="ims_bt_feed_prop_mapping_selectMappingById" resultType="com.voyageone.cms.modelbean.FeedPropMapping">
+        SELECT
+            id,
+            channel_id,
+            main_category_id,
+            prop_id,
+            conditions,
+            type,
+            value,
+            created,
+            creater,
+            modified,
+            modifier
+        FROM voyageone_ims.ims_bt_feed_prop_mapping
+        WHERE id = #{id}
+    </select>
+
+    <select id="ims_bt_feed_prop_mapping_selectMapping_byProp" resultType="com.voyageone.cms.modelbean.FeedPropMapping">
+        SELECT
+            id,
+            channel_id,
+            main_category_id,
+            prop_id,
+            conditions,
+            type,
+            value,
+            created,
+            creater,
+            modified,
+            modifier
+        FROM voyageone_ims.ims_bt_feed_prop_mapping
+        WHERE channel_id = #{channel_id} AND prop_id = #{prop_id};
+    </select>
+
+    <select id="cms_mt_feed_config_selectFeedProps" resultType="com.voyageone.cms.modelbean.FeedConfig">
+        SELECT
+            order_channel_id,
+            cfg_name,
+            cfg_val1,
+            cfg_val2,
+            is_attribute,
+            attribute_type,
+            comment
+        FROM voyageone_cms.cms_mt_feed_config
+        WHERE order_channel_id = #{channel_id} AND is_attribute = #{is_attribute};
+    </select>
+
+    <select id="cms_mt_feed_attribute_selectFeedValues" resultType="com.voyageone.cms.modelbean.FeedValue">
+        SELECT
+            channel_id,
+            attribute_name,
+            attribute_value,
+            create_on
+        FROM voyageone_cms.cms_mt_feed_attribute
+        WHERE channel_id = #{channel_id} AND attribute_name = #{attr_name}
+    </select>
+
+    <select id="ims_mt_prop_option_selectPropOptions" resultType="com.voyageone.cms.modelbean.PropertyOption">
+        SELECT
+            prop_option_id,
+            prop_id,
+            prop_option_name,
+            prop_option_value,
+            created,
+            creater,
+            modified,
+            modifier
+        FROM voyageone_ims.ims_mt_prop_option
+        WHERE prop_id = #{prop_id};
+    </select>
+
+    <select id="ims_bt_feed_prop_ignore_selectIgnoreValue" resultType="Boolean">
+        SELECT is_ignore
+        FROM voyageone_ims.ims_bt_feed_prop_ignore
+        WHERE prop_id = #{prop.prop_id} AND channel_id = #{channel_id}
+    </select>
+
+    <insert id="ims_bt_feed_prop_ignore_insertIgnoreValue">
+        INSERT INTO voyageone_ims.ims_bt_feed_prop_ignore (prop_id, channel_id, is_ignore, created, creater, modified, modifier)
+        VALUES (#{prop.prop_id}, #{channel_id}, #{prop.is_ignore}, NOW(), #{userName}, NOW(), #{userName})
+    </insert>
+
+    <update id="ims_bt_feed_prop_ignore_updateIgnoreValue">
+        UPDATE voyageone_ims.ims_bt_feed_prop_ignore
+        SET is_ignore = #{prop.is_ignore}, modified = NOW(), modifier = #{userName}
+        WHERE prop_id = #{prop.prop_id} AND channel_id = #{channel_id}
+    </update>
+
+    <delete id="ims_bt_feed_prop_mapping_deleteMapping">
+        DELETE FROM voyageone_ims.ims_bt_feed_prop_mapping
+        WHERE id = #{id}
+    </delete>
+
+    <update id="ims_bt_feed_prop_mapping_updateMapping" parameterType="com.voyageone.cms.modelbean.FeedPropMapping">
+        UPDATE voyageone_ims.ims_bt_feed_prop_mapping
+        SET type = #{type}, conditions = #{conditions}, value = #{value}, modified = NOW(), modifier = #{modifier}
+        WHERE id = #{id} AND modified = #{modified}
+    </update>
+
+    <select id="ims_bt_feed_prop_mapping_default_selectDefaultValue" resultType="String">
+        SELECT prop_value
+        FROM voyageone_ims.ims_bt_feed_prop_mapping_default
+        WHERE prop_name = #{prop.prop_name} AND prop_type = #{prop.prop_type} AND channel_id = #{channel_id}
+    </select>
+
+    <select id="ims_bt_feed_prop_mapping_selectCountsByCategory" resultType="com.voyageone.cms.modelbean.CategoryPropCount">
+        SELECT
+            count(prop.prop_id) props,
+            sum(if(ign.is_ignore = 1, 1, if(mapping.prop_id IS NULL, if(def.prop_name IS NULL, 0, 1), 1))) hasValue
+        FROM
+            voyageone_ims.ims_mt_prop prop LEFT JOIN voyageone_ims.ims_bt_feed_prop_mapping mapping
+                ON prop.prop_id = mapping.prop_id AND mapping.channel_id = #{channel_id}
+            LEFT JOIN voyageone_ims.ims_bt_feed_prop_mapping_default def
+                ON prop.prop_name = def.prop_name AND def.channel_id = #{channel_id}
+            LEFT JOIN voyageone_ims.ims_bt_feed_prop_ignore ign
+                ON prop.prop_id = ign.prop_id AND ign.channel_id = #{channel_id}
+        WHERE
+            prop.category_id = #{category_id};
+    </select>
+
+    <select id="ims_bt_category_extend_selectCategoryExtend" resultType="com.voyageone.cms.modelbean.ImsCategoryExtend">
+        SELECT
+            id,
+            channel_id,
+            main_category_id,
+            is_set_attr,
+            created,
+            creater,
+            modified,
+            modifier
+        FROM voyageone_ims.ims_bt_category_extend
+        WHERE main_category_id = #{category_id}
+    </select>
+
+    <insert id="ims_bt_category_extend_insertCategoryExtend" parameterType="com.voyageone.cms.modelbean.ImsCategoryExtend">
+        INSERT INTO voyageone_ims.ims_bt_category_extend (channel_id, main_category_id, is_set_attr, created, creater, modified, modifier)
+        VALUES (#{channel_id}, #{main_category_id}, #{is_set_attr}, NOW(), #{creater}, NOW(), #{modifier})
+    </insert>
+
+    <update id="ims_bt_category_extend_isSetAttr" parameterType="com.voyageone.cms.modelbean.ImsCategoryExtend">
+        UPDATE voyageone_ims.ims_bt_category_extend SET is_set_attr = #{is_set_attr}, modified = NOW(), modifier = #{modifier}
+        WHERE id = #{id} AND modified = #{modified}
+    </update>
+</mapper>

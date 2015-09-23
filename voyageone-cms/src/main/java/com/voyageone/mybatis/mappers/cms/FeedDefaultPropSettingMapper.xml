@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.cms.sql">
+	<select id="get_feed_default_props" resultType="com.voyageone.cms.modelbean.FeedDefaultPropModel" parameterType="String">
+		SELECT
+			CASE IFNULL(channel.prop_value, '')
+		WHEN '' THEN
+			def.channel_id
+		ELSE
+			channel.channel_id
+		END AS channelId,
+		 def.prop_name AS propName,
+		 def.prop_type AS propType,
+		 CASE IFNULL(channel.prop_value, '')
+		WHEN '' THEN
+			def.prop_value
+		ELSE
+			channel.prop_value
+		END AS propValue
+		FROM
+			voyageone_ims.ims_bt_feed_prop_mapping_default def
+		LEFT JOIN (
+			SELECT
+				channel_id,
+				prop_name,
+				prop_value
+			FROM
+				voyageone_ims.ims_bt_feed_prop_mapping_default
+			WHERE
+				channel_id = #{channelId}
+		) AS channel ON (
+			def.prop_name = channel.prop_name
+		)
+		WHERE
+			def.channel_id = '0'
+			ORDER BY propType
+			
+	</select>
+	<select id="get_feed_default_prop_options" resultType="com.voyageone.cms.modelbean.FeedDefaultPropOptionModel">
+		SELECT 
+			prop_name as propName,
+			option_name as optionName,
+			option_value as optionValue
+		FROM voyageone_ims.ims_bt_feed_prop_mapping_default_option
+	</select>
+	<delete id="delete_curChannel_props" parameterType="String">
+        DELETE FROM voyageone_ims.ims_bt_feed_prop_mapping_default
+        WHERE channel_id  = #{channelId}
+    </delete>
+    <insert id="insert_curChannel_props" parameterType="java.util.List">
+		INSERT INTO
+		voyageone_ims.ims_bt_feed_prop_mapping_default(channel_id,prop_name,prop_type,prop_value,created,creater,modified,modifier)
+		VALUES
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(#{item.channelId},#{item.propName},#{item.propType},#{item.propValue},NOW(),#{item.creater},NOW(),#{item.modifier})
+		</foreach>
+	</insert>
+	<select id="get_feed_default_prop_count" resultType="int">
+		SELECT
+			COUNT(1)
+		FROM
+			voyageone_ims.ims_bt_feed_prop_mapping_default
+		WHERE
+			channel_id = #{channelId}
+	</select>
+</mapper>

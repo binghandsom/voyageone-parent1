@@ -1,0 +1,182 @@
+<div class="vo_modal" ng-init="initialize()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()">
+            <span aria-hidden="true"><i class="fa fa-close"></i></span>
+        </button>
+        <h4 class="modal-title"><i class="glyphicons glyphicons-edit"></i>&nbsp;<span translate="CMS_TXT_TITLE_SIZE_CHART_SETTING"></span></h4>
+    </div>
+    <div class="modal-body wrapper-lg">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="m-b-sm vo_effToggle">
+                    <div ng-controller="cmsPopupController">
+                        <button class="btn m-b-xs btn-sm btn-default btn-addon pull-right" ng-click="openNewSizeChartDetail(vm.refreshSizeChart)"><i class="fa fa-plus"></i><span translate="CMS_TXT_ADD_NEW_SIZE_CHART"></span></button>
+                    </div>
+                </div>
+                <!-- START TABS-->
+                <div>
+                    <tabset class="tab-container vo_nav-tabs">
+
+                        <!-- / tab -->
+                        <tab>
+                            <tab-heading translate="CMS_TXT_BOUND_SIZE_CHART"></tab-heading>
+                            <div class="panel vo_panel tab_panel">
+                                <div class="wrapper b-b">
+                                    <form name="formValidate" class="form-validate form-horizontal">
+                                        <fieldset>
+                                            <div class="form-group col-sm-6">
+                                                <label class="col-sm-4 control-label" translate="CMS_TXT_PRODUCT_TYPE"></label>
+
+                                                <div class="col-sm-8">
+                                                    <div class="input-group">
+                                                        <ui-select ng-model="searchInfo.productTypeId" theme="bootstrap" ng-disabled="disabled" class="text-left" name="productTypeId">
+                                                            <ui-select-match placeholder="Select..." class="text-left">{{$select.selected.productTypeShortName}}</ui-select-match>
+                                                            <ui-select-choices repeat="productType.productTypeId as productType in $root.cmsMaster.productTypeList | filter: $select.search">
+                                                                <span ng-bind-html="productType.productTypeShortName | highlight: $select.search"></span>
+                                                            </ui-select-choices>
+                                                        </ui-select>
+                                                    <span class="input-group-btn">
+                                                        <button type="button" ng-click="searchInfo.productTypeId = null" class="btn btn-default">
+                                                            <small>
+                                                                <em class="fa fa-times text-muted"></em>
+                                                            </small>
+                                                        </button>
+                                                    </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-sm-6">
+                                                <label class="col-sm-4 control-label" translate="CMS_TXT_BRAND"></label>
+
+                                                <div class="col-sm-8">
+                                                    <div class="input-group">
+                                                        <ui-select ng-model="searchInfo.brandId" theme="bootstrap" ng-disabled="disabled" class="text-left" name="brandId">
+                                                            <ui-select-match placeholder="Select..." class="text-left">{{$select.selected.brandShortName}}</ui-select-match>
+                                                            <ui-select-choices repeat="brand.brandId as brand in $root.cmsMaster.brandList | filter: $select.search">
+                                                                <span ng-bind-html="brand.brandShortName | highlight: $select.search"></span>
+                                                            </ui-select-choices>
+                                                        </ui-select>
+                                                    <span class="input-group-btn">
+                                                        <button type="button" ng-click="searchInfo.brandId = null" class="btn btn-default">
+                                                            <small>
+                                                                <em class="fa fa-times text-muted"></em>
+                                                            </small>
+                                                        </button>
+                                                    </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-sm-6">
+                                                <label class="col-sm-4 control-label" translate="CMS_TXT_SIZE_TYPE"></label>
+
+                                                <div class="col-sm-8">
+                                                    <div class="input-group">
+                                                        <ui-select ng-model="searchInfo.sizeTypeId" theme="bootstrap" ng-disabled="disabled" class="text-left" name="sizeTypeId">
+                                                            <ui-select-match placeholder="Select..." class="text-left">{{$select.selected.sizeTypeShortName}}</ui-select-match>
+                                                            <ui-select-choices repeat="sizeType.sizeTypeId as sizeType in $root.cmsMaster.sizeTypeList | filter: $select.search">
+                                                                <span ng-bind-html="sizeType.sizeTypeShortName | highlight: $select.search"></span>
+                                                            </ui-select-choices>
+                                                        </ui-select>
+                                                    <span class="input-group-btn">
+                                                        <button type="button" ng-click="searchInfo.sizeTypeId = null" class="btn btn-default">
+                                                            <small>
+                                                                <em class="fa fa-times text-muted"></em>
+                                                            </small>
+                                                        </button>
+                                                    </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-sm-12 text-center">
+                                                <button type="submit" class="btn btn-sm btn-vo"  ng-click="doGetBoundSizeChartList()" translate="CMS_BTN_SEARCH"></button>
+                                            </div>
+                                        </fieldset>
+                                    </form>
+                                </div>
+                                <div class="table-responsive" ng-show="bindSizeList.length">
+                                    <table datatable="ng" class="table table-striped hover b-t b-b vo_table" dt-options="dtSizeChartList.options">
+                                        <thead>
+                                        <tr class="">
+                                            <th class="wtab-check text-center"></th>
+                                            <th class="wtab-xl" translate="CMS_TXT_NAME"></th>
+                                            <th class="wtab-sm text-center" translate="CMS_TXT_IMAGE"></th>
+                                            <th class="wtab-xsm" translate="CMS_TXT_CREATED_ON"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr ng-repeat="bindSizeInfo in bindSizeList" ng-controller="cmsPopupController">
+                                            <td class="wtab-check text-center"><input  type="checkbox" ng-click="selSizeChartId(bindSizeInfo.sizeChartId)" ng-checked="currentSizeChartId == bindSizeInfo.sizeChartId"></td>
+                                            <td class="wtab-xl"><a href="" class="btn-main" ng-bind="bindSizeInfo.sizeChartName" ng-click="openSizeChartDetail(bindSizeInfo.sizeChartId)"></a></td>
+                                            <td class="wtab-sm text-center"><img class="prodImg" ng-src="{{cmsMaster.imageUrl}}{{bindSizeInfo.sizeChartImageUrl}}"></td>
+                                            <td class="wtab-xsm" ng-bind="bindSizeInfo.created"></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </tab>
+                        <!-- .tab -->
+                        <tab>
+                            <tab-heading translate="CMS_TXT_OTHER_SIZE_CHART"></tab-heading>
+                            <div class="panel vo_panel tab_panel">
+                                <div class="wrapper b-b">
+                                    <form name="formValidate" class="form-validate form-horizontal">
+                                        <fieldset>
+                                            <div class="form-group col-sm-6">
+                                                <label class="col-sm-4 control-label" translate="CMS_TXT_SIZE"></label>
+
+                                                <div class="col-sm-8">
+                                                    <div class="input-group">
+                                                        <input type="text" class="input-sm form-control" ng-model="searchInfo.size">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-sm-6">
+                                                <label class="col-sm-4 control-label" translate="CMS_TXT_CN_SIZE"></label>
+
+                                                <div class="col-sm-8">
+                                                    <div class="input-group">
+                                                        <input type="text" class="input-sm form-control" ng-model="searchInfo.cnSize">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-sm-12 text-center">
+                                                <button type="submit" class="btn btn-sm btn-vo"  ng-click="doGetOtherSizeChartList()" translate="CMS_BTN_SEARCH"></button>
+                                            </div>
+                                        </fieldset>
+                                    </form>
+                                </div>
+                                <div class="table-responsive" ng-show="otherSizeList.length">
+                                    <table datatable="ng" class="table table-striped hover b-t b-b vo_table" dt-options="dtSizeChartList.options">
+                                        <thead>
+                                        <tr class="">
+                                            <th class="wtab-check text-center"></th>
+                                            <th class="wtab-xl" translate="CMS_TXT_NAME"></th>
+                                            <th class="wtab-sm text-center" translate="CMS_TXT_IMAGE"></th>
+                                            <th class="wtab-xsm" translate="CMS_TXT_CREATED_ON"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr ng-repeat="otherSizeInfo in otherSizeList" ng-controller="cmsPopupController">
+                                            <td class="wtab-check text-center"><input  type="checkbox" ng-click="selSizeChartId(otherSizeInfo.sizeChartId)" ng-checked="currentSizeChartId == otherSizeInfo.sizeChartId"></td>
+                                            <td class="wtab-xl"><a href="" class="btn-main" ng-bind="otherSizeInfo.sizeChartName" ng-click="openSizeChartDetail(otherSizeInfo.sizeChartId)"></a></td>
+                                            <td class="wtab-sm text-center"><img class="prodImg" ng-src="{{cmsMaster.imageUrl}}{{otherSizeInfo.sizeChartImageUrl}}"></td>
+                                            <td class="wtab-xsm" ng-bind="otherSizeInfo.created"></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- .table -->
+                            </div>
+                        </tab>
+                    </tabset>
+                </div>
+            </div>
+        </div>
+        <!-- accordion ng-controller -->
+    </div>
+   <div class="modal-footer">
+        <button class="btn btn-default" ng-click="close()" translate="CMS_BTN_CANCEL"></button>
+       <button class="btn btn-vo" ng-click="doSaveSizeChart()" translate="CMS_BTN_SAVE" ng-if="currentSizeChartId !== null"></button>
+    </div>
+</div><!-- .vo_modal -->

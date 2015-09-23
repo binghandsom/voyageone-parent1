@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.cms.sql">
+	<select id="get_master_properties" resultType="com.voyageone.cms.modelbean.MasterProperty">
+		select
+			prop_id,
+			category_id,
+			prop_name,
+			prop_type,
+			prop_value_default,
+			is_top_prop,
+			is_parent,
+			is_required,
+			parent_prop_id,
+			content
+		from voyageone_ims.ims_mt_prop where
+			 category_id = #{category_id}
+	</select>
+	<select id="get_property_options" resultType="com.voyageone.cms.modelbean.PropertyOption">
+		select
+		ims_mt_prop_option.prop_option_id,
+		ims_mt_prop_option.prop_id,
+		ims_mt_prop_option.prop_option_name,
+		ims_mt_prop_option.prop_option_value
+		from
+		voyageone_ims.ims_mt_prop_option,voyageone_ims.ims_mt_prop
+		where ims_mt_prop.category_id=#{category_id}
+		and ims_mt_prop_option.prop_id = ims_mt_prop.prop_id
+	</select>
+	<select id="get_property_rules" resultType="com.voyageone.cms.modelbean.PropertyRule">
+		select
+			ims_mt_prop_rule.prop_rule_id,
+			ims_mt_prop_rule.prop_id,
+			ims_mt_prop_rule.prop_rule_name,
+			ims_mt_prop_rule.prop_rule_value,
+			ims_mt_prop_rule.prop_rule_unit,
+			ims_mt_prop_rule.prop_rule_url,
+			ims_mt_prop_rule.prop_rule_exProperty,
+			ims_mt_prop_rule.prop_rule_relationship,
+			ims_mt_prop_rule.prop_rule_relationship_operator
+		from voyageone_ims.ims_mt_prop_rule,voyageone_ims.ims_mt_prop
+		where ims_mt_prop.category_id= #{category_id}
+		  and ims_mt_prop_rule.prop_id = ims_mt_prop.prop_id
+	</select>
+	<select id="get_master_property_values" resultType="com.voyageone.cms.modelbean.PropertyValue">
+		select
+			uuid,
+			prop_id,
+			prop_value,
+			parent
+		from voyageone_ims.ims_mt_prop_value
+		where channel_id  = #{channel_id}
+		  and level       = #{level}
+		  and level_value = #{level_value}
+	</select>
+	<insert id="insert_property_values" parameterType="java.util.List">
+		INSERT INTO
+		voyageone_ims.ims_mt_prop_value(uuid,channel_id,level,level_value,prop_id,prop_value,parent,created,creater,modified,modifier)
+		VALUES
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(#{item.uuid},#{item.channel_id},#{item.level},#{item.level_value},#{item.prop_id},#{item.prop_value},#{item.parent},
+			NOW(),#{item.creater},NOW(),#{item.modifier})
+		</foreach>
+	</insert>
+	<delete id="delete_property_values">
+        DELETE FROM voyageone_ims.ims_mt_prop_value
+        WHERE channel_id  = #{channel_id}
+		  and level       = #{level}
+		  and level_value = #{level_value}
+    </delete>
+    <select id="get_property_values_count" resultType="int">
+		select
+			count(1)
+		from voyageone_ims.ims_mt_prop_value
+		where channel_id  = #{channel_id}
+		  and level       = #{level}
+		  and level_value = #{level_value}
+	</select>
+	<select id="get_dict_contents" resultType="String">
+		select
+			name
+		from voyageone_ims.ims_mt_dict
+		where order_channel_id  = #{channel_id}
+		  
+	</select>
+</mapper>

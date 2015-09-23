@@ -1,0 +1,43 @@
+<div class="ngdialog-message">
+    <h3 class="mt0 p-sm border-bottom-1" translate="TXT_ORDER_REFUND"></h3>
+    <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+    <!--<form name="popForm" class="form-validate" novalidate="">-->
+
+
+		<div class="row mt">
+			<div class="col-md-3"></div>
+			<div class="col-md-8">
+		        <!--<h3 class="mt0 p-sm border-bottom-1"></h3>-->
+				<div class="row">
+					<div class="col-md-4">
+						<label class="ms-fr small" translate="TXT_OMS_REFUND_AGREE_IN_SERVER_PROMPT"></label>
+					</div>
+					<div class="col-md-2">
+						<label class="ms-fr small" translate="TXT_OMS_REFUND_AMOUNT"></label>
+					</div>
+					<div class="col-md-3">
+						<span ng-bind="mainOrderInfo.expected - mainOrderInfo.finalGrandTotal | number:2" readonly="" class="form-control text-right input-sm c_gray"
+							  ng-if="mainOrderInfo.expected - mainOrderInfo.finalGrandTotal &gt; 0"></span>
+					</div>
+					<div class="col-md-3">
+					</div>
+				</div>
+                <!--同意退款（独立域名）-->
+				<div class="row mt-sm">
+					<div class="col-md-1">
+					</div>
+					<div class="col-md-3">
+						<button class="btn btn-primary btn-sm form-control" translate="BUTTON_OK" ng-click="doAgreeRefund()"></button>
+					</div>
+					<div class="col-md-3">
+						<button class="btn btn-primary btn-sm form-control" translate="BUTTON_SUB_CANCEL" ng-click="doCancel()"></button>
+					</div>
+					<div class="col-md-5"></div>
+				</div>
+
+        	</div>
+			<div class="col-md-1"></div>
+        </div>
+
+    <!--</form>-->
+</div>
