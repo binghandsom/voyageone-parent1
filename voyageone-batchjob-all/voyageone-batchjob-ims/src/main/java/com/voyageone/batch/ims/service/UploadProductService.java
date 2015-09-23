@@ -25,7 +25,7 @@ import java.util.*;
 public class UploadProductService extends BaseTaskService implements WorkloadCompleteIntf {
 
     private static final int WORKLOAD_COUNT_ONCE_HANDLE = 1;
-    private static final int PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE = 10;
+    private static final int PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE = 100;
     private Set<WorkLoadBean> workLoadBeans;
     private Map<WorkLoadBean, List<ProductPublishBean>> workLoadBeanListMap;
 
