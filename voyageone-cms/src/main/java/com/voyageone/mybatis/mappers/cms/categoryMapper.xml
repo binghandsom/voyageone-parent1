@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.cms.sql">
-	
-   <resultMap type="com.voyageone.cms.formbean.CategoryCNBean" id="CategoryCNInfo">
-	 <result column="category_id" property="categoryId"/>
-	 <result column="channel_id" property="channelId"/>
-	 <result column="url_key" property="urlKey"/>
-	 <result column="parent_category_id" property="parentCategoryId"/>
-	 <result column="cn_name" property="cnName"/>
-	 <result column="cn_display_order" property="displayOrder"/>
-	 <result column="cn_header_title" property="cnHeaderTitle"/>
-	 <result column="cn_is_enable_filter" jdbcType="BOOLEAN" property="cnIsEnableFilter"/>
-	 <result column="cn_is_visible_on_menu" jdbcType="BOOLEAN" property="cnIsVisibleOnMenu"/>
-	 <result column="cn_is_publish" jdbcType="BOOLEAN"  property="cnIsPublished"/>
-	 <result column="cn_seo_title" property="cnSeoTitle"/>
-	 <result column="cn_seo_description" property="cnSeoDescription"/>
-	 <result column="cn_seo_keywords" property="cnSeoKeywords"/>
-	 <result column="hs_code_id" property="hsCodeId"/>
-	 <result column="hs_code_pu_id" property="hsCodePuId"/>
-	 <result column="size_chart_id" property="sizeChartId"/>
-	 <result column="main_category_id" property="mainCategoryId"/>
-	 <result column="tm_category_id" property="tmCategoryId"/>
-	 <result column="jd_category_id" property="jdCategoryId"/>
-	 <result column="publish_datetime" property="publishDatetime"/>
-	 <result column="modified" property="modified"/>	
-	 <result column="created" property="created"/>
-	 <result column="creater" property="creater"/>
-	 <result column="modifier" property="modifier"/>
-   </resultMap>
-	
+
+	<resultMap type="com.voyageone.cms.formbean.CategoryCNBean" id="CategoryCNInfo">
+		<result column="category_id" property="categoryId"/>
+		<result column="channel_id" property="channelId"/>
+		<result column="url_key" property="urlKey"/>
+		<result column="parent_category_id" property="parentCategoryId"/>
+		<result column="cn_name" property="cnName"/>
+		<result column="cn_display_order" property="displayOrder"/>
+		<result column="cn_header_title" property="cnHeaderTitle"/>
+		<result column="cn_is_enable_filter" jdbcType="BOOLEAN" property="cnIsEnableFilter"/>
+		<result column="cn_is_visible_on_menu" jdbcType="BOOLEAN" property="cnIsVisibleOnMenu"/>
+		<result column="cn_is_publish" jdbcType="BOOLEAN"  property="cnIsPublished"/>
+		<result column="cn_seo_title" property="cnSeoTitle"/>
+		<result column="cn_seo_description" property="cnSeoDescription"/>
+		<result column="cn_seo_keywords" property="cnSeoKeywords"/>
+		<result column="hs_code_id" property="hsCodeId"/>
+		<result column="hs_code_pu_id" property="hsCodePuId"/>
+		<result column="size_chart_id" property="sizeChartId"/>
+		<result column="main_category_id" property="mainCategoryId"/>
+		<result column="tm_category_id" property="tmCategoryId"/>
+		<result column="jd_category_id" property="jdCategoryId"/>
+		<result column="publish_datetime" property="publishDatetime"/>
+		<result column="modified" property="modified"/>
+		<result column="created" property="created"/>
+		<result column="creater" property="creater"/>
+		<result column="modifier" property="modifier"/>
+	</resultMap>
+
 	<select id="cms_select_get_cn_categoryinfo" resultMap="CategoryCNInfo" parameterType="HashMap">
 		SELECT
 			a.category_id,
@@ -111,12 +111,12 @@
 		<result column="amazon_browse_category_id" property="amazonBrowseCategoryId"/>
 		<result column="price_grabber_category_id" property="priceGrabberCategoryId"/>
 		<result column="main_category_id" property="mainCategoryId"/>
-		 <result column="publish_datetime" property="publishDatetime"/>
+		<result column="publish_datetime" property="publishDatetime"/>
 		<result column="modified" property="modified"/>
-		 <result column="created" property="created"/>
-		 <result column="creater" property="creater"/>
-		 <result column="modifier" property="modifier"/>
-	
+		<result column="created" property="created"/>
+		<result column="creater" property="creater"/>
+		<result column="modifier" property="modifier"/>
+
 	</resultMap>
 	<select id="cms_select_get_us_categoryinfo" resultMap="USCategoryInfoMap"  parameterType="HashMap">
 	 select 
@@ -206,23 +206,23 @@
 		where  b.category_id = #{id} 
 			  and b.channel_id = #{channelId} 
 	</select>
-	 <resultMap type="com.voyageone.cms.formbean.CategoryModelBean" id="ModelUSReslutMap">
-    <result  column="model" property="model"/>
-    <result  column="name" property="name"/>
-    <result  column="code" property="primaryProductCode"/>
-    <result  column="channel_id" property="channelId"/>
-    <result  column="brand_name" property="brand"/>
-    <result  column="size_type_name" property="sizeType"/>
-    <result  column="model_id" property="modelId"/>
-    <result  column="product_type_name" property="productType"/>
-    <result  column="product_id" property="primaryProductId"/>
-    <result  column="image_name" property="primaryProductUrl"/>
-    <result  column="created" property="created"/>
-    <result  column="creater" property="creater"/>
-   <result  column="modified" property="modified"/> 
-    <result  column="modifier" property="modifier"/>      
-  </resultMap>
-  <select id="cms_get_USCategoryModelList" resultMap="ModelUSReslutMap"  parameterType="HashMap">
+	<resultMap type="com.voyageone.cms.formbean.CategoryModelBean" id="ModelUSReslutMap">
+		<result  column="model" property="model"/>
+		<result  column="name" property="name"/>
+		<result  column="code" property="primaryProductCode"/>
+		<result  column="channel_id" property="channelId"/>
+		<result  column="brand_name" property="brand"/>
+		<result  column="size_type_name" property="sizeType"/>
+		<result  column="model_id" property="modelId"/>
+		<result  column="product_type_name" property="productType"/>
+		<result  column="product_id" property="primaryProductId"/>
+		<result  column="image_name" property="primaryProductUrl"/>
+		<result  column="created" property="created"/>
+		<result  column="creater" property="creater"/>
+		<result  column="modified" property="modified"/>
+		<result  column="modifier" property="modifier"/>
+	</resultMap>
+	<select id="cms_get_USCategoryModelList" resultMap="ModelUSReslutMap"  parameterType="HashMap">
   SELECT 
   		b.model,
       	a.channel_id,
@@ -261,23 +261,23 @@
 		and a.channel_id = #{channelId,jdbcType=VARCHAR}
 	 ORDER BY a.display_order asc
   </select>
-   <resultMap type="com.voyageone.cms.formbean.CategoryCNModelBean" id="ModelCNReslutMap">
-    <result  column="model" property="model"/>
-    <result  column="cn_name" property="cnName"/>
-    <result  column="code" property="cnPrimaryProductCode"/>
-    <result  column="channel_id" property="channelId"/>
-    <result  column="brand_name" property="brand"/>
-    <result  column="size_type_name" property="cnSizeType"/>
-    <result  column="model_id" property="modelId"/>
-    <result  column="product_type_name" property="productType"/>
-    <result  column="product_id" property="cnPrimaryProductId"/>
-    <result  column="image_name" property="cnPrimaryProductUrl"/>
-    <result  column="created" property="created"/>
-    <result  column="creater" property="creater"/>
-   <result  column="modified" property="modified"/> 
-    <result  column="modifier" property="modifier"/>      
-  </resultMap>
-  <select id="cms_get_CNCategoryModelList" resultMap="ModelCNReslutMap"  parameterType="HashMap">
+	<resultMap type="com.voyageone.cms.formbean.CategoryCNModelBean" id="ModelCNReslutMap">
+		<result  column="model" property="model"/>
+		<result  column="cn_name" property="cnName"/>
+		<result  column="code" property="cnPrimaryProductCode"/>
+		<result  column="channel_id" property="channelId"/>
+		<result  column="brand_name" property="brand"/>
+		<result  column="size_type_name" property="cnSizeType"/>
+		<result  column="model_id" property="modelId"/>
+		<result  column="product_type_name" property="productType"/>
+		<result  column="product_id" property="cnPrimaryProductId"/>
+		<result  column="image_name" property="cnPrimaryProductUrl"/>
+		<result  column="created" property="created"/>
+		<result  column="creater" property="creater"/>
+		<result  column="modified" property="modified"/>
+		<result  column="modifier" property="modifier"/>
+	</resultMap>
+	<select id="cms_get_CNCategoryModelList" resultMap="ModelCNReslutMap"  parameterType="HashMap">
 	SELECT
 		b.model,
 		a.channel_id,
@@ -312,7 +312,7 @@
 		and a.channel_id = #{channelId,jdbcType=VARCHAR}
 	 ORDER BY a.display_order asc
   </select>
-  <select id="cms_get_USCategoryProductListCount"  resultType="int" parameterType="HashMap">
+	<select id="cms_get_USCategoryProductListCount"  resultType="int" parameterType="HashMap">
     SELECT 
    		count(1) 
     from 
@@ -322,401 +322,474 @@
 		and channel_id = #{channelId} 
   
   </select>
-  <resultMap type="com.voyageone.cms.formbean.CategoryProductUSBean" id="ProductResultMap">
-	  	<result column="category_id" property="categoryId"/>
-	  	<result column="channel_id" property="channelId"/>
-	  	<result column="product_id" property="productId"/>
-	  	<result column="model_id" property="modelId"/> 
-	  	<result column="code" property="code"/>
-	  	<result column="name" property="name"/>
-	  	<result column="product_type_name" property="productType"/>
-	  	<result column="brand_name" property="brand"/>
-	  	<result column="size_type_name" property="sizeType"/>
-	  	<result column="display_order" property="displayOrder"/>
-	  	<result column="msrp" property="msrp"/>
-	  	<result column="is_new_arrival" javaType="BOOLEAN" property="isNewArrival"/>
-	  	<result column="is_reward_eligible" javaType="BOOLEAN" property="isRewardEligible"/>
-	  	<result column="is_discount_eligible" javaType="BOOLEAN" property="isDiscountEligible"/>
-	  	<result column="is_phone_order_only" javaType="BOOLEAN"  property="isPhoneOrderOnly"/>
-	  	<result column="is_approved_description" javaType="BOOLEAN" property="isApprovedDescription"/>
-	  	<result column="is_effective" javaType="BOOLEAN" property="isEffective"/>
-	  	<result column="color" property="color"/>
-	  	<result column="color_name" property="colorMap"/>
-	  	<result column="country_name" property="madeInCountry"/>
-	  	<result column="materialname1" property="materialFabric1" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	  	<result column="materialname2" property="materialFabric2" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	  	<result column="materialname3" property="materialFabric3" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	  	<result column="url_key" property="urlKey"/>
-	  	<result column="order_limit_count" property="orderLimitCount"/>
-	  	<result column="promotion_tag" property="promotionTag"/>
-	  	<result column="abstract" property="usAbstract"/>
-	  	<result column="short_description" property="shortDescription"/>
-	  	<result column="long_description" property="longDescription"/>
-	  	<result column="accessory" property="accessory"/>
-	  	<result column="usOfficialIsOnSale" property="usOfficialIsOnSale"/>
-	  	<result column="usOfficialIsApproved" property="usOfficialIsApproved"/>
-	  	<result column="usOfficialFreeShippingType" property="usOfficialFreeShippingType"/>
-	  	<result column="usOfficialPrice" property="usOfficialPrice"/>
-	  	<result column="usAmazonIsOnSale" property="usAmazonIsOnSale"/>
-	  	<result column="usAmazonIsApproved" property="usAmazonIsApproved"/>
-	  	<result column="usAmazonFreeShippingType" property="usAmazonFreeShippingType"/>
-	  	<result column="usAmazonPrice" property="usAmazonPrice"/>
-	  	<result column="cn_price" property="cnPrice"/>
-	  	<result column="cn_price_rmb" property="cnPriceRmb"/>
-	  	<result column="cn_price_adjustment_rmb" property="cnPriceAdjustmentRmb"/>
-	  	<result column="cn_is_on_sale" javaType="BOOLEAN" property="cnIsOnSale"/>
-	  	<result column="cn_is_approved" javaType="BOOLEAN" property="cnIsApproved"/>
-	  	<result column="image_name" property="productImgUrl"/> 
-	  	<result column="is_hight_light_product" property="isHighLightProduct" javaType="BOOLEAN"/>
-  </resultMap>
-  <select id="cms_get_USCategoryProductList"  resultMap="ProductResultMap" parameterType="HashMap">
-	SELECT
-		a.category_id,
-		a.channel_id,
-		a.is_hight_light_product,
-		a.display_order,
-		b.product_id,
-		b.model_id,
+	<resultMap type="com.voyageone.cms.formbean.CategoryProductUSBean" id="ProductResultMap">
+		<result column="category_id" property="categoryId"/>
+		<result column="channel_id" property="channelId"/>
+		<result column="product_id" property="productId"/>
+		<result column="model_id" property="modelId"/>
+		<result column="code" property="code"/>
+		<result column="name" property="name"/>
+		<result column="product_type_name" property="productType"/>
+		<result column="brand_name" property="brand"/>
+		<result column="size_type_name" property="sizeType"/>
+		<result column="display_order" property="displayOrder"/>
+		<result column="msrp" property="msrp"/>
+		<result column="is_new_arrival" javaType="BOOLEAN" property="isNewArrival"/>
+		<result column="is_reward_eligible" javaType="BOOLEAN" property="isRewardEligible"/>
+		<result column="is_discount_eligible" javaType="BOOLEAN" property="isDiscountEligible"/>
+		<result column="is_phone_order_only" javaType="BOOLEAN"  property="isPhoneOrderOnly"/>
+		<result column="is_approved_description" javaType="BOOLEAN" property="isApprovedDescription"/>
+		<result column="is_effective" javaType="BOOLEAN" property="isEffective"/>
+		<result column="color" property="color"/>
+		<result column="color_name" property="colorMap"/>
+		<result column="country_name" property="madeInCountry"/>
+		<result column="materialFabric" property="materialFabric" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="url_key" property="urlKey"/>
+		<result column="order_limit_count" property="orderLimitCount"/>
+		<result column="promotion_tag" property="promotionTag"/>
+		<result column="abstract" property="usAbstract"/>
+		<result column="short_description" property="shortDescription"/>
+		<result column="long_description" property="longDescription"/>
+		<result column="accessory" property="accessory"/>
+		<result column="usOfficialIsOnSale" property="usOfficialIsOnSale"/>
+		<result column="usOfficialIsApproved" property="usOfficialIsApproved"/>
+		<result column="usOfficialFreeShippingType" property="usOfficialFreeShippingType"/>
+		<result column="usOfficialPrice" property="usOfficialPrice"/>
+		<result column="usAmazonIsOnSale" property="usAmazonIsOnSale"/>
+		<result column="usAmazonIsApproved" property="usAmazonIsApproved"/>
+		<result column="usAmazonFreeShippingType" property="usAmazonFreeShippingType"/>
+		<result column="usAmazonPrice" property="usAmazonPrice"/>
+		<result column="cn_price" property="cnPrice"/>
+		<result column="cn_price_rmb" property="cnPriceRmb"/>
+		<result column="cn_price_adjustment_rmb" property="cnPriceAdjustmentRmb"/>
+		<result column="cn_is_on_sale" javaType="BOOLEAN" property="cnIsOnSale"/>
+		<result column="cn_is_approved" javaType="BOOLEAN" property="cnIsApproved"/>
+		<result column="image_name" property="productImgUrl"/>
+		<result column="is_hight_light_product" property="isHighLightProduct" javaType="BOOLEAN"/>
+		<result column="usOfficialSneakerSales7Days" property="usOfficialSneakerSales7Days"/>
+		<result column="usOfficialSneakerSales7DaysPercent" property="usOfficialSneakerSales7DaysPercent"/>
+		<result column="usOfficialSneakerSales30Days" property="usOfficialSneakerSales30Days"/>
+		<result column="usOfficialSneakerSales30DaysPercent" property="usOfficialSneakerSales30DaysPercent"/>
+		<result column="usOfficialSneakerSalesInThisYear" property="usOfficialSneakerSalesInThisYear"/>
+		<result column="usOfficialSneakerSalesInThisYearPercent" property="usOfficialSneakerSalesInThisYearPercent"/>
+		<result column="usAmazonSales7Days" property="usAmazonSales7Days"/>
+		<result column="usAmazonSales7DaysPercent" property="usAmazonSales7DaysPercent"/>
+		<result column="usAmazonSales30Days" property="usAmazonSales30Days"/>
+		<result column="usAmazonSales30DaysPercent" property="usAmazonSales30DaysPercent"/>
+		<result column="usAmazonSalesInThisYear" property="usAmazonSalesInThisYear"/>
+		<result column="usAmazonSalesInThisYearPercent" property="usAmazonSalesInThisYearPercent"/>
+		<result column="cnSales7Days" property="cnSales7Days"/>
+		<result column="cnSales7DaysPercent" property="cnSales7DaysPercent"/>
+		<result column="cnSales30Days" property="cnSales30Days"/>
+		<result column="cnSales30DaysPercent" property="cnSales30DaysPercent"/>
+		<result column="cnSalesInThisYear" property="cnSalesInThisYear"/>
+		<result column="cnSalesInThisYearPercent" property="cnSalesInThisYearPercent"/>
+		<result column="usOfficialSneakerRXSales7Days" property="usOfficialSneakerRXSales7Days"/>
+		<result column="usOfficialSneakerRXSales7DaysPercent" property="usOfficialSneakerRXSales7DaysPercent"/>
+		<result column="usOfficialSneakerRXSales30Days" property="usOfficialSneakerRXSales30Days"/>
+		<result column="usOfficialSneakerRXSales30DaysPercent" property="usOfficialSneakerRXSales30DaysPercent"/>
+		<result column="usOfficialSneakerRXSalesInThisYear" property="usOfficialSneakerRXSalesInThisYear"/>
+		<result column="usOfficialSneakerRXSalesInThisYearPercent" property="usOfficialSneakerRXSalesInThisYearPercent"/>
+		<result column="usOfficialSneakerWSSales7Days" property="usOfficialSneakerWSSales7Days"/>
+		<result column="usOfficialSneakerWSSales7DaysPercent" property="usOfficialSneakerWSSales7DaysPercent"/>
+		<result column="usOfficialSneakerWSSales30Days" property="usOfficialSneakerWSSales30Days"/>
+		<result column="usOfficialSneakerWSSales30DaysPercent" property="usOfficialSneakerWSSales30DaysPercent"/>
+		<result column="usOfficialSneakerWSSalesInThisYear" property="usOfficialSneakerWSSalesInThisYear"/>
+		<result column="usOfficialSneakerWSSalesInThisYearPercent" property="usOfficialSneakerWSSalesInThisYearPercent"/>
+		<result column="usOfficialSneakerMobileSales7Days" property="usOfficialSneakerMobileSales7Days"/>
+		<result column="usOfficialSneakerMobileSales7DaysPercent" property="usOfficialSneakerMobileSales7DaysPercent"/>
+		<result column="usOfficialSneakerMobileSales30Days" property="usOfficialSneakerMobileSales30Days"/>
+		<result column="usOfficialSneakerMobileSales30DaysPercent" property="usOfficialSneakerMobileSales30DaysPercent"/>
+		<result column="usOfficialSneakerMobileSalesInThisYear" property="usOfficialSneakerMobileSalesInThisYear"/>
+		<result column="usOfficialSneakerMobileSalesInThisYearPercent" property="usOfficialSneakerMobileSalesInThisYearPercent"/>
+		<result column="quantity" property="quantity"/>
+	</resultMap>
+	<select id="cms_get_USCategoryProductList"  resultMap="ProductResultMap" parameterType="HashMap">
+		SELECT
 		b.code,
 		b.name,
+		a.display_order,
+		a.is_hight_light_product,
 		b.product_type_name,
 		b.brand_name,
 		b.size_type_name,
-		b.is_unisex,
-		b.msrp,
 		b.is_new_arrival,
 		b.is_reward_eligible,
 		b.is_discount_eligible,
 		b.is_phone_order_only,
 		b.is_approved_description,
-		b.is_effective,
-		b.color,
 		b.color_name,
+		b.color,
 		b.country_name,
-		b.materialname1,
-		b.materialname2,
-		b.materialname3,
-		b.url_key,
-		b.order_limit_count,
-		b.promotion_tag,
+		b.materialFabric,
 		b.abstract,
+		b.accessory,
 		b.short_description,
 		b.long_description,
-		b.accessory,
-		b.usOfficialIsApproved,
-		b.usOfficialIsOnSale,
-		b.usOfficialFreeShippingType,
+		b.order_limit_count,
+		b.promotion_tag,
+		SUM(IFNULL(t2.qty_china,0)) as quantity,
+		b.url_key,
+		b.created,
+		b.modified,
+		b.msrp,
 		b.usOfficialPrice,
-		b.usAmazonIsApproved,
-		b.usAmazonIsOnSale,
-		b.usAmazonFreeShippingType,
+		b.usOfficialFreeShippingType,
+		b.usOfficialIsOnSale,
+		b.usOfficialIsApproved,
+		0 as usOfficialSneakerRXSales7Days,
+		0 as usOfficialSneakerRXSales7DaysPercent,
+		0 as usOfficialSneakerRXSales30Days,
+		0 as usOfficialSneakerRXSales30DaysPercent,
+		0 as usOfficialSneakerRXSalesInThisYear,
+		0 as usOfficialSneakerRXSalesInThisYearPercent,
+		b.usOfficialSneakerSales7Days,
+		b.usOfficialSneakerSales7DaysPercent,
+		b.usOfficialSneakerSales30Days,
+		b.usOfficialSneakerSales30DaysPercent,
+		b.usOfficialSneakerSalesInThisYear,
+		b.usOfficialSneakerSalesInThisYearPercent,
+		0 as usOfficialSneakerWSSales7Days,
+		0 as usOfficialSneakerWSSales7DaysPercent,
+		0 as usOfficialSneakerWSSales30Days,
+		0 as usOfficialSneakerWSSales30DaysPercent,
+		0 as usOfficialSneakerWSSalesInThisYear,
+		0 as usOfficialSneakerWSSalesInThisYearPercent,
+		0 as usOfficialSneakerMobileSales7Days,
+		0 as usOfficialSneakerMobileSales7DaysPercent,
+		0 as usOfficialSneakerMobileSales30Days,
+		0 as usOfficialSneakerMobileSales30DaysPercent,
+		0 as usOfficialSneakerMobileSalesInThisYear,
+		0 as usOfficialSneakerMobileSalesInThisYearPercent,
 		b.usAmazonPrice,
+		b.usAmazonFreeShippingType,
+		b.usAmazonIsOnSale,
+		b.usAmazonIsApproved,
 		b.usAmazonPrePublishDateTime,
+		b.usAmazonSales7Days,
+		b.usAmazonSales7DaysPercent,
+		b.usAmazonSales30Days,
+		b.usAmazonSales30DaysPercent,
+		b.usAmazonSalesInThisYear,
+		b.usAmazonSalesInThisYearPercent,
 		b.cn_price,
 		b.cn_price_rmb,
-		b.cn_price_adjustment_rmb,
-		b.cn_price_discount,
 		b.cnPriceFinalRmb,
+		b.cnFreeShippingType,
 		b.cn_is_on_sale,
 		b.cn_is_approved,
-		b.cnFreeShippingType,
 		b.cnPrePublishDateTime,
-		b.image_name,
-		b.created,
-		b.modified
-	FROM
-		cms_bt_relation_category_product a
-	LEFT JOIN view_us_product_info_list b ON a.product_id = b.product_id and a.channel_id = b.channel_id	
-	WHERE 
-		a.category_id = #{categoryId}
-		and a.channel_id = #{channelId} 
-	ORDER BY a.display_order asc
-	 <if test="offset != null and pageCount != null">
-        LIMIT #{offset}, #{pageCount}
-     </if> 
-  </select>
-	 <resultMap type="com.voyageone.cms.formbean.CategoryProductCNBean" id="CNProductListResultMap">
-  	 <result column="category_id" property="categoryId"/>
-     <result column="model_id" property="modelId"/>
-     <result column="product_id" property="productId"/>
-     <result column="channel_id" property="channelId"/>
-     <result column="code" property="code"/>
-     <result column="cn_name" property="cnName"/>
-     <result column="cn_display_order" property="cnDisplayOrder"/>
-     <result column="product_type_name" property="productType"/>
-     <result column="brand_name" property="brand"/>
-     <result column="size_type_name" property="cnSizeType"/>
-     <result column="is_approved_description" property="isApprovedDescription"/>
-     <result column="is_effective" property="isEffective"/>
-     <result column="color_name" property="colorMap"/>
-     <result column="cn_color" property="cnColor"/>
-     <result column="quantity" property="quantity"/>
-     <result column="madeInCountry" property="madeInCountry"/>
-     <result column="materialFabric" property="materialFabric" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-     <result column="cnAbstract" property="cnAbstract" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-     <result column="cnLongDescription" property="cnLongDescription" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-     <result column="cnShortDescription" property="cnShortDescription" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-     <result column="urlKey" property="urlKey"/>
-     <result column="created" property="created"/>
-     <result column="creater" property="creater"/>
-     <result column="modified" property="modified"/>
-     <result column="modifier" property="modifier"/>
-     <result column="referenceMsrp" property="referenceMsrp"/>
-     <result column="referencePrice" property="referencePrice"/>
-     <result column="firstSalePrice" property="firstSalePrice"/>
-     <result column="cnPrice" property="cnPrice"/>
-     <result column="effectivePrice" property="effectivePrice"/>
-     <result column="cnPriceRmb" property="cnPriceRmb"/>
-     <result column="cnPriceAdjustmentRmb" property="cnPriceAdjustmentRmb"/>
-     <result column="cnPriceFinalRmb" property="cnPriceFinalRmb"/>
-     <result column="cnIsOnSale" property="cnIsOnSale"/>
-     <result column="cnIsApproved" property="cnIsApproved"/>
-     <result column="cnOfficialPriceAdjustmentRmb" property="cnOfficialPriceAdjustmentRmb"/>
-     <result column="cnOfficialPriceFinalRmb" property="cnOfficialPriceFinalRmb"/>
-     <result column="cnOfficialFreeShippingType" property="cnOfficialFreeShippingType"/>
-     <result column="cnOfficialIsOnSale" property="cnOfficialIsOnSale"/>
-     <result column="cnOfficialIsApproved" property="cnOfficialIsApproved"/>
-     <result column="cnOfficialPrePublishDateTime" property="cnOfficialPrePublishDateTime"/>
-     <result column="tbPriceAdjustmentRmb" property="tbPriceAdjustmentRmb"/>
-     <result column="tbPriceFinalRmb" property="tbPriceFinalRmb"/>
-     <result column="tbFreeShippingType" property="tbFreeShippingType"/>
-     <result column="tbIsOnSale" property="tbIsOnSale"/>
-     <result column="tbIsApproved" property="tbIsApproved"/>
-     <result column="tbPrePublishDateTime" property="tbPrePublishDateTime"/>
-      <result column="tmPriceAdjustmentRmb" property="tmPriceAdjustmentRmb"/>
-     <result column="tmPriceFinalRmb" property="tmPriceFinalRmb"/>
-     <result column="tmFreeShippingType" property="tmFreeShippingType"/>
-     <result column="tmIsOnSale" property="tmIsOnSale"/>
-     <result column="tmIsApproved" property="tmIsApproved"/>
-     <result column="tmPrePublishDateTime" property="tmPrePublishDateTime"/>
-      <result column="tgPriceAdjustmentRmb" property="tgPriceAdjustmentRmb"/>
-     <result column="tgPriceFinalRmb" property="tgPriceFinalRmb"/>
-     <result column="tgFreeShippingType" property="tgFreeShippingType"/>
-     <result column="tgIsOnSale" property="tgIsOnSale"/>
-     <result column="tgIsApproved" property="tgIsApproved"/>
-     <result column="tgPrePublishDateTime" property="tgPrePublishDateTime"/>
-      <result column="jdPriceAdjustmentRmb" property="jdPriceAdjustmentRmb"/>
-     <result column="jdPriceFinalRmb" property="jdPriceFinalRmb"/>
-     <result column="jdFreeShippingType" property="jdFreeShippingType"/>
-     <result column="jdIsOnSale" property="jdIsOnSale"/>
-     <result column="jdIsApproved" property="jdIsApproved"/>
-     <result column="jdPrePublishDateTime" property="jdPrePublishDateTime"/>
-      <result column="jgPriceAdjustmentRmb" property="jgPriceAdjustmentRmb"/>
-     <result column="jgPriceFinalRmb" property="jgPriceFinalRmb"/>
-     <result column="jgFreeShippingType" property="jgFreeShippingType"/>
-     <result column="jgIsOnSale" property="jgIsOnSale"/>
-     <result column="jgIsApproved" property="jgIsApproved"/>
-     <result column="jgPrePublishDateTime" property="jgPrePublishDateTime"/>
-     <result column="image_name" property="productImgUrl"/>
-     <result column="quantity" property="quantity"/>
-     <result column="cn_is_primary_product" property="cnIsPrimaryProduct"  jdbcType="BOOLEAN"/>
-     <result column="cnSales30Days" property="cnSales30Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="cnSales30DaysPercent" property="cnSales30DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="cnSales7Days" property="cnSales7Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="cnSales7DaysPercent" property="cnSales7DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="cnSalesAllDays" property="cnSalesAllDays" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="cnSalesAllDaysPercent" property="cnSalesAllDaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="cnOfficialSales30Days" property="cnOfficialSales30Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="cnOfficialSales30DaysPercent" property="cnOfficialSales30DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="cnOfficialSales7Days" property="cnOfficialSales7Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="cnOfficialSales7DaysPercent" property="cnOfficialSales7DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="cnOfficialSalesAllDays" property="cnOfficialSalesAllDays" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="cnOfficialSalesAllDaysPercent" property="cnOfficialSalesAllDaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="tbSales30Days" property="tbSales30Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="tbSales30DaysPercent" property="tbSales30DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="tbSales7Days" property="tbSales7Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="tbSales7DaysPercent" property="tbSales7DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="tbSalesAllDays" property="tbSalesAllDays" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="tbSalesAllDaysPercent" property="tbSalesAllDaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="tmSales30Days" property="tmSales30Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="tmSales30DaysPercent" property="tmSales30DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="tmSales7Days" property="tmSales7Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="tmSales7DaysPercent" property="tmSales7DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="tmSalesAllDays" property="tmSalesAllDays" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="tmSalesAllDaysPercent" property="tmSalesAllDaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="tgSales30Days" property="tgSales30Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="tgSales30DaysPercent" property="tgSales30DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="tgSales7Days" property="tgSales7Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="tgSales7DaysPercent" property="tgSales7DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="tgSalesAllDays" property="tgSalesAllDays" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="tgSalesAllDaysPercent" property="tgSalesAllDaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="jdSales30Days" property="jdSales30Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="jdSales30DaysPercent" property="jdSales30DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="jdSales7Days" property="jdSales7Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="jdSales7DaysPercent" property="jdSales7DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="jdSalesAllDays" property="jdSalesAllDays" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="jdSalesAllDaysPercent" property="jdSalesAllDaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="jgSales30Days" property="jgSales30Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="jgSales30DaysPercent" property="jgSales30DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="jgSales7Days" property="jgSales7Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="jgSales7DaysPercent" property="jgSales7DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="jgSalesAllDays" property="jgSalesAllDays" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="jgSalesAllDaysPercent" property="jgSalesAllDaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="cnSalesInThisYear" property="cnSalesInThisYear" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="cnSalesInThisYearPercent" property="cnSalesInThisYearPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="cnOfficialSalesInThisYear" property="cnOfficialSalesInThisYear" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="cnOfficialSalesInThisYearPercent" property="cnOfficialSalesInThisYearPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="tbSalesInThisYear" property="tbSalesInThisYear" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="tbSalesInThisYearPercent" property="tbSalesInThisYearPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="tmSalesInThisYear" property="tmSalesInThisYear" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="tmSalesInThisYearPercent" property="tmSalesInThisYearPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="tgSalesInThisYear" property="tgSalesInThisYear" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="tgSalesInThisYearPercent" property="tgSalesInThisYearPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="jdSalesInThisYear" property="jdSalesInThisYear" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="jdSalesInThisYearPercent" property="jdSalesInThisYearPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="jgSalesInThisYear" property="jgSalesInThisYear" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-	<result column="jgSalesInThisYearPercent" property="jgSalesInThisYearPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-     <result column="cn_is_hight_light_product" property="cnIsHightLightProduct" javaType="BOOLEAN"/>
-     </resultMap>
-  <select id="cms_get_CNCategoryProductList" resultMap="CNProductListResultMap" parameterType="HashMap">
-		SELECT
-			b.CODE,
-			b.cn_name,
-			a.cn_display_order,
-			a.cn_is_hight_light_product,
-			b.product_type_name,
-			b.brand_name,
-			b.size_type_name,
-			b.color_name,
-			b.cn_color,
-			b.madeInCountry AS madeInCountry,
-			b.materialFabric1 AS materialFabric1,
-			b.cnAbstract AS cnAbstract,
-			b.cnShortDescription AS cnShortDescription,
-			b.cnLongDescription AS cnLongDescription,
-			SUM(IFNULL(c.qty_china, 0)) AS quantity,
-			b.urlKey AS urlKey,
-			b.created,
-			b.modified,
-			b.referenceMsrp AS referenceMsrp,
-			b.referencePrice AS referencePrice,
-			b.cnPrice AS cnPrice,
-			b.cnPriceRmb AS cnPriceRmb,
-			b.cnPriceFinalRmb AS cnPriceFinalRmb,
-			b.cnIsOnSale AS cnIsOnSale,
-			b.cnIsApproved AS cnIsApproved,
-			b.cnSales7Days,
-			b.cnSales7DaysPercent,
-			b.cnSales30Days,
-			b.cnSales30DaysPercent,
-			b.cnSalesInThisYear,
-			b.cnSalesInThisYearPercent,
-			b.cnOfficialPriceFinalRmb AS cnOfficialPriceFinalRmb,
-			b.cnOfficialFreeShippingType AS cnOfficialFreeShippingType,
-			b.cnOfficialIsOnSale AS cnOfficialIsOnSale,
-			b.cnOfficialIsApproved AS cnOfficialIsApproved,
-			b.cnOfficialPrePublishDateTime AS cnOfficialPrePublishDateTime,
-			b.cnOfficialSales7Days,
-			b.cnOfficialSales7DaysPercent,
-			b.cnOfficialSales30Days,
-			b.cnOfficialSales30DaysPercent,
-			b.cnOfficialSalesInThisYear,
-			b.cnOfficialSalesInThisYearPercent,
-			b.tbPriceFinalRmb AS tbPriceFinalRmb,
-			b.tbFreeShippingType AS tbFreeShippingType,
-			b.tbIsOnSale AS tbIsOnSale,
-			b.tbIsApproved AS tbIsApproved,
-			b.tbPrePublishDateTime AS tbPrePublishDateTime,
-			b.tbSales7Days,
-			b.tbSales7DaysPercent,
-			b.tbSales30Days,
-			b.tbSales30DaysPercent,
-			b.tbSalesInThisYear,
-			b.tbSalesInThisYearPercent,
-			b.tmPriceFinalRmb AS tmPriceFinalRmb,
-			b.tmFreeShippingType AS tmFreeShippingType,
-			b.tmIsOnSale AS tmIsOnSale,
-			b.tmIsApproved AS tmIsApproved,
-			b.tmPrePublishDateTime AS tmPrePublishDateTime,
-			b.tmSales7Days,
-			b.tmSales7DaysPercent,
-			b.tmSales30Days,
-			b.tmSales30DaysPercent,
-			b.tmSalesInThisYear,
-			b.tmSalesInThisYearPercent,
-			b.tgPriceFinalRmb AS tgPriceFinalRmb,
-			b.tgFreeShippingType AS tgFreeShippingType,
-			b.tgIsOnSale AS tgIsOnSale,
-			b.tgIsApproved AS tgIsApproved,
-			b.tgPrePublishDateTime AS tgPrePublishDateTime,
-			b.tgSales7Days,
-			b.tgSales7DaysPercent,
-			b.tgSales30Days,
-			b.tgSales30DaysPercent,
-			b.tgSalesInThisYear,
-			b.tgSalesInThisYearPercent,
-			b.jdPriceFinalRmb AS jdPriceFinalRmb,
-			b.jdFreeShippingType AS jdFreeShippingType,
-			b.jdIsOnSale AS jdIsOnSale,
-			b.jdIsApproved AS jdIsApproved,
-			b.jdPrePublishDateTime AS jdPrePublishDateTime,
-			b.jdSales7Days,
-			b.jdSales7DaysPercent,
-			b.jdSales30Days,
-			b.jdSales30DaysPercent,
-			b.jdSalesInThisYear,
-			b.jdSalesInThisYearPercent,
-			b.jgPriceFinalRmb AS jgPriceFinalRmb,
-			b.jgFreeShippingType AS jgFreeShippingType,
-			b.jgIsOnSale AS jgIsOnSale,
-			b.jgIsApproved AS jgIsApproved,
-			b.jgPrePublishDateTime AS jgPrePublishDateTime,
-			b.jgSales7Days,
-			b.jgSales7DaysPercent,
-			b.jgSales30Days,
-			b.jgSales30DaysPercent,
-			b.jgSalesInThisYear,
-			b.jgSalesInThisYearPercent,
-			a.category_id,
-			b.channel_id,
-			b.cnOfficialPriceAdjustmentRmb AS cnOfficialPriceAdjustmentRmb,
-			b.cnOfficialSalesAllDays,
-			b.cnOfficialSalesAllDaysPercent,
-			b.cnPriceAdjustmentRmb AS cnPriceAdjustmentRmb,
-			b.cnSalesAllDays,
-			b.cnSalesAllDaysPercent,
-			b.creater,
-			b.effectivePrice AS effectivePrice,
-			b.firstSalePrice AS firstSalePrice,
-			b.image_name,
-			b.is_approved_description,
-			b.is_effective,
-			b.jdPriceAdjustmentRmb AS jdPriceAdjustmentRmb,
-			b.jdSalesAllDays,
-			b.jdSalesAllDaysPercent,
-			b.jgPriceAdjustmentRmb AS jgPriceAdjustmentRmb,
-			b.jgSalesAllDays,
-			b.jgSalesAllDaysPercent,
-			b.model_id,
-			b.modifier,
-			b.product_id,
-			b.tbPriceAdjustmentRmb AS tbPriceAdjustmentRmb,
-			b.tbSalesAllDays,
-			b.tbSalesAllDaysPercent,
-			b.tgPriceAdjustmentRmb AS tgPriceAdjustmentRmb,
-			b.tgSalesAllDays,
-			b.tgSalesAllDaysPercent,
-			b.tmPriceAdjustmentRmb AS tmPriceAdjustmentRmb,
-			b.tmSalesAllDays,
-			b.tmSalesAllDaysPercent
+		b.cnSales7Days,
+		b.cnSales7DaysPercent,
+		b.cnSales30Days,
+		b.cnSales30DaysPercent,
+		b.cnSalesInThisYear,
+		b.cnSalesInThisYearPercent,
+		a.category_id,
+		a.channel_id,
+		b.product_id,
+		b.model_id,
+		b.is_unisex,
+		b.is_effective,
+		b.cn_price_adjustment_rmb,
+		b.cn_price_discount,
+		b.image_name
+
 		FROM
-			cms_bt_relation_category_product a
+		cms_bt_relation_category_product a
+		LEFT JOIN view_us_product_info_list b ON a.product_id = b.product_id and a.channel_id = b.channel_id
+		LEFT JOIN Synship.wms_bt_inventory_center_logic t2 ON t2.code = b.CODE and t2.order_channel_id = b.channel_id
+		WHERE
+		a.category_id = #{categoryId}
+		and a.channel_id = #{channelId}
+		GROUP BY b.CODE,b.channel_id
+		ORDER BY a.display_order asc
+		<if test="offset != null and pageCount != null">
+			LIMIT #{offset}, #{pageCount}
+		</if>
+	</select>
+	<resultMap type="com.voyageone.cms.formbean.CategoryProductCNBean" id="CNProductListResultMap">
+		<result column="category_id" property="categoryId"/>
+		<result column="model_id" property="modelId"/>
+		<result column="product_id" property="productId"/>
+		<result column="channel_id" property="channelId"/>
+		<result column="code" property="code"/>
+		<result column="cn_name" property="cnName"/>
+		<result column="cn_display_order" property="cnDisplayOrder"/>
+		<result column="product_type_name" property="productType"/>
+		<result column="brand_name" property="brand"/>
+		<result column="size_type_name" property="cnSizeType"/>
+		<result column="is_approved_description" property="isApprovedDescription"/>
+		<result column="is_effective" property="isEffective"/>
+		<result column="color_name" property="colorMap"/>
+		<result column="cn_color" property="cnColor"/>
+		<result column="quantity" property="quantity"/>
+		<result column="madeInCountry" property="madeInCountry"/>
+		<result column="materialFabric" property="materialFabric" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="cnAbstract" property="cnAbstract" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="cnLongDescription" property="cnLongDescription" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="cnShortDescription" property="cnShortDescription" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="urlKey" property="urlKey"/>
+		<result column="created" property="created"/>
+		<result column="creater" property="creater"/>
+		<result column="modified" property="modified"/>
+		<result column="modifier" property="modifier"/>
+		<result column="referenceMsrp" property="referenceMsrp"/>
+		<result column="referencePrice" property="referencePrice"/>
+		<result column="firstSalePrice" property="firstSalePrice"/>
+		<result column="cnPrice" property="cnPrice"/>
+		<result column="effectivePrice" property="effectivePrice"/>
+		<result column="cnPriceRmb" property="cnPriceRmb"/>
+		<result column="cnPriceAdjustmentRmb" property="cnPriceAdjustmentRmb"/>
+		<result column="cnPriceFinalRmb" property="cnPriceFinalRmb"/>
+		<result column="cnIsOnSale" property="cnIsOnSale"/>
+		<result column="cnIsApproved" property="cnIsApproved"/>
+		<result column="cnOfficialPriceAdjustmentRmb" property="cnOfficialPriceAdjustmentRmb"/>
+		<result column="cnOfficialPriceFinalRmb" property="cnOfficialPriceFinalRmb"/>
+		<result column="cnOfficialFreeShippingType" property="cnOfficialFreeShippingType"/>
+		<result column="cnOfficialIsOnSale" property="cnOfficialIsOnSale"/>
+		<result column="cnOfficialIsApproved" property="cnOfficialIsApproved"/>
+		<result column="cnOfficialPrePublishDateTime" property="cnOfficialPrePublishDateTime"/>
+		<result column="tbPriceAdjustmentRmb" property="tbPriceAdjustmentRmb"/>
+		<result column="tbPriceFinalRmb" property="tbPriceFinalRmb"/>
+		<result column="tbFreeShippingType" property="tbFreeShippingType"/>
+		<result column="tbIsOnSale" property="tbIsOnSale"/>
+		<result column="tbIsApproved" property="tbIsApproved"/>
+		<result column="tbPrePublishDateTime" property="tbPrePublishDateTime"/>
+		<result column="tmPriceAdjustmentRmb" property="tmPriceAdjustmentRmb"/>
+		<result column="tmPriceFinalRmb" property="tmPriceFinalRmb"/>
+		<result column="tmFreeShippingType" property="tmFreeShippingType"/>
+		<result column="tmIsOnSale" property="tmIsOnSale"/>
+		<result column="tmIsApproved" property="tmIsApproved"/>
+		<result column="tmPrePublishDateTime" property="tmPrePublishDateTime"/>
+		<result column="tgPriceAdjustmentRmb" property="tgPriceAdjustmentRmb"/>
+		<result column="tgPriceFinalRmb" property="tgPriceFinalRmb"/>
+		<result column="tgFreeShippingType" property="tgFreeShippingType"/>
+		<result column="tgIsOnSale" property="tgIsOnSale"/>
+		<result column="tgIsApproved" property="tgIsApproved"/>
+		<result column="tgPrePublishDateTime" property="tgPrePublishDateTime"/>
+		<result column="jdPriceAdjustmentRmb" property="jdPriceAdjustmentRmb"/>
+		<result column="jdPriceFinalRmb" property="jdPriceFinalRmb"/>
+		<result column="jdFreeShippingType" property="jdFreeShippingType"/>
+		<result column="jdIsOnSale" property="jdIsOnSale"/>
+		<result column="jdIsApproved" property="jdIsApproved"/>
+		<result column="jdPrePublishDateTime" property="jdPrePublishDateTime"/>
+		<result column="jgPriceAdjustmentRmb" property="jgPriceAdjustmentRmb"/>
+		<result column="jgPriceFinalRmb" property="jgPriceFinalRmb"/>
+		<result column="jgFreeShippingType" property="jgFreeShippingType"/>
+		<result column="jgIsOnSale" property="jgIsOnSale"/>
+		<result column="jgIsApproved" property="jgIsApproved"/>
+		<result column="jgPrePublishDateTime" property="jgPrePublishDateTime"/>
+		<result column="image_name" property="productImgUrl"/>
+		<result column="quantity" property="quantity"/>
+		<result column="cn_is_primary_product" property="cnIsPrimaryProduct"  jdbcType="BOOLEAN"/>
+		<result column="cnSales30Days" property="cnSales30Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="cnSales30DaysPercent" property="cnSales30DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="cnSales7Days" property="cnSales7Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="cnSales7DaysPercent" property="cnSales7DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="cnSalesAllDays" property="cnSalesAllDays" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="cnSalesAllDaysPercent" property="cnSalesAllDaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="cnOfficialSales30Days" property="cnOfficialSales30Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="cnOfficialSales30DaysPercent" property="cnOfficialSales30DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="cnOfficialSales7Days" property="cnOfficialSales7Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="cnOfficialSales7DaysPercent" property="cnOfficialSales7DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="cnOfficialSalesAllDays" property="cnOfficialSalesAllDays" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="cnOfficialSalesAllDaysPercent" property="cnOfficialSalesAllDaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tbSales30Days" property="tbSales30Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tbSales30DaysPercent" property="tbSales30DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tbSales7Days" property="tbSales7Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tbSales7DaysPercent" property="tbSales7DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tbSalesAllDays" property="tbSalesAllDays" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tbSalesAllDaysPercent" property="tbSalesAllDaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tmSales30Days" property="tmSales30Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tmSales30DaysPercent" property="tmSales30DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tmSales7Days" property="tmSales7Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tmSales7DaysPercent" property="tmSales7DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tmSalesAllDays" property="tmSalesAllDays" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tmSalesAllDaysPercent" property="tmSalesAllDaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tgSales30Days" property="tgSales30Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tgSales30DaysPercent" property="tgSales30DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tgSales7Days" property="tgSales7Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tgSales7DaysPercent" property="tgSales7DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tgSalesAllDays" property="tgSalesAllDays" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tgSalesAllDaysPercent" property="tgSalesAllDaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="jdSales30Days" property="jdSales30Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="jdSales30DaysPercent" property="jdSales30DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="jdSales7Days" property="jdSales7Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="jdSales7DaysPercent" property="jdSales7DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="jdSalesAllDays" property="jdSalesAllDays" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="jdSalesAllDaysPercent" property="jdSalesAllDaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="jgSales30Days" property="jgSales30Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="jgSales30DaysPercent" property="jgSales30DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="jgSales7Days" property="jgSales7Days" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="jgSales7DaysPercent" property="jgSales7DaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="jgSalesAllDays" property="jgSalesAllDays" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="jgSalesAllDaysPercent" property="jgSalesAllDaysPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="cnSalesInThisYear" property="cnSalesInThisYear" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="cnSalesInThisYearPercent" property="cnSalesInThisYearPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="cnOfficialSalesInThisYear" property="cnOfficialSalesInThisYear" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="cnOfficialSalesInThisYearPercent" property="cnOfficialSalesInThisYearPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tbSalesInThisYear" property="tbSalesInThisYear" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tbSalesInThisYearPercent" property="tbSalesInThisYearPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tmSalesInThisYear" property="tmSalesInThisYear" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tmSalesInThisYearPercent" property="tmSalesInThisYearPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tgSalesInThisYear" property="tgSalesInThisYear" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tgSalesInThisYearPercent" property="tgSalesInThisYearPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="jdSalesInThisYear" property="jdSalesInThisYear" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="jdSalesInThisYearPercent" property="jdSalesInThisYearPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="jgSalesInThisYear" property="jgSalesInThisYear" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="jgSalesInThisYearPercent" property="jgSalesInThisYearPercent" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="cn_is_hight_light_product" property="cnIsHightLightProduct" javaType="BOOLEAN"/>
+	</resultMap>
+	<select id="cms_get_CNCategoryProductList" resultMap="CNProductListResultMap" parameterType="HashMap">
+		SELECT
+		b.CODE,
+		b.cn_name,
+		a.cn_display_order,
+		a.cn_is_hight_light_product,
+		b.product_type_name,
+		b.brand_name,
+		b.size_type_name,
+		b.color_name,
+		b.cn_color,
+		b.madeInCountry AS madeInCountry,
+		b.materialFabric1 AS materialFabric1,
+		b.cnAbstract AS cnAbstract,
+		b.cnShortDescription AS cnShortDescription,
+		b.cnLongDescription AS cnLongDescription,
+		SUM(IFNULL(c.qty_china, 0)) AS quantity,
+		b.urlKey AS urlKey,
+		b.created,
+		b.modified,
+		b.referenceMsrp AS referenceMsrp,
+		b.referencePrice AS referencePrice,
+		b.cnPrice AS cnPrice,
+		b.cnPriceRmb AS cnPriceRmb,
+		b.cnPriceFinalRmb AS cnPriceFinalRmb,
+		b.cnIsOnSale AS cnIsOnSale,
+		b.cnIsApproved AS cnIsApproved,
+		b.cnSales7Days,
+		b.cnSales7DaysPercent,
+		b.cnSales30Days,
+		b.cnSales30DaysPercent,
+		b.cnSalesInThisYear,
+		b.cnSalesInThisYearPercent,
+		b.cnOfficialPriceFinalRmb AS cnOfficialPriceFinalRmb,
+		b.cnOfficialFreeShippingType AS cnOfficialFreeShippingType,
+		b.cnOfficialIsOnSale AS cnOfficialIsOnSale,
+		b.cnOfficialIsApproved AS cnOfficialIsApproved,
+		b.cnOfficialPrePublishDateTime AS cnOfficialPrePublishDateTime,
+		b.cnOfficialSales7Days,
+		b.cnOfficialSales7DaysPercent,
+		b.cnOfficialSales30Days,
+		b.cnOfficialSales30DaysPercent,
+		b.cnOfficialSalesInThisYear,
+		b.cnOfficialSalesInThisYearPercent,
+		b.tbPriceFinalRmb AS tbPriceFinalRmb,
+		b.tbFreeShippingType AS tbFreeShippingType,
+		b.tbIsOnSale AS tbIsOnSale,
+		b.tbIsApproved AS tbIsApproved,
+		b.tbPrePublishDateTime AS tbPrePublishDateTime,
+		b.tbSales7Days,
+		b.tbSales7DaysPercent,
+		b.tbSales30Days,
+		b.tbSales30DaysPercent,
+		b.tbSalesInThisYear,
+		b.tbSalesInThisYearPercent,
+		b.tmPriceFinalRmb AS tmPriceFinalRmb,
+		b.tmFreeShippingType AS tmFreeShippingType,
+		b.tmIsOnSale AS tmIsOnSale,
+		b.tmIsApproved AS tmIsApproved,
+		b.tmPrePublishDateTime AS tmPrePublishDateTime,
+		b.tmSales7Days,
+		b.tmSales7DaysPercent,
+		b.tmSales30Days,
+		b.tmSales30DaysPercent,
+		b.tmSalesInThisYear,
+		b.tmSalesInThisYearPercent,
+		b.tgPriceFinalRmb AS tgPriceFinalRmb,
+		b.tgFreeShippingType AS tgFreeShippingType,
+		b.tgIsOnSale AS tgIsOnSale,
+		b.tgIsApproved AS tgIsApproved,
+		b.tgPrePublishDateTime AS tgPrePublishDateTime,
+		b.tgSales7Days,
+		b.tgSales7DaysPercent,
+		b.tgSales30Days,
+		b.tgSales30DaysPercent,
+		b.tgSalesInThisYear,
+		b.tgSalesInThisYearPercent,
+		b.jdPriceFinalRmb AS jdPriceFinalRmb,
+		b.jdFreeShippingType AS jdFreeShippingType,
+		b.jdIsOnSale AS jdIsOnSale,
+		b.jdIsApproved AS jdIsApproved,
+		b.jdPrePublishDateTime AS jdPrePublishDateTime,
+		b.jdSales7Days,
+		b.jdSales7DaysPercent,
+		b.jdSales30Days,
+		b.jdSales30DaysPercent,
+		b.jdSalesInThisYear,
+		b.jdSalesInThisYearPercent,
+		b.jgPriceFinalRmb AS jgPriceFinalRmb,
+		b.jgFreeShippingType AS jgFreeShippingType,
+		b.jgIsOnSale AS jgIsOnSale,
+		b.jgIsApproved AS jgIsApproved,
+		b.jgPrePublishDateTime AS jgPrePublishDateTime,
+		b.jgSales7Days,
+		b.jgSales7DaysPercent,
+		b.jgSales30Days,
+		b.jgSales30DaysPercent,
+		b.jgSalesInThisYear,
+		b.jgSalesInThisYearPercent,
+		a.category_id,
+		b.channel_id,
+		b.cnOfficialPriceAdjustmentRmb AS cnOfficialPriceAdjustmentRmb,
+		b.cnOfficialSalesAllDays,
+		b.cnOfficialSalesAllDaysPercent,
+		b.cnPriceAdjustmentRmb AS cnPriceAdjustmentRmb,
+		b.cnSalesAllDays,
+		b.cnSalesAllDaysPercent,
+		b.creater,
+		b.effectivePrice AS effectivePrice,
+		b.firstSalePrice AS firstSalePrice,
+		b.image_name,
+		b.is_approved_description,
+		b.is_effective,
+		b.jdPriceAdjustmentRmb AS jdPriceAdjustmentRmb,
+		b.jdSalesAllDays,
+		b.jdSalesAllDaysPercent,
+		b.jgPriceAdjustmentRmb AS jgPriceAdjustmentRmb,
+		b.jgSalesAllDays,
+		b.jgSalesAllDaysPercent,
+		b.model_id,
+		b.modifier,
+		b.product_id,
+		b.tbPriceAdjustmentRmb AS tbPriceAdjustmentRmb,
+		b.tbSalesAllDays,
+		b.tbSalesAllDaysPercent,
+		b.tgPriceAdjustmentRmb AS tgPriceAdjustmentRmb,
+		b.tgSalesAllDays,
+		b.tgSalesAllDaysPercent,
+		b.tmPriceAdjustmentRmb AS tmPriceAdjustmentRmb,
+		b.tmSalesAllDays,
+		b.tmSalesAllDaysPercent
+		FROM
+		cms_bt_relation_category_product a
 		LEFT JOIN view_cn_product_info_list b ON a.product_id = b.product_id
 		AND a.channel_id = b.channel_id
 		LEFT JOIN Synship.wms_bt_inventory_center_logic c ON b.`code` = c.`code` and b.channel_id = c.order_channel_id
 		WHERE
-			a.category_id = #{categoryId}
+		a.category_id = #{categoryId}
 		AND a.channel_id = #{channelId}
 		GROUP BY
-			b. CODE,
-			b.channel_id
+		b. CODE,
+		b.channel_id
 		ORDER BY
-			a.display_order ASC
-	<if test="offset != null and pageCount != null">
-        LIMIT #{offset}, #{pageCount}
-    </if> 
-  </select>
-  <select id="cms_get_MainCategoryName" resultType="HashMap"  parameterType="String" >
+		a.display_order ASC
+		<if test="offset != null and pageCount != null">
+			LIMIT #{offset}, #{pageCount}
+		</if>
+	</select>
+	<select id="cms_get_MainCategoryName" resultType="HashMap"  parameterType="String" >
   	SELECT
 		category_path as mainCategoryName
 	FROM
@@ -725,7 +798,7 @@
 		category_id = #{id}
   
   </select>
-  <select id="cms_get_TMCategoryName" resultType="HashMap" parameterType="HashMap">
+	<select id="cms_get_TMCategoryName" resultType="HashMap" parameterType="HashMap">
 	SELECT
 	    platform_cid_path as name
 	FROM
@@ -735,139 +808,139 @@
 		AND platform_id =#{platformId}
 	  
   </select>
-  
+
 	<update id="cms_update_CategoryExtendInfo" parameterType="com.voyageone.cms.modelbean.CategoryExtend" >
-    	update cms_bt_category_extend
-		    <set >
-		      <if test="seoTitle != null" >
-		        seo_title = #{seoTitle,jdbcType=VARCHAR},
-		      </if>
-		      <if test="seoDescription != null" >
-		        seo_description = #{seoDescription,jdbcType=VARCHAR},
-		      </if>
-		      <if test="seoKeywords != null" >
-		        seo_keywords = #{seoKeywords,jdbcType=VARCHAR},
-		      </if>
-		      <if test="seoCanonical != null" >
-		        seo_canonical = #{seoCanonical,jdbcType=VARCHAR},
-		      </if>
-		     
-		        main_category_id = #{mainCategoryId},
-		     
-		      <if test="created != null" >
-		        created = #{created,jdbcType=TIMESTAMP},
-		      </if>
-		      <if test="creater != null" >
-		        creater = #{creater,jdbcType=VARCHAR},
-		      </if>
-		     
-		        modified = now(),
-		      
-		      <if test="modifier != null" >
-		        modifier = #{modifier,jdbcType=VARCHAR},
-		      </if>
-		    </set>
-    	where category_id = #{categoryId,jdbcType=INTEGER}
-      		and channel_id = #{channelId,jdbcType=VARCHAR}
-  </update>
+		update cms_bt_category_extend
+		<set >
+			<if test="seoTitle != null" >
+				seo_title = #{seoTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="seoDescription != null" >
+				seo_description = #{seoDescription,jdbcType=VARCHAR},
+			</if>
+			<if test="seoKeywords != null" >
+				seo_keywords = #{seoKeywords,jdbcType=VARCHAR},
+			</if>
+			<if test="seoCanonical != null" >
+				seo_canonical = #{seoCanonical,jdbcType=VARCHAR},
+			</if>
+
+			main_category_id = #{mainCategoryId},
+
+			<if test="created != null" >
+				created = #{created,jdbcType=TIMESTAMP},
+			</if>
+			<if test="creater != null" >
+				creater = #{creater,jdbcType=VARCHAR},
+			</if>
+
+			modified = now(),
+
+			<if test="modifier != null" >
+				modifier = #{modifier,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where category_id = #{categoryId,jdbcType=INTEGER}
+		and channel_id = #{channelId,jdbcType=VARCHAR}
+	</update>
 	<update id="cms_update_CategoryInfo" parameterType="com.voyageone.cms.modelbean.Category" >
-    	update cms_bt_category
-		    <set >
-		      <if test="name != null" >
-		        name = #{name,jdbcType=VARCHAR},
-		      </if>
-		      <if test="headerTitle != null" >
-		        header_title = #{headerTitle,jdbcType=VARCHAR},
-		      </if>
-		      <if test="urlKey != null" >
-		        url_key = #{urlKey,jdbcType=VARCHAR},
-		      </if>
-		      <if test="enableFilter != null" >
-		        is_enable_filter = #{isEnableFilter,jdbcType=BOOLEAN},
-		      </if>
-		      <if test="visibleOnMenu != null" >
-		        is_visible_on_menu = #{isVisibleOnMenu,jdbcType=BOOLEAN},
-		      </if>
-		      <if test="published != null" >
-		        is_published = #{isPublished,jdbcType=BOOLEAN},
-		      </if>
-		      <if test="effective != null" >
-		        is_effective = #{isEffective,jdbcType=BOOLEAN},
-		      </if>
-		      <if test="created != null" >
-		        created = #{created,jdbcType=TIMESTAMP},
-		      </if>
-		      <if test="creater != null" >
-		        creater = #{creater,jdbcType=VARCHAR},
-		      </if>
-		     
-		        modified = now(),
-		      
-		      <if test="modifier != null" >
-		        modifier = #{modifier,jdbcType=VARCHAR},
-		      </if>
-		    </set>
-    	where category_id = #{categoryId,jdbcType=INTEGER}
-     	 and channel_id = #{channelId,jdbcType=VARCHAR}
-  </update>
-  <update id="cms_update_PublishCategory" parameterType="com.voyageone.cms.modelbean.PublishCategory" >
-    	update cms_bt_publish_category
-		    <set >
-		      <if test="isPublished != null" >
-		        is_published = #{isPublished,jdbcType=CHAR},
-		      </if>
-		      <if test="publishDatetime != null" >
-		        publish_datetime = #{publishDatetime,jdbcType=TIMESTAMP},
-		      </if>
-		      <if test="publishStatus != null" >
-		        publish_status = #{publishStatus,jdbcType=CHAR},
-		      </if>
-		      <if test="cartId != null">
-		        cart_id = #{cartId,jdbcType=VARCHAR},
-		      </if>
-		      <if test="created != null" >
-		        created = #{created,jdbcType=TIMESTAMP},
-		      </if>
-		      <if test="creater != null" >
-		        creater = #{creater,jdbcType=VARCHAR},
-		      </if>
-		   
-		        modified = now(), 
-		     
-		      <if test="modifier != null" >
-		        modifier = #{modifier,jdbcType=VARCHAR},
-		      </if>
-		    </set>
-   	 	where 	category_id = #{categoryId,jdbcType=INTEGER}
-      			and channel_id = #{channelId,jdbcType=VARCHAR}
-      			
-  </update>
-   <resultMap id="CategoryExtendResultMap" type="com.voyageone.cms.modelbean.CategoryExtend" >
-    <result column="category_id" property="categoryId" jdbcType="INTEGER" />
-    <result column="channel_id" property="channelId" jdbcType="VARCHAR" />
-    <result column="seo_title" property="seoTitle" jdbcType="VARCHAR" />
-    <result column="seo_description" property="seoDescription" jdbcType="VARCHAR" />
-    <result column="seo_keywords" property="seoKeywords" jdbcType="VARCHAR" />
-    <result column="seo_canonical" property="seoCanonical" jdbcType="VARCHAR" />
-    <result column="created" property="created" jdbcType="TIMESTAMP" />
-    <result column="creater" property="creater" jdbcType="VARCHAR" />
-    <result column="modified" property="modified" jdbcType="TIMESTAMP" />
-    <result column="modifier" property="modifier" jdbcType="VARCHAR" />
-  </resultMap>
-  <sql id="CategoryExtend_Column_List" >
+		update cms_bt_category
+		<set >
+			<if test="name != null" >
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="headerTitle != null" >
+				header_title = #{headerTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="urlKey != null" >
+				url_key = #{urlKey,jdbcType=VARCHAR},
+			</if>
+			<if test="enableFilter != null" >
+				is_enable_filter = #{isEnableFilter,jdbcType=BOOLEAN},
+			</if>
+			<if test="visibleOnMenu != null" >
+				is_visible_on_menu = #{isVisibleOnMenu,jdbcType=BOOLEAN},
+			</if>
+			<if test="published != null" >
+				is_published = #{isPublished,jdbcType=BOOLEAN},
+			</if>
+			<if test="effective != null" >
+				is_effective = #{isEffective,jdbcType=BOOLEAN},
+			</if>
+			<if test="created != null" >
+				created = #{created,jdbcType=TIMESTAMP},
+			</if>
+			<if test="creater != null" >
+				creater = #{creater,jdbcType=VARCHAR},
+			</if>
+
+			modified = now(),
+
+			<if test="modifier != null" >
+				modifier = #{modifier,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where category_id = #{categoryId,jdbcType=INTEGER}
+		and channel_id = #{channelId,jdbcType=VARCHAR}
+	</update>
+	<update id="cms_update_PublishCategory" parameterType="com.voyageone.cms.modelbean.PublishCategory" >
+		update cms_bt_publish_category
+		<set >
+			<if test="isPublished != null" >
+				is_published = #{isPublished,jdbcType=CHAR},
+			</if>
+			<if test="publishDatetime != null" >
+				publish_datetime = #{publishDatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="publishStatus != null" >
+				publish_status = #{publishStatus,jdbcType=CHAR},
+			</if>
+			<if test="cartId != null">
+				cart_id = #{cartId,jdbcType=VARCHAR},
+			</if>
+			<if test="created != null" >
+				created = #{created,jdbcType=TIMESTAMP},
+			</if>
+			<if test="creater != null" >
+				creater = #{creater,jdbcType=VARCHAR},
+			</if>
+
+			modified = now(),
+
+			<if test="modifier != null" >
+				modifier = #{modifier,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where 	category_id = #{categoryId,jdbcType=INTEGER}
+		and channel_id = #{channelId,jdbcType=VARCHAR}
+
+	</update>
+	<resultMap id="CategoryExtendResultMap" type="com.voyageone.cms.modelbean.CategoryExtend" >
+		<result column="category_id" property="categoryId" jdbcType="INTEGER" />
+		<result column="channel_id" property="channelId" jdbcType="VARCHAR" />
+		<result column="seo_title" property="seoTitle" jdbcType="VARCHAR" />
+		<result column="seo_description" property="seoDescription" jdbcType="VARCHAR" />
+		<result column="seo_keywords" property="seoKeywords" jdbcType="VARCHAR" />
+		<result column="seo_canonical" property="seoCanonical" jdbcType="VARCHAR" />
+		<result column="created" property="created" jdbcType="TIMESTAMP" />
+		<result column="creater" property="creater" jdbcType="VARCHAR" />
+		<result column="modified" property="modified" jdbcType="TIMESTAMP" />
+		<result column="modifier" property="modifier" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="CategoryExtend_Column_List" >
     category_id, channel_id, seo_title, seo_description, seo_keywords, seo_canonical, 
     created, creater, modified, modifier
   </sql>
-  <select id="cms_get_CategoryExtend" resultMap="CategoryExtendResultMap" parameterType="HashMap" >
-    	select 
-    		<include refid="CategoryExtend_Column_List" />
-    	from 
-    		cms_bt_category_extend
-    	where 
-    		category_id = #{categoryId,jdbcType=INTEGER}
-      		and channel_id = #{channelId,jdbcType=VARCHAR}
-  </select>
-   <insert id="cms_insert_CategoryExtend" parameterType="com.voyageone.cms.modelbean.CategoryExtend" >
+	<select id="cms_get_CategoryExtend" resultMap="CategoryExtendResultMap" parameterType="HashMap" >
+		select
+		<include refid="CategoryExtend_Column_List" />
+		from
+		cms_bt_category_extend
+		where
+		category_id = #{categoryId,jdbcType=INTEGER}
+		and channel_id = #{channelId,jdbcType=VARCHAR}
+	</select>
+	<insert id="cms_insert_CategoryExtend" parameterType="com.voyageone.cms.modelbean.CategoryExtend" >
     	insert into 
     		cms_bt_category_extend 
     		(category_id, 
@@ -894,32 +967,32 @@
       		now(), 
       		#{modifier,jdbcType=VARCHAR})
   </insert>
-  <resultMap id="PublishCategoryResultMap" type="com.voyageone.cms.modelbean.PublishCategory" >
-    <id column="category_id" property="categoryId" jdbcType="INTEGER" />
-    <id column="channel_id" property="channelId" jdbcType="VARCHAR" />
-    <id column="cart_id" property="cartId" jdbcType="VARCHAR" />
-    <result column="is_published" property="isPublished" jdbcType="CHAR" />
-    <result column="publish_datetime" property="publishDatetime" jdbcType="TIMESTAMP" />
-    <result column="publish_status" property="publishStatus" jdbcType="CHAR" />
-    <result column="created" property="created" jdbcType="TIMESTAMP" />
-    <result column="creater" property="creater" jdbcType="VARCHAR" />
-    <result column="modified" property="modified" jdbcType="TIMESTAMP" />
-    <result column="modifier" property="modifier" jdbcType="VARCHAR" />
-  </resultMap>
-  <sql id="PublishCategory_Column_List" >
+	<resultMap id="PublishCategoryResultMap" type="com.voyageone.cms.modelbean.PublishCategory" >
+		<id column="category_id" property="categoryId" jdbcType="INTEGER" />
+		<id column="channel_id" property="channelId" jdbcType="VARCHAR" />
+		<id column="cart_id" property="cartId" jdbcType="VARCHAR" />
+		<result column="is_published" property="isPublished" jdbcType="CHAR" />
+		<result column="publish_datetime" property="publishDatetime" jdbcType="TIMESTAMP" />
+		<result column="publish_status" property="publishStatus" jdbcType="CHAR" />
+		<result column="created" property="created" jdbcType="TIMESTAMP" />
+		<result column="creater" property="creater" jdbcType="VARCHAR" />
+		<result column="modified" property="modified" jdbcType="TIMESTAMP" />
+		<result column="modifier" property="modifier" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="PublishCategory_Column_List" >
     category_id, channel_id, cart_id, is_published, publish_datetime, publish_status, 
     created, creater, modified, modifier
   </sql>
-  <select id="cms_get_PublishCategory" resultMap="PublishCategoryResultMap" parameterType="HashMap" >
-  	select 
-   		<include refid="PublishCategory_Column_List" />
-   	from 
-   		cms_bt_publish_category
-   	where 
-   		category_id = #{categoryId,jdbcType=INTEGER}
-     		and channel_id = #{channelId,jdbcType=VARCHAR}
-  </select>
-  <insert id="cms_insert_PublishCategory" parameterType="com.voyageone.cms.modelbean.PublishCategory" >
+	<select id="cms_get_PublishCategory" resultMap="PublishCategoryResultMap" parameterType="HashMap" >
+		select
+		<include refid="PublishCategory_Column_List" />
+		from
+		cms_bt_publish_category
+		where
+		category_id = #{categoryId,jdbcType=INTEGER}
+		and channel_id = #{channelId,jdbcType=VARCHAR}
+	</select>
+	<insert id="cms_insert_PublishCategory" parameterType="com.voyageone.cms.modelbean.PublishCategory" >
     insert into 
     	cms_bt_publish_category 
     	(category_id, 
@@ -944,185 +1017,185 @@
       	now(), 
       	#{modifier,jdbcType=VARCHAR})
   </insert>
-  <delete id="cms_delete_CategoryExtend" parameterType="HashMap" >
-    delete from 
-        cms_bt_category_extend
-    where 
-   		category_id = #{categoryId,jdbcType=INTEGER}
-      	and channel_id = #{channelId,jdbcType=VARCHAR}
-  </delete>
-   <resultMap id="AmazonCategoryExtendResultMap" type="com.voyageone.cms.modelbean.AmazonCategoryExtend" >
-    <result column="category_id" property="categoryId" jdbcType="INTEGER" />
-    <result column="channel_id" property="channelId" jdbcType="VARCHAR" />
-    <result column="amazon_browse_category_id" property="amazonBrowseCategoryId" jdbcType="INTEGER" />
-    <result column="created" property="created" jdbcType="TIMESTAMP" />
-    <result column="creater" property="creater" jdbcType="VARCHAR" />
-    <result column="modified" property="modified" jdbcType="TIMESTAMP" />
-    <result column="modifier" property="modifier" jdbcType="VARCHAR" />
-  </resultMap>
-  <sql id="AmazonCategoryExtend_Column_List" >
-    category_id, channel_id, amazon_browse_category_id, created, creater, modified, modifier
-  </sql>
-  <select id="cms_get_AmazonCategoryExtend" resultMap="AmazonCategoryExtendResultMap" parameterType="HashMap" >
-    select 
-    	<include refid="AmazonCategoryExtend_Column_List" />
-    from 
-    	cms_bt_amazon_category_extend
-    where 
-    	category_id = #{categoryId,jdbcType=INTEGER}
-      	and channel_id = #{channelId,jdbcType=VARCHAR}
-  </select>
-   <insert id="cms_insert_AmazonCategoryExtend" parameterType="com.voyageone.cms.modelbean.AmazonCategoryExtend" >
-    insert into 
-           cms_bt_amazon_category_extend 
-           (category_id, 
-           	channel_id, 
-           	amazon_browse_category_id, 
-     		created, 
-     		creater, 
-     		modified, 
-      		modifier)
-    values 
-    		(#{categoryId,jdbcType=INTEGER}, 
-    		#{channelId,jdbcType=VARCHAR}, 
-    		#{amazonBrowseCategoryId,jdbcType=INTEGER}, 
-      		now(), 
-      		#{creater,jdbcType=VARCHAR}, 
-      		now(), 
-      		#{modifier,jdbcType=VARCHAR})
-  </insert>
-  <update id="cms_update_AmazonCategoryExtend" parameterType="com.voyageone.cms.modelbean.AmazonCategoryExtend" >
-    update 
-    	cms_bt_amazon_category_extend
-	    <set >
-	      <if test="amazonBrowseCategoryId != null" >
-	        amazon_browse_category_id = #{amazonBrowseCategoryId,jdbcType=INTEGER},
-	      </if>
-	      <if test="created != null" >
-	        created = #{created,jdbcType=TIMESTAMP},
-	      </if>
-	      <if test="creater != null" >
-	        creater = #{creater,jdbcType=VARCHAR},
-	      </if>
-	     
-	        modified = now(), 
-	     
-	      <if test="modifier != null" >
-	        modifier = #{modifier,jdbcType=VARCHAR},
-	      </if>
-	    </set>
-    where 
-    	category_id = #{categoryId,jdbcType=INTEGER}
-      	and channel_id = #{channelId,jdbcType=VARCHAR}
-  </update>
-  <delete id="cms_delete_AmazonCategoryExtend" parameterType="HashMap" >
-    delete from 
-    	cms_bt_amazon_category_extend
-    where 
-    	category_id = #{categoryId,jdbcType=INTEGER}
-      	and channel_id = #{channelId,jdbcType=VARCHAR}
-  </delete>
-  <resultMap id="GoogleCategoryExtendResultMap" type="com.voyageone.cms.modelbean.GoogleCategoryExtend" >
-    <id column="category_id" property="categoryId" jdbcType="INTEGER" />
-    <id column="channel_id" property="channelId" jdbcType="VARCHAR" />
-    <result column="google_category_id" property="googleCategoryId" jdbcType="INTEGER" />
-    <result column="created" property="created" jdbcType="TIMESTAMP" />
-    <result column="creater" property="creater" jdbcType="VARCHAR" />
-    <result column="modified" property="modified" jdbcType="TIMESTAMP" />
-    <result column="modifier" property="modifier" jdbcType="VARCHAR" />
-  </resultMap>
-  <sql id="GoogleCategoryExtend_Column_List" >
-    category_id, channel_id, google_category_id,  created, creater, 
-    modified, modifier
-  </sql>
-  <select id="cms_get_GoogleCategoryExtend" resultMap="GoogleCategoryExtendResultMap" parameterType="HashMap" >
-    select 
-    	<include refid="GoogleCategoryExtend_Column_List" />
-    from 
-    	cms_bt_google_category_extend
-    where 
-    	category_id = #{categoryId,jdbcType=INTEGER}
-      	and channel_id = #{channelId,jdbcType=VARCHAR}
-  </select>
-   <insert id="cms_insert_GoogleCategoryExtend" parameterType="com.voyageone.cms.modelbean.GoogleCategoryExtend" >
-    insert into 
-    	cms_bt_google_category_extend 
-    	(category_id, 
-    	channel_id, 
-    	google_category_id, 
-      	created, 
-      	creater, 
-      	modified, 
-      	modifier)
-    values 
-    	(#{categoryId,jdbcType=INTEGER}, 
-    	#{channelId,jdbcType=VARCHAR}, 
-    	#{googleCategoryId,jdbcType=INTEGER}, 
-      	now(), 
-      	#{creater,jdbcType=VARCHAR}, 
-      	now(), 
-      	#{modifier,jdbcType=VARCHAR})
-  </insert>
-   <update id="cms_update_GoogleCategoryExtend" parameterType="com.voyageone.cms.modelbean.GoogleCategoryExtend" >
-    update 
-    	cms_bt_google_category_extend
-	    <set >
-	      <if test="googleCategoryId != null" >
-	        google_category_id = #{googleCategoryId,jdbcType=INTEGER},
-	      </if>
-	      <if test="created != null" >
-	        created = #{created,jdbcType=TIMESTAMP},
-	      </if>
-	      <if test="creater != null" >
-	        creater = #{creater,jdbcType=VARCHAR},
-	      </if>
-	     
-	        modified = now(), 
-	     
-	      <if test="modifier != null" >
-	        modifier = #{modifier,jdbcType=VARCHAR},
-	      </if>
-	    </set>
-    where 
-    	category_id = #{categoryId,jdbcType=INTEGER}
-      	and channel_id = #{channelId,jdbcType=VARCHAR}
-  </update>
-  <delete id="cms_delete_GoogleCategoryExtend" parameterType="HashMap" >
-    delete from 
-    	cms_bt_google_category_extend
-    where 
-    	category_id = #{categoryId,jdbcType=INTEGER}
-      	and channel_id = #{channelId,jdbcType=VARCHAR}
-  </delete>
-  <resultMap id="PricegrabberCategoryResultMap" type="com.voyageone.cms.modelbean.PricegrabberCategoryExtend" >
-    <result column="category_id" property="categoryId" jdbcType="INTEGER" />
-    <result column="channel_id" property="channelId" jdbcType="VARCHAR" />
-    <result column="price_grabber_category_id" property="priceGrabberCategoryId" jdbcType="INTEGER" />
-    <result column="created" property="created" jdbcType="TIMESTAMP" />
-    <result column="creater" property="creater" jdbcType="VARCHAR" />
-    <result column="modified" property="modified" jdbcType="TIMESTAMP" />
-    <result column="modifier" property="modifier" jdbcType="VARCHAR" />
-  </resultMap>
-  <sql id="PricegrabberCategory_Column_List" >
+	<delete id="cms_delete_CategoryExtend" parameterType="HashMap" >
+		delete from
+		cms_bt_category_extend
+		where
+		category_id = #{categoryId,jdbcType=INTEGER}
+		and channel_id = #{channelId,jdbcType=VARCHAR}
+	</delete>
+	<resultMap id="AmazonCategoryExtendResultMap" type="com.voyageone.cms.modelbean.AmazonCategoryExtend" >
+		<result column="category_id" property="categoryId" jdbcType="INTEGER" />
+		<result column="channel_id" property="channelId" jdbcType="VARCHAR" />
+		<result column="amazon_browse_category_id" property="amazonBrowseCategoryId" jdbcType="INTEGER" />
+		<result column="created" property="created" jdbcType="TIMESTAMP" />
+		<result column="creater" property="creater" jdbcType="VARCHAR" />
+		<result column="modified" property="modified" jdbcType="TIMESTAMP" />
+		<result column="modifier" property="modifier" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="AmazonCategoryExtend_Column_List" >
+		category_id, channel_id, amazon_browse_category_id, created, creater, modified, modifier
+	</sql>
+	<select id="cms_get_AmazonCategoryExtend" resultMap="AmazonCategoryExtendResultMap" parameterType="HashMap" >
+		select
+		<include refid="AmazonCategoryExtend_Column_List" />
+		from
+		cms_bt_amazon_category_extend
+		where
+		category_id = #{categoryId,jdbcType=INTEGER}
+		and channel_id = #{channelId,jdbcType=VARCHAR}
+	</select>
+	<insert id="cms_insert_AmazonCategoryExtend" parameterType="com.voyageone.cms.modelbean.AmazonCategoryExtend" >
+		insert into
+		cms_bt_amazon_category_extend
+		(category_id,
+		channel_id,
+		amazon_browse_category_id,
+		created,
+		creater,
+		modified,
+		modifier)
+		values
+		(#{categoryId,jdbcType=INTEGER},
+		#{channelId,jdbcType=VARCHAR},
+		#{amazonBrowseCategoryId,jdbcType=INTEGER},
+		now(),
+		#{creater,jdbcType=VARCHAR},
+		now(),
+		#{modifier,jdbcType=VARCHAR})
+	</insert>
+	<update id="cms_update_AmazonCategoryExtend" parameterType="com.voyageone.cms.modelbean.AmazonCategoryExtend" >
+		update
+		cms_bt_amazon_category_extend
+		<set >
+			<if test="amazonBrowseCategoryId != null" >
+				amazon_browse_category_id = #{amazonBrowseCategoryId,jdbcType=INTEGER},
+			</if>
+			<if test="created != null" >
+				created = #{created,jdbcType=TIMESTAMP},
+			</if>
+			<if test="creater != null" >
+				creater = #{creater,jdbcType=VARCHAR},
+			</if>
+
+			modified = now(),
+
+			<if test="modifier != null" >
+				modifier = #{modifier,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where
+		category_id = #{categoryId,jdbcType=INTEGER}
+		and channel_id = #{channelId,jdbcType=VARCHAR}
+	</update>
+	<delete id="cms_delete_AmazonCategoryExtend" parameterType="HashMap" >
+		delete from
+		cms_bt_amazon_category_extend
+		where
+		category_id = #{categoryId,jdbcType=INTEGER}
+		and channel_id = #{channelId,jdbcType=VARCHAR}
+	</delete>
+	<resultMap id="GoogleCategoryExtendResultMap" type="com.voyageone.cms.modelbean.GoogleCategoryExtend" >
+		<id column="category_id" property="categoryId" jdbcType="INTEGER" />
+		<id column="channel_id" property="channelId" jdbcType="VARCHAR" />
+		<result column="google_category_id" property="googleCategoryId" jdbcType="INTEGER" />
+		<result column="created" property="created" jdbcType="TIMESTAMP" />
+		<result column="creater" property="creater" jdbcType="VARCHAR" />
+		<result column="modified" property="modified" jdbcType="TIMESTAMP" />
+		<result column="modifier" property="modifier" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="GoogleCategoryExtend_Column_List" >
+		category_id, channel_id, google_category_id,  created, creater,
+		modified, modifier
+	</sql>
+	<select id="cms_get_GoogleCategoryExtend" resultMap="GoogleCategoryExtendResultMap" parameterType="HashMap" >
+		select
+		<include refid="GoogleCategoryExtend_Column_List" />
+		from
+		cms_bt_google_category_extend
+		where
+		category_id = #{categoryId,jdbcType=INTEGER}
+		and channel_id = #{channelId,jdbcType=VARCHAR}
+	</select>
+	<insert id="cms_insert_GoogleCategoryExtend" parameterType="com.voyageone.cms.modelbean.GoogleCategoryExtend" >
+		insert into
+		cms_bt_google_category_extend
+		(category_id,
+		channel_id,
+		google_category_id,
+		created,
+		creater,
+		modified,
+		modifier)
+		values
+		(#{categoryId,jdbcType=INTEGER},
+		#{channelId,jdbcType=VARCHAR},
+		#{googleCategoryId,jdbcType=INTEGER},
+		now(),
+		#{creater,jdbcType=VARCHAR},
+		now(),
+		#{modifier,jdbcType=VARCHAR})
+	</insert>
+	<update id="cms_update_GoogleCategoryExtend" parameterType="com.voyageone.cms.modelbean.GoogleCategoryExtend" >
+		update
+		cms_bt_google_category_extend
+		<set >
+			<if test="googleCategoryId != null" >
+				google_category_id = #{googleCategoryId,jdbcType=INTEGER},
+			</if>
+			<if test="created != null" >
+				created = #{created,jdbcType=TIMESTAMP},
+			</if>
+			<if test="creater != null" >
+				creater = #{creater,jdbcType=VARCHAR},
+			</if>
+
+			modified = now(),
+
+			<if test="modifier != null" >
+				modifier = #{modifier,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where
+		category_id = #{categoryId,jdbcType=INTEGER}
+		and channel_id = #{channelId,jdbcType=VARCHAR}
+	</update>
+	<delete id="cms_delete_GoogleCategoryExtend" parameterType="HashMap" >
+		delete from
+		cms_bt_google_category_extend
+		where
+		category_id = #{categoryId,jdbcType=INTEGER}
+		and channel_id = #{channelId,jdbcType=VARCHAR}
+	</delete>
+	<resultMap id="PricegrabberCategoryResultMap" type="com.voyageone.cms.modelbean.PricegrabberCategoryExtend" >
+		<result column="category_id" property="categoryId" jdbcType="INTEGER" />
+		<result column="channel_id" property="channelId" jdbcType="VARCHAR" />
+		<result column="price_grabber_category_id" property="priceGrabberCategoryId" jdbcType="INTEGER" />
+		<result column="created" property="created" jdbcType="TIMESTAMP" />
+		<result column="creater" property="creater" jdbcType="VARCHAR" />
+		<result column="modified" property="modified" jdbcType="TIMESTAMP" />
+		<result column="modifier" property="modifier" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="PricegrabberCategory_Column_List" >
     category_id, channel_id, price_grabber_category_id, created, creater, modified, modifier
   </sql>
-  <select id="cms_get_PricegrabberCategory" resultMap="PricegrabberCategoryResultMap" parameterType="com.voyageone.cms.modelbean.PricegrabberCategoryExtend" >
-    select 
-    	<include refid="PricegrabberCategory_Column_List" />
-    from 
-    	cms_bt_pricegrabber_category_extend
-    where 
-    	category_id = #{categoryId,jdbcType=INTEGER}
-      	and channel_id = #{channelId,jdbcType=VARCHAR}
-  </select>
-  <delete id="cms_delete_PricegrabberCategory" parameterType="com.voyageone.cms.modelbean.PricegrabberCategoryExtend" >
-    delete from 
-    	cms_bt_pricegrabber_category_extend
-    where 
-    	category_id = #{categoryId,jdbcType=INTEGER}
-      	and channel_id = #{channelId,jdbcType=VARCHAR}
-  </delete>
-  <insert id="cms_insert_PricegrabberCategory" parameterType="com.voyageone.cms.modelbean.PricegrabberCategoryExtend" >
+	<select id="cms_get_PricegrabberCategory" resultMap="PricegrabberCategoryResultMap" parameterType="com.voyageone.cms.modelbean.PricegrabberCategoryExtend" >
+		select
+		<include refid="PricegrabberCategory_Column_List" />
+		from
+		cms_bt_pricegrabber_category_extend
+		where
+		category_id = #{categoryId,jdbcType=INTEGER}
+		and channel_id = #{channelId,jdbcType=VARCHAR}
+	</select>
+	<delete id="cms_delete_PricegrabberCategory" parameterType="com.voyageone.cms.modelbean.PricegrabberCategoryExtend" >
+		delete from
+		cms_bt_pricegrabber_category_extend
+		where
+		category_id = #{categoryId,jdbcType=INTEGER}
+		and channel_id = #{channelId,jdbcType=VARCHAR}
+	</delete>
+	<insert id="cms_insert_PricegrabberCategory" parameterType="com.voyageone.cms.modelbean.PricegrabberCategoryExtend" >
     insert into 
     	cms_bt_pricegrabber_category_extend 
     	(category_id, 
@@ -1141,142 +1214,142 @@
      	now(), 
       	#{modifier,jdbcType=VARCHAR})
   </insert>
-  <update id="cms_update_PricegrabberCategory" parameterType="com.voyageone.cms.modelbean.PricegrabberCategoryExtend" >
-    update 
-    	cms_bt_pricegrabber_category_extend
-	    <set >
-	      <if test="priceGrabberCategoryId != null" >
-	        price_grabber_category_id = #{priceGrabberCategoryId,jdbcType=INTEGER},
-	      </if>
-	      <if test="created != null" >
-	        created = #{created,jdbcType=TIMESTAMP},
-	      </if>
-	      <if test="creater != null" >
-	        creater = #{creater,jdbcType=VARCHAR},
-	      </if>
-	     
-	        modified = now(), 
-	      
-	      <if test="modifier != null" >
-	        modifier = #{modifier,jdbcType=VARCHAR},
-	      </if>
-	    </set>
-    where 
-    	category_id = #{categoryId,jdbcType=INTEGER}
-      	and channel_id = #{channelId,jdbcType=VARCHAR}
-  </update>
- 
-  <update id="cms_update_CnCategory" parameterType="com.voyageone.cms.modelbean.CnCategory" >
-    update cms_bt_cn_category
-	    <set >
-	      <if test="cnName != null" >
-	        cn_name = #{cnName,jdbcType=VARCHAR},
-	      </if>
-	      <if test="cnHeaderTitle != null" >
-	        cn_header_title = #{cnHeaderTitle,jdbcType=VARCHAR},
-	      </if>
-	      <if test="cnIsVisibleOnMenu != null" >
-	        cn_is_visible_on_menu = #{cnIsVisibleOnMenu,jdbcType=BOOLEAN},
-	      </if>
-	       <if test="cnIsEnableFilter != null" >
-	        cn_is_enable_filter = #{cnIsEnableFilter,jdbcType=BOOLEAN},
-	      </if>
-	      <if test="cnIsPublished != null" >
-	        cn_is_publish = #{cnIsPublished,jdbcType=BOOLEAN},
-	      </if>
-	      <if test="created != null" >
-	        created = #{created,jdbcType=TIMESTAMP},
-	      </if>
-	      <if test="creater != null" >
-	        creater = #{creater,jdbcType=VARCHAR},
-	      </if>
-	     
-	        modified = now(), 
-	      
-	      <if test="modifier != null" >
-	        modifier = #{modifier,jdbcType=VARCHAR},
-	      </if>
-	    </set>
-    where 
-    	category_id = #{categoryId,jdbcType=INTEGER}
-      	and channel_id = #{channelId,jdbcType=VARCHAR}
-  </update>
-  <update id="cms_update_CnCategoryExtend" parameterType="com.voyageone.cms.modelbean.CnCategoryExtend" >
-    update cms_bt_cn_category_extend
-	    <set >
-	      <if test="cnSeoTitle != null" >
-	        cn_seo_title = #{cnSeoTitle,jdbcType=VARCHAR},
-	      </if>
-	      <if test="cnSeoDescription != null" >
-	        cn_seo_description = #{cnSeoDescription,jdbcType=VARCHAR},
-	      </if>
-	      <if test="cnSeoKeywords != null" >
-	        cn_seo_keywords = #{cnSeoKeywords,jdbcType=VARCHAR},
-	      </if>
-	      <if test="hsCodeId != null" >
-	        hs_code_id = #{hsCodeId,jdbcType=INTEGER},
-	      </if>
-	      <if test="hsCodePuId != null" >
-	        hs_code_pu_id = #{hsCodePuId,jdbcType=INTEGER},
-	      </if>
-	      <if test="sizeChartId != null" >
-	        size_chart_id = #{sizeChartId,jdbcType=INTEGER},
-	      </if>
-	    
-		    main_category_id = #{mainCategoryId},
-		  
-	      <if test="created != null" >
-	        created = #{created,jdbcType=TIMESTAMP},
-	      </if>
-	      <if test="creater != null" >
-	        creater = #{creater,jdbcType=VARCHAR},
-	      </if>
-	     
-	        modified = now(), 
-	      
-	      <if test="modifier != null" >
-	        modifier = #{modifier,jdbcType=VARCHAR},
-	      </if>
-	    </set>
-    where 
-    	category_id = #{categoryId,jdbcType=INTEGER}
-      	and channel_id = #{channelId,jdbcType=VARCHAR}
-  </update>
-   <delete id="cms_delete_CnCategoryExtend" parameterType="HashMap" >
+	<update id="cms_update_PricegrabberCategory" parameterType="com.voyageone.cms.modelbean.PricegrabberCategoryExtend" >
+		update
+		cms_bt_pricegrabber_category_extend
+		<set >
+			<if test="priceGrabberCategoryId != null" >
+				price_grabber_category_id = #{priceGrabberCategoryId,jdbcType=INTEGER},
+			</if>
+			<if test="created != null" >
+				created = #{created,jdbcType=TIMESTAMP},
+			</if>
+			<if test="creater != null" >
+				creater = #{creater,jdbcType=VARCHAR},
+			</if>
+
+			modified = now(),
+
+			<if test="modifier != null" >
+				modifier = #{modifier,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where
+		category_id = #{categoryId,jdbcType=INTEGER}
+		and channel_id = #{channelId,jdbcType=VARCHAR}
+	</update>
+
+	<update id="cms_update_CnCategory" parameterType="com.voyageone.cms.modelbean.CnCategory" >
+		update cms_bt_cn_category
+		<set >
+			<if test="cnName != null" >
+				cn_name = #{cnName,jdbcType=VARCHAR},
+			</if>
+			<if test="cnHeaderTitle != null" >
+				cn_header_title = #{cnHeaderTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="cnIsVisibleOnMenu != null" >
+				cn_is_visible_on_menu = #{cnIsVisibleOnMenu,jdbcType=BOOLEAN},
+			</if>
+			<if test="cnIsEnableFilter != null" >
+				cn_is_enable_filter = #{cnIsEnableFilter,jdbcType=BOOLEAN},
+			</if>
+			<if test="cnIsPublished != null" >
+				cn_is_publish = #{cnIsPublished,jdbcType=BOOLEAN},
+			</if>
+			<if test="created != null" >
+				created = #{created,jdbcType=TIMESTAMP},
+			</if>
+			<if test="creater != null" >
+				creater = #{creater,jdbcType=VARCHAR},
+			</if>
+
+			modified = now(),
+
+			<if test="modifier != null" >
+				modifier = #{modifier,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where
+		category_id = #{categoryId,jdbcType=INTEGER}
+		and channel_id = #{channelId,jdbcType=VARCHAR}
+	</update>
+	<update id="cms_update_CnCategoryExtend" parameterType="com.voyageone.cms.modelbean.CnCategoryExtend" >
+		update cms_bt_cn_category_extend
+		<set >
+			<if test="cnSeoTitle != null" >
+				cn_seo_title = #{cnSeoTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="cnSeoDescription != null" >
+				cn_seo_description = #{cnSeoDescription,jdbcType=VARCHAR},
+			</if>
+			<if test="cnSeoKeywords != null" >
+				cn_seo_keywords = #{cnSeoKeywords,jdbcType=VARCHAR},
+			</if>
+			<if test="hsCodeId != null" >
+				hs_code_id = #{hsCodeId,jdbcType=INTEGER},
+			</if>
+			<if test="hsCodePuId != null" >
+				hs_code_pu_id = #{hsCodePuId,jdbcType=INTEGER},
+			</if>
+			<if test="sizeChartId != null" >
+				size_chart_id = #{sizeChartId,jdbcType=INTEGER},
+			</if>
+
+			main_category_id = #{mainCategoryId},
+
+			<if test="created != null" >
+				created = #{created,jdbcType=TIMESTAMP},
+			</if>
+			<if test="creater != null" >
+				creater = #{creater,jdbcType=VARCHAR},
+			</if>
+
+			modified = now(),
+
+			<if test="modifier != null" >
+				modifier = #{modifier,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where
+		category_id = #{categoryId,jdbcType=INTEGER}
+		and channel_id = #{channelId,jdbcType=VARCHAR}
+	</update>
+	<delete id="cms_delete_CnCategoryExtend" parameterType="HashMap" >
     delete from 
     	cms_bt_cn_category_extend
     where 
     	category_id = #{categoryId,jdbcType=INTEGER}
       	and channel_id = #{channelId,jdbcType=VARCHAR}
   </delete>
-   <resultMap id="CnCategoryExtendResultMap" type="com.voyageone.cms.modelbean.CnCategoryExtend" >
-	    <id column="category_id" property="categoryId" jdbcType="INTEGER" />
-	    <id column="channel_id" property="channelId" jdbcType="VARCHAR" />
-	    <result column="cn_seo_title" property="cnSeoTitle" jdbcType="VARCHAR" />
-	    <result column="cn_seo_description" property="cnSeoDescription" jdbcType="VARCHAR" />
-	    <result column="cn_seo_keywords" property="cnSeoKeywords" jdbcType="VARCHAR" />
-	    <result column="hs_code_id" property="hsCodeId" jdbcType="INTEGER" />
-	    <result column="hs_code_pu_id" property="hsCodePuId" jdbcType="INTEGER" />
-	    <result column="size_chart_id" property="sizeChartId" jdbcType="INTEGER" />
-	    <result column="created" property="created" jdbcType="TIMESTAMP" />
-	    <result column="creater" property="creater" jdbcType="VARCHAR" />
-	    <result column="modified" property="modified" jdbcType="TIMESTAMP" />
-	    <result column="modifier" property="modifier" jdbcType="VARCHAR" />
-  </resultMap>
-  <sql id="CnCategoryExtend_Column_List" >
+	<resultMap id="CnCategoryExtendResultMap" type="com.voyageone.cms.modelbean.CnCategoryExtend" >
+		<id column="category_id" property="categoryId" jdbcType="INTEGER" />
+		<id column="channel_id" property="channelId" jdbcType="VARCHAR" />
+		<result column="cn_seo_title" property="cnSeoTitle" jdbcType="VARCHAR" />
+		<result column="cn_seo_description" property="cnSeoDescription" jdbcType="VARCHAR" />
+		<result column="cn_seo_keywords" property="cnSeoKeywords" jdbcType="VARCHAR" />
+		<result column="hs_code_id" property="hsCodeId" jdbcType="INTEGER" />
+		<result column="hs_code_pu_id" property="hsCodePuId" jdbcType="INTEGER" />
+		<result column="size_chart_id" property="sizeChartId" jdbcType="INTEGER" />
+		<result column="created" property="created" jdbcType="TIMESTAMP" />
+		<result column="creater" property="creater" jdbcType="VARCHAR" />
+		<result column="modified" property="modified" jdbcType="TIMESTAMP" />
+		<result column="modifier" property="modifier" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="CnCategoryExtend_Column_List" >
     category_id, channel_id, cn_seo_title, cn_seo_description, cn_seo_keywords, hs_code_id, 
     hs_code_pu_id, size_chart_id, created, creater, modified, modifier
   </sql>
-  <select id="cms_get_CnCategoryExtend" resultMap="CnCategoryExtendResultMap" parameterType="HashMap" >
-    select 
-    	<include refid="CnCategoryExtend_Column_List" />
-    from 
-    	cms_bt_cn_category_extend
-    where 
-    	category_id = #{categoryId,jdbcType=INTEGER}
-      	and channel_id = #{channelId,jdbcType=VARCHAR}
-  </select>
-  <insert id="cms_insert_CnCategoryExtend" parameterType="com.voyageone.cms.modelbean.CnCategoryExtend" >
+	<select id="cms_get_CnCategoryExtend" resultMap="CnCategoryExtendResultMap" parameterType="HashMap" >
+		select
+		<include refid="CnCategoryExtend_Column_List" />
+		from
+		cms_bt_cn_category_extend
+		where
+		category_id = #{categoryId,jdbcType=INTEGER}
+		and channel_id = #{channelId,jdbcType=VARCHAR}
+	</select>
+	<insert id="cms_insert_CnCategoryExtend" parameterType="com.voyageone.cms.modelbean.CnCategoryExtend" >
     insert into 
     	cms_bt_cn_category_extend 
     	(category_id, 
@@ -1309,43 +1382,43 @@
       	#{modifier,jdbcType=VARCHAR}
       	)
   </insert>
-   <resultMap id="CategoryPriceMap" type="com.voyageone.cms.modelbean.CnCategoryPrice" >
-    <result column="category_id" property="categoryId" />
-    <result column="channel_id" property="channelId"  />
-    <result column="base_price_id" property="basePriceId"  />
-    <result column="pricing_factor" property="pricingFactor"  />
-    <result column="exchange_rate" property="exchangeRate"  />
-    <result column="over_heard_1" property="overHeard1" />
-    <result column="over_heard_2" property="overHeard2" />
-    <result column="over_heard_3" property="overHeard3" />
-    <result column="over_heard_4" property="overHeard4"  />
-    <result column="over_heard_5" property="overHeard5"  />
-    <result column="shipping_compensation" property="shippingCompensation" />
-    <result column="created" property="created" />
-    <result column="creater" property="creater"  />
-    <result column="modified" property="modified"  />
-    <result column="modifier" property="modifier"  />
-  </resultMap>
-  <sql id="CnCategoryPrice_Column_List" >
-    category_id, channel_id, base_price_id, pricing_factor, exchange_rate, over_heard_1, 
-    over_heard_2, over_heard_3, over_heard_4, over_heard_5, shipping_compensation, created, 
-    creater, modified, modifier
-  </sql>
-  <select id="cms_get_CnCategoryPrice" resultMap="CategoryPriceMap" parameterType="HashMap" >
-    select 
-    <include refid="CnCategoryPrice_Column_List" />
-    from cms_bt_cn_category_price_setting
-    where category_id = #{categoryId,jdbcType=INTEGER}
-      and channel_id = #{channelId,jdbcType=VARCHAR}
-  </select>
-  <delete id="cms_delete_CnCategoryPriceSetting" parameterType="HashMap" >
+	<resultMap id="CategoryPriceMap" type="com.voyageone.cms.modelbean.CnCategoryPrice" >
+		<result column="category_id" property="categoryId" />
+		<result column="channel_id" property="channelId"  />
+		<result column="base_price_id" property="basePriceId"  />
+		<result column="pricing_factor" property="pricingFactor"  />
+		<result column="exchange_rate" property="exchangeRate"  />
+		<result column="over_heard_1" property="overHeard1" />
+		<result column="over_heard_2" property="overHeard2" />
+		<result column="over_heard_3" property="overHeard3" />
+		<result column="over_heard_4" property="overHeard4"  />
+		<result column="over_heard_5" property="overHeard5"  />
+		<result column="shipping_compensation" property="shippingCompensation" />
+		<result column="created" property="created" />
+		<result column="creater" property="creater"  />
+		<result column="modified" property="modified"  />
+		<result column="modifier" property="modifier"  />
+	</resultMap>
+	<sql id="CnCategoryPrice_Column_List" >
+		category_id, channel_id, base_price_id, pricing_factor, exchange_rate, over_heard_1,
+		over_heard_2, over_heard_3, over_heard_4, over_heard_5, shipping_compensation, created,
+		creater, modified, modifier
+	</sql>
+	<select id="cms_get_CnCategoryPrice" resultMap="CategoryPriceMap" parameterType="HashMap" >
+		select
+		<include refid="CnCategoryPrice_Column_List" />
+		from cms_bt_cn_category_price_setting
+		where category_id = #{categoryId,jdbcType=INTEGER}
+		and channel_id = #{channelId,jdbcType=VARCHAR}
+	</select>
+	<delete id="cms_delete_CnCategoryPriceSetting" parameterType="HashMap" >
     delete from 
     	cms_bt_cn_category_price_setting
     where 
     	category_id = #{categoryId,jdbcType=INTEGER}
       	and channel_id = #{channelId,jdbcType=VARCHAR}
   </delete>
-  <insert id="cms_insert_CnCategoryPriceSetting" parameterType="com.voyageone.cms.modelbean.CnCategoryPrice" >
+	<insert id="cms_insert_CnCategoryPriceSetting" parameterType="com.voyageone.cms.modelbean.CnCategoryPrice" >
     insert into 
     	cms_bt_cn_category_price_setting 
     	(
@@ -1384,54 +1457,54 @@
       	#{modifier,jdbcType=VARCHAR}
       	)
   </insert>
-  <update id="cms_update_CnCategoryPriceSetting" parameterType="com.voyageone.cms.modelbean.CnCategoryPrice" >
-    update cms_bt_cn_category_price_setting
-	    <set >
-	      <if test="basePriceId != null" >
-	        base_price_id = #{basePriceId,jdbcType=INTEGER},
-	      </if>
-	     
-	        pricing_factor = #{pricingFactor,jdbcType=DECIMAL},
-	     
-	      <if test="exchangeRate != null" >
-	        exchange_rate = #{exchangeRate,jdbcType=DECIMAL},
-	      </if>
-	      <if test="overHeard1 != null" >
-	        over_heard_1 = #{overHeard1,jdbcType=VARCHAR},
-	      </if>
-	      <if test="overHeard2 != null" >
-	        over_heard_2 = #{overHeard2,jdbcType=VARCHAR},
-	      </if>
-	      <if test="overHeard3 != null" >
-	        over_heard_3 = #{overHeard3,jdbcType=VARCHAR},
-	      </if>
-	      <if test="overHeard4 != null" >
-	        over_heard_4 = #{overHeard4,jdbcType=VARCHAR},
-	      </if>
-	      <if test="overHeard5 != null" >
-	        over_heard_5 = #{overHeard5,jdbcType=VARCHAR},
-	      </if>
-	      <if test="shippingCompensation != null" >
-	        shipping_compensation = #{shippingCompensation,jdbcType=DECIMAL},
-	      </if>
-	      <if test="created != null" >
-	        created = #{created,jdbcType=TIMESTAMP},
-	      </if>
-	      <if test="creater != null" >
-	        creater = #{creater,jdbcType=VARCHAR},
-	      </if>
-	     
-	        modified = now(),
-	      
-	      <if test="modifier != null" >
-	        modifier = #{modifier,jdbcType=VARCHAR},
-	      </if>
-	    </set>
-    where 
-    	category_id = #{categoryId}
-      	and channel_id = #{channelId}
-  </update>
-  <insert id="cms_insert_HistoryPriceSetting" parameterType="com.voyageone.cms.modelbean.HistoryPriceSetting" >
+	<update id="cms_update_CnCategoryPriceSetting" parameterType="com.voyageone.cms.modelbean.CnCategoryPrice" >
+		update cms_bt_cn_category_price_setting
+		<set >
+			<if test="basePriceId != null" >
+				base_price_id = #{basePriceId,jdbcType=INTEGER},
+			</if>
+
+			pricing_factor = #{pricingFactor,jdbcType=DECIMAL},
+
+			<if test="exchangeRate != null" >
+				exchange_rate = #{exchangeRate,jdbcType=DECIMAL},
+			</if>
+			<if test="overHeard1 != null" >
+				over_heard_1 = #{overHeard1,jdbcType=VARCHAR},
+			</if>
+			<if test="overHeard2 != null" >
+				over_heard_2 = #{overHeard2,jdbcType=VARCHAR},
+			</if>
+			<if test="overHeard3 != null" >
+				over_heard_3 = #{overHeard3,jdbcType=VARCHAR},
+			</if>
+			<if test="overHeard4 != null" >
+				over_heard_4 = #{overHeard4,jdbcType=VARCHAR},
+			</if>
+			<if test="overHeard5 != null" >
+				over_heard_5 = #{overHeard5,jdbcType=VARCHAR},
+			</if>
+			<if test="shippingCompensation != null" >
+				shipping_compensation = #{shippingCompensation,jdbcType=DECIMAL},
+			</if>
+			<if test="created != null" >
+				created = #{created,jdbcType=TIMESTAMP},
+			</if>
+			<if test="creater != null" >
+				creater = #{creater,jdbcType=VARCHAR},
+			</if>
+
+			modified = now(),
+
+			<if test="modifier != null" >
+				modifier = #{modifier,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where
+		category_id = #{categoryId}
+		and channel_id = #{channelId}
+	</update>
+	<insert id="cms_insert_HistoryPriceSetting" parameterType="com.voyageone.cms.modelbean.HistoryPriceSetting" >
     insert into 
     	cms_bt_history_price_setting 
     	(
@@ -1476,31 +1549,31 @@
       	#{comment,jdbcType=LONGVARCHAR}
       )
   </insert>
-    <resultMap id="CnTMCategoryResultMap" type="com.voyageone.cms.modelbean.CnTMCategoryExtend" >
-    <id column="category_id" property="categoryId" jdbcType="INTEGER" />
-    <id column="channel_id" property="channelId" jdbcType="VARCHAR" />
-    <result column="tm_category_id" property="tmCategoryId" jdbcType="INTEGER" />
-    <result column="created" property="created" jdbcType="TIMESTAMP" />
-    <result column="creater" property="creater" jdbcType="VARCHAR" />
-    <result column="modified" property="modified" jdbcType="TIMESTAMP" />
-    <result column="modifier" property="modifier" jdbcType="VARCHAR" />
-  </resultMap>
-  <sql id="CnTMCategory_Column_List" >
+	<resultMap id="CnTMCategoryResultMap" type="com.voyageone.cms.modelbean.CnTMCategoryExtend" >
+		<id column="category_id" property="categoryId" jdbcType="INTEGER" />
+		<id column="channel_id" property="channelId" jdbcType="VARCHAR" />
+		<result column="tm_category_id" property="tmCategoryId" jdbcType="INTEGER" />
+		<result column="created" property="created" jdbcType="TIMESTAMP" />
+		<result column="creater" property="creater" jdbcType="VARCHAR" />
+		<result column="modified" property="modified" jdbcType="TIMESTAMP" />
+		<result column="modifier" property="modifier" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="CnTMCategory_Column_List" >
     category_id, channel_id, tm_category_id, created, creater, modified, modifier
   </sql>
-  <select id="cms_get_CnTMCategoryExtend" resultMap="CnTMCategoryResultMap" parameterType="HashMap" >
-    select 
-    <include refid="CnTMCategory_Column_List" />
-    from cms_bt_cn_tm_category_extend
-    where category_id = #{categoryId,jdbcType=INTEGER}
-      and channel_id = #{channelId,jdbcType=VARCHAR}
-  </select>
-  <delete id="cms_delete_CnTMCategoryExtend" parameterType="HashMap" >
+	<select id="cms_get_CnTMCategoryExtend" resultMap="CnTMCategoryResultMap" parameterType="HashMap" >
+		select
+		<include refid="CnTMCategory_Column_List" />
+		from cms_bt_cn_tm_category_extend
+		where category_id = #{categoryId,jdbcType=INTEGER}
+		and channel_id = #{channelId,jdbcType=VARCHAR}
+	</select>
+	<delete id="cms_delete_CnTMCategoryExtend" parameterType="HashMap" >
     delete from cms_bt_cn_tm_category_extend
     where category_id = #{categoryId,jdbcType=INTEGER}
       and channel_id = #{channelId,jdbcType=VARCHAR}
   </delete>
-  <insert id="cms_insert_CnTMCategoryExtend" parameterType="com.voyageone.cms.modelbean.CnTMCategoryExtend" >
+	<insert id="cms_insert_CnTMCategoryExtend" parameterType="com.voyageone.cms.modelbean.CnTMCategoryExtend" >
     insert into 
     	cms_bt_cn_tm_category_extend 
     	(category_id, 
@@ -1519,58 +1592,58 @@
       	#{modified,jdbcType=TIMESTAMP}, 
       	#{modifier,jdbcType=VARCHAR})
   </insert>
-  <update id="cms_update_CnTMCategoryExtend" parameterType="com.voyageone.cms.modelbean.CnTMCategoryExtend" >
-    update cms_bt_cn_tm_category_extend
-    <set >
-      <if test="tmCategoryId != null" >
-        tm_category_id = #{tmCategoryId,jdbcType=INTEGER},
-      </if>
-      <if test="created != null" >
-        created = #{created,jdbcType=TIMESTAMP},
-      </if>
-      <if test="creater != null" >
-        creater = #{creater,jdbcType=VARCHAR},
-      </if>
-      <if test="modified != null" >
-        modified = #{modified,jdbcType=TIMESTAMP},
-      </if>
-      <if test="modifier != null" >
-        modifier = #{modifier,jdbcType=VARCHAR},
-      </if>
-    </set>
-    where 	
-    	category_id = #{categoryId,jdbcType=INTEGER}
-      	and channel_id = #{channelId,jdbcType=VARCHAR}
-  </update>
- <resultMap id="JdCategoryExtendResultMap" type="com.voyageone.cms.modelbean.JdCategoryExtend" >
-    <id column="category_id" property="categoryId" jdbcType="INTEGER" />
-    <id column="channel_id" property="channelId" jdbcType="VARCHAR" />
-    <result column="jd_category_id" property="jdCategoryId" jdbcType="INTEGER" />
-    <result column="created" property="created" jdbcType="TIMESTAMP" />
-    <result column="creater" property="creater" jdbcType="VARCHAR" />
-    <result column="modified" property="modified" jdbcType="TIMESTAMP" />
-    <result column="modifier" property="modifier" jdbcType="VARCHAR" />
-  </resultMap>
-  <sql id="JdCatrgoryExtend_Column_List" >
+	<update id="cms_update_CnTMCategoryExtend" parameterType="com.voyageone.cms.modelbean.CnTMCategoryExtend" >
+		update cms_bt_cn_tm_category_extend
+		<set >
+			<if test="tmCategoryId != null" >
+				tm_category_id = #{tmCategoryId,jdbcType=INTEGER},
+			</if>
+			<if test="created != null" >
+				created = #{created,jdbcType=TIMESTAMP},
+			</if>
+			<if test="creater != null" >
+				creater = #{creater,jdbcType=VARCHAR},
+			</if>
+			<if test="modified != null" >
+				modified = #{modified,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifier != null" >
+				modifier = #{modifier,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where
+		category_id = #{categoryId,jdbcType=INTEGER}
+		and channel_id = #{channelId,jdbcType=VARCHAR}
+	</update>
+	<resultMap id="JdCategoryExtendResultMap" type="com.voyageone.cms.modelbean.JdCategoryExtend" >
+		<id column="category_id" property="categoryId" jdbcType="INTEGER" />
+		<id column="channel_id" property="channelId" jdbcType="VARCHAR" />
+		<result column="jd_category_id" property="jdCategoryId" jdbcType="INTEGER" />
+		<result column="created" property="created" jdbcType="TIMESTAMP" />
+		<result column="creater" property="creater" jdbcType="VARCHAR" />
+		<result column="modified" property="modified" jdbcType="TIMESTAMP" />
+		<result column="modifier" property="modifier" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="JdCatrgoryExtend_Column_List" >
     category_id, channel_id, jd_category_id, created, creater, modified, modifier
   </sql>
-  <select id="cms_get_JdCategoryExtend" resultMap="JdCategoryExtendResultMap" parameterType="HashMap" >
-    select 
-    <include refid="JdCatrgoryExtend_Column_List" />
-    from 
-    	cms_bt_cn_jd_category_extend
-    where 
-    	category_id = #{categoryId,jdbcType=INTEGER}
-      	and channel_id = #{channelId,jdbcType=VARCHAR}
-  </select>
-  <delete id="cms_delete_JdCategoryExtend" parameterType="com.voyageone.cms.modelbean.JdCategoryExtend" >
+	<select id="cms_get_JdCategoryExtend" resultMap="JdCategoryExtendResultMap" parameterType="HashMap" >
+		select
+		<include refid="JdCatrgoryExtend_Column_List" />
+		from
+		cms_bt_cn_jd_category_extend
+		where
+		category_id = #{categoryId,jdbcType=INTEGER}
+		and channel_id = #{channelId,jdbcType=VARCHAR}
+	</select>
+	<delete id="cms_delete_JdCategoryExtend" parameterType="com.voyageone.cms.modelbean.JdCategoryExtend" >
     delete from 
     	cms_bt_cn_jd_category_extend
     where 
     	category_id = #{categoryId,jdbcType=INTEGER}
       	and channel_id = #{channelId,jdbcType=VARCHAR}
   </delete>
-  <insert id="cms_insert_JdCategoryExtend" parameterType="com.voyageone.cms.modelbean.JdCategoryExtend" >
+	<insert id="cms_insert_JdCategoryExtend" parameterType="com.voyageone.cms.modelbean.JdCategoryExtend" >
     insert into 
     	cms_bt_cn_jd_category_extend 
     	(category_id, 
@@ -1589,30 +1662,30 @@
       	#{modified,jdbcType=TIMESTAMP}, 
       	#{modifier,jdbcType=VARCHAR})
   </insert>
-  <update id="cms_update_JdCategoryExtend" parameterType="com.voyageone.cms.modelbean.JdCategoryExtend" >
-    update cms_bt_cn_jd_category_extend
-    <set >
-      <if test="jdCategoryId != null" >
-        jd_category_id = #{jdCategoryId,jdbcType=INTEGER},
-      </if>
-      <if test="created != null" >
-        created = #{created,jdbcType=TIMESTAMP},
-      </if>
-      <if test="creater != null" >
-        creater = #{creater,jdbcType=VARCHAR},
-      </if>
-      <if test="modified != null" >
-        modified = #{modified,jdbcType=TIMESTAMP},
-      </if>
-      <if test="modifier != null" >
-        modifier = #{modifier,jdbcType=VARCHAR},
-      </if>
-    </set>
-    where 
-    	category_id = #{categoryId,jdbcType=INTEGER}
-      	and channel_id = #{channelId,jdbcType=VARCHAR}
-  </update>
-  <update id="cms_update_ImsBtProduct" parameterType="HashMap">
+	<update id="cms_update_JdCategoryExtend" parameterType="com.voyageone.cms.modelbean.JdCategoryExtend" >
+		update cms_bt_cn_jd_category_extend
+		<set >
+			<if test="jdCategoryId != null" >
+				jd_category_id = #{jdCategoryId,jdbcType=INTEGER},
+			</if>
+			<if test="created != null" >
+				created = #{created,jdbcType=TIMESTAMP},
+			</if>
+			<if test="creater != null" >
+				creater = #{creater,jdbcType=VARCHAR},
+			</if>
+			<if test="modified != null" >
+				modified = #{modified,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifier != null" >
+				modifier = #{modifier,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where
+		category_id = #{categoryId,jdbcType=INTEGER}
+		and channel_id = #{channelId,jdbcType=VARCHAR}
+	</update>
+	<update id="cms_update_ImsBtProduct" parameterType="HashMap">
 	  UPDATE voyageone_ims.ims_bt_product a
 	  LEFT JOIN cms_bt_relation_category_product t ON a.product_id = t.product_id
 	  SET a.publish_status = 0,
@@ -1622,7 +1695,7 @@
 		AND t.channel_id = #{channelId,jdbcType=VARCHAR}
 	  
   </update>
-  <select id="cms_get_CategoryList" resultType="com.voyageone.cms.formbean.CategoryListBean" parameterType="HashMap">
+	<select id="cms_get_CategoryList" resultType="com.voyageone.cms.formbean.CategoryListBean" parameterType="HashMap">
   	SELECT
 		a.category_id as categoryId,
 		a. NAME as categoryName,
@@ -1640,7 +1713,7 @@
       	and a.channel_id = #{channelId,jdbcType=VARCHAR}
   
   </select>
-  <select id="cms_get_ModelInfo" resultType="HashMap"  parameterType="HashMap">
+	<select id="cms_get_ModelInfo" resultType="HashMap"  parameterType="HashMap">
   	SELECT
 		a.model_id as modelId,
 		a. NAME as modelName,
@@ -1653,49 +1726,49 @@
   		a.model_id = #{modelId}
       	and a.channel_id = #{channelId}
   </select>
-  
-   <resultMap type="HashMap" id="categoryModelPriceSettingMap">
-   	<result column="category_id" property="categoryId"/>
-   	<collection property="modelList" javaType="ArrayList" ofType="com.voyageone.cms.formbean.ModelPriceSettingBean" >
-	    <result column="model_id" property="modelId"/>
-	    <result column="channel_id" property="channelId"/>
-	    <result column="base_price_id" property="basePriceId"/>
-	    <result column="pricing_factor" property="pricingFactor"/>
-	    <result column="exchange_rate" property="exchangeRate"/> 
-	    <result column="over_heard_1" property="overHeard1"/>
-	    <result column="over_heard_2" property="overHeard2"/>
-	    <result column="over_heard_3" property="overHeard3"/>
-	    <result column="over_heard_4" property="overHeard4"/>
-	    <result column="over_heard_5" property="overHeard5"/>
-	    <result column="shipping_compensation" property="shippingCompensation"/>
-	    <result column="modified" property="modified"/>
-    </collection>
-    </resultMap>
-  <select id="get_sub_model_price_setting" parameterType="HashMap" resultMap="categoryModelPriceSettingMap">
-  
-  	 	SELECT
-			a.category_id,
-			a.model_id,
-		  	a.channel_id,
-			b.base_price_id,
-			b.pricing_factor,
-			b.exchange_rate,
-			b.over_heard_1,
-			b.over_heard_2,
-			b.shipping_compensation
-		 FROM
-			cms_bt_relation_category_model AS a
+
+	<resultMap type="HashMap" id="categoryModelPriceSettingMap">
+		<result column="category_id" property="categoryId"/>
+		<collection property="modelList" javaType="ArrayList" ofType="com.voyageone.cms.formbean.ModelPriceSettingBean" >
+			<result column="model_id" property="modelId"/>
+			<result column="channel_id" property="channelId"/>
+			<result column="base_price_id" property="basePriceId"/>
+			<result column="pricing_factor" property="pricingFactor"/>
+			<result column="exchange_rate" property="exchangeRate"/>
+			<result column="over_heard_1" property="overHeard1"/>
+			<result column="over_heard_2" property="overHeard2"/>
+			<result column="over_heard_3" property="overHeard3"/>
+			<result column="over_heard_4" property="overHeard4"/>
+			<result column="over_heard_5" property="overHeard5"/>
+			<result column="shipping_compensation" property="shippingCompensation"/>
+			<result column="modified" property="modified"/>
+		</collection>
+	</resultMap>
+	<select id="get_sub_model_price_setting" parameterType="HashMap" resultMap="categoryModelPriceSettingMap">
+
+		SELECT
+		a.category_id,
+		a.model_id,
+		a.channel_id,
+		b.base_price_id,
+		b.pricing_factor,
+		b.exchange_rate,
+		b.over_heard_1,
+		b.over_heard_2,
+		b.shipping_compensation
+		FROM
+		cms_bt_relation_category_model AS a
 		LEFT JOIN cms_bt_cn_model_price_setting AS b ON a.model_id = b.model_id
 		AND a.channel_id = b.channel_id
-		where 
+		where
 		a.channel_id = #{channelId}
 		and a.cn_is_primary_category = '1'
 		<if test="subCategroyList != null and subCategroyList.size > 0">
-		and a.category_id in
-		 <foreach item="item" index="index" collection="subCategroyList" open="(" separator="," close=")">  
-  			#{item}  
- 		</foreach> 
- 		</if>
-		
-  </select>
+			and a.category_id in
+			<foreach item="item" index="index" collection="subCategroyList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+
+	</select>
 </mapper>

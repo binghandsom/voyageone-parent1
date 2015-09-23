@@ -29,6 +29,7 @@ import com.voyageone.ims.modelbean.DictWordBean;
 import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
+import com.voyageone.ims.rule_expression.RuleWord;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +69,8 @@ public class TmallProductService implements PlatformServiceInterface {
     private IssueLog issueLog;
     @Autowired
     private DarwinStyleMappingDao darwinStyleMappingDao;
+    @Autowired
+    private ConditionPropValueDao conditionPropValueDao;
 
     public void doJob(UploadProductTcb tcb, UploadProductHandler uploadProductHandler) throws TaskSignal {
         UpJobParamBean upJobParamBean = tcb.getWorkLoadBean().getUpJobParam();
@@ -1506,9 +1509,21 @@ public class TmallProductService implements PlatformServiceInterface {
                     }
 
                     PlatformPropBean platformProp = platformProps.get(0);
-                    SingleCheckField field = (SingleCheckField) FieldTypeEnum.createField(FieldTypeEnum.SINGLECHECK);
-                    field.setId(platformProp.getPlatformPropId());
-                    //
+                    MultiCheckField field = (MultiCheckField) FieldTypeEnum.createField(FieldTypeEnum.MULTICHECK);
+                    String platformPropId = platformProp.getPlatformPropId();
+                    List<ConditionPropValue> conditionPropValues = conditionPropValueDao.selectConditionPropValue(workLoadBean.getOrder_channel_id(), platformPropId);
+                    if (conditionPropValues != null && !conditionPropValues.isEmpty()) {
+                        RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
+                        for (ConditionPropValue conditionPropValue : conditionPropValues) {
+                            String conditionExpressionStr = conditionPropValue.getCondition_expression();
+                            RuleExpression conditionExpression= ruleJsonMapper.deserializeRuleExpression(conditionExpressionStr);
+                            String propValue = expressionParser.parse(conditionExpression, null);
+                            if (propValue != null) {
+                                field.addValue(propValue);
+                            }
+                        }
+                        contextBeforeUploadImage.addCustomField(field);
+                    }
                     break;
                 }
             }
