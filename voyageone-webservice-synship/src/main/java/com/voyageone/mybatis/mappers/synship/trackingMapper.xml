@@ -2,6 +2,20 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.synship.sql">
 
+    <select id="tt_orders_getSynShipNo" resultType="String">
+        SELECT
+            orders.syn_ship_no
+        FROM
+            oms_bt_orders  omsOrders,
+            tt_orders orders
+        WHERE
+            omsOrders.source_order_id = #{cwb}
+        AND
+            omsOrders.order_kind = '0'
+        AND
+            omsOrders.order_number = orders.order_number
+    </select>
+
     <select id="tt_tracking_info_select" resultType="com.voyageone.synship.formbean.TrackInfoBean">
         select
             info.syn_ship_no,

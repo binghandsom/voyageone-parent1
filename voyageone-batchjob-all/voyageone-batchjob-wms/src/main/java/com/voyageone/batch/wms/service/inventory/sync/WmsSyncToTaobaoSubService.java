@@ -54,11 +54,11 @@ public class WmsSyncToTaobaoSubService extends WmsSyncInventoryBaseService {
             return;
         }
 
-        // num_iid 违法的时候，将该记录进行忽略处理
-        if (itemQuantityBean.getNum_iid() < 1) {
-            moveIgnore(inventorySynLogBean, "不是正确的 num_iid");
-            return;
-        }
+        // num_iid 违法的时候，将该记录进行忽略处理（默认是0，该记录不作处理）
+//        if (itemQuantityBean.getNum_iid() < 1) {
+//            moveIgnore(inventorySynLogBean, "不是正确的 num_iid");
+//            return;
+//        }
 
         ItemQuantityUpdateResponse res = null;
         try {
