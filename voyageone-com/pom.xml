@@ -237,14 +237,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.voyageone</groupId>
-			<artifactId>axis2-kernel</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.voyageone</groupId>
-			<artifactId>axis2-adb</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.voyageone</groupId>
 			<artifactId>axiom-api</artifactId>
 		</dependency>
 		<dependency>

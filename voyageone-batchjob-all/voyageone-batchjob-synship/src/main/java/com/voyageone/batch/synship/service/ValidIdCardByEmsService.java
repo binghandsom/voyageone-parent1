@@ -9,8 +9,8 @@ import com.voyageone.batch.synship.dao.IdCardHistoryDao;
 import com.voyageone.batch.synship.dao.ShortUrlDao;
 import com.voyageone.batch.synship.dao.SmsHistoryDao;
 import com.voyageone.batch.synship.modelbean.*;
-import com.voyageone.common.components.ems.B2COrderServiceStub;
-import com.voyageone.common.components.ems.EmsService;
+import com.voyageone.batch.synship.service.ems.B2COrderServiceStub;
+import com.voyageone.batch.synship.service.ems.EmsService;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
@@ -65,6 +65,9 @@ public class ValidIdCardByEmsService extends BaseTaskService {
 
     @Autowired
     private SmsConfigService smsConfigService;
+
+    @Autowired
+    private EmsService emsService;
 
     /**
      * 获取子系统
@@ -211,16 +214,12 @@ public class ValidIdCardByEmsService extends BaseTaskService {
             throw new BusinessException(String.format("发送短信前，获取渠道失败。参数 [ %s ]", idCardHistory.getOrder_channel_id()));
         }
 
-        SmsConfigBean configBean = smsConfig.get(channel, targetCode1);
+        SmsConfigBean configBean = smsConfig.getAvailable(channel, targetCode1);
 
         if (configBean == null || StringUtils.isEmpty(configBean.getContent())) {
             // 如果短信内容的配置，完全没有获取到的话，说明配置错误，不能继续
-            throw new BusinessException(String.format("短信内容没有配置，渠道 [ %s ]，Code1 [ %s ]", channel, targetCode1));
+            throw new BusinessException(String.format("没找到可用的短信内容，渠道 [ %s ]，Code1 [ %s ]", channel, targetCode1));
         }
-
-        // del flg 为 0，放弃发送
-        if (!configBean.getDel_flg().equals("0"))
-            return;
 
         $info("发送短信");
 
@@ -357,7 +356,7 @@ public class ValidIdCardByEmsService extends BaseTaskService {
 
             // 先检查格式
             function = "validCardNoFormat";
-            serviceResult = EmsService.validCardNoFormat(idCode);
+            serviceResult = emsService.validCardNoFormat(idCode);
 
             $info("callEmsValid : 通过 : validCardNoFormat");
             $info("通过结果 : " + serviceResult.getMessage());
@@ -368,7 +367,7 @@ public class ValidIdCardByEmsService extends BaseTaskService {
             }
 
             function = "validCardNo";
-            serviceResult = EmsService.validCardNo(name, idCode);
+            serviceResult = emsService.validCardNo(name, idCode);
 
             $info("callEmsValid : 通过 : validCardNo");
             $info("通过结果 : " + serviceResult.getMessage());

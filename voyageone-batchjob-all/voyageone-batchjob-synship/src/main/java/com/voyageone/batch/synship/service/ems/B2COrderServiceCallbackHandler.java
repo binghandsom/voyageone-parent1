@@ -6,7 +6,7 @@
  * by the Apache Axis2 version: 1.4.1  Built on : Aug 13, 2008 (05:03:35 LKT)
  */
 
-    package com.voyageone.common.components.ems;
+    package com.voyageone.batch.synship.service.ems;
 
     /**
      *  B2COrderServiceCallbackHandler Callback class, Users can extend this class and implement
@@ -49,7 +49,7 @@
             * override this method for handling normal response from GetOrderByExpress operation
             */
            public void receiveResultGetOrderByExpress(
-                    com.voyageone.common.components.ems.B2COrderServiceStub.GetOrderByExpressResponse result
+                    com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrderByExpressResponse result
                         ) {
            }
 
@@ -65,7 +65,7 @@
             * override this method for handling normal response from NewValidCarNo operation
             */
            public void receiveResultNewValidCarNo(
-                    com.voyageone.common.components.ems.B2COrderServiceStub.NewValidCarNoResponse result
+                    com.voyageone.batch.synship.service.ems.B2COrderServiceStub.NewValidCarNoResponse result
                         ) {
            }
 
@@ -81,7 +81,7 @@
             * override this method for handling normal response from ValidCardNoFormat operation
             */
            public void receiveResultValidCardNoFormat(
-                    com.voyageone.common.components.ems.B2COrderServiceStub.ValidCardNoFormatResponse result
+                    com.voyageone.batch.synship.service.ems.B2COrderServiceStub.ValidCardNoFormatResponse result
                         ) {
            }
 
@@ -97,7 +97,7 @@
             * override this method for handling normal response from GetOrderByCode operation
             */
            public void receiveResultGetOrderByCode(
-                    com.voyageone.common.components.ems.B2COrderServiceStub.GetOrderByCodeResponse result
+                    com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrderByCodeResponse result
                         ) {
            }
 
@@ -113,7 +113,7 @@
             * override this method for handling normal response from GetWaybillNo operation
             */
            public void receiveResultGetWaybillNo(
-                    com.voyageone.common.components.ems.B2COrderServiceStub.GetWaybillNoResponse result
+                    com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetWaybillNoResponse result
                         ) {
            }
 
@@ -129,7 +129,7 @@
             * override this method for handling normal response from GetPrintCount operation
             */
            public void receiveResultGetPrintCount(
-                    com.voyageone.common.components.ems.B2COrderServiceStub.GetPrintCountResponse result
+                    com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetPrintCountResponse result
                         ) {
            }
 
@@ -145,7 +145,7 @@
             * override this method for handling normal response from AddB2COrder operation
             */
            public void receiveResultAddB2COrder(
-                    com.voyageone.common.components.ems.B2COrderServiceStub.AddB2COrderResponse result
+                    com.voyageone.batch.synship.service.ems.B2COrderServiceStub.AddB2COrderResponse result
                         ) {
            }
 
@@ -161,7 +161,7 @@
             * override this method for handling normal response from GetOrders operation
             */
            public void receiveResultGetOrders(
-                    com.voyageone.common.components.ems.B2COrderServiceStub.GetOrdersResponse result
+                    com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrdersResponse result
                         ) {
            }
 
@@ -177,7 +177,7 @@
             * override this method for handling normal response from ValidCarNo operation
             */
            public void receiveResultValidCarNo(
-                    com.voyageone.common.components.ems.B2COrderServiceStub.ValidCarNoResponse result
+                    com.voyageone.batch.synship.service.ems.B2COrderServiceStub.ValidCarNoResponse result
                         ) {
            }
 
@@ -193,7 +193,7 @@
             * override this method for handling normal response from IsCardExist operation
             */
            public void receiveResultIsCardExist(
-                    com.voyageone.common.components.ems.B2COrderServiceStub.IsCardExistResponse result
+                    com.voyageone.batch.synship.service.ems.B2COrderServiceStub.IsCardExistResponse result
                         ) {
            }
 

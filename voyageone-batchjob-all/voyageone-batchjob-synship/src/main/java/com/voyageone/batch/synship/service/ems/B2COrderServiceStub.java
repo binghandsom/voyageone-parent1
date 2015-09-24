@@ -5,11 +5,11 @@
  * This file was auto-generated from WSDL
  * by the Apache Axis2 version: 1.4.1  Built on : Aug 13, 2008 (05:03:35 LKT)
  */
-        package com.voyageone.common.components.ems;
+        package com.voyageone.batch.synship.service.ems;
 
         
         import com.voyageone.base.exception.BusinessException;
-        import static com.voyageone.common.components.ems.EmsApiKeys.*;
+        import static com.voyageone.batch.synship.service.ems.EmsApiKeys.*;
         import com.voyageone.common.configs.Codes;
         
 
@@ -250,9 +250,9 @@
 
                     
 
-                            public  com.voyageone.common.components.ems.B2COrderServiceStub.GetOrderByExpressResponse GetOrderByExpress(
+                            public  com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrderByExpressResponse GetOrderByExpress(
 
-                            com.voyageone.common.components.ems.B2COrderServiceStub.GetOrderByExpress getOrderByExpress0)
+                            com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrderByExpress getOrderByExpress0)
                         
 
                     throws java.rmi.RemoteException
@@ -302,11 +302,11 @@
                 
                                 Object object = fromOM(
                                              _returnEnv.getBody().getFirstElement() ,
-                                             com.voyageone.common.components.ems.B2COrderServiceStub.GetOrderByExpressResponse.class,
+                                             com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrderByExpressResponse.class,
                                               getEnvelopeNamespaces(_returnEnv));
 
                                
-                                        return (com.voyageone.common.components.ems.B2COrderServiceStub.GetOrderByExpressResponse)object;
+                                        return (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrderByExpressResponse)object;
                                    
          }catch(org.apache.axis2.AxisFault f){
 
@@ -368,9 +368,9 @@
                 */
                 public  void startGetOrderByExpress(
 
-                 com.voyageone.common.components.ems.B2COrderServiceStub.GetOrderByExpress getOrderByExpress0,
+                 com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrderByExpress getOrderByExpress0,
 
-                  final com.voyageone.common.components.ems.B2COrderServiceCallbackHandler callback)
+                  final com.voyageone.batch.synship.service.ems.B2COrderServiceCallbackHandler callback)
 
                 throws java.rmi.RemoteException{
 
@@ -413,10 +413,10 @@
                                 org.apache.axiom.soap.SOAPEnvelope resultEnv = resultContext.getEnvelope();
                                 
                                         Object object = fromOM(resultEnv.getBody().getFirstElement(),
-                                                                         com.voyageone.common.components.ems.B2COrderServiceStub.GetOrderByExpressResponse.class,
+                                                                         com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrderByExpressResponse.class,
                                                                          getEnvelopeNamespaces(resultEnv));
                                         callback.receiveResultGetOrderByExpress(
-                                        (com.voyageone.common.components.ems.B2COrderServiceStub.GetOrderByExpressResponse)object);
+                                        (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrderByExpressResponse)object);
                                         
                             } catch (org.apache.axis2.AxisFault e) {
                                 callback.receiveErrorGetOrderByExpress(e);
@@ -515,9 +515,9 @@
 
                     
 
-                            public  com.voyageone.common.components.ems.B2COrderServiceStub.NewValidCarNoResponse NewValidCarNo(
+                            public  com.voyageone.batch.synship.service.ems.B2COrderServiceStub.NewValidCarNoResponse NewValidCarNo(
 
-                            com.voyageone.common.components.ems.B2COrderServiceStub.NewValidCarNo newValidCarNo2)
+                            com.voyageone.batch.synship.service.ems.B2COrderServiceStub.NewValidCarNo newValidCarNo2)
                         
 
                     throws java.rmi.RemoteException
@@ -567,11 +567,11 @@
                 
                                 Object object = fromOM(
                                              _returnEnv.getBody().getFirstElement() ,
-                                             com.voyageone.common.components.ems.B2COrderServiceStub.NewValidCarNoResponse.class,
+                                             com.voyageone.batch.synship.service.ems.B2COrderServiceStub.NewValidCarNoResponse.class,
                                               getEnvelopeNamespaces(_returnEnv));
 
                                
-                                        return (com.voyageone.common.components.ems.B2COrderServiceStub.NewValidCarNoResponse)object;
+                                        return (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.NewValidCarNoResponse)object;
                                    
          }catch(org.apache.axis2.AxisFault f){
 
@@ -633,9 +633,9 @@
                 */
                 public  void startNewValidCarNo(
 
-                 com.voyageone.common.components.ems.B2COrderServiceStub.NewValidCarNo newValidCarNo2,
+                 com.voyageone.batch.synship.service.ems.B2COrderServiceStub.NewValidCarNo newValidCarNo2,
 
-                  final com.voyageone.common.components.ems.B2COrderServiceCallbackHandler callback)
+                  final com.voyageone.batch.synship.service.ems.B2COrderServiceCallbackHandler callback)
 
                 throws java.rmi.RemoteException{
 
@@ -678,10 +678,10 @@
                                 org.apache.axiom.soap.SOAPEnvelope resultEnv = resultContext.getEnvelope();
                                 
                                         Object object = fromOM(resultEnv.getBody().getFirstElement(),
-                                                                         com.voyageone.common.components.ems.B2COrderServiceStub.NewValidCarNoResponse.class,
+                                                                         com.voyageone.batch.synship.service.ems.B2COrderServiceStub.NewValidCarNoResponse.class,
                                                                          getEnvelopeNamespaces(resultEnv));
                                         callback.receiveResultNewValidCarNo(
-                                        (com.voyageone.common.components.ems.B2COrderServiceStub.NewValidCarNoResponse)object);
+                                        (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.NewValidCarNoResponse)object);
                                         
                             } catch (org.apache.axis2.AxisFault e) {
                                 callback.receiveErrorNewValidCarNo(e);
@@ -780,9 +780,9 @@
 
                     
 
-                            public  com.voyageone.common.components.ems.B2COrderServiceStub.ValidCardNoFormatResponse ValidCardNoFormat(
+                            public  com.voyageone.batch.synship.service.ems.B2COrderServiceStub.ValidCardNoFormatResponse ValidCardNoFormat(
 
-                            com.voyageone.common.components.ems.B2COrderServiceStub.ValidCardNoFormat validCardNoFormat4)
+                            com.voyageone.batch.synship.service.ems.B2COrderServiceStub.ValidCardNoFormat validCardNoFormat4)
                         
 
                     throws java.rmi.RemoteException
@@ -832,11 +832,11 @@
                 
                                 Object object = fromOM(
                                              _returnEnv.getBody().getFirstElement() ,
-                                             com.voyageone.common.components.ems.B2COrderServiceStub.ValidCardNoFormatResponse.class,
+                                             com.voyageone.batch.synship.service.ems.B2COrderServiceStub.ValidCardNoFormatResponse.class,
                                               getEnvelopeNamespaces(_returnEnv));
 
                                
-                                        return (com.voyageone.common.components.ems.B2COrderServiceStub.ValidCardNoFormatResponse)object;
+                                        return (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.ValidCardNoFormatResponse)object;
                                    
          }catch(org.apache.axis2.AxisFault f){
 
@@ -898,9 +898,9 @@
                 */
                 public  void startValidCardNoFormat(
 
-                 com.voyageone.common.components.ems.B2COrderServiceStub.ValidCardNoFormat validCardNoFormat4,
+                 com.voyageone.batch.synship.service.ems.B2COrderServiceStub.ValidCardNoFormat validCardNoFormat4,
 
-                  final com.voyageone.common.components.ems.B2COrderServiceCallbackHandler callback)
+                  final com.voyageone.batch.synship.service.ems.B2COrderServiceCallbackHandler callback)
 
                 throws java.rmi.RemoteException{
 
@@ -943,10 +943,10 @@
                                 org.apache.axiom.soap.SOAPEnvelope resultEnv = resultContext.getEnvelope();
                                 
                                         Object object = fromOM(resultEnv.getBody().getFirstElement(),
-                                                                         com.voyageone.common.components.ems.B2COrderServiceStub.ValidCardNoFormatResponse.class,
+                                                                         com.voyageone.batch.synship.service.ems.B2COrderServiceStub.ValidCardNoFormatResponse.class,
                                                                          getEnvelopeNamespaces(resultEnv));
                                         callback.receiveResultValidCardNoFormat(
-                                        (com.voyageone.common.components.ems.B2COrderServiceStub.ValidCardNoFormatResponse)object);
+                                        (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.ValidCardNoFormatResponse)object);
                                         
                             } catch (org.apache.axis2.AxisFault e) {
                                 callback.receiveErrorValidCardNoFormat(e);
@@ -1045,9 +1045,9 @@
 
                     
 
-                            public  com.voyageone.common.components.ems.B2COrderServiceStub.GetOrderByCodeResponse GetOrderByCode(
+                            public  com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrderByCodeResponse GetOrderByCode(
 
-                            com.voyageone.common.components.ems.B2COrderServiceStub.GetOrderByCode getOrderByCode6)
+                            com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrderByCode getOrderByCode6)
                         
 
                     throws java.rmi.RemoteException
@@ -1097,11 +1097,11 @@
                 
                                 Object object = fromOM(
                                              _returnEnv.getBody().getFirstElement() ,
-                                             com.voyageone.common.components.ems.B2COrderServiceStub.GetOrderByCodeResponse.class,
+                                             com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrderByCodeResponse.class,
                                               getEnvelopeNamespaces(_returnEnv));
 
                                
-                                        return (com.voyageone.common.components.ems.B2COrderServiceStub.GetOrderByCodeResponse)object;
+                                        return (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrderByCodeResponse)object;
                                    
          }catch(org.apache.axis2.AxisFault f){
 
@@ -1163,9 +1163,9 @@
                 */
                 public  void startGetOrderByCode(
 
-                 com.voyageone.common.components.ems.B2COrderServiceStub.GetOrderByCode getOrderByCode6,
+                 com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrderByCode getOrderByCode6,
 
-                  final com.voyageone.common.components.ems.B2COrderServiceCallbackHandler callback)
+                  final com.voyageone.batch.synship.service.ems.B2COrderServiceCallbackHandler callback)
 
                 throws java.rmi.RemoteException{
 
@@ -1208,10 +1208,10 @@
                                 org.apache.axiom.soap.SOAPEnvelope resultEnv = resultContext.getEnvelope();
                                 
                                         Object object = fromOM(resultEnv.getBody().getFirstElement(),
-                                                                         com.voyageone.common.components.ems.B2COrderServiceStub.GetOrderByCodeResponse.class,
+                                                                         com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrderByCodeResponse.class,
                                                                          getEnvelopeNamespaces(resultEnv));
                                         callback.receiveResultGetOrderByCode(
-                                        (com.voyageone.common.components.ems.B2COrderServiceStub.GetOrderByCodeResponse)object);
+                                        (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrderByCodeResponse)object);
                                         
                             } catch (org.apache.axis2.AxisFault e) {
                                 callback.receiveErrorGetOrderByCode(e);
@@ -1310,9 +1310,9 @@
 
                     
 
-                            public  com.voyageone.common.components.ems.B2COrderServiceStub.GetWaybillNoResponse GetWaybillNo(
+                            public  com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetWaybillNoResponse GetWaybillNo(
 
-                            com.voyageone.common.components.ems.B2COrderServiceStub.GetWaybillNo getWaybillNo8)
+                            com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetWaybillNo getWaybillNo8)
                         
 
                     throws java.rmi.RemoteException
@@ -1362,11 +1362,11 @@
                 
                                 Object object = fromOM(
                                              _returnEnv.getBody().getFirstElement() ,
-                                             com.voyageone.common.components.ems.B2COrderServiceStub.GetWaybillNoResponse.class,
+                                             com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetWaybillNoResponse.class,
                                               getEnvelopeNamespaces(_returnEnv));
 
                                
-                                        return (com.voyageone.common.components.ems.B2COrderServiceStub.GetWaybillNoResponse)object;
+                                        return (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetWaybillNoResponse)object;
                                    
          }catch(org.apache.axis2.AxisFault f){
 
@@ -1428,9 +1428,9 @@
                 */
                 public  void startGetWaybillNo(
 
-                 com.voyageone.common.components.ems.B2COrderServiceStub.GetWaybillNo getWaybillNo8,
+                 com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetWaybillNo getWaybillNo8,
 
-                  final com.voyageone.common.components.ems.B2COrderServiceCallbackHandler callback)
+                  final com.voyageone.batch.synship.service.ems.B2COrderServiceCallbackHandler callback)
 
                 throws java.rmi.RemoteException{
 
@@ -1473,10 +1473,10 @@
                                 org.apache.axiom.soap.SOAPEnvelope resultEnv = resultContext.getEnvelope();
                                 
                                         Object object = fromOM(resultEnv.getBody().getFirstElement(),
-                                                                         com.voyageone.common.components.ems.B2COrderServiceStub.GetWaybillNoResponse.class,
+                                                                         com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetWaybillNoResponse.class,
                                                                          getEnvelopeNamespaces(resultEnv));
                                         callback.receiveResultGetWaybillNo(
-                                        (com.voyageone.common.components.ems.B2COrderServiceStub.GetWaybillNoResponse)object);
+                                        (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetWaybillNoResponse)object);
                                         
                             } catch (org.apache.axis2.AxisFault e) {
                                 callback.receiveErrorGetWaybillNo(e);
@@ -1575,9 +1575,9 @@
 
                     
 
-                            public  com.voyageone.common.components.ems.B2COrderServiceStub.GetPrintCountResponse GetPrintCount(
+                            public  com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetPrintCountResponse GetPrintCount(
 
-                            com.voyageone.common.components.ems.B2COrderServiceStub.GetPrintCount getPrintCount10)
+                            com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetPrintCount getPrintCount10)
                         
 
                     throws java.rmi.RemoteException
@@ -1627,11 +1627,11 @@
                 
                                 Object object = fromOM(
                                              _returnEnv.getBody().getFirstElement() ,
-                                             com.voyageone.common.components.ems.B2COrderServiceStub.GetPrintCountResponse.class,
+                                             com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetPrintCountResponse.class,
                                               getEnvelopeNamespaces(_returnEnv));
 
                                
-                                        return (com.voyageone.common.components.ems.B2COrderServiceStub.GetPrintCountResponse)object;
+                                        return (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetPrintCountResponse)object;
                                    
          }catch(org.apache.axis2.AxisFault f){
 
@@ -1693,9 +1693,9 @@
                 */
                 public  void startGetPrintCount(
 
-                 com.voyageone.common.components.ems.B2COrderServiceStub.GetPrintCount getPrintCount10,
+                 com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetPrintCount getPrintCount10,
 
-                  final com.voyageone.common.components.ems.B2COrderServiceCallbackHandler callback)
+                  final com.voyageone.batch.synship.service.ems.B2COrderServiceCallbackHandler callback)
 
                 throws java.rmi.RemoteException{
 
@@ -1738,10 +1738,10 @@
                                 org.apache.axiom.soap.SOAPEnvelope resultEnv = resultContext.getEnvelope();
                                 
                                         Object object = fromOM(resultEnv.getBody().getFirstElement(),
-                                                                         com.voyageone.common.components.ems.B2COrderServiceStub.GetPrintCountResponse.class,
+                                                                         com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetPrintCountResponse.class,
                                                                          getEnvelopeNamespaces(resultEnv));
                                         callback.receiveResultGetPrintCount(
-                                        (com.voyageone.common.components.ems.B2COrderServiceStub.GetPrintCountResponse)object);
+                                        (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetPrintCountResponse)object);
                                         
                             } catch (org.apache.axis2.AxisFault e) {
                                 callback.receiveErrorGetPrintCount(e);
@@ -1840,9 +1840,9 @@
 
                     
 
-                            public  com.voyageone.common.components.ems.B2COrderServiceStub.AddB2COrderResponse AddB2COrder(
+                            public  com.voyageone.batch.synship.service.ems.B2COrderServiceStub.AddB2COrderResponse AddB2COrder(
 
-                            com.voyageone.common.components.ems.B2COrderServiceStub.AddB2COrder addB2COrder12)
+                            com.voyageone.batch.synship.service.ems.B2COrderServiceStub.AddB2COrder addB2COrder12)
                         
 
                     throws java.rmi.RemoteException
@@ -1892,11 +1892,11 @@
                 
                                 Object object = fromOM(
                                              _returnEnv.getBody().getFirstElement() ,
-                                             com.voyageone.common.components.ems.B2COrderServiceStub.AddB2COrderResponse.class,
+                                             com.voyageone.batch.synship.service.ems.B2COrderServiceStub.AddB2COrderResponse.class,
                                               getEnvelopeNamespaces(_returnEnv));
 
                                
-                                        return (com.voyageone.common.components.ems.B2COrderServiceStub.AddB2COrderResponse)object;
+                                        return (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.AddB2COrderResponse)object;
                                    
          }catch(org.apache.axis2.AxisFault f){
 
@@ -1958,9 +1958,9 @@
                 */
                 public  void startAddB2COrder(
 
-                 com.voyageone.common.components.ems.B2COrderServiceStub.AddB2COrder addB2COrder12,
+                 com.voyageone.batch.synship.service.ems.B2COrderServiceStub.AddB2COrder addB2COrder12,
 
-                  final com.voyageone.common.components.ems.B2COrderServiceCallbackHandler callback)
+                  final com.voyageone.batch.synship.service.ems.B2COrderServiceCallbackHandler callback)
 
                 throws java.rmi.RemoteException{
 
@@ -2003,10 +2003,10 @@
                                 org.apache.axiom.soap.SOAPEnvelope resultEnv = resultContext.getEnvelope();
                                 
                                         Object object = fromOM(resultEnv.getBody().getFirstElement(),
-                                                                         com.voyageone.common.components.ems.B2COrderServiceStub.AddB2COrderResponse.class,
+                                                                         com.voyageone.batch.synship.service.ems.B2COrderServiceStub.AddB2COrderResponse.class,
                                                                          getEnvelopeNamespaces(resultEnv));
                                         callback.receiveResultAddB2COrder(
-                                        (com.voyageone.common.components.ems.B2COrderServiceStub.AddB2COrderResponse)object);
+                                        (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.AddB2COrderResponse)object);
                                         
                             } catch (org.apache.axis2.AxisFault e) {
                                 callback.receiveErrorAddB2COrder(e);
@@ -2105,9 +2105,9 @@
 
                     
 
-                            public  com.voyageone.common.components.ems.B2COrderServiceStub.GetOrdersResponse GetOrders(
+                            public  com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrdersResponse GetOrders(
 
-                            com.voyageone.common.components.ems.B2COrderServiceStub.GetOrders getOrders14)
+                            com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrders getOrders14)
                         
 
                     throws java.rmi.RemoteException
@@ -2157,11 +2157,11 @@
                 
                                 Object object = fromOM(
                                              _returnEnv.getBody().getFirstElement() ,
-                                             com.voyageone.common.components.ems.B2COrderServiceStub.GetOrdersResponse.class,
+                                             com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrdersResponse.class,
                                               getEnvelopeNamespaces(_returnEnv));
 
                                
-                                        return (com.voyageone.common.components.ems.B2COrderServiceStub.GetOrdersResponse)object;
+                                        return (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrdersResponse)object;
                                    
          }catch(org.apache.axis2.AxisFault f){
 
@@ -2223,9 +2223,9 @@
                 */
                 public  void startGetOrders(
 
-                 com.voyageone.common.components.ems.B2COrderServiceStub.GetOrders getOrders14,
+                 com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrders getOrders14,
 
-                  final com.voyageone.common.components.ems.B2COrderServiceCallbackHandler callback)
+                  final com.voyageone.batch.synship.service.ems.B2COrderServiceCallbackHandler callback)
 
                 throws java.rmi.RemoteException{
 
@@ -2268,10 +2268,10 @@
                                 org.apache.axiom.soap.SOAPEnvelope resultEnv = resultContext.getEnvelope();
                                 
                                         Object object = fromOM(resultEnv.getBody().getFirstElement(),
-                                                                         com.voyageone.common.components.ems.B2COrderServiceStub.GetOrdersResponse.class,
+                                                                         com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrdersResponse.class,
                                                                          getEnvelopeNamespaces(resultEnv));
                                         callback.receiveResultGetOrders(
-                                        (com.voyageone.common.components.ems.B2COrderServiceStub.GetOrdersResponse)object);
+                                        (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrdersResponse)object);
                                         
                             } catch (org.apache.axis2.AxisFault e) {
                                 callback.receiveErrorGetOrders(e);
@@ -2370,9 +2370,9 @@
 
                     
 
-                            public  com.voyageone.common.components.ems.B2COrderServiceStub.ValidCarNoResponse ValidCarNo(
+                            public  com.voyageone.batch.synship.service.ems.B2COrderServiceStub.ValidCarNoResponse ValidCarNo(
 
-                            com.voyageone.common.components.ems.B2COrderServiceStub.ValidCarNo validCarNo16)
+                            com.voyageone.batch.synship.service.ems.B2COrderServiceStub.ValidCarNo validCarNo16)
                         
 
                     throws java.rmi.RemoteException
@@ -2422,11 +2422,11 @@
                 
                                 Object object = fromOM(
                                              _returnEnv.getBody().getFirstElement() ,
-                                             com.voyageone.common.components.ems.B2COrderServiceStub.ValidCarNoResponse.class,
+                                             com.voyageone.batch.synship.service.ems.B2COrderServiceStub.ValidCarNoResponse.class,
                                               getEnvelopeNamespaces(_returnEnv));
 
                                
-                                        return (com.voyageone.common.components.ems.B2COrderServiceStub.ValidCarNoResponse)object;
+                                        return (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.ValidCarNoResponse)object;
                                    
          }catch(org.apache.axis2.AxisFault f){
 
@@ -2488,9 +2488,9 @@
                 */
                 public  void startValidCarNo(
 
-                 com.voyageone.common.components.ems.B2COrderServiceStub.ValidCarNo validCarNo16,
+                 com.voyageone.batch.synship.service.ems.B2COrderServiceStub.ValidCarNo validCarNo16,
 
-                  final com.voyageone.common.components.ems.B2COrderServiceCallbackHandler callback)
+                  final com.voyageone.batch.synship.service.ems.B2COrderServiceCallbackHandler callback)
 
                 throws java.rmi.RemoteException{
 
@@ -2533,10 +2533,10 @@
                                 org.apache.axiom.soap.SOAPEnvelope resultEnv = resultContext.getEnvelope();
                                 
                                         Object object = fromOM(resultEnv.getBody().getFirstElement(),
-                                                                         com.voyageone.common.components.ems.B2COrderServiceStub.ValidCarNoResponse.class,
+                                                                         com.voyageone.batch.synship.service.ems.B2COrderServiceStub.ValidCarNoResponse.class,
                                                                          getEnvelopeNamespaces(resultEnv));
                                         callback.receiveResultValidCarNo(
-                                        (com.voyageone.common.components.ems.B2COrderServiceStub.ValidCarNoResponse)object);
+                                        (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.ValidCarNoResponse)object);
                                         
                             } catch (org.apache.axis2.AxisFault e) {
                                 callback.receiveErrorValidCarNo(e);
@@ -2635,9 +2635,9 @@
 
                     
 
-                            public  com.voyageone.common.components.ems.B2COrderServiceStub.IsCardExistResponse IsCardExist(
+                            public  com.voyageone.batch.synship.service.ems.B2COrderServiceStub.IsCardExistResponse IsCardExist(
 
-                            com.voyageone.common.components.ems.B2COrderServiceStub.IsCardExist isCardExist18)
+                            com.voyageone.batch.synship.service.ems.B2COrderServiceStub.IsCardExist isCardExist18)
                         
 
                     throws java.rmi.RemoteException
@@ -2687,11 +2687,11 @@
                 
                                 Object object = fromOM(
                                              _returnEnv.getBody().getFirstElement() ,
-                                             com.voyageone.common.components.ems.B2COrderServiceStub.IsCardExistResponse.class,
+                                             com.voyageone.batch.synship.service.ems.B2COrderServiceStub.IsCardExistResponse.class,
                                               getEnvelopeNamespaces(_returnEnv));
 
                                
-                                        return (com.voyageone.common.components.ems.B2COrderServiceStub.IsCardExistResponse)object;
+                                        return (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.IsCardExistResponse)object;
                                    
          }catch(org.apache.axis2.AxisFault f){
 
@@ -2753,9 +2753,9 @@
                 */
                 public  void startIsCardExist(
 
-                 com.voyageone.common.components.ems.B2COrderServiceStub.IsCardExist isCardExist18,
+                 com.voyageone.batch.synship.service.ems.B2COrderServiceStub.IsCardExist isCardExist18,
 
-                  final com.voyageone.common.components.ems.B2COrderServiceCallbackHandler callback)
+                  final com.voyageone.batch.synship.service.ems.B2COrderServiceCallbackHandler callback)
 
                 throws java.rmi.RemoteException{
 
@@ -2798,10 +2798,10 @@
                                 org.apache.axiom.soap.SOAPEnvelope resultEnv = resultContext.getEnvelope();
                                 
                                         Object object = fromOM(resultEnv.getBody().getFirstElement(),
-                                                                         com.voyageone.common.components.ems.B2COrderServiceStub.IsCardExistResponse.class,
+                                                                         com.voyageone.batch.synship.service.ems.B2COrderServiceStub.IsCardExistResponse.class,
                                                                          getEnvelopeNamespaces(resultEnv));
                                         callback.receiveResultIsCardExist(
-                                        (com.voyageone.common.components.ems.B2COrderServiceStub.IsCardExistResponse)object);
+                                        (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.IsCardExistResponse)object);
                                         
                             } catch (org.apache.axis2.AxisFault e) {
                                 callback.receiveErrorIsCardExist(e);
@@ -39463,12 +39463,12 @@
         }
            
           
-            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.common.components.ems.B2COrderServiceStub.GetOrderByExpress param, boolean optimizeContent)
+            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrderByExpress param, boolean optimizeContent)
             throws org.apache.axis2.AxisFault {
 
             
                         try{
-                             return param.getOMElement(com.voyageone.common.components.ems.B2COrderServiceStub.GetOrderByExpress.MY_QNAME,
+                             return param.getOMElement(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrderByExpress.MY_QNAME,
                                           org.apache.axiom.om.OMAbstractFactory.getOMFactory());
                         } catch(org.apache.axis2.databinding.ADBException e){
                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -39477,12 +39477,12 @@
 
             }
         
-            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.common.components.ems.B2COrderServiceStub.GetOrderByExpressResponse param, boolean optimizeContent)
+            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrderByExpressResponse param, boolean optimizeContent)
             throws org.apache.axis2.AxisFault {
 
             
                         try{
-                             return param.getOMElement(com.voyageone.common.components.ems.B2COrderServiceStub.GetOrderByExpressResponse.MY_QNAME,
+                             return param.getOMElement(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrderByExpressResponse.MY_QNAME,
                                           org.apache.axiom.om.OMAbstractFactory.getOMFactory());
                         } catch(org.apache.axis2.databinding.ADBException e){
                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -39491,12 +39491,12 @@
 
             }
         
-            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.common.components.ems.B2COrderServiceStub.NewValidCarNo param, boolean optimizeContent)
+            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.NewValidCarNo param, boolean optimizeContent)
             throws org.apache.axis2.AxisFault {
 
             
                         try{
-                             return param.getOMElement(com.voyageone.common.components.ems.B2COrderServiceStub.NewValidCarNo.MY_QNAME,
+                             return param.getOMElement(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.NewValidCarNo.MY_QNAME,
                                           org.apache.axiom.om.OMAbstractFactory.getOMFactory());
                         } catch(org.apache.axis2.databinding.ADBException e){
                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -39505,12 +39505,12 @@
 
             }
         
-            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.common.components.ems.B2COrderServiceStub.NewValidCarNoResponse param, boolean optimizeContent)
+            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.NewValidCarNoResponse param, boolean optimizeContent)
             throws org.apache.axis2.AxisFault {
 
             
                         try{
-                             return param.getOMElement(com.voyageone.common.components.ems.B2COrderServiceStub.NewValidCarNoResponse.MY_QNAME,
+                             return param.getOMElement(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.NewValidCarNoResponse.MY_QNAME,
                                           org.apache.axiom.om.OMAbstractFactory.getOMFactory());
                         } catch(org.apache.axis2.databinding.ADBException e){
                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -39519,12 +39519,12 @@
 
             }
         
-            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.common.components.ems.B2COrderServiceStub.ValidCardNoFormat param, boolean optimizeContent)
+            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.ValidCardNoFormat param, boolean optimizeContent)
             throws org.apache.axis2.AxisFault {
 
             
                         try{
-                             return param.getOMElement(com.voyageone.common.components.ems.B2COrderServiceStub.ValidCardNoFormat.MY_QNAME,
+                             return param.getOMElement(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.ValidCardNoFormat.MY_QNAME,
                                           org.apache.axiom.om.OMAbstractFactory.getOMFactory());
                         } catch(org.apache.axis2.databinding.ADBException e){
                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -39533,12 +39533,12 @@
 
             }
         
-            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.common.components.ems.B2COrderServiceStub.ValidCardNoFormatResponse param, boolean optimizeContent)
+            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.ValidCardNoFormatResponse param, boolean optimizeContent)
             throws org.apache.axis2.AxisFault {
 
             
                         try{
-                             return param.getOMElement(com.voyageone.common.components.ems.B2COrderServiceStub.ValidCardNoFormatResponse.MY_QNAME,
+                             return param.getOMElement(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.ValidCardNoFormatResponse.MY_QNAME,
                                           org.apache.axiom.om.OMAbstractFactory.getOMFactory());
                         } catch(org.apache.axis2.databinding.ADBException e){
                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -39547,12 +39547,12 @@
 
             }
         
-            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.common.components.ems.B2COrderServiceStub.GetOrderByCode param, boolean optimizeContent)
+            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrderByCode param, boolean optimizeContent)
             throws org.apache.axis2.AxisFault {
 
             
                         try{
-                             return param.getOMElement(com.voyageone.common.components.ems.B2COrderServiceStub.GetOrderByCode.MY_QNAME,
+                             return param.getOMElement(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrderByCode.MY_QNAME,
                                           org.apache.axiom.om.OMAbstractFactory.getOMFactory());
                         } catch(org.apache.axis2.databinding.ADBException e){
                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -39561,12 +39561,12 @@
 
             }
         
-            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.common.components.ems.B2COrderServiceStub.GetOrderByCodeResponse param, boolean optimizeContent)
+            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrderByCodeResponse param, boolean optimizeContent)
             throws org.apache.axis2.AxisFault {
 
             
                         try{
-                             return param.getOMElement(com.voyageone.common.components.ems.B2COrderServiceStub.GetOrderByCodeResponse.MY_QNAME,
+                             return param.getOMElement(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrderByCodeResponse.MY_QNAME,
                                           org.apache.axiom.om.OMAbstractFactory.getOMFactory());
                         } catch(org.apache.axis2.databinding.ADBException e){
                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -39575,12 +39575,12 @@
 
             }
         
-            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.common.components.ems.B2COrderServiceStub.GetWaybillNo param, boolean optimizeContent)
+            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetWaybillNo param, boolean optimizeContent)
             throws org.apache.axis2.AxisFault {
 
             
                         try{
-                             return param.getOMElement(com.voyageone.common.components.ems.B2COrderServiceStub.GetWaybillNo.MY_QNAME,
+                             return param.getOMElement(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetWaybillNo.MY_QNAME,
                                           org.apache.axiom.om.OMAbstractFactory.getOMFactory());
                         } catch(org.apache.axis2.databinding.ADBException e){
                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -39589,12 +39589,12 @@
 
             }
         
-            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.common.components.ems.B2COrderServiceStub.GetWaybillNoResponse param, boolean optimizeContent)
+            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetWaybillNoResponse param, boolean optimizeContent)
             throws org.apache.axis2.AxisFault {
 
             
                         try{
-                             return param.getOMElement(com.voyageone.common.components.ems.B2COrderServiceStub.GetWaybillNoResponse.MY_QNAME,
+                             return param.getOMElement(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetWaybillNoResponse.MY_QNAME,
                                           org.apache.axiom.om.OMAbstractFactory.getOMFactory());
                         } catch(org.apache.axis2.databinding.ADBException e){
                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -39603,12 +39603,12 @@
 
             }
         
-            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.common.components.ems.B2COrderServiceStub.GetPrintCount param, boolean optimizeContent)
+            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetPrintCount param, boolean optimizeContent)
             throws org.apache.axis2.AxisFault {
 
             
                         try{
-                             return param.getOMElement(com.voyageone.common.components.ems.B2COrderServiceStub.GetPrintCount.MY_QNAME,
+                             return param.getOMElement(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetPrintCount.MY_QNAME,
                                           org.apache.axiom.om.OMAbstractFactory.getOMFactory());
                         } catch(org.apache.axis2.databinding.ADBException e){
                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -39617,12 +39617,12 @@
 
             }
         
-            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.common.components.ems.B2COrderServiceStub.GetPrintCountResponse param, boolean optimizeContent)
+            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetPrintCountResponse param, boolean optimizeContent)
             throws org.apache.axis2.AxisFault {
 
             
                         try{
-                             return param.getOMElement(com.voyageone.common.components.ems.B2COrderServiceStub.GetPrintCountResponse.MY_QNAME,
+                             return param.getOMElement(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetPrintCountResponse.MY_QNAME,
                                           org.apache.axiom.om.OMAbstractFactory.getOMFactory());
                         } catch(org.apache.axis2.databinding.ADBException e){
                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -39631,12 +39631,12 @@
 
             }
         
-            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.common.components.ems.B2COrderServiceStub.AddB2COrder param, boolean optimizeContent)
+            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.AddB2COrder param, boolean optimizeContent)
             throws org.apache.axis2.AxisFault {
 
             
                         try{
-                             return param.getOMElement(com.voyageone.common.components.ems.B2COrderServiceStub.AddB2COrder.MY_QNAME,
+                             return param.getOMElement(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.AddB2COrder.MY_QNAME,
                                           org.apache.axiom.om.OMAbstractFactory.getOMFactory());
                         } catch(org.apache.axis2.databinding.ADBException e){
                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -39645,12 +39645,12 @@
 
             }
         
-            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.common.components.ems.B2COrderServiceStub.AddB2COrderResponse param, boolean optimizeContent)
+            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.AddB2COrderResponse param, boolean optimizeContent)
             throws org.apache.axis2.AxisFault {
 
             
                         try{
-                             return param.getOMElement(com.voyageone.common.components.ems.B2COrderServiceStub.AddB2COrderResponse.MY_QNAME,
+                             return param.getOMElement(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.AddB2COrderResponse.MY_QNAME,
                                           org.apache.axiom.om.OMAbstractFactory.getOMFactory());
                         } catch(org.apache.axis2.databinding.ADBException e){
                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -39659,12 +39659,12 @@
 
             }
         
-            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.common.components.ems.B2COrderServiceStub.GetOrders param, boolean optimizeContent)
+            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrders param, boolean optimizeContent)
             throws org.apache.axis2.AxisFault {
 
             
                         try{
-                             return param.getOMElement(com.voyageone.common.components.ems.B2COrderServiceStub.GetOrders.MY_QNAME,
+                             return param.getOMElement(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrders.MY_QNAME,
                                           org.apache.axiom.om.OMAbstractFactory.getOMFactory());
                         } catch(org.apache.axis2.databinding.ADBException e){
                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -39673,12 +39673,12 @@
 
             }
         
-            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.common.components.ems.B2COrderServiceStub.GetOrdersResponse param, boolean optimizeContent)
+            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrdersResponse param, boolean optimizeContent)
             throws org.apache.axis2.AxisFault {
 
             
                         try{
-                             return param.getOMElement(com.voyageone.common.components.ems.B2COrderServiceStub.GetOrdersResponse.MY_QNAME,
+                             return param.getOMElement(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrdersResponse.MY_QNAME,
                                           org.apache.axiom.om.OMAbstractFactory.getOMFactory());
                         } catch(org.apache.axis2.databinding.ADBException e){
                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -39687,12 +39687,12 @@
 
             }
         
-            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.common.components.ems.B2COrderServiceStub.ValidCarNo param, boolean optimizeContent)
+            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.ValidCarNo param, boolean optimizeContent)
             throws org.apache.axis2.AxisFault {
 
             
                         try{
-                             return param.getOMElement(com.voyageone.common.components.ems.B2COrderServiceStub.ValidCarNo.MY_QNAME,
+                             return param.getOMElement(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.ValidCarNo.MY_QNAME,
                                           org.apache.axiom.om.OMAbstractFactory.getOMFactory());
                         } catch(org.apache.axis2.databinding.ADBException e){
                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -39701,12 +39701,12 @@
 
             }
         
-            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.common.components.ems.B2COrderServiceStub.ValidCarNoResponse param, boolean optimizeContent)
+            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.ValidCarNoResponse param, boolean optimizeContent)
             throws org.apache.axis2.AxisFault {
 
             
                         try{
-                             return param.getOMElement(com.voyageone.common.components.ems.B2COrderServiceStub.ValidCarNoResponse.MY_QNAME,
+                             return param.getOMElement(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.ValidCarNoResponse.MY_QNAME,
                                           org.apache.axiom.om.OMAbstractFactory.getOMFactory());
                         } catch(org.apache.axis2.databinding.ADBException e){
                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -39715,12 +39715,12 @@
 
             }
         
-            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.common.components.ems.B2COrderServiceStub.IsCardExist param, boolean optimizeContent)
+            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.IsCardExist param, boolean optimizeContent)
             throws org.apache.axis2.AxisFault {
 
             
                         try{
-                             return param.getOMElement(com.voyageone.common.components.ems.B2COrderServiceStub.IsCardExist.MY_QNAME,
+                             return param.getOMElement(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.IsCardExist.MY_QNAME,
                                           org.apache.axiom.om.OMAbstractFactory.getOMFactory());
                         } catch(org.apache.axis2.databinding.ADBException e){
                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -39729,12 +39729,12 @@
 
             }
         
-            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.common.components.ems.B2COrderServiceStub.IsCardExistResponse param, boolean optimizeContent)
+            private  org.apache.axiom.om.OMElement  toOM(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.IsCardExistResponse param, boolean optimizeContent)
             throws org.apache.axis2.AxisFault {
 
             
                         try{
-                             return param.getOMElement(com.voyageone.common.components.ems.B2COrderServiceStub.IsCardExistResponse.MY_QNAME,
+                             return param.getOMElement(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.IsCardExistResponse.MY_QNAME,
                                           org.apache.axiom.om.OMAbstractFactory.getOMFactory());
                         } catch(org.apache.axis2.databinding.ADBException e){
                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -39744,14 +39744,14 @@
             }
         
                                     
-                                        private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, com.voyageone.common.components.ems.B2COrderServiceStub.GetOrderByExpress param, boolean optimizeContent)
+                                        private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrderByExpress param, boolean optimizeContent)
                                         throws org.apache.axis2.AxisFault{
 
                                              
                                                     try{
 
                                                             org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
-                                                            emptyEnvelope.getBody().addChild(param.getOMElement(com.voyageone.common.components.ems.B2COrderServiceStub.GetOrderByExpress.MY_QNAME,factory));
+                                                            emptyEnvelope.getBody().addChild(param.getOMElement(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrderByExpress.MY_QNAME,factory));
                                                             return emptyEnvelope;
                                                         } catch(org.apache.axis2.databinding.ADBException e){
                                                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -39765,14 +39765,14 @@
 
                              
                                     
-                                        private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, com.voyageone.common.components.ems.B2COrderServiceStub.NewValidCarNo param, boolean optimizeContent)
+                                        private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, com.voyageone.batch.synship.service.ems.B2COrderServiceStub.NewValidCarNo param, boolean optimizeContent)
                                         throws org.apache.axis2.AxisFault{
 
                                              
                                                     try{
 
                                                             org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
-                                                            emptyEnvelope.getBody().addChild(param.getOMElement(com.voyageone.common.components.ems.B2COrderServiceStub.NewValidCarNo.MY_QNAME,factory));
+                                                            emptyEnvelope.getBody().addChild(param.getOMElement(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.NewValidCarNo.MY_QNAME,factory));
                                                             return emptyEnvelope;
                                                         } catch(org.apache.axis2.databinding.ADBException e){
                                                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -39786,14 +39786,14 @@
 
                              
                                     
-                                        private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, com.voyageone.common.components.ems.B2COrderServiceStub.ValidCardNoFormat param, boolean optimizeContent)
+                                        private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, com.voyageone.batch.synship.service.ems.B2COrderServiceStub.ValidCardNoFormat param, boolean optimizeContent)
                                         throws org.apache.axis2.AxisFault{
 
                                              
                                                     try{
 
                                                             org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
-                                                            emptyEnvelope.getBody().addChild(param.getOMElement(com.voyageone.common.components.ems.B2COrderServiceStub.ValidCardNoFormat.MY_QNAME,factory));
+                                                            emptyEnvelope.getBody().addChild(param.getOMElement(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.ValidCardNoFormat.MY_QNAME,factory));
                                                             return emptyEnvelope;
                                                         } catch(org.apache.axis2.databinding.ADBException e){
                                                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -39807,14 +39807,14 @@
 
                              
                                     
-                                        private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, com.voyageone.common.components.ems.B2COrderServiceStub.GetOrderByCode param, boolean optimizeContent)
+                                        private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrderByCode param, boolean optimizeContent)
                                         throws org.apache.axis2.AxisFault{
 
                                              
                                                     try{
 
                                                             org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
-                                                            emptyEnvelope.getBody().addChild(param.getOMElement(com.voyageone.common.components.ems.B2COrderServiceStub.GetOrderByCode.MY_QNAME,factory));
+                                                            emptyEnvelope.getBody().addChild(param.getOMElement(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrderByCode.MY_QNAME,factory));
                                                             return emptyEnvelope;
                                                         } catch(org.apache.axis2.databinding.ADBException e){
                                                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -39828,14 +39828,14 @@
 
                              
                                     
-                                        private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, com.voyageone.common.components.ems.B2COrderServiceStub.GetWaybillNo param, boolean optimizeContent)
+                                        private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetWaybillNo param, boolean optimizeContent)
                                         throws org.apache.axis2.AxisFault{
 
                                              
                                                     try{
 
                                                             org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
-                                                            emptyEnvelope.getBody().addChild(param.getOMElement(com.voyageone.common.components.ems.B2COrderServiceStub.GetWaybillNo.MY_QNAME,factory));
+                                                            emptyEnvelope.getBody().addChild(param.getOMElement(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetWaybillNo.MY_QNAME,factory));
                                                             return emptyEnvelope;
                                                         } catch(org.apache.axis2.databinding.ADBException e){
                                                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -39849,14 +39849,14 @@
 
                              
                                     
-                                        private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, com.voyageone.common.components.ems.B2COrderServiceStub.GetPrintCount param, boolean optimizeContent)
+                                        private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetPrintCount param, boolean optimizeContent)
                                         throws org.apache.axis2.AxisFault{
 
                                              
                                                     try{
 
                                                             org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
-                                                            emptyEnvelope.getBody().addChild(param.getOMElement(com.voyageone.common.components.ems.B2COrderServiceStub.GetPrintCount.MY_QNAME,factory));
+                                                            emptyEnvelope.getBody().addChild(param.getOMElement(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetPrintCount.MY_QNAME,factory));
                                                             return emptyEnvelope;
                                                         } catch(org.apache.axis2.databinding.ADBException e){
                                                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -39870,14 +39870,14 @@
 
                              
                                     
-                                        private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, com.voyageone.common.components.ems.B2COrderServiceStub.AddB2COrder param, boolean optimizeContent)
+                                        private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, com.voyageone.batch.synship.service.ems.B2COrderServiceStub.AddB2COrder param, boolean optimizeContent)
                                         throws org.apache.axis2.AxisFault{
 
                                              
                                                     try{
 
                                                             org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
-                                                            emptyEnvelope.getBody().addChild(param.getOMElement(com.voyageone.common.components.ems.B2COrderServiceStub.AddB2COrder.MY_QNAME,factory));
+                                                            emptyEnvelope.getBody().addChild(param.getOMElement(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.AddB2COrder.MY_QNAME,factory));
                                                             return emptyEnvelope;
                                                         } catch(org.apache.axis2.databinding.ADBException e){
                                                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -39891,14 +39891,14 @@
 
                              
                                     
-                                        private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, com.voyageone.common.components.ems.B2COrderServiceStub.GetOrders param, boolean optimizeContent)
+                                        private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrders param, boolean optimizeContent)
                                         throws org.apache.axis2.AxisFault{
 
                                              
                                                     try{
 
                                                             org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
-                                                            emptyEnvelope.getBody().addChild(param.getOMElement(com.voyageone.common.components.ems.B2COrderServiceStub.GetOrders.MY_QNAME,factory));
+                                                            emptyEnvelope.getBody().addChild(param.getOMElement(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrders.MY_QNAME,factory));
                                                             return emptyEnvelope;
                                                         } catch(org.apache.axis2.databinding.ADBException e){
                                                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -39912,14 +39912,14 @@
 
                              
                                     
-                                        private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, com.voyageone.common.components.ems.B2COrderServiceStub.ValidCarNo param, boolean optimizeContent)
+                                        private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, com.voyageone.batch.synship.service.ems.B2COrderServiceStub.ValidCarNo param, boolean optimizeContent)
                                         throws org.apache.axis2.AxisFault{
 
                                              
                                                     try{
 
                                                             org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
-                                                            emptyEnvelope.getBody().addChild(param.getOMElement(com.voyageone.common.components.ems.B2COrderServiceStub.ValidCarNo.MY_QNAME,factory));
+                                                            emptyEnvelope.getBody().addChild(param.getOMElement(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.ValidCarNo.MY_QNAME,factory));
                                                             return emptyEnvelope;
                                                         } catch(org.apache.axis2.databinding.ADBException e){
                                                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -39933,14 +39933,14 @@
 
                              
                                     
-                                        private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, com.voyageone.common.components.ems.B2COrderServiceStub.IsCardExist param, boolean optimizeContent)
+                                        private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, com.voyageone.batch.synship.service.ems.B2COrderServiceStub.IsCardExist param, boolean optimizeContent)
                                         throws org.apache.axis2.AxisFault{
 
                                              
                                                     try{
 
                                                             org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
-                                                            emptyEnvelope.getBody().addChild(param.getOMElement(com.voyageone.common.components.ems.B2COrderServiceStub.IsCardExist.MY_QNAME,factory));
+                                                            emptyEnvelope.getBody().addChild(param.getOMElement(com.voyageone.batch.synship.service.ems.B2COrderServiceStub.IsCardExist.MY_QNAME,factory));
                                                             return emptyEnvelope;
                                                         } catch(org.apache.axis2.databinding.ADBException e){
                                                             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -39970,142 +39970,142 @@
 
         try {
         
-                if (com.voyageone.common.components.ems.B2COrderServiceStub.GetOrderByExpress.class.equals(type)){
+                if (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrderByExpress.class.equals(type)){
                 
-                           return com.voyageone.common.components.ems.B2COrderServiceStub.GetOrderByExpress.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                           return com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrderByExpress.Factory.parse(param.getXMLStreamReaderWithoutCaching());
                     
 
                 }
            
-                if (com.voyageone.common.components.ems.B2COrderServiceStub.GetOrderByExpressResponse.class.equals(type)){
+                if (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrderByExpressResponse.class.equals(type)){
                 
-                           return com.voyageone.common.components.ems.B2COrderServiceStub.GetOrderByExpressResponse.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                           return com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrderByExpressResponse.Factory.parse(param.getXMLStreamReaderWithoutCaching());
                     
 
                 }
            
-                if (com.voyageone.common.components.ems.B2COrderServiceStub.NewValidCarNo.class.equals(type)){
+                if (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.NewValidCarNo.class.equals(type)){
                 
-                           return com.voyageone.common.components.ems.B2COrderServiceStub.NewValidCarNo.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                           return com.voyageone.batch.synship.service.ems.B2COrderServiceStub.NewValidCarNo.Factory.parse(param.getXMLStreamReaderWithoutCaching());
                     
 
                 }
            
-                if (com.voyageone.common.components.ems.B2COrderServiceStub.NewValidCarNoResponse.class.equals(type)){
+                if (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.NewValidCarNoResponse.class.equals(type)){
                 
-                           return com.voyageone.common.components.ems.B2COrderServiceStub.NewValidCarNoResponse.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                           return com.voyageone.batch.synship.service.ems.B2COrderServiceStub.NewValidCarNoResponse.Factory.parse(param.getXMLStreamReaderWithoutCaching());
                     
 
                 }
            
-                if (com.voyageone.common.components.ems.B2COrderServiceStub.ValidCardNoFormat.class.equals(type)){
+                if (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.ValidCardNoFormat.class.equals(type)){
                 
-                           return com.voyageone.common.components.ems.B2COrderServiceStub.ValidCardNoFormat.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                           return com.voyageone.batch.synship.service.ems.B2COrderServiceStub.ValidCardNoFormat.Factory.parse(param.getXMLStreamReaderWithoutCaching());
                     
 
                 }
            
-                if (com.voyageone.common.components.ems.B2COrderServiceStub.ValidCardNoFormatResponse.class.equals(type)){
+                if (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.ValidCardNoFormatResponse.class.equals(type)){
                 
-                           return com.voyageone.common.components.ems.B2COrderServiceStub.ValidCardNoFormatResponse.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                           return com.voyageone.batch.synship.service.ems.B2COrderServiceStub.ValidCardNoFormatResponse.Factory.parse(param.getXMLStreamReaderWithoutCaching());
                     
 
                 }
            
-                if (com.voyageone.common.components.ems.B2COrderServiceStub.GetOrderByCode.class.equals(type)){
+                if (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrderByCode.class.equals(type)){
                 
-                           return com.voyageone.common.components.ems.B2COrderServiceStub.GetOrderByCode.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                           return com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrderByCode.Factory.parse(param.getXMLStreamReaderWithoutCaching());
                     
 
                 }
            
-                if (com.voyageone.common.components.ems.B2COrderServiceStub.GetOrderByCodeResponse.class.equals(type)){
+                if (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrderByCodeResponse.class.equals(type)){
                 
-                           return com.voyageone.common.components.ems.B2COrderServiceStub.GetOrderByCodeResponse.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                           return com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrderByCodeResponse.Factory.parse(param.getXMLStreamReaderWithoutCaching());
                     
 
                 }
            
-                if (com.voyageone.common.components.ems.B2COrderServiceStub.GetWaybillNo.class.equals(type)){
+                if (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetWaybillNo.class.equals(type)){
                 
-                           return com.voyageone.common.components.ems.B2COrderServiceStub.GetWaybillNo.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                           return com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetWaybillNo.Factory.parse(param.getXMLStreamReaderWithoutCaching());
                     
 
                 }
            
-                if (com.voyageone.common.components.ems.B2COrderServiceStub.GetWaybillNoResponse.class.equals(type)){
+                if (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetWaybillNoResponse.class.equals(type)){
                 
-                           return com.voyageone.common.components.ems.B2COrderServiceStub.GetWaybillNoResponse.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                           return com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetWaybillNoResponse.Factory.parse(param.getXMLStreamReaderWithoutCaching());
                     
 
                 }
            
-                if (com.voyageone.common.components.ems.B2COrderServiceStub.GetPrintCount.class.equals(type)){
+                if (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetPrintCount.class.equals(type)){
                 
-                           return com.voyageone.common.components.ems.B2COrderServiceStub.GetPrintCount.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                           return com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetPrintCount.Factory.parse(param.getXMLStreamReaderWithoutCaching());
                     
 
                 }
            
-                if (com.voyageone.common.components.ems.B2COrderServiceStub.GetPrintCountResponse.class.equals(type)){
+                if (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetPrintCountResponse.class.equals(type)){
                 
-                           return com.voyageone.common.components.ems.B2COrderServiceStub.GetPrintCountResponse.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                           return com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetPrintCountResponse.Factory.parse(param.getXMLStreamReaderWithoutCaching());
                     
 
                 }
            
-                if (com.voyageone.common.components.ems.B2COrderServiceStub.AddB2COrder.class.equals(type)){
+                if (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.AddB2COrder.class.equals(type)){
                 
-                           return com.voyageone.common.components.ems.B2COrderServiceStub.AddB2COrder.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                           return com.voyageone.batch.synship.service.ems.B2COrderServiceStub.AddB2COrder.Factory.parse(param.getXMLStreamReaderWithoutCaching());
                     
 
                 }
            
-                if (com.voyageone.common.components.ems.B2COrderServiceStub.AddB2COrderResponse.class.equals(type)){
+                if (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.AddB2COrderResponse.class.equals(type)){
                 
-                           return com.voyageone.common.components.ems.B2COrderServiceStub.AddB2COrderResponse.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                           return com.voyageone.batch.synship.service.ems.B2COrderServiceStub.AddB2COrderResponse.Factory.parse(param.getXMLStreamReaderWithoutCaching());
                     
 
                 }
            
-                if (com.voyageone.common.components.ems.B2COrderServiceStub.GetOrders.class.equals(type)){
+                if (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrders.class.equals(type)){
                 
-                           return com.voyageone.common.components.ems.B2COrderServiceStub.GetOrders.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                           return com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrders.Factory.parse(param.getXMLStreamReaderWithoutCaching());
                     
 
                 }
            
-                if (com.voyageone.common.components.ems.B2COrderServiceStub.GetOrdersResponse.class.equals(type)){
+                if (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrdersResponse.class.equals(type)){
                 
-                           return com.voyageone.common.components.ems.B2COrderServiceStub.GetOrdersResponse.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                           return com.voyageone.batch.synship.service.ems.B2COrderServiceStub.GetOrdersResponse.Factory.parse(param.getXMLStreamReaderWithoutCaching());
                     
 
                 }
            
-                if (com.voyageone.common.components.ems.B2COrderServiceStub.ValidCarNo.class.equals(type)){
+                if (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.ValidCarNo.class.equals(type)){
                 
-                           return com.voyageone.common.components.ems.B2COrderServiceStub.ValidCarNo.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                           return com.voyageone.batch.synship.service.ems.B2COrderServiceStub.ValidCarNo.Factory.parse(param.getXMLStreamReaderWithoutCaching());
                     
 
                 }
            
-                if (com.voyageone.common.components.ems.B2COrderServiceStub.ValidCarNoResponse.class.equals(type)){
+                if (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.ValidCarNoResponse.class.equals(type)){
                 
-                           return com.voyageone.common.components.ems.B2COrderServiceStub.ValidCarNoResponse.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                           return com.voyageone.batch.synship.service.ems.B2COrderServiceStub.ValidCarNoResponse.Factory.parse(param.getXMLStreamReaderWithoutCaching());
                     
 
                 }
            
-                if (com.voyageone.common.components.ems.B2COrderServiceStub.IsCardExist.class.equals(type)){
+                if (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.IsCardExist.class.equals(type)){
                 
-                           return com.voyageone.common.components.ems.B2COrderServiceStub.IsCardExist.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                           return com.voyageone.batch.synship.service.ems.B2COrderServiceStub.IsCardExist.Factory.parse(param.getXMLStreamReaderWithoutCaching());
                     
 
                 }
            
-                if (com.voyageone.common.components.ems.B2COrderServiceStub.IsCardExistResponse.class.equals(type)){
+                if (com.voyageone.batch.synship.service.ems.B2COrderServiceStub.IsCardExistResponse.class.equals(type)){
                 
-                           return com.voyageone.common.components.ems.B2COrderServiceStub.IsCardExistResponse.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                           return com.voyageone.batch.synship.service.ems.B2COrderServiceStub.IsCardExistResponse.Factory.parse(param.getXMLStreamReaderWithoutCaching());
                     
 
                 }
