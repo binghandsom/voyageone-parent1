@@ -1,5 +1,6 @@
 package com.voyageone.cms.utils;
 
+import com.voyageone.common.util.StringUtils;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 
@@ -12,17 +13,17 @@ public class EmptyStringPercent implements TypeHandler<String> {
 
 	@Override
 	public String getResult(ResultSet rs, String columnName) throws SQLException {
-		return (rs.getString(columnName) == null) ? "" : rs.getString(columnName) + " %";
+		return (StringUtils.isEmpty(rs.getString(columnName))) ? "" : rs.getString(columnName) + " %";
 	}
 
 	@Override
 	public String getResult(ResultSet rs, int columnIndex) throws SQLException {
-		return (rs.getString(columnIndex) == null) ? "" : rs.getString(columnIndex) + " %";
+		return (StringUtils.isEmpty(rs.getString(columnIndex))) ? "" : rs.getString(columnIndex) + " %";
 	}
 
 	@Override
 	public String getResult(CallableStatement cs, int columnIndex) throws SQLException {
-		return (cs.getString(columnIndex) == null) ? "" : cs.getString(columnIndex) + " %";
+		return (StringUtils.isEmpty(cs.getString(columnIndex))) ? "" : cs.getString(columnIndex) + " %";
 	}
 
 	@Override
