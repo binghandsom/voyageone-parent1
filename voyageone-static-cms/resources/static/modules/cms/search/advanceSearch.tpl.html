@@ -177,6 +177,26 @@
                         <tab>
                             <tab-heading><i class="glyphicons glyphicons-sort"></i>&nbsp;<span translate="CMS_TXT_PRODUCTS"></span></tab-heading>
                             <div class="panel vo_panel tab_panel">
+                                <div class="row wrapper">
+                                    <div class="col-sm-5 m-b-xs">
+                                        <button class="btn btn-vo" ng-controller="cmsPopupController"
+                                                ng-click="openSetProductColumns(null, reFreshFunc.doRefreshCnProductInfo, 'cn')" >
+                                            <i class="fa fa-table"></i>&nbsp;<span translate="CMS_BTN_CUSTOMIZE_COLUMNS"></span>
+                                        </button>
+                                        <div class="btn-group dropdown" dropdown="">
+                                            <button class="btn btn-vo" dropdown-toggle="" aria-haspopup="true" aria-expanded="false"><i class="fa fa-edit"></i>&nbsp;<span translate="CMS_BTN_BATCH_EDIT"></span>&nbsp;<span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu" ng-controller="cmsPopupController">
+                                                <!--<li><a href="" ng-click="open('lg')" translate="CMS_BTN_SET_DISPLAY_ORDER"></a></li>-->
+                                                <!--<li><a href="" ng-click="open('lg')" translate="CMS_BTN_RESET_DISPLAY_ORDER"></a></li>-->
+                                                <li><a href="" ng-click="openSetCnProductProperty(cnProductInfo.selectIdList)" translate="CMS_BTN_SET_PROPERTY"></a></li>
+                                                <li><a href="" ng-click="openSetCnProductShare(cnProductInfo.selectIdList)" translate="CMS_BTN_SET_APPROVED"></a></li>
+                                                <li><a href="" ng-click="openAddToPromotion(cnProductInfo.selectIdList)"  translate="CMS_BTN_ADD_TO_PROMOTION"></a></li>
+                                                <!--<li><a href="" ng-click="open('lg')" translate="CMS_BTN_EXPORT_FILE"></a></li>-->
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="table-responsive">
                                    	<table datatable dt-options="dtProductList.options" dt-columns="dtProductList.columns" dt-instance="dtProductList.dtInstance" class="table table-striped hover b-t b-b vo_table">
                                     </table>
