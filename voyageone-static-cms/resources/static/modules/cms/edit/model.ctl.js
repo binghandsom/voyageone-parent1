@@ -754,10 +754,7 @@ define (function (require) {
                     DTColumnBuilder.newColumn('color', $translate('CMS_TXT_COLOR')).withClass('wtab-sm'),
                     DTColumnBuilder.newColumn('madeInCountry', $translate('CMS_TXT_MADE_IN_COUNTRY')).withClass('wtab-xs'),
                     DTColumnBuilder.newColumn('', $translate('CMS_TXT_MATERIAL_FABRIC')).withClass('wtab-sm').renderWith(function (val, type, row, cell) {
-                        var materialFabric1 = commonUtil.isNotEmpty(row.materialFabric1) ? row.materialFabric1 : '';
-                        var materialFabric2 = commonUtil.isNotEmpty(row.materialFabric2) ? row.materialFabric2 : '';
-                        var materialFabric3 = commonUtil.isNotEmpty(row.materialFabric3) ? row.materialFabric3 : '';
-                        return ('<span>'+materialFabric1+'</span><br><span>'+materialFabric2+'</span><br><span>'+materialFabric3+'</span>');
+                        return ('<span>'+row.materialFabric+'</span>');
                     }),
                     DTColumnBuilder.newColumn('usAbstract', $translate('CMS_TXT_ABSTRACT')).withClass('wtab-sm'),
                     DTColumnBuilder.newColumn('accessory', $translate('CMS_TXT_ACCESSORY')).withClass('wtab-sm'),
@@ -785,30 +782,30 @@ define (function (require) {
                     DTColumnBuilder.newColumn('', $translate('CMS_TXT_US_OFFICIAL_IS_APPROVED')).withClass('wtab-xs text-center').renderWith(function (val, type, row, cell) {
                         return ('<input type="checkbox" '+ (row.usOfficialIsApproved ? 'checked ' : '') + ' >');
                     }),
-                    DTColumnBuilder.newColumn('usOfficialRxSales7Days', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_RX_SALES_7_DAYS')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialRxSales7DaysPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_RX_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialRxSales30Days', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_RX_SALES_30_DAYS')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialRxSales30DaysPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_RX_SALES_30_DAYS_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialRxSalesInThisYear', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_RX_SALES_THIS_YEAR')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialRxSalesInThisYearPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_RX_SALES_THIS_YEAR_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialSales7Days', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_SALES_7_DAYS')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialSales7DaysPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialSales30Days', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_SALES_30_DAYS')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialSales30DaysPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_SALES_30_DAYS_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialSalesInThisYear', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_SALES_THIS_YEAR')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialSalesInThisYearPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_SALES_THIS_YEAR_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialWsSales7Days', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_WS_SALES_7_DAYS')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialWsSales7DaysPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_WS_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialWsSales30Days', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_WS_SALES_30_DAYS')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialWsSales30DaysPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_WS_SALES_30_DAYS_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialWsSalesInThisYear', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_WS_SALES_THIS_YEAR')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialWsSalesInThisYearPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_WS_SALES_THIS_YEAR_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialMobileSales7Days', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_MOBILE_SALES_7_DAYS')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialMobileSales7DaysPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_MOBILE_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialMobileSales30Days', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_MOBILE_SALES_30_DAYS')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialMobileSales30DaysPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_MOBILE_SALES_30_DAYS_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialMobileSalesInThisYear', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_MOBILE_SALES_THIS_YEAR')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialMobileSalesInThisYearPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_MOBILE_SALES_THIS_YEAR_PERCENT')).withClass('wtab-xs text-right'),
+                    DTColumnBuilder.newColumn('usOfficialSneakerRXSales7Days', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_RX_SALES_7_DAYS')).withClass('wtab-xs text-right'),
+                    DTColumnBuilder.newColumn('usOfficialSneakerRXSales7DaysPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_RX_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
+                    DTColumnBuilder.newColumn('usOfficialSneakerRXSales30Days', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_RX_SALES_30_DAYS')).withClass('wtab-xs text-right'),
+                    DTColumnBuilder.newColumn('usOfficialSneakerRXSales30DaysPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_RX_SALES_30_DAYS_PERCENT')).withClass('wtab-xs text-right'),
+                    DTColumnBuilder.newColumn('usOfficialSneakerRXSalesInThisYear', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_RX_SALES_THIS_YEAR')).withClass('wtab-xs text-right'),
+                    DTColumnBuilder.newColumn('usOfficialSneakerRXSalesInThisYearPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_RX_SALES_THIS_YEAR_PERCENT')).withClass('wtab-xs text-right'),
+                    DTColumnBuilder.newColumn('usOfficialSneakerSales7Days', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_SALES_7_DAYS')).withClass('wtab-xs text-right'),
+                    DTColumnBuilder.newColumn('usOfficialSneakerSales7DaysPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
+                    DTColumnBuilder.newColumn('usOfficialSneakerSales30Days', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_SALES_30_DAYS')).withClass('wtab-xs text-right'),
+                    DTColumnBuilder.newColumn('usOfficialSneakerSales30DaysPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_SALES_30_DAYS_PERCENT')).withClass('wtab-xs text-right'),
+                    DTColumnBuilder.newColumn('usOfficialSneakerSalesInThisYear', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_SALES_THIS_YEAR')).withClass('wtab-xs text-right'),
+                    DTColumnBuilder.newColumn('usOfficialSneakerSalesInThisYearPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_SALES_THIS_YEAR_PERCENT')).withClass('wtab-xs text-right'),
+                    DTColumnBuilder.newColumn('usOfficialSneakerWSSales7Days', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_WS_SALES_7_DAYS')).withClass('wtab-xs text-right'),
+                    DTColumnBuilder.newColumn('usOfficialSneakerWSSales7DaysPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_WS_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
+                    DTColumnBuilder.newColumn('usOfficialSneakerWSSales30Days', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_WS_SALES_30_DAYS')).withClass('wtab-xs text-right'),
+                    DTColumnBuilder.newColumn('usOfficialSneakerWSSales30DaysPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_WS_SALES_30_DAYS_PERCENT')).withClass('wtab-xs text-right'),
+                    DTColumnBuilder.newColumn('usOfficialSneakerWSSalesInThisYear', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_WS_SALES_THIS_YEAR')).withClass('wtab-xs text-right'),
+                    DTColumnBuilder.newColumn('usOfficialSneakerWSSalesInThisYearPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_WS_SALES_THIS_YEAR_PERCENT')).withClass('wtab-xs text-right'),
+                    DTColumnBuilder.newColumn('usOfficialSneakerMobileSales7Days', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_MOBILE_SALES_7_DAYS')).withClass('wtab-xs text-right'),
+                    DTColumnBuilder.newColumn('usOfficialSneakerMobileSales7DaysPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_MOBILE_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
+                    DTColumnBuilder.newColumn('usOfficialSneakerMobileSales30Days', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_MOBILE_SALES_30_DAYS')).withClass('wtab-xs text-right'),
+                    DTColumnBuilder.newColumn('usOfficialSneakerMobileSales30DaysPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_MOBILE_SALES_30_DAYS_PERCENT')).withClass('wtab-xs text-right'),
+                    DTColumnBuilder.newColumn('usOfficialSneakerMobileSalesInThisYear', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_MOBILE_SALES_THIS_YEAR')).withClass('wtab-xs text-right'),
+                    DTColumnBuilder.newColumn('usOfficialSneakerMobileSalesInThisYearPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_MOBILE_SALES_THIS_YEAR_PERCENT')).withClass('wtab-xs text-right'),
                     DTColumnBuilder.newColumn('usAmazonPrice', $translate('CMS_TXT_US_AMAZON_PRICE')).withClass('wtab-xs text-right'),
                     DTColumnBuilder.newColumn('usAmazonFreeShippingType', $translate('CMS_TXT_US_AMAZON_SHIPPING_TYPE')).withClass('wtab-xs '),
                     DTColumnBuilder.newColumn('', $translate('CMS_TXT_US_AMAZON_IS_ON_SALE')).withClass('wtab-xs text-center').renderWith(function (val, type, row, cell) {
@@ -901,21 +898,16 @@ define (function (require) {
                     DTColumnBuilder.newColumn('cnColor', $translate('CMS_TXT_COLOR')).withClass('wtab-sm'),
                     DTColumnBuilder.newColumn('madeInCountry', $translate('CMS_TXT_MADE_IN_COUNTRY')).withClass('wtab-xs'),
                     DTColumnBuilder.newColumn('', $translate('CMS_TXT_MATERIAL_FABRIC')).withClass('wtab-sm').renderWith(function (val, type, row, cell) {
-                        var materialFabric1 = commonUtil.isNotEmpty(row.materialFabric1) ? row.materialFabric1 : '';
-                        var materialFabric2 = commonUtil.isNotEmpty(row.materialFabric2) ? row.materialFabric2 : '';
-                        var materialFabric3 = commonUtil.isNotEmpty(row.materialFabric3) ? row.materialFabric3 : '';
-                        return ('<span>'+materialFabric1+'</span><br><span>'+materialFabric2+'</span><br><span>'+materialFabric3+'</span>');
+                        return ('<span>'+row.materialFabric+'</span>');
                     }),
                     DTColumnBuilder.newColumn('cnAbstract', $translate('CMS_TXT_ABSTRACT')).withClass('wtab-sm'),
                     DTColumnBuilder.newColumn('', $translate('CMS_TXT_SHORT_DESCRIPTION')).withClass('wtab-xsm').renderWith(function (val, type, row, cell) {
                         var cnShortDescription = commonUtil.isNotEmpty(row.cnShortDescription) ? row.cnShortDescription : '';
-                        var cutCnShortDescription = commonUtil.isNotEmpty(row.cutCnShortDescription) ? row.cutCnShortDescription : '';
-                        return ('<span title="'+cnShortDescription+'">'+cutCnShortDescription+'</span>');
+                        return ('<span title="'+cnShortDescription+'">'+cnShortDescription.substring(0, 100)+'</span>');
                     }),
                     DTColumnBuilder.newColumn('', $translate('CMS_TXT_LONG_DESCRIPTION')).withClass('wtab-xsm').renderWith(function (val, type, row, cell) {
                         var cnLongDescription = commonUtil.isNotEmpty(row.cnLongDescription) ? row.cnLongDescription : '';
-                        var cutCnLongDescription = commonUtil.isNotEmpty(row.cutCnLongDescription) ? row.cutCnLongDescription : '';
-                        return ('<span title="'+cnLongDescription+'">'+cutCnLongDescription+'</span>');
+                        return ('<span title="'+cnLongDescription+'">'+cnLongDescription.substring(0, 100)+'</span>');
                     }),
                     DTColumnBuilder.newColumn('quantity', $translate('CMS_TXT_QUANTITY')).withClass('wtab-xs text-center'),
                     DTColumnBuilder.newColumn('urlKey', $translate('CMS_TXT_URL_KEY')).withClass('wtab-xsm'),

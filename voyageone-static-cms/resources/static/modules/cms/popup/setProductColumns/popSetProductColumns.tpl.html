@@ -102,7 +102,7 @@
                 <div class="panel panel-drag  col-sm-4">
                     <h4 translate="CMS_TXT_BASE_ATTRIBUTE"></h4>
                     <div class="dragList">
-                        <ul ui-on-Drop="onDrop($event,$data,baseColumns)" drop-channel="baseColumnList">
+                        <ul ui-on-Drop="onDrop($event,$data,baseColumns)">
                             <li class="dragMain" ui-draggable="true" drag="baseColumnInfo" drag-channel="baseColumnList"
                                 on-drop-success="dropSuccessHandler($event,$index,baseColumns)"
                                 ng-repeat="baseColumnInfo in baseColumns" ng-show="baseColumnInfo.showFlag">
@@ -114,7 +114,7 @@
                 <div class="panel panel-drag col-sm-4">
                     <h4 translate="CMS_TXT_PRICE_ATTRIBUTE"></h4>
                     <div class="dragList">
-                        <ul ui-on-Drop="onDrop($event,$data,priceColumns)" drop-channel="priceColumnList">
+                        <ul ui-on-Drop="onDrop($event,$data,priceColumns)">
                             <li class="dragMain" ui-draggable="true" drag="priceColumnInfo" drag-channel="priceColumnList"
                                 on-drop-success="dropSuccessHandler($event,$index,priceColumns)"
                                 ng-repeat="priceColumnInfo in priceColumns" ng-show="priceColumnInfo.showFlag">
@@ -126,7 +126,7 @@
                 <div class="panel panel-drag col-sm-4">
                     <h4 translate="CMS_TXT_SALES_ATTRIBUTE"></h4>
                     <div class="dragList">
-                        <ul ui-on-Drop="onDrop($event,$data,salesColumns)" drop-channel="salesColumnList">
+                        <ul ui-on-Drop="onDrop($event,$data,salesColumns)">
                             <li class="dragMain" ui-draggable="true" drag="salesColumnInfo" drag-channel="salesColumnList"
                                 on-drop-success="dropSuccessHandler($event,$index,salesColumns)"
                                 ng-repeat="salesColumnInfo in salesColumns" ng-show="salesColumnInfo.showFlag">

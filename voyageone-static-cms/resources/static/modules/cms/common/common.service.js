@@ -89,7 +89,7 @@ define(function(require) {
                 var showUsProductList =[];
                 _.forEach(productColumns, function (object, index) {
 
-                    if (_.indexOf(usProductAttributes, (index + 1).toString()) == -1) {
+                    if (_.indexOf(usProductAttributes, (index + 1).toString()) == -1 && !_.isEmpty(usProductAttributes)) {
                         object.notVisible();
                     }
                     showUsProductList.push (object);
@@ -111,7 +111,7 @@ define(function(require) {
                 var showCnProductList = [];
                 _.forEach(productColumns, function (object, index) {
 
-                    if (_.indexOf(cnProductAttributes, (index + 1).toString()) == -1) {
+                    if (_.indexOf(cnProductAttributes, (index + 1).toString()) == -1 && !_.isEmpty(cnProductAttributes)) {
                         object.notVisible();
                     }
                     showCnProductList.push (object);

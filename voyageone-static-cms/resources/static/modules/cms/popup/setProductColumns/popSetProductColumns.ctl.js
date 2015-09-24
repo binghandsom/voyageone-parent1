@@ -87,6 +87,7 @@ define(function (require) {
                         break;
                 }
 
+                $scope.currentColumns = _.sortBy($scope.currentColumns, 'attributeValueId');
                 _.forEach($scope.currentColumns, function (object) {
                     currentAttributeValueIdList.push(object.attributeValueId);
                 });
