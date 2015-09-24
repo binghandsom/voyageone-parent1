@@ -1,5 +1,6 @@
 package com.voyageone.batch.synship.service;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.batch.SynshipConstants;
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
@@ -102,6 +103,8 @@ public class ValidIdCardByEmsService extends BaseTaskService {
 
         List<Runnable> runnable = new ArrayList<>();
 
+        List<Exception> exceptions = new ArrayList<>();
+
         // 将集合拆分到线程
         for (int i = 0; i < THREAD_COUNT; i++) {
 
@@ -114,15 +117,18 @@ public class ValidIdCardByEmsService extends BaseTaskService {
                 try {
                     validOnThread(subList);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    exceptions.add(e);
                 }
             });
         }
 
         runWithThreadPool(runnable, taskControlList);
+
+        // 任务结束后统一生成 issueLog
+        exceptions.forEach(this::logIssue);
     }
 
-    private void validOnThread(List<IdCardBean> idCardBeans) throws JSONException {
+    protected void validOnThread(List<IdCardBean> idCardBeans) throws JSONException {
         // 有数据的话，那么开始加载一些固定的配置
 
         // 短信花费计算的配置
@@ -201,17 +207,15 @@ public class ValidIdCardByEmsService extends BaseTaskService {
         Channel channel = Channel.valueOfId(idCardHistory.getOrder_channel_id());
 
         if (channel == null) {
-            logIssue(String.format("发送短信前，获取渠道失败。参数 [ %s ]", idCardHistory.getOrder_channel_id()));
             // 渠道的数据不对，无法继续
-            return;
+            throw new BusinessException(String.format("发送短信前，获取渠道失败。参数 [ %s ]", idCardHistory.getOrder_channel_id()));
         }
 
         SmsConfigBean configBean = smsConfig.get(channel, targetCode1);
 
         if (configBean == null || StringUtils.isEmpty(configBean.getContent())) {
             // 如果短信内容的配置，完全没有获取到的话，说明配置错误，不能继续
-            logIssue(String.format("短信内容没有配置，渠道 [ %s ]，Code1 [ %s ]", channel, targetCode1));
-            return;
+            throw new BusinessException(String.format("短信内容没有配置，渠道 [ %s ]，Code1 [ %s ]", channel, targetCode1));
         }
 
         // del flg 为 0，放弃发送
