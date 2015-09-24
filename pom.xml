@@ -388,7 +388,6 @@
                 <artifactId>axis2-codegen</artifactId>
                 <version>1.4.1</version>
             </dependency>
-
             <dependency>
                 <groupId>com.voyageone</groupId>
                 <artifactId>axis2-corba</artifactId>
@@ -469,6 +468,7 @@
                 <artifactId>axis2-xmlbeans</artifactId>
                 <version>1.4.1</version>
             </dependency>
+
             <dependency>
                 <groupId>com.voyageone</groupId>
                 <artifactId>jersey-bundle</artifactId>
