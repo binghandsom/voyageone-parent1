@@ -675,7 +675,7 @@
 		b.color_name,
 		b.cn_color,
 		b.madeInCountry AS madeInCountry,
-		b.materialFabric1 AS materialFabric1,
+		b.materialFabric AS materialFabric,
 		b.cnAbstract AS cnAbstract,
 		b.cnShortDescription AS cnShortDescription,
 		b.cnLongDescription AS cnLongDescription,
