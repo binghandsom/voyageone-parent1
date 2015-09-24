@@ -19,67 +19,6 @@
 			<artifactId>voyageone-com</artifactId>
 			<version>${voyageone.common.version}</version>
 		</dependency>
-
-		<dependency>
-			<groupId>com.voyageone</groupId>
-			<artifactId>jersey-bundle</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.voyageone</groupId>
-			<artifactId>jersey-spring</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>com.voyageone</groupId>
-			<artifactId>jaxrpc</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.voyageone</groupId>
-			<artifactId>axis</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.voyageone</groupId>
-			<artifactId>axiom-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.voyageone</groupId>
-			<artifactId>axiom-dom</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.voyageone</groupId>
-			<artifactId>axiom-impl</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.voyageone</groupId>
-			<artifactId>jettison</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.voyageone</groupId>
-			<artifactId>mailapi</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.voyageone</groupId>
-			<artifactId>wsdl4j</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.quartz-scheduler</groupId>
-			<artifactId>quartz</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.voyageone</groupId>
-			<artifactId>smtp</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>commons-discovery</groupId>
-			<artifactId>commons-discovery</artifactId>
-		</dependency>
-
 	</dependencies>
 	<build>
 		<finalName>voyageone-batchjob-core</finalName>

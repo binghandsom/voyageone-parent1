@@ -33,6 +33,11 @@
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-java2wsdl</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>jettison</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <finalName>voyageone-batchjob-synship</finalName>
