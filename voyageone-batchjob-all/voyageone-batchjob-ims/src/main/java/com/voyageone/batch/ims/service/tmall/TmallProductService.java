@@ -1044,14 +1044,24 @@ public class TmallProductService implements PlatformServiceInterface {
         return (List)tmallContextBuildFields.getCustomFields();
     }
 
+    /**
+     * 价格的计算方法为：
+     *  计算最高价格，库存为0的sku不参与计算
+     *  如果所有sku库存都为0， 第一个的价格作为商品价格
+     * @param cmsModelProp
+     * @return
+     */
     private double calcItemPrice(CmsModelPropBean cmsModelProp) {
-        Double resultPrice = 0d;
+        Double resultPrice = 0d, onePrice = 0d;
         List<Double> skuPriceList = new ArrayList<>();
         for (CmsCodePropBean cmsCodeProp : cmsModelProp.getCmsCodePropBeanList()) {
             for (CmsSkuPropBean cmsSkuProp : cmsCodeProp.getCmsSkuPropBeanList()) {
                 int skuQuantity = Integer.valueOf(cmsSkuProp.getProp(CmsFieldEnum.CmsSkuEnum.sku_quantity));
+                double skuPrice = Double.valueOf(cmsSkuProp.getProp(CmsFieldEnum.CmsSkuEnum.sku_price));
+                if (onePrice - 0d == 0) {
+                    onePrice = skuPrice;
+                }
                 if (skuQuantity > 0)  {
-                    double skuPrice = Double.valueOf(cmsSkuProp.getProp(CmsFieldEnum.CmsSkuEnum.sku_price));
                     skuPriceList.add(skuPrice);
                 }
             }
@@ -1059,6 +1069,9 @@ public class TmallProductService implements PlatformServiceInterface {
 
         for (double skuPrice : skuPriceList) {
             resultPrice = Double.max(resultPrice, skuPrice);
+        }
+        if (resultPrice - 0d == 0) {
+            resultPrice = onePrice;
         }
 
         return resultPrice;
