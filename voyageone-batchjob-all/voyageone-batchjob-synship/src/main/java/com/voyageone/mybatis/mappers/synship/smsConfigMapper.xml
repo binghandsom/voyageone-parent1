@@ -12,7 +12,7 @@
             a.`describe`,
             a.del_flg
         FROM
-            tm_sms_config a
+            Synship.tm_sms_config a
         WHERE
             a.order_channel_id = #{orderChannelId}
             AND a.sms_type = #{smsType}

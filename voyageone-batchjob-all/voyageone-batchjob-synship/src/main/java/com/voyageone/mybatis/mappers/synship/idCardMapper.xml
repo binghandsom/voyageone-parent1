@@ -21,7 +21,7 @@
             update_time,
             create_person,
             update_person
-        FROM tt_idcard
+        FROM Synship.tt_idcard
         WHERE approved = #{approved}
         ORDER BY update_time ASC
         LIMIT #{limit}
@@ -29,12 +29,12 @@
 
     <select id="tt_idcard_selectCountByPhoneName" resultType="int">
         SELECT count(1)
-        FROM tt_idcard
+        FROM Synship.tt_idcard
         WHERE phone = #{phone} AND receive_name = #{receive_name} AND approved = #{approved}
     </select>
 
     <update id="tt_idcard_updateApprovedWithMsg" parameterType="com.voyageone.batch.synship.modelbean.IdCardBean">
-        UPDATE tt_idcard
+        UPDATE Synship.tt_idcard
         SET approved = #{approved}, automatic_type = #{automatic_type}, comments = #{comments}, update_time = NOW(), update_person = #{update_person}
         WHERE id_no = #{id_no} AND update_time = #{update_time}
     </update>
