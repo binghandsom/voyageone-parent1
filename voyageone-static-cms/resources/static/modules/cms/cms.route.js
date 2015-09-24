@@ -81,8 +81,14 @@ define (function (require) {
             'controller': 'modules/cms/masterPropValueSetting/masterPropValueSettingController'
         },
         //add by lewis end
-        'cms_search_advance': {
-            'hash': '/cms/search/advance',
+        //'cms_search_advance_us': {
+        //    'hash': '/cms/search/advance/us',
+        //    'page': '/modules/cms/search/advanceSearch.tpl.html',
+        //    'controller': 'modules/cms/search/advanceSearch.ctl'
+        //},
+        //add by lewis end
+        'cms_search_advance_cn': {
+            'hash': '/cms/search/advance/cn',
             'page': '/modules/cms/search/advanceSearch.tpl.html',
             'controller': 'modules/cms/search/advanceSearch.ctl'
         },

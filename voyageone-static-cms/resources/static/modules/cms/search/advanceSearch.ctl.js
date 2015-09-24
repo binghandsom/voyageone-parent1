@@ -107,9 +107,9 @@ define (function (require) {
                             return ('<input type="checkbox" '+ (row.cnOfficialIsApproved ? 'checked ' : '') + ' >');
                         }),
                         DTColumnBuilder.newColumn('cnOfficialPrePublishDateTime', $translate('CMS_TXT_CN_OFFICIAL_PRE_PUBLISH_DATE_TIME')).withClass('wtab-xs text-center'),
-                        DTColumnBuilder.newColumn('cnOfficialPublishStatus', $translate('CMS_TXT_CN_OFFICIAL_PUBLISH_STATUS')).withClass('wtab-sm'),
-                        DTColumnBuilder.newColumn('cnOfficialNumIid', $translate('CMS_TXT_CN_OFFICIAL_NUMIID')).withClass('wtab-xs text-right'),
-                        DTColumnBuilder.newColumn('cnOfficialPublishFaildComment', $translate('CMS_TXT_CN_OFFICIAL_COMMENT')).withClass('wtab-xs text-right'),
+                        //DTColumnBuilder.newColumn('cnOfficialPublishStatus', $translate('CMS_TXT_CN_OFFICIAL_PUBLISH_STATUS')).withClass('wtab-sm'),
+                        //DTColumnBuilder.newColumn('cnOfficialNumIid', $translate('CMS_TXT_CN_OFFICIAL_NUMIID')).withClass('wtab-xs text-right'),
+                        //DTColumnBuilder.newColumn('cnOfficialPublishFaildComment', $translate('CMS_TXT_CN_OFFICIAL_COMMENT')).withClass('wtab-xs text-right'),
                         DTColumnBuilder.newColumn('tbPriceAdjustmentRmb', $translate('CMS_TXT_TB_PRICE_ADJUSTMENT_RMB')).withClass('wtab-xs text-right'),
                         DTColumnBuilder.newColumn('tbPriceFinalRmb', $translate('CMS_TXT_TB_PRICE_FINAL_RMB')).withClass('wtab-xs text-right'),
                         DTColumnBuilder.newColumn('tbFreeShippingType', $translate('CMS_TXT_TB_SHIPPING_TYPE')).withClass('wtab-xs ext-right'),

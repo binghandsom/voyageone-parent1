@@ -606,14 +606,14 @@ define (function (require) {
              * 刷新usProduct信息.
              */
             $scope.reFreshFunc.doRefreshUsProductInfo = function () {
-                doGetUSProductList ();
+                cmsCommonService.doGetProductListByUserConfig('us', $scope.dtUsProductList.dtInstance.DataTable);
             };
 
             /**
              * 刷新usProduct信息.
              */
             $scope.reFreshFunc.doRefreshCnProductInfo = function () {
-                doGetCNProductList ();
+                cmsCommonService.doGetProductListByUserConfig('cn', $scope.dtCnProductList.dtInstance.DataTable);
             };
             /** popup需要回调函数的处理 End **/
             /**
@@ -700,7 +700,9 @@ define (function (require) {
                         .withOption('scrollCollapse', true)
                         .withOption('ajax', $scope.doGetUSProductList)
                         .withOption('createdRow',  function(row, data, dataIndex) {
-                            $compile(angular.element(row).contents())($scope);
+                            var rowScope = $scope.$new();
+                            rowScope.$row = data;
+                            $compile(angular.element(row).contents())(rowScope);
                         })
                         .withOption('headerCallback', function(header) {
                             if (!$scope.headerCompiledUs) {
@@ -717,129 +719,123 @@ define (function (require) {
                             if (!$scope.usProductInfo.selectOneFlagList.hasOwnProperty(productId)) {
                                 $scope.usProductInfo.selectOneFlagList[productId] = false;
                             }
-                            return '<input ng-controller="selectController" type="checkbox" ng-model="usProductInfo.selectOneFlagList['+productId+']" ng-click="selectOne(' + productId + ', usProductInfo)">';
-                        })
+                            return '<input ng-controller="selectController" type="checkbox" ng-model="usProductInfo.selectOneFlagList[$row.productId]" ng-click="selectOne($row.productId, usProductInfo)">';
+                        }).notSortable(),
+                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_CODE')).withClass('wtab-xs text-center').renderWith(function () {
+                            return ('<img class="prodImg" src="{{$root.cmsMaster.imageUrl}}{{$row.productImgUrl}}"><br><a ng-controller="navigationController" href="" class="btn-main" ng-href="{{goProductPage(categoryId,$row.modelId ,$row.productId)}}">{{$row.code}}</a>');
+                        }),
+                        DTColumnBuilder.newColumn('name', $translate('CMS_TXT_NAME')).withClass('wtab-xsm').notSortable(),
+                        DTColumnBuilder.newColumn('displayOrder', $translate('CMS_TXT_DISPLAY_ORDER')).withClass('wtab-xs text-center'),
+                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_IS_HIGH_LIGHT_PRODUCT')).withClass('wtab-xs text-center').renderWith(function () {
+                            return ('<input type="checkbox" ng-model="$row.isPrimaryProduct" >');
+                        }),
+                        DTColumnBuilder.newColumn('productType', $translate('CMS_TXT_PRODUCT_TYPE')).withClass('wtab-xs').notSortable(),
+                        DTColumnBuilder.newColumn('brand', $translate('CMS_TXT_BRAND')).withClass('wtab-xs').notSortable(),
+                        DTColumnBuilder.newColumn('sizeType', $translate('CMS_TXT_SIZE_TYPE')).withClass('wtab-xs').notSortable(),
+                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_IS_NEW_ARRIVAL')).withClass('wtab-xs text-center').renderWith(function () {
+                            return ('<input type="checkbox" ng-model="$row.isNewArrival" >');
+                        }),
+                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_IS_REWARD_ELIGIBLE')).withClass('wtab-xs text-center').renderWith(function () {
+                            return ('<input type="checkbox" ng-model="$row.isRewardEligible">');
+                        }),
+                        //DTColumnBuilder.newColumn('', $translate('CMS_TXT_IS_DISCOUNT_ELIGIBLE')).withClass('wtab-xs text-center').renderWith(function () {
+                        //    return ('<input type="checkbox" ng-model="$row.isDiscountEligible">');
+                        //}),
+                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_IS_PHONE_ORDER_ONLY')).withClass('wtab-xs text-center').renderWith(function () {
+                            return ('<input type="checkbox" ng-model="$row.isPhoneOrderOnly" >');
+                        }),
+                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_IS_APPROVED_DESCRIPTION')).withClass('wtab-xs text-center').renderWith(function () {
+                            return ('<input type="checkbox" ng-model="$row.isApprovedDescription" >');
+                        }),
+                        DTColumnBuilder.newColumn('colorMap', $translate('CMS_TXT_COLOR_MAP')).withClass('wtab-xs').notSortable(),
+                        DTColumnBuilder.newColumn('color', $translate('CMS_TXT_COLOR')).withClass('wtab-sm').notSortable(),
+                        DTColumnBuilder.newColumn('madeInCountry', $translate('CMS_TXT_MADE_IN_COUNTRY')).withClass('wtab-xs').notSortable(),
+                        DTColumnBuilder.newColumn('materialFabric', $translate('CMS_TXT_MATERIAL_FABRIC')).withClass('wtab-sm').notSortable(),
+                        DTColumnBuilder.newColumn('usAbstract', $translate('CMS_TXT_ABSTRACT')).withClass('wtab-sm').notSortable(),
+                        DTColumnBuilder.newColumn('accessory', $translate('CMS_TXT_ACCESSORY')).withClass('wtab-sm').notSortable(),
+                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_SHORT_DESCRIPTION')).withClass('wtab-xsm').renderWith(function () {
+                            return ('<span title="{{$row.shortDescription}}" ng-bind="$row.shortDescription.substring(0,100)"></span>');
+                        }).notSortable(),
+                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_LONG_DESCRIPTION')).withClass('wtab-xsm').renderWith(function () {
+                            return ('<span title="{{$row.longDescription}}" ng-bind="$row.longDescription.substring(0,100)"></span>');
+                        }).notSortable(),
+                        DTColumnBuilder.newColumn('orderLimitCount', $translate('CMS_TXT_ORDER_LIMIT_COUNT')).withClass('wtab-xs text-center').notSortable(),
+                        DTColumnBuilder.newColumn('promotionTag', $translate('CMS_TXT_PROMOTION_TAG')).withClass('wtab-xs').notSortable(),
+                        DTColumnBuilder.newColumn('quantity', $translate('CMS_TXT_QUANTITY')).withClass('wtab-xs text-center'),
+                        DTColumnBuilder.newColumn('urlKey', $translate('CMS_TXT_URL_KEY')).withClass('wtab-xsm').notSortable(),
+                        DTColumnBuilder.newColumn('created', $translate('CMS_TXT_CREATED_ON')).withClass('wtab-sm'),
+                        DTColumnBuilder.newColumn('modified', $translate('CMS_TXT_LAST_UPDATED_ON')).withClass('wtab-sm'),
+                        DTColumnBuilder.newColumn('msrp', $translate('CMS_TXT_MSRP')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('usOfficialPrice', $translate('CMS_TXT_US_OFFICIAL_PRICE')).withClass('wtab-xs text-right'),
+                        //DTColumnBuilder.newColumn('usOfficialFreeShippingType', $translate('CMS_TXT_US_OFFICIAL_SHIPPING_TYPE')).withClass('wtab-xs '),
+                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_US_OFFICIAL_IS_ON_SALE')).withClass('wtab-xs text-center').renderWith(function () {
+                            return ('<input type="checkbox" ng-model="$row.usOfficialIsOnSale" >');
+                        }),
+                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_US_OFFICIAL_IS_APPROVED')).withClass('wtab-xs text-center').renderWith(function () {
+                            return ('<input type="checkbox" ng-model="$row.usOfficialIsApproved" >');
+                        }),
+                        DTColumnBuilder.newColumn('usOfficialSneakerRXSales7Days', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_RX_SALES_7_DAYS')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('usOfficialSneakerRXSales7DaysPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_RX_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('usOfficialSneakerRXSales30Days', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_RX_SALES_30_DAYS')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('usOfficialSneakerRXSales30DaysPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_RX_SALES_30_DAYS_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('usOfficialSneakerRXSalesInThisYear', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_RX_SALES_THIS_YEAR')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('usOfficialSneakerRXSalesInThisYearPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_RX_SALES_THIS_YEAR_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('usOfficialSneakerSales7Days', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_SALES_7_DAYS')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('usOfficialSneakerSales7DaysPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('usOfficialSneakerSales30Days', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_SALES_30_DAYS')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('usOfficialSneakerSales30DaysPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_SALES_30_DAYS_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('usOfficialSneakerSalesInThisYear', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_SALES_THIS_YEAR')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('usOfficialSneakerSalesInThisYearPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_SALES_THIS_YEAR_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('usOfficialSneakerWSSales7Days', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_WS_SALES_7_DAYS')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('usOfficialSneakerWSSales7DaysPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_WS_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('usOfficialSneakerWSSales30Days', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_WS_SALES_30_DAYS')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('usOfficialSneakerWSSales30DaysPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_WS_SALES_30_DAYS_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('usOfficialSneakerWSSalesInThisYear', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_WS_SALES_THIS_YEAR')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('usOfficialSneakerWSSalesInThisYearPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_WS_SALES_THIS_YEAR_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('usOfficialSneakerMobileSales7Days', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_MOBILE_SALES_7_DAYS')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('usOfficialSneakerMobileSales7DaysPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_MOBILE_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('usOfficialSneakerMobileSales30Days', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_MOBILE_SALES_30_DAYS')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('usOfficialSneakerMobileSales30DaysPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_MOBILE_SALES_30_DAYS_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('usOfficialSneakerMobileSalesInThisYear', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_MOBILE_SALES_THIS_YEAR')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('usOfficialSneakerMobileSalesInThisYearPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_MOBILE_SALES_THIS_YEAR_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('usAmazonPrice', $translate('CMS_TXT_US_AMAZON_PRICE')).withClass('wtab-xs text-right'),
+                        //DTColumnBuilder.newColumn('usAmazonFreeShippingType', $translate('CMS_TXT_US_AMAZON_SHIPPING_TYPE')).withClass('wtab-xs '),
+                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_US_AMAZON_IS_ON_SALE')).withClass('wtab-xs text-center').renderWith(function () {
+                            return ('<input type="checkbox" ng-model="$row.usAmazonIsOnSale" >');
+                        }),
+                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_US_AMAZON_IS_APPROVED')).withClass('wtab-xs text-center').renderWith(function () {
+                            return ('<input type="checkbox" ng-model="$row.usAmazonIsApproved" >');
+                        }),
+                        DTColumnBuilder.newColumn('usAmazonPrePublishDateTime', $translate('CMS_TXT_US_AMAZON_PRE_PUBLISH_DATE_TIME')).withClass('wtab-xs ').notSortable(),
+                        DTColumnBuilder.newColumn('usAmazonSales7Days', $translate('CMS_TXT_US_AMAZON_SALES_7_DAYS')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('usAmazonSales7DaysPercent', $translate('CMS_TXT_US_AMAZON_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('usAmazonSales30Days', $translate('CMS_TXT_US_AMAZON_SALES_30_DAYS')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('usAmazonSales30DaysPercent', $translate('CMS_TXT_US_AMAZON_SALES_30_DAYS_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('usAmazonSalesInThisYear', $translate('CMS_TXT_US_AMAZON_SALES_THIS_YEAR')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('usAmazonSalesInThisYearPercent', $translate('CMS_TXT_US_AMAZON_SALES_THIS_YEAR_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('cnPrice', $translate('CMS_TXT_CN_PRICE')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('cnPriceRmb', $translate('CMS_TXT_CN_PRICE_RMB')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('cnPriceFinalRmb', $translate('CMS_TXT_CN_PRICE_FINAL_RMB')).withClass('wtab-xs text-right'),
+                        //DTColumnBuilder.newColumn('cnFreeShippingType', $translate('CMS_TXT_CN_SHIPPING_TYPE')).withClass('wtab-xs '),
+                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_CN_IS_ON_SALE')).withClass('wtab-xs text-center').renderWith(function () {
+                            return ('<input type="checkbox" ng-model="$row.cnIsOnSale" >');
+                        }),
+                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_CN_IS_APPROVED')).withClass('wtab-xs text-center').renderWith(function () {
+                            return ('<input type="checkbox" ng-model="$row.cnIsApproved" >');
+                        }),
+                        DTColumnBuilder.newColumn('cnPrePublishDateTime', $translate('CMS_TXT_CN_PRE_PUBLISH_DATE_TIME')).withClass('wtab-sm').notSortable(),
+                        DTColumnBuilder.newColumn('cnSales7Days', $translate('CMS_TXT_CN_SALES_7_DAYS')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('cnSales7DaysPercent', $translate('CMS_TXT_CN_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('cnSales30Days', $translate('CMS_TXT_CN_SALES_30_DAYS')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('cnSales30DaysPercent', $translate('CMS_TXT_CN_SALES_30_DAYS_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('cnSalesInThisYear', $translate('CMS_TXT_CN_SALES_THIS_YEAR')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('cnSalesInThisYearPercent', $translate('CMS_TXT_CN_SALES_THIS_YEAR_PERCENT')).withClass('wtab-xs text-right')
                     ],
                     dtInstance: null
                 };
 
-                var usProductColumns = [
-                    DTColumnBuilder.newColumn('', $translate('CMS_TXT_CODE')).withClass('wtab-xs text-center').renderWith(function (val, type, row, cell) {
-                        return ('<img class="prodImg" src="' + $rootScope.cmsMaster.imageUrl + row.productImgUrl + '"><br><a ng-controller="navigationController" href="" class="btn-main" ng-href="{{goProductPage(' + $scope.categoryId + ',' + row.modelId + ',' + row.productId + ')}}">' + row.code + '</a>');
-                    }),
-                    DTColumnBuilder.newColumn('name', $translate('CMS_TXT_NAME')).withClass('wtab-xsm'),
-                    DTColumnBuilder.newColumn('displayOrder', $translate('CMS_TXT_DISPLAY_ORDER')).withClass('wtab-xs text-center'),
-                    DTColumnBuilder.newColumn('', $translate('CMS_TXT_IS_HIGH_LIGHT_PRODUCT')).withClass('wtab-xs text-center').renderWith(function (val, type, row, cell) {
-                        return ('<input type="checkbox" '+ (row.isPrimaryProduct ? 'checked ' : '') + ' >');
-                    }),
-                    DTColumnBuilder.newColumn('productType', $translate('CMS_TXT_PRODUCT_TYPE')).withClass('wtab-xs'),
-                    DTColumnBuilder.newColumn('brand', $translate('CMS_TXT_BRAND')).withClass('wtab-xs'),
-                    DTColumnBuilder.newColumn('sizeType', $translate('CMS_TXT_SIZE_TYPE')).withClass('wtab-xs'),
-                    DTColumnBuilder.newColumn('', $translate('CMS_TXT_IS_NEW_ARRIVAL')).withClass('wtab-xs text-center').renderWith(function (val, type, row, cell) {
-                        return ('<input type="checkbox" '+ (row.isNewArrival ? 'checked ' : '') + ' >');
-                    }),
-                    DTColumnBuilder.newColumn('', $translate('CMS_TXT_IS_REWARD_ELIGIBLE')).withClass('wtab-xs text-center').renderWith(function (val, type, row, cell) {
-                        return ('<input type="checkbox" '+ (row.isRewardEligible ? 'checked ' : '') + ' >');
-                    }),
-                    DTColumnBuilder.newColumn('', $translate('CMS_TXT_IS_DISCOUNT_ELIGIBLE')).withClass('wtab-xs text-center').renderWith(function (val, type, row, cell) {
-                        return ('<input type="checkbox" '+ (row.isDiscountEligible ? 'checked ' : '') + ' >');
-                    }),
-                    DTColumnBuilder.newColumn('', $translate('CMS_TXT_IS_PHONE_ORDER_ONLY')).withClass('wtab-xs text-center').renderWith(function (val, type, row, cell) {
-                        return ('<input type="checkbox" '+ (row.isPhoneOrderOnly ? 'checked ' : '') + ' >');
-                    }),
-                    DTColumnBuilder.newColumn('', $translate('CMS_TXT_IS_APPROVED_DESCRIPTION')).withClass('wtab-xs text-center').renderWith(function (val, type, row, cell) {
-                        return ('<input type="checkbox" '+ (row.isApprovedDescription ? 'checked ' : '') + ' >');
-                    }),
-                    DTColumnBuilder.newColumn('colorMap', $translate('CMS_TXT_COLOR_MAP')).withClass('wtab-xs'),
-                    DTColumnBuilder.newColumn('color', $translate('CMS_TXT_COLOR')).withClass('wtab-sm'),
-                    DTColumnBuilder.newColumn('madeInCountry', $translate('CMS_TXT_MADE_IN_COUNTRY')).withClass('wtab-xs'),
-                    DTColumnBuilder.newColumn('', $translate('CMS_TXT_MATERIAL_FABRIC')).withClass('wtab-sm').renderWith(function (val, type, row, cell) {
-                        return ('<span>'+row.materialFabric+'</span>');
-                    }),
-                    DTColumnBuilder.newColumn('usAbstract', $translate('CMS_TXT_ABSTRACT')).withClass('wtab-sm'),
-                    DTColumnBuilder.newColumn('accessory', $translate('CMS_TXT_ACCESSORY')).withClass('wtab-sm'),
-                    DTColumnBuilder.newColumn('', $translate('CMS_TXT_SHORT_DESCRIPTION')).withClass('wtab-xsm').renderWith(function (val, type, row, cell) {
-                        var shortDescription = commonUtil.isNotEmpty(row.shortDescription) ? row.shortDescription : '';
-                        return ('<span title="'+shortDescription+'">'+shortDescription.substring(0,100)+'</span>');
-                    }),
-                    DTColumnBuilder.newColumn('', $translate('CMS_TXT_LONG_DESCRIPTION')).withClass('wtab-xsm').renderWith(function (val, type, row, cell) {
-                        var longDescription = commonUtil.isNotEmpty(row.longDescription) ? row.longDescription : '';
-                        return ('<span title="'+longDescription+'">'+longDescription.substring(0,100)+'</span>');
-                    }),
-                    DTColumnBuilder.newColumn('orderLimitCount', $translate('CMS_TXT_ORDER_LIMIT_COUNT')).withClass('wtab-xs text-center'),
-                    DTColumnBuilder.newColumn('promotionTag', $translate('CMS_TXT_PROMOTION_TAG')).withClass('wtab-xs'),
-                    DTColumnBuilder.newColumn('quantity', $translate('CMS_TXT_QUANTITY')).withClass('wtab-xs text-center'),
-                    DTColumnBuilder.newColumn('urlKey', $translate('CMS_TXT_URL_KEY')).withClass('wtab-xsm'),
-                    DTColumnBuilder.newColumn('created', $translate('CMS_TXT_CREATED_ON')).withClass('wtab-sm'),
-                    DTColumnBuilder.newColumn('modified', $translate('CMS_TXT_LAST_UPDATED_ON')).withClass('wtab-sm'),
-                    DTColumnBuilder.newColumn('msrp', $translate('CMS_TXT_MSRP')).withClass('wtab-xs text-right'),
-
-                    DTColumnBuilder.newColumn('usOfficialPrice', $translate('CMS_TXT_US_OFFICIAL_PRICE')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialFreeShippingType', $translate('CMS_TXT_US_OFFICIAL_SHIPPING_TYPE')).withClass('wtab-xs '),
-                    DTColumnBuilder.newColumn('', $translate('CMS_TXT_US_OFFICIAL_IS_ON_SALE')).withClass('wtab-xs text-center').renderWith(function (val, type, row, cell) {
-                        return ('<input type="checkbox" '+ (row.usOfficialIsOnSale ? 'checked ' : '') + ' >');
-                    }),
-                    DTColumnBuilder.newColumn('', $translate('CMS_TXT_US_OFFICIAL_IS_APPROVED')).withClass('wtab-xs text-center').renderWith(function (val, type, row, cell) {
-                        return ('<input type="checkbox" '+ (row.usOfficialIsApproved ? 'checked ' : '') + ' >');
-                    }),
-                    DTColumnBuilder.newColumn('usOfficialSneakerRXSales7Days', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_RX_SALES_7_DAYS')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialSneakerRXSales7DaysPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_RX_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialSneakerRXSales30Days', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_RX_SALES_30_DAYS')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialSneakerRXSales30DaysPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_RX_SALES_30_DAYS_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialSneakerRXSalesInThisYear', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_RX_SALES_THIS_YEAR')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialSneakerRXSalesInThisYearPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_RX_SALES_THIS_YEAR_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialSneakerSales7Days', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_SALES_7_DAYS')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialSneakerSales7DaysPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialSneakerSales30Days', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_SALES_30_DAYS')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialSneakerSales30DaysPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_SALES_30_DAYS_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialSneakerSalesInThisYear', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_SALES_THIS_YEAR')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialSneakerSalesInThisYearPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_SALES_THIS_YEAR_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialSneakerWSSales7Days', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_WS_SALES_7_DAYS')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialSneakerWSSales7DaysPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_WS_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialSneakerWSSales30Days', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_WS_SALES_30_DAYS')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialSneakerWSSales30DaysPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_WS_SALES_30_DAYS_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialSneakerWSSalesInThisYear', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_WS_SALES_THIS_YEAR')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialSneakerWSSalesInThisYearPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_WS_SALES_THIS_YEAR_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialSneakerMobileSales7Days', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_MOBILE_SALES_7_DAYS')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialSneakerMobileSales7DaysPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_MOBILE_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialSneakerMobileSales30Days', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_MOBILE_SALES_30_DAYS')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialSneakerMobileSales30DaysPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_MOBILE_SALES_30_DAYS_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialSneakerMobileSalesInThisYear', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_MOBILE_SALES_THIS_YEAR')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usOfficialSneakerMobileSalesInThisYearPercent', $translate('CMS_TXT_US_OFFICIAL_SNEAKER_MOBILE_SALES_THIS_YEAR_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usAmazonPrice', $translate('CMS_TXT_US_AMAZON_PRICE')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usAmazonFreeShippingType', $translate('CMS_TXT_US_AMAZON_SHIPPING_TYPE')).withClass('wtab-xs '),
-                    DTColumnBuilder.newColumn('', $translate('CMS_TXT_US_AMAZON_IS_ON_SALE')).withClass('wtab-xs text-center').renderWith(function (val, type, row, cell) {
-                        return ('<input type="checkbox" '+ (row.usAmazonIsOnSale ? 'checked ' : '') + ' >');
-                    }),
-                    DTColumnBuilder.newColumn('', $translate('CMS_TXT_US_AMAZON_IS_APPROVED')).withClass('wtab-xs text-center').renderWith(function (val, type, row, cell) {
-                        return ('<input type="checkbox" '+ (row.usAmazonIsApproved ? 'checked ' : '') + ' >');
-                    }),
-                    DTColumnBuilder.newColumn('usAmazonPrePublishDateTime', $translate('CMS_TXT_US_AMAZON_PRE_PUBLISH_DATE_TIME')).withClass('wtab-xs '),
-                    DTColumnBuilder.newColumn('usAmazonSales7Days', $translate('CMS_TXT_US_AMAZON_SALES_7_DAYS')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usAmazonSales7DaysPercent', $translate('CMS_TXT_US_AMAZON_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usAmazonSales30Days', $translate('CMS_TXT_US_AMAZON_SALES_30_DAYS')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usAmazonSales30DaysPercent', $translate('CMS_TXT_US_AMAZON_SALES_30_DAYS_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usAmazonSalesInThisYear', $translate('CMS_TXT_US_AMAZON_SALES_THIS_YEAR')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('usAmazonSalesInThisYearPercent', $translate('CMS_TXT_US_AMAZON_SALES_THIS_YEAR_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('cnPrice', $translate('CMS_TXT_CN_PRICE')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('cnPriceRmb', $translate('CMS_TXT_CN_PRICE_RMB')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('cnPriceFinalRmb', $translate('CMS_TXT_CN_PRICE_FINAL_RMB')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('cnFreeShippingType', $translate('CMS_TXT_CN_SHIPPING_TYPE')).withClass('wtab-xs '),
-                    DTColumnBuilder.newColumn('', $translate('CMS_TXT_CN_IS_ON_SALE')).withClass('wtab-xs text-center').renderWith(function (val, type, row, cell) {
-                        return ('<input type="checkbox" '+ (row.cnIsOnSale ? 'checked ' : '') + ' >');
-                    }),
-                    DTColumnBuilder.newColumn('', $translate('CMS_TXT_CN_IS_APPROVED')).withClass('wtab-xs text-center').renderWith(function (val, type, row, cell) {
-                        return ('<input type="checkbox" '+ (row.cnIsApproved ? 'checked ' : '') + ' >');
-                    }),
-                    DTColumnBuilder.newColumn('cnPrePublishDateTime', $translate('CMS_TXT_CN_PRE_PUBLISH_DATE_TIME')).withClass('wtab-sm'),
-                    DTColumnBuilder.newColumn('cnSales7Days', $translate('CMS_TXT_CN_SALES_7_DAYS')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('cnSales7DaysPercent', $translate('CMS_TXT_CN_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('cnSales30Days', $translate('CMS_TXT_CN_SALES_30_DAYS')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('cnSales30DaysPercent', $translate('CMS_TXT_CN_SALES_30_DAYS_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('cnSalesInThisYear', $translate('CMS_TXT_CN_SALES_THIS_YEAR')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('cnSalesInThisYearPercent', $translate('CMS_TXT_CN_SALES_THIS_YEAR_PERCENT')).withClass('wtab-xs text-right')
-                ];
-                $scope.dtUsProductList.columns = _.union($scope.dtUsProductList.columns, cmsCommonService.doGetProductListByUserConfig('us', usProductColumns));
+                // 设置列的显示/隐藏
+                cmsCommonService.doGetProductColumnsAtFirst('us', $scope.dtUsProductList.columns);
             }
 
             /**
@@ -856,7 +852,9 @@ define (function (require) {
                         .withOption('scrollCollapse', true)
                         .withOption('ajax', $scope.doGetCNProductList)
                         .withOption('createdRow',  function(row, data, dataIndex) {
-                            $compile(angular.element(row).contents())($scope);
+                            var rowScope = $scope.$new();
+                            rowScope.$row = data;
+                            $compile(angular.element(row).contents())(rowScope);
                         })
                         .withOption('headerCallback', function(header) {
                             if (!$scope.headerCompiledCn) {
@@ -873,155 +871,171 @@ define (function (require) {
                             if (!$scope.cnProductInfo.selectOneFlagList.hasOwnProperty(productId)) {
                                 $scope.cnProductInfo.selectOneFlagList[productId] = false;
                             }
-                            return '<input ng-controller="selectController" type="checkbox" ng-model="cnProductInfo.selectOneFlagList['+productId+']" ng-click="selectOne(' + productId + ', cnProductInfo)">';
-                        })
+                            return '<input ng-controller="selectController" type="checkbox" ng-model="cnProductInfo.selectOneFlagList[$row.productId]" ng-click="selectOne($row.productId, cnProductInfo)">';
+                        }).notSortable(),
+                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_CODE')).withClass('wtab-xs text-center').renderWith(function () {
+                            return ('<img class="prodImg" ng-src="{{$root.cmsMaster.imageUrl}}{{$row.productImgUrl}}"><br><a ng-controller="navigationController" href="" class="btn-main" ng-href="{{goProductPage(categoryId,$row.modelId, $row.productId)}}">{{$row.code}}</a>');
+                        }),
+                        DTColumnBuilder.newColumn('cnName', $translate('CMS_TXT_NAME')).withClass('wtab-xsm').notSortable(),
+                        DTColumnBuilder.newColumn('cnDisplayOrder', $translate('CMS_TXT_DISPLAY_ORDER')).withClass('wtab-xs text-center'),
+                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_IS_HIGH_LIGHT_PRODUCT')).withClass('wtab-xs text-center').renderWith(function () {
+                            return ('<input type="checkbox" ng-model="$row.cnIsPrimaryProduct" >');
+                        }),
+                        DTColumnBuilder.newColumn('productType', $translate('CMS_TXT_PRODUCT_TYPE')).withClass('wtab-xs').notSortable(),
+                        DTColumnBuilder.newColumn('brand', $translate('CMS_TXT_BRAND')).withClass('wtab-xs').notSortable(),
+                        DTColumnBuilder.newColumn('cnSizeType', $translate('CMS_TXT_SIZE_TYPE')).withClass('wtab-xs').notSortable(),
+                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_IS_APPROVED_DESCRIPTION')).withClass('wtab-xs text-center').renderWith(function () {
+                            return ('<input type="checkbox" ng-model="$row.cnIsApprovedDesciption" >');
+                        }),
+                        DTColumnBuilder.newColumn('colorMap', $translate('CMS_TXT_COLOR_MAP')).withClass('wtab-xs').notSortable(),
+                        DTColumnBuilder.newColumn('cnColor', $translate('CMS_TXT_COLOR')).withClass('wtab-sm').notSortable(),
+                        DTColumnBuilder.newColumn('madeInCountry', $translate('CMS_TXT_MADE_IN_COUNTRY')).withClass('wtab-xs').notSortable(),
+                        DTColumnBuilder.newColumn('materialFabric', $translate('CMS_TXT_MATERIAL_FABRIC')).withClass('wtab-sm').notSortable(),
+                        DTColumnBuilder.newColumn('cnAbstract', $translate('CMS_TXT_ABSTRACT')).withClass('wtab-sm').notSortable(),
+                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_SHORT_DESCRIPTION')).withClass('wtab-xsm').renderWith(function () {
+                            return ('<span title="{{$row.cnShortDescription}}" ng-bind="$row.cnShortDescription.substring(0, 100)"></span>');
+                        }).notSortable(),
+                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_LONG_DESCRIPTION')).withClass('wtab-xsm').renderWith(function () {
+                            return ('<span title="{{$row.cnLongDescription}}" ng-bind="$row.cnLongDescription.substring(0, 100)"></span>');
+                        }).notSortable(),
+                        DTColumnBuilder.newColumn('quantity', $translate('CMS_TXT_QUANTITY')).withClass('wtab-xs text-center'),
+                        DTColumnBuilder.newColumn('urlKey', $translate('CMS_TXT_URL_KEY')).withClass('wtab-xsm').notSortable(),
+                        DTColumnBuilder.newColumn('created', $translate('CMS_TXT_CREATED_ON')).withClass('wtab-sm'),
+                        DTColumnBuilder.newColumn('modified', $translate('CMS_TXT_LAST_UPDATED_ON')).withClass('wtab-sm'),
+                        DTColumnBuilder.newColumn('referenceMsrp', $translate('CMS_TXT_REFERENCE_MSRP')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('referencePrice', $translate('CMS_TXT_REFERENCE_PRICE')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('cnPrice', $translate('CMS_TXT_CN_PRICE')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('cnPriceRmb', $translate('CMS_TXT_CN_PRICE_RMB')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('cnPriceFinalRmb', $translate('CMS_TXT_CN_PRICE_FINAL_RMB')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_CN_IS_ON_SALE')).withClass('wtab-xs text-center').renderWith(function () {
+                            return ('<input type="checkbox" ng-model="$row.cnIsOnSale" >');
+                        }),
+                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_CN_IS_APPROVED')).withClass('wtab-xs text-center').renderWith(function () {
+                            return ('<input type="checkbox" ng-model="$row.cnIsApproved" >');
+                        }),
+                        DTColumnBuilder.newColumn('cnSales7Days', $translate('CMS_TXT_CN_SALES_7_DAYS')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('cnSales7DaysPercent', $translate('CMS_TXT_CN_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('cnSales30Days', $translate('CMS_TXT_CN_SALES_30_DAYS')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('cnSales30DaysPercent', $translate('CMS_TXT_CN_SALES_30_DAYS_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('cnSalesInThisYear', $translate('CMS_TXT_CN_SALES_THIS_YEAR')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('cnSalesInThisYearPercent', $translate('CMS_TXT_CN_SALES_THIS_YEAR_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('cnOfficialPriceFinalRmb', $translate('CMS_TXT_CN_OFFICIAL_PRICE_FINAL_RMB')).withClass('wtab-xs text-right'),
+                        //DTColumnBuilder.newColumn('cnOfficialFreeShippingType', $translate('CMS_TXT_CN_OFFICIAL_SHIPPING_TYPE')).withClass('wtab-xs '),
+                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_CN_OFFICIAL_IS_ON_SALE')).withClass('wtab-xs text-center').renderWith(function () {
+                            return ('<input type="checkbox" ng-model="$row.cnOfficialIsOnSale" >');
+                        }),
+                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_CN_OFFICIAL_IS_APPROVED')).withClass('wtab-xs text-center').renderWith(function () {
+                            return ('<input type="checkbox" ng-model="$row.cnOfficialIsApproved" >');
+                        }),
+                        DTColumnBuilder.newColumn('cnOfficialPrePublishDateTime', $translate('CMS_TXT_CN_OFFICIAL_PRE_PUBLISH_DATE_TIME')).withClass('wtab-sm').notSortable(),
+                        DTColumnBuilder.newColumn('cnOfficialSales7Days', $translate('CMS_TXT_CN_OFFICIAL_SALES_7_DAYS')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('cnOfficialSales7DaysPercent', $translate('CMS_TXT_CN_OFFICIAL_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('cnOfficialSales30Days', $translate('CMS_TXT_CN_OFFICIAL_SALES_30_DAYS')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('cnOfficialSales30DaysPercent', $translate('CMS_TXT_CN_OFFICIAL_SALES_30_DAYS_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('cnOfficialSalesInThisYear', $translate('CMS_TXT_CN_OFFICIAL_SALES_THIS_YEAR')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('cnOfficialSalesInThisYearPercent', $translate('CMS_TXT_CN_OFFICIAL_SALES_THIS_YEAR_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('tbPriceFinalRmb', $translate('CMS_TXT_TB_PRICE_FINAL_RMB')).withClass('wtab-xs ext-right'),
+                        //DTColumnBuilder.newColumn('tbFreeShippingType', $translate('CMS_TXT_TB_SHIPPING_TYPE')).withClass('wtab-xs '),
+                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_TB_IS_ON_SALE')).withClass('wtab-xs text-center').renderWith(function () {
+                            return ('<input type="checkbox" ng-model="$row.tbIsOnSale" >');
+                        }),
+                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_TB_IS_APPROVED')).withClass('wtab-xs text-center').renderWith(function () {
+                            return ('<input type="checkbox" ng-model="$row.tbIsApproved" >');
+                        }),
+                        DTColumnBuilder.newColumn('tbPrePublishDateTime', $translate('CMS_TXT_TB_PRE_PUBLISH_DATE_TIME')).withClass('wtab-sm').notSortable(),
+                        DTColumnBuilder.newColumn('tbPublishStatus', $translate('CMS_TXT_TB_PUBLISH_STATUS')).withClass('wtab-sm').notSortable(),
+                        DTColumnBuilder.newColumn('tbNumIid', $translate('CMS_TXT_TB_NUMIID')).withClass('wtab-xs text-right').renderWith(function () {
+                            return ('<a href="" class="btn-main" ng-href="{{$root.cmsMaster.tmallUrl}}{{$row.tbNumIid}}" ng-bind="$row.tbNumIid"></a>');
+                        }).notSortable(),
+                        DTColumnBuilder.newColumn('tbPublishFaildComment', $translate('CMS_TXT_TB_COMMENT')).withClass('wtab-xs text-right').notSortable(),
+                        DTColumnBuilder.newColumn('tbSales7Days', $translate('CMS_TXT_TB_SALES_7_DAYS')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('tbSales7DaysPercent', $translate('CMS_TXT_TB_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('tbSales30Days', $translate('CMS_TXT_TB_SALES_30_DAYS')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('tbSales30DaysPercent', $translate('CMS_TXT_TB_SALES_30_DAYS_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('tbSalesInThisYear', $translate('CMS_TXT_TB_SALES_THIS_YEAR')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('tbSalesInThisYearPercent', $translate('CMS_TXT_TB_SALES_THIS_YEAR_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('tmPriceFinalRmb', $translate('CMS_TXT_TM_PRICE_FINAL_RMB')).withClass('wtab-xs text-right'),
+                        //DTColumnBuilder.newColumn('tmFreeShippingType', $translate('CMS_TXT_TM_SHIPPING_TYPE')).withClass('wtab-xs '),
+                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_TM_IS_ON_SALE')).withClass('wtab-xs text-center').renderWith(function () {
+                            return ('<input type="checkbox" ng-model="$row.tmIsOnSale" >');
+                        }),
+                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_TM_IS_APPROVED')).withClass('wtab-xs text-center').renderWith(function () {
+                            return ('<input type="checkbox" ng-model="$row.tmIsApproved" >');
+                        }),
+                        DTColumnBuilder.newColumn('tmPrePublishDateTime', $translate('CMS_TXT_TM_PRE_PUBLISH_DATE_TIME')).withClass('wtab-sm').notSortable(),
+                        DTColumnBuilder.newColumn('tmPublishStatus', $translate('CMS_TXT_TM_PUBLISH_STATUS')).withClass('wtab-sm').notSortable(),
+                        DTColumnBuilder.newColumn('tmNumIid', $translate('CMS_TXT_TM_NUMIID')).withClass('wtab-xs text-right').renderWith(function () {
+                            return ('<a href="" class="btn-main" ng-href="{{$root.cmsMaster.tmallUrl}}{{$row.tmNumIid}}" ng-bind="$row.tmNumIid"></a>');
+                        }).notSortable(),
+                        DTColumnBuilder.newColumn('tmPublishFaildComment', $translate('CMS_TXT_TM_COMMENT')).withClass('wtab-xs text-right').notSortable(),
+                        DTColumnBuilder.newColumn('tmSales7Days', $translate('CMS_TXT_TM_SALES_7_DAYS')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('tmSales7DaysPercent', $translate('CMS_TXT_TM_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('tmSales30Days', $translate('CMS_TXT_TM_SALES_30_DAYS')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('tmSales30DaysPercent', $translate('CMS_TXT_TM_SALES_30_DAYS_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('tmSalesInThisYear', $translate('CMS_TXT_TM_SALES_THIS_YEAR')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('tmSalesInThisYearPercent', $translate('CMS_TXT_TM_SALES_THIS_YEAR_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('tgPriceFinalRmb', $translate('CMS_TXT_TG_PRICE_FINAL_RMB')).withClass('wtab-xs text-right'),
+                        //DTColumnBuilder.newColumn('tgFreeShippingType', $translate('CMS_TXT_TG_SHIPPING_TYPE')).withClass('wtab-xs '),
+                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_TG_IS_ON_SALE')).withClass('wtab-xs text-center').renderWith(function () {
+                            return ('<input type="checkbox" ng-model="$row.tgIsOnSale" >');
+                        }),
+                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_TG_IS_APPROVED')).withClass('wtab-xs text-center').renderWith(function () {
+                            return ('<input type="checkbox" ng-model="$row.tgIsApproved" >');
+                        }),
+                        DTColumnBuilder.newColumn('tgPrePublishDateTime', $translate('CMS_TXT_TG_PRE_PUBLISH_DATE_TIME')).withClass('wtab-sm').notSortable(),
+                        DTColumnBuilder.newColumn('tgPublishStatus', $translate('CMS_TXT_TG_PUBLISH_STATUS')).withClass('wtab-sm').notSortable(),
+                        DTColumnBuilder.newColumn('tgNumIid', $translate('CMS_TXT_TG_NUMIID')).withClass('wtab-xs text-right').renderWith(function () {
+                            return ('<a href="" class="btn-main" ng-href="{{$root.cmsMaster.tmallUrl}}{{$row.tgNumIid}}" ng-bind="$row.tgNumIid"></a>');
+                        }).notSortable(),
+                        DTColumnBuilder.newColumn('tgPublishFaildComment', $translate('CMS_TXT_TG_COMMENT')).withClass('wtab-xs text-right').notSortable(),
+                        DTColumnBuilder.newColumn('tgSales7Days', $translate('CMS_TXT_TG_SALES_7_DAYS')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('tgSales7DaysPercent', $translate('CMS_TXT_TG_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('tgSales30Days', $translate('CMS_TXT_TG_SALES_30_DAYS')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('tgSales30DaysPercent', $translate('CMS_TXT_TG_SALES_30_DAYS_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('tgSalesInThisYear', $translate('CMS_TXT_TG_SALES_THIS_YEAR')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('tgSalesInThisYearPercent', $translate('CMS_TXT_TG_SALES_THIS_YEAR_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('jdPriceFinalRmb', $translate('CMS_TXT_JD_PRICE_FINAL_RMB')).withClass('wtab-xs text-right'),
+                        //DTColumnBuilder.newColumn('jdFreeShippingType', $translate('CMS_TXT_JD_SHIPPING_TYPE')).withClass('wtab-xs '),
+                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_JD_IS_ON_SALE')).withClass('wtab-xs text-center').renderWith(function () {
+                            return ('<input type="checkbox" ng-model="$row.jdIsOnSale" >');
+                        }),
+                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_JD_IS_APPROVED')).withClass('wtab-xs text-center').renderWith(function () {
+                            return ('<input type="checkbox" ng-model="$row.jdIsApproved" >');
+                        }),
+                        DTColumnBuilder.newColumn('jdPrePublishDateTime', $translate('CMS_TXT_JD_PRE_PUBLISH_DATE_TIME')).withClass('wtab-sm').notSortable(),
+                        DTColumnBuilder.newColumn('jdPublishStatus', $translate('CMS_TXT_JD_PUBLISH_STATUS')).withClass('wtab-sm').notSortable(),
+                        DTColumnBuilder.newColumn('jdNumIid', $translate('CMS_TXT_JD_NUMIID')).withClass('wtab-xs text-right').notSortable(),
+                        DTColumnBuilder.newColumn('jdPublishFaildComment', $translate('CMS_TXT_JD_COMMENT')).withClass('wtab-xs text-right').notSortable(),
+                        DTColumnBuilder.newColumn('jdSales7Days', $translate('CMS_TXT_JD_SALES_7_DAYS')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('jdSales7DaysPercent', $translate('CMS_TXT_JD_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('jdSales30Days', $translate('CMS_TXT_JD_SALES_30_DAYS')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('jdSales30DaysPercent', $translate('CMS_TXT_JD_SALES_30_DAYS_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('jdSalesInThisYear', $translate('CMS_TXT_JD_SALES_THIS_YEAR')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('jdSalesInThisYearPercent', $translate('CMS_TXT_JD_SALES_THIS_YEAR_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('jgPriceFinalRmb', $translate('CMS_TXT_JG_PRICE_FINAL_RMB')).withClass('wtab-xs text-right'),
+                        //DTColumnBuilder.newColumn('jgFreeShippingType', $translate('CMS_TXT_JG_SHIPPING_TYPE')).withClass('wtab-xs '),
+                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_JG_IS_ON_SALE')).withClass('wtab-xs text-center').renderWith(function () {
+                            return ('<input type="checkbox" ng-model="$row.jgIsOnSale" >');
+                        }),
+                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_JG_IS_APPROVED')).withClass('wtab-xs text-center').renderWith(function () {
+                            return ('<input type="checkbox" ng-model="$row.jgIsApproved" >');
+                        }),
+                        DTColumnBuilder.newColumn('jgPrePublishDateTime', $translate('CMS_TXT_JG_PRE_PUBLISH_DATE_TIME')).withClass('wtab-sm').notSortable(),
+                        DTColumnBuilder.newColumn('jgPublishStatus', $translate('CMS_TXT_JG_PUBLISH_STATUS')).withClass('wtab-sm').notSortable(),
+                        DTColumnBuilder.newColumn('jgNumIid', $translate('CMS_TXT_JG_NUMIID')).withClass('wtab-xs text-right').notSortable(),
+                        DTColumnBuilder.newColumn('jgPublishFaildComment', $translate('CMS_TXT_JG_COMMENT')).withClass('wtab-xs text-right').notSortable(),
+                        DTColumnBuilder.newColumn('jgSales7Days', $translate('CMS_TXT_JG_SALES_7_DAYS')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('jgSales7DaysPercent', $translate('CMS_TXT_JG_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('jgSales30Days', $translate('CMS_TXT_JG_SALES_30_DAYS')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('jgSales30DaysPercent', $translate('CMS_TXT_JG_SALES_30_DAYS_PERCENT')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('jgSalesInThisYear', $translate('CMS_TXT_JG_SALES_THIS_YEAR')).withClass('wtab-xs text-right'),
+                        DTColumnBuilder.newColumn('jgSalesInThisYearPercent', $translate('CMS_TXT_JG_SALES_THIS_YEAR_PERCENT')).withClass('wtab-xs text-right')
                     ],
                     dtInstance: null
                 };
 
-                var cnProductColumns = [
-                    DTColumnBuilder.newColumn('', $translate('CMS_TXT_CODE')).withClass('wtab-xs text-center').renderWith(function (val, type, row, cell) {
-                        return ('<img class="prodImg" src="' + $rootScope.cmsMaster.imageUrl + row.productImgUrl + '"><br><a ng-controller="navigationController" href="" class="btn-main" ng-href="{{goProductPage(' + $scope.categoryId + ',' + row.modelId + ',' + row.productId + ')}}">' + row.code + '</a>');
-                    }),
-                    DTColumnBuilder.newColumn('cnName', $translate('CMS_TXT_NAME')).withClass('wtab-xsm'),
-                    DTColumnBuilder.newColumn('cnDisplayOrder', $translate('CMS_TXT_DISPLAY_ORDER')).withClass('wtab-xs text-center'),
-                    DTColumnBuilder.newColumn('', $translate('CMS_TXT_IS_HIGH_LIGHT_PRODUCT')).withClass('wtab-xs text-center').renderWith(function (val, type, row, cell) {
-                        return ('<input type="checkbox" '+ (row.cnIsPrimaryProduct ? 'checked ' : '') + ' >');
-                    }),
-                    DTColumnBuilder.newColumn('productType', $translate('CMS_TXT_PRODUCT_TYPE')).withClass('wtab-xs'),
-                    DTColumnBuilder.newColumn('brand', $translate('CMS_TXT_BRAND')).withClass('wtab-xs'),
-                    DTColumnBuilder.newColumn('cnSizeType', $translate('CMS_TXT_SIZE_TYPE')).withClass('wtab-xs'),
-                    DTColumnBuilder.newColumn('', $translate('CMS_TXT_IS_APPROVED_DESCRIPTION')).withClass('wtab-xs text-center').renderWith(function (val, type, row, cell) {
-                        return ('<input type="checkbox" '+ (row.cnIsApprovedDescription ? 'checked ' : '') + ' >');
-                    }),
-                    DTColumnBuilder.newColumn('colorMap', $translate('CMS_TXT_COLOR_MAP')).withClass('wtab-xs'),
-                    DTColumnBuilder.newColumn('cnColor', $translate('CMS_TXT_COLOR')).withClass('wtab-sm'),
-                    DTColumnBuilder.newColumn('madeInCountry', $translate('CMS_TXT_MADE_IN_COUNTRY')).withClass('wtab-xs'),
-                    DTColumnBuilder.newColumn('', $translate('CMS_TXT_MATERIAL_FABRIC')).withClass('wtab-sm').renderWith(function (val, type, row, cell) {
-                        return ('<span>'+row.materialFabric+'</span>');
-                    }),
-                    DTColumnBuilder.newColumn('cnAbstract', $translate('CMS_TXT_ABSTRACT')).withClass('wtab-sm'),
-                    DTColumnBuilder.newColumn('', $translate('CMS_TXT_SHORT_DESCRIPTION')).withClass('wtab-xsm').renderWith(function (val, type, row, cell) {
-                        var cnShortDescription = commonUtil.isNotEmpty(row.cnShortDescription) ? row.cnShortDescription : '';
-                        return ('<span title="'+cnShortDescription+'">'+cnShortDescription.substring(0, 100)+'</span>');
-                    }),
-                    DTColumnBuilder.newColumn('', $translate('CMS_TXT_LONG_DESCRIPTION')).withClass('wtab-xsm').renderWith(function (val, type, row, cell) {
-                        var cnLongDescription = commonUtil.isNotEmpty(row.cnLongDescription) ? row.cnLongDescription : '';
-                        return ('<span title="'+cnLongDescription+'">'+cnLongDescription.substring(0, 100)+'</span>');
-                    }),
-                    DTColumnBuilder.newColumn('quantity', $translate('CMS_TXT_QUANTITY')).withClass('wtab-xs text-center'),
-                    DTColumnBuilder.newColumn('urlKey', $translate('CMS_TXT_URL_KEY')).withClass('wtab-xsm'),
-                    DTColumnBuilder.newColumn('created', $translate('CMS_TXT_CREATED_ON')).withClass('wtab-sm'),
-                    DTColumnBuilder.newColumn('modified', $translate('CMS_TXT_LAST_UPDATED_ON')).withClass('wtab-sm'),
-                    DTColumnBuilder.newColumn('referenceMsrp', $translate('CMS_TXT_REFERENCE_MSRP')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('referencePrice', $translate('CMS_TXT_REFERENCE_PRICE')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('cnPrice', $translate('CMS_TXT_CN_PRICE')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('cnPriceRmb', $translate('CMS_TXT_CN_PRICE_RMB')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('cnPriceFinalRmb', $translate('CMS_TXT_CN_PRICE_FINAL_RMB')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('', $translate('CMS_TXT_CN_IS_ON_SALE')).withClass('wtab-xs text-center').renderWith(function (val, type, row, cell) {
-                        return ('<input type="checkbox" '+ (row.cnIsOnSale ? 'checked ' : '') + ' >');
-                    }),
-                    DTColumnBuilder.newColumn('', $translate('CMS_TXT_CN_IS_APPROVED')).withClass('wtab-xs text-center').renderWith(function (val, type, row, cell) {
-                        return ('<input type="checkbox" '+ (row.cnIsApproved ? 'checked ' : '') + ' >');
-                    }),
-                    DTColumnBuilder.newColumn('cnSales7Days', $translate('CMS_TXT_CN_SALES_7_DAYS')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('cnSales7DaysPercent', $translate('CMS_TXT_CN_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('cnSales30Days', $translate('CMS_TXT_CN_SALES_30_DAYS')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('cnSales30DaysPercent', $translate('CMS_TXT_CN_SALES_30_DAYS_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('cnSalesInThisYear', $translate('CMS_TXT_CN_SALES_THIS_YEAR')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('cnSalesInThisYearPercent', $translate('CMS_TXT_CN_SALES_THIS_YEAR_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('cnOfficialPriceFinalRmb', $translate('CMS_TXT_CN_OFFICIAL_PRICE_FINAL_RMB')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('cnOfficialFreeShippingType', $translate('CMS_TXT_CN_OFFICIAL_SHIPPING_TYPE')).withClass('wtab-xs '),
-                    DTColumnBuilder.newColumn('', $translate('CMS_TXT_CN_OFFICIAL_IS_ON_SALE')).withClass('wtab-xs text-center').renderWith(function (val, type, row, cell) {
-                        return ('<input type="checkbox" '+ (row.cnOfficialIsOnSale ? 'checked ' : '') + ' >');
-                    }),
-                    DTColumnBuilder.newColumn('', $translate('CMS_TXT_CN_OFFICIAL_IS_APPROVED')).withClass('wtab-xs text-center').renderWith(function (val, type, row, cell) {
-                        return ('<input type="checkbox" '+ (row.cnOfficialIsApproved ? 'checked ' : '') + ' >');
-                    }),
-                    DTColumnBuilder.newColumn('cnOfficialPrePublishDateTime', $translate('CMS_TXT_CN_OFFICIAL_PRE_PUBLISH_DATE_TIME')).withClass('wtab-sm'),
-                    DTColumnBuilder.newColumn('cnOfficialSales7Days', $translate('CMS_TXT_CN_OFFICIAL_SALES_7_DAYS')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('cnOfficialSales7DaysPercent', $translate('CMS_TXT_CN_OFFICIAL_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('cnOfficialSales30Days', $translate('CMS_TXT_CN_OFFICIAL_SALES_30_DAYS')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('cnOfficialSales30DaysPercent', $translate('CMS_TXT_CN_OFFICIAL_SALES_30_DAYS_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('cnOfficialSalesInThisYear', $translate('CMS_TXT_CN_OFFICIAL_SALES_THIS_YEAR')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('cnOfficialSalesInThisYearPercent', $translate('CMS_TXT_CN_OFFICIAL_SALES_THIS_YEAR_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('tbPriceFinalRmb', $translate('CMS_TXT_TB_PRICE_FINAL_RMB')).withClass('wtab-xs ext-right'),
-                    DTColumnBuilder.newColumn('tbFreeShippingType', $translate('CMS_TXT_TB_SHIPPING_TYPE')).withClass('wtab-xs '),
-                    DTColumnBuilder.newColumn('', $translate('CMS_TXT_TB_IS_ON_SALE')).withClass('wtab-xs text-center').renderWith(function (val, type, row, cell) {
-                        return ('<input type="checkbox" '+ (row.tbIsOnSale ? 'checked ' : '') + ' >');
-                    }),
-                    DTColumnBuilder.newColumn('', $translate('CMS_TXT_TB_IS_APPROVED')).withClass('wtab-xs text-center').renderWith(function (val, type, row, cell) {
-                        return ('<input type="checkbox" '+ (row.tbIsApproved ? 'checked ' : '') + ' >');
-                    }),
-                    DTColumnBuilder.newColumn('tbPrePublishDateTime', $translate('CMS_TXT_TB_PRE_PUBLISH_DATE_TIME')).withClass('wtab-sm'),
-                    DTColumnBuilder.newColumn('tbSales7Days', $translate('CMS_TXT_TB_SALES_7_DAYS')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('tbSales7DaysPercent', $translate('CMS_TXT_TB_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('tbSales30Days', $translate('CMS_TXT_TB_SALES_30_DAYS')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('tbSales30DaysPercent', $translate('CMS_TXT_TB_SALES_30_DAYS_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('tbSalesInThisYear', $translate('CMS_TXT_TB_SALES_THIS_YEAR')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('tbSalesInThisYearPercent', $translate('CMS_TXT_TB_SALES_THIS_YEAR_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('tmPriceFinalRmb', $translate('CMS_TXT_TM_PRICE_FINAL_RMB')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('tmFreeShippingType', $translate('CMS_TXT_TM_SHIPPING_TYPE')).withClass('wtab-xs '),
-                    DTColumnBuilder.newColumn('', $translate('CMS_TXT_TM_IS_ON_SALE')).withClass('wtab-xs text-center').renderWith(function (val, type, row, cell) {
-                        return ('<input type="checkbox" '+ (row.tmIsOnSale ? 'checked ' : '') + ' >');
-                    }),
-                    DTColumnBuilder.newColumn('', $translate('CMS_TXT_TM_IS_APPROVED')).withClass('wtab-xs text-center').renderWith(function (val, type, row, cell) {
-                        return ('<input type="checkbox" '+ (row.tmIsApproved ? 'checked ' : '') + ' >');
-                    }),
-                    DTColumnBuilder.newColumn('tmPrePublishDateTime', $translate('CMS_TXT_TM_PRE_PUBLISH_DATE_TIME')).withClass('wtab-sm'),
-                    DTColumnBuilder.newColumn('tmSales7Days', $translate('CMS_TXT_TM_SALES_7_DAYS')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('tmSales7DaysPercent', $translate('CMS_TXT_TM_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('tmSales30Days', $translate('CMS_TXT_TM_SALES_30_DAYS')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('tmSales30DaysPercent', $translate('CMS_TXT_TM_SALES_30_DAYS_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('tmSalesInThisYear', $translate('CMS_TXT_TM_SALES_THIS_YEAR')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('tmSalesInThisYearPercent', $translate('CMS_TXT_TM_SALES_THIS_YEAR_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('tgPriceFinalRmb', $translate('CMS_TXT_TG_PRICE_FINAL_RMB')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('tgFreeShippingType', $translate('CMS_TXT_TG_SHIPPING_TYPE')).withClass('wtab-xs '),
-                    DTColumnBuilder.newColumn('', $translate('CMS_TXT_TG_IS_ON_SALE')).withClass('wtab-xs text-center').renderWith(function (val, type, row, cell) {
-                        return ('<input type="checkbox" '+ (row.tgIsOnSale ? 'checked ' : '') + ' >');
-                    }),
-                    DTColumnBuilder.newColumn('', $translate('CMS_TXT_TG_IS_APPROVED')).withClass('wtab-xs text-center').renderWith(function (val, type, row, cell) {
-                        return ('<input type="checkbox" '+ (row.tgIsApproved ? 'checked ' : '') + ' >');
-                    }),
-                    DTColumnBuilder.newColumn('tgPrePublishDateTime', $translate('CMS_TXT_TG_PRE_PUBLISH_DATE_TIME')).withClass('wtab-sm'),
-                    DTColumnBuilder.newColumn('tgSales7Days', $translate('CMS_TXT_TG_SALES_7_DAYS')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('tgSales7DaysPercent', $translate('CMS_TXT_TG_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('tgSales30Days', $translate('CMS_TXT_TG_SALES_30_DAYS')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('tgSales30DaysPercent', $translate('CMS_TXT_TG_SALES_30_DAYS_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('tgSalesInThisYear', $translate('CMS_TXT_TG_SALES_THIS_YEAR')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('tgSalesInThisYearPercent', $translate('CMS_TXT_TG_SALES_THIS_YEAR_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('jdPriceFinalRmb', $translate('CMS_TXT_JD_PRICE_FINAL_RMB')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('jdFreeShippingType', $translate('CMS_TXT_JD_SHIPPING_TYPE')).withClass('wtab-xs '),
-                    DTColumnBuilder.newColumn('', $translate('CMS_TXT_JD_IS_ON_SALE')).withClass('wtab-xs text-center').renderWith(function (val, type, row, cell) {
-                        return ('<input type="checkbox" '+ (row.jdIsOnSale ? 'checked ' : '') + ' >');
-                    }),
-                    DTColumnBuilder.newColumn('', $translate('CMS_TXT_JD_IS_APPROVED')).withClass('wtab-xs text-center').renderWith(function (val, type, row, cell) {
-                        return ('<input type="checkbox" '+ (row.jdIsApproved ? 'checked ' : '') + ' >');
-                    }),
-                    DTColumnBuilder.newColumn('jdPrePublishDateTime', $translate('CMS_TXT_JD_PRE_PUBLISH_DATE_TIME')).withClass('wtab-sm'),
-                    DTColumnBuilder.newColumn('jdSales7Days', $translate('CMS_TXT_JD_SALES_7_DAYS')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('jdSales7DaysPercent', $translate('CMS_TXT_JD_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('jdSales30Days', $translate('CMS_TXT_JD_SALES_30_DAYS')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('jdSales30DaysPercent', $translate('CMS_TXT_JD_SALES_30_DAYS_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('jdSalesInThisYear', $translate('CMS_TXT_JD_SALES_THIS_YEAR')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('jdSalesInThisYearPercent', $translate('CMS_TXT_JD_SALES_THIS_YEAR_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('jgPriceFinalRmb', $translate('CMS_TXT_JG_PRICE_FINAL_RMB')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('jgFreeShippingType', $translate('CMS_TXT_JG_SHIPPING_TYPE')).withClass('wtab-xs '),
-                    DTColumnBuilder.newColumn('', $translate('CMS_TXT_JG_IS_ON_SALE')).withClass('wtab-xs text-center').renderWith(function (val, type, row, cell) {
-                        return ('<input type="checkbox" '+ (row.jgIsOnSale ? 'checked ' : '') + ' >');
-                    }),
-                    DTColumnBuilder.newColumn('', $translate('CMS_TXT_JG_IS_APPROVED')).withClass('wtab-xs text-center').renderWith(function (val, type, row, cell) {
-                        return ('<input type="checkbox" '+ (row.jgIsApproved ? 'checked ' : '') + ' >');
-                    }),
-                    DTColumnBuilder.newColumn('jgPrePublishDateTime', $translate('CMS_TXT_JG_PRE_PUBLISH_DATE_TIME')).withClass('wtab-sm'),
-                    DTColumnBuilder.newColumn('jgSales7Days', $translate('CMS_TXT_JG_SALES_7_DAYS')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('jgSales7DaysPercent', $translate('CMS_TXT_JG_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('jgSales30Days', $translate('CMS_TXT_JG_SALES_30_DAYS')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('jgSales30DaysPercent', $translate('CMS_TXT_JG_SALES_30_DAYS_PERCENT')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('jgSalesInThisYear', $translate('CMS_TXT_JG_SALES_THIS_YEAR')).withClass('wtab-xs text-right'),
-                    DTColumnBuilder.newColumn('jgSalesInThisYearPercent', $translate('CMS_TXT_JG_SALES_THIS_YEAR_PERCENT')).withClass('wtab-xs text-right')
-                ];
-                $scope.dtCnProductList.columns = _.union($scope.dtCnProductList.columns, cmsCommonService.doGetProductListByUserConfig('cn', cnProductColumns));
+                // 设置列的显示/隐藏
+                cmsCommonService.doGetProductColumnsAtFirst('cn', $scope.dtCnProductList.columns);
             }
 
             /**

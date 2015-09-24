@@ -59,66 +59,65 @@ define(function(require) {
             };
 
             /**
-             * 根据不同的国家展示不同的产品信息.
+             * 根据不同的国家展示不同的产品信息.(datatable初始化调用)
              * @param type
-             * @returns {Array}
+             * @param columns
              */
-            this.doGetProductListByUserConfig = function (type, productColumns) {
+            this.doGetProductColumnsAtFirst = function (type, columns) {
+
+                var productAttributes = [];
                 switch (type) {
                     case 'us':
-                        return getUsProductList(productColumns);
+                        productAttributes = userService.getUserConfig().cmsUsProductAttributes;
                         break;
                     case 'cn':
-                        return getCnProductList(productColumns);
+                        productAttributes = userService.getUserConfig().cmsCnProductAttributes;
                         break;
                     default :
                         break;
                 }
+
+                // 获得US产品的属性列表.
+                if (!_.isEmpty(productAttributes)) {
+                    _.forEach(columns, function (object, index) {
+                        if (_.indexOf(productAttributes, index.toString()) == -1 && index > 0) {
+                            object.notVisible();
+                        }
+                    });
+                }
             };
 
             /**
-             * 获取US的产品信息列表.
+             * 根据不同的国家展示不同的产品信息.
+             * @param type
              * @returns {Array}
              */
-            function getUsProductList (productColumns) {
+            this.doGetProductListByUserConfig = function (type, datatable) {
+
+                var productAttributes = [];
+                switch (type) {
+                    case 'us':
+                        productAttributes = userService.getUserConfig().cmsUsProductAttributes;
+                        break;
+                    case 'cn':
+                        productAttributes = userService.getUserConfig().cmsCnProductAttributes;
+                        break;
+                    default :
+                        break;
+                }
 
                 // 获得US产品的属性列表.
-                var usProductAttributes = userService.getUserConfig().cmsUsProductAttributes;
+                if (!_.isEmpty(productAttributes)) {
 
-                // 获取被显示的产品columns列表.
-                var showUsProductList =[];
-                _.forEach(productColumns, function (object, index) {
-
-                    if (_.indexOf(usProductAttributes, (index + 1).toString()) == -1 && !_.isEmpty(usProductAttributes)) {
-                        object.notVisible();
-                    }
-                    showUsProductList.push (object);
-                });
-
-                return showUsProductList;
-            }
-
-            /**
-             * 获取CN的产品信息列表.
-             * @returns {Array}
-             */
-            function getCnProductList (productColumns) {
-
-                // 获得US产品的属性列表.
-                var cnProductAttributes = userService.getUserConfig().cmsCnProductAttributes;
-
-                // 获取被显示的产品columns列表.
-                var showCnProductList = [];
-                _.forEach(productColumns, function (object, index) {
-
-                    if (_.indexOf(cnProductAttributes, (index + 1).toString()) == -1 && !_.isEmpty(cnProductAttributes)) {
-                        object.notVisible();
-                    }
-                    showCnProductList.push (object);
-                });
-
-                return showCnProductList;
-            }
+                    datatable.columns().visible(false);
+                    datatable.column(0).visible(true);
+                    _.forEach(productAttributes, function (value) {
+                        datatable.column(parseInt(value)).visible(true);
+                    });
+                } else {
+                    datatable.columns().visible(true);
+                }
+            };
 
 /*            this.doGetCMSMasterInfo = function (channelId) {
                 var defer = $q.defer ();
