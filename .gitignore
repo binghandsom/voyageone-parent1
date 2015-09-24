@@ -8,7 +8,6 @@ classes/
 *.iml
 *.patch
 *.diff
-test
 node_modules/
 target/
 .externalToolBuilders/
