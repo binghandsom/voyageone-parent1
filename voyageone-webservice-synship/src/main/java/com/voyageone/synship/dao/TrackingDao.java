@@ -21,6 +21,15 @@ public class TrackingDao extends BaseDao {
     }
 
     /**
+     * 获得物流单号
+     * @param cwb 查询参数
+     * @return syn_ship_no
+     */
+    public String getSynShipNo(String cwb) {
+        return selectOne("tt_orders_getSynShipNo", cwb);
+    }
+
+    /**
      * 获得物流信息
      * @param syn_ship_no synShip物流单号
      * @return List<FromReservation>

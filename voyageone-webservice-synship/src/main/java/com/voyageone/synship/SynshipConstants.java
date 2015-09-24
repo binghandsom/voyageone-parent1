@@ -9,7 +9,10 @@ public class SynshipConstants {
      * Tracking 需要的操作地址
      */
     public static final class TrackingUrls {
+        // 聚美订单物流信息查询
         public static final String GET_TRACKING_JM_INFO = "/tracking/getJMInfo";
+        // 官网订单物流信息查询
+        public static final String GET_TRACKING_CN_INFO = "/tracking/getCNInfo";
     }
 
     /**
