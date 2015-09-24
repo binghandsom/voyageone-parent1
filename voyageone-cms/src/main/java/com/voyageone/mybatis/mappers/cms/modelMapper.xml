@@ -1668,7 +1668,6 @@
 		b.modified,
 		b.msrp,
 		b.usOfficialPrice,
-		b.usOfficialFreeShippingType,
 		b.usOfficialIsOnSale,
 		b.usOfficialIsApproved,
 		0 as usOfficialSneakerRXSales7Days,
@@ -1696,7 +1695,6 @@
 		0 as usOfficialSneakerMobileSalesInThisYear,
 		'' as usOfficialSneakerMobileSalesInThisYearPercent,
 		b.usAmazonPrice,
-		b.usAmazonFreeShippingType,
 		b.usAmazonIsOnSale,
 		b.usAmazonIsApproved,
 		b.usAmazonPrePublishDateTime,
@@ -1726,6 +1724,8 @@
 		b.is_effective,
 		b.cn_price_adjustment_rmb,
 		b.cn_price_discount,
+		b.usAmazonFreeShippingType,
+		b.usOfficialFreeShippingType,
 		b.image_name,
 		b.modifier,
 		b.creater
@@ -1769,6 +1769,7 @@
 		<result column="size_type_name" property="cnSizeType"/>
 		<result column="is_approved_description" property="isApprovedDescription"/>
 		<result column="is_effective" property="isEffective"/>
+		<result column="cnIsApprovedDesciption" property="cnIsApprovedDesciption"  jdbcType="BOOLEAN"/>
 		<result column="color_name" property="colorMap"/>
 		<result column="cn_color" property="cnColor"/>
 		<result column="madeInCountry" property="madeInCountry"/>
@@ -1886,7 +1887,21 @@
 		<result column="jdSalesInThisYearPercent" property="jdSalesInThisYearPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
 		<result column="jgSalesInThisYear" property="jgSalesInThisYear" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
 		<result column="jgSalesInThisYearPercent" property="jgSalesInThisYearPercent" typeHandler="com.voyageone.cms.utils.EmptyStringPercent"/>
-
+		<result column="tbPublishStatus" property="tbPublishStatus" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tbNumIid" property="tbNumIid" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tbPublishFaildComment" property="tbPublishFaildComment" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tmPublishStatus" property="tmPublishStatus" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tmNumIid" property="tmNumIid" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tmPublishFaildComment" property="tmPublishFaildComment" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tgPublishStatus" property="tgPublishStatus" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tgNumIid" property="tgNumIid" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tgPublishFaildComment" property="tgPublishFaildComment" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="jdPublishStatus" property="jdPublishStatus" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="jdNumIid" property="jdNumIid" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="jdPublishFaildComment" property="jdPublishFaildComment" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="jgPublishStatus" property="jgPublishStatus" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="jgNumIid" property="jgNumIid" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="jgPublishFaildComment" property="jgPublishFaildComment" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
 	</resultMap>
 	<select id="cms_get_CNModelProductList" resultMap="ModelCNProductResultMap" parameterType="HashMap">
 		select
@@ -1897,6 +1912,7 @@
 		b.product_type_name,
 		b.brand_name,
 		b.size_type_name,
+		b.cnIsApprovedDesciption,
 		b.color_name,
 		b.cn_color,
 		b.madeInCountry AS madeInCountry,
@@ -1933,10 +1949,17 @@
 		b.cnOfficialSalesInThisYear,
 		b.cnOfficialSalesInThisYearPercent,
 		b.tbPriceFinalRmb AS tbPriceFinalRmb,
-		b.tbFreeShippingType AS tbFreeShippingType,
 		b.tbIsOnSale AS tbIsOnSale,
 		b.tbIsApproved AS tbIsApproved,
 		b.tbPrePublishDateTime AS tbPrePublishDateTime,
+		case b.tbPublishStatus
+		when 0 then 'Pending'
+		when 1 then 'Success'
+		when 2 then 'Faild'
+		else b.tbPublishStatus
+		end as tbPublishStatus,
+		b.tbNumIid,
+		b.tbPublishFaildComment,
 		b.tbSales7Days,
 		b.tbSales7DaysPercent,
 		b.tbSales30Days,
@@ -1944,10 +1967,17 @@
 		b.tbSalesInThisYear,
 		b.tbSalesInThisYearPercent,
 		b.tmPriceFinalRmb AS tmPriceFinalRmb,
-		b.tmFreeShippingType AS tmFreeShippingType,
 		b.tmIsOnSale AS tmIsOnSale,
 		b.tmIsApproved AS tmIsApproved,
 		b.tmPrePublishDateTime AS tmPrePublishDateTime,
+		case b.tmPublishStatus
+		when 0 then 'Pending'
+		when 1 then 'Success'
+		when 2 then 'Faild'
+		else b.tmPublishStatus
+		end as tmPublishStatus,
+		b.tmNumIid,
+		b.tmPublishFaildComment,
 		b.tmSales7Days,
 		b.tmSales7DaysPercent,
 		b.tmSales30Days,
@@ -1955,10 +1985,17 @@
 		b.tmSalesInThisYear,
 		b.tmSalesInThisYearPercent,
 		b.tgPriceFinalRmb AS tgPriceFinalRmb,
-		b.tgFreeShippingType AS tgFreeShippingType,
 		b.tgIsOnSale AS tgIsOnSale,
 		b.tgIsApproved AS tgIsApproved,
 		b.tgPrePublishDateTime AS tgPrePublishDateTime,
+		case b.tgPublishStatus
+		when 0 then 'Pending'
+		when 1 then 'Success'
+		when 2 then 'Faild'
+		else b.tgPublishStatus
+		end as tgPublishStatus,
+		b.tgNumIid,
+		b.tgPublishFaildComment,
 		b.tgSales7Days,
 		b.tgSales7DaysPercent,
 		b.tgSales30Days,
@@ -1966,10 +2003,17 @@
 		b.tgSalesInThisYear,
 		b.tgSalesInThisYearPercent,
 		b.jdPriceFinalRmb AS jdPriceFinalRmb,
-		b.jdFreeShippingType AS jdFreeShippingType,
 		b.jdIsOnSale AS jdIsOnSale,
 		b.jdIsApproved AS jdIsApproved,
 		b.jdPrePublishDateTime AS jdPrePublishDateTime,
+		case b.jdPublishStatus
+		when 0 then 'Pending'
+		when 1 then 'Success'
+		when 2 then 'Faild'
+		else b.jdPublishStatus
+		end as jdPublishStatus,
+		b.jdNumIid,
+		b.jdPublishFaildComment,
 		b.jdSales7Days,
 		b.jdSales7DaysPercent,
 		b.jdSales30Days,
@@ -1977,10 +2021,17 @@
 		b.jdSalesInThisYear,
 		b.jdSalesInThisYearPercent,
 		b.jgPriceFinalRmb AS jgPriceFinalRmb,
-		b.jgFreeShippingType AS jgFreeShippingType,
 		b.jgIsOnSale AS jgIsOnSale,
 		b.jgIsApproved AS jgIsApproved,
 		b.jgPrePublishDateTime AS jgPrePublishDateTime,
+		case b.jgPublishStatus
+		when 0 then 'Pending'
+		when 1 then 'Success'
+		when 2 then 'Faild'
+		else b.jgPublishStatus
+		end as jgPublishStatus,
+		b.jgNumIid,
+		b.jgPublishFaildComment,
 		b.jgSales7Days,
 		b.jgSales7DaysPercent,
 		b.jgSales30Days,
@@ -2017,7 +2068,12 @@
 		b.tgSalesAllDaysPercent,
 		b.tmPriceAdjustmentRmb AS tmPriceAdjustmentRmb,
 		b.tmSalesAllDays,
-		b.tmSalesAllDaysPercent
+		b.tmSalesAllDaysPercent,
+		b.tbFreeShippingType AS tbFreeShippingType,
+		b.tmFreeShippingType AS tmFreeShippingType,
+		b.tgFreeShippingType AS tgFreeShippingType,
+		b.jdFreeShippingType AS jdFreeShippingType,
+		b.jgFreeShippingType AS jgFreeShippingType
 		FROM
 		cms_bt_relation_model_product a
 		LEFT JOIN view_cn_product_info_list b ON a.product_id = b.product_id and a.channel_id = b.channel_id
