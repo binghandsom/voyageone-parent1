@@ -503,7 +503,12 @@
 		a.category_id = #{categoryId}
 		and a.channel_id = #{channelId}
 		GROUP BY b.CODE,b.channel_id
-		ORDER BY a.display_order asc
+		<if test="order != null and order != ''">
+			ORDER BY #{order,jdbcType=INTEGER}  ${dir}
+		</if>
+		<if test="order == null or order == ''">
+			ORDER BY a.display_order
+		</if>
 		<if test="offset != null and pageCount != null">
 			LIMIT #{offset}, #{pageCount}
 		</if>
@@ -783,8 +788,12 @@
 		GROUP BY
 		b. CODE,
 		b.channel_id
-		ORDER BY
-		a.display_order ASC
+		<if test="order != null and order != ''">
+			ORDER BY #{order,jdbcType=INTEGER}  ${dir}
+		</if>
+		<if test="order == null or order == ''">
+			ORDER BY a.cn_display_order
+		</if>
 		<if test="offset != null and pageCount != null">
 			LIMIT #{offset}, #{pageCount}
 		</if>

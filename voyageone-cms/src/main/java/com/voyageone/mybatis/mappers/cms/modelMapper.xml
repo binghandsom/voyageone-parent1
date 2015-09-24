@@ -1738,7 +1738,12 @@
 		and a.channel_id = #{channelId}
 
 		GROUP BY b.CODE,b.channel_id
-		order by a.display_order
+		<if test="order != null and order != ''">
+			ORDER BY #{order,jdbcType=INTEGER}  ${dir}
+		</if>
+		<if test="order == null or order == ''">
+			ORDER BY a.cn_display_order
+		</if>
 		<if test="start != null and length != null">
 			LIMIT #{start}, #{length}
 		</if>
@@ -2021,7 +2026,12 @@
 		a.model_id=#{modelId}
 		and a.channel_id=#{channelId}
 		GROUP BY b.code,b.channel_id
-		order by b.cn_display_order
+		<if test="order != null and order != ''">
+			ORDER BY #{order,jdbcType=INTEGER}  ${dir}
+		</if>
+		<if test="order == null or order == ''">
+			ORDER BY b.cn_display_order
+		</if>
 		<if test="start != null and length != null">
 			LIMIT #{start}, #{length}
 		</if>
