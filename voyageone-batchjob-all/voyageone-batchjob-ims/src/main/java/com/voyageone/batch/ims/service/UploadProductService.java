@@ -224,6 +224,8 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                     }
                     //成功时，publish_status设为1
                     productPublishBean.setPublish_status(1);
+                    productPublishBean.setModifier(getTaskName());
+                    productPublishBean.setModified(DateTimeUtil.getNow());
                     productPublishDao.updateProductPublish(productPublishBean);
                 }
                 break;
@@ -246,6 +248,8 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                     productPublishBean.setPublish_status(2);
                     productPublishBean.setPublish_failed_comment(workLoadBean.getFailCause());
                     productPublishBean.setIs_published(workLoadBean.getIsPublished());
+                    productPublishBean.setModifier(getTaskName());
+                    productPublishBean.setModified(DateTimeUtil.getNow());
                     productPublishDao.updateProductPublish(productPublishBean);
                 }
                 break;
