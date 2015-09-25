@@ -141,6 +141,8 @@ public class ImagePostScene7Job {
 		isRun = false;
 
 		logger.info(taskCheck + "任务结束");
+
+		taskCheck = "ImagePostScene7";
 	}
 	
 	class ImageGetAndSendTask implements Callable<String> {
