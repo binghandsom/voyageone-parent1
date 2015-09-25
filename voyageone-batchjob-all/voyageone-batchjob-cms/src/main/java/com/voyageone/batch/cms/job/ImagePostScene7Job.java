@@ -31,7 +31,7 @@ public class ImagePostScene7Job {
 	@Autowired
 	IssueLog issueLog;
 	
-	private static String taskCheck = "ImagePostScene7";
+	private String taskCheck = "ImagePostScene7";
 	
 	public static boolean isRun = false;
 	
