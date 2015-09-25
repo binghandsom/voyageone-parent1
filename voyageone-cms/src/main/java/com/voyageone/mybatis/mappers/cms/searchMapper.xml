@@ -621,63 +621,77 @@
 			b.tgFreeShippingType AS tgFreeShippingType,
 			b.jdFreeShippingType AS jdFreeShippingType,
 			b.jgFreeShippingType AS jgFreeShippingType
-			FROM
-			voyageone_ims.ims_bt_product s
-			LEFT JOIN cms_bt_cn_product_share r on r.product_id = s.product_id and r.channel_id = s.channel_id and r.cart_id = s.cart_id
-				<if test="isApprovedDescription != null and isApprovedDescription != ''">
-				left join cms_bt_cn_product t on r.product_id = t.product_id and r.channel_id = t.channel_id and t.cn_is_approved_description = #{isApprovedDescription}
-				</if>
-				LEFT JOIN view_cn_product_info_list b ON r.channel_id = b.channel_id AND r.product_id = b.product_id
-				LEFT JOIN Synship.wms_bt_inventory_center_logic c ON c.code = b.CODE and c.order_channel_id = b.channel_id
-			WHERE
-				s.channel_id = #{channelId}
-				<if test="publishStatus != null and publishStatus != ''">
-					and s.publish_status = #{publishStatus}
-				</if>
-				<if test="isOnSale != null and isOnSale != ''">
-				AND r.is_on_sale = #{isOnSale}
-				</if>
-				<if test="cartId != null and cartId != ''">
-				AND s.cart_id = #{cartId}
-				</if>
-				<if test="isApproved != null and isApproved != ''">
-				AND r.is_approved = #{isApproved}
-				</if>
-
-			GROUP BY s.product_id, s.channel_id
-			<if test="start != null and length != null">
+		FROM
+		(
+		SELECT
+		r.product_id,
+		r.channel_id
+		FROM
+		cms_bt_cn_product_share r
+		<if test="publishStatus != null and publishStatus != ''">
+			left join voyageone_ims.ims_bt_product s on r.product_id = s.product_id and r.channel_id = s.channel_id and r.cart_id = s.cart_id
+		</if>
+		<if test="isApprovedDescription != null and isApprovedDescription != ''">
+			left join cms_bt_cn_product t on r.product_id = t.product_id and r.channel_id = t.channel_id
+		</if>
+		WHERE
+		r.channel_id = #{channelId}
+		<if test="isOnSale != null and isOnSale != ''">
+			AND r.is_on_sale = #{isOnSale}
+		</if>
+		<if test="cartId != null and cartId != ''">
+			AND r.cart_id = #{cartId}
+		</if>
+		<if test="isApproved != null and isApproved != ''">
+			AND r.is_approved = #{isApproved}
+		</if>
+		<if test="publishStatus != null and publishStatus != ''">
+			AND s.publish_status = #{publishStatus}
+		</if>
+		<if test="isApprovedDescription != null and isApprovedDescription != ''">
+			AND t.cn_is_approved_description = #{isApprovedDescription}
+		</if>
+		GROUP BY r.product_id, r.channel_id
+		<if test="start != null and length != null">
 			LIMIT #{start}, #{length}
-			</if>
+		</if>
+		) t1
+		LEFT JOIN view_cn_product_info_list b ON t1.channel_id = b.channel_id AND t1.product_id = b.product_id
+		LEFT JOIN Synship.wms_bt_inventory_center_logic c ON c.code = b.CODE and c.order_channel_id = b.channel_id
+		GROUP BY b.CODE,b.channel_id
 
 	</select>
 	<select id="advance_search_count" resultType="Integer"  parameterType="HashMap">
 		select count(1) from
 		(SELECT
-		s.product_id
+		r.product_id
 		FROM
-		voyageone_ims.ims_bt_product s
-		LEFT JOIN cms_bt_cn_product_share r on r.product_id = s.product_id and r.channel_id = s.channel_id and r.cart_id = s.cart_id
-		<if test="isApprovedDescription != null and isApprovedDescription != ''">
-			left join cms_bt_cn_product t on r.product_id = t.product_id and r.channel_id = t.channel_id and t.cn_is_approved_description = #{isApprovedDescription}
-		</if>
-		LEFT JOIN view_cn_product_info_list b ON r.channel_id = b.channel_id AND r.product_id = b.product_id
-		LEFT JOIN Synship.wms_bt_inventory_center_logic c ON c.code = b.CODE and c.order_channel_id = b.channel_id
-		WHERE
-		s.channel_id = #{channelId}
+		cms_bt_cn_product_share r
 		<if test="publishStatus != null and publishStatus != ''">
-			and s.publish_status = #{publishStatus}
+			left join voyageone_ims.ims_bt_product s on r.product_id = s.product_id and r.channel_id = s.channel_id and r.cart_id = s.cart_id
 		</if>
+		<if test="isApprovedDescription != null and isApprovedDescription != ''">
+			left join cms_bt_cn_product t on r.product_id = t.product_id and r.channel_id = t.channel_id
+		</if>
+		WHERE
+		r.channel_id = #{channelId}
 		<if test="isOnSale != null and isOnSale != ''">
 			AND r.is_on_sale = #{isOnSale}
 		</if>
 		<if test="cartId != null and cartId != ''">
-			AND s.cart_id = #{cartId}
+			AND r.cart_id = #{cartId}
 		</if>
 		<if test="isApproved != null and isApproved != ''">
 			AND r.is_approved = #{isApproved}
 		</if>
+		<if test="publishStatus != null and publishStatus != ''">
+			AND s.publish_status = #{publishStatus}
+		</if>
+		<if test="isApprovedDescription != null and isApprovedDescription != ''">
+			AND t.cn_is_approved_description = #{isApprovedDescription}
+		</if>
 
-		GROUP BY s.product_id, s.channel_id
+		GROUP BY r.product_id, r.channel_id
 		) a
 	</select>
 </mapper>
