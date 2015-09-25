@@ -504,9 +504,11 @@ define (function (require) {
                 categoryService.doGetUSCategoryInfo ($scope.currentCategoryId)
                     .then (function (data) {
                     $scope.usCategoryInfo = data;
-                    $scope.categoryName = angular.copy (data.showName);
                     $scope.oldUsCategoryInfo = angular.copy ($scope.usCategoryInfo);
                     $scope.usCategoryIsChanged = false;
+                    if (!_.isNull(data)) {
+                        $scope.categoryName = angular.copy (data.showName);
+                    }
                 });
             }
 
