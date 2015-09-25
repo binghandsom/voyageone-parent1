@@ -38,10 +38,12 @@ define([ "modules/cms/cms.module",
 								}
 								if (cmsCategorise[i].mainCategoryId >0) {
 									cmsCategorise[i].inheritClass = 'super-category fa fa-star';
+									cmsCategorise[i].isPropMatch = true;
 								}
 								
 								if (cmsCategorise[i].mainCategoryId == 0 && cmsCategorise[i].mainCategoryPath!=null) {
 									cmsCategorise[i].inheritClass = 'sub-category fa fa-long-arrow-up';
+									cmsCategorise[i].isPropMatch = false;
 								}
 							}
 							
@@ -116,6 +118,7 @@ define([ "modules/cms/cms.module",
 					//更新cms类目.
 					editService.doUpdateMainCategoryId(parmData,false).then(
 							function(respose){
+						category.isPropMatch = true;
 						category.isSave = false;
 						notify.success("CMS_TXT_MSG_UPDATE_SUCCESS");
 					});
@@ -138,12 +141,19 @@ define([ "modules/cms/cms.module",
 							}
 							item.platformInfo = allCategory[i].platformInfo;
 							saveItemList.push(item);
-							allCategory[i].isSave = false;
 						}
 					}
 					
 					//更新cms类目.
 					editService.doUpdateMainCategoryId(saveItemList,false).then(function(respose){
+						for (var i = 0; i < allCategory.length; i++) {
+							if (allCategory[i].isSave) {
+								if(allCategory[i].mainCategoryId>0){
+									allCategory[i].isPropMatch = true;;
+								}
+								allCategory[i].isSave = false;
+							}
+						}
 						notify.success("CMS_TXT_MSG_UPDATE_SUCCESS");
 					});
 				};
@@ -209,7 +219,7 @@ define([ "modules/cms/cms.module",
 				 
 				 $scope.propertyMatch = function(cmsCategory){
 					 
-					 $location.path(cmsRoute.cms_feed_prop_match.path(cmsCategory.categoryId));
+					 $location.path(cmsRoute.cms_feed_prop_match.path(cmsCategory.mainCategoryId));
 				 };
 				    
 			} ]);
