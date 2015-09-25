@@ -333,8 +333,11 @@ public class ChannelConfigEnums {
         /**
          * Jewelry
          */
-        JEWELRY("010");
-
+        JEWELRY("010"),
+        /**
+         * LOCONDO
+         */
+        LOCONDO("011");
 
         private String id;
 
@@ -368,6 +371,7 @@ public class ChannelConfigEnums {
                 case "007": return CHAMPION;
                 case "008": return REAL_MADRID;
                 case "010": return JEWELRY;
+                case "011": return LOCONDO;
                 default: return null;
             }
         }
