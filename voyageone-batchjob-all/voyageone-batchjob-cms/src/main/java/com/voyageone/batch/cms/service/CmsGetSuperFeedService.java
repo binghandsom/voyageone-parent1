@@ -1621,7 +1621,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 			if ( f == 0 ){
 				keyWrod_model = Feed.getVal1(channel_id,FeedEnums.Name.model_m_model) + " not in ('" + modelList.get(f);
 			}else{
-				keyWrod_model = keyWrod_model + "', " + modelList.get(f);
+				keyWrod_model = keyWrod_model + "', '" + modelList.get(f);
 			}
 		}
 		if (keyWrod_model !=""){
@@ -1634,7 +1634,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 			if ( f == 0 ){
 				keyWrod_product = Feed.getVal1(channel_id,FeedEnums.Name.product_p_code) + "not in ('" + productList.get(f);
 			}else{
-				keyWrod_product = keyWrod_product + "', " + productList.get(f);
+				keyWrod_product = keyWrod_product + "', '" + productList.get(f);
 			}
 		}
 		if (keyWrod_product !=""){
