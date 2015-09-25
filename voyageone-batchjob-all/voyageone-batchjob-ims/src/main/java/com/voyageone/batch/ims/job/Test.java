@@ -30,26 +30,21 @@ import java.util.List;
 public class Test {
     private Log logger = LogFactory.getLog(Test.class);
 
-    public void main()
-    {
-        logger.info("start.");
-        try {
-            Thread.sleep(10*1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-    public static void main(String[] args)
-    {
-        String f = "http://s7d5.scene7.com/is/image/sneakerhead/Jewelry%%5F20150819%%5Fx380%%5F251x?$380%%2D251$&$text05=%s&$text04=%s&$text03=%s&$text02=%s&$text01=%s";
-        //String s = String.format(f, "a", "b", "c", "d", "e");
-        String s = null;
-        try {
-            s = URLEncoder.encode("http://s7d5.scene7.com/is/image/sneakerhead/Jewelry%5F20150819%5Fx380%5F251x?$380%2D251$&$text05=Pendants&$text04=&$text03=Swarovski&$text02=Yellow / White / white / white&$text01=Gold / Swarovski", "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        System.out.println(s);
+    public static void main(String[] args) {
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("start.");
+                try {
+                    Thread.sleep(10*1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        t.start();
+        t.interrupt();
+        System.out.println("haha");
     }
 
     public static class TextValue
