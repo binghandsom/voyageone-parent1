@@ -144,6 +144,8 @@ public interface OmsMessageConstants {
     public static final String MESSAGE_CODE_210069 = "210069";
     //	订单sku个数过多，不允许Approve
     public static final String MESSAGE_CODE_210070 = "210070";
+    //	汇率保存异常
+    public static final String MESSAGE_CODE_210071 = "210071";
 
     public static final class MessageContent {
         // 单笔退款详情  调用异常

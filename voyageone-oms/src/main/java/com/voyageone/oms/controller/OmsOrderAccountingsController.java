@@ -13,10 +13,9 @@ import com.voyageone.core.modelbean.UserSessionBean;
 import com.voyageone.oms.OmsConstants;
 import com.voyageone.oms.OmsMessageConstants;
 import com.voyageone.oms.OmsUrlConstants;
+import com.voyageone.oms.formbean.OutFormSearchRate;
 import com.voyageone.oms.formbean.OutFormSearchSettlementFile;
-import com.voyageone.oms.service.OmsOrderAccountingsSearchService;
-import com.voyageone.oms.service.OmsOrderAccountingsService;
-import com.voyageone.oms.service.OmsOrdersSearchService;
+import com.voyageone.oms.service.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,11 +43,15 @@ public class OmsOrderAccountingsController extends BaseController {
 	 */
 	private static Log logger = LogFactory.getLog(OmsOrderAccountingsController.class);
 	@Autowired
-	private OmsOrderAccountingsService omsOrderAccountingsService;
-	@Autowired
 	private OmsOrdersSearchService omsOrdersSearchService;
 	@Autowired
+	private OmsOrderAccountingsService omsOrderAccountingsService;
+	@Autowired
 	private OmsOrderAccountingsSearchService omsOrderAccountingsSearchService;
+	@Autowired
+	private OmsOrderRateService omsOrderRateService;
+	@Autowired
+	private OmsOrderRateSearchService omsOrderRateSearchService;
 
 	/**
 	 * 账务文件保存
@@ -89,6 +92,13 @@ public class OmsOrderAccountingsController extends BaseController {
 			List<MasterInfoBean> shoppingCartList = omsOrdersSearchService.getShoppingCarts(propertyId);
 			Map<String, Object> shoppingCartInfo = new HashMap<String, Object>();
 			shoppingCartInfo.put("propertyId", propertyId);
+
+//			// default 项目追加
+//			MasterInfoBean defaultItem = new MasterInfoBean();
+//			defaultItem.setId("");
+//			defaultItem.setName("Please select...");
+//			shoppingCartList.add(0, defaultItem);
+
 			shoppingCartInfo.put("shoppingCartList", shoppingCartList);
 			shoppingCartInfoList.add(shoppingCartInfo);
 		}
@@ -123,7 +133,7 @@ public class OmsOrderAccountingsController extends BaseController {
 	}
 
 	/**
-	 * 画面初始化（获得查询条件）
+	 * SettlementFile检索
 	 *
 	 * @param params
 	 * @param response
@@ -154,6 +164,82 @@ public class OmsOrderAccountingsController extends BaseController {
 		AjaxResponseBean
 				.newResult(true)
 				.setResultInfo(settlementFileSearchResultMap)
+				.writeTo(getRequest(), response);
+	}
+
+	/**
+	 * 汇率保存
+	 *
+	 * @param params
+	 * @param response
+	 */
+	@RequestMapping(value = "/doSaveRate", method = RequestMethod.POST)
+	public void doSaveRate(@RequestBody Map<String, Object> params, HttpServletResponse response) {
+		// DB 中order_channel_id
+		String storeId = (String) params.get("storeId");
+		// DB中cart_id
+		String channelId = (String) params.get("channelId");
+		// 汇率
+		String rate = (String) params.get("rate");
+		// 计算误差
+		String calculationError = (String) params.get("calculationError");
+		// 币种
+		String currency = (String) params.get("currency");
+		// 汇率日期（含时间）
+		String rateTime = DateTimeUtil.getGMTTime();
+
+		List<Object> retSaveRet = omsOrderRateService.saveRate(storeId, channelId, rate, currency, rateTime, calculationError, getUser());
+
+		if ((boolean)retSaveRet.get(0)) {
+			Map<String, Object> saveRateResultMap = new HashMap<String, Object>();
+			saveRateResultMap.put("calculationError", (String)retSaveRet.get(1));
+
+			AjaxResponseBean
+					.newResult(true)
+					.setResultInfo(saveRateResultMap)
+					.writeTo(getRequest(), response);
+		} else {
+			AjaxResponseBean
+					.newResult(false)
+					.setResult(false, OmsMessageConstants.MESSAGE_CODE_210071,
+							MessageConstants.MESSAGE_TYPE_BUSSINESS_EXCEPTION)
+					.writeTo(getRequest(), response);
+		}
+	}
+
+	/**
+	 * 汇率检索
+	 *
+	 * @param params
+	 * @param response
+	 */
+	@RequestMapping(value = "/doSearchRate", method = RequestMethod.POST)
+	public void doSearchRate(@RequestBody Map<String, Object> params, HttpServletResponse response) {
+		// DB 中order_channel_id
+		List<String> storeId = (List<String>) params.get("storeId");
+		// DB中cart_id
+		List<String> channelId = (List<String>) params.get("channelId");
+		String searchDateFrom = (String) params.get("searchDateFrom");
+		String searchDateTo = (String) params.get("searchDateTo");
+		String currency = (String) params.get("currency");
+
+		int page = (int) params.get("page");
+		int size = (int) params.get("size");
+
+		searchDateFrom = StringUtils.isNullOrBlank2(searchDateFrom) ? "1990-01-01 00:00:00" : DateTimeUtil.getGMTTimeFrom(searchDateFrom, getUser().getTimeZone());
+		searchDateTo = StringUtils.isNullOrBlank2(searchDateTo) ? "2099-12-31 23:59:59" : DateTimeUtil.getGMTTimeTo(searchDateTo, getUser().getTimeZone());
+
+		List<OutFormSearchRate> rateList = omsOrderRateSearchService.searchRate(storeId, channelId, searchDateFrom, searchDateTo, currency, page, size, getUser());
+
+		int rowsCount = omsOrderRateSearchService.getSearchRateCount(storeId, channelId, searchDateFrom, searchDateTo, currency);
+
+		Map<String, Object> rateSearchResultMap = new HashMap<String, Object>();
+		rateSearchResultMap.put("data", rateList);
+		rateSearchResultMap.put("rows", rowsCount);
+
+		AjaxResponseBean
+				.newResult(true)
+				.setResultInfo(rateSearchResultMap)
 				.writeTo(getRequest(), response);
 	}
 }

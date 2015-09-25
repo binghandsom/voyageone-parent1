@@ -219,4 +219,134 @@
 			and t.upload_time between #{searchDateFrom} and #{searchDateTo}
 		</where>
 	</select>
+
+	<!-- 汇率追加文件件数检索 -->
+	<update id="oms_bt_rate_updateRateInfo" parameterType="com.voyageone.oms.modelbean.RateBean">
+		INSERT INTO oms_bt_rate (
+					order_channel_id,
+					cart_id,
+					rate_time,
+					rate,
+					currency,
+					calculation_error,
+					created,
+					modified,
+					creater,
+					modifier)
+		VALUES (#{orderChannelId},
+					#{cartId},
+					#{rateTime},
+					#{rate},
+					#{currency},
+					#{calculationError},
+					now(),
+					now(),
+					#{creater},
+					#{modifier})
+		ON DUPLICATE KEY UPDATE
+					rate = #{rate},
+					calculation_error = #{calculationError},
+					modified = now(),
+					modifier = #{modifier}
+	</update>
+
+	<!-- 汇率检索 -->
+	<resultMap id="searchRateInfoMap" type="com.voyageone.oms.formbean.OutFormSearchRate">
+		<result column="rate_time" property="rateTime"/>
+		<result column="rate" property="rate"/>
+		<result column="currency" property="currency"/>
+		<result column="order_channel_id" property="orderChannelId"/>
+		<result column="cart_id" property="cartId"/>
+		<result column="calculation_error" property="calculationError"/>
+		<result column="order_channel_name" property="orderChannelName"/>
+		<result column="cart_name" property="cartName"/>
+	</resultMap>
+	<select id="oms_bt_rate_search" parameterType="HashMap" resultMap="searchRateInfoMap">
+		SELECT
+		t.rate_time,
+		t.rate,
+		t.currency,
+		t.order_channel_id,
+		t.cart_id,
+		t.calculation_error,
+		c.short_name as cart_name,
+		p.name as order_channel_name
+		FROM
+		oms_bt_rate t
+		left join ct_cart c
+			on t.cart_id = c.cart_id
+		left join tm_order_channel p
+			on t.order_channel_id = p.order_channel_id
+		<where>
+			<if test="storeId != null ">
+				t.order_channel_id in
+				<foreach item="item" index="index" collection="storeId" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="channelId != null ">
+				and t.cart_id in
+				<foreach item="item" index="index" collection="channelId" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="currency != null ">
+				and t.currency = #{currency}
+			</if>
+			and t.rate_time between #{searchDateFrom} and #{searchDateTo}
+		</where>
+		order by t.rate_time desc
+		limit #{offset}, #{size}
+	</select>
+
+	<!-- 汇率检索 -->
+	<resultMap id="searchRateInfoMapForCond" type="com.voyageone.oms.formbean.OutFormSearchRate">
+		<result column="rate_time" property="rateTime"/>
+		<result column="rate" property="rate"/>
+		<result column="currency" property="currency"/>
+		<result column="order_channel_id" property="orderChannelId"/>
+		<result column="cart_id" property="cartId"/>
+		<result column="calculation_error" property="calculationError"/>
+	</resultMap>
+	<select id="oms_bt_rate_searchForCond" parameterType="HashMap" resultMap="searchRateInfoMapForCond">
+		SELECT
+			t.rate_time,
+			t.rate,
+			t.currency,
+			t.order_channel_id,
+			t.cart_id,
+			t.calculation_error
+		FROM
+			oms_bt_rate t
+		where
+			t.order_channel_id = #{storeId}
+			and t.cart_id = #{channelId}
+			and t.currency = #{currency}
+		order by t.rate_time desc
+	</select>
+
+	<!-- 汇率件数检索 -->
+	<select id="oms_bt_rate_search_count" parameterType="HashMap" resultType="int">
+		select count(1) from oms_bt_rate t
+		<where>
+			<if test="storeId != null ">
+				t.order_channel_id in
+				<foreach item="item" index="index" collection="storeId" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="channelId != null ">
+				and t.cart_id in
+				<foreach item="item" index="index" collection="channelId" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="currency != null ">
+				and t.currency = #{currency}
+			</if>
+			and t.rate_time between #{searchDateFrom} and #{searchDateTo}
+		</where>
+	</select>
+
+
 </mapper>
