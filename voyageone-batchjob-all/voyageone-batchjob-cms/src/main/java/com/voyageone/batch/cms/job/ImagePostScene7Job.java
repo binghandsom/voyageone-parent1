@@ -31,7 +31,7 @@ public class ImagePostScene7Job {
 	@Autowired
 	IssueLog issueLog;
 	
-	private static String taskCheck = "ImagePostScene7";
+	private String taskCheck = "ImagePostScene7";
 	
 	public static boolean isRun = false;
 	
@@ -141,6 +141,8 @@ public class ImagePostScene7Job {
 		isRun = false;
 
 		logger.info(taskCheck + "任务结束");
+
+		taskCheck = "ImagePostScene7";
 	}
 	
 	class ImageGetAndSendTask implements Callable<String> {
