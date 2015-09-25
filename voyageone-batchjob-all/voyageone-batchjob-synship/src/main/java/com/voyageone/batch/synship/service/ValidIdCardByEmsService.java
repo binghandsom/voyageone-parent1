@@ -3,7 +3,9 @@ package com.voyageone.batch.synship.service;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.batch.SynshipConstants;
 import com.voyageone.batch.base.BaseTaskService;
+import com.voyageone.batch.core.Enums.TaskControlEnums.Name;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
+import com.voyageone.batch.core.util.TaskControlUtils;
 import com.voyageone.batch.synship.dao.IdCardDao;
 import com.voyageone.batch.synship.dao.IdCardHistoryDao;
 import com.voyageone.batch.synship.dao.ShortUrlDao;
@@ -47,9 +49,7 @@ public class ValidIdCardByEmsService extends BaseTaskService {
                     "姓名：%s \r\n" +
                     "拒绝原因：%s";
 
-    private final static int THREAD_COUNT = 1;
-
-    private final static int EVERY_THREAD_COUNT = 30;
+    private final static int EVERY_THREAD_COUNT = 5;
 
     @Autowired
     private IdCardDao idCardDao;
@@ -82,7 +82,15 @@ public class ValidIdCardByEmsService extends BaseTaskService {
      */
     @Override
     public String getTaskName() {
-        return "ValidIdCardByEms";
+        return "validIdCardByEmsTask";
+    }
+
+    /**
+     * 获取打印的日志是否需要包含线程
+     */
+    @Override
+    public boolean getLogWithThread() {
+        return true;
     }
 
     /**
@@ -92,6 +100,9 @@ public class ValidIdCardByEmsService extends BaseTaskService {
      */
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
+
+        String thread_count = TaskControlUtils.getVal1(taskControlList, Name.thread_count);
+        final int THREAD_COUNT = Integer.valueOf(thread_count);
 
         int limit = THREAD_COUNT * EVERY_THREAD_COUNT;
 
@@ -108,11 +119,19 @@ public class ValidIdCardByEmsService extends BaseTaskService {
 
         List<Exception> exceptions = new ArrayList<>();
 
+        int total = idCardBeans.size();
+
         // 将集合拆分到线程
         for (int i = 0; i < THREAD_COUNT; i++) {
-
             int start = i * EVERY_THREAD_COUNT;
             int end = start + EVERY_THREAD_COUNT;
+
+            if (end >= total) {
+                end = total;
+                // 如果已经不足够了。说明就算后续还可以开线程，但是已经不需要了。
+                // 标记 i 为最大，结束 for 循环
+                i = THREAD_COUNT;
+            }
 
             List<IdCardBean> subList = idCardBeans.subList(start, end);
 
@@ -125,13 +144,15 @@ public class ValidIdCardByEmsService extends BaseTaskService {
             });
         }
 
+        $info("生成的线程任务数：" + runnable.size());
+
         runWithThreadPool(runnable, taskControlList);
 
         // 任务结束后统一生成 issueLog
         exceptions.forEach(this::logIssue);
     }
 
-    protected void validOnThread(List<IdCardBean> idCardBeans) throws JSONException {
+    protected void validOnThread(List<IdCardBean> idCardBeans) throws JSONException, InterruptedException {
         // 有数据的话，那么开始加载一些固定的配置
 
         // 短信花费计算的配置
@@ -144,11 +165,12 @@ public class ValidIdCardByEmsService extends BaseTaskService {
         // 短信内容的配置
         SmsConfig smsConfig = smsConfigService.getSmsConfigs(SynshipConstants.SMS_TYPE_CLOUD_CLIENT);
 
-        $info("准备开始");
-
         for (IdCardBean idCardBean : idCardBeans) {
-            // 打印分割
-            $info("---------------------------------------------------------");
+
+            // 因为每个结束（continue）的位置不同，所以统一在开始进行暂停和分割
+            // 休息 1 秒
+            Thread.sleep(1000);
+
             // 打印属性
             $prop("idCardBean", "id_no", idCardBean.getId_no());
             $prop("idCardBean", "source_order_id", idCardBean.getSource_order_id());
@@ -228,8 +250,6 @@ public class ValidIdCardByEmsService extends BaseTaskService {
         // 短信内容中各参数的设定
         smsContent = String.format(smsContent, channel.getFullName(), idCardBean.getReceive_name(), shortUrlBean.getShort_key());
 
-        $info("短消息发送成功的场合，更新发送履历 ");
-
         // 发送履历的做成
         SmsHistoryBean smsHistoryBean = new SmsHistoryBean();
 
@@ -238,6 +258,7 @@ public class ValidIdCardByEmsService extends BaseTaskService {
         double count = Math.ceil((double) smsContent.length() / smsWords);
         double smsFee = count * eachFee;
 
+        smsHistoryBean.setTask_id("0");
         smsHistoryBean.setSource_order_id(shortUrlBean.getSource_order_id());
         smsHistoryBean.setShip_phone(idCardBean.getPhone());
         smsHistoryBean.setShip_name(idCardBean.getReceive_name());
@@ -266,6 +287,9 @@ public class ValidIdCardByEmsService extends BaseTaskService {
     }
 
     private void afterPass(IdCardHistory idCardHistory, IdCardBean idCardBean, ShortUrlBean shortUrlBean) {
+
+        if (shortUrlBean == null)
+            throw new BusinessException("没有获取到 ShortUrlBean，记录主键：" + idCardBean.getId_no());
 
         if (idCardBean.getPhone().equals(shortUrlBean.getShip_phone()) && idCardBean.getReceive_name().equals(shortUrlBean.getShip_name())) {
             $info("信息验证成功");
@@ -358,8 +382,7 @@ public class ValidIdCardByEmsService extends BaseTaskService {
             function = "validCardNoFormat";
             serviceResult = emsService.validCardNoFormat(idCode);
 
-            $info("callEmsValid : 通过 : validCardNoFormat");
-            $info("通过结果 : " + serviceResult.getMessage());
+            $info("调用 validCardNoFormat 通过结果 : " + serviceResult.getMessage());
 
             if (!serviceResult.getIsSuccess()) {
                 // 验证格式不通过，写历史后，退出
@@ -369,8 +392,7 @@ public class ValidIdCardByEmsService extends BaseTaskService {
             function = "validCardNo";
             serviceResult = emsService.validCardNo(name, idCode);
 
-            $info("callEmsValid : 通过 : validCardNo");
-            $info("通过结果 : " + serviceResult.getMessage());
+            $info("调用 callEmsValid 通过结果 : " + serviceResult.getMessage());
 
             if (!serviceResult.getIsSuccess()) {
 
@@ -446,6 +468,9 @@ public class ValidIdCardByEmsService extends BaseTaskService {
 
         idCardHistory.setAudit_result(result);
         idCardHistory.setIsSuccess(result);
+
+        idCardHistory.setCreate_person(getTaskName());
+        idCardHistory.setUpdate_person(getTaskName());
 
         return idCardHistory;
     }

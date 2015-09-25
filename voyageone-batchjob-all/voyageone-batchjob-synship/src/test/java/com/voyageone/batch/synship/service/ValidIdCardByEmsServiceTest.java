@@ -34,9 +34,7 @@ public class ValidIdCardByEmsServiceTest {
     @Test
     public void testValidOnThread() throws Exception {
 
-        List<IdCardBean> idCardBeans = idCardDao.selectNewestByApproved(DELETE, 1);
-
-        log.info("这次测试的是：" + idCardBeans.get(0).getId_no());
+        List<IdCardBean> idCardBeans = idCardDao.selectNewestByApproved(WAITING_AUTO, 1);
 
         validIdCardByEmsService.validOnThread(idCardBeans);
     }
