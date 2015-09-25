@@ -175,7 +175,7 @@
         AND i.cart_id = p.cart_id
         AND d.itemcode = p.code
         WHERE
-            ifnull(p.num_iid,'') != ''
+            ifnull(p.num_iid,'') != '' and p.num_iid > '0'
         LIMIT #{limit};
     </select>
 
