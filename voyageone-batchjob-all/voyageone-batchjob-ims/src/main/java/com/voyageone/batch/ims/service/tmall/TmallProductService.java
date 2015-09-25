@@ -70,7 +70,7 @@ public class TmallProductService implements PlatformServiceInterface {
     @Autowired
     private DarwinStyleMappingDao darwinStyleMappingDao;
     @Autowired
-    private ConditionPropValueDao conditionPropValueDao;
+    private ConditionPropValueRepo conditionPropValueRepo;
 
     public void doJob(UploadProductTcb tcb, UploadProductHandler uploadProductHandler) throws TaskSignal {
         UpJobParamBean upJobParamBean = tcb.getWorkLoadBean().getUpJobParam();
@@ -1524,7 +1524,7 @@ public class TmallProductService implements PlatformServiceInterface {
                     PlatformPropBean platformProp = platformProps.get(0);
                     MultiCheckField field = (MultiCheckField) FieldTypeEnum.createField(FieldTypeEnum.MULTICHECK);
                     String platformPropId = platformProp.getPlatformPropId();
-                    List<ConditionPropValue> conditionPropValues = conditionPropValueDao.selectConditionPropValue(workLoadBean.getOrder_channel_id(), platformPropId);
+                    List<ConditionPropValue> conditionPropValues = conditionPropValueRepo.get(workLoadBean.getOrder_channel_id(), platformPropId);
                     field.setId(platformPropId);
                     if (conditionPropValues != null && !conditionPropValues.isEmpty()) {
                         RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();

@@ -12,7 +12,7 @@ import java.util.List;
  */
 @Repository
 public class ConditionPropValueDao extends BaseDao{
-    public List<ConditionPropValue> selectConditionPropValue(String orderChannelId, String platformPropId) {
-        return selectList(Constants.DAO_NAME_SPACE_IMS + "ims_bt_select_condition_prop_value", parameters("channel_id", orderChannelId, "platform_prop_id", platformPropId));
+    public List<ConditionPropValue> selectAllConditionPropValue() {
+        return selectList(Constants.DAO_NAME_SPACE_IMS + "ims_bt_select_all_condition_prop_value");
     }
 }
