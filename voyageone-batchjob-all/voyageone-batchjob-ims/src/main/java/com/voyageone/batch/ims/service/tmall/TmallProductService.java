@@ -1339,6 +1339,7 @@ public class TmallProductService implements PlatformServiceInterface {
                     int cartId = workLoadBean.getCart_id();
                     String categoryCode = String.valueOf(tmallUploadRunState.getCategory_code());
 
+                    workLoadBean.setHasSku(true);
 
                     //TODO 将要从tmall平台获取已被占用的color, 暂时赋值为null
                     List<String> excludeColors = null;

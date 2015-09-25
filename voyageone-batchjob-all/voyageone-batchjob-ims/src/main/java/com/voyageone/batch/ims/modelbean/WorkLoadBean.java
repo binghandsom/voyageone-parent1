@@ -16,11 +16,11 @@ public class WorkLoadBean implements Cloneable{
     private String productId;
     private String numId;
     private CmsModelPropBean cmsModelProp;
-    //库存更新时，要选择商品上传时是否有SKU属性
-    private String quality_update_type;
     //主商品属性, 上新时被设置，上新结束回调时，写入ims_bt_product表的main_product_flg
     private String mainCode;
     private CmsCodePropBean mainProductProp;
+    //库存更新时，要选择商品上传时是否有SKU属性
+    private boolean hasSku;
     private int level;
     private String levelValue;
     private String failCause;
@@ -186,12 +186,12 @@ public class WorkLoadBean implements Cloneable{
         return cloneObj;
     }
 
-    public String getQuality_update_type() {
-        return quality_update_type;
+    public boolean isHasSku() {
+        return hasSku;
     }
 
-    public void setQuality_update_type(String quality_update_type) {
-        this.quality_update_type = quality_update_type;
+    public void setHasSku(boolean hasSku) {
+        this.hasSku = hasSku;
     }
 
     public String getMainCode() {
