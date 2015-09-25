@@ -221,6 +221,13 @@ define (function (require) {
                         case "12":
                             $rootScope.cmsMaster.tmallUrl = masterInfo.value;
                             break;
+                        case "14":
+                            $rootScope.cmsMaster.usProductColumns = masterInfo.value != "" ? masterInfo.value.split(',') : [];
+                            break;
+                        case "15":
+                            $rootScope.cmsMaster.cnProductColumns = masterInfo.value != "" ? masterInfo.value.split(',') : [];
+                            break;
+
                     }
                 });
 

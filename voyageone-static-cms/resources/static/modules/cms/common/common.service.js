@@ -78,13 +78,19 @@ define(function(require) {
                 }
 
                 // 获得US产品的属性列表.
-                if (!_.isEmpty(productAttributes)) {
-                    _.forEach(columns, function (object, index) {
-                        if (_.indexOf(productAttributes, index.toString()) == -1 && index > 0) {
-                            object.notVisible();
+                _.forEach(columns, function (object, index) {
+
+                    if (_.indexOf($rootScope.cmsMaster.usProductColumns, index.toString()) == -1) {
+                        object.notVisible();
+                    } else {
+
+                        if (!_.isEmpty(productAttributes)) {
+                            if (_.indexOf(productAttributes, index.toString()) == -1 && index > 0) {
+                                object.notVisible();
+                            }
                         }
-                    });
-                }
+                    }
+                });
             };
 
             /**
@@ -106,7 +112,6 @@ define(function(require) {
                         break;
                 }
 
-                // 获得US产品的属性列表.
                 if (!_.isEmpty(productAttributes)) {
 
                     datatable.columns().visible(false);
@@ -115,7 +120,9 @@ define(function(require) {
                         datatable.column(parseInt(value)).visible(true);
                     });
                 } else {
-                    datatable.columns().visible(true);
+                    _.forEach($rootScope.cmsMaster.usProductColumns, function (value) {
+                        datatable.column(parseInt(value)).visible(true);
+                    })
                 }
             };
 

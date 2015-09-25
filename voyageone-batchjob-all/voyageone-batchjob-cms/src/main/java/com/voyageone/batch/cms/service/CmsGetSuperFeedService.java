@@ -1510,8 +1510,8 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 						logger.info(filePathName + "文件不存在.");
 					}
 				}else{
-//					//下载文件 成功
-//					ftpUtil.delOneFile(ftpBean,ftpClient, StringUtils.null2Space(Feed.getVal1(channel_id, FeedEnums.Name.feed_ftp_filename)));
+					//下载文件 成功
+					ftpUtil.delOneFile(ftpBean,ftpClient, StringUtils.null2Space(Feed.getVal1(channel_id, FeedEnums.Name.feed_ftp_filename)));
 				}
 			}
 		}finally{
