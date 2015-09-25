@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static org.junit.Assert.*;
-
 /**
  * Created by Jonas on 9/25/15.
  */
@@ -16,7 +14,7 @@ import static org.junit.Assert.*;
 public class ValidIdCardByEmsJobTest {
 
     @Autowired
-    private ValidIdCardByEmsJob validIdCardByEmsJob;
+    private SynshipValidIdCardJob validIdCardByEmsJob;
 
     @Test
     public void testRun() {
