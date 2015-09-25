@@ -49,7 +49,7 @@ public class ValidIdCardByEmsService extends BaseTaskService {
                     "姓名：%s \r\n" +
                     "拒绝原因：%s";
 
-    private final static int EVERY_THREAD_COUNT = 5;
+    private final static int EVERY_THREAD_COUNT = 30;
 
     @Autowired
     private IdCardDao idCardDao;
