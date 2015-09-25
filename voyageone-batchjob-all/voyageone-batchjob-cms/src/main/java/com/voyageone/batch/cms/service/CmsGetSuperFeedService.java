@@ -98,7 +98,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 			ProductsFeedInsert productsFeed = new ProductsFeedInsert();
 
 			boolean isSuccess = true;
-//			// 下载文件
+//			//  下载文件
 //			try {
 //				isSuccess = downloadFileForFtp(channel.getOrder_channel_id());
 //			} catch (Exception e) {
