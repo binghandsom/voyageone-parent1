@@ -32,14 +32,14 @@
 					                                <label class="col-sm-4 control-label" translate="CMS_TXT_CARD"></label>
 					                                <div class="col-sm-8">
 					                                    <div class="input-group">
-					                                        <ui-select ng-model="search.cardId" theme="bootstrap" ng-disabled="disabled" class="text-left" >
+					                                        <ui-select ng-model="search.cartId" theme="bootstrap" ng-disabled="disabled" class="text-left" >
 					                                            <ui-select-match placeholder="Select..." class="text-left">{{$select.selected.cart_name}}</ui-select-match>
 					                                            <ui-select-choices repeat="cart.cart_id as cart in $root.cmsMaster.cartList | filter: $select.search">
 					                                                <span ng-bind-html="cart.cart_name | highlight: $select.search"></span>
 					                                            </ui-select-choices>
 					                                        </ui-select>
 					                                        <span class="input-group-btn">
-					                                            <button type="button" ng-click="search.cardId = ''" class="btn btn-default">
+					                                            <button type="button" ng-click="search.cartId = ''" class="btn btn-default">
 					                                                <small>
 					                                                    <em class="fa fa-times text-muted"></em>
 					                                                </small>
