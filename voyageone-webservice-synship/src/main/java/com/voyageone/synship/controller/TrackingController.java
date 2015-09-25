@@ -19,9 +19,21 @@ public class TrackingController {
     TrackingService trackingService;
 
     @RequestMapping(method = RequestMethod.GET, value = TrackingUrls.GET_TRACKING_JM_INFO, produces = {"text/html;charset=UTF-8"})
-    public String getTrackingInfo(String cwb) throws UnsupportedEncodingException {
+    public String getJMTrackingInfo(String cwb) throws UnsupportedEncodingException {
 
         String trackingInfo= trackingService.getTrackingInfo(cwb, PlatFormEnums.PlatForm.JM);
+        if (StringUtils.isNullOrBlank2(trackingInfo)) {
+            return null;
+        } else {
+            return  trackingInfo;
+        }
+
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = TrackingUrls.GET_TRACKING_CN_INFO, produces = {"text/html;charset=UTF-8"})
+    public String getCNTrackingInfo(String cwb) throws UnsupportedEncodingException {
+
+        String trackingInfo= trackingService.getTrackingInfo(cwb, PlatFormEnums.PlatForm.CN);
         if (StringUtils.isNullOrBlank2(trackingInfo)) {
             return null;
         } else {
