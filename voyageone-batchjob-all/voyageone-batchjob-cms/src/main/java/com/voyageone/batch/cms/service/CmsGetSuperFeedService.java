@@ -63,12 +63,15 @@ public class CmsGetSuperFeedService extends BaseTaskService {
         // 允许运行的订单渠道取得
         List<String> orderChannelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
 
+		logger.info( "channel_id="+ TaskControlEnums.Name.order_channel_id  );
+		logger.info( "orderChannelIdList="+ orderChannelIdList.size()  );
 		// 线程
         List<Runnable> threads = new ArrayList<>();
 
         // 根据订单渠道运行
         for (final String orderChannelID : orderChannelIdList) {
 
+			logger.info( "channel_id=" +  orderChannelID );
             threads.add(new Runnable() {
                 @Override
                 public void run() {
