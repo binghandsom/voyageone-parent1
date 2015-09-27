@@ -1406,11 +1406,11 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 		String response = null;
 		WsdlResponseBean wsdlresponsebean = null;
 		try {
-			logger.error("Url= " + CmsConstants.WEB_SERVIES_URI_ATTRIBUTE);
+			logger.error("Url= " + CmsConstants.WEB_SERVIES_URI_INSERT);
 			response = WebServiceUtil.postByJsonStr(CmsConstants.WEB_SERVIES_URI_INSERT, jsonParam);
 			wsdlresponsebean = JsonUtil.jsonToBean(response, WsdlResponseBean.class);
 		} catch (Exception e) {
-			logger.error("json bean 新数据 post 失败: web servies =" + CmsConstants.WEB_SERVIES_URI_INSERT);
+			logger.error("json bean 新数据 post 失败: web servies =" + CmsConstants.WEB_SERVIES_URI_INSERT,e);
 			issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
 		}
 
@@ -1435,7 +1435,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 		String response = null;
 		WsdlResponseBean wsdlresponsebean = null;
 		try {
-			logger.error("Url= " + CmsConstants.WEB_SERVIES_URI_ATTRIBUTE);
+			logger.error("Url= " + CmsConstants.WEB_SERVIES_URI_UPDATE);
 			response = WebServiceUtil.postByJsonStr(CmsConstants.WEB_SERVIES_URI_UPDATE, jsonParam);
 			wsdlresponsebean = JsonUtil.jsonToBean(response, WsdlResponseBean.class);
 		} catch (Exception e) {
