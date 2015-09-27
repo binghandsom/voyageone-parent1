@@ -98,14 +98,14 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 			ProductsFeedInsert productsFeed = new ProductsFeedInsert();
 
 			boolean isSuccess = true;
-//			// 下载文件
-//			try {
-//				isSuccess = downloadFileForFtp(channel.getOrder_channel_id());
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//				logger.error("文件下载失败");
-//				issueLog.log("cms 数据导入处理", "文件下载失败" +  e.getMessage(), ErrorType.BatchJob, SubSystem.CMS);
-//			}
+			// 下载文件
+			try {
+				isSuccess = downloadFileForFtp(channel.getOrder_channel_id());
+			} catch (Exception e) {
+				e.printStackTrace();
+				logger.error("文件下载失败");
+				issueLog.log("cms 数据导入处理", "文件下载失败" +  e.getMessage(), ErrorType.BatchJob, SubSystem.CMS);
+			}
 
 			// JEWELRY数据导入
 			if(channel.getOrder_channel_id().equals(ChannelConfigEnums.Channel.JEWELRY.getId())){
@@ -869,6 +869,9 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 						List<ProductBean> productBeans = new ArrayList();
 						// product 取得
 						productBeans = createProduct(channel_id,superfeedjebeanlist.get(i),modelbean.getM_model(),"",keyword, Feed.getVal1(channel_id,FeedEnums.Name.table_id));
+
+						logger.info("新产品product= " + productBeans.get(0).getP_code());
+
 						// product 设定
 						modelbean.setProductbeans(productBeans);
 						modelBeans.set(k, modelbean);

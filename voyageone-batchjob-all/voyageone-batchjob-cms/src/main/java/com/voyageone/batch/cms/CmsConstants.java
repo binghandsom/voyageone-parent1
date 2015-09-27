@@ -6,6 +6,9 @@ public class CmsConstants {
 	public static final String URL_FORMAT = "%[~@#$%&*_''/‘’^\\()]%";
 
 	public static final String BACKUP_FEED_FILE = "d:\\productsFeed";
+//	public static final String WEB_SERVIES_URI_INSERT = "http://10.0.1.18:8080/VoyageOne_WebService/cms/products/productsFeed";
+//	public static final String WEB_SERVIES_URI_UPDATE = "http://10.0.1.18:8080/VoyageOne_WebService/cms/products/productsUpdate";
+//	public static final String WEB_SERVIES_URI_ATTRIBUTE = "http://10.0.1.18:8080/VoyageOne_WebService/cms/products/productsAttribute";
 	public static final String WEB_SERVIES_URI_INSERT = "http://121.41.58.229:8889/cms/products/productsFeed";
 	public static final String WEB_SERVIES_URI_UPDATE = "http://121.41.58.229:8889/cms/products/productsUpdate";
 	public static final String WEB_SERVIES_URI_ATTRIBUTE = "http://121.41.58.229:8889/cms/products/productsAttribute";
