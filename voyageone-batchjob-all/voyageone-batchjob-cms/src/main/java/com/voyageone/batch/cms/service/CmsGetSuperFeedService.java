@@ -1406,6 +1406,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 		String response = null;
 		WsdlResponseBean wsdlresponsebean = null;
 		try {
+			logger.error("Url= " + CmsConstants.WEB_SERVIES_URI_ATTRIBUTE);
 			response = WebServiceUtil.postByJsonStr(CmsConstants.WEB_SERVIES_URI_INSERT, jsonParam);
 			wsdlresponsebean = JsonUtil.jsonToBean(response, WsdlResponseBean.class);
 		} catch (Exception e) {
@@ -1434,6 +1435,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 		String response = null;
 		WsdlResponseBean wsdlresponsebean = null;
 		try {
+			logger.error("Url= " + CmsConstants.WEB_SERVIES_URI_ATTRIBUTE);
 			response = WebServiceUtil.postByJsonStr(CmsConstants.WEB_SERVIES_URI_UPDATE, jsonParam);
 			wsdlresponsebean = JsonUtil.jsonToBean(response, WsdlResponseBean.class);
 		} catch (Exception e) {
@@ -1461,6 +1463,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 		String response = null;
 		WsdlResponseBean wsdlresponsebean = null;
 		try {
+			logger.error("Url= " + CmsConstants.WEB_SERVIES_URI_ATTRIBUTE);
 			response = WebServiceUtil.postByJsonStr(CmsConstants.WEB_SERVIES_URI_ATTRIBUTE, jsonParam);
 			wsdlresponsebean = JsonUtil.jsonToBean(response, WsdlResponseBean.class);
 		} catch (Exception e) {
