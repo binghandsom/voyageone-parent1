@@ -17,6 +17,10 @@
         <task:scheduled ref="getClientTrackingTask" method="run" cron="0 0/30 0-23 * * ?"/>
         <!--每隔2分钟发送短消息-->
         <task:scheduled ref="sendSMSTask" method="run" cron="0 0/2 0-23 * * ?"/>
+        <!--每隔2分钟验证身份证-->
+        <task:scheduled ref="synShipValidIdCardTask" method="run" cron="0 0/5 0-23 * * ?"/>
+        <!--每隔1小时进行ETK运单状态轮询-->
+        <task:scheduled ref="synShipGetEtkStatusTask" method="run" cron="0 0 0/1 * * ?"/>
 
     </task:scheduled-tasks>
 
