@@ -302,7 +302,7 @@ public class SynShipValidIdCardService extends BaseTaskService {
 
         if (idCardBean.getPhone().equals(shortUrlBean.getShip_phone()) && idCardBean.getReceive_name().equals(shortUrlBean.getShip_name())) {
             $info("信息验证成功");
-            updateApprovedWithMsg(idCardBean, APPROVED, "跨境易审核结果：" + idCardHistory.getMessage(), idCardHistory.getReason());
+            updateApprovedWithMsg(idCardBean, APPROVED, "跨境易审核结果：" + idCardHistory.getMessage(), null);
             return;
         }
 
