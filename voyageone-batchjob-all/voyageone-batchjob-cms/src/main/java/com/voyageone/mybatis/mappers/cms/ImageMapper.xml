@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.cms.sql">
+
+	<!-- 取出要处理的图片url列表 -->
+	<select id="cms_work_product_image_url_getImageUrls" parameterType="String" resultType="String">
+	select 
+		distinct image_url
+	from
+		voyageone_cms.cms_work_product_image_url
+	where
+		channel_id = #{orderChannelId}
+		and sent_flag = 0
+	order by created asc
+	limit 100
+	</select>
+
+	<!-- 将cms_work_product_image_url表的 订单发送标志置位->1-->
+	<update id="cms_work_product_image_url_updateImageSendFlag" parameterType="HashMap">
+		update voyageone_cms.cms_work_product_image_url
+		set
+			sent_flag = 1,
+			modified = now(),
+			modifier = #{taskName}
+		<where>
+			channel_id = #{orderChannelId}
+			and image_url in
+			<foreach item="imageUrl" index="index" collection="imageUrlList" open="(" separator="," close=")">
+				#{imageUrl}
+			</foreach>
+		</where>
+	</update>
+
+</mapper>

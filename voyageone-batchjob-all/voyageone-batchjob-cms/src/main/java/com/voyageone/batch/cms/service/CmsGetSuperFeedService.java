@@ -63,12 +63,15 @@ public class CmsGetSuperFeedService extends BaseTaskService {
         // 允许运行的订单渠道取得
         List<String> orderChannelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
 
+		logger.info( "channel_id="+ TaskControlEnums.Name.order_channel_id  );
+		logger.info( "orderChannelIdList="+ orderChannelIdList.size()  );
 		// 线程
         List<Runnable> threads = new ArrayList<>();
 
         // 根据订单渠道运行
         for (final String orderChannelID : orderChannelIdList) {
 
+			logger.info( "channel_id=" +  orderChannelID );
             threads.add(new Runnable() {
                 @Override
                 public void run() {
@@ -95,14 +98,14 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 			ProductsFeedInsert productsFeed = new ProductsFeedInsert();
 
 			boolean isSuccess = true;
-			// 下载文件
-			try {
-				isSuccess = downloadFileForFtp(channel.getOrder_channel_id());
-			} catch (Exception e) {
-				e.printStackTrace();
-				logger.error("文件下载失败");
-				issueLog.log("cms 数据导入处理", "文件下载失败" +  e.getMessage(), ErrorType.BatchJob, SubSystem.CMS);
-			}
+//			// 下载文件
+//			try {
+//				isSuccess = downloadFileForFtp(channel.getOrder_channel_id());
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//				logger.error("文件下载失败");
+//				issueLog.log("cms 数据导入处理", "文件下载失败" +  e.getMessage(), ErrorType.BatchJob, SubSystem.CMS);
+//			}
 
 			// JEWELRY数据导入
 			if(channel.getOrder_channel_id().equals(ChannelConfigEnums.Channel.JEWELRY.getId())){
@@ -866,6 +869,9 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 						List<ProductBean> productBeans = new ArrayList();
 						// product 取得
 						productBeans = createProduct(channel_id,superfeedjebeanlist.get(i),modelbean.getM_model(),"",keyword, Feed.getVal1(channel_id,FeedEnums.Name.table_id));
+
+						logger.info("新产品product= " + productBeans.get(0).getP_code());
+
 						// product 设定
 						modelbean.setProductbeans(productBeans);
 						modelBeans.set(k, modelbean);
@@ -1400,10 +1406,11 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 		String response = null;
 		WsdlResponseBean wsdlresponsebean = null;
 		try {
+			logger.error("Url= " + CmsConstants.WEB_SERVIES_URI_INSERT);
 			response = WebServiceUtil.postByJsonStr(CmsConstants.WEB_SERVIES_URI_INSERT, jsonParam);
 			wsdlresponsebean = JsonUtil.jsonToBean(response, WsdlResponseBean.class);
 		} catch (Exception e) {
-			logger.error("json bean 新数据 post 失败: web servies =" + CmsConstants.WEB_SERVIES_URI_INSERT);
+			logger.error("json bean 新数据 post 失败: web servies =" + CmsConstants.WEB_SERVIES_URI_INSERT,e);
 			issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
 		}
 
@@ -1428,6 +1435,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 		String response = null;
 		WsdlResponseBean wsdlresponsebean = null;
 		try {
+			logger.error("Url= " + CmsConstants.WEB_SERVIES_URI_UPDATE);
 			response = WebServiceUtil.postByJsonStr(CmsConstants.WEB_SERVIES_URI_UPDATE, jsonParam);
 			wsdlresponsebean = JsonUtil.jsonToBean(response, WsdlResponseBean.class);
 		} catch (Exception e) {
@@ -1455,6 +1463,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 		String response = null;
 		WsdlResponseBean wsdlresponsebean = null;
 		try {
+			logger.error("Url= " + CmsConstants.WEB_SERVIES_URI_ATTRIBUTE);
 			response = WebServiceUtil.postByJsonStr(CmsConstants.WEB_SERVIES_URI_ATTRIBUTE, jsonParam);
 			wsdlresponsebean = JsonUtil.jsonToBean(response, WsdlResponseBean.class);
 		} catch (Exception e) {
@@ -1510,8 +1519,8 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 						logger.info(filePathName + "文件不存在.");
 					}
 				}else{
-//					//下载文件 成功
-//					ftpUtil.delOneFile(ftpBean,ftpClient, StringUtils.null2Space(Feed.getVal1(channel_id, FeedEnums.Name.feed_ftp_filename)));
+					//下载文件 成功
+					ftpUtil.delOneFile(ftpBean,ftpClient, StringUtils.null2Space(Feed.getVal1(channel_id, FeedEnums.Name.feed_ftp_filename)));
 				}
 			}
 		}finally{
@@ -1618,7 +1627,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 			if ( f == 0 ){
 				keyWrod_model = Feed.getVal1(channel_id,FeedEnums.Name.model_m_model) + " not in ('" + modelList.get(f);
 			}else{
-				keyWrod_model = keyWrod_model + "', " + modelList.get(f);
+				keyWrod_model = keyWrod_model + "', '" + modelList.get(f);
 			}
 		}
 		if (keyWrod_model !=""){
@@ -1631,7 +1640,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 			if ( f == 0 ){
 				keyWrod_product = Feed.getVal1(channel_id,FeedEnums.Name.product_p_code) + "not in ('" + productList.get(f);
 			}else{
-				keyWrod_product = keyWrod_product + "', " + productList.get(f);
+				keyWrod_product = keyWrod_product + "', '" + productList.get(f);
 			}
 		}
 		if (keyWrod_product !=""){
