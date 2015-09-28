@@ -16,7 +16,7 @@ import java.util.Map;
 public class RateDao extends BaseDao {
 
 	/**
-	 * æ‰¹å¤„ç†æ’å…¥Rateè¡¨æ•°æ?
+	 * 
 	 *
 	 * @param rateInfo
 	 * @return
@@ -34,7 +34,7 @@ public class RateDao extends BaseDao {
 	}
 
 	/**
-	 * »ñµÃ»ãÂÊĞÅÏ¢£¬¸ù¾İ£¨order_number£©
+	 * è·å¾—æ±‡ç‡ä¿¡æ¯ï¼Œæ ¹æ®ï¼ˆorder_numberï¼‰
 	 *
 	 * @return
 	 */
@@ -55,7 +55,7 @@ public class RateDao extends BaseDao {
 	}
 
 	/**
-	 * »ñµÃ»ãÂÊĞÅÏ¢£¬¸ù¾İ£¨order_number£©
+	 * è·å¾—æ±‡ç‡ä¿¡æ¯ï¼Œæ ¹æ®ï¼ˆorder_numberï¼‰
 	 *
 	 * @return
 	 */
@@ -74,7 +74,7 @@ public class RateDao extends BaseDao {
 	}
 
 	/**
-	 * »ñµÃ»ãÂÊĞÅÏ¢£¬¸ù¾İ£¨order_number£©
+	 * è·å¾—æ±‡ç‡ä¿¡æ¯ï¼Œæ ¹æ®ï¼ˆorder_numberï¼‰
 	 *
 	 * @return
 	 */
