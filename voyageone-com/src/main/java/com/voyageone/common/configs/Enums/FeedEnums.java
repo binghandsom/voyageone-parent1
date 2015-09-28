@@ -103,6 +103,7 @@ public class FeedEnums {
 		feed_ftp_file_coding,
 		feed_ftp_localpath,
 		feed_ftp_remotepath,
-		feed_ftp_filename
+		feed_ftp_filename,
+		post_max_model
 	}
 }
