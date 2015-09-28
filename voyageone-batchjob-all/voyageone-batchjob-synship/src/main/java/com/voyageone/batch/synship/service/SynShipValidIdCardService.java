@@ -295,12 +295,14 @@ public class SynShipValidIdCardService extends BaseTaskService {
 
     private void afterPass(IdCardHistory idCardHistory, IdCardBean idCardBean, ShortUrlBean shortUrlBean) {
 
+        idCardBean.setAutomatic_type(idCardHistory.getReason());
+
         if (shortUrlBean == null)
             throw new BusinessException("没有获取到 ShortUrlBean，记录主键：" + idCardBean.getId_no());
 
         if (idCardBean.getPhone().equals(shortUrlBean.getShip_phone()) && idCardBean.getReceive_name().equals(shortUrlBean.getShip_name())) {
             $info("信息验证成功");
-            updateApprovedWithMsg(idCardBean, APPROVED, "跨境易审核结果：" + idCardHistory.getMessage(), idCardHistory.getReason());
+            updateApprovedWithMsg(idCardBean, APPROVED, "跨境易审核结果：" + idCardHistory.getMessage(), null);
             return;
         }
 
@@ -320,7 +322,7 @@ public class SynShipValidIdCardService extends BaseTaskService {
 
         idCardHistoryDao.insert(idCardHistory);
 
-        updateApprovedWithMsg(idCardBean, UNAUDITED, message, idCardHistory.getReason());
+        updateApprovedWithMsg(idCardBean, UNAUDITED, message, null);
     }
 
     private void trySetChannel(IdCardHistory idCardHistory, ShortUrlBean shortUrlBean) throws JSONException {
