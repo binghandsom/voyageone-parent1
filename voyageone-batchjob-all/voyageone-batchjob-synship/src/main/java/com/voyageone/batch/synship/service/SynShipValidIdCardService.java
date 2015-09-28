@@ -295,6 +295,8 @@ public class SynShipValidIdCardService extends BaseTaskService {
 
     private void afterPass(IdCardHistory idCardHistory, IdCardBean idCardBean, ShortUrlBean shortUrlBean) {
 
+        idCardBean.setAutomatic_type(idCardHistory.getReason());
+
         if (shortUrlBean == null)
             throw new BusinessException("没有获取到 ShortUrlBean，记录主键：" + idCardBean.getId_no());
 
@@ -320,7 +322,7 @@ public class SynShipValidIdCardService extends BaseTaskService {
 
         idCardHistoryDao.insert(idCardHistory);
 
-        updateApprovedWithMsg(idCardBean, UNAUDITED, message, idCardHistory.getReason());
+        updateApprovedWithMsg(idCardBean, UNAUDITED, message, null);
     }
 
     private void trySetChannel(IdCardHistory idCardHistory, ShortUrlBean shortUrlBean) throws JSONException {
