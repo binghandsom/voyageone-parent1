@@ -91,14 +91,14 @@
                                     <ui-select ng-if="vm.currProp.prop_type == vm.masterPropType.singleCheck" ng-model="vm.selected.options">
                                         <ui-select-match placeholder="Please select a option">{{$select.selected.prop_option_name}}
                                         </ui-select-match>
-                                        <ui-select-choices repeat="i.prop_option_id as i in vm.options | filter: $select.search">
+                                        <ui-select-choices repeat="i.prop_option_value as i in vm.options | filter: $select.search">
                                             <div ng-bind-html="i.prop_option_name"></div>
                                         </ui-select-choices>
                                     </ui-select>
                                     <ui-select ng-if="vm.currProp.prop_type == vm.masterPropType.multiCheck" multiple ng-model="vm.selected.options">
                                         <ui-select-match placeholder="Please select a option">{{$item.prop_option_name}}
                                         </ui-select-match>
-                                        <ui-select-choices repeat="i.prop_option_id as i in vm.options | filter: $select.search">
+                                        <ui-select-choices repeat="i.prop_option_value as i in vm.options | filter: $select.search">
                                             <div ng-bind-html="i.prop_option_name"></div>
                                         </ui-select-choices>
                                     </ui-select>
