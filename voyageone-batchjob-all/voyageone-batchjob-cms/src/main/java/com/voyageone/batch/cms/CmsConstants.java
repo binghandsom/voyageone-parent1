@@ -15,6 +15,7 @@ public class CmsConstants {
 	public static final String FEED_IO_UPDATEFIELDS_MSRP = "msrp";
 	public static final String FEED_IO_UPDATEFIELDS_PRICE = "price";
 	public static final String FEED_IO_UPDATEFIELDS_CN_PRICE = "cn_price";
+	public static final String FEED_IO_UPDATEFIELDS_CN_PRICE_RMB = "cn_price_rmb";
 	public static final String FEED_IO_UPDATEFIELDS_LONG_DESCRIPTION ="long_description";
 	public static final String FEED_IO_UPDATEFIELDS_IMAGE_URL = "item_image_url";
 	public static final String FEED_IO_UPDATEFIELDS_IMAGE_SPLIT = ";";
