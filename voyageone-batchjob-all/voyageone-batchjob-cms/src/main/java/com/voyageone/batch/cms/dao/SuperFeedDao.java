@@ -201,7 +201,9 @@ public class SuperFeedDao extends BaseDao {
         params.put("pe_short_description", productbean.getPe_short_description());
         params.put("pe_long_description", productbean.getPe_long_description());
         params.put("ps_price", productbean.getPs_price());
+        params.put("cps_cn_price", productbean.getCps_cn_price());
         params.put("cps_cn_price_rmb", productbean.getCps_cn_price_rmb());
+        params.put("cps_cn_price_final_rmb", productbean.getCps_cn_price_final_rmb());
 
         params.put("tableName",tableName);
         params.put("keyword", keyword);

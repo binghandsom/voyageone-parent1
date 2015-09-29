@@ -700,7 +700,9 @@ select
 ,${pe_short_description} as pe_short_description
 ,${pe_long_description} as pe_long_description
 ,${ps_price}  as ps_price
+,${cps_cn_price}  as cps_cn_price
 ,${cps_cn_price_rmb}  as cps_cn_price_rmb
+,${cps_cn_price_final_rmb}  as cps_cn_price_final_rmb
     from
    ${tableName}
    ${keyword}
