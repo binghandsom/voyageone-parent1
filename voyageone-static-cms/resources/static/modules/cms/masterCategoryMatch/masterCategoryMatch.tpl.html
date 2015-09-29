@@ -55,7 +55,7 @@
                     <td><font ng-bind="cmsCategory.mainCategoryPath" ng-class="cmsCategory.inheritClass"></font></td>
                     <td class="text-center"><div ng-show="cmsCategory.isSave" ><button type="button" ng-click="save(cmsCategory)" class="btn btn-vo btn-xs"><i class="fa fa-save"></i></button></div></td>
                     <td class="text-center"><label class="checkbox-inline c-checkbox needsclick"><input type="checkbox" ng-change="change(cmsCategory)" ng-model="cmsCategory.isMatch"><span class="fa fa-check"></span></label></td>
-                    <td><button type="button" ng-click = "propertyMatch(cmsCategory)" class="btn btn-primary btn-sm fa fa-equalizer fa-building">&nbsp;属性匹配</button></td>
+                    <td><button ng-if="cmsCategory.mainCategoryId > 0 && cmsCategory.isPropMatch" type="button" ng-click = "propertyMatch(cmsCategory)" class="btn btn-primary btn-sm fa fa-equalizer fa-building">&nbsp;属性匹配</button></td>
                   </tr>
                   </tbody>
                 </table>

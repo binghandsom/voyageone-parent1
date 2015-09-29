@@ -256,14 +256,14 @@ public class CategoryEditServiceImpl implements CategoryEditService {
 	@Override
 	public DtResponse<List<CategoryProductUSBean>> getCategoryUSProductList(HashMap<String, Object> data) throws Exception {
 		List<CategoryProductUSBean> result = categoryDao.getUSCategoryProductList(data);
-		if (result != null && result.size() > 0) {
-			for (CategoryProductUSBean categoryProductUSBean : result) {
-				ModelUSBean modelUSBean = modelEditService.doGetUSModelInfo(categoryProductUSBean.getModelId(), categoryProductUSBean.getChannelId(), true);
-				if (modelUSBean != null) {
-					CommonUtils.merger(categoryProductUSBean, modelUSBean);
-				}
-			}
-		}
+//		if (result != null && result.size() > 0) {
+//			for (CategoryProductUSBean categoryProductUSBean : result) {
+//				ModelUSBean modelUSBean = modelEditService.doGetUSModelInfo(categoryProductUSBean.getModelId(), categoryProductUSBean.getChannelId(), true);
+//				if (modelUSBean != null) {
+//					CommonUtils.merger(categoryProductUSBean, modelUSBean);
+//				}
+//			}
+//		}
 		DtResponse<List<CategoryProductUSBean>> dtResponse = new DtResponse<List<CategoryProductUSBean>>();
 		dtResponse.setData(result);
 		int count = categoryDao.getCategoryUSProductCount(data);

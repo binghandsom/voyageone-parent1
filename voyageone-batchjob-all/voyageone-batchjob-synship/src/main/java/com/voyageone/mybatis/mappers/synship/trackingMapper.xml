@@ -33,6 +33,7 @@
             AND omsOrders.cart_id = #{cart_id}
             AND omsOrders.order_channel_id = orders.order_channel_id
             AND omsOrders.order_number = orders.order_number
+            AND omsOrders.order_kind = '0'
             AND EXISTS (SELECT
                             1
                           FROM

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.batch.synship.sql">
+    <select id="tt_idcard_selectNewestByApproved" resultType="com.voyageone.batch.synship.modelbean.IdCardBean">
+        SELECT
+            id_no,
+            phone,
+            receive_name,
+            id_card,
+            image_path,
+            approved,
+            comment,
+            comments,
+            source_order_id,
+            compress_flg,
+            source_type,
+            force_approved_flg,
+            audit_type,
+            automatic_type,
+            create_time,
+            update_time,
+            create_person,
+            update_person
+        FROM Synship.tt_idcard
+        WHERE approved = #{approved}
+        ORDER BY update_time ASC
+        LIMIT #{limit}
+    </select>
+
+    <select id="tt_idcard_selectCountByPhoneName" resultType="int">
+        SELECT count(1)
+        FROM Synship.tt_idcard
+        WHERE phone = #{phone} AND receive_name = #{receive_name} AND approved = #{approved}
+    </select>
+
+    <update id="tt_idcard_updateApprovedWithMsg" parameterType="com.voyageone.batch.synship.modelbean.IdCardBean">
+        UPDATE Synship.tt_idcard
+        SET approved = #{approved}, automatic_type = #{automatic_type}, comments = #{comments}, update_time = NOW(), update_person = #{update_person}
+        WHERE id_no = #{id_no} AND update_time = #{update_time}
+    </update>
+</mapper>

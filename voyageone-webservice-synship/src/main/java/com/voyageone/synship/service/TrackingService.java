@@ -8,9 +8,7 @@ import com.voyageone.common.util.JaxbUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.synship.SynshipConstants;
 import com.voyageone.synship.dao.TrackingDao;
-import com.voyageone.synship.formbean.TrackInfoBean;
-import com.voyageone.synship.formbean.TrackInfoJuMeiBean;
-import com.voyageone.synship.formbean.TrackInfoJuMeiListBean;
+import com.voyageone.synship.formbean.*;
 import com.voyageone.synship.modelbean.WaybillRouteBean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,15 +32,32 @@ public class TrackingService {
 
     /**
      * 根据Synship物流单号取得该订单的物流信息
-     * @param synShipNo 检索参数
+     * @param cwb 检索参数
      * @return String 物流信息
      */
-    public String getTrackingInfo(String synShipNo, PlatFormEnums.PlatForm platForm) {
+    public String getTrackingInfo(String cwb, PlatFormEnums.PlatForm platForm) {
 
-        logger.info("需要查询的物流单号：" + synShipNo + "，商家：" + platForm.toString());
+        logger.info("查询参数：" + cwb + "，商家：" + platForm.toString());
+
+        // 根据平台，获取物流单号
+        String syn_ship_no = "";
+        switch (platForm) {
+            case OF:
+            case TM:
+            case JD:
+                return null;
+            case CN:
+                syn_ship_no = trackingDao.getSynShipNo(cwb);
+                break;
+            case JM:
+                syn_ship_no = cwb;
+                break;
+
+        }
+        logger.info("查询参数：" + cwb + "，物流单号：" + syn_ship_no + "，商家：" + platForm.toString());
 
         // 根据检索参数取得记录
-        List<TrackInfoBean> resultMap = trackingDao.getTrackingInfo(synShipNo);
+        List<TrackInfoBean> resultMap = trackingDao.getTrackingInfo(syn_ship_no);
 
         List<TrackInfoBean> lstTrackInfo = new ArrayList<>();
 
@@ -97,7 +112,9 @@ public class TrackingService {
             case OF:
             case TM:
             case JD:
+                break;
             case CN:
+                resultTrackingInfo = createTrackingInfoCN(lstTrackInfo);
                 break;
             case JM:
                 resultTrackingInfo = createTrackingInfoJM(lstTrackInfo);
@@ -107,6 +124,40 @@ public class TrackingService {
 
         // 返回抽出结果
         return resultTrackingInfo;
+    }
+
+    private String createTrackingInfoCN(List<TrackInfoBean> lstTrackInfo) {
+
+        List<TrackInfoCNBean> lstTrackInfoCN = new ArrayList<>();
+        int idx = 0;
+
+        for (TrackInfoBean trackInfo : lstTrackInfo) {
+            TrackInfoCNBean trackInfoCNBean = new TrackInfoCNBean();
+
+            // 仅仅设置需要显示的节点
+            if (SynshipConstants.TrackingInfo.DISPLAY.equals(StringUtils.null2Space2(trackInfo.getDisplay_flg()))) {
+                idx = idx + 1;
+                trackInfoCNBean.setResultcount(String.valueOf(idx));
+                trackInfoCNBean.setCwb(trackInfo.getSyn_ship_no());
+                trackInfoCNBean.setTrackdatetime(trackInfo.getProcess_time());
+                trackInfoCNBean.setBranchname(trackInfo.getLocation());
+                trackInfoCNBean.setTrackevent(trackInfo.getTracking_event());
+                trackInfoCNBean.setPodresultname(trackInfo.getDisplay_status());
+
+                lstTrackInfoCN.add(trackInfoCNBean);
+
+            }
+        }
+
+        logger.info("返回的物流信息件数："+lstTrackInfoCN.size());
+
+        String trackingInfoCNXml = "";
+        if (lstTrackInfoCN.size() > 0) {
+            TrackInfoCNListBean trackInfoCNListBean = new TrackInfoCNListBean();
+            trackInfoCNListBean.setRow(lstTrackInfoCN);
+            trackingInfoCNXml = JaxbUtil.convertToXml(trackInfoCNListBean, "UTF-8");
+        }
+        return trackingInfoCNXml;
     }
 
     private String createTrackingInfoJM(List<TrackInfoBean> lstTrackInfo) {

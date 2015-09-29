@@ -51,6 +51,13 @@ public abstract class BaseTaskService {
     public abstract String getTaskName();
 
     /**
+     * 获取打印的日志是否需要包含线程
+     */
+    public boolean getLogWithThread() {
+        return false;
+    }
+
+    /**
      * 获取 job 配置
      */
     private List<TaskControlBean> getControls() {
@@ -65,6 +72,7 @@ public abstract class BaseTaskService {
         List<TaskControlBean> taskControlList = getControls();
 
         if (taskControlList.size() < 1) {
+            $info("没有找到任何配置。");
             logIssue("没有找到任何配置！！！", getTaskName());
             return;
         }
@@ -88,9 +96,11 @@ public abstract class BaseTaskService {
         } catch (BusinessException be) {
             logIssue(be, be.getInfo());
             status = Status.ERROR;
+            $info("出现业务异常，任务退出");
         } catch (Exception e) {
             logIssue(e);
             status = Status.ERROR;
+            $info("出现异常，任务退出");
         }
 
         // 任务监控历史记录添加:结束
@@ -214,7 +224,12 @@ public abstract class BaseTaskService {
      * @param arg 日志信息
      */
     protected void $info(String arg) {
-        logger.info(arg);
+        if (!getLogWithThread()){
+            logger.info(arg);
+            return;
+        }
+
+        logger.info(String.format("Thread-%s\t| %s", Thread.currentThread().getId(), arg));
     }
 
     /**
@@ -224,6 +239,17 @@ public abstract class BaseTaskService {
      * @param args     格式化参数
      */
     protected void $info(String template, Object... args) {
-        logger.info(format(template, args));
+        $info(format(template, args));
+    }
+
+    /**
+     * logger.info 的辅助方法
+     *
+     * @param obj 属性的对象类型
+     * @param name 属性的名称
+     * @param value 属性的值
+     */
+    protected void $prop(String obj, String name, Object value) {
+        $info("\"%s\".\"%s\": \"%s\"", obj, name, value);
     }
 }

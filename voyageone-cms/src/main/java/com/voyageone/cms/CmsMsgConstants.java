@@ -25,6 +25,7 @@ public final class CmsMsgConstants {
         String ERR_CONDITION_FORMAT = "4000004";
         /**
          * 不能为 FEED 类型的匹配设定条件
+         * ～暂时不用～
          */
         String CONDITION_FOR_FEED = "4000005";
         /**
