@@ -66,12 +66,15 @@ define(function(require) {
             this.doGetProductColumnsAtFirst = function (type, columns) {
 
                 var productAttributes = [];
+                var productColumns = [];
                 switch (type) {
                     case 'us':
                         productAttributes = userService.getUserConfig().cmsUsProductAttributes;
+                        productColumns = $rootScope.cmsMaster.usProductColumns;
                         break;
                     case 'cn':
                         productAttributes = userService.getUserConfig().cmsCnProductAttributes;
+                        productColumns = $rootScope.cmsMaster.cnProductColumns;
                         break;
                     default :
                         break;
@@ -80,14 +83,15 @@ define(function(require) {
                 // 获得US产品的属性列表.
                 _.forEach(columns, function (object, index) {
 
-                    if (_.indexOf($rootScope.cmsMaster.usProductColumns, index.toString()) == -1) {
+                    // 该店铺需要显示的columns意外的columns不显示
+                    if (_.indexOf(productColumns, index.toString()) == -1 && index > 0) {
                         object.notVisible();
                     } else {
 
-                        if (!_.isEmpty(productAttributes)) {
-                            if (_.indexOf(productAttributes, index.toString()) == -1 && index > 0) {
-                                object.notVisible();
-                            }
+                        // 显示用户自己设定的columns
+                        if (!_.isEmpty(productAttributes)
+                            && _.indexOf(productAttributes, index.toString()) == -1 && index > 0) {
+                            object.notVisible();
                         }
                     }
                 });
@@ -101,26 +105,37 @@ define(function(require) {
             this.doGetProductListByUserConfig = function (type, datatable) {
 
                 var productAttributes = [];
+                var productColumns = [];
                 switch (type) {
                     case 'us':
                         productAttributes = userService.getUserConfig().cmsUsProductAttributes;
+                        productColumns = $rootScope.cmsMaster.usProductColumns;
                         break;
                     case 'cn':
                         productAttributes = userService.getUserConfig().cmsCnProductAttributes;
+                        productColumns = $rootScope.cmsMaster.cnProductColumns;
                         break;
                     default :
                         break;
                 }
 
+                // 如果用户设置的要显示的columns
                 if (!_.isEmpty(productAttributes)) {
 
                     datatable.columns().visible(false);
+                    // 默认checkbox必须显示.
                     datatable.column(0).visible(true);
+
+                    // 用户选中的columns都要显示.
                     _.forEach(productAttributes, function (value) {
                         datatable.column(parseInt(value)).visible(true);
                     });
                 } else {
-                    _.forEach($rootScope.cmsMaster.usProductColumns, function (value) {
+                    // 默认checkbox必须显示.
+                    datatable.column(0).visible(true);
+
+                    // 只显示该店铺需要显示的columns
+                    _.forEach(productColumns, function (value) {
                         datatable.column(parseInt(value)).visible(true);
                     })
                 }

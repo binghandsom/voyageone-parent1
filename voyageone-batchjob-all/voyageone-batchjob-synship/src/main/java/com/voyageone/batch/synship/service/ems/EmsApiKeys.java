@@ -1,4 +1,4 @@
-package com.voyageone.common.components.ems;
+package com.voyageone.batch.synship.service.ems;
 
 /**
  * EMS API 需要用到的 Code key 定义

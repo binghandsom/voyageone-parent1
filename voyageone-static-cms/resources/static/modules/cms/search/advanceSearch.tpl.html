@@ -147,6 +147,8 @@
                                     <div class="hidden">
                                         <form id="downloadForm" method="post" target="downloadHelper" action="/VoyageOne/cms/search/advance/doExport">
                                             <input type="hidden" name="search" id="search" value="{{search}}"/>
+                                            <input type="hidden" name="token" id="token" value="{{token}}"/>
+                                            <input type="hidden" name="companyId" id="companyId" value="{{companyId}}"/>
                                         </form>
                                         <iframe id="downloadHelper" name="downloadHelper"></iframe>
                                     </div>

@@ -14,8 +14,8 @@ define (function (require) {
     require ('modules/cms/popup/setCnProductShare/popSetCnProductShare.ctl');
     require ('modules/cms/popup/setProductColumns/popSetProductColumns.ctl');
     
-    cmsApp.controller ('advanceSearchController', ['$scope', '$rootScope', '$q', '$location', '$routeParams', 'cmsCommonService', 'searchService', 'DTOptionsBuilder','DTColumnBuilder','$compile', '$translate',
-      function ($scope, $rootScope, $q, $location, $routeParams, cmsCommonService, searchService, DTOptionsBuilder, DTColumnBuilder,  $compile, $translate) {
+    cmsApp.controller ('advanceSearchController', ['$scope', '$rootScope', '$q', '$location', '$routeParams', 'cmsCommonService', 'searchService', 'DTOptionsBuilder','DTColumnBuilder','$compile', '$translate', 'cookieService',
+      function ($scope, $rootScope, $q, $location, $routeParams, cmsCommonService, searchService, DTOptionsBuilder, DTColumnBuilder,  $compile, $translate, cookieService) {
 
           var _ = require ('underscore');
           var commonUtil = require ('components/util/commonUtil');
@@ -32,6 +32,8 @@ define (function (require) {
               $scope.search = {};
               $scope.yesOrNo = [{"value":"1","name":"Yes"},{"value":"0","name":"No"}];
               $scope.publishStatus = [{"value":"0","name":"Pending"},{"value":"1","name":"Success"},{"value":"2","name":"Failed"}];
+              $scope.token = cookieService.getToken();
+              $scope.companyId = cookieService.getSelCompany();
 
               // 初始化Cn Product 选中信息.
               $scope.cnProductInfo = {
@@ -138,7 +140,7 @@ define (function (require) {
                           return '<input ng-controller="selectController" type="checkbox" ng-model="cnProductInfo.selectOneFlagList[$row.productId]" ng-click="selectOne($row.productId, cnProductInfo)">';
                       }).notSortable(),
                       DTColumnBuilder.newColumn('', $translate('CMS_TXT_CODE')).withClass('wtab-xs text-center').renderWith(function () {
-                          return ('<img class="prodImg" ng-src="{{$root.cmsMaster.imageUrl}}{{$row.productImgUrl}}"><br><a ng-controller="navigationController" href="" class="btn-main" ng-href="{{goProductPage(categoryId,$row.modelId, $row.productId)}}">{{$row.code}}</a>');
+                          return ('<img class="prodImg" ng-src="{{$root.cmsMaster.imageUrl}}{{$row.productImgUrl}}"><br><a ng-controller="navigationController" href="" class="btn-main" ng-href="{{goProductPage($row.categoryId,$row.modelId, $row.productId)}}">{{$row.code}}</a>');
                       }),
                       DTColumnBuilder.newColumn('cnName', $translate('CMS_TXT_NAME')).withClass('wtab-xsm').notSortable(),
                       DTColumnBuilder.newColumn('cnDisplayOrder', $translate('CMS_TXT_DISPLAY_ORDER')).withClass('wtab-xs text-center'),

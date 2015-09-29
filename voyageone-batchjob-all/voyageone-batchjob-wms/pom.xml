@@ -24,6 +24,16 @@
             <groupId>commons-net</groupId>
             <artifactId>commons-net</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>jettison</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>jettison</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <finalName>voyageone-batchjob-wms</finalName>
