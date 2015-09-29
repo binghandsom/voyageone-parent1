@@ -35,6 +35,14 @@ public abstract class SynShipSyncTrackingBaseService extends BaseTaskService {
         return "SynShipSyncTrackingJob";
     }
 
+    /**
+     * 获取打印的日志是否需要包含线程
+     */
+    @Override
+    public boolean getLogWithThread() {
+        return true;
+    }
+
     @Override
     protected abstract void onStartup(List<TaskControlBean> taskControlList) throws Exception;
 
