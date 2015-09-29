@@ -1,6 +1,7 @@
 package com.voyageone.cms.dao;
 
 import com.voyageone.base.dao.BaseDao;
+import com.voyageone.cms.formbean.FeedMappingProp;
 import com.voyageone.cms.modelbean.*;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -27,7 +28,7 @@ public class FeedPropMappingDao extends BaseDao {
         return selectOne("ims_mt_categories_selectCategoryPath", parameters("categoryId", categoryId));
     }
 
-    public List<FeedMappingProp> selectProps(Integer categoryId, String channel_id, int start, int length, String is_ignored, String is_required) {
+    public List<FeedMappingProp> selectProps(String prop_name, Integer categoryId, String channel_id, int start, int length, String is_ignored, String is_required) {
         List<Integer> types = new ArrayList<>();
 
         types.add(MasterPropTypeEnum.INPUT.getValue());
@@ -35,11 +36,11 @@ public class FeedPropMappingDao extends BaseDao {
         types.add(MasterPropTypeEnum.MULTICHECK.getValue());
         types.add(MasterPropTypeEnum.lABEL.getValue());
 
-        return selectList("ims_mt_prop_selectProps", parameters("categoryId", categoryId, "channel_id",
+        return selectList("ims_mt_prop_selectProps", parameters("prop_name", prop_name, "categoryId", categoryId, "channel_id",
                 channel_id, "start", start, "length", length, "types", types, "is_ignored", is_ignored, "is_required", is_required));
     }
 
-    public int selectPropsCount(Integer categoryId, String channel_id, String is_ignored, String is_required) {
+    public int selectPropsCount(String prop_name, Integer categoryId, String channel_id, String is_ignored, String is_required) {
         List<Integer> types = new ArrayList<>();
 
         types.add(MasterPropTypeEnum.INPUT.getValue());
@@ -47,7 +48,7 @@ public class FeedPropMappingDao extends BaseDao {
         types.add(MasterPropTypeEnum.MULTICHECK.getValue());
         types.add(MasterPropTypeEnum.lABEL.getValue());
 
-        return selectOne("ims_mt_prop_selectPropsCount", parameters("categoryId", categoryId, "channel_id",
+        return selectOne("ims_mt_prop_selectPropsCount", parameters("prop_name", prop_name, "categoryId", categoryId, "channel_id",
                 channel_id, "types", types, "is_ignored", is_ignored, "is_required", is_required));
     }
 
@@ -105,7 +106,7 @@ public class FeedPropMappingDao extends BaseDao {
         ));
     }
 
-    public CategoryPropCount selectCountsByCategory(String channel_id, int category_id){
+    public CategoryPropCount selectCountsByCategory(String channel_id, int category_id) {
         return selectOne("ims_bt_feed_prop_mapping_selectCountsByCategory", parameters("channel_id", channel_id, "category_id", category_id));
     }
 
