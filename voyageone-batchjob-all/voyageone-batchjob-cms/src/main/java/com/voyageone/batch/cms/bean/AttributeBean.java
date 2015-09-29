@@ -48,6 +48,21 @@ public class AttributeBean {
 	private String attribute35;
 	private String attribute36;
 	private String attribute37;
+	private String attribute38;
+	private String attribute39;
+	private String attribute40;
+	private String attribute41;
+	private String attribute42;
+	private String attribute43;
+	private String attribute44;
+	private String attribute45;
+	private String attribute46;
+	private String attribute47;
+	private String attribute48;
+	private String attribute49;
+	private String attribute50;
+
+
 
 	public String getCategory_url_key() {
 		return category_url_key;
@@ -367,5 +382,109 @@ public class AttributeBean {
 
 	public void setAttribute37(String attribute37) {
 		this.attribute37 = attribute37;
+	}
+
+	public String getAttribute38() {
+		return attribute38;
+	}
+
+	public void setAttribute38(String attribute38) {
+		this.attribute38 = attribute38;
+	}
+
+	public String getAttribute39() {
+		return attribute39;
+	}
+
+	public void setAttribute39(String attribute39) {
+		this.attribute39 = attribute39;
+	}
+
+	public String getAttribute40() {
+		return attribute40;
+	}
+
+	public void setAttribute40(String attribute40) {
+		this.attribute40 = attribute40;
+	}
+
+	public String getAttribute41() {
+		return attribute41;
+	}
+
+	public void setAttribute41(String attribute41) {
+		this.attribute41 = attribute41;
+	}
+
+	public String getAttribute42() {
+		return attribute42;
+	}
+
+	public void setAttribute42(String attribute42) {
+		this.attribute42 = attribute42;
+	}
+
+	public String getAttribute43() {
+		return attribute43;
+	}
+
+	public void setAttribute43(String attribute43) {
+		this.attribute43 = attribute43;
+	}
+
+	public String getAttribute44() {
+		return attribute44;
+	}
+
+	public void setAttribute44(String attribute44) {
+		this.attribute44 = attribute44;
+	}
+
+	public String getAttribute45() {
+		return attribute45;
+	}
+
+	public void setAttribute45(String attribute45) {
+		this.attribute45 = attribute45;
+	}
+
+	public String getAttribute46() {
+		return attribute46;
+	}
+
+	public void setAttribute46(String attribute46) {
+		this.attribute46 = attribute46;
+	}
+
+	public String getAttribute47() {
+		return attribute47;
+	}
+
+	public void setAttribute47(String attribute47) {
+		this.attribute47 = attribute47;
+	}
+
+	public String getAttribute48() {
+		return attribute48;
+	}
+
+	public void setAttribute48(String attribute48) {
+		this.attribute48 = attribute48;
+	}
+
+	public String getAttribute49() {
+		return attribute49;
+	}
+
+	public void setAttribute49(String attribute49) {
+		this.attribute49 = attribute49;
+	}
+
+	public String getAttribute50() {
+		return attribute50;
+	}
+
+	public void setAttribute50(String attribute50) {
+		this.attribute50 = attribute50;
 	}
 }
