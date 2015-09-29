@@ -285,7 +285,7 @@ public class SynShipSimShipmentService  extends BaseTaskService {
         shipmentInfoBean.setOrder_channel_id(order_channel_id);
         shipmentInfoBean.setTracking_status(CodeConstants.TRACKING.INFO_052);
         shipmentInfoBean.setProccess_type(CodeConstants.PROCCESS_TYPE.BOT);
-        shipmentInfoBean.setProccess_time(clientTrackingSimBean.getTracking_time());
+        shipmentInfoBean.setProccess_time(DateTimeUtil.getNow());
         shipmentInfoBean.setMsg("");
         shipmentInfoBean.setCreate_time(DateTimeUtil.getNow());
         shipmentInfoBean.setUpdate_time(DateTimeUtil.getNow());
