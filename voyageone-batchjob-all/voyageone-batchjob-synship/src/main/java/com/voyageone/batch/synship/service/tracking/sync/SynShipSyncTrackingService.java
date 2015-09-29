@@ -64,7 +64,7 @@ public class SynShipSyncTrackingService extends SynShipSyncTrackingBaseService {
                 List<TrackingSyncBean> trackingSyncBeans = new ArrayList<>();
 
                 String  sim_shipping = ShopConfigs.getVal1(shopBean, ShopConfigEnums.Name.sim_shipping);
-                logger.info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")模拟发货标志位："+sim_shipping);
+                $info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")模拟发货标志位：" + sim_shipping);
 
                 // 根据平台，调用相应的 抽出方法 （淘宝需要NumID更新）
                 switch (platForm) {
@@ -89,7 +89,7 @@ public class SynShipSyncTrackingService extends SynShipSyncTrackingBaseService {
 
                 if (!needSync(shopBean)) {
 
-                    logger.info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")不需要同步运单");
+                    $info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")不需要同步运单");
 
                     // 不需要同步的，则直接转为忽略
                     for (TrackingSyncBean trackingSyncBean : trackingSyncBeans)
