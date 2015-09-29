@@ -140,7 +140,7 @@ define (function (require) {
                           return '<input ng-controller="selectController" type="checkbox" ng-model="cnProductInfo.selectOneFlagList[$row.productId]" ng-click="selectOne($row.productId, cnProductInfo)">';
                       }).notSortable(),
                       DTColumnBuilder.newColumn('', $translate('CMS_TXT_CODE')).withClass('wtab-xs text-center').renderWith(function () {
-                          return ('<img class="prodImg" ng-src="{{$root.cmsMaster.imageUrl}}{{$row.productImgUrl}}"><br><a ng-controller="navigationController" href="" class="btn-main" ng-href="{{goProductPage(categoryId,$row.modelId, $row.productId)}}">{{$row.code}}</a>');
+                          return ('<img class="prodImg" ng-src="{{$root.cmsMaster.imageUrl}}{{$row.productImgUrl}}"><br><a ng-controller="navigationController" href="" class="btn-main" ng-href="{{goProductPage($row.categoryId,$row.modelId, $row.productId)}}">{{$row.code}}</a>');
                       }),
                       DTColumnBuilder.newColumn('cnName', $translate('CMS_TXT_NAME')).withClass('wtab-xsm').notSortable(),
                       DTColumnBuilder.newColumn('cnDisplayOrder', $translate('CMS_TXT_DISPLAY_ORDER')).withClass('wtab-xs text-center'),
