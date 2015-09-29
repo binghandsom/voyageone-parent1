@@ -28,7 +28,7 @@
                                 <td class="vo_a_ce col-sm-1">{{ $index + 1 }}</td>
                                 <td>{{ vm.formatCondition(m.conditions) }}</td>
                                 <td>{{ m.etype }}</td>
-                                <td>{{ m.value }}</td>
+                                <td>{{ vm.formatValue(m) }}</td>
                                 <td>
                                     <button title="编辑" class="btn btn-success btn-xs" ng-click="vm.edit($index)"><i class="fa fa-pencil"></i></button>
                                     <button title="删除" class="btn btn-danger btn-xs" ng-click="vm.del($index)"><i class="fa fa-trash-o"></i></button>
@@ -121,7 +121,7 @@
                                     </ui-select>
                                 </div>
                             </div>
-                            <div collapse="vm.curr.type == vm.feedPropMappingType.feed">
+                            <div>
                                 <div class="form-group attribute_bg">
                                     <label class="col-sm-1 checkbox-inline c-checkbox needsclick">
                                         <input id="pop-set-match-val-condition" type="checkbox" ng-model="vm.conditionChecked"/>
