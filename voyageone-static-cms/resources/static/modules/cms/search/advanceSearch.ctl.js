@@ -14,8 +14,8 @@ define (function (require) {
     require ('modules/cms/popup/setCnProductShare/popSetCnProductShare.ctl');
     require ('modules/cms/popup/setProductColumns/popSetProductColumns.ctl');
     
-    cmsApp.controller ('advanceSearchController', ['$scope', '$rootScope', '$q', '$location', '$routeParams', 'cmsCommonService', 'searchService', 'DTOptionsBuilder','DTColumnBuilder','$compile', '$translate',
-      function ($scope, $rootScope, $q, $location, $routeParams, cmsCommonService, searchService, DTOptionsBuilder, DTColumnBuilder,  $compile, $translate) {
+    cmsApp.controller ('advanceSearchController', ['$scope', '$rootScope', '$q', '$location', '$routeParams', 'cmsCommonService', 'searchService', 'DTOptionsBuilder','DTColumnBuilder','$compile', '$translate', 'cookieService',
+      function ($scope, $rootScope, $q, $location, $routeParams, cmsCommonService, searchService, DTOptionsBuilder, DTColumnBuilder,  $compile, $translate, cookieService) {
 
           var _ = require ('underscore');
           var commonUtil = require ('components/util/commonUtil');
@@ -32,6 +32,8 @@ define (function (require) {
               $scope.search = {};
               $scope.yesOrNo = [{"value":"1","name":"Yes"},{"value":"0","name":"No"}];
               $scope.publishStatus = [{"value":"0","name":"Pending"},{"value":"1","name":"Success"},{"value":"2","name":"Failed"}];
+              $scope.token = cookieService.getToken();
+              $scope.companyId = cookieService.getSelCompany();
 
               // 初始化Cn Product 选中信息.
               $scope.cnProductInfo = {
