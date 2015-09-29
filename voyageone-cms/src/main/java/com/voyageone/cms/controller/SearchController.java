@@ -141,8 +141,8 @@ public class SearchController extends BaseController {
 		logger.info(JsonUtil.toJson(requestMap));
 		Map<String,Object> parameter = com.voyageone.common.util.JsonUtil.jsonToMap(requestMap);
 		parameter.put("channelId", getUser().getSelChannel());
-//		String outPutPath = Properties.readValue(CmsConstants.PropKey.CSVPATH);
-	    String outPutPath = "C:"+File.separator+"user";
+		String outPutPath = Properties.readValue(CmsConstants.PropKey.CSVPATH);
+//	    String outPutPath = "C:"+File.separator+"user";
 	    String  name = String.format(CmsConstants.Format.CSVNAME, DateTimeUtil.getLocalTime(getUserTimeZone()).substring(0, 10));
 		File csvFile = searchService.doExport(parameter,outPutPath,name);
 		FileInputStream input = new FileInputStream(csvFile);
