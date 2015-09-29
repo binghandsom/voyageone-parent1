@@ -23,9 +23,7 @@ public class ModelProductUSBean extends ModelBaseBean{
 	private String colorMap;
 	private String color;
 	private String madeInCountry;
-	private String materialFabric1;
-	private String materialFabric2;
-	private String materialFabric3;
+	private String materialFabric;
 	@Extends
 	private String usAbstract;
 	private String accessory;
@@ -42,25 +40,11 @@ public class ModelProductUSBean extends ModelBaseBean{
 	private String usOfficialFreeShippingType;
 	private boolean usOfficialIsOnSale;
 	private boolean usOfficialIsApproved;
-	private String usOfficialSneakerRXSales7Days;
-	private String usOfficialSneakerRXSales30Days;
-	private String usOfficialSneakerRXSalesThisYear;
-	private String usOfficialSneakerSales7Days;
-	private String usOfficialSneakerSales30Days;
-	private String usOfficialSneakerSalesThisYear;
-	private String usOfficialSneakerWSSales7Days;
-	private String usOfficialSneakerWSSales30Days;
-	private String usOfficialSneakerWSSalesThisYear;
-	private String usOfficialSneakerMobileSales7Days;
-	private String usOfficialSneakerMobileSales30Days;
-	private String usOfficialSneakerMobileSalesThisYear;
 	private String usAmazonPrice;
 	private String usAmazonFreeShippingType;
 	private boolean usAmazonIsOnSale;
 	private boolean usAmazonIsApproved;
 	private String usAmazonPrePublishDateTime;
-	private String usAmazonSales7Days;
-	private String usAmazonSales30Days;
 	private String usAmazonSalesThisYear;
 	private String cnPrice;
 	private String cnPriceRmb;
@@ -70,11 +54,45 @@ public class ModelProductUSBean extends ModelBaseBean{
 	private boolean cnIsOnSale;
 	private boolean cnIsApproved;
 	private String cnPrePublishDateTime;
-	private String cnSales7Days;
-	private String cnSales30Days;
 	private String cnSalesThisYear;
-	
+
 	private Boolean isPrimaryProduct;
+	private String usOfficialSneakerSales7Days;
+	private String usOfficialSneakerSales7DaysPercent;
+	private String usOfficialSneakerSales30Days;
+	private String usOfficialSneakerSales30DaysPercent;
+	private String usOfficialSneakerSalesInThisYear;
+	private String usOfficialSneakerSalesInThisYearPercent;
+	private String usAmazonSales7Days;
+	private String usAmazonSales7DaysPercent;
+	private String usAmazonSales30Days;
+	private String usAmazonSales30DaysPercent;
+	private String usAmazonSalesInThisYear;
+	private String usAmazonSalesInThisYearPercent;
+	private String cnSales7Days;
+	private String cnSales7DaysPercent;
+	private String cnSales30Days;
+	private String cnSales30DaysPercent;
+	private String cnSalesInThisYear;
+	private String cnSalesInThisYearPercent;
+	private String usOfficialSneakerRXSales7Days;
+	private String usOfficialSneakerRXSales7DaysPercent;
+	private String usOfficialSneakerRXSales30Days;
+	private String usOfficialSneakerRXSales30DaysPercent;
+	private String usOfficialSneakerRXSalesInThisYear;
+	private String usOfficialSneakerRXSalesInThisYearPercent;
+	private String usOfficialSneakerWSSales7Days;
+	private String usOfficialSneakerWSSales7DaysPercent;
+	private String usOfficialSneakerWSSales30Days;
+	private String usOfficialSneakerWSSales30DaysPercent;
+	private String usOfficialSneakerWSSalesInThisYear;
+	private String usOfficialSneakerWSSalesInThisYearPercent;
+	private String usOfficialSneakerMobileSales7Days;
+	private String usOfficialSneakerMobileSales7DaysPercent;
+	private String usOfficialSneakerMobileSales30Days;
+	private String usOfficialSneakerMobileSales30DaysPercent;
+	private String usOfficialSneakerMobileSalesInThisYear;
+	private String usOfficialSneakerMobileSalesInThisYearPercent;
 
 	/**
 	 * @return the isPrimaryProduct
@@ -378,39 +396,18 @@ public class ModelProductUSBean extends ModelBaseBean{
 	/**
 	 * @return the materialFabric1
 	 */
-	public String getMaterialFabric1() {
-		return materialFabric1;
+	public String getMaterialFabric() {
+		return materialFabric;
 	}
 
 	/**
-	 * @param materialFabric1
+	 * @param materialFabric
 	 *            the materialFabric1 to set
 	 */
-	public void setMaterialFabric1(String materialFabric1) {
-		this.materialFabric1 = materialFabric1;
+	public void setMaterialFabric1(String materialFabric) {
+		this.materialFabric = materialFabric;
 	}
 
-	/**
-	 * @return the materialFabric2
-	 */
-	public String getMaterialFabric2() {
-		return materialFabric2;
-	}
-
-	/**
-	 * @param materialFabric2
-	 *            the materialFabric2 to set
-	 */
-	public void setMaterialFabric2(String materialFabric2) {
-		this.materialFabric2 = materialFabric2;
-	}
-
-	/**
-	 * @return the materialFabric3
-	 */
-	public String getMaterialFabric3() {
-		return materialFabric3;
-	}
 
 	/**
 	 * @return the usAbstract
@@ -427,13 +424,6 @@ public class ModelProductUSBean extends ModelBaseBean{
 		this.usAbstract = usAbstract;
 	}
 
-	/**
-	 * @param materialFabric3
-	 *            the materialFabric3 to set
-	 */
-	public void setMaterialFabric3(String materialFabric3) {
-		this.materialFabric3 = materialFabric3;
-	}
 
 	/**
 	 * @return the accessory
@@ -583,186 +573,6 @@ public class ModelProductUSBean extends ModelBaseBean{
 	 */
 	public void setUsOfficialFreeShippingType(String usOfficialFreeShippingType) {
 		this.usOfficialFreeShippingType = usOfficialFreeShippingType;
-	}
-
-	/**
-	 * @return the usOfficialSneakerRXSales7Days
-	 */
-	public String getUsOfficialSneakerRXSales7Days() {
-		return usOfficialSneakerRXSales7Days;
-	}
-
-	/**
-	 * @param usOfficialSneakerRXSales7Days
-	 *            the usOfficialSneakerRXSales7Days to set
-	 */
-	public void setUsOfficialSneakerRXSales7Days(String usOfficialSneakerRXSales7Days) {
-		this.usOfficialSneakerRXSales7Days = usOfficialSneakerRXSales7Days;
-	}
-
-	/**
-	 * @return the usOfficialSneakerRXSales30Days
-	 */
-	public String getUsOfficialSneakerRXSales30Days() {
-		return usOfficialSneakerRXSales30Days;
-	}
-
-	/**
-	 * @param usOfficialSneakerRXSales30Days
-	 *            the usOfficialSneakerRXSales30Days to set
-	 */
-	public void setUsOfficialSneakerRXSales30Days(String usOfficialSneakerRXSales30Days) {
-		this.usOfficialSneakerRXSales30Days = usOfficialSneakerRXSales30Days;
-	}
-
-	/**
-	 * @return the usOfficialSneakerRXSalesThisYear
-	 */
-	public String getUsOfficialSneakerRXSalesThisYear() {
-		return usOfficialSneakerRXSalesThisYear;
-	}
-
-	/**
-	 * @param usOfficialSneakerRXSalesThisYear
-	 *            the usOfficialSneakerRXSalesThisYear to set
-	 */
-	public void setUsOfficialSneakerRXSalesThisYear(String usOfficialSneakerRXSalesThisYear) {
-		this.usOfficialSneakerRXSalesThisYear = usOfficialSneakerRXSalesThisYear;
-	}
-
-	/**
-	 * @return the usOfficialSneakerSales7Days
-	 */
-	public String getUsOfficialSneakerSales7Days() {
-		return usOfficialSneakerSales7Days;
-	}
-
-	/**
-	 * @param usOfficialSneakerSales7Days
-	 *            the usOfficialSneakerSales7Days to set
-	 */
-	public void setUsOfficialSneakerSales7Days(String usOfficialSneakerSales7Days) {
-		this.usOfficialSneakerSales7Days = usOfficialSneakerSales7Days;
-	}
-
-	/**
-	 * @return the usOfficialSneakerSales30Days
-	 */
-	public String getUsOfficialSneakerSales30Days() {
-		return usOfficialSneakerSales30Days;
-	}
-
-	/**
-	 * @param usOfficialSneakerSales30Days
-	 *            the usOfficialSneakerSales30Days to set
-	 */
-	public void setUsOfficialSneakerSales30Days(String usOfficialSneakerSales30Days) {
-		this.usOfficialSneakerSales30Days = usOfficialSneakerSales30Days;
-	}
-
-	/**
-	 * @return the usOfficialSneakerSalesThisYear
-	 */
-	public String getUsOfficialSneakerSalesThisYear() {
-		return usOfficialSneakerSalesThisYear;
-	}
-
-	/**
-	 * @param usOfficialSneakerSalesThisYear
-	 *            the usOfficialSneakerSalesThisYear to set
-	 */
-	public void setUsOfficialSneakerSalesThisYear(String usOfficialSneakerSalesThisYear) {
-		this.usOfficialSneakerSalesThisYear = usOfficialSneakerSalesThisYear;
-	}
-
-	/**
-	 * @return the usOfficialSneakerWSSales7Days
-	 */
-	public String getUsOfficialSneakerWSSales7Days() {
-		return usOfficialSneakerWSSales7Days;
-	}
-
-	/**
-	 * @param usOfficialSneakerWSSales7Days
-	 *            the usOfficialSneakerWSSales7Days to set
-	 */
-	public void setUsOfficialSneakerWSSales7Days(String usOfficialSneakerWSSales7Days) {
-		this.usOfficialSneakerWSSales7Days = usOfficialSneakerWSSales7Days;
-	}
-
-	/**
-	 * @return the usOfficialSneakerWSSales30Days
-	 */
-	public String getUsOfficialSneakerWSSales30Days() {
-		return usOfficialSneakerWSSales30Days;
-	}
-
-	/**
-	 * @param usOfficialSneakerWSSales30Days
-	 *            the usOfficialSneakerWSSales30Days to set
-	 */
-	public void setUsOfficialSneakerWSSales30Days(String usOfficialSneakerWSSales30Days) {
-		this.usOfficialSneakerWSSales30Days = usOfficialSneakerWSSales30Days;
-	}
-
-	/**
-	 * @return the usOfficialSneakerWSSalesThisYear
-	 */
-	public String getUsOfficialSneakerWSSalesThisYear() {
-		return usOfficialSneakerWSSalesThisYear;
-	}
-
-	/**
-	 * @param usOfficialSneakerWSSalesThisYear
-	 *            the usOfficialSneakerWSSalesThisYear to set
-	 */
-	public void setUsOfficialSneakerWSSalesThisYear(String usOfficialSneakerWSSalesThisYear) {
-		this.usOfficialSneakerWSSalesThisYear = usOfficialSneakerWSSalesThisYear;
-	}
-
-	/**
-	 * @return the usOfficialSneakerMobileSales7Days
-	 */
-	public String getUsOfficialSneakerMobileSales7Days() {
-		return usOfficialSneakerMobileSales7Days;
-	}
-
-	/**
-	 * @param usOfficialSneakerMobileSales7Days
-	 *            the usOfficialSneakerMobileSales7Days to set
-	 */
-	public void setUsOfficialSneakerMobileSales7Days(String usOfficialSneakerMobileSales7Days) {
-		this.usOfficialSneakerMobileSales7Days = usOfficialSneakerMobileSales7Days;
-	}
-
-	/**
-	 * @return the usOfficialSneakerMobileSales30Days
-	 */
-	public String getUsOfficialSneakerMobileSales30Days() {
-		return usOfficialSneakerMobileSales30Days;
-	}
-
-	/**
-	 * @param usOfficialSneakerMobileSales30Days
-	 *            the usOfficialSneakerMobileSales30Days to set
-	 */
-	public void setUsOfficialSneakerMobileSales30Days(String usOfficialSneakerMobileSales30Days) {
-		this.usOfficialSneakerMobileSales30Days = usOfficialSneakerMobileSales30Days;
-	}
-
-	/**
-	 * @return the usOfficialSneakerMobileSalesThisYear
-	 */
-	public String getUsOfficialSneakerMobileSalesThisYear() {
-		return usOfficialSneakerMobileSalesThisYear;
-	}
-
-	/**
-	 * @param usOfficialSneakerMobileSalesThisYear
-	 *            the usOfficialSneakerMobileSalesThisYear to set
-	 */
-	public void setUsOfficialSneakerMobileSalesThisYear(String usOfficialSneakerMobileSalesThisYear) {
-		this.usOfficialSneakerMobileSalesThisYear = usOfficialSneakerMobileSalesThisYear;
 	}
 
 	/**
@@ -1078,6 +888,461 @@ public class ModelProductUSBean extends ModelBaseBean{
 	 */
 	public void setCnIsApproved(boolean cnIsApproved) {
 		this.cnIsApproved = cnIsApproved;
+	}
+
+	/**
+	 * @return the usOfficialSneakerSales7Days
+	 */
+	public String getUsOfficialSneakerSales7Days() {
+		return usOfficialSneakerSales7Days;
+	}
+
+	/**
+	 * @param usOfficialSneakerSales7Days the usOfficialSneakerSales7Days to set
+	 */
+	public void setUsOfficialSneakerSales7Days(String usOfficialSneakerSales7Days) {
+		this.usOfficialSneakerSales7Days = usOfficialSneakerSales7Days;
+	}
+
+	/**
+	 * @return the usOfficialSneakerSales7DaysPercent
+	 */
+	public String getUsOfficialSneakerSales7DaysPercent() {
+		return usOfficialSneakerSales7DaysPercent;
+	}
+
+	/**
+	 * @param usOfficialSneakerSales7DaysPercent the usOfficialSneakerSales7DaysPercent to set
+	 */
+	public void setUsOfficialSneakerSales7DaysPercent(String usOfficialSneakerSales7DaysPercent) {
+		this.usOfficialSneakerSales7DaysPercent = usOfficialSneakerSales7DaysPercent;
+	}
+
+	/**
+	 * @return the usOfficialSneakerSales30Days
+	 */
+	public String getUsOfficialSneakerSales30Days() {
+		return usOfficialSneakerSales30Days;
+	}
+
+	/**
+	 * @param usOfficialSneakerSales30Days the usOfficialSneakerSales30Days to set
+	 */
+	public void setUsOfficialSneakerSales30Days(String usOfficialSneakerSales30Days) {
+		this.usOfficialSneakerSales30Days = usOfficialSneakerSales30Days;
+	}
+
+	/**
+	 * @return the usOfficialSneakerSales30DaysPercent
+	 */
+	public String getUsOfficialSneakerSales30DaysPercent() {
+		return usOfficialSneakerSales30DaysPercent;
+	}
+
+	/**
+	 * @param usOfficialSneakerSales30DaysPercent the usOfficialSneakerSales30DaysPercent to set
+	 */
+	public void setUsOfficialSneakerSales30DaysPercent(String usOfficialSneakerSales30DaysPercent) {
+		this.usOfficialSneakerSales30DaysPercent = usOfficialSneakerSales30DaysPercent;
+	}
+
+	/**
+	 * @return the usOfficialSneakerSalesInThisYear
+	 */
+	public String getUsOfficialSneakerSalesInThisYear() {
+		return usOfficialSneakerSalesInThisYear;
+	}
+
+	/**
+	 * @param usOfficialSneakerSalesInThisYear the usOfficialSneakerSalesInThisYear to set
+	 */
+	public void setUsOfficialSneakerSalesInThisYear(String usOfficialSneakerSalesInThisYear) {
+		this.usOfficialSneakerSalesInThisYear = usOfficialSneakerSalesInThisYear;
+	}
+
+	/**
+	 * @return the usOfficialSneakerSalesInThisYearPercent
+	 */
+	public String getUsOfficialSneakerSalesInThisYearPercent() {
+		return usOfficialSneakerSalesInThisYearPercent;
+	}
+
+	/**
+	 * @param usOfficialSneakerSalesInThisYearPercent the usOfficialSneakerSalesInThisYearPercent to set
+	 */
+	public void setUsOfficialSneakerSalesInThisYearPercent(String usOfficialSneakerSalesInThisYearPercent) {
+		this.usOfficialSneakerSalesInThisYearPercent = usOfficialSneakerSalesInThisYearPercent;
+	}
+
+	/**
+	 * @return the usAmazonSales7DaysPercent
+	 */
+	public String getUsAmazonSales7DaysPercent() {
+		return usAmazonSales7DaysPercent;
+	}
+
+	/**
+	 * @param usAmazonSales7DaysPercent the usAmazonSales7DaysPercent to set
+	 */
+	public void setUsAmazonSales7DaysPercent(String usAmazonSales7DaysPercent) {
+		this.usAmazonSales7DaysPercent = usAmazonSales7DaysPercent;
+	}
+
+	/**
+	 * @return the usAmazonSales30DaysPercent
+	 */
+	public String getUsAmazonSales30DaysPercent() {
+		return usAmazonSales30DaysPercent;
+	}
+
+	/**
+	 * @param usAmazonSales30DaysPercent the usAmazonSales30DaysPercent to set
+	 */
+	public void setUsAmazonSales30DaysPercent(String usAmazonSales30DaysPercent) {
+		this.usAmazonSales30DaysPercent = usAmazonSales30DaysPercent;
+	}
+
+	/**
+	 * @return the usAmazonSalesInThisYear
+	 */
+	public String getUsAmazonSalesInThisYear() {
+		return usAmazonSalesInThisYear;
+	}
+
+	/**
+	 * @param usAmazonSalesInThisYear the usAmazonSalesInThisYear to set
+	 */
+	public void setUsAmazonSalesInThisYear(String usAmazonSalesInThisYear) {
+		this.usAmazonSalesInThisYear = usAmazonSalesInThisYear;
+	}
+
+	/**
+	 * @return the usAmazonSalesInThisYearPercent
+	 */
+	public String getUsAmazonSalesInThisYearPercent() {
+		return usAmazonSalesInThisYearPercent;
+	}
+
+	/**
+	 * @param usAmazonSalesInThisYearPercent the usAmazonSalesInThisYearPercent to set
+	 */
+	public void setUsAmazonSalesInThisYearPercent(String usAmazonSalesInThisYearPercent) {
+		this.usAmazonSalesInThisYearPercent = usAmazonSalesInThisYearPercent;
+	}
+
+	/**
+	 * @return the cnSales7DaysPercent
+	 */
+	public String getCnSales7DaysPercent() {
+		return cnSales7DaysPercent;
+	}
+
+	/**
+	 * @param cnSales7DaysPercent the cnSales7DaysPercent to set
+	 */
+	public void setCnSales7DaysPercent(String cnSales7DaysPercent) {
+		this.cnSales7DaysPercent = cnSales7DaysPercent;
+	}
+
+	/**
+	 * @return the cnSales30DaysPercent
+	 */
+	public String getCnSales30DaysPercent() {
+		return cnSales30DaysPercent;
+	}
+
+	/**
+	 * @param cnSales30DaysPercent the cnSales30DaysPercent to set
+	 */
+	public void setCnSales30DaysPercent(String cnSales30DaysPercent) {
+		this.cnSales30DaysPercent = cnSales30DaysPercent;
+	}
+
+	/**
+	 * @return the cnSalesInThisYear
+	 */
+	public String getCnSalesInThisYear() {
+		return cnSalesInThisYear;
+	}
+
+	/**
+	 * @param cnSalesInThisYear the cnSalesInThisYear to set
+	 */
+	public void setCnSalesInThisYear(String cnSalesInThisYear) {
+		this.cnSalesInThisYear = cnSalesInThisYear;
+	}
+
+	/**
+	 * @return the cnSalesInThisYearPercent
+	 */
+	public String getCnSalesInThisYearPercent() {
+		return cnSalesInThisYearPercent;
+	}
+
+	/**
+	 * @param cnSalesInThisYearPercent the cnSalesInThisYearPercent to set
+	 */
+	public void setCnSalesInThisYearPercent(String cnSalesInThisYearPercent) {
+		this.cnSalesInThisYearPercent = cnSalesInThisYearPercent;
+	}
+
+	/**
+	 * @return the usOfficialSneakerRXSales7Days
+	 */
+	public String getUsOfficialSneakerRXSales7Days() {
+		return usOfficialSneakerRXSales7Days;
+	}
+
+	/**
+	 * @param usOfficialSneakerRXSales7Days the usOfficialSneakerRXSales7Days to set
+	 */
+	public void setUsOfficialSneakerRXSales7Days(String usOfficialSneakerRXSales7Days) {
+		this.usOfficialSneakerRXSales7Days = usOfficialSneakerRXSales7Days;
+	}
+
+	/**
+	 * @return the usOfficialSneakerRXSales7DaysPercent
+	 */
+	public String getUsOfficialSneakerRXSales7DaysPercent() {
+		return usOfficialSneakerRXSales7DaysPercent;
+	}
+
+	/**
+	 * @param usOfficialSneakerRXSales7DaysPercent the usOfficialSneakerRXSales7DaysPercent to set
+	 */
+	public void setUsOfficialSneakerRXSales7DaysPercent(String usOfficialSneakerRXSales7DaysPercent) {
+		this.usOfficialSneakerRXSales7DaysPercent = usOfficialSneakerRXSales7DaysPercent;
+	}
+
+	/**
+	 * @return the usOfficialSneakerRXSales30Days
+	 */
+	public String getUsOfficialSneakerRXSales30Days() {
+		return usOfficialSneakerRXSales30Days;
+	}
+
+	/**
+	 * @param usOfficialSneakerRXSales30Days the usOfficialSneakerRXSales30Days to set
+	 */
+	public void setUsOfficialSneakerRXSales30Days(String usOfficialSneakerRXSales30Days) {
+		this.usOfficialSneakerRXSales30Days = usOfficialSneakerRXSales30Days;
+	}
+
+	/**
+	 * @return the usOfficialSneakerRXSales30DaysPercent
+	 */
+	public String getUsOfficialSneakerRXSales30DaysPercent() {
+		return usOfficialSneakerRXSales30DaysPercent;
+	}
+
+	/**
+	 * @param usOfficialSneakerRXSales30DaysPercent the usOfficialSneakerRXSales30DaysPercent to set
+	 */
+	public void setUsOfficialSneakerRXSales30DaysPercent(String usOfficialSneakerRXSales30DaysPercent) {
+		this.usOfficialSneakerRXSales30DaysPercent = usOfficialSneakerRXSales30DaysPercent;
+	}
+
+	/**
+	 * @return the usOfficialSneakerRXSalesInThisYear
+	 */
+	public String getUsOfficialSneakerRXSalesInThisYear() {
+		return usOfficialSneakerRXSalesInThisYear;
+	}
+
+	/**
+	 * @param usOfficialSneakerRXSalesInThisYear the usOfficialSneakerRXSalesInThisYear to set
+	 */
+	public void setUsOfficialSneakerRXSalesInThisYear(String usOfficialSneakerRXSalesInThisYear) {
+		this.usOfficialSneakerRXSalesInThisYear = usOfficialSneakerRXSalesInThisYear;
+	}
+
+	/**
+	 * @return the usOfficialSneakerRXSalesInThisYearPercent
+	 */
+	public String getUsOfficialSneakerRXSalesInThisYearPercent() {
+		return usOfficialSneakerRXSalesInThisYearPercent;
+	}
+
+	/**
+	 * @param usOfficialSneakerRXSalesInThisYearPercent the usOfficialSneakerRXSalesInThisYearPercent to set
+	 */
+	public void setUsOfficialSneakerRXSalesInThisYearPercent(String usOfficialSneakerRXSalesInThisYearPercent) {
+		this.usOfficialSneakerRXSalesInThisYearPercent = usOfficialSneakerRXSalesInThisYearPercent;
+	}
+
+	/**
+	 * @return the usOfficialSneakerWSSales7Days
+	 */
+	public String getUsOfficialSneakerWSSales7Days() {
+		return usOfficialSneakerWSSales7Days;
+	}
+
+	/**
+	 * @param usOfficialSneakerWSSales7Days the usOfficialSneakerWSSales7Days to set
+	 */
+	public void setUsOfficialSneakerWSSales7Days(String usOfficialSneakerWSSales7Days) {
+		this.usOfficialSneakerWSSales7Days = usOfficialSneakerWSSales7Days;
+	}
+
+	/**
+	 * @return the usOfficialSneakerWSSales7DaysPercent
+	 */
+	public String getUsOfficialSneakerWSSales7DaysPercent() {
+		return usOfficialSneakerWSSales7DaysPercent;
+	}
+
+	/**
+	 * @param usOfficialSneakerWSSales7DaysPercent the usOfficialSneakerWSSales7DaysPercent to set
+	 */
+	public void setUsOfficialSneakerWSSales7DaysPercent(String usOfficialSneakerWSSales7DaysPercent) {
+		this.usOfficialSneakerWSSales7DaysPercent = usOfficialSneakerWSSales7DaysPercent;
+	}
+
+	/**
+	 * @return the usOfficialSneakerWSSales30Days
+	 */
+	public String getUsOfficialSneakerWSSales30Days() {
+		return usOfficialSneakerWSSales30Days;
+	}
+
+	/**
+	 * @param usOfficialSneakerWSSales30Days the usOfficialSneakerWSSales30Days to set
+	 */
+	public void setUsOfficialSneakerWSSales30Days(String usOfficialSneakerWSSales30Days) {
+		this.usOfficialSneakerWSSales30Days = usOfficialSneakerWSSales30Days;
+	}
+
+	/**
+	 * @return the usOfficialSneakerWSSales30DaysPercent
+	 */
+	public String getUsOfficialSneakerWSSales30DaysPercent() {
+		return usOfficialSneakerWSSales30DaysPercent;
+	}
+
+	/**
+	 * @param usOfficialSneakerWSSales30DaysPercent the usOfficialSneakerWSSales30DaysPercent to set
+	 */
+	public void setUsOfficialSneakerWSSales30DaysPercent(String usOfficialSneakerWSSales30DaysPercent) {
+		this.usOfficialSneakerWSSales30DaysPercent = usOfficialSneakerWSSales30DaysPercent;
+	}
+
+	/**
+	 * @return the usOfficialSneakerWSSalesInThisYear
+	 */
+	public String getUsOfficialSneakerWSSalesInThisYear() {
+		return usOfficialSneakerWSSalesInThisYear;
+	}
+
+	/**
+	 * @param usOfficialSneakerWSSalesInThisYear the usOfficialSneakerWSSalesInThisYear to set
+	 */
+	public void setUsOfficialSneakerWSSalesInThisYear(String usOfficialSneakerWSSalesInThisYear) {
+		this.usOfficialSneakerWSSalesInThisYear = usOfficialSneakerWSSalesInThisYear;
+	}
+
+	/**
+	 * @return the usOfficialSneakerWSSalesInThisYearPercent
+	 */
+	public String getUsOfficialSneakerWSSalesInThisYearPercent() {
+		return usOfficialSneakerWSSalesInThisYearPercent;
+	}
+
+	/**
+	 * @param usOfficialSneakerWSSalesInThisYearPercent the usOfficialSneakerWSSalesInThisYearPercent to set
+	 */
+	public void setUsOfficialSneakerWSSalesInThisYearPercent(String usOfficialSneakerWSSalesInThisYearPercent) {
+		this.usOfficialSneakerWSSalesInThisYearPercent = usOfficialSneakerWSSalesInThisYearPercent;
+	}
+
+	/**
+	 * @return the usOfficialSneakerMobileSales7Days
+	 */
+	public String getUsOfficialSneakerMobileSales7Days() {
+		return usOfficialSneakerMobileSales7Days;
+	}
+
+	/**
+	 * @param usOfficialSneakerMobileSales7Days the usOfficialSneakerMobileSales7Days to set
+	 */
+	public void setUsOfficialSneakerMobileSales7Days(String usOfficialSneakerMobileSales7Days) {
+		this.usOfficialSneakerMobileSales7Days = usOfficialSneakerMobileSales7Days;
+	}
+
+	/**
+	 * @return the usOfficialSneakerMobileSales7DaysPercent
+	 */
+	public String getUsOfficialSneakerMobileSales7DaysPercent() {
+		return usOfficialSneakerMobileSales7DaysPercent;
+	}
+
+	/**
+	 * @param usOfficialSneakerMobileSales7DaysPercent the usOfficialSneakerMobileSales7DaysPercent to set
+	 */
+	public void setUsOfficialSneakerMobileSales7DaysPercent(String usOfficialSneakerMobileSales7DaysPercent) {
+		this.usOfficialSneakerMobileSales7DaysPercent = usOfficialSneakerMobileSales7DaysPercent;
+	}
+
+	/**
+	 * @return the usOfficialSneakerMobileSales30Days
+	 */
+	public String getUsOfficialSneakerMobileSales30Days() {
+		return usOfficialSneakerMobileSales30Days;
+	}
+
+	/**
+	 * @param usOfficialSneakerMobileSales30Days the usOfficialSneakerMobileSales30Days to set
+	 */
+	public void setUsOfficialSneakerMobileSales30Days(String usOfficialSneakerMobileSales30Days) {
+		this.usOfficialSneakerMobileSales30Days = usOfficialSneakerMobileSales30Days;
+	}
+
+	/**
+	 * @return the usOfficialSneakerMobileSales30DaysPercent
+	 */
+	public String getUsOfficialSneakerMobileSales30DaysPercent() {
+		return usOfficialSneakerMobileSales30DaysPercent;
+	}
+
+	/**
+	 * @param usOfficialSneakerMobileSales30DaysPercent the usOfficialSneakerMobileSales30DaysPercent to set
+	 */
+	public void setUsOfficialSneakerMobileSales30DaysPercent(String usOfficialSneakerMobileSales30DaysPercent) {
+		this.usOfficialSneakerMobileSales30DaysPercent = usOfficialSneakerMobileSales30DaysPercent;
+	}
+
+	/**
+	 * @return the usOfficialSneakerMobileSalesInThisYear
+	 */
+	public String getUsOfficialSneakerMobileSalesInThisYear() {
+		return usOfficialSneakerMobileSalesInThisYear;
+	}
+
+	/**
+	 * @param usOfficialSneakerMobileSalesInThisYear the usOfficialSneakerMobileSalesInThisYear to set
+	 */
+	public void setUsOfficialSneakerMobileSalesInThisYear(String usOfficialSneakerMobileSalesInThisYear) {
+		this.usOfficialSneakerMobileSalesInThisYear = usOfficialSneakerMobileSalesInThisYear;
+	}
+
+	/**
+	 * @return the usOfficialSneakerMobileSalesInThisYearPercent
+	 */
+	public String getUsOfficialSneakerMobileSalesInThisYearPercent() {
+		return usOfficialSneakerMobileSalesInThisYearPercent;
+	}
+
+	/**
+	 * @param usOfficialSneakerMobileSalesInThisYearPercent the usOfficialSneakerMobileSalesInThisYearPercent to set
+	 */
+	public void setUsOfficialSneakerMobileSalesInThisYearPercent(String usOfficialSneakerMobileSalesInThisYearPercent) {
+		this.usOfficialSneakerMobileSalesInThisYearPercent = usOfficialSneakerMobileSalesInThisYearPercent;
+	}
+
+	/**
+	 * @param materialFabric the materialFabric to set
+	 */
+	public void setMaterialFabric(String materialFabric) {
+		this.materialFabric = materialFabric;
 	}
 
 }

@@ -2138,24 +2138,12 @@
 )
 VALUES
 	(
-		'003',
+		3,
 		#{productId},
 		#{channelId},
-		(SELECT
-			max(a.display_order) + 1
-		FROM
-			cms_bt_relation_category_product a
-		WHERE
-			a.category_id = '003'
-		AND a.channel_id = #{channelId}),
+		getMaxDisplayOrder(3,#{channelId},'cms_bt_relation_category_product',0),
 		0,
-		(SELECT
-			max(a.cn_display_order) + 1
-		FROM
-			cms_bt_relation_category_product a
-		WHERE
-			a.category_id = '003'
-		AND a.channel_id = #{channelId}),
+		getMaxDisplayOrder(3,#{channelId},'cms_bt_relation_category_product',0),
 		0,
 		now(),
 		#{modifier},
@@ -2352,7 +2340,7 @@ VALUES
 	        #{imageTypeId,jdbcType=INTEGER},
 	      	getMaxImageId(#{productId},#{channelId},#{imageTypeId}),
 	        #{imageName,jdbcType=VARCHAR},
-	      	getMaxDisplayOrder(#{productId},#{channelId},#{imageTypeId}),
+	      	getMaxDisplayOrder(#{productId},#{channelId},'cms_bt_product_image',#{imageTypeId}),
 	        now(),
 	        #{modifier,jdbcType=VARCHAR},
 	        now(),

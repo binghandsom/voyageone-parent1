@@ -44,6 +44,8 @@ define (function (require) {
     require ("components/directives/image.directive");
     require ("components/directives/popNewWin.directive");
     require ("components/directives/ifNoRows");
+    require ("components/directives/enterClick");
+
     require ("components/filters/fromNow");
 
     require("components/directives/ui-fullscreen");

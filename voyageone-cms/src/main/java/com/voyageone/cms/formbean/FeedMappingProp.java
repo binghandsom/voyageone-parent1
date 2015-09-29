@@ -1,5 +1,6 @@
-package com.voyageone.cms.modelbean;
+package com.voyageone.cms.formbean;
 
+import com.voyageone.cms.modelbean.MasterProperty;
 import com.voyageone.ims.enums.MasterPropTypeEnum;
 
 /**
@@ -9,6 +10,8 @@ import com.voyageone.ims.enums.MasterPropTypeEnum;
  */
 public class FeedMappingProp extends MasterProperty {
     private boolean is_ignore;
+
+    private int val_count;
 
     public boolean is_ignore() {
         return is_ignore;
@@ -20,6 +23,14 @@ public class FeedMappingProp extends MasterProperty {
 
     public void setIs_ignore(boolean is_ignore) {
         this.is_ignore = is_ignore;
+    }
+
+    public int getVal_count() {
+        return val_count;
+    }
+
+    public void setVal_count(int val_count) {
+        this.val_count = val_count;
     }
 
     public MasterPropTypeEnum getEProp_type() {

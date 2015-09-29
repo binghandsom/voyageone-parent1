@@ -1,5 +1,6 @@
 package com.voyageone.core.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -231,10 +232,11 @@ public class SettingServiceImpl implements SettingService {
 		if(userDao.updateUserConfig(requestMap) == 0){
 			userDao.insertUserConfig(requestMap);
 		}
+		List<String> emptyList = new ArrayList<>();
 		if("cms_us_product_attributes".equalsIgnoreCase(requestMap.get("cfgName").toString())){
-			userBean.getCmsProductfields().put("cmsUsProductAttributes", requestMap.get("cfgVal1").toString().split(","));
+			userBean.getCmsProductfields().put("cmsUsProductAttributes", requestMap.get("cfgVal1").toString().isEmpty() ? emptyList : requestMap.get("cfgVal1").toString().split(","));
 		}else if("cms_cn_product_attributes".equalsIgnoreCase(requestMap.get("cfgName").toString())){
-			userBean.getCmsProductfields().put("cmsCnProductAttributes", requestMap.get("cfgVal1").toString().split(","));
+			userBean.getCmsProductfields().put("cmsCnProductAttributes", requestMap.get("cfgVal1").toString().isEmpty() ? emptyList : requestMap.get("cfgVal1").toString().split(","));
 		}
 		
 	}

@@ -1,7 +1,7 @@
 package com.voyageone.cms.service;
 
-import com.voyageone.cms.feed.Operation;
 import com.voyageone.cms.feed.OperationBean;
+import com.voyageone.cms.formbean.FeedMappingProp;
 import com.voyageone.cms.modelbean.*;
 import com.voyageone.core.ajax.dt.DtRequest;
 import com.voyageone.core.ajax.dt.DtResponse;

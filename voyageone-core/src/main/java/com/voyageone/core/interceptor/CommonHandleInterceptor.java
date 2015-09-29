@@ -102,6 +102,9 @@ public class CommonHandleInterceptor implements HandlerInterceptor {
 
                 // token验证
                 String tokenClient = request.getHeader(CoreConstants.VOYAGEONE_USER_TOKEN);
+                if(StringUtils.isEmpty(tokenClient)){
+                    tokenClient = request.getParameter("token");
+                }
                 if (StringUtils.isEmpty(tokenClient)) {
                     logger.info("tokenClient getHeader is " + tokenClient);
                     tokenClient = (String) request.getAttribute(CoreConstants.VOYAGEONE_USER_TOKEN);
@@ -148,6 +151,9 @@ public class CommonHandleInterceptor implements HandlerInterceptor {
         if (!EXCLUDE_URL_LIST_COMPANYID.contains(url)) {
             // 获得客户端选择companyId
             String companyIdClient = request.getHeader(CoreConstants.VOYAGEONE_USER_COMPANY);
+            if (StringUtils.isEmpty(companyIdClient)) {
+                companyIdClient = request.getParameter("companyId");
+            }
             // 客户端companyId为空
             if (StringUtils.isEmpty(companyIdClient)) {
                 String msg = MessageHelp.getMessage(MessageConstants.MESSAGE_TYPE_EXCEPTION,

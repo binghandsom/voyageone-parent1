@@ -7,8 +7,10 @@
           http://www.springframework.org/schema/task
           http://www.springframework.org/schema/task/spring-task.xsd">
     <task:scheduled-tasks scheduler="cms-job-scheduler"> 
-        <!--每天凌晨4点开始产品导入-->
-        <task:scheduled ref="cmsGetSuperFeedTask" method="run" cron="0 0 20 * * ?"/>
+        <!--每天凌晨4点开始产品导入
+        <task:scheduled ref="cmsGetSuperFeedTask" method="run" cron="0 0 20 * * ?"/>-->
+        <!--test 每5分钟运行一次　-->
+        <task:scheduled ref ="cmsGetSuperFeedTask" method="run" cron="0 0/1 0-23 * * ?"/>
 
         <!-- 每天凌晨5点开始将产品导入到主数据的值表 -->
         <!--<task:scheduled ref="cmsSetMainPropTask" method="run" cron="0 0 5 * * ?"/>-->

@@ -97,7 +97,7 @@ public class FtpUtil {
             int reply;
             ftpClient.setControlEncoding(encoding);
             ftpClient.setConnectTimeout(30000);
-            ftpClient.setDataTimeout(60000);
+            ftpClient.setDataTimeout(300000);
             //连接FTP服务器
             if (StringUtils.isNullOrBlank2(ftpBean.getPort())){
                 // 如果采用默认端口，可以使用ftp.connect(url)的方式直接连接FTP服务器
