@@ -472,7 +472,7 @@ public class LoginServiceImpl implements LoginService {
 		Map<String,Object> cmsProductFields = new HashMap<String, Object>();
 		List<String> emptyAttribute = new ArrayList<>();
 		cmsProductFields.put("cmsUsProductAttributes", cmsUsProductAttributes.isEmpty() ? emptyAttribute : cmsUsProductAttributes.split(","));
-		cmsProductFields.put("cmsCnProductAttributes", cmsCnProductAttributes.isEmpty()? emptyAttribute : cmsCnProductAttributes.split(","));
+		cmsProductFields.put("cmsCnProductAttributes", cmsCnProductAttributes.isEmpty() ? emptyAttribute : cmsCnProductAttributes.split(","));
 		user.setCmsProductfields(cmsProductFields);
 		
         // 获取用户 移库对象
