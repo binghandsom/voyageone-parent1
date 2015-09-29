@@ -43,8 +43,8 @@ public class SynShipSyncToJuMeiSubService extends SynShipSyncTrackingBaseService
 
     public void syncJuMei(List<TrackingSyncBean> trackingSyncBeans, ShopBean shopBean) {
 
-        logger.info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")运单同步开始");
-        logger.info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")运单需要同步件数："+ trackingSyncBeans.size());
+        $info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")运单同步开始");
+        $info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")运单需要同步件数：" + trackingSyncBeans.size());
 
         String  tracking_type = ShopConfigs.getVal1(shopBean, ShopConfigEnums.Name.tracking_type);
 
@@ -53,7 +53,7 @@ public class SynShipSyncToJuMeiSubService extends SynShipSyncTrackingBaseService
             syncJuMei(trackingSyncBean, shopBean, tracking_type);
         }
 
-        logger.info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")运单同步结束");
+        $info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")运单同步结束");
 
     }
 
@@ -77,11 +77,11 @@ public class SynShipSyncToJuMeiSubService extends SynShipSyncTrackingBaseService
                 req.setLogistic_track_no(trackingSyncBean.getTracking_no());
             }
 
-            logger.info("----------" + shopBean.getShop_name() + "（" + shopBean.getComment() + ")运单同步记录：" + new Gson().toJson(req));
+            $info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")运单同步记录：" + new Gson().toJson(req));
 
             res = jumeiService.setShipping(shopBean, req);
 
-            logger.info("----------" + shopBean.getShop_name() + "（" + shopBean.getComment() + ")运单同步结果：" + res);
+            $info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")运单同步结果：" + res);
         } catch (Exception e) {
             logFailRecord(e, trackingSyncBean);
             return;
