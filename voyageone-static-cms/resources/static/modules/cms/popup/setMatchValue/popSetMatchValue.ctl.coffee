@@ -55,9 +55,9 @@ define [
       value: null
     curr: null # 当前编辑的 mapping
     conditionChecked: false # 画面上条件多选是否选中
-    findFeedProp: (val1, val2) =>
-      if (val1)
-        return o for o in @feedProps when o.cfg_val1 is val1
+    findFeedProp: (name, val2) =>
+      if (name)
+        return o for o in @feedProps when o.cfg_name is name
       if (val2)
         return o for o in @feedProps when o.cfg_val2 is val2
       null
@@ -66,14 +66,14 @@ define [
       condition = angular.fromJson condition
       operation = (=> return o for o in @operations when o.name is condition.operation)()
       property = @findFeedProp condition.property
-      desc = "判断属性 [ #{property.cfg_val2} ] #{operation.desc}"
+      desc = "判断属性 [ #{if property then property.cfg_val2 else condition.property} ] #{operation.desc}"
       if !operation.single then desc += " “ #{condition.value} ”"
       desc += "时"
     formatValue: (mapping) ->
       if (mapping.type != @feedPropMappingType.feed)
         return mapping.value
       property = @findFeedProp mapping.value
-      property.cfg_val2
+      if property then property.cfg_val2 else mapping.value
     add: ->
       # 标为增加
       @fromAdd = true
@@ -135,8 +135,7 @@ define [
       else
         @SetMatchValueService.setMapping @curr
         .then (res) =>
-          @mappings.splice @editIndex, 1
-          @mappings.push res.data
+          @mappings[@editIndex] = res.data
           @editing = false
     edit: (index) ->
       # 标为更改

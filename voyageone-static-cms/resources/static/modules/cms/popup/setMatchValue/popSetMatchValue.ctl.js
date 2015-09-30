@@ -88,13 +88,13 @@ define(['modules/cms/cms.module', 'modules/cms/popup/setMatchValue/popSetMatchVa
 
     _Class.prototype.conditionChecked = false;
 
-    _Class.prototype.findFeedProp = function(val1, val2) {
+    _Class.prototype.findFeedProp = function(name, val2) {
       var i, j, len, len1, o, ref, ref1;
-      if (val1) {
+      if (name) {
         ref = this.feedProps;
         for (i = 0, len = ref.length; i < len; i++) {
           o = ref[i];
-          if (o.cfg_val1 === val1) {
+          if (o.cfg_name === name) {
             return o;
           }
         }
@@ -130,7 +130,7 @@ define(['modules/cms/cms.module', 'modules/cms/popup/setMatchValue/popSetMatchVa
         };
       })(this))();
       property = this.findFeedProp(condition.property);
-      desc = "判断属性 [ " + property.cfg_val2 + " ] " + operation.desc;
+      desc = "判断属性 [ " + (property ? property.cfg_val2 : condition.property) + " ] " + operation.desc;
       if (!operation.single) {
         desc += " “ " + condition.value + " ”";
       }
@@ -143,7 +143,11 @@ define(['modules/cms/cms.module', 'modules/cms/popup/setMatchValue/popSetMatchVa
         return mapping.value;
       }
       property = this.findFeedProp(mapping.value);
-      return property.cfg_val2;
+      if (property) {
+        return property.cfg_val2;
+      } else {
+        return mapping.value;
+      }
     };
 
     _Class.prototype.add = function() {
@@ -222,8 +226,7 @@ define(['modules/cms/cms.module', 'modules/cms/popup/setMatchValue/popSetMatchVa
       } else {
         return this.SetMatchValueService.setMapping(this.curr).then((function(_this) {
           return function(res) {
-            _this.mappings.splice(_this.editIndex, 1);
-            _this.mappings.push(res.data);
+            _this.mappings[_this.editIndex] = res.data;
             return _this.editing = false;
           };
         })(this));
