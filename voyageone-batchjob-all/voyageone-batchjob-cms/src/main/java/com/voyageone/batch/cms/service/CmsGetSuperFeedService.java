@@ -1,11 +1,6 @@
 package com.voyageone.batch.cms.service;
 
 import com.csvreader.CsvReader;
-import javax.ws.rs.core.MediaType;
-
-import com.google.gson.GsonBuilder;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource;
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.cms.bean.*;
 import com.voyageone.batch.cms.utils.WebServiceUtil;
@@ -18,6 +13,7 @@ import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.configs.ChannelConfigs;
+import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feed;
@@ -928,14 +924,14 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 					categoryBean.setC_name(strarray[j]);
 					categoryBean.setC_header_title(strarray[j]);
 					// 全部小写,且空格用-替代
-					categoryBean.setUrl_key(formaturl(strarray[j],"1",Feed.getVal1(channel_id,FeedEnums.Name.category_split)));
+					categoryBean.setUrl_key(formaturl(channel_id,strarray[j],"1",Feed.getVal1(channel_id,FeedEnums.Name.category_split)));
 
 				}else{
 					// 子层
 					categoryBean.setC_name(strarray[j]);
 					categoryBean.setC_header_title(strarray[j]);
 					// 全部小写,且空格用-替代
-					categoryBean.setUrl_key(categoryBeans.get(categoryBeans.size() - 1).getUrl_key() + '-' + formaturl(strarray[j],"1",Feed.getVal1(channel_id,FeedEnums.Name.category_split)));
+					categoryBean.setUrl_key(categoryBeans.get(categoryBeans.size() - 1).getUrl_key() + '-' + formaturl(channel_id,strarray[j],"1",Feed.getVal1(channel_id,FeedEnums.Name.category_split)));
 					categoryBean.setParent_url_key(categoryBeans.get(categoryBeans.size() - 1).getUrl_key());
 				}
 
@@ -1010,7 +1006,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 				productsFeed.setChannel_id(channel_id);
 
 				// post web servies
-				WsdlResponseBean  wsdlResponseBean= jsonBeanOutInsert(productsFeed);
+				WsdlResponseBean  wsdlResponseBean= jsonBeanOutInsert(channel_id, productsFeed);
 				ProductFeedResponseBean productFeedResponseBean = (ProductFeedResponseBean)  JsonUtil.jsonToBean(JsonUtil.getJsonString(wsdlResponseBean.getResultInfo()),ProductFeedResponseBean.class);
 
 				if (wsdlResponseBean.getResult().equals("OK") && productFeedResponseBean.getSuccess().size() > 0){
@@ -1162,9 +1158,9 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 
 		for (int k  = 0; k < attributebeans.size(); k++) {
 			AttributeBean attributebean = attributebeans.get(k);
-			attributebean.setCategory_url_key(formaturl(attributebean.getCategory_url_key(), "1", Feed.getVal1(channel_id, FeedEnums.Name.category_split)));
-			attributebean.setModel_url_key(formaturl(attributebean.getModel_url_key(), "1", Feed.getVal1(channel_id, FeedEnums.Name.category_split)));
-			attributebean.setProduct_url_key(formaturl(attributebean.getProduct_url_key(), "1", Feed.getVal1(channel_id, FeedEnums.Name.category_split)));
+			attributebean.setCategory_url_key(formaturl(channel_id,attributebean.getCategory_url_key(), "1", Feed.getVal1(channel_id, FeedEnums.Name.category_split)));
+			attributebean.setModel_url_key(formaturl(channel_id,attributebean.getModel_url_key(), "1", Feed.getVal1(channel_id, FeedEnums.Name.category_split)));
+			attributebean.setProduct_url_key(formaturl(channel_id,attributebean.getProduct_url_key(), "1", Feed.getVal1(channel_id, FeedEnums.Name.category_split)));
 
 			attributebeans.set(k, attributebean);
 		}
@@ -1175,7 +1171,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 			productsFeedAttribute.setAttributebeans(attributebeans);
 
 			// post web servies
-			WsdlResponseBean  wsdlResponseBean= jsonBeanOutAttribute(productsFeedAttribute);
+			WsdlResponseBean  wsdlResponseBean= jsonBeanOutAttribute(channel_id,productsFeedAttribute);
 
 			if (wsdlResponseBean.getResult().equals("NG")){
 				isSuccess = false;
@@ -1292,7 +1288,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 			};
 
 			// post web servies
-			WsdlResponseBean  wsdlResponseBean= jsonBeanOutUpdate(productsFeed);
+			WsdlResponseBean  wsdlResponseBean= jsonBeanOutUpdate(channel_id,productsFeed);
 
 			ProductUpdateResponseBean productUpdateResponseBean = (ProductUpdateResponseBean)  JsonUtil.jsonToBean(JsonUtil.getJsonString(wsdlResponseBean.getResultInfo()),ProductUpdateResponseBean.class);
 
@@ -1368,8 +1364,8 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 			ModelBean modelbean = modelBeans.get(i);
 
 			// urlkey 转换
-			modelbean.setCategory_url_key(formaturl(modelbean.getCategory_url_key(),"1",Feed.getVal1(channel_id,FeedEnums.Name.category_split)));
-			modelbean.setUrl_key(formaturl(modelbean.getUrl_key(),"1",Feed.getVal1(channel_id,FeedEnums.Name.category_split)));
+			modelbean.setCategory_url_key(formaturl(channel_id,modelbean.getCategory_url_key(),"1",Feed.getVal1(channel_id,FeedEnums.Name.category_split)));
+			modelbean.setUrl_key(formaturl(channel_id,modelbean.getUrl_key(),"1",Feed.getVal1(channel_id,FeedEnums.Name.category_split)));
 
 			modelBeans.set(i,modelbean);
 		}
@@ -1438,9 +1434,9 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 			ProductBean productbean = productBeans.get(i);
 
 			// urlkey 转换
-			productbean.setCategory_url_key(formaturl(productbean.getCategory_url_key(), "1",Feed.getVal1(channel_id,FeedEnums.Name.category_split)));
-			productbean.setModel_url_key(formaturl(productbean.getModel_url_key(), "1",Feed.getVal1(channel_id,FeedEnums.Name.category_split)));
-			productbean.setUrl_key(formaturl(productbean.getUrl_key(), "1",Feed.getVal1(channel_id,FeedEnums.Name.category_split)));
+			productbean.setCategory_url_key(formaturl(channel_id,productbean.getCategory_url_key(), "1",Feed.getVal1(channel_id,FeedEnums.Name.category_split)));
+			productbean.setModel_url_key(formaturl(channel_id,productbean.getModel_url_key(), "1",Feed.getVal1(channel_id,FeedEnums.Name.category_split)));
+			productbean.setUrl_key(formaturl(channel_id,productbean.getUrl_key(), "1",Feed.getVal1(channel_id,FeedEnums.Name.category_split)));
 			// 初期值 0
 			productbean.setP_image_item_count("0");
 
@@ -1482,7 +1478,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 			ItemBean itembean_params = new ItemBean();
 			itembean_params.setCode(Feed.getVal1(channel_id,FeedEnums.Name.item_code) );
 			itembean_params.setI_sku(Feed.getVal1(channel_id,FeedEnums.Name.item_i_sku) );
-			itembean_params.setI_itemcode(Feed.getVal1(channel_id,FeedEnums.Name.item_i_itemcode) );
+			itembean_params.setI_itemcode(Feed.getVal1(channel_id,FeedEnums.Name.item_i_itemcode));
 			itembean_params.setI_size(Feed.getVal1(channel_id,FeedEnums.Name.item_i_size) );
 			itembean_params.setI_barcode(Feed.getVal1(channel_id,FeedEnums.Name.item_i_barcode));
 
@@ -1507,12 +1503,12 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 	 * @param url tolower split
 	 * @return formaturl
 	 */
-	public  String formaturl(String url, String tolower ,String split ){
+	public  String formaturl(String channel_id,String url, String tolower ,String split ){
 
 		String strformaturl = url.replace(split, "-");
 
-		for (int i = 0; i < CmsConstants.URL_FORMAT.length(); i++) {
-			strformaturl =  strformaturl.replace(CmsConstants.URL_FORMAT.substring(i, i + 1), "");
+		for (int i = 0; i < Feed.getVal1(channel_id, FeedEnums.Name.url_special_symbol).length(); i++) {
+			strformaturl =  strformaturl.replace( Feed.getVal1(channel_id, FeedEnums.Name.url_special_symbol).substring(i, i + 1), "");
 		}
 
 		if ("1".equals(tolower)){
@@ -1557,13 +1553,13 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 	 * json bean 新数据  post
 	 *
 	 */
-	public WsdlResponseBean jsonBeanOutInsert(ProductsFeedInsert productsFeed){
+	public WsdlResponseBean jsonBeanOutInsert(String channel_id, ProductsFeedInsert productsFeed){
 
 		Map param = new HashMap();
 		Map authMap = new HashMap();
-		authMap.put("appKey", "21006636");
-		authMap.put("appSecret", "ca16bd08019790b2a9332e000e52e19f");
-		authMap.put("sessionKey", "7200a23ce180124c6Z248fa2bd5b420Zdf0df34db94bd5a90702966b");
+		authMap.put("appKey", Feed.getVal1(channel_id,FeedEnums.Name.webServiesAppKey));
+		authMap.put("appSecret", Feed.getVal1(channel_id,FeedEnums.Name.webServiesAppSecret));
+		authMap.put("sessionKey",  Feed.getVal1(channel_id,FeedEnums.Name.webServiesSessionKey));
 
 		param.put("authentication", authMap);
 		param.put("dataBody", productsFeed);
@@ -1574,10 +1570,10 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 		WsdlResponseBean wsdlresponsebean = null;
 		try {
 //			logger.info("Url= " + CmsConstants.WEB_SERVIES_URI_INSERT);
-			response = WebServiceUtil.postByJsonStr(CmsConstants.WEB_SERVIES_URI_INSERT, jsonParam);
+			response = WebServiceUtil.postByJsonStr(Codes.getCodeName("WEB_SERVIES_URL_FEED","01"), jsonParam);
 			wsdlresponsebean = JsonUtil.jsonToBean(response, WsdlResponseBean.class);
 		} catch (Exception e) {
-			logger.error("json bean 新数据 post 失败: web servies =" + CmsConstants.WEB_SERVIES_URI_INSERT,e);
+			logger.error("json bean 新数据 post 失败: web servies =" + Codes.getCodeName("WEB_SERVIES_URL_FEED","01"));
 			issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
 		}
 
@@ -1588,13 +1584,13 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 	 * json bean 更新数据  post
 	 *
 	 */
-	private WsdlResponseBean jsonBeanOutUpdate(ProductsFeedUpdate productsFeed){
+	private WsdlResponseBean jsonBeanOutUpdate(String channel_id,ProductsFeedUpdate productsFeed){
 
 		Map param = new HashMap();
 		Map authMap = new HashMap();
-		authMap.put("appKey", "21006636");
-		authMap.put("appSecret", "ca16bd08019790b2a9332e000e52e19f");
-		authMap.put("sessionKey", "7200a23ce180124c6Z248fa2bd5b420Zdf0df34db94bd5a90702966b");
+		authMap.put("appKey", Feed.getVal1(channel_id,FeedEnums.Name.webServiesAppKey));
+		authMap.put("appSecret", Feed.getVal1(channel_id,FeedEnums.Name.webServiesAppSecret));
+		authMap.put("sessionKey",  Feed.getVal1(channel_id,FeedEnums.Name.webServiesSessionKey));
 
 		param.put("authentication", authMap);
 		param.put("dataBody", productsFeed);
@@ -1603,10 +1599,10 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 		WsdlResponseBean wsdlresponsebean = null;
 		try {
 //			logger.info("Url= " + CmsConstants.WEB_SERVIES_URI_UPDATE);
-			response = WebServiceUtil.postByJsonStr(CmsConstants.WEB_SERVIES_URI_UPDATE, jsonParam);
+			response = WebServiceUtil.postByJsonStr(Codes.getCodeName("WEB_SERVIES_URL_FEED","02"), jsonParam);
 			wsdlresponsebean = JsonUtil.jsonToBean(response, WsdlResponseBean.class);
 		} catch (Exception e) {
-			logger.error("json bean 更新数据 post 失败: web servies =" + CmsConstants.WEB_SERVIES_URI_UPDATE);
+			logger.error("json bean 更新数据 post 失败: web servies =" + Codes.getCodeName("WEB_SERVIES_URL_FEED","02"));
 			issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
 		}
 		return wsdlresponsebean;
@@ -1616,13 +1612,13 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 	 * json bean 属性数据  post
 	 *
 	 */
-	private WsdlResponseBean jsonBeanOutAttribute(ProductsFeedAttribute attributebeans){
+	private WsdlResponseBean jsonBeanOutAttribute(String channel_id,ProductsFeedAttribute attributebeans){
 
 		Map param = new HashMap();
 		Map authMap = new HashMap();
-		authMap.put("appKey", "21006636");
-		authMap.put("appSecret", "ca16bd08019790b2a9332e000e52e19f");
-		authMap.put("sessionKey", "7200a23ce180124c6Z248fa2bd5b420Zdf0df34db94bd5a90702966b");
+		authMap.put("appKey", Feed.getVal1(channel_id,FeedEnums.Name.webServiesAppKey));
+		authMap.put("appSecret", Feed.getVal1(channel_id,FeedEnums.Name.webServiesAppSecret));
+		authMap.put("sessionKey",  Feed.getVal1(channel_id,FeedEnums.Name.webServiesSessionKey));
 
 		param.put("authentication", authMap);
 		param.put("dataBody", attributebeans);
@@ -1631,10 +1627,10 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 		WsdlResponseBean wsdlresponsebean = null;
 		try {
 //			logger.info("Url= " + CmsConstants.WEB_SERVIES_URI_ATTRIBUTE);
-			response = WebServiceUtil.postByJsonStr(CmsConstants.WEB_SERVIES_URI_ATTRIBUTE, jsonParam);
+			response = WebServiceUtil.postByJsonStr(Codes.getCodeName("WEB_SERVIES_URL_FEED","03"), jsonParam);
 			wsdlresponsebean = JsonUtil.jsonToBean(response, WsdlResponseBean.class);
 		} catch (Exception e) {
-			logger.error("json bean 属性数据 post 失败: web servies =" + CmsConstants.WEB_SERVIES_URI_ATTRIBUTE);
+			logger.error("json bean 属性数据 post 失败: web servies =" + Codes.getCodeName("WEB_SERVIES_URL_FEED","03"));
 			issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
 		}
 		return wsdlresponsebean;

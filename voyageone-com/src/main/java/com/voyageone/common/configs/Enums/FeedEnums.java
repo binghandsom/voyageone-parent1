@@ -119,6 +119,10 @@ public class FeedEnums {
 		feed_ftp_localpath,
 		feed_ftp_remotepath,
 		feed_ftp_filename,
-		post_max_model
+		post_max_model,
+		webServiesAppSecret,
+		webServiesAppKey,
+		webServiesSessionKey,
+		url_special_symbol
 	}
 }
