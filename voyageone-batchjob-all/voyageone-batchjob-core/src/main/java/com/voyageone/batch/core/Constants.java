@@ -93,6 +93,9 @@ public interface Constants {
     String ORDER_TYPE_PRESENT = "Present";
     String ORDER_TYPE_EXCHANGE = "Exchange";
     String ORDER_TYPE_PRICE_DIFFERENCE = "Price Difference";
+
+    // 名称检查选项
+    String name_check_options = "NAME_CHECK_OPTIONS";
     /**
      * E邮件的格式
      */
