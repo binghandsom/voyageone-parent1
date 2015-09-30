@@ -226,14 +226,14 @@ public class SynShipGetEtkStatusService extends BaseTaskService {
                                     }
                                     break;
                                 default:
-                                    $info(channel.getFull_name() + "--当前ETK提单状态无法处理, Order_Number：" + etkTrackingBean.getOrder_number() + "，TrackingNo：" + etkTrackingBean.getTracking_no() );
+                                    $info(channel.getFull_name() + "--当前ETK提单状态无法处理, Order_Number：" + etkTrackingBean.getOrder_number());
                                     logIssue(channel.getFull_name() + "--当前ETK提单状态无法处理", "Order_Number：" + etkTrackingBean.getOrder_number()  + "，TrackingNo：" + etkTrackingBean.getTracking_no() +  "，Tracking：" + json);
                                     break;
                             }
 
                             // 物流状态有变化时进行更新
                             if (StringUtils.isNullOrBlank2(etkTrackingBean.getTracking_status())) {
-                                $info(channel.getFull_name() + "--Order_Number：" + etkTrackingBean.getOrder_number() + "'s Status no change" + "，TrackingNo：" + etkTrackingBean.getTracking_no()  );
+                                $info(channel.getFull_name() + "--Order_Number：" + etkTrackingBean.getOrder_number() + "'s Status no change");
                             }
                             else {
 
@@ -263,7 +263,7 @@ public class SynShipGetEtkStatusService extends BaseTaskService {
                         }
                         else {
                             // 结果是错误时，忽略此条记录，继续处理其他
-                            $info(channel.getFull_name() + "--ETK提单状态取得错误，无法更新,Order_Number：" + etkTrackingBean.getOrder_number() + "，TrackingNo：" + etkTrackingBean.getTracking_no() +  "，Message：" + expressTrackingRes.getMsg());
+                            $info(channel.getFull_name() + "--ETK提单状态取得错误，无法更新,Order_Number：" + etkTrackingBean.getOrder_number());
                             logIssue(channel.getFull_name() + "--ETK提单状态取得错误，无法更新", "Order_Number：" + etkTrackingBean.getOrder_number() + "，TrackingNo：" + etkTrackingBean.getTracking_no() +  "，Message：" + expressTrackingRes.getMsg());
                         }
 
