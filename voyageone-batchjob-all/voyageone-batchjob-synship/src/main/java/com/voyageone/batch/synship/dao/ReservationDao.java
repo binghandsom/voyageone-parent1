@@ -32,7 +32,27 @@ public class ReservationDao extends BaseDao {
         params.put("status", status);
         params.put("task_name", task_name);
 
-        return updateTemplate.insert( "synShip_UpdateReservationStatus", params);
+        return updateTemplate.update("synShip_UpdateReservationStatus", params);
+    }
+
+    /**
+     *
+     * @param syn_ship_no
+     * @param status
+     * @param before_status
+     * @param task_name
+     * @return
+     */
+    public int updateReservationByStatus(String syn_ship_no, String status, String before_status, String task_name) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("syn_ship_no", syn_ship_no);
+        params.put("status", status);
+        params.put("before_status", before_status);
+        params.put("task_name", task_name);
+
+        return updateTemplate.update("synShip_UpdateReservationByStatus", params);
     }
 
     /**
@@ -51,6 +71,26 @@ public class ReservationDao extends BaseDao {
         params.put("task_name", task_name);
 
         return updateTemplate.insert( "synShip_InsertReservationLog", params);
+    }
+
+    /**
+     *
+     * @param syn_ship_no
+     * @param res_note
+     * @param status
+     * @param task_name
+     * @return
+     */
+    public int insertReservationLogByStatus(String syn_ship_no, String res_note, String status, String task_name) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("syn_ship_no", syn_ship_no);
+        params.put("res_note", res_note);
+        params.put("status", status);
+        params.put("task_name", task_name);
+
+        return updateTemplate.insert( "synShip_InsertReservationLogByStatus", params);
     }
 
 

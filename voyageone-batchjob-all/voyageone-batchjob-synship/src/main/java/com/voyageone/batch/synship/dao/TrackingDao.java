@@ -149,5 +149,23 @@ public class TrackingDao extends BaseDao {
         return selectList("synShip_getEtkTracking");
     }
 
+    /**
+     *
+     * @param tracking_type
+     * @param tracking_no
+     * @param sent_kd100_poll_flg
+     * @return
+     */
+    public int updateKD100Poll( String tracking_type, String tracking_no, String sent_kd100_poll_flg, String task_name) {
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("tracking_type", tracking_type);
+        params.put("tracking_no", tracking_no);
+        params.put("sent_kd100_poll_flg", sent_kd100_poll_flg);
+        params.put("task_name", task_name);
+
+        return updateTemplate.update("synShip_UpdateKD100Poll", params);
+    }
+
 
 }

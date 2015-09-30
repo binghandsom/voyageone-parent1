@@ -35,9 +35,9 @@ public class EtkBase {
 		postXml.append("</soap:Body>");
 		postXml.append("</soap:Envelope>");
 		
-		logger.info("E特快请求报文：" + postXml.toString());
+		//logger.info("E特快请求报文：" + postXml.toString());
 		PostResponse result = HttpUtils.PostSoapFull(carrierBean.getApi_url(), postAction, postXml.toString(),session);
-		logger.info("E特快返回报文：" + result.getResult());
+		//logger.info("E特快返回报文：" + result.getResult());
 		
 		return result;
 	}

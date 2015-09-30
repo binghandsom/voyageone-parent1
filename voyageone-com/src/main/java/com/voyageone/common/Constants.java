@@ -122,37 +122,4 @@ public final class Constants {
     // 手机号码不符合规定
     public static final int PHONE_NUM_ERR = -3;
 
-    // ETK状态
-    public final static class EtkStatus{
-        //状态Code
-        public final static class Code {
-            public final static String Created ="C";
-            public final static String Exported ="E";
-            public final static String Inscanned ="I";
-            public final static String Clearance ="";
-            public final static String Submitted ="S";
-            public final static String Despatch ="B";
-            public final static String Warehouse_reject ="";
-            public final static String HK_reject ="";
-            public final static String Cancel ="D";
-            public final static String Returned ="";
-            public final static String Delivered ="";
-            public final static String HK_clearance ="R";
-        }
-        //状态描述
-        public final static class Description {
-            public final static String Created ="Shipment Created";
-            public final static String Exported ="shipment exported by agent";
-            public final static String Inscanned ="Shipment inscanned in warehouse";
-            public final static String Clearance ="";
-            public final static String Submitted ="Shipment data submitted to HKPOST";
-            public final static String Despatch ="Shipment despatch by hkpost,Shipment accepted by hkpost";
-            public final static String Warehouse_reject ="";
-            public final static String HK_reject ="";
-            public final static String Cancel ="Shipment Cancelled by Customer";
-            public final static String Returned ="";
-            public final static String Delivered ="";
-            public final static String HK_clearance ="HK Customs clearance";
-        }
-    }
 }

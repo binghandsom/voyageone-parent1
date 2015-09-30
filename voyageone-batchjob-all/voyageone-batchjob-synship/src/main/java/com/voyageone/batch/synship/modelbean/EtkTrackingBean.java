@@ -13,19 +13,17 @@ public class EtkTrackingBean {
 
     private String order_channel_id;
 
-    private int status;
+    private String status;
 
-    private String send_tracking_flg;
-
-    private String update_time;
-
-    private String update_person;
+    private String sent_kd100_poll_flg;
 
     private String tracking_no;
 
     private String tracking_type;
 
-    private String sent_kd100_poll_flg;
+    private String tracking_status;
+
+    private String before_status;
 
     public String getSyn_ship_no() {
         return syn_ship_no;
@@ -51,36 +49,20 @@ public class EtkTrackingBean {
         this.order_channel_id = order_channel_id;
     }
 
-    public int getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
-    public String getSend_tracking_flg() {
-        return send_tracking_flg;
+    public String getSent_kd100_poll_flg() {
+        return sent_kd100_poll_flg;
     }
 
-    public void setSend_tracking_flg(String send_tracking_flg) {
-        this.send_tracking_flg = send_tracking_flg;
-    }
-
-    public String getUpdate_time() {
-        return update_time;
-    }
-
-    public void setUpdate_time(String update_time) {
-        this.update_time = update_time;
-    }
-
-    public String getUpdate_person() {
-        return update_person;
-    }
-
-    public void setUpdate_person(String update_person) {
-        this.update_person = update_person;
+    public void setSent_kd100_poll_flg(String sent_kd100_poll_flg) {
+        this.sent_kd100_poll_flg = sent_kd100_poll_flg;
     }
 
     public String getTracking_no() {
@@ -99,11 +81,19 @@ public class EtkTrackingBean {
         this.tracking_type = tracking_type;
     }
 
-    public String getSent_kd100_poll_flg() {
-        return sent_kd100_poll_flg;
+    public String getTracking_status() {
+        return tracking_status;
     }
 
-    public void setSent_kd100_poll_flg(String sent_kd100_poll_flg) {
-        this.sent_kd100_poll_flg = sent_kd100_poll_flg;
+    public void setTracking_status(String tracking_status) {
+        this.tracking_status = tracking_status;
+    }
+
+    public String getBefore_status() {
+        return before_status;
+    }
+
+    public void setBefore_status(String before_status) {
+        this.before_status = before_status;
     }
 }

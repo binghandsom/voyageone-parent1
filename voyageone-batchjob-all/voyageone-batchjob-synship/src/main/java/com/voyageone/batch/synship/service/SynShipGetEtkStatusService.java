@@ -1,47 +1,57 @@
 package com.voyageone.batch.synship.service;
 
+import com.google.gson.Gson;
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.batch.SynshipConstants;
 import com.voyageone.batch.base.BaseTaskService;
+import com.voyageone.batch.core.CodeConstants;
 import com.voyageone.batch.core.Enums.TaskControlEnums.Name;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.core.util.TaskControlUtils;
-import com.voyageone.batch.synship.dao.*;
-import com.voyageone.batch.synship.modelbean.*;
-import com.voyageone.batch.synship.service.ems.B2COrderServiceStub;
-import com.voyageone.batch.synship.service.ems.EmsService;
+import com.voyageone.batch.synship.dao.OrderDao;
+import com.voyageone.batch.synship.dao.ReservationDao;
+import com.voyageone.batch.synship.dao.TrackingDao;
+import com.voyageone.batch.synship.modelbean.EtkTrackingBean;
+import com.voyageone.common.components.eExpress.EtkConstants;
+import com.voyageone.common.components.eExpress.EtkService;
+import com.voyageone.common.components.eExpress.bean.ExpressShipmentTrackingReq;
+import com.voyageone.common.components.eExpress.bean.ExpressTrackingRes;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.configs.Codes;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
-import com.voyageone.common.util.CommonUtil;
+import com.voyageone.common.components.transaction.TransactionRunner;
+import com.voyageone.common.configs.CarrierConfigs;
+import com.voyageone.common.configs.ChannelConfigs;
+import com.voyageone.common.configs.Enums.CarrierEnums;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.configs.Enums.TypeConfigEnums;
+import com.voyageone.common.configs.Type;
+import com.voyageone.common.configs.beans.CarrierBean;
+import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.util.DateTimeUtil;
-import org.apache.axis2.AxisFault;
-import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
+import com.voyageone.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
-import static com.voyageone.batch.SynshipConstants.AuditResult.FAIL;
-import static com.voyageone.batch.SynshipConstants.AuditResult.PASS;
-import static com.voyageone.batch.SynshipConstants.IdCardStatus.*;
-import static com.voyageone.batch.SynshipConstants.Reason.*;
-import static com.voyageone.batch.SynshipConstants.*;
 
 /**
- * 从 Synship CloudClient 迁移的身份证验证任务
+ * 轮询获得ＥＴＫ面单的状态
  * <p>
- * Created by Jonas on 9/22/15.
+ * Created by Jack on 9/30/15.
  */
 @Service
 public class SynShipGetEtkStatusService extends BaseTaskService {
 
     @Autowired
     TrackingDao trackingDao;
+
+    @Autowired
+    ReservationDao reservationDao;
+
+    @Autowired
+    OrderDao orderDao;
+
+    @Autowired
+    private TransactionRunner transactionRunner;
 
     /**
      * 获取子系统
@@ -115,7 +125,7 @@ public class SynShipGetEtkStatusService extends BaseTaskService {
 
             runnable.add(() -> {
                 try {
-                    validOnThread(subList);
+                    getStatusOnThread(subList);
                 } catch (Exception e) {
                     exceptions.add(e);
                 }
@@ -127,11 +137,148 @@ public class SynShipGetEtkStatusService extends BaseTaskService {
         runWithThreadPool(runnable, taskControlList);
 
         // 任务结束后统一生成 issueLog
-        exceptions.forEach(this::logIssue);
+        exceptions.forEach((e) -> {
+            logIssue(e.getMessage(), e.getStackTrace());
+        });
     }
 
-    protected void validOnThread(List<EtkTrackingBean> etkTrackingBeans) throws JSONException, InterruptedException {
-        // 有数据的话，那么开始加载一些固定的配置
+    protected void getStatusOnThread(List<EtkTrackingBean> etkTrackingBeans) throws Exception {
+
+        $info("ETK提单状态追踪开始");
+
+        $info("ETK提单状态追踪件数："+ etkTrackingBeans.size());
+
+        for (EtkTrackingBean etkTrackingBean : etkTrackingBeans) {
+
+            OrderChannelBean channel = ChannelConfigs.getChannel(etkTrackingBean.getOrder_channel_id());
+
+            $info(channel.getFull_name() + "--OrderNumber：" + etkTrackingBean.getOrder_number() + "，TrackingNo：" + etkTrackingBean.getTracking_no() + "，Status：" + etkTrackingBean.getStatus());
+
+            // 取得相关快递信息
+            CarrierBean carrierBean = CarrierConfigs.getCarrier(etkTrackingBean.getOrder_channel_id(), CarrierEnums.Name.ETK);
+
+            // 取得发货地
+            String location = ChannelConfigs.getVal1(etkTrackingBean.getOrder_channel_id(), ChannelConfigEnums.Name.location);
+
+            if (carrierBean == null) {
+                // 渠道的数据不对，无法继续
+                $info(channel.getFull_name() + "--渠道对应的ETK快递配置信息取得失败。");
+
+                throw new BusinessException(channel.getFull_name() + "渠道对应的ETK快递配置信息取得失败。");
+            }
+
+            transactionRunner.runWithTran(new Runnable() {
+                @Override
+                public void run() {
+
+                    try {
+
+                        EtkService etkService = new EtkService();
+
+                        ExpressShipmentTrackingReq expressShipmentTrackingReq = new ExpressShipmentTrackingReq();
+                        expressShipmentTrackingReq.setShipment_number(etkTrackingBean.getTracking_no());
+                        ExpressTrackingRes expressTrackingRes = etkService.eExpressShipmentTracking(expressShipmentTrackingReq, carrierBean);
+
+                        String json = expressTrackingRes == null ? "" : new Gson().toJson(expressTrackingRes);
+                        $info(channel.getFull_name() + "--ETK返回结果：" + json);
+
+                        // 结果是正确时，处理此条记录，否则忽略此条记录，继续处理其他
+                        if (EtkConstants.Result.T.equals(expressTrackingRes.getResult())) {
+
+                            switch (expressTrackingRes.getStatus_code()) {
+
+                                case EtkConstants.StatusCode.Created:
+                                case EtkConstants.StatusCode.Exported:
+                                    break;
+                                case EtkConstants.StatusCode.Inscanned:
+                                case EtkConstants.StatusCode.Clearance:
+                                case EtkConstants.StatusCode.Submitted:
+                                    // ShippedUS状态时，变为Arrived
+                                    if (CodeConstants.Reservation_Status.ShippedUS.equals(etkTrackingBean.getStatus())) {
+                                        etkTrackingBean.setBefore_status(etkTrackingBean.getStatus());
+                                        etkTrackingBean.setStatus(CodeConstants.Reservation_Status.Arrived);
+
+                                        // 判断发货地是否是香港
+                                        if (location.equals(EtkConstants.Location)) {
+                                            etkTrackingBean.setTracking_status(CodeConstants.TRACKING.INFO_062);
+                                        } else {
+                                            etkTrackingBean.setTracking_status(CodeConstants.TRACKING.INFO_061);
+                                        }
+                                    }
+                                    break;
+                                case EtkConstants.StatusCode.Despatch:
+                                    // ShippedUS状态时，变为Arrived
+                                    if (CodeConstants.Reservation_Status.ShippedUS.equals(etkTrackingBean.getStatus())) {
+                                        etkTrackingBean.setBefore_status(etkTrackingBean.getStatus());
+                                        etkTrackingBean.setStatus(CodeConstants.Reservation_Status.Arrived);
+                                        // 判断发货地是否是香港
+                                        if (location.equals(EtkConstants.Location)) {
+                                            etkTrackingBean.setTracking_status(CodeConstants.TRACKING.INFO_062);
+                                        } else {
+                                            etkTrackingBean.setTracking_status(CodeConstants.TRACKING.INFO_061);
+                                        }
+                                    }
+                                    // Arrived状态时，变为Clearance
+                                    else if (CodeConstants.Reservation_Status.Arrived.equals(etkTrackingBean.getStatus())) {
+                                        etkTrackingBean.setBefore_status(etkTrackingBean.getStatus());
+                                        etkTrackingBean.setStatus(CodeConstants.Reservation_Status.Clearance);
+                                        etkTrackingBean.setTracking_status(CodeConstants.TRACKING.INFO_072);
+                                    }
+                                    break;
+                                default:
+                                    $info(channel.getFull_name() + "--当前ETK提单状态无法处理, Order_Number：" + etkTrackingBean.getOrder_number() + "，TrackingNo：" + etkTrackingBean.getTracking_no() );
+                                    logIssue(channel.getFull_name() + "--当前ETK提单状态无法处理", "Order_Number：" + etkTrackingBean.getOrder_number()  + "，TrackingNo：" + etkTrackingBean.getTracking_no() +  "，Tracking：" + json);
+                                    break;
+                            }
+
+                            // 物流状态有变化时进行更新
+                            if (StringUtils.isNullOrBlank2(etkTrackingBean.getTracking_status())) {
+                                $info(channel.getFull_name() + "--Order_Number：" + etkTrackingBean.getOrder_number() + "'s Status no change" + "，TrackingNo：" + etkTrackingBean.getTracking_no()  );
+                            }
+                            else {
+
+                                String notes = "Status changed to："+ Type.getTypeName(TypeConfigEnums.MastType.reservationStatus.getId(), etkTrackingBean.getStatus());
+
+                                $info(channel.getFull_name() + "--Order_Number：" + etkTrackingBean.getOrder_number() + "'s" + notes);
+
+                                // 订单状态变更
+                                orderDao.updateOrderByStatus(etkTrackingBean.getSyn_ship_no(), etkTrackingBean.getStatus(), etkTrackingBean.getBefore_status(), getTaskName());
+
+                                // Reservation状态变更
+                                reservationDao.updateReservationByStatus(etkTrackingBean.getSyn_ship_no(), etkTrackingBean.getStatus(), etkTrackingBean.getBefore_status(), getTaskName());
+
+                                // 插入物品日志
+                                reservationDao.insertReservationLogByStatus(etkTrackingBean.getSyn_ship_no(), notes, etkTrackingBean.getStatus() , getTaskName());
+
+                                // 物流信息的追加
+                                trackingDao.insertTrackingInfo(etkTrackingBean.getSyn_ship_no(),etkTrackingBean.getTracking_no(),etkTrackingBean.getTracking_status(),DateTimeUtil.getNow(),getTaskName());
+
+                                // 快递100未订阅时，订阅快递100
+                                if (CodeConstants.KD100_POLL.NO.equals(etkTrackingBean.getSent_kd100_poll_flg())){
+                                    trackingDao.updateKD100Poll(etkTrackingBean.getTracking_type(), etkTrackingBean.getTracking_no(), CodeConstants.KD100_POLL.YES, getTaskName());
+                                }
+
+                            }
+
+                        }
+                        else {
+                            // 结果是错误时，忽略此条记录，继续处理其他
+                            $info(channel.getFull_name() + "--ETK提单状态取得错误，无法更新,Order_Number：" + etkTrackingBean.getOrder_number() + "，TrackingNo：" + etkTrackingBean.getTracking_no() +  "，Message：" + expressTrackingRes.getMsg());
+                            logIssue(channel.getFull_name() + "--ETK提单状态取得错误，无法更新", "Order_Number：" + etkTrackingBean.getOrder_number() + "，TrackingNo：" + etkTrackingBean.getTracking_no() +  "，Message：" + expressTrackingRes.getMsg());
+                        }
+
+                    } catch (Exception e) {
+                        $info(channel.getFull_name() + "--ETK提单状态追踪失败" + e);
+                        //logIssue(e, channel.getFull_name() + "--ETK提单状态追踪错误");
+
+                        throw new RuntimeException(e);
+                    }
+                }
+
+            });
+        }
+
+        $info("ETK提单状态追踪结束");
 
 
     }

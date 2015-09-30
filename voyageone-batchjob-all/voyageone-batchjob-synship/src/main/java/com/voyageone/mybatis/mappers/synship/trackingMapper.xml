@@ -253,4 +253,54 @@
                             and trackingInfo.reservation_id = reservation.id)
         )
     </insert>
+
+    <select id="synShip_getEtkTracking" resultType="com.voyageone.batch.synship.modelbean.EtkTrackingBean">
+        SELECT
+            DISTINCT
+            res.syn_ship_no,
+            res.order_number,
+            res.order_channel_id,
+            res.status,
+            tracking.sent_kd100_poll_flg,
+            tracking.tracking_no,
+            tracking.tracking_type
+        FROM
+            tt_shipment shipment,
+            tt_package_items items,
+            tt_reservation res,
+            tt_tracking tracking,
+            tt_res_tracking res_tracking
+        WHERE
+            shipment.port = '12'
+        AND
+            shipment.shipment_id = items.shipment_id
+        AND
+            items.syn_ship_no = res.syn_ship_no
+        AND
+            items.del_flg = '0'
+        AND
+            res.status in ('14','15')
+        AND
+            res.syn_ship_no = res_tracking.syn_ship_no
+        AND
+            res_tracking.tracking_no = tracking.tracking_no
+        AND
+            res_tracking.tracking_type = tracking.tracking_type
+        AND
+            tracking.use_flg = '1'
+    </select>
+
+    <!--订阅快递100 -->
+    <update id="synShip_UpdateKD100Poll">
+        UPDATE
+            tt_tracking
+        SET
+            sent_kd100_poll_flg = #{sent_kd100_poll_flg},
+            update_time = now(),
+            update_person = #{task_name}
+        WHERE
+            tracking_type = #{tracking_type}
+        AND
+            tracking_no = #{tracking_no}
+    </update>
 </mapper>

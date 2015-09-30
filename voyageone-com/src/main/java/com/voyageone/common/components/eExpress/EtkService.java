@@ -167,7 +167,7 @@ public class EtkService extends EtkBase{
 	        	res.setDescription(table.elementText("description"));
 	        	res.setEntry_datetime(table.elementText("entry_datetime"));
 	        }else{
-	            throw new Exception("调用E特快登录API eExpressShipmentCancel错误：" + result.getResult());
+	            throw new Exception("调用E特快登录API eExpressShipmentTracking错误：" + result.getResult());
 	        }
         }catch (Exception e) {
         	Element errorTable = root.element("Body").element("eExpress_shipment_trackingResponse").element("eExpress_shipment_trackingResult").element("diffgram").element("DocumentElement").element("eExpress_shipment_tracking");
@@ -176,7 +176,7 @@ public class EtkService extends EtkBase{
             	res.setResult(errorTable.elementText("Result"));
             	res.setMsg(errorTable.elementText("Message"));
             }else{
-            	throw new Exception("调用E特快登录API eExpressShipmentCancel错误：" + result.getResult());
+            	throw new Exception("调用E特快登录API eExpressShipmentTracking错误：" + result.getResult());
             }       	
         }
 		
