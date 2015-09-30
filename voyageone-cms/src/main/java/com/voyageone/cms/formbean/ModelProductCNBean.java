@@ -14,6 +14,7 @@ public class ModelProductCNBean extends BaseBean{
 	private String cnSizeType;
 	private boolean isApprovedDescription;
 	private boolean isEffective;
+	private boolean cnIsApprovedDesciption;
 	private String colorMap;
 	private String cnColor;
 	private String madeInCountry;
@@ -128,7 +129,21 @@ public class ModelProductCNBean extends BaseBean{
 	private String jdSalesInThisYearPercent;
 	private String jgSalesInThisYear;
 	private String jgSalesInThisYearPercent;
-
+	private String tbPublishStatus;
+	private String tbNumIid;
+	private String tbPublishFaildComment;
+	private String tmPublishStatus;
+	private String tmNumIid;
+	private String tmPublishFaildComment;
+	private String tgPublishStatus;
+	private String tgNumIid;
+	private String tgPublishFaildComment;
+	private String jdPublishStatus;
+	private String jdNumIid;
+	private String jdPublishFaildComment;
+	private String jgPublishStatus;
+	private String jgNumIid;
+	private String jgPublishFaildComment;
 	
 	public String getModelId() {
 		return modelId;
@@ -1402,4 +1417,138 @@ public class ModelProductCNBean extends BaseBean{
 		this.jgSalesInThisYearPercent = jgSalesInThisYearPercent;
 	}
 
+	public void setIsApprovedDescription(boolean isApprovedDescription) {
+		this.isApprovedDescription = isApprovedDescription;
+	}
+
+	public void setIsEffective(boolean isEffective) {
+		this.isEffective = isEffective;
+	}
+
+	public String getTbPublishStatus() {
+		return tbPublishStatus;
+	}
+
+	public void setTbPublishStatus(String tbPublishStatus) {
+		this.tbPublishStatus = tbPublishStatus;
+	}
+
+	public String getTbNumIid() {
+		return tbNumIid;
+	}
+
+	public void setTbNumIid(String tbNumIid) {
+		this.tbNumIid = tbNumIid;
+	}
+
+	public String getTbPublishFaildComment() {
+		return tbPublishFaildComment;
+	}
+
+	public void setTbPublishFaildComment(String tbPublishFaildComment) {
+		this.tbPublishFaildComment = tbPublishFaildComment;
+	}
+
+	public String getTmPublishStatus() {
+		return tmPublishStatus;
+	}
+
+	public void setTmPublishStatus(String tmPublishStatus) {
+		this.tmPublishStatus = tmPublishStatus;
+	}
+
+	public String getTmNumIid() {
+		return tmNumIid;
+	}
+
+	public void setTmNumIid(String tmNumIid) {
+		this.tmNumIid = tmNumIid;
+	}
+
+	public String getTmPublishFaildComment() {
+		return tmPublishFaildComment;
+	}
+
+	public void setTmPublishFaildComment(String tmPublishFaildComment) {
+		this.tmPublishFaildComment = tmPublishFaildComment;
+	}
+
+	public String getTgPublishStatus() {
+		return tgPublishStatus;
+	}
+
+	public void setTgPublishStatus(String tgPublishStatus) {
+		this.tgPublishStatus = tgPublishStatus;
+	}
+
+	public String getTgNumIid() {
+		return tgNumIid;
+	}
+
+	public void setTgNumIid(String tgNumIid) {
+		this.tgNumIid = tgNumIid;
+	}
+
+	public String getTgPublishFaildComment() {
+		return tgPublishFaildComment;
+	}
+
+	public void setTgPublishFaildComment(String tgPublishFaildComment) {
+		this.tgPublishFaildComment = tgPublishFaildComment;
+	}
+
+	public String getJdPublishStatus() {
+		return jdPublishStatus;
+	}
+
+	public void setJdPublishStatus(String jdPublishStatus) {
+		this.jdPublishStatus = jdPublishStatus;
+	}
+
+	public String getJdNumIid() {
+		return jdNumIid;
+	}
+
+	public void setJdNumIid(String jdNumIid) {
+		this.jdNumIid = jdNumIid;
+	}
+
+	public String getJdPublishFaildComment() {
+		return jdPublishFaildComment;
+	}
+
+	public void setJdPublishFaildComment(String jdPublishFaildComment) {
+		this.jdPublishFaildComment = jdPublishFaildComment;
+	}
+
+	public String getJgPublishStatus() {
+		return jgPublishStatus;
+	}
+
+	public void setJgPublishStatus(String jgPublishStatus) {
+		this.jgPublishStatus = jgPublishStatus;
+	}
+
+	public String getJgNumIid() {
+		return jgNumIid;
+	}
+
+	public void setJgNumIid(String jgNumIid) {
+		this.jgNumIid = jgNumIid;
+	}
+
+	public String getJgPublishFaildComment() {
+		return jgPublishFaildComment;
+	}
+
+	public void setJgPublishFaildComment(String jgPublishFaildComment) {
+		this.jgPublishFaildComment = jgPublishFaildComment;
+	}
+	public boolean isCnIsApprovedDesciption() {
+		return cnIsApprovedDesciption;
+	}
+
+	public void setCnIsApprovedDesciption(boolean cnIsApprovedDesciption) {
+		this.cnIsApprovedDesciption = cnIsApprovedDesciption;
+	}
 }

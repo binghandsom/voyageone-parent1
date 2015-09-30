@@ -1,10 +1,6 @@
 package com.voyageone.core.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 import com.voyageone.common.Constants;
@@ -474,8 +470,9 @@ public class LoginServiceImpl implements LoginService {
 			cmsCnProductAttributes = userCnProduct.get(0).getCfg_val1();
 		}
 		Map<String,Object> cmsProductFields = new HashMap<String, Object>();
-		cmsProductFields.put("cmsUsProductAttributes", cmsUsProductAttributes.split(","));
-		cmsProductFields.put("cmsCnProductAttributes", cmsCnProductAttributes.split(","));
+		List<String> emptyAttribute = new ArrayList<>();
+		cmsProductFields.put("cmsUsProductAttributes", cmsUsProductAttributes.isEmpty() ? emptyAttribute : cmsUsProductAttributes.split(","));
+		cmsProductFields.put("cmsCnProductAttributes", cmsCnProductAttributes.isEmpty() ? emptyAttribute : cmsCnProductAttributes.split(","));
 		user.setCmsProductfields(cmsProductFields);
 		
         // 获取用户 移库对象

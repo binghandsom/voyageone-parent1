@@ -361,7 +361,7 @@ public class CategoryController extends BaseController {
 
 	/**
 	 * 获取USCategoryModelList信息
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 * @param requestMap
@@ -374,7 +374,7 @@ public class CategoryController extends BaseController {
 		String msgCode = "";
 		int msgType = 0;
 		try {
-			
+
 			// 输入参数出力
 			logger.info("param：" + JsonUtil.getJsonString(requestMap));
 			List<CategoryModelBean> ret = null;
@@ -401,7 +401,7 @@ public class CategoryController extends BaseController {
 
 	/**
 	 * 获取CNCategoryModelList信息
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 * @param requestMap
@@ -460,6 +460,10 @@ public class CategoryController extends BaseController {
 			data.put("channelId", dtRequest.getParam().getChannelId());
 			data.put("offset", dtRequest.getStart());
 			data.put("pageCount", dtRequest.getLength());
+			if(dtRequest.getOrder().size()>0){
+				data.put("order", dtRequest.getOrder().get(0).getColumn());
+				data.put("dir", dtRequest.getOrder().get(0).getDir());
+			}
 			DtResponse<List<CategoryProductUSBean>> dtResponse = categoryEditService.getCategoryUSProductList(data);
 			dtResponse.setDraw(dtRequest.getDraw());
 			isSuccess = true;
@@ -499,6 +503,10 @@ public class CategoryController extends BaseController {
 			data.put("channelId", dtRequest.getParam().getChannelId());
 			data.put("offset", dtRequest.getStart());
 			data.put("pageCount", dtRequest.getLength());
+			if(dtRequest.getOrder().size()>0){
+				data.put("order", dtRequest.getOrder().get(0).getColumn());
+				data.put("dir", dtRequest.getOrder().get(0).getDir());
+			}
 			DtResponse<List<CategoryProductCNBean>> dtResponse = categoryEditService.getCategoryCNProductList(data);
 			dtResponse.setDraw(dtRequest.getDraw());
 			isSuccess = true;

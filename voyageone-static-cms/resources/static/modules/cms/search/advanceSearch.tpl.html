@@ -1,15 +1,5 @@
 <div ng-controller="advanceSearchController" ng-init="initialize()" ng-cloak="">
-    <div class="bg-light lter b-b wrapper-md vo_page_header clearfix">
-        <!--<div class="row">-->
-            <!--<div class="vo_page_title col-sm-1"><h1 class="m-n font-thin h3 text-vo" translate="CMS_TXT_MENU_SEARCH"></h1></div>-->
-            <!--&lt;!&ndash; .vo_page_title &ndash;&gt;-->
-            <!--<div class="col-sm-8 text-left hidden-xs">-->
-            <!--</div>-->
-            <!--&lt;!&ndash; .col-sm-6 &ndash;&gt;-->
-            <!--<div class="col-sm-3 text-right"></div>-->
-        <!--</div>-->
-        <!--&lt;!&ndash; .row &ndash;&gt;-->
-    </div>
+    <div class="bg-light lter b-b wrapper-md vo_page_header clearfix"></div>
     <!--&lt;!&ndash; .wrapper-md .vo_page_header &ndash;&gt;-->
 
     <div class="wrapper-md">
@@ -32,45 +22,45 @@
 					                                <label class="col-sm-4 control-label" translate="CMS_TXT_CARD"></label>
 					                                <div class="col-sm-8">
 					                                    <div class="input-group">
-					                                        <ui-select ng-model="search.cardId" theme="bootstrap" ng-disabled="disabled" class="text-left" >
+					                                        <ui-select ng-model="search.cartId" theme="bootstrap" ng-disabled="disabled" class="text-left" >
 					                                            <ui-select-match placeholder="Select..." class="text-left">{{$select.selected.cart_name}}</ui-select-match>
 					                                            <ui-select-choices repeat="cart.cart_id as cart in $root.cmsMaster.cartList | filter: $select.search">
 					                                                <span ng-bind-html="cart.cart_name | highlight: $select.search"></span>
 					                                            </ui-select-choices>
 					                                        </ui-select>
 					                                        <span class="input-group-btn">
-					                                            <button type="button" ng-click="search.cardId = ''" class="btn btn-default">
+					                                            <button type="button" ng-click="search.cartId = ''" class="btn btn-default">
 					                                                <small>
 					                                                    <em class="fa fa-times text-muted"></em>
 					                                                </small>
 					                                            </button>
 					                                        </span>
-					                                    </div>
-					                                </div>
-					                            </div> 
-					                         </div>
-                                        	<div class="col-sm-4">
-					                            <div class="form-group">
-					                                <label class="col-sm-4 control-label" translate="CMS_TXT_IS_APPROVED"></label>
-					                                <div class="col-sm-8">
-					                                    <div class="input-group">
-					                                        <ui-select ng-model="search.isApproved" theme="bootstrap" ng-disabled="disabled" class="text-left" >
-					                                            <ui-select-match placeholder="Select..." class="text-left">{{$select.selected.name}}</ui-select-match>
-					                                            <ui-select-choices repeat="item.value as item in yesOrNo | filter: $select.search">
-					                                                <span ng-bind-html="item.name | highlight: $select.search"></span>
-					                                            </ui-select-choices>
-					                                        </ui-select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <div class="form-group">
+                                                    <label class="col-sm-4 control-label" translate="CMS_TXT_IS_APPROVED"></label>
+                                                    <div class="col-sm-8">
+                                                        <div class="input-group">
+                                                            <ui-select ng-model="search.isApproved" theme="bootstrap" ng-disabled="disabled" class="text-left" >
+                                                                <ui-select-match placeholder="Select..." class="text-left">{{$select.selected.name}}</ui-select-match>
+                                                                <ui-select-choices repeat="item.value as item in yesOrNo | filter: $select.search">
+                                                                    <span ng-bind-html="item.name | highlight: $select.search"></span>
+                                                                </ui-select-choices>
+                                                            </ui-select>
 					                                        <span class="input-group-btn">
 					                                            <button type="button" ng-click="search.isApproved = ''" class="btn btn-default">
-					                                                <small>
-					                                                    <em class="fa fa-times text-muted"></em>
-					                                                </small>
-					                                            </button>
+                                                                    <small>
+                                                                        <em class="fa fa-times text-muted"></em>
+                                                                    </small>
+                                                                </button>
 					                                        </span>
-					                                    </div>
-					                                </div>
-					                            </div> 
-					                         </div>	
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <div class="col-sm-4">
                                                 <div class="form-group">
                                                     <label class="col-sm-4 control-label" translate="CMS_TXT_PUBLISH"></label>
@@ -93,18 +83,18 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                         </div>
-                                         <div class="row">	
+                                        </div>
+                                        <div class="row">
                                             <div class="col-sm-4">
                                                 <div class="form-group">
                                                     <label class="col-sm-4 control-label" translate="CMS_TXT_IS_APPROVED_DESCRIPTION"></label>
                                                     <div class="col-sm-8">
                                                         <div class="input-group">
                                                             <ui-select ng-model="search.isApprovedDescription" theme="bootstrap" ng-disabled="disabled" class="text-left" >
-					                                            <ui-select-match placeholder="Select..." class="text-left">{{$select.selected.name}}</ui-select-match>
-					                                            <ui-select-choices repeat="item.value as item in yesOrNo | filter: $select.search">
-					                                                <span ng-bind-html="item.name | highlight: $select.search"></span>
-					                                            </ui-select-choices>
+                                                                <ui-select-match placeholder="Select..." class="text-left">{{$select.selected.name}}</ui-select-match>
+                                                                <ui-select-choices repeat="item.value as item in yesOrNo | filter: $select.search">
+                                                                    <span ng-bind-html="item.name | highlight: $select.search"></span>
+                                                                </ui-select-choices>
                                                             </ui-select>
                                                             <span class="input-group-btn">
                                                                 <button type="button" ng-click="search.isApprovedDescription = ''" class="btn btn-default">
@@ -117,16 +107,16 @@
                                                     </div>
                                                 </div>
                                             </div>
-											<div class="col-sm-4">
+                                            <div class="col-sm-4">
                                                 <div class="form-group">
                                                     <label class="col-sm-4 control-label" translate="CMS_TXT_IS_ON_SALE"></label>
                                                     <div class="col-sm-8">
                                                         <div class="input-group">
                                                             <ui-select ng-model="search.isOnSale" theme="bootstrap" ng-disabled="disabled" class="text-left" >
-					                                            <ui-select-match placeholder="Select..." class="text-left">{{$select.selected.name}}</ui-select-match>
-					                                            <ui-select-choices repeat="item.value as item in yesOrNo | filter: $select.search">
-					                                                <span ng-bind-html="item.name | highlight: $select.search"></span>
-					                                            </ui-select-choices>
+                                                                <ui-select-match placeholder="Select..." class="text-left">{{$select.selected.name}}</ui-select-match>
+                                                                <ui-select-choices repeat="item.value as item in yesOrNo | filter: $select.search">
+                                                                    <span ng-bind-html="item.name | highlight: $select.search"></span>
+                                                                </ui-select-choices>
                                                             </ui-select>
                                                             <span class="input-group-btn">
                                                                 <button type="button" ng-click="search.isOnSale = ''" class="btn btn-default">
@@ -138,30 +128,31 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>                                            
-					                     </div>
-					                     </div>
-					                     <div class="row">
-					                     	<div class="col-sm-12 control-savebar">
-                                                  <div class="col-sm-12 text-center">
-                                                      <div class="form-group">
-                                                          <button type="button" class="btn btn-default" translate="CMS_BTN_CANCEL" data-ng-click="initialize()"></button>
-                                                          <button type="button" class="btn btn-vo" translate="CMS_TXT_MENU_SEARCH" data-ng-click="doSearch()"></button>
-                                                          <button type="button" class="btn btn-vo" translate="CMS_TXT_MENU_EXPORT" ng-click="doExport()"> </button>
-                                                          <!-- <a href="C:\usr\test.csv" ><font color="red">导出</font></a> -->
-                                                      </div>
-
-                                                  </div>
                                             </div>
-					                     </div>
-					                 </form>
-                                     <div class="hidden">
-							           <form id="downloadForm" method="post" target="downloadHelper" action="/VoyageOne/cms/search/advance/doExport">
-							                <input type="hidden" name="search" id="search" value="{{search}}"/>
-							           </form>
-							           <iframe id="downloadHelper" name="downloadHelper"></iframe>
-							       </div>					                 
-					              </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-12 control-savebar">
+                                                <div class="col-sm-12 text-center">
+                                                    <div class="form-group">
+                                                        <button type="button" class="btn btn-default" translate="CMS_BTN_CANCEL" data-ng-click="initialize()"></button>
+                                                        <button type="button" class="btn btn-vo" translate="CMS_TXT_MENU_SEARCH" data-ng-click="doSearch()"></button>
+                                                        <button type="button" class="btn btn-vo" translate="CMS_TXT_MENU_EXPORT" ng-click="doExport()"> </button>
+                                                        <!-- <a href="C:\usr\test.csv" ><font color="red">导出</font></a> -->
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <div class="hidden">
+                                        <form id="downloadForm" method="post" target="downloadHelper" action="/VoyageOne/cms/search/advance/doExport">
+                                            <input type="hidden" name="search" id="search" value="{{search}}"/>
+                                            <input type="hidden" name="token" id="token" value="{{token}}"/>
+                                            <input type="hidden" name="companyId" id="companyId" value="{{companyId}}"/>
+                                        </form>
+                                        <iframe id="downloadHelper" name="downloadHelper"></iframe>
+                                    </div>
+                                </div>
                             </div>
                         </accordion-group>
                     </accordion>
@@ -177,8 +168,28 @@
                         <tab>
                             <tab-heading><i class="glyphicons glyphicons-sort"></i>&nbsp;<span translate="CMS_TXT_PRODUCTS"></span></tab-heading>
                             <div class="panel vo_panel tab_panel">
+                                <div class="row wrapper">
+                                    <div class="col-sm-5 m-b-xs">
+                                        <button class="btn btn-vo" ng-controller="cmsPopupController"
+                                                ng-click="openSetProductColumns(null, reFreshFunc.doRefreshCnProductInfo, 'cn')" >
+                                            <i class="fa fa-table"></i>&nbsp;<span translate="CMS_BTN_CUSTOMIZE_COLUMNS"></span>
+                                        </button>
+                                        <div class="btn-group dropdown" dropdown="">
+                                            <button class="btn btn-vo" dropdown-toggle="" aria-haspopup="true" aria-expanded="false"><i class="fa fa-edit"></i>&nbsp;<span translate="CMS_BTN_BATCH_EDIT"></span>&nbsp;<span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu" ng-controller="cmsPopupController">
+                                                <!--<li><a href="" ng-click="open('lg')" translate="CMS_BTN_SET_DISPLAY_ORDER"></a></li>-->
+                                                <!--<li><a href="" ng-click="open('lg')" translate="CMS_BTN_RESET_DISPLAY_ORDER"></a></li>-->
+                                                <li><a href="" ng-click="openSetCnProductProperty(cnProductInfo.selectIdList)" translate="CMS_BTN_SET_PROPERTY"></a></li>
+                                                <li><a href="" ng-click="openSetCnProductShare(cnProductInfo.selectIdList)" translate="CMS_BTN_SET_APPROVED"></a></li>
+                                                <li><a href="" ng-click="openAddToPromotion(cnProductInfo.selectIdList)"  translate="CMS_BTN_ADD_TO_PROMOTION"></a></li>
+                                                <!--<li><a href="" ng-click="open('lg')" translate="CMS_BTN_EXPORT_FILE"></a></li>-->
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="table-responsive">
-                                   	<table datatable dt-options="dtProductList.options" dt-columns="dtProductList.columns" dt-instance="dtProductList.dtInstance" class="table table-striped hover b-t b-b vo_table">
+                                    <table datatable dt-options="dtProductList.options" dt-columns="dtProductList.columns" dt-instance="dtProductList.dtInstance" class="table table-striped hover b-t b-b vo_table">
                                     </table>
                                 </div>
                             </div>
@@ -189,7 +200,7 @@
             </div>
             <!-- .col-lg-12 -->
         </div>
-        
+
         <!-- .row -->
     </div>
     <!-- end .wrapper-md -->
