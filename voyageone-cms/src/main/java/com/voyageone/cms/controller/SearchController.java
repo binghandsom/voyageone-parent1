@@ -1,10 +1,6 @@
 package com.voyageone.cms.controller;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
@@ -141,12 +137,9 @@ public class SearchController extends BaseController {
 		logger.info(JsonUtil.toJson(requestMap));
 		Map<String,Object> parameter = com.voyageone.common.util.JsonUtil.jsonToMap(requestMap);
 		parameter.put("channelId", getUser().getSelChannel());
-//		String outPutPath = Properties.readValue(CmsConstants.PropKey.CSVPATH);
-	    String outPutPath = "C:"+File.separator+"user";
 	    String  name = String.format(CmsConstants.Format.CSVNAME, DateTimeUtil.getLocalTime(getUserTimeZone()).substring(0, 10));
-		File csvFile = searchService.doExport(parameter,outPutPath,name);
-		FileInputStream input = new FileInputStream(csvFile);
-		return genResponseEntityFromStream(name+".csv", input);
+		byte[] data = searchService.doExport(parameter);
+		return genResponseEntityFromBytes(name+".csv", data);
 
 	}
 }

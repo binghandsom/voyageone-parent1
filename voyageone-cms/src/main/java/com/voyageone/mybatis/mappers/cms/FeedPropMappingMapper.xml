@@ -2,31 +2,37 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.voyageone.cms.sql">
     <!-- 功能用 mapper 文件 -->
-    <select id="ims_mt_prop_selectProps" resultType="com.voyageone.cms.modelbean.FeedMappingProp">
+    <select id="ims_mt_prop_selectProps" resultType="com.voyageone.cms.formbean.FeedMappingProp">
         SELECT
-        a.prop_id,
-        a.category_id,
-        a.prop_name,
-        a.prop_type,
-        a.prop_value_default,
-        a.is_top_prop,
-        a.is_parent,
-        a.is_required,
-        a.parent_prop_id,
-        a.content,
-        a.created,
-        a.creater,
-        a.modified,
-        a.modifier,
-        b.is_ignore
+            a.prop_id,
+            a.category_id,
+            a.prop_name,
+            a.prop_type,
+            a.prop_value_default,
+            a.is_top_prop,
+            a.is_parent,
+            a.is_required,
+            a.parent_prop_id,
+            a.content,
+            a.created,
+            a.creater,
+            a.modified,
+            a.modifier,
+            b.is_ignore,
+            SUM(IF(m.id IS NULL, 0, 1)) val_count
         FROM voyageone_ims.ims_mt_prop a
         LEFT JOIN voyageone_ims.ims_bt_feed_prop_ignore b
-        ON b.channel_id = #{channel_id}
-        AND a.prop_id = b.prop_id
+          ON b.channel_id = #{channel_id} AND a.prop_id = b.prop_id
+        LEFT JOIN voyageone_ims.ims_bt_feed_prop_mapping m
+          ON a.prop_id = m.prop_id
         WHERE a.category_id = #{categoryId}
-        AND a.prop_type IN (<foreach item="typeValue" collection="types" separator=",">#{typeValue}</foreach>)
+          AND a.prop_type IN (<foreach item="typeValue" collection="types" separator=",">#{typeValue}</foreach>)
         <if test="is_ignored != null and is_ignored != ''">AND IFNULL(b.is_ignore, 0) = #{is_ignored}</if>
         <if test="is_required != null and is_required != ''">AND a.is_required = #{is_required}</if>
+        <if test="prop_name != null and prop_name != ''">AND a.prop_name like concat(#{prop_name}, '%')</if>
+        GROUP BY a.prop_id, a.category_id, a.prop_name, a.prop_type, a.prop_value_default, a.is_top_prop,
+            a.is_parent, a.is_required, a.parent_prop_id, a.content, a.created, a.creater, a.modified,
+            a.modifier, b.is_ignore
         LIMIT #{start}, #{length}
     </select>
 
@@ -40,6 +46,7 @@
         AND a.prop_type IN (<foreach item="typeValue" collection="types" separator=",">#{typeValue}</foreach>)
         <if test="is_ignored != null and is_ignored != ''">AND IFNULL(b.is_ignore, 0) = #{is_ignored}</if>
         <if test="is_required != null and is_required != ''">AND a.is_required = #{is_required}</if>
+        <if test="prop_name != null and prop_name != ''">AND a.prop_name like concat(#{prop_name}, '%')</if>
     </select>
 
     <select id="ims_mt_categories_selectCategoryPath" resultType="String">
@@ -182,9 +189,10 @@
         WHERE prop_name = #{prop.prop_name} AND prop_type = #{prop.prop_type} AND channel_id = #{channel_id}
     </select>
 
-    <select id="ims_bt_feed_prop_mapping_selectCountsByCategory" resultType="com.voyageone.cms.modelbean.CategoryPropCount">
+    <select id="ims_bt_feed_prop_mapping_selectCountsByCategory"
+            resultType="com.voyageone.cms.modelbean.CategoryPropCount">
         SELECT
-            count(prop.prop_id) props,
+            count(prop.prop_id)                                                                            props,
             sum(if(ign.is_ignore = 1, 1, if(mapping.prop_id IS NULL, if(def.prop_name IS NULL, 0, 1), 1))) hasValue
         FROM
             voyageone_ims.ims_mt_prop prop LEFT JOIN voyageone_ims.ims_bt_feed_prop_mapping mapping
@@ -211,13 +219,15 @@
         WHERE main_category_id = #{category_id}
     </select>
 
-    <insert id="ims_bt_category_extend_insertCategoryExtend" parameterType="com.voyageone.cms.modelbean.ImsCategoryExtend">
+    <insert id="ims_bt_category_extend_insertCategoryExtend"
+            parameterType="com.voyageone.cms.modelbean.ImsCategoryExtend">
         INSERT INTO voyageone_ims.ims_bt_category_extend (channel_id, main_category_id, is_set_attr, created, creater, modified, modifier)
         VALUES (#{channel_id}, #{main_category_id}, #{is_set_attr}, NOW(), #{creater}, NOW(), #{modifier})
     </insert>
 
     <update id="ims_bt_category_extend_isSetAttr" parameterType="com.voyageone.cms.modelbean.ImsCategoryExtend">
-        UPDATE voyageone_ims.ims_bt_category_extend SET is_set_attr = #{is_set_attr}, modified = NOW(), modifier = #{modifier}
+        UPDATE voyageone_ims.ims_bt_category_extend
+        SET is_set_attr = #{is_set_attr}, modified = NOW(), modifier = #{modifier}
         WHERE id = #{id} AND modified = #{modified}
     </update>
 </mapper>

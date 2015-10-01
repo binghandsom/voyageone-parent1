@@ -5,12 +5,13 @@ import com.voyageone.cms.dao.FeedPropMappingDao;
 import com.voyageone.cms.feed.Condition;
 import com.voyageone.cms.feed.Operation;
 import com.voyageone.cms.feed.OperationBean;
+import com.voyageone.cms.formbean.FeedMappingProp;
 import com.voyageone.cms.modelbean.*;
 import com.voyageone.cms.service.FeedPropMappingService;
-import com.voyageone.cms.service.FeedPropMappingType;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
 import com.voyageone.core.ajax.dt.DtRequest;
 import com.voyageone.core.ajax.dt.DtResponse;
+import com.voyageone.core.ajax.dt.DtSearch;
 import com.voyageone.core.modelbean.UserSessionBean;
 import com.voyageone.ims.enums.CmsFieldEnum;
 import org.apache.commons.lang3.StringUtils;
@@ -65,16 +66,21 @@ public class FeedPropMappingServiceImpl implements FeedPropMappingService {
 
         if (channel == null) throw new BusinessException(NOT_FOUND_CHANNEL);
 
+        // 获取过滤参数
         String byRequired = params.getColumns().get(3).getSearch().getValue();
-
         String byIgnored = params.getColumns().get(4).getSearch().getValue();
 
+        DtSearch search = params.getSearch();
+
+        // 获取搜索参数
+        String value = search.getValue();
+
         // 抽取数据
-        List<FeedMappingProp> masterProperties = feedPropMappingDao.selectProps(params.getParam(), channel.getId(),
+        List<FeedMappingProp> masterProperties = feedPropMappingDao.selectProps(value, params.getParam(), channel.getId(),
                 params.getStart(), params.getLength(), byIgnored, byRequired);
 
         // 抽取不分页的总数量
-        int total = feedPropMappingDao.selectPropsCount(params.getParam(), channel.getId(), byIgnored, byRequired);
+        int total = feedPropMappingDao.selectPropsCount(value, params.getParam(), channel.getId(), byIgnored, byRequired);
 
         // 创建返回结果
         DtResponse<List<FeedMappingProp>> response = new DtResponse<>();
@@ -325,10 +331,6 @@ public class FeedPropMappingServiceImpl implements FeedPropMappingService {
         // 条件是可以为空的，但是如果不为空，则格式不能错
         if (!Condition.valid(condition))
             throw new BusinessException(ERR_CONDITION_FORMAT);
-
-        // 如果映射的值来源是 feed，则要求不能使用 condition
-        if (mapping.getEType().equals(FeedPropMappingType.FEED) && !StringUtils.isEmpty(condition))
-            throw new BusinessException(CONDITION_FOR_FEED);
 
         if (StringUtils.isEmpty(mapping.getValue()))
             throw new BusinessException(NO_MAPPING_VALUE);

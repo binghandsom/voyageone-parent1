@@ -8,8 +8,8 @@ define(function (require) {
     require ('modules/cms/popup/setProductColumns/popSetProductColumns.service');
     require ('modules/cms/common/common.service');
 
-    cmsApp.controller('popSetProductColumns', ['$scope', '$modalInstance', '$q', 'popSetProductColumnsService', 'cmsCommonService', 'parameters', 'userService', 'notify',
-        function ($scope, $modalInstance, $q, popSetProductColumnsService, cmsCommonService, parameters, userService, notify) {
+    cmsApp.controller('popSetProductColumns', ['$scope', '$rootScope', '$modalInstance', '$q', 'popSetProductColumnsService', 'cmsCommonService', 'parameters', 'userService', 'notify',
+        function ($scope, $rootScope, $modalInstance, $q, popSetProductColumnsService, cmsCommonService, parameters, userService, notify) {
 
             var commonUtil = require('components/util/commonUtil');
 
@@ -35,15 +35,31 @@ define(function (require) {
                 }
 
                 popSetProductColumnsService.doGetProductColumns(parameters.type).then(function(data) {
+
+                    var productRoleColumns = [];
+                    switch (parameters.type) {
+                        case 'us':
+                            productRoleColumns = $rootScope.cmsMaster.usProductColumns;
+                            break;
+                        case 'cn':
+                            productRoleColumns = $rootScope.cmsMaster.cnProductColumns;
+                            break;
+                    }
+
                     _.forEach(data, function (productColumnInfo) {
 
-                        //设置默认值该属性在列表中显示与否
-                        productColumnInfo.showFlag = true;
+                        productColumnInfo.showFlag = false;
 
-                        // 获取用户当前的属性列表对应的属性对象.
-                        if (_.indexOf(currentProductAttribute, productColumnInfo.attributeValueId) > -1) {
-                            productColumnInfo.showFlag = false;
-                            $scope.currentColumns.push(productColumnInfo);
+                        if (_.indexOf(productRoleColumns, productColumnInfo.attributeValueId) > -1) {
+
+                            //设置默认值该属性在列表中显示与否
+                            productColumnInfo.showFlag = true;
+
+                            // 获取用户当前的属性列表对应的属性对象.
+                            if (_.indexOf(currentProductAttribute, productColumnInfo.attributeValueId) > -1) {
+                                productColumnInfo.showFlag = false;
+                                $scope.currentColumns.push(productColumnInfo);
+                            }
                         }
 
                         // 取得数据库中现在保存的所有的书信，并将其分类.
@@ -87,6 +103,7 @@ define(function (require) {
                         break;
                 }
 
+                $scope.currentColumns = _.sortBy($scope.currentColumns, 'attributeValueId');
                 _.forEach($scope.currentColumns, function (object) {
                     currentAttributeValueIdList.push(object.attributeValueId);
                 });
