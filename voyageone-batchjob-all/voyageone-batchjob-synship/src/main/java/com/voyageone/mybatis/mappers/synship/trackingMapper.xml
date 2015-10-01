@@ -271,11 +271,13 @@
             tt_tracking tracking,
             tt_res_tracking res_tracking
         WHERE
+            shipment.status = '2'
+        AND
             shipment.port = '12'
         AND
             shipment.shipment_id = items.shipment_id
         AND
-            items.syn_ship_no = res.syn_ship_no
+            items.ordernum = res.order_number
         AND
             items.del_flg = '0'
         AND

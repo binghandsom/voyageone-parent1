@@ -1,8 +1,11 @@
 package com.voyageone.common.components.eExpress;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.voyageone.common.components.eExpress.bean.*;
+import com.voyageone.common.util.DateTimeUtil;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
@@ -159,13 +162,27 @@ public class EtkService extends EtkBase{
         ExpressTrackingRes res = new ExpressTrackingRes();
         try {
 	        Element table = root.element("Body").element("eExpress_shipment_trackingResponse").element("eExpress_shipment_trackingResult").element("diffgram").element("NewDataSet").element("Table");
-	        if (table!=null){
-	        	res.setResult(table.elementText("Result"));
-	        	res.setShipment_number(table.elementText("shipment_number"));
-	        	res.setCustomer_number(table.elementText("customer_number"));
-	        	res.setStatus_code(table.elementText("status_code"));
-	        	res.setDescription(table.elementText("description"));
-	        	res.setEntry_datetime(table.elementText("entry_datetime"));
+			if (table!=null){
+
+				res.setResult(table.elementText("Result"));
+
+				List<ExpressTrackingDetail> trackingDetails = new ArrayList<>();
+
+				// 物流信息有多条记录，需要全部取得
+				for(int i=1;i<table.getParent().content().size();i++) {
+					Element tableDetail = (Element) table.getParent().content().get(i);
+					ExpressTrackingDetail trackingDetail = new ExpressTrackingDetail();
+					trackingDetail.setShipment_number(tableDetail.elementText("shipment_number"));
+					trackingDetail.setCustomer_number(tableDetail.elementText("customer_number"));
+					trackingDetail.setStatus_code(tableDetail.elementText("status_code"));
+					trackingDetail.setDescription(tableDetail.elementText("description"));
+					trackingDetail.setEntry_datetime(tableDetail.elementText("entry_datetime"));
+
+					trackingDetails.add(trackingDetail);
+				}
+
+				res.setTrackingDetails(trackingDetails);
+
 	        }else{
 	            throw new Exception("调用E特快登录API eExpressShipmentTracking错误：" + result.getResult());
 	        }

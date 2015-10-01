@@ -14,6 +14,7 @@ import com.voyageone.batch.synship.modelbean.EtkTrackingBean;
 import com.voyageone.common.components.eExpress.EtkConstants;
 import com.voyageone.common.components.eExpress.EtkService;
 import com.voyageone.common.components.eExpress.bean.ExpressShipmentTrackingReq;
+import com.voyageone.common.components.eExpress.bean.ExpressTrackingDetail;
 import com.voyageone.common.components.eExpress.bean.ExpressTrackingRes;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.TransactionRunner;
@@ -179,13 +180,32 @@ public class SynShipGetEtkStatusService extends BaseTaskService {
                         expressShipmentTrackingReq.setShipment_number(etkTrackingBean.getTracking_no());
                         ExpressTrackingRes expressTrackingRes = etkService.eExpressShipmentTracking(expressShipmentTrackingReq, carrierBean);
 
-                        String json = expressTrackingRes == null ? "" : new Gson().toJson(expressTrackingRes);
-                        $info(channel.getFull_name() + "--ETK返回结果：" + json);
+                        $info(channel.getFull_name() + "--OrderNumber：" + etkTrackingBean.getOrder_number() + "，ETK返回结果：" + expressTrackingRes.getResult());
 
                         // 结果是正确时，处理此条记录，否则忽略此条记录，继续处理其他
                         if (EtkConstants.Result.T.equals(expressTrackingRes.getResult())) {
 
-                            switch (expressTrackingRes.getStatus_code()) {
+                            int index =0 ;
+                            expressTrackingRes.getTrackingDetails().get(index).setEntry_datetime(DateTimeUtil.getGMTTime(DateTimeUtil.parse(expressTrackingRes.getTrackingDetails().get(index).getEntry_datetime(), DateTimeUtil.DATE_TIME_FORMAT_5), 8));
+                            String entryDatetime = expressTrackingRes.getTrackingDetails().get(index).getEntry_datetime();
+
+                            // 取得处理日期最大的记录
+                            for(int i=1;i<expressTrackingRes.getTrackingDetails().size();i++) {
+
+                                expressTrackingRes.getTrackingDetails().get(i).setEntry_datetime(DateTimeUtil.getGMTTime(DateTimeUtil.parse(expressTrackingRes.getTrackingDetails().get(i).getEntry_datetime(), DateTimeUtil.DATE_TIME_FORMAT_5), 8));
+
+                                if (expressTrackingRes.getTrackingDetails().get(i).getEntry_datetime().compareTo(entryDatetime) > 0) {
+                                    entryDatetime = expressTrackingRes.getTrackingDetails().get(i).getEntry_datetime();
+                                    index = i;
+                                }
+                            }
+
+                            ExpressTrackingDetail trackingDetail =expressTrackingRes.getTrackingDetails().get(index);
+
+                            String json = trackingDetail == null ? "" : new Gson().toJson(trackingDetail);
+                            $info(channel.getFull_name() + "--OrderNumber：" + etkTrackingBean.getOrder_number() + "，ETK返回最新状态：" + json);
+
+                            switch (trackingDetail.getStatus_code()) {
 
                                 case EtkConstants.StatusCode.Created:
                                 case EtkConstants.StatusCode.Exported:
@@ -226,8 +246,8 @@ public class SynShipGetEtkStatusService extends BaseTaskService {
                                     }
                                     break;
                                 default:
-                                    $info(channel.getFull_name() + "--当前ETK提单状态无法处理, Order_Number：" + etkTrackingBean.getOrder_number());
-                                    logIssue(channel.getFull_name() + "--当前ETK提单状态无法处理", "Order_Number：" + etkTrackingBean.getOrder_number()  + "，TrackingNo：" + etkTrackingBean.getTracking_no() +  "，Tracking：" + json);
+                                    $info(channel.getFull_name() + "--OrderNumber：" + etkTrackingBean.getOrder_number() + "当前ETK提单状态无法处理");
+                                    logIssue(channel.getFull_name() + "--当前ETK提单状态无法处理", "Order_Number：" + etkTrackingBean.getOrder_number() + "，TrackingNo：" + etkTrackingBean.getTracking_no() + "，Message：" + expressTrackingRes.getMsg());
                                     break;
                             }
 
@@ -251,7 +271,7 @@ public class SynShipGetEtkStatusService extends BaseTaskService {
                                 reservationDao.insertReservationLogByStatus(etkTrackingBean.getSyn_ship_no(), notes, etkTrackingBean.getStatus() , getTaskName());
 
                                 // 物流信息的追加
-                                trackingDao.insertTrackingInfo(etkTrackingBean.getSyn_ship_no(),etkTrackingBean.getTracking_no(),etkTrackingBean.getTracking_status(),DateTimeUtil.getNow(),getTaskName());
+                                trackingDao.insertTrackingInfo(etkTrackingBean.getSyn_ship_no(),etkTrackingBean.getTracking_no(),etkTrackingBean.getTracking_status(),trackingDetail.getEntry_datetime(),getTaskName());
 
                                 // 快递100未订阅时，订阅快递100
                                 if (CodeConstants.KD100_POLL.NO.equals(etkTrackingBean.getSent_kd100_poll_flg())){
@@ -263,7 +283,7 @@ public class SynShipGetEtkStatusService extends BaseTaskService {
                         }
                         else {
                             // 结果是错误时，忽略此条记录，继续处理其他
-                            $info(channel.getFull_name() + "--ETK提单状态取得错误，无法更新,Order_Number：" + etkTrackingBean.getOrder_number());
+                            $info(channel.getFull_name() + "--Order_Number：" + etkTrackingBean.getOrder_number()+"，ETK提单状态取得错误，无法更新");
                             logIssue(channel.getFull_name() + "--ETK提单状态取得错误，无法更新", "Order_Number：" + etkTrackingBean.getOrder_number() + "，TrackingNo：" + etkTrackingBean.getTracking_no() +  "，Message：" + expressTrackingRes.getMsg());
                         }
 
