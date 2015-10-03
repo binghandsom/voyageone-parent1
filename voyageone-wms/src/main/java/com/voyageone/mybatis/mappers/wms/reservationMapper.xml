@@ -420,16 +420,7 @@
           count(1)
         FROM
           wms_bt_item_details t
-        where 1 = 1
-        <if test="order_channel_id != null and order_channel_id != ''">
-            and t.order_channel_id = #{order_channel_id}
-        </if>
-        <if test="order_channel_id == null or order_channel_id == ''">
-            and t.order_channel_id in
-            <foreach collection="companyOrdChannelList" item="orderChannelId"  open="(" separator="," close=")">
-                #{orderChannelId}
-            </foreach>
-        </if>
+        where  t.order_channel_id = #{order_channel_id}
         <if test="itemCode != null and itemCode != ''">
             and t.itemcode = #{itemCode}
         </if>
@@ -454,17 +445,8 @@
 						 t.store_id,
 						 t.store_name
 				    from wms_mt_store t
-				   where t.active = 1
-					/* and t.store_kind = '0'*/
-                     <if test="order_channel_id != null and order_channel_id != ''">
-                        and t.order_channel_id = #{order_channel_id}
-                     </if>
-                     <if test="order_channel_id == null or order_channel_id == ''">
-                        and t.order_channel_id in
-                       <foreach collection="companyOrdChannelList" item="orderChannelId"  open="(" separator="," close=")">
-                          #{orderChannelId}
-                       </foreach>
-                     </if>
+				   where  t.order_channel_id = #{order_channel_id}
+                     and  is_sale = '1'
 				   order by t.store_id
 				) t_store
                 left join
@@ -473,16 +455,7 @@
                         t.itemCode,
                         t.order_channel_id
                         from wms_bt_item_details t
-                    where 1 = 1
-                        <if test="order_channel_id != null and order_channel_id != ''">
-                            and t.order_channel_id = #{order_channel_id}
-                        </if>
-                        <if test="order_channel_id == null or order_channel_id == ''">
-                            and t.order_channel_id in
-                            <foreach collection="companyOrdChannelList" item="orderChannelId"  open="(" separator="," close=")">
-                                #{orderChannelId}
-                            </foreach>
-                        </if>
+                    where  t.order_channel_id = #{order_channel_id}
                         <if test="itemCode != null and itemCode != ''">
                             and t.itemcode = #{itemCode}
                         </if>
@@ -520,17 +493,8 @@
         select t_store.store_id,
 			   t_store.store_name
           from wms_mt_store t_store
-         where t_store.active = 1
-           /*and t_store.store_kind = '0'*/
-          <if test="order_channel_id != null and order_channel_id != ''">
-              and t_store.order_channel_id = #{order_channel_id}
-          </if>
-          <if test="order_channel_id == null or order_channel_id == ''">
-              and t_store.order_channel_id in
-              <foreach collection="companyOrdChannelList" item="orderChannelId"  open="(" separator="," close=")">
-                  #{orderChannelId}
-              </foreach>
-          </if>
+         where  t_store.order_channel_id = #{order_channel_id}
+           and  is_sale = '1'
          order by t_store.store_id
     </select>
 
