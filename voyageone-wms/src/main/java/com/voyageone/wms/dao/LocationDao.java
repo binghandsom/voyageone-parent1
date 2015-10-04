@@ -154,6 +154,17 @@ public class LocationDao extends BaseDao {
     }
 
     /**
+     * 删除 ItemLocationExt
+     *
+     * @param itemLocationBean
+     * @return int
+     */
+    public int deleteItemLocationExt(ItemLocationBean itemLocationBean) {
+
+        return updateTemplate.delete("wms_bt_item_location_ext_delete", itemLocationBean);
+    }
+
+    /**
      * 根据主键检索 ItemLocation
      *
      * @param item_location_id 主键

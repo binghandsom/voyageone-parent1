@@ -282,6 +282,8 @@ public class WmsLocationServiceImpl implements WmsLocationService {
         if (itemLocation == null)
             throw new BusinessException(ComMsg.UPDATE_BY_OTHER);
 
+        locationDao.deleteItemLocationExt(itemLocation);
+
         int count = locationDao.deleteItemLocation(item_location_id, modified);
 
         if (count > 0) {
