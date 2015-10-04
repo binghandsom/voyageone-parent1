@@ -224,6 +224,20 @@
         AND modified = #{modified}
     </delete>
 
+    <delete id="wms_bt_item_location_ext_delete">
+        DELETE
+        FROM
+          wms_bt_item_location_ext
+        WHERE
+          order_channel_id = #{order_channel_id}
+        AND
+          store_id = #{store_id}
+        AND
+          code = #{code}
+        AND
+          location_id = #{location_id}
+    </delete>
+
     <select id="wms_bt_item_location_get" resultMap="item_location_result_map">
         SELECT
         <include refid="item_location_select_cols"></include>,
