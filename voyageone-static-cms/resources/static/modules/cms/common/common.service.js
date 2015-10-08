@@ -70,11 +70,11 @@ define(function(require) {
                 switch (type) {
                     case 'us':
                         productAttributes = userService.getUserConfig().cmsUsProductAttributes;
-                        productColumns = getAttrributeId($rootScope.cmsMaster.USProductAttributes);
+                        productColumns = getAttributeId($rootScope.cmsMaster.USProductAttributes);
                         break;
                     case 'cn':
                         productAttributes = userService.getUserConfig().cmsCnProductAttributes;
-                        productColumns = getAttrributeId($rootScope.cmsMaster.CNProductAttributes);
+                        productColumns = getAttributeId($rootScope.cmsMaster.CNProductAttributes);
                         break;
                     default :
                         break;
@@ -109,11 +109,11 @@ define(function(require) {
                 switch (type) {
                     case 'us':
                         productAttributes = userService.getUserConfig().cmsUsProductAttributes;
-                        productColumns = getAttrributeId($rootScope.cmsMaster.USProductAttributes);
+                        productColumns = getAttributeId($rootScope.cmsMaster.USProductAttributes);
                         break;
                     case 'cn':
                         productAttributes = userService.getUserConfig().cmsCnProductAttributes;
-                        productColumns = getAttrributeId($rootScope.cmsMaster.USProductAttributes);
+                        productColumns = getAttributeId($rootScope.cmsMaster.USProductAttributes);
                         break;
                     default :
                         break;
@@ -146,7 +146,7 @@ define(function(require) {
              * @param productAttributes
              * @returns {Array}
              */
-            function getAttrributeId (productAttributes) {
+            function getAttributeId (productAttributes) {
                 var attributeList = [];
                 _.forEach(productAttributes, function (attribute) {
                     attributeList.push(attribute.attributeValueId);
