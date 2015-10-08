@@ -1,15 +1,15 @@
 package com.voyageone.batch.cms.bean;
 
 /**
- * FeedMappingBean
+ * FeedMappingSkuBean
  * Created by tom on 7/28/2015.
  *
  * @author tom
  */
-public class FeedMappingBean {
+public class FeedMappingSkuBean {
 	private String channel_id;
 	private String main_category_id;
-	private String prop_id;
+	private String prop_name;
 	private String conditions;
 	private String type;
 	private String value;
@@ -30,12 +30,12 @@ public class FeedMappingBean {
         this.main_category_id = main_category_id;
     }
 
-    public String getProp_id() {
-        return prop_id;
+    public String getProp_name() {
+        return prop_name;
     }
 
-    public void setProp_id(String prop_id) {
-        this.prop_id = prop_id;
+    public void setProp_name(String prop_name) {
+        this.prop_name = prop_name;
     }
 
     public String getConditions() {
