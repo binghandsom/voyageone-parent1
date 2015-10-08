@@ -1,28 +1,37 @@
-<div ng-app="ngSanitize" ng-controller='masterPropValueSettingController' ng-init="init()" class="ng-pristine category-search ng-valid" ng-cloak="">
-	
-	<div class="wrapper-md">
-	<!-- category menu -->
-    <div class="form-inline">
-         <div class="btn-group" style="float: left;margin-bottom: 30px;" dropdown>
-           <button type="button" class="btn btn-vo">所有类目</button>
-           <button type="button" class="btn btn-vo dropdown-toggle" dropdown-toggle>
-             <span class="caret"></span>
-             <span class="sr-only">Split button!</span>
-           </button>
-			<ul class="dropdown-menu" role="menu">
-				<li>
-					<div id="master-category-nav">
-						<ul ng-include="'categoryNav'"></ul>
-					</div>
-				</li>
-			</ul>
-         </div>
-         <!-- / category menu -->
-         <div style="float: left;margin-left:50px;text-align: center;">
-	       	<h4><label><strong>类目:</strong> <font ng-bind="currentCategoryName"></font></label></h4>
-	     </div>
+<div ng-controller='masterPropValueSettingController' ng-init="init()" ng-cloak="">
+	<div class="bg-light lter b-b wrapper-md vo_page_header clearfix">
+        <div class="row">
+            <div class="col-sm-12 text-left hidden-xs">
+                <div ng-if="isReady" class="form-inline">
+                	 <div class="col-sm-4 noPadding" dropdown>
+			           <button type="button" class="btn btn-vo btn-xl dropdown-toggle"  dropdown-toggle>
+			           	  <i class="fa fa-refresh fa-1x"></i>&nbsp;切换类目&nbsp;
+			             <span class="caret"></span>
+			             <span class="sr-only">Split button!</span>
+			           </button>
+						<ul class="dropdown-menu" role="menu">
+							<li>
+								<div id="master-category-nav">
+									<ul ng-include="'categoryNav'"></ul>
+								</div>
+							</li>
+						</ul>
+						<button ng-if="!isSave&&!isNew" style="margin-left: 10px;" class="btn btn-vo btn-xl" type="button" ng-click="switchCategory()"><i class="fa fa-check-square fa-1x"></i>&nbsp;确认</button>
+				        <button ng-if="!isSave&&!isNew" style="margin-left: 10px;" class="btn btn-vo btn-xl" ng-click="revertCategory()"><i class="fa fa-undo fa-1x"></i>&nbsp;重置</button>
+         			</div>
+			        <div class="col-sm-7 pull-left">
+				       	<h4 class="m-n font-thin text-vo pull-left" translate="" ng-bind="currentCategoryName"></h4>
+				    </div>
+	     			<div class="col-sm-1 noPadding pull-right"><button class="btn btn-vo pull-right" ng-click="doGoBack()"><i class="fa fa-reply fa-1x"></i>&nbsp;返&nbsp;回</button></div>
+                </div>
+                <!-- .form-group -->
+            </div>
+        </div>
+        <!-- .row -->
     </div>
+    <!-- .wrapper-md .vo_page_header -->
     
+	<div class="wrapper-md ng-pristine category-search ng-valid">
 	   <div class="row">
 	       <div class="col-lg-12">
 	           <div class="vo_accordion vo_attr vo_product">
@@ -32,28 +41,21 @@
 						      <div class="panel-body">
 						          <div class="hbox hbox-auto-xs no-border vo_prodBox">
 						          	
-						          	<div class="col-sm-10 p-l-none p-r-none" ng-show="isShow">
+						          	<div class="col-sm-10 p-l-none p-r-none"  ng-if="!isError&&isReady">
 						                <div class="col vo_prodDataPanel">
 						                    <div class="categoryFormTitle">
-												<div>
-													<div>
-														<form name="categoryForm" ng-submit="submit()">
-															<table>
-																<tr>
-																	<td><div id="innerHtml" class="categoryList"></div></td>
-																</tr>
-																<tr>
-																	<td align="right"><input class="btn btn-vo" type="submit" value="Submit"></td>
-																</tr>
-															</table>
-														</form>
+												<div class="categoryList">
+													<div ng-repeat="reModel in propModels" on-finish-render-filters>
+														<div ng-include="'mainView'"  ng-init="model = reModel" ng-controller="cmsPopupController">
+														</div>
 													</div>
+													<div ng-if="isSave&&!isNew" class="topPadding"><button class="btn btn-vo btn-xl" type="button" ng-click="submit(propModels)"><i class="fa fa-save fa-1x"></i>&nbsp;提交</button></div>
 												</div>
 											</div>
 										</div>
 									</div>
 									
-									<div class="col-sm-2 p-l-none p-r-none col no-padder bg-light vo_prodDetailPanel" style="border-top:1px solid #d4cfcf;margin-top: 30px;margin-right: 10px;" ng-show="isPhotosShow">
+									<div class="col-sm-2 p-l-none p-r-none col no-padder bg-light vo_prodDetailPanel" style="width:15%;border-top:1px solid #d4cfcf;margin-top: 220px;margin-right: 35px;position:fixed;" ng-show="!isError&&isPhotosShow">
 										<div id="vo_fixProdPanel">
 											<p class="photosTittle">product photos</p>
 											<div class="vo_prodGallery">
@@ -68,7 +70,18 @@
 											</div>
 										</div>
 									</div>
-									
+
+									  <div ng-if="isError"  class="proErrMsg">
+										  <div class="proErrMsgList"><strong ng-bind="errMsg"></strong></div>
+									  </div>
+									  <div ng-if="isNew"  class="proErrMsg">
+										  <div class="proWarningMsgList"><h3>请选择一个类目</h3></div>
+									  </div>
+									  <div ng-if="!isReady"  class="proErrMsg">
+										  <div class="proWarningMsgList"><span  translate="CMS_MSG_MASTER_PROP_VALUE_SETTING_CATEGORY_NODATA"></span><p><br>{{sec}}秒后将返回到上一个页面</p></div>
+										  <div style="padding-top: 30px;"><button class="btn btn-vo pull-right" ng-click="doGoBack()"><i class="fa fa-reply fa-1x"></i>立即返回</button></div>
+									  </div>
+
 								</div>
 							</div>
 						 </div>
@@ -76,9 +89,7 @@
 					</div>
 				</div>
 			</div>
-		</div>
-		<div ng-hide="isShow" style="text-align: center;color: red;">
-			<h3><strong>{{errMsg}}</strong></h3>
+
 		</div>
 	</div>
 </div>
@@ -97,4 +108,197 @@
 		</a>
 		<ul ng-if="item.subCategories.length" ng-include="'categoryNav'" ng-init="categories = item.subCategories"></ul>
 	</li>
+</script>
+
+<script id="mainView" type="text/ng-template">
+	
+<!-- input -->
+		<fieldset ng-if="model.propType==1 && model.parentPropId == 0">
+			<legend>{{model.propName}}</legend>
+			<fieldset ng-if="model.rules.length>0" >
+				<legend><span class="legendTitle">填写规则：</span></legend>
+				<ul>
+					<li ng-repeat="rule in model.rules">
+						<div ng-if="rule.prop_rule_url">
+							<span>{{rule.prop_rule_value}}</span><a ng-href="{{rule.prop_rule_url}}">（查看详情）</a>
+						</div>
+						<div ng-if="!rule.prop_rule_url">
+							<span ng-bind="rule.decodeRule"></span>
+						</div>
+					</li>
+				</ul>
+			</fieldset>
+			<label>{{model.propName}}：</label><input type="text" ng-mousedown="openPropValueSetting(model)" ng-disabled="isNew||!isSave" ng-model="model.propValue">
+		</fieldset>
+		<div ng-if="model.propType==1 && model.parentPropId != 0">
+			<label>{{model.propName}}：</label><input type="text" ng-mousedown="openPropValueSetting(model)" ng-disabled="isNew||!isSave" ng-model="model.propValue">
+		</div>
+
+<!-- singleCheck -->
+		<fieldset ng-if="model.propType==2">
+			<legend ng-bind="model.propName"></legend>
+			<div class="pull-right"><button class="btn btn-danger btn-xs"  ng-disabled="isNew||!isSave" ng-click="clearValue(model)"><i class="fa fa-eraser"></i> 清除</button></div>
+			<div ng-if="model.rules.length==0" >
+				<br/>
+				<br/>
+			</div>
+			<fieldset ng-if="model.rules.length>0" >
+				<legend><span class="legendTitle">填写规则：</span></legend>
+				<ul>
+					<li ng-repeat="rule in model.rules">
+						<div ng-if="rule.prop_rule_url">
+							<span>{{rule.prop_rule_value}}</span><a ng-href="{{rule.prop_rule_url}}">（查看详情）</a>
+						</div>
+						<div ng-if="!rule.prop_rule_url">
+							<span ng-bind="rule.decodeRule"></span>
+						</div>
+					</li>
+				</ul>
+			</fieldset>
+			<label ng-repeat="option in model.options" >
+				<input type="radio" ng-model="model.propValue" ng-disabled="isNew||!isSave" ng-value="option.prop_option_value">{{option.prop_option_name}}
+			</label>
+			
+		</fieldset>
+
+<!-- multiCheck -->
+		<fieldset ng-if="model.propType==3 && model.parentPropId == 0">
+			<legend>{{model.propName}}</legend>
+			<fieldset ng-if="model.rules.length>0" >
+				<legend><span class="legendTitle">填写规则：</span></legend>
+				<ul>
+					<li ng-repeat="rule in model.rules">
+						<div ng-if="rule.prop_rule_url">
+							<span>{{rule.prop_rule_value}}</span><a ng-href="{{rule.prop_rule_url}}">（查看详情）</a>
+						</div>
+						<div ng-if="!rule.prop_rule_url">
+							<span ng-bind="rule.decodeRule"></span>
+						</div>
+					</li>
+				</ul>
+			</fieldset>
+			<label ng-repeat="check in model.options" >
+				<input type="checkbox" ng-model="check.selectedValue" ng-disabled="isNew||!isSave" ng-true-value="'{{check.prop_option_value}}'">{{check.prop_option_name}}&nbsp;&nbsp;
+			</label>
+		</fieldset>
+		<div ng-if="model.propType==3 && model.parentPropId != 0 ">
+			<label ng-repeat="check in model.options" >
+				<input type="checkbox" ng-model="check.selectedValue" ng-disabled="isNew||!isSave" ng-true-value="'{{check.prop_option_value}}'">{{check.prop_option_name}}&nbsp;&nbsp;
+			</label>
+		</div>
+
+<!-- label -->
+		<fieldset ng-if="model.propType==4">
+			<legend>{{model.propName}}</legend>
+			<fieldset ng-if="model.rules.length>0">
+				<legend><span class="legendTitle">填写规则：</span></legend>
+				<ul>
+					<li ng-repeat="rule in model.rules">
+						<div ng-if="rule.prop_rule_url">
+							<span>{{rule.prop_rule_value}}</span><a ng-href="{{rule.prop_rule_url}}">（查看详情）</a>
+						</div>
+						<div ng-if="!rule.prop_rule_url">
+							<span ng-bind="rule.decodeRule"></span>
+						</div>
+					</li>
+				</ul>
+			</fieldset>
+			<label>
+				{{model.propValue}}
+			</label>
+		</fieldset>
+<!-- complex -->
+		<fieldset ng-if="(model.propType==5)&&(model.children!=null)">
+			<legend>{{model.propName}}</legend>
+			<fieldset ng-if="model.rules.length > 0" >
+				<legend><span class="legendTitle">填写规则：</span></legend>
+				<ul>
+					<li ng-repeat="rule in model.rules">
+						<div ng-if="rule.prop_rule_url">
+							<span>{{rule.prop_rule_value}}</span><a ng-href="{{rule.prop_rule_url}}">（查看详情）</a>
+						</div>
+						<div ng-if="!rule.prop_rule_url">
+							<span ng-bind="rule.decodeRule"></span>
+						</div>
+					</li>
+				</ul>
+			</fieldset>
+			<fieldset ng-if="model.rules.length == 0 && model.require == 1" >
+				<legend><span class="legendTitle">填写规则：</span></legend>
+				<ul>
+					<li>
+						<span>必须填写</span>
+					</li>
+				</ul>
+			</fieldset>
+			<div ng-repeat="reModel in model.children" ng-include="'mainView'"  ng-init="model = reModel"></div>
+		</fieldset>
+<!-- multiComplex -->
+		<fieldset ng-if="(model.propType==6)&&(model.items!=null)" class="legendTitle">
+			<legend>{{model.propName}}</legend>
+			<fieldset ng-if="model.rules.length>0" >
+				<legend><span class="legendTitle">填写规则：</span></legend>
+				<ul>
+					<li ng-repeat="rule in model.rules">
+						<div ng-if="rule.prop_rule_url">
+							<span>{{rule.prop_rule_value}}</span><a ng-href="{{rule.prop_rule_url}}">（查看详情）</a>
+						</div>
+						<div ng-if="!rule.prop_rule_url">
+							<span ng-bind="rule.decodeRule"></span>
+						</div>
+					</li>
+				</ul>
+			</fieldset>
+			<div class="panel vo_panel tab_panel" >
+			<div class="table-responsive" >			
+							<table class="table table-striped hover b-t b-b vo_table" style="margin:0px;padding:0px">
+				<thead>
+                  
+					<tr>
+						<th ng-repeat="th in model.items[0]">{{th.propName}}</th>
+						<th>删除</th>
+					</tr>
+				</thead>
+      			<tbody>
+					<tr ng-repeat="tr in model.items as list" class="ng-scope">
+						<td ng-repeat="td in tr" >
+							
+							<input ng-if ="td.propType == 1" ng-disabled="isNew||!isSave" type="text" ng-model="td.propValue" ng-mousedown="openPropValueSetting(td)" class="ng-pristine ng-untouched ng-valid">
+
+							<select ng-if ="td.propType == 2" ng-disabled="isNew||!isSave" ng-model="td.propValue" ng-options="option.prop_option_value as option.prop_option_name for option in td.options" class="ng-pristine ng-untouched ng-valid">
+								<option value="">-- 选择 --</option>
+							</select>
+
+							<div ng-if ="td.propType == 3">
+								<label ng-repeat="check in td.options">
+									<input type="checkbox" ng-disabled="isNew||!isSave" ng-model="check.selectedValue" ng-true-value="'{{check.prop_option_value}}'">{{check.prop_option_name}}
+								</label>
+							</div>
+
+							<label ng-if ="td.propType == 4">
+								{{td.propValue}}
+							</label>
+
+							<div ng-if="td.propType == 5 && td.children!=null" ng-repeat="reModel in td.children">
+								<div ng-include="'mainView'"  ng-init="model = reModel"></div>
+							</div>
+
+						</td>
+						<td style="white-space: nowrap">
+							<div class="buttons">
+								<button ng-click="removeItem(list,$index)"  ng-disabled="isNew||!isSave" title="Delete" class="btn btn-sm btn-danger">
+									<em class="fa fa-trash"/>
+								</button>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			</div>
+			</div>
+ 			<button class="btn m-b-xs btn-sm btn-success btn-addon pull-right"  ng-disabled="isNew||!isSave" style="margin-top:20px" ng-click="addItem(list)" >
+                <i class="fa fa-plus"></i>
+                <span translate="CORE_BTN_ADD"></span>
+             </button>
+		</fieldset>
 </script>

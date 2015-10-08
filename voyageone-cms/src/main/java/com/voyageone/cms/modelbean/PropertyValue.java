@@ -4,16 +4,12 @@ import java.util.List;
 
 import com.voyageone.ims.enums.MasterPropTypeEnum;
 
-public class PropertyValue {
+public class PropertyValue  extends BaseModel{
     private String channel_id;
     private int level;
     private String level_value;
     private  int prop_id;
     private String prop_value;
-    private String created;
-    private String creater;
-    private String modified;
-    private String modifier;
     private String uuid;
     private String parent;
     private MasterPropTypeEnum type;
@@ -48,30 +44,6 @@ public class PropertyValue {
     }
     public void setProp_value(String prop_value) {
         this.prop_value = prop_value;
-    }
-    public String getCreated() {
-        return created;
-    }
-    public void setCreated(String created) {
-        this.created = created;
-    }
-    public String getCreater() {
-        return creater;
-    }
-    public void setCreater(String creater) {
-        this.creater = creater;
-    }
-    public String getModified() {
-        return modified;
-    }
-    public void setModified(String modified) {
-        this.modified = modified;
-    }
-    public String getModifier() {
-        return modifier;
-    }
-    public void setModifier(String modifier) {
-        this.modifier = modifier;
     }
     public String getUuid() {
         return uuid;
