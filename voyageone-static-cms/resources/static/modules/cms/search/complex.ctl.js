@@ -23,7 +23,7 @@ define (function (require) {
            */
           $scope.initialize = function () {
               if (commonUtil.isNotEmpty($routeParams.key)) {
-                  $scope.searchValue = $routeParams.key;
+                  $scope.searchValue = $routeParams.key.replace("%2f","/");
               }
               $scope.doSearchCategory ();
               $scope.doSearchModel();

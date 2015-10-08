@@ -63,7 +63,7 @@
                                     <ui-select ng-model="vm.selected.feed">
                                         <ui-select-match placeholder="Please select a Feed Prop">{{$select.selected.cfg_val2}}
                                         </ui-select-match>
-                                        <ui-select-choices repeat="i.cfg_val1 as i in vm.feedProps | filter: $select.search">
+                                        <ui-select-choices repeat="i.cfg_name as i in vm.feedProps | filter: $select.search">
                                             <div ng-bind-html="i.cfg_val2"></div>
                                         </ui-select-choices>
                                     </ui-select>
@@ -133,7 +133,7 @@
                                             <ui-select ng-model="vm.condition.property" on-select="vm.getFeedValues($item, $model)">
                                                 <ui-select-match placeholder="Prop">{{$select.selected.cfg_val2}}
                                                 </ui-select-match>
-                                                <ui-select-choices repeat="i.cfg_val1 as i in vm.feedProps | filter: $select.search">
+                                                <ui-select-choices repeat="i.cfg_name as i in vm.feedProps | filter: $select.search">
                                                     <div ng-bind-html="i.cfg_val2"></div>
                                                 </ui-select-choices>
                                             </ui-select>

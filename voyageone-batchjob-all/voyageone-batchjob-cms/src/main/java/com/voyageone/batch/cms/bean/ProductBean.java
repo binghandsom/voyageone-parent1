@@ -83,6 +83,8 @@ public class ProductBean {
 	private String cpps_shipping_compensation;
 	private String ps_price;
 	private String cps_cn_price_rmb;
+	private String cps_cn_price;
+	private String cps_cn_price_final_rmb;
 	private List <ImageBean> images;
 	private List <ItemBean > itembeans;
 
@@ -676,5 +678,21 @@ public class ProductBean {
 
 	public void setItembeans(List<ItemBean> itembeans) {
 		this.itembeans = itembeans;
+	}
+
+	public String getCps_cn_price() {
+		return cps_cn_price;
+	}
+
+	public void setCps_cn_price(String cps_cn_price) {
+		this.cps_cn_price = cps_cn_price;
+	}
+
+	public String getCps_cn_price_final_rmb() {
+		return cps_cn_price_final_rmb;
+	}
+
+	public void setCps_cn_price_final_rmb(String cps_cn_price_final_rmb) {
+		this.cps_cn_price_final_rmb = cps_cn_price_final_rmb;
 	}
 }
