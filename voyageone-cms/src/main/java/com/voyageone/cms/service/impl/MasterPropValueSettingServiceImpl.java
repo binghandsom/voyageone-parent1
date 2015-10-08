@@ -171,10 +171,7 @@ public class MasterPropValueSettingServiceImpl implements MasterPropValueSetting
 			if (viewModelMap != null) {
 				responseMap.put("propModels", viewModelMap);
 			}
-			//设定产品图片
-			List<Map<String, Object>> images = this.getModelImageNames(level, levelValue, channelId);
-			responseMap.put("images", images);
-			
+
 			//设置当前类目名称
 			ImsCategoryBean  mtCateBean = ImsCategoryConfigs.getMtCategoryBeanById(Integer.valueOf(categoryId));
 			responseMap.put("currentCategoryName", mtCateBean.getCategoryPath());
@@ -182,6 +179,10 @@ public class MasterPropValueSettingServiceImpl implements MasterPropValueSetting
 			List<PlatformInfoModel> platformInfo = platformInfoDao.getPlatformInfo(Integer.valueOf(categoryId));
 			responseMap.put("platformInfo", platformInfo);
 		}
+
+		//设定产品图片
+		List<Map<String, Object>> images = this.getModelImageNames(level, levelValue, channelId);
+		responseMap.put("images", images);
 		
 		// 设定hidden值.
 		Map<String, Object> hiddenMap = new HashMap<String, Object>();
