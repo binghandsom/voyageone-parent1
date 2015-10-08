@@ -121,4 +121,5 @@ public final class Constants {
 
     // 手机号码不符合规定
     public static final int PHONE_NUM_ERR = -3;
+
 }

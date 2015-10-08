@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.batch.synship.sql">
+
+    <!--Order状态更新 -->
+    <update id="synShip_UpdateOrderByStatus">
+        UPDATE
+            tt_orders
+        SET
+            order_status = #{status},
+            update_time = now(),
+            update_person = #{task_name}
+        WHERE
+            syn_ship_no = #{syn_ship_no}
+        AND
+            order_status = #{before_status}
+    </update>
+
+</mapper>

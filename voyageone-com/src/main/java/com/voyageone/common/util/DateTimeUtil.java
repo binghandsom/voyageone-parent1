@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 /**
  * 日期时间工具类 <br>
@@ -213,6 +214,16 @@ public final class DateTimeUtil {
      * 缺省的日期时间显示格式：HHmmss
      */
     public static final String DATE_TIME_FORMAT_4 = "HHmmss";
+
+    /**
+     * 缺省的日期时间显示格式：yyyy-MM-dd'T'HH:mm:ss（参照例：2014-11-11T14:00:00）
+     */
+    public static final String DATE_TIME_FORMAT_5 = "yyyy-MM-dd'T'HH:mm:ss";
+
+    /**
+     * 缺省的日期时间显示格式：yyyy-MM-dd'T'HH:mm:ssZ（参照例：2014-11-11T14:00:00+0800）
+     */
+    public static final String DATE_TIME_FORMAT_6 = "yyyy-MM-dd'T'HH:mm:ssZ";
 
     /**
      * 私有构造方法，禁止对该类进行实例化
@@ -562,6 +573,32 @@ public final class DateTimeUtil {
 
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
+            date = dateFormat.parse(dateStr);
+        } catch (ParseException e) {
+            log.debug("日期转换错误", e);
+        }
+
+        return date;
+    }
+
+    /**
+     * 将一个字符串用给定的格式转换为日期类型。 <br>
+     * 注意：如果返回null，则表示解析失败
+     *
+     * @param dateStr 需要解析的日期字符串
+     * @param pattern 日期字符串的格式
+     * @return 解析后的日期
+     */
+    public static Date parseToGmt(String dateStr, String pattern) {
+        Date date = null;
+
+        if (dateStr == null || dateStr.trim().length() == 0) {
+            return null;
+        }
+
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
+            dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
             date = dateFormat.parse(dateStr);
         } catch (ParseException e) {
             log.debug("日期转换错误", e);

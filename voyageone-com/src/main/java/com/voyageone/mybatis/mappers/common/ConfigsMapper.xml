@@ -114,6 +114,28 @@
     <select id="ct_store_config_getAll" resultType="com.voyageone.common.configs.beans.StoreConfigBean">
         SELECT * FROM ct_store_config ORDER BY store_id, cfg_name, cfg_val1
     </select>
+
+    <select id="tm_carrier_channel_getAll" resultType="com.voyageone.common.configs.beans.CarrierBean">
+        select
+            tm_carrier_channel.order_channel_id    order_channel_id
+            , tm_carrier_channel.carrier             carrier
+            , tm_carrier.api_url                     api_url
+            , tm_carrier_channel.api_key             api_key
+            , tm_carrier_channel.api_user            api_user
+            , tm_carrier_channel.api_pwd             api_pwd
+            , tm_carrier_channel.card_number         card_number
+            , tm_carrier_channel.cusite              cusite
+            , tm_carrier_channel.cusname             cusname
+            , tm_carrier_channel.customer            customer
+            , tm_carrier.alias_name                  alias_name
+            , tm_carrier_channel.wsdl_url            wsdl_url
+            , tm_carrier_channel.comments            comments
+        from     tm_carrier
+        join     tm_carrier_channel
+        on     tm_carrier.carrier = tm_carrier_channel.carrier
+        order by tm_carrier_channel.order_channel_id
+                  , tm_carrier_channel.carrier
+    </select>
     
     <resultMap type="com.voyageone.common.configs.beans.ImsCategoryBean" id="ImsCategoryMap">
 		<id property="categoryId" column="category_id"/>

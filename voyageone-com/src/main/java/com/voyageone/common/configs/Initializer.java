@@ -44,6 +44,9 @@ public class Initializer {
     @Autowired
     FeedDao feedDao;
 
+    @Autowired
+    private CarrierDao carrierDao;
+
     /**
      * 初始化所有配置类的内容
      */
@@ -68,5 +71,7 @@ public class Initializer {
         ImsCategoryConfigs.init(imsCategoryDao);
         //初始化类目列表
         Feed.init(feedDao);
+        // 初始化 Carrier
+        CarrierConfigs.init(carrierDao);
     }
 }
