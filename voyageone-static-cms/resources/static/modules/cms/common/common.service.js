@@ -70,11 +70,11 @@ define(function(require) {
                 switch (type) {
                     case 'us':
                         productAttributes = userService.getUserConfig().cmsUsProductAttributes;
-                        productColumns = $rootScope.cmsMaster.usProductColumns;
+                        productColumns = getAttrributeId($rootScope.cmsMaster.USProductAttributes);
                         break;
                     case 'cn':
                         productAttributes = userService.getUserConfig().cmsCnProductAttributes;
-                        productColumns = $rootScope.cmsMaster.cnProductColumns;
+                        productColumns = getAttrributeId($rootScope.cmsMaster.CNProductAttributes);
                         break;
                     default :
                         break;
@@ -109,11 +109,11 @@ define(function(require) {
                 switch (type) {
                     case 'us':
                         productAttributes = userService.getUserConfig().cmsUsProductAttributes;
-                        productColumns = $rootScope.cmsMaster.usProductColumns;
+                        productColumns = getAttrributeId($rootScope.cmsMaster.USProductAttributes);
                         break;
                     case 'cn':
                         productAttributes = userService.getUserConfig().cmsCnProductAttributes;
-                        productColumns = $rootScope.cmsMaster.cnProductColumns;
+                        productColumns = getAttrributeId($rootScope.cmsMaster.USProductAttributes);
                         break;
                     default :
                         break;
@@ -140,6 +140,20 @@ define(function(require) {
                     })
                 }
             };
+
+            /**
+             * 获取Attribute的Id列表.
+             * @param productAttributes
+             * @returns {Array}
+             */
+            function getAttrributeId (productAttributes) {
+                var attributeList = [];
+                _.forEach(productAttributes, function (attribute) {
+                    attributeList.push(attribute.attributeValueId);
+                });
+
+                return attributeList
+            }
 
 /*            this.doGetCMSMasterInfo = function (channelId) {
                 var defer = $q.defer ();

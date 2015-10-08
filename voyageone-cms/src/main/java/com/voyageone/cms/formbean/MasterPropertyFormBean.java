@@ -35,7 +35,7 @@ public class MasterPropertyFormBean {
 	/**
 	 * 
 	 */
-	private Map<String, Object> propModel;
+	private Map<String, Object> propModels;
 
 	public String getChannelId() {
 	    return channelId;
@@ -93,12 +93,12 @@ public class MasterPropertyFormBean {
 	    this.hiddenInfo = hiddenInfo;
 	}
 
-	public Map<String, Object> getPropModel() {
-	    return propModel;
+	public Map<String, Object> getPropModels() {
+		return propModels;
 	}
 
-	public void setPropModel(Map<String, Object> propModel) {
-	    this.propModel = propModel;
+	public void setPropModels(Map<String, Object> propModels) {
+		this.propModels = propModels;
 	}
 	
 }
