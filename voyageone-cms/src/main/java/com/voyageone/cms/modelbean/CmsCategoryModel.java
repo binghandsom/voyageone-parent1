@@ -2,7 +2,7 @@ package com.voyageone.cms.modelbean;
 
 import java.util.List;
 
-public class CmsCategoryModel {
+public class CmsCategoryModel  extends BaseModel{
 	/**
 	 * CMS類目id.
 	 */

@@ -1,5 +1,6 @@
 package com.voyageone.cms.service.impl;
 
+import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,10 +27,12 @@ import com.voyageone.cms.modelbean.PropertyOption;
 import com.voyageone.cms.modelbean.PropertyRule;
 import com.voyageone.cms.modelbean.PropertyValue;
 import com.voyageone.cms.service.MasterPropValueSettingService;
+import com.voyageone.cms.utils.RuleDecodeUtil;
 import com.voyageone.common.bussiness.platformInfo.dao.PlatformInfoDao;
 import com.voyageone.common.bussiness.platformInfo.model.PlatformInfoModel;
 import com.voyageone.common.configs.ImsCategoryConfigs;
 import com.voyageone.common.configs.beans.ImsCategoryBean;
+import com.voyageone.core.modelbean.UserSessionBean;
 import com.voyageone.ims.enums.MasterPropTypeEnum;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
@@ -53,17 +56,15 @@ public class MasterPropValueSettingServiceImpl implements MasterPropValueSetting
 	private ProductDao productDao;
 	
 	@Autowired
-	PlatformInfoDao platformInfoDao;
+	private PlatformInfoDao platformInfoDao;
+	
+	private UserSessionBean userSession;
 	
 	/** type **/
-	private final String ENTRY = "ENTRY";
-	private final String modelKey = "propModel";
-	private final String viewKey = "htmlView";
 	private final String channelIdKey = "channelId";
 	private final String levelKey = "level";
 	private final String levelValueKey = "levelValue";
 	private final String hiddenInfoKey = "hiddenInfo";
-	private final String viewModelKey = "viewModel";
 	private final String errMsgKey = "errorMessage";
 	private final String errMsgMapKey = "errMsgObj";
 
@@ -71,9 +72,11 @@ public class MasterPropValueSettingServiceImpl implements MasterPropValueSetting
 
 	/**
 	 * 初始化处理.
+	 * @throws IOException 
+	 * @throws NumberFormatException 
 	 */
 	@Override
-	public Object init(MasterPropertyFormBean formData) {
+	public Object init(MasterPropertyFormBean formData) throws NumberFormatException, IOException {
 
 		logger.info("初始化处理开始...");
 		Map<String, Object> responseMap = new HashMap<String, Object>();
@@ -135,6 +138,7 @@ public class MasterPropValueSettingServiceImpl implements MasterPropValueSetting
 					levelValue);
 			logger.info("类目属性值数量："+updatePropertyValues.size());
 		}
+		
 		if (categoryId != null) {
 			
 			// 获取属性列表.
@@ -158,12 +162,14 @@ public class MasterPropValueSettingServiceImpl implements MasterPropValueSetting
 						updatePropertyValues);
 				
 			}else {
-				viewModelMap = this.buildResposeDataMap(Integer.valueOf(categoryId), masterProperties,
-						null);
+				
+				return 0;
+				
+//				viewModelMap = this.buildResposeDataMap(Integer.valueOf(categoryId), masterProperties,
+//						null);
 			}
 			if (viewModelMap != null) {
-				responseMap.put(this.viewModelKey, viewModelMap);
-				
+				responseMap.put("propModels", viewModelMap);
 			}
 			//设定产品图片
 			List<Map<String, Object>> images = this.getModelImageNames(level, levelValue, channelId);
@@ -171,15 +177,11 @@ public class MasterPropValueSettingServiceImpl implements MasterPropValueSetting
 			
 			//设置当前类目名称
 			ImsCategoryBean  mtCateBean = ImsCategoryConfigs.getMtCategoryBeanById(Integer.valueOf(categoryId));
-			responseMap.put("currentCategoryName", mtCateBean.getCategoryName());
+			responseMap.put("currentCategoryName", mtCateBean.getCategoryPath());
 			
 			List<PlatformInfoModel> platformInfo = platformInfoDao.getPlatformInfo(Integer.valueOf(categoryId));
 			responseMap.put("platformInfo", platformInfo);
 		}
-		
-		//设置顶层所有类目
-		List<ImsCategoryBean> topCategories = ImsCategoryConfigs.getMtCategoryBeanById(0).getSubCategories();
-		responseMap.put("categories", topCategories);	
 		
 		// 设定hidden值.
 		Map<String, Object> hiddenMap = new HashMap<String, Object>();
@@ -187,16 +189,31 @@ public class MasterPropValueSettingServiceImpl implements MasterPropValueSetting
 		hiddenMap.put(this.levelKey, level);
 		hiddenMap.put(this.levelValueKey, levelValue);
 		responseMap.put(this.hiddenInfoKey, hiddenMap);
+		
 		logger.info("初始化处理结束...");
 		return responseMap;
 
 	}
+	
+	/**
+	 * 获取类目菜单列表.
+	 */
+	@Override
+	public Object getCategoryNav() {
+		Map<String, Object> responseMap = new HashMap<String, Object>();
+		//设置顶层所有类目
+		List<ImsCategoryBean> topCategories = ImsCategoryConfigs.getMtCategoryBeanById(0).getSubCategories();
+		responseMap.put("categories", topCategories);
+		
+		return responseMap;
+	}
 
 	/**
 	 * 查询处理.
+	 * @throws IOException 
 	 */
 	@Override
-	public Object search(MasterPropertyFormBean formData) {
+	public Object search(MasterPropertyFormBean formData) throws IOException {
 		logger.info("查询处理开始...");
 		Map<String, Object> responseMap = new HashMap<String, Object>();
 		Map<String, Object> viewModelMap = null;
@@ -256,17 +273,14 @@ public class MasterPropValueSettingServiceImpl implements MasterPropValueSetting
 		}
 
 		if (viewModelMap != null) {
-			responseMap.put(this.viewModelKey, viewModelMap);
+			responseMap.put("propModels", viewModelMap);
 			//设定产品图片
 			List<Map<String, Object>> images = this.getModelImageNames(String.valueOf(level), levelValue, channelId);
 			responseMap.put("images", images);
 		}
-		//设置顶层所有类目
-		List<ImsCategoryBean> topCategories = ImsCategoryConfigs.getMtCategoryBeanById(0).getSubCategories();
-		responseMap.put("categories", topCategories);
 		//设置当前类目名称
 		ImsCategoryBean  mtCateBean = ImsCategoryConfigs.getMtCategoryBeanById(categoryId);
-		responseMap.put("currentCategoryName", mtCateBean.getCategoryName());
+		responseMap.put("currentCategoryName", mtCateBean.getCategoryPath());
 		//设置平台信息.
 		List<PlatformInfoModel> platformInfo = platformInfoDao.getPlatformInfo(categoryId);
 		responseMap.put("platformInfo", platformInfo);
@@ -279,9 +293,10 @@ public class MasterPropValueSettingServiceImpl implements MasterPropValueSetting
 	 */
 	@Override
 	@Transactional("transactionManager")
-	public boolean submit(MasterPropertyFormBean formData) {
+	public boolean submit(MasterPropertyFormBean formData,UserSessionBean userSession) {
 		logger.info("提交处理开始...");
-		Map<String, Object> modelMap = formData.getPropModel();
+		this.userSession = userSession;
+		Map<String, Object> modelMap = formData.getPropModels();
 		Map<String, Object> hiddenMap = formData.getHiddenInfo();
 		// 获取channel_id
 		String channelId = hiddenMap.get(this.channelIdKey).toString();
@@ -313,32 +328,52 @@ public class MasterPropValueSettingServiceImpl implements MasterPropValueSetting
 		return false;
 	}
 
+	
+	/**
+	 * 清空切换后类目的属性值.
+	 * @param channelId
+	 * @param level
+	 * @param levelValue
+	 */
+	@Override
+	@Transactional("transactionManager")
+	public boolean switchCagetgory(String channelId, int level, String levelValue,UserSessionBean userSession) {
+		
+		//删除属性值
+		int delCount = masterPropValueSettingDao.delete(channelId, level, levelValue);
+		//更新dealFlag
+		masterPropValueSettingDao.updateDealFlag(channelId, level, levelValue, userSession.getUserName());
+		
+		if (delCount>0) {
+			
+			return true;
+		}
+		
+		return false;
+	}
+
 	/**
 	 * 构建responseData.
 	 * 
 	 * @param categoryId
 	 * @param updatePropertyValues
 	 * @return
+	 * @throws IOException 
 	 */
 	private Map<String, Object> buildResposeDataMap(int categoryId, List<MasterProperty> masterProperties,
-			List<PropertyValue> updatePropertyValues) {
+			List<PropertyValue> updatePropertyValues) throws IOException {
 		logger.debug("buildResposeDataMap() start:"+System.currentTimeMillis());
-		Map<String, Object> viewModelMap = new HashMap<String, Object>();
-
+		Map<String, Object> modelMap = new HashMap<String, Object>();
 		if (masterProperties != null && masterProperties.size() > 0) {
 
 			// 获取属性选项列表.
 			List<PropertyOption> propertyOptions = masterPropValueSettingDao.getPropertyOptions(categoryId);
 			// 获取属性规则列表.
 			List<PropertyRule> propertyRules = masterPropValueSettingDao.getPropertyRules(categoryId);
-
-			Map<String, Object> modelMap = new HashMap<String, Object>();
-
+			//解码规则
+			RuleDecodeUtil.decodeRule(propertyRules);
 			// 装配属性选项列表.
-			setPropertyOptions(masterProperties, propertyOptions);
-
-			// 装配属性规则.
-			setPropertyRules(masterProperties, propertyRules);
+			this.setPropOptionsAndRules(masterProperties, propertyOptions, propertyRules);
 
 			Map<Integer, MasterProperty> propIdPropMap = new HashMap<Integer, MasterProperty>();
 			for (MasterProperty masterProperty : masterProperties) {
@@ -360,20 +395,56 @@ public class MasterPropValueSettingServiceImpl implements MasterPropValueSetting
 
 			}
 
-			String htmlView = buildDivView(resultProperties).toString();
-
-			// 设定view
-			viewModelMap.put(this.viewKey, htmlView);
-			// 设定页面默认值
-			viewModelMap.put(this.modelKey, modelMap);
 		}else {
 			
 		}
 
-		return viewModelMap;
+		return modelMap;
 
 	}
 
+	/**
+	 * 把属性选项和属性输入规则装配到属性列表中.
+	 * 
+	 * @param masterProps
+	 * @param propertyOptions
+	 */
+	private void setPropOptionsAndRules(List<MasterProperty> masterProps, List<PropertyOption> propertyOptions, List<PropertyRule> propertyRules) {
+
+		for (MasterProperty prop : masterProps) {
+			
+			List<PropertyOption> resOptions = new ArrayList<PropertyOption>();
+			
+			List<PropertyRule> rules = new ArrayList<PropertyRule>();
+			
+			if (prop.getProp_type() == 2 || prop.getProp_type() == 3) {
+				for (Iterator<PropertyOption> iter = propertyOptions.iterator();iter.hasNext();) {
+					
+					PropertyOption propertyOption = iter.next();
+					
+					if (propertyOption.getProp_id() == prop.getProp_id()) {
+						resOptions.add(propertyOption);
+						iter.remove();
+					}
+	
+					prop.setPropertyOptions(resOptions);
+				}
+
+			}
+			
+			for (Iterator<PropertyRule> ruleIter = propertyRules.iterator();ruleIter.hasNext();) {
+				PropertyRule propertyRule = ruleIter.next();
+				if (propertyRule.getProp_id() == prop.getProp_id()) {
+					rules.add(propertyRule);
+					ruleIter.remove();
+				}
+			}
+			prop.setRules(rules);
+
+		}
+
+	}
+	
 	/**
 	 * 同步modelMap.
 	 * 
@@ -388,6 +459,19 @@ public class MasterPropValueSettingServiceImpl implements MasterPropValueSetting
 				if (entry.getValue() instanceof Map) {
 					synchronizeModelMap((Map<String, Object>) entry.getValue(),
 							(Map<String, Object>) valueModelMap.get(entry.getKey()));
+				}else if (entry.getValue() instanceof List) {
+					if ("items".equals(entry.getKey().toString())) {
+						List<Map<String, Object>> subList = (List<Map<String,Object>>)valueModelMap.get(entry.getKey());
+						List<Map<String, Object>> orgList = (List<Map<String,Object>>)entry.getValue();
+						if (!subList.isEmpty()&&!orgList.isEmpty()) {
+							Map<String, Object>  templateMap = orgList.get(0);
+							for (Map<String, Object> map : subList) {
+								synchronizeModelMap(templateMap,map);
+							}
+						}
+						
+					}
+					
 				}
 			}
 		}
@@ -407,42 +491,70 @@ public class MasterPropValueSettingServiceImpl implements MasterPropValueSetting
 		for (PropertyValue propertyValue : valuesTrees) {
 
 			MasterPropTypeEnum type = propertyValue.getType();
-			String key = encodeNgModelName(type, propertyValue.getProp_id());
+			MasterProperty prop = propIdPropMap.get(propertyValue.getProp_id());
+			String key = null;
+			if (prop.getIs_required()==1) {
+				if (prop.getProp_type()==1) {
+					key = "A_B_"+ encodeNgModelName(type, prop.getProp_id());
+				}else {
+					key = "A_"+ encodeNgModelName(type, prop.getProp_id());
+				}
+				 
+			}else {
+				 key = encodeNgModelName(type, prop.getProp_id());
+			}
+			if (prop.getProp_type()==2 && prop.getParent_prop_id()!=0) {
+				if (key.startsWith("A_")) {
+					key = key.replace("A_", "A_B_");
+				}else {
+					key = "B_"+ encodeNgModelName(type, prop.getProp_id());
+				}
+				 
+			}
+			List<PropertyOption> options = prop.getPropertyOptions();
+			Map<String, Object> sunModel = new HashMap<>();
+			sunModel.put("propType", type.getValue());
+			sunModel.put("propName", prop.getProp_name());
+			sunModel.put("propId", prop.getProp_id());
+			sunModel.put("parentPropId", prop.getParent_prop_id());
+			sunModel.put("require", prop.getIs_required());
+			sunModel.put("rules", prop.getRules());
 			switch (type) {
 			case INPUT:
-				modelMap.put(key, propertyValue.getProp_value());
+				sunModel.put("propValue", propertyValue.getProp_value());
 				break;
 			case SINGLECHECK:
 				TextWord textWord = (TextWord) ruleJsonMapper.deserializeRuleExpression(propertyValue.getProp_value())
 						.getRuleWordList().get(0);
-				modelMap.put(key, textWord.getValue());
+				sunModel.put("propValue", textWord.getValue());
+				sunModel.put("options", prop.getPropertyOptions());
 				break;
 			case MULTICHECK:
-				Map<String, Object> multiCheckMap = new HashMap<String, Object>();
-				List<PropertyOption> options = propIdPropMap.get(propertyValue.getProp_id()).getPropertyOptions();
+				
 				// 设定默认值.
 				List<PropertyValue> valueOptions = propertyValue.getValues();
 
 				for (PropertyOption propertyOption : options) {
 					for (PropertyValue selectedOption : valueOptions) {
+						
 						TextWord selectedValue = (TextWord) ruleJsonMapper
 								.deserializeRuleExpression(selectedOption.getProp_value()).getRuleWordList().get(0);
-						String optionModelName = "OPTION" + propertyOption.getProp_option_id();
 						if (propertyOption.getProp_option_value().equals(selectedValue.getValue())) {
-							multiCheckMap.put(optionModelName, propertyOption.getProp_option_value());
+							propertyOption.setSelectedValue(selectedValue.getValue());
 						}
+						
 					}
 				}
-
-				modelMap.put(key, multiCheckMap);
+				sunModel.put("options", prop.getPropertyOptions());
 				break;
 			case lABEL:
-				modelMap.put(key, propertyValue.getProp_value());
+				sunModel.put("propValue", propertyValue.getProp_value());
 				break;
 			case COMPLEX:
 				Map<String, Object> complexModelMap = new HashMap<String, Object>();
 				buildUpdateModelMap(propertyValue.getValues(), complexModelMap, propIdPropMap);
-				modelMap.put(key, complexModelMap);
+				sunModel.put("children", complexModelMap);
+				
 				break;
 			case MULTICOMPLEX:
 				List<Map<String, Object>> complexModelMapList = new ArrayList<Map<String, Object>>();
@@ -463,13 +575,13 @@ public class MasterPropValueSettingServiceImpl implements MasterPropValueSetting
 					buildUpdateModelMap(subValue.getValues(), complexMap, propIdPropMap);
 					complexModelMapList.add(complexMap);
 				}
-
-				modelMap.put(key, complexModelMapList);
+				sunModel.put("items", complexModelMapList);
 				break;
 
 			default:
 				break;
 			}
+			modelMap.put(key, sunModel);
 		}
 
 		return modelMap;
@@ -481,81 +593,105 @@ public class MasterPropValueSettingServiceImpl implements MasterPropValueSetting
 	 * @param properties
 	 * @param modelMap
 	 * @return
+	 * @throws IOException 
 	 */
 	private Map<String, Object> buildModelMap(List<MasterProperty> properties, Map<String, Object> modelMap,
 			boolean isSetDefaultValue) {
 
-		for (MasterProperty masterProperty : properties) {
+		for (MasterProperty property : properties) {
 
-			MasterPropTypeEnum type = MasterPropTypeEnum.valueOf(masterProperty.getProp_type());
-			String key = encodeNgModelName(type, masterProperty.getProp_id());
+			MasterPropTypeEnum type = MasterPropTypeEnum.valueOf(property.getProp_type());
+			String key = null;
+			if (property.getIs_required()==1) {
+				if (property.getProp_type()==1) {
+					key = "A_B_"+ encodeNgModelName(type, property.getProp_id());
+				}else {
+					key = "A_"+ encodeNgModelName(type, property.getProp_id());
+				}
+				 
+			}else {
+				 key = encodeNgModelName(type, property.getProp_id());
+			}
+			if (property.getProp_type()==2 && property.getParent_prop_id()!=0) {
+				if (key.startsWith("A_")) {
+					key = key.replace("A_", "A_B_");
+				}else {
+					key = "B_"+ encodeNgModelName(type, property.getProp_id());
+				}
+				 
+			}
+			Map<String, Object> sunModel = new HashMap<>();
+			List<PropertyOption> options = property.getPropertyOptions();
+			sunModel.put("propType", type.getValue());
+			sunModel.put("propName", property.getProp_name());
+			sunModel.put("propId", property.getProp_id());
+			sunModel.put("parentPropId", property.getParent_prop_id());
+			sunModel.put("require", property.getIs_required());
+			sunModel.put("rules", property.getRules());
 			switch (type) {
 			case INPUT:
-				if (isSetDefaultValue&&masterProperty.getProp_value_default()!=null&&!"".equals(masterProperty.getProp_value_default())) {
+				if (isSetDefaultValue&&property.getProp_value_default()!=null&&!"".equals(property.getProp_value_default())) {
 					RuleExpression ruleExpression = new RuleExpression();
-					ruleExpression.addRuleWord(new TextWord(masterProperty.getProp_value_default()));
+					ruleExpression.addRuleWord(new TextWord(property.getProp_value_default()));
 					String encodePropValue = ruleJsonMapper.serializeRuleExpression(ruleExpression);
-					modelMap.put(key, encodePropValue);
+					
+					sunModel.put("propValue", encodePropValue);
+					
 				} else {
-					modelMap.put(key, "");
+					sunModel.put("propValue", "");
 				}
 				break;
 			case SINGLECHECK:
 				if (isSetDefaultValue) {
-					modelMap.put(key, masterProperty.getProp_value_default());
+					sunModel.put("propValue", property.getProp_value_default());
 				} else {
-					modelMap.put(key, "");
+					sunModel.put("propValue", "");
 				}
+				sunModel.put("options", options);
 				break;
 			case MULTICHECK:
-				Map<String, Object> multiCheckMap = new HashMap<String, Object>();
 				// 设定默认值.
-				List<PropertyOption> options = masterProperty.getPropertyOptions();
-				if (masterProperty.getProp_value_default() != null
-						&& !"".equals(masterProperty.getProp_value_default())) {
-					for (PropertyOption propertyOption : options) {
-						String optionModelName = "OPTION" + propertyOption.getProp_option_id();
-						if (isSetDefaultValue) {
-							if (propertyOption.getProp_option_value().equals(masterProperty.getProp_value_default())) {
-								multiCheckMap.put(optionModelName, propertyOption.getProp_option_value());
-							}
+				for (PropertyOption option : options) {
+					if (isSetDefaultValue) {
+						if (option.getProp_option_value().equals(property.getProp_value_default())) {
+							option.setSelectedValue(option.getProp_option_value());
 						}
-
 					}
-
 				}
-				modelMap.put(key, multiCheckMap);
+
+				sunModel.put("options", options);
 				break;
 			case lABEL:
-				if (masterProperty.getProp_value_default() != null){
-					modelMap.put(key, masterProperty.getProp_value_default());
+				if (property.getProp_value_default() != null){
+					sunModel.put("propValue", property.getProp_value_default());
 				}
 				break;
 			case COMPLEX:
 				Map<String, Object> complexModelMap = new HashMap<String, Object>();
-				buildModelMap(masterProperty.getProperties(), complexModelMap, isSetDefaultValue);
-				modelMap.put(key, complexModelMap);
+				buildModelMap(property.getProperties(), complexModelMap, isSetDefaultValue);
+				sunModel.put("children", complexModelMap);
 				break;
 			case MULTICOMPLEX:
 				List<Map<String, Object>> complexModelMapList = new ArrayList<Map<String, Object>>();
 				Map<String, Object> complexMap = new HashMap<String, Object>();
-				buildModelMap(masterProperty.getProperties(), complexMap, isSetDefaultValue);
+				buildModelMap(property.getProperties(), complexMap, isSetDefaultValue);
 				complexModelMapList.add(complexMap);
-				modelMap.put(key, complexModelMapList);
+				sunModel.put("items", complexModelMapList);
 				break;
 			case MULTIINPUT:
 				List<Map<String, Object>> inputModelMapList = new ArrayList<Map<String, Object>>();
 				Map<String, Object> defaultInputMap = new HashMap<String, Object>();
-				buildModelMap(masterProperty.getProperties(), defaultInputMap, isSetDefaultValue);
+				buildModelMap(property.getProperties(), defaultInputMap, isSetDefaultValue);
 				inputModelMapList.add(defaultInputMap);
-				modelMap.put(key, inputModelMapList);
+				sunModel.put("items", inputModelMapList);
 				break;
 
 			default:
 				break;
 			}
+			modelMap.put(key, sunModel);
 		}
-
+		
 		return modelMap;
 	}
 
@@ -595,7 +731,6 @@ public class MasterPropValueSettingServiceImpl implements MasterPropValueSetting
 
 		}
 		propValues.removeAll(removePropValues);
-
 		return propValues;
 	}
 
@@ -612,42 +747,44 @@ public class MasterPropValueSettingServiceImpl implements MasterPropValueSetting
 			Map<String, Object> formDataMap) {
 		List<PropertyValue> propertyValues = new ArrayList<PropertyValue>();
 		for (Map.Entry<String, Object> entry : formDataMap.entrySet()) {
-			if (entry.getValue() != null) {
-				String encodeValue = entry.getKey();
-				Map.Entry<MasterPropTypeEnum, String> type_propIdEntry = decodeNgModelName(encodeValue);
-				int propId = Integer.valueOf(type_propIdEntry.getValue());
-				MasterPropTypeEnum type = type_propIdEntry.getKey();
+			if (entry.getValue() != null && entry.getValue() instanceof Map) {
+				
+				Map<String, Object> valueMap = (Map<String, Object>)entry.getValue();
+				
+				int propId = Integer.valueOf(valueMap.get("propId").toString());
+				
+				MasterPropTypeEnum type = MasterPropTypeEnum.valueOf(Integer.valueOf(valueMap.get("propType").toString()));
+				
 				switch (type) {
 				case INPUT:
-					String inputValue = (String) (entry.getValue());
+					String inputValue = (String) (valueMap.get("propValue"));
 					if (inputValue != null && !"".equals(inputValue)) {
 						propertyValues.add(constructInputProp(channelId, level, levelValue, propId, "", inputValue));
 					}
 					break;
 				case SINGLECHECK:
-					String singleCheckValue = (String) (entry.getValue());
+					String singleCheckValue = (String) (valueMap.get("propValue"));
 					if (singleCheckValue != null && !"".equals(singleCheckValue)) {
-						propertyValues.add(constructSingleCheckBox(channelId, level, levelValue, propId, "",
-								(String) (entry.getValue())));
+						propertyValues.add(constructSingleCheckBox(channelId, level, levelValue, propId, "",singleCheckValue));
 					}
 					break;
 				case MULTICHECK:
 					List<PropertyValue> multiCheckValues = constructMultiCheckBox(channelId, level, levelValue, propId,
-							"", (Map<String, Object>) entry.getValue());
+							"", valueMap);
 					if (multiCheckValues != null) {
 						propertyValues.addAll(multiCheckValues);
 					}
 
 					break;
 				case lABEL:
-					String labelValue = (String) (entry.getValue());
+					String labelValue = (String) (valueMap.get("propValue"));
 					if (labelValue != null && !"".equals(labelValue)) {
 						propertyValues.add(constructInputProp(channelId, level, levelValue, propId, "", labelValue));
 					}
 					break;
 				case COMPLEX:
 					List<PropertyValue> complexValues = constructComplex(channelId, level, levelValue, propId,
-							(HashMap) (entry.getValue()), "");
+							valueMap, "");
 					if (complexValues != null) {
 						propertyValues.addAll(complexValues);
 					}
@@ -655,7 +792,7 @@ public class MasterPropValueSettingServiceImpl implements MasterPropValueSetting
 					break;
 				case MULTICOMPLEX:
 					List<PropertyValue> multiComplexValues = constructMultiComplex(channelId, level, levelValue, propId,
-							(List<Map<String, Object>>) (entry.getValue()), "");
+							(List<Map<String, Object>>) (valueMap.get("items")), "");
 					if (multiComplexValues != null) {
 						propertyValues.addAll(multiComplexValues);
 					}
@@ -687,7 +824,7 @@ public class MasterPropValueSettingServiceImpl implements MasterPropValueSetting
 		singleCheckBoxProp.setLevel(level);
 		singleCheckBoxProp.setLevel_value(levelValue);
 		singleCheckBoxProp.setParent(parent);
-		singleCheckBoxProp.setCreater("lewis");
+		singleCheckBoxProp.setCreater(this.userSession.getUserName());
 		singleCheckBoxProp.setUuid(UUID.randomUUID().toString().replace("-", "").replace("-", ""));
 
 		RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
@@ -741,33 +878,42 @@ public class MasterPropValueSettingServiceImpl implements MasterPropValueSetting
 	private List<PropertyValue> constructMultiCheckBox(String channelId, int level, String levelValue, int propId,
 			String parent, Map<String, Object> propValues) {
 		List<PropertyValue> multiCheckBoxList = new ArrayList<>();
-		if (propValues.size() > 0) {
+		if (propValues.get("options") instanceof List) {
+		
+		List<Map<String, Object>> multiCheckMapList = (List<Map<String, Object>>)propValues.get("options");
+		
+		if (multiCheckMapList.size() > 0) {
 			PropertyValue checkBoxParent = new PropertyValue();
 			checkBoxParent.setChannel_id(channelId);
 			checkBoxParent.setParent(parent);
 			checkBoxParent.setProp_id(propId);
 			checkBoxParent.setLevel(level);
 			checkBoxParent.setLevel_value(levelValue);
-			checkBoxParent.setCreater("lewis");
+			checkBoxParent.setCreater(this.userSession.getUserName());
 			checkBoxParent.setUuid(UUID.randomUUID().toString().replace("-", ""));
 			checkBoxParent.setProp_value(null);
 			RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
 
-			for (String propValue : (List<String>) new ArrayList(propValues.values())) {
-				if (propValue != null && !"".equals(propValue)) {
-					PropertyValue checkBox = new PropertyValue();
-					checkBox.setChannel_id(channelId);
-					checkBox.setParent(checkBoxParent.getUuid());
-					checkBox.setProp_id(propId);
-					checkBox.setLevel(level);
-					checkBox.setLevel_value(levelValue);
-					checkBox.setCreater("lewis");
-					RuleExpression ruleExpression = new RuleExpression();
-					ruleExpression.addRuleWord(new TextWord(propValue));
-					String encodePropValue = ruleJsonMapper.serializeRuleExpression(ruleExpression);
-					checkBox.setProp_value(encodePropValue);
-					checkBox.setUuid(UUID.randomUUID().toString().replace("-", ""));
-					multiCheckBoxList.add(checkBox);
+			for (Map<String, Object> map : multiCheckMapList) {
+				if (map.get("selectedValue")!=null) {
+					
+					String propValue = map.get("selectedValue").toString();
+				
+					if (propValue != null && !"".equals(propValue)) {
+						PropertyValue checkBox = new PropertyValue();
+						checkBox.setChannel_id(channelId);
+						checkBox.setParent(checkBoxParent.getUuid());
+						checkBox.setProp_id(propId);
+						checkBox.setLevel(level);
+						checkBox.setLevel_value(levelValue);
+						checkBox.setCreater(this.userSession.getUserName());
+						RuleExpression ruleExpression = new RuleExpression();
+						ruleExpression.addRuleWord(new TextWord(propValue));
+						String encodePropValue = ruleJsonMapper.serializeRuleExpression(ruleExpression);
+						checkBox.setProp_value(encodePropValue);
+						checkBox.setUuid(UUID.randomUUID().toString().replace("-", ""));
+						multiCheckBoxList.add(checkBox);
+					}
 				}
 			}
 
@@ -776,6 +922,7 @@ public class MasterPropValueSettingServiceImpl implements MasterPropValueSetting
 				return multiCheckBoxList;
 			}
 
+		}
 		}
 		return null;
 	}
@@ -801,62 +948,76 @@ public class MasterPropValueSettingServiceImpl implements MasterPropValueSetting
 		parentComplexPropValue.setProp_id(propId);
 		parentComplexPropValue.setLevel(level);
 		parentComplexPropValue.setLevel_value(levelValue);
-		parentComplexPropValue.setCreater("lewis");
+		parentComplexPropValue.setCreater(this.userSession.getUserName());
 		parentComplexPropValue.setUuid(UUID.randomUUID().toString().replace("-", ""));
 		parentComplexPropValue.setProp_value(null);
-
-		for (Map.Entry<String, Object> entry : propMap.entrySet()) {
-			String encodeValue = entry.getKey();
-			Map.Entry<MasterPropTypeEnum, String> type_propEntry = decodeNgModelName(encodeValue);
-			MasterPropTypeEnum type = type_propEntry.getKey();
-			int subPropId = Integer.valueOf(type_propEntry.getValue());
-			switch (type) {
-			case INPUT:
-				String inputValue = (String) (entry.getValue());
-				if (inputValue != null && !"".equals(inputValue)) {
-					singleTypeList.add(constructInputProp(channelId, level, levelValue, subPropId,
-							parentComplexPropValue.getUuid(), inputValue));
-				}
-
-				break;
-			case SINGLECHECK:
-				String singleCheckValue = (String) (entry.getValue());
-				if (singleCheckValue != null && !"".equals(singleCheckValue)) {
-					singleTypeList.add(constructSingleCheckBox(channelId, level, levelValue, subPropId,
-							parentComplexPropValue.getUuid(), singleCheckValue));
-				}
-
-				break;
-			case MULTICHECK:
-				List<PropertyValue> checkValues = constructMultiCheckBox(channelId, level, levelValue, subPropId,
-						parentComplexPropValue.getUuid(), (Map<String, Object>) entry.getValue());
-				if (checkValues != null) {
-					singleTypeList.addAll(checkValues);
-				}
-
-				break;
-			case COMPLEX:
-				List<PropertyValue> complexValues = constructComplex(channelId, level, levelValue, subPropId,
-						(HashMap) (entry.getValue()), parentComplexPropValue.getUuid());
-				if (complexValues != null) {
-					singleTypeList.addAll(complexValues);
-				}
-
-				break;
-			case MULTICOMPLEX:
-				List<PropertyValue> multiComplexValues = constructMultiComplex(channelId, level, levelValue, subPropId,
-						(List<Map<String, Object>>) (entry.getValue()), parentComplexPropValue.getUuid());
-				if (multiComplexValues != null) {
-					singleTypeList.addAll(multiComplexValues);
-				}
-
-				break;
+		
+		if (propMap.get("children")==null || propMap.get("children") instanceof Map) {
+			
+			Map<String, Object> children=null;
+			
+			if (propMap.get("children")==null) {
+				children = propMap;
+			}else {
+				children = (Map<String, Object>)propMap.get("children");
 			}
-		}
-		if (singleTypeList.size() > 0) {
-			singleTypeList.add(parentComplexPropValue);
-
-			return singleTypeList;
+		
+			for (Map.Entry<String, Object> entry : children.entrySet()) {
+				if (entry.getValue() != null && entry.getValue() instanceof Map) {
+					
+					Map<String, Object> valueMap = (Map<String, Object>)entry.getValue();
+				
+					MasterPropTypeEnum type = MasterPropTypeEnum.valueOf(Integer.valueOf(valueMap.get("propType").toString()));
+					int subPropId =  Integer.valueOf(valueMap.get("propId").toString());
+					switch (type) {
+					case INPUT:
+						String inputValue =  (String) (valueMap.get("propValue"));
+						if (inputValue != null && !"".equals(inputValue)) {
+							singleTypeList.add(constructInputProp(channelId, level, levelValue, subPropId,
+									parentComplexPropValue.getUuid(), inputValue));
+						}
+		
+						break;
+					case SINGLECHECK:
+						String singleCheckValue =  (String) (valueMap.get("propValue"));
+						if (singleCheckValue != null && !"".equals(singleCheckValue)) {
+							singleTypeList.add(constructSingleCheckBox(channelId, level, levelValue, subPropId,
+									parentComplexPropValue.getUuid(), singleCheckValue));
+						}
+		
+						break;
+					case MULTICHECK:
+						List<PropertyValue> checkValues = constructMultiCheckBox(channelId, level, levelValue, subPropId,
+								parentComplexPropValue.getUuid(), (Map<String, Object>) entry.getValue());
+						if (checkValues != null) {
+							singleTypeList.addAll(checkValues);
+						}
+		
+						break;
+					case COMPLEX:
+						List<PropertyValue> complexValues = constructComplex(channelId, level, levelValue, subPropId,
+								valueMap, parentComplexPropValue.getUuid());
+						if (complexValues != null) {
+							singleTypeList.addAll(complexValues);
+						}
+		
+						break;
+					case MULTICOMPLEX:
+						List<PropertyValue> multiComplexValues = constructMultiComplex(channelId, level, levelValue, subPropId,
+								(List<Map<String, Object>>) (valueMap.get("items")), parentComplexPropValue.getUuid());
+						if (multiComplexValues != null) {
+							singleTypeList.addAll(multiComplexValues);
+						}
+		
+						break;
+					}
+				}
+			}
+			if (singleTypeList.size() > 0) {
+				singleTypeList.add(parentComplexPropValue);
+	
+				return singleTypeList;
+			}
 		}
 		return null;
 	}
@@ -882,7 +1043,7 @@ public class MasterPropValueSettingServiceImpl implements MasterPropValueSetting
 		multiComplexPropValue.setProp_id(propId);
 		multiComplexPropValue.setLevel(level);
 		multiComplexPropValue.setLevel_value(levelValue);
-		multiComplexPropValue.setCreater("lewis");
+		multiComplexPropValue.setCreater(this.userSession.getUserName());
 		multiComplexPropValue.setUuid(UUID.randomUUID().toString().replace("-", ""));
 		multiComplexPropValue.setProp_value(null);
 
@@ -903,25 +1064,12 @@ public class MasterPropValueSettingServiceImpl implements MasterPropValueSetting
 	}
 
 	/**
-	 * 创建div视图.
-	 * 
-	 * @param masterProperties
-	 * @return
-	 */
-	private StringBuilder buildDivView(List<MasterProperty> masterProperties) {
-		StringBuilder htmlStringBuilder = new StringBuilder();
-		htmlStringBuilder.append("<div class=\"panel-body\">");
-		htmlStringBuilder = buildHtmlView(masterProperties, htmlStringBuilder, false, modelKey);
-		htmlStringBuilder.append("</div>");
-		return htmlStringBuilder;
-	}
-
-	/**
 	 * 创建层次关系.
 	 * 
 	 * @param masterProperties
 	 */
-	private List<MasterProperty> buildPorpertyTrees(List<MasterProperty> masterProperties) {
+	@Override
+	public List<MasterProperty> buildPorpertyTrees(List<MasterProperty> masterProperties) {
 		// 设置属性层次关系.
 		List<MasterProperty> assistProperties = new ArrayList<MasterProperty>(masterProperties);
 
@@ -952,475 +1100,6 @@ public class MasterPropValueSettingServiceImpl implements MasterPropValueSetting
 		return masterProperties;
 	}
 
-	/**
-	 * 创建属性视图.
-	 * 
-	 * @param masterProperties
-	 * @param htmlStringBuilder
-	 * @return
-	 */
-	private StringBuilder buildHtmlView(List<MasterProperty> masterProperties, StringBuilder htmlStringBuilder,
-			boolean isMulti, String path) {
-
-		for (MasterProperty masterProperty : masterProperties) {
-			MasterPropTypeEnum type = MasterPropTypeEnum.valueOf(masterProperty.getProp_type());
-			switch (type) {
-			case INPUT:
-				String inputView = buildInputView(masterProperty, isMulti, path);
-				htmlStringBuilder.append(inputView);
-				break;
-			case SINGLECHECK:
-				String singleCheckView = buildSingleCheckView(masterProperty, isMulti, path);
-				htmlStringBuilder.append(singleCheckView);
-				break;
-			case MULTICHECK:
-				String multiCheckView = buildMultiCheckView(masterProperty, isMulti, path);
-				htmlStringBuilder.append(multiCheckView);
-				break;
-			case lABEL:
-				String lableView = buildLabelView(masterProperty,path);
-				htmlStringBuilder.append(lableView);
-				break;
-			case COMPLEX:
-				htmlStringBuilder = buildComplexView(htmlStringBuilder, masterProperty, isMulti, path);
-				break;
-			case MULTICOMPLEX:
-				htmlStringBuilder = buildMultiComplexView(htmlStringBuilder, masterProperty, true, path);
-				break;
-			case MULTIINPUT:
-				htmlStringBuilder = buildMultiInputView(htmlStringBuilder, masterProperty, true, path);
-				break;
-			default:
-				break;
-			}
-
-		}
-		return htmlStringBuilder;
-	}
-
-	/**
-	 * 创建Complex视图.
-	 * 
-	 * @param htmlStringBuilder
-	 * @param masterProperty
-	 * @return
-	 */
-	private StringBuilder buildComplexView(StringBuilder htmlStringBuilder, MasterProperty masterProperty,
-			boolean isMulti, String parentPath) {
-
-		StringBuilder complexBuilder = new StringBuilder();
-
-		String ngModelName = encodeNgModelName(MasterPropTypeEnum.valueOf(masterProperty.getProp_type()),
-				masterProperty.getProp_id());
-
-		String path = parentPath + "." + ngModelName;
-		
-		if (!isMulti) {
-			
-			buildRulesView(masterProperty, complexBuilder);
-
-			complexBuilder = buildHtmlView(masterProperty.getProperties(), complexBuilder, isMulti, path);
-
-			bulidFieldSet(complexBuilder, masterProperty);
-		}else {
-			
-			complexBuilder.append("<td>");
-			
-			buildRulesView(masterProperty, complexBuilder);
-
-			complexBuilder = buildHtmlView(masterProperty.getProperties(), complexBuilder, false, path);
-
-			bulidFieldSet(complexBuilder, masterProperty);
-			
-			complexBuilder.append("</td>");
-		}
-
-		
-		
-
-		return htmlStringBuilder.append(complexBuilder);
-	}
-
-	/**
-	 * 创建 MultiComplex 视图.
-	 * 
-	 * @param htmlStringBuilder
-	 * @param masterProperty
-	 * @param isMulti
-	 * @param parentPath
-	 * @return
-	 */
-	private StringBuilder buildMultiComplexView(StringBuilder htmlStringBuilder, MasterProperty masterProperty,
-			boolean isMulti, String parentPath) {
-		StringBuilder multiComplexBuilder = new StringBuilder();
-		String ngModelName = encodeNgModelName(MasterPropTypeEnum.valueOf(masterProperty.getProp_type()),
-				masterProperty.getProp_id());
-		String path = parentPath + "." + ngModelName;
-
-		buildRulesView(masterProperty, multiComplexBuilder);
-		multiComplexBuilder.append("<div>");
-		multiComplexBuilder.append("<table class=\"table table-bordered table-hover bg-white\">");
-		multiComplexBuilder.append("<tr>");
-		for (int i = 0; i < masterProperty.getProperties().size(); i++) {
-			MasterProperty property = masterProperty.getProperties().get(i);
-			multiComplexBuilder.append("<th>");
-			multiComplexBuilder.append(property.getProp_name());
-			multiComplexBuilder.append("</th>");
-		}
-		multiComplexBuilder.append("<th>");
-		multiComplexBuilder.append("删除");
-		multiComplexBuilder.append("</th>");
-		multiComplexBuilder.append("</tr>");
-		String valueModelList = "list" + masterProperty.getProp_id();
-		multiComplexBuilder.append("<tr ng-repeat=\"" + ENTRY + " in " + path + " as " + valueModelList + "\">");
-		multiComplexBuilder = buildHtmlView(masterProperty.getProperties(), multiComplexBuilder, isMulti, ENTRY);
-		multiComplexBuilder.append("<td style=\"white-space: nowrap\">");
-		multiComplexBuilder.append("<div class=\"buttons\">");
-		multiComplexBuilder
-				.append("<button ng-click=\""+valueModelList+ ".splice($index, 1)\" title=\"Delete\" class=\"btn btn-sm btn-danger\">");
-		multiComplexBuilder.append("<em class=\"fa fa-trash\"></em>");
-		multiComplexBuilder.append("</button>");
-		multiComplexBuilder.append("</td>");
-		multiComplexBuilder.append(" </div>");
-		multiComplexBuilder.append("</tr>");
-		multiComplexBuilder.append("</table>");
-		multiComplexBuilder
-		.append("<button type=\"button\" class=\"btn btn-default\" ng-click=\"" + valueModelList + ".push({})\" >添加</button>");
-		multiComplexBuilder.append("</div>");
-		bulidFieldSet(multiComplexBuilder, masterProperty);
-		return htmlStringBuilder.append(multiComplexBuilder);
-	}
-
-	/**
-	 *  创建MultiInput视图.
-	 * @param htmlStringBuilder
-	 * @param masterProperty
-	 * @param isMulti
-	 * @param path
-	 * @return
-	 */
-	private StringBuilder buildMultiInputView(StringBuilder htmlStringBuilder, MasterProperty masterProperty,
-			boolean isMulti, String path) {
-		StringBuilder multiInputBuilder = new StringBuilder();
-		buildRulesView(masterProperty, multiInputBuilder);
-		multiInputBuilder = buildHtmlView(masterProperty.getProperties(), multiInputBuilder, isMulti, path);
-		bulidFieldSet(multiInputBuilder, masterProperty);
-		return htmlStringBuilder.append(multiInputBuilder);
-	}
-
-	/**
-	 * 创建label视图.
-	 * @param masterProperty
-	 * @param path
-	 * @return
-	 */
-	private String buildLabelView(MasterProperty masterProperty, String path) {
-		StringBuilder htmlStringBuilder = new StringBuilder();
-		String labelModelName = encodeNgModelName(MasterPropTypeEnum.valueOf(masterProperty.getProp_type()),
-				masterProperty.getProp_id());
-		String ng_model = path + "." + labelModelName;
-		buildRulesView(masterProperty, htmlStringBuilder);
-		htmlStringBuilder.append("<label>");
-		htmlStringBuilder.append("{{"+ng_model+"}}");
-		htmlStringBuilder.append("</label>");
-		bulidFieldSet(htmlStringBuilder, masterProperty);
-		return htmlStringBuilder.toString();
-	}
-
-	/**
-	 * 创建multiCheck视图.
-	 * @param masterProperty
-	 * @param isMulti
-	 * @param path
-	 * @return
-	 */
-	private String buildMultiCheckView(MasterProperty masterProperty, boolean isMulti, String path) {
-		StringBuilder htmlStringBuilder = new StringBuilder();
-		List<PropertyOption> options = masterProperty.getPropertyOptions();
-		String multiCheckModelName = encodeNgModelName(MasterPropTypeEnum.valueOf(masterProperty.getProp_type()),
-				masterProperty.getProp_id());
-		if (!isMulti) {
-
-			buildRulesView(masterProperty, htmlStringBuilder);
-
-			for (PropertyOption propertyOption : options) {
-				String optionModelName = "OPTION" + propertyOption.getProp_option_id();
-				String ng_model = path + "." + multiCheckModelName + "." + optionModelName;
-				htmlStringBuilder.append("<label>");
-				htmlStringBuilder.append("<input type=\"checkbox\" ");
-				htmlStringBuilder.append("ng-model=\"" + ng_model + "\" ");
-				htmlStringBuilder.append("ng-true-value=\"'" + propertyOption.getProp_option_value() + "'\" ");
-				htmlStringBuilder.append("ng-false-value=\"''\"");
-				htmlStringBuilder.append("/>");
-				htmlStringBuilder.append(propertyOption.getProp_option_name());
-				htmlStringBuilder.append("</label>");
-			}
-			bulidFieldSet(htmlStringBuilder, masterProperty);
-		} else {
-			htmlStringBuilder.append("<td>");
-			htmlStringBuilder.append("<fieldset>");
-			buildRulesView(masterProperty, htmlStringBuilder);
-			Map<String, Object> defaultCheckMap = new HashMap<String, Object>();
-			for (PropertyOption propertyOption : options) {
-				String optionModelName = "OPTION" + propertyOption.getProp_option_id();
-				String ng_model = path + "." + multiCheckModelName + "." + optionModelName;
-				htmlStringBuilder.append("<label>");
-				htmlStringBuilder.append("<input type=\"checkbox\" ");
-				htmlStringBuilder.append("ng-model=\"" + ng_model + "\" ");
-				htmlStringBuilder.append("ng-true-value=\"'" + propertyOption.getProp_option_value() + "'\" ");
-				htmlStringBuilder.append("ng-false-value=\"''\"");
-				htmlStringBuilder.append("/>");
-				htmlStringBuilder.append(propertyOption.getProp_option_name());
-				htmlStringBuilder.append("</label>");
-				if (masterProperty.getProp_value_default() != null && masterProperty.getProp_value_default() != ""
-						&& propertyOption.getProp_option_value().equals(masterProperty.getProp_value_default())) {
-					// 绑定默认值
-					defaultCheckMap.put(optionModelName, masterProperty.getProp_value_default());
-				} else {
-					defaultCheckMap.put(optionModelName, "");
-				}
-			}
-			htmlStringBuilder.append("</fieldset>");
-			htmlStringBuilder.append("</td>");
-
-		}
-		isMulti = false;
-		return htmlStringBuilder.toString();
-	}
-
-	/**
-	 * 创建singleCheck视图.
-	 * @param masterProperty
-	 * @param isMulti
-	 * @param path
-	 * @return
-	 */
-	private String buildSingleCheckView(MasterProperty masterProperty, boolean isMulti, String path) {
-		StringBuilder htmlStringBuilder = new StringBuilder();
-		String singleCheckModelName = encodeNgModelName(MasterPropTypeEnum.valueOf(masterProperty.getProp_type()),
-				masterProperty.getProp_id());
-		List<PropertyOption> options = masterProperty.getPropertyOptions();
-		if (!isMulti) {
-			
-			buildRulesView(masterProperty, htmlStringBuilder);
-			for (PropertyOption propertyOption : options) {
-
-				String ng_model = path + "." + singleCheckModelName;
-				htmlStringBuilder.append("<label>");
-				htmlStringBuilder.append("<input type=\"radio\" ");
-				htmlStringBuilder.append("ng-model=\"" + ng_model + "\" ");
-				htmlStringBuilder.append("name=\"" + singleCheckModelName + "\"  ");
-				htmlStringBuilder.append("value=\"" + propertyOption.getProp_option_value() + "\" ");
-				htmlStringBuilder.append("/>");
-				htmlStringBuilder.append(propertyOption.getProp_option_name() + "&nbsp;&nbsp;");
-				htmlStringBuilder.append("</label>");
-			}
-
-			bulidFieldSet(htmlStringBuilder, masterProperty);
-
-		} else {
-
-			String ng_model = path + "." + singleCheckModelName;
-			StringBuilder temBuilder = new StringBuilder();
-			for (PropertyOption propertyOption : options) {
-				temBuilder.append("<option value=\"" + propertyOption.getProp_option_value() + "\">");
-				temBuilder.append(propertyOption.getProp_option_name());
-				temBuilder.append("</option>");
-			}
-
-			htmlStringBuilder.append("<td>");
-			htmlStringBuilder.append("<select ng-model=\"" + ng_model + "\">");
-			htmlStringBuilder.append(temBuilder.toString());
-			htmlStringBuilder.append("</select>");
-			htmlStringBuilder.append("</td>");
-			isMulti = false;
-		}
-
-		return htmlStringBuilder.toString();
-
-	}
-
-	/**
-	 * 创建textInput视图.
-	 * @param masterProperty
-	 * @param isMulti
-	 * @param path
-	 * @return
-	 */
-	private String buildInputView(MasterProperty masterProperty, boolean isMulti, String path) {
-		StringBuilder htmlStringBuilder = new StringBuilder();
-		String inputModelName = encodeNgModelName(MasterPropTypeEnum.valueOf(masterProperty.getProp_type()),
-				masterProperty.getProp_id());
-
-		if (!isMulti) {
-			String ng_model = path + "." + inputModelName;
-			htmlStringBuilder.append("<fieldset id=\"" + masterProperty.getProp_id() + "\">");
-			if (masterProperty.getIs_top_prop()==1) {
-				String fieldSetTitle = "<legend>" + masterProperty.getProp_name() + "</legend>";
-				htmlStringBuilder.append(fieldSetTitle);
-			}
-			buildRulesView(masterProperty, htmlStringBuilder);
-			htmlStringBuilder.append("<label>");
-			htmlStringBuilder.append(masterProperty.getProp_name() + ":&nbsp;");
-			htmlStringBuilder.append("</label>");
-			htmlStringBuilder.append("<input type=\"text\" ");
-			htmlStringBuilder.append("ng-model=\"" + ng_model + "\" ");
-			htmlStringBuilder.append("ng-click=\"setValuePopup(this,'"+ng_model+"')\"");
-			htmlStringBuilder.append("ng-readonly=\"true\"");
-			htmlStringBuilder.append("/>");
-			htmlStringBuilder.append("</fieldset>");
-
-		} else {
-			String ng_model = path + "." + inputModelName;
-			htmlStringBuilder.append("<td>");
-			htmlStringBuilder.append("<input type=\"text\" ");
-			htmlStringBuilder.append("ng-model=\"" + ng_model + "\" ");
-			htmlStringBuilder.append("ng-click=\"setValuePopup(this,'"+ng_model+"')\"");
-			htmlStringBuilder.append("ng-readonly=\"true\"");
-			htmlStringBuilder.append("/>");
-			htmlStringBuilder.append("</td>");
-
-		}
-		isMulti = false;
-		return htmlStringBuilder.toString();
-	}
-
-	/**
-	 * 构造FieldSet.
-	 * 
-	 * @param htmlStringBuilder
-	 * @param masterProperty
-	 */
-	private void bulidFieldSet(StringBuilder htmlStringBuilder, MasterProperty masterProperty) {
-
-		String startFieldSet = "<fieldset id=\"" + masterProperty.getProp_id() + "\">";
-		String fieldSetTitle = "<legend>" + masterProperty.getProp_name() + "</legend>";
-		htmlStringBuilder.insert(0, startFieldSet + fieldSetTitle);
-		htmlStringBuilder.append("</fieldset>");
-	}
-
-	/**
-	 * 组装规则标签.
-	 * 
-	 * @param masterProperty
-	 * @param htmlStringBuilder
-	 */
-	private void buildRulesView(MasterProperty masterProperty, StringBuilder htmlStringBuilder) {
-		
-		StringBuilder ruleView = new StringBuilder();
-
-		List<PropertyRule> rules = masterProperty.getRules();
-
-		if (rules != null && rules.size() > 0) {
-			ruleView.append("<div>");
-			ruleView.append("<h5>填写规则:</h5>");
-			ruleView.append("<ul>");
-			for (int i = 0; i < rules.size(); i++) {
-				
-				PropertyRule rule = rules.get(i);
-				
-				ruleView.append("<li>");
-				if (rule.getProp_rule_name().contains("minValueRule")) {
-					ruleView.append(rule.getProp_rule_name() + "(" + rule.getProp_rule_value() + ")");
-				}else if (rule.getProp_rule_name().contains("maxValueRule")) {
-					ruleView.append(rule.getProp_rule_name() + "(" + rule.getProp_rule_value() + ")");
-				}else if (rule.getProp_rule_name().contains("disableRule")) {
-					ruleView.append(rule.getProp_rule_name() + "(" + rule.getProp_rule_value() + "), "+rule.getProp_rule_relationship()+": "+rule.getProp_rule_relationship_operator());
-				}else if (rule.getProp_rule_name().contains("minInputNumRule")) {
-					ruleView.append(rule.getProp_rule_name() + "(" + rule.getProp_rule_value() + ")");
-				}else if (rule.getProp_rule_name().contains("maxInputNumRule")) {
-					ruleView.append(rule.getProp_rule_name() + "(" + rule.getProp_rule_value() + ")");
-				}else if (rule.getProp_rule_name().contains("regexRule")) {
-					ruleView.append(rule.getProp_rule_name() + "(" + rule.getProp_rule_value() + ")");
-				}else if (rule.getProp_rule_name().contains("tipRule")) {
-					ruleView.append(rule.getProp_rule_value());
-				}else if (rule.getProp_rule_name().contains("devTipRule")) {
-					ruleView.append(rule.getProp_rule_value());
-				}else if (rule.getProp_rule_name().contains("minLengthRule")) {
-					ruleView.append(rule.getProp_rule_name() + "(" + rule.getProp_rule_value() + ")");
-				}else if (rule.getProp_rule_name().contains("maxLengthRule")) {
-					ruleView.append(rule.getProp_rule_name() + "(" + rule.getProp_rule_value() + ")");
-				}else if (rule.getProp_rule_name().contains("maxTargetSizeRule")) {
-					ruleView.append(rule.getProp_rule_name() + "(" + rule.getProp_rule_value() + ")");
-				}else if (rule.getProp_rule_name().contains("minImageSizeRule")) {
-					ruleView.append(rule.getProp_rule_name() + "(" + rule.getProp_rule_value() + ")");
-				}else if (rule.getProp_rule_name().contains("maxImageSizeRule")) {
-					ruleView.append(rule.getProp_rule_name() + "(" + rule.getProp_rule_value() + ")");
-				}else if (rule.getProp_rule_name().contains("readOnlyRule")) {
-					ruleView.append(rule.getProp_rule_name() + "(" + rule.getProp_rule_value() + ")");
-				}else if (rule.getProp_rule_name().contains("requiredRule")) {
-					if ("true".equals(rule.getProp_rule_value())) {
-						ruleView.append("必须填写");
-					}
-				}else if (rule.getProp_rule_name().contains("valueTypeRule")) {
-					ruleView.append(rule.getProp_rule_name() + "(" + rule.getProp_rule_value() + ")");
-				}else if (rule.getProp_rule_name().matches("^\\d+.*")) {
-					ruleView.append(rule.getProp_rule_value());
-				}
-				
-				ruleView.append("</li>");
-				
-			}
-			ruleView.append("</ul>");
-			ruleView.append("</div>");
-			htmlStringBuilder.append(ruleView);
-			
-		}
-
-	}
-
-	/**
-	 * 把属性规则装配到属性中.
-	 * 
-	 * @param masterProperties
-	 * @param propertyOptions
-	 */
-	private void setPropertyOptions(List<MasterProperty> masterProperties, List<PropertyOption> propertyOptions) {
-
-		for (MasterProperty masterProperty : masterProperties) {
-			List<PropertyOption> resOptions = new ArrayList<PropertyOption>();
-			if (masterProperty.getProp_type() == 2 || masterProperty.getProp_type() == 3) {
-				for (int i = 0; i < propertyOptions.size(); i++) {
-					PropertyOption propertyOption = propertyOptions.get(i);
-					if (propertyOption.getProp_id() == masterProperty.getProp_id()) {
-						resOptions.add(propertyOption);
-					}
-				}
-
-				masterProperty.setPropertyOptions(resOptions);
-
-				propertyOptions.removeAll(resOptions);
-			}
-
-		}
-
-	}
-
-	/**
-	 * 把属性规则装配到属性中.
-	 * @param masterProperties
-	 * @param propertyRules
-	 * @return
-	 */
-	private List<MasterProperty> setPropertyRules(List<MasterProperty> masterProperties,
-			List<PropertyRule> propertyRules) {
-
-		for (MasterProperty masterProperty : masterProperties) {
-			List<PropertyRule> rules = new ArrayList<PropertyRule>();
-			for (int i = 0; i < propertyRules.size(); i++) {
-				PropertyRule propertyRule = propertyRules.get(i);
-				if (propertyRule.getProp_id() == masterProperty.getProp_id()) {
-					rules.add(propertyRule);
-				}
-			}
-			masterProperty.setRules(rules);
-		}
-
-		propertyRules.removeAll(propertyRules);
-
-		return masterProperties;
-
-	}
 
 	private String encodeNgModelName(MasterPropTypeEnum propType, int propId) {
 		String seperator = "_";

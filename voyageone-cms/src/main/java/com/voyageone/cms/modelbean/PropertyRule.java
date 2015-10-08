@@ -1,6 +1,6 @@
 package com.voyageone.cms.modelbean;
 
-public class PropertyRule {
+public class PropertyRule  extends BaseModel{
     private int prop_rule_id;
     private int prop_id;
     private String prop_rule_name;
@@ -10,10 +10,7 @@ public class PropertyRule {
     private String prop_rule_exProperty;
     private String prop_rule_relationship;
     private String prop_rule_relationship_operator;
-    private String created;
-    private String creater;
-    private String modified;
-    private String modifier;
+    private String decodeRule;
     
     private RuleTranslater ruleTranslater;
 
@@ -53,30 +50,6 @@ public class PropertyRule {
     public void setProp_rule_url(String prop_rule_url) {
         this.prop_rule_url = prop_rule_url;
     }
-    public String getCreated() {
-        return created;
-    }
-    public void setCreated(String created) {
-        this.created = created;
-    }
-    public String getCreater() {
-        return creater;
-    }
-    public void setCreater(String creater) {
-        this.creater = creater;
-    }
-    public String getModified() {
-        return modified;
-    }
-    public void setModified(String modified) {
-        this.modified = modified;
-    }
-    public String getModifier() {
-        return modifier;
-    }
-    public void setModifier(String modifier) {
-        this.modifier = modifier;
-    }
     public RuleTranslater getRuleTranslater() {
         return ruleTranslater;
     }
@@ -101,5 +74,12 @@ public class PropertyRule {
 	public void setProp_rule_relationship_operator(String prop_rule_relationship_operator) {
 		this.prop_rule_relationship_operator = prop_rule_relationship_operator;
 	}
+	public String getDecodeRule() {
+		return decodeRule;
+	}
+	public void setDecodeRule(String decodeRule) {
+		this.decodeRule = decodeRule;
+	}
+	
     
 }

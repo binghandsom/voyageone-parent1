@@ -78,17 +78,11 @@ define (function (require) {
         'cms_masterPropValue_setting': {
             'hash': '/cms/setPropValue/masterProperty',
             'page': '/modules/cms/masterPropValueSetting/masterPropValueSetting.tpl.html',
-            'controller': 'modules/cms/masterPropValueSetting/masterPropValueSettingController'
+            'controller': 'modules/cms/masterPropValueSetting/masterPropValueSetting.ctl'
         },
         //add by lewis end
-        //'cms_search_advance_us': {
-        //    'hash': '/cms/search/advance/us',
-        //    'page': '/modules/cms/search/advanceSearch.tpl.html',
-        //    'controller': 'modules/cms/search/advanceSearch.ctl'
-        //},
-        //add by lewis end
-        'cms_search_advance_cn': {
-            'hash': '/cms/search/advance/cn',
+        'cms_search_advance': {
+            'hash': '/cms/search/advance',
             'page': '/modules/cms/search/advanceSearch.tpl.html',
             'controller': 'modules/cms/search/advanceSearch.ctl'
         },
