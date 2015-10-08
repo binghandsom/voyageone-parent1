@@ -41,7 +41,11 @@ define([ "modules/cms/cms.module",
 				 * 初始化处理
 				 */
 				scope.init = function() {
+
 					scope.isReady = true;
+
+					scope.isSave = true;
+
 					//需要调用catagoryServiece 取得参数.
 					scope.session = catagoryServiece.getMainCategoryParam();
 					var parmData ={
@@ -66,7 +70,7 @@ define([ "modules/cms/cms.module",
 
 								scope.isReady=false;
 
-								scope.sec = 5;
+								scope.sec = 10;
 								var cur = $interval(function(){
 									scope.sec--;
 									if (scope.sec==0) {
@@ -97,7 +101,7 @@ define([ "modules/cms/cms.module",
 								scope.isError=false;
 							}
 
-							scope.isSave = true;
+
 
 						});
 					}else{
@@ -114,7 +118,6 @@ define([ "modules/cms/cms.module",
 								scope.isError=false;
 							}
 
-							scope.isSave = true;
 
 						});
 						//取得导航列表.
@@ -122,7 +125,6 @@ define([ "modules/cms/cms.module",
 							vaueSetservice.getCategoryNav().then(function(response) {
 								//设置所有顶层类目名称
 								scope.categories = response.data.categories;
-								scope.isReady = true;
 								scope.isNew=true;
 							});
 						}
@@ -191,16 +193,20 @@ define([ "modules/cms/cms.module",
 						
 						var fromData ={
 							propModels:propModels,
-							hiddenInfo:scope.hiddenInfo
+							hiddenInfo:{
+								channelId:scope.session.channelId,
+								level:scope.session.currentLevel,
+								levelValue:scope.session.currentId
+							}
 						};
 						
 						vaueSetservice.doSubmit(fromData).then(function(response) {
 							if (response.data==true) {
 								
 								var returnData =[{
-									type:scope.hiddenInfo.level,
-									id:scope.hiddenInfo.levelValue,
-									channelId:scope.hiddenInfo.channelId,
+									type:scope.session.currentLevel,
+									id:scope.session.currentId+"",
+									channelId:scope.session.channelId,
 									mainCategoryId:scope.categoryId,
 									platformInfo:scope.platformInfo
 								}];
@@ -215,6 +221,38 @@ define([ "modules/cms/cms.module",
 	                	
 	                })
 	            };
+
+				/**
+				 * 类目切换.
+				 */
+				scope.switchCategory = function () {
+					var confrimMsg={
+						id:'CMS_MSG_MASTER_PROP_VALUE_SETTING_CATEGORY_SWITCH_COMFIRM',
+						values:{categoryName:scope.currentCategoryName}
+					};
+					vConfirm(confrimMsg).result.then(function() {
+
+						var fromData ={
+							level:scope.session.currentLevel,
+							levelValue:scope.session.currentId
+						};
+						vaueSetservice.doSwitchCategory(fromData).then(function(response) {
+
+							var returnData =[{
+								type:scope.session.currentLevel,
+								id:scope.session.currentId+"",
+								channelId:scope.session.channelId,
+								mainCategoryId:scope.categoryId+"",
+								platformInfo:scope.platformInfo
+							}];
+							//设定返回对象.
+							editService.doUpdateMainCategoryId(returnData,true);
+						});
+
+					}, function() {
+
+					})
+				};
 				
 				/**
 	             * 展示下一张图片.
@@ -311,37 +349,7 @@ define([ "modules/cms/cms.module",
 	            	scope.search(scope.orgCategoryId);
 	            };
 
-				/**
-				 * 类目切换.
-				 */
-	            scope.switchCategory = function () {
-	            	var confrimMsg={
-	            		id:'CMS_MSG_MASTER_PROP_VALUE_SETTING_CATEGORY_SWITCH_COMFIRM',
-	            		values:{categoryName:scope.currentCategoryName}
-	            	};
-	                vConfirm(confrimMsg).result.then(function() {
-						
-						var fromData ={
-							level:scope.session.currentLevel,
-							levelValue:scope.session.currentId
-						};
-						vaueSetservice.doSwitchCategory(fromData).then(function(response) {
-							
-							var returnData =[{
-								type:scope.hiddenInfo.level,
-								id:scope.hiddenInfo.levelValue,
-								channelId:scope.hiddenInfo.channelId,
-								mainCategoryId:scope.categoryId,
-								platformInfo:scope.platformInfo
-							}];
-							//设定返回对象.
-							editService.doUpdateMainCategoryId(returnData,true);
-						});
-						
-	                }, function() {
-	                	
-	                })
-	            };
+
 			} ]);
 			
 			//监视页面加载完成命令

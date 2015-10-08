@@ -243,7 +243,7 @@ public class MasterPropValueSettingServiceImpl implements MasterPropValueSetting
 			
 		}else{
 			Map<String, Object> errMessageMap = new HashMap<String, Object>();
-			String errMsg="请输入主类目ID!";
+			String errMsg="请选择主类目!";
 			errMessageMap.put(this.errMsgKey, errMsg);
 			responseMap.put(this.errMsgMapKey, errMessageMap);
 			logger.error(errMsg);

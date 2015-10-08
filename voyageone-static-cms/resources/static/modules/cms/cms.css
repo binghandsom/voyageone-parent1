@@ -349,3 +349,13 @@ fieldset.requireStyle{
 .pull-left{
     text-align: left;
 }
+
+.rule-nolink a{
+    color:#ee3939;
+    text-decoration: underline;
+}
+
+
+.rule-nolink a:hover{
+    text-decoration: none;
+}
