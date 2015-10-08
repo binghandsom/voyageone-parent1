@@ -2241,7 +2241,7 @@ public class OrderInfoImportService {
 		}
 
 		// 只有一个字判断
-		if (strLength == 1 && byteLength == 2) {
+		if (strLength == 1 && byteLength >= 2) {
 			return isSuccess;
 		}
 
