@@ -74,6 +74,17 @@
 					<button ng-click="confirm()" class="btn btn-default pull-right">确定</button>
 				</div>
 			</div>
+			<div ng-if="rules.length > 0">
+				<div class="col-sm-12"><hr/></div>
+	            <div class="col-sm-12">
+	               输入规则：
+	                <ul>
+						<li ng-repeat="rule in rules">
+							<span ng-bind="rule.decodeRule"></span>
+						</li>
+					</ul>
+	            </div>
+            </div>
 		</div>
 	</div>
 
