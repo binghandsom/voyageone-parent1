@@ -9,7 +9,7 @@
 define([ "modules/cms/cms.module",
          "modules/cms/cms.route",
 		 "modules/cms/feedDefaultPropSetting/feedDefaultPropSettingService",
-		 "modules/cms/feedDefaultPropSetting/comPropValueSettingPopUp.ctl"], 
+		 "modules/cms/popup/propValueSetting/popPropValueSetting.ctl"], 
 		 function(cmsModule) {
 	
 			cmsModule.controller('feedDefaultPropSettingController', 
@@ -71,21 +71,5 @@ define([ "modules/cms/cms.module",
 					})
 				};
 				
-				 /**
-	             * 弹出属性设定页面
-	             */
-	            $scope.openValueSetPopup = function (selectObj) {
-	                    var modalInstance = $modal.open({
-	                        templateUrl: cmsPopupPages.comPropValueSetting.page,
-	                        controller: cmsPopupPages.comPropValueSetting.controller,
-	                        size: 'lg',
-	                        resolve: {
-	                            parameters: function(){
-	                                return {selectObj};
-	                            }
-	                        }
-	                    });
-	            };
-				    
 			} ]);
 });

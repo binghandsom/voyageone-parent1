@@ -123,15 +123,17 @@ define (function (require) {
 
         // popSetProductColumns
         'popSetProductColumns': {
-            //'doGetProductColumns': '/cms/popup/setProductColumns/doGetProductColumns',
-            'doSaveProductColumns': '/core/setting/user/doUpdateUserConfig'
+            'doGetProductColumns': '/cms/popup/setProductColumns/doGetProductColumns',
+            'doSaveProductColumns': '/cms/popup/setProductColumns/doSaveProductColumns'
         },
 
         //add by lewis start.
         'masterPropSetting':{
             'init':'/cms/masterPropValue/setting/init',
             'search':'/cms/masterPropValue/setting/search',
-            'submit':'/cms/masterPropValue/setting/submit'
+            'submit':'/cms/masterPropValue/setting/submit',
+            'getCategoryNav':'/cms/masterPropValue/setting/getCategoryNav',
+            'switchCategory':'/cms/masterPropValue/setting/switchCategory'
         },
         //add by lewis end.
 
@@ -273,10 +275,6 @@ define (function (require) {
      * cms的所有popup画面一览.
      */
     cmsApp.constant ("cmsPopupPages", {
-        'setMasterPropValue': {
-            'page': 'modules/cms/masterPropValueSetting/setMtPropValuePopUp.tpl.html',
-            'controller': 'setMtPropValuePopUpController'
-        },
         "popPromotionDiscount": {
             "page": "/VoyageOne/modules/cms/popup/promotionDiscount/popPromotionDiscount.tpl.html",
             "controller": "popPromotionDiscountController"
@@ -330,9 +328,15 @@ define (function (require) {
             'controller': 'popSetProductColumns'
         },
         //add by lewis start 2015-09-17.
-        'comPropValueSetting':{
-            'page':'/VoyageOne/modules/cms/feedDefaultPropSetting/comPropValueSettingPopUp.tpl.html',
-            'controller':'comPropValueSettingPopUpController'
+        'popPropValueSetting':{
+            'page':'/VoyageOne/modules/cms/popup/propValueSetting/popPropValueSetting.tpl.html',
+            'controller':'popPropValueSettingController'
+        },
+        //add by lewis end.
+      //add by lewis start 2015-09-17.
+        'popPropValueSettingWarningMsg':{
+            'page':'/VoyageOne/modules/cms/popup/warningMessageView/warningMsg.tpl.html',
+            'controller':'warningMsgController'
         },
         //add by lewis end.
         
@@ -341,8 +345,8 @@ define (function (require) {
     /**
      * 用于CMS系统弹出popUp画面使用.
      */
-    cmsApp.controller('cmsPopupController', ['$scope', 'cmsPopupPages', 'systemCountry', '$modal', 'notify', 'userService',
-        function ($scope, cmsPopupPages, systemCountry, $modal, notify, userService) {
+    cmsApp.controller('cmsPopupController', ['$scope', 'cmsPopupPages', 'systemCountry', '$modal', 'notify',
+        function ($scope, cmsPopupPages, systemCountry, $modal, notify) {
             /**
              * 弹出Add To Promotion页面.
              */
@@ -541,9 +545,8 @@ define (function (require) {
                         }
                     }
                 });
-
+                
                 modalInstance.result.then(function(){
-
                     switch (type) {
                         case 'us':
                             fhRefreshUs();
@@ -553,6 +556,23 @@ define (function (require) {
                             break;
                     }
                 });
+            };
+            
+            /**
+             * 弹出属性设定页面.
+             * @param selectObj
+             */
+            $scope.openPropValueSetting = function (selectObj) {
+                    var modalInstance = $modal.open({
+                        templateUrl: cmsPopupPages.popPropValueSetting.page,
+                        controller: cmsPopupPages.popPropValueSetting.controller,
+                        size: 'lg',
+                        resolve: {
+                            parameters: function(){
+                                return {selectObj:selectObj};
+                            }
+                        }
+                    });
             };
 
         }]);

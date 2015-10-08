@@ -292,7 +292,7 @@ define (function (require) {
                     CMS_TXT_MODEL_COUNT: 'Models Count',
                     CMS_TXT_PRODUCT_COUNT: 'Products Count',
                     CMS_TXT_PRIMARY_CATEGORY: 'Primary Category',
-                    CMS_TXT_TITLE_ADVANCE_SEARCH: 'Advance Search (US)',
+                    CMS_TXT_TITLE_ADVANCE_SEARCH: 'Advance Search',
                     CMS_TXT_PROMOTION: 'Promotion',
                     CMS_TXT_ADD_PROMOTION: 'Add Promotion',
                     CMS_TXT_CART: 'Sales Channels',
@@ -386,7 +386,6 @@ define (function (require) {
                     CMS_TXT_PRICE_ATTRIBUTE: 'Price Attributes',
                     CMS_TXT_SALES_ATTRIBUTE: 'Sales Attributes',
                     CMS_TXT_TITLE_SHOW_ATTRIBUTE: 'Drag the top of these attributes to here and will be displayed in product list',
-                    CMS_TXT_TITLE_ADVANCE_SEARCH_CN: 'Advance Search (CN)',
 
                     CMS_TXT_TH_TYPE: 'Type',
                     CMS_TXT_TH_VALUE: 'Value',
@@ -483,7 +482,10 @@ define (function (require) {
                     CMS_MSG_DICT_VAL_TXT: 'Text',
                     CMS_MSG_DICT_VAL_CMS: 'CMS',
                     CMS_MSG_DICT_VAL_MASTER: 'Master Props',
-                    CMS_MSG_DICT_VAL_DICT: 'Dict'
+                    CMS_MSG_DICT_VAL_DICT: 'Dict',
+                    CMS_MSG_MASTER_PROP_VALUE_SETTING_CATEGORY_SWITCH_COMFIRM:'This product will be change to the new category, [{{categoryName}}].<br />Please click [OK] to confirm it,<br />or click [Cancel] to cancel it.<br />The process is beginning to reset, please access this page 10 minutes later.<br />If the resetting is on continued after 10 minutes, please contact IT. <br />',
+                    CMS_MSG_MASTER_PROP_VALUE_SETTING_CATEGORY_SAVE_COMFIRM:'The properties will be saved<br />Please click [OK] to confirm it,<br />or click [Cancel] to cancel it.<br /> Save or not ?',
+                    CMS_MSG_MASTER_PROP_VALUE_SETTING_CATEGORY_NODATA:'The process of category change is on continued. Please come back 10 minutes later.<br />If the resetting is on continued after 10 minutes, please contact IT.'
                 });
         }]);
 });

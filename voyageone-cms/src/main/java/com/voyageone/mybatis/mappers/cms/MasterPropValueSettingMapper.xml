@@ -84,4 +84,64 @@
 		where order_channel_id  = #{channel_id}
 		  
 	</select>
+	<select id="get_propertiesAndVaues" resultType="com.voyageone.cms.modelbean.MasterCategoryPropertyModel">
+		SELECT DISTINCT
+			prop.prop_id AS propId,
+			prop.prop_name AS propName,
+			prop.prop_type AS propType,
+			CASE IFNULL(
+				propValueTable.prop_value,
+				''
+			)
+		WHEN '' THEN
+			prop.prop_value_default
+		ELSE
+			propValueTable.prop_value
+		END AS propValue,
+		 prop.is_parent AS isParent,
+		 prop.is_required AS isRequired,
+		 prop.is_top_prop AS isTopProp,
+		 prop.parent_prop_id AS parentPropId,
+		 propValueTable.uuid AS valueUuid,
+		 propValueTable.parent AS valueParent
+		FROM
+			voyageone_ims.ims_mt_prop prop
+		LEFT JOIN (
+			SELECT
+				prop_id,
+				uuid,
+				parent,
+				prop_value
+			FROM
+				voyageone_ims.ims_mt_prop_value
+			WHERE
+				channel_id = #{channelId}
+			AND `level` = #{level}
+			AND level_value = #{levelValue}
+		) AS propValueTable ON (
+			prop.prop_id = propValueTable.prop_id
+		)
+		WHERE
+			prop.category_id = #{categoryId}
+	</select>
+	<update id="updateDealFlagByProductId">
+	  UPDATE     voyageone_cms.cms_mt_product_attribute attr
+   	  LEFT JOIN  voyageone_cms.cms_bt_product p ON p.url_key = attr.product_url_key
+			 SET attr.deal_flag = 0,
+				 attr.modifier=#{user},
+				 attr.modified=NOW()
+		   WHERE attr.channel_id = #{chanelId}
+		     AND p.product_id = #{productId}
+		     AND attr.deal_flag != 0
+	</update>
+	<update id="updateDealFlagByModelId">
+	  UPDATE voyageone_cms.cms_mt_product_attribute attr
+		LEFT JOIN voyageone_cms.cms_bt_model m ON m.url_key = attr.product_url_key
+		SET attr.deal_flag = 0,
+		    attr.modifier = #{user},
+		 	attr.modified = NOW()
+		WHERE attr.channel_id = #{chanelId}
+		  AND m.model_id = #{modelId}
+		  AND attr.deal_flag != 0
+	</update>
 </mapper>

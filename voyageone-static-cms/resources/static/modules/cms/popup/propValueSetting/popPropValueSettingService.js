@@ -10,7 +10,7 @@ define(["modules/cms/cms.module",
         "components/services/ajax.service"],
    function (cmsServiceModule) {
 	
-	cmsServiceModule.service("setMtPropValuePopUpService",
+	cmsServiceModule.service("popPropValueSettingService",
 			["$q", 
 			 "cmsAction", 
 			 "ajaxService",

@@ -7,19 +7,19 @@
  */
 
 define([ "modules/cms/cms.module",
-		"modules/cms/feedDefaultPropSetting/comPropValueSettingPopUpService"], 
+		"modules/cms/popup/propValueSetting/popPropValueSettingService"], 
 		function(cmsApp) {
 	
-			cmsApp.controller('comPropValueSettingPopUpController', ['$scope', 
-			                                                         "comPropValueSettingPopUpService",
-			                                                         '$filter', 
-			                                                         '$http', 
-			                                                         'editableOptions', 
-			                                                         'editableThemes',
-			                                                         '$q',
-			                                                         '$modalInstance',
-			                                                         'parameters',
-			                                                         'userService',
+			cmsApp.controller('popPropValueSettingController', ['$scope', 
+		                                                         'popPropValueSettingService',
+		                                                         '$filter', 
+		                                                         '$http', 
+		                                                         'editableOptions', 
+		                                                         'editableThemes',
+		                                                         '$q',
+		                                                         '$modalInstance',
+		                                                         'parameters',
+		                                                         'userService',
 			  function($scope, service, $filter, $http, editableOptions, editableThemes, $q,$modalInstance,parameters,userService) {
 
 				 // 关闭对话框
@@ -42,6 +42,10 @@ define([ "modules/cms/cms.module",
 				 $scope.init = function() {
 					
 					var unDecodeValue = parameters.selectObj.propValue;
+					
+					if (parameters.selectObj.rules != null) {
+						$scope.rules = parameters.selectObj.rules;
+					}
 					
 					if (unDecodeValue==undefined||unDecodeValue==null||unDecodeValue.trim()=="") {
 						var word = {type:1,value:undefined};
