@@ -31,6 +31,18 @@ public class TrackingService {
     private TrackingDao trackingDao;
 
     /**
+     * 根据传入参数取得该订单的物流信息
+     * @param cwb 检索参数
+     */
+    public OrderTrackInfoBean getOrderTrackInfo(String cwb) {
+
+        OrderTrackInfoBean orderTrackInfoBean = trackingDao.getOrderTrackInfo(cwb);
+
+        return orderTrackInfoBean;
+
+    }
+
+    /**
      * 根据Synship物流单号取得该订单的物流信息
      * @param cwb 检索参数
      * @return String 物流信息
@@ -43,11 +55,11 @@ public class TrackingService {
         String syn_ship_no = "";
         switch (platForm) {
             case OF:
-            case TM:
             case JD:
+            case TM:
                 return null;
             case CN:
-                syn_ship_no = trackingDao.getSynShipNo(cwb);
+                syn_ship_no = cwb;
                 break;
             case JM:
                 syn_ship_no = cwb;
@@ -110,8 +122,8 @@ public class TrackingService {
         // 根据平台，调用相应的 输入方法
         switch (platForm) {
             case OF:
-            case TM:
             case JD:
+            case TM:
                 break;
             case CN:
                 resultTrackingInfo = createTrackingInfoCN(lstTrackInfo);
