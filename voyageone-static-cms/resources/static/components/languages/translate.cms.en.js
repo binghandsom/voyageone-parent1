@@ -386,6 +386,7 @@ define (function (require) {
                     CMS_TXT_PRICE_ATTRIBUTE: 'Price Attributes',
                     CMS_TXT_SALES_ATTRIBUTE: 'Sales Attributes',
                     CMS_TXT_TITLE_SHOW_ATTRIBUTE: 'Drag the top of these attributes to here and will be displayed in product list',
+                    CMS_TXT_TITLE_ADVANCE_SEARCH_CN: 'Advance Search (CN)',
 
                     CMS_TXT_TH_TYPE: 'Type',
                     CMS_TXT_TH_VALUE: 'Value',

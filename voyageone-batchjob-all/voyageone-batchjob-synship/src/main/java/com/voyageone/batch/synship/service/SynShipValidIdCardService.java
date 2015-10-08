@@ -160,7 +160,10 @@ public class SynShipValidIdCardService extends BaseTaskService {
     }
 
     protected void validOnThread(List<IdCardBean> idCardBeans) throws JSONException, InterruptedException {
+        $info("跨境易身份证验证开始");
+
         // 有数据的话，那么开始加载一些固定的配置
+        $info("跨境易身份证验证件数：" + idCardBeans.size());
 
         // 短信花费计算的配置
         Map<String, String> smsInfoMap = Codes.getCodeMap(SMS_INFO);
@@ -223,6 +226,8 @@ public class SynShipValidIdCardService extends BaseTaskService {
             // 如果短链接是有内容的，则尝试发送短信通知客户
             sendSmsToCustomer(idCardHistory, smsConfig, idCardBean, shortUrlBean, smsWords, eachFee);
         }
+
+        $info("跨境易身份证验证结束" );
     }
 
     private void sendSmsToCustomer(IdCardHistory idCardHistory, SmsConfig smsConfig, IdCardBean idCardBean, ShortUrlBean shortUrlBean, double smsWords, double eachFee ) {

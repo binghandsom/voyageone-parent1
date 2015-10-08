@@ -123,8 +123,8 @@ define (function (require) {
 
         // popSetProductColumns
         'popSetProductColumns': {
-            'doGetProductColumns': '/cms/popup/setProductColumns/doGetProductColumns',
-            'doSaveProductColumns': '/cms/popup/setProductColumns/doSaveProductColumns'
+            //'doGetProductColumns': '/cms/popup/setProductColumns/doGetProductColumns',
+            'doSaveProductColumns': '/core/setting/user/doUpdateUserConfig'
         },
 
         //add by lewis start.

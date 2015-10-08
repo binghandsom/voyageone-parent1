@@ -55,6 +55,14 @@ public class GetClientShippingInfoService extends BaseTaskService {
         return "SynshipGetClientShipping";
     }
 
+    /**
+     * 获取打印的日志是否需要包含线程
+     */
+    @Override
+    public boolean getLogWithThread() {
+        return true;
+    }
+
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
@@ -66,7 +74,7 @@ public class GetClientShippingInfoService extends BaseTaskService {
             threads.add(() -> new GetShippingInfo(channelId).doRun());
         }
         runWithThreadPool(threads, taskControlList);
-        logger.info(getTaskName() + "----------结束");
+        $info(getTaskName() + "----------结束");
 
     }
 
@@ -85,7 +93,7 @@ public class GetClientShippingInfoService extends BaseTaskService {
          */
         public void doRun() {
 
-            logger.info(channel.getFull_name() + "获取物流信息Start");
+            $info(channel.getFull_name() + "获取物流信息Start");
 
             //获取当前销售渠道的第三方配置信息
             HashMap<String, ThirdPartyConfigBean> configs = ThirdPartyConfigs.getThirdPartyConfigMap(channel.getOrder_channel_id());
@@ -109,10 +117,10 @@ public class GetClientShippingInfoService extends BaseTaskService {
                     }
                 }
             } catch (Exception e) {
-                logger.error("调用CA-orderService错误：" + e.getMessage());
+                $info("调用CA-orderService错误：" + e.getMessage());
                 issueLog.log(e, ErrorType.BatchJob, SubSystem.SYNSHIP);
             }
-            logger.info(channel.getFull_name() + "获取物流信息End");
+            $info(channel.getFull_name() + "获取物流信息End");
         }
     }
 
@@ -140,8 +148,8 @@ public class GetClientShippingInfoService extends BaseTaskService {
         param.setPageNumberFilter(1);
         param.setPageSize(Integer.parseInt(configs.get(CaConstants.OrderList.PAGE_SIZE).getProp_val1()));
 
-        logger.info("startTimeXml:" + startTimeXml);
-        logger.info("endTimeXml:" + endTimeXml);
+        $info("startTimeXml:" + startTimeXml);
+        $info("endTimeXml:" + endTimeXml);
 
         return param;
     }
@@ -175,12 +183,12 @@ public class GetClientShippingInfoService extends BaseTaskService {
                 bean.setModifier(getTaskName());
                 if (StringUtils.isNullOrBlank2(bean.getTracking_type())|| StringUtils.isNullOrBlank2(bean.getTracking_no())) {
                     String json = order == null ? "" : new Gson().toJson(order);
-                    logger.info(channel.getFull_name() + "----------返回的订单具体信息："+ json);
+                    $info(channel.getFull_name() + "----------返回的订单具体信息：" + json);
                     errorTrackingLst.add(bean.getSource_order_id());
                 }
                 else {
                     String json = bean == null ? "" : new Gson().toJson(bean);
-                    logger.info(channel.getFull_name() + "----------返回的订单信息："+ json);
+                    $info(channel.getFull_name() + "----------返回的订单信息：" + json);
                     trackingList.add(bean);
                 }
 
@@ -188,7 +196,7 @@ public class GetClientShippingInfoService extends BaseTaskService {
                 clientTrackingDao.updateSellerOrderID(channel.getOrder_channel_id(),String.valueOf(order.getOrderID()), order.getSellerOrderID(), getTaskName());
             }
 
-            logger.info(channel.getFull_name() + "----------订单的快递信息不全：" + errorTrackingLst.size());
+            $info(channel.getFull_name() + "----------订单的快递信息不全：" + errorTrackingLst.size());
             if (errorTrackingLst.size() > 0 ) {
                 logIssue(channel.getFull_name() + "订单的快递信息不全，无法进行LA港口模拟发货", errorTrackingLst);
             }

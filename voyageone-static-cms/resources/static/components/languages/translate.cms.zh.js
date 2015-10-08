@@ -395,6 +395,7 @@ define (function (require) {
                     CMS_TXT_PRICE_ATTRIBUTE: '价格属性',
                     CMS_TXT_SALES_ATTRIBUTE: '销售属性',
                     CMS_TXT_TITLE_SHOW_ATTRIBUTE: '将上方的属性拖放到此处,将会在产品列表中展示',
+                    CMS_TXT_TITLE_ADVANCE_SEARCH_CN: '高级检索 (中国)',
 
                     CMS_TXT_TH_TYPE: '类型',
                     CMS_TXT_TH_VALUE: '值',
