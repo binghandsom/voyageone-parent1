@@ -101,15 +101,28 @@ define([ "modules/cms/cms.module",
 
 						});
 					}else{
+						vaueSetservice.doInit(parmData).then(function(response) {
 
+
+							var responseData=response.data;
+
+							if (responseData.images) {
+
+								//设定图片
+								setImages(responseData);
+
+								scope.isError=false;
+							}
+
+							scope.isSave = true;
+
+						});
 						//取得导航列表.
 						if (!scope.categories) {
 							vaueSetservice.getCategoryNav().then(function(response) {
 								//设置所有顶层类目名称
 								scope.categories = response.data.categories;
 								scope.isReady = true;
-								scope.isError=false;
-								scope.isSave = true;
 								scope.isNew=true;
 							});
 						}
