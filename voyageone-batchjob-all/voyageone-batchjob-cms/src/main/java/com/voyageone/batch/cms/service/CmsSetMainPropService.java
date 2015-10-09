@@ -19,6 +19,7 @@ import com.voyageone.ims.enums.MasterPropTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
 import java.util.*;
 
 @Service
@@ -93,6 +94,10 @@ public class CmsSetMainPropService extends BaseTaskService {
 					break;
 				}
 
+                // 一次性获取所有的类目匹配关系（根据channel_id）
+                Map<String, String> mainCategoryIdList = mainPropDao.selectMainCategoryIdList(channel_id);
+
+                // 循环所有的商品
 				for (MainPropTodoListBean mainPropTodoListBean : mainPropTodoListBeanList) {
 					// 遍历每个商品
 					String category_id = mainPropTodoListBean.getCategory_id();
@@ -100,45 +105,169 @@ public class CmsSetMainPropService extends BaseTaskService {
 					String product_id = mainPropTodoListBean.getProduct_id();
 
 					// 获取主类目
-					String mainCategoryId = "36129"; // TODO:调用刘耀的函数，取得返回值。
-
-					// 如果没有设定过主类目，那么认为出错了，并要求运营设置主类目
-					if (StringUtils.isEmpty(mainCategoryId)) {
-                        blnError = true;
-						break;
-					}
-
-					// 去value表检索一下，看看这个model是否已经设置过了
-                    // TODO:这个功能以后可能会被废除
-                    // TODO:如果已经有了，那么“酌情”先删除再添加
-                    boolean blnMainValueExist = mainPropDao.selectMainValue(channel_id, level_model, model_id);
-                    if (blnMainValueExist) {
-                        // 已经存在了，认为错误数据存在
+					String mainCategoryId;
+                    if (mainCategoryIdList.containsKey(category_id)) {
+                        mainCategoryId = mainCategoryIdList.get(category_id);
+                    } else {
+                        // 如果没有设定过主类目，那么认为出错了，并要求运营设置主类目
                         blnError = true;
                         break;
                     }
 
-					// 获取该类目（主数据类目）的所有属性， 放入map
-                    Map<String, ImsPropBean> imsPropMap = mainPropDao.selectImsPropByCategoryId(mainCategoryId);
-
-					// 获取feed内容
+                    // 获取feed内容
                     List<MainPropTodoItemListBean> mainPropTodoItemListBeanList = mainPropDao.selectMainPropTodoItemListBean(channel_id, product_id);
                     Map<String, String> mapMainPropTodoItemListBeanList = new HashMap<>();
                     for (MainPropTodoItemListBean mainPropTodoItemListBean : mainPropTodoItemListBeanList) {
                         mapMainPropTodoItemListBeanList.put(mainPropTodoItemListBean.getAttribute_name(), mainPropTodoItemListBean.getAttribute_value());
                     }
 
+                    // 根据product id，获取sku列表
+                    List<String> skuList = mainPropDao.getSkuListFromProductId(channel_id, product_id);
+
+                    // 如果sku的数据不存在的话，那就没必要做这些处理了
+                    if (skuList != null && skuList.size() > 0) {
+
+                        // 遍历SKU级别的数据
+                        // 获取ims_bt_sku_prop_mapping的数据
+                        List<FeedMappingSkuBean> feedMappingBeanSkuList = mainPropDao.selectFeedMappingSkuList(channel_id, mainCategoryId);
+                        // 获取ims_bt_prop_value_sku_template的数据
+                        List<PropValueSkuTemplateBean> propValueSkuTemplateBeanList = mainPropDao.selectPropValueSkuTemplateList();
+                        Map<String, PropValueSkuTemplateBean> propValueSkuTemplateBeanMap = new HashMap<>();
+                        for (PropValueSkuTemplateBean propValueSkuTemplateBean : propValueSkuTemplateBeanList) {
+                            propValueSkuTemplateBeanMap.put(propValueSkuTemplateBean.getProp_name(), propValueSkuTemplateBean);
+                        }
+
+                        // 设置sku的属性
+                        List<ImsPropValueSkuBean> mainPropSkuList = new ArrayList<>();
+
+                        // 遍历FeedMapping
+                        for (FeedMappingSkuBean feedMappingSkuBean : feedMappingBeanSkuList) {
+
+                            // 如果有条件的话，看看是否符合条件
+                            if (!StringUtils.isEmpty(feedMappingSkuBean.getConditions())) {
+                                // 条件
+                                Condition condition = JsonUtil.jsonToBean(feedMappingSkuBean.getConditions(), Condition.class);
+
+                                // 判断条件是否满足
+                                String strFeedValue = mapMainPropTodoItemListBeanList.get(condition.getProperty());
+                                switch (condition.getOperation()) {
+                                    case IS_NULL:
+                                        if (!StringUtils.isEmpty(strFeedValue)) {
+                                            // 条件不满足，跳过
+                                            continue;
+                                        }
+                                        break;
+                                    case IS_NOT_NULL:
+                                        if (StringUtils.isEmpty(strFeedValue)) {
+                                            // 条件不满足，跳过
+                                            continue;
+                                        }
+                                        break;
+                                    case EQUALS:
+                                        // 禁止为空
+                                        if (strFeedValue == null) {
+                                            continue;
+                                        }
+                                        if (condition.getValue() == null) {
+                                            continue;
+                                        }
+
+                                        if (!strFeedValue.equals(condition.getValue())) {
+                                            // 条件不满足，跳过
+                                            continue;
+                                        }
+                                        break;
+                                    case NOT_EQUALS:
+                                        // 禁止为空
+                                        if (strFeedValue == null) {
+                                            continue;
+                                        }
+                                        if (condition.getValue() == null) {
+                                            continue;
+                                        }
+
+                                        if (strFeedValue.equals(condition.getValue())) {
+                                            // 条件不满足，跳过
+                                            continue;
+                                        }
+                                        break;
+                                }
+
+                            }
+
+                            // 准备设定值
+                            String value = "";
+                            FeedPropMappingType feedPropMappingType;
+                            feedPropMappingType = FeedPropMappingType.valueOf(Integer.parseInt(feedMappingSkuBean.getType()));
+                            if (feedPropMappingType == FeedPropMappingType.FEED) {
+                                // 获取属性的值
+                                value = mapMainPropTodoItemListBeanList.get(feedMappingSkuBean.getValue());
+
+                                // 获取template，看看是否要进行运算
+                                PropValueSkuTemplateBean propValueSkuTemplateBean;
+                                if (propValueSkuTemplateBeanMap.containsKey(feedMappingSkuBean.getProp_name())) {
+                                    propValueSkuTemplateBean = propValueSkuTemplateBeanMap.get(feedMappingSkuBean.getProp_name());
+
+                                    value = doEditSkuTemplate(
+                                            value,
+                                            propValueSkuTemplateBean.getEdit(),
+                                            propValueSkuTemplateBean.getPrefix(),
+                                            propValueSkuTemplateBean.getSuffix()
+                                            );
+                                }
+
+                            }
+
+                            // 循环sku列表
+                            for (String sku : skuList) {
+                                List<ImsPropValueSkuBean> imsPropValueSkuBeanList = mainPropDao.selectPropValueSku(
+                                        channel_id,
+                                        sku,
+                                        feedMappingSkuBean.getProp_name()
+                                );
+
+                                // 查看当前属性是否已经设定过了
+                                if (imsPropValueSkuBeanList != null && imsPropValueSkuBeanList.size() > 0) {
+                                    // 如果这个属性已经设置过了，那么根据先来后到的优先度，之后的就不用设置了
+                                    continue;
+                                }
+
+                                // 添加自己
+                                ImsPropValueSkuBean imsPropValueSkuBean = new ImsPropValueSkuBean();
+
+                                imsPropValueSkuBean.setSku(sku);
+                                imsPropValueSkuBean.setProp_name(feedMappingSkuBean.getProp_name());
+                                imsPropValueSkuBean.setProp_value(value);
+                                imsPropValueSkuBean.setOrder_channel_id(channel_id);
+
+                                mainPropSkuList.add(imsPropValueSkuBean);
+
+                            }
+
+                        }
+
+                        if (mainPropSkuList.size() > 0) {
+                            // 插入数据库
+                            mainPropDao.doInsertSkuValue(mainPropSkuList, getTaskName());
+                        }
+                    }
+
+                    // 去value表检索一下，看看这个model是否已经设置过了
+                    boolean blnMainValueExist = mainPropDao.selectMainValue(channel_id, level_model, model_id);
+                    // 已经存在了，那就是已经设置过了
+                    if (blnMainValueExist) {
+                        // 更新处理flag
+                        mainPropDao.doFinishProduct(channel_id, product_id);
+
+                        // 跳过这条数据吧
+                        continue;
+                    }
+
+                    // 获取该类目（主数据类目）的所有属性， 放入map
+                    Map<String, ImsPropBean> imsPropMap = mainPropDao.selectImsPropByCategoryId(mainCategoryId);
+
                     // 获取mapping的内容，放入需要操作的对象
                     List<FeedMappingBean> feedMappingBeanList = mainPropDao.selectFeedMappingList(channel_id, mainCategoryId);
-                    Map<String, List<String>> mapFeedMappingBeanList = new HashMap<>();
-                    for (FeedMappingBean feedMappingBean : feedMappingBeanList) {
-                        List<String> lstProp = new ArrayList<>();
-                        lstProp.add(feedMappingBean.getConditions());
-                        lstProp.add(feedMappingBean.getType());
-                        lstProp.add(feedMappingBean.getValue());
-
-                        mapFeedMappingBeanList.put(feedMappingBean.getProp_id(), lstProp);
-                    }
 
                     // 获取mapping default的内容，放入需要操作的对象
                     List<FeedMappingDefaultBean> feedMappingDefaultBeanList = mainPropDao.selectFeedMappingDefaultList(channel_id);
@@ -216,7 +345,7 @@ public class CmsSetMainPropService extends BaseTaskService {
                         // 准备设定值
                         String value = "";
                         FeedPropMappingType feedPropMappingType;
-                        feedPropMappingType = FeedPropMappingType.valueOf(feedMappingBean.getType());
+                        feedPropMappingType = FeedPropMappingType.valueOf(Integer.parseInt(feedMappingBean.getType()));
                         if (feedPropMappingType == FeedPropMappingType.FEED) {
                             // 获取属性的值
                             value = mapMainPropTodoItemListBeanList.get(feedMappingBean.getValue());
@@ -292,7 +421,80 @@ public class CmsSetMainPropService extends BaseTaskService {
                         }
                     }
 
-                    // 遍历FeedMappingDefault
+                    // 设置默认值
+                    // 遍历主类目的所有属性
+                    Iterator iter = imsPropMap.entrySet().iterator();
+                    while (iter.hasNext()) {
+                        Map.Entry entry = (Map.Entry) iter.next();
+
+                        String key = entry.getKey().toString();
+                        ImsPropBean val = (ImsPropBean) entry.getValue();
+
+                        // 遍历FeedMappingDefault
+                        if (mapFeedMappingDefaultBeanList.containsKey(val.getPropName())) {
+                            List<String> feedMappingDefaultBean = mapFeedMappingDefaultBeanList.get(val.getPropName());
+                            if (String.valueOf(val.getPropType()).equals(feedMappingDefaultBean.get(0))) {
+                                // 这个属性还没有被设置过的话，可以设置一下
+                                if (!mainPropList.containsKey(key)) {
+
+                                    // 设定值
+                                    {
+                                        // 添加一个父
+                                        String strParentUuidMulti = "";
+                                        String strParentUuid = "";
+
+                                        // 看看自己的类型
+                                        int intType = imsPropMap.get(key).getPropType();
+                                        if (intType == MasterPropTypeEnum.MULTICHECK.getValue()
+                                                || intType == MasterPropTypeEnum.MULTICOMPLEX.getValue()
+                                                ) {
+                                            // 需要待会儿在最后插入数据的时候，添加一个父
+                                            strParentUuidMulti = getUUID();
+                                        }
+
+                                        // 看看自己是否有父
+                                        int intParentId = imsPropMap.get(key).getParentPropId();
+                                        if (intParentId != 0) {
+                                            // 有父，添加父（包括所有父）
+                                            List<ImsPropValueBean> imsParentPropValueBeanList =  doAddParentProp(channel_id, level_model, model_id, String.valueOf(intParentId), imsPropMap, mainPropList);
+
+                                            for (ImsPropValueBean bean : imsParentPropValueBeanList) {
+                                                mainPropList.put(bean.getPropId(), bean);
+                                            }
+
+                                            strParentUuid = imsParentPropValueBeanList.get(imsParentPropValueBeanList.size() - 1).getUuid();
+
+                                        }
+
+                                        // 添加自己
+                                        ImsPropValueBean imsPropValueBean = new ImsPropValueBean();
+                                        // 算一个uuid出来
+                                        imsPropValueBean.setUuid(getUUID());
+                                        // channel id
+                                        imsPropValueBean.setChannelId(channel_id);
+                                        // level
+                                        imsPropValueBean.setLevel(level_model);
+                                        // level value
+                                        imsPropValueBean.setLevelValue(model_id);
+                                        // prop id
+                                        imsPropValueBean.setPropId(key);
+                                        // prop value
+                                        imsPropValueBean.setPropValue(feedMappingDefaultBean.get(1).replace("'", "''"));
+                                        // parent
+                                        imsPropValueBean.setParent(strParentUuid);
+                                        // parent multi
+                                        imsPropValueBean.setParentMulti(strParentUuidMulti);
+
+                                        mainPropList.put(key, imsPropValueBean);
+
+                                    }
+
+
+                                }
+                            }
+                        }
+
+                    }
 
 					// 插入到数据库里（主数据的值表）
                     List<ImsPropValueBean> imsPropValueBeanList = new ArrayList<>();
@@ -347,7 +549,9 @@ public class CmsSetMainPropService extends BaseTaskService {
                         imsPropValueBeanList.add(imsPropValueBean);
 
                     }
-                    mainPropDao.doInsertMainValue(imsPropValueBeanList, getTaskName());
+                    if (imsPropValueBeanList.size() > 0) {
+                        mainPropDao.doInsertMainValue(imsPropValueBeanList, getTaskName());
+                    }
 
                     // 更新处理flag
                     mainPropDao.doFinishProduct(channel_id, product_id);
@@ -363,6 +567,58 @@ public class CmsSetMainPropService extends BaseTaskService {
             logger.info(channel.getFull_name() + "产品导入结束");
         }
 	}
+
+    private String doEditSkuTemplate(String inputValue, String edit, String prefix, String suffix) {
+        String value = inputValue;
+
+        // 根据edit进行变换
+        if (!StringUtils.isEmpty(edit)) {
+            if ("in2cm".equals(edit)) {
+                // 奇怪的数据转换
+                // 有时候别人提供的数字中会有类似于这样的数据：
+                // 33 3/4 意思是 33又四分之三 -> 33.75
+                // 33 1/2 意思是 33又二分之一 -> 33.5
+                // 33 1/4 意思是 33又四分之一 -> 33.25
+                // 直接这边代码处理掉避免人工干预
+                if (value.contains(" ")) {
+                    String[] strSplit = value.split(" ");
+
+                    switch (strSplit[1]) {
+                        case "3/4":
+                            value = String.valueOf(Float.valueOf(strSplit[0]) + 0.75);
+                            break;
+                        case "1/2":
+                            value = String.valueOf(Float.valueOf(strSplit[0]) + 0.5);
+                            break;
+                        case "1/4":
+                            value = String.valueOf(Float.valueOf(strSplit[0]) + 0.25);
+                            break;
+                    }
+
+                }
+
+                // 英寸转厘米
+                value = String.valueOf(Float.valueOf(value) * 2.54);
+
+                DecimalFormat df = new DecimalFormat("0.00");
+                value = df.format(Float.valueOf(value));
+
+            }
+        }
+
+        // 设置前缀
+        if (!StringUtils.isEmpty(prefix)) {
+            value = prefix + value;
+        }
+
+        // 设置后缀
+        if (!StringUtils.isEmpty(suffix)) {
+            value = value + suffix;
+        }
+
+        return value;
+
+    }
 
 
     private String getUUID() {

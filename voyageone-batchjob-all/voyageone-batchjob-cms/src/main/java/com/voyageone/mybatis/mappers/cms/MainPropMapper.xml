@@ -17,26 +17,47 @@
           attr.category_url_key,
           attr.model_url_key,
           attr.product_url_key
-        from voyageone_cms_feedtest.cms_mt_product_attribute attr
+        from voyageone_cms.cms_mt_product_attribute attr
         where attr.channel_id = #{channel_id}
               and attr.deal_flag = 0 limit 10
       ) attr
-      left join voyageone_cms_feedtest.cms_bt_category c on c.url_key = attr.category_url_key
-      left join voyageone_cms_feedtest.cms_bt_model m on m.url_key = attr.model_url_key
-      left join voyageone_cms_feedtest.cms_bt_product p on p.url_key = attr.product_url_key
+      left join voyageone_cms.cms_bt_category c on c.url_key = attr.category_url_key
+      left join voyageone_cms.cms_bt_model m on m.url_key = attr.model_url_key
+      left join voyageone_cms.cms_bt_product p on p.url_key = attr.product_url_key
     ;
   </select>
 
     <!-- 设置完成标记 -->
     <update id="cms_mt_product_attribute_setFinished" parameterType="HashMap">
-        update voyageone_cms_feedtest.cms_mt_product_attribute attr
-        left join voyageone_cms_feedtest.cms_bt_product p on p.url_key = attr.product_url_key
+        update voyageone_cms.cms_mt_product_attribute attr
+        left join voyageone_cms.cms_bt_product p on p.url_key = attr.product_url_key
         set attr.deal_flag = 1
         where attr.channel_id = #{channel_id}
               and p.product_id = #{product_id}
     </update>
 
-  <!-- 查看指定商品是否已经存在于值表 -->
+    <!-- 根据product id，获取sku列表 -->
+    <select id="wms_bt_item_details_selectSkuListFromProductId" parameterType="HashMap"
+            resultType="String">
+        select sku
+        from synship.wms_bt_item_details
+        where order_channel_id = #{channel_id}
+          and product_id = #{product_id};
+    </select>
+
+    <!-- 一次性获取所有的类目匹配关系（根据channel_id） -->
+    <select id="cms_bt_relation_category_selectMainCategoryIdList" parameterType="HashMap"
+            resultType="HashMap">
+        select relation.category_id category_id,
+               relation.parent_category_id parent,
+               category.main_category_id main_category_id
+        from   voyageone_cms.cms_bt_relation_category relation
+        left join voyageone_cms.cms_bt_cn_category_extend category on category.category_id = relation.category_id
+        where relation.channel_id = #{channel_id}
+        ;
+    </select>
+
+    <!-- 查看指定商品是否已经存在于值表 -->
   <select id="ims_mt_prop_value_selectMainValue" parameterType="HashMap"
           resultType="Integer">
     select
@@ -67,8 +88,8 @@
     select
       attr.attribute_name,
       attr.attribute_value
-    from voyageone_cms_feedtest.cms_mt_product_attribute attr
-      left join voyageone_cms_feedtest.cms_bt_product p on p.url_key = attr.product_url_key
+    from voyageone_cms.cms_mt_product_attribute attr
+      left join voyageone_cms.cms_bt_product p on p.url_key = attr.product_url_key
     where attr.channel_id = #{channel_id}
       and p.product_id = #{product_id}
     ;
@@ -103,7 +124,69 @@
         ;
     </select>
 
-    <!-- 批量插入（第三方平台）类目的属性 -->
+    <!-- 根据channel_id和main_category_id，获取ims_bt_sku_prop_mapping的值 -->
+    <select id="ims_bt_sku_prop_mapping_select" parameterType="HashMap"
+            resultType="com.voyageone.batch.cms.bean.FeedMappingSkuBean">
+        select
+        `channel_id`,
+        `main_category_id`,
+        `prop` as `prop_name`,
+        `conditions`,
+        `type`,
+        `value`
+        from voyageone_ims.ims_bt_sku_prop_mapping
+        where channel_id = #{channel_id}
+        and main_category_id = #{main_category_id}
+        ;
+    </select>
+
+    <!-- 获取ims_bt_prop_value_sku_template的值 -->
+    <select id="ims_bt_prop_value_sku_template_select"
+            resultType="com.voyageone.batch.cms.bean.PropValueSkuTemplateBean">
+        select
+          prop_name,
+          edit,
+          prefix,
+          suffix,
+          comment
+        from voyageone_ims.ims_bt_prop_value_sku_template;
+    </select>
+
+    <!-- 获取ims_bt_prop_value_sku的值 -->
+    <select id="ims_bt_prop_value_sku_select" parameterType="HashMap"
+            resultType="com.voyageone.batch.cms.bean.ImsPropValueSkuBean">
+        select
+            sku,
+            prop_name,
+            prop_value,
+            order_channel_id
+        from voyageone_ims.ims_bt_prop_value_sku
+        where order_channel_id = #{order_channel_id}
+          and sku = #{sku}
+          and prop_name = #{prop_name}
+        ;
+    </select>
+
+    <!-- 批量插入（第三方平台）类目的Sku的属性的值 -->
+    <insert id="ims_insertPropValueSku">
+        insert into voyageone_ims.ims_bt_prop_value_sku
+        (
+            `sku`,
+            `prop_name`,
+            `prop_value`,
+            `order_channel_id`
+        ) values
+        <foreach collection="imsPropValueSkuBeanList" item="valueBean" separator=",">
+            (
+            #{valueBean.sku}
+            , #{valueBean.prop_name}
+            , #{valueBean.prop_value}
+            , #{valueBean.order_channel_id}
+            )
+        </foreach>
+    </insert>
+
+    <!-- 批量插入（第三方平台）类目的属性的值 -->
     <insert id="ims_insertPropValue">
         insert into voyageone_ims.ims_mt_prop_value
         (

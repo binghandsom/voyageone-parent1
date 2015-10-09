@@ -31,7 +31,7 @@ define([ "modules/cms/cms.module",
 							$scope.resData = response.data;
 							
 							var cmsCategorise = $scope.resData.cmsCategoryList;
-							
+
 							for (var i = 0; i < cmsCategorise.length; i++) {
 								if (cmsCategorise[i].mainCategoryId==-1) {
 									cmsCategorise[i].isMatch = true;
@@ -157,6 +157,45 @@ define([ "modules/cms/cms.module",
 						notify.success("CMS_TXT_MSG_UPDATE_SUCCESS");
 					});
 				};
+
+				$scope.filterPropDisMatchCategory = function($event){
+
+
+					var cmsCategorise = $scope.resData.cmsCategoryList;
+
+					if ($scope.filterByProp) {
+
+						$scope.filterByProp = false;
+
+						for (var i = 0; i < cmsCategorise.length; i++) {
+							if (cmsCategorise[i].mainCategoryId==-1) {
+								cmsCategorise[i].isMatch = true;
+							}
+							if (cmsCategorise[i].mainCategoryId >0) {
+								cmsCategorise[i].inheritClass = 'super-category fa fa-star';
+							}
+
+							if (cmsCategorise[i].mainCategoryId == 0 && cmsCategorise[i].mainCategoryPath!=null) {
+								cmsCategorise[i].inheritClass = 'sub-category fa fa-long-arrow-up';
+							}
+						}
+						//获取cms类目
+						$scope.cmsCategoryList = cmsCategorise;
+						$event.target.innerText = " 属性匹配未完成类目";
+					}else {
+						var filterCategoryList = [];
+						$scope.filterByProp = true;
+						for (var i = 0; i < cmsCategorise.length; i++) {
+
+							if (cmsCategorise[i].mainCategoryId > 0 && cmsCategorise[i].propMatchStatus==0) {
+								filterCategoryList.push(cmsCategorise[i]);
+							}
+						}
+						//获取cms类目
+						$scope.cmsCategoryList = filterCategoryList;
+						$event.target.innerText = " 全部类目";
+					}
+				}
 				
 				document.onclick = function(e){
 					if ($scope.isClick) {
@@ -182,9 +221,9 @@ define([ "modules/cms/cms.module",
 					 
 					 var cmsCategorise = $scope.resData.cmsCategoryList;
 					 
-					 if ($scope.filter) {
+					 if ($scope.filterByCategory) {
 						 
-						 $scope.filter = false;
+						 $scope.filterByCategory = false;
 							
 						for (var i = 0; i < cmsCategorise.length; i++) {
 							if (cmsCategorise[i].mainCategoryId==-1) {
@@ -203,7 +242,7 @@ define([ "modules/cms/cms.module",
 						$event.target.innerText = " 未匹配类目";
 					}else {
 						var filterCategoryList = [];
-						$scope.filter = true;
+						$scope.filterByCategory = true;
 						for (var i = 0; i < cmsCategorise.length; i++) {
 							
 							if (cmsCategorise[i].mainCategoryId == 0) {
