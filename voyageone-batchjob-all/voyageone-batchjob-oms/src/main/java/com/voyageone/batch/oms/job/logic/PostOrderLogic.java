@@ -180,7 +180,7 @@ public abstract class PostOrderLogic {
 					String[] splitName = discountName.split("[$]");
 					Double discount = Double.valueOf(item.get("PricePerUnit").toString());
 					// get USD Discount
-					discount = round((discount / dbRate)) * -1;
+					discount = round((discount / dbRate) * -1);
 					// when Product Discount
 					if (splitName.length > 1) {
 						if(!productDiscount.containsKey(splitName[1]))
