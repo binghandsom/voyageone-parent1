@@ -1107,12 +1107,12 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 
 			// 没有变化跳过。
 			if(updatefields.size() <= 0 ){
-				// 更新ZZ_Work_Superfeed_Full
-				if (!SuperfeedFullUpdate(channel_id, productBeans.get(i).getP_code())){
-					logger.error("更新ZZ_Work_Superfeed_Full 失败");
-					issueLog.log("cms 数据导入处理", "更新ZZ_Work_Superfeed_Full 失败，code=" + productBeans.get(i).getP_code(),
-							ErrorType.BatchJob, SubSystem.CMS);
-				}
+//				// 更新ZZ_Work_Superfeed_Full
+//				if (!SuperfeedFullUpdate(channel_id, productBeans.get(i).getP_code())){
+//					logger.error("更新ZZ_Work_Superfeed_Full 失败");
+//					issueLog.log("cms 数据导入处理", "更新ZZ_Work_Superfeed_Full 失败，code=" + productBeans.get(i).getP_code(),
+//							ErrorType.BatchJob, SubSystem.CMS);
+//				}
 				// 如果失败下面跳过
 				continue;
 			}
