@@ -646,7 +646,8 @@ from  ${tablename}
   <!-- 更新UpdateFlag :insert -->
   <update id="cms_updateInsertData" parameterType="HashMap">
     update  ${tableName} set UpdateFlag = '1'
-     where ${code} in (${codes})
+     ${keyword}
+     and ${code} in (${codes})
   </update>
 
   <!-- 更新UpdateFlag :insert model -->
@@ -758,21 +759,6 @@ and attribute_type = ${attributeType}
 and order_channel_id = ${channelId}
   </select>
 
-  <!-- 插入Attribute产品信息 太慢了不用
-  <insert id="cms_superfeed_insertFeedAttribute" parameterType="HashMap">
-  insert into  voyageone_cms.cms_mt_feed_attribute
-  select ${channelId}, ${attributeName_value}, a.attributename, sysdate() from
-  (select distinct  ${attributeName} as attributename
-  from ${tableName}
-  where ${attributeName} is not null
-  and trim(${attributeName}) != ''
-  and ${attributeName} not in (
-  select attribute_value
-  from voyageone_cms.cms_mt_feed_attribute
-  where attribute_name = ${attributeName_value}
-  and channel_id = ${channelId})) a
-</insert> -->
-
   <!-- 插入SuperfeedFull产品信息 -->
   <insert id="cms_superfeed_inertSuperfeedFull" parameterType="HashMap">
 insert ignore into  ${tableNameFull}
@@ -832,4 +818,12 @@ insert ignore into  ${tableNameFull}
     and attribute_name = #{attributeName}
     and attribute_value = #{attributeValue}
   </select>
+
+  <!-- 更新UpdateFlag 清除update -->
+  <update id="cms_changeUpdateDateFlag" parameterType="HashMap">
+    update ${tableName}
+    set UpdateFlag = '0'
+    where ${keyword}
+    and ${category} in (${categoryvalue})
+  </update>
 </mapper>
