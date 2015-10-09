@@ -52,6 +52,8 @@ public abstract class PostOrderLogic {
 	protected Double orderProductTotal = 0.0;
 	// order discount total
 	protected Double orderDiscountTotal = 0.0;
+
+	protected  Double surchargeTotal = 0.0;
 	// 对美元的汇率
 	protected Double dbRate;
 
@@ -162,6 +164,8 @@ public abstract class PostOrderLogic {
 		// order discount total
 		orderDiscountTotal = 0.0;
 
+		surchargeTotal = 0.0;
+
 		if (dtOrderDetails.size() > 0) {
 			for (Map<String, Object> item : dtOrderDetails) {
 				// process Shipping Fee
@@ -176,7 +180,7 @@ public abstract class PostOrderLogic {
 					String[] splitName = discountName.split("[$]");
 					Double discount = Double.valueOf(item.get("PricePerUnit").toString());
 					// get USD Discount
-					discount = round((Math.abs(discount) / dbRate));
+					discount = round((discount / dbRate)) * -1;
 					// when Product Discount
 					if (splitName.length > 1) {
 						if(!productDiscount.containsKey(splitName[1]))
@@ -189,6 +193,8 @@ public abstract class PostOrderLogic {
 					} else {
 						orderDiscount = orderDiscount + discount;
 					}
+				} else if ("surcharge".equals(item.get("SKU").toString().toLowerCase())) {
+					surchargeTotal +=  round(Double.valueOf(item.get("PricePerUnit").toString()) / dbRate);
 				} else {
 					// Product Fee
 					Double price = Double.valueOf(item.get("PricePerUnit").toString());
@@ -234,6 +240,17 @@ public abstract class PostOrderLogic {
 					productDiscount.put(sku, discount);
 				} else {
 					productDiscount.put(sku, percentDiscount);
+				}
+			}
+		}
+		// surcharge的金额从discount中拿出
+		if(surchargeTotal > 0 ){
+			for (Entry<String, Double> de : productDiscount.entrySet()){
+				String sku = de.getKey().toString();
+				Double discount = Double.valueOf((de.getValue().toString()));
+				if (discount >= surchargeTotal){
+					productDiscount.put(sku,discount-surchargeTotal);
+					break;
 				}
 			}
 		}
