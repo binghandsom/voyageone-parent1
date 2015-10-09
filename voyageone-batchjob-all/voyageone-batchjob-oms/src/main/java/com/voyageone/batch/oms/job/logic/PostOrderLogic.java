@@ -249,7 +249,7 @@ public abstract class PostOrderLogic {
 				String sku = de.getKey().toString();
 				Double discount = Double.valueOf((de.getValue().toString()));
 				if (discount >= surchargeTotal){
-					productDiscount.put(sku,discount-surchargeTotal);
+					productDiscount.put(sku,round(discount-surchargeTotal));
 					break;
 				}
 			}
