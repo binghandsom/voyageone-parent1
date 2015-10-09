@@ -97,10 +97,11 @@ public class SuperFeedDao extends BaseDao {
      * @param tableName code
      * @return
      */
-    public int updateInsertData(String tableName,  String code, String codes) {
+    public int updateInsertData(String tableName, String keyword ,String code, String codes) {
         Map<String, Object> params = new HashMap<>();
 
-        params.put("tableName",tableName);
+        params.put("tableName",tableName);;
+        params.put("keyword",keyword);
         params.put("code",code);
         params.put("codes",codes);
 
@@ -312,6 +313,25 @@ public class SuperFeedDao extends BaseDao {
 
         return selectList(Constants.DAO_NAME_SPACE_CMS + "cms_superfeed_selectUpdateData", params);
     }
+
+
+    /**
+     * insert model date change UpdateFlag
+     *
+     * @param tableName tableName model code codes keyword
+     * @return
+     */
+    public int changeUpdateDateFlag(String tableName, String keyword, String category, String categoryvalue) {
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("tableName",tableName);
+        params.put("keyword",keyword.replace("and",""));
+        params.put("category",category);
+        params.put("categoryvalue",categoryvalue);
+
+        return updateTemplate.update(Constants.DAO_NAME_SPACE_CMS + "cms_changeUpdateDateFlag", params);
+    }
+
 
     /**
      * 取得Attribute数据 All Attribute
