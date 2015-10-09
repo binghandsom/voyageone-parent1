@@ -396,4 +396,53 @@ define (function (require) {
                 return defer.promise;
             };
         }]);
+
+    omsApp.service ('rateService', ['$q', 'omsAction', 'omsType', 'ajaxService', 'omsCommonService',
+        function ($q, omsAction, omsType, ajaxService, omsCommonService) {
+
+            /**
+             * get the code list for this page.
+             * @returns {r.promise|promise|qFactory.Deferred.promise|x.ready.promise|fd.g.promise}
+             */
+            this.doGetCodeList = function () {
+                var defer = $q.defer ();
+                var codeTypeList = [];
+                codeTypeList.push ({id: omsType.currencyType, showBlank: true});
+
+                omsCommonService.doGetCodeList (codeTypeList)
+                    .then (function (data) {
+                    defer.resolve (data);
+                });
+
+                return defer.promise;
+            };
+
+            /**
+             * 检索操作
+             * @param data
+             * @returns {*}
+             */
+            this.doSaveRate = function (data) {
+                var defer = $q.defer ();
+                ajaxService.ajaxPostWithData (data, omsAction.oms_orders_accounting_doSaveRate)
+                    .then (function (response) {
+                    defer.resolve (response.data);
+                });
+                return defer.promise;
+            };
+
+            /**
+             * 检索操作
+             * @param data
+             * @returns {*}
+             */
+            this.doSearch = function (data) {
+                var defer = $q.defer ();
+                ajaxService.ajaxPostWithData (data, omsAction.oms_orders_accounting_doSearchRate)
+                    .then (function (response) {
+                    defer.resolve (response.data);
+                });
+                return defer.promise;
+            };
+        }]);
 });
