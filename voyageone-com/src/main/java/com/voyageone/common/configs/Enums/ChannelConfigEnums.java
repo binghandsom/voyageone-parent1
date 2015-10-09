@@ -284,7 +284,11 @@ public class ChannelConfigEnums {
         /**
          * 最大允许sku种类数（手动）
          */
-        manual_approved_max_sku_kind_number
+        manual_approved_max_sku_kind_number,
+        /**
+         * 非真实姓名的限制
+         */
+        is_true_name_check
 
     }
 
