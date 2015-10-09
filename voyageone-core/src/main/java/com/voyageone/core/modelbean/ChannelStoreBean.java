@@ -1,9 +1,11 @@
 package com.voyageone.core.modelbean;
 
+import java.io.Serializable;
+
 /**
  * Created by Jonas on 4/13/2015.
  */
-public class ChannelStoreBean {
+public class ChannelStoreBean implements Serializable {
     private int store_id;
     private String store_name;
 

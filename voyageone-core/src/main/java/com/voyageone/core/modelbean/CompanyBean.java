@@ -1,8 +1,9 @@
 package com.voyageone.core.modelbean;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class CompanyBean {
+public class CompanyBean implements Serializable {
 
 	private int companyId;
 

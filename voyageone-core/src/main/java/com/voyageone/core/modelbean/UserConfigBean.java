@@ -1,9 +1,11 @@
 package com.voyageone.core.modelbean;
 
+import java.io.Serializable;
+
 /**
  * Created by Jonas on 4/13/2015.
  */
-public class UserConfigBean {
+public class UserConfigBean implements Serializable {
     private int user_id;
 
     private String cfg_name;

@@ -1,9 +1,11 @@
 package com.voyageone.core.modelbean;
 
+import java.io.Serializable;
+
 /**
  * Created by Jonas on 4/13/2015.
  */
-public class UserHardwareConfigBean {
+public class UserHardwareConfigBean implements Serializable {
     private int user_id;
 
     private String hardware_key;
