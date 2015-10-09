@@ -16,8 +16,8 @@
 								</div>
 							</li>
 						</ul>
-						<button ng-if="!isSave&&!isNew" style="margin-left: 10px;" class="btn btn-vo btn-xl" type="button" ng-click="switchCategory()"><i class="fa fa-check-square fa-1x"></i>&nbsp;确认</button>
-				        <button ng-if="!isSave&&!isNew" style="margin-left: 10px;" class="btn btn-vo btn-xl" ng-click="revertCategory()"><i class="fa fa-undo fa-1x"></i>&nbsp;重置</button>
+						<button ng-if="!isSave && !isNew" style="margin-left: 10px;" class="btn btn-vo btn-xl" type="button" ng-click="switchCategory()"><i class="fa fa-check-square fa-1x"></i>&nbsp;确认</button>
+				        <button ng-if="!isSave && !isNew" style="margin-left: 10px;" class="btn btn-vo btn-xl" ng-click="revertCategory()"><i class="fa fa-undo fa-1x"></i>&nbsp;重置</button>
          			</div>
 			        <div class="col-sm-7 pull-left">
 				       	<h4 class="m-n font-thin text-vo pull-left" translate="" ng-bind="currentCategoryName"></h4>
@@ -40,8 +40,17 @@
 						 <div class="panel-collapse">
 						      <div class="panel-body">
 						          <div class="hbox hbox-auto-xs no-border vo_prodBox">
-						          	
-						          	<div class="col-sm-10 p-l-none p-r-none"  ng-if="!isError&&isReady">
+									  <div ng-if="isError"  class="proErrMsg">
+										  <div class="proErrMsgList"><strong ng-bind="errMsg"></strong></div>
+									  </div>
+									  <div ng-if="isNew"  class="proErrMsg">
+										  <div class="proWarningMsgList">请选择一个类目</div>
+									  </div>
+									  <div ng-if="!isReady"  class="proErrMsg">
+										  <div class="proWarningMsgList"><span  translate="CMS_MSG_MASTER_PROP_VALUE_SETTING_CATEGORY_NODATA"></span><p><br>{{sec}}秒后将返回到上一个页面</p></div>
+										  <div style="padding-top: 30px;"><button class="btn btn-vo pull-right" ng-click="doGoBack()"><i class="fa fa-reply fa-1x"></i>立即返回</button></div>
+									  </div>
+						          	<div class="col-sm-10 p-l-none p-r-none"  ng-if="!isError && isReady">
 						                <div class="col vo_prodDataPanel">
 						                    <div class="categoryFormTitle">
 												<div class="categoryList">
@@ -55,7 +64,7 @@
 										</div>
 									</div>
 									
-									<div class="col-sm-2 p-l-none p-r-none col no-padder bg-light vo_prodDetailPanel" style="width:15%;border-top:1px solid #d4cfcf;margin-top: 220px;margin-right: 35px;position:fixed;" ng-show="!isError&&isPhotosShow">
+									<div class="col-sm-2 p-l-none p-r-none col no-padder bg-light vo_prodDetailPanel" style="width:15%;border-top:1px solid #d4cfcf;margin-top: 220px;margin-right: 35px;position:fixed;" ng-if="isPhotosShow">
 										<div id="vo_fixProdPanel">
 											<p class="photosTittle">product photos</p>
 											<div class="vo_prodGallery">
@@ -71,16 +80,7 @@
 										</div>
 									</div>
 
-									  <div ng-if="isError"  class="proErrMsg">
-										  <div class="proErrMsgList"><strong ng-bind="errMsg"></strong></div>
-									  </div>
-									  <div ng-if="isNew"  class="proErrMsg">
-										  <div class="proWarningMsgList"><h3>请选择一个类目</h3></div>
-									  </div>
-									  <div ng-if="!isReady"  class="proErrMsg">
-										  <div class="proWarningMsgList"><span  translate="CMS_MSG_MASTER_PROP_VALUE_SETTING_CATEGORY_NODATA"></span><p><br>{{sec}}秒后将返回到上一个页面</p></div>
-										  <div style="padding-top: 30px;"><button class="btn btn-vo pull-right" ng-click="doGoBack()"><i class="fa fa-reply fa-1x"></i>立即返回</button></div>
-									  </div>
+
 
 								</div>
 							</div>
@@ -120,7 +120,7 @@
 				<ul>
 					<li ng-repeat="rule in model.rules">
 						<div ng-if="rule.prop_rule_url">
-							<span>{{rule.prop_rule_value}}</span><a ng-href="{{rule.prop_rule_url}}">（查看详情）</a>
+							<span>{{rule.prop_rule_value}}</span>&nbsp;<span class="rule-nolink"><a ng-href="{{rule.prop_rule_url}}">查看详情</a></span>
 						</div>
 						<div ng-if="!rule.prop_rule_url">
 							<span ng-bind="rule.decodeRule"></span>
@@ -147,7 +147,7 @@
 				<ul>
 					<li ng-repeat="rule in model.rules">
 						<div ng-if="rule.prop_rule_url">
-							<span>{{rule.prop_rule_value}}</span><a ng-href="{{rule.prop_rule_url}}">（查看详情）</a>
+							<span>{{rule.prop_rule_value}}</span>&nbsp;<span class="rule-nolink"><a ng-href="{{rule.prop_rule_url}}">查看详情</a></span>
 						</div>
 						<div ng-if="!rule.prop_rule_url">
 							<span ng-bind="rule.decodeRule"></span>
@@ -169,7 +169,7 @@
 				<ul>
 					<li ng-repeat="rule in model.rules">
 						<div ng-if="rule.prop_rule_url">
-							<span>{{rule.prop_rule_value}}</span><a ng-href="{{rule.prop_rule_url}}">（查看详情）</a>
+							<span>{{rule.prop_rule_value}}</span>&nbsp;<span class="rule-nolink"><a ng-href="{{rule.prop_rule_url}}">查看详情</a></span>
 						</div>
 						<div ng-if="!rule.prop_rule_url">
 							<span ng-bind="rule.decodeRule"></span>
@@ -195,7 +195,7 @@
 				<ul>
 					<li ng-repeat="rule in model.rules">
 						<div ng-if="rule.prop_rule_url">
-							<span>{{rule.prop_rule_value}}</span><a ng-href="{{rule.prop_rule_url}}">（查看详情）</a>
+							<span>{{rule.prop_rule_value}}</span>&nbsp;<span class="rule-nolink"><a ng-href="{{rule.prop_rule_url}}">查看详情</a></span>
 						</div>
 						<div ng-if="!rule.prop_rule_url">
 							<span ng-bind="rule.decodeRule"></span>
@@ -215,7 +215,7 @@
 				<ul>
 					<li ng-repeat="rule in model.rules">
 						<div ng-if="rule.prop_rule_url">
-							<span>{{rule.prop_rule_value}}</span><a ng-href="{{rule.prop_rule_url}}">（查看详情）</a>
+							<span>{{rule.prop_rule_value}}</span>&nbsp;<span class="rule-nolink"><a ng-href="{{rule.prop_rule_url}}">查看详情</a></span>
 						</div>
 						<div ng-if="!rule.prop_rule_url">
 							<span ng-bind="rule.decodeRule"></span>
@@ -241,7 +241,7 @@
 				<ul>
 					<li ng-repeat="rule in model.rules">
 						<div ng-if="rule.prop_rule_url">
-							<span>{{rule.prop_rule_value}}</span><a ng-href="{{rule.prop_rule_url}}">（查看详情）</a>
+							<span>{{rule.prop_rule_value}}</span>&nbsp;<span class="rule-nolink"><a ng-href="{{rule.prop_rule_url}}">查看详情</a></span>
 						</div>
 						<div ng-if="!rule.prop_rule_url">
 							<span ng-bind="rule.decodeRule"></span>
