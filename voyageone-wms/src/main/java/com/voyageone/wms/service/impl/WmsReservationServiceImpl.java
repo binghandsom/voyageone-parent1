@@ -1,7 +1,9 @@
 package com.voyageone.wms.service.impl;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
+import com.google.gson.Gson;
 import com.taobao.top.schema.Util.StringUtil;
 import com.voyageone.base.BaseAppService;
 import com.voyageone.base.exception.BusinessException;
@@ -199,8 +201,13 @@ public class WmsReservationServiceImpl implements WmsReservationService {
 		}else{
 			resultMap.put(WmsConstants.Common.SUCCESEFLG, true);
 		}
+		// 获取渠道
+		HashMap<String, PermissionBean> propertyPermissions = user.getPropertyPermissions();
+		List<PermissionBean> propertyList = propertyPermissions.keySet().stream().map(propertyPermissions::get).collect(Collectors.toList());
+
 		result.setResult(true);
 		resultMap.put("productInfo", formReservation);
+		resultMap.put("channel", propertyList);
 		result.setResultInfo(resultMap);
 		result.writeTo(request, response);
 		//logger.info(result.toString());
@@ -211,7 +218,7 @@ public class WmsReservationServiceImpl implements WmsReservationService {
 		Map<String, Object> resultMap = new HashMap<>();
 		AjaxResponseBean result = new AjaxResponseBean();
 		FormReservation formReservation_param = JsonUtil.jsonToBean(JsonUtil.getJsonString(object), FormReservation.class);
-        setFormCommonValue(formReservation_param, user);
+		setFormCommonValue(formReservation_param, user);
 		//获取仓库列表
 		List<FormReservation> formReservation_store = reservationDao.getStoreByChannelId(formReservation_param);
 		//获取产品列表

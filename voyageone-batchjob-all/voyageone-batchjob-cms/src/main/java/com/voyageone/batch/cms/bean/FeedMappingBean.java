@@ -1,7 +1,7 @@
 package com.voyageone.batch.cms.bean;
 
 /**
- * MainPropTodoListBean
+ * FeedMappingBean
  * Created by tom on 7/28/2015.
  *
  * @author tom

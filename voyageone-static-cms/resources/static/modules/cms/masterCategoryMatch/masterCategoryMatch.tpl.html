@@ -3,8 +3,8 @@
   <div class="row">
     <div class="vo_page_title col-sm-1"><h1 class="m-n font-thin h3 text-vo">类目列表</h1></div><!-- .vo_page_title -->
         <div class="col-sm-5 pull-right">
-		<button ng-click = "filterPropDisMatchCategory()" class="btn m-b-xs btn-sm btn-success fa fa-list-alt pull-right"> 属性匹配未完成类目</button>
-		<button ng-click = "filterDisMatchCategory($event)" class="btn m-b-xs btn-sm btn-success fa fa-list-alt pull-right"> 未匹配类目</button>
+		<button ng-if="!filterByCategory" ng-click = "filterPropDisMatchCategory($event)" class="btn m-b-xs btn-sm btn-success fa fa-list-alt pull-right"> 属性匹配未完成类目</button>
+		<button ng-if="!filterByProp" ng-click = "filterDisMatchCategory($event)" class="btn m-b-xs btn-sm btn-success fa fa-list-alt pull-right"> 未匹配类目</button>
           
         </div><!-- .col-sm-5 -->
   </div><!-- .row -->
@@ -43,8 +43,8 @@
                     <td class="fixed">
                       <div class="form-inline">
                         <div  class="btn-group">
-                          <button type="button" class="btn btn-primary btn-sm fa fa-list-alt">&nbsp;类目匹配</button>
                           <button type="button" ng-click="showMasterCategoryDiv(this,$event)" class="btn btn-primary dropdown-toggle btn-sm fa">
+                          &nbsp;类目匹配
                             <span class="caret"></span>
                             <span class="sr-only">Split button!</span>
                           </button>

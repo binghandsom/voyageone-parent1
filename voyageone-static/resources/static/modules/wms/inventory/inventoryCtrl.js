@@ -29,6 +29,8 @@ define([
             rows: 20 //分頁用pageSize
         };
 
+        var cb = $scope.cb = {};
+
         //点击查询按钮
         $scope.doSearch = doSearch;
 
@@ -52,6 +54,10 @@ define([
         //初始化
         function init() {
             popInventoryService.popInit(vm).then(function(response) {
+                cb.channel = response.data.channel;
+                if (response.data.channel.length > 0) {
+                    vm.order_channel_id = response.data.channel[0].propertyId;
+                }
                 doSearch(1);
             });
         }

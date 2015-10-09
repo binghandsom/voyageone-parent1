@@ -1,16 +1,12 @@
 package com.voyageone.cms.modelbean;
 
-public class PropertyOption {
+public class PropertyOption  extends BaseModel{
     
     private int prop_option_id;
     private int prop_id;
     private String prop_option_name;
     private String prop_option_value;
-    private String created;
-    private String creater;
-    private String modified;
-    private String modifier;
-    
+    private String selectedValue;
     public int getProp_option_id() {
         return prop_option_id;
     }
@@ -35,29 +31,11 @@ public class PropertyOption {
     public void setProp_option_value(String prop_option_value) {
         this.prop_option_value = prop_option_value;
     }
-    public String getCreated() {
-        return created;
-    }
-    public void setCreated(String created) {
-        this.created = created;
-    }
-    public String getCreater() {
-        return creater;
-    }
-    public void setCreater(String creater) {
-        this.creater = creater;
-    }
-    public String getModified() {
-        return modified;
-    }
-    public void setModified(String modified) {
-        this.modified = modified;
-    }
-    public String getModifier() {
-        return modifier;
-    }
-    public void setModifier(String modifier) {
-        this.modifier = modifier;
-    }
+	public String getSelectedValue() {
+		return selectedValue;
+	}
+	public void setSelectedValue(String selectedValue) {
+		this.selectedValue = selectedValue;
+	}
 
 }
