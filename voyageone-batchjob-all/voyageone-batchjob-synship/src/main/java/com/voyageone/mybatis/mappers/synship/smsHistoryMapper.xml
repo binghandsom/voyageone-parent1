@@ -25,11 +25,14 @@
         FROM
             tt_sms_history history
         WHERE
-            history.sent_conent IS NOT NULL
-            AND history.sent_conent != ''
-            AND history.sent_type = #{sent_type}
+            history.sent_type = #{sent_type}
             AND history.sms_flg = #{sms_flg}
             AND history.order_channel_id = #{order_channel_id}
+            AND history.sent_conent IS NOT NULL
+            AND history.sent_conent != ''
+        ORDER BY
+          history.task_id,
+          history.auto_no
         LIMIT #{limit};
     </select>
 
