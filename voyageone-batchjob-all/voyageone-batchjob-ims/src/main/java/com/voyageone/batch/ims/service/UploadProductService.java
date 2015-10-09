@@ -167,6 +167,8 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                 workLoadSelected.setNumId(productPublishBean.getNum_iid());
                 workLoadSelected.setProductId(String.valueOf(productPublishBean.getPublish_product_id()));
                 workLoadSelected.setIsPublished(productPublishBean.getIs_published());
+                //默认没有sku属性，当检测到有sku时，会置为true
+                workLoadSelected.setHasSku(false);
                 if (productPublishBean.getMain_product_flg() == 1) {
                     workLoadSelected.setMainCode(productPublishBean.getCode());
                 }
@@ -221,6 +223,12 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                     } else {
                         productPublishBean.setPublish_product_status(0);
                     }
+                    if (workLoadBean.isHasSku()) {
+                        productPublishBean.setQuality_update_type("s");
+                    } else {
+                        productPublishBean.setQuality_update_type("p");
+                    }
+
                     //成功时，publish_status设为1
                     productPublishBean.setPublish_status(1);
                     productPublishBean.setModifier(getTaskName());
