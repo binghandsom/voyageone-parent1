@@ -77,28 +77,35 @@ define (function (require) {
         //add by lewis start
         'cms_masterPropValue_setting': {
             'hash': '/cms/setPropValue/masterProperty',
-            'page': '/modules/cms/masterPropValueSetting/masterPropValueSetting.tpl.html',
-            'controller': 'modules/cms/masterPropValueSetting/masterPropValueSettingController'
+            'page': '/modules/cms/master/masterPropValueSetting/masterPropValueSetting.tpl.html',
+            'controller': 'modules/cms/master/masterPropValueSetting/masterPropValueSetting.ctl'
         },
         //add by lewis end
-        'cms_search_advance': {
-            'hash': '/cms/search/advance',
+        //add by lewis end
+        //'cms_search_advance_us': {
+        //    'hash': '/cms/search/advance/us',
+        //    'page': '/modules/cms/search/advanceSearch.tpl.html',
+        //    'controller': 'modules/cms/search/advanceSearch.ctl'
+        //},
+        //add by lewis end
+        'cms_search_advance_cn': {
+            'hash': '/cms/search/advance/cn',
             'page': '/modules/cms/search/advanceSearch.tpl.html',
             'controller': 'modules/cms/search/advanceSearch.ctl'
         },
         //add by lewis start 2015-09-01
         'cms_masterCategory_match': {
             'hash': '/cms/masterCategory/match',
-            'page': '/modules/cms/masterCategoryMatch/masterCategoryMatch.tpl.html',
-            'controller': 'modules/cms/masterCategoryMatch/masterCategoryMatch.ctl'
+            'page': '/modules/cms/master/masterCategoryMatch/masterCategoryMatch.tpl.html',
+            'controller': 'modules/cms/master/masterCategoryMatch/masterCategoryMatch.ctl'
         },
         //add by lewis end 2015-09-01
         
         //add by lewis start 2015-09-10
         'cms_feedCommonProperty_setting': {
             'hash': '/cms/feedCommonProperty/setting',
-            'page': '/modules/cms/feedDefaultPropSetting/feedDefaultPropSetting.tpl.html',
-            'controller': 'modules/cms/feedDefaultPropSetting/feedDefaultPropSetting.ctl'
+            'page': '/modules/cms/master/feedDefaultPropSetting/feedDefaultPropSetting.tpl.html',
+            'controller': 'modules/cms/master/feedDefaultPropSetting/feedDefaultPropSetting.ctl'
         },
         //add by lewis end 2015-09-01
 

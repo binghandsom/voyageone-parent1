@@ -50,7 +50,8 @@
                 /core/account/company/doSelectCompany,
                 /core/menu/home/doGetAnnouncements,
                 /core/setting/user/doChgPassword,
-                /core/account/login/doGetUserInfo
+                /core/account/login/doGetUserInfo,
+                /core/setting/user/doUpdateUserConfig
             </param-value>
         </init-param>
         <init-param>

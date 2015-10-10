@@ -3,13 +3,14 @@
  */
 package com.voyageone.core.modelbean;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * @author jacky
  *
  */
-public class MenuBean {
+public class MenuBean implements Serializable {
 
 	/**
 	 * 菜单名称

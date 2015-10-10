@@ -872,6 +872,14 @@ public class ConstructPropValue {
         customPlatformPropMapping.setCustomMappingType(CustomMappingType.TMALL_SHOP_CATEGORY);
         customPlatformPropMapping.setPlatformPropId("seller_cids");
         platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setCustomMappingType(CustomMappingType.PRICE_SECTION);
+        customPlatformPropMapping.setPlatformPropId("prop_13618191");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setCustomMappingType(CustomMappingType.PRICE_SECTION);
+        customPlatformPropMapping.setPlatformPropId("prop_21548");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
     }
 
     public static void constructTmallSkuInfo(PlatformSkuInfoDao platformSkuInfoDao) {
@@ -1175,8 +1183,8 @@ public class ConstructPropValue {
         constructProductValue(ruleJsonMapper, propValueDao, util);
         constructItemValue(ruleJsonMapper, propValueDao, util);
         */
-//        constructPlatformPropMappingCustom(platformPropCustomMappingDao);
-        constructTmallSkuInfo(platformSkuInfoDao);
+        constructPlatformPropMappingCustom(platformPropCustomMappingDao);
+//        constructTmallSkuInfo(platformSkuInfoDao);
         //constructDictInfo(dictWordDao);
     }
 

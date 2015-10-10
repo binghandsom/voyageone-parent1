@@ -49,7 +49,7 @@ define(['modules/cms/cms.module', 'modules/cms/master/matchProps/matchProps.serv
         };
       })(this));
       this.dtProps = {
-        options: DTOptionsBuilder.newOptions().withOption('processing', true).withOption('serverSide', true).withOption('ordering', false).withOption('ajax', this.dtGetProps).withOption('createdRow', (function(_this) {
+        options: DTOptionsBuilder.newOptions().withOption('processing', true).withOption('serverSide', true).withOption('ordering', false).withOption('searching', false).withOption('ajax', this.dtGetProps).withOption('createdRow', (function(_this) {
           return function(tr, row) {
             var rowScope;
             rowScope = _this.$scope.$new();
@@ -60,8 +60,12 @@ define(['modules/cms/cms.module', 'modules/cms/master/matchProps/matchProps.serv
         columns: [
           DTColumnBuilder.newColumn('prop_name', this.$translate(KEYS.NAME)).withClass('col-sm-5'), DTColumnBuilder.newColumn('prop_type', this.$translate(KEYS.TYPE)).withClass('col-sm-1').renderWith(function(v, t, r) {
             return r.typeName;
-          }), DTColumnBuilder.newColumn('prop_value_default', this.$translate(KEYS.VALUE)).withClass('col-sm-2').renderWith(function() {
-            return '?';
+          }), DTColumnBuilder.newColumn('val_count', this.$translate(KEYS.VALUE)).withClass('col-sm-2').renderWith(function(val) {
+            if (val > 0) {
+              return '已设置';
+            } else {
+              return '无';
+            }
           }), DTColumnBuilder.newColumn('is_required', this.$translate(KEYS.REQUIRED)).withClass('col-sm-1').renderWith((function(_this) {
             return function(val) {
               return _this.$translate.instant(val === 0 ? KEYS.NO : KEYS.YES);
@@ -74,6 +78,20 @@ define(['modules/cms/cms.module', 'modules/cms/master/matchProps/matchProps.serv
         ],
         instance: null
       };
+      this.$scope.$watch('vm.filter.ignored', ((function(_this) {
+        return function() {
+          if (_this.dtProps.instance) {
+            return _this.dtProps.instance.reloadData();
+          }
+        };
+      })(this)));
+      this.$scope.$watch('vm.filter.required', ((function(_this) {
+        return function() {
+          if (_this.dtProps.instance) {
+            return _this.dtProps.instance.reloadData();
+          }
+        };
+      })(this)));
     }
 
     _Class.prototype.options = [
@@ -106,7 +124,8 @@ define(['modules/cms/cms.module', 'modules/cms/master/matchProps/matchProps.serv
 
     _Class.prototype.filter = {
       ignored: '',
-      required: ''
+      required: '',
+      propName: ''
     };
 
     _Class.prototype.getConst = function() {
@@ -132,6 +151,7 @@ define(['modules/cms/cms.module', 'modules/cms/master/matchProps/matchProps.serv
       data.param = this.category.id;
       data.columns[3].search.value = this.filter.required;
       data.columns[4].search.value = this.filter.ignored;
+      data.search.value = this.filter.propName;
       return this.matchPropsService.getProps(data).then((function(_this) {
         return function(res) {
           draw(res.data);

@@ -50,6 +50,14 @@ public class SendSMSService  extends BaseTaskService {
         return "SendSMSJob";
     }
 
+    /**
+     * 获取打印的日志是否需要包含线程
+     */
+    @Override
+    public boolean getLogWithThread() {
+        return true;
+    }
+
     private final int SMS_TIME_OUT = -9025;
 
     private final int PHONE_NUM_ERR = -3;
@@ -98,7 +106,7 @@ public class SendSMSService  extends BaseTaskService {
         }
 
         public void doRun() {
-            logger.info(channel.getFull_name() + " 定时发送短信开始");
+            $info(channel.getFull_name() + " 定时发送短信开始");
             YMSMSSendBean ymsmsSendBean;
             // 短信内容
             String content = "";
@@ -119,10 +127,10 @@ public class SendSMSService  extends BaseTaskService {
                 // 每条短信的费用
                 eachFee = Double.valueOf(SMS_COST);
 
-                logger.info(channel.getFull_name() + "----------定时发送短信件数：" + sendSMSLstLst.size());
+                $info(channel.getFull_name() + "----------定时发送短信件数：" + sendSMSLstLst.size());
                 // 签名内容设定
                 String signName = String.format(SynshipConstants.SMS_CHECK.SIGN_NAME, channel.getFull_name());
-                logger.info("短信签名：" + signName);
+                $info("短信签名：" + signName);
                 // 发送短信
                 for (SmsHistoryBean sendSMSBean : sendSMSLstLst) {
                     // 判断同一号码发送次数
@@ -137,7 +145,7 @@ public class SendSMSService  extends BaseTaskService {
                     } else {
                         // 判断现有签名不正确
                         if (sendSMSBean.getSent_conent().startsWith(charCheck)){
-                            logger.info(channel.getFull_name() + "定时发送短信时短信内容中签名不正确：" + sendSMSBean.getSent_conent());
+                            $info(channel.getFull_name() + "定时发送短信时短信内容中签名不正确：" + sendSMSBean.getSent_conent());
                             logIssue(channel.getFull_name() + "定时发送短信时短信内容中签名不正确:" + " order_channel_id = " + sendSMSBean.getOrder_channel_id() +
                                     ",  phone = " + sendSMSBean.getShip_phone()+ ",  conent = " + sendSMSBean.getSent_conent());
                             continue;
@@ -146,11 +154,11 @@ public class SendSMSService  extends BaseTaskService {
                             content = signName + sendSMSBean.getSent_conent();
                         }
                     }
-                    logger.info("order_channel_id = " + sendSMSBean.getOrder_channel_id() + ",  phone = " + sendSMSBean.getShip_phone() + ",  conent = " + content);
+                    $info("order_channel_id = " + sendSMSBean.getOrder_channel_id() + ",  phone = " + sendSMSBean.getShip_phone() + ",  conent = " + content);
                     ymsmsSendBean = formatYMSMSSendBean(sendSMSBean.getOrder_channel_id(), sendSMSBean.getShip_phone(), content);
                     try {
                         Integer sendFlg = ymSmsSendService.sendSMS(ymsmsSendBean);
-                        logger.info("发送短信返回值 = " + sendFlg.toString());
+                        $info("发送短信返回值 = " + sendFlg.toString());
                         // 发送成功
                         if (sendFlg == 0) {
                             updateSmsHistory(sendSMSBean,content,eachFee,SMS_WORDS);
@@ -170,7 +178,7 @@ public class SendSMSService  extends BaseTaskService {
                             sendErrToIssue(sendFlg,sendSMSBean.getShip_phone());
                         }
                     } catch (Exception e) {
-                        logger.error(channel.getFull_name() + "定时发送短信发生错误：", e);
+                        $info(channel.getFull_name() + "定时发送短信发生错误：", e);
                         logIssue(e.getMessage(), channel.getFull_name() + "定时发送短信发生错误:" +  " order_channel_id = " + sendSMSBean.getOrder_channel_id() +
                                 ",  phone = " + sendSMSBean.getShip_phone()+ ",  conent = " + sendSMSBean.getSent_conent());
                     }
@@ -178,10 +186,10 @@ public class SendSMSService  extends BaseTaskService {
                 // 短信余额判断
                 checkBalance(sendSMSLstLst.size());
             } catch (Exception e) {
-                logger.error(channel.getFull_name() + "定时发送短信发生错误：", e);
+                $info(channel.getFull_name() + "定时发送短信发生错误：", e);
                 logIssue(e.getMessage(), channel.getFull_name() + "定时发送短信发生错误");
             }
-            logger.info(channel.getFull_name() + " 定时发送短信结束");
+            $info(channel.getFull_name() + " 定时发送短信结束");
         }
 
         /**
@@ -234,7 +242,7 @@ public class SendSMSService  extends BaseTaskService {
          */
         private void updateSmsHistory(SmsHistoryBean sendSMSBean,String conent,double eachFee,String smsWords ){
 
-            logger.info("更新sms_history开始");
+            $info("更新sms_history开始");
             // 更新sms_history表
             double count = Math.ceil((double) conent.length() / Double.valueOf(smsWords));
             double smsFee = count * eachFee;
@@ -248,13 +256,13 @@ public class SendSMSService  extends BaseTaskService {
             try {
                 smsHistoryDao.UpdateSmsHistory(sendSMSBean);
             } catch (Exception e) {
-                logger.error(channel.getFull_name() + "更新sms_history发生错误：", e);
+                $info(channel.getFull_name() + "更新sms_history发生错误：", e);
                 logIssue(e.getMessage(), channel.getFull_name() + "更新sms_history发生错误");
             }
             // 同一号码发送次数的统计
             Integer sentCount = mapPhone.get(sendSMSBean.getShip_phone()) + 1;
             mapPhone.put(sendSMSBean.getShip_phone(), sentCount);
-            logger.info("更新sms_history结束");
+            $info("更新sms_history结束");
 
         }
 
@@ -267,7 +275,7 @@ public class SendSMSService  extends BaseTaskService {
          */
         private void updateSmsHistoryStatus(SmsHistoryBean sendSMSBean,String status ){
 
-            logger.info("更新sms_history  status开始");
+            $info("更新sms_history  status开始");
             // 更新sms_history表
             sendSMSBean.setSms_flg(status);
             sendSMSBean.setUpdate_time(DateTimeUtil.getNow());
@@ -275,10 +283,10 @@ public class SendSMSService  extends BaseTaskService {
             try {
                 smsHistoryDao.UpdateSmsHistoryStatus(sendSMSBean);
             } catch (Exception e) {
-                logger.error(channel.getFull_name() + "更新sms_history status发生错误：", e);
+                $info(channel.getFull_name() + "更新sms_history status发生错误：", e);
                 logIssue(e.getMessage(), channel.getFull_name() + "更新sms_history status发生错误");
             }
-            logger.info("更新sms_history  status结束");
+            $info("更新sms_history  status结束");
         }
 
 
@@ -292,13 +300,13 @@ public class SendSMSService  extends BaseTaskService {
         private void sendErrToIssue(int sendFlg,String phone){
             // 记录错误至IssueLog表
             if (SynshipConstants.SMS_ERR_INFO.CONTENTS.containsKey(sendFlg)) {
-                logger.error(channel.getFull_name() + " 返回值 = " + String.valueOf(sendFlg) + " Phone = " + phone +
+                $info(channel.getFull_name() + " 返回值 = " + String.valueOf(sendFlg) + " Phone = " + phone +
                         "  定时发送短信返回错误：" + SynshipConstants.SMS_ERR_INFO.CONTENTS.get(sendFlg));
                 // 根据返回错误KEY，可以找到错误内容
                 logIssue(String.valueOf(sendFlg), channel.getFull_name() + " Phone = " + phone +
                         "  定时发送短信返回错误：" + SynshipConstants.SMS_ERR_INFO.CONTENTS.get(sendFlg));
             } else {
-                logger.error(channel.getFull_name() + " 返回值 = " + String.valueOf(sendFlg) + " Phone = " + phone +
+                $info(channel.getFull_name() + " 返回值 = " + String.valueOf(sendFlg) + " Phone = " + phone +
                         "  定时发送短信返回错误：错误信息未知");
                 // 根据返回错误KEY，可以找到错误内容
                 logIssue(String.valueOf(sendFlg), channel.getFull_name() + " Phone = " + phone +
@@ -317,13 +325,13 @@ public class SendSMSService  extends BaseTaskService {
                 double balance = 0d;
                 try {
                     balance = ymSmsSendService.getBalance();
-                    logger.info("短信账户的剩余金额(实际金额)： " + (balance / 2));
+                    $info("短信账户的剩余金额(实际金额)： " + (balance / 2));
                     // 余额不足200的场合，发送要求充值邮件(之所以用大于零而不是大于等于零的原因是防止误报)
                     if (balance > 0d && (balance / 2) < SynshipConstants.SMS_CHECK.ACCOUNT_BALANCE) {
                         logIssue("短信账户的剩余金额不足，请尽快充值", "短信账户的剩余金额:" + (balance / 2));
                     }
                 } catch (Exception e) {
-                    logger.error(channel.getFull_name() + "短信账户的剩余金额取得发生错误：", e);
+                    $info(channel.getFull_name() + "短信账户的剩余金额取得发生错误：", e);
                     logIssue(e.getMessage(), channel.getFull_name() + "短信账户的剩余金额取得发生错误");
                 }
             }

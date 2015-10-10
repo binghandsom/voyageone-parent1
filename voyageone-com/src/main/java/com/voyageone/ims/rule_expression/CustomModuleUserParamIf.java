@@ -7,6 +7,9 @@ public class CustomModuleUserParamIf extends CustomModuleUserParam {
     private RuleExpression condition;
     private RuleExpression propValue;
 
+    public CustomModuleUserParamIf() {
+    }
+
     public CustomModuleUserParamIf(RuleExpression condition, RuleExpression propValue) {
         this.condition = condition;
         this.propValue = propValue;

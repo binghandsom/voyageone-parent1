@@ -8,6 +8,8 @@
   @User: Jonas
   @Version: 0.0.1
  */
+var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
 define(['modules/cms/cms.module', 'modules/cms/popup/setMatchValue/popSetMatchValue.service', 'css!modules/cms/popup/setMatchValue/popSetMatchValue.css'], function(cmsModule) {
   return cmsModule.controller('SetMatchValueController', (function() {
     _Class.$inject = ['category', 'currProp', 'cmsProps', 'operations', 'feedProps', 'SetMatchValueService', 'notify'];
@@ -20,6 +22,7 @@ define(['modules/cms/cms.module', 'modules/cms/popup/setMatchValue/popSetMatchVa
       this.feedProps = feedProps;
       this.SetMatchValueService = SetMatchValueService;
       this.notify = notify;
+      this.findFeedProp = bind(this.findFeedProp, this);
       this.SetMatchValueService.getMappings(this.currProp.prop_id).then((function(_this) {
         return function(res) {
           return _this.mappings = res.data;
@@ -85,8 +88,31 @@ define(['modules/cms/cms.module', 'modules/cms/popup/setMatchValue/popSetMatchVa
 
     _Class.prototype.conditionChecked = false;
 
+    _Class.prototype.findFeedProp = function(name, val2) {
+      var i, j, len, len1, o, ref, ref1;
+      if (name) {
+        ref = this.feedProps;
+        for (i = 0, len = ref.length; i < len; i++) {
+          o = ref[i];
+          if (o.cfg_name === name) {
+            return o;
+          }
+        }
+      }
+      if (val2) {
+        ref1 = this.feedProps;
+        for (j = 0, len1 = ref1.length; j < len1; j++) {
+          o = ref1[j];
+          if (o.cfg_val2 === val2) {
+            return o;
+          }
+        }
+      }
+      return null;
+    };
+
     _Class.prototype.formatCondition = function(condition) {
-      var desc, operation;
+      var desc, operation, property;
       if (!condition) {
         return "";
       }
@@ -103,15 +129,36 @@ define(['modules/cms/cms.module', 'modules/cms/popup/setMatchValue/popSetMatchVa
           }
         };
       })(this))();
-      desc = "判断属性 [ " + condition.property + " ] " + operation.desc;
+      property = this.findFeedProp(condition.property);
+      desc = "判断属性 [ " + (property ? property.cfg_val2 : condition.property) + " ] " + operation.desc;
       if (!operation.single) {
         desc += " “ " + condition.value + " ”";
       }
       return desc += "时";
     };
 
+    _Class.prototype.formatValue = function(mapping) {
+      var property;
+      if (mapping.type !== this.feedPropMappingType.feed) {
+        return mapping.value;
+      }
+      property = this.findFeedProp(mapping.value);
+      if (property) {
+        return property.cfg_val2;
+      } else {
+        return mapping.value;
+      }
+    };
+
     _Class.prototype.add = function() {
       this.fromAdd = true;
+      this.selected = {
+        feed: null,
+        "default": this.selected["default"],
+        options: null,
+        cms: null,
+        value: null
+      };
       this.curr = {
         prop_id: this.currProp.prop_id,
         main_category_id: this.currProp.category_id
@@ -179,8 +226,7 @@ define(['modules/cms/cms.module', 'modules/cms/popup/setMatchValue/popSetMatchVa
       } else {
         return this.SetMatchValueService.setMapping(this.curr).then((function(_this) {
           return function(res) {
-            _this.mappings.splice(_this.editIndex, 1);
-            _this.mappings.push(res.data);
+            _this.mappings[_this.editIndex] = res.data;
             return _this.editing = false;
           };
         })(this));

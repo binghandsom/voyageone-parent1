@@ -1,11 +1,6 @@
 package com.voyageone.batch.cms.service;
 
 import com.csvreader.CsvReader;
-import javax.ws.rs.core.MediaType;
-
-import com.google.gson.GsonBuilder;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource;
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.cms.bean.*;
 import com.voyageone.batch.cms.utils.WebServiceUtil;
@@ -18,6 +13,7 @@ import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.configs.ChannelConfigs;
+import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feed;
@@ -63,12 +59,15 @@ public class CmsGetSuperFeedService extends BaseTaskService {
         // 允许运行的订单渠道取得
         List<String> orderChannelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
 
+		logger.info( "channel_id="+ TaskControlEnums.Name.order_channel_id  );
+		logger.info( "orderChannelIdList="+ orderChannelIdList.size()  );
 		// 线程
         List<Runnable> threads = new ArrayList<>();
 
         // 根据订单渠道运行
         for (final String orderChannelID : orderChannelIdList) {
 
+			logger.info( "channel_id=" +  orderChannelID );
             threads.add(new Runnable() {
                 @Override
                 public void run() {
@@ -95,14 +94,14 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 			ProductsFeedInsert productsFeed = new ProductsFeedInsert();
 
 			boolean isSuccess = true;
-			// 下载文件
-			try {
-				isSuccess = downloadFileForFtp(channel.getOrder_channel_id());
-			} catch (Exception e) {
-				e.printStackTrace();
-				logger.error("文件下载失败");
-				issueLog.log("cms 数据导入处理", "文件下载失败" +  e.getMessage(), ErrorType.BatchJob, SubSystem.CMS);
-			}
+//			// 下载文件
+//			try {
+//				isSuccess = downloadFileForFtp(channel.getOrder_channel_id());
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//				logger.error("文件下载失败");
+//				issueLog.log("cms 数据导入处理", "文件下载失败" +  e.getMessage(), ErrorType.BatchJob, SubSystem.CMS);
+//			}
 
 			// JEWELRY数据导入
 			if(channel.getOrder_channel_id().equals(ChannelConfigEnums.Channel.JEWELRY.getId())){
@@ -117,18 +116,18 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 				}
 			}
 
-			// LOCONDO数据导入
-			if(channel.getOrder_channel_id().equals(ChannelConfigEnums.Channel.LOCONDO.getId())){
-				// LC产品文件读入
-				List<SuperFeedLCBean> superfeedlcbean = lcSuperFeedImport();
-
-				if (superfeedlcbean.size() > 0) {
-					// JE产品信息插入
-					isSuccess = insertSuperFeedLC(superfeedlcbean);
-				}else{
-					isSuccess = false;
-				}
-			}
+//			// LOCONDO数据导入
+//			if(channel.getOrder_channel_id().equals(ChannelConfigEnums.Channel.LOCONDO.getId())){
+//				// LC产品文件读入
+//				List<SuperFeedLCBean> superfeedlcbean = lcSuperFeedImport();
+//
+//				if (superfeedlcbean.size() > 0) {
+//					// JE产品信息插入
+//					isSuccess = insertSuperFeedLC(superfeedlcbean);
+//				}else{
+//					isSuccess = false;
+//				}
+//			}
 
 			// 所有Attribute
 			AttributeListInsert(channel.getOrder_channel_id());
@@ -560,38 +559,114 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 		boolean isSuccess = true;
 		logger.info("异常数据清除开始");
 
-		if (superfeeddao.deleteData(Feed.getVal1(channel_id,FeedEnums.Name.feed_delete_category_err_sql)) < 0){
-			logger.error("异常数据清除失败");
-			issueLog.log("cms 数据导入处理", "异常数据清除失败" , ErrorType.BatchJob, SubSystem.CMS);
-			isSuccess = false;
+
+		// 取得category异常数据
+		List<String> err_categorylist = superfeeddao.selectErrData(Feed.getVal1(channel_id,FeedEnums.Name.feed_delete_category_err_sql));
+
+		// 异常数据-邮件提示
+		String err_data_maill ="category异常:";
+		// 删除异常数据
+		String err_data ="";
+		for (int i = 0; i < err_categorylist.size(); i++) {
+			err_data = err_data + " '" +err_categorylist.get(i) + "',";
+		}
+		err_data_maill = err_data_maill + err_data;
+		// 存在异常数据
+		if (err_data.length() > 0){
+			issueLog.log("cms 数据导入处理", "异常数据清除对象=>" + err_data_maill, ErrorType.BatchJob, SubSystem.CMS);
+
+			// 去掉最后一个“，”
+			err_data = Feed.getVal1(channel_id,FeedEnums.Name.feed_item_key) + " in (" + err_data.substring(0,err_data.lastIndexOf(",")) +")";
+
+			if (superfeeddao.deleteErrData(Feed.getVal1(channel_id,FeedEnums.Name.table_id), err_data) <= 0 ){
+				//异常数据清除失败
+				logger.info("异常数据清除失败");
+				issueLog.log("cms 数据导入处理", "异常数据清除失败", ErrorType.BatchJob, SubSystem.CMS);
+				isSuccess = false;
+			}
 		}
 
 		// 取得model异常数据
 		List<String> err_modellist = superfeeddao.selectErrData(Feed.getVal1(channel_id,FeedEnums.Name.feed_delete_model_sql));
-		// 取得product异常数据
-		List<String> err_productlist = superfeeddao.selectErrData(Feed.getVal1(channel_id,FeedEnums.Name.feed_delete_product_sql));
-		// 取得有model无product异常数据
-		List<String> err_model_noproductlist = superfeeddao.selectErrData(Feed.getVal1(channel_id,FeedEnums.Name.feed_delete_model_no_product_sql));
-		// 取得有prouduct无model异常数据
-		List<String> err_product_nomodellist = superfeeddao.selectErrData(Feed.getVal1(channel_id,FeedEnums.Name.feed_delete_product_no_model_sql));
-
-		// 删除异常数据
-		String err_data="";
+		err_data_maill = "model异常:";
+		err_data ="";
 		for (int i = 0; i < err_modellist.size(); i++) {
 			err_data = err_data + " '" +err_modellist.get(i) + "',";
 		}
+		err_data_maill = err_data_maill + err_data;
+		// 存在异常数据
+		if (err_data.length() > 0){
+			issueLog.log("cms 数据导入处理", "异常数据清除对象=>" + err_data_maill, ErrorType.BatchJob, SubSystem.CMS);
+
+			// 去掉最后一个“，”
+			err_data = Feed.getVal1(channel_id,FeedEnums.Name.feed_item_key) + " in (" + err_data.substring(0,err_data.lastIndexOf(",")) +")";
+
+			if (superfeeddao.deleteErrData(Feed.getVal1(channel_id,FeedEnums.Name.table_id), err_data) <= 0 ){
+				//异常数据清除失败
+				logger.info("异常数据清除失败");
+				issueLog.log("cms 数据导入处理", "异常数据清除失败", ErrorType.BatchJob, SubSystem.CMS);
+				isSuccess = false;
+			}
+		}
+
+		// 取得product异常数据
+		List<String> err_productlist = superfeeddao.selectErrData(Feed.getVal1(channel_id,FeedEnums.Name.feed_delete_product_sql));
+		err_data ="";
+		err_data_maill = "product异常:";
 		for (int i = 0; i < err_productlist.size(); i++) {
 			err_data = err_data + " '" +err_productlist.get(i) + "',";
 		}
+		err_data_maill = err_data_maill + err_data;
+		// 存在异常数据
+		if (err_data.length() > 0){
+			issueLog.log("cms 数据导入处理", "异常数据清除对象=>" + err_data_maill, ErrorType.BatchJob, SubSystem.CMS);
+
+			// 去掉最后一个“，”
+			err_data = Feed.getVal1(channel_id,FeedEnums.Name.feed_item_key) + " in (" + err_data.substring(0,err_data.lastIndexOf(",")) +")";
+
+			if (superfeeddao.deleteErrData(Feed.getVal1(channel_id,FeedEnums.Name.table_id), err_data) <= 0 ){
+				//异常数据清除失败
+				logger.info("异常数据清除失败");
+				issueLog.log("cms 数据导入处理", "异常数据清除失败", ErrorType.BatchJob, SubSystem.CMS);
+				isSuccess = false;
+			}
+		}
+
+		// 取得有model无product异常数据
+		List<String> err_model_noproductlist = superfeeddao.selectErrData(Feed.getVal1(channel_id,FeedEnums.Name.feed_delete_model_no_product_sql));
+		err_data ="";
+		err_data_maill = "有model无product异常:";
 		for (int i = 0; i < err_model_noproductlist.size(); i++) {
 			err_data = err_data + " '" +err_model_noproductlist.get(i) + "',";
 		}
+		err_data_maill = err_data_maill + err_data;
+		// 存在异常数据
+		if (err_data.length() > 0){
+			issueLog.log("cms 数据导入处理", "异常数据清除对象=>" + err_data_maill, ErrorType.BatchJob, SubSystem.CMS);
+
+			// 去掉最后一个“，”
+			err_data = Feed.getVal1(channel_id,FeedEnums.Name.feed_item_key) + " in (" + err_data.substring(0,err_data.lastIndexOf(",")) +")";
+
+			if (superfeeddao.deleteErrData(Feed.getVal1(channel_id,FeedEnums.Name.table_id), err_data) <= 0 ){
+				//异常数据清除失败
+				logger.info("异常数据清除失败");
+				issueLog.log("cms 数据导入处理", "异常数据清除失败", ErrorType.BatchJob, SubSystem.CMS);
+				isSuccess = false;
+			}
+		}
+
+		// 取得有prouduct无model异常数据
+		List<String> err_product_nomodellist = superfeeddao.selectErrData(Feed.getVal1(channel_id,FeedEnums.Name.feed_delete_product_no_model_sql));
+		err_data ="";
+		err_data_maill = "有prouduct无model异常:";
 		for (int i = 0; i < err_product_nomodellist.size(); i++) {
 			err_data = err_data + " '" +err_product_nomodellist.get(i) + "',";
 		}
-
+		err_data_maill = err_data_maill + err_data;
 		// 存在异常数据
 		if (err_data.length() > 0){
+			issueLog.log("cms 数据导入处理", "异常数据清除对象=>" + err_data_maill, ErrorType.BatchJob, SubSystem.CMS);
+
 			// 去掉最后一个“，”
 			err_data = Feed.getVal1(channel_id,FeedEnums.Name.feed_item_key) + " in (" + err_data.substring(0,err_data.lastIndexOf(",")) +")";
 
@@ -608,7 +683,6 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 		logger.info("数据判定开始");
 		if (isSuccess == true){
 			// insert data
-			String str_insert_data;
 			List<String> insert_data = superfeeddao.inertSuperfeedInsertData(Feed.getVal1(channel_id, FeedEnums.Name.category_column),
 					Feed.getVal1(channel_id, FeedEnums.Name.feed_model_key),
 					Feed.getVal1(channel_id, FeedEnums.Name.feed_code_key),
@@ -634,7 +708,11 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 				str_code_insert = str_code_insert.substring(0, str_code_insert.lastIndexOf(",")) ;
 
 				// 插入数据 更新UpdateFlag :1
-				int reslut_insert = superfeeddao.updateInsertData(Feed.getVal1(channel_id,FeedEnums.Name.table_id), Feed.getVal1(channel_id,FeedEnums.Name.feed_code_key), str_code_insert);
+				int reslut_insert = superfeeddao.updateInsertData(Feed.getVal1(channel_id,FeedEnums.Name.table_id),
+						Feed.getVal1(channel_id,FeedEnums.Name.product_keyword),
+						Feed.getVal1(channel_id,FeedEnums.Name.feed_code_key),
+						str_code_insert);
+
 				if (reslut_insert<=0){
 					issueLog.log("cms 数据导入处理", "更新UpdateFlag :1", ErrorType.BatchJob, SubSystem.CMS);
 				}
@@ -661,147 +739,6 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 					issueLog.log("cms 数据导入处理", "更新UpdateFlag :2，3", ErrorType.BatchJob, SubSystem.CMS);
 				}
 			}
-
-//
-//			// --------------------------------------------------------
-//
-//			// 预处理数据取得
-//			List <ProductBean> productbean_update = createProduct(channel_id,"","","","",Feed.getVal1(channel_id,FeedEnums.Name.table_id));
-//
-//			// 新数据_code
-//			String str_code_insert = "";
-//			// 更新数据_code
-//			String str_code_update = "";
-//
-//			// 取得预更新数据code
-//			for (int i = 0; i < productbean_update.size(); i++) {
-//
-//				// 预更新数据_full 取得 单条取得
-//				List <ProductBean>  productbean_update_full = createProduct(channel_id,"","",productbean_update.get(i).getP_code(),"",Feed.getVal1(channel_id,FeedEnums.Name.table_id) + "_full");
-//
-//				if (productbean_update_full.size() > 0) {
-//
-//					// Url_key 不一样 那就新数据看看能不能处理
-//					if (!productbean_update.get(i).getUrl_key().equals(productbean_update_full.get(0).getUrl_key())){
-//						// 插入数据_code
-//						str_code_insert = str_code_insert + "'"  + productbean_update.get(i).getP_code() + "',";
-//
-//						// 更新数据_code
-//						str_code_update = str_code_update + "'"  + productbean_update.get(i).getP_code() + "',";
-//					}
-//					else{
-//						// image
-//						String image_url= "";
-//						for (int j = 0; j < productbean_update.get(i).getImages().size(); j++) {
-//							image_url = image_url +  productbean_update.get(i).getImages().get(j).getImage_url() + ";";
-//						}
-//
-//						// image_full
-//						String image_url_full= "";
-//						for (int j = 0; j < productbean_update_full.get(0).getImages().size(); j++) {
-//							image_url_full = image_url_full + productbean_update_full.get(0).getImages().get(j).getImage_url() + ";";
-//						}
-//
-//						// msrp、price、cn_price、long_description、image_url 不一样
-//						if ((!productbean_update.get(i).getP_msrp().equals(productbean_update_full.get(0).getP_msrp())
-//								|| !productbean_update.get(i).getPs_price().equals(productbean_update_full.get(0).getPs_price())
-//								|| !productbean_update.get(i).getCps_cn_price_rmb().equals(productbean_update_full.get(0).getCps_cn_price_rmb())
-//								|| !productbean_update.get(i).getPe_long_description().equals(productbean_update_full.get(0).getPe_long_description())
-//								|| !image_url.equals(image_url_full))){
-//
-//							// 更新数据_code
-//							str_code_update = str_code_update + "'"  + productbean_update.get(i).getP_code() + "',";
-//						}
-//
-////					if (!productbean_update.get(i).getP_msrp().equals(productbean_update_full.get(0).getP_msrp()) ){
-////
-////						// 更新数据_code
-////						str_code_update = str_code_update + "'"  + productbean_update.get(i).getP_code() + "',";
-////					}
-////
-////					if (!productbean_update.get(i).getPs_price().equals(productbean_update_full.get(0).getPs_price().toString())){
-////
-////						// 更新数据_code
-////						str_code_update = str_code_update + "'"  + productbean_update.get(i).getP_code() + "',";
-////					}
-////
-////					if (!productbean_update.get(i).getCps_cn_price_rmb().equals(productbean_update_full.get(0).getCps_cn_price_rmb())){
-////
-////						// 更新数据_code
-////						str_code_update = str_code_update + "'"  + productbean_update.get(i).getP_code() + "',";
-////					}
-////
-////					if (!productbean_update.get(i).getPe_long_description().equals(productbean_update_full.get(0).getPe_long_description())){
-////
-////						// 更新数据_code
-////						str_code_update = str_code_update + "'"  + productbean_update.get(i).getP_code() + "',";
-////					}
-////					if (!image_url.equals(image_url_full)){
-////
-////						// 更新数据_code
-////						str_code_update = str_code_update + "'"  + productbean_update.get(i).getP_code() + "',";
-////					}
-////					if (!productbean_update.get(i).getImages().equals(productbean_update_full.get(0).getImages())){
-////
-////						// 更新数据_code
-////						str_code_update = str_code_update + "'"  + productbean_update.get(i).getP_code() + "',";
-////					}
-//
-//						// item_sku
-//						String item_sku= "";
-//						for (int j = 0; j < productbean_update.get(i).getItembeans().size(); j++) {
-//							item_sku = item_sku +  productbean_update.get(i).getItembeans().get(j).getI_sku() + ";";
-//						}
-//
-//						// item_sku_full
-//						String item_sku_full= "";
-//						for (int j = 0; j < productbean_update_full.get(0).getItembeans().size(); j++) {
-//							item_sku_full = item_sku_full +  productbean_update_full.get(0).getItembeans().get(j).getI_sku() + ";";
-//						}
-//
-//						// itmebean 不一样
-//						if (!item_sku.equals(item_sku_full)){
-//							// 插入数据_code
-//							str_code_insert = str_code_insert + "'"  + productbean_update.get(i).getP_code() + "',";
-//						}
-//					}
-//				}else{
-//					// 插入数据_code
-//					str_code_insert = str_code_insert + "'"  + productbean_update.get(i).getP_code() + "',";
-//				}
-//			}
-//
-//			// 插入数据_code 存在
-//			if (str_code_insert.length() > 0){
-//				// 去掉最后一个“，”
-////				int a = str_code_insert.lastIndexOf(",");
-//				str_code_insert = str_code_insert.substring(0, str_code_insert.lastIndexOf(",")) ;
-//
-//				// 插入数据 更新UpdateFlag :1
-//				int reslut_insert = superfeeddao.updateInsertData(Feed.getVal1(channel_id,FeedEnums.Name.table_id), Feed.getVal1(channel_id,FeedEnums.Name.feed_code_key), str_code_insert);
-//				if (reslut_insert<=0){
-//					issueLog.log("cms 数据导入处理", "更新UpdateFlag :1", ErrorType.BatchJob, SubSystem.CMS);
-//				}
-//
-//				// 插入数据 补足没有model的数据
-//				int reslut_insertmodel = superfeeddao.updateInsertModelData(Feed.getVal1(channel_id,FeedEnums.Name.table_id), Feed.getVal1(channel_id,FeedEnums.Name.feed_model_key),
-//						Feed.getVal1(channel_id,FeedEnums.Name.feed_code_key), str_code_insert, Feed.getVal1(channel_id,FeedEnums.Name.feed_model_keyword));
-//				if (reslut_insertmodel<0){
-//					issueLog.log("cms 数据导入处理", "更新UpdateFlag :1 model", ErrorType.BatchJob, SubSystem.CMS);
-//				}
-//			}
-//
-//			// 更新数据_code 存在
-//			if (str_code_update.length() > 0){
-//				// 去掉最后一个“，”
-//				str_code_update = str_code_update.substring(0, str_code_update.lastIndexOf(",")) ;
-//
-//				// 更新数据 更新UpdateFlag :2，3
-//				int reslut_update =superfeeddao.updateUpdateData(Feed.getVal1(channel_id,FeedEnums.Name.table_id), Feed.getVal1(channel_id,FeedEnums.Name.feed_code_key), str_code_update);
-//				if (reslut_update <= 0){
-//					issueLog.log("cms 数据导入处理", "更新UpdateFlag :2，3", ErrorType.BatchJob, SubSystem.CMS);
-//				}
-//			}
 		}
 		logger.info("数据判定结束");
 
@@ -818,7 +755,6 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 		boolean isSuccess = true;
 		logger.info("新产品处理开始");
 
-		ProductsFeedInsert productsFeed = new ProductsFeedInsert();
 		// 只处理新数据
 		String keyword = " and UpdateFlag in ('1','3')";
 
@@ -826,8 +762,13 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 		List<String> superfeedjebeanlist = superfeeddao.selectSuperfeedCategory(Feed.getVal1(channel_id,FeedEnums.Name.category_column) ,Feed.getVal1(channel_id,FeedEnums.Name.table_id),keyword);
 
  		for (int i = 0; i < superfeedjebeanlist.size(); i++) {
+			boolean isPostSuccess = true;
+
 			// CategoryBean ModelBean ProductBean 以Category单位
 			List<CategoryBean> categoryBeans = new ArrayList();
+			List<ModelBean> modelBeans = new ArrayList();
+
+			logger.info("新产品category= " + superfeedjebeanlist.get(i).toString());
 
 			// category
 			String[] strarray=superfeedjebeanlist.get(i).split(Feed.getVal1(channel_id,FeedEnums.Name.category_split));
@@ -836,17 +777,17 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 
 				// 父层
 				if (j==0){
-					categoryBean.setC_name(formaturl(strarray[j],"0" ,Feed.getVal1(channel_id,FeedEnums.Name.category_split)));
-					categoryBean.setC_header_title(formaturl(strarray[j],"0",Feed.getVal1(channel_id,FeedEnums.Name.category_split)));
+					categoryBean.setC_name(strarray[j]);
+					categoryBean.setC_header_title(strarray[j]);
 					// 全部小写,且空格用-替代
-					categoryBean.setUrl_key(formaturl(strarray[j],"1",Feed.getVal1(channel_id,FeedEnums.Name.category_split)));
+					categoryBean.setUrl_key(formaturl(channel_id,strarray[j],"1",Feed.getVal1(channel_id,FeedEnums.Name.category_split)));
 
 				}else{
 					// 子层
-					categoryBean.setC_name(formaturl(strarray[j],"0",Feed.getVal1(channel_id,FeedEnums.Name.category_split)));
-					categoryBean.setC_header_title(formaturl(strarray[j],"0",Feed.getVal1(channel_id,FeedEnums.Name.category_split)));
+					categoryBean.setC_name(strarray[j]);
+					categoryBean.setC_header_title(strarray[j]);
 					// 全部小写,且空格用-替代
-					categoryBean.setUrl_key(categoryBeans.get(categoryBeans.size() - 1).getUrl_key() + '-' + formaturl(strarray[j],"1",Feed.getVal1(channel_id,FeedEnums.Name.category_split)));
+					categoryBean.setUrl_key(categoryBeans.get(categoryBeans.size() - 1).getUrl_key() + '-' + formaturl(channel_id,strarray[j],"1",Feed.getVal1(channel_id,FeedEnums.Name.category_split)));
 					categoryBean.setParent_url_key(categoryBeans.get(categoryBeans.size() - 1).getUrl_key());
 				}
 
@@ -855,9 +796,8 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 				categoryBean.setC_is_published("0");
 				categoryBean.setC_is_effective("1");
 
-				List<ModelBean> modelBeans = new ArrayList();
 				// 最终category
-				if (j == strarray.length - 1){
+				if (j >= strarray.length - 1){
 					// model 取得
 					modelBeans = createModel(channel_id,superfeedjebeanlist.get(i), keyword);
 					for (int k  = 0; k < modelBeans.size(); k++) {
@@ -866,60 +806,111 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 						List<ProductBean> productBeans = new ArrayList();
 						// product 取得
 						productBeans = createProduct(channel_id,superfeedjebeanlist.get(i),modelbean.getM_model(),"",keyword, Feed.getVal1(channel_id,FeedEnums.Name.table_id));
+
+						logger.info("新产品product= " + productBeans.get(0).getP_code());
+
 						// product 设定
 						modelbean.setProductbeans(productBeans);
 						modelBeans.set(k, modelbean);
-
-					}
-					if (modelBeans.size() > 0){
-						// model 设定
-						categoryBean.setModelbeans(modelBeans);
 					}
 				}
 				categoryBeans.add(categoryBean);
 			}
 
-			productsFeed.setChannel_id(channel_id);
-			productsFeed.setCategorybeans(categoryBeans);
-
 			//新产品Attribute处理
 			if (!AttributeInsert(channel_id ,keyword, superfeedjebeanlist.get(i) ,"")){
 				logger.info("新产品Attribute处理异常");
+
+				// 更新update数据flag
+				superfeeddao.changeUpdateDateFlag(Feed.getVal1(channel_id, FeedEnums.Name.table_id),
+						keyword,
+						Feed.getVal1(channel_id, FeedEnums.Name.category_column),
+						"'"+ superfeedjebeanlist.get(i)+"'");
 				continue;
 			};
 
-			logger.info("新产品category= " + superfeedjebeanlist.get(i).toString());
+			// model 数量
+			int model_size = 0;
+			// category 数量
+			int category_size = categoryBeans.size();
+			if (category_size > 0){
+				model_size =  modelBeans.size();
+			}
 
-			// post web servies
-			WsdlResponseBean  wsdlResponseBean= jsonBeanOutInsert(productsFeed);
-			ProductFeedResponseBean productFeedResponseBean = (ProductFeedResponseBean)  JsonUtil.jsonToBean(JsonUtil.getJsonString(wsdlResponseBean.getResultInfo()),ProductFeedResponseBean.class);
+			// 100 model 推送一次
+			int post_max_model =  Integer.parseInt(Feed.getVal1(channel_id,FeedEnums.Name.post_max_model));
+			int post_count  = model_size / post_max_model;
+			if (model_size % post_max_model > 0){
+				post_count = post_count + 1;
+			}
 
-			if (wsdlResponseBean.getResult().equals("OK") && productFeedResponseBean.getSuccess().size() > 0){
-				List <String> modelFailList = new  ArrayList();
-				List <String> productFailList = new  ArrayList();
+			// 异常数据
+			List <String> modelFailList = new  ArrayList();
+			List <String> productFailList = new  ArrayList();
 
-				// 出错统计
-				List<ProductFeedDetailBean> productFeedDetailBeans = productFeedResponseBean.getFailure();
-				for (int b  = 0; b < productFeedDetailBeans.size(); b ++) {
-					//  处理类型 1:category 无; 2:model
-					if (productFeedDetailBeans.get(b).getBeanType() == 2){
-						modelFailList.add(productFeedDetailBeans.get(b).getDealObject().getModel());
+			for (int model_i  = 0; model_i < post_count; model_i ++) {
+				// post productsFeed
+				ProductsFeedInsert productsFeed = new ProductsFeedInsert();
+
+				// model设定
+				int post_i = 0;
+				List<ModelBean>  post_modelBeans = new ArrayList();
+				for(int model_j = model_i * post_max_model; model_j< model_i * post_max_model + post_max_model;model_j ++){
+					if (model_j > model_size - 1){
+						break;
 					}
-					//  处理类型 3:product; 4:item
-					if (productFeedDetailBeans.get(b).getBeanType() == 3 || productFeedDetailBeans.get(b).getBeanType() == 4){
-						productFailList.add(productFeedDetailBeans.get(b).getDealObject().getCode());
+					post_modelBeans.add(post_i,modelBeans.get(model_j));
+					post_i ++;
+				}
+
+				categoryBeans.get(category_size - 1).setModelbeans(post_modelBeans);
+				productsFeed.setCategorybeans(categoryBeans);
+				productsFeed.setChannel_id(channel_id);
+
+				// post web servies
+				WsdlResponseBean  wsdlResponseBean= jsonBeanOutInsert(channel_id, productsFeed);
+				// 处理失败
+				if (wsdlResponseBean == null){
+					logger.error("cms 数据导入处理，新产品推送失败！");
+					isPostSuccess = false;
+					break;
+				}
+
+				ProductFeedResponseBean productFeedResponseBean = (ProductFeedResponseBean)  JsonUtil.jsonToBean(JsonUtil.getJsonString(wsdlResponseBean.getResultInfo()),ProductFeedResponseBean.class);
+				if (wsdlResponseBean.getResult().equals("OK") && productFeedResponseBean.getSuccess().size() > 0){
+					// 出错统计
+					List<ProductFeedDetailBean> productFeedDetailBeans = productFeedResponseBean.getFailure();
+					for (int b  = 0; b < productFeedDetailBeans.size(); b ++) {
+						//  处理类型 1:category 无; 2:model
+						if (productFeedDetailBeans.get(b).getBeanType() == 2){
+							modelFailList.add(productFeedDetailBeans.get(b).getDealObject().getModel());
+						}
+						//  处理类型 3:product; 4:item
+						if (productFeedDetailBeans.get(b).getBeanType() == 3 || productFeedDetailBeans.get(b).getBeanType() == 4){
+							productFailList.add(productFeedDetailBeans.get(b).getDealObject().getCode());
+						}
 					}
 				}
 
+				if (wsdlResponseBean.getResult().equals("NG")){
+					issueLog.log("cms 数据导入处理", "新产品推送失败：Message=" + wsdlResponseBean.getMessage(),
+							ErrorType.BatchJob, SubSystem.CMS);
+					isPostSuccess = false;
+					break;
+				}
+			}
+
+			if (isPostSuccess = true){
 				// 插入ZZ_Work_Superfeed_Full
 				if (!SuperfeedFullInsert(superfeedjebeanlist.get(i).toString() ,channel_id, modelFailList, productFailList)){
 					logger.error("插入ZZ_Work_Superfeed_Full 失败");
 				}
-			}
-
-			if (wsdlResponseBean.getResult().equals("NG")){
-				issueLog.log("cms 数据导入处理", "新产品推送失败：Message=" + wsdlResponseBean.getMessage(),
-						ErrorType.BatchJob, SubSystem.CMS);
+			}else{
+//				// 更新update数据flag
+				superfeeddao.changeUpdateDateFlag(Feed.getVal1(channel_id, FeedEnums.Name.table_id),
+						keyword,
+						Feed.getVal1(channel_id, FeedEnums.Name.category_column),
+						"'"+ superfeedjebeanlist.get(i)+"'");
 			}
 		}
 
@@ -978,6 +969,20 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 		attributebean_param.setAttribute35(Feed.getVal1(channel_id, FeedEnums.Name.attribute35));
 		attributebean_param.setAttribute36(Feed.getVal1(channel_id, FeedEnums.Name.attribute36));
 		attributebean_param.setAttribute37(Feed.getVal1(channel_id, FeedEnums.Name.attribute37));
+		attributebean_param.setAttribute37(Feed.getVal1(channel_id, FeedEnums.Name.attribute37));
+		attributebean_param.setAttribute38(Feed.getVal1(channel_id, FeedEnums.Name.attribute38));
+		attributebean_param.setAttribute39(Feed.getVal1(channel_id, FeedEnums.Name.attribute39));
+		attributebean_param.setAttribute40(Feed.getVal1(channel_id, FeedEnums.Name.attribute40));
+		attributebean_param.setAttribute41(Feed.getVal1(channel_id, FeedEnums.Name.attribute41));
+		attributebean_param.setAttribute42(Feed.getVal1(channel_id, FeedEnums.Name.attribute42));
+		attributebean_param.setAttribute43(Feed.getVal1(channel_id, FeedEnums.Name.attribute43));
+		attributebean_param.setAttribute44(Feed.getVal1(channel_id, FeedEnums.Name.attribute44));
+		attributebean_param.setAttribute45(Feed.getVal1(channel_id, FeedEnums.Name.attribute45));
+		attributebean_param.setAttribute46(Feed.getVal1(channel_id, FeedEnums.Name.attribute46));
+		attributebean_param.setAttribute47(Feed.getVal1(channel_id, FeedEnums.Name.attribute47));
+		attributebean_param.setAttribute48(Feed.getVal1(channel_id, FeedEnums.Name.attribute48));
+		attributebean_param.setAttribute49(Feed.getVal1(channel_id, FeedEnums.Name.attribute49));
+		attributebean_param.setAttribute50(Feed.getVal1(channel_id, FeedEnums.Name.attribute50));
 
 		String keyword_attribute = Feed.getVal1(channel_id,FeedEnums.Name.product_keyword) + keyword;
 
@@ -995,9 +1000,9 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 
 		for (int k  = 0; k < attributebeans.size(); k++) {
 			AttributeBean attributebean = attributebeans.get(k);
-			attributebean.setCategory_url_key(formaturl(attributebean.getCategory_url_key(), "1", Feed.getVal1(channel_id, FeedEnums.Name.category_split)));
-			attributebean.setModel_url_key(formaturl(attributebean.getModel_url_key(), "1", Feed.getVal1(channel_id, FeedEnums.Name.category_split)));
-			attributebean.setProduct_url_key(formaturl(attributebean.getProduct_url_key(), "1", Feed.getVal1(channel_id, FeedEnums.Name.category_split)));
+			attributebean.setCategory_url_key(formaturl(channel_id,attributebean.getCategory_url_key(), "1", Feed.getVal1(channel_id, FeedEnums.Name.category_split)));
+			attributebean.setModel_url_key(formaturl(channel_id,attributebean.getModel_url_key(), "1", Feed.getVal1(channel_id, FeedEnums.Name.category_split)));
+			attributebean.setProduct_url_key(formaturl(channel_id,attributebean.getProduct_url_key(), "1", Feed.getVal1(channel_id, FeedEnums.Name.category_split)));
 
 			attributebeans.set(k, attributebean);
 		}
@@ -1008,14 +1013,18 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 			productsFeedAttribute.setAttributebeans(attributebeans);
 
 			// post web servies
-			WsdlResponseBean  wsdlResponseBean= jsonBeanOutAttribute(productsFeedAttribute);
+			WsdlResponseBean  wsdlResponseBean = jsonBeanOutAttribute(channel_id,productsFeedAttribute);
 
-			if (wsdlResponseBean.getResult().equals("NG")){
+			// 处理失败
+			if (wsdlResponseBean == null){
+				logger.error("产品Attribute处理失败，处理失败！");
 				isSuccess = false;
-				logger.error("产品Attribute处理失败，MessageCode = " + wsdlResponseBean.getMessageCode() + ",Message = " + wsdlResponseBean.getMessage());
-				issueLog.log("cms 数据导入处理", "产品Attribute处理失败，MessageCode = " + wsdlResponseBean.getMessageCode() + ",Message = " + wsdlResponseBean.getMessage(),
-						ErrorType.BatchJob, SubSystem.CMS);
- 			}
+			}else if (wsdlResponseBean.getResult().equals("NG")){
+					isSuccess = false;
+					logger.error("产品Attribute处理失败，MessageCode = " + wsdlResponseBean.getMessageCode() + ",Message = " + wsdlResponseBean.getMessage());
+					issueLog.log("cms 数据导入处理", "产品Attribute处理失败，MessageCode = " + wsdlResponseBean.getMessageCode() + ",Message = " + wsdlResponseBean.getMessage(),
+							ErrorType.BatchJob, SubSystem.CMS);
+			}
 		}else{
 			isSuccess = false;
 		}
@@ -1067,8 +1076,12 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 				updatefields.put(CmsConstants.FEED_IO_UPDATEFIELDS_PRICE,productBeans.get(i).getPs_price() );
 			}
 
+			if (!productBeans.get(i).getCps_cn_price().equals(productBeans_full.get(0).getCps_cn_price())){
+				updatefields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE,productBeans.get(i).getCps_cn_price() );
+			}
+
 			if (!productBeans.get(i).getCps_cn_price_rmb().equals(productBeans_full.get(0).getCps_cn_price_rmb())){
-				updatefields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE,productBeans.get(i).getCps_cn_price_rmb() );
+				updatefields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE_RMB,productBeans.get(i).getCps_cn_price_rmb() );
 			}
 
 			if (!productBeans.get(i).getPe_long_description().equals(productBeans_full.get(0).getPe_long_description())){
@@ -1094,12 +1107,12 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 
 			// 没有变化跳过。
 			if(updatefields.size() <= 0 ){
-				// 更新ZZ_Work_Superfeed_Full
-				if (!SuperfeedFullUpdate(channel_id, productBeans.get(i).getP_code())){
-					logger.error("更新ZZ_Work_Superfeed_Full 失败");
-					issueLog.log("cms 数据导入处理", "更新ZZ_Work_Superfeed_Full 失败，code=" + productBeans.get(i).getP_code(),
-							ErrorType.BatchJob, SubSystem.CMS);
-				}
+//				// 更新ZZ_Work_Superfeed_Full
+//				if (!SuperfeedFullUpdate(channel_id, productBeans.get(i).getP_code())){
+//					logger.error("更新ZZ_Work_Superfeed_Full 失败");
+//					issueLog.log("cms 数据导入处理", "更新ZZ_Work_Superfeed_Full 失败，code=" + productBeans.get(i).getP_code(),
+//							ErrorType.BatchJob, SubSystem.CMS);
+//				}
 				// 如果失败下面跳过
 				continue;
 			}
@@ -1121,10 +1134,15 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 			};
 
 			// post web servies
-			WsdlResponseBean  wsdlResponseBean= jsonBeanOutUpdate(productsFeed);
+			WsdlResponseBean  wsdlResponseBean= jsonBeanOutUpdate(channel_id,productsFeed);
+
+			// 处理失败 跳过
+			if (wsdlResponseBean == null){
+				logger.error("更新产品Attribute处理失败，处理失败！");
+				continue;
+			}
 
 			ProductUpdateResponseBean productUpdateResponseBean = (ProductUpdateResponseBean)  JsonUtil.jsonToBean(JsonUtil.getJsonString(wsdlResponseBean.getResultInfo()),ProductUpdateResponseBean.class);
-
 			// web servies 返回失败
 			if (wsdlResponseBean.getResult().equals("NG") || productUpdateResponseBean.getFailure().size() > 0){
 
@@ -1197,8 +1215,8 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 			ModelBean modelbean = modelBeans.get(i);
 
 			// urlkey 转换
-			modelbean.setCategory_url_key(formaturl(modelbean.getCategory_url_key(),"1",Feed.getVal1(channel_id,FeedEnums.Name.category_split)));
-			modelbean.setUrl_key(formaturl(modelbean.getUrl_key(),"1",Feed.getVal1(channel_id,FeedEnums.Name.category_split)));
+			modelbean.setCategory_url_key(formaturl(channel_id,modelbean.getCategory_url_key(),"1",Feed.getVal1(channel_id,FeedEnums.Name.category_split)));
+			modelbean.setUrl_key(formaturl(channel_id,modelbean.getUrl_key(),"1",Feed.getVal1(channel_id,FeedEnums.Name.category_split)));
 
 			modelBeans.set(i,modelbean);
 		}
@@ -1255,6 +1273,8 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 		productbean_params.setPe_long_description(Feed.getVal1(channel_id, FeedEnums.Name.product_pe_long_description));
 		productbean_params.setPs_price(Feed.getVal1(channel_id, FeedEnums.Name.product_ps_price));
 		productbean_params.setCps_cn_price_rmb(Feed.getVal1(channel_id, FeedEnums.Name.product_cps_cn_price_rmb));
+		productbean_params.setCps_cn_price(Feed.getVal1(channel_id, FeedEnums.Name.product_cps_cn_price));
+		productbean_params.setCps_cn_price_final_rmb(Feed.getVal1(channel_id, FeedEnums.Name.product_cps_cn_price_final_rmb));
 
 		// 取得所有Superfeed  product
 		productBeans = superfeeddao.selectSuperfeedProduct(product_keyword,
@@ -1265,9 +1285,9 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 			ProductBean productbean = productBeans.get(i);
 
 			// urlkey 转换
-			productbean.setCategory_url_key(formaturl(productbean.getCategory_url_key(), "1",Feed.getVal1(channel_id,FeedEnums.Name.category_split)));
-			productbean.setModel_url_key(formaturl(productbean.getModel_url_key(), "1",Feed.getVal1(channel_id,FeedEnums.Name.category_split)));
-			productbean.setUrl_key(formaturl(productbean.getUrl_key(), "1",Feed.getVal1(channel_id,FeedEnums.Name.category_split)));
+			productbean.setCategory_url_key(formaturl(channel_id,productbean.getCategory_url_key(), "1",Feed.getVal1(channel_id,FeedEnums.Name.category_split)));
+			productbean.setModel_url_key(formaturl(channel_id,productbean.getModel_url_key(), "1",Feed.getVal1(channel_id,FeedEnums.Name.category_split)));
+			productbean.setUrl_key(formaturl(channel_id,productbean.getUrl_key(), "1",Feed.getVal1(channel_id,FeedEnums.Name.category_split)));
 			// 初期值 0
 			productbean.setP_image_item_count("0");
 
@@ -1309,7 +1329,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 			ItemBean itembean_params = new ItemBean();
 			itembean_params.setCode(Feed.getVal1(channel_id,FeedEnums.Name.item_code) );
 			itembean_params.setI_sku(Feed.getVal1(channel_id,FeedEnums.Name.item_i_sku) );
-			itembean_params.setI_itemcode(Feed.getVal1(channel_id,FeedEnums.Name.item_i_itemcode) );
+			itembean_params.setI_itemcode(Feed.getVal1(channel_id,FeedEnums.Name.item_i_itemcode));
 			itembean_params.setI_size(Feed.getVal1(channel_id,FeedEnums.Name.item_i_size) );
 			itembean_params.setI_barcode(Feed.getVal1(channel_id,FeedEnums.Name.item_i_barcode));
 
@@ -1334,12 +1354,12 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 	 * @param url tolower split
 	 * @return formaturl
 	 */
-	public  String formaturl(String url, String tolower ,String split ){
+	public  String formaturl(String channel_id,String url, String tolower ,String split ){
 
 		String strformaturl = url.replace(split, "-");
 
-		for (int i = 0; i < CmsConstants.URL_FORMAT.length(); i++) {
-			strformaturl =  strformaturl.replace(CmsConstants.URL_FORMAT.substring(i, i + 1), "");
+		for (int i = 0; i < Feed.getVal1(channel_id, FeedEnums.Name.url_special_symbol).length(); i++) {
+			strformaturl =  strformaturl.replace( Feed.getVal1(channel_id, FeedEnums.Name.url_special_symbol).substring(i, i + 1), "");
 		}
 
 		if ("1".equals(tolower)){
@@ -1384,13 +1404,13 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 	 * json bean 新数据  post
 	 *
 	 */
-	public WsdlResponseBean jsonBeanOutInsert(ProductsFeedInsert productsFeed){
+	public WsdlResponseBean jsonBeanOutInsert(String channel_id, ProductsFeedInsert productsFeed){
 
 		Map param = new HashMap();
 		Map authMap = new HashMap();
-		authMap.put("appKey", "21006636");
-		authMap.put("appSecret", "ca16bd08019790b2a9332e000e52e19f");
-		authMap.put("sessionKey", "7200a23ce180124c6Z248fa2bd5b420Zdf0df34db94bd5a90702966b");
+		authMap.put("appKey", Feed.getVal1(channel_id,FeedEnums.Name.webServiesAppKey));
+		authMap.put("appSecret", Feed.getVal1(channel_id,FeedEnums.Name.webServiesAppSecret));
+		authMap.put("sessionKey",  Feed.getVal1(channel_id,FeedEnums.Name.webServiesSessionKey));
 
 		param.put("authentication", authMap);
 		param.put("dataBody", productsFeed);
@@ -1400,10 +1420,11 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 		String response = null;
 		WsdlResponseBean wsdlresponsebean = null;
 		try {
-			response = WebServiceUtil.postByJsonStr(CmsConstants.WEB_SERVIES_URI_INSERT, jsonParam);
+//			logger.info("Url= " + CmsConstants.WEB_SERVIES_URI_INSERT);
+			response = WebServiceUtil.postByJsonStr(Codes.getCodeName("WEB_SERVIES_URL_FEED","01"), jsonParam);
 			wsdlresponsebean = JsonUtil.jsonToBean(response, WsdlResponseBean.class);
 		} catch (Exception e) {
-			logger.error("json bean 新数据 post 失败: web servies =" + CmsConstants.WEB_SERVIES_URI_INSERT);
+			logger.error("json bean 新数据 post 失败: web servies =" + Codes.getCodeName("WEB_SERVIES_URL_FEED","01"));
 			issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
 		}
 
@@ -1414,13 +1435,13 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 	 * json bean 更新数据  post
 	 *
 	 */
-	private WsdlResponseBean jsonBeanOutUpdate(ProductsFeedUpdate productsFeed){
+	private WsdlResponseBean jsonBeanOutUpdate(String channel_id,ProductsFeedUpdate productsFeed){
 
 		Map param = new HashMap();
 		Map authMap = new HashMap();
-		authMap.put("appKey", "21006636");
-		authMap.put("appSecret", "ca16bd08019790b2a9332e000e52e19f");
-		authMap.put("sessionKey", "7200a23ce180124c6Z248fa2bd5b420Zdf0df34db94bd5a90702966b");
+		authMap.put("appKey", Feed.getVal1(channel_id,FeedEnums.Name.webServiesAppKey));
+		authMap.put("appSecret", Feed.getVal1(channel_id,FeedEnums.Name.webServiesAppSecret));
+		authMap.put("sessionKey",  Feed.getVal1(channel_id,FeedEnums.Name.webServiesSessionKey));
 
 		param.put("authentication", authMap);
 		param.put("dataBody", productsFeed);
@@ -1428,10 +1449,11 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 		String response = null;
 		WsdlResponseBean wsdlresponsebean = null;
 		try {
-			response = WebServiceUtil.postByJsonStr(CmsConstants.WEB_SERVIES_URI_UPDATE, jsonParam);
+//			logger.info("Url= " + CmsConstants.WEB_SERVIES_URI_UPDATE);
+			response = WebServiceUtil.postByJsonStr(Codes.getCodeName("WEB_SERVIES_URL_FEED","02"), jsonParam);
 			wsdlresponsebean = JsonUtil.jsonToBean(response, WsdlResponseBean.class);
 		} catch (Exception e) {
-			logger.error("json bean 更新数据 post 失败: web servies =" + CmsConstants.WEB_SERVIES_URI_UPDATE);
+			logger.error("json bean 更新数据 post 失败: web servies =" + Codes.getCodeName("WEB_SERVIES_URL_FEED","02"));
 			issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
 		}
 		return wsdlresponsebean;
@@ -1441,13 +1463,13 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 	 * json bean 属性数据  post
 	 *
 	 */
-	private WsdlResponseBean jsonBeanOutAttribute(ProductsFeedAttribute attributebeans){
+	private WsdlResponseBean jsonBeanOutAttribute(String channel_id,ProductsFeedAttribute attributebeans){
 
 		Map param = new HashMap();
 		Map authMap = new HashMap();
-		authMap.put("appKey", "21006636");
-		authMap.put("appSecret", "ca16bd08019790b2a9332e000e52e19f");
-		authMap.put("sessionKey", "7200a23ce180124c6Z248fa2bd5b420Zdf0df34db94bd5a90702966b");
+		authMap.put("appKey", Feed.getVal1(channel_id,FeedEnums.Name.webServiesAppKey));
+		authMap.put("appSecret", Feed.getVal1(channel_id,FeedEnums.Name.webServiesAppSecret));
+		authMap.put("sessionKey",  Feed.getVal1(channel_id,FeedEnums.Name.webServiesSessionKey));
 
 		param.put("authentication", authMap);
 		param.put("dataBody", attributebeans);
@@ -1455,10 +1477,11 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 		String response = null;
 		WsdlResponseBean wsdlresponsebean = null;
 		try {
-			response = WebServiceUtil.postByJsonStr(CmsConstants.WEB_SERVIES_URI_ATTRIBUTE, jsonParam);
+//			logger.info("Url= " + CmsConstants.WEB_SERVIES_URI_ATTRIBUTE);
+			response = WebServiceUtil.postByJsonStr(Codes.getCodeName("WEB_SERVIES_URL_FEED","03"), jsonParam);
 			wsdlresponsebean = JsonUtil.jsonToBean(response, WsdlResponseBean.class);
 		} catch (Exception e) {
-			logger.error("json bean 属性数据 post 失败: web servies =" + CmsConstants.WEB_SERVIES_URI_ATTRIBUTE);
+			logger.error("json bean 属性数据 post 失败: web servies =" + Codes.getCodeName("WEB_SERVIES_URL_FEED","03"));
 			issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
 		}
 		return wsdlresponsebean;
@@ -1510,7 +1533,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 						logger.info(filePathName + "文件不存在.");
 					}
 				}else{
-//					//下载文件 成功
+					//下载文件 成功
 //					ftpUtil.delOneFile(ftpBean,ftpClient, StringUtils.null2Space(Feed.getVal1(channel_id, FeedEnums.Name.feed_ftp_filename)));
 				}
 			}
@@ -1618,7 +1641,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 			if ( f == 0 ){
 				keyWrod_model = Feed.getVal1(channel_id,FeedEnums.Name.model_m_model) + " not in ('" + modelList.get(f);
 			}else{
-				keyWrod_model = keyWrod_model + "', " + modelList.get(f);
+				keyWrod_model = keyWrod_model + "', '" + modelList.get(f);
 			}
 		}
 		if (keyWrod_model !=""){
@@ -1631,7 +1654,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 			if ( f == 0 ){
 				keyWrod_product = Feed.getVal1(channel_id,FeedEnums.Name.product_p_code) + "not in ('" + productList.get(f);
 			}else{
-				keyWrod_product = keyWrod_product + "', " + productList.get(f);
+				keyWrod_product = keyWrod_product + "', '" + productList.get(f);
 			}
 		}
 		if (keyWrod_product !=""){

@@ -102,7 +102,8 @@
 		WHERE
 			t.is_active = '1'
 		AND t.attribute_id = #{attributeId}
-		and t.channel_id = #{channelId}
+		AND t.channel_id = #{channelId}
+		ORDER BY CAST(t.attribute_value_id as SIGNED) ASC
 	</select>
 	<select id="cms_mt_product_type"  parameterType="String" resultType="HashMap">
 		SELECT
@@ -185,5 +186,17 @@
 			<if test="typeId != null">
 			and t.type_id = #{typeId}
 			</if>			
+	</select>
+	<select id="get_channel_categoryId" resultType="String">
+		SELECT category_id
+		FROM voyageone_ims.ims_bt_channel_categories_mapping
+		WHERE channel_id = #{channelId}
+		AND isDisplay = '1';
+	</select>
+	<select id="get_channel_noDisplay_categoryId" resultType="String">
+		SELECT category_id
+		FROM voyageone_ims.ims_bt_channel_categories_mapping
+		WHERE channel_id = #{channelId}
+		AND isDisplay = '0';
 	</select>
 </mapper>

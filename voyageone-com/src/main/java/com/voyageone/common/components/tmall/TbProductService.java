@@ -110,6 +110,11 @@ public class TbProductService extends TbBase {
         req.setCatId(categoryId);
         //req.setBrandId(brandId);
         TmallBrandcatMetadataGetResponse response = reqTaobaoApi(config, req);
+        if (response == null)
+        {
+            failCause.append("访问taobao超时");
+            return null;
+        }
         if (response.getErrorCode() != null) {
             failCause.append(response.getMsg());
             return null;

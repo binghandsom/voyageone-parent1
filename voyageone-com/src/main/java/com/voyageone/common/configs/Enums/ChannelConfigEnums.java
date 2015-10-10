@@ -293,7 +293,19 @@ public class ChannelConfigEnums {
         /**
          * 非真实姓名的限制
          */
-        is_true_name_check
+        is_true_name_check,
+        /**
+         * 渠道允许发货数量（0：代表不用检查）
+         */
+        shipping_num,
+        /**
+         * 多件物品时，渠道允许发货金额（0：代表不用检查）
+         */
+        shipping_amount,
+        /**
+         * scene7上传图片文件夹路径
+         */
+        scene7_image_folder
 
     }
 

@@ -1,12 +1,14 @@
 package com.voyageone.cms.service.impl;
 
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.omg.CORBA.portable.OutputStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -128,9 +130,31 @@ public class SearchServiceImpl implements SearchService {
 			}
 			dataList.add(list);
 		}
- 		File result = CSVUtils.createCSVFile(head, dataList, outPutPath, name);
+		File result = CSVUtils.createCSVFile(head, dataList, outPutPath, name);
 		// List<Map<String, Object>> ret =doAdvanceSearch (data);
 		return result;
+
+	}
+
+	@Override
+	public byte[] doExport(Map<String, Object> data) throws IOException {
+		boolean isSuccess = false;
+		StringBuffer stringBuffer=new StringBuffer();
+		//获取列表
+		List<Object> head = getColumn();
+		stringBuffer.append(CSVUtils.writeRow(head)).append("\n");
+		List<Map<String, Object>> ret = searchDao.doAdvanceSearch(data);
+		List<List<Object>> dataList = new ArrayList<List<Object>>();
+		for (Map<String, Object> obj : ret) {
+			List<Object> list = new ArrayList<Object>();
+			for (Object column : getColumn()) {
+				list.add(obj.get(column));
+			}
+			stringBuffer.append(CSVUtils.writeRow(list)).append("\n");
+		}
+		byte[] bom = {(byte)0xef,(byte)0xbb,(byte)0xbf};
+
+		return ArrayUtils.addAll(bom, stringBuffer.toString().getBytes("UTF-8"));
 
 	}
 /**

@@ -231,8 +231,12 @@ public class ModelController extends BaseController {
 			logger.info("参数：" + JsonUtil.toJson(requestMap));
 			
 			requestMap.getParam().put("start", requestMap.getStart());
-			requestMap.getParam().put("length", requestMap.getLength());			
-			
+			requestMap.getParam().put("length", requestMap.getLength());
+			if(requestMap.getOrder().size()>0){
+				requestMap.getParam().put("order", requestMap.getOrder().get(0).getColumn());
+				requestMap.getParam().put("dir", requestMap.getOrder().get(0).getDir());
+			}
+
 			DtResponse<List<ModelProductUSBean>> ret = new DtResponse<List<ModelProductUSBean>>();
 			ret.setData(modelEditService.doGetUSProductList(requestMap.getParam()));
 			ret.setDraw(requestMap.getDraw());
@@ -271,7 +275,11 @@ public class ModelController extends BaseController {
 			logger.info("参数：" + JsonUtil.toJson(requestMap));
 
 			requestMap.getParam().put("start", requestMap.getStart());
-			requestMap.getParam().put("length", requestMap.getLength());			
+			requestMap.getParam().put("length", requestMap.getLength());
+			if(requestMap.getOrder().size()>0){
+				requestMap.getParam().put("order", requestMap.getOrder().get(0).getColumn());
+				requestMap.getParam().put("dir", requestMap.getOrder().get(0).getDir());
+			}
 			
 			DtResponse<List<ModelProductCNBean>> ret = new DtResponse<List<ModelProductCNBean>>();
 			ret.setData(modelEditService.doGetCNProductList(requestMap.getParam()));

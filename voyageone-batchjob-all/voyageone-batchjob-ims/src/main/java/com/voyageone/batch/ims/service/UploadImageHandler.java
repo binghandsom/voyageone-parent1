@@ -158,7 +158,9 @@ public class UploadImageHandler extends UploadWorkloadHandler{
         logger.info("read complete, begin to upload image");
         String pictureUrl = null;
         try {
+            logger.info("upload image, wait Tmall response...");
             PictureUploadResponse pictureUploadResponse = tbPictureService.uploadPicture(shopBean, baos.toByteArray(), "image_title", "0");
+            logger.info("response comes");
             if (pictureUploadResponse.getErrorCode() != null) {
                 logger.error("上传图片到天猫时，错误:" + pictureUploadResponse.getErrorCode() + ", " + pictureUploadResponse.getMsg());
                 logger.error("上传图片到天猫时，sub错误:" + pictureUploadResponse.getSubCode() + ", " + pictureUploadResponse.getSubMsg());

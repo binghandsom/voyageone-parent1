@@ -40,6 +40,8 @@ public class MasterCategoryMatchServiceImpl implements MasterCategoryMatchServic
 
 		List<CmsCategoryModel> categoryModels = masterCategoryMatchDao.getCmsCategoryList(channelId);
 
+		List<String> propMatchDoneList = masterCategoryMatchDao.getPropMatchCompleteCategories(channelId);
+
 		List<CmsCategoryModel> removeList = new ArrayList<>();
 		List<CmsCategoryBean> resultList = new ArrayList<>();
 
@@ -75,6 +77,9 @@ public class MasterCategoryMatchServiceImpl implements MasterCategoryMatchServic
 			if (model.getMainCategoryId()>0) {
 				categoryBean.setMainCategoryPath(
 						ImsCategoryConfigs.getMtCategoryBeanById(model.getMainCategoryId()).getCategoryPath());
+				if(propMatchDoneList.contains(String.valueOf(model.getMainCategoryId()))){
+					categoryBean.setPropMatchStatus(1);
+				}
 			}
 			resultList.add(categoryBean);
 

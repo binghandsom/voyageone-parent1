@@ -68,6 +68,8 @@ public class TmallProductService implements PlatformServiceInterface {
     private IssueLog issueLog;
     @Autowired
     private DarwinStyleMappingDao darwinStyleMappingDao;
+    @Autowired
+    private ConditionPropValueRepo conditionPropValueRepo;
 
     public void doJob(UploadProductTcb tcb, UploadProductHandler uploadProductHandler) throws TaskSignal {
         UpJobParamBean upJobParamBean = tcb.getWorkLoadBean().getUpJobParam();
@@ -139,6 +141,17 @@ public class TmallProductService implements PlatformServiceInterface {
         }
     }
 
+    /**
+     * 在天猫平台上传商品时做的初始化操作
+     * 1. 创建该任务运行时状态对象-TmallUploadRunState
+     * 2. 从数据库中找到主数据品牌对应的平台品牌，并设置到TmallUploadRunState
+     * 3. 将平台类目设置到TmallUploadRunState
+     * 4. 判断是否时达尔文体系，并设置到TmallUploadRunState
+     * 5. 选择主商品（选择第一个code作为主商品）
+     * 6. 进入搜索产品状态
+     * @param tcb
+     * @throws TaskSignal
+     */
     private void addProductForStatusInit(UploadProductTcb tcb) throws TaskSignal {
         WorkLoadBean workLoadBean = tcb.getWorkLoadBean();
         ShopBean shopBean = ShopConfigs.getShop(workLoadBean.getOrder_channel_id(),
@@ -163,17 +176,20 @@ public class TmallProductService implements PlatformServiceInterface {
 
         if (brandCode == null || "".equals(brandCode))
         {
-            logger.info("Job abort: can not find brand_code by brandId " +
-                    cmsModelProp.getProp(CmsFieldEnum.CmsModelEnum.brand_id) + ", workload:" + workLoadBean);
-            throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("No brand found"));
+            String abortCause = "Job abort: can not find brand_code by brandId "
+                    + cmsModelProp.getProp(CmsFieldEnum.CmsModelEnum.brand_id)
+                    + ", workload:" + workLoadBean;
+            logger.error(abortCause);
+            throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(abortCause));
         }
         else {
             logger.debug("找到天猫品牌:" + brandCode);
         }
         if (categoryCode < 0)
         {
-            logger.info("Job abort: can not find category_code by model, workload:" + workLoadBean);
-            throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("No category found"));
+            String abortCause = "Job abort: can not find category_code by model, workload:" + workLoadBean;
+            logger.error(abortCause);
+            throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(abortCause));
         }
         logger.debug("找到天猫分类ID:" + categoryCode);
 
@@ -194,10 +210,20 @@ public class TmallProductService implements PlatformServiceInterface {
         }
         tmallUploadRunState.setIs_darwin(isDarwin);
 
+        //上传商品时，使用第一个code作为主商品
         workLoadBean.setMainProductProp(cmsModelProp.getCmsCodePropBeanList().get(0));
         tmallWorkloadStatus.setValue(TmallWorkloadStatus.ADD_SEARCH_PRODUCT);
     }
 
+    /**
+     * 在天猫平台上传商品时搜索产品是否已经存在
+     * 1. 调用天猫API获取产品匹配的schema
+     * 2. 根据天猫API的产品匹配的Schema中的字段填充值
+     * 3. 调用天猫API获取该产品是否存在匹配的product
+     * 4. 如果不存在product则进入上传产品状态，如果存在，则进入检查产品状态
+     * @param tcb
+     * @throws TaskSignal
+     */
     private void addProductForStatusSearchProduct(UploadProductTcb tcb) throws TaskSignal {
         WorkLoadBean workLoadBean = tcb.getWorkLoadBean();
         TmallUploadRunState tmallUploadRunState = (TmallUploadRunState) tcb.getPlatformUploadRunState();
@@ -211,7 +237,7 @@ public class TmallProductService implements PlatformServiceInterface {
 
         List<PlatformPropBean> platformPropBeans = new ArrayList<>();
         try {
-            String schema ;
+            String schema;
             schema = tbProductService.getProductMatchSchema(categoryCode, shopBean);
             logger.debug("product_match_schema:" + schema);
 
@@ -252,6 +278,17 @@ public class TmallProductService implements PlatformServiceInterface {
         }
     }
 
+    /**
+     * 生成款号
+     * 1. 如果不是达尔文体系，那么使用model作为款号直接返回
+     * 2. 如果是达尔文体系，那么首先从workload获取款号（当该任务是达尔文已经拆分的子任务时，该款号会存在）
+     * 3. 如果是达尔文体系，并且workload中没有获取到款号，那么先从darwin list表中读取到该model下所有code
+     *    的款号，根据不同的款号拆分成多个子任务，抛出切分任务的信号给任务分发者，有WorkloadDispacher重新
+     *    分发子任务。
+     * @param tcb
+     * @return
+     * @throws TaskSignal
+     */
     private String generateStyleCode(UploadProductTcb tcb) throws TaskSignal {
         WorkLoadBean workLoadBean = tcb.getWorkLoadBean();
         TmallUploadRunState tmallUploadRunState = (TmallUploadRunState) tcb.getPlatformUploadRunState();
@@ -304,6 +341,18 @@ public class TmallProductService implements PlatformServiceInterface {
         }
     }
 
+    /**
+     * 在天猫平台上传商品时检查产品状态(不存在，等待审核，审核完毕)
+     * 对所有search product到的产品进行遍历
+     *  1. 如果发现某一个产品的产品状态是审核完毕，那么跳出循环，并进入上传商品状态。
+     *  2. 如果发现某一个产品的产品状态是未审核，那么继续循环
+     *  3. 如果发现产品不存在，那么也继续循环
+     *  4. 循环结束，如果有未审核的产品，那么抛出Abort_Job信号，任务结束，结束原因为：需要
+     *     等待产品审核
+     *  5. 循环结束，如果没有未审核的产品，那么进入上传产品状态
+     * @param tcb
+     * @throws TaskSignal
+     */
     private void addProductForStatusCheckProductStatus(UploadProductTcb tcb) throws TaskSignal {
         WorkLoadBean workLoadBean = tcb.getWorkLoadBean();
         TmallUploadRunState tmallUploadRunState = (TmallUploadRunState) tcb.getPlatformUploadRunState();
@@ -362,16 +411,22 @@ public class TmallProductService implements PlatformServiceInterface {
             tmallWorkloadStatus.setValue(TmallWorkloadStatus.ADD_UPLOAD_ITEM);
         }
     }
+
+    /**
+     * 天猫平台上传商品时，上传产品
+     * 1. 从数据库中查询所有产品的字段
+     * 2. 对所有产品字段进行mapping填值，如果遇到图片，那么抛出上传图片的信号
+     * 3. 如果没有遇到图片，那么调用Tmall API上传产品，如果上传成功，进入上传商品状态，
+     *    否则抛出Abort_Job信号, 错误原因为Tmall Api返回的错误
+     * @param tcb
+     * @throws TaskSignal
+     */
     private void addProductForStatusUploadProduct(UploadProductTcb tcb) throws TaskSignal {
         WorkLoadBean workLoadBean = tcb.getWorkLoadBean();
-        UpJobParamBean upJobParamBean = workLoadBean.getUpJobParam();
         TmallUploadRunState tmallUploadRunState = (TmallUploadRunState) tcb.getPlatformUploadRunState();
         TmallWorkloadStatus tmallWorkloadStatus = (TmallWorkloadStatus) workLoadBean.getWorkload_status();
-        boolean isDarwin = tmallUploadRunState.is_darwin();
         long categoryCode = tmallUploadRunState.getCategory_code();
         String brandCode = tmallUploadRunState.getBrand_code();
-        CmsModelPropBean cmsModelProp = workLoadBean.getCmsModelProp();
-        List<CmsCodePropBean> cmsCodeProps = cmsModelProp.getCmsCodePropBeanList();
         String productCode = tmallUploadRunState.getProduct_code();
         ShopBean shopBean = ShopConfigs.getShop(workLoadBean.getOrder_channel_id(),
                 String.valueOf(workLoadBean.getCart_id()));
@@ -379,28 +434,6 @@ public class TmallProductService implements PlatformServiceInterface {
         //没有找到产品id，需要重新上传Tmall产品
         if (productCode == null)
         {
-            CmsCodePropBean cmsCodePropBean = cmsCodeProps.get(0);
-            String styleCode;
-            // 如果是达尔文体系，那么首先从已有的表中查找该商品对应的product，
-            // 如果没有找到，则使用model作为产品ID
-            if (isDarwin) {
-                styleCode = getStyleCodeFromDawinList(workLoadBean.getCart_id(), cmsCodePropBean.getProp(CmsFieldEnum.CmsCodeEnum.code));
-                if (styleCode == null || "".equals(styleCode)) {
-                    styleCode = cmsCodePropBean.getCmsModelPropBean().getProp(CmsFieldEnum.CmsModelEnum.model);
-                }
-            }
-            else {
-                //如果上传model，那么以model作为款号，否则使用第一个code作为款号
-                if (upJobParamBean.getCodes() == null)
-                {
-                    styleCode = cmsModelProp.getProp(CmsFieldEnum.CmsModelEnum.model);
-                }
-                else {
-                    styleCode = cmsCodePropBean.getProp(CmsFieldEnum.CmsCodeEnum.code);
-                }
-            }
-            tmallUploadRunState.setStyle_code(styleCode);
-
             Set<String> imageSet = new HashSet<>();
             //输出参数，当构造image参数时，会填充url与它所在的field的映射关系，便于当图片上传结束时，能恢复url到字段中的值
 
@@ -455,6 +488,11 @@ public class TmallProductService implements PlatformServiceInterface {
         }
     }
 
+    /**
+     * 天猫平台上传商品时，当产品图片上传成功后继续上传产品
+     * @param tcb
+     * @throws TaskSignal
+     */
     private void addProductForStatusProductImageUploaded(UploadProductTcb tcb) throws TaskSignal {
         TmallUploadRunState tmallUploadRunState = (TmallUploadRunState) tcb.getPlatformUploadRunState();
         UploadImageResult uploadImageResult = tcb.getUploadImageResult();
@@ -1041,14 +1079,24 @@ public class TmallProductService implements PlatformServiceInterface {
         return (List)tmallContextBuildFields.getCustomFields();
     }
 
+    /**
+     * 价格的计算方法为：
+     *  计算最高价格，库存为0的sku不参与计算
+     *  如果所有sku库存都为0， 第一个的价格作为商品价格
+     * @param cmsModelProp
+     * @return
+     */
     private double calcItemPrice(CmsModelPropBean cmsModelProp) {
-        Double resultPrice = 0d;
+        Double resultPrice = 0d, onePrice = 0d;
         List<Double> skuPriceList = new ArrayList<>();
         for (CmsCodePropBean cmsCodeProp : cmsModelProp.getCmsCodePropBeanList()) {
             for (CmsSkuPropBean cmsSkuProp : cmsCodeProp.getCmsSkuPropBeanList()) {
                 int skuQuantity = Integer.valueOf(cmsSkuProp.getProp(CmsFieldEnum.CmsSkuEnum.sku_quantity));
+                double skuPrice = Double.valueOf(cmsSkuProp.getProp(CmsFieldEnum.CmsSkuEnum.sku_price));
+                if (onePrice - 0d == 0) {
+                    onePrice = skuPrice;
+                }
                 if (skuQuantity > 0)  {
-                    double skuPrice = Double.valueOf(cmsSkuProp.getProp(CmsFieldEnum.CmsSkuEnum.sku_price));
                     skuPriceList.add(skuPrice);
                 }
             }
@@ -1056,6 +1104,9 @@ public class TmallProductService implements PlatformServiceInterface {
 
         for (double skuPrice : skuPriceList) {
             resultPrice = Double.max(resultPrice, skuPrice);
+        }
+        if (resultPrice - 0d == 0) {
+            resultPrice = onePrice;
         }
 
         return resultPrice;
@@ -1323,6 +1374,7 @@ public class TmallProductService implements PlatformServiceInterface {
                     int cartId = workLoadBean.getCart_id();
                     String categoryCode = String.valueOf(tmallUploadRunState.getCategory_code());
 
+                    workLoadBean.setHasSku(true);
 
                     //TODO 将要从tmall平台获取已被占用的color, 暂时赋值为null
                     List<String> excludeColors = null;
@@ -1506,9 +1558,22 @@ public class TmallProductService implements PlatformServiceInterface {
                     }
 
                     PlatformPropBean platformProp = platformProps.get(0);
-                    SingleCheckField field = (SingleCheckField) FieldTypeEnum.createField(FieldTypeEnum.SINGLECHECK);
-                    field.setId(platformProp.getPlatformPropId());
-                    //
+                    MultiCheckField field = (MultiCheckField) FieldTypeEnum.createField(FieldTypeEnum.MULTICHECK);
+                    String platformPropId = platformProp.getPlatformPropId();
+                    List<ConditionPropValue> conditionPropValues = conditionPropValueRepo.get(workLoadBean.getOrder_channel_id(), platformPropId);
+                    field.setId(platformPropId);
+                    if (conditionPropValues != null && !conditionPropValues.isEmpty()) {
+                        RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
+                        for (ConditionPropValue conditionPropValue : conditionPropValues) {
+                            String conditionExpressionStr = conditionPropValue.getCondition_expression();
+                            RuleExpression conditionExpression= ruleJsonMapper.deserializeRuleExpression(conditionExpressionStr);
+                            String propValue = expressionParser.parse(conditionExpression, null);
+                            if (propValue != null) {
+                                field.addValue(propValue);
+                            }
+                        }
+                        contextBeforeUploadImage.addCustomField(field);
+                    }
                     break;
                 }
             }

@@ -611,6 +611,19 @@
 ,${attributebean.attribute35} as  attribute35
 ,${attributebean.attribute36} as  attribute36
 ,${attributebean.attribute37} as  attribute37
+,${attributebean.attribute38} as  attribute38
+,${attributebean.attribute39} as  attribute39
+,${attributebean.attribute40} as  attribute40
+,${attributebean.attribute41} as  attribute41
+,${attributebean.attribute42} as  attribute42
+,${attributebean.attribute43} as  attribute43
+,${attributebean.attribute44} as  attribute44
+,${attributebean.attribute45} as  attribute45
+,${attributebean.attribute46} as  attribute46
+,${attributebean.attribute47} as  attribute47
+,${attributebean.attribute48} as  attribute48
+,${attributebean.attribute49} as  attribute49
+,${attributebean.attribute50} as  attribute50
 from  ${tablename}
   ${keyword}
   </select>
@@ -633,7 +646,8 @@ from  ${tablename}
   <!-- 更新UpdateFlag :insert -->
   <update id="cms_updateInsertData" parameterType="HashMap">
     update  ${tableName} set UpdateFlag = '1'
-     where ${code} in (${codes})
+     ${keyword}
+     and ${code} in (${codes})
   </update>
 
   <!-- 更新UpdateFlag :insert model -->
@@ -700,7 +714,9 @@ select
 ,${pe_short_description} as pe_short_description
 ,${pe_long_description} as pe_long_description
 ,${ps_price}  as ps_price
+,${cps_cn_price}  as cps_cn_price
 ,${cps_cn_price_rmb}  as cps_cn_price_rmb
+,${cps_cn_price_final_rmb}  as cps_cn_price_final_rmb
     from
    ${tableName}
    ${keyword}
@@ -742,21 +758,6 @@ where is_attribute  = ${isAttribute}
 and attribute_type = ${attributeType}
 and order_channel_id = ${channelId}
   </select>
-
-  <!-- 插入Attribute产品信息 太慢了不用
-  <insert id="cms_superfeed_insertFeedAttribute" parameterType="HashMap">
-  insert into  voyageone_cms.cms_mt_feed_attribute
-  select ${channelId}, ${attributeName_value}, a.attributename, sysdate() from
-  (select distinct  ${attributeName} as attributename
-  from ${tableName}
-  where ${attributeName} is not null
-  and trim(${attributeName}) != ''
-  and ${attributeName} not in (
-  select attribute_value
-  from voyageone_cms.cms_mt_feed_attribute
-  where attribute_name = ${attributeName_value}
-  and channel_id = ${channelId})) a
-</insert> -->
 
   <!-- 插入SuperfeedFull产品信息 -->
   <insert id="cms_superfeed_inertSuperfeedFull" parameterType="HashMap">
@@ -817,4 +818,12 @@ insert ignore into  ${tableNameFull}
     and attribute_name = #{attributeName}
     and attribute_value = #{attributeValue}
   </select>
+
+  <!-- 更新UpdateFlag 清除update -->
+  <update id="cms_changeUpdateDateFlag" parameterType="HashMap">
+    update ${tableName}
+    set UpdateFlag = '0'
+    where ${keyword}
+    and ${category} in (${categoryvalue})
+  </update>
 </mapper>

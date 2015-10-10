@@ -27,6 +27,20 @@
     border: 1px solid #ccc;
     margin-bottom: 5px;
 }
+/* 
+.categoryList fieldset div{
+	padding:0px 0px 10px 0px;
+} */
+
+.categoryListRules{
+	margin:0px;
+	padding:0px;
+}
+.categoryListRules ul li{
+	margin:0px;
+	padding:0px;
+	list-style:none;
+}
 
 .categoryList legend {
     color: #e67e22;
@@ -43,6 +57,7 @@
     margin-left: 10px;
     margin-bottom: 10px;
     width: 100%;
+    border:none;
 }
 
 .categoryList table th tr td {
@@ -50,8 +65,10 @@
 }
 
 .categoryList input {
-    margin: 0px 5px 0px 5px;
-    padding: 1px;
+    margin: 10px 5px 10px 5px;
+    padding:2px;
+    border:1px solid #c8c2c2;
+    background:#fff;
 }
 
 .categoryList font {
@@ -79,16 +96,13 @@
 
 .categoryList th {
     text-align: center;
-    background: #87CEFA;
+    /*background: #f7f6f6; */
 }
 
 .categoryList td {
     text-align: center;
 }
 
-.categoryList td input {
-    width: 100%;
-}
 
 .categoryList td select {
     width: auto;
@@ -286,4 +300,63 @@
 
 fieldset.haveDone{
 	background:#fff4f4;
+}
+
+.legendTitle{
+	color:#444;
+}
+fieldset.requireStyle{
+	background-color:#fcf0f0;
+}
+.topPadding{
+	padding-top: 20px;
+}
+
+.proErrMsg{
+	width:60%;
+	margin:0 auto;
+	padding:0px;
+	text-align:center;
+    margin-bottom: 300px;
+}
+
+.proErrMsgList{
+	text-align:center;
+	color: #a94442;	
+	font-size:16px;
+	background:#f2dede;
+    border:1px solid #ebccd1;
+    border-radius: 2px;
+    padding:20px;
+    margin-top:200px;
+	
+}
+.proWarningMsgList{
+    text-align:center;
+    color: #a94442;
+    font-size:16px;
+    background:#f2dede;
+    border:1px solid #ebccd1;
+    border-radius: 2px;
+    padding:20px;
+    margin-top:200px;
+
+}
+.noPadding{
+	padding:0px;
+	margin:0px;
+}
+
+.pull-left{
+    text-align: left;
+}
+
+.rule-nolink a{
+    color:#ee3939;
+    text-decoration: underline;
+}
+
+
+.rule-nolink a:hover{
+    text-decoration: none;
 }

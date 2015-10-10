@@ -1,6 +1,8 @@
 package com.voyageone.core.modelbean;
 
-public class NaviBean {
+import java.io.Serializable;
+
+public class NaviBean implements Serializable {
 
 	private String menuName;
 

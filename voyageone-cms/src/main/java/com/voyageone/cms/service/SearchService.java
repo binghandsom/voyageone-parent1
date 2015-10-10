@@ -1,6 +1,7 @@
 package com.voyageone.cms.service;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -19,4 +20,5 @@ public interface SearchService {
 
 	File doExport(Map<String, Object> data, String path, String name);
 
+	public byte[] doExport(Map<String, Object> data) throws IOException;
 }

@@ -45,6 +45,7 @@ define [
         .withOption 'processing', true
         .withOption 'serverSide', true
         .withOption 'ordering', false
+        .withOption 'searching', false
         .withOption 'ajax', @dtGetProps
         .withOption 'createdRow', (tr, row) =>
           rowScope = @$scope.$new()
@@ -61,9 +62,9 @@ define [
           DTColumnBuilder.newColumn('prop_type', @$translate(KEYS.TYPE))
           .withClass('col-sm-1')
           .renderWith (v, t, r) -> r.typeName
-          DTColumnBuilder.newColumn('prop_value_default', @$translate(KEYS.VALUE))
+          DTColumnBuilder.newColumn('val_count', @$translate(KEYS.VALUE))
           .withClass('col-sm-2')
-          .renderWith -> '?'
+          .renderWith (val)-> if val > 0 then '已设置' else '无'
           DTColumnBuilder.newColumn('is_required', @$translate(KEYS.REQUIRED))
           .withClass('col-sm-1')
           .renderWith (val) =>
@@ -76,6 +77,12 @@ define [
           .renderWith -> template.btnSetMatch
         ]
         instance: null
+
+      # Windows 上应该没有相应的问题，但是 Mac 中会有中文无法输入的问题，所以此处进行细分处理
+      @$scope.$watch 'vm.filter.ignored', (=>
+        if @dtProps.instance then @dtProps.instance.reloadData() )
+      @$scope.$watch 'vm.filter.required', (=>
+        if @dtProps.instance then @dtProps.instance.reloadData() )
 
     options: [
       {label: 'ALL', value: ''}
@@ -93,6 +100,7 @@ define [
     filter:
       ignored: ''
       required: ''
+      propName: ''
 
     getConst: () ->
       @matchPropsService.getConst().then (res) =>
@@ -109,6 +117,7 @@ define [
       data.param = @category.id
       data.columns[3].search.value = @filter.required
       data.columns[4].search.value = @filter.ignored
+      data.search.value = @filter.propName
       # 设定搜索
       @matchPropsService.getProps data
       .then (res) =>

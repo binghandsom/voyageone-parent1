@@ -59,65 +59,100 @@ define(function(require) {
             };
 
             /**
-             * 根据不同的国家展示不同的产品信息.
+             * 根据不同的国家展示不同的产品信息.(datatable初始化调用)
              * @param type
-             * @returns {Array}
+             * @param columns
              */
-            this.doGetProductListByUserConfig = function (type, productColumns) {
+            this.doGetProductColumnsAtFirst = function (type, columns) {
+
+                var productAttributes = [];
+                var productColumns = [];
                 switch (type) {
                     case 'us':
-                        return getUsProductList(productColumns);
+                        productAttributes = userService.getUserConfig().cmsUsProductAttributes;
+                        productColumns = getAttributeId($rootScope.cmsMaster.USProductAttributes);
                         break;
                     case 'cn':
-                        return getCnProductList(productColumns);
+                        productAttributes = userService.getUserConfig().cmsCnProductAttributes;
+                        productColumns = getAttributeId($rootScope.cmsMaster.CNProductAttributes);
                         break;
                     default :
                         break;
                 }
+
+                // 获得US产品的属性列表.
+                _.forEach(columns, function (object, index) {
+
+                    // 该店铺需要显示的columns意外的columns不显示
+                    if (_.indexOf(productColumns, index.toString()) == -1 && index > 0) {
+                        object.notVisible();
+                    } else {
+
+                        // 显示用户自己设定的columns
+                        if (!_.isEmpty(productAttributes)
+                            && _.indexOf(productAttributes, index.toString()) == -1 && index > 0) {
+                            object.notVisible();
+                        }
+                    }
+                });
             };
 
             /**
-             * 获取US的产品信息列表.
+             * 根据不同的国家展示不同的产品信息.
+             * @param type
              * @returns {Array}
              */
-            function getUsProductList (productColumns) {
+            this.doGetProductListByUserConfig = function (type, datatable) {
 
-                // 获得US产品的属性列表.
-                var usProductAttributes = userService.getUserConfig().cmsUsProductAttributes;
+                var productAttributes = [];
+                var productColumns = [];
+                switch (type) {
+                    case 'us':
+                        productAttributes = userService.getUserConfig().cmsUsProductAttributes;
+                        productColumns = getAttributeId($rootScope.cmsMaster.USProductAttributes);
+                        break;
+                    case 'cn':
+                        productAttributes = userService.getUserConfig().cmsCnProductAttributes;
+                        productColumns = getAttributeId($rootScope.cmsMaster.USProductAttributes);
+                        break;
+                    default :
+                        break;
+                }
 
-                // 获取被显示的产品columns列表.
-                var showUsProductList =[];
-                _.forEach(productColumns, function (object, index) {
+                // 如果用户设置的要显示的columns
+                if (!_.isEmpty(productAttributes)) {
 
-                    if (_.indexOf(usProductAttributes, (index + 1).toString()) == -1) {
-                        object.notVisible();
-                    }
-                    showUsProductList.push (object);
-                });
+                    datatable.columns().visible(false);
+                    // 默认checkbox必须显示.
+                    datatable.column(0).visible(true);
 
-                return showUsProductList;
-            }
+                    // 用户选中的columns都要显示.
+                    _.forEach(productAttributes, function (value) {
+                        datatable.column(parseInt(value)).visible(true);
+                    });
+                } else {
+                    // 默认checkbox必须显示.
+                    datatable.column(0).visible(true);
+
+                    // 只显示该店铺需要显示的columns
+                    _.forEach(productColumns, function (value) {
+                        datatable.column(parseInt(value)).visible(true);
+                    })
+                }
+            };
 
             /**
-             * 获取CN的产品信息列表.
+             * 获取Attribute的Id列表.
+             * @param productAttributes
              * @returns {Array}
              */
-            function getCnProductList (productColumns) {
-
-                // 获得US产品的属性列表.
-                var cnProductAttributes = userService.getUserConfig().cmsCnProductAttributes;
-
-                // 获取被显示的产品columns列表.
-                var showCnProductList = [];
-                _.forEach(productColumns, function (object, index) {
-
-                    if (_.indexOf(cnProductAttributes, (index + 1).toString()) == -1) {
-                        object.notVisible();
-                    }
-                    showCnProductList.push (object);
+            function getAttributeId (productAttributes) {
+                var attributeList = [];
+                _.forEach(productAttributes, function (attribute) {
+                    attributeList.push(attribute.attributeValueId);
                 });
 
-                return showCnProductList;
+                return attributeList
             }
 
 /*            this.doGetCMSMasterInfo = function (channelId) {
