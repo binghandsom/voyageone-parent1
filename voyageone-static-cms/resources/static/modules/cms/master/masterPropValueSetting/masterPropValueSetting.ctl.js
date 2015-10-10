@@ -8,7 +8,7 @@
 
 define([ "modules/cms/cms.module",
          "modules/cms/cms.route",
-		 "modules/cms/masterPropValueSetting/masterPropValueSettingService",
+		 "modules/cms/master/masterPropValueSetting/masterPropValueSettingService",
 		 "modules/cms/service/mainCategory.service",
 		 "modules/cms/edit/edit.service",
 		 "modules/cms/popup/propValueSetting/popPropValueSetting.ctl"], 
