@@ -17,7 +17,7 @@ define (function (require) {
     require ('modules/cms/popup/setCnProductProperty/popSetCnProductProperty.ctl');
     require ('modules/cms/popup/setCnProductShare/popSetCnProductShare.ctl');
     require ('modules/cms/popup/setProductColumns/popSetProductColumns.ctl');
-    require ('modules/cms/popup/propValueSetting/popPropValueSetting.ctl');
+    require ('modules/cms/master/masterPropValueSetting/masterPropValueSetting.ctl');
 
     cmsApp.controller ('editCategoryController', ['$scope', '$rootScope', '$q', '$location', '$routeParams', '$translate', '$compile', 'cmsCommonService'
         , 'editCategoryService', 'cmsRoute', 'mainCategoryService', 'mainCategoryLevel', 'notify', 'ngDialog', 'cmsPopupPages', 'systemCountry',
