@@ -15,7 +15,7 @@ public interface MasterPropValueSettingService {
     
     public boolean submit(MasterPropertyFormBean formData, UserSessionBean userSession);
     
-    public Object getCategoryNav();
+    public Object getCategoryNav(UserSessionBean userSession);
     
     public List<MasterProperty> buildPorpertyTrees(List<MasterProperty> masterProperties);
     

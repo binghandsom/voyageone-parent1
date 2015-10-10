@@ -1,5 +1,8 @@
 package com.voyageone.common.configs.beans;
 
+import org.springframework.beans.BeanUtils;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class ImsCategoryBean {
@@ -53,6 +56,33 @@ public class ImsCategoryBean {
 	public void setSubCategories(List<ImsCategoryBean> subCategories) {
 		this.subCategories = subCategories;
 	}
-	
-	
+
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+
+		return this.clone(this);
+	}
+
+	/**
+	 * 克隆.
+	 * @param orgCategory
+	 * @return
+	 */
+	private ImsCategoryBean clone(ImsCategoryBean orgCategory){
+
+		ImsCategoryBean target = new ImsCategoryBean();
+
+		BeanUtils.copyProperties(orgCategory, target);
+
+		List<ImsCategoryBean> categoryBeanList =new ArrayList<>();
+
+		for (ImsCategoryBean bean:orgCategory.getSubCategories()){
+
+			ImsCategoryBean subTarCategory = new ImsCategoryBean();
+			categoryBeanList.add(clone(bean));
+		}
+		target.setSubCategories(categoryBeanList);
+
+		return target;
+	}
 }

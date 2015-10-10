@@ -12,7 +12,7 @@
 		channel_id = #{orderChannelId}
 		and sent_flag = 0
 	order by created asc
-	limit 100
+	limit 200
 	</select>
 
 	<!-- 将cms_work_product_image_url表的 订单发送标志置位->1-->

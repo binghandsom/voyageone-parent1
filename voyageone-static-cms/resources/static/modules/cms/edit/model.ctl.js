@@ -17,7 +17,7 @@ define (function (require) {
     require ('modules/cms/popup/moveToModel/popMoveToModel.ctl');
     require ('modules/cms/popup/setCnProductProperty/popSetCnProductProperty.ctl');
     require ('modules/cms/popup/setCnProductShare/popSetCnProductShare.ctl');
-    require ('modules/cms/popup/propValueSetting/popPropValueSetting.ctl');
+    require ('modules/cms/master/masterPropValueSetting/masterPropValueSetting.ctl');
 
     cmsApp.controller ('editModelController', ['$scope', '$rootScope', '$q', '$location', '$routeParams', 'cmsCommonService', 'editModelService', 'mainCategoryService'
         , 'mainCategoryLevel', 'cmsRoute', 'systemCountry', 'notify', '$compile', 'DTOptionsBuilder', 'DTColumnBuilder', '$modal', 'cmsPopupPages', '$translate', 'vConfirm',

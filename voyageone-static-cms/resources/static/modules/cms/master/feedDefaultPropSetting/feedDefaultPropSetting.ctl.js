@@ -8,7 +8,7 @@
 
 define([ "modules/cms/cms.module",
          "modules/cms/cms.route",
-		 "modules/cms/feedDefaultPropSetting/feedDefaultPropSettingService",
+		 "modules/cms/master/feedDefaultPropSetting/feedDefaultPropSettingService",
 		 "modules/cms/popup/propValueSetting/popPropValueSetting.ctl"], 
 		 function(cmsModule) {
 	

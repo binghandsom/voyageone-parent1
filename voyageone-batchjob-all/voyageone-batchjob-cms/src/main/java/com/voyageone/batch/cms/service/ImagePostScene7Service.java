@@ -1,10 +1,17 @@
 package com.voyageone.batch.cms.service;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.voyageone.common.components.issueLog.enums.ErrorType;
+import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.configs.ChannelConfigs;
+import com.voyageone.common.configs.Codes;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.net.ftp.FTP;
@@ -22,19 +29,16 @@ import com.voyageone.common.util.HttpUtils;
 public class ImagePostScene7Service {
 	
 	private static Log logger = LogFactory.getLog(ImagePostScene7Service.class);
-	
-	public static Map<String, String> CHANNEL_IMAGE_FOLD = new HashMap<String, String>();
-	
+
 	@Autowired
 	private ImageDao imageDao;
 	
 	@Autowired
 	IssueLog issueLog;
-	
-	static {
-		CHANNEL_IMAGE_FOLD.put("010", "/Jewelry");
-	}
-	
+
+	// Scene7FTP设置
+	private static final String S7FTP_CONFIG = "S7FTP_CONFIG";
+
 	/**
 	 * 取出要处理的图片url列表
 	 * 
@@ -58,21 +62,30 @@ public class ImagePostScene7Service {
 			
 			FtpBean ftpBean = new FtpBean();
 			// ftp连接port
-			ftpBean.setPort("21");
+			String port = Codes.getCodeName(S7FTP_CONFIG, "Port");
+			ftpBean.setPort(port);
 			// ftp连接url
-			ftpBean.setUrl("s7ftp2.scene7.com");
+			String url = Codes.getCodeName(S7FTP_CONFIG, "Url");
+			ftpBean.setUrl(url);
 			// ftp连接usernmae
-			ftpBean.setUsername("maintenance-40voyageone-2eco8553");
+			String userName = Codes.getCodeName(S7FTP_CONFIG, "UserName");
+			ftpBean.setUsername(userName);
 			// ftp连接password
-			ftpBean.setPassword("VoyageOne#");
-			ftpBean.setFile_coding("utf-8");
+			String password = Codes.getCodeName(S7FTP_CONFIG, "Password");
+			ftpBean.setPassword(password);
+			// ftp连接上传文件编码
+			String fileEncode = Codes.getCodeName(S7FTP_CONFIG, "FileCoding");
+			ftpBean.setFile_coding(fileEncode);
 			
 			//FTP服务器保存目录设定
-			ftpBean.setUpload_path(CHANNEL_IMAGE_FOLD.get(orderChannelId));
+			String uploadPath = ChannelConfigs.getVal1(orderChannelId, ChannelConfigEnums.Name.scene7_image_folder);
+			ftpBean.setUpload_path(uploadPath);
 			
 			FtpUtil ftpUtil = new FtpUtil();
 			FTPClient ftpClient = new FTPClient();
-			
+
+			String imageUrl = "";
+
 			try {
 				//建立连接
 				ftpClient = ftpUtil.linkFtp(ftpBean);
@@ -85,7 +98,7 @@ public class ImagePostScene7Service {
 						ftpClient.setConnectTimeout(120000);
 						
 						for (int i = 0; i < imageUrlList.size(); i++) {
-							String imageUrl = imageUrlList.get(i);
+							imageUrl = imageUrlList.get(i);
 							
 							inputStream = HttpUtils.getInputStream(imageUrl, null);
 							
@@ -113,9 +126,16 @@ public class ImagePostScene7Service {
 				}
 					
 			} catch (Exception ex) {
-				System.out.println(ex);
+				logger.error(ex.getMessage(), ex);
+				issueLog.log(ex, ErrorType.BatchJob, SubSystem.CMS);
+
+				// 图片url错误，不需要再处理
+				if (ex instanceof FileNotFoundException) {
+					successImageUrlList.add(imageUrl);
+				}
+
 				isSuccess = false;
-				
+
 			} finally {
 				//断开连接
 				if (ftpClient != null) {
@@ -143,10 +163,6 @@ public class ImagePostScene7Service {
 		return imageDao.updateImageSendFlag(orderChannelId, successImageUrlList, taskName);
 	}
 	
-	public static void main(String[] args) {
-		String imageUrl = "http://max1.jewelrystatic.com/media/catalog/product/a/t/atv722az_main.jpg";
-		int lastSlash = imageUrl.lastIndexOf("/");
-		String fileName = imageUrl.substring(lastSlash + 1);
-		System.out.println(fileName);
+	public static void main(String[] args) throws IOException {
 	}
 }
