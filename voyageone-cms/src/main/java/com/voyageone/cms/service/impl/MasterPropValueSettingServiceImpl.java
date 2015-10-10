@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.voyageone.cms.service.CommonService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +58,9 @@ public class MasterPropValueSettingServiceImpl implements MasterPropValueSetting
 	
 	@Autowired
 	private PlatformInfoDao platformInfoDao;
+
+	@Autowired
+	CommonService commonService;
 	
 	private UserSessionBean userSession;
 	
@@ -200,10 +204,10 @@ public class MasterPropValueSettingServiceImpl implements MasterPropValueSetting
 	 * 获取类目菜单列表.
 	 */
 	@Override
-	public Object getCategoryNav() {
+	public Object getCategoryNav(UserSessionBean userSession) {
 		Map<String, Object> responseMap = new HashMap<String, Object>();
 		//设置顶层所有类目
-		List<ImsCategoryBean> topCategories = ImsCategoryConfigs.getMtCategoryBeanById(0).getSubCategories();
+		List<ImsCategoryBean> topCategories = commonService.getChannelCategories(userSession.getSelChannel());
 		responseMap.put("categories", topCategories);
 		
 		return responseMap;

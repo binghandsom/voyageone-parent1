@@ -159,4 +159,27 @@ public class CommonDao extends CmsBaseDao {
 		}
 		return info;
 	}
+
+	/**
+	 * 获取当前channel下的所有一级类目.
+	 * @param channelId
+	 * @return
+	 */
+	public List<String> getChannelCategories(String channelId){
+
+		Map<String, Object> parms = new HashMap<String, Object>();
+		parms.put("channelId",channelId);
+		return selectList(Constants.DAO_NAME_SPACE_CMS +"get_channel_categoryId",parms);
+	}
+
+	/**
+	 * 获取当前channel下不应显示的子类目.
+	 * @param channelId
+	 * @return
+	 */
+	public List<String> getChannelNoDisplayCategories(String channelId){
+		Map<String, Object> parms = new HashMap<String, Object>();
+		parms.put("channelId",channelId);
+		return selectList(Constants.DAO_NAME_SPACE_CMS +"get_channel_noDisplay_categoryId",parms);
+	}
 }
