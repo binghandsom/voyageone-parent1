@@ -13,13 +13,12 @@
 		<div class="row">
 			<div class="col-lg-12">
 				<div class="panel panel-default">
-					<div class="categoryList">
+					<div class="categoryList" >
 						<fieldset ng-repeat="comProp in defaultPropList" ng-class="comProp.ngClass">
 							<legend>{{comProp.propName}}</legend>
-							<div
-								ng-if="comProp.propType === inputType.INPUT||comProp.propType === inputType.lABEL" >
+							<div ng-if="comProp.propType === inputType.INPUT||comProp.propType === inputType.lABEL"  ng-controller="cmsPopupController">
 								<label>{{comProp.propName}}:&nbsp;</label><input
-									ng-mousedown="openValueSetPopup(comProp)" type="text"
+									ng-mousedown="openPropValueSetting(comProp)" type="text"
 									ng-model="comProp.propValue" />
 							</div>
 							<div ng-if="comProp.propType === inputType.SINGLECHECK">

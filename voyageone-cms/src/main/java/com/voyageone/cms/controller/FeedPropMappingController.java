@@ -2,6 +2,7 @@ package com.voyageone.cms.controller;
 
 import com.voyageone.base.BaseController;
 import com.voyageone.cms.feed.OperationBean;
+import com.voyageone.cms.formbean.FeedMappingProp;
 import com.voyageone.cms.modelbean.*;
 import com.voyageone.cms.service.FeedPropMappingService;
 import com.voyageone.core.ajax.AjaxResponseBean;

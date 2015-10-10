@@ -31,17 +31,19 @@ define([ "modules/cms/cms.module",
 							$scope.resData = response.data;
 							
 							var cmsCategorise = $scope.resData.cmsCategoryList;
-							
+
 							for (var i = 0; i < cmsCategorise.length; i++) {
 								if (cmsCategorise[i].mainCategoryId==-1) {
 									cmsCategorise[i].isMatch = true;
 								}
 								if (cmsCategorise[i].mainCategoryId >0) {
 									cmsCategorise[i].inheritClass = 'super-category fa fa-star';
+									cmsCategorise[i].isPropMatch = true;
 								}
 								
 								if (cmsCategorise[i].mainCategoryId == 0 && cmsCategorise[i].mainCategoryPath!=null) {
 									cmsCategorise[i].inheritClass = 'sub-category fa fa-long-arrow-up';
+									cmsCategorise[i].isPropMatch = false;
 								}
 							}
 							
@@ -116,6 +118,7 @@ define([ "modules/cms/cms.module",
 					//更新cms类目.
 					editService.doUpdateMainCategoryId(parmData,false).then(
 							function(respose){
+						category.isPropMatch = true;
 						category.isSave = false;
 						notify.success("CMS_TXT_MSG_UPDATE_SUCCESS");
 					});
@@ -138,15 +141,61 @@ define([ "modules/cms/cms.module",
 							}
 							item.platformInfo = allCategory[i].platformInfo;
 							saveItemList.push(item);
-							allCategory[i].isSave = false;
 						}
 					}
 					
 					//更新cms类目.
 					editService.doUpdateMainCategoryId(saveItemList,false).then(function(respose){
+						for (var i = 0; i < allCategory.length; i++) {
+							if (allCategory[i].isSave) {
+								if(allCategory[i].mainCategoryId>0){
+									allCategory[i].isPropMatch = true;;
+								}
+								allCategory[i].isSave = false;
+							}
+						}
 						notify.success("CMS_TXT_MSG_UPDATE_SUCCESS");
 					});
 				};
+
+				$scope.filterPropDisMatchCategory = function($event){
+
+
+					var cmsCategorise = $scope.resData.cmsCategoryList;
+
+					if ($scope.filterByProp) {
+
+						$scope.filterByProp = false;
+
+						for (var i = 0; i < cmsCategorise.length; i++) {
+							if (cmsCategorise[i].mainCategoryId==-1) {
+								cmsCategorise[i].isMatch = true;
+							}
+							if (cmsCategorise[i].mainCategoryId >0) {
+								cmsCategorise[i].inheritClass = 'super-category fa fa-star';
+							}
+
+							if (cmsCategorise[i].mainCategoryId == 0 && cmsCategorise[i].mainCategoryPath!=null) {
+								cmsCategorise[i].inheritClass = 'sub-category fa fa-long-arrow-up';
+							}
+						}
+						//获取cms类目
+						$scope.cmsCategoryList = cmsCategorise;
+						$event.target.innerText = " 属性匹配未完成类目";
+					}else {
+						var filterCategoryList = [];
+						$scope.filterByProp = true;
+						for (var i = 0; i < cmsCategorise.length; i++) {
+
+							if (cmsCategorise[i].mainCategoryId > 0 && cmsCategorise[i].propMatchStatus==0) {
+								filterCategoryList.push(cmsCategorise[i]);
+							}
+						}
+						//获取cms类目
+						$scope.cmsCategoryList = filterCategoryList;
+						$event.target.innerText = " 全部类目";
+					}
+				}
 				
 				document.onclick = function(e){
 					if ($scope.isClick) {
@@ -172,9 +221,9 @@ define([ "modules/cms/cms.module",
 					 
 					 var cmsCategorise = $scope.resData.cmsCategoryList;
 					 
-					 if ($scope.filter) {
+					 if ($scope.filterByCategory) {
 						 
-						 $scope.filter = false;
+						 $scope.filterByCategory = false;
 							
 						for (var i = 0; i < cmsCategorise.length; i++) {
 							if (cmsCategorise[i].mainCategoryId==-1) {
@@ -193,7 +242,7 @@ define([ "modules/cms/cms.module",
 						$event.target.innerText = " 未匹配类目";
 					}else {
 						var filterCategoryList = [];
-						$scope.filter = true;
+						$scope.filterByCategory = true;
 						for (var i = 0; i < cmsCategorise.length; i++) {
 							
 							if (cmsCategorise[i].mainCategoryId == 0) {
@@ -209,7 +258,7 @@ define([ "modules/cms/cms.module",
 				 
 				 $scope.propertyMatch = function(cmsCategory){
 					 
-					 $location.path(cmsRoute.cms_feed_prop_match.path(cmsCategory.categoryId));
+					 $location.path(cmsRoute.cms_feed_prop_match.path(cmsCategory.mainCategoryId));
 				 };
 				    
 			} ]);

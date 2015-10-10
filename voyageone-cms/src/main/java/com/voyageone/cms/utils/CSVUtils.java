@@ -67,7 +67,7 @@ public class CSVUtils {
      * @param csvWriter
      * @throws IOException
      */
-    private static void writeRow(List<Object> row, BufferedWriter csvWriter) throws IOException {
+    public static void writeRow(List<Object> row, BufferedWriter csvWriter) throws IOException {
         // 写入文件头部
         for (Object data : row) {
             StringBuffer sb = new StringBuffer();
@@ -75,5 +75,14 @@ public class CSVUtils {
             csvWriter.write(rowStr);
         }
         csvWriter.newLine();
+    }
+
+    public static String writeRow(List<Object> row) throws IOException {
+        StringBuffer rowStr=new StringBuffer();
+        // 写入文件头部
+        for (Object data : row) {
+            rowStr.append("\"").append(data).append("\",").toString();
+        }
+        return  rowStr.toString();
     }
 }

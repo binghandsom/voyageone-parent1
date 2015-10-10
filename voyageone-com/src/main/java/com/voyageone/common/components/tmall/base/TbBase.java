@@ -96,12 +96,8 @@ public abstract class TbBase {
         // 按给定的次数，进行多次的尝试
         for (int intApiErrorCount = 0; intApiErrorCount < maxTryCount; intApiErrorCount++) {
 
-            TaobaoClient client = getDefaultTaobaoClient(shopBean);
-
             try {
-                T response = setSessionKey
-                        ? client.execute(request, shopBean.getSessionKey())
-                        : client.execute(request);
+                T response = reqTaobaoApiWithThread(shopBean, request, setSessionKey, tryWait);
 
                 if (response != null && !isTimeout(response))
                     return response;
@@ -123,6 +119,63 @@ public abstract class TbBase {
         return null;
     }
 
+    /**
+     * 请求taobao Api的线程，响应和异常通过成员response和apiException传递
+     * 如果超时，response为null
+     * @param <T>
+     */
+    private class ReqTaobaoApiThread<T extends TaobaoResponse> extends Thread {
+        private ShopBean shopBean;
+        private TaobaoRequest<T> request;
+        private boolean setSessionKey;
+        private ApiException apiException = null;
+        private T response = null;
+
+        public ReqTaobaoApiThread(ShopBean shopBean, TaobaoRequest<T> request, boolean setSessionKey) {
+            this.shopBean = shopBean;
+            this.request = request;
+            this.setSessionKey = setSessionKey;
+        }
+
+        @Override
+        public void run() {
+            TaobaoClient client = getDefaultTaobaoClient(shopBean);
+                try {
+                    response = setSessionKey
+                            ? client.execute(request, shopBean.getSessionKey())
+                            : client.execute(request);
+                }
+                catch (ApiException e) {
+                    apiException = e;
+                }
+        }
+
+        public ApiException getApiException() {
+            return apiException;
+        }
+
+        public T getResponse() {
+            return response;
+        }
+    }
+    private <T extends TaobaoResponse> T reqTaobaoApiWithThread(ShopBean shopBean, TaobaoRequest<T> request, boolean setSessionKey, int timeout) throws ApiException {
+
+        T response;
+        ReqTaobaoApiThread t = new ReqTaobaoApiThread<T>(shopBean, request, setSessionKey);
+        t.start();
+        try {
+            t.join(timeout);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if (t.getApiException() != null)
+        {
+            throw t.getApiException();
+        } else {
+            response = (T) t.getResponse();
+        }
+        return response;
+    }
     /**
      * 辅助：判断结果是否是超时
      */

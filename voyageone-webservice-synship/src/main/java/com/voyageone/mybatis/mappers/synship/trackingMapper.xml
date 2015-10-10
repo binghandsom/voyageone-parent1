@@ -16,6 +16,22 @@
             omsOrders.order_number = orders.order_number
     </select>
 
+    <select id="orders_getOrderTrackInfo" resultType="com.voyageone.synship.formbean.OrderTrackInfoBean">
+        SELECT
+            orders.syn_ship_no,
+            omsOrders.order_channel_id,
+            omsOrders.cart_id
+        FROM
+            oms_bt_orders  omsOrders,
+            tt_orders orders
+        WHERE
+            omsOrders.source_order_id = #{cwb}
+        AND
+            omsOrders.order_kind = '0'
+        AND
+            omsOrders.order_number = orders.order_number
+    </select>
+
     <select id="tt_tracking_info_select" resultType="com.voyageone.synship.formbean.TrackInfoBean">
         select
             info.syn_ship_no,

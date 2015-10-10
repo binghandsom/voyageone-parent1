@@ -1,5 +1,7 @@
 package com.voyageone.common.util;
 
+import com.voyageone.common.configs.beans.PostResponse;
+
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -211,6 +213,61 @@ public class HttpUtils {
             throw new Exception("Request 异常  Response Code: " + String.valueOf(code));
         }
         return ret;
+
+    }
+
+    /*
+     * 带Session的HttpPost请求
+     */
+    public static PostResponse PostSoapFull(String postUrl, String soap_action, String send_soap, String session) throws Exception {
+
+        URL url = new URL(postUrl);
+        HttpURLConnection http = (HttpURLConnection) url.openConnection();
+        http.setConnectTimeout(30000);
+
+        // 设置从主机读取数据超时（单位：毫秒）
+        http.setReadTimeout(30000);
+        http.setRequestProperty("Content-Length", String.valueOf(send_soap.length()));
+        http.setRequestProperty("Content-Type", "text/xml;charset=UTF-8");
+        http.setRequestProperty("SOAPAction", soap_action);
+        if (session!=null && !"".equals(session)){
+            http.setRequestProperty("Cookie", session);
+        }
+
+        http.setRequestMethod("POST");
+        http.setDoInput(true);
+        http.setDoOutput(true);
+        http.setUseCaches(false);
+
+        PostResponse res = new PostResponse();
+
+        OutputStreamWriter out = new OutputStreamWriter(http.getOutputStream(), "UTF-8");
+        out.append(send_soap);
+        out.flush();
+        out.close();
+
+        int code = http.getResponseCode();
+        if (code == HttpURLConnection.HTTP_OK) {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(http.getInputStream()));
+            String line;
+            StringBuffer buffer = new StringBuffer();
+            while ((line = reader.readLine()) != null) {
+                buffer.append(line);
+            }
+            reader.close();
+            http.disconnect();
+
+            //获取 sessionid
+            String sessionId  = http.getHeaderField("Set-Cookie");
+            if (sessionId!=null && !"".equals(sessionId)){
+                sessionId = sessionId.substring(0, sessionId.indexOf(";"));
+                res.setSession(sessionId);
+            }
+            res.setResult(buffer.toString());
+        } else {
+            throw new Exception("Request 异常  Response Code: " + String.valueOf(code));
+        }
+        return res;
 
     }
 }

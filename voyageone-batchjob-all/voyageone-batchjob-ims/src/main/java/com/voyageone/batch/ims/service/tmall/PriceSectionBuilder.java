@@ -23,30 +23,30 @@ public class PriceSectionBuilder {
     private PlatformPropDao platformPropDao;
 
     private class PriceSection {
-        private int minPrice;
-        private int maxPrice;
+        private double minPrice;
+        private double maxPrice;
 
         public PriceSection() {
         }
 
-        public PriceSection(int minPrice, int maxPrice) {
+        public PriceSection(double minPrice, double maxPrice) {
             this.minPrice = minPrice;
             this.maxPrice = maxPrice;
         }
 
-        public int getMinPrice() {
+        public double getMinPrice() {
             return minPrice;
         }
 
-        public void setMinPrice(int minPrice) {
+        public void setMinPrice(double minPrice) {
             this.minPrice = minPrice;
         }
 
-        public int getMaxPrice() {
+        public double getMaxPrice() {
             return maxPrice;
         }
 
-        public void setMaxPrice(int maxPrice) {
+        public void setMaxPrice(double maxPrice) {
             this.maxPrice = maxPrice;
         }
 
@@ -56,14 +56,14 @@ public class PriceSectionBuilder {
         if (platformProp.getPlatformPropType() == ImsConstants.PlatformPropType.C_SINGLE_CHECK)
         {
             String priceStr = cmsCodeProp.getProp(CmsFieldEnum.CmsCodeEnum.price);
-            int price = Integer.valueOf(priceStr);
+            double price = Double.valueOf(priceStr);
 
             String platformPropHash = platformProp.getPlatformPropHash();
             List<PlatformPropOptionBean> platformoOptions = platformPropDao.selectPlatformOptionsByPropHash(platformPropHash);
 
             for (PlatformPropOptionBean platformPropOption : platformoOptions)
             {
-                PriceSection priceSection = parsePriceSection(platformPropOption.getPlatformPropOptionValue());
+                PriceSection priceSection = parsePriceSection(platformPropOption.getPlatformPropOptionName());
                 if (inSection(price, priceSection))
                 {
                     SingleCheckField field = (SingleCheckField) FieldTypeEnum.createField(FieldTypeEnum.SINGLECHECK);
@@ -93,8 +93,8 @@ public class PriceSectionBuilder {
         {
             String[] sectionStrs = platformPropOptionValue.split(sectionSeparator);
 
-            priceSection.setMinPrice(Integer.valueOf(sectionStrs[0]));
-            priceSection.setMaxPrice(Integer.valueOf(sectionStrs[1]));
+            priceSection.setMinPrice(Double.valueOf(sectionStrs[0]));
+            priceSection.setMaxPrice(Double.valueOf(sectionStrs[1]));
         } //有最大值
         else if (platformPropOptionValue.indexOf(maxIdentifier) != -1)
         {
@@ -113,7 +113,7 @@ public class PriceSectionBuilder {
         return priceSection;
     }
 
-    private boolean inSection(int price, PriceSection priceSection)
+    private boolean inSection(double price, PriceSection priceSection)
     {
         return (price <= priceSection.getMaxPrice()) && (price >= priceSection.getMinPrice());
     }

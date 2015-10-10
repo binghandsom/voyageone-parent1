@@ -4,60 +4,71 @@
 
     <select id="synShip_getSendSMSLst" resultType="com.voyageone.batch.synship.modelbean.SmsHistoryBean">
         SELECT
-        history.auto_no,
-        history.source_order_id,
-        history.ship_phone,
-        history.ship_name,
-        history.sent_type,
-        history.sent_person,
-        history.sent_time,
-        history.sent_conent,
-        history.sent_cost,
-        history.PORT,
-        history.STATUS,
-        history.sms_flg,
-        history.order_channel_id,
-        history.task_id,
-        history.create_time,
-        history.update_time,
-        history.create_person,
-        history.update_person
+            history.auto_no,
+            history.source_order_id,
+            history.ship_phone,
+            history.ship_name,
+            history.sent_type,
+            history.sent_person,
+            history.sent_time,
+            history.sent_conent,
+            history.sent_cost,
+            history.PORT,
+            history.STATUS,
+            history.sms_flg,
+            history.order_channel_id,
+            history.task_id,
+            history.create_time,
+            history.update_time,
+            history.create_person,
+            history.update_person
         FROM
-        tt_sms_history history
+            tt_sms_history history
         WHERE
-        history.sent_conent is not null
-        AND history.sent_conent != ''
-        AND history.sent_type = #{sent_type}
-        AND history.sms_flg = #{sms_flg}
-        AND history.order_channel_id = #{order_channel_id}
+            history.sent_type = #{sent_type}
+            AND history.sms_flg = #{sms_flg}
+            AND history.order_channel_id = #{order_channel_id}
+            AND history.sent_conent IS NOT NULL
+            AND history.sent_conent != ''
+        ORDER BY
+          history.task_id,
+          history.auto_no
         LIMIT #{limit};
     </select>
 
 
     <update id="synShip_UpdateSmsHistory">
         UPDATE
-          tt_sms_history
+            tt_sms_history
         SET
-          sent_conent = #{sent_conent},
-          sent_cost = #{sent_cost},
-          sms_flg = #{sms_flg},
-          sent_time = #{sent_time},
-          update_time = #{update_time},
-          update_person = #{update_person}
+            sent_conent   = #{sent_conent},
+            sent_cost     = #{sent_cost},
+            sms_flg       = #{sms_flg},
+            sent_time     = #{sent_time},
+            update_time   = #{update_time},
+            update_person = #{update_person}
         WHERE
-          auto_no = #{auto_no};
+            auto_no = #{auto_no};
     </update>
 
 
     <update id="synShip_UpdateSmsHistoryStatus">
         UPDATE
-        tt_sms_history
+            tt_sms_history
         SET
-        sms_flg = #{sms_flg},
-        update_time = #{update_time},
-        update_person = #{update_person}
+            sms_flg       = #{sms_flg},
+            update_time   = #{update_time},
+            update_person = #{update_person}
         WHERE
-        auto_no = #{auto_no};
+            auto_no = #{auto_no};
     </update>
 
+    <insert id="tt_sms_history_insert" parameterType="com.voyageone.batch.synship.modelbean.SmsHistoryBean">
+        INSERT INTO Synship.tt_sms_history (source_order_id, ship_phone, ship_name, sent_type, sent_person, sent_time,
+                                            sent_conent, sent_cost, port, status, sms_flg, order_channel_id, task_id,
+                                            create_time, update_time, create_person, update_person)
+        VALUES (#{source_order_id}, #{ship_phone}, #{ship_name}, #{sent_type}, #{sent_person}, #{sent_time}, #{sent_conent},
+                #{sent_cost}, #{port}, #{status}, #{sms_flg}, #{order_channel_id}, #{task_id}, NOW(), NOW(),
+                #{create_person}, #{update_person})
+    </insert>
 </mapper>

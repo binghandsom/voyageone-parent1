@@ -1,6 +1,7 @@
 package com.voyageone.batch.synship.dao;
 
 import com.voyageone.base.dao.BaseDao;
+import com.voyageone.batch.synship.modelbean.EtkTrackingBean;
 import com.voyageone.batch.synship.modelbean.PackageItemBean;
 import com.voyageone.batch.synship.modelbean.TrackingBean;
 import com.voyageone.batch.synship.modelbean.TrackingSyncBean;
@@ -136,6 +137,34 @@ public class TrackingDao extends BaseDao {
         params.put("task_name", task_name);
 
         return updateTemplate.insert( "synShip_InsertTrackingInfo", params);
+    }
+
+    /**
+     * 获取需要进行轮询的ETK面单记录(
+     *
+     * @return EtkTrackingBean
+     */
+    public List<EtkTrackingBean> getEtkTracking() {
+
+        return selectList("synShip_getEtkTracking");
+    }
+
+    /**
+     *
+     * @param tracking_type
+     * @param tracking_no
+     * @param sent_kd100_poll_flg
+     * @return
+     */
+    public int updateKD100Poll( String tracking_type, String tracking_no, String sent_kd100_poll_flg, String task_name) {
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("tracking_type", tracking_type);
+        params.put("tracking_no", tracking_no);
+        params.put("sent_kd100_poll_flg", sent_kd100_poll_flg);
+        params.put("task_name", task_name);
+
+        return updateTemplate.update("synShip_UpdateKD100Poll", params);
     }
 
 

@@ -1,0 +1,92 @@
+<div ng-init="init()" class="vo_modal">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal"
+			aria-label="Close" ng-click="close()">
+			<span aria-hidden="true"><i class="fa fa-close"></i></span>
+		</button>
+		<h4 class="modal-title">
+			<i class="glyphicons glyphicons-edit"></i>&nbsp;<span translate="">属性设定</span>
+		</h4>
+	</div>
+	<div class="modal-body wrapper-lg">
+		<div class="row">
+			<div class="col-sm-12">
+
+				<form role="form" class="form-horizontal">
+
+					<div class="panel vo_panel tab_panel">
+						<div class="table-responsive">
+							<table class="table table-striped hover b-t b-b vo_table">
+								<tr style="font-weight: bold">
+									<td style="width: 20%; text-align: center;">类型</td>
+									<td style="width: 60%; text-align: center;">值</td>
+									<td style="width: 20%; text-align: center;">删除</td>
+								</tr>
+								<tr ng-repeat="word in words">
+									<td><span class="editable-wrap editable-select ng-scope">
+											<span class="editable-controls"> <select name="type"
+												ng-model="word.type" ng-change="onChange(this)"
+												ng-options="type.value as type.text for type in types"
+												class="editable-input ng-pristine ng-valid ng-touched"
+												tabindex="0" aria-invalid="false">
+											</select>
+										</span>
+									</span></td>
+									<td>
+										<div ng-show="word.type=='1'">
+											<span class="editable-wrap editable-text ng-scope"> <span
+												class="editable-controls"> <input type="text"
+													name="word" ng-model="word.value" required="required"
+													class="editable-input ng-pristine ng-untouched ng-valid ng-valid-required"
+													tabindex="0" aria-required="false" aria-invalid="false">
+											</span>
+											</span>
+										</div>
+										<div ng-hide="word.type=='1'">
+											<span class="editable-wrap editable-select ng-scope">
+												<span class="editable-controls"> <select name="value"
+													ng-model="word.value"
+													ng-options="complex.value as complex.value for complex in word.complexValues"
+													class="editable-input ng-pristine ng-valid ng-touched"
+													tabindex="0" aria-invalid="false">
+												</select>
+											</span>
+											</span>
+										</div>
+									</td>
+
+									<td style="white-space: nowrap; text-align: center;">
+										<div class="buttons">
+											<button ng-click="words.splice($index, 1)" title="Delete"
+												class="btn btn-sm btn-danger">
+												<em class="fa fa-trash"></em>
+											</button>
+										</div>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</form>
+				<div>
+					<button ng-click="words.push({type: 1, value: null})"
+						class="btn btn-default">添加</button>
+					<button ng-click="confirm()" class="btn btn-default pull-right">确定</button>
+				</div>
+			</div>
+			<div ng-if="rules.length > 0">
+				<div class="col-sm-12"><hr/></div>
+	            <div class="col-sm-12">
+	               输入规则：
+	                <ul>
+						<li ng-repeat="rule in rules">
+							<span ng-bind="rule.decodeRule"></span>
+						</li>
+					</ul>
+	            </div>
+            </div>
+		</div>
+	</div>
+
+
+</div>

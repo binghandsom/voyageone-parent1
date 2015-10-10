@@ -33,7 +33,19 @@ public class CmsCategoryBean {
 	 * IMS主类目路径.
 	 */
 	private String mainCategoryPath;
-	
+	/**
+	 * 属性匹配完成状态.
+	 */
+	private int propMatchStatus;
+
+	public int getPropMatchStatus() {
+		return propMatchStatus;
+	}
+
+	public void setPropMatchStatus(int propMatchStatus) {
+		this.propMatchStatus = propMatchStatus;
+	}
+
 	public int getCategoryId() {
 		return categoryId;
 	}

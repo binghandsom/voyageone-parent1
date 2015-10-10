@@ -28,7 +28,7 @@
                                 <td class="vo_a_ce col-sm-1">{{ $index + 1 }}</td>
                                 <td>{{ vm.formatCondition(m.conditions) }}</td>
                                 <td>{{ m.etype }}</td>
-                                <td>{{ m.value }}</td>
+                                <td>{{ vm.formatValue(m) }}</td>
                                 <td>
                                     <button title="编辑" class="btn btn-success btn-xs" ng-click="vm.edit($index)"><i class="fa fa-pencil"></i></button>
                                     <button title="删除" class="btn btn-danger btn-xs" ng-click="vm.del($index)"><i class="fa fa-trash-o"></i></button>
@@ -63,7 +63,7 @@
                                     <ui-select ng-model="vm.selected.feed">
                                         <ui-select-match placeholder="Please select a Feed Prop">{{$select.selected.cfg_val2}}
                                         </ui-select-match>
-                                        <ui-select-choices repeat="i.cfg_val1 as i in vm.feedProps | filter: $select.search">
+                                        <ui-select-choices repeat="i.cfg_name as i in vm.feedProps | filter: $select.search">
                                             <div ng-bind-html="i.cfg_val2"></div>
                                         </ui-select-choices>
                                     </ui-select>
@@ -80,25 +80,25 @@
                                     <input type="text" class="form-control input-group" ng-model="vm.selected.value">
                                 </div>
                             </div>
-                            <div class="form-group" ng-show="vm.currProp.prop_type == vm.masterPropType.option">
+                            <div class="form-group" ng-show="vm.isCheckProp()">
                                 <label class="col-sm-1 checkbox-inline c-radio needsclick">
                                     <input id="pop-set-match-val-radios-option" type="radio" name="pop-set-match-val-radios-1" ng-model="vm.curr.type" ng-value="vm.feedPropMappingType.options"/>
                                     <span class="fa fa-check"></span>
                                 </label>
                                 <label for="pop-set-match-val-radios-option" class="col-sm-2 control-label" translate="CMS_TXT_LABEL_OPTIONS"></label>
 
-                                <div class="col-sm-5" ng-show="vm.isCheckProp()">
+                                <div class="col-sm-5" ng-show="vm.curr.type == vm.feedPropMappingType.options">
                                     <ui-select ng-if="vm.currProp.prop_type == vm.masterPropType.singleCheck" ng-model="vm.selected.options">
                                         <ui-select-match placeholder="Please select a option">{{$select.selected.prop_option_name}}
                                         </ui-select-match>
-                                        <ui-select-choices repeat="i.prop_option_id as i in vm.options | filter: $select.search">
+                                        <ui-select-choices repeat="i.prop_option_value as i in vm.options | filter: $select.search">
                                             <div ng-bind-html="i.prop_option_name"></div>
                                         </ui-select-choices>
                                     </ui-select>
                                     <ui-select ng-if="vm.currProp.prop_type == vm.masterPropType.multiCheck" multiple ng-model="vm.selected.options">
-                                        <ui-select-match placeholder="Please select a option">{{$select.selected.prop_option_name}}
+                                        <ui-select-match placeholder="Please select a option">{{$item.prop_option_name}}
                                         </ui-select-match>
-                                        <ui-select-choices repeat="i.prop_option_id as i in vm.options | filter: $select.search">
+                                        <ui-select-choices repeat="i.prop_option_value as i in vm.options | filter: $select.search">
                                             <div ng-bind-html="i.prop_option_name"></div>
                                         </ui-select-choices>
                                     </ui-select>
@@ -121,7 +121,7 @@
                                     </ui-select>
                                 </div>
                             </div>
-                            <div collapse="vm.curr.type == vm.feedPropMappingType.feed">
+                            <div>
                                 <div class="form-group attribute_bg">
                                     <label class="col-sm-1 checkbox-inline c-checkbox needsclick">
                                         <input id="pop-set-match-val-condition" type="checkbox" ng-model="vm.conditionChecked"/>
@@ -133,7 +133,7 @@
                                             <ui-select ng-model="vm.condition.property" on-select="vm.getFeedValues($item, $model)">
                                                 <ui-select-match placeholder="Prop">{{$select.selected.cfg_val2}}
                                                 </ui-select-match>
-                                                <ui-select-choices repeat="i.cfg_val1 as i in vm.feedProps | filter: $select.search">
+                                                <ui-select-choices repeat="i.cfg_name as i in vm.feedProps | filter: $select.search">
                                                     <div ng-bind-html="i.cfg_val2"></div>
                                                 </ui-select-choices>
                                             </ui-select>

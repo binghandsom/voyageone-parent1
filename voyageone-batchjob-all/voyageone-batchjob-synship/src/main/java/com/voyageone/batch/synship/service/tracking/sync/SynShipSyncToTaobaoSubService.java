@@ -31,16 +31,16 @@ public class SynShipSyncToTaobaoSubService extends SynShipSyncTrackingBaseServic
 
     public void syncTaobao(List<TrackingSyncBean> trackingSyncBeans, ShopBean shopBean) {
 
-        logger.info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")运单同步开始");
-        logger.info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")运单需要同步件数："+ trackingSyncBeans.size());
-        logger.info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")运单同步暂时在旧synShip任务中做成，这里不做处理");
+        $info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")运单同步开始");
+        $info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")运单需要同步件数：" + trackingSyncBeans.size());
+        $info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")运单同步暂时在旧synShip任务中做成，这里不做处理");
 
         for (TrackingSyncBean trackingSyncBean : trackingSyncBeans) {
 
 //            syncTaobao(trackingSyncBean, shopBean);
 
         }
-        logger.info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")运单同步结束");
+        $info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")运单同步结束");
     }
 
     private void syncTaobao(TrackingSyncBean trackingSyncBean, ShopBean shopBean) {

@@ -395,6 +395,7 @@ define (function (require) {
                     CMS_TXT_PRICE_ATTRIBUTE: '价格属性',
                     CMS_TXT_SALES_ATTRIBUTE: '销售属性',
                     CMS_TXT_TITLE_SHOW_ATTRIBUTE: '将上方的属性拖放到此处,将会在产品列表中展示',
+                    CMS_TXT_TITLE_ADVANCE_SEARCH_CN: '高级检索 (中国)',
 
                     CMS_TXT_TH_TYPE: '类型',
                     CMS_TXT_TH_VALUE: '值',
@@ -483,7 +484,10 @@ define (function (require) {
                     CMS_MSG_DICT_VAL_TXT: '文本',
                     CMS_MSG_DICT_VAL_CMS: 'CMS',
                     CMS_MSG_DICT_VAL_MASTER: '主数据',
-                    CMS_MSG_DICT_VAL_DICT: '字典'
+                    CMS_MSG_DICT_VAL_DICT: '字典',
+                    CMS_MSG_MASTER_PROP_VALUE_SETTING_CATEGORY_SWITCH_COMFIRM:'当前商品即将被切换到【{{categoryName}}】类目。<br />整个切换过程将持续十分钟左右，请十分钟后再访问当前产品 。<br />如果十分钟后仍不能正常访问当前产品，请联系IT。<br />确认切换请点击【是】<br />取消切换请点击【否】',
+                    CMS_MSG_MASTER_PROP_VALUE_SETTING_CATEGORY_SAVE_COMFIRM:'当前商品属性信息即将被保存，确认请点击【是】，如果想要取消，请点击【否】。',
+                    CMS_MSG_MASTER_PROP_VALUE_SETTING_CATEGORY_NODATA:'当前商品的类目信息还没切换完毕，请稍后再访问。<br />如果十分钟后仍不能正常访问，请联系IT。'
                 });
         }]);
 });

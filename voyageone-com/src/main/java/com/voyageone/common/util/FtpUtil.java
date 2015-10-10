@@ -97,7 +97,7 @@ public class FtpUtil {
             int reply;
             ftpClient.setControlEncoding(encoding);
             ftpClient.setConnectTimeout(30000);
-            ftpClient.setDataTimeout(60000);
+            ftpClient.setDataTimeout(300000);
             //连接FTP服务器
             if (StringUtils.isNullOrBlank2(ftpBean.getPort())){
                 // 如果采用默认端口，可以使用ftp.connect(url)的方式直接连接FTP服务器
@@ -165,12 +165,15 @@ public class FtpUtil {
         logger.info("  remotePath=" + ftpBean.getDown_remotepath());
         logger.info("  localPath=" + ftpBean.getDown_localpath());
         logger.info("  fileName=" + ftpBean.getDown_filename());
+        logger.info("  getFile_coding=" + ftpBean.getFile_coding());
 
         int result = 0;
         //定位FTP目录夹
         ftpClient = changeFolder(ftpBean,ftpClient);
         // 获取文件列表
-        FTPFile[] fs = ftpClient.listFiles();
+        FTPFile[] fs = ftpClient.listFiles(ftpBean.getDown_remotepath());
+        logger.info("  fs.length=" +fs.length);
+
         int fileCount = 0;
         for (FTPFile ff : fs) {
             //下载文件为空，下载全部文件
