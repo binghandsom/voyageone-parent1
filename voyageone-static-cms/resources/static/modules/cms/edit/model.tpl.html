@@ -479,9 +479,9 @@
                                                                 <label for="txtCNModelCnName" class="col-sm-4 control-label vo_reqfield" translate="CMS_TXT_NAME"></label>
 
                                                                 <div class="col-sm-8">
-                                                                    <input type="text" class="form-control" id="txtCNModelCnName" name="txtCNModelCnName" ng-model="cnBaseModelInfo.cnName" ng-maxlength="100" required="" ng-change="cnModelChanged()">
+                                                                    <input type="text" class="form-control" id="txtCNModelCnName" name="txtCNModelCnName" ng-model="cnBaseModelInfo.cnName" ng-maxlength="60" required="" ng-change="cnModelChanged()">
                                                                     <va-check ng-show="formCNModelInfo.txtCNModelCnName.$error.required" check-type="required"></va-check>
-                                                                    <va-check ng-show="formCNModelInfo.txtCNModelCnName.$error.maxlength" check-type="maxlength" check-param="100"></va-check>
+                                                                    <va-check ng-show="formCNModelInfo.txtCNModelCnName.$error.maxlength" check-type="maxlength" check-param="60"></va-check>
                                                                 </div>
                                                             </div>
                                                             <!-- .form-group -->

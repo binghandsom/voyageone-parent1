@@ -1623,4 +1623,14 @@
 									modifier = tmp.modifier,
 									modified = tmp.modified
 	</update>
+
+	<!-- 获得订单菜鸟物流单号 -->
+	<select id="tt_cainiao_order_getLogisticsId" parameterType="HashMap" resultType="String" >
+		select taobao_logistics_id
+		from
+			tt_cainiao_order
+		where
+			source_order_id = #{sourceOrderId}
+			and use_flg = '1'
+	</select>
 </mapper>
