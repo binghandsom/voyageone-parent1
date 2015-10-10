@@ -26,7 +26,7 @@ public class ValidIdCardByEmsServiceTest {
     private Log log = LogFactory.getLog(getClass());
 
     @Autowired
-    private SynshipValidIdCardService validIdCardByEmsService;
+    private SynShipValidIdCardService validIdCardByEmsService;
 
     @Autowired
     private IdCardDao idCardDao;
