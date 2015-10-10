@@ -12,6 +12,7 @@ import java.util.Random;
 
 import javax.mail.MessagingException;
 
+import com.voyageone.common.configs.Codes;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -2132,6 +2133,15 @@ public class OrderInfoImportService {
 					}
 				}
 			}
+
+			// 非真实姓名的限制
+			if (isAutoApproved) {
+				String isTrueNameCheck = ChannelConfigs.getVal1(newOrderInfo.getOrderChannelId(), Name.is_true_name_check);
+				if (Constants.ONE_CHAR.equals(isTrueNameCheck)) {
+					String shipName = newOrderInfo.getShippingReceiverName();
+					isAutoApproved = checkShipName(shipName);
+				}
+			}
 		}
 		
 		return isAutoApproved;
@@ -2197,8 +2207,59 @@ public class OrderInfoImportService {
 				}
 			}
 		}
+
+		// 非真实姓名的限制
+		if (isAutoApproved) {
+			String isTrueNameCheck = ChannelConfigs.getVal1(newOrderInfo.getOrderChannelId(), Name.is_true_name_check);
+			if (Constants.ONE_CHAR.equals(isTrueNameCheck)) {
+				String shipName = newOrderInfo.getShippingReceiverName();
+				isAutoApproved = checkShipName(shipName);
+			}
+		}
 		
 		return isAutoApproved;
+	}
+
+	/**
+	 * 检查收件人姓名是否真实
+	 * @param shipName
+	 * @return
+	 */
+	private boolean checkShipName(String shipName) {
+		boolean isSuccess = false;
+
+		// 收件人姓名为空
+		if (StringUtils.isNullOrBlank2(shipName)) {
+			return isSuccess;
+		}
+
+		// 全英文判断
+		int byteLength = shipName.getBytes().length;
+		int strLength = shipName.length();
+		if (byteLength == strLength) {
+			return isSuccess;
+		}
+
+		// 只有一个字判断
+		if (strLength == 1 && byteLength >= 2) {
+			return isSuccess;
+		}
+
+		// 预定义关键词过滤检查
+		String checkShipName = Codes.getCodeName(Constants.name_check_options, "ShipName");
+		String[] checkShipNameArray = checkShipName.split(",");
+		if (checkShipNameArray != null && checkShipNameArray.length > 0) {
+			for (String checkName : checkShipNameArray) {
+				if (shipName.contains(checkName)) {
+					return isSuccess;
+				}
+			}
+		}
+
+		// 前面检查都通过了
+		isSuccess = true;
+
+		return isSuccess;
 	}
 	
 	/**
@@ -6515,7 +6576,6 @@ public class OrderInfoImportService {
 	 * 
 	 * @param orderNumber
 	 * @param orderStatus
-	 * @param confirmDate
 	 * @param taskName
 	 * 
 	 * @return

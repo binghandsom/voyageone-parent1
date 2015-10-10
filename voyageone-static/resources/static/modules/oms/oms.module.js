@@ -89,6 +89,12 @@ define (function (require) {
         'oms_orders_accounting_doSaveAccountingFile': '/oms/orders/accounting/doSaveAccountingFile',
         'oms_orders_accounting_doInit': '/oms/orders/accounting/doInit',
         'oms_orders_accounting_doSearchSettlementFile': '/oms/orders/accounting/doSearchSettlementFile',
+        /** accounting 页面使用 end **/
+
+        /** rate 页面使用 start **/
+        'oms_orders_accounting_doSaveRate': '/oms/orders/accounting/doSaveRate',
+        'oms_orders_accounting_doSearchRate': '/oms/orders/accounting/doSearchRate',
+        /** rate 页面使用 end **/
 
         /** customer 页面使用 start **/
         'oms_customer_index_doInit': '/oms/customer/index/doInit',
@@ -116,7 +122,8 @@ define (function (require) {
         'country': '10',
         'orderKind': '11',
         'invoiceKind': '27',
-        'expressCode': '31'
+        'expressCode': '31',
+        'currencyType': '36'
     });
 
     /**

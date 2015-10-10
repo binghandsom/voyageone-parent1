@@ -1,9 +1,10 @@
 package com.voyageone.core.modelbean;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.ArrayList;
 
-public class PermissionBean {
+public class PermissionBean implements Serializable {
 
 	private String propertyId;
 	
