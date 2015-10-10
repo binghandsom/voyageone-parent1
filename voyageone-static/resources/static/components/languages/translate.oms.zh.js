@@ -309,12 +309,20 @@ define (function (require) {
                     TXT_ACCOUNTING_SEARCH_SEARCH_UPLOAD_DATE: '上传日',
                     TXT_RECORDNUMBER: '全部记录数 : ',
 
+                    TXT_ACCOUNTING_UPLOAD_RATE: '汇率上传',
+                    TXT_ACCOUNTING_SEARCH_RATE: '汇率检索',
+                    TXT_ACCOUNTING_RATE: '汇率',
+                    TXT_ACCOUNTING_CURRENCY: '币种',
+
                     TXT_ACCOUNTING_SEARCH_CHANNEL_NAME: '渠道名',
                     TXT_ACCOUNTING_SEARCH_CART_NAME: '店铺名',
                     TXT_ACCOUNTING_SEARCH_FILE_ID: '文件名',
                     TXT_ACCOUNTING_SEARCH_UPLOAD_DATE: '上传日期',
                     TXT_ACCOUNTING_SEARCH_INCOME: '收入合计',
                     TXT_ACCOUNTING_SEARCH_EXPENSE: '支出合计',
+
+                    TXT_ACCOUNTING_SEARCH_RATE_DATE: '汇率日期',
+                    TXT_ACCOUNTING_SEARCH_CALCULATION_ERROR: '计算误差',
                     //--------------------------------------------------------OMS-INDEX
                     TXT_ORDER_INDEX_TODATORDER: '今日订单统计',
                     TXT_ORDER_INDEX_REFUNDORDER: '退款未处理订单统计',

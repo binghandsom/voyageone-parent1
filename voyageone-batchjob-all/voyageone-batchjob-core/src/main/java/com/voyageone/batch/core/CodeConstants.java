@@ -63,6 +63,7 @@ public interface CodeConstants {
      * Reservation状态
      */
     final class Reservation_Status {
+        public final static String ID = "REV_STU";
         public final static String Open = "11";
         public final static String Reserved = "12";
         public final static String Packaged = "13";
@@ -108,6 +109,9 @@ public interface CodeConstants {
         public static final String INFO_070 = "070";//您的订单已交由【s1%】进行国内段运送 运单号：【s2%】        GZ_PACKAGE
         public static final String INFO_071 = "071";//您的订单已清关，等待国内转运    TM_PACKAGE
         public static final String INFO_080 = "080";//您的订单已交由【s1%】进行国内段运送 运单号：【s2%】        TM_PACKAGE
+        public static final String INFO_061 = "061";//您的订单已到达香港，将由香港邮政收寄                  HK_PACKAGE
+        public static final String INFO_062 = "062";//您的订单将由香港邮政收寄                  HK_PACKAGE
+        public static final String INFO_072 = "072";//您的订单已交由【%s】开始配送，运单号：【%s】                  HK_PACKAGE
     }
 
     // tt_shipment_info.proccess_type
@@ -115,5 +119,15 @@ public interface CodeConstants {
         public static final String BOT = "0";
         public static final String MANUAL = "1";
     }
+
+    // 快递100订阅
+    final class KD100_POLL {
+        public static final String NO = "0";
+        // 快递100订阅
+        public static final String YES = "1";
+        // 快递100延迟订阅
+        public static final String DELAY = "2";
+    }
+
 	
 }

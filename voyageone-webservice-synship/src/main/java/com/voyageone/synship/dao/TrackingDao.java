@@ -1,6 +1,7 @@
 package com.voyageone.synship.dao;
 
 import com.voyageone.base.dao.BaseDao;
+import com.voyageone.synship.formbean.OrderTrackInfoBean;
 import com.voyageone.synship.formbean.TrackInfoBean;
 import com.voyageone.synship.modelbean.WaybillRouteBean;
 import org.springframework.stereotype.Repository;
@@ -27,6 +28,15 @@ public class TrackingDao extends BaseDao {
      */
     public String getSynShipNo(String cwb) {
         return selectOne("tt_orders_getSynShipNo", cwb);
+    }
+
+    /**
+     * 根据传入参数取得该订单的物流信息
+     * @param cwb 查询参数
+     * @return OrderTrackInfoBean
+     */
+    public OrderTrackInfoBean getOrderTrackInfo(String cwb) {
+        return selectOne("orders_getOrderTrackInfo", cwb);
     }
 
     /**

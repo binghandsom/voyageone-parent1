@@ -2,16 +2,16 @@ table.dataTable thead > tr > th {
     padding-left: 14px;
 }
 
-.table-striped > tbody > tr:nth-child(odd) > td, .table-striped > tbody > tr:nth-child(odd) > th {
+.table > tbody > tr:nth-child(odd) > td, .table-striped > tbody > tr:nth-child(odd) > th {
     background-color: white;
 }
 
-.table-striped > tbody > tr.prop-require > td {
+.table > tbody > tr.prop-require > td {
     color: #101010;
     background-color: #fae6e6;
 }
 
-.table-striped > tbody > tr.prop-ignore > td {
+.table > tbody > tr.prop-ignore > td {
     background-color: #edf1f2;
     color: #929292;
 }
@@ -33,4 +33,16 @@ table.dataTable thead > tr > th {
 
 .vo_page_header .ui-select-match {
     width: 185px !important;
+}
+
+.table-hover > tbody > tr:hover > td {
+    background-color: #F3F3F3;
+}
+
+.table-hover > tbody > tr.prop-require:hover > td {
+    background-color: #EFD2D2;
+}
+
+.table-hover > tbody > tr.prop-ignore:hover > td {
+    background-color: #D8DDDE;
 }

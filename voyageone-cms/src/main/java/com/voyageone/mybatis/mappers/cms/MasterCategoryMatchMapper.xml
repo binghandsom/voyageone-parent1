@@ -9,8 +9,8 @@
 		us.name as enName,
 		cn.cn_name as cnName,
 		cn_extend.main_category_id as mainCategoryId
-	FROM 
-		voyageone_cms.cms_bt_relation_category AS relation 
+	FROM
+		voyageone_cms.cms_bt_relation_category AS relation
 		LEFT JOIN voyageone_cms.cms_bt_category AS us ON relation.category_id = us.category_id AND relation.channel_id = us.channel_id
 		LEFT JOIN voyageone_cms.cms_bt_cn_category AS cn ON relation.category_id = cn.category_id AND relation.channel_id = cn.channel_id
 		LEFT JOIN voyageone_cms.cms_bt_cn_category_extend AS cn_extend ON relation.category_id = cn_extend.category_id AND relation.channel_id = cn_extend.channel_id
@@ -18,5 +18,15 @@
 		and relation.category_id > 500
 		and relation.channel_id = #{channelId}
 	order by relation.parent_category_id,relation.category_id
+	</select>
+
+	<select id="get_cms_category_propMatchComplete" resultType="String" parameterType="String">
+		SELECT
+			main_category_id
+		FROM
+			voyageone_ims.ims_bt_category_extend
+		WHERE
+			channel_id = #{channelId}
+		AND is_set_attr = '1'
 	</select>
 </mapper>

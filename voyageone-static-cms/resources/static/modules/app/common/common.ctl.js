@@ -155,6 +155,7 @@ define (function (require) {
                 if (commonUtil.isNotEmpty(inputValue)) {
                     switch ($scope.userInfo.selMenu) {
                         case mainMenu.CMS:
+                            inputValue = inputValue.replace("/","%2f");
                             $location.path(commonUtil.returnReallyPath(commonRoute.cms_search_complex.hash, inputValue));
                             break;
                     }

@@ -3,12 +3,10 @@ package com.voyageone.batch.cms.dao;
 import com.voyageone.base.dao.BaseDao;
 import com.voyageone.batch.cms.bean.*;
 import com.voyageone.common.Constants;
+import com.voyageone.common.util.StringUtils;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class MainPropDao extends BaseDao {
@@ -27,7 +25,7 @@ public class MainPropDao extends BaseDao {
     }
 
     /**
-     * 查找未处理的商品
+     * 设置为已处理
      * @param channel_id channel_id
      * @param product_id product_id
      */
@@ -39,6 +37,98 @@ public class MainPropDao extends BaseDao {
         params.put("product_id", product_id);
 
         updateTemplate.update(Constants.DAO_NAME_SPACE_CMS + "cms_mt_product_attribute_setFinished", params);
+    }
+
+    /**
+     * 根据product id，获取Sku列表
+     * @param channel_id channel_id
+     * @param product_id product_id
+     * @return sku列表
+     */
+    public List<String> getSkuListFromProductId( String channel_id, String product_id) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("channel_id", channel_id);
+        params.put("product_id", product_id);
+
+        return selectList(Constants.DAO_NAME_SPACE_CMS + "wms_bt_item_details_selectSkuListFromProductId", params);
+    }
+
+    /**
+     * 一次性获取所有的类目匹配关系（根据channel_id）
+     * @param channel_id 店铺
+     * @return List<PlatformCategories>
+     */
+    public Map<String, String> selectMainCategoryIdList( String channel_id ) {
+
+        // 返回值
+        Map<String, String> result = new HashMap<>();
+
+        // 输入参数
+        Map<String, Object> params = new HashMap<>();
+        params.put("channel_id", channel_id);
+
+        List<Map<String, String>> lstRelation = selectList(Constants.DAO_NAME_SPACE_CMS + "cms_bt_relation_category_selectMainCategoryIdList", params);
+
+        // 换一种便于读取的格式
+        Map<String, List<String>> mapRelation = new HashMap<>();
+        for (Map<String, String> relation : lstRelation) {
+            String strCategoryId = String.valueOf(relation.get("category_id"));
+            String strParent = String.valueOf(relation.get("parent"));
+            String strMainCategoryId;
+            if (relation.get("main_category_id") == null) {
+                strMainCategoryId = null;
+            } else {
+                strMainCategoryId = String.valueOf(relation.get("main_category_id"));
+            }
+
+            List<String> lstTemp = new ArrayList<>();
+
+            lstTemp.add(strParent);
+            lstTemp.add(strMainCategoryId);
+
+            mapRelation.put(strCategoryId, lstTemp);
+        }
+
+        // 正式开始遍历
+        for (Map<String, String> relation : lstRelation) {
+            String strCategoryId = String.valueOf(relation.get("category_id"));
+            String strMainCategoryId = selectMainCategoryIdListSub(strCategoryId, mapRelation);
+
+            if (!StringUtils.isEmpty(strMainCategoryId)) {
+                result.put(strCategoryId, strMainCategoryId);
+            }
+
+        }
+
+        return result;
+    }
+    private String selectMainCategoryIdListSub(String categoryId, Map<String, List<String>> mapRelation) {
+        // 看看自己有没有设定过MainCategoryId
+        if (mapRelation.containsKey(categoryId)) {
+
+            List<String> lstTemp;
+            lstTemp = mapRelation.get(categoryId);
+
+            String parent = lstTemp.get(0);
+            String mainCategoryId = lstTemp.get(1);
+
+            // 如果到顶层了，那就不用再看下去了
+            if ("2".equals(categoryId)) {
+                return null;
+            }
+
+            if (StringUtils.isEmpty(mainCategoryId)) {
+                // 看看父亲有没有设定过
+                return selectMainCategoryIdListSub(parent, mapRelation);
+            } else {
+                // 自己有设定过，那就直接返回
+                return mainCategoryId;
+            }
+
+        } else {
+            return null;
+        }
+
     }
 
     /**
@@ -124,6 +214,55 @@ public class MainPropDao extends BaseDao {
         params.put("main_category_id", main_category_id);
 
         return selectList(Constants.DAO_NAME_SPACE_CMS + "ims_bt_feed_prop_mapping_select", params);
+    }
+
+    /**
+     * 根据channel_id，获取ims_bt_sku_prop_mapping的值
+     * @param channel_id channel_id
+     * @param main_category_id main_category_id
+     * @return 属性列表
+     */
+    public List<FeedMappingSkuBean> selectFeedMappingSkuList(String channel_id, String main_category_id) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("channel_id", channel_id);
+        params.put("main_category_id", main_category_id);
+
+        return selectList(Constants.DAO_NAME_SPACE_CMS + "ims_bt_sku_prop_mapping_select", params);
+    }
+
+    /**
+     * 获取ims_bt_prop_value_sku_template的值
+     * @return ims_bt_prop_value_sku_template列表
+     */
+    public List<PropValueSkuTemplateBean> selectPropValueSkuTemplateList() {
+
+        return selectList(Constants.DAO_NAME_SPACE_CMS + "ims_bt_prop_value_sku_template_select");
+    }
+
+    /**
+     * 获取ims_bt_prop_value_sku的值
+     * @return ims_bt_prop_value_sku列表
+     */
+    public List<ImsPropValueSkuBean> selectPropValueSku(String channel_id, String sku, String prop_name) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("order_channel_id", channel_id);
+        params.put("sku", sku);
+        params.put("prop_name", prop_name);
+
+        return selectList(Constants.DAO_NAME_SPACE_CMS + "ims_bt_prop_value_sku_select", params);
+    }
+
+    /**
+     * 插入sku的值表
+     *
+     */
+    public void doInsertSkuValue(List<ImsPropValueSkuBean> imsPropValueSkuBeanList, String jobName) {
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("imsPropValueSkuBeanList", imsPropValueSkuBeanList);
+        params.put("task_name", jobName);
+
+        updateTemplate.update(Constants.DAO_NAME_SPACE_CMS + "ims_insertPropValueSku", params);
     }
 
     /**
