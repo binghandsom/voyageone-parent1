@@ -1,9 +1,10 @@
 package com.voyageone.cms.service.impl;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import com.voyageone.common.configs.ImsCategoryConfigs;
+import com.voyageone.common.configs.beans.ImsCategoryBean;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -146,5 +147,58 @@ public class CommonServiceImpl implements CommonService {
 				}
 			}
 		}
+	}
+
+	/**
+	 * 获取当前channel下的类目.
+	 * @param channelId
+	 * @return
+	 */
+	@Override
+	public List<ImsCategoryBean> getChannelCategories(String channelId) {
+
+		List<ImsCategoryBean> categories = new ArrayList<>();
+
+		List<String> displayCategories = commonDao.getChannelCategories(channelId);
+
+		List<String> noDisplayCategories = commonDao.getChannelNoDisplayCategories(channelId);
+
+		for(String categoryId:displayCategories){
+			ImsCategoryBean channelCategory = null;
+			try {
+				channelCategory = (ImsCategoryBean)ImsCategoryConfigs.getMtCategoryBeanById(Integer.valueOf(categoryId)).clone();
+			} catch (CloneNotSupportedException e) {
+				e.printStackTrace();
+			}
+			for (Iterator<String> iterator = noDisplayCategories.iterator();iterator.hasNext();){
+				String noDisplayCategoryId = iterator.next();
+				if(removeNoDisplayCategories(channelCategory,noDisplayCategoryId)) {
+					iterator.remove();
+				}
+			}
+			categories.add(channelCategory);
+		}
+
+		return categories;
+	}
+
+	/**
+	 *
+	 * @param category
+	 * @param noDisplayCategoryId
+	 */
+	private boolean removeNoDisplayCategories(ImsCategoryBean category,String noDisplayCategoryId){
+
+		for (Iterator<ImsCategoryBean> iter = category.getSubCategories().iterator();iter.hasNext();){
+			ImsCategoryBean subCategory = iter.next();
+			if (noDisplayCategoryId.equals(String.valueOf(subCategory.getCategoryId()))){
+				iter.remove();
+				return true;
+			} else {
+				if (removeNoDisplayCategories(subCategory,noDisplayCategoryId))
+					return true;
+			}
+		}
+		return false;
 	}
 }
