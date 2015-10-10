@@ -375,6 +375,11 @@ public interface OmsConstants {
 	 * 第三方订单取消 Notes样式
 	 */
 	public static final String THIRD_PARTY_ORDER_CANCELLED = "Third-party order change to cancelled";
+
+	/**
+	 * 速邮宝订单取消 Notes样式
+	 */
+	public static final String SYB_ORDER_CANCELLED = "SYB order change to cancelled";
 	
 	/**
 	 * 订单CustomerComment变更Notes样式
@@ -622,5 +627,16 @@ public interface OmsConstants {
 		public static final String LineItemLevel = "LineItemLevel";
 		public static final String OrderAndLineItemLevel = "OrderAndLineItemLevel";
 		public static final String FailedAttemptsOnly = "FailedAttemptsOnly";
+	}
+
+	public static final class ShipChannel {
+		public static final String SYB = "SYB";
+	}
+
+	//	taobao.wlb.imports.order.get (物流订单获取)
+	//	物流订单状态编码
+	public static final class WLBOrderStatusCode {
+		//	ORDER_CANCELED
+		public static final String ORDER_CANCELED = "ORDER_CANCELED";
 	}
 }
