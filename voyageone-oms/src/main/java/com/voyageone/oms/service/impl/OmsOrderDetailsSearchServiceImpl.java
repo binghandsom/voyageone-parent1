@@ -15,6 +15,7 @@ import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.taobao.api.response.*;
 import com.voyageone.common.components.channelAdvisor.bean.orders.*;
 import com.voyageone.common.components.channelAdvisor.service.OrderRefundService;
 import com.voyageone.common.components.channelAdvisor.service.OrderService;
@@ -22,10 +23,13 @@ import com.voyageone.common.components.channelAdvisor.webservices.APIResultOfArr
 import com.voyageone.common.components.channelAdvisor.webservices.APIResultOfRefundOrderResponse;
 import com.voyageone.common.components.channelAdvisor.webservices.ArrayOfOrderResponseItem;
 import com.voyageone.common.components.channelAdvisor.webservices.SubmitOrderRefundResponse;
+import com.voyageone.common.components.tmall.TbWLBService;
 import com.voyageone.common.configs.*;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.beans.ThirdPartyConfigBean;
 import com.voyageone.common.mail.Mail;
 import com.voyageone.common.Constants;
+import com.voyageone.oms.dao.*;
 import com.voyageone.oms.modelbean.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -43,15 +47,6 @@ import sun.misc.BASE64Decoder;
 import com.taobao.api.ApiException;
 import com.taobao.api.domain.Refund;
 import com.taobao.api.domain.RefundMessage;
-import com.taobao.api.response.RefundGetResponse;
-import com.taobao.api.response.RefundMessageAddResponse;
-import com.taobao.api.response.RefundMessagesGetResponse;
-import com.taobao.api.response.RefundRefuseResponse;
-import com.taobao.api.response.RpRefundReviewResponse;
-import com.taobao.api.response.RpRefundsAgreeResponse;
-import com.taobao.api.response.RpReturngoodsAgreeResponse;
-import com.taobao.api.response.RpReturngoodsRefillResponse;
-import com.taobao.api.response.RpReturngoodsRefuseResponse;
 import com.voyageone.common.components.tmall.TbRefundService;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums.Name;
 import com.voyageone.common.configs.beans.OrderChannelConfigBean;
@@ -71,16 +66,6 @@ import com.voyageone.oms.OmsConstants.OrderDetailSkuDsp;
 import com.voyageone.oms.OmsConstants.PropKey;
 import com.voyageone.oms.OmsMessageConstants;
 import com.voyageone.oms.OmsUrlConstants;
-import com.voyageone.oms.dao.CartDao;
-import com.voyageone.oms.dao.CustomerDao;
-import com.voyageone.oms.dao.NotesDao;
-import com.voyageone.oms.dao.OrderDao;
-import com.voyageone.oms.dao.OrderDetailDao;
-import com.voyageone.oms.dao.PaymentsDao;
-import com.voyageone.oms.dao.RefundDao;
-import com.voyageone.oms.dao.SynShipSyncDao;
-import com.voyageone.oms.dao.TrackingDao;
-import com.voyageone.oms.dao.TransactionsDao;
 import com.voyageone.oms.formbean.InFormOrderdetailAddLineItem;
 import com.voyageone.oms.formbean.InFormOrderdetailAdjustmentItem;
 import com.voyageone.oms.formbean.InFormOrderdetailReturn;
@@ -141,13 +126,21 @@ public class OmsOrderDetailsSearchServiceImpl implements OmsOrderDetailsSearchSe
 	
 	@Autowired
 	private RefundDao refundDao;
-	
-    @Autowired
-    TbRefundService tbRefundService;
 
 	@Autowired
-	OrderRefundService orderRefundService;
+	private CainiaoDao cainiaoDao;
+	
+    // 淘宝退款申请API
+	@Autowired
+    TbRefundService tbRefundService;
+	// 物流宝API
+	@Autowired
+	TbWLBService tbWLBService;
 
+	// CA退货API
+	@Autowired
+	OrderRefundService orderRefundService;
+	// CA订单API
 	@Autowired
 	OrderService orderService;
 	
@@ -3501,11 +3494,28 @@ public class OmsOrderDetailsSearchServiceImpl implements OmsOrderDetailsSearchSe
 				result.setResult(false, OmsMessageConstants.MESSAGE_CODE_210005, MessageConstants.MESSAGE_TYPE_BUSSINESS_EXCEPTION);
 			}
 
+			//	菜鸟订单取消
+			if (ret) {
+				if (OmsConstants.ShipChannel.SYB.equals(orderDetailsList.get(0).getShipChannel())) {
+					logger.info("cancelSYBOrder");
+					ret = cancelSYBOrder(ordersInfo, user, result);
+				}
+			}
+
 			//	CA订单取消
 			if (ret) {
 				if (isNeedCancelCAOrder(ordersInfo.getOrderChannelId())) {
+					//	CA 订单取消与明细取消相同
 					logger.info("cancelOrderDetailInfoForCA");
 					ret = cancelOrderDetailInfoForCA(ordersInfo, orderDetailsList, user, result, false);
+				}
+			}
+
+			//	KitBag订单取消
+			if (ret) {
+				if (isNeedCancelKitbagOrder(ordersInfo.getOrderChannelId())) {
+					logger.info("cancelOrderForKitBag");
+					ret = cancelOrderForKitBag(ordersInfo, result, user);
 				}
 			}
 			
@@ -3532,6 +3542,62 @@ public class OmsOrderDetailsSearchServiceImpl implements OmsOrderDetailsSearchSe
 	}
 
 	/**
+	 * 速邮宝订单取消
+	 *
+	 * @param bean 订单信息
+	 * @param result 执行结果
+	 *
+	 * @return 订单价格
+	 */
+	private boolean cancelSYBOrder(OutFormOrderdetailOrders bean, UserSessionBean user, AjaxResponseBean result) throws ApiException {
+		boolean ret = true;
+
+		String lgOrderCode = "";
+		lgOrderCode = cainiaoDao.getLogisticsId(bean.getSourceOrderId());
+
+		if (!StringUtils.isEmpty(lgOrderCode)) {
+			// 物流宝订单取消
+			WlbImportsOrderCancelResponse tmallResponse = callTmallApiWLBOrderCancel(bean, lgOrderCode);
+			boolean tmallResponseRet = tmallResponse.getIsSuccess();
+
+			if (!tmallResponseRet) {
+				// 物流宝订单状态查询
+				WlbImportsOrderGetResponse tmallOrderGetResponse = callTmallApiWLBOrderGet(bean);
+				if (tmallOrderGetResponse.isSuccess()) {
+					if (!OmsConstants.WLBOrderStatusCode.ORDER_CANCELED.equals(tmallOrderGetResponse.getOrders().get(0).getStatusCode())) {
+						ret = false;
+
+						String errorMsg = String.format(OmsMessageConstants.MessageContent.WLB_ORDER_GET_INFO, tmallOrderGetResponse.getOrders().get(0).getStatusCode());
+						result.setResult(false, MessageConstants.MESSAGE_TYPE_BUSSINESS_EXCEPTION, errorMsg);
+					}
+				} else {
+					ret = false;
+
+					String errorMsg = String.format(OmsMessageConstants.MessageContent.WLB_ORDER_CANCEL_ERROR, tmallResponse.getResultErrorCode(), tmallResponse.getResultErrorMsg());
+					result.setResult(false, MessageConstants.MESSAGE_TYPE_BUSSINESS_EXCEPTION, errorMsg);
+				}
+			} else {
+
+				String note = OmsConstants.SYB_ORDER_CANCELLED;
+
+				// 订单Notes
+				String noteId = addNotes(bean.getSourceOrderId(),
+						OmsConstants.NotesType.SYSTEM,
+						bean.getOrderNumber(),
+						note,
+						user.getUserName(),
+						user.getUserName());
+				if (StringUtils.isEmpty(noteId)) {
+					ret = false;
+				}
+			}
+		}
+
+
+		return ret;
+	}
+
+	/**
 	 * 是否需要取消CA的订单
 	 *
 	 * @param orderChannelId 订单渠道ID
@@ -3542,6 +3608,23 @@ public class OmsOrderDetailsSearchServiceImpl implements OmsOrderDetailsSearchSe
 		boolean ret = false;
 		String needCancelCA = ChannelConfigs.getVal1(orderChannelId, Name.need_cancel_CA);
 		if (!StringUtils.isEmpty(needCancelCA) && OmsConstants.PERMIT_OK.equals(needCancelCA)) {
+			ret = true;
+		}
+
+		return  ret;
+	}
+
+	/**
+	 * 是否需要取消Kitbag的订单
+	 *
+	 * @param orderChannelId 订单渠道ID
+	 *
+	 * @return 订单价格
+	 */
+	private boolean isNeedCancelKitbagOrder(String orderChannelId) {
+		boolean ret = false;
+		String needCancelKitBag = ChannelConfigs.getVal1(orderChannelId, Name.need_cancel_KitBag);
+		if (!StringUtils.isEmpty(needCancelKitBag) && OmsConstants.PERMIT_OK.equals(needCancelKitBag)) {
 			ret = true;
 		}
 
@@ -4659,6 +4742,44 @@ public class OmsOrderDetailsSearchServiceImpl implements OmsOrderDetailsSearchSe
 	}
 
 	/**
+	 * KitBag订单取消子函数
+	 *
+	 * @return
+	 */
+	private boolean cancelOrderForKitBag(OutFormOrderdetailOrders bean, AjaxResponseBean result, UserSessionBean user) {
+		boolean ret = true;
+
+		logger.info("	cancelOrderForKitBag isPushed = " + bean.isClientOrderSendFlag());
+
+		if (bean.isClientOrderSendFlag()) {
+			logger.info("	cancelOrderForKitBag");
+
+			//	更新者设定
+			bean.setModifier(user.getUserName());
+
+			ret = orderDetailDao.cancelClientOrder(bean);
+
+			if (ret) {
+
+				String note = String.format(OmsConstants.THIRD_PARTY_ORDER_CANCELLED, bean.isOrigFreightCollect());
+
+				// 订单Notes
+				String noteId = addNotes(bean.getSourceOrderId(),
+						OmsConstants.NotesType.SYSTEM,
+						bean.getOrderNumber(),
+						note,
+						user.getUserName(),
+						user.getUserName());
+				if (StringUtils.isEmpty(noteId)) {
+					ret = false;
+				}
+			}
+		}
+
+		return ret;
+	}
+
+	/**
 	 * 订单Approve 主函数
 	 * 
 	 * @return
@@ -5147,7 +5268,9 @@ public class OmsOrderDetailsSearchServiceImpl implements OmsOrderDetailsSearchSe
 					permitStatusList = ChannelConfigs.getConfigs(ordersInfo.getOrderChannelId(), Name.cancel_order_detail_permit_status);
 					break;
 				case CancelOrderDetail:
-					order_detail_permit = ChannelConfigs.getVal1(ordersInfo.getOrderChannelId(), Name.cancel_order_detail_permit);
+//					order_detail_permit = ChannelConfigs.getVal1(ordersInfo.getOrderChannelId(), Name.cancel_order_detail_permit);
+					// 按渠道取明细删除许可
+					order_detail_permit = getConfigureInfoByShipChannel(ordersInfo, orderDetailInfo, Name.cancel_order_detail_permit);
 					permitStatusList = ChannelConfigs.getConfigs(ordersInfo.getOrderChannelId(), Name.cancel_order_detail_permit_status);
 					break;
 				case ReturnOrderDetail:
@@ -5176,14 +5299,16 @@ public class OmsOrderDetailsSearchServiceImpl implements OmsOrderDetailsSearchSe
 					
 				// 操作许可的场合
 				} else {
-					// 第三方状态检查
-					if (!StringUtils.isEmpty(order_chk_parten_status) && OmsConstants.PERMIT_OK.equals(order_chk_parten_status)) {
-						// 已推送 && 未取消
-						if (ordersInfo.isClientOrderSendFlag() && !ordersInfo.isThirdPartyCancelOrderFlag()) {
-							ret = false;
-							chkPartnerPermit = false;
-						}
-					}
+//					// 速邮宝取消对应，该检查删除
+//					// CancelOrder时
+//					// 第三方状态检查
+//					if (!StringUtils.isEmpty(order_chk_parten_status) && OmsConstants.PERMIT_OK.equals(order_chk_parten_status)) {
+//						// 已推送 && 未取消
+//						if (ordersInfo.isClientOrderSendFlag() && !ordersInfo.isThirdPartyCancelOrderFlag()) {
+//							ret = false;
+//							chkPartnerPermit = false;
+//						}
+//					}
 
 					if (chkPartnerPermit) {
 						//	按渠道
@@ -5330,7 +5455,35 @@ public class OmsOrderDetailsSearchServiceImpl implements OmsOrderDetailsSearchSe
 
 		return ret;
 	}
-	
+
+	/**
+	 * 按渠道配置信息取得
+	 *
+	 * @param ordersInfo 订单信息
+	 * @param configureInfo 配置项
+	 *
+	 * @return
+	 */
+	private String getConfigureInfoByShipChannel(OutFormOrderdetailOrders ordersInfo, OutFormOrderDetailOrderDetail orderDetailInfo, ChannelConfigEnums.Name configureInfo) {
+		String ret = "";
+
+		//	可处理状态  配置（ship_channel）
+		List<OrderChannelConfigBean> permitStatusList = ChannelConfigs.getConfigs(ordersInfo.getOrderChannelId(), configureInfo);
+
+		if (permitStatusList != null) {
+			for (int i = 0; i < permitStatusList.size(); i++) {
+				OrderChannelConfigBean permitStatusInfo = permitStatusList.get(i);
+				// 根据ShipChannel（TM，GZ）取得，状态判定用配置Bean取得
+				if (permitStatusInfo.getCfg_val1().equals(orderDetailInfo.getShipChannel())) {
+					ret = permitStatusInfo.getCfg_val2();
+					break;
+				}
+			}
+		}
+
+		return ret;
+	}
+
 	/**
 	 * 删除LineItem（该机能已废止）
 	 * 
@@ -11609,6 +11762,56 @@ public class OmsOrderDetailsSearchServiceImpl implements OmsOrderDetailsSearchSe
 			logger.info("	sub msg = " + response.getSubMsg());
 		}
 		
+		return response;
+	}
+
+	/**
+	 * 天猫API调用（taobao.wlb.imports.order.cancel）
+	 *
+	 * @param bean 订单信息
+	 * @param lgOrderCode 菜鸟物流单号
+	 *
+	 * @return
+	 * @throws ApiException
+	 */
+	private WlbImportsOrderCancelResponse callTmallApiWLBOrderCancel(OutFormOrderdetailOrders bean, String lgOrderCode) throws ApiException {
+		logger.info("callTmallApiWLBOrderCancel");
+
+		ShopBean shopInfo = ShopConfigs.getShop(bean.getOrderChannelId(), bean.getCartId());
+		WlbImportsOrderCancelResponse response = tbWLBService.cancelOrder(shopInfo, lgOrderCode);
+
+		if (response.getErrorCode() != null) {
+			logger.info("	errcode = " + response.getErrorCode());
+			logger.info("	msg = " + response.getMsg());
+			logger.info("	sub errcode = " + response.getSubCode());
+			logger.info("	sub msg = " + response.getSubMsg());
+		}
+
+		return response;
+	}
+
+	/**
+	 * 天猫API调用（taobao.wlb.imports.order.get）
+	 *
+	 * @param bean 订单信息
+	 *
+	 * @return
+	 * @throws ApiException
+	 */
+	private WlbImportsOrderGetResponse callTmallApiWLBOrderGet(OutFormOrderdetailOrders bean) throws ApiException {
+		logger.info("callTmallApiWLBOrderGet");
+
+		ShopBean shopInfo = ShopConfigs.getShop(bean.getOrderChannelId(), bean.getCartId());
+		WlbImportsOrderGetResponse response = tbWLBService.orderGet(shopInfo, bean.getSourceOrderId());
+//		WlbImportsOrderGetResponse response = tbWLBService.orderGet(shopInfo, "1326471399347183");
+
+		if (response.getErrorCode() != null) {
+			logger.info("	errcode = " + response.getErrorCode());
+			logger.info("	msg = " + response.getMsg());
+			logger.info("	sub errcode = " + response.getSubCode());
+			logger.info("	sub msg = " + response.getSubMsg());
+		}
+
 		return response;
 	}
 
