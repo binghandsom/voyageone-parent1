@@ -124,7 +124,7 @@ public class TmallGjSkuFieldBuilderImpl_3 extends AbstractSkuFieldBuilder
         return true;
     }
 
-    private Field buildSkuProp(int platformId, String categoryCode, PlatformPropBean platformProp, List<String> excludeColorValues, CmsModelPropBean cmsModelProp, TmallUploadRunState.TmallContextBuildCustomFields contextBuildCustomFields) {
+    private Field buildSkuProp(int cartId, String categoryCode, PlatformPropBean platformProp, List<String> excludeColorValues, CmsModelPropBean cmsModelProp, TmallUploadRunState.TmallContextBuildCustomFields contextBuildCustomFields) {
         UploadProductTcb uploadProductTcb = contextBuildCustomFields.getPlatformContextBuildFields().getPlatformUploadRunState().getUploadProductTcb();
         WorkLoadBean workLoadBean = uploadProductTcb.getWorkLoadBean();
         Map<String, CmsCodePropBean> usingColorMap = contextBuildCustomFields.getUsingColorMap();
@@ -138,7 +138,7 @@ public class TmallGjSkuFieldBuilderImpl_3 extends AbstractSkuFieldBuilder
         SingleCheckField colorCategoryField = (SingleCheckField) FieldTypeEnum.createField(FieldTypeEnum.SINGLECHECK);
         colorCategoryField.setId(propId_sku_color);
 
-        PlatformPropBean platformProp_colorCategory = platformPropDao.selectPlatformPropByPropId(platformId, categoryCode, propId_sku_color, platformProp.getPlatformPropHash());
+        PlatformPropBean platformProp_colorCategory = platformPropDao.selectPlatformPropByPropId(cartId, categoryCode, propId_sku_color, platformProp.getPlatformPropHash());
         List<PlatformPropOptionBean> colorOptions = platformPropDao.selectPlatformOptionsByPropHash(platformProp_colorCategory.getPlatformPropHash());
 
         List<String> availableColorValues = new ArrayList<>();

@@ -86,7 +86,7 @@ public class MasterPropValueSettingController extends BaseController {
 	@RequestMapping(value = "/getCategoryNav", method = RequestMethod.POST)
 	public void doGetCategoryNav(HttpServletResponse response) {
 
-		Object responseObject = this.propertyService.getCategoryNav();
+		Object responseObject = this.propertyService.getCategoryNav(getUser());
 
 		// 设置返回画面的值
 		AjaxResponseBean.newResult(true).setResultInfo(responseObject).writeTo(super.getRequest(), response);

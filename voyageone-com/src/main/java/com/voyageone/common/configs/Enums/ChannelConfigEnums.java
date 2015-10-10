@@ -296,7 +296,11 @@ public class ChannelConfigEnums {
         /**
          * 多件物品时，渠道允许发货金额（0：代表不用检查）
          */
-        shipping_amount
+        shipping_amount,
+        /**
+         * scene7上传图片文件夹路径
+         */
+        scene7_image_folder
 
     }
 
