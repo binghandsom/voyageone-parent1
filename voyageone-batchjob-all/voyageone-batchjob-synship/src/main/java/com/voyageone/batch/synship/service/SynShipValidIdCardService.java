@@ -424,10 +424,12 @@ public class SynShipValidIdCardService extends BaseTaskService {
         } catch (AxisFault a) {
             String msg = CommonUtil.getExceptionContent(a);
             $info(msg);
+            logIssue("跨境易身份证验证出异常", "Name：" + name + "，IdCard：" + idCode + "，Message：" + a.getMessage());
             return getHistory(idCardBean, CALL_EMS_FAIL, function, a.getMessage());
         } catch (Exception e) {
             String msg = CommonUtil.getExceptionContent(e);
             $info(msg);
+            logIssue("跨境易身份证验证出异常", "Name：" + name + "，IdCard：" + idCode + "，Message：" + e.getMessage());
             return getHistory(idCardBean, CALL_ERROR, function, e.getMessage());
         }
     }
