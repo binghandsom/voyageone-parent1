@@ -424,11 +424,11 @@ public class SynShipValidIdCardService extends BaseTaskService {
         } catch (AxisFault a) {
             String msg = CommonUtil.getExceptionContent(a);
             $info(msg);
-            return getHistory(idCardBean, CALL_EMS_FAIL, function, msg);
+            return getHistory(idCardBean, CALL_EMS_FAIL, function, a.getMessage());
         } catch (Exception e) {
             String msg = CommonUtil.getExceptionContent(e);
             $info(msg);
-            return getHistory(idCardBean, CALL_ERROR, function, msg);
+            return getHistory(idCardBean, CALL_ERROR, function, e.getMessage());
         }
     }
 
