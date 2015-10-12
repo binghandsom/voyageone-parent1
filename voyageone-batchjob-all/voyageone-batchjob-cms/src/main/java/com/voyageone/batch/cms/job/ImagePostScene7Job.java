@@ -37,20 +37,16 @@ public class ImagePostScene7Job {
 	
 	private String taskCheck = "ImagePostScene7";
 	
-	public static boolean isRun = false;
+	public boolean isRun = false;
 	
 	/**
 	 * 
 	 */
 	public void run(String orderChannelId) {
-		if (isRun) {
-			logger.info("ImagePostScene7Job is running, continue");
-			return;
-		} else {
-			isRun = true;
+
+		if (!taskCheck.contains(":")) {
+			taskCheck = orderChannelId + ":" + taskCheck;
 		}
-		
-		taskCheck = orderChannelId + ":" + taskCheck;
 		
 		List<TaskControlBean> taskControlList = taskDao.getTaskControlList(taskCheck);
 		// 是否可以运行的判断
@@ -60,6 +56,13 @@ public class ImagePostScene7Job {
 		String taskID =  TaskControlUtils.getTaskId(taskControlList);
 		logger.info(taskCheck + "任务开始");
 		logger.info("oderChannelId:" + orderChannelId);
+
+		if (isRun) {
+			logger.info("ImagePostScene7Job is running, continue");
+			return;
+		} else {
+			isRun = true;
+		}
 
 		// 任务监控历史记录添加:启动
 		taskDao.insertTaskHistory(taskID, TaskControlEnums.Status.START.getIs());
