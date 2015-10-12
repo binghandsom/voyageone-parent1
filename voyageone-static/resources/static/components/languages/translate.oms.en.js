@@ -306,12 +306,20 @@ define(function(require) {
                     TXT_ACCOUNTING_SEARCH_SEARCH_UPLOAD_DATE: 'Upload Date',
                     TXT_RECORDNUMBER: 'All Record Count : ',
 
+                    TXT_ACCOUNTING_UPLOAD_RATE: 'Rate Upload',
+                    TXT_ACCOUNTING_SEARCH_RATE: 'Rate Search',
+                    TXT_ACCOUNTING_RATE: 'Rate',
+                    TXT_ACCOUNTING_CURRENCY: 'Currency',
+
                     TXT_ACCOUNTING_SEARCH_CHANNEL_NAME: 'Channel Name',
                     TXT_ACCOUNTING_SEARCH_CART_NAME: 'Cart Name',
                     TXT_ACCOUNTING_SEARCH_FILE_ID: 'File Id',
                     TXT_ACCOUNTING_SEARCH_UPLOAD_DATE: 'Upload Date',
                     TXT_ACCOUNTING_SEARCH_INCOME: 'Total Income',
                     TXT_ACCOUNTING_SEARCH_EXPENSE: 'Total Expense',
+
+                    TXT_ACCOUNTING_SEARCH_RATE_DATE: 'Rate Date',
+                    TXT_ACCOUNTING_SEARCH_CALCULATION_ERROR: 'Calculation Error',
                     //-------------------------------------------------OMS-INDEX
                     TXT_ORDER_INDEX_TODATORDER: 'Today Orders Count',
                     TXT_ORDER_INDEX_REFUNDORDER: 'Refund Orders Count',

@@ -559,6 +559,11 @@ public interface OmsConstants {
 	 */
 	public static final int ORDER_SEARCH_FROM_MONTH = -3;
 
+	/**
+	 * 默认汇率计算误差
+	 */
+	public static final String DEFAULT_CALCULATION_ERROR = "1";
+
 	//	财务文件相关
 	//	账务方式 识别子
 	public static final class AccountKindIdentify {

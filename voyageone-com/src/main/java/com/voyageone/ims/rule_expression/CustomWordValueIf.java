@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class CustomWordValueIf extends CustomWordValue{
     private CustomModuleUserParamIf userParam;
     @JsonIgnore
-    public final static String moduleName = "IfAssign";
+    public final static String moduleName = "If";
 
     public CustomWordValueIf() {
     }

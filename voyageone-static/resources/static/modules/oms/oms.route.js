@@ -27,6 +27,11 @@ define (function (require) {
             'page': 'modules/oms/orders/accounting.tpl.html',
             'controller': 'modules/oms/orders/accounting.ctl'
         },
+        'oms_orders_rate': {
+            'hash': '/oms/orders/rate',
+            'page': 'modules/oms/orders/rate.tpl.html',
+            'controller': 'modules/oms/orders/rate.ctl'
+        },
         //'oms_orders_orderdetail_search': {
         //    'hash': '/oms/orders/orderdetail/',
         //    'page': 'modules/oms/orders/orderDetail.tpl.html',

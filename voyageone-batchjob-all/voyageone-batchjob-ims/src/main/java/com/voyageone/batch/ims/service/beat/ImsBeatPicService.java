@@ -1,7 +1,9 @@
 package com.voyageone.batch.ims.service.beat;
 
 import com.voyageone.batch.base.BaseTaskService;
+import com.voyageone.batch.core.Enums.TaskControlEnums;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
+import com.voyageone.batch.core.util.TaskControlUtils;
 import com.voyageone.batch.ims.bean.BeatPicBean;
 import com.voyageone.batch.ims.dao.ImsBeatPicDao;
 import com.voyageone.common.Constants;
@@ -35,9 +37,6 @@ public class ImsBeatPicService extends BaseTaskService {
     // 每个线程处理的数量
     private static final int PRODUCT_COUNT_ON_THREAD = 1000;
 
-    // 线程数量
-    private static final int THREAD_COUNT = 1;
-
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.IMS;
@@ -46,6 +45,14 @@ public class ImsBeatPicService extends BaseTaskService {
     @Override
     public String getTaskName() {
         return "ImsBeatPicJob";
+    }
+
+    /**
+     * 获取打印的日志是否需要包含线程
+     */
+    @Override
+    public boolean getLogWithThread() {
+        return true;
     }
 
     @Override
@@ -60,6 +67,9 @@ public class ImsBeatPicService extends BaseTaskService {
      * @throws InterruptedException
      */
     private void doBeats(List<TaskControlBean> taskControlList) throws InterruptedException {
+
+        String thread_count = TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.thread_count);
+        final int THREAD_COUNT = Integer.valueOf(thread_count);
 
         int limit = PRODUCT_COUNT_ON_THREAD * THREAD_COUNT;
 
