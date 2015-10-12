@@ -433,10 +433,26 @@
       	and channel_id = #{channelId}
   
   </select>
-  <select id="get_custom_info" parameterType="HashMap" resultType="HashMap">
+	<resultMap type="HashMap" id="customInfo">
+		<result column="name" property="name"/>
+		<result column="cnName" property="cnName"/>
+		<result column="value" property="value"/>
+		<result column="cnValue" property="cnValue"/>
+		<result column="attribute_name" property="attributeName"/>
+		<result column="product_url_key" property="productUrlKey"/>
+		<result column="channel_id" property="channelId"/>
+		<result column="isShow" property="isShow"  javaType="BOOLEAN" jdbcType="BOOLEAN"/>
+	</resultMap>
+  <select id="get_custom_info" parameterType="HashMap" resultMap="customInfo">
   	SELECT
 		c.cfg_val2 as name,
-		b.attribute_value as value
+		IFNULL(c.cfg_val3,c.cfg_val2) as cnName,
+		b.attribute_value as value,
+		ifnull(b.attribute_value_cn,'') as cnValue,
+		b.is_show as isShow,
+		b.product_url_key,
+		b.channel_id,
+		b.attribute_name
 	FROM
 		cms_bt_product a,
 		cms_mt_product_attribute b,
@@ -449,6 +465,16 @@
 	AND c.order_channel_id = b.channel_id
 	AND c.cfg_name = b.attribute_name
   </select>
+	<update id="update_custom_info" parameterType="HashMap">
+		update cms_mt_product_attribute
+			set
+				attribute_value_cn = #{cnValue,jdbcType=VARCHAR},
+				is_show = #{isShow,jdbcType=BOOLEAN}
+		where
+			channel_id = #{channelId,jdbcType=VARCHAR}
+		and product_url_key = #{productUrlKey,jdbcType=VARCHAR}
+		and attribute_name = #{attributeName,jdbcType=VARCHAR}
+	</update>
   <!-- cms_bt_product -->
   <insert id="insert_cms_bt_product" parameterType="com.voyageone.cms.formbean.ProductUSBean" >
     insert into cms_bt_product

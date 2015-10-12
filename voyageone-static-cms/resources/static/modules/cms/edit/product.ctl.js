@@ -398,6 +398,16 @@ define(function (require) {
 	             })
             };
 
+            $scope.doUpdateCustemData = function(){
+                productService.doUpdateCustemData($scope.customList)
+                    .then(function () {
+                        notify.success("CMS_TXT_MSG_UPDATE_SUCCESS");
+                        doGetCustomInfo();
+                    }, function () {
+                        notify.danger("CMS_TXT_MSG_UPDATE_FAILED");
+                        doGetCustomInfo();
+                    });
+            }
             // TODO
             /**
              * 弹出Display Image页面.
@@ -559,6 +569,15 @@ define(function (require) {
                 $scope.cnJGPriceInfoIsChanged = false;
                 $scope.cnJGPriceIsChanged = false;
             };
+
+            /**
+             * 取消Custem的变更.
+             */
+            $scope.undoUpdateCustemData = function () {
+                $scope.customList = angular.copy($scope.oldCustomList);
+                $scope.custemDataIsChanged = false;
+            };
+
             /** 画面编辑数据撤销 end **/
 
             /** 画面变更数据设置 start **/
@@ -666,6 +685,12 @@ define(function (require) {
              */
             $scope.cnJGPriceInfoChanged = function () {
                 $scope.cnJGPriceInfoIsChanged = !_.isEqual($scope.cnJGPriceInfo, $scope.oldCnJGPriceInfo);
+            };
+            /**
+             * 检查custemChanged是否发生变化
+             */
+            $scope.custemChanged = function () {
+                $scope.custemDataIsChanged = !_.isEqual($scope.customList, $scope.oldCustomList);
             };
             /** 画面变更数据设置 end **/
 
@@ -1269,6 +1294,8 @@ define(function (require) {
                 productService.doGetCustomInfo($scope.currentProductId)
                     .then(function (data) {
                         $scope.customList = data;
+                        $scope.oldCustomList = angular.copy($scope.customList);
+                        $scope.custemDataIsChanged = false;
                     })
             }
             /**
