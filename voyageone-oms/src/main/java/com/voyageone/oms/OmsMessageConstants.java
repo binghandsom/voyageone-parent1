@@ -179,6 +179,12 @@ public interface OmsMessageConstants {
         // Pay number not exists
         public static final String PAYNUMBER_IS_NOT_EXIST = "Pay number = %s is not exist.";
 
+        // 物流宝订单取消  调用异常
+        public static final String WLB_ORDER_CANCEL_ERROR = "taobao.wlb.imports.order.cancel result_error_code = %s，result_error_msg = %s";
+
+        //  物流宝订单状态取得
+        public static final String WLB_ORDER_GET_INFO = "taobao.wlb.imports.order.get  status_code = %s";
+
     }
 
 }

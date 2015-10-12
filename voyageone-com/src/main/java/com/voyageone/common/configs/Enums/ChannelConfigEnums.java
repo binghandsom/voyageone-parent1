@@ -262,6 +262,11 @@ public class ChannelConfigEnums {
         need_cancel_CA,
 
         /**
+         * KitBag 订单是否取消
+         */
+        need_cancel_KitBag,
+
+        /**
          * 报关时的金额单位
          */
         declare_unit,
