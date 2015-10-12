@@ -266,6 +266,9 @@ public class ProductDao extends CmsBaseDao{
 		}
 		return ret;
 	}
+	public int doUpdateCustomInfo(Map<String, Object> paramMap){
+		return updateTemplateCms.update(Constants.DAO_NAME_SPACE_CMS + "update_custom_info", paramMap);
+	}
 	public int doUpdtProductEffective(Map<String, Object> paramMap) {
 		return updateTemplateCms.update(Constants.DAO_NAME_SPACE_CMS + "update_cms_bt_product_effective", paramMap);
 	}

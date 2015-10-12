@@ -116,7 +116,7 @@ public class UploadProductHandler extends UploadWorkloadHandler{
                 case ABORT:
                 {
                     //TODO save abort status
-                    workloadStatus.setValue(PlatformWorkloadStatus.JOB_ABORT);
+                    workLoadBean.getWorkload_status().setValue(PlatformWorkloadStatus.JOB_ABORT);
                     AbortTaskSignalInfo abortTaskSignalInfo = (AbortTaskSignalInfo) signal.getSignalInfo();
                     workLoadBean.setFailCause(abortTaskSignalInfo.getAbortCause());
                     uploadJob.workloadComplete(workLoadBean);

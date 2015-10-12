@@ -8,6 +8,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import com.voyageone.batch.core.Enums.TaskControlEnums;
+import com.voyageone.batch.core.modelbean.TaskControlBean;
+import com.voyageone.batch.core.util.TaskControlUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.voyageone.batch.cms.service.ImagePostScene7Service;
 import com.voyageone.batch.core.dao.TaskDao;
 import com.voyageone.common.components.issueLog.IssueLog;
+
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 
@@ -33,48 +37,51 @@ public class ImagePostScene7Job {
 	
 	private String taskCheck = "ImagePostScene7";
 	
-	public static boolean isRun = false;
+	public boolean isRun = false;
 	
 	/**
 	 * 
 	 */
 	public void run(String orderChannelId) {
+
+		if (!taskCheck.contains(":")) {
+			taskCheck = orderChannelId + ":" + taskCheck;
+		}
+		
+		List<TaskControlBean> taskControlList = taskDao.getTaskControlList(taskCheck);
+		// 是否可以运行的判断
+		if (!TaskControlUtils.isRunnable(taskControlList, taskCheck)) {
+			return;
+		}
+		String taskID =  TaskControlUtils.getTaskId(taskControlList);
+		logger.info(taskCheck + "任务开始");
+		logger.info("oderChannelId:" + orderChannelId);
+
 		if (isRun) {
 			logger.info("ImagePostScene7Job is running, continue");
 			return;
 		} else {
 			isRun = true;
 		}
-		
-		taskCheck = orderChannelId + ":" + taskCheck;
-		
-//		List<TaskControlBean> taskControlList = taskDao.getTaskControlList(taskCheck);
-//		// 是否可以运行的判断
-//		if (TaskControlUtils.isRunnable(taskControlList, taskCheck) == false) {
-//			return;
-//		}
-//		String taskID =  TaskControlUtils.getTaskId(taskControlList);
-//		logger.info(taskCheck + "任务开始");
-//		logger.info("oderChannelId:" + orderChannelId);
-//		
-//		// 任务监控历史记录添加:启动
-//		taskDao.insertTaskHistory(taskID, TaskControlEnums.Status.START.getIs());
+
+		// 任务监控历史记录添加:启动
+		taskDao.insertTaskHistory(taskID, TaskControlEnums.Status.START.getIs());
 		
 		boolean isSuccess = true;
 		
 		ExecutorService es = null;
 		
-		List<Future<String>> resultList = new ArrayList<Future<String>>(); 
+		List<Future<String>> resultList = new ArrayList<>();
 		
 		try {
 			// 获得该渠道要上传Scene7的图片url列表
 			List<String> imageUrlList = imagePostScene7Service.getImageUrls(orderChannelId);
 			
 			if (imageUrlList != null && imageUrlList.size() > 0) {
-				int count = 15;
+				int count = 25;
 				int totalSize = imageUrlList.size();
-				int threadCount = 0;
-				int subSize = 0;
+				int threadCount;
+				int subSize;
 				if (totalSize > count) {
 					if (totalSize % count != 0) {
 						threadCount = totalSize / count + 1;
@@ -111,18 +118,16 @@ public class ImagePostScene7Job {
 			isSuccess = false;
 			
 			logger.error(ex.getMessage(), ex);
-			issueLog.log(ex, ErrorType.BatchJob, SubSystem.OMS);
+			issueLog.log(ex, ErrorType.BatchJob, SubSystem.CMS);
 		}
 		
 		for (Future<String> fs : resultList) {
 			try {
 				//打印各个线程（任务）执行的结果
 				logger.info(fs.get());
-			} catch (InterruptedException e) {
+			} catch (InterruptedException | ExecutionException e) {
 				e.printStackTrace(); 
-			} catch (ExecutionException e) {
-				e.printStackTrace();
-			} finally { 
+			} finally {
 				if (es != null) {
 					es.shutdown();
 				}
@@ -130,13 +135,13 @@ public class ImagePostScene7Job {
 		}
 		
 		// 任务监控历史记录添加:结束
-//		String result = "";
-//		if (isSuccess) {
-//			result = TaskControlEnums.Status.SUCCESS.getIs();
-//		} else {
-//			result = TaskControlEnums.Status.ERROR.getIs();
-//		}
-//		taskDao.insertTaskHistory(taskID, result);
+		String result = "";
+		if (isSuccess) {
+			result = TaskControlEnums.Status.SUCCESS.getIs();
+		} else {
+			result = TaskControlEnums.Status.ERROR.getIs();
+		}
+		taskDao.insertTaskHistory(taskID, result);
 		
 		isRun = false;
 
@@ -197,33 +202,6 @@ public class ImagePostScene7Job {
 	}
 	
 	public static void main(String[] args) {
-		int count = 20;
-		int totalSize = 23;
-		int threadCount = 5;
-		int subSize = 0;
-		if (totalSize > count) {
-			if (totalSize % count != 0) {
-				threadCount = totalSize / count + 1;
-			} else {
-				threadCount = totalSize / count;
-			}
-			subSize = totalSize / threadCount;
-			
-		} else {
-			subSize = totalSize;
-			threadCount = 1;
-		}
-		
-		for (int i = 0; i < threadCount; i++) {
-			int startIndex = i * subSize;
-			
-			int endIndex = startIndex + subSize - 1;
-			
-			if (i == threadCount - 1) {
-				endIndex = totalSize - 1;
-			}
-			System.out.println();
-		}
 	}
 	
 }

@@ -2,7 +2,6 @@ package com.voyageone.batch.ims.dao;
 
 import com.voyageone.base.dao.BaseDao;
 import com.voyageone.batch.ims.modelbean.CategoryModelMapBean;
-import com.voyageone.batch.ims.modelbean.ProductBean;
 import com.voyageone.common.Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

@@ -95,7 +95,10 @@ public class MainPropDao extends BaseDao {
             String strMainCategoryId = selectMainCategoryIdListSub(strCategoryId, mapRelation);
 
             if (!StringUtils.isEmpty(strMainCategoryId)) {
-                result.put(strCategoryId, strMainCategoryId);
+                // -1的场合：该类目无法做类目匹配并忽略
+                if (!"-1".equals(strMainCategoryId)) {
+                    result.put(strCategoryId, strMainCategoryId);
+                }
             }
 
         }
@@ -276,6 +279,367 @@ public class MainPropDao extends BaseDao {
         params.put("task_name", jobName);
 
         updateTemplate.update(Constants.DAO_NAME_SPACE_CMS + "ims_insertPropValue", params);
+    }
+
+    /**
+     * 获取model id 和 主类目
+     * @param channelId 渠道
+     * @param modelId model id
+     * @return 第一个项目是model id， 第二个项目是主类目， 第三个项目是主类目（cn表）
+     */
+    public List<String> selectModelIdByModelName(String channelId, String modelId) {
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("channel_id", channelId);
+        params.put("model_id", modelId);
+
+        List<HashMap<String, String>> lstResult = selectList(Constants.DAO_NAME_SPACE_CMS + "cms_bt_model_select_main_category", params);
+
+        if (lstResult == null || lstResult.size() == 0) {
+            return null;
+        } else {
+            List<String> result = new ArrayList<>();
+
+            // model id
+            result.add(getString(lstResult.get(0).get("model_id")));
+
+            // 主数据
+            result.add(getString(lstResult.get(0).get("main_category_id")));
+            result.add(getString(lstResult.get(0).get("main_category_id_cn")));
+            result.add(getString(lstResult.get(0).get("ext_model_id")));
+            result.add(getString(lstResult.get(0).get("ext_cn_model_id")));
+
+            // 平台系
+            result.add(getString(lstResult.get(0).get("tm_category_id")));
+            result.add(getString(lstResult.get(0).get("ext_cn_tm_model_id")));
+            result.add(getString(lstResult.get(0).get("jd_category_id")));
+            result.add(getString(lstResult.get(0).get("ext_cn_jd_model_id")));
+
+            return result;
+        }
+
+    }
+
+    /**
+     * 设置主类目
+     * @param model_id_value model_id_value
+     * @param channel_id channel_id
+     * @param main_category_id main_category_id
+     * @param jobName jobName
+     */
+    public void doSetMainCategoryId(List<String> model_id_value, String channel_id, String main_category_id, String jobName) {
+
+        String model_id = model_id_value.get(0);
+
+        String cms_bt_model_extend_data = model_id_value.get(1);
+        String cms_bt_cn_model_extend_data = model_id_value.get(2);
+        String cms_bt_model_extend_data_exist = model_id_value.get(3);
+        String cms_bt_cn_model_extend_data_exist = model_id_value.get(4);
+
+        String cms_bt_cn_tm_model_data = model_id_value.get(5);
+        String cms_bt_cn_tm_model_exist = model_id_value.get(6);
+        String cms_bt_cn_jd_model_data = model_id_value.get(7);
+        String cms_bt_cn_jd_model_exist = model_id_value.get(8);
+
+        // 获取对应的天猫类目和京东类目
+        Map<String, String> platformCid = getPlatformCategoryByMainCategoryId(main_category_id);
+        String platformCidTm = "";
+        String platformCidJd = "";
+        if (platformCid.containsKey("1")) {
+            platformCidTm = platformCid.get("1");
+        }
+        if (platformCid.containsKey("2")) {
+            platformCidJd = platformCid.get("2");
+        }
+
+        // 设定主类目
+        if (StringUtils.isEmpty(cms_bt_model_extend_data_exist)) {
+            // insert
+            doInsertMainCategoryId_1(model_id, channel_id, main_category_id, jobName);
+        } else {
+            // update 与数据库里的不一致的场合，更新
+            if (StringUtils.isEmpty(cms_bt_model_extend_data)) {
+                cms_bt_model_extend_data = "";
+            }
+            if (!main_category_id.equals(cms_bt_model_extend_data)) {
+                doUpdateMainCategoryId_1(model_id, channel_id, main_category_id, jobName);
+            }
+        }
+
+        if (StringUtils.isEmpty(cms_bt_cn_model_extend_data_exist)) {
+            // insert
+            doInsertMainCategoryId_2(model_id, channel_id, main_category_id, jobName);
+        } else {
+            // update 与数据库里的不一致的场合，更新
+            if (StringUtils.isEmpty(cms_bt_cn_model_extend_data)) {
+                cms_bt_cn_model_extend_data = "";
+            }
+            if (!main_category_id.equals(cms_bt_cn_model_extend_data)) {
+                doUpdateMainCategoryId_2(model_id, channel_id, main_category_id, jobName);
+            }
+        }
+
+        if (StringUtils.isEmpty(cms_bt_cn_tm_model_exist)) {
+            // insert
+            doInsertPlatformCategoryId_Tm(model_id, channel_id, platformCidTm, jobName);
+        } else {
+            if (StringUtils.isEmpty(cms_bt_cn_tm_model_data)) {
+                cms_bt_cn_tm_model_data = "";
+            }
+            if (!platformCidTm.equals(cms_bt_cn_tm_model_data)) {
+                // 更新
+                doUpdatePlatformCategoryId_Tm(model_id, channel_id, platformCidTm, jobName);
+            }
+        }
+
+        if (StringUtils.isEmpty(cms_bt_cn_jd_model_exist)) {
+            // insert
+            doInsertPlatformCategoryId_Jd(model_id, channel_id, platformCidJd, jobName);
+        } else {
+            if (StringUtils.isEmpty(cms_bt_cn_jd_model_data)) {
+                cms_bt_cn_jd_model_data = "";
+            }
+            if (!platformCidJd.equals(cms_bt_cn_jd_model_data)) {
+                // 更新
+                doUpdatePlatformCategoryId_Jd(model_id, channel_id, platformCidJd, jobName);
+            }
+        }
+
+
+    }
+
+    /**
+     * 插入model的主类目
+     *   插入表：
+     *     cms_bt_model_extend
+     *   设定字段：
+     *     model_id
+     *     channel_id
+     *     main_category_id
+     *     created
+     *     creater
+     * @param model_id model id
+     * @param channel_id channel_id
+     * @param main_category_id main category id
+     * @param jobName jobName
+     */
+    private void doInsertMainCategoryId_1(String model_id, String channel_id, String main_category_id, String jobName) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("model_id", model_id);
+        params.put("channel_id", channel_id);
+        params.put("main_category_id", main_category_id);
+        params.put("jobName", jobName);
+
+        updateTemplate.update(Constants.DAO_NAME_SPACE_CMS + "cms_bt_model_extend_insert", params);
+
+    }
+
+    /**
+     * 插入model的主类目
+     *   插入表：
+     *     cms_bt_cn_model_extend
+     *   设定字段：
+     *     model_id
+     *     channel_id
+     *     main_category_id
+     *     created
+     *     creater
+     * @param model_id model id
+     * @param channel_id channel_id
+     * @param main_category_id main category id
+     * @param jobName jobName
+     */
+    private void doInsertMainCategoryId_2(String model_id, String channel_id, String main_category_id, String jobName) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("model_id", model_id);
+        params.put("channel_id", channel_id);
+        params.put("main_category_id", main_category_id);
+        params.put("jobName", jobName);
+
+        updateTemplate.update(Constants.DAO_NAME_SPACE_CMS + "cms_bt_cn_model_extend_insert", params);
+
+    }
+
+    /**
+     * 更新model的主类目
+     *   更新两张表：
+     *     cms_bt_model_extend
+     *   更新字段：
+     *     main_category_id
+     * @param model_id model id
+     * @param channel_id channel_id
+     * @param main_category_id main category id
+     * @param jobName jobName
+     */
+    private void doUpdateMainCategoryId_1(String model_id, String channel_id, String main_category_id, String jobName) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("model_id", model_id);
+        params.put("channel_id", channel_id);
+        params.put("main_category_id", main_category_id);
+        params.put("jobName", jobName);
+
+        updateTemplate.update(Constants.DAO_NAME_SPACE_CMS + "cms_bt_model_extend_update", params);
+
+    }
+
+    /**
+     * 更新model的主类目
+     *   更新两张表：
+     *     cms_bt_cn_model_extend
+     *   更新字段：
+     *     main_category_id
+     * @param model_id model id
+     * @param channel_id channel_id
+     * @param main_category_id main category id
+     * @param jobName jobName
+     */
+    private void doUpdateMainCategoryId_2(String model_id, String channel_id, String main_category_id, String jobName) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("model_id", model_id);
+        params.put("channel_id", channel_id);
+        params.put("main_category_id", main_category_id);
+        params.put("jobName", jobName);
+
+        updateTemplate.update(Constants.DAO_NAME_SPACE_CMS + "cms_bt_cn_model_extend_update", params);
+
+    }
+
+    /**
+     * 插入model的平台类目
+     *   插入表：
+     *     voyageone_cms.cms_bt_cn_tm_model_extend
+     *   设定字段：
+     *     model_id
+     *     channel_id
+     *     created
+     *     creater
+     * @param model_id model id
+     * @param channel_id channel_id
+     * @param platform_category_id tm_category_id 或者 jd_category_id
+     * @param jobName jobName
+     */
+    private void doInsertPlatformCategoryId_Tm(String model_id, String channel_id, String platform_category_id, String jobName) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("model_id", model_id);
+        params.put("channel_id", channel_id);
+        params.put("platform_category_id", platform_category_id);
+        params.put("jobName", jobName);
+
+        updateTemplate.update(Constants.DAO_NAME_SPACE_CMS + "cms_bt_cn_tm_model_extend_insert", params);
+
+    }
+
+    /**
+     * 插入model的平台类目
+     *   插入表：
+     *     voyageone_cms.cms_bt_cn_jd_model_extend
+     *   设定字段：
+     *     model_id
+     *     channel_id
+     *     created
+     *     creater
+     * @param model_id model id
+     * @param channel_id channel_id
+     * @param platform_category_id tm_category_id 或者 jd_category_id
+     * @param jobName jobName
+     */
+    private void doInsertPlatformCategoryId_Jd(String model_id, String channel_id, String platform_category_id, String jobName) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("model_id", model_id);
+        params.put("channel_id", channel_id);
+        params.put("platform_category_id", platform_category_id);
+        params.put("jobName", jobName);
+
+        updateTemplate.update(Constants.DAO_NAME_SPACE_CMS + "cms_bt_cn_jd_model_extend_insert", params);
+
+    }
+
+    /**
+     * 更新model的平台类目
+     *   更新两张表：
+     *     voyageone_cms.cms_bt_cn_tm_model_extend
+     *   更新字段：
+     *     tm_category_id
+     * @param model_id model id
+     * @param channel_id channel_id
+     * @param platform_category_id tm_category_id
+     * @param jobName jobName
+     */
+    private void doUpdatePlatformCategoryId_Tm(String model_id, String channel_id, String platform_category_id, String jobName) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("model_id", model_id);
+        params.put("channel_id", channel_id);
+        params.put("platform_category_id", platform_category_id);
+        params.put("jobName", jobName);
+
+        updateTemplate.update(Constants.DAO_NAME_SPACE_CMS + "cms_bt_cn_tm_model_extend_update", params);
+
+    }
+
+    /**
+     * 更新model的平台类目
+     *   更新两张表：
+     *     voyageone_cms.cms_bt_cn_jd_model_extend
+     *   更新字段：
+     *     jd_category_id
+     * @param model_id model id
+     * @param channel_id channel_id
+     * @param platform_category_id jd_category_id
+     * @param jobName jobName
+     */
+    private void doUpdatePlatformCategoryId_Jd(String model_id, String channel_id, String platform_category_id, String jobName) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("model_id", model_id);
+        params.put("channel_id", channel_id);
+        params.put("platform_category_id", platform_category_id);
+        params.put("jobName", jobName);
+
+        updateTemplate.update(Constants.DAO_NAME_SPACE_CMS + "cms_bt_cn_jd_model_extend_update", params);
+
+    }
+
+    /**
+     * 根据主类目id，获取各个平台的类目id
+     * @param categoryId 主类目的id
+     * @return 各个平台的类目id
+     */
+    private Map<String, String> getPlatformCategoryByMainCategoryId(String categoryId) {
+        Map<String, String> result = new HashMap<>();
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("categoryId", categoryId);
+
+        List<HashMap<String, String>> lstResult = selectList(Constants.DAO_NAME_SPACE_CMS + "ims_mt_category_mapping_select_by_categoryid", params);
+
+        for (Map<String, String> map : lstResult) {
+            result.put(getString(map.get("platform_id")), getString(map.get("platform_cid")));
+        }
+
+        return result;
+    }
+
+    public String getString(Object value) {
+        if (value == null) {
+            return "";
+        } else {
+            return String.valueOf(value);
+        }
     }
 
 }
