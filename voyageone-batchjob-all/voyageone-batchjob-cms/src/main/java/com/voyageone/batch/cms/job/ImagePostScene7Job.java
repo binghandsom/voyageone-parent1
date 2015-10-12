@@ -37,14 +37,16 @@ public class ImagePostScene7Job {
 	
 	private String taskCheck = "ImagePostScene7";
 	
-	public static boolean isRun = false;
+	public boolean isRun = false;
 	
 	/**
 	 * 
 	 */
 	public void run(String orderChannelId) {
 
-		taskCheck = orderChannelId + ":" + taskCheck;
+		if (!taskCheck.contains(":")) {
+			taskCheck = orderChannelId + ":" + taskCheck;
+		}
 		
 		List<TaskControlBean> taskControlList = taskDao.getTaskControlList(taskCheck);
 		// 是否可以运行的判断
