@@ -671,6 +671,32 @@ public class ProductController extends BaseController {
 		}
 	}
 
+	@RequestMapping(value = {"/doUpdateCustomInfo"})
+	public void doUpdateCustomInfo(HttpServletResponse response, @RequestBody List<Map<String, Object>> requestMap){
+		AjaxResponseBean responseBean = new AjaxResponseBean();
+		List<Map<String, Object>> resMap = new ArrayList<Map<String,Object>>();
+		String msgCode = "";
+		int msgType = 0;
+		try {
+			// 输入参数出力
+			logger.info("参数：" + JsonUtil.toJson(requestMap));
+
+			productEditService.doUpdateCustomInfo(requestMap, getUser().getUserName());
+		} catch (Exception e) {
+			logger.info(e);
+			msgCode = MessageConstants.MESSAGE_CODE_500001;
+			msgType = MessageConstants.MESSAGE_TYPE_EXCEPTION;
+		} finally {
+			if (msgType > 0) {
+				responseBean.setResult(false, msgCode, msgType);
+			} else {
+				responseBean.setResult(true);
+			}
+			responseBean.writeTo(request, response);
+			logger.info(responseBean.toString());
+		}
+	}
+
 	@RequestMapping(value = {"/doGetPriceHistory"})
 	public void doGetPriceHistory(HttpServletResponse response,  @RequestBody DtRequest<ProductUSPriceInfo> dtRequest){
 		AjaxResponseBean responseBean = new AjaxResponseBean();

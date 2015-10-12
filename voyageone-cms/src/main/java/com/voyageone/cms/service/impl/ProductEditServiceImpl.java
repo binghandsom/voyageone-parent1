@@ -647,10 +647,10 @@ public class ProductEditServiceImpl implements ProductEditService {
 		productCNBean.getCnBaseProductInfo().setModifier((String)data.get("modifier"));
 		
 		productCNBean.getJdProductInfo().setJdCategoryId(jdCategoryId);
-		productCNBean.getJdProductInfo().setModifier((String)data.get("modifier"));
+		productCNBean.getJdProductInfo().setModifier((String) data.get("modifier"));
 		
 		productCNBean.getTmProductInfo().setTmCategoryId(tmCategoryId);
-		productCNBean.getTmProductInfo().setModifier((String)data.get("modifier"));
+		productCNBean.getTmProductInfo().setModifier((String) data.get("modifier"));
 
 		doUpdateCNProductInfo(productCNBean.getCnBaseProductInfo());
 		doUpdateCNProductJingDongInfo(productCNBean.getJdProductInfo());
@@ -734,6 +734,19 @@ public class ProductEditServiceImpl implements ProductEditService {
 			}
 		}
 		return true;
+	}
+
+	@Transactional("transactionManagerCms")
+	@Override
+	public void doUpdateCustomInfo(List<Map<String, Object>> requestMap, String userName) throws Exception {
+
+		try {
+			for (Map<String, Object>item:requestMap){
+				productDao.doUpdateCustomInfo(item);
+			}
+		}catch (Exception e){
+			throw e;
+		}
 	}
 	
 	/*@Transactional("transactionManagerCms")

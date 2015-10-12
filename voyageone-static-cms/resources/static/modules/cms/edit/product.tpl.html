@@ -520,9 +520,9 @@
 
                                                                                 <div class="col-sm-8">
                                                                                     <input type="text" class="form-control" id="txtCNProductCnName" name="txtCNProductCnName" ng-model="cnBaseProductInfo.cnName"
-                                                                                           ng-maxlength="100" required="" ng-change="cnBaseProductChanged()">
+                                                                                           ng-maxlength="60" required="" ng-change="cnBaseProductChanged()">
                                                                                     <va-check ng-show="formCNBaseProductInfo.txtCNProductCnName.$error.required" check-type="required"></va-check>
-                                                                                    <va-check ng-show="formCNBaseProductInfo.txtCNProductCnName.$error.maxlength" check-type="maxlength" check-param="100"></va-check>
+                                                                                    <va-check ng-show="formCNBaseProductInfo.txtCNProductCnName.$error.maxlength" check-type="maxlength" check-param="60"></va-check>
                                                                                 </div>
                                                                             </div><!-- .form-group -->
 
@@ -3124,15 +3124,45 @@
                                                            	<div class="container-fluid">
                                                           		<form name="customInfo" class="form-horizontal" novalidate="">
 	                                                           		<div class="row">
-	                                                           			<div class="col-sm-6" ng-repeat="customInfo in customList">
-				                                          					<div class="form-group">
+	                                                           			<div class="col-sm-12" ng-repeat="customInfo in customList">
+                                                                            <div class="col-sm-5">
+                                                                                <div class="form-group">
 	                                                                               <label class="col-sm-4 control-label" ng-bind="customInfo.name"></label>
 	                                                                               <div class="col-sm-8">
 	                                                                                   <input type="text" disabled="disabled" class="form-control" ng-model="customInfo.value">
 	                                                                               </div>
 	                                                                           </div>
+                                                                            </div>
+                                                                            <div class="col-sm-5">
+                                                                                <div class="form-group">
+                                                                                    <label class="col-sm-4 control-label" ng-bind="customInfo.cnName"></label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="text" ng-change="custemChanged()" class="form-control" ng-model="customInfo.cnValue">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-sm-2">
+                                                                                <div class="form-group">
+                                                                                    <div class="onoffswitch">
+                                                                                        <input type="checkbox" class="onoffswitch-checkbox" id={{customInfo.attributeName}}
+                                                                                               ng-model="customInfo.isShow" ng-change="custemChanged()">
+                                                                                        <label class="onoffswitch-label" for={{customInfo.attributeName}}>
+                                                                                            <span class="onoffswitch-inner"></span>
+                                                                                            <span class="onoffswitch-switch"></span>
+                                                                                        </label>
+                                                                                    </div><!-- onoff switch -->
+                                                                                </div>
+                                                                            </div>
 	                                       								</div>
 	                                                           		</div>
+                                                                    <div class="col-sm-12 control-savebar" ng-if="custemDataIsChanged">
+                                                                        <div class="col-sm-12 text-center">
+                                                                            <div class="form-group">
+                                                                                <button type="button" class="btn btn-default" translate="CMS_BTN_CANCEL" ng-click="undoUpdateCustemData()"></button>
+                                                                                <button type="button" class="btn btn-vo" translate="CMS_BTN_SAVE" ng-click="doUpdateCustemData()"></button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
                                                            		</form>
                                                            	</div>
                                                         </tab>
