@@ -202,7 +202,8 @@
             LEFT JOIN voyageone_ims.ims_bt_feed_prop_ignore ign
                 ON prop.prop_id = ign.prop_id AND ign.channel_id = #{channel_id}
         WHERE
-            prop.category_id = #{category_id};
+          prop.prop_type IN (<foreach item="typeValue" collection="types" separator=",">#{typeValue}</foreach>)
+        AND prop.category_id = #{category_id};
     </select>
 
     <select id="ims_bt_category_extend_selectCategoryExtend" resultType="com.voyageone.cms.modelbean.ImsCategoryExtend">
