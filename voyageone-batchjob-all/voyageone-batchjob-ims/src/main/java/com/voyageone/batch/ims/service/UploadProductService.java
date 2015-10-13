@@ -224,9 +224,9 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                         productPublishBean.setPublish_product_status(0);
                     }
                     if (workLoadBean.isHasSku()) {
-                        productPublishBean.setQuality_update_type("s");
+                        productPublishBean.setQuantity_update_type("s");
                     } else {
-                        productPublishBean.setQuality_update_type("p");
+                        productPublishBean.setQuantity_update_type("p");
                     }
 
                     //成功时，publish_status设为1

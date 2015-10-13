@@ -14,7 +14,7 @@ public class ProductPublishBean {
     private String publish_product_id;
     private int publish_product_status;
     private int main_product_flg;
-    private String quality_update_type;
+    private String quantity_update_type;
     private int publish_status;
     private String num_iid;
     private String publish_date_time;
@@ -88,12 +88,12 @@ public class ProductPublishBean {
         this.publish_failed_comment = publish_failed_comment;
     }
 
-    public String getQuality_update_type() {
-        return quality_update_type;
+    public String getQuantity_update_type() {
+        return quantity_update_type;
     }
 
-    public void setQuality_update_type(String quality_update_type) {
-        this.quality_update_type = quality_update_type;
+    public void setQuantity_update_type(String quantity_update_type) {
+        this.quantity_update_type = quantity_update_type;
     }
 
     public int getMain_product_flg() {
