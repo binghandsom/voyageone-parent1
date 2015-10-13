@@ -65,6 +65,7 @@
             i.order_channel_id = #{order_channel_id}
         AND i.cart_id = #{cart_id}
         AND i.syn_flg = #{syn_flg}
+        AND i.syn_type = #{syn_type}
         AND EXISTS (SELECT
                       1
                     FROM
