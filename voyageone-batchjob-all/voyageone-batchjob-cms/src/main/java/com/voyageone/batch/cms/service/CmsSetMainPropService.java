@@ -265,6 +265,7 @@ public class CmsSetMainPropService extends BaseTaskService {
                     if (mainPropSkuList.size() > 0) {
                         // 插入数据库
                         mainPropDao.doInsertSkuValue(mainPropSkuList, getTaskName());
+                        logger.info("主数据属性值设定（SKU）：product_id=" + product_id);
                     }
                 }
 
@@ -567,6 +568,7 @@ public class CmsSetMainPropService extends BaseTaskService {
                 }
                 if (imsPropValueBeanList.size() > 0) {
                     mainPropDao.doInsertMainValue(imsPropValueBeanList, getTaskName());
+                    logger.info("主数据属性值设定（CODE）：product_id=" + product_id);
                 }
 
                 // 更新处理flag
