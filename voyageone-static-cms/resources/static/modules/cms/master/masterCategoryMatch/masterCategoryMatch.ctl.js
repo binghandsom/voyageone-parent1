@@ -49,7 +49,7 @@ define([ "modules/cms/cms.module",
 							
 							//获取cms类目
 							$scope.cmsCategoryList = cmsCategorise;
-							//获取�?有主类目
+							//获取所有主类目
 							$scope.masterCategoryList = $scope.resData.masterCategoryList;
 					})
 					
@@ -77,7 +77,6 @@ define([ "modules/cms/cms.module",
 						}
 						
 					})
-					
 				};
 				
 				$scope.showMasterCategoryDiv = function($this,$event){
@@ -181,7 +180,7 @@ define([ "modules/cms/cms.module",
 						}
 						//获取cms类目
 						$scope.cmsCategoryList = cmsCategorise;
-						$event.target.innerText = " 属�?�匹配未完成类目";
+						$event.target.innerText = " 属性匹配未完成类目";
 					}else {
 						var filterCategoryList = [];
 						$scope.filterByProp = true;
@@ -239,7 +238,7 @@ define([ "modules/cms/cms.module",
 						}
 						//获取cms类目
 						$scope.cmsCategoryList = cmsCategorise;
-						$event.target.innerText = " 未匹配类�?";
+						$event.target.innerText = " 未匹配类目";
 					}else {
 						var filterCategoryList = [];
 						$scope.filterByCategory = true;

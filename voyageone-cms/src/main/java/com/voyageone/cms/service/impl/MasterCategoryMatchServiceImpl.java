@@ -46,6 +46,12 @@ public class MasterCategoryMatchServiceImpl implements MasterCategoryMatchServic
 		List<CmsCategoryBean> resultList = new ArrayList<>();
 
 		for (CmsCategoryModel model : categoryModels) {
+			if (model.getMainCategoryId()>0) {
+				model.setMainCategoryPath(ImsCategoryConfigs.getMtCategoryBeanById(model.getMainCategoryId()).getCategoryPath());
+				if(propMatchDoneList.contains(String.valueOf(model.getMainCategoryId()))){
+					model.setPropMatchStatus(1);
+				}
+			}
 			List<CmsCategoryModel> subModels = new ArrayList<>();
 			boolean isTop = true;
 			for (CmsCategoryModel subModel : categoryModels) {
@@ -74,19 +80,63 @@ public class MasterCategoryMatchServiceImpl implements MasterCategoryMatchServic
 			BeanUtils.copyProperties(model, categoryBean);
 
 			categoryBean.setCmsCategoryPath(model.getEnName());
-			if (model.getMainCategoryId()>0) {
-				categoryBean.setMainCategoryPath(
-						ImsCategoryConfigs.getMtCategoryBeanById(model.getMainCategoryId()).getCategoryPath());
-				if(propMatchDoneList.contains(String.valueOf(model.getMainCategoryId()))){
-					categoryBean.setPropMatchStatus(1);
-				}
-			}
+
 			resultList.add(categoryBean);
 
 			this.buildViewModel(model, model.getEnName(), categoryBean.getMainCategoryPath(), resultList);
 		}
 
 		return resultList;
+
+	}
+
+	/**
+	 * 获取所有cms类目的信息.
+	 */
+	@Override
+	public List<CmsCategoryModel> getCmsCategoryModelList(String channelId) {
+
+		List<CmsCategoryModel> categoryModels = masterCategoryMatchDao.getCmsCategoryList(channelId);
+		List<String> propMatchDoneList = masterCategoryMatchDao.getPropMatchCompleteCategories(channelId);
+
+		List<CmsCategoryModel> removeList = new ArrayList<>();
+
+		for (CmsCategoryModel model : categoryModels) {
+			if (model.getMainCategoryId()>0) {
+				model.setMainCategoryPath(ImsCategoryConfigs.getMtCategoryBeanById(model.getMainCategoryId()).getCategoryPath());
+				if(propMatchDoneList.contains(String.valueOf(model.getMainCategoryId()))){
+					model.setPropMatchStatus(1);
+				}
+			}
+			List<CmsCategoryModel> subModels = new ArrayList<>();
+			boolean isTop = true;
+			for (CmsCategoryModel subModel : categoryModels) {
+				if (subModel.getParentCategoryId() == model.getCategoryId()) {
+					subModels.add(subModel);
+				}
+
+				if (model.getParentCategoryId() == subModel.getCategoryId()) {
+					isTop = false;
+				}
+			}
+			model.setChildren(subModels);
+			if (isTop) {
+				model.setParentCategoryId(0);
+			} else {
+				removeList.add(model);
+			}
+		}
+
+		categoryModels.removeAll(removeList);
+
+		for (CmsCategoryModel model : categoryModels) {
+
+			model.setCmsCategoryPath(model.getEnName());
+
+			this.buildModel(model, model.getEnName(), model.getMainCategoryPath());
+		}
+
+		return categoryModels;
 
 	}
 	
@@ -113,12 +163,6 @@ public class MasterCategoryMatchServiceImpl implements MasterCategoryMatchServic
 				categoryBean.setCmsCategoryPath(path);
 				if (cmsCategoryModel.getMainCategoryId() == 0) {
 					categoryBean.setMainCategoryPath(parentMainPath);
-				} else {
-					if (cmsCategoryModel.getMainCategoryId()>0) {
-						categoryBean.setMainCategoryPath(ImsCategoryConfigs
-								.getMtCategoryBeanById(cmsCategoryModel.getMainCategoryId()).getCategoryPath());
-					}
-					
 				}
 				resultList.add(categoryBean);
 				if (cmsCategoryModel.getMainCategoryId() == -1) {
@@ -127,6 +171,34 @@ public class MasterCategoryMatchServiceImpl implements MasterCategoryMatchServic
 					buildViewModel(cmsCategoryModel, path, categoryBean.getMainCategoryPath(), resultList);
 				}
 				
+			}
+		}
+	}
+
+	/**
+	 *
+	 * @param parent
+	 * @param parentPath
+	 * @param parentMainPath
+	 */
+	private void buildModel(CmsCategoryModel parent, String parentPath, String parentMainPath) {
+
+		List<CmsCategoryModel> categoryModels = parent.getChildren();
+
+		if (categoryModels != null) {
+
+			for (CmsCategoryModel cmsCategoryModel : categoryModels) {
+				String path = parentPath + " > " + cmsCategoryModel.getEnName();
+				cmsCategoryModel.setCmsCategoryPath(path);
+				if (cmsCategoryModel.getMainCategoryId() == 0) {
+					cmsCategoryModel.setMainCategoryPath(parentMainPath);
+				}
+				if (cmsCategoryModel.getMainCategoryId() == -1) {
+					buildModel(cmsCategoryModel, path, parentMainPath);
+				}else {
+					buildModel(cmsCategoryModel, path, cmsCategoryModel.getMainCategoryPath());
+				}
+
 			}
 		}
 	}

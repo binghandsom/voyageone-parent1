@@ -142,7 +142,4 @@ define [
           feedProps: => @feedProps
 
     changeIgnore: (prop) ->
-      @confirm(KEYS.CHANGE).result.then(
-        => @matchPropsService.setIgnore(prop).then => @notify.success KEYS.SUCCESS
-        => prop.is_ignore = !prop.is_ignore
-      )
+      @matchPropsService.setIgnore(prop).then => @notify.success KEYS.SUCCESS
