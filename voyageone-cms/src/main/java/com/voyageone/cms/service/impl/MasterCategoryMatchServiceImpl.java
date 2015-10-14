@@ -75,7 +75,7 @@ public class MasterCategoryMatchServiceImpl implements MasterCategoryMatchServic
 
 			model.setCmsCategoryPath(model.getEnName());
 
-			this.buildModel(model, model.getEnName(), model.getMainCategoryPath());
+			this.buildModel(model, model.getEnName(), model.getMainCategoryPath(),model.getMainCategoryId());
 		}
 
 		return categoryModels;
@@ -88,7 +88,7 @@ public class MasterCategoryMatchServiceImpl implements MasterCategoryMatchServic
 	 * @param parentPath
 	 * @param parentMainPath
 	 */
-	private void buildModel(CmsCategoryModel parent, String parentPath, String parentMainPath) {
+	private void buildModel(CmsCategoryModel parent, String parentPath, String parentMainPath,int parentMainCatId) {
 
 		List<CmsCategoryModel> categoryModels = parent.getChildren();
 
@@ -99,12 +99,12 @@ public class MasterCategoryMatchServiceImpl implements MasterCategoryMatchServic
 				cmsCategoryModel.setCmsCategoryPath(path);
 				if (cmsCategoryModel.getMainCategoryId() == 0) {
 					cmsCategoryModel.setMainCategoryPath(parentMainPath);
-					cmsCategoryModel.setExtendMainCategoryId(parent.getMainCategoryId());
+					cmsCategoryModel.setExtendMainCategoryId(parentMainCatId);
 				}
 				if (cmsCategoryModel.getMainCategoryId() == -1) {
-					buildModel(cmsCategoryModel, path, parentMainPath);
+					buildModel(cmsCategoryModel, path, parentMainPath,parentMainCatId);
 				}else {
-					buildModel(cmsCategoryModel, path, cmsCategoryModel.getMainCategoryPath());
+					buildModel(cmsCategoryModel, path, cmsCategoryModel.getMainCategoryPath(),cmsCategoryModel.getMainCategoryId());
 				}
 
 			}
