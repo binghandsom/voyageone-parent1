@@ -102,7 +102,7 @@ define([ "modules/cms/cms.module",
 							if(subCategory.mainCategoryId==0){
 								subCategory.mainCategoryPath = parentPath;
 								if(parentPath==null){
-									category.isExtend=false;
+									subCategory.isExtend=false;
 									subCategory.inheritClass = '';
 								}else{
 									subCategory.extendMainCategoryId = parentCategoryId;
@@ -157,18 +157,19 @@ define([ "modules/cms/cms.module",
 					//更新cms类目.
 					editService.doUpdateMainCategoryId(parmData,false).then(
 							function(respose){
-						category.isPropMatch = true;
 
-						if(category.isSave){
-							category.isSave = false;
-						}
+								category.isPropMatch = true;
 
-						if(category.isExtend) {
-							category.inheritClass = 'super-category fa fa-star';
-							category.isExtend = false;
-						}
+								if(category.isSave){
+									category.isSave = false;
+								}
 
-						notify.success("CMS_TXT_MSG_UPDATE_SUCCESS");
+								if(category.isExtend) {
+									category.inheritClass = 'super-category fa fa-star';
+									category.isExtend = false;
+								}
+
+								notify.success("CMS_TXT_MSG_UPDATE_SUCCESS");
 					});
 				};
 				
@@ -202,6 +203,7 @@ define([ "modules/cms/cms.module",
 								allCategory[i].isSave = false;
 							}
 						}
+
 						notify.success("CMS_TXT_MSG_UPDATE_SUCCESS");
 					});
 				};
