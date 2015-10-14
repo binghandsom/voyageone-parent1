@@ -49,7 +49,7 @@ public class FixedLengthReader {
     public List<String> readLine(String line, int... colLens) {
 
         // 如果为空值,则跳过
-        if (line.equals(Constants.EmptyString)) return null;
+        if (StringUtils.isEmpty(line)) return null;
 
         int start = 0;
 
@@ -103,6 +103,7 @@ public class FixedLengthReader {
             String line = reader.readLine();
 
             // 如果不读取第一行(有可能为表头),则标记为跳过
+            // 空字符串,ReadLine 时会返回 null
             if (!isReadFirst()) line = Constants.EmptyString;
 
             List<List<String>> rows = new ArrayList<>();
@@ -112,7 +113,8 @@ public class FixedLengthReader {
 
                 List<String> row = readLine(line, colLens);
 
-                rows.add(row);
+                // 此处如果返回 null,则认为时前面标记的第一行
+                if (row != null) rows.add(row);
 
                 // 读取下一行
                 line = reader.readLine();
