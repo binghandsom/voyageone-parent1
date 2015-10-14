@@ -30,31 +30,43 @@ define([ "modules/cms/cms.module",
 								
 							$scope.resData = response.data;
 							
-							var cmsCategorise = $scope.resData.cmsCategoryList;
+							var categories = [];
 
-							for (var i = 0; i < cmsCategorise.length; i++) {
-								if (cmsCategorise[i].mainCategoryId==-1) {
-									cmsCategorise[i].isMatch = true;
-								}
-								if (cmsCategorise[i].mainCategoryId >0) {
-									cmsCategorise[i].inheritClass = 'super-category fa fa-star';
-									cmsCategorise[i].isPropMatch = true;
-								}
-								
-								if (cmsCategorise[i].mainCategoryId == 0 && cmsCategorise[i].mainCategoryPath!=null) {
-									cmsCategorise[i].inheritClass = 'sub-category fa fa-long-arrow-up';
-									cmsCategorise[i].isPropMatch = false;
-								}
-							}
-							
+							var cmsCategoryModels = $scope.resData.cmsCategoryModels;
+
+							buildModel(cmsCategoryModels,categories);
+
 							//获取cms类目
-							$scope.cmsCategoryList = cmsCategorise;
+							$scope.cmsCategoryList = categories;
 							//获取所有主类目
 							$scope.masterCategoryList = $scope.resData.masterCategoryList;
 					})
 					
 				};
-				
+				function buildModel(cmsCategoryModels,categories){
+					if(cmsCategoryModels.length<1){
+						return;
+					}
+					for(var i=0;i<cmsCategoryModels.length;i++){
+						var model = cmsCategoryModels[i];
+						if(model.mainCategoryId==-1){
+							model.isMatch=true;
+						}
+						if (model.mainCategoryId >0) {
+							model.inheritClass = 'super-category fa fa-star';
+							model.isPropMatch = true;
+						}
+
+						if (model.mainCategoryId == 0 && model.mainCategoryPath!=null) {
+							model.isExtend=true;
+							model.inheritClass = 'sub-category fa fa-long-arrow-up';
+							model.isPropMatch = false;
+						}
+						categories.push(model);
+						buildModel(model.children,categories);
+					}
+
+				};
 				$scope.setMasterCategory=function(item){
 					
 					matchService.getPlatformInfo({categoryId:item.categoryId}).then(function(response){
@@ -66,18 +78,43 @@ define([ "modules/cms/cms.module",
 						$scope.selectScope.cmsCategory.isSave = true;
 						$scope.selectScope.cmsCategory.isMatch = false;
 						$scope.selectScope.cmsCategory.inheritClass = 'super-category fa fa-star';
-						var keyCmsPath = $scope.selectScope.cmsCategory.cmsCategoryPath;
-						var keyLength = keyCmsPath.length;
-						var cmsCategoryList = $scope.selectScope.$parent.cmsCategoryList;
-						for (var i = 0; i < cmsCategoryList.length; i++) {
-							if (cmsCategoryList[i].mainCategoryId==0 && (cmsCategoryList[i].cmsCategoryPath.substring(0,keyLength))==keyCmsPath) {
-								cmsCategoryList[i].mainCategoryPath = item.categoryPath;
-								cmsCategoryList[i].inheritClass = 'sub-category fa fa-long-arrow-up';
-							}
+
+
+						var curCategory = $scope.selectScope.cmsCategory;
+						if(curCategory.isExtend){
+							curCategory.isExtend=false;
 						}
-						
+						setSubCategoryPath(curCategory,item.categoryPath,item.categoryId);
+
 					})
 				};
+
+				function setSubCategoryPath(category,parentPath,parentCategoryId){
+
+					if(category.children.length<1){
+						return;
+					}
+
+					for (var i = 0; i < category.children.length; i++) {
+						var subCategory = category.children[i];
+						if (subCategory.mainCategoryId<1) {
+
+							if(subCategory.mainCategoryId==0){
+								subCategory.mainCategoryPath = parentPath;
+								if(parentPath==null){
+									category.isExtend=false;
+									subCategory.inheritClass = '';
+								}else{
+									subCategory.extendMainCategoryId = parentCategoryId;
+									subCategory.isExtend=true;
+									subCategory.inheritClass = 'sub-category fa fa-long-arrow-up';
+								}
+							}
+
+							setSubCategoryPath(subCategory,parentPath,parentCategoryId);
+						}
+					}
+				}
 				
 				$scope.showMasterCategoryDiv = function($this,$event){
 					$scope.isClick = true;
@@ -103,8 +140,11 @@ define([ "modules/cms/cms.module",
 				
 				$scope.save = function(category){
 					var mainCategoryId=null;
-					if(category.mainCategoryId!=0){
+					if(category.isSave){
 						mainCategoryId = category.mainCategoryId;
+					}else if(category.isExtend){
+						mainCategoryId = category.extendMainCategoryId;
+						category.mainCategoryId = mainCategoryId;
 					}
 					var parmData =[{
 							type:'1',
@@ -118,7 +158,16 @@ define([ "modules/cms/cms.module",
 					editService.doUpdateMainCategoryId(parmData,false).then(
 							function(respose){
 						category.isPropMatch = true;
-						category.isSave = false;
+
+						if(category.isSave){
+							category.isSave = false;
+						}
+
+						if(category.isExtend) {
+							category.inheritClass = 'super-category fa fa-star';
+							category.isExtend = false;
+						}
+
 						notify.success("CMS_TXT_MSG_UPDATE_SUCCESS");
 					});
 				};
@@ -159,35 +208,24 @@ define([ "modules/cms/cms.module",
 
 				$scope.filterPropDisMatchCategory = function($event){
 
-
-					var cmsCategorise = $scope.resData.cmsCategoryList;
-
 					if ($scope.filterByProp) {
 
 						$scope.filterByProp = false;
 
-						for (var i = 0; i < cmsCategorise.length; i++) {
-							if (cmsCategorise[i].mainCategoryId==-1) {
-								cmsCategorise[i].isMatch = true;
-							}
-							if (cmsCategorise[i].mainCategoryId >0) {
-								cmsCategorise[i].inheritClass = 'super-category fa fa-star';
-							}
+						var cmsCategorise = $scope.allCategory;
 
-							if (cmsCategorise[i].mainCategoryId == 0 && cmsCategorise[i].mainCategoryPath!=null) {
-								cmsCategorise[i].inheritClass = 'sub-category fa fa-long-arrow-up';
-							}
-						}
 						//获取cms类目
 						$scope.cmsCategoryList = cmsCategorise;
+
 						$event.target.innerText = " 属性匹配未完成类目";
 					}else {
+						$scope.allCategory = $scope.cmsCategoryList;
 						var filterCategoryList = [];
 						$scope.filterByProp = true;
-						for (var i = 0; i < cmsCategorise.length; i++) {
+						for (var i = 0; i < $scope.cmsCategoryList.length; i++) {
 
-							if (cmsCategorise[i].mainCategoryId > 0 && cmsCategorise[i].propMatchStatus==0) {
-								filterCategoryList.push(cmsCategorise[i]);
+							if ($scope.cmsCategoryList[i].mainCategoryId > 0 && $scope.cmsCategoryList[i].propMatchStatus==0) {
+								filterCategoryList.push($scope.cmsCategoryList[i]);
 							}
 						}
 						//获取cms类目
@@ -205,6 +243,9 @@ define([ "modules/cms/cms.module",
 				 };
 				 
 				 $scope.change = function(category){
+					 if(category.isExtend){
+						 category.isExtend=false;
+					 }
 					 category.isSave = true;
 					 if (category.isMatch) {
 						 category.mainCategoryId = -1;
@@ -213,39 +254,31 @@ define([ "modules/cms/cms.module",
 					}
 					category.mainCategoryPath = null;
 					category.inheritClass = "";
+
+					 setSubCategoryPath(category,category.mainCategoryPath);
 					 
 				 };
 				 
 				 $scope.filterDisMatchCategory = function($event){
-					 
-					 var cmsCategorise = $scope.resData.cmsCategoryList;
-					 
+
+
 					 if ($scope.filterByCategory) {
+
+						 var cmsCategorise = $scope.allCategory;
 						 
 						 $scope.filterByCategory = false;
-							
-						for (var i = 0; i < cmsCategorise.length; i++) {
-							if (cmsCategorise[i].mainCategoryId==-1) {
-								cmsCategorise[i].isMatch = true;
-							}
-							if (cmsCategorise[i].mainCategoryId >0) {
-								cmsCategorise[i].inheritClass = 'super-category fa fa-star';
-							}
-							
-							if (cmsCategorise[i].mainCategoryId == 0 && cmsCategorise[i].mainCategoryPath!=null) {
-								cmsCategorise[i].inheritClass = 'sub-category fa fa-long-arrow-up';
-							}
-						}
+
 						//获取cms类目
 						$scope.cmsCategoryList = cmsCategorise;
 						$event.target.innerText = " 未匹配类目";
 					}else {
+						 $scope.allCategory = $scope.cmsCategoryList;
 						var filterCategoryList = [];
 						$scope.filterByCategory = true;
-						for (var i = 0; i < cmsCategorise.length; i++) {
+						for (var i = 0; i < $scope.cmsCategoryList.length; i++) {
 							
-							if (cmsCategorise[i].mainCategoryId == 0) {
-								filterCategoryList.push(cmsCategorise[i]);
+							if ($scope.cmsCategoryList[i].mainCategoryId == 0) {
+								filterCategoryList.push($scope.cmsCategoryList[i]);
 							}
 						}
 						//获取cms类目

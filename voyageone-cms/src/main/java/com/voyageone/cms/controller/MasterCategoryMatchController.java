@@ -62,12 +62,12 @@ public class MasterCategoryMatchController extends BaseController {
 
 			String channelId = userSession.getSelChannel();
 
-			List<CmsCategoryBean> cmsCategoryBeans = this.masterCategoryMatchService.getCmsCategoryList(channelId);
+//			List<CmsCategoryBean> cmsCategoryBeans = this.masterCategoryMatchService.getCmsCategoryList(channelId);
 
 			List<CmsCategoryModel> cmsCategoryModels = this.masterCategoryMatchService.getCmsCategoryModelList(channelId);
 
 			// 获取cms类目
-			responseObject.put("cmsCategoryList", cmsCategoryBeans);
+//			responseObject.put("cmsCategoryList", cmsCategoryBeans);
 			responseObject.put("cmsCategoryModels", cmsCategoryModels);
 			// 获取所有的主类目
 //			List<ImsCategoryBean> masterCategoryList = ImsCategoryConfigs.getMtCategoryBeanById(0).getSubCategories();
