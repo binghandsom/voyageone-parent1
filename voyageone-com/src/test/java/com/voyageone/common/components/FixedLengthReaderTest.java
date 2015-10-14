@@ -12,7 +12,7 @@ public class FixedLengthReaderTest {
     @Test
     public void testReadFile() throws Exception {
 
-        FixedLengthReader utils = new FixedLengthReader(false, true);
+        FixedLengthReader utils = new FixedLengthReader(true, false);
 
         int[] cols = {10, 5, 3, 10, 5, 3, 3};
 
