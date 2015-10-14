@@ -121,6 +121,7 @@
 		<result column="thirdPartyCancelOrderFlag" property="thirdPartyCancelOrderFlag"/>
 		<result column="customer_refused" property="customerRefused"/>
 		<result column="customer_refused" property="origCustomerRefused"/>
+		<result column="seller_order_id" property="sellerOrderId"/>
 	</resultMap>
 	<sql id="orders_columnforDetail">
 		o.order_number,
@@ -199,7 +200,8 @@
 		IFNULL(ox.send_flg, false) as clientOrderSendFlag,
 		IFNULL(ox.ext_flg1, false) as cancelClientOrderFlag,
 		IFNULL(ox.ext_flg3, false) as thirdPartyCancelOrderFlag,
-		customer_refused
+		customer_refused,
+		ox.seller_order_id
 	</sql>
 	<!-- 获得订单详细信息 （根据订单号） -->
 	<select id="oms_bt_order_details_getOrdersInfo" parameterType="String" resultMap="ordersInfoMapforDetail" >

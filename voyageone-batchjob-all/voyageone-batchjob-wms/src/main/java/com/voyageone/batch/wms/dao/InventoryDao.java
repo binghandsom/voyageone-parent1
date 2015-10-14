@@ -59,7 +59,7 @@ public class InventoryDao extends BaseDao {
     }
 
     /**
-     * 获取不需要进行的库存同步记录（赠品SKU等）
+     * 获取不需要进行的库存同步记录（赠品SKU等\增量更新时例外）
      *
      * @param order_channel_id 渠道
      * @param cart_id          店铺
@@ -72,6 +72,7 @@ public class InventoryDao extends BaseDao {
         params.put("order_channel_id", order_channel_id);
         params.put("cart_id", cart_id);
         params.put("syn_flg", "0");
+        params.put("syn_type", "1");
 
         return selectList(Constants.DAO_NAME_SPACE_WMS + "wms_selectInventoryExceptSynLogs", params);
     }
