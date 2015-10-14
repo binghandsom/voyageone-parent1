@@ -95,7 +95,10 @@ public class MainPropDao extends BaseDao {
             String strMainCategoryId = selectMainCategoryIdListSub(strCategoryId, mapRelation);
 
             if (!StringUtils.isEmpty(strMainCategoryId)) {
-                result.put(strCategoryId, strMainCategoryId);
+                // -1的场合：该类目无法做类目匹配并忽略
+                if (!"-1".equals(strMainCategoryId)) {
+                    result.put(strCategoryId, strMainCategoryId);
+                }
             }
 
         }
