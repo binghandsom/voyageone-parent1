@@ -31,64 +31,6 @@ public class MasterCategoryMatchServiceImpl implements MasterCategoryMatchServic
 	MasterCategoryMatchDao masterCategoryMatchDao;
 	@Autowired
 	PlatformInfoDao platformInfoDao;
-	
-	/**
-	 * 获取所有cms类目的信息.
-	 */
-	@Override
-	public List<CmsCategoryBean> getCmsCategoryList(String channelId) {
-
-		List<CmsCategoryModel> categoryModels = masterCategoryMatchDao.getCmsCategoryList(channelId);
-
-		List<String> propMatchDoneList = masterCategoryMatchDao.getPropMatchCompleteCategories(channelId);
-
-		List<CmsCategoryModel> removeList = new ArrayList<>();
-		List<CmsCategoryBean> resultList = new ArrayList<>();
-
-		for (CmsCategoryModel model : categoryModels) {
-			if (model.getMainCategoryId()>0) {
-				model.setMainCategoryPath(ImsCategoryConfigs.getMtCategoryBeanById(model.getMainCategoryId()).getCategoryPath());
-				if(propMatchDoneList.contains(String.valueOf(model.getMainCategoryId()))){
-					model.setPropMatchStatus(1);
-				}
-			}
-			List<CmsCategoryModel> subModels = new ArrayList<>();
-			boolean isTop = true;
-			for (CmsCategoryModel subModel : categoryModels) {
-				if (subModel.getParentCategoryId() == model.getCategoryId()) {
-					subModels.add(subModel);
-				}
-
-				if (model.getParentCategoryId() == subModel.getCategoryId()) {
-					isTop = false;
-				}
-			}
-			model.setChildren(subModels);
-			if (isTop) {
-				model.setParentCategoryId(0);
-			} else {
-				removeList.add(model);
-			}
-		}
-
-		categoryModels.removeAll(removeList);
-
-		for (CmsCategoryModel model : categoryModels) {
-
-			CmsCategoryBean categoryBean = new CmsCategoryBean();
-
-			BeanUtils.copyProperties(model, categoryBean);
-
-			categoryBean.setCmsCategoryPath(model.getEnName());
-
-			resultList.add(categoryBean);
-
-			this.buildViewModel(model, model.getEnName(), categoryBean.getMainCategoryPath(), resultList);
-		}
-
-		return resultList;
-
-	}
 
 	/**
 	 * 获取所有cms类目的信息.
@@ -133,55 +75,20 @@ public class MasterCategoryMatchServiceImpl implements MasterCategoryMatchServic
 
 			model.setCmsCategoryPath(model.getEnName());
 
-			this.buildModel(model, model.getEnName(), model.getMainCategoryPath());
+			this.buildModel(model, model.getEnName(), model.getMainCategoryPath(),model.getMainCategoryId());
 		}
 
 		return categoryModels;
 
 	}
 	
-	
-
-	/**
-	 * 
-	 * @param parent
-	 * @param parentPath
-	 * @param parentMainPath
-	 * @param resultList
-	 */
-	private void buildViewModel(CmsCategoryModel parent, String parentPath, String parentMainPath,
-			List<CmsCategoryBean> resultList) {
-
-		List<CmsCategoryModel> categoryModels = parent.getChildren();
-
-		if (categoryModels != null) {
-
-			for (CmsCategoryModel cmsCategoryModel : categoryModels) {
-				CmsCategoryBean categoryBean = new CmsCategoryBean();
-				BeanUtils.copyProperties(cmsCategoryModel, categoryBean);
-				String path = parentPath + " > " + cmsCategoryModel.getEnName();
-				categoryBean.setCmsCategoryPath(path);
-				if (cmsCategoryModel.getMainCategoryId() == 0) {
-					categoryBean.setMainCategoryPath(parentMainPath);
-				}
-				resultList.add(categoryBean);
-				if (cmsCategoryModel.getMainCategoryId() == -1) {
-					buildViewModel(cmsCategoryModel, path, parentMainPath, resultList);
-				}else {
-					buildViewModel(cmsCategoryModel, path, categoryBean.getMainCategoryPath(), resultList);
-				}
-				
-			}
-		}
-	}
-
 	/**
 	 *
 	 * @param parent
 	 * @param parentPath
 	 * @param parentMainPath
 	 */
-	private void buildModel(CmsCategoryModel parent, String parentPath, String parentMainPath) {
+	private void buildModel(CmsCategoryModel parent, String parentPath, String parentMainPath,int parentMainCatId) {
 
 		List<CmsCategoryModel> categoryModels = parent.getChildren();
 
@@ -192,11 +99,12 @@ public class MasterCategoryMatchServiceImpl implements MasterCategoryMatchServic
 				cmsCategoryModel.setCmsCategoryPath(path);
 				if (cmsCategoryModel.getMainCategoryId() == 0) {
 					cmsCategoryModel.setMainCategoryPath(parentMainPath);
+					cmsCategoryModel.setExtendMainCategoryId(parentMainCatId);
 				}
 				if (cmsCategoryModel.getMainCategoryId() == -1) {
-					buildModel(cmsCategoryModel, path, parentMainPath);
+					buildModel(cmsCategoryModel, path, parentMainPath,parentMainCatId);
 				}else {
-					buildModel(cmsCategoryModel, path, cmsCategoryModel.getMainCategoryPath());
+					buildModel(cmsCategoryModel, path, cmsCategoryModel.getMainCategoryPath(),cmsCategoryModel.getMainCategoryId());
 				}
 
 			}

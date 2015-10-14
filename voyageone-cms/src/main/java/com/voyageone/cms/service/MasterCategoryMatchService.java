@@ -8,7 +8,7 @@ import com.voyageone.common.bussiness.platformInfo.model.PlatformInfoModel;
 
 public interface MasterCategoryMatchService {
 	
-	public List<CmsCategoryBean> getCmsCategoryList(String channelId);
+//	public List<CmsCategoryBean> getCmsCategoryList(String channelId);
 	
 	public List<PlatformInfoModel> getPlatformInfo(int categoryId);
 

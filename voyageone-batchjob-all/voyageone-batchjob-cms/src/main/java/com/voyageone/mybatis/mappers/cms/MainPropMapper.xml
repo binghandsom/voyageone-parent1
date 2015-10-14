@@ -19,7 +19,7 @@
           attr.product_url_key
         from voyageone_cms.cms_mt_product_attribute attr
         where attr.channel_id = #{channel_id}
-              and attr.deal_flag = 0 limit 100
+              and attr.deal_flag = 0 limit 500
       ) attr
       left join voyageone_cms.cms_bt_category c on c.url_key = attr.category_url_key
       left join voyageone_cms.cms_bt_model m on m.url_key = attr.model_url_key
@@ -53,7 +53,7 @@
                relation.parent_category_id parent,
                category.main_category_id main_category_id
         from   voyageone_cms.cms_bt_relation_category relation
-        left join voyageone_cms.cms_bt_cn_category_extend category on category.category_id = relation.category_id
+        left join voyageone_cms.cms_bt_category_extend category on category.category_id = relation.category_id
         where relation.channel_id = #{channel_id}
         ;
     </select>

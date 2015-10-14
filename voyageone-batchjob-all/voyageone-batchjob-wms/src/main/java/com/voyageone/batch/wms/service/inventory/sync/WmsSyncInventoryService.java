@@ -59,7 +59,7 @@ public class WmsSyncInventoryService extends WmsSyncInventoryBaseService {
             // 为需要的店铺，创建同步任务
             threads.add(() -> {
 
-                // 过滤不需要更新的SKU（如赠品SKU等）
+                // 过滤不需要更新的SKU（如赠品SKU等\增量更新时例外）
                 List<InventorySynLogBean> inventoryExceptSynLogBeans =
                         inventoryDao.getInventoryExceptSynLog(getTaskName(), shopBean.getOrder_channel_id(), shopBean.getCart_id());
 
