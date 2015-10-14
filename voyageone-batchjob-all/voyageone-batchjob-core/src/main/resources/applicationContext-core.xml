@@ -11,8 +11,8 @@
 		location="classpath*:config/job/**/config.properties" ignore-unresolvable="true" />
 
 	<!-- 数据源配置 -->
-	<import resource="file:C:/usr/web/spring-config/datasource-config.xml" />
-	<!--<import resource="file:/usr/web/spring-config/datasource-config.xml" />-->
+	<!--<import resource="file:C:/usr/web/spring-config/datasource-config.xml" />-->
+	<import resource="file:/usr/web/spring-config/datasource-config.xml" />
 	
 	<!-- 定时任务 -->
 	<import resource="classpath*:config/job/**/*-config.xml" />
