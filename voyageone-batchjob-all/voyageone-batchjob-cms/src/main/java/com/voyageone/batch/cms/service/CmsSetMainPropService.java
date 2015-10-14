@@ -107,7 +107,10 @@ public class CmsSetMainPropService extends BaseTaskService {
                 List<String> resultModel = mainPropDao.selectModelIdByModelName(channel_id, model_id);
 
                 if (resultModel != null && resultModel.size() > 0) {
-                    mainCategoryId = resultModel.get(1);
+                    // 2015-10-14 tom modify 主数据类目的数据源从cms_bt_model_extend，改为cms_bt_cn_model_extend START
+//                    mainCategoryId = resultModel.get(1);
+                    mainCategoryId = resultModel.get(2);
+                    // 2015-10-14 tom modify 主数据类目的数据源从cms_bt_model_extend，改为cms_bt_cn_model_extend END
                 } else {
                     mainCategoryId = "";
                 }
