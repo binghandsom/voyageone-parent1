@@ -263,7 +263,6 @@ define([ "modules/cms/cms.module",
 							 }else{
 								 setSubCategoryPath(category,category.mainCategoryPath);
 							 }
-							 //setSubCategoryPath(category,category.mainCategoryPath);
 						 }else if(category.mainCategoryId==0){
 							 category.mainCategoryId = -1;
 							 category.mainCategoryPath = null;
