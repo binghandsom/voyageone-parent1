@@ -2447,6 +2447,11 @@ public class OrderInfoImportService {
 			String[] itemPriceArray = realItemPrices.split(Constants.SPLIT_CHAR_RESOLVE);
 			String[] quantityArray = realQuantitys.split(Constants.SPLIT_CHAR_RESOLVE);
 
+			newOrderInfo.setProductSku(realSkus);
+			newOrderInfo.setProductName(realSkuNames);
+			newOrderInfo.setProductItemPrice(realItemPrices);
+			newOrderInfo.setProductQuantity(realQuantitys);
+
 			if (skuArray != null && skuArray.length > 0) {
 
 				//总价
