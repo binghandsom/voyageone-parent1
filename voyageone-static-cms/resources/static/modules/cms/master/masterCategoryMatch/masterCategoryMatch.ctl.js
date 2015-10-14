@@ -105,6 +105,9 @@ define([ "modules/cms/cms.module",
 									subCategory.isExtend=false;
 									subCategory.inheritClass = '';
 								}else{
+									if(subCategory.isSave){
+										subCategory.isSave=false;
+									}
 									subCategory.extendMainCategoryId = parentCategoryId;
 									subCategory.isExtend=true;
 									subCategory.inheritClass = 'sub-category fa fa-long-arrow-up';
@@ -250,16 +253,50 @@ define([ "modules/cms/cms.module",
 					 }
 					 category.isSave = true;
 					 if (category.isMatch) {
-						 category.mainCategoryId = -1;
-					}else {
-						category.mainCategoryId = 0;
-					}
-					category.mainCategoryPath = null;
-					category.inheritClass = "";
+						 if(category.mainCategoryId > 0){
+							 category.mainCategoryId = -1;
+							 category.mainCategoryPath = null;
+							 category.inheritClass = "";
+							 var topNodeCat = getTopNOde(category.parentCategoryId);
+							 if(topNodeCat!=null){
+								 setSubCategoryPath(topNodeCat,topNodeCat.mainCategoryPath);
+							 }else{
+								 setSubCategoryPath(category,category.mainCategoryPath);
+							 }
+							 //setSubCategoryPath(category,category.mainCategoryPath);
+						 }else if(category.mainCategoryId==0){
+							 category.mainCategoryId = -1;
+							 category.mainCategoryPath = null;
+							 category.inheritClass = "";
+						 }
 
-					 setSubCategoryPath(category,category.mainCategoryPath);
-					 
+					}else if(category.mainCategoryId==-1){
+						category.mainCategoryId = 0;
+						 if(category.parentCategoryId>0){
+							 var topNodeCat = getTopNOde(category.parentCategoryId);
+							 if(topNodeCat!=null){
+								 setSubCategoryPath(topNodeCat,topNodeCat.mainCategoryPath);
+							 }
+						 }
+					}
+
 				 };
+
+				function getTopNOde(parentCategoryId){
+
+					for(var i=0;i< $scope.cmsCategoryList.length;i++){
+						var category = $scope.cmsCategoryList[i];
+						if(category.categoryId===parentCategoryId){
+							if(category.mainCategoryId>0){
+								return category;
+							}else{
+								getTopNOde(category.parentCategoryId);
+							}
+						}
+					}
+
+					return null;
+				};
 				 
 				 $scope.filterDisMatchCategory = function($event){
 
