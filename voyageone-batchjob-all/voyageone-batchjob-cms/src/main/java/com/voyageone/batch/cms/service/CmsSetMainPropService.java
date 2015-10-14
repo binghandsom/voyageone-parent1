@@ -107,7 +107,10 @@ public class CmsSetMainPropService extends BaseTaskService {
                 List<String> resultModel = mainPropDao.selectModelIdByModelName(channel_id, model_id);
 
                 if (resultModel != null && resultModel.size() > 0) {
-                    mainCategoryId = resultModel.get(1);
+                    // 2015-10-14 tom modify 主数据类目的数据源从cms_bt_model_extend，改为cms_bt_cn_model_extend START
+//                    mainCategoryId = resultModel.get(1);
+                    mainCategoryId = resultModel.get(2);
+                    // 2015-10-14 tom modify 主数据类目的数据源从cms_bt_model_extend，改为cms_bt_cn_model_extend END
                 } else {
                     mainCategoryId = "";
                 }
@@ -125,6 +128,8 @@ public class CmsSetMainPropService extends BaseTaskService {
 //                            break;
 
                         // 如果没有设定过匹配用的主类目，那么认为无法继续了，跳过
+                        logger.info("尚未指定主类目：category_id=" + category_id);
+                        logger.info("尚未指定主类目：model_id=" + model_id);
                         logger.info("尚未指定主类目：product_id=" + product_id);
                         continue;
                     }
@@ -265,6 +270,7 @@ public class CmsSetMainPropService extends BaseTaskService {
                     if (mainPropSkuList.size() > 0) {
                         // 插入数据库
                         mainPropDao.doInsertSkuValue(mainPropSkuList, getTaskName());
+                        logger.info("主数据属性值设定（SKU）：model_id=" + model_id + "; product_id=" + product_id + "; main_category_id=" + mainCategoryId);
                     }
                 }
 
@@ -567,6 +573,7 @@ public class CmsSetMainPropService extends BaseTaskService {
                 }
                 if (imsPropValueBeanList.size() > 0) {
                     mainPropDao.doInsertMainValue(imsPropValueBeanList, getTaskName());
+                    logger.info("主数据属性值设定（CODE）：model_id=" + model_id + "; product_id=" + product_id + "; main_category_id=" + mainCategoryId);
                 }
 
                 // 更新处理flag
@@ -589,21 +596,33 @@ public class CmsSetMainPropService extends BaseTaskService {
                 // 33 3/4 意思是 33又四分之三 -> 33.75
                 // 33 1/2 意思是 33又二分之一 -> 33.5
                 // 33 1/4 意思是 33又四分之一 -> 33.25
+                // 33 5/8 意思是 33又八分之五 -> 33.625
                 // 直接这边代码处理掉避免人工干预
                 if (value.contains(" ")) {
+                    value = value.replaceAll(" +", " ");
                     String[] strSplit = value.split(" ");
 
-                    switch (strSplit[1]) {
-                        case "3/4":
-                            value = String.valueOf(Float.valueOf(strSplit[0]) + 0.75);
-                            break;
-                        case "1/2":
-                            value = String.valueOf(Float.valueOf(strSplit[0]) + 0.5);
-                            break;
-                        case "1/4":
-                            value = String.valueOf(Float.valueOf(strSplit[0]) + 0.25);
-                            break;
-                    }
+                    // 修改：直接用除法来过滤掉所有这类问题 tom 20151014 START
+//                    switch (strSplit[1]) {
+//                        case "3/4":
+//                            value = String.valueOf(Float.valueOf(strSplit[0]) + 0.75);
+//                            break;
+//                        case "1/2":
+//                            value = String.valueOf(Float.valueOf(strSplit[0]) + 0.5);
+//                            break;
+//                        case "1/4":
+//                            value = String.valueOf(Float.valueOf(strSplit[0]) + 0.25);
+//                            break;
+//                        case "5/8":
+//                            value = String.valueOf(Float.valueOf(strSplit[0]) + 0.625);
+//                            break;
+//                    }
+                    String[] strSplitSub = strSplit[1].split("/");
+                    value = String.valueOf(
+                            Float.valueOf(strSplit[0]) +
+                                    (Float.valueOf(strSplitSub[0]) / Float.valueOf(strSplitSub[1]))
+                    );
+                    // 修改：直接用除法来过滤掉所有这类问题 tom 20151014 END
 
                 }
 
