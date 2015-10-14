@@ -372,4 +372,67 @@ public final class StringUtils {
             return data.replace("'", "''").replace("\\", "\\\\").replace("\r\n", " ").replace("\n", " ").replace("\r", " ");
         }
     }
+
+    /**
+     * <p>
+     * Discription: 指定的字符串累加
+     * </p>
+     *
+     * @param chr
+     * @param len
+     * @return
+     * @author :
+     * @update :
+     */
+    public static String strAdd(String chr, int len) {
+        if (len > 0) {
+            StringBuffer ret = new StringBuffer(len);
+            for (int i = 0; i < len; i++) {
+                ret.append(chr);
+            }
+            return (ret.toString());
+        } else {
+            return "";
+        }
+    }
+
+    /**
+     * <p>
+     * Discription: 给字符串补足到指定的长度，从左边补足chr指定的字符
+     * </p>
+     *
+     * @param source
+     * @param chr
+     * @param len
+     * @return
+     * @author :
+     * @update :
+     */
+    public static String lPad(String source, String chr, int len) {
+        int lenleft = len - source.length();
+        if (lenleft < 0) {
+            lenleft = 0;
+        }
+        return (strAdd(chr, lenleft) + source);
+    }
+
+    /**
+     * <p>
+     * Discription: 给字符串补足到指定的长度，从右边补足chr指定的字符
+     * </p>
+     *
+     * @param source
+     * @param chr
+     * @param len
+     * @return
+     * @author :
+     * @update :
+     */
+    public static String rPad(String source, String chr, int len) {
+        int lenleft = len - source.length();
+        if (lenleft < 0) {
+            lenleft = 0;
+        }
+        return (source + strAdd(chr, lenleft));
+    }
 }
