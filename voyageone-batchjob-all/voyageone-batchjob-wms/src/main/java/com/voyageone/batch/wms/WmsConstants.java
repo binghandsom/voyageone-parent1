@@ -206,6 +206,15 @@ public interface WmsConstants {
                 put("Site","01");
             }
         };
+        //特殊物品销售订单标题
+        public static final HashMap<String, String> SPECIAL_SALES_ORDER_TITLE = new HashMap<String, String>() {
+            {
+                put("SalesType", "销售订单");
+                put("Warehouse", "0201");
+                put("Ordertype", "4");
+                put("Site","01");
+            }
+        };
     }
 
 
@@ -230,6 +239,7 @@ public interface WmsConstants {
             add("a");
             add("b");
             add("c");
+            add("d");
         }};
     }
 
@@ -274,6 +284,12 @@ public interface WmsConstants {
                 put("OneSize", "");
             }
         };
+    }
+
+    // 斯伯丁报表特殊商品类型
+    final class specialType {
+        public static final  String BACKBOARD = "special_goods_backboard";
+        public static final  String BALL = "special_goods_ball";
     }
 
 }

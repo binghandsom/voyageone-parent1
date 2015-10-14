@@ -305,7 +305,15 @@ public class ChannelConfigEnums {
         /**
          * scene7上传图片文件夹路径
          */
-        scene7_image_folder
+        scene7_image_folder,
+        /**
+         * 斯伯丁特殊物品篮板
+         */
+        special_goods_backboard,
+        /**
+         * 斯伯丁特殊物品定制球
+         */
+        special_goods_ball
 
     }
 

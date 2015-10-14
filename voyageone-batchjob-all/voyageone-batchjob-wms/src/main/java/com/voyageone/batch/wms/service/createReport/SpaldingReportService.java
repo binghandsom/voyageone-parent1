@@ -257,13 +257,18 @@ public class SpaldingReportService extends CreateReportBaseService {
             //timeRegion.set(0,"2015-09-07 16:00:00"); timeRegion.set(1,"2015-09-14 15:59:59");
             ReportDatas  = createReportDao.getCreateReportData(cart_id, order_channel_id, CodeConstants.TransferStatus.ClOSE, CodeConstants.TransferType.WITHDRAWAL,
                     CodeConstants.TransferOrigin.WITHDRAWAL, timeRegion.get(0), timeRegion.get(1), taskName);
+        //取得特殊物品(定制球)销售订单的日报基本数据记录
+        }else if (fileFlg == 3){
+            //============================================================================================
+            //============================================================================================
+            //timeRegion.set(0,"2015-09-07 16:00:00"); timeRegion.set(1,"2015-09-14 15:59:59");
+            ReportDatas  = createReportDao.getCreateReportSpecialData(cart_id, order_channel_id, WmsConstants.specialType.BALL, timeRegion.get(0), timeRegion.get(1), taskName);
         }
 
         logger.info("取得日报表基本数据结束");
         return ReportDatas;
 
     }
-
 
 
     /**
@@ -338,9 +343,13 @@ public class SpaldingReportService extends CreateReportBaseService {
             fileTitleHeads = WmsConstants.spaldingReportTitleHead.RETURN_TP_TITLE_HEAD;
             fileTile = WmsConstants.spaldingReportTitle.RETURN_TP_TITLE;
             //退货订单(退回到福建仓库)标题
-        }else {
+        }else  if (fileFlg == 2) {
             fileTitleHeads = WmsConstants.spaldingReportTitleHead.RETURN_TP_TITLE_HEAD;
             fileTile = WmsConstants.spaldingReportTitle.RETURN_SPALDING_TITLE;
+            //特殊物品销售订单（定制球）的日报标题
+        } else {
+            fileTitleHeads = WmsConstants.spaldingReportTitleHead.SALES_ORDER_TITLE_HEAD;
+            fileTile = WmsConstants.spaldingReportTitle.SPECIAL_SALES_ORDER_TITLE;
         }
 
         try {
@@ -447,11 +456,17 @@ public class SpaldingReportService extends CreateReportBaseService {
         boolean priceFlg = false;
         String strUnit = "";
         String sizeValue = "";
+        String specialSku = "";
         //List<SpaldingPriceBean> spaldingPriceDatas = new ArrayList<SpaldingPriceBean>();
         List<SetPriceBean> spaldingPriceDatas = new ArrayList<SetPriceBean>();
         logger.info(format(" [ %s ]日报文件内容输出开始", fileNameA));
         logger.info(format("[ %s ]  条数据准备写入开始", ReportDatas.size()));
         for (ThirdReportBean reportBean : ReportDatas) {
+            //特殊商品SKU装换
+            if (fileFlg == 3 ) {
+                reportBean = changeSpecialSku(reportBean,fileFlg,order_channel_id);
+            }
+
             //Order_number不一样
             if (!orderNumBasic.equals(reportBean.getOrder_number())){
                 //spaldingPriceDatas = new ArrayList<SpaldingPriceBean>();
@@ -471,7 +486,7 @@ public class SpaldingReportService extends CreateReportBaseService {
             //CustAccount
             csvWriter.write(Customer);
             //ReasonCode
-            if (fileFlg > 0) {
+            if (fileFlg == 1 || fileFlg == 2) {
                 csvWriter.write("残次品");
             }
             //InventSiteId
@@ -670,5 +685,31 @@ public class SpaldingReportService extends CreateReportBaseService {
         }
         return sizeValue;
 
+    }
+
+    /**
+     * 特殊商品SKU装换
+     * @param  reportBean
+     * @param  fileFlg
+     * @return ThirdReportBean
+     */
+    private  ThirdReportBean changeSpecialSku(ThirdReportBean reportBean,int fileFlg,String order_channel_id) throws Exception{
+        String specialSku = "";
+        //specialSku = ChannelConfigs.getVal2(order_channel_id, ChannelConfigEnums.Name.special_goods_ball, reportBean.getTransfer_sku());
+        if (fileFlg == 3 ) {
+            //对方定制球SKU取得
+            specialSku = ChannelConfigs.getVal2(order_channel_id, ChannelConfigEnums.Name.special_goods_ball, reportBean.getTransfer_sku());
+        } else {
+            //对方篮板SKU取得
+            specialSku = ChannelConfigs.getVal2(order_channel_id, ChannelConfigEnums.Name.special_goods_backboard, reportBean.getTransfer_sku());
+        }
+        //当前SKU和对方SKU不一致
+        if (!specialSku.equals(reportBean.getTransfer_sku())) {
+            //reportBean.setTransfer_sku(specialSku);
+            int value = specialSku.lastIndexOf("-");
+            reportBean.setItemcode(specialSku.substring(0,value));
+            reportBean.setSize(specialSku.substring(value+1));
+        }
+        return reportBean;
     }
 }
