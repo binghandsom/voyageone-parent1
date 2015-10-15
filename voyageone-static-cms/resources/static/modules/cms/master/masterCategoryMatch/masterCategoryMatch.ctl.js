@@ -259,9 +259,9 @@ define([ "modules/cms/cms.module",
 							 category.inheritClass = "";
 							 var topNodeCat = getTopNOde(category.parentCategoryId);
 							 if(topNodeCat!=null){
-								 setSubCategoryPath(topNodeCat,topNodeCat.mainCategoryPath);
+								 setSubCategoryPath(topNodeCat,topNodeCat.mainCategoryPath,topNodeCat.mainCategoryId);
 							 }else{
-								 setSubCategoryPath(category,category.mainCategoryPath);
+								 setSubCategoryPath(category,category.mainCategoryPath,category.mainCategoryId);
 							 }
 						 }else if(category.mainCategoryId==0){
 							 category.mainCategoryId = -1;
@@ -274,7 +274,7 @@ define([ "modules/cms/cms.module",
 						 if(category.parentCategoryId>0){
 							 var topNodeCat = getTopNOde(category.parentCategoryId);
 							 if(topNodeCat!=null){
-								 setSubCategoryPath(topNodeCat,topNodeCat.mainCategoryPath);
+								 setSubCategoryPath(topNodeCat,topNodeCat.mainCategoryPath,topNodeCat.mainCategoryId);
 							 }
 						 }
 					}
@@ -289,11 +289,10 @@ define([ "modules/cms/cms.module",
 							if(category.mainCategoryId>0){
 								return category;
 							}else{
-								getTopNOde(category.parentCategoryId);
+								return getTopNOde(category.parentCategoryId);
 							}
 						}
 					}
-
 					return null;
 				};
 				 
