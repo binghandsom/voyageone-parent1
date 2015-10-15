@@ -35,10 +35,7 @@
 	   <div class="row">
 	       <div class="col-lg-12">
 	           <div class="vo_accordion vo_attr vo_product">
-	               <div class="panel-group">
-	                   <div class="panel panel-default">
 						 <div class="panel-collapse">
-						      <div class="panel-body">
 						          <div class="hbox hbox-auto-xs no-border vo_prodBox">
 									  <div ng-if="isError"  class="proErrMsg">
 										  <div class="proErrMsgList"><strong ng-bind="errMsg"></strong></div>
@@ -46,28 +43,40 @@
 									  <div ng-if="isNew"  class="proErrMsg">
 										  <div class="proWarningMsgList">请选择一个类目</div>
 									  </div>
-									  <div ng-if="!isReady"  class="proErrMsg">
+									  <div ng-if="!isReady&&!isNew"  class="proErrMsg">
 										  <div class="proWarningMsgList"><span  translate="CMS_MSG_MASTER_PROP_VALUE_SETTING_CATEGORY_NODATA"></span><p><br>{{sec}}秒后将返回到上一个页面</p></div>
 										  <div style="padding-top: 30px;"><button class="btn btn-vo pull-right" ng-click="doGoBack()"><i class="fa fa-reply fa-1x"></i>立即返回</button></div>
 									  </div>
-						          	<div class="col-sm-10 p-l-none p-r-none"  ng-if="!isError && isReady">
+
+						          	<div class="col-sm-10 p-l-none p-r-none"  ng-if="!isError && isReady && !isNew">
 						                <div class="col vo_prodDataPanel">
 						                    <div class="categoryFormTitle">
 												<div class="categoryList">
-													<div ng-repeat="reModel in propModels" on-finish-render-filters>
-														<div ng-include="'mainView'"  ng-init="model = reModel" ng-controller="cmsPopupController">
-														</div>
+													<div class="panel panel-default"  ng-controller="cmsPopupController">
+														<tabset class="tab-container vo_nav-tabs" >
+															<tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" ng-click="showEligiblyModels(tab)">
+																<div ng-repeat="item in tab.models" on-finish-render-filters>
+																	<div ng-include="'mainView'"  ng-init="model = item">
+																	</div>
+																</div>
+																<!--<div ng-if="!tab.require" ng-repeat="item in noRequireModels">
+																	<div ng-include="'mainView'"  ng-init="model = item" ng-controller="cmsPopupController">
+																	</div>
+																</div>-->
+															</tab>
+														</tabset>
 													</div>
-													<div ng-if="isSave&&!isNew" class="topPadding"><button class="btn btn-vo btn-xl" type="button" ng-click="submit(propModels)"><i class="fa fa-save fa-1x"></i>&nbsp;提交</button></div>
+
+													<div ng-if="isSave&&!isNew" class="topPadding"><button class="btn btn-vo btn-xl" type="button" ng-click="submit()">提交</button></div>
 												</div>
 											</div>
 										</div>
 									</div>
 									
-									<div class="col-sm-2 p-l-none p-r-none col no-padder bg-light vo_prodDetailPanel" style="width:15%;border-top:1px solid #d4cfcf;margin-top: 220px;margin-right: 50px;position:fixed;" ng-if="isPhotosShow">
+									<div class="col-sm-2 p-l-none p-r-none col no-padder bg-light vo_prodDetailPanel" style="width:15%;border-top:1px solid #d4cfcf;margin-top: 170px;margin-right:15px;position:fixed;" ng-if="isPhotosShow">
 										<div id="vo_fixProdPanel">
 											<p class="photosTittle">product photos</p>
-											<div class="vo_prodGallery">
+											<div class="vo_prodGallery" style="border-bottom:0px">
 												<div class="imageContainer" ng-repeat="image in images" ng-hide="currentImageIndex !== $index">
 													<div class="imageWrapper" ng-style="{'background-image' : 'url(' + image.imageUrl + ')'}" style="background-repeat: no-repeat;" ng-swipe-left="showNextImage()" ng-swipe-right="showPreviousImage()"></div>
 												</div>
@@ -83,10 +92,7 @@
 
 
 								</div>
-							</div>
 						 </div>
-						</div>
-					</div>
 				</div>
 			</div>
 

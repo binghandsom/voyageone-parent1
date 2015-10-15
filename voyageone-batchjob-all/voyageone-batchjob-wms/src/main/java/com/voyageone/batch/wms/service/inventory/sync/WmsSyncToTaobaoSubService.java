@@ -92,6 +92,8 @@ public class WmsSyncToTaobaoSubService extends WmsSyncInventoryBaseService {
             case "isv.invalid-parameter:sku-properties-tmall":
             // 库存更新失败（不允许更新）
             case "isv.item-quantity-item-update-service-error-tmall":
+            // 预售商品，不能全量更新库存，只能增量更新库存;
+            case "isv.item-is-presale:invalid-presale-tags-id-tmall":
                 moveIgnore(inventorySynLogBean, res.getSubMsg());
 
                 logFailRecord(res.getSubMsg(), inventorySynLogBean);

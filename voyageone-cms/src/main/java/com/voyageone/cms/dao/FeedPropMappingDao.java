@@ -107,7 +107,16 @@ public class FeedPropMappingDao extends BaseDao {
     }
 
     public CategoryPropCount selectCountsByCategory(String channel_id, int category_id) {
-        return selectOne("ims_bt_feed_prop_mapping_selectCountsByCategory", parameters("channel_id", channel_id, "category_id", category_id));
+
+        List<Integer> types = new ArrayList<>();
+
+        types.add(MasterPropTypeEnum.INPUT.getValue());
+        types.add(MasterPropTypeEnum.SINGLECHECK.getValue());
+        types.add(MasterPropTypeEnum.MULTICHECK.getValue());
+        types.add(MasterPropTypeEnum.lABEL.getValue());
+
+        return selectOne("ims_bt_feed_prop_mapping_selectCountsByCategory", parameters("channel_id", channel_id,
+                "category_id", category_id, "types", types));
     }
 
     public ImsCategoryExtend selectCategoryExtend(int category_id) {
