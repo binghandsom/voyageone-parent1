@@ -75,7 +75,15 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
             return null;
 
         String propImageProp = cmsCodeProp.getProp((CmsFieldEnum.CmsCodeEnum) CmsFieldEnum.valueOf(imageType));
-        String[] propImages = propImageProp.split(",");
+
+        String[] propImages;
+        if (propImageProp == null || "".equals(propImageProp.trim()))
+        {
+            propImages = new String[] {};
+        } else {
+            propImages = propImageProp.split(",");
+        }
+
 
         String parseResult = "";
         List<String> imageUrlList = new ArrayList<>();
@@ -93,7 +101,7 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
                 return null;
             }
             String paddingImage = String.format(imageTemplate, paddingImageKey.trim());
-            imageUrlList.add(String.format(imageTemplate, paddingImage));
+            imageUrlList.add(paddingImage);
         }
         else
         {
