@@ -105,12 +105,12 @@ define([ "modules/cms/cms.module",
 									subCategory.isExtend=false;
 									subCategory.inheritClass = '';
 								}else{
-									if(subCategory.isSave){
-										subCategory.isSave=false;
+									if(!subCategory.isSave){
+										subCategory.extendMainCategoryId = parentCategoryId;
+										subCategory.isExtend=true;
+										subCategory.inheritClass = 'sub-category fa fa-long-arrow-up';
 									}
-									subCategory.extendMainCategoryId = parentCategoryId;
-									subCategory.isExtend=true;
-									subCategory.inheritClass = 'sub-category fa fa-long-arrow-up';
+
 								}
 							}
 
@@ -165,11 +165,12 @@ define([ "modules/cms/cms.module",
 
 								if(category.isSave){
 									category.isSave = false;
-								}
-
-								if(category.isExtend) {
-									category.inheritClass = 'super-category fa fa-star';
-									category.isExtend = false;
+									if(category.mainCategoryId==0){
+										category.isExtend = true;
+									}
+								}else if(category.isExtend) {
+										category.inheritClass = 'super-category fa fa-star';
+										category.isExtend = false;
 								}
 
 								notify.success("CMS_TXT_MSG_UPDATE_SUCCESS");
@@ -200,10 +201,15 @@ define([ "modules/cms/cms.module",
 					editService.doUpdateMainCategoryId(saveItemList,false).then(function(respose){
 						for (var i = 0; i < allCategory.length; i++) {
 							if (allCategory[i].isSave) {
+
+								allCategory[i].isSave = false;
+
 								if(allCategory[i].mainCategoryId>0){
 									allCategory[i].isPropMatch = true;;
+								}else if(allCategory[i].mainCategoryId==0){
+									allCategory[i].isExtend = true;
 								}
-								allCategory[i].isSave = false;
+
 							}
 						}
 
@@ -270,7 +276,9 @@ define([ "modules/cms/cms.module",
 						 }
 
 					}else if(category.mainCategoryId==-1){
-						category.mainCategoryId = 0;
+						 category.mainCategoryId = 0;
+					 	 category.isSave=true;
+					 	 category.inheritClass = 'sub-category fa fa-long-arrow-up';
 						 if(category.parentCategoryId>0){
 							 var topNodeCat = getTopNOde(category.parentCategoryId);
 							 if(topNodeCat!=null){
