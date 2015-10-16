@@ -978,6 +978,22 @@ define(function (require) {
 
                 return defer.promise;
             };
+
+            this.doUpdateCustemData = function (custemList) {
+                var defer = $q.defer();
+                // var data = {};
+                // //data.typeIdList = values;
+                // data.modelId = modelId;
+                // data.channelId = userService.getSelChannel ();
+                // data.categoryId = categoryId;
+
+                ajaxService.ajaxPostWithData(custemList, cmsAction.cms_edit_product_doUpdateCustem)
+                    .then(function (response) {
+                        defer.resolve(response.data);
+                    });
+
+                return defer.promise;
+            };
         }
     ]);
 

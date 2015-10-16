@@ -104,6 +104,11 @@ public class OrderInfoImportService {
 	 * 赠品规则类型相关属性设定
 	 */
 	private Map<String, String> GIFT_PROPERTY_SETTING;
+
+	/**
+	 * 套装设定内容
+	 */
+	private Map<String, List<String>> SUIT_SKU_SETTING;
 	
 	/**
 	 * 取出要处理的新订单json列表
@@ -1310,7 +1315,45 @@ public class OrderInfoImportService {
 //			}
 //		}
 //	}
-	
+
+	/**
+	 * 获取套装设定信息
+	 *
+	 * @return
+	 */
+	public void getSuitSkuSetting() {
+		if (SUIT_SKU_SETTING == null) {
+			SUIT_SKU_SETTING = new HashMap<String, List<String>>();
+		}
+		if (!SUIT_SKU_SETTING.isEmpty()) {
+			SUIT_SKU_SETTING.clear();
+		}
+
+		List<Map<String, String>> suitSkuSettingList = orderDao.getSuitSkuSetting();
+		if (suitSkuSettingList != null && suitSkuSettingList.size() > 0) {
+			for (Map<String, String> suitSku : suitSkuSettingList) {
+				String orderChannelId = StringUtils.null2Space2(String.valueOf(suitSku.get("orderChannelId")));
+				String cartId = StringUtils.null2Space2(String.valueOf(suitSku.get("cartId")));
+				String sku = StringUtils.null2Space2(String.valueOf(suitSku.get("sku")));
+				String realSku = StringUtils.null2Space2(String.valueOf(suitSku.get("realSku")));
+				String realSkuPrice = StringUtils.null2Space2(String.valueOf(suitSku.get("realSkuPrice")));
+				String realSkuName = StringUtils.null2Space2(String.valueOf(suitSku.get("realSkuName")));
+
+				String mapKey = orderChannelId + cartId + sku.toUpperCase();
+				if (SUIT_SKU_SETTING.containsKey(mapKey)) {
+					List<String>  realSkuList = SUIT_SKU_SETTING.get(mapKey);
+					realSkuList.add(realSku.toUpperCase() + Constants.SPLIT_CHAR_ADD + realSkuPrice + Constants.SPLIT_CHAR_ADD + realSkuName);
+
+				} else {
+					List<String> realSkuList = new ArrayList<String>();
+					realSkuList.add(realSku.toUpperCase() + Constants.SPLIT_CHAR_ADD + realSkuPrice + Constants.SPLIT_CHAR_ADD + realSkuName);
+					SUIT_SKU_SETTING.put(mapKey, realSkuList);
+				}
+
+			}
+		}
+	}
+
 	/**
 	 * 获取需批处理新订单信息(手工)
 	 * 
@@ -2318,19 +2361,99 @@ public class OrderInfoImportService {
 		
 		String skus = newOrderInfo.getProductSku();
 		if (!StringUtils.isNullOrBlank2(skus)) {
-			
-			String[] skuArray = skus.split(Constants.SPLIT_CHAR_RESOLVE);
+
+			String[] realSkuArray = skus.split(Constants.SPLIT_CHAR_RESOLVE);
+			// 商品名
+			String names = newOrderInfo.getProductName();
+			String[] realNameArray = names.split(Constants.SPLIT_CHAR_RESOLVE);
+			// 单项价格
+			String itemPrices = newOrderInfo.getProductItemPrice();
+			String[] realItemPriceArray = itemPrices.split(Constants.SPLIT_CHAR_RESOLVE);
+			// 数量
+			String quantitys = newOrderInfo.getProductQuantity();
+			String[] realQuantityArray = quantitys.split(Constants.SPLIT_CHAR_RESOLVE);
+
+			// 判断是否套装
+			boolean isSuit = false;
+
+			String realSkus = "";
+			String realItemPrices = "";
+			String realSkuNames = "";
+			String realQuantitys = "";
+
+			if (realSkuArray != null && realSkuArray.length > 0) {
+				for (int i = 0; i < realSkuArray.length; i++ ) {
+
+					String realSku = realSkuArray[i];
+					String realItemPrice = realItemPriceArray[i];
+					String realSkuName = realNameArray[i];
+					String realQuantity = realQuantityArray[i];
+
+					if (SUIT_SKU_SETTING.containsKey(orderChannelId + cartId + realSku.toUpperCase())) {
+						isSuit = true;
+
+						List<String> realSkuPriceNameList = SUIT_SKU_SETTING.get(orderChannelId + cartId + realSku.toUpperCase());
+
+						if (realSkuPriceNameList != null && realSkuPriceNameList.size() > 0) {
+
+							double suitItemPrice = Double.parseDouble(realItemPrice);
+							double sumItemPriceTmp = 0;
+							int index = 0;
+							for (String realSkuPriceName : realSkuPriceNameList) {
+								String[] realSkuPriceNameArray = realSkuPriceName.split(Constants.SPLIT_CHAR_RESOLVE);
+
+								// 套装中单品配置价格
+								String skuPrice =  realSkuPriceNameArray[1];
+								// 最后一件的价格用实际总价 - 其余物品的配置价格
+								if (index == (realSkuPriceNameList.size() - 1)) {
+									skuPrice = String.valueOf(suitItemPrice - sumItemPriceTmp);
+								} else {
+									sumItemPriceTmp += Double.parseDouble(skuPrice);
+								}
+
+								if (StringUtils.isNullOrBlank2(realSkus)) {
+									realSkus = realSkuPriceNameArray[0];
+									realItemPrices = skuPrice;
+									realSkuNames = realSkuPriceNameArray[2];
+									realQuantitys = realQuantity;
+								} else {
+									realSkus += Constants.SPLIT_CHAR_ADD + realSkuPriceNameArray[0];
+									realItemPrices += Constants.SPLIT_CHAR_ADD + skuPrice;
+									realSkuNames += Constants.SPLIT_CHAR_ADD + realSkuPriceNameArray[2];
+									realQuantitys += Constants.SPLIT_CHAR_ADD + realQuantity;
+								}
+
+								index++;
+							}
+						}
+					} else {
+						if (StringUtils.isNullOrBlank2(realSkus)) {
+							realSkus = realSku;
+							realItemPrices = realItemPrice;
+							realSkuNames = realSkuName;
+							realQuantitys = realQuantity;
+						} else {
+							realSkus += Constants.SPLIT_CHAR_ADD + realSku;
+							realItemPrices += Constants.SPLIT_CHAR_ADD + realItemPrice;
+							realSkuNames += Constants.SPLIT_CHAR_ADD + realSkuName;
+							realQuantitys += Constants.SPLIT_CHAR_ADD + realQuantity;
+						}
+					}
+				}
+			}
+
+			String[] skuArray = realSkus.split(Constants.SPLIT_CHAR_RESOLVE);
+			String[] nameArray = realSkuNames.split(Constants.SPLIT_CHAR_RESOLVE);
+			String[] itemPriceArray = realItemPrices.split(Constants.SPLIT_CHAR_RESOLVE);
+			String[] quantityArray = realQuantitys.split(Constants.SPLIT_CHAR_RESOLVE);
+
+			newOrderInfo.setProductSku(realSkus);
+			newOrderInfo.setProductName(realSkuNames);
+			newOrderInfo.setProductItemPrice(realItemPrices);
+			newOrderInfo.setProductQuantity(realQuantitys);
+
 			if (skuArray != null && skuArray.length > 0) {
-				// 商品名
-				String names = newOrderInfo.getProductName();
-				String[] nameArray = names.split(Constants.SPLIT_CHAR_RESOLVE);
-				// 单项价格
-				String itemPrices = newOrderInfo.getProductItemPrice();
-				String[] itemPriceArray = itemPrices.split(Constants.SPLIT_CHAR_RESOLVE);
-				// 数量
-				String quantitys = newOrderInfo.getProductQuantity();
-				String[] quantityArray = quantitys.split(Constants.SPLIT_CHAR_RESOLVE);
-				
+
 				//总价
 				double dblPayment = Double.parseDouble(newOrderInfo.getTotalsPayment());
 				//满就送排除的商品
@@ -2348,7 +2471,7 @@ public class OrderInfoImportService {
 					sku = transferStr(sku);
 					
 					int quantity = Integer.valueOf(quantityArray[i]);
-					
+
 					//满就送总价中减掉排除商品的价格
 					if (exceptOfPriceThanGift != null && exceptOfPriceThanGift.size() > 0) {
 						for (String tmp : exceptOfPriceThanGift){
@@ -2359,7 +2482,7 @@ public class OrderInfoImportService {
 								// 该sku实际价格
 								double itemPriceReal = getRealItemPrice(Double.parseDouble(itemPrice), sku, disCounts, disCountDescriptions);
 								dblPayment = dblPayment - (itemPriceReal * quantity);
-								
+
 								break;
 							}
 						}
@@ -2472,109 +2595,109 @@ public class OrderInfoImportService {
 						sqlValueBuffer.append(Constants.COMMA_CHAR);
 					} else {
 						for (int j = 0; j < quantity; j++) {
-							
+
 							skuTotalList.add(sku.toUpperCase());
-							
+
 							sqlValueBuffer.append(Constants.LEFT_BRACKET_CHAR);
-							
+
 							// order_number
 							sqlValueBuffer.append(newOrderInfo.getPreOrderNumber());
 							sqlValueBuffer.append(Constants.COMMA_CHAR);
-							
+
 							// item_number
 							itemNumber++;
 							Map<String, Integer> skuItemMap = new HashMap<String, Integer>();
 							skuItemMap.put(sku, itemNumber);
 							subItemNumberList.add(skuItemMap);
-							
+
 							sqlValueBuffer.append(itemNumber);
 							sqlValueBuffer.append(Constants.COMMA_CHAR);
-							
+
 							// detail_date
 							sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
 							sqlValueBuffer.append(gmtPayTime);
 							sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
 							sqlValueBuffer.append(Constants.COMMA_CHAR);
-							
+
 							// adjustment
 							sqlValueBuffer.append(Constants.ADJUSTMENT_0);
 							sqlValueBuffer.append(Constants.COMMA_CHAR);
-							
+
 							// product
 							sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
 							sqlValueBuffer.append(name);
 							sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
 							sqlValueBuffer.append(Constants.COMMA_CHAR);
-							
+
 							// sub_item_number
 							sqlValueBuffer.append(Constants.ZERO_CHAR);
 							sqlValueBuffer.append(Constants.COMMA_CHAR);
-							
+
 							// price_per_unit
 							sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
 							sqlValueBuffer.append(itemPrice);
 							sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
 							sqlValueBuffer.append(Constants.COMMA_CHAR);
-							
+
 							// quantity_ordered
 							sqlValueBuffer.append(Constants.ONE_CHAR);
 							sqlValueBuffer.append(Constants.COMMA_CHAR);
-							
+
 							// quantity_shipped
 							sqlValueBuffer.append(Constants.ONE_CHAR);
 							sqlValueBuffer.append(Constants.COMMA_CHAR);
-							
+
 							// quantity_returned
 							sqlValueBuffer.append(Constants.ZERO_CHAR);
 							sqlValueBuffer.append(Constants.COMMA_CHAR);
-							
+
 							// sku
 							sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
 							sqlValueBuffer.append(sku);
 							sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
 							sqlValueBuffer.append(Constants.COMMA_CHAR);
-							
+
 							// status
 							sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
-							sqlValueBuffer.append(newOrderInfo.getApproved() ? 
-									Type.getValue(MastType.orderStatus.getId(), Constants.ORDER_STATUS_APPROVED, com.voyageone.common.Constants.LANGUAGE.EN) : 
+							sqlValueBuffer.append(newOrderInfo.getApproved() ?
+									Type.getValue(MastType.orderStatus.getId(), Constants.ORDER_STATUS_APPROVED, com.voyageone.common.Constants.LANGUAGE.EN) :
 									Type.getValue(MastType.orderStatus.getId(), Constants.ORDER_STATUS_IN_PROCESSING, com.voyageone.common.Constants.LANGUAGE.EN));
 							sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
 							sqlValueBuffer.append(Constants.COMMA_CHAR);
-							
+
 							// res_allot_flg
 							sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
 							sqlValueBuffer.append(Constants.ZERO_CHAR);
 							sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
 							sqlValueBuffer.append(Constants.COMMA_CHAR);
-							
+
 							// synship_flg
 							sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
 							sqlValueBuffer.append(Constants.ZERO_CHAR);
 							sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
 							sqlValueBuffer.append(Constants.COMMA_CHAR);
-							
+
 							// creater
 							sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
 							sqlValueBuffer.append(taskName);
 							sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
 							sqlValueBuffer.append(Constants.COMMA_CHAR);
-							
+
 							// created
 							sqlValueBuffer.append(Constants.NOW_MYSQL);
 							sqlValueBuffer.append(Constants.COMMA_CHAR);
-							
+
 							// modifier
 							sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
 							sqlValueBuffer.append(taskName);
 							sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
 							sqlValueBuffer.append(Constants.COMMA_CHAR);
-							
+
 							// modified
 							sqlValueBuffer.append(Constants.NOW_MYSQL);
-							
+
 							sqlValueBuffer.append(Constants.RIGHT_BRACKET_CHAR);
-							
+
 							sqlValueBuffer.append(Constants.COMMA_CHAR);
 						}
 					}

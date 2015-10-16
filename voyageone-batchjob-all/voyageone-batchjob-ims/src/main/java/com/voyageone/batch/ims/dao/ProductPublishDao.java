@@ -49,7 +49,7 @@ public class ProductPublishDao extends BaseDao{
         dataMap.put("publish_failed_comment", productPublishBean.getPublish_failed_comment());
         dataMap.put("publish_product_id", productPublishBean.getPublish_product_id());
         dataMap.put("main_product_flg", productPublishBean.getMain_product_flg());
-        dataMap.put("quality_update_type", productPublishBean.getQuality_update_type());
+        dataMap.put("quanity_update_type", productPublishBean.getQuantity_update_type());
         update(Constants.DAO_NAME_SPACE_IMS + "ims_updateProductPublish", dataMap);
     }
 }

@@ -1534,7 +1534,19 @@ public class OrderDao extends BaseDao {
 //
 //		return regularCustomerGiftSku;
 //	}
-	
+
+	/**
+	 * 套装内容设置获得
+	 *
+	 * @return
+	 */
+	public List<Map<String, String>> getSuitSkuSetting() {
+
+		List<Map<String, String>> suitInfoList = (List)selectList(Constants.DAO_NAME_SPACE_OMS + "oms_suit_sku_setting_getSuitSkuSetting");
+
+		return suitInfoList;
+	}
+
 	/**
 	 * 获取独立域名已发货订单信息
 	 * 

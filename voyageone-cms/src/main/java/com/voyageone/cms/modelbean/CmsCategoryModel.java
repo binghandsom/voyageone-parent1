@@ -27,9 +27,57 @@ public class CmsCategoryModel  extends BaseModel{
 	 * IMS主类目id.
 	 */
 	private int mainCategoryId;
+	/**
+	 * IMS主类目id.
+	 */
+	private int extendMainCategoryId;
+	/**
+	 * CMS当前类目的路径.
+	 */
+	private String cmsCategoryPath;
+	/**
+	 * IMS主类目路径.
+	 */
+	private String mainCategoryPath;
+	/**
+	 * 属性匹配完成状态.
+	 */
+	private int propMatchStatus;
 	
 	private List<CmsCategoryModel> children;
-	
+
+	public int getExtendMainCategoryId() {
+		return extendMainCategoryId;
+	}
+
+	public int getPropMatchStatus() {
+		return propMatchStatus;
+	}
+
+	public void setPropMatchStatus(int propMatchStatus) {
+		this.propMatchStatus = propMatchStatus;
+	}
+
+	public void setExtendMainCategoryId(int extendMainCategoryId) {
+		this.extendMainCategoryId = extendMainCategoryId;
+	}
+
+	public String getMainCategoryPath() {
+		return mainCategoryPath;
+	}
+
+	public void setMainCategoryPath(String mainCategoryPath) {
+		this.mainCategoryPath = mainCategoryPath;
+	}
+
+	public String getCmsCategoryPath() {
+		return cmsCategoryPath;
+	}
+
+	public void setCmsCategoryPath(String cmsCategoryPath) {
+		this.cmsCategoryPath = cmsCategoryPath;
+	}
+
 	public int getCategoryId() {
 		return categoryId;
 	}
