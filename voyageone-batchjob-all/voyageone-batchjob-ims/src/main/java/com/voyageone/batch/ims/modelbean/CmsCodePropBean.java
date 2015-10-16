@@ -12,6 +12,7 @@ public class CmsCodePropBean {
     private Map<String, String> propMap;
     private CmsModelPropBean cmsModelPropBean;
     private List<CmsSkuPropBean> cmsSkuPropBeanList;
+    private List<Map<String,Object>> attributeNameValueList;
 
     public String getProp(CmsFieldEnum.CmsCodeEnum propKey)
     {
@@ -40,5 +41,13 @@ public class CmsCodePropBean {
 
     public void setCmsSkuPropBeanList(List<CmsSkuPropBean> cmsSkuPropBeanList) {
         this.cmsSkuPropBeanList = cmsSkuPropBeanList;
+    }
+
+    public List<Map<String, Object>> getAttributeNameValueList() {
+        return attributeNameValueList;
+    }
+
+    public void setAttributeNameValueList(List<Map<String, Object>> attributeNameValueList) {
+        this.attributeNameValueList = attributeNameValueList;
     }
 }
