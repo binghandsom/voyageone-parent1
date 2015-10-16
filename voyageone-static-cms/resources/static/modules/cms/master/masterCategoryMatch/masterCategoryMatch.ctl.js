@@ -105,9 +105,12 @@ define([ "modules/cms/cms.module",
 									subCategory.isExtend=false;
 									subCategory.inheritClass = '';
 								}else{
-									subCategory.extendMainCategoryId = parentCategoryId;
-									subCategory.isExtend=true;
-									subCategory.inheritClass = 'sub-category fa fa-long-arrow-up';
+									if(!subCategory.isSave){
+										subCategory.extendMainCategoryId = parentCategoryId;
+										subCategory.isExtend=true;
+										subCategory.inheritClass = 'sub-category fa fa-long-arrow-up';
+									}
+
 								}
 							}
 
@@ -162,11 +165,12 @@ define([ "modules/cms/cms.module",
 
 								if(category.isSave){
 									category.isSave = false;
-								}
-
-								if(category.isExtend) {
-									category.inheritClass = 'super-category fa fa-star';
-									category.isExtend = false;
+									if(category.mainCategoryId==0){
+										category.isExtend = true;
+									}
+								}else if(category.isExtend) {
+										category.inheritClass = 'super-category fa fa-star';
+										category.isExtend = false;
 								}
 
 								notify.success("CMS_TXT_MSG_UPDATE_SUCCESS");
@@ -197,10 +201,15 @@ define([ "modules/cms/cms.module",
 					editService.doUpdateMainCategoryId(saveItemList,false).then(function(respose){
 						for (var i = 0; i < allCategory.length; i++) {
 							if (allCategory[i].isSave) {
+
+								allCategory[i].isSave = false;
+
 								if(allCategory[i].mainCategoryId>0){
 									allCategory[i].isPropMatch = true;;
+								}else if(allCategory[i].mainCategoryId==0){
+									allCategory[i].isExtend = true;
 								}
-								allCategory[i].isSave = false;
+
 							}
 						}
 
@@ -250,16 +259,50 @@ define([ "modules/cms/cms.module",
 					 }
 					 category.isSave = true;
 					 if (category.isMatch) {
-						 category.mainCategoryId = -1;
-					}else {
-						category.mainCategoryId = 0;
-					}
-					category.mainCategoryPath = null;
-					category.inheritClass = "";
+						 if(category.mainCategoryId > 0){
+							 category.mainCategoryId = -1;
+							 category.mainCategoryPath = null;
+							 category.inheritClass = "";
+							 var topNodeCat = getTopNOde(category.parentCategoryId);
+							 if(topNodeCat!=null){
+								 setSubCategoryPath(topNodeCat,topNodeCat.mainCategoryPath,topNodeCat.mainCategoryId);
+							 }else{
+								 setSubCategoryPath(category,category.mainCategoryPath,category.mainCategoryId);
+							 }
+						 }else if(category.mainCategoryId==0){
+							 category.mainCategoryId = -1;
+							 category.mainCategoryPath = null;
+							 category.inheritClass = "";
+						 }
 
-					 setSubCategoryPath(category,category.mainCategoryPath);
-					 
+					}else if(category.mainCategoryId==-1){
+						 category.mainCategoryId = 0;
+					 	 category.isSave=true;
+					 	 category.inheritClass = 'sub-category fa fa-long-arrow-up';
+						 if(category.parentCategoryId>0){
+							 var topNodeCat = getTopNOde(category.parentCategoryId);
+							 if(topNodeCat!=null){
+								 setSubCategoryPath(topNodeCat,topNodeCat.mainCategoryPath,topNodeCat.mainCategoryId);
+							 }
+						 }
+					}
+
 				 };
+
+				function getTopNOde(parentCategoryId){
+
+					for(var i=0;i< $scope.cmsCategoryList.length;i++){
+						var category = $scope.cmsCategoryList[i];
+						if(category.categoryId===parentCategoryId){
+							if(category.mainCategoryId>0){
+								return category;
+							}else{
+								return getTopNOde(category.parentCategoryId);
+							}
+						}
+					}
+					return null;
+				};
 				 
 				 $scope.filterDisMatchCategory = function($event){
 
