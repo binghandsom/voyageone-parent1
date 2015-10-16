@@ -335,8 +335,8 @@
 		<result column="cnPriceRmb" property="cnPriceRmb" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
 		<result column="cnPriceAdjustmentRmb" property="cnPriceAdjustmentRmb" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
 		<result column="cnPriceFinalRmb" property="cnPriceFinalRmb" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="cnIsOnSale" property="cnIsOnSale" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="cnIsApproved" property="cnIsApproved" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="cnIsOnSale" property="cnIsOnSale" javaType="BOOLEAN" jdbcType="BOOLEAN"/>
+		<result column="cnIsApproved" property="cnIsApproved" javaType="BOOLEAN" jdbcType="BOOLEAN"/>
 		<result column="cnOfficialPriceAdjustmentRmb" property="cnOfficialPriceAdjustmentRmb" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
 		<result column="cnOfficialPriceFinalRmb" property="cnOfficialPriceFinalRmb" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
 		<result column="cnOfficialFreeShippingType" property="cnOfficialFreeShippingType" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
@@ -346,32 +346,32 @@
 		<result column="tbPriceAdjustmentRmb" property="tbPriceAdjustmentRmb" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
 		<result column="tbPriceFinalRmb" property="tbPriceFinalRmb" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
 		<result column="tbFreeShippingType" property="tbFreeShippingType" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="tbIsOnSale" property="tbIsOnSale" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="tbIsApproved" property="tbIsApproved" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tbIsOnSale" property="tbIsOnSale" javaType="BOOLEAN" jdbcType="BOOLEAN"/>
+		<result column="tbIsApproved" property="tbIsApproved" javaType="BOOLEAN" jdbcType="BOOLEAN"/>
 		<result column="tbPrePublishDateTime" property="tbPrePublishDateTime" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
 		<result column="tmPriceAdjustmentRmb" property="tmPriceAdjustmentRmb" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
 		<result column="tmPriceFinalRmb" property="tmPriceFinalRmb" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
 		<result column="tmFreeShippingType" property="tmFreeShippingType" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="tmIsOnSale" property="tmIsOnSale" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="tmIsApproved" property="tmIsApproved" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tmIsOnSale" property="tmIsOnSale" javaType="BOOLEAN" jdbcType="BOOLEAN"/>
+		<result column="tmIsApproved" property="tmIsApproved" javaType="BOOLEAN" jdbcType="BOOLEAN"/>
 		<result column="tmPrePublishDateTime" property="tmPrePublishDateTime" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
 		<result column="tgPriceAdjustmentRmb" property="tgPriceAdjustmentRmb" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
 		<result column="tgPriceFinalRmb" property="tgPriceFinalRmb" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
 		<result column="tgFreeShippingType" property="tgFreeShippingType" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="tgIsOnSale" property="tgIsOnSale" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="tgIsApproved" property="tgIsApproved" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="tgIsOnSale" property="tgIsOnSale" javaType="BOOLEAN" jdbcType="BOOLEAN"/>
+		<result column="tgIsApproved" property="tgIsApproved" javaType="BOOLEAN" jdbcType="BOOLEAN"/>
 		<result column="tgPrePublishDateTime" property="tgPrePublishDateTime" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
 		<result column="jdPriceAdjustmentRmb" property="jdPriceAdjustmentRmb" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
 		<result column="jdPriceFinalRmb" property="jdPriceFinalRmb" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
 		<result column="jdFreeShippingType" property="jdFreeShippingType" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="jdIsOnSale" property="jdIsOnSale" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="jdIsApproved" property="jdIsApproved" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="jdIsOnSale" property="jdIsOnSale" javaType="BOOLEAN" jdbcType="BOOLEAN"/>
+		<result column="jdIsApproved" property="jdIsApproved" javaType="BOOLEAN" jdbcType="BOOLEAN"/>
 		<result column="jdPrePublishDateTime" property="jdPrePublishDateTime" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
 		<result column="jgPriceAdjustmentRmb" property="jgPriceAdjustmentRmb" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
 		<result column="jgPriceFinalRmb" property="jgPriceFinalRmb" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
 		<result column="jgFreeShippingType" property="jgFreeShippingType" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="jgIsOnSale" property="jgIsOnSale" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
-		<result column="jgIsApproved" property="jgIsApproved" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="jgIsOnSale" property="jgIsOnSale" javaType="BOOLEAN" jdbcType="BOOLEAN"/>
+		<result column="jgIsApproved" property="jgIsApproved" javaType="BOOLEAN" jdbcType="BOOLEAN"/>
 		<result column="jgPrePublishDateTime" property="jgPrePublishDateTime" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
 		<result column="image_name" property="productImgUrl" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
 		<result column="quantity" property="quantity" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
