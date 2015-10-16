@@ -207,7 +207,19 @@
 
 				<!-- OMS里SneakerHead漏单检查定时任务 -->
 				<ref bean="CheckOmitSecResultSNTaskContri" />
-								
+
+				<!-- OMS里BHFO漏单检查定时任务 -->
+				<ref bean="CheckOmitSecResultBHFOTaskContri" />
+
+				<!-- OMS里RM漏单检查定时任务 -->
+				<ref bean="CheckOmitSecResultRMTaskContri" />
+
+				<!-- OMS里CP漏单检查定时任务 -->
+				<ref bean="CheckOmitSecResultCPTaskContri" />
+
+				<!-- OMS里JE漏单检查定时任务 -->
+				<ref bean="CheckOmitSecResultJETaskContri" />
+
 				<!-- 订单重复检查 -->
 				<ref local="sendSameOrderTaskContri"/>
 				
