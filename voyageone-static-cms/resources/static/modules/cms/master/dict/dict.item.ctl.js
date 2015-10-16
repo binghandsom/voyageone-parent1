@@ -111,8 +111,8 @@ define(['modules/cms/cms.module', 'modules/cms/master/dict/dict.service', 'modul
       return this.wordList.splice(index, 1);
     };
 
-    _Class.prototype.editValue = function(word) {
-      if (word.type === 'CUSTOM') {
+    _Class.prototype.editValue = function(word,mode) {
+      if (word.type === 'CUSTOM'&& mode !=null) {
         this.broadcast('custom.edit', word);
         this.showCustom = true;
         return;

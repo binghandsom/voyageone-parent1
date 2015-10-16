@@ -43,11 +43,14 @@
                             <td>{{ word.type }}</td>
                             <td>{{ word.value }}</td>
                             <td>
-                                <button class="btn btn-success btn-xs" ng-click="vm.editValue(word)">
+                                <button class="btn btn-success btn-xs" ng-click="vm.editValue(word,true)">
                                     <i class="fa fa-pencil"></i>
                                 </button>
                                 <button class="btn btn-danger btn-xs" ng-click="vm.delValue($index)">
                                     <i class="fa fa-trash-o"></i>
+                                </button>
+                                <button class="btn btn-success btn-xs" ng-show="word.type == 'CUSTOM'" ng-click="vm.editValue(word)">
+                                    <i class="fa fa-pencil"></i>
                                 </button>
                             </td>
                         </tr>
