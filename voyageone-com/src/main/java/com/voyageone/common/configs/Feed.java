@@ -88,9 +88,7 @@ public class Feed {
         private static final long serialVersionUID = 1L;
 
         public Configs(List<FeedBean> beans) {
-            for (FeedBean bean : beans) {
-                put(bean);
-            }
+            beans.forEach(this::put);
         }
 
         public void put(FeedBean config) {
@@ -120,7 +118,7 @@ public class Feed {
 
         public void put(FeedEnums.Name name, FeedBean config) {
             if (!containsKey(name)) {
-                super.put(name, new ArrayList<FeedBean>());
+                super.put(name, new ArrayList<>());
             }
 
             get(name).add(config);

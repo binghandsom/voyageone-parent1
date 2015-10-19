@@ -13,6 +13,14 @@ public class FeedBean {
 
     private String cfg_val2;
 
+    private String cfg_val3;
+
+    private int is_attribute;
+
+    private int attribute_type;
+
+    private int display_sort;
+
     private String comment;
 
     public String getOrder_channel_id() {
@@ -45,6 +53,38 @@ public class FeedBean {
 
     public void setCfg_val2(String cfg_val2) {
         this.cfg_val2 = cfg_val2;
+    }
+
+    public String getCfg_val3() {
+        return cfg_val3;
+    }
+
+    public void setCfg_val3(String cfg_val3) {
+        this.cfg_val3 = cfg_val3;
+    }
+
+    public int getIs_attribute() {
+        return is_attribute;
+    }
+
+    public void setIs_attribute(int is_attribute) {
+        this.is_attribute = is_attribute;
+    }
+
+    public int getAttribute_type() {
+        return attribute_type;
+    }
+
+    public void setAttribute_type(int attribute_type) {
+        this.attribute_type = attribute_type;
+    }
+
+    public int getDisplay_sort() {
+        return display_sort;
+    }
+
+    public void setDisplay_sort(int display_sort) {
+        this.display_sort = display_sort;
     }
 
     public String getComment() {
