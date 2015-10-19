@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.cms.sql">
+    <insert id="cms_zz_worktable_bcbg_superfeed_insertWorkTables">
+        INSERT INTO voyageone_cms.cms_zz_worktable_bcbg_superfeed
+        (MATNR, EAN11, BRAND_ID, MATKL, ZZCODE1, ZZCODE2, ZZCODE3, MEINS, BSTME, COLOR, COLOR_ATWTB, SIZE1,
+        SIZE1_ATWTB, SIZE1_ATINN, ATBEZ, SAISO, SAISJ, SAITY, SATNR, MAKTX, WLADG, WHERL, MEAN_EAN11,
+        A304_DATAB, A304_DATBI, A304_KBETR, A304_KONWA, A073_DATAB, A073_DATBI, A073_KBETR, A073_KONWA)
+        VALUES
+        <foreach collection="bcbgBeans" item="bean" separator=",">
+            (#{bean.MATNR}, #{bean.EAN11}, #{bean.BRAND_ID}, #{bean.MATKL}, #{bean.ZZCODE1}, #{bean.ZZCODE2},
+            #{bean.ZZCODE3}, #{bean.MEINS}, #{bean.BSTME}, #{bean.COLOR}, #{bean.COLOR_ATWTB}, #{bean.SIZE1},
+            #{bean.SIZE1_ATWTB}, #{bean.SIZE1_ATINN}, #{bean.ATBEZ}, #{bean.SAISO}, #{bean.SAISJ}, #{bean.SAITY},
+            #{bean.SATNR}, #{bean.MAKTX}, #{bean.WLADG}, #{bean.WHERL}, #{bean.MEAN_EAN11}, #{bean.A304_DATAB},
+            #{bean.A304_DATBI}, #{bean.A304_KBETR}, #{bean.A304_KONWA}, #{bean.A073_DATAB}, #{bean.A073_DATBI},
+            #{bean.A073_KBETR}, #{bean.A073_KONWA})
+        </foreach>
+    </insert>
+
+    <delete id="cms_zz_worktable_bcbg_superfeed_delete">
+        DELETE FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed;
+    </delete>
+
+    <insert id="cms_zz_worktable_bcbg_styles_insertStyles">
+        INSERT INTO voyageone_cms.cms_zz_worktable_bcbg_styles (styleID, productDesc, productImgURLs) VALUES
+        <foreach collection="bcbgStyles" item="style" separator=",">
+            (
+            #{style.styleID}, #{style.productDesc},
+            CONCAT(<foreach collection="style.productImgURLs" item="img" separator=",';;',">#{img}</foreach>)
+            )
+        </foreach>
+    </insert>
+
+    <delete id="cms_zz_worktable_bcbg_styles_deleteStyles">
+        DELETE FROM voyageone_cms.cms_zz_worktable_bcbg_styles
+    </delete>
+</mapper>
