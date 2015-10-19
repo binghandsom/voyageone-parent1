@@ -4,6 +4,7 @@ import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.wms.dao.ClientInventoryDao;
 import com.voyageone.batch.wms.dao.ClientOrderDao;
+import com.voyageone.batch.wms.dao.ClientShipmentDao;
 import com.voyageone.batch.wms.modelbean.OrderUpdateBean;
 import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.configs.ChannelConfigs;
@@ -28,6 +29,9 @@ public abstract class ThirdFileProBaseService extends BaseTaskService{
 
     @Autowired
     protected ClientOrderDao clientOrderDao;
+
+    @Autowired
+    protected ClientShipmentDao clientShipmentDao;
 
     @Autowired
     protected TransactionRunner transactionRunner;

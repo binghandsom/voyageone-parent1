@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.wms.sql">
+
+     <!-- 插入wms_bt_client_shipment-->
+    <insert id="wms_bt_client_shipment_insert" useGeneratedKeys="true"  keyProperty="shipment_id">
+        INSERT INTO
+            wms_bt_client_shipment
+            (
+                shipment_id,
+                order_channel_id,
+                file_name,
+                transfer_id,
+                syn_flg,
+                active,
+                created,
+                creater,
+                modified,
+                modifier
+            ) values (
+                null,
+                #{order_channel_id},
+                #{file_name},
+                #{transfer_id},
+                #{syn_flg},
+                #{active},
+                #{created},
+                #{creater},
+                #{modified},
+                #{modifier}
+            )
+    </insert>
+
+    <!-- 插入wms_bt_client_package-->
+    <insert id="wms_bt_client_package_insert" useGeneratedKeys="true"  keyProperty="package_id">
+        INSERT INTO
+            wms_bt_client_package
+        (
+            package_id,
+            shipment_id,
+            ucc128_carton_no,
+            ship_to_store,
+            ship_date,
+            total_carton_quantity,
+            ship_via,
+            tracking_no,
+            shipping_material,
+            cancellation_flag,
+            active,
+            created,
+            creater,
+            modified,
+            modifier
+        ) values (
+            null,
+            #{shipment_id},
+            #{ucc128_carton_no},
+            #{ship_to_store},
+            #{ship_date},
+            #{total_carton_quantity},
+            #{ship_via},
+            #{tracking_no},
+            #{shipping_material},
+            #{cancellation_flag},
+            #{active},
+            #{created},
+            #{creater},
+            #{modified},
+            #{modifier}
+        )
+    </insert>
+
+    <!-- 插入wms_bt_client_package_item-->
+    <insert id="wms_bt_client_package_item_insert" useGeneratedKeys="true"  keyProperty="package_item_id">
+        INSERT INTO
+            wms_bt_client_package_item
+        (
+            package_item_id,
+            shipment_id,
+            package_id,
+            carton_line_number,
+            sto_no,
+            sto_line_no,
+            article_number,
+            shipped_qty,
+            fact_unit_nom,
+            base_uom,
+            stock_type,
+            site,
+            shipping_point,
+            upc,
+            active,
+            created,
+            creater,
+            modified,
+            modifier
+        ) values (
+            null,
+            #{shipment_id},
+            #{package_id},
+            #{carton_line_number},
+            #{sto_no},
+            #{sto_line_no},
+            #{article_number},
+            #{shipped_qty},
+            #{fact_unit_nom},
+            #{base_uom},
+            #{stock_type},
+            #{site},
+            #{shipping_point},
+            #{upc},
+            #{active},
+            #{created},
+            #{creater},
+            #{modified},
+            #{modifier}
+        )
+    </insert>
+
+</mapper>
