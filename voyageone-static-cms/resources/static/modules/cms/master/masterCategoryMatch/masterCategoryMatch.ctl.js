@@ -51,6 +51,7 @@ define([ "modules/cms/cms.module",
 						var model = cmsCategoryModels[i];
 						if(model.mainCategoryId==-1){
 							model.isMatch=true;
+							model.isDisable=true;
 						}
 						if (model.mainCategoryId >0) {
 							model.inheritClass = 'super-category fa fa-star';
@@ -108,9 +109,8 @@ define([ "modules/cms/cms.module",
 									if(!subCategory.isSave){
 										subCategory.extendMainCategoryId = parentCategoryId;
 										subCategory.isExtend=true;
-										subCategory.inheritClass = 'sub-category fa fa-long-arrow-up';
 									}
-
+									subCategory.inheritClass = 'sub-category fa fa-long-arrow-up';
 								}
 							}
 
@@ -165,7 +165,7 @@ define([ "modules/cms/cms.module",
 
 								if(category.isSave){
 									category.isSave = false;
-									if(category.mainCategoryId==0){
+									if(category.mainCategoryId==0 && category.mainCategoryPath!=null){
 										category.isExtend = true;
 									}
 								}else if(category.isExtend) {
@@ -206,7 +206,7 @@ define([ "modules/cms/cms.module",
 
 								if(allCategory[i].mainCategoryId>0){
 									allCategory[i].isPropMatch = true;;
-								}else if(allCategory[i].mainCategoryId==0){
+								}else if(allCategory[i].mainCategoryId==0 && allCategory[i].mainCategoryPath!=null){
 									allCategory[i].isExtend = true;
 								}
 
@@ -259,6 +259,7 @@ define([ "modules/cms/cms.module",
 					 }
 					 category.isSave = true;
 					 if (category.isMatch) {
+						 category.isDisable=true;
 						 if(category.mainCategoryId > 0){
 							 category.mainCategoryId = -1;
 							 category.mainCategoryPath = null;
@@ -275,16 +276,24 @@ define([ "modules/cms/cms.module",
 							 category.inheritClass = "";
 						 }
 
-					}else if(category.mainCategoryId==-1){
-						 category.mainCategoryId = 0;
-					 	 category.isSave=true;
-					 	 category.inheritClass = 'sub-category fa fa-long-arrow-up';
-						 if(category.parentCategoryId>0){
-							 var topNodeCat = getTopNOde(category.parentCategoryId);
-							 if(topNodeCat!=null){
-								 setSubCategoryPath(topNodeCat,topNodeCat.mainCategoryPath,topNodeCat.mainCategoryId);
+					}else{
+						 category.isDisable=false;
+
+						 if(category.mainCategoryId==-1){
+							 category.mainCategoryId = 0;
+							 category.isSave=true;
+
+							 if(category.parentCategoryId>0){
+
+								 var topNodeCat = getTopNOde(category.parentCategoryId);
+
+								 if(topNodeCat!=null){
+									 category.inheritClass = 'sub-category fa fa-long-arrow-up';
+									 setSubCategoryPath(topNodeCat,topNodeCat.mainCategoryPath,topNodeCat.mainCategoryId);
+								 }
 							 }
 						 }
+
 					}
 
 				 };
