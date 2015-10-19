@@ -165,6 +165,7 @@ public class SearchServiceImpl implements SearchService {
 		List<Object> column = new ArrayList<Object>();
 		column.add("code");
 		column.add("cnName");
+		column.add("quantity");
 		column.add("cnDisplayOrder");
 		column.add("productType");
 		column.add("brand");
