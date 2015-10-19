@@ -64,7 +64,7 @@ import java.util.List;
         // 解析文件
         for(Object fileNameInfo : fileNameList) {
             String filenameInfoStr = (String) fileNameInfo;
-            List<BulkShipmentBean> fileDataList = readFile(filePath, filenameInfoStr, headFixedLength, detailFixedLength, orderChannelId);
+            List<bulkShipmentBean> fileDataList = readFile(filePath, filenameInfoStr, headFixedLength, detailFixedLength, orderChannelId);
             if(fileDataList != null && fileDataList.size() > 0) {
                 updateTabels(filenameInfoStr, orderChannelId, fileDataList);
                 // 处理完毕，移除文件
@@ -84,10 +84,10 @@ import java.util.List;
      * @param orderChannelId 渠道
      * @return OrderUpdateBean集合
      */
-    protected List<BulkShipmentBean> readFile(String filePath, String filename,String[] headFixedLength, String[] detailFixedLength, String orderChannelId) {
+    protected List<bulkShipmentBean> readFile(String filePath, String filename,String[] headFixedLength, String[] detailFixedLength, String orderChannelId) {
         OrderChannelBean channel = ChannelConfigs.getChannel(orderChannelId);
         log(channel.getFull_name() + "读取 " + filename + " 文件信息开始");
-        List<BulkShipmentBean> bulkShipmentBeans = new ArrayList<>();
+        List<bulkShipmentBean> bulkShipmentBeans = new ArrayList<>();
 
         try {
             filePath = filePath + "/" + filename;
@@ -101,7 +101,7 @@ import java.util.List;
                 BufferedReader bufferedReader = new BufferedReader(read);
                 String lineTxt;
                 int countRow = 0;
-                BulkShipmentBean bulkShipmentBean = new BulkShipmentBean();
+                bulkShipmentBean bulkShipmentBean = new bulkShipmentBean();
                 FixedLengthReader fixedLengthReader = new FixedLengthReader(true, false);
                 while ((lineTxt = bufferedReader.readLine()) != null) {
 
@@ -110,11 +110,11 @@ import java.util.List;
                         if (countRow > 0) {
                             bulkShipmentBeans.add(bulkShipmentBean);
                         }
-                        bulkShipmentBean = new BulkShipmentBean();
+                        bulkShipmentBean = new bulkShipmentBean();
 
                         List<String> head = fixedLengthReader.readLine(lineTxt, headFixedLength);
 
-                        BulkShipmentHeadBean bulkShipmentHeadBean = new BulkShipmentHeadBean();
+                        bulkShipmentHeadBean bulkShipmentHeadBean = new bulkShipmentHeadBean();
 
                         bulkShipmentHeadBean.setHeader_identifier(head.get(0));
                         bulkShipmentHeadBean.setHdl_unit_exid(head.get(1));
@@ -132,7 +132,7 @@ import java.util.List;
 
                         List<String> detail = fixedLengthReader.readLine(lineTxt, detailFixedLength);
 
-                        BulkShipmentDetailBean bulkShipmentDetailBean = new BulkShipmentDetailBean();
+                        bulkShipmentDetailBean bulkShipmentDetailBean = new bulkShipmentDetailBean();
 
                         bulkShipmentDetailBean.setItem_identifier(detail.get(0));
                         bulkShipmentDetailBean.setCarton_line(detail.get(1));
@@ -147,7 +147,7 @@ import java.util.List;
                         bulkShipmentDetailBean.setStge_loc(detail.get(10));
                         bulkShipmentDetailBean.setUpc(detail.get(11));
 
-                        List<BulkShipmentDetailBean> getBulkShipmentDetails = bulkShipmentBean.getBulkShipmentDetails();
+                        List<com.voyageone.batch.wms.modelbean.bulkShipmentDetailBean> getBulkShipmentDetails = bulkShipmentBean.getBulkShipmentDetails();
                         getBulkShipmentDetails.add(bulkShipmentDetailBean);
 
                         bulkShipmentBean.setBulkShipmentDetails(getBulkShipmentDetails);
@@ -182,7 +182,7 @@ import java.util.List;
      * @param orderChannelId 渠道Id
      * @param bulkShipmentBeans 参数Map
      */
-    private void updateTabels(final String fileNameInfo, final String orderChannelId, final List<BulkShipmentBean> bulkShipmentBeans){
+    private void updateTabels(final String fileNameInfo, final String orderChannelId, final List<bulkShipmentBean> bulkShipmentBeans){
         OrderChannelBean channel = ChannelConfigs.getChannel(orderChannelId);
         log(channel.getFull_name()+"处理文件 " + fileNameInfo + " 开始");
         transactionRunner.runWithTran(() -> {
@@ -191,12 +191,12 @@ import java.util.List;
                 ClientShipmentBean clientShipmentBean = setClientShipment(orderChannelId, fileNameInfo);
                 long shipmentId = clientShipmentDao.insertClientShipment(clientShipmentBean);
 
-                for (BulkShipmentBean bulkShipmentBean : bulkShipmentBeans) {
+                for (com.voyageone.batch.wms.modelbean.bulkShipmentBean bulkShipmentBean : bulkShipmentBeans) {
                     //wms_bt_client_package
                     ClientPackageBean clientPackageBean = setClientPackage(shipmentId,bulkShipmentBean.getBulkShipmentHead());
                     long packageId = clientShipmentDao.insertClientPackage(clientPackageBean);
 
-                    for (BulkShipmentDetailBean bulkShipmentDetailBean : bulkShipmentBean.getBulkShipmentDetails()) {
+                    for (com.voyageone.batch.wms.modelbean.bulkShipmentDetailBean bulkShipmentDetailBean : bulkShipmentBean.getBulkShipmentDetails()) {
                         //wms_bt_client_package_item
                         ClientPackageItemBean clientPackageItemBean = setClientPackageItem(shipmentId,packageId,bulkShipmentDetailBean);
                         clientShipmentDao.insertClientPackageItem(clientPackageItemBean);
@@ -238,7 +238,7 @@ import java.util.List;
      * @param bulkShipmentHead 头文件
      * @return ClientPackageBean
      */
-    private ClientPackageBean setClientPackage(long shipmentId, BulkShipmentHeadBean bulkShipmentHead){
+    private ClientPackageBean setClientPackage(long shipmentId, bulkShipmentHeadBean bulkShipmentHead){
         ClientPackageBean clientPackageBean = new ClientPackageBean();
 
         clientPackageBean.setShipment_id(shipmentId);
@@ -264,7 +264,7 @@ import java.util.List;
      * @param bulkShipmentDetailBean 明细文件
      * @return ClientPackageItemBean
      */
-    private ClientPackageItemBean setClientPackageItem(long shipmentId, long packageId, BulkShipmentDetailBean bulkShipmentDetailBean){
+    private ClientPackageItemBean setClientPackageItem(long shipmentId, long packageId, bulkShipmentDetailBean bulkShipmentDetailBean){
         ClientPackageItemBean clientPackageItemBean = new ClientPackageItemBean();
 
         clientPackageItemBean.setShipment_id(shipmentId);
