@@ -106,6 +106,17 @@ define(['modules/cms/cms.module', 'modules/cms/master/dict/dict.service', 'modul
         };
       })(this));
     };
+    _Class.prototype.up = function(index) {
+      var temp =  angular.copy (this.wordList[index]);
+      this.wordList.splice(index, 1);
+      this.wordList.splice(index - 1, 0,temp);
+    };
+
+    _Class.prototype.down = function(index) {
+      var temp =  angular.copy (this.wordList[index]);
+      this.wordList.splice(index, 1);
+      this.wordList.splice(index+1 , 0,temp);
+    };
 
     _Class.prototype.delValue = function(index) {
       return this.wordList.splice(index, 1);

@@ -52,6 +52,13 @@
                                 <button class="btn btn-success btn-xs" ng-show="word.type == 'CUSTOM'" ng-click="vm.editValue(word)">
                                     <i class="fa fa-pencil"></i>
                                 </button>
+                                <br>
+                                <button class="btn btn-danger btn-xs" ng-show="$index != 0" ng-click="vm.up($index)">
+                                    <i class="glyphicon glyphicon-arrow-up"></i>
+                                </button>
+                                <button class="btn btn-danger btn-xs"   ng-show="$index != vm.wordList.length-1" ng-click="vm.down($index)">
+                                    <i class="glyphicon glyphicon-arrow-down"></i>
+                                </button>
                             </td>
                         </tr>
                         </tbody>
