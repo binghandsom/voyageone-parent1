@@ -52,6 +52,26 @@ public class CmsFieldEnum {
         oblique_image,
         art_image,
         handmade_image,
+        attribute_1_key,
+        attribute_2_key,
+        attribute_3_key,
+        attribute_4_key,
+        attribute_5_key,
+        attribute_6_key,
+        attribute_7_key,
+        attribute_8_key,
+        attribute_9_key,
+        attribute_10_key,
+        attribute_1_value,
+        attribute_2_value,
+        attribute_3_value,
+        attribute_4_value,
+        attribute_5_value,
+        attribute_6_value,
+        attribute_7_value,
+        attribute_8_value,
+        attribute_9_value,
+        attribute_10_value
 
         /*
         public String toString() {
