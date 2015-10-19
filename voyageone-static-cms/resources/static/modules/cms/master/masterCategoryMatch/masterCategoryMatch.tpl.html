@@ -43,7 +43,7 @@
                     <td class="fixed">
                       <div class="form-inline">
                         <div  class="btn-group">
-                          <button type="button" ng-click="showMasterCategoryDiv(this,$event)" class="btn btn-primary dropdown-toggle btn-sm fa">
+                          <button type="button" ng-click="showMasterCategoryDiv(this,$event)" ng-disabled="cmsCategory.isDisable" class="btn btn-primary dropdown-toggle btn-sm fa">
                           &nbsp;类目匹配
                             <span class="caret"></span>
                             <span class="sr-only">Split button!</span>
@@ -55,7 +55,7 @@
                     <td><font ng-bind="cmsCategory.mainCategoryPath" ng-class="cmsCategory.inheritClass"></font></td>
                     <td class="text-center">
                       <div ng-if="cmsCategory.isSave" ><button type="button" ng-click="save(cmsCategory)" class="btn btn-vo btn-xs"><i class="fa fa-save"></i></button></div>
-                      <div ng-if="cmsCategory.isExtend" ><button type="button" ng-click="save(cmsCategory)" class="btn btn-vo btn-xs"><i class="fa fa-arrow-down"></i></button></div>
+                      <div ng-if="cmsCategory.isExtend" ><button type="button" ng-click="save(cmsCategory)" class="btn btn-default btn-xs"><i class="fa fa-arrow-down"></i></button></div>
                     </td>
                     <td class="text-center"><label class="checkbox-inline c-checkbox needsclick"><input type="checkbox" ng-change="change(cmsCategory)" ng-model="cmsCategory.isMatch"><span class="fa fa-check"></span></label></td>
                     <td><button ng-if="cmsCategory.mainCategoryId > 0 && cmsCategory.isPropMatch" type="button" ng-click = "propertyMatch(cmsCategory)" class="btn btn-primary btn-sm fa fa-equalizer fa-building">&nbsp;属性匹配</button></td>

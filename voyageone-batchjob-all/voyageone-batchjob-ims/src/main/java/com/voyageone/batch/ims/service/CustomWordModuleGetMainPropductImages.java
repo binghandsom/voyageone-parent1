@@ -50,7 +50,11 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
             htmlTemplate = expressionParser.parse(htmlTemplateExpression, null);
 
         RuleExpression imageTemplateExpression = customModuleUserParamGetMainPrductImages.getImageTemplate();
-        String imageTemplate = expressionParser.parse(imageTemplateExpression, null);
+
+        String imageTemplate = null;
+
+        if(imageTemplateExpression!=null)
+            imageTemplate = expressionParser.parse(imageTemplateExpression, null);
 
         RuleExpression imageTypeExpression = customModuleUserParamGetMainPrductImages.getImageType();
         String imageType = expressionParser.parse(imageTypeExpression, null);
@@ -75,36 +79,59 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
             return null;
 
         String propImageProp = cmsCodeProp.getProp((CmsFieldEnum.CmsCodeEnum) CmsFieldEnum.valueOf(imageType));
-        String[] propImages = propImageProp.split(",");
+
+        String[] propImages;
+        if (propImageProp == null || "".equals(propImageProp.trim()))
+        {
+            propImages = new String[] {};
+        } else {
+            propImages = propImageProp.split(",");
+        }
+
 
         String parseResult = "";
+
         List<String> imageUrlList = new ArrayList<>();
         //获取所有图片
         if (imageIndex == -1) {
-            for (String propImage : propImages) {
-                imageUrlList.add(String.format(imageTemplate, propImage.trim()));
+            if (imageTemplate != null) {
+                for (String propImage : propImages) {
+                    imageUrlList.add(String.format(imageTemplate, propImage.trim()));
+                }
+            } else {
+                for (String propImage : propImages) {
+                    parseResult += propImage;
+                }
+                return parseResult;
             }
         } //padding图片
-        else if (imageIndex > propImages.length)
-        {
+        else if (imageIndex > propImages.length) {
             RuleExpression paddingExpression = customModuleUserParamGetMainPrductImages.getPaddingExpression();
             String paddingImageKey = expressionParser.parse(paddingExpression, null);
             if (paddingImageKey == null || "".equalsIgnoreCase(paddingImageKey)) {
                 return null;
             }
-            String paddingImage = String.format(imageTemplate, paddingImageKey.trim());
-            imageUrlList.add(String.format(imageTemplate, paddingImage));
-        }
-        else
-        {
-            String propImage =  propImages[imageIndex - 1];
-            imageUrlList.add(String.format(imageTemplate, propImage.trim()));
+            String paddingImage;
+            if(imageTemplate != null){
+                paddingImage = String.format(imageTemplate, paddingImageKey.trim());
+                imageUrlList.add(String.format(imageTemplate, paddingImage));
+
+            }else {
+                return paddingImageKey.trim();
+            }
+        } else {
+            String propImage = propImages[imageIndex - 1];
+            if(imageTemplate != null){
+                imageUrlList.add(String.format(imageTemplate, propImage.trim()));
+            }else {
+                return propImage.trim();
+            }
+
         }
         for (String imageUrl : imageUrlList) {
             if (htmlTemplate != null) {
                 parseResult += String.format(htmlTemplate, imageUrl);
-            }
-            else {
+            } else {
                 parseResult += imageUrl;
             }
 

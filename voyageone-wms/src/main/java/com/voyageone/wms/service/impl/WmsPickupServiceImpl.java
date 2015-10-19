@@ -771,6 +771,9 @@ public class WmsPickupServiceImpl implements WmsPickupService {
         // 下单时间（本地时间）
         reservation.setOrderDateTime_local(StringUtils.isNullOrBlank2(reservation.getOrderDateTime()) ? "" : DateTimeUtil.getLocalTime(reservation.getOrderDateTime(), user.getTimeZone()));
 
+        // 货架所在
+        reservation.setLocation_name(reservationDao.getLocationBySKU(reservation.getOrder_channel_id(),reservation.getSku(),reservation.getStore_id()));
+
     }
 
     /**

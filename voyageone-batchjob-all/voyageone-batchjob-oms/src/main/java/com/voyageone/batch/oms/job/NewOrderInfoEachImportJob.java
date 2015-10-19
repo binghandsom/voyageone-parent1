@@ -73,6 +73,9 @@ public class NewOrderInfoEachImportJob {
 				// 赠品类型信息设置获得
 				orderInfoImportService.getGiftedPropertySetting();
 				/******************** 初始化赠品设定相关内容 END ********************/
+
+				// 套装设定内容获得
+				orderInfoImportService.getSuitSkuSetting();
 				
 				for (NewOrderInfo4Log newOrderInfo : newOrderInfoList) {
 					logger.info("tid：" + newOrderInfo.getTid() + " 导入开始");

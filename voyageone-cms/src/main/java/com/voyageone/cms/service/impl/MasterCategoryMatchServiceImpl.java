@@ -101,10 +101,10 @@ public class MasterCategoryMatchServiceImpl implements MasterCategoryMatchServic
 					cmsCategoryModel.setMainCategoryPath(parentMainPath);
 					cmsCategoryModel.setExtendMainCategoryId(parentMainCatId);
 				}
-				if (cmsCategoryModel.getMainCategoryId() == -1) {
-					buildModel(cmsCategoryModel, path, parentMainPath,parentMainCatId);
-				}else {
+				if (cmsCategoryModel.getMainCategoryId() > 0) {
 					buildModel(cmsCategoryModel, path, cmsCategoryModel.getMainCategoryPath(),cmsCategoryModel.getMainCategoryId());
+				}else {
+					buildModel(cmsCategoryModel, path, parentMainPath,parentMainCatId);
 				}
 
 			}
