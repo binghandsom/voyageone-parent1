@@ -144,4 +144,70 @@
             and details.order_number = #{order_number}
         GROUP BY details.sku
     </select>
+
+
+    <!-- 取得特殊物品销售订单的日报基本数据记录-->
+    <select id="wms_getCreateReportSpecialData" resultType="com.voyageone.batch.wms.modelbean.ThirdReportBean">
+        SELECT
+             '0' as transfer_id,
+            details.order_number,
+            details.sku as transfer_sku,
+            count(details.adjustment) AS sales_unit,
+            orders.order_channel_id,
+            orders.created,
+            orders.source_order_id,
+            orders.cart_id,
+            itemdetails.itemcode,
+            itemdetails.size
+        FROM
+            oms_bt_orders orders
+        INNER JOIN oms_bt_order_details details ON details.order_number = orders.order_number
+        AND (
+            details. STATUS NOT IN ('Canceled', 'Returned')
+            OR details. STATUS IS NULL
+        )
+        AND details.adjustment = 0
+        AND EXISTS (
+            SELECT
+                1
+            FROM
+                tm_order_channel_config
+            WHERE
+                order_channel_id =  #{order_channel_id}
+            AND cfg_name = #{specialType}
+          and cfg_val1 = details.sku
+        )
+         INNER JOIN wms_bt_item_details itemdetails ON itemdetails.sku = details.sku
+        WHERE
+            orders.order_channel_id =  #{order_channel_id}
+        AND orders.cart_id = #{cart_id}
+        AND orders.created BETWEEN #{start_created}
+                           AND #{end_created}
+        AND EXISTS (
+            SELECT
+                1
+            FROM
+                tm_task_control
+            WHERE
+                task_id = #{task_name}
+            AND cfg_name = 'order_channel_id'
+          and cfg_val1 = orders.order_channel_id
+        )
+        AND NOT EXISTS (
+            SELECT
+                1
+            FROM
+                voyageone_ims.ims_bt_product_except except
+            WHERE
+                except.order_channel_id =  #{order_channel_id}
+            AND except.cart_id = #{cart_id}
+            AND except.except_sku = details.sku
+        )
+        GROUP BY
+            details.order_number,
+            details.sku
+        ORDER BY
+            details.order_number,
+            details.sku;
+     </select>
 </mapper>

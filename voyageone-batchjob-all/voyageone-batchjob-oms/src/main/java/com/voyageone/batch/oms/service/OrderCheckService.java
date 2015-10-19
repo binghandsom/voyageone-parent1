@@ -85,11 +85,10 @@ public class OrderCheckService extends BaseTaskService{
 	@Override
 	protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-		List<String> omitlist = new ArrayList<String>();
 
 		for (TaskControlBean taskControl : taskControlList) {
 			if ("card_id".equals(taskControl.getCfg_name())) {
-				
+				List<String> omitlist = new ArrayList<String>();
 				cartId = taskControl.getCfg_val1();
 				
 				shopBean = ShopConfigs.getShop(channelId, cartId);

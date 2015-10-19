@@ -30,7 +30,7 @@
             publish_product_id=#{publish_product_id},
             main_product_flg=#{main_product_flg},
             publish_product_status=#{publish_product_status},
-            quality_update_type=#{quantity_update_type},
+            quantity_update_type=#{quantity_update_type},
             modifier=#{modifier},
             modified=#{modified}
         WHERE

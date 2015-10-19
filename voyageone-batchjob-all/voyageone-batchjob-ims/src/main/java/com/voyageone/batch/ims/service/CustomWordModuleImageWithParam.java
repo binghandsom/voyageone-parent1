@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -54,6 +55,22 @@ public class CustomWordModuleImageWithParam extends CustomWordModule {
                 logger.error(e.fillInStackTrace());
             }
             imageParams.add(imageParam);
+        }
+
+        int deleteItemsCount =0;
+        for(Iterator<String> iterator=imageParams.iterator();iterator.hasNext();){
+            String param = iterator.next();
+            if(param == null || "".equals(param.trim())){
+
+                iterator.remove();
+
+                deleteItemsCount++;
+            }
+
+        }
+
+        for (int i=0;i<deleteItemsCount;i++){
+            imageParams.add("");
         }
 
         String parseResult = String.format(imageTemplate, imageParams.toArray());
