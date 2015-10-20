@@ -17,6 +17,12 @@ define(function(require) {
             var _ = require('underscore');
             var commonUtil = require ('components/util/commonUtil');
 
+
+            // quickFilter用的检索条件
+            this.filter = null;
+            this.setSearchCondition = function (factor){
+                this.filter = factor;
+            };
             /**
              * get the navigation about the category.
              * @param categoryId
@@ -141,6 +147,18 @@ define(function(require) {
                 }
             };
 
+            this.doQuickSearch = function () {
+                var defer = $q.defer();
+                var data={};
+                //data.typeIdList = values;
+                data.channelId = userService.getSelChannel();
+                ajaxService.ajaxPostWithData(data, cmsAction.cms_search_quick_search)
+                    .then(function (response) {
+                        defer.resolve(response.data);
+                    });
+
+                return defer.promise;
+            };
             /**
              * 获取Attribute的Id列表.
              * @param productAttributes

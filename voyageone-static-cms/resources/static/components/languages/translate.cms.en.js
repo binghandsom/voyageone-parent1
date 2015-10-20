@@ -462,6 +462,7 @@ define (function (require) {
                     CMS_TXT_PROMOTION_SALES_QUANTITY :'Sales Quantity',
                     CMS_TXT_PROMOTION_SALES_PERCENT :'Sales Percent',
                     CMS_TXT_CARD: 'Card',
+                    CMS_TXT_STATISTICAL_DATA: 'Statistical Data',
 
                     CMS_BTN_NEW_DICT: 'New Dict',
                     CMS_TXT_HEAD_DICT: 'Dict Manage',

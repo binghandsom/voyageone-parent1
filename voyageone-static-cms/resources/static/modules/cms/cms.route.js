@@ -38,6 +38,11 @@ define (function (require) {
             'page': '/modules/cms/edit/promotion.tpl.html',
             'controller': 'modules/cms/edit/promotion.ctl'
         },
+        'cms_quick_filter': {
+            'hash': '/cms/common/index',
+            'page': '/modules/cms/common/index.tpl.html',
+            'controller': 'modules/cms/common/index.ctl'
+        },
         //'cms_edit_model_withModelId': {
         //    'hash': '/cms/edit/model/:modelId',
         //    'page': '/modules/cms/edit/model.tpl.html',

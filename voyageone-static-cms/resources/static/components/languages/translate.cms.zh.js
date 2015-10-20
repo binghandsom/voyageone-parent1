@@ -458,6 +458,7 @@ define (function (require) {
                     CMS_TXT_JG_PUBLISH_STATUS: '京东国际是否发布',
                     CMS_TXT_JG_NUMIID: '京东国际 num_iid',
                     CMS_TXT_JG_COMMENT: '京东国际备注',
+                    CMS_TXT_STATISTICAL_DATA: '统计数据',
 
                     CMS_MSG_ADD_TO_PROMOTION_SUCCESS: '商品添加到 promotion 成功。',
                     CMS_MSG_MOVE_TO_MODEL_SUCCESS: '商品移动到 model 成功。',

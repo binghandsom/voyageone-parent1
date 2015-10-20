@@ -8,6 +8,7 @@
 
 define([ "modules/cms/cms.module",
          "modules/cms/cms.route",
+		 "modules/cms/common/common.service",
 		 "modules/cms/master/masterCategoryMatch/masterCategoryMatchService",
 		 "modules/cms/service/mainCategory.service",
 		 "modules/cms/edit/edit.service"], 
@@ -21,10 +22,13 @@ define([ "modules/cms/cms.module",
 					  'editMainCategoryService',
 					  '$location',
 					  'cmsRoute',
+					  'cmsCommonService',
 					  'notify',
-			function($scope,$rootScope,cmsAction,matchService,editService,$location,cmsRoute,notify) {
+			function($scope,$rootScope,cmsAction,matchService,editService,$location,cmsRoute,cmsCommonService,notify) {
 					$scope.initialize = function() {
-						
+
+						$scope.filterByProp = false;
+						$scope.filterByCategory = false;
 						matchService.getAllCategory({}).then(
 							function(response) {
 								
@@ -40,6 +44,13 @@ define([ "modules/cms/cms.module",
 							$scope.cmsCategoryList = categories;
 							//获取所有主类目
 							$scope.masterCategoryList = $scope.resData.masterCategoryList;
+							if(cmsCommonService.filter == 1){
+								$scope.filterDisMatchCategory();
+							}else if(cmsCommonService.filter == 2){
+								$scope.filterPropDisMatchCategory();
+							}
+							cmsCommonService.filter = null;
+
 					})
 					
 				};
@@ -217,7 +228,7 @@ define([ "modules/cms/cms.module",
 					});
 				};
 
-				$scope.filterPropDisMatchCategory = function($event){
+				$scope.filterPropDisMatchCategory = function(){
 
 					if ($scope.filterByProp) {
 
@@ -228,7 +239,6 @@ define([ "modules/cms/cms.module",
 						//获取cms类目
 						$scope.cmsCategoryList = cmsCategorise;
 
-						$event.target.innerText = " 属性匹配未完成类目";
 					}else {
 						$scope.allCategory = $scope.cmsCategoryList;
 						var filterCategoryList = [];
@@ -241,7 +251,6 @@ define([ "modules/cms/cms.module",
 						}
 						//获取cms类目
 						$scope.cmsCategoryList = filterCategoryList;
-						$event.target.innerText = " 全部类目";
 					}
 				}
 				
@@ -304,7 +313,7 @@ define([ "modules/cms/cms.module",
 					return null;
 				};
 				 
-				 $scope.filterDisMatchCategory = function($event){
+				 $scope.filterDisMatchCategory = function(){
 
 
 					 if ($scope.filterByCategory) {
@@ -315,7 +324,6 @@ define([ "modules/cms/cms.module",
 
 						//获取cms类目
 						$scope.cmsCategoryList = cmsCategorise;
-						$event.target.innerText = " 未匹配类目";
 					}else {
 						 $scope.allCategory = $scope.cmsCategoryList;
 						var filterCategoryList = [];
@@ -328,7 +336,6 @@ define([ "modules/cms/cms.module",
 						}
 						//获取cms类目
 						$scope.cmsCategoryList = filterCategoryList;
-						$event.target.innerText = " 全部类目";
 					}
 					 
 				 };
