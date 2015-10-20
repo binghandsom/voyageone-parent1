@@ -44,6 +44,8 @@ public class CmsSetMainPropService extends BaseTaskService {
         return "CmsSetMainPropJob";
     }
 
+    private String bad_prop_const = "badprop>";
+
     public void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
         // 允许运行的订单渠道取得
@@ -93,6 +95,8 @@ public class CmsSetMainPropService extends BaseTaskService {
                 // 一次性获取所有的类目匹配关系（根据channel_id）
                 mainCategoryIdList = mainPropDao.selectMainCategoryIdList(channel_id);
             }
+            // 遍历检索到的类目匹配关系，看看属性是否有匹配过
+//            mainCategoryIdList = getCleanMainCategoryIdList(mainCategoryIdList);
 
             // 循环所有的商品
             for (MainPropTodoListBean mainPropTodoListBean : mainPropTodoListBeanList) {
@@ -120,6 +124,11 @@ public class CmsSetMainPropService extends BaseTaskService {
                     if (mainCategoryIdList.containsKey(category_id)) {
                         mainCategoryId = mainCategoryIdList.get(category_id);
 
+                        if (mainCategoryId.startsWith(bad_prop_const)) {
+                            // 如果没有设定过匹配用的主类目，那么认为无法继续了，跳过
+                            logger.warn("主类目属性未设定完成：category_id=" + category_id);
+                            continue;
+                        }
                         // 将该商品的主类目，设为默认匹配好的值
                         mainPropDao.doSetMainCategoryId(resultModel, channel_id, mainCategoryId, getTaskName());
                     } else {
@@ -128,9 +137,9 @@ public class CmsSetMainPropService extends BaseTaskService {
 //                            break;
 
                         // 如果没有设定过匹配用的主类目，那么认为无法继续了，跳过
-                        logger.info("尚未指定主类目：category_id=" + category_id);
-                        logger.info("尚未指定主类目：model_id=" + model_id);
-                        logger.info("尚未指定主类目：product_id=" + product_id);
+                        logger.warn("尚未指定主类目：category_id=" + category_id);
+                        logger.warn("尚未指定主类目：model_id=" + model_id);
+                        logger.warn("尚未指定主类目：product_id=" + product_id);
                         continue;
                     }
                 }
@@ -237,6 +246,9 @@ public class CmsSetMainPropService extends BaseTaskService {
                                         );
                             }
 
+                        } else if (feedPropMappingType == FeedPropMappingType.VALUE) {
+                            // 直接设定值
+                            value = feedMappingSkuBean.getValue();
                         }
 
                         // 循环sku列表
@@ -649,6 +661,99 @@ public class CmsSetMainPropService extends BaseTaskService {
 
     }
 
+    /**
+     * 踢除尚未匹配完成属性的主类目id
+     * @param mainCategoryIdList 主类目id列表
+     * @return 已经匹配完属性的主类目的id
+     */
+    private Map<String, String> getCleanMainCategoryIdList(Map<String, String> mainCategoryIdList) {
+        // 返回值
+        Map<String, String> result = new HashMap<>();
+
+        // 获取属性忽略列表（所有类目）
+        List<String> ignoreList = new ArrayList<>();
+        // select prop_id
+        // from voyageone_ims.ims_bt_feed_prop_ignore
+        // where is_ignore = 1
+        // and channel_id = #{channel_id};
+
+        // 遍历传入的主类目列表
+        Iterator iter = mainCategoryIdList.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry entry = (Map.Entry) iter.next();
+
+            String key = entry.getKey().toString();     // 平台类目
+            String val = entry.getValue().toString();   // 主类目
+
+            // 获取当前主类目的所有属性列表
+            List<ImsPropBean> propList = mainPropDao.selectImsPropByCategoryIdList(val);
+
+            // 获取当前主类目的所有已mapping的属性的列表
+            List<String> mappingPropList = new ArrayList<>();
+            // select distinct prop_id, type
+            // from voyageone_ims.ims_bt_feed_prop_mapping
+            // where channel_id = #{channel_id}
+            //   and category_id = #{category_id};
+
+            // 获取所有的默认属性名称
+            List<List<String>> defaultMappingPropList = new ArrayList<>();
+            // select prop_name,
+            //        prop_type
+            // from voyageone_ims.ims_bt_feed_prop_mapping_default
+            // where channel_id = #{channel_id}
+            //   and prop_value is not null
+            //   and prop_value <> ''
+
+            // 检查
+            boolean blnError = false;
+            // 遍历主类目的所有属性
+            for (ImsPropBean lstProp : propList) {
+
+                String propId = String.valueOf(lstProp.getPropId()); // prop id
+                String propName = lstProp.getPropName(); // prop name
+                String propType = String.valueOf(lstProp.getPropType()); // prop type
+
+                boolean blnFound = false;
+
+                // 检查这个属性在mapping中是否存在
+                if (mappingPropList.contains(propId)) {
+                    blnFound = true;
+                }
+                // 检查这个属性在ignore中是否存在
+                if (ignoreList.contains(propId)) {
+                    blnFound = true;
+                }
+                // 检查这个属性在default中是否存在
+                for (List<String> defaultValue : defaultMappingPropList) {
+                    if (propName.equals(defaultValue.get(0))
+                            && propType.equals(defaultValue.get(1))
+                            ) {
+                        blnFound = true;
+                        break;
+                    }
+                }
+
+                if (!blnFound) {
+                    // 有一个属性没有设置的话，就认为是没匹配完
+                    blnError = true;
+                    break;
+                }
+            }
+
+            // 设置值
+            if (blnError) {
+                // 有错误的场合，设置一个标记
+                result.put(key, bad_prop_const);
+            } else {
+                // 正确的场合，直接设置
+                result.put(key, val);
+            }
+
+        }
+
+        return result;
+
+    }
 
     private String getUUID() {
         // 创建 GUID 对象
