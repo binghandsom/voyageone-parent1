@@ -157,7 +157,46 @@ public class SearchServiceImpl implements SearchService {
 		return ArrayUtils.addAll(bom, stringBuffer.toString().getBytes("UTF-8"));
 
 	}
-/**
+
+	@Override
+	public List<Integer> doQuickSearch(String channelId) throws IOException {
+
+		// 1.未匹配类目：
+		List<Integer> ret=new ArrayList<>();
+		ret.add(searchDao.doCategoryUnMappingCnt(channelId));
+
+		// 2.属性匹配未完成类目:
+		ret.add(searchDao.doCategoryPropertyUnMappingCnt(channelId));
+
+		// 3.属性编辑未完成产品:
+		Map<String,Object> s = new HashMap<>();
+		s.put("channelId", channelId);
+		s.put("isApprovedDescription", '0');
+		ret.add(searchDao.doAdvanceSearchCnt(s));
+
+		// 4.属性编辑完成未approve产品:
+		s = new HashMap<>();
+		s.put("channelId", channelId);
+		s.put("isApprovedDescription", '1');
+		s.put("isApproved", '0');
+		ret.add(searchDao.doAdvanceSearchCnt(s));
+
+		// 5.approve但未上新产品:
+		s = new HashMap<>();
+		s.put("channelId", channelId);
+		s.put("isApproved", '1');
+		s.put("publishStatus", '0');
+		ret.add(searchDao.doAdvanceSearchCnt(s));
+
+		// 5.approve但未上新产品:
+		s = new HashMap<>();
+		s.put("channelId", channelId);
+		s.put("publishStatus", '2');
+		ret.add(searchDao.doAdvanceSearchCnt(s));
+		return  ret;
+	}
+
+	/**
  * 取展示的列,等选择列完成可以从表里面取
  * @return
  */

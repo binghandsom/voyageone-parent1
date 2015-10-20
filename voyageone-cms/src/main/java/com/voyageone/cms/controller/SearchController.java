@@ -142,4 +142,37 @@ public class SearchController extends BaseController {
 		return genResponseEntityFromBytes(name+".csv", data);
 
 	}
+
+	@RequestMapping(value = "/quick/search")
+	public void doQuickSearch(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, Object> requestMap ) {
+		AjaxResponseBean responseBean = new AjaxResponseBean();
+
+		boolean isSuccess = false;
+		String msgCode = "";
+		int msgType = 0;
+		try {
+			// 输入参数出力
+			logger.info(JsonUtil.toJson(requestMap));
+			requestMap.put("cartId",23);
+			String channelId = requestMap.get("channelId").toString();
+			responseBean.setResultInfo(searchService.doQuickSearch(channelId));
+			isSuccess = true;
+
+		} catch (Exception e) {
+			logger.info(e);
+			msgCode = MessageConstants.MESSAGE_CODE_500001;
+			msgType = MessageConstants.MESSAGE_TYPE_EXCEPTION;
+		} finally {
+			// 设置返回结果
+			if (msgType > 0) {
+				responseBean.setResult(isSuccess, msgCode, msgType);
+			} else {
+				responseBean.setResult(isSuccess);
+			}
+			// 结果返回输出流
+			responseBean.writeTo(request, response);
+			// 输出结果出力
+			logger.info(responseBean.toString());
+		}
+	}
 }
