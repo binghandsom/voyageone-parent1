@@ -12,6 +12,8 @@ import java.util.Map;
 
 import javax.mail.MessagingException;
 
+import com.voyageone.common.configs.Codes;
+import com.voyageone.common.configs.beans.CodeBean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,18 +55,8 @@ public class SendOrderMailService {
 
 	private static final String SUBJECT = "Order List";
 
-	// private static final String RECEIVER = "maggie.yu@voyageone.cn;"
-	// + "kobe.xin@voyageone.cn;"
-	// + "tom.zhu@voyageone.cn;"
-	// + "weijianhuaxp@163.com;"
-	// + "dennis.zhang@voyageone.com;"
-	// + "owen.sun@voyageone.cn;"
-	// + "helena.han@voyageone.com;"
-	// + "robert.gao@voyageone.com;"
-	// + "catherine.gao@voyageone.cn;"
-	// + "summer.hu@voyageone.cn;"
-	// + "zero.zeng@voyageone.cn;"
-	// + "cathy.liu@voyageone.cn";
+	// 渠道邮件设置
+	private static final String ORDER_REPORT_MAIL_CONFIG = "ORDER_REPORT_MAIL_CONFIG";
 
 	public boolean sendOrderMail() {
 
@@ -82,15 +74,7 @@ public class SendOrderMailService {
 				logger.info("文件夹创建失败！" + e);
 			}
 		}
-		// TODO 删除 模拟ITOMS对应的渠道 等邮件的渠道权限方法出来再更改,现在是先写死
-		List<String> channelIdSet = new ArrayList<String>();
-		channelIdSet.add(OmsConstants.CHANNEL_SNEAKERHEAD);
-		channelIdSet.add(OmsConstants.CHANNEL_JC);
-		channelIdSet.add(OmsConstants.CHANNEL_PA);
-		channelIdSet.add(OmsConstants.CHANNEL_SPALDING);
-		channelIdSet.add(OmsConstants.CHANNEL_BHFO);
-		channelIdSet.add(OmsConstants.CHANNEL_RM);
-		channelIdSet.add(OmsConstants.CHANNEL_CP);
+
 		// 生成CSV文件
 		// 拼接文件名
 		Date date = new Date();
@@ -106,80 +90,68 @@ public class SendOrderMailService {
 		// 由于统计北京时间的当天订单，所以要默认时区为8
 		String fromTime = DateTimeUtil.getGMTTimeFrom(strdate, OmsConstants.SEND_ORDER_ZONE);
 		String endTime = DateTimeUtil.getGMTTimeTo(strdate, OmsConstants.SEND_ORDER_ZONE);
-		// String fromTime = strdate+OmsConstants.SENDORDER_FORMTIME;
-		// String endTime = strdate+OmsConstants.SENDORDER_ENDTIME;
 		String output_file = "";
 
-		for (String channelId : channelIdSet) {
+		List<CodeBean> orderReportMailList = Codes.getCodeList(ORDER_REPORT_MAIL_CONFIG);
+		if (orderReportMailList != null && orderReportMailList.size() > 0) {
+			for (CodeBean orderReoprtMail : orderReportMailList) {
+				// 渠道获得
+				String channelId = orderReoprtMail.getCode();
 
-			OrderChannelBean channelBean = ChannelConfigs.getChannel(channelId);
-			String channelName = channelBean.getName();
+				OrderChannelBean channelBean = ChannelConfigs.getChannel(channelId);
+				String channelName = channelBean.getName();
 
-			// 获取channelId对应的cartId
-			List<ShopBean> shopBean = ShopConfigs.getChannelShopList(channelId);
-			// List<String> cartId = new ArrayList<String>();
+				// 获取channelId对应的cartId
+				List<ShopBean> shopBean = ShopConfigs.getChannelShopList(channelId);
 
-			// 存放邮件附件
-			List<String> fileAffix = new ArrayList<String>();
+				// 存放邮件附件
+				List<String> fileAffix = new ArrayList<String>();
 
-			if (null != shopBean && shopBean.size() > 0) {
-				for (ShopBean shopBeanObj : shopBean) {
+				if (null != shopBean && shopBean.size() > 0) {
+					for (ShopBean shopBeanObj : shopBean) {
 
-					FileWriter fw = null;
-					// cartId.add(shopBeanObj.getCart_id());
-					List<OutFormSendOrderMail> result = new ArrayList<OutFormSendOrderMail>();
-					try {
-						// 获取订单信息
-						result = orderDao.sendOrderMail(fromTime, endTime, channelId, shopBeanObj.getCart_id());
-					} catch (Exception e) {
-						logger.info(e);
-						
-					}
-					// 生成的文件名
-					String filename = ShopConfigs.getVal1(channelId, shopBeanObj.getCart_id(), ShopConfigEnums.Name.filename);
-					output_file = orderfolder + date_ymd + channelName + filename;
-					if (result != null && result.size() > 0) {
-						if (channelIdResult(result, fw, output_file)) {
-							fileAffix.add(output_file);
+						FileWriter fw = null;
+						// cartId.add(shopBeanObj.getCart_id());
+						List<OutFormSendOrderMail> result = new ArrayList<OutFormSendOrderMail>();
+						try {
+							// 获取订单信息
+							result = orderDao.sendOrderMail(fromTime, endTime, channelId, shopBeanObj.getCart_id());
+						} catch (Exception e) {
+							logger.info(e);
+
+						}
+						// 生成的文件名
+						String filename = ShopConfigs.getVal1(channelId, shopBeanObj.getCart_id(), ShopConfigEnums.Name.filename);
+						output_file = orderfolder + date_ymd + channelName + filename;
+						if (result != null && result.size() > 0) {
+							if (channelIdResult(result, fw, output_file)) {
+								fileAffix.add(output_file);
+							}
 						}
 					}
 				}
-			}
 
-			// 获取统计结果
-			String Totalresult = sendOrderMailTotal(channelId, channelName);
-			// 拼接附件名字
-			String subject = channelName + SUBJECT;
+				// 获取统计结果
+				String Totalresult = sendOrderMailTotal(channelId, channelName);
+				// 拼接附件名字
+				String subject = channelBean.getFull_name() + " " + SUBJECT;
 
-			// String filename_tg = orderfolder + channelName +
-			// OmsConstants.SENDORDER_FILENAME_TG + date_ymd;
+				// 该渠道收件人列表
+				String channelReceiver = orderReoprtMail.getName();
+				logger.info("channelName:" + channelName + "  channelReceiver:" + channelReceiver);
 
-			try {
+				try {
+					Mail.send(channelReceiver, subject, Totalresult, fileAffix, false);
 
-				Mail.send("jacky.zhu@voyageone.cn", subject, Totalresult, fileAffix, false);
-				Mail.send("kobe.xin@voyageone.cn", subject, Totalresult, fileAffix, false);
-				Mail.send("dennis.zhang@voyageone.com", subject, Totalresult, fileAffix, false);
-				Mail.send("owen.sun@voyageone.cn", subject, Totalresult, fileAffix, false);
-				Mail.send("cathy.liu@voyageone.cn", subject, Totalresult, fileAffix, false);
-				Mail.send("zero.zeng@voyageone.cn", subject, Totalresult, fileAffix, false);
-				Mail.send("will.wei@voyageone.cn", subject, Totalresult, fileAffix, false);
-				Mail.send("tom.zhu@voyageone.cn", subject, Totalresult, fileAffix, false);
-				Mail.send("gary.li@voyageone.cn", subject, Totalresult, fileAffix, false);
-				Mail.send("veronica.sha@voyageone.cn", subject, Totalresult, fileAffix, false);
-				Mail.send("aaron.deng@voyageone.cn", subject, Totalresult, fileAffix, false);
-				Mail.send("shasha.yao@voyageone.com", subject, Totalresult, fileAffix, false);
-				Mail.send("maggie.yu@voyageone.cn", subject, Totalresult, fileAffix, false);
-				Mail.send("robert.gao@voyageone.com", subject, Totalresult, fileAffix, false);
-				Mail.send("helena.han@voyageone.com", subject, Totalresult, fileAffix, false);
-				Mail.send("lara.cao@voyageone.com", subject, Totalresult, fileAffix, false);
-				logger.info("日报邮件发送成功！");
+					logger.info(channelName + "日报邮件发送成功！");
 
-			} catch (MessagingException e) {
+				} catch (MessagingException e) {
 
-				logger.info("日报邮件发送失败！", e);
+					logger.info(channelName + "日报邮件发送失败！", e);
 
-				isSuccess = false;
+					isSuccess = false;
 
+				}
 			}
 		}
 
