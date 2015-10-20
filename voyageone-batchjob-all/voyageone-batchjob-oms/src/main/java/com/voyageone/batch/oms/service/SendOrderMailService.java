@@ -156,14 +156,13 @@ public class SendOrderMailService {
 
 			try {
 
-				Mail.send("eric.chen@voyageone.cn", subject, Totalresult, fileAffix, false);
+				Mail.send("jacky.zhu@voyageone.cn", subject, Totalresult, fileAffix, false);
 				Mail.send("kobe.xin@voyageone.cn", subject, Totalresult, fileAffix, false);
 				Mail.send("dennis.zhang@voyageone.com", subject, Totalresult, fileAffix, false);
 				Mail.send("owen.sun@voyageone.cn", subject, Totalresult, fileAffix, false);
 				Mail.send("cathy.liu@voyageone.cn", subject, Totalresult, fileAffix, false);
 				Mail.send("zero.zeng@voyageone.cn", subject, Totalresult, fileAffix, false);
 				Mail.send("will.wei@voyageone.cn", subject, Totalresult, fileAffix, false);
-				Mail.send("zero.zeng@voyageone.cn", subject, Totalresult, fileAffix, false);
 				Mail.send("tom.zhu@voyageone.cn", subject, Totalresult, fileAffix, false);
 				Mail.send("gary.li@voyageone.cn", subject, Totalresult, fileAffix, false);
 				Mail.send("veronica.sha@voyageone.cn", subject, Totalresult, fileAffix, false);
@@ -172,6 +171,7 @@ public class SendOrderMailService {
 				Mail.send("maggie.yu@voyageone.cn", subject, Totalresult, fileAffix, false);
 				Mail.send("robert.gao@voyageone.com", subject, Totalresult, fileAffix, false);
 				Mail.send("helena.han@voyageone.com", subject, Totalresult, fileAffix, false);
+				Mail.send("lara.cao@voyageone.com", subject, Totalresult, fileAffix, false);
 				logger.info("日报邮件发送成功！");
 
 			} catch (MessagingException e) {

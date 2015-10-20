@@ -44,7 +44,11 @@ public class TaskControlEnums {
         /**
          * 价格披露任务的提前量配置
          */
-        advance
+        advance,
+        /**
+         * 历史数据转移表
+         */
+        history_table
     }
 
     /**
