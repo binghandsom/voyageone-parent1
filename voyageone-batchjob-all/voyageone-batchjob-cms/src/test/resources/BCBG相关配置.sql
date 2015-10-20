@@ -9,30 +9,66 @@ INSERT INTO Synship.tm_task_control (task_id, cfg_name, cfg_val1, cfg_val2, end_
 ALTER TABLE `voyageone_cms`.`cms_mt_feed_config`
 DROP PRIMARY KEY;
 ALTER TABLE `voyageone_cms`.`cms_mt_feed_config`
-ADD COLUMN `id` INT NOT NULL AUTO_INCREMENT FIRST,
+ADD COLUMN `id` INT NOT NULL AUTO_INCREMENT
+FIRST,
 ADD PRIMARY KEY (`id`);
 
 # 老版本解析配置
-INSERT INTO voyageone_cms.cms_mt_feed_config (order_channel_id, cfg_name, cfg_val1, cfg_val2, cfg_val3, is_attribute, attribute_type, `comment`)
+INSERT INTO voyageone_cms.cms_mt_feed_config (order_channel_id, cfg_val2, cfg_val3, is_attribute, attribute_type, `comment`, cfg_name, cfg_val1)
 VALUES
-  ('012', 'feed_ftp_filename', '/Users/Jonas/Desktop/BCBG_IM_20151014093724.xml;/Users/Jonas/Desktop/BCBG-20151015.json', '', '', '0', '0', '推送过来的数据文件存放的位置'),
-  ('012', 'feed_backup_dir', '/Users/Jonas/Desktop/BCBG_BKU/%s/%s/', '', '', '0', '0', '数据文件的备份'),
+  ('012', '', '', 0, 0, '推送过来的数据文件存放的位置', 'feed_ftp_filename',
+   '/Users/Jonas/Desktop/BCBG_IM_20151014093724.xml;/Users/Jonas/Desktop/BCBG-20151015.json'),
+  ('012', '', '', 0, 0, '数据文件的备份', 'feed_backup_dir', '/Users/Jonas/Desktop/BCBG_BKU/%s/%s/'),
 
-  ('012', 'table_id', 'voyageone_cms.cms_zz_worktable_bcbg_superfeed', '', '', '0', '0', '数据表'),
-  ('012', 'category_split', '-', '', '', '0', '0', '类目分割符'),
-  ('012', 'category_column', 'MATKL', '', '', '0', '0', '类目分割符'),
-  ('012', 'product_category_url_key', 'MATKL', '', '', '0', '0', '类目'),
-  ('012', 'product_model_url_key', 'CONCAT(MATKL, ''-'', SATNR)', '', '', '0', '0', 'Model'),
-  ('012', 'product_url_key', 'CONCAT(MATKL, ''-'', SATNR, COLOR)', '', '', '0', '0', 'Code'),
-  ('012', 'item_code', 'CONCAT(SATNR, COLOR)', '', '', '0', '0', 'Product 级别的 Code'),
-  ('012', 'item_i_sku', 'MATNR', '', '', '0', '0', 'SKU'),
-  ('012', 'item_i_itemcode', 'MATNR', '', '', '0', '0', 'ItemCode'),
-  ('012', 'item_i_size', 'SIZE1', '', '', '0', '0', 'Size'),
-  ('012', 'item_i_barcode', 'EAN11', '', '', '0', '0', 'UPC'),
+  ('012', '', '', 0, 0, '数据表', 'table_id', 'voyageone_cms.cms_zz_worktable_bcbg_superfeed'),
+  ('012', '', '', 0, 0, '类目分割符', 'category_split', '-'),
+  ('012', '', '', 0, 0, '类目分割符', 'category_column', 'MATKL'),
 
-  ('012', 'webServiesAppKey', '21006636', '', '', '0', '0', ''),
-  ('012', 'webServiesAppSecret', 'ca16bd08019790b2a9332e000e52e19f', '', '', '0', '0', ''),
-  ('012', 'webServiesSessionKey', '7200a23ce180124c6Z248fa2bd5b420Zdf0df34db94bd5a90702966b', '', '', '0', '0', '');
+  ('012', '', '', 0, 0, 'Model 级别', 'model_table_id', 'voyageone_cms.cms_zz_worktable_bcbg_superfeed JOIN voyageone_cms.cms_zz_worktable_bcbg_styles b ON b.styleID = CONCAT(SATNR, ''-'', COLOR)'),
+  ('012', '', '', 0, 0, 'Model 级别', 'model_url_key', 'DISTINCT CONCAT(MATKL, ''-'', SATNR)'),
+  ('012', '', '', 0, 0, 'Model 级别', 'model_category_url_key', 'MATKL'),
+  ('012', '', '', 0, 0, 'Model 级别', 'model_m_product_type', 'WLADG'),
+  ('012', '', '', 0, 0, 'Model 级别', 'model_m_brand', 'BRAND_ID'),
+  ('012', '', '', 0, 0, 'Model 级别', 'model_m_model', 'SATNR'),
+  ('012', '', '', 0, 0, 'Model 级别', 'model_m_name', 'SATNR'),
+  ('012', '', '', 0, 0, 'Model 级别', 'model_m_short_description', 'MAKTX'),
+  ('012', '', '', 0, 0, 'Model 级别', 'model_m_long_description', 'ATBEZ'),
+  ('012', '', '', 0, 0, 'Model 级别', 'model_m_size_type', 'SIZE1_ATINN'),
+  ('012', '', '', 0, 0, 'Model 级别', 'model_m_is_unisex', '0'),
+  ('012', '', '', 0, 0, 'Model 级别', 'model_m_weight', ''''''),
+  ('012', '', '', 0, 0, 'Model 级别', 'model_m_is_taxable', '1'),
+  ('012', '', '', 0, 0, 'Model 级别', 'model_m_is_effective', '1'),
+
+  ('012', '', '', 0, 0, 'Product 级别', 'product_url_key', 'DISTINCT CONCAT(MATKL, ''-'', SATNR, COLOR)'),
+  ('012', '', '', 0, 0, 'Product 级别', 'product_category_url_key', 'MATKL'),
+  ('012', '', '', 0, 0, 'Product 级别', 'product_model_url_key', 'CONCAT(MATKL, ''-'', SATNR)'),
+  ('012', '', '', 0, 0, 'Product 级别', 'product_p_code', 'CONCAT(SATNR, COLOR)'),
+  ('012', '', '', 0, 0, 'Product 级别', 'product_p_name', 'LEFT(MAKTX, LOCATE('','', MAKTX) - 1)'),
+  ('012', '', '', 0, 0, 'Product 级别', 'product_p_color', 'COLOR_ATWTB'),
+  ('012', '', '', 0, 0, 'Product 级别', 'product_p_made_in_country', 'WHERL'),
+  ('012', '', '', 0, 0, 'Product 级别', 'product_pe_short_description', 'MAKTX'),
+  ('012', '', '', 0, 0, 'Product 级别', 'product_pe_long_description', 'ATBEZ'),
+  ('012', '', '', 0, 0, 'Product 级别', 'product_p_msrp', 'A304_KBETR'),
+  ('012', '', '', 0, 0, 'Product 级别', 'product_ps_price', 'A073_KBETR'),
+  ('012', '', '', 0, 0, 'Product 级别', 'product_cps_cn_price_rmb', 'A304_KBETR'),
+  ('012', '', '', 0, 0, 'Product 级别', 'product_cps_cn_price', 'A073_KBETR'),
+  ('012', '', '', 0, 0, 'Product 级别', 'product_cps_cn_price_final_rmb', 'A073_KBETR'),
+
+
+  ('012', '', '', 0, 0, 'Item 级别', 'item_code', 'CONCAT(SATNR, COLOR)'),
+  ('012', '', '', 0, 0, 'Item 级别', 'item_i_sku', 'MATNR'),
+  ('012', '', '', 0, 0, 'Item 级别', 'item_i_itemcode', 'MATNR'),
+  ('012', '', '', 0, 0, 'Item 级别', 'item_i_size', 'SIZE1'),
+  ('012', '', '', 0, 0, 'Item 级别', 'item_i_barcode', 'EAN11'),
+
+  ('012', '', '', 0, 0, 'Image 级别', 'image_table_id', 'voyageone_cms.cms_zz_worktable_bcbg_superfeed JOIN voyageone_cms.cms_zz_worktable_bcbg_styles ON styleID = CONCAT(SATNR, ''-'', COLOR)'),
+  ('012', '', '', 0, 0, 'Image 级别', 'images', 'productImgURLs'),
+  ('012', '', '', 0, 0, 'Image 级别', 'image_split', ';;'),
+
+  ('012', '', '', 0, 0, 'WebService 授权配置', 'webServiesAppKey', '21006636'),
+  ('012', '', '', 0, 0, 'WebService 授权配置', 'webServiesAppSecret', 'ca16bd08019790b2a9332e000e52e19f'),
+  ('012', '', '', 0, 0, 'WebService 授权配置', 'webServiesSessionKey',
+   '7200a23ce180124c6Z248fa2bd5b420Zdf0df34db94bd5a90702966b');
 
 # 属性配置
 INSERT INTO voyageone_cms.cms_mt_feed_config (order_channel_id, cfg_name, cfg_val1, cfg_val2, cfg_val3, is_attribute, attribute_type, `comment`)
@@ -92,7 +128,9 @@ VALUES
 INSERT INTO voyageone_cms.cms_mt_feed_config (`comment`, order_channel_id, cfg_name, cfg_val1, cfg_val2, cfg_val3, is_attribute, attribute_type, display_sort)
 VALUES
   # 先查一波数据,用来发送 master 关联的警告邮件
-  ('Get data that cant context to master', '012', 'transform', 'select_str', 'SELECT MATNR FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed LEFT JOIN voyageone_cms.cms_mt_feed_master m ON BRAND_ID = m.value AND m.channel_id = ''012'' AND m.master_attr = ''BRAND_ID'' WHERE m.value IS NULL', 'set:noMasterSku', 0, 0, 1),
+  ('Get data that cant context to master', '012', 'transform', 'select_str',
+   'SELECT MATNR FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed LEFT JOIN voyageone_cms.cms_mt_feed_master m ON BRAND_ID = m.value AND m.channel_id = ''012'' AND m.master_attr = ''BRAND_ID'' WHERE m.value IS NULL',
+   'set:noMasterSku', 0, 0, 1),
   ('Get data that cant context to master', '012', 'transform', 'select_str', 'SELECT MATNR FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed LEFT JOIN voyageone_cms.cms_mt_feed_master m ON SAISO = m.value AND m.channel_id = ''012'' AND m.master_attr = ''SAISO'' WHERE m.value IS NULL', 'append:noMasterSku', 0, 0, 2),
   ('Get data that cant context to master', '012', 'transform', 'select_str', 'SELECT MATNR FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed LEFT JOIN voyageone_cms.cms_mt_feed_master m ON SAITY = m.value AND m.channel_id = ''012'' AND m.master_attr = ''SAITY'' WHERE m.value IS NULL', 'append:noMasterSku', 0, 0, 3),
   ('Get data that cant context to master', '012', 'transform', 'select_str', 'SELECT MATNR FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed LEFT JOIN voyageone_cms.cms_mt_feed_master m ON WLADG = m.value AND m.channel_id = ''012'' AND m.master_attr = ''WLADG'' WHERE m.value IS NULL', 'append:noMasterSku', 0, 0, 4),
