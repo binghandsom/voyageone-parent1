@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @Service
 class BcbgInsertService extends BcbgWsdlBase {
 
-    private static final String INSERT_FLG = " AND update_flg = 1";
+    private static final String INSERT_FLG = "update_flg = 1";
 
     /**
      * 获取任务名称
@@ -72,7 +72,7 @@ class BcbgInsertService extends BcbgWsdlBase {
             modelColumns.setM_is_effective(Feed.getVal1(channel, FeedEnums.Name.model_m_is_effective));
 
             // 条件则根据类目筛选
-            String where = String.format("WHERE %s = '%s' %s", modelColumns.getCategory_url_key(), category.getUrl_key(), INSERT_FLG);
+            String where = String.format("WHERE %s AND %s = '%s'", INSERT_FLG, modelColumns.getCategory_url_key(), category.getUrl_key());
 
             List<ModelBean> modelBeans = superFeedDao.selectSuperfeedModel(where, modelColumns, modelTable);
 

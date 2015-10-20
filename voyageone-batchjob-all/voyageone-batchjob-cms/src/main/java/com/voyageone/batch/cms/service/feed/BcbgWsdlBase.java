@@ -73,14 +73,14 @@ abstract class BcbgWsdlBase extends BaseTaskService {
             itemColumns.setI_size(Feed.getVal1(channel, FeedEnums.Name.item_i_size));
             itemColumns.setI_barcode(Feed.getVal1(channel, FeedEnums.Name.item_i_barcode));
 
-            String where = String.format("WHERE %s = '%s' %s", itemColumns.getCode(), product.getP_code(), getWhereUpdateFlg());
+            String where = String.format("WHERE %s AND %s = '%s'", getWhereUpdateFlg(), itemColumns.getCode(), product.getP_code());
 
             return superFeedDao.selectSuperfeedItem(where, itemColumns, table);
         }
 
         protected List<ImageBean> getImages(ProductBean product) {
 
-            String where = String.format("WHERE %s = '%s' %s", Feed.getVal1(channel, FeedEnums.Name.product_p_code), product.getP_code(), getWhereUpdateFlg());
+            String where = String.format("WHERE %s AND %s = '%s'", getWhereUpdateFlg(), Feed.getVal1(channel, FeedEnums.Name.product_p_code), product.getP_code());
 
             List<String> imageArrs = superFeedDao.selectSuperfeedImage(
                     where,
@@ -136,7 +136,7 @@ abstract class BcbgWsdlBase extends BaseTaskService {
             productColumns.setCps_cn_price_final_rmb(Feed.getVal1(channel, FeedEnums.Name.product_cps_cn_price_final_rmb));
 
             // 条件则根据类目筛选
-            String where = String.format("WHERE %s = '%s' %s", productColumns.getModel_url_key(), model.getUrl_key(), getWhereUpdateFlg());
+            String where = String.format("WHERE %s AND %s = '%s'", getWhereUpdateFlg(), productColumns.getModel_url_key(), model.getUrl_key());
 
             List<ProductBean> productBeans = superFeedDao.selectSuperfeedProduct(where, productColumns, table);
 
