@@ -153,7 +153,6 @@ public class SearchController extends BaseController {
 		try {
 			// 输入参数出力
 			logger.info(JsonUtil.toJson(requestMap));
-			requestMap.put("cartId",23);
 			String channelId = requestMap.get("channelId").toString();
 			responseBean.setResultInfo(searchService.doQuickSearch(channelId));
 			isSuccess = true;
