@@ -39,4 +39,10 @@ public class BcbgSuperFeedDao extends BaseDao {
     public int deleteStyles() {
         return delete("cms_zz_worktable_bcbg_styles_deleteStyles", null);
     }
+
+    public int insertFullWithoutFail(List<String> modelFailList, List<String> productFailList) {
+        return insert("cms_zz_worktable_bcbg_superfeed_full_insertWithoutFail",
+                parameters("update_flg", 1, "modelFailList", modelFailList,
+                        "productFailList", productFailList));
+    }
 }

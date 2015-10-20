@@ -42,6 +42,9 @@ public class BcbgAnalysisService extends BaseTaskService {
     @Autowired
     private Transformer transformer;
 
+    @Autowired
+    private BcbgInsertService insertService;
+
     /**
      * 获取子系统
      */
@@ -121,9 +124,9 @@ public class BcbgAnalysisService extends BaseTaskService {
         $info("数据处理阶段结束");
 
         // 使用接口提交
+        insertService.new Context(BCBG).postNewProduct();
+//postUpdatedProduct();
 //        postAttribute();
-//        postNewProduct();
-//        postUpdatedProduct();
 
         // 备份文件
 //        backupDataFile(feedFile, styleFile);
@@ -216,125 +219,6 @@ public class BcbgAnalysisService extends BaseTaskService {
         // TODO 处理返回结果
     }
 
-    private void postUpdatedProduct() throws Exception {
-
-        String channel_id = BCBG.getId();
-
-        ProductService service = new ProductService(BCBG);
-
-        ProductsFeedUpdate feedUpdate = new ProductsFeedUpdate();
-
-        feedUpdate.setChannel_id(channel_id);
-        feedUpdate.setBarcode("barcode");
-        feedUpdate.setCode("code");
-        feedUpdate.setProduct_url_key("product_url_key");
-        feedUpdate.setUpdatefields(new HashMap<>());
-
-        WsdlResponseBean result = service.update(feedUpdate);
-
-        // TODO 处理返回结果
-    }
-
-    private void postNewProduct() throws Exception {
-
-        String channel_id = BCBG.getId();
-
-        ProductService service = new ProductService(BCBG);
-
-        ProductsFeedInsert feedInsert = new ProductsFeedInsert();
-
-        List<CategoryBean> categoryBeans = new ArrayList<>();
-
-        CategoryBean categoryBean = new CategoryBean();
-
-        List<ModelBean> modelBeans = new ArrayList<>();
-
-        ModelBean modelBean = new ModelBean();
-
-        List<ProductBean> productBeans = new ArrayList<>();
-
-        ProductBean productBean = new ProductBean();
-
-        List<ItemBean> itemBeans = new ArrayList<>();
-
-        ItemBean itemBean = new ItemBean();
-
-        itemBean.setCode(Feed.getVal1(channel_id, FeedEnums.Name.item_code));
-        itemBean.setI_sku(Feed.getVal1(channel_id, FeedEnums.Name.item_i_sku));
-        itemBean.setI_itemcode(Feed.getVal1(channel_id, FeedEnums.Name.item_i_itemcode));
-        itemBean.setI_size(Feed.getVal1(channel_id, FeedEnums.Name.item_i_size));
-        itemBean.setI_barcode(Feed.getVal1(channel_id, FeedEnums.Name.item_i_barcode));
-
-        itemBeans.add(itemBean);
-
-        List<ImageBean> imageBeans = new ArrayList<>();
-
-        ImageBean imageBean = new ImageBean();
-
-        imageBean.setImage_type("1");
-        imageBean.setImage(String.valueOf(imageBeans.size() + 1));
-        imageBean.setImage_url("images[k]");
-        imageBean.setImage_name("images[k].substring(images[k].lastIndexOf(\"/\") + 1, images[k].lastIndexOf(\".\"})");
-        imageBean.setDisplay_order("0");
-
-        imageBeans.add(imageBean);
-
-        productBean.setUrl_key(Feed.getVal1(channel_id, FeedEnums.Name.product_url_key));
-        productBean.setModel_url_key(Feed.getVal1(channel_id, FeedEnums.Name.product_model_url_key));
-        productBean.setCategory_url_key(Feed.getVal1(channel_id, FeedEnums.Name.product_category_url_key));
-        productBean.setP_code(Feed.getVal1(channel_id, FeedEnums.Name.product_p_code));
-        productBean.setP_name(Feed.getVal1(channel_id, FeedEnums.Name.product_p_name));
-        productBean.setP_color(Feed.getVal1(channel_id, FeedEnums.Name.product_p_color));
-        productBean.setP_msrp(Feed.getVal1(channel_id, FeedEnums.Name.product_p_msrp));
-        productBean.setP_made_in_country(Feed.getVal1(channel_id, FeedEnums.Name.product_p_made_in_country));
-        productBean.setPe_short_description(Feed.getVal1(channel_id, FeedEnums.Name.product_pe_short_description));
-        productBean.setPe_long_description(Feed.getVal1(channel_id, FeedEnums.Name.product_pe_long_description));
-        productBean.setPs_price(Feed.getVal1(channel_id, FeedEnums.Name.product_ps_price));
-        productBean.setCps_cn_price_rmb(Feed.getVal1(channel_id, FeedEnums.Name.product_cps_cn_price_rmb));
-        productBean.setCps_cn_price(Feed.getVal1(channel_id, FeedEnums.Name.product_cps_cn_price));
-        productBean.setCps_cn_price_final_rmb(Feed.getVal1(channel_id, FeedEnums.Name.product_cps_cn_price_final_rmb));
-        productBean.setItembeans(itemBeans);
-        productBean.setImages(imageBeans);
-
-        productBeans.add(productBean);
-
-        modelBean.setUrl_key(Feed.getVal1(channel_id, FeedEnums.Name.model_url_key));
-        modelBean.setCategory_url_key(Feed.getVal1(channel_id, FeedEnums.Name.model_category_url_key));
-        modelBean.setM_product_type(Feed.getVal1(channel_id, FeedEnums.Name.model_m_product_type));
-        modelBean.setM_brand(Feed.getVal1(channel_id, FeedEnums.Name.model_m_brand));
-        modelBean.setM_model(Feed.getVal1(channel_id, FeedEnums.Name.model_m_model));
-        modelBean.setM_name(Feed.getVal1(channel_id, FeedEnums.Name.model_m_name));
-        modelBean.setM_short_description(Feed.getVal1(channel_id, FeedEnums.Name.model_m_short_description));
-        modelBean.setM_long_description(Feed.getVal1(channel_id, FeedEnums.Name.model_m_long_description));
-        modelBean.setM_size_type(Feed.getVal1(channel_id, FeedEnums.Name.model_m_size_type));
-        modelBean.setM_is_unisex(Feed.getVal1(channel_id, FeedEnums.Name.model_m_is_unisex));
-        modelBean.setM_weight(Feed.getVal1(channel_id, FeedEnums.Name.model_m_weight));
-        modelBean.setM_is_taxable(Feed.getVal1(channel_id, FeedEnums.Name.model_m_is_taxable));
-        modelBean.setM_is_effective(Feed.getVal1(channel_id, FeedEnums.Name.model_m_is_effective));
-        modelBean.setProductbeans(productBeans);
-
-        modelBeans.add(modelBean);
-
-        categoryBean.setC_name("c_name");
-        categoryBean.setC_header_title("c_header_title");
-        categoryBean.setUrl_key("url_key");
-        categoryBean.setParent_url_key("parent_url_key");
-        categoryBean.setC_is_enable_filter("1");
-        categoryBean.setC_is_visible_on_menu("0");
-        categoryBean.setC_is_published("0");
-        categoryBean.setC_is_effective("1");
-        categoryBean.setModelbeans(modelBeans);
-
-        categoryBeans.add(categoryBean);
-
-        feedInsert.setCategorybeans(categoryBeans);
-        feedInsert.setChannel_id(BCBG.getId());
-
-        WsdlResponseBean result = service.insert(feedInsert);
-
-        // TODO 处理返回结果
-    }
-
     private void insertNewData(List<SuperFeedBcbgBean> bcbgBeans, BcbgStyleBean[] styleBeanArr) {
 
         int start = 0, end, total = bcbgBeans.size(), limit = 500;
@@ -390,6 +274,9 @@ public class BcbgAnalysisService extends BaseTaskService {
         // 对无效数据进行警告处理
 
         styleBeans = styleBeansMap.get(false);
+
+        if (styleBeans == null || styleBeans.size() < 1) return;
+
         logIssue("发现部分 BCBG Style 文件的无效数据", styleBeans.size() + "个");
         $info("已警告<无效>数据 %s 个", styleBeans.size());
     }

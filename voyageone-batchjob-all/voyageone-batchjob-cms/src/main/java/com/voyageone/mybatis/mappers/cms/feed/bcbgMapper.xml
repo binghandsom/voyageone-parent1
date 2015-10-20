@@ -34,4 +34,32 @@
     <delete id="cms_zz_worktable_bcbg_styles_deleteStyles">
         DELETE FROM voyageone_cms.cms_zz_worktable_bcbg_styles
     </delete>
+
+    <insert id="cms_zz_worktable_bcbg_superfeed_full_insertWithoutFail">
+        INSERT INTO voyageone_cms.cms_zz_worktable_bcbg_superfeed_full
+        (MATNR, EAN11, BRAND_ID, MATKL, ZZCODE1, ZZCODE2, ZZCODE3, MEINS, BSTME, COLOR, COLOR_ATWTB, SIZE1, SIZE1_ATWTB,
+         SIZE1_ATINN, ATBEZ, SAISO, SAISJ, SAITY, SATNR, MAKTX, WLADG, WHERL, MEAN_EAN11, A304_DATAB, A304_DATBI,
+         A304_KBETR, A304_KONWA, A073_DATAB, A073_DATBI, A073_KBETR, A073_KONWA)
+        SELECT MATNR, EAN11, BRAND_ID, MATKL, ZZCODE1, ZZCODE2, ZZCODE3, MEINS, BSTME, COLOR, COLOR_ATWTB, SIZE1, SIZE1_ATWTB,
+            SIZE1_ATINN, ATBEZ, SAISO, SAISJ, SAITY, SATNR, MAKTX, WLADG, WHERL, MEAN_EAN11, A304_DATAB, A304_DATBI,
+            A304_KBETR, A304_KONWA, A073_DATAB, A073_DATBI, A073_KBETR, A073_KONWA
+        FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed
+        <where>
+            update_flg = #{update_flg}
+            <if test="modelFailList != null and modelFailList.size() > 0">
+                AND SATNR NOT IN (
+                <foreach collection="modelFailList" item="model" separator=",">
+                    #{model}
+                </foreach>
+                )
+            </if>
+            <if test="productFailList != null and productFailList.size() > 0">
+                AND CONCAT(SATNR, MATNR) NOT IN (
+                <foreach collection="productFailList" item="code" separator=",">
+                    #{code}
+                </foreach>
+                )
+            </if>
+        </where>
+    </insert>
 </mapper>

@@ -47,13 +47,12 @@ VALUES
   ('012', '', '', 0, 0, 'Product 级别', 'product_p_color', 'COLOR_ATWTB'),
   ('012', '', '', 0, 0, 'Product 级别', 'product_p_made_in_country', 'WHERL'),
   ('012', '', '', 0, 0, 'Product 级别', 'product_pe_short_description', 'MAKTX'),
-  ('012', '', '', 0, 0, 'Product 级别', 'product_pe_long_description', 'ATBEZ'),
+  ('012', '', '', 0, 0, 'Product 级别', 'product_pe_long_description', 'ATBEZ'), # 这里可能需要改
   ('012', '', '', 0, 0, 'Product 级别', 'product_p_msrp', 'A304_KBETR'),
   ('012', '', '', 0, 0, 'Product 级别', 'product_ps_price', 'A073_KBETR'),
   ('012', '', '', 0, 0, 'Product 级别', 'product_cps_cn_price_rmb', 'A304_KBETR'),
   ('012', '', '', 0, 0, 'Product 级别', 'product_cps_cn_price', 'A073_KBETR'),
   ('012', '', '', 0, 0, 'Product 级别', 'product_cps_cn_price_final_rmb', 'A073_KBETR'),
-
 
   ('012', '', '', 0, 0, 'Item 级别', 'item_code', 'CONCAT(SATNR, COLOR)'),
   ('012', '', '', 0, 0, 'Item 级别', 'item_i_sku', 'MATNR'),
