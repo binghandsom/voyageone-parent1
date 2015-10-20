@@ -123,6 +123,6 @@ public class FeedEnums {
         webServiesAppSecret,
         webServiesAppKey,
         webServiesSessionKey,
-        fixed_lens, transform, feed_backup_dir, url_special_symbol
+        fixed_lens, transform, feed_backup_dir, model_table_id, image_table_id, url_special_symbol
     }
 }
