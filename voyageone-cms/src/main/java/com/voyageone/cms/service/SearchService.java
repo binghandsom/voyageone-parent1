@@ -21,4 +21,6 @@ public interface SearchService {
 	File doExport(Map<String, Object> data, String path, String name);
 
 	public byte[] doExport(Map<String, Object> data) throws IOException;
+
+	public List<Integer> doQuickSearch(String channelId) throws IOException;
 }

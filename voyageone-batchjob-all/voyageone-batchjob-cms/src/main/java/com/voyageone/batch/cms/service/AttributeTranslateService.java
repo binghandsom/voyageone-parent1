@@ -28,10 +28,6 @@ public class AttributeTranslateService extends BaseTaskService {
     // 百度翻译设置
     private static final String BAIDU_TRANSLATE_CONFIG = "BAIDU_TRANSLATE_CONFIG";
 
-    private List<List<Map<String, String>>> TRANSLATE_RESULT_TMP_LIST = null;
-
-    private List<Map<String, String>> TRANSLATE_RESULT_LIST = null;
-
     @Autowired
     private AttributeDao attributeDao;
 
@@ -59,8 +55,6 @@ public class AttributeTranslateService extends BaseTaskService {
         List<Future<String>> resultList = new ArrayList<>();
 
         if (attributeValueList != null && attributeValueList.size() > 0) {
-            TRANSLATE_RESULT_TMP_LIST = new ArrayList<List<Map<String, String>>>();
-            TRANSLATE_RESULT_LIST = new ArrayList<Map<String, String>>();
 
             // 拆分多线程翻译处理
             int count = 50;
@@ -104,17 +98,6 @@ public class AttributeTranslateService extends BaseTaskService {
                         es.shutdown();
                     }
                 }
-            }
-
-            for (List<Map<String, String>> threadResult : TRANSLATE_RESULT_TMP_LIST) {
-                TRANSLATE_RESULT_LIST.addAll(threadResult);
-            }
-
-            // 更新需要翻译的字段
-            if (TRANSLATE_RESULT_LIST.size() == totalSize) {
-                updateAttributeValueCn(TRANSLATE_RESULT_LIST);
-            } else {
-                $info("翻译之后的记录数和带翻译数不一致，异常");
             }
 
         } else {
@@ -283,15 +266,14 @@ public class AttributeTranslateService extends BaseTaskService {
                         String finishStr = translateList.get(i);
                         subTransStrList.get(i).put("attribute_value_cn", finishStr);
                     }
-                    TRANSLATE_RESULT_TMP_LIST.add(subTransStrList);
+
+                    updateAttributeValueCn(subTransStrList);
                 }
             } else {
                 $info("百度翻译任务thread-" + threadNo + "有错误发生");
             }
 
             // 已翻译成功的文言返回
-            $info("百度翻译 product attribute value 任务 thread-" + threadNo + "结束");
-
             return "百度翻译 product attribute value 任务 thread-" + threadNo + "结束";
         }
     }
