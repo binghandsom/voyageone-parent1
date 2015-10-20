@@ -1,10 +1,7 @@
 package com.voyageone.batch.cms.service.feed;
 
 import com.google.gson.Gson;
-import com.voyageone.batch.cms.bean.ProductsFeedAttribute;
-import com.voyageone.batch.cms.bean.ProductsFeedInsert;
-import com.voyageone.batch.cms.bean.ProductsFeedUpdate;
-import com.voyageone.batch.cms.bean.WsdlResponseBean;
+import com.voyageone.batch.cms.bean.*;
 import com.voyageone.batch.cms.utils.WebServiceUtil;
 import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
@@ -44,7 +41,7 @@ public class ProductService {
         return Codes.getCodeName("WEB_SERVIES_URL_FEED", action);
     }
 
-    private WsdlResponseBean post(String action, Object dataBody) throws Exception {
+    private String post(String action, Object dataBody) throws Exception {
 
         String channel_id = channel.getId();
 
@@ -60,9 +57,7 @@ public class ProductService {
 
         String jsonParam = gson.toJson(param);
 
-        String response = WebServiceUtil.postByJsonStr(getUrl(action), jsonParam);
-
-        return gson.fromJson(response, WsdlResponseBean.class);
+        return WebServiceUtil.postByJsonStr(getUrl(action), jsonParam);
     }
 
     /**
@@ -72,8 +67,11 @@ public class ProductService {
      * @return 接口的响应内容
      * @throws Exception
      */
-    public WsdlResponseBean insert(ProductsFeedInsert productsFeed) throws Exception {
-        return post(INSERT, productsFeed);
+    public WsdlProductInsertResponse insert(ProductsFeedInsert productsFeed) throws Exception {
+
+        String response = post(INSERT, productsFeed);
+
+        return new Gson().fromJson(response, WsdlProductInsertResponse.class);
     }
 
     /**
@@ -83,18 +81,24 @@ public class ProductService {
      * @return 接口的响应内容
      * @throws Exception
      */
-    public WsdlResponseBean update(ProductsFeedUpdate productsFeed) throws Exception {
-        return post(UPDATE, productsFeed);
+    public WsdlProductUpdateResponse update(ProductsFeedUpdate productsFeed) throws Exception {
+
+        String response = post(UPDATE, productsFeed);
+
+        return new Gson().fromJson(response, WsdlProductUpdateResponse.class);
     }
 
     /**
-     * ???
+     * 插入或更新商品的具体属性
      *
      * @param productsFeed 接口参数
      * @return 接口的响应内容
      * @throws Exception
      */
     public WsdlResponseBean attribute(ProductsFeedAttribute productsFeed) throws Exception {
-        return post(ATTRIBUTE, productsFeed);
+
+        String response = post(ATTRIBUTE, productsFeed);
+
+        return new Gson().fromJson(response, WsdlProductUpdateResponse.class);
     }
 }
