@@ -648,6 +648,26 @@ public class MainPropDao extends BaseDao {
         return result;
     }
 
+    /**
+     * 查看已经完成属性匹配的主类目列表
+     * @param channel_id channel_id
+     * @return 主类目列表
+     */
+    public List<String> getMainCategoryListWhereAttrIsSetted(String channel_id) {
+        List<String> result = new ArrayList<>();
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("channel_id", channel_id);
+
+        List<HashMap<String, String>> lstResult = selectList(Constants.DAO_NAME_SPACE_CMS + "ims_bt_category_extend_select_where_attr_is_setted", params);
+
+        for (Map<String, String> map : lstResult) {
+            result.add(map.get("main_category_id"));
+        }
+
+        return result;
+    }
+
     public String getString(Object value) {
         if (value == null) {
             return "";
