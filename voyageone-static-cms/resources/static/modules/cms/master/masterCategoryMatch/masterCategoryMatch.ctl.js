@@ -241,12 +241,16 @@ define([ "modules/cms/cms.module",
 
 					}else {
 						$scope.allCategory = $scope.cmsCategoryList;
+						var unMappingMainCategoryIdList = [];
 						var filterCategoryList = [];
 						$scope.filterByProp = true;
 						for (var i = 0; i < $scope.cmsCategoryList.length; i++) {
 
 							if ($scope.cmsCategoryList[i].mainCategoryId > 0 && $scope.cmsCategoryList[i].propMatchStatus==0) {
-								filterCategoryList.push($scope.cmsCategoryList[i]);
+								if(_.indexOf(unMappingMainCategoryIdList, $scope.cmsCategoryList[i].mainCategoryId) == -1){
+									filterCategoryList.push($scope.cmsCategoryList[i]);
+									unMappingMainCategoryIdList.push($scope.cmsCategoryList[i].mainCategoryId);
+								}
 							}
 						}
 						//获取cms类目
