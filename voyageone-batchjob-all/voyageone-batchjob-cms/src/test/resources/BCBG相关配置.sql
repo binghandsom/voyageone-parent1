@@ -25,14 +25,16 @@ VALUES
   ('012', '', '', 0, 0, '类目分割符', 'category_column', 'MATKL'),
 
   ('012', '', '', 0, 0, 'Model 级别', 'model_table_id', 'voyageone_cms.cms_zz_worktable_bcbg_superfeed JOIN voyageone_cms.cms_zz_worktable_bcbg_styles b ON b.styleID = CONCAT(SATNR, ''-'', COLOR)'),
-  ('012', '', '', 0, 0, 'Model 级别', 'model_url_key', 'DISTINCT CONCAT(MATKL, ''-'', SATNR)'),
+  ('012', '', '', 0, 0, 'Model 级别', 'model_sql_ending', 'GROUP BY CONCAT(MATKL, ''-'', SATNR), MATKL, WLADG, BRAND_ID, SATNR, ATBEZ, SIZE1_ATINN'),
+
+  ('012', '', '', 0, 0, 'Model 级别', 'model_url_key', 'CONCAT(MATKL, ''-'', SATNR)'),
   ('012', '', '', 0, 0, 'Model 级别', 'model_category_url_key', 'MATKL'),
   ('012', '', '', 0, 0, 'Model 级别', 'model_m_product_type', 'WLADG'),
   ('012', '', '', 0, 0, 'Model 级别', 'model_m_brand', 'BRAND_ID'),
   ('012', '', '', 0, 0, 'Model 级别', 'model_m_model', 'SATNR'),
   ('012', '', '', 0, 0, 'Model 级别', 'model_m_name', 'SATNR'),
   ('012', '', '', 0, 0, 'Model 级别', 'model_m_short_description', 'MAKTX'),
-  ('012', '', '', 0, 0, 'Model 级别', 'model_m_long_description', 'ATBEZ'),
+  ('012', '', '', 0, 0, 'Model 级别', 'model_m_long_description', 'productDesc'),
   ('012', '', '', 0, 0, 'Model 级别', 'model_m_size_type', 'SIZE1_ATINN'),
   ('012', '', '', 0, 0, 'Model 级别', 'model_m_is_unisex', '0'),
   ('012', '', '', 0, 0, 'Model 级别', 'model_m_weight', ''''''),
@@ -47,7 +49,7 @@ VALUES
   ('012', '', '', 0, 0, 'Product 级别', 'product_p_color', 'COLOR_ATWTB'),
   ('012', '', '', 0, 0, 'Product 级别', 'product_p_made_in_country', 'WHERL'),
   ('012', '', '', 0, 0, 'Product 级别', 'product_pe_short_description', 'MAKTX'),
-  ('012', '', '', 0, 0, 'Product 级别', 'product_pe_long_description', 'ATBEZ'), # 这里可能需要改
+  ('012', '', '', 0, 0, 'Product 级别', 'product_pe_long_description', ''''''),
   ('012', '', '', 0, 0, 'Product 级别', 'product_p_msrp', 'A304_KBETR'),
   ('012', '', '', 0, 0, 'Product 级别', 'product_ps_price', 'A073_KBETR'),
   ('012', '', '', 0, 0, 'Product 级别', 'product_cps_cn_price_rmb', 'A304_KBETR'),

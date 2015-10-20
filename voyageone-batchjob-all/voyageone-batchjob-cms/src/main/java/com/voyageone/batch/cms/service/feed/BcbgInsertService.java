@@ -72,7 +72,7 @@ class BcbgInsertService extends BcbgWsdlBase {
             modelColumns.setM_is_effective(Feed.getVal1(channel, FeedEnums.Name.model_m_is_effective));
 
             // 条件则根据类目筛选
-            String where = String.format("WHERE %s AND %s = '%s'", INSERT_FLG, modelColumns.getCategory_url_key(), category.getUrl_key());
+            String where = String.format("WHERE %s AND %s = '%s' %s", INSERT_FLG, modelColumns.getCategory_url_key(), category.getUrl_key(), Feed.getVal1(channel, FeedEnums.Name.model_sql_ending));
 
             List<ModelBean> modelBeans = superFeedDao.selectSuperfeedModel(where, modelColumns, modelTable);
 
@@ -91,7 +91,7 @@ class BcbgInsertService extends BcbgWsdlBase {
             // update flg 标记, 只获取哪些即将进行新增的商品的类目
             List<String> categoryPaths = superFeedDao.selectSuperfeedCategory(
                     Feed.getVal1(channel, FeedEnums.Name.category_column),
-                    table, INSERT_FLG);
+                    table, " AND " + INSERT_FLG);
 
             $info("获取类目路径数 %s , 准备拆分继续处理", categoryPaths.size());
 
