@@ -370,5 +370,14 @@
         ;
     </update>
 
+    <!-- 查看已经完成属性匹配的主类目列表 -->
+    <select id="ims_bt_category_extend_select_where_attr_is_setted" parameterType="HashMap"
+            resultType="HashMap">
+        select main_category_id
+        from voyageone_ims.ims_bt_category_extend
+        where channel_id = #{channel_id}
+          and is_set_attr = 1
+        ;
+    </select>
 
 </mapper>
