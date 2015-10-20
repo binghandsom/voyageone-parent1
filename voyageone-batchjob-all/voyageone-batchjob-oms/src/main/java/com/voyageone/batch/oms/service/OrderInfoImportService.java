@@ -1724,19 +1724,25 @@ public class OrderInfoImportService {
 		
 		// city
 		sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
-		sqlValueBuffer.append(transferStr(newOrderInfo.getBillingAddressCity()));
+		String city = transferStr(newOrderInfo.getBillingAddressCity());
+		sqlValueBuffer.append(city);
 		sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
 		sqlValueBuffer.append(Constants.COMMA_CHAR);
 		
 		// state
 		sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
-		sqlValueBuffer.append(transferStr(newOrderInfo.getBillingAddressState()));
+		String state = transferStr(newOrderInfo.getBillingAddressState());
+		sqlValueBuffer.append(state);
 		sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
 		sqlValueBuffer.append(Constants.COMMA_CHAR);
 		
 		// zip
 		sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
-		sqlValueBuffer.append(transferStr(newOrderInfo.getBillingAddressZip()));
+		String zip = newOrderInfo.getBillingAddressZip();
+		if ("000000".equals(zip) || zip == null) {
+			zip = getZipFromAddress(StringUtils.null2Space2(state), StringUtils.null2Space2(city));
+		}
+		sqlValueBuffer.append(transferStr(zip));
 		sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
 		sqlValueBuffer.append(Constants.COMMA_CHAR);
 		
@@ -2036,6 +2042,21 @@ public class OrderInfoImportService {
 		sqlValueBuffer.append(Constants.RIGHT_BRACKET_CHAR);
 		
 		return sqlValueBuffer.toString();
+	}
+
+	/**
+	 * 根据省市获得邮编
+	 *
+	 * @param state
+	 * @param city
+	 */
+	private String getZipFromAddress(String state, String city) {
+		String zip = orderDao.getZip(state, city);
+		if (StringUtils.isNullOrBlank2(zip)) {
+			zip = Constants.EMPTY_STR;
+		}
+
+		return zip;
 	}
 	
 	/**
