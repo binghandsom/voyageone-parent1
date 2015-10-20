@@ -88,7 +88,8 @@ public class ExpressionParser {
                     case MASTER: {
                         String expressionValue = masterWordParser.parse(ruleWord);
                         if (expressionValue == null || "".equals(expressionValue)) {
-                            return "";
+                            plainValue = "";
+                            break;
                         }
                         RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
                         RuleExpression masterExpression = ruleJsonMapper.deserializeRuleExpression(expressionValue);
