@@ -74,7 +74,9 @@ import java.util.List;
         List < StoreBean > storeBeans = StoreConfigs.getChannelStoreList(orderChannelId);
         assert storeBeans != null;
         for (StoreBean storeBean: storeBeans) {
-            if (storeBean.getStore_location().equals(StoreConfigEnums.Location.CB.getId()) && storeBean.getStore_kind().equals("0")) {
+            if (storeBean.getStore_location().equals(StoreConfigEnums.Location.CB.getId()) &&
+                    storeBean.getStore_kind().equals(StoreConfigEnums.Kind.REAL.getId()) &&
+                    storeBean.getInventory_manager().equals(StoreConfigEnums.Manager.NO.getId())) {
                 storeID = storeBean.getStore_id();
                 break;
             }
@@ -117,9 +119,9 @@ import java.util.List;
 //                    createErrorMail(notExistsSizeMappingList, "1");
                     if ("Y".equals(updateItemDetail)) {
                         //获取临时库存表中在wms_bt_item_details表中不存在的记录
-                        notExistsItemDetailsList = clientInventoryDao.getNotExistsItemDetails(orderChannelId);
+                        //notExistsItemDetailsList = clientInventoryDao.getNotExistsItemDetails(orderChannelId);
                         //发送警告邮件
-                        createErrorMail(notExistsItemDetailsList, "2");
+                        //createErrorMail(notExistsItemDetailsList, "2");
                     }
                     //移除文件到指定目录
                     moveFiles(filePath, tcb.getProp_val1(), bakFilePath);
@@ -213,7 +215,7 @@ import java.util.List;
                 //最后一次不够500条的进行兜底插入
                 if (i > 0 && !StringUtils.isNullOrBlank2(ordersBatchStr)) {
                     clientInventoryDao.insertClientInventory(ordersBatchStr.substring(0, ordersBatchStr.length() - 1));
-                    logger.info("至第" + countRow + "条记录插入数据");
+                    logger.info(channel.getFull_name() + "至第" + countRow + "条记录插入数据");
                 }
             } else {
                 logger.info(channel.getFull_name() + "找不到指定的文件 filePath:" + filePath);
