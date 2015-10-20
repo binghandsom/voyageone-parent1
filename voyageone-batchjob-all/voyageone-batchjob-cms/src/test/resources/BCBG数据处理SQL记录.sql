@@ -99,3 +99,18 @@ SET MATKL = label;
 # 转换完 master 之后,看看是不是都转了
 SELECT *
 FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed;
+
+# 标记数据
+UPDATE voyageone_cms.cms_zz_worktable_bcbg_superfeed b
+  LEFT JOIN voyageone_cms.cms_zz_worktable_bcbg_superfeed_full bf
+    ON b.MATNR = bf.MATNR
+SET b.update_flg = 1
+WHERE bf.MATNR IS NULL;
+
+
+
+UPDATE voyageone_cms.cms_zz_worktable_bcbg_superfeed b
+  LEFT JOIN voyageone_cms.cms_zz_worktable_bcbg_superfeed_full bf
+    ON b.MATNR = bf.MATNR
+SET b.update_flg = 2
+WHERE bf.MATNR IS NOT NULL;
