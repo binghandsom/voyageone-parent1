@@ -15,8 +15,8 @@
 				<form role="form" class="form-horizontal">
 
 					<div class="panel vo_panel tab_panel">
-						<div class="table-responsive">
-							<table class="table table-striped hover b-t b-b vo_table">
+						<div class="table-responsive tablist">
+							<table class="table table-striped hover b-t b-b vo_table categoryList">
 								<tr style="font-weight: bold">
 									<td style="width: 20%; text-align: center;">类型</td>
 									<td style="width: 60%; text-align: center;">值</td>
@@ -58,7 +58,7 @@
 									<td style="white-space: nowrap; text-align: center;">
 										<div class="buttons">
 											<button ng-click="words.splice($index, 1)" title="Delete"
-												class="btn btn-sm btn-danger">
+												class="btn btn-xs btn-danger">
 												<em class="fa fa-trash"></em>
 											</button>
 										</div>
@@ -70,14 +70,12 @@
 				</form>
 				<div>
 					<button ng-click="words.push({type: 1, value: null})"
-						class="btn btn-default">添加</button>
-					<button ng-click="confirm()" class="btn btn-default pull-right">确定</button>
+							class="btn m-b-xs btn-sm btn-success btn-addon"><i class="fa fa-plus"></i>添加</button>
 				</div>
 			</div>
-			<div ng-if="rules.length > 0">
-				<div class="col-sm-12"><hr/></div>
-	            <div class="col-sm-12">
-	               输入规则：
+	            <div ng-if="rules.length > 0" class="col-sm-12 rule-main">
+					<hr/>
+	               <h4>输入规则：</h4>
 	                <ul>
 						<li ng-repeat="rule in rules">
 							<span ng-bind="rule.decodeRule"></span>
@@ -85,8 +83,10 @@
 					</ul>
 	            </div>
             </div>
-		</div>
 	</div>
 
-
+	<div class="modal-footer">
+		<button class="btn btn-default" ng-click="close()" translate="CMS_BTN_CANCEL"></button>
+		<button ng-click="confirm()" class="btn btn-vo pull-right">确定</button>
+	</div>
 </div>

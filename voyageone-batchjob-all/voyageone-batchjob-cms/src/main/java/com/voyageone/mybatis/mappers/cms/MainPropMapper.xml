@@ -19,11 +19,12 @@
           attr.product_url_key
         from voyageone_cms.cms_mt_product_attribute attr
         where attr.channel_id = #{channel_id}
-              and attr.deal_flag = 0 limit 10
+              and attr.deal_flag = 0 limit 500
       ) attr
       left join voyageone_cms.cms_bt_category c on c.url_key = attr.category_url_key
       left join voyageone_cms.cms_bt_model m on m.url_key = attr.model_url_key
       left join voyageone_cms.cms_bt_product p on p.url_key = attr.product_url_key
+	where category_id is not null and model_id is not null and product_id is not null
     ;
   </select>
 
@@ -40,7 +41,7 @@
     <select id="wms_bt_item_details_selectSkuListFromProductId" parameterType="HashMap"
             resultType="String">
         select sku
-        from synship.wms_bt_item_details
+        from Synship.wms_bt_item_details
         where order_channel_id = #{channel_id}
           and product_id = #{product_id};
     </select>
@@ -52,7 +53,7 @@
                relation.parent_category_id parent,
                category.main_category_id main_category_id
         from   voyageone_cms.cms_bt_relation_category relation
-        left join voyageone_cms.cms_bt_cn_category_extend category on category.category_id = relation.category_id
+        left join voyageone_cms.cms_bt_category_extend category on category.category_id = relation.category_id
         where relation.channel_id = #{channel_id}
         ;
     </select>
@@ -219,8 +220,155 @@
         </foreach>
     </insert>
 
+    <!-- 获取model id 和 主类目 -->
+    <select id="cms_bt_model_select_main_category" parameterType="HashMap"
+            resultType="HashMap">
+        select
+             m.model_id as model_id,
+             ext.main_category_id as main_category_id,
+             ext_cn.main_category_id as main_category_id_cn,
+             ext_cn_tm.tm_category_id as tm_category_id,
+             ext_cn_jd.jd_category_id as jd_category_id,
+             ext.model_id as ext_model_id,
+             ext_cn.model_id as ext_cn_model_id,
+             ext_cn_tm.model_id as ext_cn_tm_model_id,
+             ext_cn_jd.model_id as ext_cn_jd_model_id
+         from voyageone_cms.cms_bt_model m
+         left join voyageone_cms.cms_bt_model_extend ext on m.model_id = ext.model_id
+         left join voyageone_cms.cms_bt_cn_model_extend ext_cn on m.model_id = ext_cn.model_id
+         left join voyageone_cms.cms_bt_cn_tm_model_extend ext_cn_tm on m.model_id = ext_cn_tm.model_id
+         left join voyageone_cms.cms_bt_cn_jd_model_extend ext_cn_jd on m.model_id = ext_cn_jd.model_id
+         where m.channel_id = #{channel_id}
+           and m.model_id = #{model_id};
+    </select>
 
+    <!-- 根据主类目id，获取各个平台的类目id -->
+    <select id="ims_mt_category_mapping_select_by_categoryid" parameterType="HashMap"
+            resultType="HashMap">
+        select distinct m.category_id as category_id,
+                       m.platform_cid as platform_cid,
+                       v.platform_id as platform_id
+                 from voyageone_ims.ims_mt_category_mapping m
+                 left join Synship.viw_com_cart_shop_channel_mapping v on v.cart_id = m.platform_cart_id
+                 where m.category_id = #{categoryId}
+                ;
+    </select>
 
+    <!-- 插入model的主类目_1 -->
+    <insert id="cms_bt_model_extend_insert" parameterType="HashMap">
+        insert into voyageone_cms.cms_bt_model_extend
+         (model_id, channel_id, main_category_id, created, creater)
+         values (
+               #{model_id}
+             , #{channel_id}
+             , #{main_category_id}
+             , now()
+             , #{jobName}
+        );
+    </insert>
+
+    <!-- 插入model的主类目_2 -->
+    <insert id="cms_bt_cn_model_extend_insert" parameterType="HashMap">
+        insert into voyageone_cms.cms_bt_cn_model_extend
+        (model_id, channel_id, main_category_id, created, creater)
+        values (
+        #{model_id}
+        , #{channel_id}
+        , #{main_category_id}
+        , now()
+        , #{jobName}
+        );
+    </insert>
+
+    <!-- 更新model的主类目_1 -->
+    <update id="cms_bt_model_extend_update" parameterType="HashMap">
+        update voyageone_cms.cms_bt_model_extend
+         set  main_category_id = #{main_category_id}
+            , modified = now()
+            , modifier = #{jobName}
+         where model_id = #{model_id}
+           and channel_id = #{channel_id}
+        ;
+    </update>
+
+    <!-- 更新model的主类目_2 -->
+    <update id="cms_bt_cn_model_extend_update" parameterType="HashMap">
+        update voyageone_cms.cms_bt_cn_model_extend
+        set  main_category_id = #{main_category_id}
+        , modified = now()
+        , modifier = #{jobName}
+        where model_id = #{model_id}
+        and channel_id = #{channel_id}
+        ;
+    </update>
+
+    <!-- 插入model的平台类目_Tm -->
+    <insert id="cms_bt_cn_tm_model_extend_insert" parameterType="HashMap">
+        insert into voyageone_cms.cms_bt_cn_tm_model_extend
+         (model_id, channel_id, tm_category_id, created, creater)
+         values (
+               #{model_id}
+             , #{channel_id}
+             <if test="platform_category_id == null or platform_category_id == ''">
+              , null
+             </if>
+             <if test="platform_category_id != null and platform_category_id != ''">
+                 , #{platform_category_id}
+             </if>
+             , now()
+             , #{jobName}
+        );
+    </insert>
+
+    <!-- 插入model的平台类目_Jd -->
+    <insert id="cms_bt_cn_jd_model_extend_insert" parameterType="HashMap">
+        insert into voyageone_cms.cms_bt_cn_jd_model_extend
+        (model_id, channel_id, jd_category_id, created, creater)
+        values (
+            #{model_id}
+            , #{channel_id}
+            <if test="platform_category_id == null or platform_category_id == ''">
+                , null
+            </if>
+            <if test="platform_category_id != null and platform_category_id != ''">
+                , #{platform_category_id}
+            </if>
+            , now()
+            , #{jobName}
+        );
+    </insert>
+
+    <!-- 更新model的平台类目_Tm -->
+    <update id="cms_bt_cn_tm_model_extend_update" parameterType="HashMap">
+        update voyageone_cms.cms_bt_cn_tm_model_extend
+        <if test="platform_category_id == null or platform_category_id == ''">
+            set  tm_category_id = null
+        </if>
+        <if test="platform_category_id != null and platform_category_id != ''">
+            set  tm_category_id = #{platform_category_id}
+        </if>
+            , modified = now()
+            , modifier = #{jobName}
+         where model_id = #{model_id}
+           and channel_id = #{channel_id}
+        ;
+    </update>
+
+    <!-- 更新model的平台类目_Jd -->
+    <update id="cms_bt_cn_jd_model_extend_update" parameterType="HashMap">
+        update voyageone_cms.cms_bt_cn_jd_model_extend
+        <if test="platform_category_id == null or platform_category_id == ''">
+            set  jd_category_id = null
+        </if>
+        <if test="platform_category_id != null and platform_category_id != ''">
+            set  jd_category_id = #{platform_category_id}
+        </if>
+        , modified = now()
+        , modifier = #{jobName}
+        where model_id = #{model_id}
+        and channel_id = #{channel_id}
+        ;
+    </update>
 
 
 </mapper>

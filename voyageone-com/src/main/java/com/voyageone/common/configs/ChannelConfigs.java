@@ -162,9 +162,7 @@ public class ChannelConfigs {
         private static final long serialVersionUID = 1L;
 
         public Configs(List<OrderChannelConfigBean> beans) {
-            for (OrderChannelConfigBean bean : beans) {
-                put(bean);
-            }
+            beans.forEach(this::put);
         }
 
         public void put(OrderChannelConfigBean config) {
@@ -176,10 +174,7 @@ public class ChannelConfigs {
                 map.put(name, config);
                 put(id, map);
             } catch (IllegalArgumentException e) {
-                logger.warn("=== ChannelConfig.Configs.put ===");
-                logger.warn(e);
-                logger.warn(e.getMessage());
-                logger.warn(String.format("Channel: %s ; Name: %s", config.getOrder_channel_id(), config.getCfg_name()));
+                logger.warn(String.format("[ %s ] [ Channel: %s ; Name: %s ]", e.getMessage(), config.getOrder_channel_id(), config.getCfg_name()));
             }
         }
     }
@@ -194,7 +189,7 @@ public class ChannelConfigs {
 
         public void put(ChannelConfigEnums.Name name, OrderChannelConfigBean config) {
             if (!containsKey(name)) {
-                super.put(name, new ArrayList<OrderChannelConfigBean>());
+                super.put(name, new ArrayList<>());
             }
 
             get(name).add(config);

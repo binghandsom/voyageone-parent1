@@ -1494,6 +1494,22 @@
 			and now() >= ifNull(exp_date_time_start, now())
 			and ifNull(exp_date_time_end, now()) >= now()
 	</select>
+
+	<!-- 套装内容设置获得 -->
+	<select id="oms_suit_sku_setting_getSuitSkuSetting" resultType="HashMap">
+		select
+			order_channel_id as orderChannelId,
+			cart_id as cartId,
+			sku,
+			real_sku as realSku,
+			real_sku_name as realSkuName,
+			real_sku_price as realSkuPrice
+		from
+			oms_suit_sku_setting
+		where
+			now() >= ifNull(exp_date_time_start, now())
+			and ifNull(exp_date_time_end, now()) >= now()
+	</select>
 	
 	<!-- 获取独立域名已发货订单信息 -->
 	<select id="oms_bt_orders_getSelfShippedOrderInfo" parameterType="HashMap" resultType="HashMap">
@@ -1893,7 +1909,7 @@
 			on o.cart_id = c.cart_id
 		where
 			o.order_channel_id = #{orderChannelId} and
-			o.order_status != 'Canceled' and
+			o.order_status = 'Canceled' and
 			od.adjustment = false and
 			ox.send_flg = true and
 			ox.ext_flg1 = true and

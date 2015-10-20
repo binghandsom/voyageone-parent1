@@ -31,21 +31,25 @@ public class MasterCategoryMatchServiceImpl implements MasterCategoryMatchServic
 	MasterCategoryMatchDao masterCategoryMatchDao;
 	@Autowired
 	PlatformInfoDao platformInfoDao;
-	
+
 	/**
 	 * 获取所有cms类目的信息.
 	 */
 	@Override
-	public List<CmsCategoryBean> getCmsCategoryList(String channelId) {
+	public List<CmsCategoryModel> getCmsCategoryModelList(String channelId) {
 
 		List<CmsCategoryModel> categoryModels = masterCategoryMatchDao.getCmsCategoryList(channelId);
-
 		List<String> propMatchDoneList = masterCategoryMatchDao.getPropMatchCompleteCategories(channelId);
 
 		List<CmsCategoryModel> removeList = new ArrayList<>();
-		List<CmsCategoryBean> resultList = new ArrayList<>();
 
 		for (CmsCategoryModel model : categoryModels) {
+			if (model.getMainCategoryId()>0) {
+				model.setMainCategoryPath(ImsCategoryConfigs.getMtCategoryBeanById(model.getMainCategoryId()).getCategoryPath());
+				if(propMatchDoneList.contains(String.valueOf(model.getMainCategoryId()))){
+					model.setPropMatchStatus(1);
+				}
+			}
 			List<CmsCategoryModel> subModels = new ArrayList<>();
 			boolean isTop = true;
 			for (CmsCategoryModel subModel : categoryModels) {
@@ -69,64 +73,40 @@ public class MasterCategoryMatchServiceImpl implements MasterCategoryMatchServic
 
 		for (CmsCategoryModel model : categoryModels) {
 
-			CmsCategoryBean categoryBean = new CmsCategoryBean();
+			model.setCmsCategoryPath(model.getEnName());
 
-			BeanUtils.copyProperties(model, categoryBean);
-
-			categoryBean.setCmsCategoryPath(model.getEnName());
-			if (model.getMainCategoryId()>0) {
-				categoryBean.setMainCategoryPath(
-						ImsCategoryConfigs.getMtCategoryBeanById(model.getMainCategoryId()).getCategoryPath());
-				if(propMatchDoneList.contains(String.valueOf(model.getMainCategoryId()))){
-					categoryBean.setPropMatchStatus(1);
-				}
-			}
-			resultList.add(categoryBean);
-
-			this.buildViewModel(model, model.getEnName(), categoryBean.getMainCategoryPath(), resultList);
+			this.buildModel(model, model.getEnName(), model.getMainCategoryPath(),model.getMainCategoryId());
 		}
 
-		return resultList;
+		return categoryModels;
 
 	}
 	
-	
-
 	/**
-	 * 
+	 *
 	 * @param parent
 	 * @param parentPath
 	 * @param parentMainPath
-	 * @param resultList
 	 */
-	private void buildViewModel(CmsCategoryModel parent, String parentPath, String parentMainPath,
-			List<CmsCategoryBean> resultList) {
+	private void buildModel(CmsCategoryModel parent, String parentPath, String parentMainPath,int parentMainCatId) {
 
 		List<CmsCategoryModel> categoryModels = parent.getChildren();
 
 		if (categoryModels != null) {
 
 			for (CmsCategoryModel cmsCategoryModel : categoryModels) {
-				CmsCategoryBean categoryBean = new CmsCategoryBean();
-				BeanUtils.copyProperties(cmsCategoryModel, categoryBean);
 				String path = parentPath + " > " + cmsCategoryModel.getEnName();
-				categoryBean.setCmsCategoryPath(path);
+				cmsCategoryModel.setCmsCategoryPath(path);
 				if (cmsCategoryModel.getMainCategoryId() == 0) {
-					categoryBean.setMainCategoryPath(parentMainPath);
-				} else {
-					if (cmsCategoryModel.getMainCategoryId()>0) {
-						categoryBean.setMainCategoryPath(ImsCategoryConfigs
-								.getMtCategoryBeanById(cmsCategoryModel.getMainCategoryId()).getCategoryPath());
-					}
-					
+					cmsCategoryModel.setMainCategoryPath(parentMainPath);
+					cmsCategoryModel.setExtendMainCategoryId(parentMainCatId);
 				}
-				resultList.add(categoryBean);
-				if (cmsCategoryModel.getMainCategoryId() == -1) {
-					buildViewModel(cmsCategoryModel, path, parentMainPath, resultList);
+				if (cmsCategoryModel.getMainCategoryId() > 0) {
+					buildModel(cmsCategoryModel, path, cmsCategoryModel.getMainCategoryPath(),cmsCategoryModel.getMainCategoryId());
 				}else {
-					buildViewModel(cmsCategoryModel, path, categoryBean.getMainCategoryPath(), resultList);
+					buildModel(cmsCategoryModel, path, parentMainPath,parentMainCatId);
 				}
-				
+
 			}
 		}
 	}

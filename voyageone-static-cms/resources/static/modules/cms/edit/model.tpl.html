@@ -479,9 +479,9 @@
                                                                 <label for="txtCNModelCnName" class="col-sm-4 control-label vo_reqfield" translate="CMS_TXT_NAME"></label>
 
                                                                 <div class="col-sm-8">
-                                                                    <input type="text" class="form-control" id="txtCNModelCnName" name="txtCNModelCnName" ng-model="cnBaseModelInfo.cnName" ng-maxlength="100" required="" ng-change="cnModelChanged()">
+                                                                    <input type="text" class="form-control" id="txtCNModelCnName" name="txtCNModelCnName" ng-model="cnBaseModelInfo.cnName" vo-char-max-length="60" required="" ng-change="cnModelChanged()">
                                                                     <va-check ng-show="formCNModelInfo.txtCNModelCnName.$error.required" check-type="required"></va-check>
-                                                                    <va-check ng-show="formCNModelInfo.txtCNModelCnName.$error.maxlength" check-type="maxlength" check-param="100"></va-check>
+                                                                    <va-check ng-show="formCNModelInfo.txtCNModelCnName.$error.maxlength" check-type="maxlength" check-param="60"></va-check>
                                                                 </div>
                                                             </div>
                                                             <!-- .form-group -->
@@ -775,7 +775,7 @@
                                                                             <label for="txtCNModelTbName" class="col-sm-4 control-label" translate="CMS_TXT_NAME"></label>
 
                                                                             <div class="col-sm-8">
-                                                                                <input type="text" class="form-control inherited" id="txtCNModelTbName" name="txtCNModelTbName" ng-model="tmModelInfo.tbName" ng-maxlength="60" ng-change="tmModelChanged()">
+                                                                                <input type="text" class="form-control inherited" id="txtCNModelTbName" name="txtCNModelTbName" ng-model="tmModelInfo.tbName" vo-char-max-length="60" ng-change="tmModelChanged()">
                                                                                 <va-check ng-show="formTMModelInfo.txtCNModelTbName.$error.maxlength" check-type="maxlength" check-param="60"></va-check>
                                                                             </div>
                                                                         </div>
@@ -800,7 +800,7 @@
                                                                             <label for="txtCNModelTMName" class="col-sm-4 control-label" translate="CMS_TXT_NAME"></label>
 
                                                                             <div class="col-sm-8">
-                                                                                <input type="text" class="form-control inherited" id="txtCNModelTMName" name="txtCNModelTMName" ng-model="tmModelInfo.tmName" ng-maxlength="60" ng-change="tmModelChanged()">
+                                                                                <input type="text" class="form-control inherited" id="txtCNModelTMName" name="txtCNModelTMName" ng-model="tmModelInfo.tmName" vo-char-max-length="60" ng-change="tmModelChanged()">
                                                                                 <va-check ng-show="formTMModelInfo.txtCNModelTMName.$error.maxlength" check-type="maxlength" check-param="60"></va-check>
                                                                             </div>
                                                                         </div>
@@ -824,7 +824,7 @@
                                                                             <label for="txtCNModelTGName" class="col-sm-4 control-label" translate="CMS_TXT_NAME"></label>
 
                                                                             <div class="col-sm-8">
-                                                                                <input type="text" class="form-control inherited" id="txtCNModelTGName" name="txtCNModelTGName" ng-model="tmModelInfo.tgName" ng-maxlength="60" ng-change="tmModelChanged()">
+                                                                                <input type="text" class="form-control inherited" id="txtCNModelTGName" name="txtCNModelTGName" ng-model="tmModelInfo.tgName" vo-char-max-length="60" ng-change="tmModelChanged()">
                                                                                 <va-check ng-show="formTMModelInfo.txtCNModelTGName.$error.maxlength" check-type="maxlength" check-param="60"></va-check>
                                                                             </div>
                                                                         </div>

@@ -8,7 +8,7 @@
 
 define([ "modules/cms/cms.module",
          "modules/cms/cms.route",
-		 "modules/cms/masterPropValueSetting/masterPropValueSettingService",
+		 "modules/cms/master/masterPropValueSetting/masterPropValueSettingService",
 		 "modules/cms/service/mainCategory.service",
 		 "modules/cms/edit/edit.service",
 		 "modules/cms/popup/propValueSetting/popPropValueSetting.ctl"], 
@@ -41,11 +41,9 @@ define([ "modules/cms/cms.module",
 				 * 初始化处理
 				 */
 				scope.init = function() {
-
 					scope.isReady = true;
-
 					scope.isSave = true;
-
+					scope.eligiblyModels=null;
 					//需要调用catagoryServiece 取得参数.
 					scope.session = catagoryServiece.getMainCategoryParam();
 					var parmData ={
@@ -57,6 +55,7 @@ define([ "modules/cms/cms.module",
 						levelValue:scope.session.currentId
 					};
 					if(parmData.categoryId!=null && parmData.categoryId!=''){
+
 						scope.isNew=false;
 						vaueSetservice.doInit(parmData).then(function(response) {
 
@@ -81,10 +80,23 @@ define([ "modules/cms/cms.module",
 
 								return;
 							}
-
+							var requireModels ={};
+							for(var modelName in responseData.propModels){
+								var model = responseData.propModels[modelName];
+								if(model.require==1){
+									requireModels[modelName] = model;
+								}else{
+									if(!scope.eligiblyModels){
+										scope.eligiblyModels={};
+									}
+									scope.eligiblyModels[modelName] = model;
+								}
+							}
 							//绑定
-							scope.propModels = responseData.propModels;
-
+							scope.tabs = [
+								{title:'必填项',models:requireModels},
+								{title:'可选项'}
+							];
 							//设定平台信息.
 							scope.platformInfo = responseData.platformInfo;
 
@@ -93,20 +105,15 @@ define([ "modules/cms/cms.module",
 
 							scope.hiddenInfo = responseData.hiddenInfo;
 
-							if (responseData.propModels) {
+							//设定图片
+							setImages(responseData);
 
-								//设定图片
-								setImages(responseData);
-
-								scope.isError=false;
-							}
-
-
+							scope.isError=false;
 
 						});
 					}else{
+						scope.isNew=true;
 						vaueSetservice.doInit(parmData).then(function(response) {
-
 
 							var responseData=response.data;
 
@@ -117,28 +124,33 @@ define([ "modules/cms/cms.module",
 
 								scope.isError=false;
 							}
-
-
 						});
 						//取得导航列表.
 						if (!scope.categories) {
 							vaueSetservice.getCategoryNav().then(function(response) {
 								//设置所有顶层类目名称
 								scope.categories = response.data.categories;
-								scope.isNew=true;
 							});
 						}
 					}
 				};
-				
-				
+
+				scope.showEligiblyModels = function(tab){
+					if(!tab.models){
+						tab.models = scope.eligiblyModels;
+					}
+				};
 				/**
 				 * 查询处理
 				 */
 				scope.search = function(categoryId) {
-
+					if(scope.tabs){
+						scope.tabs[0].active=true;
+					}
 					scope.isNew=false;
 					scope.isSave = false;
+					scope.propModels=null;
+					scope.eligiblyModels=null;
 
 					var hiddenInfo = {
 						channelId:scope.session.channelId,
@@ -162,9 +174,26 @@ define([ "modules/cms/cms.module",
 							scope.isError=true;
 							return;
 						}
-						
-						scope.propModels = responseData.propModels;
-						
+
+						var requireModels ={};
+						for(var modelName in responseData.propModels){
+							var model = responseData.propModels[modelName];
+							if(model.require==1){
+
+								requireModels[modelName] = model;
+
+							}else{
+								if(scope.eligiblyModels==null){
+									scope.eligiblyModels={};
+								}
+								scope.eligiblyModels[modelName] = model;
+
+							}
+						}
+						scope.tabs = [
+							{title:'必填项',models:requireModels},
+							{title:'可选项'}
+						];
 						//设定平台信息.
 						scope.platformInfo = responseData.platformInfo;
 						
@@ -188,11 +217,24 @@ define([ "modules/cms/cms.module",
 				/**
 				 * 提交处理.
 				 */
-	            scope.submit = function (propModels) {
+	            scope.submit = function () {
+
 	                vConfirm('CMS_MSG_MASTER_PROP_VALUE_SETTING_CATEGORY_SAVE_COMFIRM','').result.then(function() {
-						
+
+						var saveModels=scope.tabs[0].models;
+
+						if(scope.tabs[1].models){
+							for(var modelName in scope.tabs[1].models){
+								saveModels[modelName] =   scope.tabs[1].models[modelName];
+							}
+						}else{
+							for(var modelName in scope.eligiblyModels){
+								saveModels[modelName] =   scope.eligiblyModels[modelName];
+							}
+						}
+
 						var fromData ={
-							propModels:propModels,
+							propModels:saveModels,
 							hiddenInfo:{
 								channelId:scope.session.channelId,
 								level:scope.session.currentLevel,

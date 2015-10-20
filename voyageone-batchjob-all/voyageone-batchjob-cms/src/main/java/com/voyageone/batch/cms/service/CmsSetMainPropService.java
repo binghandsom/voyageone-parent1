@@ -44,6 +44,8 @@ public class CmsSetMainPropService extends BaseTaskService {
         return "CmsSetMainPropJob";
     }
 
+    private String bad_prop_const = "badprop>";
+
     public void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
         // 允许运行的订单渠道取得
@@ -77,223 +79,104 @@ public class CmsSetMainPropService extends BaseTaskService {
         }
 
         public void doRun() {
-            logger.info(channel.getFull_name() + "产品导入开始" );
-
-            boolean blnError = false;
+            logger.info(channel.getFull_name() + "产品导入主数据开始" );
 
             String channel_id = this.channel.getOrder_channel_id();
             String level_model = "2";
 
-			while (true) {
-				// 查找所有的商品
-				List<MainPropTodoListBean> mainPropTodoListBeanList;
-				mainPropTodoListBeanList = mainPropDao.getPlatformSubCatsWithoutShop(channel_id);
+            // 查找所有的商品
+            List<MainPropTodoListBean> mainPropTodoListBeanList;
+            mainPropTodoListBeanList = mainPropDao.getPlatformSubCatsWithoutShop(channel_id);
 
-				// 如果没有检索到数据，那么就跳出循环
-				if (mainPropTodoListBeanList.size() == 0) {
-					break;
-				}
-
+            // 所有的类目匹配关系
+            Map<String, String> mainCategoryIdList = new HashMap<>();
+            // 如果检索到数据
+            if (mainPropTodoListBeanList.size() > 0) {
                 // 一次性获取所有的类目匹配关系（根据channel_id）
-                Map<String, String> mainCategoryIdList = mainPropDao.selectMainCategoryIdList(channel_id);
+                mainCategoryIdList = mainPropDao.selectMainCategoryIdList(channel_id);
+            }
+            // 遍历检索到的类目匹配关系，看看属性是否有匹配过
+//            mainCategoryIdList = getCleanMainCategoryIdList(mainCategoryIdList);
 
-                // 循环所有的商品
-				for (MainPropTodoListBean mainPropTodoListBean : mainPropTodoListBeanList) {
-					// 遍历每个商品
-					String category_id = mainPropTodoListBean.getCategory_id();
-					String model_id = mainPropTodoListBean.getModel_id();
-					String product_id = mainPropTodoListBean.getProduct_id();
+            // 循环所有的商品
+            for (MainPropTodoListBean mainPropTodoListBean : mainPropTodoListBeanList) {
+                // 遍历每个商品
+                String category_id = mainPropTodoListBean.getCategory_id();
+                String model_id = mainPropTodoListBean.getModel_id();
+                String product_id = mainPropTodoListBean.getProduct_id();
 
-					// 获取主类目
-					String mainCategoryId;
+                // 获取主类目
+                String mainCategoryId;
+                // 有可能已经设置过主类目了，去获取一下
+                List<String> resultModel = mainPropDao.selectModelIdByModelName(channel_id, model_id);
+
+                if (resultModel != null && resultModel.size() > 0) {
+                    // 2015-10-14 tom modify 主数据类目的数据源从cms_bt_model_extend，改为cms_bt_cn_model_extend START
+//                    mainCategoryId = resultModel.get(1);
+                    mainCategoryId = resultModel.get(2);
+                    // 2015-10-14 tom modify 主数据类目的数据源从cms_bt_model_extend，改为cms_bt_cn_model_extend END
+                } else {
+                    mainCategoryId = "";
+                }
+
+                // 如果没有设置过主类目的话，使用默认匹配的主类目
+                if (StringUtils.isEmpty(mainCategoryId)) {
                     if (mainCategoryIdList.containsKey(category_id)) {
                         mainCategoryId = mainCategoryIdList.get(category_id);
-                    } else {
-                        // 如果没有设定过主类目，那么认为出错了，并要求运营设置主类目
-                        blnError = true;
-                        break;
-                    }
 
-                    // 获取feed内容
-                    List<MainPropTodoItemListBean> mainPropTodoItemListBeanList = mainPropDao.selectMainPropTodoItemListBean(channel_id, product_id);
-                    Map<String, String> mapMainPropTodoItemListBeanList = new HashMap<>();
-                    for (MainPropTodoItemListBean mainPropTodoItemListBean : mainPropTodoItemListBeanList) {
-                        mapMainPropTodoItemListBeanList.put(mainPropTodoItemListBean.getAttribute_name(), mainPropTodoItemListBean.getAttribute_value());
-                    }
-
-                    // 根据product id，获取sku列表
-                    List<String> skuList = mainPropDao.getSkuListFromProductId(channel_id, product_id);
-
-                    // 如果sku的数据不存在的话，那就没必要做这些处理了
-                    if (skuList != null && skuList.size() > 0) {
-
-                        // 遍历SKU级别的数据
-                        // 获取ims_bt_sku_prop_mapping的数据
-                        List<FeedMappingSkuBean> feedMappingBeanSkuList = mainPropDao.selectFeedMappingSkuList(channel_id, mainCategoryId);
-                        // 获取ims_bt_prop_value_sku_template的数据
-                        List<PropValueSkuTemplateBean> propValueSkuTemplateBeanList = mainPropDao.selectPropValueSkuTemplateList();
-                        Map<String, PropValueSkuTemplateBean> propValueSkuTemplateBeanMap = new HashMap<>();
-                        for (PropValueSkuTemplateBean propValueSkuTemplateBean : propValueSkuTemplateBeanList) {
-                            propValueSkuTemplateBeanMap.put(propValueSkuTemplateBean.getProp_name(), propValueSkuTemplateBean);
-                        }
-
-                        // 设置sku的属性
-                        List<ImsPropValueSkuBean> mainPropSkuList = new ArrayList<>();
-
-                        // 遍历FeedMapping
-                        for (FeedMappingSkuBean feedMappingSkuBean : feedMappingBeanSkuList) {
-
-                            // 如果有条件的话，看看是否符合条件
-                            if (!StringUtils.isEmpty(feedMappingSkuBean.getConditions())) {
-                                // 条件
-                                Condition condition = JsonUtil.jsonToBean(feedMappingSkuBean.getConditions(), Condition.class);
-
-                                // 判断条件是否满足
-                                String strFeedValue = mapMainPropTodoItemListBeanList.get(condition.getProperty());
-                                switch (condition.getOperation()) {
-                                    case IS_NULL:
-                                        if (!StringUtils.isEmpty(strFeedValue)) {
-                                            // 条件不满足，跳过
-                                            continue;
-                                        }
-                                        break;
-                                    case IS_NOT_NULL:
-                                        if (StringUtils.isEmpty(strFeedValue)) {
-                                            // 条件不满足，跳过
-                                            continue;
-                                        }
-                                        break;
-                                    case EQUALS:
-                                        // 禁止为空
-                                        if (strFeedValue == null) {
-                                            continue;
-                                        }
-                                        if (condition.getValue() == null) {
-                                            continue;
-                                        }
-
-                                        if (!strFeedValue.equals(condition.getValue())) {
-                                            // 条件不满足，跳过
-                                            continue;
-                                        }
-                                        break;
-                                    case NOT_EQUALS:
-                                        // 禁止为空
-                                        if (strFeedValue == null) {
-                                            continue;
-                                        }
-                                        if (condition.getValue() == null) {
-                                            continue;
-                                        }
-
-                                        if (strFeedValue.equals(condition.getValue())) {
-                                            // 条件不满足，跳过
-                                            continue;
-                                        }
-                                        break;
-                                }
-
-                            }
-
-                            // 准备设定值
-                            String value = "";
-                            FeedPropMappingType feedPropMappingType;
-                            feedPropMappingType = FeedPropMappingType.valueOf(Integer.parseInt(feedMappingSkuBean.getType()));
-                            if (feedPropMappingType == FeedPropMappingType.FEED) {
-                                // 获取属性的值
-                                value = mapMainPropTodoItemListBeanList.get(feedMappingSkuBean.getValue());
-
-                                // 获取template，看看是否要进行运算
-                                PropValueSkuTemplateBean propValueSkuTemplateBean;
-                                if (propValueSkuTemplateBeanMap.containsKey(feedMappingSkuBean.getProp_name())) {
-                                    propValueSkuTemplateBean = propValueSkuTemplateBeanMap.get(feedMappingSkuBean.getProp_name());
-
-                                    value = doEditSkuTemplate(
-                                            value,
-                                            propValueSkuTemplateBean.getEdit(),
-                                            propValueSkuTemplateBean.getPrefix(),
-                                            propValueSkuTemplateBean.getSuffix()
-                                            );
-                                }
-
-                            }
-
-                            // 循环sku列表
-                            for (String sku : skuList) {
-                                List<ImsPropValueSkuBean> imsPropValueSkuBeanList = mainPropDao.selectPropValueSku(
-                                        channel_id,
-                                        sku,
-                                        feedMappingSkuBean.getProp_name()
-                                );
-
-                                // 查看当前属性是否已经设定过了
-                                if (imsPropValueSkuBeanList != null && imsPropValueSkuBeanList.size() > 0) {
-                                    // 如果这个属性已经设置过了，那么根据先来后到的优先度，之后的就不用设置了
-                                    continue;
-                                }
-
-                                // 添加自己
-                                ImsPropValueSkuBean imsPropValueSkuBean = new ImsPropValueSkuBean();
-
-                                imsPropValueSkuBean.setSku(sku);
-                                imsPropValueSkuBean.setProp_name(feedMappingSkuBean.getProp_name());
-                                imsPropValueSkuBean.setProp_value(value);
-                                imsPropValueSkuBean.setOrder_channel_id(channel_id);
-
-                                mainPropSkuList.add(imsPropValueSkuBean);
-
-                            }
-
-                        }
-
-                        if (mainPropSkuList.size() > 0) {
-                            // 插入数据库
-                            mainPropDao.doInsertSkuValue(mainPropSkuList, getTaskName());
-                        }
-                    }
-
-                    // 去value表检索一下，看看这个model是否已经设置过了
-                    boolean blnMainValueExist = mainPropDao.selectMainValue(channel_id, level_model, model_id);
-                    // 已经存在了，那就是已经设置过了
-                    if (blnMainValueExist) {
-                        // 更新处理flag
-                        mainPropDao.doFinishProduct(channel_id, product_id);
-
-                        // 跳过这条数据吧
-                        continue;
-                    }
-
-                    // 获取该类目（主数据类目）的所有属性， 放入map
-                    Map<String, ImsPropBean> imsPropMap = mainPropDao.selectImsPropByCategoryId(mainCategoryId);
-
-                    // 获取mapping的内容，放入需要操作的对象
-                    List<FeedMappingBean> feedMappingBeanList = mainPropDao.selectFeedMappingList(channel_id, mainCategoryId);
-
-                    // 获取mapping default的内容，放入需要操作的对象
-                    List<FeedMappingDefaultBean> feedMappingDefaultBeanList = mainPropDao.selectFeedMappingDefaultList(channel_id);
-                    Map<String, List<String>> mapFeedMappingDefaultBeanList = new HashMap<>();
-                    for (FeedMappingDefaultBean feedMappingDefaultBean : feedMappingDefaultBeanList) {
-                        List<String> lstProp = new ArrayList<>();
-                        lstProp.add(feedMappingDefaultBean.getProp_type());
-                        lstProp.add(feedMappingDefaultBean.getProp_value());
-
-                        mapFeedMappingDefaultBeanList.put(feedMappingDefaultBean.getProp_name(), lstProp);
-                    }
-
-					// 设置主数据的属性
-                    Map<String, ImsPropValueBean> mainPropList = new HashMap<>();
-
-					// 遍历FeedMapping
-                    for (FeedMappingBean feedMappingBean : feedMappingBeanList) {
-                        if (mainPropList.containsKey(feedMappingBean.getProp_id())) {
-                            // 如果这个属性已经设置过了，那么根据先来后到的优先度，之后的就不用设置了
+                        if (mainCategoryId.startsWith(bad_prop_const)) {
+                            // 如果没有设定过匹配用的主类目，那么认为无法继续了，跳过
+                            logger.warn("主类目属性未设定完成：category_id=" + category_id);
                             continue;
                         }
+                        // 将该商品的主类目，设为默认匹配好的值
+                        mainPropDao.doSetMainCategoryId(resultModel, channel_id, mainCategoryId, getTaskName());
+                    } else {
+//                            // 如果没有设定过匹配用的主类目，那么认为出错了，并要求运营设置主类目
+//                            blnError = true;
+//                            break;
+
+                        // 如果没有设定过匹配用的主类目，那么认为无法继续了，跳过
+                        logger.warn("尚未指定主类目：category_id=" + category_id);
+                        logger.warn("尚未指定主类目：model_id=" + model_id);
+                        logger.warn("尚未指定主类目：product_id=" + product_id);
+                        continue;
+                    }
+                }
+
+                // 获取feed内容
+                List<MainPropTodoItemListBean> mainPropTodoItemListBeanList = mainPropDao.selectMainPropTodoItemListBean(channel_id, product_id);
+                Map<String, String> mapMainPropTodoItemListBeanList = new HashMap<>();
+                for (MainPropTodoItemListBean mainPropTodoItemListBean : mainPropTodoItemListBeanList) {
+                    mapMainPropTodoItemListBeanList.put(mainPropTodoItemListBean.getAttribute_name(), mainPropTodoItemListBean.getAttribute_value());
+                }
+
+                // 根据product id，获取sku列表
+                List<String> skuList = mainPropDao.getSkuListFromProductId(channel_id, product_id);
+
+                // 如果sku的数据不存在的话，那就没必要做这些处理了
+                if (skuList != null && skuList.size() > 0) {
+
+                    // 遍历SKU级别的数据
+                    // 获取ims_bt_sku_prop_mapping的数据
+                    List<FeedMappingSkuBean> feedMappingBeanSkuList = mainPropDao.selectFeedMappingSkuList(channel_id, mainCategoryId);
+                    // 获取ims_bt_prop_value_sku_template的数据
+                    List<PropValueSkuTemplateBean> propValueSkuTemplateBeanList = mainPropDao.selectPropValueSkuTemplateList();
+                    Map<String, PropValueSkuTemplateBean> propValueSkuTemplateBeanMap = new HashMap<>();
+                    for (PropValueSkuTemplateBean propValueSkuTemplateBean : propValueSkuTemplateBeanList) {
+                        propValueSkuTemplateBeanMap.put(propValueSkuTemplateBean.getProp_name(), propValueSkuTemplateBean);
+                    }
+
+                    // 设置sku的属性
+                    List<ImsPropValueSkuBean> mainPropSkuList = new ArrayList<>();
+
+                    // 遍历FeedMapping
+                    for (FeedMappingSkuBean feedMappingSkuBean : feedMappingBeanSkuList) {
 
                         // 如果有条件的话，看看是否符合条件
-                        if (!StringUtils.isEmpty(feedMappingBean.getConditions())) {
+                        if (!StringUtils.isEmpty(feedMappingSkuBean.getConditions())) {
                             // 条件
-                            Condition condition = JsonUtil.jsonToBean(feedMappingBean.getConditions(), Condition.class);
+                            Condition condition = JsonUtil.jsonToBean(feedMappingSkuBean.getConditions(), Condition.class);
 
                             // 判断条件是否满足
                             String strFeedValue = mapMainPropTodoItemListBeanList.get(condition.getProperty());
@@ -345,226 +228,372 @@ public class CmsSetMainPropService extends BaseTaskService {
                         // 准备设定值
                         String value = "";
                         FeedPropMappingType feedPropMappingType;
-                        feedPropMappingType = FeedPropMappingType.valueOf(Integer.parseInt(feedMappingBean.getType()));
+                        feedPropMappingType = FeedPropMappingType.valueOf(Integer.parseInt(feedMappingSkuBean.getType()));
                         if (feedPropMappingType == FeedPropMappingType.FEED) {
                             // 获取属性的值
-                            value = mapMainPropTodoItemListBeanList.get(feedMappingBean.getValue());
-                            value = "{\"ruleWordList\":[{\"type\":\"TEXT\", \"value\":\"" + value + "\"}]}";
-                        } else if (feedPropMappingType == FeedPropMappingType.OPTIONS) {
-                            value = feedMappingBean.getValue();
-                            value = "{\"ruleWordList\":[{\"type\":\"TEXT\", \"value\":\"" + value + "\"}]}";
-                        } else if (feedPropMappingType == FeedPropMappingType.CMS) {
-                            value = feedMappingBean.getValue();
-                            value = "{\"ruleWordList\":[{\"type\":\"CMS\", \"value\":[\"CmsModelEnum\",\"" + value + "\"]}]}";
-                        } else if (feedPropMappingType == FeedPropMappingType.VALUE) {
-                            if (feedMappingBean.getValue().startsWith("{")
-                                    || feedMappingBean.getValue().startsWith("[{")
-                                    ) {
-                                value = feedMappingBean.getValue();
-                            } else {
-                                value = feedMappingBean.getValue();
-                                value = "{\"ruleWordList\":[{\"type\":\"TEXT\", \"value\":\"" + value + "\"}]}";
+                            value = mapMainPropTodoItemListBeanList.get(feedMappingSkuBean.getValue());
+
+                            // 获取template，看看是否要进行运算
+                            PropValueSkuTemplateBean propValueSkuTemplateBean;
+                            if (propValueSkuTemplateBeanMap.containsKey(feedMappingSkuBean.getProp_name())) {
+                                propValueSkuTemplateBean = propValueSkuTemplateBeanMap.get(feedMappingSkuBean.getProp_name());
+
+                                value = doEditSkuTemplate(
+                                        value,
+                                        propValueSkuTemplateBean.getEdit(),
+                                        propValueSkuTemplateBean.getPrefix(),
+                                        propValueSkuTemplateBean.getSuffix()
+                                        );
                             }
 
+                        } else if (feedPropMappingType == FeedPropMappingType.VALUE) {
+                            // 直接设定值
+                            value = feedMappingSkuBean.getValue();
                         }
 
-                        // 设定值
-                        {
-                            // 添加一个父
-                            String strParentUuidMulti = "";
-                            String strParentUuid = "";
+                        // 循环sku列表
+                        for (String sku : skuList) {
+                            List<ImsPropValueSkuBean> imsPropValueSkuBeanList = mainPropDao.selectPropValueSku(
+                                    channel_id,
+                                    sku,
+                                    feedMappingSkuBean.getProp_name()
+                            );
 
-                            // 看看自己的类型
-                            int intType = imsPropMap.get(feedMappingBean.getProp_id()).getPropType();
-                            if (intType == MasterPropTypeEnum.MULTICHECK.getValue()
-                                    || intType == MasterPropTypeEnum.MULTICOMPLEX.getValue()
-                                    ) {
-                                // 需要待会儿在最后插入数据的时候，添加一个父
-                                strParentUuidMulti = getUUID();
-                            }
-
-                            // 看看自己是否有父
-                            int intParentId = imsPropMap.get(feedMappingBean.getProp_id()).getParentPropId();
-                            if (intParentId != 0) {
-                                // 有父，添加父（包括所有父）
-                                List<ImsPropValueBean> imsParentPropValueBeanList =  doAddParentProp(channel_id, level_model, model_id, String.valueOf(intParentId), imsPropMap, mainPropList);
-
-                                for (ImsPropValueBean bean : imsParentPropValueBeanList) {
-                                    mainPropList.put(bean.getPropId(), bean);
-                                }
-
-                                strParentUuid = imsParentPropValueBeanList.get(imsParentPropValueBeanList.size() - 1).getUuid();
-
+                            // 查看当前属性是否已经设定过了
+                            if (imsPropValueSkuBeanList != null && imsPropValueSkuBeanList.size() > 0) {
+                                // 如果这个属性已经设置过了，那么根据先来后到的优先度，之后的就不用设置了
+                                continue;
                             }
 
                             // 添加自己
-                            ImsPropValueBean imsPropValueBean = new ImsPropValueBean();
-                            // 算一个uuid出来
-                            imsPropValueBean.setUuid(getUUID());
-                            // channel id
-                            imsPropValueBean.setChannelId(channel_id);
-                            // level
-                            imsPropValueBean.setLevel(level_model);
-                            // level value
-                            imsPropValueBean.setLevelValue(model_id);
-                            // prop id
-                            imsPropValueBean.setPropId(feedMappingBean.getProp_id());
-                            // prop value
-                            imsPropValueBean.setPropValue(value.replace("'", "''"));
-                            // parent
-                            imsPropValueBean.setParent(strParentUuid);
-                            // parent multi
-                            imsPropValueBean.setParentMulti(strParentUuidMulti);
+                            ImsPropValueSkuBean imsPropValueSkuBean = new ImsPropValueSkuBean();
 
-                            mainPropList.put(feedMappingBean.getProp_id(), imsPropValueBean);
+                            imsPropValueSkuBean.setSku(sku);
+                            imsPropValueSkuBean.setProp_name(feedMappingSkuBean.getProp_name());
+                            imsPropValueSkuBean.setProp_value(value);
+                            imsPropValueSkuBean.setOrder_channel_id(channel_id);
 
-                        }
-                    }
-
-                    // 设置默认值
-                    // 遍历主类目的所有属性
-                    Iterator iter = imsPropMap.entrySet().iterator();
-                    while (iter.hasNext()) {
-                        Map.Entry entry = (Map.Entry) iter.next();
-
-                        String key = entry.getKey().toString();
-                        ImsPropBean val = (ImsPropBean) entry.getValue();
-
-                        // 遍历FeedMappingDefault
-                        if (mapFeedMappingDefaultBeanList.containsKey(val.getPropName())) {
-                            List<String> feedMappingDefaultBean = mapFeedMappingDefaultBeanList.get(val.getPropName());
-                            if (String.valueOf(val.getPropType()).equals(feedMappingDefaultBean.get(0))) {
-                                // 这个属性还没有被设置过的话，可以设置一下
-                                if (!mainPropList.containsKey(key)) {
-
-                                    // 设定值
-                                    {
-                                        // 添加一个父
-                                        String strParentUuidMulti = "";
-                                        String strParentUuid = "";
-
-                                        // 看看自己的类型
-                                        int intType = imsPropMap.get(key).getPropType();
-                                        if (intType == MasterPropTypeEnum.MULTICHECK.getValue()
-                                                || intType == MasterPropTypeEnum.MULTICOMPLEX.getValue()
-                                                ) {
-                                            // 需要待会儿在最后插入数据的时候，添加一个父
-                                            strParentUuidMulti = getUUID();
-                                        }
-
-                                        // 看看自己是否有父
-                                        int intParentId = imsPropMap.get(key).getParentPropId();
-                                        if (intParentId != 0) {
-                                            // 有父，添加父（包括所有父）
-                                            List<ImsPropValueBean> imsParentPropValueBeanList =  doAddParentProp(channel_id, level_model, model_id, String.valueOf(intParentId), imsPropMap, mainPropList);
-
-                                            for (ImsPropValueBean bean : imsParentPropValueBeanList) {
-                                                mainPropList.put(bean.getPropId(), bean);
-                                            }
-
-                                            strParentUuid = imsParentPropValueBeanList.get(imsParentPropValueBeanList.size() - 1).getUuid();
-
-                                        }
-
-                                        // 添加自己
-                                        ImsPropValueBean imsPropValueBean = new ImsPropValueBean();
-                                        // 算一个uuid出来
-                                        imsPropValueBean.setUuid(getUUID());
-                                        // channel id
-                                        imsPropValueBean.setChannelId(channel_id);
-                                        // level
-                                        imsPropValueBean.setLevel(level_model);
-                                        // level value
-                                        imsPropValueBean.setLevelValue(model_id);
-                                        // prop id
-                                        imsPropValueBean.setPropId(key);
-                                        // prop value
-                                        imsPropValueBean.setPropValue(feedMappingDefaultBean.get(1).replace("'", "''"));
-                                        // parent
-                                        imsPropValueBean.setParent(strParentUuid);
-                                        // parent multi
-                                        imsPropValueBean.setParentMulti(strParentUuidMulti);
-
-                                        mainPropList.put(key, imsPropValueBean);
-
-                                    }
-
-
-                                }
-                            }
-                        }
-
-                    }
-
-					// 插入到数据库里（主数据的值表）
-                    List<ImsPropValueBean> imsPropValueBeanList = new ArrayList<>();
-                    Set<String> set_MainPropList = mainPropList.keySet();
-                    for (String propId : set_MainPropList) {
-
-                        // 操作对象
-                        ImsPropValueBean imsPropValueBean = mainPropList.get(propId);
-
-                        // 操作对象的类型
-                        int intType = imsPropMap.get(imsPropValueBean.getPropId()).getPropType();
-
-                        // 判断是否是多选（需要特殊处理）
-                        String uuidNew;
-                        if (intType == MasterPropTypeEnum.MULTICHECK.getValue()
-                                || intType == MasterPropTypeEnum.MULTICOMPLEX.getValue()
-                                ) {
-                            ImsPropValueBean tempBean = new ImsPropValueBean();
-
-                            // uuid
-                            uuidNew = getUUID();
-                            tempBean.setUuid(uuidNew);// imsPropValueBean.getParent()
-                            // channel id
-                            tempBean.setChannelId(channel_id);
-                            // level
-                            tempBean.setLevel(level_model);
-                            // level value
-                            tempBean.setLevelValue(model_id);
-                            // prop id
-                            tempBean.setPropId(imsPropValueBean.getPropId());
-                            // prop value
-                            tempBean.setPropValue("");
-                            // parent
-                            // 看看自己是否有父
-                            int intParentId = imsPropMap.get(imsPropValueBean.getPropId()).getParentPropId();
-                            if (intParentId != 0) {
-                                // 如果有父
-                                String strParentUuid = mainPropList.get(String.valueOf(intParentId)).getUuid();
-                                tempBean.setParent(strParentUuid);
-                            } else {
-                                // 没有
-                                tempBean.setParent("");
-                            }
-
-                            // 直接插入
-                            imsPropValueBeanList.add(tempBean);
-
-                            imsPropValueBean.setParent(uuidNew);
+                            mainPropSkuList.add(imsPropValueSkuBean);
 
                         }
 
-                        imsPropValueBeanList.add(imsPropValueBean);
-
-                    }
-                    if (imsPropValueBeanList.size() > 0) {
-                        mainPropDao.doInsertMainValue(imsPropValueBeanList, getTaskName());
                     }
 
+                    if (mainPropSkuList.size() > 0) {
+                        // 插入数据库
+                        mainPropDao.doInsertSkuValue(mainPropSkuList, getTaskName());
+                        logger.info("主数据属性值设定（SKU）：model_id=" + model_id + "; product_id=" + product_id + "; main_category_id=" + mainCategoryId);
+                    }
+                }
+
+                // 去value表检索一下，看看这个model是否已经设置过了
+                boolean blnMainValueExist = mainPropDao.selectMainValue(channel_id, level_model, model_id);
+                // 已经存在了，那就是已经设置过了
+                if (blnMainValueExist) {
                     // 更新处理flag
                     mainPropDao.doFinishProduct(channel_id, product_id);
 
-				}
-
-                // 认为出错了，就不用继续做下去了
-                if (blnError) {
-                    break;
+                    // 跳过这条数据吧
+                    continue;
                 }
-			}
 
-            logger.info(channel.getFull_name() + "产品导入结束");
+                // 获取该类目（主数据类目）的所有属性， 放入map
+                Map<String, ImsPropBean> imsPropMap = mainPropDao.selectImsPropByCategoryId(mainCategoryId);
+
+                // 获取mapping的内容，放入需要操作的对象
+                List<FeedMappingBean> feedMappingBeanList = mainPropDao.selectFeedMappingList(channel_id, mainCategoryId);
+
+                // 获取mapping default的内容，放入需要操作的对象
+                List<FeedMappingDefaultBean> feedMappingDefaultBeanList = mainPropDao.selectFeedMappingDefaultList(channel_id);
+                Map<String, List<String>> mapFeedMappingDefaultBeanList = new HashMap<>();
+                for (FeedMappingDefaultBean feedMappingDefaultBean : feedMappingDefaultBeanList) {
+                    List<String> lstProp = new ArrayList<>();
+                    lstProp.add(feedMappingDefaultBean.getProp_type());
+                    lstProp.add(feedMappingDefaultBean.getProp_value());
+
+                    mapFeedMappingDefaultBeanList.put(feedMappingDefaultBean.getProp_name(), lstProp);
+                }
+
+                // 设置主数据的属性
+                Map<String, ImsPropValueBean> mainPropList = new HashMap<>();
+
+                // 遍历FeedMapping
+                for (FeedMappingBean feedMappingBean : feedMappingBeanList) {
+                    if (mainPropList.containsKey(feedMappingBean.getProp_id())) {
+                        // 如果这个属性已经设置过了，那么根据先来后到的优先度，之后的就不用设置了
+                        continue;
+                    }
+
+                    // 如果有条件的话，看看是否符合条件
+                    if (!StringUtils.isEmpty(feedMappingBean.getConditions())) {
+                        // 条件
+                        Condition condition = JsonUtil.jsonToBean(feedMappingBean.getConditions(), Condition.class);
+
+                        // 判断条件是否满足
+                        String strFeedValue = mapMainPropTodoItemListBeanList.get(condition.getProperty());
+                        switch (condition.getOperation()) {
+                            case IS_NULL:
+                                if (!StringUtils.isEmpty(strFeedValue)) {
+                                    // 条件不满足，跳过
+                                    continue;
+                                }
+                                break;
+                            case IS_NOT_NULL:
+                                if (StringUtils.isEmpty(strFeedValue)) {
+                                    // 条件不满足，跳过
+                                    continue;
+                                }
+                                break;
+                            case EQUALS:
+                                // 禁止为空
+                                if (strFeedValue == null) {
+                                    continue;
+                                }
+                                if (condition.getValue() == null) {
+                                    continue;
+                                }
+
+                                if (!strFeedValue.equals(condition.getValue())) {
+                                    // 条件不满足，跳过
+                                    continue;
+                                }
+                                break;
+                            case NOT_EQUALS:
+                                // 禁止为空
+                                if (strFeedValue == null) {
+                                    continue;
+                                }
+                                if (condition.getValue() == null) {
+                                    continue;
+                                }
+
+                                if (strFeedValue.equals(condition.getValue())) {
+                                    // 条件不满足，跳过
+                                    continue;
+                                }
+                                break;
+                        }
+
+                    }
+
+                    // 准备设定值
+                    String value = "";
+                    FeedPropMappingType feedPropMappingType;
+                    feedPropMappingType = FeedPropMappingType.valueOf(Integer.parseInt(feedMappingBean.getType()));
+                    if (feedPropMappingType == FeedPropMappingType.FEED) {
+                        // 获取属性的值
+                        value = mapMainPropTodoItemListBeanList.get(feedMappingBean.getValue());
+                        value = "{\"ruleWordList\":[{\"type\":\"TEXT\", \"value\":\"" + value + "\"}]}";
+                    } else if (feedPropMappingType == FeedPropMappingType.OPTIONS) {
+                        value = feedMappingBean.getValue();
+                        value = "{\"ruleWordList\":[{\"type\":\"TEXT\", \"value\":\"" + value + "\"}]}";
+                    } else if (feedPropMappingType == FeedPropMappingType.CMS) {
+                        value = feedMappingBean.getValue();
+                        value = "{\"ruleWordList\":[{\"type\":\"CMS\", \"value\":[\"CmsModelEnum\",\"" + value + "\"]}]}";
+                    } else if (feedPropMappingType == FeedPropMappingType.VALUE) {
+                        if (feedMappingBean.getValue().startsWith("{")
+                                || feedMappingBean.getValue().startsWith("[{")
+                                ) {
+                            value = feedMappingBean.getValue();
+                        } else {
+                            value = feedMappingBean.getValue();
+                            value = "{\"ruleWordList\":[{\"type\":\"TEXT\", \"value\":\"" + value + "\"}]}";
+                        }
+
+                    }
+
+                    // 设定值
+                    {
+                        // 添加一个父
+                        String strParentUuidMulti = "";
+                        String strParentUuid = "";
+
+                        // 看看自己的类型
+                        int intType = imsPropMap.get(feedMappingBean.getProp_id()).getPropType();
+                        if (intType == MasterPropTypeEnum.MULTICHECK.getValue()
+                                || intType == MasterPropTypeEnum.MULTICOMPLEX.getValue()
+                                ) {
+                            // 需要待会儿在最后插入数据的时候，添加一个父
+                            strParentUuidMulti = getUUID();
+                        }
+
+                        // 看看自己是否有父
+                        int intParentId = imsPropMap.get(feedMappingBean.getProp_id()).getParentPropId();
+                        if (intParentId != 0) {
+                            // 有父，添加父（包括所有父）
+                            List<ImsPropValueBean> imsParentPropValueBeanList =  doAddParentProp(channel_id, level_model, model_id, String.valueOf(intParentId), imsPropMap, mainPropList);
+
+                            for (ImsPropValueBean bean : imsParentPropValueBeanList) {
+                                mainPropList.put(bean.getPropId(), bean);
+                            }
+
+                            strParentUuid = imsParentPropValueBeanList.get(imsParentPropValueBeanList.size() - 1).getUuid();
+
+                        }
+
+                        // 添加自己
+                        ImsPropValueBean imsPropValueBean = new ImsPropValueBean();
+                        // 算一个uuid出来
+                        imsPropValueBean.setUuid(getUUID());
+                        // channel id
+                        imsPropValueBean.setChannelId(channel_id);
+                        // level
+                        imsPropValueBean.setLevel(level_model);
+                        // level value
+                        imsPropValueBean.setLevelValue(model_id);
+                        // prop id
+                        imsPropValueBean.setPropId(feedMappingBean.getProp_id());
+                        // prop value
+                        imsPropValueBean.setPropValue(value.replace("'", "''"));
+                        // parent
+                        imsPropValueBean.setParent(strParentUuid);
+                        // parent multi
+                        imsPropValueBean.setParentMulti(strParentUuidMulti);
+
+                        mainPropList.put(feedMappingBean.getProp_id(), imsPropValueBean);
+
+                    }
+                }
+
+                // 设置默认值
+                // 遍历主类目的所有属性
+                Iterator iter = imsPropMap.entrySet().iterator();
+                while (iter.hasNext()) {
+                    Map.Entry entry = (Map.Entry) iter.next();
+
+                    String key = entry.getKey().toString();
+                    ImsPropBean val = (ImsPropBean) entry.getValue();
+
+                    // 遍历FeedMappingDefault
+                    if (mapFeedMappingDefaultBeanList.containsKey(val.getPropName())) {
+                        List<String> feedMappingDefaultBean = mapFeedMappingDefaultBeanList.get(val.getPropName());
+                        if (String.valueOf(val.getPropType()).equals(feedMappingDefaultBean.get(0))) {
+                            // 这个属性还没有被设置过的话，可以设置一下
+                            if (!mainPropList.containsKey(key)) {
+
+                                // 设定值
+                                {
+                                    // 添加一个父
+                                    String strParentUuidMulti = "";
+                                    String strParentUuid = "";
+
+                                    // 看看自己的类型
+                                    int intType = imsPropMap.get(key).getPropType();
+                                    if (intType == MasterPropTypeEnum.MULTICHECK.getValue()
+                                            || intType == MasterPropTypeEnum.MULTICOMPLEX.getValue()
+                                            ) {
+                                        // 需要待会儿在最后插入数据的时候，添加一个父
+                                        strParentUuidMulti = getUUID();
+                                    }
+
+                                    // 看看自己是否有父
+                                    int intParentId = imsPropMap.get(key).getParentPropId();
+                                    if (intParentId != 0) {
+                                        // 有父，添加父（包括所有父）
+                                        List<ImsPropValueBean> imsParentPropValueBeanList =  doAddParentProp(channel_id, level_model, model_id, String.valueOf(intParentId), imsPropMap, mainPropList);
+
+                                        for (ImsPropValueBean bean : imsParentPropValueBeanList) {
+                                            mainPropList.put(bean.getPropId(), bean);
+                                        }
+
+                                        strParentUuid = imsParentPropValueBeanList.get(imsParentPropValueBeanList.size() - 1).getUuid();
+
+                                    }
+
+                                    // 添加自己
+                                    ImsPropValueBean imsPropValueBean = new ImsPropValueBean();
+                                    // 算一个uuid出来
+                                    imsPropValueBean.setUuid(getUUID());
+                                    // channel id
+                                    imsPropValueBean.setChannelId(channel_id);
+                                    // level
+                                    imsPropValueBean.setLevel(level_model);
+                                    // level value
+                                    imsPropValueBean.setLevelValue(model_id);
+                                    // prop id
+                                    imsPropValueBean.setPropId(key);
+                                    // prop value
+                                    imsPropValueBean.setPropValue(feedMappingDefaultBean.get(1).replace("'", "''"));
+                                    // parent
+                                    imsPropValueBean.setParent(strParentUuid);
+                                    // parent multi
+                                    imsPropValueBean.setParentMulti(strParentUuidMulti);
+
+                                    mainPropList.put(key, imsPropValueBean);
+
+                                }
+
+
+                            }
+                        }
+                    }
+
+                }
+
+                // 插入到数据库里（主数据的值表）
+                List<ImsPropValueBean> imsPropValueBeanList = new ArrayList<>();
+                Set<String> set_MainPropList = mainPropList.keySet();
+                for (String propId : set_MainPropList) {
+
+                    // 操作对象
+                    ImsPropValueBean imsPropValueBean = mainPropList.get(propId);
+
+                    // 操作对象的类型
+                    int intType = imsPropMap.get(imsPropValueBean.getPropId()).getPropType();
+
+                    // 判断是否是多选（需要特殊处理）
+                    String uuidNew;
+                    if (intType == MasterPropTypeEnum.MULTICHECK.getValue()
+                            || intType == MasterPropTypeEnum.MULTICOMPLEX.getValue()
+                            ) {
+                        ImsPropValueBean tempBean = new ImsPropValueBean();
+
+                        // uuid
+                        uuidNew = getUUID();
+                        tempBean.setUuid(uuidNew);// imsPropValueBean.getParent()
+                        // channel id
+                        tempBean.setChannelId(channel_id);
+                        // level
+                        tempBean.setLevel(level_model);
+                        // level value
+                        tempBean.setLevelValue(model_id);
+                        // prop id
+                        tempBean.setPropId(imsPropValueBean.getPropId());
+                        // prop value
+                        tempBean.setPropValue("");
+                        // parent
+                        // 看看自己是否有父
+                        int intParentId = imsPropMap.get(imsPropValueBean.getPropId()).getParentPropId();
+                        if (intParentId != 0) {
+                            // 如果有父
+                            String strParentUuid = mainPropList.get(String.valueOf(intParentId)).getUuid();
+                            tempBean.setParent(strParentUuid);
+                        } else {
+                            // 没有
+                            tempBean.setParent("");
+                        }
+
+                        // 直接插入
+                        imsPropValueBeanList.add(tempBean);
+
+                        imsPropValueBean.setParent(uuidNew);
+
+                    }
+
+                    imsPropValueBeanList.add(imsPropValueBean);
+
+                }
+                if (imsPropValueBeanList.size() > 0) {
+                    mainPropDao.doInsertMainValue(imsPropValueBeanList, getTaskName());
+                    logger.info("主数据属性值设定（CODE）：model_id=" + model_id + "; product_id=" + product_id + "; main_category_id=" + mainCategoryId);
+                }
+
+                // 更新处理flag
+                mainPropDao.doFinishProduct(channel_id, product_id);
+
+            }
+
+            logger.info(channel.getFull_name() + "产品导入主数据结束");
         }
 	}
 
@@ -579,21 +608,33 @@ public class CmsSetMainPropService extends BaseTaskService {
                 // 33 3/4 意思是 33又四分之三 -> 33.75
                 // 33 1/2 意思是 33又二分之一 -> 33.5
                 // 33 1/4 意思是 33又四分之一 -> 33.25
+                // 33 5/8 意思是 33又八分之五 -> 33.625
                 // 直接这边代码处理掉避免人工干预
                 if (value.contains(" ")) {
+                    value = value.replaceAll(" +", " ");
                     String[] strSplit = value.split(" ");
 
-                    switch (strSplit[1]) {
-                        case "3/4":
-                            value = String.valueOf(Float.valueOf(strSplit[0]) + 0.75);
-                            break;
-                        case "1/2":
-                            value = String.valueOf(Float.valueOf(strSplit[0]) + 0.5);
-                            break;
-                        case "1/4":
-                            value = String.valueOf(Float.valueOf(strSplit[0]) + 0.25);
-                            break;
-                    }
+                    // 修改：直接用除法来过滤掉所有这类问题 tom 20151014 START
+//                    switch (strSplit[1]) {
+//                        case "3/4":
+//                            value = String.valueOf(Float.valueOf(strSplit[0]) + 0.75);
+//                            break;
+//                        case "1/2":
+//                            value = String.valueOf(Float.valueOf(strSplit[0]) + 0.5);
+//                            break;
+//                        case "1/4":
+//                            value = String.valueOf(Float.valueOf(strSplit[0]) + 0.25);
+//                            break;
+//                        case "5/8":
+//                            value = String.valueOf(Float.valueOf(strSplit[0]) + 0.625);
+//                            break;
+//                    }
+                    String[] strSplitSub = strSplit[1].split("/");
+                    value = String.valueOf(
+                            Float.valueOf(strSplit[0]) +
+                                    (Float.valueOf(strSplitSub[0]) / Float.valueOf(strSplitSub[1]))
+                    );
+                    // 修改：直接用除法来过滤掉所有这类问题 tom 20151014 END
 
                 }
 
@@ -620,6 +661,99 @@ public class CmsSetMainPropService extends BaseTaskService {
 
     }
 
+    /**
+     * 踢除尚未匹配完成属性的主类目id
+     * @param mainCategoryIdList 主类目id列表
+     * @return 已经匹配完属性的主类目的id
+     */
+    private Map<String, String> getCleanMainCategoryIdList(Map<String, String> mainCategoryIdList) {
+        // 返回值
+        Map<String, String> result = new HashMap<>();
+
+        // 获取属性忽略列表（所有类目）
+        List<String> ignoreList = new ArrayList<>();
+        // select prop_id
+        // from voyageone_ims.ims_bt_feed_prop_ignore
+        // where is_ignore = 1
+        // and channel_id = #{channel_id};
+
+        // 遍历传入的主类目列表
+        Iterator iter = mainCategoryIdList.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry entry = (Map.Entry) iter.next();
+
+            String key = entry.getKey().toString();     // 平台类目
+            String val = entry.getValue().toString();   // 主类目
+
+            // 获取当前主类目的所有属性列表
+            List<ImsPropBean> propList = mainPropDao.selectImsPropByCategoryIdList(val);
+
+            // 获取当前主类目的所有已mapping的属性的列表
+            List<String> mappingPropList = new ArrayList<>();
+            // select distinct prop_id, type
+            // from voyageone_ims.ims_bt_feed_prop_mapping
+            // where channel_id = #{channel_id}
+            //   and category_id = #{category_id};
+
+            // 获取所有的默认属性名称
+            List<List<String>> defaultMappingPropList = new ArrayList<>();
+            // select prop_name,
+            //        prop_type
+            // from voyageone_ims.ims_bt_feed_prop_mapping_default
+            // where channel_id = #{channel_id}
+            //   and prop_value is not null
+            //   and prop_value <> ''
+
+            // 检查
+            boolean blnError = false;
+            // 遍历主类目的所有属性
+            for (ImsPropBean lstProp : propList) {
+
+                String propId = String.valueOf(lstProp.getPropId()); // prop id
+                String propName = lstProp.getPropName(); // prop name
+                String propType = String.valueOf(lstProp.getPropType()); // prop type
+
+                boolean blnFound = false;
+
+                // 检查这个属性在mapping中是否存在
+                if (mappingPropList.contains(propId)) {
+                    blnFound = true;
+                }
+                // 检查这个属性在ignore中是否存在
+                if (ignoreList.contains(propId)) {
+                    blnFound = true;
+                }
+                // 检查这个属性在default中是否存在
+                for (List<String> defaultValue : defaultMappingPropList) {
+                    if (propName.equals(defaultValue.get(0))
+                            && propType.equals(defaultValue.get(1))
+                            ) {
+                        blnFound = true;
+                        break;
+                    }
+                }
+
+                if (!blnFound) {
+                    // 有一个属性没有设置的话，就认为是没匹配完
+                    blnError = true;
+                    break;
+                }
+            }
+
+            // 设置值
+            if (blnError) {
+                // 有错误的场合，设置一个标记
+                result.put(key, bad_prop_const);
+            } else {
+                // 正确的场合，直接设置
+                result.put(key, val);
+            }
+
+        }
+
+        return result;
+
+    }
 
     private String getUUID() {
         // 创建 GUID 对象

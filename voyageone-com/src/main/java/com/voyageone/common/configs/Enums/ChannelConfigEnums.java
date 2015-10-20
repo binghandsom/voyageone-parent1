@@ -262,6 +262,11 @@ public class ChannelConfigEnums {
         need_cancel_CA,
 
         /**
+         * KitBag 订单是否取消
+         */
+        need_cancel_KitBag,
+
+        /**
          * 报关时的金额单位
          */
         declare_unit,
@@ -296,7 +301,19 @@ public class ChannelConfigEnums {
         /**
          * 多件物品时，渠道允许发货金额（0：代表不用检查）
          */
-        shipping_amount
+        shipping_amount,
+        /**
+         * scene7上传图片文件夹路径
+         */
+        scene7_image_folder,
+        /**
+         * 斯伯丁特殊物品篮板
+         */
+        special_goods_backboard,
+        /**
+         * 斯伯丁特殊物品定制球
+         */
+        special_goods_ball
 
     }
 
@@ -346,10 +363,16 @@ public class ChannelConfigEnums {
          * Jewelry
          */
         JEWELRY("010"),
+
         /**
          * LOCONDO
          */
-        LOCONDO("011");
+        LOCONDO("011"),
+
+        /**
+         * BCBG
+         */
+        BCBG("012");
 
         private String id;
 
@@ -384,6 +407,7 @@ public class ChannelConfigEnums {
                 case "008": return REAL_MADRID;
                 case "010": return JEWELRY;
                 case "011": return LOCONDO;
+                case "012": return LOCONDO;
                 default: return null;
             }
         }

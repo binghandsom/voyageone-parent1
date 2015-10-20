@@ -6,6 +6,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.voyageone.cms.modelbean.CmsCategoryModel;
+import com.voyageone.cms.service.CommonService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +39,8 @@ public class MasterCategoryMatchController extends BaseController {
 
 	@Autowired
 	MasterCategoryMatchService masterCategoryMatchService;
+	@Autowired
+	CommonService commonService;
 
 	/**
 	 * 
@@ -58,12 +62,16 @@ public class MasterCategoryMatchController extends BaseController {
 
 			String channelId = userSession.getSelChannel();
 
-			List<CmsCategoryBean> cmsCategoryBeans = this.masterCategoryMatchService.getCmsCategoryList(channelId);
+//			List<CmsCategoryBean> cmsCategoryBeans = this.masterCategoryMatchService.getCmsCategoryList(channelId);
+
+			List<CmsCategoryModel> cmsCategoryModels = this.masterCategoryMatchService.getCmsCategoryModelList(channelId);
 
 			// 获取cms类目
-			responseObject.put("cmsCategoryList", cmsCategoryBeans);
+//			responseObject.put("cmsCategoryList", cmsCategoryBeans);
+			responseObject.put("cmsCategoryModels", cmsCategoryModels);
 			// 获取所有的主类目
-			List<ImsCategoryBean> masterCategoryList = ImsCategoryConfigs.getMtCategoryBeanById(0).getSubCategories();
+//			List<ImsCategoryBean> masterCategoryList = ImsCategoryConfigs.getMtCategoryBeanById(0).getSubCategories();
+			List<ImsCategoryBean> masterCategoryList = commonService.getChannelCategories(channelId);
 			responseObject.put("masterCategoryList", masterCategoryList);
 
 			// 设置返回画面的值

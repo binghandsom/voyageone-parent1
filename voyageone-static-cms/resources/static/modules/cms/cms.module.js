@@ -89,6 +89,7 @@ define (function (require) {
         'cms_edit_product_doGetCustomInfo':'/cms/edit/product/doGetCustomInfo',
         'cms_edit_product_doUpdateProductImg':'/cms/edit/product/doUpdateProductImg',
         'cms_edit_product_doDelProductImg':'/cms/edit/product/doDelProductImg',
+        'cms_edit_product_doUpdateCustem':'/cms/edit/product/doUpdateCustomInfo',
         
         /** edit promotion's url **/
         'cms_edit_promotion_doGetPromotionInfo': '/cms/edit/promotion/doGetPromotionInfo',

@@ -19,7 +19,7 @@
 .categoryList {
     font-family: 'Segoe UI', Arial, 'Microsoft Yahei', sans-serif;
     width: 100%;
-    padding:20px;
+    padding:0px;
 }
 
 .categoryList fieldset {
@@ -68,6 +68,7 @@
     margin: 10px 5px 10px 5px;
     padding:2px;
     border:1px solid #c8c2c2;
+    background:#fff;
 }
 
 .categoryList font {
@@ -80,7 +81,7 @@
 }
 
 .categoryFormTitle {
-    margin: 20px 20px 20px 20px
+    margin: 0px
 }
 
 .photosTittle {
@@ -355,7 +356,27 @@ fieldset.requireStyle{
     text-decoration: underline;
 }
 
-
 .rule-nolink a:hover{
     text-decoration: none;
+}
+
+.tablist input,.tablist select{
+    padding:4px;
+    border:1px solid #c8c2c2;
+}
+
+.rule-main{
+    margin: 0;
+    padding:0;
+}
+.rule-main li{
+ color:#878787;
+}
+
+.rule-main h4{
+  padding-left:16px;
+  font-size:14px;
+  font-weight:bold;
+  font-family: "Microsoft Yahei";
+  color:#e67e22;
 }

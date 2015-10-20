@@ -97,5 +97,52 @@ define(function(require) {
             }
         }]);
 
+    /**
+     * check输入的字节数是否超长.
+     */
+    mainApp.directive('voCharMaxLength', function () {
+
+        return {
+            restrict: 'A',
+            require: '?ngModel',
+            link: function(scope, elm, attr, ctrl) {
+                if (!ctrl) return;
+
+                var maxlength = -1;
+                attr.$observe('voCharMaxLength', function(value) {
+                    var intVal =  parseInt(value) ;
+                    maxlength = isNaN(intVal) ? -1 : intVal;
+                    ctrl.$validate();
+                });
+                ctrl.$validators.maxlength = function(modelValue, viewValue) {
+                    return (maxlength < 0) || ctrl.$isEmpty(viewValue) || (getByteLength(viewValue) <= maxlength);
+                };
+            }
+        };
+
+        /**
+         * 取得字段的字节长度.
+         * @param value
+         * @returns {number}
+         */
+        function getByteLength(value) {
+            var byteLen = 0,len = value.length;
+            if(value){
+                for(var i = 0; i<len; i++){
+                    if(value.charCodeAt(i)>255){
+                        byteLen += 2;
+                    }
+                    else{
+                        byteLen++;
+                    }
+                }
+                return byteLen;
+            }
+            else{
+                return 0;
+            }
+        }
+    });
+
     return mainApp;
 });

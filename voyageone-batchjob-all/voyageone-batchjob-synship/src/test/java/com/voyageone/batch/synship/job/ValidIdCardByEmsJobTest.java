@@ -14,7 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class ValidIdCardByEmsJobTest {
 
     @Autowired
-    private SynshipValidIdCardJob validIdCardByEmsJob;
+    private SynShipValidIdCardJob validIdCardByEmsJob;
 
     @Test
     public void testRun() {

@@ -521,6 +521,11 @@ public class OutFormOrderdetailOrders {
 	 *		原始客户取消标志(customer_refused)
 	 */
 	private boolean origCustomerRefused;
+
+	/**
+	 *		品牌方订单号
+	 */
+	private String sellerOrderId;
 	
 	/**
 	 * 订单明细
@@ -1620,6 +1625,14 @@ public class OutFormOrderdetailOrders {
 
 	public void setOrigCustomerRefused(boolean origCustomerRefused) {
 		this.origCustomerRefused = origCustomerRefused;
+	}
+
+	public String getSellerOrderId() {
+		return sellerOrderId;
+	}
+
+	public void setSellerOrderId(String sellerOrderId) {
+		this.sellerOrderId = sellerOrderId;
 	}
 
 	public List<OutFormOrderDetailOrderDetail> getOrderDetailsList() {
