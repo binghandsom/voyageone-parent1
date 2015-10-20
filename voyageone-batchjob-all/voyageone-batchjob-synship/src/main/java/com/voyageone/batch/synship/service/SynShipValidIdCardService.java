@@ -212,6 +212,13 @@ public class SynShipValidIdCardService extends BaseTaskService {
                 continue;
             }
 
+            // 身份证接口异常，下次继续验证
+            if (isInterfaceError(idCardHistory)){
+                $info("接口异常，等待下次验证");
+                logIssue("跨境易身份证接口异常", "Name：" + idCardHistory.getShip_name() + "，IdCard：" + idCardHistory.getId_card() + "，Message：" + idCardHistory.getMessage());
+                continue;
+            }
+
             // 如果信息错误，直接转人工
             // 并在备注表明
             $info("身份证信息验证失败，直接转人工");
@@ -296,6 +303,10 @@ public class SynShipValidIdCardService extends BaseTaskService {
 
     private boolean isTimeout(IdCardHistory idCardHistory) {
         return idCardHistory.getMessage().contains("timed out") || idCardHistory.getMessage().contains("timeout");
+    }
+
+    private boolean isInterfaceError(IdCardHistory idCardHistory) {
+        return idCardHistory.getMessage().contains("接口异常");
     }
 
     private void afterPass(IdCardHistory idCardHistory, IdCardBean idCardBean, ShortUrlBean shortUrlBean) {
@@ -477,7 +488,11 @@ public class SynShipValidIdCardService extends BaseTaskService {
 
         idCardHistory.setReason(reason);
         idCardHistory.setFunction(function);
-        idCardHistory.setMessage(message);
+        if (message.length() > 500) {
+            idCardHistory.setMessage(message.substring(0,499));
+        }else {
+            idCardHistory.setMessage(message);
+        }
 
         // 通过 reason 判断结果
         String result = isPass(idCardHistory) ? PASS : FAIL;

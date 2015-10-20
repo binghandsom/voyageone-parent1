@@ -3,8 +3,10 @@
   <div class="row">
     <div class="vo_page_title col-sm-1"><h1 class="m-n font-thin h3 text-vo">类目列表</h1></div><!-- .vo_page_title -->
         <div class="col-sm-5 pull-right">
-		<button ng-if="!filterByCategory" ng-click = "filterPropDisMatchCategory($event)" class="btn m-b-xs btn-sm btn-success fa fa-list-alt pull-right"> 属性匹配未完成类目</button>
-		<button ng-if="!filterByProp" ng-click = "filterDisMatchCategory($event)" class="btn m-b-xs btn-sm btn-success fa fa-list-alt pull-right"> 未匹配类目</button>
+		<button ng-if="filterByCategory == false && filterByProp == false" ng-click = "filterPropDisMatchCategory()" class="btn m-b-xs btn-sm btn-success fa fa-list-alt pull-right"> 属性匹配未完成类目</button>
+        <button ng-if="filterByCategory == false && filterByProp == true" ng-click = "filterPropDisMatchCategory()" class="btn m-b-xs btn-sm btn-success fa fa-list-alt pull-right"> 全部类目</button>
+		<button ng-if="filterByCategory == false && filterByProp == false" ng-click = "filterDisMatchCategory()" class="btn m-b-xs btn-sm btn-success fa fa-list-alt pull-right"> 未匹配类目</button>
+        <button ng-if="filterByCategory == true  && filterByProp == false" ng-click = "filterDisMatchCategory()" class="btn m-b-xs btn-sm btn-success fa fa-list-alt pull-right"> 全部类目</button>
           
         </div><!-- .col-sm-5 -->
   </div><!-- .row -->
@@ -24,7 +26,7 @@
 			</div>
             <div class="panel vo_panel tab_panel fixed">
               <!-- .table-responsive -->
-              <div class="table-responsive">
+              <div ng-if="filterByProp == false" class="table-responsive"  >
                 <table datatable="ng" class="table table-striped hover b-t b-b vo_table">
                   <thead>
                   <tr>
@@ -58,7 +60,28 @@
                       <div ng-if="cmsCategory.isExtend" ><button type="button" ng-click="save(cmsCategory)" class="btn btn-default btn-xs"><i class="fa fa-arrow-down"></i></button></div>
                     </td>
                     <td class="text-center"><label class="checkbox-inline c-checkbox needsclick"><input type="checkbox" ng-change="change(cmsCategory)" ng-model="cmsCategory.isMatch"><span class="fa fa-check"></span></label></td>
-                    <td><button ng-if="cmsCategory.mainCategoryId > 0 && cmsCategory.isPropMatch" type="button" ng-click = "propertyMatch(cmsCategory)" class="btn btn-primary btn-sm fa fa-equalizer fa-building">&nbsp;属性匹配</button></td>
+                    <td>
+                      <button ng-if="cmsCategory.mainCategoryId > 0 && cmsCategory.isPropMatch && cmsCategory.propMatchStatus != 0" type="button" ng-click = "propertyMatch(cmsCategory)" class="btn btn-primary btn-sm fa fa-equalizer fa-building">&nbsp;属性修改</button>
+                      <button ng-if="cmsCategory.mainCategoryId > 0 && cmsCategory.isPropMatch && cmsCategory.propMatchStatus == 0" type="button" ng-click = "propertyMatch(cmsCategory)" class="btn btn-danger btn-sm fa fa-equalizer fa-building">&nbsp;属性匹配</button>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div><!-- .table-responsive -->
+              <div ng-if="filterByProp == true" class="table-responsive">
+                <table datatable="ng" class="table table-striped hover b-t b-b vo_table">
+                  <thead>
+                  <tr>
+                    <th class="vo_a_ce col-sm-1">序号</th>
+                    <th class="col-sm-3">主类目名称</th>
+                    <th class="vo_a_ce col-sm-1">属性匹配</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr ng-repeat="cmsCategory in cmsCategoryList">
+                    <td class="vo_a_ce">{{$index + 1}}</td>
+                    <td><font ng-bind="cmsCategory.mainCategoryPath" ng-class="cmsCategory.inheritClass"></font></td>
+                    <td class="text-center"><button ng-if="cmsCategory.mainCategoryId > 0 && cmsCategory.isPropMatch" type="button" ng-click = "propertyMatch(cmsCategory)" class="btn btn-primary btn-sm fa fa-equalizer fa-building">&nbsp;属性匹配</button></td>
                   </tr>
                   </tbody>
                 </table>

@@ -12,7 +12,7 @@ public interface UrlConstants {
 	public static final String URL_CORE_MENU_HOME = "/core/menu/home";
 	
 	// cms主页面URL
-	public static final String URL_CORE_CMS_HOME = "/cms/edit/category/2";
+	public static final String URL_CORE_CMS_HOME = "/cms/common/index";
 	
 	// 系统设定--用户管理URL
 	public static final String URL_CORE_SETTING_USER = "/core/setting/user";

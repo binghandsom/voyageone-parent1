@@ -694,4 +694,33 @@
 		GROUP BY r.product_id, r.channel_id
 		) a
 	</select>
+	<select id="category_unmapping_count" resultType="Integer"  parameterType="String">
+		SELECT
+			count(1)
+		FROM
+			voyageone_cms.cms_bt_relation_category AS relation
+			LEFT JOIN voyageone_cms.cms_bt_category AS us ON relation.category_id = us.category_id AND relation.channel_id = us.channel_id
+			LEFT JOIN voyageone_cms.cms_bt_cn_category_extend AS cn_extend ON relation.category_id = cn_extend.category_id AND relation.channel_id = cn_extend.channel_id
+		where us.is_effective = '1'
+			and relation.category_id > 500
+			and relation.channel_id = #{channelId}
+			and (cn_extend.main_category_id is null or cn_extend.main_category_id = 0)
+		order by relation.parent_category_id,relation.category_id
+	</select>
+	<select id="category_property_unmapping_count" resultType="Integer"  parameterType="String">
+		select count(1) from (SELECT
+			t1.main_category_id
+		FROM
+			voyageone_cms.cms_bt_cn_category_extend t1
+		LEFT JOIN voyageone_ims.ims_bt_category_extend t2 ON t1.main_category_id = t2.main_category_id
+		WHERE
+			(
+			t2.is_set_attr != 1
+			OR t2.is_set_attr IS NULL
+			)
+		AND t1.main_category_id != - 1
+		AND t1.channel_id = #{channelId}
+		GROUP BY
+		t1.main_category_id)a
+	</select>
 </mapper>
