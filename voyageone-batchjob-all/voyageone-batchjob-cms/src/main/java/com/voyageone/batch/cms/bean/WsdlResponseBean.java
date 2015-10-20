@@ -6,7 +6,7 @@ package com.voyageone.batch.cms.bean;
  *
  * @author zero
  */
-public class WsdlResponseBean {
+public class WsdlResponseBean<T> {
 
     /**
      * 结果 OK/NG
@@ -31,7 +31,7 @@ public class WsdlResponseBean {
     /**
      * 数据体信息
      */
-    private Object resultInfo;
+    private T resultInfo;
 
     /**
      * @return the result
@@ -92,14 +92,14 @@ public class WsdlResponseBean {
     /**
      * @return the resultInfo
      */
-    public Object getResultInfo() {
+    public T getResultInfo() {
         return resultInfo;
     }
 
     /**
      * @param resultInfo the resultInfo to set
      */
-    public void setResultInfo(Object resultInfo) {
+    public void setResultInfo(T resultInfo) {
         this.resultInfo = resultInfo;
     }
 }
