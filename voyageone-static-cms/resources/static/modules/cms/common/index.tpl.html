@@ -1,0 +1,60 @@
+<div ng-controller="indexController" ng-init="initialize()" ng-cloak="">
+    <div class="bg-light lter b-b wrapper-md vo_page_header clearfix"></div>
+    <!--&lt;!&ndash; .wrapper-md .vo_page_header &ndash;&gt;-->
+    <div class="bg-light lter b-b wrapper-md">
+        <h1 class="m-n font-thin h3"><span translate="CMS_TXT_STATISTICAL_DATA"></span></h1>
+    </div>
+    <div class="wrapper-md">
+        <!--统计信息-->
+        <div class="row">
+            <div class="col-md-4">
+                <!-- box-success-->
+                <div class="box box-solid box-success">
+                    <div class="box-header">
+                        <h3 class="box-title">CATEGORY</h3>
+                        <div class="box-tools pull-right">
+                            <i class="fa fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <p>未匹配类目：<code><a ng-click="goSearch(0)" href="" class="box-btn">{{data[0]}}</a></code></p>
+                        <p>属性匹配未完成类目: ：<code><a ng-click="goSearch(1)" href="">{{data[1]}}</a></code></p>
+                    </div><!-- /.box-body -->
+                </div><!-- /.box -->
+            </div><!-- /.col -->
+
+            <div class="col-md-4">
+                <!-- box-warning-->
+                <div class="box box-solid box-warning">
+                    <div class="box-header">
+                        <h3 class="box-title">MODEL</h3>
+                        <div class="box-tools pull-right">
+                            <i class="fa fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <p>属性编辑未完成产品：<code><a ng-click="goSearch(2)" href="">{{data[2]}}</a></code></p>
+                        <p>属性编辑完成未approve产品：<code><a ng-click="goSearch(3)" href="">{{data[3]}}</a></code></p>
+                        <p>approve但未上新产品：<code><a ng-click="goSearch(4)" href="">{{data[4]}}</a></code></p>
+                        <p>上新失败产品：<code><a ng-click="goSearch(5)" href="">{{data[5]}}</a></code></p>
+                    </div><!-- /.box-body -->
+                </div><!-- /.box -->
+            </div><!-- /.col -->
+
+            <div class="col-md-4">
+                <!-- box-danger-->
+                <div class="box box-solid box-blue">
+                    <div class="box-header">
+                        <h3 class="box-title">PRODUCT</h3>
+                        <div class="box-tools pull-right">
+                            <i class="fa fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="box-body">
+
+                    </div><!-- /.box-body -->
+                </div><!-- /.box -->
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div><!-- end .wrapper-md -->
+</div>
