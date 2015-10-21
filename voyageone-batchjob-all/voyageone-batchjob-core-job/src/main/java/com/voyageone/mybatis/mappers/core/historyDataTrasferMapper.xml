@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.core.sql">
+    <insert id="insertHistoryData" parameterType="HashMap">
+        INSERT INTO ${historyTableTo}
+        SELECT
+            *
+        FROM
+            ${historyTableFrom}
+        WHERE
+            ${dataTime}
+    </insert>
+    <delete id="deleteHistoryData" parameterType="HashMap">
+        DELETE FROM
+           ${historyTableFrom}
+        WHERE
+           ${dataTime}
+
+    </delete>
+	
+</mapper>
