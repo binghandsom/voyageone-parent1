@@ -153,8 +153,8 @@ public class MasterDataMappingService {
             if (masterPropMapping == null) {
                 logger.debug("can not find master mapping!");
             }
-            if ("seller_cids".equals(platformProp.getPlatformPropId())) {
-                logger.debug("find shangpin leimu");
+            if ("description".equals(platformProp.getPlatformPropId())) {
+                logger.debug("find description");
             }
 
             //如果主数据中有他的映射关系，第三步
