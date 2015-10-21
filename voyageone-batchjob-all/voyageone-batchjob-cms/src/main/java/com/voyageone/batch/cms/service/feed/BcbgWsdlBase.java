@@ -61,14 +61,36 @@ abstract class BcbgWsdlBase extends BaseTaskService {
 
         protected final String imageTable;
 
+        protected final String imageJoin;
+
         protected final String productTable;
+
+        protected final String productJoin;
+
+        protected final String modelTable;
+
+        protected final String modelJoin;
+
+        private ProductBean productColumns;
 
         protected ContextBase(ChannelConfigEnums.Channel channel) {
             this.channel = channel;
+            // 主表
             this.table = Feed.getVal1(channel, FeedEnums.Name.table_id);
+            // 图片表
             this.imageTable = Feed.getVal1(channel, FeedEnums.Name.image_table_id);
+            // 特殊字符 (正则)
             this.special_symbol = Pattern.compile(Feed.getVal1(channel, FeedEnums.Name.url_special_symbol));
+            // 商品表
             this.productTable = Feed.getVal1(channel, FeedEnums.Name.product_table_id);
+            // 图片表的 Join 部分
+            this.imageJoin = Feed.getVal1(channel, FeedEnums.Name.image_table_join);
+            // 商品表的 Join 部分
+            this.productJoin = Feed.getVal1(channel, FeedEnums.Name.product_table_join);
+            // Model 表
+            this.modelTable = Feed.getVal1(channel, FeedEnums.Name.model_table_id);
+            // Model 的 Join 部分
+            this.modelJoin = Feed.getVal1(channel, FeedEnums.Name.model_table_join);
         }
 
         protected List<ItemBean> getItems(ProductBean product) {
@@ -83,7 +105,11 @@ abstract class BcbgWsdlBase extends BaseTaskService {
 
             String where = String.format("WHERE %s AND %s = '%s'", getWhereUpdateFlg(), itemColumns.getCode(), product.getP_code());
 
-            return superFeedDao.selectSuperfeedItem(where, itemColumns, table);
+            List<ItemBean> itemBeans = superFeedDao.selectSuperfeedItem(where, itemColumns, table);
+
+            $info("取得 Item [ %s\t ] 个 [ Product: %s ]", itemBeans.size(), product.getUrl_key());
+
+            return itemBeans;
         }
 
         protected List<ImageBean> getImages(ProductBean product) {
@@ -93,7 +119,10 @@ abstract class BcbgWsdlBase extends BaseTaskService {
             List<String> imageArrs = superFeedDao.selectSuperfeedImage(
                     where,
                     Feed.getVal1(channel, FeedEnums.Name.images),
-                    imageTable);
+                    // 组合 Image 的表部分和Join部分
+                    String.format("%s %s", imageTable, imageJoin));
+
+            $info("取得 Image 路径组合 [ %s ] 个 [ Product: %s ]", imageArrs.size(), product.getUrl_key());
 
             List<ImageBean> imageBeans = new ArrayList<>();
 
@@ -124,21 +153,12 @@ abstract class BcbgWsdlBase extends BaseTaskService {
 
             $info("准备批量获取 Product");
 
-            ProductBean productColumns = getProductColumns();
-
             // 条件则根据类目筛选
             String where = String.format("WHERE %s", getWhereUpdateFlg());
 
-            List<ProductBean> productBeans = superFeedDao.selectSuperfeedProduct(where, productColumns, productTable);
+            List<ProductBean> productBeans = getProductBeans(where);
 
             $info("取得 Product [ %s ] 个", productBeans.size());
-
-            for (ProductBean productBean: productBeans) {
-
-                productBean.setItembeans(getItems(productBean));
-                productBean.setImages(getImages(productBean));
-            }
-
             $info("已为 Product 补全 Item 和 Image");
 
             return productBeans;
@@ -151,14 +171,25 @@ abstract class BcbgWsdlBase extends BaseTaskService {
 
             $info("准备批量获取 Model [ %s ] 的 Product", model.getUrl_key());
 
-            ProductBean productColumns = getProductColumns();
-
             // 条件则根据类目筛选
-            String where = String.format("WHERE %s AND %s = '%s'", getWhereUpdateFlg(), productColumns.getModel_url_key(), model.getUrl_key());
+            String where = String.format("WHERE %s AND %s = '%s'", getWhereUpdateFlg(), getProductColumns().getModel_url_key(), model.getUrl_key());
 
-            List<ProductBean> productBeans = superFeedDao.selectSuperfeedProduct(where, productColumns, productTable);
+            List<ProductBean> productBeans = getProductBeans(where);
 
             $info("取得 Model [ %s ] 的 Product [ %s ] 个", model.getUrl_key(), productBeans.size());
+
+            return productBeans;
+        }
+
+        private List<ProductBean> getProductBeans(String where) {
+
+            ProductBean productColumns = getProductColumns();
+
+            List<ProductBean> productBeans = superFeedDao.selectSuperfeedProduct(where, productColumns,
+                    // 组合 Product 的表部分和Join部分
+                    String.format("%s %s", productTable, productJoin));
+
+            $info("取得 Product [ %s ] 个 [ 条件: %s ]", productBeans.size(), where);
 
             for (ProductBean productBean: productBeans) {
                 productBean.setItembeans(getItems(productBean));
@@ -168,8 +199,6 @@ abstract class BcbgWsdlBase extends BaseTaskService {
                 productBean.setCategory_url_key(clearSpecialSymbol(productBean.getCategory_url_key()));
                 productBean.setModel_url_key(clearSpecialSymbol(productBean.getModel_url_key()));
             }
-
-            $info("已为 Model [ %s ] 的 Product 补全 Item 和 Image", model.getUrl_key());
 
             return productBeans;
         }
@@ -181,9 +210,11 @@ abstract class BcbgWsdlBase extends BaseTaskService {
         /**
          * 获取商品级别的列定义
          */
-        private ProductBean getProductColumns() {
+        protected ProductBean getProductColumns() {
 
-            ProductBean productColumns = new ProductBean();
+            if (productColumns != null) return productColumns;
+
+            productColumns = new ProductBean();
 
             // 为每个字段指定其映射到的数据表的列.
             // 在后面的查询,自动从数据表填充值.

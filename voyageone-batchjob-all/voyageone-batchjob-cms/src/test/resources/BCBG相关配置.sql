@@ -24,7 +24,8 @@ VALUES
   ('012', '', '', 0, 0, '类目分割符', 'category_split', '-'),
   ('012', '', '', 0, 0, '类目分割符', 'category_column', 'MATKL'),
 
-  ('012', '', '', 0, 0, 'Model 级别', 'model_table_id', 'voyageone_cms.cms_zz_worktable_bcbg_superfeed JOIN voyageone_cms.cms_zz_worktable_bcbg_styles b ON b.styleID = CONCAT(SATNR, ''-'', COLOR)'),
+  ('012', '', '', 0, 0, 'Model 级别', 'model_table_id', 'voyageone_cms.cms_zz_worktable_bcbg_superfeed'),
+  ('012', '', '', 0, 0, 'Model 级别', 'model_table_join', 'JOIN voyageone_cms.cms_zz_worktable_bcbg_styles b ON b.styleID = CONCAT(SATNR, ''-'', COLOR)'),
   ('012', '', '', 0, 0, 'Model 级别', 'model_sql_ending', 'GROUP BY CONCAT(MATKL, ''-'', SATNR), MATKL, WLADG, BRAND_ID, SATNR, ATBEZ, SIZE1_ATINN'),
 
   ('012', '', '', 0, 0, 'Model 级别', 'model_url_key', 'CONCAT(MATKL, ''-'', SATNR)'),
@@ -41,7 +42,8 @@ VALUES
   ('012', '', '', 0, 0, 'Model 级别', 'model_m_is_taxable', '1'),
   ('012', '', '', 0, 0, 'Model 级别', 'model_m_is_effective', '1'),
 
-  ('012', '', '', 0, 0, 'Product 级别', 'product_table_id', 'voyageone_cms.cms_zz_worktable_bcbg_superfeed JOIN voyageone_cms.cms_zz_worktable_bcbg_styles b ON b.styleID = CONCAT(SATNR, ''-'', COLOR)'),
+  ('012', '', '', 0, 0, 'Product 级别', 'product_table_id', 'voyageone_cms.cms_zz_worktable_bcbg_superfeed'),
+  ('012', '', '', 0, 0, 'Product 级别', 'product_table_join', 'JOIN voyageone_cms.cms_zz_worktable_bcbg_styles b ON b.styleID = CONCAT(SATNR, ''-'', COLOR)'),
   ('012', '', '', 0, 0, 'Product 级别', 'product_url_key', 'DISTINCT CONCAT(MATKL, ''-'', SATNR, COLOR)'),
   ('012', '', '', 0, 0, 'Product 级别', 'product_category_url_key', 'MATKL'),
   ('012', '', '', 0, 0, 'Product 级别', 'product_model_url_key', 'CONCAT(MATKL, ''-'', SATNR)'),
@@ -63,7 +65,8 @@ VALUES
   ('012', '', '', 0, 0, 'Item 级别', 'item_i_size', 'SIZE1'),
   ('012', '', '', 0, 0, 'Item 级别', 'item_i_barcode', 'EAN11'),
 
-  ('012', '', '', 0, 0, 'Image 级别', 'image_table_id', 'voyageone_cms.cms_zz_worktable_bcbg_superfeed JOIN voyageone_cms.cms_zz_worktable_bcbg_styles ON styleID = CONCAT(SATNR, ''-'', COLOR)'),
+  ('012', '', '', 0, 0, 'Image 级别', 'image_table_id', 'voyageone_cms.cms_zz_worktable_bcbg_superfeed'),
+  ('012', '', '', 0, 0, 'Image 级别', 'image_table_join', 'JOIN voyageone_cms.cms_zz_worktable_bcbg_styles ON styleID = CONCAT(SATNR, ''-'', COLOR)'),
   ('012', '', '', 0, 0, 'Image 级别', 'images', 'productImgURLs'),
   ('012', '', '', 0, 0, 'Image 级别', 'image_split', ';;'),
 

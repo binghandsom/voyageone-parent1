@@ -35,13 +35,9 @@ class BcbgWsdlInsert extends BcbgWsdlBase {
 
     class Context extends ContextBase {
 
-        private final String modelTable;
-
         protected Context(ChannelConfigEnums.Channel channel) {
 
             super(channel);
-
-            this.modelTable = Feed.getVal1(channel, FeedEnums.Name.model_table_id);
         }
 
         private List<ModelBean> getModels(CategoryBean category) {
@@ -67,9 +63,12 @@ class BcbgWsdlInsert extends BcbgWsdlBase {
             modelColumns.setM_is_effective(Feed.getVal1(channel, FeedEnums.Name.model_m_is_effective));
 
             // 条件则根据类目筛选
-            String where = String.format("WHERE %s AND %s = '%s' %s", INSERT_FLG, modelColumns.getCategory_url_key(), category.getUrl_key(), Feed.getVal1(channel, FeedEnums.Name.model_sql_ending));
+            String where = String.format("WHERE %s AND %s = '%s' %s", INSERT_FLG, modelColumns.getCategory_url_key(),
+                    category.getUrl_key(), Feed.getVal1(channel, FeedEnums.Name.model_sql_ending));
 
-            List<ModelBean> modelBeans = superFeedDao.selectSuperfeedModel(where, modelColumns, modelTable);
+            List<ModelBean> modelBeans = superFeedDao.selectSuperfeedModel(where, modelColumns,
+                    // 组合 Model 的表部分和Join部分
+                    String.format("%s %s", modelTable, modelJoin));
 
             $info("取得 [ %s ] 的 Model 数 %s", category.getUrl_key(), modelBeans.size());
 
