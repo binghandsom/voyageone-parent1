@@ -152,13 +152,13 @@ class BcbgInsertService extends BcbgWsdlBase {
         }
 
         /**
-         * 调用 ProductService 提交新商品
+         * 调用 WsdlProductService 提交新商品
          *
          * @throws Exception
          */
         protected void postNewProduct() throws Exception {
             // 接口的主服务
-            ProductService service = new ProductService(channel);
+            WsdlProductService service = new WsdlProductService(channel);
             // 主参数
             ProductsFeedInsert feedInsert = new ProductsFeedInsert();
 

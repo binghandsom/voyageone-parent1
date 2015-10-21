@@ -146,7 +146,7 @@ public class BcbgAnalysisService extends BaseTaskService {
 
         String channel_id = BCBG.getId();
 
-        ProductService service = new ProductService(BCBG);
+        WsdlProductService service = new WsdlProductService(BCBG);
 
         ProductsFeedAttribute feedAttribute = new ProductsFeedAttribute();
 

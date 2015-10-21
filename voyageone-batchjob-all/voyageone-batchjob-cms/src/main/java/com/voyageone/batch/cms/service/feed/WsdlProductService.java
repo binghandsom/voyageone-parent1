@@ -16,7 +16,7 @@ import java.util.Map;
  * <p>
  * Created by Jonas on 10/13/15.
  */
-public class ProductService {
+public class WsdlProductService {
 
     private static final String INSERT = "01";
 
@@ -33,7 +33,7 @@ public class ProductService {
      *
      * @param channel 渠道
      */
-    public ProductService(ChannelConfigEnums.Channel channel) {
+    public WsdlProductService(ChannelConfigEnums.Channel channel) {
         this.channel = channel;
     }
 
