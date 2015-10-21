@@ -263,6 +263,13 @@
 			<groupId>javax.xml.soap</groupId>
 			<artifactId>saaj-api</artifactId>
 		</dependency>
+
+		<!-- srping mongodb -->
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-mongodb</artifactId>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<finalName>voyageone-com</finalName>
