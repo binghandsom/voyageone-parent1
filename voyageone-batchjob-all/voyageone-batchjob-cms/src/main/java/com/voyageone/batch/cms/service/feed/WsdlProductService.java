@@ -13,7 +13,6 @@ import java.util.Map;
 
 /**
  * 产品信息服务调用接口
- * <p>
  * Created by Jonas on 10/13/15.
  */
 public class WsdlProductService {
