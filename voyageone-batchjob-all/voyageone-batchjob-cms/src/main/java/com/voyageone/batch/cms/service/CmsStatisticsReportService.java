@@ -37,14 +37,16 @@ public class CmsStatisticsReportService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
+        Map<String,List<Integer>> statisticsInfo = new HashMap<>();
         for(TaskControlBean taskControl : taskControlList){
             if("order_channel_id".equalsIgnoreCase(taskControl.getCfg_name())){
                 String channelId = taskControl.getCfg_val1();
                 ChannelConfigEnums.Channel channel=  ChannelConfigEnums.Channel.valueOfId(channelId);
                 List<Integer>statistics = doQuickSearch(channelId);
-                Mail.sendAlert("CmsStatisticsReport", "CMS统计数据(" + channel.getFullName() + ")", getMailContent(statistics,channel), true);
+                statisticsInfo.put(channel.getFullName(), statistics);
             }
         }
+        Mail.sendAlert("CmsStatisticsReport", "CMS统计数据", getMailContent(statisticsInfo), true);
     }
 
     public List<Integer> doQuickSearch(String channelId) throws IOException {
@@ -91,21 +93,21 @@ public class CmsStatisticsReportService extends BaseTaskService {
 
     /**
      * 生产邮件的内容
-     * @param statistics
-     * @param channel
+     * @param statisticsInfo
      * @return
      */
-    private String getMailContent(List<Integer> statistics,ChannelConfigEnums.Channel channel) {
+    private String getMailContent(Map<String,List<Integer>> statisticsInfo) {
 
         StringBuffer sb = new StringBuffer();
 
         sb.append("各位");
         sb.append("<br>");
-        sb.append("以下信息是(" + channel.getFullName() + ") CMS中的统计数据");
+        sb.append("以下信息是各个店铺的CMS中的统计数据");
         sb.append("<br>");
 
         sb.append("<table border=\"1\" style=\"border-collapse:collapse\">");
         sb.append("<tr bgcolor=\"#CCCCCC\">");
+        sb.append("<td align=center>店铺</td>");
         sb.append("<td align=center>Feed类目未匹配</td>");
         sb.append("<td align=center>主类目属性未匹配</td>");
         sb.append("<td align=center>产品属性编辑未完成(未翻译)</td>");
@@ -115,11 +117,18 @@ public class CmsStatisticsReportService extends BaseTaskService {
         sb.append("</tr>");
 
         sb.append("<tr>");
-        for(Integer count: statistics){
-            sb.append("<td>");
-            sb.append(count.toString());
-            sb.append("</td>");
-        }
+        statisticsInfo.forEach(
+                (channel, integers) -> {
+                    sb.append("<td>");
+                    sb.append(channel);
+                    sb.append("</td>");
+                    integers.forEach(count -> {
+                        sb.append("<td>");
+                        sb.append(count.toString());
+                        sb.append("</td>");
+                    });
+                }
+        );
         sb.append("</tr>");
         sb.append("</table>");
         return sb.toString();
