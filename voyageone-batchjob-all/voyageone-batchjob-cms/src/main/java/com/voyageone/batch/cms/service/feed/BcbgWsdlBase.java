@@ -73,6 +73,8 @@ abstract class BcbgWsdlBase extends BaseTaskService {
 
         private ProductBean productColumns;
 
+        private ItemBean itemColumns;
+
         protected ContextBase(ChannelConfigEnums.Channel channel) {
             this.channel = channel;
             // 主表
@@ -95,13 +97,7 @@ abstract class BcbgWsdlBase extends BaseTaskService {
 
         protected List<ItemBean> getItems(ProductBean product) {
 
-            ItemBean itemColumns = new ItemBean();
-
-            itemColumns.setCode(Feed.getVal1(channel, FeedEnums.Name.item_code));
-            itemColumns.setI_sku(Feed.getVal1(channel, FeedEnums.Name.item_i_sku));
-            itemColumns.setI_itemcode(Feed.getVal1(channel, FeedEnums.Name.item_i_itemcode));
-            itemColumns.setI_size(Feed.getVal1(channel, FeedEnums.Name.item_i_size));
-            itemColumns.setI_barcode(Feed.getVal1(channel, FeedEnums.Name.item_i_barcode));
+            ItemBean itemColumns = getItemColumns();
 
             String where = String.format("WHERE %s AND %s = '%s'", getWhereUpdateFlg(), itemColumns.getCode(), product.getP_code());
 
@@ -110,6 +106,20 @@ abstract class BcbgWsdlBase extends BaseTaskService {
             $info("取得 Item [ %s\t ] 个 [ Product: %s ]", itemBeans.size(), product.getUrl_key());
 
             return itemBeans;
+        }
+
+        private ItemBean getItemColumns() {
+
+            if (itemColumns != null) return itemColumns;
+
+            itemColumns = new ItemBean();
+
+            itemColumns.setCode(Feed.getVal1(channel, FeedEnums.Name.item_code));
+            itemColumns.setI_sku(Feed.getVal1(channel, FeedEnums.Name.item_i_sku));
+            itemColumns.setI_itemcode(Feed.getVal1(channel, FeedEnums.Name.item_i_itemcode));
+            itemColumns.setI_size(Feed.getVal1(channel, FeedEnums.Name.item_i_size));
+            itemColumns.setI_barcode(Feed.getVal1(channel, FeedEnums.Name.item_i_barcode));
+            return itemColumns;
         }
 
         protected List<ImageBean> getImages(ProductBean product) {

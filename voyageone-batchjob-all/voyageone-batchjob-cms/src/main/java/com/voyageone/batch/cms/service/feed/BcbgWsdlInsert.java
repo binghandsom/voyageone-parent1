@@ -44,23 +44,7 @@ class BcbgWsdlInsert extends BcbgWsdlBase {
 
             $info("准备获取类目 [ %s ] 的 Model", category.getUrl_key());
 
-            ModelBean modelColumns = new ModelBean();
-
-            // 为每个字段指定其映射到的数据表的列.
-            // 在后面的查询,自动从数据表填充值.
-            modelColumns.setUrl_key(Feed.getVal1(channel, FeedEnums.Name.model_url_key));
-            modelColumns.setCategory_url_key(Feed.getVal1(channel, FeedEnums.Name.model_category_url_key));
-            modelColumns.setM_product_type(Feed.getVal1(channel, FeedEnums.Name.model_m_product_type));
-            modelColumns.setM_brand(Feed.getVal1(channel, FeedEnums.Name.model_m_brand));
-            modelColumns.setM_model(Feed.getVal1(channel, FeedEnums.Name.model_m_model));
-            modelColumns.setM_name(Feed.getVal1(channel, FeedEnums.Name.model_m_name));
-            modelColumns.setM_short_description(Feed.getVal1(channel, FeedEnums.Name.model_m_short_description));
-            modelColumns.setM_long_description(Feed.getVal1(channel, FeedEnums.Name.model_m_long_description));
-            modelColumns.setM_size_type(Feed.getVal1(channel, FeedEnums.Name.model_m_size_type));
-            modelColumns.setM_is_unisex(Feed.getVal1(channel, FeedEnums.Name.model_m_is_unisex));
-            modelColumns.setM_weight(Feed.getVal1(channel, FeedEnums.Name.model_m_weight));
-            modelColumns.setM_is_taxable(Feed.getVal1(channel, FeedEnums.Name.model_m_is_taxable));
-            modelColumns.setM_is_effective(Feed.getVal1(channel, FeedEnums.Name.model_m_is_effective));
+            ModelBean modelColumns = getModelColumns();
 
             // 条件则根据类目筛选
             String where = String.format("WHERE %s AND %s = '%s' %s", INSERT_FLG, modelColumns.getCategory_url_key(),
@@ -80,6 +64,27 @@ class BcbgWsdlInsert extends BcbgWsdlBase {
             }
 
             return modelBeans;
+        }
+
+        private ModelBean getModelColumns() {
+            ModelBean modelColumns = new ModelBean();
+
+            // 为每个字段指定其映射到的数据表的列.
+            // 在后面的查询,自动从数据表填充值.
+            modelColumns.setUrl_key(Feed.getVal1(channel, FeedEnums.Name.model_url_key));
+            modelColumns.setCategory_url_key(Feed.getVal1(channel, FeedEnums.Name.model_category_url_key));
+            modelColumns.setM_product_type(Feed.getVal1(channel, FeedEnums.Name.model_m_product_type));
+            modelColumns.setM_brand(Feed.getVal1(channel, FeedEnums.Name.model_m_brand));
+            modelColumns.setM_model(Feed.getVal1(channel, FeedEnums.Name.model_m_model));
+            modelColumns.setM_name(Feed.getVal1(channel, FeedEnums.Name.model_m_name));
+            modelColumns.setM_short_description(Feed.getVal1(channel, FeedEnums.Name.model_m_short_description));
+            modelColumns.setM_long_description(Feed.getVal1(channel, FeedEnums.Name.model_m_long_description));
+            modelColumns.setM_size_type(Feed.getVal1(channel, FeedEnums.Name.model_m_size_type));
+            modelColumns.setM_is_unisex(Feed.getVal1(channel, FeedEnums.Name.model_m_is_unisex));
+            modelColumns.setM_weight(Feed.getVal1(channel, FeedEnums.Name.model_m_weight));
+            modelColumns.setM_is_taxable(Feed.getVal1(channel, FeedEnums.Name.model_m_is_taxable));
+            modelColumns.setM_is_effective(Feed.getVal1(channel, FeedEnums.Name.model_m_is_effective));
+            return modelColumns;
         }
 
         private List<List<CategoryBean>> getCategories() {
