@@ -46,8 +46,8 @@
         f1.ATBEZ, f1.SAISO, f1.SAISJ, f1.SAITY, f1.SATNR, f1.MAKTX, f1.WLADG, f1.WHERL,
         f1.MEAN_EAN11, f1.A304_DATAB, f1.A304_DATBI, f1.A304_KBETR, f1.A304_KONWA, f1.A073_DATAB, f1.A073_DATBI,
         f1.A073_KBETR, f1.A073_KONWA
-        FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed f1 JOIN voyageone_cms.cms_zz_worktable_bcbg_superfeed_full f2
-        ON f1.MATNR = f2.MATNR
+        FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed f1 LEFT JOIN voyageone_cms.cms_zz_worktable_bcbg_superfeed_full f2
+        ON f1.MATNR = f2.MATNR AND f2.MATNR IS NULL
         <where>
             f1.update_flg = #{update_flg}
             <if test="modelFailList != null and modelFailList.size() > 0">

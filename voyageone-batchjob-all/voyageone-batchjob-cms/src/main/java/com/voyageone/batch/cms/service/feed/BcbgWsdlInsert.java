@@ -166,6 +166,10 @@ class BcbgWsdlInsert extends BcbgWsdlBase {
             $info("准备 <构造> 类目树");
             List<List<CategoryBean>> categoriesList = getCategories();
 
+            // 准备接收失败内容
+            List<String> modelFailList = new ArrayList<>();
+            List<String> productFailList = new ArrayList<>();
+
             // 分每棵树进行提交
             for (List<CategoryBean> categories: categoriesList) {
 
@@ -179,10 +183,6 @@ class BcbgWsdlInsert extends BcbgWsdlBase {
                 WsdlProductInsertResponse response = service.insert(feedInsert);
 
                 $info("接口结果: %s ; 返回: %s", response.getResult(), response.getMessage());
-
-                // 准备接收失败内容
-                List<String> modelFailList = new ArrayList<>();
-                List<String> productFailList = new ArrayList<>();
 
                 ProductFeedResponseBean productFeedResponseBean = response.getResultInfo();
 
@@ -200,13 +200,13 @@ class BcbgWsdlInsert extends BcbgWsdlBase {
                     }
                 }
 
-                $info("失败的 Model: %s ; 失败的 Product: %s", modelFailList.size(), productFailList.size());
-
                 if (response.getResult().equals("NG"))
                     logIssue("cms 数据导入处理", "新产品推送失败：Message=" + response.getMessage());
-
-                bcbgSuperFeedDao.insertFullWithoutFail(modelFailList, productFailList);
             }
+
+            $info("总共~ 失败的 Model: %s ; 失败的 Product: %s", modelFailList.size(), productFailList.size());
+
+            bcbgSuperFeedDao.insertFullWithoutFail(modelFailList, productFailList);
 
             $info("新商品 Insert 处理全部完成");
         }
