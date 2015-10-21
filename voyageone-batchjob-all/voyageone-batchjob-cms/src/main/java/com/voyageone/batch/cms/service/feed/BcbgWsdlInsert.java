@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  * Created by Jonas on 10/19/15.
  */
 @Service
-class BcbgInsertService extends BcbgWsdlBase {
+class BcbgWsdlInsert extends BcbgWsdlBase {
 
     private static final String INSERT_FLG = "update_flg = 1";
 

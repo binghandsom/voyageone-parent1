@@ -43,7 +43,7 @@ public class BcbgAnalysisService extends BaseTaskService {
     private Transformer transformer;
 
     @Autowired
-    private BcbgInsertService insertService;
+    private BcbgWsdlInsert insertService;
 
     /**
      * 获取子系统
