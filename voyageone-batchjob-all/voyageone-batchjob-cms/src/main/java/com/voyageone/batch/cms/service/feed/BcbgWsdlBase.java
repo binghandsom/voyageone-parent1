@@ -8,6 +8,7 @@ import com.voyageone.batch.cms.bean.ProductBean;
 import com.voyageone.batch.cms.dao.SuperFeedDao;
 import com.voyageone.batch.cms.dao.feed.BcbgSuperFeedDao;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
+import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Bcbg 远程调用共通基础
@@ -51,16 +53,22 @@ abstract class BcbgWsdlBase extends BaseTaskService {
 
     protected abstract class ContextBase {
 
+        private final Pattern special_symbol;
+
         protected final ChannelConfigEnums.Channel channel;
 
         protected final String table;
 
         protected final String imageTable;
 
+        protected final String productTable;
+
         protected ContextBase(ChannelConfigEnums.Channel channel) {
             this.channel = channel;
             this.table = Feed.getVal1(channel, FeedEnums.Name.table_id);
             this.imageTable = Feed.getVal1(channel, FeedEnums.Name.image_table_id);
+            this.special_symbol = Pattern.compile(Feed.getVal1(channel, FeedEnums.Name.url_special_symbol));
+            this.productTable = Feed.getVal1(channel, FeedEnums.Name.product_table_id);
         }
 
         protected List<ItemBean> getItems(ProductBean product) {
@@ -112,9 +120,68 @@ abstract class BcbgWsdlBase extends BaseTaskService {
             return imageBeans;
         }
 
+        protected List<ProductBean> getProducts() {
+
+            $info("准备批量获取 Product");
+
+            ProductBean productColumns = getProductColumns();
+
+            // 条件则根据类目筛选
+            String where = String.format("WHERE %s", getWhereUpdateFlg());
+
+            List<ProductBean> productBeans = superFeedDao.selectSuperfeedProduct(where, productColumns, productTable);
+
+            $info("取得 Product [ %s ] 个", productBeans.size());
+
+            for (ProductBean productBean: productBeans) {
+
+                productBean.setItembeans(getItems(productBean));
+                productBean.setImages(getImages(productBean));
+            }
+
+            $info("已为 Product 补全 Item 和 Image");
+
+            return productBeans;
+        }
+
+        /**
+         * 获取某 Model 下的所有 Product
+         */
         protected List<ProductBean> getProducts(ModelBean model) {
 
             $info("准备批量获取 Model [ %s ] 的 Product", model.getUrl_key());
+
+            ProductBean productColumns = getProductColumns();
+
+            // 条件则根据类目筛选
+            String where = String.format("WHERE %s AND %s = '%s'", getWhereUpdateFlg(), productColumns.getModel_url_key(), model.getUrl_key());
+
+            List<ProductBean> productBeans = superFeedDao.selectSuperfeedProduct(where, productColumns, productTable);
+
+            $info("取得 Model [ %s ] 的 Product [ %s ] 个", model.getUrl_key(), productBeans.size());
+
+            for (ProductBean productBean: productBeans) {
+                productBean.setItembeans(getItems(productBean));
+                productBean.setImages(getImages(productBean));
+                // 转换 Url Key 格式,这里顺序同之前的get类方法一样的原理
+                productBean.setUrl_key(clearSpecialSymbol(productBean.getUrl_key()));
+                productBean.setCategory_url_key(clearSpecialSymbol(productBean.getCategory_url_key()));
+                productBean.setModel_url_key(clearSpecialSymbol(productBean.getModel_url_key()));
+            }
+
+            $info("已为 Model [ %s ] 的 Product 补全 Item 和 Image", model.getUrl_key());
+
+            return productBeans;
+        }
+
+        protected String clearSpecialSymbol(String name) {
+            return special_symbol.matcher(name.toLowerCase()).replaceAll(Constants.EmptyString).replace(" ", "-");
+        }
+
+        /**
+         * 获取商品级别的列定义
+         */
+        private ProductBean getProductColumns() {
 
             ProductBean productColumns = new ProductBean();
 
@@ -135,21 +202,7 @@ abstract class BcbgWsdlBase extends BaseTaskService {
             productColumns.setCps_cn_price(Feed.getVal1(channel, FeedEnums.Name.product_cps_cn_price));
             productColumns.setCps_cn_price_final_rmb(Feed.getVal1(channel, FeedEnums.Name.product_cps_cn_price_final_rmb));
 
-            // 条件则根据类目筛选
-            String where = String.format("WHERE %s AND %s = '%s'", getWhereUpdateFlg(), productColumns.getModel_url_key(), model.getUrl_key());
-
-            List<ProductBean> productBeans = superFeedDao.selectSuperfeedProduct(where, productColumns, table);
-
-            $info("取得 Model [ %s ] 的 Product [ %s ] 个", model.getUrl_key(), productBeans.size());
-
-            for (ProductBean productBean: productBeans) {
-                productBean.setItembeans(getItems(productBean));
-                productBean.setImages(getImages(productBean));
-            }
-
-            $info("已为 Model [ %s ] 的 Product 补全 Item 和 Image", model.getUrl_key());
-
-            return productBeans;
+            return productColumns;
         }
     }
 }

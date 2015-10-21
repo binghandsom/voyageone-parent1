@@ -40,21 +40,25 @@
         (MATNR, EAN11, BRAND_ID, MATKL, ZZCODE1, ZZCODE2, ZZCODE3, MEINS, BSTME, COLOR, COLOR_ATWTB, SIZE1, SIZE1_ATWTB,
          SIZE1_ATINN, ATBEZ, SAISO, SAISJ, SAITY, SATNR, MAKTX, WLADG, WHERL, MEAN_EAN11, A304_DATAB, A304_DATBI,
          A304_KBETR, A304_KONWA, A073_DATAB, A073_DATBI, A073_KBETR, A073_KONWA)
-        SELECT MATNR, EAN11, BRAND_ID, MATKL, ZZCODE1, ZZCODE2, ZZCODE3, MEINS, BSTME, COLOR, COLOR_ATWTB, SIZE1, SIZE1_ATWTB,
-            SIZE1_ATINN, ATBEZ, SAISO, SAISJ, SAITY, SATNR, MAKTX, WLADG, WHERL, MEAN_EAN11, A304_DATAB, A304_DATBI,
-            A304_KBETR, A304_KONWA, A073_DATAB, A073_DATBI, A073_KBETR, A073_KONWA
-        FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed
+        SELECT
+        f1.MATNR, f1.EAN11, f1.BRAND_ID, f1.MATKL, f1.ZZCODE1, f1.ZZCODE2, f1.ZZCODE3,
+        f1.MEINS, f1.BSTME, f1.COLOR, f1.COLOR_ATWTB, f1.SIZE1, f1.SIZE1_ATWTB, f1.SIZE1_ATINN,
+        f1.ATBEZ, f1.SAISO, f1.SAISJ, f1.SAITY, f1.SATNR, f1.MAKTX, f1.WLADG, f1.WHERL,
+        f1.MEAN_EAN11, f1.A304_DATAB, f1.A304_DATBI, f1.A304_KBETR, f1.A304_KONWA, f1.A073_DATAB, f1.A073_DATBI,
+        f1.A073_KBETR, f1.A073_KONWA
+        FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed f1 JOIN voyageone_cms.cms_zz_worktable_bcbg_superfeed_full f2
+        ON f1.MATNR = f2.MATNR
         <where>
-            update_flg = #{update_flg}
+            f1.update_flg = #{update_flg}
             <if test="modelFailList != null and modelFailList.size() > 0">
-                AND SATNR NOT IN (
+                AND f1.SATNR NOT IN (
                 <foreach collection="modelFailList" item="model" separator=",">
                     #{model}
                 </foreach>
                 )
             </if>
             <if test="productFailList != null and productFailList.size() > 0">
-                AND CONCAT(SATNR, MATNR) NOT IN (
+                AND f1.CONCAT(SATNR, MATNR) NOT IN (
                 <foreach collection="productFailList" item="code" separator=",">
                     #{code}
                 </foreach>
