@@ -11,6 +11,7 @@ public class ClientShipmentBean {
     private long shipment_id;
     private String order_channel_id;
     private String file_name;
+    private String brand;
     private long transfer_id;
     private String syn_flg;
     private String active;
@@ -41,6 +42,14 @@ public class ClientShipmentBean {
 
     public void setFile_name(String file_name) {
         this.file_name = file_name;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
     }
 
     public long getTransfer_id() {

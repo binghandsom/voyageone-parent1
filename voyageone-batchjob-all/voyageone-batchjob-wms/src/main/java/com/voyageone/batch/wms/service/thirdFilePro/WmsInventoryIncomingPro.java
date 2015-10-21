@@ -11,6 +11,7 @@ import com.voyageone.common.configs.beans.ThirdPartyConfigBean;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -58,17 +59,17 @@ import java.util.List;
         //文件明细的定长
         final String[] detailFixedLength = tcb.getProp_val4().split(",");
 
-        //完成处理后的备份路径
-        final String bakFilePath = tcb.getProp_val5();
+        //完成处理后的FTP备份路径
+        final String ftpBakFilePath = tcb.getProp_val5();
+        //完成处理后的服务器备份路径
+        final String webBakFilePath = tcb.getProp_val6();
 
         // 解析文件
         for(Object fileNameInfo : fileNameList) {
             String filenameInfoStr = (String) fileNameInfo;
             List<bulkShipmentBean> fileDataList = readFile(filePath, filenameInfoStr, headFixedLength, detailFixedLength, orderChannelId);
             if(fileDataList != null && fileDataList.size() > 0) {
-                updateTabels(filenameInfoStr, orderChannelId, fileDataList);
-                // 处理完毕，移除文件
-                moveFile(filePath, filenameInfoStr, bakFilePath);
+                updateTabels(filenameInfoStr, orderChannelId, fileDataList, filePath, ftpBakFilePath,webBakFilePath);
             }
 
         }
@@ -124,7 +125,7 @@ import java.util.List;
                         bulkShipmentHeadBean.setShip_via_code(head.get(5));
                         bulkShipmentHeadBean.setTracking_num(head.get(6));
                         bulkShipmentHeadBean.setShipping_material(head.get(7));
-                        bulkShipmentHeadBean.setCancel_flag(head.get(8));
+                        //bulkShipmentHeadBean.setCancel_flag(head.get(8));
 
                         bulkShipmentBean.setBulkShipmentHead(bulkShipmentHeadBean);
                     }
@@ -147,10 +148,13 @@ import java.util.List;
                         bulkShipmentDetailBean.setStge_loc(detail.get(10));
                         bulkShipmentDetailBean.setUpc(detail.get(11));
 
-                        List<com.voyageone.batch.wms.modelbean.bulkShipmentDetailBean> getBulkShipmentDetails = bulkShipmentBean.getBulkShipmentDetails();
-                        getBulkShipmentDetails.add(bulkShipmentDetailBean);
+                        List<bulkShipmentDetailBean> BulkShipmentDetails = bulkShipmentBean.getBulkShipmentDetails();
+                        if (BulkShipmentDetails == null){
+                            BulkShipmentDetails = new ArrayList<>();
+                        }
+                        BulkShipmentDetails.add(bulkShipmentDetailBean);
 
-                        bulkShipmentBean.setBulkShipmentDetails(getBulkShipmentDetails);
+                        bulkShipmentBean.setBulkShipmentDetails(BulkShipmentDetails);
 
                     }
 
@@ -182,7 +186,7 @@ import java.util.List;
      * @param orderChannelId 渠道Id
      * @param bulkShipmentBeans 参数Map
      */
-    private void updateTabels(final String fileNameInfo, final String orderChannelId, final List<bulkShipmentBean> bulkShipmentBeans){
+    private void updateTabels(final String fileNameInfo, final String orderChannelId, final List<bulkShipmentBean> bulkShipmentBeans, final String filePath, final String ftpBakFilePath, final String webBakFilePath){
         OrderChannelBean channel = ChannelConfigs.getChannel(orderChannelId);
         log(channel.getFull_name()+"处理文件 " + fileNameInfo + " 开始");
         transactionRunner.runWithTran(() -> {
@@ -202,6 +206,11 @@ import java.util.List;
                         clientShipmentDao.insertClientPackageItem(clientPackageItemBean);
                     }
                 }
+
+                // 处理完毕，复制文件
+                copyFile(filePath, fileNameInfo, webBakFilePath);
+                // 处理完毕，移除文件
+                moveFile(filePath, fileNameInfo, ftpBakFilePath);
             } catch (Exception e) {
                 logger.error(channel.getFull_name() + "处理文件 " + fileNameInfo + " 失败：" + e);
                 throw new RuntimeException(channel.getFull_name() + "处理文件 " + fileNameInfo + " 失败：" + e.getMessage());
@@ -222,6 +231,7 @@ import java.util.List;
 
         clientShipmentBean.setOrder_channel_id(orderChannelId);
         clientShipmentBean.setFile_name(fileName);
+        clientShipmentBean.setBrand(fileName.substring(4,7));
         clientShipmentBean.setTransfer_id(0);
         clientShipmentBean.setSyn_flg("0");
         clientShipmentBean.setActive("1");

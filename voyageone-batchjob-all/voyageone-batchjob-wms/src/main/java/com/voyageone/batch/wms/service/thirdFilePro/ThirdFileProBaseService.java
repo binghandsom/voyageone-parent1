@@ -207,6 +207,19 @@ public abstract class ThirdFileProBaseService extends BaseTaskService{
     }
 
     /**
+     * @description 移动文件到指定目录
+     * @param srcPath 源文件位置
+     * @param srcFileName 源文件名称
+     * @param bakFilePath 目标文件路径
+     */
+    protected void copyFile(String srcPath, String srcFileName, String bakFilePath) {
+        log("复制文件 " + srcFileName + " 到备份文件夹开始！");
+        String bakFileName = srcFileName.substring(0, srcFileName.lastIndexOf(".")) + "_" + DateTimeUtil.getNow(DateTimeUtil.DATE_TIME_FORMAT_2) + srcFileName.substring(srcFileName.lastIndexOf("."));
+        FileUtils.copyFile(srcPath + "/" + srcFileName, bakFilePath + "/" + bakFileName);
+        log("复制文件 " + srcFileName + " 到备份文件夹结束！");
+    }
+
+    /**
      * @description 获取文件中的行中的某一列数据
      * @param key 文件与orderUpdateBean对应关系的Map中的Key（文件中的字段名）
      * @param firstRowArr 文件中的第一行数组（列名）
