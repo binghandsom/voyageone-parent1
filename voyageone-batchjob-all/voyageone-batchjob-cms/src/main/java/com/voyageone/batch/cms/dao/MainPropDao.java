@@ -662,7 +662,7 @@ public class MainPropDao extends BaseDao {
         List<HashMap<String, String>> lstResult = selectList(Constants.DAO_NAME_SPACE_CMS + "ims_bt_category_extend_select_where_attr_is_setted", params);
 
         for (Map<String, String> map : lstResult) {
-            result.add(map.get("main_category_id"));
+            result.add(String.valueOf(map.get("main_category_id")));
         }
 
         return result;

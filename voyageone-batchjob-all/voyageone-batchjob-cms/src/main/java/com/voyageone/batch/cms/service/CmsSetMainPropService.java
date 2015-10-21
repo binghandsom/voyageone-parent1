@@ -143,7 +143,7 @@ public class CmsSetMainPropService extends BaseTaskService {
 
                 if (!categoryListSetted.contains(mainCategoryId)) {
                     // 如果没有设定过匹配用的主类目，那么认为无法继续了，跳过
-                    logger.warn("主类目属性未设定完成：category_id=" + category_id);
+                    logger.warn("主类目属性未设定完成：mainCategoryId=" + mainCategoryId);
                     continue;
                 }
 
