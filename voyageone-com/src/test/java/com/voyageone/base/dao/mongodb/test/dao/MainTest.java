@@ -1,0 +1,16 @@
+package com.voyageone.base.dao.mongodb.test.dao;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.GenericXmlApplicationContext;
+
+/**
+ * Created by DELL on 2015/10/21.
+ */
+public class MainTest {
+    public static void main(String[] args) {
+        ApplicationContext ctx = new GenericXmlApplicationContext("applicationContext.xml");
+
+        MainTestTask testTask = ctx.getBean(MainTestTask.class);
+        testTask.testSelect();
+    }
+}
