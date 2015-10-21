@@ -5,7 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface CoreConstants {
-
+    //拼接SQL
+    public final  static String TIME_SQL = " %s <= DATE_ADD(now(),INTERVAL %s MONTH )";
     /**
      * 从库状态
      */

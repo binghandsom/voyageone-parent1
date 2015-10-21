@@ -136,7 +136,7 @@
 	</update>
 	<update id="updateDealFlagByModelId">
 	  UPDATE voyageone_cms.cms_mt_product_attribute attr
-		LEFT JOIN voyageone_cms.cms_bt_model m ON m.url_key = attr.product_url_key
+		LEFT JOIN voyageone_cms.cms_bt_model m ON m.url_key = attr.model_url_key
 		SET attr.deal_flag = 0,
 		    attr.modifier = #{user},
 		 	attr.modified = NOW()

@@ -88,10 +88,16 @@ public class CmsSetMainPropService extends BaseTaskService {
 
             // 所有的类目匹配关系
             Map<String, String> mainCategoryIdList = new HashMap<>();
+            // 已经完成属性匹配的主类目列表
+            List<String> categoryListSetted = new ArrayList<>();
             // 如果检索到数据
             if (mainPropTodoListBeanList.size() > 0) {
                 // 一次性获取所有的类目匹配关系（根据channel_id）
                 mainCategoryIdList = mainPropDao.selectMainCategoryIdList(channel_id);
+
+                // 查看已经完成属性匹配的主类目列表
+                categoryListSetted = mainPropDao.getMainCategoryListWhereAttrIsSetted(channel_id);
+
             }
 
             // 循环所有的商品
@@ -128,11 +134,17 @@ public class CmsSetMainPropService extends BaseTaskService {
 //                            break;
 
                         // 如果没有设定过匹配用的主类目，那么认为无法继续了，跳过
-                        logger.info("尚未指定主类目：category_id=" + category_id);
-                        logger.info("尚未指定主类目：model_id=" + model_id);
-                        logger.info("尚未指定主类目：product_id=" + product_id);
+                        logger.warn("尚未指定主类目：category_id=" + category_id);
+                        logger.warn("尚未指定主类目：model_id=" + model_id);
+                        logger.warn("尚未指定主类目：product_id=" + product_id);
                         continue;
                     }
+                }
+
+                if (!categoryListSetted.contains(mainCategoryId)) {
+                    // 如果没有设定过匹配用的主类目，那么认为无法继续了，跳过
+                    logger.warn("主类目属性未设定完成：category_id=" + category_id);
+                    continue;
                 }
 
                 // 获取feed内容
@@ -237,6 +249,9 @@ public class CmsSetMainPropService extends BaseTaskService {
                                         );
                             }
 
+                        } else if (feedPropMappingType == FeedPropMappingType.VALUE) {
+                            // 直接设定值
+                            value = feedMappingSkuBean.getValue();
                         }
 
                         // 循环sku列表
@@ -648,7 +663,6 @@ public class CmsSetMainPropService extends BaseTaskService {
         return value;
 
     }
-
 
     private String getUUID() {
         // 创建 GUID 对象
