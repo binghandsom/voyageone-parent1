@@ -143,6 +143,7 @@ public class CommonServiceImpl implements CommonService {
 				data.put("isPublished", false);
 				if (productDao.doUpdatePublishStatus(data) == 0) {
 					data.put("code", productCNPriceInfo.getCode());
+					data.put("cnGroupId", 1);
 					productDao.doInsertPublishStatus(data);
 				}
 			}

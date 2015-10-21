@@ -1,0 +1,127 @@
+package com.voyageone.batch.cms.service;
+
+import com.voyageone.batch.base.BaseTaskService;
+import com.voyageone.batch.cms.dao.SearchDao;
+import com.voyageone.batch.core.modelbean.TaskControlBean;
+import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.mail.Mail;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Created by james.li on 2015/10/20.
+ */
+@Service
+public class CmsStatisticsReportService extends BaseTaskService {
+
+    @Autowired
+    private SearchDao searchDao;
+
+    @Override
+    public SubSystem getSubSystem() {
+        return SubSystem.CMS;
+    }
+
+    @Override
+    public String getTaskName() {
+        return "cmsStatisticsReportJob";
+    }
+
+    @Override
+    protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
+
+        for(TaskControlBean taskControl : taskControlList){
+            if("order_channel_id".equalsIgnoreCase(taskControl.getCfg_name())){
+                String channelId = taskControl.getCfg_val1();
+                ChannelConfigEnums.Channel channel=  ChannelConfigEnums.Channel.valueOfId(channelId);
+                List<Integer>statistics = doQuickSearch(channelId);
+                Mail.sendAlert("CmsStatisticsReport", "CMS统计数据(" + channel.getFullName() + ")", getMailContent(statistics,channel), true);
+            }
+        }
+    }
+
+    public List<Integer> doQuickSearch(String channelId) throws IOException {
+
+        // 1.未匹配类目：
+        List<Integer> ret=new ArrayList<>();
+
+        ret.add(searchDao.doCategoryUnMappingCnt(channelId));
+
+        // 2.属性匹配未完成类目:
+        ret.add(searchDao.doCategoryPropertyUnMappingCnt(channelId));
+
+        // 3.属性编辑未完成产品:
+        Map<String,Object> s = new HashMap<>();
+        s.put("channelId", channelId);
+        s.put("isApprovedDescription", '0');
+        s.put("cartId",23);
+        ret.add(searchDao.doAdvanceSearchCnt(s));
+
+        // 4.属性编辑完成未approve产品:
+        s = new HashMap<>();
+        s.put("channelId", channelId);
+        s.put("isApprovedDescription", '1');
+        s.put("isApproved", '0');
+        s.put("cartId",23);
+        ret.add(searchDao.doAdvanceSearchCnt(s));
+
+        // 5.approve但未上新产品:
+        s = new HashMap<>();
+        s.put("channelId", channelId);
+        s.put("isApproved", '1');
+        s.put("publishStatus", '0');
+        s.put("cartId",23);
+        ret.add(searchDao.doAdvanceSearchCnt(s));
+
+        // 5.approve但未上新产品:
+        s = new HashMap<>();
+        s.put("channelId", channelId);
+        s.put("publishStatus", '2');
+        s.put("cartId",23);
+        ret.add(searchDao.doAdvanceSearchCnt(s));
+        return  ret;
+    }
+
+    /**
+     * 生产邮件的内容
+     * @param statistics
+     * @param channel
+     * @return
+     */
+    private String getMailContent(List<Integer> statistics,ChannelConfigEnums.Channel channel) {
+
+        StringBuffer sb = new StringBuffer();
+
+        sb.append("各位");
+        sb.append("<br>");
+        sb.append("以下信息是(" + channel.getFullName() + ") CMS中的统计数据");
+        sb.append("<br>");
+
+        sb.append("<table border=\"1\" style=\"border-collapse:collapse\">");
+        sb.append("<tr bgcolor=\"#CCCCCC\">");
+        sb.append("<td align=center>Feed类目未匹配</td>");
+        sb.append("<td align=center>主类目属性未匹配</td>");
+        sb.append("<td align=center>产品属性编辑未完成(未翻译)</td>");
+        sb.append("<td align=center>产品属性编辑完成未Approve</td>");
+        sb.append("<td align=center>产品Approved但未上新</td>");
+        sb.append("<td align=center>产品上新失败</td>");
+        sb.append("</tr>");
+
+        sb.append("<tr>");
+        for(Integer count: statistics){
+            sb.append("<td>");
+            sb.append(count.toString());
+            sb.append("</td>");
+        }
+        sb.append("</tr>");
+        sb.append("</table>");
+        return sb.toString();
+    }
+}
