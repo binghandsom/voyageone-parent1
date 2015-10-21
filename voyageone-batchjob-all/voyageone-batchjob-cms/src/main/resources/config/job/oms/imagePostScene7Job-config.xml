@@ -10,6 +10,7 @@
 	<bean id="imagePostScene7Job"
 		class="com.voyageone.batch.cms.job.ImagePostScene7Job">
 	</bean>
+
 	<bean id="jewelyImagePostScene7Task"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject">
@@ -33,6 +34,32 @@
 		</property>
 		<property name="cronExpression">
 			<value>${quartz.image.scene7.jewely.post}</value>
+		</property>
+	</bean>
+
+	<bean id="bcbgImagePostScene7Task"
+		  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref local="imagePostScene7Job" />
+		</property>
+		<property name="targetMethod">
+			<value>run</value>
+		</property>
+		<property name="arguments">
+			<value>012</value>
+		</property>
+		<property name="concurrent">
+			<value>false</value>
+		</property>
+	</bean>
+	<bean id="bcbgImagePostScene7TaskContri"
+		  name="bcbgImagePostScene7TaskContri"
+		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="bcbgImagePostScene7Task" />
+		</property>
+		<property name="cronExpression">
+			<value>${quartz.image.scene7.bcbg.post}</value>
 		</property>
 	</bean>
 	<!-- ===================== 向scene7上传产品图片定时任务 end ===================== -->
