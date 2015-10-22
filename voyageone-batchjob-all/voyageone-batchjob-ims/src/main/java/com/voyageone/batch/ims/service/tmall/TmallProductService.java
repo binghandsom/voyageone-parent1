@@ -509,7 +509,7 @@ public class TmallProductService implements PlatformServiceInterface {
         if (uploadImageResult.isUploadSuccess()) {
             urlMap = uploadImageResult.getUrlMap();
         } else {
-            throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(uploadImageResult.getFailCause()));
+            throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(uploadImageResult.getFailCause(), uploadImageResult.isNextProcess()));
         }
 
         List<Field> productPlatformFields = (List)masterDataMappingService.resolvePlatformProps(this, tcb.getPlatformUploadRunState(), urlMap);
@@ -616,7 +616,7 @@ public class TmallProductService implements PlatformServiceInterface {
         if (uploadImageResult.isUploadSuccess()) {
             urlMap = uploadImageResult.getUrlMap();
         } else {
-            throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(uploadImageResult.getFailCause()));
+            throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(uploadImageResult.getFailCause(), uploadImageResult.isNextProcess()));
         }
 
         List<Field> itemPlatformFields = (List)masterDataMappingService.resolvePlatformProps(this, tcb.getPlatformUploadRunState(), urlMap);
@@ -993,7 +993,7 @@ public class TmallProductService implements PlatformServiceInterface {
         if (uploadImageResult.isUploadSuccess()) {
             urlMap = uploadImageResult.getUrlMap();
         } else {
-            throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(uploadImageResult.getFailCause()));
+            throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(uploadImageResult.getFailCause(), uploadImageResult.isNextProcess()));
         }
 
         List<Field> itemPlatformFields = (List)masterDataMappingService.resolvePlatformProps(this, tcb.getPlatformUploadRunState(), urlMap);

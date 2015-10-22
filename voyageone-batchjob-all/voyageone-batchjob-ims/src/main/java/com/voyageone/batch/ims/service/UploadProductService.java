@@ -256,8 +256,12 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                     } else {
                         productPublishBean.setPublish_product_status(0);
                     }
-                    //失败时，publish_status设为2
-                    productPublishBean.setPublish_status(2);
+                    //失败时，如果下次需要执行，publish_status设为0，否则publish_status设为2
+                    if (workLoadBean.isNextProcess()) {
+                        productPublishBean.setPublish_status(0);
+                    } else {
+                        productPublishBean.setPublish_status(2);
+                    }
                     productPublishBean.setPublish_failed_comment(workLoadBean.getFailCause());
                     productPublishBean.setIs_published(workLoadBean.getIsPublished());
                     productPublishBean.setModifier(getTaskName());
