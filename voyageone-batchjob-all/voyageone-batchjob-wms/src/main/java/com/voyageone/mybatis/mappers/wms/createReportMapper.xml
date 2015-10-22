@@ -36,7 +36,8 @@
                       tm_task_control
                     WHERE
                       task_id = #{task_name}
-                    AND cfg_name = 'order_channel_id')
+                    AND cfg_name = 'order_channel_id'
+                    and cfg_val1 = orders.order_channel_id)
         AND NOT EXISTS (SELECT
                         1
                       FROM
@@ -104,7 +105,8 @@
         tm_task_control
         WHERE
         task_id = #{task_name}
-        AND cfg_name = 'order_channel_id')
+        AND cfg_name = 'order_channel_id'
+        and cfg_val1 = orders.order_channel_id)
         GROUP BY
         transferitem.transfer_id,
         transferitem.order_number,
