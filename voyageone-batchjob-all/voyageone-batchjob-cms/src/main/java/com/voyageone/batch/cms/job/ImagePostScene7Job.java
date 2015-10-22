@@ -44,21 +44,19 @@ public class ImagePostScene7Job {
 	 */
 	public void run(String orderChannelId) {
 
-		if (!taskCheck.contains(":")) {
-			taskCheck = orderChannelId + ":" + taskCheck;
-		}
+		String taskNameReal = orderChannelId + ":" + taskCheck;
 		
-		List<TaskControlBean> taskControlList = taskDao.getTaskControlList(taskCheck);
+		List<TaskControlBean> taskControlList = taskDao.getTaskControlList(taskNameReal);
 		// 是否可以运行的判断
-		if (!TaskControlUtils.isRunnable(taskControlList, taskCheck)) {
+		if (!TaskControlUtils.isRunnable(taskControlList, taskNameReal)) {
 			return;
 		}
 		String taskID =  TaskControlUtils.getTaskId(taskControlList);
-		logger.info(taskCheck + "任务开始");
+		logger.info(taskNameReal + "任务开始");
 		logger.info("oderChannelId:" + orderChannelId);
 
 		if (isRun) {
-			logger.info("ImagePostScene7Job is running, continue");
+			logger.info(taskNameReal + " is running, continue");
 			return;
 		} else {
 			isRun = true;
@@ -145,9 +143,7 @@ public class ImagePostScene7Job {
 		
 		isRun = false;
 
-		logger.info(taskCheck + "任务结束");
-
-		taskCheck = "ImagePostScene7";
+		logger.info(taskNameReal + "任务结束");
 	}
 	
 	class ImageGetAndSendTask implements Callable<String> {
