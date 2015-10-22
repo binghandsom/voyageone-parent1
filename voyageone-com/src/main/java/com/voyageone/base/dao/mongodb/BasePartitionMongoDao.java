@@ -22,7 +22,7 @@ import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 
 @NoRepositoryBean
-public class BaseMongoDao<T, ID extends Serializable> implements MongoRepository<T, ID> {
+public class BasePartitionMongoDao <T, ID extends Serializable> implements MongoRepository<T, ID> {
 
     private final MongoOperations mongoOperations;
     private final MongoEntityInformation<T, ID> entityInformation;
@@ -33,13 +33,31 @@ public class BaseMongoDao<T, ID extends Serializable> implements MongoRepository
      * @param metadata must not be {@literal null}.
      * @param mongoOperations must not be {@literal null}.
      */
-    public BaseMongoDao(MongoEntityInformation<T, ID> metadata, MongoOperations mongoOperations) {
+    public BasePartitionMongoDao(MongoEntityInformation<T, ID> metadata, MongoOperations mongoOperations) {
 
         Assert.notNull(mongoOperations);
         Assert.notNull(metadata);
 
         this.entityInformation = metadata;
         this.mongoOperations = mongoOperations;
+    }
+
+    private String getCollectionName(Object entity) {
+        String result = null;
+        if (entity instanceof ChannelPartitionID) {
+            result = getCollectionName((ChannelPartitionID)entity);
+        } else {
+            result = entityInformation.getCollectionName();
+        }
+        return result;
+    }
+
+    private String getCollectionName(ChannelPartitionID entity) {
+        String result = entityInformation.getCollectionName();
+        if (entity.getChannelID() != null && !"".equals(entity.getChannelID())) {
+            result = result + "_" + entity.getChannelID();
+        }
+        return result;
     }
 
     /*
@@ -49,11 +67,10 @@ public class BaseMongoDao<T, ID extends Serializable> implements MongoRepository
     public <S extends T> S save(S entity) {
 
         Assert.notNull(entity, "Entity must not be null!");
-
         if (entityInformation.isNew(entity)) {
-            mongoOperations.insert(entity, entityInformation.getCollectionName());
+            mongoOperations.insert(entity, getCollectionName(entity));
         } else {
-            mongoOperations.save(entity, entityInformation.getCollectionName());
+            mongoOperations.save(entity, getCollectionName(entity));
         }
 
         return entity;
@@ -94,7 +111,7 @@ public class BaseMongoDao<T, ID extends Serializable> implements MongoRepository
      */
     public T findOne(ID id) {
         Assert.notNull(id, "The given id must not be null!");
-        return mongoOperations.findById(id, entityInformation.getJavaType(), entityInformation.getCollectionName());
+        return mongoOperations.findById(id, entityInformation.getJavaType(), getCollectionName(id));
     }
 
     private Query getIdQuery(Object id) {
@@ -112,8 +129,7 @@ public class BaseMongoDao<T, ID extends Serializable> implements MongoRepository
     public boolean exists(ID id) {
 
         Assert.notNull(id, "The given id must not be null!");
-        return mongoOperations.exists(getIdQuery(id), entityInformation.getJavaType(),
-                entityInformation.getCollectionName());
+        return mongoOperations.exists(getIdQuery(id), entityInformation.getJavaType(), getCollectionName(id));
     }
 
     /*
@@ -121,6 +137,7 @@ public class BaseMongoDao<T, ID extends Serializable> implements MongoRepository
      * @see org.springframework.data.repository.CrudRepository#count()
      */
     public long count() {
+        //???
         return mongoOperations.getCollection(entityInformation.getCollectionName()).count();
     }
 
@@ -130,7 +147,7 @@ public class BaseMongoDao<T, ID extends Serializable> implements MongoRepository
      */
     public void delete(ID id) {
         Assert.notNull(id, "The given id must not be null!");
-        mongoOperations.remove(getIdQuery(id), entityInformation.getJavaType(), entityInformation.getCollectionName());
+        mongoOperations.remove(getIdQuery(id), entityInformation.getJavaType(), getCollectionName(id));
     }
 
     /*
@@ -160,6 +177,7 @@ public class BaseMongoDao<T, ID extends Serializable> implements MongoRepository
      * @see org.springframework.data.repository.CrudRepository#deleteAll()
      */
     public void deleteAll() {
+        //???
         mongoOperations.remove(new Query(), entityInformation.getCollectionName());
     }
 
@@ -176,7 +194,7 @@ public class BaseMongoDao<T, ID extends Serializable> implements MongoRepository
      * @see org.springframework.data.repository.CrudRepository#findAll(java.lang.Iterable)
      */
     public Iterable<T> findAll(Iterable<ID> ids) {
-
+        //???
         Set<ID> parameters = new HashSet<ID>(tryDetermineRealSizeOrReturn(ids, 10));
         for (ID id : ids) {
             parameters.add(id);
@@ -190,7 +208,7 @@ public class BaseMongoDao<T, ID extends Serializable> implements MongoRepository
      * @see org.springframework.data.repository.PagingAndSortingRepository#findAll(org.springframework.data.domain.Pageable)
      */
     public Page<T> findAll(final Pageable pageable) {
-
+        //???
         Long count = count();
         List<T> list = findAll(new Query().with(pageable));
 
@@ -202,6 +220,7 @@ public class BaseMongoDao<T, ID extends Serializable> implements MongoRepository
      * @see org.springframework.data.repository.PagingAndSortingRepository#findAll(org.springframework.data.domain.Sort)
      */
     public List<T> findAll(Sort sort) {
+        //???
         return findAll(new Query().with(sort));
     }
 
@@ -214,7 +233,7 @@ public class BaseMongoDao<T, ID extends Serializable> implements MongoRepository
 
         Assert.notNull(entity, "Entity must not be null!");
 
-        mongoOperations.insert(entity, entityInformation.getCollectionName());
+        mongoOperations.insert(entity, getCollectionName(entity));
         return entity;
     }
 
@@ -232,7 +251,7 @@ public class BaseMongoDao<T, ID extends Serializable> implements MongoRepository
         if (list.isEmpty()) {
             return list;
         }
-
+        //???
         mongoOperations.insertAll(list);
         return list;
     }
@@ -242,7 +261,7 @@ public class BaseMongoDao<T, ID extends Serializable> implements MongoRepository
         if (query == null) {
             return Collections.emptyList();
         }
-
+        //???
         return mongoOperations.find(query, entityInformation.getJavaType(), entityInformation.getCollectionName());
     }
 

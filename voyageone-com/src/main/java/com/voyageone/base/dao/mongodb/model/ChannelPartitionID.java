@@ -1,8 +1,5 @@
 package com.voyageone.base.dao.mongodb.model;
 
-/**
- * Created by DELL on 2015/10/21.
- */
 public class ChannelPartitionID extends BaseMongoModel{
 
     protected String channelID;

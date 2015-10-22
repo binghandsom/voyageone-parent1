@@ -7,9 +7,6 @@ import org.springframework.data.repository.core.support.RepositoryFactorySupport
 
 import java.io.Serializable;
 
-/**
- * Created by DELL on 2015/10/21.
- */
 public class BaseMongoRepositoryFactoryBean<T extends Repository<S, ID>, S, ID extends Serializable> extends MongoRepositoryFactoryBean<T, S, ID> {
 
     /**
