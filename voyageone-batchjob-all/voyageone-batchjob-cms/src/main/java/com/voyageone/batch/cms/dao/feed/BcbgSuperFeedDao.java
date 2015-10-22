@@ -8,6 +8,7 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 所有 bcbg 数据解析的操作
@@ -40,9 +41,30 @@ public class BcbgSuperFeedDao extends BaseDao {
         return delete("cms_zz_worktable_bcbg_styles_deleteStyles", null);
     }
 
-    public int insertFullWithoutFail(List<String> modelFailList, List<String> productFailList) {
-        return insert("cms_zz_worktable_bcbg_superfeed_full_insertWithoutFail",
-                parameters("update_flg", 1, "modelFailList", modelFailList,
-                        "productFailList", productFailList));
+    public int[] insertFullWithoutFail(List<String> modelFailList, List<String> productFailList) {
+
+        Map<String, Object> params = parameters("update_flg", 1, "modelFailList", modelFailList,
+                "productFailList", productFailList);
+
+        int insertFeedCount = insert("cms_zz_worktable_bcbg_superfeed_full_insertWithoutFail", params);
+
+        int insertStyleCount = insert("cms_zz_worktable_bcbg_styles_full_insertFullWithoutFail", params);
+
+        return new int[] { insertFeedCount, insertStyleCount };
+    }
+
+    public int[] updateFull(List<String> updatedCodes) {
+
+        Map<String, Object> params = parameters("updatedCodes", updatedCodes, "update_flg", 2);
+
+        int deleteFeedCount = delete("cms_zz_worktable_bcbg_superfeed_full_deleteFullByCode", params);
+
+        int insertFeedCount = insert("cms_zz_worktable_bcbg_superfeed_full_insertFullByCode", params);
+
+        int deleteStyleCount = delete("cms_zz_worktable_bcbg_styles_full_deleteStyleFullByCode", params);
+
+        int insertStyleCount = insert("cms_zz_worktable_bcbg_styles_full_insertStyleFullByCode", params);
+
+        return new int[] { deleteFeedCount, insertFeedCount, deleteStyleCount, insertStyleCount };
     }
 }

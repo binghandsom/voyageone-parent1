@@ -226,6 +226,15 @@ public class SuperFeedDao extends BaseDao {
         return selectList(Constants.DAO_NAME_SPACE_CMS + "cms_superfeed_selectSuperfeedImage", params);
     }
 
+    public List<String> selectAllfeedImage(String keyword, String  image,String tableName) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("keyword", keyword);
+        params.put("image", image);
+        params.put("tableName",tableName);
+
+        return selectList(Constants.DAO_NAME_SPACE_CMS + "cms_superfeed_selectAllfeedImage", params);
+    }
+
     /**
      * 取得 Item 信息
      *

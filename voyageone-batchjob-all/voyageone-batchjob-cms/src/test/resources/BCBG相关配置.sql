@@ -65,8 +65,8 @@ VALUES
   ('012', '', '', 0, 0, 'Item 级别', 'item_i_size', 'SIZE1'),
   ('012', '', '', 0, 0, 'Item 级别', 'item_i_barcode', 'EAN11'),
 
-  ('012', '', '', 0, 0, 'Image 级别', 'image_table_id', 'voyageone_cms.cms_zz_worktable_bcbg_superfeed'),
-  ('012', '', '', 0, 0, 'Image 级别', 'image_table_join', 'JOIN voyageone_cms.cms_zz_worktable_bcbg_styles ON styleID = CONCAT(SATNR, ''-'', COLOR)'),
+  ('012', '', '', 0, 0, 'Image 级别', 'image_table_id', 'voyageone_cms.cms_zz_worktable_bcbg_styles'),
+  ('012', '', '', 0, 0, 'Image 级别', 'image_table_join', 'JOIN voyageone_cms.cms_zz_worktable_bcbg_superfeed ON styleID = CONCAT(SATNR, ''-'', COLOR)'),
   ('012', '', '', 0, 0, 'Image 级别', 'images', 'productImgURLs'),
   ('012', '', '', 0, 0, 'Image 级别', 'image_split', ';;'),
 
@@ -162,6 +162,6 @@ VALUES
   ('Update data to master', '012', 'transform', 'update', 'UPDATE voyageone_cms.cms_zz_worktable_bcbg_superfeed JOIN voyageone_cms.cms_mt_feed_master m ON MATKL = m.value AND m.master_attr = ''MATKL'' AND m.channel_id = ''012'' SET MATKL = label', '', 0, 0, 15),
   # 标记数据
   ('Update the flg', '012', 'transform', 'update', 'UPDATE voyageone_cms.cms_zz_worktable_bcbg_superfeed b LEFT JOIN voyageone_cms.cms_zz_worktable_bcbg_superfeed_full bf ON b.MATNR = bf.MATNR SET b.update_flg = 1 WHERE bf.MATNR IS NULL', '', 0, 0, 16),
-  ('Update the flg', '012', 'transform', 'update', 'UPDATE voyageone_cms.cms_zz_worktable_bcbg_superfeed b LEFT JOIN voyageone_cms.cms_zz_worktable_bcbg_superfeed_full bf ON b.MATNR = bf.MATNR SET b.update_flg = 1 WHERE bf.MATNR IS NOT NULL', '', 0, 0, 17);
+  ('Update the flg', '012', 'transform', 'update', 'UPDATE voyageone_cms.cms_zz_worktable_bcbg_superfeed b LEFT JOIN voyageone_cms.cms_zz_worktable_bcbg_superfeed_full bf ON b.MATNR = bf.MATNR SET b.update_flg = 2 WHERE bf.MATNR IS NOT NULL', '', 0, 0, 17);
 
 COMMIT;

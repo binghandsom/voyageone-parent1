@@ -82,3 +82,12 @@ CREATE TABLE voyageone_cms.cms_zz_worktable_bcbg_styles
   productDesc VARCHAR(2000) NOT NULL,
   productImgURLs VARCHAR(2000) NOT NULL
 );
+
+CREATE TABLE voyageone_cms.cms_zz_worktable_bcbg_styles_full
+(
+  styleID VARCHAR(300) NOT NULL,
+  productDesc VARCHAR(2000) NOT NULL,
+  productImgURLs VARCHAR(2000) NOT NULL
+);
+
+COMMIT ;

@@ -1,6 +1,7 @@
 DELETE FROM voyageone_cms.cms_mt_feed_config
 WHERE order_channel_id = '012';
 DELETE FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed_full;
+DELETE FROM voyageone_cms.cms_zz_worktable_bcbg_styles_full;
 
 DELETE FROM voyageone_cms.cms_work_product_feed_category WHERE channel_id = '012';
 DELETE FROM voyageone_cms.cms_work_product_feed_model WHERE channel_id = '012';
@@ -56,3 +57,5 @@ DELETE FROM voyageone_cms.cms_bt_relation_model_product WHERE channel_id = '012'
 DELETE FROM voyageone_cms.cms_bt_relation_category_product WHERE channel_id = '012';
 
 DELETE FROM voyageone_cms.cms_mt_product_attribute WHERE channel_id = '012';
+
+COMMIT ;

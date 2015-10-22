@@ -45,6 +45,9 @@ public class BcbgAnalysisService extends BaseTaskService {
     @Autowired
     private BcbgWsdlInsert insertService;
 
+    @Autowired
+    private BcbgWsdlUpdate updateService;
+
     /**
      * 获取子系统
      */
@@ -125,7 +128,7 @@ public class BcbgAnalysisService extends BaseTaskService {
 
         // 使用接口提交
         insertService.new Context(BCBG).postNewProduct();
-//postUpdatedProduct();
+        updateService.new Context(BCBG).postUpdatedProduct();
 //        postAttribute();
 
         // 备份文件

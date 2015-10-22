@@ -210,9 +210,9 @@ class BcbgWsdlInsert extends BcbgWsdlBase {
 
             $info("总共~ 失败的 Model: %s ; 失败的 Product: %s", modelFailList.size(), productFailList.size());
 
-            bcbgSuperFeedDao.insertFullWithoutFail(modelFailList, productFailList);
+            int[] counts = bcbgSuperFeedDao.insertFullWithoutFail(modelFailList, productFailList);
 
-            $info("新商品 Insert 处理全部完成");
+            $info("新商品 Insert 处理全部完成, 更新 Full 表 [ Feed: %s ] [ Style: %s ]", counts[0], counts[1]);
         }
     }
 }
