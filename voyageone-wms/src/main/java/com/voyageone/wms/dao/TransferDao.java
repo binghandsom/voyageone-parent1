@@ -199,7 +199,7 @@ public class TransferDao extends BaseDao {
 
         params.put("package_id", package_id);
 
-        return updateTemplate.delete(PREFIX + "wms_bt_transfer_deletePackage", params);
+        return updateTemplate.delete(PREFIX + "wms_bt_transfer_deleteItemsByPackage", params);
     }
 
     /**
