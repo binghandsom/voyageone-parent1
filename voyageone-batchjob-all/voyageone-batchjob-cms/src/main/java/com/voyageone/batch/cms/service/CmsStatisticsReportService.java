@@ -37,12 +37,12 @@ public class CmsStatisticsReportService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-        Map<String,List<Integer>> statisticsInfo = new HashMap<>();
-        for(TaskControlBean taskControl : taskControlList){
-            if("order_channel_id".equalsIgnoreCase(taskControl.getCfg_name())){
+        Map<String, List<Integer>> statisticsInfo = new HashMap<>();
+        for (TaskControlBean taskControl : taskControlList) {
+            if ("order_channel_id".equalsIgnoreCase(taskControl.getCfg_name())) {
                 String channelId = taskControl.getCfg_val1();
-                ChannelConfigEnums.Channel channel=  ChannelConfigEnums.Channel.valueOfId(channelId);
-                List<Integer>statistics = doQuickSearch(channelId);
+                ChannelConfigEnums.Channel channel = ChannelConfigEnums.Channel.valueOfId(channelId);
+                List<Integer> statistics = doQuickSearch(channelId);
                 statisticsInfo.put(channel.getFullName(), statistics);
             }
         }
@@ -52,7 +52,7 @@ public class CmsStatisticsReportService extends BaseTaskService {
     public List<Integer> doQuickSearch(String channelId) throws IOException {
 
         // 1.未匹配类目：
-        List<Integer> ret=new ArrayList<>();
+        List<Integer> ret = new ArrayList<>();
 
         ret.add(searchDao.doCategoryUnMappingCnt(channelId));
 
@@ -60,10 +60,10 @@ public class CmsStatisticsReportService extends BaseTaskService {
         ret.add(searchDao.doCategoryPropertyUnMappingCnt(channelId));
 
         // 3.属性编辑未完成产品:
-        Map<String,Object> s = new HashMap<>();
+        Map<String, Object> s = new HashMap<>();
         s.put("channelId", channelId);
         s.put("isApprovedDescription", '0');
-        s.put("cartId",23);
+        s.put("cartId", 23);
         ret.add(searchDao.doAdvanceSearchCnt(s));
 
         // 4.属性编辑完成未approve产品:
@@ -71,7 +71,7 @@ public class CmsStatisticsReportService extends BaseTaskService {
         s.put("channelId", channelId);
         s.put("isApprovedDescription", '1');
         s.put("isApproved", '0');
-        s.put("cartId",23);
+        s.put("cartId", 23);
         ret.add(searchDao.doAdvanceSearchCnt(s));
 
         // 5.approve但未上新产品:
@@ -79,24 +79,25 @@ public class CmsStatisticsReportService extends BaseTaskService {
         s.put("channelId", channelId);
         s.put("isApproved", '1');
         s.put("publishStatus", '0');
-        s.put("cartId",23);
+        s.put("cartId", 23);
         ret.add(searchDao.doAdvanceSearchCnt(s));
 
         // 5.approve但未上新产品:
         s = new HashMap<>();
         s.put("channelId", channelId);
         s.put("publishStatus", '2');
-        s.put("cartId",23);
+        s.put("cartId", 23);
         ret.add(searchDao.doAdvanceSearchCnt(s));
-        return  ret;
+        return ret;
     }
 
     /**
      * 生产邮件的内容
+     *
      * @param statisticsInfo
      * @return
      */
-    private String getMailContent(Map<String,List<Integer>> statisticsInfo) {
+    private String getMailContent(Map<String, List<Integer>> statisticsInfo) {
 
         StringBuffer sb = new StringBuffer();
 
