@@ -1091,8 +1091,18 @@ public class TmallProductService implements PlatformServiceInterface {
         List<Double> skuPriceList = new ArrayList<>();
         for (CmsCodePropBean cmsCodeProp : cmsModelProp.getCmsCodePropBeanList()) {
             for (CmsSkuPropBean cmsSkuProp : cmsCodeProp.getCmsSkuPropBeanList()) {
-                int skuQuantity = Integer.valueOf(cmsSkuProp.getProp(CmsFieldEnum.CmsSkuEnum.sku_quantity));
-                double skuPrice = Double.valueOf(cmsSkuProp.getProp(CmsFieldEnum.CmsSkuEnum.sku_price));
+                int skuQuantity = 0;
+                try {
+                    skuQuantity = Integer.valueOf(cmsSkuProp.getProp(CmsFieldEnum.CmsSkuEnum.sku_quantity));
+                } catch (Exception e) {
+                    logger.warn("No quantity for sku " + cmsSkuProp.getProp(CmsFieldEnum.CmsSkuEnum.sku));
+                }
+                double skuPrice = 0;
+                try {
+                    skuPrice = Double.valueOf(cmsSkuProp.getProp(CmsFieldEnum.CmsSkuEnum.sku_price));
+                } catch (Exception e) {
+                    logger.warn("No price for sku " + cmsSkuProp.getProp(CmsFieldEnum.CmsSkuEnum.sku));
+                }
                 if (onePrice - 0d == 0) {
                     onePrice = skuPrice;
                 }
