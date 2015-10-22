@@ -102,7 +102,7 @@ import java.util.List;
                 BufferedReader bufferedReader = new BufferedReader(read);
                 String lineTxt;
                 int countRow = 0;
-                bulkShipmentBean bulkShipmentBean = new bulkShipmentBean();
+                bulkShipmentBean bulkShipmentBean = null;
                 FixedLengthReader fixedLengthReader = new FixedLengthReader(true, false);
                 while ((lineTxt = bufferedReader.readLine()) != null) {
 
@@ -160,6 +160,9 @@ import java.util.List;
 
                     countRow++;
                 }
+                if (bulkShipmentBean != null ) {
+                    bulkShipmentBeans.add(bulkShipmentBean);
+                }
                 bufferedReader.close();
                 read.close();
 
@@ -195,12 +198,12 @@ import java.util.List;
                 ClientShipmentBean clientShipmentBean = setClientShipment(orderChannelId, fileNameInfo);
                 long shipmentId = clientShipmentDao.insertClientShipment(clientShipmentBean);
 
-                for (com.voyageone.batch.wms.modelbean.bulkShipmentBean bulkShipmentBean : bulkShipmentBeans) {
+                for (bulkShipmentBean bulkShipmentBean : bulkShipmentBeans) {
                     //wms_bt_client_package
                     ClientPackageBean clientPackageBean = setClientPackage(shipmentId,bulkShipmentBean.getBulkShipmentHead());
                     long packageId = clientShipmentDao.insertClientPackage(clientPackageBean);
 
-                    for (com.voyageone.batch.wms.modelbean.bulkShipmentDetailBean bulkShipmentDetailBean : bulkShipmentBean.getBulkShipmentDetails()) {
+                    for (bulkShipmentDetailBean bulkShipmentDetailBean : bulkShipmentBean.getBulkShipmentDetails()) {
                         //wms_bt_client_package_item
                         ClientPackageItemBean clientPackageItemBean = setClientPackageItem(shipmentId,packageId,bulkShipmentDetailBean);
                         clientShipmentDao.insertClientPackageItem(clientPackageItemBean);
