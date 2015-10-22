@@ -175,6 +175,11 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                 workLoadBeanListMap.put(workLoadSelected, new ArrayList<>());
             }
 
+            if (workLoadSelected.getIsPublished() == 0 && productPublishBean.getIs_published() == 1) {
+                workLoadSelected.setNumId(productPublishBean.getNum_iid());
+                workLoadSelected.setProductId(String.valueOf(productPublishBean.getProduct_id()));
+                workLoadSelected.setIsPublished(productPublishBean.getIs_published());
+            }
             workLoadBeanListMap.get(workLoadSelected).add(productPublishBean);
         }
         return workLoadBeanListMap;
