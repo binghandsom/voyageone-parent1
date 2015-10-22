@@ -233,6 +233,7 @@ public class SpaldingReportService extends CreateReportBaseService {
      */
     private List<ThirdReportBean> setReportBasicData(int fileFlg,String cart_id,String order_channel_id, String taskName,List<String> timeRegion,String fullName) throws Exception {
         logger.info("取得日报表基本数据开始");
+        logger.info("fileFlg=" + fileFlg);
         List<ThirdReportBean>  ReportDatas  = new ArrayList<ThirdReportBean>();
 
         //取得销售订单的日报基本数据记录
@@ -261,8 +262,10 @@ public class SpaldingReportService extends CreateReportBaseService {
         }else if (fileFlg == 3){
             //============================================================================================
             //============================================================================================
+            logger.info("getCreateReportSpecialData开始");
             timeRegion.set(0,"2015-08-29 16:00:00"); timeRegion.set(1,"2015-09-29 15:59:59");
             ReportDatas  = createReportDao.getCreateReportSpecialData(cart_id, order_channel_id, WmsConstants.specialType.BALL, timeRegion.get(0), timeRegion.get(1), taskName);
+            logger.info("getCreateReportSpecialData结束");
         }
 
         logger.info("取得日报表基本数据结束");
