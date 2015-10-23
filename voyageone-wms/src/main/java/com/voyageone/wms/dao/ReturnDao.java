@@ -80,6 +80,15 @@ public class ReturnDao extends BaseDao {
 		return selectList(Constants.DAO_NAME_SPACE_WMS + "wms_return_getOrderInfo", formReturn);
 	}
 
+	/**
+	 * @Description 根据传入的值获得真正的OrderNumber
+	 * @param formReturn 扫描值
+	 * @return String
+	 */
+	public String getOrderNumber(FormReturn formReturn) {
+		return selectOne(Constants.DAO_NAME_SPACE_WMS + "wms_return_getOrderNumber", formReturn);
+	}
+
     /**
      * @Description 插入return记录到wms_bt_return表
      * @param list formReturn bean对象集合

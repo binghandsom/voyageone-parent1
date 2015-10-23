@@ -313,9 +313,6 @@
                 1 != 1
             </otherwise>
         </choose>
-        <if test="scanStatus != null and scanStatus != ''">
-            AND status = #{scanStatus}
-        </if>
         <if test="scanStore != null and scanStore != 0 and scanType == 1">
             AND store_id = #{scanStore}
         </if>

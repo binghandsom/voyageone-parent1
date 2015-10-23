@@ -87,9 +87,19 @@ public class WmsReturnServiceImpl implements WmsReturnService {
 	public void getOrderInfoByOrdNo(HttpServletRequest request, HttpServletResponse response, String orderNumber, UserSessionBean user) {
 		Map<String, Object> resultMap = new HashMap<>();
 		AjaxResponseBean result = new AjaxResponseBean();
+
+
 		FormReturn formReturn = new FormReturn();
 		formReturn.setOrderChannelId(getOrderChanleList(user));
 		formReturn.setOrder_num(orderNumber);
+
+		// 根据传入的值来取得真正的orderNumber
+		String order_nember = returnDao.getOrderNumber(formReturn);
+
+		if (!StringUtils.isNullOrBlank2(order_nember)) {
+			formReturn.setOrder_num(order_nember);
+		}
+
 		List<FormReturn> orderInfo;
 		orderInfo = returnDao.getOrderInfoByOrdNo(formReturn);
 		resultMap.put("orderInfo", orderInfo);
