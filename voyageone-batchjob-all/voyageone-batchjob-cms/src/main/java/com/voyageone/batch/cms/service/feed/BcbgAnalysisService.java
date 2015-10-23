@@ -347,7 +347,7 @@ public class BcbgAnalysisService extends BaseTaskService {
 
         protected void backupDataFile(File file, File styleFile) {
             backup(file);
-            backup(styleFile);
+            //backup(styleFile);
         }
     }
 }
