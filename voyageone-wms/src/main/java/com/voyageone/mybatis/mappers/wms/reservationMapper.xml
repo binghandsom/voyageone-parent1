@@ -800,6 +800,65 @@
             rsv.sku
     </select>
 
+    <select id="wms_reservation_getLocationBySKU" resultType="string">
+        SELECT
+            ifnull((CASE WHEN (ifnull(location_ext.location_name,'') = '') THEN location.location_name ELSE location_ext.location_name END),'') AS location_name
+        from
+        (select
+                GROUP_CONCAT(IFNULL(location.location_name,'')) as location_name
+        from
+                wms_bt_item_location item,
+                wms_mt_location location,
+                wms_bt_item_details details
+        where
+                details.order_channel_id = #{order_channel_id}
+        and
+                details.sku = #{sku}
+        and
+                details.order_channel_id = item.order_channel_id
+        and
+                item.store_id = #{store_id}
+        and
+                details.itemcode = item.code
+        and
+                item.location_id = location.location_id
+        and
+                location.active = '1'
+        group by
+                item.order_channel_id,
+                item.store_id,
+                item.code) location
+
+        join
+
+        (select
+                GROUP_CONCAT(IFNULL(location.location_name,'')) as location_name
+        from
+                wms_bt_item_location_ext item,
+                wms_mt_location location,
+                wms_bt_item_details details
+        where
+                details.order_channel_id = #{order_channel_id}
+        and
+                details.sku = #{sku}
+        and
+                details.order_channel_id = item.order_channel_id
+        and
+                item.store_id = #{store_id}
+        and
+                details.itemcode = item.code
+        and
+                details.sku = item.sku
+        and
+                item.location_id = location.location_id
+        and
+                location.active = '1'
+        group by
+                item.order_channel_id,
+                item.store_id,
+                item.sku) location_ext
+    </select>
+
     <select id="wms_reservation_getCurQty" resultType="int">
         select sum(inventory.qty)
           from wms_bt_inventory_center inventory,

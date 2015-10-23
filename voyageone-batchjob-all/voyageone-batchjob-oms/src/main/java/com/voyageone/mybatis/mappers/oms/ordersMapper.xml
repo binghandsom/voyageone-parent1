@@ -1909,7 +1909,7 @@
 			on o.cart_id = c.cart_id
 		where
 			o.order_channel_id = #{orderChannelId} and
-			o.order_status != 'Canceled' and
+			o.order_status = 'Canceled' and
 			od.adjustment = false and
 			ox.send_flg = true and
 			ox.ext_flg1 = true and

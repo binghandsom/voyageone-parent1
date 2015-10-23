@@ -33,13 +33,13 @@ public class SearchDao extends CmsBaseDao {
 	   Integer ret = null;
 	   int type = (Integer)data.get("type");
 	   if(type == CmsConstants.IDType.TYPE_CATEGORY || type == CmsConstants.IDType.TYPE_ALL){
-		   ret = selectOne(Constants.DAO_NAME_SPACE_CMS + "search_category_count",data);
+		   ret = selectOne(Constants.DAO_NAME_SPACE_CMS + "search_category_count", data);
 	   }
 	   if(type == CmsConstants.IDType.TYPE_MODEL || type == CmsConstants.IDType.TYPE_ALL){
-		   ret = selectOne(Constants.DAO_NAME_SPACE_CMS + "search_model_count",data);
+		   ret = selectOne(Constants.DAO_NAME_SPACE_CMS + "search_model_count", data);
 	   }
 	   if(type == CmsConstants.IDType.TYPE_PRODUCT || type == CmsConstants.IDType.TYPE_ALL){
-		   ret = selectOne(Constants.DAO_NAME_SPACE_CMS + "search_product_count",data);
+		   ret = selectOne(Constants.DAO_NAME_SPACE_CMS + "search_product_count", data);
 	   }
 	   return ret;
    }
@@ -60,5 +60,12 @@ public class SearchDao extends CmsBaseDao {
 	}
 	public Integer doAdvanceSearchCnt(Map<String ,Object> data){
 		return (Integer)(selectOne(Constants.DAO_NAME_SPACE_CMS + "advance_search_count", data));
+	}
+
+	public Integer doCategoryUnMappingCnt(String channelId){
+		return (Integer)(selectOne(Constants.DAO_NAME_SPACE_CMS + "category_unmapping_count", channelId));
+	}
+	public Integer doCategoryPropertyUnMappingCnt(String channelId){
+		return (Integer)(selectOne(Constants.DAO_NAME_SPACE_CMS + "category_property_unmapping_count", channelId));
 	}
 }

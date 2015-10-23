@@ -161,10 +161,15 @@ public class UploadImageHandler extends UploadWorkloadHandler{
             logger.info("upload image, wait Tmall response...");
             PictureUploadResponse pictureUploadResponse = tbPictureService.uploadPicture(shopBean, baos.toByteArray(), "image_title", "0");
             logger.info("response comes");
-            if (pictureUploadResponse.getErrorCode() != null) {
-                logger.error("上传图片到天猫时，错误:" + pictureUploadResponse.getErrorCode() + ", " + pictureUploadResponse.getMsg());
-                logger.error("上传图片到天猫时，sub错误:" + pictureUploadResponse.getSubCode() + ", " + pictureUploadResponse.getSubMsg());
-                return null;
+            if (pictureUploadResponse == null) {
+                String failCause = "上传图片到天猫时，超时, tmall response为空";
+                logger.error(failCause);
+                throw new Exception(failCause);
+            } else if (pictureUploadResponse.getErrorCode() != null) {
+                String failCause = "上传图片到天猫时，错误:" + pictureUploadResponse.getErrorCode() + ", " + pictureUploadResponse.getMsg();
+                    logger.error(failCause);
+                    logger.error("上传图片到天猫时，sub错误:" + pictureUploadResponse.getSubCode() + ", " + pictureUploadResponse.getSubMsg());
+                throw new Exception(failCause);
             }
             Picture picture = pictureUploadResponse.getPicture();
             if (picture != null)
@@ -173,6 +178,7 @@ public class UploadImageHandler extends UploadWorkloadHandler{
             logIssue("上传图片到天猫国际时出错！ msg:" + e.getMessage());
             logger.error("errCode: " + e.getErrCode());
             logger.error("errMsg: " + e.getErrMsg());
+            throw e;
         }
         logger.info(String.format("Success to upload image[%s -> %s]", url, pictureUrl));
 
@@ -190,12 +196,4 @@ public class UploadImageHandler extends UploadWorkloadHandler{
             uploadJob.getUploadProductHandler().stopTcb(uploadProductTcb);
         }
     }
-
-    public void addTask(TaskControlBlock tcb) {
-        synchronized (running_queue) {
-            running_queue.add(tcb);
-        }
-        wakeSelf();
-    }
-
 }

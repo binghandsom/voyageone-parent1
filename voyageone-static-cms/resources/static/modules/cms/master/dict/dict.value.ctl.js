@@ -36,6 +36,9 @@ define(['modules/cms/cms.module', 'modules/cms/master/dict/dict.service'], funct
           break;
         case this.valueTypes.master:
           this.selected.masterProp = this.word.value;
+          break;
+        case this.valueTypes.custom:
+          this.selected.text = JSON.stringify(this.word.value);
       }
     }
 
@@ -71,6 +74,8 @@ define(['modules/cms/cms.module', 'modules/cms/master/dict/dict.service'], funct
             return this.selected.dict;
           case this.valueTypes.master:
             return this.selected.masterProp;
+          case this.valueTypes.custom:
+            return  JSON.parse(this.selected.text);
           default:
             return null;
         }

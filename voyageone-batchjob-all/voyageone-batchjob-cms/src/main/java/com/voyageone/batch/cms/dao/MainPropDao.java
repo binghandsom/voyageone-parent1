@@ -167,10 +167,7 @@ public class MainPropDao extends BaseDao {
      */
     public LinkedHashMap<String, ImsPropBean> selectImsPropByCategoryId(String categoryId) {
 
-        Map<String, Object> params = new HashMap<>();
-        params.put("category_id", categoryId);
-
-        List<ImsPropBean> imsPropBeanList = selectList(Constants.DAO_NAME_SPACE_CMS + "ims_mt_prop_selectMainProp", params);
+        List<ImsPropBean> imsPropBeanList = selectImsPropByCategoryIdList(categoryId);
 
         LinkedHashMap<String, ImsPropBean> result = new LinkedHashMap<>();
         for (ImsPropBean imsPropBean : imsPropBeanList) {
@@ -178,6 +175,21 @@ public class MainPropDao extends BaseDao {
         }
 
         return result;
+
+    }
+    /**
+     * 根据类目id，获取主数据的属性
+     * @param categoryId 主数据类目id
+     * @return 属性列表
+     */
+    public List<ImsPropBean> selectImsPropByCategoryIdList(String categoryId) {
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("category_id", categoryId);
+
+        List<ImsPropBean> imsPropBeanList = selectList(Constants.DAO_NAME_SPACE_CMS + "ims_mt_prop_selectMainProp", params);
+
+        return imsPropBeanList;
 
     }
 
@@ -631,6 +643,26 @@ public class MainPropDao extends BaseDao {
 
         for (Map<String, String> map : lstResult) {
             result.put(getString(map.get("platform_id")), getString(map.get("platform_cid")));
+        }
+
+        return result;
+    }
+
+    /**
+     * 查看已经完成属性匹配的主类目列表
+     * @param channel_id channel_id
+     * @return 主类目列表
+     */
+    public List<String> getMainCategoryListWhereAttrIsSetted(String channel_id) {
+        List<String> result = new ArrayList<>();
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("channel_id", channel_id);
+
+        List<HashMap<String, String>> lstResult = selectList(Constants.DAO_NAME_SPACE_CMS + "ims_bt_category_extend_select_where_attr_is_setted", params);
+
+        for (Map<String, String> map : lstResult) {
+            result.add(map.get("main_category_id"));
         }
 
         return result;
