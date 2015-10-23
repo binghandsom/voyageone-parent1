@@ -105,12 +105,14 @@ public class BcbgAnalysisService extends BaseTaskService {
             return;
         }
 
+        Backuper backuper = new Backuper();
+
         // 排序文件
         List<File> feedFileList =  Arrays.asList(feedFiles).stream().sorted((f1, f2) -> f2.getName().compareTo(f1.getName())).collect(toList());
         // 取第一个作为目标文件,并从其中移除
-        // 其他直接删除
+        // 其他直接进行备份处理
         File feedFile = feedFileList.remove(0);
-        feedFileList.forEach(File::delete);
+        feedFileList.forEach(backuper::backup);
 
         File styleFile = new File(styleFileName);
 
@@ -146,7 +148,7 @@ public class BcbgAnalysisService extends BaseTaskService {
         updateService.new Context(BCBG).postUpdatedProduct();
 
         // 备份文件
-        backupDataFile(feedFile, styleFile);
+        backuper.backupDataFile(feedFile, styleFile);
     }
 
     private void clearLastData() {
@@ -320,22 +322,32 @@ public class BcbgAnalysisService extends BaseTaskService {
         }
     }
 
-    private void backupDataFile(File file, File styleFile) {
+    class Backuper {
 
-        String sBackupDir = Feed.getVal1(BCBG, Name.feed_backup_dir); // 备份的文件路径
+        private File backupDir;
 
-        // 格式化处理路径,指向到独特的位置
-        sBackupDir = String.format(sBackupDir, DateTimeUtil.getNow("yyyyMMdd"), DateTimeUtil.getNow("HHmmss"));
+        public Backuper() {
 
-        File backupDir = new File(sBackupDir);
+            String sBackupDir = Feed.getVal1(BCBG, Name.feed_backup_dir); // 备份的文件路径
 
-        if (!backupDir.exists() && !backupDir.mkdirs()) {
-            logger.error("产品文件备份失败,目录创建失败");
-            return;
+            sBackupDir = String.format(sBackupDir, DateTimeUtil.getNow("yyyyMMdd"), DateTimeUtil.getNow("HHmmss"));
+
+            backupDir = new File(sBackupDir);
+
+            if (!backupDir.exists() && !backupDir.mkdirs()) {
+                $info("产品文件备份失败,目录创建失败");
+                throw new BusinessException("产品文件备份失败,目录创建失败");
+            }
         }
 
-        // 移动文件
-        if (!file.renameTo(new File(backupDir, file.getName()))) logger.error("产品文件备份失败");
-        if (!styleFile.renameTo(new File(backupDir, styleFile.getName()))) logger.error("样式文件备份失败");
+        protected void backup(File file) {
+            if (!file.renameTo(new File(backupDir, file.getName())))
+                $info("文件备份失败 %s %s", file.getPath(), file.getName());
+        }
+
+        protected void backupDataFile(File file, File styleFile) {
+            backup(file);
+            backup(styleFile);
+        }
     }
 }
