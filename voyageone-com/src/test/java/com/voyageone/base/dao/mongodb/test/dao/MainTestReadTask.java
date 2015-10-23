@@ -19,7 +19,8 @@ public class MainTestReadTask {
 
     @Autowired
     CustomerDao customerDao;
-
+    @Autowired
+    PersonDao personDao;
 
     public void testSelect() {
 
@@ -92,12 +93,36 @@ public class MainTestReadTask {
             System.out.println("result5:=" + row);
         }
 
-//        Customer person = new Customer("person");
-//        List<Customer> result6 = repository.findAll(person.address.zipCode.eq("C0123"));
-
         Iterable<Customer> result6 = customerDao.findByThePersonsFirstName("aa2015-10-21 17:20:58","11bb");
         for (Customer row : result6) {
             System.out.println("result6:=" + row);
+        }
+
+
+        //插入复杂属性
+        List<Person> personList = new ArrayList<Person>();
+        for (int i=0; i<10 ; i++ ){
+
+            SimpleDateFormat f = new SimpleDateFormat("yyyyMMddhhmmssSSS");
+            Date date = new Date();
+        String returnStr = i + "--" + f.format(date);
+
+        Person person = new Person();
+        person.setPerson_id(String.valueOf(i));
+        person.setPerson_name(String.valueOf(i) + returnStr);
+        DepartInfo info = new DepartInfo();
+        info.setDepartName("DepartName--"+ i);
+        info.setRole("Role--" + i);
+        person.setDepartInfo(info);
+        personList.add(person);
+
+    }
+
+//        personDao.save(personList);
+        //搜索两级属性
+        Iterable<Person> result7 = personDao.findByDepartInfo_DepartName("DepartName--5");
+        for (Person row : result7) {
+            System.out.println("result7:=" + row);
         }
 
         //
