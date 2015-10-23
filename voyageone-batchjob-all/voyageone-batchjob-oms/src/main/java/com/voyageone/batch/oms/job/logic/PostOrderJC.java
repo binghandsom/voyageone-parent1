@@ -39,41 +39,46 @@ public class PostOrderJC extends PostOrderLogic {
 		// Get SKU/UPC Info
 
 		// 从Reservation库中取得Barcode和ColorId
-		List<Map<String, Object>> dtItems = postOrderService.getReservationInfo(Properties.readValue("PostOrder_JC_GetBarcodeAndSizeURL") + rv.get("OrderNumber").toString());
+		StringBuffer buf=new StringBuffer();
+		for (Map.Entry<String, Integer> de : productQuantity.entrySet()) {
+			buf.append(de.getKey().toString() + ";");
+		}
+		buf.substring(0, buf.length()-1);
+		List<Map<String, Object>> dtItems = postOrderService.getReservationInfo(Properties.readValue("PostOrder_JC_GetBarcodeAndSizeURL") +  buf.substring(0, buf.length()-1).toString());
 		List<OrderItemBean> orderItems = new ArrayList<OrderItemBean>();
-		if (dtItems.size() > 0) {
+		if (dtItems.size() > 0 && dtItems.size() == productQuantity.size()) {
+            // 把SKU大小写统一一下
+            skuConduct(dtItems);
 			for (Map<String, Object> item : dtItems) {
-				OrderItemBean orderItem = new OrderItemBean();
-				orderItem.setUpc(item.get("Barcode").toString());
 				String SKU = item.get("SKU").toString();
-				String[] splits = SKU.split("-");
-				orderItem.setProductId(splits[0]);
-				orderItem.setColorId(splits[1]);
-				// transfer Tmall size to Juicy sizeId by
-				if (StringUtils.isEmpty(item.get("sizeId").toString())) {
-					// sizeid不存在的场合 只有第一次抛异常 后面直接退出 不抛异常
-					if (!warningOrderNumber.contains(rv.get("OrderNumber").toString())) {
-						warningOrderNumber.add(rv.get("OrderNumber").toString());
-						throw new Exception("sizeId不存在   OrderNumber=" + rv.get("OrderNumber").toString() + "  SKU=" + item.get("SKU").toString());
+                int quantity = productQuantity.get(SKU);
+                for (int i=0;i<quantity;i++) {
+					OrderItemBean orderItem = new OrderItemBean();
+					orderItem.setUpc(item.get("Barcode").toString());
+					String[] splits = SKU.split("-");
+					orderItem.setProductId(splits[0]);
+					orderItem.setColorId(splits[1]);
+					// transfer Tmall size to Juicy sizeId by
+					if (StringUtils.isEmpty(item.get("sizeId").toString())) {
+							throw new Exception("sizeId不存在   OrderNumber=" + rv.get("OrderNumber").toString() + "  SKU=" + item.get("SKU").toString());
 					}
-					return null;
+					orderItem.setSizeId(item.get("sizeId").toString());
+					orderItem.setItemCost(productPrice.get(SKU).toString());
+					Double tempDiscount = 0.0;
+					// <itemDiscount> is set only when discount
+					// exists
+					if (productDiscount.containsKey(SKU)) {
+						orderItem.setItemDiscount(productDiscount.get(SKU).toString());
+						tempDiscount = Double.valueOf(productDiscount.get(SKU));
+						orderDiscountTotal = orderDiscountTotal + tempDiscount;
+					}
+					orderItem.setItemTotal(round((Double.valueOf(productPrice.get(SKU)) - tempDiscount)));
+					orderItem.setItemTax(0);
+					orderItems.add(orderItem);
 				}
-				orderItem.setSizeId(item.get("sizeId").toString());
-				orderItem.setItemCost(productPrice.get(SKU).toString());
-				Double tempDiscount = 0.0;
-				// <itemDiscount> is set only when discount
-				// exists
-				if (productDiscount.containsKey(SKU)) {
-					orderItem.setItemDiscount(productDiscount.get(SKU).toString());
-					tempDiscount = Double.valueOf(productDiscount.get(SKU));
-					orderDiscountTotal = orderDiscountTotal + tempDiscount;
-				}
-				orderItem.setItemTotal(round((Double.valueOf(productPrice.get(SKU)) - tempDiscount)));
-				orderItem.setItemTax(0);
-				orderItems.add(orderItem);
 			}
 		} else {
-			throw new Exception("Reservation data not exists");
+			throw new Exception("cms数据不整合："+rv.get("SourceOrderID").toString());
 		}
 		order.setOrderItems(orderItems);
 		TotalsBean totals = new TotalsBean();
@@ -120,6 +125,17 @@ public class PostOrderJC extends PostOrderLogic {
 
 	}
 
+    private void skuConduct(List<Map<String, Object>> dtItems) throws Exception {
+
+        dtItems.forEach(stringObjectMap -> {
+            for (Map.Entry<String, Integer> de : productQuantity.entrySet()) {
+                if (de.getKey().equalsIgnoreCase(stringObjectMap.get("SKU").toString())){
+                    stringObjectMap.put("SKU", de.getKey());
+                    break;
+                }
+            }
+        });
+    }
 	@Override
 	public void reservationUpdate() throws Exception {
 		reservationUpdate(rv.get("OrderNumber").toString(), clientOrderId, "004");

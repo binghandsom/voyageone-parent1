@@ -25,7 +25,7 @@ public class PostOrderService {
 	 * timeout
 	 */
 	private static final int WEBSERVICE_TIMEOUT = 10000;
-	
+
 	@Autowired
 	PostOrderDao postOrderDao;
 
@@ -36,22 +36,22 @@ public class PostOrderService {
 	 */
 	public List<Map<String, Object>> getOrdersToOneShop(String channel_id){
 		return (List) postOrderDao.selectList(Constants.DAO_NAME_SPACE_OMS + "get_orders_to_oneShop", channel_id);
-		
+
 	}
 
 	public List<Map<String, Object>> getOrdersToChanneladvisor(String channel_id){
 		return (List) postOrderDao.selectList(Constants.DAO_NAME_SPACE_OMS + "get_orders_to_channeladvisor", channel_id);
-		
+
 	}
-	
+
 	public List<Map<String, Object>> getApproveOrdersToChanneladvisor(String channel_id){
 		return (List) postOrderDao.selectList(Constants.DAO_NAME_SPACE_OMS + "get_approve_orders_to_channeladvisor", channel_id);
-		
+
 	}
-	
+
 	public int updateOrderSendflg(String orderNumber){
 		return postOrderDao.updateTable(Constants.DAO_NAME_SPACE_OMS + "update_order_sendflg", orderNumber);
-		
+
 	}
 	/**
 	 * 获取order_details的数据
@@ -59,20 +59,20 @@ public class PostOrderService {
 	 * @return
 	 */
 	public List<Map<String, Object>> getOrderItems(String OrderNumber) {
-		
+
 		return (List) postOrderDao.selectList(Constants.DAO_NAME_SPACE_OMS + "get_order_details_by_ordernumber", OrderNumber);
-		
+
 
 	}
 
 	/**
 	 * 调用238服务器的webservice获取upc和sizeid
-	 * @param OrderNumber
+	 * @param url
 	 * @return
 	 * @throws Exception
 	 */
 	public List<Map<String, Object>> getReservationInfo(String url) throws Exception {
-		
+
 		String ret="";
 		String response=CommonUtil.HttpPost("", null, url);
 		return JsonUtil.jsonToMapList(response);
@@ -93,6 +93,6 @@ public class PostOrderService {
 		return postOrderDao.updateTable(Constants.DAO_NAME_SPACE_OMS + "update_jc_order_number",parameter);
 
 	}
-	
-	
+
+
 }
