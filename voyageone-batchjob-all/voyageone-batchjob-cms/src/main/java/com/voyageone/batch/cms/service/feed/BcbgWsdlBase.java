@@ -195,7 +195,9 @@ abstract class BcbgWsdlBase extends BaseTaskService {
 
             ProductBean productColumns = getProductColumns();
 
-            List<ProductBean> productBeans = superFeedDao.selectSuperfeedProduct(where, productColumns,
+            List<ProductBean> productBeans = superFeedDao.selectSuperfeedProduct(
+                    String.format("%s %s", where, Feed.getVal1(channel, FeedEnums.Name.product_sql_ending)),
+                    productColumns,
                     // 组合 Product 的表部分和Join部分
                     String.format("%s %s", productTable, productJoin));
 

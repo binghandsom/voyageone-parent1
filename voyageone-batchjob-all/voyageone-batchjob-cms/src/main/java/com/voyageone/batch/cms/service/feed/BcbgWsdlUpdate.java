@@ -127,7 +127,9 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
             // 依据前序逻辑,这里每次任务只会执行一次.所以无需担心
             String where = Constants.EmptyString;
 
-            List<ProductBean> productBeans = superFeedDao.selectSuperfeedProduct(where, productColumns,
+            List<ProductBean> productBeans = superFeedDao.selectSuperfeedProduct(
+                    String.format("%s %s", where, Feed.getVal1(channel, FeedEnums.Name.product_sql_ending)),
+                    productColumns,
                     String.format("%s_full %s", productTable, productJoin));
 
             $info("取得上次记录的 Product ( Full ) [ %s ] 个", productBeans.size());
@@ -193,12 +195,17 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
          */
         private ProductsFeedUpdate getWsdlParam(Relation relation) {
 
+            Map<String, String> updateFields = relation.getUpdateFields();
+
+            if (updateFields == null || updateFields.size() < 1)
+                return null;
+
             ProductsFeedUpdate feedUpdate = new ProductsFeedUpdate();
 
             feedUpdate.setChannel_id(channel.getId());
             feedUpdate.setCode(relation.updating.getP_code());
             feedUpdate.setProduct_url_key(relation.updating.getUrl_key());
-            feedUpdate.setUpdatefields(relation.getUpdateFields());
+            feedUpdate.setUpdatefields(updateFields);
 
             return feedUpdate;
         }
