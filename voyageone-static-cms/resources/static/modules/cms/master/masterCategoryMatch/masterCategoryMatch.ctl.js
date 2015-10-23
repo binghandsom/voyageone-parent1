@@ -8,6 +8,7 @@
 
 define([ "modules/cms/cms.module",
          "modules/cms/cms.route",
+		 "modules/cms/common/common.service",
 		 "modules/cms/master/masterCategoryMatch/masterCategoryMatchService",
 		 "modules/cms/service/mainCategory.service",
 		 "modules/cms/edit/edit.service"], 
@@ -21,10 +22,13 @@ define([ "modules/cms/cms.module",
 					  'editMainCategoryService',
 					  '$location',
 					  'cmsRoute',
+					  'cmsCommonService',
 					  'notify',
-			function($scope,$rootScope,cmsAction,matchService,editService,$location,cmsRoute,notify) {
+			function($scope,$rootScope,cmsAction,matchService,editService,$location,cmsRoute,cmsCommonService,notify) {
 					$scope.initialize = function() {
-						
+
+						$scope.filterByProp = false;
+						$scope.filterByCategory = false;
 						matchService.getAllCategory({}).then(
 							function(response) {
 								
@@ -40,6 +44,13 @@ define([ "modules/cms/cms.module",
 							$scope.cmsCategoryList = categories;
 							//获取所有主类目
 							$scope.masterCategoryList = $scope.resData.masterCategoryList;
+							if(cmsCommonService.filter == 1){
+								$scope.filterDisMatchCategory();
+							}else if(cmsCommonService.filter == 2){
+								$scope.filterPropDisMatchCategory();
+							}
+							cmsCommonService.filter = null;
+
 					})
 					
 				};
@@ -51,6 +62,7 @@ define([ "modules/cms/cms.module",
 						var model = cmsCategoryModels[i];
 						if(model.mainCategoryId==-1){
 							model.isMatch=true;
+							model.isDisable=true;
 						}
 						if (model.mainCategoryId >0) {
 							model.inheritClass = 'super-category fa fa-star';
@@ -108,9 +120,8 @@ define([ "modules/cms/cms.module",
 									if(!subCategory.isSave){
 										subCategory.extendMainCategoryId = parentCategoryId;
 										subCategory.isExtend=true;
-										subCategory.inheritClass = 'sub-category fa fa-long-arrow-up';
 									}
-
+									subCategory.inheritClass = 'sub-category fa fa-long-arrow-up';
 								}
 							}
 
@@ -165,7 +176,7 @@ define([ "modules/cms/cms.module",
 
 								if(category.isSave){
 									category.isSave = false;
-									if(category.mainCategoryId==0){
+									if(category.mainCategoryId==0 && category.mainCategoryPath!=null){
 										category.isExtend = true;
 									}
 								}else if(category.isExtend) {
@@ -206,7 +217,7 @@ define([ "modules/cms/cms.module",
 
 								if(allCategory[i].mainCategoryId>0){
 									allCategory[i].isPropMatch = true;;
-								}else if(allCategory[i].mainCategoryId==0){
+								}else if(allCategory[i].mainCategoryId==0 && allCategory[i].mainCategoryPath!=null){
 									allCategory[i].isExtend = true;
 								}
 
@@ -217,7 +228,7 @@ define([ "modules/cms/cms.module",
 					});
 				};
 
-				$scope.filterPropDisMatchCategory = function($event){
+				$scope.filterPropDisMatchCategory = function(){
 
 					if ($scope.filterByProp) {
 
@@ -228,20 +239,22 @@ define([ "modules/cms/cms.module",
 						//获取cms类目
 						$scope.cmsCategoryList = cmsCategorise;
 
-						$event.target.innerText = " 属性匹配未完成类目";
 					}else {
 						$scope.allCategory = $scope.cmsCategoryList;
+						var unMappingMainCategoryIdList = [];
 						var filterCategoryList = [];
 						$scope.filterByProp = true;
 						for (var i = 0; i < $scope.cmsCategoryList.length; i++) {
 
 							if ($scope.cmsCategoryList[i].mainCategoryId > 0 && $scope.cmsCategoryList[i].propMatchStatus==0) {
-								filterCategoryList.push($scope.cmsCategoryList[i]);
+								if(_.indexOf(unMappingMainCategoryIdList, $scope.cmsCategoryList[i].mainCategoryId) == -1){
+									filterCategoryList.push($scope.cmsCategoryList[i]);
+									unMappingMainCategoryIdList.push($scope.cmsCategoryList[i].mainCategoryId);
+								}
 							}
 						}
 						//获取cms类目
 						$scope.cmsCategoryList = filterCategoryList;
-						$event.target.innerText = " 全部类目";
 					}
 				}
 				
@@ -259,6 +272,7 @@ define([ "modules/cms/cms.module",
 					 }
 					 category.isSave = true;
 					 if (category.isMatch) {
+						 category.isDisable=true;
 						 if(category.mainCategoryId > 0){
 							 category.mainCategoryId = -1;
 							 category.mainCategoryPath = null;
@@ -275,16 +289,24 @@ define([ "modules/cms/cms.module",
 							 category.inheritClass = "";
 						 }
 
-					}else if(category.mainCategoryId==-1){
-						 category.mainCategoryId = 0;
-					 	 category.isSave=true;
-					 	 category.inheritClass = 'sub-category fa fa-long-arrow-up';
-						 if(category.parentCategoryId>0){
-							 var topNodeCat = getTopNOde(category.parentCategoryId);
-							 if(topNodeCat!=null){
-								 setSubCategoryPath(topNodeCat,topNodeCat.mainCategoryPath,topNodeCat.mainCategoryId);
+					}else{
+						 category.isDisable=false;
+
+						 if(category.mainCategoryId==-1){
+							 category.mainCategoryId = 0;
+							 category.isSave=true;
+
+							 if(category.parentCategoryId>0){
+
+								 var topNodeCat = getTopNOde(category.parentCategoryId);
+
+								 if(topNodeCat!=null){
+									 category.inheritClass = 'sub-category fa fa-long-arrow-up';
+									 setSubCategoryPath(topNodeCat,topNodeCat.mainCategoryPath,topNodeCat.mainCategoryId);
+								 }
 							 }
 						 }
+
 					}
 
 				 };
@@ -304,7 +326,7 @@ define([ "modules/cms/cms.module",
 					return null;
 				};
 				 
-				 $scope.filterDisMatchCategory = function($event){
+				 $scope.filterDisMatchCategory = function(){
 
 
 					 if ($scope.filterByCategory) {
@@ -315,7 +337,6 @@ define([ "modules/cms/cms.module",
 
 						//获取cms类目
 						$scope.cmsCategoryList = cmsCategorise;
-						$event.target.innerText = " 未匹配类目";
 					}else {
 						 $scope.allCategory = $scope.cmsCategoryList;
 						var filterCategoryList = [];
@@ -328,7 +349,6 @@ define([ "modules/cms/cms.module",
 						}
 						//获取cms类目
 						$scope.cmsCategoryList = filterCategoryList;
-						$event.target.innerText = " 全部类目";
 					}
 					 
 				 };

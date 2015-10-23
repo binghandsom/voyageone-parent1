@@ -109,6 +109,8 @@ define (function (require) {
         'cms_search_complex_doSearch': '/cms/search/complex/doSearch',
         'cms_search_advance_doSearch': '/cms/search/advance/doSearch',
         'cms_search_advance_doExport': '/cms/search/advance/doExport',
+        'cms_search_quick_search': '/cms/search/quick/search',
+
         /**setSizeChart**/
         'cms_popup_setsizechart_doGetBindedSizeChartList':'/cms/popup/setsizechart/doGetBindedSizeChartList',
         'cms_popup_setsizechart_doGetOtherSizeChartList':'/cms/popup/setsizechart/doGetOtherSizeChartList',

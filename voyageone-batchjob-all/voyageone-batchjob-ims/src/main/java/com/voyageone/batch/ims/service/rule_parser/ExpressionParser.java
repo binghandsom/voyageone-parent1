@@ -43,7 +43,7 @@ public class ExpressionParser {
 
         String categoryId = cmsModelProp.getProp(CmsFieldEnum.CmsModelEnum.category_id);
 
-        this.cmsWordParser = new CmsWordParser(cmsModelProp);
+        this.cmsWordParser = new CmsWordParser(cmsModelProp,mainProductCodeProp);
         this.dictWordParser = new DictWordParser(orderChannelId);
         this.textWordParser = new TextWordParser();
         this.customWordParser = new CustomWordParser(this, customValueSystemParam);
@@ -88,7 +88,8 @@ public class ExpressionParser {
                     case MASTER: {
                         String expressionValue = masterWordParser.parse(ruleWord);
                         if (expressionValue == null || "".equals(expressionValue)) {
-                            return "";
+                            plainValue = "";
+                            break;
                         }
                         RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
                         RuleExpression masterExpression = ruleJsonMapper.deserializeRuleExpression(expressionValue);

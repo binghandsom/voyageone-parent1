@@ -75,6 +75,8 @@ public class FormReservation extends AjaxRequestBean {
     private String orderDateTime_local;
 	// 允许变更仓库
 	private String change_store_flg;
+	// 货架名称
+	public String  location_name;
 
 	public int getInProcess_qty() {
 		return inProcess_qty;
@@ -474,6 +476,14 @@ public class FormReservation extends AjaxRequestBean {
 
 	public void setChange_store_flg(String change_store_flg) {
 		this.change_store_flg = change_store_flg;
+	}
+
+	public String getLocation_name() {
+		return location_name;
+	}
+
+	public void setLocation_name(String location_name) {
+		this.location_name = location_name;
 	}
 
 	@Override

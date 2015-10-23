@@ -537,13 +537,21 @@ public class WmsReservationServiceImpl implements WmsReservationService {
 		//获取渠道可选择仓库（虚拟仓库不能选择）
 		List<StoreBean> storeList = StoreConfigs.getChannelStoreList(orderChannelId, false, false);
 
+		List<StoreBean> storeChangeList = new ArrayList<>();
+		//排除销售外的仓库
+		for (StoreBean storeBean : storeList) {
+			if (storeBean.getIs_sale().equals("1")) {
+				storeChangeList.add(storeBean);
+			}
+		}
+
 		//如果现有仓库在渠道仓库中不存在，或者是虚拟仓库，则排除此仓库
 		StoreBean storeBean = StoreConfigs.getStore(orderChannelId, Long.valueOf(storeId));
 		if (storeBean == null || storeBean.getStore_kind().equals(StoreConfigEnums.Kind.VIRTUAL.getId())) {
 			storeId = "";
 		}
 
-		resultMap.put("storeList", storeList);
+		resultMap.put("storeList", storeChangeList);
 		resultMap.put("storeId", storeId);
 
 		return resultMap;

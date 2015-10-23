@@ -56,7 +56,6 @@ define(function (require) {
 
                 return defer.promise;
             };
-           
         }
     ]);
 });

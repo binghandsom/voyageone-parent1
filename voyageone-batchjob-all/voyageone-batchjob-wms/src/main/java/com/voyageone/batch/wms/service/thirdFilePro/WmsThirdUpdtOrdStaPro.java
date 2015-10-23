@@ -80,8 +80,8 @@ public class WmsThirdUpdtOrdStaPro extends ThirdFileProBaseService {
             fileDataList = filterOrderStatus(fileDataList);
             if(fileDataList != null && fileDataList.size() > 0) {
                 updateTabels(filenameInfoStr, orderChannelId, setParam(orderChannelId, fileDataList));
-                moveFile(filePath, filenameInfoStr, bakFilePath);
             }
+            moveFile(filePath, filenameInfoStr, bakFilePath);
         }
     }
 

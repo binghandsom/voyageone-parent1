@@ -663,7 +663,7 @@ public class WmsPickupServiceImpl implements WmsPickupService {
         pickupLabelBean.setExpected_ship_date("");
 
         // 分库
-        pickupLabelBean.setStore(scanInfoList.get(0).getStore_name());
+        pickupLabelBean.setStore(scanInfoList.get(0).getStore());
 
         // 收件名
         pickupLabelBean.setShip_name(StringUtils.null2Space2(scanInfoList.get(0).getShip_name()));
@@ -770,6 +770,9 @@ public class WmsPickupServiceImpl implements WmsPickupService {
 
         // 下单时间（本地时间）
         reservation.setOrderDateTime_local(StringUtils.isNullOrBlank2(reservation.getOrderDateTime()) ? "" : DateTimeUtil.getLocalTime(reservation.getOrderDateTime(), user.getTimeZone()));
+
+        // 货架所在
+        reservation.setLocation_name(reservationDao.getLocationBySKU(reservation.getOrder_channel_id(),reservation.getSku(),reservation.getStore_id()));
 
     }
 

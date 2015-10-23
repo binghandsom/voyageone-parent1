@@ -520,7 +520,7 @@
 
                                                                                 <div class="col-sm-8">
                                                                                     <input type="text" class="form-control" id="txtCNProductCnName" name="txtCNProductCnName" ng-model="cnBaseProductInfo.cnName"
-                                                                                           ng-maxlength="60" required="" ng-change="cnBaseProductChanged()">
+                                                                                           vo-char-max-length="60" required="" ng-change="cnBaseProductChanged()">
                                                                                     <va-check ng-show="formCNBaseProductInfo.txtCNProductCnName.$error.required" check-type="required"></va-check>
                                                                                     <va-check ng-show="formCNBaseProductInfo.txtCNProductCnName.$error.maxlength" check-type="maxlength" check-param="60"></va-check>
                                                                                 </div>
@@ -725,7 +725,7 @@
 
                                                                                         <div class="col-sm-8">
                                                                                             <input type="text" class="form-control inherited" id="txtCNProductTbName" name="txtCNProductTbName" ng-model="tmProductInfo.tbName"
-                                                                                                   ng-maxlength="60" ng-change="tmProductChanged()">
+                                                                                                   vo-char-max-length="60" ng-change="tmProductChanged()">
                                                                                             <va-check ng-show="formTMProductInfo.txtCNProductTbName.$error.maxlength" check-type="maxlength" check-param="60"></va-check>
                                                                                         </div>
                                                                                     </div>
@@ -752,7 +752,7 @@
 
                                                                                         <div class="col-sm-8">
                                                                                             <input type="text" class="form-control inherited" id="txtCNProductTMName" name="txtCNProductTMName" ng-model="tmProductInfo.tmName"
-                                                                                                   ng-maxlength="60" ng-change="tmProductChanged()">
+                                                                                                   vo-char-max-length="60" ng-change="tmProductChanged()">
                                                                                             <va-check ng-show="formTMProductInfo.txtCNProductTMName.$error.maxlength" check-type="maxlength" check-param="60"></va-check>
                                                                                         </div>
                                                                                     </div>
@@ -778,7 +778,7 @@
 
                                                                                         <div class="col-sm-8">
                                                                                             <input type="text" class="form-control inherited" id="txtCNProductTGName" name="txtCNProductTGName" ng-model="tmProductInfo.tgName"
-                                                                                                   ng-maxlength="60" ng-change="tmProductChanged()">
+                                                                                                   vo-char-max-length="60" ng-change="tmProductChanged()">
                                                                                             <va-check ng-show="formTMProductInfo.txtCNProductTGName.$error.maxlength" check-type="maxlength" check-param="60"></va-check>
                                                                                         </div>
                                                                                     </div>

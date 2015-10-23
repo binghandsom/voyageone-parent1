@@ -316,6 +316,26 @@ public class ReservationDao extends BaseDao {
     }
 
     /**
+     * 获得可捡货SKU所属的货架
+
+     * @param order_channel_id 物品的状态
+     * @param sku 用户所属的仓库
+     * @param store_id 用户所属的ChannelID
+     * @return List<FormPickupBean>
+     */
+    public String getLocationBySKU(String order_channel_id,String  sku,String store_id) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("order_channel_id", order_channel_id);
+        params.put("sku", sku);
+        params.put("store_id", store_id);
+
+        return updateTemplate.selectOne(Constants.DAO_NAME_SPACE_WMS + "wms_reservation_getLocationBySKU", params);
+
+    }
+
+    /**
      * @description 根据order_channel_id、code、sku,和时间范围获取对应sku的产品的库存变更信息
      * @param formReservation 通过bean对象传递参数
      * @return formReservation 对象获取传回参数

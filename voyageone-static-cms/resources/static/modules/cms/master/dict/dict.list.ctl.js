@@ -11,13 +11,16 @@ var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); 
 
 define(['modules/cms/cms.module', 'modules/cms/master/dict/dict.service'], function(cmsModule) {
   return cmsModule.controller('DictListController', (function() {
-    _Class.$inject = ['$scope', '$compile', '$translate', 'DTOptionsBuilder', 'DTColumnBuilder', 'DictService', '$location', 'notify'];
-
-    function _Class($scope, $compile, $translate, DTOptionsBuilder, DTColumnBuilder, DictService, $location, notify) {
+    _Class.$inject = ['$scope', '$compile', '$translate', 'DTOptionsBuilder', 'DTColumnBuilder', 'DictService', '$location', 'notify','vConfirm'];
+    var m_dictService;
+    var m_notify;
+    var m_dtDict;
+    function _Class($scope, $compile, $translate, DTOptionsBuilder, DTColumnBuilder, DictService, $location, notify, vConfirm) {
       this.$translate = $translate;
-      this.DictService = DictService;
+      m_dictService = DictService;
       this.$location = $location;
-      this.notify = notify;
+      m_notify = notify;
+      this.vConfirm = vConfirm;
       this.dtGetDict = bind(this.dtGetDict, this);
       this.dtDict = {
         options: DTOptionsBuilder.newOptions().withOption('processing', true).withOption('serverSide', true).withOption('ordering', false).withOption('ajax', this.dtGetDict).withOption('createdRow', (function(_this) {
@@ -37,10 +40,11 @@ define(['modules/cms/cms.module', 'modules/cms/master/dict/dict.service'], funct
         ],
         instance: null
       };
+      m_dtDict = this.dtDict;
     }
 
     _Class.prototype.dtGetDict = function(data, callback) {
-      return this.DictService.dtGetDict(data).then(function(res) {
+      return m_dictService.dtGetDict(data).then(function(res) {
         return callback(res.data);
       });
     };
@@ -57,16 +61,19 @@ define(['modules/cms/cms.module', 'modules/cms/master/dict/dict.service'], funct
     };
 
     _Class.prototype.delItem = function(item) {
-      return this.DictService.delDict(item).then((function(_this) {
-        return function(res) {
-          if (res.data) {
-            _this.notify.success('CMS_TXT_MSG_DELETE_SUCCESS');
-            return _this.dtDict.instance.reloadData();
-          } else {
-            return _this.notify.warning('CMS_TXT_MSG_DELETE_FAILED');
-          }
-        };
-      })(this));
+      this.vConfirm('CMS_MSG_IS_DELETE','').result.then(function() {
+        return m_dictService.delDict(item).then((function(_this) {
+          return function(res) {
+            if (res.data) {
+              m_notify.success('CMS_TXT_MSG_DELETE_SUCCESS');
+              return m_dtDict.instance.reloadData();
+            } else {
+              return m_notify.warning('CMS_TXT_MSG_DELETE_FAILED');
+            }
+          };
+        })(this));
+      }, function() {
+      })
     };
 
     return _Class;

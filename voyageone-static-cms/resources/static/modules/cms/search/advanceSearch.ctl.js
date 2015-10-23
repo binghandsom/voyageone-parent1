@@ -29,7 +29,11 @@ define (function (require) {
               $scope.status = {};
         	  $scope.status.open = true;
 
-              $scope.search = {};
+              if(cmsCommonService.filter != null){
+                $scope.search = angular.copy(cmsCommonService.filter);
+              }else{
+                  $scope.search = {};
+              }
               $scope.yesOrNo = [{"value":"1","name":"Yes"},{"value":"0","name":"No"}];
               $scope.publishStatus = [{"value":"0","name":"Pending"},{"value":"1","name":"Success"},{"value":"2","name":"Failed"}];
               $scope.token = cookieService.getToken();
@@ -76,7 +80,11 @@ define (function (require) {
                   initData.draw= 1;
                   initData.data={};
                   draw(initData);
-                  return;
+                  if(cmsCommonService.filter == null){
+                      return;
+                  }else{
+                      cmsCommonService.filter = null;
+                  }
               }
 
               return searchService.doAdvanceSearch(data,$scope.search)
@@ -89,7 +97,7 @@ define (function (require) {
                       var productId = parseInt(productInfo.productId);
 
                       $scope.cnProductInfo.currentPageIdList.push({id: productId});
-                      $scope.cnProductInfo.currentPageDataList.push({id: productId, code: productInfo.code, name: productInfo.cnName});
+                      $scope.cnProductInfo.currentPageDataList.push({id: productId, code: productInfo.code, name: productInfo.cnName, modelId: productInfo.modelId});
 
                       if (!$scope.cnProductInfo.selectOneFlagList.hasOwnProperty(productId) || !$scope.cnProductInfo.selectOneFlagList[productId]) {
                           $scope.cnProductInfo.selectAllFlag = false;
@@ -114,7 +122,7 @@ define (function (require) {
            * 执行检索
            */
           function doSearchProduct () {
-              var titleHtml = '<input ng-controller="selectController" ng-model="usProductInfo.selectAllFlag" type="checkbox" ng-click="selectAll(usProductInfo)">';
+              var titleHtml = '<input ng-controller="selectController" ng-model="cnProductInfo.selectAllFlag" type="checkbox" ng-click="selectAll(cnProductInfo)">';
               $scope.dtProductList = {
                   options: DTOptionsBuilder.newOptions()
                       .withOption('processing', true)
@@ -128,6 +136,13 @@ define (function (require) {
                           rowScope.$row = data;
                           // Recompiling so we can bind Angular directive to the DT
                           $compile(angular.element(row).contents())(rowScope);
+                      })
+                      .withOption('headerCallback', function(header) {
+                          if (!$scope.headerCompiledCn) {
+                              // Use this headerCompiled field to only compile header once
+                              $scope.headerCompiledCn = true;
+                              $compile(angular.element(header).contents())($scope);
+                          }
                       })
                       .withDataProp('data')
                       .withPaginationType('full_numbers'),
