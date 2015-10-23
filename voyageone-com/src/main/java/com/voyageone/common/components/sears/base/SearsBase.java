@@ -25,7 +25,7 @@ public class SearsBase {
 
     public SearsBase(){
         properties = new Properties();
-        properties.put("javax.net.debug", "ssl");
+//        properties.put("javax.net.debug", "ssl");
         properties.put("javax.net.ssl.keyStore", keystore);
         properties.put("javax.net.ssl.keyStorePassword", "password");
         properties.put("javax.net.ssl.keyStoreType", "jks");
