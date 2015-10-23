@@ -180,6 +180,7 @@
           and cfg_val1 = details.sku
         )
          INNER JOIN wms_bt_item_details itemdetails ON itemdetails.sku = details.sku
+             and    itemdetails.order_channel_id = orders.order_channel_id
         WHERE
             orders.order_channel_id =  #{order_channel_id}
         AND orders.cart_id = #{cart_id}
