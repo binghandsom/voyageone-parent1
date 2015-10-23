@@ -219,7 +219,25 @@
 			</foreach>
 		</if>
     </select>
-    
+
+	<select id="wms_return_getOrderNumber"   resultType="String">
+		select
+			order_number
+		from
+			viw_wms_reservation_pickup_mapping
+		where
+			(order_number = #{order_num}
+		or
+			client_order_id = #{order_num})
+		<if test="orderChannelId != null and orderChannelId.size() != 0 ">
+			and order_channel_id in
+			<foreach item="item" index="index" collection="orderChannelId" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		limit 1
+	</select>
+
     <insert id="wms_return_insertReturnInfo" parameterType="java.util.List">
 		insert into wms_bt_return 
 				  (
