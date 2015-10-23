@@ -1,9 +1,6 @@
 package com.voyageone.base.dao.mongodb.test.dao;
 
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
@@ -11,10 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by DELL on 2015/10/21.
- */
-@Component("MainTestReadTask")
+@Component("mainTestReadTask")
 public class MainTestReadTask {
 
     @Autowired

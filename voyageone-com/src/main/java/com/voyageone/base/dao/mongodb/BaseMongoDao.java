@@ -1,6 +1,5 @@
 package com.voyageone.base.dao.mongodb;
 
-import com.voyageone.base.dao.mongodb.model.ChannelPartitionID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -24,9 +23,12 @@ import static org.springframework.data.mongodb.core.query.Criteria.where;
 @NoRepositoryBean
 public class BaseMongoDao<T, ID extends Serializable> implements MongoRepository<T, ID> {
 
-    private final MongoOperations mongoOperations;
-    private final MongoEntityInformation<T, ID> entityInformation;
+    protected MongoOperations mongoOperations;
+    protected MongoEntityInformation<T, ID> entityInformation;
 
+    public BaseMongoDao() {
+
+    }
     /**
      * Creates a new {@link SimpleMongoRepository} for the given {@link MongoEntityInformation} and {@link MongoTemplate}.
      *

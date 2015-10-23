@@ -1,18 +1,15 @@
 package com.voyageone.base.dao.mongodb.test.dao;
 
 
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
-import java.util.List;
 
-/**
- * Created by DELL on 2015/10/21.
- */
 public interface CustomerDao extends CrudRepository<Customer, String> {
 
     public Customer findOneByFirstName(String firstName);
+
+    public Customer findOneByLastName(String firstName);
 
     public Iterable<Customer> findByFirstName(String firstName);
 
