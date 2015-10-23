@@ -95,11 +95,26 @@ public class BcbgAnalysisService extends BaseTaskService {
             throw new BusinessException("BCBG 的配置 feed_ftp_filename 错误,路径为空.");
         }
 
-        // 检查文件是否存在
-        // 不存在就直接结束处理
-        File feedFile = new File(feedFileName);
+        // 打开目录
+        File feedFileDir = new File(feedFileName);
+        // 过滤文件
+        File[] feedFiles = feedFileDir.listFiles(i -> i.getName().contains(".xml"));
+
+        if (feedFiles.length < 1) {
+            $info("XML 数据文件不存在,退出任务");
+            return;
+        }
+
+        // 排序文件
+        List<File> feedFileList =  Arrays.asList(feedFiles).stream().sorted((f1, f2) -> f2.getName().compareTo(f1.getName())).collect(toList());
+        // 取第一个作为目标文件,并从其中移除
+        // 其他直接删除
+        File feedFile = feedFileList.remove(0);
+        feedFileList.forEach(File::delete);
+
         File styleFile = new File(styleFileName);
-        if (!feedFile.exists() || !styleFile.exists()) {
+
+        if (!styleFile.exists()) {
             $info("数据文件不存在,退出任务 [ %s ] [ %s ]", feedFile.exists(), styleFile.exists());
             return;
         }
@@ -129,10 +144,9 @@ public class BcbgAnalysisService extends BaseTaskService {
         // 使用接口提交
         insertService.new Context(BCBG).postNewProduct();
         updateService.new Context(BCBG).postUpdatedProduct();
-//        postAttribute();
 
         // 备份文件
-//        backupDataFile(feedFile, styleFile);
+        backupDataFile(feedFile, styleFile);
     }
 
     private void clearLastData() {
