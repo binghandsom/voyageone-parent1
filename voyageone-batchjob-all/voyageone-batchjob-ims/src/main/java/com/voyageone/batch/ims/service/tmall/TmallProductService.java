@@ -686,9 +686,8 @@ public class TmallProductService implements PlatformServiceInterface {
         if (addItemResponse == null) {
             failCause.append(String.format("Tmall return null response when add item"));
             logger.error(failCause + ", request:" + xmlData);
-            throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(failCause.toString()));
-        } else if (addItemResponse.getErrorCode() != null)
-        {
+            throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(failCause.toString(), true));
+        } else if (addItemResponse.getErrorCode() != null) {
             logger.debug("errorCode:" + addItemResponse.getErrorCode());
             String subMsg = addItemResponse.getSubMsg();
             numId = getNumIdFromSubMsg(subMsg, failCause);
@@ -696,7 +695,14 @@ public class TmallProductService implements PlatformServiceInterface {
                 logger.debug(String.format("find numId(%s) has been uploaded before", numId));
                 return numId;
             }
-            throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(failCause.toString()));
+            //天猫系统服务异常
+            if ("15".equals(addItemResponse.getErrorCode())) {
+                logger.debug("此处应该时天猫商品服务异常--->" + failCause.toString());
+                throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(failCause.toString(), true));
+            }
+            else {
+                throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(failCause.toString(), false));
+            }
         } else {
             numId = addItemResponse.getAddItemResult();
             logger.debug("numId: " + numId);
