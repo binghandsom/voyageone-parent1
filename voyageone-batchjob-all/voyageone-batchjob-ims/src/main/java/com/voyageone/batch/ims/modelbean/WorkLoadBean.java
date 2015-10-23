@@ -26,8 +26,13 @@ public class WorkLoadBean implements Cloneable{
     private String failCause;
     private String style_code;
     private int isPublished;
+    //标志错误出现时，是否在任务下次运行时，该任务是否仍需要执行,
+    //如果需要执行，那么publish_status会保持0，否则设为2
+    private boolean nextProcess;
 
-    public WorkLoadBean() {}
+    public WorkLoadBean() {
+        nextProcess = false;
+    }
 
     /*
     public WorkLoadBean(WorkLoadBean copyWorkload)
@@ -184,6 +189,14 @@ public class WorkLoadBean implements Cloneable{
             e.printStackTrace();
         }
         return cloneObj;
+    }
+
+    public boolean isNextProcess() {
+        return nextProcess;
+    }
+
+    public void setNextProcess(boolean nextProcess) {
+        this.nextProcess = nextProcess;
     }
 
     public boolean isHasSku() {

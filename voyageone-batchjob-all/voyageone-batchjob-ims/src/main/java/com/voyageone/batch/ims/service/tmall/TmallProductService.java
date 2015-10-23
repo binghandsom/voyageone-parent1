@@ -509,7 +509,7 @@ public class TmallProductService implements PlatformServiceInterface {
         if (uploadImageResult.isUploadSuccess()) {
             urlMap = uploadImageResult.getUrlMap();
         } else {
-            throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(uploadImageResult.getFailCause()));
+            throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(uploadImageResult.getFailCause(), uploadImageResult.isNextProcess()));
         }
 
         List<Field> productPlatformFields = (List)masterDataMappingService.resolvePlatformProps(this, tcb.getPlatformUploadRunState(), urlMap);
@@ -616,7 +616,7 @@ public class TmallProductService implements PlatformServiceInterface {
         if (uploadImageResult.isUploadSuccess()) {
             urlMap = uploadImageResult.getUrlMap();
         } else {
-            throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(uploadImageResult.getFailCause()));
+            throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(uploadImageResult.getFailCause(), uploadImageResult.isNextProcess()));
         }
 
         List<Field> itemPlatformFields = (List)masterDataMappingService.resolvePlatformProps(this, tcb.getPlatformUploadRunState(), urlMap);
@@ -686,9 +686,8 @@ public class TmallProductService implements PlatformServiceInterface {
         if (addItemResponse == null) {
             failCause.append(String.format("Tmall return null response when add item"));
             logger.error(failCause + ", request:" + xmlData);
-            throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(failCause.toString()));
-        } else if (addItemResponse.getErrorCode() != null)
-        {
+            throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(failCause.toString(), true));
+        } else if (addItemResponse.getErrorCode() != null) {
             logger.debug("errorCode:" + addItemResponse.getErrorCode());
             String subMsg = addItemResponse.getSubMsg();
             numId = getNumIdFromSubMsg(subMsg, failCause);
@@ -696,7 +695,14 @@ public class TmallProductService implements PlatformServiceInterface {
                 logger.debug(String.format("find numId(%s) has been uploaded before", numId));
                 return numId;
             }
-            throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(failCause.toString()));
+            //天猫系统服务异常
+            if ("15".equals(addItemResponse.getErrorCode())) {
+                logger.debug("此处应该时天猫商品服务异常--->" + failCause.toString());
+                throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(failCause.toString(), true));
+            }
+            else {
+                throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(failCause.toString(), false));
+            }
         } else {
             numId = addItemResponse.getAddItemResult();
             logger.debug("numId: " + numId);
@@ -993,7 +999,7 @@ public class TmallProductService implements PlatformServiceInterface {
         if (uploadImageResult.isUploadSuccess()) {
             urlMap = uploadImageResult.getUrlMap();
         } else {
-            throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(uploadImageResult.getFailCause()));
+            throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(uploadImageResult.getFailCause(), uploadImageResult.isNextProcess()));
         }
 
         List<Field> itemPlatformFields = (List)masterDataMappingService.resolvePlatformProps(this, tcb.getPlatformUploadRunState(), urlMap);
@@ -1091,8 +1097,18 @@ public class TmallProductService implements PlatformServiceInterface {
         List<Double> skuPriceList = new ArrayList<>();
         for (CmsCodePropBean cmsCodeProp : cmsModelProp.getCmsCodePropBeanList()) {
             for (CmsSkuPropBean cmsSkuProp : cmsCodeProp.getCmsSkuPropBeanList()) {
-                int skuQuantity = Integer.valueOf(cmsSkuProp.getProp(CmsFieldEnum.CmsSkuEnum.sku_quantity));
-                double skuPrice = Double.valueOf(cmsSkuProp.getProp(CmsFieldEnum.CmsSkuEnum.sku_price));
+                int skuQuantity = 0;
+                try {
+                    skuQuantity = Integer.valueOf(cmsSkuProp.getProp(CmsFieldEnum.CmsSkuEnum.sku_quantity));
+                } catch (Exception e) {
+                    logger.warn("No quantity for sku " + cmsSkuProp.getProp(CmsFieldEnum.CmsSkuEnum.sku));
+                }
+                double skuPrice = 0;
+                try {
+                    skuPrice = Double.valueOf(cmsSkuProp.getProp(CmsFieldEnum.CmsSkuEnum.sku_price));
+                } catch (Exception e) {
+                    logger.warn("No price for sku " + cmsSkuProp.getProp(CmsFieldEnum.CmsSkuEnum.sku));
+                }
                 if (onePrice - 0d == 0) {
                     onePrice = skuPrice;
                 }

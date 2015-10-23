@@ -6,6 +6,8 @@ import com.voyageone.batch.wms.modelbean.ClientInventoryBean;
 import com.voyageone.batch.wms.modelbean.SpaldingPriceBean;
 import com.voyageone.batch.wms.modelbean.ThirdReportBean;
 import com.voyageone.common.Constants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
@@ -18,7 +20,7 @@ import java.util.Map;
  */
 @Repository
 public class CreateReportDao extends BaseDao {
-
+    protected final Log logger = LogFactory.getLog(getClass());
     /**
      * 销售订单基本数据取得
      * @param cartID
@@ -86,6 +88,13 @@ public class CreateReportDao extends BaseDao {
      * @return List<ThirdReportBean>
      */
     public List<ThirdReportBean> getCreateReportSpecialData(String cartID,String order_channel_id,String specialType,String start_created,String end_created,String task_name) {
+        logger.info( "----------" + "getCreateReportSpecialData----------开始");
+        logger.info("cartID="+cartID);
+        logger.info("order_channel_id="+order_channel_id);
+        logger.info("specialType="+specialType);
+        logger.info("start_created="+start_created);
+        logger.info("end_created="+end_created);
+        logger.info("task_name="+task_name);
         Map<String, String> paramMap = new HashMap<>();
         paramMap.put("cart_id", cartID);
         paramMap.put("order_channel_id", order_channel_id);
@@ -93,8 +102,13 @@ public class CreateReportDao extends BaseDao {
         paramMap.put("start_created",start_created);
         paramMap.put("end_created",end_created);
         paramMap.put("task_name",task_name);
+        try {
+            return selectList(Constants.DAO_NAME_SPACE_WMS + "wms_getCreateReportSpecialData", paramMap);
+        }catch(Exception ex){
+            ex.printStackTrace();
+            return null;
+        }
 
-        return selectList(Constants.DAO_NAME_SPACE_WMS + "wms_getCreateReportSpecialData", paramMap);
     }
 
 

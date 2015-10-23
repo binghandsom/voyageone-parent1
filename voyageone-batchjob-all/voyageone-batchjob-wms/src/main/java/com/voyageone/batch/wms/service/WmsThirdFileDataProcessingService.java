@@ -5,10 +5,7 @@ import com.voyageone.batch.core.Enums.TaskControlEnums;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.core.util.TaskControlUtils;
 import com.voyageone.batch.wms.dao.ClientInventoryDao;
-import com.voyageone.batch.wms.service.thirdFilePro.ThirdFileProBaseService;
-import com.voyageone.batch.wms.service.thirdFilePro.WmsThirdInventoryFilePro;
-import com.voyageone.batch.wms.service.thirdFilePro.WmsThirdOrdFilePro;
-import com.voyageone.batch.wms.service.thirdFilePro.WmsThirdUpdtOrdStaPro;
+import com.voyageone.batch.wms.service.thirdFilePro.*;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.ThirdPartyConfigs;
@@ -41,14 +38,19 @@ public class WmsThirdFileDataProcessingService extends BaseTaskService {
     @Autowired
     WmsThirdUpdtOrdStaPro wmsThirdUpdtOrdStaPro;
 
+    @Autowired
+    WmsInventoryIncomingPro wmsInventoryIncomingPro;
+
     private static String PRO_INVFILE_CONFIG = "pro_invFile_config";
 
     private static String PRO_ORDFILE_CONFIG = "pro_ordFile_config";
 
     private static String PRO_ORDSTAFILE_CONFIG = "pro_ordStaFile_config";
 
+    private static String PRO_INVENTORY_INCOMING = "pro_inventory_incoming";
+
     //第三方文件配置prop_namme
-    private static String[] PRO_FILE_CONFIG = {PRO_INVFILE_CONFIG, PRO_ORDFILE_CONFIG, PRO_ORDSTAFILE_CONFIG};
+    private static String[] PRO_FILE_CONFIG = {PRO_INVFILE_CONFIG, PRO_ORDFILE_CONFIG, PRO_ORDSTAFILE_CONFIG, PRO_INVENTORY_INCOMING};
 
     @Override
     public SubSystem getSubSystem() {
@@ -79,28 +81,40 @@ public class WmsThirdFileDataProcessingService extends BaseTaskService {
 
         //找到各渠道对应需要处理的文件
         for(String channelId : orderChannelIdList){
+            OrderChannelBean channel = ChannelConfigs.getChannel(channelId);
             for(String proName : PRO_FILE_CONFIG) {
                 //获得渠道下需要处理的文件配置列表
                 List<ThirdPartyConfigBean> thirdConfigBeans = getProFileConfig(channelId, proName);
                 if (thirdConfigBeans.size() > 0) {
                     if(proName.equals(PRO_INVFILE_CONFIG)) {
-                        logger.info("解析库存文件");
+                        logger.info(channel.getFull_name()+"解析库存文件");
                         thirdFileProBaseService = wmsThirdInvFilePro;
                     }else if (proName.equals(PRO_ORDFILE_CONFIG)){
-                        logger.info( "解析订单文件");
+                        logger.info(channel.getFull_name()+"解析订单文件");
                         thirdFileProBaseService = wmsThirdOrdFilePro;
-                    }else{
-                        logger.info( "解析订单文件(JCTR_OrdersData_*.txt)");
+                    }else if (proName.equals(PRO_ORDSTAFILE_CONFIG)){
+                        logger.info(channel.getFull_name()+"解析订单文件(JCTR_OrdersData_*.txt)");
                         thirdFileProBaseService = wmsThirdUpdtOrdStaPro;
+                    }else if (proName.equals(PRO_INVENTORY_INCOMING)){
+                        logger.info(channel.getFull_name()+"解析Shipment文件(ASN_*.dat)");
+                        thirdFileProBaseService = wmsInventoryIncomingPro;
+                    }else {
+                        logger.info(channel.getFull_name()+"无相关需要解析的文件");
+                        break;
                     }
                     try {
                         processFile(thirdConfigBeans, thirdFileProBaseService, channelId, taskControlList, threads);
                     }catch (Exception e){
                         if(proName.equals(PRO_INVFILE_CONFIG)) {
-                            logger.error( "解析库存文件出现错误");
+                            logger.error(channel.getFull_name()+"解析库存文件出现错误："+e);
                         }else if(proName.equals(PRO_ORDFILE_CONFIG)) {
-                            logger.error( "解析订单文件出现错误");
+                            logger.error(channel.getFull_name()+"解析订单文件出现错误"+e);
+                        }else if(proName.equals(PRO_ORDSTAFILE_CONFIG)) {
+                            logger.error(channel.getFull_name()+"解析订单文件出现错误"+e);
+                        }else if(proName.equals(PRO_INVENTORY_INCOMING)) {
+                            logger.error(channel.getFull_name()+"解析Shipment文件出现错误"+e);
                         }
+
                         break;
                     }
 
