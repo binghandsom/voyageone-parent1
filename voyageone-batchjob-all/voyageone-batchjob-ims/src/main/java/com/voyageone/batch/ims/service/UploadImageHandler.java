@@ -5,9 +5,7 @@ import com.taobao.api.domain.Picture;
 import com.taobao.api.response.PictureUploadResponse;
 import com.voyageone.batch.ims.bean.UploadImageParam;
 import com.voyageone.batch.ims.bean.UploadImageResult;
-import com.voyageone.batch.ims.bean.tcb.TaskControlBlock;
-import com.voyageone.batch.ims.bean.tcb.UploadImageTcb;
-import com.voyageone.batch.ims.bean.tcb.UploadProductTcb;
+import com.voyageone.batch.ims.bean.tcb.*;
 import com.voyageone.batch.ims.enums.TmallWorkloadStatus;
 import com.voyageone.batch.ims.modelbean.WorkLoadBean;
 import com.voyageone.common.components.issueLog.IssueLog;
@@ -78,11 +76,24 @@ public class UploadImageHandler extends UploadWorkloadHandler{
                 uploadImageResult.add(srcUrl, destUrl);
             }
             uploadImageResult.setUploadSuccess(true);
-        } catch (Exception e) {
+        } catch (TaskSignal taskSignal) {
+            String failCause;
             uploadImageResult.setUploadSuccess(false);
-            uploadImageResult.setFailCause(e.getMessage());
-            logger.error("Fail to upload image", e);
-            logger.error(e.getMessage());
+
+            if (taskSignal.getSignalType() != TaskSignalType.ABORT) {
+                failCause = "状态错误，上传图片结束后收到的taskSignal只能时AbortSignal";
+                uploadImageResult.setNextProcess(false);
+            } else {
+                AbortTaskSignalInfo abortTaskSignalInfo = (AbortTaskSignalInfo)taskSignal.getSignalInfo();
+                if (abortTaskSignalInfo.isProcessNextTime())  {
+                    uploadImageResult.setNextProcess(true);
+                } else {
+                    uploadImageResult.setNextProcess(false);
+                }
+                failCause = abortTaskSignalInfo.getAbortCause();
+            }
+            uploadImageResult.setFailCause(failCause);
+            logger.error("Fail to upload image: " + failCause);
         }
 
         uploadImageTcb.setUploadImageResult(uploadImageResult);
@@ -106,7 +117,7 @@ public class UploadImageHandler extends UploadWorkloadHandler{
                 break;
         }
     }
-    public String uploadImageByUrl(String url, ShopBean shopBean) throws Exception {
+    public String uploadImageByUrl(String url, ShopBean shopBean) throws TaskSignal{
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         int TIMEOUT_TIME = 10*1000;
@@ -141,21 +152,23 @@ public class UploadImageHandler extends UploadWorkloadHandler{
                         return null;
                     }
                 }
+                if (is != null) {
+                    is.close();
+                }
             } catch (Exception e) {
                 logger.error("exception when upload image", e);
                 if ("Connection reset".equals(e.getMessage())) {
                     if (++retry_times < max_retry_times)
                         continue;
                 }
-                throw new Exception(String.format("Fail to upload image[%s]: %s", url, e.getMessage()));
-            } finally {
-                if (is != null) {
-                    is.close();
-                }
+                throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(String.format("Fail to upload image[%s]: %s", url, e.getMessage())));
             }
             break;
         } while (true);
+
         logger.info("read complete, begin to upload image");
+
+        //上传到天猫
         String pictureUrl = null;
         try {
             logger.info("upload image, wait Tmall response...");
@@ -164,21 +177,22 @@ public class UploadImageHandler extends UploadWorkloadHandler{
             if (pictureUploadResponse == null) {
                 String failCause = "上传图片到天猫时，超时, tmall response为空";
                 logger.error(failCause);
-                throw new Exception(failCause);
+                throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(failCause, true));
             } else if (pictureUploadResponse.getErrorCode() != null) {
                 String failCause = "上传图片到天猫时，错误:" + pictureUploadResponse.getErrorCode() + ", " + pictureUploadResponse.getMsg();
                     logger.error(failCause);
                     logger.error("上传图片到天猫时，sub错误:" + pictureUploadResponse.getSubCode() + ", " + pictureUploadResponse.getSubMsg());
-                throw new Exception(failCause);
+                throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(failCause));
             }
             Picture picture = pictureUploadResponse.getPicture();
             if (picture != null)
                 pictureUrl = picture.getPicturePath();
         } catch (ApiException e) {
-            logIssue("上传图片到天猫国际时出错！ msg:" + e.getMessage());
+            String failCause = "上传图片到天猫国际时出错！ msg:" + e.getMessage();
+            logIssue(failCause);
             logger.error("errCode: " + e.getErrCode());
             logger.error("errMsg: " + e.getErrMsg());
-            throw e;
+            throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(failCause, false));
         }
         logger.info(String.format("Success to upload image[%s -> %s]", url, pictureUrl));
 

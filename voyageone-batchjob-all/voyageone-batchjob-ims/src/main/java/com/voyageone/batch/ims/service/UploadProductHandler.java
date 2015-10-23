@@ -119,6 +119,9 @@ public class UploadProductHandler extends UploadWorkloadHandler{
                     workLoadBean.getWorkload_status().setValue(PlatformWorkloadStatus.JOB_ABORT);
                     AbortTaskSignalInfo abortTaskSignalInfo = (AbortTaskSignalInfo) signal.getSignalInfo();
                     workLoadBean.setFailCause(abortTaskSignalInfo.getAbortCause());
+                    if (abortTaskSignalInfo.isProcessNextTime()) {
+                        workLoadBean.setNextProcess(true);
+                    }
                     uploadJob.workloadComplete(workLoadBean);
                     stopCurrentTcb();
                     break;

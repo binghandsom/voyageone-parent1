@@ -7,6 +7,7 @@ import com.voyageone.batch.wms.WmsConstants;
 import com.voyageone.batch.wms.modelbean.InventorySynLogBean;
 import com.voyageone.common.components.tmall.bean.ItemQuantityBean;
 import com.voyageone.common.components.tmall.TbInventoryService;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -131,6 +132,11 @@ public class WmsSyncToTaobaoSubService extends WmsSyncInventoryBaseService {
             itemQuantityBean.setNum_iid(Long.valueOf(num_iid));
 
         itemQuantityBean.setQuantity(inventorySynLogBean.getQty());
+
+        // JC暂定特殊处理
+        if (inventorySynLogBean.getOrder_channel_id().equals(ChannelConfigEnums.Channel.JC.getId())) {
+            sku = sku.toUpperCase();
+        }
 
         // 判断是按Product还是按SKU来同步库存
         if (WmsConstants.QuantityUpdateType.PRODUCT.equals(inventorySynLogBean.getQuantity_update_type())) {
