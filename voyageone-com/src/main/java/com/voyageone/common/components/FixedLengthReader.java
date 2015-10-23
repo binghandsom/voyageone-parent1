@@ -73,6 +73,23 @@ public class FixedLengthReader {
     }
 
     /**
+     * 读取一行
+     *
+     * @param line    定长内容
+     * @param colLens 列长的定义
+     * @return 一行的拆分内容
+     */
+    public List<String> readLine(String line, String... colLens) {
+
+        int array[] = new int[colLens.length];
+        for(int i=0;i<colLens.length;i++) {
+            array[i] = Integer.parseInt(colLens[i]);
+        }
+        return readLine(line,array);
+
+    }
+
+    /**
      * 从文件中读取
      *
      * @param fileName 文件全名
