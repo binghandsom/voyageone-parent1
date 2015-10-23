@@ -18,7 +18,7 @@ INSERT INTO voyageone_cms.cms_mt_feed_config (order_channel_id, cfg_val2, cfg_va
 VALUES
   ('012', '', '', 0, 0, '推送过来的数据文件存放的位置', 'feed_ftp_filename',
    '/Users/Jonas/Desktop/products;/Users/Jonas/Desktop/BCBG-20151015.json'),
-  ('012', '', '', 0, 0, '数据文件的备份', 'feed_backup_dir', '/Users/Jonas/Desktop/BCBG_BKU/%s/%s/'),
+  ('012', '', '', 0, 0, '数据文件的备份', 'feed_backup_dir', '/xvdb/ftp-shared/clients-ftp/voyageone-bcbg-sftp-bak/%s/%s'),
 
   ('012', '', '', 0, 0, '数据表', 'table_id', 'voyageone_cms.cms_zz_worktable_bcbg_superfeed'),
   ('012', '', '', 0, 0, '类目分割符', 'category_split', '-'),
