@@ -54,6 +54,7 @@ public class ProductDetailBean {
     private String imageWidth;
     private String imageHeight;
     private PriceBean price;
+    private AvailabilityBean availability;
 
 
     public String getProductId() {
@@ -246,5 +247,13 @@ public class ProductDetailBean {
 
     public void setPrice(PriceBean price) {
         this.price = price;
+    }
+
+    public AvailabilityBean getAvailability() {
+        return availability;
+    }
+
+    public void setAvailability(AvailabilityBean availability) {
+        this.availability = availability;
     }
 }
