@@ -360,6 +360,11 @@ public class ChannelConfigEnums {
         REAL_MADRID("008"),
 
         /**
+         * SwissWatch
+         */
+        SWISSWATCH("009"),
+
+        /**
          * Jewelry
          */
         JEWELRY("010"),
@@ -372,7 +377,12 @@ public class ChannelConfigEnums {
         /**
          * BCBG
          */
-        BCBG("012");
+        BCBG("012"),
+
+        /**
+         * SEARS
+         */
+        SEARS("013");
 
         private String id;
 
@@ -405,9 +415,11 @@ public class ChannelConfigEnums {
                 case "006": return BHFO;
                 case "007": return CHAMPION;
                 case "008": return REAL_MADRID;
+                case "009": return SWISSWATCH;
                 case "010": return JEWELRY;
                 case "011": return LOCONDO;
-                case "012": return LOCONDO;
+                case "012": return BCBG;
+                case "013": return SEARS;
                 default: return null;
             }
         }
