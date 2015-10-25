@@ -170,6 +170,8 @@ define(['components/app', 'components/services/language.service', "underscore"],
                     WMS_PICKUP_STORE_UN_VALID: "Store is required !",
                     WMS_PICKUP_RELABEL: 'Are you sure ?<br/> ReLabel the {{scanTypeName}} [ {{scanNo}} ] s Pick note.',
                     WMS_PICKUP_TYPE_UN_VALID: "{{scanTypeName}} is required !",
+                    WMS_PICKUP_PERMIT: "No permit to PickUp Items !",
+                    WMS_RECEIVE_PERMIT: "No permit to Receive Orders !",
 
                     WMS_LOCATION_NOT_FOUND:"Not found location",
                     WMS_LOCATION_DEL: "Are you sure ?",

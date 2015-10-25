@@ -55,6 +55,31 @@ public class StoreConfigEnums {
     }
 
     /**
+     * 销售管理
+     */
+    public enum Sale {
+
+        /**
+         * 不管理
+         */
+        NO("0"),
+        /**
+         * 管理
+         */
+        YES("1");
+
+        private String id;
+
+        Sale(String id) {
+            this.id = id;
+        }
+
+        public String getId() {
+            return id;
+        }
+    }
+
+    /**
      * 库存同步类型
      */
     public enum SynType {

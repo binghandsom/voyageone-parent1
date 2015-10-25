@@ -170,6 +170,8 @@ define(['components/app', 'components/services/language.service', "underscore"],
                     WMS_PICKUP_STORE_UN_VALID: "请选择仓库！",
                     WMS_PICKUP_RELABEL: '是否确定重新打印 {{scanTypeName}} [ {{scanNo}} ] 的捡货单？',
                     WMS_PICKUP_TYPE_UN_VALID: "请输入{{scanTypeName}}！",
+                    WMS_PICKUP_PERMIT: "没有权限捡货 !",
+                    WMS_RECEIVE_PERMIT: "没有权限收货 !",
 
                     WMS_LOCATION_NOT_FOUND:"没找到货架！",
                     WMS_LOCATION_DEL: "是否确定删除货架？",
