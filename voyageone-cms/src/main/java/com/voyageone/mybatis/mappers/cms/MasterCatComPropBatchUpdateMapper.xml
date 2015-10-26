@@ -132,4 +132,18 @@
 		AND `level` = #{level}
 		AND level_value=#{levelValue}
 	</update>
+
+	<update id="update_product_publish_status">
+		update voyageone_ims.ims_bt_product
+		SET publish_status = 0
+		<where>
+			<if test="modelIdList != null and modelIdList.size > 0">
+				model_id in
+				<foreach item="item" index="index" collection="modelIdList" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			AND channel_id = #{channelId}
+		</where>
+	</update>
 </mapper>
