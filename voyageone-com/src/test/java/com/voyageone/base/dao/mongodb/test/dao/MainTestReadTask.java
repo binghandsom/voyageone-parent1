@@ -19,10 +19,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by DELL on 2015/10/21.
- */
-@Component("MainTestReadTask")
+@Component("mainTestReadTask")
 public class MainTestReadTask {
 
     @Autowired
@@ -74,8 +71,6 @@ public class MainTestReadTask {
         if (result1 != null){
             System.out.println("result1:=" + result1);
         }
-
-//        mongoTemplate.insert(list,"test_insert");
 
         //根据指定字段搜索1条记录
         Customer result2 = customerDao.findOneByFirstName("aa0--2015-10-21 17:28:03");
