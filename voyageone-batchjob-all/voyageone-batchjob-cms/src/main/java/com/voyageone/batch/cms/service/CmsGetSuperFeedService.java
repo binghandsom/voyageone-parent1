@@ -56,15 +56,15 @@ public class CmsGetSuperFeedService extends BaseTaskService {
         // 允许运行的订单渠道取得
         List<String> orderChannelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
 
-        logger.info("channel_id=" + TaskControlEnums.Name.order_channel_id);
-        logger.info("orderChannelIdList=" + orderChannelIdList.size());
+        $info("channel_id=" + TaskControlEnums.Name.order_channel_id);
+        $info("orderChannelIdList=" + orderChannelIdList.size());
         // 线程
         List<Runnable> threads = new ArrayList<>();
 
         // 根据订单渠道运行
         for (final String orderChannelID : orderChannelIdList) {
 
-            logger.info("channel_id=" + orderChannelID);
+            $info("channel_id=" + orderChannelID);
             threads.add(new Runnable() {
                 @Override
                 public void run() {
@@ -87,7 +87,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
         }
 
         public void doRun() {
-            logger.info(channel.getFull_name() + "产品导入开始");
+            $info(channel.getFull_name() + "产品导入开始");
             ProductsFeedInsert productsFeed = new ProductsFeedInsert();
 
             boolean isSuccess = true;
@@ -147,7 +147,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
                 isSuccess = backupFeedFile(channel.getOrder_channel_id());
             }
 
-            logger.info(channel.getFull_name() + "产品导入结束");
+            $info(channel.getFull_name() + "产品导入结束");
         }
     }
 
@@ -155,7 +155,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
      * JE产品文件读入
      */
     public List<SuperFeedJEBean> jeSuperFeedImport() {
-        logger.info("JE产品文件读入开始");
+        $info("JE产品文件读入开始");
 
         List<SuperFeedJEBean> superfeed = new ArrayList<SuperFeedJEBean>();
 
@@ -403,9 +403,9 @@ public class CmsGetSuperFeedService extends BaseTaskService {
             }
 
             reader.close();
-            logger.info("JE产品文件读入完成");
+            $info("JE产品文件读入完成");
         } catch (Exception ex) {
-            logger.info("JE产品文件读入失败");
+            $info("JE产品文件读入失败");
             issueLog.log("cms 数据导入处理", "JE产品文件读入失败 " + ex.getMessage(), ErrorType.BatchJob, SubSystem.CMS);
         }
         return superfeed;
@@ -415,7 +415,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
      * LC产品文件读入
      */
     public List<SuperFeedLCBean> lcSuperFeedImport() {
-        logger.info("LC产品文件读入开始");
+        $info("LC产品文件读入开始");
 
         List<SuperFeedLCBean> superfeed = new ArrayList<SuperFeedLCBean>();
 
@@ -481,9 +481,9 @@ public class CmsGetSuperFeedService extends BaseTaskService {
             }
 
             reader.close();
-            logger.info("LC产品文件读入完成");
+            $info("LC产品文件读入完成");
         } catch (Exception ex) {
-            logger.info("LC产品文件读入失败");
+            $info("LC产品文件读入失败");
             issueLog.log("cms 数据导入处理", "LC产品文件读入失败 " + ex.getMessage(), ErrorType.BatchJob, SubSystem.CMS);
         }
         return superfeed;
@@ -497,7 +497,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
      */
     public boolean insertSuperFeedJE(List<SuperFeedJEBean> superfeedlist) {
         boolean isSuccess = true;
-        logger.info("JE产品信息插入开始");
+        $info("JE产品信息插入开始");
 
         // 清表
         if (superfeeddao.deleteTableInfo(Feed.getVal1(ChannelConfigEnums.Channel.JEWELRY.getId(), FeedEnums.Name.table_id)) >= 0) {
@@ -506,15 +506,15 @@ public class CmsGetSuperFeedService extends BaseTaskService {
                 SuperFeedJEBean superfeed = superfeedlist.get(i);
 
                 if (superfeeddao.insertSuperfeedJEInfo(superfeed) <= 0) {
-                    logger.info("JE产品信息插入失败 InventoryNumber = " + superfeed.getInventoryNumber());
+                    $info("JE产品信息插入失败 InventoryNumber = " + superfeed.getInventoryNumber());
                 }
                 ;
             }
         } else {
             isSuccess = false;
-            logger.info("JE产品信息插入失败 清TMP表失败");
+            $info("JE产品信息插入失败 清TMP表失败");
         }
-        logger.info("JE产品信息插入完成");
+        $info("JE产品信息插入完成");
         return isSuccess;
     }
 
@@ -526,7 +526,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
      */
     public boolean insertSuperFeedLC(List<SuperFeedLCBean> superfeedlist) {
         boolean isSuccess = true;
-        logger.info("LC产品信息插入开始");
+        $info("LC产品信息插入开始");
 
         // 清表
         if (superfeeddao.deleteTableInfo(Feed.getVal1(ChannelConfigEnums.Channel.LOCONDO.getId(), FeedEnums.Name.table_id)) >= 0) {
@@ -535,15 +535,15 @@ public class CmsGetSuperFeedService extends BaseTaskService {
                 SuperFeedLCBean superfeed = superfeedlist.get(i);
 
                 if (superfeeddao.insertSuperfeedLCInfo(superfeed) <= 0) {
-                    logger.info("LC产品信息插入失败 code = " + superfeed.getCode());
+                    $info("LC产品信息插入失败 code = " + superfeed.getCode());
                 }
                 ;
             }
         } else {
             isSuccess = false;
-            logger.info("LC产品信息插入失败 清TMP表失败");
+            $info("LC产品信息插入失败 清TMP表失败");
         }
-        logger.info("LC产品信息插入完成");
+        $info("LC产品信息插入完成");
         return isSuccess;
     }
 
@@ -556,7 +556,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
      */
     public boolean CheckSuperFeed(String channel_id) {
         boolean isSuccess = true;
-        logger.info("异常数据清除开始");
+        $info("异常数据清除开始");
 
 
         // 取得category异常数据
@@ -579,7 +579,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 
             if (superfeeddao.deleteErrData(Feed.getVal1(channel_id, FeedEnums.Name.table_id), err_data) <= 0) {
                 //异常数据清除失败
-                logger.info("异常数据清除失败");
+                $info("异常数据清除失败");
                 issueLog.log("cms 数据导入处理", "异常数据清除失败", ErrorType.BatchJob, SubSystem.CMS);
                 isSuccess = false;
             }
@@ -602,7 +602,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 
             if (superfeeddao.deleteErrData(Feed.getVal1(channel_id, FeedEnums.Name.table_id), err_data) <= 0) {
                 //异常数据清除失败
-                logger.info("异常数据清除失败");
+                $info("异常数据清除失败");
                 issueLog.log("cms 数据导入处理", "异常数据清除失败", ErrorType.BatchJob, SubSystem.CMS);
                 isSuccess = false;
             }
@@ -625,7 +625,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 
             if (superfeeddao.deleteErrData(Feed.getVal1(channel_id, FeedEnums.Name.table_id), err_data) <= 0) {
                 //异常数据清除失败
-                logger.info("异常数据清除失败");
+                $info("异常数据清除失败");
                 issueLog.log("cms 数据导入处理", "异常数据清除失败", ErrorType.BatchJob, SubSystem.CMS);
                 isSuccess = false;
             }
@@ -648,7 +648,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 
             if (superfeeddao.deleteErrData(Feed.getVal1(channel_id, FeedEnums.Name.table_id), err_data) <= 0) {
                 //异常数据清除失败
-                logger.info("异常数据清除失败");
+                $info("异常数据清除失败");
                 issueLog.log("cms 数据导入处理", "异常数据清除失败", ErrorType.BatchJob, SubSystem.CMS);
                 isSuccess = false;
             }
@@ -671,15 +671,15 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 
             if (superfeeddao.deleteErrData(Feed.getVal1(channel_id, FeedEnums.Name.table_id), err_data) <= 0) {
                 //异常数据清除失败
-                logger.info("异常数据清除失败");
+                $info("异常数据清除失败");
                 issueLog.log("cms 数据导入处理", "异常数据清除失败", ErrorType.BatchJob, SubSystem.CMS);
                 isSuccess = false;
             }
         }
-        logger.info("异常数据清除结束");
+        $info("异常数据清除结束");
 
         // UpdateFlag : 1:插入 2:更新 3:两者都有 0:不处理
-        logger.info("数据判定开始");
+        $info("数据判定开始");
         if (isSuccess == true) {
             // insert data
             List<String> insert_data = superfeeddao.inertSuperfeedInsertData(Feed.getVal1(channel_id, FeedEnums.Name.category_column),
@@ -739,7 +739,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
                 }
             }
         }
-        logger.info("数据判定结束");
+        $info("数据判定结束");
 
         return isSuccess;
     }
@@ -752,7 +752,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
      */
     public boolean NewProductFeed(String channel_id) {
         boolean isSuccess = true;
-        logger.info("新产品处理开始");
+        $info("新产品处理开始");
 
         // 只处理新数据
         String keyword = " and UpdateFlag in ('1','3')";
@@ -767,7 +767,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
             List<CategoryBean> categoryBeans = new ArrayList();
             List<ModelBean> modelBeans = new ArrayList();
 
-            logger.info("新产品category= " + superfeedjebeanlist.get(i).toString());
+            $info("新产品category= " + superfeedjebeanlist.get(i).toString());
 
             // category
             String[] strarray = superfeedjebeanlist.get(i).split(Feed.getVal1(channel_id, FeedEnums.Name.category_split));
@@ -806,7 +806,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
                         // product 取得
                         productBeans = createProduct(channel_id, superfeedjebeanlist.get(i), modelbean.getM_model(), "", keyword, Feed.getVal1(channel_id, FeedEnums.Name.table_id));
 
-                        logger.info("新产品product= " + productBeans.get(0).getP_code());
+                        $info("新产品product= " + productBeans.get(0).getP_code());
 
                         // product 设定
                         modelbean.setProductbeans(productBeans);
@@ -818,7 +818,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 
             //新产品Attribute处理
             if (!AttributeInsert(channel_id, keyword, superfeedjebeanlist.get(i), "")) {
-                logger.info("新产品Attribute处理异常");
+                $info("新产品Attribute处理异常");
 
                 // 更新update数据flag
                 superfeeddao.changeUpdateDateFlag(Feed.getVal1(channel_id, FeedEnums.Name.table_id),
@@ -914,7 +914,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
             }
         }
 
-        logger.info("新产品处理完成");
+        $info("新产品处理完成");
         return isSuccess;
     }
 
@@ -926,7 +926,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
      */
     public boolean AttributeInsert(String channel_id, String keyword, String category, String product) {
         boolean isSuccess = true;
-        logger.info("产品Attribute处理开始");
+        $info("产品Attribute处理开始");
         AttributeBean attributebean_param = new AttributeBean();
 
         attributebean_param.setCategory_url_key(Feed.getVal1(channel_id, FeedEnums.Name.product_category_url_key));
@@ -1029,7 +1029,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
             isSuccess = false;
         }
 
-        logger.info("产品Attribute处理结束");
+        $info("产品Attribute处理结束");
         return isSuccess;
     }
 
@@ -1041,7 +1041,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
      */
     public boolean OldProductFeed(String channel_id) {
         boolean isSuccess = true;
-        logger.info("更新产品处理开始");
+        $info("更新产品处理开始");
 
         // 只处理更新数据
         String keyword = " and UpdateFlag in ('2','3')";
@@ -1128,7 +1128,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 
             //新产品Attribute处理
             if (!AttributeInsert(channel_id, keyword, "", productBeans.get(i).getP_code())) {
-                logger.info("更新产品Attribute处理异常");
+                $info("更新产品Attribute处理异常");
                 // 如果失败下面跳过
                 continue;
             }
@@ -1174,7 +1174,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
                 }
             }
         }
-        logger.info("更新产品处理完成");
+        $info("更新产品处理完成");
         return isSuccess;
     }
 
@@ -1185,7 +1185,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
      * @return modelBeans
      */
     public List<ModelBean> createModel(String channel_id, String category, String keyword) {
-        logger.info("新产品Model处理开始");
+        $info("新产品Model处理开始");
 
         List<ModelBean> modelBeans = new ArrayList();
 
@@ -1230,7 +1230,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
             modelBeans.set(i, modelbean);
         }
 
-        logger.info("新产品Model处理完成");
+        $info("新产品Model处理完成");
         return modelBeans;
     }
 
@@ -1241,7 +1241,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
      * @return productBeans
      */
     public List<ProductBean> createProduct(String channel_id, String category, String models, String codes, String keyword, String tablename) {
-        logger.info("产品Product处理开始");
+        $info("产品Product处理开始");
 
         List<ProductBean> productBeans = new ArrayList();
         String category_keyword = "";
@@ -1353,7 +1353,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
             productBeans.set(i, productbean);
         }
 
-        logger.info("产品Product处理完成");
+        $info("产品Product处理完成");
         return productBeans;
     }
 
@@ -1379,7 +1379,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
             strformaturl = strformaturl.toLowerCase();
         }
 
-//		logger.info("url = " +  url + ", strformaturl = " +  strformaturl);
+//		$info("url = " +  url + ", strformaturl = " +  strformaturl);
         return strformaturl;
     }
 //
@@ -1428,7 +1428,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
         String response = null;
         WsdlResponseBean wsdlresponsebean = null;
         try {
-//			logger.info("Url= " + CmsConstants.WEB_SERVIES_URI_INSERT);
+//			$info("Url= " + CmsConstants.WEB_SERVIES_URI_INSERT);
             response = WebServiceUtil.postByJsonStr(Codes.getCodeName("WEB_SERVIES_URL_FEED", "01"), jsonParam);
             wsdlresponsebean = JsonUtil.jsonToBean(response, WsdlResponseBean.class);
         } catch (Exception e) {
@@ -1456,7 +1456,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
         String response = null;
         WsdlResponseBean wsdlresponsebean = null;
         try {
-//			logger.info("Url= " + CmsConstants.WEB_SERVIES_URI_UPDATE);
+//			$info("Url= " + CmsConstants.WEB_SERVIES_URI_UPDATE);
             response = WebServiceUtil.postByJsonStr(Codes.getCodeName("WEB_SERVIES_URL_FEED", "02"), jsonParam);
             wsdlresponsebean = JsonUtil.jsonToBean(response, WsdlResponseBean.class);
         } catch (Exception e) {
@@ -1483,7 +1483,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
         String response = null;
         WsdlResponseBean wsdlresponsebean = null;
         try {
-//			logger.info("Url= " + CmsConstants.WEB_SERVIES_URI_ATTRIBUTE);
+//			$info("Url= " + CmsConstants.WEB_SERVIES_URI_ATTRIBUTE);
             response = WebServiceUtil.postByJsonStr(Codes.getCodeName("WEB_SERVIES_URL_FEED", "03"), jsonParam);
             wsdlresponsebean = JsonUtil.jsonToBean(response, WsdlResponseBean.class);
         } catch (Exception e) {
@@ -1499,7 +1499,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
      * @param channel_id
      */
     private boolean downloadFileForFtp(String channel_id) throws Exception {
-        logger.info("产品文件下载开始 ");
+        $info("产品文件下载开始 ");
         boolean isSuccess = true;
 
         // FtpBean初期化
@@ -1537,7 +1537,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
                         logger.error(filePathName + "下载异常！");
                         issueLog.log("cms 数据导入处理", filePathName + "下载异常！", ErrorType.BatchJob, SubSystem.CMS);
                     } else {
-                        logger.info(filePathName + "文件不存在.");
+                        $info(filePathName + "文件不存在.");
                     }
                 } else {
                     //下载文件 成功
@@ -1548,7 +1548,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
             //断开连接
             ftpUtil.disconnectFtp(ftpClient);
         }
-        logger.info("产品文件下载结束");
+        $info("产品文件下载结束");
         return isSuccess;
     }
 
@@ -1558,7 +1558,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
      * @param channel_id
      */
     private boolean backupFeedFile(String channel_id) {
-        logger.info("备份处理文件开始");
+        $info("备份处理文件开始");
         boolean isSuccess = true;
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -1575,7 +1575,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
         }
         ;
 
-        logger.info("备份处理文件结束");
+        $info("备份处理文件结束");
         return isSuccess;
     }
 
@@ -1585,7 +1585,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
      * @param channel_id
      */
     private boolean AttributeListInsert(String channel_id) {
-        logger.info("AttributeList处理开始");
+        $info("AttributeList处理开始");
         boolean isSuccess = true;
 
         List<String> attributelist = superfeeddao.selectSuperfeedAttributeList(channel_id, "1", "1");
@@ -1622,7 +1622,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
             });
         }
 
-        logger.info("AttributeList处理结束");
+        $info("AttributeList处理结束");
         return isSuccess;
     }
 
@@ -1643,7 +1643,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
      */
     private boolean SuperfeedFullInsert(String category, String channel_id, List<String> modelList, List<String> productList) {
         boolean isSuccess = true;
-        logger.info("插入ZZ_Work_Superfeed_Full产品处理开始");
+        $info("插入ZZ_Work_Superfeed_Full产品处理开始");
 
         // 成功的数据保存至full表
         String keyWrod = "";
@@ -1695,7 +1695,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
             }
         }
 
-        logger.info("插入ZZ_Work_Superfeed_Full产品处理结束");
+        $info("插入ZZ_Work_Superfeed_Full产品处理结束");
         return isSuccess;
     }
 
@@ -1706,7 +1706,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
      */
     private boolean SuperfeedFullUpdate(String channel_id, String product_code) {
         boolean isSuccess = true;
-        logger.info("更新ZZ_Work_Superfeed_Full产品处理开始");
+        $info("更新ZZ_Work_Superfeed_Full产品处理开始");
 
         // 单事务处理
         transactionRunner.runWithTran(new Runnable() {
@@ -1732,7 +1732,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
             }
         });
 
-        logger.info("更新ZZ_Work_Superfeed_Full产品处理结束");
+        $info("更新ZZ_Work_Superfeed_Full产品处理结束");
         return isSuccess;
     }
 }
