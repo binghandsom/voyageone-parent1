@@ -892,15 +892,10 @@ public class ConstructPropValue {
         tmallSkuInfo.setSku_type(skuType);
         platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
 
+        //颜色
         tmallSkuInfo.setProp_id("prop_1627207");
         skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_1_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_1_Schema.SKU_COLOR,
                 SkuTemplateSchema.SkuTemplate_1_Schema.EXTENDCOLOR_COLOR);
-        tmallSkuInfo.setSku_type(skuType);
-        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
-
-        tmallSkuInfo.setProp_id("prop_10537981");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_1_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_1_Schema.SKU_SIZE
-                , SkuTemplateSchema.SkuTemplate_1_Schema.EXTENDSIZE_SIZE);
         tmallSkuInfo.setSku_type(skuType);
         platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
 
@@ -924,6 +919,7 @@ public class ConstructPropValue {
         tmallSkuInfo.setSku_type(skuType);
         platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
 
+        //颜色扩展
         tmallSkuInfo.setProp_id("prop_extend_1627207");
         skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_1_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_1_Schema.EXTENDCOLOR);
         tmallSkuInfo.setSku_type(skuType);
@@ -940,217 +936,71 @@ public class ConstructPropValue {
         tmallSkuInfo.setSku_type(skuType);
         platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
 
+        //容量
+        tmallSkuInfo.setProp_id("prop_10537981");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_1_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_1_Schema.SKU_SIZE
+                , SkuTemplateSchema.SkuTemplate_1_Schema.EXTENDSIZE_SIZE);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        //容量扩展
         tmallSkuInfo.setProp_id("prop_extend_10537981");
         skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_1_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_1_Schema.EXTENDSIZE);
         tmallSkuInfo.setSku_type(skuType);
         platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
 
-
-
-        //模板2
-        tmallSkuInfo.setProp_id("sku");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.SKU);
+        //尺寸
+        tmallSkuInfo.setProp_id("prop_20509");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_1_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_1_Schema.SKU_SIZE
+                , SkuTemplateSchema.SkuTemplate_1_Schema.EXTENDSIZE_SIZE);
         tmallSkuInfo.setSku_type(skuType);
         platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
 
-        tmallSkuInfo.setProp_id("in_prop_150988152");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.SKU_NECKLANCE_LENGTH);
+        //尺寸扩展
+        tmallSkuInfo.setProp_id("prop_extend_20509");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_1_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_1_Schema.EXTENDSIZE);
         tmallSkuInfo.setSku_type(skuType);
         platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
 
+        //戒指手寸扩展 规格
         tmallSkuInfo.setProp_id("prop_9066257");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.SKU_RING_SIZE, SkuTemplateSchema.SkuTemplate_2_Schema.EXTEND_RING_SIZE_SIZE);
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_1_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_1_Schema.SKU_SIZE, SkuTemplateSchema.SkuTemplate_1_Schema.EXTENDSIZE_SIZE);
         tmallSkuInfo.setSku_type(skuType);
         platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
 
-        tmallSkuInfo.setProp_id("sku_price");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.SKU_PRICE);
-        tmallSkuInfo.setSku_type(skuType);
-        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
-
-        tmallSkuInfo.setProp_id("sku_quantity");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.SKU_QUANTITY);
-        tmallSkuInfo.setSku_type(skuType);
-        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
-
-        tmallSkuInfo.setProp_id("sku_outerId");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.SKU_OUTERID);
-        tmallSkuInfo.setSku_type(skuType);
-        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
-
-        tmallSkuInfo.setProp_id("sku_barcode");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.SKU_BARCODE);
-        tmallSkuInfo.setSku_type(skuType);
-        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
-
+        //戒指手寸扩展 规格扩展
         tmallSkuInfo.setProp_id("prop_extend_9066257");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTEND_RING_SIZE);
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_1_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_1_Schema.EXTENDSIZE);
         tmallSkuInfo.setSku_type(skuType);
         platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
 
-        tmallSkuInfo.setProp_id("alias_name");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTEND_RING_SIZE_ALIASNAME);
-        tmallSkuInfo.setSku_type(skuType);
-        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
-
-        //模板3
-        tmallSkuInfo.setProp_id("sku");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_3_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_3_Schema.SKU);
-        tmallSkuInfo.setSku_type(skuType);
-        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
-
-        tmallSkuInfo.setProp_id("in_prop_150778146");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_3_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_3_Schema.SKU_PEARL_DIAMTER);
-        tmallSkuInfo.setSku_type(skuType);
-        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
-
+        //项链长度
         tmallSkuInfo.setProp_id("in_prop_150988152");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_3_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_3_Schema.SKU_NECKLANCE_LENGTH);
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_1_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_1_Schema.INPUT_CUSTOM_SIZE_1);
         tmallSkuInfo.setSku_type(skuType);
         platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
 
-        tmallSkuInfo.setProp_id("prop_1627207");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_3_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_3_Schema.SKU_COLOR,
-                SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDCOLOR_COLOR);
-        tmallSkuInfo.setSku_type(skuType);
-        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
-
-        tmallSkuInfo.setProp_id("sku_price");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_3_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_3_Schema.SKU_PRICE);
-        tmallSkuInfo.setSku_type(skuType);
-        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
-
-        tmallSkuInfo.setProp_id("sku_quantity");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_3_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_3_Schema.SKU_QUANTITY);
-        tmallSkuInfo.setSku_type(skuType);
-        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
-
-        tmallSkuInfo.setProp_id("sku_outerId");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_3_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_3_Schema.SKU_OUTERID);
-        tmallSkuInfo.setSku_type(skuType);
-        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
-
-        tmallSkuInfo.setProp_id("sku_barcode");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_3_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_3_Schema.SKU_BARCODE);
-        tmallSkuInfo.setSku_type(skuType);
-        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
-
-        tmallSkuInfo.setProp_id("prop_extend_1627207");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_3_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDCOLOR);
-        tmallSkuInfo.setSku_type(skuType);
-        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
-
-        tmallSkuInfo.setProp_id("alias_name");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_3_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDCOLOR_ALIASNAME);
-        tmallSkuInfo.setSku_type(skuType);
-        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
-
-        tmallSkuInfo.setProp_id("prop_image");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_3_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDCOLOR_IMAGE);
-        tmallSkuInfo.setSku_type(skuType);
-        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
-
-
-        //模板4
-        tmallSkuInfo.setProp_id("sku");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_4_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_4_Schema.SKU);
-        tmallSkuInfo.setSku_type(skuType);
-        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
-
-        tmallSkuInfo.setProp_id("in_prop_151018199");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_4_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_4_Schema.SKU_BRACELET_LENGTH);
-        tmallSkuInfo.setSku_type(skuType);
-        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
-
-        tmallSkuInfo.setProp_id("prop_9066257");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_4_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_4_Schema.SKU_RING_SIZE, SkuTemplateSchema.SkuTemplate_4_Schema.EXTEND_RING_SIZE_SIZE);
-        tmallSkuInfo.setSku_type(skuType);
-        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
-
-        tmallSkuInfo.setProp_id("sku_price");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_4_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_4_Schema.SKU_PRICE);
-        tmallSkuInfo.setSku_type(skuType);
-        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
-
-        tmallSkuInfo.setProp_id("sku_quantity");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_4_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_4_Schema.SKU_QUANTITY);
-        tmallSkuInfo.setSku_type(skuType);
-        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
-
-        tmallSkuInfo.setProp_id("sku_outerId");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_4_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_4_Schema.SKU_OUTERID);
-        tmallSkuInfo.setSku_type(skuType);
-        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
-
-        tmallSkuInfo.setProp_id("sku_barcode");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_4_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_4_Schema.SKU_BARCODE);
-        tmallSkuInfo.setSku_type(skuType);
-        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
-
-        tmallSkuInfo.setProp_id("prop_extend_9066257");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_4_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_4_Schema.EXTEND_RING_SIZE);
-        tmallSkuInfo.setSku_type(skuType);
-        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
-
-        tmallSkuInfo.setProp_id("alias_name");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_4_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_4_Schema.EXTEND_RING_SIZE_ALIASNAME);
-        tmallSkuInfo.setSku_type(skuType);
-        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
-
-        //模板5
-        tmallSkuInfo.setProp_id("sku");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_5_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_5_Schema.SKU);
-        tmallSkuInfo.setSku_type(skuType);
-        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
-
+        //珍珠直径
         tmallSkuInfo.setProp_id("in_prop_150778146");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_5_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_5_Schema.SKU_PEARL_DIAMTER);
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_1_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_1_Schema.INPUT_CUSTOM_SIZE_2);
         tmallSkuInfo.setSku_type(skuType);
         platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
 
+        //手链长度 重量 (平台类目121478031)
         tmallSkuInfo.setProp_id("in_prop_151018199");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_5_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_5_Schema.SKU_BRACELET_LENGTH);
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_1_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_1_Schema.INPUT_CUSTOM_SIZE_3);
         tmallSkuInfo.setSku_type(skuType);
         platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
 
-        tmallSkuInfo.setProp_id("prop_1627207");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_5_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_5_Schema.SKU_COLOR,
-                SkuTemplateSchema.SkuTemplate_5_Schema.EXTENDCOLOR_COLOR);
+        //尺码 (50009032)
+        tmallSkuInfo.setProp_id("in_prop_148242406");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_1_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_1_Schema.INPUT_CUSTOM_SIZE_4);
         tmallSkuInfo.setSku_type(skuType);
         platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
 
-        tmallSkuInfo.setProp_id("sku_price");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_5_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_5_Schema.SKU_PRICE);
-        tmallSkuInfo.setSku_type(skuType);
-        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
-
-        tmallSkuInfo.setProp_id("sku_quantity");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_5_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_5_Schema.SKU_QUANTITY);
-        tmallSkuInfo.setSku_type(skuType);
-        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
-
-        tmallSkuInfo.setProp_id("sku_outerId");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_5_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_5_Schema.SKU_OUTERID);
-        tmallSkuInfo.setSku_type(skuType);
-        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
-
-        tmallSkuInfo.setProp_id("sku_barcode");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_5_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_5_Schema.SKU_BARCODE);
-        tmallSkuInfo.setSku_type(skuType);
-        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
-
-        tmallSkuInfo.setProp_id("prop_extend_1627207");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_5_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_5_Schema.EXTENDCOLOR);
-        tmallSkuInfo.setSku_type(skuType);
-        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
-
-        tmallSkuInfo.setProp_id("alias_name");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_5_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_5_Schema.EXTENDCOLOR_ALIASNAME);
-        tmallSkuInfo.setSku_type(skuType);
-        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
-
-        tmallSkuInfo.setProp_id("prop_image");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_5_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_5_Schema.EXTENDCOLOR_IMAGE);
+        //包袋大小 (prop_14067173)
+        tmallSkuInfo.setProp_id("prop_14067173");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_1_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_1_Schema.INPUT_CUSTOM_SIZE_4);
         tmallSkuInfo.setSku_type(skuType);
         platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
     }
@@ -1172,6 +1022,7 @@ public class ConstructPropValue {
         RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
         ConstructPropValue util = new ConstructPropValue();
 
+        constructTmallSkuInfo(platformSkuInfoDao);
         /*
         constructProductValue(ruleJsonMapper, propValueDao, util);
         constructItemValue(ruleJsonMapper, propValueDao, util);
@@ -1183,8 +1034,8 @@ public class ConstructPropValue {
         constructProductValue(ruleJsonMapper, propValueDao, util);
         constructItemValue(ruleJsonMapper, propValueDao, util);
         */
-        constructPlatformPropMappingCustom(platformPropCustomMappingDao);
-//        constructTmallSkuInfo(platformSkuInfoDao);
+//        constructPlatformPropMappingCustom(platformPropCustomMappingDao);
+//       constructTmallSkuInfo(platformSkuInfoDao);
         //constructDictInfo(dictWordDao);
     }
 

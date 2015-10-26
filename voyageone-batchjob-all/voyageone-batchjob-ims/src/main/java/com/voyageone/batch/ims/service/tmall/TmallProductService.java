@@ -202,7 +202,12 @@ public class TmallProductService implements PlatformServiceInterface {
         try {
             isDarwin = tbProductService.isDarwin(categoryCode, Long.parseLong(brandCode), shopBean, failCause);
             if (isDarwin == null && failCause.length() != 0) {
-                throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(failCause.toString()));
+                if (failCause.indexOf("访问淘宝超时") == -1) {
+                    throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(failCause.toString(), true));
+                }
+                else {
+                    throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(failCause.toString()));
+                }
             }
         } catch (ApiException e) {
             issueLog.log(e, ErrorType.BatchJob, SubSystem.IMS);
@@ -696,8 +701,9 @@ public class TmallProductService implements PlatformServiceInterface {
                 return numId;
             }
             //天猫系统服务异常
-            if ("15".equals(addItemResponse.getErrorCode())) {
-                logger.debug("此处应该时天猫商品服务异常--->" + failCause.toString());
+            if (failCause.indexOf("天猫商品服务异常") != -1
+                    || failCause.indexOf("访问淘宝超时") != -1) {
+                logger.debug("此处应该是下次启动任务仍需处理的错误--->" + failCause.toString());
                 throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(failCause.toString(), true));
             }
             else {
@@ -901,8 +907,14 @@ public class TmallProductService implements PlatformServiceInterface {
         Boolean isDarwin;
         try {
             isDarwin = tbProductService.isDarwin(categoryCode, Long.parseLong(brandCode), shopBean, failCause);
+
             if (isDarwin == null && failCause.length() != 0) {
-                throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(failCause.toString()));
+                if (failCause.indexOf("访问淘宝超时") != -1) {
+                    throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(failCause.toString(), true));
+                }
+                else {
+                    throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(failCause.toString()));
+                }
             }
         } catch (ApiException e) {
             issueLog.log(e, ErrorType.BatchJob, SubSystem.IMS);
