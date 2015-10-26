@@ -692,14 +692,14 @@ public class CmsGetSuperFeedService extends BaseTaskService {
                         str_code_insert);
 
                 if (reslut_insert <= 0) {
-                    logIssue("cms 数据导入处理", "更新UpdateFlag :1");
+                    logIssue("cms 数据导入处理", "更新UpdateFlag :1 ( for product ), 无受影响行数");
                 }
 
                 // 插入数据 补足没有model的数据
                 int reslut_insertmodel = superfeeddao.updateInsertModelData(Feed.getVal1(channel_id, FeedEnums.Name.table_id), Feed.getVal1(channel_id, FeedEnums.Name.feed_model_key),
                         Feed.getVal1(channel_id, FeedEnums.Name.feed_code_key), str_code_insert, Feed.getVal1(channel_id, FeedEnums.Name.feed_model_keyword));
                 if (reslut_insertmodel < 0) {
-                    logIssue("cms 数据导入处理", "更新UpdateFlag :1 model");
+                    logIssue("cms 数据导入处理", "更新UpdateFlag :1 ( for model ), 无受影响行数");
                 }
             }
 
@@ -714,7 +714,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
                 // 更新数据 更新UpdateFlag :2，3
                 int reslut_update = superfeeddao.updateUpdateData(Feed.getVal1(channel_id, FeedEnums.Name.table_id), Feed.getVal1(channel_id, FeedEnums.Name.feed_code_key), str_code_update);
                 if (reslut_update <= 0) {
-                    logIssue("cms 数据导入处理", "更新UpdateFlag :2，3");
+                    logIssue("cms 数据导入处理", "更新UpdateFlag :2，3 ( for all ), 无受影响行数");
                 }
             }
         }
