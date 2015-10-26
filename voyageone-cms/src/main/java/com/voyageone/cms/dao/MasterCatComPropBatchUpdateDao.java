@@ -161,4 +161,25 @@ public class MasterCatComPropBatchUpdateDao extends BaseDao {
 		return count;
 	}
 
+	/**
+	 * 更新产品发布状态.
+	 * @param modelIdList
+	 * @param channelId
+	 * @return
+	 */
+	public int updateProductPublishStatus(List<String> modelIdList,String channelId){
+		logger.info("更新产品发布状态开始...");
+
+		Map<String, Object> parmMap = new HashMap<String, Object>();
+
+		parmMap.put("modelIdList",modelIdList);
+		parmMap.put("channelId",channelId);
+
+		int count = super.update(Constants.DAO_NAME_SPACE_CMS + "update_product_publish_status", parmMap);
+
+		logger.info("更新了"+count+"条");
+
+		return count;
+	}
+
 }
