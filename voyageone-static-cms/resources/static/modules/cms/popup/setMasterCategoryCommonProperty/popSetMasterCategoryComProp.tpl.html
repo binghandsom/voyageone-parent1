@@ -1,0 +1,61 @@
+<div  ng-init="getOptions()" class="vo_modal">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h4 class="modal-title"><i class="glyphicons glyphicons-edit"></i>&nbsp;<span translate="CMS_TXT_SET_MASTER_COM_PROPERTY"></span></h4>
+    </div>
+    <div class="modal-body wrapper-lg">
+        <div class="row">
+            <div class="col-sm-12">
+
+                <form role="form" class="form-horizontal">
+                    <fieldset>
+                        <legend translate="CMS_TXT_SET_MASTER_COM_PROPERTY_SHELVE"></legend>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" translate="CMS_TXT_SET_MASTER_COM_PROPERTY_SHELVE"></label>
+                        <div class="col-sm-10">
+                            <div class="input-group">
+                                <ui-select ng-model="productStatus.itemStatus" theme="bootstrap" ng-disabled="disabled" class="text-left">
+                                    <ui-select-match placeholder="Select..." class="text-left">{{$select.selected.name}}</ui-select-match>
+                                    <ui-select-choices repeat="option.value as option in options | filter: $select.search">
+                                        <span ng-bind-html="option.name | highlight: $select.search"></span>
+                                    </ui-select-choices>
+                                </ui-select>
+                                 <span class="input-group-btn">
+                                     <button type="button" ng-click="productStatus.itemStatus = ''" class="btn btn-default">
+                                         <small>
+                                             <em class="fa fa-times text-muted"></em>
+                                         </small>
+                                     </button>
+                                  </span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- .form-group -->
+                    <div class="form-group" ng-if="productStatus.itemStatus=='1'">
+                        <label class="col-sm-2 control-label" translate="CMS_TXT_SET_MASTER_COM_PROPERTY_START_TIME"></label>
+                        <div for="txtCNOfficialPrePublishTime" class="col-sm-10" ng-controller="datePickerController">
+                            <div class="input-group">
+                                <input type="text" name="txtCNOfficialPrePublishTime" ng-model="productStatus.startTime"
+                                       id="txtCNOfficialPrePublishTime" class="form-control" datepicker-popup="{{$root.timeFormat}}"
+                                       is-open="cnPublishTime" datepicker-options="dateOptions" close-text="Close"/>
+                                        <span class="input-group-btn">
+                                            <button type="button" class="btn btn-default" ng-click="openDatePicker($event, 'cnPublishTime')">
+                                                <i class="glyphicon glyphicon-calendar"></i>
+                                            </button>
+                                        </span>
+                            </div>
+                        </div>
+                    </div>
+                        <button class="btn btn-vo pull-right"  ng-click="update(productStatus)" >
+                            <span translate="CMS_BTN_BATCH_EDIT"></span>
+                        </button>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="close()" translate="CMS_BTN_CANCEL"></button>
+    </div>
+</div><!-- .vo_modal -->

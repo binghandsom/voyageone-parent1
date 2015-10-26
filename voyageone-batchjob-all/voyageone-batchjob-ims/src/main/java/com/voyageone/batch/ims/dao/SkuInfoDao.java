@@ -34,7 +34,9 @@ public class SkuInfoDao extends BaseDao{
     {
         Map<String, String> dataMap = new HashMap<>();
         dataMap.put("channel_id", channelId);
-        dataMap.put("code", code);
+        if (code != null) {
+            dataMap.put("code", code);
+        }
         if (sku != null) {
             dataMap.put("sku", sku);
         }

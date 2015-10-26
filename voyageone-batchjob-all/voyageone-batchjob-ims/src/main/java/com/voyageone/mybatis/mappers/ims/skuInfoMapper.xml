@@ -5,9 +5,15 @@
     <select id="ims_selectInventoryByCondition" resultType="String" parameterType="Map">
         SELECT qty_china
         FROM wms_bt_inventory_center_logic
-        WHERE code = #{code}
+        WHERE
+        <if test="code != null">
+            code = #{code}
+        </if>
         <if test="sku != null">
-            AND sku = #{sku}
+            <if test="code != null">
+                AND
+            </if>
+            sku = #{sku}
         </if>
         AND order_channel_id = #{channel_id}
     </select>

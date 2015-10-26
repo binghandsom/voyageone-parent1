@@ -21,6 +21,9 @@
 		<property name="arguments">
 			<value>005</value>
 		</property>
+		<property name="concurrent">
+			<value>false</value>
+		</property>
 	</bean>
 	<bean id="selfSpaldingOrderStatusPostTaskContri"
 		name="selfSpaldingOrderStatusPostTaskContri"
@@ -43,6 +46,9 @@
 		</property>
 		<property name="arguments">
 			<value>001</value>
+		</property>
+		<property name="concurrent">
+			<value>false</value>
 		</property>
 	</bean>
 	<bean id="selfSneakerheadOrderStatusPostTaskContri"

@@ -227,6 +227,10 @@
       delete from wms_bt_transfer_detail where transfer_package_id = #{package_id} and modified = #{modified} and package_status = '0'
     </delete>
 
+    <update id="wms_bt_transfer_reOpenPackage">
+        update wms_bt_transfer_detail set package_status = "0"  where transfer_package_id = #{package_id} and modified = #{modified} and package_status = '1'
+    </update>
+
     <delete id="wms_bt_transfer_deleteDetails">
         delete from wms_bt_transfer_detail where transfer_id = #{transfer_id}
     </delete>
@@ -276,6 +280,7 @@
                    group by transfer_package_id
                 ) item
                 on  detail.transfer_package_id = item.transfer_package_id
+        order by transfer_package_id desc
     </select>
 
     <select id="wms_bt_transfer_detail_get_package" resultMap="transferDetailMap">
@@ -292,6 +297,7 @@
         <include refid="common_select_cols"></include>
         from wms_bt_transfer_detail
         where transfer_package_id = #{package_id}
+        order by transfer_package_id desc
     </select>
 
     <select id="wms_bt_transfer_detail_get_max" resultType="int">
@@ -448,6 +454,7 @@
             <include refid="common_select_cols"></include>
         from wms_bt_transfer_item
         where transfer_id = #{transfer_id}
+        order by transfer_item_id desc
     </select>
 
     <select id="wms_bt_transfer_item_count_in_transfer" resultType="int">
@@ -460,6 +467,7 @@
         <include refid="common_select_cols"></include>
         from wms_bt_transfer_item
         where transfer_package_id = #{package_id}
+        order by transfer_item_id desc
     </select>
 
     <select id="wms_bt_transfer_item_count_in_package" resultType="int">

@@ -35,6 +35,7 @@ public final class WmsUrlConstants {
             public static final String CREATE = "/wms/transfer/edit/createPackage";
             public static final String DELETE = "/wms/transfer/edit/deletePackage";
             public static final String CLOSE = "/wms/transfer/edit/closePackage";
+            public static final String REOPEN = "/wms/transfer/edit/reOpenPackage";
         }
 
         public static final class Item {

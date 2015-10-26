@@ -321,6 +321,22 @@ public class WmsTransferServiceImpl implements WmsTransferService {
     }
 
     /**
+     * 重新打开 Package
+     *
+     * @param package_id Package ID
+     * @param modified   最后修改的时间
+     * @return 是否打开成功
+     */
+    @Override
+    public boolean reOpenPackage(int package_id, String modified) {
+        // 状态验证直接写死在 SQL 中
+        if (transferDao.reOpenPackage(package_id, modified) < 1)
+            return false;
+
+        return true;
+    }
+
+    /**
      * 增加（或减少，数量为负则减少）一个 Item 的数量
      *
      * @param package_id int
