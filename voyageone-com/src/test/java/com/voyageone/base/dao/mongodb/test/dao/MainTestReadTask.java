@@ -1,11 +1,19 @@
 package com.voyageone.base.dao.mongodb.test.dao;
 
+import com.sun.org.apache.xpath.internal.objects.XObject;
 import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.Aggregation.*;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Component;
 
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
+import static org.springframework.data.mongodb.core.query.Criteria.where;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,6 +29,8 @@ public class MainTestReadTask {
     CustomerDao customerDao;
     @Autowired
     PersonDao personDao;
+    @Autowired
+    MongoTemplate mongoTemplate;
 
     public void testSelect() {
 
@@ -64,6 +74,8 @@ public class MainTestReadTask {
         if (result1 != null){
             System.out.println("result1:=" + result1);
         }
+
+//        mongoTemplate.insert(list,"test_insert");
 
         //根据指定字段搜索1条记录
         Customer result2 = customerDao.findOneByFirstName("aa0--2015-10-21 17:28:03");
@@ -125,6 +137,17 @@ public class MainTestReadTask {
             System.out.println("result7:=" + row);
         }
 
+        Aggregation agg = newAggregation(
+                match(Criteria.where("cat_id").lt(10)),
+                group("cat_id").sum("field.prop_1").as("count"),
+                project("count").and("mmm").previousOperation()
+
+        );
+
+        AggregationResults<CatCount> groupResults
+                = mongoTemplate.aggregate(agg, "cat_010", CatCount.class);
+        List<CatCount> aa = groupResults.getMappedResults();
+//        AggregationResults<OutputType> results = mongoTemplate.aggregate(agg, "INPUT_COLLECTION_NAME", OutputType.class);
         //
     }
 }
