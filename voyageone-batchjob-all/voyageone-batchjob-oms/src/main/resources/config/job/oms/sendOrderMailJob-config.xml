@@ -19,6 +19,9 @@
 		<property name="targetMethod">
 			<value>run</value>
 		</property>
+		<property name="concurrent">
+			<value>false</value>
+		</property>
 	</bean>
 	<bean id="SendOrderMailTaskContri"
 		name="SendOrderMailTaskContri"
@@ -42,6 +45,9 @@
 		<property name="targetMethod">
 			<value>run</value>
 		</property>
+		<property name="concurrent">
+			<value>false</value>
+		</property>
 	</bean>
 	<bean id="sendSameOrderTaskContri"
 		name="sendSameOrderTaskContri"
@@ -63,6 +69,9 @@
 		</property>
 		<property name="targetMethod">
 			<value>sneakerhead88Top10</value>
+		</property>
+		<property name="concurrent">
+			<value>false</value>
 		</property>
 	</bean>
 	<bean id="Sneakerhead88Top10TaskContri"

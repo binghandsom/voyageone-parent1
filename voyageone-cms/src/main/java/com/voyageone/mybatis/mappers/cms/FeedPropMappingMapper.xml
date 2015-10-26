@@ -217,7 +217,7 @@
             modified,
             modifier
         FROM voyageone_ims.ims_bt_category_extend
-        WHERE main_category_id = #{category_id}
+        WHERE main_category_id = #{category_id} AND channel_id = #{channel_id}
     </select>
 
     <insert id="ims_bt_category_extend_insertCategoryExtend"

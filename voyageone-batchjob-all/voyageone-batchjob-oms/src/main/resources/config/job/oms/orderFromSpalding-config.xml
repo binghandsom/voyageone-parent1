@@ -25,6 +25,9 @@
 		<property name="targetMethod">
 			<value>CreateMagentoOrder</value>
 		</property>
+		<property name="concurrent">
+			<value>false</value>
+		</property>
 	</bean>	
 	<bean id="OrderFromSpaldingMobContri" 
 		name="OrderFromSpaldingMobContri"
@@ -56,6 +59,9 @@
 		</property>
 		<property name="targetMethod">
 			<value>CreateMagentoOrder</value>
+		</property>
+		<property name="concurrent">
+			<value>false</value>
 		</property>
 	</bean>	
 	<bean id="OrderFromSpaldingWebContri" 

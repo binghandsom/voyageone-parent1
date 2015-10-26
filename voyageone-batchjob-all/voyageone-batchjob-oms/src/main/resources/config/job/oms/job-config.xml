@@ -18,6 +18,9 @@
 		<property name="targetMethod">
 			<value>run</value>
 		</property>
+		<property name="concurrent">
+			<value>false</value>
+		</property>
 	</bean>
 	<bean id="newOrderJsonImportTaskContri"
 		name="newOrderJsonImportTaskContri"
@@ -40,6 +43,9 @@
 		</property>
 		<property name="targetMethod">
 			<value>run</value>
+		</property>
+		<property name="concurrent">
+			<value>false</value>
 		</property>
 	</bean>
 	<bean id="changedOrderJsonImportTaskContri"
@@ -64,6 +70,9 @@
 		<property name="targetMethod">
 			<value>run</value>
 		</property>
+		<property name="concurrent">
+			<value>false</value>
+		</property>
 	</bean>
 	<bean id="newOrderInfoBatchImportTaskContri"
 		name="newOrderInfoBatchImportTaskContri"
@@ -86,6 +95,9 @@
 		</property>
 		<property name="targetMethod">
 			<value>run</value>
+		</property>
+		<property name="concurrent">
+			<value>false</value>
 		</property>
 	</bean>
 	<bean id="newOrderInfoEachImportTaskContri"
@@ -110,6 +122,9 @@
 		<property name="targetMethod">
 			<value>run</value>
 		</property>
+		<property name="concurrent">
+			<value>false</value>
+		</property>
 	</bean>
 	<bean id="changedOrderInfoImportTaskContri"
 		name="changedOrderInfoImportTaskContri"
@@ -133,6 +148,9 @@
 		<property name="targetMethod">
 			<value>run</value>
 		</property>
+		<property name="concurrent">
+			<value>false</value>
+		</property>
 	</bean>
 	<bean id="syncSynShipNewOrderTaskContri"
 		name="syncSynShipNewOrderTaskContri"
@@ -155,6 +173,9 @@
 		</property>
 		<property name="targetMethod">
 			<value>run</value>
+		</property>
+		<property name="concurrent">
+			<value>false</value>
 		</property>
 	</bean>	
 	<bean id="ReservationInfoTransferTaskContri" 
@@ -299,7 +320,7 @@
 		</property>
 		<property name="quartzProperties">
 			<map>
-				<entry key="org.quartz.threadPool.threadCount" value="1"></entry>
+				<entry key="org.quartz.threadPool.threadCount" value="3"></entry>
 			</map>
 		</property>
 	</bean>
