@@ -292,4 +292,10 @@ public interface WmsConstants {
         public static final  String BALL = "special_goods_ball";
     }
 
+    // 库存同步类型
+    final class INVENTORY_INCOMING {
+        public static final  String HEAD = "H";
+        public static final  String DETAIL = "D";
+    }
+
 }

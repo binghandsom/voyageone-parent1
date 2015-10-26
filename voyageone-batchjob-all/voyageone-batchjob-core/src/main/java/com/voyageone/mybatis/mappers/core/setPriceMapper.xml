@@ -19,7 +19,7 @@
         where shipdetails.order_number	= #{order_number}
         and shipdetails.adjustment = 1
         AND (shipdetails.STATUS not in ( 'Canceled','Returned') or shipdetails.STATUS is null)
-        and shipdetails.sub_item_number = 0),0) as shipping_price
+        and shipdetails.sub_item_number = 0 AND shipdetails.sku not in ('Shipping')),0) as shipping_price
         from
         oms_bt_orders orders,
         oms_bt_order_details details

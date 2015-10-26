@@ -1,17 +1,15 @@
 package com.voyageone.common.configs;
 
-import com.voyageone.common.configs.Enums.FeedEnums; 
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.beans.FeedBean;
 import com.voyageone.common.configs.dao.FeedDao;
-import com.voyageone.common.util.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 /**
  * 访问 com_mt_feed_config 表配置
@@ -23,10 +21,10 @@ public class Feed {
 
     /**
      * 初始化渠道相关的基本信息和配置信息
-     * 
+     *
      * @param feedDao 用于获取配置信息
      */
-    public static void init( FeedDao feedDao) {
+    public static void init(FeedDao feedDao) {
         if (configs == null) {
             List<FeedBean> all = feedDao.getAll();
 
@@ -46,6 +44,17 @@ public class Feed {
     public static String getVal1(String id, FeedEnums.Name name) {
         List<FeedBean> beans = getConfigs(id, name);
         return (beans == null || beans.size() < 1) ? "" : beans.get(0).getCfg_val1();
+    }
+
+    /**
+     * 获取指定渠道的第一个配置参数
+     *
+     * @param channel 渠道
+     * @param name    配置名称
+     * @return String
+     */
+    public static String getVal1(ChannelConfigEnums.Channel channel, FeedEnums.Name name) {
+        return getVal1(channel.getId(), name);
     }
 
     /**
@@ -79,9 +88,7 @@ public class Feed {
         private static final long serialVersionUID = 1L;
 
         public Configs(List<FeedBean> beans) {
-            for (FeedBean bean : beans) {
-                put(bean);
-            }
+            beans.forEach(this::put);
         }
 
         public void put(FeedBean config) {
@@ -111,7 +118,7 @@ public class Feed {
 
         public void put(FeedEnums.Name name, FeedBean config) {
             if (!containsKey(name)) {
-                super.put(name, new ArrayList<FeedBean>());
+                super.put(name, new ArrayList<>());
             }
 
             get(name).add(config);

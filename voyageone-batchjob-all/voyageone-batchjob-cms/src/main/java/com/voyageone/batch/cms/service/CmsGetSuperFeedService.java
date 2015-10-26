@@ -2,13 +2,13 @@ package com.voyageone.batch.cms.service;
 
 import com.csvreader.CsvReader;
 import com.voyageone.batch.base.BaseTaskService;
+import com.voyageone.batch.cms.CmsConstants;
 import com.voyageone.batch.cms.bean.*;
+import com.voyageone.batch.cms.dao.SuperFeedDao;
 import com.voyageone.batch.cms.utils.WebServiceUtil;
 import com.voyageone.batch.core.Enums.TaskControlEnums;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.core.util.TaskControlUtils;
-import com.voyageone.batch.cms.CmsConstants;
-import com.voyageone.batch.cms.dao.SuperFeedDao;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.TransactionRunner;
@@ -22,15 +22,12 @@ import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.util.FtpUtil;
 import com.voyageone.common.util.JsonUtil;
 import com.voyageone.common.util.StringUtils;
-
-import java.io.*;
-
 import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.io.File;
+import java.io.FileInputStream;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -1196,15 +1193,23 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 		modelbean_params.setUrl_key(Feed.getVal1(channel_id,FeedEnums.Name.model_url_key));
 		modelbean_params.setCategory_url_key(Feed.getVal1(channel_id, FeedEnums.Name.model_category_url_key));
 		modelbean_params.setM_product_type(Feed.getVal1(channel_id, FeedEnums.Name.model_m_product_type));
+
 		modelbean_params.setM_brand(Feed.getVal1(channel_id, FeedEnums.Name.model_m_brand));
+
 		modelbean_params.setM_model(Feed.getVal1(channel_id, FeedEnums.Name.model_m_model));
 		modelbean_params.setM_name(Feed.getVal1(channel_id, FeedEnums.Name.model_m_name));
+
 		modelbean_params.setM_short_description(Feed.getVal1(channel_id, FeedEnums.Name.model_m_short_description));
 		modelbean_params.setM_long_description(Feed.getVal1(channel_id, FeedEnums.Name.model_m_long_description));
+
 		modelbean_params.setM_size_type(Feed.getVal1(channel_id, FeedEnums.Name.model_m_size_type));
+
 		modelbean_params.setM_is_unisex(Feed.getVal1(channel_id, FeedEnums.Name.model_m_is_unisex));
+
 		modelbean_params.setM_weight(Feed.getVal1(channel_id, FeedEnums.Name.model_m_weight));
+
 		modelbean_params.setM_is_taxable(Feed.getVal1(channel_id, FeedEnums.Name.model_m_is_taxable));
+
 		modelbean_params.setM_is_effective(Feed.getVal1(channel_id, FeedEnums.Name.model_m_is_effective));
 
 		// 取得所有Superfeed Model

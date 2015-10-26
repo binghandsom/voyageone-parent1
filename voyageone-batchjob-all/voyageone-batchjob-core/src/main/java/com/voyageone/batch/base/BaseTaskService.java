@@ -169,14 +169,14 @@ public abstract class BaseTaskService {
     /**
      * 错误信息记录
      */
-    protected void logIssue(Exception ex) {
+    public void logIssue(Exception ex) {
         logIssue(ex, null);
     }
 
     /**
      * 错误信息记录
      */
-    protected void logIssue(Exception ex, Object attJson) {
+    public void logIssue(Exception ex, Object attJson) {
         if (attJson == null) {
             issueLog.log(ex, ErrorType.BatchJob, getSubSystem(), getTaskName());
             return;
@@ -188,7 +188,7 @@ public abstract class BaseTaskService {
     /**
      * 错误信息记录
      */
-    protected void logIssue(String msg, Object attJson) {
+    public void logIssue(String msg, Object attJson) {
         if (attJson == null) {
             logIssue(msg);
         } else {
@@ -199,14 +199,14 @@ public abstract class BaseTaskService {
     /**
      * 错误信息记录
      */
-    protected void logIssue(String message) {
+    public void logIssue(String message) {
         issueLog.log(getTaskName(), message, ErrorType.BatchJob, getSubSystem());
     }
 
     /**
      * 错误信息记录
      */
-    protected void logIssue(String msg, String attach) {
+    public void logIssue(String msg, String attach) {
         issueLog.log(getTaskName(), msg, ErrorType.BatchJob, getSubSystem(), attach);
     }
 
@@ -223,7 +223,7 @@ public abstract class BaseTaskService {
      *
      * @param arg 日志信息
      */
-    protected void $info(String arg) {
+    public void $info(String arg) {
         if (!getLogWithThread()){
             logger.info(arg);
             return;
@@ -238,7 +238,7 @@ public abstract class BaseTaskService {
      * @param template 格式化字符串
      * @param args     格式化参数
      */
-    protected void $info(String template, Object... args) {
+    public void $info(String template, Object... args) {
         $info(format(template, args));
     }
 

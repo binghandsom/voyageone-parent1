@@ -36,7 +36,8 @@
                       tm_task_control
                     WHERE
                       task_id = #{task_name}
-                    AND cfg_name = 'order_channel_id')
+                    AND cfg_name = 'order_channel_id'
+                    and cfg_val1 = orders.order_channel_id)
         AND NOT EXISTS (SELECT
                         1
                       FROM
@@ -104,7 +105,8 @@
         tm_task_control
         WHERE
         task_id = #{task_name}
-        AND cfg_name = 'order_channel_id')
+        AND cfg_name = 'order_channel_id'
+        and cfg_val1 = orders.order_channel_id)
         GROUP BY
         transferitem.transfer_id,
         transferitem.order_number,
@@ -178,6 +180,7 @@
           and cfg_val1 = details.sku
         )
          INNER JOIN wms_bt_item_details itemdetails ON itemdetails.sku = details.sku
+             and    itemdetails.order_channel_id = orders.order_channel_id
         WHERE
             orders.order_channel_id =  #{order_channel_id}
         AND orders.cart_id = #{cart_id}
