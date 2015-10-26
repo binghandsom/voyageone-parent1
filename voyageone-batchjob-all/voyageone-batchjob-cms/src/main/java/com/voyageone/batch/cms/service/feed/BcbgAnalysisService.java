@@ -19,7 +19,10 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.BCBG;
 import static java.util.stream.Collectors.groupingBy;
@@ -105,14 +108,14 @@ public class BcbgAnalysisService extends BaseTaskService {
             return;
         }
 
-        Backuper backuper = new Backuper();
+        Backup backup = new Backup();
 
         // 排序文件
         List<File> feedFileList =  Arrays.asList(feedFiles).stream().sorted((f1, f2) -> f2.getName().compareTo(f1.getName())).collect(toList());
         // 取第一个作为目标文件,并从其中移除
         // 其他直接进行备份处理
         File feedFile = feedFileList.remove(0);
-        feedFileList.forEach(backuper::backup);
+        feedFileList.forEach(backup::from);
 
         File styleFile = new File(styleFileName);
 
@@ -148,7 +151,7 @@ public class BcbgAnalysisService extends BaseTaskService {
         updateService.new Context(BCBG).postUpdatedProduct();
 
         // 备份文件
-        backuper.backupDataFile(feedFile, styleFile);
+        backup.fromData(feedFile, styleFile);
     }
 
     private void clearLastData() {
@@ -322,15 +325,17 @@ public class BcbgAnalysisService extends BaseTaskService {
         }
     }
 
-    class Backuper {
+    class Backup {
 
         private File backupDir;
 
-        public Backuper() {
+        public Backup() {
 
             String sBackupDir = Feed.getVal1(BCBG, Name.feed_backup_dir); // 备份的文件路径
 
-            sBackupDir = String.format(sBackupDir, DateTimeUtil.getNow("yyyyMMdd"), DateTimeUtil.getNow("HHmmss"));
+            // 如果是模板,就尝试格式化
+            if (sBackupDir.contains("%s"))
+                sBackupDir = String.format(sBackupDir, DateTimeUtil.getNow("yyyyMMdd"), DateTimeUtil.getNow("HHmmss"));
 
             backupDir = new File(sBackupDir);
 
@@ -340,14 +345,14 @@ public class BcbgAnalysisService extends BaseTaskService {
             }
         }
 
-        protected void backup(File file) {
+        protected void from(File file) {
             if (!file.renameTo(new File(backupDir, file.getName())))
                 $info("文件备份失败 %s %s", file.getPath(), file.getName());
         }
 
-        protected void backupDataFile(File file, File styleFile) {
-            backup(file);
-            //backup(styleFile);
+        protected void fromData(File file, File styleFile) {
+            from(file);
+            //from(styleFile);
         }
     }
 }

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.cms.sql">
+	<select id="get_Com_Prop_Options" resultType="map" parameterType="String">
+		SELECT
+			opt.prop_option_name AS name,
+			opt.prop_option_value AS value
+		FROM(
+				SELECT
+					prop_id
+				FROM
+					voyageone_ims.ims_mt_prop
+				WHERE
+					prop_name = #{propName}
+				LIMIT 1
+			) AS prop, voyageone_ims.ims_mt_prop_option opt
+		WHERE
+			prop.prop_id = opt.prop_id
+	</select>
+	<update id="update_batch_cat_com_propValue">
+		UPDATE voyageone_ims.ims_mt_prop_value AS v
+		INNER JOIN (
+			SELECT
+				val.id AS id
+			FROM
+				voyageone_cms.cms_bt_model_extend ext,
+				voyageone_ims.ims_mt_prop prop,
+				voyageone_ims.ims_mt_prop_value val
+			<where>
+				<if test="modelIdList != null and modelIdList.size > 0">
+					ext.model_id in
+					<foreach item="item" index="index" collection="modelIdList" open="(" separator="," close=")">
+						#{item}
+					</foreach>
+				</if>
+			AND ext.main_category_id = prop.category_id
+			AND prop.prop_id = val.prop_id
+			AND val.level_value = ext.model_id
+			AND prop.prop_name = #{propName}
+			AND val.channel_id = #{channelId}
+			AND val.`level` = #{level}
+			</where>
+		) a ON v.id = a.id
+		SET v.prop_value = #{propValue},
+			v.modifier = #{user},
+			v.modified = NOW()
+	</update>
+
+	<select id="verify_prop_value_exist" resultType="map">
+		SELECT
+			model.model_id AS modelId,
+			prop.prop_id AS propId,
+			val.prop_id AS valPropId,
+			val.prop_value AS propValue
+		FROM
+			voyageone_ims.ims_mt_prop prop
+		INNER JOIN voyageone_cms.cms_bt_model_extend model ON (
+			prop.category_id = model.main_category_id
+			AND prop.prop_name = #{propName}
+			<if test="modelIdList != null and modelIdList.size > 0">
+				AND model.model_id in
+				<foreach item="item" index="index" collection="modelIdList" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="modelId != null">
+				AND model.model_id = #{modelId}
+			</if>
+		)
+		LEFT JOIN voyageone_ims.ims_mt_prop_value val ON (
+			prop.prop_id = val.prop_id
+			AND val.level_value = model.model_id
+			AND val.channel_id = #{channelId}
+			AND val.`level` = #{level}
+		)
+		<if test="referencePropId != null">
+			INNER JOIN voyageone_ims.ims_mt_prop_rule rule ON (
+			prop.prop_id = rule.prop_id
+			AND rule.prop_rule_relationship LIKE #{referencePropId}
+			)
+		</if>
+	</select>
+	<insert id="insert_prop_value" parameterType="com.voyageone.cms.modelbean.PropertyValue">
+		INSERT INTO voyageone_ims.ims_mt_prop_value (
+			uuid,
+			channel_id,
+			level,
+			level_value,
+			prop_id,
+			prop_value,
+			parent,
+			created,
+			creater,
+			modified,
+			modifier
+		)
+		VALUES
+			(
+				#{uuid},
+				#{channel_id},
+				#{level},
+				#{level_value},
+				#{prop_id},
+				#{prop_value},
+				#{parent},
+				NOW(),
+				#{creater},
+				NOW(),
+				#{modifier}
+			)
+	</insert>
+
+	<delete id="delete_sub_prop_value" parameterType="map">
+		DELETE
+		FROM
+			voyageone_ims.ims_mt_prop_value
+		WHERE
+			prop_id = #{propId}
+		AND channel_id = #{channelId}
+		AND `level` = #{level}
+		AND level_value=#{levelValue}
+	</delete>
+
+	<update id="update_sub_prop_value">
+		UPDATE voyageone_ims.ims_mt_prop_value
+		SET prop_value = #{propValue},
+		 modifier = #{user},
+		 modified = NOW()
+		WHERE
+			prop_id = #{propId}
+		AND channel_id = #{channelId}
+		AND `level` = #{level}
+		AND level_value=#{levelValue}
+	</update>
+</mapper>
