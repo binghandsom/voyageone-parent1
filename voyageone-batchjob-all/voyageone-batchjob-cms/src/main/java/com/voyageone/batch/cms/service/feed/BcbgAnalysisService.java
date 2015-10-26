@@ -77,52 +77,15 @@ public class BcbgAnalysisService extends BaseTaskService {
 
         $info("开始处理 BCBG 数据");
 
-        // 读取各种配置
-        // 精简配置,减少独立配置,所以两个文件都配置在一个项目里
-        String fileNames = Feed.getVal1(BCBG, Name.feed_ftp_filename); // 文件路径
-
-        // 拆分成 feed 和 style
-        String[] fileNameArr = fileNames.split(";");
-
-        if (fileNameArr.length != 2) {
-            $info("读取的文件路径错误,至少需要两个文件.退出任务");
-            throw new BusinessException("BCBG 的配置 feed_ftp_filename 错误,至少两个文件.");
-        }
-
-        String feedFileName = fileNameArr[0];
-        String styleFileName = fileNameArr[1];
-
-        // 检查配置
-        if (StringUtils.isAnyEmpty(feedFileName, styleFileName)) {
-            $info("没读取到文件路径,退出任务");
-            throw new BusinessException("BCBG 的配置 feed_ftp_filename 错误,路径为空.");
-        }
-
-        // 打开目录
-        File feedFileDir = new File(feedFileName);
-        // 过滤文件
-        File[] feedFiles = feedFileDir.listFiles(i -> i.getName().contains(".xml"));
-
-        if (feedFiles.length < 1) {
-            $info("XML 数据文件不存在,退出任务");
-            return;
-        }
-
         Backup backup = new Backup();
 
-        // 排序文件
-        List<File> feedFileList =  Arrays.asList(feedFiles).stream().sorted((f1, f2) -> f2.getName().compareTo(f1.getName())).collect(toList());
-        // 取第一个作为目标文件,并从其中移除
-        // 其他直接进行备份处理
-        File feedFile = feedFileList.remove(0);
-        feedFileList.forEach(backup::from);
+        File[] files = getDataFiles(backup);
 
-        File styleFile = new File(styleFileName);
+        // 说明没获取到文件, 放弃执行. 内部会进行日志输出
+        if (files == null) return;
 
-        if (!styleFile.exists()) {
-            $info("数据文件不存在,退出任务 [ %s ] [ %s ]", feedFile.exists(), styleFile.exists());
-            return;
-        }
+        File feedFile = files[0];
+        File styleFile = files[1];
 
         // 读取数据文件
         BcbgFeedFile bcbgFeedFile = BcbgFeedFile.read(feedFile);
@@ -152,6 +115,63 @@ public class BcbgAnalysisService extends BaseTaskService {
 
         // 备份文件
         backup.fromData(feedFile, styleFile);
+    }
+
+    private File[] getDataFiles(Backup backup) {
+
+        // 读取各种配置
+        // 精简配置,减少独立配置,所以两个文件都配置在一个项目里
+        String fileNames = Feed.getVal1(BCBG, Name.feed_ftp_filename); // 文件路径
+
+        // 拆分成 feed 和 style
+        String[] fileNameArr = fileNames.split(";");
+
+        if (fileNameArr.length != 2) {
+            $info("读取的文件路径错误,至少需要两个文件.退出任务");
+            throw new BusinessException("BCBG 的配置 feed_ftp_filename 错误,至少两个文件.");
+        }
+
+        String sFeedXmlDir = fileNameArr[0];
+        String sStyleJsonDir = fileNameArr[1];
+
+        // 检查配置
+        if (StringUtils.isAnyEmpty(sFeedXmlDir, sStyleJsonDir)) {
+            $info("没读取到文件路径,退出任务");
+            throw new BusinessException("BCBG 的配置 feed_ftp_filename 错误,路径为空.");
+        }
+
+        File feedFile = getDataFile(sFeedXmlDir, ".xml", backup);
+
+        if (feedFile == null) return null;
+
+        File styleFile = getDataFile(sStyleJsonDir, ".json", backup);
+
+        if (styleFile == null) return null;
+
+        return new File[] { feedFile, styleFile };
+    }
+
+    private File getDataFile(String dir, String filter, Backup backup) {
+
+        // 打开目录
+        File feedFileDir = new File(dir);
+        // 过滤文件
+        File[] feedFiles = feedFileDir.listFiles(i -> i.getName().contains(filter));
+
+        if (feedFiles.length < 1) {
+            $info("'%s' 数据文件不存在,退出任务", filter);
+            return null;
+        }
+
+        // 排序文件
+        List<File> feedFileList =  Arrays.asList(feedFiles).stream().sorted((f1, f2) -> f2.getName().compareTo(f1.getName())).collect(toList());
+
+        // 取第一个作为目标文件,并从其中移除
+        // 其他直接进行备份处理
+        File dataFile = feedFileList.remove(0);
+        feedFileList.forEach(backup::from);
+
+        return dataFile;
     }
 
     private void clearLastData() {
