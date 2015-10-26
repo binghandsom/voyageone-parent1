@@ -497,7 +497,11 @@ define (function (require) {
                     CMS_MSG_DICT_VAL_DICT: 'Dict',
                     CMS_MSG_MASTER_PROP_VALUE_SETTING_CATEGORY_SWITCH_COMFIRM:'This product will be change to the new category, [{{categoryName}}].<br />Please click [OK] to confirm it,<br />or click [Cancel] to cancel it.<br />The process is beginning to reset, please access this page 10 minutes later.<br />If the resetting is on continued after 10 minutes, please contact IT. <br />',
                     CMS_MSG_MASTER_PROP_VALUE_SETTING_CATEGORY_SAVE_COMFIRM:'The properties will be saved<br />Please click [OK] to confirm it,<br />or click [Cancel] to cancel it.<br /> Save or not ?',
-                    CMS_MSG_MASTER_PROP_VALUE_SETTING_CATEGORY_NODATA:'The process of category change is on continued. Please come back 10 minutes later.<br />If the resetting is on continued after 10 minutes, please contact IT.'
+                    CMS_MSG_MASTER_PROP_VALUE_SETTING_CATEGORY_NODATA:'The process of category change is on continued. Please come back 10 minutes later.<br />If the resetting is on continued after 10 minutes, please contact IT.',
+                    CMS_BTN_SET_MASTER_COM_PROPERTY: 'Set Master Category Common Property',
+                    CMS_TXT_SET_MASTER_COM_PROPERTY: 'Set Master Category Common Property',
+                    CMS_TXT_SET_MASTER_COM_PROPERTY_SHELVE: 'Item Status',
+                    CMS_TXT_SET_MASTER_COM_PROPERTY_START_TIME:'Start Time'
                 });
         }]);
 });

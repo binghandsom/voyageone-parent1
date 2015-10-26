@@ -18,6 +18,7 @@ define (function (require) {
     require ('modules/cms/popup/setCnProductShare/popSetCnProductShare.ctl');
     require ('modules/cms/popup/setProductColumns/popSetProductColumns.ctl');
     require ('modules/cms/master/masterPropValueSetting/masterPropValueSetting.ctl');
+    require ('modules/cms/popup/setMasterCategoryCommonProperty/popSetMasterCategoryComProp.ctl');
 
     cmsApp.controller ('editCategoryController', ['$scope', '$rootScope', '$q', '$location', '$routeParams', '$translate', '$compile', 'cmsCommonService'
         , 'editCategoryService', 'cmsRoute', 'mainCategoryService', 'mainCategoryLevel', 'notify', 'ngDialog', 'cmsPopupPages', 'systemCountry',
@@ -461,7 +462,7 @@ define (function (require) {
                         var productId = parseInt(productInfo.productId);
 
                         $scope.cnProductInfo.currentPageIdList.push({id: productId});
-                        $scope.cnProductInfo.currentPageDataList.push({id: productId, code: productInfo.code, name: productInfo.cnName});
+                        $scope.cnProductInfo.currentPageDataList.push({id: productId, code: productInfo.code, name: productInfo.cnName, modelId: productInfo.modelId});
 
                         if (!$scope.cnProductInfo.selectOneFlagList.hasOwnProperty(productId) || !$scope.cnProductInfo.selectOneFlagList[productId]) {
                             $scope.cnProductInfo.selectAllFlag = false;

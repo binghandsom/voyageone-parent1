@@ -19,6 +19,9 @@
 		<property name="targetMethod">
 			<value>run</value>
 		</property>
+		<property name="concurrent">
+			<value>false</value>
+		</property>
 	</bean>	
 	<bean id="GetTradeRateResultTaskContri" 
 		name="GetTradeRateResultTaskContri"
