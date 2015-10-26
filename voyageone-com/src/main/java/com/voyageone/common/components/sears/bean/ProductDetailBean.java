@@ -5,6 +5,7 @@ import com.voyageone.common.components.sears.bean.feed.SalesRanking;
 import com.voyageone.common.components.sears.bean.feed.Specification;
 
 import javax.xml.bind.annotation.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -255,5 +256,23 @@ public class ProductDetailBean {
 
     public void setAvailability(AvailabilityBean availability) {
         this.availability = availability;
+    }
+
+    public String getCategory(){
+        return categorization.toString();
+    }
+
+    public List<Specification> getSpecifications(){
+        List<Specification> ret = new ArrayList<>();
+        if(productSpecifications != null && productSpecifications.size()>0){
+            ret.addAll(getProductSpecifications());
+        }
+        if(commonSpecifications != null && commonSpecifications.size()>0){
+            ret.addAll(getCommonSpecifications());
+        }
+        if(variantSpecifications != null && variantSpecifications.size()>0){
+            ret.addAll(getVariantSpecifications());
+        }
+        return  ret;
     }
 }

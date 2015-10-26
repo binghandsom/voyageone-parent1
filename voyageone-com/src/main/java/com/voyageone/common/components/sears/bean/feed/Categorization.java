@@ -47,4 +47,9 @@ public class Categorization {
     public void setSubcategory(String subcategory) {
         this.subcategory = subcategory;
     }
+
+    @Override
+    public String toString(){
+        return String.format("%s;%s;%s",vertical,category,subcategory);
+    }
 }

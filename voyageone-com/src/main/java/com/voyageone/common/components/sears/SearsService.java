@@ -1,6 +1,7 @@
 package com.voyageone.common.components.sears;
 
 import com.voyageone.common.components.sears.base.SearsBase;
+import com.voyageone.common.components.sears.bean.PaginationBean;
 import com.voyageone.common.components.sears.bean.ProductResponse;
 import com.voyageone.common.util.JaxbUtil;
 
@@ -53,21 +54,34 @@ public class SearsService extends SearsBase {
     }
 
     /**
+     * 取得Products总数和页数
+     * @param pageSize
+     * @return
+     * @throws Exception
+     */
+    public PaginationBean getProductsTotalPages(Integer pageSize) throws Exception {
+        ProductResponse productResponse = getAllProducts(1, pageSize, false, false, false);
+        if (productResponse != null ){
+            return productResponse.getPagination();
+        }
+        return null;
+    }
+    /**
      * 取得所有Product的
      *
      * @param page         第几页
-     * @param perPage      每页多少个
+     * @param pageSize      每页多少个
      * @param details      是否需要详细数据
      * @param price        是否需要价格数据
      * @param availability 是否需要库存数据
      * @return
      * @throws Exception
      */
-    public ProductResponse getAllProducts(Integer page, Integer perPage, Boolean details, Boolean price, Boolean availability) throws Exception {
+    public ProductResponse getAllProducts(Integer page, Integer pageSize, Boolean details, Boolean price, Boolean availability) throws Exception {
 
         StringBuffer param = new StringBuffer();
 
-        param.append("page=" + page + "&per_page=" + perPage);
+        param.append("page=" + page + "&per_page=" + pageSize);
         if (details) {
             param.append("&product_details=true");
         }
