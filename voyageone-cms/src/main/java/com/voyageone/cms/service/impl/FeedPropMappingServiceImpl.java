@@ -1,5 +1,6 @@
 package com.voyageone.cms.service.impl;
 
+import com.voyageone.base.BaseAppService;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.cms.dao.FeedPropMappingDao;
 import com.voyageone.cms.feed.Condition;
@@ -32,7 +33,7 @@ import static com.voyageone.core.MessageConstants.ComMsg.UPDATE_BY_OTHER;
  * Created by Jonas on 9/1/15.
  */
 @Service
-public class FeedPropMappingServiceImpl implements FeedPropMappingService {
+public class FeedPropMappingServiceImpl extends BaseAppService implements FeedPropMappingService {
 
     @Autowired
     private FeedPropMappingDao feedPropMappingDao;
@@ -58,11 +59,17 @@ public class FeedPropMappingServiceImpl implements FeedPropMappingService {
     @Override
     public DtResponse<List<FeedMappingProp>> getProps(DtRequest<Integer> params, String channel_id) {
 
+        $info("准备为属性匹配设定获取属性");
+
         Integer categoryId = params.getParam();
+
+        $info(1, "类目:%s", categoryId);
 
         if (categoryId == null) throw new BusinessException(NO_PARAM);
 
         Channel channel = Channel.valueOfId(channel_id);
+
+        $info(1, "渠道:%s", channel);
 
         if (channel == null) throw new BusinessException(NOT_FOUND_CHANNEL);
 
@@ -75,12 +82,18 @@ public class FeedPropMappingServiceImpl implements FeedPropMappingService {
         // 获取搜索参数
         String value = search.getValue();
 
+        $info(1, "必填:%s", byRequired);
+        $info(1, "忽略:%s", byIgnored);
+        $info(1, "模糊:%s", value);
+
         // 抽取数据
-        List<FeedMappingProp> masterProperties = feedPropMappingDao.selectProps(value, params.getParam(), channel.getId(),
+        List<FeedMappingProp> masterProperties = feedPropMappingDao.selectProps(value, categoryId, channel.getId(),
                 params.getStart(), params.getLength(), byIgnored, byRequired);
 
+        $info("属性匹配已完成属性获取");
+
         // 抽取不分页的总数量
-        int total = feedPropMappingDao.selectPropsCount(value, params.getParam(), channel.getId(), byIgnored, byRequired);
+        int total = feedPropMappingDao.selectPropsCount(value, categoryId, channel.getId(), byIgnored, byRequired);
 
         // 创建返回结果
         DtResponse<List<FeedMappingProp>> response = new DtResponse<>();
