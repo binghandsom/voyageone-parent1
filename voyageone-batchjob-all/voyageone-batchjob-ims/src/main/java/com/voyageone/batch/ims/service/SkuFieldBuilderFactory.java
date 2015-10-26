@@ -40,10 +40,6 @@ public class SkuFieldBuilderFactory {
         skuFieldBuilderClazzsMap = new HashMap<>();
         List<Class> tmallGjSkuFieldBuilderClazzs = new ArrayList<>();
         tmallGjSkuFieldBuilderClazzs.add(TmallGjSkuFieldBuilderImpl_1.class);
-        tmallGjSkuFieldBuilderClazzs.add(TmallGjSkuFieldBuilderImpl_2.class);
-        tmallGjSkuFieldBuilderClazzs.add(TmallGjSkuFieldBuilderImpl_3.class);
-        tmallGjSkuFieldBuilderClazzs.add(TmallGjSkuFieldBuilderImpl_4.class);
-        tmallGjSkuFieldBuilderClazzs.add(TmallGjSkuFieldBuilderImpl_5.class);
         skuFieldBuilderClazzsMap.put(CartEnums.Cart.TG, tmallGjSkuFieldBuilderClazzs);
     }
 

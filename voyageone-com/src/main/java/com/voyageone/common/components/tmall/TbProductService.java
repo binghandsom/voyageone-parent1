@@ -112,7 +112,7 @@ public class TbProductService extends TbBase {
         TmallBrandcatMetadataGetResponse response = reqTaobaoApi(config, req);
         if (response == null)
         {
-            failCause.append("访问taobao超时");
+            failCause.append("访问淘宝超时");
             return null;
         }
         if (response.getErrorCode() != null) {
