@@ -11,6 +11,7 @@ import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.util.JsonUtil;
+import com.voyageone.common.util.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,6 +73,14 @@ public class ReservationInfoTransferService extends BaseTaskService {
 			// 允许运行的订单渠道取得
 			List<String> orderChannelIdList = TaskControlUtils.getVal1List(taskControlList,TaskControlEnums.Name.order_channel_id);
 
+			// 抽出件数
+			String row_count = TaskControlUtils.getVal1(taskControlList,TaskControlEnums.Name.row_count);
+
+			int intRowCount = 1;
+			if (!StringUtils.isNullOrBlank2(row_count)) {
+				intRowCount = Integer.valueOf(row_count);
+			}
+
 			// 获取配置文件keyValue.properties的WS信息
 
 			String nameSpace = Properties.readValue("OMS_WS_RESERVATION_NAMESPACE");
@@ -79,7 +88,8 @@ public class ReservationInfoTransferService extends BaseTaskService {
 
 			Map<String, String> paramMap = new HashMap<String, String>();
 			for (String strChannelId : orderChannelIdList) {
-				List<OutFormReservationInfo> reservationList = orderDao.getReservationInfo(strChannelId);
+				List<OutFormReservationInfo> reservationList = orderDao.getReservationInfo(strChannelId,intRowCount);
+				logger.info("渠道ID为[" +strChannelId + "]需要处理的订单件数："+ reservationList.size());
 				if (reservationList != null && reservationList.size() != 0) {
 					paramMap.put("channel", strChannelId);
 					paramMap.put("order_json", JsonUtil.getJsonString(reservationList));

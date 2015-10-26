@@ -189,7 +189,13 @@ define (function (require) {
                 ADD_DICT : "addDict",
                 GET_DICT_LIST : 'getDictList'
             }
+        },
+        //add by lewis start 2015-10-20 19:49.
+        'setMasterCategoryCommonPropertyPopup':{
+            'getOptions':'/cms/masterCategory/comPropUpdate/getPropertyOptions',
+            'batchUpdate':'/cms/masterCategory/comPropUpdate/batchUpdate'
         }
+        //add by lewis end 2015-10-20 19:49.
     });
 
     /**
@@ -294,6 +300,10 @@ define (function (require) {
             'page': '/VoyageOne/modules/cms/popup/setCnProductProperty/popSetCnProductProperty.tpl.html',
             'controller': 'popSetCnProductPropertyController'
         },
+        'popSetMasterCatComProp': {
+            'page': '/VoyageOne/modules/cms/popup/setMasterCategoryCommonProperty/popSetMasterCategoryComProp.tpl.html',
+            'controller': 'popSetMasterCategoryComPropController'
+        },
         'popSetCnProductShare': {
             'page': '/VoyageOne/modules/cms/popup/setCnProductShare/popSetCnProductShare.tpl.html',
             'controller': 'popSetCnProductShareController'
@@ -382,6 +392,26 @@ define (function (require) {
                         resolve: {
                             productIdArray: function () {
                                 return selectIdList;
+                            }
+                        }
+                    });
+                } else {
+                    notify.warning("CMS_MSG_NO_PRODUCT_SELECTED");
+                }
+            };
+
+            /**
+             * 弹出Set Master Category Common Property页面.
+             */
+            $scope.openSetMasterCategoryComProp = function (selectDataList){
+                if (selectDataList.length) {
+                    var modalInstance = $modal.open({
+                        templateUrl: cmsPopupPages.popSetMasterCatComProp.page,
+                        controller: cmsPopupPages.popSetMasterCatComProp.controller,
+                        size: 'md',
+                        resolve: {
+                            productDataArray: function () {
+                                return selectDataList;
                             }
                         }
                     });

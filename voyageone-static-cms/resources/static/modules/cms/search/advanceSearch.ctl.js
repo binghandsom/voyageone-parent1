@@ -13,6 +13,7 @@ define (function (require) {
     require ('modules/cms/popup/setCnProductProperty/popSetCnProductProperty.ctl');
     require ('modules/cms/popup/setCnProductShare/popSetCnProductShare.ctl');
     require ('modules/cms/popup/setProductColumns/popSetProductColumns.ctl');
+    require ('modules/cms/popup/setMasterCategoryCommonProperty/popSetMasterCategoryComProp.ctl');
     
     cmsApp.controller ('advanceSearchController', ['$scope', '$rootScope', '$q', '$location', '$routeParams', 'cmsCommonService', 'searchService', 'DTOptionsBuilder','DTColumnBuilder','$compile', '$translate', 'cookieService',
       function ($scope, $rootScope, $q, $location, $routeParams, cmsCommonService, searchService, DTOptionsBuilder, DTColumnBuilder,  $compile, $translate, cookieService) {

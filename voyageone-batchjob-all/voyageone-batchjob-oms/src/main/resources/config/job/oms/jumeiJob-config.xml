@@ -19,6 +19,9 @@
 		<property name="targetMethod">
 			<value>jmNewOrderImport</value>
 		</property>
+		<property name="concurrent">
+			<value>false</value>
+		</property>
 	</bean>
 	<bean id="jumeiOrderImportJobTaskContri"
 		name="jumeiOrderImportJobTaskContri"
@@ -37,6 +40,9 @@
 		</property>
 		<property name="targetMethod">
 			<value>shortUrlGenerate</value>
+		</property>
+		<property name="concurrent">
+			<value>false</value>
 		</property>
 	</bean>
 	<bean id="jumeiShortUrlGenerateJobTaskContri"

@@ -24,6 +24,9 @@
 		<property name="targetMethod">
 			<value>run</value>
 		</property>
+		<property name="concurrent">
+			<value>false</value>
+		</property>
 	</bean>	
 	<bean id="CheckOmitSecResultPATaskContri" 
 		name="CheckOmitSecResultPATaskContri"
@@ -52,6 +55,9 @@
 		</property>
 		<property name="targetMethod">
 			<value>run</value>
+		</property>
+		<property name="concurrent">
+			<value>false</value>
 		</property>
 	</bean>	
 	<bean id="CheckOmitSecResultJCTaskContri" 
@@ -83,6 +89,9 @@
 		<property name="targetMethod">
 			<value>run</value>
 		</property>
+		<property name="concurrent">
+			<value>false</value>
+		</property>
 	</bean>	
 	<bean id="CheckOmitSecResultSPTaskContri" 
 		name="CheckOmitSecResultSPTaskContri"
@@ -111,6 +120,9 @@
 		</property>
 		<property name="targetMethod">
 			<value>run</value>
+		</property>
+		<property name="concurrent">
+			<value>false</value>
 		</property>
 	</bean>	
 	<bean id="CheckOmitSecResultSNTaskContri" 
@@ -141,6 +153,9 @@
 		<property name="targetMethod">
 			<value>run</value>
 		</property>
+		<property name="concurrent">
+			<value>false</value>
+		</property>
 	</bean>
 	<bean id="CheckOmitSecResultBHFOTaskContri"
 		  name="CheckOmitSecResultBHFOTaskContri"
@@ -169,6 +184,9 @@
 		</property>
 		<property name="targetMethod">
 			<value>run</value>
+		</property>
+		<property name="concurrent">
+			<value>false</value>
 		</property>
 	</bean>
 	<bean id="CheckOmitSecResultRMTaskContri"
@@ -199,6 +217,9 @@
 		<property name="targetMethod">
 			<value>run</value>
 		</property>
+		<property name="concurrent">
+			<value>false</value>
+		</property>
 	</bean>
 	<bean id="CheckOmitSecResultCPTaskContri"
 		  name="CheckOmitSecResultCPTaskContri"
@@ -227,6 +248,9 @@
 		</property>
 		<property name="targetMethod">
 			<value>run</value>
+		</property>
+		<property name="concurrent">
+			<value>false</value>
 		</property>
 	</bean>
 	<bean id="CheckOmitSecResultJETaskContri"
