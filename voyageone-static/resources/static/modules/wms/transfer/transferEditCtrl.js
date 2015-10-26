@@ -84,6 +84,9 @@ define([
         //dorpDown显示控制
         vm.isColose = [];
 
+        //dorpDown显示控制
+        vm.isReOpen = [];
+
         $scope.getCurrTransferName = getCurrTransferName;
         $scope.isPurchaseOrder = isPurchaseOrder;
         $scope.isWithdrawal = isWithdrawal;
@@ -109,6 +112,7 @@ define([
         $scope.compare = compare;
         $scope.editPackage = editPackage;
         $scope.deletePackage = deletePackage;
+        $scope.reOpenPackage = reOpenPackage;
         $scope.setVal = setVal;
 
         init();
@@ -116,6 +120,7 @@ define([
         function setVal($index){
             vm.packages.selected = $index;
             vm.isColose = vm.packages[$index].package_status == "1" ? 1 : 0;
+            vm.isReOpen = vm.isColose && vm.transfer.transfer_status == 0;
         }
 
         function init() {
@@ -184,6 +189,8 @@ define([
             if (vm._isEditingPackage == null) vm._isEditingPackage = false;
 
             if (arguments.length > 0) vm._isEditingPackage = !!arguments[0];
+
+            vm.package.transfer_package_qty = calPackageQty();
 
             return vm._isEditingPackage;
         }
@@ -398,6 +405,33 @@ define([
                 });
         }
 
+        function reOpenPackage() {
+            var index = vm.packages.selected;
+            if (index < 0) return;
+
+            var selected = vm.packages[index];
+
+            if (isTransferClosed()) {
+                alert("WMS_ALERT_TRANSFER_EDIT_CLOSED");
+                return;
+            }
+
+            confirm({id:"WMS_TRANSFER_EDIT_PKG_REOPEN",values:selected})
+                .then(function () {
+                    transferService
+
+                        .reOpenPackage(selected.transfer_package_id, selected.modified)
+
+                        .then(function (isSuccess) {
+                            if (isSuccess) {
+                                vm.packages[index].package_status = "0";
+                            } else {
+                                alert("WMS_NOTIFY_OP_FAIL");
+                            }
+                        });
+                });
+        }
+
         function reqSaveTransfer() {
             if (vm.btnCtrl.save) {
                 return;
@@ -490,7 +524,7 @@ define([
                 .createPackage(transfer_id, package_name)
 
                 .then(function (pkg) {
-                    vm.packages.push(pkg);
+                    vm.packages.unshift(pkg);
                     // 还原输入框内的名称
                     vm.packageInput.name = "";
 
@@ -662,6 +696,17 @@ define([
                     scope.items = items;
                 }]
             });
+        }
+
+        function calPackageQty() {
+
+            var packageQty = 0;
+            for (i = 0; i < vm.packageItems.length; i++) {
+                packageQty = packageQty + parseInt(vm.packageItems[i].transfer_qty);
+
+            }
+            return packageQty ;
+
         }
     }
 });

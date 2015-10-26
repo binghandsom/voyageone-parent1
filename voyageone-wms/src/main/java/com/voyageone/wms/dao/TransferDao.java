@@ -194,6 +194,15 @@ public class TransferDao extends BaseDao {
         return updateTemplate.delete(PREFIX + "wms_bt_transfer_deletePackage", params);
     }
 
+    public int reOpenPackage(int package_id, String modified) {
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("package_id", package_id);
+        params.put("modified", modified);
+
+        return updateTemplate.delete(PREFIX + "wms_bt_transfer_reOpenPackage", params);
+    }
+
     public int deletePackageItems(int package_id) {
         Map<String, Object> params = new HashMap<>();
 
