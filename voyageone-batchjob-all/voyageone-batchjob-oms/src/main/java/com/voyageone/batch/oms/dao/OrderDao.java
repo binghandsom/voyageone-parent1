@@ -1739,6 +1739,38 @@ public class OrderDao extends BaseDao {
 	}
 
 	/**
+	 * 获得推送 BCBG(not Shipped)订单信息
+	 *
+	 * @return
+	 */
+	public List<OrderExtend> getPushBCBGDemandsInfo(String orderChannelId, String beginSearchDate, String endSearchDate) {
+		HashMap<String, String> inPara = new HashMap<String, String>();
+		inPara.put("orderChannelId", orderChannelId);
+		inPara.put("beginDate", beginSearchDate);
+		inPara.put("endDate", endSearchDate);
+
+		List<OrderExtend> ordersInfo = (List) selectList(Constants.DAO_NAME_SPACE_OMS + "oms_bt_order_details_getPushBCBGDemandsInfo", inPara);
+
+		return ordersInfo;
+	}
+
+	/**
+	 * 获得推送 BCBG(Shipped)订单信息
+	 *
+	 * @return
+	 */
+	public List<OrderExtend> getPushBCBGDailySalesInfo(String orderChannelId, String beginSearchDate, String endSearchDate) {
+		HashMap<String, String> inPara = new HashMap<String, String>();
+		inPara.put("orderChannelId", orderChannelId);
+		inPara.put("beginDate", beginSearchDate);
+		inPara.put("endDate", endSearchDate);
+
+		List<OrderExtend> ordersInfo = (List) selectList(Constants.DAO_NAME_SPACE_OMS + "oms_bt_order_details_getPushBCBGDailySalesInfo", inPara);
+
+		return ordersInfo;
+	}
+
+	/**
 	 * 订单信息更新（发送标志）
 	 *
 	 * @return
@@ -1772,6 +1804,27 @@ public class OrderDao extends BaseDao {
 		paraIn.put("orderNumberList", orderNumberList);
 
 		int retCount = updateTemplate.update(Constants.DAO_NAME_SPACE_OMS + "oms_bt_ext_orders_updatePendingCancelSendFlag", paraIn);
+
+		if (retCount > 0) {
+			ret = true;
+		}
+
+		return ret;
+	}
+
+	/**
+	 * 订单信息更新（ExtFlg1）
+	 *
+	 * @return
+	 */
+	public boolean updateOrderExtFlg1(String taskName, List<String> orderNumberList) {
+		boolean ret = false;
+
+		HashMap<String, Object> paraIn = new HashMap<String, Object>();
+		paraIn.put("taskName", taskName);
+		paraIn.put("orderNumberList", orderNumberList);
+
+		int retCount = updateTemplate.update(Constants.DAO_NAME_SPACE_OMS + "oms_bt_ext_orders_updateExtFlg1", paraIn);
 
 		if (retCount > 0) {
 			ret = true;
