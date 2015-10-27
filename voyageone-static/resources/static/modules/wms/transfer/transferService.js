@@ -177,6 +177,23 @@ define([
             };
 
             /**
+             * 重新打开一个 Package
+             * @resolve {boolean}
+             * @param package_id {string}
+             * @returns {Promise}
+             */
+            this.reOpenPackage = function (package_id, modified) {
+                return $q(function (resolve) {
+                    http.ajaxPost({
+                        package_id: package_id,
+                        modified: modified
+                    }, actions.transfer.package.reopen).then(function (res) {
+                        resolve(res.data);
+                    });
+                });
+            };
+
+            /**
              * 请求服务器，在 Transfer 下创建一个指定名称的 Package
              * @resolve {Package}
              * @param transfer_id {number}

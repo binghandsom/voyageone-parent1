@@ -302,7 +302,7 @@ public class FeedPropMappingServiceImpl extends BaseAppService implements FeedPr
         CategoryPropCount propCount = feedPropMappingDao.selectCountsByCategory(channel_id, category_id);
 
         // 获取目录记录
-        ImsCategoryExtend categoryExtend = feedPropMappingDao.selectCategoryExtend(category_id);
+        ImsCategoryExtend categoryExtend = feedPropMappingDao.selectCategoryExtend(channel_id, category_id);
         
         // 如果两数量不相同，说明有属性还没有忽略或设置 mapping，并且没有默认值
         int isSetAttr = propCount.getProps() != propCount.getHasValue() ? 0 : 1;
