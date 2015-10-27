@@ -30,7 +30,7 @@ import com.voyageone.common.configs.ThirdPartyConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.util.StringUtils;
 
-public class PostOrderBHFO extends PostOrderLogic {
+public class PostOrderChannelAdvisor extends PostOrderLogic {
 
 	private static String Password;
 	private static String DeveloperKey;
