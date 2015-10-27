@@ -18,7 +18,7 @@ INSERT INTO voyageone_cms.cms_mt_feed_config (order_channel_id, cfg_val2, cfg_va
 VALUES
   ('012', '', '', 0, 0, '推送过来的数据文件存放的位置', 'feed_ftp_filename',
    '/opt/ftp-shared/clients-ftp/voyageone-bcbg-sftp/products;/Users/Jonas/Desktop/BCBG-20151015.json'),
-  ('012', '', '', 0, 0, '数据文件的备份', 'feed_backup_dir', '/xvdb/ftp-shared/clients-ftp/voyageone-bcbg-sftp-bak/%s/%s'),
+  ('012', '', '', 0, 0, '数据文件的备份', 'feed_backup_dir', '/opt/ftp-shared/clients-ftp/voyageone-bcbg-sftp/archive/products'),
 
   ('012', '', '', 0, 0, '数据表', 'table_id', 'voyageone_cms.cms_zz_worktable_bcbg_superfeed'),
   ('012', '', '', 0, 0, '类目分割符', 'category_split', '-'),
@@ -142,7 +142,7 @@ VALUES
   ('Get data that cant context to master', '012', 'transform', 'select_str', 'SELECT MATNR FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed LEFT JOIN voyageone_cms.cms_mt_feed_master m ON WLADG = m.value AND m.channel_id = ''012'' AND m.master_attr = ''WLADG'' WHERE m.value IS NULL', 'append:noMasterSku', 0, 0, 4),
   ('Get data that cant context to master', '012', 'transform', 'select_str', 'SELECT MATNR FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed LEFT JOIN voyageone_cms.cms_mt_feed_master m ON MATKL = m.value AND m.channel_id = ''012'' AND m.master_attr = ''MATKL'' WHERE m.value IS NULL', 'append:noMasterSku', 0, 0, 5),
   # 定义发邮件操作
-  ('Send mail with last step get data', '012', 'transform', 'mail', '这是BCBG数据处理的测试邮件', 'get:noMasterSku', 0, 0, 6),
+  ('Send mail with last step get data', '012', 'transform', 'mail', 'BCBG 没有 Master 数据的 SKU', 'get:noMasterSku', 0, 0, 6),
   # 删除 master 关联失败的
   ('Clear data that cant context to master', '012', 'transform', 'delete', 'DELETE voyageone_cms.cms_zz_worktable_bcbg_superfeed FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed LEFT JOIN voyageone_cms.cms_mt_feed_master m ON BRAND_ID = m.value AND m.channel_id = ''012'' AND m.master_attr = ''BRAND_ID'' WHERE m.value IS NULL', '', 0, 0, 7),
   ('Clear data that cant context to master', '012', 'transform', 'delete', 'DELETE voyageone_cms.cms_zz_worktable_bcbg_superfeed FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed LEFT JOIN voyageone_cms.cms_mt_feed_master m ON SAISO = m.value AND m.channel_id = ''012'' AND m.master_attr = ''SAISO'' WHERE m.value IS NULL', '', 0, 0, 7),
@@ -152,7 +152,7 @@ VALUES
   # 查一波 DO NOT USE 类目的数据,发一波邮件
   ('Get data that category is DO NOT USE', '012', 'transform', 'select_str', 'SELECT MATNR FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed JOIN voyageone_cms.cms_mt_feed_master m ON MATKL = m.value AND m.channel_id = ''012'' AND m.master_attr = ''MATKL'' AND m.label = ''DO NOT USE''', 'set:noCategorySku', 0, 0, 8),
   # 定义发邮件操作
-  ('Send mail with last step get data', '012', 'transform', 'mail', '这是BCBG数据处理的测试邮件', 'get:noCategorySku', 0, 0, 9),
+  ('Send mail with last step get data', '012', 'transform', 'mail', 'BCBG 类目为 "DO NOT USE" 的 SKU', 'get:noCategorySku', 0, 0, 9),
   # 删除 DO NOT USE
   ('Clear no category data', '012', 'transform', 'delete', 'DELETE voyageone_cms.cms_zz_worktable_bcbg_superfeed FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed JOIN voyageone_cms.cms_mt_feed_master m ON MATKL = m.value AND m.channel_id = ''012'' AND m.master_attr = ''MATKL'' AND m.label = ''DO NOT USE''', '', 0, 0, 10),
   # 转换一波 master 数据

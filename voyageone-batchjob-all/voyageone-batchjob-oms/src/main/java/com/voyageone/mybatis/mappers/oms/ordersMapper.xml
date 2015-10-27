@@ -1138,7 +1138,7 @@
 		<result column="item_number" property="item_number"/>
 	</resultMap>
 	<!-- 获取reservation信息 -->
-	<select id="wsdl_transfer_reservationInfo" resultMap="reservationInfo" parameterType="String">
+	<select id="wsdl_transfer_reservationInfo" resultMap="reservationInfo">
         select tt1.order_number,                                    
         	   ifnull(tt1.source_order_id, '') sourceorderid,                         
         	   tt2.sku,                                    
@@ -1159,19 +1159,18 @@
 				  and exists(select 1 from oms_bt_order_details t1 
 							  where t1.quantity_shipped = 1
 							  	and t1.res_allot_flg = '0'
+							  	and t1.adjustment = 0
+                  				and t1.res_id = 0
 								and t.order_number = t1.order_number)
-                limit 50
+				order by t.order_number
+                limit #{intRowCount}
              ) tt1,                                    
-             (                                    
-        	   select t.order_number,                                    
-        		  	  t.sku,                                    
-        		      t.quantity_shipped,                                    
-        			  t.item_number                                    
-                 from oms_bt_order_details t                                    
-                where t.quantity_shipped = 1                                    
-                  and t.res_allot_flg = '0'                                    
-             ) tt2                                    
-         where tt1.order_number = tt2.order_number;   
+			oms_bt_order_details tt2
+         	where tt1.order_number = tt2.order_number
+			and tt2.quantity_shipped = 1
+            and tt2.res_allot_flg = '0'
+            and tt2.adjustment = 0
+            and tt2.res_id = 0
 	</select>	
 	<!-- 将reservationId信息更新到oms_order_details表 -->
 	<update id="wsdl_update_reservationId" parameterType="HashMap">

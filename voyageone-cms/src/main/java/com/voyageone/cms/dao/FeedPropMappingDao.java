@@ -36,8 +36,15 @@ public class FeedPropMappingDao extends BaseDao {
         types.add(MasterPropTypeEnum.MULTICHECK.getValue());
         types.add(MasterPropTypeEnum.lABEL.getValue());
 
-        return selectList("ims_mt_prop_selectProps", parameters("prop_name", prop_name, "categoryId", categoryId, "channel_id",
-                channel_id, "start", start, "length", length, "types", types, "is_ignored", is_ignored, "is_required", is_required));
+        return selectList("ims_mt_prop_selectProps", parameters(
+                "prop_name", prop_name,
+                "categoryId", categoryId,
+                "channel_id", channel_id,
+                "start", start,
+                "length", length,
+                "types", types,
+                "is_ignored", is_ignored,
+                "is_required", is_required));
     }
 
     public int selectPropsCount(String prop_name, Integer categoryId, String channel_id, String is_ignored, String is_required) {
@@ -119,8 +126,8 @@ public class FeedPropMappingDao extends BaseDao {
                 "category_id", category_id, "types", types));
     }
 
-    public ImsCategoryExtend selectCategoryExtend(int category_id) {
-        return selectOne("ims_bt_category_extend_selectCategoryExtend", parameters("category_id", category_id));
+    public ImsCategoryExtend selectCategoryExtend(String channel_id, int category_id) {
+        return selectOne("ims_bt_category_extend_selectCategoryExtend", parameters("category_id", category_id, "channel_id", channel_id));
     }
 
     public int insertCategoryExtend(ImsCategoryExtend imsCategoryExtend) {

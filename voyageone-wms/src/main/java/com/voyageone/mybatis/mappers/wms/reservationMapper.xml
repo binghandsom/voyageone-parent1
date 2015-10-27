@@ -313,7 +313,7 @@
                 1 != 1
             </otherwise>
         </choose>
-        <if test="scanStatus != null and scanStatus != ''">
+        <if test="scanStatus != null and scanStatus != '' and scanType == 1">
             AND status = #{scanStatus}
         </if>
         <if test="scanStore != null and scanStore != 0 and scanType == 1">
