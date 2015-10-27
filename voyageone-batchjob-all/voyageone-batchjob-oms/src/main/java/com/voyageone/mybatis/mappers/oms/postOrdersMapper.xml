@@ -26,6 +26,8 @@
 		FROM
 			oms_bt_orders a
 			LEFT JOIN oms_bt_order_details b on a.order_number =b.order_number
+			LEFT JOIN tt_reservation r on r.id = b.res_id and a.order_channel_id = r.order_channel_id
+			LEFT JOIN wms_mt_store d on d.store_id = r.store_id and a.order_channel_id = d.order_channel_id
 		WHERE
 			a.Approved = 1
 		AND (
@@ -36,6 +38,7 @@
 		AND a.order_channel_id = #{channel_id}
 		and b.res_id != 0
 		GROUP BY a.order_number
+		HAVING MAX(IFNULL(d.inventory_manager, '0')) = '0'
 	</select>
 	<select id="get_orders_to_channeladvisor" parameterType="String" resultType="HashMap">
 		SELECT
