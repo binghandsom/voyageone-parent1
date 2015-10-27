@@ -34,7 +34,7 @@ public class FeedPropMappingDao extends BaseDao {
         types.add(MasterPropTypeEnum.INPUT.getValue());
         types.add(MasterPropTypeEnum.SINGLECHECK.getValue());
         types.add(MasterPropTypeEnum.MULTICHECK.getValue());
-        types.add(MasterPropTypeEnum.lABEL.getValue());
+        types.add(MasterPropTypeEnum.LABEL.getValue());
 
         return selectList("ims_mt_prop_selectProps", parameters(
                 "prop_name", prop_name,
@@ -53,7 +53,7 @@ public class FeedPropMappingDao extends BaseDao {
         types.add(MasterPropTypeEnum.INPUT.getValue());
         types.add(MasterPropTypeEnum.SINGLECHECK.getValue());
         types.add(MasterPropTypeEnum.MULTICHECK.getValue());
-        types.add(MasterPropTypeEnum.lABEL.getValue());
+        types.add(MasterPropTypeEnum.LABEL.getValue());
 
         return selectOne("ims_mt_prop_selectPropsCount", parameters("prop_name", prop_name, "categoryId", categoryId, "channel_id",
                 channel_id, "types", types, "is_ignored", is_ignored, "is_required", is_required));
@@ -87,8 +87,8 @@ public class FeedPropMappingDao extends BaseDao {
         return selectList("ims_mt_prop_option_selectPropOptions", parameters("prop_id", prop_id));
     }
 
-    public Boolean selectIgnoreValue(FeedMappingProp prop, String channel_id) {
-        return selectOne("ims_bt_feed_prop_ignore_selectIgnoreValue", parameters("prop", prop, "channel_id", channel_id));
+    public List<FeedMappingProp> selectIgnoreValue(List<FeedMappingProp> props, String channel_id) {
+        return selectOne("ims_bt_feed_prop_ignore_selectIgnoreValue", parameters("props", props, "channel_id", channel_id));
     }
 
     public int updateIgnoreValue(FeedMappingProp prop, String channel_id, String userName) {
@@ -120,10 +120,12 @@ public class FeedPropMappingDao extends BaseDao {
         types.add(MasterPropTypeEnum.INPUT.getValue());
         types.add(MasterPropTypeEnum.SINGLECHECK.getValue());
         types.add(MasterPropTypeEnum.MULTICHECK.getValue());
-        types.add(MasterPropTypeEnum.lABEL.getValue());
+        types.add(MasterPropTypeEnum.LABEL.getValue());
 
-        return selectOne("ims_bt_feed_prop_mapping_selectCountsByCategory", parameters("channel_id", channel_id,
-                "category_id", category_id, "types", types));
+        return selectOne("ims_bt_feed_prop_mapping_selectCountsByCategory", parameters(
+                "channel_id", channel_id,
+                "category_id", category_id,
+                "types", types));
     }
 
     public ImsCategoryExtend selectCategoryExtend(String channel_id, int category_id) {
