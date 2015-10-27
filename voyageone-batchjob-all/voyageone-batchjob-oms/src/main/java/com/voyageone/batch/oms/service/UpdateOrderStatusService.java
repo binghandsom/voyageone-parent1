@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 
+import com.voyageone.common.configs.Enums.CartEnums;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,12 +140,16 @@ public class UpdateOrderStatusService extends BaseTaskService {
 		
 		if(channelId.equals(ChannelConfigEnums.Channel.JEWELRY.getId())){
 		// paymentinfo 设定
-		PaymentInfoUpdateSubmit paymentInfo =new PaymentInfoUpdateSubmit();
-			paymentInfo.setPaymentType("AliPay");
+			PaymentInfoUpdateSubmit paymentInfo =new PaymentInfoUpdateSubmit();
+			if (CartEnums.Cart.JM.getId().equals(order.get("cartId").toString())) {
+				paymentInfo.setPaymentType("Jumei");
+			}else{
+				paymentInfo.setPaymentType("AliPay");
+			}
 			paymentInfo.setPaymentTransactionID(order.get("payNo").toString());
 			paymentInfo.setMerchantReferenceNumber(order.get("originSourceOrderId").toString());
-			paymentInfo.setCreditCardLast4(""); 
-			paymentInfo.setPayPalID(""); 
+			paymentInfo.setCreditCardLast4("");
+			paymentInfo.setPayPalID("");
 			orderUpdateSubmit.setPaymentInfo(paymentInfo);
 		}
 		

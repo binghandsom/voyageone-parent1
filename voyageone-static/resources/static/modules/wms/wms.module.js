@@ -25,6 +25,7 @@ define(function () {
                     get: "/wms/transfer/edit/getPackage",
                     create: "/wms/transfer/edit/createPackage",
                     close: "/wms/transfer/edit/closePackage",
+                    reopen: "/wms/transfer/edit/reOpenPackage",
 
                     item: {
                         add: "/wms/transfer/edit/addItem",
