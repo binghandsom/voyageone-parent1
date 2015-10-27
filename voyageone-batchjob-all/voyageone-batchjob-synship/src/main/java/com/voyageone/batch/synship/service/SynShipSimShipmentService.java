@@ -124,7 +124,7 @@ public class SynShipSimShipmentService  extends BaseTaskService {
             $info(channel.getFull_name() + "----------模拟发货件数：" + clientTrackingSimLst.size());
 
             // 获取当前日期
-            final String dateFormat = DateTimeUtil.format(DateTimeUtil.getDate(), DateTimeUtil.DEFAULT_DATE_FORMAT);
+             final String dateFormat = DateTimeUtil.format(DateTimeUtil.getDate(), DateTimeUtil.DEFAULT_DATE_FORMAT);
 
             transactionRunner.runWithTran(new Runnable() {
                 @Override
@@ -134,8 +134,8 @@ public class SynShipSimShipmentService  extends BaseTaskService {
 
                         ShipmentBean shipmentBean = new ShipmentBean();
                         // 判断当日的Shipment是否已建立，如果没有的话，模拟一个
-                        if (clientTrackingSimLst.size() > 0 ) {
-                            String shipmentName = dateFormat + "-SIM";
+                        for (ClientTrackingSimBean clientTracking : clientTrackingSimLst) {
+                            String shipmentName = dateFormat + "-" + clientTracking.getTracking_no() + "-SIM";
                             shipmentBean = shipmentDao.getShipmentDelay(channel.getOrder_channel_id(), shipmentName);
 
                             if (shipmentBean == null || StringUtils.isNullOrBlank2(shipmentBean.getShipment_id())) {
@@ -143,7 +143,7 @@ public class SynShipSimShipmentService  extends BaseTaskService {
                                 String shipmentID = sequenceDao.getNextVal("Shipment");
 
                                 // 设置Shipment内容
-                                shipmentBean = SimShipment(channel.getOrder_channel_id(), shipmentID, shipmentName, dateFormat, clientTrackingSimLst.get(0));
+                                shipmentBean = SimShipment(channel.getOrder_channel_id(), shipmentID, shipmentName, dateFormat, clientTracking);
 
                                 $info(channel.getFull_name() + "----------模拟Shipment做成：" + shipmentID);
 
@@ -152,7 +152,7 @@ public class SynShipSimShipmentService  extends BaseTaskService {
 
                                 // 设置ShipmentInfo内容
                                 ShipmentInfoBean shipmentinfoBean = new ShipmentInfoBean();
-                                shipmentinfoBean = SimShipmentInfo(channel.getOrder_channel_id(), shipmentID, clientTrackingSimLst.get(0));
+                                shipmentinfoBean = SimShipmentInfo(channel.getOrder_channel_id(), shipmentID, clientTracking);
 
                                 $info(channel.getFull_name() + "----------模拟ShipmentInfo做成：" + shipmentinfoBean.getTracking_status());
 
@@ -161,9 +161,6 @@ public class SynShipSimShipmentService  extends BaseTaskService {
 
                             }
 
-                        }
-
-                        for (ClientTrackingSimBean clientTracking : clientTrackingSimLst) {
                             $info(channel.getFull_name() + "----------OrderNumber：" + clientTracking.getOrder_number() + "，ClientOrderId：" + clientTracking.getClient_order_id() + "，TrackingType：" + clientTracking.getTracking_type() + "，TrackingNo：" + clientTracking.getTracking_no());
 
                             // 判断Package是否做成，没有的话，新规做成
@@ -227,14 +224,14 @@ public class SynShipSimShipmentService  extends BaseTaskService {
                             // 更新模拟标志位
                             clientTrackingDao.UpdatClientTrackingSimFlg(clientTracking.getSeq(), "1", getTaskName());
 
-                        }
-                    } catch (Exception e) {
-                        logIssue(e, channel.getFull_name() + " Shipment模拟错误");
-
-                        throw new RuntimeException(e);
                     }
+                } catch(Exception e) {
+                    logIssue(e, channel.getFull_name() + " Shipment模拟错误");
+
+                    throw new RuntimeException(e);
                 }
-            });
+            }
+        });
 
             $info(channel.getFull_name() + " Shipment模拟结束");
 
@@ -293,7 +290,7 @@ public class SynShipSimShipmentService  extends BaseTaskService {
         shipmentInfoBean.setOrder_channel_id(order_channel_id);
         shipmentInfoBean.setTracking_status(CodeConstants.TRACKING.INFO_052);
         shipmentInfoBean.setProccess_type(CodeConstants.PROCCESS_TYPE.BOT);
-        shipmentInfoBean.setProccess_time(DateTimeUtil.getNow());
+        shipmentInfoBean.setProccess_time(clientTrackingSimBean.getTracking_time());
         shipmentInfoBean.setMsg("");
         shipmentInfoBean.setCreate_time(DateTimeUtil.getNow());
         shipmentInfoBean.setUpdate_time(DateTimeUtil.getNow());
