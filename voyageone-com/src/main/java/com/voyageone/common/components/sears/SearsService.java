@@ -4,6 +4,7 @@ import com.voyageone.common.components.sears.base.SearsBase;
 import com.voyageone.common.components.sears.bean.PaginationBean;
 import com.voyageone.common.components.sears.bean.ProductResponse;
 import com.voyageone.common.util.JaxbUtil;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.stream.Collectors;
 /**
  * Created by Administrator on 2015/10/22.
  */
+@Service
 public class SearsService extends SearsBase {
 
     /**

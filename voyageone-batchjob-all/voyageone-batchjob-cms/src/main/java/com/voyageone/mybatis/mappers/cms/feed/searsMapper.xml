@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.cms.sql">
+
+
+    <delete id="cms_zz_worktable_sears_superfeed_delete">
+        DELETE FROM voyageone_cms.cms_zz_worktable_sears_superfeed;
+    </delete>
+
+    <insert id="cms_zz_worktable_sears_superfeed_insert" parameterType="com.voyageone.common.components.sears.bean.ProductResponse" >
+        insert into voyageone_cms.cms_zz_worktable_sears_superfeed (
+                item_id,
+                product_id,
+                brand,
+                description,
+                manufacturer_name,
+                manufacturer_part_number,
+                image_url,
+                upc,
+                weight,
+                category_id,
+                categorization,
+                mailable,
+                store_pickup_eligible,
+                htc_code,
+                model_number,
+                country_groups,
+                country_of_origin,
+                price)
+        values
+        <foreach collection="product" item="item" index="index"
+                 separator=",">
+            (#{item.itemId,jdbcType=VARCHAR},
+                    #{item.productDetails.productId,jdbcType=VARCHAR},
+                    #{item.productDetails.brand,jdbcType=VARCHAR},
+                    #{item.productDetails.description,jdbcType=VARCHAR},
+                    #{item.productDetails.manufacturerName,jdbcType=VARCHAR},
+                    #{item.productDetails.manufacturerPartNumber,jdbcType=INTEGER},
+                    #{item.productDetails.imageUrl,jdbcType=VARCHAR},
+                    #{item.productDetails.upc,jdbcType=VARCHAR},
+                    #{item.productDetails.weight,jdbcType=DECIMAL},
+                    #{item.productDetails.categoryId,jdbcType=INTEGER},
+                    #{item.productDetails.category,jdbcType=VARCHAR},
+                    #{item.productDetails.mailable,jdbcType=CHAR},
+                    #{item.productDetails.storePickupEligible,jdbcType=CHAR},
+                    #{item.productDetails.htcCode,jdbcType=VARCHAR},
+                    #{item.productDetails.modelNumber,jdbcType=VARCHAR},
+                    #{item.productDetails.countryGroups,jdbcType=VARCHAR},
+                    #{item.productDetails.countryOfOrigin,jdbcType=VARCHAR},
+                    #{item.productDetails.price.sellPrice,jdbcType=DECIMAL})
+        </foreach>
+    </insert>
+    <insert id="cms_zz_worktable_sears_attribute_insert" parameterType="com.voyageone.common.components.sears.bean.ProductResponse" >
+        insert into voyageone_cms.cms_zz_worktable_sears_attribute (
+        item_id,
+        attribute,
+        value)
+        values
+        <foreach collection="product" item="item" index="index"
+                 separator=",">
+            <foreach collection="item.productDetails.specifications" item="specification" index="index"
+                     separator=",">
+                (#{item.itemId,jdbcType=VARCHAR},
+                #{specification.key,jdbcType=VARCHAR},
+                #{specification.value,jdbcType=VARCHAR})
+            </foreach>
+        </foreach>
+    </insert>
+    <delete id="cms_zz_worktable_sears_attribute_delete">
+        DELETE FROM voyageone_cms.cms_zz_worktable_sears_attribute;
+    </delete>
+</mapper>
