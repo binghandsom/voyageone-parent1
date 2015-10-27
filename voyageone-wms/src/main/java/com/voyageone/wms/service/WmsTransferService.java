@@ -40,6 +40,8 @@ public interface WmsTransferService {
 
     boolean deletePackage(int package_id, String modified);
 
+    boolean reOpenPackage(int package_id, String modified);
+
     String addItem(int package_id, String barcode, int num, UserSessionBean user);
 
     boolean closePackage(int package_id, String modified, UserSessionBean user);

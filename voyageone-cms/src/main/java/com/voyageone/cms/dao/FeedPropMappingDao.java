@@ -126,8 +126,8 @@ public class FeedPropMappingDao extends BaseDao {
                 "category_id", category_id, "types", types));
     }
 
-    public ImsCategoryExtend selectCategoryExtend(int category_id) {
-        return selectOne("ims_bt_category_extend_selectCategoryExtend", parameters("category_id", category_id));
+    public ImsCategoryExtend selectCategoryExtend(String channel_id, int category_id) {
+        return selectOne("ims_bt_category_extend_selectCategoryExtend", parameters("category_id", category_id, "channel_id", channel_id));
     }
 
     public int insertCategoryExtend(ImsCategoryExtend imsCategoryExtend) {
