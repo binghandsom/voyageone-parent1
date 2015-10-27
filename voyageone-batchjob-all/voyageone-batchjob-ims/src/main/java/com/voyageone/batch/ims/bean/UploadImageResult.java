@@ -9,6 +9,7 @@ import java.util.Map;
 public class UploadImageResult {
     private boolean uploadSuccess;
     private String failCause;
+    private boolean nextProcess;
     private Map<String, String> urlMap;
 
     @Override
@@ -36,6 +37,14 @@ public class UploadImageResult {
 
     public void setFailCause(String failCause) {
         this.failCause = failCause;
+    }
+
+    public boolean isNextProcess() {
+        return nextProcess;
+    }
+
+    public void setNextProcess(boolean nextProcess) {
+        this.nextProcess = nextProcess;
     }
 
     public UploadImageResult() {

@@ -4,6 +4,7 @@ import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.wms.dao.ClientInventoryDao;
 import com.voyageone.batch.wms.dao.ClientOrderDao;
+import com.voyageone.batch.wms.dao.ClientShipmentDao;
 import com.voyageone.batch.wms.modelbean.OrderUpdateBean;
 import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.configs.ChannelConfigs;
@@ -28,6 +29,9 @@ public abstract class ThirdFileProBaseService extends BaseTaskService{
 
     @Autowired
     protected ClientOrderDao clientOrderDao;
+
+    @Autowired
+    protected ClientShipmentDao clientShipmentDao;
 
     @Autowired
     protected TransactionRunner transactionRunner;
@@ -200,6 +204,19 @@ public abstract class ThirdFileProBaseService extends BaseTaskService{
         FileUtils.copyFile(srcPath + "/" + srcFileName, bakFilePath + "/" + bakFileName);
         FileUtils.delFile(srcPath + "/" + srcFileName);
         log("移动文件 " + srcFileName + " 到备份文件夹结束！");
+    }
+
+    /**
+     * @description 移动文件到指定目录
+     * @param srcPath 源文件位置
+     * @param srcFileName 源文件名称
+     * @param bakFilePath 目标文件路径
+     */
+    protected void copyFile(String srcPath, String srcFileName, String bakFilePath) {
+        log("复制文件 " + srcFileName + " 到备份文件夹开始！");
+        String bakFileName = srcFileName.substring(0, srcFileName.lastIndexOf(".")) + "_" + DateTimeUtil.getNow(DateTimeUtil.DATE_TIME_FORMAT_2) + srcFileName.substring(srcFileName.lastIndexOf("."));
+        FileUtils.copyFile(srcPath + "/" + srcFileName, bakFilePath + "/" + bakFileName);
+        log("复制文件 " + srcFileName + " 到备份文件夹结束！");
     }
 
     /**

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.cms.sql">
+    <insert id="cms_zz_worktable_bcbg_superfeed_insertWorkTables">
+        INSERT INTO voyageone_cms.cms_zz_worktable_bcbg_superfeed
+        (MATNR, EAN11, BRAND_ID, MATKL, ZZCODE1, ZZCODE2, ZZCODE3, MEINS, BSTME, COLOR, COLOR_ATWTB, SIZE1,
+        SIZE1_ATWTB, SIZE1_ATINN, ATBEZ, SAISO, SAISJ, SAITY, SATNR, MAKTX, WLADG, WHERL, MEAN_EAN11,
+        A304_DATAB, A304_DATBI, A304_KBETR, A304_KONWA, A073_DATAB, A073_DATBI, A073_KBETR, A073_KONWA)
+        VALUES
+        <foreach collection="bcbgBeans" item="bean" separator=",">
+            (#{bean.MATNR}, #{bean.EAN11}, #{bean.BRAND_ID}, #{bean.MATKL}, #{bean.ZZCODE1}, #{bean.ZZCODE2},
+            #{bean.ZZCODE3}, #{bean.MEINS}, #{bean.BSTME}, #{bean.COLOR}, #{bean.COLOR_ATWTB}, #{bean.SIZE1},
+            #{bean.SIZE1_ATWTB}, #{bean.SIZE1_ATINN}, #{bean.ATBEZ}, #{bean.SAISO}, #{bean.SAISJ}, #{bean.SAITY},
+            #{bean.SATNR}, #{bean.MAKTX}, #{bean.WLADG}, #{bean.WHERL}, #{bean.MEAN_EAN11}, #{bean.A304_DATAB},
+            #{bean.A304_DATBI}, #{bean.A304_KBETR}, #{bean.A304_KONWA}, #{bean.A073_DATAB}, #{bean.A073_DATBI},
+            #{bean.A073_KBETR}, #{bean.A073_KONWA})
+        </foreach>
+    </insert>
+
+    <delete id="cms_zz_worktable_bcbg_superfeed_delete">
+        DELETE FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed;
+    </delete>
+
+    <insert id="cms_zz_worktable_bcbg_styles_insertStyles">
+        INSERT INTO voyageone_cms.cms_zz_worktable_bcbg_styles (styleID, productDesc, productImgURLs) VALUES
+        <foreach collection="bcbgStyles" item="style" separator=",">
+            (
+            #{style.styleID}, #{style.productDesc},
+            CONCAT(<foreach collection="style.productImgURLs" item="img" separator=",';;',">#{img}</foreach>)
+            )
+        </foreach>
+    </insert>
+
+    <delete id="cms_zz_worktable_bcbg_styles_deleteStyles">
+        DELETE FROM voyageone_cms.cms_zz_worktable_bcbg_styles
+    </delete>
+
+    <insert id="cms_zz_worktable_bcbg_superfeed_full_insertWithoutFail">
+        INSERT INTO voyageone_cms.cms_zz_worktable_bcbg_superfeed_full
+        (MATNR, EAN11, BRAND_ID, MATKL, ZZCODE1, ZZCODE2, ZZCODE3, MEINS, BSTME, COLOR, COLOR_ATWTB, SIZE1, SIZE1_ATWTB,
+        SIZE1_ATINN, ATBEZ, SAISO, SAISJ, SAITY, SATNR, MAKTX, WLADG, WHERL, MEAN_EAN11, A304_DATAB, A304_DATBI,
+        A304_KBETR, A304_KONWA, A073_DATAB, A073_DATBI, A073_KBETR, A073_KONWA)
+        SELECT
+        f1.MATNR, f1.EAN11, f1.BRAND_ID, f1.MATKL, f1.ZZCODE1, f1.ZZCODE2, f1.ZZCODE3,
+        f1.MEINS, f1.BSTME, f1.COLOR, f1.COLOR_ATWTB, f1.SIZE1, f1.SIZE1_ATWTB, f1.SIZE1_ATINN,
+        f1.ATBEZ, f1.SAISO, f1.SAISJ, f1.SAITY, f1.SATNR, f1.MAKTX, f1.WLADG, f1.WHERL,
+        f1.MEAN_EAN11, f1.A304_DATAB, f1.A304_DATBI, f1.A304_KBETR, f1.A304_KONWA, f1.A073_DATAB, f1.A073_DATBI,
+        f1.A073_KBETR, f1.A073_KONWA
+        FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed f1 LEFT JOIN
+        voyageone_cms.cms_zz_worktable_bcbg_superfeed_full f2
+        ON f1.MATNR = f2.MATNR AND f2.MATNR IS NULL
+        <where>
+            f1.update_flg = #{update_flg}
+            <if test="modelFailList != null and modelFailList.size() > 0">
+                AND f1.SATNR NOT IN (
+                <foreach collection="modelFailList" item="model" separator=",">
+                    #{model}
+                </foreach>
+                )
+            </if>
+            <if test="productFailList != null and productFailList.size() > 0">
+                AND f1.CONCAT(SATNR, MATNR) NOT IN (
+                <foreach collection="productFailList" item="code" separator=",">
+                    #{code}
+                </foreach>
+                )
+            </if>
+        </where>
+    </insert>
+
+    <insert id="cms_zz_worktable_bcbg_styles_full_insertFullWithoutFail">
+        INSERT INTO voyageone_cms.cms_zz_worktable_bcbg_styles_full (styleID, productDesc, productImgURLs)
+        SELECT DISTINCT styleID, productDesc, productImgURLs
+        FROM voyageone_cms.cms_zz_worktable_bcbg_styles JOIN voyageone_cms.cms_zz_worktable_bcbg_superfeed
+        ON concat(SATNR, '-', COLOR) = styleID
+        WHERE update_flg = #{update_flg}
+        <if test="modelFailList != null and modelFailList.size() > 0">
+            AND SATNR NOT IN (
+            <foreach collection="modelFailList" item="model" separator=",">
+                #{model}
+            </foreach>
+            )
+        </if>
+        <if test="productFailList != null and productFailList.size() > 0">
+            AND CONCAT(SATNR, MATNR) NOT IN (
+            <foreach collection="productFailList" item="code" separator=",">
+                #{code}
+            </foreach>
+            )
+        </if>
+    </insert>
+
+    <delete id="cms_zz_worktable_bcbg_superfeed_full_deleteFullByCode">
+        DELETE a
+        FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed_full a
+        JOIN voyageone_cms.cms_zz_worktable_bcbg_superfeed b on a.MATNR = b.MATNR
+        WHERE b.update_flg = #{update_flg}
+        <if test="updatedCodes != null and updatedCodes.size() > 0">
+            AND CONCAT(a.SATNR, '-', a.COLOR) IN (
+            <foreach collection="updatedCodes" item="code" separator=",">#{code}</foreach>
+            )
+        </if>
+    </delete>
+
+    <insert id="cms_zz_worktable_bcbg_superfeed_full_insertFullByCode">
+        INSERT INTO voyageone_cms.cms_zz_worktable_bcbg_superfeed_full
+        (MATNR, EAN11, BRAND_ID, MATKL, ZZCODE1, ZZCODE2, ZZCODE3, MEINS, BSTME, COLOR, COLOR_ATWTB, SIZE1, SIZE1_ATWTB,
+        SIZE1_ATINN, ATBEZ, SAISO, SAISJ, SAITY, SATNR, MAKTX, WLADG, WHERL, MEAN_EAN11, A304_DATAB, A304_DATBI,
+        A304_KBETR, A304_KONWA, A073_DATAB, A073_DATBI, A073_KBETR, A073_KONWA)
+        SELECT
+        f1.MATNR, f1.EAN11, f1.BRAND_ID, f1.MATKL, f1.ZZCODE1, f1.ZZCODE2, f1.ZZCODE3,
+        f1.MEINS, f1.BSTME, f1.COLOR, f1.COLOR_ATWTB, f1.SIZE1, f1.SIZE1_ATWTB, f1.SIZE1_ATINN,
+        f1.ATBEZ, f1.SAISO, f1.SAISJ, f1.SAITY, f1.SATNR, f1.MAKTX, f1.WLADG, f1.WHERL,
+        f1.MEAN_EAN11, f1.A304_DATAB, f1.A304_DATBI, f1.A304_KBETR, f1.A304_KONWA, f1.A073_DATAB, f1.A073_DATBI,
+        f1.A073_KBETR, f1.A073_KONWA
+        FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed f1
+        WHERE update_flg = #{update_flg}
+        <if test="updatedCodes != null and updatedCodes.size() > 0">
+            AND CONCAT(SATNR, '-', COLOR) IN (
+            <foreach collection="updatedCodes" item="code" separator=",">#{code}</foreach>
+            )
+        </if>
+    </insert>
+
+    <delete id="cms_zz_worktable_bcbg_styles_full_deleteStyleFullByCode">
+        DELETE a
+        FROM voyageone_cms.cms_zz_worktable_bcbg_styles_full a
+        JOIN voyageone_cms.cms_zz_worktable_bcbg_superfeed b on a.styleID = CONCAT(b.SATNR, '-', b.COLOR)
+        WHERE b.update_flg = #{update_flg}
+        <if test="updatedCodes != null and updatedCodes.size() > 0">
+            AND a.styleID IN (
+            <foreach collection="updatedCodes" item="code" separator=",">#{code}</foreach>
+            )
+        </if>
+    </delete>
+
+    <insert id="cms_zz_worktable_bcbg_styles_full_insertStyleFullByCode">
+        INSERT INTO voyageone_cms.cms_zz_worktable_bcbg_styles_full
+        (styleID, productDesc, productImgURLs)
+        SELECT
+         DISTINCT styleID, productDesc, productImgURLs
+        FROM voyageone_cms.cms_zz_worktable_bcbg_styles
+        JOIN voyageone_cms.cms_zz_worktable_bcbg_superfeed b on styleID = CONCAT(b.SATNR, '-', b.COLOR)
+        WHERE b.update_flg = #{update_flg}
+        <if test="updatedCodes != null and updatedCodes.size() > 0">
+            AND styleID IN (
+            <foreach collection="updatedCodes" item="code" separator=",">#{code}</foreach>
+            )
+        </if>
+    </insert>
+</mapper>

@@ -313,7 +313,7 @@
                 1 != 1
             </otherwise>
         </choose>
-        <if test="scanStatus != null and scanStatus != ''">
+        <if test="scanStatus != null and scanStatus != '' and scanType == 1">
             AND status = #{scanStatus}
         </if>
         <if test="scanStore != null and scanStore != 0 and scanType == 1">
@@ -422,7 +422,7 @@
           wms_bt_item_details t
         where  t.order_channel_id = #{order_channel_id}
         <if test="itemCode != null and itemCode != ''">
-            and t.itemcode = #{itemCode}
+            and t.itemcode like concat(#{itemCode}, '%')
         </if>
         <if test="sku != null and sku != ''">
             and t.sku like concat(#{sku}, '%')
@@ -457,7 +457,7 @@
                         from wms_bt_item_details t
                     where  t.order_channel_id = #{order_channel_id}
                         <if test="itemCode != null and itemCode != ''">
-                            and t.itemcode = #{itemCode}
+                            and t.itemcode like concat(#{itemCode}, '%')
                         </if>
                         <if test="sku != null and sku != ''">
                             and t.sku like concat(#{sku}, '%')

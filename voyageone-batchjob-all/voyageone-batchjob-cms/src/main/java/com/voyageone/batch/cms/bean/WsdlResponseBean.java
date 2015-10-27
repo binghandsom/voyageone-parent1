@@ -1,22 +1,12 @@
 package com.voyageone.batch.cms.bean;
 
-import com.voyageone.base.exception.SystemException;
-import com.voyageone.common.util.JsonUtil;
-import com.voyageone.common.util.StringUtils;
-
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import javax.servlet.http.HttpServletResponse;
-
 /**
  * 用于返回 webservice请求的结果数据
  * Created by zero on 7/28/2015.
  *
  * @author zero
- *
  */
-public class WsdlResponseBean {
+public class WsdlResponseBean<T> {
 
     /**
      * 结果 OK/NG
@@ -41,7 +31,7 @@ public class WsdlResponseBean {
     /**
      * 数据体信息
      */
-    private Object resultInfo;
+    private T resultInfo;
 
     /**
      * @return the result
@@ -102,100 +92,14 @@ public class WsdlResponseBean {
     /**
      * @return the resultInfo
      */
-    public Object getResultInfo() {
+    public T getResultInfo() {
         return resultInfo;
     }
 
     /**
      * @param resultInfo the resultInfo to set
      */
-    public void setResultInfo(Object resultInfo) {
+    public void setResultInfo(T resultInfo) {
         this.resultInfo = resultInfo;
     }
-//
-//    @Override
-//    public String toString() {
-//        return JsonUtil.getJsonString(this);
-//    }
-//
-//    /**
-//     * 将内容写到Response的输出流中, 默认 UTF-8
-//     *
-//     * @param request
-//     * @param response
-//     */
-//    public void writeTo(HttpServletResponse response) throws SystemException {
-//        writeTo(response, "UTF-8");
-//    }
-//
-//    /**
-//     * 将内容写到Response的输出流中
-//     */
-//    public void writeTo(HttpServletResponse response, String encoding) throws SystemException {
-//        if (!StringUtils.isEmpty(encoding)) {
-//            response.setCharacterEncoding(encoding);
-//        }
-//
-//        PrintWriter out = null;
-//        try {
-//            out = response.getWriter();
-//            out.print(toString());
-//        } catch (IOException e) {
-//            throw new SystemException(this.getClass() + "'s writeTo() has IOException.", e);
-//        } finally {
-//            if (out != null) {
-//                out.close();
-//            }
-//        }
-//    }
-//
-//    /**
-//     * 帮助方法，用于设置reqResult的通用结果
-//     * @param result
-//     * 		返回的具体结果
-//     * @param msgCode
-//     * 		返回的信息代码
-//     * @param msgType
-//     * 		附带的信息类型
-//     */
-//    @SuppressWarnings("unchecked")
-//    public <T extends WsdlResponseBean> T setResult(String result, String msgCode, int msgType) {
-//        // 结果
-//        setResult(result);
-//        // 消息代码
-//        setMessageCode(msgCode);
-//        // 附带信息
-//        String msg = MessageHelp.getMessage(msgType, msgCode);
-//        if (!StringUtils.isEmpty(msg)) {
-//            setMessage(msg);
-//        }
-//        // 附带的信息类型
-//        setMessageType(msgType);
-//
-//        return (T) this;
-//    }
-//
-//    /**
-//     * 帮助方法，用于设置reqResult的通用结果
-//     * @param result
-//     * 		返回的具体结果
-//     * @param msgType
-//     * 		附带的信息类型
-//     * @param msg
-//     * 		返回的信息
-//     */
-//    @SuppressWarnings("unchecked")
-//    public <T extends WsdlResponseBean> T setResult(String result, int msgType, String msg) {
-//        // 结果
-//        setResult(result);
-//        // 附带信息
-//        if (!StringUtils.isEmpty(msg)) {
-//            setMessage(msg);
-//        }
-//        // 附带的信息类型
-//        setMessageType(msgType);
-//
-//        return (T) this;
-//    }
-
 }

@@ -204,14 +204,32 @@ public class WmsPickupServiceImpl implements WmsPickupService {
         List<String> orderChannelList = user.getChannelList();
 
         // 取得符合条件的记录
-        List<FormPickupBean> scanInfoList = reservationDao.getScanInfo(scanMode, scanType, scanNo, scanStatus, scanStore, channelStoreList, orderChannelList);
+        List<FormPickupBean> scanInfoListALL = reservationDao.getScanInfo(scanMode, scanType, scanNo, scanStatus, scanStore, channelStoreList, orderChannelList);
 
         String StatusName = Type.getTypeName(MastType.reservationStatus.getId(),scanStatus);
 
+        List<FormPickupBean> scanInfoList =new ArrayList<>();
+        int intCancelled = 0;
+
+        for (FormPickupBean formPickupBean : scanInfoListALL) {
+            // 取得满足状态条件的记录
+            if (formPickupBean.getStatus().equals(scanStatus)) {
+                scanInfoList.add(formPickupBean);
+            } else if (formPickupBean.getStatus().equals(WmsCodeConstants.Reservation_Status.Cancelled)) {
+                intCancelled ++;
+            }
+        }
+
         // 0件的场合，错误信息表示
         if (scanInfoList.size() == 0) {
-            logger.info("没有取得符合条件的记录" + "（scanTypeName：" + scanTypeName  + "，ScanNo：" + scanNo+ "）");
-            throw new BusinessException(WmsMsgConstants.PickUpMsg.NOT_FOUND_SCANNO, scanTypeName, scanNo, StatusName);
+            // 存在取消记录时，请仓库进行入库操作
+            if (intCancelled > 0) {
+                logger.info("该记录已被取消" + "（scanTypeName：" + scanTypeName  + "，ScanNo：" + scanNo+ "）");
+                throw new BusinessException(WmsMsgConstants.PickUpMsg.CANCELLED);
+            } else {
+                logger.info("没有取得符合条件的记录" + "（scanTypeName：" + scanTypeName  + "，ScanNo：" + scanNo+ "）");
+                throw new BusinessException(WmsMsgConstants.PickUpMsg.NOT_FOUND_SCANNO, scanTypeName, scanNo, StatusName);
+            }
         }
 
         // 需要判断港口的场合，取得相关港口（BHFO等渠道是由品牌方仓库发出后再捡货的）
@@ -663,7 +681,7 @@ public class WmsPickupServiceImpl implements WmsPickupService {
         pickupLabelBean.setExpected_ship_date("");
 
         // 分库
-        pickupLabelBean.setStore(scanInfoList.get(0).getStore_name());
+        pickupLabelBean.setStore(scanInfoList.get(0).getStore());
 
         // 收件名
         pickupLabelBean.setShip_name(StringUtils.null2Space2(scanInfoList.get(0).getShip_name()));

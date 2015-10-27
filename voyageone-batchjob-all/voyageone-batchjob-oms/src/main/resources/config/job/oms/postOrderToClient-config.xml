@@ -31,6 +31,9 @@
 		<property name="targetMethod">
 			<value>postOrderJob</value>
 		</property>
+		<property name="concurrent">
+			<value>false</value>
+		</property>
 	</bean>	
 	<bean id="PostOrderBHFOTaskContri" 
 		name="PostOrderBHFOTaskContri"
@@ -68,6 +71,9 @@
 		<property name="targetMethod">
 			<value>postOrderJob</value>
 		</property>
+		<property name="concurrent">
+			<value>false</value>
+		</property>
 	</bean>	
 	<bean id="PostOrderJCTaskContri" 
 		name="PostOrderJCTaskContri"
@@ -104,6 +110,9 @@
 		</property>
 		<property name="targetMethod">
 			<value>postOrderJob</value>
+		</property>
+		<property name="concurrent">
+			<value>false</value>
 		</property>
 	</bean>	
 	<bean id="PostOrderJEWELRYTaskContri" 

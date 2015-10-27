@@ -43,6 +43,49 @@
         GROUP BY details.sku
     </select>
 
+
+    <!-- 汇总价格取得（不包含运费）-->
+    <select id="getPriceDataNotShipping" resultType="com.voyageone.batch.core.modelbean.SetPriceBean">
+        select
+        orders.source_order_id,
+        orders.order_date_time,
+        orders.cart_id,
+        details.sku,
+        SUM(details.price_per_unit + ifnull((select SUM(price_per_unit)
+        from oms_bt_order_details discount
+        where details.order_number = discount.order_number
+        AND (discount.STATUS not in ( 'Canceled','Returned') or discount.STATUS is null)
+        and details.item_number = discount.sub_item_number),0)) as price,
+        ifnull((select SUM(price_per_unit)
+        from oms_bt_order_details shipdetails
+        where shipdetails.order_number	= #{order_number}
+        and shipdetails.adjustment = 1
+        AND (shipdetails.STATUS not in ( 'Canceled','Returned') or shipdetails.STATUS is null)
+        and shipdetails.sub_item_number = 0 AND shipdetails.sku not in ('Shipping')),0) as shipping_price
+        from
+        oms_bt_orders orders,
+        oms_bt_order_details details
+        where
+        orders.order_channel_id = #{order_channel_id}
+        and orders.order_number = details.order_number
+        and details.synship_flg = '1'
+        and details.res_allot_flg = '1'
+        and details.adjustment = 0
+        and details.res_id > 0
+        and details.order_number = #{order_number}
+        AND (details.STATUS not in ( 'Canceled','Returned') or details.STATUS is null)
+        AND NOT EXISTS (SELECT
+        1
+        FROM
+        voyageone_ims.ims_bt_product_except except
+        WHERE
+        except.order_channel_id = #{order_channel_id}
+        AND except.cart_id = #{cart_id}
+        AND except.except_sku = details.sku)
+        GROUP BY details.sku
+    </select>
+
+
     <!-- 退货汇总价格取得-->
     <select id="getReturnedPriceData" resultType="com.voyageone.batch.core.modelbean.SetPriceBean">
         select
@@ -73,6 +116,66 @@
         and details.res_id > 0
         and details.order_number = #{order_number}
         AND details.STATUS in ( 'Canceled','Returned')
+        AND NOT EXISTS (SELECT
+        1
+        FROM
+        voyageone_ims.ims_bt_product_except except
+        WHERE
+        except.order_channel_id = #{order_channel_id}
+        AND except.cart_id = #{cart_id}
+        AND except.except_sku = details.sku)
+        GROUP BY details.sku
+    </select>
+
+
+    <!-- 汇总价格取得,运费单独算-->
+    <select id="getPriceShippingData" resultType="com.voyageone.batch.core.modelbean.SetPriceBean">
+        select
+        orders.source_order_id,
+        orders.order_date_time,
+        orders.cart_id,
+        details.sku,
+        SUM(details.price_per_unit + ifnull((select SUM(price_per_unit)
+        from oms_bt_order_details discount
+        where details.order_number = discount.order_number
+        AND (discount.STATUS not in ( 'Canceled','Returned') or discount.STATUS is null)
+        and details.item_number = discount.sub_item_number),0)) as price,
+        ifnull((select SUM(price_per_unit)
+        from oms_bt_order_details shipdetails
+        where shipdetails.order_number	= #{order_number}
+        and shipdetails.adjustment = 1
+        AND (shipdetails.STATUS not in ( 'Canceled','Returned') or shipdetails.STATUS is null)
+        and shipdetails.sub_item_number = 0 AND shipdetails.sku not in ('Shipping')),0) AS discount_price,
+        ifnull(
+            (
+                SELECT
+                    SUM(price_per_unit)
+                FROM
+                    oms_bt_order_details shipdetails
+                WHERE
+                    shipdetails.order_number = #{order_number}
+                AND shipdetails.adjustment = 1
+                AND (
+                    shipdetails. STATUS NOT IN ('Canceled', 'Returned')
+                    OR shipdetails. STATUS IS NULL
+                )
+                AND shipdetails.sub_item_number = 0
+          AND shipdetails.sku = 'Shipping'
+            ),
+            0
+        ) AS shipping_price
+        from
+        oms_bt_orders orders,
+        oms_bt_order_details details
+        where
+        orders.order_channel_id = #{order_channel_id}
+        and orders.order_number = details.order_number
+        and details.synship_flg = '1'
+        and details.res_allot_flg = '1'
+        and details.adjustment = 0
+        and details.res_id > 0
+        and details.order_number = #{order_number}
+        AND (details.STATUS not in ( 'Canceled','Returned') or details.STATUS is null)
         AND NOT EXISTS (SELECT
         1
         FROM

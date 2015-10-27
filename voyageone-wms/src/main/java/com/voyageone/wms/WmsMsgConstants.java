@@ -95,6 +95,10 @@ public final class WmsMsgConstants {
          * 3: 可捡货清单下载失败
          */
         public static final String DOWNLOAD_FAILED = "3000026";
+        /**
+         * 4: 取消物品的提示信息
+         */
+        public static final String CANCELLED = "3000063";
 
     }
 

@@ -12,6 +12,9 @@
 			<list>
 				<!-- jewely向scene7上传产品图片 -->
 				<ref bean="jewelyImagePostScene7TaskContri" />
+
+				<!-- BCBG向scene7上传产品图片 -->
+				<ref bean="bcbgImagePostScene7TaskContri" />
 			</list>
 		</property>
 		<property name="quartzProperties">

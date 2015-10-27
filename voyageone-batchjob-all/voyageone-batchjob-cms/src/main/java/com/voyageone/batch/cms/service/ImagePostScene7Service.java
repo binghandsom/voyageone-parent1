@@ -104,6 +104,10 @@ public class ImagePostScene7Service {
 							
 							int lastSlash = imageUrl.lastIndexOf("/");
 							String fileName = imageUrl.substring(lastSlash + 1);
+							if (fileName.contains("?")) {
+								int qIndex = fileName.indexOf("?");
+								fileName = fileName.substring(0, qIndex);
+							}
 							
 							boolean result = ftpClient.storeFile(fileName, inputStream);
 

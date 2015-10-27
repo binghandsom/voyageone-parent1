@@ -734,6 +734,15 @@ select
     limit 1
   </select>
 
+  <select id="cms_superfeed_selectAllfeedImage" parameterType="HashMap"
+          resultType="String">
+    select
+    ${image} as image
+    from
+    ${tableName}
+    ${keyword}
+  </select>
+
   <!-- Item信息 -->
   <select id="cms_superfeed_selectSuperfeedItem" parameterType="HashMap"
           resultType="com.voyageone.batch.cms.bean.ItemBean">
