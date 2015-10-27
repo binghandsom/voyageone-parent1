@@ -44,5 +44,6 @@
 </div>
 <ul role="menu" id="package-item-operation" class="dropdown-menu">
     <li><a href="javascript:" ng-click="editPackage()"><i class="fa fa-edit"></i>&nbsp;<span translate="{{vm.isColose ?'WMS_DETAIL':'WMS_EDIT'}}"></span></a></li>
+    <li ng-show="vm.isReOpen "><a href="javascript:" ng-click="reOpenPackage()"><i class="fa fa-edit"></i>&nbsp;<span translate="WMS_REOPEN"></span></a></li>
     <li ng-hide="vm.isColose"><a href="javascript:" ng-click="deletePackage()"><i class="fa fa-trash"></i>&nbsp;<span translate="WMS_DELETE"></span></a></li>
 </ul>

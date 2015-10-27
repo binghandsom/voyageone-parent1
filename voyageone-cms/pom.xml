@@ -10,7 +10,7 @@
 	</parent>
 	<artifactId>voyageone-cms</artifactId>
 	<packaging>jar</packaging>
-
+	<version>${voyageone.web.cms.version}</version>
 	<dependencies>
 		<dependency>
 			<groupId>com.voyageone</groupId>

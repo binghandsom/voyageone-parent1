@@ -1236,8 +1236,13 @@ public class OrderDao extends BaseDao {
 	 * @param dataMap
 	 * @return List OutFormReservationInfo对象类型
 	 */
-	public List<OutFormReservationInfo> getReservationInfo(String channel) {
-		List<OutFormReservationInfo> reservationInfo = (List)selectList(Constants.DAO_NAME_SPACE_OMS + "wsdl_transfer_reservationInfo", channel);
+	public List<OutFormReservationInfo> getReservationInfo(String channel,int intRowCount) {
+
+		Map<String,Object> param=new HashMap<String,Object>();
+		param.put("order_channel_id", channel);
+		param.put("intRowCount", intRowCount);
+
+		List<OutFormReservationInfo> reservationInfo = (List)selectList(Constants.DAO_NAME_SPACE_OMS + "wsdl_transfer_reservationInfo", param);
 		return reservationInfo;
 	}
 
