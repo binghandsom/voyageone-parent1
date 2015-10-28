@@ -315,6 +315,38 @@ public class ChannelConfigEnums {
          */
         special_goods_ball,
         /**
+         * 是否允许捡货状态
+         */
+        pickup_permit,
+        /**
+         * 是否允许收货状态
+         */
+        receive_permit,
+        /**
+         * 收货状态
+         */
+        receive_status,
+        /**
+         * 收货类型
+         */
+        receive_type,
+        /**
+         * 收货重打状态
+         */
+        receive_relabel_status,
+        /**
+         * 收货重打类型
+         */
+        receive_relabel_type,
+        /**
+         * 再分配标志判断
+         */
+        allot_inventory_again,
+        /**
+         * 订单拆分
+         */
+        order_split,
+        /**
          * SMS用户密码
          */
         sms_password,
