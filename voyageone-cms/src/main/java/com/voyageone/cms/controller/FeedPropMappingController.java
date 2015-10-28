@@ -97,9 +97,9 @@ public class FeedPropMappingController extends BaseController {
     }
 
     @RequestMapping(SET_IGNORE)
-    public AjaxResponseBean setIgnore(@RequestBody FeedMappingProp prop) {
+    public AjaxResponseBean setIgnore(@RequestBody FeedMappingProp[] props) {
 
-        int count = feedPropMappingService.updateIgnore(prop, getUser());
+        int count = feedPropMappingService.updateIgnore(props, getUser());
 
         return success(count);
     }

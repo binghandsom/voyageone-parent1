@@ -19,6 +19,8 @@ public class UploadJob {
     private String platform_name;
     private UploadWorkloadDispatcher.JobStateCb jobStateCb;
 
+    private boolean isRunning;
+
     //TODO 预留，将来要实时查看Job状态时使用
     private Set<WorkLoadBean> workLoadBeanDoneSet;
     //TODO 预留，将来要实时查看Job状态时使用
@@ -34,6 +36,7 @@ public class UploadJob {
         this.channel_id = channel_id;
         this.cart_id = cart_id;
         this.jobStateCb = jobStateCb;
+        isRunning = false;
 
         uploadProductHandler = new UploadProductHandler(this, categoryMappingDao, issueLog);
         uploadImageHandler = new UploadImageHandler(this, issueLog);
@@ -41,8 +44,11 @@ public class UploadJob {
 
     public void run()
     {
-        uploadProductHandler.start();
-        uploadImageHandler.startJob();
+        if (!isRunning) {
+            uploadProductHandler.start();
+            uploadImageHandler.startJob();
+            isRunning = true;
+        }
     }
 
     public void stopUploadImageHandler()
