@@ -39,30 +39,39 @@
             info.process_time,
             config.order_channel_id,
             config.cart_id,
-            config.tracking_info,
+            if (info.msg = '',config.tracking_info,info.msg) tracking_info,
             config.location,
             config.display_flg,
             config.display_status,
             config.tracking_area,
             config.tracking_spread_flg,
-            (select tracking.tracking_no
-             from tt_tracking tracking,tt_res_tracking res
-             where res.syn_ship_no = info.syn_ship_no
-               and res.tracking_no = tracking.tracking_no
-               and tracking.tracking_area = config.tracking_area
-               and tracking.use_flg = '1'
-             order by tracking.create_time,tracking.tracking_no limit 1) as tracking_no,
-            (select tracking.tracking_type
-             from tt_tracking tracking,tt_res_tracking res
-             where res.syn_ship_no = info.syn_ship_no
-               and res.tracking_no = tracking.tracking_no
-               and tracking.tracking_area = config.tracking_area
-               and tracking.use_flg = '1'
-             order by tracking.create_time,tracking.tracking_no limit 1) as tracking_type
+            if (info.tracking_no = '',
+                (select tracking.tracking_no
+                 from tt_tracking tracking,tt_res_tracking res
+                 where res.syn_ship_no = info.syn_ship_no
+                   and res.tracking_no = tracking.tracking_no
+                   and tracking.tracking_area = config.tracking_area
+                   and tracking.use_flg = '1'
+                 order by tracking.create_time,tracking.tracking_no limit 1),
+                 info.tracking_no) as tracking_no,
+            if (info.tracking_no = '',
+                (select tracking.tracking_type
+                 from tt_tracking tracking,tt_res_tracking res
+                 where res.syn_ship_no = info.syn_ship_no
+                   and res.tracking_no = tracking.tracking_no
+                   and tracking.tracking_area = config.tracking_area
+                   and tracking.use_flg = '1'
+                 order by tracking.create_time,tracking.tracking_no limit 1),
+                 (select tracking.tracking_type
+                  from tt_tracking tracking
+                  where tracking.tracking_no = info.tracking_no
+                 order by tracking.create_time,tracking.tracking_no limit 1)) as tracking_type
         from
             (select
                  info.syn_ship_no,
                  info.tracking_status,
+                 info.tracking_no,
+                 '' msg,
                  min(info.process_time) as process_time
              from
                  tt_tracking_info info
@@ -75,6 +84,8 @@
                  DISTINCT
                  items.syn_ship_no,
                  info.tracking_status,
+                 '' tracking_no,
+                 info.msg,
                  min(info.proccess_time) as process_time
              from
                  tt_shipment shipment,
