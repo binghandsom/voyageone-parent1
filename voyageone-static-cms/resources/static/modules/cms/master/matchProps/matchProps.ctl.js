@@ -211,15 +211,26 @@
       };
 
       _Class.prototype.changeIgnore = function(prop) {
-        this.matchPropsService.setIgnore(prop || this.props)
-        .then((function(_this) {
-          return function() {
-            _.forEach(_this.props, function (prop) {
-              prop.is_ignore = true;
+        if (prop) {
+          return this.matchPropsService.setIgnore(prop)
+          .then((function(_this) {
+            return function() {
+              return _this.notify.success(KEYS.SUCCESS);
+            };
+          })(this));
+        }
+
+        var _this = this;
+        this.confirm(KEYS.CHANGE).result.then(function() {
+          _this.matchPropsService
+            .setIgnore(_this.props)
+            .then(function() {
+              _.forEach(_this.props, function (prop) {
+                prop.is_ignore = true;
+              });
+              return _this.notify.success(KEYS.SUCCESS);
             });
-            return _this.notify.success(KEYS.SUCCESS);
-          };
-        })(this));
+        });
       };
 
       return _Class;
