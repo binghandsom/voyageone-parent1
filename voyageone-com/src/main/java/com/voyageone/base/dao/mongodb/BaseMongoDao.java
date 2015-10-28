@@ -23,12 +23,14 @@ import static org.springframework.data.mongodb.core.query.Criteria.where;
 @NoRepositoryBean
 public class BaseMongoDao<T, ID extends Serializable> implements MongoRepository<T, ID> {
 
+    // mongoTemplate
     protected MongoOperations mongoOperations;
+    public MongoOperations getMongoOperations() {
+        return mongoOperations;
+    }
+    // table Information
     protected MongoEntityInformation<T, ID> entityInformation;
 
-    public BaseMongoDao() {
-
-    }
     /**
      * Creates a new {@link SimpleMongoRepository} for the given {@link MongoEntityInformation} and {@link MongoTemplate}.
      *

@@ -37,6 +37,9 @@
         <property name="writeConcern" value="SAFE" />
     </bean>
 
+    <bean id="basePartitionMongoTemplate" class="com.voyageone.base.dao.mongodb.BasePartitionMongoTemplate">
+    </bean>
+
     <!-- mongodb bean的仓库目录，会自动扫描扩展了MongoRepository接口的接口进行注入 -->
     <mongo:repositories base-package="com.voyageone.base.dao.mongodb.test.dao" factory-class="com.voyageone.base.dao.mongodb.support.BaseMongoRepositoryFactoryBean" />
 

@@ -2,6 +2,7 @@ package com.voyageone.base.dao.mongodb.test.model.product;
 
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
+import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.util.Assert;
 
@@ -12,14 +13,23 @@ import java.util.Map;
 
 
 @Document
-public class Product extends BaseMongoModel {
+public class Product extends ChannelPartitionModel {
 
-    private String channel_id, cat_id, product_id;
+    private int cat_id;
+    public int getCat_id() {
+        return cat_id;
+    }
+
+    private int product_id;
+    public int getProduct_id() {
+        return product_id;
+    }
+
     private List<Map<String, Object>> field = new ArrayList<>();
     //private Map<String, String> field = new HashMap<String, String>();
 
-    public Product(String channel_id, String cat_id, String product_id) {
-        this.channel_id = channel_id;
+    public Product(String channel_id, int cat_id, int product_id) {
+        super(channel_id);
         this.cat_id = cat_id;
         this.product_id = product_id;
     }
@@ -63,4 +73,9 @@ public class Product extends BaseMongoModel {
         }
         return result;
     }
+
+    public String getCollectionName() {
+        return "product" + getPartitionName();
+    }
+
 }
