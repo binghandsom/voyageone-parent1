@@ -91,6 +91,8 @@ define (function (require) {
               if($scope.search.codesString){
                   var codes = $scope.search.codesString.split("\n");
                   $scope.search.codes = codes;
+              }else{
+                  $scope.search.codes = null;
               }
               return searchService.doAdvanceSearch(data,$scope.search)
                   .then (function (data) {
