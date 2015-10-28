@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.voyageone.common.util.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -153,7 +154,10 @@ public class SearchController extends BaseController {
 		try {
 			// 输入参数出力
 			logger.info(JsonUtil.toJson(requestMap));
-			String channelId = requestMap.get("channelId").toString();
+//			String channelId = requestMap.get("channelId").toString();
+//			if(StringUtils.isEmpty(channelId)){
+			String	channelId = getUser().getSelChannel();
+//			}
 			responseBean.setResultInfo(searchService.doQuickSearch(channelId));
 			isSuccess = true;
 
