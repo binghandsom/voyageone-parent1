@@ -173,14 +173,12 @@ public class BcbgAnalysisService extends BaseTaskService {
         }
 
         // 排序文件
-        List<File> feedFileList =  Arrays.asList(feedFiles).stream().sorted((f1, f2) -> f2.getName().compareTo(f1.getName())).collect(toList());
+        List<File> feedFileList =  Arrays.asList(feedFiles).stream().sorted((f1, f2) -> f1.getName().compareTo(f2.getName())).collect(toList());
 
         // 取第一个作为目标文件,并从其中移除
-        // 其他直接进行备份处理
-        File dataFile = feedFileList.remove(0);
-        feedFileList.forEach(backup::from);
+        // 其他的等待后续
 
-        return dataFile;
+        return feedFileList.remove(0);
     }
 
     private void clearLastData() {
