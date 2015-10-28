@@ -158,7 +158,7 @@ public class MasterCatComPropBatchUpdateServiceImpl implements MasterCatComPropB
 
 		//更新产品状态.
 		if(modelIdList.size()>0)
-			masterCatComPropBatchUpdateDao.updateProductPublishStatus(modelIdList,userSession.getSelChannel());
+			masterCatComPropBatchUpdateDao.updateProductPublishStatus(userSession.getUserName(),modelIdList,userSession.getSelChannel());
 
 		return isSuccess;
 	}

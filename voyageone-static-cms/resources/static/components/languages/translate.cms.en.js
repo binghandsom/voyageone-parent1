@@ -410,7 +410,7 @@ define (function (require) {
                     CMS_TXT_LABEL_CMS: 'CMS 属性',
                     CMS_TXT_LABEL_DEFAULT: '默认值',
 
-                    CMS_MSG_CHANGE_IGNORE: 'Confirm modify "Required" property?',
+                    CMS_MSG_CHANGE_IGNORE: 'Confirm modify "Ignored" property?',
                     CMS_MSG_CHANGE_SUCCESS: 'Modified successfully! (｡・`ω´･)',
                     CMS_MSG_NO_MATCH_TYPE: 'Please select any of the available type！<br />(/= _ =)/~┴┴',
                     CMS_MSG_NO_MATCH_VALUE: 'Please set/select a value for a property！<br />(/"≡ _ ≡)/~┴┴',
@@ -434,7 +434,7 @@ define (function (require) {
 
                     CMS_TXT_CN_PUBLISH_STATUS: 'Cn Publish Status',
                     CMS_TXT_CN_NUMIID: 'Cn Numiid',
-                    CMS_TXT_CN_COMMENT: 'Cn Comment',                    
+                    CMS_TXT_CN_COMMENT: 'Cn Comment',
                     CMS_TXT_CN_OFFICIAL_PUBLISH_STATUS: 'Cn Official Publish Status',
                     CMS_TXT_CN_OFFICIAL_NUMIID: 'Cn Official Numiid',
                     CMS_TXT_CN_OFFICIAL_COMMENT: 'Cn Official Comment',

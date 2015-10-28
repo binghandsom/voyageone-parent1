@@ -24,17 +24,29 @@ public class FeedPropMappingDao extends BaseDao {
         return Constants.getDaoNameSpace(SubSystem.CMS);
     }
 
-    public String selectCategoryPath(int categoryId) {
-        return selectOne("ims_mt_categories_selectCategoryPath", parameters("categoryId", categoryId));
-    }
+    /**
+     * 获取需要进行处理的属性类型
+     */
+    private List<Integer> getMasterPropTypes() {
 
-    public List<FeedMappingProp> selectProps(String prop_name, Integer categoryId, String channel_id, int start, int length, String is_ignored, String is_required) {
+        // 只有下面这些类型,才需要被显示到画面上
+
         List<Integer> types = new ArrayList<>();
 
         types.add(MasterPropTypeEnum.INPUT.getValue());
         types.add(MasterPropTypeEnum.SINGLECHECK.getValue());
         types.add(MasterPropTypeEnum.MULTICHECK.getValue());
-        types.add(MasterPropTypeEnum.lABEL.getValue());
+        types.add(MasterPropTypeEnum.LABEL.getValue());
+        return types;
+    }
+
+    public String selectCategoryPath(int categoryId) {
+        return selectOne("ims_mt_categories_selectCategoryPath", parameters("categoryId", categoryId));
+    }
+
+    public List<FeedMappingProp> selectProps(String prop_name, Integer categoryId, String channel_id, int start, int length, String is_ignored, String is_required) {
+
+        List<Integer> types = getMasterPropTypes();
 
         return selectList("ims_mt_prop_selectProps", parameters(
                 "prop_name", prop_name,
@@ -48,12 +60,8 @@ public class FeedPropMappingDao extends BaseDao {
     }
 
     public int selectPropsCount(String prop_name, Integer categoryId, String channel_id, String is_ignored, String is_required) {
-        List<Integer> types = new ArrayList<>();
 
-        types.add(MasterPropTypeEnum.INPUT.getValue());
-        types.add(MasterPropTypeEnum.SINGLECHECK.getValue());
-        types.add(MasterPropTypeEnum.MULTICHECK.getValue());
-        types.add(MasterPropTypeEnum.lABEL.getValue());
+        List<Integer> types = getMasterPropTypes();
 
         return selectOne("ims_mt_prop_selectPropsCount", parameters("prop_name", prop_name, "categoryId", categoryId, "channel_id",
                 channel_id, "types", types, "is_ignored", is_ignored, "is_required", is_required));
@@ -87,16 +95,28 @@ public class FeedPropMappingDao extends BaseDao {
         return selectList("ims_mt_prop_option_selectPropOptions", parameters("prop_id", prop_id));
     }
 
-    public Boolean selectIgnoreValue(FeedMappingProp prop, String channel_id) {
-        return selectOne("ims_bt_feed_prop_ignore_selectIgnoreValue", parameters("prop", prop, "channel_id", channel_id));
+    /**
+     * 获取 props (prop_id) 属性的 is_ignore.
+     * @return 返回的集合对象中,只包含 prop_id 和 is_ignore
+     */
+    public List<FeedMappingProp> selectIgnoreValue(List<FeedMappingProp> props, String channel_id) {
+        return selectList("ims_bt_feed_prop_ignore_selectIgnoreValue", parameters("props", props, "channel_id", channel_id));
     }
 
     public int updateIgnoreValue(FeedMappingProp prop, String channel_id, String userName) {
-        return update("ims_bt_feed_prop_ignore_insertIgnoreValue", parameters("prop", prop, "channel_id", channel_id, "userName", userName));
+        return update("ims_bt_feed_prop_ignore_updateIgnoreValue", parameters("prop", prop, "channel_id", channel_id, "userName", userName));
     }
 
     public int insertIgnoreValue(FeedMappingProp prop, String channel_id, String userName) {
-        return insert("ims_bt_feed_prop_ignore_updateIgnoreValue", parameters("prop", prop, "channel_id", channel_id, "userName", userName));
+        return insert("ims_bt_feed_prop_ignore_insertIgnoreValue", parameters("prop", prop, "channel_id", channel_id, "userName", userName));
+    }
+
+    public int updateIgnoreValues(List<FeedMappingProp> props, String channel_id, String userName) {
+        return update("ims_bt_feed_prop_ignore_updateIgnoreValues", parameters("props", props, "channel_id", channel_id, "userName", userName, "is_ignore", 1));
+    }
+
+    public int insertIgnoreValues(List<FeedMappingProp> props, String channel_id, String userName) {
+        return insert("ims_bt_feed_prop_ignore_insertIgnoreValues", parameters("props", props, "channel_id", channel_id, "userName", userName, "is_ignore", 1));
     }
 
     public int deleteMapping(int id) {
@@ -115,15 +135,12 @@ public class FeedPropMappingDao extends BaseDao {
 
     public CategoryPropCount selectCountsByCategory(String channel_id, int category_id) {
 
-        List<Integer> types = new ArrayList<>();
+        List<Integer> types = getMasterPropTypes();
 
-        types.add(MasterPropTypeEnum.INPUT.getValue());
-        types.add(MasterPropTypeEnum.SINGLECHECK.getValue());
-        types.add(MasterPropTypeEnum.MULTICHECK.getValue());
-        types.add(MasterPropTypeEnum.lABEL.getValue());
-
-        return selectOne("ims_bt_feed_prop_mapping_selectCountsByCategory", parameters("channel_id", channel_id,
-                "category_id", category_id, "types", types));
+        return selectOne("ims_bt_feed_prop_mapping_selectCountsByCategory", parameters(
+                "channel_id", channel_id,
+                "category_id", category_id,
+                "types", types));
     }
 
     public ImsCategoryExtend selectCategoryExtend(String channel_id, int category_id) {
