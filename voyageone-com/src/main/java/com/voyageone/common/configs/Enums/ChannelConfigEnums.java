@@ -313,9 +313,22 @@ public class ChannelConfigEnums {
         /**
          * 斯伯丁特殊物品定制球
          */
-        special_goods_ball
+        special_goods_ball,
+        /**
+         * SMS用户密码
+         */
+        sms_password,
+        /**
+         * SMS用户
+         */
+        sms_user,
+        /**
+         * 短信客服号
+         */
+        sms_add_serial
 
-    }
+
+        }
 
     /**
      * 对应 tm_order_channel 表中存在的所有渠道ID
