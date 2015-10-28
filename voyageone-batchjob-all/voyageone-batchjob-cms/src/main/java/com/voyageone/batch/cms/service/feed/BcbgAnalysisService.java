@@ -117,7 +117,7 @@ public class BcbgAnalysisService extends BaseTaskService {
         updateService.new Context(BCBG).postUpdatedProduct();
 
         // BCBG 的特殊情况:暂不使用
-        // attributeService.new Context(BCBG).postAttributes();
+        attributeService.new Context(BCBG).postAttributes();
 
         // 备份文件
         backup.fromData(feedFile, styleFile);
@@ -157,6 +157,9 @@ public class BcbgAnalysisService extends BaseTaskService {
         return new File[] { feedFile, styleFile };
     }
 
+    /**
+     * 去 dir 下,按照 filter 过滤文件,返回第一个文件,并备份其他文件
+     */
     private File getDataFile(String dir, String filter, Backup backup) {
 
         // 打开目录
@@ -164,7 +167,7 @@ public class BcbgAnalysisService extends BaseTaskService {
         // 过滤文件
         File[] feedFiles = feedFileDir.listFiles(i -> i.getName().contains(filter));
 
-        if (feedFiles.length < 1) {
+        if (feedFiles == null || feedFiles.length < 1) {
             $info("'%s' 数据文件不存在,退出任务", filter);
             return null;
         }
