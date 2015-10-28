@@ -30,6 +30,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.BCBG;
+import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.SEARS;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
@@ -46,6 +47,15 @@ public class SearsAnalysisService extends BaseTaskService {
 
     @Autowired
     private SearsService searsService;
+
+    @Autowired
+    private SearsWsdlInsert insertService;
+
+    @Autowired
+    private Transformer transformer;
+
+    @Autowired
+    private SearsWsdlInsert updateService;
 
     private static Integer PageSize = 200;
 
@@ -81,6 +91,12 @@ public class SearsAnalysisService extends BaseTaskService {
 
         // 取得feed数据
         getSearsFeedData();
+
+        // 开始数据分析处理阶段
+        transformer.new Context(SEARS, this).transform();
+        $info("数据处理阶段结束");
+
+        insertService.new Context(SEARS).postNewProduct();
     }
 
     private void getSearsFeedData() throws Exception {
