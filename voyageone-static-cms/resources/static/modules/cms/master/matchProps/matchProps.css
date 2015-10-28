@@ -31,7 +31,7 @@ table.dataTable thead > tr > th {
     border-color: #5a4daa;
 }
 
-.vo_page_header .ui-select-match {
+.ui-select-fix .ui-select-match {
     width: 185px !important;
 }
 
@@ -45,4 +45,12 @@ table.dataTable thead > tr > th {
 
 .table-hover > tbody > tr.prop-ignore:hover > td {
     background-color: #D8DDDE;
+}
+
+.btn-warning,
+.btn-warning:hover,
+.btn-warning:active,
+.btn-warning:focus {
+  border-color: #e67e22;
+  background-color: #e67e22;
 }
