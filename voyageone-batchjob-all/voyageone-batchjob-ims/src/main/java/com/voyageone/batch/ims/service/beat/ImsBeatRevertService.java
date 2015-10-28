@@ -56,6 +56,8 @@ public class ImsBeatRevertService extends ImsBeatBaseService {
         }
 
         // 获取主图地址
+        // 逻辑同 update(上传) 一样, 内部会通过 flg 判断如何生成图片的标识名称
+        // 实际主图的下载上传不同于 update. 已处理过的商品主图会存储在相应的数据库中, 可重用.
         String image_url = getImage(shopBean, beatPicBean, cate_tid, taskControlList);
 
         if (StringUtils.isEmpty(image_url)) {

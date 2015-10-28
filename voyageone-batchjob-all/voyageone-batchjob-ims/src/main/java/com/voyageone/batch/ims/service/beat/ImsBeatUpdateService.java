@@ -76,8 +76,11 @@ public class ImsBeatUpdateService extends ImsBeatBaseService {
 
     private String getImage(ShopBean shopBean, String category_tid, BeatPicBean beatPicBean) {
 
+        // 因为下一步会尝试 clear 上一次的图片,依据就是图片文件的 title. 所以 title 的生成必须是固定的.
+        // 这一步生成固定规则的文件 title
         String title = getTitle(beatPicBean);
 
+        // 到 category_tid 里, 用生成的固定 title 尝试删除.
         clearLastImage(shopBean, title, category_tid);
 
         String url = getImageUrl(beatPicBean);
@@ -154,6 +157,8 @@ public class ImsBeatUpdateService extends ImsBeatBaseService {
             return null;
         }
 
+        // 获取到"商品图片"的标识名称
+        // 该名称由 CMS 提供, 且固定在 CMS 和 Adobe 的服务器上.
         String imageName = getImageName(beatPicBean);
 
         if (StringUtils.isEmpty(imageName)) return null;

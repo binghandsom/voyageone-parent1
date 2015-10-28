@@ -10,7 +10,6 @@ import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.ims.bean.BeatPicBean;
 import com.voyageone.batch.ims.dao.ImsPicCategoryDao;
-import com.voyageone.batch.ims.dao.ImsPicDao;
 import com.voyageone.batch.ims.enums.BeatFlg;
 import com.voyageone.batch.ims.enums.ImsPicCategoryType;
 import com.voyageone.batch.ims.modelbean.ImsPicCategory;
@@ -150,6 +149,7 @@ public abstract class ImsBeatBaseService extends BaseTaskService {
     }
 
     protected String getTitle(BeatPicBean beatPicBean) {
+        // 根据具体情况来生成 title
         // 拼接图片标题的规则，暂时这里固定写死，后续的功能会将此处处理移动到别处。
         // 对于规则，为了防止可配置方式导致后续查找图片的失败。这里规则内定于程序内。不轻易修改
         // !!! 请注意此处规则不要轻易修改，见上一行
@@ -212,9 +212,13 @@ public abstract class ImsBeatBaseService extends BaseTaskService {
         }
     }
 
+    /**
+     * 获取图片的"标识"名称. 来源是 CMS. 该字段内容实在 web 创建任务时就冗余存储到 beat_item 表的.
+     */
     protected String getImageName(BeatPicBean beatPicBean) {
         String imageName = beatPicBean.getImage_name();
 
+        // 如果拿不到直接的 name, 那么就尝试拼接
         if (StringUtils.isEmpty(imageName)) {
 
             String url_key = beatPicBean.getUrl_key();
