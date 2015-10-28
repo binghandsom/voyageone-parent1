@@ -111,12 +111,11 @@ public final class Constants {
     //SMS情报
     public final static class smsInfo {
         public static final String SMS_INFO = "SMS_INFO";
-        public static final String PASSWORD = "PASSWORD";
-        public static final String USER = "USER";
         public static final String WORDS = "WORDS";
         public static final String COST = "COST";
-        public static final String ADD_SERIAL = "ADD_SERIAL";
         public static final String URL = "URL";
+        public static final String NEED_ADD_SERIAL = "1";
+        public static final String NO_NEED_ADD_SERIAL = "0";
     }
 
     // 手机号码不符合规定

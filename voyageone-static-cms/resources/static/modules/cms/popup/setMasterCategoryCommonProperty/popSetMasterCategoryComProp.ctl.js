@@ -5,8 +5,8 @@
 define(function (require) {
     var cmsApp = require('modules/cms/cms.module');
     require ('modules/cms/popup/setMasterCategoryCommonProperty/popSetMasterCategoryComProp.service');
-    cmsApp.controller('popSetMasterCategoryComPropController', ['$scope', 'popSetMasterCategoryComPropService', 'userService', '$modalInstance', 'productDataArray', 'notify',
-        function ($scope, popSetMasterCategoryComPropService, userService, $modalInstance, productDataArray, notify) {
+    cmsApp.controller('popSetMasterCategoryComPropController', ['$scope', 'popSetMasterCategoryComPropService', 'userService', '$modalInstance', 'productDataArray', 'notify','$filter',
+        function ($scope, popSetMasterCategoryComPropService, userService, $modalInstance, productDataArray, notify,$filter) {
 
             var commonUtil = require('components/util/commonUtil');
 
@@ -47,7 +47,9 @@ define(function (require) {
 
                 if(productStatus.itemStatus==1){
                     if(productStatus.startTime){
-                        var startTime = commonUtil.doFormatDate (productStatus.startTime);
+
+                        var startTime = $filter('date')(new Date(productStatus.startTime),"yyyy-MM-dd HH:mm:ss");
+
                         propertyList.push({propName:"开始时间",propValue:startTime});
                     }
 

@@ -33,14 +33,14 @@
                     </div>
                     <!-- .form-group -->
                     <div class="form-group" ng-if="productStatus.itemStatus=='1'">
-                        <label class="col-sm-2 control-label" translate="CMS_TXT_SET_MASTER_COM_PROPERTY_START_TIME"></label>
-                        <div for="txtCNOfficialPrePublishTime" class="col-sm-10" ng-controller="datePickerController">
+                        <label  for="txtCNItemStatusStartTime" class="col-sm-2 control-label" translate="CMS_TXT_SET_MASTER_COM_PROPERTY_START_TIME"></label>
+                        <div class="col-sm-10" ng-controller="datePickerController">
                             <div class="input-group">
-                                <input type="text" name="txtCNOfficialPrePublishTime" ng-model="productStatus.startTime"
-                                       id="txtCNOfficialPrePublishTime" class="form-control" datepicker-popup="{{$root.timeFormat}}"
-                                       is-open="cnPublishTime" datepicker-options="dateOptions" close-text="Close"/>
+                                <input type="text" name="txtCNItemStatusStartTime" ng-model="productStatus.startTime"
+                                       id="txtCNItemStatusStartTime" class="form-control" datepicker-popup="{{$root.timeFormat}}"
+                                       is-open="cnStartTime" datepicker-options="dateOptions" close-text="Close"/>
                                         <span class="input-group-btn">
-                                            <button type="button" class="btn btn-default" ng-click="openDatePicker($event, 'cnPublishTime')">
+                                            <button type="button" class="btn btn-default" ng-click="openDatePicker($event, 'cnStartTime')">
                                                 <i class="glyphicon glyphicon-calendar"></i>
                                             </button>
                                         </span>

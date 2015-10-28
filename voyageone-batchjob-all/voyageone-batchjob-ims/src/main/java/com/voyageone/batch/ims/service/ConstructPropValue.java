@@ -607,6 +607,7 @@ public class ConstructPropValue {
             propValueDao.insertPropValue(propValue);
         }
         */
+
     }
 
     public static void constructDictInfo(DictWordDao dictWordDao) {

@@ -85,11 +85,11 @@ public interface FeedPropMappingService {
     /**
      * 更新主数据属性的可忽略属性
      *
-     * @param prop 主数据属性
-     * @param user 当前用户
+     * @param props 主数据属性
+     * @param user  当前用户
      * @return 影响的行数
      */
-    int updateIgnore(FeedMappingProp prop, UserSessionBean user);
+    int updateIgnore(FeedMappingProp[] props, UserSessionBean user);
 
     /**
      * 新增一个第三方品牌属性的值映射
