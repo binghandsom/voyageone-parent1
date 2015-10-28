@@ -1,5 +1,7 @@
 package com.voyageone.common.components.sears.bean.feed;
 
+import com.voyageone.common.Constants;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -50,6 +52,7 @@ public class Categorization {
 
     @Override
     public String toString(){
-        return String.format("%s;%s;%s",vertical,category,subcategory);
+//        return String.format("%s-%s-%s",vertical,category,subcategory).toLowerCase().replaceAll(" ", "").replaceAll("'","");
+        return String.format("%s-%s-%s",vertical,category,subcategory);
     }
 }
