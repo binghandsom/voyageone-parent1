@@ -292,7 +292,6 @@ public class ImsBeatService extends BaseAppService {
         return cellStyle;
     }
 
-
     /**
      * 保存详细的商品信息
      *
@@ -452,11 +451,12 @@ public class ImsBeatService extends BaseAppService {
     /**
      * 获取任务的所有项
      *
-     * @param beat   任务
-     * @param flg 用于筛选的状态
-     * @param num_iid 用于搜索的 num_iid
-     * @param offset 起始行
-     * @param limit  行数    @return 任务项集合
+     * @param beat     任务
+     * @param beat_flg 用于筛选的状态
+     * @param num_iid  用于搜索的 num_iid
+     * @param offset   起始行
+     * @param limit    行数
+     * @return 任务项集合
      */
     public DtResponse<List<ImsBeatItem>> getBeatItems(ImsBeat beat, Integer beat_flg, String num_iid, int offset, int limit) {
 
@@ -749,7 +749,6 @@ public class ImsBeatService extends BaseAppService {
         return item.hasComments();
     }
 
-
     private int insertTempItems(List<ImsBeatItem> items) {
         int insertLen = MAX_INSERT_LENGTH;
         int total = items.size();
@@ -959,7 +958,6 @@ public class ImsBeatService extends BaseAppService {
 
     /**
      * 更新一项的价格，并重启这个子任务
-     *
      *
      * @param beat_id 主任务
      * @param item_id 子任务
