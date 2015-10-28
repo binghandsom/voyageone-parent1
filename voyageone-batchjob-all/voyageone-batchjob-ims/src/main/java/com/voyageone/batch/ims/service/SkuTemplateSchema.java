@@ -31,90 +31,22 @@ public class SkuTemplateSchema {
         public final static int EXTENDSIZE_SIZE = 11;
         public final static int EXTENDSIZE_ALIASNAME = 12;
         public final static int EXTENDSIZE = 13;
-        public final static int FIELD_BIT_MAX = EXTENDSIZE;
+
+        public final static int INPUT_CUSTOM_SIZE_1 = 14;
+        public final static int INPUT_CUSTOM_SIZE_2 = 15;
+        public final static int INPUT_CUSTOM_SIZE_3 = 16;
+        public final static int INPUT_CUSTOM_SIZE_4 = 17;
+        public final static int INPUT_CUSTOM_SIZE_5 = 18;
+
+        public final static int SELECT_CUSTOM_SIZE_1 = 19;
+        public final static int SELECT_CUSTOM_SIZE_2 = 20;
+        public final static int SELECT_CUSTOM_SIZE_3 = 21;
+        public final static int SELECT_CUSTOM_SIZE_4 = 22;
+        public final static int SELECT_CUSTOM_SIZE_5 = 23;
+
+        public final static int FIELD_BIT_MAX = SELECT_CUSTOM_SIZE_5;
     }
 
-    public class SkuTemplate_2_Schema {
-        public final static int TPL_INDEX = 1;
-
-        public final static int FIELD_BIT_MIN = 0;
-        public final static int SKU_NECKLANCE_LENGTH = FIELD_BIT_MIN;
-        public final static int SKU_RING_SIZE = 1;
-        public final static int SKU_PRICE = 2;
-        public final static int SKU_QUANTITY = 3;
-        public final static int SKU_OUTERID = 4;
-        public final static int SKU_BARCODE = 5;
-        public final static int SKU = 6;
-
-
-        public final static int EXTEND_RING_SIZE = 7;
-        public final static int EXTEND_RING_SIZE_ALIASNAME = 8;
-        public final static int EXTEND_RING_SIZE_SIZE = 9;
-
-        public final static int FIELD_BIT_MAX = EXTEND_RING_SIZE_SIZE;
-    }
-
-    public class SkuTemplate_3_Schema {
-        public final static int TPL_INDEX = 2;
-
-        public final static int FIELD_BIT_MIN = 0;
-        public final static int SKU_COLOR = FIELD_BIT_MIN;
-        public final static int SKU_PRICE = 1;
-        public final static int SKU_QUANTITY = 2;
-        public final static int SKU_OUTERID = 3;
-        public final static int SKU_BARCODE = 4;
-        public final static int SKU_NECKLANCE_LENGTH = 5;
-        public final static int SKU_PEARL_DIAMTER = 6;
-        public final static int SKU = 7;
-
-        public final static int EXTENDCOLOR_ALIASNAME = 8;
-        public final static int EXTENDCOLOR_COLOR = 9;
-        public final static int EXTENDCOLOR_IMAGE = 10;
-        public final static int EXTENDCOLOR = 11;
-
-        public final static int FIELD_BIT_MAX = EXTENDCOLOR;
-    }
-
-    public class SkuTemplate_4_Schema {
-        public final static int TPL_INDEX = 3;
-
-        public final static int FIELD_BIT_MIN = 0;
-        public final static int SKU_BRACELET_LENGTH = FIELD_BIT_MIN;
-        public final static int SKU_RING_SIZE = 1;
-        public final static int SKU_PRICE = 2;
-        public final static int SKU_QUANTITY = 3;
-        public final static int SKU_OUTERID = 4;
-        public final static int SKU_BARCODE = 5;
-        public final static int SKU = 6;
-
-
-        public final static int EXTEND_RING_SIZE = 7;
-        public final static int EXTEND_RING_SIZE_ALIASNAME = 8;
-        public final static int EXTEND_RING_SIZE_SIZE = 9;
-
-        public final static int FIELD_BIT_MAX = EXTEND_RING_SIZE_SIZE;
-    }
-    //121364028 珠宝/钻石/翡翠/黄金>天然珍珠（新）>手饰
-    public class SkuTemplate_5_Schema {
-        public final static int TPL_INDEX = 4;
-
-        public final static int FIELD_BIT_MIN = 0;
-        public final static int SKU_COLOR = FIELD_BIT_MIN;
-        public final static int SKU_PRICE = 1;
-        public final static int SKU_QUANTITY = 2;
-        public final static int SKU_OUTERID = 3;
-        public final static int SKU_BARCODE = 4;
-        public final static int SKU_BRACELET_LENGTH = 5;
-        public final static int SKU_PEARL_DIAMTER = 6;
-        public final static int SKU = 7;
-
-        public final static int EXTENDCOLOR_ALIASNAME = 8;
-        public final static int EXTENDCOLOR_COLOR = 9;
-        public final static int EXTENDCOLOR_IMAGE = 10;
-        public final static int EXTENDCOLOR = 11;
-
-        public final static int FIELD_BIT_MAX = EXTENDCOLOR;
-    }
     public static int encodeSkuType(int tpl, int ... types)
     {
         int skuType = tpl << 24;

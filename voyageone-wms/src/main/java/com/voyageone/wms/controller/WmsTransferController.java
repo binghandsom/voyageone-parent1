@@ -232,6 +232,21 @@ public class WmsTransferController extends BaseController {
     }
 
     /**
+     * 重新打开一个 Package
+     */
+    @RequestMapping(TransferUrls.Package.REOPEN)
+    public void reOpenPackage(@RequestBody Map<String, Object> params, HttpServletResponse response) {
+        int package_id = (int) params.get("package_id");
+        String modified = (String) params.get("modified");
+
+        boolean is = transferService.reOpenPackage(package_id, modified);
+
+        AjaxResponseBean.newResult(true)
+                .setResultInfo(is)
+                .writeTo(getRequest(), response);
+    }
+
+    /**
      * 向 Package 中添加一个 Item
      */
     @RequestMapping(TransferUrls.Item.ADD)
