@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.ims.sql">
+       <select id="ims_promotion_select" resultType="HashMap">
+              SELECT
+                  t1.*, floor(t2.cn_price_final_rmb*100) as cnPriceFinalRmb
+              FROM
+                  (
+                      SELECT
+                          a.product_id,
+                          a.num_iid,
+                          a.channel_id,
+                          a.cart_id,
+                          a.promotion_add_status,
+                          a.publish_promotion_price_status
+                      FROM
+                          voyageone_ims.ims_bt_product a
+                      WHERE
+                          a.channel_id = #{channelId}
+                      AND a.cart_id = #{cartId}
+                      AND a.publish_status = 1
+                      AND a.publish_promotion_price_status = 0
+                  ) t1
+              LEFT JOIN voyageone_cms.cms_bt_cn_product_share t2 ON t1.product_id = t2.product_id
+              AND t1.cart_id = t2.cart_id
+       </select>
+       <update id="ims_promotion_update" parameterType="HashMap">
+              UPDATE voyageone_ims.ims_bt_product
+              SET publish_promotion_price_status = 1,
+               promotion_add_status = 1
+              WHERE
+                  cart_id = #{cartId}
+              <if test="products != null and products.size > 0">
+                  AND product_id IN
+              <foreach item="item" index="index" collection="products" open="(" separator="," close=")">
+                     #{item}
+              </foreach>
+              </if>
+       </update>
+</mapper>
