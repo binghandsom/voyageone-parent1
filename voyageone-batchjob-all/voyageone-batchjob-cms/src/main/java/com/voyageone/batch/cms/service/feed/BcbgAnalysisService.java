@@ -245,8 +245,9 @@ public class BcbgAnalysisService extends BaseTaskService {
 
         if (styleBeans == null || styleBeans.size() < 1) return;
 
-        logIssue("发现部分 BCBG Style 文件的无效数据", styleBeans.size() + "个");
-        $info("已警告<无效>数据 %s 个", styleBeans.size());
+        // logIssue("发现部分 BCBG Style 文件的无效数据", styleBeans.size() + "个");
+
+        $info("发现 BCBG Style <无效>数据 %s 个", styleBeans.size());
     }
 
     private void attributeListInsert(Channel channel){
