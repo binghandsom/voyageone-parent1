@@ -11,8 +11,6 @@ import com.voyageone.core.MessageConstants;
 import com.voyageone.core.ajax.AjaxResponseBean;
 import com.voyageone.core.ajax.dt.DtRequest;
 import com.voyageone.core.ajax.dt.DtResponse;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -30,11 +28,6 @@ import java.util.Map;
 @Controller
 @RequestMapping(value = UrlConstants.URL_CMS_EDIT_PRODUCT)
 public class ProductController extends BaseController {
-	
-	/**
-	 * 日志
-	 */
-	private static Log logger = LogFactory.getLog(ProductController.class);
 	
 	@Autowired
 	private ProductEditService productEditService;
@@ -70,7 +63,7 @@ public class ProductController extends BaseController {
 			// 结果返回输出流
 			responseBean.writeTo(request, response);
 			// 输出结果出力
-			logger.info(responseBean.toString());
+			logger.debug(responseBean.toString());
 		}
 	}
 	@RequestMapping(value = "/doGetCNProductInfo")
@@ -105,7 +98,7 @@ public class ProductController extends BaseController {
 			// 结果返回输出流
 			responseBean.writeTo(request, response);
 			// 输出结果出力
-			logger.info(responseBean.toString());
+			logger.debug(responseBean.toString());
 		}
 	}
 	@RequestMapping(value = "/doGetProductCNPriceSettingInfo")
@@ -140,7 +133,7 @@ public class ProductController extends BaseController {
 			// 结果返回输出流
 			responseBean.writeTo(request, response);
 			// 输出结果出力
-			logger.info(responseBean.toString());
+			logger.debug(responseBean.toString());
 		}
 	}
 	@RequestMapping(value = "/doGetUSProductPriceInfo")
@@ -175,7 +168,7 @@ public class ProductController extends BaseController {
 			// 结果返回输出流
 			responseBean.writeTo(request, response);
 			// 输出结果出力
-			logger.info(responseBean.toString());
+			logger.debug(responseBean.toString());
 		}
 	}
 //	@RequestMapping(value = "/doGetProductAmazonPriceInfo")
@@ -210,7 +203,7 @@ public class ProductController extends BaseController {
 //			// 结果返回输出流
 //			responseBean.writeTo(request, response);
 //			// 输出结果出力
-//			logger.info(responseBean.toString());
+//			logger.debug(responseBean.toString());
 //		}
 //	}
 	@RequestMapping(value = "/doGetCNProductPriceInfo")
@@ -246,7 +239,7 @@ public class ProductController extends BaseController {
 			// 结果返回输出流
 			responseBean.writeTo(request, response);
 			// 输出结果出力
-			logger.info(responseBean.toString());
+			logger.debug(responseBean.toString());
 		}
 	}
 //	@RequestMapping(value = "/doGetProductCNCartPriceInfo")
@@ -281,7 +274,7 @@ public class ProductController extends BaseController {
 //			// 结果返回输出流
 //			responseBean.writeTo(request, response);
 //			// 输出结果出力
-//			logger.info(responseBean.toString());
+//			logger.debug(responseBean.toString());
 //		}
 //	}
 	@RequestMapping(value = "/doGetProductImages")
@@ -314,7 +307,7 @@ public class ProductController extends BaseController {
 			// 结果返回输出流
 			responseBean.writeTo(request, response);
 			// 输出结果出力
-			logger.info(responseBean.toString());
+			logger.debug(responseBean.toString());
 		}
 	}
 	@RequestMapping(value = "/doGetProductInventory")
@@ -350,7 +343,7 @@ public class ProductController extends BaseController {
 			// 结果返回输出流
 			responseBean.writeTo(request, response);
 			// 输出结果出力
-			logger.info(responseBean.toString());
+			logger.debug(responseBean.toString());
 		}
 	}
 	@RequestMapping(value = "/doUpdateUSProductInfo")
@@ -380,7 +373,7 @@ public class ProductController extends BaseController {
 			// 结果返回输出流
 			responseBean.writeTo(request, response);
 			// 输出结果出力
-			logger.info(responseBean.toString());
+			logger.debug(responseBean.toString());
 		}
 	}
 	@RequestMapping(value = "/doUpdateCNProductInfo")
@@ -409,7 +402,7 @@ public class ProductController extends BaseController {
 			// 结果返回输出流
 			responseBean.writeTo(request, response);
 			// 输出结果出力
-			logger.info(responseBean.toString());
+			logger.debug(responseBean.toString());
 		}
 	}
 	@RequestMapping(value = "/doUpdateCNProductTmallInfo")
@@ -438,7 +431,7 @@ public class ProductController extends BaseController {
 			// 结果返回输出流
 			responseBean.writeTo(request, response);
 			// 输出结果出力
-			logger.info(responseBean.toString());
+			logger.debug(responseBean.toString());
 		}
 	}
 	@RequestMapping(value = "/doUpdateCNProductJingDongInfo")
@@ -468,7 +461,7 @@ public class ProductController extends BaseController {
 			// 结果返回输出流
 			responseBean.writeTo(request, response);
 			// 输出结果出力
-			logger.info(responseBean.toString());
+			logger.debug(responseBean.toString());
 		}
 	}
 	@RequestMapping(value = "/doUpdateProductCNPriceSettingInfo")
@@ -497,7 +490,7 @@ public class ProductController extends BaseController {
 			// 结果返回输出流
 			responseBean.writeTo(request, response);
 			// 输出结果出力
-			logger.info(responseBean.toString());
+			logger.debug(responseBean.toString());
 		}
 	}
 	@RequestMapping(value = {"/doUpdateProductOfficialPriceInfo","/doUpdateProductUSCartPriceInfo"})
@@ -531,7 +524,7 @@ public class ProductController extends BaseController {
 			// 结果返回输出流
 			responseBean.writeTo(request, response);
 			// 输出结果出力
-			logger.info(responseBean.toString());
+			logger.debug(responseBean.toString());
 		}
 	}
 	@RequestMapping(value = {"/doUpdateProductCNPriceInfo","/doUpdateProductCNCartPriceInfo"})
@@ -560,7 +553,7 @@ public class ProductController extends BaseController {
 			// 结果返回输出流
 			responseBean.writeTo(request, response);
 			// 输出结果出力
-			logger.info(responseBean.toString());
+			logger.debug(responseBean.toString());
 		}
 	}
 
@@ -587,7 +580,7 @@ public class ProductController extends BaseController {
 				responseBean.setResult(isSuccess);
 			}
 			responseBean.writeTo(request, response);
-			logger.info(responseBean.toString());
+			logger.debug(responseBean.toString());
 		}
 	}
 
@@ -614,7 +607,7 @@ public class ProductController extends BaseController {
 				responseBean.setResult(isSuccess);
 			}
 			responseBean.writeTo(request, response);
-			logger.info(responseBean.toString());
+			logger.debug(responseBean.toString());
 		}
 	}
 
@@ -638,7 +631,7 @@ public class ProductController extends BaseController {
 				responseBean.setResult(true);
 			}
 			responseBean.writeTo(request, response);
-			logger.info(responseBean.toString());
+			logger.debug(responseBean.toString());
 		}
 	}
 
@@ -667,7 +660,7 @@ public class ProductController extends BaseController {
 				responseBean.setResult(true);
 			}
 			responseBean.writeTo(request, response);
-			logger.info(responseBean.toString());
+			logger.debug(responseBean.toString());
 		}
 	}
 
@@ -693,7 +686,7 @@ public class ProductController extends BaseController {
 				responseBean.setResult(true);
 			}
 			responseBean.writeTo(request, response);
-			logger.info(responseBean.toString());
+			logger.debug(responseBean.toString());
 		}
 	}
 
@@ -717,7 +710,7 @@ public class ProductController extends BaseController {
 				responseBean.setResult(true);
 			}
 			responseBean.writeTo(request, response);
-			logger.info(responseBean.toString());
+			logger.debug(responseBean.toString());
 		}
 	}
 	
@@ -744,7 +737,7 @@ public class ProductController extends BaseController {
 				responseBean.setResult(true);
 			}
 			responseBean.writeTo(request, response);
-			logger.info(responseBean.toString());
+			logger.debug(responseBean.toString());
 		}
 	}
 }
