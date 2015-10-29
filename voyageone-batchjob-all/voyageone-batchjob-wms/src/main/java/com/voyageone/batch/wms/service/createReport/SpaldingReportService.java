@@ -239,21 +239,21 @@ public class SpaldingReportService extends CreateReportBaseService {
         if (fileFlg == 0){
             //============================================================================================
             //============================================================================================
-            //timeRegion.set(0,"2015-07-14 16:00:00"); timeRegion.set(1,"2015-07-15 15:59:59");
-            ReportDatas  = createReportDao.getCreateReportData(cart_id,order_channel_id, CodeConstants.TransferStatus.ClOSE,CodeConstants.TransferType.OUT,
+            //timeRegion.set(0,"2015-07-01 00:00:00"); timeRegion.set(1,"2015-07-01 23:59:59");
+            ReportDatas  = createReportDao.getVirtualCreateReportData(cart_id,order_channel_id, CodeConstants.TransferStatus.ClOSE,CodeConstants.TransferType.OUT,
                     CodeConstants.TransferOrigin.RESERVED,timeRegion.get(0),timeRegion.get(1),taskName);
         //取得退货订单（退回TM仓库）的日报基本数据记录
         }else if (fileFlg == 1){
             //============================================================================================
             //============================================================================================
-            //timeRegion.set(0,"2015-07-14 16:00:00"); timeRegion.set(1,"2015-07-15 15:59:59");
+            //timeRegion.set(0,"2015-07-01 00:00:00"); timeRegion.set(1,"2015-07-01 23:59:59");
             ReportDatas  = createReportDao.getCreateReportDataByTM(cart_id, order_channel_id, CodeConstants.TransferStatus.ClOSE, CodeConstants.TransferType.IN,
                     CodeConstants.TransferOrigin.RETURNED, timeRegion.get(0), timeRegion.get(1), taskName);
         //取得退货订单（退回福建仓库）的日报基本数据记录
         }else if (fileFlg == 2){
             //============================================================================================
             //============================================================================================
-            //timeRegion.set(0,"2015-07-14 16:00:00"); timeRegion.set(1,"2015-07-15 15:59:59");
+            //timeRegion.set(0,"2015-07-01 00:00:00"); timeRegion.set(1,"2015-07-01 23:59:59");
             //timeRegion.set(0,"2015-09-07 16:00:00"); timeRegion.set(1,"2015-09-14 15:59:59");
             ReportDatas  = createReportDao.getCreateReportData(cart_id, order_channel_id, CodeConstants.TransferStatus.ClOSE, CodeConstants.TransferType.WITHDRAWAL,
                     CodeConstants.TransferOrigin.WITHDRAWAL, timeRegion.get(0), timeRegion.get(1), taskName);
@@ -261,7 +261,7 @@ public class SpaldingReportService extends CreateReportBaseService {
         }else if (fileFlg == 3){
             //============================================================================================
             //============================================================================================
-            //timeRegion.set(0,"2015-07-14 16:00:00"); timeRegion.set(1,"2015-07-15 15:59:59");
+            //timeRegion.set(0,"2015-09-08 00:00:00"); timeRegion.set(1,"2015-09-08 23:59:59");
             ReportDatas  = createReportDao.getCreateReportSpecialData(cart_id, order_channel_id, WmsConstants.specialType.BALL, timeRegion.get(0), timeRegion.get(1), taskName);
         }
 
