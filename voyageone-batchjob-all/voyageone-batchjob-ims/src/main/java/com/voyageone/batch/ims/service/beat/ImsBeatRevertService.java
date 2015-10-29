@@ -21,7 +21,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.lang.String.format;
 
@@ -58,15 +60,15 @@ public class ImsBeatRevertService extends ImsBeatBaseService {
         // 获取主图地址
         // 逻辑同 update(上传) 一样, 内部会通过 flg 判断如何生成图片的标识名称
         // 实际主图的下载上传不同于 update. 已处理过的商品主图会存储在相应的数据库中, 可重用.
-        String image_url = getImage(shopBean, beatPicBean, cate_tid, taskControlList);
+        Map<Integer, String> tbImageUrlMap = getTbImageUrl(shopBean, beatPicBean, cate_tid, taskControlList);
 
-        if (StringUtils.isEmpty(image_url)) {
+        if (tbImageUrlMap == null) {
             // 这里之前的方法会记录为何获取不到 url 的原因。所以此处失败不输出 log
             beatPicBean.setBeat_flg(getResultFlg(beatPicBean, false));
             return;
         }
 
-        Boolean flg = updateSchema(shopBean, beatPicBean, image_url);
+        Boolean flg = updateSchema(shopBean, beatPicBean, tbImageUrlMap);
 
         if (flg == null) return;
 
@@ -75,9 +77,38 @@ public class ImsBeatRevertService extends ImsBeatBaseService {
         $info("价格披露还原：完成 [ %s ] [ %s ]", beatPicBean.getNum_iid(), beatPicBean.getCode());
     }
 
-    private String getImage(ShopBean shopBean, BeatPicBean beatPicBean, String cate_id, List<TaskControlBean> taskControlList) {
+    private Map<Integer, String> getTbImageUrl(ShopBean shopBean, BeatPicBean beatPicBean, String category_tid, List<TaskControlBean> taskControlList) {
+        // 现根据位置获取 CMS 的图片信息
+        List<BeatImageInfo> imageInfoList = getTbImageUrl(beatPicBean);
 
-        String title = getTitle(beatPicBean);
+        Map<Integer, String> tbImageUrlMap = new HashMap<>();
+
+        for (BeatImageInfo imageInfo: imageInfoList) {
+
+            // 补全信息
+            imageInfo.setBeatInfo(beatPicBean);
+            imageInfo.setCategoryTid(category_tid);
+            imageInfo.setShop(shopBean);
+
+            String tbImageUrl = getTbImageUrl(imageInfo, taskControlList);
+
+            if (StringUtils.isEmpty(tbImageUrl)) return null;
+
+            tbImageUrlMap.put(imageInfo.getImage_id(), tbImageUrl);
+        }
+
+        return tbImageUrlMap;
+    }
+
+    private String getTbImageUrl(BeatImageInfo imageInfo, List<TaskControlBean> taskControlList) {
+
+        String title = imageInfo.getTitle();
+
+        String cate_id = imageInfo.getCategoryTid();
+
+        BeatPicBean beatPicBean = imageInfo.getBeatInfo();
+
+        ShopBean shopBean = imageInfo.getShop();
 
         ImsPic pic = imsPicDao.selectByTitle(title, cate_id);
 
@@ -100,7 +131,7 @@ public class ImsBeatRevertService extends ImsBeatBaseService {
                 $info("价格披露还原：没有找到图片，准备从新上传 [ %s ] [ %s ] [ %s ] [ %s ]",
                         res.getSubMsg(), title, cate_id, shopBean.getShop_name());
 
-                picture = upload(shopBean, beatPicBean, cate_id, taskControlList);
+                picture = upload(imageInfo, taskControlList);
             }
 
         } catch (ApiException e) {
@@ -131,7 +162,14 @@ public class ImsBeatRevertService extends ImsBeatBaseService {
         return pic.getPic_url();
     }
 
-    private Picture upload(ShopBean shopBean, BeatPicBean beatPicBean, String cate_id, List<TaskControlBean> taskControlList) {
+    private Picture upload(BeatImageInfo imageInfo, List<TaskControlBean> taskControlList) {
+
+        String cate_id = imageInfo.getCategoryTid();
+
+        BeatPicBean beatPicBean = imageInfo.getBeatInfo();
+
+        ShopBean shopBean = imageInfo.getShop();
+
         String errorMsg;
         // 获取模板地址
         // 此处先不把 “template_url” 加入到 Name 枚举中。等待后续做主图任务时，顺带修改这里获取模板的方式
@@ -158,7 +196,7 @@ public class ImsBeatRevertService extends ImsBeatBaseService {
             return null;
         }
 
-        String imageName = getImageName(beatPicBean);
+        String imageName = imageInfo.getImage_name();
 
         if (StringUtils.isEmpty(imageName)) return null;
 
@@ -183,7 +221,7 @@ public class ImsBeatRevertService extends ImsBeatBaseService {
 
         // 尝试上传
         try {
-            PictureUploadResponse res = tbPictureService.uploadPicture(shopBean, image, getTitle(beatPicBean),
+            PictureUploadResponse res = tbPictureService.uploadPicture(shopBean, image, imageInfo.getTitle(),
                     cate_id);
 
             if (res.getPicture() != null) return res.getPicture();

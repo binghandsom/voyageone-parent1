@@ -5,8 +5,10 @@ import com.taobao.top.schema.field.*;
 import com.taobao.top.schema.value.ComplexValue;
 
 import java.util.List;
+import java.util.Map;
 
 /**
+ * 淘宝商品信息操作辅助类
  * Created by Jonas on 7/29/15.
  */
 public class TbItemSchema {
@@ -83,10 +85,9 @@ public class TbItemSchema {
     /**
      * 设置商品的主图，返回商品的原主图地址
      *
-     * @param imageUrl 主图地址
-     * @return 商品的原主图地址
+     * @param imageUrls 主图地址
      */
-    public String setMainImage(String imageUrl) {
+    public void setMainImage(Map<Integer, String> imageUrls) {
 
         // 如果更新默认值到值上，则覆盖后续的设置。所以要在这之前设置
         setFieldValue();
@@ -98,10 +99,15 @@ public class TbItemSchema {
 
         ComplexValue complexValue = complexField.getComplexValue();
 
-        complexValue.setInputFieldValue("item_image_0", imageUrl);
+        for (Map.Entry<Integer, String > imageUrl: imageUrls.entrySet()) {
 
-        // 获取原图
-        return complexField.getDefaultComplexValue().getStringValue("item_image_0");
+            int index = imageUrl.getKey();
+
+            // 不在 1-5 范围内说明数据本身有问题,直接无视
+            if (index < 1 || index > 5) return;
+
+            complexValue.setInputFieldValue("item_image_" + String.valueOf(index - 1), imageUrl.getValue());
+        }
     }
 
 }

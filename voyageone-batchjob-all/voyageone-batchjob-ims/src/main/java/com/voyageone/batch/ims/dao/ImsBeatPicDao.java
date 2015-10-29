@@ -1,6 +1,7 @@
 package com.voyageone.batch.ims.dao;
 
 import com.voyageone.base.dao.BaseDao;
+import com.voyageone.batch.ims.service.beat.BeatImageInfo;
 import com.voyageone.batch.ims.bean.BeatPicBean;
 import org.springframework.stereotype.Repository;
 
@@ -35,5 +36,12 @@ public class ImsBeatPicDao extends BaseDao {
      */
     public int updateItem(BeatPicBean beatPicBean) {
         return update("ims_bt_beat_item_updateItem", beatPicBean);
+    }
+
+    /**
+     * 从 cms 获取简单的图片信息
+     */
+    public List<BeatImageInfo> getImageInfo(BeatPicBean beatPicBean) {
+        return selectList("cms_bt_product_selectImageInfo", parameters("beat", beatPicBean, "image_type_id", 1));
     }
 }

@@ -18,7 +18,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.voyageone.batch.ims.enums.BeatFlg.Startup;
 import static java.lang.String.format;
@@ -35,6 +37,11 @@ public class ImsBeatUpdateService extends ImsBeatBaseService {
 
     @Autowired
     private TbPictureService tbPictureService;
+
+    @Override
+    public String getTaskName() {
+        return "ImsBeatPicJob-beat";
+    }
 
     public void beat(BeatPicBean beatPicBean) {
 
@@ -54,14 +61,15 @@ public class ImsBeatUpdateService extends ImsBeatBaseService {
         }
 
         // 获取主图地址
-        String image_url = getImage(shopBean, cate_tid, beatPicBean);
+        Map<Integer, String> tbImageUrlMap = getTbImageUrl(shopBean, cate_tid, beatPicBean);
 
-        if (StringUtils.isEmpty(image_url)) {
+        if (tbImageUrlMap == null) {
+            // 直接退出
             // 保存信息，理论上，上小段逻辑 flg 不会改动。等待后续重试
             return;
         }
 
-        Boolean result = updateSchema(shopBean, beatPicBean, image_url);
+        Boolean result = updateSchema(shopBean, beatPicBean, tbImageUrlMap);
 
         if (result == null) {
             // 如果为空表示重试。直接保存信息
@@ -74,16 +82,41 @@ public class ImsBeatUpdateService extends ImsBeatBaseService {
         $info("价格披露：披露完成 [ %s ] [ %s ]", beatPicBean.getNum_iid(), beatPicBean.getBeat_item_id());
     }
 
-    private String getImage(ShopBean shopBean, String category_tid, BeatPicBean beatPicBean) {
+    private Map<Integer, String> getTbImageUrl(ShopBean shopBean, String category_tid, BeatPicBean beatPicBean) {
 
-        // 因为下一步会尝试 clear 上一次的图片,依据就是图片文件的 title. 所以 title 的生成必须是固定的.
-        // 这一步生成固定规则的文件 title
-        String title = getTitle(beatPicBean);
+        // 现根据位置获取 CMS 的图片信息
+        List<BeatImageInfo> imageInfoList = getTbImageUrl(beatPicBean);
 
-        // 到 category_tid 里, 用生成的固定 title 尝试删除.
-        clearLastImage(shopBean, title, category_tid);
+        Map<Integer, String> tbImageUrlMap = new HashMap<>();
 
-        String url = getImageUrl(beatPicBean);
+        for (BeatImageInfo imageInfo: imageInfoList) {
+
+            // 补全信息
+            imageInfo.setBeatInfo(beatPicBean);
+            imageInfo.setCategoryTid(category_tid);
+            imageInfo.setShop(shopBean);
+
+            String tbImageUrl = getTbImageUrl(imageInfo);
+
+            if (StringUtils.isEmpty(tbImageUrl)) return null;
+
+            tbImageUrlMap.put(imageInfo.getImage_id(), tbImageUrl);
+        }
+
+        return tbImageUrlMap;
+    }
+
+    /**
+     * 根据完整的图片信息,处理获取该图片在淘宝上的路径
+     */
+    private String getTbImageUrl(BeatImageInfo imageInfo) {
+
+        BeatPicBean beatPicBean = imageInfo.getBeatInfo();
+
+        // 清除该图片在淘宝上的文件
+        clearLastImage(imageInfo);
+
+        String url = formatImageUrl(imageInfo);
 
         $info("价格披露：图片下载地址: " + url);
 
@@ -106,7 +139,8 @@ public class ImsBeatUpdateService extends ImsBeatBaseService {
         $info("价格披露：已下载 [ %s ]", image.length);
 
         try {
-            PictureUploadResponse uploadResponse = tbPictureService.uploadPicture(shopBean, image, title, category_tid);
+            PictureUploadResponse uploadResponse = tbPictureService.uploadPicture(imageInfo.getShop(), image,
+                    imageInfo.getTitle(), imageInfo.getCategoryTid());
 
             if (uploadResponse.isSuccess() && StringUtils.isEmpty(uploadResponse.getSubCode())) {
                 // 成功返回
@@ -130,15 +164,24 @@ public class ImsBeatUpdateService extends ImsBeatBaseService {
         }
     }
 
-    private void clearLastImage(ShopBean shopBean, String title, String category_tid) {
+    private void clearLastImage(BeatImageInfo imageInfo) {
         // 价格披露的图片，在上传之前先检查是否已有，有则删除
         // 老图检测和删除时出现的错误和异常不会影响正常逻辑执行。所以此处都忽略
         try {
-            PictureGetResponse pictureGetResponse = tbPictureService.getPictures(shopBean, title, Long.valueOf(category_tid));
+
+            ShopBean shopBean = imageInfo.getShop();
+
+            PictureGetResponse pictureGetResponse = tbPictureService.getPictures(shopBean,
+                    imageInfo.getTitle(), Long.valueOf(imageInfo.getCategoryTid()));
+
             List<Picture> pictures = pictureGetResponse.getPictures();
+
             if (pictures == null || pictures.size() < 1) return;
+
             Picture picture = pictures.get(0);
+
             tbPictureService.deletePictures(shopBean, picture.getPictureId());
+
         } catch (ApiException ignored) {
         }
     }
@@ -146,7 +189,9 @@ public class ImsBeatUpdateService extends ImsBeatBaseService {
     /**
      * 获取拼接的商品价格披露图的地址
      */
-    private String getImageUrl(BeatPicBean beatPicBean) {
+    private String formatImageUrl(BeatImageInfo imageInfo) {
+
+        BeatPicBean beatPicBean = imageInfo.getBeatInfo();
 
         String price = beatPicBean.getPrice();
 
@@ -159,17 +204,15 @@ public class ImsBeatUpdateService extends ImsBeatBaseService {
 
         // 获取到"商品图片"的标识名称
         // 该名称由 CMS 提供, 且固定在 CMS 和 Adobe 的服务器上.
-        String imageName = getImageName(beatPicBean);
+        String imageName = imageInfo.getImage_name();
 
-        if (StringUtils.isEmpty(imageName)) return null;
+        if (StringUtils.isEmpty(imageName)) {
+            $info("没有获取到 ImageName [ %s, %s ]", imageInfo.getCode(), imageInfo.getUrl_key());
+            return null;
+        }
 
         String template = beatPicBean.getTemp_url();
 
         return template.replace("{key}", imageName).replace("{price}", beatPicBean.getPrice());
-    }
-
-    @Override
-    public String getTaskName() {
-        return "ImsBeatPicJob-beat";
     }
 }

@@ -9,8 +9,8 @@ import com.taobao.top.schema.exception.TopSchemaException;
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.ims.bean.BeatPicBean;
+import com.voyageone.batch.ims.dao.ImsBeatPicDao;
 import com.voyageone.batch.ims.dao.ImsPicCategoryDao;
-import com.voyageone.batch.ims.enums.BeatFlg;
 import com.voyageone.batch.ims.enums.ImsPicCategoryType;
 import com.voyageone.batch.ims.modelbean.ImsPicCategory;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -23,16 +23,21 @@ import com.voyageone.common.configs.beans.ShopBean;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static java.lang.String.format;
 
 /**
  * 价格披露的通用部分
- *
+ * <p>
  * Created by Jonas on 8/20/15.
  */
 public abstract class ImsBeatBaseService extends BaseTaskService {
+
+    @Autowired
+    private ImsBeatPicDao imsBeatPicDao;
 
     @Autowired
     private TbItemService tbItemService;
@@ -96,6 +101,30 @@ public abstract class ImsBeatBaseService extends BaseTaskService {
         }
     }
 
+    protected List<BeatImageInfo> getTbImageUrl(BeatPicBean beatPicBean) {
+        // 现根据位置获取 CMS 的图片信息
+        List<BeatImageInfo> imageInfoList = imsBeatPicDao.getImageInfo(beatPicBean);
+
+        String[] strings = beatPicBean.getTargets().split(",");
+
+        // 已重写了 BeatImageInfo 的比较方法,所以可以用 contains
+        Arrays.stream(strings).map(Integer::valueOf)
+                .filter(i -> !imageInfoList.contains(i))
+                .forEach(i -> {
+                    BeatImageInfo imageInfo = new BeatImageInfo();
+
+                    imageInfo.setChannel_id(beatPicBean.getChannel_id());
+                    imageInfo.setBeatInfo(beatPicBean);
+                    imageInfo.setCode(beatPicBean.getCode());
+                    imageInfo.setImage_id(i);
+                    imageInfo.setUrl_key(beatPicBean.getUrl_key());
+
+                    imageInfoList.add(imageInfo);
+                });
+
+        return imageInfoList;
+    }
+
     private String getCategoryTid(ShopBean shopBean, ImsPicCategory category) {
 
         TbGetPicCategoryParam param = new TbGetPicCategoryParam();
@@ -106,7 +135,8 @@ public abstract class ImsBeatBaseService extends BaseTaskService {
 
             List<PictureCategory> categories = res.getPictureCategories();
 
-            if (res.isSuccess() && categories != null && categories.size() > 0) return String.valueOf(categories.get(0).getPictureCategoryId());
+            if (res.isSuccess() && categories != null && categories.size() > 0)
+                return String.valueOf(categories.get(0).getPictureCategoryId());
 
             logger.info(format("价格披露(B)：调用接口尝试获取目录失败 [ %s ] [ %s ] [ %s ]", res.getSubCode(),
                     res.getSubMsg(), category.getCategory_name()));
@@ -148,30 +178,14 @@ public abstract class ImsBeatBaseService extends BaseTaskService {
         }
     }
 
-    protected String getTitle(BeatPicBean beatPicBean) {
-        // 根据具体情况来生成 title
-        // 拼接图片标题的规则，暂时这里固定写死，后续的功能会将此处处理移动到别处。
-        // 对于规则，为了防止可配置方式导致后续查找图片的失败。这里规则内定于程序内。不轻易修改
-        // !!! 请注意此处规则不要轻易修改，见上一行
-        switch (beatPicBean.getBeat_flg()) {
-            case Waiting:
-                //打标（beat_flg为1）
-                return beatPicBean.getImage_name() + ".beat.jpg";
-            case Passed:
-            case Cancel:
-                return beatPicBean.getImage_name() + ".jpg";
-        }
-        return null;
-    }
-
-    protected Boolean updateSchema(ShopBean shopBean, BeatPicBean beatPicBean, String image_url) {
+    protected Boolean updateSchema(ShopBean shopBean, BeatPicBean beatPicBean, Map<Integer, String> tbImageUrlMap) {
         String errorMsg;
         try {
             // 获取 taobao 的商品信息
             TbItemSchema itemSchema = tbItemService.getUpdateSchema(shopBean, beatPicBean.getNum_iid());
 
             // 更改其主图地址
-            itemSchema.setMainImage(image_url);
+            itemSchema.setMainImage(tbImageUrlMap);
 
             // 将商品信息更新回 taobao
             TmallItemSchemaUpdateResponse res = tbItemService.updateFields(shopBean, itemSchema);
@@ -210,29 +224,5 @@ public abstract class ImsBeatBaseService extends BaseTaskService {
             logger.info(errorMsg);
             return false;
         }
-    }
-
-    /**
-     * 获取图片的"标识"名称. 来源是 CMS. 该字段内容实在 web 创建任务时就冗余存储到 beat_item 表的.
-     */
-    protected String getImageName(BeatPicBean beatPicBean) {
-        String imageName = beatPicBean.getImage_name();
-
-        // 如果拿不到直接的 name, 那么就尝试拼接
-        if (StringUtils.isEmpty(imageName)) {
-
-            String url_key = beatPicBean.getUrl_key();
-
-            if (StringUtils.isEmpty(url_key)) {
-                // 没有获取到图片参数，回退到设置状态
-                beatPicBean.setComment("价格披露：url_key / image_name 找不到");
-                beatPicBean.setBeat_flg(BeatFlg.Startup);
-                return null;
-            }
-
-            imageName = url_key + "-1";
-        }
-
-        return imageName;
     }
 }
