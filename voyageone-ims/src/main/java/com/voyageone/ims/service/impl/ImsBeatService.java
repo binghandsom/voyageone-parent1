@@ -292,6 +292,7 @@ public class ImsBeatService extends BaseAppService {
         return cellStyle;
     }
 
+
     /**
      * 保存详细的商品信息
      *
@@ -749,6 +750,7 @@ public class ImsBeatService extends BaseAppService {
         return item.hasComments();
     }
 
+
     private int insertTempItems(List<ImsBeatItem> items) {
         int insertLen = MAX_INSERT_LENGTH;
         int total = items.size();
@@ -958,6 +960,7 @@ public class ImsBeatService extends BaseAppService {
 
     /**
      * 更新一项的价格，并重启这个子任务
+     *
      *
      * @param beat_id 主任务
      * @param item_id 子任务

@@ -28,7 +28,6 @@ import static com.voyageone.core.ajax.AjaxResponseBean.newResult;
 
 /**
  * 为打标画面提供数据和数据处理
- * <p>
  * Created by Jonas on 15/6/29.
  */
 @Controller
