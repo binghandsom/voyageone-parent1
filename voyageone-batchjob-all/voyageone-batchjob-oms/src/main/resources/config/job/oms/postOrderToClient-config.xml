@@ -9,7 +9,7 @@
     <bean id="Channle_BHFO" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
 		<property name="staticField" value="com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.BHFO" />
 	</bean>	
-   	<bean id="PostOrderBHFO" class="com.voyageone.batch.oms.job.logic.PostOrderBHFO">
+   	<bean id="PostOrderBHFO" class="com.voyageone.batch.oms.job.logic.PostOrderChannelAdvisor">
 	</bean>	        
    <bean id="PostOrderBHFOJob"
 		class="com.voyageone.batch.oms.job.PostOrderToClientJob">
@@ -89,7 +89,7 @@
     <bean id="Channle_JEWELRY" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
 		<property name="staticField" value="com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.JEWELRY" />
 	</bean>	
-   	<bean id="PostOrderJEWELRY" class="com.voyageone.batch.oms.job.logic.PostOrderBHFO">
+   	<bean id="PostOrderJEWELRY" class="com.voyageone.batch.oms.job.logic.PostOrderChannelAdvisor">
 	</bean>	        
    <bean id="PostOrderJEWELRYJob"
 		class="com.voyageone.batch.oms.job.PostOrderToClientJob">

@@ -167,11 +167,12 @@ public class MasterCatComPropBatchUpdateDao extends BaseDao {
 	 * @param channelId
 	 * @return
 	 */
-	public int updateProductPublishStatus(List<String> modelIdList,String channelId){
+	public int updateProductPublishStatus(String user,List<String> modelIdList,String channelId){
 		logger.info("更新产品发布状态开始...");
 
 		Map<String, Object> parmMap = new HashMap<String, Object>();
 
+		parmMap.put("user",user);
 		parmMap.put("modelIdList",modelIdList);
 		parmMap.put("channelId",channelId);
 

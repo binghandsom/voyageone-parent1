@@ -3,8 +3,10 @@ package com.voyageone.common.components.yimei;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.yimei.bean.YMSMSSendBean;
 import com.voyageone.common.components.yimei.client.Client;
+import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.Codes;
 
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.util.CommonUtil;
 import org.springframework.stereotype.Component;
 
@@ -27,8 +29,8 @@ public class YMSmsSendService {
     public Integer sendSMS(YMSMSSendBean ymsmsSendBean) throws Exception {
 
         // 发送者扩展号码
-        String SMS_ADD_SERIAL = "";
-        Map<String, String> mapTemp = null;
+        //String SMS_ADD_SERIAL = "";
+        //Map<String, String> mapTemp = null;
 
         // 手机号码有效性检查
         if (CommonUtil.isPhoneNum(ymsmsSendBean.getPhone()) == false) {
@@ -42,9 +44,15 @@ public class YMSmsSendService {
         // 短信发送客户端
         Client sendIdCardSMSclient = null;
         //sendIdCardSMSclient = new Client(SMS_USER, SMS_PASSWORD);
-        sendIdCardSMSclient = createClient();
+        sendIdCardSMSclient = createClient(ymsmsSendBean.getOrder_channel_id());
         // 发送短消息
-        String addSerial = ymsmsSendBean.getOrder_channel_id();
+        String sms_add_serial = ChannelConfigs.getVal1(ymsmsSendBean.getOrder_channel_id(), ChannelConfigEnums.Name.sms_add_serial);
+        //需要特殊码
+        String addSerial = "";
+        if (ChannelConfigs.getVal2(ymsmsSendBean.getOrder_channel_id(), ChannelConfigEnums.Name.sms_add_serial, sms_add_serial).equals(Constants.smsInfo.NEED_ADD_SERIAL)){
+             addSerial = ymsmsSendBean.getOrder_channel_id();
+        }
+
         //int ret=sendIdCardSMSclient.sendSMS(new String[] {shortUrlBean.getShip_phone()}, smsContent,"",5);
         int ret = sendIdCardSMSclient.sendSMS(new String[]{ymsmsSendBean.getPhone()}, ymsmsSendBean.getContent(), addSerial, 5);
 
@@ -54,32 +62,36 @@ public class YMSmsSendService {
 
     /**
      * 调用亿美WSDL，发送短信
+     * @param orderChannelId
      *
      * @throws Exception
      */
-    public double getBalance() throws Exception {
+    public double getBalance(String orderChannelId) throws Exception {
         // 短信发送客户端
         Client sendIdCardSMSclient = null;
         //sendIdCardSMSclient = new Client(SMS_USER, SMS_PASSWORD);
-        sendIdCardSMSclient = createClient();
+        sendIdCardSMSclient = createClient(orderChannelId);
         return sendIdCardSMSclient.getBalance();
     }
 
     /**
      * 调用亿美WSDL，发送短信
+     * @param orderChannelId
      *
      * @throws Exception
      */
-    private Client createClient() {
+    private Client createClient(String orderChannelId) {
         // 短信软件序列号
         String SMS_USER = "";
         // 短信软件密码
         String SMS_PASSWORD = "";
-        Map<String, String> mapTemp = null;
+        //Map<String, String> mapTemp = null;
         // 短信配置
-        mapTemp = Codes.getCodeMap(Constants.smsInfo.SMS_INFO);
-        SMS_USER = mapTemp.get(Constants.smsInfo.USER);
-        SMS_PASSWORD = mapTemp.get(Constants.smsInfo.PASSWORD);
+        //mapTemp = Codes.getCodeMap(Constants.smsInfo.SMS_INFO);
+        //SMS_USER = mapTemp.get(Constants.smsInfo.USER);
+        //SMS_PASSWORD = mapTemp.get(Constants.smsInfo.PASSWORD);
+        SMS_USER = ChannelConfigs.getVal1(orderChannelId, ChannelConfigEnums.Name.sms_user);
+        SMS_PASSWORD = ChannelConfigs.getVal1(orderChannelId, ChannelConfigEnums.Name.sms_password);
         //addSerial
         // 短信发送客户端
         //Client sendIdCardSMSclient = null;

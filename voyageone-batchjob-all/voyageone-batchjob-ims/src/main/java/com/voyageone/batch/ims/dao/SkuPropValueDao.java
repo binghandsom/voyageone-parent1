@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class SkuPropValueDao extends BaseDao{
-    public String selectSkuPropValue(String orderChannelId, String sku, SkuPropNameEnum propName) {
-        return selectOne(Constants.DAO_NAME_SPACE_IMS + "ims_bt_prop_value_sku_get_value", parameters("order_channel_id", orderChannelId, "sku", sku, "prop_name", propName.toString()));
+    public String selectSkuPropValue(String orderChannelId, String sku, String propName) {
+        return selectOne(Constants.DAO_NAME_SPACE_IMS + "ims_bt_prop_value_sku_get_value", parameters("order_channel_id", orderChannelId, "sku", sku, "prop_name", propName));
     }
 }

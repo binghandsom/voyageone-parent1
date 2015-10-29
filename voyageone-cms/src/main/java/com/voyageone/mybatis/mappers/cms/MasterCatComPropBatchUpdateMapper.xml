@@ -23,7 +23,7 @@
 			SELECT
 				val.id AS id
 			FROM
-				voyageone_cms.cms_bt_model_extend ext,
+				voyageone_cms.cms_bt_cn_model_extend ext,
 				voyageone_ims.ims_mt_prop prop,
 				voyageone_ims.ims_mt_prop_value val
 			<where>
@@ -54,7 +54,7 @@
 			val.prop_value AS propValue
 		FROM
 			voyageone_ims.ims_mt_prop prop
-		INNER JOIN voyageone_cms.cms_bt_model_extend model ON (
+		INNER JOIN voyageone_cms.cms_bt_cn_model_extend model ON (
 			prop.category_id = model.main_category_id
 			AND prop.prop_name = #{propName}
 			<if test="modelIdList != null and modelIdList.size > 0">
@@ -135,7 +135,7 @@
 
 	<update id="update_product_publish_status">
 		update voyageone_ims.ims_bt_product
-		SET publish_status = 0
+		SET publish_status = 0,modifier=#{user},modified= NOW()
 		<where>
 			<if test="modelIdList != null and modelIdList.size > 0">
 				model_id in
@@ -144,6 +144,7 @@
 				</foreach>
 			</if>
 			AND channel_id = #{channelId}
+			AND publish_status != 0
 		</where>
 	</update>
 </mapper>

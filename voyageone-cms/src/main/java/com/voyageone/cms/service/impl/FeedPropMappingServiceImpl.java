@@ -22,10 +22,13 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static com.voyageone.cms.CmsMsgConstants.FeedPropMappingMsg.*;
 import static com.voyageone.core.MessageConstants.ComMsg.NOT_FOUND_CHANNEL;
 import static com.voyageone.core.MessageConstants.ComMsg.UPDATE_BY_OTHER;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 
 /**
  * 第三方品牌数据，和主数据，进行属性和值的匹配
@@ -178,35 +181,74 @@ public class FeedPropMappingServiceImpl extends BaseAppService implements FeedPr
 
     /**
      * 更新主数据属性的可忽略属性
+     * 注意!! 根据数组的数量进行判断,如果数组只有一个元素,则为切换状态.多个元素则视为统一变更为忽略状态
      *
-     * @param prop 主数据属性
-     * @param user 当前用户
+     * @param props 主数据属性
+     * @param user  当前用户
      * @return 影响的行数
      */
     @Override
-    public int updateIgnore(FeedMappingProp prop, UserSessionBean user) {
+    public int updateIgnore(FeedMappingProp[] props, UserSessionBean user) {
+
+        if (props == null || props.length < 1)
+            return 0;
 
         String channel_id = user.getSelChannel();
         String userName = user.getUserName();
 
-        // 检查是插入还是更新
-        Boolean isIgnore = feedPropMappingDao.selectIgnoreValue(prop, channel_id);
+        List<FeedMappingProp> propList = Arrays.asList(props);
 
-        int count = 0;
+        // 一次性获取这些属性的忽略属性
+        // 获取的这些对象只包含 prop_id 和 is_ignore
+        List<FeedMappingProp> propsWithIgnore = feedPropMappingDao.selectIgnoreValue(propList, channel_id);
 
-        if (isIgnore == null) {
+        int count;
+
+        // 根据数组的数量进行判断,如果数组只有一个元素,则为切换状态.多个元素则视为统一变更为忽略状态
+        if (props.length == 1) {
+
+            FeedMappingProp ignore = propsWithIgnore.get(0);
+            FeedMappingProp prop = propList.get(0);
+
             // 查询不到则为插入
-            count = feedPropMappingDao.updateIgnoreValue(prop, channel_id, userName);
-        } else if (isIgnore != prop.is_ignore()) {
-            // 如果查询的值和提交的不同，再进行更新
-            count = feedPropMappingDao.insertIgnoreValue(prop, channel_id, userName);
+            // 单值处理时, is_ignore 会由前台切换并传回到这里.所以不用在这里具体处理 is_ignore
+            if (ignore == null) {
+                count = feedPropMappingDao.insertIgnoreValue(prop, channel_id, userName);
+            } else {
+                count = feedPropMappingDao.updateIgnoreValue(prop, channel_id, userName);
+            }
+
+            completeCategory(prop.getCategory_id(), channel_id, user);
+
+            return count;
         }
 
-        if (count == 1)
-            // 检查目录是否完全匹配完成
-            completeCategory(prop.getCategory_id(), user.getSelChannel(), user);
+        // 批量处理
+        if (propsWithIgnore.isEmpty()) {
+            // 如果是空,则批量插入
+            count = feedPropMappingDao.insertIgnoreValues(propList, channel_id, userName);
+        } else if (propsWithIgnore.size() == props.length) {
+            // 否则是批量更新
+            count = feedPropMappingDao.updateIgnoreValues(propList, channel_id, userName);
+        } else {
+            // 区分开忽略是插入还是更新
+            propList.addAll(propsWithIgnore);
+            Map<Integer, List<FeedMappingProp>> map = propList.stream().collect(groupingBy(FeedMappingProp::getProp_id, toList()));
 
-        // 如果不需要更新则直接返回成功
+            List<FeedMappingProp> inserting = map.entrySet().stream()
+                    .filter(e -> e.getValue().size() == 1)
+                    .map(e -> e.getValue().get(0))
+                    .collect(toList());
+
+            List<FeedMappingProp> updating = map.entrySet().stream()
+                    .filter(e -> e.getValue().size() == 2)
+                    .map(e -> e.getValue().get(0))
+                    .collect(toList());
+
+            count = feedPropMappingDao.insertIgnoreValues(inserting, channel_id, userName);
+            count += feedPropMappingDao.updateIgnoreValues(updating, channel_id, userName);
+        }
+
         return count;
     }
 
@@ -235,7 +277,7 @@ public class FeedPropMappingServiceImpl extends BaseAppService implements FeedPr
 
         // 检查目录是否完全匹配完成
         completeCategory(mapping.getMain_category_id(), mapping.getChannel_id(), user);
-        
+
         return feedPropMappingDao.selectMappingByFinger(mapping);
     }
 
@@ -258,7 +300,7 @@ public class FeedPropMappingServiceImpl extends BaseAppService implements FeedPr
 
         // 检查目录是否完全匹配完成
         completeCategory(mapping.getMain_category_id(), mapping.getChannel_id(), user);
-        
+
         return feedPropMappingDao.selectMappingById(mapping.getId());
     }
 
@@ -302,11 +344,11 @@ public class FeedPropMappingServiceImpl extends BaseAppService implements FeedPr
         CategoryPropCount propCount = feedPropMappingDao.selectCountsByCategory(channel_id, category_id);
 
         // 获取目录记录
-        ImsCategoryExtend categoryExtend = feedPropMappingDao.selectCategoryExtend(category_id);
-        
+        ImsCategoryExtend categoryExtend = feedPropMappingDao.selectCategoryExtend(channel_id, category_id);
+
         // 如果两数量不相同，说明有属性还没有忽略或设置 mapping，并且没有默认值
         int isSetAttr = propCount.getProps() != propCount.getHasValue() ? 0 : 1;
-        
+
         // 如果取出的 extend 没有值，则插入，否则更新
         if (categoryExtend != null) {
             categoryExtend.setIs_set_attr(isSetAttr);
