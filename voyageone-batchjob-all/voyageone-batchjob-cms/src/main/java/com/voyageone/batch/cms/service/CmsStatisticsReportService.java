@@ -116,9 +116,10 @@ public class CmsStatisticsReportService extends BaseTaskService {
         sb.append("<td align=center>产品上新失败</td>");
         sb.append("</tr>");
 
-        sb.append("<tr>");
+
         statisticsInfo.forEach(
                 (channel, integers) -> {
+                    sb.append("<tr>");
                     sb.append("<td>");
                     sb.append(channel);
                     sb.append("</td>");
@@ -127,9 +128,10 @@ public class CmsStatisticsReportService extends BaseTaskService {
                         sb.append(count.toString());
                         sb.append("</td>");
                     });
+                    sb.append("</tr>");
                 }
         );
-        sb.append("</tr>");
+
         sb.append("</table>");
         return sb.toString();
     }

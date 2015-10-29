@@ -55,13 +55,6 @@
         this.date = $filter('date');
         this.carts = carts;
         this.beat = deepClone(this.beatDef);
-        this.target = {
-          p1: false,
-          p2: false,
-          p3: false,
-          p4: false,
-          p5: false
-        };
       }
 
       CreatorController.prototype.ok = function() {
@@ -69,14 +62,6 @@
         part1 = dateFormat(this.beat.end, 1, this.date);
         part2 = dateFormat(this.time.end, 2, this.date);
         this.beat.end = part1 + ' ' + part2;
-
-        var targets = "";
-        _.each(this.target, function(val, name) {
-          if (!val) return;
-          targets += name.substr(1) + ",";
-        });
-        this.beat.targets = targets.substr(0, targets.length - 1);
-
         return this.instance.close(this.beat);
       };
 
@@ -158,64 +143,35 @@
         });
         this.dateFilter = filter('date');
         this.dtBeats = {
-          options: DTOptionsBuilder.newOptions()
-            .withOption('processing', true)
-            .withOption('serverSide', true)
-            .withOption('ajax', this.onDtGetBeats)
-            .withOption('createdRow', (function(_this) {
-              return function(row) {
-                return _this.$compile(angular.element(row).contents())(_this.$scope);
-              };
-            })(this))
-            .withDataProp('data')
-            .withPaginationType('full_numbers'),
+          options: DTOptionsBuilder.newOptions().withOption('processing', true).withOption('serverSide', true).withOption('ajax', this.onDtGetBeats).withOption('createdRow', (function(_this) {
+            return function(row) {
+              return _this.$compile(angular.element(row).contents())(_this.$scope);
+            };
+          })(this)).withDataProp('data').withPaginationType('full_numbers'),
           columns: [
-            DTColumnBuilder.newColumn('cart_id', 'Cart').renderWith(this.formatCart),
-            DTColumnBuilder.newColumn('description', 'Description'),
-            DTColumnBuilder.newColumn('end', 'End'),
-            DTColumnBuilder.newColumn('template_url', 'Template'),
-            DTColumnBuilder.newColumn('targets', 'Target Image Indexes'),
-            DTColumnBuilder.newColumn('modifier', 'Modifier'),
-            DTColumnBuilder.newColumn('modified', 'Modified'),
-            DTColumnBuilder.newColumn('', '').renderWith(function(val, type, row, cell) {
-              return "<button class=\"btn btn-warning btn-sm\" ng-click=\"ctrl.openBeat(" + cell.row + ")\">&nbsp;查看&nbsp;</button>";
+            DTColumnBuilder.newColumn('cart_id', 'Cart').renderWith(this.formatCart), DTColumnBuilder.newColumn('description', 'Description'), DTColumnBuilder.newColumn('end', 'End'), DTColumnBuilder.newColumn('template_url', 'Template'), DTColumnBuilder.newColumn('modifier', 'Modifier'), DTColumnBuilder.newColumn('modified', 'Modified'), DTColumnBuilder.newColumn('', '').renderWith(function(val, type, row, cell) {
+              return "<button class=\"btn btn-primary btn-xs\" ng-click=\"ctrl.openBeat(" + cell.row + ")\">查看</button>";
             })
           ],
           instance: null
         };
         this.dtItems = {
-          options: DTOptionsBuilder.newOptions()
-            .withOption('processing', true)
-            .withOption('serverSide', true)
-            .withOption('ajax', this.onDtGetItems)
-            .withOption('createdRow', (function(_this) {
-              return function(row) {
-                return _this.$compile(angular.element(row).contents())(_this.$scope);
-              };
-            })(this))
-            .withDataProp('data')
-            .withPaginationType('full_numbers'),
+          options: DTOptionsBuilder.newOptions().withOption('processing', true).withOption('serverSide', true).withOption('ajax', this.onDtGetItems).withOption('createdRow', (function(_this) {
+            return function(row) {
+              return _this.$compile(angular.element(row).contents())(_this.$scope);
+            };
+          })(this)).withDataProp('data').withPaginationType('full_numbers'),
           columns: [
-            DTColumnBuilder.newColumn('code', 'Code'),
-            DTColumnBuilder.newColumn('num_iid', 'Num iid').renderWith(function(col) {
+            DTColumnBuilder.newColumn('code', 'Code'), DTColumnBuilder.newColumn('num_iid', 'Num iid').renderWith(function(col) {
               return "<a target=\"_blank\" href=\"https://detail.tmall.hk/hk/item.htm?id=" + col + "\">" + col + "</a>";
-            }),
-            DTColumnBuilder.newColumn('key', 'Image Name').renderWith(function(col, type, row) {
+            }), DTColumnBuilder.newColumn('key', 'Image Name').renderWith(function(col, type, row) {
               return row.url_key || row.image_name;
-            }),
-            DTColumnBuilder.newColumn('price', 'Price'),
-            DTColumnBuilder.newColumn('beat_flg', 'Status').renderWith((function(_this) {
+            }), DTColumnBuilder.newColumn('price', 'Price'), DTColumnBuilder.newColumn('beat_flg', 'Status').renderWith((function(_this) {
               return function(col) {
                 return _this.status[col.toString()];
               };
-            })(this)),
-            DTColumnBuilder.newColumn('comment', 'Comment'),
-            DTColumnBuilder.newColumn('modifier', 'Modify').renderWith(function(col, type, row) {return row.modifier + "<br>" + row.modified;}),
-            DTColumnBuilder.newColumn('', '').renderWith(function(val, type, row, cell) {
-              return ("<button class=\"btn btn-success btn-xs\" ng-click=\"ctrl.beatControl('startup'," + (row.beat_item_id || null) + ")\">刷图</button>") +
-                ("<button class=\"btn btn-warning btn-xs\" ng-click=\"ctrl.beatControl('cancel'," + (row.beat_item_id || null) + ")\">取消</button>") +
-                ("<button class=\"btn btn-danger btn-xs\" ng-click=\"ctrl.beatControl('stop'," + (row.beat_item_id || null) + ")\">暂停</button>") +
-                ("<button class=\"btn btn-danger btn-xs\" ng-click=\"ctrl.setPrice(" + cell.row + ")\">修改价格</button>");
+            })(this)), DTColumnBuilder.newColumn('comment', 'Comment'), DTColumnBuilder.newColumn('modifier', 'Modifier'), DTColumnBuilder.newColumn('modified', 'Modified'), DTColumnBuilder.newColumn('', '').renderWith(function(val, type, row, cell) {
+              return ("<button class=\"btn btn-success btn-xs\" ng-click=\"ctrl.beatControl('startup'," + (row.beat_item_id || null) + ")\">刷图</button>") + ("<button class=\"btn btn-warning btn-xs\" ng-click=\"ctrl.beatControl('cancel'," + (row.beat_item_id || null) + ")\">取消</button>") + ("<button class=\"btn btn-danger btn-xs\" ng-click=\"ctrl.beatControl('stop'," + (row.beat_item_id || null) + ")\">暂停</button>") + ("<button class=\"btn btn-danger btn-xs\" ng-click=\"ctrl.setPrice(" + cell.row + ")\">修改价格</button>");
             })
           ],
           instance: null
@@ -238,8 +194,6 @@
         '11': '取消成功',
         '12': '取消失败'
       };
-
-      BeatController.prototype.showItemPanel = false;
 
       BeatController.prototype.carts = [];
 
@@ -268,7 +222,6 @@
             return "[ " + cart.comment + " ] " + cart.shop_name;
           }
         }
-        return col;
       };
 
       BeatController.prototype.formatCart = function(col) {
@@ -324,15 +277,11 @@
       BeatController.prototype.openBeat = function(index) {
         var beat;
         beat = this.beats[index];
-
-        this.showItemPanel = true;
-
         if (beat === this.beat) {
-          this.notify.success("任务已经打开");
           return;
         }
         this.beat = beat;
-        this.dtItems.instance.reloadData();
+        return this.dtItems.instance.reloadData();
       };
 
       BeatController.prototype.onDtGetItems = function(data, draw) {
@@ -399,10 +348,12 @@
             return _this.dtItems.instance.reloadData();
           };
         })(this);
-        fileItem.formData = [{
-          beat_id: this.beat.beat_id,
-          isCode: this.itemsType
-        }];
+        fileItem.formData = [
+          {
+            beat_id: this.beat.beat_id,
+            isCode: this.itemsType
+          }
+        ];
         return fileItem.upload();
       };
 
@@ -533,8 +484,7 @@
           templateUrl: 'progress.tpl.html',
           backdrop: 'static',
           controller: [
-            'uploader',
-            function(uploader1) {
+            'uploader', function(uploader1) {
               this.uploader = uploader1;
             }
           ],

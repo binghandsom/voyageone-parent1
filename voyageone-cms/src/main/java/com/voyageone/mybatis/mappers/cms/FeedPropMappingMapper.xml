@@ -155,10 +155,12 @@
         WHERE prop_id = #{prop_id};
     </select>
 
-    <select id="ims_bt_feed_prop_ignore_selectIgnoreValue" resultType="Boolean">
-        SELECT is_ignore
+    <select id="ims_bt_feed_prop_ignore_selectIgnoreValue" resultType="com.voyageone.cms.formbean.FeedMappingProp">
+        SELECT prop_id, is_ignore
         FROM voyageone_ims.ims_bt_feed_prop_ignore
-        WHERE prop_id = #{prop.prop_id} AND channel_id = #{channel_id}
+        WHERE channel_id = #{channel_id} AND prop_id IN (
+            <foreach collection="props" item="prop" separator=",">#{prop.prop_id}</foreach>
+        )
     </select>
 
     <insert id="ims_bt_feed_prop_ignore_insertIgnoreValue">
@@ -170,6 +172,21 @@
         UPDATE voyageone_ims.ims_bt_feed_prop_ignore
         SET is_ignore = #{prop.is_ignore}, modified = NOW(), modifier = #{userName}
         WHERE prop_id = #{prop.prop_id} AND channel_id = #{channel_id}
+    </update>
+
+    <insert id="ims_bt_feed_prop_ignore_insertIgnoreValues">
+        INSERT INTO voyageone_ims.ims_bt_feed_prop_ignore (prop_id, channel_id, is_ignore, created, creater, modified, modifier) VALUES
+            <foreach collection="props" item="prop" separator=",">
+                (#{prop.prop_id}, #{channel_id}, #{is_ignore}, NOW(), #{userName}, NOW(), #{userName})
+            </foreach>
+    </insert>
+
+    <update id="ims_bt_feed_prop_ignore_updateIgnoreValues">
+        UPDATE voyageone_ims.ims_bt_feed_prop_ignore
+        SET is_ignore = #{is_ignore}, modified = NOW(), modifier = #{userName}
+        WHERE channel_id = #{channel_id} AND prop_id IN (
+            <foreach collection="props" item="prop" separator=",">#{prop.prop_id}</foreach>
+        )
     </update>
 
     <delete id="ims_bt_feed_prop_mapping_deleteMapping">
@@ -217,7 +234,7 @@
             modified,
             modifier
         FROM voyageone_ims.ims_bt_category_extend
-        WHERE main_category_id = #{category_id}
+        WHERE main_category_id = #{category_id} AND channel_id = #{channel_id}
     </select>
 
     <insert id="ims_bt_category_extend_insertCategoryExtend"

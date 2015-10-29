@@ -3,7 +3,8 @@ package com.voyageone.batch.cms.service.feed;
 import com.google.gson.Gson;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.batch.base.BaseTaskService;
-import com.voyageone.batch.cms.bean.*;
+import com.voyageone.batch.cms.bean.BcbgStyleBean;
+import com.voyageone.batch.cms.bean.SuperFeedBcbgBean;
 import com.voyageone.batch.cms.dao.SuperFeedDao;
 import com.voyageone.batch.cms.dao.feed.BcbgSuperFeedDao;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
@@ -19,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileReader;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +50,9 @@ public class BcbgAnalysisService extends BaseTaskService {
 
     @Autowired
     private BcbgWsdlUpdate updateService;
+
+    @Autowired
+    private BcbgWsdlAttribute attributeService;
 
     /**
      * 获取子系统
@@ -113,6 +116,9 @@ public class BcbgAnalysisService extends BaseTaskService {
         insertService.new Context(BCBG).postNewProduct();
         updateService.new Context(BCBG).postUpdatedProduct();
 
+        // BCBG 的特殊情况:暂不使用
+        attributeService.new Context(BCBG).postAttributes();
+
         // 备份文件
         backup.fromData(feedFile, styleFile);
     }
@@ -151,6 +157,9 @@ public class BcbgAnalysisService extends BaseTaskService {
         return new File[] { feedFile, styleFile };
     }
 
+    /**
+     * 去 dir 下,按照 filter 过滤文件,返回第一个文件,并备份其他文件
+     */
     private File getDataFile(String dir, String filter, Backup backup) {
 
         // 打开目录
@@ -158,107 +167,24 @@ public class BcbgAnalysisService extends BaseTaskService {
         // 过滤文件
         File[] feedFiles = feedFileDir.listFiles(i -> i.getName().contains(filter));
 
-        if (feedFiles.length < 1) {
+        if (feedFiles == null || feedFiles.length < 1) {
             $info("'%s' 数据文件不存在,退出任务", filter);
             return null;
         }
 
         // 排序文件
-        List<File> feedFileList =  Arrays.asList(feedFiles).stream().sorted((f1, f2) -> f2.getName().compareTo(f1.getName())).collect(toList());
+        List<File> feedFileList =  Arrays.asList(feedFiles).stream().sorted((f1, f2) -> f1.getName().compareTo(f2.getName())).collect(toList());
 
         // 取第一个作为目标文件,并从其中移除
-        // 其他直接进行备份处理
-        File dataFile = feedFileList.remove(0);
-        feedFileList.forEach(backup::from);
+        // 其他的等待后续
 
-        return dataFile;
+        return feedFileList.remove(0);
     }
 
     private void clearLastData() {
         // 删除所有
         bcbgSuperFeedDao.delete();
         bcbgSuperFeedDao.deleteStyles();
-    }
-
-    /**
-     * 推送所有商品的非 CMS 属性,插入和更改都通过这里推送.
-     * @throws Exception
-     */
-    private void postAttribute() throws Exception {
-
-        String channel_id = BCBG.getId();
-
-        WsdlProductService service = new WsdlProductService(BCBG);
-
-        ProductsFeedAttribute feedAttribute = new ProductsFeedAttribute();
-
-        List<AttributeBean> attributes = new ArrayList<>();
-
-        AttributeBean attribute = new AttributeBean();
-
-        attribute.setCategory_url_key(Feed.getVal1(channel_id, FeedEnums.Name.product_category_url_key));
-        attribute.setModel_url_key(Feed.getVal1(channel_id, FeedEnums.Name.product_model_url_key));
-        attribute.setProduct_url_key(Feed.getVal1(channel_id, FeedEnums.Name.product_url_key));
-        attribute.setAttribute1(Feed.getVal1(channel_id, FeedEnums.Name.attribute1));
-        attribute.setAttribute2(Feed.getVal1(channel_id, FeedEnums.Name.attribute2));
-        attribute.setAttribute3(Feed.getVal1(channel_id, FeedEnums.Name.attribute3));
-        attribute.setAttribute4(Feed.getVal1(channel_id, FeedEnums.Name.attribute4));
-        attribute.setAttribute5(Feed.getVal1(channel_id, FeedEnums.Name.attribute5));
-        attribute.setAttribute6(Feed.getVal1(channel_id, FeedEnums.Name.attribute6));
-        attribute.setAttribute7(Feed.getVal1(channel_id, FeedEnums.Name.attribute7));
-        attribute.setAttribute8(Feed.getVal1(channel_id, FeedEnums.Name.attribute8));
-        attribute.setAttribute9(Feed.getVal1(channel_id, FeedEnums.Name.attribute9));
-        attribute.setAttribute10(Feed.getVal1(channel_id, FeedEnums.Name.attribute10));
-        attribute.setAttribute11(Feed.getVal1(channel_id, FeedEnums.Name.attribute11));
-        attribute.setAttribute12(Feed.getVal1(channel_id, FeedEnums.Name.attribute12));
-        attribute.setAttribute13(Feed.getVal1(channel_id, FeedEnums.Name.attribute13));
-        attribute.setAttribute14(Feed.getVal1(channel_id, FeedEnums.Name.attribute14));
-        attribute.setAttribute15(Feed.getVal1(channel_id, FeedEnums.Name.attribute15));
-        attribute.setAttribute16(Feed.getVal1(channel_id, FeedEnums.Name.attribute16));
-        attribute.setAttribute17(Feed.getVal1(channel_id, FeedEnums.Name.attribute17));
-        attribute.setAttribute18(Feed.getVal1(channel_id, FeedEnums.Name.attribute18));
-        attribute.setAttribute19(Feed.getVal1(channel_id, FeedEnums.Name.attribute19));
-        attribute.setAttribute20(Feed.getVal1(channel_id, FeedEnums.Name.attribute20));
-        attribute.setAttribute21(Feed.getVal1(channel_id, FeedEnums.Name.attribute21));
-        attribute.setAttribute22(Feed.getVal1(channel_id, FeedEnums.Name.attribute22));
-        attribute.setAttribute23(Feed.getVal1(channel_id, FeedEnums.Name.attribute23));
-        attribute.setAttribute24(Feed.getVal1(channel_id, FeedEnums.Name.attribute24));
-        attribute.setAttribute25(Feed.getVal1(channel_id, FeedEnums.Name.attribute25));
-        attribute.setAttribute26(Feed.getVal1(channel_id, FeedEnums.Name.attribute26));
-        attribute.setAttribute27(Feed.getVal1(channel_id, FeedEnums.Name.attribute27));
-        attribute.setAttribute28(Feed.getVal1(channel_id, FeedEnums.Name.attribute28));
-        attribute.setAttribute29(Feed.getVal1(channel_id, FeedEnums.Name.attribute29));
-        attribute.setAttribute30(Feed.getVal1(channel_id, FeedEnums.Name.attribute30));
-        attribute.setAttribute31(Feed.getVal1(channel_id, FeedEnums.Name.attribute31));
-        attribute.setAttribute32(Feed.getVal1(channel_id, FeedEnums.Name.attribute32));
-        attribute.setAttribute33(Feed.getVal1(channel_id, FeedEnums.Name.attribute33));
-        attribute.setAttribute34(Feed.getVal1(channel_id, FeedEnums.Name.attribute34));
-        attribute.setAttribute35(Feed.getVal1(channel_id, FeedEnums.Name.attribute35));
-        attribute.setAttribute36(Feed.getVal1(channel_id, FeedEnums.Name.attribute36));
-        attribute.setAttribute37(Feed.getVal1(channel_id, FeedEnums.Name.attribute37));
-        attribute.setAttribute37(Feed.getVal1(channel_id, FeedEnums.Name.attribute37));
-        attribute.setAttribute38(Feed.getVal1(channel_id, FeedEnums.Name.attribute38));
-        attribute.setAttribute39(Feed.getVal1(channel_id, FeedEnums.Name.attribute39));
-        attribute.setAttribute40(Feed.getVal1(channel_id, FeedEnums.Name.attribute40));
-        attribute.setAttribute41(Feed.getVal1(channel_id, FeedEnums.Name.attribute41));
-        attribute.setAttribute42(Feed.getVal1(channel_id, FeedEnums.Name.attribute42));
-        attribute.setAttribute43(Feed.getVal1(channel_id, FeedEnums.Name.attribute43));
-        attribute.setAttribute44(Feed.getVal1(channel_id, FeedEnums.Name.attribute44));
-        attribute.setAttribute45(Feed.getVal1(channel_id, FeedEnums.Name.attribute45));
-        attribute.setAttribute46(Feed.getVal1(channel_id, FeedEnums.Name.attribute46));
-        attribute.setAttribute47(Feed.getVal1(channel_id, FeedEnums.Name.attribute47));
-        attribute.setAttribute48(Feed.getVal1(channel_id, FeedEnums.Name.attribute48));
-        attribute.setAttribute49(Feed.getVal1(channel_id, FeedEnums.Name.attribute49));
-        attribute.setAttribute50(Feed.getVal1(channel_id, FeedEnums.Name.attribute50));
-
-        attributes.add(attribute);
-
-        feedAttribute.setChannel_id(channel_id);
-        feedAttribute.setAttributebeans(attributes);
-
-        WsdlResponseBean result = service.attribute(feedAttribute);
-
-        // TODO 处理返回结果
     }
 
     private void insertNewData(List<SuperFeedBcbgBean> bcbgBeans, BcbgStyleBean[] styleBeanArr) {
@@ -319,8 +245,9 @@ public class BcbgAnalysisService extends BaseTaskService {
 
         if (styleBeans == null || styleBeans.size() < 1) return;
 
-        logIssue("发现部分 BCBG Style 文件的无效数据", styleBeans.size() + "个");
-        $info("已警告<无效>数据 %s 个", styleBeans.size());
+        // logIssue("发现部分 BCBG Style 文件的无效数据", styleBeans.size() + "个");
+
+        $info("发现 BCBG Style <无效>数据 %s 个", styleBeans.size());
     }
 
     private void attributeListInsert(Channel channel){

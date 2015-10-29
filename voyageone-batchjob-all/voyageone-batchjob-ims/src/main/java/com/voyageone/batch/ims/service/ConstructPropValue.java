@@ -2,10 +2,7 @@ package com.voyageone.batch.ims.service;
 
 import com.voyageone.batch.ims.ImsConstants;
 import com.voyageone.batch.ims.bean.CustomMappingType;
-import com.voyageone.batch.ims.dao.DictWordDao;
-import com.voyageone.batch.ims.dao.PlatformPropCustomMappingDao;
-import com.voyageone.batch.ims.dao.PlatformSkuInfoDao;
-import com.voyageone.batch.ims.dao.PropValueDao;
+import com.voyageone.batch.ims.dao.*;
 import com.voyageone.batch.ims.modelbean.CustomPlatformPropMapping;
 import com.voyageone.batch.ims.modelbean.PlatformSkuInfoBean;
 import com.voyageone.batch.ims.modelbean.PropBean;
@@ -607,6 +604,7 @@ public class ConstructPropValue {
             propValueDao.insertPropValue(propValue);
         }
         */
+
     }
 
     public static void constructDictInfo(DictWordDao dictWordDao) {
@@ -666,6 +664,7 @@ public class ConstructPropValue {
             //商品图片-1
             RuleExpression itemImage1Expression = new RuleExpression();
             imageIndexParamExpressioin.clear();
+
             imageIndexParamExpressioin.addRuleWord(new TextWord(String.valueOf(i)));
             CustomWord getImageByCodeCustomWord = new CustomWord(new CustomWordValueGetMainProductImages(null, itemImageTplExpression, imageIndexParamExpressioin, productImageTypeExpression, null));
             itemImage1Expression.addRuleWord(getImageByCodeCustomWord);
@@ -847,6 +846,142 @@ public class ConstructPropValue {
         customPlatformPropMapping.setPlatformPropId("in_prop_150778146");
         platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
 
+        customPlatformPropMapping.setPlatformPropId("in_prop_148242406");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("prop_20506");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("std_size_prop_20509_-1");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("custom_prop_1");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("basecolor");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("std_size_extends_20509");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_tip");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_shengao");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_shengao_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_tizhong");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_tizhong_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_jiankuan");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_jiankuan_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_xiongwei");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_xiongwei_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_yaowei");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_yaowei_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_xiuchang");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_xiuchang_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_yichang");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_yichang_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_baiwei");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_baiwei_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_xiabaiwei");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_xiabaiwei_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_xiukou");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_xiukou_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_xiufei");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_xiufei_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_zhongyao");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_zhongyao_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_lingshen");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_lingshen_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_linggao");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_linggao_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_lingkuan");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_lingkuan_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_lingwei");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_lingwei_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_yuanbaihou");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_yuanbaihou_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_pingbai");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_pingbai_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_yuanbai");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("size_mapping_yuanbai_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        //=================================SKU_INFO END==============================
+
         customPlatformPropMapping.setCustomMappingType(CustomMappingType.TMALL_ITEM_QUANTITY);
         customPlatformPropMapping.setPlatformPropId("quantity");
         platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
@@ -888,7 +1023,7 @@ public class ConstructPropValue {
 
         //模板1
         tmallSkuInfo.setProp_id("sku");
-        int skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_1_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_1_Schema.SKU);
+        long skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_1_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_1_Schema.SKU);
         tmallSkuInfo.setSku_type(skuType);
         platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
 
@@ -1003,6 +1138,301 @@ public class ConstructPropValue {
         skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_1_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_1_Schema.INPUT_CUSTOM_SIZE_4);
         tmallSkuInfo.setSku_type(skuType);
         platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+
+        //=================模板2=========================================
+        tmallSkuInfo.setProp_id("sku");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.SKU);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        //颜色
+        tmallSkuInfo.setProp_id("prop_1627207");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.SKU_COLOR,
+                SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDCOLOR_COLOR);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("sku_price");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.SKU_PRICE);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("sku_quantity");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.SKU_QUANTITY);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("sku_outerId");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.SKU_OUTERID);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("sku_barcode");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.SKU_BARCODE);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        //自定义尺码
+        tmallSkuInfo.setProp_id("std_size_prop_20509_-1");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.SKU_SIZE
+                , SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_SIZE);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("custom_prop_1");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_CUSTOM_SIZE_1);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        //颜色扩展
+        tmallSkuInfo.setProp_id("prop_extend_1627207");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDCOLOR);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("alias_name");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDCOLOR_ALIASNAME);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("prop_image");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDCOLOR_IMAGE);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("basecolor");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDCOLOR_BASECOLOR);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        //尺码扩展
+        tmallSkuInfo.setProp_id("std_size_extends_20509");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_tip");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_TIP);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_shengao");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_SHENGAO);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_shengao_range");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_SHENGAO_RANGE);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_tizhong");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_TIZHONG);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_tizhong_range");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_TIZHONG_RANGE);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_jiankuan");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_JIANKUAN);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_jiankuan_range");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_JIANKUAN_RANGE);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_xiongwei");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_XIONGWEI);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_xiongwei_range");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_XIONGWEI_RANGE);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_yaowei");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_YAOWEI);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_yaowei_range");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_YAOWEI_RANGE);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_xiuchang");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_XIUCHANG);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_xiuchang_range");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_XIUCHANG_RANGE);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_yichang");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_YICHANG);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_yichang_range");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_YICHANG_RANGE);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_beikuan");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_BEIKUAN);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_beikuan_range");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_BEIKUAN_RANGE);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_qianchang");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_QIANCHANG);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_qianchang_range");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_QIANCHANG_RANGE);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_baiwei");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_BAIWEI);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_baiwei_range");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_BAIWEI_RANGE);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_xiabaiwei");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_XIABAIWEI);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_xiabaiwei_range");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_XIABAIWEI_RANGE);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_xiukou");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_XIUKOU);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_xiukou_range");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_XIUKOU_RANGE);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_xiufei");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_XIUFEI);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_xiufei_range");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_XIUFEI_RANGE);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_zhongyao");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_ZHONGYAO);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_zhongyao_range");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_ZHONGYAO_RANGE);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_lingshen");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_LINGSHEN);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_lingshen_range");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_LINGSHEN_RANGE);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_linggao");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_LINGGAO);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_linggao_range");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_LINGGAO_RANGE);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_lingkuan");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_LINGKUAN);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_lingkuan_range");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_LINGKUAN_RANGE);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_lingwei");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_LINGWEI);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_lingwei_range");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_LINGWEI_RANGE);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_yuanbaihou");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_YUANBAIHOU);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_yuanbaihou_range");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_YUANBAIHOU_RANGE);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_pingbai");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_PINGBAI);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_pingbai_range");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_PINGBAI_RANGE);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_yuanbai");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_YUANBAI);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("size_mapping_yuanbai_range");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_YUANBAI_RANGE);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("custom_prop_1");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_CUSTOM_SIZE_1);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        //=================END 模板2=====================================
     }
 
     public static String convertUrlToPattern(String url) {
@@ -1022,7 +1452,11 @@ public class ConstructPropValue {
         RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
         ConstructPropValue util = new ConstructPropValue();
 
+        CustomSizePropDao customSizePropDao = ctx.getBean(CustomSizePropDao.class);
+        customSizePropDao.selectCustomSizeProp("012");
+        //constructPlatformPropMappingCustom(platformPropCustomMappingDao);
         constructTmallSkuInfo(platformSkuInfoDao);
+//        constructTmallSkuInfo(platformSkuInfoDao);
         /*
         constructProductValue(ruleJsonMapper, propValueDao, util);
         constructItemValue(ruleJsonMapper, propValueDao, util);
@@ -1034,7 +1468,7 @@ public class ConstructPropValue {
         constructProductValue(ruleJsonMapper, propValueDao, util);
         constructItemValue(ruleJsonMapper, propValueDao, util);
         */
-//        constructPlatformPropMappingCustom(platformPropCustomMappingDao);
+        //constructPlatformPropMappingCustom(platformPropCustomMappingDao);
 //       constructTmallSkuInfo(platformSkuInfoDao);
         //constructDictInfo(dictWordDao);
     }
