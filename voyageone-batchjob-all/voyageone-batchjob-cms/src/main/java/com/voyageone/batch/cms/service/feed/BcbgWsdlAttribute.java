@@ -52,6 +52,8 @@ public class BcbgWsdlAttribute extends BcbgWsdlBase {
 
             List<AttributeBean> attributeBeans = getAttributes();
 
+            $info("获取未处理重复的 AttributeBean %s 个", attributeBeans.size());
+
             ProductsFeedAttribute feedAttribute = new ProductsFeedAttribute();
             feedAttribute.setChannel_id(channel.getId());
             feedAttribute.setAttributebeans(attributeBeans);
@@ -62,9 +64,16 @@ public class BcbgWsdlAttribute extends BcbgWsdlBase {
             // 处理失败
             if (wsdlResponseBean == null) {
                 $info("产品Attribute处理失败，处理失败！");
-            } else if (wsdlResponseBean.getResult().equals("NG")) {
-                $info("产品Attribute处理失败，MessageCode = " + wsdlResponseBean.getMessageCode() + ",Message = " + wsdlResponseBean.getMessage());
-                logIssue("cms 数据导入处理", "产品Attribute处理失败，MessageCode = " + wsdlResponseBean.getMessageCode() + ",Message = " + wsdlResponseBean.getMessage());
+            } else {
+                $info("调用结果 Attribute 接口");
+                $info("\tMessage:\t%s", wsdlResponseBean.getMessage());
+                $info("\tResult:\t%s", wsdlResponseBean.getResult());
+                $info("\tResultInfo:\t%s", wsdlResponseBean.getResultInfo());
+
+                if (wsdlResponseBean.getResult().equals("NG")) {
+                    $info("产品Attribute处理失败，MessageCode = " + wsdlResponseBean.getMessageCode() + ",Message = " + wsdlResponseBean.getMessage());
+                    logIssue("cms 数据导入处理", "产品Attribute处理失败，MessageCode = " + wsdlResponseBean.getMessageCode() + ",Message = " + wsdlResponseBean.getMessage());
+                }
             }
 
             $info("产品Attribute处理结束");
@@ -76,7 +85,8 @@ public class BcbgWsdlAttribute extends BcbgWsdlBase {
              * 之后根据 ProductUrlKey 分组, 取第一个. 以此进行去重复
              * 同时格式化 UrlKey
              */
-            return superFeedDao.selectAttribute(getAttributeColumns(), String.format("%s %s", productTable, productJoin), Constants.EmptyString)
+            String groupBy = Feed.getVal1(channel, FeedEnums.Name.product_sql_ending);
+            return superFeedDao.selectAttribute(getAttributeColumns(), String.format("%s %s", productTable, productJoin), groupBy)
                     .stream()
                     .collect(groupingBy(AttributeBean::getProduct_url_key, toList()))
                     .values()

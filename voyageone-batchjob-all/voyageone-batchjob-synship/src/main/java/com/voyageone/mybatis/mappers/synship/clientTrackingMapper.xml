@@ -52,6 +52,9 @@
             client.tracking_type != ''
         AND
              client.tracking_no != ''
+        order by
+            client.tracking_no asc,
+            client.tracking_time desc
         LIMIT #{limit};
     </select>
 
