@@ -73,6 +73,10 @@ public class WmsThirdFileDataProcessingService extends BaseTaskService {
 
     protected void onStartup(final List<TaskControlBean> taskControlList) throws Exception {
         logger.info("----------" + getTaskName() +"----------开始");
+
+        //防止文件未下载完全，先休眠一段时间
+        Thread.sleep(10000);
+
         //允许运行的渠道取得
         List<String> orderChannelIdList = TaskControlUtils.getVal1List(taskControlList,TaskControlEnums.Name.order_channel_id);
         //线程
