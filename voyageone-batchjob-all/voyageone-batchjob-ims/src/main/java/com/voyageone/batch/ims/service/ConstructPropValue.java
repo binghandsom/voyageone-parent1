@@ -846,10 +846,19 @@ public class ConstructPropValue {
         customPlatformPropMapping.setPlatformPropId("in_prop_150778146");
         platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
 
+        customPlatformPropMapping.setPlatformPropId("sku_MarketTime");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
         customPlatformPropMapping.setPlatformPropId("in_prop_148242406");
         platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
 
-        customPlatformPropMapping.setPlatformPropId("prop_20506");
+        customPlatformPropMapping.setPlatformPropId("prop_20509");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("prop_extend_20509");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("prop_14067173");
         platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
 
         customPlatformPropMapping.setPlatformPropId("std_size_prop_20509_-1");
@@ -1168,6 +1177,11 @@ public class ConstructPropValue {
         tmallSkuInfo.setSku_type(skuType);
         platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
 
+        tmallSkuInfo.setProp_id("sku_MarketTime");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.SKU_MARKET_TIME);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
         tmallSkuInfo.setProp_id("sku_barcode");
         skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.SKU_BARCODE);
         tmallSkuInfo.setSku_type(skuType);
@@ -1452,9 +1466,7 @@ public class ConstructPropValue {
         RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
         ConstructPropValue util = new ConstructPropValue();
 
-        CustomSizePropDao customSizePropDao = ctx.getBean(CustomSizePropDao.class);
-        customSizePropDao.selectCustomSizeProp("012");
-        //constructPlatformPropMappingCustom(platformPropCustomMappingDao);
+        constructPlatformPropMappingCustom(platformPropCustomMappingDao);
         constructTmallSkuInfo(platformSkuInfoDao);
 //        constructTmallSkuInfo(platformSkuInfoDao);
         /*

@@ -12,6 +12,7 @@ import com.voyageone.batch.ims.bean.tcb.UploadProductTcb;
 import com.voyageone.batch.ims.modelbean.*;
 import com.voyageone.batch.ims.service.AbstractSkuFieldBuilder;
 import com.voyageone.batch.ims.service.SkuTemplateSchema;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.ims.enums.CmsFieldEnum;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,6 +35,7 @@ public class TmallGjSkuFieldBuilderImpl_2 extends AbstractSkuFieldBuilder{
     private String propId_sku_quantity;
     private String propId_sku_outerId;
     private String propId_sku_barCode;
+    private String propId_sku_market_time;
 
     private String propId_colorExtend_aliasname;
     private String propId_colorExtend_color;
@@ -113,6 +115,9 @@ public class TmallGjSkuFieldBuilderImpl_2 extends AbstractSkuFieldBuilder{
             }
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_2_Schema.SKU_QUANTITY)) {
                 propId_sku_quantity = platformProp.getPlatformPropId();
+            }
+            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_2_Schema.SKU_MARKET_TIME)) {
+                propId_sku_market_time = platformProp.getPlatformPropId();
             }
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDCOLOR)) {
                 propId_colorExtend = platformProp.getPlatformPropId();
@@ -311,6 +316,12 @@ public class TmallGjSkuFieldBuilderImpl_2 extends AbstractSkuFieldBuilder{
 
                 String skuOuterId = cmsSkuProp.getProp(CmsFieldEnum.CmsSkuEnum.sku); //商家编码使用sku的值
                 skuFieldValue.setInputFieldValue(propId_sku_outerId, skuOuterId);
+
+                if (propId_sku_market_time != null && !"".equals(propId_sku_market_time)) {
+                    Date now = DateTimeUtil.getDate();
+                    String marketTime = String.format("%d-%d-%d", now.getYear(), now.getMonth(), now.getDay());
+                    skuFieldValue.setInputFieldValue(propId_sku_market_time, marketTime);
+                }
 
                 String skuBarCode = cmsSkuProp.getProp(CmsFieldEnum.CmsSkuEnum.bar_code);
                 //条形码可为空
