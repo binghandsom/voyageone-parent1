@@ -102,13 +102,15 @@ public abstract class ImsBeatBaseService extends BaseTaskService {
     }
 
     protected List<ImsBeatImageInfo> getTbImageUrl(BeatPicBean beatPicBean) {
+
         // 现根据位置获取 CMS 的图片信息
         List<ImsBeatImageInfo> imageInfoList = imsBeatPicDao.getImageInfo(beatPicBean);
 
         String[] strings = beatPicBean.getTargets().split(",");
 
         // 已重写了 ImsBeatImageInfo 的比较方法,所以可以用 contains
-        Arrays.stream(strings).map(Integer::valueOf)
+        Arrays.stream(strings)
+                .map(ImageIndex::new)
                 .filter(i -> !imageInfoList.contains(i))
                 .forEach(i -> {
                     ImsBeatImageInfo imageInfo = new ImsBeatImageInfo();
@@ -116,7 +118,7 @@ public abstract class ImsBeatBaseService extends BaseTaskService {
                     imageInfo.setChannel_id(beatPicBean.getChannel_id());
                     imageInfo.setBeatInfo(beatPicBean);
                     imageInfo.setCode(beatPicBean.getCode());
-                    imageInfo.setImage_id(i);
+                    imageInfo.setImage_id(i.getIndex());
                     imageInfo.setUrl_key(beatPicBean.getUrl_key());
 
                     imageInfoList.add(imageInfo);
@@ -190,6 +192,11 @@ public abstract class ImsBeatBaseService extends BaseTaskService {
             // 将商品信息更新回 taobao
             TmallItemSchemaUpdateResponse res = tbItemService.updateFields(shopBean, itemSchema);
 
+            if (res == null) {
+                beatPicBean.setComment("更新商品信息时, 为获取到响应.");
+                return false;
+            }
+
             if (StringUtils.isEmpty(res.getSubCode())) return true;
 
             $info("价格披露(B)：商品更新失败了。[ %s ] [ %s ] [ %s ]", beatPicBean.getNum_iid(), res.getSubCode(), res.getSubMsg());
@@ -223,6 +230,32 @@ public abstract class ImsBeatBaseService extends BaseTaskService {
             beatPicBean.setComment(errorMsg);
             logger.info(errorMsg);
             return false;
+        }
+    }
+
+    /**
+     * getTbImageUrl 方法的辅助类
+     */
+    private class ImageIndex {
+
+        private Integer index;
+
+        public ImageIndex(String index) {
+            this.index = Integer.valueOf(index);
+        }
+
+        public Integer getIndex() {
+            return index;
+        }
+
+        /**
+         * 专门处理比较 ImsBeatImageInfo 的 index (image_id)
+         */
+        @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof ImsBeatImageInfo)
+                return index.equals(((ImsBeatImageInfo) obj).getImage_id());
+            return super.equals(obj);
         }
     }
 }

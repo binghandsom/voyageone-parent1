@@ -108,15 +108,4 @@ public class ImsBeatImageInfo {
         }
         return null;
     }
-
-    /**
-     * 为价格披露进行重写,针对整形提供特殊处理
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Integer)
-            return obj.equals(getImage_id());
-
-        return super.equals(obj);
-    }
 }

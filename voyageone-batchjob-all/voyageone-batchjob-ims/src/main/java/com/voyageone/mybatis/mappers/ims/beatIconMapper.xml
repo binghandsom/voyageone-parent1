@@ -46,6 +46,9 @@
             image_name,
             image_id
         FROM voyageone_cms.cms_bt_product p JOIN voyageone_cms.cms_bt_product_image pi ON p.product_id = pi.product_id
-        WHERE p.channel_id = #{beat.channel_id} AND image_id IN (${beat.targets}) AND image_type_id = #{image_type_id};
+        WHERE p.channel_id = #{beat.channel_id}
+          AND image_id IN (${beat.targets})
+          AND image_type_id = #{image_type_id}
+          AND p.code = #{beat.code}
     </select>
 </mapper>
