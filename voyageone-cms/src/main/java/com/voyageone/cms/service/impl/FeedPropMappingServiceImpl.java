@@ -248,6 +248,8 @@ public class FeedPropMappingServiceImpl extends BaseAppService implements FeedPr
             count += feedPropMappingDao.updateIgnoreValues(updating, channel_id, userName);
         }
 
+        completeCategory(propList.get(0).getCategory_id(), channel_id, user);
+
         return count;
     }
 
