@@ -2,7 +2,9 @@ package com.voyageone.batch.ims.service.beat;
 
 import com.voyageone.batch.ims.bean.BeatPicBean;
 import com.voyageone.common.configs.beans.ShopBean;
-import org.apache.commons.lang3.StringUtils;
+
+import static com.voyageone.batch.ims.service.beat.ImsBeatImageNameFormater.formatImageName;
+import static com.voyageone.common.util.StringUtils.isEmpty;
 
 /**
  * 价格披露使用的,商品的简要图片信息
@@ -27,7 +29,12 @@ public class ImsBeatImageInfo {
     private ShopBean shop;
 
     public String getChannel_id() {
-        return channel_id;
+
+        if (!isEmpty(channel_id)) return channel_id;
+
+        if (getBeatInfo() == null) return null;
+
+        return getBeatInfo().getChannel_id();
     }
 
     public void setChannel_id(String channel_id) {
@@ -52,9 +59,9 @@ public class ImsBeatImageInfo {
 
     public String getImage_name() {
 
-        if (!StringUtils.isEmpty(image_name)) return image_name;
+        if (!isEmpty(image_name)) return image_name;
 
-        return String.format("%s-%s", getUrl_key(), getImage_id());
+        return formatImageName(this);
     }
 
     public void setImage_name(String image_name) {
@@ -98,13 +105,16 @@ public class ImsBeatImageInfo {
         // 拼接图片标题的规则，暂时这里固定写死，后续的功能会将此处处理移动到别处。
         // 对于规则，为了防止可配置方式导致后续查找图片的失败。这里规则内定于程序内。不轻易修改
         // !!! 请注意此处规则不要轻易修改，见上一行
+
+        String titleKey = getImage_name();
+
         switch (getBeatInfo().getBeat_flg()) {
             case Waiting:
                 //打标（beat_flg为1）
-                return getImage_name() + ".beat.jpg";
+                return titleKey + ".beat.jpg";
             case Passed:
             case Cancel:
-                return getImage_name() + ".jpg";
+                return titleKey + ".jpg";
         }
         return null;
     }

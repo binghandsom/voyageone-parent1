@@ -1,7 +1,7 @@
 package com.voyageone.batch.ims.service.beat;
 
 import com.voyageone.batch.base.BaseTaskService;
-import com.voyageone.batch.core.Enums.TaskControlEnums;
+import com.voyageone.batch.core.Enums.TaskControlEnums.Name;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.core.util.TaskControlUtils;
 import com.voyageone.batch.ims.bean.BeatPicBean;
@@ -57,6 +57,9 @@ public class ImsBeatPicService extends BaseTaskService {
 
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
+
+        ImsBeatImageNameFormater.setTaskControls(taskControlList);
+
         doBeats(taskControlList);
     }
 
@@ -68,7 +71,7 @@ public class ImsBeatPicService extends BaseTaskService {
      */
     private void doBeats(List<TaskControlBean> taskControlList) throws InterruptedException {
 
-        String thread_count = TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.thread_count);
+        String thread_count = TaskControlUtils.getVal1(taskControlList, Name.thread_count);
         final int THREAD_COUNT = Integer.valueOf(thread_count);
 
         int limit = PRODUCT_COUNT_ON_THREAD * THREAD_COUNT;
