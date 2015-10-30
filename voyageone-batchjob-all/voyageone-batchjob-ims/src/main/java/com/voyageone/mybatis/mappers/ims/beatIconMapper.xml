@@ -38,7 +38,7 @@
     </update>
 
     <select id="cms_bt_product_selectImageInfo" parameterType="com.voyageone.batch.ims.bean.BeatPicBean"
-            resultType="com.voyageone.batch.ims.service.beat.BeatImageInfo">
+            resultType="com.voyageone.batch.ims.service.beat.ImsBeatImageInfo">
         SELECT
             p.channel_id,
             code,

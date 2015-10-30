@@ -101,17 +101,17 @@ public abstract class ImsBeatBaseService extends BaseTaskService {
         }
     }
 
-    protected List<BeatImageInfo> getTbImageUrl(BeatPicBean beatPicBean) {
+    protected List<ImsBeatImageInfo> getTbImageUrl(BeatPicBean beatPicBean) {
         // 现根据位置获取 CMS 的图片信息
-        List<BeatImageInfo> imageInfoList = imsBeatPicDao.getImageInfo(beatPicBean);
+        List<ImsBeatImageInfo> imageInfoList = imsBeatPicDao.getImageInfo(beatPicBean);
 
         String[] strings = beatPicBean.getTargets().split(",");
 
-        // 已重写了 BeatImageInfo 的比较方法,所以可以用 contains
+        // 已重写了 ImsBeatImageInfo 的比较方法,所以可以用 contains
         Arrays.stream(strings).map(Integer::valueOf)
                 .filter(i -> !imageInfoList.contains(i))
                 .forEach(i -> {
-                    BeatImageInfo imageInfo = new BeatImageInfo();
+                    ImsBeatImageInfo imageInfo = new ImsBeatImageInfo();
 
                     imageInfo.setChannel_id(beatPicBean.getChannel_id());
                     imageInfo.setBeatInfo(beatPicBean);

@@ -79,11 +79,11 @@ public class ImsBeatRevertService extends ImsBeatBaseService {
 
     private Map<Integer, String> getTbImageUrl(ShopBean shopBean, BeatPicBean beatPicBean, String category_tid, List<TaskControlBean> taskControlList) {
         // 现根据位置获取 CMS 的图片信息
-        List<BeatImageInfo> imageInfoList = getTbImageUrl(beatPicBean);
+        List<ImsBeatImageInfo> imageInfoList = getTbImageUrl(beatPicBean);
 
         Map<Integer, String> tbImageUrlMap = new HashMap<>();
 
-        for (BeatImageInfo imageInfo: imageInfoList) {
+        for (ImsBeatImageInfo imageInfo: imageInfoList) {
 
             // 补全信息
             imageInfo.setBeatInfo(beatPicBean);
@@ -100,7 +100,7 @@ public class ImsBeatRevertService extends ImsBeatBaseService {
         return tbImageUrlMap;
     }
 
-    private String getTbImageUrl(BeatImageInfo imageInfo, List<TaskControlBean> taskControlList) {
+    private String getTbImageUrl(ImsBeatImageInfo imageInfo, List<TaskControlBean> taskControlList) {
 
         String title = imageInfo.getTitle();
 
@@ -162,7 +162,7 @@ public class ImsBeatRevertService extends ImsBeatBaseService {
         return pic.getPic_url();
     }
 
-    private Picture upload(BeatImageInfo imageInfo, List<TaskControlBean> taskControlList) {
+    private Picture upload(ImsBeatImageInfo imageInfo, List<TaskControlBean> taskControlList) {
 
         String cate_id = imageInfo.getCategoryTid();
 

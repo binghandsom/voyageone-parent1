@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
  * 价格披露使用的,商品的简要图片信息
  * Created by Jonas on 10/29/15.
  */
-public class BeatImageInfo {
+public class ImsBeatImageInfo {
 
     private String channel_id;
 

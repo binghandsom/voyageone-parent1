@@ -85,11 +85,11 @@ public class ImsBeatUpdateService extends ImsBeatBaseService {
     private Map<Integer, String> getTbImageUrl(ShopBean shopBean, String category_tid, BeatPicBean beatPicBean) {
 
         // 现根据位置获取 CMS 的图片信息
-        List<BeatImageInfo> imageInfoList = getTbImageUrl(beatPicBean);
+        List<ImsBeatImageInfo> imageInfoList = getTbImageUrl(beatPicBean);
 
         Map<Integer, String> tbImageUrlMap = new HashMap<>();
 
-        for (BeatImageInfo imageInfo: imageInfoList) {
+        for (ImsBeatImageInfo imageInfo: imageInfoList) {
 
             // 补全信息
             imageInfo.setBeatInfo(beatPicBean);
@@ -109,7 +109,7 @@ public class ImsBeatUpdateService extends ImsBeatBaseService {
     /**
      * 根据完整的图片信息,处理获取该图片在淘宝上的路径
      */
-    private String getTbImageUrl(BeatImageInfo imageInfo) {
+    private String getTbImageUrl(ImsBeatImageInfo imageInfo) {
 
         BeatPicBean beatPicBean = imageInfo.getBeatInfo();
 
@@ -164,7 +164,7 @@ public class ImsBeatUpdateService extends ImsBeatBaseService {
         }
     }
 
-    private void clearLastImage(BeatImageInfo imageInfo) {
+    private void clearLastImage(ImsBeatImageInfo imageInfo) {
         // 价格披露的图片，在上传之前先检查是否已有，有则删除
         // 老图检测和删除时出现的错误和异常不会影响正常逻辑执行。所以此处都忽略
         try {
@@ -189,7 +189,7 @@ public class ImsBeatUpdateService extends ImsBeatBaseService {
     /**
      * 获取拼接的商品价格披露图的地址
      */
-    private String formatImageUrl(BeatImageInfo imageInfo) {
+    private String formatImageUrl(ImsBeatImageInfo imageInfo) {
 
         BeatPicBean beatPicBean = imageInfo.getBeatInfo();
 
