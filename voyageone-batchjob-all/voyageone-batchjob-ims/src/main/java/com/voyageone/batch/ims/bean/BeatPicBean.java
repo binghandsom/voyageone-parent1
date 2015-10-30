@@ -1,9 +1,10 @@
 package com.voyageone.batch.ims.bean;
 
 import com.voyageone.batch.ims.enums.BeatFlg;
+import org.apache.commons.lang3.StringUtils;
 
 /**
- *
+ * 汇集 beat 和 beatItem 表的信息
  * Created by sky on 20150814
  */
 public class BeatPicBean {
@@ -14,9 +15,7 @@ public class BeatPicBean {
 
     private String code;
 
-    private String url_key;
-
-    private String image_name;
+    private String targets;
 
     private long num_iid;
 
@@ -25,6 +24,8 @@ public class BeatPicBean {
     private String temp_url;
 
     private BeatFlg beat_flg;
+
+    private String url_key;
 
     private String modified;
 
@@ -41,7 +42,10 @@ public class BeatPicBean {
     }
 
     public void setComment(String comment) {
-        this.comment = comment;
+        if (this.comment == null)
+            this.comment = comment;
+        else if (!StringUtils.isEmpty(comment))
+            this.comment += ";" + comment;
     }
 
     public int getBeat_item_id() {
@@ -82,22 +86,6 @@ public class BeatPicBean {
 
     public void setCode(String code) {
         this.code = code;
-    }
-
-    public String getUrl_key() {
-        return url_key;
-    }
-
-    public void setUrl_key(String url_key) {
-        this.url_key = url_key;
-    }
-
-    public String getImage_name() {
-        return image_name;
-    }
-
-    public void setImage_name(String image_name) {
-        this.image_name = image_name;
     }
 
     public long getNum_iid() {
@@ -152,4 +140,19 @@ public class BeatPicBean {
         this.modifier = modifier;
     }
 
+    public String getTargets() {
+        return targets;
+    }
+
+    public void setTargets(String targets) {
+        this.targets = targets;
+    }
+
+    public String getUrl_key() {
+        return url_key;
+    }
+
+    public void setUrl_key(String url_key) {
+        this.url_key = url_key;
+    }
 }

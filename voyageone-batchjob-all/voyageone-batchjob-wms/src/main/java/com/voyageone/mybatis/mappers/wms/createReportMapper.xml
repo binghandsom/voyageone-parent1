@@ -2,6 +2,77 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.wms.sql">
 
+    <!-- 取得wms_bt_transfer_item表中要做报告的销售记录集(大礼包解决方案)-->
+    <select id="wms_getVirtualCreateReportData" resultType="com.voyageone.batch.wms.modelbean.ThirdReportBean">
+        SELECT
+            provisional.transfer_id,
+            provisional.order_number,
+            provisional.transfer_sku,
+            count(provisional.transfer_id) AS sales_unit,
+            provisional.order_channel_id,
+            provisional.created,
+            orders.source_order_id,
+            orders.cart_id,
+            itemdetails.itemcode,
+            itemdetails.size
+        FROM
+            (
+                SELECT
+                    transferitem.transfer_id,
+                    transferitem.order_number,
+                    ifnull(
+                        virtual.sku,
+                        transferitem.transfer_sku
+                    ) AS transfer_sku,
+                    transfer.order_channel_id,
+                    transfer.created
+                FROM
+                    wms_bt_transfer_item transferitem
+                INNER JOIN wms_bt_transfer transfer ON transfer.transfer_id = transferitem.transfer_id
+                AND transfer.order_channel_id = #{order_channel_id}
+                AND transfer.transfer_status =  #{transfer_status}
+                AND transfer.transfer_type = #{transfer_type}
+                AND transfer.transfer_origin = #{transfer_origin}
+                AND transfer.created BETWEEN #{start_created}
+                AND #{end_created}
+                LEFT JOIN wms_bt_virtual_sku virtual ON transferitem.transfer_sku = virtual.provisional_sku
+            ) AS provisional
+        INNER JOIN oms_bt_orders orders ON orders.order_number = provisional.order_number
+        AND orders.cart_id = #{cart_id}
+        INNER JOIN wms_bt_item_details itemdetails ON itemdetails.sku = provisional.transfer_sku
+        WHERE
+            EXISTS (
+                SELECT
+                    1
+                FROM
+                    tm_task_control
+                WHERE
+                    task_id = #{task_name}
+                AND cfg_name = 'order_channel_id'
+                AND cfg_val1 = orders.order_channel_id
+            )
+        AND NOT EXISTS (
+            SELECT
+                1
+            FROM
+                voyageone_ims.ims_bt_product_except except
+            WHERE
+                except.order_channel_id = #{order_channel_id}
+            AND except.cart_id = #{cart_id}
+            AND except.`comment` LIKE '%赠品%'
+            AND except.except_sku = provisional.transfer_sku
+        )
+        GROUP BY
+            provisional.transfer_id,
+            provisional.order_number,
+            provisional.transfer_sku
+        ORDER BY
+            provisional.transfer_id,
+            provisional.order_number,
+            provisional.transfer_sku;
+    </select>
+
+
 
 
     <!-- 取得wms_bt_transfer_item表中要做报告的销售记录集-->
@@ -45,6 +116,7 @@
                       WHERE
                         except.order_channel_id = #{order_channel_id}
                       AND except.cart_id = #{cart_id}
+                      AND except.`comment` LIKE '%赠品%'
                       AND except.except_sku = transferitem.transfer_sku)
         GROUP BY
             transferitem.transfer_id,
@@ -92,6 +164,7 @@
                       WHERE
                         except.order_channel_id = #{order_channel_id}
                       AND except.cart_id = #{cart_id}
+                      AND except.`comment` LIKE '%赠品%'
                       AND except.except_sku = transferitem.transfer_sku)
         INNER JOIN oms_bt_orders orders ON orders.order_number = transferitem.order_number
         AND orders.cart_id = #{cart_id}
@@ -168,6 +241,7 @@
             details. STATUS NOT IN ('Canceled', 'Returned')
             OR details. STATUS IS NULL
         )
+        AND orders.order_status = 'Approved'
         AND details.adjustment = 0
         AND EXISTS (
             SELECT
@@ -184,7 +258,7 @@
         WHERE
             orders.order_channel_id =  #{order_channel_id}
         AND orders.cart_id = #{cart_id}
-        AND orders.created BETWEEN #{start_created}
+        AND orders.approval_date BETWEEN #{start_created}
                            AND #{end_created}
         AND EXISTS (
             SELECT
@@ -204,6 +278,7 @@
             WHERE
                 except.order_channel_id =  #{order_channel_id}
             AND except.cart_id = #{cart_id}
+            AND except.`comment` LIKE '%赠品%'
             AND except.except_sku = details.sku
         )
         GROUP BY

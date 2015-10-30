@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * 为 淘宝 API 提供基础服务
- * <p/>
  * Created by neil on 2015-05-22.
  */
 public abstract class TbBase {
@@ -119,12 +118,48 @@ public abstract class TbBase {
         return null;
     }
 
+    private <T extends TaobaoResponse> T reqTaobaoApiWithThread(ShopBean shopBean, TaobaoRequest<T> request, boolean setSessionKey, int timeout) throws ApiException {
+
+        T response;
+
+        ReqTaobaoApiThread<T> t = new ReqTaobaoApiThread<>(shopBean, request, setSessionKey);
+
+        t.start();
+
+        try {
+            t.join(timeout);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        if (t.getApiException() != null) {
+            throw t.getApiException();
+        } else {
+            response = t.getResponse();
+        }
+
+        return response;
+    }
+
+    /**
+     * 辅助：判断结果是否是超时
+     */
+    private <T extends TaobaoResponse> boolean isTimeout(T response) {
+        return "isp.top-remote-connection-timeout".equals(response.getSubCode());
+    }
+
+    protected void setErrorLog(Exception e) {
+        issueLog.log(e, ErrorType.BatchJob, SubSystem.COM);
+    }
+
     /**
      * 请求taobao Api的线程，响应和异常通过成员response和apiException传递
      * 如果超时，response为null
+     *
      * @param <T>
      */
     private class ReqTaobaoApiThread<T extends TaobaoResponse> extends Thread {
+
         private ShopBean shopBean;
         private TaobaoRequest<T> request;
         private boolean setSessionKey;
@@ -140,14 +175,13 @@ public abstract class TbBase {
         @Override
         public void run() {
             TaobaoClient client = getDefaultTaobaoClient(shopBean);
-                try {
-                    response = setSessionKey
-                            ? client.execute(request, shopBean.getSessionKey())
-                            : client.execute(request);
-                }
-                catch (ApiException e) {
-                    apiException = e;
-                }
+            try {
+                response = setSessionKey
+                        ? client.execute(request, shopBean.getSessionKey())
+                        : client.execute(request);
+            } catch (ApiException e) {
+                apiException = e;
+            }
         }
 
         public ApiException getApiException() {
@@ -157,33 +191,5 @@ public abstract class TbBase {
         public T getResponse() {
             return response;
         }
-    }
-    private <T extends TaobaoResponse> T reqTaobaoApiWithThread(ShopBean shopBean, TaobaoRequest<T> request, boolean setSessionKey, int timeout) throws ApiException {
-
-        T response;
-        ReqTaobaoApiThread t = new ReqTaobaoApiThread<T>(shopBean, request, setSessionKey);
-        t.start();
-        try {
-            t.join(timeout);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        if (t.getApiException() != null)
-        {
-            throw t.getApiException();
-        } else {
-            response = (T) t.getResponse();
-        }
-        return response;
-    }
-    /**
-     * 辅助：判断结果是否是超时
-     */
-    private <T extends TaobaoResponse> boolean isTimeout(T response) {
-        return "isp.top-remote-connection-timeout".equals(response.getSubCode());
-    }
-
-    protected void setErrorLog(Exception e) {
-        issueLog.log(e, ErrorType.BatchJob, SubSystem.COM);
     }
 }
