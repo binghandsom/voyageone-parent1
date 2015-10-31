@@ -66,12 +66,13 @@
             imsProducts.code,
             pi.image_name,
             cmsProducts.url_key,
-            b.description
+            imsProduct.description
         FROM (SELECT
                   item.code src,
                   beat.channel_id,
                   beat.cart_id,
-                  p.num_iid
+                  p.num_iid,
+                  beat.description
               FROM voyageone_ims.ims_bt_beat beat
                   JOIN voyageone_ims.ims_bt_beat_item_temp item ON beat.beat_id = item.beat_id
                   JOIN voyageone_ims.ims_bt_product p
@@ -105,7 +106,7 @@
             imsProducts.code,
             pi.image_name,
             cmsProducts.url_key,
-            b.description
+            beat.description
         FROM voyageone_ims.ims_bt_beat beat
             JOIN voyageone_ims.ims_bt_beat_item_temp temp ON beat.beat_id = temp.beat_id
             LEFT JOIN voyageone_ims.ims_bt_product imsProducts
