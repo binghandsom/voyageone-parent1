@@ -176,7 +176,10 @@ public abstract class ImsBeatBaseService extends BaseTaskService {
             $info("价格披露：接口结果 [ %s ] [ %s ] [ %s ] [ %s ] [ %s ]", res.getUpdateItemResult(), res.getGmtModified(),
                     res.getMsg(), res.getSubCode(), res.getSubMsg());
 
-            if (StringUtils.isEmpty(res.getSubCode())) return true;
+            if (StringUtils.isEmpty(res.getSubCode())) {
+                beatPicBean.setComment(res.getUpdateItemResult());
+                return true;
+            }
 
             $info("价格披露：商品更新失败了。[ %s ] [ %s ] [ %s ]", beatPicBean.getNum_iid(), res.getSubCode(), res.getSubMsg());
 
