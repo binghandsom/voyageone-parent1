@@ -79,7 +79,7 @@
                       ON item.code = p.code
                          AND beat.channel_id = p.channel_id
                          AND beat.cart_id = p.cart_id
-              WHERE beat.beat_id = #{beat_id} AND beat.end &lt; #{now}) imsProduct
+              WHERE beat.beat_id = #{beat_id} AND beat.end > #{now}) imsProduct
             LEFT JOIN voyageone_ims.ims_bt_product imsProducts
                 ON imsProduct.cart_id = imsProducts.cart_id
                    AND imsProduct.channel_id = imsProducts.channel_id
@@ -122,7 +122,7 @@
                    AND pi.image_type_id = 1
                    AND pi.image_id = 1
         WHERE
-            beat.beat_id = #{beat_id} AND beat.end &lt; #{now}
+            beat.beat_id = #{beat_id} AND beat.end > #{now}
     </select>
 
     <select id="ims_bt_beat_item_selectItems_byBeatId" resultType="com.voyageone.ims.model.ImsBeatItem">
