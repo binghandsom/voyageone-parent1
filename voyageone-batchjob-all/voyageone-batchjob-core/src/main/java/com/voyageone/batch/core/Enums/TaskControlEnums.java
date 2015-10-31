@@ -50,6 +50,10 @@ public class TaskControlEnums {
          */
         image_name_template,
         /**
+         * 每线程的原子数
+         */
+        atom_count,
+        /**
          * 历史数据转移表
          */
         history_table
