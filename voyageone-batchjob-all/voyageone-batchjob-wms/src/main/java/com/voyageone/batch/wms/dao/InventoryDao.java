@@ -1,7 +1,6 @@
 package com.voyageone.batch.wms.dao;
 
 import com.voyageone.base.dao.BaseDao;
-import com.voyageone.batch.wms.modelbean.AllotInventoryDetailBean;
 import com.voyageone.batch.wms.modelbean.InventorySynLogBean;
 import com.voyageone.batch.wms.modelbean.ViwLogicInventoryBean;
 import com.voyageone.common.Constants;
@@ -33,33 +32,7 @@ public class InventoryDao extends BaseDao {
     }
 
     /**
-     * 库存分配
-     *
-     * @param orderChannelID 订单渠道
-     * @param rowCount       处理件数
-     */
-    public void setAllotInventory(String orderChannelID, int rowCount) {
-
-        Map<String, Object> dataMap = new HashMap<>();
-        dataMap.put("order_channel_id", orderChannelID);
-        dataMap.put("row_count", rowCount);
-
-        updateTemplate.update(Constants.DAO_NAME_SPACE_WMS + "wms_setAllotInventory", dataMap);
-    }
-
-    /**
-     * 取得分配库存后SKU错误的记录
-     *
-     * @return List<AllotInventoryDetailBean>
-     */
-    public List<AllotInventoryDetailBean> getErrorSkuInfo() {
-
-        return updateTemplate.selectList(Constants.DAO_NAME_SPACE_WMS + "wms_selectErrorSkuInfo");
-
-    }
-
-    /**
-     * 获取不需要进行的库存同步记录（增量更新时\强行同步时等例外）
+     * 获取不需要进行的库存同步记录（增量更新时\强行同步时例外）
      *
      * @param order_channel_id 渠道
      * @param cart_id          店铺

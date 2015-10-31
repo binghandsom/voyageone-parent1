@@ -598,4 +598,30 @@ public class ChannelConfigEnums {
         }
     }
 
+    /**
+     * 是否允许捡货或收货
+     *
+     * @author Jack
+     */
+    public enum Reserve {
+        /**
+         * 不允许
+         */
+        NO("0"),
+        /**
+         * 允许
+         */
+        YES("1");
+
+        private String is;
+
+        Reserve(String is) {
+            this.is = is;
+        }
+
+        public String getIs() {
+            return is;
+        }
+    }
+
 }

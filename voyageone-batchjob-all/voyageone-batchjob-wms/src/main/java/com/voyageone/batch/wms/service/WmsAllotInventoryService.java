@@ -179,7 +179,7 @@ public class WmsAllotInventoryService extends BaseTaskService {
 
                                     // 仓库分配没有取得
                                     if (storeId == 0) {
-                                        logIssue(channel.getFull_name() + "存分配时仓库取得失败",  "Order_Number：" + reservation.getOrder_number() + "，Item_Number：" + reservation.getItem_number()+ "，SKU：" + reservation.getSku() + "，Store：" + storeId);
+                                        logIssue(channel.getFull_name() + "库存分配时仓库取得失败",  "Order_Number：" + reservation.getOrder_number() + "，Item_Number：" + reservation.getItem_number()+ "，SKU：" + reservation.getSku() + "，Store：" + storeId);
                                     }
                                     else {
 

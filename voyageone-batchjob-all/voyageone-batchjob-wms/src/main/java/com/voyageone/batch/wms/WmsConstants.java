@@ -52,6 +52,29 @@ public interface WmsConstants {
     }
 
     /**
+     * 库存分配时拆单警告邮件（WmsSetAllotInventoryJob）
+     */
+    final class EmailSetAllotInventoryErrorSpilt {
+
+        // 表格式
+        public final static String TABLE = "<div><span>%s</span>"
+                + "<table><tr>"
+                + "<th></th><th>Shop</th><th>OrderNum</th><th>WebID</th><th><font color='red'>Store</font></th>"
+                + "</tr>%s</table></div>";
+        // 行格式
+        public final static String ROW = "<tr>"
+                + "<td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td>"
+                + "</tr>";
+        // 邮件名
+        public final static String SUBJECT = "%s需拆分订单一览";
+        // 概要说明
+        public final static String HEAD = "<font color='red'>以下订单中存在不同的仓库，需要拆分，请确认</font>";
+        // 件数
+        public final static String COUNT = "拆分总数：%s";
+
+    }
+
+    /**
      * 同步Synship错误邮件（WmsSyncChangeToSynShipJob）
      */
     final class EmailWmsSyncChangeToSynShipJob {
@@ -303,6 +326,12 @@ public interface WmsConstants {
         public final static String FORCE = "0";
         public final static String FULL = "1";
         public final static String INCREACE = "2";
+    }
+
+    // 库存再分配
+    final class ALLOT_INVENTORY_AGAIN {
+        public static final  String INVENTORY_MANAGER = "inventory_manager";
+        public static final  String STORE_AREA = "store_area";
     }
 
 }

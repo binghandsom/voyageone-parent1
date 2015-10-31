@@ -307,14 +307,15 @@ public class WmsPickupServiceImpl implements WmsPickupService {
 
         String orderChannelId = scanInfoList.get(0).getOrder_channel_id();
         String shipChannel = scanInfoList.get(0).getShip_channel();
-        // 跨境电商的场合，发货渠道的判断
-        if (ChannelConfigEnums.Sale.CB.getType().equals(ChannelConfigs.getVal1(orderChannelId, ChannelConfigEnums.Name.sale_type))) {
-            shipChannel = reservationDao.getShippingMethod(orderChannelId, scanInfoList.get(0).getOrder_number(), scanInfoList.get(0).getId());
-        }
-        // 国内电商的场合，默认发货渠道的取得
-        else  if (ChannelConfigEnums.Sale.CB.getType().equals(ChannelConfigs.getVal1(orderChannelId, ChannelConfigEnums.Name.sale_type))) {
-            shipChannel = ChannelConfigs.getVal1(orderChannelId, ChannelConfigEnums.Name.default_ship_channel);
-        }
+//        // 跨境电商的场合，发货渠道的判断
+//        if (ChannelConfigEnums.Sale.CB.getType().equals(ChannelConfigs.getVal1(orderChannelId, ChannelConfigEnums.Name.sale_type))) {
+//            shipChannel = reservationDao.getShippingMethod(orderChannelId, scanInfoList.get(0).getOrder_number(), scanInfoList.get(0).getId());
+//        }
+//        // 国内电商的场合，默认发货渠道的取得
+//        else  if (ChannelConfigEnums.Sale.CN.getType().equals(ChannelConfigs.getVal1(orderChannelId, ChannelConfigEnums.Name.sale_type))) {
+//            shipChannel = ChannelConfigs.getVal1(orderChannelId, ChannelConfigEnums.Name.default_ship_channel);
+//        }
+        shipChannel = reservationDao.getShippingMethod(orderChannelId, scanInfoList.get(0).getOrder_number(), scanInfoList.get(0).getId());
         logger.info("发货渠道判定" + "（scanTypeName：" + scanTypeName  + "，ScanNo：" + scanNo  + "，ReservationID：" + reservationList.toString() + "，ShipChannel：" + shipChannel +  "）");
 
         // 根据发货渠道计算折扣

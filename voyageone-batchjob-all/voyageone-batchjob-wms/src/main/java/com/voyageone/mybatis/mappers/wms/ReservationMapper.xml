@@ -36,7 +36,7 @@
             details.sku
     </select>
 
-    <!-- 待库存分配记录取出 -->
+    <!-- 待库存分配记录取出（物品级别） -->
     <select id="wms_selectAllotInventoryInto" resultType="com.voyageone.batch.wms.modelbean.ReservationBean">
         SELECT
             orders.order_number,
@@ -97,7 +97,7 @@
                                 not exists
                                 (select 1
                                  from wms_bt_item_details itemdel1
-                                 where orders1.order_channel_id = itemdel.order_channel_id
+                                 where orders1.order_channel_id = itemdel1.order_channel_id
                                        and details1.sku = itemdel1.sku))
         ORDER BY
             orders.order_number,
@@ -105,9 +105,104 @@
         LIMIT #{limit}
   </select>
 
+    <!-- 待库存分配记录取出（订单级别） -->
+    <select id="wms_selectAllotInventoryIntoByOrder" resultType="com.voyageone.batch.wms.modelbean.ReservationBean">
+        SELECT
+            orders.order_number,
+            details.item_number,
+            orders.source_order_id,
+            orders.order_channel_id,
+            details.product,
+            orders.cart_id,
+            details.sku,
+            itemdel.itemcode
+        FROM
+            (SELECT
+                orders.order_number,
+                orders.source_order_id,
+                orders.order_channel_id,
+                orders.cart_id
+            FROM
+                oms_bt_orders orders
+            WHERE
+                orders.order_channel_id = #{order_channel_id}
+            AND
+                orders.approved = 1
+            AND
+                orders.cancelled = 0
+            AND
+                EXISTS (SELECT
+                                1
+                        FROM
+                                oms_bt_order_details details1
+                        WHERE
+                                orders.order_number = details1.order_number
+                        AND
+                                details1.res_allot_flg = '0'
+                        AND
+                                details1.adjustment = 0
+                        AND
+                                details1.quantity_shipped = 1
+                        AND
+                                details1.res_id = 0)
+            AND
+                NOT EXISTS (SELECT
+                                    1
+                                FROM
+                                    oms_bt_order_details details1
+                                WHERE
+                                    orders.order_number = details1.order_number
+                                AND
+                                    details1.res_allot_flg = '0'
+                                AND
+                                    details1.adjustment = 0
+                                AND
+                                    details1.quantity_shipped = 1
+                                AND
+                                    details1.res_id = 0
+                                AND
+                                    not exists
+                                    (select 1
+                                     from wms_bt_item_details itemdel1
+                                     where orders.order_channel_id = itemdel1.order_channel_id
+                                           and details1.sku = itemdel1.sku))
+            ORDER BY
+                orders.order_number
+             LIMIT #{limit}) orders,
+            oms_bt_order_details details,
+            wms_bt_item_details itemdel
+        WHERE
+            orders.order_number = details.order_number
+        AND
+            details.res_allot_flg = '0'
+        AND
+            details.adjustment = 0
+        AND
+            details.quantity_shipped = 1
+        AND
+            details.res_id = 0
+        AND
+            orders.order_channel_id = itemdel.order_channel_id
+        AND
+            details.sku = itemdel.sku
+        ORDER BY
+            orders.order_number,
+            details.item_number
+    </select>
+
     <!-- 仓库取得-->
     <select id="wms_getAllotStore" resultType="long">
-        select wms_getAllotStore(#{order_channel_id}, #{cart_id},#{sku})
+        select wms_getAllotStore(#{order_channel_id}, #{cart_id} ,#{sku})
+    </select>
+
+    <!-- 仓库取得-->
+    <select id="wms_getAllotStoreAgain" resultType="long">
+        select wms_getAllotStoreAgain(#{order_channel_id}, #{cart_id}, #{sku}, #{storeList})
+    </select>
+
+    <!-- 发货渠道取得-->
+    <select id="wms_getShippingMethod" resultType="String">
+        select wms_getShippingMethod(#{order_channel_id},  #{order_number},  #{reservationId})
     </select>
 
     <!-- 插入Reservation-->
@@ -215,6 +310,31 @@
             )
     </insert>
 
+    <update id="wms_updateReservationShipChannel">
+        UPDATE
+          tt_reservation
+        SET
+          ship_channel = #{shipChannel},
+          update_time = now()
+        WHERE
+          id = #{reservationID}
+        AND
+          order_number = #{orderNumber}
+    </update>
+
+    <update id="wms_updateReservationStatus">
+        UPDATE
+          tt_reservation
+        SET
+          status = #{status},
+          update_time = now()
+        WHERE
+          order_number = #{orderNumber}
+        AND id in
+        <foreach collection="reservationList" item="id" open="(" separator="," close=")">#{id}
+        </foreach>
+    </update>
+
     <!-- OrderDetails的更新-->
     <update id="wms_updateOrderDetails">
         UPDATE
@@ -226,7 +346,7 @@
             details.modifier = #{takeName}
         WHERE
             details.order_number = #{orderNumber}
-            AND
+        AND
             details.item_number = #{itemNumber};
     </update>
 
@@ -249,5 +369,62 @@
         AND
             reservation.order_number = item.order_number
     </update>
+
+    <insert id="oms_bt_notes_insert">
+        insert into
+            oms_bt_notes(
+                 type
+                ,numeric_key
+                ,item_number
+                ,alpha_key
+                ,entry_date
+                ,entry_time
+                ,notes
+                ,event
+                ,followup_action
+                ,assigned_to
+                ,completed
+                ,entered_by
+                ,priority
+                ,status
+                ,keywords
+                ,email_out_going
+                ,email_incoming
+                ,parent_type
+                ,parent_key
+                ,file_path
+                ,source_order_id
+                ,created
+                ,modified
+                ,creater
+                ,modifier
+              ) values (
+                '0'
+                ,#{orderNumber}
+                ,0
+                ,' '
+                ,now()
+                ,now()
+                ,#{note}
+                ,''
+                ,''
+                ,''
+                ,''
+                ,#{task_name}
+                ,''
+                ,''
+                ,''
+                ,''
+                ,''
+                ,'0'
+                ,#{orderNumber}
+                ,''
+                ,#{source_order_id}
+                ,now()
+                ,now()
+                ,#{task_name}
+                ,#{task_name}
+              );
+    </insert>
 
 </mapper>
