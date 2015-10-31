@@ -66,20 +66,19 @@
             imsProducts.code,
             pi.image_name,
             cmsProducts.url_key,
-            imsProduct.description
+            b.description
         FROM (SELECT
                   item.code src,
                   beat.channel_id,
                   beat.cart_id,
-                  p.num_iid,
-                  beat.description
+                  p.num_iid
               FROM voyageone_ims.ims_bt_beat beat
                   JOIN voyageone_ims.ims_bt_beat_item_temp item ON beat.beat_id = item.beat_id
                   JOIN voyageone_ims.ims_bt_product p
                       ON item.code = p.code
                          AND beat.channel_id = p.channel_id
                          AND beat.cart_id = p.cart_id
-              WHERE beat.beat_id = #{beat_id} AND beat.end > #{now}) imsProduct
+              WHERE beat.beat_id = #{beat_id}) imsProduct
             LEFT JOIN voyageone_ims.ims_bt_product imsProducts
                 ON imsProduct.cart_id = imsProducts.cart_id
                    AND imsProduct.channel_id = imsProducts.channel_id
@@ -92,6 +91,10 @@
                 ON pi.product_id = cmsProducts.product_id
                    AND pi.image_type_id = 1
                    AND pi.image_id = 1
+            LEFT JOIN voyageone_ims.ims_bt_beat_item item ON imsProducts.code = item.code
+            LEFT JOIN voyageone_ims.ims_bt_beat b
+                ON item.beat_id = b.beat_id AND imsProduct.channel_id = b.channel_id AND imsProduct.cart_id = b.cart_id
+                   AND b.end > #{now}
     </select>
 
     <delete id="ims_bt_beat_item_temp_deleteTempItems">
@@ -106,7 +109,7 @@
             imsProducts.code,
             pi.image_name,
             cmsProducts.url_key,
-            beat.description
+            b.description
         FROM voyageone_ims.ims_bt_beat beat
             JOIN voyageone_ims.ims_bt_beat_item_temp temp ON beat.beat_id = temp.beat_id
             LEFT JOIN voyageone_ims.ims_bt_product imsProducts
@@ -121,8 +124,12 @@
                 ON pi.product_id = cmsProducts.product_id
                    AND pi.image_type_id = 1
                    AND pi.image_id = 1
+            LEFT JOIN voyageone_ims.ims_bt_beat_item item ON imsProducts.code = item.code
+            LEFT JOIN voyageone_ims.ims_bt_beat b
+                ON item.beat_id = b.beat_id AND beat.channel_id = b.channel_id AND beat.cart_id = b.cart_id AND
+                   b.end > #{now}
         WHERE
-            beat.beat_id = #{beat_id} AND beat.end > #{now}
+            beat.beat_id = #{beat_id}
     </select>
 
     <select id="ims_bt_beat_item_selectItems_byBeatId" resultType="com.voyageone.ims.model.ImsBeatItem">
