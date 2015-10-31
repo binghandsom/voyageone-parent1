@@ -27,6 +27,8 @@ public class BeatPicBean {
 
     private String url_key;
 
+    private boolean repeat;
+
     private String modified;
 
     private String modifier;
@@ -154,5 +156,13 @@ public class BeatPicBean {
 
     public void setUrl_key(String url_key) {
         this.url_key = url_key;
+    }
+
+    public boolean isRepeat() {
+        return repeat;
+    }
+
+    public void setRepeat(boolean repeat) {
+        this.repeat = repeat;
     }
 }

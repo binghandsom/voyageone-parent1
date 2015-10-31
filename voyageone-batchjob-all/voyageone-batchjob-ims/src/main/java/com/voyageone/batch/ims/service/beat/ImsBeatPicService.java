@@ -58,7 +58,7 @@ public class ImsBeatPicService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-        ImsBeatImageNameFormater.setTaskControls(taskControlList);
+        ImsBeatImageNameFormat.setTaskControls(taskControlList);
 
         doBeats(taskControlList);
     }

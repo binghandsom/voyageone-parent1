@@ -36,6 +36,8 @@ import static java.lang.String.format;
 @Service
 public class ImsBeatRevertService extends ImsBeatBaseService {
 
+    private final static String NO_IMAGE_FLG = "NO IMAGE";
+
     @Autowired
     private TbPictureService tbPictureService;
 
@@ -81,6 +83,8 @@ public class ImsBeatRevertService extends ImsBeatBaseService {
         // 现根据位置获取 CMS 的图片信息
         List<ImsBeatImageInfo> imageInfoList = getTbImageUrl(beatPicBean);
 
+        if (imageInfoList == null) return null;
+
         Map<Integer, String> tbImageUrlMap = new HashMap<>();
 
         for (ImsBeatImageInfo imageInfo: imageInfoList) {
@@ -93,14 +97,20 @@ public class ImsBeatRevertService extends ImsBeatBaseService {
             String tbImageUrl = getTbImageUrl(imageInfo, taskControlList);
 
             if (StringUtils.isEmpty(tbImageUrl)) return null;
-
-            tbImageUrlMap.put(imageInfo.getImage_id(), tbImageUrl);
+            else if (tbImageUrl.equals(NO_IMAGE_FLG))
+                // 转换 FLG 为 null, 后续接口调用内部会继续进一步判断
+                tbImageUrlMap.put(imageInfo.getImage_id(), null);
+            else
+                tbImageUrlMap.put(imageInfo.getImage_id(), tbImageUrl);
         }
 
         return tbImageUrlMap;
     }
 
     private String getTbImageUrl(ImsBeatImageInfo imageInfo, List<TaskControlBean> taskControlList) {
+
+        // 通过特殊标记处理无图位置
+        if (imageInfo.isNoImage()) return NO_IMAGE_FLG;
 
         String title = imageInfo.getTitle();
 

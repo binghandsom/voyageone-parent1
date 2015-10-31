@@ -3,7 +3,7 @@ package com.voyageone.batch.ims.service.beat;
 import com.voyageone.batch.ims.bean.BeatPicBean;
 import com.voyageone.common.configs.beans.ShopBean;
 
-import static com.voyageone.batch.ims.service.beat.ImsBeatImageNameFormater.formatImageName;
+import static com.voyageone.batch.ims.service.beat.ImsBeatImageNameFormat.formatImageName;
 import static com.voyageone.common.util.StringUtils.isEmpty;
 
 /**
@@ -27,6 +27,8 @@ public class ImsBeatImageInfo {
     private String categoryTid;
 
     private ShopBean shop;
+
+    private boolean noImage;
 
     public String getChannel_id() {
 
@@ -117,5 +119,16 @@ public class ImsBeatImageInfo {
                 return titleKey + ".jpg";
         }
         return null;
+    }
+
+    public void setNoImage(boolean noImage) {
+        this.noImage = noImage;
+    }
+
+    /**
+     * 获取标记,是否该位置应有图片.仅还原时使用
+     */
+    public boolean isNoImage() {
+        return noImage;
     }
 }

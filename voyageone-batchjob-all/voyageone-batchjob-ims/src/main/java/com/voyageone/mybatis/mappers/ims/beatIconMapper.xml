@@ -11,6 +11,7 @@
             item.image_name,
             item.num_iid,
             item.price,
+            beat.repeat,
             beat.template_url temp_url,
             item.beat_flg     dbBeat_flg,
             item.modified,

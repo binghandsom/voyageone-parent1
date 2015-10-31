@@ -5,7 +5,6 @@ import com.taobao.api.domain.Picture;
 import com.taobao.api.response.PictureGetResponse;
 import com.taobao.api.response.PictureUploadResponse;
 import com.voyageone.batch.ims.bean.BeatPicBean;
-import com.voyageone.batch.ims.enums.BeatFlg;
 import com.voyageone.batch.ims.enums.ImsPicCategoryType;
 import com.voyageone.common.components.tmall.TbPictureService;
 import com.voyageone.common.configs.ShopConfigs;
@@ -22,7 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.voyageone.batch.ims.enums.BeatFlg.Startup;
+import static com.voyageone.batch.ims.enums.BeatFlg.*;
 import static java.lang.String.format;
 
 /**
@@ -77,7 +76,7 @@ public class ImsBeatUpdateService extends ImsBeatBaseService {
         }
 
         // 否则保存执行结果
-        beatPicBean.setBeat_flg(result ? BeatFlg.Passed : BeatFlg.Fail);
+        beatPicBean.setBeat_flg(result ? Passed : Fail);
 
         $info("价格披露：披露完成 [ %s ] [ %s ]", beatPicBean.getNum_iid(), beatPicBean.getBeat_item_id());
     }
@@ -86,6 +85,8 @@ public class ImsBeatUpdateService extends ImsBeatBaseService {
 
         // 现根据位置获取 CMS 的图片信息
         List<ImsBeatImageInfo> imageInfoList = getTbImageUrl(beatPicBean);
+
+        if (imageInfoList == null) return null;
 
         Map<Integer, String> tbImageUrlMap = new HashMap<>();
 
@@ -117,10 +118,9 @@ public class ImsBeatUpdateService extends ImsBeatBaseService {
         clearLastImage(imageInfo);
 
         String url = formatImageUrl(imageInfo);
+        if (StringUtils.isEmpty(url)) return null;
 
         $info("价格披露：图片下载地址: " + url);
-
-        if (StringUtils.isEmpty(url)) return null;
 
         byte[] image;
 
@@ -131,7 +131,8 @@ public class ImsBeatUpdateService extends ImsBeatBaseService {
             image = IOUtils.toByteArray(inputStream);
 
         } catch (IOException e) {
-            beatPicBean.setComment(format("价格披露：线程内下载图片出现异常 [ %s ] [ %s ]", e.getMessage(), url));
+            beatPicBean.setComment(format("价格披露：线程内下载图片出现异常 [ %s ]", e.getMessage()));
+            beatPicBean.setBeat_flg(Fail);
             $info("价格披露：线程内下载图片出现异常。[ %s ] [ %s ]", beatPicBean.getBeat_item_id(), e.getMessage());
             return null;
         }
@@ -198,7 +199,7 @@ public class ImsBeatUpdateService extends ImsBeatBaseService {
         if (StringUtils.isEmpty(price)) {
             // 未设置价格，回退到设置状态
             beatPicBean.setComment("没有设置价格。");
-            beatPicBean.setBeat_flg(BeatFlg.Startup);
+            beatPicBean.setBeat_flg(Startup);
             return null;
         }
 
@@ -207,7 +208,9 @@ public class ImsBeatUpdateService extends ImsBeatBaseService {
         String imageName = imageInfo.getImage_name();
 
         if (StringUtils.isEmpty(imageName)) {
-            $info("没有获取到 ImageName [ %s, %s ]", imageInfo.getCode(), imageInfo.getUrl_key());
+            $info("没有获取到 ImageName [ %s, %s, %s ]", imageInfo.getCode(), imageInfo.getUrl_key(), imageInfo.getImage_id());
+            beatPicBean.setComment(format("没有获取到 ImageName [ %s ]", imageInfo.getImage_id()));
+            beatPicBean.setBeat_flg(Fail);
             return null;
         }
 
