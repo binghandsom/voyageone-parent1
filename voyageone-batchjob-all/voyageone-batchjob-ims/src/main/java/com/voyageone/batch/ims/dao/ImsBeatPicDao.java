@@ -14,6 +14,9 @@ import java.util.List;
  */
 @Repository
 public class ImsBeatPicDao extends BaseDao {
+
+    private final static String targets = "1,2,3,4,5";
+
     @Override
     protected String namespace() {
         return "com.voyageone.ims.sql";
@@ -42,6 +45,10 @@ public class ImsBeatPicDao extends BaseDao {
      * 从 cms 获取简单的图片信息
      */
     public List<ImsBeatImageInfo> getImageInfo(BeatPicBean beatPicBean) {
-        return selectList("cms_bt_product_selectImageInfo", parameters("beat", beatPicBean, "image_type_id", 1));
+        // targets 的应用场景参见 mybatis sql 的定义
+        return selectList("cms_bt_product_selectImageInfo", parameters(
+                "beat", beatPicBean,
+                "targets", targets,
+                "image_type_id", 1));
     }
 }

@@ -46,6 +46,10 @@ public class TaskControlEnums {
          */
         advance,
         /**
+         * 商品图片,标识的处理模板
+         */
+        image_name_template,
+        /**
          * 历史数据转移表
          */
         history_table
