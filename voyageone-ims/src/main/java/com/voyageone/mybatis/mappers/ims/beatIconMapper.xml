@@ -78,7 +78,7 @@
                       ON item.code = p.code
                          AND beat.channel_id = p.channel_id
                          AND beat.cart_id = p.cart_id
-              WHERE beat.beat_id = #{beat_id}) imsProduct
+              WHERE beat.beat_id = #{beat_id} AND beat.end &lt; #{now}) imsProduct
             LEFT JOIN voyageone_ims.ims_bt_product imsProducts
                 ON imsProduct.cart_id = imsProducts.cart_id
                    AND imsProduct.channel_id = imsProducts.channel_id
@@ -91,10 +91,6 @@
                 ON pi.product_id = cmsProducts.product_id
                    AND pi.image_type_id = 1
                    AND pi.image_id = 1
-            LEFT JOIN voyageone_ims.ims_bt_beat_item item ON imsProducts.code = item.code
-            LEFT JOIN voyageone_ims.ims_bt_beat b
-                ON item.beat_id = b.beat_id AND imsProduct.channel_id = b.channel_id AND imsProduct.cart_id = b.cart_id
-                   AND b.end &lt; #{now}
     </select>
 
     <delete id="ims_bt_beat_item_temp_deleteTempItems">
@@ -124,12 +120,8 @@
                 ON pi.product_id = cmsProducts.product_id
                    AND pi.image_type_id = 1
                    AND pi.image_id = 1
-            LEFT JOIN voyageone_ims.ims_bt_beat_item item ON imsProducts.code = item.code
-            LEFT JOIN voyageone_ims.ims_bt_beat b
-                ON item.beat_id = b.beat_id AND beat.channel_id = b.channel_id AND beat.cart_id = b.cart_id AND
-                   b.end &lt; #{now}
         WHERE
-            beat.beat_id = #{beat_id}
+            beat.beat_id = #{beat_id} AND beat.end &lt; #{now}
     </select>
 
     <select id="ims_bt_beat_item_selectItems_byBeatId" resultType="com.voyageone.ims.model.ImsBeatItem">
