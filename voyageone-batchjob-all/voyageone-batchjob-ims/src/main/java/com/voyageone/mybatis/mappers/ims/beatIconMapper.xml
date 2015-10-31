@@ -51,5 +51,6 @@
         )
         AND image_type_id = #{image_type_id}
         AND p.code = #{beat.code}
+        ORDER BY pi.image_id
     </select>
 </mapper>

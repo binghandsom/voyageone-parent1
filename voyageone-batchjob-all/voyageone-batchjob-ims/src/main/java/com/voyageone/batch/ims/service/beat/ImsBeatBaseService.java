@@ -1,17 +1,17 @@
 package com.voyageone.batch.ims.service.beat;
 
 import com.taobao.api.ApiException;
+import com.taobao.api.domain.Picture;
 import com.taobao.api.domain.PictureCategory;
-import com.taobao.api.response.PictureCategoryAddResponse;
-import com.taobao.api.response.PictureCategoryGetResponse;
-import com.taobao.api.response.TmallItemSchemaUpdateResponse;
+import com.taobao.api.response.*;
 import com.taobao.top.schema.exception.TopSchemaException;
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.ims.bean.BeatPicBean;
-import com.voyageone.batch.ims.dao.ImsBeatPicDao;
 import com.voyageone.batch.ims.dao.ImsPicCategoryDao;
+import com.voyageone.batch.ims.dao.ImsPicDao;
 import com.voyageone.batch.ims.enums.ImsPicCategoryType;
+import com.voyageone.batch.ims.modelbean.ImsPic;
 import com.voyageone.batch.ims.modelbean.ImsPicCategory;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.tmall.TbItemSchema;
@@ -20,14 +20,16 @@ import com.voyageone.common.components.tmall.TbPictureService;
 import com.voyageone.common.components.tmall.bean.TbGetPicCategoryParam;
 import com.voyageone.common.components.tmall.exceptions.GetUpdateSchemaFailException;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.HttpUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Arrays;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import static com.voyageone.batch.ims.enums.BeatFlg.Waiting;
 import static java.lang.String.format;
 
 /**
@@ -38,13 +40,7 @@ import static java.lang.String.format;
 public abstract class ImsBeatBaseService extends BaseTaskService {
 
     @Autowired
-    private ImsBeatPicDao imsBeatPicDao;
-
-    @Autowired
     private TbItemService tbItemService;
-
-    @Autowired
-    private TbPictureService tbPictureService;
 
     @Autowired
     private ImsPicCategoryDao imsPicCategoryDao;
@@ -100,43 +96,6 @@ public abstract class ImsBeatBaseService extends BaseTaskService {
 
             return id;
         }
-    }
-
-    protected List<ImsBeatImageInfo> getTbImageUrl(BeatPicBean beatPicBean) {
-
-        // 现根据位置获取 CMS 的图片信息
-        List<ImsBeatImageInfo> imageInfoList = imsBeatPicDao.getImageInfo(beatPicBean);
-
-        // 如果打开了 extended, 则无需后续处理
-        if (beatPicBean.isExtended()) return imageInfoList;
-
-        String[] strings = beatPicBean.getTargets().split(",");
-
-        // contains 可用是因为提供了特供的 ImageIndex 类~
-        // 使用下面的代码, 补全那些没有取到 imageName 的信息
-        Arrays.stream(strings)
-                .map(ImageIndex::new)
-                .filter(i -> !imageInfoList.contains(i))
-                .forEach(i -> {
-                    // 这里针对不包含的 index 进行处理
-                    // 即没有渠道 imageName 的 index
-                    ImsBeatImageInfo imageInfo = new ImsBeatImageInfo();
-
-                    imageInfo.setChannel_id(beatPicBean.getChannel_id());
-                    imageInfo.setCode(beatPicBean.getCode());
-                    imageInfo.setImage_id(i.getIndex());
-                    imageInfo.setUrl_key(beatPicBean.getUrl_key());
-
-                    // 如果不是刷图, 那么必然是还原. 则逻辑为
-                    // 如果该位置无图, 则设定无图开关, 后续会从 taobao 移除该位置的图片
-                    if (beatPicBean.getBeat_flg() != Waiting) {
-                        imageInfo.setNoImage(true);
-                    }
-
-                    imageInfoList.add(imageInfo);
-                });
-
-        return imageInfoList;
     }
 
     private String getCategoryTid(ShopBean shopBean, ImsPicCategory category) {
@@ -254,33 +213,158 @@ public abstract class ImsBeatBaseService extends BaseTaskService {
         copy.setImage_id(index);
         copy.setCode(imageInfo.getCode());
         copy.setChannel_id(imageInfo.getChannel_id());
+        copy.setImageUrl(imageInfo.getImageUrl());
 
         return copy;
     }
 
-    /**
-     * getTbImageUrl 方法的辅助类
-     */
-    private class ImageIndex {
 
-        private Integer index;
+    protected final static String NO_IMAGE_FLG = "NO IMAGE";
 
-        public ImageIndex(String index) {
-            this.index = Integer.valueOf(index);
+    @Autowired
+    private TbPictureService tbPictureService;
+
+    @Autowired
+    private ImsPicDao imsPicDao;
+
+    protected String getOrgImageUrl(ImsBeatImageInfo imageInfo, List<TaskControlBean> taskControlList) {
+
+        // 通过特殊标记处理无图位置
+        if (imageInfo.isNoImage()) return NO_IMAGE_FLG;
+
+        String title = imageInfo.getOrgTitle();
+
+        String cate_id = imageInfo.getCategoryTid();
+
+        BeatPicBean beatPicBean = imageInfo.getBeatInfo();
+
+        ShopBean shopBean = imageInfo.getShop();
+
+        ImsPic pic = imsPicDao.selectByTitle(title, cate_id);
+
+        if (pic != null)
+            return pic.getPic_url();
+
+        Picture picture;
+
+        try {
+            PictureGetResponse res = tbPictureService.getPictures(shopBean, title, Long.valueOf(cate_id));
+
+            List<Picture> pictures = res.getPictures();
+
+            if (res.isSuccess() && pictures != null && pictures.size() > 0) {
+
+                picture = pictures.get(0);
+
+            } else {
+
+                $info("价格披露还原：没有找到图片，准备从新上传 [ %s ] [ %s ] [ %s ] [ %s ]",
+                        res.getSubMsg(), title, cate_id, shopBean.getShop_name());
+
+                picture = uploadOrg(imageInfo, taskControlList);
+            }
+
+        } catch (ApiException e) {
+
+            String message = format("价格披露还原：调用淘宝图片获取接口异常 [ %s ] [ %s ] [ %s ] [ %s ]",
+                    e.getLocalizedMessage(), title, cate_id, shopBean.getShop_name());
+            $info(message);
+            beatPicBean.setComment(message);
+
+            return null;
         }
 
-        public Integer getIndex() {
-            return index;
+        if (picture == null)
+            return null;
+
+        pic = new ImsPic();
+        pic.setTitle(title);
+        pic.setCategory_tid(cate_id);
+        pic.setModifier(getTaskName());
+        pic.setCreater(getTaskName());
+        pic.setPic_tid(String.valueOf(picture.getPictureId()));
+        pic.setPic_url(picture.getPicturePath());
+
+        int count = imsPicDao.insert(pic);
+
+        $info("价格披露还原：插入 pic 数据。反应行数 [ %s ]", count);
+
+        return pic.getPic_url();
+    }
+
+    private Picture uploadOrg(ImsBeatImageInfo imageInfo, List<TaskControlBean> taskControlList) {
+
+        String cate_id = imageInfo.getCategoryTid();
+
+        BeatPicBean beatPicBean = imageInfo.getBeatInfo();
+
+        ShopBean shopBean = imageInfo.getShop();
+
+        String errorMsg;
+        // 获取模板地址
+        // 此处先不把 “template_url” 加入到 Name 枚举中。等待后续做主图任务时，顺带修改这里获取模板的方式
+        // 所以暂时使用字符串
+        TaskControlBean templateUrl = taskControlList.stream()
+                .filter(c -> c.getCfg_name().equals("template_url") && c.getCfg_val1().equals(shopBean.getCart_id() + shopBean.getOrder_channel_id()))
+                .findFirst()
+                .orElse(null);
+
+        // 模版配置为空
+        if (templateUrl == null || StringUtils.isEmpty(templateUrl.getCfg_val2())) {
+            errorMsg = format("价格披露还原：没有找到主图模板地址，当前 Cart 为：[ %s ] [ %s ]", shopBean.getCart_id(),
+                    shopBean.getShop_name());
+            $info(errorMsg);
+            beatPicBean.setComment(errorMsg);
+            return null;
         }
 
-        /**
-         * 专门处理比较 ImsBeatImageInfo 的 index (image_id)
-         */
-        @Override
-        public boolean equals(Object obj) {
-            if (obj instanceof ImsBeatImageInfo)
-                return index.equals(((ImsBeatImageInfo) obj).getImage_id());
-            return super.equals(obj);
+        // 检查模版配置是否正确
+        if (!templateUrl.getCfg_val2().contains("{key}")) {
+            errorMsg = format("价格披露还原：主图模板地址没有找到关键字“{key}” [ %s ]", templateUrl.getCfg_val2());
+            $info(errorMsg);
+            beatPicBean.setComment(errorMsg);
+            return null;
+        }
+
+        String imageName = imageInfo.getImage_name();
+
+        if (StringUtils.isEmpty(imageName)) return null;
+
+        byte[] image;
+        String image_url = templateUrl.getCfg_val2().replace("{key}", imageName);
+
+        $info("价格披露还原：尝试下载图片：[ %s ]", image_url);
+
+        // 尝试下载
+        try (InputStream inputStream = HttpUtils.getInputStream(image_url, null)) {
+
+            image = IOUtils.toByteArray(inputStream);
+
+            $info("价格披露还原：已下载，长度：[ %s ]", image.length);
+
+        } catch (IOException e) {
+            errorMsg = format("价格披露还原：线程内下载图片出现异常。异常信息：%s", e.getMessage());
+            beatPicBean.setComment(errorMsg);
+            $info(errorMsg);
+            return null;
+        }
+
+        // 尝试上传
+        try {
+            PictureUploadResponse res = tbPictureService.uploadPicture(shopBean, image, imageInfo.getOrgTitle(),
+                    cate_id);
+
+            if (res.getPicture() != null) return res.getPicture();
+            errorMsg = "线程内上传图片失败：" + format("[ %s ] [ %s ]", res.getSubCode(), res.getSubMsg());
+            beatPicBean.setComment(errorMsg);
+            $info("价格披露还原：线程内上传图片失败 [ %s ] [ %s ]", res.getSubCode(), res.getSubMsg());
+            return null;
+
+        } catch (ApiException e) {
+            errorMsg = format("价格披露还原：线程内上传图片出现异常。异常信息：%s", e.getMessage());
+            beatPicBean.setComment(errorMsg);
+            $info(errorMsg);
+            return null;
         }
     }
 }

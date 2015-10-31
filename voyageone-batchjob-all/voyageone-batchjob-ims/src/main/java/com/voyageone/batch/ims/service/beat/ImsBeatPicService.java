@@ -106,7 +106,7 @@ public class ImsBeatPicService extends BaseTaskService {
                     switch (bean.getBeat_flg()) {
                         case Waiting:
                             //打标（beat_flg为1）
-                            imsBeatUpdateService.beat(bean);
+                            imsBeatUpdateService.beat(taskControlList, bean);
                             break;
                         case Passed:
                         case Cancel:

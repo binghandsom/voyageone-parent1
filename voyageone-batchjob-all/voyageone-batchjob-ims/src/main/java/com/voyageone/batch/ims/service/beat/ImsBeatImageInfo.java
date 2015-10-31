@@ -30,6 +30,8 @@ public class ImsBeatImageInfo {
 
     private boolean noImage;
 
+    private String imageUrl;
+
     public String getChannel_id() {
 
         if (!isEmpty(channel_id)) return channel_id;
@@ -102,23 +104,14 @@ public class ImsBeatImageInfo {
         return shop;
     }
 
-    public String getTitle() {
-        // 根据具体情况来生成 title
-        // 拼接图片标题的规则，暂时这里固定写死，后续的功能会将此处处理移动到别处。
-        // 对于规则，为了防止可配置方式导致后续查找图片的失败。这里规则内定于程序内。不轻易修改
-        // !!! 请注意此处规则不要轻易修改，见上一行
-
+    public String getBeatTitle() {
         String titleKey = getImage_name();
+        return titleKey + ".beat.jpg";
+    }
 
-        switch (getBeatInfo().getBeat_flg()) {
-            case Waiting:
-                //打标（beat_flg为1）
-                return titleKey + ".beat.jpg";
-            case Passed:
-            case Cancel:
-                return titleKey + ".jpg";
-        }
-        return null;
+    public String getOrgTitle() {
+        String titleKey = getImage_name();
+        return titleKey + ".jpg";
     }
 
     public void setNoImage(boolean noImage) {
@@ -130,5 +123,13 @@ public class ImsBeatImageInfo {
      */
     public boolean isNoImage() {
         return noImage;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

@@ -4,7 +4,9 @@ import com.taobao.api.ApiException;
 import com.taobao.api.domain.Picture;
 import com.taobao.api.response.PictureGetResponse;
 import com.taobao.api.response.PictureUploadResponse;
+import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.ims.bean.BeatPicBean;
+import com.voyageone.batch.ims.dao.ImsBeatPicDao;
 import com.voyageone.batch.ims.enums.ImsPicCategoryType;
 import com.voyageone.common.components.tmall.TbPictureService;
 import com.voyageone.common.configs.ShopConfigs;
@@ -17,12 +19,14 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.voyageone.batch.ims.enums.BeatFlg.*;
 import static java.lang.String.format;
+import static java.util.stream.Collectors.toList;
 
 /**
  * 价格披露定时任务。
@@ -35,6 +39,9 @@ import static java.lang.String.format;
 public class ImsBeatUpdateService extends ImsBeatBaseService {
 
     @Autowired
+    private ImsBeatPicDao imsBeatPicDao;
+
+    @Autowired
     private TbPictureService tbPictureService;
 
     @Override
@@ -42,7 +49,7 @@ public class ImsBeatUpdateService extends ImsBeatBaseService {
         return "ImsBeatPicJob-beat";
     }
 
-    public void beat(BeatPicBean beatPicBean) {
+    public void beat(List<TaskControlBean> taskControlList, BeatPicBean beatPicBean) {
 
         ShopBean shopBean = ShopConfigs.getShop(beatPicBean.getChannel_id(), beatPicBean.getCart_id());
 
@@ -60,7 +67,7 @@ public class ImsBeatUpdateService extends ImsBeatBaseService {
         }
 
         // 获取主图地址
-        Map<Integer, String> tbImageUrlMap = getTbImageUrl(shopBean, cate_tid, beatPicBean);
+        Map<Integer, String> tbImageUrlMap = getTbImageUrl(shopBean, cate_tid, beatPicBean, taskControlList);
 
         if (tbImageUrlMap == null) {
             // 直接退出
@@ -81,39 +88,61 @@ public class ImsBeatUpdateService extends ImsBeatBaseService {
         $info("价格披露：披露完成 [ %s ] [ %s ]", beatPicBean.getNum_iid(), beatPicBean.getBeat_item_id());
     }
 
-    private Map<Integer, String> getTbImageUrl(ShopBean shopBean, String category_tid, BeatPicBean beatPicBean) {
+    private Map<Integer, String> getTbImageUrl(ShopBean shopBean, String category_tid, BeatPicBean beatPicBean, List<TaskControlBean> taskControlList) {
 
         // 现根据位置获取 CMS 的图片信息
-        List<ImsBeatImageInfo> imageInfoList = getTbImageUrl(beatPicBean);
+        List<ImsBeatImageInfo> imageInfoList = imsBeatPicDao.getImageInfo(beatPicBean);
 
-        if (imageInfoList == null) return null;
+        List<Integer> indexList = Arrays.stream(beatPicBean.getTargets().split(",")).map(Integer::valueOf).collect(toList());
 
         Map<Integer, String> tbImageUrlMap = new HashMap<>();
 
-        // 为顺延补全图片信息
-        appendExtended(imageInfoList, beatPicBean);
-
         for (ImsBeatImageInfo imageInfo: imageInfoList) {
-
             // 补全信息
             imageInfo.setBeatInfo(beatPicBean);
             imageInfo.setCategoryTid(category_tid);
             imageInfo.setShop(shopBean);
 
-            // 为特殊的 repeat 设定重置时出错的话... 放弃
-            if (beatPicBean.isRepeat() && !resetImageNameForRepeat(imageInfoList)) return null;
+            String tbImageUrl;
 
-            String tbImageUrl = getTbImageUrl(imageInfo);
+            if (beatPicBean.isExtended()) {
+
+                if (imageInfo.getImage_id() == 1) {
+                    tbImageUrl = getTbImageUrl(imageInfo);
+                } else {
+                    tbImageUrl = getOrgImageUrl(imageInfo, taskControlList);
+                }
+
+            } else {
+                tbImageUrl = getTbImageUrl(imageInfo);
+            }
 
             if (StringUtils.isEmpty(tbImageUrl)) return null;
 
-            tbImageUrlMap.put(imageInfo.getImage_id(), tbImageUrl);
+            // 如果是 Repeat 的话, 把第一个放置到各个位置上即可
+            // 所以最后直接 return 结束
+            if (beatPicBean.isRepeat()) {
+                for (Integer i: indexList) {
+                    tbImageUrlMap.put(i, tbImageUrl);
+                }
+                return tbImageUrlMap;
+            }
+
+            imageInfo.setImageUrl(tbImageUrl);
+        }
+
+        if (beatPicBean.isExtended()) {
+            resetForExtended(imageInfoList, beatPicBean);
+        }
+
+        for (int i = 0; i < imageInfoList.size() && i < 5; i++) {
+            tbImageUrlMap.put(i + 1, imageInfoList.get(i).getImageUrl());
         }
 
         return tbImageUrlMap;
     }
 
-    private void appendExtended(List<ImsBeatImageInfo> imageInfoList, BeatPicBean beatPicBean) {
+    private void resetForExtended(List<ImsBeatImageInfo> imageInfoList, BeatPicBean beatPicBean) {
 
         // 在这些位置进行顺延插入
         String targets = beatPicBean.getTargets();
@@ -133,32 +162,9 @@ public class ImsBeatUpdateService extends ImsBeatBaseService {
                 imageInfoList.add(copyInfo(first, index));
             } else {
                 // 相反如果不超过, 则将需要重复的图片插入到指定的位置即可
-                imageInfoList.add(index, copyInfo(first, index));
+                imageInfoList.add(index - 1, copyInfo(first, index));
             }
         }
-    }
-
-    private boolean resetImageNameForRepeat(List<ImsBeatImageInfo> imageInfoList) {
-
-        // 设定了 repeat, 那么在补全了图片位置之后, 统一制定所有图片都使用第一个作为基础, 即设定 imageName
-        ImsBeatImageInfo firstImage = imageInfoList.get(0);
-
-        BeatPicBean beatPicBean = firstImage.getBeatInfo();
-
-        String firstImageName = firstImage.getImage_name();
-
-        if (StringUtils.isEmpty(firstImageName)) {
-            $info("打开 Repeat 的情况下,没能获取到 FirstImageName [ %s ]", firstImage.getUrl_key());
-            beatPicBean.setComment("打开 Repeat 的情况下,没能获取到 FirstImageName");
-            beatPicBean.setBeat_flg(Fail);
-            return false;
-        }
-
-        for (ImsBeatImageInfo imageInfo : imageInfoList) {
-            imageInfo.setImage_name(firstImageName);
-        }
-
-        return true;
     }
 
     /**
@@ -195,7 +201,7 @@ public class ImsBeatUpdateService extends ImsBeatBaseService {
 
         try {
             PictureUploadResponse uploadResponse = tbPictureService.uploadPicture(imageInfo.getShop(), image,
-                    imageInfo.getTitle(), imageInfo.getCategoryTid());
+                    imageInfo.getBeatTitle(), imageInfo.getCategoryTid());
 
             if (uploadResponse.isSuccess() && StringUtils.isEmpty(uploadResponse.getSubCode())) {
                 // 成功返回
@@ -227,7 +233,7 @@ public class ImsBeatUpdateService extends ImsBeatBaseService {
             ShopBean shopBean = imageInfo.getShop();
 
             PictureGetResponse pictureGetResponse = tbPictureService.getPictures(shopBean,
-                    imageInfo.getTitle(), Long.valueOf(imageInfo.getCategoryTid()));
+                    imageInfo.getBeatTitle(), Long.valueOf(imageInfo.getCategoryTid()));
 
             List<Picture> pictures = pictureGetResponse.getPictures();
 
