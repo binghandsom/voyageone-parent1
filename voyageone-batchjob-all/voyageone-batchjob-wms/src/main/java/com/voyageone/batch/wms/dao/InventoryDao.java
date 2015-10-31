@@ -59,7 +59,7 @@ public class InventoryDao extends BaseDao {
     }
 
     /**
-     * 获取不需要进行的库存同步记录（赠品SKU等\增量更新时例外）
+     * 获取不需要进行的库存同步记录（增量更新时\强行同步时等例外）
      *
      * @param order_channel_id 渠道
      * @param cart_id          店铺
