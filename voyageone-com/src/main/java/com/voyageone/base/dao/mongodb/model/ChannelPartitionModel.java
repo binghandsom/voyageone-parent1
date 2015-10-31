@@ -9,8 +9,7 @@ public class ChannelPartitionModel extends BaseMongoModel {
     public String getChannel_id() {
         return channel_id;
     }
-
-    public ChannelPartitionModel(String channel_id) {
+    public void setChannel_id(String channel_id) {
         this.channel_id = channel_id;
     }
 

@@ -4,20 +4,15 @@ import com.voyageone.common.util.JsonUtil;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.math.BigInteger;
-
 @Document
 public class BaseMongoModel {
     @Id
-    protected BigInteger id;
-
-    /**
-     * Returns the identifier of the document.
-     *
-     * @return the id
-     */
-    public BigInteger getId() {
-        return id;
+    protected String _id;
+    public String get_id() {
+        return _id;
+    }
+    public void set_id(String _id) {
+        this._id = _id;
     }
 
     /**
@@ -31,13 +26,13 @@ public class BaseMongoModel {
             return true;
         }
 
-        if (this.id == null || obj == null || !(this.getClass().equals(obj.getClass()))) {
+        if (this._id == null || obj == null || !(this.getClass().equals(obj.getClass()))) {
             return false;
         }
 
         BaseMongoModel that = (BaseMongoModel) obj;
 
-        return this.id.equals(that.getId());
+        return this._id.equals(that.get_id());
     }
 
     /**
@@ -46,7 +41,7 @@ public class BaseMongoModel {
      */
     @Override
     public int hashCode() {
-        return id == null ? 0 : id.hashCode();
+        return _id == null ? 0 : _id.hashCode();
     }
 
     /**

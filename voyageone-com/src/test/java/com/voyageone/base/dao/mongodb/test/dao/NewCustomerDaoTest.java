@@ -56,7 +56,7 @@ public class NewCustomerDaoTest extends AbstractJUnit4SpringContextTests {
         System.out.println(customer);
 
         assertNotNull(customer);
-        assertNotNull(customer.getId());
+        assertNotNull(customer.get_id());
     }
 
     @Test

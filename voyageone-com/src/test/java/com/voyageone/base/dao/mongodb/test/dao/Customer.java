@@ -21,7 +21,7 @@ public class Customer extends BaseMongoModel {
     public String toString() {
         return String.format(
                 "Customer[id=%s, firstName='%s', lastName='%s']",
-                id, firstName, lastName);
+                _id, firstName, lastName);
     }
 
     public String getFirstName() {

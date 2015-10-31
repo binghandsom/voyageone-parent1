@@ -1,7 +1,6 @@
 package com.voyageone.base.dao.mongodb.test.model.product;
 
 
-import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.util.Assert;
@@ -19,19 +18,40 @@ public class Product extends ChannelPartitionModel {
     public int getCat_id() {
         return cat_id;
     }
+    public void setCat_id(int cat_id) {
+        this.cat_id = cat_id;
+    }
 
     private int product_id;
     public int getProduct_id() {
         return product_id;
     }
-
-    private List<Map<String, Object>> field = new ArrayList<>();
-    //private Map<String, String> field = new HashMap<String, String>();
-
-    public Product(String channel_id, int cat_id, int product_id) {
-        super(channel_id);
-        this.cat_id = cat_id;
+    public void setProduct_id(int product_id) {
         this.product_id = product_id;
+    }
+
+
+
+    private List<Map<String, Object>> field;
+
+    public void setField(List<Map<String, Object>> field) {
+        this.field = field;
+    }
+    public List<Map<String, Object>> getField() {
+        return field;
+    }
+
+
+
+//private Map<String, String> field = new HashMap<String, String>();
+
+    public Product() {
+    }
+
+    public Product(String channelId, int catId, int productId) {
+        this.channel_id = channelId;
+        this.cat_id = catId;
+        this.product_id = productId;
     }
 
     public void setAttribute(String name, Object value) {
@@ -41,6 +61,9 @@ public class Product extends ChannelPartitionModel {
     public void setAttribute(String name, Object value, boolean isCheck) {
 
         Assert.hasText(name);
+        if (field == null) {
+            field = new ArrayList<>();
+        }
 
         Map<String, Object> attributeCurrent = null;
         if (isCheck) {
@@ -64,7 +87,7 @@ public class Product extends ChannelPartitionModel {
         }
     }
 
-    public Map<String, Object> getField() {
+    public Map<String, Object> getFields() {
         Map<String, Object> result = new HashMap<>();
         for(Map<String, Object> attribute : field) {
             if (attribute != null) {
@@ -75,7 +98,11 @@ public class Product extends ChannelPartitionModel {
     }
 
     public String getCollectionName() {
-        return "product" + getPartitionName();
+        return getCollectionName(getPartitionName());
+    }
+
+    public static String getCollectionName(String channel_id) {
+        return "product" + channel_id;
     }
 
 }

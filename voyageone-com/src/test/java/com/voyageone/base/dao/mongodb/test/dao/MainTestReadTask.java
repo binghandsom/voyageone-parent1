@@ -1,23 +1,18 @@
 package com.voyageone.base.dao.mongodb.test.dao;
 
-import com.sun.org.apache.xpath.internal.objects.XObject;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
-import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Component;
 
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
-import static org.springframework.data.mongodb.core.query.Criteria.where;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
 @Component("mainTestReadTask")
 public class MainTestReadTask {
@@ -127,7 +122,7 @@ public class MainTestReadTask {
 
 //        personDao.save(personList);
         //搜索两级属性
-        Iterable<Person> result7 = personDao.findByDepartInfo_DepartName("DepartName--5");
+        Iterable<Person> result7 = personDao.findByDepartInfo$DepartName("DepartName--5");
         for (Person row : result7) {
             System.out.println("result7:=" + row);
         }

@@ -2,6 +2,7 @@ package com.voyageone.base.dao.mongodb.test.dao;
 
 import com.voyageone.base.dao.mongodb.test.dao.product.ProductDao;
 import com.voyageone.base.dao.mongodb.test.model.product.Product;
+import com.voyageone.base.dao.mongodb.test.dao.support.ProductJongo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,5 +30,47 @@ public class ProductDaoTest extends AbstractJUnit4SpringContextTests {
     @Test
     public void testCreate1000WanProduct() {
        productDao.saveProduct1000Wan();
+    }
+
+    @Test
+    public void testQueryWithJongo() {
+        productDao.queryWithJongo();
+    }
+
+    @Test
+    public void testQueryWithJongoObj() {
+        productDao.queryWithJongoObj();
+    }
+
+    @Test
+    public void saveTestJongo() {
+        ProductJongo product = new ProductJongo("001", 1, 2);
+        productDao.saveWithProduct(product);
+        System.out.println(product);
+    }
+
+    @Test
+    public void testExecuteCommand() {
+        productDao.testExecuteCommand();
+    }
+
+    @Test
+    public void testExecuteCommand1() {
+        productDao.testExecuteCommand1();
+    }
+
+    @Test
+    public void testExecuteCommand2() {
+        productDao.testExecuteCommand2();
+    }
+
+    @Test
+    public void testExecuteQuery() {
+        productDao.executeQuery();
+    }
+
+    @Test
+    public void testExecuteDbCallback() {
+        productDao.executeDbCallback();
     }
 }

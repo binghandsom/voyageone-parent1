@@ -9,5 +9,5 @@ import org.springframework.data.repository.CrudRepository;
  */
 public interface PersonDao extends CrudRepository<Person, String> {
 
-    public Iterable<Person> findByDepartInfo_DepartName(String departName);
+    public Iterable<Person> findByDepartInfo$DepartName(String departName);
 }
