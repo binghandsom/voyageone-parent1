@@ -90,12 +90,18 @@ public class ImsBeatUpdateService extends ImsBeatBaseService {
 
         Map<Integer, String> tbImageUrlMap = new HashMap<>();
 
+        // 为顺延补全图片信息
+        appendExtended(imageInfoList, beatPicBean);
+
         for (ImsBeatImageInfo imageInfo: imageInfoList) {
 
             // 补全信息
             imageInfo.setBeatInfo(beatPicBean);
             imageInfo.setCategoryTid(category_tid);
             imageInfo.setShop(shopBean);
+
+            // 为特殊的 repeat 设定重置时出错的话... 放弃
+            if (beatPicBean.isRepeat() && !resetImageNameForRepeat(imageInfoList)) return null;
 
             String tbImageUrl = getTbImageUrl(imageInfo);
 
@@ -105,6 +111,54 @@ public class ImsBeatUpdateService extends ImsBeatBaseService {
         }
 
         return tbImageUrlMap;
+    }
+
+    private void appendExtended(List<ImsBeatImageInfo> imageInfoList, BeatPicBean beatPicBean) {
+
+        // 在这些位置进行顺延插入
+        String targets = beatPicBean.getTargets();
+
+        ImsBeatImageInfo first = imageInfoList.get(0);
+
+        int size = imageInfoList.size();
+
+        for (String target: targets.split(",")) {
+
+            int index = Integer.valueOf(target);
+
+            if (index == 1) continue;
+
+            if (index > size) {
+                // 如果目标位置超过原有图片的数量, 说明这个位置本来没图, 所以这里直接追加就可以
+                imageInfoList.add(copyInfo(first, index));
+            } else {
+                // 相反如果不超过, 则将需要重复的图片插入到指定的位置即可
+                imageInfoList.add(index, copyInfo(first, index));
+            }
+        }
+    }
+
+    private boolean resetImageNameForRepeat(List<ImsBeatImageInfo> imageInfoList) {
+
+        // 设定了 repeat, 那么在补全了图片位置之后, 统一制定所有图片都使用第一个作为基础, 即设定 imageName
+        ImsBeatImageInfo firstImage = imageInfoList.get(0);
+
+        BeatPicBean beatPicBean = firstImage.getBeatInfo();
+
+        String firstImageName = firstImage.getImage_name();
+
+        if (StringUtils.isEmpty(firstImageName)) {
+            $info("打开 Repeat 的情况下,没能获取到 FirstImageName [ %s ]", firstImage.getUrl_key());
+            beatPicBean.setComment("打开 Repeat 的情况下,没能获取到 FirstImageName");
+            beatPicBean.setBeat_flg(Fail);
+            return false;
+        }
+
+        for (ImsBeatImageInfo imageInfo : imageInfoList) {
+            imageInfo.setImage_name(firstImageName);
+        }
+
+        return true;
     }
 
     /**

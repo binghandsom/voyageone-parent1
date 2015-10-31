@@ -27,7 +27,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static com.voyageone.batch.ims.enums.BeatFlg.Fail;
 import static com.voyageone.batch.ims.enums.BeatFlg.Waiting;
 import static java.lang.String.format;
 
@@ -108,14 +107,13 @@ public abstract class ImsBeatBaseService extends BaseTaskService {
         // 现根据位置获取 CMS 的图片信息
         List<ImsBeatImageInfo> imageInfoList = imsBeatPicDao.getImageInfo(beatPicBean);
 
-        String[] strings = beatPicBean.getTargets().split(",");
+        // 如果打开了 extended, 则无需后续处理
+        if (beatPicBean.isExtended()) return imageInfoList;
 
-        // 如果设定了 repeat, 那么在补全了图片位置之后, 统一制定所有图片都使用第一个作为基础, 即设定 imageName
-        // 如果没设定, 则补出来的图尝试获取 imageName, 获取不到, 则放弃
+        String[] strings = beatPicBean.getTargets().split(",");
 
         // contains 可用是因为提供了特供的 ImageIndex 类~
         // 使用下面的代码, 补全那些没有取到 imageName 的信息
-        // 当然是否补全,要看 repeat 等设定了
         Arrays.stream(strings)
                 .map(ImageIndex::new)
                 .filter(i -> !imageInfoList.contains(i))
@@ -137,26 +135,6 @@ public abstract class ImsBeatBaseService extends BaseTaskService {
 
                     imageInfoList.add(imageInfo);
                 });
-
-        // 如果没有打开重复或不是刷图, 按照上述注释和逻辑, 可以直接返回了
-        if (!beatPicBean.isRepeat() || beatPicBean.getBeat_flg() != Waiting)
-            return imageInfoList;
-
-        // 否则, 继续处理
-        ImsBeatImageInfo firstImage = imageInfoList.get(0);
-
-        String firstImageName = firstImage.getImage_name();
-
-        if (StringUtils.isEmpty(firstImageName)) {
-            $info("打开 Repeat 的情况下,没能获取到 FirstImageName [ %s ]", firstImage.getUrl_key());
-            beatPicBean.setComment("打开 Repeat 的情况下,没能获取到 FirstImageName");
-            beatPicBean.setBeat_flg(Fail);
-            return null;
-        }
-
-        for (ImsBeatImageInfo imageInfo : imageInfoList) {
-            imageInfo.setImage_name(firstImageName);
-        }
 
         return imageInfoList;
     }
@@ -265,6 +243,19 @@ public abstract class ImsBeatBaseService extends BaseTaskService {
             $info(errorMsg);
             return false;
         }
+    }
+
+    protected ImsBeatImageInfo copyInfo(ImsBeatImageInfo imageInfo, int index) {
+
+        ImsBeatImageInfo copy = new ImsBeatImageInfo();
+
+        copy.setImage_name(imageInfo.getImage_name());
+        copy.setUrl_key(imageInfo.getUrl_key());
+        copy.setImage_id(index);
+        copy.setCode(imageInfo.getCode());
+        copy.setChannel_id(imageInfo.getChannel_id());
+
+        return copy;
     }
 
     /**

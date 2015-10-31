@@ -87,6 +87,9 @@ public class ImsBeatRevertService extends ImsBeatBaseService {
 
         Map<Integer, String> tbImageUrlMap = new HashMap<>();
 
+        // 为顺延的图片设定 NO IMAGE
+        appendExtended(imageInfoList, beatPicBean);
+
         for (ImsBeatImageInfo imageInfo: imageInfoList) {
 
             // 补全信息
@@ -105,6 +108,27 @@ public class ImsBeatRevertService extends ImsBeatBaseService {
         }
 
         return tbImageUrlMap;
+    }
+
+    private void appendExtended(List<ImsBeatImageInfo> imageInfoList, BeatPicBean beatPicBean) {
+
+        String targets = beatPicBean.getTargets();
+
+        ImsBeatImageInfo first = imageInfoList.get(0);
+
+        int size = imageInfoList.size();
+
+        for (String target: targets.split(",")) {
+
+            int index = Integer.valueOf(target);
+
+            // 为顺延产生的多余图片,设定 NO IMAGE
+            if (index > size) {
+                ImsBeatImageInfo imageInfo = copyInfo(first, index);
+                imageInfo.setNoImage(true);
+                imageInfoList.add(imageInfo);
+            }
+        }
     }
 
     private String getTbImageUrl(ImsBeatImageInfo imageInfo, List<TaskControlBean> taskControlList) {

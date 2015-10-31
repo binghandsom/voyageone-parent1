@@ -29,6 +29,8 @@ public class BeatPicBean {
 
     private boolean repeat;
 
+    private boolean extended;
+
     private String modified;
 
     private String modifier;
@@ -164,5 +166,13 @@ public class BeatPicBean {
 
     public void setRepeat(boolean repeat) {
         this.repeat = repeat;
+    }
+
+    public boolean isExtended() {
+        return extended;
+    }
+
+    public void setExtended(boolean extended) {
+        this.extended = extended;
     }
 }
