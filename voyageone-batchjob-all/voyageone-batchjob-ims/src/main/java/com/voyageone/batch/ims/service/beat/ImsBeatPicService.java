@@ -35,7 +35,7 @@ public class ImsBeatPicService extends BaseTaskService {
     private ImsBeatUpdateService imsBeatUpdateService;
 
     // 每个线程处理的数量
-    private static final int PRODUCT_COUNT_ON_THREAD = 1000;
+    private static final int PRODUCT_COUNT_ON_THREAD = 50;
 
     @Override
     public SubSystem getSubSystem() {
@@ -72,6 +72,7 @@ public class ImsBeatPicService extends BaseTaskService {
     private void doBeats(List<TaskControlBean> taskControlList) throws InterruptedException {
 
         String thread_count = TaskControlUtils.getVal1(taskControlList, Name.thread_count);
+
         final int THREAD_COUNT = Integer.valueOf(thread_count);
 
         int limit = PRODUCT_COUNT_ON_THREAD * THREAD_COUNT;
