@@ -290,10 +290,10 @@
                 <version>1.0</version>
             </dependency>
 
-            <dependency>
+           <dependency>
                 <groupId>taobao</groupId>
                 <artifactId>taobao-sdk-java</artifactId>
-                <version>20150806</version>
+                <version>1445566890094</version>
             </dependency>
             <dependency>
                 <groupId>com.voyageone</groupId>

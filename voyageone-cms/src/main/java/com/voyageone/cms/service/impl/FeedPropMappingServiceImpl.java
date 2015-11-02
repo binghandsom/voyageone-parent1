@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static com.voyageone.cms.CmsMsgConstants.FeedPropMappingMsg.*;
 import static com.voyageone.core.MessageConstants.ComMsg.NOT_FOUND_CHANNEL;
@@ -207,12 +208,11 @@ public class FeedPropMappingServiceImpl extends BaseAppService implements FeedPr
         // 根据数组的数量进行判断,如果数组只有一个元素,则为切换状态.多个元素则视为统一变更为忽略状态
         if (props.length == 1) {
 
-            FeedMappingProp ignore = propsWithIgnore.get(0);
             FeedMappingProp prop = propList.get(0);
 
             // 查询不到则为插入
             // 单值处理时, is_ignore 会由前台切换并传回到这里.所以不用在这里具体处理 is_ignore
-            if (ignore == null) {
+            if (propsWithIgnore.isEmpty()) {
                 count = feedPropMappingDao.insertIgnoreValue(prop, channel_id, userName);
             } else {
                 count = feedPropMappingDao.updateIgnoreValue(prop, channel_id, userName);
@@ -232,8 +232,9 @@ public class FeedPropMappingServiceImpl extends BaseAppService implements FeedPr
             count = feedPropMappingDao.updateIgnoreValues(propList, channel_id, userName);
         } else {
             // 区分开忽略是插入还是更新
-            propList.addAll(propsWithIgnore);
-            Map<Integer, List<FeedMappingProp>> map = propList.stream().collect(groupingBy(FeedMappingProp::getProp_id, toList()));
+            Map<Integer, List<FeedMappingProp>> map = Stream
+                    .concat(propList.stream(), propsWithIgnore.stream())
+                    .collect(groupingBy(FeedMappingProp::getProp_id, toList()));
 
             List<FeedMappingProp> inserting = map.entrySet().stream()
                     .filter(e -> e.getValue().size() == 1)
@@ -248,6 +249,8 @@ public class FeedPropMappingServiceImpl extends BaseAppService implements FeedPr
             count = feedPropMappingDao.insertIgnoreValues(inserting, channel_id, userName);
             count += feedPropMappingDao.updateIgnoreValues(updating, channel_id, userName);
         }
+
+        completeCategory(propList.get(0).getCategory_id(), channel_id, user);
 
         return count;
     }
