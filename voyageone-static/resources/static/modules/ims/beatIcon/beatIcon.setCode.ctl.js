@@ -22,7 +22,7 @@ define([
 
     ok: function () {
       if (this.code) {
-        this.instance.close(parseFloat(this.price));
+        this.instance.close(this.code);
       } else {
         this.message = '请务必填写一个 Code 或数字 ID (Num_iid)';
       }
