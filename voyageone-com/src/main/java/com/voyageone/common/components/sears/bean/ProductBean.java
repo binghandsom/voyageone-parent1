@@ -14,6 +14,8 @@ public class ProductBean {
     private String itemId;
     private String upc;
     private String status;
+    private PriceBean price;
+    private AvailabilityBean availability;
 
     @XmlElement(name = "product_details")
     private ProductDetailBean productDetails;
@@ -48,5 +50,21 @@ public class ProductBean {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public PriceBean getPrice() {
+        return price;
+    }
+
+    public void setPrice(PriceBean price) {
+        this.price = price;
+    }
+
+    public AvailabilityBean getAvailability() {
+        return availability;
+    }
+
+    public void setAvailability(AvailabilityBean availability) {
+        this.availability = availability;
     }
 }

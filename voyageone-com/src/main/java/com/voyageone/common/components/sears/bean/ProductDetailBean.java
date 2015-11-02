@@ -54,8 +54,6 @@ public class ProductDetailBean {
     private String countryOfOrigin;
     private String imageWidth;
     private String imageHeight;
-    private PriceBean price;
-    private AvailabilityBean availability;
 
 
     public String getProductId() {
@@ -240,22 +238,6 @@ public class ProductDetailBean {
 
     public void setImageHeight(String imageHeight) {
         this.imageHeight = imageHeight;
-    }
-
-    public PriceBean getPrice() {
-        return price;
-    }
-
-    public void setPrice(PriceBean price) {
-        this.price = price;
-    }
-
-    public AvailabilityBean getAvailability() {
-        return availability;
-    }
-
-    public void setAvailability(AvailabilityBean availability) {
-        this.availability = availability;
     }
 
     public String getCategory(){

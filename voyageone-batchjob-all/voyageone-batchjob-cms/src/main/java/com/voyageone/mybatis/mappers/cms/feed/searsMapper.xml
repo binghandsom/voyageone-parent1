@@ -8,7 +8,7 @@
     </delete>
 
     <insert id="cms_zz_worktable_sears_superfeed_insert" parameterType="com.voyageone.common.components.sears.bean.ProductResponse" >
-        insert into voyageone_cms.cms_zz_worktable_sears_superfeed (
+        insert ignore into voyageone_cms.cms_zz_worktable_sears_superfeed (
                 item_id,
                 product_id,
                 brand,
@@ -47,12 +47,13 @@
                     #{item.productDetails.modelNumber,jdbcType=VARCHAR},
                     #{item.productDetails.countryGroups,jdbcType=VARCHAR},
                     #{item.productDetails.countryOfOrigin,jdbcType=VARCHAR},
-                    #{item.productDetails.price.sellPrice,jdbcType=DECIMAL})
+                    #{item.price.sellPrice,jdbcType=DECIMAL})
         </foreach>
     </insert>
     <insert id="cms_zz_worktable_sears_attribute_insert" parameterType="com.voyageone.common.components.sears.bean.ProductResponse" >
-        insert into voyageone_cms.cms_zz_worktable_sears_attribute (
+        insert ignore into voyageone_cms.cms_zz_worktable_sears_attribute (
         item_id,
+        label,
         attribute,
         value)
         values
@@ -61,6 +62,7 @@
             <foreach collection="item.productDetails.specifications" item="specification" index="index"
                      separator=",">
                 (#{item.itemId,jdbcType=VARCHAR},
+                #{specification.label,jdbcType=VARCHAR},
                 #{specification.key,jdbcType=VARCHAR},
                 #{specification.value,jdbcType=VARCHAR})
             </foreach>
