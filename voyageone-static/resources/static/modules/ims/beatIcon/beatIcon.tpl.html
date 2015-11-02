@@ -72,6 +72,8 @@
                 <button class="btn btn-warning btn-sm" ng-click="ctrl.beatControl('redo')">重刷所有任务</button>
                 <button class="btn btn-danger btn-sm" ng-click="ctrl.beatControl('stop')">停止所有任务</button>
               </div>
+              <span>&nbsp;|&nbsp;</span>
+              <button class="btn btn-primary btn-sm" ng-click="ctrl.addCode()">添加商品</button>
               <div class="hidden">
                 <form id="beat-downloadForm" method="post" target="beat-downloadHelper">
                   <input type="hidden" name="beat_id" id="beat_id" value="{{ctrl.beat.beat_id}}" />
@@ -100,10 +102,11 @@
     </div>
   </div>
   <ul id="operations" role="menu" class="dropdown-menu">
-      <li><a href="javascript:" ng-click="ctrl.beatControl('startup', row.beat_item_id || null)">刷图</a></li>
-      <li><a href="javascript:" ng-click="ctrl.beatControl('cancel', row.beat_item_id || null)">取消</a></li>
-      <li><a href="javascript:" ng-click="ctrl.beatControl('stop', row.beat_item_id || null)">暂停</a></li>
-      <li><a href="javascript:" ng-click="ctrl.setPrice(cell.row)">修改价格</a></li>
+      <li><a href="javascript:" ng-click="ctrl.beatControl('startup')">刷图</a></li>
+      <li><a href="javascript:" ng-click="ctrl.beatControl('cancel')">取消</a></li>
+      <li><a href="javascript:" ng-click="ctrl.beatControl('stop')">暂停</a></li>
+      <li><a href="javascript:" ng-click="ctrl.setPrice()">修改价格</a></li>
+      <li><a href="javascript:" ng-click="ctrl.setCode()">修改商品</a></li>
   </ul>
   <script type="text/ng-template" id="createBeat.tpl.html">
     <div class="modal-header">
@@ -152,7 +155,8 @@
     </div>
     <div class="modal-body">
       <div class="alert alert-danger" ng-show="ctrl.message">{{ctrl.message}}</div>
-      <input type="text" class="form-control" placeholder="New price" ng-model="ctrl.price" />
+      <label for="beat-set-price" class="form-label">商品活动价</label>
+      <input id="beat-set-price" type="text" class="form-control" placeholder="New price" ng-model="ctrl.price" />
     </div>
     <div class="modal-footer">
       <button class="btn btn-primary" ng-click="ctrl.ok()">确定</button>

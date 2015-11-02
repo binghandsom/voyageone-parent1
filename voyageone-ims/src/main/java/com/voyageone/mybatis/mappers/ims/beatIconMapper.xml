@@ -200,4 +200,40 @@
         WHERE beat_id = #{beat_id}
         GROUP BY beat_flg
     </select>
+
+    <select id="ims_bt_product_selectCodeByNumiid" resultType="string">
+        SELECT code
+        FROM voyageone_ims.ims_bt_product
+        WHERE channel_id = #{beat.channel_id}
+              AND cart_id = #{beat.cart_id}
+              AND num_iid = #{item.num_iid}
+              AND main_product_flg = #{main_product_flg};
+    </select>
+
+    <select id="ims_bt_product_selectNumiidByCode" resultType="string">
+        SELECT num_iid
+        FROM voyageone_ims.ims_bt_product
+        WHERE channel_id = #{beat.channel_id}
+              AND code = #{item.code}
+              AND cart_id = #{beat.cart_id};
+    </select>
+
+    <insert id="ims_bt_beat_item_insertItem" parameterType="com.voyageone.ims.model.ImsBeatItem">
+        INSERT INTO voyageone_ims.ims_bt_beat_item (beat_id, code, num_iid, url_key, image_name, price, beat_flg,
+                                                    comment, created, creater, modified, modifier)
+        VALUES (#{beat_id}, #{code}, #{num_iid}, '', '', #{price}, #{beat_flg}, '', NOW(), #{creater}, NOW(),
+                #{modifier})
+    </insert>
+
+    <update id="ims_bt_beat_item_updateItemCode" parameterType="com.voyageone.ims.model.ImsBeatItem">
+        UPDATE voyageone_ims.ims_bt_beat_item
+        SET code = #{code}, beat_flg = #{beat_flg}, modified = NOW(), modifier = #{modifier}
+        WHERE beat_item_id = #{beat_item_id} AND modified = #{modified}
+    </update>
+
+    <select id="ims_bt_beat_item_selectItemCountByNumiid" resultType="int">
+        SELECT count(1)
+        FROM voyageone_ims.ims_bt_beat_item
+        WHERE beat_id = #{beat.beat_id} AND num_iid = #{item.num_iid}
+    </select>
 </mapper>

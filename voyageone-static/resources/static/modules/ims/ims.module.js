@@ -22,7 +22,9 @@ define(function () {
                 downErr: "downloadErr",
                 addItems: "addItems",
                 control: "control",
-                setItemPrice: "setItemPrice"
+                setItemPrice: "setItemPrice",
+                addCode: "addCode",
+                setCode: "setCode"
             }
         });
 
