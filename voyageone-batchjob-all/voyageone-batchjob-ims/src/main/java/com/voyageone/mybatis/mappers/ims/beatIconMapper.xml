@@ -7,8 +7,6 @@
             beat.cart_id,
             beat.targets,
             item.`code`,
-            item.url_key,
-            item.image_name,
             item.num_iid,
             item.price,
             beat.repeat,
