@@ -607,13 +607,8 @@ public class ImsBeatService extends BaseAppService {
         if (StringUtils.isEmpty(beat.getEnd())) {
             messageBuilder.append("<li>没有输入时间</li>");
         } else {
-            Date gmtNow = new Date();
             Date end = DateTimeUtil.parse(beat.getEnd());
             Date gmtEnd = DateTimeUtil.addHours(end, -8);
-
-            // 结束时间应该至少比现在晚 12 个小时
-            if (DateTimeUtil.diffHours(gmtEnd, gmtNow) < 12)
-                messageBuilder.append("<li>价格披露的还原时间至少要比现在晚 12 个小时。</li>");
 
             // 如果正确，则直接放回 bean
             beat.setEnd(DateTimeUtil.format(gmtEnd, DateTimeUtil.DEFAULT_DATETIME_FORMAT));

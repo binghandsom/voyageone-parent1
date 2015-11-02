@@ -113,28 +113,44 @@
       <span class="h4">新建任务</span>
     </div>
     <div class="modal-body">
-      <ui-select ng-model="ctrl.beat.cart_id">
-        <ui-select-match placeholder="Please select a Cart">{{$select.selected.shop_name}}</ui-select-match>
-        <ui-select-choices repeat="i.cart_id as i in ctrl.carts | filter: $select.search">
-          <div ng-bind-html="'[' + i.comment + '] ' + i.shop_name"></div>
-        </ui-select-choices>
-      </ui-select>
-      <br />
-      <input type="text" class="form-control" placeholder="Description" ng-model="ctrl.beat.description" />
-      <br />
-      <input type="text" class="form-control" placeholder="Image Template Url" ng-model="ctrl.beat.template_url" />
-      <br />
       <div class="form-group">
-        <label>图片位置</label>
+        <label class="control-label">店铺:</label>
+        <ui-select ng-model="ctrl.beat.cart_id">
+          <ui-select-match placeholder="Please select a Cart">{{$select.selected.shop_name}}</ui-select-match>
+          <ui-select-choices repeat="i.cart_id as i in ctrl.carts | filter: $select.search">
+            <div ng-bind-html="'[' + i.comment + '] ' + i.shop_name"></div>
+          </ui-select-choices>
+        </ui-select>
+      </div>
+      <div class="form-group">
+        <label for="beat-new-desc" class="control-label">名称 (不能重复):</label>
+        <input id="beat-new-desc" type="text" class="form-control" placeholder="Description" ng-model="ctrl.beat.description" />
+      </div>
+      <div class="form-group">
+        <label for="beat-new-temp" class="control-label">价格图的模板地址</label>
+        <input id="beat-new-temp" type="text" class="form-control" placeholder="Image Template Url" ng-model="ctrl.beat.template_url" />
+      </div>
+      <div class="form-group">
+        <label class="control-label">图片位置</label>
+        <br />
         <div class="btn-group">
-          <label class="btn btn-info btn-sm" ng-model="ctrl.target.p1" btn-checkbox>1</label>
-          <label class="btn btn-info btn-sm" ng-model="ctrl.target.p2" btn-checkbox>2</label>
-          <label class="btn btn-info btn-sm" ng-model="ctrl.target.p3" btn-checkbox>3</label>
-          <label class="btn btn-info btn-sm" ng-model="ctrl.target.p4" btn-checkbox>4</label>
-          <label class="btn btn-info btn-sm" ng-model="ctrl.target.p5" btn-checkbox>5</label>
+          <label class="btn btn-default btn-sm" ng-model="ctrl.target.p1" btn-checkbox>1</label>
+          <label class="btn btn-default btn-sm" ng-model="ctrl.target.p2" btn-checkbox>2</label>
+          <label class="btn btn-default btn-sm" ng-model="ctrl.target.p3" btn-checkbox>3</label>
+          <label class="btn btn-default btn-sm" ng-model="ctrl.target.p4" btn-checkbox>4</label>
+          <label class="btn btn-default btn-sm" ng-model="ctrl.target.p5" btn-checkbox>5</label>
         </div>
       </div>
-      <br />
+      <div class="form-group">
+        <label class="control-label">其他选项</label>
+        <br />
+        <div class="btn-group">
+          <label class="btn btn-default btn-sm" ng-model="ctrl.option" btn-radio="0" uncheckable>无</label>
+          <label class="btn btn-default btn-sm" ng-model="ctrl.option" btn-radio="1" uncheckable>覆盖重复</label>
+          <label class="btn btn-default btn-sm" ng-model="ctrl.option" btn-radio="2" uncheckable>插入重复</label>
+        </div>
+      </div>
+      <label class="control-label">还原时间</label>
       <div class="row beat-date">
         <div class="col-xs-8">
           <input ng-model="ctrl.beat.end" type="text" class="form-control" is-open="$$endPicker" datepicker-popup="yyyy-MM-dd" ng-click="$$endPicker = true" />

@@ -3,11 +3,11 @@
 <mapper namespace="com.voyageone.ims.sql">
     <insert id="ims_bt_beat_insert" parameterType="com.voyageone.ims.model.ImsBeat">
         INSERT INTO `voyageone_ims`.`ims_bt_beat`
-        (`beat_id`, `description`, `channel_id`, `cart_id`, `end`, `template_url`, `targets`, `created`, `creater`,
-         `modified`, `modifier`)
+        (`beat_id`, `description`, `channel_id`, `cart_id`, `end`, `template_url`, `targets`, `repeat`, `extended`,
+         `created`, `creater`, `modified`, `modifier`)
         VALUES
-            (#{beat_id}, #{description}, #{channel_id}, #{cart_id}, #{end}, #{template_url}, #{targets}, NOW(),
-             #{creater}, NOW(), #{modifier})
+            (#{beat_id}, #{description}, #{channel_id}, #{cart_id}, #{end}, #{template_url}, #{targets},
+             #{repeat}, #{extended}, NOW(), #{creater}, NOW(), #{modifier})
     </insert>
 
     <select id="ims_bt_beat_selectByFinger" parameterType="com.voyageone.ims.model.ImsBeat"
@@ -20,6 +20,8 @@
             end,
             template_url,
             targets,
+            `repeat`,
+            extended,
             created,
             creater,
             modified,
@@ -44,6 +46,8 @@
             end,
             template_url,
             targets,
+            `repeat`,
+            extended,
             created,
             creater,
             modified,
@@ -154,8 +158,8 @@
     </delete>
 
     <select id="ims_bt_beat_selectByChannel" resultType="com.voyageone.ims.model.ImsBeat">
-        SELECT beat_id, description, channel_id, cart_id, end, template_url, targets, created, creater, modified,
-        modifier
+        SELECT beat_id, description, channel_id, cart_id, end, template_url, targets,
+        `repeat`, extended, created, creater, modified, modifier
         FROM voyageone_ims.ims_bt_beat WHERE channel_id = #{channel_id}
         <if test="cart_id != null and cart_id != ''">AND cart_id = #{cart_id}</if>
         LIMIT #{offset}, #{limit}

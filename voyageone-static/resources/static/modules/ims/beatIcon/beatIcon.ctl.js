@@ -64,6 +64,8 @@
         };
       }
 
+      CreatorController.prototype.option = 0;
+
       CreatorController.prototype.ok = function () {
         var part1, part2;
         part1 = dateFormat(this.beat.end, 1, this.date);
@@ -76,6 +78,17 @@
           targets += name.substr(1) + ",";
         });
         this.beat.targets = targets.substr(0, targets.length - 1);
+
+        if (this.option == 1) {
+          this.beat.repeat = true;
+          this.beat.extended = false;
+        } else if (this.option == 2) {
+          this.beat.repeat = false;
+          this.beat.extended = true;
+        } else {
+          this.beat.repeat = false;
+          this.beat.extended = false;
+        }
 
         return this.instance.close(this.beat);
       };
@@ -172,13 +185,15 @@
             .withDataProp('data')
             .withPaginationType('full_numbers'),
           columns: [
-            DTColumnBuilder.newColumn('cart_id', 'Cart').renderWith(this.formatCart),
-            DTColumnBuilder.newColumn('description', 'Description'),
-            DTColumnBuilder.newColumn('end', 'End'),
-            DTColumnBuilder.newColumn('template_url', 'Template'),
-            DTColumnBuilder.newColumn('targets', 'Target Image Indexes'),
-            DTColumnBuilder.newColumn('modifier', 'Modifier'),
-            DTColumnBuilder.newColumn('modified', 'Modified'),
+            DTColumnBuilder.newColumn('cart_id', '店铺').renderWith(this.formatCart),
+            DTColumnBuilder.newColumn('description', '名称'),
+            DTColumnBuilder.newColumn('end', '还原时间'),
+            DTColumnBuilder.newColumn('template_url', '活动模板'),
+            DTColumnBuilder.newColumn('targets', '披露图片的位置'),
+            DTColumnBuilder.newColumn('repeat', '其他选项').renderWith(function(val, type, row) {
+              return row.repeat ? "覆盖重复" : row.extended ? "插入重复" : "无";
+            }),
+            DTColumnBuilder.newColumn('modifier', '修改人'),
             DTColumnBuilder.newColumn('', '').renderWith(function (val, type, row, cell) {
               return "<button class=\"btn btn-warning btn-sm\" ng-click=\"ctrl.openBeat(" + cell.row + ")\">&nbsp;查看&nbsp;</button>";
             })
