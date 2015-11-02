@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 public class TbPromotionService extends TbBase {
     private static Log logger = LogFactory.getLog(TbProductService.class);
 
-    public boolean addPromotion(ShopBean shopBean,TipItemPromDTO ItemProm) throws ApiException {
+    public TmallPromotionTipItemAddResponse addPromotion(ShopBean shopBean,TipItemPromDTO ItemProm) throws ApiException {
 
         logger.info("天猫特价宝添加活动商品 " + ItemProm.getItemId());
 
@@ -30,19 +30,15 @@ public class TbPromotionService extends TbBase {
         req.setItemProm(ItemProm);
 
         TmallPromotionTipItemAddResponse response = reqTaobaoApi(shopBean, req);
-        if (response == null){
-            return false;
-        }
         if (response.getErrorCode() != null)
         {
             logger.error(response.getSubMsg());
-            new ApiException(response.getSubMsg());
         }
 
-        return true;
+        return response;
     }
 
-    public boolean updatePromotion(ShopBean shopBean,TipItemPromDTO ItemProm) throws ApiException {
+    public TmallPromotionTipItemModifyResponse updatePromotion(ShopBean shopBean,TipItemPromDTO ItemProm) throws ApiException {
         logger.info("天猫特价宝更新活动商品 " + ItemProm.getItemId());
 
         TmallPromotionTipItemModifyRequest req = new TmallPromotionTipItemModifyRequest();
@@ -50,13 +46,10 @@ public class TbPromotionService extends TbBase {
         req.setItemProm(ItemProm);
 
         TmallPromotionTipItemModifyResponse response = reqTaobaoApi(shopBean, req);
-        if (response == null){
-            return false;
-        }
         if (response.getErrorCode() != null)
         {
             logger.error(response.getSubMsg());
         }
-        return response.getModifyRst();
+        return response;
     }
 }

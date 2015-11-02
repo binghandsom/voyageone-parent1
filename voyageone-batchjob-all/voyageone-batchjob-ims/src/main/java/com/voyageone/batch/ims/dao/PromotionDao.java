@@ -19,10 +19,10 @@ public class PromotionDao extends BaseDao{
      * @param cardId
      * @return
      */
-    public List<Map> getPromotionItem(String channelId, String cardId){
+    public List<Map> getPromotionItem(String channelId, String cartId){
         Map<String,Object> parameter = new HashMap<>();
         parameter.put("channelId",channelId);
-        parameter.put("cardId", cardId);
+        parameter.put("cartId", cartId);
 
         List<Map> data = selectList("ims_promotion_select", parameter);
 
@@ -32,12 +32,7 @@ public class PromotionDao extends BaseDao{
         return data;
     }
 
-    public int updatePromotionStatus(String channelId, String cardId,List<Integer> products){
-        Map<String,Object> parameter = new HashMap<>();
-        parameter.put("channelId",channelId);
-        parameter.put("cardId", cardId);
-        parameter.put("products", products);
-
+    public int updatePromotionStatus(Map<String,Object> parameter){
         return update("ims_promotion_update", parameter);
     }
 }
