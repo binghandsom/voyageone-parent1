@@ -126,4 +126,26 @@ public final class FileUtils {
         return fileNameList;
     }
 
+    /**
+     * 文件是否存在
+     * @param chkFileName 被检查文件
+     * @param chkFilePath 被检查路径
+     * @param suffixLength 后缀长度
+     * @return boolean
+     */
+    public static boolean isFileExist(String chkFileName, String chkFilePath, int suffixLength) {
+        boolean ret = false;
+
+        String fileNameLike = chkFileName.substring(0, chkFileName.length() - suffixLength);
+
+        File file = new File(chkFilePath);
+        for (String fileName : file.list()) {
+            if (fileName.toUpperCase().contains(fileNameLike)) {
+                ret = true;
+                break;
+            }
+        }
+
+        return ret;
+    }
 }
