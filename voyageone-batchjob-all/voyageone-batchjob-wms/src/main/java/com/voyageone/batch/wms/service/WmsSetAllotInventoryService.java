@@ -114,10 +114,10 @@ public class WmsSetAllotInventoryService extends BaseTaskService {
         }
 
         public void doRun() throws MessagingException {
-            logger.info(channel.getFull_name()+"(订单级别)库存分配开始" );
+            $info(channel.getFull_name()+"(订单级别)库存分配开始" );
 
             if (StringUtils.isNullOrBlank2(postURI)) {
-                logger.info(channel.getFull_name()+"(订单级别)库存分配错误：PostURL地址没有设置" );
+                $info(channel.getFull_name()+"(订单级别)库存分配错误：PostURL地址没有设置" );
                 logIssue(channel.getFull_name() + " PostURL地址没有设置，无法库存分配");
                 return;
             }
@@ -125,7 +125,7 @@ public class WmsSetAllotInventoryService extends BaseTaskService {
             // ItemDetail表中没有的记录取得
             List<String> notExistsItemCode = reservationDao.getNotExistsItemCode(channel.getOrder_channel_id());
 
-            logger.info(channel.getFull_name() + "------(订单级别)SKU在ItemDetail中不存在件数：" + notExistsItemCode.size());
+            $info(channel.getFull_name() + "------(订单级别)SKU在ItemDetail中不存在件数：" + notExistsItemCode.size());
             if (notExistsItemCode.size() > 0 ) {
                 logIssue(channel.getFull_name() + "：SKU在ItemDetail中不存在，无法库存分配", notExistsItemCode);
             }
@@ -133,7 +133,7 @@ public class WmsSetAllotInventoryService extends BaseTaskService {
             // 需要库存分配的记录取得
             List<ReservationBean> reservationList = reservationDao.getAllotInventoryIntoByOrder(channel.getOrder_channel_id(), rowCount);
 
-            logger.info(channel.getFull_name() + "------(订单级别)库存分配明细件数：" + reservationList.size());
+            $info(channel.getFull_name() + "------(订单级别)库存分配明细件数：" + reservationList.size());
 
             List<AllotInventoryDetailBean>  allotInventoryDetailList = new ArrayList<>();
 
@@ -176,14 +176,14 @@ public class WmsSetAllotInventoryService extends BaseTaskService {
 
             }
 
-            logger.info(channel.getFull_name() + "------(订单级别)库存分配订单件数：" + allotInventoryDetailList.size());
+            $info(channel.getFull_name() + "------(订单级别)库存分配订单件数：" + allotInventoryDetailList.size());
 
             // 取得再分配标志
             List<OrderChannelConfigBean> allot_inventory_again = ChannelConfigs.getConfigs(channel.getOrder_channel_id(), ChannelConfigEnums.Name.allot_inventory_again);
 
             for (AllotInventoryDetailBean allotInventory : allotInventoryDetailList) {
 
-                logger.info(channel.getFull_name() + "---------(订单级别)Order_Number：" + allotInventory.getOrder_number() + "，明细件数：" + allotInventory.getLstReservation().size());
+                $info(channel.getFull_name() + "---------(订单级别)Order_Number：" + allotInventory.getOrder_number() + "，明细件数：" + allotInventory.getLstReservation().size());
 
                 allotInventory.setAllot_error(false);
                 try {
@@ -191,11 +191,11 @@ public class WmsSetAllotInventoryService extends BaseTaskService {
                     // 取得物品的产品信息、分配仓库等
                     for (ReservationBean reservation : allotInventory.getLstReservation()) {
 
-                        logger.info(channel.getFull_name() + "----------(订单级别)初回处理Order_Number：" + reservation.getOrder_number() + "，Item_Number：" + reservation.getItem_number()+ "，SKU：" + reservation.getSku());
+                        $info(channel.getFull_name() + "----------(订单级别)初回处理Order_Number：" + reservation.getOrder_number() + "，Item_Number：" + reservation.getItem_number()+ "，SKU：" + reservation.getSku());
 
                         // SKU信息取得
                         String result = getItemCodeInfo(channel.getOrder_channel_id(), reservation.getItemCode(), postURI);
-                        logger.info(channel.getFull_name() + "----------(订单级别)初回处理getItemCodeInfo："+ result);
+                        $info(channel.getFull_name() + "----------(订单级别)初回处理getItemCodeInfo："+ result);
 
                         ItemCodeBean itemCodeInfo = new ItemCodeBean();
                         // 调用WebService时返回为空时，抛出错误
@@ -238,14 +238,14 @@ public class WmsSetAllotInventoryService extends BaseTaskService {
 
                                 if (!productAttributes) {
                                     String json = itemCodeInfo == null ? "" : new Gson().toJson(itemCodeInfo);
-                                    logger.info(channel.getFull_name() + "----------(订单级别)初回处理产品属性设置不全");
+                                    $info(channel.getFull_name() + "----------(订单级别)初回处理产品属性设置不全");
                                     logIssue(channel.getFull_name() + "税号等产品属性设置不全，无法库存分配", "Order_Number：" + reservation.getOrder_number() + "，Item_Number：" + reservation.getItem_number() + "，SKU：" + reservation.getSku() + "，Attributes：" + json);
                                     allotInventory.setAllot_error(true);
                                 }
 
                                 // 分配仓库
                                 long storeId = reservationDao.getAllotStore(channel.getOrder_channel_id(), reservation.getCart_id(), reservation.getSku());
-                                logger.info(channel.getFull_name() + "----------(订单级别)初回处理getAllotStore：" + storeId);
+                                $info(channel.getFull_name() + "----------(订单级别)初回处理getAllotStore：" + storeId);
 
                                 // 仓库分配没有取得
                                 if (storeId == 0) {
@@ -327,7 +327,7 @@ public class WmsSetAllotInventoryService extends BaseTaskService {
                                     }
                                     // 再次分配仓库
                                     long storeId = reservationDao.getAllotStoreAgain(channel.getOrder_channel_id(), reservation.getCart_id(), reservation.getSku(), storeList);
-                                    logger.info(channel.getFull_name() + "----------(订单级别)再次分配getAllotStore：" + storeId);
+                                    $info(channel.getFull_name() + "----------(订单级别)再次分配getAllotStore：" + storeId);
 
                                     // 仓库分配没有取得
                                     if (storeId == 0) {
@@ -336,7 +336,7 @@ public class WmsSetAllotInventoryService extends BaseTaskService {
                                     } else {
                                         // 真实仓库时，记入
                                         if (StoreConfigs.getStore(storeId).getStore_kind().equals(StoreConfigEnums.Kind.REAL.getId())) {
-                                            logger.info(channel.getFull_name() + "----------(订单级别)再次分配Order_Number：" + reservation.getOrder_number() + "，Item_Number：" + reservation.getItem_number() + "，SKU：" + reservation.getSku() + "，Store：" + storeId);
+                                            $info(channel.getFull_name() + "----------(订单级别)再次分配Order_Number：" + reservation.getOrder_number() + "，Item_Number：" + reservation.getItem_number() + "，SKU：" + reservation.getSku() + "，Store：" + storeId);
                                             reservation.setStore_id(storeId);
                                         }
                                     }
@@ -347,7 +347,7 @@ public class WmsSetAllotInventoryService extends BaseTaskService {
                     }
 
                 } catch (Exception e) {
-                    logIssue(e, channel.getFull_name() + "----------(订单级别)库存分配错误，Order_Number：" + allotInventory.getOrder_number());
+                    logIssue(channel.getFull_name() + "----------(订单级别)库存分配错误，Order_Number：" + allotInventory.getOrder_number(),e);
                     allotInventory.setAllot_error(true);
                 }
 
@@ -373,7 +373,7 @@ public class WmsSetAllotInventoryService extends BaseTaskService {
                                     // 更新OrderDetails
                                     reservationDao.updateOrderDetails(reservation.getOrder_number(), reservation.getItem_number(), res_id, getTaskName());
 
-                                    logger.info(channel.getFull_name() + "----------(订单级别)库存分配成功：" + res_id);
+                                    $info(channel.getFull_name() + "----------(订单级别)库存分配成功：" + res_id);
 
                                 }
 
@@ -387,7 +387,7 @@ public class WmsSetAllotInventoryService extends BaseTaskService {
 
                                     // 发货渠道和默认发货渠道不一致时，更新发货渠道并插入Log
                                     if (!shipChannel.equals(ChannelConfigs.getVal1(channel.getOrder_channel_id(), ChannelConfigEnums.Name.default_ship_channel))) {
-                                        logger.info(channel.getFull_name() + "----------(订单级别)发货渠道变更：" + shipChannel);
+                                        $info(channel.getFull_name() + "----------(订单级别)发货渠道变更：" + shipChannel);
                                         reservationDao.updateShipChannel(allotInventory.getOrder_number(), resId, shipChannel);
                                         List<Long> reservationLogList = new ArrayList<>();
                                         reservationLogList.add(resId);
@@ -398,7 +398,7 @@ public class WmsSetAllotInventoryService extends BaseTaskService {
                                 // 判断是否需要拆单
                                 // 拆单的场合，将物品取消、插入Log并插入订单备注
                                 if (isSplitOrder(channel.getOrder_channel_id(), storeList)) {
-                                    logger.info(channel.getFull_name() + "----------Order_Number：" + allotInventory.getOrder_number() + "需要拆单");
+                                    $info(channel.getFull_name() + "----------Order_Number：" + allotInventory.getOrder_number() + "需要拆单");
                                     reservationDao.updateReservationStatus(allotInventory.getOrder_number(), reservationList, CodeConstants.Reservation_Status.Cancelled);
 
                                     String note = "Warehouse is different, need to split the order";
@@ -411,7 +411,7 @@ public class WmsSetAllotInventoryService extends BaseTaskService {
 
 
                             } catch (Exception e) {
-                                logIssue(e, channel.getFull_name() + "----------(订单级别)库存分配错误，Order_Number：" + allotInventory.getOrder_number());
+                                logIssue(channel.getFull_name() + "----------(订单级别)库存分配错误，Order_Number：" + allotInventory.getOrder_number(),e);
 
                                 throw new RuntimeException(e);
                             }
@@ -424,12 +424,12 @@ public class WmsSetAllotInventoryService extends BaseTaskService {
             String errorMail = sendErrorMail(errorAllotInventoryDetailList);
 
             if (!StringUtils.isNullOrBlank2(errorMail)) {
-                logger.info("错误邮件出力");
+                $info("错误邮件出力");
                 String subject = String.format(WmsConstants.EmailSetAllotInventoryErrorSpilt.SUBJECT, channel.getFull_name());
                 Mail.sendAlert(CodeConstants.EmailReceiver.NEED_SOLVE, subject, errorMail, true);
             }
 
-             logger.info(channel.getFull_name() + "库存分配结束");
+             $info(channel.getFull_name() + "库存分配结束");
 
         }
 
@@ -503,7 +503,7 @@ public class WmsSetAllotInventoryService extends BaseTaskService {
 
         json = new Gson().toJson(jsonMap);
 
-        logger.info(json);
+        $info(json);
         return HttpUtils.post(postURI, json);
 
     }
