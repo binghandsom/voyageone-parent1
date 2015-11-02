@@ -145,9 +145,8 @@ public class WmsSyncToTaobaoSubService extends WmsSyncInventoryBaseService {
             itemQuantityBean.setSku(sku);
         }
 
-
         // 设置，是全量还是增量更新
-        itemQuantityBean.setIsTotal("1".equals(inventorySynLogBean.getSyn_type()));
+        itemQuantityBean.setIsTotal(WmsConstants.InventorySynType.FULL.equals(inventorySynLogBean.getSyn_type()) || WmsConstants.InventorySynType.FORCE.equals(inventorySynLogBean.getSyn_type()));
 
         return itemQuantityBean;
     }

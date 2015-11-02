@@ -6,7 +6,7 @@ package com.voyageone.batch.ims.modelbean;
 public class PlatformSkuInfoBean {
     private int cart_id;
     private String prop_id;
-    private int sku_type;
+    private long sku_type;
 
     public int getCart_id() {
         return cart_id;
@@ -24,11 +24,11 @@ public class PlatformSkuInfoBean {
         this.prop_id = prop_id;
     }
 
-    public int getSku_type() {
+    public long getSku_type() {
         return sku_type;
     }
 
-    public void setSku_type(int sku_type) {
+    public void setSku_type(long sku_type) {
         this.sku_type = sku_type;
     }
 }

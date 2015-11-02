@@ -1,6 +1,107 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.core.sql">
+    <!-- 汇总价格取得（大礼包解决方案）-->
+    <select id="getVirtualPriceData" resultType="com.voyageone.batch.core.modelbean.SetPriceBean">
+        SELECT
+            orders.source_order_id,
+            orders.order_date_time,
+            orders.cart_id,
+            provisional.sku,
+            SUM(
+                provisional.price_per_unit + ifnull(
+                    (
+                        SELECT
+                            SUM(price_per_unit)
+                        FROM
+                            oms_bt_order_details discount
+                        WHERE
+                            provisional.order_number = discount.order_number
+                        AND provisional.item_number = discount.sub_item_number
+                    ),
+                    0
+                )
+            ) AS price,
+            ifnull(
+                (
+                    SELECT
+                        SUM(price_per_unit)
+                    FROM
+                        oms_bt_order_details shipdetails
+                    WHERE
+                        shipdetails.order_number = #{order_number}
+                    AND shipdetails.adjustment = 1
+                    AND shipdetails.sub_item_number = 0
+                ),
+                0
+            ) AS shipping_price
+        FROM
+            oms_bt_orders orders,
+            (
+                SELECT
+                    details.`order_number`,
+                    CASE
+                WHEN ifnull(
+                    virtual.item_number,
+                    details.`item_number`
+                ) = - 1 THEN
+                    virtual.item_number
+                WHEN ifnull(
+                    virtual.item_number,
+                    details.`item_number`
+                ) = 0 THEN
+                    details.`item_number`
+                ELSE
+                    details.`item_number`
+                END AS `item_number`,
+                details.`detail_date`,
+                details.`adjustment`,
+                details.`product`,
+                details.`sub_item_number`,
+                ifnull(
+                    virtual.provisional_price,
+                    details.`price_per_unit`
+                ) AS price_per_unit,
+                details.`quantity_ordered`,
+                details.`quantity_shipped`,
+                details.`quantity_returned`,
+                ifnull(virtual.sku, details.sku) AS sku,
+                details.`status`,
+                details.`return_id`,
+                details.`freight_collect`,
+                details.`res_allot_flg`,
+                details.`synship_flg`,
+                details.`res_id`,
+                details.`syn_ship_no`,
+                details.`ship_date`
+            FROM
+                oms_bt_order_details details
+            LEFT JOIN wms_bt_virtual_sku virtual ON details.sku = virtual.provisional_sku
+            WHERE
+                details.synship_flg = '1'
+            AND details.res_allot_flg = '1'
+            AND details.adjustment = 0
+            AND details.res_id > 0
+            AND details.order_number = #{order_number}
+            AND NOT EXISTS (
+                SELECT
+                    1
+                FROM
+                    voyageone_ims.ims_bt_product_except except
+                WHERE
+                    except.order_channel_id = #{order_channel_id}
+                AND except.cart_id = #{cart_id}
+                AND except.`comment` LIKE '%赠品%'
+                AND except.except_sku = details.sku
+            )
+            ) provisional
+        WHERE
+            orders.order_channel_id = #{order_channel_id}
+        AND orders.order_number = provisional.order_number
+        GROUP BY
+            provisional.sku;
+    </select>
+
 
     <!-- 汇总价格取得-->
     <select id="getPriceData" resultType="com.voyageone.batch.core.modelbean.SetPriceBean">
@@ -39,6 +140,7 @@
                       WHERE
                         except.order_channel_id = #{order_channel_id}
                       AND except.cart_id = #{cart_id}
+                      AND except.`comment` LIKE '%赠品%'
                       AND except.except_sku = details.sku)
         GROUP BY details.sku
     </select>
@@ -81,6 +183,7 @@
         WHERE
         except.order_channel_id = #{order_channel_id}
         AND except.cart_id = #{cart_id}
+        AND except.`comment` LIKE '%赠品%'
         AND except.except_sku = details.sku)
         GROUP BY details.sku
     </select>
@@ -123,6 +226,7 @@
         WHERE
         except.order_channel_id = #{order_channel_id}
         AND except.cart_id = #{cart_id}
+        AND except.`comment` LIKE '%赠品%'
         AND except.except_sku = details.sku)
         GROUP BY details.sku
     </select>
@@ -183,6 +287,7 @@
         WHERE
         except.order_channel_id = #{order_channel_id}
         AND except.cart_id = #{cart_id}
+        AND except.`comment` LIKE '%赠品%'
         AND except.except_sku = details.sku)
         GROUP BY details.sku
     </select>

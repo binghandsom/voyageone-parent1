@@ -1,7 +1,7 @@
 package com.voyageone.batch.ims.service.beat;
 
 import com.voyageone.batch.base.BaseTaskService;
-import com.voyageone.batch.core.Enums.TaskControlEnums;
+import com.voyageone.batch.core.Enums.TaskControlEnums.Name;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.core.util.TaskControlUtils;
 import com.voyageone.batch.ims.bean.BeatPicBean;
@@ -34,9 +34,6 @@ public class ImsBeatPicService extends BaseTaskService {
     @Autowired
     private ImsBeatUpdateService imsBeatUpdateService;
 
-    // 每个线程处理的数量
-    private static final int PRODUCT_COUNT_ON_THREAD = 1000;
-
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.IMS;
@@ -57,6 +54,9 @@ public class ImsBeatPicService extends BaseTaskService {
 
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
+
+        ImsBeatImageNameFormat.setTaskControls(taskControlList);
+
         doBeats(taskControlList);
     }
 
@@ -68,8 +68,13 @@ public class ImsBeatPicService extends BaseTaskService {
      */
     private void doBeats(List<TaskControlBean> taskControlList) throws InterruptedException {
 
-        String thread_count = TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.thread_count);
+        String thread_count = TaskControlUtils.getVal1(taskControlList, Name.thread_count);
+
+        String atom_count = TaskControlUtils.getVal1(taskControlList, Name.atom_count);
+
         final int THREAD_COUNT = Integer.valueOf(thread_count);
+
+        final int PRODUCT_COUNT_ON_THREAD = Integer.valueOf(atom_count);
 
         int limit = PRODUCT_COUNT_ON_THREAD * THREAD_COUNT;
 
@@ -103,7 +108,7 @@ public class ImsBeatPicService extends BaseTaskService {
                     switch (bean.getBeat_flg()) {
                         case Waiting:
                             //打标（beat_flg为1）
-                            imsBeatUpdateService.beat(bean);
+                            imsBeatUpdateService.beat(taskControlList, bean);
                             break;
                         case Passed:
                         case Cancel:

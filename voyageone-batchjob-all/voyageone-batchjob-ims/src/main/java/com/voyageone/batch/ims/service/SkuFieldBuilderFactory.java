@@ -3,10 +3,7 @@ package com.voyageone.batch.ims.service;
 import com.voyageone.batch.ims.bean.tcb.AbortTaskSignalInfo;
 import com.voyageone.batch.ims.bean.tcb.TaskSignal;
 import com.voyageone.batch.ims.bean.tcb.TaskSignalType;
-import com.voyageone.batch.ims.dao.PlatformPropDao;
-import com.voyageone.batch.ims.dao.PlatformSkuInfoDao;
-import com.voyageone.batch.ims.dao.SkuInfoDao;
-import com.voyageone.batch.ims.dao.SkuPropValueDao;
+import com.voyageone.batch.ims.dao.*;
 import com.voyageone.batch.ims.modelbean.PlatformPropBean;
 import com.voyageone.batch.ims.service.tmall.*;
 import com.voyageone.common.configs.Enums.CartEnums;
@@ -33,6 +30,8 @@ public class SkuFieldBuilderFactory {
     private PlatformSkuInfoDao platformSkuInfoDao;
     @Autowired
     private SkuInfoDao skuInfoDao;
+    @Autowired
+    private CustomSizePropDao customSizePropDao;
     private Map<CartEnums.Cart, List<Class>> skuFieldBuilderClazzsMap;
     private static Log logger = LogFactory.getLog(SkuFieldBuilderFactory.class);
 
@@ -40,6 +39,7 @@ public class SkuFieldBuilderFactory {
         skuFieldBuilderClazzsMap = new HashMap<>();
         List<Class> tmallGjSkuFieldBuilderClazzs = new ArrayList<>();
         tmallGjSkuFieldBuilderClazzs.add(TmallGjSkuFieldBuilderImpl_1.class);
+        tmallGjSkuFieldBuilderClazzs.add(TmallGjSkuFieldBuilderImpl_2.class);
         skuFieldBuilderClazzsMap.put(CartEnums.Cart.TG, tmallGjSkuFieldBuilderClazzs);
     }
 
@@ -54,7 +54,7 @@ public class SkuFieldBuilderFactory {
         for (Class skuFieldBuilderClazz :  skuFieldBuilderClazzs) {
             try {
                 skuFieldBuilder = (AbstractSkuFieldBuilder) skuFieldBuilderClazz.newInstance();
-                skuFieldBuilder.setDao(platformPropDao, skuPropValueDao, platformSkuInfoDao, skuInfoDao);
+                skuFieldBuilder.setDao(platformPropDao, skuPropValueDao, platformSkuInfoDao, skuInfoDao, customSizePropDao);
                 if (skuFieldBuilder.isYourFood(platformProps)) {
                     logger.info("Choose skuBuilder " + skuFieldBuilderClazz.getSimpleName());
                     return skuFieldBuilder;

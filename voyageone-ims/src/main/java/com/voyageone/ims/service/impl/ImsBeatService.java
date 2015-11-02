@@ -452,11 +452,12 @@ public class ImsBeatService extends BaseAppService {
     /**
      * 获取任务的所有项
      *
-     * @param beat   任务
-     * @param flg 用于筛选的状态
-     * @param num_iid 用于搜索的 num_iid
-     * @param offset 起始行
-     * @param limit  行数    @return 任务项集合
+     * @param beat     任务
+     * @param beat_flg 用于筛选的状态
+     * @param num_iid  用于搜索的 num_iid
+     * @param offset   起始行
+     * @param limit    行数
+     * @return 任务项集合
      */
     public DtResponse<List<ImsBeatItem>> getBeatItems(ImsBeat beat, Integer beat_flg, String num_iid, int offset, int limit) {
 
