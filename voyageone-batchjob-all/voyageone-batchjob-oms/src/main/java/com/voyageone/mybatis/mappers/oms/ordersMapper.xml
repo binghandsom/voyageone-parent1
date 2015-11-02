@@ -1152,7 +1152,9 @@
                select t.order_number,                                    
         			  t.source_order_id,                                    
         			  t.cart_id                                    
-                 from oms_bt_orders t                                     
+                 from oms_bt_orders t
+                 left join tt_idcard i
+				 on t.ship_name = i.receive_name and t.ship_phone = i.phone and i.approved = '1'
                 where t.approved = 1                                    
                   and t.cancelled = 0                                    
                   and t.order_channel_id = #{order_channel_id}  
@@ -1162,7 +1164,7 @@
 							  	and t1.adjustment = 0
                   				and t1.res_id = 0
 								and t.order_number = t1.order_number)
-				order by t.order_number
+				order by i.approved desc ,t.order_number
                 limit #{intRowCount}
              ) tt1,                                    
 			oms_bt_order_details tt2
