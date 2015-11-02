@@ -1,0 +1,20 @@
+<div class="modal-header">
+  <span class="h4">新增商品</span>
+</div>
+<div class="modal-body">
+  <div class="alert alert-danger" ng-show="ctrl.message">{{ctrl.message}}</div>
+  <label for="beat-new-code" class="control-label">
+    商品的
+    <div class="btn-group">
+      <label class="btn btn-success btn-sm" ng-model="ctrl.isCode" btn-radio="true" uncheckable>Code</label>
+      <label class="btn btn-success btn-sm" ng-model="ctrl.isCode" btn-radio="false" uncheckable>数字 ID (Num_iid)</label>
+    </div>
+  </label>
+  <input id="beat-new-code" type="text" class="form-control" ng-model="ctrl.code" />
+  <label for="beat-new-code-price" class="control-label">商品活动价</label>
+  <input id="beat-new-code-price" type="text" class="form-control" ng-model="ctrl.price" />
+</div>
+<div class="modal-footer">
+  <button class="btn btn-primary" ng-click="ctrl.ok()">确定</button>
+  <button class="btn btn-default" ng-click="ctrl.cancel()">取消</button>
+</div>

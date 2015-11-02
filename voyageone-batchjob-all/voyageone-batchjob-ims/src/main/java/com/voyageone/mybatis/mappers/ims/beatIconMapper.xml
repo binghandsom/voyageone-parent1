@@ -7,8 +7,6 @@
             beat.cart_id,
             beat.targets,
             item.`code`,
-            item.url_key,
-            item.image_name,
             item.num_iid,
             item.price,
             beat.repeat,
@@ -43,7 +41,7 @@
             resultType="com.voyageone.batch.ims.service.beat.ImsBeatImageInfo">
         SELECT
         p.channel_id, code, url_key, image_name, image_id
-        FROM voyageone_cms.cms_bt_product p JOIN voyageone_cms.cms_bt_product_image pi ON p.product_id = pi.product_id
+        FROM voyageone_cms.cms_bt_product p LEFT JOIN voyageone_cms.cms_bt_product_image pi ON p.product_id = pi.product_id
         WHERE p.channel_id = #{beat.channel_id}
         AND image_id IN (
         <if test="!beat.extended">${beat.targets}</if>

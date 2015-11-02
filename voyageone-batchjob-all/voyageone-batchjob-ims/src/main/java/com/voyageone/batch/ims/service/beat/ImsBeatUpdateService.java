@@ -93,6 +93,13 @@ public class ImsBeatUpdateService extends ImsBeatBaseService {
         // 现根据位置获取 CMS 的图片信息
         List<ImsBeatImageInfo> imageInfoList = imsBeatPicDao.getImageInfo(beatPicBean);
 
+        if (imageInfoList.size() < 1) {
+            $info("没有在 CMS 中取到图片信息");
+            beatPicBean.setComment("没有在 CMS 中取到图片信息");
+            beatPicBean.setBeat_flg(Fail);
+            return null;
+        }
+
         List<Integer> indexList = Arrays.stream(beatPicBean.getTargets().split(",")).map(Integer::valueOf).collect(toList());
 
         Map<Integer, String> tbImageUrlMap = new HashMap<>();
