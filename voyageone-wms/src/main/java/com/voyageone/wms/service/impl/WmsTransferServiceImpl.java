@@ -1009,11 +1009,19 @@ public class WmsTransferServiceImpl implements WmsTransferService {
         String sku = itemDao.getSku(to_store_channel_id, barcode);
 
         //该渠道找不到匹配SKU时
-        if (StringUtils.isEmpty(sku)) {
-            throw new BusinessException(TransferMsg.INVALID_SKU);
-        }
+//        if (StringUtils.isEmpty(sku)) {
+//            throw new BusinessException(TransferMsg.INVALID_SKU);
+//        }
 
         TransferItemBean item = new TransferItemBean();
+
+        item.setSyn_flg(WmsConstants.SynFlg.UNSEND);
+
+        //该渠道找不到匹配SKU时，将Barcode设置为SKU，并且该记录的同步标志位设置为忽略
+        if (StringUtils.isEmpty(sku)) {
+            sku = barcode;
+            item.setSyn_flg(WmsConstants.SynFlg.IGNORE);
+        }
 
         item.setTransfer_id(detail.getTransfer_id());
         item.setTransfer_package_id(detail.getTransfer_package_id());
@@ -1026,7 +1034,6 @@ public class WmsTransferServiceImpl implements WmsTransferService {
 
         setItemCalcQty(transfer, item);
 
-        item.setSyn_flg(TransferStatus.Open);
         item.setActive(true);
 
         String now = DateTimeUtil.getNow();
