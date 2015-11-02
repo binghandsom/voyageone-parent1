@@ -38,7 +38,9 @@ public class SetPriceUtils {
         //order_channel_id = "001";
 //        order_number = "1000036633";
 //        order_channel_id = "005";
-        if (fileFlg == 0 || fileFlg == 3) {
+        if (fileFlg == 0 ){
+            priceReportDatas = setPriceDao.getVirtualPriceData(order_number, order_channel_id, cart_id);
+        } else if( fileFlg == 3) {
             priceReportDatas = setPriceDao.getPriceData(order_number, order_channel_id, cart_id);
         //退货订单基本价格数据取得
         }else if(fileFlg == 1 || fileFlg == 2) {

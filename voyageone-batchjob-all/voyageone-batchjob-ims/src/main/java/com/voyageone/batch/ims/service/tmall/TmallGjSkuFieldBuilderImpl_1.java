@@ -79,7 +79,7 @@ public class TmallGjSkuFieldBuilderImpl_1 extends AbstractSkuFieldBuilder{
                 return false;
             }
 
-            int fieldType = SkuTemplateSchema.decodeFieldTypes(tmallSkuInfo.getSku_type());
+            long fieldType = SkuTemplateSchema.decodeFieldTypes(tmallSkuInfo.getSku_type());
 
             if (fieldType < (1 << SkuTemplateSchema.SkuTemplate_1_Schema.FIELD_BIT_MIN)
                     || fieldType > (1 << (SkuTemplateSchema.SkuTemplate_1_Schema.FIELD_BIT_MAX + 1)))

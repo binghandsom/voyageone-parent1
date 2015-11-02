@@ -187,7 +187,6 @@
 		<dependency>
 			<groupId>taobao</groupId>
 			<artifactId>taobao-sdk-java</artifactId>
-			<version>20150806</version>
 		</dependency>
 
 		<dependency>
