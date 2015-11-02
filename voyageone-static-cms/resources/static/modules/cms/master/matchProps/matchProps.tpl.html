@@ -1,37 +1,42 @@
 <div ng-controller="MatchPropsController as vm">
     <div class="bg-light lter b-b wrapper-md vo_page_header clearfix">
         <div class="row">
-            <div class="vo_page_title col-sm-4"><h1 class="m-n font-thin h3 text-vo">{{vm.category.path}} - 属性列表</h1></div><!-- .vo_page_title -->
-
-            <div class="col-sm-8 text-right">
-                <div class="form-inline">
-                    <div class="input-group">
-                        <input type="text" placeholder="属性名称" class="form-control" ng-model="vm.filter.propName" enter-click="vm.dtProps.instance.reloadData()"/>
-                    </div>
-                    <div class="input-group">
-                        <ui-select ng-model="vm.filter.required">
-                            <ui-select-match placeholder="filter by Required">“必填”为“{{ $select.selected.label }}”的
-                            </ui-select-match>
-                            <ui-select-choices repeat="i.value as i in vm.options | filter: $select.search">
-                                <div ng-bind="i.label"></div>
-                            </ui-select-choices>
-                        </ui-select>
-                    </div>
-                    <div class="input-group">
-                        <ui-select ng-model="vm.filter.ignored">
-                            <ui-select-match placeholder="filter by Ignore">“忽略”为“{{ $select.selected.label }}”的
-                            </ui-select-match>
-                            <ui-select-choices repeat="i.value as i in vm.options | filter: $select.search">
-                                <div ng-bind="i.label"></div>
-                            </ui-select-choices>
-                        </ui-select>
-                    </div>
-                </div>
-            </div>
+            <div class="vo_page_title"><h1 class="m-n font-thin h3 text-vo">{{vm.category.path}} - 属性列表</h1></div><!-- .vo_page_title -->
         </div><!-- .row -->
     </div><!-- .wrapper-md .vo_page_header -->
 
     <div class="wrapper-md">
+      <div class="row">
+        <div class="col-sm-6">
+          <button type="button" class="btn btn-warning" ng-click="vm.changeIgnore()">忽略当前页的所有属性</button>
+        </div>
+        <div class="col-sm-6 text-right ui-select-fix">
+          <div class="form-inline">
+              <div class="input-group">
+                  <input type="text" placeholder="属性名称" class="form-control" ng-model="vm.filter.propName" enter-click="vm.dtProps.instance.reloadData()"/>
+              </div>
+              <div class="input-group">
+                  <ui-select ng-model="vm.filter.required">
+                      <ui-select-match placeholder="filter by Required">“必填”为“{{ $select.selected.label }}”的
+                      </ui-select-match>
+                      <ui-select-choices repeat="i.value as i in vm.options | filter: $select.search">
+                          <div ng-bind="i.label"></div>
+                      </ui-select-choices>
+                  </ui-select>
+              </div>
+              <div class="input-group">
+                  <ui-select ng-model="vm.filter.ignored">
+                      <ui-select-match placeholder="filter by Ignore">“忽略”为“{{ $select.selected.label }}”的
+                      </ui-select-match>
+                      <ui-select-choices repeat="i.value as i in vm.options | filter: $select.search">
+                          <div ng-bind="i.label"></div>
+                      </ui-select-choices>
+                  </ui-select>
+              </div>
+          </div>
+        </div>
+      </div>
+      <br />
         <div class="panel vo_panel tab_panel">
             <table datatable dt-options="vm.dtProps.options" dt-columns="vm.dtProps.columns"
                    dt-instance="vm.dtProps.instance"

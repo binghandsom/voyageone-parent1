@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+          
+	<!-- ===================== BCBG定时任务 start ===================== -->
+	<bean id="postBCBGOrderJob"
+		class="com.voyageone.batch.oms.job.PostBCBGOrderJob">
+	</bean>
+	
+	<bean id="postBCBGDailySalesJobTask"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref local="postBCBGOrderJob" />
+		</property>
+		<property name="targetMethod">
+			<value>postBCBGDailySales</value>
+		</property>
+	</bean>
+	<bean id="postBCBGDailySalesJobTaskContri"
+		name="postBCBGDailySalesJobTaskContri"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="postBCBGDailySalesJobTask" />
+		</property>
+		<property name="cronExpression">
+			<value>${quartz.post.dailysales.BCBG.order}</value>
+		</property>
+	</bean>
+	
+	<bean id="postBCBGDemandJobTask"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref local="postBCBGOrderJob" />
+		</property>
+		<property name="targetMethod">
+			<value>postBCBGDemand</value>
+		</property>
+	</bean>
+	<bean id="postBCBGDemandJobTaskContri"
+		name="postBCBGDemandJobTaskContri"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="postBCBGDemandJobTask" />
+		</property>
+		<property name="cronExpression">
+			<value>${quartz.post.demand.BCBG.order}</value>
+		</property>
+	</bean>
+
+	<!-- ===================== BCBG定时任务 end ===================== -->
+	
+</beans>

@@ -36,8 +36,8 @@ public class CmsDataProvider {
      * 正式环境： http://api.voyageone.com.cn/cms/products/getGroupModelProducts
     */
     //private String cmsWebServiceUrl = null;
-    //private String cmsWebServiceUrl = "http://10.0.0.24:8080/VoyageOne_WebService/cms/products/getGroupModelProducts";
-    private String cmsWebServiceUrl = "http://api.voyageone.com.cn/cms/products/getGroupModelProducts";
+    private String cmsWebServiceUrl = "http://10.0.0.24:8080/VoyageOne_WebService/cms/products/getGroupModelProducts";
+//    private String cmsWebServiceUrl = "http://api.voyageone.com.cn/cms/products/getGroupModelProducts";
 
     private int maxRetryTimes = 3;
     private int retryTimes = 0;

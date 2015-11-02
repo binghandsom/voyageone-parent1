@@ -1,7 +1,5 @@
 package com.voyageone.ims.model;
 
-import java.util.List;
-
 /**
  * ims_bt_activity_beat_icon
  *
@@ -20,6 +18,14 @@ public class ImsBeat {
     private String end;
 
     private String template_url;
+
+    private boolean extended;
+
+    private boolean repeat;
+
+    private String targets;
+
+    private int[] targetIndexes;
 
     private String created;
 
@@ -77,6 +83,22 @@ public class ImsBeat {
         this.template_url = template_url;
     }
 
+    public String getTargets() {
+        return targets;
+    }
+
+    public void setTargets(String targets) {
+        this.targets = targets;
+    }
+
+    public int[] getTargetIndexes() {
+        return targetIndexes;
+    }
+
+    public void setTargetIndexes(int[] targetIndexes) {
+        this.targetIndexes = targetIndexes;
+    }
+
     public String getCreated() {
         return created;
     }
@@ -107,5 +129,21 @@ public class ImsBeat {
 
     public void setModifier(String modifier) {
         this.modifier = modifier;
+    }
+
+    public boolean isExtended() {
+        return extended;
+    }
+
+    public void setExtended(boolean extended) {
+        this.extended = extended;
+    }
+
+    public boolean isRepeat() {
+        return repeat;
+    }
+
+    public void setRepeat(boolean repeat) {
+        this.repeat = repeat;
     }
 }

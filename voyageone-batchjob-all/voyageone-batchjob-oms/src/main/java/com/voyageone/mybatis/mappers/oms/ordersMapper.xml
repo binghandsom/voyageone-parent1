@@ -1979,6 +1979,22 @@
 		</if>
 	</update>
 
+	<!-- 将oms_bt_ext_orders表的 ext_flg1->1-->
+	<update id="oms_bt_ext_orders_updateExtFlg1" parameterType="HashMap">
+		update oms_bt_ext_orders
+		set
+			ext_flg1 = true,
+			modified = now(),
+			modifier = #{taskName}
+		where
+		<if test="orderNumberList != null ">
+			order_number in
+			<foreach item="item" index="index" collection="orderNumberList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</update>
+
 	<!-- 将oms_bt_ext_order_details表的 退货订单发送标志置位->1-->
 	<update id="oms_bt_ext_order_details_updateReturnSendFlag" parameterType="HashMap">
 		update oms_bt_ext_order_details
@@ -2317,5 +2333,168 @@
 				#{item.sourceOrderId}
 			</foreach>
 		</if>
+	</select>
+
+	<!-- 获得向BCBG 推送Demand订单信息 -->
+	<resultMap id="ordersInfoMapforBCBGDemand" type="com.voyageone.batch.oms.modelbean.OrderExtend">
+		<result column="order_channel_id" property="orderChannelId"/>
+		<result column="source_order_id" property="sourceOrderId"/>
+		<result column="order_number" property="orderNumber"/>
+		<result column="cart_id" property="cartId"/>
+		<result column="order_date_time" property="orderDateTime"/>
+		<result column="sku" property="sku"/>
+		<result column="quantity_ordered" property="quantityOrdered"/>
+		<result column="quantity_shipped" property="quantityShipped"/>
+		<result column="price_per_unit" property="pricePerUnit"/>
+		<result column="UPC" property="UPC"/>
+	</resultMap>
+	<select id="oms_bt_order_details_getPushBCBGDemandsInfo" parameterType="HashMap" resultMap="ordersInfoMapforBCBGDemand" >
+		select o.order_channel_id,
+				o.source_order_id,
+				o.order_number,
+				o.cart_id,
+				o.order_date_time,
+				od.sku,
+				od.quantity_ordered,
+				od.quantity_shipped,
+				od.price_per_unit,
+				IFNULL(cms.EAN11,'') as UPC
+		from
+			Synship.oms_bt_orders o
+		left join
+			(select ods.order_number,
+						ods.adjustment,
+						ods.sku,
+						sum(ods.quantity_ordered) as quantity_ordered,
+						sum(ods.quantity_shipped) as quantity_shipped,
+						min(ods.price_per_unit) as price_per_unit
+				from Synship.oms_bt_order_details ods
+				where
+					ods.detail_date >= #{beginDate} and
+					#{endDate} >= ods.detail_date and
+					ods.adjustment = 0
+				group by ods.order_number, ods.adjustment, ods.sku
+			)od
+			on o.order_number = od.order_number
+		left join
+			voyageone_cms.cms_zz_worktable_bcbg_superfeed cms
+			on od.sku = cms.MATNR
+		where
+			o.order_channel_id = #{orderChannelId} and
+			od.adjustment = false and
+			o.order_status = 'Approved' and
+			o.order_date_time >= #{beginDate} and
+			#{endDate} >= o.order_date_time
+	</select>
+
+	<!-- 获得向BCBG 推送DailySales订单信息 -->
+	<resultMap id="ordersInfoMapforBCBGDailySales" type="com.voyageone.batch.oms.modelbean.OrderExtend">
+		<result column="order_channel_id" property="orderChannelId"/>
+		<result column="order_number" property="orderNumber"/>
+		<result column="order_date_time" property="orderDateTime"/>
+		<result column="source_order_id" property="sourceOrderId"/>
+		<result column="cart_id" property="cartId"/>
+
+		<result column="name" property="name"/>
+		<result column="company" property="company"/>
+		<result column="email" property="email"/>
+		<result column="address" property="address"/>
+		<result column="address2" property="address2"/>
+		<result column="city" property="city"/>
+		<result column="state" property="state"/>
+		<result column="zip" property="zip"/>
+		<result column="country" property="country"/>
+		<result column="phone" property="phone"/>
+
+		<result column="ship_name" property="shipName"/>
+		<result column="ship_company" property="shipCompany"/>
+		<result column="ship_email" property="shipEmail"/>
+		<result column="ship_address" property="shipAddress"/>
+		<result column="ship_address2" property="shipAddress2"/>
+		<result column="ship_city" property="shipCity"/>
+		<result column="ship_state" property="shipState"/>
+		<result column="ship_zip" property="shipZip"/>
+		<result column="ship_country" property="shipCountry"/>
+		<result column="ship_phone" property="shipPhone"/>
+
+		<result column="sku" property="sku"/>
+		<result column="quantity_ordered" property="quantityOrdered"/>
+		<result column="quantity_shipped" property="quantityShipped"/>
+		<result column="price_per_unit" property="pricePerUnit"/>
+		<result column="ship_date" property="shipDate"/>
+
+		<result column="tracking_no" property="trackingNo"/>
+
+		<result column="UPC" property="UPC"/>
+		<result column="style" property="style"/>
+		<result column="color" property="color"/>
+		<result column="size1" property="size"/>
+		<result column="MSRP" property="MSRP"/>
+	</resultMap>
+	<select id="oms_bt_order_details_getPushBCBGDailySalesInfo" parameterType="HashMap" resultMap="ordersInfoMapforBCBGDailySales" >
+		select o.order_channel_id,
+			o.order_number,
+			o.order_date_time,
+			o.source_order_id,
+			o.cart_id,
+
+			IFNULL(o.name,'') as name,
+			IFNULL(o.company,'') as company,
+			IFNULL(o.email,'') as email,
+			IFNULL(o.address,'') as address,
+			IFNULL(o.address2,'') as address2,
+			IFNULL(o.city,'') as city,
+			IFNULL(o.state,'') as state,
+			IFNULL(o.zip,'') as zip,
+			IFNULL(o.country,'') as country,
+			IFNULL(o.phone,'') as phone,
+
+			IFNULL(o.ship_name,'') as ship_name,
+			IFNULL(o.ship_company,'') as ship_company,
+			IFNULL(o.ship_email,'') as ship_email,
+			IFNULL(o.ship_address,'') as ship_address,
+			IFNULL(o.ship_address2,'') as ship_address2,
+			IFNULL(o.ship_city,'') as ship_city,
+			IFNULL(o.ship_state,'') as ship_state,
+			IFNULL(o.ship_zip,'') as ship_zip,
+			IFNULL(o.ship_country,'') as ship_country,
+			IFNULL(o.ship_phone,'') as ship_phone,
+
+			od.sku,
+			od.quantity_ordered,
+			od.quantity_shipped,
+			od.price_per_unit,
+			od.ship_date,
+			IFNULL(rt.tracking_no,'') as tracking_no,
+			IFNULL(cms.EAN11,'') as UPC,
+			IFNULL(cms.SATNR,'') as style,
+			IFNULL(cms.COLOR,'') as color,
+			IFNULL(cms.SIZE1,'') as size1,
+			IFNULL(cms.A304_KBETR,'') as MSRP
+		from
+			(select ods.order_number,
+						ods.adjustment,
+						ods.sku,
+						ods.ship_date,
+						sum(ods.quantity_ordered) as quantity_ordered,
+						sum(ods.quantity_shipped) as quantity_shipped,
+						min(ods.price_per_unit) as price_per_unit,
+						min(ods.res_id) as res_id
+			from Synship.oms_bt_order_details ods
+			where
+				ods.ship_date >= #{beginDate} and
+				#{endDate} >= ods.ship_date and
+				ods.status = 'Shipped' and
+				ods.adjustment = 0
+			group by ods.order_number, ods.adjustment, ods.sku, ods.ship_date
+			)od
+		left join Synship.oms_bt_orders o
+			on o.order_number = od.order_number
+		left join tt_res_tracking rt
+			on od.res_id = rt.reservation_id
+		left join	voyageone_cms.cms_zz_worktable_bcbg_superfeed cms
+			on od.sku = cms.MATNR
+		where
+			o.order_channel_id = #{orderChannelId}
 	</select>
 </mapper>

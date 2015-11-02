@@ -184,7 +184,7 @@ public class SendSMSService  extends BaseTaskService {
                     }
                 }
                 // 短信余额判断
-                checkBalance(sendSMSLstLst.size());
+                checkBalance(sendSMSLstLst.size(),channel.getOrder_channel_id());
             } catch (Exception e) {
                 $info(channel.getFull_name() + "定时发送短信发生错误：", e);
                 logIssue(e.getMessage(), channel.getFull_name() + "定时发送短信发生错误");
@@ -318,13 +318,15 @@ public class SendSMSService  extends BaseTaskService {
          * 短信余额判断
          *
          * @param sendSMSLstLstSize 需要发送短信件数
+         * @param orderChannelId
+         *
          */
-        private void checkBalance(int sendSMSLstLstSize) {
+        private void checkBalance(int sendSMSLstLstSize,String orderChannelId) {
             // 余额不足的场合
             if (sendSMSLstLstSize > 0) {
                 double balance = 0d;
                 try {
-                    balance = ymSmsSendService.getBalance();
+                    balance = ymSmsSendService.getBalance(orderChannelId);
                     $info("短信账户的剩余金额(实际金额)： " + (balance / 2));
                     // 余额不足200的场合，发送要求充值邮件(之所以用大于零而不是大于等于零的原因是防止误报)
                     if (balance > 0d && (balance / 2) < SynshipConstants.SMS_CHECK.ACCOUNT_BALANCE) {

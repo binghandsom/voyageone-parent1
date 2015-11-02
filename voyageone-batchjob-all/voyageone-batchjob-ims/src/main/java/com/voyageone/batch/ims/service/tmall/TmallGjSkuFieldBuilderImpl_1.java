@@ -79,7 +79,7 @@ public class TmallGjSkuFieldBuilderImpl_1 extends AbstractSkuFieldBuilder{
                 return false;
             }
 
-            int fieldType = SkuTemplateSchema.decodeFieldTypes(tmallSkuInfo.getSku_type());
+            long fieldType = SkuTemplateSchema.decodeFieldTypes(tmallSkuInfo.getSku_type());
 
             if (fieldType < (1 << SkuTemplateSchema.SkuTemplate_1_Schema.FIELD_BIT_MIN)
                     || fieldType > (1 << (SkuTemplateSchema.SkuTemplate_1_Schema.FIELD_BIT_MAX + 1)))
@@ -231,7 +231,9 @@ public class TmallGjSkuFieldBuilderImpl_1 extends AbstractSkuFieldBuilder{
         List<CmsCodePropBean> cmsCodeProps = cmsModelProp.getCmsCodePropBeanList();
 
         List<ComplexValue> complexValues = new ArrayList<>();
-        for (int indexColor = 0; indexColor < cmsCodeProps.size(); indexColor++)
+        int indexColor = 0, indexSize = 0;
+
+        for (; indexColor < cmsCodeProps.size(); indexColor++)
         {
             CmsCodePropBean cmsCodeProp = cmsCodeProps.get(indexColor);
 
@@ -249,10 +251,15 @@ public class TmallGjSkuFieldBuilderImpl_1 extends AbstractSkuFieldBuilder{
                 return null;
             }
 
+            //如果颜色扩展存在，那么indexSize对每个颜色从0开始，否则，code挂在sku上，indexSize不置为0
+            if (propId_colorExtend != null) {
+                indexSize = 0;
+            }
 
-            for (int indexSize = 0; indexSize < cmsCodeProp.getCmsSkuPropBeanList().size(); indexSize++)
+            int i=0;
+            for (; i < cmsCodeProp.getCmsSkuPropBeanList().size(); i++)
             {
-                CmsSkuPropBean cmsSkuProp = cmsCodeProp.getCmsSkuPropBeanList().get(indexSize);
+                CmsSkuPropBean cmsSkuProp = cmsCodeProp.getCmsSkuPropBeanList().get(i);
                 //设置code级别的颜色属性
                 ComplexValue skuFieldValue = new ComplexValue();
                 if (propId_sku_color != null && !"".equals(propId_sku_color.trim())) {
@@ -262,8 +269,8 @@ public class TmallGjSkuFieldBuilderImpl_1 extends AbstractSkuFieldBuilder{
                 //设置sku级别的尺寸属性
                 if (propId_sku_size != null) {
                     String size;
-                    if (indexSize < availableSizeValues.size()) {
-                        size = availableSizeValues.get(indexSize);
+                    if (indexSize + i < availableSizeValues.size()) {
+                        size = availableSizeValues.get(indexSize + i);
                     } else {
                         logger.error("no available size!");
                         return null;
@@ -302,6 +309,7 @@ public class TmallGjSkuFieldBuilderImpl_1 extends AbstractSkuFieldBuilder{
 
                 complexValues.add(skuFieldValue);
             }
+            indexSize += i;
         }
         skuField.setComplexValues(complexValues);
         return skuField;

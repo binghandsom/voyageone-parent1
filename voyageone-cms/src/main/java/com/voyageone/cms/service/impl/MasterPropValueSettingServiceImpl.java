@@ -552,7 +552,7 @@ public class MasterPropValueSettingServiceImpl implements MasterPropValueSetting
 				}
 				sunModel.put("options", prop.getPropertyOptions());
 				break;
-			case lABEL:
+			case LABEL:
 				sunModel.put("propValue", propertyValue.getProp_value());
 				break;
 			case COMPLEX:
@@ -666,7 +666,7 @@ public class MasterPropValueSettingServiceImpl implements MasterPropValueSetting
 
 				sunModel.put("options", options);
 				break;
-			case lABEL:
+			case LABEL:
 				if (property.getProp_value_default() != null){
 					sunModel.put("propValue", property.getProp_value_default());
 				}
@@ -781,7 +781,7 @@ public class MasterPropValueSettingServiceImpl implements MasterPropValueSetting
 					}
 
 					break;
-				case lABEL:
+				case LABEL:
 					String labelValue = (String) (valueMap.get("propValue"));
 					if (labelValue != null && !"".equals(labelValue)) {
 						propertyValues.add(constructInputProp(channelId, level, levelValue, propId, "", labelValue));

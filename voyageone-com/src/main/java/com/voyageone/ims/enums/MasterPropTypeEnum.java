@@ -11,7 +11,7 @@ public enum MasterPropTypeEnum {
 
     MULTICHECK(3),
 
-    lABEL(4),
+    LABEL(4),
 
     COMPLEX(5),
 
@@ -42,7 +42,7 @@ public enum MasterPropTypeEnum {
             case 3:
                 return MULTICHECK;
             case 4:
-                return lABEL;
+                return LABEL;
             case 5:
                 return COMPLEX;
             case 6:
@@ -65,7 +65,7 @@ public enum MasterPropTypeEnum {
                 return "单选";
             case MULTICHECK:
                 return "多选";
-            case lABEL:
+            case LABEL:
                 return "标签";
             case COMPLEX:
                 return "组合属性";

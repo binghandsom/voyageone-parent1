@@ -46,6 +46,11 @@ public class ShopConfigEnums {
          * 模拟发货标志位（0：订单进入系统即同步运单至平台；1：实际发货再同步）
          */
         sim_shipping,
+
+        /**
+         * 天猫特价宝的活动ID
+         */
+        promotion_id
     }
 
     /**

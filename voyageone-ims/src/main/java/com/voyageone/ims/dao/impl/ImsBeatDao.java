@@ -1,6 +1,7 @@
 package com.voyageone.ims.dao.impl;
 
 import com.voyageone.base.dao.BaseDao;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.ims.model.ImsBeatInfo;
 import com.voyageone.ims.model.ImsBeatItem;
 import com.voyageone.ims.model.ImsBeatItemTemp;
@@ -43,7 +44,7 @@ public class ImsBeatDao extends BaseDao {
     }
 
     public List<ImsBeatItemTemp> selectProductsByCode(long beat_id) {
-        return selectList("ims_bt_beat_item_temp_selectProductsByCode", parameters("beat_id", beat_id));
+        return selectList("ims_bt_beat_item_temp_selectProductsByCode", parameters("beat_id", beat_id, "now", DateTimeUtil.getNow()));
     }
 
     public int deleteTempItems(long beat_id) {
@@ -51,7 +52,7 @@ public class ImsBeatDao extends BaseDao {
     }
 
     public List<ImsBeatItemTemp> selectProductsByNumiid(long beat_id) {
-        return selectList("ims_bt_beat_item_temp_selectProductsByNumiid", parameters("beat_id", beat_id));
+        return selectList("ims_bt_beat_item_temp_selectProductsByNumiid", parameters("beat_id", beat_id, "now", DateTimeUtil.getNow()));
     }
 
     public List<ImsBeatItem> selectItems(long beat_id) {
@@ -111,5 +112,25 @@ public class ImsBeatDao extends BaseDao {
 
     public List<ImsBeatInfo> selectInfo(ImsBeat beat) {
         return selectList("ims_bt_beat_item_selectInfo", beat);
+    }
+
+    public String selectNumiidByCode(ImsBeatItem item, ImsBeat beat) {
+        return selectOne("ims_bt_product_selectNumiidByCode", parameters("item", item, "beat", beat));
+    }
+
+    public String selectCodeByNumiid(ImsBeatItem item, ImsBeat beat) {
+        return selectOne("ims_bt_product_selectCodeByNumiid", parameters("item", item, "beat", beat, "main_product_flg", 1));
+    }
+
+    public int insertItem(ImsBeatItem item) {
+        return insert("ims_bt_beat_item_insertItem", item);
+    }
+
+    public int updateItemCode(ImsBeatItem item) {
+        return update("ims_bt_beat_item_updateItemCode", item);
+    }
+
+    public int selectItemCountByNumiid(ImsBeatItem item, ImsBeat beat) {
+        return selectOne("ims_bt_beat_item_selectItemCountByNumiid", parameters("item", item, "beat", beat));
     }
 }

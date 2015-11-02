@@ -47,6 +47,10 @@ public class MasterWordParser {
             MasterWord masterWord = (MasterWord) ruleWord;
             String propName = masterWord.getValue();
             PropBean propBean = propDao.selectPropByPropName(categoryId, propName);
+            if (propBean == null) {
+                logger.error(String.format("can't find master prop(categoryId:%s, propName:%s", categoryId, propName));
+                return null;
+            }
             List<PropValueBean> propValueBeans = propValueDao.selectPropValue(orderChannelId, level, levelValue, String.valueOf(propBean.getPropId()));
             if (propValueBeans != null && propValueBeans.size() != 1) {
                 logger.error("Count of MasterWord's value should be one!");
