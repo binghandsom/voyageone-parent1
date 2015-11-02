@@ -238,7 +238,7 @@
             })(this)),
             DTColumnBuilder.newColumn('comment', 'Comment'),
             DTColumnBuilder.newColumn('modifier', 'Modify').renderWith(function (col, type, row) {
-              return row.modifier + "<br>" + row.modified;
+              return row.modifier + "<br>" + row.cnModified;
             }),
             DTColumnBuilder.newColumn('', '').renderWith(function (val, type, row, cell) {
               return '<button class="btn btn-sm btn-success fix-sel" context-menu="operations" ng-click="ctrl.setCurrItem(' + cell.row + ')">操作<span class="caret"></span></button>';
