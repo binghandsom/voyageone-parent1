@@ -161,6 +161,8 @@
           options: DTOptionsBuilder.newOptions()
             .withOption('processing', true)
             .withOption('serverSide', true)
+            .withOption('searching', false)
+            .withOption('ordering', false)
             .withOption('ajax', this.onDtGetBeats)
             .withOption('createdRow', (function(_this) {
               return function(row) {
@@ -183,25 +185,36 @@
           ],
           instance: null
         };
+
         this.dtItems = {
           options: DTOptionsBuilder.newOptions()
+            .withDataProp('data')
+            .withPaginationType('full_numbers')
             .withOption('processing', true)
             .withOption('serverSide', true)
+            .withOption('ordering', false)
             .withOption('ajax', this.onDtGetItems)
             .withOption('createdRow', (function(_this) {
               return function(row) {
                 return _this.$compile(angular.element(row).contents())(_this.$scope);
               };
             })(this))
-            .withDataProp('data')
-            .withPaginationType('full_numbers'),
+            .withOption('initComplete', (function(ctrl){
+              return function() {
+
+                $('.dataTables_filter input')
+                  .off()
+                  .on('keypress', function(e){
+                    if (e.keyCode == 13) {
+                      ctrl.dtItems.instance.dataTable.api().search(this.value).draw();
+                    }
+                  });
+              };
+            })(this)),
           columns: [
             DTColumnBuilder.newColumn('code', 'Code'),
             DTColumnBuilder.newColumn('num_iid', 'Num iid').renderWith(function(col) {
               return "<a target=\"_blank\" href=\"https://detail.tmall.hk/hk/item.htm?id=" + col + "\">" + col + "</a>";
-            }),
-            DTColumnBuilder.newColumn('key', 'Image Name').renderWith(function(col, type, row) {
-              return row.url_key || row.image_name;
             }),
             DTColumnBuilder.newColumn('price', 'Price'),
             DTColumnBuilder.newColumn('beat_flg', 'Status').renderWith((function(_this) {
@@ -212,10 +225,7 @@
             DTColumnBuilder.newColumn('comment', 'Comment'),
             DTColumnBuilder.newColumn('modifier', 'Modify').renderWith(function(col, type, row) {return row.modifier + "<br>" + row.modified;}),
             DTColumnBuilder.newColumn('', '').renderWith(function(val, type, row, cell) {
-              return ("<button class=\"btn btn-success btn-xs\" ng-click=\"ctrl.beatControl('startup'," + (row.beat_item_id || null) + ")\">刷图</button>") +
-                ("<button class=\"btn btn-warning btn-xs\" ng-click=\"ctrl.beatControl('cancel'," + (row.beat_item_id || null) + ")\">取消</button>") +
-                ("<button class=\"btn btn-danger btn-xs\" ng-click=\"ctrl.beatControl('stop'," + (row.beat_item_id || null) + ")\">暂停</button>") +
-                ("<button class=\"btn btn-danger btn-xs\" ng-click=\"ctrl.setPrice(" + cell.row + ")\">修改价格</button>");
+              return '<button class="btn btn-sm btn-success fix-sel" context-menu="operations">操作<span class="caret"></span></button>';
             })
           ],
           instance: null
