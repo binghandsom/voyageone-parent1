@@ -177,7 +177,7 @@
                             t.order_number,
                             client_order_id,
                             source_order_id
-                        from Oms_bt_orders t
+                        from oms_bt_orders t
                         where t.order_channel_id = #{orderChannelId}
                     ) omsOrd,
                     (

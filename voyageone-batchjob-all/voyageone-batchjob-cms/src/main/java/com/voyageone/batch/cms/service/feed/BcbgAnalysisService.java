@@ -173,14 +173,12 @@ public class BcbgAnalysisService extends BaseTaskService {
         }
 
         // 排序文件
-        List<File> feedFileList =  Arrays.asList(feedFiles).stream().sorted((f1, f2) -> f2.getName().compareTo(f1.getName())).collect(toList());
+        List<File> feedFileList =  Arrays.asList(feedFiles).stream().sorted((f1, f2) -> f1.getName().compareTo(f2.getName())).collect(toList());
 
         // 取第一个作为目标文件,并从其中移除
-        // 其他直接进行备份处理
-        File dataFile = feedFileList.remove(0);
-        feedFileList.forEach(backup::from);
+        // 其他的等待后续
 
-        return dataFile;
+        return feedFileList.remove(0);
     }
 
     private void clearLastData() {
@@ -247,8 +245,9 @@ public class BcbgAnalysisService extends BaseTaskService {
 
         if (styleBeans == null || styleBeans.size() < 1) return;
 
-        logIssue("发现部分 BCBG Style 文件的无效数据", styleBeans.size() + "个");
-        $info("已警告<无效>数据 %s 个", styleBeans.size());
+        // logIssue("发现部分 BCBG Style 文件的无效数据", styleBeans.size() + "个");
+
+        $info("发现 BCBG Style <无效>数据 %s 个", styleBeans.size());
     }
 
     private void attributeListInsert(Channel channel){
@@ -300,7 +299,7 @@ public class BcbgAnalysisService extends BaseTaskService {
 
         protected void fromData(File file, File styleFile) {
             from(file);
-            //from(styleFile);
+            from(styleFile);
         }
     }
 }

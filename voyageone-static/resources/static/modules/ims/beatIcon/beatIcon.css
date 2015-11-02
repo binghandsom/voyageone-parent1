@@ -1,0 +1,7 @@
+.btn-sm {
+  height: 30px;
+}
+
+.btn-group label.btn input {
+  display: none;
+}

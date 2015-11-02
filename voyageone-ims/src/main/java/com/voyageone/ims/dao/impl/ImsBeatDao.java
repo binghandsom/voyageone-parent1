@@ -1,6 +1,7 @@
 package com.voyageone.ims.dao.impl;
 
 import com.voyageone.base.dao.BaseDao;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.ims.model.ImsBeatInfo;
 import com.voyageone.ims.model.ImsBeatItem;
 import com.voyageone.ims.model.ImsBeatItemTemp;
@@ -43,7 +44,7 @@ public class ImsBeatDao extends BaseDao {
     }
 
     public List<ImsBeatItemTemp> selectProductsByCode(long beat_id) {
-        return selectList("ims_bt_beat_item_temp_selectProductsByCode", parameters("beat_id", beat_id));
+        return selectList("ims_bt_beat_item_temp_selectProductsByCode", parameters("beat_id", beat_id, "now", DateTimeUtil.getNow()));
     }
 
     public int deleteTempItems(long beat_id) {
@@ -51,7 +52,7 @@ public class ImsBeatDao extends BaseDao {
     }
 
     public List<ImsBeatItemTemp> selectProductsByNumiid(long beat_id) {
-        return selectList("ims_bt_beat_item_temp_selectProductsByNumiid", parameters("beat_id", beat_id));
+        return selectList("ims_bt_beat_item_temp_selectProductsByNumiid", parameters("beat_id", beat_id, "now", DateTimeUtil.getNow()));
     }
 
     public List<ImsBeatItem> selectItems(long beat_id) {

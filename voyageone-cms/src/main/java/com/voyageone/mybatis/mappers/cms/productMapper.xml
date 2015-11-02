@@ -2455,8 +2455,9 @@ VALUES
 
 	<update id="update_Ims_Bt_Product">
 		update voyageone_ims.ims_bt_product t
-		   set t.publish_status = '0',
+		   set t.publish_status = 0,
 			   t.modifier = #{modifier},
+			   t.publish_promotion_price_status = 0,
 			   t.modified = now()
 		 where t.cart_id = #{cartId}
 		   and t.channel_id = #{channelId}
