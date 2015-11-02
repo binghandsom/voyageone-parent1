@@ -158,6 +158,9 @@ public class WmsReceiptConfirmationService extends BaseTaskService {
 
             if (StringUtils.isNullOrBlank2(backupLocalPath) || StringUtils.isNullOrBlank2(uploadLocalPath)) {
                 logIssue("Receipt Confirmation's backupLocalPath&uploadLocalPath is empty!");
+
+                $info("Receipt Confirmation's backupLocalPath&uploadLocalPath is empty!");
+
                 return false;
             }
 
@@ -199,7 +202,24 @@ public class WmsReceiptConfirmationService extends BaseTaskService {
                             $info("backupFile:" + backupFileName + " is created success.");
 
                             String uploadLocalFileName = uploadLocalPath + File.separator + fileName;
-                            FileUtils.copyFile(backupFileName, uploadLocalFileName);
+
+                            try {
+                                FileUtils.copyFile(backupFileName, uploadLocalFileName);
+                            } catch (Exception ex) {
+                                issueLog.log(ex, ErrorType.BatchJob, SubSystem.WMS);
+
+                                $info(ex.getMessage(), ex);
+
+                                try {
+                                    FileUtils.delFile(backupFileName);
+                                    FileUtils.delFile(uploadLocalFileName);
+                                } catch (Exception e) {
+                                    $info(ex.getMessage(), ex);
+                                }
+
+                                return false;
+
+                            }
 
                             $info("uploadLocalFile:" + uploadLocalFileName + " is created success.");
                         }
@@ -214,7 +234,7 @@ public class WmsReceiptConfirmationService extends BaseTaskService {
 
                 logger.error("createReceiptConfirmFile", e);
 
-                issueLog.log(e, ErrorType.BatchJob, SubSystem.OMS);
+                issueLog.log(e, ErrorType.BatchJob, SubSystem.WMS);
             } finally {
                 if (fileWriter != null) {
                     fileWriter.close();
