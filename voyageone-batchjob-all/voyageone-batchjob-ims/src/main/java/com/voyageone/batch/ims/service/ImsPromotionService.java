@@ -3,13 +3,11 @@ package com.voyageone.batch.ims.service;
 import com.taobao.api.ApiException;
 import com.taobao.api.TaobaoResponse;
 import com.taobao.api.domain.TipItemPromDTO;
-import com.taobao.api.domain.TipPromUnitDTO;
 import com.taobao.api.domain.TipSkuPromUnitDTO;
 import com.taobao.api.response.ItemSkusGetResponse;
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.ims.dao.PromotionDao;
-import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.tmall.TbItemService;
 import com.voyageone.common.components.tmall.TbPromotionService;
@@ -71,7 +69,7 @@ public class ImsPromotionService extends BaseTaskService {
                 if (shopConfig != null && "1".equals(shopConfig.get(0).getCfg_val2())) {
                     Long promotionId = Long.parseLong(shopConfig.get(0).getCfg_val1());
                     // 加入线程池
-                    executor.execute(() -> postPromotion(channelId, CartEnums.Cart.TG.getId(), promotionId));
+                    executor.execute(() -> updatePromotion(channelId, CartEnums.Cart.TG.getId(), promotionId));
                 }
             }
         }
@@ -86,7 +84,13 @@ public class ImsPromotionService extends BaseTaskService {
         }
     }
 
-    private void postPromotion(String channelId, String cartId, Long promotionId) {
+    /**
+     *
+     * @param channelId
+     * @param cartId
+     * @param promotionId
+     */
+    private void updatePromotion(String channelId, String cartId, Long promotionId) {
         List<Map> items = promotionDao.getPromotionItem(channelId, cartId);
         // 取得shop信息
         ShopBean shopBean = ShopConfigs.getShop(channelId, cartId);
