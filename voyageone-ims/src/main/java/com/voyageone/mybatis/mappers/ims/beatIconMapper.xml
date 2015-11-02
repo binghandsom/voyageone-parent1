@@ -3,11 +3,11 @@
 <mapper namespace="com.voyageone.ims.sql">
     <insert id="ims_bt_beat_insert" parameterType="com.voyageone.ims.model.ImsBeat">
         INSERT INTO `voyageone_ims`.`ims_bt_beat`
-        (`beat_id`, `description`, `channel_id`, `cart_id`, `end`, `template_url`, `created`, `creater`, `modified`,
-         `modifier`)
+        (`beat_id`, `description`, `channel_id`, `cart_id`, `end`, `template_url`, `targets`, `created`, `creater`,
+         `modified`, `modifier`)
         VALUES
-            (#{beat_id}, #{description}, #{channel_id}, #{cart_id}, #{end}, #{template_url}, NOW(), #{creater}, NOW(),
-             #{modifier})
+            (#{beat_id}, #{description}, #{channel_id}, #{cart_id}, #{end}, #{template_url}, #{targets}, NOW(),
+             #{creater}, NOW(), #{modifier})
     </insert>
 
     <select id="ims_bt_beat_selectByFinger" parameterType="com.voyageone.ims.model.ImsBeat"
@@ -19,6 +19,7 @@
             cart_id,
             end,
             template_url,
+            targets,
             created,
             creater,
             modified,
@@ -42,6 +43,7 @@
             cart_id,
             end,
             template_url,
+            targets,
             created,
             creater,
             modified,
@@ -61,10 +63,7 @@
         SELECT
             imsProduct.src,
             imsProducts.num_iid,
-            imsProducts.code,
-            pi.image_name,
-            cmsProducts.url_key,
-            b.description
+            imsProducts.code
         FROM (SELECT
                   item.code src,
                   beat.channel_id,
@@ -76,23 +75,12 @@
                       ON item.code = p.code
                          AND beat.channel_id = p.channel_id
                          AND beat.cart_id = p.cart_id
-              WHERE beat.beat_id = #{beat_id}) imsProduct
+              WHERE beat.beat_id = 8) imsProduct
             LEFT JOIN voyageone_ims.ims_bt_product imsProducts
                 ON imsProduct.cart_id = imsProducts.cart_id
                    AND imsProduct.channel_id = imsProducts.channel_id
                    AND imsProduct.num_iid = imsProducts.num_iid
                    AND imsProducts.main_product_flg = 1
-            LEFT JOIN voyageone_cms.cms_bt_product cmsProducts
-                ON imsProducts.code = cmsProducts.code
-                   AND imsProducts.channel_id = cmsProducts.channel_id
-            LEFT JOIN voyageone_cms.cms_bt_product_image pi
-                ON pi.product_id = cmsProducts.product_id
-                   AND pi.image_type_id = 1
-                   AND pi.image_id = 1
-            LEFT JOIN voyageone_ims.ims_bt_beat_item item ON imsProducts.code = item.code
-            LEFT JOIN voyageone_ims.ims_bt_beat b
-                ON item.beat_id = b.beat_id AND imsProduct.channel_id = b.channel_id AND imsProduct.cart_id = b.cart_id
-                   AND b.end &lt; #{now}
     </select>
 
     <delete id="ims_bt_beat_item_temp_deleteTempItems">
@@ -104,10 +92,7 @@
         SELECT
             temp.num_iid src,
             imsProducts.num_iid,
-            imsProducts.code,
-            pi.image_name,
-            cmsProducts.url_key,
-            b.description
+            imsProducts.code
         FROM voyageone_ims.ims_bt_beat beat
             JOIN voyageone_ims.ims_bt_beat_item_temp temp ON beat.beat_id = temp.beat_id
             LEFT JOIN voyageone_ims.ims_bt_product imsProducts
@@ -115,17 +100,6 @@
                    AND beat.channel_id = imsProducts.channel_id
                    AND temp.num_iid = imsProducts.num_iid
                    AND imsProducts.main_product_flg = 1
-            LEFT JOIN voyageone_cms.cms_bt_product cmsProducts
-                ON imsProducts.code = cmsProducts.code
-                   AND imsProducts.channel_id = cmsProducts.channel_id
-            LEFT JOIN voyageone_cms.cms_bt_product_image pi
-                ON pi.product_id = cmsProducts.product_id
-                   AND pi.image_type_id = 1
-                   AND pi.image_id = 1
-            LEFT JOIN voyageone_ims.ims_bt_beat_item item ON imsProducts.code = item.code
-            LEFT JOIN voyageone_ims.ims_bt_beat b
-                ON item.beat_id = b.beat_id AND beat.channel_id = b.channel_id AND beat.cart_id = b.cart_id AND
-                   b.end &lt; #{now}
         WHERE
             beat.beat_id = #{beat_id}
     </select>
@@ -180,8 +154,9 @@
     </delete>
 
     <select id="ims_bt_beat_selectByChannel" resultType="com.voyageone.ims.model.ImsBeat">
-        SELECT beat_id, description, channel_id, cart_id, end, template_url, created, creater, modified, modifier FROM
-        voyageone_ims.ims_bt_beat WHERE channel_id = #{channel_id}
+        SELECT beat_id, description, channel_id, cart_id, end, template_url, targets, created, creater, modified,
+        modifier
+        FROM voyageone_ims.ims_bt_beat WHERE channel_id = #{channel_id}
         <if test="cart_id != null and cart_id != ''">AND cart_id = #{cart_id}</if>
         LIMIT #{offset}, #{limit}
     </select>
@@ -216,7 +191,8 @@
         WHERE beat_item_id = #{beat_item_id} AND modified = #{modified}
     </update>
 
-    <select id="ims_bt_beat_item_selectInfo" parameterType="com.voyageone.ims.model.ImsBeat" resultType="com.voyageone.ims.model.ImsBeatInfo">
+    <select id="ims_bt_beat_item_selectInfo" parameterType="com.voyageone.ims.model.ImsBeat"
+            resultType="com.voyageone.ims.model.ImsBeatInfo">
         SELECT
             beat_flg beatFlg,
             count(1) count

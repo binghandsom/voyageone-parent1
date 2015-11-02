@@ -379,10 +379,7 @@ public class ImsBeatService extends BaseAppService {
 
         String num_iid = item.getNum_iid();
 
-        String url_key = item.getUrl_key();
-        String image_name = item.getImage_name();
-
-        if (StringUtils.isAnyEmpty(code, num_iid) || (StringUtils.isEmpty(url_key) && StringUtils.isEmpty(image_name))) {
+        if (StringUtils.isAnyEmpty(code, num_iid)) {
             item.setComments("读取错误，请对照提交的表格验证");
         }
 
@@ -452,11 +449,12 @@ public class ImsBeatService extends BaseAppService {
     /**
      * 获取任务的所有项
      *
-     * @param beat   任务
-     * @param flg 用于筛选的状态
-     * @param num_iid 用于搜索的 num_iid
-     * @param offset 起始行
-     * @param limit  行数    @return 任务项集合
+     * @param beat     任务
+     * @param beat_flg 用于筛选的状态
+     * @param num_iid  用于搜索的 num_iid
+     * @param offset   起始行
+     * @param limit    行数
+     * @return 任务项集合
      */
     public DtResponse<List<ImsBeatItem>> getBeatItems(ImsBeat beat, Integer beat_flg, String num_iid, int offset, int limit) {
 
@@ -722,28 +720,9 @@ public class ImsBeatService extends BaseAppService {
 
         String code = item.getCode();
 
-        String url_key = item.getUrl_key();
-        String image_name = item.getImage_name();
-
         // code 由 num_iid 关联反查，如果 num_iid 没查询到，则必然 code 为空
         if (StringUtils.isEmpty(code)) {
             item.setComments("没有从 ims 中找到 code 和 num_iid");
-
-        } else if (StringUtils.isEmpty(image_name)) {
-
-            /*
-             * 优先检查 image name。如果 image name 存在。则不在进行检查。
-             * 否则继续检查 url key
-             */
-
-            if (StringUtils.isEmpty(url_key)) {
-                item.setComments("没有从 cms 中找到 url_key 和 image_name");
-            }
-        }
-
-        // 如果描述存在，则说明商品在其他！同店铺！未结束！的活动里存在
-        if (!StringUtils.isEmpty(item.getDescription())) {
-            item.setComments(format("商品也存在于未结束的任务 [ %s ] 中。此时不能对该商品执行价格披露操作。", item.getDescription()));
         }
 
         return item.hasComments();

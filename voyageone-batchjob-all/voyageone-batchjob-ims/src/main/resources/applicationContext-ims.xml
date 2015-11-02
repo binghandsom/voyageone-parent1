@@ -9,7 +9,8 @@
 
 	<task:scheduled-tasks scheduler="ims-job-scheduler">
 
-		<task:scheduled ref="ImsBeatPicJob" method="run" cron="0 0/3 0-23 * * ?"/>
+		<task:scheduled ref="ImsBeatPicJob" method="run" cron="0 0/1 0-23 * * ?"/>
+
 		<task:scheduled ref="UploadProductJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
 		<!-- 第三方平台类目属性信息取得 -->
