@@ -14,7 +14,7 @@
 		where
 			attribute_value is not null
 			and attribute_value != ''
-			and (attribute_value_cn = '' or attribute_value_cn is NULL)
+			and (attribute_value_cn = BINARY'' or attribute_value_cn is NULL)
 		order by created asc
 		limit 500
 	</select>
