@@ -133,9 +133,15 @@ public class ProductDao {
         mongoTemplate.execute("", new CollectionCallback<Product>() {
             @Override
             public Product doInCollection(DBCollection collection) throws MongoException, DataAccessException {
-                return null;
+                Product product = new Product("001", 1, 3);
+                //自己取值然后处理返回对应的处理  collection.find();
+                return product;
             }
         });
+    }
+
+    public void createCollection() {
+        mongoTemplate.createCollection("product_k001");
     }
 
 }
