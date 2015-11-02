@@ -158,7 +158,7 @@ public class ImsPromotionService extends BaseTaskService {
                 } else {
                     failProduct.get(e.getMessage()).addAll((List<Map>) item.get("productList"));
                 }
-                e.printStackTrace();
+                logger.info(e.getMessage());
             }
         });
         // 把成功的产品更新数据库
