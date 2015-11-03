@@ -80,6 +80,18 @@ public final class WmsConstants {
     }
 
     /**
+     * SynFlg
+     */
+    public final static class SynFlg {
+        // 推送忽略
+        public static final String IGNORE = "4";
+        // 1:已推送
+        public static final String SENDED = "1";
+        //  0:未推送
+        public static final String UNSEND = "0";
+    }
+
+    /**
      * 报表相关设置
      */
     public final static class ReportSetting {
