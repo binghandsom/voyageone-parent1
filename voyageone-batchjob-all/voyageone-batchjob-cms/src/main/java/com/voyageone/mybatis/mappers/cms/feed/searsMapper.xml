@@ -8,7 +8,7 @@
     </delete>
 
     <insert id="cms_zz_worktable_sears_superfeed_insert" parameterType="com.voyageone.common.components.sears.bean.ProductResponse" >
-        insert ignore into voyageone_cms.cms_zz_worktable_sears_superfeed (
+        insert into voyageone_cms.cms_zz_worktable_sears_superfeed (
                 item_id,
                 product_id,
                 brand,
@@ -59,16 +59,40 @@
         values
         <foreach collection="product" item="item" index="index"
                  separator=",">
-            <foreach collection="item.productDetails.specifications" item="specification" index="index"
-                     separator=",">
-                (#{item.itemId,jdbcType=VARCHAR},
-                #{specification.label,jdbcType=VARCHAR},
-                #{specification.key,jdbcType=VARCHAR},
-                #{specification.value,jdbcType=VARCHAR})
-            </foreach>
+            <if test="item.productDetails.specifications != null and item.productDetails.specifications.size >0 ">
+                <foreach collection="item.productDetails.specifications" item="specification" index="index"
+                         separator=",">
+                    (#{item.itemId,jdbcType=VARCHAR},
+                    #{specification.label,jdbcType=VARCHAR},
+                    #{specification.key,jdbcType=VARCHAR},
+                    #{specification.value,jdbcType=VARCHAR})
+                </foreach>
+            </if>
         </foreach>
     </insert>
     <delete id="cms_zz_worktable_sears_attribute_delete">
         DELETE FROM voyageone_cms.cms_zz_worktable_sears_attribute;
     </delete>
+    <delete id="cms_zz_worktable_sears_list_delete">
+        DELETE FROM voyageone_cms.cms_zz_worktable_sears_list;
+    </delete>
+    <insert id="cms_zz_worktable_sears_list_insert" parameterType="com.voyageone.common.components.sears.bean.ProductResponse" >
+        insert into voyageone_cms.cms_zz_worktable_sears_list (
+        item_id,
+        status)
+        values
+        <foreach collection="product" item="item" index="index"
+                 separator=",">
+                (#{item.itemId,jdbcType=VARCHAR},
+                #{item.status,jdbcType=VARCHAR})
+        </foreach>
+    </insert>
+    <select id="cms_zz_worktable_sears_list_select" parameterType="String" resultType="String">
+        select
+          item_id
+        from
+          voyageone_cms.cms_zz_worktable_sears_list
+        where
+          status = #{status}
+    </select>
 </mapper>
