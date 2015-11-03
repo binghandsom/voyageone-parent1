@@ -213,7 +213,7 @@ public final class CommonUtil {
                     subList.add(list.get(j));                                               //放入list中的元素到分割后的list(subList)
                 }
 
-                if( (j + 1) == ((j + 1) * pageSize) ) {                               //当放满一页时退出当前循环
+                if( (j + 1) == ((i + 1) * pageSize) ) {                               //当放满一页时退出当前循环
                     break;
                 }
             }

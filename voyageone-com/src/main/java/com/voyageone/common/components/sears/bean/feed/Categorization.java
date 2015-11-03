@@ -53,6 +53,8 @@ public class Categorization {
     @Override
     public String toString(){
 //        return String.format("%s-%s-%s",vertical,category,subcategory).toLowerCase().replaceAll(" ", "").replaceAll("'","");
-        return String.format("%s-%s-%s",vertical,category,subcategory);
+        String str = String.format("%s-%s-%s",vertical,category,subcategory);
+        str = str.replace(" & ","-");
+        return str;
     }
 }
