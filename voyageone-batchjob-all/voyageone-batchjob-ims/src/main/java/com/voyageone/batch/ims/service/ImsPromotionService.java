@@ -94,15 +94,12 @@ public class ImsPromotionService extends BaseTaskService {
         List<Map> items = promotionDao.getPromotionItem(channelId, cartId);
         // 取得shop信息
         ShopBean shopBean = ShopConfigs.getShop(channelId, cartId);
-        shopBean.setSessionKey("6201d2770dbfa1a88af5acfd330fd334fb4ZZa8ff26a40b2641101981");
-        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
-        shopBean.setAppKey("21008948");
         List<Map> succeedProduct = new ArrayList<>();
         Map<String, List<Map>> failProduct = new HashMap<>();
         items.forEach(item -> {
             TaobaoResponse response;
             try {
-                // 根据商品ID列表获取SKU信息
+                // 根据商品ID列表获取SKU信息 因为需要知道天猫的SKU的ID
                 response = tbItemService.getSkuInfo(shopBean, item.get("num_iid").toString(), "sku_id,num_iid,outer_id");
 
                 ItemSkusGetResponse skuids = (ItemSkusGetResponse) response;
