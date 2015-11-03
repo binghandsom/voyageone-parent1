@@ -9,6 +9,7 @@
 			(
 				order_channel_id,
 				cart_id,
+				file_type,
 				payment_time,
 				settlement_time,
 				source_order_id,
@@ -105,6 +106,7 @@
 			(
 				order_channel_id,
 				cart_id,
+				file_type,
 				pay_type,
 				upload_time,
 				settlement_file_id,
@@ -123,6 +125,7 @@
 			(
 				#{orderChannelId},
 				#{cartId},
+				#{fileType},
 				#{payType},
 				now(),
 				#{settlementFileId},
@@ -194,6 +197,7 @@
 					#{item}
 				</foreach>
 			</if>
+			and t.file_type = #{fileType}
 			and t.upload_time between #{searchDateFrom} and #{searchDateTo}
 		</where>
 		order by t.upload_time desc
@@ -216,6 +220,7 @@
 					#{item}
 				</foreach>
 			</if>
+			and t.file_type = #{fileType}
 			and t.upload_time between #{searchDateFrom} and #{searchDateTo}
 		</where>
 	</select>

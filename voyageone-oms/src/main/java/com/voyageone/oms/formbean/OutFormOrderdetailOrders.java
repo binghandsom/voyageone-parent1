@@ -321,6 +321,16 @@ public class OutFormOrderdetailOrders {
 	 * 订单类型
 	 */
 	private String orderKind;
+
+	/**
+	 * 汇率
+	 */
+	private String rate;
+
+	/**
+	 * 币种
+	 */
+	private String currency;
 	
 	/**
 	 * 源订单号（连番）
@@ -1193,6 +1203,22 @@ public class OutFormOrderdetailOrders {
 
 	public void setOrderKind(String orderKind) {
 		this.orderKind = orderKind;
+	}
+
+	public String getRate() {
+		return rate;
+	}
+
+	public void setRate(String rate) {
+		this.rate = rate;
+	}
+
+	public String getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(String currency) {
+		this.currency = currency;
 	}
 
 	public String getSubSourceOrderId() {

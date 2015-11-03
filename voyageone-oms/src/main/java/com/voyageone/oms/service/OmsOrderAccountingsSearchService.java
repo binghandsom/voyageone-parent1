@@ -27,7 +27,7 @@ public interface OmsOrderAccountingsSearchService {
 	 * @param user 当前用户
 	 * @return
 	 */
-	public List<OutFormSearchSettlementFile> searchSettlementFile(List<String> storeId, List<String> channelId, String searchDateFrom, String searchDateTo, int page, int size, UserSessionBean user);
+	public List<OutFormSearchSettlementFile> searchSettlementFile(String fileType, List<String> storeId, List<String> channelId, String searchDateFrom, String searchDateTo, int page, int size, UserSessionBean user);
 
 	/**
 	 * 账务文件件数检索
@@ -38,5 +38,5 @@ public interface OmsOrderAccountingsSearchService {
 	 * @param searchDateTo 检索日终了
 	 * @return
 	 */
-	public  int getSearchSettlementFileCount(List<String> storeId, List<String> channelId, String searchDateFrom, String searchDateTo);
+	public  int getSearchSettlementFileCount(String fileType, List<String> storeId, List<String> channelId, String searchDateFrom, String searchDateTo);
 }
