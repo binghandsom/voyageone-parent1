@@ -50,6 +50,7 @@ public class OmsOrderAccountingsServiceImpl implements OmsOrderAccountingsServic
 
 	// 文件类型
 	private enum AccountingType {
+		//	Settlement 文件
 		//	未知
 		UnKnow("00"),
 		//	支付宝
@@ -63,7 +64,11 @@ public class OmsOrderAccountingsServiceImpl implements OmsOrderAccountingsServic
 		//	独立域名
 		// Cnpay("09"),
 		//	微信
-		Weixinpay("10");
+		Weixinpay("10"),
+
+		//	Transaction 文件
+		//	支付宝国际
+		AlipayInterNationalForTran("06");
 
 		private final String value;
 
@@ -96,11 +101,11 @@ public class OmsOrderAccountingsServiceImpl implements OmsOrderAccountingsServic
 	 * @param user 当前用户
 	 * @return
 	 */
-	public void saveSettlementFile(MultipartFile file, AjaxResponseBean result, UserSessionBean user) {
+	public void saveSettlementFile(String fileType, MultipartFile file, AjaxResponseBean result, UserSessionBean user) {
 		//	上传文件检查
 		if(chkSettlementFile(file, result)) {
 			//	保存账务
-			saveSettlementFileSub(file, result, user);
+			saveSettlementFileSub(fileType, file, result, user);
 		}
 	}
 
@@ -111,7 +116,7 @@ public class OmsOrderAccountingsServiceImpl implements OmsOrderAccountingsServic
 	 * @param user 当前用户
 	 * @return
 	 */
-	private void saveSettlementFileSub(MultipartFile file, AjaxResponseBean result, UserSessionBean user) {
+	private void saveSettlementFileSub(String fileType, MultipartFile file, AjaxResponseBean result, UserSessionBean user) {
 
 		logger.info("saveSettlementFileSub start");
 		logger.info("saveSettlementFileSub file = " + file.getOriginalFilename());
@@ -134,7 +139,7 @@ public class OmsOrderAccountingsServiceImpl implements OmsOrderAccountingsServic
 
 		//	文件类型识别
 		logger.info("	文件类型识别");
-		ret = getFileType(file, result);
+		ret = getFileType(fileType, file, result);
 
 		//	文件读入
 		if ((boolean)ret.get(0)) {
@@ -144,7 +149,8 @@ public class OmsOrderAccountingsServiceImpl implements OmsOrderAccountingsServic
 			logger.info("	文件读入");
 			//	缓存读入
 			switch ((AccountingType)ret.get(1)) {
-				//	支付宝
+				//	Settlement 文件
+				//		支付宝
 				case AliPay:
 					ret = readTMFile(file, result);
 					accountNo = (String)ret.get(4);
@@ -156,7 +162,7 @@ public class OmsOrderAccountingsServiceImpl implements OmsOrderAccountingsServic
 					orderChannelId = (String)ret.get(10);
 					cartId = (String)ret.get(11);
 					break;
-				//	支付宝国际
+				//		支付宝国际
 				case AlipayInterNational:
 					ret = readTGFile(file, result);
 					totalIncome = (String)ret.get(4);
@@ -164,17 +170,27 @@ public class OmsOrderAccountingsServiceImpl implements OmsOrderAccountingsServic
 					orderChannelId = (String)ret.get(6);
 					cartId = (String)ret.get(7);
 					break;
-				//	京东
+				//		京东
 				case Jdpay:
 					ret = readJDFile(file, result);
 					break;
-				//	京东国际
+				//		京东国际
 				case JdpayInterNational:
 					ret = readJGFile(file, result);
 					break;
-				//	微信
+				//		微信
 				case Weixinpay:
 					ret = readWXFile(file, result);
+					totalIncome = (String)ret.get(4);
+					totalExpense = (String)ret.get(5);
+					orderChannelId = (String)ret.get(6);
+					cartId = (String)ret.get(7);
+					break;
+
+				//	Transaction 文件
+				//		支付宝国际
+				case AlipayInterNationalForTran:
+					ret = readTGFileForTran(file, result);
 					totalIncome = (String)ret.get(4);
 					totalExpense = (String)ret.get(5);
 					orderChannelId = (String)ret.get(6);
@@ -199,7 +215,7 @@ public class OmsOrderAccountingsServiceImpl implements OmsOrderAccountingsServic
 			ret.set(0, false);
 
 			logger.info("	DB保存");
-			ret = saveDB((List<SettlementBean>)ret.get(1), file.getOriginalFilename(), user, accountNo, beginTime, endTime, exportTime,
+			ret = saveDB(fileType, (List<SettlementBean>)ret.get(1), file.getOriginalFilename(), user, accountNo, beginTime, endTime, exportTime,
 					totalIncome, totalExpense, orderChannelId, cartId);
 			if (!(boolean)ret.get(0)) {
 				result.setResult(false, OmsMessageConstants.MESSAGE_CODE_210064, MessageConstants.MESSAGE_TYPE_BUSSINESS_EXCEPTION);
@@ -234,7 +250,7 @@ public class OmsOrderAccountingsServiceImpl implements OmsOrderAccountingsServic
 		if (file.isEmpty()) {
 			ret = false;
 
-			// 该文件已处理
+			// 上传的Settlement文件为空
 			result.setResult(false, OmsMessageConstants.MESSAGE_CODE_210066, MessageConstants.MESSAGE_TYPE_BUSSINESS_EXCEPTION);
 		}
 
@@ -260,7 +276,7 @@ public class OmsOrderAccountingsServiceImpl implements OmsOrderAccountingsServic
 	 * @return List<0>	返回结果
 	 * 			List<1>	文件类型
 	 */
-	private List<Object> getFileType(MultipartFile file, AjaxResponseBean result) {
+	private List<Object> getFileType(String fileType, MultipartFile file, AjaxResponseBean result) {
 		List<Object> ret = new ArrayList<>();
 
 		boolean isSuccess = true;
@@ -273,14 +289,24 @@ public class OmsOrderAccountingsServiceImpl implements OmsOrderAccountingsServic
 			reader.readHeaders();
 			String[] headers = reader.getHeaders();
 
-			if (OmsConstants.AccountKindIdentify.TG.equals(headers[0])) {
-				retAccountingKind = AccountingType.AlipayInterNational;
-			}
-			else if(OmsConstants.AccountKindIdentify.WX.equals(headers[0]))	{
-				retAccountingKind = AccountingType.Weixinpay;
-			}
-			else if(OmsConstants.AccountKindIdentify.TM.equals(headers[0]))	{
-				retAccountingKind = AccountingType.AliPay;
+			// Settlement 文件的场合
+			if (OmsConstants.AccountingFileType.SettlementFile.equals(fileType)) {
+				if (OmsConstants.AccountKindIdentify.TG.equals(headers[0]) &&
+						OmsConstants.AccountKindIdentify.TG2.equals(headers[1])) {
+					retAccountingKind = AccountingType.AlipayInterNational;
+				}
+				else if(OmsConstants.AccountKindIdentify.WX.equals(headers[0]))	{
+					retAccountingKind = AccountingType.Weixinpay;
+				}
+				else if(OmsConstants.AccountKindIdentify.TM.equals(headers[0]))	{
+					retAccountingKind = AccountingType.AliPay;
+				}
+			// Transaction 文件的场合
+			} else {
+				 if(OmsConstants.AccountKindIdentify.TG.equals(headers[0]) &&
+					OmsConstants.AccountKindIdentify.TGForTran.equals(headers[1])) {
+					 retAccountingKind = AccountingType.AlipayInterNationalForTran;
+				 }
 			}
 
 			reader.close();
@@ -315,7 +341,7 @@ public class OmsOrderAccountingsServiceImpl implements OmsOrderAccountingsServic
 	 * @param cartId 账单店铺
 	 * @return List<0>	返回结果
 	 */
-	private List<Object> saveDB(List<SettlementBean> settlementList, String settlementFileId, UserSessionBean user,
+	private List<Object> saveDB(String fileType, List<SettlementBean> settlementList, String settlementFileId, UserSessionBean user,
 								String accountNo, String beginTime, String endTime,
 								String exportTime, String totalIncome, String totalExpense,
 								String orderChannelId, String cartId) {
@@ -370,16 +396,24 @@ public class OmsOrderAccountingsServiceImpl implements OmsOrderAccountingsServic
 				}
 			}
 
-			//	oms_bt_group_orders  payment_total_settle 更新
 			if (isSuccess) {
-				logger.info("		updatePaymentSettleInfo");
-				isSuccess = orderDetailDao.updatePaymentSettleInfo(settlementFileId);
+				if (OmsConstants.AccountingFileType.SettlementFile.equals(fileType)) {
+					//	Settlement文件的场合
+					//		oms_bt_group_orders  payment_total_settle 更新
+					logger.info("		updatePaymentSettleInfo");
+					isSuccess = orderDetailDao.updatePaymentSettleInfo(settlementFileId);
+				} else {
+					//	Transaction文件的场合
+					//		oms_bt_group_orders  rate 更新
+					logger.info("		updateOrderRateInfo");
+					isSuccess = orderDetailDao.updateOrderRateInfo(settlementFileId);
+				}
 			}
 
 			//	oms_bt_settlement_file
 			if (isSuccess) {
 				logger.info("		saveSettlementFile");
-				isSuccess = saveSettlementFile(settlementList.get(0), settlementFileId, user,
+				isSuccess = saveSettlementFile(fileType, settlementList.get(0), settlementFileId, user,
 						accountNo, beginTime, endTime,
 						exportTime, totalIncome, totalExpense,
 						orderChannelId, cartId);
@@ -418,7 +452,7 @@ public class OmsOrderAccountingsServiceImpl implements OmsOrderAccountingsServic
 	 * @param cartId 账单店铺
 	 * @return boolean 保存结果
 	 */
-	private boolean saveSettlementFile(SettlementBean settlementInfo, String settlementFileId, UserSessionBean user,
+	private boolean saveSettlementFile(String fileType, SettlementBean settlementInfo, String settlementFileId, UserSessionBean user,
 									   String accountNo, String beginTime, String endTime,
 									   String exportTime, String totalIncome, String totalExpense,
 									   String orderChannelId, String cartId) {
@@ -427,6 +461,7 @@ public class OmsOrderAccountingsServiceImpl implements OmsOrderAccountingsServic
 
 		settlementFileInfo.setOrderChannelId(orderChannelId);
 		settlementFileInfo.setCartId(cartId);
+		settlementFileInfo.setFileType(fileType);
 		settlementFileInfo.setPayType(settlementInfo.getPayType());
 		settlementFileInfo.setSettlementFileId(settlementFileId);
 		settlementFileInfo.setAccount_no(accountNo);
@@ -458,6 +493,7 @@ public class OmsOrderAccountingsServiceImpl implements OmsOrderAccountingsServic
 
 		insertString.append(formatStringField(settlementInfo.getOrderChannelId())).append(",");
 		insertString.append(settlementInfo.getCartId()).append(",");
+		insertString.append(settlementInfo.getFileType()).append(",");
 		insertString.append(formatDatetimeField(settlementInfo.getPaymentTime())).append(",");
 		insertString.append(formatDatetimeField(settlementInfo.getSettlementTime())).append(",");
 		insertString.append(formatStringField(settlementInfo.getSourceOrderId())).append(",");
@@ -832,6 +868,8 @@ public class OmsOrderAccountingsServiceImpl implements OmsOrderAccountingsServic
 			// Body读入
 			while (reader.readRecord()) {
 				SettlementBean settlement = new SettlementBean();
+				// 文件类型
+				settlement.setFileType(OmsConstants.AccountingFileType.SettlementFile);
 
 				// 从文件字段
 				settlement.setOriginSourceOrderId(reader.get(AliPayInt.Partner_transaction_id));
@@ -842,8 +880,15 @@ public class OmsOrderAccountingsServiceImpl implements OmsOrderAccountingsServic
 				settlement.setSettlement_foreign(reader.get(AliPayInt.Rmb_settlement));
 				settlement.setCurrency(reader.get(AliPayInt.Currency));
 				settlement.setRate(formatTGRate(reader.get(AliPayInt.Rate)));
-				settlement.setPaymentTime(DateTimeUtil.getGMTTime(reader.get(AliPayInt.Payment_time), 8));
-				settlement.setSettlementTime(DateTimeUtil.getGMTTime(reader.get(AliPayInt.Settlement_time), 8));
+
+				if (!StringUtils.isEmpty(reader.get(AliPayInt.Payment_time))) {
+					settlement.setPaymentTime(DateTimeUtil.getGMTTime(reader.get(AliPayInt.Payment_time), 8));
+				}
+
+				if (!StringUtils.isEmpty(reader.get(AliPayInt.Settlement_time))) {
+					settlement.setSettlementTime(DateTimeUtil.getGMTTime(reader.get(AliPayInt.Settlement_time), 8));
+				}
+
 				settlement.setTrade_type(reader.get(AliPayInt.Type));
 				settlement.setTrade_status(reader.get(AliPayInt.Status));
 				settlement.setAli_int_stem_from(reader.get(AliPayInt.Stem_from));
@@ -1046,6 +1091,9 @@ public class OmsOrderAccountingsServiceImpl implements OmsOrderAccountingsServic
 				notes = reader.get(AliPay.Remarks);
 
 				SettlementBean settlement = new SettlementBean();
+
+				// 文件类型
+				settlement.setFileType(OmsConstants.AccountingFileType.SettlementFile);
 
 				// Read fields
 				settlement.setAli_accounting_no(reader.get(AliPay.Accounting_no));
@@ -1251,6 +1299,9 @@ public class OmsOrderAccountingsServiceImpl implements OmsOrderAccountingsServic
 
 				SettlementBean settlement = new SettlementBean();
 
+				// 文件类型
+				settlement.setFileType(OmsConstants.AccountingFileType.SettlementFile);
+
 				// 从文件字段
 				settlement.setSettlementTime(DateTimeUtil.getGMTTime(formatWxStringField(reader.get(WeixinPay.Settlement_time)), 8));
 				settlement.setWx_public_account_id(formatWxStringField(reader.get(WeixinPay.Public_account_id)));
@@ -1336,6 +1387,145 @@ public class OmsOrderAccountingsServiceImpl implements OmsOrderAccountingsServic
 	}
 
 	/**
+	 * 文件读入
+	 *
+	 * @param file 结算文件
+	 * @return List<0>	返回结果
+	 *			List<1>	缓存文件内容
+	 *			List<2> 渠道名称
+	 *			List<3>	店铺名称
+	 *			List<4> 收入合计
+	 *			List<5>	支出合计
+	 *			List<6> 渠道ID
+	 *			List<7>	店铺ID
+	 */
+	private List<Object> readTGFileForTran(MultipartFile file, AjaxResponseBean result) {
+		List<Object> ret = new ArrayList<>();
+
+		boolean isSuccess = true;
+		List<SettlementBean> settlementBeanList = new ArrayList<SettlementBean>();
+		//	订单渠道名称
+		String orderChannelName = "";
+		//	店铺名称
+		String cartName = "";
+		//  Total income
+		Double totalIncome = 0d;
+		//  Total expense
+		Double totalExpense = 0d;
+		//  Channel ID
+		String orderChannelId = "";
+		//  Cart ID
+		String cartId = "";
+
+		try {
+			CsvReader reader = new CsvReader(file.getInputStream(), ',', Charset.forName("GBK"));
+
+			// Head读入
+			reader.readHeaders();
+
+			// Body读入
+			while (reader.readRecord()) {
+				SettlementBean settlement = new SettlementBean();
+
+				// 文件类型
+				settlement.setFileType(OmsConstants.AccountingFileType.TransactionFile);
+
+				// 从文件字段
+				settlement.setOriginSourceOrderId(reader.get(AliPayIntForTran.Partner_transaction_id));
+				settlement.setDebitForeign(reader.get(AliPayIntForTran.Amount));
+				settlement.setDebit(reader.get(AliPayIntForTran.Rmb_amount));
+				settlement.setCreditForeign(reader.get(AliPayIntForTran.Fee));
+				settlement.setSettlement(reader.get(AliPayIntForTran.Rmb_settlement));
+				settlement.setSettlement_foreign(reader.get(AliPayIntForTran.Settlement));
+				settlement.setCurrency(reader.get(AliPayIntForTran.Currency));
+				settlement.setRate(formatTGRate(reader.get(AliPayIntForTran.Rate)));
+				if (!StringUtils.isEmpty(reader.get(AliPayIntForTran.Payment_time))) {
+					settlement.setPaymentTime(DateTimeUtil.getGMTTime(reader.get(AliPayIntForTran.Payment_time), 8));
+				}
+
+				if (!StringUtils.isEmpty(reader.get(AliPayIntForTran.Settlement_time))) {
+					settlement.setSettlementTime(DateTimeUtil.getGMTTime(reader.get(AliPayIntForTran.Settlement_time), 8));
+				}
+
+				settlement.setTrade_type(reader.get(AliPayIntForTran.Type));
+
+				// 其他字段
+				//	业务类型
+				settlement.setBusinessType(OmsConstants.BusinessType.PAYMENT);
+				//	账务方式
+				settlement.setPayType(AccountingType.AlipayInterNational.getValue());
+
+				//	DB关联字段取得
+				String sourceOrderIdFromFile = reader.get(AliPayInt.Partner_transaction_id);
+				OutFormOrderdetailOrders ordersInfo = orderDetailDao.getOrdersInfoByOrigSourceOrderId(sourceOrderIdFromFile);
+				//	文件的订单，OMS不存在的场合，异常
+				if (ordersInfo == null) {
+					//For advance order, save data even though the order number doesn't exists in OMS
+					settlement.setProcess_flag(false);
+					settlement.setOrderChannelId("");
+					settlement.setCartId("0");
+					settlement.setSourceOrderId("");
+					settlement.setPayNo("");
+					settlement.setPayAccount("");
+				} else {
+					settlement.setProcess_flag(true);
+					settlement.setOrderChannelId(ordersInfo.getOrderChannelId());
+					settlement.setCartId(ordersInfo.getCartId());
+					settlement.setSourceOrderId(ordersInfo.getSourceOrderId());
+					settlement.setPayNo(ordersInfo.getPoNumber());
+					settlement.setPayAccount(ordersInfo.getAccount());
+
+					orderChannelName = ordersInfo.getOrderChannelName();
+					cartName = ordersInfo.getCartName();
+					orderChannelId = ordersInfo.getOrderChannelId();
+					cartId = ordersInfo.getCartId();
+				}
+
+				//Get total amount
+				Double rmbAmount = Double.valueOf(reader.get(AliPayInt.Rmb_amount));
+				if (rmbAmount >= 0d) {
+					totalIncome += rmbAmount;
+				} else {
+					totalExpense += rmbAmount;
+				}
+
+				settlementBeanList.add(settlement);
+			}
+			reader.close();
+
+			//	结果判定
+			if (isSuccess && settlementBeanList.size() == 0) {
+				isSuccess = false;
+				result.setResult(false, OmsMessageConstants.MESSAGE_CODE_210065, MessageConstants.MESSAGE_TYPE_BUSSINESS_EXCEPTION);
+			}
+
+		} catch (Exception e) {
+			isSuccess = false;
+
+			logger.error("readTGFileForTran", e);
+		}
+
+		ret.add(isSuccess);
+		ret.add(settlementBeanList);
+		ret.add(orderChannelName);
+		ret.add(cartName);
+
+		//  Format total amount
+		NumberFormat formatter = NumberFormat.getInstance();
+		formatter.setMaximumFractionDigits(2);
+		formatter.setGroupingUsed(false);
+		ret.add(formatter.format(totalIncome));
+		ret.add(formatter.format(totalExpense));
+		ret.add(orderChannelId);
+		ret.add(cartId);
+
+		return ret;
+	}
+
+	/**
+	 * Settlement文件格式
+	 */
+	/**
 	 * 国际支付宝文件格式
 	 */
 	private class AliPayInt {
@@ -1401,5 +1591,27 @@ public class OmsOrderAccountingsServiceImpl implements OmsOrderAccountingsServic
 		private static final int Payment_channel = 9;
 		private static final int Paytype = 10;
 		private static final int Remarks = 11;
+	}
+
+	/**
+	 * Transaction文件格式
+	 */
+	/**
+	 * 国际支付宝文件格式
+	 */
+	private class AliPayIntForTran {
+		private static final int Partner_transaction_id = 0;
+		private static final int Transaction_id = 1;
+		private static final int Amount = 2;
+		private static final int Rmb_amount = 3;
+		private static final int Fee = 4;
+		private static final int Refund = 5;
+		private static final int Settlement = 6;
+		private static final int Rmb_settlement = 7;
+		private static final int Currency = 8;
+		private static final int Rate = 9;
+		private static final int Payment_time = 10;
+		private static final int Settlement_time = 11;
+		private static final int Type = 12;
 	}
 }
