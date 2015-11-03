@@ -25,7 +25,7 @@ define(["components/app"], function(app){
 
                 function openMenu(evt) {
 
-                    var host = $position.offset(elem);
+                    var host = $position.position(elem);
 
                     menu.css({display: 'block'});
 
