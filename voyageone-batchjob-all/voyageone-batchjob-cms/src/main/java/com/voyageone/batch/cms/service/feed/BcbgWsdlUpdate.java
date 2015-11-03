@@ -266,9 +266,19 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
 
             String separator = CmsConstants.FEED_IO_UPDATEFIELDS_IMAGE_SPLIT;
 
-            String images = updating.getImages().stream().map(ImageBean::getImage_url).filter(i -> i != null).collect(joining(separator));
+            String images = "";
 
-            String lastImages = last.getImages().stream().map(ImageBean::getImage_url).filter(i -> i != null).collect(joining(separator));
+            List<ImageBean> imageBeanList = updating.getImages();
+
+            if (imageBeanList != null)
+                images = imageBeanList.stream().map(ImageBean::getImage_url).filter(i -> i != null).collect(joining(separator));
+
+            String lastImages = null;
+
+            List<ImageBean> lastImageList = last.getImages();
+
+            if (lastImageList != null)
+                lastImages = lastImageList.stream().map(ImageBean::getImage_url).filter(i -> i != null).collect(joining(separator));
 
             if (!images.equals(lastImages)) {
                 updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_IMAGE_URL, images);
