@@ -147,7 +147,7 @@ public class ReservationInfoTransferService extends BaseTaskService {
 		String result;
 		org.apache.axis.client.Service service = new org.apache.axis.client.Service();
 		org.apache.axis.client.Call call = (org.apache.axis.client.Call) service.createCall();
-		call.setTimeout(10000);
+		call.setTimeout(20000);
 		call.setTargetEndpointAddress(new java.net.URL(endpoint));
 		call.setOperationName(new QName(nameSpace, method));
 		Set<Entry<String, String>> set = paramMap.entrySet();

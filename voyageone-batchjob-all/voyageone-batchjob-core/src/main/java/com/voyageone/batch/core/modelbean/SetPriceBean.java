@@ -42,7 +42,6 @@ public class SetPriceBean {
     public void setSku(String sku) {
         this.sku = sku;
     }
-
     public String getPrice() {
         return price;
     }
@@ -59,4 +58,5 @@ public class SetPriceBean {
         this.shipping_price = shipping_price;
     }
 }
+
 

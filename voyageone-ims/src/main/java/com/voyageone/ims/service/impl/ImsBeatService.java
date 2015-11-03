@@ -117,56 +117,6 @@ public class ImsBeatService extends BaseAppService {
         return imsBeatDao.selectByFinger(beat);
     }
 
-    private void createCheck(ImsBeat beat) {
-
-        CartBean cart = ShopConfigs.getCart(beat.getCart_id());
-
-        OrderChannelBean channel = ChannelConfigs.getChannel(beat.getChannel_id());
-
-        StringBuilder messageBuilder = new StringBuilder();
-
-        if (cart == null) messageBuilder.append("<li>店铺错误</li>");
-
-        if (channel == null) messageBuilder.append("<li>渠道错误</li>");
-
-        if (cart != null && channel != null) {
-            ShopBean shop = ShopConfigs.getShop(channel, cart);
-            if (shop == null)
-                messageBuilder.append(format("<li>没有找到 [ %s ] [ %s ] 店</li>", channel.getName(), cart.getName()));
-        }
-
-        if (StringUtils.isEmpty(beat.getDescription())) {
-            messageBuilder.append("<li>没有填写描述</li>");
-        } else if (imsBeatDao.selectCountByDescription(beat) > 0) {
-            messageBuilder.append("<li>输入的描述已经被占用，请重新输入后，再次尝试</li>");
-        }
-
-        if (StringUtils.isEmpty(beat.getTemplate_url())) {
-            messageBuilder.append("<li>没有输入图片模板</li>");
-        }
-
-        if (StringUtils.isEmpty(beat.getEnd())) {
-            messageBuilder.append("<li>没有输入时间</li>");
-        } else {
-            Date gmtNow = new Date();
-            Date end = DateTimeUtil.parse(beat.getEnd());
-            Date gmtEnd = DateTimeUtil.addHours(end, -8);
-
-            // 结束时间应该至少比现在晚 12 个小时
-            if (DateTimeUtil.diffHours(gmtEnd, gmtNow) < 12)
-                messageBuilder.append("<li>价格披露的还原时间至少要比现在晚 12 个小时。</li>");
-
-            // 如果正确，则直接放回 bean
-            beat.setEnd(DateTimeUtil.format(gmtEnd, DateTimeUtil.DEFAULT_DATETIME_FORMAT));
-        }
-
-        // --- 最终进行错误判断 ---
-        if (messageBuilder.length() > 0) {
-            $info(1, messageBuilder.toString());
-            throw new BusinessException(BEAT_UNVALID, format("<ul>%s</ul>", messageBuilder));
-        }
-    }
-
     /**
      * 下载价格披露详细商品信息的 Excel 表格
      *
@@ -241,57 +191,6 @@ public class ImsBeatService extends BaseAppService {
             }
         }
     }
-
-    private CellStyle createUnLockStyle(Workbook book) {
-        CellStyle cellStyle = book.createCellStyle();
-
-        cellStyle.setLocked(false);
-
-        return cellStyle;
-    }
-
-    private CellStyle createLockStyle(Workbook book) {
-        CellStyle cellStyle = book.createCellStyle();
-
-        cellStyle.setLocked(true);
-
-        cellStyle.setBorderTop(CellStyle.BORDER_THIN);
-        cellStyle.setBorderBottom(CellStyle.BORDER_THIN);
-        cellStyle.setBorderLeft(CellStyle.BORDER_THIN);
-        cellStyle.setBorderRight(CellStyle.BORDER_THIN);
-
-        if (book instanceof HSSFWorkbook) {
-
-            HSSFCellStyle hssfCellStyle = (HSSFCellStyle) cellStyle;
-
-            hssfCellStyle.setFillForegroundColor(HSSFColor.GREY_40_PERCENT.index);
-            hssfCellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-
-            hssfCellStyle.setTopBorderColor(HSSFColor.GREY_50_PERCENT.index);
-            hssfCellStyle.setRightBorderColor(HSSFColor.GREY_50_PERCENT.index);
-            hssfCellStyle.setBottomBorderColor(HSSFColor.GREY_50_PERCENT.index);
-            hssfCellStyle.setLeftBorderColor(HSSFColor.GREY_50_PERCENT.index);
-
-        } else if (book instanceof XSSFWorkbook) {
-
-            XSSFCellStyle xssfCellStyle = (XSSFCellStyle) cellStyle;
-
-            XSSFColor lightGray = new XSSFColor(Color.lightGray);
-            XSSFColor gray = new XSSFColor(Color.gray);
-
-            xssfCellStyle.setFillForegroundColor(lightGray);
-            xssfCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-
-            xssfCellStyle.setTopBorderColor(gray);
-            xssfCellStyle.setRightBorderColor(gray);
-            xssfCellStyle.setBottomBorderColor(gray);
-            xssfCellStyle.setLeftBorderColor(gray);
-
-        }
-
-        return cellStyle;
-    }
-
 
     /**
      * 保存详细的商品信息
@@ -369,65 +268,6 @@ public class ImsBeatService extends BaseAppService {
 
             return insertCount;
         }
-    }
-
-    private boolean checkRead(ImsBeatItemTemp item) {
-
-        // 检查每项从价格文档读取的内容
-
-        String code = item.getCode();
-
-        String num_iid = item.getNum_iid();
-
-        String url_key = item.getUrl_key();
-        String image_name = item.getImage_name();
-
-        if (StringUtils.isAnyEmpty(code, num_iid) || (StringUtils.isEmpty(url_key) && StringUtils.isEmpty(image_name))) {
-            item.setComments("读取错误，请对照提交的表格验证");
-        }
-
-        if (StringUtils.isEmpty(item.getPrice())) {
-            item.setComments("没有获取到价格。");
-        }
-
-        return item.hasComments();
-    }
-
-    private ImsBeatItemTemp createTempItem(long beat_id, Row row, UserSessionBean user) {
-
-        String code = getString(row, 0);
-
-        String num_iid = getString(row, 1);
-
-        String price = getString(row, 2, "#.##");
-
-        String url_key = getString(row, 4);
-
-        String image_name = getString(row, 5);
-
-        ImsBeatItemTemp item = new ImsBeatItemTemp();
-
-        item.setSrc("对应原表行号：" + row.getRowNum());
-
-        item.setBeat_id(beat_id);
-
-        item.setBeatFlg(BeatFlg.Startup);
-
-        item.setCode(code);
-
-        item.setNum_iid(num_iid);
-
-        item.setPrice(price);
-
-        item.setUrl_key(url_key);
-
-        item.setImage_name(image_name);
-
-        item.setCreater(user.getUserName());
-
-        item.setModifier(user.getUserName());
-
-        return item;
     }
 
     /**
@@ -532,6 +372,359 @@ public class ImsBeatService extends BaseAppService {
         $info("插入 Item 数据 [ %s ]", insertCount);
 
         return insertCount;
+    }
+
+    /**
+     * 下载指定任务的错误文档
+     *
+     * @param beat_id 任务
+     * @param errLev  步骤
+     */
+    public byte[] getErrExcel(long beat_id, String errLev) throws IOException, InvalidFormatException {
+
+        if (StringUtils.isEmpty(errLev))
+            return null;
+
+        // 如果是 C 阶段。则生成后返回
+        if (errLev.equals(ERR_DOC_LEV_C))
+            return writeErrExcelC(beat_id);
+
+        String outputPath = getErrDocPath(beat_id, errLev);
+        File file = new File(outputPath);
+        if (!file.exists())
+            return null;
+
+        try (InputStream inputStream = new FileInputStream(file)) {
+            return IOUtils.toByteArray(inputStream);
+        }
+    }
+
+    /**
+     * 控制单个或全部任务的状态
+     *
+     * @param beat_id 任务
+     * @param item_id 子任务
+     * @param action  执行状态
+     * @return 成功处理的任务数
+     */
+    public int control(long beat_id, String item_id, String action) {
+
+        BeatFlg beatFlg = getBeatFlgFromAction(action);
+
+        $info("从 Action 参数 [ %s ] 转换获取 [ %s ]", action, beatFlg);
+
+        if (beatFlg == null)
+            throw new BusinessException(CONTROL_ERR);
+
+        if (!StringUtils.isEmpty(item_id)) {
+            // 查询单个，处理数据。直接更改
+            // 不检查类型，直接用于查询
+            $info("准备单个处理: [ %s ] [ %s ]", beat_id, item_id);
+
+            ImsBeatItem item = imsBeatDao.selectItem(item_id, beat_id);
+
+            if (item == null)
+                throw new BusinessException(NO_BEAT_ITEM);
+
+            item.setBeatFlg(beatFlg);
+
+            int updateCount = imsBeatDao.updateBeatFlg(item);
+
+            $info("已更新 [ %s ]", updateCount);
+
+            return updateCount;
+        }
+
+        // 批量处理所有任务下的子任务
+        // 查询所有数据，重新填充数据
+        // 清空，在重新插入
+
+        $info("准备对任务 [ %s ] 全量更新", beat_id);
+
+        ImsBeat beat = imsBeatDao.selectById(beat_id);
+
+        if (beat == null)
+            throw new BusinessException(NO_BEAT);
+
+        List<ImsBeatItem> items = imsBeatDao.selectItems(beat_id);
+
+        $info("子任务查询 [ %s ]", items.size());
+
+        for (ImsBeatItem item : items) {
+            item.setBeatFlg(beatFlg);
+        }
+
+        transactionRunner.runWithTran(() -> {
+            int deleteCount = imsBeatDao.deleteItems(beat);
+
+            $info("清空数 [ %s ]", deleteCount);
+
+            int insertCount = insertItems(items);
+
+            $info("重新插入 [ %s ]", insertCount);
+
+            if (deleteCount != insertCount)
+                throw new BusinessException(PART_INSERT_ERR);
+        });
+
+        return items.size();
+    }
+
+    /**
+     * 获取主任务的统计信息
+     *
+     * @param beat 主任务
+     * @return 统计信息
+     */
+    public List<ImsBeatInfo> getBeatSummary(ImsBeat beat) {
+        return imsBeatDao.selectInfo(beat);
+    }
+
+    /**
+     * 更新一项的价格，并重启这个子任务
+     *
+     *
+     * @param beat_id 主任务
+     * @param item_id 子任务
+     * @param price   新价格
+     * @return 更新数
+     */
+    public int updateItemPrice(long beat_id, String item_id, double price) {
+
+        if (price < 1)
+            throw new BusinessException(PRICE_ERR);
+
+        ImsBeatItem item = imsBeatDao.selectItem(item_id, beat_id);
+
+        if (item == null)
+            throw new BusinessException(NO_BEAT_ITEM);
+
+        NumberFormat format = new DecimalFormat("#.#");
+
+        item.setPrice(format.format(price));
+
+        item.setBeatFlg(BeatFlg.Waiting);
+
+        return imsBeatDao.updateBeatFlg(item);
+    }
+
+    public int addBeatItem(ImsBeatItem item, UserSessionBean user) {
+
+        if (item.getBeat_id() < 1)
+            throw new BusinessException(NO_BEAT);
+
+        ImsBeat beat = imsBeatDao.selectById(item.getBeat_id());
+
+        if (beat == null)
+            throw new BusinessException(NO_BEAT);
+
+        item.setCreater(user.getUserName());
+        item.setModifier(user.getUserName());
+
+        if (!StringUtils.isEmpty(item.getCode())) {
+
+            String num_iid = imsBeatDao.selectNumiidByCode(item, beat);
+
+            if (StringUtils.isEmpty(num_iid))
+                throw new BusinessException(NO_IMS_INFO);
+
+            item.setNum_iid(num_iid);
+
+        } else if (!StringUtils.isEmpty(item.getNum_iid())) {
+
+            String code = imsBeatDao.selectCodeByNumiid(item, beat);
+
+            if (StringUtils.isEmpty(code))
+                throw new BusinessException(NO_CMS_INFO);
+
+            item.setCode(code);
+
+        } else {
+            throw new BusinessException(NO_IMS_INFO);
+        }
+
+        int count = imsBeatDao.selectItemCountByNumiid(item, beat);
+
+        if (count > 0)
+            throw new BusinessException(NUM_IID_EXISTS);
+
+        item.setBeatFlg(BeatFlg.Waiting);
+        return imsBeatDao.insertItem(item);
+    }
+
+    public int setItemCode(ImsBeatItem item, UserSessionBean user) {
+
+        if (item.getBeat_id() < 1)
+            throw new BusinessException(NO_BEAT);
+
+        ImsBeat beat = imsBeatDao.selectById(item.getBeat_id());
+
+        if (beat == null)
+            throw new BusinessException(NO_BEAT);
+
+        item.setModifier(user.getUserName());
+
+        if (StringUtils.isEmpty(item.getCode()))
+            throw new BusinessException(NO_CMS_INFO);
+
+        String num_iid = imsBeatDao.selectNumiidByCode(item, beat);
+
+        if (StringUtils.isEmpty(num_iid) || !num_iid.equals(item.getNum_iid()))
+            throw new BusinessException(DIFF_NUM_IID);
+
+        item.setBeatFlg(BeatFlg.Waiting);
+        return imsBeatDao.updateItemCode(item);
+    }
+
+    private void createCheck(ImsBeat beat) {
+
+        CartBean cart = ShopConfigs.getCart(beat.getCart_id());
+
+        OrderChannelBean channel = ChannelConfigs.getChannel(beat.getChannel_id());
+
+        StringBuilder messageBuilder = new StringBuilder();
+
+        if (cart == null) messageBuilder.append("<li>店铺错误</li>");
+
+        if (channel == null) messageBuilder.append("<li>渠道错误</li>");
+
+        if (cart != null && channel != null) {
+            ShopBean shop = ShopConfigs.getShop(channel, cart);
+            if (shop == null)
+                messageBuilder.append(format("<li>没有找到 [ %s ] [ %s ] 店</li>", channel.getName(), cart.getName()));
+        }
+
+        if (StringUtils.isEmpty(beat.getDescription())) {
+            messageBuilder.append("<li>没有填写描述</li>");
+        } else if (imsBeatDao.selectCountByDescription(beat) > 0) {
+            messageBuilder.append("<li>输入的描述已经被占用，请重新输入后，再次尝试</li>");
+        }
+
+        if (StringUtils.isEmpty(beat.getTemplate_url())) {
+            messageBuilder.append("<li>没有输入图片模板</li>");
+        }
+
+        if (StringUtils.isEmpty(beat.getEnd())) {
+            messageBuilder.append("<li>没有输入时间</li>");
+        } else {
+            Date end = DateTimeUtil.parse(beat.getEnd());
+            Date gmtEnd = DateTimeUtil.addHours(end, -8);
+
+            // 如果正确，则直接放回 bean
+            beat.setEnd(DateTimeUtil.format(gmtEnd, DateTimeUtil.DEFAULT_DATETIME_FORMAT));
+        }
+
+        // --- 最终进行错误判断 ---
+        if (messageBuilder.length() > 0) {
+            $info(1, messageBuilder.toString());
+            throw new BusinessException(BEAT_UNVALID, format("<ul>%s</ul>", messageBuilder));
+        }
+    }
+
+    private CellStyle createUnLockStyle(Workbook book) {
+        CellStyle cellStyle = book.createCellStyle();
+
+        cellStyle.setLocked(false);
+
+        return cellStyle;
+    }
+
+    private CellStyle createLockStyle(Workbook book) {
+        CellStyle cellStyle = book.createCellStyle();
+
+        cellStyle.setLocked(true);
+
+        cellStyle.setBorderTop(CellStyle.BORDER_THIN);
+        cellStyle.setBorderBottom(CellStyle.BORDER_THIN);
+        cellStyle.setBorderLeft(CellStyle.BORDER_THIN);
+        cellStyle.setBorderRight(CellStyle.BORDER_THIN);
+
+        if (book instanceof HSSFWorkbook) {
+
+            HSSFCellStyle hssfCellStyle = (HSSFCellStyle) cellStyle;
+
+            hssfCellStyle.setFillForegroundColor(HSSFColor.GREY_40_PERCENT.index);
+            hssfCellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+
+            hssfCellStyle.setTopBorderColor(HSSFColor.GREY_50_PERCENT.index);
+            hssfCellStyle.setRightBorderColor(HSSFColor.GREY_50_PERCENT.index);
+            hssfCellStyle.setBottomBorderColor(HSSFColor.GREY_50_PERCENT.index);
+            hssfCellStyle.setLeftBorderColor(HSSFColor.GREY_50_PERCENT.index);
+
+        } else if (book instanceof XSSFWorkbook) {
+
+            XSSFCellStyle xssfCellStyle = (XSSFCellStyle) cellStyle;
+
+            XSSFColor lightGray = new XSSFColor(Color.lightGray);
+            XSSFColor gray = new XSSFColor(Color.gray);
+
+            xssfCellStyle.setFillForegroundColor(lightGray);
+            xssfCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+            xssfCellStyle.setTopBorderColor(gray);
+            xssfCellStyle.setRightBorderColor(gray);
+            xssfCellStyle.setBottomBorderColor(gray);
+            xssfCellStyle.setLeftBorderColor(gray);
+
+        }
+
+        return cellStyle;
+    }
+
+    private boolean checkRead(ImsBeatItemTemp item) {
+
+        // 检查每项从价格文档读取的内容
+
+        String code = item.getCode();
+
+        String num_iid = item.getNum_iid();
+
+        if (StringUtils.isAnyEmpty(code, num_iid)) {
+            item.setComments("读取错误，请对照提交的表格验证");
+        }
+
+        if (StringUtils.isEmpty(item.getPrice())) {
+            item.setComments("没有获取到价格。");
+        }
+
+        return item.hasComments();
+    }
+
+    private ImsBeatItemTemp createTempItem(long beat_id, Row row, UserSessionBean user) {
+
+        String code = getString(row, 0);
+
+        String num_iid = getString(row, 1);
+
+        String price = getString(row, 2, "#.##");
+
+        String url_key = getString(row, 4);
+
+        String image_name = getString(row, 5);
+
+        ImsBeatItemTemp item = new ImsBeatItemTemp();
+
+        item.setSrc("对应原表行号：" + row.getRowNum());
+
+        item.setBeat_id(beat_id);
+
+        item.setBeatFlg(BeatFlg.Startup);
+
+        item.setCode(code);
+
+        item.setNum_iid(num_iid);
+
+        item.setPrice(price);
+
+        item.setUrl_key(url_key);
+
+        item.setImage_name(image_name);
+
+        item.setCreater(user.getUserName());
+
+        item.setModifier(user.getUserName());
+
+        return item;
     }
 
     private <T extends ImsBeatItem> int insertItems(List<T> products) {
@@ -723,33 +916,13 @@ public class ImsBeatService extends BaseAppService {
 
         String code = item.getCode();
 
-        String url_key = item.getUrl_key();
-        String image_name = item.getImage_name();
-
         // code 由 num_iid 关联反查，如果 num_iid 没查询到，则必然 code 为空
         if (StringUtils.isEmpty(code)) {
             item.setComments("没有从 ims 中找到 code 和 num_iid");
-
-        } else if (StringUtils.isEmpty(image_name)) {
-
-            /*
-             * 优先检查 image name。如果 image name 存在。则不在进行检查。
-             * 否则继续检查 url key
-             */
-
-            if (StringUtils.isEmpty(url_key)) {
-                item.setComments("没有从 cms 中找到 url_key 和 image_name");
-            }
-        }
-
-        // 如果描述存在，则说明商品在其他！同店铺！未结束！的活动里存在
-        if (!StringUtils.isEmpty(item.getDescription())) {
-            item.setComments(format("商品也存在于未结束的任务 [ %s ] 中。此时不能对该商品执行价格披露操作。", item.getDescription()));
         }
 
         return item.hasComments();
     }
-
 
     private int insertTempItems(List<ImsBeatItem> items) {
         int insertLen = MAX_INSERT_LENGTH;
@@ -783,31 +956,6 @@ public class ImsBeatService extends BaseAppService {
         int fix = totalCount % length;
 
         return count + (fix > 0 ? 1 : 0);
-    }
-
-    /**
-     * 下载指定任务的错误文档
-     *
-     * @param beat_id 任务
-     * @param errLev  步骤
-     */
-    public byte[] getErrExcel(long beat_id, String errLev) throws IOException, InvalidFormatException {
-
-        if (StringUtils.isEmpty(errLev))
-            return null;
-
-        // 如果是 C 阶段。则生成后返回
-        if (errLev.equals(ERR_DOC_LEV_C))
-            return writeErrExcelC(beat_id);
-
-        String outputPath = getErrDocPath(beat_id, errLev);
-        File file = new File(outputPath);
-        if (!file.exists())
-            return null;
-
-        try (InputStream inputStream = new FileInputStream(file)) {
-            return IOUtils.toByteArray(inputStream);
-        }
     }
 
     private byte[] writeErrExcelC(long beat_id) throws IOException, InvalidFormatException {
@@ -864,77 +1012,6 @@ public class ImsBeatService extends BaseAppService {
         }
     }
 
-    /**
-     * 控制单个或全部任务的状态
-     *
-     * @param beat_id 任务
-     * @param item_id 子任务
-     * @param action  执行状态
-     * @return 成功处理的任务数
-     */
-    public int control(long beat_id, String item_id, String action) {
-
-        BeatFlg beatFlg = getBeatFlgFromAction(action);
-
-        $info("从 Action 参数 [ %s ] 转换获取 [ %s ]", action, beatFlg);
-
-        if (beatFlg == null)
-            throw new BusinessException(CONTROL_ERR);
-
-        if (!StringUtils.isEmpty(item_id)) {
-            // 查询单个，处理数据。直接更改
-            // 不检查类型，直接用于查询
-            $info("准备单个处理: [ %s ] [ %s ]", beat_id, item_id);
-
-            ImsBeatItem item = imsBeatDao.selectItem(item_id, beat_id);
-
-            if (item == null)
-                throw new BusinessException(NO_BEAT_ITEM);
-
-            item.setBeatFlg(beatFlg);
-
-            int updateCount = imsBeatDao.updateBeatFlg(item);
-
-            $info("已更新 [ %s ]", updateCount);
-
-            return updateCount;
-        }
-
-        // 批量处理所有任务下的子任务
-        // 查询所有数据，重新填充数据
-        // 清空，在重新插入
-
-        $info("准备对任务 [ %s ] 全量更新", beat_id);
-
-        ImsBeat beat = imsBeatDao.selectById(beat_id);
-
-        if (beat == null)
-            throw new BusinessException(NO_BEAT);
-
-        List<ImsBeatItem> items = imsBeatDao.selectItems(beat_id);
-
-        $info("子任务查询 [ %s ]", items.size());
-
-        for (ImsBeatItem item : items) {
-            item.setBeatFlg(beatFlg);
-        }
-
-        transactionRunner.runWithTran(() -> {
-            int deleteCount = imsBeatDao.deleteItems(beat);
-
-            $info("清空数 [ %s ]", deleteCount);
-
-            int insertCount = insertItems(items);
-
-            $info("重新插入 [ %s ]", insertCount);
-
-            if (deleteCount != insertCount)
-                throw new BusinessException(PART_INSERT_ERR);
-        });
-
-        return items.size();
-    }
-
     private BeatFlg getBeatFlgFromAction(String action) {
         switch (action) {
             case "startup":
@@ -946,44 +1023,6 @@ public class ImsBeatService extends BaseAppService {
                 return BeatFlg.Startup;
         }
         return null;
-    }
-
-    /**
-     * 获取主任务的统计信息
-     *
-     * @param beat 主任务
-     * @return 统计信息
-     */
-    public List<ImsBeatInfo> getBeatSummary(ImsBeat beat) {
-        return imsBeatDao.selectInfo(beat);
-    }
-
-    /**
-     * 更新一项的价格，并重启这个子任务
-     *
-     *
-     * @param beat_id 主任务
-     * @param item_id 子任务
-     * @param price   新价格
-     * @return 更新数
-     */
-    public int updateItemPrice(long beat_id, String item_id, double price) {
-
-        if (price < 1)
-            throw new BusinessException(PRICE_ERR);
-
-        ImsBeatItem item = imsBeatDao.selectItem(item_id, beat_id);
-
-        if (item == null)
-            throw new BusinessException(NO_BEAT_ITEM);
-
-        NumberFormat format = new DecimalFormat("#.#");
-
-        item.setPrice(format.format(price));
-
-        item.setBeatFlg(BeatFlg.Waiting);
-
-        return imsBeatDao.updateBeatFlg(item);
     }
 }
 

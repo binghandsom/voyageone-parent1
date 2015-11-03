@@ -113,4 +113,24 @@ public class ImsBeatDao extends BaseDao {
     public List<ImsBeatInfo> selectInfo(ImsBeat beat) {
         return selectList("ims_bt_beat_item_selectInfo", beat);
     }
+
+    public String selectNumiidByCode(ImsBeatItem item, ImsBeat beat) {
+        return selectOne("ims_bt_product_selectNumiidByCode", parameters("item", item, "beat", beat));
+    }
+
+    public String selectCodeByNumiid(ImsBeatItem item, ImsBeat beat) {
+        return selectOne("ims_bt_product_selectCodeByNumiid", parameters("item", item, "beat", beat, "main_product_flg", 1));
+    }
+
+    public int insertItem(ImsBeatItem item) {
+        return insert("ims_bt_beat_item_insertItem", item);
+    }
+
+    public int updateItemCode(ImsBeatItem item) {
+        return update("ims_bt_beat_item_updateItemCode", item);
+    }
+
+    public int selectItemCountByNumiid(ImsBeatItem item, ImsBeat beat) {
+        return selectOne("ims_bt_beat_item_selectItemCountByNumiid", parameters("item", item, "beat", beat));
+    }
 }

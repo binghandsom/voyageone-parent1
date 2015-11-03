@@ -59,8 +59,9 @@ public class OmsCommonServiceImpl implements OmsCommonService {
 				String searchskuPath = Properties.readValue(PropKey.SEARCHSKUListCN_PATH);
 				result = HttpUtils.post(searchskuPath, param);
 			}
-		// 珠宝的场合
-		} else if (OmsCodeConstants.OrderChannelId.JW.equals(inFormServiceSearchSKU.getChannelId())) {
+		// 珠宝,BCBG的场合
+		} else if (OmsCodeConstants.OrderChannelId.JW.equals(inFormServiceSearchSKU.getChannelId()) ||
+						OmsCodeConstants.OrderChannelId.BCBG.equals(inFormServiceSearchSKU.getChannelId())) {
 			String searchskuPath = Properties.readValue(PropKey.SEARCHSKUINFO_PATH);
 			result = getSKUInfoByWebService(searchskuPath, inFormServiceSearchSKU);
 		// 其他的场合（CMS 在美国）

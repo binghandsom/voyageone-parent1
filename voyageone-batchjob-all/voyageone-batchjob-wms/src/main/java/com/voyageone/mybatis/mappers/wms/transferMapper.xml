@@ -299,4 +299,75 @@
         WHERE
             created &lt;= #{process_time}
     </delete>
+
+    <!-- 取得Receipt Confirmation的记录 -->
+    <select id="wms_bt_client_shipment_getReceiptConfirmation" parameterType="String" resultType="com.voyageone.batch.wms.modelbean.ReceiptConfirmationBean">
+        SELECT
+            tm.brand,
+            tm.cartonNumber,
+            tm.customerPoNumber,
+            tm.custPoLineNo,
+            tm.upc,
+            tm.customerItem,
+            tm.quantityReceived,
+            tm.receiptDate,
+            tm.poNumber,
+            tm.shipmentId,
+            tm.transferId
+        FROM
+            (
+                SELECT
+                    client_shipment.brand AS brand,
+                    client_package.ucc128_carton_no AS cartonNumber,
+                    package_item.sto_no AS customerPoNumber,
+                    package_item.sto_line_no AS custPoLineNo,
+                    package_item.upc AS upc,
+                    transfer_item.transfer_sku AS customerItem,
+                    sum(transfer_item.transfer_qty) AS quantityReceived,
+                    transfer_item.created AS receiptDate,
+                    transfer.transfer_id AS poNumber,
+                    client_shipment.shipment_id AS shipmentId,
+                    transfer.transfer_id AS transferId
+                FROM
+                    wms_bt_client_shipment client_shipment
+                INNER JOIN wms_bt_client_package client_package ON client_shipment.shipment_id = client_package.shipment_id
+                INNER JOIN wms_bt_client_package_item package_item ON client_package.shipment_id = package_item.shipment_id
+                AND client_package.package_id = package_item.package_id
+                INNER JOIN wms_bt_transfer_item transfer_item ON transfer_item.transfer_barcode = package_item.upc
+                INNER JOIN wms_bt_transfer transfer ON transfer.transfer_id = transfer_item.transfer_id
+                WHERE
+                    client_shipment.syn_flg = '0'
+                AND client_shipment.transfer_id = 0
+                AND client_shipment.active = '1'
+                AND client_shipment.order_channel_id = #{OrderChannelID}
+                AND client_shipment.transfer_id = 0
+                AND transfer.order_channel_id = #{OrderChannelID}
+                AND transfer.transfer_type = '3'
+                AND transfer.transfer_id > 0
+                AND transfer.transfer_status = '1'
+                GROUP BY
+                    brand,
+                    upc,
+                    customerPoNumber,
+                    cartonNumber
+            ) tm
+        GROUP BY
+            tm.upc
+    </select>
+
+    <update id="wms_bt_client_shipment_updateReceiptConfirmInfo" parameterType="HashMap">
+        UPDATE
+        wms_bt_client_shipment
+        SET
+        syn_flg = '1',
+        transfer_id = #{transferId},
+        modified = now(),
+        modifier = #{taskName}
+        WHERE
+        shipment_id = #{shipmentId}
+        AND
+        order_channel_id= #{orderChannelId}
+        AND
+        brand = #{brand}
+    </update>
 </mapper>

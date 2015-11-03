@@ -1,8 +1,10 @@
 package com.voyageone.common.components.tmall;
 
 import com.taobao.api.ApiException;
+import com.taobao.api.request.ItemSkusGetRequest;
 import com.taobao.api.request.TmallItemSchemaUpdateRequest;
 import com.taobao.api.request.TmallItemUpdateSchemaGetRequest;
+import com.taobao.api.response.ItemSkusGetResponse;
 import com.taobao.api.response.TmallItemSchemaUpdateResponse;
 import com.taobao.api.response.TmallItemUpdateSchemaGetResponse;
 import com.taobao.top.schema.exception.TopSchemaException;
@@ -65,6 +67,29 @@ public class TbItemService extends TbBase {
 
         req.setXmlData(xmlData);
 
+        return reqTaobaoApi(shopBean, req);
+    }
+
+    /**
+     * 根据商品ID列表获取SKU信息
+     * @param shopBean
+     * @param numIid
+     * @param fields
+     * @return
+     * @throws ApiException
+     */
+    public ItemSkusGetResponse getSkuInfo(ShopBean shopBean,String numIid,String fields ) throws ApiException {
+
+        logger.info("根据商品ID列表获取SKU信息 " + numIid);
+        ItemSkusGetRequest req = new ItemSkusGetRequest();
+        req.setFields(fields);
+        req.setNumIids(numIid);
+
+        ItemSkusGetResponse response = reqTaobaoApi (shopBean, req);
+        if (response.getErrorCode() != null)
+        {
+            logger.error(response.getSubMsg());
+        }
         return reqTaobaoApi(shopBean, req);
     }
 }
