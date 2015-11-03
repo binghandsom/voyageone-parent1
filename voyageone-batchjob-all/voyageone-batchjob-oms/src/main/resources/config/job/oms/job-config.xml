@@ -315,6 +315,12 @@
 				
 				<!-- sneakerhead 88店庆每小时统计消费前10顾客邮件 -->
 				<ref bean="Sneakerhead88Top10TaskContri" />
+
+				<!-- BCBG Daily Sales推送 -->
+				<ref bean="postBCBGDailySalesJobTaskContri" />
+
+				<!-- BCBG Demands推送 -->
+				<ref bean="postBCBGDemandJobTaskContri" />
 			
 			</list>
 		</property>

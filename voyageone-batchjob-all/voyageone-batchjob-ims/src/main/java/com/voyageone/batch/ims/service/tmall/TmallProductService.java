@@ -1585,6 +1585,7 @@ public class TmallProductService implements PlatformServiceInterface {
                         throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("tmall item shop_category's platformProps must have one prop!"));
                     }
 
+                    /*
                     PlatformPropBean platformProp = platformProps.get(0);
                     MultiCheckField field = (MultiCheckField) FieldTypeEnum.createField(FieldTypeEnum.MULTICHECK);
                     String platformPropId = platformProp.getPlatformPropId();
@@ -1602,6 +1603,7 @@ public class TmallProductService implements PlatformServiceInterface {
                         }
                         contextBeforeUploadImage.addCustomField(field);
                     }
+                    */
                     break;
                 }
             }

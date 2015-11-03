@@ -849,6 +849,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
                 // 处理失败
                 if (wsdlResponseBean == null) {
                     logger.error("cms 数据导入处理，新产品推送失败！");
+                    $info("cms 数据导入处理，新产品推送失败！");
                     isPostSuccess = false;
                     break;
                 }
@@ -880,9 +881,11 @@ public class CmsGetSuperFeedService extends BaseTaskService {
                 // 插入ZZ_Work_Superfeed_Full
                 if (!SuperfeedFullInsert(aSuperfeedjebeanlist, channel_id, modelFailList, productFailList)) {
                     logger.error("插入ZZ_Work_Superfeed_Full 失败");
+                    $info("插入ZZ_Work_Superfeed_Full 失败");
                 }
             } else {
 //				// 更新update数据flag
+                // 更新update数据flag
                 superfeeddao.changeUpdateDateFlag(Feed.getVal1(channel_id, FeedEnums.Name.table_id),
                         keyword,
                         Feed.getVal1(channel_id, FeedEnums.Name.category_column),
@@ -994,10 +997,12 @@ public class CmsGetSuperFeedService extends BaseTaskService {
             // 处理失败
             if (wsdlResponseBean == null) {
                 logger.error("产品Attribute处理失败，处理失败！");
+                $info("产品Attribute处理失败，处理失败！");
                 isSuccess = false;
             } else if (wsdlResponseBean.getResult().equals("NG")) {
                 isSuccess = false;
                 logger.error("产品Attribute处理失败，MessageCode = " + wsdlResponseBean.getMessageCode() + ",Message = " + wsdlResponseBean.getMessage());
+                $info("产品Attribute处理失败，MessageCode = " + wsdlResponseBean.getMessageCode() + ",Message = " + wsdlResponseBean.getMessage());
                 logIssue("cms 数据导入处理", "产品Attribute处理失败，MessageCode = " + wsdlResponseBean.getMessageCode() + ",Message = " + wsdlResponseBean.getMessage());
             }
         } else {
@@ -1033,6 +1038,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 
             if (productBeans_full.size() != 1) {
                 logger.error("更新产品处理异常 code=" + productBean.getP_code() + ",抽出件数=" + productBeans_full.size());
+                $info("更新产品处理异常 code=" + productBean.getP_code() + ",抽出件数=" + productBeans_full.size());
                 logIssue("cms 数据导入处理", "更新产品处理异常 code=" + productBean.getP_code() + ",抽出件数=" + productBeans_full.size());
                 continue;
             }
@@ -1082,6 +1088,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 //				// 更新ZZ_Work_Superfeed_Full
 //				if (!SuperfeedFullUpdate(channel_id, productBeans.get(i).getP_code())){
 //					logger.error("更新ZZ_Work_Superfeed_Full 失败");
+//					$info("更新ZZ_Work_Superfeed_Full 失败");
 //					logIssue("cms 数据导入处理", "更新ZZ_Work_Superfeed_Full 失败，code=" + productBeans.get(i).getP_code(),
 //							ErrorType.BatchJob, SubSystem.CMS);
 //				}
@@ -1111,6 +1118,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
             // 处理失败 跳过
             if (wsdlResponseBean == null) {
                 logger.error("更新产品Attribute处理失败，处理失败！");
+                $info("更新产品Attribute处理失败，处理失败！");
                 continue;
             }
 
@@ -1122,6 +1130,12 @@ public class CmsGetSuperFeedService extends BaseTaskService {
                 if (wsdlResponseBean.getResult().equals("NG")) {
                     logger.error("更新产品处理失败，MessageCode = " + wsdlResponseBean.getMessageCode() + ",Message = " + wsdlResponseBean.getMessage());
                     logIssue("cms 数据导入处理", "更新产品处理异常 code=" + productBean.getP_code() + ",抽出件数=" + productBeans_full.size());
+                    $info("更新产品处理失败，MessageCode = " + wsdlResponseBean.getMessageCode() + ",Message = " + wsdlResponseBean.getMessage());
+                    logIssue("cms 数据导入处理", String.format("更新产品处理异常 code= %s ,抽出件数= %s ,Message = %s ,MessageCode = %s",
+                            productBean.getP_code(),
+                            productBeans_full.size(),
+                            wsdlResponseBean.getMessageCode(),
+                            wsdlResponseBean.getMessage()));
                 }
                 // web servies 返回数据失败
                 else {
@@ -1132,12 +1146,14 @@ public class CmsGetSuperFeedService extends BaseTaskService {
                         failureMessage = failureMessage + "Messag(" + b + ")=" + productUpdateDetailBeans.get(b).getResultMessage() + ";";
                     }
                     logger.error("更新产品处理失败，" + failureMessage);
+                    $info("更新产品处理失败，" + failureMessage);
                     logIssue("cms 数据导入处理", "更新产品处理失败，" + failureMessage);
                 }
             } else {
                 // 更新ZZ_Work_Superfeed_Full
                 if (!SuperfeedFullUpdate(channel_id, productBean.getP_code())) {
                     logger.error("更新ZZ_Work_Superfeed_Full 失败");
+                    $info("更新ZZ_Work_Superfeed_Full 失败");
                     logIssue("cms 数据导入处理", "更新ZZ_Work_Superfeed_Full 失败，code=" + productBean.getP_code());
                 }
             }
@@ -1370,10 +1386,12 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 //			} catch (IOException e) {
 //				e.printStackTrace();
 //				logger.error(e.getMessage());
+//				$info(e.getMessage());
 //			}
 //		} catch (FileNotFoundException e) {
 //			e.printStackTrace();
 //			logger.error(e.getMessage());
+//			$info(e.getMessage());
 //		}
 //	}
 
@@ -1401,6 +1419,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
             wsdlresponsebean = JsonUtil.jsonToBean(response, WsdlResponseBean.class);
         } catch (Exception e) {
             logger.error("json bean 新数据 post 失败: web servies =" + Codes.getCodeName("WEB_SERVIES_URL_FEED", "01"));
+            $info("json bean 新数据 post 失败: web servies =" + Codes.getCodeName("WEB_SERVIES_URL_FEED", "01"));
             logIssue(e);
         }
 
@@ -1429,6 +1448,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
             wsdlresponsebean = JsonUtil.jsonToBean(response, WsdlResponseBean.class);
         } catch (Exception e) {
             logger.error("json bean 更新数据 post 失败: web servies =" + Codes.getCodeName("WEB_SERVIES_URL_FEED", "02"));
+            $info("json bean 更新数据 post 失败: web servies =" + Codes.getCodeName("WEB_SERVIES_URL_FEED", "02"));
             logIssue(e);
         }
         return wsdlresponsebean;
@@ -1456,6 +1476,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
             wsdlresponsebean = JsonUtil.jsonToBean(response, WsdlResponseBean.class);
         } catch (Exception e) {
             logger.error("json bean 属性数据 post 失败: web servies =" + Codes.getCodeName("WEB_SERVIES_URL_FEED", "03"));
+            $info("json bean 属性数据 post 失败: web servies =" + Codes.getCodeName("WEB_SERVIES_URL_FEED", "03"));
             logIssue(e);
         }
         return wsdlresponsebean;
@@ -1500,6 +1521,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
                         file.delete();
                         isSuccess = false;
                         logger.error(filePathName + "下载异常！");
+                        $info(filePathName + "下载异常！");
                         logIssue("cms 数据导入处理", filePathName + "下载异常！");
                     } else {
                         $info(filePathName + "文件不存在.");
@@ -1534,6 +1556,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 
         if (!file.renameTo(file_backup)) {
             logger.error("产品文件备份失败");
+            $info("产品文件备份失败");
         }
 
         $info("备份处理文件结束");
@@ -1560,6 +1583,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
                     if (Integer.parseInt(result) == 0) {
                         if (superfeeddao.insertFeedAttributeNew(channel_id, attribute, allattribute) < 0) {
                             logger.error("AttributeList 插入失败 attribute = " + attribute + "," + allattribute);
+                            $info("AttributeList 插入失败 attribute = " + attribute + "," + allattribute);
                             logIssue("cms 数据导入处理", "AttributeList 插入失败 attribute= " + attribute);
                         }
                     }
@@ -1568,6 +1592,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 //					if (superfeeddao.deleteData(sql) >= 0) {
 //						if (superfeeddao.insertFeedAttribute(channel_id, attribute, Feed.getVal1(channel_id, FeedEnums.Name.table_id)) < 0) {
 //							logger.error("AttributeList 插入失败 attribute = " + attribute);
+//							$info("AttributeList 插入失败 attribute = " + attribute);
 //							logIssue("cms 数据导入处理", "AttributeList 插入失败 attribute= " + attribute);
 //						}
 //					}
@@ -1638,6 +1663,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
             if (count < 0) {
                 isSuccess = false;
                 logger.error("插入ZZ_Work_Superfeed_Full产品处理失败");
+                $info("插入ZZ_Work_Superfeed_Full产品处理失败");
             }
         }
 
@@ -1666,9 +1692,11 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 
                 if (result <= 0) {
                     logger.error("更新 ZZ_Work_Superfeed_Full表 delete失败，code= " + product_code);
+                    $info("更新 ZZ_Work_Superfeed_Full表 delete失败，code= " + product_code);
                 }
             } else {
                 logger.error("更新 ZZ_Work_Superfeed_Full表 insert失败，code= " + product_code);
+                $info("更新 ZZ_Work_Superfeed_Full表 insert失败，code= " + product_code);
             }
         });
 
