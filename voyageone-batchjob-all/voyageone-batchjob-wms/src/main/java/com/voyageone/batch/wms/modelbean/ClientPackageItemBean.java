@@ -14,6 +14,7 @@ public class ClientPackageItemBean {
     private String sto_line_no;
     private String article_number;
     private String shipped_qty;
+    private int calc_qty;
     private String fact_unit_nom;
     private String base_uom;
     private String stock_type;
@@ -88,6 +89,14 @@ public class ClientPackageItemBean {
 
     public void setShipped_qty(String shipped_qty) {
         this.shipped_qty = shipped_qty;
+    }
+
+    public int getCalc_qty() {
+        return calc_qty;
+    }
+
+    public void setCalc_qty(int calc_qty) {
+        this.calc_qty = calc_qty;
     }
 
     public String getFact_unit_nom() {
