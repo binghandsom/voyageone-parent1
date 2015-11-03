@@ -870,6 +870,9 @@ public class ConstructPropValue {
         customPlatformPropMapping.setPlatformPropId("basecolor");
         platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
 
+        customPlatformPropMapping.setPlatformPropId("in_prop_1627207");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
         customPlatformPropMapping.setPlatformPropId("std_size_extends_20509");
         platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
 
@@ -1207,6 +1210,11 @@ public class ConstructPropValue {
 
         tmallSkuInfo.setProp_id("alias_name");
         skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDCOLOR_ALIASNAME);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("in_prop_1627207");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDCOLOR_COLOR, SkuTemplateSchema.SkuTemplate_2_Schema.SKU_COLOR);
         tmallSkuInfo.setSku_type(skuType);
         platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
 
