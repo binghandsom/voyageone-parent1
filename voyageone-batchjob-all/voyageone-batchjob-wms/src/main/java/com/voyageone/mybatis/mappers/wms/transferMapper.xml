@@ -348,7 +348,8 @@
                 GROUP BY
                     brand,
                     upc,
-                    customerPoNumber
+                    customerPoNumber,
+                    cartonNumber
             ) tm
         GROUP BY
             tm.upc

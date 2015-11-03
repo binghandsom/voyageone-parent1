@@ -160,10 +160,6 @@ public class ImsTaskBeatController extends BaseController {
         DtResponse<List<ImsBeatItem>> dtResponse = imsBeatService.getBeatItems(dtRequest.getParam().beat,
                 dtRequest.getParam().flg, search.getValue(), offset, limit);
 
-        // 格式化将显示数据的时期
-        for (ImsBeatItem item : dtResponse.getData())
-            item.setModified(DateTimeUtil.getLocalTime(item.getModified(), getUserTimeZone()));
-
         dtResponse.setDraw(dtRequest.getDraw());
         dtResponse.setRecordsFiltered(dtResponse.getRecordsTotal());
 
@@ -208,7 +204,7 @@ public class ImsTaskBeatController extends BaseController {
     public AjaxResponseBean setCode(@RequestBody ImsBeatItem item) {
 
         int count = imsBeatService.setItemCode(item, getUser());
-        
+
         return success(count);
     }
 
