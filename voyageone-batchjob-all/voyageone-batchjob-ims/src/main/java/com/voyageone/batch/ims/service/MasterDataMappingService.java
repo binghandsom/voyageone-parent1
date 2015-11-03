@@ -153,8 +153,8 @@ public class MasterDataMappingService {
             if (masterPropMapping == null) {
                 logger.debug("can not find master mapping!");
             }
-            if ("description".equals(platformProp.getPlatformPropId())) {
-                logger.debug("find description");
+            if ("vertical_image".equals(platformProp.getPlatformPropId())) {
+                logger.debug("find vertical_image");
             }
 
             //如果主数据中有他的映射关系，第三步
