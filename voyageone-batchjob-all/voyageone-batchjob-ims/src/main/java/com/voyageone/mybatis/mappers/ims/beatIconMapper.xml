@@ -7,10 +7,10 @@
             beat.cart_id,
             beat.targets,
             item.`code`,
-            item.url_key,
-            item.image_name,
             item.num_iid,
             item.price,
+            beat.repeat,
+            beat.extended,
             beat.template_url temp_url,
             item.beat_flg     dbBeat_flg,
             item.modified,
@@ -40,15 +40,15 @@
     <select id="cms_bt_product_selectImageInfo" parameterType="com.voyageone.batch.ims.bean.BeatPicBean"
             resultType="com.voyageone.batch.ims.service.beat.ImsBeatImageInfo">
         SELECT
-            p.channel_id,
-            code,
-            url_key,
-            image_name,
-            image_id
-        FROM voyageone_cms.cms_bt_product p JOIN voyageone_cms.cms_bt_product_image pi ON p.product_id = pi.product_id
+        p.channel_id, code, url_key, image_name, image_id
+        FROM voyageone_cms.cms_bt_product p LEFT JOIN voyageone_cms.cms_bt_product_image pi ON p.product_id = pi.product_id
         WHERE p.channel_id = #{beat.channel_id}
-          AND image_id IN (${beat.targets})
-          AND image_type_id = #{image_type_id}
-          AND p.code = #{beat.code}
+        AND image_id IN (
+        <if test="!beat.extended">${beat.targets}</if>
+        <if test="beat.extended">${targets}</if>
+        )
+        AND image_type_id = #{image_type_id}
+        AND p.code = #{beat.code}
+        ORDER BY pi.image_id
     </select>
 </mapper>

@@ -24,6 +24,10 @@ public interface ImsUrlConstants {
         String CONTROL = "control";
 
 		String SET_PRICE = "setItemPrice";
+
+		String SET_CODE = "setCode";
+
+		String ADD_CODE = "addCode";
     }
 
 }

@@ -457,6 +457,16 @@ public class OrderExtend implements java.io.Serializable {
 	//	订单折扣
 	private String orderDiscount;
 
+	//	BCBG订单使用 start
+	private String shipDate;
+	private String UPC;
+	private String style;
+	private String color;
+	private String size;
+	private String lineNumber;
+	private String MSRP;
+	//	BCBG订单使用 end
+
 	public static long getSerialVersionUID() {
 		return serialVersionUID;
 	}
@@ -1483,5 +1493,61 @@ public class OrderExtend implements java.io.Serializable {
 
 	public void setOrderDiscount(String orderDiscount) {
 		this.orderDiscount = orderDiscount;
+	}
+
+	public String getUPC() {
+		return UPC;
+	}
+
+	public void setUPC(String UPC) {
+		this.UPC = UPC;
+	}
+
+	public String getStyle() {
+		return style;
+	}
+
+	public void setStyle(String style) {
+		this.style = style;
+	}
+
+	public String getColor() {
+		return color;
+	}
+
+	public void setColor(String color) {
+		this.color = color;
+	}
+
+	public String getSize() {
+		return size;
+	}
+
+	public void setSize(String size) {
+		this.size = size;
+	}
+
+	public String getLineNumber() {
+		return lineNumber;
+	}
+
+	public void setLineNumber(String lineNumber) {
+		this.lineNumber = lineNumber;
+	}
+
+	public String getMSRP() {
+		return MSRP;
+	}
+
+	public void setMSRP(String MSRP) {
+		this.MSRP = MSRP;
+	}
+
+	public String getShipDate() {
+		return shipDate;
+	}
+
+	public void setShipDate(String shipDate) {
+		this.shipDate = shipDate;
 	}
 }

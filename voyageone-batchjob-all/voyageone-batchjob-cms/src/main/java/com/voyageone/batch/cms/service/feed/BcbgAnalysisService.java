@@ -299,7 +299,7 @@ public class BcbgAnalysisService extends BaseTaskService {
 
         protected void fromData(File file, File styleFile) {
             from(file);
-            //from(styleFile);
+            from(styleFile);
         }
     }
 }

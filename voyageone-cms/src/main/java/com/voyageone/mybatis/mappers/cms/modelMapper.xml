@@ -571,6 +571,7 @@
 				is_published = #{isPublished,jdbcType=BOOLEAN},
 			</if>
 			publish_status = 0,
+			publish_promotion_price_status = 0,
 			modified = now(),
 			<if test="modifier != null">
 				modifier = #{modifier,jdbcType=VARCHAR},

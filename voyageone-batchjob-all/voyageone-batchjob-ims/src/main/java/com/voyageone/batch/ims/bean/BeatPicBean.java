@@ -25,7 +25,9 @@ public class BeatPicBean {
 
     private BeatFlg beat_flg;
 
-    private String url_key;
+    private boolean repeat;
+
+    private boolean extended;
 
     private String modified;
 
@@ -148,11 +150,19 @@ public class BeatPicBean {
         this.targets = targets;
     }
 
-    public String getUrl_key() {
-        return url_key;
+    public boolean isRepeat() {
+        return repeat;
     }
 
-    public void setUrl_key(String url_key) {
-        this.url_key = url_key;
+    public void setRepeat(boolean repeat) {
+        this.repeat = repeat;
+    }
+
+    public boolean isExtended() {
+        return extended;
+    }
+
+    public void setExtended(boolean extended) {
+        this.extended = extended;
     }
 }

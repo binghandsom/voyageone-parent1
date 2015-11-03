@@ -26,7 +26,17 @@ public class StoreConfigEnums {
         /**
          * 客户库存同步
          */
-        client_inventory_syn_type
+        client_inventory_syn_type,
+
+        /**
+         * 公司ID
+         */
+        site,
+
+        /**
+         * 库存位置编码
+         */
+        storage_location
     }
 
     /**

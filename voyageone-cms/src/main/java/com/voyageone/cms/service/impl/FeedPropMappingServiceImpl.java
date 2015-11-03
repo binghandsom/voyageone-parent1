@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static com.voyageone.cms.CmsMsgConstants.FeedPropMappingMsg.*;
 import static com.voyageone.core.MessageConstants.ComMsg.NOT_FOUND_CHANNEL;
@@ -231,8 +232,9 @@ public class FeedPropMappingServiceImpl extends BaseAppService implements FeedPr
             count = feedPropMappingDao.updateIgnoreValues(propList, channel_id, userName);
         } else {
             // 区分开忽略是插入还是更新
-            propList.addAll(propsWithIgnore);
-            Map<Integer, List<FeedMappingProp>> map = propList.stream().collect(groupingBy(FeedMappingProp::getProp_id, toList()));
+            Map<Integer, List<FeedMappingProp>> map = Stream
+                    .concat(propList.stream(), propsWithIgnore.stream())
+                    .collect(groupingBy(FeedMappingProp::getProp_id, toList()));
 
             List<FeedMappingProp> inserting = map.entrySet().stream()
                     .filter(e -> e.getValue().size() == 1)

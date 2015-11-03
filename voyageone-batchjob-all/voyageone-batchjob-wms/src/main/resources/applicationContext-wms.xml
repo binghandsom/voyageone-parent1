@@ -41,6 +41,10 @@
         <task:scheduled ref="wmsCreateReportJobTask" method="run" cron="0 0/5 0-23 * * ?"/>
         <!--第三方销售文件， 上传FTP服务器　-->
         <task:scheduled ref="wmsUploadFileToThirdJobTask" method="run" cron="0 0 0/1 * * ?"/>
+
+        <!--Receipt Confirmation 文件生成　-->
+        <task:scheduled ref="wmsReceiptConfirmationJob" method="run" cron="15 0/5 0-23 * * ?"/>
+
     </task:scheduled-tasks>
 
     <!-- 必须需要 -->

@@ -1755,6 +1755,7 @@
 	  UPDATE voyageone_ims.ims_bt_product a
 	  LEFT JOIN cms_bt_relation_category_product t ON a.product_id = t.product_id
 	  SET a.publish_status = 0,
+	  	   a.publish_promotion_price_status = 0,
 	     a.modified = now()
 	WHERE
 	    t.category_id = #{categoryId,jdbcType=INTEGER}
