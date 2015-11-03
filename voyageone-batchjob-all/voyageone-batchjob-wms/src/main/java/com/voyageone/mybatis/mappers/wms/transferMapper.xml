@@ -319,37 +319,186 @@
                 SELECT
                     client_shipment.brand AS brand,
                     client_package.ucc128_carton_no AS cartonNumber,
-                    package_item.sto_no AS customerPoNumber,
-                    package_item.sto_line_no AS custPoLineNo,
-                    package_item.upc AS upc,
-                    transfer_item.transfer_sku AS customerItem,
-                    sum(transfer_item.transfer_qty) AS quantityReceived,
-                    transfer_item.created AS receiptDate,
-                    transfer.transfer_id AS poNumber,
+                    client_package_item.sto_no AS customerPoNumber,
+                    client_package_item.sto_line_no AS custPoLineNo,
+                    client_package_item.upc AS upc,
+                    client_package_item.article_number AS customerItem,
+                    client_package_item.shipped_qty AS quantityReceived,
+                    shipment_transfer.created AS receiptDate,
+                    shipment_transfer.transfer_id AS poNumber,
                     client_shipment.shipment_id AS shipmentId,
-                    transfer.transfer_id AS transferId
+                    shipment_transfer.transfer_id AS transferId
                 FROM
                     wms_bt_client_shipment client_shipment
-                INNER JOIN wms_bt_client_package client_package ON client_shipment.shipment_id = client_package.shipment_id
-                INNER JOIN wms_bt_client_package_item package_item ON client_package.shipment_id = package_item.shipment_id
-                AND client_package.package_id = package_item.package_id
-                INNER JOIN wms_bt_transfer_item transfer_item ON transfer_item.transfer_barcode = package_item.upc
-                INNER JOIN wms_bt_transfer transfer ON transfer.transfer_id = transfer_item.transfer_id
+                LEFT JOIN wms_bt_client_package_item client_package_item ON client_shipment.shipment_id = client_package_item.shipment_id
+                LEFT JOIN wms_bt_client_package client_package ON client_package_item.package_id = client_package.package_id
+                INNER JOIN (
+                    SELECT
+                        package_item.shipment_id AS shipment_id,
+                        transfer.transfer_id AS transfer_id,
+                        package_item.upc AS upc,
+                        package_item.shipped_qty AS shipped_qty,
+                        transfer.transfer_qty AS transfer_qty,
+                        package_item.ucc128 AS ucc128,
+                        transfer.transfer_sku AS transfer_sku,
+                        package_item.sto_no AS sto_no,
+                        package_item.sto_line_no AS sto_line_no,
+                        transfer.created AS created
+                    FROM
+                        (
+                            SELECT
+                                pi.shipment_id AS shipment_id,
+                                s.transfer_id AS transfer_id,
+                                p.ucc128_carton_no AS ucc128,
+                                pi.article_number AS article_number,
+                                pi.upc AS upc,
+                                pi.sto_no AS sto_no,
+                                pi.sto_line_no AS sto_line_no,
+                                pi.package_id AS package_id,
+                                IFNULL(
+                                    SUM(
+                                        CONVERT (pi.shipped_qty, SIGNED)
+                                    ),
+                                    0
+                                ) AS shipped_qty
+                            FROM
+                                wms_bt_client_shipment s
+                            LEFT JOIN wms_bt_client_package_item pi ON s.shipment_id = pi.shipment_id
+                            LEFT JOIN wms_bt_client_package p ON pi.package_id = p.package_id
+                            WHERE
+                                s.syn_flg = '0'
+                            AND s.transfer_id = 0
+                            AND s.active = '1'
+                            GROUP BY
+                                pi.shipment_id,
+                                pi.article_number
+                        ) package_item
+                    INNER JOIN (
+                        SELECT
+                            t.order_channel_id AS order_channel_id,
+                            t.po_number AS po_number,
+                            ti.transfer_id AS transfer_id,
+                            ti.transfer_package_id AS transfer_package_id,
+                            ti.transfer_item_id AS transfer_item_id,
+                            ti.transfer_sku AS transfer_sku,
+                            IFNULL(SUM(ti.transfer_qty), 0) AS transfer_qty,
+                            ti.created AS created
+                        FROM
+                            wms_bt_transfer_item ti
+                        LEFT JOIN wms_bt_transfer t ON ti.transfer_id = t.transfer_id
+                        AND t.order_channel_id = #{OrderChannelID}
+                        INNER JOIN wms_bt_transfer_detail d ON d.transfer_package_id = ti.transfer_package_id
+                        AND d.transfer_id = ti.transfer_id
+                        WHERE
+                            t.transfer_type = '3'
+                        AND t.transfer_id > 0
+                        AND t.transfer_status = '1'
+                        GROUP BY
+                            ti.transfer_id,
+                            ti.transfer_sku
+                    ) transfer ON transfer.transfer_sku = package_item.article_number
+                    AND transfer.transfer_qty = package_item.shipped_qty
+                    GROUP BY
+                        package_item.upc
+                ) shipment_transfer ON client_package_item.upc = shipment_transfer.upc
                 WHERE
                     client_shipment.syn_flg = '0'
                 AND client_shipment.transfer_id = 0
                 AND client_shipment.active = '1'
-                AND client_shipment.order_channel_id = #{OrderChannelID}
-                AND client_shipment.transfer_id = 0
-                AND transfer.order_channel_id = #{OrderChannelID}
-                AND transfer.transfer_type = '3'
-                AND transfer.transfer_id > 0
-                AND transfer.transfer_status = '1'
-                GROUP BY
-                    brand,
-                    upc,
-                    customerPoNumber,
-                    cartonNumber
+                UNION ALL
+                    SELECT
+                        client_shipment.brand AS brand,
+                        client_package.ucc128_carton_no AS cartonNumber,
+                        client_package_item.sto_no AS customerPoNumber,
+                        client_package_item.sto_line_no AS custPoLineNo,
+                        client_package_item.upc AS upc,
+                        client_package_item.article_number AS customerItem,
+                        LPAD(
+                            shipment_transfer.transfer_qty,
+                            13,
+                            '0'
+                        ) AS quantityReceived,
+                        shipment_transfer.created AS receiptDate,
+                        shipment_transfer.transfer_id AS poNumber,
+                        client_shipment.shipment_id AS shipmentId,
+                        shipment_transfer.transfer_id AS transferId
+                    FROM
+                        wms_bt_client_shipment client_shipment
+                    LEFT JOIN wms_bt_client_package_item client_package_item ON client_shipment.shipment_id = client_package_item.shipment_id
+                    LEFT JOIN wms_bt_client_package client_package ON client_package_item.package_id = client_package.package_id
+                    INNER JOIN (
+                        SELECT
+                            package_item.shipment_id AS shipment_id,
+                            transfer.transfer_id AS transfer_id,
+                            package_item.upc AS upc,
+                            package_item.shipped_qty AS shipped_qty,
+                            transfer.transfer_qty AS transfer_qty,
+                            package_item.ucc128 AS ucc128,
+                            transfer.transfer_sku AS transfer_sku,
+                            package_item.sto_no AS sto_no,
+                            package_item.sto_line_no AS sto_line_no,
+                            transfer.created AS created
+                        FROM
+                            (
+                                SELECT
+                                    pi.shipment_id AS shipment_id,
+                                    s.transfer_id AS transfer_id,
+                                    p.ucc128_carton_no AS ucc128,
+                                    pi.article_number AS article_number,
+                                    pi.upc AS upc,
+                                    pi.sto_no AS sto_no,
+                                    pi.sto_line_no AS sto_line_no,
+                                    pi.package_id AS package_id,
+                                    IFNULL(
+                                        SUM(
+                                            CONVERT (pi.shipped_qty, SIGNED)
+                                        ),
+                                        0
+                                    ) AS shipped_qty
+                                FROM
+                                    wms_bt_client_shipment s
+                                LEFT JOIN wms_bt_client_package_item pi ON s.shipment_id = pi.shipment_id
+                                LEFT JOIN wms_bt_client_package p ON pi.package_id = p.package_id
+                                WHERE
+                                    s.syn_flg = '0'
+                                AND s.transfer_id = 0
+                                AND s.active = '1'
+                                GROUP BY
+                                    pi.shipment_id,
+                                    pi.article_number
+                            ) package_item
+                        INNER JOIN (
+                            SELECT
+                                t.order_channel_id AS order_channel_id,
+                                t.po_number AS po_number,
+                                ti.transfer_id AS transfer_id,
+                                ti.transfer_package_id AS transfer_package_id,
+                                ti.transfer_item_id AS transfer_item_id,
+                                ti.transfer_sku AS transfer_sku,
+                                IFNULL(SUM(ti.transfer_qty), 0) AS transfer_qty,
+                                ti.created AS created
+                            FROM
+                                wms_bt_transfer_item ti
+                            LEFT JOIN wms_bt_transfer t ON ti.transfer_id = t.transfer_id
+                            AND t.order_channel_id = #{OrderChannelID}
+                            INNER JOIN wms_bt_transfer_detail d ON d.transfer_package_id = ti.transfer_package_id
+                            AND d.transfer_id = ti.transfer_id
+                            WHERE
+                                t.transfer_type = '3'
+                            AND t.transfer_id > 0
+                            AND t.transfer_status = '1'
+                            GROUP BY
+                                ti.transfer_id,
+                                ti.transfer_sku
+                        ) transfer ON transfer.transfer_sku = package_item.article_number
+                        AND transfer.transfer_qty != package_item.shipped_qty
+                        GROUP BY
+                            package_item.upc
+                    ) shipment_transfer ON client_package_item.upc = shipment_transfer.upc
+                    WHERE
+                        client_shipment.syn_flg = '0'
+                    AND client_shipment.transfer_id = 0
+                    AND client_shipment.active = '1'
             ) tm
         GROUP BY
             tm.upc
