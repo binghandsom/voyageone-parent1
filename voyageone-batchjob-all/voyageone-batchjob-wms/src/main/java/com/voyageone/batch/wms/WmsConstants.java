@@ -292,10 +292,17 @@ public interface WmsConstants {
         public static final  String BALL = "special_goods_ball";
     }
 
-    // 库存同步类型
+    // BCBG入库文件
     final class INVENTORY_INCOMING {
         public static final  String HEAD = "H";
         public static final  String DETAIL = "D";
+    }
+
+    //库存同步类型 0: 强制；  1: 全量； 2: 增量
+    final class InventorySynType {
+        public final static String FORCE = "0";
+        public final static String FULL = "1";
+        public final static String INCREACE = "2";
     }
 
 }

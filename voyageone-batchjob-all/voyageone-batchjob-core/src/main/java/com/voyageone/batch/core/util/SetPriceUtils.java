@@ -23,7 +23,9 @@ public class SetPriceUtils {
     /**
      * @description 根据order_number，以SKU汇总取得价格
      * @param order_channel_id  渠道ID
-     *
+     * @param fileFlg 0，3 正常订单
+     *                  1，2 退货订单
+     *                  4 不含运费订单
      * @return List<SpaldingPriceBean>
      */
     public static  List<SetPriceBean> setPrice(String order_number,String order_channel_id,String cart_id,int fileFlg)  throws Exception{
@@ -41,8 +43,10 @@ public class SetPriceUtils {
         } else if( fileFlg == 3) {
             priceReportDatas = setPriceDao.getPriceData(order_number, order_channel_id, cart_id);
         //退货订单基本价格数据取得
-        }else{
+        }else if(fileFlg == 1 || fileFlg == 2) {
             priceReportDatas = setPriceDao.getReturnedPriceData(order_number, order_channel_id, cart_id);
+        } else if(fileFlg == 4) {
+            priceReportDatas = setPriceDao.getPriceDataNotIncludeShipping(order_number, order_channel_id, cart_id);
         }
 
         if (priceReportDatas != null && priceReportDatas.size() > 0){

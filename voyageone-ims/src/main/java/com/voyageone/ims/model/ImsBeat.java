@@ -19,6 +19,10 @@ public class ImsBeat {
 
     private String template_url;
 
+    private boolean extended;
+
+    private boolean repeat;
+
     private String targets;
 
     private int[] targetIndexes;
@@ -125,5 +129,21 @@ public class ImsBeat {
 
     public void setModifier(String modifier) {
         this.modifier = modifier;
+    }
+
+    public boolean isExtended() {
+        return extended;
+    }
+
+    public void setExtended(boolean extended) {
+        this.extended = extended;
+    }
+
+    public boolean isRepeat() {
+        return repeat;
+    }
+
+    public void setRepeat(boolean repeat) {
+        this.repeat = repeat;
     }
 }

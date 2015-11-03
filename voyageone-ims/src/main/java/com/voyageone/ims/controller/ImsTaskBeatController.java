@@ -24,8 +24,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import static com.voyageone.core.ajax.AjaxResponseBean.newResult;
-
 /**
  * 为打标画面提供数据和数据处理
  * Created by Jonas on 15/6/29.
@@ -48,7 +46,7 @@ public class ImsTaskBeatController extends BaseController {
 
         List<ShopBean> shopBeans = imsBeatService.getShops(order_channel_id);
 
-        return newResult(true, this).setResultInfo(shopBeans);
+        return success(shopBeans);
     }
 
     /**
@@ -145,7 +143,7 @@ public class ImsTaskBeatController extends BaseController {
         dtResponse.setDraw(dtRequest.getDraw());
         dtResponse.setRecordsFiltered(dtResponse.getRecordsTotal());
 
-        return newResult(true, this).setResultInfo(dtResponse);
+        return success(dtResponse);
     }
 
     @RequestMapping(BeatIconUrls.DT_GET_ITEMS)
@@ -162,10 +160,6 @@ public class ImsTaskBeatController extends BaseController {
         DtResponse<List<ImsBeatItem>> dtResponse = imsBeatService.getBeatItems(dtRequest.getParam().beat,
                 dtRequest.getParam().flg, search.getValue(), offset, limit);
 
-        // 格式化将显示数据的时期
-        for (ImsBeatItem item : dtResponse.getData())
-            item.setModified(DateTimeUtil.getLocalTime(item.getModified(), getUserTimeZone()));
-
         dtResponse.setDraw(dtRequest.getDraw());
         dtResponse.setRecordsFiltered(dtResponse.getRecordsTotal());
 
@@ -174,7 +168,8 @@ public class ImsTaskBeatController extends BaseController {
         ItemRes res = new ItemRes();
         res.dtResponse = dtResponse;
         res.beatSummary = beatSummary;
-        return newResult(true, this).setResultInfo(res);
+        
+        return success(res);
     }
 
     @RequestMapping(BeatIconUrls.CONTROL)
@@ -183,7 +178,7 @@ public class ImsTaskBeatController extends BaseController {
 
         int count = imsBeatService.control(param.beat_id, param.item_id, param.action);
 
-        return newResult(true, this).setResultInfo(count);
+        return success(count);
     }
 
     @RequestMapping(BeatIconUrls.SET_PRICE)
@@ -192,7 +187,25 @@ public class ImsTaskBeatController extends BaseController {
 
         int count = imsBeatService.updateItemPrice(param.beat_id, param.item_id, param.price);
 
-        return newResult(true, this).setResultInfo(count);
+        return success(count);
+    }
+
+    @RequestMapping(BeatIconUrls.ADD_CODE)
+    @ResponseBody
+    public AjaxResponseBean addCode(@RequestBody ImsBeatItem item) {
+
+        int count = imsBeatService.addBeatItem(item, getUser());
+
+        return success(count);
+    }
+
+    @RequestMapping(BeatIconUrls.SET_CODE)
+    @ResponseBody
+    public AjaxResponseBean setCode(@RequestBody ImsBeatItem item) {
+
+        int count = imsBeatService.setItemCode(item, getUser());
+
+        return success(count);
     }
 
     private static class ItemRes {
