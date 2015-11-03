@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.SEARS;
@@ -98,20 +99,15 @@ public class SearsAnalysisService extends BaseTaskService {
 
         PaginationBean paginationBean = searsService.getProductsTotalPages(PageSize);
 
+        $info("feed总数" + paginationBean.getTotalPages());
         ExecutorService executor = Executors.newFixedThreadPool(ThreadPoolCnt);
         for (int i = 1; i < paginationBean.getTotalPages() + 1; i++) {
             final int finalI = i;
             executor.execute(() -> feedListInsertTask(finalI));
         }
         executor.shutdown();
-        while (true) {
-            if (executor.isTerminated()) {
-                System.out.println("获取变更的feed列表结束了！");
-                break;
-            }
-            Thread.sleep(200);
-        }
-
+        executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+        $info("获取变更的feed列表结束了！");
     }
 
     /**
@@ -131,13 +127,8 @@ public class SearsAnalysisService extends BaseTaskService {
             executor.execute(() -> feedDetailsInsertTask(productBeans));
         });
         executor.shutdown();
-        while (true) {
-            if (executor.isTerminated()) {
-                $info("获取feed数据结束了！");
-                break;
-            }
-            Thread.sleep(200);
-        }
+        executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+        $info("获取feed数据结束了！");
         logger.info(String.format("失败的feed(%d)件进行单个导入", failurepageList.size()));
 
         // 失败的数据再给一次机会
@@ -146,19 +137,16 @@ public class SearsAnalysisService extends BaseTaskService {
             List<String> temp = new ArrayList<>(Arrays.asList(new String[failurepageList.size()]));
             Collections.copy(temp, failurepageList);
             failurepageList.clear();
+
+            // 一个个SKU单独取得数据
             CommonUtil.splitList(temp, 1).forEach(productBeans -> {
                 executor2.execute(() -> feedDetailsInsertTask(productBeans));
             });
             executor2.shutdown();
-            while (true) {
-                if (executor2.isTerminated()) {
-                    $info(String.format("最后feed(%d)件读入失败", failurepageList.size()));
-                    if(failurepageList.size() > 0) {
-                        issueLog.log("SearsFeed导入", "Sears读入失败", ErrorType.BatchJob, SubSystem.CMS, failurepageList.stream().collect(Collectors.joining(", ")));
-                    }
-                    break;
-                }
-                Thread.sleep(200);
+            executor2.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+            $info(String.format("最后feed(%d)件读入失败", failurepageList.size()));
+            if(failurepageList.size() > 0) {
+                issueLog.log("SearsFeed导入", "Sears读入失败", ErrorType.BatchJob, SubSystem.CMS, failurepageList.stream().collect(Collectors.joining(", ")));
             }
         }
     }
@@ -168,8 +156,8 @@ public class SearsAnalysisService extends BaseTaskService {
      */
     private void clearLastData() {
         // 删除所有
-        searsSuperFeedDao.delete();
-        searsSuperFeedDao.deleteAattribute();
+//        searsSuperFeedDao.delete();
+//        searsSuperFeedDao.deleteAattribute();
         searsSuperFeedDao.deleteList();
     }
 
