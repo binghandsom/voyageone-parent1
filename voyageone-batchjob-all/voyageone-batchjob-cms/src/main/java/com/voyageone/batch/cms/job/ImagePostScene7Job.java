@@ -2,6 +2,7 @@ package com.voyageone.batch.cms.job;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -73,7 +74,7 @@ public class ImagePostScene7Job {
 		
 		try {
 			// 获得该渠道要上传Scene7的图片url列表
-			List<String> imageUrlList = imagePostScene7Service.getImageUrls(orderChannelId);
+			List<Map<String, String>> imageUrlList = imagePostScene7Service.getImageUrls(orderChannelId);
 			
 			if (imageUrlList != null && imageUrlList.size() > 0) {
 				int count = 25;
@@ -102,7 +103,7 @@ public class ImagePostScene7Job {
 					if (i == threadCount - 1) {
 						endIndex = totalSize;
 					}
-					List<String> subImageUrlList = imageUrlList.subList(startIndex, endIndex);
+					List<Map<String, String>> subImageUrlList = imageUrlList.subList(startIndex, endIndex);
 					
 					Future<String> future = es.submit(new ImageGetAndSendTask(orderChannelId, subImageUrlList, i + 1));
 					resultList.add(future);
@@ -156,7 +157,7 @@ public class ImagePostScene7Job {
 		/**
 		 * 待上传图片url列表
 		 */
-		private List<String> subImageUrlList;
+		private List<Map<String, String>> subImageUrlList;
 		
 		/**
 		 * 线程号
@@ -166,7 +167,7 @@ public class ImagePostScene7Job {
 		/**
 		 * 构造函数
 		 */
-		public ImageGetAndSendTask(String orderChannelId, List<String> subImageUrlList, int threadNo) {
+		public ImageGetAndSendTask(String orderChannelId, List<Map<String, String>> subImageUrlList, int threadNo) {
 			this.orderChannelId = orderChannelId;
 			this.subImageUrlList = subImageUrlList;
 			this.threadNo = threadNo;
@@ -178,7 +179,8 @@ public class ImagePostScene7Job {
 			
 			//  成功处理的图片url列表
 			List<String> subSuccessImageUrlList = new ArrayList<String>();
-			boolean isSuccess = imagePostScene7Service.getAndSendImage(orderChannelId, subImageUrlList, subSuccessImageUrlList, threadNo);
+			List<Map<String, String>> urlErrorList = new ArrayList<Map<String, String>>();
+			boolean isSuccess = imagePostScene7Service.getAndSendImage(orderChannelId, subImageUrlList, subSuccessImageUrlList, urlErrorList, threadNo);
 			
 			if (isSuccess) {
 				logger.info(orderChannelId + "渠道本次推送scene7图片任务thread-" + threadNo + "成功");
@@ -192,8 +194,15 @@ public class ImagePostScene7Job {
 				
 				returnValue = imagePostScene7Service.updateImageSendFlag(orderChannelId, subSuccessImageUrlList, taskCheck);
 			}
+
+			if (urlErrorList.size() > 0) {
+
+				imagePostScene7Service.deleteUrlErrorImage(orderChannelId, urlErrorList);
+			}
 			
-			return "thread-" + threadNo + "上传scene7图片成功个数：" + subSuccessImageUrlList.size() + System.lineSeparator() + "已上传成功图片处理标志置位成功个数：" + returnValue;
+			return "thread-" + threadNo + "上传scene7图片成功个数：" + subSuccessImageUrlList.size() +
+					System.lineSeparator() + "已上传成功图片处理标志置位成功个数：" + returnValue +
+					System.lineSeparator() + "图片URL错误个数：" + urlErrorList.size();
 		}
 	}
 	
