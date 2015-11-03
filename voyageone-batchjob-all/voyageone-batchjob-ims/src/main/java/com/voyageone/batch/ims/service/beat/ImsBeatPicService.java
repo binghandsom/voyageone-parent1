@@ -8,14 +8,11 @@ import com.voyageone.batch.ims.bean.BeatPicBean;
 import com.voyageone.batch.ims.dao.ImsBeatPicDao;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.util.stream.Collectors.joining;
 
 /**
  * 价格披露同一处理任务
@@ -97,10 +94,7 @@ public class ImsBeatPicService extends BaseTaskService {
             List<BeatPicBean> subList = beatPics.subList(i, end);
 
             runnableList.add(() -> {
-                List<BeatPicBean> err = new ArrayList<>();
-
                 for (BeatPicBean bean : subList) {
-
                     // 进入任务处理之前，重置上一次的信息
                     bean.setComment(Constants.EmptyString);
                     bean.setModifier(getTaskName());
@@ -118,21 +112,7 @@ public class ImsBeatPicService extends BaseTaskService {
                     }
 
                     imsBeatPicDao.updateItem(bean);
-
-                    if (!StringUtils.isEmpty(bean.getComment()))
-                        err.add(bean);
                 }
-
-                // 最终处理完后检查错误
-                if (err.size() > 0) {
-                    String allIds = err.stream()
-                            .map(BeatPicBean::getBeat_item_id)
-                            .map(String::valueOf)
-                            .collect(joining(" ], [ "));
-                    logIssue("价格披露任务出现异常和错误！", " [ " + allIds + " ]");
-                }
-
-                $info("价格披露：子线程处理结束。预计处理数量：%s", subList.size());
             });
         }
 
