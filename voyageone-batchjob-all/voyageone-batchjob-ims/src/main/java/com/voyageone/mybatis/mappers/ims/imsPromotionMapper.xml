@@ -43,7 +43,6 @@
             t1.num_iid,
             t1.product_id,
             t1.channel_id,
-            t1.promotion_add_status,
             t1.publish_promotion_price_status,
             floor(t2.cn_price_final_rmb * 100) AS cnPriceFinalRmb,
             t3.sku
@@ -55,7 +54,6 @@
                     a.num_iid,
                     a.channel_id,
                     a.cart_id,
-                    a.promotion_add_status,
                     a.publish_promotion_price_status
                 FROM
                     voyageone_ims.ims_bt_product a
@@ -76,7 +74,6 @@
        <update id="ims_promotion_update" parameterType="HashMap">
               UPDATE voyageone_ims.ims_bt_product
               SET publish_promotion_price_status = #{priceStatus},
-               promotion_add_status = #{addStatus},
               promotion_faild_comment = #{promotionFaildComment},
               modified = now(),
               modifier = 'ImsPromotionJob'
