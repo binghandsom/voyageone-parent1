@@ -301,8 +301,11 @@ define(function(require) {
                     TXT_ORDER_TRACKING_NO: 'Tracking No',
                     TXT_ORDER_TRACKING_AREA: 'Tracking Area',
 
-                    TXT_ACCOUNTING_UPLOAD_SETTLEMENT_FILE: 'Settlement File Upload',
-                    TXT_ACCOUNTING_SEARCH: 'Upload Settle File Search',
+                    TXT_ACCOUNTING_UPLOAD_ACCOUNTING_FILE: 'Accounting File Upload',
+                    TXT_ACCOUNTING_FILETYPE: 'Accounting File Type',
+                    TXT_ACCOUNTING_SETTLEMENT: 'Settlement',
+                    TXT_ACCOUNTING_TRANSACTION: 'Transaction',
+                    TXT_ACCOUNTING_SEARCH: 'Upload Accounting File Search',
                     TXT_ACCOUNTING_SEARCH_SEARCH_UPLOAD_DATE: 'Upload Date',
                     TXT_RECORDNUMBER: 'All Record Count : ',
 
