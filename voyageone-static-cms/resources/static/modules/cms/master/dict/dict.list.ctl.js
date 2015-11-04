@@ -9,16 +9,17 @@
  */
 var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-define(['modules/cms/cms.module', 'modules/cms/master/dict/dict.service'], function(cmsModule) {
+define(['modules/cms/cms.module', 'modules/cms/master/dict/dict.service', 'modules/cms/master/dict/dict.value.ctl'], function(cmsModule) {
   return cmsModule.controller('DictListController', (function() {
-    _Class.$inject = ['$scope', '$compile', '$translate', 'DTOptionsBuilder', 'DTColumnBuilder', 'DictService', '$location', 'notify','vConfirm'];
+    _Class.$inject = ['$scope', '$compile', '$translate', 'DTOptionsBuilder', 'DTColumnBuilder', 'DictService', '$location', 'notify','vConfirm', '$modal'];
     var m_dictService;
     var m_notify;
     var m_dtDict;
-    function _Class($scope, $compile, $translate, DTOptionsBuilder, DTColumnBuilder, DictService, $location, notify, vConfirm) {
+    function _Class($scope, $compile, $translate, DTOptionsBuilder, DTColumnBuilder, DictService, $location, notify, vConfirm,$modal) {
       this.$translate = $translate;
       m_dictService = DictService;
       this.$location = $location;
+      this.$modal = $modal;
       m_notify = notify;
       this.vConfirm = vConfirm;
       this.dtGetDict = bind(this.dtGetDict, this);
@@ -35,7 +36,7 @@ define(['modules/cms/cms.module', 'modules/cms/master/dict/dict.service'], funct
           DTColumnBuilder.newColumn('name', this.$translate('CMS_TXT_PROMOTION_NAME')).withClass('col-sm-2'), DTColumnBuilder.newColumn('value', this.$translate('CMS_TXT_TH_VALUE')).withClass('col-sm-8').renderWith(function() {
             return '{{$row.value}}';
           }), DTColumnBuilder.newColumn('', this.$translate('CMS_TXT_ACTIONS')).withClass('col-sm-2').renderWith(function() {
-            return '<button ng-click="vm.editItem($row)" class="btn btn-success btn-sm"><i class="fa fa-pencil"></i></button>&nbsp;' + '<button ng-click="vm.delItem($row)" class="btn btn-danger btn-sm"><i class="fa fa-trash-o"></i></button>';
+            return '<button ng-click="vm.editItem($row)" class="btn btn-success btn-sm"><i class="fa fa-pencil"></i></button>&nbsp;' + '<button ng-click="vm.delItem($row)" class="btn btn-danger btn-sm"><i class="fa fa-trash-o"></i></button>&nbsp;' + '<button class="btn btn-success btn-sm" ng-click="vm.editValue($row)"> <i class="glyphicon glyphicon-edit"></i> </button>';
           })
         ],
         instance: null
@@ -76,6 +77,49 @@ define(['modules/cms/cms.module', 'modules/cms/master/dict/dict.service'], funct
       })
     };
 
+    _Class.prototype.editValue = function(word) {
+      return this.openValue(word, function(res) {
+        word.value = res.value;
+        m_dictService.setDict(word).then((function(_this) {
+          return function(res) {
+            if (res) {
+              return _this.alert('CMS_TXT_MSG_SAVE_SUCCESS').result.then(function() {
+                return _this.cancel();
+              });
+            }
+          };
+        }));
+        return word.value = res.value;
+      });
+    };
+
+    _Class.prototype.openValue = function(word, callback) {
+      return this.$modal.open({
+        templateUrl: 'modules/cms/master/dict/dict.value.tpl.html',
+        controller: 'DictValueController',
+        controllerAs: 'vm',
+        resolve: {
+          masterProps: (function(_this) {
+            return function() {
+              return "";
+            };
+          })(this),
+          cmsValues: (function(_this) {
+            return function() {
+              return "";
+            };
+          })(this),
+          dictList: (function(_this) {
+            return function() {
+              return "";
+            };
+          })(this),
+          word: function() {
+            return word;
+          }
+        }
+      }).result.then(callback);
+    };
     return _Class;
 
   })());
