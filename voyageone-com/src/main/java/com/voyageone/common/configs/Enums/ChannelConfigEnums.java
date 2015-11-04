@@ -357,7 +357,11 @@ public class ChannelConfigEnums {
         /**
          * 短信客服号
          */
-        sms_add_serial
+        sms_add_serial,
+        /**
+         * 强制发货渠道仓库
+         */
+        ship_store_channel
 
     }
 
