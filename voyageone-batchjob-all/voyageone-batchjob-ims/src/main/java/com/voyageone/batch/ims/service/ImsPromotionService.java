@@ -3,6 +3,7 @@ package com.voyageone.batch.ims.service;
 import com.taobao.api.ApiException;
 import com.taobao.api.TaobaoResponse;
 import com.taobao.api.domain.TipItemPromDTO;
+import com.taobao.api.domain.TipPromUnitDTO;
 import com.taobao.api.domain.TipSkuPromUnitDTO;
 import com.taobao.api.response.ItemSkusGetResponse;
 import com.voyageone.batch.base.BaseTaskService;
@@ -102,38 +103,43 @@ public class ImsPromotionService extends BaseTaskService {
         items.forEach(item -> {
             TaobaoResponse response;
             try {
-                // 根据商品ID列表获取SKU信息 因为需要知道天猫的SKU的ID
-                response = tbItemService.getSkuInfo(shopBean, item.get("num_iid").toString(), "sku_id,num_iid,outer_id");
-
-                ItemSkusGetResponse skuids = (ItemSkusGetResponse) response;
-                if (skuids.getSkus() == null) {
-                    throw new ApiException("numiid 不存在");
-                }
-
                 TipItemPromDTO tipItemPromDTO = new TipItemPromDTO();
                 tipItemPromDTO.setCampaignId(promotionId);
                 tipItemPromDTO.setItemId(Long.parseLong(item.get("num_iid").toString()));
-                List<TipSkuPromUnitDTO> tipSkuPromUnitDTOs = new ArrayList<TipSkuPromUnitDTO>();
                 List<Map> productList = (List<Map>) item.get("productList");
-                // 遍历该num_iid下所有的SKU
-                for (Map product : productList) {
-                    List<Map> skuList = (List<Map>) product.get("skuList");
-                    // 遍历code下面的所有SKU
-                    skuList.forEach(map -> {
-                        TipSkuPromUnitDTO tipSkuPromUnitDTO = new TipSkuPromUnitDTO();
-                        tipSkuPromUnitDTO.setDiscount(Long.parseLong(map.get("cnPriceFinalRmb").toString()));
-                        // 获取SKU对已TM的SKUID
-                        skuids.getSkus().forEach(sku -> {
-                            if(sku.getOuterId() != null){
-                                if (sku.getOuterId().equalsIgnoreCase(map.get("sku").toString())) {
-                                    tipSkuPromUnitDTO.setSkuId(sku.getSkuId());
+
+                // 根据商品ID列表获取SKU信息 因为需要知道天猫的SKU的ID
+                response = tbItemService.getSkuInfo(shopBean, item.get("num_iid").toString(), "sku_id,num_iid,outer_id");
+                ItemSkusGetResponse skuids = (ItemSkusGetResponse) response;
+                // 商品里有SKU的场合 更新特价的时候以SKU为单位更新 （因为TM部分类目下没有SKU 那就用ITEM单位更新）
+                if (skuids.getSkus() != null) {
+                    List<TipSkuPromUnitDTO> tipSkuPromUnitDTOs = new ArrayList<TipSkuPromUnitDTO>();
+                    // 遍历该num_iid下所有的SKU
+                    for (Map product : productList) {
+                        List<Map> skuList = (List<Map>) product.get("skuList");
+                        // 遍历code下面的所有SKU
+                        skuList.forEach(map -> {
+                            TipSkuPromUnitDTO tipSkuPromUnitDTO = new TipSkuPromUnitDTO();
+                            tipSkuPromUnitDTO.setDiscount(Long.parseLong(map.get("cnPriceFinalRmb").toString()));
+                            // 获取SKU对已TM的SKUID
+                            skuids.getSkus().forEach(sku -> {
+                                if (sku.getOuterId() != null) {
+                                    if (sku.getOuterId().equalsIgnoreCase(map.get("sku").toString())) {
+                                        tipSkuPromUnitDTO.setSkuId(sku.getSkuId());
+                                    }
                                 }
-                            }
+                            });
+                            tipSkuPromUnitDTOs.add(tipSkuPromUnitDTO);
                         });
-                        tipSkuPromUnitDTOs.add(tipSkuPromUnitDTO);
-                    });
+                    }
+                    tipItemPromDTO.setSkuLevelProms(tipSkuPromUnitDTOs);
+                }else{
+                    // ITEM单位更新
+                    List<Map> skuList = (List<Map>) productList.get(0).get("skuList");
+                    TipPromUnitDTO tipPromUnitDTO = new TipPromUnitDTO();
+                    tipPromUnitDTO.setDiscount(Long.parseLong(skuList.get(0).get("cnPriceFinalRmb").toString()));
+                    tipItemPromDTO.setItemLevelProm(tipPromUnitDTO);
                 }
-                tipItemPromDTO.setSkuLevelProms(tipSkuPromUnitDTOs);
                 // 调用天猫特价宝
                 response = tbPromotionService.updatePromotion(shopBean, tipItemPromDTO);
                 // 成功的场合把product_id保存起来
