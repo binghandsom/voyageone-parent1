@@ -76,7 +76,7 @@ public class Product extends ChannelPartitionModel {
         }
         if (value == null) {
             if (attributeCurrent != null) {
-                field.remove(value);
+                field.remove(attributeCurrent);
             }
         } else {
             if (attributeCurrent == null) {
@@ -97,12 +97,13 @@ public class Product extends ChannelPartitionModel {
         return result;
     }
 
+    @Override
     public String getCollectionName() {
-        return getCollectionName(getPartitionName());
+        return getCollectionName(this.channel_id);
     }
 
     public static String getCollectionName(String channel_id) {
-        return "product" + channel_id;
+        return "product" + getPartitionValue(channel_id);
     }
 
 }

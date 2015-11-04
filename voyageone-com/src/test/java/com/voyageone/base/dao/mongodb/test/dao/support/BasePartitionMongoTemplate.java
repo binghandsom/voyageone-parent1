@@ -1,34 +1,69 @@
 package com.voyageone.base.dao.mongodb.test.dao.support;
 
+
+import com.mongodb.*;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.data.geo.GeoResults;
+import org.springframework.data.mongodb.core.*;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
+import org.springframework.data.mongodb.core.mapreduce.GroupBy;
+import org.springframework.data.mongodb.core.mapreduce.GroupByResults;
+import org.springframework.data.mongodb.core.mapreduce.MapReduceOptions;
+import org.springframework.data.mongodb.core.mapreduce.MapReduceResults;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.NearQuery;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 
-//import org.jongo.Jongo;
-//import org.jongo.MongoCollection;
-//import org.springframework.data.util.CloseableIterator;
+import java.util.Collection;
+import java.util.List;
 
-public class BasePartitionJomgoTemplate {
+public class BasePartitionMongoTemplate {
+//public class BasePartitionMongoTemplate implements ApplicationContextAware {
 //    @Autowired
 //    MongoTemplate mongoTemplate;
-
-//    Jongo jongo = null;
-//    private Jongo getJongo() {
-//        if (jongo == null) {
-//            jongo = new Jongo(mongoTemplate.getDb());
-//        }
-//        return jongo;
+//
+////    public <T> CloseableIterator<T> stream(final Query query, final Class<T> entityType) {
+////        throw new RuntimeException("not support!");
+////    }
+//
+//    public CommandResult executeCommand(String jsonCommand) {
+//        return mongoTemplate.executeCommand(jsonCommand);
 //    }
 //
-//    private MongoCollection getMongoCollection(String collectionName) {
-//        return getJongo().getCollection(collectionName);
+//    public CommandResult executeCommand(final DBObject command) {
+//        return mongoTemplate.executeCommand(command);
 //    }
 //
-//    public <T> CloseableIterator<T> stream(final Query query, final Class<T> entityType) {
-//        throw new RuntimeException("not support!");
+//    @Deprecated
+//    public CommandResult executeCommand(final DBObject command, final int options) {
+//        return mongoTemplate.executeCommand(command, options);
 //    }
 //
-//    public void executeCommand(String jsonCommand) {
-//        getJongo().runCommand(jsonCommand);
+//    public CommandResult executeCommand(final DBObject command, final ReadPreference readPreference) {
+//        return mongoTemplate.executeCommand(command, readPreference);
+//    }
+//
+//    public void executeQuery(Query query, String collectionName, DocumentCallbackHandler dch) {
+//        mongoTemplate.executeQuery(query, collectionName, dch);
+//    }
+//
+//    public <T> T execute(DbCallback<T> action) {
+//        return mongoTemplate.execute(action);
+//    }
+//
+//    @Deprecated
+//    public <T> T executeInSession(final DbCallback<T> action) {
+//        return mongoTemplate.executeInSession(action);
+//    }
+//
+//    public <T> T execute(String collectionName, CollectionCallback<T> callback) {
+//        return mongoTemplate.execute(collectionName, callback);
 //    }
 //
 //    public DBCollection createCollection(final String collectionName) {
@@ -55,29 +90,24 @@ public class BasePartitionJomgoTemplate {
 //        return mongoTemplate.indexOps(collectionName);
 //    }
 //
-//    public <T> T findOne(Class<T> entityClass, String collectionName) {
-//        return getMongoCollection(collectionName).findOne().as(entityClass);
+//    public <T> T findOne(Query query, Class<T> entityClass, String collectionName) {
+//        return mongoTemplate.findOne(query, entityClass, collectionName);
 //    }
 //
-//    public <T> T findOne(final String query, Class<T> entityClass, String collectionName) {
-//        return getMongoCollection(collectionName).findOne(query).as(entityClass);
+//    public boolean exists(Query query, String collectionName) {
+//        return mongoTemplate.exists(query, collectionName);
 //    }
 //
-//    public boolean exists(final String query, String collectionName) {
-//        long count = getMongoCollection(collectionName).count(query);
-//        if (count == 0) {
-//            return false;
-//        }
-//        return true;
+//    public boolean exists(Query query, Class<?> entityClass, String collectionName) {
+//        return mongoTemplate.exists(query, entityClass, collectionName);
 //    }
 //
-//    public <T> List<T> find(final String strQuery, Class<T> entityClass, String collectionName) {
-//        return IteratorUtils.toList(getMongoCollection(collectionName).find(strQuery).as(entityClass));
+//    public <T> List<T> find(final Query query, Class<T> entityClass, String collectionName) {
+//        return mongoTemplate.find(query, entityClass, collectionName);
 //    }
 //
 //    public <T> T findById(Object id, Class<T> entityClass, String collectionName) {
-//        String query = "{\"_id\":ObjectId(\"" + id.toString() + "\")}";
-//        return findOne(query, entityClass, collectionName);
+//        return mongoTemplate.findById(id, entityClass, collectionName);
 //    }
 //
 //    public <T> GeoResults<T> geoNear(NearQuery near, Class<T> entityClass, String collectionName) {
@@ -113,8 +143,7 @@ public class BasePartitionJomgoTemplate {
 //    }
 //
 //    public void save(Object objectToSave, String collectionName) {
-//        MongoCollection mongoCollection = getJongo().getCollection(collectionName);
-//        mongoCollection.save(objectToSave);
+//        mongoTemplate.save(objectToSave, collectionName);
 //    }
 //
 //    public WriteResult upsert(Query query, Update update, String collectionName) {
@@ -217,5 +246,9 @@ public class BasePartitionJomgoTemplate {
 //    public DB getDb() {
 //        return mongoTemplate.getDb();
 //    }
-
+//
+//    @Override
+//    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+//        mongoTemplate.setApplicationContext(applicationContext);
+//    }
 }

@@ -2,9 +2,6 @@ package com.voyageone.base.dao.mongodb.test.dao;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 
-/**
- * Created by DELL on 2015/10/19.
- */
 public class Customer extends BaseMongoModel {
 
     private String firstName;
