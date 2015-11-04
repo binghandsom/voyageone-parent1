@@ -74,13 +74,25 @@ public interface ImsMsgConstants {
          */
         String NO_BEAT_ITEM = "3000049";
 
-        String UN_USE_1 = "3000051";
+        /**
+         * 找不到 CMS 商品
+         */
+        String NO_CMS_INFO = "3000051";
 
-        String UN_USE_2 = "3000046";
+        /**
+         * 找不到 IMS 商品
+         */
+        String NO_IMS_INFO = "3000046";
 
-        String UN_USE_3 = "3000052";
+        /**
+         * 不能对应 IMS 商品
+         */
+        String DIFF_NUM_IID = "3000052";
 
-        String UN_USE_4 = "3000053";
+        /**
+         * 这个商品已经再刷了,要修改就去找.
+         */
+        String NUM_IID_EXISTS = "3000053";
 
         String UN_USE_5 = "3000054";
 

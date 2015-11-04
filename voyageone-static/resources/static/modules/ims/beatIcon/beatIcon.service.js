@@ -3,8 +3,9 @@
   @Date: 2015/06/30
 
   @User: Jonas
-  @Version: 0.2.2
+  @Version: 0.2.3
  */
+
 define(['modules/ims/ims.module'], function(ims) {
   return ims.service('ImsBeatService', [
     'ajaxService', 'imsAction', (function() {
@@ -60,6 +61,18 @@ define(['modules/ims/ims.module'], function(ims) {
           item_id: item_id,
           price: price
         }).then(function(res) {
+          return res.data;
+        });
+      };
+
+      ImsBeatService.prototype.addCode = function(item) {
+        return this.post(this.url.addCode, item).then(function(res) {
+          return res.data;
+        });
+      };
+
+      ImsBeatService.prototype.setCode = function(item) {
+        return this.post(this.url.setCode, item).then(function(res) {
           return res.data;
         });
       };
