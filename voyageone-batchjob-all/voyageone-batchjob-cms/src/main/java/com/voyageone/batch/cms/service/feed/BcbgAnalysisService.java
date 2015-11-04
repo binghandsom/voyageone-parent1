@@ -78,11 +78,14 @@ public class BcbgAnalysisService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
+        // 每次启动尝试初始化
+        BcbgWsdlConstants.init();
+
         $info("开始处理 BCBG 数据");
 
         Backup backup = new Backup();
 
-        File[] files = getDataFiles(backup);
+        File[] files = getDataFiles();
 
         // 说明没获取到文件, 放弃执行. 内部会进行日志输出
         if (files == null) return;
@@ -113,17 +116,15 @@ public class BcbgAnalysisService extends BaseTaskService {
         $info("数据处理阶段结束");
 
         // 使用接口提交
-        insertService.new Context(BCBG).postNewProduct();
-        updateService.new Context(BCBG).postUpdatedProduct();
-
-        // BCBG 的特殊情况:暂不使用
-        attributeService.new Context(BCBG).postAttributes();
+        insertService.postNewProduct();
+        updateService.postUpdatedProduct();
+        attributeService.postAttributes();
 
         // 备份文件
-        backup.fromData(feedFile, styleFile);
+        // TODO backup.fromData(feedFile, styleFile);
     }
 
-    private File[] getDataFiles(Backup backup) {
+    private File[] getDataFiles() {
 
         // 读取各种配置
         // 精简配置,减少独立配置,所以两个文件都配置在一个项目里
@@ -146,11 +147,11 @@ public class BcbgAnalysisService extends BaseTaskService {
             throw new BusinessException("BCBG 的配置 feed_ftp_filename 错误,路径为空.");
         }
 
-        File feedFile = getDataFile(sFeedXmlDir, ".xml", backup);
+        File feedFile = getDataFile(sFeedXmlDir, ".xml");
 
         if (feedFile == null) return null;
 
-        File styleFile = getDataFile(sStyleJsonDir, ".json", backup);
+        File styleFile = getDataFile(sStyleJsonDir, ".json");
 
         if (styleFile == null) return null;
 
@@ -160,7 +161,7 @@ public class BcbgAnalysisService extends BaseTaskService {
     /**
      * 去 dir 下,按照 filter 过滤文件,返回第一个文件,并备份其他文件
      */
-    private File getDataFile(String dir, String filter, Backup backup) {
+    private File getDataFile(String dir, String filter) {
 
         // 打开目录
         File feedFileDir = new File(dir);

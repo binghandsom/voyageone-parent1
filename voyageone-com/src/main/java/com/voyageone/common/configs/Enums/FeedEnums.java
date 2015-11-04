@@ -124,6 +124,6 @@ public class FeedEnums {
         webServiesAppKey,
         webServiesSessionKey,
         fixed_lens, transform, feed_backup_dir, model_table_id, image_table_id, model_sql_ending, product_table_id,
-        image_table_join, product_table_join, model_table_join, product_sql_ending, url_special_symbol
+        image_table_join, product_table_join, model_table_join, product_sql_ending, fixed_exchange_rate, apparels_duty, other_duty, product_type, url_special_symbol
     }
 }
