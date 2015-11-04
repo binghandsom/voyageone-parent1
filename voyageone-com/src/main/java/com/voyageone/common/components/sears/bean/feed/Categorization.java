@@ -54,7 +54,7 @@ public class Categorization {
     public String toString(){
 //        return String.format("%s-%s-%s",vertical,category,subcategory).toLowerCase().replaceAll(" ", "").replaceAll("'","");
         String str = String.format("%s-%s-%s",vertical,category,subcategory);
-        str = str.replace(" & ","-");
+//        str = str.replace(" & ","-");
         return str;
     }
 }
