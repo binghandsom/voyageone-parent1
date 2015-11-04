@@ -122,11 +122,11 @@ public class MainTestReadTask {
 
 //        personDao.save(personList);
         //搜索两级属性
-        Iterable<Person> result7 = personDao.findByDepartInfo$DepartName("DepartName--5");
-        for (Person row : result7) {
-            System.out.println("result7:=" + row);
-        }
-
+//        Iterable<Person> result7 = personDao.findByDepartInfo$DepartName("DepartName--5");
+//        for (Person row : result7) {
+//            System.out.println("result7:=" + row);
+//        }
+//
         Aggregation agg = newAggregation(
                 match(Criteria.where("cat_id").lt(10)),
                 group("cat_id").sum("field.prop_1").as("count"),

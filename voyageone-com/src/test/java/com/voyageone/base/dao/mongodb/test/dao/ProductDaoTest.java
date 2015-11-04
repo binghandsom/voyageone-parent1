@@ -33,6 +33,16 @@ public class ProductDaoTest extends AbstractJUnit4SpringContextTests {
     }
 
     @Test
+    public void testCreate100WanProduct() {
+        productDao.saveProduct100Wan();
+    }
+
+    @Test
+    public void testCreate10WanProduct() {
+        productDao.saveProduct10Wan();
+    }
+
+    @Test
     public void testQueryWithJongo() {
         productDao.queryWithJongo();
     }

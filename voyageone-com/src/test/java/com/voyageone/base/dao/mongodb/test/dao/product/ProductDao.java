@@ -2,6 +2,7 @@ package com.voyageone.base.dao.mongodb.test.dao.product;
 
 import com.mongodb.*;
 import com.mongodb.util.JSON;
+import com.voyageone.base.dao.mongodb.BaseJomgoTemplate;
 import com.voyageone.base.dao.mongodb.BasePartitionMongoTemplate;
 import com.voyageone.base.dao.mongodb.test.model.product.Product;
 import com.voyageone.base.dao.mongodb.test.dao.support.ProductJongo;
@@ -24,8 +25,29 @@ public class ProductDao {
     @Autowired
     BasePartitionMongoTemplate mongoTemplate;
 
+    @Autowired
+    BaseJomgoTemplate baseJomgoDao;
+
     public void saveWithProduct(Product entity) {
         mongoTemplate.save(entity, entity.getCollectionName());
+    }
+
+    public void saveProduct10Wan() {
+        System.out.println("start:" + DateTimeUtil.getNow());
+        Random random = new Random();
+        for (int i=0; i<100; i++) {
+            saveProduct1Wan(random, i, 1000) ;
+        }
+        System.out.println("end:" + DateTimeUtil.getNow());
+    }
+
+    public void saveProduct100Wan() {
+        System.out.println("start:" + DateTimeUtil.getNow());
+        Random random = new Random();
+        for (int i=0; i<1000; i++) {
+            saveProduct1Wan(random, i, 1000) ;
+        }
+        System.out.println("end:" + DateTimeUtil.getNow());
     }
 
     public void saveProduct1000Wan() {
@@ -39,14 +61,18 @@ public class ProductDao {
 
     public void saveProduct1Wan(Random random, int page, int size) {
         List<Product> lst = new ArrayList<>();
-        String channel_id = "010";
+        String channel_id = "012";
         for (int i=1; i<=size; i++) {
             int cat_id = random.nextInt(1000)+1;
             int product_id = page*size + i;
             Product product = new Product(channel_id, cat_id, product_id);
             for (int j=0; j<101; j++) {
                 int prop_id = random.nextInt(1000)+1;
-                product.setAttribute("prop_" + j, prop_id, false);
+                if (j>80) {
+                    product.setAttribute("prop_" + j, String.valueOf(prop_id), false);
+                } else {
+                    product.setAttribute("prop_" + j, prop_id, false);
+                }
             }
             lst.add(product);
         }
@@ -61,12 +87,19 @@ public class ProductDao {
     }
 
     public void queryWithJongo() {
-        Query query = new BasicQuery("{\"product_id\":20}");
-        List<Product> lst =  mongoTemplate.find(query, Product.class, "product_c010");
-        for(Product product : lst) {
-            System.out.println(product);
+        baseJomgoDao.getCollection("product_c010");
+        DBObject query = new BasicDBObject("field.prop_11", 716);
+        DBCollection collection = mongoTemplate.getCollection("product_c010");
+        DBCursor cursor = collection.find(query);
+        while(cursor.hasNext()) {
+            DBObject aa = cursor.next();
+            System.out.println(aa);
         }
-        System.out.println(lst.size());
+        //List<ProductMo> lst =  mongoTemplate.find(query, ProductMo.class, "product_c010");
+//        for(ProductMo product : lst) {
+//            System.out.println(product);
+//        }
+//        System.out.println(lst.size());
     }
 
     public void queryWithJongoObj() {

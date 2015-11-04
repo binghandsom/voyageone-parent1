@@ -272,7 +272,11 @@
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-commons</artifactId>
-			<version>spring-data-commons-1.11.1.BUILD</version>
+			<version>1.8.0.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jongo</groupId>
+			<artifactId>jongo</artifactId>
 		</dependency>
 
 	</dependencies>

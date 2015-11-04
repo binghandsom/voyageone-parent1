@@ -40,6 +40,10 @@
     <bean id="basePartitionMongoTemplate" class="com.voyageone.base.dao.mongodb.BasePartitionMongoTemplate">
     </bean>
 
+    <bean id="BaseJomgoDao" class="com.voyageone.base.dao.mongodb.BaseJomgoTemplate">
+        <constructor-arg ref="mongoTemplate" />
+    </bean>
+
     <!-- mongodb bean的仓库目录，会自动扫描扩展了MongoRepository接口的接口进行注入 -->
     <mongo:repositories base-package="com.voyageone.base.dao.mongodb.test.dao" factory-class="com.voyageone.base.dao.mongodb.support.BaseMongoRepositoryFactoryBean" />
 
