@@ -61,6 +61,7 @@
                     a.channel_id = #{channelId}
                 AND a.cart_id = #{cartId}
                 AND a.num_iid != '0'
+                AND a.num_iid != ''
                 AND a.publish_promotion_price_status = 0
                 LIMIT 0,100
             ) t1
