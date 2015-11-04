@@ -121,7 +121,7 @@ public class BcbgAnalysisService extends BaseTaskService {
         attributeService.postAttributes();
 
         // 备份文件
-        // TODO backup.fromData(feedFile, styleFile);
+        backup.fromData(feedFile, styleFile);
     }
 
     private File[] getDataFiles() {
