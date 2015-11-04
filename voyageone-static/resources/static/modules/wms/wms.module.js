@@ -168,6 +168,14 @@ define(function () {
                 }
             },
 
+            receive: {
+                list: {
+                    init: "/wms/receive/list/init",
+                    search: "/wms/receive/list/search",
+                    scan: "/wms/receive/list/scan"
+                }
+            },
+
             upc: {
                 GET_PRODUCT : "/wms/upc/manage/getProduct",
                 SAVE_PRODUCT : "/wms/upc/manage/saveProduct",

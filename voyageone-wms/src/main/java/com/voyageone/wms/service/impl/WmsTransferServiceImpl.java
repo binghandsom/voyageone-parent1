@@ -2,6 +2,7 @@ package com.voyageone.wms.service.impl;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.base.exception.SystemException;
+import com.voyageone.common.configs.Enums.StoreConfigEnums;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.StoreConfigs;
 import com.voyageone.common.configs.Type;
@@ -67,7 +68,7 @@ public class WmsTransferServiceImpl implements WmsTransferService {
     private HttpServletRequest request;
 
     /**
-     * 【货架绑定画面】初始化
+     * 【Transfer画面】初始化
      *
      * @param user 用户登录信息
      * @return Map 画面初始化项目
@@ -90,7 +91,13 @@ public class WmsTransferServiceImpl implements WmsTransferService {
 
         channelStoreList.add(channelStoreBean);
 
-        channelStoreList.addAll(user.getCompanyRealStoreList());
+        // 排除品牌方管理库存的仓库
+        for (ChannelStoreBean storeBean : user.getCompanyRealStoreList() ) {
+            if (StoreConfigs.getStore(new Long(storeBean.getStore_id())).getInventory_manager().equals(StoreConfigEnums.Manager.YES.getId())) {
+                channelStoreList.add(storeBean);
+            }
+        }
+
         resultMap.put("storeList", channelStoreList);
 
         // 获取开始日期（当前日期的一个月前）
@@ -568,16 +575,36 @@ public class WmsTransferServiceImpl implements WmsTransferService {
         for (String orderChannelId : orderChannelIdList) {
             List<StoreBean> storeBeans = StoreConfigs.getChannelStoreList(orderChannelId, false, false);
             if (storeBeans == null) throw new SystemException("System Init Error");
-            storeList.addAll(storeBeans);
+//            storeList.addAll(storeBeans);
+            // 排除品牌方管理库存的仓库
+            for (StoreBean storeBean : storeBeans ) {
+                if (storeBean.getInventory_manager().equals(StoreConfigEnums.Manager.YES.getId())) {
+                    storeList.add(storeBean);
+                }
+            }
+
         }
         resultMap.put("storeList", storeList);
 
         // 获得该用户登录时的仓库
-        List<ChannelStoreBean> companyStoreList = user.getCompanyRealStoreList();
+//        List<ChannelStoreBean> companyStoreList = user.getCompanyRealStoreList();
+        ArrayList<ChannelStoreBean> companyStoreList = new ArrayList<>();
+        // 排除品牌方管理库存的仓库
+        for (ChannelStoreBean storeBean : user.getCompanyRealStoreList() ) {
+            if (StoreConfigs.getStore(new Long(storeBean.getStore_id())).getInventory_manager().equals(StoreConfigEnums.Manager.YES.getId())) {
+                companyStoreList.add(storeBean);
+            }
+        }
         resultMap.put("companyStoreList", companyStoreList);
 
         // 获得该用户可以移库的仓库
-        List<ChannelStoreBean> companyStoreToList = user.getCompanyRealStoreToList();
+//        List<ChannelStoreBean> companyStoreToList = user.getCompanyRealStoreToList();
+        ArrayList<ChannelStoreBean> companyStoreToList = new ArrayList<>();
+        for (ChannelStoreBean storeBean : user.getCompanyRealStoreToList() ) {
+            if (StoreConfigs.getStore(new Long(storeBean.getStore_id())).getInventory_manager().equals(StoreConfigEnums.Manager.YES.getId())) {
+                companyStoreToList.add(storeBean);
+            }
+        }
         resultMap.put("companyStoreToList", companyStoreToList);
 
         return resultMap;

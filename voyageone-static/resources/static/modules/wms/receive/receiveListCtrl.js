@@ -5,16 +5,16 @@
  */
 define([
     "modules/wms/wms.module",
-    "modules/wms/pickup/pickupService",
+    "modules/wms/receive/receiveService",
     "components/directives/paging",
     "components/services/printService",
     "../directives/popChangeReservation/popChangeReservation",
     "components/directives/enterClick",
     "components/directives/dialogs/dialogs"
 ], function (wms) {
-    wms.controller("pickupListCtrl", [
+    wms.controller("receiveListCtrl", [
         "$scope",
-        "pickupService",
+        "receiveService",
         "printService",
         "vConfirm",
         "$filter",
@@ -24,7 +24,7 @@ define([
         pickupListCtrl
     ]);
 
-    function pickupListCtrl($scope, pickupService, printService, confirm, $filter, notify, wmsConstant, wmsChangeReservation) {
+    function pickupListCtrl($scope, receiveService, printService, confirm, $filter, notify, wmsConstant, wmsChangeReservation) {
 
         var vm = $scope.vm = {};
 
@@ -94,7 +94,7 @@ define([
         var liViewCtl = $scope.liViewCtl = {};
 
         // 初始化处理：取得仓库一览、状态一览并赋予初期值
-        pickupService.doInit({},$scope).then(function(response) {
+        receiveService.doInit({},$scope).then(function(response) {
             vm.status = response.data.status;
             vm.stores = response.data.storeList;
             vm.search.status = response.data.defaultStatus;
@@ -143,7 +143,7 @@ define([
             var from = format(vm.search.fromDate),
                 to = format(vm.search.toDate);
 
-            pickupService.searchPickup(
+            receiveService.searchPickup(
                 vm.search.orderNumber,
                 vm.search.reservationId,
                 vm.search.sku,
@@ -177,7 +177,7 @@ define([
         function scanPickup() {
 
             if (vm.scan.permit != "1") {
-                notify({"message": "WMS_PICKUP_PERMIT","status":"warning"});
+                notify({"message": "WMS_RECEIVE_PERMIT","status":"warning"});
                 return;
             }
 
@@ -217,7 +217,7 @@ define([
         function relabelPickup() {
 
             if (vm.scan.permit != "1") {
-                notify({"message": "WMS_PICKUP_PERMIT","status":"warning"});
+                notify({"message": "WMS_RECEIVE_PERMIT","status":"warning"});
                 return;
             }
 
@@ -250,7 +250,7 @@ define([
             vm.scan.no = "";
             $('#scanNo').focus();
 
-            pickupService.scanPickup(
+            receiveService.scanPickup(
                 vm.scan.scanNo,
                 vm.scan.scanMode,
                 vm.scan.scanType,

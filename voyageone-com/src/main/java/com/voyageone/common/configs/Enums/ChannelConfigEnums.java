@@ -359,8 +359,7 @@ public class ChannelConfigEnums {
          */
         sms_add_serial
 
-
-        }
+    }
 
     /**
      * 对应 tm_order_channel 表中存在的所有渠道ID
@@ -596,6 +595,32 @@ public class ChannelConfigEnums {
 
         public String getType() {
             return type;
+        }
+    }
+
+    /**
+     * 是否允许捡货或收货
+     *
+     * @author Jack
+     */
+    public enum Reserve {
+        /**
+         * 不允许
+         */
+        NO("0"),
+        /**
+         * 允许
+         */
+        YES("1");
+
+        private String is;
+
+        Reserve(String is) {
+            this.is = is;
+        }
+
+        public String getIs() {
+            return is;
         }
     }
 

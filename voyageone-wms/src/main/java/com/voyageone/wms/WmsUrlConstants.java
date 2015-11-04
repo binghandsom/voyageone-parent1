@@ -92,6 +92,28 @@ public final class WmsUrlConstants {
     }
 
     /**
+     * 收货 系列页面
+     */
+    public static final class ReceiveUrls {
+
+        /**
+         * List 页面。初始化
+         */
+        public static final String INIT = "/wms/receive/list/init";
+
+        /**
+         * List 页面。搜索指定条件的 Order
+         */
+        public static final String SEARCH = "/wms/receive/list/search";
+
+        /**
+         * List 页面。扫描指定条件的 Order
+         */
+        public static final String SCAN = "/wms/receive/list/scan";
+
+    }
+
+    /**
      * Upc 管理页面需要的操作地址
      */
     public static final class UpcUrls {
