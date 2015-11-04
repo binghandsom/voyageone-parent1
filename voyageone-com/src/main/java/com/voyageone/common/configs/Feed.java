@@ -100,10 +100,7 @@ public class Feed {
                 map.put(name, config);
                 put(id, map);
             } catch (IllegalArgumentException e) {
-                logger.warn("=== Feed.Configs.put ===");
-                logger.warn(e);
-                logger.warn(e.getMessage());
-                logger.warn(String.format("Channel: %s ; Name: %s", config.getOrder_channel_id(), config.getCfg_name()));
+                logger.warn(String.format("Feed 枚举匹配警告: [%s] NO \"%s\"", config.getOrder_channel_id(), config.getCfg_name()));
             }
         }
     }

@@ -60,6 +60,12 @@ FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed
     ON MATKL = m.value AND m.channel_id = '012' AND m.master_attr = 'MATKL'
 WHERE m.value IS NULL;
 
+DELETE voyageone_cms.cms_zz_worktable_bcbg_superfeed
+FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed
+  LEFT JOIN voyageone_cms.cms_mt_feed_master m
+    ON MATKL = m.value AND m.channel_id = '012' AND m.master_attr = 'MATKL'
+WHERE m.att_val1 = '';
+
 # 删除 DO NOT USE 类目的数据
 DELETE voyageone_cms.cms_zz_worktable_bcbg_superfeed
 FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed
@@ -94,7 +100,7 @@ SET WLADG = label;
 UPDATE voyageone_cms.cms_zz_worktable_bcbg_superfeed
   JOIN voyageone_cms.cms_mt_feed_master m
     ON MATKL = m.value AND m.master_attr = 'MATKL' AND m.channel_id = '012'
-SET MATKL = label;
+SET MATKL = label, MATKL_ATT1 = att_val1;
 
 # 转换完 master 之后,看看是不是都转了
 SELECT *
@@ -106,7 +112,6 @@ UPDATE voyageone_cms.cms_zz_worktable_bcbg_superfeed b
     ON b.MATNR = bf.MATNR
 SET b.update_flg = 1
 WHERE bf.MATNR IS NULL;
-
 
 
 UPDATE voyageone_cms.cms_zz_worktable_bcbg_superfeed b
