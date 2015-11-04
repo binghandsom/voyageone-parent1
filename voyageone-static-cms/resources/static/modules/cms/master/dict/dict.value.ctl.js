@@ -20,6 +20,7 @@ define(['modules/cms/cms.module', 'modules/cms/master/dict/dict.service'], funct
       this.dictList = dictList;
       this.word = word;
       this.notify = notify;
+      this.selected.text = "";
       if (!this.word) {
         this.selected.valueType = null;
         return;
