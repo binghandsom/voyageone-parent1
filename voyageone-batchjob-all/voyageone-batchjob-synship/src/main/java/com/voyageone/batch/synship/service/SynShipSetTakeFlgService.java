@@ -95,7 +95,13 @@ public class SynShipSetTakeFlgService extends BaseTaskService {
 
             for  (String synShipNo : synShipNoList) {
                 $info(channel.getFull_name() + "----------SynShipNo：" + synShipNo);
-                trackingDao.insertTrackingByStatus(synShipNo, CodeConstants.TRACKING.INFO_010, 0, getTaskName());
+                // 是否存在的检查，存在的场合不插入记录
+                int trackingExists = trackingDao.selectTrackingByStatus(synShipNo, CodeConstants.TRACKING.INFO_010);
+
+                if (trackingExists == 0) {
+                    trackingDao.insertTrackingByStatus(synShipNo, CodeConstants.TRACKING.INFO_010, 0, getTaskName());
+                }
+
             }
 
             $info(channel.getFull_name() + " 物流揽收信息设置结束");

@@ -180,7 +180,23 @@ public class TrackingDao extends BaseDao {
         params.put("order_channel_id", order_channel_id);
         params.put("processTime", processTime);
 
-        return updateTemplate.selectList(Constants.DAO_NAME_SPACE_WMS + "synShip_tracking_info_getNotTracking", params);
+        return updateTemplate.selectList("synShip_tracking_info_getNotTracking", params);
+    }
+
+    /**
+     * 查询物流信息
+     * @param synShipNo synShipNo
+     * @param trackingStatus 物品的物流状态
+     * @return int
+     */
+    public int selectTrackingByStatus(String synShipNo, String trackingStatus) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("synShipNo", synShipNo);
+        params.put("trackingStatus", trackingStatus);
+
+        return updateTemplate.selectOne("synShip_tracking_info_selectByStatus", params);
     }
 
     /**
@@ -200,7 +216,7 @@ public class TrackingDao extends BaseDao {
         params.put("trackingStatus", trackingStatus);
         params.put("userName", userName);
 
-        return updateTemplate.insert(Constants.DAO_NAME_SPACE_WMS + "synShip_tracking_info_insertByStatus", params);
+        return updateTemplate.insert("synShip_tracking_info_insertByStatus", params);
     }
 
 

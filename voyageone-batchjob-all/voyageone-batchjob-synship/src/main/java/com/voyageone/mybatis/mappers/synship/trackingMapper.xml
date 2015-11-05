@@ -331,7 +331,18 @@
                           WHERE tracking_info.syn_ship_no = res.syn_ship_no)
     </select>
 
-    <insert id="tt_tracking_info_insertByStatus">
+    <select id="synShip_tracking_info_selectByStatus" resultType="integer">
+        select
+          count(1)
+        from
+          tt_tracking_info
+        where
+          syn_ship_no = #{synShipNo}
+        and
+          tracking_status = #{trackingStatus}
+    </select>
+
+    <insert id="synShip_tracking_info_insertByStatus">
         insert into
           tt_tracking_info
          (
