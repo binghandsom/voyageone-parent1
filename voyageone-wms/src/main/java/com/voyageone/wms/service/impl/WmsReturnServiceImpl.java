@@ -321,7 +321,14 @@ public class WmsReturnServiceImpl implements WmsReturnService {
 		FormReturn formReturnParam = new FormReturn();
 		setFormCommonValue(request, formReturnParam, user);
 		//获得用户下的仓库
-		List<ChannelStoreBean> storeList = user.getCompanyRealStoreList();
+		//List<ChannelStoreBean> storeList = user.getCompanyRealStoreList();
+		ArrayList<ChannelStoreBean> storeList = new ArrayList<>();
+		// 排除品牌方管理库存的仓库
+		for (ChannelStoreBean storeBean : user.getCompanyRealStoreList() ) {
+			if (StoreConfigs.getStore(new Long(storeBean.getStore_id())).getInventory_manager().equals(StoreConfigEnums.Manager.YES.getId())) {
+				storeList.add(storeBean);
+			}
+		}
 
 		//获取所有未关闭的session并且添加选项【NewSession】
 		List<FormReturn> processingSessionAllList = getProcessingSessionName(formReturnParam);

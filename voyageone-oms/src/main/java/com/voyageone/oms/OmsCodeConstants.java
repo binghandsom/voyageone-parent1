@@ -176,5 +176,7 @@ public interface OmsCodeConstants {
 		public final static String RM = "008";
 		// 珠宝旗舰店
 		public final static String JW = "010";
+		// BCBG
+		public final static String BCBG = "012";
 	}
 }

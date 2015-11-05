@@ -1,5 +1,6 @@
 package com.voyageone.ims.model;
 
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.ims.service.impl.BeatFlg;
 
 import static com.voyageone.common.Constants.EmptyString;
@@ -135,6 +136,10 @@ public class ImsBeatItem {
 
     public String getModified() {
         return modified;
+    }
+
+    public String getCnModified() {
+        return DateTimeUtil.getLocalTime(modified, 8);
     }
 
     public void setModified(String modified) {

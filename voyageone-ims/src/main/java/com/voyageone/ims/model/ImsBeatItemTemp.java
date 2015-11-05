@@ -17,9 +17,6 @@ public class ImsBeatItemTemp extends ImsBeatItem {
     // 扩展
     private List<String> comments;
 
-    // 扩展
-    private String description;
-
     public String getSrc() {
         return src;
     }
@@ -41,13 +38,5 @@ public class ImsBeatItemTemp extends ImsBeatItem {
 
     public boolean hasComments() {
         return comments != null && comments.size() > 0;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 }

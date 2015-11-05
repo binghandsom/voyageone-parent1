@@ -11,6 +11,7 @@ public interface CodeConstants {
         public static final String ITOMS = "ITOMS";
         public static final String ITWMS = "ITWMS";
         public static final String ITIMS = "ITIMS";
+        public static final String NEED_SOLVE ="NEED_SOLVE";
 	}
 
     /**

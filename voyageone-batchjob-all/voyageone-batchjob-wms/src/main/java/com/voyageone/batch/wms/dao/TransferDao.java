@@ -1,6 +1,7 @@
 package com.voyageone.batch.wms.dao;
 
 import com.voyageone.base.dao.BaseDao;
+import com.voyageone.batch.wms.modelbean.ReceiptConfirmationBean;
 import com.voyageone.batch.wms.modelbean.SimTransferBean;
 import com.voyageone.batch.wms.modelbean.TransferBean;
 import com.voyageone.common.Constants;
@@ -115,4 +116,24 @@ public class TransferDao extends BaseDao {
         return updateTemplate.delete(Constants.DAO_NAME_SPACE_WMS + "wms_deleteTransferHistory", process_time);
     }
 
+    /**
+     * 取得Receipt Confirmation记录
+     * @param OrderChannelID 订单渠道
+     * @return List<ReceiptConfirmationBean>
+     */
+    public List<ReceiptConfirmationBean> getReceiptConfirmation(String OrderChannelID) {
+
+        return selectList(Constants.DAO_NAME_SPACE_WMS + "wms_bt_client_shipment_getReceiptConfirmation", OrderChannelID);
+
+    }
+
+    /**
+     * 置位已经生成文件的记录
+     *
+     * @param successConfirm 出力时间
+     */
+    public int updateReceiptConfirmInfo(Map<String, String> successConfirm) {
+
+        return updateTemplate.update(Constants.DAO_NAME_SPACE_WMS + "wms_bt_client_shipment_updateReceiptConfirmInfo", successConfirm);
+    }
 }

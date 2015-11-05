@@ -313,7 +313,55 @@ public class ChannelConfigEnums {
         /**
          * 斯伯丁特殊物品定制球
          */
-        special_goods_ball
+        special_goods_ball,
+        /**
+         * 是否允许捡货状态
+         */
+        pickup_permit,
+        /**
+         * 是否允许收货状态
+         */
+        receive_permit,
+        /**
+         * 收货状态
+         */
+        receive_status,
+        /**
+         * 收货类型
+         */
+        receive_type,
+        /**
+         * 收货重打状态
+         */
+        receive_relabel_status,
+        /**
+         * 收货重打类型
+         */
+        receive_relabel_type,
+        /**
+         * 再分配标志判断
+         */
+        allot_inventory_again,
+        /**
+         * 订单拆分
+         */
+        order_split,
+        /**
+         * SMS用户密码
+         */
+        sms_password,
+        /**
+         * SMS用户
+         */
+        sms_user,
+        /**
+         * 短信客服号
+         */
+        sms_add_serial,
+        /**
+         * 强制发货渠道仓库
+         */
+        ship_store_channel
 
     }
 
@@ -551,6 +599,32 @@ public class ChannelConfigEnums {
 
         public String getType() {
             return type;
+        }
+    }
+
+    /**
+     * 是否允许捡货或收货
+     *
+     * @author Jack
+     */
+    public enum Reserve {
+        /**
+         * 不允许
+         */
+        NO("0"),
+        /**
+         * 允许
+         */
+        YES("1");
+
+        private String is;
+
+        Reserve(String is) {
+            this.is = is;
+        }
+
+        public String getIs() {
+            return is;
         }
     }
 

@@ -9,11 +9,15 @@
 
 	<task:scheduled-tasks scheduler="ims-job-scheduler">
 
-		<task:scheduled ref="ImsBeatPicJob" method="run" cron="0 0/3 0-23 * * ?"/>
+		<task:scheduled ref="ImsBeatPicJob" method="run" cron="0 0/1 0-23 * * ?"/>
+
 		<task:scheduled ref="UploadProductJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
 		<!-- 第三方平台类目属性信息取得 -->
 		<task:scheduled ref="ImsCategoryTask" method="run" cron="0 0 04 * * ?"/>
+
+		<!-- 天猫特价宝更新活动商品 -->
+		<task:scheduled ref="ImsPromotionTask" method="run" cron="0 0/3 0-23 * * ?"/>
 
 		<!--主数据类目属性信息初始化 -->
 		<!--<task:scheduled ref="ImsCategoryInitTask" method="run" cron="0 0/1 0-23 * * ?"/>-->

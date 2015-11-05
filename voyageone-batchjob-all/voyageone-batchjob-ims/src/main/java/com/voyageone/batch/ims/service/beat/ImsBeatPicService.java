@@ -1,21 +1,18 @@
 package com.voyageone.batch.ims.service.beat;
 
 import com.voyageone.batch.base.BaseTaskService;
-import com.voyageone.batch.core.Enums.TaskControlEnums;
+import com.voyageone.batch.core.Enums.TaskControlEnums.Name;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.core.util.TaskControlUtils;
 import com.voyageone.batch.ims.bean.BeatPicBean;
 import com.voyageone.batch.ims.dao.ImsBeatPicDao;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.util.stream.Collectors.joining;
 
 /**
  * 价格披露同一处理任务
@@ -33,9 +30,6 @@ public class ImsBeatPicService extends BaseTaskService {
 
     @Autowired
     private ImsBeatUpdateService imsBeatUpdateService;
-
-    // 每个线程处理的数量
-    private static final int PRODUCT_COUNT_ON_THREAD = 1000;
 
     @Override
     public SubSystem getSubSystem() {
@@ -57,6 +51,9 @@ public class ImsBeatPicService extends BaseTaskService {
 
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
+
+        ImsBeatImageNameFormat.setTaskControls(taskControlList);
+
         doBeats(taskControlList);
     }
 
@@ -68,8 +65,13 @@ public class ImsBeatPicService extends BaseTaskService {
      */
     private void doBeats(List<TaskControlBean> taskControlList) throws InterruptedException {
 
-        String thread_count = TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.thread_count);
+        String thread_count = TaskControlUtils.getVal1(taskControlList, Name.thread_count);
+
+        String atom_count = TaskControlUtils.getVal1(taskControlList, Name.atom_count);
+
         final int THREAD_COUNT = Integer.valueOf(thread_count);
+
+        final int PRODUCT_COUNT_ON_THREAD = Integer.valueOf(atom_count);
 
         int limit = PRODUCT_COUNT_ON_THREAD * THREAD_COUNT;
 
@@ -92,10 +94,7 @@ public class ImsBeatPicService extends BaseTaskService {
             List<BeatPicBean> subList = beatPics.subList(i, end);
 
             runnableList.add(() -> {
-                List<BeatPicBean> err = new ArrayList<>();
-
                 for (BeatPicBean bean : subList) {
-
                     // 进入任务处理之前，重置上一次的信息
                     bean.setComment(Constants.EmptyString);
                     bean.setModifier(getTaskName());
@@ -103,7 +102,7 @@ public class ImsBeatPicService extends BaseTaskService {
                     switch (bean.getBeat_flg()) {
                         case Waiting:
                             //打标（beat_flg为1）
-                            imsBeatUpdateService.beat(bean);
+                            imsBeatUpdateService.beat(taskControlList, bean);
                             break;
                         case Passed:
                         case Cancel:
@@ -113,21 +112,7 @@ public class ImsBeatPicService extends BaseTaskService {
                     }
 
                     imsBeatPicDao.updateItem(bean);
-
-                    if (!StringUtils.isEmpty(bean.getComment()))
-                        err.add(bean);
                 }
-
-                // 最终处理完后检查错误
-                if (err.size() > 0) {
-                    String allIds = err.stream()
-                            .map(BeatPicBean::getBeat_item_id)
-                            .map(String::valueOf)
-                            .collect(joining(" ], [ "));
-                    logIssue("价格披露任务出现异常和错误！", " [ " + allIds + " ]");
-                }
-
-                $info("价格披露：子线程处理结束。预计处理数量：%s", subList.size());
             });
         }
 

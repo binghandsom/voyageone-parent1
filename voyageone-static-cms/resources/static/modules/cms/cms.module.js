@@ -275,6 +275,9 @@ define (function (require) {
                     case 'cnPublishTime':
                         $scope.cnPublishTime = true;
                         break;
+                    case 'cnStartTime':
+                        $scope.cnStartTime = true;
+                        break;
                     default:
                         break;
                 }
