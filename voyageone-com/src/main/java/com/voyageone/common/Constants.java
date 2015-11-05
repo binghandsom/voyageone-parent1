@@ -116,6 +116,8 @@ public final class Constants {
         public static final String URL = "URL";
         public static final String NEED_ADD_SERIAL = "1";
         public static final String NO_NEED_ADD_SERIAL = "0";
+        public static final String SMS_TYPE_MARKETING = "1";
+        public static final String SMS_TYPE_LOGISTICS = "0";
     }
 
     // 手机号码不符合规定

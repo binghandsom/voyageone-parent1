@@ -1,6 +1,7 @@
 package com.voyageone.wms.service.impl;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.Enums.StoreConfigEnums;
 import com.voyageone.common.configs.StoreConfigs;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
@@ -54,7 +55,7 @@ public class WmsLocationServiceImpl implements WmsLocationService {
         Map<String, Object> resultMap = new HashMap<>();
 
         // 获取用户可用的仓库
-        List<ChannelStoreBean> usersStores = user.getCompanyRealStoreList();
+        List<ChannelStoreBean> usersStores = new ArrayList<>();
 
         List<ChannelStoreBean> channelStoreList = new ArrayList<>();
 
@@ -66,7 +67,15 @@ public class WmsLocationServiceImpl implements WmsLocationService {
         channelStoreList.add(defaultAll);
 
         // 追加用户可用的仓库
-        channelStoreList.addAll(usersStores);
+//        channelStoreList.addAll(usersStores);
+        // 排除品牌方管理库存的仓库
+        for (ChannelStoreBean storeBean : user.getCompanyRealStoreList() ) {
+            if (StoreConfigs.getStore(new Long(storeBean.getStore_id())).getInventory_manager().equals(StoreConfigEnums.Manager.YES.getId())) {
+                usersStores.add(storeBean);
+                channelStoreList.add(storeBean);
+            }
+        }
+
 
         resultMap.put("storeList", channelStoreList);
         resultMap.put("addStoreList", usersStores);

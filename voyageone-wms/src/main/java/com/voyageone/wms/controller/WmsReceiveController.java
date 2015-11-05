@@ -1,10 +1,10 @@
 package com.voyageone.wms.controller;
 
+import com.voyageone.base.BaseController;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.core.ajax.AjaxResponseBean;
-import com.voyageone.base.BaseController;
 import com.voyageone.wms.WmsConstants;
-import com.voyageone.wms.WmsUrlConstants.PickupUrls;
+import com.voyageone.wms.WmsUrlConstants.ReceiveUrls;
 import com.voyageone.wms.formbean.FormReservation;
 import com.voyageone.wms.service.WmsPickupService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,21 +26,21 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping(method = RequestMethod.POST)
-public class WmsPickupController extends BaseController {
+public class WmsReceiveController extends BaseController {
     @Autowired
     private WmsPickupService pickupService;
 
     /**
-     * 捡货画面初始化
+     * 收货画面初始化
      *
      * @param response status/storeList/fromDate/toDate
      * @param paramMap 入力参数
      */
-    @RequestMapping(PickupUrls.INIT)
+    @RequestMapping(ReceiveUrls.INIT)
     public void doInit(HttpServletResponse response, @RequestBody Map<String, Object> paramMap) {
 
         // 取得初始化的必要项目
-        Map<String, Object> result = pickupService.doInit(getUser(),WmsConstants.ReserveType.PickUp);
+        Map<String, Object> result = pickupService.doInit(getUser(),WmsConstants.ReserveType.Receive);
 
         // 设置返回画面的值
         AjaxResponseBean
@@ -55,7 +55,7 @@ public class WmsPickupController extends BaseController {
      * @param paramMap   order_number/ id/ sku/ status/ store_id/ from/ to/ page/ size
      * @param response data/ count
      */
-    @RequestMapping(PickupUrls.SEARCH)
+    @RequestMapping(ReceiveUrls.SEARCH)
     public void searchPickup(@RequestBody Map<String, Object> paramMap, HttpServletResponse response) {
 
         // 根据检索条件取得抽出记录
@@ -81,30 +81,15 @@ public class WmsPickupController extends BaseController {
      * @param paramMap scanNo
      * @param response data
      */
-    @RequestMapping(PickupUrls.SCAN)
+    @RequestMapping(ReceiveUrls.SCAN)
     public void scanPickup(@RequestBody Map<String, Object> paramMap, HttpServletResponse response) {
 
-        Map<String, Object> result = pickupService.getScanInfo(paramMap, getUser(),WmsConstants.ReserveType.PickUp);
+        Map<String, Object> result = pickupService.getScanInfo(paramMap, getUser(),WmsConstants.ReserveType.Receive);
 
         AjaxResponseBean
                 .newResult(true)
                 .setResultInfo(result)
                 .writeTo(getRequest(), response);
-    }
-
-    /**
-     * 下载可捡货清单
-     *
-     */
-    @RequestMapping(value = PickupUrls.DOWNLOAD, method = RequestMethod.GET)
-    public ResponseEntity<byte[]>  downloadPickup(String type) throws IOException {
-
-        byte[] bytes = pickupService.downloadPickup(type, getUser());
-
-        String outFile =  WmsConstants.ReportPickupItems.FILE_NAME + "_" + DateTimeUtil.getNow() + ".xls";
-
-        return  genResponseEntityFromBytes(outFile, bytes);
-
     }
 
 }

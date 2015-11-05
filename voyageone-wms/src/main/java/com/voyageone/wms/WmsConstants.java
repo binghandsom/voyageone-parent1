@@ -92,6 +92,16 @@ public final class WmsConstants {
     }
 
     /**
+     * Reserve
+     */
+    public final static class ReserveType {
+        // 捡货
+        public final static String PickUp = "PickUp";
+        // 收货
+        public final static String Receive = "Receive";
+    }
+
+    /**
      * 报表相关设置
      */
     public final static class ReportSetting {

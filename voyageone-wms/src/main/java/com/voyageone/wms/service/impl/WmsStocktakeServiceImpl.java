@@ -2,6 +2,7 @@ package com.voyageone.wms.service.impl;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.*;
+import com.voyageone.common.configs.Enums.StoreConfigEnums;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.beans.MasterInfoBean;
 import com.voyageone.common.util.DateTimeUtil;
@@ -9,6 +10,7 @@ import com.voyageone.common.util.JsonUtil;
 import com.voyageone.core.CoreConstants;
 import com.voyageone.core.MessageConstants;
 import com.voyageone.core.ajax.AjaxResponseBean;
+import com.voyageone.core.modelbean.ChannelStoreBean;
 import com.voyageone.core.modelbean.PermissionBean;
 import com.voyageone.core.modelbean.UserSessionBean;
 import com.voyageone.core.util.PageUtil;
@@ -66,8 +68,15 @@ public class WmsStocktakeServiceImpl implements WmsStocktakeService {
 	public void sessionListInit(HttpServletRequest request, HttpServletResponse response, Map<String, String> paramMap, UserSessionBean user, HttpSession session) {
 		Map<String, Object> resultMap = new HashMap<>();
 		//获取用户仓库
-		List storeList = user.getCompanyRealStoreList();
-		resultMap.put("storeList", storeList);
+		//List storeList = user.getCompanyRealStoreList();
+		ArrayList<ChannelStoreBean> channelStoreList = new ArrayList<>();
+		// 排除品牌方管理库存的仓库
+		for (ChannelStoreBean storeBean : user.getCompanyRealStoreList() ) {
+			if (StoreConfigs.getStore(new Long(storeBean.getStore_id())).getInventory_manager().equals(StoreConfigEnums.Manager.YES.getId())) {
+				channelStoreList.add(storeBean);
+			}
+		}
+		resultMap.put("storeList", channelStoreList);
 		//获取页面查询条件下拉框内容
 		doGetComBoxInfo(paramMap, resultMap);
 		// 获取开始日期（当前日期的一个月前）
