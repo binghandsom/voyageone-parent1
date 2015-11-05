@@ -9,8 +9,6 @@ import com.voyageone.batch.cms.dao.SuperFeedDao;
 import com.voyageone.batch.cms.dao.feed.BcbgSuperFeedDao;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
-import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Enums.FeedEnums.Name;
 import com.voyageone.common.configs.Feed;
 import com.voyageone.common.util.DateTimeUtil;
@@ -24,9 +22,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.BCBG;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
+import static com.voyageone.batch.cms.service.feed.BcbgWsdlConstants.*;
 
 /**
  * Bcbg 的 Feed 数据分析服务
@@ -108,27 +106,27 @@ public class BcbgAnalysisService extends BaseTaskService {
         clearLastData();
         insertNewData(bcbgBeans, styleBeans);
 
-        // 处理下拉类属性
-        attributeListInsert(BCBG);
-
         // 开始数据分析处理阶段
-        transformer.new Context(BCBG, this).transform();
+        transformer.new Context(channel, this).transform();
         $info("数据处理阶段结束");
+
+        // 处理下拉类属性
+        attributeListInsert();
 
         // 使用接口提交
         insertService.postNewProduct();
         updateService.postUpdatedProduct();
-        attributeService.postAttributes();
+        //attributeService.postAttributes();
 
         // 备份文件
-        backup.fromData(feedFile, styleFile);
+        //backup.fromData(feedFile, styleFile);
     }
 
     private File[] getDataFiles() {
 
         // 读取各种配置
         // 精简配置,减少独立配置,所以两个文件都配置在一个项目里
-        String fileNames = Feed.getVal1(BCBG, Name.feed_ftp_filename); // 文件路径
+        String fileNames = Feed.getVal1(channel, Name.feed_ftp_filename); // 文件路径
 
         // 拆分成 feed 和 style
         String[] fileNameArr = fileNames.split(";");
@@ -251,7 +249,7 @@ public class BcbgAnalysisService extends BaseTaskService {
         $info("发现 BCBG Style <无效>数据 %s 个", styleBeans.size());
     }
 
-    private void attributeListInsert(Channel channel){
+    private void attributeListInsert(){
 
         String channel_id = channel.getId();
 
@@ -260,7 +258,7 @@ public class BcbgAnalysisService extends BaseTaskService {
         
         for (String attribute : attributeList) {
             // 从数据中取该属性的数据,并消除重复
-            List<String> distinctValues = superFeedDao.selectAllAttribute(attribute, Feed.getVal1(channel_id, FeedEnums.Name.table_id));
+            List<String> distinctValues = superFeedDao.selectAllAttribute(attribute, table_feed_full);
 
             for (String value : distinctValues) {
                 // 针对每个值进行检查.有则跳过,没有则插入
@@ -279,7 +277,7 @@ public class BcbgAnalysisService extends BaseTaskService {
 
         public Backup() {
 
-            String sBackupDir = Feed.getVal1(BCBG, Name.feed_backup_dir); // 备份的文件路径
+            String sBackupDir = Feed.getVal1(channel, Name.feed_backup_dir); // 备份的文件路径
 
             // 如果是模板,就尝试格式化
             if (sBackupDir.contains("%s"))
