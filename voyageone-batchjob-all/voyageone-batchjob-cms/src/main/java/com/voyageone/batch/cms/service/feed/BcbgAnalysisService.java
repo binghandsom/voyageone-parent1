@@ -116,10 +116,10 @@ public class BcbgAnalysisService extends BaseTaskService {
         // 使用接口提交
         insertService.postNewProduct();
         updateService.postUpdatedProduct();
-        //attributeService.postAttributes();
+        attributeService.postAttributes();
 
         // 备份文件
-        //backup.fromData(feedFile, styleFile);
+        backup.fromData(feedFile, styleFile);
     }
 
     private File[] getDataFiles() {
