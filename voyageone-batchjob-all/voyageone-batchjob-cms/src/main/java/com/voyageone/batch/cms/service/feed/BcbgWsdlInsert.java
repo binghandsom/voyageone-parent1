@@ -191,10 +191,10 @@ class BcbgWsdlInsert extends BcbgWsdlBase {
                     //  处理类型 1:category 无; 2:model
                     if (productFeedDetailBean.getBeanType() == 2)
                         modelFailList.add(productFeedDetailBean.getDealObject().getModel());
-
                     //  处理类型 3:product; 4:item
                     if (productFeedDetailBean.getBeanType() == 3 || productFeedDetailBean.getBeanType() == 4)
                         productFailList.add(productFeedDetailBean.getDealObject().getCode());
+                    $info("INSERT 接口返回: ", productFeedDetailBean.getResultMessage());
                 }
             }
 
@@ -206,6 +206,6 @@ class BcbgWsdlInsert extends BcbgWsdlBase {
 
         int count = bcbgSuperFeedDao.updateSuccessStatus(modelFailList, productFailList);
 
-        $info("新商品 Insert 处理全部完成, 更新 Full 表 [ Feed: %s ]", count);
+        $info("新商品 INSERT 处理全部完成, 更新 Full 表 [ Feed: %s ]", count);
     }
 }
