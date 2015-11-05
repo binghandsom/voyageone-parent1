@@ -22,7 +22,7 @@ import static com.voyageone.batch.cms.service.feed.BcbgWsdlConstants.*;
 @Service
 public class BcbgWsdlUpdate extends BcbgWsdlBase {
 
-    private static final String UPDATE_FLG = "update_flg = 2";
+    private static final String UPDATE_FLG = "status=30";
 
     @Override
     protected String getWhereUpdateFlg() {
@@ -52,13 +52,13 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
         }
 
         // 从 _full 后缀的表里取上次的数据
-        List<ProductBean> lastProduct = getLastProducts();
-        Map<String, List<ImageBean>> codeImages = getLastImages();
+        List<ProductBean> newProducts = getNewProducts();
+        Map<String, List<ImageBean>> codeImages = getNewImages();
 
         // 在这次的商品数据和上次的商品数据之间建立关联关系
         List<ProductsFeedUpdate> feedUpdates = updatingProduct
                 .stream()
-                .map(p -> new Relation(p, lastProduct, codeImages)) // 这里注意, indexOf 重写了 ProductBean 的 equals 方法
+                .map(p -> new Relation(p, newProducts, codeImages)) // 这里注意, indexOf 重写了 ProductBean 的 equals 方法
                 .map(this::getWsdlParam)
                 .filter(p -> p != null)
                 .collect(toList());
@@ -109,7 +109,7 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
         $info("已完成商品更新, 更新的商品数量 Feed [ %s ] [ %s ] Style [ %s ] [ %s ] ", counts[0], counts[1], counts[2], counts[3]);
     }
 
-    private List<ProductBean> getLastProducts() {
+    private List<ProductBean> getNewProducts() {
 
         $info("准备批量获取上次记录的 Product ( Full )");
 
@@ -120,9 +120,9 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
         String where = Constants.EmptyString;
 
         List<ProductBean> productBeans = superFeedDao.selectSuperfeedProduct(
-                String.format("%s %s", where, Feed.getVal1(channel, FeedEnums.Name.product_sql_ending)),
+                String.format("%s GROUP BY %s", where, grouping_product),
                 productColumns,
-                String.format("%s_full %s", productTable, productJoin));
+                String.format("%s JOIN %s ON %s", table_feed, table_style_full, on_product));
 
         $info("取得上次记录的 Product ( Full ) [ %s ] 个", productBeans.size());
 
@@ -136,7 +136,7 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
         return productBeans;
     }
 
-    private Map<String, List<ImageBean>> getLastImages() {
+    private Map<String, List<ImageBean>> getNewImages() {
 
         $info("准备批量获取上次记录的 Image ( Full )");
 
@@ -151,8 +151,8 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
         // 通过组装的 SQL 查询这次需要更新的商品,其上次的图片信息
         List<String> imageArrs = superFeedDao.selectAllfeedImage(
                 where,
-                String.format("DISTINCT CONCAT(%s, '<>', %s)", code, images), // 这里定义固定格式
-                String.format("%s_full %s", imageTable, imageJoin)); // 表部分
+                String.format("DISTINCT CONCAT(%s,'<>',%s)", code, images), // 这里定义固定格式
+                String.format("%s JOIN %s ON %s", table_feed, table_style_full, on_product)); // 表部分
 
         return imageArrs
                 .stream()
@@ -216,16 +216,16 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
         /**
          * 上次记录的商品信息
          */
-        private ProductBean last;
+        private ProductBean newProduct;
 
-        public Relation(ProductBean updating, List<ProductBean> lastProduct, Map<String, List<ImageBean>> codeImages) {
+        public Relation(ProductBean updating, List<ProductBean> newProductList, Map<String, List<ImageBean>> codeImages) {
 
             this.updating = updating;
 
             // 这里因为 ProductBean 的 equals 重写, 可以通过 indexOf 查询到上次的数据
-            this.last = lastProduct.get(lastProduct.indexOf(updating));
+            this.newProduct = newProductList.get(newProductList.indexOf(updating));
             // 使用 Code 关联查询上次的图片信息
-            this.last.setImages(codeImages.get(this.last.getP_code()));
+            this.newProduct.setImages(codeImages.get(this.newProduct.getP_code()));
         }
 
         /**
@@ -233,28 +233,28 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
          */
         public Map<String, String> getUpdateFields() {
 
-            if (last == null) return null;
+            if (newProduct == null) return null;
 
             Map<String, String> updateFields = new HashMap<>();
 
-            if (!updating.getP_msrp().equals(last.getP_msrp())) {
-                updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_MSRP, updating.getP_msrp());
+            if (!updating.getP_msrp().equals(newProduct.getP_msrp())) {
+                updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_MSRP, newProduct.getP_msrp());
             }
 
-            if (!updating.getPs_price().equals(last.getPs_price())) {
-                updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_PRICE, updating.getPs_price());
+            if (!updating.getPs_price().equals(newProduct.getPs_price())) {
+                updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_PRICE, newProduct.getPs_price());
             }
 
-            if (!updating.getCps_cn_price().equals(last.getCps_cn_price())) {
-                updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE, updating.getCps_cn_price());
+            if (!updating.getCps_cn_price().equals(newProduct.getCps_cn_price())) {
+                updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE, newProduct.getCps_cn_price());
             }
 
-            if (!updating.getCps_cn_price_rmb().equals(last.getCps_cn_price_rmb())) {
-                updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE_RMB, updating.getCps_cn_price_rmb());
+            if (!updating.getCps_cn_price_rmb().equals(newProduct.getCps_cn_price_rmb())) {
+                updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE_RMB, newProduct.getCps_cn_price_rmb());
             }
 
-            if (!updating.getPe_long_description().equals(last.getPe_long_description())) {
-                updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_LONG_DESCRIPTION, updating.getPe_long_description());
+            if (!updating.getPe_long_description().equals(newProduct.getPe_long_description())) {
+                updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_LONG_DESCRIPTION, newProduct.getPe_long_description());
             }
 
             String separator = CmsConstants.FEED_IO_UPDATEFIELDS_IMAGE_SPLIT;
@@ -266,15 +266,15 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
             if (imageBeanList != null)
                 images = imageBeanList.stream().map(ImageBean::getImage_url).filter(i -> i != null).collect(joining(separator));
 
-            String lastImages = null;
+            String newImages = null;
 
-            List<ImageBean> lastImageList = last.getImages();
+            List<ImageBean> lastImageList = newProduct.getImages();
 
             if (lastImageList != null)
-                lastImages = lastImageList.stream().map(ImageBean::getImage_url).filter(i -> i != null).collect(joining(separator));
+                newImages = lastImageList.stream().map(ImageBean::getImage_url).filter(i -> i != null).collect(joining(separator));
 
-            if (!images.equals(lastImages)) {
-                updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_IMAGE_URL, images);
+            if (!images.equals(newImages)) {
+                updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_IMAGE_URL, newImages);
             }
 
             return updateFields;

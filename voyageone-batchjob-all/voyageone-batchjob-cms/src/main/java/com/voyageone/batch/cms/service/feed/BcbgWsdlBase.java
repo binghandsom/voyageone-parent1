@@ -66,7 +66,7 @@ abstract class BcbgWsdlBase extends BaseTaskService {
 
         String where = String.format("WHERE %s AND %s = '%s'", getWhereUpdateFlg(), itemColumns.getCode(), product.getP_code());
 
-        List<ItemBean> itemBeans = superFeedDao.selectSuperfeedItem(where, itemColumns, table);
+        List<ItemBean> itemBeans = superFeedDao.selectSuperfeedItem(where, itemColumns, table_feed);
 
         $info("取得 Item [ %s\t ] 个 [ Product: %s ]", itemBeans.size(), product.getUrl_key());
 
@@ -95,7 +95,7 @@ abstract class BcbgWsdlBase extends BaseTaskService {
                 where,
                 Feed.getVal1(channel, FeedEnums.Name.images),
                 // 组合 Image 的表部分和Join部分
-                String.format("%s %s", imageTable, imageJoin));
+                String.format("%s JOIN %s ON %s", table_feed_full, table_style_full, on_product));
 
         $info("取得 Image 路径组合 [ %s ] 个 [ Product: %s ]", imageArrs.size(), product.getUrl_key());
 
@@ -161,10 +161,10 @@ abstract class BcbgWsdlBase extends BaseTaskService {
         ProductBean productColumns = getProductColumns();
 
         List<ProductBean> productBeans = superFeedDao.selectSuperfeedProduct(
-                String.format("%s %s", where, Feed.getVal1(channel, FeedEnums.Name.product_sql_ending)),
+                String.format("%s GROUP BY %s", where, grouping_product),
                 productColumns,
                 // 组合 Product 的表部分和Join部分
-                String.format("%s %s", productTable, productJoin));
+                String.format("%s JOIN %s ON %s", table_feed_full, table_style_full, on_product));
 
         $info("取得 Product [ %s ] 个 [ 条件: %s ]", productBeans.size(), where);
 

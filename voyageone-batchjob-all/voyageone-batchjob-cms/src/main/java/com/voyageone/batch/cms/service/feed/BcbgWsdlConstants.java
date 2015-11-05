@@ -13,29 +13,27 @@ import java.util.regex.Pattern;
  */
 class BcbgWsdlConstants {
 
-    public static Pattern special_symbol;
+    protected final static String table_feed = "voyageone_cms.cms_zz_worktable_bcbg_superfeed";
 
-    public static ChannelConfigEnums.Channel channel;
+    protected final static String table_feed_full = "voyageone_cms.cms_zz_worktable_bcbg_superfeed_full";
 
-    public static String table;
+    protected final static String table_style_full = "voyageone_cms.cms_zz_worktable_bcbg_styles_full";
 
-    public static String imageTable;
+    protected final static String on_product = "styleID = CONCAT(SATNR,'-',COLOR)";
 
-    public static String imageJoin;
+    protected final static String grouping_product = "CONCAT(MATKL,'-',SATNR,COLOR),MATKL,CONCAT(MATKL,'-',SATNR),CONCAT(SATNR,'-',COLOR),COLOR_ATWTB,WHERL,productDesc,A304_KBETR,A073_KBETR,A304_KBETR,A073_KBETR,A073_KBETR";
 
-    public static String productTable;
+    protected final static String grouping_model = "CONCAT(MATKL,'-',SATNR),MATKL,WLADG,BRAND_ID,SATNR,ATBEZ,SIZE1_ATINN";
 
-    public static String productJoin;
+    protected static Pattern special_symbol;
 
-    public static String modelTable;
+    protected static ChannelConfigEnums.Channel channel;
 
-    public static String modelJoin;
+    protected static BigDecimal fixed_exchange_rate;
 
-    public static BigDecimal fixed_exchange_rate;
+    protected static BigDecimal apparels_duty;
 
-    public static BigDecimal apparels_duty;
-
-    public static BigDecimal other_duty;
+    protected static BigDecimal other_duty;
 
     /**
      * 初始化所有静态变量
@@ -47,22 +45,8 @@ class BcbgWsdlConstants {
         }
 
         channel = ChannelConfigEnums.Channel.BCBG;
-        // 主表
-        table = Feed.getVal1(channel, FeedEnums.Name.table_id);
-        // 图片表
-        imageTable = Feed.getVal1(channel, FeedEnums.Name.image_table_id);
         // 特殊字符 (正则)
         special_symbol = Pattern.compile(Feed.getVal1(channel, FeedEnums.Name.url_special_symbol));
-        // 商品表
-        productTable = Feed.getVal1(channel, FeedEnums.Name.product_table_id);
-        // 图片表的 Join 部分
-        imageJoin = Feed.getVal1(channel, FeedEnums.Name.image_table_join);
-        // 商品表的 Join 部分
-        productJoin = Feed.getVal1(channel, FeedEnums.Name.product_table_join);
-        // Model 表
-        modelTable = Feed.getVal1(channel, FeedEnums.Name.model_table_id);
-        // Model 的 Join 部分
-        modelJoin = Feed.getVal1(channel, FeedEnums.Name.model_table_join);
 
         fixed_exchange_rate = getBigDecimalFeedVal1(FeedEnums.Name.fixed_exchange_rate);
         apparels_duty = getBigDecimalFeedVal1(FeedEnums.Name.apparels_duty);
