@@ -22,9 +22,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static com.voyageone.batch.cms.service.feed.BcbgWsdlConstants.channel;
+import static com.voyageone.batch.cms.service.feed.BcbgWsdlConstants.table_feed_full;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
-import static com.voyageone.batch.cms.service.feed.BcbgWsdlConstants.*;
 
 /**
  * Bcbg 的 Feed 数据分析服务
@@ -85,22 +86,26 @@ public class BcbgAnalysisService extends BaseTaskService {
 
         File[] files = getDataFiles();
 
-        // 说明没获取到文件, 放弃执行. 内部会进行日志输出
-        if (files == null) return;
-
         File feedFile = files[0];
         File styleFile = files[1];
 
+        List<SuperFeedBcbgBean> bcbgBeans = null;
+        BcbgStyleBean[] styleBeans = null;
+
         // 读取数据文件
-        BcbgFeedFile bcbgFeedFile = BcbgFeedFile.read(feedFile);
-        List<SuperFeedBcbgBean> bcbgBeans = bcbgFeedFile.getMATERIALS();
+        if (feedFile != null) {
+            BcbgFeedFile bcbgFeedFile = BcbgFeedFile.read(feedFile);
+            bcbgBeans = bcbgFeedFile.getMATERIALS();
 
-        $info("已读取文件.获得 Feed %s 个", bcbgBeans.size());
+            $info("已读取文件.获得 Feed %s 个", bcbgBeans.size());
+        }
 
-        FileReader styleFileReader = new FileReader(styleFile);
-        BcbgStyleBean[] styleBeans = new Gson().fromJson(styleFileReader, BcbgStyleBean[].class);
+        if (styleFile != null) {
+            FileReader styleFileReader = new FileReader(styleFile);
+            styleBeans = new Gson().fromJson(styleFileReader, BcbgStyleBean[].class);
 
-        $info("已读取文件.获得 Style %s 个", styleBeans.length);
+            $info("已读取文件.获得 Style %s 个", styleBeans.length);
+        }
 
         // 插入数据库
         clearLastData();
@@ -147,11 +152,7 @@ public class BcbgAnalysisService extends BaseTaskService {
 
         File feedFile = getDataFile(sFeedXmlDir, ".xml");
 
-        if (feedFile == null) return null;
-
         File styleFile = getDataFile(sStyleJsonDir, ".json");
-
-        if (styleFile == null) return null;
 
         return new File[] { feedFile, styleFile };
     }
@@ -167,7 +168,7 @@ public class BcbgAnalysisService extends BaseTaskService {
         File[] feedFiles = feedFileDir.listFiles(i -> i.getName().contains(filter));
 
         if (feedFiles == null || feedFiles.length < 1) {
-            $info("'%s' 数据文件不存在,退出任务", filter);
+            $info("没有找到 '%s' 文件", filter);
             return null;
         }
 
@@ -188,22 +189,29 @@ public class BcbgAnalysisService extends BaseTaskService {
 
     private void insertNewData(List<SuperFeedBcbgBean> bcbgBeans, BcbgStyleBean[] styleBeanArr) {
 
-        int start = 0, end, total = bcbgBeans.size(), limit = 500;
+        int start, end, total, limit = 500;
 
-        while (start < total) {
+        if (bcbgBeans != null) {
+            start = 0;
+            total = bcbgBeans.size();
 
-            end = start + limit;
+            while (start < total) {
 
-            if (end > total) end = total;
+                end = start + limit;
 
-            List<SuperFeedBcbgBean> subList = bcbgBeans.subList(start, end);
+                if (end > total) end = total;
 
-            int count = bcbgSuperFeedDao.insertWorkTables(subList);
+                List<SuperFeedBcbgBean> subList = bcbgBeans.subList(start, end);
 
-            $info("分段插入 Feed %s 个", count);
+                int count = bcbgSuperFeedDao.insertWorkTables(subList);
 
-            start = end;
+                $info("分段插入 Feed %s 个", count);
+
+                start = end;
+            }
         }
+
+        if (styleBeanArr == null) return;
 
         List<BcbgStyleBean> styleBeans = Arrays.asList(styleBeanArr);
 
