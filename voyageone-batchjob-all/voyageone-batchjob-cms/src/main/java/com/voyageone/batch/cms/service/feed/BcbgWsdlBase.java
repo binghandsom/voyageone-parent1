@@ -26,9 +26,11 @@ import static com.voyageone.batch.cms.service.feed.BcbgWsdlConstants.*;
  */
 abstract class BcbgWsdlBase extends BaseTaskService {
 
-    public final static String APPAREL = "Apparel";
+    private final static String APPAREL = "Apparel";
 
-    public final static String ACCESSORIES = "Accessories";
+    private final static String ACCESSORIES = "Accessories";
+
+    private final static BigDecimal TEN = new BigDecimal(10);
 
     @Autowired
     protected SuperFeedDao superFeedDao;
@@ -203,8 +205,8 @@ abstract class BcbgWsdlBase extends BaseTaskService {
                 return;
         }
 
-        int iMsrp = msrp.multiply(fixed_exchange_rate).divide(duty, BigDecimal.ROUND_DOWN).intValue();
-        int iPrice = price.multiply(fixed_exchange_rate).divide(duty, BigDecimal.ROUND_DOWN).intValue();
+        int iMsrp = calePrice(msrp, duty);
+        int iPrice = calePrice(price, duty);
 
         productBean.setCps_cn_price(String.valueOf(iMsrp));
         productBean.setCps_cn_price_rmb(String.valueOf(iPrice));
@@ -212,6 +214,16 @@ abstract class BcbgWsdlBase extends BaseTaskService {
 
         // 计算完成后去除临时使用的 type 内容
         productBean.setP_product_type(Constants.EmptyString);
+    }
+
+    private int calePrice(BigDecimal bigDecimal, BigDecimal duty) {
+        return bigDecimal
+                .multiply(fixed_exchange_rate)
+                .divide(duty, BigDecimal.ROUND_DOWN)
+                .setScale(0, BigDecimal.ROUND_DOWN)
+                .divide(TEN, BigDecimal.ROUND_DOWN)
+                .multiply(TEN)
+                .intValue();
     }
 
     protected String clearSpecialSymbol(String name) {
