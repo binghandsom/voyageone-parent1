@@ -89,6 +89,10 @@ public class BcbgAnalysisService extends BaseTaskService {
         File feedFile = files[0];
         File styleFile = files[1];
 
+        // 同时木有...
+        if (feedFile == null && styleFile == null)
+            return;
+
         List<SuperFeedBcbgBean> bcbgBeans = null;
         BcbgStyleBean[] styleBeans = null;
 
@@ -300,6 +304,7 @@ public class BcbgAnalysisService extends BaseTaskService {
         }
 
         protected void from(File file) {
+            if (file == null) return;
             if (!file.renameTo(new File(backupDir, file.getName())))
                 $info("文件备份失败 %s %s", file.getPath(), file.getName());
         }
