@@ -666,41 +666,41 @@ public class PostBCBGOrderService {
 				isSuccess = uploadOrderFile(upLoadFtpBean, fileName);
 			}
 
-			// 推送标志更新
-			if (isSuccess) {
-//				logger.info("updateDemandSendInfo");
-//				isSuccess = updateOrdersInfo(POST_BCBG_DEMAND, pushDemandList);
-//
-//				if (isSuccess) {
+				// 推送标志更新
+				if (isSuccess) {
+	//				logger.info("updateDemandSendInfo");
+	//				isSuccess = updateOrdersInfo(POST_BCBG_DEMAND, pushDemandList);
+	//
+	//				if (isSuccess) {
+						// 源文件
+						String srcFile = upLoadFtpBean.getUpload_localpath() + "/" + upLoadFtpBean.getUpload_filename();
+						// 目标文件
+						String destFile = upLoadFtpBean.getUpload_local_bak_path() + "/" + upLoadFtpBean.getUpload_filename();
+						logger.info("moveFile = " + srcFile + " " + destFile);
+						FileUtils.moveFile(srcFile, destFile);
+
+	//				} else {
+	//					logger.info("updateDemandSendInfo error");
+	//					issueLog.log("postBCBGDemands.updateDemandSendInfo",
+	//							"updateDemandSendInfo error;Push order file = " + fileName,
+	//							ErrorType.BatchJob,
+	//							SubSystem.OMS);
+	//				}
+				} else {
+					logger.info("uploadOrderFile error;Push demand file = " + fileName);
+					issueLog.log("postRMNormalOrder.uploadOrderFile",
+							"uploadOrderFile error;Push demand file = " + fileName,
+							ErrorType.BatchJob,
+							SubSystem.OMS);
+
 					// 源文件
 					String srcFile = upLoadFtpBean.getUpload_localpath() + "/" + upLoadFtpBean.getUpload_filename();
-					// 目标文件
-					String destFile = upLoadFtpBean.getUpload_local_bak_path() + "/" + upLoadFtpBean.getUpload_filename();
-					logger.info("moveFile = " + srcFile + " " + destFile);
-					FileUtils.moveFile(srcFile, destFile);
-
-//				} else {
-//					logger.info("updateDemandSendInfo error");
-//					issueLog.log("postBCBGDemands.updateDemandSendInfo",
-//							"updateDemandSendInfo error;Push order file = " + fileName,
-//							ErrorType.BatchJob,
-//							SubSystem.OMS);
-//				}
-			} else {
-				logger.info("uploadOrderFile error;Push demand file = " + fileName);
-				issueLog.log("postRMNormalOrder.uploadOrderFile",
-						"uploadOrderFile error;Push demand file = " + fileName,
-						ErrorType.BatchJob,
-						SubSystem.OMS);
-
-				// 源文件
-				String srcFile = upLoadFtpBean.getUpload_localpath() + "/" + upLoadFtpBean.getUpload_filename();
-				logger.info("delFile = " + srcFile);
-				FileUtils.delFile(srcFile);
+					logger.info("delFile = " + srcFile);
+					FileUtils.delFile(srcFile);
+				}
 			}
-		}
 
-		return isSuccess;
+			return isSuccess;
 	}
 
 	/**
