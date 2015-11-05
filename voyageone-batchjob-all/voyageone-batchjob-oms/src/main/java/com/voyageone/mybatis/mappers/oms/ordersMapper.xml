@@ -2377,7 +2377,7 @@
 			)od
 			on o.order_number = od.order_number
 		left join
-			voyageone_cms.cms_zz_worktable_bcbg_superfeed cms
+			voyageone_cms.cms_zz_worktable_bcbg_superfeed_full cms
 			on od.sku = cms.MATNR
 		where
 			o.order_channel_id = #{orderChannelId} and
@@ -2466,7 +2466,7 @@
 			od.quantity_shipped,
 			od.price_per_unit,
 			od.ship_date,
-			IFNULL(rt.syn_ship_no,'') as tracking_no,
+			IFNULL(od.syn_ship_no,'') as tracking_no,
 			IFNULL(cms.EAN11,'') as UPC,
 			IFNULL(cms.SATNR,'') as style,
 			IFNULL(cms.COLOR,'') as color,
@@ -2480,7 +2480,8 @@
 						sum(ods.quantity_ordered) as quantity_ordered,
 						sum(ods.quantity_shipped) as quantity_shipped,
 						min(ods.price_per_unit) as price_per_unit,
-						min(ods.res_id) as res_id
+						min(ods.res_id) as res_id,
+						min(ods.syn_ship_no) as syn_ship_no
 			from Synship.oms_bt_order_details ods
 			inner join (select order_number
 							from Synship.oms_bt_order_details odss
@@ -2496,9 +2497,7 @@
 			)od
 		left join Synship.oms_bt_orders o
 			on o.order_number = od.order_number
-		left join tt_res_tracking rt
-			on od.res_id = rt.reservation_id
-		left join	voyageone_cms.cms_zz_worktable_bcbg_superfeed cms
+		left join	voyageone_cms.cms_zz_worktable_bcbg_superfeed_full cms
 			on od.sku = cms.MATNR
 		where
 			o.order_channel_id = #{orderChannelId}
