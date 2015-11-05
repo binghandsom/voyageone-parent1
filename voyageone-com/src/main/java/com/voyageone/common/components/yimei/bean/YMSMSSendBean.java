@@ -11,6 +11,9 @@ public class YMSMSSendBean {
     //    短信内容
     private String content;
 
+    // 短信类型
+    private String sms_type;
+
     public String getOrder_channel_id() {
         return order_channel_id;
     }
@@ -33,5 +36,13 @@ public class YMSMSSendBean {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getSms_type() {
+        return sms_type;
+    }
+
+    public void setSms_type(String sms_type) {
+        this.sms_type = sms_type;
     }
 }

@@ -361,7 +361,19 @@ public class ChannelConfigEnums {
         /**
          * 强制发货渠道仓库
          */
-        ship_store_channel
+        ship_store_channel,
+        /**
+         * SMS用户密码(营销)
+         */
+        sms_password_marketing,
+        /**
+         * SMS用户(营销)
+         */
+        sms_user_marketing,
+        /**
+         * 短信客服号(营销)
+         */
+        sms_add_serial_marketing
 
     }
 

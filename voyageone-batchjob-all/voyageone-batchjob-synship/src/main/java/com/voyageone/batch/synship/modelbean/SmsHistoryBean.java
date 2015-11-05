@@ -29,6 +29,8 @@ public class SmsHistoryBean {
     private String status;
     // 发送标志位
     private String sms_flg;
+    // 短信类型
+    private String sms_type;
     // 销售渠道
     private String order_channel_id;
     // 任务编号
@@ -137,6 +139,14 @@ public class SmsHistoryBean {
 
     public void setSms_flg(String sms_flg) {
         this.sms_flg = sms_flg;
+    }
+
+    public String getSms_type() {
+        return sms_type;
+    }
+
+    public void setSms_type(String sms_type) {
+        this.sms_type = sms_type;
     }
 
     public String getOrder_channel_id() {
