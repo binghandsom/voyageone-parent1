@@ -16,6 +16,7 @@
             history.PORT,
             history.STATUS,
             history.sms_flg,
+            history.sms_type,
             history.order_channel_id,
             history.task_id,
             history.create_time,

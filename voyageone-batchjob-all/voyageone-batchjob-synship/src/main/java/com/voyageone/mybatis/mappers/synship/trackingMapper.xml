@@ -305,4 +305,70 @@
         AND
             tracking_no = #{tracking_no}
     </update>
+
+    <select id="synShip_tracking_info_getNotTracking" resultType="string">
+        SELECT
+            DISTINCT
+            res.syn_ship_no
+        FROM
+            oms_bt_orders orders,
+            tt_reservation res
+        WHERE
+            orders.order_channel_id =#{order_channel_id}
+        AND
+            orders.order_number = orders.order_number
+        AND
+            orders.order_date_time &lt;= #{processTime}
+        AND
+            orders.order_channel_id = res.order_channel_id
+        AND
+            orders.order_number = res.order_number
+        AND
+            res.`status` in ('11','12','96','98')
+        AND
+            NOT EXISTS (SELECT 1
+                          FROM tt_tracking_info tracking_info
+                          WHERE tracking_info.syn_ship_no = res.syn_ship_no)
+    </select>
+
+    <select id="synShip_tracking_info_selectByStatus" resultType="integer">
+        select
+          count(1)
+        from
+          tt_tracking_info
+        where
+          syn_ship_no = #{synShipNo}
+        and
+          tracking_status = #{trackingStatus}
+    </select>
+
+    <insert id="synShip_tracking_info_insertByStatus">
+        insert into
+          tt_tracking_info
+         (
+            seq,
+            syn_ship_no,
+            tracking_status,
+            reservation_id,
+            tracking_no,
+            process_time,
+            create_time,
+            update_time,
+            create_person,
+            update_person
+          )
+        values
+          (
+            null,
+            #{synShipNo},
+            #{trackingStatus},
+            #{reservationId},
+            '',
+            now(),
+            now(),
+            now(),
+            #{userName},
+            #{userName}
+          )
+    </insert>
 </mapper>
