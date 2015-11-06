@@ -805,7 +805,7 @@
             ifnull((CASE WHEN (ifnull(location_ext.location_name,'') = '') THEN location.location_name ELSE location_ext.location_name END),'') AS location_name
         from
         (select
-                GROUP_CONCAT(IFNULL(location.location_name,'')) as location_name
+                details.sku,GROUP_CONCAT(IFNULL(location.location_name,'')) as location_name
         from
                 wms_bt_item_location item,
                 wms_mt_location location,
@@ -829,10 +829,10 @@
                 item.store_id,
                 item.code) location
 
-        join
+        left join
 
         (select
-                GROUP_CONCAT(IFNULL(location.location_name,'')) as location_name
+                details.sku,GROUP_CONCAT(IFNULL(location.location_name,'')) as location_name
         from
                 wms_bt_item_location_ext item,
                 wms_mt_location location,
@@ -857,6 +857,7 @@
                 item.order_channel_id,
                 item.store_id,
                 item.sku) location_ext
+        on location.sku = location_ext.sku
     </select>
 
     <select id="wms_reservation_getCurQty" resultType="int">
