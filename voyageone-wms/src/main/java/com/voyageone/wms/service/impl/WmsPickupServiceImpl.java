@@ -377,6 +377,13 @@ public class WmsPickupServiceImpl implements WmsPickupService {
 
         // 捡货时 插入TrackingInfo
         if (WmsConstants.ScanType.SCAN.equals(scanMode)) {
+            // 是否存在的检查，存在的场合不插入记录
+            int trackingExists = trackingInfoDao.selectTrackingByStatus(scanInfoList.get(0).getSyn_ship_no(), WmsCodeConstants.Tracking_Info.Take);
+
+            if (trackingExists == 0) {
+                trackingInfoDao.insertTrackingByStatus(scanInfoList.get(0).getSyn_ship_no(), WmsCodeConstants.Tracking_Info.Take, 0, user.getUserName());
+            }
+
             trackingInfoDao.insertTrackingInfo(reservationList, WmsCodeConstants.Tracking_Info.Reserved, user.getUserName());
         }
 

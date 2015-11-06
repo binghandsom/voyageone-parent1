@@ -80,7 +80,7 @@ public class BcbgWsdlAttribute extends BcbgWsdlBase {
              * 同时格式化 UrlKey
              */
         String groupBy = Feed.getVal1(channel, FeedEnums.Name.product_sql_ending);
-        return superFeedDao.selectAttribute(getAttributeColumns(), String.format("%s %s", productTable, productJoin), groupBy)
+        return superFeedDao.selectAttribute(getAttributeColumns(), String.format("%s JOIN %s ON %s", table_feed_full, table_style_full, on_product), groupBy)
                 .stream()
                 .collect(groupingBy(AttributeBean::getProduct_url_key, toList()))
                 .values()
