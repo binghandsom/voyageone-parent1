@@ -61,9 +61,9 @@ VALUES
   ('012', '', '', 0, 0, 'Product 级别', 'product_cps_cn_price', 'A073_KBETR'),
   ('012', '', '', 0, 0, 'Product 级别', 'product_cps_cn_price_final_rmb', 'A073_KBETR'),
 
-  ('012', '', '', 0, 0, 'Item 级别', 'item_code', 'CONCAT(SATNR, ''-'', COLOR)'),
-  ('012', '', '', 0, 0, 'Item 级别', 'item_i_sku', 'MATNR'),
-  ('012', '', '', 0, 0, 'Item 级别', 'item_i_itemcode', 'CONCAT(SATNR, ''-'', COLOR)'),
+  ('012', '', '', 0, 0, 'Item 级别', 'item_code', 'CONCAT(SATNR,''-'',COLOR)'),
+  ('012', '', '', 0, 0, 'Item 级别', 'item_i_sku', 'CONCAT(SATNR,''-'',COLOR,''-'',SIZE1)'),
+  ('012', '', '', 0, 0, 'Item 级别', 'item_i_itemcode', 'CONCAT(SATNR,''-'',COLOR)'),
   ('012', '', '', 0, 0, 'Item 级别', 'item_i_size', 'SIZE1'),
   ('012', '', '', 0, 0, 'Item 级别', 'item_i_barcode', 'EAN11'),
 
