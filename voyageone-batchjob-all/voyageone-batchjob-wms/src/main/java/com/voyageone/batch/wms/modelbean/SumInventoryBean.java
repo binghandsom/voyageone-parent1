@@ -11,6 +11,7 @@ public class SumInventoryBean {
     private String store_id;
     private String sku;
     private String barcode;
+    private String client_sku;
     private String qty;
     private String res_qty;
     private String sales_price;
@@ -47,6 +48,14 @@ public class SumInventoryBean {
 
     public void setBarcode(String barcode) {
         this.barcode = barcode;
+    }
+
+    public String getClient_sku() {
+        return client_sku;
+    }
+
+    public void setClient_sku(String client_sku) {
+        this.client_sku = client_sku;
     }
 
     public String getQty() {

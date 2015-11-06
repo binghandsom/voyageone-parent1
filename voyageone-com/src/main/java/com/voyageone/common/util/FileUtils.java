@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -148,4 +149,47 @@ public final class FileUtils {
 
         return ret;
     }
+
+    /**
+     * 复制文件
+     * @param srcFile 源文件
+     * @param targetFile 目标文件
+     */
+    public static void copyFileByBcbg(String srcFile, String targetFile) throws IOException {
+
+        try (FileInputStream inStream = new FileInputStream(srcFile);
+             FileOutputStream fs = new FileOutputStream(targetFile);){
+            int byteread;
+            File oldfile = new File(srcFile);
+            if (oldfile.exists()) {
+//                FileInputStream inStream = new FileInputStream(srcFile);
+//                FileOutputStream fs = new FileOutputStream(targetFile);
+                byte[] buffer = new byte[1444];
+                while ((byteread = inStream.read(buffer)) != -1) {
+                    fs.write(buffer, 0, byteread);
+                }
+                //inStream.close();
+                //fs.close();
+            }
+        } catch (Exception e) {
+            //inStream.close();
+            //fs.close();
+            String logMsg = "复制单个文件操作出错! 源文件：" + srcFile + "; 目标文件:" + targetFile;
+            logger.error(logMsg);
+            throw new RuntimeException(logMsg);
+        }
+    }
+
+    /**
+     * 文件移动
+     *
+     * @param srcFile 源文件
+     * @param targetFile 目标文件
+     * @return boolean
+     */
+    public static void moveFileByBcbg(String srcFile, String targetFile)throws IOException {
+        copyFileByBcbg(srcFile, targetFile);
+        delFile(srcFile);
+    }
+
 }

@@ -519,6 +519,7 @@
             inventory.store_id,
             inventory.sku,
             details.barcode,
+            details.client_sku,
             sum(inventory.qty) AS qty,
             (
                 SELECT
@@ -528,41 +529,42 @@
                 WHERE
                     res.order_channel_id = inventory.order_channel_id
                 AND res.sku = inventory.sku
-                AND res.`status` = #{status}
+                AND res.`status` =  #{status}
             ) AS res_qty,
-            (
+            IFNULL ((
                 SELECT
                     A073_KBETR
                 FROM
-                    voyageone_cms.cms_zz_worktable_bcbg_superfeed superfeed
+                    voyageone_cms.cms_zz_worktable_bcbg_superfeed_full superfeed
                 WHERE
-                    superfeed.MATNR = inventory.sku
-            ) AS sales_price,
-            (
+                    superfeed.MATNR = details.client_sku
+            ),0) AS sales_price,
+            IFNULL ((
                 SELECT
                     A304_KBETR
                 FROM
-                    voyageone_cms.cms_zz_worktable_bcbg_superfeed superfeed
+                    voyageone_cms.cms_zz_worktable_bcbg_superfeed_full superfeed
                 WHERE
-                    superfeed.MATNR = inventory.sku
-            ) AS msrp	,
+                    superfeed.MATNR = details.client_sku
+            ),0) AS msrp	,
             (
                 SELECT
                     DISTINCT item.brand
                 FROM
                     wms_bt_client_package_item item
                 WHERE
-                    item.article_number = inventory.sku
+                    item.article_number = details.client_sku
             ) AS brand
         FROM
             `wms_bt_inventory_center` inventory
         LEFT JOIN wms_bt_item_details details ON details.sku = inventory.sku
         AND details.order_channel_id = inventory.order_channel_id
         WHERE
-            inventory.order_channel_id =  #{order_channel_id}
+            inventory.order_channel_id = #{order_channel_id}
         GROUP BY
-            inventory.sku
+          details.client_sku
+            -- inventory.sku
         ORDER BY
-            inventory.sku;
+          brand ,details.client_sku
      </select>
 </mapper>
