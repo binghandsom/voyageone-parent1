@@ -10,14 +10,15 @@ import com.voyageone.batch.cms.dao.feed.BcbgSuperFeedDao;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feed;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
+
+import static com.voyageone.batch.cms.service.feed.BcbgWsdlConstants.*;
 
 /**
  * Bcbg 远程调用共通基础
@@ -25,11 +26,21 @@ import java.util.regex.Pattern;
  */
 abstract class BcbgWsdlBase extends BaseTaskService {
 
+    private final static String APPAREL = "Apparel";
+
+    private final static String ACCESSORIES = "Accessories";
+
+    private final static BigDecimal TEN = new BigDecimal(10);
+
     @Autowired
     protected SuperFeedDao superFeedDao;
 
     @Autowired
     protected BcbgSuperFeedDao bcbgSuperFeedDao;
+
+    private static ProductBean productColumns;
+
+    private static ItemBean itemColumns;
 
     /**
      * 获取子系统
@@ -51,201 +62,205 @@ abstract class BcbgWsdlBase extends BaseTaskService {
 
     protected abstract String getWhereUpdateFlg();
 
-    protected abstract class ContextBase {
+    protected List<ItemBean> getItems(ProductBean product) {
 
-        private final Pattern special_symbol;
+        ItemBean itemColumns = getItemColumns();
 
-        protected final ChannelConfigEnums.Channel channel;
+        String where = String.format("WHERE %s AND %s = '%s'", getWhereUpdateFlg(), itemColumns.getCode(), product.getP_code());
 
-        protected final String table;
+        List<ItemBean> itemBeans = superFeedDao.selectSuperfeedItem(where, itemColumns, table_feed);
 
-        protected final String imageTable;
+        $info("取得 Item [ %s\t ] 个 [ Product: %s ]", itemBeans.size(), product.getUrl_key());
 
-        protected final String imageJoin;
+        return itemBeans;
+    }
 
-        protected final String productTable;
+    private ItemBean getItemColumns() {
 
-        protected final String productJoin;
+        if (itemColumns != null) return itemColumns;
 
-        protected final String modelTable;
+        itemColumns = new ItemBean();
 
-        protected final String modelJoin;
+        itemColumns.setCode(Feed.getVal1(channel, FeedEnums.Name.item_code));
+        itemColumns.setI_sku(Feed.getVal1(channel, FeedEnums.Name.item_i_sku));
+        itemColumns.setI_itemcode(Feed.getVal1(channel, FeedEnums.Name.item_i_itemcode));
+        itemColumns.setI_size(Feed.getVal1(channel, FeedEnums.Name.item_i_size));
+        itemColumns.setI_barcode(Feed.getVal1(channel, FeedEnums.Name.item_i_barcode));
+        return itemColumns;
+    }
 
-        private ProductBean productColumns;
+    protected List<ImageBean> getImages(ProductBean product) {
 
-        private ItemBean itemColumns;
+        String where = String.format("WHERE %s AND %s = '%s'", getWhereUpdateFlg(), Feed.getVal1(channel, FeedEnums.Name.product_p_code), product.getP_code());
 
-        protected ContextBase(ChannelConfigEnums.Channel channel) {
-            this.channel = channel;
-            // 主表
-            this.table = Feed.getVal1(channel, FeedEnums.Name.table_id);
-            // 图片表
-            this.imageTable = Feed.getVal1(channel, FeedEnums.Name.image_table_id);
-            // 特殊字符 (正则)
-            this.special_symbol = Pattern.compile(Feed.getVal1(channel, FeedEnums.Name.url_special_symbol));
-            // 商品表
-            this.productTable = Feed.getVal1(channel, FeedEnums.Name.product_table_id);
-            // 图片表的 Join 部分
-            this.imageJoin = Feed.getVal1(channel, FeedEnums.Name.image_table_join);
-            // 商品表的 Join 部分
-            this.productJoin = Feed.getVal1(channel, FeedEnums.Name.product_table_join);
-            // Model 表
-            this.modelTable = Feed.getVal1(channel, FeedEnums.Name.model_table_id);
-            // Model 的 Join 部分
-            this.modelJoin = Feed.getVal1(channel, FeedEnums.Name.model_table_join);
-        }
+        List<String> imageArrs = superFeedDao.selectSuperfeedImage(
+                where,
+                Feed.getVal1(channel, FeedEnums.Name.images),
+                // 组合 Image 的表部分和Join部分
+                String.format("%s JOIN %s ON %s", table_feed_full, table_style_full, on_product));
 
-        protected List<ItemBean> getItems(ProductBean product) {
+        $info("取得 Image 路径组合 [ %s ] 个 [ Product: %s ]", imageArrs.size(), product.getUrl_key());
 
-            ItemBean itemColumns = getItemColumns();
+        List<ImageBean> imageBeans = new ArrayList<>();
 
-            String where = String.format("WHERE %s AND %s = '%s'", getWhereUpdateFlg(), itemColumns.getCode(), product.getP_code());
+        String separator = Feed.getVal1(channel, FeedEnums.Name.image_split);
 
-            List<ItemBean> itemBeans = superFeedDao.selectSuperfeedItem(where, itemColumns, table);
+        for (String imageArr: imageArrs) {
 
-            $info("取得 Item [ %s\t ] 个 [ Product: %s ]", itemBeans.size(), product.getUrl_key());
+            String[] images = imageArr.split(separator);
 
-            return itemBeans;
-        }
+            for (String image: images) {
 
-        private ItemBean getItemColumns() {
+                ImageBean imageBean = new ImageBean();
 
-            if (itemColumns != null) return itemColumns;
+                imageBean.setImage_type("1");
+                imageBean.setImage(String.valueOf(imageBeans.size() + 1));
+                imageBean.setImage_url(image);
+                imageBean.setImage_name(image.substring(image.lastIndexOf("/") + 1, image.lastIndexOf(".")));
+                imageBean.setDisplay_order("0");
 
-            itemColumns = new ItemBean();
-
-            itemColumns.setCode(Feed.getVal1(channel, FeedEnums.Name.item_code));
-            itemColumns.setI_sku(Feed.getVal1(channel, FeedEnums.Name.item_i_sku));
-            itemColumns.setI_itemcode(Feed.getVal1(channel, FeedEnums.Name.item_i_itemcode));
-            itemColumns.setI_size(Feed.getVal1(channel, FeedEnums.Name.item_i_size));
-            itemColumns.setI_barcode(Feed.getVal1(channel, FeedEnums.Name.item_i_barcode));
-            return itemColumns;
-        }
-
-        protected List<ImageBean> getImages(ProductBean product) {
-
-            String where = String.format("WHERE %s AND %s = '%s'", getWhereUpdateFlg(), Feed.getVal1(channel, FeedEnums.Name.product_p_code), product.getP_code());
-
-            List<String> imageArrs = superFeedDao.selectSuperfeedImage(
-                    where,
-                    Feed.getVal1(channel, FeedEnums.Name.images),
-                    // 组合 Image 的表部分和Join部分
-                    String.format("%s %s", imageTable, imageJoin));
-
-            $info("取得 Image 路径组合 [ %s ] 个 [ Product: %s ]", imageArrs.size(), product.getUrl_key());
-
-            List<ImageBean> imageBeans = new ArrayList<>();
-
-            String separator = Feed.getVal1(channel, FeedEnums.Name.image_split);
-
-            for (String imageArr: imageArrs) {
-
-                String[] images = imageArr.split(separator);
-
-                for (String image: images) {
-
-                    ImageBean imageBean = new ImageBean();
-
-                    imageBean.setImage_type("1");
-                    imageBean.setImage(String.valueOf(imageBeans.size() + 1));
-                    imageBean.setImage_url(image);
-                    imageBean.setImage_name(image.substring(image.lastIndexOf("/") + 1, image.lastIndexOf(".")));
-                    imageBean.setDisplay_order("0");
-
-                    imageBeans.add(imageBean);
-                }
+                imageBeans.add(imageBean);
             }
-
-            return imageBeans;
         }
 
-        protected List<ProductBean> getProducts() {
+        return imageBeans;
+    }
 
-            $info("准备批量获取 Product");
+    protected List<ProductBean> getProducts() {
 
-            // 条件则根据类目筛选
-            String where = String.format("WHERE %s", getWhereUpdateFlg());
+        $info("准备批量获取 Product");
 
-            List<ProductBean> productBeans = getProductBeans(where);
+        // 条件则根据类目筛选
+        String where = String.format("WHERE %s", getWhereUpdateFlg());
 
-            $info("取得 Product [ %s ] 个", productBeans.size());
-            $info("已为 Product 补全 Item 和 Image");
+        List<ProductBean> productBeans = getProductBeans(where);
 
-            return productBeans;
+        $info("取得 Product [ %s ] 个", productBeans.size());
+        $info("已为 Product 补全 Item 和 Image");
+
+        return productBeans;
+    }
+
+    /**
+     * 获取某 Model 下的所有 Product
+     */
+    protected List<ProductBean> getProducts(ModelBean model) {
+
+        $info("准备批量获取 Model [ %s ] 的 Product", model.getUrl_key());
+
+        // 条件则根据类目筛选
+        String where = String.format("WHERE %s AND %s = '%s'", getWhereUpdateFlg(), getProductColumns().getModel_url_key(), model.getUrl_key());
+
+        List<ProductBean> productBeans = getProductBeans(where);
+
+        $info("取得 Model [ %s ] 的 Product [ %s ] 个", model.getUrl_key(), productBeans.size());
+
+        return productBeans;
+    }
+
+    private List<ProductBean> getProductBeans(String where) {
+
+        ProductBean productColumns = getProductColumns();
+
+        List<ProductBean> productBeans = superFeedDao.selectSuperfeedProduct(
+                String.format("%s GROUP BY %s", where, grouping_product),
+                productColumns,
+                // 组合 Product 的表部分和Join部分
+                String.format("%s JOIN %s ON %s", table_feed_full, table_style_full, on_product));
+
+        $info("取得 Product [ %s ] 个 [ 条件: %s ]", productBeans.size(), where);
+
+        for (ProductBean productBean: productBeans) {
+            productBean.setItembeans(getItems(productBean));
+            productBean.setImages(getImages(productBean));
+            // 转换 Url Key 格式,这里顺序同之前的get类方法一样的原理
+            productBean.setUrl_key(clearSpecialSymbol(productBean.getUrl_key()));
+            productBean.setCategory_url_key(clearSpecialSymbol(productBean.getCategory_url_key()));
+            productBean.setModel_url_key(clearSpecialSymbol(productBean.getModel_url_key()));
+
+            // 以下进行价格的转换计算
+            calePrice(productBean);
         }
 
-        /**
-         * 获取某 Model 下的所有 Product
-         */
-        protected List<ProductBean> getProducts(ModelBean model) {
+        return productBeans;
+    }
 
-            $info("准备批量获取 Model [ %s ] 的 Product", model.getUrl_key());
+    protected void calePrice(ProductBean productBean) {
+        BigDecimal msrp = new BigDecimal(productBean.getP_msrp());
+        BigDecimal price = new BigDecimal(productBean.getPs_price());
 
-            // 条件则根据类目筛选
-            String where = String.format("WHERE %s AND %s = '%s'", getWhereUpdateFlg(), getProductColumns().getModel_url_key(), model.getUrl_key());
+        BigDecimal duty;
 
-            List<ProductBean> productBeans = getProductBeans(where);
-
-            $info("取得 Model [ %s ] 的 Product [ %s ] 个", model.getUrl_key(), productBeans.size());
-
-            return productBeans;
+        switch (productBean.getP_product_type()) {
+            case ACCESSORIES:
+                duty = other_duty;
+                break;
+            case APPAREL:
+                duty = apparels_duty;
+                break;
+            default:
+                // 去除临时使用的 type 内容
+                productBean.setP_product_type(Constants.EmptyString);
+                // 没找到则直接无视,后续价格做 0 处理
+                return;
         }
 
-        private List<ProductBean> getProductBeans(String where) {
+        int iMsrp = calePrice(msrp, duty);
+        int iPrice = calePrice(price, duty);
 
-            ProductBean productColumns = getProductColumns();
+        productBean.setCps_cn_price(String.valueOf(iMsrp));
+        productBean.setCps_cn_price_rmb(String.valueOf(iPrice));
+        productBean.setCps_cn_price_final_rmb(String.valueOf(iPrice));
 
-            List<ProductBean> productBeans = superFeedDao.selectSuperfeedProduct(
-                    String.format("%s %s", where, Feed.getVal1(channel, FeedEnums.Name.product_sql_ending)),
-                    productColumns,
-                    // 组合 Product 的表部分和Join部分
-                    String.format("%s %s", productTable, productJoin));
+        // 计算完成后去除临时使用的 type 内容
+        productBean.setP_product_type(Constants.EmptyString);
+    }
 
-            $info("取得 Product [ %s ] 个 [ 条件: %s ]", productBeans.size(), where);
+    private int calePrice(BigDecimal bigDecimal, BigDecimal duty) {
+        return bigDecimal
+                .multiply(fixed_exchange_rate)
+                .divide(duty, BigDecimal.ROUND_DOWN)
+                .setScale(0, BigDecimal.ROUND_DOWN)
+                .divide(TEN, BigDecimal.ROUND_DOWN)
+                .multiply(TEN)
+                .intValue();
+    }
 
-            for (ProductBean productBean: productBeans) {
-                productBean.setItembeans(getItems(productBean));
-                productBean.setImages(getImages(productBean));
-                // 转换 Url Key 格式,这里顺序同之前的get类方法一样的原理
-                productBean.setUrl_key(clearSpecialSymbol(productBean.getUrl_key()));
-                productBean.setCategory_url_key(clearSpecialSymbol(productBean.getCategory_url_key()));
-                productBean.setModel_url_key(clearSpecialSymbol(productBean.getModel_url_key()));
-            }
+    protected String clearSpecialSymbol(String name) {
+        return special_symbol.matcher(name.toLowerCase()).replaceAll(Constants.EmptyString).replace(" ", "-");
+    }
 
-            return productBeans;
-        }
+    /**
+     * 获取商品级别的列定义
+     */
+    protected ProductBean getProductColumns() {
 
-        protected String clearSpecialSymbol(String name) {
-            return special_symbol.matcher(name.toLowerCase()).replaceAll(Constants.EmptyString).replace(" ", "-");
-        }
+        if (productColumns != null) return productColumns;
 
-        /**
-         * 获取商品级别的列定义
-         */
-        protected ProductBean getProductColumns() {
+        productColumns = new ProductBean();
 
-            if (productColumns != null) return productColumns;
+        // 为每个字段指定其映射到的数据表的列.
+        // 在后面的查询,自动从数据表填充值.
+        productColumns.setUrl_key(Feed.getVal1(channel, FeedEnums.Name.product_url_key));
+        productColumns.setModel_url_key(Feed.getVal1(channel, FeedEnums.Name.product_model_url_key));
+        productColumns.setCategory_url_key(Feed.getVal1(channel, FeedEnums.Name.product_category_url_key));
+        productColumns.setP_code(Feed.getVal1(channel, FeedEnums.Name.product_p_code));
+        productColumns.setP_name(Feed.getVal1(channel, FeedEnums.Name.product_p_name));
+        productColumns.setP_color(Feed.getVal1(channel, FeedEnums.Name.product_p_color));
+        productColumns.setP_made_in_country(Feed.getVal1(channel, FeedEnums.Name.product_p_made_in_country));
+        productColumns.setPe_short_description(Feed.getVal1(channel, FeedEnums.Name.product_pe_short_description));
+        productColumns.setPe_long_description(Feed.getVal1(channel, FeedEnums.Name.product_pe_long_description));
 
-            productColumns = new ProductBean();
+        // 使用 type 字段临时存储从 master 获取的类目附加属性 MATKL_ATT1. 用来进行后续的价格计算
+        productColumns.setP_product_type(Feed.getVal1(channel, FeedEnums.Name.product_type));
 
-            // 为每个字段指定其映射到的数据表的列.
-            // 在后面的查询,自动从数据表填充值.
-            productColumns.setUrl_key(Feed.getVal1(channel, FeedEnums.Name.product_url_key));
-            productColumns.setModel_url_key(Feed.getVal1(channel, FeedEnums.Name.product_model_url_key));
-            productColumns.setCategory_url_key(Feed.getVal1(channel, FeedEnums.Name.product_category_url_key));
-            productColumns.setP_code(Feed.getVal1(channel, FeedEnums.Name.product_p_code));
-            productColumns.setP_name(Feed.getVal1(channel, FeedEnums.Name.product_p_name));
-            productColumns.setP_color(Feed.getVal1(channel, FeedEnums.Name.product_p_color));
-            productColumns.setP_msrp(Feed.getVal1(channel, FeedEnums.Name.product_p_msrp));
-            productColumns.setP_made_in_country(Feed.getVal1(channel, FeedEnums.Name.product_p_made_in_country));
-            productColumns.setPe_short_description(Feed.getVal1(channel, FeedEnums.Name.product_pe_short_description));
-            productColumns.setPe_long_description(Feed.getVal1(channel, FeedEnums.Name.product_pe_long_description));
-            productColumns.setPs_price(Feed.getVal1(channel, FeedEnums.Name.product_ps_price));
-            productColumns.setCps_cn_price_rmb(Feed.getVal1(channel, FeedEnums.Name.product_cps_cn_price_rmb));
-            productColumns.setCps_cn_price(Feed.getVal1(channel, FeedEnums.Name.product_cps_cn_price));
-            productColumns.setCps_cn_price_final_rmb(Feed.getVal1(channel, FeedEnums.Name.product_cps_cn_price_final_rmb));
+        // 一下全部为价格
+        productColumns.setP_msrp(Feed.getVal1(channel, FeedEnums.Name.product_p_msrp));
+        productColumns.setPs_price(Feed.getVal1(channel, FeedEnums.Name.product_ps_price));
+        productColumns.setCps_cn_price_rmb(Feed.getVal1(channel, FeedEnums.Name.product_cps_cn_price_rmb));
+        productColumns.setCps_cn_price(Feed.getVal1(channel, FeedEnums.Name.product_cps_cn_price));
+        productColumns.setCps_cn_price_final_rmb(Feed.getVal1(channel, FeedEnums.Name.product_cps_cn_price_final_rmb));
 
-            return productColumns;
-        }
+        return productColumns;
     }
 }

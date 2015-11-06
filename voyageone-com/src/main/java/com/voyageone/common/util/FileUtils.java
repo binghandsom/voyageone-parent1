@@ -141,7 +141,7 @@ public final class FileUtils {
 
         File file = new File(chkFilePath);
         for (String fileName : file.list()) {
-            if (fileName.toUpperCase().contains(fileNameLike)) {
+            if (fileName.contains(fileNameLike)) {
                 ret = true;
                 break;
             }

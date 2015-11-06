@@ -76,7 +76,7 @@ public class WmsSetClientInventoryService extends BaseTaskService {
     }
 
     /**
-     * 按渠道进行模拟入出库
+     * 按渠道进行库存计算
      */
     public class setClientInventory  {
         private OrderChannelBean channel;
@@ -97,12 +97,30 @@ public class WmsSetClientInventoryService extends BaseTaskService {
 
                     logger.info(channel.getFull_name()+"-----库存计算件数："+transferList.size());
 
+                    // 取得该渠道下所属的真实仓库
+                    List<StoreBean> storeList  = StoreConfigs.getChannelStoreList(channel.getOrder_channel_id(), false, false);
+                    // 判断是否有【库存由品牌方管理】的仓库
+                    boolean inventory_manager = true;
+                    for (StoreBean storeBean : storeList) {
+                        if (storeBean.getInventory_manager().equals(StoreConfigEnums.Manager.NO.getId())) {
+                            inventory_manager = false;
+                            break;
+                        }
+                    }
+
                     try {
                         for (TransferBean transfer : transferList) {
                             logger.info(channel.getFull_name() + "，transfer_id：" + transfer.getTransfer_id() + "，Store：" + transfer.getStore_id() + "，Origin：" + transfer.getTransfer_origin()+ "，Item_id：" + transfer.getTransfer_item_id());
 
-                            // 客户库存保留量
+                            // 所属仓库
                             StoreBean storebean = StoreConfigs.getStore(transfer.getStore_id());
+
+                            // 如果是品牌方仓库引起的变化，则允许进行逻辑库存计算（这是为了防止品牌方库存推送延迟导致库存不一致的问题）
+                            if (storebean.getInventory_manager().equals(StoreConfigEnums.Manager.NO.getId())) {
+                                inventory_manager = true;
+                            }
+
+                            // 客户库存保留量
                             String  client_inventory_hold = storebean.getInventory_hold();
                             if (StringUtils.isNullOrBlank2(client_inventory_hold)) {
                                 client_inventory_hold = "0";
@@ -162,19 +180,8 @@ public class WmsSetClientInventoryService extends BaseTaskService {
                             }
                         }
 
-                        // 取得该渠道下所属的真实仓库
-                        List<StoreBean> storeList  = StoreConfigs.getChannelStoreList(channel.getOrder_channel_id(), false, false);
-                        // 判断是否有【库存由品牌方管理】的仓库
-                        boolean inventory_manager = true;
-                        for (StoreBean storeBean : storeList) {
-                            if (storeBean.getInventory_manager().equals(StoreConfigEnums.Manager.NO.getId())) {
-                                inventory_manager = false;
-                                break;
-                            }
-                        }
-
                         // 如果库存需要管理 或者物理库存发生过变动，进行逻辑库存计算
-                        if ( inventory_manager == true || transferList.size() > 0) {
+                        if ( inventory_manager == true ) {
                             logger.info(channel.getFull_name() + "-----逻辑库存计算" );
                             inventoryDao.setLogicInventory(channel.getOrder_channel_id());
                         }

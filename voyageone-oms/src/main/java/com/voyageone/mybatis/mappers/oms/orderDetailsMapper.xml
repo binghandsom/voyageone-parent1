@@ -75,6 +75,8 @@
 		<result column="discount_type" property="discountType"/>
 		<result column="discount_percent" property="discountPercent"/>
 		<result column="order_kind" property="orderKind"/>
+		<result column="rate" property="rate"/>
+		<result column="currency" property="currency"/>
 		<result column="sub_source_order_id" property="subSourceOrderId"/>
 		
 		<result column="customerComment" property="origCustomerComment"/>
@@ -191,6 +193,8 @@
 		o.discount_type,
 		o.discount_percent,
 		o.order_kind,
+		o.rate,
+		o.currency,
 		o.sub_source_order_id,
 		o.price_difference_flag,
 		IFNULL(o.invoice_kind, '') as invoice_kind,
@@ -853,6 +857,7 @@
 		where
 				source_order_id = #{sourceOrderId}
 				and business_type = '0'
+				and file_type = '1'
 		order by t.settlement_time desc
 	</select>
 	
@@ -1624,6 +1629,20 @@
 		ON DUPLICATE KEY UPDATE payment_total_settle = payment_total_settle + tmp.payment_total,
 									modifier = tmp.modifier,
 									modified = tmp.modified
+	</update>
+
+	<!-- 订单汇率更新-->
+	<update id="oms_bt_orders_updateOrderRateInfo" parameterType="HashMap">
+		update oms_bt_orders o,oms_bt_settlement s
+		set o.rate = s.rate,
+			o.currency = s.currency,
+			o.modified = s.modified,
+			o.modifier = s.modifier
+		where
+			o.origin_source_order_id = s.origin_source_order_id
+			and s.settlement_file_id = #{settlementFileId}
+			and s.business_type = '0'
+			and s.process_flag = 1
 	</update>
 
 	<!-- 获得订单菜鸟物流单号 -->

@@ -12,6 +12,7 @@ import com.voyageone.batch.oms.formbean.InFormFile;
 import com.voyageone.batch.oms.formbean.OutFormOrderDetailOrderDetail;
 import com.voyageone.batch.oms.formbean.OutFormOrderdetailOrders;
 import com.voyageone.batch.oms.modelbean.OrderExtend;
+import com.voyageone.batch.oms.utils.WebServiceUtil;
 import com.voyageone.common.components.issueLog.IssueLog;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -35,11 +36,13 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.io.*;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class PostBCBGOrderService {
@@ -75,13 +78,22 @@ public class PostBCBGOrderService {
 //	private String orderChannelID = "001";
 
 	// 正常订单推送（Shipped）
-	private String postBCBGDailySalesFileName = "SALES_%s_%s.dat"; //"SALES_YYYYMMDD_HHMMSS.dat";
+//	private String postBCBGDailySalesFileName = "SALES_%s_%s.dat"; //"SALES_YYYYMMDD_HHMMSS.dat";
+	private String postBCBGDailySalesFileName = "DailySales_VO_BMX_%s_%s.dat"; //"DailySales_VO_BBB_YYYYMMDD_HHMMSS.dat";
 	// 未发货订单推送（Not Shipped）
-	private String postBCBGDemandFileName = "DEMAND_%s_%s.dat";//"DEMAND_YYYYMMDD_HHMMSS.dat";
+//	private String postBCBGDemandFileName = "DEMAND_%s_%s.dat";//"DEMAND_YYYYMMDD_HHMMSS.dat";
+	private String postBCBGDemandFileName = "OrderStatus_VO_BMX_%s_%s.dat";//"OrderStatus_VO_BBB_YYYYMMDD_HHMMSS.dat";
 
 	// 输出文件编码
 	private final String outputFileEncoding = "UTF-8";
 
+	private final String FREIGHT = "FREIGHT";
+	private final String StoreNumber = "868";
+	private final String Carrier = "99999999";
+	private final String Country = "CHN";
+	private final String PayType = "ALIPAY";
+	private final String Discount = "Discount";
+	private final String BAIDU_TRANSLATE_CONFIG = "BAIDU_TRANSLATE_CONFIG";
 	/**
 	 * 向RM正常订单推送(upload)
 	 *
@@ -103,6 +115,7 @@ public class PostBCBGOrderService {
 
 		// 路径配置信息读取
 		FtpBean upLoadFtpBean = formatDailySalesUploadFtpBean();
+		upLoadFtpBean.setUpload_filename(fileName);
 
 		// 每天生成一个文件
 		if (FileUtils.isFileExist(fileName, upLoadFtpBean.getUpload_local_bak_path(), 10)) {
@@ -129,10 +142,10 @@ public class PostBCBGOrderService {
 
 			// 推送标志更新
 			if (isSuccess) {
-//				logger.info("updateDailySalesSendInfo");
-//				isSuccess = updateOrdersInfo(POST_BCBG_DEMAND, pushDailySalesListList);
+				logger.info("updateDailySalesSendInfo");
+				isSuccess = updateOrdersInfo(POST_BCBG_DAILY_SALES, pushDailySalesListList);
 //
-//				if (isSuccess) {
+				if (isSuccess) {
 					// 源文件
 					String srcFile = upLoadFtpBean.getUpload_localpath() + "/" + upLoadFtpBean.getUpload_filename();
 					// 目标文件
@@ -140,13 +153,13 @@ public class PostBCBGOrderService {
 					logger.info("moveFile = " + srcFile + " " + destFile);
 					FileUtils.moveFile(srcFile, destFile);
 
-//				} else {
-//					logger.info("updateDailySalesSendInfo error");
-//					issueLog.log("postBCBGDemands.updateDailySalesSendInfo",
-//							"updateDailySalesSendInfo error;Push order file = " + fileName,
-//							ErrorType.BatchJob,
-//							SubSystem.OMS);
-//				}
+				} else {
+					logger.info("updateDailySalesSendInfo error");
+					issueLog.log("postBCBGDailySales.updateDailySalesSendInfo",
+							"updateDailySalesSendInfo error;Push order file = " + fileName,
+							ErrorType.BatchJob,
+							SubSystem.OMS);
+				}
 			} else {
 				logger.info("uploadOrderFile error;Push Daily Sales file = " + fileName);
 				issueLog.log("postBCBGDailySales.uploadOrderFile",
@@ -209,26 +222,57 @@ public class PostBCBGOrderService {
 				// LineNumber
 				orderExtendInfo.setLineNumber(String.valueOf(lineNumber));
 
+				String orderDateTime = orderExtendInfo.getOrderDateTime();
 				// OrderDateTime
-				orderExtendInfo.setOrderDateTime(getLocalDateTime(orderExtendInfo.getOrderDateTime(), timeZone));
-
+				orderExtendInfo.setOrderDateTime(getLocalDateTime(orderDateTime, timeZone));
 				// OrderDate
-				orderExtendInfo.setOrderDate(getLocalDate(orderExtendInfo.getOrderDateTime(), timeZone));
+				orderExtendInfo.setOrderDate(getLocalDate(orderDateTime, timeZone));
 
-				// ShipDate
-				orderExtendInfo.setShipDate(getLocalDate(orderExtendInfo.getShipDate(), timeZone));
+				if ("Shipping".equals(orderExtendInfo.getSku())){
+					// 运费的场合
+					orderExtendInfo.setLongItemNumber(FREIGHT);
 
-				// 售价含折扣
-				float price = div2Digits(Float.valueOf(skuPriceInfo.getPrice()), rate);
-				orderExtendInfo.setPrice(String.valueOf(price));
+					// ShipDate
+					orderExtendInfo.setShipDate("");
 
-				// 售价不含折扣
-				float unitPrice = div2Digits(Float.valueOf(orderExtendInfo.getPricePerUnit()), rate);
-				orderExtendInfo.setPricePerUnit(String.valueOf(unitPrice));
+					orderExtendInfo.setQuantityOrdered("0");
+					orderExtendInfo.setQuantityShipped("0");
 
-				// 订单折扣
-				float orderDiscount = div2Digits(Float.valueOf(skuPriceInfo.getShipping_price()), rate);
-				orderExtendInfo.setOrderDiscount(String.valueOf(orderDiscount));
+					float price = div2Digits(Float.valueOf(orderExtendInfo.getPricePerUnit()), rate);
+					orderExtendInfo.setPrice(String.valueOf(price));
+
+					// SalePrice
+					orderExtendInfo.setPricePerUnit("0");
+
+					// Promo Discount
+					orderExtendInfo.setOrderDiscount("0");
+				} else {
+					// 物品的场合
+					orderExtendInfo.setLongItemNumber("");
+
+					// ShipDate
+					orderExtendInfo.setShipDate(getLocalDate(orderExtendInfo.getShipDate(), timeZone));
+
+					// 售价含折扣 = （数量 * 单价）
+					float price = div2Digits(Float.valueOf(skuPriceInfo.getPrice()), rate);
+					orderExtendInfo.setPrice(String.valueOf(price));
+
+					// 售价不含折扣
+					String pricePerUnit = orderExtendInfo.getPricePerUnit();
+					float unitPrice = div2Digits(Float.valueOf(pricePerUnit), rate);
+					orderExtendInfo.setPricePerUnit(String.valueOf(unitPrice));
+
+					// 订单折扣（明细折扣 + 订单折扣 = 原始价格 - 销售价格）
+					float salePrice = mult2Digits(Float.valueOf(pricePerUnit), Float.valueOf(orderExtendInfo.getQuantityOrdered()));
+					float orderDiscount = sub2Digits(salePrice, Float.valueOf(skuPriceInfo.getPrice()));
+//					orderDiscount = mult2Digits(Float.valueOf(skuPriceInfo.getShipping_price()), -1);
+//					orderDiscount = mult2Digits(orderDiscount, -1);
+					orderDiscount = div2Digits(orderDiscount, rate);
+					orderExtendInfo.setOrderDiscount(String.valueOf(orderDiscount));
+				}
+
+				// 中文翻译
+				translateOrderExtend(orderExtendInfo);
 
 				lineNumber = lineNumber + 1;
 			}
@@ -237,9 +281,9 @@ public class PostBCBGOrderService {
 		} catch(Exception e) {
 			ret = null;
 
-			logger.error("getPushDemandList error", e);
-			issueLog.log("postBCBGDemands.getPushDemandList",
-					"getPushDemandList error",
+			logger.error("getPushDailySalesList error", e);
+			issueLog.log("PostBCBGOrderService.getPushDailySalesList",
+					"getPushDailySalesList error",
 					ErrorType.BatchJob,
 					SubSystem.OMS);
 		}
@@ -292,15 +336,15 @@ public class PostBCBGOrderService {
 		for (int i = 0 ; i < pushOrderList.size(); i++) {
 			OrderExtend orderInfo = pushOrderList.get(i);
 
-			fileWriter.write(" ", DailySalesFileFormat.StoreNumber);
-			fileWriter.write(" ", DailySalesFileFormat.CustomerID);
-			fileWriter.write(" ", DailySalesFileFormat.OrderNumber);
+			fileWriter.write(StoreNumber, DailySalesFileFormat.StoreNumber);
+			fileWriter.write("", DailySalesFileFormat.CustomerID);
+			fileWriter.write("", DailySalesFileFormat.OrderNumber);
 			fileWriter.write(orderInfo.getSourceOrderId(), DailySalesFileFormat.WebOrderNumber);
 			fileWriter.write("SO", DailySalesFileFormat.OrderType);
 			fileWriter.write(orderInfo.getOrderDate(), DailySalesFileFormat.OrderDate);
 			fileWriter.write(orderInfo.getShipDate(), DailySalesFileFormat.ShipDate);
 			fileWriter.write(orderInfo.getLineNumber(), DailySalesFileFormat.LineNumber);
-			fileWriter.write(" ", DailySalesFileFormat.LongItemNumber);
+			fileWriter.write(orderInfo.getLongItemNumber(), DailySalesFileFormat.LongItemNumber);
 			fileWriter.write(orderInfo.getUPC(), DailySalesFileFormat.UPC);
 			fileWriter.write(orderInfo.getStyle(), DailySalesFileFormat.Style);
 			fileWriter.write(orderInfo.getColor(), DailySalesFileFormat.Color);
@@ -309,14 +353,18 @@ public class PostBCBGOrderService {
 			fileWriter.write(orderInfo.getQuantityShipped(), DailySalesFileFormat.QuantityShipped);
 			fileWriter.write(orderInfo.getMSRP(), DailySalesFileFormat.ListPrice);
 
-			float unitPrice = div2Digits(Float.valueOf(orderInfo.getPrice()), Float.valueOf(orderInfo.getQuantityOrdered()));
-			fileWriter.write(String.valueOf(unitPrice), DailySalesFileFormat.UnitPrice);
+			if ("Shipping".equals(orderInfo.getSku())){
+				fileWriter.write("", DailySalesFileFormat.UnitPrice);
+			} else {
+				float unitPrice = div2Digits(Float.valueOf(orderInfo.getPrice()), Float.valueOf(orderInfo.getQuantityOrdered()));
+				fileWriter.write(String.valueOf(unitPrice), DailySalesFileFormat.UnitPrice);
+			}
 
 			fileWriter.write(orderInfo.getPrice(), DailySalesFileFormat.ItemAmount);
-			fileWriter.write(" ", DailySalesFileFormat.TaxAmount);
-			fileWriter.write("EMS", DailySalesFileFormat.Carrier);
-			fileWriter.write(" ", DailySalesFileFormat.ReasonCode);
-			fileWriter.write(" ", DailySalesFileFormat.ShipToAddressID);
+			fileWriter.write("", DailySalesFileFormat.TaxAmount);
+			fileWriter.write(Carrier, DailySalesFileFormat.Carrier);
+			fileWriter.write("", DailySalesFileFormat.ReasonCode);
+			fileWriter.write("", DailySalesFileFormat.ShipToAddressID);
 			fileWriter.write(orderInfo.getShipName(), DailySalesFileFormat.ShipToName);
 
 			ArrayList<String> shipAddressList = getBCBGAddress(orderInfo.getShipAddress(), orderInfo.getShipAddress2());
@@ -326,9 +374,9 @@ public class PostBCBGOrderService {
 			fileWriter.write(orderInfo.getShipCity(), DailySalesFileFormat.ShipToCity);
 			fileWriter.write(orderInfo.getShipState(), DailySalesFileFormat.ShipToState);
 			fileWriter.write(orderInfo.getShipZip(), DailySalesFileFormat.ShipToZip);
-			fileWriter.write(orderInfo.getShipCountry(), DailySalesFileFormat.ShipToCountry);
+			fileWriter.write(Country, DailySalesFileFormat.ShipToCountry);
 			fileWriter.write(orderInfo.getShipPhone(), DailySalesFileFormat.ShipToPhone);
-			fileWriter.write(" ", DailySalesFileFormat.BillToAddressID);
+			fileWriter.write("", DailySalesFileFormat.BillToAddressID);
 			fileWriter.write(orderInfo.getName(), DailySalesFileFormat.BillToName);
 
 			ArrayList<String> billAddressList = getBCBGAddress(orderInfo.getAddress(), orderInfo.getAddress2());
@@ -338,36 +386,36 @@ public class PostBCBGOrderService {
 			fileWriter.write(orderInfo.getCity(), DailySalesFileFormat.BillToCity);
 			fileWriter.write(orderInfo.getState(), DailySalesFileFormat.BillToState);
 			fileWriter.write(orderInfo.getZip(), DailySalesFileFormat.BillToZip);
-			fileWriter.write(orderInfo.getCountry(), DailySalesFileFormat.BillToCountry);
+			fileWriter.write(Country, DailySalesFileFormat.BillToCountry);
 			fileWriter.write(orderInfo.getPhone(), DailySalesFileFormat.BillToPhone);
-			fileWriter.write("ALIPAY", DailySalesFileFormat.PaymentType);
+			fileWriter.write(PayType, DailySalesFileFormat.PaymentType);
 			fileWriter.write(orderInfo.getPricePerUnit(), DailySalesFileFormat.SalePrice);
-			fileWriter.write("Discount", DailySalesFileFormat.Promo1);
+			fileWriter.write(Discount, DailySalesFileFormat.Promo1);
 			fileWriter.write(orderInfo.getOrderDiscount(), DailySalesFileFormat.PromoDiscountAmount1);
-			fileWriter.write("Discount", DailySalesFileFormat.PromoDiscountDescription1);
-			fileWriter.write(" ", DailySalesFileFormat.Promo2);
-			fileWriter.write(" ", DailySalesFileFormat.PromoDiscountAmount2);
-			fileWriter.write(" ", DailySalesFileFormat.PromoDiscountDescription2);
-			fileWriter.write(" ", DailySalesFileFormat.Promo3);
-			fileWriter.write(" ", DailySalesFileFormat.PromoDiscountAmount3);
-			fileWriter.write(" ", DailySalesFileFormat.PromoDiscountDescription3);
-			fileWriter.write(" ", DailySalesFileFormat.Promo4);
-			fileWriter.write(" ", DailySalesFileFormat.PromoDiscountAmount4);
-			fileWriter.write(" ", DailySalesFileFormat.PromoDescountDescription4);
-			fileWriter.write(" ", DailySalesFileFormat.Promo5);
-			fileWriter.write(" ", DailySalesFileFormat.PromoDiscountAmount5);
-			fileWriter.write(" ", DailySalesFileFormat.PromoDiscountDescription5);
+			fileWriter.write(Discount, DailySalesFileFormat.PromoDiscountDescription1);
+			fileWriter.write("", DailySalesFileFormat.Promo2);
+			fileWriter.write("0.0", DailySalesFileFormat.PromoDiscountAmount2);
+			fileWriter.write("", DailySalesFileFormat.PromoDiscountDescription2);
+			fileWriter.write("", DailySalesFileFormat.Promo3);
+			fileWriter.write("0.0", DailySalesFileFormat.PromoDiscountAmount3);
+			fileWriter.write("", DailySalesFileFormat.PromoDiscountDescription3);
+			fileWriter.write("", DailySalesFileFormat.Promo4);
+			fileWriter.write("0.0", DailySalesFileFormat.PromoDiscountAmount4);
+			fileWriter.write("", DailySalesFileFormat.PromoDescountDescription4);
+			fileWriter.write("", DailySalesFileFormat.Promo5);
+			fileWriter.write("0.0", DailySalesFileFormat.PromoDiscountAmount5);
+			fileWriter.write("", DailySalesFileFormat.PromoDiscountDescription5);
 			fileWriter.write("45010", DailySalesFileFormat.InventoryCondition);
-			fileWriter.write(" ", DailySalesFileFormat.AgentIDChannel);
+			fileWriter.write("", DailySalesFileFormat.AgentIDChannel);
 			fileWriter.write(orderInfo.getTrackingNo(), DailySalesFileFormat.TrackingNo);
-			fileWriter.write(" ", DailySalesFileFormat.OriginalOrderNumber);
-			fileWriter.write(" ", DailySalesFileFormat.ReasonCodeDescription);
+			fileWriter.write("", DailySalesFileFormat.OriginalOrderNumber);
+			fileWriter.write("", DailySalesFileFormat.ReasonCodeDescription);
 			fileWriter.write(orderInfo.getOrderDateTime(), DailySalesFileFormat.WebOrderDateTime);
 			fileWriter.write(createdDateTime, DailySalesFileFormat.DateTimeFileCreated);
-			fileWriter.write(" ", DailySalesFileFormat.AOSStoreID);
-			fileWriter.write(" ", DailySalesFileFormat.AOSEmployeeEIN);
-			fileWriter.write(" ", DailySalesFileFormat.AOSEmployeeName);
-			fileWriter.write(" ", DailySalesFileFormat.Source);
+			fileWriter.write("", DailySalesFileFormat.AOSStoreID);
+			fileWriter.write("", DailySalesFileFormat.AOSEmployeeEIN);
+			fileWriter.write("", DailySalesFileFormat.AOSEmployeeName);
+			fileWriter.write("", DailySalesFileFormat.Source);
 			fileWriter.write(orderInfo.getSourceOrderId(), DailySalesFileFormat.BorderfreeOrderNO);
 			fileWriter.write(orderInfo.getEmail(), DailySalesFileFormat.CustomerEmailAddress);
 
@@ -417,14 +465,14 @@ public class PostBCBGOrderService {
 		String retAddress2 = "";
 
 		String allAddress = address1 + address2;
-		if (allAddress.length() <= 20) {
+		if (allAddress.length() <= 40) {
 			retAddress1 = allAddress;
-		} else if (allAddress.length() > 20 && allAddress.length() <= 40) {
-			retAddress1 = allAddress.substring(0,20);
-			retAddress2 = allAddress.substring(20,allAddress.length());
+		} else if (allAddress.length() > 40 && allAddress.length() <= 80) {
+			retAddress1 = allAddress.substring(0,40);
+			retAddress2 = allAddress.substring(40,allAddress.length());
 		} else {
-			retAddress1 = allAddress.substring(0,20);
-			retAddress2 = allAddress.substring(20,40);
+			retAddress1 = allAddress.substring(0,40);
+			retAddress2 = allAddress.substring(40,80);
 		}
 
 		retAddress.add(retAddress1);
@@ -570,7 +618,7 @@ public class PostBCBGOrderService {
 			note = "Push Daily Sales File to BCBG";
 		// Not Shipped Order 推送
 		} else if (POST_BCBG_DEMAND.equals(taskName)) {
-			note = "Push cancel order to RM";
+			note = "Push Demand File to BCBG";
 		}
 
 		sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
@@ -636,6 +684,9 @@ public class PostBCBGOrderService {
 		int orderChannelTimeZone = Integer.valueOf(ChannelConfigs.getVal1(orderChannelID, ChannelConfigEnums.Name.channel_time_zone));
 		// 汇率
 		String exchangeRate = Codes.getCodeName("MONEY_CHG_RMB", "USD");
+		// 做成时间
+		String createdDateTimeTmp = DateTimeUtil.getLocalTime(DateTimeUtil.getGMTTime(), orderChannelTimeZone);
+		String createdDateTime = DateTimeUtil.format(DateTimeUtil.parse(createdDateTimeTmp), DateTimeUtil.DATE_TIME_FORMAT_2);
 
 		// 推送文件名取得
 		String fileName = createPostFileNameForDemands(orderChannelTimeZone);
@@ -643,6 +694,7 @@ public class PostBCBGOrderService {
 
 		// 路径配置信息读取
 		FtpBean upLoadFtpBean = formatDemandUploadFtpBean();
+		upLoadFtpBean.setUpload_filename(fileName);
 
 		// 每天生成一个文件
 		if (FileUtils.isFileExist(fileName, upLoadFtpBean.getUpload_local_bak_path(), 10)) {
@@ -657,7 +709,7 @@ public class PostBCBGOrderService {
 			// CSV文件做成
 			if (isSuccess) {
 				logger.info("createUploadFile Demands record count = " + pushDemandList.size());
-				isSuccess = createUploadFileForDemands(upLoadFtpBean, fileName, pushDemandList);
+				isSuccess = createUploadFileForDemands(upLoadFtpBean, fileName, pushDemandList, createdDateTime);
 			}
 
 			// FTP目录夹Copy推送
@@ -666,41 +718,41 @@ public class PostBCBGOrderService {
 				isSuccess = uploadOrderFile(upLoadFtpBean, fileName);
 			}
 
-				// 推送标志更新
+			// 推送标志更新
+			if (isSuccess) {
+				logger.info("updateDemandSendInfo");
+				isSuccess = updateOrdersInfo(POST_BCBG_DEMAND, pushDemandList);
+
 				if (isSuccess) {
-	//				logger.info("updateDemandSendInfo");
-	//				isSuccess = updateOrdersInfo(POST_BCBG_DEMAND, pushDemandList);
-	//
-	//				if (isSuccess) {
-						// 源文件
-						String srcFile = upLoadFtpBean.getUpload_localpath() + "/" + upLoadFtpBean.getUpload_filename();
-						// 目标文件
-						String destFile = upLoadFtpBean.getUpload_local_bak_path() + "/" + upLoadFtpBean.getUpload_filename();
-						logger.info("moveFile = " + srcFile + " " + destFile);
-						FileUtils.moveFile(srcFile, destFile);
-
-	//				} else {
-	//					logger.info("updateDemandSendInfo error");
-	//					issueLog.log("postBCBGDemands.updateDemandSendInfo",
-	//							"updateDemandSendInfo error;Push order file = " + fileName,
-	//							ErrorType.BatchJob,
-	//							SubSystem.OMS);
-	//				}
-				} else {
-					logger.info("uploadOrderFile error;Push demand file = " + fileName);
-					issueLog.log("postRMNormalOrder.uploadOrderFile",
-							"uploadOrderFile error;Push demand file = " + fileName,
-							ErrorType.BatchJob,
-							SubSystem.OMS);
-
 					// 源文件
 					String srcFile = upLoadFtpBean.getUpload_localpath() + "/" + upLoadFtpBean.getUpload_filename();
-					logger.info("delFile = " + srcFile);
-					FileUtils.delFile(srcFile);
-				}
-			}
+					// 目标文件
+					String destFile = upLoadFtpBean.getUpload_local_bak_path() + "/" + upLoadFtpBean.getUpload_filename();
+					logger.info("moveFile = " + srcFile + " " + destFile);
+					FileUtils.moveFile(srcFile, destFile);
 
-			return isSuccess;
+				} else {
+					logger.info("updateDemandSendInfo error");
+					issueLog.log("postBCBGDemands.updateDemandSendInfo",
+							"updateDemandSendInfo error;Push order file = " + fileName,
+							ErrorType.BatchJob,
+							SubSystem.OMS);
+				}
+			} else {
+				logger.info("uploadOrderFile error;Push demand file = " + fileName);
+				issueLog.log("postBCBGDemand.uploadOrderFile",
+						"uploadOrderFile error;Push demand file = " + fileName,
+						ErrorType.BatchJob,
+						SubSystem.OMS);
+
+				// 源文件
+				String srcFile = upLoadFtpBean.getUpload_localpath() + "/" + upLoadFtpBean.getUpload_filename();
+				logger.info("delFile = " + srcFile);
+				FileUtils.delFile(srcFile);
+			}
+		}
+
+		return isSuccess;
 	}
 
 	/**
@@ -749,16 +801,49 @@ public class PostBCBGOrderService {
 				// LineNumber
 				orderExtendInfo.setLineNumber(String.valueOf(lineNumber));
 
-				// OrderDate
-				orderExtendInfo.setOrderDate(getLocalDate(orderExtendInfo.getOrderDateTime(), timeZone));
+//				// OrderDate
+//				orderExtendInfo.setOrderDate(getLocalDate(orderExtendInfo.getOrderDateTime(), timeZone));
+				orderExtendInfo.setOrderDateTime(getLocalDateTime(orderExtendInfo.getOrderDateTime(), timeZone));
 
-				// 售价含折扣
-				float price = div2Digits(Float.valueOf(skuPriceInfo.getPrice()), rate);
-				orderExtendInfo.setPrice(String.valueOf(price));
+				if ("Shipping".equals(orderExtendInfo.getSku())) {
+					// 运费的场合
+					orderExtendInfo.setLongItemNumber(FREIGHT);
 
-				// 售价不含折扣
-				float unitPrice = div2Digits(Float.valueOf(orderExtendInfo.getPricePerUnit()), rate);
-				orderExtendInfo.setPricePerUnit(String.valueOf(unitPrice));
+					orderExtendInfo.setQuantityOrdered("0");
+					orderExtendInfo.setQuantityShipped("0");
+
+					float price = div2Digits(Float.valueOf(orderExtendInfo.getPricePerUnit()), rate);
+					orderExtendInfo.setPrice(String.valueOf(price));
+
+					// SalePrice
+					orderExtendInfo.setPricePerUnit("0");
+
+					// Promo Discount
+					orderExtendInfo.setOrderDiscount("0");
+				} else {
+					// 物品的场合
+					orderExtendInfo.setLongItemNumber("");
+
+					// 售价含折扣
+					float price = div2Digits(Float.valueOf(skuPriceInfo.getPrice()), rate);
+					orderExtendInfo.setPrice(String.valueOf(price));
+
+					// 售价不含折扣
+					String pricePerUnit = orderExtendInfo.getPricePerUnit();
+					float unitPrice = div2Digits(Float.valueOf(pricePerUnit), rate);
+					orderExtendInfo.setPricePerUnit(String.valueOf(unitPrice));
+
+					// 订单折扣
+//					float orderDiscount = mult2Digits(Float.valueOf(skuPriceInfo.getShipping_price()), -1);
+//					orderDiscount = div2Digits(orderDiscount, rate);
+//					orderExtendInfo.setOrderDiscount(String.valueOf(orderDiscount));
+
+					// 订单折扣（明细折扣 + 订单折扣 = 原始价格 - 销售价格）
+					float salePrice = mult2Digits(Float.valueOf(pricePerUnit), Float.valueOf(orderExtendInfo.getQuantityOrdered()));
+					float orderDiscount = sub2Digits(salePrice, Float.valueOf(skuPriceInfo.getPrice()));
+					orderDiscount = div2Digits(orderDiscount, rate);
+					orderExtendInfo.setOrderDiscount(String.valueOf(orderDiscount));
+				}
 
 				lineNumber = lineNumber + 1;
 			}
@@ -905,7 +990,7 @@ public class PostBCBGOrderService {
 	 *
 	 * @param fileName 待上传文件名
 	 */
-	private boolean createUploadFileForDemands(FtpBean ftpBean, String fileName, List<OrderExtend> pushOrderList) {
+	private boolean createUploadFileForDemands(FtpBean ftpBean, String fileName, List<OrderExtend> pushOrderList, String createdDateTime) {
 		boolean isSuccess = true;
 
 		// 本地文件生成路径
@@ -918,7 +1003,7 @@ public class PostBCBGOrderService {
 			FileWriteUtils fileWriter = new FileWriteUtils(fop,  Charset.forName(outputFileEncoding), "A","S");
 
 			// Body输出
-			createUploadFileBodyForDemands(fileWriter, pushOrderList);
+			createUploadFileBodyForDemands(fileWriter, pushOrderList, createdDateTime);
 
 			fileWriter.flush();
 			fileWriter.close();
@@ -934,47 +1019,63 @@ public class PostBCBGOrderService {
 		return isSuccess;
 	}
 
-	private void createUploadFileBodyForDemands(FileWriteUtils fileWriter, List<OrderExtend> pushOrderList) throws IOException {
+	/**
+	 * 未发货订单做成
+	 *
+	 * @param fileWriter
+	 * @param pushOrderList
+	 * @param createdDateTime
+	 */
+	private void createUploadFileBodyForDemands(FileWriteUtils fileWriter, List<OrderExtend> pushOrderList, String createdDateTime) throws IOException {
 
 		for (int i = 0 ; i < pushOrderList.size(); i++) {
 			OrderExtend orderInfo = pushOrderList.get(i);
-			fileWriter.write(" ", DemandsFileFormat.StoreNumber);
-			fileWriter.write(" ", DemandsFileFormat.OrderNumber);
+			fileWriter.write(StoreNumber, DemandsFileFormat.StoreNumber);
+			fileWriter.write("", DemandsFileFormat.OrderNumber);
 			fileWriter.write(orderInfo.getLineNumber(), DemandsFileFormat.LineNumber);
-			fileWriter.write(orderInfo.getOrderDate(), DemandsFileFormat.OrderDate);
+			fileWriter.write(orderInfo.getOrderDateTime(), DemandsFileFormat.OrderDate);
 			fileWriter.write(orderInfo.getSourceOrderId(), DemandsFileFormat.WebOrderNumber);
-			fileWriter.write(" ", DemandsFileFormat.AgentIDChannel);
-			fileWriter.write(" ", DemandsFileFormat.LongItemNumber);
+			fileWriter.write("", DemandsFileFormat.AgentIDChannel);
+			fileWriter.write(orderInfo.getLongItemNumber(), DemandsFileFormat.LongItemNumber);
 			fileWriter.write(orderInfo.getUPC(), DemandsFileFormat.UPC);
 			fileWriter.write(orderInfo.getPricePerUnit(), DemandsFileFormat.SalePrice);
 			fileWriter.write(orderInfo.getQuantityOrdered(), DemandsFileFormat.QuantityOrdered);
 			fileWriter.write(orderInfo.getQuantityShipped(), DemandsFileFormat.QuantityShipped);
-			fileWriter.write(" ", DemandsFileFormat.POBOQuantity);
-			fileWriter.write(" ", DemandsFileFormat.PromiseDate);
-			fileWriter.write(orderInfo.getPrice(), DemandsFileFormat.UnitPrice);
-			fileWriter.write("0", DemandsFileFormat.TaxAmount);
-			fileWriter.write(" ", DemandsFileFormat.Promo1);
-			fileWriter.write("0", DemandsFileFormat.PromoDiscountAmount1);
-			fileWriter.write(" ", DemandsFileFormat.PromoDiscountDescription1);
-			fileWriter.write(" ", DemandsFileFormat.Promo2);
-			fileWriter.write("0", DemandsFileFormat.PromoDiscountAmount2);
-			fileWriter.write(" ", DemandsFileFormat.PromoDiscountDescription2);
-			fileWriter.write(" ", DemandsFileFormat.Promo3);
-			fileWriter.write("0", DemandsFileFormat.PromoDiscountAmount3);
-			fileWriter.write(" ", DemandsFileFormat.PromoDiscountDescription3);
-			fileWriter.write(" ", DemandsFileFormat.Promo4);
-			fileWriter.write("0", DemandsFileFormat.PromoDiscountAmount4);
-			fileWriter.write(" ", DemandsFileFormat.PromoDiscountDescription4);
-			fileWriter.write(" ", DemandsFileFormat.Promo5);
-			fileWriter.write("0", DemandsFileFormat.PromoDiscountAmount5);
-			fileWriter.write(" ", DemandsFileFormat.PromoDiscountDescription5);
+			fileWriter.write("", DemandsFileFormat.POBOQuantity);
+			fileWriter.write("", DemandsFileFormat.PromiseDate);
+
+			if ("Shipping".equals(orderInfo.getSku())) {
+				fileWriter.write(orderInfo.getPrice(), DemandsFileFormat.UnitPrice);
+			} else {
+				float unitPrice = div2Digits(Float.valueOf(orderInfo.getPrice()), Float.valueOf(orderInfo.getQuantityOrdered()));
+				fileWriter.write(String.valueOf(unitPrice), DemandsFileFormat.UnitPrice);
+//				fileWriter.write(orderInfo.getPrice(), DemandsFileFormat.UnitPrice);
+			}
+
+			fileWriter.write("", DemandsFileFormat.TaxAmount);
+			fileWriter.write(Discount, DemandsFileFormat.Promo1);
+			fileWriter.write(orderInfo.getOrderDiscount(), DemandsFileFormat.PromoDiscountAmount1);
+			fileWriter.write(Discount, DemandsFileFormat.PromoDiscountDescription1);
+
+			fileWriter.write("", DemandsFileFormat.Promo2);
+			fileWriter.write("0.0", DemandsFileFormat.PromoDiscountAmount2);
+			fileWriter.write("", DemandsFileFormat.PromoDiscountDescription2);
+			fileWriter.write("", DemandsFileFormat.Promo3);
+			fileWriter.write("0.0", DemandsFileFormat.PromoDiscountAmount3);
+			fileWriter.write("", DemandsFileFormat.PromoDiscountDescription3);
+			fileWriter.write("", DemandsFileFormat.Promo4);
+			fileWriter.write("0.0", DemandsFileFormat.PromoDiscountAmount4);
+			fileWriter.write("", DemandsFileFormat.PromoDiscountDescription4);
+			fileWriter.write("", DemandsFileFormat.Promo5);
+			fileWriter.write("0.0", DemandsFileFormat.PromoDiscountAmount5);
+			fileWriter.write("", DemandsFileFormat.PromoDiscountDescription5);
 			fileWriter.write("IP", DemandsFileFormat.HoldCode);
 			fileWriter.write("In Process", DemandsFileFormat.HoldCodeDescription);
-			fileWriter.write(DateTimeUtil.getNow(DateTimeUtil.DATE_TIME_FORMAT_2), DemandsFileFormat.DateTimeFileCreated);
+			fileWriter.write(createdDateTime, DemandsFileFormat.DateTimeFileCreated);
 			fileWriter.write(orderInfo.getSourceOrderId(), DemandsFileFormat.BorderFreeOrderNO);
-			fileWriter.write(" ", DemandsFileFormat.AOSEINNO);
-			fileWriter.write(" ", DemandsFileFormat.AOSStoreNO);
-			fileWriter.write(" ", DemandsFileFormat.CustomerEmailAddress);
+			fileWriter.write("", DemandsFileFormat.AOSEINNO);
+			fileWriter.write("", DemandsFileFormat.AOSStoreNO);
+			fileWriter.write("", DemandsFileFormat.CustomerEmailAddress);
 
 			fileWriter.write(System.getProperty("line.separator"));
 		}
@@ -1204,21 +1305,21 @@ public class PostBCBGOrderService {
 		private static final String OrderDate = "A,14";
 		private static final String WebOrderNumber = "A,25";
 		private static final String AgentIDChannel = "S,10";
-		private static final String LongItemNumber = "S,25";
+		private static final String LongItemNumber = "A,25";
 		private static final String UPC = "S,14";
 		private static final String SalePrice = "S,15.2";
-		private static final String QuantityOrdered = "A,15";
-		private static final String QuantityShipped = "A,15";
+		private static final String QuantityOrdered = "S,15";
+		private static final String QuantityShipped = "S,15";
 		private static final String POBOQuantity = "A,15";
 		private static final String PromiseDate = "A,8";
 		private static final String UnitPrice = "S,15.2";
 		private static final String TaxAmount = "S,15.2";
-		private static final String Promo1 = "S,12";
+		private static final String Promo1 = "A,12";
 		private static final String PromoDiscountAmount1 = "S,15.2";
-		private static final String PromoDiscountDescription1 = "S,20";
-		private static final String Promo2 = "S,12";
+		private static final String PromoDiscountDescription1 = "A,20";
+		private static final String Promo2 = "A,12";
 		private static final String PromoDiscountAmount2 = "S,15.2";
-		private static final String PromoDiscountDescription2 = "S,20";
+		private static final String PromoDiscountDescription2 = "A,20";
 		private static final String Promo3 = "A,12";
 		private static final String PromoDiscountAmount3 = "S,15.2";
 		private static final String PromoDiscountDescription3 = "A,20";
@@ -1227,7 +1328,7 @@ public class PostBCBGOrderService {
 		private static final String PromoDiscountDescription4 = "A,20";
 		private static final String Promo5 = "A,12";
 		private static final String PromoDiscountAmount5 = "S,15.2";
-		private static final String PromoDiscountDescription5 = "S,20";
+		private static final String PromoDiscountDescription5 = "A,20";
 		private static final String HoldCode = "A,3";
 		private static final String HoldCodeDescription = "A,40";
 		private static final String DateTimeFileCreated = "A,14";
@@ -1343,30 +1444,140 @@ public class PostBCBGOrderService {
 		return ret;
 	}
 
-	public static void main(String[] args) throws Exception {
-//		String temp = "中国人1";
-//
-//		System.out.println(temp.length());
-//		System.out.println(temp.getBytes().length);
-//		Charset charset = Charset.forName("gbk");
-//		System.out.println(temp.getBytes(charset).length);
+	private void translateOrderExtend(OrderExtend orderInfo) throws Exception {
+		ArrayList<String> translateContent = new ArrayList<String>();
 
-//		float a = Float.valueOf("6.2");
-//		float price = div2Digits(Float.valueOf("1049.00"), a);
-//		System.out.println(price);
+		translateContent.add(orderInfo.getShipName());
+		translateContent.add(orderInfo.getShipAddress());
+		translateContent.add(orderInfo.getShipAddress2());
+		translateContent.add(orderInfo.getShipCity());
+		translateContent.add(orderInfo.getShipState());
 
-		String inputString = "1.2";
-		String numericLength = "10";
-		String outputString = "";
+		translateContent.add(orderInfo.getName());
+		translateContent.add(orderInfo.getAddress());
+		translateContent.add(orderInfo.getAddress2());
+		translateContent.add(orderInfo.getCity());
+		translateContent.add(orderInfo.getState());
 
-		if (inputString.contains(".")) {
-			double numericDouble = Double.parseDouble(inputString);
-			DecimalFormat df = new DecimalFormat("#.00");
-			outputString = StringUtils.lPad(df.format(numericDouble), "0", Integer.valueOf(numericLength));
+		List<String> afterTranslateContent = translate(translateContent, 1);
+
+		orderInfo.setShipName(afterTranslateContent.get(0));
+		orderInfo.setShipAddress(afterTranslateContent.get(1));
+		orderInfo.setShipAddress2(afterTranslateContent.get(2));
+		orderInfo.setShipCity(afterTranslateContent.get(3));
+		orderInfo.setShipState(afterTranslateContent.get(4));
+
+		orderInfo.setName(afterTranslateContent.get(5));
+		orderInfo.setAddress(afterTranslateContent.get(6));
+		orderInfo.setAddress2(afterTranslateContent.get(7));
+		orderInfo.setCity(afterTranslateContent.get(8));
+		orderInfo.setState(afterTranslateContent.get(9));
+	}
+
+	private List<String> translate(List<String> beforeStringList, int threadNo) throws Exception {
+		List<String> resultStrList = new ArrayList<String>();
+
+		StringBuilder url = new StringBuilder(Codes.getCodeName(BAIDU_TRANSLATE_CONFIG, "Url"));
+		String apiKey = Codes.getCodeName(BAIDU_TRANSLATE_CONFIG, "ApiKey" + threadNo);
+		String from = Codes.getCodeName(BAIDU_TRANSLATE_CONFIG, "From");
+		String to = Codes.getCodeName(BAIDU_TRANSLATE_CONFIG, "To");
+
+		StringBuilder q = new StringBuilder("q=");
+		if (beforeStringList != null && beforeStringList.size() > 0) {
+			String qSplit = URLEncoder.encode("\n", "utf-8");
+			int qSize = beforeStringList.size();
+			for (int i = 0; i < qSize; i++) {
+				if (i == 0) {
+					q.append(URLEncoder.encode(beforeStringList.get(i), "utf-8"));
+				} else {
+					q.append(qSplit);
+					q.append(URLEncoder.encode(beforeStringList.get(i), "utf-8"));
+				}
+			}
 		} else {
-			outputString = StringUtils.lPad(inputString, "0", Integer.valueOf(numericLength));
+			return resultStrList;
 		}
 
-		System.out.println(outputString);
+//		url.append("?");
+//		url.append("client_id=");
+//		url.append(apiKey);
+//		url.append("&");
+//		url.append(q.toString());
+//		url.append("&");
+//		url.append("from=");
+//		url.append(from);
+//		url.append("&");
+//		url.append("to=");
+//		url.append(to);
+
+		StringBuilder urlPara = new StringBuilder();
+		urlPara.append("client_id=");
+		urlPara.append(apiKey);
+		urlPara.append("&");
+		urlPara.append(q.toString());
+		urlPara.append("&");
+		urlPara.append("from=");
+		urlPara.append(from);
+		urlPara.append("&");
+		urlPara.append("to=");
+		urlPara.append(to);
+
+		logger.info(url.toString());
+
+//		String transResult = WebServiceUtil.getByUrl(url.toString());
+		String transResult = HttpUtils.get(url.toString(),urlPara.toString());
+
+		Map<String, Object> jsonToMap = JsonUtil.jsonToMap(transResult);
+		// 百度翻译API服务发生错误
+		if (jsonToMap.containsKey("error_code")) {
+			Object error_code = jsonToMap.get("error_code");
+			Object error_msg = jsonToMap.get("error_msg");
+			issueLog.log("PostBCBGOrderService.translate",
+					"百度翻译API服务发生错误。error_code：" + error_code + " error_msg：" + error_msg,
+					ErrorType.BatchJob,
+					SubSystem.OMS);
+
+		} else {
+			Object trans_result = jsonToMap.get("trans_result");
+			List<Map> mapList = (List<Map>) trans_result;
+			if (mapList != null && mapList.size() > 0) {
+				for (int i = 0; i < mapList.size(); i++) {
+					Map<String, String> map = mapList.get(i);
+					String src = map.get("src");
+					String dst = map.get("dst");
+					logger.info("src:" + src + " -> dst:" + dst);
+					resultStrList.add(dst);
+				}
+			}
+		}
+
+		return resultStrList;
 	}
+
+//	public static void main(String[] args) throws Exception {
+////		String temp = "中国人1";
+////
+////		System.out.println(temp.length());
+////		System.out.println(temp.getBytes().length);
+////		Charset charset = Charset.forName("gbk");
+////		System.out.println(temp.getBytes(charset).length);
+//
+////		float a = Float.valueOf("6.2");
+////		float price = div2Digits(Float.valueOf("1049.00"), a);
+////		System.out.println(price);
+//
+//		String inputString = "1.2";
+//		String numericLength = "10";
+//		String outputString = "";
+//
+//		if (inputString.contains(".")) {
+//			double numericDouble = Double.parseDouble(inputString);
+//			DecimalFormat df = new DecimalFormat("#.00");
+//			outputString = StringUtils.lPad(df.format(numericDouble), "0", Integer.valueOf(numericLength));
+//		} else {
+//			outputString = StringUtils.lPad(inputString, "0", Integer.valueOf(numericLength));
+//		}
+//
+//		System.out.println(outputString);
+//	}
 }

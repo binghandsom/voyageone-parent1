@@ -20,6 +20,7 @@ define(['modules/cms/cms.module', 'modules/cms/master/dict/dict.service'], funct
       this.dictList = dictList;
       this.word = word;
       this.notify = notify;
+      this.selected.text = "";
       if (!this.word) {
         this.selected.valueType = null;
         return;
@@ -38,6 +39,9 @@ define(['modules/cms/cms.module', 'modules/cms/master/dict/dict.service'], funct
           this.selected.masterProp = this.word.value;
           break;
         case this.valueTypes.custom:
+          this.selected.text = JSON.stringify(this.word.value);
+          break;
+        default :
           this.selected.text = JSON.stringify(this.word.value);
       }
     }
@@ -60,10 +64,10 @@ define(['modules/cms/cms.module', 'modules/cms/master/dict/dict.service'], funct
 
     _Class.prototype.save = function() {
       var val;
-      if (!this.selected.valueType) {
-        this.notify.warning('CMS_MSG_DICT_VAL_NO_TYPE');
-        return;
-      }
+      //if (!this.selected.valueType) {
+      //  this.notify.warning('CMS_MSG_DICT_VAL_NO_TYPE');
+      //  return;
+      //}
       val = (function() {
         switch (this.selected.valueType) {
           case this.valueTypes.text:
@@ -77,7 +81,7 @@ define(['modules/cms/cms.module', 'modules/cms/master/dict/dict.service'], funct
           case this.valueTypes.custom:
             return  JSON.parse(this.selected.text);
           default:
-            return null;
+            return  JSON.parse(this.selected.text);
         }
       }).call(this);
       if (!val) {

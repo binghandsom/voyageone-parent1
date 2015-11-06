@@ -12,40 +12,6 @@
         call wms_setLogicInventory(#{order_channel_id})
     </update>
 
-    <!-- 库存分配-->
-    <update id="wms_setAllotInventory" statementType="CALLABLE" parameterType="HashMap">
-        call wms_setAllotInventory(#{order_channel_id},#{row_count})
-    </update>
-
-    <!-- 错误的SKU记录取得-->
-    <select id="wms_selectErrorSkuInfo" resultType="com.voyageone.batch.wms.modelbean.AllotInventoryDetailBean">
-        SELECT
-          log_details.order_number,
-          log_details.item_number,
-          log_details.source_order_id,
-          log_details.order_channel_id,
-          log_details.product,
-          log_details.cart_id,
-          log_details.sku,
-          details.res_allot_flg,
-          details.res_id,
-          log_details.sku_error_flg
-        FROM
-          wms_bt_log_order_details log_details,
-          oms_bt_order_details details
-        WHERE
-          log_details.order_number = details.order_number
-        AND
-          log_details.item_number = details.item_number
-        AND
-          log_details.sku_error_flg = '1'
-        ORDER BY
-          log_details.order_channel_id,
-          log_details.cart_id,
-          log_details.order_number,
-          log_details.item_number
-    </select>
-
     <select id="wms_selectInventoryExceptSynLogs" resultType="com.voyageone.batch.wms.modelbean.InventorySynLogBean">
         SELECT
             i.seq,

@@ -55,8 +55,8 @@ public class OmsOrderAccountingsSearchServiceImpl implements OmsOrderAccountings
 	 * @param user 当前用户
 	 * @return
 	 */
-	public List<OutFormSearchSettlementFile> searchSettlementFile(List<String> storeId, List<String> channelId, String searchDateFrom, String searchDateTo, int page, int size, UserSessionBean user) {
-		List<OutFormSearchSettlementFile> settlementFileList = settlementDao.getSettlementFileList(storeId, channelId, searchDateFrom, searchDateTo, page * size, size);
+	public List<OutFormSearchSettlementFile> searchSettlementFile(String fileType, List<String> storeId, List<String> channelId, String searchDateFrom, String searchDateTo, int page, int size, UserSessionBean user) {
+		List<OutFormSearchSettlementFile> settlementFileList = settlementDao.getSettlementFileList(fileType, storeId, channelId, searchDateFrom, searchDateTo, page * size, size);
 
 		if (settlementFileList.size() > 0) {
 			for (int i = 0; i < settlementFileList.size(); i++) {
@@ -77,8 +77,8 @@ public class OmsOrderAccountingsSearchServiceImpl implements OmsOrderAccountings
 	 * @param searchDateTo 检索日终了
 	 * @return
 	 */
-	public  int getSearchSettlementFileCount(List<String> storeId, List<String> channelId, String searchDateFrom, String searchDateTo) {
-		int settlementFileCount = settlementDao.getSettlementFileCount(storeId, channelId, searchDateFrom, searchDateTo);
+	public  int getSearchSettlementFileCount(String fileType, List<String> storeId, List<String> channelId, String searchDateFrom, String searchDateTo) {
+		int settlementFileCount = settlementDao.getSettlementFileCount(fileType, storeId, channelId, searchDateFrom, searchDateTo);
 
 		return settlementFileCount;
 	}

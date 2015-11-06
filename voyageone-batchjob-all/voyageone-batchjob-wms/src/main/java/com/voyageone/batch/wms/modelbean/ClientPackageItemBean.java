@@ -21,6 +21,7 @@ public class ClientPackageItemBean {
     private String site;
     private String shipping_point;
     private String upc;
+    private String brand;
     private String active;
     private String created;
     private String creater;
@@ -145,6 +146,14 @@ public class ClientPackageItemBean {
 
     public void setUpc(String upc) {
         this.upc = upc;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
     }
 
     public String getActive() {

@@ -9,9 +9,11 @@ import java.util.Map;
 
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.util.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.net.ftp.FTP;
@@ -36,6 +38,9 @@ public class ImagePostScene7Service {
 	@Autowired
 	IssueLog issueLog;
 
+	@Autowired
+	private TransactionRunner transactionRunner;
+
 	// Scene7FTP设置
 	private static final String S7FTP_CONFIG = "S7FTP_CONFIG";
 
@@ -44,7 +49,7 @@ public class ImagePostScene7Service {
 	 * 
 	 * @return
 	 */
-	public List<String> getImageUrls(String orderChannelId) {
+	public List<Map<String, String>> getImageUrls(String orderChannelId) {
 		return imageDao.getImageUrls(orderChannelId);
 	}
 	
@@ -53,7 +58,8 @@ public class ImagePostScene7Service {
 	 * 
 	 * @return
 	 */
-	public boolean getAndSendImage(String orderChannelId, List<String> imageUrlList, List<String> successImageUrlList, int threadNo) throws Exception {
+	public boolean getAndSendImage(String orderChannelId, List<Map<String, String>> imageUrlList, List<String> successImageUrlList,
+								   List<Map<String, String>> urlErrorList, int threadNo) throws Exception {
 		boolean isSuccess = true;
 		
 		if (imageUrlList != null && imageUrlList.size() > 0) {
@@ -98,9 +104,24 @@ public class ImagePostScene7Service {
 						ftpClient.setConnectTimeout(120000);
 						
 						for (int i = 0; i < imageUrlList.size(); i++) {
-							imageUrl = imageUrlList.get(i);
-							
-							inputStream = HttpUtils.getInputStream(imageUrl, null);
+							imageUrl = String.valueOf(imageUrlList.get(i).get("image_url"));
+
+							if (StringUtils.isNullOrBlank2(imageUrl)) {
+								successImageUrlList.add(imageUrl);
+
+								continue;
+							}
+
+							try {
+								inputStream = HttpUtils.getInputStream(imageUrl, null);
+							} catch (FileNotFoundException ex) {
+								// 图片url错误
+								logger.error(ex.getMessage(), ex);
+								// 记录url错误图片以便删除这张图片相关记录
+								urlErrorList.add(imageUrlList.get(i));
+
+								continue;
+							}
 							
 							int lastSlash = imageUrl.lastIndexOf("/");
 							String fileName = imageUrl.substring(lastSlash + 1);
@@ -133,11 +154,6 @@ public class ImagePostScene7Service {
 				logger.error(ex.getMessage(), ex);
 				issueLog.log(ex, ErrorType.BatchJob, SubSystem.CMS);
 
-				// 图片url错误，不需要再处理
-				if (ex instanceof FileNotFoundException) {
-					successImageUrlList.add(imageUrl);
-				}
-
 				isSuccess = false;
 
 			} finally {
@@ -166,7 +182,31 @@ public class ImagePostScene7Service {
 	public int updateImageSendFlag(String orderChannelId, List<String> successImageUrlList, String taskName) {
 		return imageDao.updateImageSendFlag(orderChannelId, successImageUrlList, taskName);
 	}
-	
+
+	/**
+	 * 删除错误url图片
+	 *
+	 * @param orderChannelId
+	 * @param urlErrorList
+	 * @return
+	 */
+	public void deleteUrlErrorImage(String orderChannelId, List<Map<String, String>> urlErrorList) {
+		for (Map<String, String> urlError : urlErrorList) {
+			String productId = String.valueOf(urlError.get("product_id"));
+			String imageTypeId = String.valueOf(urlError.get("image_type_id"));
+			String imageId = String.valueOf(urlError.get("image_id"));
+			String imageUrl = String.valueOf(urlError.get("image_url"));
+			logger.info("IMAGE URL IS NOT EXIST! channelId:" + orderChannelId + " productId:" + productId + " imageTypeId:" + imageTypeId + " imageId:" + imageId + " imageUrl:" + imageUrl);
+
+			// 单事务处理
+			transactionRunner.runWithTran(() -> {
+				imageDao.deleteUrlErrorImage(orderChannelId, urlError);
+			});
+		}
+	}
+
+
+
 	public static void main(String[] args) throws IOException {
 	}
 }

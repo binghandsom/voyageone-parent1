@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.ims.sql">
+       <!--<select id="ims_promotion_select" resultType="HashMap">-->
+              <!--SELECT-->
+                  <!--t1.*, floor(t2.cn_price_final_rmb*100) as cnPriceFinalRmb-->
+              <!--FROM-->
+                  <!--(-->
+                      <!--SELECT-->
+                          <!--a.product_id,-->
+                          <!--a.num_iid,-->
+                          <!--a.channel_id,-->
+                          <!--a.cart_id,-->
+                          <!--a.promotion_add_status,-->
+                          <!--a.publish_promotion_price_status-->
+                      <!--FROM-->
+                          <!--voyageone_ims.ims_bt_product a-->
+                      <!--WHERE-->
+                          <!--a.channel_id = #{channelId}-->
+                      <!--AND a.cart_id = #{cartId}-->
+                      <!--AND a.num_iid != '0'-->
+                      <!--AND a.publish_promotion_price_status = 0-->
+                  <!--) t1-->
+              <!--LEFT JOIN voyageone_cms.cms_bt_cn_product_share t2 ON t1.product_id = t2.product_id-->
+              <!--AND t1.cart_id = t2.cart_id-->
+       <!--</select>-->
+    <resultMap type="HashMap" id="imsPromotionMap">
+        <result column="num_iid" property="num_iid"/>
+
+        <result column="channel_id" property="channel_id"/>
+        <result column="promotion_add_status" property="promotion_add_status" />
+        <result column="publish_promotion_price_status" property="publish_promotion_price_status" />
+        <collection property="productList" javaType="ArrayList" ofType="HashMap" >
+            <result column="product_id" property="product_id" />
+            <collection property="skuList" javaType="ArrayList" ofType="HashMap" >
+                <result column="cnPriceFinalRmb" property="cnPriceFinalRmb" />
+                <result column="sku" property="sku"/>
+            </collection>
+        </collection>
+    </resultMap>
+    <select id="ims_promotion_select" resultMap="imsPromotionMap">
+        SELECT
+            t1.num_iid,
+            t1.product_id,
+            t1.channel_id,
+            t1.publish_promotion_price_status,
+            floor(t2.cn_price_final_rmb * 100) AS cnPriceFinalRmb,
+            t3.sku
+        FROM
+            (
+                SELECT
+                    a.product_id,
+                    a.`code`,
+                    a.num_iid,
+                    a.channel_id,
+                    a.cart_id,
+                    a.publish_promotion_price_status
+                FROM
+                    voyageone_ims.ims_bt_product a
+                WHERE
+                    a.channel_id = #{channelId}
+                AND a.cart_id = #{cartId}
+                AND a.num_iid != '0'
+                AND a.publish_promotion_price_status = 0
+                LIMIT 0,100
+            ) t1
+        LEFT JOIN voyageone_cms.cms_bt_cn_product_share t2 ON t1.product_id = t2.product_id
+        AND t1.channel_id = t2.channel_id
+        AND t1.cart_id = t2.cart_id
+        LEFT JOIN Synship.wms_bt_item_details t3 ON t1.`code` = t3.itemcode
+        AND t1.channel_id = t3.order_channel_id
+        ORDER BY
+            num_iid
+    </select>
+       <update id="ims_promotion_update" parameterType="HashMap">
+              UPDATE voyageone_ims.ims_bt_product
+              SET publish_promotion_price_status = #{priceStatus},
+              promotion_faild_comment = #{promotionFaildComment},
+              modified = now(),
+              modifier = 'ImsPromotionJob'
+              WHERE
+                  cart_id = #{cartId}
+              <if test="products != null and products.size > 0">
+                  AND product_id IN
+              <foreach item="item" index="index" collection="products" open="(" separator="," close=")">
+                     #{item.product_id}
+              </foreach>
+              </if>
+       </update>
+</mapper>

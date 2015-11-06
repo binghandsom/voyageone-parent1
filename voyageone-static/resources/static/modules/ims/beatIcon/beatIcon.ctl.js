@@ -210,8 +210,11 @@
             .withOption('ordering', false)
             .withOption('ajax', this.onDtGetItems)
             .withOption('createdRow', (function (_this) {
-              return function (row) {
-                return _this.$compile(angular.element(row).contents())(_this.$scope);
+              return function (td, row) {
+                var rowScope;
+                rowScope = _this.$scope.$new();
+                rowScope.$row = row;
+                return _this.$compile(angular.element(td).contents())(rowScope);
               };
             })(this))
             .withOption('initComplete', (function (ctrl) {
@@ -228,7 +231,7 @@
           columns: [
             DTColumnBuilder.newColumn('code', 'Code'),
             DTColumnBuilder.newColumn('num_iid', 'Num iid').renderWith(function (col) {
-              return "<a target=\"_blank\" href=\"https://detail.tmall.hk/hk/item.htm?id=" + col + "\">" + col + "</a>";
+              return '<ng-include src="\'dropdown-operations.tpl.html\'"></ng-include>';
             }),
             DTColumnBuilder.newColumn('price', 'Price'),
             DTColumnBuilder.newColumn('beat_flg', 'Status').renderWith((function (_this) {
@@ -239,9 +242,6 @@
             DTColumnBuilder.newColumn('comment', 'Comment'),
             DTColumnBuilder.newColumn('modifier', 'Modify').renderWith(function (col, type, row) {
               return row.modifier + "<br>" + row.cnModified;
-            }),
-            DTColumnBuilder.newColumn('', '').renderWith(function (val, type, row, cell) {
-              return '<button class="btn btn-sm btn-success fix-sel" context-menu="operations" ng-click="ctrl.setCurrItem(' + cell.row + ')">操作<span class="caret"></span></button>';
             })
           ],
           instance: null
@@ -505,15 +505,15 @@
         return false;
       };
 
-      BeatController.prototype.beatControl = function (action) {
+      BeatController.prototype.beatControl = function (action, item) {
         if (!this.beat || !this.beat.beat_id) {
           this.alert('NO_SELECTED_BEAT。');
           return;
         }
 
-        if (!this.currItem) return console.log('beatControl: noCurrItem');
+        if (!item) return console.log('beatControl: noCurrItem');
 
-        var item_id = this.currItem.beat_item_id;
+        var item_id = item.beat_item_id;
 
         return this.beatService.beatControl(this.beat.beat_id, item_id, action).then((function (_this) {
           return function (count) {
@@ -525,8 +525,7 @@
         })(this));
       };
 
-      BeatController.prototype.setPrice = function () {
-        var item = this.currItem;
+      BeatController.prototype.setPrice = function (item) {
         if (!item) {
           return this.alert('NO_SELECTED_ITEM');
         }
@@ -576,10 +575,6 @@
         });
       };
 
-      BeatController.prototype.setCurrItem = function (rowIndex) {
-        this.currItem = this.items[rowIndex];
-      };
-
       BeatController.prototype.addCode = function () {
         var ctrl = this;
 
@@ -606,10 +601,9 @@
           });
       };
 
-      BeatController.prototype.setCode = function () {
-        if (!this.currItem) return console.log('setCode: noCurrItem');
+      BeatController.prototype.setCode = function (item) {
+        if (!item) return console.log('setCode: noCurrItem');
 
-        var item = this.currItem;
         var ctrl = this;
 
         this.$modal.open({
@@ -626,6 +620,10 @@
               if (count) ctrl.notify.success("已成功修改商品 (・ω< )★");
             });
           });
+      };
+
+      BeatController.prototype.gotoTmall = function (item) {
+        window.open('https://detail.tmall.hk/hk/item.htm?id=' + item.num_iid);
       };
 
       return BeatController;

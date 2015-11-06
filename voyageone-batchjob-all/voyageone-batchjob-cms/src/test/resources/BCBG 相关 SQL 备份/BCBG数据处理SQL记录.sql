@@ -60,6 +60,12 @@ FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed
     ON MATKL = m.value AND m.channel_id = '012' AND m.master_attr = 'MATKL'
 WHERE m.value IS NULL;
 
+DELETE voyageone_cms.cms_zz_worktable_bcbg_superfeed
+FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed
+  LEFT JOIN voyageone_cms.cms_mt_feed_master m
+    ON MATKL = m.value AND m.channel_id = '012' AND m.master_attr = 'MATKL'
+WHERE m.att_val1 = '';
+
 # 删除 DO NOT USE 类目的数据
 DELETE voyageone_cms.cms_zz_worktable_bcbg_superfeed
 FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed
@@ -94,23 +100,54 @@ SET WLADG = label;
 UPDATE voyageone_cms.cms_zz_worktable_bcbg_superfeed
   JOIN voyageone_cms.cms_mt_feed_master m
     ON MATKL = m.value AND m.master_attr = 'MATKL' AND m.channel_id = '012'
-SET MATKL = label;
+SET MATKL = label, MATKL_ATT1 = att_val1;
 
 # 转换完 master 之后,看看是不是都转了
 SELECT *
 FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed;
 
-# 标记数据
+# 原来表里没有的, 说明是新来的. 标记为插入
 UPDATE voyageone_cms.cms_zz_worktable_bcbg_superfeed b
   LEFT JOIN voyageone_cms.cms_zz_worktable_bcbg_superfeed_full bf
     ON b.MATNR = bf.MATNR
-SET b.update_flg = 1
+SET b.status = 10
 WHERE bf.MATNR IS NULL;
-
-
-
+# 原来表里有的, 暂时全部标记为更新.
 UPDATE voyageone_cms.cms_zz_worktable_bcbg_superfeed b
   LEFT JOIN voyageone_cms.cms_zz_worktable_bcbg_superfeed_full bf
     ON b.MATNR = bf.MATNR
-SET b.update_flg = 2
+SET b.status = 30
 WHERE bf.MATNR IS NOT NULL;
+# 原来表里有, 但是插入没成功的. 从新标记为插入
+UPDATE voyageone_cms.cms_zz_worktable_bcbg_superfeed b
+  LEFT JOIN voyageone_cms.cms_zz_worktable_bcbg_superfeed_full bf
+    ON b.MATNR = bf.MATNR
+SET b.status = 10
+WHERE bf.status = 10;
+
+# 删除即将从新插入的(上次没成功,这次又来了的
+DELETE bf FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed_full bf
+  JOIN voyageone_cms.cms_zz_worktable_bcbg_superfeed b ON b.MATNR = bf.MATNR
+WHERE bf.status = 10;
+# 把即将进行插入的数据, 插入到 full 表
+INSERT INTO voyageone_cms.cms_zz_worktable_bcbg_superfeed_full
+(MATNR, EAN11, BRAND_ID, MATKL, MATKL_ATT1, ZZCODE1, ZZCODE2, ZZCODE3, MEINS, BSTME, COLOR, COLOR_ATWTB, SIZE1,
+ SIZE1_ATWTB, SIZE1_ATINN, ATBEZ, SAISO, SAISJ, SAITY, SATNR, MAKTX, WLADG, WHERL, MEAN_EAN11,
+ A304_DATAB, A304_DATBI, A304_KBETR, A304_KONWA, A073_DATAB, A073_DATBI, A073_KBETR, A073_KONWA)
+SELECT
+  MATNR, EAN11, BRAND_ID, MATKL, MATKL_ATT1, ZZCODE1, ZZCODE2, ZZCODE3, MEINS, BSTME, COLOR, COLOR_ATWTB, SIZE1,
+  SIZE1_ATWTB, SIZE1_ATINN, ATBEZ, SAISO, SAISJ, SAITY, SATNR, MAKTX, WLADG, WHERL, MEAN_EAN11,
+  A304_DATAB, A304_DATBI, A304_KBETR, A304_KONWA, A073_DATAB, A073_DATBI, A073_KBETR, A073_KONWA
+FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed
+WHERE status = 10;
+
+# 删除与这次新来有关系的
+DELETE sf FROM voyageone_cms.cms_zz_worktable_bcbg_styles_full sf
+  JOIN voyageone_cms.cms_zz_worktable_bcbg_styles s ON sf.styleID = s.styleID;
+
+# 丢这次新来的
+INSERT INTO voyageone_cms.cms_zz_worktable_bcbg_styles_full
+(styleID, productDesc, productImgURLs)
+SELECT
+  styleID, productDesc, productImgURLs
+FROM voyageone_cms.cms_zz_worktable_bcbg_styles

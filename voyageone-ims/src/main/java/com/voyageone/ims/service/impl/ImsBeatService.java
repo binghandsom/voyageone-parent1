@@ -530,11 +530,6 @@ public class ImsBeatService extends BaseAppService {
 
             item.setNum_iid(num_iid);
 
-            int count = imsBeatDao.selectItemCountByNumiid(item, beat);
-
-            if (count > 0)
-                throw new BusinessException(NUM_IID_EXISTS);
-
         } else if (!StringUtils.isEmpty(item.getNum_iid())) {
 
             String code = imsBeatDao.selectCodeByNumiid(item, beat);
@@ -547,6 +542,11 @@ public class ImsBeatService extends BaseAppService {
         } else {
             throw new BusinessException(NO_IMS_INFO);
         }
+
+        int count = imsBeatDao.selectItemCountByNumiid(item, beat);
+
+        if (count > 0)
+            throw new BusinessException(NUM_IID_EXISTS);
 
         item.setBeatFlg(BeatFlg.Waiting);
         return imsBeatDao.insertItem(item);

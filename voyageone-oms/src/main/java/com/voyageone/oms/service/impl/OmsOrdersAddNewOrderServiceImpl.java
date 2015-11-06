@@ -874,11 +874,19 @@ public class OmsOrdersAddNewOrderServiceImpl implements OmsOrdersAddNewOrderServ
 			newOrderInfo.setLockShip(OmsConstants.LockShip.No);
 			//	快递方式
 			newOrderInfo.setShipping(ordersInfo.getShipping());
+			//	汇率
+			newOrderInfo.setRate(ordersInfo.getRate());
+			//	币种
+			newOrderInfo.setCurrency(ordersInfo.getCurrency());
 		} else {
 			//	锁定状态，同主订单状态
 			newOrderInfo.setLockShip(ordersInfo.getLockShip());
 			//	快递方式
 			newOrderInfo.setShipping(ordersInfo.getShipping());
+			//	汇率
+			newOrderInfo.setRate(ordersInfo.getRate());
+			//	币种
+			newOrderInfo.setCurrency(ordersInfo.getCurrency());
 		}
 	}
 	

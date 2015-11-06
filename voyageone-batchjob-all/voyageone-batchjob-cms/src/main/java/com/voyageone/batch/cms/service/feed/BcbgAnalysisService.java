@@ -9,8 +9,6 @@ import com.voyageone.batch.cms.dao.SuperFeedDao;
 import com.voyageone.batch.cms.dao.feed.BcbgSuperFeedDao;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
-import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Enums.FeedEnums.Name;
 import com.voyageone.common.configs.Feed;
 import com.voyageone.common.util.DateTimeUtil;
@@ -24,7 +22,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.BCBG;
+import static com.voyageone.batch.cms.service.feed.BcbgWsdlConstants.channel;
+import static com.voyageone.batch.cms.service.feed.BcbgWsdlConstants.table_feed_full;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
@@ -78,56 +77,65 @@ public class BcbgAnalysisService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
+        // 每次启动尝试初始化
+        BcbgWsdlConstants.init();
+
         $info("开始处理 BCBG 数据");
 
         Backup backup = new Backup();
 
-        File[] files = getDataFiles(backup);
-
-        // 说明没获取到文件, 放弃执行. 内部会进行日志输出
-        if (files == null) return;
+        File[] files = getDataFiles();
 
         File feedFile = files[0];
         File styleFile = files[1];
 
+        // 同时木有...
+        if (feedFile == null && styleFile == null)
+            return;
+
+        List<SuperFeedBcbgBean> bcbgBeans = null;
+        BcbgStyleBean[] styleBeans = null;
+
         // 读取数据文件
-        BcbgFeedFile bcbgFeedFile = BcbgFeedFile.read(feedFile);
-        List<SuperFeedBcbgBean> bcbgBeans = bcbgFeedFile.getMATERIALS();
+        if (feedFile != null) {
+            BcbgFeedFile bcbgFeedFile = BcbgFeedFile.read(feedFile);
+            bcbgBeans = bcbgFeedFile.getMATERIALS();
 
-        $info("已读取文件.获得 Feed %s 个", bcbgBeans.size());
+            $info("已读取文件.获得 Feed %s 个", bcbgBeans.size());
+        }
 
-        FileReader styleFileReader = new FileReader(styleFile);
-        BcbgStyleBean[] styleBeans = new Gson().fromJson(styleFileReader, BcbgStyleBean[].class);
+        if (styleFile != null) {
+            FileReader styleFileReader = new FileReader(styleFile);
+            styleBeans = new Gson().fromJson(styleFileReader, BcbgStyleBean[].class);
 
-        $info("已读取文件.获得 Style %s 个", styleBeans.length);
+            $info("已读取文件.获得 Style %s 个", styleBeans.length);
+        }
 
         // 插入数据库
         clearLastData();
         insertNewData(bcbgBeans, styleBeans);
 
-        // 处理下拉类属性
-        attributeListInsert(BCBG);
-
         // 开始数据分析处理阶段
-        transformer.new Context(BCBG, this).transform();
+        transformer.new Context(channel, this).transform();
         $info("数据处理阶段结束");
 
-        // 使用接口提交
-        insertService.new Context(BCBG).postNewProduct();
-        updateService.new Context(BCBG).postUpdatedProduct();
+        // 处理下拉类属性
+        attributeListInsert();
 
-        // BCBG 的特殊情况:暂不使用
-        attributeService.new Context(BCBG).postAttributes();
+        // 使用接口提交
+        insertService.postNewProduct();
+        updateService.postUpdatedProduct();
+        attributeService.postAttributes();
 
         // 备份文件
         backup.fromData(feedFile, styleFile);
     }
 
-    private File[] getDataFiles(Backup backup) {
+    private File[] getDataFiles() {
 
         // 读取各种配置
         // 精简配置,减少独立配置,所以两个文件都配置在一个项目里
-        String fileNames = Feed.getVal1(BCBG, Name.feed_ftp_filename); // 文件路径
+        String fileNames = Feed.getVal1(channel, Name.feed_ftp_filename); // 文件路径
 
         // 拆分成 feed 和 style
         String[] fileNameArr = fileNames.split(";");
@@ -146,13 +154,9 @@ public class BcbgAnalysisService extends BaseTaskService {
             throw new BusinessException("BCBG 的配置 feed_ftp_filename 错误,路径为空.");
         }
 
-        File feedFile = getDataFile(sFeedXmlDir, ".xml", backup);
+        File feedFile = getDataFile(sFeedXmlDir, ".xml");
 
-        if (feedFile == null) return null;
-
-        File styleFile = getDataFile(sStyleJsonDir, ".json", backup);
-
-        if (styleFile == null) return null;
+        File styleFile = getDataFile(sStyleJsonDir, ".json");
 
         return new File[] { feedFile, styleFile };
     }
@@ -160,7 +164,7 @@ public class BcbgAnalysisService extends BaseTaskService {
     /**
      * 去 dir 下,按照 filter 过滤文件,返回第一个文件,并备份其他文件
      */
-    private File getDataFile(String dir, String filter, Backup backup) {
+    private File getDataFile(String dir, String filter) {
 
         // 打开目录
         File feedFileDir = new File(dir);
@@ -168,7 +172,7 @@ public class BcbgAnalysisService extends BaseTaskService {
         File[] feedFiles = feedFileDir.listFiles(i -> i.getName().contains(filter));
 
         if (feedFiles == null || feedFiles.length < 1) {
-            $info("'%s' 数据文件不存在,退出任务", filter);
+            $info("没有找到 '%s' 文件", filter);
             return null;
         }
 
@@ -189,22 +193,29 @@ public class BcbgAnalysisService extends BaseTaskService {
 
     private void insertNewData(List<SuperFeedBcbgBean> bcbgBeans, BcbgStyleBean[] styleBeanArr) {
 
-        int start = 0, end, total = bcbgBeans.size(), limit = 500;
+        int start, end, total, limit = 500;
 
-        while (start < total) {
+        if (bcbgBeans != null) {
+            start = 0;
+            total = bcbgBeans.size();
 
-            end = start + limit;
+            while (start < total) {
 
-            if (end > total) end = total;
+                end = start + limit;
 
-            List<SuperFeedBcbgBean> subList = bcbgBeans.subList(start, end);
+                if (end > total) end = total;
 
-            int count = bcbgSuperFeedDao.insertWorkTables(subList);
+                List<SuperFeedBcbgBean> subList = bcbgBeans.subList(start, end);
 
-            $info("分段插入 Feed %s 个", count);
+                int count = bcbgSuperFeedDao.insertWorkTables(subList);
 
-            start = end;
+                $info("分段插入 Feed %s 个", count);
+
+                start = end;
+            }
         }
+
+        if (styleBeanArr == null) return;
 
         List<BcbgStyleBean> styleBeans = Arrays.asList(styleBeanArr);
 
@@ -250,7 +261,7 @@ public class BcbgAnalysisService extends BaseTaskService {
         $info("发现 BCBG Style <无效>数据 %s 个", styleBeans.size());
     }
 
-    private void attributeListInsert(Channel channel){
+    private void attributeListInsert(){
 
         String channel_id = channel.getId();
 
@@ -259,7 +270,7 @@ public class BcbgAnalysisService extends BaseTaskService {
         
         for (String attribute : attributeList) {
             // 从数据中取该属性的数据,并消除重复
-            List<String> distinctValues = superFeedDao.selectAllAttribute(attribute, Feed.getVal1(channel_id, FeedEnums.Name.table_id));
+            List<String> distinctValues = superFeedDao.selectAllAttribute(attribute, table_feed_full);
 
             for (String value : distinctValues) {
                 // 针对每个值进行检查.有则跳过,没有则插入
@@ -278,7 +289,7 @@ public class BcbgAnalysisService extends BaseTaskService {
 
         public Backup() {
 
-            String sBackupDir = Feed.getVal1(BCBG, Name.feed_backup_dir); // 备份的文件路径
+            String sBackupDir = Feed.getVal1(channel, Name.feed_backup_dir); // 备份的文件路径
 
             // 如果是模板,就尝试格式化
             if (sBackupDir.contains("%s"))
@@ -293,6 +304,7 @@ public class BcbgAnalysisService extends BaseTaskService {
         }
 
         protected void from(File file) {
+            if (file == null) return;
             if (!file.renameTo(new File(backupDir, file.getName())))
                 $info("文件备份失败 %s %s", file.getPath(), file.getName());
         }

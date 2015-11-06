@@ -76,7 +76,11 @@ public class FileWriteUtils {
 
         //  文字的场合
         if (characterIdentify.equals(type)) {
-            outputString = StringUtils.rPad(inputString, " ", Integer.valueOf(formatContent));
+            if (inputString.length() > Integer.valueOf(formatContent)) {
+                outputString = inputString.substring(0, Integer.valueOf(formatContent));
+            } else {
+                outputString = StringUtils.rPad(inputString, " ", Integer.valueOf(formatContent));
+            }
         //  数值的场合
         } else {
             if (formatContent.contains(".")) {

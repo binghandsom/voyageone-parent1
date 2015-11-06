@@ -73,7 +73,8 @@ public class Transformer {
                         after(maps, feed);
                         break;
                     case INSERT:
-                        // 暂不支持
+                        int insertCount = sqlDao.insert(feed.getCfg_val2());
+                        taskService.$info("执行 INSERT 操作: " + insertCount);
                         break;
                     case DELETE:
                         int deleteCount = sqlDao.delete(feed.getCfg_val2());
