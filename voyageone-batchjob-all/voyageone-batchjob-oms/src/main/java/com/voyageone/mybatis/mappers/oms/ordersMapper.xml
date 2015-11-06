@@ -1704,6 +1704,33 @@
 		order by sum(final_grand_total) desc
 		limit 10
 	</select>
+
+	<!-- 统计阿里系渠道消费前count数顾客-->
+	<select id="oms_bt_orders_getSpendingTop" parameterType="HashMap" resultType="HashMap">
+		SELECT
+			orderTop.NAME AS wangwangId,
+			sum(orderTop.final_grand_total) AS consumeMoney
+		FROM
+			(
+				SELECT
+					NAME,
+					final_grand_total
+				FROM
+					oms_bt_orders
+				WHERE
+					order_channel_id = #{orderChannelId} and
+					cart_id IN ('20', '21', '23')
+				AND order_date_time >= '2015-11-10 16:00:00'
+				AND '2015-11-11 15:59:59' >= order_date_time
+				AND order_kind = '0'
+				AND order_status NOT IN ('Returned', 'Canceled')
+			) orderTop
+		GROUP BY
+			orderTop.NAME
+		ORDER BY
+			sum(orderTop.final_grand_total) DESC
+		LIMIT ${topCount}
+	</select>
 	
 	<!-- 根据省市获得邮编 -->
 	<select id="tm_zip_getZip" parameterType="HashMap" resultType="String">

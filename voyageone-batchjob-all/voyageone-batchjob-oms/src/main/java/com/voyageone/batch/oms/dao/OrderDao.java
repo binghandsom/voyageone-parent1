@@ -1966,15 +1966,17 @@ public class OrderDao extends BaseDao {
 	}
 	
 	/**
-	 * sneakerhead 88店庆每小时统计消费前10顾客
+	 * 消费前count顾客
 	 * 
 	 * @return
 	 */
-	public List<Map<String, String>> getSendSneakerhead88Top10() {
+	public List<Map<String, String>> getSneakerheadTopSpendingRanking(String orderChannelId, int count) {
+		Map<String, String> paraMap = new HashMap<String, String>();
+		paraMap.put("orderChannelId", orderChannelId);
+		paraMap.put("topCount", String.valueOf(count));
+		List<Map<String, String>> topMapList = (List)selectList(Constants.DAO_NAME_SPACE_OMS + "oms_bt_orders_getSpendingTop", paraMap);
 
-		List<Map<String, String>> top10MapList = (List)selectList(Constants.DAO_NAME_SPACE_OMS + "oms_bt_orders_getSendSneakerhead88Top10");
-
-		return top10MapList;
+		return topMapList;
 	}
 	
 	/**

@@ -538,13 +538,54 @@ public class OmsConstants {
 				"<td>%s</td>" +
 		"</tr>";
 	
+//	/**
+//	 * sneakerhead 88店庆每小时统计消费前10顾客邮件HEAD
+//	 */
+//	public static final String SNEAKERHEAD_TOP10_CHECK_HEAD = "sneakerhead 88店庆  土豪大咖消费排行榜";
+
 	/**
-	 * sneakerhead 88店庆每小时统计消费前10顾客邮件HEAD
+	 * 统计消费前111顾客邮件HEAD
 	 */
-	public static final String SNEAKERHEAD_TOP10_CHECK_HEAD = "sneakerhead 88店庆  土豪大咖消费排行榜";
+	public static final String SNEAKERHEAD_TOP10_CHECK_HEAD = "双十一消费排行榜";
 	
+//	/**
+//	 * sneakerhead 88店庆每小时统计消费前10顾客邮件SUBJECT
+//	 */
+//	public static final String SNEAKERHEAD_TOP10_CHECK_SUBJECT = "sneakerhead 88店庆  土豪大咖消费排行榜";
+
 	/**
-	 * sneakerhead 88店庆每小时统计消费前10顾客邮件SUBJECT
+	 * 统计消费前111顾客邮件SUBJECT
 	 */
-	public static final String SNEAKERHEAD_TOP10_CHECK_SUBJECT = "sneakerhead 88店庆  土豪大咖消费排行榜";
+	public static final String SNEAKERHEAD_TOP10_CHECK_SUBJECT = "双十一消费排行榜";
+
+	public static final String html4Space = "&nbsp;&nbsp;&nbsp;&nbsp;";
+	/**
+	 * sneakerhead 统计消费前多少名顾客邮件ROW格式
+	 */
+	public static final String SNEAKERHEAD_TOP_SPENDING_RANKING_ROW =
+			html4Space + html4Space + html4Space + html4Space + "&lt;tr height=\"30\"&gt;" + "<br>" +
+					html4Space + html4Space + html4Space + html4Space + html4Space + "&lt;td style=\"width:160px;border: solid 1px #000;\">%s&lt;/td&gt;" + "<br>" +
+					html4Space + html4Space + html4Space + html4Space + html4Space + "&lt;td style=\"width:160px;border: solid 1px #000;\">%s&lt;/td&gt;" + "<br>" +
+					html4Space + html4Space + html4Space + html4Space + html4Space + "&lt;td style=\"width:160px;border: solid 1px #000;\">%s&lt;/td&gt;" + "<br>" +
+			html4Space + html4Space + html4Space + html4Space + "&lt;/tr&gt;" + "<br>";
+
+	/**
+	 * sneakerhead 统计消费前多少名顾客邮件ROW格式
+	 */
+	public static final String SNEAKERHEAD_TOP_SPENDING_RANKING_COLOUM =
+			html4Space + html4Space + "&lt;td&gt;" + "<br>" +
+					html4Space + html4Space + html4Space + "&lt;table width=\"480\" style=\"border-right:solid 3px #000;\"&gt;" + "<br>" +
+						"%s" +
+					html4Space + html4Space + html4Space + "&lt;/table&gt;" + "<br>" +
+			html4Space + html4Space + "&lt;/td&gt;" + "<br>";
+
+	/**
+	 * sneakerhead 统计消费前多少名顾客邮件ROW格式
+	 */
+	public static final String SNEAKERHEAD_TOP_SPENDING_RANKING_TABLE =
+			"&lt;table style=\"text-align:center;font-size:14px;background-color:#777777;color:#fff;\"&gt;" + "<br>" +
+				html4Space + "&lt;tr&gt;" + "<br>" +
+					"%s" +
+				html4Space + "&lt;/tr&gt;" + "<br>" +
+			"&lt;/table&gt;" + "<br>";
 }
