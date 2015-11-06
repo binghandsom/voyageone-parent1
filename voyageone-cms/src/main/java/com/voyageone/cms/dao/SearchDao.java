@@ -56,9 +56,25 @@ public class SearchDao extends CmsBaseDao {
 	}
 	
 	public List<Map<String ,Object>> doAdvanceSearch(Map<String ,Object> data){
+		// 发布状态是0：待发布
+		if(	"0".equals(data.get("publishStatus"))){
+			data.put("isPublished","0");
+			// 发布状态是3：待更新
+		}else if("3".equals(data.get("publishStatus"))){
+			data.put("isPublished","1");
+			data.put("publishStatus","0");
+		}
 		return selectList(Constants.DAO_NAME_SPACE_CMS + "advance_search", data);
 	}
 	public Integer doAdvanceSearchCnt(Map<String ,Object> data){
+		// 发布状态是0：待发布
+		if(	"0".equals(data.get("publishStatus"))){
+			data.put("isPublished","0");
+		// 发布状态是3：待更新
+		}else if("3".equals(data.get("publishStatus"))){
+			data.put("isPublished","1");
+			data.put("publishStatus","0");
+		}
 		return (Integer)(selectOne(Constants.DAO_NAME_SPACE_CMS + "advance_search_count", data));
 	}
 

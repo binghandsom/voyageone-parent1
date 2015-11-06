@@ -171,30 +171,37 @@ public class SearchServiceImpl implements SearchService {
 		// 3.属性编辑未完成产品:
 		Map<String,Object> s = new HashMap<>();
 		s.put("channelId", channelId);
-		s.put("isApprovedDescription", '0');
-		s.put("cartId",23);
+		s.put("isApprovedDescription", "0");
+		s.put("cartId", 23);
 		ret.add(searchDao.doAdvanceSearchCnt(s));
 
 		// 4.属性编辑完成未approve产品:
 		s = new HashMap<>();
 		s.put("channelId", channelId);
-		s.put("isApprovedDescription", '1');
-		s.put("isApproved", '0');
-		s.put("cartId",23);
+		s.put("isApprovedDescription", "1");
+		s.put("isApproved", "0");
+		s.put("cartId", 23);
 		ret.add(searchDao.doAdvanceSearchCnt(s));
 
 		// 5.approve但未上新产品:
 		s = new HashMap<>();
 		s.put("channelId", channelId);
-		s.put("isApproved", '1');
-		s.put("publishStatus", '0');
+		s.put("isApproved", "1");
+		s.put("publishStatus", "0");
+		s.put("cartId", 23);
+		ret.add(searchDao.doAdvanceSearchCnt(s));
+
+		// 6.approve但还没有更新:
+		s = new HashMap<>();
+		s.put("channelId", channelId);
+		s.put("publishStatus", "3");
 		s.put("cartId",23);
 		ret.add(searchDao.doAdvanceSearchCnt(s));
 
-		// 5.approve但未上新产品:
+		// 7.approve上新失败:
 		s = new HashMap<>();
 		s.put("channelId", channelId);
-		s.put("publishStatus", '2');
+		s.put("publishStatus", "2");
 		s.put("cartId",23);
 		ret.add(searchDao.doAdvanceSearchCnt(s));
 		return  ret;

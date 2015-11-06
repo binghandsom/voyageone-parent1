@@ -404,7 +404,8 @@ define (function (require) {
                     CMS_TXT_CATEGORY_ATTRIBUTE_NO_SET: '类目属性未匹配',
                     CMS_TXT_PRODUCT_ATTRIBUTE_NO_FINISH: '产品属性编辑未完成(未翻译)',
                     CMS_TXT_PRODUCT_NO_APPROVE: '产品属性编辑完成未Approve',
-                    CMS_TXT_PRODUCT_NO_UPLOAD: '产品Approved但未上新',
+                    CMS_TXT_PRODUCT_NO_PUBLISH: '产品Approved但未上新',
+                    CMS_TXT_PRODUCT_NO_UPLOAD: '产品已上新但还没有更新',
                     CMS_TXT_PRODUCT_UPLOAD_FAIL: '产品上新失败',
 
                     CMS_TXT_TH_TYPE: '类型',

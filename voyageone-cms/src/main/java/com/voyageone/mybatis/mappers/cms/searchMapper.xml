@@ -651,6 +651,9 @@
 		<if test="publishStatus != null and publishStatus != ''">
 			AND s.publish_status = #{publishStatus}
 		</if>
+		<if test="isPublished != null and isPublished != ''">
+			AND s.is_published = #{isPublished}
+		</if>
 		<if test="isApprovedDescription != null and isApprovedDescription != ''">
 			AND t.cn_is_approved_description = #{isApprovedDescription}
 		</if>
@@ -700,6 +703,9 @@
 		</if>
 		<if test="publishStatus != null and publishStatus != ''">
 			AND s.publish_status = #{publishStatus}
+		</if>
+		<if test="isPublished != null and isPublished != ''">
+			AND s.is_published = #{isPublished}
 		</if>
 		<if test="isApprovedDescription != null and isApprovedDescription != ''">
 			AND t.cn_is_approved_description = #{isApprovedDescription}
