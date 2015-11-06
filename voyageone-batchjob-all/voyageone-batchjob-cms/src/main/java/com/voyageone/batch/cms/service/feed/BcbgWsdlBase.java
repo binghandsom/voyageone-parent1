@@ -85,6 +85,7 @@ abstract class BcbgWsdlBase extends BaseTaskService {
         itemColumns.setI_sku(Feed.getVal1(channel, FeedEnums.Name.item_i_sku));
         itemColumns.setI_itemcode(Feed.getVal1(channel, FeedEnums.Name.item_i_itemcode));
         itemColumns.setI_size(Feed.getVal1(channel, FeedEnums.Name.item_i_size));
+        itemColumns.setI_client_sku(Feed.getVal1(channel, FeedEnums.Name.item_i_client_sku));
         itemColumns.setI_barcode(Feed.getVal1(channel, FeedEnums.Name.item_i_barcode));
         return itemColumns;
     }
