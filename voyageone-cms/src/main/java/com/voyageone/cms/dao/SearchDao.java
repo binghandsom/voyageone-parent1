@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.voyageone.common.util.JsonUtil;
 import org.springframework.stereotype.Repository;
 
 import com.voyageone.cms.CmsConstants;
@@ -56,26 +57,36 @@ public class SearchDao extends CmsBaseDao {
 	}
 	
 	public List<Map<String ,Object>> doAdvanceSearch(Map<String ,Object> data){
+		String temp = JsonUtil.getJsonString(data);
+		Map<String ,Object> param = JsonUtil.jsonToBean(temp, HashMap.class);
 		// 发布状态是0：待发布
-		if(	"0".equals(data.get("publishStatus"))){
-			data.put("isPublished","0");
+		if(	"0".equals(param.get("publishStatus"))){
+			param.put("isPublished","0");
 			// 发布状态是3：待更新
-		}else if("3".equals(data.get("publishStatus"))){
-			data.put("isPublished","1");
-			data.put("publishStatus","0");
+		}else if("3".equals(param.get("publishStatus"))){
+			param.put("isPublished","1");
+			param.put("publishStatus","0");
 		}
-		return selectList(Constants.DAO_NAME_SPACE_CMS + "advance_search", data);
+		param.put("start",data.get("start"));
+		param.put("length",data.get("length"));
+
+		return selectList(Constants.DAO_NAME_SPACE_CMS + "advance_search", param);
 	}
 	public Integer doAdvanceSearchCnt(Map<String ,Object> data){
+		String temp = JsonUtil.getJsonString(data);
+		Map<String ,Object> param = JsonUtil.jsonToBean(temp, HashMap.class);
 		// 发布状态是0：待发布
-		if(	"0".equals(data.get("publishStatus"))){
-			data.put("isPublished","0");
+		if(	"0".equals(param.get("publishStatus"))){
+			param.put("isPublished","0");
 		// 发布状态是3：待更新
-		}else if("3".equals(data.get("publishStatus"))){
-			data.put("isPublished","1");
-			data.put("publishStatus","0");
+		}else if("3".equals(param.get("publishStatus"))){
+			param.put("isPublished","1");
+			param.put("publishStatus","0");
 		}
-		return (Integer)(selectOne(Constants.DAO_NAME_SPACE_CMS + "advance_search_count", data));
+		param.put("start",data.get("start"));
+		param.put("length",data.get("length"));
+
+		return (Integer)(selectOne(Constants.DAO_NAME_SPACE_CMS + "advance_search_count", param));
 	}
 
 	public Integer doCategoryUnMappingCnt(String channelId){
