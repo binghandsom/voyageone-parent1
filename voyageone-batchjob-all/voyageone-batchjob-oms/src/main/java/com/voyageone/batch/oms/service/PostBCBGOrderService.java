@@ -344,7 +344,7 @@ public class PostBCBGOrderService {
 			fileWriter.write(orderInfo.getOrderDate(), DailySalesFileFormat.OrderDate);
 			fileWriter.write(orderInfo.getShipDate(), DailySalesFileFormat.ShipDate);
 			fileWriter.write(orderInfo.getLineNumber(), DailySalesFileFormat.LineNumber);
-			fileWriter.write("", DailySalesFileFormat.LongItemNumber);
+			fileWriter.write(orderInfo.getLongItemNumber(), DailySalesFileFormat.LongItemNumber);
 			fileWriter.write(orderInfo.getUPC(), DailySalesFileFormat.UPC);
 			fileWriter.write(orderInfo.getStyle(), DailySalesFileFormat.Style);
 			fileWriter.write(orderInfo.getColor(), DailySalesFileFormat.Color);
@@ -1305,7 +1305,7 @@ public class PostBCBGOrderService {
 		private static final String OrderDate = "A,14";
 		private static final String WebOrderNumber = "A,25";
 		private static final String AgentIDChannel = "S,10";
-		private static final String LongItemNumber = "S,25";
+		private static final String LongItemNumber = "A,25";
 		private static final String UPC = "S,14";
 		private static final String SalePrice = "S,15.2";
 		private static final String QuantityOrdered = "S,15";
