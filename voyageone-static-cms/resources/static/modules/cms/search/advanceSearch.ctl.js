@@ -36,7 +36,7 @@ define (function (require) {
                   $scope.search = {};
               }
               $scope.yesOrNo = [{"value":"1","name":"Yes"},{"value":"0","name":"No"}];
-              $scope.publishStatus = [{"value":"0","name":"Pending"},{"value":"1","name":"Success"},{"value":"2","name":"Failed"}];
+              $scope.publishStatus = [{"value":"0","name":"Pending"},{"value":"3","name":"Update"},{"value":"1","name":"Success"},{"value":"2","name":"Failed"}];
               $scope.token = cookieService.getToken();
               $scope.companyId = cookieService.getSelCompany();
 
