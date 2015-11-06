@@ -68,6 +68,13 @@ define (function (require) {
                       break;
                   case 5:
                       var condition={};
+                      condition.publishStatus = "3";
+                      condition.cartId = 23;
+                      cmsCommonService.setSearchCondition(condition);
+                      $location.path(cmsRoute.cms_search_advance_cn.hash);
+                      break;
+                  case 6:
+                      var condition={};
                       condition.publishStatus = "2";
                       condition.cartId = 23;
                       cmsCommonService.setSearchCondition(condition);

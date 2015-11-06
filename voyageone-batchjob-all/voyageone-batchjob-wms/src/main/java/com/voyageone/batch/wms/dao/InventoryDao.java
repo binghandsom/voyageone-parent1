@@ -2,6 +2,7 @@ package com.voyageone.batch.wms.dao;
 
 import com.voyageone.base.dao.BaseDao;
 import com.voyageone.batch.wms.modelbean.InventorySynLogBean;
+import com.voyageone.batch.wms.modelbean.SumInventoryBean;
 import com.voyageone.batch.wms.modelbean.ViwLogicInventoryBean;
 import com.voyageone.common.Constants;
 import org.springframework.stereotype.Repository;
@@ -258,5 +259,20 @@ public class InventoryDao extends BaseDao {
         params.put("limit", row_count);
 
         return selectList(Constants.DAO_NAME_SPACE_WMS + "wms_selectInventoryHistorySynLog", params);
+    }
+
+
+    /**
+     * 以SKU集计物理库存
+     * @param order_channel_id
+     * @param status
+     * @return
+     */
+    public List<SumInventoryBean> getSumInventoryBySKU(String order_channel_id,String status) {
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("order_channel_id", order_channel_id);
+        params.put("status", status);
+        return selectList(Constants.DAO_NAME_SPACE_WMS + "wms_selectSumInventoryBySKU", params);
     }
 }

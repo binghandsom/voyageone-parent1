@@ -2401,16 +2401,18 @@
 				where
 					ods.detail_date >= #{beginDate} and
 					#{endDate} >= ods.detail_date and
-					ods.adjustment = 0
+					(ods.adjustment = 0 or ods.sku = 'Shipping')
 				group by ods.order_number, ods.adjustment, ods.sku
 			)od
 			on o.order_number = od.order_number
+		left join Synship.wms_bt_item_details wd
+			on od.sku = wd.sku
+			and o.order_channel_id = wd.order_channel_id
 		left join
-			voyageone_cms.cms_zz_worktable_bcbg_superfeed cms
-			on od.sku = cms.MATNR
+			voyageone_cms.cms_zz_worktable_bcbg_superfeed_full cms
+			on wd.client_sku = cms.MATNR
 		where
 			o.order_channel_id = #{orderChannelId} and
-			od.adjustment = false and
 			o.order_status = 'Approved' and
 			o.order_date_time >= #{beginDate} and
 			#{endDate} >= o.order_date_time
@@ -2445,6 +2447,7 @@
 		<result column="ship_zip" property="shipZip"/>
 		<result column="ship_country" property="shipCountry"/>
 		<result column="ship_phone" property="shipPhone"/>
+		<result column="final_shipping_total" property="finalShippingTotal"/>
 
 		<result column="sku" property="sku"/>
 		<result column="quantity_ordered" property="quantityOrdered"/>
@@ -2488,13 +2491,14 @@
 			IFNULL(o.ship_zip,'') as ship_zip,
 			IFNULL(o.ship_country,'') as ship_country,
 			IFNULL(o.ship_phone,'') as ship_phone,
+			o.final_shipping_total,
 
 			od.sku,
 			od.quantity_ordered,
 			od.quantity_shipped,
 			od.price_per_unit,
 			od.ship_date,
-			IFNULL(rt.tracking_no,'') as tracking_no,
+			IFNULL(od.syn_ship_no,'') as tracking_no,
 			IFNULL(cms.EAN11,'') as UPC,
 			IFNULL(cms.SATNR,'') as style,
 			IFNULL(cms.COLOR,'') as color,
@@ -2508,21 +2512,28 @@
 						sum(ods.quantity_ordered) as quantity_ordered,
 						sum(ods.quantity_shipped) as quantity_shipped,
 						min(ods.price_per_unit) as price_per_unit,
-						min(ods.res_id) as res_id
+						min(ods.res_id) as res_id,
+						min(ods.syn_ship_no) as syn_ship_no
 			from Synship.oms_bt_order_details ods
-			where
-				ods.ship_date >= #{beginDate} and
-				#{endDate} >= ods.ship_date and
-				ods.status = 'Shipped' and
-				ods.adjustment = 0
+			inner join (select order_number
+							from Synship.oms_bt_order_details odss
+							where
+								odss.ship_date >= #{beginDate} and
+								#{endDate} >= odss.ship_date and
+								odss.status = 'Shipped' and
+								odss.adjustment = 0
+							group by order_number	) ods2
+			on ods.order_number = ods2.order_number
+			where ods.adjustment = 0 or ods.sku = 'Shipping'
 			group by ods.order_number, ods.adjustment, ods.sku, ods.ship_date
 			)od
 		left join Synship.oms_bt_orders o
 			on o.order_number = od.order_number
-		left join tt_res_tracking rt
-			on od.res_id = rt.reservation_id
-		left join	voyageone_cms.cms_zz_worktable_bcbg_superfeed cms
-			on od.sku = cms.MATNR
+		left join Synship.wms_bt_item_details wd
+			on od.sku = wd.sku
+			and o.order_channel_id = wd.order_channel_id
+		left join	voyageone_cms.cms_zz_worktable_bcbg_superfeed_full cms
+			on wd.client_sku = cms.MATNR
 		where
 			o.order_channel_id = #{orderChannelId}
 	</select>
