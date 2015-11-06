@@ -43,7 +43,6 @@
             t1.num_iid,
             t1.product_id,
             t1.channel_id,
-            t1.promotion_add_status,
             t1.publish_promotion_price_status,
             floor(t2.cn_price_final_rmb * 100) AS cnPriceFinalRmb,
             t3.sku
@@ -55,7 +54,6 @@
                     a.num_iid,
                     a.channel_id,
                     a.cart_id,
-                    a.promotion_add_status,
                     a.publish_promotion_price_status
                 FROM
                     voyageone_ims.ims_bt_product a
@@ -67,6 +65,7 @@
                 LIMIT 0,100
             ) t1
         LEFT JOIN voyageone_cms.cms_bt_cn_product_share t2 ON t1.product_id = t2.product_id
+        AND t1.channel_id = t2.channel_id
         AND t1.cart_id = t2.cart_id
         LEFT JOIN Synship.wms_bt_item_details t3 ON t1.`code` = t3.itemcode
         AND t1.channel_id = t3.order_channel_id
@@ -76,7 +75,6 @@
        <update id="ims_promotion_update" parameterType="HashMap">
               UPDATE voyageone_ims.ims_bt_product
               SET publish_promotion_price_status = #{priceStatus},
-               promotion_add_status = #{addStatus},
               promotion_faild_comment = #{promotionFaildComment},
               modified = now(),
               modifier = 'ImsPromotionJob'

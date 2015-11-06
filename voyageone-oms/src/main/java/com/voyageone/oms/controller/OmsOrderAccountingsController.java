@@ -58,12 +58,12 @@ public class OmsOrderAccountingsController extends BaseController {
 	 */
 	@RequestMapping(value = "/doSaveAccountingFile", method = RequestMethod.POST)
 	@ResponseBody
-	public AjaxResponseBean doSaveAccountingFile(@RequestParam MultipartFile file) {
+	public AjaxResponseBean doSaveAccountingFile(@RequestParam String fileType, @RequestParam MultipartFile file) {
 
 		// ajax 返回结果
 		AjaxResponseBean result = AjaxResponseBean.newResult(true, this).setResult(true);
 
-		omsOrderAccountingsService.saveSettlementFile(file, result, getUser());
+		omsOrderAccountingsService.saveSettlementFile(fileType, file, result, getUser());
 
 //		return AjaxResponseBean.newResult(true, this).setResult(false, OmsMessageConstants.MESSAGE_CODE_210060, MessageConstants.MESSAGE_TYPE_BUSSINESS_EXCEPTION);
 		return result;
@@ -140,7 +140,9 @@ public class OmsOrderAccountingsController extends BaseController {
 	 */
 	@RequestMapping(value = "/doSearchSettlementFile", method = RequestMethod.POST)
 	public void search(@RequestBody Map<String, Object> params, HttpServletResponse response) {
-		// DB 中order_channel_id
+		// DB中file_type
+		String fileType = (String) params.get("fileType");
+		// DB中order_channel_id
 		List<String> storeId = (List<String>) params.get("storeId");
 		// DB中cart_id
 		List<String> channelId = (List<String>) params.get("channelId");
@@ -153,9 +155,9 @@ public class OmsOrderAccountingsController extends BaseController {
 		searchDateFrom = StringUtils.isNullOrBlank2(searchDateFrom) ? "1990-01-01 00:00:00" : DateTimeUtil.getGMTTimeFrom(searchDateFrom, getUser().getTimeZone());
 		searchDateTo = StringUtils.isNullOrBlank2(searchDateTo) ? "2099-12-31 23:59:59" : DateTimeUtil.getGMTTimeTo(searchDateTo, getUser().getTimeZone());
 
-		List<OutFormSearchSettlementFile> settlementFileList = omsOrderAccountingsSearchService.searchSettlementFile(storeId, channelId, searchDateFrom, searchDateTo, page, size, getUser());
+		List<OutFormSearchSettlementFile> settlementFileList = omsOrderAccountingsSearchService.searchSettlementFile(fileType, storeId, channelId, searchDateFrom, searchDateTo, page, size, getUser());
 
-		int rowsCount = omsOrderAccountingsSearchService.getSearchSettlementFileCount(storeId, channelId, searchDateFrom, searchDateTo);
+		int rowsCount = omsOrderAccountingsSearchService.getSearchSettlementFileCount(fileType, storeId, channelId, searchDateFrom, searchDateTo);
 
 		Map<String, Object> settlementFileSearchResultMap = new HashMap<String, Object>();
 		settlementFileSearchResultMap.put("data", settlementFileList);

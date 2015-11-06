@@ -16,6 +16,7 @@ public class StoreBean {
     private String inventory_manager;
     private String inventory_hold;
     private String inventory_syn_type;
+    private String store_area;
     private String active;
     private String created;
     private String creater;
@@ -164,5 +165,13 @@ public class StoreBean {
 
     public void setModifier(String modifier) {
         this.modifier = modifier;
+    }
+
+    public String getStore_area() {
+        return store_area;
+    }
+
+    public void setStore_area(String store_area) {
+        this.store_area = store_area;
     }
 }

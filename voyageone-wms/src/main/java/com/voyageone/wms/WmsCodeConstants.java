@@ -34,6 +34,8 @@ public interface WmsCodeConstants {
      * 物流信息
      */
     final class Tracking_Info {
+        // 您的订单已经揽收
+        public final static String Take = "010";
         // 您的订单已经拣货完成
         public final static String Reserved = "030";
     }

@@ -26,9 +26,11 @@ import static com.voyageone.batch.cms.service.feed.BcbgWsdlConstants.*;
  */
 abstract class BcbgWsdlBase extends BaseTaskService {
 
-    public final static String APPAREL = "Apparel";
+    private final static String APPAREL = "Apparel";
 
-    public final static String ACCESSORIES = "Accessories";
+    private final static String ACCESSORIES = "Accessories";
+
+    private final static BigDecimal TEN = new BigDecimal(10);
 
     @Autowired
     protected SuperFeedDao superFeedDao;
@@ -66,7 +68,7 @@ abstract class BcbgWsdlBase extends BaseTaskService {
 
         String where = String.format("WHERE %s AND %s = '%s'", getWhereUpdateFlg(), itemColumns.getCode(), product.getP_code());
 
-        List<ItemBean> itemBeans = superFeedDao.selectSuperfeedItem(where, itemColumns, table);
+        List<ItemBean> itemBeans = superFeedDao.selectSuperfeedItem(where, itemColumns, table_feed);
 
         $info("取得 Item [ %s\t ] 个 [ Product: %s ]", itemBeans.size(), product.getUrl_key());
 
@@ -83,6 +85,7 @@ abstract class BcbgWsdlBase extends BaseTaskService {
         itemColumns.setI_sku(Feed.getVal1(channel, FeedEnums.Name.item_i_sku));
         itemColumns.setI_itemcode(Feed.getVal1(channel, FeedEnums.Name.item_i_itemcode));
         itemColumns.setI_size(Feed.getVal1(channel, FeedEnums.Name.item_i_size));
+        itemColumns.setI_client_sku(Feed.getVal1(channel, FeedEnums.Name.item_i_client_sku));
         itemColumns.setI_barcode(Feed.getVal1(channel, FeedEnums.Name.item_i_barcode));
         return itemColumns;
     }
@@ -95,7 +98,7 @@ abstract class BcbgWsdlBase extends BaseTaskService {
                 where,
                 Feed.getVal1(channel, FeedEnums.Name.images),
                 // 组合 Image 的表部分和Join部分
-                String.format("%s %s", imageTable, imageJoin));
+                String.format("%s JOIN %s ON %s", table_feed_full, table_style_full, on_product));
 
         $info("取得 Image 路径组合 [ %s ] 个 [ Product: %s ]", imageArrs.size(), product.getUrl_key());
 
@@ -161,10 +164,10 @@ abstract class BcbgWsdlBase extends BaseTaskService {
         ProductBean productColumns = getProductColumns();
 
         List<ProductBean> productBeans = superFeedDao.selectSuperfeedProduct(
-                String.format("%s %s", where, Feed.getVal1(channel, FeedEnums.Name.product_sql_ending)),
+                String.format("%s GROUP BY %s", where, grouping_product),
                 productColumns,
                 // 组合 Product 的表部分和Join部分
-                String.format("%s %s", productTable, productJoin));
+                String.format("%s JOIN %s ON %s", table_feed_full, table_style_full, on_product));
 
         $info("取得 Product [ %s ] 个 [ 条件: %s ]", productBeans.size(), where);
 
@@ -203,8 +206,8 @@ abstract class BcbgWsdlBase extends BaseTaskService {
                 return;
         }
 
-        int iMsrp = msrp.multiply(fixed_exchange_rate).divide(duty, BigDecimal.ROUND_DOWN).intValue();
-        int iPrice = price.multiply(fixed_exchange_rate).divide(duty, BigDecimal.ROUND_DOWN).intValue();
+        int iMsrp = calePrice(msrp, duty);
+        int iPrice = calePrice(price, duty);
 
         productBean.setCps_cn_price(String.valueOf(iMsrp));
         productBean.setCps_cn_price_rmb(String.valueOf(iPrice));
@@ -212,6 +215,16 @@ abstract class BcbgWsdlBase extends BaseTaskService {
 
         // 计算完成后去除临时使用的 type 内容
         productBean.setP_product_type(Constants.EmptyString);
+    }
+
+    private int calePrice(BigDecimal bigDecimal, BigDecimal duty) {
+        return bigDecimal
+                .multiply(fixed_exchange_rate)
+                .divide(duty, BigDecimal.ROUND_DOWN)
+                .setScale(0, BigDecimal.ROUND_DOWN)
+                .divide(TEN, BigDecimal.ROUND_DOWN)
+                .multiply(TEN)
+                .intValue();
     }
 
     protected String clearSpecialSymbol(String name) {

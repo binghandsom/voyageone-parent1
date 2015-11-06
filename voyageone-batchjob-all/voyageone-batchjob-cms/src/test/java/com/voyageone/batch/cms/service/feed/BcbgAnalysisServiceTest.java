@@ -8,6 +8,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.regex.Pattern;
 
 import static com.voyageone.batch.cms.service.feed.BcbgWsdlConstants.apparels_duty;
@@ -34,16 +35,23 @@ public class BcbgAnalysisServiceTest {
         System.out.println("");
         System.out.println("=================");
 
-
-        BigDecimal c = new BigDecimal("228.0000");
-
+        BigDecimal c = new BigDecimal("231.0000");
         System.out.println(c.toString());
         System.out.println(c.intValue());
         System.out.println(fixed_exchange_rate);
         System.out.println(apparels_duty);
-        Assert.isTrue(c.intValue() == 228);
 
-        System.out.println(c.multiply(fixed_exchange_rate).divide(apparels_duty, BigDecimal.ROUND_DOWN).intValue());
+        BigDecimal ten = new BigDecimal(10);
+
+        BigDecimal d = c.multiply(fixed_exchange_rate).divide(apparels_duty, BigDecimal.ROUND_DOWN);
+
+        d = d.setScale(0, RoundingMode.DOWN);
+
+        BigDecimal e1 = d.divide(ten, BigDecimal.ROUND_DOWN).multiply(ten);
+        BigDecimal e2 = new BigDecimal(d.toString().substring(0, d.toString().length() - 1) + "0");
+        System.out.println(e1.intValue());
+        System.out.println(e2.intValue());
+        Assert.isTrue(e1.compareTo(e2) == 0);
 
         BigDecimal a = new BigDecimal(1);
         BigDecimal b = new BigDecimal(2);

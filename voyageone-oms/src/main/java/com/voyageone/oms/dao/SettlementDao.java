@@ -85,9 +85,10 @@ public class SettlementDao extends BaseDao {
 	 *
 	 * @return
 	 */
-	public List<OutFormSearchSettlementFile> getSettlementFileList(List<String> storeId, List<String> channelId, String searchDateFrom, String searchDateTo, int page, int size) {
+	public List<OutFormSearchSettlementFile> getSettlementFileList(String fileType, List<String> storeId, List<String> channelId, String searchDateFrom, String searchDateTo, int page, int size) {
 
 		HashMap<String, Object> paraIn = new HashMap<String, Object>();
+		paraIn.put("fileType", fileType);
 		paraIn.put("storeId", storeId);
 		paraIn.put("channelId", channelId);
 		paraIn.put("searchDateFrom", searchDateFrom);
@@ -105,9 +106,10 @@ public class SettlementDao extends BaseDao {
 	 *
 	 * @return
 	 */
-	public int getSettlementFileCount(List<String> storeId, List<String> channelId, String searchDateFrom, String searchDateTo) {
+	public int getSettlementFileCount(String fileType, List<String> storeId, List<String> channelId, String searchDateFrom, String searchDateTo) {
 
 		HashMap<String, Object> paraIn = new HashMap<String, Object>();
+		paraIn.put("fileType", fileType);
 		paraIn.put("storeId", storeId);
 		paraIn.put("channelId", channelId);
 		paraIn.put("searchDateFrom", searchDateFrom);
