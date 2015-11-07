@@ -122,7 +122,7 @@ define (function (require) {
                       DTColumnBuilder.newColumn('', $translate('CMS_TXT_PRIMARY_CATEGORY')).withClass('wtab-xsm').renderWith(function (val, type, row, cell) {
                           return ($scope.getParentHtm(row));
                       }),
-                      DTColumnBuilder.newColumn('', $translate('CMS_TXT_PRIMARY_PRODUCT')).withClass('wtab-xl text-center').renderWith(function (val, type, row, cell) {
+                      DTColumnBuilder.newColumn('', $translate('CMS_TXT_PRIMARY_PRODUCT')).withClass('wtab-sm text-center').renderWith(function (val, type, row, cell) {
                           if(commonUtil.isNotEmpty(row.primaryProductId)){
                               return ('<img class="prodImg" src="' + $rootScope.cmsMaster.imageUrl + row.imageName + '"><br><a ng-controller="navigationController" href="" class="btn-main" ng-href="{{goProductPage(' + row.primaryCategoryId + ',' + row.modelId + ',' + row.primaryProductId + ')}}">' + row.primaryProductCode + '</a>');
                           }else{
