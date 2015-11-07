@@ -23,6 +23,8 @@
         <task:scheduled ref="synShipGetEtkStatusTask" method="run" cron="0 0 0/1 * * ?"/>
         <!--每隔1小时进行物流状态轮询并设置揽收标志-->
         <task:scheduled ref="synShipSetTakeFlgTask" method="run" cron="0 0 0/1 * * ?"/>
+        <!--每隔1小时进行发货渠道预处理-->
+        <task:scheduled ref="synShipPreShipChannelTask" method="run" cron="0 0 0/1 * * ?"/>
 
     </task:scheduled-tasks>
 
