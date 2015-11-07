@@ -44,6 +44,8 @@
 
         <!--Receipt Confirmation 文件生成　-->
         <task:scheduled ref="wmsReceiptConfirmationJob" method="run" cron="15 0/5 0-23 * * ?"/>
+        <!--生成BCBG日报（以SKU集计物理库存）， 每天中午12点运行　-->
+        <task:scheduled ref="wmsBCBGInventoryReportingTask" method="run" cron="0 0 11 * * ?"/>
 
     </task:scheduled-tasks>
 
