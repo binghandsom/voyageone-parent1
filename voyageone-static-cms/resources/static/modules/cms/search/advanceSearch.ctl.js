@@ -9,13 +9,15 @@ define (function (require) {
     var cmsApp = require ('modules/cms/cms.module');
     require ('modules/cms/common/common.service');
     require ('modules/cms/search/search.service');
+    require ('modules/cms/service/mainCategory.service');
     require ('modules/cms/popup/addToPromotion/popAddToPromotion.ctl');
     require ('modules/cms/popup/setCnProductProperty/popSetCnProductProperty.ctl');
     require ('modules/cms/popup/setCnProductShare/popSetCnProductShare.ctl');
     require ('modules/cms/popup/setProductColumns/popSetProductColumns.ctl');
     require ('modules/cms/popup/setMasterCategoryCommonProperty/popSetMasterCategoryComProp.ctl');
     
-    cmsApp.controller ('advanceSearchController', ['$scope', '$rootScope', '$q', '$location', '$routeParams', 'cmsCommonService', 'searchService', 'DTOptionsBuilder','DTColumnBuilder','$compile', '$translate', 'cookieService',
+    cmsApp.controller ('advanceSearchController', ['$scope', '$rootScope', '$q', '$location', '$routeParams'
+        , 'cmsCommonService', 'searchService', 'DTOptionsBuilder','DTColumnBuilder','$compile', '$translate', 'cookieService',
       function ($scope, $rootScope, $q, $location, $routeParams, cmsCommonService, searchService, DTOptionsBuilder, DTColumnBuilder,  $compile, $translate, cookieService) {
 
           var _ = require ('underscore');
@@ -235,7 +237,10 @@ define (function (require) {
                       DTColumnBuilder.newColumn('', $translate('CMS_TXT_TB_NUMIID')).withClass('wtab-xs').renderWith(function () {
                           return ('<a href="" class="btn-main" ng-href="{{$root.cmsMaster.tmallUrl}}{{$row.tbNumIid}}" ng-bind="$row.tbNumIid"></a>');
                       }).notSortable(),
-                      DTColumnBuilder.newColumn('tbPublishFaildComment', $translate('CMS_TXT_TB_COMMENT')).withClass('wtab-xs').notSortable(),
+                      DTColumnBuilder.newColumn('', $translate('CMS_TXT_TB_COMMENT')).withClass('wtab-xs').renderWith(function () {
+                          return ('<a ng-controller="goMainPage" href="" class="btn-main" ng-click="goMainCategoryPage($row.modelId)" ng-bind="$row.tbPublishFaildComment"></a>');
+                      }).notSortable(),
+                      //DTColumnBuilder.newColumn('tbPublishFaildComment', $translate('CMS_TXT_TB_COMMENT')).withClass('wtab-xs').notSortable(),
                       DTColumnBuilder.newColumn('tbSales7Days', $translate('CMS_TXT_TB_SALES_7_DAYS')).withClass('wtab-xs text-right'),
                       DTColumnBuilder.newColumn('tbSales7DaysPercent', $translate('CMS_TXT_TB_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
                       DTColumnBuilder.newColumn('tbSales30Days', $translate('CMS_TXT_TB_SALES_30_DAYS')).withClass('wtab-xs text-right'),
@@ -255,7 +260,10 @@ define (function (require) {
                       DTColumnBuilder.newColumn('', $translate('CMS_TXT_TM_NUMIID')).withClass('wtab-xs').renderWith(function () {
                           return ('<a href="" class="btn-main" ng-href="{{$root.cmsMaster.tmallUrl}}{{$row.tmNumIid}}" ng-bind="$row.tmNumIid"></a>');
                       }).notSortable(),
-                      DTColumnBuilder.newColumn('tmPublishFaildComment', $translate('CMS_TXT_TM_COMMENT')).withClass('wtab-xs').notSortable(),
+                      DTColumnBuilder.newColumn('', $translate('CMS_TXT_TM_COMMENT')).withClass('wtab-xs').renderWith(function () {
+                          return ('<a ng-controller="goMainPage" href="" class="btn-main" ng-click="goMainCategoryPage($row.modelId)" ng-bind="$row.tmPublishFaildComment"></a>');
+                      }).notSortable(),
+                      //DTColumnBuilder.newColumn('tmPublishFaildComment', $translate('CMS_TXT_TM_COMMENT')).withClass('wtab-xs').notSortable(),
                       DTColumnBuilder.newColumn('tmSales7Days', $translate('CMS_TXT_TM_SALES_7_DAYS')).withClass('wtab-xs text-right'),
                       DTColumnBuilder.newColumn('tmSales7DaysPercent', $translate('CMS_TXT_TM_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
                       DTColumnBuilder.newColumn('tmSales30Days', $translate('CMS_TXT_TM_SALES_30_DAYS')).withClass('wtab-xs text-right'),
@@ -275,7 +283,10 @@ define (function (require) {
                       DTColumnBuilder.newColumn('tgNumIid', $translate('CMS_TXT_TG_NUMIID')).withClass('wtab-xs').renderWith(function () {
                           return ('<a href="" class="btn-main" ng-href="{{$root.cmsMaster.tmallUrl}}{{$row.tgNumIid}}" ng-bind="$row.tgNumIid"></a>');
                       }).notSortable(),
-                      DTColumnBuilder.newColumn('tgPublishFaildComment', $translate('CMS_TXT_TG_COMMENT')).withClass('wtab-xs').notSortable(),
+                      DTColumnBuilder.newColumn('', $translate('CMS_TXT_TG_COMMENT')).withClass('wtab-xs').renderWith(function () {
+                          return ('<a ng-controller="goMainPage" href="" class="btn-main" ng-click="goMainCategoryPage($row.modelId)" ng-bind="$row.tgPublishFaildComment"></a>');
+                      }).notSortable(),
+                      //DTColumnBuilder.newColumn('tgPublishFaildComment', $translate('CMS_TXT_TG_COMMENT')).withClass('wtab-xs').notSortable(),
                       DTColumnBuilder.newColumn('tgSales7Days', $translate('CMS_TXT_TG_SALES_7_DAYS')).withClass('wtab-xs text-right'),
                       DTColumnBuilder.newColumn('tgSales7DaysPercent', $translate('CMS_TXT_TG_SALES_7_DAYS_PERCENT')).withClass('wtab-xs text-right'),
                       DTColumnBuilder.newColumn('tgSales30Days', $translate('CMS_TXT_TG_SALES_30_DAYS')).withClass('wtab-xs text-right'),
@@ -326,4 +337,35 @@ define (function (require) {
               cmsCommonService.doGetProductColumnsAtFirst('cn', $scope.dtProductList.columns);
           }
       }]);
+
+    /**
+     * 用于跳转到主类目属性设置页面.
+     * 为了应付20151107快速对应
+     */
+    cmsApp.controller ('goMainPage',['$scope', '$location', 'searchService','mainCategoryService','cmsRoute', 'mainCategoryLevel',
+    function($scope, $location, searchService, mainCategoryService, cmsRoute, mainCategoryLevel) {
+
+        /**
+         * 跳转到MainCategory设定页面.
+         */
+        $scope.goMainCategoryPage = function (modelId) {
+
+            searchService.doGetCNModelInfo(modelId.toString()).then(function(modelInfo) {
+
+                var data = {};
+
+                data.channelId = modelInfo.cnBaseModelInfo.channelId;
+                data.mainCategoryId = modelInfo.cnBaseModelInfo.mainCategoryId;
+                data.parentLevel = modelInfo.cnBaseModelInfo.mainParentCategoryTypeId;
+                data.parentId = modelInfo.cnBaseModelInfo.mainParentCategoryId;
+                data.currentLevel = mainCategoryLevel.model;
+                data.currentId = modelInfo.cnBaseModelInfo.modelId;
+                mainCategoryService.setMainCategoryParam(data);
+
+                mainCategoryService.setMainCategoryReturnUrl($location.path());
+
+                $location.path(cmsRoute.cms_masterPropValue_setting.hash);
+            });
+        };
+    }])
 });

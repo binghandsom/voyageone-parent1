@@ -56,6 +56,28 @@ define(function (require) {
 
                 return defer.promise;
             };
+
+
+            /**
+             * 取得CN Model信息.
+             *
+             * @param modelId
+             * @returns {*}
+             */
+            this.doGetCNModelInfo = function (modelId) {
+                var defer = $q.defer();
+                var data = {};
+                // data.typeIdList = values;
+                data.channelId = userService.getSelChannel();
+                data.modelId = modelId;
+                // TODO 以后根据用户当前的选择
+                ajaxService.ajaxPostWithData(data, cmsAction.cms_edit_model_doGetCNModelInfo)
+                    .then(function (response) {
+                        defer.resolve(response.data);
+                    });
+
+                return defer.promise;
+            };
         }
     ]);
 });
