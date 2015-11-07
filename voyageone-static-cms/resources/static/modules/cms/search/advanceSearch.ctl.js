@@ -136,7 +136,7 @@ define (function (require) {
                   options: DTOptionsBuilder.newOptions()
                       .withOption('processing', true)
                       .withOption('serverSide', true)
-                      .withOption('scrollY', '400px')
+                      .withOption('scrollY', '600px')
                       .withOption('scrollX', '100%')
                       .withOption('scrollCollapse', true)
                       .withOption('ajax', $scope.doSearchProductData)
@@ -343,29 +343,29 @@ define (function (require) {
      * 为了应付20151107快速对应
      */
     cmsApp.controller ('goMainPage',['$scope', '$location', 'searchService','mainCategoryService','cmsRoute', 'mainCategoryLevel',
-    function($scope, $location, searchService, mainCategoryService, cmsRoute, mainCategoryLevel) {
+        function($scope, $location, searchService, mainCategoryService, cmsRoute, mainCategoryLevel) {
 
-        /**
-         * 跳转到MainCategory设定页面.
-         */
-        $scope.goMainCategoryPage = function (modelId) {
+            /**
+             * 跳转到MainCategory设定页面.
+             */
+            $scope.goMainCategoryPage = function (modelId) {
 
-            searchService.doGetCNModelInfo(modelId.toString()).then(function(modelInfo) {
+                searchService.doGetCNModelInfo(modelId.toString()).then(function(modelInfo) {
 
-                var data = {};
+                    var data = {};
 
-                data.channelId = modelInfo.cnBaseModelInfo.channelId;
-                data.mainCategoryId = modelInfo.cnBaseModelInfo.mainCategoryId;
-                data.parentLevel = modelInfo.cnBaseModelInfo.mainParentCategoryTypeId;
-                data.parentId = modelInfo.cnBaseModelInfo.mainParentCategoryId;
-                data.currentLevel = mainCategoryLevel.model;
-                data.currentId = modelInfo.cnBaseModelInfo.modelId;
-                mainCategoryService.setMainCategoryParam(data);
+                    data.channelId = modelInfo.cnBaseModelInfo.channelId;
+                    data.mainCategoryId = modelInfo.cnBaseModelInfo.mainCategoryId;
+                    data.parentLevel = modelInfo.cnBaseModelInfo.mainParentCategoryTypeId;
+                    data.parentId = modelInfo.cnBaseModelInfo.mainParentCategoryId;
+                    data.currentLevel = mainCategoryLevel.model;
+                    data.currentId = modelInfo.cnBaseModelInfo.modelId;
+                    mainCategoryService.setMainCategoryParam(data);
 
-                mainCategoryService.setMainCategoryReturnUrl($location.path());
+                    mainCategoryService.setMainCategoryReturnUrl($location.path());
 
-                $location.path(cmsRoute.cms_masterPropValue_setting.hash);
-            });
-        };
-    }])
+                    $location.path(cmsRoute.cms_masterPropValue_setting.hash);
+                });
+            };
+        }]);
 });
