@@ -2418,6 +2418,7 @@ VALUES
 		  from cms_bt_relation_model_product t1,
 			   cms_bt_product t2
 		 where t1.product_id = t2.product_id
+		   and t1.channel_id = t2.channel_id
 		   and t1.channel_id = #{channelId}
 		   and t1.product_id in (
 		<foreach collection="productIdList" item="item" separator=",">
