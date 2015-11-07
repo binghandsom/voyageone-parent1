@@ -696,9 +696,9 @@ define (function (require) {
                     options: DTOptionsBuilder.newOptions()
                         .withOption('processing', true)
                         .withOption('serverSide', true)
-                        .withOption('scrollY', '600px')
+                        .withOption('scrollY', '400px')
                         .withOption('scrollX', '100%')
-                        .withOption('scrollCollapse', true)
+                        .withOption('scrollCollapse', false)
                         .withOption('ajax', $scope.doGetUSProductList)
                         .withOption('createdRow',  function(row, data, dataIndex) {
                             var rowScope = $scope.$new();
@@ -848,9 +848,9 @@ define (function (require) {
                     options: DTOptionsBuilder.newOptions()
                         .withOption('processing', true)
                         .withOption('serverSide', true)
-                        .withOption('scrollY', '600px')
+                        .withOption('scrollY', '400px')
                         .withOption('scrollX', '100%')
-                        .withOption('scrollCollapse', true)
+                        .withOption('scrollCollapse', false)
                         .withOption('ajax', $scope.doGetCNProductList)
                         .withOption('createdRow',  function(row, data, dataIndex) {
                             var rowScope = $scope.$new();

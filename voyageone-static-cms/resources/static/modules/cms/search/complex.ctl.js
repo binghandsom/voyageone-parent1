@@ -48,9 +48,9 @@ define (function (require) {
                   options: DTOptionsBuilder.newOptions()
                       .withOption('processing', true)
                       .withOption('serverSide', true)
-                      .withOption('scrollY', '600px')
+                      .withOption('scrollY', '400px')
                       .withOption('scrollX', '100%')
-                      .withOption('scrollCollapse', true)
+                      .withOption('scrollCollapse', false)
                       .withOption('ajax', $scope.doSearchCategoryData)
                       .withOption('createdRow',  function(row, data, dataIndex) {
                           // Recompiling so we can bind Angular directive to the DT
@@ -103,9 +103,9 @@ define (function (require) {
                   options: DTOptionsBuilder.newOptions()
                       .withOption('processing', true)
                       .withOption('serverSide', true)
-                      .withOption('scrollY', '600px')
+                      .withOption('scrollY', '400px')
                       .withOption('scrollX', '100%')
-                      .withOption('scrollCollapse', true)
+                      .withOption('scrollCollapse', false)
                       .withOption('ajax', $scope.doSearchModelData)
                       .withOption('createdRow',  function(row, data, dataIndex) {
                           // Recompiling so we can bind Angular directive to the DT
@@ -164,9 +164,9 @@ define (function (require) {
                   options: DTOptionsBuilder.newOptions()
                       .withOption('processing', true)
                       .withOption('serverSide', true)
-                      .withOption('scrollY', '600px')
+                      .withOption('scrollY', '400px')
                       .withOption('scrollX', '100%')
-                      .withOption('scrollCollapse', true)
+                      .withOption('scrollCollapse', false)
                       .withOption('ajax', $scope.doSearchProductData)
                       .withOption('createdRow',  function(row, data, dataIndex) {
                           // Recompiling so we can bind Angular directive to the DT
