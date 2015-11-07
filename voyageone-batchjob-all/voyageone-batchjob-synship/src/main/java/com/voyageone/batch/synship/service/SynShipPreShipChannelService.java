@@ -104,7 +104,8 @@ public class SynShipPreShipChannelService extends BaseTaskService {
                     public void run() {
 
                         try {
-                            // 是否存在的检查，存在的场合不插入记录
+
+                            // 更新发货渠道
                             int result = reservationDao.updateReservationByShipChannel(reservationBean.getSyn_ship_no(),reservationBean.getId(),reservationBean.getStatus(),reservationBean.getShip_channel(),getTaskName());
 
                             if (result > 0) {

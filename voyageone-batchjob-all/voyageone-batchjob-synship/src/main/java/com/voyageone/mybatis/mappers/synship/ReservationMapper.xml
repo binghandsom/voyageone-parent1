@@ -11,11 +11,11 @@
         from
             tt_reservation res
         where
-            res.order_channel_id = #(order_channel_id)
+            res.order_channel_id = #{order_channel_id}
         and res.status = #{status}
-        <if test="exceptShipChannelList != null and exceptShipChannelList != ''">
+        <if test="exceptShipChannelList != null and exceptShipChannelList.size() != 0">
             AND  res.ship_channel not in
-            <foreach collection="exceptShipChannelList" item="ShipChannel" open="(" separator="," close=")">#{ShipChannel}
+            <foreach collection="exceptShipChannelList" item="shipChannel" open="(" separator="," close=")">#{shipChannel}
             </foreach>
         </if>
         and res.ship_channel != wms_getShippingMethod(res.order_channel_id,res.order_number,res.id)
