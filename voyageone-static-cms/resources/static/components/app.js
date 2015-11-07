@@ -17,6 +17,7 @@ define (function (require) {
     require ("angular-translate");
     require ("angular-datatables");
     require ("ui-bootstrap-tpls");
+    require ("ui-load");
     require ("ngDialog");
     require ("ngStorage");
     require ("flow");
@@ -30,6 +31,7 @@ define (function (require) {
         , "ngCookies"
         , "ngSanitize"
         , "pascalprecht.translate"
+        , "ui.load"
         , "ui.select"
         , "ui.bootstrap"
         , "xeditable"
