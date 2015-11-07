@@ -29,7 +29,7 @@ define (function (require) {
                 $scope.dtSizeChartList = {
                     options: DTOptionsBuilder.newOptions()
                         .withOption('processing', true)
-                        .withOption('scrollY', '400px')
+                        .withOption('scrollY', '600px')
                         .withOption('scrollX', '100%')
                         .withOption('scrollCollapse', true)
                         .withPaginationType('full_numbers')
