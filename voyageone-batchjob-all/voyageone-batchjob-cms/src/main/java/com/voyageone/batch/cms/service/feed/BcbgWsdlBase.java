@@ -68,7 +68,7 @@ abstract class BcbgWsdlBase extends BaseTaskService {
 
         String where = String.format("WHERE %s AND %s = '%s'", getWhereUpdateFlg(), itemColumns.getCode(), product.getP_code());
 
-        List<ItemBean> itemBeans = superFeedDao.selectSuperfeedItem(where, itemColumns, table_feed);
+        List<ItemBean> itemBeans = superFeedDao.selectSuperfeedItem(where, itemColumns, table_feed_full);
 
         $info("取得 Item [ %s\t ] 个 [ Product: %s ]", itemBeans.size(), product.getUrl_key());
 
