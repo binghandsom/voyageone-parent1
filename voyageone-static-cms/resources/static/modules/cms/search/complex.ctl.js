@@ -9,6 +9,7 @@ define (function (require) {
     var cmsApp = require ('modules/cms/cms.module');
     require ('modules/cms/common/common.service');
     require ('modules/cms/search/search.service');
+    require ('modules/cms/service/mainCategory.service');
     
     cmsApp.controller ('searchComplexController', ['$scope', '$rootScope', '$q', '$location', '$routeParams', 'cmsCommonService', 'cmsRoute', 'searchService', 'systemCountry','DTOptionsBuilder','DTColumnBuilder','$translate','$compile',
       function ($scope, $rootScope, $q, $location, $routeParams, commonService, cmsRoute, searchService, systemCountry,DTOptionsBuilder,DTColumnBuilder,$translate,$compile) {
@@ -47,9 +48,9 @@ define (function (require) {
                   options: DTOptionsBuilder.newOptions()
                       .withOption('processing', true)
                       .withOption('serverSide', true)
-                      .withOption('scrollY', '500px')
+                      .withOption('scrollY', '400px')
                       .withOption('scrollX', '100%')
-                      .withOption('scrollCollapse', true)
+                      .withOption('scrollCollapse', false)
                       .withOption('ajax', $scope.doSearchCategoryData)
                       .withOption('createdRow',  function(row, data, dataIndex) {
                           // Recompiling so we can bind Angular directive to the DT
@@ -70,12 +71,13 @@ define (function (require) {
                             return ('<input type="checkbox" '+ (row.isEffective ? 'checked ' : '') + ' >');
                         }),
                         DTColumnBuilder.newColumn('created', $translate('CMS_TXT_CREATED_ON')).withClass('wtab-xsm text-center'),
-                        DTColumnBuilder.newColumn('modified', $translate('CMS_TXT_LAST_UPDATED_ON')).withClass('wtab-xsm text-center'),
+                        DTColumnBuilder.newColumn('modified', $translate('CMS_TXT_LAST_UPDATED_ON')).withClass('wtab-xsm text-center')
                         
                   ],
                   dtInstance:1
               };
-          }
+          };
+
           $scope.doSearchCategoryData = function(data, draw) {
               if (data.draw === 1) {
             	  var initData={};
@@ -101,9 +103,9 @@ define (function (require) {
                   options: DTOptionsBuilder.newOptions()
                       .withOption('processing', true)
                       .withOption('serverSide', true)
-                      .withOption('scrollY', '500px')
+                      .withOption('scrollY', '400px')
                       .withOption('scrollX', '100%')
-                      .withOption('scrollCollapse', true)
+                      .withOption('scrollCollapse', false)
                       .withOption('ajax', $scope.doSearchModelData)
                       .withOption('createdRow',  function(row, data, dataIndex) {
                           // Recompiling so we can bind Angular directive to the DT
@@ -112,28 +114,30 @@ define (function (require) {
                       .withDataProp('data')
                       .withPaginationType('full_numbers'),
                   columns: [
-                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_MODEL')).withClass('wtab-sm text-center').renderWith(function (val, type, row, cell) {
-                            return ('<a ng-controller="navigationController" href="" class="btn-main" ng-href="{{goModelPage('+row.primaryCategoryId+','+row.modelId+')}}" >'+row.model+'</a>');
-                        }),
-                        DTColumnBuilder.newColumn('name', $translate('CMS_TXT_NAME')).withClass('wtab-xsm'),
-                        DTColumnBuilder.newColumn('productCount', $translate('CMS_TXT_PRODUCT_COUNT')).withClass('wtab-s text-center'),
-                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_PRIMARY_CATEGORY')).withClass('wtab-xsm text-center').renderWith(function (val, type, row, cell) {
-                            return ($scope.getParentHtm(row));
-                        }),
-                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_PRIMARY_PRODUCT')).renderWith(function (val, type, row, cell) {
-                        	if(commonUtil.isNotEmpty(row.primaryProductId)){
-                        		return ('<img class="prodImg" src="' + $rootScope.cmsMaster.imageUrl + row.imageName + '"><br><a ng-controller="navigationController" href="" class="btn-main" ng-href="{{goProductPage(' + row.primaryCategoryId + ',' + row.modelId + ',' + row.primaryProductId + ')}}">' + row.primaryProductCode + '</a>');
-                        	}else{
-                        		return "";
-                        	}
-                        }),
-                        DTColumnBuilder.newColumn('created', $translate('CMS_TXT_CREATED_ON')).withClass('wtab-xsm text-center'),
-                        DTColumnBuilder.newColumn('modified', $translate('CMS_TXT_LAST_UPDATED_ON')).withClass('wtab-xsm text-center'),
-                        
+                      DTColumnBuilder.newColumn('', $translate('CMS_TXT_MODEL')).withClass('wtab-sm text-center').renderWith(function (val, type, row, cell) {
+                          return ('<a ng-controller="navigationController" href="" class="btn-main" ng-href="{{goModelPage('+row.primaryCategoryId+','+row.modelId+')}}" >'+row.model+'</a>');
+                      }),
+                      DTColumnBuilder.newColumn('name', $translate('CMS_TXT_NAME')).withClass('wtab-xsm'),
+                      DTColumnBuilder.newColumn('productCount', $translate('CMS_TXT_PRODUCT_COUNT')).withClass('wtab-xs text-center'),
+                      DTColumnBuilder.newColumn('', $translate('CMS_TXT_PRIMARY_CATEGORY')).withClass('wtab-xsm').renderWith(function (val, type, row, cell) {
+                          return ($scope.getParentHtm(row));
+                      }),
+                      DTColumnBuilder.newColumn('', $translate('CMS_TXT_PRIMARY_PRODUCT')).withClass('wtab-sm text-center').renderWith(function (val, type, row, cell) {
+                          if(commonUtil.isNotEmpty(row.primaryProductId)){
+                              return ('<img class="prodImg" src="' + $rootScope.cmsMaster.imageUrl + row.imageName + '"><br><a ng-controller="navigationController" href="" class="btn-main" ng-href="{{goProductPage(' + row.primaryCategoryId + ',' + row.modelId + ',' + row.primaryProductId + ')}}">' + row.primaryProductCode + '</a>');
+                          }else{
+                              return "";
+                          }
+                      }),
+                      DTColumnBuilder.newColumn('created', $translate('CMS_TXT_CREATED_ON')).withClass('wtab-sm'),
+                      DTColumnBuilder.newColumn('modified', $translate('CMS_TXT_LAST_UPDATED_ON')).withClass('wtab-sm'),
+                      DTColumnBuilder.newColumn('', $translate('CMS_BTN_SET_PROPERTY')).withClass('wtab-sm').renderWith(function (val, type, row, cell) {
+                          return ('<button ng-controller="goMainPage" ype="button" ng-click="goMainCategoryPage('+row.modelId+')" class="btn btn-primary btn-sm fa fa-equalizer fa-building ng-scope" translate="CMS_TXT_SET_PROPERTY"></button>');
+                      })
                   ],
                   dtInstance:1
               };
-          }
+          };
           
           $scope.doSearchModelData = function(data, draw) {
               if (data.draw === 1) {
@@ -160,9 +164,9 @@ define (function (require) {
                   options: DTOptionsBuilder.newOptions()
                       .withOption('processing', true)
                       .withOption('serverSide', true)
-                      .withOption('scrollY', '500px')
+                      .withOption('scrollY', '400px')
                       .withOption('scrollX', '100%')
-                      .withOption('scrollCollapse', true)
+                      .withOption('scrollCollapse', false)
                       .withOption('ajax', $scope.doSearchProductData)
                       .withOption('createdRow',  function(row, data, dataIndex) {
                           // Recompiling so we can bind Angular directive to the DT
@@ -171,20 +175,23 @@ define (function (require) {
                       .withDataProp('data')
                       .withPaginationType('full_numbers'),
                   columns: [
-                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_CODE')).withClass('wtab-xsm text-center').renderWith(function (val, type, row, cell) {
-                        	return ('<img class="prodImg" src="' + $rootScope.cmsMaster.imageUrl + row.imageName + '"><br><a ng-controller="navigationController" href="" class="btn-main" ng-href="{{goProductPage(' + row.primaryCategoryId + ',' + row.modelId + ',' + row.productId + ')}}">' + row.code + '</a>');
-                        }),
-                        DTColumnBuilder.newColumn('name', $translate('CMS_TXT_NAME')).withClass('wtab-xsm'),
-                        DTColumnBuilder.newColumn('color', $translate('CMS_TXT_COLOR')).withClass('wtab-xsm text-center'),
-                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_MODEL')).withClass('wtab-xsm text-center').renderWith(function (val, type, row, cell) {
-                        	return ('<a  ng-controller="navigationController" href="" class="btn-main" ng-href="{{goModelPage('+row.primaryCategoryId+','+row.modelId+')}}" >'+'<span title="'+row.modelName+'">'+row.model+'</span>'+'</a>');
-                        }),
-                        DTColumnBuilder.newColumn('', $translate('CMS_TXT_PRIMARY_CATEGORY')).withClass('wtab-xsm').renderWith(function (val, type, row, cell) {
-                            return ($scope.getParentHtm(row));
-                        }),
-                        DTColumnBuilder.newColumn('quantity', $translate('CMS_TXT_QUANTITY')).withClass('wtab-s'),                        
-                        DTColumnBuilder.newColumn('created', $translate('CMS_TXT_CREATED_ON')).withClass('wtab-xsm text-center'),
-                        DTColumnBuilder.newColumn('modified', $translate('CMS_TXT_LAST_UPDATED_ON')).withClass('wtab-xsm text-center')
+                      DTColumnBuilder.newColumn('', $translate('CMS_TXT_CODE')).withClass('wtab-xs text-center').renderWith(function (val, type, row, cell) {
+                          return ('<img class="prodImg" src="' + $rootScope.cmsMaster.imageUrl + row.imageName + '"><br><a ng-controller="navigationController" href="" class="btn-main" ng-href="{{goProductPage(' + row.primaryCategoryId + ',' + row.modelId + ',' + row.productId + ')}}">' + row.code + '</a>');
+                      }),
+                      DTColumnBuilder.newColumn('name', $translate('CMS_TXT_NAME')).withClass('wtab-xsm'),
+                      DTColumnBuilder.newColumn('color', $translate('CMS_TXT_COLOR')).withClass('wtab-sm'),
+                      DTColumnBuilder.newColumn('', $translate('CMS_TXT_MODEL')).withClass('wtab-xs').renderWith(function (val, type, row, cell) {
+                          return ('<a  ng-controller="navigationController" href="" class="btn-main" ng-href="{{goModelPage('+row.primaryCategoryId+','+row.modelId+')}}" >'+'<span title="'+row.modelName+'">'+row.model+'</span>'+'</a>');
+                      }),
+                      DTColumnBuilder.newColumn('', $translate('CMS_TXT_PRIMARY_CATEGORY')).withClass('wtab-xsm').renderWith(function (val, type, row, cell) {
+                          return ($scope.getParentHtm(row));
+                      }),
+                      DTColumnBuilder.newColumn('quantity', $translate('CMS_TXT_QUANTITY')).withClass('wtab-xs text-center'),
+                      DTColumnBuilder.newColumn('created', $translate('CMS_TXT_CREATED_ON')).withClass('wtab-sm'),
+                      DTColumnBuilder.newColumn('modified', $translate('CMS_TXT_LAST_UPDATED_ON')).withClass('wtab-sm'),
+                      DTColumnBuilder.newColumn('', $translate('CMS_BTN_SET_PROPERTY')).withClass('wtab-sm').renderWith(function (val, type, row, cell) {
+                          return ('<button ng-controller="goMainPage" ype="button" ng-click="goMainCategoryPage('+row.modelId+')" class="btn btn-primary btn-sm fa fa-equalizer fa-building ng-scope" translate="CMS_TXT_SET_PROPERTY"></button>');
+                      })
                   ],
                   dtInstance:1
               };
@@ -222,4 +229,35 @@ define (function (require) {
           }
          
       }]);
+
+    /**
+     * 用于跳转到主类目属性设置页面.
+     * 为了应付20151107快速对应
+     */
+    cmsApp.controller ('goMainPage',['$scope', '$location', 'searchService','mainCategoryService','cmsRoute', 'mainCategoryLevel',
+        function($scope, $location, searchService, mainCategoryService, cmsRoute, mainCategoryLevel) {
+
+            /**
+             * 跳转到MainCategory设定页面.
+             */
+            $scope.goMainCategoryPage = function (modelId) {
+
+                searchService.doGetCNModelInfo(modelId.toString()).then(function(modelInfo) {
+
+                    var data = {};
+
+                    data.channelId = modelInfo.cnBaseModelInfo.channelId;
+                    data.mainCategoryId = modelInfo.cnBaseModelInfo.mainCategoryId;
+                    data.parentLevel = modelInfo.cnBaseModelInfo.mainParentCategoryTypeId;
+                    data.parentId = modelInfo.cnBaseModelInfo.mainParentCategoryId;
+                    data.currentLevel = mainCategoryLevel.model;
+                    data.currentId = modelInfo.cnBaseModelInfo.modelId;
+                    mainCategoryService.setMainCategoryParam(data);
+
+                    mainCategoryService.setMainCategoryReturnUrl($location.path());
+
+                    $location.path(cmsRoute.cms_masterPropValue_setting.hash);
+                });
+            };
+        }]);
 });
