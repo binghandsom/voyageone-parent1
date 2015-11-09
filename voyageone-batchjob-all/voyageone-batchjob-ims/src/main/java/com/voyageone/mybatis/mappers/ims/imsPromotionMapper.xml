@@ -72,7 +72,7 @@
         LEFT JOIN Synship.wms_bt_item_details t3 ON t1.`code` = t3.itemcode
         AND t1.channel_id = t3.order_channel_id
         where
-            t2.cn_price != t2.cn_price_final_rmb
+            t2.cn_price != t2.cn_price_rmb
         ORDER BY
             num_iid
     </select>
