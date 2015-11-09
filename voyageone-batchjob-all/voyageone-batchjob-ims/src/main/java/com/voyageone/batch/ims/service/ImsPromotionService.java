@@ -106,6 +106,7 @@ public class ImsPromotionService extends BaseTaskService {
                 TipItemPromDTO tipItemPromDTO = new TipItemPromDTO();
                 tipItemPromDTO.setCampaignId(promotionId);
                 tipItemPromDTO.setItemId(Long.parseLong(item.get("num_iid").toString()));
+                System.out.println(item.get("num_iid")+"开始");
                 List<Map> productList = (List<Map>) item.get("productList");
 
                 // 根据商品ID列表获取SKU信息 因为需要知道天猫的SKU的ID
@@ -113,6 +114,7 @@ public class ImsPromotionService extends BaseTaskService {
                 ItemSkusGetResponse skuids = (ItemSkusGetResponse) response;
                 // 商品里有SKU的场合 更新特价的时候以SKU为单位更新 （因为TM部分类目下没有SKU 那就用ITEM单位更新）
                 if (skuids.getSkus() != null) {
+                    System.out.println("skuids"+skuids.getSkus().size()+"");
                     List<TipSkuPromUnitDTO> tipSkuPromUnitDTOs = new ArrayList<TipSkuPromUnitDTO>();
                     // 遍历该num_iid下所有的SKU
                     for (Map product : productList) {
@@ -142,6 +144,7 @@ public class ImsPromotionService extends BaseTaskService {
                 }
                 // 调用天猫特价宝
                 response = tbPromotionService.updatePromotion(shopBean, tipItemPromDTO);
+
                 // 成功的场合把product_id保存起来
                 if (response != null && response.getErrorCode() == null) {
                     succeedProduct.addAll((List<Map>) item.get("productList"));
@@ -149,8 +152,10 @@ public class ImsPromotionService extends BaseTaskService {
                     // 失败的场合 错误信息取得
                     String fail = "";
                     if (response == null) {
+                        System.out.println("超时");
                         fail = "超时";
                     } else {
+                        System.out.println("getSubMsg" + response.getSubMsg());
                         fail = response.getSubMsg();
                     }
                     if (failProduct.get(fail) == null) {
@@ -162,6 +167,7 @@ public class ImsPromotionService extends BaseTaskService {
                     }
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 if (failProduct.get(e.getMessage()) == null) {
                     List<Map> temp = new ArrayList<>();
                     temp.addAll((List<Map>) item.get("productList"));
