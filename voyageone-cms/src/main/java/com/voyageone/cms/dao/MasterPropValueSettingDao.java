@@ -106,4 +106,21 @@ public class MasterPropValueSettingDao extends BaseDao{
 		return false;
 	}
 
+	/**
+	 * 获取属性错误信息.
+	 * @param channelId
+	 * @param levelValue
+	 * @return
+	 */
+	public List<String> getErrMsgs(String channelId,String levelValue){
+
+		Map<String, Object> parmMap = new HashMap<String, Object>();
+		parmMap.put("channelId", channelId);
+		parmMap.put("modelId", levelValue);
+
+		List<String> msgs =  super.selectList(Constants.DAO_NAME_SPACE_CMS + "getErrorMessages", parmMap);
+
+		return msgs;
+	}
+
 }
