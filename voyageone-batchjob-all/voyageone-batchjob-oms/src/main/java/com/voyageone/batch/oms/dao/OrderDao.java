@@ -1178,6 +1178,28 @@ public class OrderDao extends BaseDao {
 		
 		return ret;
 	}
+
+	/**
+	 * 本轮订单插入结束之后回写满就送配置表里的赠品剩余库存
+	 *
+	 * @param paraMap
+	 * @return
+	 */
+	public boolean recordPriceThanGiftInventory(Map<String, String> paraMap) {
+		boolean ret = false;
+
+		try {
+			int retCount = updateTemplate.insert(Constants.DAO_NAME_SPACE_OMS + "oms_price_than_gift_setting_recordPriceThanGiftInventory", paraMap);
+			ret = true;
+
+		} catch (Exception ex) {
+			logger.error(ex.getMessage(), ex);
+
+			ret = false;
+		}
+
+		return ret;
+	}
 	
 	/**
 	 * 置位synship发送标志

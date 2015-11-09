@@ -1112,6 +1112,17 @@
 		values
 			${values}
 	</insert>
+
+	<!-- 本轮订单插入结束之后回写满就送配置表里的赠品剩余库存 -->
+	<insert id="oms_price_than_gift_setting_recordPriceThanGiftInventory" parameterType="HashMap">
+		UPDATE oms_price_than_gift_setting
+			SET inventory = ${inventory}
+		WHERE
+			order_channel_id = #{orderChannelId}
+			AND cart_id = ${cartId}
+			AND price = ${price}
+			AND gift_sku = #{giftSku}
+	</insert>
 	
 	<!-- 置位synship发送标志（->1） -->
 	<update id="oms_bt_order_details_resetSynShipFlag" parameterType="HashMap">
@@ -1383,7 +1394,9 @@
 			order_channel_id as orderChannelId,
 			cart_id as cartId,
 			price,
-			gift_sku as giftSku
+			gift_sku as giftSku,
+			prior_num as priorNum,
+			inventory
 		from
 			oms_price_than_gift_setting
 		where

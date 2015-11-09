@@ -79,7 +79,15 @@ public class OrderInfoImportService {
 	/**
 	 * 满就送赠品设定
 	 */
-	private Map<String, List<String>> PRICE_THAN_GIFT_SETTING;
+	private Map<String, List<Map<String, String>>> PRICE_THAN_GIFT_SETTING;
+	/**
+	 * 满就送赠品设定(不减库存备份，给transaction表用)
+	 */
+	private Map<String, List<Map<String, String>>> PRICE_THAN_GIFT_SETTING_TRANS;
+	/**
+	 * 满就送赠品设定(不减库存备份，给扩展表用)
+	 */
+	private Map<String, List<Map<String, String>>> PRICE_THAN_GIFT_SETTING_EXT;
 	/**
 	 * 满就送金额设定
 	 */
@@ -1073,10 +1081,22 @@ public class OrderInfoImportService {
 	 */
 	public void getPriceThanGiftSetting() {
 		if (PRICE_THAN_GIFT_SETTING == null) {
-			PRICE_THAN_GIFT_SETTING = new HashMap<String, List<String>>();
+			PRICE_THAN_GIFT_SETTING = new HashMap<String, List<Map<String, String>>>();
 		}
 		if (!PRICE_THAN_GIFT_SETTING.isEmpty()) {
 			PRICE_THAN_GIFT_SETTING.clear();
+		}
+		if (PRICE_THAN_GIFT_SETTING_TRANS == null) {
+			PRICE_THAN_GIFT_SETTING_TRANS = new HashMap<String, List<Map<String, String>>>();
+		}
+		if (!PRICE_THAN_GIFT_SETTING_TRANS.isEmpty()) {
+			PRICE_THAN_GIFT_SETTING_TRANS.clear();
+		}
+		if (PRICE_THAN_GIFT_SETTING_EXT == null) {
+			PRICE_THAN_GIFT_SETTING_EXT = new HashMap<String, List<Map<String, String>>>();
+		}
+		if (!PRICE_THAN_GIFT_SETTING_EXT.isEmpty()) {
+			PRICE_THAN_GIFT_SETTING_EXT.clear();
 		}
 		if (PRICE_THAN_GIFT_PRICE_SETTING == null) {
 			PRICE_THAN_GIFT_PRICE_SETTING = new HashMap<String, List<Double>>();
@@ -1084,7 +1104,7 @@ public class OrderInfoImportService {
 		if (!PRICE_THAN_GIFT_PRICE_SETTING.isEmpty()) {
 			PRICE_THAN_GIFT_PRICE_SETTING.clear();
 		}
-		
+
 		List<Map<String, String>> priceThanGiftSettingList = orderDao.getPriceThanGiftSetting();
 		if (priceThanGiftSettingList != null && priceThanGiftSettingList.size() > 0) {
 			
@@ -1096,20 +1116,61 @@ public class OrderInfoImportService {
 				double priceDouble = Double.parseDouble(price);
 				DecimalFormat df = new DecimalFormat("#.00");
 				price = df.format(priceDouble);
-				
+
+				// 赠品sku
 				String giftSku = StringUtils.null2Space2(String.valueOf(priceThanGift.get("giftSku")));
-				
-				String mapKey = orderChannelId + cartId + price;
+				giftSku = giftSku.toUpperCase();
+				// 赠品sku指定顺序
+				String giftSkuPrior = StringUtils.null2Space2(String.valueOf(priceThanGift.get("priorNum")));
+				// 赠品sku库存
+				String giftSkuInventory = StringUtils.null2Space2(String.valueOf(priceThanGift.get("inventory")));
+				Map<String, String> giftSkuMap = new HashMap<String, String>();
+				giftSkuMap.put("giftSku", giftSku);
+				giftSkuMap.put("priorNum", giftSkuPrior);
+				giftSkuMap.put("inventory", giftSkuInventory);
+
+				String mapKey = orderChannelId + Constants.COMMA_CHAR + cartId + Constants.COMMA_CHAR + price;
 				if (PRICE_THAN_GIFT_SETTING.containsKey(mapKey)) {
-					List<String> priceThanGiftSkuList = PRICE_THAN_GIFT_SETTING.get(mapKey);
-					priceThanGiftSkuList.add(giftSku.toUpperCase());
+					List<Map<String, String>> priceThanGiftSkuList = PRICE_THAN_GIFT_SETTING.get(mapKey);
+					priceThanGiftSkuList.add(giftSkuMap);
 					
 				} else {
-					List<String> priceThanGiftSkuList = new ArrayList<String>();
-					priceThanGiftSkuList.add(giftSku.toUpperCase());
+					List<Map<String, String>> priceThanGiftSkuList = new ArrayList<Map<String, String>>();
+					priceThanGiftSkuList.add(giftSkuMap);
 					PRICE_THAN_GIFT_SETTING.put(mapKey, priceThanGiftSkuList);
+
 				}
-				
+
+				Map<String, String> giftSkuMapTrans = new HashMap<String, String>();
+				giftSkuMapTrans.put("giftSku", giftSku);
+				giftSkuMapTrans.put("priorNum", giftSkuPrior);
+				giftSkuMapTrans.put("inventory", giftSkuInventory);
+				if (PRICE_THAN_GIFT_SETTING_TRANS.containsKey(mapKey)) {
+					List<Map<String, String>> priceThanGiftSkuList = PRICE_THAN_GIFT_SETTING_TRANS.get(mapKey);
+					priceThanGiftSkuList.add(giftSkuMapTrans);
+
+				} else {
+					List<Map<String, String>> priceThanGiftSkuList = new ArrayList<Map<String, String>>();
+					priceThanGiftSkuList.add(giftSkuMapTrans);
+					PRICE_THAN_GIFT_SETTING_TRANS.put(mapKey, priceThanGiftSkuList);
+
+				}
+
+				Map<String, String> giftSkuMapExt = new HashMap<String, String>();
+				giftSkuMapExt.put("giftSku", giftSku);
+				giftSkuMapExt.put("priorNum", giftSkuPrior);
+				giftSkuMapExt.put("inventory", giftSkuInventory);
+				if (PRICE_THAN_GIFT_SETTING_EXT.containsKey(mapKey)) {
+					List<Map<String, String>> priceThanGiftSkuList = PRICE_THAN_GIFT_SETTING_EXT.get(mapKey);
+					priceThanGiftSkuList.add(giftSkuMapExt);
+
+				} else {
+					List<Map<String, String>> priceThanGiftSkuList = new ArrayList<Map<String, String>>();
+					priceThanGiftSkuList.add(giftSkuMapExt);
+					PRICE_THAN_GIFT_SETTING_EXT.put(mapKey, priceThanGiftSkuList);
+
+				}
+
 				String giftMapKey = orderChannelId + cartId;
 				if (PRICE_THAN_GIFT_PRICE_SETTING.containsKey(giftMapKey)) {
 					List<Double> priceList = PRICE_THAN_GIFT_PRICE_SETTING.get(giftMapKey);
@@ -2723,10 +2784,24 @@ public class OrderInfoImportService {
 						}
 					}
 				}
-				
+
+				// 平台ID
+				CartBean cartBean = ShopConfigs.getCart(cartId);
+				String platformId = cartBean.getPlatform_id();
 				// ----------------------------------------------------------------- 满就送赠品 START ---------------------------------------------------------------------------
 				boolean blnGift = false;
-				List<Double> priceOfPriceThanGift = PRICE_THAN_GIFT_PRICE_SETTING.get(orderChannelId + cartId);
+				// 同一家店满就送规则是以平台还是以渠道来进行赠品
+				boolean isFlatform = false;
+				String platformOrCart = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_PRICE_THAN_SELECT_PLATFORM_CART,
+						com.voyageone.common.Constants.LANGUAGE.EN);
+				String platformOrCartValue = GIFT_PROPERTY_SETTING.get(orderChannelId + platformId + platformOrCart);
+				// 平台
+				if (Constants.ONE_CHAR.equals(platformOrCartValue)) {
+					isFlatform = true;
+				}
+
+				// 获得该 渠道/平台 的满就送赠品设置
+				List<Double> priceOfPriceThanGift = PRICE_THAN_GIFT_PRICE_SETTING.get(orderChannelId + (isFlatform ? platformId : cartId));
 				if (priceOfPriceThanGift != null && priceOfPriceThanGift.size() > 0) {
 					for (int i = 0; i < priceOfPriceThanGift.size(); i++) {
 						if (!blnGift) {
@@ -2735,38 +2810,79 @@ public class OrderInfoImportService {
 								// 获取赠品
 								DecimalFormat df = new DecimalFormat("#.00");
 								String price = df.format(dblPrice);
-								List<String> gifts = PRICE_THAN_GIFT_SETTING.get(orderChannelId + cartId + price);
-								if (gifts != null && gifts.size() > 0) {
-									
+
+								String mapKey = orderChannelId + Constants.COMMA_CHAR + (isFlatform ? platformId : cartId) + Constants.COMMA_CHAR + price;
+								List<Map<String, String>> giftMaps = PRICE_THAN_GIFT_SETTING.get(mapKey);
+								if (giftMaps != null && giftMaps.size() > 0) {
+
+									// 可重复
 									String giftPropertyRepeat = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_PRICE_THAN_REPEAT, 
 											com.voyageone.common.Constants.LANGUAGE.EN);
-									String giftPropertyMaxsum = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_PRICE_THAN_MAXSUM, 
+									// 前最大数
+									String giftPropertyMaxsum = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_PRICE_THAN_MAXSUM,
 											com.voyageone.common.Constants.LANGUAGE.EN);
-									String giftPropertySelectOne = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_PRICE_THAN_SELECTONE, 
+									// 随机选一个
+									String giftPropertySelectOne = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_PRICE_THAN_SELECTONE,
 											com.voyageone.common.Constants.LANGUAGE.EN);
-									
-									CartBean cartBean = ShopConfigs.getCart(cartId);
-									String platformId = cartBean.getPlatform_id();
-									
-									String giftPropertySelectOneValue = GIFT_PROPERTY_SETTING.get(orderChannelId + platformId + giftPropertySelectOne);
-									
+									// 选择优先顺序且有库存的赠品
+									String giftPropertyAppointOneWithInventory = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_PRICE_THAN_SELECT_APPOINT_ONE_WITH_INVENTORY,
+											com.voyageone.common.Constants.LANGUAGE.EN);
+
+									// 满就送赠品列表
+									List<String> gifts = new ArrayList<String>();
+
 									// 任选择一款sku
+									String giftPropertySelectOneValue = GIFT_PROPERTY_SETTING.get(orderChannelId + platformId + giftPropertySelectOne);
 									if (Constants.ONE_CHAR.equals(giftPropertySelectOneValue)) {
-										int giftSize = gifts.size();
+										int giftSize = giftMaps.size();
 										int index = new Random().nextInt(giftSize);
-										String skuSelect = gifts.get(index);
+										String skuSelect = giftMaps.get(index).get("giftSku");
 										
 										if (!StringUtils.isNullOrBlank2(skuSelect)) {
-											gifts = new ArrayList<String>();
 											gifts.add(skuSelect);
 										}
+
+									// 任选一款以外设置
+									} else {
+
+										// 按优先顺序选择一款赠品，当且仅当有库存
+										String giftPropertySelectAppointOneWithInventoryValue = GIFT_PROPERTY_SETTING.get(orderChannelId + platformId + giftPropertyAppointOneWithInventory);
+										if (Constants.ONE_CHAR.equals(giftPropertySelectAppointOneWithInventoryValue)) {
+											// 找出本次赠品选哪个及库存处理
+											String giftSku = getSelectAppointOneWithInventorySku(giftMaps);
+											// 多个sku
+											if (giftSku.contains(";")) {
+												String[] giftSkuSplitArray = giftSku.split(";");
+												for (String giftSkuSplit : giftSkuSplitArray) {
+													if (!StringUtils.isNullOrBlank2(giftSkuSplit)) {
+														gifts.add(giftSkuSplit);
+													}
+												}
+											} else {
+												if (!StringUtils.isNullOrBlank2(giftSku)) {
+													gifts.add(giftSku);
+												}
+											}
+
+										// 以上情况以外满就送赠品设定
+										} else {
+											for (Map<String, String> giftMap : giftMaps) {
+												String giftSku = giftMap.get("giftSku");
+												if (!StringUtils.isNullOrBlank2(giftSku)) {
+													gifts.add(giftSku);
+												}
+											}
+										}
 									}
-									
-									// 可以送赠品
-									if (giftRulerJudge(newOrderInfo, giftPropertyRepeat, OmsConstants.GIFT_PROPERTY_PRICE_THAN, giftPropertyMaxsum)) {
-										itemNumber = getGiftSql(newOrderInfo, gifts, sqlValueBuffer, itemNumber, taskName);
-										blnGift = true;
-										break;
+
+									// 有满足条件赠品
+									if (gifts.size() > 0) {
+										// 可以送赠品
+										if (giftRulerJudge(newOrderInfo, giftPropertyRepeat, OmsConstants.GIFT_PROPERTY_PRICE_THAN, giftPropertyMaxsum)) {
+											itemNumber = getGiftSql(newOrderInfo, gifts, sqlValueBuffer, itemNumber, taskName);
+											blnGift = true;
+											break;
+										}
 									}
 								}
 							}
@@ -2788,14 +2904,11 @@ public class OrderInfoImportService {
 					
 					String giftPropertyRepeat = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_BUY_THAN_REPEAT, 
 							com.voyageone.common.Constants.LANGUAGE.EN);
-					String giftPropertyMaxsum = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_BUY_THAN_MAXSUM, 
+					String giftPropertyMaxsum = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_BUY_THAN_MAXSUM,
 							com.voyageone.common.Constants.LANGUAGE.EN);
-					String giftPropertySelectOne = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_BUY_THAN_SELECTONE, 
+					String giftPropertySelectOne = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_BUY_THAN_SELECTONE,
 							com.voyageone.common.Constants.LANGUAGE.EN);
-					
-					CartBean cartBean = ShopConfigs.getCart(cartId);
-					String platformId = cartBean.getPlatform_id();
-					
+
 					String giftPropertySelectOneValue = GIFT_PROPERTY_SETTING.get(orderChannelId + platformId + giftPropertySelectOne);
 					
 					// 任选择一款sku
@@ -2825,13 +2938,10 @@ public class OrderInfoImportService {
 						
 						String giftPropertyRepeat = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_REGULAR_CUSTOMER_REPEAT, 
 								com.voyageone.common.Constants.LANGUAGE.EN);
-						String giftPropertyMaxsum = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_REGULAR_CUSTOMER_MAXSUM, 
+						String giftPropertyMaxsum = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_REGULAR_CUSTOMER_MAXSUM,
 								com.voyageone.common.Constants.LANGUAGE.EN);
-						String giftPropertySelectOne = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_REGULAR_CUSTOMER_SELECTONE, 
+						String giftPropertySelectOne = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_REGULAR_CUSTOMER_SELECTONE,
 								com.voyageone.common.Constants.LANGUAGE.EN);
-						
-						CartBean cartBean = ShopConfigs.getCart(cartId);
-						String platformId = cartBean.getPlatform_id();
 						
 						String giftPropertySelectOneValue = GIFT_PROPERTY_SETTING.get(orderChannelId + platformId + giftPropertySelectOne);
 						
@@ -2862,14 +2972,11 @@ public class OrderInfoImportService {
 					
 					String giftPropertyRepeat = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_REPEAT, 
 							com.voyageone.common.Constants.LANGUAGE.EN);
-					String giftPropertyMaxsum = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_MAXSUM, 
+					String giftPropertyMaxsum = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_MAXSUM,
 							com.voyageone.common.Constants.LANGUAGE.EN);
-					String giftPropertySelectOne = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_SELECTONE, 
+					String giftPropertySelectOne = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_SELECTONE,
 							com.voyageone.common.Constants.LANGUAGE.EN);
-					
-					CartBean cartBean = ShopConfigs.getCart(cartId);
-					String platformId = cartBean.getPlatform_id();
-					
+
 					String giftPropertySelectOneValue = GIFT_PROPERTY_SETTING.get(orderChannelId + platformId + giftPropertySelectOne);
 					
 					// 任选择一款sku
@@ -2902,6 +3009,66 @@ public class OrderInfoImportService {
 		itemNumber = getDisCountSurchargeShipingSql(null, newOrderInfo, Constants.SHIPPING_TYPE, sqlValueBuffer, itemNumber, taskName);
 		
 		return new String[] { sqlValueBuffer.toString() , String.valueOf(itemNumber) };
+	}
+
+	/**
+	 * 找出本次赠品选哪个及库存处理
+	 *
+	 * @param giftMaps
+	 * @return
+	 */
+	private String getSelectAppointOneWithInventorySku(List<Map<String, String>> giftMaps) {
+		// 本次所选赠品sku
+		String selectSku = "";
+
+		// 优先顺列表
+		List<Integer> priorNumList = new ArrayList<Integer>();
+		for (Map<String, String> giftMap : giftMaps) {
+			String priorNum = giftMap.get("priorNum");
+			priorNumList.add(Integer.valueOf(priorNum));
+		}
+
+		// 优先顺列表有设置
+		if (priorNumList.size() > 0) {
+			// 优先顺排序
+			Collections.sort(priorNumList);
+
+			// 按排过序的优先顺序循环
+			for (int priorSort : priorNumList) {
+
+				// 找到赠品需跳出标志
+				boolean isBreak = false;
+
+				for (Map<String, String> giftMap : giftMaps) {
+					String priorNum = giftMap.get("priorNum");
+					String giftSku = giftMap.get("giftSku");
+					String inventory = giftMap.get("inventory");
+
+					// 设置的优先顺
+					int priorNumInt = Integer.valueOf(priorNum);
+
+					// 找到符合条件优先顺的赠品
+					if ((priorSort == priorNumInt) && (Integer.valueOf(inventory) > 0)) {
+						selectSku = giftSku;
+
+						// 送完赠品之后计算剩余库存并保存
+						int inventoryInt = Integer.valueOf(inventory);
+						giftMap.put("inventory", String.valueOf(--inventoryInt));
+
+						isBreak = true;
+
+						break;
+					}
+				}
+
+				if (isBreak) {
+					break;
+				}
+			}
+		}
+
+		// 返回本次所选赠品sku
+		return selectSku;
 	}
 	
 	/**
@@ -3567,10 +3734,24 @@ public class OrderInfoImportService {
 						}
 					}
 				}
-				
+
+				// 平台ID
+				CartBean cartBean = ShopConfigs.getCart(cartId);
+				String platformId = cartBean.getPlatform_id();
 				// ----------------------------------------------------------------- 满就送赠品 START ---------------------------------------------------------------------------
 				boolean blnGift = false;
-				List<Double> priceOfPriceThanGift = PRICE_THAN_GIFT_PRICE_SETTING.get(orderChannelId + cartId);
+				// 同一家店满就送规则是以平台还是以渠道来进行赠品
+				boolean isFlatform = false;
+				String platformOrCart = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_PRICE_THAN_SELECT_PLATFORM_CART,
+						com.voyageone.common.Constants.LANGUAGE.EN);
+				String platformOrCartValue = GIFT_PROPERTY_SETTING.get(orderChannelId + platformId + platformOrCart);
+				// 平台
+				if (Constants.ONE_CHAR.equals(platformOrCartValue)) {
+					isFlatform = true;
+				}
+
+				// 获得该 渠道/平台 的满就送赠品设置
+				List<Double> priceOfPriceThanGift = PRICE_THAN_GIFT_PRICE_SETTING.get(orderChannelId + (isFlatform ? platformId : cartId));
 				if (priceOfPriceThanGift != null && priceOfPriceThanGift.size() > 0) {
 					for (int i = 0; i < priceOfPriceThanGift.size(); i++){
 						if (!blnGift) {
@@ -3579,38 +3760,77 @@ public class OrderInfoImportService {
 								// 获取赠品
 								DecimalFormat df = new DecimalFormat("#.00");
 								String price = df.format(dblPrice);
-								List<String> gifts = PRICE_THAN_GIFT_SETTING.get(orderChannelId + cartId + price);
-								if (gifts != null && gifts.size() > 0) {
-									
+
+								String mapKey = orderChannelId + Constants.COMMA_CHAR + (isFlatform ? platformId : cartId) + Constants.COMMA_CHAR + price;
+								List<Map<String, String>> giftMaps = PRICE_THAN_GIFT_SETTING_TRANS.get(mapKey);
+								if (giftMaps != null && giftMaps.size() > 0) {
+
+									// 可重复
 									String giftPropertyRepeat = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_PRICE_THAN_REPEAT, 
 											com.voyageone.common.Constants.LANGUAGE.EN);
+									// 前最大数
 									String giftPropertyMaxsum = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_PRICE_THAN_MAXSUM, 
 											com.voyageone.common.Constants.LANGUAGE.EN);
+									// 随机选一个
 									String giftPropertySelectOne = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_PRICE_THAN_SELECTONE, 
 											com.voyageone.common.Constants.LANGUAGE.EN);
-									
-									CartBean cartBean = ShopConfigs.getCart(cartId);
-									String platformId = cartBean.getPlatform_id();
-									
-									String giftPropertySelectOneValue = GIFT_PROPERTY_SETTING.get(orderChannelId + platformId + giftPropertySelectOne);
-									
+									// 选择优先顺序且有库存的赠品
+									String giftPropertyAppointOneWithInventory = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_PRICE_THAN_SELECT_APPOINT_ONE_WITH_INVENTORY,
+											com.voyageone.common.Constants.LANGUAGE.EN);
+
+									// 满就送赠品列表
+									List<String> gifts = new ArrayList<String>();
+
 									// 任选择一款sku
+									String giftPropertySelectOneValue = GIFT_PROPERTY_SETTING.get(orderChannelId + platformId + giftPropertySelectOne);
 									if (Constants.ONE_CHAR.equals(giftPropertySelectOneValue)) {
-										int giftSize = gifts.size();
+										int giftSize = giftMaps.size();
 										int index = new Random().nextInt(giftSize);
-										String skuSelect = gifts.get(index);
+										String skuSelect = giftMaps.get(index).get("giftSku");
 										
 										if (!StringUtils.isNullOrBlank2(skuSelect)) {
-											gifts = new ArrayList<String>();
 											gifts.add(skuSelect);
 										}
+										// 任选一款以外设置
+									} else {
+										// 按优先顺序选择一款赠品，当且仅当有库存
+										String giftPropertySelectAppointOneWithInventoryValue = GIFT_PROPERTY_SETTING.get(orderChannelId + platformId + giftPropertyAppointOneWithInventory);
+										if (Constants.ONE_CHAR.equals(giftPropertySelectAppointOneWithInventoryValue)) {
+											// 找出本次赠品选哪个及库存处理
+											String giftSku = getSelectAppointOneWithInventorySku(giftMaps);
+											// 多个sku
+											if (giftSku.contains(";")) {
+												String[] giftSkuSplitArray = giftSku.split(";");
+												for (String giftSkuSplit : giftSkuSplitArray) {
+													if (!StringUtils.isNullOrBlank2(giftSkuSplit)) {
+														gifts.add(giftSkuSplit);
+													}
+												}
+											} else {
+												if (!StringUtils.isNullOrBlank2(giftSku)) {
+													gifts.add(giftSku);
+												}
+											}
+
+											// 以上情况以外满就送赠品设定
+										} else {
+											for (Map<String, String> giftMap : giftMaps) {
+												String giftSku = giftMap.get("giftSku");
+												if (!StringUtils.isNullOrBlank2(giftSku)) {
+													gifts.add(giftSku);
+												}
+											}
+										}
 									}
-									
-									// 可以送赠品
-									if (giftRulerJudge2(newOrderInfo, giftPropertyRepeat, OmsConstants.GIFT_PROPERTY_PRICE_THAN, giftPropertyMaxsum)) {
-										itemNumber = getGiftSqlTransaction(newOrderInfo, gifts, sqlValueBuffer, itemNumber, taskName);
-										blnGift = true;
-										break;
+
+									// 有满足条件赠品
+									if (gifts.size() > 0) {
+										// 可以送赠品
+										if (giftRulerJudge2(newOrderInfo, giftPropertyRepeat, OmsConstants.GIFT_PROPERTY_PRICE_THAN, giftPropertyMaxsum)) {
+											itemNumber = getGiftSqlTransaction(newOrderInfo, gifts, sqlValueBuffer, itemNumber, taskName);
+											blnGift = true;
+											break;
+										}
 									}
 								}
 							}
@@ -3629,16 +3849,13 @@ public class OrderInfoImportService {
 					}
 				}
 				if (gifts != null && gifts.size() > 0) {
-					
+
 					String giftPropertyRepeat = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_BUY_THAN_REPEAT, 
 							com.voyageone.common.Constants.LANGUAGE.EN);
 					String giftPropertyMaxsum = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_BUY_THAN_MAXSUM, 
 							com.voyageone.common.Constants.LANGUAGE.EN);
 					String giftPropertySelectOne = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_BUY_THAN_SELECTONE, 
 							com.voyageone.common.Constants.LANGUAGE.EN);
-					
-					CartBean cartBean = ShopConfigs.getCart(cartId);
-					String platformId = cartBean.getPlatform_id();
 					
 					String giftPropertySelectOneValue = GIFT_PROPERTY_SETTING.get(orderChannelId + platformId + giftPropertySelectOne);
 					
@@ -3667,16 +3884,13 @@ public class OrderInfoImportService {
 				if (newOrderInfo.isRegularCustomer()) {
 					gifts = REGULAR_CUSTOMER_GIFT_SETTING.get(orderChannelId + cartId);
 					if (gifts != null && gifts.size() > 0) {
-						
+
 						String giftPropertyRepeat = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_REGULAR_CUSTOMER_REPEAT, 
 								com.voyageone.common.Constants.LANGUAGE.EN);
 						String giftPropertyMaxsum = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_REGULAR_CUSTOMER_MAXSUM, 
 								com.voyageone.common.Constants.LANGUAGE.EN);
 						String giftPropertySelectOne = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_REGULAR_CUSTOMER_SELECTONE, 
 								com.voyageone.common.Constants.LANGUAGE.EN);
-						
-						CartBean cartBean = ShopConfigs.getCart(cartId);
-						String platformId = cartBean.getPlatform_id();
 						
 						String giftPropertySelectOneValue = GIFT_PROPERTY_SETTING.get(orderChannelId + platformId + giftPropertySelectOne);
 						
@@ -3704,16 +3918,13 @@ public class OrderInfoImportService {
 				// ----------------------------------------------------------------- 前多少名送赠品 START --------------------------------------------------------------------------
 				gifts = PRIOR_COUNT_CUSTOMER_GIFT_SETTING.get(orderChannelId + cartId);
 				if (gifts != null && gifts.size() > 0) {
-					
+
 					String giftPropertyRepeat = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_REPEAT, 
 							com.voyageone.common.Constants.LANGUAGE.EN);
 					String giftPropertyMaxsum = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_MAXSUM, 
 							com.voyageone.common.Constants.LANGUAGE.EN);
 					String giftPropertySelectOne = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_SELECTONE, 
 							com.voyageone.common.Constants.LANGUAGE.EN);
-					
-					CartBean cartBean = ShopConfigs.getCart(cartId);
-					String platformId = cartBean.getPlatform_id();
 					
 					String giftPropertySelectOneValue = GIFT_PROPERTY_SETTING.get(orderChannelId + platformId + giftPropertySelectOne);
 					
@@ -4288,10 +4499,24 @@ public class OrderInfoImportService {
 						}
 					}
 				}
-				
+
+				// 平台ID
+				CartBean cartBean = ShopConfigs.getCart(cartId);
+				String platformId = cartBean.getPlatform_id();
 				// ----------------------------------------------------------------- 满就送赠品 START ---------------------------------------------------------------------------
 				boolean blnGift = false;
-				List<Double> priceOfPriceThanGift = PRICE_THAN_GIFT_PRICE_SETTING.get(orderChannelId + cartId);
+				// 同一家店满就送规则是以平台还是以渠道来进行赠品
+				boolean isFlatform = false;
+				String platformOrCart = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_PRICE_THAN_SELECT_PLATFORM_CART,
+						com.voyageone.common.Constants.LANGUAGE.EN);
+				String platformOrCartValue = GIFT_PROPERTY_SETTING.get(orderChannelId + platformId + platformOrCart);
+				// 平台
+				if (Constants.ONE_CHAR.equals(platformOrCartValue)) {
+					isFlatform = true;
+				}
+
+				// 获得该 渠道/平台 的满就送赠品设置
+				List<Double> priceOfPriceThanGift = PRICE_THAN_GIFT_PRICE_SETTING.get(orderChannelId + (isFlatform ? platformId : cartId));
 				if (priceOfPriceThanGift != null && priceOfPriceThanGift.size() > 0) {
 					for (int i = 0; i < priceOfPriceThanGift.size(); i++) {
 						if (!blnGift) {
@@ -4300,38 +4525,79 @@ public class OrderInfoImportService {
 								// 获取赠品
 								DecimalFormat df = new DecimalFormat("#.00");
 								String price = df.format(dblPrice);
-								List<String> gifts = PRICE_THAN_GIFT_SETTING.get(orderChannelId + cartId + price);
-								if (gifts != null && gifts.size() > 0) {
-									
+
+								String mapKey = orderChannelId + Constants.COMMA_CHAR + (isFlatform ? platformId : cartId) + Constants.COMMA_CHAR + price;
+								List<Map<String, String>> giftMaps = PRICE_THAN_GIFT_SETTING_EXT.get(mapKey);
+								if (giftMaps != null && giftMaps.size() > 0) {
+
+									// 可重复
 									String giftPropertyRepeat = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_PRICE_THAN_REPEAT, 
 											com.voyageone.common.Constants.LANGUAGE.EN);
-									String giftPropertyMaxsum = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_PRICE_THAN_MAXSUM, 
+									// 前最大数
+									String giftPropertyMaxsum = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_PRICE_THAN_MAXSUM,
 											com.voyageone.common.Constants.LANGUAGE.EN);
-									String giftPropertySelectOne = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_PRICE_THAN_SELECTONE, 
+									// 随机选一个
+									String giftPropertySelectOne = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_PRICE_THAN_SELECTONE,
 											com.voyageone.common.Constants.LANGUAGE.EN);
-									
-									CartBean cartBean = ShopConfigs.getCart(cartId);
-									String platformId = cartBean.getPlatform_id();
-									
-									String giftPropertySelectOneValue = GIFT_PROPERTY_SETTING.get(orderChannelId + platformId + giftPropertySelectOne);
-									
+									// 选择优先顺序且有库存的赠品
+									String giftPropertyAppointOneWithInventory = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_PRICE_THAN_SELECT_APPOINT_ONE_WITH_INVENTORY,
+											com.voyageone.common.Constants.LANGUAGE.EN);
+
+									// 满就送赠品列表
+									List<String> gifts = new ArrayList<String>();
+
 									// 任选择一款sku
+									String giftPropertySelectOneValue = GIFT_PROPERTY_SETTING.get(orderChannelId + platformId + giftPropertySelectOne);
 									if (Constants.ONE_CHAR.equals(giftPropertySelectOneValue)) {
-										int giftSize = gifts.size();
+										int giftSize = giftMaps.size();
 										int index = new Random().nextInt(giftSize);
-										String skuSelect = gifts.get(index);
+										String skuSelect = giftMaps.get(index).get("giftSku");
 										
 										if (!StringUtils.isNullOrBlank2(skuSelect)) {
-											gifts = new ArrayList<String>();
 											gifts.add(skuSelect);
 										}
+
+									// 任选一款以外设置
+									} else {
+
+										// 按优先顺序选择一款赠品，当且仅当有库存
+										String giftPropertySelectAppointOneWithInventoryValue = GIFT_PROPERTY_SETTING.get(orderChannelId + platformId + giftPropertyAppointOneWithInventory);
+										if (Constants.ONE_CHAR.equals(giftPropertySelectAppointOneWithInventoryValue)) {
+											// 找出本次赠品选哪个及库存处理
+											String giftSku = getSelectAppointOneWithInventorySku(giftMaps);
+											// 多个sku
+											if (giftSku.contains(";")) {
+												String[] giftSkuSplitArray = giftSku.split(";");
+												for (String giftSkuSplit : giftSkuSplitArray) {
+													if (!StringUtils.isNullOrBlank2(giftSkuSplit)) {
+														gifts.add(giftSkuSplit);
+													}
+												}
+											} else {
+												if (!StringUtils.isNullOrBlank2(giftSku)) {
+													gifts.add(giftSku);
+												}
+											}
+
+											// 以上情况以外满就送赠品设定
+										} else {
+											for (Map<String, String> giftMap : giftMaps) {
+												String giftSku = giftMap.get("giftSku");
+												if (!StringUtils.isNullOrBlank2(giftSku)) {
+													gifts.add(giftSku);
+												}
+											}
+										}
 									}
-									
-									// 可以送赠品
-									if (giftRulerJudge2(newOrderInfo, giftPropertyRepeat, OmsConstants.GIFT_PROPERTY_PRICE_THAN, giftPropertyMaxsum)) {
-										itemNumber = getGiftSqlExt(newOrderInfo, gifts, sqlValueBuffer, itemNumber, taskName);
-										blnGift = true;
-										break;
+
+									// 有满足条件赠品
+									if (gifts.size() > 0) {
+										// 可以送赠品
+										if (giftRulerJudge2(newOrderInfo, giftPropertyRepeat, OmsConstants.GIFT_PROPERTY_PRICE_THAN, giftPropertyMaxsum)) {
+											itemNumber = getGiftSqlExt(newOrderInfo, gifts, sqlValueBuffer, itemNumber, taskName);
+											blnGift = true;
+											break;
+										}
 									}
 								}
 							}
@@ -4352,14 +4618,11 @@ public class OrderInfoImportService {
 				if (gifts != null && gifts.size() > 0) {
 					String giftPropertyRepeat = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_BUY_THAN_REPEAT, 
 							com.voyageone.common.Constants.LANGUAGE.EN);
-					String giftPropertyMaxsum = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_BUY_THAN_MAXSUM, 
+					String giftPropertyMaxsum = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_BUY_THAN_MAXSUM,
 							com.voyageone.common.Constants.LANGUAGE.EN);
-					String giftPropertySelectOne = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_BUY_THAN_SELECTONE, 
+					String giftPropertySelectOne = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_BUY_THAN_SELECTONE,
 							com.voyageone.common.Constants.LANGUAGE.EN);
-					
-					CartBean cartBean = ShopConfigs.getCart(cartId);
-					String platformId = cartBean.getPlatform_id();
-					
+
 					String giftPropertySelectOneValue = GIFT_PROPERTY_SETTING.get(orderChannelId + platformId + giftPropertySelectOne);
 					
 					// 任选择一款sku
@@ -4388,14 +4651,11 @@ public class OrderInfoImportService {
 						
 						String giftPropertyRepeat = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_REGULAR_CUSTOMER_REPEAT, 
 								com.voyageone.common.Constants.LANGUAGE.EN);
-						String giftPropertyMaxsum = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_REGULAR_CUSTOMER_MAXSUM, 
+						String giftPropertyMaxsum = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_REGULAR_CUSTOMER_MAXSUM,
 								com.voyageone.common.Constants.LANGUAGE.EN);
-						String giftPropertySelectOne = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_REGULAR_CUSTOMER_SELECTONE, 
+						String giftPropertySelectOne = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_REGULAR_CUSTOMER_SELECTONE,
 								com.voyageone.common.Constants.LANGUAGE.EN);
-						
-						CartBean cartBean = ShopConfigs.getCart(cartId);
-						String platformId = cartBean.getPlatform_id();
-						
+
 						String giftPropertySelectOneValue = GIFT_PROPERTY_SETTING.get(orderChannelId + platformId + giftPropertySelectOne);
 						
 						// 任选择一款sku
@@ -4424,14 +4684,11 @@ public class OrderInfoImportService {
 					
 					String giftPropertyRepeat = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_REPEAT, 
 							com.voyageone.common.Constants.LANGUAGE.EN);
-					String giftPropertyMaxsum = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_MAXSUM, 
+					String giftPropertyMaxsum = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_MAXSUM,
 							com.voyageone.common.Constants.LANGUAGE.EN);
-					String giftPropertySelectOne = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_SELECTONE, 
+					String giftPropertySelectOne = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_SELECTONE,
 							com.voyageone.common.Constants.LANGUAGE.EN);
-					
-					CartBean cartBean = ShopConfigs.getCart(cartId);
-					String platformId = cartBean.getPlatform_id();
-					
+
 					String giftPropertySelectOneValue = GIFT_PROPERTY_SETTING.get(orderChannelId + platformId + giftPropertySelectOne);
 					
 					// 任选择一款sku
@@ -7165,7 +7422,55 @@ public class OrderInfoImportService {
 		
 		return sqlValueBuffer.toString();
 	}
-	
+
+	/**
+	 * 本轮订单插入结束之后回写满就送配置表里的赠品剩余库存
+	 *
+	 * @return
+	 */
+	public void recordPriceThanGiftInventory() {
+		if (PRICE_THAN_GIFT_SETTING != null && PRICE_THAN_GIFT_SETTING.size() > 0) {
+			String giftPropertyAppointOneWithInventory = Type.getValue(MastType.giftRuleType.getId(), OmsConstants.GIFT_PROPERTY_PRICE_THAN_SELECT_APPOINT_ONE_WITH_INVENTORY,
+					com.voyageone.common.Constants.LANGUAGE.EN);
+
+			for (String mapKey : PRICE_THAN_GIFT_SETTING.keySet()) {
+
+				String[] mapKeyArray = mapKey.split(Constants.COMMA_CHAR);
+
+				if (mapKeyArray != null && mapKeyArray.length == 3) {
+					String orderChannelId = mapKeyArray[0];
+					String cartId = mapKeyArray[1];
+					String price = mapKeyArray[2];
+
+					String giftPropertySelectAppointOneWithInventoryValue = GIFT_PROPERTY_SETTING.get(orderChannelId + cartId + giftPropertyAppointOneWithInventory);
+					if (giftPropertySelectAppointOneWithInventoryValue == null) {
+						CartBean cartBean = ShopConfigs.getCart(cartId);
+						String platformId = cartBean.getPlatform_id();
+
+						if (!StringUtils.isNullOrBlank2(platformId)) {
+							giftPropertySelectAppointOneWithInventoryValue = GIFT_PROPERTY_SETTING.get(orderChannelId + platformId + giftPropertyAppointOneWithInventory);
+						}
+					}
+					// 有满就送根据库存优先送的配置
+					if (Constants.ONE_CHAR.equals(giftPropertySelectAppointOneWithInventoryValue)) {
+						List<Map<String, String>> giftMapList = PRICE_THAN_GIFT_SETTING.get(mapKey);
+						if (giftMapList != null && giftMapList.size() > 0) {
+							for (Map<String, String> giftMap : giftMapList) {
+								Map<String, String> paraMap = new HashMap<String, String>();
+								paraMap.put("orderChannelId", orderChannelId);
+								paraMap.put("cartId", cartId);
+								paraMap.put("price", price.split("\\.")[0]);
+								paraMap.put("giftSku", giftMap.get("giftSku"));
+								paraMap.put("inventory", giftMap.get("inventory"));
+
+								orderDao.recordPriceThanGiftInventory(paraMap);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 	
 	/**
 	 * 检查收件人信息完整性检查，如果信息不全会发警告邮件
@@ -8106,6 +8411,8 @@ public class OrderInfoImportService {
 	}
 	
 	public static void main(String[] args) {
+		String giftSku = "8306sr-OneSize;40001-02-24*26";
+		String[] giftSkuArray = giftSku.split(";");
 //		String lastOrderTime = "2015-06-18 10:30:45";
 //		int preTime = 30;
 //		// 如果没取到时间

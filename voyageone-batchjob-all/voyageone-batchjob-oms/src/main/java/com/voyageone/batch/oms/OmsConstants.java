@@ -331,6 +331,9 @@ public class OmsConstants {
     public static final String GIFT_PROPERTY_PRICE_THAN_SELECTONE = "priceThanSelectOne";
     public static final String GIFT_PROPERTY_BUY_THAN_SELECTONE = "buyThanSelectOne";
     public static final String GIFT_PROPERTY_REGULAR_CUSTOMER_SELECTONE = "regularCustomerSelectOne";
+
+	public static final String GIFT_PROPERTY_PRICE_THAN_SELECT_APPOINT_ONE_WITH_INVENTORY = "priceThanSelectAppointOneWithInventory";
+	public static final String GIFT_PROPERTY_PRICE_THAN_SELECT_PLATFORM_CART = "priceThanSelectPlatformCart";
     
     public static final String GIFT_PROPERTY = "";
     public static final String GIFT_PROPERTY_REPEAT = "repeat";
@@ -583,7 +586,7 @@ public class OmsConstants {
 	 * sneakerhead 统计消费前多少名顾客邮件ROW格式
 	 */
 	public static final String SNEAKERHEAD_TOP_SPENDING_RANKING_TABLE =
-			"&lt;table style=\"text-align:center;font-size:14px;background-color:#777777;color:#fff;\"&gt;" + "<br>" +
+			"&lt;table style=\"text-align:center;font-size:14px;background-color:#333333;color:#fff;\"&gt;" + "<br>" +
 				html4Space + "&lt;tr&gt;" + "<br>" +
 					"%s" +
 				html4Space + "&lt;/tr&gt;" + "<br>" +
