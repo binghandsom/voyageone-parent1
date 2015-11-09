@@ -11,7 +11,7 @@ require.config({
     // require-css 插件加载配置
     map: {
         '*': {
-            'css': 'dep/require-css/css'
+            'css': 'dep/require-css/css.min'
         }
     },
 
@@ -24,17 +24,17 @@ require.config({
         'angular-ui-select': 'dep/angular-ui-select/select.min',
         'angular-xeditable': 'dep/angular-xeditable/xeditable.min',
         'angular-translate': 'dep/angular-translate/angular-translate.min',
-        'ngDialog': 'dep/ngDialog/ngDialog',
-        'ngGrid': 'dep/ng-grid/ng-grid.debug',
+        'ngDialog': 'dep/ngDialog/ngDialog.min',
+        'ngGrid': 'dep/ng-grid/ng-grid.min',
         'underscore': 'dep/underscore/underscore-min',
         'flow': 'dep/ng-flow/ng-flow-standalone.min',
         'app': 'components/app',
         'bootstrap': 'components/bootstrap',
-        'chosen': "dep/chosen/chosen.jquery",
+        'chosen': "dep/chosen/chosen.jquery.min",
         'angular-chosen': "dep/chosen/angular-chosen-localytics/chosen",
         'angular-datatables': 'dep/datatables/angular-datatables',
-        'datatables': 'dep/datatables/jquery.dataTables.min',
-        'datatables-extend': 'dep/datatables/extend/code/dataTables.bootstrap',
+        'datatables': ['//cdn.bootcss.com/datatables/1.10.9/js/jquery.dataTables.min', 'dep/datatables/jquery.dataTables.min'],
+        'datatables-extend': ['//cdn.bootcss.com/datatables/1.10.9/js/dataTables.bootstrap.min', 'dep/datatables/extend/code/dataTables.bootstrap'],
         'filestyle': 'dep/filestyle'
     },
 
