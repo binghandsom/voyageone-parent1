@@ -182,6 +182,9 @@ public class MasterPropValueSettingServiceImpl implements MasterPropValueSetting
 			
 			List<PlatformInfoModel> platformInfo = platformInfoDao.getPlatformInfo(Integer.valueOf(categoryId));
 			responseMap.put("platformInfo", platformInfo);
+			//获取上新时的错误信息.
+			List<String> tmErrMsgs = masterPropValueSettingDao.getErrMsgs(channelId, levelValue);
+			responseMap.put("tmallErrMsgs",tmErrMsgs);
 		}
 
 		//设定产品图片
