@@ -131,7 +131,7 @@ public class BcbgAnalysisService extends BaseTaskService {
         $info("数据处理阶段结束");
 
         // 备份文件
-        // new Backup().fromData(feedFile, styleFile);
+        new Backup().fromData(feedFile, styleFile);
     }
 
     private File[] getDataFiles() {
