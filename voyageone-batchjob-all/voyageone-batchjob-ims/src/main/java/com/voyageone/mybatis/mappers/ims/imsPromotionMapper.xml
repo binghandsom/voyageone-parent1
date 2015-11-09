@@ -34,6 +34,7 @@
             <result column="product_id" property="product_id" />
             <collection property="skuList" javaType="ArrayList" ofType="HashMap" >
                 <result column="cnPriceFinalRmb" property="cnPriceFinalRmb" />
+                <result column="cnPriceRmb" property="cnPriceRmb" />
                 <result column="sku" property="sku"/>
             </collection>
         </collection>
