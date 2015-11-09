@@ -99,7 +99,7 @@ public class MasterDataMappingService {
             }
         }
 
-        platformService.constructCustomPlatformPropsBeforeUploadImage(tcb, mappingTypePropsMap, expressionParser, imageSet);
+        platformService.constructCustomPlatformPropsBeforeUploadImage(tcb, mappingTypePropsMap, expressionParser, imageSet, platformPropsWillBeFilted);
 
         //过滤掉platformProp的子孙子段
         filtDescendantPlatformProps(platformProps, platformPropsWillBeFilted);
@@ -153,8 +153,8 @@ public class MasterDataMappingService {
             if (masterPropMapping == null) {
                 logger.debug("can not find master mapping!");
             }
-            if ("vertical_image".equals(platformProp.getPlatformPropId())) {
-                logger.debug("find vertical_image");
+            if ("desc_module_user_mod_content".equals(platformProp.getPlatformPropId())) {
+                logger.debug("find desc_module_user_mod_content");
             }
 
             //如果主数据中有他的映射关系，第三步
