@@ -45,6 +45,7 @@
             t1.channel_id,
             t1.publish_promotion_price_status,
             floor(t2.cn_price_final_rmb * 100) AS cnPriceFinalRmb,
+            floor(t2.cn_price_rmb * 100) AS cnPriceRmb,
             t3.sku
         FROM
             (

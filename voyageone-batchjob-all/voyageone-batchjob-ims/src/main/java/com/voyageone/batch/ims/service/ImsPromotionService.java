@@ -120,7 +120,7 @@ public class ImsPromotionService extends BaseTaskService {
                         // 遍历code下面的所有SKU
                         skuList.forEach(map -> {
                             TipSkuPromUnitDTO tipSkuPromUnitDTO = new TipSkuPromUnitDTO();
-                            tipSkuPromUnitDTO.setDiscount(Long.parseLong(map.get("cnPriceFinalRmb").toString()));
+                            tipSkuPromUnitDTO.setDiscount(Long.parseLong(map.get("cnPriceRmb").toString()));
                             // 获取SKU对已TM的SKUID
                             skuids.getSkus().forEach(sku -> {
                                 if (sku.getOuterId() != null) {
@@ -137,7 +137,7 @@ public class ImsPromotionService extends BaseTaskService {
                     // ITEM单位更新
                     List<Map> skuList = (List<Map>) productList.get(0).get("skuList");
                     TipPromUnitDTO tipPromUnitDTO = new TipPromUnitDTO();
-                    tipPromUnitDTO.setDiscount(Long.parseLong(skuList.get(0).get("cnPriceFinalRmb").toString()));
+                    tipPromUnitDTO.setDiscount(Long.parseLong(skuList.get(0).get("cnPriceRmb").toString()));
                     tipItemPromDTO.setItemLevelProm(tipPromUnitDTO);
                 }
                 // 调用天猫特价宝
