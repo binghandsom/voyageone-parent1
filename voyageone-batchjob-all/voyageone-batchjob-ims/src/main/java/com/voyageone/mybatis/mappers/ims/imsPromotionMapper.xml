@@ -45,6 +45,7 @@
             t1.channel_id,
             t1.publish_promotion_price_status,
             floor(t2.cn_price_final_rmb * 100) AS cnPriceFinalRmb,
+            floor(t2.cn_price_rmb * 100) AS cnPriceRmb,
             t3.sku
         FROM
             (
@@ -61,6 +62,7 @@
                     a.channel_id = #{channelId}
                 AND a.cart_id = #{cartId}
                 AND a.num_iid != '0'
+                AND a.num_iid != ''
                 AND a.publish_promotion_price_status = 0
                 LIMIT 0,100
             ) t1
@@ -69,6 +71,8 @@
         AND t1.cart_id = t2.cart_id
         LEFT JOIN Synship.wms_bt_item_details t3 ON t1.`code` = t3.itemcode
         AND t1.channel_id = t3.order_channel_id
+        where
+            t2.cn_price != t2.cn_price_rmb
         ORDER BY
             num_iid
     </select>
