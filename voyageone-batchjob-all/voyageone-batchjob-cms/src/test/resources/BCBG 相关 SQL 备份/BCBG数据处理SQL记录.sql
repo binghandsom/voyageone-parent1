@@ -96,6 +96,9 @@ UPDATE voyageone_cms.cms_zz_worktable_bcbg_superfeed b LEFT JOIN voyageone_cms.c
 SET b.status = 10
 WHERE bf.status = 10;
 
+# 2015-11-09 15:53:59 新增
+UPDATE voyageone_cms.cms_zz_worktable_bcbg_superfeed b JOIN voyageone_cms.cms_zz_worktable_bcbg_superfeed_full bf ON b.MATNR = bf.MATNR SET bf.status = 30 WHERE bf.status > 10;
+
 DELETE bf FROM
   voyageone_cms.cms_zz_worktable_bcbg_superfeed_full bf JOIN voyageone_cms.cms_zz_worktable_bcbg_superfeed b
     ON b.MATNR = bf.MATNR
