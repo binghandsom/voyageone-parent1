@@ -169,6 +169,8 @@
         WHERE
             store.order_channel_id = #{order_channel_id}
         AND
+            store.store_id = #{store_id}
+        AND
             store.inventory_manager = '0'
     </select>
     
