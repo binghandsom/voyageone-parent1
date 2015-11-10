@@ -2267,6 +2267,17 @@ public class OrderInfoImportService {
 					isAutoApproved = checkShipName(shipName);
 				}
 			}
+
+			// 地址中包含菜鸟驿站的订单是否允许自动Arrpoved
+			if (isAutoApproved) {
+				String isCaiNiaoYiZhanCheck = ChannelConfigs.getVal1(newOrderInfo.getOrderChannelId(), Name.is_cainiaoyizhan_check);
+				if (Constants.ONE_CHAR.equals(isCaiNiaoYiZhanCheck)) {
+					String shipAddressStreet2 = transferStr(newOrderInfo.getShippingAddressStreet2());
+					if (shipAddressStreet2.contains("菜鸟驿站")) {
+						isAutoApproved = false;
+					}
+				}
+			}
 		}
 		
 		return isAutoApproved;
@@ -2339,6 +2350,17 @@ public class OrderInfoImportService {
 			if (Constants.ONE_CHAR.equals(isTrueNameCheck)) {
 				String shipName = newOrderInfo.getShippingReceiverName();
 				isAutoApproved = checkShipName(shipName);
+			}
+		}
+
+		// 地址中包含菜鸟驿站的订单是否允许自动Arrpoved
+		if (isAutoApproved) {
+			String isCaiNiaoYiZhanCheck = ChannelConfigs.getVal1(newOrderInfo.getOrderChannelId(), Name.is_cainiaoyizhan_check);
+			if (Constants.ONE_CHAR.equals(isCaiNiaoYiZhanCheck)) {
+				String shipAddressStreet2 = transferStr(newOrderInfo.getShippingAddressStreet2());
+				if (shipAddressStreet2.contains("菜鸟驿站")) {
+					isAutoApproved = false;
+				}
 			}
 		}
 		
