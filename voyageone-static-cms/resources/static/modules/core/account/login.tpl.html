@@ -1,7 +1,5 @@
-
 <div ng-if="alerts.length > 0" class="w40p hint" ng-repeat="alert in alerts" close="closeAlert($index)" ng-bind="alert.msg"></div>
-
-<div class="mainBanners" ng-controller="loginController" ng-init="initialize()" ng-cloak="">
+<div class="mainBanners" ng-controller="loginController" ng-init="initialize()">
     <form name="loginForm"  novalidate="">
         <!--<div class="form-text">-->
         <input type="text" name="txtUserName" id="txtUserName" class="text" ng-model="user.userName" value="USERNAME" placeholder="username or email" required>
