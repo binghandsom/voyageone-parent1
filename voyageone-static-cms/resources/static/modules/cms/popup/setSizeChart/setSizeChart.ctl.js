@@ -31,7 +31,7 @@ define (function (require) {
                         .withOption('processing', true)
                         .withOption('scrollY', '400px')
                         .withOption('scrollX', '100%')
-                        .withOption('scrollCollapse', true)
+                        .withOption('scrollCollapse', false)
                         .withPaginationType('full_numbers')
                 };
             };

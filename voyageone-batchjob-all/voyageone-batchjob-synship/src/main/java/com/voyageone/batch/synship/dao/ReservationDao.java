@@ -1,6 +1,7 @@
 package com.voyageone.batch.synship.dao;
 
 import com.voyageone.base.dao.BaseDao;
+import com.voyageone.batch.synship.modelbean.ReservationBean;
 import com.voyageone.batch.synship.modelbean.TrackingBean;
 import com.voyageone.batch.synship.modelbean.TrackingSyncBean;
 import org.springframework.stereotype.Repository;
@@ -91,6 +92,63 @@ public class ReservationDao extends BaseDao {
         params.put("task_name", task_name);
 
         return updateTemplate.insert( "synShip_InsertReservationLogByStatus", params);
+    }
+
+    /**
+     * 取得发货渠道发生变化的订单
+     * @param order_channel_id 订单渠道
+     * @param status 状态
+     * @return List<String>
+     */
+    public List<ReservationBean> getPreShipChannel(String order_channel_id, String status, List<String> exceptShipChannelList) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("order_channel_id", order_channel_id);
+        params.put("status", status);
+        params.put("exceptShipChannelList", exceptShipChannelList);
+
+        return selectList("synShip_selectPreShipChannel", params);
+    }
+
+    /**
+     *
+     * @param syn_ship_no
+     * @param id
+     * @param status
+     * @param task_name
+     * @return
+     */
+    public int updateReservationByShipChannel(String syn_ship_no, long id, String status, String ship_channel, String task_name) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("syn_ship_no", syn_ship_no);
+        params.put("id", id);
+        params.put("status", status);
+        params.put("ship_channel", ship_channel);
+        params.put("task_name", task_name);
+
+        return updateTemplate.update("synShip_UpdateReservationByShipChannel", params);
+    }
+
+    /**
+     *
+     * @param syn_ship_no
+     * @param res_note
+     * @param task_name
+     * @return
+     */
+    public int insertReservationLogByID(String syn_ship_no, long id,  String res_note, String task_name) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("syn_ship_no", syn_ship_no);
+        params.put("id", id);
+        params.put("res_note", res_note);
+        params.put("task_name", task_name);
+
+        return updateTemplate.insert( "synShip_InsertReservationLogByID", params);
     }
 
 

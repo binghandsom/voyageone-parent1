@@ -194,7 +194,7 @@ class BcbgWsdlInsert extends BcbgWsdlBase {
                     //  处理类型 3:product; 4:item
                     if (productFeedDetailBean.getBeanType() == 3 || productFeedDetailBean.getBeanType() == 4)
                         productFailList.add(productFeedDetailBean.getDealObject().getCode());
-                    $info("INSERT 接口返回: ", productFeedDetailBean.getResultMessage());
+                    $info("INSERT 接口返回: [%s] %s", productFeedDetailBean.getResultType(), productFeedDetailBean.getResultMessage());
                 }
             }
 

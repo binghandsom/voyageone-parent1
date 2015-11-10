@@ -56,18 +56,28 @@ define([
 
             vm.search.store =vm.stores[0].store_id;
 
+            $('#location-bind-code').focus();
+
         });
 
         function searchItemLocation() {
+
+            var code = $('#location-bind-code');
+            var location = $('#location-bind-location');
+
+            code.focus();
 
             if (!vm.search.code) {
                 notify("WMS_LOCATION_CODE_UN_VALID");
                 return;
             }
 
+            var search_code = vm.search.code;
+            vm.search.code = "";
+
             // 根据条件搜索
             locationService.doSearchItemLocation(
-                vm.search.code,
+                search_code,
                 vm.search.store
             ).then(
                 function (res) {
@@ -78,6 +88,8 @@ define([
 
                     vm.itemLocations = res.itemLocations;
                     vm.itemLocationLogs = res.itemLocationLogs;
+
+                    location.focus();
                 });
         }
 
@@ -97,8 +109,10 @@ define([
 
         function addItemLocation() {
             var location_name = vm.add.location;
+            var location = $('#location-bind-location');
 
             vm.add.location = "";
+            location.focus();
 
             if (!vm.curr.code) {
                 notify("WMS_LOCATION_SEARCH");

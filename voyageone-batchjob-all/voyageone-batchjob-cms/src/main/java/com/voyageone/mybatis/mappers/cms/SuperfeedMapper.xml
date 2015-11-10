@@ -753,6 +753,7 @@ select
     ,${i_itemcode} as i_itemcode
     ,${i_size} as i_size
     ,${i_barcode} as i_barcode
+    ,${i_client_sku} as i_client_sku
     ,1 as i_active
     from
    ${tableName}

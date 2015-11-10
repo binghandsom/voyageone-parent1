@@ -395,6 +395,7 @@ define (function (require) {
                     CMS_TXT_CATEGORY_ATTRIBUTE_NO_SET: 'Category\'s Attributes No Match',
                     CMS_TXT_PRODUCT_ATTRIBUTE_NO_FINISH: 'Product\'s Attributes No Finish',
                     CMS_TXT_PRODUCT_NO_APPROVE: 'Product No Approve',
+                    CMS_TXT_PRODUCT_NO_PUBLISH: 'Product No Publish',
                     CMS_TXT_PRODUCT_NO_UPLOAD: 'Product No Upload',
                     CMS_TXT_PRODUCT_UPLOAD_FAIL: 'Product Upload Fail',
 

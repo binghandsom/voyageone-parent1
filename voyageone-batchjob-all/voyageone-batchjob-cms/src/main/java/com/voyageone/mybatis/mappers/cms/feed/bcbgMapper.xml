@@ -37,6 +37,8 @@
 
     <update id="cms_zz_worktable_bcbg_superfeed_full_updateStatusWithoutFail">
         UPDATE voyageone_cms.cms_zz_worktable_bcbg_superfeed_full
+          JOIN voyageone_cms.cms_zz_worktable_bcbg_styles_full
+            ON styleID = CONCAT(SATNR,'-',COLOR)
         SET status = #{success_status}
         <where>
             status = #{target_status}

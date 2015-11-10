@@ -330,7 +330,7 @@
                     self_transer.transfer_id,
                     self_transer.transfer_package_id,
                     self_transer.transfer_barcode,
-                    self_transer.transfer_sku,
+                    self_transer.client_sku,
                     self_transer.transfer_qty,
                     self_transer.created
                 FROM
@@ -343,7 +343,7 @@
                         transfer_item.transfer_id,
                         transfer_item.transfer_package_id,
                         transfer_item.transfer_barcode,
-                        transfer_item.transfer_sku,
+                        item_detail.client_sku,
                         transfer_item.transfer_qty,
                         transfer_item.created
                     FROM
@@ -351,13 +351,19 @@
                     LEFT JOIN wms_bt_transfer_detail transfer_detail ON transfer.transfer_id = transfer_detail.transfer_id
                     LEFT JOIN wms_bt_transfer_item transfer_item ON transfer.transfer_id = transfer_item.transfer_id
                     AND transfer_detail.transfer_package_id = transfer_item.transfer_package_id
+					LEFT JOIN wms_bt_item_details item_detail On transfer.order_channel_id = item_detail.order_channel_id
+					AND transfer_item.transfer_sku = item_detail.sku
                     WHERE
                         transfer.order_channel_id = #{OrderChannelID}
                     AND transfer.transfer_type = '3'
                     AND transfer.transfer_status = '1'
                     AND transfer.active = 1
+                    AND NOT EXISTS (select 1
+                                        from wms_bt_client_shipment shipment
+                                        where shipment.order_channel_id = transfer.order_channel_id
+                                        and shipment.transfer_id = transfer.transfer_id)
                 ) self_transer ON self_transer.transfer_barcode = c_package_item.upc
-                AND self_transer.transfer_sku = c_package_item.article_number
+                AND self_transer.client_sku = c_package_item.article_number
                 WHERE
                     c_shipment.order_channel_id = #{OrderChannelID}
                 AND c_shipment.transfer_id = 0
