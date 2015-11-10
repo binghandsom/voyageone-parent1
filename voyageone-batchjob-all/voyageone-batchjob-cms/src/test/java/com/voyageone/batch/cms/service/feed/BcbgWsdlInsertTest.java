@@ -7,17 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.io.FileNotFoundException;
-
 /**
- * 解析测试..
- * Created by Jonas on 10/14/15.
+ * 插入部分的单元测试
+ * Created by Jonas on 11/9/15.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:context-cms-test.xml")
-public class BcbgAnalysisServiceTest {
+public class BcbgWsdlInsertTest {
     @Autowired
-    private BcbgAnalysisService bcbgAnalysisService;
+    private BcbgWsdlInsert bcbgWsdlInsert;
 
     @Before
     public void setUp() throws Exception {
@@ -25,12 +23,7 @@ public class BcbgAnalysisServiceTest {
     }
 
     @Test
-    public void testAppendDataFromFile() throws FileNotFoundException {
-        bcbgAnalysisService.appendDataFromFile();
-    }
-
-    @Test
-    public void testBcbgAnalysisService() {
-        bcbgAnalysisService.startup();
+    public void testPostNewProduct() throws Exception {
+        bcbgWsdlInsert.postNewProduct();
     }
 }

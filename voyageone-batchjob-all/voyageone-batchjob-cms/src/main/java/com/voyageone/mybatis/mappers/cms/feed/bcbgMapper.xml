@@ -37,24 +37,17 @@
 
     <update id="cms_zz_worktable_bcbg_superfeed_full_updateStatusWithoutFail">
         UPDATE voyageone_cms.cms_zz_worktable_bcbg_superfeed_full
-          JOIN voyageone_cms.cms_zz_worktable_bcbg_styles_full
-            ON styleID = CONCAT(SATNR,'-',COLOR)
-        SET status = #{success_status}
+          JOIN voyageone_cms.cms_zz_worktable_bcbg_styles_full ON styleID = CONCAT(SATNR,'-',COLOR)
+           SET status = #{success_status}
         <where>
             status = #{target_status}
             <if test="modelFailList != null and modelFailList.size() > 0">
-                AND SATNR NOT IN (
-                <foreach collection="modelFailList" item="model" separator=",">
-                    #{model}
-                </foreach>
-                )
+                AND SATNR NOT IN (<foreach collection="modelFailList" item="model" separator=",">#{model}</foreach>)
             </if>
             <if test="productFailList != null and productFailList.size() > 0">
-                AND CONCAT(SATNR, MATNR) NOT IN (
-                <foreach collection="productFailList" item="code" separator=",">
-                    #{code}
-                </foreach>
-                )
+                <if test="modelFailList == null or 1 > modelFailList.size()">AND</if>
+                <if test="modelFailList != null and modelFailList.size() > 0">OR status = #{target_status} AND</if>
+                CONCAT(SATNR, MATNR) NOT IN (<foreach collection="productFailList" item="code" separator=",">#{code}</foreach>)
             </if>
         </where>
     </update>

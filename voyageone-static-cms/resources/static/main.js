@@ -33,7 +33,8 @@ require.config({
         'bootstrap': 'components/bootstrap',
         'app': 'components/app',
         'flow': ['//cdn.bootcss.com/ng-flow/2.6.1/ng-flow-standalone.min', 'libs/angular/ng-flow/ng-flow-standalone.min'],
-        'css': ['//cdn.bootcss.com/require-css/0.1.8/css.min', 'libs/jquery/require-css/css']
+        'css': ['//cdn.bootcss.com/require-css/0.1.8/css.min', 'libs/jquery/require-css/css'],
+        'ui-load': 'libs/angular/ui-load/ui-load'
     },
 
     map: {

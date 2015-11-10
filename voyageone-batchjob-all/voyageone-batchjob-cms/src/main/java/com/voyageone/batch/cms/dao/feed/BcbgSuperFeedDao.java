@@ -12,7 +12,7 @@ import java.util.Map;
 
 /**
  * 所有 bcbg 数据解析的操作
- *
+ * <p>
  * Created by Jonas on 10/13/15.
  */
 @Repository
@@ -60,6 +60,13 @@ public class BcbgSuperFeedDao extends BaseDao {
 
         int insertFeedCount = insert("cms_zz_worktable_bcbg_superfeed_full_insertFullByCode", params);
 
-        return new int[] { deleteFeedCount, insertFeedCount };
+        return new int[]{deleteFeedCount, insertFeedCount};
+    }
+
+    /**
+     * 更新所有 30(updating) 的商品为成功.
+     */
+    public int[] updateUpdatingSuccess() {
+        return updateFull(null);
     }
 }
