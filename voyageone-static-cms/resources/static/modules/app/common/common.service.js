@@ -41,6 +41,17 @@ define (function (require) {
             };
 
             /**
+             * try get user info using ajax ( always remoute not local cache )
+             */
+            this.tryGetUserInfo = function() {
+              return ajaxService
+              .ajaxPostOnlyByUrl(commonAction.common_doGetUserInfo)
+              .then(function (response) {
+                return response.data.userInfo;
+              });
+            };
+
+            /**
              * logout clear hte cookie, and init the userInfo.
              * @returns {r.promise|promise|qFactory.Deferred.promise|x.ready.promise|fd.g.promise}
              */
@@ -181,7 +192,7 @@ define (function (require) {
              */
             function setMasterInfoToSession(data) {
                 $rootScope.cmsMaster = data;
-                
+
                 angular.forEach(data.masterValue, function(masterInfo) {
 
                     switch (masterInfo.typeId.toString()) {

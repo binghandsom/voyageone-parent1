@@ -18,12 +18,13 @@ define([
   ]);
 
   function indexController($scope, commonService, userService, $location) {
-    // 如果没登陆
-    // 跳至登陆页
-    if (!userService.isLogin()) {
-      common.goToLoginPage();
-      return;
-    }
-    $location.path('/cms/common/index');
+    // 尝试发送登陆检测
+    commonService.tryGetUserInfo().then(function(user){
+      if (!user) {
+        common.goToLoginPage();
+        return;
+      }
+      $location.path('/cms/common/index');
+    });
   }
 });
