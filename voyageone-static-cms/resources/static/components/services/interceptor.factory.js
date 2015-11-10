@@ -37,12 +37,7 @@ define (function (require) {
              * @returns {*}
              */
             request: function (config) {
-
-                // 非 POST 时，无需处理
                 if (config.method !== 'POST') return config;
-
-                // 在发送请求为 POST 的时候（即，该请求为 Tomcat 处理的请求）
-                // 设置 Java 端需要的，或需要验证的信息
 
                 config.headers['Voyageone-User-Token'] = cookieService.getToken ();
                 config.headers['Voyageone-User-Lang'] = cookieService.getSelLanguage ();
@@ -63,13 +58,6 @@ define (function (require) {
                 return config;
             },
             responseError: function () {
-
-                sessionStorage.clear();
-
-                userService.init ();
-
-                cookieService.init ();
-
                 $location.path(commonRoute.common_error_index.hash);
             }
         };
