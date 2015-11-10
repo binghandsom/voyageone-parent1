@@ -25,4 +25,9 @@
         <level value="debug"></level>
         <appender-ref ref="ASYNC"/>
     </logger>
+    <logger name="com.voyageone.common.components.tmall" additivity="false">
+        <level value="info"></level>
+        <appender-ref ref="ASYNC"/>
+    </logger>
+
 </log4j:configuration>
