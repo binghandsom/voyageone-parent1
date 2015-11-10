@@ -18,13 +18,15 @@ define (function (require) {
         'userService',
         'cookieService',
         'commonRoute',
+        'notify',
         interceptorFactory]);
 
     function interceptorFactory(
         $location,
         userService,
         cookieService,
-        commonRoute
+        commonRoute,
+        notify
     ) {
 
         var _ = require ('underscore');
@@ -58,7 +60,9 @@ define (function (require) {
                 return config;
             },
             responseError: function () {
-                $location.path(commonRoute.common_error_index.hash);
+                window.lastErr = arguments;
+                console.log(arguments);
+                notify.danger('System error! <br/>Please contact administrators!');
             }
         };
     }
