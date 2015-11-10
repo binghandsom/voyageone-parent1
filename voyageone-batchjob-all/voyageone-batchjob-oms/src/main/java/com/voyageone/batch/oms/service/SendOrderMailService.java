@@ -335,47 +335,180 @@ public class SendOrderMailService {
 	 * 
 	 * @return
 	 */
-	public boolean sendSneakerhead88Top10Mail() {
-		
-		List<Map<String, String>> top10MapList = orderDao.getSendSneakerhead88Top10();
-		
-		if (top10MapList != null && top10MapList.size() > 0) {
-			
-			StringBuilder tbody = new StringBuilder();
-			
-			for (int i = 0; i < top10MapList.size(); i++) {
-				Map<String, String> top10Map = top10MapList.get(i);
-				
-				String wangwangId = String.valueOf(top10Map.get("wangwangId"));
-				String consumeMoney = String.valueOf(top10Map.get("consumeMoney"));
-				
-				// 邮件每行正文
-				String mailTextLine = 
-					String.format(OmsConstants.SNEAKERHEAD_TOP10_CHECK_ROW, "第" + (i+1) + "名", wangwangId, consumeMoney);
-				tbody.append(mailTextLine);
+//	public boolean sendSneakerhead88Top10Mail() {
+//
+//		List<Map<String, String>> top10MapList = orderDao.getSendSneakerhead88Top10();
+//
+//		if (top10MapList != null && top10MapList.size() > 0) {
+//
+//			StringBuilder tbody = new StringBuilder();
+//
+//			for (int i = 0; i < top10MapList.size(); i++) {
+//				Map<String, String> top10Map = top10MapList.get(i);
+//
+//				String wangwangId = String.valueOf(top10Map.get("wangwangId"));
+//				String consumeMoney = String.valueOf(top10Map.get("consumeMoney"));
+//
+//				// 邮件每行正文
+//				String mailTextLine =
+//					String.format(OmsConstants.SNEAKERHEAD_TOP10_CHECK_ROW, "第" + (i+1) + "名", wangwangId, consumeMoney);
+//				tbody.append(mailTextLine);
+//			}
+//
+//			// 需要发警告邮件
+//			if (tbody.length() > 0) {
+//				// 拼接table
+//				String body = String.format(OmsConstants.SNEAKERHEAD_TOP10_CHECK_TABLE, OmsConstants.SNEAKERHEAD_TOP10_CHECK_HEAD, tbody.toString());
+//
+//				// 拼接邮件正文
+//				StringBuilder emailContent = new StringBuilder();
+//				emailContent.append(Constants.EMAIL_STYLE_STRING).append(body);
+//				try {
+//					String receiver = "SNEAKERHEAD_TOP10";
+//					Mail.send2(receiver, OmsConstants.SNEAKERHEAD_TOP10_CHECK_SUBJECT, emailContent.toString());
+//					logger.info("邮件发送成功!");
+//
+//				} catch (MessagingException e) {
+//					logger.info("邮件发送失败！" + e);
+//
+//					return false;
+//				}
+//			}
+//		}
+//
+//		return true;
+//	}
+
+	/**
+	 * 统计消费前多少名顾客
+	 *
+	 * @return
+	 */
+	public boolean sendTopSpendingRankingMail(String orderChannelId, int topCount) {
+
+		List<Map<String, String>> topMapList = orderDao.getSneakerheadTopSpendingRanking(orderChannelId, topCount);
+
+		if (topMapList != null && topMapList.size() > 0) {
+
+			StringBuilder tbodyOut1 = new StringBuilder();
+			StringBuilder tbodyOut2 = new StringBuilder();
+
+			StringBuilder tbodyIn = new StringBuilder();
+
+			int topSize = topMapList.size();
+			for (int i = 0; i < topSize; i++) {
+				Map<String, String> topMap = topMapList.get(i);
+
+				// 旺旺ID
+				String wangwangId = String.valueOf(topMap.get("wangwangId"));
+				// 旺旺ID缩写
+				String wangwangIdShield = shieldWangWangId(wangwangId);
+				// 消费金额
+				String consumeMoney = String.valueOf(topMap.get("consumeMoney"));
+				// 名次
+				String rankingStr = "第" + (i+1) + "名";
+
+				// 页面显示用文本
+				String mailTextLineOut = "";
+				if (i < (topSize - 1)) {
+					mailTextLineOut = String.format(OmsConstants.SNEAKERHEAD_TOP_SPENDING_RANKING_ROW, rankingStr, wangwangIdShield, consumeMoney);
+				} else {
+					mailTextLineOut = String.format(OmsConstants.SNEAKERHEAD_TOP_SPENDING_RANKING_ROW, "&amp;nbsp;", "&amp;nbsp;", "&amp;nbsp;");
+				}
+
+				if (i < 56) {
+					tbodyOut1.append(mailTextLineOut);
+				} else {
+					tbodyOut2.append(mailTextLineOut);
+				}
+
+				// 邮件每行正文(内部使用)
+				if (i < (topSize - 1)) {
+					String mailTextLineIn =
+							String.format(OmsConstants.SNEAKERHEAD_TOP10_CHECK_ROW, rankingStr, wangwangId, consumeMoney);
+
+					tbodyIn.append(mailTextLineIn);
+				}
 			}
-			
-			// 需要发警告邮件
-			if (tbody.length() > 0) {
-				// 拼接table
-				String body = String.format(OmsConstants.SNEAKERHEAD_TOP10_CHECK_TABLE, OmsConstants.SNEAKERHEAD_TOP10_CHECK_HEAD, tbody.toString());
-				
+
+			// 需要发统计邮件
+			if (tbodyIn.length() > 0) {
+				OrderChannelBean channelBean = ChannelConfigs.getChannel(orderChannelId);
+				String channelName = channelBean.getFull_name();
+
+				// 页面显示用文本第一列
+				String col1 = String.format(OmsConstants.SNEAKERHEAD_TOP_SPENDING_RANKING_COLOUM, tbodyOut1.toString());
+				// 页面显示用文本第二列
+				String col2 = String.format(OmsConstants.SNEAKERHEAD_TOP_SPENDING_RANKING_COLOUM, tbodyOut2.toString());
+				// 页面显示用文本拼接table
+				StringBuilder table = new StringBuilder();
+				table.append(col1);
+				table.append(col2);
+				String bodyOut = String.format(OmsConstants.SNEAKERHEAD_TOP_SPENDING_RANKING_TABLE, table.toString());
+
+				// 内部用拼接table
+				String bodyIn = String.format(OmsConstants.SNEAKERHEAD_TOP10_CHECK_TABLE, channelName + OmsConstants.SNEAKERHEAD_TOP10_CHECK_HEAD, tbodyIn.toString());
+
 				// 拼接邮件正文
 				StringBuilder emailContent = new StringBuilder();
-				emailContent.append(Constants.EMAIL_STYLE_STRING).append(body);
+				// sneakerhead生成页面直接用html文本
+				if (OmsConstants.CHANNEL_SNEAKERHEAD.equals(orderChannelId)) {
+					emailContent.append(channelName + OmsConstants.SNEAKERHEAD_TOP10_CHECK_HEAD);
+					emailContent.append("，可以直接用于页面排版的html文本如下：");
+					emailContent.append("<br><br>");
+					emailContent.append(bodyOut);
+					emailContent.append("<br><br>");
+				}
+				emailContent.append(Constants.EMAIL_STYLE_STRING).append(bodyIn);
 				try {
-					String receiver = "SNEAKERHEAD_TOP10";
-					Mail.send2(receiver, OmsConstants.SNEAKERHEAD_TOP10_CHECK_SUBJECT, emailContent.toString());
-					logger.info("邮件发送成功!");
-					
+					String receiver = Codes.getCodeName("TOP_RANKING_MAIL_CONFIG", orderChannelId);
+					Mail.send(receiver, channelName + OmsConstants.SNEAKERHEAD_TOP10_CHECK_SUBJECT, emailContent.toString());
+					logger.info(channelName + "消费排名邮件发送成功！");
+
 				} catch (MessagingException e) {
-					logger.info("邮件发送失败！" + e);
-					
+					logger.info(channelName + "消费排名邮件发送失败！" + e);
+
 					return false;
 				}
 			}
 		}
-		
+
 		return true;
+	}
+
+	/**
+	 * 屏蔽旺旺ID
+	 *
+	 * @param wangwangId
+	 * @return
+	 */
+	private String shieldWangWangId(String wangwangId) {
+		if (StringUtils.isNullOrBlank2(wangwangId)) {
+			return "";
+		}
+
+		String star = "*";
+
+		int nameLen = wangwangId.length();
+		if (nameLen < 4) {
+			if (nameLen == 1) {
+				wangwangId = star;
+			} else {
+				wangwangId = star + wangwangId.substring(1);
+			}
+		} else if (nameLen >= 4 && nameLen <= 7) {
+			wangwangId = star + wangwangId.substring(1, nameLen - 1) + star;
+		} else {
+			wangwangId = star + wangwangId.substring(1, 6) + star;
+		}
+
+		return wangwangId;
+	}
+
+	public static void main(String[] args) {
+		String wangwang = "a天aq";
+		SendOrderMailService service = new SendOrderMailService();
+		wangwang = service.shieldWangWangId(wangwang);
+		System.out.print(wangwang);
 	}
 }
