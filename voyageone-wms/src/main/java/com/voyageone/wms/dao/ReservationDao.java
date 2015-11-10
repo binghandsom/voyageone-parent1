@@ -52,7 +52,7 @@ public class ReservationDao extends BaseDao {
      * @param params 对象
      * @return List<FromReservation>
      */
-    public String getChangeStoreFlg(String params) {
+    public String getChangeStoreFlg(FormReservation params) {
         String change_store_flg = "1";
         int result = selectOne(Constants.DAO_NAME_SPACE_WMS + "wms_reservation_getChangeStoreFlg", params);
 
