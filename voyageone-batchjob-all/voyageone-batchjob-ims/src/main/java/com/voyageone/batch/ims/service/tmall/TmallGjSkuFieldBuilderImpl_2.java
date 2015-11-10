@@ -8,10 +8,14 @@ import com.taobao.top.schema.value.Value;
 import com.voyageone.batch.ims.ImsConstants;
 import com.voyageone.batch.ims.bean.PlatformUploadRunState;
 import com.voyageone.batch.ims.bean.TmallUploadRunState;
+import com.voyageone.batch.ims.bean.tcb.AbortTaskSignalInfo;
+import com.voyageone.batch.ims.bean.tcb.TaskSignal;
+import com.voyageone.batch.ims.bean.tcb.TaskSignalType;
 import com.voyageone.batch.ims.bean.tcb.UploadProductTcb;
 import com.voyageone.batch.ims.modelbean.*;
 import com.voyageone.batch.ims.service.AbstractSkuFieldBuilder;
 import com.voyageone.batch.ims.service.SkuTemplateSchema;
+import com.voyageone.batch.ims.service.UploadImageHandler;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.ims.enums.CmsFieldEnum;
 import org.apache.commons.logging.Log;
@@ -229,7 +233,7 @@ public class TmallGjSkuFieldBuilderImpl_2 extends AbstractSkuFieldBuilder{
         return true;
     }
 
-    private Field buildSkuProp(int platformId, String categoryCode, PlatformPropBean platformProp, List<String> excludeColorValues, CmsModelPropBean cmsModelProp, TmallUploadRunState.TmallContextBuildCustomFields contextBuildCustomFields) {
+    private Field buildSkuProp(int platformId, String categoryCode, PlatformPropBean platformProp, List<String> excludeColorValues, CmsModelPropBean cmsModelProp, TmallUploadRunState.TmallContextBuildCustomFields contextBuildCustomFields) throws TaskSignal{
         Map<String, CmsCodePropBean> usingColorMap = contextBuildCustomFields.getUsingColorMap();
         Map<String, CmsSkuPropBean> usingSkuMap = contextBuildCustomFields.getUsingSkuMap();
 
@@ -368,7 +372,7 @@ public class TmallGjSkuFieldBuilderImpl_2 extends AbstractSkuFieldBuilder{
             if (propImageStr != null && !"".equals(propImageStr)) {
                 String propImages[] = propImageStr.split(",");
                 String propImage = propImages[0];
-                String codePropFullImageUrl = String.format(codeImageTemplate, propImage);
+                String codePropFullImageUrl = UploadImageHandler.encodeImageUrl(String.format(codeImageTemplate, propImage));
                 complexValue.setInputFieldValue(propId_colorExtend_image, codePropFullImageUrl);
                 imageSet.add(codePropFullImageUrl);
                 if (srcUrlColorExtendValueMap != null)
@@ -382,7 +386,7 @@ public class TmallGjSkuFieldBuilderImpl_2 extends AbstractSkuFieldBuilder{
         return colorExtendField;
     }
 
-    private Field buildSkuExtendProp(PlatformPropBean platformProp, TmallUploadRunState.TmallContextBuildCustomFields contextBuildCustomFields) {
+    private Field buildSkuExtendProp(PlatformPropBean platformProp, TmallUploadRunState.TmallContextBuildCustomFields contextBuildCustomFields) throws TaskSignal {
         UploadProductTcb uploadProductTcb = contextBuildCustomFields.getPlatformContextBuildFields().getPlatformUploadRunState().getUploadProductTcb();
         WorkLoadBean workLoadBean = uploadProductTcb.getWorkLoadBean();
 
@@ -427,7 +431,14 @@ public class TmallGjSkuFieldBuilderImpl_2 extends AbstractSkuFieldBuilder{
             extendSizeComplexValue.setInputFieldValue(propId_skuExtend_size, size);
 
             String sizeId = customSizeNameIdMap.get(size);
+
+            if (sizeId == null) {
+                String failCause = "no custom size name " + size;
+                throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(failCause));
+            }
+
             Map<String, String> customSizePropMap = allCustomSizePropMap.get(sizeId);
+
             for (Map.Entry<String, String> entry : customSizePropMap.entrySet())
             {
                 extendSizeComplexValue.setInputFieldValue(entry.getKey(), entry.getValue());
@@ -446,7 +457,7 @@ public class TmallGjSkuFieldBuilderImpl_2 extends AbstractSkuFieldBuilder{
     }
 
     @Override
-    public List<Field> buildSkuInfoField(int cartId, String categoryCode, List<PlatformPropBean> platformProps, List<String> excludeColorValues, CmsModelPropBean cmsModelProp, PlatformUploadRunState.PlatformContextBuildCustomFields contextBuildCustomFields, Set<String> imageSet) {
+    public List<Field> buildSkuInfoField(int cartId, String categoryCode, List<PlatformPropBean> platformProps, List<String> excludeColorValues, CmsModelPropBean cmsModelProp, PlatformUploadRunState.PlatformContextBuildCustomFields contextBuildCustomFields, Set<String> imageSet) throws TaskSignal{
         init(platformProps);
         TmallUploadRunState.TmallContextBuildCustomFields tmallContextBuildCustomFields = (TmallUploadRunState.TmallContextBuildCustomFields) contextBuildCustomFields;
 
