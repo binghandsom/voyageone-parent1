@@ -92,7 +92,7 @@ public class ImsPromotionService extends BaseTaskService {
      * @param promotionId
      */
     private void updatePromotion(String channelId, String cartId, Long promotionId, String priceField) {
-        List<Map> items = promotionDao.getPromotionItem(channelId, cartId);
+        List<Map> items = promotionDao.getPromotionItem(channelId, cartId, priceField);
         // 取得shop信息
         ShopBean shopBean = ShopConfigs.getShop(channelId, cartId);
 //        shopBean.setAppKey("21008948");

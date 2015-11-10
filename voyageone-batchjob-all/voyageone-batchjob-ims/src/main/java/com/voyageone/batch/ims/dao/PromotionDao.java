@@ -19,10 +19,11 @@ public class PromotionDao extends BaseDao{
      * @param cardId
      * @return
      */
-    public List<Map> getPromotionItem(String channelId, String cartId){
+    public List<Map> getPromotionItem(String channelId, String cartId, String priceField){
         Map<String,Object> parameter = new HashMap<>();
         parameter.put("channelId",channelId);
         parameter.put("cartId", cartId);
+        parameter.put("price", priceField);
 
         List<Map> data = selectList("ims_promotion_select", parameter);
 
