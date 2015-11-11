@@ -233,7 +233,7 @@ public abstract class PostOrderLogic {
 				String sku = de.getKey().toString();
 				Double skuPrice = Double.valueOf((de.getValue().toString()));
 				Integer quantity = productQuantity.get(sku);
-				Double percentDiscount = round((skuPrice * quantity / orderProductTotal) * orderDiscount);
+				Double percentDiscount = round((skuPrice * quantity / orderProductTotal * orderDiscount / quantity));
 				if (productDiscount.containsKey(sku)) {
 					Double discount = round(Double.valueOf(productDiscount.get(sku)) + percentDiscount);
 					productDiscount.remove(sku);
