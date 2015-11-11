@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+    <context:component-scan base-package="com.voyageone"/>
+
+    <bean id="dataSourceMaster" class="com.voyageone.base.dao.ProxoolDataSource">
+        <property name="driver" value="com.mysql.jdbc.Driver"/>
+        <property name="driverUrl"
+                  value="jdbc:mysql://10.0.0.24:3306/synship?user=root&amp;password=sneakerhead&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8"/>
+        <property name="user" value="root" />
+        <property name="password" value="sneakerhead" />
+    </bean>
+
+    <bean id="sqlSessionFactoryMaster"
+          class="org.mybatis.spring.SqlSessionFactoryBean"
+          p:dataSource-ref="dataSourceMaster"
+          p:mapperLocations="classpath*:com/voyageone/mybatis/mappers/**/*Mapper.xml" />
+
+    <bean id="updateTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg ref="sqlSessionFactoryMaster" />
+    </bean>
+</beans>
