@@ -1735,7 +1735,6 @@
 					cart_id IN ('20', '21', '23')
 				AND order_date_time >= '2015-11-10 16:00:00'
 				AND '2015-11-11 15:59:59' >= order_date_time
-				AND order_kind = '0'
 				AND order_status NOT IN ('Returned', 'Canceled')
 			) orderTop
 		GROUP BY
