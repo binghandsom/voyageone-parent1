@@ -977,7 +977,7 @@ public class ImsBeatService extends BaseAppService {
          * Comment
          */
 
-        String errTemplatePath = readValue(ERROR_CODE_TEMPLATE);
+        String errTemplatePath = readValue(ERROR_CODE_TEMPLATE_C);
 
         // 打开文档
         try (InputStream inputStream = new FileInputStream(errTemplatePath);
