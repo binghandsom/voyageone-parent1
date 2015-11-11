@@ -2,6 +2,25 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.batch.synship.sql">
 
+    <select id="synShip_selectPreShipChannel" resultType="com.voyageone.batch.synship.modelbean.ReservationBean">
+        select
+            res.syn_ship_no,
+            res.id,
+            res.status,
+            wms_getShippingMethod(res.order_channel_id,res.order_number,res.id) ship_channel
+        from
+            tt_reservation res
+        where
+            res.order_channel_id = #{order_channel_id}
+        and res.status = #{status}
+        <if test="exceptShipChannelList != null and exceptShipChannelList.size() != 0">
+            AND  res.ship_channel not in
+            <foreach collection="exceptShipChannelList" item="shipChannel" open="(" separator="," close=")">#{shipChannel}
+            </foreach>
+        </if>
+        and res.ship_channel != wms_getShippingMethod(res.order_channel_id,res.order_number,res.id)
+    </select>
+
     <!--Reservation状态更新 -->
     <update id="synShip_UpdateReservationStatus">
         UPDATE
@@ -26,6 +45,22 @@
             syn_ship_no = #{syn_ship_no}
         AND
             status = #{before_status}
+    </update>
+
+    <!--Reservation发货渠道更新 -->
+    <update id="synShip_UpdateReservationByShipChannel">
+        UPDATE
+            tt_reservation
+        SET
+            ship_channel = #{ship_channel},
+            update_time = now(),
+            update_person = #{task_name}
+        WHERE
+            syn_ship_no = #{syn_ship_no}
+        AND
+            id = #{id}
+        AND
+            status = #{status}
     </update>
 
 
@@ -113,6 +148,50 @@
         FROM tt_reservation
         WHERE syn_ship_no = #{syn_ship_no}
         AND status = #{status}
+        )
+    </insert>
+
+    <!--ReservationLog信息追加 -->
+    <insert id="synShip_InsertReservationLogByID">
+        insert into
+          wms_bt_reservation_log
+        (
+            order_channel_id,
+            reservation_id,
+            store_id,
+            order_number,
+            sku,
+            product,
+            res_status,
+            ship_channel,
+            res_note,
+            syn_flg,
+            active,
+            created,
+            creater,
+            modified,
+            modifier
+        )
+        (
+            SELECT
+            order_channel_id,
+            id,
+            store_id,
+            order_number,
+            sku,
+            product,
+            status,
+            ship_channel,
+            #{res_note},
+            '0',
+            '1',
+            now(),
+            #{task_name},
+            now(),
+            #{task_name}
+        FROM tt_reservation
+        WHERE syn_ship_no = #{syn_ship_no}
+        AND id = #{id}
         )
     </insert>
 </mapper>

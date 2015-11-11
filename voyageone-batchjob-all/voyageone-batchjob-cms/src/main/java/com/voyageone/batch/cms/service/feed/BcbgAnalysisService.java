@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Arrays;
 import java.util.List;
@@ -82,8 +83,18 @@ public class BcbgAnalysisService extends BaseTaskService {
 
         $info("开始处理 BCBG 数据");
 
-        Backup backup = new Backup();
+        appendDataFromFile();
 
+        // 处理下拉类属性
+        attributeListInsert();
+
+        // 使用接口提交
+        insertService.postNewProduct();
+        updateService.postUpdatedProduct();
+        attributeService.postAttributes();
+    }
+
+    protected void appendDataFromFile() throws FileNotFoundException {
         File[] files = getDataFiles();
 
         File feedFile = files[0];
@@ -119,16 +130,8 @@ public class BcbgAnalysisService extends BaseTaskService {
         transformer.new Context(channel, this).transform();
         $info("数据处理阶段结束");
 
-        // 处理下拉类属性
-        attributeListInsert();
-
-        // 使用接口提交
-        insertService.postNewProduct();
-        updateService.postUpdatedProduct();
-        attributeService.postAttributes();
-
         // 备份文件
-        backup.fromData(feedFile, styleFile);
+        new Backup().fromData(feedFile, styleFile);
     }
 
     private File[] getDataFiles() {

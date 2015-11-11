@@ -70,11 +70,11 @@
         <commons.lang3.version>3.3.2</commons.lang3.version>
 
         <!-- voyageone module version -->
-        <voyageone.common.version>0.2.13-SNAPSHOT</voyageone.common.version>
+        <voyageone.common.version>0.2.14-SNAPSHOT</voyageone.common.version>
         <voyageone.web.core.version>0.2.4-SNAPSHOT</voyageone.web.core.version>
         <voyageone.web.oms.version>0.2.17-SNAPSHOT</voyageone.web.oms.version>
         <voyageone.web.ims.version>0.0.5-SNAPSHOT</voyageone.web.ims.version>
-        <voyageone.web.wms.version>0.2.18-SNAPSHOT</voyageone.web.wms.version>
+        <voyageone.web.wms.version>0.2.20-SNAPSHOT</voyageone.web.wms.version>
         <voyageone.web.cms.version>0.2.1-SNAPSHOT</voyageone.web.cms.version>
         <voyageone.batchjob.core.version>0.2.0-SNAPSHOT</voyageone.batchjob.core.version>
         <voyageone.wsdl.core.version>0.0.1-SNAPSHOT</voyageone.wsdl.core.version>

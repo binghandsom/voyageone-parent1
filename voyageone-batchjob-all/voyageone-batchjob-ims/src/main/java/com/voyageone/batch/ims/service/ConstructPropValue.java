@@ -843,6 +843,11 @@ public class ConstructPropValue {
         customPlatformPropMapping.setPlatformPropId("prop_extend_9066257");
         platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
 
+        customPlatformPropMapping.setPlatformPropId("std_size_extends_20518");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMapping.setPlatformPropId("std_size_prop_20518_-1");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
         customPlatformPropMapping.setPlatformPropId("in_prop_150778146");
         platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
 
@@ -1083,6 +1088,11 @@ public class ConstructPropValue {
         tmallSkuInfo.setSku_type(skuType);
         platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
 
+        tmallSkuInfo.setProp_id("basecolor");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_1_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_1_Schema.EXTENDCOLOR_BASECOLOR);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
         //容量
         tmallSkuInfo.setProp_id("prop_10537981");
         skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_1_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_1_Schema.SKU_SIZE
@@ -1141,7 +1151,7 @@ public class ConstructPropValue {
 
         //尺码 (50009032)
         tmallSkuInfo.setProp_id("in_prop_148242406");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_1_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_1_Schema.INPUT_CUSTOM_SIZE_4);
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_1_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_1_Schema.SKU_SIZE, SkuTemplateSchema.SkuTemplate_1_Schema.EXTENDSIZE_SIZE);
         tmallSkuInfo.setSku_type(skuType);
         platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
 
@@ -1197,6 +1207,12 @@ public class ConstructPropValue {
         tmallSkuInfo.setSku_type(skuType);
         platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
 
+        tmallSkuInfo.setProp_id("std_size_prop_20518_-1");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.SKU_SIZE
+                , SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_SIZE);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
         tmallSkuInfo.setProp_id("custom_prop_1");
         skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_CUSTOM_SIZE_1);
         tmallSkuInfo.setSku_type(skuType);
@@ -1230,6 +1246,11 @@ public class ConstructPropValue {
 
         //尺码扩展
         tmallSkuInfo.setProp_id("std_size_extends_20509");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("std_size_extends_20518");
         skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE);
         tmallSkuInfo.setSku_type(skuType);
         platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
@@ -1474,7 +1495,7 @@ public class ConstructPropValue {
         RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
         ConstructPropValue util = new ConstructPropValue();
 
-        constructPlatformPropMappingCustom(platformPropCustomMappingDao);
+//        constructPlatformPropMappingCustom(platformPropCustomMappingDao);
         constructTmallSkuInfo(platformSkuInfoDao);
 //        constructTmallSkuInfo(platformSkuInfoDao);
         /*

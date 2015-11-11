@@ -11,11 +11,11 @@
 
         <!--每隔1分钟进行运单同步-->
         <task:scheduled ref="synShipSyncTrackingTask" method="run" cron="0 0/1 0-23 * * ?"/>
-        <!--每隔1分钟进行模拟Shipment-->
-        <task:scheduled ref="synShipSimShipmentTask" method="run" cron="0 0/1 0-23 * * ?"/>
+        <!--每隔5分钟进行模拟Shipment-->
+        <task:scheduled ref="synShipSimShipmentTask" method="run" cron="0 0/5 0-23 * * ?"/>
         <!--每隔半小时获取第三方物流信息-->
         <task:scheduled ref="getClientTrackingTask" method="run" cron="0 0/30 0-23 * * ?"/>
-        <!--每隔2分钟发送短消息-->
+        <!--每隔1分钟发送短消息-->
         <task:scheduled ref="sendSMSTask" method="run" cron="0 0/1 0-23 * * ?"/>
         <!--每隔2分钟验证身份证-->
         <task:scheduled ref="synShipValidIdCardTask" method="run" cron="0 0/2 0-23 * * ?"/>
@@ -23,6 +23,8 @@
         <task:scheduled ref="synShipGetEtkStatusTask" method="run" cron="0 0 0/1 * * ?"/>
         <!--每隔1小时进行物流状态轮询并设置揽收标志-->
         <task:scheduled ref="synShipSetTakeFlgTask" method="run" cron="0 0 0/1 * * ?"/>
+        <!--每隔1小时进行发货渠道预处理-->
+        <task:scheduled ref="synShipPreShipChannelTask" method="run" cron="0 0 0/1 * * ?"/>
 
     </task:scheduled-tasks>
 

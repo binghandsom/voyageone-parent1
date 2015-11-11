@@ -371,6 +371,7 @@ public class WmsBCBGInventoryReportingService extends BaseTaskService {
 
             // 本地文件生成路径
             File file = new File(ftpBean.getUpload_localpath() + "/" + ftpBean.getUpload_filename());
+            file.setWritable(true, false);
 
             try  (FileOutputStream fop = new FileOutputStream(file); ){
 

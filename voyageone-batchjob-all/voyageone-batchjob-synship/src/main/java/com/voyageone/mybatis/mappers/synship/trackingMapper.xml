@@ -290,6 +290,8 @@
             res_tracking.tracking_type = tracking.tracking_type
         AND
             tracking.use_flg = '1'
+        AND
+            tracking.tracking_type = 'EMS'
     </select>
 
     <!--订阅快递100 -->
