@@ -239,7 +239,7 @@ define(function (require) {
                          .withOption('serverSide', true)
                          .withOption('scrollY', '400px')
                          .withOption('scrollX', '100%')
-                         .withOption('scrollCollapse', true)
+                         .withOption('scrollCollapse', false)
                          .withOption('ajax', $scope.doGetPromotionProductList)
                          .withOption('createdRow',  function(row, data, dataIndex) {
                              // Recompiling so we can bind Angular directive to the DT

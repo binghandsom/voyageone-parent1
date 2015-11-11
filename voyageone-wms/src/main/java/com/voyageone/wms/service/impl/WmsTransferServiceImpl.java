@@ -2,6 +2,7 @@ package com.voyageone.wms.service.impl;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.base.exception.SystemException;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.StoreConfigEnums;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.StoreConfigs;
@@ -1044,10 +1045,17 @@ public class WmsTransferServiceImpl implements WmsTransferService {
 
         item.setSyn_flg(WmsConstants.SynFlg.UNSEND);
 
-        //该渠道找不到匹配SKU时，将Barcode设置为SKU，并且该记录的同步标志位设置为忽略
+        //该渠道找不到匹配SKU时，根据渠道进行判断：
+        // 允许的场合，将Barcode设置为SKU，并且该记录的同步标志位设置为忽略
+        // 不允许的场合，直接抛出错误
         if (StringUtils.isEmpty(sku)) {
-            sku = barcode;
-            item.setSyn_flg(WmsConstants.SynFlg.IGNORE);
+            if (to_store_channel_id.equals(ChannelConfigEnums.Channel.JC.getId())) {
+                sku = barcode;
+                item.setSyn_flg(WmsConstants.SynFlg.IGNORE);
+            } else {
+                throw new BusinessException(TransferMsg.INVALID_SKU);
+            }
+
         }
 
         item.setTransfer_id(detail.getTransfer_id());
