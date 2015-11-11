@@ -26,12 +26,11 @@
        <!--</select>-->
     <resultMap type="HashMap" id="imsPromotionMap">
         <result column="num_iid" property="num_iid"/>
-
         <result column="channel_id" property="channel_id"/>
         <result column="promotion_add_status" property="promotion_add_status" />
-        <result column="publish_promotion_price_status" property="publish_promotion_price_status" />
         <collection property="productList" javaType="ArrayList" ofType="HashMap" >
             <result column="product_id" property="product_id" />
+            <result column="publish_promotion_price_status" property="publish_promotion_price_status" />
             <collection property="skuList" javaType="ArrayList" ofType="HashMap" >
                 <result column="cnPriceFinalRmb" property="cnPriceFinalRmb" />
                 <result column="cnPriceRmb" property="cnPriceRmb" />
@@ -51,34 +50,45 @@
         FROM
             (
                 SELECT
+                    a.num_iid,
                     a.product_id,
                     a.`code`,
-                    a.num_iid,
-                    a.channel_id,
                     a.cart_id,
+                    a.channel_id,
                     a.publish_promotion_price_status
                 FROM
-                    voyageone_ims.ims_bt_product a
-                WHERE
-                    a.channel_id = #{channelId}
-                AND a.cart_id = #{cartId}
-                AND a.num_iid != '0'
-                AND a.num_iid != ''
-                AND a.publish_promotion_price_status = 0
-                LIMIT 0,100
+                    (
+                        SELECT
+                            b.num_iid,
+                            b.channel_id,
+                            b.cart_id,
+                            b.publish_promotion_price_status
+                        FROM
+                            voyageone_ims.ims_bt_product b
+                        WHERE
+                            b.channel_id = #{channelId}
+                        AND b.cart_id = #{cartId}
+                        AND b.num_iid != '0'
+                        AND b.num_iid != ''
+                        AND b.publish_promotion_price_status = 0
+                        GROUP BY
+                            num_iid,
+                            channel_id,
+                            cart_id
+                        LIMIT 0,
+                        100
+                    ) b
+                LEFT JOIN voyageone_ims.ims_bt_product a ON b.num_iid = a.num_iid
+                AND b.channel_id = a.channel_id
+                AND b.cart_id = a.cart_id
             ) t1
         LEFT JOIN voyageone_cms.cms_bt_cn_product_share t2 ON t1.product_id = t2.product_id
         AND t1.channel_id = t2.channel_id
         AND t1.cart_id = t2.cart_id
         LEFT JOIN Synship.wms_bt_item_details t3 ON t1.`code` = t3.itemcode
         AND t1.channel_id = t3.order_channel_id
-        where
-            <if test="price == 'cnPriceRmb'">
-            t2.cn_price != t2.cn_price_rmb
-            </if>
-            <if test="price == 'cnPriceFinalRmb'">
-                t2.cn_price != t2.cn_price_final_rmb
-            </if>
+        WHERE
+            t2.cn_price != t2.cn_price_final_rmb
         ORDER BY
             num_iid
     </select>
@@ -90,10 +100,10 @@
               modifier = 'ImsPromotionJob'
               WHERE
                   cart_id = #{cartId}
-              <if test="products != null and products.size > 0">
-                  AND product_id IN
-              <foreach item="item" index="index" collection="products" open="(" separator="," close=")">
-                     #{item.product_id}
+              <if test="numIid != null and numIid.size > 0">
+                  AND num_iid IN
+              <foreach item="item" index="index" collection="numIid" open="(" separator="," close=")">
+                     #{item}
               </foreach>
               </if>
        </update>
