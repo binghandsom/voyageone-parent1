@@ -28,7 +28,7 @@ public class ReservationDao extends BaseDao {
     }
 
     /**
-     * 需要临时库存分配的记录取得
+     * 需要库存分配的记录取得（物品级别）
      * @param OrderChannelID 订单渠道
      * @param row_count 抽出件数
      * @return List<ReservationBean>
@@ -45,7 +45,24 @@ public class ReservationDao extends BaseDao {
     }
 
     /**
-     * 需要临时库存分配的记录取得
+     * 需要库存分配的记录取得（订单级别）
+     * @param OrderChannelID 订单渠道
+     * @param row_count 抽出件数
+     * @return List<ReservationBean>
+     */
+    public List<ReservationBean> getAllotInventoryIntoByOrder(String OrderChannelID,int row_count) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("order_channel_id", OrderChannelID);
+        params.put("limit", row_count);
+
+        return selectList(Constants.DAO_NAME_SPACE_WMS + "wms_selectAllotInventoryIntoByOrder", params);
+
+    }
+
+    /**
+     * 需要库存分配的记录对应仓库取得
      * @param OrderChannelID 订单渠道
      * @param CartId CartId
      * @param Sku Sku
@@ -59,7 +76,46 @@ public class ReservationDao extends BaseDao {
         params.put("cart_id", CartId);
         params.put("sku", Sku);
 
-        return selectOne(Constants.DAO_NAME_SPACE_WMS + "wms_getAllotStore", params);
+        return updateTemplate.selectOne(Constants.DAO_NAME_SPACE_WMS + "wms_getAllotStore", params);
+
+    }
+
+    /**
+     * 需要库存分配的记录对应仓库取得(排除一些不需要的仓库)
+     * @param OrderChannelID 订单渠道
+     * @param CartId CartId
+     * @param Sku Sku
+     * @return long
+     */
+    public long getAllotStoreAgain(String OrderChannelID,String CartId, String Sku, String storeList) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("order_channel_id", OrderChannelID);
+        params.put("cart_id", CartId);
+        params.put("sku", Sku);
+        params.put("storeList", storeList);
+
+        return updateTemplate.selectOne(Constants.DAO_NAME_SPACE_WMS + "wms_getAllotStoreAgain", params);
+
+    }
+
+    /**
+     * 发货渠道的取得
+     * @param order_channel_id 订单渠道
+     * @param order_number 订单号
+     * @param reservationId
+     * @return 物品ID
+     */
+    public String getShippingMethod(String order_channel_id, long order_number, long reservationId){
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("order_channel_id", order_channel_id);
+        params.put("order_number", order_number);
+        params.put("reservationId", reservationId);
+
+        return updateTemplate.selectOne(Constants.DAO_NAME_SPACE_WMS + "wms_getShippingMethod", params);
 
     }
 
@@ -81,6 +137,44 @@ public class ReservationDao extends BaseDao {
     }
 
     /**
+     * 更新Reservation的发货渠道
+     * @param orderNumber 订单号
+     * @param reservationID reservationID
+     * @param shipChannel 发货渠道
+     * @return long
+     */
+    public long updateShipChannel(long orderNumber, long reservationID, String shipChannel) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("orderNumber", orderNumber);
+        params.put("reservationID", reservationID);
+        params.put("shipChannel", shipChannel);
+
+        return updateTemplate.update(Constants.DAO_NAME_SPACE_WMS + "wms_updateReservationShipChannel", params);
+
+    }
+
+    /**
+     * 更新Reservation的状态
+     * @param orderNumber 订单号
+     * @param reservationList reservationID一览
+     * @param status 状态
+     * @return long
+     */
+    public long updateReservationStatus(long orderNumber, List<Long> reservationList, String status) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("orderNumber", orderNumber);
+        params.put("reservationList", reservationList);
+        params.put("status", status);
+
+        return updateTemplate.update(Constants.DAO_NAME_SPACE_WMS + "wms_updateReservationStatus", params);
+
+    }
+
+    /**
      * OrderDetails的更新
      * @param orderNumber 订单号
      * @param itemNumber itemNumber
@@ -98,6 +192,26 @@ public class ReservationDao extends BaseDao {
         params.put("takeName", takeName);
 
         return updateTemplate.update(Constants.DAO_NAME_SPACE_WMS + "wms_updateOrderDetails", params);
+    }
+
+    /**
+     * 插入oms_bt_notes
+     * @param orderNumber 订单号
+     * @param source_order_id Web订单号
+     * @param note 备注
+     * @param takeName 更新者
+     * @return int
+     */
+    public int insertOrderNotes(long orderNumber, String source_order_id, String note, String takeName) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("orderNumber", orderNumber);
+        params.put("source_order_id", source_order_id);
+        params.put("note", note);
+        params.put("takeName", takeName);
+
+        return updateTemplate.insert(Constants.DAO_NAME_SPACE_WMS + "oms_bt_notes_insert", params);
     }
 
     /**

@@ -134,9 +134,9 @@ public interface OmsMessageConstants {
     public static final String MESSAGE_CODE_210064 = "210064";
     //	上传的文件中，没有Settlement数据
     public static final String MESSAGE_CODE_210065 = "210065";
-    //	上传的Settlement文件为空
+    //	上传的Accounting文件为空
     public static final String MESSAGE_CODE_210066 = "210066";
-    //	上传的Settlement文件，格式不正确
+    //	上传的Account文件，格式不正确
     public static final String MESSAGE_CODE_210067 = "210067";
     //	下单人不一致不能绑定
     public static final String MESSAGE_CODE_210068 = "210068";

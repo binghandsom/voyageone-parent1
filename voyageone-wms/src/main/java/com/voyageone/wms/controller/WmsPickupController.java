@@ -40,7 +40,7 @@ public class WmsPickupController extends BaseController {
     public void doInit(HttpServletResponse response, @RequestBody Map<String, Object> paramMap) {
 
         // 取得初始化的必要项目
-        Map<String, Object> result = pickupService.doInit(getUser());
+        Map<String, Object> result = pickupService.doInit(getUser(),WmsConstants.ReserveType.PickUp);
 
         // 设置返回画面的值
         AjaxResponseBean
@@ -84,7 +84,7 @@ public class WmsPickupController extends BaseController {
     @RequestMapping(PickupUrls.SCAN)
     public void scanPickup(@RequestBody Map<String, Object> paramMap, HttpServletResponse response) {
 
-        Map<String, Object> result = pickupService.getScanInfo(paramMap, getUser());
+        Map<String, Object> result = pickupService.getScanInfo(paramMap, getUser(),WmsConstants.ReserveType.PickUp);
 
         AjaxResponseBean
                 .newResult(true)

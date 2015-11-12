@@ -28,7 +28,7 @@ public interface OmsOrderAccountingsService {
 	 * @param user 当前用户
 	 * @return
 	 */
-	public void saveSettlementFile(MultipartFile file, AjaxResponseBean result, UserSessionBean user);
+	public void saveSettlementFile(String fileType, MultipartFile file, AjaxResponseBean result, UserSessionBean user);
 	
 
 }

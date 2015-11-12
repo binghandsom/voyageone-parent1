@@ -75,6 +75,8 @@
             typevalue.type_id = #{type_id}
         AND
             typevalue.value = reservation.status
+        Order By
+            sync.seq
         LIMIT #{limit}
   </select>
 

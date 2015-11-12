@@ -15,8 +15,8 @@
         <!--<task:scheduled ref="wmsSetPhysicsInventoryTask" method="run" cron="0 0/1 0-23 * * ?"/>-->
         <!--每隔1分钟进行逻辑库存计算（通过wmsSetClientInventoryTask来计算，该任务废止）-->
         <!--<task:scheduled ref="wmsSetLogicInventoryTask" method="run" cron="0 0/1 0-23 * * ?"/>-->
-        <!--每隔30秒进行库存分配（由于CMS情报通过Webservice来取得，该任务废止）-->
-        <!--<task:scheduled ref="wmsSetAllotInventoryTask" method="run" cron="0/30 * 0-23 * * ?"/>-->
+        <!--每隔30秒进行库存分配（订单级别使用）-->
+        <task:scheduled ref="wmsSetAllotInventoryTask" method="run" cron="0/30 * 0-23 * * ?"/>
         <!--每隔1分钟进行盘点比较-->
         <task:scheduled ref="wmsCompareStockTask" method="run" cron="0 0/1 0-23 * * ?"/>
         <!--每隔1分钟同步物品变化信息到synship-->
@@ -44,6 +44,8 @@
 
         <!--Receipt Confirmation 文件生成　-->
         <task:scheduled ref="wmsReceiptConfirmationJob" method="run" cron="15 0/5 0-23 * * ?"/>
+        <!--生成BCBG日报（以SKU集计物理库存）， 每天中午12点运行　-->
+        <task:scheduled ref="wmsBCBGInventoryReportingTask" method="run" cron="0 0 11 * * ?"/>
 
     </task:scheduled-tasks>
 

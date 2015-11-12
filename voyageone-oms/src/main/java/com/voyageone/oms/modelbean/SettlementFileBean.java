@@ -6,6 +6,7 @@ public class SettlementFileBean {
 	//	订单渠道ID
 	private String orderChannelId;
 	private String cartId;
+	private String fileType;
 	//	账务方式
 	private String payType;
 
@@ -39,6 +40,14 @@ public class SettlementFileBean {
 
 	public void setCartId(String cartId) {
 		this.cartId = cartId;
+	}
+
+	public String getFileType() {
+		return fileType;
+	}
+
+	public void setFileType(String fileType) {
+		this.fileType = fileType;
 	}
 
 	public void setOrderChannelId(String orderChannelId) {

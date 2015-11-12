@@ -663,4 +663,24 @@ public class OrderDetailDao extends BaseDao {
 
 		return ret;
 	}
+
+	/**
+	 * 订单汇率更新
+	 *
+	 * @return
+	 */
+	public boolean updateOrderRateInfo(String settlementFileId) {
+		boolean ret = false;
+
+		HashMap<String, Object> paraIn = new HashMap<String, Object>();
+		paraIn.put("settlementFileId", settlementFileId);
+
+		int retCount = updateTemplate.update(Constants.DAO_NAME_SPACE_OMS + "oms_bt_orders_updateOrderRateInfo", paraIn);
+
+		if (retCount > 0) {
+			ret = true;
+		}
+
+		return ret;
+	}
 }

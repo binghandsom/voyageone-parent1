@@ -712,6 +712,7 @@ select
 ,${p_msrp} as p_msrp
 ,${p_made_in_country} as p_made_in_country
 ,${pe_short_description} as pe_short_description
+  ,${p_product_type} as p_product_type
 ,${pe_long_description} as pe_long_description
 ,${ps_price}  as ps_price
 ,${cps_cn_price}  as cps_cn_price
@@ -752,6 +753,7 @@ select
     ,${i_itemcode} as i_itemcode
     ,${i_size} as i_size
     ,${i_barcode} as i_barcode
+    ,${i_client_sku} as i_client_sku
     ,1 as i_active
     from
    ${tableName}

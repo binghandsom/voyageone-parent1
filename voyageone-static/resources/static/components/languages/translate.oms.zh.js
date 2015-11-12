@@ -304,8 +304,11 @@ define (function (require) {
                     TXT_ORDER_TRACKING_NO: '运单号',
                     TXT_ORDER_TRACKING_AREA: '区域',
 
-                    TXT_ACCOUNTING_UPLOAD_SETTLEMENT_FILE: 'Settlement文件上传',
-                    TXT_ACCOUNTING_SEARCH: 'Settlement文件检索',
+                    TXT_ACCOUNTING_UPLOAD_ACCOUNTING_FILE: 'Accounting文件上传',
+                    TXT_ACCOUNTING_FILETYPE: '账务文件类型',
+                    TXT_ACCOUNTING_SETTLEMENT: 'Settlement',
+                    TXT_ACCOUNTING_TRANSACTION: 'Transaction',
+                    TXT_ACCOUNTING_SEARCH: 'Accounting文件检索',
                     TXT_ACCOUNTING_SEARCH_SEARCH_UPLOAD_DATE: '上传日',
                     TXT_RECORDNUMBER: '全部记录数 : ',
 

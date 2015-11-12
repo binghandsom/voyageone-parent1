@@ -303,56 +303,86 @@
     <!-- 取得Receipt Confirmation的记录 -->
     <select id="wms_bt_client_shipment_getReceiptConfirmation" parameterType="String" resultType="com.voyageone.batch.wms.modelbean.ReceiptConfirmationBean">
         SELECT
-            tm.brand,
-            tm.cartonNumber,
-            tm.customerPoNumber,
-            tm.custPoLineNo,
-            tm.upc,
-            tm.customerItem,
-            tm.quantityReceived,
-            tm.receiptDate,
-            tm.poNumber,
-            tm.shipmentId,
-            tm.transferId
+            tm.brand AS brand,
+            tm.ucc128_carton_no AS cartonNumber,
+            tm.sto_no AS customerPoNumber,
+            tm.sto_line_no AS custPoLineNo,
+            tm.upc AS upc,
+            tm.article_number AS customerItem,
+            tm.calc_qty AS quantityReceived,
+            tm.created AS receiptDate,
+            tm.transfer_id AS poNumber,
+            tm.shipment_id AS shipmentId,
+            tm.transfer_id AS transferId
         FROM
             (
                 SELECT
-                    client_shipment.brand AS brand,
-                    client_package.ucc128_carton_no AS cartonNumber,
-                    package_item.sto_no AS customerPoNumber,
-                    package_item.sto_line_no AS custPoLineNo,
-                    package_item.upc AS upc,
-                    transfer_item.transfer_sku AS customerItem,
-                    sum(transfer_item.transfer_qty) AS quantityReceived,
-                    transfer_item.created AS receiptDate,
-                    transfer.transfer_id AS poNumber,
-                    client_shipment.shipment_id AS shipmentId,
-                    transfer.transfer_id AS transferId
+                    c_shipment.brand,
+                    c_package.shipment_id,
+                    c_package.package_id,
+                    c_package.ucc128_carton_no,
+                    c_package_item.sto_no,
+                    c_package_item.sto_line_no,
+                    c_package_item.article_number,
+                    c_package_item.shipped_qty,
+                    c_package_item.calc_qty,
+                    c_package_item.upc,
+                    self_transer.transfer_id,
+                    self_transer.transfer_package_id,
+                    self_transer.transfer_barcode,
+                    self_transer.client_sku,
+                    self_transer.transfer_qty,
+                    self_transer.created
                 FROM
-                    wms_bt_client_shipment client_shipment
-                INNER JOIN wms_bt_client_package client_package ON client_shipment.shipment_id = client_package.shipment_id
-                INNER JOIN wms_bt_client_package_item package_item ON client_package.shipment_id = package_item.shipment_id
-                AND client_package.package_id = package_item.package_id
-                INNER JOIN wms_bt_transfer_item transfer_item ON transfer_item.transfer_barcode = package_item.upc
-                INNER JOIN wms_bt_transfer transfer ON transfer.transfer_id = transfer_item.transfer_id
+                    wms_bt_client_shipment c_shipment
+                LEFT JOIN wms_bt_client_package c_package ON c_shipment.shipment_id = c_package.shipment_id
+                LEFT JOIN wms_bt_client_package_item c_package_item ON c_package.package_id = c_package_item.package_id
+                AND c_package.shipment_id = c_package_item.shipment_id
+                LEFT JOIN (
+                    SELECT
+                        transfer_item.transfer_id,
+                        transfer_item.transfer_package_id,
+                        transfer_item.transfer_barcode,
+                        item_detail.client_sku,
+                        transfer_item.transfer_qty,
+                        transfer_item.created
+                    FROM
+                        wms_bt_transfer transfer
+                    LEFT JOIN wms_bt_transfer_detail transfer_detail ON transfer.transfer_id = transfer_detail.transfer_id
+                    LEFT JOIN wms_bt_transfer_item transfer_item ON transfer.transfer_id = transfer_item.transfer_id
+                    AND transfer_detail.transfer_package_id = transfer_item.transfer_package_id
+					LEFT JOIN wms_bt_item_details item_detail On transfer.order_channel_id = item_detail.order_channel_id
+					AND transfer_item.transfer_sku = item_detail.sku
+                    WHERE
+                        transfer.order_channel_id = #{OrderChannelID}
+                    AND transfer.transfer_type = '3'
+                    AND transfer.transfer_status = '1'
+                    AND transfer.active = 1
+                    AND NOT EXISTS (select 1
+                                        from wms_bt_client_shipment shipment
+                                        where shipment.order_channel_id = transfer.order_channel_id
+                                        and shipment.transfer_id = transfer.transfer_id)
+                ) self_transer ON self_transer.transfer_barcode = c_package_item.upc
+                AND self_transer.client_sku = c_package_item.article_number
                 WHERE
-                    client_shipment.syn_flg = '0'
-                AND client_shipment.transfer_id = 0
-                AND client_shipment.active = '1'
-                AND client_shipment.order_channel_id = #{OrderChannelID}
-                AND client_shipment.transfer_id = 0
-                AND transfer.order_channel_id = #{OrderChannelID}
-                AND transfer.transfer_type = '3'
-                AND transfer.transfer_id > 0
-                AND transfer.transfer_status = '1'
+                    c_shipment.order_channel_id = #{OrderChannelID}
+                AND c_shipment.transfer_id = 0
+                AND c_shipment.syn_flg = 0
+                AND c_shipment.active = 1
+                AND c_package_item.calc_qty = self_transer.transfer_qty
                 GROUP BY
-                    brand,
-                    upc,
-                    customerPoNumber,
-                    cartonNumber
+                    shipment_id,
+                    package_id,
+                    ucc128_carton_no,
+                    sto_no,
+                    sto_line_no,
+                    article_number
+                ORDER BY
+                    ucc128_carton_no,
+                    sto_no,
+                    sto_line_no,
+                    article_number
             ) tm
-        GROUP BY
-            tm.upc
     </select>
 
     <update id="wms_bt_client_shipment_updateReceiptConfirmInfo" parameterType="HashMap">

@@ -196,6 +196,7 @@ public class SuperFeedDao extends BaseDao {
         params.put("p_color", productbean.getP_color());
         params.put("p_msrp", productbean.getP_msrp());
         params.put("p_made_in_country", productbean.getP_made_in_country());
+        params.put("p_product_type", productbean.getP_product_type());
         params.put("pe_short_description", productbean.getPe_short_description());
         params.put("pe_long_description", productbean.getPe_long_description());
         params.put("ps_price", productbean.getPs_price());
@@ -246,6 +247,7 @@ public class SuperFeedDao extends BaseDao {
         params.put("i_itemcode", itembean.getI_itemcode());
         params.put("i_size", itembean.getI_size());
         params.put("i_barcode", itembean.getI_barcode());
+        params.put("i_client_sku", itembean.getI_client_sku());
         params.put("tableName", tableName);
 
         return selectList("cms_superfeed_selectSuperfeedItem", params);

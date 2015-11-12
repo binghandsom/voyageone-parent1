@@ -226,6 +226,10 @@ public final class DateTimeUtil {
     public static final String DATE_TIME_FORMAT_6 = "yyyy-MM-dd'T'HH:mm:ssZ";
 
     /**
+     * 缺省的日期时间显示格式：MMddyyyy
+     */
+    public static final String DATE_TIME_FORMAT_7 = "MMddyyyy";
+    /**
      * 私有构造方法，禁止对该类进行实例化
      */
     private DateTimeUtil() {

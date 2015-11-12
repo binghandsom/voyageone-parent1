@@ -38,17 +38,16 @@ public class ExceptionHandler implements HandlerExceptionResolver {
             if (session != null) {
                 token = (String) session.getAttribute(CoreConstants.VOYAGEONE_USER_TOKEN);
             }
-            // 业务异常记错误日志及堆栈信息，迁移到共通错误页面
-            if (exception instanceof BusinessException) {
-                String lang = (String) request.getSession().getAttribute(CoreConstants.VOYAGEONE_USER_LANG);
-                return catchBusinessException(lang, token, (BusinessException) exception, request, response);
-            }
 
             // log4j打印出详细信息，包括堆栈信息
             logger.error(exception.getMessage(), exception);
             // 异常信息记录至数据库
             insertLogToDB(request, exception);
-
+            // 业务异常记错误日志及堆栈信息，迁移到共通错误页面
+            if (exception instanceof BusinessException) {
+                String lang = (String) request.getSession().getAttribute(CoreConstants.VOYAGEONE_USER_LANG);
+                return catchBusinessException(lang, token, (BusinessException) exception, request, response);
+            }
             // 系统异常记错误日志及堆栈信息，迁移到共通错误页面
             if (exception instanceof SystemException) {
                 return catchSystemException((SystemException) exception, token, request, response);
