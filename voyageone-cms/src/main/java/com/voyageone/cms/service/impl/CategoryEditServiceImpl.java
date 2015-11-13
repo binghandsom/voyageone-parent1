@@ -282,12 +282,12 @@ public class CategoryEditServiceImpl implements CategoryEditService {
 	public DtResponse<List<CategoryProductCNBean>> getCategoryCNProductList(HashMap<String, Object> data) throws Exception {
 
 		List<CategoryProductCNBean> result = categoryDao.getCategoryProductCNList(data);
-		for (CategoryProductCNBean categoryProductCNBean : result) {
-			ModelCNBean modelCNBean = modelEditService.doGetCNModelInfo(categoryProductCNBean.getModelId(), categoryProductCNBean.getChannelId(), true);
-			if (modelCNBean != null) {
-				CommonUtils.merger(categoryProductCNBean, modelCNBean.getCnBaseModelInfo());
-			}
-		}
+//		for (CategoryProductCNBean categoryProductCNBean : result) {
+//			ModelCNBean modelCNBean = modelEditService.doGetCNModelInfo(categoryProductCNBean.getModelId(), categoryProductCNBean.getChannelId(), true);
+//			if (modelCNBean != null) {
+//				CommonUtils.merger(categoryProductCNBean, modelCNBean.getCnBaseModelInfo());
+//			}
+//		}
 		DtResponse<List<CategoryProductCNBean>> dtResponse = new DtResponse<List<CategoryProductCNBean>>();
 		dtResponse.setData(result);
 		int count = categoryDao.getCategoryUSProductCount(data);
