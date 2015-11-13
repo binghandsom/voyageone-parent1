@@ -82,15 +82,15 @@
 		a.created
 	FROM
 		cms_bt_product a
-	LEFT JOIN cms_bt_product_extend b ON a.product_id = b.product_id
-	LEFT JOIN cms_bt_amazon_product_extend c ON c.product_id = a.product_id
-	LEFT JOIN cms_bt_google_product_extend d ON d.product_id = a.product_id
-	LEFT JOIN cms_bt_pricegrabber_product_extend e ON e.product_id = a.product_id
-	LEFT JOIN cms_bt_relation_model_product f ON f.product_id = a.product_id
-	LEFT JOIN cms_bt_model h on h.model_id=f.model_id
-  	LEFT JOIN cms_mt_brand i on i.brand_id=h.brand_id
-  	LEFT JOIN cms_mt_product_type g on g.product_type_id=h.product_type_id
-	where 
+	LEFT JOIN cms_bt_product_extend b ON a.product_id = b.product_id and a.channel_id = b.channel_id
+	LEFT JOIN cms_bt_amazon_product_extend c ON c.product_id = a.product_id and a.channel_id = c.channel_id
+	LEFT JOIN cms_bt_google_product_extend d ON d.product_id = a.product_id and a.channel_id = d.channel_id
+	LEFT JOIN cms_bt_pricegrabber_product_extend e ON e.product_id = a.product_id and a.channel_id = e.channel_id
+	LEFT JOIN cms_bt_relation_model_product f ON f.product_id = a.product_id and a.channel_id = f.channel_id
+	LEFT JOIN cms_bt_model h on h.model_id=f.model_id and h.channel_id = f.channel_id
+  	LEFT JOIN cms_mt_brand i on i.brand_id=h.brand_id and i.channel_id = h.channel_id
+  	LEFT JOIN cms_mt_product_type g on g.product_type_id=h.product_type_id and g.channel_id = h.channel_id
+	where
 		a.product_id=#{productId}
 		and a.channel_id=#{channelId}
 	</select>
@@ -189,14 +189,14 @@
 		g.modified as jdmodified
 	FROM
 		cms_bt_cn_product a
-	LEFT JOIN cms_bt_cn_product_extend b ON a.product_id = b.product_id
-	LEFT JOIN cms_bt_cn_tm_product_extend f ON f.product_id = a.product_id
-	LEFT JOIN cms_bt_cn_jd_product_extend g ON g.product_id = a.product_id
-	LEFT JOIN cms_bt_relation_model_product h ON h.product_id = a.product_id
-	LEFT JOIN cms_bt_product i ON i.product_id = a.product_id
-	LEFT JOIN cms_mt_material_fabric j ON j.material_fabric_id = i.material_fabric_1_id
-	LEFT JOIN cms_mt_material_fabric k ON k.material_fabric_id = i.material_fabric_2_id
-	LEFT JOIN cms_mt_material_fabric l ON l.material_fabric_id = i.material_fabric_3_id
+	LEFT JOIN cms_bt_cn_product_extend b ON a.product_id = b.product_id and a.channel_id = b.channel_id
+	LEFT JOIN cms_bt_cn_tm_product_extend f ON f.product_id = a.product_id and f.channel_id = b.channel_id
+	LEFT JOIN cms_bt_cn_jd_product_extend g ON g.product_id = a.product_id and g.channel_id = b.channel_id
+	LEFT JOIN cms_bt_relation_model_product h ON h.product_id = a.product_id and h.channel_id = b.channel_id
+	LEFT JOIN cms_bt_product i ON i.product_id = a.product_id and i.channel_id = b.channel_id
+	LEFT JOIN cms_mt_material_fabric j ON j.material_fabric_id = i.material_fabric_1_id and j.channel_id = b.channel_id
+	LEFT JOIN cms_mt_material_fabric k ON k.material_fabric_id = i.material_fabric_2_id and k.channel_id = b.channel_id
+	LEFT JOIN cms_mt_material_fabric l ON l.material_fabric_id = i.material_fabric_3_id and l.channel_id = b.channel_id
 	where 
 		a.product_id=#{productId}
 		and a.channel_id=#{channelId}
