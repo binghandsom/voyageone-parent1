@@ -309,7 +309,7 @@
                 id = #{scanNo}
             </when>
             <when test="scanMode == 'ReLabel' and scanType == 2">
-                order_number = #{scanNo} or client_order_id = #{scanNo}
+                (order_number = #{scanNo} or client_order_id = #{scanNo})
             </when>
             <otherwise>
                 1 != 1
