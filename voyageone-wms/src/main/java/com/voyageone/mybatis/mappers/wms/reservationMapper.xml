@@ -253,6 +253,7 @@
         <result column="ship_channel" property="ship_channel"/>
         <result column="status" property="status"/>
         <result column="sku" property="sku"/>
+        <result column="client_sku" property="client_sku"/>
         <result column="barcode" property="barcode"/>
         <result column="product" property="product"/>
         <result column="description" property="description"/>
@@ -578,6 +579,7 @@
             rsv.store_name,
             ifnull((CASE WHEN (ifnull(location_ext.location_name,'') = '') THEN location.location_name ELSE location_ext.location_name END),'') AS location_name,
             rsv.sku,
+            client.client_sku,
             rsv.product,
             rsv.order_number,
             rsv.create_time,
@@ -659,6 +661,12 @@
             rsv.itemcode = location_ext.`code`
         AND
             rsv.sku = location_ext.sku
+        left JOIN
+            wms_bt_client_item_details client
+        ON
+            rsv.order_channel_id = client.order_channel_id
+        AND
+            rsv.barcode = client.barcode
         WHERE
             rsv.status = #{status}
         <if test="storeList != null and storeList.size() != 0">
@@ -688,6 +696,7 @@
             rsv.store_id,
             rsv.store_name,
             rsv.sku,
+            client.client_sku,
             ifnull((CASE WHEN (ifnull(location_ext.location_name,'') = '') THEN location.location_name ELSE location_ext.location_name END),'') AS location_name,
             rsv.qty
         FROM
@@ -697,6 +706,7 @@
                 store_name,
                 itemcode,
                 sku,
+                barcode,
                 count(1) as qty
             FROM
                 viw_wms_reservation_pickup_mapping
@@ -719,7 +729,8 @@
                 store_id,
                 store_name,
                 itemcode,
-                sku) rsv
+                sku,
+                barcode) rsv
           left join
             (select
                 item.order_channel_id,
@@ -794,6 +805,12 @@
             rsv.itemcode = location_ext.`code`
         AND
             rsv.sku = location_ext.sku
+        left JOIN
+            wms_bt_client_item_details client
+        ON
+            rsv.store_order_channel_id = client.order_channel_id
+        AND
+            rsv.barcode = client.barcode
         ORDER BY
             rsv.store_order_channel_id,
             rsv.store_id,
@@ -860,6 +877,23 @@
                 item.store_id,
                 item.sku) location_ext
         on location.sku = location_ext.sku
+    </select>
+
+    <select id="wms_reservation_getClientSKU" resultType="string">
+        SELECT
+            client.client_sku
+        FROM
+            wms_bt_client_item_details client,
+            wms_bt_item_details details
+        WHERE
+            details.order_channel_id = #{order_channel_id}
+        AND
+            details.sku = #{sku}
+        AND
+            details.order_channel_id = client.order_channel_id
+        AND
+            details.barcode = client.barcode
+        LIMIT 1
     </select>
 
     <select id="wms_reservation_getCurQty" resultType="int">
