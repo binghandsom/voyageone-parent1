@@ -5,8 +5,10 @@ import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feed;
+import com.voyageone.common.util.CommonUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,29 +50,72 @@ class SearsWsdlInsert extends SearsWsdlBase {
 
             $info("准备获取类目 [ %s ] 的 Model", category.getUrl_key());
 
-            ModelBean modelColumns = getModelColumns();
-            ProductBean productColumns = getProductColumns();
-            ItemBean itemColumns = getItemColumns();
-            Feed.getVal1(channel, FeedEnums.Name.images);
+            Map colums = getColumns();
 
             // 条件则根据类目筛选
-            String where = String.format("WHERE %s AND %s = '%s' %s", INSERT_FLG, modelColumns.getCategory_url_key(),
+            String where = String.format("WHERE %s AND %s = '%s' %s", INSERT_FLG, colums.get("category_url_key").toString(),
                     category.getUrl_key().replaceAll("'", "\\\\'"), Feed.getVal1(channel, FeedEnums.Name.model_sql_ending));
 
-            List<ModelBean> modelBeans = superFeedDao.selectSuperfeedModel(where, modelColumns,
+            List<ModelBean> modelBeans = superFeedDao.selectSuperfeedModel(where, colums,
                     // 组合 Model 的表部分和Join部分
                     String.format("%s %s", modelTable, modelJoin));
 
             $info("取得 [ %s ] 的 Model 数 %s", category.getUrl_key(), modelBeans.size());
 
-            for (ModelBean bean : modelBeans) {
-                bean.setProductbeans(getProducts(bean));
-                // 转换 Url Key 格式,这里顺序同 getCategories 一样的原理
-                bean.setUrl_key(clearSpecialSymbol(bean.getUrl_key()));
-                bean.setCategory_url_key(clearSpecialSymbol(bean.getCategory_url_key()));
+//            for (ModelBean bean : modelBeans) {
+//                bean.setProductbeans(getProducts(bean));
+//                // 转换 Url Key 格式,这里顺序同 getCategories 一样的原理
+//                bean.setUrl_key(clearSpecialSymbol(bean.getUrl_key()));
+//                bean.setCategory_url_key(clearSpecialSymbol(bean.getCategory_url_key()));
+//            }
+            if (modelBeans.size() > 0) {
+                modelBeans.forEach(modelBean -> modelBean.getProductbeans().forEach(productBean -> {
+                    for (int i = 0; i < productBean.getImages().size(); i++) {
+                        ImageBean imageBean = productBean.getImages().get(i);
+                        imageBean.setImage_name(imageBean.getImage_url().substring(imageBean.getImage_url().lastIndexOf("/") + 1));
+                        imageBean.setImage((i + 1) + "");
+                    }
+                }));
             }
-
             return modelBeans;
+        }
+
+        private HashMap<String, Object> getColumns() {
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("url_key", Feed.getVal1(channel, FeedEnums.Name.model_url_key));
+            map.put("category_url_key", Feed.getVal1(channel, FeedEnums.Name.model_category_url_key));
+            map.put("m_product_type", Feed.getVal1(channel, FeedEnums.Name.model_m_product_type));
+            map.put("m_brand", Feed.getVal1(channel, FeedEnums.Name.model_m_brand));
+            map.put("m_model", Feed.getVal1(channel, FeedEnums.Name.model_m_model));
+            map.put("m_name", Feed.getVal1(channel, FeedEnums.Name.model_m_name));
+            map.put("m_short_description", Feed.getVal1(channel, FeedEnums.Name.model_m_short_description));
+            map.put("m_long_description", Feed.getVal1(channel, FeedEnums.Name.model_m_long_description));
+            map.put("m_size_type", Feed.getVal1(channel, FeedEnums.Name.model_m_size_type));
+            map.put("m_is_unisex", Feed.getVal1(channel, FeedEnums.Name.model_m_is_unisex));
+            map.put("m_weight", Feed.getVal1(channel, FeedEnums.Name.model_m_weight));
+            map.put("m_is_taxable", Feed.getVal1(channel, FeedEnums.Name.model_m_is_taxable));
+            map.put("m_is_effective", Feed.getVal1(channel, FeedEnums.Name.model_m_is_effective));
+            map.put("model_url_key", (Feed.getVal1(channel, FeedEnums.Name.product_model_url_key)));
+            map.put("p_url_key", (Feed.getVal1(channel, FeedEnums.Name.product_url_key)));
+            map.put("p_code", (Feed.getVal1(channel, FeedEnums.Name.product_p_code)));
+            map.put("p_name", (Feed.getVal1(channel, FeedEnums.Name.product_p_name)));
+            map.put("p_color", (Feed.getVal1(channel, FeedEnums.Name.product_p_color)));
+            map.put("p_msrp", (Feed.getVal1(channel, FeedEnums.Name.product_p_msrp)));
+            map.put("p_made_in_country", (Feed.getVal1(channel, FeedEnums.Name.product_p_made_in_country)));
+            map.put("pe_short_description", (Feed.getVal1(channel, FeedEnums.Name.product_pe_short_description)));
+            map.put("pe_long_description", (Feed.getVal1(channel, FeedEnums.Name.product_pe_long_description)));
+            map.put("ps_price", (Feed.getVal1(channel, FeedEnums.Name.product_ps_price)));
+            map.put("cps_cn_price_rmb", (Feed.getVal1(channel, FeedEnums.Name.product_cps_cn_price_rmb)));
+            map.put("cps_cn_price", (Feed.getVal1(channel, FeedEnums.Name.product_cps_cn_price)));
+            map.put("cps_cn_price_final_rmb", (Feed.getVal1(channel, FeedEnums.Name.product_cps_cn_price_final_rmb)));
+            map.put("item_code", (Feed.getVal1(channel, FeedEnums.Name.item_code)));
+            map.put("i_sku", (Feed.getVal1(channel, FeedEnums.Name.item_i_sku)));
+            map.put("i_itemcode", (Feed.getVal1(channel, FeedEnums.Name.item_i_itemcode)));
+            map.put("i_size", (Feed.getVal1(channel, FeedEnums.Name.item_i_size)));
+            map.put("i_barcode", (Feed.getVal1(channel, FeedEnums.Name.item_i_barcode)));
+            map.put("i_client_sku", (Feed.getVal1(channel, FeedEnums.Name.item_i_client_sku)));
+            map.put("image", (Feed.getVal1(channel, FeedEnums.Name.images)));
+            return map;
         }
 
         private ModelBean getModelColumns() {
@@ -94,75 +139,82 @@ class SearsWsdlInsert extends SearsWsdlBase {
             return modelColumns;
         }
 
-        private List<List<CategoryBean>> getCategories() {
+        /**
+         * 查询一共有多少类目
+         *
+         * @return 类目清单
+         */
+        private List<String> getCategories() {
 
             // 先从数据表中获取所有商品的类目路径,经过去重复的
             // update flg 标记, 只获取哪些即将进行新增的商品的类目
+//            List<String> categoryPaths = superFeedDao.selectSuperfeedCategory(
+//                    Feed.getVal1(channel, FeedEnums.Name.category_column),
+//                    table, " AND " + INSERT_FLG + " AND category_id in (95301,110)");
             List<String> categoryPaths = superFeedDao.selectSuperfeedCategory(
                     Feed.getVal1(channel, FeedEnums.Name.category_column),
-                    table, " AND " + INSERT_FLG + " AND category_id in (95301,110)");
-
+                    table, " AND " + INSERT_FLG + " AND model_number != '' AND brand != ''");
             $info("获取类目路径数 %s , 准备拆分继续处理", categoryPaths.size());
 
-            // 建好集合, 后续会将所有类目的路径进行分解拆分存入
-            // 接口提交的时候, 要求每次提交的类目必须且只能一次提交一颗完整的树
-            List<List<CategoryBean>> categoriesList = new ArrayList<>();
+            return categoryPaths;
+        }
+
+        /**
+         * 生成类目数据包含model product数据
+         *
+         * @param categoryPath
+         * @return
+         */
+        protected List<CategoryBean> getCategoryInfo(String categoryPath) {
             // 获取分隔符
             String separator = Feed.getVal1(channel, FeedEnums.Name.category_split);
 
-            for (String categoryPath : categoryPaths) {
-                // 分批提交,所以为每棵树创建独立的类目集合
-                List<CategoryBean> categories = new ArrayList<>();
+            // 分批提交,所以为每棵树创建独立的类目集合
+            List<CategoryBean> categories = new ArrayList<>();
 
-                // 对类目路径进行拆分
-                String[] categoryNames = categoryPath.split(separator);
-                // 声明一个新的路径
-                String currPath = Constants.EmptyString;
+            // 对类目路径进行拆分
+            String[] categoryNames = categoryPath.split(separator);
+            // 声明一个新的路径
+            String currPath = Constants.EmptyString;
 
-                for (int i = 0; i < categoryNames.length; i++) {
+            for (int i = 0; i < categoryNames.length; i++) {
 
-                    String name = categoryNames[i];
+                String name = categoryNames[i];
 
-                    if (StringUtils.isEmpty(name)) continue;
+                if (StringUtils.isEmpty(name)) continue;
 
-                    CategoryBean category = new CategoryBean();
-                    // 设置当前类目为上一次的计算结果,如果是第一个,则刚好为 EmptyString
-                    category.setParent_url_key(currPath);
-                    // 如果上次时 EmptyString, 那么就覆盖并赋值
-                    // 否则就拼接后赋值
-                    if (currPath.equals(Constants.EmptyString))
-                        category.setUrl_key(currPath = name);
-                    else
-                        category.setUrl_key(currPath = (currPath + '-' + name));
+                CategoryBean category = new CategoryBean();
+                // 设置当前类目为上一次的计算结果,如果是第一个,则刚好为 EmptyString
+                category.setParent_url_key(currPath);
+                // 如果上次时 EmptyString, 那么就覆盖并赋值
+                // 否则就拼接后赋值
+                if (currPath.equals(Constants.EmptyString))
+                    category.setUrl_key(currPath = name);
+                else
+                    category.setUrl_key(currPath = (currPath + '-' + name));
 
-                    // 当遇到最后一级,最底层时,为叶子补全 Models
-                    if (i == categoryNames.length - 1) {
-                        category.setModelbeans(getModels(category));
-                    }
-
-                    category.setC_name(name);
-                    category.setC_header_title(name);
-                    category.setC_is_enable_filter("1");
-                    category.setC_is_visible_on_menu("0");
-                    category.setC_is_published("0");
-                    category.setC_is_effective("1");
-
-                    // 因为数据库中的数据是没有处理特殊字符串,和转换小写的.所以 getModels 需要使用未处理的 url key 去匹配
-                    // 所以转换处理这一步放到每个类目的最后进行处理
-                    category.setUrl_key(clearSpecialSymbol(category.getUrl_key()));
-                    category.setParent_url_key(clearSpecialSymbol(category.getParent_url_key()));
-
-                    categories.add(category);
+                // 当遇到最后一级,最底层时,为叶子补全 Models
+                if (i == categoryNames.length - 1) {
+                    category.setModelbeans(getModels(category));
                 }
 
-                $info("构造类目树 %s", categories.size());
+                category.setC_name(name);
+                category.setC_header_title(name);
+                category.setC_is_enable_filter("1");
+                category.setC_is_visible_on_menu("0");
+                category.setC_is_published("0");
+                category.setC_is_effective("1");
 
-                categoriesList.add(categories);
+                // 因为数据库中的数据是没有处理特殊字符串,和转换小写的.所以 getModels 需要使用未处理的 url key 去匹配
+                // 所以转换处理这一步放到每个类目的最后进行处理
+                category.setUrl_key(clearSpecialSymbol(category.getUrl_key()));
+                category.setParent_url_key(clearSpecialSymbol(category.getParent_url_key()));
+
+                categories.add(category);
             }
 
-            $info("获取完整类目树 %s", categoriesList.size());
-
-            return categoriesList;
+            $info("构造类目树 %s", categories.size());
+            return categories;
         }
 
         /**
@@ -175,93 +227,104 @@ class SearsWsdlInsert extends SearsWsdlBase {
             WsdlProductService service = new WsdlProductService(channel);
 
             $info("准备 <构造> 类目树");
-            List<List<CategoryBean>> categoriesList = getCategories();
+            List<String> categoriePaths = getCategories();
 
             // 准备接收失败内容
             List<String> modelFailList = new ArrayList<>();
             List<String> productFailList = new ArrayList<>();
 
-            // 分每棵树进行提交
-            for (List<CategoryBean> categories : categoriesList) {
+            for (String categorPath : categoriePaths) {
+
+                List<String> productSuccessList = new ArrayList<>();
+
+                // 分每棵树的信息取得
+                List<CategoryBean> categories = getCategoryInfo(categorPath);
 
                 // 主参数
                 ProductsFeedInsert feedInsert = new ProductsFeedInsert();
 
-                feedInsert.setCategorybeans(categories);
-                feedInsert.setChannel_id(channel.getId());
+                //怕数据太多webservice会超时 所以50个model调一次webservice
+                List<List<ModelBean>> models = CommonUtil.splitList(categories.get(categories.size() - 1).getModelbeans(), 50);
+                for(List<ModelBean>model: models) {
+                    categories.get(categories.size() - 1).setModelbeans(model);
+                    feedInsert.setCategorybeans(categories);
+                    feedInsert.setChannel_id(channel.getId());
 
-                // 调用返回
-                WsdlProductInsertResponse response = service.insert(feedInsert);
+                    // 调用返回
+                    WsdlProductInsertResponse response = service.insert(feedInsert);
 
-                $info("接口结果: %s ; 返回: %s", response.getResult(), response.getMessage());
+                    $info("接口结果: %s ; 返回: %s", response.getResult(), response.getMessage());
 
-                ProductFeedResponseBean productFeedResponseBean = response.getResultInfo();
+                    ProductFeedResponseBean productFeedResponseBean = response.getResultInfo();
 
-                if (response.getResult().equals("OK") && productFeedResponseBean.getSuccess().size() > 0) {
-                    // 出错统计
-                    List<ProductFeedDetailBean> productFeedDetailBeans = productFeedResponseBean.getFailure();
-                    for (ProductFeedDetailBean productFeedDetailBean : productFeedDetailBeans) {
-                        //  处理类型 1:category 无; 2:model
-                        if (productFeedDetailBean.getBeanType() == 2)
-                            modelFailList.add(productFeedDetailBean.getDealObject().getModel());
+                    if (response.getResult().equals("OK") && productFeedResponseBean.getSuccess().size() > 0) {
+                        // 出错统计
+                        List<ProductFeedDetailBean> productFeedDetailBeans = productFeedResponseBean.getFailure();
+                        for (ProductFeedDetailBean productFeedDetailBean : productFeedDetailBeans) {
+                            //  处理类型 1:category 无; 2:model
+                            if (productFeedDetailBean.getBeanType() == 2)
+                                modelFailList.add(productFeedDetailBean.getDealObject().getModel());
 
-                        //  处理类型 3:product; 4:item
-                        if (productFeedDetailBean.getBeanType() == 3 || productFeedDetailBean.getBeanType() == 4)
-                            productFailList.add(productFeedDetailBean.getDealObject().getCode());
-                    }
+                            //  处理类型 3:product; 4:item
+                            if (productFeedDetailBean.getBeanType() == 3 || productFeedDetailBean.getBeanType() == 4)
+                                productFailList.add(productFeedDetailBean.getDealObject().getCode());
+                        }
 
-                    // 成功 3:product; 4:item
-                    List<ProductFeedDetailBean> productFeedDetailSuccess = productFeedResponseBean.getSuccess();
-                    List<Map> attributeList = new ArrayList<>();
-                    for (ProductFeedDetailBean productFeedDetailBean : productFeedDetailSuccess) {
-                        //  处理类型 3:product; 4:item
-                        if (productFeedDetailBean.getBeanType() == 3) {
-                            categories.get(categories.size() - 1).getModelbeans().forEach(modelBean -> modelBean.getProductbeans().forEach(productBean -> {
-                                if (productBean.getUrl_key().equalsIgnoreCase(productFeedDetailBean.getDealObject().getUrl_key())) {
-                                    List<Map> ret = searsFeedDao.getFeedAttribute(productBean);
-                                    if (ret.size() > 0) {
-                                        HashMap<String, Object> attribute = new HashMap<String, Object>();
-                                        attribute.put("category_url_key", productBean.getCategory_url_key());
-                                        attribute.put("model_url_key", productBean.getModel_url_key());
-                                        attribute.put("product_url_key", productBean.getUrl_key());
-                                        ret.forEach(map -> {
-                                            attribute.put(map.get("cfg_name").toString(), map.get("value"));
-                                        });
-                                        attributeList.add(attribute);
+                        // 成功 3:product; 4:item
+                        List<ProductFeedDetailBean> productFeedDetailSuccess = productFeedResponseBean.getSuccess();
+                        List<Map> attributeList = new ArrayList<>();
+                        for (ProductFeedDetailBean productFeedDetailBean : productFeedDetailSuccess) {
+                            //  处理类型 3:product; 4:item
+                            if (productFeedDetailBean.getBeanType() == 3) {
+                                categories.get(categories.size() - 1).getModelbeans().forEach(modelBean -> modelBean.getProductbeans().forEach(productBean -> {
+                                    if (productBean.getUrl_key().equalsIgnoreCase(productFeedDetailBean.getDealObject().getUrl_key())) {
+                                        List<Map> ret = searsFeedDao.getFeedAttribute(productBean);
+                                        if (ret.size() > 0) {
+                                            HashMap<String, Object> attribute = new HashMap<String, Object>();
+                                            attribute.put("category_url_key", productBean.getCategory_url_key());
+                                            attribute.put("model_url_key", productBean.getModel_url_key());
+                                            attribute.put("product_url_key", productBean.getUrl_key());
+                                            ret.forEach(map -> {
+                                                attribute.put(map.get("cfg_name").toString(), map.get("value"));
+                                            });
+                                            attributeList.add(attribute);
+                                        }
                                     }
-                                }
-                            }));
+                                }));
+                            } else if (productFeedDetailBean.getBeanType() == 4) {
+                                productSuccessList.add(productFeedDetailBean.getDealObject().getClient_sku());
+                            }
                         }
-                    }
-                    Map feedAttribute = new HashMap<>();
-                    feedAttribute.put("channel_id", channel.getId());
-                    feedAttribute.put("attributebeans", attributeList);
-                    WsdlResponseBean wsdlResponseBean = service.attribute(feedAttribute);
-                    // 处理失败
-                    if (wsdlResponseBean == null) {
-                        $info("产品Attribute处理失败，处理失败！");
-                    } else {
-                        $info("调用结果 Attribute 接口");
-                        $info("\tMessage:\t%s", wsdlResponseBean.getMessage());
-                        $info("\tResult:\t%s", wsdlResponseBean.getResult());
-                        $info("\tResultInfo:\t%s", wsdlResponseBean.getResultInfo());
 
-                        if (wsdlResponseBean.getResult().equals("NG")) {
-                            $info("产品Attribute处理失败，MessageCode = " + wsdlResponseBean.getMessageCode() + ",Message = " + wsdlResponseBean.getMessage());
-                            logIssue("cms 数据导入处理", "产品Attribute处理失败，MessageCode = " + wsdlResponseBean.getMessageCode() + ",Message = " + wsdlResponseBean.getMessage());
+                        //Attribute属性导入
+                        Map feedAttribute = new HashMap<>();
+                        feedAttribute.put("channel_id", channel.getId());
+                        feedAttribute.put("attributebeans", attributeList);
+                        WsdlResponseBean wsdlResponseBean = service.attribute(feedAttribute);
+                        // 处理失败
+                        if (wsdlResponseBean == null) {
+                            $info("产品Attribute处理失败，处理失败！");
+                        } else {
+                            $info("调用结果 Attribute 接口");
+                            $info("\tMessage:\t%s", wsdlResponseBean.getMessage());
+                            $info("\tResult:\t%s", wsdlResponseBean.getResult());
+                            $info("\tResultInfo:\t%s", wsdlResponseBean.getResultInfo());
+
+                            if (wsdlResponseBean.getResult().equals("NG")) {
+                                $info("产品Attribute处理失败，MessageCode = " + wsdlResponseBean.getMessageCode() + ",Message = " + wsdlResponseBean.getMessage());
+                                logIssue("cms 数据导入处理", "产品Attribute处理失败，MessageCode = " + wsdlResponseBean.getMessageCode() + ",Message = " + wsdlResponseBean.getMessage());
+                            }
                         }
+                        //把成功的SKU保存到full表中
+                        updateFull(productSuccessList);
                     }
+
+                    if (response.getResult().equals("NG"))
+                        logIssue("cms 数据导入处理", "新产品推送失败：Message=" + response.getMessage());
                 }
-
-                if (response.getResult().equals("NG"))
-                    logIssue("cms 数据导入处理", "新产品推送失败：Message=" + response.getMessage());
             }
-
             $info("总共~ 失败的 Model: %s ; 失败的 Product: %s", modelFailList.size(), productFailList.size());
 
-            // int[] counts = searsFeedDao.insertFullWithoutFail(modelFailList, productFailList);
-
-            //$info("新商品 Insert 处理全部完成, 更新 Full 表 [ Feed: %s ] [ Style: %s ]", counts[0], counts[1]);
         }
     }
 }

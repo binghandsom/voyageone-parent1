@@ -15,6 +15,7 @@ import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feed;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -249,6 +250,20 @@ abstract class SearsWsdlBase extends BaseTaskService {
             productColumns.setCps_cn_price_final_rmb(Feed.getVal1(channel, FeedEnums.Name.product_cps_cn_price_final_rmb));
 
             return productColumns;
+        }
+    }
+
+
+    /**
+     * 导入成功的FEED数据保存起来
+     * @param itemIds
+     */
+    @Transactional
+    protected void updateFull(List<String> itemIds){
+        if(itemIds.size() > 0){
+            searsFeedDao.delFull(itemIds);
+            searsFeedDao.insertFull(itemIds);
+            searsFeedDao.updateFeetStatus(itemIds);
         }
     }
 }

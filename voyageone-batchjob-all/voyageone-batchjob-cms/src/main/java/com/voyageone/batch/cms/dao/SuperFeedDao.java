@@ -180,6 +180,12 @@ public class SuperFeedDao extends BaseDao {
         return selectList("cms_superfeed_selectSuperfeedModel", params);
     }
 
+    public List<ModelBean> selectSuperfeedModel(String keyword, Map params, String tableName) {
+        params.put("keyword", keyword);
+        params.put("tableName", tableName);
+
+        return selectList("cms_searsfeed_select", params);
+    }
     /**
      * 取得 Product 信息
      *

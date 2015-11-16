@@ -59,10 +59,6 @@ public class SearsFeedDao extends BaseDao {
         return ret;
     }
 
-    public int[] updateFull(List<String> updatedCodes) {
-        return new int[0];
-    }
-
     public List<Map> getFeedAttribute(ProductBean productBean) {
         List<Map> ret;
         ret = selectList("cms_attribute_select", productBean);
@@ -70,5 +66,20 @@ public class SearsFeedDao extends BaseDao {
             ret = new ArrayList<>();
         }
         return ret;
+    }
+
+    // 把读入成功的FEED数据保存起来
+    public int insertFull(List<String> itemIds){
+        return insert("cms_zz_worktable_sears_superfeed_full_insert",itemIds);
+    }
+
+    //把导入成功的FEED数据 从保存数据中删除
+    public int delFull(List<String> itemIds){
+        return delete("cms_zz_worktable_sears_superfeed_full_del", itemIds);
+    }
+
+    // 导入成功的FEED数据的状态变更
+    public int updateFeetStatus(List<String> itemIds){
+        return delete("cms_zz_worktable_sears_superfeed_update",itemIds);
     }
 }

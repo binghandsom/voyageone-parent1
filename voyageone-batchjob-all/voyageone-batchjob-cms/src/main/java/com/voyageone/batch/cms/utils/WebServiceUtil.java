@@ -39,7 +39,7 @@ public class WebServiceUtil {
 //		URI u = new URI(url);
 //		WebResource resource = client.resource(u);
 //		String response = resource.type(MediaType.APPLICATION_JSON_TYPE).post(String.class, jsonData);
-		String response = HttpUtils.post(url, jsonData,30000,120000);
+		String response = HttpUtils.post(url, jsonData,60000,120000);
 		return response;
 	}
 

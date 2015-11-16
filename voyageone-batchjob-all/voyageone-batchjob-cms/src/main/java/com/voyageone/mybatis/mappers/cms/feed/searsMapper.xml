@@ -114,8 +114,8 @@
            cfg_name
     </select>
     <resultMap id="resultMap_sears" type="com.voyageone.batch.cms.bean.ModelBean">
-        <result column="model_url_key" property="url_key" />
-        <result column="category_url_key" property="category_url_key" />
+        <result column="model_url_key" property="url_key" typeHandler="com.voyageone.batch.cms.utils.ClearSpecial"/>
+        <result column="category_url_key" property="category_url_key" typeHandler="com.voyageone.batch.cms.utils.ClearSpecial"/>
         <result column="m_product_type" property="m_product_type" />
         <result column="m_brand" property="m_brand" />
         <result column="m_model" property="m_model" />
@@ -130,7 +130,9 @@
         <result column="m_is_taxable" property="m_is_taxable" />
         <result column="m_is_effective" property="m_is_effective" />
         <collection property="productbeans" javaType="ArrayList" ofType="com.voyageone.batch.cms.bean.ProductBean" >
-            <result column="url_key" property="url_key" />
+            <result column="url_key" property="url_key" typeHandler="com.voyageone.batch.cms.utils.ClearSpecial"/>
+            <result column="model_url_key" property="model_url_key" typeHandler="com.voyageone.batch.cms.utils.ClearSpecial"/>
+            <result column="category_url_key" property="category_url_key" typeHandler="com.voyageone.batch.cms.utils.ClearSpecial"/>
             <result column="p_code" property="p_code" />
             <result column="p_name" property="p_name" />
             <result column="p_color" property="p_color" />
@@ -146,6 +148,7 @@
             <result column="cps_cn_price" property="cps_cn_price" />
             <result column="cps_cn_price" property="cps_cn_price" />
             <collection property="itembeans" javaType="ArrayList" ofType="com.voyageone.batch.cms.bean.ItemBean" >
+                <result column="item_code" property="code" />
                 <result column="i_sku" property="i_sku" />
                 <result column="i_itemcode" property="i_itemcode" />
                 <result column="i_size" property="i_size" />
@@ -190,6 +193,7 @@
         ,${cps_cn_price}  as cps_cn_price
         ,${cps_cn_price_rmb}  as cps_cn_price_rmb
         ,${cps_cn_price_final_rmb}  as cps_cn_price_final_rmb
+        ,${item_code} as item_code
         ,${i_sku} as i_sku
         ,${i_itemcode} as i_itemcode
         ,${i_size} as i_size
@@ -203,4 +207,30 @@
         ${tableName}
         ${keyword}
     </select>
+    <delete id="cms_zz_worktable_sears_superfeed_full_del" parameterType="java.util.List">
+        DELETE
+        FROM
+        voyageone_cms.cms_zz_worktable_sears_superfeed_full
+        where item_id in (
+        <foreach collection="list" item="itemIds" index="index" separator=",">
+            #{itemIds}
+        </foreach>
+        )
+    </delete>
+    <insert id="cms_zz_worktable_sears_superfeed_full_insert"  parameterType="java.util.List">
+        INSERT INTO voyageone_cms.cms_zz_worktable_sears_superfeed_full SELECT * from
+        voyageone_cms.cms_zz_worktable_sears_superfeed where item_id in
+        (
+        <foreach collection="list" item="itemIds" index="index" separator=",">
+            #{itemIds}
+        </foreach>
+        )
+    </insert>
+    <update id="cms_zz_worktable_sears_superfeed_update"  parameterType="java.util.List">
+        UPDATE voyageone_cms.cms_zz_worktable_sears_superfeed set update_flg = 3 where item_id in (
+        <foreach collection="list" item="itemIds" index="index" separator=",">
+            #{itemIds}
+        </foreach>
+        )
+    </update>
 </mapper>
