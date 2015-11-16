@@ -346,7 +346,7 @@ public class WmsPickupServiceImpl implements WmsPickupService {
         }
 
         // 设置捡货单的内容
-        FormPickUpLabelBean pickupLabel = getPickupLabel(scanInfoList, scanType);
+        FormPickUpLabelBean pickupLabel = getPickupLabel(scanInfoList, scanType, scanNo);
         //设置skuList
         pickupLabel.setSkuList(skuListToString(orderSkuList));
         String printPickupLabel = "[" + JsonUtil.getJsonString(pickupLabel)  + "]";
@@ -716,7 +716,7 @@ public class WmsPickupServiceImpl implements WmsPickupService {
      * @param scanType 扫描类型
      * @return FormPickUpLabelBean
      */
-    private FormPickUpLabelBean getPickupLabel (List<FormPickupBean>scanInfoList, String scanType) {
+    private FormPickUpLabelBean getPickupLabel (List<FormPickupBean>scanInfoList, String scanType, String scanNo) {
 
         FormPickUpLabelBean pickupLabelBean = new FormPickUpLabelBean();
 
@@ -775,7 +775,7 @@ public class WmsPickupServiceImpl implements WmsPickupService {
         else if (ChannelConfigEnums.Scan.ORDER.getType().equals(scanType))  {
 
             // 配货号
-            pickupLabelBean.setReservation_id("");
+            pickupLabelBean.setReservation_id(scanNo);
 
             // 货品名称
             pickupLabelBean.setProduct("");
