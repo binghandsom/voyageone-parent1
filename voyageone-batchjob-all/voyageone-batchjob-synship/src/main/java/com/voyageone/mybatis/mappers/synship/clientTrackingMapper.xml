@@ -31,7 +31,8 @@
         SELECT
             client.*,
             orders.order_number,
-            orders.syn_ship_no
+            orders.syn_ship_no,
+            '0' as reservation_id
         FROM
             tt_client_tracking client,
             oms_bt_orders omsOrders,
@@ -56,6 +57,63 @@
             client.tracking_no asc,
             client.tracking_time desc
         LIMIT #{limit};
+    </select>
+
+    <select id="synShip_getErrorClientTrackingLstByOrderNumber" resultType="String">
+        SELECT
+            orders.order_number
+        FROM
+            tt_client_tracking client,
+            oms_bt_orders omsOrders,
+            tt_orders orders
+        WHERE
+            client.order_channel_id = #{order_channel_id}
+        AND
+            client.sim_flg = '0'
+        AND
+            client.order_channel_id = omsOrders.order_channel_id
+        AND
+            client.client_order_id = omsOrders.order_number
+        AND
+            omsOrders.order_channel_id = orders.order_channel_id
+        AND
+            omsOrders.order_number = orders.order_number
+        AND
+            (client.tracking_type = ''
+            OR
+            client.tracking_no = '')
+    </select>
+
+    <select id="synShip_getClientTrackingSimLstByOrderNumber" resultType="com.voyageone.batch.synship.modelbean.ClientTrackingSimBean">
+        SELECT
+            client.*,
+            orders.order_number,
+            orders.syn_ship_no,
+            (select GROUP_CONCAT(res.id) from tt_reservation res where orders.syn_ship_no = res.syn_ship_no) as reservation_id
+        FROM
+            tt_client_tracking client,
+            oms_bt_orders omsOrders,
+             tt_orders orders
+        WHERE
+            client.order_channel_id = #{order_channel_id}
+        AND
+            client.sim_flg = '0'
+        AND
+            client.order_channel_id = omsOrders.order_channel_id
+        AND
+            client.client_order_id = omsOrders.order_number
+        AND
+            omsOrders.order_channel_id = orders.order_channel_id
+        AND
+            omsOrders.order_number = orders.order_number
+        AND
+            client.tracking_type != ''
+        AND
+            client.tracking_no != ''
+        order by
+            client.tracking_no asc,
+            client.tracking_time desc
+            LIMIT #{limit};
     </select>
 
     <update id="synShip_insertClientTrackingInfo">

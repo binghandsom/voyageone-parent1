@@ -49,6 +49,36 @@ public class ClientTrackingDao extends BaseDao {
     }
 
     /**
+     * 获取无法模拟的记录
+     *
+     * @param order_channel_id 渠道
+     * @return String
+     */
+    public List<String> getErrorClientTrackingLstByOrderNumber(String order_channel_id) {
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("order_channel_id", order_channel_id);
+
+        return selectList("synShip_getErrorClientTrackingLstByOrderNumber", params);
+    }
+
+    /**
+     * 获取需要进行模拟的记录
+     *
+     * @param order_channel_id 渠道
+     * @param row_count        抽出件数
+     * @return ClientTrackingSimBean
+     */
+    public List<ClientTrackingSimBean> getClientTrackingSimLstByOrderNumber(String order_channel_id, int row_count) {
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("order_channel_id", order_channel_id);
+        params.put("limit", row_count);
+
+        return selectList("synShip_getClientTrackingSimLstByOrderNumber", params);
+    }
+
+    /**
      * @param items
      * @return
      */

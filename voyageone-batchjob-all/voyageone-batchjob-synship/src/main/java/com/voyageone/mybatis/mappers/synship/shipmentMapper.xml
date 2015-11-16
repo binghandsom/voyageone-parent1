@@ -157,6 +157,8 @@
           package_id = #{package_id}
         AND
           syn_ship_no = #{syn_ship_no}
+        AND
+          reservation_id = #{reservation_id}
     </select>
 
     <!-- PackageItem信息追加 -->
