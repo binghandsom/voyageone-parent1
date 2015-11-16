@@ -2405,7 +2405,7 @@
 				IFNULL(cms.EAN11,'') as UPC
 		from
 			Synship.oms_bt_orders o
-		left join
+		inner join
 			(select ods.order_number,
 						ods.adjustment,
 						ods.sku,
@@ -2426,10 +2426,12 @@
 		left join
 			voyageone_cms.cms_zz_worktable_bcbg_superfeed_full cms
 			on wd.client_sku = cms.MATNR
+		inner join oms_bt_ext_orders ox
+			on o.order_number = ox.order_number
 		where
 			o.order_channel_id = #{orderChannelId} and
 			o.order_status = 'Approved' and
-			o.order_date_time >= #{beginDate} and
+			ox.send_flg = 0 and
 			#{endDate} >= o.order_date_time
 	</select>
 
@@ -2542,14 +2544,17 @@
 			where ods.adjustment = 0 or ods.sku = 'Shipping'
 			group by ods.order_number, ods.adjustment, ods.sku, ods.ship_date
 			)od
-		left join Synship.oms_bt_orders o
+		inner join Synship.oms_bt_orders o
 			on o.order_number = od.order_number
 		left join Synship.wms_bt_item_details wd
 			on od.sku = wd.sku
 			and o.order_channel_id = wd.order_channel_id
 		left join	voyageone_cms.cms_zz_worktable_bcbg_superfeed_full cms
 			on wd.client_sku = cms.MATNR
+		inner join Synship.oms_bt_ext_orders ox
+			on o.order_number = ox.order_number
 		where
 			o.order_channel_id = #{orderChannelId}
+			and ox.ext_flg1 = 0
 	</select>
 </mapper>

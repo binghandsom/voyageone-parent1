@@ -104,7 +104,8 @@ public class PostBCBGOrderService {
 
 		boolean isSuccess = true;
 		// 渠道时区
-		int orderChannelTimeZone = Integer.valueOf(ChannelConfigs.getVal1(orderChannelID, ChannelConfigEnums.Name.channel_time_zone));
+//		int orderChannelTimeZone = Integer.valueOf(ChannelConfigs.getVal1(orderChannelID, ChannelConfigEnums.Name.channel_time_zone));
+		int orderChannelTimeZone = 8; // 以北京时间计算
 		// 汇率
 		String exchangeRate = Codes.getCodeName("MONEY_CHG_RMB", "USD");
 		// 做成时间
@@ -699,7 +700,8 @@ public class PostBCBGOrderService {
 	public boolean postBCBGDemand() {
 		boolean isSuccess = true;
 		// 渠道时区
-		int orderChannelTimeZone = Integer.valueOf(ChannelConfigs.getVal1(orderChannelID, ChannelConfigEnums.Name.channel_time_zone));
+//		int orderChannelTimeZone = Integer.valueOf(ChannelConfigs.getVal1(orderChannelID, ChannelConfigEnums.Name.channel_time_zone));
+		int orderChannelTimeZone = 8;
 		// 汇率
 		String exchangeRate = Codes.getCodeName("MONEY_CHG_RMB", "USD");
 		// 做成时间
@@ -896,21 +898,37 @@ public class PostBCBGOrderService {
 	}
 
 	/**
-	 * 检索时间（美国时间，前一天的数据）
+	 * 检索时间（北京时间 当天24点，前七天的数据，通过定时器设定24点启动）     //检索时间（美国时间，前一天的数据）
 	 *
 	 * @param timeZone 本地时区
 	 */
 	private ArrayList<String> getSearchDate(int timeZone) {
 		ArrayList<String> retSearchDate = new ArrayList<String>();
 
-		String localTime = DateTimeUtil.getLocalTime(DateTimeUtil.getNow(), timeZone);
-		Date searchDate = DateTimeUtil.addDays(DateTimeUtil.parse(localTime), -1);
-		String searchDateString =  DateTimeUtil.format(searchDate, DateTimeUtil.DEFAULT_DATE_FORMAT);
-		String startSearchDate = searchDateString + " 00:00:00";
-		String endSearchDate = searchDateString + " 23:59:59";
+//		String localTime = DateTimeUtil.getLocalTime(DateTimeUtil.getNow(), timeZone);
+//		Date searchDate = DateTimeUtil.addDays(DateTimeUtil.parse(localTime), -1);
+//		String searchDateString =  DateTimeUtil.format(searchDate, DateTimeUtil.DEFAULT_DATE_FORMAT);
+//		String startSearchDate = searchDateString + " 00:00:00";
+//		String endSearchDate = searchDateString + " 23:59:59";
+//
+//		String startSearchDateGMT = DateTimeUtil.getGMTTime(startSearchDate, timeZone);
+//		String endSearchDateGMT = DateTimeUtil.getGMTTime(endSearchDate, timeZone);
+//
+//		retSearchDate.add(startSearchDateGMT);
+//		retSearchDate.add(endSearchDateGMT);
 
-		String startSearchDateGMT = DateTimeUtil.getGMTTime(startSearchDate, timeZone);
-		String endSearchDateGMT = DateTimeUtil.getGMTTime(endSearchDate, timeZone);
+
+		String startSearchDateGMT = "";
+		String endSearchDateGMT = "";
+		String now = "";
+
+		now = DateTimeUtil.getNow();
+
+		// 前七天
+		Date startDate = DateTimeUtil.addDays(DateTimeUtil.parse(now), -7);
+		String startDateString =  DateTimeUtil.format(startDate, DateTimeUtil.DEFAULT_DATE_FORMAT);
+		startSearchDateGMT = startDateString + " 00:00:00";
+		endSearchDateGMT = now;
 
 		retSearchDate.add(startSearchDateGMT);
 		retSearchDate.add(endSearchDateGMT);
@@ -1609,5 +1627,13 @@ public class PostBCBGOrderService {
 //		}
 //
 //		System.out.println(outputString);
+
+//		String localTime = DateTimeUtil.getLocalTime("2015-11-11 16:00:00", 8);
+//		Date localTimeForDate = DateTimeUtil.parse(localTime);
+//
+//		String date = DateTimeUtil.format(localTimeForDate, DateTimeUtil.DATE_TIME_FORMAT_3);
+//		String time = DateTimeUtil.format(localTimeForDate, DateTimeUtil.DATE_TIME_FORMAT_4);
+//
+//		System.out.println(String.format("DailySales_VO_BMX_%s_%s.dat", date, time));
 //	}
 }
