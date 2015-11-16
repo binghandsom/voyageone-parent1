@@ -94,6 +94,8 @@ public class PostBCBGOrderService {
 	private final String PayType = "ALIPAY";
 	private final String Discount = "Discount";
 	private final String BAIDU_TRANSLATE_CONFIG = "BAIDU_TRANSLATE_CONFIG";
+
+	private final String DummyDate = "00000000";
 	/**
 	 * 向RM正常订单推送(upload)
 	 *
@@ -102,7 +104,8 @@ public class PostBCBGOrderService {
 
 		boolean isSuccess = true;
 		// 渠道时区
-		int orderChannelTimeZone = Integer.valueOf(ChannelConfigs.getVal1(orderChannelID, ChannelConfigEnums.Name.channel_time_zone));
+//		int orderChannelTimeZone = Integer.valueOf(ChannelConfigs.getVal1(orderChannelID, ChannelConfigEnums.Name.channel_time_zone));
+		int orderChannelTimeZone = 8; // 以北京时间计算
 		// 汇率
 		String exchangeRate = Codes.getCodeName("MONEY_CHG_RMB", "USD");
 		// 做成时间
@@ -207,6 +210,7 @@ public class PostBCBGOrderService {
 			// 订单单位连番
 			int lineNumber = 0;
 
+			String shipDate = "";
 			for (int i = 0; i < pushOrderList.size(); i++) {
 				OrderExtend orderExtendInfo = pushOrderList.get(i);
 				// SKU金额取得
@@ -216,6 +220,7 @@ public class PostBCBGOrderService {
 
 					orderNumber = orderExtendInfo.getOrderNumber();
 					lineNumber = 1;
+					shipDate = "";
 				}
 				SetPriceBean skuPriceInfo = getSKUPriceInfo(orderExtendInfo.getSku(), orderPriceDatas);
 
@@ -232,11 +237,11 @@ public class PostBCBGOrderService {
 					// 运费的场合
 					orderExtendInfo.setLongItemNumber(FREIGHT);
 
-					// ShipDate
-					orderExtendInfo.setShipDate("");
+					// ShipDate（用物品的ShipDate设定）
+					orderExtendInfo.setShipDate(shipDate);
 
-					orderExtendInfo.setQuantityOrdered("0");
-					orderExtendInfo.setQuantityShipped("0");
+					orderExtendInfo.setQuantityOrdered("1");
+					orderExtendInfo.setQuantityShipped("1");
 
 					float price = div2Digits(Float.valueOf(orderExtendInfo.getPricePerUnit()), rate);
 					orderExtendInfo.setPrice(String.valueOf(price));
@@ -251,7 +256,8 @@ public class PostBCBGOrderService {
 					orderExtendInfo.setLongItemNumber("");
 
 					// ShipDate
-					orderExtendInfo.setShipDate(getLocalDate(orderExtendInfo.getShipDate(), timeZone));
+					shipDate = getLocalDate(orderExtendInfo.getShipDate(), timeZone);
+					orderExtendInfo.setShipDate(shipDate);
 
 					// 售价含折扣 = （数量 * 单价）
 					float price = div2Digits(Float.valueOf(skuPriceInfo.getPrice()), rate);
@@ -266,7 +272,7 @@ public class PostBCBGOrderService {
 					float salePrice = mult2Digits(Float.valueOf(pricePerUnit), Float.valueOf(orderExtendInfo.getQuantityOrdered()));
 					float orderDiscount = sub2Digits(salePrice, Float.valueOf(skuPriceInfo.getPrice()));
 //					orderDiscount = mult2Digits(Float.valueOf(skuPriceInfo.getShipping_price()), -1);
-//					orderDiscount = mult2Digits(orderDiscount, -1);
+					orderDiscount = mult2Digits(orderDiscount, -1);
 					orderDiscount = div2Digits(orderDiscount, rate);
 					orderExtendInfo.setOrderDiscount(String.valueOf(orderDiscount));
 				}
@@ -361,7 +367,7 @@ public class PostBCBGOrderService {
 			}
 
 			fileWriter.write(orderInfo.getPrice(), DailySalesFileFormat.ItemAmount);
-			fileWriter.write("", DailySalesFileFormat.TaxAmount);
+			fileWriter.write("0.0", DailySalesFileFormat.TaxAmount);
 			fileWriter.write(Carrier, DailySalesFileFormat.Carrier);
 			fileWriter.write("", DailySalesFileFormat.ReasonCode);
 			fileWriter.write("", DailySalesFileFormat.ShipToAddressID);
@@ -390,9 +396,22 @@ public class PostBCBGOrderService {
 			fileWriter.write(orderInfo.getPhone(), DailySalesFileFormat.BillToPhone);
 			fileWriter.write(PayType, DailySalesFileFormat.PaymentType);
 			fileWriter.write(orderInfo.getPricePerUnit(), DailySalesFileFormat.SalePrice);
-			fileWriter.write(Discount, DailySalesFileFormat.Promo1);
-			fileWriter.write(orderInfo.getOrderDiscount(), DailySalesFileFormat.PromoDiscountAmount1);
-			fileWriter.write(Discount, DailySalesFileFormat.PromoDiscountDescription1);
+
+			float unitOrderDiscount = div2Digits(Float.valueOf(orderInfo.getOrderDiscount()), Float.valueOf(orderInfo.getQuantityOrdered()));
+
+			if (unitOrderDiscount == 0) {
+				fileWriter.write("", DailySalesFileFormat.Promo1);
+			} else {
+				fileWriter.write(Discount, DailySalesFileFormat.Promo1);
+			}
+			fileWriter.write(String.valueOf(unitOrderDiscount), DailySalesFileFormat.PromoDiscountAmount1);
+
+			if (unitOrderDiscount == 0) {
+				fileWriter.write("", DailySalesFileFormat.PromoDiscountDescription1);
+			} else {
+				fileWriter.write(Discount, DailySalesFileFormat.PromoDiscountDescription1);
+			}
+
 			fileWriter.write("", DailySalesFileFormat.Promo2);
 			fileWriter.write("0.0", DailySalesFileFormat.PromoDiscountAmount2);
 			fileWriter.write("", DailySalesFileFormat.PromoDiscountDescription2);
@@ -681,7 +700,8 @@ public class PostBCBGOrderService {
 	public boolean postBCBGDemand() {
 		boolean isSuccess = true;
 		// 渠道时区
-		int orderChannelTimeZone = Integer.valueOf(ChannelConfigs.getVal1(orderChannelID, ChannelConfigEnums.Name.channel_time_zone));
+//		int orderChannelTimeZone = Integer.valueOf(ChannelConfigs.getVal1(orderChannelID, ChannelConfigEnums.Name.channel_time_zone));
+		int orderChannelTimeZone = 8;
 		// 汇率
 		String exchangeRate = Codes.getCodeName("MONEY_CHG_RMB", "USD");
 		// 做成时间
@@ -809,8 +829,8 @@ public class PostBCBGOrderService {
 					// 运费的场合
 					orderExtendInfo.setLongItemNumber(FREIGHT);
 
-					orderExtendInfo.setQuantityOrdered("0");
-					orderExtendInfo.setQuantityShipped("0");
+					orderExtendInfo.setQuantityOrdered("1");
+					orderExtendInfo.setQuantityShipped("1");
 
 					float price = div2Digits(Float.valueOf(orderExtendInfo.getPricePerUnit()), rate);
 					orderExtendInfo.setPrice(String.valueOf(price));
@@ -841,6 +861,7 @@ public class PostBCBGOrderService {
 					// 订单折扣（明细折扣 + 订单折扣 = 原始价格 - 销售价格）
 					float salePrice = mult2Digits(Float.valueOf(pricePerUnit), Float.valueOf(orderExtendInfo.getQuantityOrdered()));
 					float orderDiscount = sub2Digits(salePrice, Float.valueOf(skuPriceInfo.getPrice()));
+					orderDiscount = mult2Digits(orderDiscount, -1);
 					orderDiscount = div2Digits(orderDiscount, rate);
 					orderExtendInfo.setOrderDiscount(String.valueOf(orderDiscount));
 				}
@@ -877,21 +898,37 @@ public class PostBCBGOrderService {
 	}
 
 	/**
-	 * 检索时间（美国时间，前一天的数据）
+	 * 检索时间（北京时间 当天24点，前七天的数据，通过定时器设定24点启动）     //检索时间（美国时间，前一天的数据）
 	 *
 	 * @param timeZone 本地时区
 	 */
 	private ArrayList<String> getSearchDate(int timeZone) {
 		ArrayList<String> retSearchDate = new ArrayList<String>();
 
-		String localTime = DateTimeUtil.getLocalTime(DateTimeUtil.getNow(), timeZone);
-		Date searchDate = DateTimeUtil.addDays(DateTimeUtil.parse(localTime), -1);
-		String searchDateString =  DateTimeUtil.format(searchDate, DateTimeUtil.DEFAULT_DATE_FORMAT);
-		String startSearchDate = searchDateString + " 00:00:00";
-		String endSearchDate = searchDateString + " 23:59:59";
+//		String localTime = DateTimeUtil.getLocalTime(DateTimeUtil.getNow(), timeZone);
+//		Date searchDate = DateTimeUtil.addDays(DateTimeUtil.parse(localTime), -1);
+//		String searchDateString =  DateTimeUtil.format(searchDate, DateTimeUtil.DEFAULT_DATE_FORMAT);
+//		String startSearchDate = searchDateString + " 00:00:00";
+//		String endSearchDate = searchDateString + " 23:59:59";
+//
+//		String startSearchDateGMT = DateTimeUtil.getGMTTime(startSearchDate, timeZone);
+//		String endSearchDateGMT = DateTimeUtil.getGMTTime(endSearchDate, timeZone);
+//
+//		retSearchDate.add(startSearchDateGMT);
+//		retSearchDate.add(endSearchDateGMT);
 
-		String startSearchDateGMT = DateTimeUtil.getGMTTime(startSearchDate, timeZone);
-		String endSearchDateGMT = DateTimeUtil.getGMTTime(endSearchDate, timeZone);
+
+		String startSearchDateGMT = "";
+		String endSearchDateGMT = "";
+		String now = "";
+
+		now = DateTimeUtil.getNow();
+
+		// 前七天
+		Date startDate = DateTimeUtil.addDays(DateTimeUtil.parse(now), -7);
+		String startDateString =  DateTimeUtil.format(startDate, DateTimeUtil.DEFAULT_DATE_FORMAT);
+		startSearchDateGMT = startDateString + " 00:00:00";
+		endSearchDateGMT = now;
 
 		retSearchDate.add(startSearchDateGMT);
 		retSearchDate.add(endSearchDateGMT);
@@ -1035,14 +1072,14 @@ public class PostBCBGOrderService {
 			fileWriter.write(orderInfo.getLineNumber(), DemandsFileFormat.LineNumber);
 			fileWriter.write(orderInfo.getOrderDateTime(), DemandsFileFormat.OrderDate);
 			fileWriter.write(orderInfo.getSourceOrderId(), DemandsFileFormat.WebOrderNumber);
-			fileWriter.write("", DemandsFileFormat.AgentIDChannel);
+			fileWriter.write("Customer", DemandsFileFormat.AgentIDChannel);
 			fileWriter.write(orderInfo.getLongItemNumber(), DemandsFileFormat.LongItemNumber);
 			fileWriter.write(orderInfo.getUPC(), DemandsFileFormat.UPC);
 			fileWriter.write(orderInfo.getPricePerUnit(), DemandsFileFormat.SalePrice);
 			fileWriter.write(orderInfo.getQuantityOrdered(), DemandsFileFormat.QuantityOrdered);
 			fileWriter.write(orderInfo.getQuantityShipped(), DemandsFileFormat.QuantityShipped);
 			fileWriter.write("", DemandsFileFormat.POBOQuantity);
-			fileWriter.write("", DemandsFileFormat.PromiseDate);
+			fileWriter.write(DummyDate, DemandsFileFormat.PromiseDate);
 
 			if ("Shipping".equals(orderInfo.getSku())) {
 				fileWriter.write(orderInfo.getPrice(), DemandsFileFormat.UnitPrice);
@@ -1052,10 +1089,21 @@ public class PostBCBGOrderService {
 //				fileWriter.write(orderInfo.getPrice(), DemandsFileFormat.UnitPrice);
 			}
 
-			fileWriter.write("", DemandsFileFormat.TaxAmount);
-			fileWriter.write(Discount, DemandsFileFormat.Promo1);
-			fileWriter.write(orderInfo.getOrderDiscount(), DemandsFileFormat.PromoDiscountAmount1);
-			fileWriter.write(Discount, DemandsFileFormat.PromoDiscountDescription1);
+			fileWriter.write("0.0", DemandsFileFormat.TaxAmount);
+			float unitOrderDiscount = div2Digits(Float.valueOf(orderInfo.getOrderDiscount()), Float.valueOf(orderInfo.getQuantityOrdered()));
+
+			if (unitOrderDiscount == 0) {
+				fileWriter.write("", DemandsFileFormat.Promo1);
+			} else {
+				fileWriter.write(Discount, DemandsFileFormat.Promo1);
+			}
+			fileWriter.write(String.valueOf(unitOrderDiscount), DemandsFileFormat.PromoDiscountAmount1);
+
+			if (unitOrderDiscount == 0) {
+				fileWriter.write("", DemandsFileFormat.PromoDiscountDescription1);
+			} else {
+				fileWriter.write(Discount, DemandsFileFormat.PromoDiscountDescription1);
+			}
 
 			fileWriter.write("", DemandsFileFormat.Promo2);
 			fileWriter.write("0.0", DemandsFileFormat.PromoDiscountAmount2);
@@ -1299,19 +1347,19 @@ public class PostBCBGOrderService {
 	 * DEMAND_YYYYMMDD_HHMMSS.dat 文件格式（upload： /opt/ftp-shared/clients-ftp/voyageone-bcbg-sftp/orders/demands）
 	 */
 	private class DemandsFileFormat {
-		private static final String StoreNumber = "A,5";
+		private static final String StoreNumber = "S,5";
 		private static final String OrderNumber = "S,8";
 		private static final String LineNumber = "S,6";
 		private static final String OrderDate = "A,14";
 		private static final String WebOrderNumber = "A,25";
-		private static final String AgentIDChannel = "S,10";
+		private static final String AgentIDChannel = "A,10";
 		private static final String LongItemNumber = "A,25";
-		private static final String UPC = "S,14";
+		private static final String UPC = "A,14";
 		private static final String SalePrice = "S,15.2";
 		private static final String QuantityOrdered = "S,15";
 		private static final String QuantityShipped = "S,15";
-		private static final String POBOQuantity = "A,15";
-		private static final String PromiseDate = "A,8";
+		private static final String POBOQuantity = "S,15";
+		private static final String PromiseDate = "S,8";
 		private static final String UnitPrice = "S,15.2";
 		private static final String TaxAmount = "S,15.2";
 		private static final String Promo1 = "A,12";
@@ -1579,5 +1627,13 @@ public class PostBCBGOrderService {
 //		}
 //
 //		System.out.println(outputString);
+
+//		String localTime = DateTimeUtil.getLocalTime("2015-11-11 16:00:00", 8);
+//		Date localTimeForDate = DateTimeUtil.parse(localTime);
+//
+//		String date = DateTimeUtil.format(localTimeForDate, DateTimeUtil.DATE_TIME_FORMAT_3);
+//		String time = DateTimeUtil.format(localTimeForDate, DateTimeUtil.DATE_TIME_FORMAT_4);
+//
+//		System.out.println(String.format("DailySales_VO_BMX_%s_%s.dat", date, time));
 //	}
 }

@@ -26,23 +26,24 @@ public class SkuTemplateSchema {
         public final static int EXTENDCOLOR_ALIASNAME = 7;
         public final static int EXTENDCOLOR_COLOR = 8;
         public final static int EXTENDCOLOR_IMAGE = 9;
-        public final static int EXTENDCOLOR = 10;
+        public final static int EXTENDCOLOR_BASECOLOR = 10;
+        public final static int EXTENDCOLOR = 11;
 
-        public final static int EXTENDSIZE_SIZE = 11;
-        public final static int EXTENDSIZE_ALIASNAME = 12;
-        public final static int EXTENDSIZE = 13;
+        public final static int EXTENDSIZE_SIZE = 12;
+        public final static int EXTENDSIZE_ALIASNAME = 13;
+        public final static int EXTENDSIZE = 14;
 
-        public final static int INPUT_CUSTOM_SIZE_1 = 14;
-        public final static int INPUT_CUSTOM_SIZE_2 = 15;
-        public final static int INPUT_CUSTOM_SIZE_3 = 16;
-        public final static int INPUT_CUSTOM_SIZE_4 = 17;
-        public final static int INPUT_CUSTOM_SIZE_5 = 18;
+        public final static int INPUT_CUSTOM_SIZE_1 = 15;
+        public final static int INPUT_CUSTOM_SIZE_2 = 16;
+        public final static int INPUT_CUSTOM_SIZE_3 = 17;
+        public final static int INPUT_CUSTOM_SIZE_4 = 18;
+        public final static int INPUT_CUSTOM_SIZE_5 = 19;
 
-        public final static int SELECT_CUSTOM_SIZE_1 = 19;
-        public final static int SELECT_CUSTOM_SIZE_2 = 20;
-        public final static int SELECT_CUSTOM_SIZE_3 = 21;
-        public final static int SELECT_CUSTOM_SIZE_4 = 22;
-        public final static int SELECT_CUSTOM_SIZE_5 = 23;
+        public final static int SELECT_CUSTOM_SIZE_1 = 20;
+        public final static int SELECT_CUSTOM_SIZE_2 = 21;
+        public final static int SELECT_CUSTOM_SIZE_3 = 22;
+        public final static int SELECT_CUSTOM_SIZE_4 = 23;
+        public final static int SELECT_CUSTOM_SIZE_5 = 24;
 
         public final static int FIELD_BIT_MAX = SELECT_CUSTOM_SIZE_5;
     }

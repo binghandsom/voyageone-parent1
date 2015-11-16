@@ -73,7 +73,7 @@ public class CustomWordModuleImageWithParam extends CustomWordModule {
             imageParams.add("");
         }
 
-        String parseResult = String.format(imageTemplate, imageParams.toArray());
+        String parseResult = UploadImageHandler.encodeImageUrl(String.format(imageTemplate, imageParams.toArray()));
         if (imageSet != null) {
             imageSet.add(parseResult);
         }
