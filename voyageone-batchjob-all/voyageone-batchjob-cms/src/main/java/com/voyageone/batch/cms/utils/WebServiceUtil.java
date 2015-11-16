@@ -6,6 +6,7 @@ package com.voyageone.batch.cms.utils;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.voyageone.common.components.channelAdvisor.bean.orders.ObjectFactory;
+import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.JsonUtil;
 
 import javax.ws.rs.core.MediaType;
@@ -30,13 +31,15 @@ public class WebServiceUtil {
 	 * @throws URISyntaxException
 	 */
 	public static String postByJsonStr(String url, String jsonData) throws Exception{
-		Client client = Client.create();
-		client.setConnectTimeout(15000);
-		client.setReadTimeout(120000);
-		
-		URI u = new URI(url);
-		WebResource resource = client.resource(u);
-		String response = resource.type(MediaType.APPLICATION_JSON_TYPE).post(String.class, jsonData);
+
+//		Client client = Client.create();
+//		client.setConnectTimeout(15000);
+//		client.setReadTimeout(120000);
+//
+//		URI u = new URI(url);
+//		WebResource resource = client.resource(u);
+//		String response = resource.type(MediaType.APPLICATION_JSON_TYPE).post(String.class, jsonData);
+		String response = HttpUtils.post(url, jsonData,30000,120000);
 		return response;
 	}
 

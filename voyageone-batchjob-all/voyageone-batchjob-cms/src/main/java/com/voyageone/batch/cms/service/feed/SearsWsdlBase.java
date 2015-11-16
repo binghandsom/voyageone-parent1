@@ -7,6 +7,7 @@ import com.voyageone.batch.cms.bean.ModelBean;
 import com.voyageone.batch.cms.bean.ProductBean;
 import com.voyageone.batch.cms.dao.SuperFeedDao;
 import com.voyageone.batch.cms.dao.feed.BcbgSuperFeedDao;
+import com.voyageone.batch.cms.dao.feed.SearsFeedDao;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -29,7 +30,7 @@ abstract class SearsWsdlBase extends BaseTaskService {
     protected SuperFeedDao superFeedDao;
 
     @Autowired
-    protected BcbgSuperFeedDao bcbgSuperFeedDao;
+    protected SearsFeedDao searsFeedDao;
 
     /**
      * 获取子系统
@@ -51,7 +52,7 @@ abstract class SearsWsdlBase extends BaseTaskService {
 
     protected abstract String getWhereUpdateFlg();
 
-    protected abstract class ContextBase {
+    protected  class ContextBase {
 
         private final Pattern special_symbol;
 
@@ -108,7 +109,7 @@ abstract class SearsWsdlBase extends BaseTaskService {
             return itemBeans;
         }
 
-        private ItemBean getItemColumns() {
+        protected ItemBean getItemColumns() {
 
             if (itemColumns != null) return itemColumns;
 
@@ -119,6 +120,7 @@ abstract class SearsWsdlBase extends BaseTaskService {
             itemColumns.setI_itemcode(Feed.getVal1(channel, FeedEnums.Name.item_i_itemcode));
             itemColumns.setI_size(Feed.getVal1(channel, FeedEnums.Name.item_i_size));
             itemColumns.setI_barcode(Feed.getVal1(channel, FeedEnums.Name.item_i_barcode));
+            itemColumns.setI_client_sku(Feed.getVal1(channel, FeedEnums.Name.item_i_client_sku));
             return itemColumns;
         }
 
@@ -216,7 +218,8 @@ abstract class SearsWsdlBase extends BaseTaskService {
         }
 
         protected String clearSpecialSymbol(String name) {
-            return special_symbol.matcher(name.toLowerCase()).replaceAll(Constants.EmptyString).replace(" ", "").replace("'","");
+//            return special_symbol.matcher(name.toLowerCase()).replaceAll(Constants.EmptyString).replace(" ", "").replace("'","").replace("&","").replace(".","");
+            return special_symbol.matcher(name.toLowerCase()).replaceAll(Constants.EmptyString);
         }
 
         /**

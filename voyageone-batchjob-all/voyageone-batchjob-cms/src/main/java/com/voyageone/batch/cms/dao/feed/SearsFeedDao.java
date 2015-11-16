@@ -1,14 +1,15 @@
 package com.voyageone.batch.cms.dao.feed;
 
 import com.voyageone.base.dao.BaseDao;
+import com.voyageone.batch.cms.bean.ProductBean;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.components.sears.bean.ProductBean;
 import com.voyageone.common.components.sears.bean.ProductResponse;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by james on 2015/10/26.
@@ -58,4 +59,16 @@ public class SearsFeedDao extends BaseDao {
         return ret;
     }
 
+    public int[] updateFull(List<String> updatedCodes) {
+        return new int[0];
+    }
+
+    public List<Map> getFeedAttribute(ProductBean productBean) {
+        List<Map> ret;
+        ret = selectList("cms_attribute_select", productBean);
+        if (ret == null) {
+            ret = new ArrayList<>();
+        }
+        return ret;
+    }
 }

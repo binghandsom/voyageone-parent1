@@ -20,7 +20,7 @@ import static java.util.stream.Collectors.*;
  * Created by Jonas on 10/20/15.
  */
 @Service
-public class SearsWsdlUpdate extends BcbgWsdlBase {
+public class SearsWsdlUpdate extends SearsWsdlBase {
 
     private static final String UPDATE_FLG = "update_flg = 2";
 
@@ -37,7 +37,7 @@ public class SearsWsdlUpdate extends BcbgWsdlBase {
         return "BcbgAnalysis.Update";
     }
 
-    protected class Context extends ContextBase {
+    class Context extends SearsWsdlBase.ContextBase {
 
         protected Context(ChannelConfigEnums.Channel channel) {
             super(channel);
@@ -110,7 +110,7 @@ public class SearsWsdlUpdate extends BcbgWsdlBase {
             }
 
             // 返回删除数量和插入数量,理论上应该相同
-            int[] counts = bcbgSuperFeedDao.updateFull(updatedCodes);
+            int[] counts = searsFeedDao.updateFull(updatedCodes);
 
             $info("已完成商品更新, 更新的商品数量 Feed [ %s ] [ %s ] Style [ %s ] [ %s ] ", counts[0], counts[1], counts[2], counts[3]);
         }

@@ -95,4 +95,112 @@
         where
           status = #{status}
     </select>
+    <select id="cms_attribute_select" parameterType="com.voyageone.batch.cms.bean.ProductBean" resultType="HashMap">
+        SELECT
+            b.cfg_name,
+            GROUP_CONCAT(DISTINCT a.`value`) as value
+        FROM
+            voyageone_cms.cms_zz_worktable_sears_attribute a
+        LEFT JOIN voyageone_cms.cms_mt_feed_config b ON a.attribute = b.cfg_val1
+        AND b.order_channel_id = '013'
+        WHERE
+             b.is_attribute = 1
+        AND a.item_id IN (
+            <foreach collection="itembeans" item="item" separator=",">
+                #{item.i_client_sku}
+            </foreach>
+        )
+        GROUP BY
+           cfg_name
+    </select>
+    <resultMap id="resultMap_sears" type="com.voyageone.batch.cms.bean.ModelBean">
+        <result column="model_url_key" property="url_key" />
+        <result column="category_url_key" property="category_url_key" />
+        <result column="m_product_type" property="m_product_type" />
+        <result column="m_brand" property="m_brand" />
+        <result column="m_model" property="m_model" />
+        <result column="m_name" property="m_name" />
+        <result column="m_short_description" property="m_short_description" />
+        <result column="m_long_description" property="m_long_description" />
+        <result column="m_size_type" property="m_size_type" />
+        <result column="m_is_unisex" property="m_is_unisex" />
+        <result column="m_weight" property="m_weight" />
+        <result column="m_is_taxable" property="m_is_taxable" />
+        <result column="m_weight" property="m_weight" />
+        <result column="m_is_taxable" property="m_is_taxable" />
+        <result column="m_is_effective" property="m_is_effective" />
+        <collection property="productbeans" javaType="ArrayList" ofType="com.voyageone.batch.cms.bean.ProductBean" >
+            <result column="url_key" property="url_key" />
+            <result column="p_code" property="p_code" />
+            <result column="p_name" property="p_name" />
+            <result column="p_color" property="p_color" />
+            <result column="p_msrp" property="p_msrp" />
+            <result column="p_made_in_country" property="p_made_in_country" />
+            <result column="pe_short_description" property="pe_short_description" />
+            <result column="pe_long_description" property="pe_long_description" />
+            <result column="ps_price" property="ps_price" />
+            <result column="cps_cn_price" property="cps_cn_price" />
+            <result column="cps_cn_price_rmb" property="cps_cn_price_rmb" />
+            <result column="cps_cn_price_final_rmb" property="cps_cn_price_final_rmb" />
+            <result column="cps_cn_price" property="cps_cn_price" />
+            <result column="cps_cn_price" property="cps_cn_price" />
+            <result column="cps_cn_price" property="cps_cn_price" />
+            <collection property="itembeans" javaType="ArrayList" ofType="com.voyageone.batch.cms.bean.ItemBean" >
+                <result column="i_sku" property="i_sku" />
+                <result column="i_itemcode" property="i_itemcode" />
+                <result column="i_size" property="i_size" />
+                <result column="i_barcode" property="i_barcode" />
+                <result column="i_client_sku" property="i_client_sku" />
+                <result column="i_active" property="i_active" />
+            </collection>
+            <collection property="images" javaType="ArrayList" ofType="com.voyageone.batch.cms.bean.ImageBean" >
+                <result column="image" property="image_url" />
+                <result column="image_type" property="image_type" />
+                <result column="display_order" property="display_order" />
+            </collection>
+        </collection>
+    </resultMap>
+    <select id="cms_searsfeed_select" resultMap="resultMap_sears" parameterType="HashMap">
+        select
+         ${model_url_key} as model_url_key
+        ,${category_url_key} as category_url_key
+        ,${m_product_type} as m_product_type
+        ,${m_brand} as m_brand
+        ,${m_model} as m_model
+        ,${m_name} as m_name
+        ,${m_short_description} as m_short_description
+        ,${m_long_description} as m_long_description
+        ,${m_size_type} as m_size_type
+        ,${m_is_unisex} as m_is_unisex
+        ,${m_weight} as m_weight
+        ,${m_is_taxable} as m_is_taxable
+        ,${m_is_effective} as m_is_effective
+        ,${p_url_key} as url_key
+        ,${p_code} as p_code
+        ,${p_name} as p_name
+        ,${p_color} as p_color
+        ,${p_msrp} as p_msrp
+        ,${p_made_in_country} as p_made_in_country
+        ,${pe_short_description} as pe_short_description
+        <if test="p_product_type != null">
+            ,${p_product_type} as p_product_type
+        </if>
+        ,${pe_long_description} as pe_long_description
+        ,${ps_price}  as ps_price
+        ,${cps_cn_price}  as cps_cn_price
+        ,${cps_cn_price_rmb}  as cps_cn_price_rmb
+        ,${cps_cn_price_final_rmb}  as cps_cn_price_final_rmb
+        ,${i_sku} as i_sku
+        ,${i_itemcode} as i_itemcode
+        ,${i_size} as i_size
+        ,${i_barcode} as i_barcode
+        ,${i_client_sku} as i_client_sku
+        ,1 as i_active
+        ,${image} as image
+        ,1 as image_type
+        ,0 as display_order
+        from
+        ${tableName}
+        ${keyword}
+    </select>
 </mapper>

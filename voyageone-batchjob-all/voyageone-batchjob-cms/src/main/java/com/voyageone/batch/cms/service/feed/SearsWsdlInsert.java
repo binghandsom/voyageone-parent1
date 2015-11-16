@@ -9,7 +9,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static com.voyageone.batch.cms.service.feed.BcbgWsdlConstants.channel;
 
 /**
  * (临时) 为插入接口提供专门服务
@@ -45,6 +49,9 @@ class SearsWsdlInsert extends SearsWsdlBase {
             $info("准备获取类目 [ %s ] 的 Model", category.getUrl_key());
 
             ModelBean modelColumns = getModelColumns();
+            ProductBean productColumns = getProductColumns();
+            ItemBean itemColumns = getItemColumns();
+            Feed.getVal1(channel, FeedEnums.Name.images);
 
             // 条件则根据类目筛选
             String where = String.format("WHERE %s AND %s = '%s' %s", INSERT_FLG, modelColumns.getCategory_url_key(),
@@ -56,7 +63,7 @@ class SearsWsdlInsert extends SearsWsdlBase {
 
             $info("取得 [ %s ] 的 Model 数 %s", category.getUrl_key(), modelBeans.size());
 
-            for (ModelBean bean: modelBeans) {
+            for (ModelBean bean : modelBeans) {
                 bean.setProductbeans(getProducts(bean));
                 // 转换 Url Key 格式,这里顺序同 getCategories 一样的原理
                 bean.setUrl_key(clearSpecialSymbol(bean.getUrl_key()));
@@ -93,7 +100,7 @@ class SearsWsdlInsert extends SearsWsdlBase {
             // update flg 标记, 只获取哪些即将进行新增的商品的类目
             List<String> categoryPaths = superFeedDao.selectSuperfeedCategory(
                     Feed.getVal1(channel, FeedEnums.Name.category_column),
-                    table, " AND " + INSERT_FLG);
+                    table, " AND " + INSERT_FLG + " AND category_id in (95301,110)");
 
             $info("获取类目路径数 %s , 准备拆分继续处理", categoryPaths.size());
 
@@ -175,7 +182,7 @@ class SearsWsdlInsert extends SearsWsdlBase {
             List<String> productFailList = new ArrayList<>();
 
             // 分每棵树进行提交
-            for (List<CategoryBean> categories: categoriesList) {
+            for (List<CategoryBean> categories : categoriesList) {
 
                 // 主参数
                 ProductsFeedInsert feedInsert = new ProductsFeedInsert();
@@ -202,6 +209,48 @@ class SearsWsdlInsert extends SearsWsdlBase {
                         if (productFeedDetailBean.getBeanType() == 3 || productFeedDetailBean.getBeanType() == 4)
                             productFailList.add(productFeedDetailBean.getDealObject().getCode());
                     }
+
+                    // 成功 3:product; 4:item
+                    List<ProductFeedDetailBean> productFeedDetailSuccess = productFeedResponseBean.getSuccess();
+                    List<Map> attributeList = new ArrayList<>();
+                    for (ProductFeedDetailBean productFeedDetailBean : productFeedDetailSuccess) {
+                        //  处理类型 3:product; 4:item
+                        if (productFeedDetailBean.getBeanType() == 3) {
+                            categories.get(categories.size() - 1).getModelbeans().forEach(modelBean -> modelBean.getProductbeans().forEach(productBean -> {
+                                if (productBean.getUrl_key().equalsIgnoreCase(productFeedDetailBean.getDealObject().getUrl_key())) {
+                                    List<Map> ret = searsFeedDao.getFeedAttribute(productBean);
+                                    if (ret.size() > 0) {
+                                        HashMap<String, Object> attribute = new HashMap<String, Object>();
+                                        attribute.put("category_url_key", productBean.getCategory_url_key());
+                                        attribute.put("model_url_key", productBean.getModel_url_key());
+                                        attribute.put("product_url_key", productBean.getUrl_key());
+                                        ret.forEach(map -> {
+                                            attribute.put(map.get("cfg_name").toString(), map.get("value"));
+                                        });
+                                        attributeList.add(attribute);
+                                    }
+                                }
+                            }));
+                        }
+                    }
+                    Map feedAttribute = new HashMap<>();
+                    feedAttribute.put("channel_id", channel.getId());
+                    feedAttribute.put("attributebeans", attributeList);
+                    WsdlResponseBean wsdlResponseBean = service.attribute(feedAttribute);
+                    // 处理失败
+                    if (wsdlResponseBean == null) {
+                        $info("产品Attribute处理失败，处理失败！");
+                    } else {
+                        $info("调用结果 Attribute 接口");
+                        $info("\tMessage:\t%s", wsdlResponseBean.getMessage());
+                        $info("\tResult:\t%s", wsdlResponseBean.getResult());
+                        $info("\tResultInfo:\t%s", wsdlResponseBean.getResultInfo());
+
+                        if (wsdlResponseBean.getResult().equals("NG")) {
+                            $info("产品Attribute处理失败，MessageCode = " + wsdlResponseBean.getMessageCode() + ",Message = " + wsdlResponseBean.getMessage());
+                            logIssue("cms 数据导入处理", "产品Attribute处理失败，MessageCode = " + wsdlResponseBean.getMessageCode() + ",Message = " + wsdlResponseBean.getMessage());
+                        }
+                    }
                 }
 
                 if (response.getResult().equals("NG"))
@@ -210,9 +259,9 @@ class SearsWsdlInsert extends SearsWsdlBase {
 
             $info("总共~ 失败的 Model: %s ; 失败的 Product: %s", modelFailList.size(), productFailList.size());
 
-            int[] counts = bcbgSuperFeedDao.insertFullWithoutFail(modelFailList, productFailList);
+            // int[] counts = searsFeedDao.insertFullWithoutFail(modelFailList, productFailList);
 
-            $info("新商品 Insert 处理全部完成, 更新 Full 表 [ Feed: %s ] [ Style: %s ]", counts[0], counts[1]);
+            //$info("新商品 Insert 处理全部完成, 更新 Full 表 [ Feed: %s ] [ Style: %s ]", counts[0], counts[1]);
         }
     }
 }
