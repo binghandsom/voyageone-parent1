@@ -77,6 +77,9 @@ public class FormPickupBean  extends ReservationBean {
     // 仓库所属渠道
     public String  store_order_channel_id;
 
+    // 品牌方SKU
+    public String  client_sku;
+
     public String getOrder_channel_name() {
         return order_channel_name;
     }
@@ -243,5 +246,13 @@ public class FormPickupBean  extends ReservationBean {
 
     public void setStore_order_channel_id(String store_order_channel_id) {
         this.store_order_channel_id = store_order_channel_id;
+    }
+
+    public String getClient_sku() {
+        return client_sku;
+    }
+
+    public void setClient_sku(String client_sku) {
+        this.client_sku = client_sku;
     }
 }

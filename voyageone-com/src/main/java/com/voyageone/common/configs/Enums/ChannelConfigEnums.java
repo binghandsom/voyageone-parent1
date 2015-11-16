@@ -295,6 +295,10 @@ public class ChannelConfigEnums {
          */
         is_true_name_check,
         /**
+         * 订单地址包含菜鸟驿站的限制
+         */
+        is_cainiaoyizhan_check,
+        /**
          * 渠道允许发货数量（0：代表不用检查）
          */
         shipping_num,

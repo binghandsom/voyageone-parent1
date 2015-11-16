@@ -62,26 +62,26 @@
 	
 <!-- ===================add by eric for sendOrderMail end=========== -->
 
-	<bean id="Sneakerhead88Top10Task"
+	<bean id="SendTopRankingTask"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject">
 			<ref local="SendOrderMailJob" />
 		</property>
 		<property name="targetMethod">
-			<value>sneakerhead88Top10</value>
+			<value>sendTopSpendingRanking</value>
 		</property>
 		<property name="concurrent">
 			<value>false</value>
 		</property>
 	</bean>
-	<bean id="Sneakerhead88Top10TaskContri"
-		name="Sneakerhead88Top10TaskContri"
+	<bean id="SendTopRankingTaskContri"
+		name="SendTopRankingTaskContri"
 		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
 		<property name="jobDetail">
-			<ref bean="Sneakerhead88Top10Task" />
+			<ref bean="SendTopRankingTask" />
 		</property>
 		<property name="cronExpression">
-			<value>${quartz.sneakerhead.88.top10.mail}</value>
+			<value>${quartz.spending.top.ranking.mail}</value>
 		</property>
 	</bean>
 	

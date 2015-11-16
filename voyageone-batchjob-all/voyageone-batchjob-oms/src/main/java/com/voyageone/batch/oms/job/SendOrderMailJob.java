@@ -29,7 +29,7 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 		
 		public final static String taskCheck = "SendOrderMailJob";
 		
-		public final static String taskCheckSneakerhead88Top10 = "Sneakerhead88Top10";
+		public final static String taskCheckTopSpendingRanking = "SpendingTopRanking";
 			
 		public void run(){
 			List<TaskControlBean> taskControlList = taskDao.getTaskControlList(taskCheck);
@@ -39,9 +39,12 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 			}
 			String taskID =  TaskControlUtils.getTaskId(taskControlList);
 			logger.info(taskCheck + "任务开始");
+
 			// 任务监控历史记录添加:启动
 			taskDao.insertTaskHistory(taskID, TaskControlEnums.Status.START.getIs());
+
 			boolean isSuccess = sendOrderMailService.sendOrderMail();
+
 			// 任务监控历史记录添加:结束
 			String result = "";
 			if (isSuccess) {
@@ -55,28 +58,41 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 		}
 		
 		/**
-		 * sneakerhead 88店庆每小时统计消费前10顾客
+		 * 统计消费前多少名顾客
 		 */
-		public void sneakerhead88Top10() {
-			List<TaskControlBean> taskControlList = taskDao.getTaskControlList(taskCheckSneakerhead88Top10);
+		public void sendTopSpendingRanking() {
+			String taskNameReal = taskCheckTopSpendingRanking;
+
+			List<TaskControlBean> taskControlList = taskDao.getTaskControlList(taskNameReal);
 			// 是否可以运行的判断
-			if (TaskControlUtils.isRunnable(taskControlList, taskCheckSneakerhead88Top10) == false) {
+			if (TaskControlUtils.isRunnable(taskControlList, taskNameReal) == false) {
 				return;
 			}
-			String taskID =  TaskControlUtils.getTaskId(taskControlList);
-			logger.info(taskCheckSneakerhead88Top10 + "任务开始");
+
+			String taskID = TaskControlUtils.getTaskId(taskControlList);
+			logger.info(taskNameReal + "任务开始");
 			// 任务监控历史记录添加:启动
 			taskDao.insertTaskHistory(taskID, TaskControlEnums.Status.START.getIs());
-			
+
+			// 允许运行的订单渠道取得
+			List<String> orderChannelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
+
 			boolean isSuccess = true;
-			try {
-				isSuccess = sendOrderMailService.sendSneakerhead88Top10Mail();
-			} catch (Exception ex) {
-				isSuccess = false;
-				
-				logger.error(ex.getMessage(), ex);
-				issueLog.log(ex, ErrorType.BatchJob, SubSystem.OMS);
+
+			// 需要发邮件的渠道
+			for (String orderChannelId : orderChannelIdList) {
+				try {
+					String topCountStr =  TaskControlUtils.getVal2(taskControlList, TaskControlEnums.Name.order_channel_id, orderChannelId);
+					isSuccess = sendOrderMailService.sendTopSpendingRankingMail(orderChannelId, Integer.valueOf(topCountStr));
+
+				} catch (Exception ex) {
+					isSuccess = false;
+
+					logger.error(ex.getMessage(), ex);
+					issueLog.log(ex, ErrorType.BatchJob, SubSystem.OMS);
+				}
 			}
+
 			// 任务监控历史记录添加:结束
 			String result = "";
 			if (isSuccess) {
@@ -86,6 +102,6 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 			}
 			taskDao.insertTaskHistory(taskID, result);
 
-			logger.info(taskCheckSneakerhead88Top10 + "任务结束");
+			logger.info(taskNameReal + "任务结束");
 		}
 	}

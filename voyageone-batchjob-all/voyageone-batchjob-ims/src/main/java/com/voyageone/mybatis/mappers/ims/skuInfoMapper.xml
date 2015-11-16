@@ -4,7 +4,7 @@
 
     <select id="ims_selectInventoryByCondition" resultType="String" parameterType="Map">
         SELECT qty_china
-        FROM wms_bt_inventory_center_logic
+        FROM Synship.wms_bt_inventory_center_logic
         WHERE
         <if test="code != null">
             code = #{code}
@@ -20,7 +20,7 @@
 
     <select id="ims_selectSkuInfoByCode" resultType="com.voyageone.batch.ims.modelbean.SkuInfoBean" parameterType="Map">
         SELECT itemCode as code, order_channel_id, sku
-        FROM wms_bt_item_details
+        FROM Synship.wms_bt_item_details
         WHERE itemCode = #{code}
         AND order_channel_id = #{channel_id}
     </select>
@@ -28,7 +28,7 @@
     <select id="ims_selectSkuSizeBySku" resultType="String" parameterType="String">
         SELECT
         size
-        FROM wms_bt_item_details
+        FROM Synship.wms_bt_item_details
         Where sku = #{sku}
     </select>
 </mapper>

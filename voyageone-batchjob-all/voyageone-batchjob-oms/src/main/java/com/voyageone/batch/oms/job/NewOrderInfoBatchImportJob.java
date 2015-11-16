@@ -137,6 +137,9 @@ public class NewOrderInfoBatchImportJob {
 							
 							// 本轮订单插入结束之后已送赠品顾客信息记录
 							orderInfoImportService.recordHavingGiftedCustomerInfo();
+
+							// 本轮订单插入结束之后回写满就送配置表里的赠品剩余库存
+							orderInfoImportService.recordPriceThanGiftInventory();
 							
 							// 检查没有自动approved的订单
 							orderInfoImportService.checkNotApprovedInfo(newOrderInfoList);

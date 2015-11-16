@@ -104,6 +104,14 @@ public class TbProductService extends TbBase {
         return response;
     }
 
+    public TmallItemUpdateSchemaGetResponse doGetWareInfoItem(String itemId, ShopBean config) throws ApiException{
+
+        TmallItemUpdateSchemaGetRequest request = new TmallItemUpdateSchemaGetRequest();
+        request.setItemId(Long.parseLong(itemId));
+            TmallItemUpdateSchemaGetResponse response = reqTaobaoApi(config, request);
+        return response;
+    }
+
     public Boolean isDarwin(Long categoryId, Long brandId, ShopBean config, StringBuffer failCause) throws ApiException
     {
         TmallBrandcatMetadataGetRequest req = new TmallBrandcatMetadataGetRequest();

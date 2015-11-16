@@ -1112,6 +1112,17 @@
 		values
 			${values}
 	</insert>
+
+	<!-- 本轮订单插入结束之后回写满就送配置表里的赠品剩余库存 -->
+	<insert id="oms_price_than_gift_setting_recordPriceThanGiftInventory" parameterType="HashMap">
+		UPDATE oms_price_than_gift_setting
+			SET inventory = ${inventory}
+		WHERE
+			order_channel_id = #{orderChannelId}
+			AND cart_id = ${cartId}
+			AND price = ${price}
+			AND gift_sku = #{giftSku}
+	</insert>
 	
 	<!-- 置位synship发送标志（->1） -->
 	<update id="oms_bt_order_details_resetSynShipFlag" parameterType="HashMap">
@@ -1383,7 +1394,9 @@
 			order_channel_id as orderChannelId,
 			cart_id as cartId,
 			price,
-			gift_sku as giftSku
+			gift_sku as giftSku,
+			prior_num as priorNum,
+			inventory
 		from
 			oms_price_than_gift_setting
 		where
@@ -1703,6 +1716,35 @@
 		group by name
 		order by sum(final_grand_total) desc
 		limit 10
+	</select>
+
+	<!-- 统计阿里系渠道消费前count数顾客-->
+	<select id="oms_bt_orders_getSpendingTop" parameterType="HashMap" resultType="HashMap">
+		SELECT
+			orderTop.NAME AS wangwangId,
+			sum(orderTop.final_grand_total) AS consumeMoney
+		FROM
+			(
+				SELECT
+					NAME,
+					final_grand_total
+				FROM
+					oms_bt_orders
+				WHERE
+					order_channel_id = #{orderChannelId} and
+					cart_id IN ('20', '21', '23')
+				AND order_date_time >= '2015-11-10 16:00:00'
+				AND '2015-11-11 15:59:59' >= order_date_time
+				AND order_status NOT IN ('Returned', 'Canceled')
+				<if test="orderChannelId == '001'.toString() ">
+					AND name != '老公不让shopping啊'
+				</if>
+			) orderTop
+		GROUP BY
+			orderTop.NAME
+		ORDER BY
+			sum(orderTop.final_grand_total) DESC
+		LIMIT ${topCount}
 	</select>
 	
 	<!-- 根据省市获得邮编 -->
@@ -2363,7 +2405,7 @@
 				IFNULL(cms.EAN11,'') as UPC
 		from
 			Synship.oms_bt_orders o
-		left join
+		inner join
 			(select ods.order_number,
 						ods.adjustment,
 						ods.sku,
@@ -2384,10 +2426,12 @@
 		left join
 			voyageone_cms.cms_zz_worktable_bcbg_superfeed_full cms
 			on wd.client_sku = cms.MATNR
+		inner join oms_bt_ext_orders ox
+			on o.order_number = ox.order_number
 		where
 			o.order_channel_id = #{orderChannelId} and
 			o.order_status = 'Approved' and
-			o.order_date_time >= #{beginDate} and
+			ox.send_flg = 0 and
 			#{endDate} >= o.order_date_time
 	</select>
 
@@ -2500,14 +2544,17 @@
 			where ods.adjustment = 0 or ods.sku = 'Shipping'
 			group by ods.order_number, ods.adjustment, ods.sku, ods.ship_date
 			)od
-		left join Synship.oms_bt_orders o
+		inner join Synship.oms_bt_orders o
 			on o.order_number = od.order_number
 		left join Synship.wms_bt_item_details wd
 			on od.sku = wd.sku
 			and o.order_channel_id = wd.order_channel_id
 		left join	voyageone_cms.cms_zz_worktable_bcbg_superfeed_full cms
 			on wd.client_sku = cms.MATNR
+		inner join Synship.oms_bt_ext_orders ox
+			on o.order_number = ox.order_number
 		where
 			o.order_channel_id = #{orderChannelId}
+			and ox.ext_flg1 = 0
 	</select>
 </mapper>

@@ -3,6 +3,7 @@ package com.voyageone.batch.ims.service.tmall;
 import com.taobao.api.ApiException;
 import com.taobao.api.response.TmallItemSchemaAddResponse;
 import com.taobao.api.response.TmallItemSchemaUpdateResponse;
+import com.taobao.api.response.TmallItemUpdateSchemaGetResponse;
 import com.taobao.top.schema.enums.FieldTypeEnum;
 import com.taobao.top.schema.exception.TopSchemaException;
 import com.taobao.top.schema.factory.SchemaReader;
@@ -274,7 +275,9 @@ public class TmallProductService implements PlatformServiceInterface {
                 tmallUploadRunState.getContextBuildFields().clearContext();
             } else {
                 logger.info("No product_code matched");
+                //##############临时测试
                 tmallWorkloadStatus.setValue(TmallWorkloadStatus.ADD_UPLOAD_PRODUCT);
+//                tmallWorkloadStatus.setValue(TmallWorkloadStatus.ADD_UPLOAD_ITEM);
                 tmallUploadRunState.getContextBuildFields().clearContext();
             }
         } catch (Exception e) {
@@ -596,6 +599,7 @@ public class TmallProductService implements PlatformServiceInterface {
         }
 
         try {
+            logger.debug("addTmallItem: [productCode:" + productCode + ", categoryCode:" + categoryCode + "]");
             String numId = addTmallItem(categoryCode, productCode, itemPlatformFields, shopBean);
             tcb.setNumId(numId);
         } catch (ApiException e) {
@@ -615,6 +619,7 @@ public class TmallProductService implements PlatformServiceInterface {
         WorkLoadBean workLoadBean = tcb.getWorkLoadBean();
         ShopBean shopBean = ShopConfigs.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
 
+        logger.debug("Before ============");
         TmallUploadRunState.TmallContextBuildFields contextBeforeUploadImage = tmallUploadRunState.getContextBuildFields();
 
         Map<String, String> urlMap;
@@ -624,7 +629,9 @@ public class TmallProductService implements PlatformServiceInterface {
             throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(uploadImageResult.getFailCause(), uploadImageResult.isNextProcess()));
         }
 
+        logger.debug("Before resolve");
         List<Field> itemPlatformFields = (List)masterDataMappingService.resolvePlatformProps(this, tcb.getPlatformUploadRunState(), urlMap);
+        logger.debug("After resolve");
 
         //在临上新的前一刻，再次做库存更新
         TmallUploadRunState.TmallContextBuildCustomFields contextBuildCustomFields = contextBeforeUploadImage.getContextBuildCustomFields();
@@ -632,7 +639,9 @@ public class TmallProductService implements PlatformServiceInterface {
         List<Field> customFields = contextBeforeUploadImage.getCustomFields();
         int totalInventory = 0;
         if (skuFieldBuilder != null) {
+            logger.debug("before update inventory");
             totalInventory = skuFieldBuilder.updateInventoryField(workLoadBean.getOrder_channel_id(), contextBuildCustomFields, customFields);
+            logger.debug("After update inventory");
         }
         else {
             totalInventory = calcTotalInventory(workLoadBean.getOrder_channel_id(), workLoadBean.getCmsModelProp());
@@ -644,7 +653,9 @@ public class TmallProductService implements PlatformServiceInterface {
         }
 
         try {
+            logger.debug("addTmallItem: [productCode:" + productCode + ", categoryCode:" + categoryCode + "]");
             String numId = addTmallItem(categoryCode, productCode, itemPlatformFields, shopBean);
+            logger.debug("after addTmallItem");
             tcb.setNumId(numId);
         } catch (ApiException e) {
             issueLog.log(e, ErrorType.BatchJob, SubSystem.IMS);
@@ -984,6 +995,7 @@ public class TmallProductService implements PlatformServiceInterface {
         }
 
         try {
+            logger.debug("updateTmallItem: [productCode:" + productId + ", categoryCode:" + categoryCode + "]");
             numId = updateTmallItem(productId, numId, categoryCode, itemPlatformFields, shopBean);
             tcb.setNumId(numId);
         } catch (ApiException e) {
@@ -1034,6 +1046,7 @@ public class TmallProductService implements PlatformServiceInterface {
         }
 
         try {
+            logger.debug("updateTmallItem: [productCode:" + productId + ", categoryCode:" + categoryCode + "]");
             numId = updateTmallItem(productId, numId, categoryCode, itemPlatformFields, shopBean);
             tcb.setNumId(numId);
         } catch (ApiException e) {
@@ -1062,14 +1075,19 @@ public class TmallProductService implements PlatformServiceInterface {
             failCause.append(String.format("Tmall return null response when update item"));
             logger.error(failCause + ", request:" + xmlData);
             throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(failCause.toString()));
-        } else if (updateItemResponse.getErrorCode() != null)
-        {
+        } else if (updateItemResponse.getErrorCode() != null) {
             logger.debug("errorCode:" + updateItemResponse.getErrorCode());
             String subMsg = updateItemResponse.getSubMsg();
             numId = getNumIdFromSubMsg(subMsg, failCause);
             if (numId != null && !"".equals(numId)) {
                 logger.debug(String.format("find numId(%s) has been uploaded before", numId));
                 return numId;
+            }
+            //天猫系统服务异常
+            if (failCause.indexOf("天猫商品服务异常") != -1
+                    || failCause.indexOf("访问淘宝超时") != -1) {
+                logger.debug("此处应该是下次启动任务仍需处理的错误--->" + failCause.toString());
+                throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(failCause.toString(), true));
             }
             throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(failCause.toString()));
         } else {
@@ -1371,7 +1389,7 @@ public class TmallProductService implements PlatformServiceInterface {
 
     @Override
     public void constructCustomPlatformPropsBeforeUploadImage(UploadProductTcb tcb, Map<CustomMappingType,
-            List<PlatformPropBean>> mappingTypePropsMap, ExpressionParser expressionParser, Set<String> imageSet) throws TaskSignal {
+            List<PlatformPropBean>> mappingTypePropsMap, ExpressionParser expressionParser, Set<String> imageSet, List<PlatformPropBean> platformPropsWillBeFilted) throws TaskSignal {
         TmallUploadRunState tmallUploadRunState = (TmallUploadRunState) tcb.getPlatformUploadRunState();
         TmallUploadRunState.TmallContextBuildFields contextBeforeUploadImage =
                 tmallUploadRunState.getContextBuildFields();
@@ -1585,25 +1603,67 @@ public class TmallProductService implements PlatformServiceInterface {
                         throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("tmall item shop_category's platformProps must have one prop!"));
                     }
 
-                    /*
-                    PlatformPropBean platformProp = platformProps.get(0);
-                    MultiCheckField field = (MultiCheckField) FieldTypeEnum.createField(FieldTypeEnum.MULTICHECK);
-                    String platformPropId = platformProp.getPlatformPropId();
-                    List<ConditionPropValue> conditionPropValues = conditionPropValueRepo.get(workLoadBean.getOrder_channel_id(), platformPropId);
-                    field.setId(platformPropId);
-                    if (conditionPropValues != null && !conditionPropValues.isEmpty()) {
-                        RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
-                        for (ConditionPropValue conditionPropValue : conditionPropValues) {
-                            String conditionExpressionStr = conditionPropValue.getCondition_expression();
-                            RuleExpression conditionExpression= ruleJsonMapper.deserializeRuleExpression(conditionExpressionStr);
-                            String propValue = expressionParser.parse(conditionExpression, null);
-                            if (propValue != null) {
-                                field.addValue(propValue);
+                    if ("010".equals(workLoadBean.getOrder_channel_id())) {
+                        PlatformPropBean platformProp = platformProps.get(0);
+                        MultiCheckField field = (MultiCheckField) FieldTypeEnum.createField(FieldTypeEnum.MULTICHECK);
+                        String platformPropId = platformProp.getPlatformPropId();
+                        List<ConditionPropValue> conditionPropValues = conditionPropValueRepo.get(workLoadBean.getOrder_channel_id(), platformPropId);
+                        field.setId(platformPropId);
+                        if (conditionPropValues != null && !conditionPropValues.isEmpty()) {
+                            RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
+                            for (ConditionPropValue conditionPropValue : conditionPropValues) {
+                                String conditionExpressionStr = conditionPropValue.getCondition_expression();
+                                RuleExpression conditionExpression= ruleJsonMapper.deserializeRuleExpression(conditionExpressionStr);
+                                String propValue = expressionParser.parse(conditionExpression, null);
+                                if (propValue != null) {
+                                    field.addValue(propValue);
+                                }
+                            }
+                            contextBeforeUploadImage.addCustomField(field);
+                        }
+                    } else if ("012".equals(workLoadBean.getOrder_channel_id())) {
+                        /*
+                        for (Iterator<PlatformPropBean> iter = platformPropsWillBeFilted.iterator(); iter.hasNext(); ) {
+                            PlatformPropBean platformPropBean = iter.next();
+                            if ("seller_cids".equals(platformPropBean.getPlatformPropId())) {
+                                iter.remove();
                             }
                         }
-                        contextBeforeUploadImage.addCustomField(field);
+                        */
+                        logger.info("====================================in 012");
+                        final String sellerCategoryPropId = "seller_cids";
+                        if (workLoadBean.getUpJobParam().getMethod() == UpJobParamBean.METHOD_UPDATE) {
+                            String numId = workLoadBean.getNumId();
+                            ShopBean shopBean = ShopConfigs.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
+                            try {
+                                TmallItemUpdateSchemaGetResponse response = tbProductService.doGetWareInfoItem(numId, shopBean);
+                                String strXml = response.getUpdateItemResult();
+                                // 读入的属性列表
+                                List<Field> fieldList = null;
+                                fieldList = SchemaReader.readXmlForList(strXml);
+                                List<String> defaultValues = null;
+                                for (Field field : fieldList) {
+                                    if (sellerCategoryPropId.equals(field.getId())) {
+                                        MultiCheckField multiCheckField = (MultiCheckField) field;
+                                        defaultValues = multiCheckField.getDefaultValues();
+                                        break;
+                                    }
+                                }
+                                if (defaultValues != null) {
+                                    MultiCheckField field = (MultiCheckField) FieldTypeEnum.createField(FieldTypeEnum.MULTICHECK);
+                                    field.setId(sellerCategoryPropId);
+                                    for (String defaultValue : defaultValues) {
+                                        field.addValue(defaultValue);
+                                    }
+                                    contextBeforeUploadImage.addCustomField(field);
+                                }
+                            } catch (TopSchemaException e) {
+                                e.printStackTrace();
+                            } catch (ApiException e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
-                    */
                     break;
                 }
             }
@@ -1673,6 +1733,10 @@ public class TmallProductService implements PlatformServiceInterface {
                         throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(error));
                     }
                     plainPropValue = expressionParser.parse(ruleExpression, imageSet);
+                    if (plainPropValue == null) {
+                        logger.error("fail to parse expression, " + propValue );
+                        plainPropValue = expressionParser.parse(ruleExpression, imageSet);
+                    }
                 }
                 else
                  continue;//如果没有值，那么要看主数据属性表中是否有默认值,如果有,则使用默认值
