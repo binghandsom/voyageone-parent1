@@ -13,6 +13,7 @@ import com.voyageone.batch.ims.bean.tcb.UploadProductTcb;
 import com.voyageone.batch.ims.modelbean.*;
 import com.voyageone.batch.ims.service.AbstractSkuFieldBuilder;
 import com.voyageone.batch.ims.service.SkuTemplateSchema;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.ims.enums.CmsFieldEnum;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,7 +25,7 @@ import java.util.*;
  * 参考天猫分类: 50014993
  * 线程安全: 否
  */
-public class TmallGjSkuFieldBuilderImpl_2 extends AbstractSkuFieldBuilder {
+public class TmallGjSkuFieldBuilderImpl_3 extends AbstractSkuFieldBuilder {
     private String propId_sku;
     private String propId_colorExtend;
     private String propId_skuExtend;
@@ -36,17 +37,33 @@ public class TmallGjSkuFieldBuilderImpl_2 extends AbstractSkuFieldBuilder {
     private String propId_sku_barCode;
     private String propId_sku_size;
 
-    private String propId_custom_size1;
-    private String propId_custom_size2;
-    private String propId_custom_size3;
-    private String propId_custom_size4;
-    private String propId_custom_size5;
-
-    private String propId_colorExtend_aliasname;
     private String propId_colorExtend_color;
     private String propId_colorExtend_image;
 
-    private String propId_skuExtend_aliasname;
+    private String propId_skuExtend_tip;
+    private String propId_skuExtend_shengao;
+    private String propId_skuExtend_tizhong;
+    private String propId_skuExtend_jiankuan;
+    private String propId_skuExtend_xiongwei;
+    private String propId_skuExtend_yaowei;
+    private String propId_skuExtend_xiuchang;
+    private String propId_skuExtend_beikuan;
+    private String propId_skuExtend_qianchang;
+    private String propId_skuExtend_baiwei;
+    private String propId_skuExtend_xiabaiwei;
+    private String propId_skuExtend_xiukou;
+    private String propId_skuExtend_xiufei;
+    private String propId_skuExtend_zhongyao;
+    private String propId_skuExtend_lingshen;
+    private String propId_skuExtend_linggao;
+    private String propId_skuExtend_lingkuan;
+    private String propId_skuExtend_lingwei;
+    private String propId_skuExtend_yuanbaihou;
+    private String propId_skuExtend_yuanbai;
+    private String propId_skuExtend_pingbaiyichang;
+    private String propId_skuExtend_yichang;
+
+    private String propId_sku_market_time;
     private String propId_skuExtend_size;
 
     private PlatformPropBean skuPlatformProp;
@@ -96,7 +113,7 @@ public class TmallGjSkuFieldBuilderImpl_2 extends AbstractSkuFieldBuilder {
 
             PlatformSkuInfoBean tmallSkuInfo = null;
             for (PlatformSkuInfoBean tmallSkuInfoEach : tmallSkuInfos) {
-                if (SkuTemplateSchema.decodeTpl(tmallSkuInfoEach.getSku_type()) == SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX) {
+                if (SkuTemplateSchema.decodeTpl(tmallSkuInfoEach.getSku_type()) == SkuTemplateSchema.SkuTemplate_3_Schema.TPL_INDEX) {
                     tmallSkuInfo = tmallSkuInfoEach;
                     break;
                 }
@@ -104,19 +121,19 @@ public class TmallGjSkuFieldBuilderImpl_2 extends AbstractSkuFieldBuilder {
 
             if (tmallSkuInfo == null) {
                 logger.warn("No sku info find for platformProp: [prop_id=" + platformProp.getPlatformPropId() + ", cartId=" + platformProp.getPlatformCartId() + "]");
-                logger.warn(TmallGjSkuFieldBuilderImpl_2.class.getName() + " is not applicable!");
+                logger.warn(TmallGjSkuFieldBuilderImpl_3.class.getName() + " is not applicable!");
                 return false;
             }
 
             long fieldType = SkuTemplateSchema.decodeFieldTypes(tmallSkuInfo.getSku_type());
 
-            if ((fieldType < (1L << SkuTemplateSchema.SkuTemplate_2_Schema.FIELD_BIT_MIN))
-                    || (fieldType > (1L << (SkuTemplateSchema.SkuTemplate_2_Schema.FIELD_BIT_MAX + 1L)))) {
+            if ((fieldType < (1L << SkuTemplateSchema.SkuTemplate_3_Schema.FIELD_BIT_MIN))
+                    || (fieldType > (1L << (SkuTemplateSchema.SkuTemplate_3_Schema.FIELD_BIT_MAX + 1L)))) {
                 return false;
             }
 
             //SKU
-            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_2_Schema.SKU)) {
+            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.SKU)) {
                 propId_sku = platformProp.getPlatformPropId();
                 skuPlatformProp = platformProp;
             }
@@ -124,77 +141,128 @@ public class TmallGjSkuFieldBuilderImpl_2 extends AbstractSkuFieldBuilder {
                 propId_sku_size = platformProp.getPlatformPropId();
                 sizeIsSingleCheck = platformProp.getPlatformPropType() == ImsConstants.PlatformPropType.C_SINGLE_CHECK;
             }
-            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_2_Schema.SKU_BARCODE)) {
+            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.SKU_BARCODE)) {
                 propId_sku_barCode = platformProp.getPlatformPropId();
             }
-            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_2_Schema.SKU_COLOR)) {
+            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.SKU_COLOR)) {
                 propId_sku_color = platformProp.getPlatformPropId();
                 colorIsSingleCheck = platformProp.getPlatformPropType() == ImsConstants.PlatformPropType.C_SINGLE_CHECK;
             }
-            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_2_Schema.SKU_OUTERID)) {
+            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.SKU_OUTERID)) {
                 propId_sku_outerId = platformProp.getPlatformPropId();
             }
-            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_2_Schema.SKU_PRICE)) {
+            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.SKU_PRICE)) {
                 propId_sku_price = platformProp.getPlatformPropId();
             }
-            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_2_Schema.SKU_QUANTITY)) {
+            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.SKU_QUANTITY)) {
                 propId_sku_quantity = platformProp.getPlatformPropId();
             }
-            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_2_Schema.SKU_CUSTOM_SIZE1)) {
-                propId_custom_size1 = platformProp.getPlatformPropId();
+            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.SKU_MARKET_TIME)) {
+                propId_sku_market_time = platformProp.getPlatformPropId();
             }
 
-            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_2_Schema.SKU_CUSTOM_SIZE2)) {
-                propId_custom_size2 = platformProp.getPlatformPropId();
-            }
-
-            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_2_Schema.SKU_CUSTOM_SIZE3)) {
-                propId_custom_size3 = platformProp.getPlatformPropId();
-            }
-
-            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_2_Schema.SKU_CUSTOM_SIZE4)) {
-                propId_custom_size4 = platformProp.getPlatformPropId();
-            }
-
-            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_2_Schema.SKU_CUSTOM_SIZE5)) {
-                propId_custom_size5 = platformProp.getPlatformPropId();
-            }
             //EXTENDCOLOR
-            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDCOLOR)) {
+            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDCOLOR)) {
                 propId_colorExtend = platformProp.getPlatformPropId();
             }
-            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDCOLOR_ALIASNAME)) {
-                propId_colorExtend_aliasname = platformProp.getPlatformPropId();
-            }
-            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDCOLOR_COLOR)) {
+            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDCOLOR_COLOR)) {
                 propId_colorExtend_color = platformProp.getPlatformPropId();
             }
-            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDCOLOR_IMAGE)) {
+            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDCOLOR_IMAGE)) {
                 propId_colorExtend_image = platformProp.getPlatformPropId();
             }
 
             //EXTENDSIZE
-            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE)) {
+            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE)) {
                 propId_skuExtend = platformProp.getPlatformPropId();
             }
-            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_SIZE)) {
+            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_SIZE)) {
                 propId_skuExtend_size = platformProp.getPlatformPropId();
             }
-            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_ALIASNAME)) {
-                propId_skuExtend_aliasname = platformProp.getPlatformPropId();
+            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_BAIWEI)) {
+                propId_skuExtend_baiwei = platformProp.getPlatformPropId();
             }
-        }
-        if (propId_sku == null) {
-            logger.warn(this.getClass().getName() + " requires sku!");
-            return false;
-        }
-        if (propId_sku_size == null) {
-            logger.warn(this.getClass().getName() + " requires sku size!");
-            return false;
-        }
-        if (propId_sku_color == null) {
-            logger.warn(this.getClass().getName() + " requires sku color!");
-            return false;
+
+            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_BEIKUAN)) {
+                propId_skuExtend_beikuan = platformProp.getPlatformPropId();
+            }
+
+            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_JIANKUAN)) {
+                propId_skuExtend_jiankuan = platformProp.getPlatformPropId();
+            }
+
+            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_LINGGAO)) {
+                propId_skuExtend_linggao = platformProp.getPlatformPropId();
+            }
+
+            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_LINGKUAN)) {
+                propId_skuExtend_lingkuan = platformProp.getPlatformPropId();
+            }
+
+            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_LINGSHEN)) {
+                propId_skuExtend_lingshen = platformProp.getPlatformPropId();
+            }
+
+            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_LINGWEI)) {
+                propId_skuExtend_lingwei = platformProp.getPlatformPropId();
+            }
+
+            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_PINGBAI)) {
+                propId_skuExtend_pingbaiyichang = platformProp.getPlatformPropId();
+            }
+
+            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_QIANCHANG)) {
+                propId_skuExtend_qianchang = platformProp.getPlatformPropId();
+            }
+
+            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_SHENGAO)) {
+                propId_skuExtend_shengao = platformProp.getPlatformPropId();
+            }
+
+            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_TIP)) {
+                propId_skuExtend_tip = platformProp.getPlatformPropId();
+            }
+
+            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_TIZHONG)) {
+                propId_skuExtend_tizhong = platformProp.getPlatformPropId();
+            }
+
+            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_XIABAIWEI)) {
+                propId_skuExtend_xiabaiwei = platformProp.getPlatformPropId();
+            }
+            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_XIONGWEI)) {
+                propId_skuExtend_xiongwei = platformProp.getPlatformPropId();
+            }
+            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_XIUCHANG)) {
+                propId_skuExtend_xiuchang = platformProp.getPlatformPropId();
+            }
+            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_XIUFEI)) {
+                propId_skuExtend_xiufei = platformProp.getPlatformPropId();
+            }
+
+            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_XIUKOU)) {
+                propId_skuExtend_xiukou = platformProp.getPlatformPropId();
+            }
+
+            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_YICHANG)) {
+                propId_skuExtend_yichang = platformProp.getPlatformPropId();
+            }
+
+            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_YAOWEI)) {
+                propId_skuExtend_yaowei = platformProp.getPlatformPropId();
+            }
+
+            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_ZHONGYAO)) {
+                propId_skuExtend_zhongyao = platformProp.getPlatformPropId();
+            }
+
+            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_YUANBAIHOU)) {
+                propId_skuExtend_yuanbaihou = platformProp.getPlatformPropId();
+            }
+
+            if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_YUANBAI)) {
+                propId_skuExtend_yuanbai = platformProp.getPlatformPropId();
+            }
         }
 
         return true;
@@ -240,8 +308,6 @@ public class TmallGjSkuFieldBuilderImpl_2 extends AbstractSkuFieldBuilder {
     }
 
     private Field buildSkuProp(int cartId, String categoryCode, PlatformPropBean platformProp, CmsModelPropBean cmsModelProp, TmallUploadRunState.TmallContextBuildCustomFields contextBuildCustomFields) {
-        UploadProductTcb uploadProductTcb = contextBuildCustomFields.getPlatformContextBuildFields().getPlatformUploadRunState().getUploadProductTcb();
-        WorkLoadBean workLoadBean = uploadProductTcb.getWorkLoadBean();
 
         BuildSkuResult buildSkuResult = new BuildSkuResult();
         contextBuildCustomFields.setBuildSkuResult(buildSkuResult);
@@ -275,15 +341,15 @@ public class TmallGjSkuFieldBuilderImpl_2 extends AbstractSkuFieldBuilder {
                     skuFieldValue.setInputFieldValue(propId_sku_barCode, skuBarCode);
                 }
 
-               buildSkuSize(skuFieldValue, buildSkuResult, cartId, cmsSkuProp, categoryCode, platformProp.getPlatformPropHash());
+                buildSkuSize(skuFieldValue, buildSkuResult, cartId, cmsSkuProp, categoryCode, platformProp.getPlatformPropHash());
 
-               buildInputCustomProp(skuFieldValue, workLoadBean.getOrder_channel_id(), skuOuterId, propId_custom_size1);
-               buildInputCustomProp(skuFieldValue, workLoadBean.getOrder_channel_id(), skuOuterId, propId_custom_size2);
-               buildInputCustomProp(skuFieldValue, workLoadBean.getOrder_channel_id(), skuOuterId, propId_custom_size3);
-               buildInputCustomProp(skuFieldValue, workLoadBean.getOrder_channel_id(), skuOuterId, propId_custom_size4);
-               buildInputCustomProp(skuFieldValue, workLoadBean.getOrder_channel_id(), skuOuterId, propId_custom_size5);
+                if (propId_sku_market_time != null && !"".equals(propId_sku_market_time)) {
+                    Date now = DateTimeUtil.getDate();
+                    String marketTime = String.format("%d-%d-%d", 1900 + now.getYear(), now.getMonth(), now.getDay());
+                    skuFieldValue.setInputFieldValue(propId_sku_market_time, marketTime);
+                }
 
-               availableSizeIndex++;
+                availableSizeIndex++;
             }
             availableColorIndex++;
         }
@@ -308,8 +374,6 @@ public class TmallGjSkuFieldBuilderImpl_2 extends AbstractSkuFieldBuilder {
             } else {
                 complexValue.setInputFieldValue(propId_colorExtend_color, entry.getKey());
             }
-            //TODO
-            complexValue.setInputFieldValue(propId_colorExtend_aliasname, cmsCodeProp.getProp(CmsFieldEnum.CmsCodeEnum.code));
 
             //颜色图使用竖图
             String propImageStr = cmsCodeProp.getProp(CmsFieldEnum.CmsCodeEnum.product_image);
@@ -328,36 +392,59 @@ public class TmallGjSkuFieldBuilderImpl_2 extends AbstractSkuFieldBuilder {
     }
 
     private Field buildSizeExtendProp(TmallUploadRunState.TmallContextBuildCustomFields contextBuildCustomFields) {
-        BuildSkuResult buildSkuResult = (BuildSkuResult) contextBuildCustomFields.getBuildSkuResult();
         UploadProductTcb uploadProductTcb = contextBuildCustomFields.getPlatformContextBuildFields().getPlatformUploadRunState().getUploadProductTcb();
         WorkLoadBean workLoadBean = uploadProductTcb.getWorkLoadBean();
 
-        MultiComplexField sizeExtendField = (MultiComplexField) FieldTypeEnum.createField(FieldTypeEnum.MULTICOMPLEX);
-        sizeExtendField.setId(propId_skuExtend);
+        BuildSkuResult buildSkuResult = (BuildSkuResult) contextBuildCustomFields.getBuildSkuResult();
+        Map<String, CmsSkuPropBean> sizeCmsSkuPropMap = buildSkuResult.getSizeCmsSkuPropMap();
 
-        List<ComplexValue> complexValues = new ArrayList<>();
-        for (Map.Entry<String, CmsSkuPropBean> entry : buildSkuResult.getSizeCmsSkuPropMap().entrySet())
-        {
-            ComplexValue complexValue = new ComplexValue();
-            if (sizeIsSingleCheck) {
-                complexValue.setSingleCheckFieldValue(propId_skuExtend_size, new Value(entry.getKey()));
-            } else {
-                complexValue.setInputFieldValue(propId_skuExtend_size, entry.getKey());
+        MultiComplexField sizeExtendProp = (MultiComplexField) FieldTypeEnum.createField(FieldTypeEnum.MULTICOMPLEX);
+        sizeExtendProp.setId(propId_skuExtend);
+
+        List<ComplexValue> complexValueList = new ArrayList<>();
+
+        Map<String, Map<String, String>> allCustomSizePropMap = new HashMap<>();
+        List<Map<String, Object>> allCustomSizeProps = customSizePropDao.selectCustomSizeProp(workLoadBean.getOrder_channel_id());
+        Map<String, String> customSizeNameIdMap = new HashMap<>();
+
+        //构造两个map，一个是customSizeNameIdMap sizeName->sizeId, such as: L->1
+        //另一个是allCustomSizePropMap, sizeId ->CustomSize属性map, such as: 1->[{shengao:170}, {tizhong:70}]
+        for (Map<String, Object> customSizeProp : allCustomSizeProps) {
+            String sizeId = customSizeProp.get("custom_size_id").toString();
+            String propId = customSizeProp.get("custom_prop_id").toString();
+            String propValue = customSizeProp.get("custom_prop_value").toString();
+            Map<String, String> eachCustomSizePropMap = allCustomSizePropMap.get(sizeId);
+
+            if (eachCustomSizePropMap == null) {
+                eachCustomSizePropMap = new HashMap<>();
+                allCustomSizePropMap.put(sizeId, eachCustomSizePropMap);
+            }
+            eachCustomSizePropMap.put(propId, propValue);
+
+            if (propId != null && propId.equals(propId_skuExtend_size)) {
+                customSizeNameIdMap.put(propValue, sizeId);
+            }
+            allCustomSizePropMap.put(sizeId, eachCustomSizePropMap);
+        }
+
+        for (Map.Entry<String, CmsSkuPropBean> cmsSkuPropBeanEntry : sizeCmsSkuPropMap.entrySet()) {
+            String size = cmsSkuPropBeanEntry.getKey();
+            ComplexValue extendSizeComplexValue = new ComplexValue();
+
+            extendSizeComplexValue.setInputFieldValue(propId_skuExtend_size, size);
+
+            String sizeId = customSizeNameIdMap.get(size);
+            Map<String, String> customSizePropMap = allCustomSizePropMap.get(sizeId);
+            for (Map.Entry<String, String> entry : customSizePropMap.entrySet())
+            {
+                extendSizeComplexValue.setInputFieldValue(entry.getKey(), entry.getValue());
             }
 
-            String sku = entry.getValue().getProp(CmsFieldEnum.CmsSkuEnum.sku);
-            buildInputCustomProp(complexValue, workLoadBean.getOrder_channel_id(), sku, propId_skuExtend_aliasname);
-            complexValues.add(complexValue);
+            complexValueList.add(extendSizeComplexValue);
         }
-        sizeExtendField.setComplexValues(complexValues);
-        return sizeExtendField;
-    }
 
-    private void buildInputCustomProp(ComplexValue skuFieldValue, String channelId, String sku, String propId_input_custom_size) {
-        if (propId_input_custom_size != null && !"".equals(propId_input_custom_size.trim())) {
-            String skuPropValue = skuPropValueDao.selectSkuPropValue(channelId, sku, propId_input_custom_size);
-            skuFieldValue.setInputFieldValue(propId_input_custom_size, skuPropValue);
-        }
+        sizeExtendProp.setComplexValues(complexValueList);
+        return sizeExtendProp;
     }
 
     @Override
@@ -387,8 +474,8 @@ public class TmallGjSkuFieldBuilderImpl_2 extends AbstractSkuFieldBuilder {
 
     @Override
     public int updateInventoryField(String orderChannelId,
-                                     PlatformUploadRunState.PlatformContextBuildCustomFields contextBuildCustomFields,
-                                     List fields) {
+                                    PlatformUploadRunState.PlatformContextBuildCustomFields contextBuildCustomFields,
+                                    List fields) {
         MultiComplexField skuProp = null;
         int totalInventory = 0;
 
