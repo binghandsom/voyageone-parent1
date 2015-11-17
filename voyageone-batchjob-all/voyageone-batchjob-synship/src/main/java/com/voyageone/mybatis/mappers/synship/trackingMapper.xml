@@ -207,7 +207,8 @@
             #{task_name},
             #{task_name}
         FROM tt_reservation reservation
-        WHERE syn_ship_no = #{syn_ship_no}
+        WHERE reservation.syn_ship_no = #{syn_ship_no}
+        and reservation.status not in ('12','13','14','15','16','17')
         AND not exists (select 1
                             from tt_res_tracking tracking
                             where tracking.syn_ship_no = #{syn_ship_no}
@@ -244,7 +245,8 @@
             #{task_name},
             #{task_name}
         FROM tt_reservation reservation
-        WHERE syn_ship_no = #{syn_ship_no}
+        WHERE reservation.syn_ship_no = #{syn_ship_no}
+        and reservation.status not in ('12','13','14','15','16','17')
         AND not exists (select 1
                             from tt_tracking_info trackingInfo
                             where trackingInfo.syn_ship_no = #{syn_ship_no}
