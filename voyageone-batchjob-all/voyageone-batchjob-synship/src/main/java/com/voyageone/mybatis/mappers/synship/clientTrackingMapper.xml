@@ -89,7 +89,7 @@
             client.*,
             orders.order_number,
             orders.syn_ship_no,
-            (select GROUP_CONCAT(res.id) from tt_reservation res where orders.syn_ship_no = res.syn_ship_no) as reservation_id
+            (select GROUP_CONCAT(res.id) from tt_reservation res where orders.syn_ship_no = res.syn_ship_no and res.status not in ('12','13','14','15','16','17')) as reservation_id
         FROM
             tt_client_tracking client,
             oms_bt_orders omsOrders,
