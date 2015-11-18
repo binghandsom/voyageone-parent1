@@ -41,7 +41,7 @@ public class SearsAnalysisService extends BaseTaskService {
     private Transformer transformer;
 
     @Autowired
-    private SearsWsdlInsert updateService;
+    private SearsWsdlUpdate updateService;
 
     private static Integer PageSize = 500;
 
@@ -87,7 +87,8 @@ public class SearsAnalysisService extends BaseTaskService {
 //        transformer.new Context(SEARS, this).transform();
         $info("数据处理阶段结束");
 
-        insertService.new Context(SEARS).postNewProduct();
+//        insertService.new Context(SEARS).postNewProduct();
+        updateService.new Context(SEARS).postUpdatedProduct();
     }
 
     /**
