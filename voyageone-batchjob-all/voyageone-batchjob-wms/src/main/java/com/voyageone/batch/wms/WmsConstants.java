@@ -334,4 +334,11 @@ public interface WmsConstants {
         public static final  String STORE_AREA = "store_area";
     }
 
+
+    //BCBG年报标题
+    final class bcbgReportTitleHead {
+        //销售订单标题
+        public static final String[] PHYSICALS_TITLE_HEAD={"WERKS","DATE","LGORT","EAN/UPC","PRICE",
+                "MENGE","RECRODTYPE","PRICEFLAG","ARTICLE"};
+    }
 }
