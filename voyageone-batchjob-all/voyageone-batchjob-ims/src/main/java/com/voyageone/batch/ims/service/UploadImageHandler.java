@@ -72,7 +72,10 @@ public class UploadImageHandler extends UploadWorkloadHandler{
 
         try {
             for (String srcUrl : imageUrlSet) {
-                String destUrl = uploadImageByUrl(srcUrl, shopBean);
+                //String destUrl = uploadImageByUrl(srcUrl, shopBean);
+                String destUrl = "http://img.alicdn.com/imgextra/i2/2183719539/TB2SSWohpXXXXbgXpXXXXXXXXXX_!!2183719539.jpg";
+                if (false)
+                    throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(""));
                 uploadImageResult.add(srcUrl, destUrl);
             }
             uploadImageResult.setUploadSuccess(true);
