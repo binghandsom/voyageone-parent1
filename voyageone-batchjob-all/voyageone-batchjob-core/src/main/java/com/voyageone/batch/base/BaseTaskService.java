@@ -100,8 +100,7 @@ public abstract class BaseTaskService {
         } catch (Exception e) {
             logIssue(e);
             status = Status.ERROR;
-            e.printStackTrace();
-            $info("出现异常，任务退出");
+            logger.error("出现异常，任务退出", e);
         }
 
         // 任务监控历史记录添加:结束
