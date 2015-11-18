@@ -1,11 +1,14 @@
 package com.voyageone.batch.wms.service;
 
+import com.csvreader.CsvWriter;
 import com.jcraft.jsch.ChannelSftp;
 import com.taobao.api.domain.Store;
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.core.CodeConstants;
 import com.voyageone.batch.core.Enums.TaskControlEnums;
+import com.voyageone.batch.core.modelbean.SetPriceBean;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
+import com.voyageone.batch.core.util.SetPriceUtils;
 import com.voyageone.batch.core.util.TaskControlUtils;
 import com.voyageone.batch.wms.WmsConstants;
 import com.voyageone.batch.wms.dao.InventoryDao;
@@ -29,7 +32,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.math.BigDecimal;
 import java.nio.charset.Charset;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -89,6 +94,12 @@ public class WmsBCBGInventoryReportingService extends BaseTaskService {
         private final String create_bcbg_daily_Inventory_report = "create_bcbg_daily_Inventory_report";
         // 已生成文件列表
         private List<String>createFileName = new  ArrayList<String>();
+        // 文件名判断用
+        private final String fileCheckName = "VBCBG";
+
+        // bom文件头
+        private final String bom = "BOM";
+
 
         public bcbgInventoryReporting(String orderChannelId) {
             this.channel = ChannelConfigs.getChannel(orderChannelId);
@@ -108,6 +119,8 @@ public class WmsBCBGInventoryReportingService extends BaseTaskService {
             List<ThirdPartyConfigBean> fileConfigs = ThirdPartyConfigs.getThirdPartyConfigList(channel.getOrder_channel_id(), create_bcbg_daily_Inventory_report);
 
             for (ThirdPartyConfigBean thirdPartyConfigBean :fileConfigs ) {
+                createFileName = new  ArrayList<String>();
+                isCreated = false;
                 //相关文件的配置没有设定
                 if (thirdPartyConfigBean == null || StringUtils.isNullOrBlank2(thirdPartyConfigBean.getProp_val2())) {
                     errmsg = "在com_mt_third_party_config表中Order_channel_id=" + channel.getOrder_channel_id() + "的create_bcbg_daily_Inventory_report配置缺少";
@@ -119,27 +132,43 @@ public class WmsBCBGInventoryReportingService extends BaseTaskService {
                         createdFileList = readFile(thirdPartyConfigBean.getProp_val5());
                         //文件中的日期小于取得数据时间区间，文件删除，新的一天生成全新文件
                         if (createdFileList != null && createdFileList.size() > 0) {
-                            if (Long.valueOf(createdFileList.get(0)) < Long.valueOf(timeRegion.get(0))) {
+                            //文件指定生成日期为空，或者文件文件指定生成日期=当前日期
+                            if (Long.valueOf(createdFileList.get(0)) < Long.valueOf(timeRegion.get(0)) && (StringUtils.isNullOrBlank2(thirdPartyConfigBean.getProp_val6()) || thirdPartyConfigBean.getProp_val6().equals(timeRegion.get(3)) )) {
                                 //判断生成文件删除
                                 delFile(thirdPartyConfigBean.getProp_val5());
                                 //处理以SKU集计物理库存日报文件
                                 isSuccess = processReportFile(timeRegion, thirdPartyConfigBean);
                             } else {
-                                logger.info(timeRegion.get(0) + "以SKU集计物理库存生成BCBG日报文件已经完成，不需要再次处理！");
+                                //Physicals report
+                                if (thirdPartyConfigBean.getProp_val2().indexOf(fileCheckName) == -1) {
+                                    logger.info(timeRegion.get(0) + "以SKU集计物理库存生成BCBG日报文件已经完成，不需要再次处理！");
+                                }else{
+                                    logger.info(timeRegion.get(0) + "以仓库SKU集计物理库存生成BCBG年报文件已经完成，不需要再次处理！");
+                                }
                                 isCreated = true;
                             }
                         }else {
                             //处理以SKU集计物理库存日报文件
-                            isSuccess = processReportFile(timeRegion, thirdPartyConfigBean);
+                            if (StringUtils.isNullOrBlank2(thirdPartyConfigBean.getProp_val6()) || thirdPartyConfigBean.getProp_val6().equals(timeRegion.get(3)) ) {
+                                isSuccess = processReportFile(timeRegion, thirdPartyConfigBean);
+                            }else{
+                                isCreated = true;
+                                //Physicals report
+                                if (thirdPartyConfigBean.getProp_val2().indexOf(fileCheckName) >= 0) {
+                                    logger.info(timeRegion.get(0) + "不是以仓库SKU集计物理库存生成BCBG年报文件日期，不需要处理！");
+                                }
+                            }
                         }
                     } catch (Exception e) {
                         logger.info("读取文件内容出错");
                         logIssue(thirdPartyConfigBean.getProp_val5() + "读取文件内容出错", "readFile");
                     }
+
+                    // 日报文件生成后继处理
+                    processCreateAfter(thirdPartyConfigBean,timeRegion.get(0),isSuccess,isCreated);
                 }
             }
-            // 日报文件生成后继处理
-            processCreateAfter(fileConfigs.get(0),timeRegion.get(0),isSuccess,isCreated);
+
             logger.info(channel.getFull_name()+"以SKU集计物理库存生成BCBG日报结束" );
         }
 
@@ -156,9 +185,13 @@ public class WmsBCBGInventoryReportingService extends BaseTaskService {
             String reportDateYyyyMMdd = DateTimeUtil.format(localTimeForDate, DateTimeUtil.DATE_TIME_FORMAT_3);
             String reportDateMMddyyyy = DateTimeUtil.format(localTimeForDate, DateTimeUtil.DATE_TIME_FORMAT_7);
             String reportTime = DateTimeUtil.format(localTimeForDate, DateTimeUtil.DATE_TIME_FORMAT_4);
+            String reportTimeMMDD = DateTimeUtil.format(localTimeForDate, DateTimeUtil.DATE_TIME_FORMAT_8);
+            String reportTimeMMDDYY = DateTimeUtil.format(localTimeForDate, DateTimeUtil.DATE_TIME_FORMAT_9);
             timeRegion.add(reportDateYyyyMMdd);
             timeRegion.add(reportDateMMddyyyy);
             timeRegion.add(reportTime);
+            timeRegion.add(reportTimeMMDD);
+            timeRegion.add(reportTimeMMDDYY);
 
             String GMTTimeFrom = DateTimeUtil.getGMTTimeFrom(localTime, timeZone);
             logger.info("文件生成时间为：" + "第三方时间：" + reportDateYyyyMMdd + "  " + reportTime + "；格林威治时间：" + GMTTimeFrom);
@@ -216,9 +249,22 @@ public class WmsBCBGInventoryReportingService extends BaseTaskService {
             // 以SKU集计物理库存取得
             List<SumInventoryBean> simTransferList = new ArrayList<SumInventoryBean>();
             try {
-                simTransferList = inventoryDao.getSumInventoryBySKU(channel.getOrder_channel_id(), CodeConstants.Reservation_Status.Open);
-                //生成日报文件开始
-                isSuccess = createReportDat(thirdPartyConfigBean,simTransferList,timeRegion);
+                //Physicals report
+                if (thirdPartyConfigBean.getProp_val2().indexOf(fileCheckName) >= 0){
+                    //生成Physicals年报文件开始
+                    simTransferList = inventoryDao.getSumInventoryByStoreSKU(channel.getOrder_channel_id());
+                    isSuccess = createPhysicalsReportDat(thirdPartyConfigBean, simTransferList, timeRegion);
+                    // bom 追加
+                    //isSuccess = addBom(thirdPartyConfigBean.getProp_val3(), String.format(thirdPartyConfigBean.getProp_val2(), timeRegion.get(0), timeRegion.get(2)));
+                //Inventory report
+                }else{
+                    simTransferList = inventoryDao.getSumInventoryBySKU(channel.getOrder_channel_id(), CodeConstants.Reservation_Status.Open);
+
+                    //生成日报文件开始
+                    isSuccess = createReportDat(thirdPartyConfigBean,simTransferList,timeRegion);
+
+                }
+
             } catch (Exception e) {
                 logger.error(e.getMessage());
                 logger.info("取得集计物理库存数据发生错误");
@@ -236,15 +282,22 @@ public class WmsBCBGInventoryReportingService extends BaseTaskService {
          * @param timeRegion  时区
          * @param thirdPartyConfigBean
          * @param brand 品牌名
+         * @param flag 文件区分
          *
          * @return FtpBean
          */
-        private FtpBean createPostFileNameForDailyInventory(List<String> timeRegion,ThirdPartyConfigBean thirdPartyConfigBean,String brand) {
+        private FtpBean createPostFileNameForDailyInventory(List<String> timeRegion,ThirdPartyConfigBean thirdPartyConfigBean,String brand,int flag) {
             FtpBean ftpBean = new FtpBean();
             // 上传文件路径
             ftpBean.setUpload_path(thirdPartyConfigBean.getProp_val1());
-            // 上传文件路径
-            ftpBean.setUpload_filename(String.format(thirdPartyConfigBean.getProp_val2(), brand, timeRegion.get(0), timeRegion.get(2)));
+            // 上传文件名
+            //Inventory日报文件
+            if (flag == 1) {
+                ftpBean.setUpload_filename(String.format(thirdPartyConfigBean.getProp_val2(), brand, timeRegion.get(0), timeRegion.get(2)));
+            //Physicals年报文件
+            }else{
+                ftpBean.setUpload_filename(String.format(thirdPartyConfigBean.getProp_val2(), timeRegion.get(0), timeRegion.get(2)));
+            }
             // 本地文件路径
             ftpBean.setUpload_localpath(thirdPartyConfigBean.getProp_val3());
             // 本地文件备份路径
@@ -334,7 +387,7 @@ public class WmsBCBGInventoryReportingService extends BaseTaskService {
                         rowReports = 1;
                     }
                     //获得相应的推送文件的配置
-                    ftpBean = createPostFileNameForDailyInventory(timeRegion, thirdPartyConfigBean, sumInventoryBean.getBrand());
+                    ftpBean = createPostFileNameForDailyInventory(timeRegion, thirdPartyConfigBean, sumInventoryBean.getBrand(),1);
                     brand = StringUtils.null2Space(sumInventoryBean.getBrand());
                     logger.info(format("生成集计物理库存日报文件 [ %s ]开始", ftpBean.getUpload_filename()));
                 }
@@ -403,7 +456,7 @@ public class WmsBCBGInventoryReportingService extends BaseTaskService {
          * @param timeRegion 文件生成日期
          *
          */
-        private void createUploadFileBodyForDemands(FileWriteUtils fileWriter,List<SumInventoryBean>  reportInventoryBeans,String filename,List<String> timeRegion) throws IOException {
+        private void createUploadFileBodyForDemands(FileWriteUtils fileWriter,List<SumInventoryBean>  reportInventoryBeans,String filename,List<String> timeRegion) throws Exception {
 
             logger.info(format("[ %s ]  条数据准备写入开始", reportInventoryBeans.size()));
             //site和storageLocation取得
@@ -411,9 +464,10 @@ public class WmsBCBGInventoryReportingService extends BaseTaskService {
             Long storeid = storeBean.get(0).getStore_id();
             String site = StoreConfigs.getVal1(storeid, StoreConfigEnums.Name.site);
             //表示 右对齐占用4个字符，不足的用0补位
-            site = String.format("%020d", Integer.valueOf(site));
+            //site = String.format("%020d", Integer.valueOf(site));
             String storageLocation = StoreConfigs.getVal1(storeid, StoreConfigEnums.Name.storage_location);
-            storageLocation = String.format("%012d", Integer.valueOf(storageLocation));
+            //storageLocation = String.format("%012d", Integer.valueOf(storageLocation));
+            //int i =0 ;
             for (SumInventoryBean reportInventoryBean :  reportInventoryBeans) {
                 int quantityAvailable = Integer.valueOf(reportInventoryBean.getQty()) - Integer.valueOf(reportInventoryBean.getRes_qty());
 
@@ -429,14 +483,15 @@ public class WmsBCBGInventoryReportingService extends BaseTaskService {
                 fileWriter.write(StringUtils.null2Space(reportInventoryBean.getBarcode()), DemandsFileFormat.UPC);
                 fileWriter.write(reportInventoryBean.getQty(), DemandsFileFormat.QuantityOnHand);
                 fileWriter.write(String.valueOf(quantityAvailable), DemandsFileFormat.QuantityAvailable);
-                fileWriter.write(reportInventoryBean.getSales_price(), DemandsFileFormat.SalesPrice);
-                fileWriter.write(reportInventoryBean.getMsrp(), DemandsFileFormat.MSRP);
+                fileWriter.write(formatPrice(reportInventoryBean.getSales_price()), DemandsFileFormat.SalesPrice);
+                fileWriter.write(formatPrice(reportInventoryBean.getMsrp()), DemandsFileFormat.MSRP);
                 fileWriter.write("EA", DemandsFileFormat.UOM);
                 fileWriter.write(storageLocation, DemandsFileFormat.StorageLocation);
-                fileWriter.write(timeRegion.get(1), DemandsFileFormat.DATE);
+                fileWriter.write(timeRegion.get(0), DemandsFileFormat.DATE);
                 fileWriter.write(timeRegion.get(2), DemandsFileFormat.Time);
 
                 fileWriter.write(System.getProperty("line.separator"));
+                //i= i +1;
             }
 
             logger.info(format("[ %s ]  条数据准备写入结束", reportInventoryBeans.size()));
@@ -454,10 +509,10 @@ public class WmsBCBGInventoryReportingService extends BaseTaskService {
             private static final String ARTICLE = "A,25";
             private static final String LongItemNumber = "A,25";
             private static final String UPC = "A,25";
-            private static final String QuantityOnHand = "S,15";
-            private static final String QuantityAvailable = "S,15";
-            private static final String SalesPrice = "S,15.2";
-            private static final String MSRP = "S,15.2";
+            private static final String QuantityOnHand = "A,15";
+            private static final String QuantityAvailable = "A,15";
+            private static final String SalesPrice = "A,15";
+            private static final String MSRP = "A,15";
             private static final String UOM = "A,2";
             private static final String StorageLocation = "A,12";
             private static final String DATE = "A,8";
@@ -575,6 +630,179 @@ public class WmsBCBGInventoryReportingService extends BaseTaskService {
                 logIssue(channel.getFull_name() + " " + "   writeFileCreated发生错误：", e);
             }
             logger.info(checkFileName + " 写入文件结束" );
+        }
+
+
+        /**
+         * @description 生成DAT格式Physicals年报文件
+         * @param thirdPartyConfigBean
+         * @param sumInventoryBeans 集计物理库存数据
+         * @param timeRegion 文件生成日期
+         *
+         * @return boolean
+         */
+        private boolean createPhysicalsReportDat(ThirdPartyConfigBean thirdPartyConfigBean,List<SumInventoryBean>  sumInventoryBeans,List<String> timeRegion) {
+
+            boolean isSuccess = true;
+            FtpBean ftpBean = new FtpBean();
+
+
+            //获得相应的推送文件的配置
+            ftpBean = createPostFileNameForDailyInventory(timeRegion, thirdPartyConfigBean, "",2);
+
+            logger.info(format("生成集计Physicals年报文件 [ %s ]开始", ftpBean.getUpload_filename()));
+
+
+            try {
+                // DAT文件做成
+                createCSVReportFile(ftpBean,  sumInventoryBeans,timeRegion);
+                //已生成文件名保存
+                createFileName.add(ftpBean.getUpload_filename());
+            } catch (Exception e) {
+                isSuccess = false;
+                logIssue(channel.getFull_name() + " " + format("生成集计Physicals年报文件 [ %s ]发生错误：", ftpBean.getUpload_filename()) + " " + e);
+            }
+
+            logger.info(format("生成集计Physicals年报文件 [ %s ]结束", ftpBean.getUpload_filename()));
+            return isSuccess;
+        }
+
+        /**
+         * 上传文件做成
+         * @param ftpBean
+         * @param timeRegion
+         * @param sumInventoryBeans
+         */
+        private void createCSVReportFile(FtpBean ftpBean,List<SumInventoryBean>  sumInventoryBeans,List<String> timeRegion)throws Exception {
+
+            //logger.info(format("生成日报文件 [ %s ]开始", fileName));
+            File file = new File(ftpBean.getUpload_localpath() + "/" + ftpBean.getUpload_filename());
+            try (FileOutputStream  fop = new FileOutputStream(file);) {
+
+                CsvWriter csvWriter = new CsvWriter(fop, ',', Charset.forName(outputFileEncoding));
+                try {
+                    // Head输出
+                    createUploadFileHead(csvWriter, WmsConstants.bcbgReportTitleHead.PHYSICALS_TITLE_HEAD);
+                    // Body输出
+                    createUploadFileBody(csvWriter, sumInventoryBeans,timeRegion,ftpBean.getUpload_filename());
+
+                    csvWriter.flush();
+                    csvWriter.close();
+
+                } catch (Exception e) {
+                    //isSuccess = false;
+                    csvWriter.flush();
+                    csvWriter.close();
+                    logger.info(format("生成年报文件 [ %s ]  时createCSVReportFile发生错误", ftpBean.getUpload_filename()));
+                    logger.error(e.getMessage());
+                    //logIssue(fullName + " " + format("生成日报文件 [ %s ]发生错误：", fileName) + " " + e);
+                    Exception ex = new Exception(e.getMessage() + "   createCSVReportFile发生错误");
+                    throw ex;
+                }
+            }
+            //logger.info(format("生成日报文件 [ %s ]结束", fileName));
+            //return isSuccess;
+        }
+
+        /**
+         * 上传文件做成
+         *
+         * @param csvWriter 上传文件Handler
+         * @param titleHeads CSV文件标题行
+         */
+        private void createUploadFileHead(CsvWriter csvWriter,String[] titleHeads) throws Exception {
+            int indexCell = 0;
+            for (String titleHead : titleHeads){
+                if (indexCell == 0){
+                    //csvWriter.write(bom + titleHead);
+                    csvWriter.write(titleHead);
+                }else {
+                    csvWriter.write(titleHead);
+                }
+                indexCell = indexCell + 1;
+            }
+            csvWriter.endRecord();
+        }
+
+        /**
+         * @description CSV日报文件内容输出
+         * @param csvWriter
+         * @param sumInventoryBeans
+         * @param timeRegion
+         * @param fileNameA
+         *
+         */
+        private void createUploadFileBody(CsvWriter csvWriter,List<SumInventoryBean>  sumInventoryBeans,List<String> timeRegion,String fileNameA)  throws Exception  {
+            logger.info(format(" [ %s ]年报文件内容输出开始", fileNameA));
+            logger.info(format("[ %s ]  条数据准备写入开始", sumInventoryBeans.size()));
+
+            //site和storageLocation取得
+            List<StoreBean> storeBean = StoreConfigs.getChannelStoreList(channel.getOrder_channel_id(), false, false);
+            for (SumInventoryBean sumInventoryBean : sumInventoryBeans) {
+                //site和storageLocation取得
+                Long storeid = Long.valueOf(sumInventoryBean.getStore_id());
+                String site = StoreConfigs.getVal1(storeid, StoreConfigEnums.Name.site);
+                String storageLocation = StoreConfigs.getVal1(storeid, StoreConfigEnums.Name.storage_location);
+                //WERKS
+                csvWriter.write(site);
+                //DATE
+                csvWriter.write(timeRegion.get(4));
+                //LGORT
+                csvWriter.write(storageLocation);
+                //EAN/UPC
+                csvWriter.write(StringUtils.null2Space(sumInventoryBean.getBarcode()));
+                //PRICE
+                csvWriter.write(sumInventoryBean.getSales_price());
+                //MENGE
+                csvWriter.write(sumInventoryBean.getQty());
+                //RECRODTYPE
+                csvWriter.write("U");
+                //PRICEFLAG
+                csvWriter.write("R");
+                //ARTICLE
+                csvWriter.write(StringUtils.null2Space(sumInventoryBean.getClient_sku()));
+                csvWriter.endRecord();
+            }
+            logger.info(format("[ %s ]  条数据准备写入结束", sumInventoryBeans.size()));
+            logger.info(format(" [ %s ]年报文件内容输出结束", fileNameA));
+        }
+
+        /**
+         * @description CSV日报文件Bom内容输出
+         * @param filePath  文件路径
+         * @param fileName  文件名
+         *
+         */
+        private boolean addBom(String filePath,  String fileName) throws Exception  {
+
+            logger.info(format(" [ %s ]年报文件addBom开始", fileName));
+            // bom 头部
+            byte[] bs={(byte)0xef,(byte)0xbb,(byte)0xbf};
+            try(RandomAccessFile raf = new RandomAccessFile(filePath + "/" + fileName, "rw");) {
+                // 将写文件指针移到文件头
+                raf.seek(0);
+                raf.write(bs);
+                //raf.close();
+            } catch (Exception e) {
+                logger.info(format("生成日报文件 [ %s ]  时addBom发生错误", fileName));
+                logger.error(e.getMessage());
+                logIssue(channel.getFull_name() + "取得集计物理库存数据发生错误：" + e);
+                return false;
+            }
+            logger.info(format(" [ %s ]年报文件addBom结束", fileName));
+            return true;
+        }
+
+        /**
+         * @description 价格转为0.00格式
+         * @param inputString
+         *
+         */
+        private String formatPrice(String inputString) throws Exception {
+            double numericDouble = Double.parseDouble(inputString);
+            DecimalFormat df = new DecimalFormat("#.00");
+            String outputString = df.format(numericDouble);
+            return outputString;
         }
     }
 }

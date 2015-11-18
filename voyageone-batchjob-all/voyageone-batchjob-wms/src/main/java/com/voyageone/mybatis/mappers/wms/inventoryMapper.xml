@@ -533,4 +533,39 @@
         ORDER BY
           brand ,details.client_sku
      </select>
+
+    <!-- 以仓库SKU集计物理库存-->
+    <select id="wms_selectSumInventoryByStoreSKU" resultType="com.voyageone.batch.wms.modelbean.SumInventoryBean">
+        SELECT
+            inventory.order_channel_id,
+            inventory.store_id,
+            inventory.sku,
+            details.barcode,
+            details.client_sku,
+            sum(inventory.qty) AS qty,
+            IFNULL(
+                (
+                    SELECT
+                        A073_KBETR
+                    FROM
+                        voyageone_cms.cms_zz_worktable_bcbg_superfeed_full superfeed
+                    WHERE
+                        superfeed.MATNR = details.client_sku
+                ),
+                0
+            ) AS sales_price
+        FROM
+            `wms_bt_inventory_center` inventory
+        LEFT JOIN wms_bt_item_details details ON details.sku = inventory.sku
+        AND details.order_channel_id = inventory.order_channel_id
+        WHERE
+            inventory.order_channel_id = #{order_channel_id}
+        GROUP BY
+            inventory.sku,
+            inventory.store_id
+        ORDER BY
+            inventory.store_id,
+            details.client_sku
+    </select>
+
 </mapper>

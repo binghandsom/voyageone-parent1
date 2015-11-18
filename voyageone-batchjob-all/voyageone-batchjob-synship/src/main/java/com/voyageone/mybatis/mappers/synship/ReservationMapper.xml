@@ -31,6 +31,8 @@
             update_person = #{task_name}
         WHERE
             syn_ship_no = #{syn_ship_no}
+        AND
+            status not in ('12','13','14','15','16','17')
     </update>
 
     <!--Reservation状态更新 -->
