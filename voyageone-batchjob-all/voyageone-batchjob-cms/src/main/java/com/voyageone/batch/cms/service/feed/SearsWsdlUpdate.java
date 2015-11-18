@@ -112,7 +112,7 @@ public class SearsWsdlUpdate extends SearsWsdlBase {
             // 返回删除数量和插入数量,理论上应该相同
             updateFullByCode(updatedCodes);
 
-//            $info("已完成商品更新, 更新的商品数量 Feed [ %s ] [ %s ] Style [ %s ] [ %s ] ", counts[0], counts[1], counts[2], counts[3]);
+            $info("已完成商品更新, 更新的商品数量 Feed [ %s ]", updatedCodes.size());
         }
 
         private List<ProductBean> getLastProducts() {

@@ -98,11 +98,13 @@ public class SearsAnalysisService extends BaseTaskService {
      */
     private void getSearsFeedList() throws Exception {
 
-        PaginationBean paginationBean = searsService.getProductsTotalPages(PageSize);
+        PaginationBean paginationBean = searsService.getProductsTotal();
+        int productsTotal = paginationBean.getTotalProducts();
+        int pageCount = productsTotal / PageSize + (productsTotal % PageSize > 0 ? 1 : 0);
 
-        $info("feed总数" + paginationBean.getTotalPages());
+        $info("feed总数 " + productsTotal + " 总页数 " + pageCount);
         ExecutorService executor = Executors.newFixedThreadPool(ThreadPoolCnt);
-        for (int i = 1; i < paginationBean.getTotalPages() + 1; i++) {
+        for (int i = 1; i < pageCount + 1; i++) {
             final int finalI = i;
             executor.execute(() -> feedListInsertTask(finalI));
         }
@@ -133,7 +135,7 @@ public class SearsAnalysisService extends BaseTaskService {
         logger.info(String.format("失败的feed(%d)件进行单个导入", failurepageList.size()));
 
         // 失败的数据再给一次机会
-        if(failurepageList .size() > 0) {
+        if (failurepageList.size() > 0) {
             ExecutorService executor2 = Executors.newFixedThreadPool(ThreadPoolCnt);
             List<String> temp = new ArrayList<>(Arrays.asList(new String[failurepageList.size()]));
             Collections.copy(temp, failurepageList);
@@ -146,7 +148,7 @@ public class SearsAnalysisService extends BaseTaskService {
             executor2.shutdown();
             executor2.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
             $info(String.format("最后feed(%d)件读入失败", failurepageList.size()));
-            if(failurepageList.size() > 0) {
+            if (failurepageList.size() > 0) {
                 issueLog.log("SearsFeed导入", "Sears读入失败", ErrorType.BatchJob, SubSystem.CMS, failurepageList.stream().collect(Collectors.joining(", ")));
             }
         }
@@ -165,12 +167,13 @@ public class SearsAnalysisService extends BaseTaskService {
 
     /**
      * feed列表取得并插入数据库
+     *
      * @param page
      */
     private void feedListInsertTask(int page) {
         $info(page + "");
         try {
-            ProductResponse product = searsService.getAllProducts(page, PageSize, false, false, false);
+            ProductResponse product = searsService.getAllProducts(page, PageSize);
             searsSuperFeedDao.insertFeedList(product);
         } catch (Exception e) {
             e.printStackTrace();
@@ -179,6 +182,7 @@ public class SearsAnalysisService extends BaseTaskService {
 
     /**
      * feed详细信息取得并插入数据库
+     *
      * @param products
      */
     private void feedDetailsInsertTask(List<String> products) {
@@ -186,7 +190,7 @@ public class SearsAnalysisService extends BaseTaskService {
 
         $info(products.stream().collect(Collectors.joining(", ")));
         try {
-            ProductResponse product = searsService.getProductsBySku(products, true, true, true);
+            ProductResponse product = searsService.getProductsBySku(products, true, true, false);
             searsSuperFeedDao.insert(product);
             searsSuperFeedDao.insertAattribute(product);
 
