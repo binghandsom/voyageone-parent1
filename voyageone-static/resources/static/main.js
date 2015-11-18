@@ -24,7 +24,7 @@ require.config({
         'angular-ui-select': 'dep/angular-ui-select/select.min',
         'angular-xeditable': 'dep/angular-xeditable/xeditable.min',
         'angular-translate': 'dep/angular-translate/angular-translate.min',
-        'ngDialog': 'dep/ngDialog/ngDialog.min',
+        'ngDialog': ['//cdn.bootcss.com/ng-dialog/0.5.5/js/ngDialog.min.js', 'dep/ngDialog/ngDialog'],
         'ngGrid': 'dep/ng-grid/ng-grid.min',
         'underscore': 'dep/underscore/underscore-min',
         'flow': 'dep/ng-flow/ng-flow-standalone.min',
