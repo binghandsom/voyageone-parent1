@@ -346,7 +346,7 @@ public class WmsPickupServiceImpl implements WmsPickupService {
         }
 
         // 设置捡货单的内容
-        FormPickUpLabelBean pickupLabel = getPickupLabel(scanInfoList, scanType);
+        FormPickUpLabelBean pickupLabel = getPickupLabel(scanInfoList, scanType, scanNo);
         //设置skuList
         pickupLabel.setSkuList(skuListToString(orderSkuList));
         String printPickupLabel = "[" + JsonUtil.getJsonString(pickupLabel)  + "]";
@@ -543,6 +543,9 @@ public class WmsPickupServiceImpl implements WmsPickupService {
             // ReservationID
             currentRow.getCell(ReportPickupItems.Reservation.Column_RsvId).setCellValue(pickup.getId());
 
+            // 品牌方SKU
+            currentRow.getCell(ReportPickupItems.Reservation.Column_Client_SKU).setCellValue(pickup.getClient_sku());
+
             intRow = intRow + 1;
 
         }
@@ -621,6 +624,9 @@ public class WmsPickupServiceImpl implements WmsPickupService {
 
             // 货架名
             currentRow.getCell(ReportPickupItems.SKU.Column_Location).setCellValue(StringUtils.null2Space2(pickup.getLocation_name()));
+
+            // 品牌方SKU
+            currentRow.getCell(ReportPickupItems.SKU.Column_Client_SKU).setCellValue(pickup.getClient_sku());
 
             intRow = intRow + 1;
 
@@ -710,7 +716,7 @@ public class WmsPickupServiceImpl implements WmsPickupService {
      * @param scanType 扫描类型
      * @return FormPickUpLabelBean
      */
-    private FormPickUpLabelBean getPickupLabel (List<FormPickupBean>scanInfoList, String scanType) {
+    private FormPickUpLabelBean getPickupLabel (List<FormPickupBean>scanInfoList, String scanType, String scanNo) {
 
         FormPickUpLabelBean pickupLabelBean = new FormPickUpLabelBean();
 
@@ -759,14 +765,17 @@ public class WmsPickupServiceImpl implements WmsPickupService {
             // 货品名称
             pickupLabelBean.setProduct(scanInfoList.get(0).getProduct());
 
-            // SKU
-            pickupLabelBean.setSku(scanInfoList.get(0).getSku());
+            // SKU（品牌方SKU存在时，显示品牌方SKU）
+            String client_sku = StringUtils.null2Space(reservationDao.getClientSku(scanInfoList.get(0).getOrder_channel_id(), scanInfoList.get(0).getSku()));
+
+            pickupLabelBean.setSku(StringUtils.isNullOrBlank2(client_sku) ? scanInfoList.get(0).getSku() : client_sku);
+
         }
         // 订单捡货时，按照订单级别设置
         else if (ChannelConfigEnums.Scan.ORDER.getType().equals(scanType))  {
 
             // 配货号
-            pickupLabelBean.setReservation_id("");
+            pickupLabelBean.setReservation_id(scanNo);
 
             // 货品名称
             pickupLabelBean.setProduct("");
@@ -831,6 +840,10 @@ public class WmsPickupServiceImpl implements WmsPickupService {
 
         // 货架所在
         reservation.setLocation_name(reservationDao.getLocationBySKU(reservation.getOrder_channel_id(),reservation.getSku(),reservation.getStore_id()));
+
+        // 品牌方SKU
+        reservation.setClient_sku(StringUtils.null2Space(reservationDao.getClientSku(reservation.getOrder_channel_id(), reservation.getSku())));
+
 
     }
 
