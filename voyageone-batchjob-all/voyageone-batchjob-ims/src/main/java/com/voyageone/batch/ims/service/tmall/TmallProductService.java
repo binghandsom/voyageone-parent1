@@ -1438,7 +1438,7 @@ public class TmallProductService implements PlatformServiceInterface {
                     skuFieldBuilder.setCodeImageTemplete(codePropImageTemplate);
 
                     List<Field> skuInfoFields = skuFieldBuilder.buildSkuInfoField(cartId, categoryCode, platformProps,
-                     excludeColors, workLoadBean.getCmsModelProp(), contextBuildCustomFields, imageSet);
+                     workLoadBean.getCmsModelProp(), contextBuildCustomFields, imageSet);
 
                     if (skuInfoFields == null)
                     {

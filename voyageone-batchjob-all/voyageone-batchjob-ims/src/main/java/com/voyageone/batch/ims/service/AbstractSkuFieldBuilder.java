@@ -26,7 +26,7 @@ public abstract class AbstractSkuFieldBuilder{
     public abstract boolean isYourFood(List<PlatformPropBean> platformProps);
 
     public abstract List buildSkuInfoField(int cartId, String categoryCode, List<PlatformPropBean> platformProps,
-                           List<String> excludeColorValues, CmsModelPropBean cmsModelProp,
+                           CmsModelPropBean cmsModelProp,
                            PlatformUploadRunState.PlatformContextBuildCustomFields contextBuildCustomFields,
                            Set<String> imageSet) throws TaskSignal;
 
@@ -34,8 +34,8 @@ public abstract class AbstractSkuFieldBuilder{
                                      PlatformUploadRunState.PlatformContextBuildCustomFields contextBuildCustomFields,
                                      List fields);
 
-    public abstract void updateSkuPropImage(Map<String, String> urlMap,
-                            PlatformUploadRunState.PlatformContextBuildCustomFields contextBuildCustomFields);
+    public void updateSkuPropImage(Map<String, String> urlMap,
+                            PlatformUploadRunState.PlatformContextBuildCustomFields contextBuildCustomFields){}
 
     public void setDao(PlatformPropDao platformPropDao, SkuPropValueDao skuPropValueDao, PlatformSkuInfoDao platformSkuInfoDao, SkuInfoDao skuInfoDao, CustomSizePropDao customSizePropDao) {
         this.platformPropDao = platformPropDao;

@@ -98,8 +98,8 @@ public class ImsPromotionService extends BaseTaskService {
 //        shopBean.setAppKey("21008948");
 //        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
 //        shopBean.setSessionKey("6201d2770dbfa1a88af5acfd330fd334fb4ZZa8ff26a40b2641101981");
-        List<Map> succeedProduct = new ArrayList<>();
-        Map<String, List<Map>> failProduct = new HashMap<>();
+        List<String> succeedProduct = new ArrayList<>();
+        Map<String, List<String>> failProduct = new HashMap<>();
         items.forEach(item -> {
             TaobaoResponse response;
             try {
@@ -147,7 +147,7 @@ public class ImsPromotionService extends BaseTaskService {
 
                 // 成功的场合把product_id保存起来
                 if (response != null && response.getErrorCode() == null) {
-                    succeedProduct.addAll((List<Map>) item.get("productList"));
+                    succeedProduct.add(item.get("num_iid").toString());
                 } else {
                     // 失败的场合 错误信息取得
                     String fail = "";
@@ -159,21 +159,21 @@ public class ImsPromotionService extends BaseTaskService {
                         fail = response.getSubMsg();
                     }
                     if (failProduct.get(fail) == null) {
-                        List<Map> temp = new ArrayList<>();
-                        temp.addAll((List<Map>) item.get("productList"));
+                        List<String> temp = new ArrayList<>();
+                        temp.add(item.get("num_iid").toString());
                         failProduct.put(fail, temp);
                     } else {
-                        failProduct.get(fail).addAll((List<Map>) item.get("productList"));
+                        failProduct.get(fail).add((item.get("num_iid").toString()));
                     }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
                 if (failProduct.get(e.getMessage()) == null) {
-                    List<Map> temp = new ArrayList<>();
-                    temp.addAll((List<Map>) item.get("productList"));
+                    List<String> temp = new ArrayList<>();
+                    temp.add(item.get("num_iid").toString());
                     failProduct.put(e.getMessage(), temp);
                 } else {
-                    failProduct.get(e.getMessage()).addAll((List<Map>) item.get("productList"));
+                    failProduct.get(e.getMessage()).add((item.get("num_iid").toString()));
                 }
                 logger.info(e.getMessage());
             }
@@ -183,7 +183,7 @@ public class ImsPromotionService extends BaseTaskService {
             Map<String, Object> parameter = new HashMap<>();
             parameter.put("channelId", channelId);
             parameter.put("cartId", cartId);
-            parameter.put("products", succeedProduct);
+            parameter.put("numIid", succeedProduct);
             parameter.put("priceStatus", "1");
             parameter.put("promotionFaildComment", "");
             promotionDao.updatePromotionStatus(parameter);
@@ -195,7 +195,7 @@ public class ImsPromotionService extends BaseTaskService {
                 Map<String, Object> parameter = new HashMap<>();
                 parameter.put("channelId", channelId);
                 parameter.put("cartId", cartId);
-                parameter.put("products", integers);
+                parameter.put("numIid", integers);
                 parameter.put("priceStatus", "2");
                 parameter.put("promotionFaildComment", s);
                 promotionDao.updatePromotionStatus(parameter);

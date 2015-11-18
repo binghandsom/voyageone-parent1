@@ -230,8 +230,8 @@
             })(this)),
           columns: [
             DTColumnBuilder.newColumn('code', 'Code'),
-            DTColumnBuilder.newColumn('num_iid', 'Num iid').renderWith(function (col) {
-              return '<ng-include src="\'dropdown-operations.tpl.html\'"></ng-include>';
+            DTColumnBuilder.newColumn('num_iid', 'Num iid').renderWith(function() {
+              return '<a href="https://detail.tmall.hk/hk/item.htm?id={{$row.num_iid}}" target="_blank">{{$row.num_iid}}</a>';
             }),
             DTColumnBuilder.newColumn('price', 'Price'),
             DTColumnBuilder.newColumn('beat_flg', 'Status').renderWith((function (_this) {
@@ -240,8 +240,11 @@
               };
             })(this)),
             DTColumnBuilder.newColumn('comment', 'Comment'),
-            DTColumnBuilder.newColumn('modifier', 'Modify').renderWith(function (col, type, row) {
-              return row.modifier + "<br>" + row.cnModified;
+            DTColumnBuilder.newColumn('modifier', 'Modify').renderWith(function () {
+              return "<span title='{{$row.modifier}}'>{{$row.cnModified}}</span>";
+            }),
+            DTColumnBuilder.newColumn('', '').renderWith(function (col) {
+              return '<ng-include src="\'dropdown-operations.tpl.html\'"></ng-include>';
             })
           ],
           instance: null
@@ -620,10 +623,6 @@
               if (count) ctrl.notify.success("已成功修改商品 (・ω< )★");
             });
           });
-      };
-
-      BeatController.prototype.gotoTmall = function (item) {
-        window.open('https://detail.tmall.hk/hk/item.htm?id=' + item.num_iid);
       };
 
       return BeatController;

@@ -84,10 +84,10 @@
             </div>
             <div class="col-sm-7 text-right">
               <div class="btn-group">
-                <button class="btn btn-default btn-sm" ng-click="ctrl.selected.flg = null;ctrl.reloadData(1)">
+                <button class="btn btn-default btn-sm" ng-class="{active: ctrl.selected.flg == info.flgValue}" ng-click="ctrl.selected.flg = null;ctrl.reloadData(1)">
                   显示所有
                 </button>
-                <button class="btn btn-default btn-sm" ng-repeat="info in ctrl.beatSummary" ng-click="ctrl.selected.flg = info.flgValue;ctrl.reloadData(1)">
+                <button class="btn btn-default btn-sm" ng-class="{active: ctrl.selected.flg == info.flgValue}" ng-repeat="info in ctrl.beatSummary" ng-click="ctrl.selected.flg = info.flgValue;ctrl.reloadData(1)">
                   显示 {{ info.cnName + ":" + info.count }}
                 </button>
                 <button ng-click="ctrl.reloadData(1)" type="button" class="btn btn-info btn-sm">
@@ -103,10 +103,8 @@
   </div>
   <script type="text/ng-template" id="dropdown-operations.tpl.html">
     <span class="dropdown" dropdown>
-      <a href dropdown-toggle class="dropdown-toggle">{{$row.num_iid}}</a>
-      <ul class="dropdown-menu">
-        <li><a href ng-click="ctrl.gotoTmall($row)">去天猫看看</a></li>
-        <li class="divider"></li>
+      <button dropdown-toggle class="btn btn-info btn-sm dropdown-toggle">操作&nbsp;<span class="caret"></span></button>
+      <ul class="dropdown-menu dropdown-menu-right">
         <li><a href ng-click="ctrl.beatControl('startup', $row)">刷图（打标）</a></li>
         <li><a href ng-click="ctrl.beatControl('cancel', $row)">取消（还原主图）</a></li>
         <li><a href ng-click="ctrl.beatControl('stop', $row)">放弃执行</a></li>
