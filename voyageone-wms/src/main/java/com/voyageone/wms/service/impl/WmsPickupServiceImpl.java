@@ -1,14 +1,11 @@
 package com.voyageone.wms.service.impl;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.configs.ChannelConfigs;
+import com.voyageone.common.configs.*;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.StoreConfigEnums;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Enums.TypeConfigEnums.MastType;
-import com.voyageone.common.configs.Properties;
-import com.voyageone.common.configs.StoreConfigs;
-import com.voyageone.common.configs.Type;
 import com.voyageone.common.configs.beans.MasterInfoBean;
 import com.voyageone.common.configs.beans.StoreBean;
 import com.voyageone.common.util.DateTimeUtil;
@@ -241,19 +238,38 @@ public class WmsPickupServiceImpl implements WmsPickupService {
         String StatusName = Type.getTypeName(MastType.reservationStatus.getId(),scanStatus);
 
         List<FormPickupBean> scanInfoList =new ArrayList<>();
+        int intReserved = 0;
         int intCancelled = 0;
+        List<String> reservationStatus = new ArrayList<>();
 
         for (FormPickupBean formPickupBean : scanInfoListALL) {
+
+            String statusName = Codes.getCodeName(WmsCodeConstants.Reservation_Status.Name, formPickupBean.getStatus());
+
             // 取得满足状态条件的记录
             if (formPickupBean.getStatus().equals(scanStatus)) {
                 scanInfoList.add(formPickupBean);
             } else if (formPickupBean.getStatus().equals(WmsCodeConstants.Reservation_Status.Cancelled)) {
                 intCancelled ++;
+            } else if (formPickupBean.getStatus().equals(WmsCodeConstants.Reservation_Status.Reserved)) {
+                intReserved ++;
+            } else if (!reservationStatus.toString().contains(statusName)) {
+                reservationStatus.add(statusName);
             }
         }
 
         // 0件的场合，错误信息表示
         if (scanInfoList.size() == 0) {
+            // 存在已拣货的状态时，请仓库重新Relabel
+            if (intReserved > 0) {
+                logger.info("该记录已拣货" + "（scanTypeName：" + scanTypeName  + "，ScanNo：" + scanNo+ "）");
+                throw new BusinessException(WmsMsgConstants.PickUpMsg.RESERVED, scanTypeName, scanNo);
+            }
+            // 订单状态不允许拣货时的提示信息
+            if (reservationStatus.size() > 0 ) {
+                logger.info("该记录状态是" +reservationStatus.toString() + "（scanTypeName：" + scanTypeName  + "，ScanNo：" + scanNo+ "）");
+                throw new BusinessException(WmsMsgConstants.PickUpMsg.NOT_RECEIVE, scanTypeName, scanNo, reservationStatus.toString(), scanMode);
+            }
             // 存在取消记录时，请仓库进行入库操作
             if (intCancelled > 0) {
                 logger.info("该记录已被取消" + "（scanTypeName：" + scanTypeName  + "，ScanNo：" + scanNo+ "）");
