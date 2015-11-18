@@ -99,6 +99,14 @@ public final class WmsMsgConstants {
          * 4: 取消物品的提示信息
          */
         public static final String CANCELLED = "3000063";
+        /**
+         * 5: 已拣货物品的提示信息
+         */
+        public static final String RESERVED = "3000064";
+        /**
+         * 6: 无法收货的提示信息
+         */
+        public static final String NOT_RECEIVE = "3000065";
 
     }
 
