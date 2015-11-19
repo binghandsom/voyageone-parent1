@@ -1,5 +1,6 @@
 package com.voyageone.batch.cms.service.feed;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.cms.bean.ImageBean;
 import com.voyageone.batch.cms.bean.ItemBean;
@@ -68,7 +69,7 @@ abstract class BcbgWsdlBase extends BaseTaskService {
 
         String where = String.format("WHERE %s AND %s = '%s'", getWhereUpdateFlg(), itemColumns.getCode(), product.getP_code());
 
-        List<ItemBean> itemBeans = superFeedDao.selectSuperfeedItem(where, itemColumns, table_feed);
+        List<ItemBean> itemBeans = superFeedDao.selectSuperfeedItem(where, itemColumns, table_feed_full);
 
         $info("取得 Item [ %s\t ] 个 [ Product: %s ]", itemBeans.size(), product.getUrl_key());
 
@@ -200,10 +201,7 @@ abstract class BcbgWsdlBase extends BaseTaskService {
                 duty = apparels_duty;
                 break;
             default:
-                // 去除临时使用的 type 内容
-                productBean.setP_product_type(Constants.EmptyString);
-                // 没找到则直接无视,后续价格做 0 处理
-                return;
+                throw new BusinessException("没有找到 MATKL_ATT1 ! 无法计算价格 !");
         }
 
         int iMsrp = calePrice(msrp, duty);

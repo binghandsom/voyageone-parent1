@@ -380,3 +380,15 @@ fieldset.requireStyle{
   font-family: "Microsoft Yahei";
   color:#e67e22;
 }
+
+.modelTop{
+    padding:10px 0px 10px 0px
+}
+.modelErrMsg{
+    margin:0px;
+    padding:10px;
+    color: #a94442;
+    background:#f2dede;
+    border-top:1px solid #efefef;
+    word-wrap: break-word;
+}

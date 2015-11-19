@@ -19,7 +19,7 @@ public interface PlatformServiceInterface {
     List<Object> resolveCustomMappingProps(PlatformUploadRunState platformUploadRunState, Map<String, String> urlMap);
     List<Object> resolveMasterMappingProps(PlatformUploadRunState platformUploadRunState, Map<String, String> urlMap);
 
-    void constructCustomPlatformPropsBeforeUploadImage(UploadProductTcb tcb,Map<CustomMappingType, List<PlatformPropBean>> mappingTypePropsMap, ExpressionParser expressionParser, Set<String> imageSet) throws TaskSignal;
+    void constructCustomPlatformPropsBeforeUploadImage(UploadProductTcb tcb,Map<CustomMappingType, List<PlatformPropBean>> mappingTypePropsMap, ExpressionParser expressionParser, Set<String> imageSet, List<PlatformPropBean> platformPropsWillBeFilted) throws TaskSignal;
     void constructDarwinPlatformProps(UploadProductTcb tcb, PlatformPropBean platformPropBean, String propValue) throws TaskSignal;
     void constructFieldMappingPlatformPropsBeforeUploadImage(UploadProductTcb tcb, PlatformPropBean platformProp, List<PlatformPropBean> platformProps, PropMappingBean masterPropMapping,
                                                              ExpressionParser expressionParser, Set<String> imageSet) throws TaskSignal;

@@ -12,8 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.stream.Collectors.*;
 import static com.voyageone.batch.cms.service.feed.BcbgWsdlConstants.*;
+import static java.util.stream.Collectors.*;
 
 /**
  * (临时) 为更新接口提供专门服务
@@ -56,12 +56,26 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
         Map<String, List<ImageBean>> codeImages = getNewImages();
 
         // 在这次的商品数据和上次的商品数据之间建立关联关系
-        List<ProductsFeedUpdate> feedUpdates = updatingProduct
+        Map<Boolean, List<ProductsFeedUpdate>> feedMap = updatingProduct
                 .stream()
                 .map(p -> new Relation(p, newProducts, codeImages)) // 这里注意, indexOf 重写了 ProductBean 的 equals 方法
                 .map(this::getWsdlParam)
-                .filter(p -> p != null)
-                .collect(toList());
+                .collect(groupingBy(p -> p.getUpdatefields() != null, toList()));
+
+        List<ProductsFeedUpdate> feedUpdates = feedMap.get(true);
+
+        if (feedUpdates.size() < 1) {
+            int[] counts = bcbgSuperFeedDao.updateUpdatingSuccess();
+            $info("没有商品需要更新. 商品更新信息 Feed [ %s ] [ %s ]", counts[0], counts[1]);
+            return;
+        }
+
+        List<ProductsFeedUpdate> noNeedUpdating = feedMap.get(false);
+
+        if (noNeedUpdating != null && noNeedUpdating.size() > 0) {
+            int[] counts = bcbgSuperFeedDao.updateFull(noNeedUpdating.stream().map(ProductsFeedUpdate::getCode).collect(toList()));
+            $info("部分商品不需要更新, 执行信息 Feed [ %s ] [ %s ]", counts[0], counts[1]);
+        }
 
         $info("已取得商品更新参数 [ %s ]", feedUpdates.size());
 
@@ -103,10 +117,11 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
             }
         }
 
-        // 返回删除数量和插入数量,理论上应该相同
-        int[] counts = bcbgSuperFeedDao.updateFull(updatedCodes);
-
-        $info("已完成商品更新, 更新的商品数量 Feed [ %s ] [ %s ] Style [ %s ] [ %s ] ", counts[0], counts[1], counts[2], counts[3]);
+        if (updatedCodes.size() > 0) {
+            // 返回删除数量和插入数量,理论上应该相同
+            int[] counts = bcbgSuperFeedDao.updateFull(updatedCodes);
+            $info("已完成商品更新, 更新的商品数量 Feed [ %s ] [ %s ]", counts[0], counts[1]);
+        }
     }
 
     private List<ProductBean> getNewProducts() {
@@ -189,16 +204,17 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
      */
     private ProductsFeedUpdate getWsdlParam(Relation relation) {
 
-        Map<String, String> updateFields = relation.getUpdateFields();
-
-        if (updateFields == null || updateFields.size() < 1)
-            return null;
-
         ProductsFeedUpdate feedUpdate = new ProductsFeedUpdate();
 
         feedUpdate.setChannel_id(channel.getId());
         feedUpdate.setCode(relation.updating.getP_code());
         feedUpdate.setProduct_url_key(relation.updating.getUrl_key());
+
+        Map<String, String> updateFields = relation.getUpdateFields();
+
+        if (updateFields == null || updateFields.size() < 1)
+            return feedUpdate;
+
         feedUpdate.setUpdatefields(updateFields);
 
         return feedUpdate;

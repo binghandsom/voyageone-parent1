@@ -1178,6 +1178,28 @@ public class OrderDao extends BaseDao {
 		
 		return ret;
 	}
+
+	/**
+	 * 本轮订单插入结束之后回写满就送配置表里的赠品剩余库存
+	 *
+	 * @param paraMap
+	 * @return
+	 */
+	public boolean recordPriceThanGiftInventory(Map<String, String> paraMap) {
+		boolean ret = false;
+
+		try {
+			int retCount = updateTemplate.insert(Constants.DAO_NAME_SPACE_OMS + "oms_price_than_gift_setting_recordPriceThanGiftInventory", paraMap);
+			ret = true;
+
+		} catch (Exception ex) {
+			logger.error(ex.getMessage(), ex);
+
+			ret = false;
+		}
+
+		return ret;
+	}
 	
 	/**
 	 * 置位synship发送标志
@@ -2052,15 +2074,17 @@ public class OrderDao extends BaseDao {
 	}
 	
 	/**
-	 * sneakerhead 88店庆每小时统计消费前10顾客
+	 * 消费前count顾客
 	 * 
 	 * @return
 	 */
-	public List<Map<String, String>> getSendSneakerhead88Top10() {
+	public List<Map<String, String>> getSneakerheadTopSpendingRanking(String orderChannelId, int count) {
+		Map<String, String> paraMap = new HashMap<String, String>();
+		paraMap.put("orderChannelId", orderChannelId);
+		paraMap.put("topCount", String.valueOf(count));
+		List<Map<String, String>> topMapList = (List)selectList(Constants.DAO_NAME_SPACE_OMS + "oms_bt_orders_getSpendingTop", paraMap);
 
-		List<Map<String, String>> top10MapList = (List)selectList(Constants.DAO_NAME_SPACE_OMS + "oms_bt_orders_getSendSneakerhead88Top10");
-
-		return top10MapList;
+		return topMapList;
 	}
 	
 	/**
