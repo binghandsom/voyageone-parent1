@@ -146,48 +146,91 @@
     </select>
 
 
-    <!-- 汇总价格取得（不包含运费）-->
+    <!-- 汇总价格取得（不包含运费，正常订单）-->
     <select id="getPriceDataNotShipping" resultType="com.voyageone.batch.core.modelbean.SetPriceBean">
         select
-        orders.source_order_id,
-        orders.order_date_time,
-        orders.cart_id,
-        details.sku,
-        SUM(details.price_per_unit + ifnull((select SUM(price_per_unit)
-        from oms_bt_order_details discount
-        where details.order_number = discount.order_number
-        AND (discount.STATUS not in ( 'Canceled','Returned') or discount.STATUS is null)
-        and details.item_number = discount.sub_item_number),0)) as price,
-        ifnull((select SUM(price_per_unit)
-        from oms_bt_order_details shipdetails
-        where shipdetails.order_number	= #{order_number}
-        and shipdetails.adjustment = 1
-        AND (shipdetails.STATUS not in ( 'Canceled','Returned') or shipdetails.STATUS is null)
-        and shipdetails.sub_item_number = 0 AND shipdetails.sku not in ('Shipping')),0) as shipping_price
+            orders.source_order_id,
+            orders.order_date_time,
+            orders.cart_id,
+            details.sku,
+            SUM(details.price_per_unit + ifnull((select SUM(price_per_unit)
+                                                    from oms_bt_order_details discount
+                                                    where details.order_number = discount.order_number
+                                                        AND (discount.STATUS not in ( 'Canceled','Returned') or discount.STATUS is null)
+                                                        and details.item_number = discount.sub_item_number),0)) as price,
+            ifnull((select SUM(price_per_unit)
+                    from oms_bt_order_details shipdetails
+                    where shipdetails.order_number	= #{order_number}
+                        and shipdetails.adjustment = 1
+                        AND (shipdetails.STATUS not in ( 'Canceled','Returned') or shipdetails.STATUS is null)
+                        and shipdetails.sub_item_number = 0 AND shipdetails.sku not in ('Shipping')),0) as shipping_price
         from
-        oms_bt_orders orders,
-        oms_bt_order_details details
+            oms_bt_orders orders,
+            oms_bt_order_details details
         where
-        orders.order_channel_id = #{order_channel_id}
-        and orders.order_number = details.order_number
+            orders.order_channel_id = #{order_channel_id}
+            and orders.order_number = details.order_number
 
 
-        and details.adjustment = 0
+            and details.adjustment = 0
 
-        and details.order_number = #{order_number}
+            and details.order_number = #{order_number}
         AND (details.STATUS not in ( 'Canceled','Returned') or details.STATUS is null)
         AND NOT EXISTS (SELECT
-        1
-        FROM
-        voyageone_ims.ims_bt_product_except except
-        WHERE
-        except.order_channel_id = #{order_channel_id}
-        AND except.cart_id = #{cart_id}
-        AND except.`comment` LIKE '%赠品%'
-        AND except.except_sku = details.sku)
+                            1
+                            FROM
+                                voyageone_ims.ims_bt_product_except except
+                            WHERE
+                                except.order_channel_id = #{order_channel_id}
+                                AND except.cart_id = #{cart_id}
+                                AND except.`comment` LIKE '%赠品%'
+                                AND except.except_sku = details.sku)
         GROUP BY details.sku
     </select>
 
+    <!-- 汇总价格取得（不包含运费，Cancel，Return 订单）-->
+    <select id="getPriceDataNotShippingForCancelOrReturn" resultType="com.voyageone.batch.core.modelbean.SetPriceBean">
+        select
+            orders.source_order_id,
+            orders.order_date_time,
+            orders.cart_id,
+            details.sku,
+            SUM(details.price_per_unit + ifnull((select SUM(price_per_unit)
+                                                    from oms_bt_order_details discount
+                                                    where details.order_number = discount.order_number
+                                                        AND discount.STATUS in ( 'Canceled','Returned')
+                                                        and details.item_number = discount.sub_item_number),0)) as price,
+            ifnull((select SUM(price_per_unit)
+                    from oms_bt_order_details shipdetails
+                    where shipdetails.order_number	= #{order_number}
+                        and shipdetails.adjustment = 1
+                        AND shipdetails.STATUS in ( 'Canceled','Returned')
+                        and shipdetails.sub_item_number = 0 AND shipdetails.sku not in ('Shipping')),0) as shipping_price
+        from
+            oms_bt_orders orders,
+            oms_bt_order_details details,
+            oms_bt_ext_order_details odx
+        where
+            orders.order_channel_id = #{order_channel_id}
+            and orders.order_number = details.order_number
+            and details.order_number = odx.order_number
+            and details.item_number = odx.item_number
+            and details.adjustment = 0
+            and details.order_number = #{order_number}
+            and odx.send_flg = 0 and odx.ext_flg1 = 0
+        AND details.STATUS in ( 'Canceled','Returned')
+        AND NOT EXISTS (SELECT
+                            1
+                            FROM
+                                voyageone_ims.ims_bt_product_except except
+                            WHERE
+                                except.order_channel_id = #{order_channel_id}
+                                AND except.cart_id = #{cart_id}
+                                AND except.`comment` LIKE '%赠品%'
+                                AND except.except_sku = details.sku)
+        GROUP BY details.sku
+
+    </select>
 
     <!-- 退货汇总价格取得-->
     <select id="getReturnedPriceData" resultType="com.voyageone.batch.core.modelbean.SetPriceBean">
