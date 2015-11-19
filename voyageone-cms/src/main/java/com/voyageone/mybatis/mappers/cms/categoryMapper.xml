@@ -243,7 +243,7 @@
   	from 
   		cms_bt_relation_category_model a 
 	LEFT JOIN cms_bt_model b  
-		on a.model_id=b.model_id
+		on a.model_id=b.model_id and a.channel_id = b.channel_id
 	LEFT JOIN cms_mt_brand c 
 		on c.brand_id=b.brand_id 
 	LEFT JOIN cms_mt_size_type d 
@@ -251,11 +251,11 @@
 	LEFT JOIN cms_mt_product_type e 
 		on e.product_type_id=b.product_type_id
 	LEFT JOIN cms_bt_relation_model_product f 
-		on f.model_id=b.model_id  and f.is_primary_product='1'
+		on f.model_id=b.model_id  and f.is_primary_product='1' and f.channel_id = b.channel_id
 	LEFT JOIN cms_bt_product g 
-		on g.product_id=f.product_id	 
+		on g.product_id=f.product_id and g.channel_id = f.channel_id
 	LEFT JOIN cms_bt_product_image h 
-     	on h.product_id=f.product_id and h.image_id='1' and h.image_type_id='1' 
+     	on h.product_id=f.product_id and h.image_id='1' and h.image_type_id='1' and h.channel_id = f.channel_id
 	WHERE 
 		a.category_id = #{categoryId,jdbcType=INTEGER}
 		and a.channel_id = #{channelId,jdbcType=VARCHAR}

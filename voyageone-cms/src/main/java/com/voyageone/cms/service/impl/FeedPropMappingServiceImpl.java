@@ -381,7 +381,7 @@ public class FeedPropMappingServiceImpl extends BaseAppService implements FeedPr
         if (mapping.getEType() == null)
             throw new BusinessException(ERR_MAPPING_TYPE);
 
-        if (mapping.getProp_id() < 0)
+        if (mapping.getProp_id() == 0)
             throw new BusinessException(NO_PARAM);
 
         String condition = mapping.getConditions();

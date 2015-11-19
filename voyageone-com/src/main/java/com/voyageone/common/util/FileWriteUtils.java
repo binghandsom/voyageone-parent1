@@ -76,26 +76,65 @@ public class FileWriteUtils {
 
         //  文字的场合
         if (characterIdentify.equals(type)) {
-            outputString = StringUtils.rPad(inputString, " ", Integer.valueOf(formatContent));
+            if (inputString.length() > Integer.valueOf(formatContent)) {
+                outputString = inputString.substring(0, Integer.valueOf(formatContent));
+            } else {
+                outputString = StringUtils.rPad(inputString, " ", Integer.valueOf(formatContent));
+            }
         //  数值的场合
         } else {
+            // 负数判定
+            boolean isNegative = isInputStringNegative(inputString);
+
             if (formatContent.contains(".")) {
                 String[] formatContentArr = formatContent.split("\\.");
                 String numericLength = formatContentArr[0];
 
+                // 负号去除
+                if (isNegative) {
+                    inputString = inputString.substring(1, inputString.length());
+                }
+
                 if (inputString.contains(".")) {
                     double numericDouble = Double.parseDouble(inputString);
                     DecimalFormat df = new DecimalFormat("#.00");
-                    outputString = StringUtils.lPad(df.format(numericDouble), "0", Integer.valueOf(numericLength));
+
+                    if (isNegative) {
+                        outputString = "-" + StringUtils.lPad(df.format(numericDouble), "0", Integer.valueOf(numericLength) - 1);
+                    } else {
+                        outputString = StringUtils.lPad(df.format(numericDouble), "0", Integer.valueOf(numericLength));
+                    }
                 } else {
-                    outputString = StringUtils.lPad(inputString, "0", Integer.valueOf(numericLength));
+                    if (isNegative) {
+                        outputString = "-" +StringUtils.lPad(inputString, "0", Integer.valueOf(numericLength) - 1);
+                    } else {
+                        outputString = StringUtils.lPad(inputString, "0", Integer.valueOf(numericLength));
+                    }
                 }
             } else {
-                outputString = StringUtils.lPad(inputString, "0", Integer.valueOf(formatContent));
+                if (isNegative) {
+                    outputString = "-" + StringUtils.lPad(inputString, "0", Integer.valueOf(formatContent) - 1);
+                } else {
+                    outputString = StringUtils.lPad(inputString, "0", Integer.valueOf(formatContent));
+                }
             }
         }
 
         return outputString;
+    }
+
+    private boolean isInputStringNegative(String inputString) {
+        boolean ret = false;
+
+        if (!StringUtils.isEmpty(inputString)) {
+            float inputContent = Float.valueOf(inputString);
+
+            if (inputContent < 0) {
+                ret = true;
+            }
+        }
+
+        return ret;
     }
 
     public void endRecord() throws IOException {
@@ -148,4 +187,9 @@ public class FileWriteUtils {
     protected void finalize() {
         this.close(false);
     }
+
+//    public static void main(String[] args) {
+//        String a = getFormattedString("1.0","S,15.2");
+//        System.out.println("a = " + a);
+//    }
 }

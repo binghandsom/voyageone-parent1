@@ -465,6 +465,7 @@ public class OrderExtend implements java.io.Serializable {
 	private String size;
 	private String lineNumber;
 	private String MSRP;
+	private String LongItemNumber;
 	//	BCBG订单使用 end
 
 	public static long getSerialVersionUID() {
@@ -1541,6 +1542,14 @@ public class OrderExtend implements java.io.Serializable {
 
 	public void setMSRP(String MSRP) {
 		this.MSRP = MSRP;
+	}
+
+	public String getLongItemNumber() {
+		return LongItemNumber;
+	}
+
+	public void setLongItemNumber(String longItemNumber) {
+		LongItemNumber = longItemNumber;
 	}
 
 	public String getShipDate() {

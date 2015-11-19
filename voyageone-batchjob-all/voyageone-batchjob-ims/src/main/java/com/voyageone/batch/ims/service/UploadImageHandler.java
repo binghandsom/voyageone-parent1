@@ -213,4 +213,22 @@ public class UploadImageHandler extends UploadWorkloadHandler{
             uploadJob.getUploadProductHandler().stopTcb(uploadProductTcb);
         }
     }
+
+    public static void main(String[] args) {
+        String plain = "http://s7d5.scene7.com/is/image/sneakerhead/bcbg_1200_1200?$1200x1200$&$big=IZD1U885_001";
+        String encode = encodeImageUrl(plain);
+        System.out.println(encode);
+        System.out.println(decodeImageUrl(encode));
+    }
+
+    public static String encodeImageUrl(String plainValue) {
+        String endStr = "%&";
+        if (!plainValue.endsWith(endStr))
+            return plainValue + endStr;
+        return plainValue;
+    }
+
+    public static String decodeImageUrl(String encodedValue) {
+        return encodedValue.substring(0, encodedValue.length() - 2);
+    }
 }

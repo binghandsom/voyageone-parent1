@@ -72,7 +72,7 @@ public class WmsPickupServiceImpl implements WmsPickupService {
      * @return Map 画面初始化项目
      */
 	@Override
-	public Map<String, Object> doInit(UserSessionBean user) {
+	public Map<String, Object> doInit(UserSessionBean user,String reserveType) {
 		Map<String, Object> resultMap = new HashMap<>();
 
         //获取Reservation状态、默认状态
@@ -89,9 +89,25 @@ public class WmsPickupServiceImpl implements WmsPickupService {
 
         channelStoreList.add(channelStoreBean);
 
-        channelStoreList.addAll(user.getCompanyRealStoreList());
+        ArrayList<ChannelStoreBean> storeList = new ArrayList<>();
+        // 根据reserveType来决定显示仓库
+        for (ChannelStoreBean storeBean : user.getCompanyRealStoreList() ) {
+            StoreBean store = StoreConfigs.getStore(new Long(storeBean.getStore_id()));
+            if (reserveType.equals(WmsConstants.ReserveType.PickUp)) {
+                if (store.getInventory_manager().equals(StoreConfigEnums.Manager.YES.getId()) && store.getIs_sale().equals(StoreConfigEnums.Sale.YES.getId())) {
+                    storeList.add(storeBean);
+                }
+            }
+             else  if (reserveType.equals(WmsConstants.ReserveType.Receive)) {
+                if (store.getInventory_manager().equals(StoreConfigEnums.Manager.NO.getId())) {
+                    storeList.add(storeBean);
+                }
+            }
+        }
+
+        channelStoreList.addAll(storeList);
 		resultMap.put("storeList", channelStoreList);
-        resultMap.put("selectStoreList", user.getCompanyRealStoreList());
+        resultMap.put("selectStoreList",storeList);
 
         // 获取开始日期（当前日期的一个月前）
         String date_from = DateTimeUtil.parseStr(DateTimeUtil.getLocalTime(DateTimeUtil.addMonths(DateTimeUtil.getDate(), -1), user.getTimeZone()), DateTimeUtil.DEFAULT_DATE_FORMAT);
@@ -103,6 +119,7 @@ public class WmsPickupServiceImpl implements WmsPickupService {
 
         // 获取相关渠道对应的扫描方式
         List<String> orderChannelList = user.getChannelList();
+        String permit = "";
         String pickupType = "";
         String pickupTypeName = "";
         String pickupStatus = "";
@@ -112,15 +129,30 @@ public class WmsPickupServiceImpl implements WmsPickupService {
         String relabelStatus = "";
         String relabelPort = "";
         if (orderChannelList.size() > 0){
-            pickupType = ChannelConfigs.getVal1(orderChannelList.get(0), ChannelConfigEnums.Name.pickup_type);
-            pickupTypeName = ChannelConfigs.getVal2(orderChannelList.get(0), ChannelConfigEnums.Name.pickup_type, pickupType);
-            pickupStatus = ChannelConfigs.getVal1(orderChannelList.get(0), ChannelConfigEnums.Name.pickup_status);
-            pickupPort = ChannelConfigs.getVal2(orderChannelList.get(0), ChannelConfigEnums.Name.pickup_status, pickupStatus);
-            relabelType = ChannelConfigs.getVal1(orderChannelList.get(0), ChannelConfigEnums.Name.relabel_type);
-            relabelTypeName = ChannelConfigs.getVal2(orderChannelList.get(0), ChannelConfigEnums.Name.relabel_type, relabelType);
-            relabelStatus = ChannelConfigs.getVal1(orderChannelList.get(0), ChannelConfigEnums.Name.relabel_status);
-            relabelPort = ChannelConfigs.getVal2(orderChannelList.get(0), ChannelConfigEnums.Name.relabel_status, relabelStatus);
+            if (reserveType.equals(WmsConstants.ReserveType.PickUp)) {
+                permit = ChannelConfigs.getVal1(orderChannelList.get(0), ChannelConfigEnums.Name.pickup_permit);
+                pickupType = ChannelConfigs.getVal1(orderChannelList.get(0), ChannelConfigEnums.Name.pickup_type);
+                pickupTypeName = ChannelConfigs.getVal2(orderChannelList.get(0), ChannelConfigEnums.Name.pickup_type, pickupType);
+                pickupStatus = ChannelConfigs.getVal1(orderChannelList.get(0), ChannelConfigEnums.Name.pickup_status);
+                pickupPort = ChannelConfigs.getVal2(orderChannelList.get(0), ChannelConfigEnums.Name.pickup_status, pickupStatus);
+                relabelType = ChannelConfigs.getVal1(orderChannelList.get(0), ChannelConfigEnums.Name.relabel_type);
+                relabelTypeName = ChannelConfigs.getVal2(orderChannelList.get(0), ChannelConfigEnums.Name.relabel_type, relabelType);
+                relabelStatus = ChannelConfigs.getVal1(orderChannelList.get(0), ChannelConfigEnums.Name.relabel_status);
+                relabelPort = ChannelConfigs.getVal2(orderChannelList.get(0), ChannelConfigEnums.Name.relabel_status, relabelStatus);
+            }
+            else  if (reserveType.equals(WmsConstants.ReserveType.Receive)) {
+                permit = ChannelConfigs.getVal1(orderChannelList.get(0), ChannelConfigEnums.Name.receive_permit);
+                pickupType = ChannelConfigs.getVal1(orderChannelList.get(0), ChannelConfigEnums.Name.receive_type);
+                pickupTypeName = ChannelConfigs.getVal2(orderChannelList.get(0), ChannelConfigEnums.Name.receive_type, pickupType);
+                pickupStatus = ChannelConfigs.getVal1(orderChannelList.get(0), ChannelConfigEnums.Name.receive_status);
+                pickupPort = ChannelConfigs.getVal2(orderChannelList.get(0), ChannelConfigEnums.Name.receive_status, pickupStatus);
+                relabelType = ChannelConfigs.getVal1(orderChannelList.get(0), ChannelConfigEnums.Name.receive_relabel_type);
+                relabelTypeName = ChannelConfigs.getVal2(orderChannelList.get(0), ChannelConfigEnums.Name.receive_relabel_type, relabelType);
+                relabelStatus = ChannelConfigs.getVal1(orderChannelList.get(0), ChannelConfigEnums.Name.receive_relabel_status);
+                relabelPort = ChannelConfigs.getVal2(orderChannelList.get(0), ChannelConfigEnums.Name.receive_relabel_status, relabelStatus);
+            }
         }
+        resultMap.put("permit", permit);
         resultMap.put("pickupType", pickupType);
         resultMap.put("pickupTypeName", pickupTypeName);
         resultMap.put("pickupStatus", pickupStatus);
@@ -182,7 +214,7 @@ public class WmsPickupServiceImpl implements WmsPickupService {
      */
     @Transactional
     @Override
-    public Map<String, Object> getScanInfo(Map<String, Object> paramMap, UserSessionBean user) {
+    public Map<String, Object> getScanInfo(Map<String, Object> paramMap, UserSessionBean user, String reserveType) {
 
         // 取得扫描内容
         String scanNo = (String) paramMap.get("scanNo");
@@ -193,7 +225,7 @@ public class WmsPickupServiceImpl implements WmsPickupService {
         String scanPort = (String) paramMap.get("scanPort");
         String scanStore = (String) paramMap.get("scanStore");
 
-        logger.info("scanType：" + scanType + "，scanTypeName：" + scanTypeName  + "，scanMode：" + scanMode  + "，ScanNo：" + scanNo + "，scanStore：" + scanStore);
+        logger.info("scanType：" + scanType + "，scanTypeName：" + scanTypeName  + "，scanMode：" + scanMode  + "，ScanNo：" + scanNo + "，scanStore：" + scanStore + "，reserveType：" + reserveType);
 
         Map<String, Object> resultMap = new HashMap<>();
 
@@ -228,7 +260,7 @@ public class WmsPickupServiceImpl implements WmsPickupService {
                 throw new BusinessException(WmsMsgConstants.PickUpMsg.CANCELLED);
             } else {
                 logger.info("没有取得符合条件的记录" + "（scanTypeName：" + scanTypeName  + "，ScanNo：" + scanNo+ "）");
-                throw new BusinessException(WmsMsgConstants.PickUpMsg.NOT_FOUND_SCANNO, scanTypeName, scanNo, StatusName);
+                throw new BusinessException(WmsMsgConstants.PickUpMsg.NOT_FOUND_SCANNO, reserveType, scanTypeName, scanNo, StatusName);
             }
         }
 
@@ -239,7 +271,7 @@ public class WmsPickupServiceImpl implements WmsPickupService {
             if (!scanPort.equals(port)) {
                 logger.info("没有取得符合条件的记录" + "（scanTypeName：" + scanTypeName  + "，ScanNo：" + scanNo+  "，ScanPort：" + scanPort + "）");
 
-                throw new BusinessException(WmsMsgConstants.PickUpMsg.NOT_FOUND_SCANNO, scanTypeName, scanNo, StatusName);
+                throw new BusinessException(WmsMsgConstants.PickUpMsg.NOT_FOUND_SCANNO, reserveType, scanTypeName, scanNo, StatusName);
             }
         }
 
@@ -275,14 +307,15 @@ public class WmsPickupServiceImpl implements WmsPickupService {
 
         String orderChannelId = scanInfoList.get(0).getOrder_channel_id();
         String shipChannel = scanInfoList.get(0).getShip_channel();
-        // 跨境电商的场合，发货渠道的判断
-        if (ChannelConfigEnums.Sale.CB.getType().equals(ChannelConfigs.getVal1(orderChannelId, ChannelConfigEnums.Name.sale_type))) {
-            shipChannel = reservationDao.getShippingMethod(orderChannelId, scanInfoList.get(0).getOrder_number(), scanInfoList.get(0).getId());
-        }
-        // 国内电商的场合，默认发货渠道的取得
-        else  if (ChannelConfigEnums.Sale.CB.getType().equals(ChannelConfigs.getVal1(orderChannelId, ChannelConfigEnums.Name.sale_type))) {
-            shipChannel = ChannelConfigs.getVal1(orderChannelId, ChannelConfigEnums.Name.default_ship_channel);
-        }
+//        // 跨境电商的场合，发货渠道的判断
+//        if (ChannelConfigEnums.Sale.CB.getType().equals(ChannelConfigs.getVal1(orderChannelId, ChannelConfigEnums.Name.sale_type))) {
+//            shipChannel = reservationDao.getShippingMethod(orderChannelId, scanInfoList.get(0).getOrder_number(), scanInfoList.get(0).getId());
+//        }
+//        // 国内电商的场合，默认发货渠道的取得
+//        else  if (ChannelConfigEnums.Sale.CN.getType().equals(ChannelConfigs.getVal1(orderChannelId, ChannelConfigEnums.Name.sale_type))) {
+//            shipChannel = ChannelConfigs.getVal1(orderChannelId, ChannelConfigEnums.Name.default_ship_channel);
+//        }
+        shipChannel = reservationDao.getShippingMethod(orderChannelId, scanInfoList.get(0).getOrder_number(), scanInfoList.get(0).getId());
         logger.info("发货渠道判定" + "（scanTypeName：" + scanTypeName  + "，ScanNo：" + scanNo  + "，ReservationID：" + reservationList.toString() + "，ShipChannel：" + shipChannel +  "）");
 
         // 根据发货渠道计算折扣
@@ -313,7 +346,7 @@ public class WmsPickupServiceImpl implements WmsPickupService {
         }
 
         // 设置捡货单的内容
-        FormPickUpLabelBean pickupLabel = getPickupLabel(scanInfoList, scanType);
+        FormPickUpLabelBean pickupLabel = getPickupLabel(scanInfoList, scanType, scanNo);
         //设置skuList
         pickupLabel.setSkuList(skuListToString(orderSkuList));
         String printPickupLabel = "[" + JsonUtil.getJsonString(pickupLabel)  + "]";
@@ -344,6 +377,13 @@ public class WmsPickupServiceImpl implements WmsPickupService {
 
         // 捡货时 插入TrackingInfo
         if (WmsConstants.ScanType.SCAN.equals(scanMode)) {
+            // 是否存在的检查，存在的场合不插入记录
+            int trackingExists = trackingInfoDao.selectTrackingByStatus(scanInfoList.get(0).getSyn_ship_no(), WmsCodeConstants.Tracking_Info.Take);
+
+            if (trackingExists == 0) {
+                trackingInfoDao.insertTrackingByStatus(scanInfoList.get(0).getSyn_ship_no(), WmsCodeConstants.Tracking_Info.Take, 0, user.getUserName());
+            }
+
             trackingInfoDao.insertTrackingInfo(reservationList, WmsCodeConstants.Tracking_Info.Reserved, user.getUserName());
         }
 
@@ -503,6 +543,9 @@ public class WmsPickupServiceImpl implements WmsPickupService {
             // ReservationID
             currentRow.getCell(ReportPickupItems.Reservation.Column_RsvId).setCellValue(pickup.getId());
 
+            // 品牌方SKU
+            currentRow.getCell(ReportPickupItems.Reservation.Column_Client_SKU).setCellValue(pickup.getClient_sku());
+
             intRow = intRow + 1;
 
         }
@@ -581,6 +624,9 @@ public class WmsPickupServiceImpl implements WmsPickupService {
 
             // 货架名
             currentRow.getCell(ReportPickupItems.SKU.Column_Location).setCellValue(StringUtils.null2Space2(pickup.getLocation_name()));
+
+            // 品牌方SKU
+            currentRow.getCell(ReportPickupItems.SKU.Column_Client_SKU).setCellValue(pickup.getClient_sku());
 
             intRow = intRow + 1;
 
@@ -670,7 +716,7 @@ public class WmsPickupServiceImpl implements WmsPickupService {
      * @param scanType 扫描类型
      * @return FormPickUpLabelBean
      */
-    private FormPickUpLabelBean getPickupLabel (List<FormPickupBean>scanInfoList, String scanType) {
+    private FormPickUpLabelBean getPickupLabel (List<FormPickupBean>scanInfoList, String scanType, String scanNo) {
 
         FormPickUpLabelBean pickupLabelBean = new FormPickUpLabelBean();
 
@@ -719,14 +765,17 @@ public class WmsPickupServiceImpl implements WmsPickupService {
             // 货品名称
             pickupLabelBean.setProduct(scanInfoList.get(0).getProduct());
 
-            // SKU
-            pickupLabelBean.setSku(scanInfoList.get(0).getSku());
+            // SKU（品牌方SKU存在时，显示品牌方SKU）
+            String client_sku = StringUtils.null2Space(reservationDao.getClientSku(scanInfoList.get(0).getOrder_channel_id(), scanInfoList.get(0).getSku()));
+
+            pickupLabelBean.setSku(StringUtils.isNullOrBlank2(client_sku) ? scanInfoList.get(0).getSku() : client_sku);
+
         }
         // 订单捡货时，按照订单级别设置
         else if (ChannelConfigEnums.Scan.ORDER.getType().equals(scanType))  {
 
             // 配货号
-            pickupLabelBean.setReservation_id("");
+            pickupLabelBean.setReservation_id(scanNo);
 
             // 货品名称
             pickupLabelBean.setProduct("");
@@ -791,6 +840,10 @@ public class WmsPickupServiceImpl implements WmsPickupService {
 
         // 货架所在
         reservation.setLocation_name(reservationDao.getLocationBySKU(reservation.getOrder_channel_id(),reservation.getSku(),reservation.getStore_id()));
+
+        // 品牌方SKU
+        reservation.setClient_sku(StringUtils.null2Space(reservationDao.getClientSku(reservation.getOrder_channel_id(), reservation.getSku())));
+
 
     }
 

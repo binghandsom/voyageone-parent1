@@ -1112,6 +1112,17 @@
 		values
 			${values}
 	</insert>
+
+	<!-- 本轮订单插入结束之后回写满就送配置表里的赠品剩余库存 -->
+	<insert id="oms_price_than_gift_setting_recordPriceThanGiftInventory" parameterType="HashMap">
+		UPDATE oms_price_than_gift_setting
+			SET inventory = ${inventory}
+		WHERE
+			order_channel_id = #{orderChannelId}
+			AND cart_id = ${cartId}
+			AND price = ${price}
+			AND gift_sku = #{giftSku}
+	</insert>
 	
 	<!-- 置位synship发送标志（->1） -->
 	<update id="oms_bt_order_details_resetSynShipFlag" parameterType="HashMap">
@@ -1383,7 +1394,9 @@
 			order_channel_id as orderChannelId,
 			cart_id as cartId,
 			price,
-			gift_sku as giftSku
+			gift_sku as giftSku,
+			prior_num as priorNum,
+			inventory
 		from
 			oms_price_than_gift_setting
 		where
@@ -1703,6 +1716,57 @@
 		group by name
 		order by sum(final_grand_total) desc
 		limit 10
+	</select>
+
+	<!-- 统计阿里系渠道消费前count数顾客-->
+	<select id="oms_bt_orders_getSpendingTop" parameterType="HashMap" resultType="HashMap">
+		SELECT
+			orderTop.NAME AS wangwangId,
+			sum(orderTop.final_grand_total) AS consumeMoney
+		FROM
+			(
+					SELECT
+						NAME,
+						final_grand_total,
+						order_number
+					FROM
+						oms_bt_orders
+					WHERE
+						order_channel_id = #{orderChannelId} and
+						cart_id IN ('20', '21', '23')
+					AND order_date_time >= '2015-11-10 16:00:00'
+					AND '2015-11-11 15:59:59' >= order_date_time
+					AND order_status NOT IN ('Returned', 'Canceled')
+				UNION
+					SELECT
+						NAME,
+						final_grand_total,
+						order_number
+					FROM
+						oms_bt_orders
+					WHERE
+						order_date_time > '2015-11-11 15:59:59'
+					AND
+						origin_source_order_id
+						IN
+							(
+								SELECT
+									origin_source_order_id
+								FROM
+									oms_bt_orders
+								WHERE
+									order_channel_id = #{orderChannelId} and
+									cart_id IN ('20', '21', '23')
+								AND order_date_time >= '2015-11-10 16:00:00'
+								AND '2015-11-11 15:59:59' >= order_date_time
+								AND order_status IN ('Returned', 'Canceled')
+							)
+		) orderTop
+		GROUP BY
+			orderTop.NAME
+		ORDER BY
+			sum(orderTop.final_grand_total) DESC
+		LIMIT ${topCount}
 	</select>
 	
 	<!-- 根据省市获得邮编 -->
@@ -2363,7 +2427,7 @@
 				IFNULL(cms.EAN11,'') as UPC
 		from
 			Synship.oms_bt_orders o
-		left join
+		inner join
 			(select ods.order_number,
 						ods.adjustment,
 						ods.sku,
@@ -2374,18 +2438,22 @@
 				where
 					ods.detail_date >= #{beginDate} and
 					#{endDate} >= ods.detail_date and
-					ods.adjustment = 0
+					(ods.adjustment = 0 or ods.sku = 'Shipping')
 				group by ods.order_number, ods.adjustment, ods.sku
 			)od
 			on o.order_number = od.order_number
+		left join Synship.wms_bt_item_details wd
+			on od.sku = wd.sku
+			and o.order_channel_id = wd.order_channel_id
 		left join
-			voyageone_cms.cms_zz_worktable_bcbg_superfeed cms
-			on od.sku = cms.MATNR
+			voyageone_cms.cms_zz_worktable_bcbg_superfeed_full cms
+			on wd.client_sku = cms.MATNR
+		inner join oms_bt_ext_orders ox
+			on o.order_number = ox.order_number
 		where
 			o.order_channel_id = #{orderChannelId} and
-			od.adjustment = false and
 			o.order_status = 'Approved' and
-			o.order_date_time >= #{beginDate} and
+			ox.send_flg = 0 and
 			#{endDate} >= o.order_date_time
 	</select>
 
@@ -2418,6 +2486,7 @@
 		<result column="ship_zip" property="shipZip"/>
 		<result column="ship_country" property="shipCountry"/>
 		<result column="ship_phone" property="shipPhone"/>
+		<result column="final_shipping_total" property="finalShippingTotal"/>
 
 		<result column="sku" property="sku"/>
 		<result column="quantity_ordered" property="quantityOrdered"/>
@@ -2461,13 +2530,14 @@
 			IFNULL(o.ship_zip,'') as ship_zip,
 			IFNULL(o.ship_country,'') as ship_country,
 			IFNULL(o.ship_phone,'') as ship_phone,
+			o.final_shipping_total,
 
 			od.sku,
 			od.quantity_ordered,
 			od.quantity_shipped,
 			od.price_per_unit,
 			od.ship_date,
-			IFNULL(rt.tracking_no,'') as tracking_no,
+			IFNULL(od.syn_ship_no,'') as tracking_no,
 			IFNULL(cms.EAN11,'') as UPC,
 			IFNULL(cms.SATNR,'') as style,
 			IFNULL(cms.COLOR,'') as color,
@@ -2481,22 +2551,32 @@
 						sum(ods.quantity_ordered) as quantity_ordered,
 						sum(ods.quantity_shipped) as quantity_shipped,
 						min(ods.price_per_unit) as price_per_unit,
-						min(ods.res_id) as res_id
+						min(ods.res_id) as res_id,
+						min(ods.syn_ship_no) as syn_ship_no
 			from Synship.oms_bt_order_details ods
-			where
-				ods.ship_date >= #{beginDate} and
-				#{endDate} >= ods.ship_date and
-				ods.status = 'Shipped' and
-				ods.adjustment = 0
+			inner join (select order_number
+							from Synship.oms_bt_order_details odss
+							where
+								odss.ship_date >= #{beginDate} and
+								#{endDate} >= odss.ship_date and
+								odss.status = 'Shipped' and
+								odss.adjustment = 0
+							group by order_number	) ods2
+			on ods.order_number = ods2.order_number
+			where ods.adjustment = 0 or ods.sku = 'Shipping'
 			group by ods.order_number, ods.adjustment, ods.sku, ods.ship_date
 			)od
-		left join Synship.oms_bt_orders o
+		inner join Synship.oms_bt_orders o
 			on o.order_number = od.order_number
-		left join tt_res_tracking rt
-			on od.res_id = rt.reservation_id
-		left join	voyageone_cms.cms_zz_worktable_bcbg_superfeed cms
-			on od.sku = cms.MATNR
+		left join Synship.wms_bt_item_details wd
+			on od.sku = wd.sku
+			and o.order_channel_id = wd.order_channel_id
+		left join	voyageone_cms.cms_zz_worktable_bcbg_superfeed_full cms
+			on wd.client_sku = cms.MATNR
+		inner join Synship.oms_bt_ext_orders ox
+			on o.order_number = ox.order_number
 		where
 			o.order_channel_id = #{orderChannelId}
+			and ox.ext_flg1 = 0
 	</select>
 </mapper>

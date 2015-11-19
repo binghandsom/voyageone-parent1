@@ -92,6 +92,16 @@ public final class WmsConstants {
     }
 
     /**
+     * Reserve
+     */
+    public final static class ReserveType {
+        // 捡货
+        public final static String PickUp = "PickUp";
+        // 收货
+        public final static String Receive = "Receive";
+    }
+
+    /**
      * 报表相关设置
      */
     public final static class ReportSetting {
@@ -168,7 +178,7 @@ public final class WmsConstants {
             public final static int TEMPLATE_SHEET = 0;
 
             // 最大列数
-            public final static int MAX_COLUMNS = 7;
+            public final static int MAX_COLUMNS = 8;
 
             // 开始行数
             public final static int START_ROWS = 1;
@@ -193,6 +203,9 @@ public final class WmsConstants {
 
             // 列：RsvId
             public final static int Column_RsvId= 6;
+
+            // 列：Client_Sku
+            public final static int Column_Client_SKU= 7;
         }
 
         // 出力内容
@@ -202,7 +215,7 @@ public final class WmsConstants {
             public final static int TEMPLATE_SHEET = 1;
 
             // 最大列数
-            public final static int MAX_COLUMNS = 4;
+            public final static int MAX_COLUMNS = 5;
 
             // 开始行数
             public final static int START_ROWS = 1;
@@ -218,6 +231,9 @@ public final class WmsConstants {
 
             // 列：Date
             public final static int Column_Location = 3;
+
+            // 列：Client_Sku
+            public final static int Column_Client_SKU= 4;
 
         }
 

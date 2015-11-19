@@ -155,15 +155,15 @@
     	a.modified
 	FROM
 		cms_bt_relation_promotion_product a
-	LEFT JOIN cms_bt_promotion b ON a.promotion_id = b.promotion_id
-	LEFT JOIN cms_bt_product c ON c.product_id = a.product_id
-	LEFT JOIN cms_bt_cn_product_share d ON d.product_id = a.product_id
-	AND d.cart_id = b.cart_id
-	LEFT JOIN cms_bt_product_image e ON e.channel_id = a.channel_id
-	AND a.product_id = e.product_id
-	AND e.image_type_id = '1'
-	AND e.image_id = '1'
-  	LEFT JOIN view_product_info_list f on f.channel_id = a.channel_id and f.product_id = a.product_id 
+    LEFT JOIN cms_bt_promotion b ON a.promotion_id = b.promotion_id
+    LEFT JOIN cms_bt_product c ON c.product_id = a.product_id AND c.channel_id = a.channel_id
+    LEFT JOIN cms_bt_cn_product_share d ON d.product_id = a.product_id AND d.channel_id = a.channel_id
+    AND d.cart_id = b.cart_id
+    LEFT JOIN cms_bt_product_image e ON e.channel_id = a.channel_id
+    AND a.product_id = e.product_id
+    AND e.image_type_id = '1'
+    AND e.image_id = '1'
+  	LEFT JOIN view_cn_product_info_list f on f.channel_id = a.channel_id and f.product_id = a.product_id
     where 
     	a.promotion_id = #{promotionId,jdbcType=INTEGER}
       	and a.channel_id = #{channelId,jdbcType=VARCHAR}

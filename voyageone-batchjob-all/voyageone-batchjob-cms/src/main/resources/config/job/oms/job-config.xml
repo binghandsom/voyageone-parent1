@@ -15,6 +15,9 @@
 
 				<!-- BCBG向scene7上传产品图片 -->
 				<ref bean="bcbgImagePostScene7TaskContri" />
+
+				<!-- Sears向scene7上传产品图片 -->
+				<ref bean="searsImagePostScene7TaskContri" />
 			</list>
 		</property>
 		<property name="quartzProperties">

@@ -34,10 +34,11 @@ public class CmsDataProvider {
      * 本地测试环境： http://10.0.0.24:8080/VoyageOne_WebService/cms/products/getGroupModelProducts
      * 阿里云测试环境： http://121.41.58.229:8889/cms/products/getGroupModelProducts
      * 正式环境： http://api.voyageone.com.cn/cms/products/getGroupModelProducts
+     * 本地测试环境： http://127.0.0.1:8080/VoyageOne_WebService/cms/products/getGroupModelProducts
     */
     //private String cmsWebServiceUrl = null;
 //    private String cmsWebServiceUrl = "http://10.0.0.24:8080/VoyageOne_WebService/cms/products/getGroupModelProducts";
-    private String cmsWebServiceUrl = "http://api.voyageone.com.cn/cms/products/getGroupModelProducts";
+    private String cmsWebServiceUrl = "http://127.0.0.1:8080/VoyageOne_WebService/cms/products/getGroupModelProducts";
 
     private int maxRetryTimes = 3;
     private int retryTimes = 0;

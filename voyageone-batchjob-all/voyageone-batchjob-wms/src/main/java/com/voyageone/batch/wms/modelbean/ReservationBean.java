@@ -56,6 +56,7 @@ public class ReservationBean {
     private String update_person;
     private long item_number;
     private String itemCode;
+    private ItemCodeBean itemCodeInfo;
 
     public long getId() {
         return id;
@@ -455,5 +456,13 @@ public class ReservationBean {
 
     public void setItemCode(String itemCode) {
         this.itemCode = itemCode;
+    }
+
+    public ItemCodeBean getItemCodeInfo() {
+        return itemCodeInfo;
+    }
+
+    public void setItemCodeInfo(ItemCodeBean itemCodeInfo) {
+        this.itemCodeInfo = itemCodeInfo;
     }
 }

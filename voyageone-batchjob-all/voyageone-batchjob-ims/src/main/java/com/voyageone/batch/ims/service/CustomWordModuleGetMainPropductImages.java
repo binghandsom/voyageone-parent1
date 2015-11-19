@@ -96,7 +96,8 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
         if (imageIndex == -1) {
             if (imageTemplate != null) {
                 for (String propImage : propImages) {
-                    imageUrlList.add(String.format(imageTemplate, propImage.trim()));
+                    String completeImageUrl = UploadImageHandler.encodeImageUrl(String.format(imageTemplate, propImage.trim()));
+                    imageUrlList.add(completeImageUrl);
                 }
             } else {
                 for (String propImage : propImages) {
@@ -114,6 +115,7 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
             String paddingImage;
             if(imageTemplate != null){
                 paddingImage = String.format(imageTemplate, paddingImageKey.trim());
+                paddingImage = UploadImageHandler.encodeImageUrl(paddingImage);
                 imageUrlList.add(String.format(imageTemplate, paddingImage));
 
             }else {
@@ -122,7 +124,8 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
         } else {
             String propImage = propImages[imageIndex - 1];
             if(imageTemplate != null){
-                imageUrlList.add(String.format(imageTemplate, propImage.trim()));
+                String completeImageUrl = UploadImageHandler.encodeImageUrl(String.format(imageTemplate, propImage.trim()));
+                imageUrlList.add(completeImageUrl);
             }else {
                 return propImage.trim();
             }
@@ -136,7 +139,7 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
             }
 
             if (imageSet != null) {
-                imageSet.add(imageUrl);
+                imageSet.add(UploadImageHandler.encodeImageUrl(imageUrl));
             }
         }
         return parseResult;

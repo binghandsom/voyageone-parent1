@@ -53,6 +53,7 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
 
             for (String productImage : productImages) {
                 String completeImageUrl = String.format(imageTemplate, productImage);
+                completeImageUrl = UploadImageHandler.encodeImageUrl(completeImageUrl);
                 if (htmlTemplate != null) {
                     parseResult += String.format(htmlTemplate, completeImageUrl);
                 }

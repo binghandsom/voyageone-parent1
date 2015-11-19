@@ -39,6 +39,7 @@
 		and b.res_id != 0
 		GROUP BY a.order_number
 		HAVING MAX(IFNULL(d.inventory_manager, '0')) = '0'
+		limit 80
 	</select>
 	<select id="get_orders_to_channeladvisor" parameterType="String" resultType="HashMap">
 		SELECT

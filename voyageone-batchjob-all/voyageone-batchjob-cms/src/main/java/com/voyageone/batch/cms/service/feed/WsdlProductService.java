@@ -100,4 +100,10 @@ public class WsdlProductService {
 
         return new Gson().fromJson(response, WsdlProductUpdateResponse.class);
     }
+    public WsdlResponseBean attribute(Map productsFeed) throws Exception {
+
+        String response = post(ATTRIBUTE, productsFeed);
+
+        return new Gson().fromJson(response, WsdlProductUpdateResponse.class);
+    }
 }

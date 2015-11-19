@@ -29,8 +29,9 @@ define([ "modules/cms/cms.module",
 					  '$modal',
 					  '$timeout',
 					  '$interval',
+					  '$anchorScroll',
 			
-			function(scope,rootScope,vaueSetservice,catagoryServiece,editService, $compile, $location, cmsRoute,cmsPopupPages,ngDialog,vConfirm,$modal,$timeout,$interval) {
+			function(scope,rootScope,vaueSetservice,catagoryServiece,editService, $compile, $location, cmsRoute,cmsPopupPages,ngDialog,vConfirm,$modal,$timeout,$interval,$anchorScroll) {
 						
 				/**
 				 * 递归用对象
@@ -70,16 +71,19 @@ define([ "modules/cms/cms.module",
 								scope.isReady=false;
 
 								scope.sec = 10;
-								var cur = $interval(function(){
+								scope.cur = $interval(function(){
 									scope.sec--;
 									if (scope.sec==0) {
-										$interval.cancel(cur);
+										$interval.cancel(scope.cur);
 										scope.doGoBack();
 									}
 								},1000);
 
 								return;
 							}
+							//获取上新时错误信息.
+							scope.tmallErrMsgs = responseData.tmallErrMsgs;
+
 							var requireModels ={};
 							for(var modelName in responseData.propModels){
 								var model = responseData.propModels[modelName];
@@ -135,7 +139,30 @@ define([ "modules/cms/cms.module",
 					}
 				};
 
+				/**
+				 * 选择tab.
+				 * @param index
+				 */
+				scope.selectTab = function(index){
+
+					scope.tabs[index].active=true;
+
+					$location.hash('top');
+
+					$anchorScroll();
+
+					if(index==1 && !scope.tabs[index].models){
+						scope.tabs[index].models = scope.eligiblyModels;
+					}
+
+				};
+
+				/**
+				 * 绑定可选项数据.
+				 * @param tab
+				 */
 				scope.showEligiblyModels = function(tab){
+
 					if(!tab.models){
 						tab.models = scope.eligiblyModels;
 					}
@@ -342,6 +369,8 @@ define([ "modules/cms/cms.module",
 				 * 返回上一页
 				 */
 				scope.doGoBack = function(){
+					if(scope.cur)
+						$interval.cancel(scope.cur);
 					$location.path (catagoryServiece.gettMainCategoryReturnUrl());
 				}
 				

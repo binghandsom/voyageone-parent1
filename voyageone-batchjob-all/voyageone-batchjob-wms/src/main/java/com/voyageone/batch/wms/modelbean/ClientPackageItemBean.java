@@ -14,12 +14,14 @@ public class ClientPackageItemBean {
     private String sto_line_no;
     private String article_number;
     private String shipped_qty;
+    private int calc_qty;
     private String fact_unit_nom;
     private String base_uom;
     private String stock_type;
     private String site;
     private String shipping_point;
     private String upc;
+    private String brand;
     private String active;
     private String created;
     private String creater;
@@ -90,6 +92,14 @@ public class ClientPackageItemBean {
         this.shipped_qty = shipped_qty;
     }
 
+    public int getCalc_qty() {
+        return calc_qty;
+    }
+
+    public void setCalc_qty(int calc_qty) {
+        this.calc_qty = calc_qty;
+    }
+
     public String getFact_unit_nom() {
         return fact_unit_nom;
     }
@@ -136,6 +146,14 @@ public class ClientPackageItemBean {
 
     public void setUpc(String upc) {
         this.upc = upc;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
     }
 
     public String getActive() {

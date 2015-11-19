@@ -34,6 +34,26 @@ public class PortConfigEnums {
          * 港口的可选择快递公司
          */
         select_express,
+        /**
+         * 扫描时打印的寄件人电话
+         */
+        sender_tel,
+        /**
+         * 扫描时打印的寄件人地址
+         */
+        sender_address,
+        /**
+         * 扫描时打印的寄件人市
+         */
+        sender_city,
+        /**
+         * 扫描时打印的寄件人省
+         */
+        sender_province,
+        /**
+         * 扫描时打印的寄件人邮编
+         */
+        sender_zipCode,
     }
 
     /**
@@ -47,6 +67,11 @@ public class PortConfigEnums {
         SH("10"),
         /**
          /**
+         * 发往香港2
+         */
+        HK("12"),
+        /**
+         /**
          * 发往广州
          */
         GZ("13"),
@@ -57,7 +82,11 @@ public class PortConfigEnums {
         /**
          * 发往洛杉矶
          */
-        LA("15");
+        LA("15"),
+        /**
+         * 发往菜鸟
+         */
+        SYB("16");
 
         private String id;
 

@@ -12,7 +12,7 @@ import java.util.Map;
 
 /**
  * 所有 bcbg 数据解析的操作
- *
+ * <p>
  * Created by Jonas on 10/13/15.
  */
 @Repository
@@ -41,30 +41,32 @@ public class BcbgSuperFeedDao extends BaseDao {
         return delete("cms_zz_worktable_bcbg_styles_deleteStyles", null);
     }
 
-    public int[] insertFullWithoutFail(List<String> modelFailList, List<String> productFailList) {
+    public int updateSuccessStatus(List<String> modelFailList, List<String> productFailList) {
 
-        Map<String, Object> params = parameters("update_flg", 1, "modelFailList", modelFailList,
+        Map<String, Object> params = parameters(
+                "success_status", 20,
+                "target_status", 10,
+                "modelFailList", modelFailList,
                 "productFailList", productFailList);
 
-        int insertFeedCount = insert("cms_zz_worktable_bcbg_superfeed_full_insertWithoutFail", params);
-
-        int insertStyleCount = insert("cms_zz_worktable_bcbg_styles_full_insertFullWithoutFail", params);
-
-        return new int[] { insertFeedCount, insertStyleCount };
+        return insert("cms_zz_worktable_bcbg_superfeed_full_updateStatusWithoutFail", params);
     }
 
     public int[] updateFull(List<String> updatedCodes) {
 
-        Map<String, Object> params = parameters("updatedCodes", updatedCodes, "update_flg", 2);
+        Map<String, Object> params = parameters("updatedCodes", updatedCodes, "status", 30);
 
         int deleteFeedCount = delete("cms_zz_worktable_bcbg_superfeed_full_deleteFullByCode", params);
 
         int insertFeedCount = insert("cms_zz_worktable_bcbg_superfeed_full_insertFullByCode", params);
 
-        int deleteStyleCount = delete("cms_zz_worktable_bcbg_styles_full_deleteStyleFullByCode", params);
+        return new int[]{deleteFeedCount, insertFeedCount};
+    }
 
-        int insertStyleCount = insert("cms_zz_worktable_bcbg_styles_full_insertStyleFullByCode", params);
-
-        return new int[] { deleteFeedCount, insertFeedCount, deleteStyleCount, insertStyleCount };
+    /**
+     * 更新所有 30(updating) 的商品为成功.
+     */
+    public int[] updateUpdatingSuccess() {
+        return updateFull(null);
     }
 }

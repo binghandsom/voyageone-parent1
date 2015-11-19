@@ -114,6 +114,15 @@ define(["angularAMD", "components/app", "components/util/commonUtil", "underscor
                 }
             },
 
+            // 收货
+            receive: {
+                list: {
+                    hash: "/wms/receive/list",
+                    page: "modules/wms/receive/receiveList.tpl.html",
+                    controller: "modules/wms/receive/receiveListCtrl"
+                }
+            },
+
             // 订单管理
             wms_workload_list: {
                 hash: "/wms/reservation/list",

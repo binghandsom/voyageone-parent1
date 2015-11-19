@@ -84,13 +84,15 @@ public class ShipmentDao extends BaseDao {
      * @param shipment_id
      * @param package_id
      * @param syn_ship_no
+     * @param reservation_id
      */
-    public PackageItemBean getPackageItem(String shipment_id, String package_id, String syn_ship_no) {
+    public PackageItemBean getPackageItem(String shipment_id, String package_id, String syn_ship_no, long reservation_id) {
         Map<String, Object> params = new HashMap<>();
 
         params.put("shipment_id", shipment_id);
         params.put("package_id", package_id);
         params.put("syn_ship_no", syn_ship_no);
+        params.put("reservation_id", reservation_id);
 
         return updateTemplate.selectOne("synShip_getPackageItem", params);
     }

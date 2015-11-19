@@ -33,6 +33,24 @@ public class HttpUtils {
         return null;
     }
 
+    public static String post(String url, String param, int connectTimeout, int readTimeout) {
+
+        HttpURLConnection connection = null;
+        try {
+            connection = sendPost(url, param, connectTimeout, readTimeout);
+
+            try (InputStream inputStream = connection.getInputStream()) {
+                return readConnection(inputStream);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null)
+                connection.disconnect();
+        }
+
+        return null;
+    }
     public static String postWithException(String url, String param) throws IOException {
 
         HttpURLConnection connection = null;
@@ -92,6 +110,28 @@ public class HttpUtils {
     /**
      * 辅助方法：打开一个 Post 连接。
      */
+    private static HttpURLConnection sendPost(String url, String param,int connectTimeout, int readTimeout) throws IOException {
+
+        // 打开和URL之间的连接
+        HttpURLConnection connection = getConnection(url, "POST",connectTimeout, readTimeout);
+
+        // 发送POST请求必须设置如下两行
+        connection.setDoOutput(true);
+        connection.setDoInput(true);
+
+        // 获取URLConnection对象对应的输出流
+        try (OutputStream outputStream = connection.getOutputStream();
+             PrintWriter printWriter = new PrintWriter(outputStream)) {
+
+            // 发送请求参数
+            printWriter.print(param);
+            printWriter.flush();
+        }
+
+        connection.connect();
+
+        return connection;
+    }
     private static HttpURLConnection sendPost(String url, String param) throws IOException {
 
         // 打开和URL之间的连接
@@ -114,7 +154,6 @@ public class HttpUtils {
 
         return connection;
     }
-
     /**
      * 以默认的 UTF－8 读取结果
      *
@@ -175,6 +214,24 @@ public class HttpUtils {
         return connection;
     }
 
+    private static HttpURLConnection getConnection(String location, String method, int connectTimeout, int readTimeout) throws IOException {
+
+        URL url = new URL(location);
+
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod(method);
+
+        //设置连接超时
+        connection.setConnectTimeout(connectTimeout);
+        connection.setReadTimeout(readTimeout);
+        // 设置通用的请求属性
+        connection.setRequestProperty("accept", "*/*");
+        connection.setRequestProperty("connection", "Keep-Alive");
+        connection.setRequestProperty("user-agent",
+                "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+
+        return connection;
+    }
     public static String PostSoap(String postUrl, String soap_action, String send_soap) throws Exception {
         String ret;
         URL url = new URL(postUrl);

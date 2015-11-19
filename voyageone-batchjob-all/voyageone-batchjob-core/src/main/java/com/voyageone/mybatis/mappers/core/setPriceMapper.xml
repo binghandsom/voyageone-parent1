@@ -170,10 +170,10 @@
         where
         orders.order_channel_id = #{order_channel_id}
         and orders.order_number = details.order_number
-        and details.synship_flg = '1'
-        and details.res_allot_flg = '1'
+
+
         and details.adjustment = 0
-        and details.res_id > 0
+
         and details.order_number = #{order_number}
         AND (details.STATUS not in ( 'Canceled','Returned') or details.STATUS is null)
         AND NOT EXISTS (SELECT
