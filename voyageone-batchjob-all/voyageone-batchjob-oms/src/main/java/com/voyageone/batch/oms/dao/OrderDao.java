@@ -1760,6 +1760,38 @@ public class OrderDao extends BaseDao {
 	}
 
 	/**
+	 * 获得推送 BCBG(Cancel)订单信息
+	 *
+	 * @return
+	 */
+	public List<OrderExtend> getPushBCBGDemandsInfoForCancel(String orderChannelId, String beginSearchDate, String endSearchDate) {
+		HashMap<String, String> inPara = new HashMap<String, String>();
+		inPara.put("orderChannelId", orderChannelId);
+		inPara.put("beginDate", beginSearchDate);
+		inPara.put("endDate", endSearchDate);
+
+		List<OrderExtend> ordersInfo = (List) selectList(Constants.DAO_NAME_SPACE_OMS + "oms_bt_order_details_getPushBCBGDemandsInfoForCancel", inPara);
+
+		return ordersInfo;
+	}
+
+	/**
+	 * 获得推送 BCBG(Cancel 明细 推送标志更新用)订单信息
+	 *
+	 * @return
+	 */
+	public List<OrderExtend> getPushBCBGDemandsInfoForCancelItems(String orderChannelId, String beginSearchDate, String endSearchDate) {
+		HashMap<String, String> inPara = new HashMap<String, String>();
+		inPara.put("orderChannelId", orderChannelId);
+		inPara.put("beginDate", beginSearchDate);
+		inPara.put("endDate", endSearchDate);
+
+		List<OrderExtend> ordersInfo = (List) selectList(Constants.DAO_NAME_SPACE_OMS + "oms_bt_order_details_getPushBCBGDemandsInfoForCancelItems", inPara);
+
+		return ordersInfo;
+	}
+
+	/**
 	 * 获得推送 BCBG(Shipped)订单信息
 	 *
 	 * @return
@@ -1771,6 +1803,38 @@ public class OrderDao extends BaseDao {
 		inPara.put("endDate", endSearchDate);
 
 		List<OrderExtend> ordersInfo = (List) selectList(Constants.DAO_NAME_SPACE_OMS + "oms_bt_order_details_getPushBCBGDailySalesInfo", inPara);
+
+		return ordersInfo;
+	}
+
+	/**
+	 * 获得推送 BCBG(Returned)订单信息
+	 *
+	 * @return
+	 */
+	public List<OrderExtend> getPushBCBGDailySalesInfoForReturn(String orderChannelId, String beginSearchDate, String endSearchDate) {
+		HashMap<String, String> inPara = new HashMap<String, String>();
+		inPara.put("orderChannelId", orderChannelId);
+		inPara.put("beginDate", beginSearchDate);
+		inPara.put("endDate", endSearchDate);
+
+		List<OrderExtend> ordersInfo = (List) selectList(Constants.DAO_NAME_SPACE_OMS + "oms_bt_order_details_getPushBCBGDailySalesInfoForReturn", inPara);
+
+		return ordersInfo;
+	}
+
+	/**
+	 * 获得推送 BCBG(Returned)订单信息
+	 *
+	 * @return
+	 */
+	public List<OrderExtend> getPushBCBGDailySalesInfoForReturnItems(String orderChannelId, String beginSearchDate, String endSearchDate) {
+		HashMap<String, String> inPara = new HashMap<String, String>();
+		inPara.put("orderChannelId", orderChannelId);
+		inPara.put("beginDate", beginSearchDate);
+		inPara.put("endDate", endSearchDate);
+
+		List<OrderExtend> ordersInfo = (List) selectList(Constants.DAO_NAME_SPACE_OMS + "oms_bt_order_details_getPushBCBGDemandsInfoForReturnItems", inPara);
 
 		return ordersInfo;
 	}
@@ -1839,7 +1903,7 @@ public class OrderDao extends BaseDao {
 	}
 
 	/**
-	 * 订单信息更新（Return订单发送标志）
+	 * 订单信息更新（订单明细 send_flg 发送标志）
 	 *
 	 * @return
 	 */
@@ -1852,6 +1916,28 @@ public class OrderDao extends BaseDao {
 		paraIn.put("itemNumber", itemNumber);
 
 		int retCount = updateTemplate.update(Constants.DAO_NAME_SPACE_OMS + "oms_bt_ext_order_details_updateReturnSendFlag", paraIn);
+
+		if (retCount > 0) {
+			ret = true;
+		}
+
+		return ret;
+	}
+
+	/**
+	 * 订单信息更新（订单明细 ext_flg1 发送标志）
+	 *
+	 * @return
+	 */
+	public boolean updateExtFlag1OrdersSendInfo(String taskName, String orderNumber, String itemNumber) {
+		boolean ret = false;
+
+		HashMap<String, Object> paraIn = new HashMap<String, Object>();
+		paraIn.put("taskName", taskName);
+		paraIn.put("orderNumber", orderNumber);
+		paraIn.put("itemNumber", itemNumber);
+
+		int retCount = updateTemplate.update(Constants.DAO_NAME_SPACE_OMS + "oms_bt_ext_order_details_updateExtFlag1", paraIn);
 
 		if (retCount > 0) {
 			ret = true;
