@@ -182,7 +182,7 @@ define([
                     var data = [{"codition" : e.condition,
                                  "modifier" : userService.getUserName(),
                                  "modified" : nowStr,
-                                 "location" : e.store_name,
+                                 "location" : e.location_name,
                                  "barcode" : e.barCode,
                                  "sku" : e.sku,
                                  "size" : e.size,

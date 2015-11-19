@@ -19,6 +19,7 @@ import com.voyageone.core.modelbean.PermissionBean;
 import com.voyageone.core.modelbean.UserSessionBean;
 import com.voyageone.core.util.PageUtil;
 import com.voyageone.wms.WmsConstants;
+import com.voyageone.wms.dao.ReservationDao;
 import com.voyageone.wms.dao.ReservationLogDao;
 import com.voyageone.wms.dao.ReturnDao;
 import com.voyageone.wms.formbean.FormReturn;
@@ -59,6 +60,9 @@ public class WmsReturnServiceImpl implements WmsReturnService {
 
 	@Autowired
 	private ReservationLogDao reservationLogDao;
+
+	@Autowired
+	private ReservationDao reservationDao;
 
 //	@Override
 //	public void changeStatus(HttpServletRequest request, HttpServletResponse response, String returnId) {
@@ -102,6 +106,8 @@ public class WmsReturnServiceImpl implements WmsReturnService {
 
 		List<FormReturn> orderInfo;
 		orderInfo = returnDao.getOrderInfoByOrdNo(formReturn);
+		setDisplayInfo(orderInfo, user);
+
 		resultMap.put("orderInfo", orderInfo);
 		result.setResult(true);
 		result.setResultInfo(resultMap);
@@ -253,7 +259,8 @@ public class WmsReturnServiceImpl implements WmsReturnService {
 			if (PageUtil.pageInit(formReturn, total)) {
 				sessionInfoList = returnDao.doSessionListSearch(formReturn);
 				//结果集里面的日期格式化成本地时间
-				setLocalDateTime(sessionInfoList, user);
+				setDisplayInfo(sessionInfoList, user);
+
 			}
 			resultMap.put("sessionInfoList", sessionInfoList);
 			result.setResult(true);
@@ -308,7 +315,7 @@ public class WmsReturnServiceImpl implements WmsReturnService {
 		if (PageUtil.pageInit(formReturn, total)) {
 			returnList = getReturnList(formReturn);
 		}
-		setLocalDateTime(returnList, user);
+		setDisplayInfo(returnList, user);
 		result.setResult(true);
 		resultListMap.put("returnList", returnList);
 		result.setResultInfo(resultListMap);
@@ -344,7 +351,7 @@ public class WmsReturnServiceImpl implements WmsReturnService {
 			}
 		}
 
-		setLocalDateTime(processingSessionList, user);
+		setDisplayInfo(processingSessionList, user);
 		FormReturn formReturn = new FormReturn();
 		formReturn.setReturn_session_id(null);
 		formReturn.setCreated_local("NewSession");
@@ -421,15 +428,24 @@ public class WmsReturnServiceImpl implements WmsReturnService {
 		}
 	}
 
-	//将时间类型的字段处理成本地时间（默认时间是格林威治时间）
-	private void setLocalDateTime(List<FormReturn> list, UserSessionBean user) {
+	private void setDisplayInfo(List<FormReturn> list, UserSessionBean user) {
 		for(FormReturn formReturn : list){
+			//将时间类型的字段处理成本地时间（默认时间是格林威治时间）
 			if(!StringUtils.isEmpty(formReturn.getCreated())){
 				formReturn.setCreated_local(DateTimeUtil.getLocalTime(formReturn.getCreated(), user.getTimeZone()));
 			}
 			if(!StringUtils.isEmpty(formReturn.getModified())){
 				formReturn.setModified_local(DateTimeUtil.getLocalTime(formReturn.getModified(), user.getTimeZone()));
 			}
+
+			// 货架取得
+			String locationName = reservationDao.getLocationBySKU(formReturn.getOrder_channel_id(),formReturn.getSku(),formReturn.getStore_id());
+			if (StringUtils.isNullOrBlank2(locationName)) {
+				formReturn.setLocation_name(formReturn.getStore_name());
+			} else {
+				formReturn.setLocation_name(locationName.split(",")[0]);
+			}
+
 		}
 	}
 

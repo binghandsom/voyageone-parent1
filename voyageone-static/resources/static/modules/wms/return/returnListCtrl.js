@@ -112,7 +112,7 @@ define([
 					var data = [{"codition" : returnInfo.condition_id,
 						"modifier" : returnInfo.modifier,
 						"modified" : returnInfo.modified,
-						"location" : returnInfo.store_name,
+						"location" : returnInfo.location_name,
 						"barcode" : returnInfo.barCode,
 						"sku" : returnInfo.sku,
 						"size" : returnInfo.size,
