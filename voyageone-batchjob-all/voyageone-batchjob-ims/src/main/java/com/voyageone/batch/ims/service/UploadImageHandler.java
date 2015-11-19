@@ -89,7 +89,7 @@ public class UploadImageHandler extends UploadWorkloadHandler {
             for (ImageUrlMappingModel bean:imageUrlMappingBeans){
                 imageUrlMap.put(bean.getOrgImageUrl(),bean.getPlatformImageUrl());
             }
-            List<ImageUrlMappingModel> imageUrlModels = new ArrayList<>();
+            List<ImageUrlMappingModel> imageUrlSaveModels = new ArrayList<>();
             // add by lewis 2015/11/16 end...
 
             for (String srcUrl : imageUrlSet) {
@@ -106,7 +106,7 @@ public class UploadImageHandler extends UploadWorkloadHandler {
                     imageUrlInfo.setPlatformImageUrl(destUrl);
                     imageUrlInfo.setCreater("uploadProductJob");
                     imageUrlInfo.setModifier("uploadProductJob");
-                    imageUrlModels.add(imageUrlInfo);
+                    imageUrlSaveModels.add(imageUrlInfo);
                 }else {
                     uploadImageResult.add(srcUrl, imageUrlMap.get(decodeSrcUrl));
                 }
@@ -114,10 +114,10 @@ public class UploadImageHandler extends UploadWorkloadHandler {
             }
 
             // add by lewis 2015/11/16 start...
-            if(imageUrlModels.size()>0)
+            if(imageUrlSaveModels.size()>0)
             {
                 //insert image url
-                imageUrlMappingDao.insertPlatformSkuInfo(imageUrlModels);
+                imageUrlMappingDao.insertPlatformSkuInfo(imageUrlSaveModels);
             }
             // add by lewis 2015/11/16 end...
 
