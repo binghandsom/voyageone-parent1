@@ -5,6 +5,7 @@ import com.voyageone.batch.cms.bean.*;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feed;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -238,8 +239,12 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
 
             this.updating = updating;
 
+            if (newProductList.size() < 1) return;
+
             // 这里因为 ProductBean 的 equals 重写, 可以通过 indexOf 查询到上次的数据
-            this.newProduct = newProductList.get(newProductList.indexOf(updating));
+            int index = newProductList.indexOf(updating);
+            if (index < 0) return;
+            this.newProduct = newProductList.get(index);
             // 使用 Code 关联查询上次的图片信息
             this.newProduct.setImages(codeImages.get(this.newProduct.getP_code()));
         }
@@ -248,8 +253,31 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
          * 获取需要更新的字段
          */
         public Map<String, String> getUpdateFields() {
+            // 如果 full 里为 30, 临时表无数据. 则使用当前的数据进行更新.
+            // 这种情况视为人为的手动处理.
+            return newProduct == null ? getCurrFields() : getNewestFields();
+        }
 
-            if (newProduct == null) return null;
+        private Map<String, String> getCurrFields() {
+            Map<String, String> updateFields = new HashMap<>();
+            updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_MSRP, updating.getP_msrp());
+            updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_PRICE, updating.getPs_price());
+            updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE, updating.getCps_cn_price());
+            updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE_RMB, updating.getCps_cn_price_rmb());
+            updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_LONG_DESCRIPTION, updating.getPe_long_description());
+
+            String separator = CmsConstants.FEED_IO_UPDATEFIELDS_IMAGE_SPLIT;
+            List<ImageBean> imageBeanList = updating.getImages();
+            if (imageBeanList != null) {
+                String images = imageBeanList.stream().map(ImageBean::getImage_url).filter(i -> i != null).collect(joining(separator));
+                if (!StringUtils.isEmpty(images))
+                    updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_IMAGE_URL, images);
+            }
+
+            return updateFields;
+        }
+
+        private Map<String, String> getNewestFields() {
 
             Map<String, String> updateFields = new HashMap<>();
 
