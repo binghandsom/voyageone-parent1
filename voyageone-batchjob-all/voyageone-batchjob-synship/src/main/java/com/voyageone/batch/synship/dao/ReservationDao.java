@@ -25,12 +25,13 @@ public class ReservationDao extends BaseDao {
      * @param task_name
      * @return
      */
-    public int UpdateReservationStatus(String syn_ship_no, String status, String task_name) {
+    public int UpdateReservationStatus(String syn_ship_no, String status, String closeDayflg, String task_name) {
 
         Map<String, Object> params = new HashMap<>();
 
         params.put("syn_ship_no", syn_ship_no);
         params.put("status", status);
+        params.put("close_day_flg", closeDayflg);
         params.put("task_name", task_name);
 
         return updateTemplate.update("synShip_UpdateReservationStatus", params);
