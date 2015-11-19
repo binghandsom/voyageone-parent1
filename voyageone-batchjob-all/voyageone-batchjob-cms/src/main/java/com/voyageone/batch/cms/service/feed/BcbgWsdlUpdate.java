@@ -121,7 +121,7 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
         if (updatedCodes.size() > 0) {
             // 返回删除数量和插入数量,理论上应该相同
             int[] counts = bcbgSuperFeedDao.updateFull(updatedCodes);
-            $info("已完成商品更新, 更新的商品数量 Feed [ %s ] [ %s ]", counts[0], counts[1]);
+            $info("已完成商品更新, DEL/INS/UPD: %s / %s / %s", counts[0], counts[1], counts[2]);
         }
     }
 
