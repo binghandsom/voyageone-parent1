@@ -54,13 +54,19 @@ public class BcbgSuperFeedDao extends BaseDao {
 
     public int[] updateFull(List<String> updatedCodes) {
 
-        Map<String, Object> params = parameters("updatedCodes", updatedCodes, "status", 30);
+        Map<String, Object> params = parameters(
+                "updatedCodes", updatedCodes,
+                "status", 30,
+                "target_status", 30,
+                "success_status", 40);
 
         int deleteFeedCount = delete("cms_zz_worktable_bcbg_superfeed_full_deleteFullByCode", params);
 
         int insertFeedCount = insert("cms_zz_worktable_bcbg_superfeed_full_insertFullByCode", params);
 
-        return new int[]{deleteFeedCount, insertFeedCount};
+        int updateFeedCount = update("cms_zz_worktable_bcbg_superfeed_full_updateStatusByCode", params);
+
+        return new int[]{deleteFeedCount, insertFeedCount, updateFeedCount};
     }
 
     /**
