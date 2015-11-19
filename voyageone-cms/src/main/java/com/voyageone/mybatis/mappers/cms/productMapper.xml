@@ -154,7 +154,7 @@
 		a.channel_id,
 		a.code,
 		a.url_key,
-		a.cn_name,
+		ifnull(a.cn_name, n.cn_name) as cn_name,
 		a.cn_color,
 		a.cn_is_approved_description,
    		h.model_id,
@@ -171,20 +171,20 @@
 		b.reference_msrp,
 		b.reference_price,
     	a.modified,
-		f.tb_name,
+		COALESCE(f.tb_name, a.cn_name, n.cn_name) as tb_name,
 		f.tb_attachment_name,
-		f.tm_name,
+		COALESCE(f.tm_name, a.cn_name, n.cn_name) as tm_name,
 		f.tm_attachment_name,
-		f.tg_name,
+		COALESCE(f.tg_name, a.cn_name, n.cn_name) as tg_name,
 		f.tg_attachment_name,
-		f.tm_short_description,
-		f.tm_long_description,
+		ifnull(f.tm_short_description, n.cn_short_description) as tm_short_description,
+		ifnull(f.tm_long_description, n.cn_long_description) as tm_long_description,
 		f.tm_category_id,
 		f.modified as tmmodified,
-		g.jg_name,
-		g.jd_name,
-		g.jd_short_description,
-		g.jd_long_description,
+		COALESCE(g.jg_name, a.cn_name, n.cn_name) as jg_name,
+		COALESCE(g.jd_name, a.cn_name, n.cn_name) as jd_name,
+		ifnull(g.jd_short_description, n.cn_short_description) as jd_short_description,
+		ifnull(g.jd_long_description, n.cn_long_description) as jd_long_description,
 		g.jd_category_id,
 		g.modified as jdmodified
 	FROM
@@ -197,6 +197,8 @@
 	LEFT JOIN cms_mt_material_fabric j ON j.material_fabric_id = i.material_fabric_1_id and j.channel_id = b.channel_id
 	LEFT JOIN cms_mt_material_fabric k ON k.material_fabric_id = i.material_fabric_2_id and k.channel_id = b.channel_id
 	LEFT JOIN cms_mt_material_fabric l ON l.material_fabric_id = i.material_fabric_3_id and l.channel_id = b.channel_id
+	LEFT JOIN cms_bt_relation_model_product m ON a.product_id = m.product_id and a.channel_id = m.channel_id
+	LEFT JOIN cms_bt_cn_model n ON m.model_id = n.model_id and m.channel_id = n.channel_id
 	where 
 		a.product_id=#{productId}
 		and a.channel_id=#{channelId}

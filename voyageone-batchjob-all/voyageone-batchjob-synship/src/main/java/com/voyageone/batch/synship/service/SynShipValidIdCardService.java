@@ -411,7 +411,7 @@ public class SynShipValidIdCardService extends BaseTaskService {
 
             if (!serviceResult.getIsSuccess()) {
                 // 验证格式不通过，写历史后，退出
-                return getHistory(idCardBean, ID_CARD_FORMAT_ERROR, function, serviceResult.getMessage());
+                return getHistory(idCardBean, ID_CARD_FORMAT_ERROR, function, serviceResult.getMessage(),"");
             }
 
             function = "validCardNo";
@@ -421,27 +421,27 @@ public class SynShipValidIdCardService extends BaseTaskService {
 
             if (!serviceResult.getIsSuccess()) {
 
-                return getHistory(idCardBean, EMS_FAIL, function, serviceResult.getMessage());
+                return getHistory(idCardBean, EMS_FAIL, function, serviceResult.getMessage(),"");
             }
             // 验证成功，但是没有图片的场合，也作为失败
             else if (StringUtils.isEmpty(serviceResult.getData())) {
                 $info("身份证图片未取得，无法通过");
 
-                return getHistory(idCardBean, IMAGE_NOT_EXISTS, function, serviceResult.getMessage() + "(身份证图片未取得，无法清关。)");
+                return getHistory(idCardBean, IMAGE_NOT_EXISTS, function, serviceResult.getMessage() + "(身份证图片未取得，无法清关。)","");
             }
 
-            return getHistory(idCardBean, EMS_PASS, function, serviceResult.getMessage());
+            return getHistory(idCardBean, EMS_PASS, function, serviceResult.getMessage(),serviceResult.getData());
 
         } catch (AxisFault a) {
             String msg = CommonUtil.getExceptionContent(a);
             $info(msg);
             logIssue("跨境易身份证验证出异常", "Name：" + name + "，IdCard：" + idCode + "，Message：" + a.getMessage());
-            return getHistory(idCardBean, CALL_EMS_FAIL, function, a.getMessage());
+            return getHistory(idCardBean, CALL_EMS_FAIL, function, a.getMessage(),"");
         } catch (Exception e) {
             String msg = CommonUtil.getExceptionContent(e);
             $info(msg);
             logIssue("跨境易身份证验证出异常", "Name：" + name + "，IdCard：" + idCode + "，Message：" + e.getMessage());
-            return getHistory(idCardBean, CALL_ERROR, function, e.getMessage());
+            return getHistory(idCardBean, CALL_ERROR, function, e.getMessage(),"");
         }
     }
 
@@ -477,7 +477,7 @@ public class SynShipValidIdCardService extends BaseTaskService {
         return true;
     }
 
-    private IdCardHistory getHistory(IdCardBean idCardBean, String reason, String function, String message) {
+    private IdCardHistory getHistory(IdCardBean idCardBean, String reason, String function, String message, String data) {
 
         IdCardHistory idCardHistory = new IdCardHistory();
 
@@ -493,6 +493,8 @@ public class SynShipValidIdCardService extends BaseTaskService {
         }else {
             idCardHistory.setMessage(message);
         }
+
+        idCardHistory.setResult(data);
 
         // 通过 reason 判断结果
         String result = isPass(idCardHistory) ? PASS : FAIL;

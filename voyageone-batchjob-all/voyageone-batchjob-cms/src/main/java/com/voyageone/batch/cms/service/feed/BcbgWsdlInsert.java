@@ -87,7 +87,8 @@ class BcbgWsdlInsert extends BcbgWsdlBase {
         // update flg 标记, 只获取哪些即将进行新增的商品的类目
         List<String> categoryPaths = superFeedDao.selectSuperfeedCategory(
                 Feed.getVal1(channel, FeedEnums.Name.category_column),
-                table_feed_full, " AND " + INSERT_FLG);
+                String.format("%s JOIN %s ON %s", table_feed_full, table_style_full, on_product),
+                " AND " + INSERT_FLG);
 
         $info("获取类目路径数 %s , 准备拆分继续处理", categoryPaths.size());
 

@@ -82,10 +82,13 @@ public class SynShipSimShipmentService  extends BaseTaskService {
 
             final int finalIntRowCount = intRowCount;
 
+            // 模拟港口
+            final String port = TaskControlUtils.getVal2(taskControlList, TaskControlEnums.Name.order_channel_id,orderChannelID);
+
             threads.add(new Runnable() {
                 @Override
                 public void run() {
-                    new simShipment(orderChannelID, finalIntRowCount).doRun();
+                    new simShipment(orderChannelID, port, finalIntRowCount).doRun();
                 }
             });
 
@@ -101,17 +104,25 @@ public class SynShipSimShipmentService  extends BaseTaskService {
     public class simShipment  {
         private OrderChannelBean channel;
         private int rowCount;
+        private String port;
 
-        public simShipment(String orderChannelId, int rowCount) {
+        public simShipment(String orderChannelId, String port, int rowCount) {
             this.channel = ChannelConfigs.getChannel(orderChannelId);
             this.rowCount = rowCount;
+            this.port = port;
         }
 
         public void doRun() {
-            $info(channel.getFull_name() + " Shipment模拟开始");
+            $info(channel.getFull_name() + " Shipment模拟开始，港口："+port);
 
             // 模拟 Shipment 失败的记录取得
-            List<String> errorClientTrackingLst = clientTrackingDao.getErrorClientTrackingLst(channel.getOrder_channel_id());
+            List<String> errorClientTrackingLst = new ArrayList<>();
+            if (port.equals(PortConfigEnums.Port.LA.getId())) {
+               errorClientTrackingLst = clientTrackingDao.getErrorClientTrackingLst(channel.getOrder_channel_id());
+            }
+            else if (port.equals(PortConfigEnums.Port.CN.getId())) {
+                errorClientTrackingLst = clientTrackingDao.getErrorClientTrackingLstByOrderNumber(channel.getOrder_channel_id());
+            }
 
             $info(channel.getFull_name() + "----------OrderNumber的快递信息不全：" + errorClientTrackingLst.size());
             if (errorClientTrackingLst.size() > 0 ) {
@@ -119,12 +130,20 @@ public class SynShipSimShipmentService  extends BaseTaskService {
             }
 
             // 需要模拟 Shipment的记录取得
-            final List<ClientTrackingSimBean> clientTrackingSimLst =  clientTrackingDao.getClientTrackingSimLst(channel.getOrder_channel_id(), rowCount);
+            List<ClientTrackingSimBean> clientTrackingSimLst  = new ArrayList<>();
+            if (port.equals(PortConfigEnums.Port.LA.getId())) {
+                clientTrackingSimLst = clientTrackingDao.getClientTrackingSimLst(channel.getOrder_channel_id(), rowCount);
+            }
+            else if (port.equals(PortConfigEnums.Port.CN.getId())) {
+                clientTrackingSimLst = clientTrackingDao.getClientTrackingSimLstByOrderNumber(channel.getOrder_channel_id(), rowCount);
+            }
 
             $info(channel.getFull_name() + "----------模拟发货件数：" + clientTrackingSimLst.size());
 
             // 获取当前日期
-             final String dateFormat = DateTimeUtil.format(DateTimeUtil.getDate(), DateTimeUtil.DEFAULT_DATE_FORMAT);
+            final String dateFormat = DateTimeUtil.format(DateTimeUtil.getDate(), DateTimeUtil.DEFAULT_DATE_FORMAT);
+
+            final List<ClientTrackingSimBean> finalClientTrackingSimLst = clientTrackingSimLst;
 
             transactionRunner.runWithTran(new Runnable() {
                 @Override
@@ -134,8 +153,15 @@ public class SynShipSimShipmentService  extends BaseTaskService {
 
                         ShipmentBean shipmentBean = new ShipmentBean();
                         // 判断当日的Shipment是否已建立，如果没有的话，模拟一个
-                        for (ClientTrackingSimBean clientTracking : clientTrackingSimLst) {
-                            String shipmentName = dateFormat + "-" + clientTracking.getTracking_no() + "-SIM";
+                        for (ClientTrackingSimBean clientTracking : finalClientTrackingSimLst) {
+                            String shipmentName = dateFormat;
+                            // LA时以运单号为Shipment名
+                            if (port.equals(PortConfigEnums.Port.LA.getId())) {
+                                shipmentName = shipmentName + "-" + clientTracking.getTracking_no() + "-SIM";
+                            }
+                            else if (port.equals(PortConfigEnums.Port.CN.getId())) {
+                                shipmentName = shipmentName + "-" + channel.getName() + "-SIM";
+                            }
                             shipmentBean = shipmentDao.getShipmentDelay(channel.getOrder_channel_id(), shipmentName);
 
                             if (shipmentBean == null || StringUtils.isNullOrBlank2(shipmentBean.getShipment_id())) {
@@ -143,35 +169,45 @@ public class SynShipSimShipmentService  extends BaseTaskService {
                                 String shipmentID = sequenceDao.getNextVal("Shipment");
 
                                 // 设置Shipment内容
-                                shipmentBean = SimShipment(channel.getOrder_channel_id(), shipmentID, shipmentName, dateFormat, clientTracking);
+                                shipmentBean = SimShipment(channel.getOrder_channel_id(), shipmentID, shipmentName, dateFormat, clientTracking, port);
 
                                 $info(channel.getFull_name() + "----------模拟Shipment做成：" + shipmentID);
 
                                 // 插入模拟的Shipment
                                 shipmentDao.insertShipment(shipmentBean);
 
-                                // 设置ShipmentInfo内容
-                                ShipmentInfoBean shipmentinfoBean = new ShipmentInfoBean();
-                                shipmentinfoBean = SimShipmentInfo(channel.getOrder_channel_id(), shipmentID, clientTracking);
+                                // LA时需要插入ShipmentInfo
+                                if (port.equals(PortConfigEnums.Port.LA.getId())) {
+                                    // 设置ShipmentInfo内容
+                                    ShipmentInfoBean shipmentinfoBean = new ShipmentInfoBean();
+                                    shipmentinfoBean = SimShipmentInfo(channel.getOrder_channel_id(), shipmentID, clientTracking);
 
-                                $info(channel.getFull_name() + "----------模拟ShipmentInfo做成：" + shipmentinfoBean.getTracking_status());
+                                    $info(channel.getFull_name() + "----------模拟ShipmentInfo做成：" + shipmentinfoBean.getTracking_status());
 
-                                // 插入模拟的ShipmentInfo
-                                shipmentDao.insertShipmentInfo(shipmentinfoBean);
+                                    // 插入模拟的ShipmentInfo
+                                    shipmentDao.insertShipmentInfo(shipmentinfoBean);
+                                }
 
                             }
 
                             $info(channel.getFull_name() + "----------OrderNumber：" + clientTracking.getOrder_number() + "，ClientOrderId：" + clientTracking.getClient_order_id() + "，TrackingType：" + clientTracking.getTracking_type() + "，TrackingNo：" + clientTracking.getTracking_no());
 
                             // 判断Package是否做成，没有的话，新规做成
-                            PackageBean packageBean = shipmentDao.getPackage(shipmentBean.getShipment_id(), clientTracking.getTracking_no());
+                            PackageBean packageBean = new PackageBean();
+                            if (port.equals(PortConfigEnums.Port.LA.getId())) {
+                                packageBean = shipmentDao.getPackage(shipmentBean.getShipment_id(), clientTracking.getTracking_no());
+                            }
+                            else   if (port.equals(PortConfigEnums.Port.CN.getId())) {
+                                packageBean = shipmentDao.getPackage(shipmentBean.getShipment_id(),"");
+                            }
+
 
                             if (packageBean == null || StringUtils.isNullOrBlank2(packageBean.getPackage_id())) {
                                 // 取得PackageID
                                 String packageID = sequenceDao.getNextVal("Package");
 
                                 // 设置Package内容
-                                packageBean = SimPackage(shipmentBean.getShipment_id(), packageID, clientTracking);
+                                packageBean = SimPackage(shipmentBean.getShipment_id(), packageID, clientTracking, port);
 
                                 $info(channel.getFull_name() + "----------模拟Package做成：" + packageID);
 
@@ -179,61 +215,81 @@ public class SynShipSimShipmentService  extends BaseTaskService {
                                 shipmentDao.insertPackage(packageBean);
                             }
 
-                            // 判断PackageItem是否做成，没有的话，新规做成
-                            PackageItemBean packageItemBean = shipmentDao.getPackageItem(shipmentBean.getShipment_id(), packageBean.getPackage_id(), clientTracking.getSyn_ship_no());
+                            String[] reservationList = clientTracking.getReservation_id().split(",");
 
-                            if (packageItemBean == null || StringUtils.isNullOrBlank2(packageItemBean.getPackage_item_id())) {
-                                // 取得PackageItemID
-                                String packageItemID = sequenceDao.getNextVal("PackageItem");
+                            for (String reservationId : reservationList) {
+                                // 判断PackageItem是否做成，没有的话，新规做成
+                                PackageItemBean packageItemBean = shipmentDao.getPackageItem(shipmentBean.getShipment_id(), packageBean.getPackage_id(), clientTracking.getSyn_ship_no(), Long.valueOf(reservationId));
 
-                                // 设置Package内容
-                                packageItemBean = SimPackageItem(shipmentBean.getShipment_id(), packageBean.getPackage_id(), packageItemID, clientTracking);
+                                if (packageItemBean == null || StringUtils.isNullOrBlank2(packageItemBean.getPackage_item_id())) {
+                                    // 取得PackageItemID
+                                    String packageItemID = sequenceDao.getNextVal("PackageItem");
 
-                                $info(channel.getFull_name() + "----------模拟PackageItem做成：" + packageItemID);
+                                    // 设置Package内容
+                                    packageItemBean = SimPackageItem(shipmentBean.getShipment_id(), packageBean.getPackage_id(), packageItemID, Long.valueOf(reservationId), clientTracking, port);
 
-                                // 插入模拟的Shipment
-                                shipmentDao.insertPackageItem(packageItemBean);
+                                    $info(channel.getFull_name() + "----------模拟PackageItem做成：" + packageItemID);
+
+                                    // 插入模拟的Shipment
+                                    shipmentDao.insertPackageItem(packageItemBean);
+                                }
                             }
 
                             // 判断Tracking是否做成，没有的话，新规做成
-                            TrackingBean trackingBean = trackingDao.getTracking(clientTracking.getOrder_channel_id(), clientTracking.getTracking_type(), clientTracking.getTracking_no(), "");
+                            TrackingBean trackingBean = new TrackingBean();
+                            if (port.equals(PortConfigEnums.Port.LA.getId())) {
+                                trackingBean = trackingDao.getTracking(clientTracking.getOrder_channel_id(), clientTracking.getTracking_type(), clientTracking.getTracking_no(), "");
+                            }
+                            else if (port.equals(PortConfigEnums.Port.CN.getId())) {
+                                trackingBean = trackingDao.getTracking(clientTracking.getOrder_channel_id(), clientTracking.getTracking_type(), clientTracking.getTracking_no(), clientTracking.getSyn_ship_no());
+                            }
 
                             if (trackingBean == null || StringUtils.isNullOrBlank2(trackingBean.getTracking_no())) {
 
                                 // 插入Tracking
-                                trackingBean = SimTracking(clientTracking);
+                                trackingBean = SimTracking(clientTracking, port);
 
                                 $info(channel.getFull_name() + "----------模拟Tracking做成：" + trackingBean.getTracking_no());
 
                                 trackingDao.insertTracking(trackingBean);
                             }
 
-
                             // 插入ResTracking
                             trackingDao.insertResTracking(clientTracking.getSyn_ship_no(), clientTracking.getTracking_no(), clientTracking.getTracking_type(), getTaskName());
 
-                            // 插入TrackingInfo(按ShipMent单位插入)
-                            //trackingDao.insertTrackingInfo(clientTracking.getSyn_ship_no(), clientTracking.getTracking_no(), CodeConstants.TRACKING.INFO_052, clientTracking.getTracking_time(), getTaskName());
+                            // 插入TrackingInfo
+                            if (port.equals(PortConfigEnums.Port.CN.getId())) {
+                                trackingDao.insertTrackingInfo(clientTracking.getSyn_ship_no(), clientTracking.getTracking_no(), CodeConstants.TRACKING.INFO_080, clientTracking.getTracking_time(), getTaskName());
+                            }
 
-                            // 更新物品状态
-                            reservationDao.UpdateReservationStatus(clientTracking.getSyn_ship_no(), CodeConstants.Reservation_Status.ShippedUS, getTaskName());
+                            if (port.equals(PortConfigEnums.Port.LA.getId())) {
+                                // 更新物品状态
+                                reservationDao.UpdateReservationStatus(clientTracking.getSyn_ship_no(), CodeConstants.Reservation_Status.ShippedUS, getTaskName());
 
-                            // 插入物品日志
-                            reservationDao.insertReservationLog(clientTracking.getSyn_ship_no(), "Sim LA Port Shipment", getTaskName());
+                                // 插入物品日志
+                                reservationDao.insertReservationLog(clientTracking.getSyn_ship_no(), "Sim LA Port Shipment", getTaskName());
+                            }
+                            else  if (port.equals(PortConfigEnums.Port.CN.getId())) {
+                                // 更新物品状态
+                                reservationDao.UpdateReservationStatus(clientTracking.getSyn_ship_no(), CodeConstants.Reservation_Status.ShippedCN, getTaskName());
+
+                                // 插入物品日志
+                                reservationDao.insertReservationLog(clientTracking.getSyn_ship_no(), "Sim CN Port Shipment", getTaskName());
+                            }
 
                             // 更新模拟标志位
                             clientTrackingDao.UpdatClientTrackingSimFlg(clientTracking.getSeq(), "1", getTaskName());
 
                     }
                 } catch(Exception e) {
-                    logIssue(e, channel.getFull_name() + " Shipment模拟错误");
+                    logIssue(e, channel.getFull_name() + " Shipment模拟错误，港口："+port);
 
                     throw new RuntimeException(e);
                 }
             }
         });
 
-            $info(channel.getFull_name() + " Shipment模拟结束");
+            $info(channel.getFull_name() + " Shipment模拟结束，港口："+port);
 
         }
     }
@@ -245,22 +301,27 @@ public class SynShipSimShipmentService  extends BaseTaskService {
      * @param shipmentName
      * @param dateFormat
      * @param clientTrackingSimBean
+     * @param port
      * @return ShipmentBean
      */
-    private  ShipmentBean SimShipment(String order_channel_id, String shipmentID, String shipmentName, String dateFormat, ClientTrackingSimBean clientTrackingSimBean) {
+    private  ShipmentBean SimShipment(String order_channel_id, String shipmentID, String shipmentName, String dateFormat, ClientTrackingSimBean clientTrackingSimBean, String port) {
 
         ShipmentBean shipmentBean = new ShipmentBean();
         shipmentBean.setShipment_id(shipmentID);
         shipmentBean.setOrder_channel_id(order_channel_id);
         shipmentBean.setShipment_name(shipmentName);
         shipmentBean.setShipdate(dateFormat);
-        shipmentBean.setPort(PortConfigEnums.Port.LA.getId());
+        shipmentBean.setPort(port);
         shipmentBean.setStatus(CodeConstants.SHIPMENT_STATUS.SHIPPED);
         shipmentBean.setDeclaration_number("");
         shipmentBean.setWay_bill_number("");
         shipmentBean.setShip_price("");
-        shipmentBean.setTracking_type(clientTrackingSimBean.getTracking_type());
-        shipmentBean.setTracking_no(clientTrackingSimBean.getTracking_no());
+        shipmentBean.setTracking_type("");
+        shipmentBean.setTracking_no("");
+        if (port.equals(PortConfigEnums.Port.LA.getId())) {
+            shipmentBean.setTracking_type(clientTrackingSimBean.getTracking_type());
+            shipmentBean.setTracking_no(clientTrackingSimBean.getTracking_no());
+        }
         shipmentBean.setComments("");
         shipmentBean.setWarehouse_id(ChannelConfigs.getVal1(order_channel_id, ChannelConfigEnums.Name.warehouse));
         shipmentBean.setCustoms_declaration("");
@@ -306,16 +367,20 @@ public class SynShipSimShipmentService  extends BaseTaskService {
      * @param shipmentID
      * @param packageID
      * @param clientTrackingSimBean
+     * @param port
      * @return PackageBean
      */
-    private  PackageBean SimPackage(String shipmentID, String packageID, ClientTrackingSimBean clientTrackingSimBean) {
+    private  PackageBean SimPackage(String shipmentID, String packageID, ClientTrackingSimBean clientTrackingSimBean, String port) {
 
         PackageBean packageBean = new PackageBean();
 
         packageBean.setShipment_id(shipmentID);
         packageBean.setPackage_id(packageID);
         packageBean.setPackage_name(packageID);
-        packageBean.setTracking_no(clientTrackingSimBean.getTracking_no());
+        packageBean.setTracking_no("");
+        if (port.equals(PortConfigEnums.Port.LA.getId())) {
+            packageBean.setTracking_no(clientTrackingSimBean.getTracking_no());
+        }
         packageBean.setLimit_weight("0");
         packageBean.setWeight_kg("0");
         packageBean.setWeight_lb("0");
@@ -335,9 +400,10 @@ public class SynShipSimShipmentService  extends BaseTaskService {
      * @param packageID
      * @param packageItemID
      * @param clientTrackingSimBean
+     * @param port
      * @return PackageItemBean
      */
-    private  PackageItemBean SimPackageItem(String shipmentID, String packageID, String packageItemID, ClientTrackingSimBean clientTrackingSimBean) {
+    private  PackageItemBean SimPackageItem(String shipmentID, String packageID, String packageItemID, long reservationId, ClientTrackingSimBean clientTrackingSimBean, String port) {
 
         PackageItemBean packageItemBean = new PackageItemBean();
 
@@ -346,8 +412,11 @@ public class SynShipSimShipmentService  extends BaseTaskService {
         packageItemBean.setPackage_item_id(packageItemID);
         packageItemBean.setSyn_ship_no(clientTrackingSimBean.getSyn_ship_no());
         packageItemBean.setOrdernum(clientTrackingSimBean.getOrder_number());
-        packageItemBean.setReservation_id(0);
-        packageItemBean.setPackage_type("1");
+        packageItemBean.setReservation_id(reservationId);
+        packageItemBean.setPackage_type("3");
+        if (port.equals(PortConfigEnums.Port.LA.getId())) {
+            packageItemBean.setPackage_type("1");
+        }
         packageItemBean.setComments("");
         packageItemBean.setDel_flg("0");
         packageItemBean.setCreate_time(DateTimeUtil.getNow());
@@ -364,17 +433,23 @@ public class SynShipSimShipmentService  extends BaseTaskService {
      * @param clientTrackingSimBean
      * @return TrackingBean
      */
-    private  TrackingBean SimTracking( ClientTrackingSimBean clientTrackingSimBean) {
+    private  TrackingBean SimTracking( ClientTrackingSimBean clientTrackingSimBean, String port) {
 
         TrackingBean trackingBean = new TrackingBean();
 
-        trackingBean.setSyn_ship_no("");
+        trackingBean.setSyn_ship_no(clientTrackingSimBean.getSyn_ship_no());
+        if (port.equals(PortConfigEnums.Port.LA.getId())) {
+            trackingBean.setSyn_ship_no("");
+        }
         trackingBean.setOrder_channel_id(clientTrackingSimBean.getOrder_channel_id());
         trackingBean.setTracking_no(clientTrackingSimBean.getTracking_no());
         trackingBean.setTracking_type(clientTrackingSimBean.getTracking_type());
         trackingBean.setSim_order_num("");
         trackingBean.setTracking_kind("0");
-        trackingBean.setTracking_area("1");
+        trackingBean.setTracking_area("0");
+        if (port.equals(PortConfigEnums.Port.LA.getId())) {
+            trackingBean.setTracking_area("1");
+        }
         trackingBean.setStatus("00");
         trackingBean.setClear_port_flg("0");
         trackingBean.setUse_flg("1");
