@@ -217,8 +217,6 @@ public class UploadImageHandler extends UploadWorkloadHandler{
     public static void main(String[] args) {
         String plain = "http://s7d5.scene7.com/is/image/sneakerhead/bcbg_1200_1200?$1200x1200$&$big=IZD1U885_001";
         String encode = encodeImageUrl(plain);
-        System.out.println(encode);
-        System.out.println(decodeImageUrl(encode));
     }
 
     public static String encodeImageUrl(String plainValue) {
