@@ -2474,7 +2474,7 @@
 			inner join	Synship.oms_bt_orders o
 				on ods.order_number = o.order_number
 			where
-				(ods.adjustment = 0 or ods.sku = 'Shipping') and
+
 				ods.ship_date is null and
 				ods.status in ('Returned','Canceled') and
 				odx.ext_flg1 = 0 and
@@ -2702,7 +2702,7 @@
 				on ods.order_number = ox.order_number
 			inner join	Synship.oms_bt_orders o
 				on ods.order_number = o.order_number
-			where (ods.adjustment = 0  or ods.sku = 'Shipping') and
+			where
 					ods.ship_date is not null and
 					ods.status in ('Returned','Canceled') and
 					odx.send_flg = 0 and
