@@ -619,7 +619,6 @@ public class TmallProductService implements PlatformServiceInterface {
         WorkLoadBean workLoadBean = tcb.getWorkLoadBean();
         ShopBean shopBean = ShopConfigs.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
 
-        logger.debug("Before ============");
         TmallUploadRunState.TmallContextBuildFields contextBeforeUploadImage = tmallUploadRunState.getContextBuildFields();
 
         Map<String, String> urlMap;
@@ -629,9 +628,7 @@ public class TmallProductService implements PlatformServiceInterface {
             throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(uploadImageResult.getFailCause(), uploadImageResult.isNextProcess()));
         }
 
-        logger.debug("Before resolve");
         List<Field> itemPlatformFields = (List)masterDataMappingService.resolvePlatformProps(this, tcb.getPlatformUploadRunState(), urlMap);
-        logger.debug("After resolve");
 
         //在临上新的前一刻，再次做库存更新
         TmallUploadRunState.TmallContextBuildCustomFields contextBuildCustomFields = contextBeforeUploadImage.getContextBuildCustomFields();
@@ -1630,7 +1627,6 @@ public class TmallProductService implements PlatformServiceInterface {
                             }
                         }
                         */
-                        logger.info("====================================in 012");
                         final String sellerCategoryPropId = "seller_cids";
                         if (workLoadBean.getUpJobParam().getMethod() == UpJobParamBean.METHOD_UPDATE) {
                             String numId = workLoadBean.getNumId();
