@@ -1,11 +1,26 @@
 <div class="container searchWrap" id="oms_orders_search" ng-controller="accountingController" ng-init="initialize()" ng-cloak>
     <div id="uploadFilePanel" class="panel panel-primary">
         <div ng-class="{'panel-heading-collapsed':uploadFilePanel}" class="panel-heading">
-            <span translate="TXT_ACCOUNTING_UPLOAD_SETTLEMENT_FILE"></span>
+            <span translate="TXT_ACCOUNTING_UPLOAD_ACCOUNTING_FILE"></span>
             <paneltool tool-collapse="tool-collapse"></paneltool>
         </div>
         <div collapse="uploadFilePanel" class="panel-wrapper">
             <div class="panel-body">
+                <div class="row">
+                    <div class="form-group">
+                        <label class="control-label col-xs-2" translate="TXT_ACCOUNTING_FILETYPE"></label>
+
+                        <div class="col-xs-4 input-group" style="font-size:13px;">
+                            <label class="radio-inline">
+                                <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="1" ng-model="upload.fileType"><span translate="TXT_ACCOUNTING_SETTLEMENT"></span>
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="2" ng-model="upload.fileType"><span translate="TXT_ACCOUNTING_TRANSACTION"></span>
+                            </label>
+                        </div>
+                        <div class="col-xs-6"/>
+                    </div>
+                </div>
                 <div class="row">
                     <div class="col-xs-12 text-right">
                         <span class="col-sm-10">
@@ -32,6 +47,19 @@
                 <div class="row">
                     <div class="col-xs-6">
                         <div class="form-horizontal">
+                            <div class="form-group">
+                                <label class="control-label col-xs-4" translate="TXT_ACCOUNTING_FILETYPE"></label>
+
+                                <div class="col-xs-8 input-group" style="font-size:13px;">
+                                    <label class="radio-inline">
+                                        <input type="radio" name="searchRadioOptions" id="searchRadio1" value="1" ng-model="search.fileType"><span translate="TXT_ACCOUNTING_SETTLEMENT"></span>
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="searchRadioOptions" id="searchRadio2" value="2" ng-model="search.fileType"><span translate="TXT_ACCOUNTING_TRANSACTION"></span>
+                                    </label>
+                                </div>
+                            </div>
+
                             <div class="form-group">
                                 <label class="control-label col-xs-4" translate="TXT_ORDERS_SEARCH_SEARCH_STORE"></label>
 

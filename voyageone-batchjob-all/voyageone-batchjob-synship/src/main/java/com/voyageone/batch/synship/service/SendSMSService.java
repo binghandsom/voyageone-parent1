@@ -155,7 +155,7 @@ public class SendSMSService  extends BaseTaskService {
                         }
                     }
                     $info("order_channel_id = " + sendSMSBean.getOrder_channel_id() + ",  phone = " + sendSMSBean.getShip_phone() + ",  conent = " + content);
-                    ymsmsSendBean = formatYMSMSSendBean(sendSMSBean.getOrder_channel_id(), sendSMSBean.getShip_phone(), content);
+                    ymsmsSendBean = formatYMSMSSendBean(sendSMSBean.getOrder_channel_id(), sendSMSBean.getShip_phone(), content,sendSMSBean.getSms_type());
                     try {
                         Integer sendFlg = ymSmsSendService.sendSMS(ymsmsSendBean);
                         $info("发送短信返回值 = " + sendFlg.toString());
@@ -183,8 +183,11 @@ public class SendSMSService  extends BaseTaskService {
                                 ",  phone = " + sendSMSBean.getShip_phone()+ ",  conent = " + sendSMSBean.getSent_conent());
                     }
                 }
-                // 短信余额判断
-                checkBalance(sendSMSLstLst.size(),channel.getOrder_channel_id());
+                // 物流短信余额判断
+                checkBalance(sendSMSLstLst.size(),channel.getOrder_channel_id(),Constants.smsInfo.SMS_TYPE_LOGISTICS);
+                // 营销短信余额判断
+                checkBalance(sendSMSLstLst.size(),channel.getOrder_channel_id(),Constants.smsInfo.SMS_TYPE_MARKETING);
+
             } catch (Exception e) {
                 $info(channel.getFull_name() + "定时发送短信发生错误：", e);
                 logIssue(e.getMessage(), channel.getFull_name() + "定时发送短信发生错误");
@@ -198,8 +201,9 @@ public class SendSMSService  extends BaseTaskService {
          * @param orderChannelID String  销售渠道
          * @param phone          String   手机号码
          * @param content        String 短信内容
+         * @param sms_type       String 短信类型
          */
-        private YMSMSSendBean formatYMSMSSendBean(String orderChannelID, String phone, String content) {
+        private YMSMSSendBean formatYMSMSSendBean(String orderChannelID, String phone, String content,String sms_type) {
             YMSMSSendBean ymsmsSendBean = new YMSMSSendBean();
             //    电话号码
             ymsmsSendBean.setPhone(phone);
@@ -207,6 +211,8 @@ public class SendSMSService  extends BaseTaskService {
             ymsmsSendBean.setOrder_channel_id(orderChannelID);
             //    短信内容
             ymsmsSendBean.setContent(content);
+            //    短信类型
+            ymsmsSendBean.setSms_type(sms_type);
             return ymsmsSendBean;
         }
 
@@ -319,22 +325,33 @@ public class SendSMSService  extends BaseTaskService {
          *
          * @param sendSMSLstLstSize 需要发送短信件数
          * @param orderChannelId
+         * @param
          *
          */
-        private void checkBalance(int sendSMSLstLstSize,String orderChannelId) {
+        private void checkBalance(int sendSMSLstLstSize,String orderChannelId,String sms_type) {
             // 余额不足的场合
             if (sendSMSLstLstSize > 0) {
                 double balance = 0d;
+                double balanceMarketing = 0d;
+                String strValue= "";
                 try {
-                    balance = ymSmsSendService.getBalance(orderChannelId);
-                    $info("短信账户的剩余金额(实际金额)： " + (balance / 2));
+                    //物流短信
+                    if (Constants.smsInfo.SMS_TYPE_LOGISTICS.equals(sms_type)) {
+                        strValue = "物流";
+                    }else{
+                        strValue = "营销";
+                    }
+                    //短信余额
+                    balance = ymSmsSendService.getBalance(orderChannelId,sms_type);
+
+                    $info(strValue + "短信账户的剩余金额(实际金额)： " + (balance / 2));
                     // 余额不足200的场合，发送要求充值邮件(之所以用大于零而不是大于等于零的原因是防止误报)
                     if (balance > 0d && (balance / 2) < SynshipConstants.SMS_CHECK.ACCOUNT_BALANCE) {
-                        logIssue("短信账户的剩余金额不足，请尽快充值", "短信账户的剩余金额:" + (balance / 2));
+                        logIssue(strValue + "短信账户的剩余金额不足，请尽快充值", "短信账户的剩余金额:" + (balance / 2));
                     }
                 } catch (Exception e) {
-                    $info(channel.getFull_name() + "短信账户的剩余金额取得发生错误：", e);
-                    logIssue(e.getMessage(), channel.getFull_name() + "短信账户的剩余金额取得发生错误");
+                    $info(channel.getFull_name() + "  " + strValue + "短信账户的剩余金额取得发生错误：", e);
+                    logIssue(e.getMessage(), channel.getFull_name() + "  " + strValue + "短信账户的剩余金额取得发生错误");
                 }
             }
         }

@@ -118,9 +118,10 @@ public class WmsReservationServiceImpl implements WmsReservationService {
 		// 分页处理
 		if (PageUtil.pageInit(formReservation, total)) {
 			reservationList = reservationDao.getReservationInfo(formReservation);
-			// 是否允许变更仓库的判断
-			String change_store_flg = reservationDao.getChangeStoreFlg(reservationList.get(0).getOrder_channel_id());
+
 			for(FormReservation reservation : reservationList){
+				// 是否允许变更仓库的判断
+				String change_store_flg = reservationDao.getChangeStoreFlg(reservation);
 				reservation.setChange_store_flg(StringUtils.null2Space2(change_store_flg));
 				setReservationDisplayInfo(reservation, user);
 			}

@@ -16,9 +16,8 @@ define (function (require) {
     require ("angular-xeditable");
     require ("angular-translate");
     require ("angular-datatables");
-    require ("ui-load");
-    require ("ui-jq");
     require ("ui-bootstrap-tpls");
+    require ("ui-load");
     require ("ngDialog");
     require ("ngStorage");
     require ("flow");
@@ -32,10 +31,9 @@ define (function (require) {
         , "ngCookies"
         , "ngSanitize"
         , "pascalprecht.translate"
+        , "ui.load"
         , "ui.select"
         , "ui.bootstrap"
-        , "ui.load"
-        , "ui.jq"
         , "xeditable"
         , "ngDialog"
         , "blockUI"

@@ -4,8 +4,6 @@ import com.taobao.top.schema.field.Field;
 import com.taobao.top.schema.field.InputField;
 import com.taobao.top.schema.value.ComplexValue;
 import com.voyageone.batch.ims.bean.tcb.UploadProductTcb;
-import com.voyageone.batch.ims.modelbean.CmsCodePropBean;
-import com.voyageone.batch.ims.modelbean.CmsSkuPropBean;
 import com.voyageone.batch.ims.modelbean.PlatformPropBean;
 import com.voyageone.batch.ims.modelbean.PropValueBean;
 import com.voyageone.batch.ims.service.AbstractSkuFieldBuilder;
@@ -44,22 +42,12 @@ public class TmallUploadRunState extends PlatformUploadRunState{
 
         //sku
         private AbstractSkuFieldBuilder skuFieldBuilder;
-        private Map<String, CmsCodePropBean> usingColorMap;
-        private Map<String, CmsSkuPropBean> usingSkuMap;
-        private Map<String, Map.Entry<CmsCodePropBean, CmsSkuPropBean>> usingRingSizeMap;
-        private Map<String, ComplexValue> srcUrlExtendCodePropMap;
+        private Object buildSkuResult;
 
         //商品数量
         private InputField quantityField;
         //商品价格
         private InputField priceField;
-
-        public TmallContextBuildCustomFields() {
-            usingColorMap = new HashMap<>();
-            usingSkuMap = new HashMap<>();
-            usingRingSizeMap = new HashMap<>();
-            srcUrlExtendCodePropMap = new HashMap<>();
-        }
 
         public InputField getPriceField() {
             return priceField;
@@ -69,20 +57,12 @@ public class TmallUploadRunState extends PlatformUploadRunState{
             this.priceField = priceField;
         }
 
-        public Map<String, ComplexValue> getSrcUrlExtendCodePropMap() {
-            return srcUrlExtendCodePropMap;
-        }
-
         public AbstractSkuFieldBuilder getSkuFieldBuilder() {
             return skuFieldBuilder;
         }
 
         public void setSkuFieldBuilder(AbstractSkuFieldBuilder skuFieldBuilder) {
             this.skuFieldBuilder = skuFieldBuilder;
-        }
-
-        public void setSrcUrlExtendCodePropMap(Map<String, ComplexValue> srcUrlExtendCodePropMap) {
-            this.srcUrlExtendCodePropMap = srcUrlExtendCodePropMap;
         }
 
         public List<Field> getCustomFields() {
@@ -109,28 +89,12 @@ public class TmallUploadRunState extends PlatformUploadRunState{
             this.quantityField = quantityField;
         }
 
-        public Map<String, CmsCodePropBean> getUsingColorMap() {
-            return usingColorMap;
+        public Object getBuildSkuResult() {
+            return buildSkuResult;
         }
 
-        public void setUsingColorMap(Map<String, CmsCodePropBean> usingColorMap) {
-            this.usingColorMap = usingColorMap;
-        }
-
-        public Map<String, Map.Entry<CmsCodePropBean, CmsSkuPropBean>> getUsingRingSizeMap() {
-            return usingRingSizeMap;
-        }
-
-        public void setUsingRingSizeMap(Map<String, Map.Entry<CmsCodePropBean, CmsSkuPropBean>> usingRingSizeMap) {
-            this.usingRingSizeMap = usingRingSizeMap;
-        }
-
-        public Map<String, CmsSkuPropBean> getUsingSkuMap() {
-            return usingSkuMap;
-        }
-
-        public void setUsingSkuMap(Map<String, CmsSkuPropBean> usingSkuMap) {
-            this.usingSkuMap = usingSkuMap;
+        public void setBuildSkuResult(Object buildSkuResult) {
+            this.buildSkuResult = buildSkuResult;
         }
     }
 

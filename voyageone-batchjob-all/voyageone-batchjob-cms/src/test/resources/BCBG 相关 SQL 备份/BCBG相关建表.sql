@@ -90,4 +90,11 @@ CREATE TABLE voyageone_cms.cms_zz_worktable_bcbg_styles_full
   productImgURLs VARCHAR(2000) NOT NULL
 );
 
+# 价格计算部分追加
+ALTER TABLE `voyageone_cms`.`cms_zz_worktable_bcbg_superfeed`
+ADD COLUMN `MATKL_ATT1` VARCHAR(50) NOT NULL DEFAULT '' COMMENT '类目的附加值（内容取自 Feed_Master 的 att_val1 字段）' AFTER `MATKL`;
+
+ALTER TABLE `voyageone_cms`.`cms_zz_worktable_bcbg_superfeed_full`
+ADD COLUMN `MATKL_ATT1` VARCHAR(50) NOT NULL DEFAULT '' COMMENT '类目的附加值（内容取自 Feed_Master 的 att_val1 字段）' AFTER `MATKL`;
+
 COMMIT ;

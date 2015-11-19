@@ -61,9 +61,9 @@ VALUES
   ('012', '', '', 0, 0, 'Product 级别', 'product_cps_cn_price', 'A073_KBETR'),
   ('012', '', '', 0, 0, 'Product 级别', 'product_cps_cn_price_final_rmb', 'A073_KBETR'),
 
-  ('012', '', '', 0, 0, 'Item 级别', 'item_code', 'CONCAT(SATNR, ''-'', COLOR)'),
-  ('012', '', '', 0, 0, 'Item 级别', 'item_i_sku', 'MATNR'),
-  ('012', '', '', 0, 0, 'Item 级别', 'item_i_itemcode', 'CONCAT(SATNR, ''-'', COLOR)'),
+  ('012', '', '', 0, 0, 'Item 级别', 'item_code', 'CONCAT(SATNR,''-'',COLOR)'),
+  ('012', '', '', 0, 0, 'Item 级别', 'item_i_sku', 'CONCAT(SATNR,''-'',COLOR,''-'',SIZE1)'),
+  ('012', '', '', 0, 0, 'Item 级别', 'item_i_itemcode', 'CONCAT(SATNR,''-'',COLOR)'),
   ('012', '', '', 0, 0, 'Item 级别', 'item_i_size', 'SIZE1'),
   ('012', '', '', 0, 0, 'Item 级别', 'item_i_barcode', 'EAN11'),
 
@@ -164,5 +164,24 @@ VALUES
   # 标记数据
   ('Update the flg', '012', 'transform', 'update', 'UPDATE voyageone_cms.cms_zz_worktable_bcbg_superfeed b LEFT JOIN voyageone_cms.cms_zz_worktable_bcbg_superfeed_full bf ON b.MATNR = bf.MATNR SET b.update_flg = 1 WHERE bf.MATNR IS NULL', '', 0, 0, 16),
   ('Update the flg', '012', 'transform', 'update', 'UPDATE voyageone_cms.cms_zz_worktable_bcbg_superfeed b LEFT JOIN voyageone_cms.cms_zz_worktable_bcbg_superfeed_full bf ON b.MATNR = bf.MATNR SET b.update_flg = 2 WHERE bf.MATNR IS NOT NULL', '', 0, 0, 17);
+
+# 价格计算部分,改动和追加的配置
+UPDATE `voyageone_cms`.`cms_mt_feed_config`
+SET `cfg_val2`='UPDATE voyageone_cms.cms_zz_worktable_bcbg_superfeed JOIN voyageone_cms.cms_mt_feed_master m ON MATKL = m.value AND m.master_attr = \'MATKL\' AND m.channel_id = \'012\' SET MATKL = label, MATKL_ATT1 = att_val1'
+WHERE `id`='1758';
+
+INSERT INTO `voyageone_cms`.`cms_mt_feed_config`
+(`order_channel_id`, `cfg_name`, `cfg_val1`, `cfg_val2`, `cfg_val3`, `is_attribute`, `attribute_type`, `comment`, `display_sort`) VALUES
+  ('012', 'transform', 'delete', 'DELETE voyageone_cms.cms_zz_worktable_bcbg_superfeed FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed LEFT JOIN voyageone_cms.cms_mt_feed_master m ON MATKL = m.value AND m.channel_id = \'012\' AND m.master_attr = \'MATKL\' WHERE m.att_val1 = \'\';', '', '0', '0', 'Clear data that cant context to master', '7');
+
+INSERT INTO `voyageone_cms`.`cms_mt_feed_config`
+(`order_channel_id`, `cfg_name`, `cfg_val1`, `is_attribute`, `attribute_type`, `comment`) VALUES
+  ('012', 'product_type', 'MATKL_ATT1', '0', '0', '该配置针对 012 渠道。用于临时存储 MATKL_ATT1');
+
+INSERT INTO `voyageone_cms`.`cms_mt_feed_config`
+(`order_channel_id`, `cfg_name`, `cfg_val1`, `is_attribute`, `attribute_type`, `comment`) VALUES
+  ('012', 'fixed_exchange_rate', '6.33', '0', '0', '固定的转化汇率'),
+  ('012', 'apparels_duty', '0.2', '0', '0', 'BCBG 专用'),
+  ('012', 'other_duty', '0.1', '0', '0', 'BCBG 专用');
 
 COMMIT;

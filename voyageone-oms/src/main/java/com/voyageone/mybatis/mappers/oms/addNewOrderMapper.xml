@@ -150,6 +150,8 @@
 				discount_percent,
 				
 				order_kind,
+				rate,
+				currency,
 				sub_source_order_id,
 				
 				/* timestamp*/
@@ -241,6 +243,8 @@
 			#{discountPercent},
 			
 			#{orderKind},
+			#{rate},
+			#{currency},
 			#{subSourceOrderId},
 			
 			/* timestamp*/

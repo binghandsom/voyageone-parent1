@@ -7,6 +7,8 @@ public class SettlementBean {
 	private String orderChannelId;
 	//
 	private String cartId;
+	//	文件类型（1：settlement，2：transaction）
+	private String fileType;
 	//	付款日
 	private String paymentTime;
 	//	结算日
@@ -154,6 +156,14 @@ public class SettlementBean {
 
 	public void setCartId(String cartId) {
 		this.cartId = cartId;
+	}
+
+	public String getFileType() {
+		return fileType;
+	}
+
+	public void setFileType(String fileType) {
+		this.fileType = fileType;
 	}
 
 	public String getPaymentTime() {

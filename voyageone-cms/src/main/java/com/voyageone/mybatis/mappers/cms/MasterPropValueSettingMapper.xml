@@ -144,4 +144,14 @@
 		  AND m.model_id = #{modelId}
 		  AND attr.deal_flag != 0
 	</update>
+	<select id="getErrorMessages" resultType="String">
+		SELECT DISTINCT
+			publish_faild_comment
+		FROM
+			voyageone_ims.ims_bt_product
+		WHERE
+			publish_status = '2'
+		AND	channel_id = #{channelId}
+		AND model_id = #{modelId}
+	</select>
 </mapper>

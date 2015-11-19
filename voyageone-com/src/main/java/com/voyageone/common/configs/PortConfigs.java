@@ -113,10 +113,7 @@ public class PortConfigs {
                 map.put(name, config);
                 put(port, map);
             } catch (IllegalArgumentException e) {
-                logger.warn("=== PortConfig.Configs.put ===");
-                logger.warn(e);
-                logger.warn(e.getMessage());
-                logger.warn(String.format("Channel: %s ; Name: %s", config.getPort(), config.getCfg_name()));
+                logger.warn(String.format("PortConfig 枚举匹配警告: [%s] NO \"%s\"", config.getPort(), config.getCfg_name()));
             }
         }
     }
@@ -131,7 +128,7 @@ public class PortConfigs {
 
         public void put(PortConfigEnums.Name name, PortConfigBean config) {
             if (!containsKey(name)) {
-                super.put(name, new ArrayList<PortConfigBean>());
+                super.put(name, new ArrayList<>());
             }
 
             get(name).add(config);

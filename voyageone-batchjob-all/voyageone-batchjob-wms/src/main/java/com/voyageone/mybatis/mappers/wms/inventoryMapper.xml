@@ -12,40 +12,6 @@
         call wms_setLogicInventory(#{order_channel_id})
     </update>
 
-    <!-- 库存分配-->
-    <update id="wms_setAllotInventory" statementType="CALLABLE" parameterType="HashMap">
-        call wms_setAllotInventory(#{order_channel_id},#{row_count})
-    </update>
-
-    <!-- 错误的SKU记录取得-->
-    <select id="wms_selectErrorSkuInfo" resultType="com.voyageone.batch.wms.modelbean.AllotInventoryDetailBean">
-        SELECT
-          log_details.order_number,
-          log_details.item_number,
-          log_details.source_order_id,
-          log_details.order_channel_id,
-          log_details.product,
-          log_details.cart_id,
-          log_details.sku,
-          details.res_allot_flg,
-          details.res_id,
-          log_details.sku_error_flg
-        FROM
-          wms_bt_log_order_details log_details,
-          oms_bt_order_details details
-        WHERE
-          log_details.order_number = details.order_number
-        AND
-          log_details.item_number = details.item_number
-        AND
-          log_details.sku_error_flg = '1'
-        ORDER BY
-          log_details.order_channel_id,
-          log_details.cart_id,
-          log_details.order_number,
-          log_details.item_number
-    </select>
-
     <select id="wms_selectInventoryExceptSynLogs" resultType="com.voyageone.batch.wms.modelbean.InventorySynLogBean">
         SELECT
             i.seq,
@@ -510,4 +476,61 @@
         group by i.order_channel_id,i.cart_id,i.sku
         LIMIT #{limit};
     </select>
+
+
+    <!-- 以SKU集计物理库存-->
+    <select id="wms_selectSumInventoryBySKU" resultType="com.voyageone.batch.wms.modelbean.SumInventoryBean">
+        SELECT
+            inventory.order_channel_id,
+            inventory.store_id,
+            inventory.sku,
+            details.barcode,
+            details.client_sku,
+            sum(inventory.qty) AS qty,
+            (
+                SELECT
+                    count(0)
+                FROM
+                    tt_reservation res
+                WHERE
+                    res.order_channel_id = inventory.order_channel_id
+                AND res.sku = inventory.sku
+                AND res.`status` =  #{status}
+            ) AS res_qty,
+            IFNULL ((
+                SELECT
+                    A073_KBETR
+                FROM
+                    voyageone_cms.cms_zz_worktable_bcbg_superfeed_full superfeed
+                WHERE
+                    superfeed.MATNR = details.client_sku
+            ),0) AS sales_price,
+            IFNULL ((
+                SELECT
+                    A304_KBETR
+                FROM
+                    voyageone_cms.cms_zz_worktable_bcbg_superfeed_full superfeed
+                WHERE
+                    superfeed.MATNR = details.client_sku
+            ),0) AS msrp	,
+            (
+                SELECT
+                    DISTINCT item.brand
+                FROM
+                    wms_bt_client_package_item item
+                WHERE
+                    item.article_number = details.client_sku
+            ) AS brand
+        FROM
+            `wms_bt_inventory_center` inventory
+        LEFT JOIN wms_bt_item_details details ON details.sku = inventory.sku
+        AND details.order_channel_id = inventory.order_channel_id
+        WHERE
+            inventory.order_channel_id = #{order_channel_id}
+        GROUP BY
+          details.client_sku
+            -- inventory.sku
+        ORDER BY
+          brand ,details.client_sku
+     </select>
 </mapper>

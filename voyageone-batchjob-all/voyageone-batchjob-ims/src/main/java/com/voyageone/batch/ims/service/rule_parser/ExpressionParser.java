@@ -6,6 +6,7 @@ import com.voyageone.batch.ims.dao.PropDao;
 import com.voyageone.batch.ims.dao.PropValueDao;
 import com.voyageone.batch.ims.modelbean.CmsCodePropBean;
 import com.voyageone.batch.ims.modelbean.CmsModelPropBean;
+import com.voyageone.batch.ims.service.UploadImageHandler;
 import com.voyageone.ims.enums.CmsFieldEnum;
 import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
@@ -77,8 +78,9 @@ public class ExpressionParser {
                         plainValue = parse(dictWordDefine.getExpression(), imageSet);
 
                         if (plainValue != null && imageSet != null && dictWordDefine.getIsUrl()) {
-                            imageSet.add(plainValue);
+                            imageSet.add(UploadImageHandler.encodeImageUrl(plainValue));
                         }
+
                         break;
                     }
                     case CUSTOM: {

@@ -93,26 +93,32 @@ public class UploadImageHandler extends UploadWorkloadHandler {
             // add by lewis 2015/11/16 end...
 
             for (String srcUrl : imageUrlSet) {
+                String decodeSrcUrl = decodeImageUrl(srcUrl);
                 // modified by lewis 2015/11/16 start...
-                if(imageUrlMap.get(srcUrl)==null){
-                    String destUrl = uploadImageByUrl(srcUrl, shopBean);
+                if(imageUrlMap.get(decodeSrcUrl)==null){
+                    String destUrl = uploadImageByUrl(decodeSrcUrl, shopBean);
                     uploadImageResult.add(srcUrl, destUrl);
 
                     ImageUrlMappingModel imageUrlInfo = new ImageUrlMappingModel();
                     imageUrlInfo.setCartId(Integer.valueOf(uploadJob.getCart_id()));
                     imageUrlInfo.setChannelID(uploadJob.getChannel_id());
-                    imageUrlInfo.setOrgImageUrl(srcUrl);
+                    imageUrlInfo.setOrgImageUrl(decodeSrcUrl);
                     imageUrlInfo.setPlatformImageUrl(destUrl);
                     imageUrlInfo.setCreater("uploadProductJob");
                     imageUrlInfo.setModifier("uploadProductJob");
                     imageUrlModels.add(imageUrlInfo);
+                }else {
+                    uploadImageResult.add(srcUrl, imageUrlMap.get(decodeSrcUrl));
                 }
                 // modified by lewis 2015/11/16 end...
             }
 
             // add by lewis 2015/11/16 start...
-            //insert image url
-            imageUrlMappingDao.insertPlatformSkuInfo(imageUrlModels);
+            if(imageUrlModels.size()>0)
+            {
+                //insert image url
+                imageUrlMappingDao.insertPlatformSkuInfo(imageUrlModels);
+            }
             // add by lewis 2015/11/16 end...
 
             uploadImageResult.setUploadSuccess(true);
@@ -249,5 +255,23 @@ public class UploadImageHandler extends UploadWorkloadHandler {
         if (uploadProductTcb != null) {
             uploadJob.getUploadProductHandler().stopTcb(uploadProductTcb);
         }
+    }
+
+    public static void main(String[] args) {
+        String plain = "http://s7d5.scene7.com/is/image/sneakerhead/bcbg_1200_1200?$1200x1200$&$big=IZD1U885_001";
+        String encode = encodeImageUrl(plain);
+        System.out.println(encode);
+        System.out.println(decodeImageUrl(encode));
+    }
+
+    public static String encodeImageUrl(String plainValue) {
+        String endStr = "%&";
+        if (!plainValue.endsWith(endStr))
+            return plainValue + endStr;
+        return plainValue;
+    }
+
+    public static String decodeImageUrl(String encodedValue) {
+        return encodedValue.substring(0, encodedValue.length() - 2);
     }
 }
