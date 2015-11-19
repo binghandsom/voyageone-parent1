@@ -18,8 +18,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * Bcbg 远程调用共通基础
@@ -53,7 +57,7 @@ abstract class SearsWsdlBase extends BaseTaskService {
 
     protected abstract String getWhereUpdateFlg();
 
-    protected  class ContextBase {
+    protected class ContextBase {
 
         private final Pattern special_symbol;
 
@@ -256,14 +260,32 @@ abstract class SearsWsdlBase extends BaseTaskService {
 
     /**
      * 导入成功的FEED数据保存起来
+     *
      * @param itemIds
      */
     @Transactional
-    protected void updateFull(List<String> itemIds){
-        if(itemIds.size() > 0){
+    protected void updateFull(List<String> itemIds) {
+        if (itemIds.size() > 0) {
             searsFeedDao.delFull(itemIds);
             searsFeedDao.insertFull(itemIds);
             searsFeedDao.updateFeetStatus(itemIds);
+        }
+    }
+
+    protected void updateFullByCode(List<String> code) {
+        if (code.size() > 0) {
+            code.forEach(s -> {
+                String[] str = s.split("-");
+                HashMap parm = new HashMap<String,String>();
+                parm.put("model",str[0]);
+                if(str.length>1){
+                    parm.put("color",str[1]);
+                }
+                searsFeedDao.delFullByCode(parm);
+                searsFeedDao.insertFullByCode(parm);
+                searsFeedDao.updateFeetStatusByCode(parm);
+            });
+
         }
     }
 }

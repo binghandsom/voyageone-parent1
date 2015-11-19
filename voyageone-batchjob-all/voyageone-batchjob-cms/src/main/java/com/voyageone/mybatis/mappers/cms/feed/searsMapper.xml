@@ -144,9 +144,6 @@
             <result column="cps_cn_price" property="cps_cn_price" />
             <result column="cps_cn_price_rmb" property="cps_cn_price_rmb" />
             <result column="cps_cn_price_final_rmb" property="cps_cn_price_final_rmb" />
-            <result column="cps_cn_price" property="cps_cn_price" />
-            <result column="cps_cn_price" property="cps_cn_price" />
-            <result column="cps_cn_price" property="cps_cn_price" />
             <collection property="itembeans" javaType="ArrayList" ofType="com.voyageone.batch.cms.bean.ItemBean" >
                 <result column="item_code" property="code" />
                 <result column="i_sku" property="i_sku" />
@@ -232,5 +229,31 @@
             #{itemIds}
         </foreach>
         )
+    </update>
+
+
+
+    <delete id="cms_zz_worktable_sears_superfeed_full_code_del" parameterType="java.util.List">
+        DELETE
+        FROM
+        voyageone_cms.cms_zz_worktable_sears_superfeed_full
+        where model_number = #{model}
+        <if test="color != null and color != ''">
+            and  color =  #{color}
+        </if>
+    </delete>
+    <insert id="cms_zz_worktable_sears_superfeed_full_code_insert"  parameterType="java.util.List">
+        INSERT INTO voyageone_cms.cms_zz_worktable_sears_superfeed_full SELECT * from
+        voyageone_cms.cms_zz_worktable_sears_superfeed where model_number = #{model}
+        <if test="color != null and color != ''">
+           and color =  #{color}
+        </if>
+    </insert>
+    <update id="cms_zz_worktable_sears_superfeed_code_update"  parameterType="java.util.List">
+        UPDATE voyageone_cms.cms_zz_worktable_sears_superfeed set update_flg = 3
+        where model_number = #{model}
+        <if test="color != null and color != ''">
+            and  color =  #{color}
+        </if>
     </update>
 </mapper>
