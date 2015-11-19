@@ -246,13 +246,50 @@
             #{task_name}
         FROM tt_reservation reservation
         WHERE reservation.syn_ship_no = #{syn_ship_no}
-        and reservation.status not in ('12','13','14','15','16','17')
         AND not exists (select 1
                             from tt_tracking_info trackingInfo
                             where trackingInfo.syn_ship_no = #{syn_ship_no}
                             and trackingInfo.tracking_status = #{tracking_status}
                             and trackingInfo.tracking_no = #{tracking_no}
                             and trackingInfo.reservation_id = reservation.id)
+        )
+    </insert>
+
+    <!-- TrackingInfo信息追加 -->
+    <insert id="synShip_InsertTrackingInfoBySim">
+        insert into
+        tt_tracking_info
+        (
+        syn_ship_no,
+        tracking_status,
+        reservation_id,
+        tracking_no,
+        process_time,
+        create_time,
+        update_time,
+        create_person,
+        update_person
+        )
+        (
+        SELECT
+        syn_ship_no,
+        #{tracking_status},
+        id,
+        #{tracking_no},
+        #{process_time},
+        now(),
+        now(),
+        #{task_name},
+        #{task_name}
+        FROM tt_reservation reservation
+        WHERE reservation.syn_ship_no = #{syn_ship_no}
+        and reservation.status not in ('12','13','14','15','16','17')
+        AND not exists (select 1
+        from tt_tracking_info trackingInfo
+        where trackingInfo.syn_ship_no = #{syn_ship_no}
+        and trackingInfo.tracking_status = #{tracking_status}
+        and trackingInfo.tracking_no = #{tracking_no}
+        and trackingInfo.reservation_id = reservation.id)
         )
     </insert>
 

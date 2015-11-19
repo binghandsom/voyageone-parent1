@@ -259,7 +259,7 @@ public class SynShipSimShipmentService  extends BaseTaskService {
 
                             // 插入TrackingInfo
                             if (port.equals(PortConfigEnums.Port.CN.getId())) {
-                                trackingDao.insertTrackingInfo(clientTracking.getSyn_ship_no(), clientTracking.getTracking_no(), CodeConstants.TRACKING.INFO_080, clientTracking.getTracking_time(), getTaskName());
+                                trackingDao.insertTrackingInfoBySim(clientTracking.getSyn_ship_no(), clientTracking.getTracking_no(), CodeConstants.TRACKING.INFO_080, clientTracking.getTracking_time(), getTaskName());
                             }
 
                             if (port.equals(PortConfigEnums.Port.LA.getId())) {
