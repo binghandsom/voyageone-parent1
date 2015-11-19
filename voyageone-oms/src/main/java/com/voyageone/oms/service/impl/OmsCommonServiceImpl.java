@@ -10,6 +10,7 @@ import com.voyageone.common.util.MD5;
 import com.voyageone.oms.OmsCodeConstants;
 import com.voyageone.oms.OmsConstants;
 import com.voyageone.oms.OmsConstants.PropKey;
+import com.voyageone.oms.dao.InventoryDao;
 import com.voyageone.oms.dao.OrderDao;
 import com.voyageone.oms.formbean.InFormServiceSearchSKU;
 import com.voyageone.oms.formbean.OutFormServiceSearchSKU;
@@ -30,9 +31,9 @@ import java.util.Map;
 @Service
 public class OmsCommonServiceImpl implements OmsCommonService {
 	private static Log logger = LogFactory.getLog(OmsCommonServiceImpl.class);
-	
+
 	@Autowired
-	private OrderDao orderDao;
+	private InventoryDao inventoryDao;
 	
 	/**
 	 * 获得SKU信息
@@ -59,13 +60,12 @@ public class OmsCommonServiceImpl implements OmsCommonService {
 				String searchskuPath = Properties.readValue(PropKey.SEARCHSKUListCN_PATH);
 				result = HttpUtils.post(searchskuPath, param);
 			}
-		// 珠宝,BCBG的场合
-		} else if (OmsCodeConstants.OrderChannelId.JW.equals(inFormServiceSearchSKU.getChannelId()) ||
-						OmsCodeConstants.OrderChannelId.BCBG.equals(inFormServiceSearchSKU.getChannelId())) {
-			String searchskuPath = Properties.readValue(PropKey.SEARCHSKUINFO_PATH);
-			result = getSKUInfoByWebService(searchskuPath, inFormServiceSearchSKU);
-		// 其他的场合（CMS 在美国）
-		} else {
+		// SN，PA，JC，BHFO 的场合(CMS 在美国)
+		} else if(OmsCodeConstants.OrderChannelId.SN.equals(inFormServiceSearchSKU.getChannelId()) ||
+						OmsCodeConstants.OrderChannelId.PA.equals(inFormServiceSearchSKU.getChannelId()) ||
+						OmsCodeConstants.OrderChannelId.JC.equals(inFormServiceSearchSKU.getChannelId()) ||
+						OmsCodeConstants.OrderChannelId.BHFO.equals(inFormServiceSearchSKU.getChannelId())) {
+
 			if(type.equals(OmsConstants.SKU_TYPE_ADDNEWORDER)){
 				String searchskuPath = Properties.readValue(PropKey.SEARCHSKU_PATH);
 				result = HttpUtils.post(searchskuPath, param);
@@ -75,9 +75,28 @@ public class OmsCommonServiceImpl implements OmsCommonService {
 				String searchskuPath = Properties.readValue(PropKey.SEARCHSKUList_PATH);
 				result = HttpUtils.post(searchskuPath, param);
 			}
+		// 其他的场合 珠宝,BCBG的场合（新CMS）
+		} else {
+			String searchskuPath = Properties.readValue(PropKey.SEARCHSKUINFO_PATH);
+			result = getSKUInfoByWebService(searchskuPath, inFormServiceSearchSKU);
 		}
 
 		ret = JsonUtil.jsonToBeanList(result, OutFormServiceSearchSKU.class);
+
+		// 库存再设定
+		if (OmsCodeConstants.OrderChannelId.SP.equals(inFormServiceSearchSKU.getChannelId()) ||
+				OmsCodeConstants.OrderChannelId.CHAMPION.equals(inFormServiceSearchSKU.getChannelId()) ||
+				OmsCodeConstants.OrderChannelId.RM.equals(inFormServiceSearchSKU.getChannelId()) ||
+				OmsCodeConstants.OrderChannelId.JC.equals(inFormServiceSearchSKU.getChannelId()) ||
+				OmsCodeConstants.OrderChannelId.BHFO.equals(inFormServiceSearchSKU.getChannelId())) {
+			for (OutFormServiceSearchSKU outFormServiceSearchSKU : ret) {
+				int quantity = 0;
+
+				quantity = inventoryDao.getLogicQuantity(inFormServiceSearchSKU.getChannelId(), outFormServiceSearchSKU.getSku());
+				outFormServiceSearchSKU.setInventory(String.valueOf(quantity));
+			}
+		}
+
 //		for (OutFormServiceSearchSKU outFormServiceSearchSKU : ret) {
 //			// TODO 转换什么字符？
 //			if (!StringUtils.isEmpty(outFormServiceSearchSKU.getDescription())) {
