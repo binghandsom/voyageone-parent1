@@ -196,14 +196,22 @@
             orders.cart_id,
             details.sku,
             SUM(details.price_per_unit + ifnull((select SUM(price_per_unit)
-                                                    from oms_bt_order_details discount
+                                                    from oms_bt_order_details discount,
+                                                          oms_bt_ext_order_details odx
                                                     where details.order_number = discount.order_number
+                                                        and discount.order_number = odx.order_number
+                                                        and discount.item_number = odx.item_number
+                                                        and odx.send_flg = 0 and odx.ext_flg1 = 0
                                                         AND discount.STATUS in ( 'Canceled','Returned')
                                                         and details.item_number = discount.sub_item_number),0)) as price,
             ifnull((select SUM(price_per_unit)
-                    from oms_bt_order_details shipdetails
+                    from oms_bt_order_details shipdetails ,
+                          oms_bt_ext_order_details odx
                     where shipdetails.order_number	= #{order_number}
                         and shipdetails.adjustment = 1
+                        and shipdetails.order_number = odx.order_number
+                        and shipdetails.item_number = odx.item_number
+                        and odx.send_flg = 0 and odx.ext_flg1 = 0
                         AND shipdetails.STATUS in ( 'Canceled','Returned')
                         and shipdetails.sub_item_number = 0 AND shipdetails.sku not in ('Shipping')),0) as shipping_price
         from
@@ -216,8 +224,8 @@
             and details.order_number = odx.order_number
             and details.item_number = odx.item_number
             and details.adjustment = 0
-            and details.order_number = #{order_number}
             and odx.send_flg = 0 and odx.ext_flg1 = 0
+            and details.order_number = #{order_number}
         AND details.STATUS in ( 'Canceled','Returned')
         AND NOT EXISTS (SELECT
                             1
