@@ -295,6 +295,7 @@ public class WmsReturnServiceImpl implements WmsReturnService {
 		formReturn.setReturn_session_id(sessionId);
 		setFormCommonValue(request, formReturn, user);
 		sessionInfo = returnDao.getSessionInfo(formReturn);
+		setDisplayInfo(sessionInfo,user);
 		result.setResult(false);
 		result.setResult(true);
 		resultListMap.put("returnList", sessionInfo);

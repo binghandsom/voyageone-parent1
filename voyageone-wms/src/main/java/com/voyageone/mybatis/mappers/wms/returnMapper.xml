@@ -136,9 +136,13 @@
 		select rtnsession.order_channel_id,
 				rtnsession.return_session_id,
 			   date_format(rtnsession.created, '%Y-%m-%d %H:%i:%s') created,
-			   rtnsession.store_id
-  	 	  from wms_bt_return_session rtnsession
+			   rtnsession.store_id,
+		       store.store_name
+  	 	  from wms_bt_return_session rtnsession,
+				wms_mt_store store
  		 where rtnsession.return_session_status = '0'
+		   and store.order_channel_id = rtnsession.order_channel_id
+		   and store.store_id = rtnsession.store_id
 		<if test="return_type != null and return_type != '' ">
 			and rtnsession.return_type = #{return_type}
 		</if>
