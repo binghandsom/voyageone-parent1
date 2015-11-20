@@ -2061,11 +2061,23 @@
 		</if>
 	</update>
 
-	<!-- 将oms_bt_ext_order_details表的 退货订单发送标志置位->1-->
+	<!-- 将oms_bt_ext_order_details表的 send_flg->1-->
 	<update id="oms_bt_ext_order_details_updateReturnSendFlag" parameterType="HashMap">
 		update oms_bt_ext_order_details
 		set
 			send_flg = true,
+			modified = now(),
+			modifier = #{taskName}
+		where
+			order_number = #{orderNumber} and
+			item_number = #{itemNumber}
+	</update>
+
+	<!-- 将oms_bt_ext_order_details表的 ext_flg1->1-->
+	<update id="oms_bt_ext_order_details_updateExtFlag1" parameterType="HashMap">
+		update oms_bt_ext_order_details
+		set
+			ext_flg1 = true,
 			modified = now(),
 			modifier = #{taskName}
 		where
@@ -2401,7 +2413,6 @@
 		</if>
 	</select>
 
-	<!-- 获得向BCBG 推送Demand订单信息 -->
 	<resultMap id="ordersInfoMapforBCBGDemand" type="com.voyageone.batch.oms.modelbean.OrderExtend">
 		<result column="order_channel_id" property="orderChannelId"/>
 		<result column="source_order_id" property="sourceOrderId"/>
@@ -2414,6 +2425,7 @@
 		<result column="price_per_unit" property="pricePerUnit"/>
 		<result column="UPC" property="UPC"/>
 	</resultMap>
+	<!-- 获得向BCBG 推送Demand订单信息（正常Approved 订单） -->
 	<select id="oms_bt_order_details_getPushBCBGDemandsInfo" parameterType="HashMap" resultMap="ordersInfoMapforBCBGDemand" >
 		select o.order_channel_id,
 				o.source_order_id,
@@ -2457,7 +2469,83 @@
 			#{endDate} >= o.order_date_time
 	</select>
 
-	<!-- 获得向BCBG 推送DailySales订单信息 -->
+	<!-- 获得向BCBG 推送Demand订单信息（Cancel 订单） -->
+	<select id="oms_bt_order_details_getPushBCBGDemandsInfoForCancel" parameterType="HashMap" resultMap="ordersInfoMapforBCBGDemand" >
+		select o.order_channel_id,
+				o.source_order_id,
+				o.order_number,
+				o.cart_id,
+				o.order_date_time,
+				od.sku,
+				od.quantity_ordered,
+				od.quantity_shipped,
+				od.price_per_unit,
+				IFNULL(cms.EAN11,'') as UPC
+		from
+			Synship.oms_bt_orders o
+		inner join
+			(select ods.order_number,
+						ods.adjustment,
+						ods.sku,
+						sum(ods.quantity_ordered) as quantity_ordered,
+						sum(ods.quantity_shipped) as quantity_shipped,
+						min(ods.price_per_unit) as price_per_unit
+				from Synship.oms_bt_order_details ods
+				inner join Synship.oms_bt_ext_order_details odx
+					on ods.order_number = odx.order_number
+					and ods.item_number = odx.item_number
+				where
+					(ods.adjustment = 0 or ods.sku = 'Shipping') and
+					ods.ship_date is null and
+					ods.status in ('Returned','Canceled') and
+					odx.ext_flg1 = 0
+				group by ods.order_number, ods.adjustment, ods.sku
+			)od
+			on o.order_number = od.order_number
+		inner join Synship.oms_bt_ext_orders ox
+				on o.order_number = ox.order_number
+		left join Synship.wms_bt_item_details wd
+			on od.sku = wd.sku
+			and o.order_channel_id = wd.order_channel_id
+		left join
+			voyageone_cms.cms_zz_worktable_bcbg_superfeed_full cms
+			on wd.client_sku = cms.MATNR
+		where
+			o.order_channel_id = #{orderChannelId} and
+			#{endDate} >= o.order_date_time and
+			ox.send_flg = 1
+	</select>
+
+	<!-- 获得向BCBG 推送Demand订单信息(Cancel 明细物品取得) -->
+	<resultMap id="ordersInfoMapforBCBGDemandCancelItems" type="com.voyageone.batch.oms.modelbean.OrderExtend">
+		<result column="source_order_id" property="sourceOrderId"/>
+		<result column="order_number" property="orderNumber"/>
+		<result column="item_number" property="itemNumber"/>
+	</resultMap>
+	<select id="oms_bt_order_details_getPushBCBGDemandsInfoForCancelItems" parameterType="HashMap" resultMap="ordersInfoMapforBCBGDemandCancelItems" >
+			select
+			 	o.source_order_id,
+				ods.order_number,
+				ods.item_number,
+				ods.adjustment,
+				ods.sku
+			from Synship.oms_bt_order_details ods
+			inner join Synship.oms_bt_ext_order_details odx
+				on ods.order_number = odx.order_number
+				and ods.item_number = odx.item_number
+			inner join Synship.oms_bt_ext_orders ox
+				on ods.order_number = ox.order_number
+			inner join	Synship.oms_bt_orders o
+				on ods.order_number = o.order_number
+			where
+
+				ods.ship_date is null and
+				ods.status in ('Returned','Canceled') and
+				odx.ext_flg1 = 0 and
+				ox.order_channel_id = #{orderChannelId}	and
+				ox.send_flg = 1
+	</select>
+
 	<resultMap id="ordersInfoMapforBCBGDailySales" type="com.voyageone.batch.oms.modelbean.OrderExtend">
 		<result column="order_channel_id" property="orderChannelId"/>
 		<result column="order_number" property="orderNumber"/>
@@ -2502,6 +2590,7 @@
 		<result column="size1" property="size"/>
 		<result column="MSRP" property="MSRP"/>
 	</resultMap>
+	<!-- 获得向BCBG 推送DailySales订单信息 (Shipped 订单)-->
 	<select id="oms_bt_order_details_getPushBCBGDailySalesInfo" parameterType="HashMap" resultMap="ordersInfoMapforBCBGDailySales" >
 		select o.order_channel_id,
 			o.order_number,
@@ -2547,7 +2636,7 @@
 			(select ods.order_number,
 						ods.adjustment,
 						ods.sku,
-						ods.ship_date,
+						max(ods.ship_date) as ship_date,
 						sum(ods.quantity_ordered) as quantity_ordered,
 						sum(ods.quantity_shipped) as quantity_shipped,
 						min(ods.price_per_unit) as price_per_unit,
@@ -2564,7 +2653,7 @@
 							group by order_number	) ods2
 			on ods.order_number = ods2.order_number
 			where ods.adjustment = 0 or ods.sku = 'Shipping'
-			group by ods.order_number, ods.adjustment, ods.sku, ods.ship_date
+			group by ods.order_number, ods.adjustment, ods.sku
 			)od
 		inner join Synship.oms_bt_orders o
 			on o.order_number = od.order_number
@@ -2578,5 +2667,110 @@
 		where
 			o.order_channel_id = #{orderChannelId}
 			and ox.ext_flg1 = 0
+	</select>
+
+	<!-- 获得向BCBG 推送DailySales订单信息 (Returned 订单)-->
+	<select id="oms_bt_order_details_getPushBCBGDailySalesInfoForReturn" parameterType="HashMap" resultMap="ordersInfoMapforBCBGDailySales" >
+		select o.order_channel_id,
+			o.order_number,
+			o.order_date_time,
+			o.source_order_id,
+			o.cart_id,
+
+			IFNULL(o.name,'') as name,
+			IFNULL(o.company,'') as company,
+			IFNULL(o.email,'') as email,
+			IFNULL(o.address,'') as address,
+			IFNULL(o.address2,'') as address2,
+			IFNULL(o.city,'') as city,
+			IFNULL(o.state,'') as state,
+			IFNULL(o.zip,'') as zip,
+			IFNULL(o.country,'') as country,
+			IFNULL(o.phone,'') as phone,
+
+			IFNULL(o.ship_name,'') as ship_name,
+			IFNULL(o.ship_company,'') as ship_company,
+			IFNULL(o.ship_email,'') as ship_email,
+			IFNULL(o.ship_address,'') as ship_address,
+			IFNULL(o.ship_address2,'') as ship_address2,
+			IFNULL(o.ship_city,'') as ship_city,
+			IFNULL(o.ship_state,'') as ship_state,
+			IFNULL(o.ship_zip,'') as ship_zip,
+			IFNULL(o.ship_country,'') as ship_country,
+			IFNULL(o.ship_phone,'') as ship_phone,
+			o.final_shipping_total,
+
+			od.sku,
+			od.quantity_ordered,
+			od.quantity_shipped,
+			od.price_per_unit,
+			od.ship_date,
+			IFNULL(od.syn_ship_no,'') as tracking_no,
+			IFNULL(cms.EAN11,'') as UPC,
+			IFNULL(cms.SATNR,'') as style,
+			IFNULL(cms.COLOR,'') as color,
+			IFNULL(cms.SIZE1,'') as size1,
+			IFNULL(cms.A304_KBETR,'') as MSRP
+		from
+			(select ods.order_number,
+						ods.adjustment,
+						ods.sku,
+						max(ods.ship_date) as ship_date,
+						sum(ods.quantity_ordered) as quantity_ordered,
+						sum(ods.quantity_shipped) as quantity_shipped,
+						min(ods.price_per_unit) as price_per_unit,
+						min(ods.res_id) as res_id,
+						min(ods.syn_ship_no) as syn_ship_no
+			from Synship.oms_bt_order_details ods
+			inner join Synship.oms_bt_ext_order_details odx
+				on ods.order_number = odx.order_number
+				and ods.item_number = odx.item_number
+			where (ods.adjustment = 0  or ods.sku = 'Shipping') and
+					ods.ship_date is not null and
+					ods.status in ('Returned','Canceled') and
+					odx.send_flg = 0
+			group by ods.order_number, ods.adjustment, ods.sku
+			)od
+		inner join Synship.oms_bt_orders o
+			on o.order_number = od.order_number
+		left join Synship.wms_bt_item_details wd
+			on od.sku = wd.sku
+			and o.order_channel_id = wd.order_channel_id
+		left join	voyageone_cms.cms_zz_worktable_bcbg_superfeed_full cms
+			on wd.client_sku = cms.MATNR
+		inner join Synship.oms_bt_ext_orders ox
+			on o.order_number = ox.order_number
+		where
+			o.order_channel_id = #{orderChannelId}
+			and ox.ext_flg1 = 1
+	</select>
+
+	<!-- 获得向BCBG 推送DailySales订单信息 (Returned 订单 明细物品取得)-->
+	<resultMap id="ordersInfoMapforBCBGDemandReturnItems" type="com.voyageone.batch.oms.modelbean.OrderExtend">
+		<result column="source_order_id" property="sourceOrderId"/>
+		<result column="order_number" property="orderNumber"/>
+		<result column="item_number" property="itemNumber"/>
+	</resultMap>
+	<select id="oms_bt_order_details_getPushBCBGDemandsInfoForReturnItems" parameterType="HashMap" resultMap="ordersInfoMapforBCBGDemandReturnItems" >
+			select
+			 	o.source_order_id,
+				ods.order_number,
+				ods.item_number,
+				ods.adjustment,
+				ods.sku
+			from Synship.oms_bt_order_details ods
+			inner join Synship.oms_bt_ext_order_details odx
+				on ods.order_number = odx.order_number
+				and ods.item_number = odx.item_number
+			inner join Synship.oms_bt_ext_orders ox
+				on ods.order_number = ox.order_number
+			inner join	Synship.oms_bt_orders o
+				on ods.order_number = o.order_number
+			where
+					ods.ship_date is not null and
+					ods.status in ('Returned','Canceled') and
+					odx.send_flg = 0 and
+					ox.order_channel_id = #{orderChannelId}	and
+					ox.ext_flg1 = 1
 	</select>
 </mapper>
