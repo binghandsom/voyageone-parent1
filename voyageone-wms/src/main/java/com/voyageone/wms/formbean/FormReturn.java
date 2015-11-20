@@ -63,6 +63,7 @@ public class FormReturn extends AjaxRequestBean {
 	private String reservationLog_notes;
 	private String returnType_name;
 	private String label_type;
+	private String location_name;
 
 	public String getReservationLog_notes() {
 		return reservationLog_notes;
@@ -414,6 +415,14 @@ public class FormReturn extends AjaxRequestBean {
 
 	public void setLabel_type(String label_type) {
 		this.label_type = label_type;
+	}
+
+	public String getLocation_name() {
+		return location_name;
+	}
+
+	public void setLocation_name(String location_name) {
+		this.location_name = location_name;
 	}
 
 	@Override

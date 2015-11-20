@@ -33,7 +33,8 @@
 		<result column="order_channel_id" property="order_channel_id"/>
 	</resultMap>
     <select id="wms_return_getReturnList" parameterType="com.voyageone.wms.formbean.FormReturn" resultMap="returnMap">
-    	select rtn.return_id,
+    	select rtn.order_channel_id,
+				rtn.return_id,
                rtn.res_id,
          	   rtn.order_num,
          	   rtn.sku,
@@ -44,6 +45,7 @@
 			   cmv_receivedFrom.`name` received_from,
 			   rtn.tracking_no,
          	   rtn.notes,
+		       store.store_id,
          	   store.store_name,
 			   itemDel.barcode,
 			   itemDel.size,
@@ -131,11 +133,16 @@
         <result column="created" property="created"/>                             
     </resultMap>
     <select id="wms_return_getProcessingSessionName"  resultMap="processingSessionMap" parameterType="com.voyageone.wms.formbean.FormReturn">
-		select rtnsession.return_session_id,
+		select rtnsession.order_channel_id,
+				rtnsession.return_session_id,
 			   date_format(rtnsession.created, '%Y-%m-%d %H:%i:%s') created,
-			   rtnsession.store_id
-  	 	  from wms_bt_return_session rtnsession
+			   rtnsession.store_id,
+		       store.store_name
+  	 	  from wms_bt_return_session rtnsession,
+				wms_mt_store store
  		 where rtnsession.return_session_status = '0'
+		   and store.order_channel_id = rtnsession.order_channel_id
+		   and store.store_id = rtnsession.store_id
 		<if test="return_type != null and return_type != '' ">
 			and rtnsession.return_type = #{return_type}
 		</if>
@@ -195,7 +202,8 @@
     </select>
     
     <select id="wms_return_getOrderInfo"  parameterType="com.voyageone.wms.formbean.FormReturn"  resultMap="returnMap">
-		select res.id res_id,
+		select res.order_channel_id,
+				res.id res_id,
 			   res.sku,
 			   itemDetl.barcode,
 			   res.close_day_flg,
@@ -205,6 +213,7 @@
 			   IFNULL(retn.return_session_id, -1) return_session_id,
                res.product product_name,
                itemDetl.size `size`,
+		       res.store_id,
                res.store store_name,
 			   store.label_type
 		  from tt_reservation res
@@ -347,11 +356,13 @@
     </delete>
 
 	<select id="wms_return_sessionListSearch" parameterType="com.voyageone.wms.formbean.FormReturn" resultMap="returnMap">
-		select retnSession.return_session_id,
+		select  retnSession.order_channel_id,
+				retnSession.return_session_id,
 			   date_format(retnSession.created, '%Y-%m-%d %H:%i:%s') created,
 			   retnSession.creater,
 				sessionStatus.name status_name,
 				returnType.name returnType_name,
+		       store.store_id,
 			   store.store_name,
 		       retnSession.store_id
 		  from wms_bt_return_session retnSession,
