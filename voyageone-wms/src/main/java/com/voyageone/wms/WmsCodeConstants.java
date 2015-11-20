@@ -7,6 +7,7 @@ public interface WmsCodeConstants {
      * Reservation状态
      */
     final class Reservation_Status {
+        public final static String Name = "REV_STU";
         public final static String Open = "11";
         public final static String Reserved = "12";
         public final static String Packaged = "13";

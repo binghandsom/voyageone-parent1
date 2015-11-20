@@ -259,19 +259,19 @@ public class SynShipSimShipmentService  extends BaseTaskService {
 
                             // 插入TrackingInfo
                             if (port.equals(PortConfigEnums.Port.CN.getId())) {
-                                trackingDao.insertTrackingInfo(clientTracking.getSyn_ship_no(), clientTracking.getTracking_no(), CodeConstants.TRACKING.INFO_080, clientTracking.getTracking_time(), getTaskName());
+                                trackingDao.insertTrackingInfoBySim(clientTracking.getSyn_ship_no(), clientTracking.getTracking_no(), CodeConstants.TRACKING.INFO_080, clientTracking.getTracking_time(), getTaskName());
                             }
 
                             if (port.equals(PortConfigEnums.Port.LA.getId())) {
                                 // 更新物品状态
-                                reservationDao.UpdateReservationStatus(clientTracking.getSyn_ship_no(), CodeConstants.Reservation_Status.ShippedUS, getTaskName());
+                                reservationDao.UpdateReservationStatus(clientTracking.getSyn_ship_no(), CodeConstants.Reservation_Status.ShippedUS, "2",getTaskName());
 
                                 // 插入物品日志
                                 reservationDao.insertReservationLog(clientTracking.getSyn_ship_no(), "Sim LA Port Shipment", getTaskName());
                             }
                             else  if (port.equals(PortConfigEnums.Port.CN.getId())) {
                                 // 更新物品状态
-                                reservationDao.UpdateReservationStatus(clientTracking.getSyn_ship_no(), CodeConstants.Reservation_Status.ShippedCN, getTaskName());
+                                reservationDao.UpdateReservationStatus(clientTracking.getSyn_ship_no(), CodeConstants.Reservation_Status.ShippedCN, "2",getTaskName());
 
                                 // 插入物品日志
                                 reservationDao.insertReservationLog(clientTracking.getSyn_ship_no(), "Sim CN Port Shipment", getTaskName());

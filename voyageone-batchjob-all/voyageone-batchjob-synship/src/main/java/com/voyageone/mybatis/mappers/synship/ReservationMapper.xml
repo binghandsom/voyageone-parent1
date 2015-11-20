@@ -27,6 +27,7 @@
             tt_reservation
         SET
             status = #{status},
+            close_day_flg = #{close_day_flg},
             update_time = now(),
             update_person = #{task_name}
         WHERE

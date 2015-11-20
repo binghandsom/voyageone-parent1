@@ -25,7 +25,8 @@ public class SetPriceUtils {
      * @param order_channel_id  渠道ID
      * @param fileFlg 0，3 正常订单
      *                  1，2 退货订单
-     *                  4 不含运费订单
+     *                  4 不含运费订单 正常订单
+     *                  5 不含运费订单 Cancel,Return订单
      * @return List<SpaldingPriceBean>
      */
     public static  List<SetPriceBean> setPrice(String order_number,String order_channel_id,String cart_id,int fileFlg)  throws Exception{
@@ -47,6 +48,8 @@ public class SetPriceUtils {
             priceReportDatas = setPriceDao.getReturnedPriceData(order_number, order_channel_id, cart_id);
         } else if(fileFlg == 4) {
             priceReportDatas = setPriceDao.getPriceDataNotIncludeShipping(order_number, order_channel_id, cart_id);
+        } else if(fileFlg == 5) {
+            priceReportDatas = setPriceDao.getPriceDataNotIncludeShippingForCancelOrReturn(order_number, order_channel_id, cart_id);
         }
 
         if (priceReportDatas != null && priceReportDatas.size() > 0){

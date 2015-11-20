@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.oms.sql">
+
+	<!-- 取得逻辑库存信息 -->
+	<select id="wms_bt_inventory_center_logic_getQuantity" parameterType="HashMap" resultType="int">
+		select
+			qty_china
+		from
+			wms_bt_inventory_center_logic inventory
+		where
+			inventory.order_channel_id = #{orderChannelId} and
+			inventory.sku = #{sku}
+	</select>
+</mapper>
