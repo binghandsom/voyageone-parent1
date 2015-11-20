@@ -719,6 +719,20 @@
                                 </div>
                             </div>
 
+                            <div class="row mt-sm form-horizontal">
+                                <label class="col-xs-3 control-label" translate="TXT_ACCOUNTING_RATE"></label>
+
+                                <div class="form-group">
+                                    <div class="col-xs-2">
+                                        <input type="text" ng-model="selectedOrder.orderInfo.rate" readonly class="form-control input-sm c_gray"/>
+                                    </div>
+                                    <div class="col-xs-2">
+                                        <!--<input type="text" ng-model="selectedOrder.orderInfo.currency" readonly class="form-control input-sm c_gray"/>-->
+                                        <span class="label label-default bg-white c_blue" ng-bind="selectedOrder.orderInfo.currency"></span>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="row mt-sm form-horizontal" ng-if="selectedOrder.orderInfo.orderChannelId == '008'">
                                 <label class="col-xs-3 control-label" translate="TXT_ORDER_CANCEL_RM_ORDER"></label>
 

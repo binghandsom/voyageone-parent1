@@ -11,7 +11,7 @@ import com.voyageone.common.configs.beans.ThirdPartyConfigBean;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.FileUtils;
-import org.apache.commons.lang3.StringUtils;
+import com.voyageone.common.util.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -125,7 +125,9 @@ import java.util.List;
                         bulkShipmentHeadBean.setShip_via_code(head.get(5));
                         bulkShipmentHeadBean.setTracking_num(head.get(6));
                         bulkShipmentHeadBean.setShipping_material(head.get(7));
-                        //bulkShipmentHeadBean.setCancel_flag(head.get(8));
+                        if (lineTxt.length() > 104) {
+                            bulkShipmentHeadBean.setCancel_flag(lineTxt.substring(104, 105));
+                        }
 
                         bulkShipmentBean.setBulkShipmentHead(bulkShipmentHeadBean);
                     }
@@ -205,7 +207,7 @@ import java.util.List;
 
                     for (bulkShipmentDetailBean bulkShipmentDetailBean : bulkShipmentBean.getBulkShipmentDetails()) {
                         //wms_bt_client_package_item
-                        ClientPackageItemBean clientPackageItemBean = setClientPackageItem(shipmentId,packageId,bulkShipmentDetailBean);
+                        ClientPackageItemBean clientPackageItemBean = setClientPackageItem(shipmentId,packageId,clientShipmentBean.getBrand(),bulkShipmentDetailBean);
                         clientShipmentDao.insertClientPackageItem(clientPackageItemBean);
                     }
                 }
@@ -277,7 +279,7 @@ import java.util.List;
      * @param bulkShipmentDetailBean 明细文件
      * @return ClientPackageItemBean
      */
-    private ClientPackageItemBean setClientPackageItem(long shipmentId, long packageId, bulkShipmentDetailBean bulkShipmentDetailBean){
+    private ClientPackageItemBean setClientPackageItem(long shipmentId, long packageId, String brand,  bulkShipmentDetailBean bulkShipmentDetailBean){
         ClientPackageItemBean clientPackageItemBean = new ClientPackageItemBean();
 
         clientPackageItemBean.setShipment_id(shipmentId);
@@ -287,12 +289,16 @@ import java.util.List;
         clientPackageItemBean.setSto_line_no(bulkShipmentDetailBean.getLips_posnr());
         clientPackageItemBean.setArticle_number(bulkShipmentDetailBean.getLips_matnr());
         clientPackageItemBean.setShipped_qty(bulkShipmentDetailBean.getDlv_qty());
+        if (!StringUtils.isNullOrBlank2(bulkShipmentDetailBean.getDlv_qty())) {
+            clientPackageItemBean.setCalc_qty(Integer.valueOf(bulkShipmentDetailBean.getDlv_qty()));
+        }
         clientPackageItemBean.setFact_unit_nom(bulkShipmentDetailBean.getFact_unit_nom());
         clientPackageItemBean.setBase_uom(bulkShipmentDetailBean.getBase_uom());
         clientPackageItemBean.setStock_type(bulkShipmentDetailBean.getStock_type());
         clientPackageItemBean.setSite(bulkShipmentDetailBean.getPlant());
         clientPackageItemBean.setShipping_point(bulkShipmentDetailBean.getStge_loc());
         clientPackageItemBean.setUpc(bulkShipmentDetailBean.getUpc());
+        clientPackageItemBean.setBrand(brand);
         clientPackageItemBean.setActive("1");
         clientPackageItemBean.setCreated(DateTimeUtil.getNow());
         clientPackageItemBean.setCreater(getTaskName());

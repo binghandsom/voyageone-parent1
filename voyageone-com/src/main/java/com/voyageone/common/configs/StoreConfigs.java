@@ -1,17 +1,16 @@
 package com.voyageone.common.configs;
 
-import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Enums.StoreConfigEnums;
 import com.voyageone.common.configs.beans.StoreBean;
 import com.voyageone.common.configs.beans.StoreConfigBean;
 import com.voyageone.common.configs.dao.StoreConfigDao;
-import com.voyageone.common.util.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 访问 wms_mt_store 表配置
@@ -26,7 +25,7 @@ public class StoreConfigs {
     /**
      * 初始化仓库相关的基本信息和配置信息
      *
-     * @param storeConfigDao       用于获取基本信息
+     * @param storeConfigDao 用于获取基本信息
      */
     public static void init(StoreConfigDao storeConfigDao) {
 
@@ -48,8 +47,9 @@ public class StoreConfigs {
 
     /**
      * 获取指定渠道、仓库ID的基本信息
+     *
      * @param order_channel_id 订单渠道
-     * @param store_id 仓库ID
+     * @param store_id         仓库ID
      * @return StoreBean
      */
     public static StoreBean getStore(String order_channel_id, long store_id) {
@@ -59,7 +59,7 @@ public class StoreConfigs {
         }
 
         StoreBean resultStore = null;
-        for (StoreBean storeBean : allStores){
+        for (StoreBean storeBean : allStores) {
             if (storeBean.getOrder_channel_id().equals(order_channel_id) &&
                     storeBean.getStore_id() == store_id) {
                 resultStore = storeBean;
@@ -73,6 +73,7 @@ public class StoreConfigs {
 
     /**
      * 获取指定仓库ID的基本信息
+     *
      * @param store_id 仓库ID
      * @return StoreBean
      */
@@ -83,7 +84,7 @@ public class StoreConfigs {
         }
 
         StoreBean resultStore = null;
-        for (StoreBean storeBean : allStores){
+        for (StoreBean storeBean : allStores) {
             if (storeBean.getStore_id() == store_id) {
                 resultStore = storeBean;
                 break;
@@ -96,6 +97,7 @@ public class StoreConfigs {
 
     /**
      * 获取指定渠道的仓库信息
+     *
      * @param order_channel_id 订单渠道
      * @return List<StoreBean>
      */
@@ -104,20 +106,15 @@ public class StoreConfigs {
             logger.error("====== StoreConfig 没有初始化，必须先调用 init");
             return null;
         }
-        List<StoreBean> channelStoreList = new ArrayList<StoreBean>();
-        for (StoreBean bean : allStores) {
-            if (order_channel_id.equals(bean.getOrder_channel_id())) {
-                channelStoreList.add(bean);
-            }
-        }
-        return channelStoreList;
+        return allStores.stream().filter(bean -> order_channel_id.equals(bean.getOrder_channel_id())).collect(Collectors.toList());
     }
 
     /**
      * 获取指定渠道的仓库信息
+     *
      * @param order_channel_id 订单渠道
-     * @param defaultAll 是否包含All选项
-     * @param includeVirtual 是否包含虚拟仓库
+     * @param defaultAll       是否包含All选项
+     * @param includeVirtual   是否包含虚拟仓库
      * @return List<StoreBean>
      */
     public static List<StoreBean> getChannelStoreList(String order_channel_id, boolean defaultAll, boolean includeVirtual) {
@@ -142,8 +139,7 @@ public class StoreConfigs {
                 // 是否包含虚拟仓库
                 if (includeVirtual) {
                     channelStoreList.add(bean);
-                }
-                else if (StoreConfigEnums.Kind.REAL.getId().equals(bean.getStore_kind())) {
+                } else if (StoreConfigEnums.Kind.REAL.getId().equals(bean.getStore_kind())) {
                     channelStoreList.add(bean);
                 }
             }
@@ -167,7 +163,8 @@ public class StoreConfigs {
 
     /**
      * 获取指定渠道的仓库信息
-     * @param defaultAll 是否包含All选项
+     *
+     * @param defaultAll     是否包含All选项
      * @param includeVirtual 是否包含虚拟仓库
      * @return List<StoreBean>
      */
@@ -192,8 +189,7 @@ public class StoreConfigs {
             // 是否包含虚拟仓库
             if (includeVirtual) {
                 storeList.add(bean);
-            }
-            else if (StoreConfigEnums.Kind.REAL.getId().equals(bean.getStore_kind())) {
+            } else if (StoreConfigEnums.Kind.REAL.getId().equals(bean.getStore_kind())) {
                 storeList.add(bean);
             }
         }
@@ -223,10 +219,7 @@ public class StoreConfigs {
                 map.put(name, config);
                 put(id, map);
             } catch (IllegalArgumentException e) {
-                logger.warn("=== StoreConfig.Configs.put ===");
-                logger.warn(e);
-                logger.warn(e.getMessage());
-                logger.warn(String.format("Store: %s ; Name: %s", config.getStore_id(), config.getCfg_name()));
+                logger.warn(String.format("StoreConfigs 枚举匹配警告: [%s] NO \"%s\"", config.getStore_id(), config.getCfg_name()));
             }
         }
     }
@@ -241,7 +234,7 @@ public class StoreConfigs {
 
         public void put(StoreConfigEnums.Name name, StoreConfigBean config) {
             if (!containsKey(name)) {
-                super.put(name, new ArrayList<StoreConfigBean>());
+                super.put(name, new ArrayList<>());
             }
 
             get(name).add(config);

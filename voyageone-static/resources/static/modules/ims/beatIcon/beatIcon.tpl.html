@@ -84,10 +84,10 @@
             </div>
             <div class="col-sm-7 text-right">
               <div class="btn-group">
-                <button class="btn btn-default btn-sm" ng-click="ctrl.selected.flg = null;ctrl.reloadData(1)">
+                <button class="btn btn-default btn-sm" ng-class="{active: ctrl.selected.flg == info.flgValue}" ng-click="ctrl.selected.flg = null;ctrl.reloadData(1)">
                   显示所有
                 </button>
-                <button class="btn btn-default btn-sm" ng-repeat="info in ctrl.beatSummary" ng-click="ctrl.selected.flg = info.flgValue;ctrl.reloadData(1)">
+                <button class="btn btn-default btn-sm" ng-class="{active: ctrl.selected.flg == info.flgValue}" ng-repeat="info in ctrl.beatSummary" ng-click="ctrl.selected.flg = info.flgValue;ctrl.reloadData(1)">
                   显示 {{ info.cnName + ":" + info.count }}
                 </button>
                 <button ng-click="ctrl.reloadData(1)" type="button" class="btn btn-info btn-sm">

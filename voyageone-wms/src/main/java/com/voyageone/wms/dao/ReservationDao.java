@@ -52,7 +52,7 @@ public class ReservationDao extends BaseDao {
      * @param params 对象
      * @return List<FromReservation>
      */
-    public String getChangeStoreFlg(String params) {
+    public String getChangeStoreFlg(FormReservation params) {
         String change_store_flg = "1";
         int result = selectOne(Constants.DAO_NAME_SPACE_WMS + "wms_reservation_getChangeStoreFlg", params);
 
@@ -332,6 +332,24 @@ public class ReservationDao extends BaseDao {
         params.put("store_id", store_id);
 
         return updateTemplate.selectOne(Constants.DAO_NAME_SPACE_WMS + "wms_reservation_getLocationBySKU", params);
+
+    }
+
+    /**
+     * 获得可品牌方SKU
+
+     * @param order_channel_id 物品的状态
+     * @param sku 用户所属的仓库
+     * @return String
+     */
+    public String getClientSku(String order_channel_id,String  sku) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("order_channel_id", order_channel_id);
+        params.put("sku", sku);
+
+        return updateTemplate.selectOne(Constants.DAO_NAME_SPACE_WMS + "wms_reservation_getClientSKU", params);
 
     }
 

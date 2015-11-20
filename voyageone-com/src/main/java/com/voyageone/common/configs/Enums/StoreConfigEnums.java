@@ -26,7 +26,17 @@ public class StoreConfigEnums {
         /**
          * 客户库存同步
          */
-        client_inventory_syn_type
+        client_inventory_syn_type,
+
+        /**
+         * 公司ID
+         */
+        site,
+
+        /**
+         * 库存位置编码
+         */
+        storage_location
     }
 
     /**
@@ -46,6 +56,31 @@ public class StoreConfigEnums {
         private String id;
 
         Manager(String id) {
+            this.id = id;
+        }
+
+        public String getId() {
+            return id;
+        }
+    }
+
+    /**
+     * 销售管理
+     */
+    public enum Sale {
+
+        /**
+         * 不管理
+         */
+        NO("0"),
+        /**
+         * 管理
+         */
+        YES("1");
+
+        private String id;
+
+        Sale(String id) {
             this.id = id;
         }
 

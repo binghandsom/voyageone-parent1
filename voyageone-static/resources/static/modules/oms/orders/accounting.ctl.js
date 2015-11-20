@@ -21,8 +21,15 @@ define (function (require) {
 
             var _ = require ('underscore');
 
-            // settlement文件检索条件初始化
+            // 上传文件条件初始化
+            $scope.upload = {};
+            // Settlement 文件默认选中
+            $scope.upload.fileType = "1";
+
+            // Accounting文件检索条件初始化
             $scope.search = {};
+            // Settlement 文件默认选中
+            $scope.search.fileType = "1";
             // 给所有listbox设置初始值
             $scope.search.propertySelected = "";
             $scope.search.shoppingCartSelected = "";
@@ -88,6 +95,11 @@ define (function (require) {
                     }
                     return;
                 };
+                fileItem.formData = [
+                    {
+                        fileType: $scope.upload.fileType
+                    }
+                ];
                 fileItem.upload();
             };
 

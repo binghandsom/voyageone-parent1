@@ -24,6 +24,8 @@ public class FeedDealObject {
 
     private String sku;
 
+    private String client_sku;
+
     /**
      * @return the channelId
      */
@@ -134,6 +136,13 @@ public class FeedDealObject {
      */
     public void setSku(String sku) {
         this.sku = sku;
+    }
+    public String getClient_sku() {
+        return client_sku;
+    }
+
+    public void setClient_sku(String client_sku) {
+        this.client_sku = client_sku;
     }
 
 }

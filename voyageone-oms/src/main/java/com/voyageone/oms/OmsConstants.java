@@ -570,11 +570,23 @@ public interface OmsConstants {
 	public static final String DEFAULT_CALCULATION_ERROR = "1";
 
 	//	财务文件相关
+	//	文件类型
+	public static final class AccountingFileType {
+		public static final String SettlementFile = "1";
+		public static final String TransactionFile = "2";
+	}
+
 	//	账务方式 识别子
 	public static final class AccountKindIdentify {
+		//	Settlement 文件
 		public static final String TG = "Partner_transaction_id";
+		public static final String TG2 = "Amount";
+
 		public static final String WX = "交易时间";
 		public static final String TM = "#支付宝账务明细查询";
+
+		//	Transaction 文件
+		public static final String TGForTran = "Transaction_id";
 	}
 
 	//	业务类型

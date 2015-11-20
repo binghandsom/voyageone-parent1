@@ -295,6 +295,10 @@ public class ChannelConfigEnums {
          */
         is_true_name_check,
         /**
+         * 订单地址包含菜鸟驿站的限制
+         */
+        is_cainiaoyizhan_check,
+        /**
          * 渠道允许发货数量（0：代表不用检查）
          */
         shipping_num,
@@ -357,10 +361,25 @@ public class ChannelConfigEnums {
         /**
          * 短信客服号
          */
-        sms_add_serial
+        sms_add_serial,
+        /**
+         * 强制发货渠道仓库
+         */
+        ship_store_channel,
+        /**
+         * SMS用户密码(营销)
+         */
+        sms_password_marketing,
+        /**
+         * SMS用户(营销)
+         */
+        sms_user_marketing,
+        /**
+         * 短信客服号(营销)
+         */
+        sms_add_serial_marketing
 
-
-        }
+    }
 
     /**
      * 对应 tm_order_channel 表中存在的所有渠道ID
@@ -596,6 +615,32 @@ public class ChannelConfigEnums {
 
         public String getType() {
             return type;
+        }
+    }
+
+    /**
+     * 是否允许捡货或收货
+     *
+     * @author Jack
+     */
+    public enum Reserve {
+        /**
+         * 不允许
+         */
+        NO("0"),
+        /**
+         * 允许
+         */
+        YES("1");
+
+        private String is;
+
+        Reserve(String is) {
+            this.is = is;
+        }
+
+        public String getIs() {
+            return is;
         }
     }
 

@@ -60,6 +60,7 @@ define([
         vm.scan = {
             no:"",
             mode:"Scan",
+            permit:"",
             pickupType:"",
             pickupTypeName:"",
             pickupStatus:"",
@@ -114,6 +115,7 @@ define([
             vm.scan.relabelTypeName = response.data.relabelTypeName;
             vm.scan.relabelStatus = response.data.relabelStatus;
             vm.scan.relabelPort = response.data.relabelPort;
+            vm.scan.permit = response.data.permit;
 
             // 扫描项目的初期说明
             $('#scanNo').attr('placeholder',vm.scan.pickupTypeName).focus();
@@ -174,6 +176,11 @@ define([
         // 扫描并且打印捡货单
         function scanPickup() {
 
+            if (vm.scan.permit != "1") {
+                notify({"message": "WMS_PICKUP_PERMIT","status":"warning"});
+                return;
+            }
+
             if (vm.scan.mode == "Scan") {
                 vm.scan.scanType = vm.scan.pickupType;
                 vm.scan.scanTypeName = vm.scan.pickupTypeName;
@@ -208,6 +215,11 @@ define([
 
         // 扫描并且打印捡货单
         function relabelPickup() {
+
+            if (vm.scan.permit != "1") {
+                notify({"message": "WMS_PICKUP_PERMIT","status":"warning"});
+                return;
+            }
 
             vm.scan.scanType = vm.scan.relabelType;
             vm.scan.scanTypeName = vm.scan.relabelTypeName;

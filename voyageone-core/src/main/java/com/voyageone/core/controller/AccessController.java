@@ -1,21 +1,18 @@
 package com.voyageone.core.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
-
 import com.voyageone.common.Constants;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.core.CoreConstants;
+import com.voyageone.core.MessageConstants;
+import com.voyageone.core.UrlConstants;
+import com.voyageone.core.ajax.AjaxResponseBean;
+import com.voyageone.core.formbean.InFormLoginUser;
+import com.voyageone.core.init.MessageHelp;
+import com.voyageone.core.modelbean.CompanyBean;
 import com.voyageone.core.modelbean.PermissionBean;
-
+import com.voyageone.core.modelbean.UserSessionBean;
+import com.voyageone.core.service.LoginService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.shiro.crypto.hash.Md5Hash;
@@ -27,15 +24,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.voyageone.core.MessageConstants;
-import com.voyageone.core.UrlConstants;
-import com.voyageone.core.ajax.AjaxResponseBean;
-import com.voyageone.core.formbean.InFormLoginUser;
-import com.voyageone.core.init.MessageHelp;
-import com.voyageone.core.modelbean.CompanyBean;
-import com.voyageone.core.modelbean.UserSessionBean;
-import com.voyageone.core.service.LoginService;
-import com.voyageone.core.utilbean.ConfigConstants;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Scope(Constants.SCOPE_PROTOTYPE)
 @Controller
@@ -51,11 +47,6 @@ public class AccessController {
 
     /**
      * 登陆
-     *
-     * @param request
-     * @param response
-     * @param bean
-     * @param bindingResult
      */
     @RequestMapping(value = "/doLogin", method = RequestMethod.POST)
     public void doLogin(HttpServletRequest request, HttpServletResponse response,
@@ -92,7 +83,7 @@ public class AccessController {
             // 设置用户ID
             user.setUserId((int) userResult.get(0).get("userId"));
             // 取得有权限的公司列表
-            List<Map<String, Object>> companyList = new ArrayList<Map<String, Object>>();
+            List<Map<String, Object>> companyList;
             // 是否是超级用户
             if ((boolean) userResult.get(0).get("is_superuser")) {
                 user.setIsSuperUser();
@@ -114,11 +105,11 @@ public class AccessController {
             user.setSelectCompany(selectCompany);
 
             // 设置权限公司列表
-            List<CompanyBean> permissionCompanies = new ArrayList<CompanyBean>();
-            for (int i = 0; i < companyList.size(); i++) {
+            List<CompanyBean> permissionCompanies = new ArrayList<>();
+            for (Map<String, Object> aCompanyList : companyList) {
                 CompanyBean company = new CompanyBean();
-                company.setCompanyId(Integer.parseInt(companyList.get(i).get("company_id").toString()));
-                company.setCompanyName(companyList.get(i).get("company").toString());
+                company.setCompanyId(Integer.parseInt(aCompanyList.get("company_id").toString()));
+                company.setCompanyName(aCompanyList.get("company").toString());
                 permissionCompanies.add(company);
             }
             user.setPermissionCompanies(permissionCompanies);
@@ -169,16 +160,11 @@ public class AccessController {
         bean.getResponseBean().writeTo(request, response);
 
         // 输出结果出力
-        logger.info(bean.getResponseBean().toString());
-
-        return;
+        logger.debug(bean.getResponseBean().toString());
     }
 
     /**
      * logout
-     *
-     * @param request
-     * @param response
      */
     @RequestMapping(value = "/doLogout", method = RequestMethod.POST)
     public void doLogout(HttpServletRequest request, HttpServletResponse response) {
@@ -193,8 +179,6 @@ public class AccessController {
         if (session != null) {
             session.invalidate();
         }
-
-        return;
     }
 
     /**
@@ -260,7 +244,7 @@ public class AccessController {
         responseBean.writeTo(request, response);
 
         // 输出结果出力
-        logger.info(responseBean.toString());
+        logger.debug(responseBean.toString());
     }
 
     /**
@@ -294,7 +278,6 @@ public class AccessController {
 
     /**
      * 将 User 中完整的属性、权限配置，转换为简单的渠道信息
-     * @param user UserSessionBean
      */
     private List<Map<String, String>> getLanguages() {
 

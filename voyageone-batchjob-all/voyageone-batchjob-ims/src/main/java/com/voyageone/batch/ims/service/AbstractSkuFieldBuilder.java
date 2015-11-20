@@ -1,6 +1,7 @@
 package com.voyageone.batch.ims.service;
 
 import com.voyageone.batch.ims.bean.PlatformUploadRunState;
+import com.voyageone.batch.ims.bean.tcb.TaskSignal;
 import com.voyageone.batch.ims.dao.*;
 import com.voyageone.batch.ims.modelbean.CmsModelPropBean;
 import com.voyageone.batch.ims.modelbean.PlatformPropBean;
@@ -25,16 +26,16 @@ public abstract class AbstractSkuFieldBuilder{
     public abstract boolean isYourFood(List<PlatformPropBean> platformProps);
 
     public abstract List buildSkuInfoField(int cartId, String categoryCode, List<PlatformPropBean> platformProps,
-                           List<String> excludeColorValues, CmsModelPropBean cmsModelProp,
+                           CmsModelPropBean cmsModelProp,
                            PlatformUploadRunState.PlatformContextBuildCustomFields contextBuildCustomFields,
-                           Set<String> imageSet);
+                           Set<String> imageSet) throws TaskSignal;
 
     public abstract int updateInventoryField(String orderChannelId,
                                      PlatformUploadRunState.PlatformContextBuildCustomFields contextBuildCustomFields,
                                      List fields);
 
-    public abstract void updateSkuPropImage(Map<String, String> urlMap,
-                            PlatformUploadRunState.PlatformContextBuildCustomFields contextBuildCustomFields);
+    public void updateSkuPropImage(Map<String, String> urlMap,
+                            PlatformUploadRunState.PlatformContextBuildCustomFields contextBuildCustomFields){}
 
     public void setDao(PlatformPropDao platformPropDao, SkuPropValueDao skuPropValueDao, PlatformSkuInfoDao platformSkuInfoDao, SkuInfoDao skuInfoDao, CustomSizePropDao customSizePropDao) {
         this.platformPropDao = platformPropDao;

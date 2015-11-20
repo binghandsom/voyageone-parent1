@@ -77,6 +77,8 @@ public class FormReservation extends AjaxRequestBean {
 	private String change_store_flg;
 	// 货架名称
 	public String  location_name;
+	// 品牌方SKU
+	public String client_sku;
 
 	public int getInProcess_qty() {
 		return inProcess_qty;
@@ -484,6 +486,14 @@ public class FormReservation extends AjaxRequestBean {
 
 	public void setLocation_name(String location_name) {
 		this.location_name = location_name;
+	}
+
+	public String getClient_sku() {
+		return client_sku;
+	}
+
+	public void setClient_sku(String client_sku) {
+		this.client_sku = client_sku;
 	}
 
 	@Override

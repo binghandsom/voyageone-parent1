@@ -71,8 +71,6 @@ public class SuperFeedBcbgBean {
 
     private String A073_KONWA;
 
-    private int update_flg;
-
     public int getId() {
         return id;
     }
@@ -327,13 +325,5 @@ public class SuperFeedBcbgBean {
 
     public void setA073_KONWA(String a073_KONWA) {
         A073_KONWA = a073_KONWA;
-    }
-
-    public int getUpdate_flg() {
-        return update_flg;
-    }
-
-    public void setUpdate_flg(int update_flg) {
-        this.update_flg = update_flg;
     }
 }
