@@ -34,17 +34,9 @@ public class SearsService extends SearsBase {
         if (skuList.size() > 0) {
             skus = "/" + skuList.stream().collect(Collectors.joining(","));
         }
-        if (details) {
-            param.append("product_details=true");
-        }
-        if (price) {
-            if (param.length() > 0) param.append("&");
-            param.append("price=true");
-        }
-        if (availability) {
-            if (param.length() > 0) param.append("&");
-            param.append("availability=true");
-        }
+        param.append("product_details=" + details);
+        param.append("&price=" + price);
+        param.append("&availability=" + availability);
 
         String responseXml = reqSearsApi(searsUrl + "products" + skus, param.toString());
 
@@ -57,30 +49,34 @@ public class SearsService extends SearsBase {
 
     /**
      * 获取库存数据
+     *
      * @param skuList 需要查询的SKU列表最多25个
      * @return
      * @throws Exception
      */
     public ProductResponse getInventory(List<String> skuList) throws Exception {
-        return getProductsBySku(skuList,false,false,true);
+        return getProductsBySku(skuList, false, false, true);
     }
+
     /**
      * 取得Products总数
+     *
      * @return
      * @throws Exception
      */
     public PaginationBean getProductsTotal() throws Exception {
         ProductResponse productResponse = getAllProducts(1, 1);
-        if (productResponse != null ){
+        if (productResponse != null) {
             return productResponse.getPagination();
         }
         return null;
     }
+
     /**
      * 取得所有Product的
      *
-     * @param page         第几页
-     * @param pageSize      每页多少个
+     * @param page     第几页
+     * @param pageSize 每页多少个
      * @return
      * @throws Exception
      */
