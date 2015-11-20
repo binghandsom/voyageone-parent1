@@ -131,7 +131,9 @@ public class ImsPromotionService extends BaseTaskService {
                                     }
                                 }
                             });
-                            tipSkuPromUnitDTOs.add(tipSkuPromUnitDTO);
+                            if(tipSkuPromUnitDTO.getSkuId() != null && tipSkuPromUnitDTO.getSkuId() > 0){
+                                tipSkuPromUnitDTOs.add(tipSkuPromUnitDTO);
+                            }
                         });
                     }
                     tipItemPromDTO.setSkuLevelProms(tipSkuPromUnitDTOs);
