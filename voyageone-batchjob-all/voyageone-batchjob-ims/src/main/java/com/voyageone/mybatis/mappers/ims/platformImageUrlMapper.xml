@@ -3,7 +3,7 @@
 <mapper namespace="com.voyageone.ims.sql">
 
     <!-- 检查检查检查检查检查@Lewis -->
-    <select id="getPlatformImageUrlMap" parameterType="Map" resultType="com.voyageone.batch.ims.bean.ImageUrlMappingBean">
+    <select id="getPlatformImageUrlMap" parameterType="Map" resultType="com.voyageone.batch.ims.modelbean.ImageUrlMappingModel">
        SELECT
             org_image_url AS orgImageUrl,
             platform_image_url AS platformImageUrl
@@ -32,11 +32,11 @@
               #{model.cartId},
               #{model.channelId},
               #{model.orgImageUrl},
-              #{model.plarformImageUrl},
+              #{model.platformImageUrl},
               NOW(),
-              #{model.user},
+              #{model.creater},
               NOW(),
-              #{model.user}
+              #{model.modifier}
             )
         </foreach>
     </insert>

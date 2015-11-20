@@ -79,6 +79,8 @@ public class UploadImageHandler extends UploadWorkloadHandler {
 
         UploadImageResult uploadImageResult = new UploadImageResult();
 
+        List<ImageUrlMappingModel> imageUrlSaveModels = new ArrayList<>();
+
         try {
             // add by lewis 2015/11/16 start...
             // check images
@@ -89,7 +91,7 @@ public class UploadImageHandler extends UploadWorkloadHandler {
             for (ImageUrlMappingModel bean:imageUrlMappingBeans){
                 imageUrlMap.put(bean.getOrgImageUrl(),bean.getPlatformImageUrl());
             }
-            List<ImageUrlMappingModel> imageUrlSaveModels = new ArrayList<>();
+
             // add by lewis 2015/11/16 end...
 
             for (String srcUrl : imageUrlSet) {
@@ -101,7 +103,7 @@ public class UploadImageHandler extends UploadWorkloadHandler {
 
                     ImageUrlMappingModel imageUrlInfo = new ImageUrlMappingModel();
                     imageUrlInfo.setCartId(Integer.valueOf(uploadJob.getCart_id()));
-                    imageUrlInfo.setChannelID(uploadJob.getChannel_id());
+                    imageUrlInfo.setChannelId(uploadJob.getChannel_id());
                     imageUrlInfo.setOrgImageUrl(decodeSrcUrl);
                     imageUrlInfo.setPlatformImageUrl(destUrl);
                     imageUrlInfo.setCreater("uploadProductJob");
@@ -113,13 +115,7 @@ public class UploadImageHandler extends UploadWorkloadHandler {
                 // modified by lewis 2015/11/16 end...
             }
 
-            // add by lewis 2015/11/16 start...
-            if(imageUrlSaveModels.size()>0)
-            {
-                //insert image url
-                imageUrlMappingDao.insertPlatformSkuInfo(imageUrlSaveModels);
-            }
-            // add by lewis 2015/11/16 end...
+
 
             uploadImageResult.setUploadSuccess(true);
         } catch (TaskSignal taskSignal) {
@@ -140,6 +136,15 @@ public class UploadImageHandler extends UploadWorkloadHandler {
             }
             uploadImageResult.setFailCause(failCause);
             logger.error("Fail to upload image: " + failCause);
+        } finally {
+            // add by lewis 2015/11/16 start...
+            if(imageUrlSaveModels.size()>0)
+            {
+                //insert image url
+                imageUrlMappingDao.insertPlatformSkuInfo(imageUrlSaveModels);
+            }
+            // add by lewis 2015/11/16 end...
+
         }
 
         uploadImageTcb.setUploadImageResult(uploadImageResult);

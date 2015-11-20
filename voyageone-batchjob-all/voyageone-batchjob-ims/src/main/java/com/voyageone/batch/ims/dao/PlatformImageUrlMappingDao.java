@@ -40,6 +40,6 @@ public class PlatformImageUrlMappingDao extends BaseDao {
     {
         Map<String, Object> params = new HashMap<>();
         params.put("imgModels", imageUrlInfos);
-        updateTemplate.insert(Constants.DAO_NAME_SPACE_IMS + "ims_mt_platform_imageUrl_mapping", params);
+        updateTemplate.insert(Constants.DAO_NAME_SPACE_IMS + "ims_insertPlatformImageUrl", params);
     }
 }

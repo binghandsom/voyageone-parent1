@@ -7,7 +7,7 @@ public class ImageUrlMappingModel {
 
     private int cartId;
 
-    private String channelID;
+    private String channelId;
 
     private String orgImageUrl;
 
@@ -25,12 +25,12 @@ public class ImageUrlMappingModel {
         this.cartId = cartId;
     }
 
-    public String getChannelID() {
-        return channelID;
+    public String getChannelId() {
+        return channelId;
     }
 
-    public void setChannelID(String channelID) {
-        this.channelID = channelID;
+    public void setChannelId(String channelId) {
+        this.channelId = channelId;
     }
 
     public String getOrgImageUrl() {
