@@ -200,7 +200,8 @@ define(['components/app', 'components/services/language.service', "underscore"],
 
                     //report
                     WMS_INVENTORY_DETAIL_REPORT: 'Inventory Details Report',
-                    WMS_STOCKTAKE_COMPARERES_REPORT: 'Stocktake Compare Result Report'
+                    WMS_STOCKTAKE_COMPARERES_REPORT: 'Stocktake Compare Result Report',
+                    WMS_INCLUDING_RETURN_STORE: 'Including return Store'
                 });
         }]);
 });
