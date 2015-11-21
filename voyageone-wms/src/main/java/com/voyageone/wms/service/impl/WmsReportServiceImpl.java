@@ -1,8 +1,12 @@
 package com.voyageone.wms.service.impl;
 
+import com.voyageone.common.configs.Enums.StoreConfigEnums;
+import com.voyageone.common.configs.StoreConfigs;
+import com.voyageone.common.configs.beans.StoreBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JsonUtil;
 import com.voyageone.core.ajax.AjaxResponseBean;
+import com.voyageone.core.modelbean.ChannelStoreBean;
 import com.voyageone.core.modelbean.PermissionBean;
 import com.voyageone.core.modelbean.UserSessionBean;
 import com.voyageone.wms.dao.ReportDao;
@@ -16,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,9 +59,24 @@ public class WmsReportServiceImpl implements WmsReportService{
 		String date_from = DateTimeUtil.parseStr(DateTimeUtil.getLocalTime(DateTimeUtil.addDays(DateTimeUtil.getDate(), -6), user.getTimeZone()), DateTimeUtil.DEFAULT_DATE_FORMAT);
 		// 获取结束日期（当前日期）
 		String date_to = DateTimeUtil.parseStr(DateTimeUtil.getLocalTime(DateTimeUtil.getNow(), user.getTimeZone()), DateTimeUtil.DEFAULT_DATE_FORMAT);
+
+//		//获取用户仓库(只显示库存不是由品牌方管理的仓库)
+//		ArrayList<ChannelStoreBean> channelStoreList = new ArrayList<>();
+//		ChannelStoreBean channelStoreBean = new ChannelStoreBean();
+//		channelStoreBean.setStore_id(0);
+//		channelStoreBean.setStore_name("ALL");
+//
+//		channelStoreList.add(channelStoreBean);
+//		for (ChannelStoreBean storeBean : user.getCompanyRealStoreList() ) {
+//			StoreBean store = StoreConfigs.getStore(new Long(storeBean.getStore_id()));
+//			if (store.getInventory_manager().equals(StoreConfigEnums.Manager.NO.getId())) {
+//				channelStoreList.add(storeBean);
+//			}
+//		}
+
 		resultMap.put("fromDate", date_from);
 		resultMap.put("toDate", date_to);
-		resultMap.put("userStore", user.getCompanyRealStoreList());
+//		resultMap.put("userStore",channelStoreList);
 		resultMap.put("channel", propertyList);
 		resultDeal(request, response, resultMap);
 	}

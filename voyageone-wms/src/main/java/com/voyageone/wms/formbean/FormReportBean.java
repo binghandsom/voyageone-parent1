@@ -31,6 +31,7 @@ public class FormReportBean extends AjaxRequestBean {
 	private String returns;
 	private String wit;
 	private String currInv;
+	private String store_sale;
 
 	public String getFromDate() {
 		return fromDate;
@@ -134,6 +135,14 @@ public class FormReportBean extends AjaxRequestBean {
 
 	public void setCurrInv(String currInv) {
 		this.currInv = currInv;
+	}
+
+	public String getStore_sale() {
+		return store_sale;
+	}
+
+	public void setStore_sale(String store_sale) {
+		this.store_sale = store_sale;
 	}
 
 	@Override
