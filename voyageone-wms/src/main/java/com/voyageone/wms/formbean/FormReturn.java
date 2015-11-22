@@ -25,6 +25,8 @@ public class FormReturn extends AjaxRequestBean {
 	private String store_id;
 	private String store_name;
 	private String res_id;
+	private String res_status;
+	private String res_status_name;
 	private String barCode;
 	private String sku;
 	private String size;
@@ -423,6 +425,22 @@ public class FormReturn extends AjaxRequestBean {
 
 	public void setLocation_name(String location_name) {
 		this.location_name = location_name;
+	}
+
+	public String getRes_status() {
+		return res_status;
+	}
+
+	public void setRes_status(String res_status) {
+		this.res_status = res_status;
+	}
+
+	public String getRes_status_name() {
+		return res_status_name;
+	}
+
+	public void setRes_status_name(String res_status_name) {
+		this.res_status_name = res_status_name;
 	}
 
 	@Override
