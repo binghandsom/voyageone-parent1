@@ -2,6 +2,7 @@ package com.voyageone.wms.service.impl;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
+import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.Enums.StoreConfigEnums;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.StoreConfigs;
@@ -18,6 +19,7 @@ import com.voyageone.core.modelbean.ChannelStoreBean;
 import com.voyageone.core.modelbean.PermissionBean;
 import com.voyageone.core.modelbean.UserSessionBean;
 import com.voyageone.core.util.PageUtil;
+import com.voyageone.wms.WmsCodeConstants;
 import com.voyageone.wms.WmsConstants;
 import com.voyageone.wms.dao.ReservationDao;
 import com.voyageone.wms.dao.ReservationLogDao;
@@ -445,6 +447,11 @@ public class WmsReturnServiceImpl implements WmsReturnService {
 				formReturn.setLocation_name(formReturn.getStore_name());
 			} else {
 				formReturn.setLocation_name(locationName.split(",")[0]);
+			}
+
+			// 物品状态取得
+			if (!StringUtils.isNullOrBlank2(formReturn.getRes_status())) {
+				formReturn.setRes_status_name(Codes.getCodeName(WmsCodeConstants.Reservation_Status.Name,formReturn.getRes_status()));
 			}
 
 		}
