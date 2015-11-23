@@ -1789,18 +1789,19 @@
       </if>
     </trim>
   </insert>
-  <select id="cms_get_inventory" resultType="HashMap" parameterType="HashMap">
-  	SELECT
-		b.size, 
-		a.qty_china as qtyChina,
-		a.qty_orgin as qtyOrign
-	FROM
-		Synship.wms_bt_inventory_center_logic a
-	LEFT JOIN Synship.wms_bt_item_details b ON a.sku = b.sku
-	WHERE
+	<select id="cms_get_inventory" resultType="HashMap" parameterType="HashMap">
+		SELECT
+		a.size,
+		IFNULL(b.qty_china, 0),
+		IFNULL(b.qty_orgin, 0)
+		FROM
+		Synship.wms_bt_item_details a
+		LEFT JOIN Synship.wms_bt_inventory_center_logic b ON a.sku = b.sku
+		AND a.order_channel_id = b.order_channel_id
+		WHERE
 		a.order_channel_id = #{channelId}
-		AND a.CODE = #{code}
-  </select>
+		AND a.itemcode = #{code}
+	</select>
   
   <insert id="insert_cms_bt_cn_product_price_setting" parameterType="com.voyageone.cms.formbean.ProductPriceSettingBean" >
     insert into cms_bt_cn_product_price_setting
