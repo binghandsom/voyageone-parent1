@@ -1792,8 +1792,8 @@
 	<select id="cms_get_inventory" resultType="HashMap" parameterType="HashMap">
 		SELECT
 		a.size,
-		IFNULL(b.qty_china, 0),
-		IFNULL(b.qty_orgin, 0)
+		IFNULL(b.qty_china, 0) as qtyChina,
+		IFNULL(b.qty_orgin, 0) as qtyOrgin
 		FROM
 		Synship.wms_bt_item_details a
 		LEFT JOIN Synship.wms_bt_inventory_center_logic b ON a.sku = b.sku
