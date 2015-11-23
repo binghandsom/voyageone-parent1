@@ -7,6 +7,7 @@
         <result column="rowno" property="rowNo"/>
         <result column="return_id" property="return_id"/>
         <result column="res_id" property="res_id"/>
+		<result column="res_status" property="res_status"/>
         <result column="order_num" property="order_num"/>
         <result column="sku" property="sku"/>
 		<result column="size" property="size"/>
@@ -23,6 +24,7 @@
         <result column="notes" property="notes"/>
         <result column="store_name" property="store_name"/>
 		<result column="store_id" property="store_id"/>
+		<result column="store_name" property="store_name"/>
         <result column="modifier" property="modifier"/>
         <result column="modified" property="modified"/> 
         <result column="barCode" property="barCode"/>  
@@ -205,6 +207,7 @@
 		select res.order_channel_id,
 				res.id res_id,
 			   res.sku,
+				res.status res_status,
 			   itemDetl.barcode,
 			   res.close_day_flg,
 			   res.order_channel_id,

@@ -200,7 +200,8 @@ define(['components/app', 'components/services/language.service', "underscore"],
 
                     //报表
                     WMS_INVENTORY_DETAIL_REPORT: '库存变更详情报表',
-                    WMS_STOCKTAKE_COMPARERES_REPORT: '盘点比较结果报表'
+                    WMS_STOCKTAKE_COMPARERES_REPORT: '盘点比较结果报表',
+                    WMS_INCLUDING_RETURN_STORE: '包含退货仓库'
                 });
         }]);
 });

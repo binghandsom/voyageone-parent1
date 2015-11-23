@@ -28,11 +28,11 @@
 
     <div class="panel panel-primary">
         <div class="panel-heading">
-            <h3 class="panel-title">Order Items</h3>
+            <h3 class="panel-title">Order Items（Input No：{{ orderNumber }}）</h3>
         </div>
         <table class="table table-bordered table-hover table-condensed">
             <tr class="row row-flow {{returnInfo.selectClass}}" ng-repeat="returnInfo in orderInfo">
-                <td class="col-md-4">
+                <td class="col-md-3">
                     <span class="input-group btn-block">
                         <input readonly class="form-control" type="text" value="{{returnInfo.res_id}}"/>
                     </span>
@@ -42,7 +42,12 @@
                         <input id="popReturnInfo-sku" readonly class="form-control" type="text" value="{{returnInfo.sku}}"/>
                     </div>
                 </td>
-                <td class="col-md-3">
+                <td class="col-md-2">
+                    <div class="input-grou btn-blockp">
+                        <input id="popReturnInfo-status" readonly class="form-control" type="text" value="{{returnInfo.res_status_name}}"/>
+                    </div>
+                </td>
+                <td class="col-md-2">
                     <ui-select ng-model="returnInfo.condition" style="min-width: 150px">
                         <ui-select-match placeholder="select a store">{{$select.selected.name}}</ui-select-match>
                         <ui-select-choices repeat="i.id as i in returnCondition | filter: $select.search">

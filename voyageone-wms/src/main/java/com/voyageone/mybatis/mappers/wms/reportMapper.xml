@@ -14,12 +14,12 @@
 
     <select id="wms_report_getInvDelList" parameterType="com.voyageone.wms.formbean.FormReportBean" resultMap="reportMap">
 		select details.sku,
-			   if(transfer.initInv is null or transfer.initInv = 0, '', transfer.initInv) initInv,
-			   if(transfer.po is null or transfer.po = 0, '', transfer.po) as po,
-			   if(transfer.sell is null or transfer.sell = 0, '', transfer.sell) as sell,
-			   if(transfer.returns is null or transfer.returns = 0, '', transfer.returns) as returns,
-			   if(transfer.wit is null or transfer.wit = 0, '', transfer.wit) as wit,
-			   if(transfer.currInv is null or transfer.currInv = 0, '', transfer.currInv) as currInv
+			   sum(if(transfer.initInv is null or transfer.initInv = 0, '', transfer.initInv)) initInv,
+			   sum(if(transfer.po is null or transfer.po = 0, '', transfer.po)) as po,
+			   sum(if(transfer.sell is null or transfer.sell = 0, '', transfer.sell)) as sell,
+			   sum(if(transfer.returns is null or transfer.returns = 0, '', transfer.returns)) as returns,
+			   sum(if(transfer.wit is null or transfer.wit = 0, '', transfer.wit)) as wit,
+			   sum(if(transfer.currInv is null or transfer.currInv = 0, '', transfer.currInv)) as currInv
 		  from wms_bt_item_details details
 		  left join
 			   (
@@ -51,6 +51,12 @@
 														  where t.order_channel_id = #{order_channel_id}
 						   							        and t.history_time &lt; #{fromDateGMT}
 						   								)
+							<if test="store_sale != 'true' ">
+								and not exists (select 1
+												  from wms_mt_store store
+												  where store.store_id = transfer.store_id
+								                  and store.is_sale = '0')
+							</if>
 						   union ALL
 						  select order_channel_id,
 								 t.store_id,
@@ -59,17 +65,25 @@
 								 0,0,0,0,
 								 t.qty
 							from wms_bt_inventory_history t
-						   where t.history_time = (
+						   where t.order_channel_id = #{order_channel_id}
+							and t.history_time = (
 							   						select ifnull(max(history_time), 0)
 													  from wms_bt_inventory_history t
 													 where t.order_channel_id = #{order_channel_id}
 													   and t.history_time &lt; #{fromDateGMT}
 						   						  )
+							<if test="store_sale != 'true' ">
+								and not exists (select 1
+													from wms_mt_store store
+													where store.store_id = t.store_id
+													and store.is_sale = '0')
+							</if>
 					   ) tempTable
 				   group by order_channel_id, sku, store_id
 		       ) transfer
 			on details.order_channel_id = transfer.order_channel_id and details.sku = transfer.sku
 		 where details.order_channel_id = #{order_channel_id}
+		 group by details.sku
 		 order by details.sku
 	</select>
 

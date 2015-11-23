@@ -36,11 +36,12 @@ define([
                 //库存详情报表，盘点比对结果报表
                 cb.channel = res.data.channel;
                 //库存详情报表
-                cb.userStores = res.data.userStore;
+               // cb.userStores = res.data.userStore;
                 vm.fromDate = res.data.fromDate;
                 vm.toDate = res.data.toDate;
-                vm.store_id = res.data.userStore[0].store_id;
-                vm.order_channel_id = res.data.userStore[0].order_channel_id;
+                vm.store_sale = true;
+                //vm.store_id = res.data.userStore[0].store_id;
+                vm.order_channel_id = res.data.channel[0].propertyId;
             });
         }
 
