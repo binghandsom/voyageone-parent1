@@ -1,8 +1,7 @@
 package com.voyageone.common.components.sears;
 
 import com.voyageone.common.components.sears.base.SearsBase;
-import com.voyageone.common.components.sears.bean.PaginationBean;
-import com.voyageone.common.components.sears.bean.ProductResponse;
+import com.voyageone.common.components.sears.bean.*;
 import com.voyageone.common.util.JaxbUtil;
 import org.springframework.stereotype.Service;
 
@@ -49,13 +48,24 @@ public class SearsService extends SearsBase {
 
     /**
      * 获取库存数据
-     *
-     * @param skuList 需要查询的SKU列表最多25个
+     * @param page
+     * @param pageSize
+     * @param since
      * @return
      * @throws Exception
      */
-    public ProductResponse getInventory(List<String> skuList) throws Exception {
-        return getProductsBySku(skuList, false, false, true);
+    public AvailabilitiesResponse getInventory(Integer page, Integer pageSize,String since) throws Exception {
+        StringBuffer param = new StringBuffer();
+
+        param.append("page=" + page + "&per_page=" + pageSize + "&since=" + java.net.URLEncoder.encode(since, "utf-8"));
+
+        String responseXml = reqSearsApi(searsUrl + "availabilities", param.toString());
+
+        logger.info("Sears response: " + responseXml);
+
+        AvailabilitiesResponse response = JaxbUtil.converyToJavaBean(responseXml, AvailabilitiesResponse.class);
+
+        return response;
     }
 
     /**
@@ -99,5 +109,15 @@ public class SearsService extends SearsBase {
         String response = reqSearsApi(searsUrl + "latest_entry_ids", "");
         logger.info("Sears response: " + response);
         return response;
+    }
+
+    /**
+     * 给Sears推订单
+     * @param order
+     * @return
+     * @throws Exception
+     */
+    public OrderResponse CreateOrder(OrderBean order) throws Exception {
+        return SearsHttpPost(searsUrl+"orders","utf-8",JaxbUtil.convertToXml(order));
     }
 }

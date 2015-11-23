@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
 public class AvailabilityBean {
+    private String itemId;
     private Boolean available;
     private Integer quantity;
 
@@ -27,5 +28,13 @@ public class AvailabilityBean {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
+    }
+
+    public String getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(String itemId) {
+        this.itemId = itemId;
     }
 }

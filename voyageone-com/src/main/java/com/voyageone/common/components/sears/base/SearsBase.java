@@ -1,9 +1,16 @@
 package com.voyageone.common.components.sears.base;
 
+import com.voyageone.common.components.sears.bean.OrderResponse;
 import com.voyageone.common.util.HttpUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Properties;
 
 /**
@@ -70,5 +77,87 @@ public class SearsBase {
             }
         }
         return "";
+    }
+
+    protected OrderResponse SearsHttpPost(String url, String charset,String content) throws Exception {
+
+        HttpURLConnection http = null;
+        OutputStream output = null;
+        BufferedReader in = null;
+        String ret = null;
+        OrderResponse orderResponse = new OrderResponse();
+
+        try {
+            URL u = new URL(url);
+            http = (HttpURLConnection) u.openConnection();
+
+            http.setDoOutput(true);
+            http.setDoInput(true);
+            // 设置连接主机超时（单位：毫秒）
+
+            http.setConnectTimeout(10000);
+            // 设置从主机读取数据超时（单位：毫秒）
+            http.setReadTimeout(10000);
+            // 设定请求的方法为"POST"，默认是GET
+            http.setRequestMethod("POST");
+            // 设定传送的内容类型
+            http.setRequestProperty("Content-Type", "text/xml");
+            http.connect();
+            output = http.getOutputStream();
+            if (charset != null) {
+                output.write(content.getBytes(charset));
+            } else {
+                output.write(content.getBytes());
+            }
+            output.flush();
+            output.close();
+
+            int code = http.getResponseCode();
+
+            StringBuilder sb = new StringBuilder();
+            // 将内存缓冲区中封装好的完整的HTTP请求电文发送到服务端
+
+            if (charset != null) {
+                in = new BufferedReader(new InputStreamReader(code >= 400?http.getErrorStream():http.getInputStream(), charset));
+            } else {
+                in = new BufferedReader(new InputStreamReader(code >= 400?http.getErrorStream():http.getInputStream()));
+            }
+
+            String line = "";
+            while ((line = in.readLine()) != null) {
+                sb.append(line).append("\n");
+            }
+            in.close();
+            http.disconnect();
+            if(code >= 400){
+                orderResponse.setMessage(sb.toString());
+            }else{
+                String orderId = http.getHeaderField("Location").substring(http.getHeaderField("Location").lastIndexOf("/")+1);
+                orderResponse.setOrderId(orderId);
+                orderResponse.setMessage("Succeed");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            if (output != null) {
+                try {
+                    output.close();
+                } catch (IOException ex) {
+                    e.printStackTrace();
+                }
+            }
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException ex) {
+                    e.printStackTrace();
+                }
+            }
+            if (http != null) {
+                http.disconnect();
+            }
+            // 异常发生
+            throw new Exception("HttpPost fail "+e.getMessage());
+        }
+        return orderResponse;
     }
 }
