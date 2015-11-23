@@ -87,10 +87,12 @@
     <update id="cms_zz_worktable_bcbg_superfeed_full_updateStatusByCode">
         UPDATE voyageone_cms.cms_zz_worktable_bcbg_superfeed_full
         JOIN voyageone_cms.cms_zz_worktable_bcbg_styles_full ON styleID = CONCAT(SATNR,'-',COLOR)
-        SET status = #{success_status}
+        SET `status` = #{success_status}
         <where>
-            status = #{target_status}
-        AND CONCAT(SATNR, '-', COLOR) IN (<foreach collection="updatedCodes" item="code" separator=",">#{code}</foreach>)
+            `status` = #{target_status}
+            <if test="updatedCodes != null and updatedCodes.size() > 0">
+              AND styleID IN (<foreach collection="updatedCodes" item="code" separator=",">#{code}</foreach>)
+            </if>
         </where>
     </update>
 </mapper>
