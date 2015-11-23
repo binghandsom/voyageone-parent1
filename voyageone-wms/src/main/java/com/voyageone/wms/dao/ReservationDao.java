@@ -140,13 +140,15 @@ public class ReservationDao extends BaseDao {
     /**
      *  获得订单的物品数
      * @param order_number 订单号
+     * @param scanType 扫描类型
      * @return list sku
      */
-    public List<String> getOrderProductList(long order_number) {
+    public List<String> getOrderProductList(long order_number, String scanType) {
 
         Map<String, Object> params = new HashMap<>();
 
         params.put("order_number", order_number);
+        params.put("scanType", scanType);
 
         return updateTemplate.selectList(Constants.DAO_NAME_SPACE_WMS + "tt_reservation_getProductNum", params);
 
@@ -182,7 +184,7 @@ public class ReservationDao extends BaseDao {
      * @param userName 更新者
      * @return int
      */
-    public int updatePickupStatus(List<Long>reservationList, String scanStatus, String updateStatus, String shipChannel, BigDecimal price, String closeDayFlg, String userName) {
+    public int updatePickupStatus(List<Long>reservationList, String scanStatus, String updateStatus, String shipChannel, BigDecimal price, String closeDayFlg, String userName,String scanType) {
 
         Map<String, Object> params = new HashMap<>();
 
@@ -193,6 +195,7 @@ public class ReservationDao extends BaseDao {
         params.put("price", new BigDecimal(price.doubleValue()).setScale(2, BigDecimal.ROUND_HALF_UP));
         params.put("closeDayFlg", closeDayFlg);
         params.put("userName", userName);
+        params.put("scanType", scanType);
 
         return updateTemplate.insert(Constants.DAO_NAME_SPACE_WMS + "tt_reservation_updatePickupStatus", params);
     }
