@@ -47,7 +47,7 @@ public class SearsAnalysisService extends BaseTaskService {
 
     private static List<String> failurepageList = new ArrayList<>();
 
-    private static final int ThreadPoolCnt = 5;
+    private static final int ThreadPoolCnt = 10;
 
 
     /**
@@ -78,7 +78,7 @@ public class SearsAnalysisService extends BaseTaskService {
 //        clearLastData();
 //
 //        // 取得feedList
-//        getSearsFeedList();
+        getSearsFeedList();
 //
 //        // 取得feed数据
 //        getSearsFeedData();

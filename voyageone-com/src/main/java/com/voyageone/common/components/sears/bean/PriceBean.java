@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class PriceBean {
     private Double sellPrice;
+    private Double intlRegPrice;
 
     public Double getSellPrice() {
         return sellPrice;
@@ -18,5 +19,13 @@ public class PriceBean {
 
     public void setSellPrice(Double sellPrice) {
         this.sellPrice = sellPrice;
+    }
+
+    public Double getIntlRegPrice() {
+        return intlRegPrice;
+    }
+
+    public void setIntlRegPrice(Double intlRegPrice) {
+        this.intlRegPrice = intlRegPrice;
     }
 }
