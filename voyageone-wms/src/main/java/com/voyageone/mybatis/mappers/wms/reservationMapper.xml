@@ -353,8 +353,14 @@
 			tt_reservation
 		WHERE
             order_number = #{order_number}
-		AND
-		    status NOT IN ('96', '97', '98', '99')
+        <choose>
+            <when test="scanType == 1">
+                and status NOT IN ('96', '97', '98', '99')
+            </when>
+            <when test="scanType == 2">
+                and status NOT IN ('96', '97')
+            </when>
+        </choose>
 	  order by sku
     </select>
 
@@ -378,7 +384,17 @@
           update_time = NOW(),
           update_person = #{userName}
         WHERE
-          status = #{scanStatus}
+        <choose>
+            <when test="scanType == 1">
+                status = #{scanStatus}
+            </when>
+            <when test="scanType == 2">
+                (status = #{scanStatus} or status = '99')
+            </when>
+            <otherwise>
+                status = #{scanStatus}
+            </otherwise>
+        </choose>
         <if test="reservationList != null and reservationList.size() != 0">
             AND id in
             <foreach collection="reservationList" item="id"  open="(" separator="," close=")">
