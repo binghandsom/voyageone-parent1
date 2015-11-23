@@ -1799,9 +1799,9 @@ public class OrderInfoImportService {
 		
 		// zip
 		sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
-		String zip = newOrderInfo.getBillingAddressZip();
-		if ("000000".equals(zip) || zip == null) {
-			zip = getZipFromAddress(StringUtils.null2Space2(state), StringUtils.null2Space2(city));
+		String zip = getZipFromAddress(StringUtils.null2Space2(state), StringUtils.null2Space2(city));
+		if (Constants.EMPTY_STR.equals(zip)) {
+			zip = newOrderInfo.getBillingAddressZip();
 		}
 		sqlValueBuffer.append(transferStr(zip));
 		sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
@@ -1857,7 +1857,7 @@ public class OrderInfoImportService {
 		
 		// ship_zip
 		sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
-		sqlValueBuffer.append(transferStr(newOrderInfo.getShippingAddressZip()));
+		sqlValueBuffer.append(transferStr(zip));
 		sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
 		sqlValueBuffer.append(Constants.COMMA_CHAR);
 		
