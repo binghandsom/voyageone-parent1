@@ -18,7 +18,9 @@ public class ProductDetailBean {
     private String productId;
 
     private String brand;
+    private String productName;
     private String description;
+    private String featureDescription;
     private String manufacturerName;
     private String manufacturerPartNumber;
     private String imageUrl;
@@ -64,6 +66,14 @@ public class ProductDetailBean {
         this.productId = productId;
     }
 
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
     public String getBrand() {
         return brand;
     }
@@ -78,6 +88,14 @@ public class ProductDetailBean {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getFeatureDescription() {
+        return featureDescription;
+    }
+
+    public void setFeatureDescription(String featureDescription) {
+        this.featureDescription = featureDescription;
     }
 
     public String getManufacturerName() {
@@ -240,21 +258,21 @@ public class ProductDetailBean {
         this.imageHeight = imageHeight;
     }
 
-    public String getCategory(){
+    public String getCategory() {
         return categorization.toString();
     }
 
-    public List<Specification> getSpecifications(){
+    public List<Specification> getSpecifications() {
         List<Specification> ret = new ArrayList<>();
-        if(productSpecifications != null && productSpecifications.size()>0){
+        if (productSpecifications != null && productSpecifications.size() > 0) {
             ret.addAll(getProductSpecifications());
         }
-        if(commonSpecifications != null && commonSpecifications.size()>0){
+        if (commonSpecifications != null && commonSpecifications.size() > 0) {
             ret.addAll(getCommonSpecifications());
         }
-        if(variantSpecifications != null && variantSpecifications.size()>0){
+        if (variantSpecifications != null && variantSpecifications.size() > 0) {
             ret.addAll(getVariantSpecifications());
         }
-        return  ret;
+        return ret;
     }
 }
