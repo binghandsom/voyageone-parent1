@@ -326,4 +326,8 @@ public class SuperFeedBcbgBean {
     public void setA073_KONWA(String a073_KONWA) {
         A073_KONWA = a073_KONWA;
     }
+
+    public String getStyleID() {
+        return String.format("%s-%s", getSATNR(), getCOLOR());
+    }
 }
