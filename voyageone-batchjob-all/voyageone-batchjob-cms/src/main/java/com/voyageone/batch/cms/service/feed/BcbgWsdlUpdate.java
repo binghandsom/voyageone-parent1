@@ -65,7 +65,7 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
 
         List<ProductsFeedUpdate> feedUpdates = feedMap.get(true);
 
-        if (feedUpdates.size() < 1) {
+        if (feedUpdates == null || feedUpdates.size() < 1) {
             int[] counts = bcbgSuperFeedDao.updateUpdatingSuccess();
             $info("没有商品需要更新. 商品更新信息 Feed [ %s ] [ %s ]", counts[0], counts[1]);
             return;
