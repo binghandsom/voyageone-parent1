@@ -61,7 +61,7 @@
         JOIN voyageone_cms.cms_zz_worktable_bcbg_superfeed b on a.MATNR = b.MATNR
         WHERE b.status = #{status}
         <if test="updatedCodes != null and updatedCodes.size() > 0">
-            AND feedStyleID IN (
+            AND a.feedStyleID IN (
             <foreach collection="updatedCodes" item="code" separator=",">#{code}</foreach>
             )
         </if>
