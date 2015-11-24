@@ -10,7 +10,8 @@ require.config({
   paths: {
     'angular': 'libs/angular.js/1.4.7/angular',
     'angular-translate': 'libs/angular-translate/2.8.1/angular-translate',
-    'angular-block-ui': 'libs/angular-block-ui/0.2.1/angular-block-ui'
+    'angular-block-ui': 'libs/angular-block-ui/0.2.1/angular-block-ui',
+    'css': 'libs/require-css/0.1.8/css'
   },
   shim: {
     'angular-block-ui': ['angular', 'css!libs/angular-block-ui/0.2.1/angular-block-ui.css'],
@@ -20,15 +21,22 @@ require.config({
 });
 
 // Bootstrap App !!
-requirejs([
+require([
   'angular',
   'angular-block-ui',
   'angular-translate'
 ], function (angular) {
-  return angular.module('voyageone.cms.login', [
+  angular.module('voyageone.cms.login', [
     'pascalprecht.translate',
     'blockUI'
   ]).controller('loginController', function($scope, $http) {
-
+    $scope.username = '';
+    $scope.password = '';
+    $scope.isSavePwd = '';
+    $scope.login = function() {
+      alert($scope.username);
+      alert($scope.password);
+    };
   });
+  return angular.bootstrap(document, ['voyageone.cms.login']);
 });
