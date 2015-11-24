@@ -36,7 +36,7 @@ gulp.task('build-angular-com', function () {
     // 包裹整个内容
     .pipe(header(definePrefix))
     .pipe(footer(defineSuffix))
-    // 压缩
+    // 压缩 //
     .pipe(uglify())
     .pipe(sourceMaps.write('./'))
     .pipe(gulp.dest(destDir));
