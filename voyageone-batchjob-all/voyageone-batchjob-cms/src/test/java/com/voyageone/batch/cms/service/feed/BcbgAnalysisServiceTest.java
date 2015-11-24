@@ -33,4 +33,9 @@ public class BcbgAnalysisServiceTest {
     public void testBcbgAnalysisService() {
         bcbgAnalysisService.startup();
     }
+
+    @Test
+    public void testFix() {
+        System.out.println("a'b".replace("'", "\\'"));
+    }
 }
