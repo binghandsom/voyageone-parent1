@@ -7,6 +7,7 @@ var footer = require('gulp-footer');
 var minifyCss = require('gulp-minify-css');
 var uglify = require('gulp-uglify');
 var sourceMaps = require('gulp-sourcemaps');
+var rename = require('gulp-rename');
 var fs = require('fs');
 
 var definePrefix = 'define(function(){\n';
@@ -36,7 +37,7 @@ gulp.task('build-angular-com', function () {
     // 包裹整个内容
     .pipe(header(definePrefix))
     .pipe(footer(defineSuffix))
-    // 压缩 //
+    // 压缩
     .pipe(uglify())
     .pipe(sourceMaps.write('./'))
     .pipe(gulp.dest(destDir));
@@ -79,12 +80,14 @@ gulp.task('build-login-css', function () {
     .pipe(gulp.dest('develop/static/'));
 });
 
-gulp.task('build-login', function () {
-  return gulp.src([
-      'develop/static/css/login.css',
-      'develop/static/css/font-awesome.css'
-    ])
-    .pipe(concat('login.min.css'))
-    .pipe(minifyCss())
-    .pipe(gulp.dest('develop/static/'));
+gulp.task('build-login-app', function () {
+  return gulp.src('develop/login.js')
+    .pipe(ngAnnotate())
+    .pipe(sourceMaps.init())
+    .pipe(uglify())
+    .pipe(rename({extname: '.min.js'}))
+    .pipe(sourceMaps.write('./'))
+    .pipe(gulp.dest('develop/'));
 });
+
+gulp.task('build-login', ['build-login-css', 'build-login-app']);
