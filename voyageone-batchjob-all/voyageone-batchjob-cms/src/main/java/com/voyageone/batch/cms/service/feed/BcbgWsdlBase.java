@@ -93,8 +93,7 @@ abstract class BcbgWsdlBase extends BaseTaskService {
 
     protected List<ImageBean> getImages(ProductBean product) {
 
-        String where = String.format("WHERE %s AND %s = '%s'", getWhereUpdateFlg(),
-                Feed.getVal1(channel, FeedEnums.Name.product_p_code), product.getP_code());
+        String where = String.format("WHERE %s AND %s = '%s'", getWhereUpdateFlg(), Feed.getVal1(channel, FeedEnums.Name.product_p_code), product.getP_code());
 
         List<String> imageArrs = superFeedDao.selectSuperfeedImage(
                 where,
@@ -152,8 +151,7 @@ abstract class BcbgWsdlBase extends BaseTaskService {
         $info("准备批量获取 Model [ %s ] 的 Product", model.getUrl_key());
 
         // 条件则根据类目筛选
-        String where = String.format("WHERE %s AND %s = '%s'", getWhereUpdateFlg(),
-                getProductColumns().getModel_url_key(), fix(model.getUrl_key()));
+        String where = String.format("WHERE %s AND %s = '%s'", getWhereUpdateFlg(), getProductColumns().getModel_url_key(), model.getUrl_key());
 
         List<ProductBean> productBeans = getProductBeans(where);
 
