@@ -52,9 +52,13 @@ public class WmsSimTransferInfoService  extends BaseTaskService {
 
         String process_time = DateTimeUtil.getLocalTime(DateTimeUtil.getDate(), -120);
 
-        int overdueCount = transferDao.deleteTransferHistory( process_time);
+        int transferCount = transferDao.deleteTransferHistory( process_time);
 
-        logger.info("处理过期数据日期："+process_time + "，处理件数："+overdueCount);
+        logger.info("处理过期Transfer数据日期："+process_time + "，处理件数："+transferCount);
+
+        int inventoryCount = clientInventoryDao.deleteClientInventoryHistory(process_time);
+
+        logger.info("处理过期InventoryHistory数据日期："+process_time + "，处理件数："+inventoryCount);
 
         // 根据订单渠道运行
         for (final String orderChannelID : orderChannelIdList) {
