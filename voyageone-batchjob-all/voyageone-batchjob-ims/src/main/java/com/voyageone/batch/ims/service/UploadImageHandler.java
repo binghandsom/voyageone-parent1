@@ -231,8 +231,8 @@ public class UploadImageHandler extends UploadWorkloadHandler {
                 throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(failCause, true));
             } else if (pictureUploadResponse.getErrorCode() != null) {
                 String failCause = "上传图片到天猫时，错误:" + pictureUploadResponse.getErrorCode() + ", " + pictureUploadResponse.getMsg();
-                    logger.error(failCause);
-                    logger.error("上传图片到天猫时，sub错误:" + pictureUploadResponse.getSubCode() + ", " + pictureUploadResponse.getSubMsg());
+                logger.error(failCause);
+                logger.error("上传图片到天猫时，sub错误:" + pictureUploadResponse.getSubCode() + ", " + pictureUploadResponse.getSubMsg());
                 throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(failCause));
             }
             Picture picture = pictureUploadResponse.getPicture();
@@ -260,13 +260,6 @@ public class UploadImageHandler extends UploadWorkloadHandler {
         if (uploadProductTcb != null) {
             uploadJob.getUploadProductHandler().stopTcb(uploadProductTcb);
         }
-    }
-
-    public static void main(String[] args) {
-        String plain = "http://s7d5.scene7.com/is/image/sneakerhead/bcbg_1200_1200?$1200x1200$&$big=IZD1U885_001";
-        String encode = encodeImageUrl(plain);
-        System.out.println(encode);
-        System.out.println(decodeImageUrl(encode));
     }
 
     public static String encodeImageUrl(String plainValue) {
