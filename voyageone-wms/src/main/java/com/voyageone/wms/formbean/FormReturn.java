@@ -25,6 +25,8 @@ public class FormReturn extends AjaxRequestBean {
 	private String store_id;
 	private String store_name;
 	private String res_id;
+	private String res_status;
+	private String res_status_name;
 	private String barCode;
 	private String sku;
 	private String size;
@@ -63,6 +65,7 @@ public class FormReturn extends AjaxRequestBean {
 	private String reservationLog_notes;
 	private String returnType_name;
 	private String label_type;
+	private String location_name;
 
 	public String getReservationLog_notes() {
 		return reservationLog_notes;
@@ -414,6 +417,30 @@ public class FormReturn extends AjaxRequestBean {
 
 	public void setLabel_type(String label_type) {
 		this.label_type = label_type;
+	}
+
+	public String getLocation_name() {
+		return location_name;
+	}
+
+	public void setLocation_name(String location_name) {
+		this.location_name = location_name;
+	}
+
+	public String getRes_status() {
+		return res_status;
+	}
+
+	public void setRes_status(String res_status) {
+		this.res_status = res_status;
+	}
+
+	public String getRes_status_name() {
+		return res_status_name;
+	}
+
+	public void setRes_status_name(String res_status_name) {
+		this.res_status_name = res_status_name;
 	}
 
 	@Override

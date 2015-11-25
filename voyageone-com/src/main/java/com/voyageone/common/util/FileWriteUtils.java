@@ -86,14 +86,14 @@ public class FileWriteUtils {
             // 负数判定
             boolean isNegative = isInputStringNegative(inputString);
 
+            // 负号去除
+            if (isNegative) {
+                inputString = inputString.substring(1, inputString.length());
+            }
+
             if (formatContent.contains(".")) {
                 String[] formatContentArr = formatContent.split("\\.");
                 String numericLength = formatContentArr[0];
-
-                // 负号去除
-                if (isNegative) {
-                    inputString = inputString.substring(1, inputString.length());
-                }
 
                 if (inputString.contains(".")) {
                     double numericDouble = Double.parseDouble(inputString);

@@ -168,6 +168,15 @@ public interface OmsCodeConstants {
 	 * 渠道ID
 	 */
 	public static final class OrderChannelId {
+		// SN
+		public final static String SN = "001";
+		// PA
+		public final static String PA = "002";
+		// JC
+		public final static String JC = "004";
+		// BHFO
+		public final static String BHFO = "006";
+
 		// 斯伯丁官方旗舰店
 		public final static String SP = "005";
 		// Champion海外旗舰店

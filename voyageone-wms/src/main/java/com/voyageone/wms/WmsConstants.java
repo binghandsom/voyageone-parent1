@@ -119,19 +119,43 @@ public final class WmsConstants {
             public final static String RPT_NAME = "SalesDetailsInventory";
             public final static String RPT_SUFFIX = ".xlsx";
             public final static String RPT_SHEET_NAME = "SalesDetailsInventory";
-            public final static int TEMPLATE_SHEET_NO = 0;
-            public final static int TEMPLATE_FIRSTROW_NO = 2;
-            public final static int COLNUM = 7;
-            public final static class Col{
-                public final static int COLNUM_SKU = 1;
-                public final static int COLNUM_INITINV = 2;
-                public final static int COLNUM_PO = 3;
-                public final static int COLNUM_SELL = 4;
-                public final static int COLNUM_RETURN = 5;
-                public final static int COLNUM_WIT = 6;
-                public final static int COLNUM_CURRINV = 7;
+            public final static class RptType1 {
+                public final static int TEMPLATE_SHEET_NO = 0;
+                public final static int TEMPLATE_FIRSTROW_NO = 2;
+                public final static int START = 1;
+                public final static int COLNUM = 7;
+
+                public final static class Col {
+                    public final static int COLNUM_SKU = 1;
+                    public final static int COLNUM_INITINV = 2;
+                    public final static int COLNUM_PO = 3;
+                    public final static int COLNUM_SELL = 4;
+                    public final static int COLNUM_RETURN = 5;
+                    public final static int COLNUM_WIT = 6;
+                    public final static int COLNUM_CURRINV = 7;
+                }
+            }
+            public final static class RptType2 {
+                public final static int TEMPLATE_SHEET_NO = 1;
+                public final static int TEMPLATE_FIRSTROW_NO = 2;
+                public final static int START = 0;
+                public final static int COLNUM = 8;
+
+                public final static class Col {
+                    public final static int COLNUM_MODEL = 0;
+                    public final static int COLNUM_COLOR = 1;
+                    public final static int COLNUM_SIZE = 2;
+                    public final static int COLNUM_INITINV = 3;
+                    public final static int COLNUM_PO = 4;
+                    public final static int COLNUM_SELL = 5;
+                    public final static int COLNUM_RETURN = 6;
+                    public final static int COLNUM_WIT = 7;
+                    public final static int COLNUM_CURRINV = 8;
+                }
             }
         }
+
+
 
         // 盘点比对结果报告模板配置
         public final static class StocktakeCompResRpt {

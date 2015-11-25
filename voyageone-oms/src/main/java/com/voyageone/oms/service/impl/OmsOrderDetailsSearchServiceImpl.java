@@ -1187,7 +1187,7 @@ public class OmsOrderDetailsSearchServiceImpl implements OmsOrderDetailsSearchSe
 			
 			// 订单明细保存
 			logger.info("saveOrderDetail");
-			ret = saveOrderDetail(inFormOrderdetailAdjustmentItem, itemNumber, orderPrice, user);
+			ret = saveOrderDetail(inFormOrderdetailAdjustmentItem, itemNumber, orderPrice, ordersInfo.getOrderChannelId(), user);
 			
 			// 订单金额变更
 			if (ret) {
@@ -1692,7 +1692,7 @@ public class OmsOrderDetailsSearchServiceImpl implements OmsOrderDetailsSearchSe
 	 * 
 	 * @return
 	 */
-	private boolean saveOrderDetail(InFormOrderdetailAdjustmentItem inFormOrderdetailAdjustmentItem, int itemNumber, OrderPrice orderPrice, UserSessionBean user) {
+	private boolean saveOrderDetail(InFormOrderdetailAdjustmentItem inFormOrderdetailAdjustmentItem, int itemNumber, OrderPrice orderPrice, String orderChannelId, UserSessionBean user) {
 		boolean ret = true;
 		
 		// 订单明细
@@ -1731,10 +1731,68 @@ public class OmsOrderDetailsSearchServiceImpl implements OmsOrderDetailsSearchSe
 		orderDetailsInfo.setModifier(user.getUserName());
 		
 		ret = orderDetailDao.insertOrderDetailsInfo(orderDetailsInfo);
-		
+
+		if (ret) {
+			ret = insertExtTable(orderDetailsInfo, orderChannelId);
+		}
+
 		return ret;
 	}
-	
+
+	/**
+	 * 订单明细保存
+	 *
+	 * @param orderDetailsInfo 订单明细
+	 * @param itemNumber 明细番号
+	 * @param orderChannelId 订单渠道
+	 *
+	 * @return
+	 */
+	private boolean insertExtTable(OrderDetailsBean orderDetailsInfo, String orderChannelId) {
+		boolean ret = true;
+
+		boolean isInsertIntoExtTable = isInsertIntoExtTable(orderChannelId);
+		if (isInsertIntoExtTable) {
+			ret = insertExtOrderDetailsInfo(orderDetailsInfo);
+		}
+
+		return ret;
+	}
+
+	/**
+	 * 扩展表是否追加判定
+	 *
+	 * @param orderChannelId 订单渠道
+	 *
+	 * @return
+	 */
+	private boolean isInsertIntoExtTable(String orderChannelId) {
+		boolean ret = false;
+
+		String extOrderInsert = ChannelConfigs.getVal1(orderChannelId, ChannelConfigEnums.Name.ext_order_insert);
+		// 扩展表需要追加的场合
+		if (!StringUtils.isEmpty(extOrderInsert) && "1".equals(extOrderInsert)) {
+			ret = true;
+		}
+
+		return ret;
+	}
+
+	/**
+	 * Ext order details info 保存
+	 *
+	 * @param orderDetailsInfo 订单明细
+	 *
+	 * @return
+	 */
+	private boolean insertExtOrderDetailsInfo(OrderDetailsBean orderDetailsInfo) {
+		boolean ret = true;
+
+		ret = orderDetailDao.insertExtOrderDetailsInfo(orderDetailsInfo);
+
+		return ret;
+	}
+
 	/**
 	 * 订单Note保存
 	 * 
@@ -8361,7 +8419,7 @@ public class OmsOrderDetailsSearchServiceImpl implements OmsOrderDetailsSearchSe
 			
 			// 订单明细保存
 			logger.info("saveOrderDetail");
-			ret = saveOrderDetail(inFormOrderdetailReturn, itemNumber, user);
+			ret = saveOrderDetail(inFormOrderdetailReturn, itemNumber, ordersInfo.getOrderChannelId(),user);
 			
 			// 订单金额变更
 			if (ret) {
@@ -8462,7 +8520,7 @@ public class OmsOrderDetailsSearchServiceImpl implements OmsOrderDetailsSearchSe
 	 * 
 	 * @return
 	 */
-	private boolean saveOrderDetail(InFormOrderdetailReturn inFormOrderdetailReturn, int itemNumber, UserSessionBean user) {
+	private boolean saveOrderDetail(InFormOrderdetailReturn inFormOrderdetailReturn, int itemNumber, String orderChannelId, UserSessionBean user) {
 		boolean ret = true;
 		
 		// product 信息
@@ -8508,6 +8566,10 @@ public class OmsOrderDetailsSearchServiceImpl implements OmsOrderDetailsSearchSe
 			orderDetailsInfo.setModifier(user.getUserName());
 			
 			ret = orderDetailDao.insertOrderDetailsInfo(orderDetailsInfo);
+
+			if (ret) {
+				ret = insertExtTable(orderDetailsInfo, orderChannelId);
+			}
 			
 			if (!ret) {
 				break;

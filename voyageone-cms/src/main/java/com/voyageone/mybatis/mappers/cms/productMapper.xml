@@ -190,13 +190,13 @@
 	FROM
 		cms_bt_cn_product a
 	LEFT JOIN cms_bt_cn_product_extend b ON a.product_id = b.product_id and a.channel_id = b.channel_id
-	LEFT JOIN cms_bt_cn_tm_product_extend f ON f.product_id = a.product_id and f.channel_id = b.channel_id
-	LEFT JOIN cms_bt_cn_jd_product_extend g ON g.product_id = a.product_id and g.channel_id = b.channel_id
-	LEFT JOIN cms_bt_relation_model_product h ON h.product_id = a.product_id and h.channel_id = b.channel_id
-	LEFT JOIN cms_bt_product i ON i.product_id = a.product_id and i.channel_id = b.channel_id
-	LEFT JOIN cms_mt_material_fabric j ON j.material_fabric_id = i.material_fabric_1_id and j.channel_id = b.channel_id
-	LEFT JOIN cms_mt_material_fabric k ON k.material_fabric_id = i.material_fabric_2_id and k.channel_id = b.channel_id
-	LEFT JOIN cms_mt_material_fabric l ON l.material_fabric_id = i.material_fabric_3_id and l.channel_id = b.channel_id
+	LEFT JOIN cms_bt_cn_tm_product_extend f ON f.product_id = a.product_id and f.channel_id = a.channel_id
+	LEFT JOIN cms_bt_cn_jd_product_extend g ON g.product_id = a.product_id and g.channel_id = a.channel_id
+	LEFT JOIN cms_bt_relation_model_product h ON h.product_id = a.product_id and h.channel_id = a.channel_id
+	LEFT JOIN cms_bt_product i ON i.product_id = a.product_id and i.channel_id = a.channel_id
+	LEFT JOIN cms_mt_material_fabric j ON j.material_fabric_id = i.material_fabric_1_id and j.channel_id = a.channel_id
+	LEFT JOIN cms_mt_material_fabric k ON k.material_fabric_id = i.material_fabric_2_id and k.channel_id = a.channel_id
+	LEFT JOIN cms_mt_material_fabric l ON l.material_fabric_id = i.material_fabric_3_id and l.channel_id = a.channel_id
 	LEFT JOIN cms_bt_relation_model_product m ON a.product_id = m.product_id and a.channel_id = m.channel_id
 	LEFT JOIN cms_bt_cn_model n ON m.model_id = n.model_id and m.channel_id = n.channel_id
 	where 
@@ -1789,18 +1789,19 @@
       </if>
     </trim>
   </insert>
-  <select id="cms_get_inventory" resultType="HashMap" parameterType="HashMap">
-  	SELECT
-		b.size, 
-		a.qty_china as qtyChina,
-		a.qty_orgin as qtyOrign
-	FROM
-		Synship.wms_bt_inventory_center_logic a
-	LEFT JOIN Synship.wms_bt_item_details b ON a.sku = b.sku
-	WHERE
+	<select id="cms_get_inventory" resultType="HashMap" parameterType="HashMap">
+		SELECT
+		a.size,
+		IFNULL(b.qty_china, 0) as qtyChina,
+		IFNULL(b.qty_orgin, 0) as qtyOrgin
+		FROM
+		Synship.wms_bt_item_details a
+		LEFT JOIN Synship.wms_bt_inventory_center_logic b ON a.sku = b.sku
+		AND a.order_channel_id = b.order_channel_id
+		WHERE
 		a.order_channel_id = #{channelId}
-		AND a.CODE = #{code}
-  </select>
+		AND a.itemcode = #{code}
+	</select>
   
   <insert id="insert_cms_bt_cn_product_price_setting" parameterType="com.voyageone.cms.formbean.ProductPriceSettingBean" >
     insert into cms_bt_cn_product_price_setting

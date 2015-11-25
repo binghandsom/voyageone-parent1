@@ -41,7 +41,7 @@ public class BcbgSuperFeedDao extends BaseDao {
         return delete("cms_zz_worktable_bcbg_styles_deleteStyles", null);
     }
 
-    public int updateSuccessStatus(List<String> modelFailList, List<String> productFailList) {
+    public int[] updateSuccessStatus(List<String> modelFailList, List<String> productFailList) {
 
         Map<String, Object> params = parameters(
                 "success_status", 20,
@@ -49,18 +49,32 @@ public class BcbgSuperFeedDao extends BaseDao {
                 "modelFailList", modelFailList,
                 "productFailList", productFailList);
 
-        return insert("cms_zz_worktable_bcbg_superfeed_full_updateStatusWithoutFail", params);
+        int count1 = update("cms_zz_worktable_bcbg_superfeed_full_updateStatusWithoutFailModel", params);
+
+        // 必须 product 有数据才执行下一句, 否则会更新全部
+        if (productFailList == null || productFailList.size() < 1)
+            return new int[] { count1, 0 };
+
+        int count2 = update("cms_zz_worktable_bcbg_superfeed_full_updateStatusWithoutFailCode", params);
+
+        return new int[] { count1, count2 };
     }
 
     public int[] updateFull(List<String> updatedCodes) {
 
-        Map<String, Object> params = parameters("updatedCodes", updatedCodes, "status", 30);
+        Map<String, Object> params = parameters(
+                "updatedCodes", updatedCodes,
+                "status", 30,
+                "target_status", 30,
+                "success_status", 40);
 
         int deleteFeedCount = delete("cms_zz_worktable_bcbg_superfeed_full_deleteFullByCode", params);
 
         int insertFeedCount = insert("cms_zz_worktable_bcbg_superfeed_full_insertFullByCode", params);
 
-        return new int[]{deleteFeedCount, insertFeedCount};
+        int updateFeedCount = update("cms_zz_worktable_bcbg_superfeed_full_updateStatusByCode", params);
+
+        return new int[]{deleteFeedCount, insertFeedCount, updateFeedCount};
     }
 
     /**

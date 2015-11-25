@@ -5,7 +5,7 @@
         INSERT INTO voyageone_cms.cms_zz_worktable_bcbg_superfeed
         (MATNR, EAN11, BRAND_ID, MATKL, ZZCODE1, ZZCODE2, ZZCODE3, MEINS, BSTME, COLOR, COLOR_ATWTB, SIZE1,
         SIZE1_ATWTB, SIZE1_ATINN, ATBEZ, SAISO, SAISJ, SAITY, SATNR, MAKTX, WLADG, WHERL, MEAN_EAN11,
-        A304_DATAB, A304_DATBI, A304_KBETR, A304_KONWA, A073_DATAB, A073_DATBI, A073_KBETR, A073_KONWA)
+        A304_DATAB, A304_DATBI, A304_KBETR, A304_KONWA, A073_DATAB, A073_DATBI, A073_KBETR, A073_KONWA, feedStyleID)
         VALUES
         <foreach collection="bcbgBeans" item="bean" separator=",">
             (#{bean.MATNR}, #{bean.EAN11}, #{bean.BRAND_ID}, #{bean.MATKL}, #{bean.ZZCODE1}, #{bean.ZZCODE2},
@@ -13,7 +13,7 @@
             #{bean.SIZE1_ATWTB}, #{bean.SIZE1_ATINN}, #{bean.ATBEZ}, #{bean.SAISO}, #{bean.SAISJ}, #{bean.SAITY},
             #{bean.SATNR}, #{bean.MAKTX}, #{bean.WLADG}, #{bean.WHERL}, #{bean.MEAN_EAN11}, #{bean.A304_DATAB},
             #{bean.A304_DATBI}, #{bean.A304_KBETR}, #{bean.A304_KONWA}, #{bean.A073_DATAB}, #{bean.A073_DATBI},
-            #{bean.A073_KBETR}, #{bean.A073_KONWA})
+            #{bean.A073_KBETR}, #{bean.A073_KONWA}, #{bean.styleID})
         </foreach>
     </insert>
 
@@ -35,21 +35,24 @@
         DELETE FROM voyageone_cms.cms_zz_worktable_bcbg_styles
     </delete>
 
-    <update id="cms_zz_worktable_bcbg_superfeed_full_updateStatusWithoutFail">
+    <update id="cms_zz_worktable_bcbg_superfeed_full_updateStatusWithoutFailModel">
         UPDATE voyageone_cms.cms_zz_worktable_bcbg_superfeed_full
-          JOIN voyageone_cms.cms_zz_worktable_bcbg_styles_full ON styleID = CONCAT(SATNR,'-',COLOR)
-           SET status = #{success_status}
-        <where>
-            status = #{target_status}
-            <if test="modelFailList != null and modelFailList.size() > 0">
-                AND SATNR NOT IN (<foreach collection="modelFailList" item="model" separator=",">#{model}</foreach>)
-            </if>
-            <if test="productFailList != null and productFailList.size() > 0">
-                <if test="modelFailList == null or 1 > modelFailList.size()">AND</if>
-                <if test="modelFailList != null and modelFailList.size() > 0">OR status = #{target_status} AND</if>
-                CONCAT(SATNR, MATNR) NOT IN (<foreach collection="productFailList" item="code" separator=",">#{code}</foreach>)
-            </if>
-        </where>
+          JOIN voyageone_cms.cms_zz_worktable_bcbg_styles_full ON styleID = feedStyleID
+           SET `status` = #{success_status}
+         WHERE `status` = #{target_status}
+        <if test="modelFailList != null and modelFailList.size() > 0">
+            AND SATNR NOT IN (<foreach collection="modelFailList" item="model" separator=",">#{model}</foreach>)
+        </if>
+    </update>
+
+    <update id="cms_zz_worktable_bcbg_superfeed_full_updateStatusWithoutFailCode">
+        UPDATE voyageone_cms.cms_zz_worktable_bcbg_superfeed_full
+          JOIN voyageone_cms.cms_zz_worktable_bcbg_styles_full ON styleID = feedStyleID
+           SET `status` = #{success_status}
+         WHERE `status` = #{target_status}
+        <if test="productFailList != null and productFailList.size() > 0">
+            AND feedStyleID NOT IN (<foreach collection="productFailList" item="code" separator=",">#{code}</foreach>)
+        </if>
     </update>
 
     <delete id="cms_zz_worktable_bcbg_superfeed_full_deleteFullByCode">
@@ -58,7 +61,7 @@
         JOIN voyageone_cms.cms_zz_worktable_bcbg_superfeed b on a.MATNR = b.MATNR
         WHERE b.status = #{status}
         <if test="updatedCodes != null and updatedCodes.size() > 0">
-            AND CONCAT(a.SATNR, '-', a.COLOR) IN (
+            AND a.feedStyleID IN (
             <foreach collection="updatedCodes" item="code" separator=",">#{code}</foreach>
             )
         </if>
@@ -78,9 +81,21 @@
         FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed f1
         WHERE status = #{status}
         <if test="updatedCodes != null and updatedCodes.size() > 0">
-            AND CONCAT(SATNR, '-', COLOR) IN (
+            AND feedStyleID IN (
             <foreach collection="updatedCodes" item="code" separator=",">#{code}</foreach>
             )
         </if>
     </insert>
+
+    <update id="cms_zz_worktable_bcbg_superfeed_full_updateStatusByCode">
+        UPDATE voyageone_cms.cms_zz_worktable_bcbg_superfeed_full
+        JOIN voyageone_cms.cms_zz_worktable_bcbg_styles_full ON styleID = feedStyleID
+        SET `status` = #{success_status}
+        <where>
+            `status` = #{target_status}
+            <if test="updatedCodes != null and updatedCodes.size() > 0">
+              AND styleID IN (<foreach collection="updatedCodes" item="code" separator=",">#{code}</foreach>)
+            </if>
+        </where>
+    </update>
 </mapper>

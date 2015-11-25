@@ -275,4 +275,17 @@ public class InventoryDao extends BaseDao {
         params.put("status", status);
         return selectList(Constants.DAO_NAME_SPACE_WMS + "wms_selectSumInventoryBySKU", params);
     }
+
+    /**
+     * 以仓库SKU集计物理库存
+     * @param order_channel_id
+     * @return
+     */
+    public List<SumInventoryBean> getSumInventoryByStoreSKU(String order_channel_id) {
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("order_channel_id", order_channel_id);
+        return selectList(Constants.DAO_NAME_SPACE_WMS + "wms_selectSumInventoryByStoreSKU", params);
+    }
+
 }
