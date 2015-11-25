@@ -22,10 +22,10 @@
         <module>voyageone-bi</module>
         <module>voyageone-webservice</module>
         <module>voyageone-release</module>
-        <!-- <module>voyageone-static</module> -->
         <module>voyageone-batchjob-all</module>
         <module>voyageone-webservice-synship</module>
         <module>voyageone-wsdl-all</module>
+        <module>voyageone-web2</module>
     </modules>
 
     <repositories>
