@@ -17,12 +17,48 @@ var footerSingle = '})();';
 
 var encode = 'utf8';
 
+// 全部任务的地址或字符串预定义
+var cms = {
+  common: {
+    angular: {
+      src: 'develop/components/angular/*/*.js',
+      dist: 'develop/components/dist',
+      footerFile: 'develop/components/angular/voyageone.angular.com.suffix',
+      concat: 'voyageone.angular.com.min.js'
+    },
+    native: {
+      srcFiles: 'develop/components/js/*.js',
+      destDir: 'develop/components/dist',
+      concatFile: 'voyageone.com.js'
+    }
+  },
+  appCss: '',
+  channel: {
+    css: [
+      'develop/static/css/login.css',
+      'develop/static/css/font-awesome.css'
+    ],
+    js: 'develop/channel.js',
+    concat: ''
+  },
+  login: {
+    css: {
+      src: [
+        'develop/static/css/login.css',
+        'develop/static/css/font-awesome.css'
+      ],
+      concat: 'login.min.css',
+      dist: 'develop/static/'
+    },
+    js: {
+      src: 'develop/login.js',
+      dist: 'develop/'
+    }
+  }
+};
+
 gulp.task('build-angular-com', function () {
-  var srcFiles = 'develop/components/angular/*/*.js';
-  var destDir = 'develop/components/dist';
-  var footerFile = 'develop/components/angular/voyageone.angular.com.suffix';
-  var concatFile = 'voyageone.angular.com.min.js';
-  return gulp.src(srcFiles)
+  return gulp.src(cms.common.angular.src)
     .pipe(debug())
     .pipe(sourceMaps.init())
     // 追加依赖注入语法
@@ -31,22 +67,19 @@ gulp.task('build-angular-com', function () {
     .pipe(header(headerSingle))
     .pipe(footer(footerSingle))
     // 合并到一个文件
-    .pipe(concat(concatFile))
+    .pipe(concat(cms.common.angular.concat))
     // 追加尾部声明
-    .pipe(footer(fs.readFileSync(footerFile, encode)))
+    .pipe(footer(fs.readFileSync(cms.common.angular.footerFile, encode)))
     // 包裹整个内容
     .pipe(header(definePrefix))
     .pipe(footer(defineSuffix))
     // 压缩
     .pipe(uglify())
     .pipe(sourceMaps.write('./'))
-    .pipe(gulp.dest(destDir));
+    .pipe(gulp.dest(cms.common.angular.dist));
 });
 
 gulp.task('build-com', function () {
-  var srcFiles = 'develop/components/js/*.js';
-  var destDir = 'develop/components/dist';
-  var concatFile = 'voyageone.com.js';
   return gulp.src(srcFiles)
     .pipe(debug())
     .pipe(sourceMaps.init())
@@ -71,23 +104,25 @@ gulp.task('build-css-app', function () {
 });
 
 gulp.task('build-login-css', function () {
-  return gulp.src([
-      'develop/static/css/login.css',
-      'develop/static/css/font-awesome.css'
-    ])
-    .pipe(concat('login.min.css'))
+  return gulp.src(cms.login.css.src)
+    .pipe(concat(cms.login.css.concat))
     .pipe(minifyCss())
-    .pipe(gulp.dest('develop/static/'));
+    .pipe(gulp.dest(cms.login.css.dist));
 });
 
 gulp.task('build-login-app', function () {
-  return gulp.src('develop/login.js')
+  return gulp.src(cms.login.js.src)
     .pipe(ngAnnotate())
     .pipe(sourceMaps.init())
     .pipe(uglify())
     .pipe(rename({extname: '.min.js'}))
     .pipe(sourceMaps.write('./'))
-    .pipe(gulp.dest('develop/'));
+    .pipe(gulp.dest(cms.login.js.dist));
 });
 
 gulp.task('build-login', ['build-login-css', 'build-login-app']);
+
+gulp.task('watch', function () {
+  gulp.watch(cms.login.css.src, ['build-login-css']);
+  gulp.watch(cms.login.js.src, ['build-login-app']);
+});
