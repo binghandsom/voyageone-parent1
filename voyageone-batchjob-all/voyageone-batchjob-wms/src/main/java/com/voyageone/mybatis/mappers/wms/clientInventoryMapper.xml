@@ -245,4 +245,11 @@
         )
         values ${values}
     </insert>
+
+    <delete id="wms_deleteClientInventoryHistory">
+        DELETE FROM
+          wms_bt_client_inventory_history
+        WHERE
+          created &lt;= #{process_time}
+    </delete>
 </mapper>

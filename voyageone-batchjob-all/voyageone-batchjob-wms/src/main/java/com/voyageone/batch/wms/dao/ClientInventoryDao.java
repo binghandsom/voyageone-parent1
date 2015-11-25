@@ -180,4 +180,18 @@ public class ClientInventoryDao extends BaseDao {
         dataMap.put("values", tempTable);
         return updateTemplate.insert(Constants.DAO_NAME_SPACE_WMS + "wms_insertClientInventory_commonly", dataMap);
     }
+
+    /**
+     * 将一段时间之前的ClientInventoryHistory删除
+     *
+     * @param process_time 出力时间
+     */
+    public int deleteClientInventoryHistory(String process_time) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("process_time", process_time);
+
+        return updateTemplate.delete(Constants.DAO_NAME_SPACE_WMS + "wms_deleteClientInventoryHistory", process_time);
+    }
 }
