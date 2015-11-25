@@ -9,7 +9,7 @@
 <div class="login-logo"><img src="static/img/voyage_one_logo_3.png"/></div>
 <div class="login" ng-controller="loginController">
     <form class="login-main">
-        <div class="loginSign">password:长度需要在6和50之间</div>
+        <ng-include src="'msg.tpl.html'"></ng-include>
         <ul>
             <li>
                 <input ng-model="username" type="text" class="text" placeholder="Username or Email">
@@ -28,6 +28,9 @@
         <input type="button" value="登录" ng-click="login()">
     </div>
 </div>
+<script type="text/ng-template" id="msg.tpl.html">
+    <div class="loginSign" ng-show="errorMessage">{{errorMessage}}</div>
+</script>
 <script src="libs/require.js/2.1.21/require.js" data-main="login.min"></script>
 </body>
 </html>

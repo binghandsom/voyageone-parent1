@@ -32,10 +32,22 @@ require([
   ]).controller('loginController', function($scope, $http) {
     $scope.username = '';
     $scope.password = '';
-    $scope.isSavePwd = '';
+    $scope.isSavePwd = false;
+    $scope.errorMessage = '';
+
     $scope.login = function() {
-      alert($scope.username);
-      alert($scope.password);
+      if (!$scope.username || !$scope.username.length) {
+        $scope.errorMessage = '用户名必须填写';
+        return;
+      }
+      if (!$scope.password || !$scope.password.length) {
+        $scope.errorMessage = '密码必须填写';
+        return;
+      }
+      $scope.errorMessage = '';
+      $http.post('', {}).then(function(res){
+
+      });
     };
   });
   return angular.bootstrap(document, ['voyageone.cms.login']);
