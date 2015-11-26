@@ -2,37 +2,24 @@ package com.voyageone.batch.wms.service.clientInventory;
 
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.core.Constants;
-import com.voyageone.batch.core.Enums.TaskControlEnums;
-import com.voyageone.batch.core.modelbean.TaskControlBean;
-import com.voyageone.batch.core.util.TaskControlUtils;
 import com.voyageone.batch.wms.WmsConstants;
-import com.voyageone.batch.wms.WmsConstants.updateClientInventoryConstants;
 import com.voyageone.batch.wms.dao.ClientInventoryDao;
-import com.voyageone.batch.wms.dao.ItemDetailDao;
+import com.voyageone.batch.wms.dao.ItemDetailsDao;
 import com.voyageone.batch.wms.modelbean.ClientInventoryBean;
-import com.voyageone.common.components.channelAdvisor.bean.inventory.GetInventoryParamBean;
 import com.voyageone.common.components.channelAdvisor.service.InventoryService;
-import com.voyageone.common.components.channelAdvisor.soap.InventoryResSoapenv;
-import com.voyageone.common.components.channelAdvisor.webservices.ArrayOfInventoryItemResponse;
-import com.voyageone.common.components.channelAdvisor.webservices.InventoryItemResponse;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.sears.SearsService;
-import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.Enums.StoreConfigEnums;
 import com.voyageone.common.configs.StoreConfigs;
-import com.voyageone.common.configs.ThirdPartyConfigs;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.StoreBean;
 import com.voyageone.common.configs.beans.ThirdPartyConfigBean;
 import com.voyageone.common.configs.dao.ThirdPartConfigDao;
-import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.*;
 
 /**
@@ -48,7 +35,7 @@ public abstract class WmsGetClientInvBaseService extends BaseTaskService {
     ThirdPartConfigDao thirdPartConfigDao;
 
     @Autowired
-    ItemDetailDao itemDetailDao;
+    ItemDetailsDao itemDetailsDao;
 
     @Autowired
     InventoryService inventoryService;
