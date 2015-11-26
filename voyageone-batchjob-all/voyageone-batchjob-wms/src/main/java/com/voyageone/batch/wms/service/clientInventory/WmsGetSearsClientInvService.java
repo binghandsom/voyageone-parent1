@@ -3,7 +3,6 @@ package com.voyageone.batch.wms.service.clientInventory;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.wms.WmsConstants.updateClientInventoryConstants;
 import com.voyageone.batch.wms.modelbean.ClientInventoryBean;
-import com.voyageone.batch.wms.modelbean.ItemDetailBean;
 import com.voyageone.batch.wms.modelbean.ItemDetailsBean;
 import com.voyageone.common.components.channelAdvisor.bean.inventory.GetInventoryParamBean;
 import com.voyageone.common.components.sears.bean.AvailabilitiesResponse;
