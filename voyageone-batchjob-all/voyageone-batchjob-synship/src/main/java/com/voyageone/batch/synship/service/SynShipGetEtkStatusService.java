@@ -275,7 +275,7 @@ public class SynShipGetEtkStatusService extends BaseTaskService {
                                 reservationDao.insertReservationLogByStatus(etkTrackingBean.getSyn_ship_no(), notes, etkTrackingBean.getStatus(), getTaskName());
 
                                 // 物流信息的追加
-                                trackingDao.insertTrackingInfo(etkTrackingBean.getSyn_ship_no(), etkTrackingBean.getTracking_no(), etkTrackingBean.getTracking_status(), trackingDetail.getEntry_datetime(), getTaskName());
+                                trackingDao.insertTrackingInfo(etkTrackingBean.getSyn_ship_no(), etkTrackingBean.getTracking_no(), etkTrackingBean.getTracking_status(), trackingDetail.getEntry_datetime(), etkTrackingBean.getStatus(), getTaskName());
 
                                 // 快递100未订阅时，订阅快递100
                                 if (CodeConstants.KD100_POLL.NO.equals(etkTrackingBean.getSent_kd100_poll_flg())) {
