@@ -191,7 +191,7 @@ public class WmsUploadFileToThirdService extends BaseTaskService {
                         }
                     }
                     //全部文件已经准备完毕
-                    if (checkFlg == createFileNames.size()){
+                    if (checkFlg == createFileNames.size() && checkFlg == ftpFileNames.size()){
                         return true;
                     }
                 }
