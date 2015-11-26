@@ -2,13 +2,9 @@ package com.voyageone.cms.service.dao;
 
 import com.voyageone.base.dao.mongodb.BaseJomgoTemplate;
 import com.voyageone.cms.service.bean.FeedCategoryBean;
-import com.voyageone.cms.service.bean.FeedCategoryChildBean;
-import com.voyageone.common.components.channelAdvisor.bean.orders.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +21,7 @@ public class FeedToCmsDao  {
         return mongoTemplate.findOne(query, FeedCategoryBean.class, "feed_category_info");
     }
 
-    public void setFeedCategory(String channelId, List<FeedCategoryChildBean> tree){
+    public void setFeedCategory(String channelId, List<Map> tree){
         FeedCategoryBean treeObject = getFeedCategory(channelId);
         if(treeObject == null){
             treeObject = new FeedCategoryBean();
