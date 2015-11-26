@@ -20,8 +20,8 @@ var mappings = {};
 (function (routes) {
   return routes.forEach(function (name) {
     var phyPath, routePath;
-    routePath = "./routes/" + name;
-    phyPath = __dirname + "\/routes\/" + name + ".js";
+    routePath = "./views/" + name + "\/" + name;
+    phyPath = __dirname + "\/views\/" + name + "\/" + name + ".js";
     return fs.exists(phyPath, function (isExists) {
       if (isExists) {
         return extend(mappings, require(routePath));
@@ -30,10 +30,10 @@ var mappings = {};
       }
     });
   });
-})(["core"]);
+})(["core","cms"]);
 
 // 设定 express 渲染根目录
-app.set("views", "./test_server/data");
+app.set("views", "./test_server/views");
 // 设定对 json 的渲染方式
 app.engine("json", function (filePath, options, callback) {
   return fs.readFile(filePath, function (err, content) {
@@ -49,21 +49,31 @@ app.post("*", function (req, res, next) {
   url = req.url;
   view = mappings[url];
   console.log(url + " -> " + view);
+
   if (view) {
     if (typeof view === "function") {
-      return view(req, res, next);
+      req.on('data', function (data) {
+        return view(JSON.parse(data), res, next);
+      })
     } else {
       return res.render(view + ".json");
     }
   } else {
-    var json = require(url);
-    if (json) {
-      return res.json(json);
+    if (view === undefined) {
+      url = url.substring(1, url.length);
+      return res.render(url + ".json");
     }
-    return res.json(commonError);
   }
 });
-// 启动监听
-app.listen(8080);
+
+console.log(process.cwd());
+
+var staticRouter =  express["static"](process.cwd() + "\/develop");
+
+app.use(function (req, res, next) {
+  return staticRouter(req, res, next);
+});
+
+app.listen(8082);
 
 module.exports = app;
