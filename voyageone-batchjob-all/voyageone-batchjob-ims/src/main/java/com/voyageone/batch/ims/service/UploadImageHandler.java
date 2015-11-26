@@ -84,7 +84,7 @@ public class UploadImageHandler extends UploadWorkloadHandler {
         try {
             // add by lewis 2015/11/16 start...
             // check images
-            List<ImageUrlMappingModel> imageUrlMappingBeans = imageUrlMappingDao.getImageUrlMap(Integer.valueOf(uploadJob.getCart_id()),uploadJob.getChannel_id());
+            List<ImageUrlMappingModel> imageUrlMappingBeans = imageUrlMappingDao.getImageUrlMap(Integer.valueOf(uploadJob.getCart_id()),uploadJob.getChannel_id(),String.valueOf(uploadImageTcb.getUploadProductTcb().getWorkLoadBean().getModelId()));
 
             Map<String,String> imageUrlMap = new HashMap<>();
 
