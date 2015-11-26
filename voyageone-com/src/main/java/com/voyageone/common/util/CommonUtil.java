@@ -180,7 +180,7 @@ public final class CommonUtil {
     }
 
 
-    public static boolean isPhoneNum(String phone){
+    public static boolean isPhoneNum(String phone) {
 
         // 电话号码以1开头的11位数字
         Pattern pattern = Pattern.compile("^1[\\d]{10}$");
@@ -193,32 +193,35 @@ public final class CommonUtil {
 
     /**
      * 分割List
-     * @author bianrx
-     * @date 2012.1.13
-     * @param list 待分割的list
+     *
+     * @param list     待分割的list
      * @param pageSize 每段list的大小
-     * @return List<<List<T>>
+     * @return List[List[T]]
      */
     public static <T> List<List<T>> splitList(List<T> list, int pageSize) {
 
-        int listSize = list.size();                                                           //list的大小
-        int page = (listSize + (pageSize-1))/ pageSize;                      //页数
+        int total = list.size();
+        int start = 0;
+        int end;
 
-        List<List<T>> listArray = new ArrayList<List<T>>();              //创建list数组 ,用来保存分割后的list
-        for(int i=0;i<page;i++) {                                                         //按照数组大小遍历
-            List<T> subList = new ArrayList<T>();                               //数组每一位放入一个分割后的list
-            for(int j=0;j<listSize;j++) {                                                 //遍历待分割的list
-                int pageIndex = ( (j + 1) + (pageSize-1) ) / pageSize;   //当前记录的页码(第几页)
-                if(pageIndex == (i + 1)) {                                               //当前记录的页码等于要放入的页码时
-                    subList.add(list.get(j));                                               //放入list中的元素到分割后的list(subList)
-                }
+        List<List<T>> listArray = new ArrayList<>();
 
-                if( (j + 1) == ((i + 1) * pageSize) ) {                               //当放满一页时退出当前循环
-                    break;
-                }
-            }
-            listArray.add(subList);                                                         //将分割后的list放入对应的数组的位中
+        if (total <= pageSize) {
+            listArray.add(list);
+            return listArray;
         }
+
+        while (start < total) {
+
+            end = start + pageSize;
+
+            if (end > total) end = total;
+
+            listArray.add(list.subList(start, end));
+
+            start = end;
+        }
+
         return listArray;
     }
 }

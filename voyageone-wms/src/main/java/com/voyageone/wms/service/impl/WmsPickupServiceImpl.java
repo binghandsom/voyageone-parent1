@@ -250,7 +250,18 @@ public class WmsPickupServiceImpl implements WmsPickupService {
             if (formPickupBean.getStatus().equals(scanStatus)) {
                 scanInfoList.add(formPickupBean);
             } else if (formPickupBean.getStatus().equals(WmsCodeConstants.Reservation_Status.Cancelled)) {
-                intCancelled ++;
+                // 物品级别拣货时，忽略Cancel记录
+                if (ChannelConfigEnums.Scan.RES.getType().equals(scanType)) {
+                    intCancelled++;
+                }
+                // 订单级别收货时，由于货物可能已经实际发到仓库了，即使已经取消订单，也需要将取消物品打单
+                else if (ChannelConfigEnums.Scan.ORDER.getType().equals(scanType)) {
+                    if (WmsConstants.ScanType.SCAN.equals(scanMode)) {
+                        scanInfoList.add(formPickupBean);
+                    } else {
+                        intCancelled++;
+                    }
+                }
             } else if (formPickupBean.getStatus().equals(WmsCodeConstants.Reservation_Status.Reserved)) {
                 intReserved ++;
             } else if (!reservationStatus.toString().contains(statusName)) {
@@ -292,7 +303,7 @@ public class WmsPickupServiceImpl implements WmsPickupService {
         }
 
         // 得到订单对应的物品数
-        List<String> orderSkuList = reservationDao.getOrderProductList(scanInfoList.get(0).getOrder_number());
+        List<String> orderSkuList = reservationDao.getOrderProductList(scanInfoList.get(0).getOrder_number(),scanType);
         logger.info("取得该订单的物品" + "（orderNumber：" + scanInfoList.get(0).getOrder_number()  + "，skuList：" + orderSkuList + "）");
         int productNum = orderSkuList.size();
 
@@ -381,7 +392,7 @@ public class WmsPickupServiceImpl implements WmsPickupService {
         }
 
         // 更新捡货物品的状态和发货渠道
-        int resultUpdatePickup = reservationDao.updatePickupStatus(reservationList, scanStatus, updateStatus, shipChannel, price, closeDayFlg, user.getUserName());
+        int resultUpdatePickup = reservationDao.updatePickupStatus(reservationList, scanStatus, updateStatus, shipChannel, price, closeDayFlg, user.getUserName(),scanType);
 
         if (resultUpdatePickup == 0) {
             logger.info("捡货物品更新失败" + "（scanTypeName：" + scanTypeName  + "，ScanNo：" + scanNo  + "，ReservationID：" + reservationList.toString() +  "）");
