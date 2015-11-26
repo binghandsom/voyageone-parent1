@@ -26,21 +26,21 @@
     <mongo:db-factory id="mongoDbFactory" mongo-ref="mongo" username="admin2" password="admin123" dbname="test" authentication-dbname="admin"/>
 
     <!-- 映射转换器，扫描back-package目录下的文件，根据注释，把它们作为mongodb的一个collection的映射 -->
-    <mongo:mapping-converter id="mongoConverter" base-package="com.voyageone.base.dao.mongodb.test.dao">
-        <mongo:custom-converters base-package="com.voyageone.base.dao.mongodb.test.dao" />
-    </mongo:mapping-converter>
+    <!--<mongo:mapping-converter id="mongoConverter" base-package="com.voyageone.base.dao.mongodb.test.dao">-->
+        <!--<mongo:custom-converters base-package="com.voyageone.base.dao.mongodb.test.dao" />-->
+    <!--</mongo:mapping-converter>-->
 
     <!-- mongodb的主要操作对象，所有对mongodb的增删改查的操作都是通过它完成 -->
     <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
         <constructor-arg ref="mongoDbFactory" />
-        <constructor-arg ref="mongoConverter" />
-        <property name="writeConcern" value="SAFE" />
+        <!--<constructor-arg ref="mongoConverter" />-->
+        <!--<property name="writeConcern" value="SAFE" />-->
     </bean>
 
     <!--<bean id="basePartitionMongoTemplate" class="com.voyageone.base.dao.mongodb.BasePartitionMongoTemplate">-->
     <!--</bean>-->
 
-    <bean id="BaseJomgoDao" class="com.voyageone.base.dao.mongodb.BaseJomgoTemplate">
+    <bean id="baseJomgoDao" class="com.voyageone.base.dao.mongodb.BaseJomgoTemplate">
         <constructor-arg ref="mongoTemplate" />
     </bean>
 
