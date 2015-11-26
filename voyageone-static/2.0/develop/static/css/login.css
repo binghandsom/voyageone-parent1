@@ -107,9 +107,9 @@ body {
     position: relative;
     width: 100%;
     text-align: center;
-    background: #FF0000;
+    background: #DC2424;
     color: #fff;
-    padding: 1em 0;
+    padding: 8px 0;
     border-radius: 4px;
     font-size: 16px;
 }
@@ -124,7 +124,7 @@ body {
     height: 0;
     border-left: 6px solid transparent;
     border-right: 6px solid transparent;
-    border-top: 6px solid #FF0000;
+    border-top: 6px solid #DC2424;
 }
 
 .c-checkbox {

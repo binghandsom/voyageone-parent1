@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="voyageone.cms.login">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -9,25 +9,28 @@
 <div class="login-logo"><img src="static/img/voyage_one_logo_3.png"/></div>
 <div class="login" ng-controller="loginController">
     <form class="login-main">
-        <div class="loginSign">password:长度需要在6和50之间</div>
+        <ng-include src="'msg.tpl.html'"></ng-include>
         <ul>
             <li>
-                <input type="text" class="text" placeholder="Username or Email">
-                <a href="#" class="small-icon login-user"></a>
+                <input ng-model="username" type="text" class="text" placeholder="Username or Email">
+                <span class="small-icon login-user"></span>
             </li>
             <li>
-                <input type="password" value="Password" placeholder="Password">
-                <a href="#" class="small-icon login-lock"></a>
+                <input ng-model="password" type="password" placeholder="Password">
+                <span class="small-icon login-lock"></span>
             </li>
         </ul>
         <div class="checkbox c-checkbox">
-            <label><input type="checkbox" value=""/><span class="fa fa-check"></span>记住密码</label>
+            <label><input type="checkbox" ng-model="isSavePwd"/><span class="fa fa-check"></span>记住密码</label>
         </div>
     </form>
     <div class="login-submit">
-        <input type="button" value="登录">
+        <input type="button" value="登录" ng-click="login()">
     </div>
 </div>
-<script src="libs/require.js/2.1.21/require.js" data-main="login.main"></script>
+<script type="text/ng-template" id="msg.tpl.html">
+    <div class="loginSign" ng-show="errorMessage">{{errorMessage}}</div>
+</script>
+<script src="libs/require.js/2.1.21/require.js" data-main="login.min"></script>
 </body>
 </html>
