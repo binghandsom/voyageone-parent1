@@ -1746,12 +1746,13 @@
 						oms_bt_orders
 					WHERE
 						order_date_time > '2015-11-11 15:59:59'
+						AND order_status NOT IN ('Returned', 'Canceled')
 					AND
-						origin_source_order_id
+						source_order_id
 						IN
 							(
 								SELECT
-									origin_source_order_id
+									source_order_id
 								FROM
 									oms_bt_orders
 								WHERE
@@ -1759,7 +1760,6 @@
 									cart_id IN ('20', '21', '23')
 								AND order_date_time >= '2015-11-10 16:00:00'
 								AND '2015-11-11 15:59:59' >= order_date_time
-								AND order_status IN ('Returned', 'Canceled')
 							)
 		) orderTop
 		GROUP BY
