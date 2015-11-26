@@ -34,6 +34,9 @@ public class VoyageOneBatchJobService {
 				ex.printStackTrace();
 				log.error(ex.getMessage());
 			}
+
+
+
 //		}
 	}
 	
