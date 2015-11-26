@@ -73,7 +73,25 @@ public class UploadImageHandler extends UploadWorkloadHandler{
         try {
             for (String srcUrl : imageUrlSet) {
                 String decodeSrcUrl = decodeImageUrl(srcUrl);
-                String destUrl = uploadImageByUrl(decodeSrcUrl, shopBean);
+                // modified by lewis 2015/11/16 start...
+                if(imageUrlMap.get(decodeSrcUrl)==null){
+                    String destUrl = uploadImageByUrl(decodeSrcUrl, shopBean);
+                    uploadImageResult.add(srcUrl, destUrl);
+
+                    ImageUrlMappingModel imageUrlInfo = new ImageUrlMappingModel();
+                    imageUrlInfo.setCartId(Integer.valueOf(uploadJob.getCart_id()));
+                    imageUrlInfo.setChannelId(uploadJob.getChannel_id());
+                    imageUrlInfo.setOrgImageUrl(decodeSrcUrl);
+                    imageUrlInfo.setPlatformImageUrl(destUrl);
+                    imageUrlInfo.setCreater("uploadProductJob");
+                    imageUrlInfo.setModifier("uploadProductJob");
+                    imageUrlSaveModels.add(imageUrlInfo);
+                }else {
+                    uploadImageResult.add(srcUrl, imageUrlMap.get(decodeSrcUrl));
+                }
+                // modified by lewis 2015/11/16 end...
+            }
+
 
                 /*
                 String destUrl = "http://img.alicdn.com/imgextra/i2/2183719539/TB2gR6IgVXXXXbmXpXXXXXXXXXX_!!2183719539.jpg";
@@ -222,6 +240,8 @@ public class UploadImageHandler extends UploadWorkloadHandler{
     public static void main(String[] args) {
         String plain = "http://s7d5.scene7.com/is/image/sneakerhead/bcbg_1200_1200?$1200x1200$&$big=IZD1U885_001";
         String encode = encodeImageUrl(plain);
+        System.out.println(encode);
+        System.out.println(decodeImageUrl(encode));
     }
 
     public static String encodeImageUrl(String plainValue) {
