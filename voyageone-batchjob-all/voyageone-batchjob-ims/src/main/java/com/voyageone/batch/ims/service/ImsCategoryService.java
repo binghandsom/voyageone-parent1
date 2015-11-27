@@ -12,7 +12,9 @@ import com.voyageone.batch.ims.ImsConstants;
 import com.voyageone.batch.ims.dao.BrandDao;
 import com.voyageone.batch.ims.dao.DarwinBrandMappingDao;
 import com.voyageone.batch.ims.dao.PlatformCategoryDao;
+import com.voyageone.batch.ims.dao.PlatformCategoryMongoDao;
 import com.voyageone.batch.ims.modelbean.PlatformCategories;
+import com.voyageone.batch.ims.modelbean.PlatformCategoryMongoBean;
 import com.voyageone.batch.ims.modelbean.PlatformPropBean;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -50,6 +52,8 @@ public class ImsCategoryService extends BaseTaskService{
     DarwinBrandMappingDao darwinBrandMappingDao;
     @Autowired
     ImsCategorySubService imsCategorySubService;
+    @Autowired
+    PlatformCategoryMongoDao platformCategoryMongoDao;
 
     @Override
     public SubSystem getSubSystem() {
@@ -330,7 +334,34 @@ public class ImsCategoryService extends BaseTaskService{
         );
 
         // 插入到属性表中
-        imsCategorySubService.doInsertPlatformPropMain(platformPropBeanList, JOB_NAME);
+//        imsCategorySubService.doInsertPlatformPropMain(platformPropBeanList, JOB_NAME);
+        PlatformCategoryMongoBean platformCategoryMongoBean = platformCategoryMongoDao.findOne(
+                platformCategories.getChannelId(),
+                "{" +
+                        "channel_id: '" + platformCategories.getChannelId() + "'" +
+                        ", cartId: '" + platformCategories.getCartId() + "'" +
+                        ", categoryId: '" + platformCategories.getPlatformCid() + "'" +
+                        "}"
+        );
+
+        if (platformCategoryMongoBean == null) {
+            platformCategoryMongoBean = new PlatformCategoryMongoBean();
+
+            platformCategoryMongoBean.setChannel_id(platformCategories.getChannelId());
+            platformCategoryMongoBean.setCartId(platformCategories.getCartId().toString());
+            platformCategoryMongoBean.setCategoryId(platformCategories.getPlatformCid());
+            platformCategoryMongoBean.setCategoryName(platformCategories.getCidName());
+            platformCategoryMongoBean.setCategoryPath(platformCategories.getCidPath());
+            platformCategoryMongoBean.setParentId(platformCategories.getParentCid());
+        }
+
+        if (isProduct == 1) {
+            platformCategoryMongoBean.setPropsProduct(xmlContent);
+        } else {
+            platformCategoryMongoBean.setPropsItem(xmlContent);
+        }
+        platformCategoryMongoDao.saveWithProduct(platformCategoryMongoBean);
+
 
         return new ItemSchema();
     }

@@ -3,6 +3,7 @@ package com.voyageone.base.dao.mongodb;
 import com.mongodb.CommandResult;
 import com.mongodb.DBCollection;
 import com.mongodb.WriteResult;
+import net.minidev.json.JSONObject;
 import org.apache.commons.collections.IteratorUtils;
 import org.bson.types.ObjectId;
 import org.jongo.*;
@@ -53,11 +54,20 @@ public class BaseJomgoPartTemplate {
         mongoTemplate.dropCollection(collectionName);
     }
 
+    public JSONObject findOne( String collectionName) {
+        return findOne(JSONObject.class, collectionName);
+    }
+
     public <T> T findOne(Class<T> entityClass, String collectionName) {
         return getCollection(collectionName).findOne().as(entityClass);
     }
 
+    public JSONObject findOne(String strQuery, String collectionName) {
+        return findOne(strQuery, JSONObject.class, collectionName);
+    }
+
     public <T> T findOne(String strQuery, Class<T> entityClass, String collectionName) {
+        JSONObject aa = getCollection(collectionName).findOne(strQuery).as(JSONObject.class);
         return getCollection(collectionName).findOne(strQuery).as(entityClass);
     }
 
@@ -65,8 +75,16 @@ public class BaseJomgoPartTemplate {
         return getCollection(collectionName).count(strQuery)>0;
     }
 
+    public List<JSONObject> findAll(String collectionName) {
+        return findAll(JSONObject.class, collectionName);
+    }
+
     public <T> List<T> findAll(Class<T> entityClass, String collectionName) {
         return find("", entityClass, collectionName);
+    }
+
+    public List<JSONObject> find(final String strQuery, String collectionName) {
+        return find(strQuery, JSONObject.class, collectionName);
     }
 
     public <T> List<T> find(final String strQuery, Class<T> entityClass, String collectionName) {
@@ -77,6 +95,10 @@ public class BaseJomgoPartTemplate {
             result = IteratorUtils.toList(getCollection(collectionName).find(strQuery).as(entityClass));
         }
         return result;
+    }
+
+    public JSONObject findById(String id, String collectionName) {
+        return findById(id, JSONObject.class, collectionName);
     }
 
     public <T> T findById(String id, Class<T> entityClass, String collectionName) {

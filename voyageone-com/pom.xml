@@ -264,6 +264,11 @@
 			<groupId>org.jongo</groupId>
 			<artifactId>jongo</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.jayway.jsonpath</groupId>
+			<artifactId>json-path</artifactId>
+			<version>2.1.0</version>
+		</dependency>
 
 	</dependencies>
 	<build>
