@@ -5,10 +5,7 @@ import com.voyageone.batch.wms.WmsConstants.updateClientInventoryConstants;
 import com.voyageone.batch.wms.modelbean.ClientInventoryBean;
 import com.voyageone.batch.wms.modelbean.ItemDetailsBean;
 import com.voyageone.common.components.channelAdvisor.bean.inventory.GetInventoryParamBean;
-import com.voyageone.common.components.sears.bean.AvailabilitiesResponse;
-import com.voyageone.common.components.sears.bean.AvailabilityBean;
-import com.voyageone.common.components.sears.bean.ProductBean;
-import com.voyageone.common.components.sears.bean.ProductResponse;
+import com.voyageone.common.components.sears.bean.*;
 import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.ThirdPartyConfigs;
@@ -113,6 +110,7 @@ public class WmsGetSearsClientInvService extends WmsGetClientInvBaseService {
         int losePageCount = 1;
         try {
             log(channel.getFull_name() + "库存取得开始");
+            int totalPage = 0;
             while (true){
                 logger.info("----------"+channel.getFull_name()+"当前执行到第【" + pageIndex + "】页----------");
                 AvailabilitiesResponse responseBean ;
@@ -130,26 +128,34 @@ public class WmsGetSearsClientInvService extends WmsGetClientInvBaseService {
                     continue;
                 }
                 losePageCount = 1;
-                if (responseBean == null) {
-                    break;
-                }
-                for (AvailabilityBean availabilityBean : responseBean.getProduct()) {
 
-                    ClientInventoryBean clientInventoryBean = new ClientInventoryBean();
-                    clientInventoryBean.setClient_sku(availabilityBean.getItemId());
-                    if (availabilityBean.getAvailable()) {
-                        clientInventoryBean.setQty(availabilityBean.getQuantity().toString());
-                    }else {
-                        clientInventoryBean.setQty("0");
+                // 判断返回是否为空，并且是否相关页数是否都已处理完毕
+                if (responseBean != null) {
+                    PaginationBean pagination = responseBean.getPagination();
+                    totalPage = pagination.getTotalPages();
+
+                    for (AvailabilityBean availabilityBean : responseBean.getProduct()) {
+
+                        ClientInventoryBean clientInventoryBean = new ClientInventoryBean();
+                        clientInventoryBean.setClient_sku(availabilityBean.getItemId());
+                        if (availabilityBean.getAvailable()) {
+                            clientInventoryBean.setQty(availabilityBean.getQuantity().toString());
+                        }else {
+                            clientInventoryBean.setQty("0");
+                        }
+                        clientInventoryList.add(clientInventoryBean);
                     }
-                    clientInventoryList.add(clientInventoryBean);
-                }
 
-                if (responseBean.getProduct().size() < getInventoryParamBean.getnPageSize()) {
+                    if (responseBean.getProduct().size() < getInventoryParamBean.getnPageSize()) {
+                        break;
+                    }
+                    pageIndex++;
+                    getInventoryParamBean.setnPageIndex(pageIndex);
+
+                } else if (pageIndex >= totalPage){
                     break;
                 }
-                pageIndex++;
-                getInventoryParamBean.setnPageIndex(pageIndex);
+
 
             }
             log(channel.getFull_name() + "库存取得结束");
@@ -214,7 +220,6 @@ public class WmsGetSearsClientInvService extends WmsGetClientInvBaseService {
                         if (responseBean == null) {
                             break;
                         }
-                        logger.info("----------" + channel.getFull_name() + "有效Product数：" + responseBean.getProduct().size() + "件----------");
                         for (ProductBean productBean : responseBean.getProduct()) {
 
                             if (productBean.getAvailability() != null) {
@@ -400,6 +405,8 @@ public class WmsGetSearsClientInvService extends WmsGetClientInvBaseService {
                 }else if("0".equals(fullUpdateFlg)){
                     map.put("fullUpdateFlg", "1");
                     map.put("currDate", lastFullUpdtTimeStr);
+                    clientInventoryDao.setLastFullUpdateTime(map);
+                } else {
                     clientInventoryDao.setLastFullUpdateTime(map);
                 }
             } else {
