@@ -14,7 +14,7 @@ import com.voyageone.batch.ims.dao.DarwinBrandMappingDao;
 import com.voyageone.batch.ims.dao.PlatformCategoryDao;
 import com.voyageone.batch.ims.dao.PlatformCategoryMongoDao;
 import com.voyageone.batch.ims.modelbean.PlatformCategories;
-import com.voyageone.batch.ims.modelbean.PlatformCategoryMongoModel;
+import com.voyageone.batch.ims.modelbean.PlatformCategoryMongoBean;
 import com.voyageone.batch.ims.modelbean.PlatformPropBean;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -36,7 +36,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.File;
 import java.util.*;
 
-@SuppressWarnings("ALL")
 @Service
 public class ImsCategoryService extends BaseTaskService{
 
@@ -70,20 +69,19 @@ public class ImsCategoryService extends BaseTaskService{
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception{
 
-        /*
-        任务说明 ------------------------------------------------- START
-        要做的事情：
-        1. 第三方平台类目信息取得（天猫与 TODO:京东暂时不做）
-        2. 第三方平台品牌信息取得（天猫与 TODO:京东暂时不做）
-        3. 天猫系达尔文信息取得（TODO:暂时先不做）
-        4. 第三方平台属性信息取得（天猫与 TODO:京东暂时不做）
-        执行频率：
-        按理说是每天都需要执行一次的
-        店铺搞活动的时候，为了不占用过多资源，可以暂停执行
-        任务说明 ------------------------------------------------- END
-        获取天猫系所有店铺
-        */
+        // 任务说明 ------------------------------------------------- START
+        // 要做的事情：
+        // 1. 第三方平台类目信息取得（天猫与 TODO:京东暂时不做）
+        // 2. 第三方平台品牌信息取得（天猫与 TODO:京东暂时不做）
+        // 3. 天猫系达尔文信息取得（TODO:暂时先不做）
+        // 4. 第三方平台属性信息取得（天猫与 TODO:京东暂时不做）
 
+        // 执行频率：
+        // 按理说是每天都需要执行一次的
+        // 店铺搞活动的时候，为了不占用过多资源，可以暂停执行
+        // 任务说明 ------------------------------------------------- END
+
+        // 获取天猫系所有店铺
         List<ShopBean> shopList = ShopConfigs.getShopListByPlatform(PlatFormEnums.PlatForm.TM);
         // 获取该任务可以运行的销售渠道
         List<String> orderChannelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
@@ -222,74 +220,14 @@ public class ImsCategoryService extends BaseTaskService{
 
         }
 
-        // TODO 保存json
         // 重建第三方平台指定店铺类目信息
         imsCategorySubService.doRebuidPlatformCategory(platformCategoriesList, shop, JOB_NAME);
-
-        //add by lewis start 2015/11/27
-        List<PlatformCategoryMongoModel> platformCategoryMongoBeanList = new ArrayList<>();
-        for (PlatformCategories category:platformCategoriesList){
-            PlatformCategoryMongoModel mongoModel = new PlatformCategoryMongoModel();
-
-            mongoModel.setCartId(String.valueOf(category.getCartId()));
-            mongoModel.setCategoryId(category.getPlatformCid());
-            category.setCidName(mongoModel.getCategoryName());
-            mongoModel.setParentCategoryId(category.getParentCid());
-            mongoModel.setIsParent(category.getIsParent());
-            mongoModel.setCategoryPath(category.getCidPath());
-
-            platformCategoryMongoBeanList.add(mongoModel);
-
-        }
-        //获取类目树
-        List<PlatformCategoryMongoModel> savePlatformCatModels = this.buildPlatformCatTrees(platformCategoryMongoBeanList);
-        //save
-
-
-        //add by lewis end 2015/11/27
-
 
         // 重建第三方平台指定店铺品牌信息
         List<Brand> brands = removeListDuplicate(sellerAuthorize.getBrands());
         imsCategorySubService.doRebuidPlatformBrand(brands, shop, JOB_NAME);
 
     }
-
-    /** add by lewis start 2015/11/27 */
-    /**
-     * 创建平台层次关系.
-     *
-     * @param platformCatModelList
-     */
-    private List<PlatformCategoryMongoModel> buildPlatformCatTrees(List<PlatformCategoryMongoModel> platformCatModelList) {
-        // 设置属性层次关系.
-        List<PlatformCategoryMongoModel> assistPlatformCatList = new ArrayList<PlatformCategoryMongoModel>(platformCatModelList);
-
-        List<PlatformCategoryMongoModel> removePlatformCatList = new ArrayList<PlatformCategoryMongoModel>();
-
-        for (int i = 0; i < platformCatModelList.size(); i++) {
-            PlatformCategoryMongoModel platformCat = platformCatModelList.get(i);
-            List<PlatformCategoryMongoModel> subPlatformCatgories = new ArrayList<PlatformCategoryMongoModel>();
-            for (Iterator assIterator = assistPlatformCatList.iterator(); assIterator.hasNext();) {
-
-                PlatformCategoryMongoModel subPlatformCatItem = (PlatformCategoryMongoModel) assIterator.next();
-                if (subPlatformCatItem.getParentCategoryId() == platformCat.getCategoryId()) {
-                    subPlatformCatgories.add(subPlatformCatItem);
-                    assIterator.remove();
-                }
-
-            }
-            platformCat.setSubCategories(subPlatformCatgories);
-            if ("0".equals(platformCat.getParentCategoryId())) {
-                removePlatformCatList.add(platformCat);
-            }
-
-        }
-        platformCatModelList.removeAll(removePlatformCatList);
-        return platformCatModelList;
-    }
-    /** add by lewis end 2015/11/27 */
-
 
     /**
      * 第三方平台属性信息取得（天猫系）
@@ -397,28 +335,30 @@ public class ImsCategoryService extends BaseTaskService{
 
         // 插入到属性表中
 //        imsCategorySubService.doInsertPlatformPropMain(platformPropBeanList, JOB_NAME);
-        PlatformCategoryMongoModel platformCategoryMongoBean = platformCategoryMongoDao.findOne(
+        PlatformCategoryMongoBean platformCategoryMongoBean = platformCategoryMongoDao.findOne(
+                platformCategories.getChannelId(),
                 "{" +
-                        "cartId: '" + platformCategories.getCartId() + "'" +
+                        "channel_id: '" + platformCategories.getChannelId() + "'" +
+                        ", cartId: '" + platformCategories.getCartId() + "'" +
                         ", categoryId: '" + platformCategories.getPlatformCid() + "'" +
                         "}"
         );
 
         if (platformCategoryMongoBean == null) {
-            platformCategoryMongoBean = new PlatformCategoryMongoModel();
+            platformCategoryMongoBean = new PlatformCategoryMongoBean();
 
-//            platformCategoryMongoBean.setChannel_id(platformCategories.getChannelId());
+            platformCategoryMongoBean.setChannel_id(platformCategories.getChannelId());
             platformCategoryMongoBean.setCartId(platformCategories.getCartId().toString());
             platformCategoryMongoBean.setCategoryId(platformCategories.getPlatformCid());
             platformCategoryMongoBean.setCategoryName(platformCategories.getCidName());
             platformCategoryMongoBean.setCategoryPath(platformCategories.getCidPath());
-            platformCategoryMongoBean.setParentCategoryId(platformCategories.getParentCid());
+            platformCategoryMongoBean.setParentId(platformCategories.getParentCid());
         }
 
         if (isProduct == 1) {
-//            platformCategoryMongoBean.setPropsProduct(xmlContent);
+            platformCategoryMongoBean.setPropsProduct(xmlContent);
         } else {
-//            platformCategoryMongoBean.setPropsItem(xmlContent);
+            platformCategoryMongoBean.setPropsItem(xmlContent);
         }
         platformCategoryMongoDao.saveWithProduct(platformCategoryMongoBean);
 
