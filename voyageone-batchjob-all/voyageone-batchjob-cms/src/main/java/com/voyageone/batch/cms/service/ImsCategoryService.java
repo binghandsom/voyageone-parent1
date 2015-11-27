@@ -1,25 +1,25 @@
-package com.voyageone.batch.ims.service;
+package com.voyageone.batch.cms.service;
 
 import com.taobao.api.ApiException;
 import com.taobao.api.domain.Brand;
 import com.taobao.api.domain.ItemCat;
 import com.taobao.api.domain.SellerAuthorize;
 import com.voyageone.batch.base.BaseTaskService;
+import com.voyageone.batch.cms.model.PlatformCategoriesModel;
+import com.voyageone.batch.cms.model.PlatformPropModel;
 import com.voyageone.batch.core.Enums.TaskControlEnums;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.core.util.TaskControlUtils;
-import com.voyageone.batch.ims.ImsConstants;
-import com.voyageone.batch.ims.dao.BrandDao;
-import com.voyageone.batch.ims.dao.DarwinBrandMappingDao;
-import com.voyageone.batch.ims.dao.PlatformCategoryDao;
-import com.voyageone.batch.ims.dao.PlatformCategoryMongoDao;
-import com.voyageone.batch.ims.modelbean.PlatformCategories;
-import com.voyageone.batch.ims.modelbean.PlatformCategoryMongoModel;
-import com.voyageone.batch.ims.modelbean.PlatformPropBean;
+import com.voyageone.batch.cms.CmsConstants;
+import com.voyageone.batch.cms.dao.BrandDao;
+import com.voyageone.batch.cms.dao.DarwinBrandMappingDao;
+import com.voyageone.batch.cms.dao.PlatformCategoryDao;
+import com.voyageone.batch.cms.mongoDao.PlatformCategoryMongoDao;
+import com.voyageone.batch.cms.mongoModel.PlatformCategoryMongoModel;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.components.tmall.bean.ItemSchema;
 import com.voyageone.common.components.tmall.TbCategoryService;
+import com.voyageone.common.components.tmall.bean.ItemSchema;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Properties;
@@ -34,9 +34,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-@SuppressWarnings("ALL")
 @Service
 public class ImsCategoryService extends BaseTaskService{
 
@@ -70,20 +71,19 @@ public class ImsCategoryService extends BaseTaskService{
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception{
 
-        /*
-        任务说明 ------------------------------------------------- START
-        要做的事情：
-        1. 第三方平台类目信息取得（天猫与 TODO:京东暂时不做）
-        2. 第三方平台品牌信息取得（天猫与 TODO:京东暂时不做）
-        3. 天猫系达尔文信息取得（TODO:暂时先不做）
-        4. 第三方平台属性信息取得（天猫与 TODO:京东暂时不做）
-        执行频率：
-        按理说是每天都需要执行一次的
-        店铺搞活动的时候，为了不占用过多资源，可以暂停执行
-        任务说明 ------------------------------------------------- END
-        获取天猫系所有店铺
-        */
+        // 任务说明 ------------------------------------------------- START
+        // 要做的事情：
+        // 1. 第三方平台类目信息取得（天猫与 TODO:京东暂时不做）
+        // 2. 第三方平台品牌信息取得（天猫与 TODO:京东暂时不做）
+        // 3. 天猫系达尔文信息取得（TODO:暂时先不做）
+        // 4. 第三方平台属性信息取得（天猫与 TODO:京东暂时不做）
 
+        // 执行频率：
+        // 按理说是每天都需要执行一次的
+        // 店铺搞活动的时候，为了不占用过多资源，可以暂停执行
+        // 任务说明 ------------------------------------------------- END
+
+        // 获取天猫系所有店铺
         List<ShopBean> shopList = ShopConfigs.getShopListByPlatform(PlatFormEnums.PlatForm.TM);
         // 获取该任务可以运行的销售渠道
         List<String> orderChannelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
@@ -136,7 +136,7 @@ public class ImsCategoryService extends BaseTaskService{
         }
 
         // 第三方平台类目信息
-        List<PlatformCategories> platformCategoriesList = new ArrayList<>();
+        List<PlatformCategoriesModel> platformCategoriesModelList = new ArrayList<>();
         // 循环所有父类目，获取所有子类目
         List<ItemCat> subCatsAll = new ArrayList<>();
         if (sellerAuthorize.getItemCats() != null && sellerAuthorize.getItemCats().size() > 0 ) {
@@ -168,7 +168,7 @@ public class ImsCategoryService extends BaseTaskService{
                 for (int i = intMax; i >= 0; i--) {
                     ItemCat itemCat = subCatsAllTodo.get(i);
 
-                    PlatformCategories platformCategories = new PlatformCategories();
+                    PlatformCategoriesModel platformCategoriesModel = new PlatformCategoriesModel();
                     // 第三方平台父类目id
                     String platformParentId = String.valueOf(itemCat.getParentCid());
 
@@ -176,15 +176,15 @@ public class ImsCategoryService extends BaseTaskService{
                     boolean blnFound = false;
                     if ("0".equals(platformParentId)) {
                         // 一级类目，没有父了
-                        platformCategories.setCidPath(itemCat.getName());
+                        platformCategoriesModel.setCidPath(itemCat.getName());
                         blnFound = true;
                     } else {
-                        for (PlatformCategories cat : platformCategoriesList) {
+                        for (PlatformCategoriesModel cat : platformCategoriesModelList) {
 
                             if (platformParentId.equals(cat.getPlatformCid())) {
                                 // 找到了
                                 // 父类目id
-                                platformCategories.setCidPath(cat.getCidPath() + ImsConstants.C_PROP_PATH_SPLIT_CHAR + itemCat.getName());
+                                platformCategoriesModel.setCidPath(cat.getCidPath() + CmsConstants.C_PROP_PATH_SPLIT_CHAR + itemCat.getName());
 
                                 blnFound = true;
                                 break;
@@ -199,20 +199,20 @@ public class ImsCategoryService extends BaseTaskService{
                     }
 
                     // 编辑
-                    platformCategories.setChannelId(shop.getOrder_channel_id());
-                    platformCategories.setCartId(Integer.parseInt(shop.getCart_id()));
-                    platformCategories.setPlatformId(Integer.parseInt(PlatFormEnums.PlatForm.TM.getId())); // 第三方平台Id
-                    platformCategories.setPlatformCid(String.valueOf(itemCat.getCid()));
-                    platformCategories.setParentCid(String.valueOf(itemCat.getParentCid()));
+                    platformCategoriesModel.setChannelId(shop.getOrder_channel_id());
+                    platformCategoriesModel.setCartId(Integer.parseInt(shop.getCart_id()));
+                    platformCategoriesModel.setPlatformId(Integer.parseInt(PlatFormEnums.PlatForm.TM.getId())); // 第三方平台Id
+                    platformCategoriesModel.setPlatformCid(String.valueOf(itemCat.getCid()));
+                    platformCategoriesModel.setParentCid(String.valueOf(itemCat.getParentCid()));
                     if (itemCat.getIsParent()) {
-                        platformCategories.setIsParent(1);
+                        platformCategoriesModel.setIsParent(1);
                     } else {
-                        platformCategories.setIsParent(0);
+                        platformCategoriesModel.setIsParent(0);
                     }
-                    platformCategories.setCidName(itemCat.getName());
-                    platformCategories.setSortOrder(0);
+                    platformCategoriesModel.setCidName(itemCat.getName());
+                    platformCategoriesModel.setSortOrder(0);
 
-                    platformCategoriesList.add(platformCategories);
+                    platformCategoriesModelList.add(platformCategoriesModel);
 
                     // 成功后移除
                     subCatsAllTodo.remove(i);
@@ -224,16 +224,16 @@ public class ImsCategoryService extends BaseTaskService{
 
         // TODO 保存json
         // 重建第三方平台指定店铺类目信息
-        imsCategorySubService.doRebuidPlatformCategory(platformCategoriesList, shop, JOB_NAME);
+        imsCategorySubService.doRebuidPlatformCategory(platformCategoriesModelList, shop, JOB_NAME);
 
         //add by lewis start 2015/11/27
         List<PlatformCategoryMongoModel> platformCategoryMongoBeanList = new ArrayList<>();
-        for (PlatformCategories category:platformCategoriesList){
+        for (PlatformCategoriesModel category: platformCategoriesModelList){
             PlatformCategoryMongoModel mongoModel = new PlatformCategoryMongoModel();
 
             mongoModel.setCartId(String.valueOf(category.getCartId()));
             mongoModel.setCategoryId(category.getPlatformCid());
-            category.setCidName(mongoModel.getCategoryName());
+            mongoModel.setCategoryName(category.getCidName());
             mongoModel.setParentCategoryId(category.getParentCid());
             mongoModel.setIsParent(category.getIsParent());
             mongoModel.setCategoryPath(category.getCidPath());
@@ -297,22 +297,22 @@ public class ImsCategoryService extends BaseTaskService{
      */
     private void doSetPlatformPropTm(String cartId) throws ApiException {
         // 获取天猫国际叶子类目信息
-        List<PlatformCategories> platformSubCategoryList = platformCategoryDao.getPlatformSubCatsWithoutShop(cartId);
+        List<PlatformCategoriesModel> platformSubCategoryList = platformCategoryDao.getPlatformSubCatsWithoutShop(cartId);
 
         // 需要等待删除的第三方平台类目信息
         List<ItemSchema> delCats = new ArrayList<>();
 
         int i = 1;
         int cnt = platformSubCategoryList.size();
-        for (PlatformCategories platformCategories : platformSubCategoryList) {
+        for (PlatformCategoriesModel platformCategoriesModel : platformSubCategoryList) {
 
             // 获取产品属性
-            logger.info("获取产品属性:" + i + "/" + cnt + ":CHANNEL_ID:" + platformCategories.getChannelId() + ":CART_ID:" + platformCategories.getCartId() + ":PLATFORM_CATEGORY_ID:" + platformCategories.getPlatformCid());
-            doSetPlatformPropTmSub(platformCategories, 1);
+            logger.info("获取产品属性:" + i + "/" + cnt + ":CHANNEL_ID:" + platformCategoriesModel.getChannelId() + ":CART_ID:" + platformCategoriesModel.getCartId() + ":PLATFORM_CATEGORY_ID:" + platformCategoriesModel.getPlatformCid());
+            doSetPlatformPropTmSub(platformCategoriesModel, 1);
 
             // 获取商品属性
-            logger.info("获取商品属性:" + i + "/" + cnt + ":CHANNEL_ID:" + platformCategories.getChannelId() + ":CART_ID:" + platformCategories.getCartId() + ":PLATFORM_CATEGORY_ID:" + platformCategories.getPlatformCid());
-            delCats.add(doSetPlatformPropTmSub(platformCategories, 0));
+            logger.info("获取商品属性:" + i + "/" + cnt + ":CHANNEL_ID:" + platformCategoriesModel.getChannelId() + ":CART_ID:" + platformCategoriesModel.getCartId() + ":PLATFORM_CATEGORY_ID:" + platformCategoriesModel.getPlatformCid());
+            delCats.add(doSetPlatformPropTmSub(platformCategoriesModel, 0));
 
             i++;
         }
@@ -327,10 +327,10 @@ public class ImsCategoryService extends BaseTaskService{
 
     /**
      * 第三方平台属性信息取得（天猫系）（子函数）
-     * @param platformCategories 店铺信息
+     * @param platformCategoriesModel 店铺信息
      * @param isProduct 是否是产品（产品：1； 商品：0）
      */
-    private ItemSchema doSetPlatformPropTmSub(PlatformCategories platformCategories, int isProduct) throws ApiException {
+    private ItemSchema doSetPlatformPropTmSub(PlatformCategoriesModel platformCategoriesModel, int isProduct) throws ApiException {
 
         // xml文件的保存路径
         String path;
@@ -339,7 +339,7 @@ public class ImsCategoryService extends BaseTaskService{
         String xmlContent = null;
 
         // 获取店铺信息
-        ShopBean shopProp = ShopConfigs.getShop(platformCategories.getChannelId(), String.valueOf(platformCategories.getCartId()));
+        ShopBean shopProp = ShopConfigs.getShop(platformCategoriesModel.getChannelId(), String.valueOf(platformCategoriesModel.getCartId()));
         if (shopProp == null) {
             logger.error("没有获取到店铺信息 " + "channel_id:" + shopProp.getOrder_channel_id() + "  cart_id:" + shopProp.getCart_id());
         }
@@ -349,7 +349,7 @@ public class ImsCategoryService extends BaseTaskService{
             path = Properties.readValue(Constants.PATH.PATH_PRODUCT_RULE_FILE);
 
             // 调用API获取产品属性规则
-            xmlContent = tbCategoryService.getTbProductAddSchema(shopProp, Long.parseLong(platformCategories.getPlatformCid()));
+            xmlContent = tbCategoryService.getTbProductAddSchema(shopProp, Long.parseLong(platformCategoriesModel.getPlatformCid()));
 
             if (StringUtils.isEmpty(xmlContent)) {
                 return new ItemSchema();
@@ -359,7 +359,7 @@ public class ImsCategoryService extends BaseTaskService{
             path = Properties.readValue(Constants.PATH.PATH_ITEM_RULE_FILE);
 
             // 调用API获取产品属性规则
-            ItemSchema result = tbCategoryService.getTbItemAddSchema(shopProp, Long.parseLong(platformCategories.getPlatformCid()));
+            ItemSchema result = tbCategoryService.getTbItemAddSchema(shopProp, Long.parseLong(platformCategoriesModel.getPlatformCid()));
             //保存为XML文件
             if (result.getResult() == 0 ){
                 xmlContent = result.getItemResult();
@@ -373,7 +373,7 @@ public class ImsCategoryService extends BaseTaskService{
         }
 
         // XML文件名字
-        String strFileNameXML = platformCategories.getPlatformCid().toString() + "_" + shopProp.getCart_id() + ".xml";
+        String strFileNameXML = platformCategoriesModel.getPlatformCid().toString() + "_" + shopProp.getCart_id() + ".xml";
         // 保存为XML文件
         if (!StringUtils.isEmpty(xmlContent)){
             XmlUtil.writeXml2File(xmlContent, strFileNameXML, path);
@@ -388,31 +388,31 @@ public class ImsCategoryService extends BaseTaskService{
         String xmlContentRead = XmlUtil.readXml(strFileNameXML, path);
 
         // 分析XML
-        List<PlatformPropBean> platformPropBeanList = TmallPropertyParser.getTmallPropertiesByXmlContent(
+        List<PlatformPropModel> platformPropModelList = TmallPropertyParser.getTmallPropertiesByXmlContent(
                 Integer.parseInt(shopProp.getCart_id()),
-                platformCategories.getPlatformCid(),
+                platformCategoriesModel.getPlatformCid(),
                 isProduct,
                 xmlContentRead
         );
 
         // 插入到属性表中
-//        imsCategorySubService.doInsertPlatformPropMain(platformPropBeanList, JOB_NAME);
+//        imsCategorySubService.doInsertPlatformPropMain(platformPropModelList, JOB_NAME);
         PlatformCategoryMongoModel platformCategoryMongoBean = platformCategoryMongoDao.findOne(
                 "{" +
-                        "cartId: '" + platformCategories.getCartId() + "'" +
-                        ", categoryId: '" + platformCategories.getPlatformCid() + "'" +
+                        "cartId: '" + platformCategoriesModel.getCartId() + "'" +
+                        ", categoryId: '" + platformCategoriesModel.getPlatformCid() + "'" +
                         "}"
         );
 
         if (platformCategoryMongoBean == null) {
             platformCategoryMongoBean = new PlatformCategoryMongoModel();
 
-//            platformCategoryMongoBean.setChannel_id(platformCategories.getChannelId());
-            platformCategoryMongoBean.setCartId(platformCategories.getCartId().toString());
-            platformCategoryMongoBean.setCategoryId(platformCategories.getPlatformCid());
-            platformCategoryMongoBean.setCategoryName(platformCategories.getCidName());
-            platformCategoryMongoBean.setCategoryPath(platformCategories.getCidPath());
-            platformCategoryMongoBean.setParentCategoryId(platformCategories.getParentCid());
+//            platformCategoryMongoBean.setChannel_id(platformCategoriesModel.getChannelId());
+            platformCategoryMongoBean.setCartId(platformCategoriesModel.getCartId().toString());
+            platformCategoryMongoBean.setCategoryId(platformCategoriesModel.getPlatformCid());
+            platformCategoryMongoBean.setCategoryName(platformCategoriesModel.getCidName());
+            platformCategoryMongoBean.setCategoryPath(platformCategoriesModel.getCidPath());
+            platformCategoryMongoBean.setParentCategoryId(platformCategoriesModel.getParentCid());
         }
 
         if (isProduct == 1) {

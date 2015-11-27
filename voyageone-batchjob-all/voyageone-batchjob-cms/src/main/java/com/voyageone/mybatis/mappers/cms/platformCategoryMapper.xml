@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.cms.sql">
+
+    <!-- 批量插入（第三方平台）授权类目表-->
+    <insert id="ims_insertPlatformCats">
+        insert into voyageone_ims.ims_mt_platform_categories (channel_id,cart_id,platform_cid,parent_cid,is_parent,cid_name,cid_path,sort_order,active,created,creater,modified,modifier)
+        values
+        <foreach collection="cats" item="cat" separator="," >
+            (#{order_channel_id},#{cart_id},#{cat.platformCid},#{cat.parentCid},#{cat.isParent},#{cat.cidName},#{cat.cidPath},ifnull(#{cat.sortOrder},0),1,now(),#{task_name},now(),#{task_name})
+        </foreach>
+
+    </insert>
+
+    <!-- 删除指定店铺类目信息(第三方平台)-->
+    <delete id="ims_delPlatformCatsByShop">
+        DELETE FROM voyageone_ims.ims_mt_platform_categories
+        WHERE channel_id = #{order_channel_id}
+          AND cart_id = #{cart_id}
+    </delete>
+
+    <!-- 获取所有(第三方平台)店铺的叶子类目，去重-->
+    <!-- 各个平台（天猫,天猫国际,京东）分别取得数据 -->
+    <select id="ims_selectPlatformSubCatsWithoutShop" resultType="com.voyageone.batch.ims.modelbean.PlatformCategories" >
+          select  c.platform_cid   platformCid
+                , c.channel_id     channelId
+                , c.cart_id        cartId
+          from    voyageone_ims.ims_mt_platform_categories c
+          where   c.is_parent = 0
+            and   c.cart_id = #{cart_id}
+          group by c.platform_cid
+    </select>
+
+    <!-- 获取所有(第三方平台)店铺的类目，去重-->
+    <!-- 各个平台（天猫,天猫国际,京东）分别取得数据 -->
+    <select id="ims_selectPlatformCatsWithoutShop" resultType="com.voyageone.batch.ims.modelbean.PlatformCategories" >
+          select  c.platform_cid   platformCid
+                , c.channel_id     channelId
+                , c.cart_id        cartId
+                , c.parent_cid     parentCid
+                , c.is_parent      isParent
+                , c.cid_name       cidName
+                , c.cid_path       cidPath
+                , v.platform_id    platformId
+          from    voyageone_ims.ims_mt_platform_categories c
+          join    viw_com_cart_shop_channel_mapping v
+            on    v.order_channel_id = c.channel_id
+            and   v.cart_id = c.cart_id
+          where   c.cart_id = #{cart_id}
+          group by c.platform_cid
+    </select>
+
+    <!-- 删除指定（第三方平台）店铺类目信息-->
+    <delete id="ims_delPlatformCatsByCid">
+        DELETE FROM voyageone_ims.ims_mt_platform_categories
+        WHERE platform_cid  IN  (
+        <foreach collection="cats" item="cat" separator="," >
+            #{cat.platformCid}
+        </foreach>
+        )
+    </delete>
+
+</mapper>
