@@ -20,7 +20,7 @@ public class ProductDao {
 
         for (Inventory item:list){
             int code_qty =  item.getQty();
-            mongoTemplate.updateFirst(list.get_id(), C_NAME);
+//            mongoTemplate.updateFirst(list.get_id(), C_NAME);
 
             String strQuery = "{\"product_id\":22}";
             String strUpdate = "{$set:{field.code_qty:}}";
