@@ -38,6 +38,9 @@ var build = {
       src:
           [
             'develop/static/css/twitter-bootstrap/3.3.5/bootstrap.css',
+            'develop/static/css/animate.css',
+            'develop/static/css/simple-line-icons.css',
+            'develop/static/css/font.css',
             'develop/static/css/font-awesome.css',
             'develop/static/css/app.css'
           ],
