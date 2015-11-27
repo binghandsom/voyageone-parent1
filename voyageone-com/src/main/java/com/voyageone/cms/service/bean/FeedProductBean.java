@@ -19,6 +19,7 @@ public class FeedProductBean extends ChannelPartitionModel {
     private String sizeType;
     private List<String> image;
     private String brand;
+    private String weight;
     private String short_description;
     private String long_description;
     private List<FeedSkuBean> skus;
@@ -126,6 +127,14 @@ public class FeedProductBean extends ChannelPartitionModel {
 
     public void setAttribute(Map attribute) {
         this.attribute = attribute;
+    }
+
+    public String getWeight() {
+        return weight;
+    }
+
+    public void setWeight(String weight) {
+        this.weight = weight;
     }
 
     @Override
