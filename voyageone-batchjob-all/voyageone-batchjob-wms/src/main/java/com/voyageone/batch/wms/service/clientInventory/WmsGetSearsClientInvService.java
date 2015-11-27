@@ -197,7 +197,7 @@ public class WmsGetSearsClientInvService extends WmsGetClientInvBaseService {
                     totalCount = totalCount +1;
                 }
 
-                if (intCount == getInventoryParamBean.getnPageSize() || totalCount == itemDetailBeans.size()) {
+                if (intCount == 25 || totalCount == itemDetailBeans.size()) {
 
                     while (true) {
                         logger.info("----------" + channel.getFull_name() + "当前处理到第【" + totalCount + "】件----------");
