@@ -53,9 +53,6 @@ public class UploadProductHandler extends UploadWorkloadHandler{
                 abortJob(workLoadBean, workloadStatus, failCause);
                 return;
             }
-            //todo
-            masterCId = "36264"; //戒指
-            masterCId = "36745"; //珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>颈饰
 
             //设置平台分类
             //TODO: 暂不考虑店级别的分类映射

@@ -136,6 +136,8 @@ public class UploadImageHandler extends UploadWorkloadHandler {
             }
             uploadImageResult.setFailCause(failCause);
             logger.error("Fail to upload image: " + failCause);
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             // add by lewis 2015/11/16 start...
             if(imageUrlSaveModels.size()>0)
