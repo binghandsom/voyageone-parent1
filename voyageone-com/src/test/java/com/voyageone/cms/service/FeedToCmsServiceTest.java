@@ -49,16 +49,16 @@ public class FeedToCmsServiceTest {
 
     @Test
     public void testFindCategory() throws Exception {
-        List<Map> ret = feedToCmsService.getFeedCategory("010");
+        List<Map> ret = feedToCmsService.getFeedCategory("013");
 //        Map child =  feedToCmsService.findCategory(ret, "Home-Kitchen");
-        Map child =  feedToCmsService.findCategory(ret, "Home");
+        Map child =  feedToCmsService.findCategory(ret, "Clothing-Kids' Apparel-Boys");
     }
 
     @Test
     public void testAddCategory() throws Exception {
-        List<Map> tree = feedToCmsService.getFeedCategory("010");
-        feedToCmsService.addCategory(tree,"Home-voyageone-james");
-        feedToCmsService.setFeedCategory("010",tree);
+        List<Map> tree = feedToCmsService.getFeedCategory("013");
+        feedToCmsService.addCategory(tree,"Clothing-Kids' Apparel-Boys");
+        feedToCmsService.setFeedCategory("013",tree);
     }
 
     @Test
@@ -82,7 +82,7 @@ public class FeedToCmsServiceTest {
         Map att = new HashMap<>();
         att.put("a","1");
         att.put("b", "2");
-        p1.setAttribute(att);
+//        p1.setAttribute(att);
 
         List<FeedSkuBean> skus = new ArrayList<>();
         FeedSkuBean sku = new FeedSkuBean();
@@ -114,7 +114,7 @@ public class FeedToCmsServiceTest {
         att = new HashMap<>();
         att.put("a","1");
         att.put("b", "2");
-        p2.setAttribute(att);
+//        p2.setAttribute(att);
 
         skus = new ArrayList<>();
         sku = new FeedSkuBean();

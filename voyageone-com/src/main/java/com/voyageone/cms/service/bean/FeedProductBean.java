@@ -2,7 +2,9 @@ package com.voyageone.cms.service.bean;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +25,8 @@ public class FeedProductBean extends ChannelPartitionModel {
     private String short_description;
     private String long_description;
     private List<FeedSkuBean> skus;
-    private Map attribute;
+    @JsonIgnore
+    private List<Map> attribute;
 
     public String getCategory() {
         return category;
@@ -121,11 +124,11 @@ public class FeedProductBean extends ChannelPartitionModel {
         this.skus = skus;
     }
 
-    public Map getAttribute() {
+    public List<Map> getAttribute() {
         return attribute;
     }
 
-    public void setAttribute(Map attribute) {
+    public void setAttribute(List<Map> attribute) {
         this.attribute = attribute;
     }
 
@@ -141,6 +144,7 @@ public class FeedProductBean extends ChannelPartitionModel {
     public String getCollectionName() {
         return getCollectionName(this.channel_id);
     }
+
     public static String getCollectionName(String channel_id) {
         return "feed_code_info" + getPartitionValue(channel_id);
     }
