@@ -741,7 +741,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 
             boolean isPostSuccess = true;
 
-            // CategoryBean ModelBean ProductBean 以Category单位
+            // CategoryModel ModelBean ProductBean 以Category单位
             List<CategoryBean> categoryBeans = new ArrayList<>();
             List<ModelBean> modelBeans = new ArrayList<>();
 
