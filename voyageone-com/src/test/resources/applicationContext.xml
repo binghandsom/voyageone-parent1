@@ -10,9 +10,10 @@
      http://www.springframework.org/schema/context/spring-context-3.2.xsd">
 
     <!-- 类扫描路径配置 -->
-    <context:component-scan base-package="com.voyageone.base"/>
+    <context:component-scan base-package="com.voyageone"/>
     <!-- DAO相关配置 -->
     <import resource="dao-mongo.xml"/>
+    <import resource="test-context.xml"/>
 
     <!-- 初始化处理 -->
 <!--

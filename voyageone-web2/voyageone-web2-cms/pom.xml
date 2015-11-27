@@ -9,10 +9,10 @@
 		<version>2.0.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>voyageone-web2-cms</artifactId>
+	<version>${voyageone.web2.cms.version}</version>
 	<packaging>jar</packaging>
 	<name>Voyageone Web2 Cms Maven Webapp</name>
 	<url>http://maven.apache.org</url>
-	<version>${voyageone.web2.cms.version}</version>
 	<dependencies>
 		<dependency>
 			<groupId>com.voyageone</groupId>

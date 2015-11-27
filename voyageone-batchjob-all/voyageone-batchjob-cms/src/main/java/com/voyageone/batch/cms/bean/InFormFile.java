@@ -1,4 +1,4 @@
-package com.voyageone.batch.cms.formbean;
+package com.voyageone.batch.cms.bean;
 
 
 /**
