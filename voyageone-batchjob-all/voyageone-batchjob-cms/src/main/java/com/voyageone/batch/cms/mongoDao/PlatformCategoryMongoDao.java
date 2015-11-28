@@ -5,6 +5,8 @@ import com.voyageone.batch.cms.mongoModel.PlatformCategoryMongoModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public class PlatformCategoryMongoDao {
 
@@ -13,6 +15,16 @@ public class PlatformCategoryMongoDao {
 
     public PlatformCategoryMongoModel findOne(String strQuery) {
         return mongoTemplate.findOne(strQuery, PlatformCategoryMongoModel.class, PlatformCategoryMongoModel.getCollectionName());
+    }
+
+    public void savePlatformCategories(List<PlatformCategoryMongoModel> models){
+        mongoTemplate.insert(models);
+
+    }
+
+    public void deletePlatformCategories(String cartId){
+        mongoTemplate.remove("{cartId:"+cartId+"}", PlatformCategoryMongoModel.getCollectionName());
+
     }
 
     public void insertWithProduct(PlatformCategoryMongoModel entity) {
