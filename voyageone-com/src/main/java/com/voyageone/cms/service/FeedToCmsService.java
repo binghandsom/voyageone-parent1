@@ -62,9 +62,9 @@ public class FeedToCmsService {
     public Map findCategory(List<Map> tree, String cat) {
         Object jsonObj = JsonPath.parse(tree).json();
         System.out.println(jsonObj.toString());
-        List<Map> child = JsonPath.read(jsonObj, "$..child[?(@.category == '" + cat + "')]");
+        List<Map> child = JsonPath.read(jsonObj, "$..child[?(@.category == '" + cat.replace("'","\\\'") + "')]");
         if (child.size() == 0) {
-            child = JsonPath.read(jsonObj, "$..*[?(@.category == '" + cat + "')]");
+            child = JsonPath.read(jsonObj, "$..*[?(@.category == '" + cat.replace("'","\\\'") + "')]");
         }
         return child == null || child.size() == 0 ? null : child.get(0);
     }
