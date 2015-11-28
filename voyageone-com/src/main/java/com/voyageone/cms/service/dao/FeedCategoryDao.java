@@ -1,8 +1,7 @@
 package com.voyageone.cms.service.dao;
 
 import com.voyageone.base.dao.mongodb.BaseJomgoTemplate;
-import com.voyageone.cms.service.bean.FeedCategoryBean;
-import com.voyageone.cms.service.bean.FeedProductBean;
+import com.voyageone.cms.service.model.FeedCategoryModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -17,18 +16,18 @@ public class FeedCategoryDao {
     @Autowired
     BaseJomgoTemplate mongoTemplate;
 
-    public FeedCategoryBean getFeedCategory(String channelId) {
+    public FeedCategoryModel getFeedCategory(String channelId) {
         String query = "{\"channelId\":\"" + channelId + "\"}";
-        return mongoTemplate.findOne(query, FeedCategoryBean.class, "feed_category_info");
+        return mongoTemplate.findOne(query, FeedCategoryModel.class, FeedCategoryModel.COLLECTION_NAME);
     }
 
     public void setFeedCategory(String channelId, List<Map> tree) {
-        FeedCategoryBean treeObject = getFeedCategory(channelId);
+        FeedCategoryModel treeObject = getFeedCategory(channelId);
         if (treeObject == null) {
-            treeObject = new FeedCategoryBean();
+            treeObject = new FeedCategoryModel();
             treeObject.setChannelId(channelId);
         }
         treeObject.setCategoryTree(tree);
-        mongoTemplate.save(treeObject, "feed_category_info");
+        mongoTemplate.save(treeObject, FeedCategoryModel.COLLECTION_NAME);
     }
 }

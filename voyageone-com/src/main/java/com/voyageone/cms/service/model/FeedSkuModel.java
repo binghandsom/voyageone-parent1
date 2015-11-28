@@ -1,9 +1,9 @@
-package com.voyageone.cms.service.bean;
+package com.voyageone.cms.service.model;
 
 /**
  * Created by james.li on 2015/11/27.
  */
-public class FeedSkuBean {
+public class FeedSkuModel {
     private Double price_current;
     private Double price_msrp;
     private String sku;

@@ -1,17 +1,21 @@
-package com.voyageone.cms.service.bean;
+package com.voyageone.cms.service.model;
 
-import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Created by james.li on 2015/11/26.
  */
-public class FeedProductBean extends ChannelPartitionModel {
+public class FeedProductModel extends ChannelPartitionModel {
+    public static final String COLLECTION_NAME = "cms_bt_product";
+
+    public FeedProductModel(String channelId) {
+        super(channelId);
+    }
+
     private String category;
     private String code;
     private String name;
@@ -24,7 +28,7 @@ public class FeedProductBean extends ChannelPartitionModel {
     private String weight;
     private String short_description;
     private String long_description;
-    private List<FeedSkuBean> skus;
+    private List<FeedSkuModel> skus;
     @JsonIgnore
     private List<Map> attribute;
 
@@ -116,11 +120,11 @@ public class FeedProductBean extends ChannelPartitionModel {
         this.long_description = long_description;
     }
 
-    public List<FeedSkuBean> getSkus() {
+    public List<FeedSkuModel> getSkus() {
         return skus;
     }
 
-    public void setSkus(List<FeedSkuBean> skus) {
+    public void setSkus(List<FeedSkuModel> skus) {
         this.skus = skus;
     }
 
@@ -140,12 +144,11 @@ public class FeedProductBean extends ChannelPartitionModel {
         this.weight = weight;
     }
 
-    @Override
     public String getCollectionName() {
-        return getCollectionName(this.channel_id);
+        return getCollectionName(this.channelId);
     }
 
-    public static String getCollectionName(String channel_id) {
-        return "feed_code_info" + getPartitionValue(channel_id);
+    public static String getCollectionName(String channelId) {
+        return COLLECTION_NAME + getPartitionValue(channelId);
     }
 }

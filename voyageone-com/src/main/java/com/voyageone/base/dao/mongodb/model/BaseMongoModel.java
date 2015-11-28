@@ -39,4 +39,5 @@ public class BaseMongoModel {
     public String toString() {
         return JsonUtil.getJsonString(this);
     }
+
 }

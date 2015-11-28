@@ -1,7 +1,7 @@
 package com.voyageone.cms.service;
 
-import com.voyageone.cms.service.bean.FeedProductBean;
-import com.voyageone.cms.service.bean.FeedSkuBean;
+import com.voyageone.cms.service.model.FeedProductModel;
+import com.voyageone.cms.service.model.FeedSkuModel;
 import com.voyageone.common.util.JsonUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -63,10 +63,9 @@ public class FeedToCmsServiceTest {
 
     @Test
     public void testUpdateProduct() throws Exception {
-        List<FeedProductBean> products = new ArrayList<>();
-        FeedProductBean p1= new FeedProductBean();
+        List<FeedProductModel> products = new ArrayList<>();
+        FeedProductModel p1= new FeedProductModel("010");
         p1.setCategory("Home-voyageone-james");
-        p1.setChannel_id("010");
         p1.setBrand("voyage");
         p1.setCode("james");
         p1.setColor("red");
@@ -84,8 +83,8 @@ public class FeedToCmsServiceTest {
         att.put("b", "2");
 //        p1.setAttribute(att);
 
-        List<FeedSkuBean> skus = new ArrayList<>();
-        FeedSkuBean sku = new FeedSkuBean();
+        List<FeedSkuModel> skus = new ArrayList<>();
+        FeedSkuModel sku = new FeedSkuModel();
         sku.setBarcode("111111");
         sku.setClientSku("");
         sku.setPrice_current(13.01);
@@ -96,9 +95,9 @@ public class FeedToCmsServiceTest {
 
         products.add(p1);
 
-        FeedProductBean p2= new FeedProductBean();
+        FeedProductModel p2= new FeedProductModel("010");
         p2.setCategory("Home-voyageone-lijun");
-        p2.setChannel_id("010");
+        //p2.setChannelId("010");
         p2.setBrand("voyage");
         p2.setCode("lijun");
         p2.setColor("blue");
@@ -117,7 +116,7 @@ public class FeedToCmsServiceTest {
 //        p2.setAttribute(att);
 
         skus = new ArrayList<>();
-        sku = new FeedSkuBean();
+        sku = new FeedSkuModel();
         sku.setBarcode("111111");
         sku.setClientSku("");
         sku.setPrice_current(14.01);

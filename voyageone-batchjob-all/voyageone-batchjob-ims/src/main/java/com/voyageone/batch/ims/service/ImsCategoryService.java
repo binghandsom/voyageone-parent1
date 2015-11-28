@@ -347,7 +347,7 @@ public class ImsCategoryService extends BaseTaskService{
         if (platformCategoryMongoBean == null) {
             platformCategoryMongoBean = new PlatformCategoryMongoBean();
 
-            platformCategoryMongoBean.setChannel_id(platformCategories.getChannelId());
+            platformCategoryMongoBean.setChannelId(platformCategories.getChannelId());
             platformCategoryMongoBean.setCartId(platformCategories.getCartId().toString());
             platformCategoryMongoBean.setCategoryId(platformCategories.getPlatformCid());
             platformCategoryMongoBean.setCategoryName(platformCategories.getCidName());

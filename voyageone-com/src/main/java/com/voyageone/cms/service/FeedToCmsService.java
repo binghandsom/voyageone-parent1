@@ -1,8 +1,8 @@
 package com.voyageone.cms.service;
 
 import com.jayway.jsonpath.JsonPath;
-import com.voyageone.cms.service.bean.FeedCategoryBean;
-import com.voyageone.cms.service.bean.FeedProductBean;
+import com.voyageone.cms.service.model.FeedCategoryModel;
+import com.voyageone.cms.service.model.FeedProductModel;
 import com.voyageone.cms.service.dao.FeedCategoryDao;
 import com.voyageone.cms.service.dao.FeedProductDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +33,9 @@ public class FeedToCmsService {
      * @return
      */
     public List<Map> getFeedCategory(String channelId) {
-        FeedCategoryBean category = feedCategoryDao.getFeedCategory(channelId);
+        FeedCategoryModel category = feedCategoryDao.getFeedCategory(channelId);
         if (category == null) {
-            category = new FeedCategoryBean();
+            category = new FeedCategoryModel();
             category.setChannelId(channelId);
             category.setCategoryTree(new ArrayList<>());
         }
@@ -135,10 +135,10 @@ public class FeedToCmsService {
      * @param products
      * @return
      */
-    public Map updateProduct(String channelId, List<FeedProductBean> products) {
+    public Map updateProduct(String channelId, List<FeedProductModel> products) {
 
         List<String> existCategory = new ArrayList<>();
-        for (FeedProductBean product : products) {
+        for (FeedProductModel product : products) {
             String category = product.getCategory();
             // 判断是否追加一个新的类目
             if (existCategory.contains(category) == false) {
@@ -149,7 +149,7 @@ public class FeedToCmsService {
             imageUrls = product.getImage();
             // 把Image中的Path删除只保留文件名
             product.setImage(product.getImage().stream().map(image -> image.substring(image.lastIndexOf("/") + 1)).collect(toList()));
-            FeedProductBean befproduct = feedProductDao.getProductByCode(channelId, product.getCode());
+            FeedProductModel befproduct = feedProductDao.getProductByCode(channelId, product.getCode());
             if(befproduct != null){
                 product.set_id(befproduct.get_id());
             }

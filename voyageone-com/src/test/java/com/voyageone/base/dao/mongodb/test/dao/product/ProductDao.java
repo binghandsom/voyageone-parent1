@@ -115,11 +115,11 @@ public class ProductDao {
 
     public void saveProduct1Wan(Random random, int page, int size) {
         List<Product> lst = new ArrayList<>();
-        String channel_id = "013";
+        String channelId = "013";
         for (int i=1; i<=size; i++) {
             int cat_id = random.nextInt(1000)+1;
             int product_id = page*size + i;
-            Product product = new Product(channel_id, cat_id, product_id);
+            Product product = new Product(channelId, cat_id, product_id);
             for (int j=0; j<101; j++) {
                 int prop_id = random.nextInt(1000)+1;
                 if (j>80) {

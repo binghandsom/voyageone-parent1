@@ -1,12 +1,16 @@
 package com.voyageone.batch.ims.modelbean;
 
 
+import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
-public class PlatformCategoryMongoBean extends ChannelPartitionModel {
+public class PlatformCategoryMongoBean extends BaseMongoModel {
 
+    public static final String COLLECTION_NAME = "platform_category";
+
+    private String channelId;
     private String cartId;
     private String categoryId;
     private String categoryName;
@@ -14,6 +18,14 @@ public class PlatformCategoryMongoBean extends ChannelPartitionModel {
     private String parentId;
     private String propsProduct;
     private String propsItem;
+
+    public String getChannelId() {
+        return channelId;
+    }
+
+    public void setChannelId(String channelId) {
+        this.channelId = channelId;
+    }
 
     public String getCartId() {
         return cartId;
@@ -83,7 +95,7 @@ public class PlatformCategoryMongoBean extends ChannelPartitionModel {
             String propsProduct,
             String propsItem
     ) {
-        this.channel_id = channelId;
+        this.channelId = channelId;
         this.categoryId = categoryId;
         this.categoryName = categoryName;
         this.categoryPath = categoryPath;
@@ -92,13 +104,8 @@ public class PlatformCategoryMongoBean extends ChannelPartitionModel {
         this.propsItem = propsItem;
     }
 
-    @Override
-    public String getCollectionName() {
-        return getCollectionName(this.channel_id);
-    }
-
-    public static String getCollectionName(String channel_id) {
-        return "category" + getPartitionValue(channel_id);
+    public static String getCollectionName() {
+        return COLLECTION_NAME;
     }
 
 }

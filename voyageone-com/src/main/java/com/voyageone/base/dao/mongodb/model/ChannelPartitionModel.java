@@ -1,26 +1,23 @@
 package com.voyageone.base.dao.mongodb.model;
 
-public abstract class ChannelPartitionModel extends BaseMongoModel {
-
-    protected String channel_id = null;
-    public String getChannel_id() {
-        return channel_id;
+public class ChannelPartitionModel extends BaseMongoModel {
+    protected String channelId = null;
+    public String getChannelId() {
+        return channelId;
     }
-    public void setChannel_id(String channel_id) {
-        this.channel_id = channel_id;
-    }
-
-    protected String getPartitionValue() {
-        return getPartitionValue(channel_id);
+    public void setChannelId(String channelId) {
+        this.channelId = channelId;
     }
 
-    public static String getPartitionValue(String channel_id) {
+    public ChannelPartitionModel(String channelId) {
+        this.channelId = channelId;
+    }
+
+    public static String getPartitionValue(String channelId) {
         String result = "";
-        if (channel_id != null) {
-            result = "_c" + channel_id;
+        if (channelId != null) {
+            result = "_c" + channelId;
         }
         return result;
     }
-
-    public abstract String getCollectionName();
 }

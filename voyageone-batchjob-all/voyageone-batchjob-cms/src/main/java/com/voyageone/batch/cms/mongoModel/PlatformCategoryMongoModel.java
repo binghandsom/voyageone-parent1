@@ -9,6 +9,8 @@ import java.util.List;
 @Document
 public class PlatformCategoryMongoModel extends BaseMongoModel {
 
+    public static final String COLLECTION_NAME = "platform_category";
+
     private String cartId;
     private String categoryId;
     private String categoryName;
@@ -41,7 +43,7 @@ public class PlatformCategoryMongoModel extends BaseMongoModel {
      * @return
      */
     public static String getCollectionName() {
-        return "platform_category";
+        return COLLECTION_NAME;
     }
 
     public Integer getIsParent() {

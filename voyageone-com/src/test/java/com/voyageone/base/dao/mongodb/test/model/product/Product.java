@@ -46,10 +46,11 @@ public class Product extends ChannelPartitionModel {
 //private Map<String, String> field = new HashMap<String, String>();
 
     public Product() {
+        super("");
     }
 
     public Product(String channelId, int catId, int productId) {
-        this.channel_id = channelId;
+        super(channelId);
         this.cat_id = catId;
         this.product_id = productId;
     }
@@ -97,13 +98,13 @@ public class Product extends ChannelPartitionModel {
         return result;
     }
 
-    @Override
     public String getCollectionName() {
-        return getCollectionName(this.channel_id);
+        return getCollectionName(this.channelId);
     }
 
-    public static String getCollectionName(String channel_id) {
-        return "product" + getPartitionValue(channel_id);
+    public static String collectionName = "product";
+    public static String getCollectionName(String channelId) {
+        return collectionName + getPartitionValue(channelId);
     }
 
 }
