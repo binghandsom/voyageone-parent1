@@ -2,14 +2,15 @@ package com.voyageone.web2.base;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.base.exception.SystemException;
+import com.voyageone.common.Constants.LANGUAGE;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.base.log.ExceptionLogBean;
 import com.voyageone.web2.base.log.LogService;
 import com.voyageone.web2.base.message.MessageService;
 import com.voyageone.web2.core.model.UserSessionBean;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +27,6 @@ import javax.servlet.http.HttpServletResponse;
  * @version 2.0.0
  */
 public class ExceptionHandler implements HandlerExceptionResolver {
-
-    private final static String EXCEPTION_MESSAGE_PREFIX = "; cause is ";
 
     private Log logger = LogFactory.getLog(getClass());
 
@@ -46,7 +45,15 @@ public class ExceptionHandler implements HandlerExceptionResolver {
             insertLogToDB(request, exception);
             // 业务异常记错误日志及堆栈信息，迁移到共通错误页面
             if (exception instanceof BusinessException) {
-                String lang = (String) request.getSession().getAttribute(BaseConstants.SESSION_LANG);
+                Object val = request.getSession().getAttribute(BaseConstants.SESSION_LANG);
+
+                String lang = val == null ||
+                        !val.equals(LANGUAGE.EN) ||
+                        !val.equals(LANGUAGE.CN) ||
+                        !val.equals(LANGUAGE.JP)
+                        ? LANGUAGE.EN
+                        : val.toString();
+
                 return catchBusinessException(lang, (BusinessException) exception, response);
             }
             // 系统异常记错误日志及堆栈信息，迁移到共通错误页面
@@ -78,8 +85,8 @@ public class ExceptionHandler implements HandlerExceptionResolver {
     private ModelAndView catchSystemException(SystemException exception,
                                               HttpServletResponse response) {
         // 尝试根据信息获取指定的错误提示
-        String msg = exception.getMessage().split(EXCEPTION_MESSAGE_PREFIX)[0];
-
+        String msg = exception.getMessage();
+        msg = StringUtils.isEmpty(msg) ? exception.getClass().getName(): msg;
         return exceptionDeal(msg, response);
     }
 
@@ -89,8 +96,8 @@ public class ExceptionHandler implements HandlerExceptionResolver {
     private ModelAndView catchDefault(Exception exception,
                                       HttpServletResponse response) {
         // 尝试根据信息获取指定的错误提示
-        String msg = exception.getMessage().split(EXCEPTION_MESSAGE_PREFIX)[0];
-
+        String msg = exception.getMessage();
+        msg = StringUtils.isEmpty(msg) ? exception.getClass().getName(): msg;
         return exceptionDeal(msg, response);
     }
 
@@ -104,7 +111,7 @@ public class ExceptionHandler implements HandlerExceptionResolver {
         String msg = messageService.getMessage(lang, code);
 
         if (StringUtils.isEmpty(msg)) {
-            msg = String.format("this msg_code [%s] is not exists !!", code);
+            msg = String.format("this msg_code [%s(%s)] is not exists !!", code, lang);
         } else {
             msg = String.format(msg, exception.getInfo());
         }
@@ -144,7 +151,6 @@ public class ExceptionHandler implements HandlerExceptionResolver {
         // String stackInfo = getExceptionStack(exception);
         // 异常描述
         String message = CommonUtil.getExceptionSimpleContent(exception);
-
 
         ExceptionLogBean exceptionBean = new ExceptionLogBean();
         exceptionBean.setDateTime(dateTime);

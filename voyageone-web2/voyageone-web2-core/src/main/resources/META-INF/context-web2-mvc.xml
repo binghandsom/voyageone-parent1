@@ -31,7 +31,7 @@
         <mvc:interceptor>
             <mvc:mapping path="/**"/>
             <!-- 例外 -->
-            <mvc:exclude-mapping path="/core/user/access/login"/>
+            <mvc:exclude-mapping path="/core/access/user/login"/>
             <mvc:exclude-mapping path="/**/*.js"/>
             <mvc:exclude-mapping path="/**/*.css"/>
             <mvc:exclude-mapping path="/**/*.html"/>

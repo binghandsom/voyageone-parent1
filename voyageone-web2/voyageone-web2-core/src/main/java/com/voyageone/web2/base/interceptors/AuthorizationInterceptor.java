@@ -1,5 +1,6 @@
 package com.voyageone.web2.base.interceptors;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants.LANGUAGE;
 import com.voyageone.web2.base.BaseConstants;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -40,25 +41,15 @@ class AuthorizationInterceptor {
         String url = request.getRequestURI();
         String project = request.getContextPath();
 
+        if (user.getActionPermission() == null)
+            throw new BusinessException(BaseConstants.MSG_DENIED);
+
         // 检查用户是否有权限, 没有权限则不再继续
         boolean isAuth = user.getActionPermission().contains(url.replaceFirst(project, ""));
 
-        if (isAuth) return true;
+        if (!isAuth)
+            throw new BusinessException(BaseConstants.MSG_DENIED);
 
-        Object val = session.getAttribute(BaseConstants.SESSION_LANG);
-
-        String lang = val == null ||
-                !val.equals(LANGUAGE.EN) ||
-                !val.equals(LANGUAGE.CN) ||
-                !val.equals(LANGUAGE.JP)
-                    ? LANGUAGE.EN
-                    : val.toString();
-
-        AjaxResponse ajaxResponse = new AjaxResponse();
-        ajaxResponse.setCode(BaseConstants.MSG_DENIED);
-        ajaxResponse.setMessage(messageService.getMessage(lang, BaseConstants.MSG_DENIED));
-        ajaxResponse.writeTo(response);
-
-        return false;
+        return true;
     }
 }

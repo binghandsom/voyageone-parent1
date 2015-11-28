@@ -5,6 +5,7 @@
      http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
     <!-- DAO相关配置 -->
     <import resource="classpath*:context-test-datasource.xml" />
+    <import resource="classpath*:context-test-datasource-mongo.xml" />
 	<!-- 异常处理 -->
 	<bean id="exceptionHandler" class="com.voyageone.web2.base.ExceptionHandler"/>
     <!-- 配置内容初始化Bean -->
