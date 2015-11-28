@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.web2.core.sql">
+    <select id="ct_user_selectUser" resultType="com.voyageone.web2.core.model.UserBean">
+        SELECT
+            id,
+            username,
+            password
+        FROM Synship.ct_user
+        WHERE username = #{username}
+              AND active = 1;
+    </select>
+</mapper>

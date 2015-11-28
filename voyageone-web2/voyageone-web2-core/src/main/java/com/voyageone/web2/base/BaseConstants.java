@@ -5,7 +5,7 @@ package com.voyageone.web2.base;
  * Created by Jonas on 11/25/15.
  * @version 2.0.0
  */
-public interface Constants {
+public interface BaseConstants {
     /**
      * Session 内用户信息存放的 Key
      */

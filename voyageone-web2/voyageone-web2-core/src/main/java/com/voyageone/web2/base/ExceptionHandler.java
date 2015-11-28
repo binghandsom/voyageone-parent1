@@ -46,7 +46,7 @@ public class ExceptionHandler implements HandlerExceptionResolver {
             insertLogToDB(request, exception);
             // 业务异常记错误日志及堆栈信息，迁移到共通错误页面
             if (exception instanceof BusinessException) {
-                String lang = (String) request.getSession().getAttribute(Constants.SESSION_LANG);
+                String lang = (String) request.getSession().getAttribute(BaseConstants.SESSION_LANG);
                 return catchBusinessException(lang, (BusinessException) exception, response);
             }
             // 系统异常记错误日志及堆栈信息，迁移到共通错误页面
@@ -133,7 +133,7 @@ public class ExceptionHandler implements HandlerExceptionResolver {
         // 异常发生时间
         String dateTime = DateTimeUtil.getNow(DateTimeUtil.DATE_TIME_FORMAT_1);
         // 取得用户信息
-        UserSessionBean user = (UserSessionBean) request.getSession().getAttribute(Constants.SESSION_USER);
+        UserSessionBean user = (UserSessionBean) request.getSession().getAttribute(BaseConstants.SESSION_USER);
         // 操作人
         String userName = user != null ? user.getUserName() : "ghost user";
         // 请求URL

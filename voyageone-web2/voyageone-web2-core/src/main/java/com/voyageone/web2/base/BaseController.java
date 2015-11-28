@@ -92,14 +92,14 @@ public abstract class BaseController extends BaseAppComponent {
      * 统一的当前登陆用户提供
      */
     public UserSessionBean getUser() {
-        return (UserSessionBean) getSession().getAttribute(Constants.SESSION_USER);
+        return (UserSessionBean) getSession().getAttribute(BaseConstants.SESSION_USER);
     }
 
     /**
      * 统一的当前语言环境提供
      */
     public String getLang() {
-        return (String) getSession().getAttribute(Constants.SESSION_LANG);
+        return (String) getSession().getAttribute(BaseConstants.SESSION_LANG);
     }
 
     /**

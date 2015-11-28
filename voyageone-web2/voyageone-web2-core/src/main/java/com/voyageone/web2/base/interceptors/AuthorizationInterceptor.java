@@ -1,7 +1,7 @@
 package com.voyageone.web2.base.interceptors;
 
 import com.voyageone.common.Constants.LANGUAGE;
-import com.voyageone.web2.base.Constants;
+import com.voyageone.web2.base.BaseConstants;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.base.message.MessageService;
 import com.voyageone.web2.core.model.UserSessionBean;
@@ -27,12 +27,12 @@ class AuthorizationInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         HttpSession session = request.getSession();
-        UserSessionBean user = (UserSessionBean) session.getAttribute(Constants.SESSION_USER);
+        UserSessionBean user = (UserSessionBean) session.getAttribute(BaseConstants.SESSION_USER);
 
         if (user == null) {
             AjaxResponse ajaxResponse = new AjaxResponse();
-            ajaxResponse.setCode(Constants.MSG_TIMEOUT);
-            ajaxResponse.setMessage(messageService.getMessage(LANGUAGE.EN, Constants.MSG_TIMEOUT));
+            ajaxResponse.setCode(BaseConstants.MSG_TIMEOUT);
+            ajaxResponse.setMessage(messageService.getMessage(LANGUAGE.EN, BaseConstants.MSG_TIMEOUT));
             ajaxResponse.writeTo(response);
             return false;
         }
@@ -45,7 +45,7 @@ class AuthorizationInterceptor {
 
         if (isAuth) return true;
 
-        Object val = session.getAttribute(Constants.SESSION_LANG);
+        Object val = session.getAttribute(BaseConstants.SESSION_LANG);
 
         String lang = val == null ||
                 !val.equals(LANGUAGE.EN) ||
@@ -55,8 +55,8 @@ class AuthorizationInterceptor {
                     : val.toString();
 
         AjaxResponse ajaxResponse = new AjaxResponse();
-        ajaxResponse.setCode(Constants.MSG_DENIED);
-        ajaxResponse.setMessage(messageService.getMessage(lang, Constants.MSG_DENIED));
+        ajaxResponse.setCode(BaseConstants.MSG_DENIED);
+        ajaxResponse.setMessage(messageService.getMessage(lang, BaseConstants.MSG_DENIED));
         ajaxResponse.writeTo(response);
 
         return false;
