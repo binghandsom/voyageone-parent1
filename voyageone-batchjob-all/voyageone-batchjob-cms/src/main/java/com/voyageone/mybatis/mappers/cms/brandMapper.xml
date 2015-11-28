@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.voyageone.ims.sql">
+<mapper namespace="com.voyageone.cms.sql">
 
     <!-- 批量插入授权类目表-->
     <insert id="ims_insertBrands">

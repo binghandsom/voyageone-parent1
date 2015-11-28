@@ -12,8 +12,6 @@ import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.core.util.TaskControlUtils;
 import com.voyageone.batch.cms.CmsConstants;
 import com.voyageone.batch.cms.dao.BrandDao;
-import com.voyageone.batch.cms.dao.DarwinBrandMappingDao;
-import com.voyageone.batch.cms.dao.PlatformCategoryDao;
 import com.voyageone.batch.cms.mongoDao.PlatformCategoryMongoDao;
 import com.voyageone.batch.cms.mongoModel.PlatformCategoryMongoModel;
 import com.voyageone.common.Constants;
@@ -47,25 +45,18 @@ public class ImsCategoryService extends BaseTaskService{
     @Autowired
     BrandDao brandDao;
     @Autowired
-    PlatformCategoryDao platformCategoryDao;
-    @Autowired
     TbCategoryService tbCategoryService;
     @Autowired
-    DarwinBrandMappingDao darwinBrandMappingDao;
-    @Autowired
-    ImsCategorySubService imsCategorySubService;
-    @Autowired
     PlatformCategoryMongoDao platformCategoryMongoDao;
-
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.IMS;
     }
-
     @Override
     public String getTaskName() {
-        return "imsCategoryJob";
+        return "ImsCategoryService";
     }
+
 
     @Transactional
     @Override
@@ -222,11 +213,8 @@ public class ImsCategoryService extends BaseTaskService{
 
         }
 
-        // TODO 保存json
-        // 重建第三方平台指定店铺类目信息
-        imsCategorySubService.doRebuidPlatformCategory(platformCategoriesModelList, shop, JOB_NAME);
-
-        //add by lewis start 2015/11/27
+        /** 保存类目信息 */
+        /** add by lewis start 2015/11/27 */
         List<PlatformCategoryMongoModel> platformCategoryMongoBeanList = new ArrayList<>();
         for (PlatformCategoriesModel category: platformCategoriesModelList){
             PlatformCategoryMongoModel mongoModel = new PlatformCategoryMongoModel();
@@ -243,15 +231,17 @@ public class ImsCategoryService extends BaseTaskService{
         }
         //获取类目树
         List<PlatformCategoryMongoModel> savePlatformCatModels = this.buildPlatformCatTrees(platformCategoryMongoBeanList);
-        //save
 
-
-        //add by lewis end 2015/11/27
+        //删除原有类目信息
+        platformCategoryMongoDao.deletePlatformCategories(shop.getCart_id());
+        //保存最新的类目信息
+        platformCategoryMongoDao.savePlatformCategories(savePlatformCatModels);
+        /** add by lewis end 2015/11/27 **/
 
 
         // 重建第三方平台指定店铺品牌信息
         List<Brand> brands = removeListDuplicate(sellerAuthorize.getBrands());
-        imsCategorySubService.doRebuidPlatformBrand(brands, shop, JOB_NAME);
+        this.doRebuidPlatformBrand(brands, shop, JOB_NAME);
 
     }
 
@@ -296,8 +286,9 @@ public class ImsCategoryService extends BaseTaskService{
      * @param cartId 渠道信息
      */
     private void doSetPlatformPropTm(String cartId) throws ApiException {
-        // 获取天猫国际叶子类目信息
-        List<PlatformCategoriesModel> platformSubCategoryList = platformCategoryDao.getPlatformSubCatsWithoutShop(cartId);
+        // TODO 调用梁兄借口 获取天猫国际叶子类目信息
+        List<PlatformCategoriesModel> platformSubCategoryList = new ArrayList<>();
+//                platformCategoryDao.getPlatformSubCatsWithoutShop(cartId);
 
         // 需要等待删除的第三方平台类目信息
         List<ItemSchema> delCats = new ArrayList<>();
@@ -453,6 +444,22 @@ public class ImsCategoryService extends BaseTaskService{
         }
 
         return ret;
+    }
+
+    /**
+     * 重建第三方平台指定店铺品牌信息
+     * @param brands 品牌信息
+     * @param shop shop
+     * @param JOB_NAME job name
+     */
+    @Transactional
+    public void doRebuidPlatformBrand(List<Brand> brands, ShopBean shop, String JOB_NAME) {
+        //删除该店的所有品牌数据
+        brandDao.delBrandsByShop(shop);
+        //插入该店的所有品牌数据
+        if(brands != null && brands.size() > 0){
+            brandDao.insertBrands(brands, shop, JOB_NAME);
+        }
     }
 
 
