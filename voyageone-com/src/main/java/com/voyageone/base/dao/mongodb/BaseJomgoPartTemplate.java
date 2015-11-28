@@ -127,8 +127,8 @@ public class BaseJomgoPartTemplate {
         getCollection(collectionName).insert(objectToSave);
     }
 
-    public void insert(Collection<? extends Object> batchToSaves, String collectionName) {
-        getCollection(collectionName).insert(batchToSaves.toArray());
+    public WriteResult insert(Collection<? extends Object> batchToSaves, String collectionName) {
+        return getCollection(collectionName).insert(batchToSaves.toArray());
     }
 
     public void save(Object objectToSave, String collectionName) {
