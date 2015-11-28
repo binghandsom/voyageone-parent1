@@ -176,7 +176,7 @@
                         select
                             t.order_number,
                             t.client_order_id,
-                            ifnull((CASE WHEN (ifnull(t.sub_source_order_id,	''	) = '') THEN t.sub_source_order_id ELSE t.source_order_id	END	),	'') AS source_order_id
+                            ifnull((CASE WHEN (ifnull(t.sub_source_order_id,	''	) = '') THEN t.source_order_id ELSE t.sub_source_order_id	END	),	'') AS source_order_id
                         from oms_bt_orders t
                         where t.order_channel_id = #{orderChannelId}
                     ) omsOrd,
