@@ -3,7 +3,8 @@ var ngAnnotate = require('gulp-ng-annotate');
 var header = require('gulp-header');
 var minifyHtml = require('gulp-minify-html');
 var uglify = require('gulp-uglify');
-var sourceMaps = require('gulp-sourcemaps');
+var replace = require('gulp-replace');
+var rename = require('gulp-rename');
 
 var vars = require('./gulp-vars');
 var publish = vars.publish;
@@ -52,12 +53,12 @@ gulp.task(tasks.publish.views, function () {
   // build login.app and channel.app
   gulp.src(publish.loginAndChannel.js)
     .pipe(ngAnnotate())
-    .pipe(sourceMaps.init())
     .pipe(uglify())
-    .pipe(sourceMaps.write('./'))
+    .pipe(rename({suffix:".min"}))
     .pipe(gulp.dest(publish.release.loginAndChannel));
 
   gulp.src(publish.loginAndChannel.html)
+    .pipe(replace(/data-main=["'](.+?)["']/g, 'data-main="$1.min"'))
     .pipe(minifyHtml())
     .pipe(gulp.dest(publish.release.loginAndChannel));
 

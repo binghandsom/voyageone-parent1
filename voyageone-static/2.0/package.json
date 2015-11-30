@@ -2,6 +2,8 @@
   "name": "voyageone_cms",
   "version": "0.2.0",
   "devDependencies": {
+    "express": "^4.13.3",
+    "extend": "^3.0.0",
     "gulp": "^3.9.0",
     "gulp-concat": "^2.6.0",
     "gulp-debug": "^2.1.2",
@@ -11,9 +13,8 @@
     "gulp-minify-html": "^1.0.4",
     "gulp-ng-annotate": "^1.1.0",
     "gulp-rename": "^1.2.2",
+    "gulp-replace": "^0.5.4",
     "gulp-sourcemaps": "^1.6.0",
-    "gulp-uglify": "^1.4.2",
-    "express": "^4.13.3",
-    "extend": "^3.0.0"
+    "gulp-uglify": "^1.4.2"
   }
 }

@@ -5,10 +5,8 @@ var debug = require('gulp-debug');
 var header = require('gulp-header');
 var footer = require('gulp-footer');
 var minifyCss = require('gulp-minify-css');
-var minifyHtml = require('gulp-minify-html');
 var uglify = require('gulp-uglify');
 var sourceMaps = require('gulp-sourcemaps');
-var rename = require('gulp-rename');
 var fs = require('fs');
 
 var build = require('./gulp-vars').build;
@@ -18,6 +16,7 @@ var definePrefix = 'define(function(){\n';
 var defineSuffix = '});';
 var headerSingle = '(function(){\n';
 var footerSingle = '})();';
+var encode = 'utf-8';
 
 // build voyageone.angular.com.js
 gulp.task(tasks.build.angular, function () {
