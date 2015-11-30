@@ -13,10 +13,14 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     private String cidPath;
 
     private CmsBtProductModel_Field field = new CmsBtProductModel_Field();
-    private Map<String, Object> group = new HashMap<>();
-    private List<Map<String, Object>> skus = new ArrayList<>();
-    private List<Map<String, Object>> tags = new ArrayList<>();
-    private Map<String, Object> feedAtts = new HashMap<>();
+    private CmsBtProductModel_Group group = new CmsBtProductModel_Group();
+    private List<CmsBtProductModel_Sku> skus = new ArrayList<>();
+    private List<CmsBtProductModel_Tag> tags = new ArrayList<>();
+    private CmsBtProductModel_Feed feedAtts = new CmsBtProductModel_Feed();
+    private Date createTime = new Date();
+    private String creater = "0";
+    private Date updateTime = new Date();
+    private String updater = "0";
 
     public CmsBtProductModel(String channelId) {
         super(channelId);
@@ -46,10 +50,6 @@ public class CmsBtProductModel extends ChannelPartitionModel {
         this.cidPath = cidPath;
     }
 
-    private Date updateTime = new Date();
-    private String updater = "0";
-    private Date createTime = new Date();
-    private String creater = "0";
 
     public int getProdId() {
         return prodId;
@@ -67,77 +67,36 @@ public class CmsBtProductModel extends ChannelPartitionModel {
         this.field = field;
     }
 
-
-    public Map getGroup() {
+    public CmsBtProductModel_Group getGroup() {
         return group;
     }
 
-    public void setGroup(Map group) {
+    public void setGroup(CmsBtProductModel_Group group) {
         this.group = group;
     }
 
-    public Object getGroupAtt(String key) {
-        return this.group.get(key);
-    }
-
-    public void setGroupAtt(String key, Object value) {
-        if (value == null) {
-            this.group.remove(key);
-        } else {
-            this.group.put(key, value);
-        }
-    }
-
-    public List<Map<String, Object>> getSkus() {
+    public List<CmsBtProductModel_Sku> getSkus() {
         return skus;
     }
 
-    public void setSkus(List<Map<String, Object>> skus) {
+    public void setSkus(List<CmsBtProductModel_Sku> skus) {
         this.skus = skus;
     }
 
-    public List<Map<String, Object>> getTags() {
+    public List<CmsBtProductModel_Tag> getTags() {
         return tags;
     }
 
-    public void setTags(List<Map<String, Object>> tags) {
+    public void setTags(List<CmsBtProductModel_Tag> tags) {
         this.tags = tags;
     }
 
-    public Map getFeedAtts() {
+    public CmsBtProductModel_Feed getFeedAtts() {
         return feedAtts;
     }
 
-    public void setFeedAtts(Map feedAtt) {
+    public void setFeedAtts(CmsBtProductModel_Feed feedAtt) {
         this.feedAtts = feedAtt;
-    }
-
-    public Object getFeedAtt(String key) {
-        return this.feedAtts.get(key);
-    }
-
-    public void setFeedAtt(String key, Object value) {
-        if (value == null) {
-            this.feedAtts.remove(key);
-        } else {
-            this.feedAtts.put(key, value);
-        }
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public String getUpdater() {
-        return updater;
-    }
-
-    public void setUpdater(String updater) {
-        this.updater = updater;
     }
 
     public Date getCreateTime() {
@@ -154,6 +113,22 @@ public class CmsBtProductModel extends ChannelPartitionModel {
 
     public void setCreater(String creater) {
         this.creater = creater;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public String getUpdater() {
+        return updater;
+    }
+
+    public void setUpdater(String updater) {
+        this.updater = updater;
     }
 
 }

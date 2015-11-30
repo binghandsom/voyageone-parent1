@@ -58,22 +58,22 @@ public class BaseJomgoTemplate extends BaseJomgoPartTemplate {
 //    }
 
 
-    public void insert(Object objectToSave) {
+    public WriteResult insert(Object objectToSave) {
         String collectionName = getCollectionName(objectToSave.getClass());
-        insert(objectToSave, collectionName);
+        return insert(objectToSave, collectionName);
     }
 
-    public void insert(Collection<? extends Object> batchToSaves) {
+    public WriteResult insert(Collection<? extends Object> batchToSaves) {
         String collectionName = null;
         if (batchToSaves != null && batchToSaves.size()>0) {
             collectionName = getCollectionName(batchToSaves.iterator().next().getClass());
         }
-        insert(batchToSaves, collectionName);
+        return insert(batchToSaves, collectionName);
     }
 
-    public void save(Object objectToSave) {
+    public WriteResult save(Object objectToSave) {
         String collectionName = getCollectionName(objectToSave.getClass());
-        save(objectToSave, collectionName);
+        return save(objectToSave, collectionName);
     }
 
     public WriteResult updateFirst(final String strQuery, final String strUpdate, Class<?> entityClass) {
@@ -91,19 +91,19 @@ public class BaseJomgoTemplate extends BaseJomgoPartTemplate {
         return upsert(strQuery, strUpdate, collectionName);
     }
 
-    public void removeById(String id, Class<?> entityClass) {
+    public WriteResult removeById(String id, Class<?> entityClass) {
         String collectionName = getCollectionName(entityClass);
-        removeById(id, collectionName);
+        return removeById(id, collectionName);
     }
 
-    public void removeAll(Class<?> entityClass) {
+    public WriteResult removeAll(Class<?> entityClass) {
         String collectionName = getCollectionName(entityClass);
-        removeAll(collectionName);
+        return removeAll(collectionName);
     }
 
-    public void remove(String strQuery, Class<?> entityClass) {
+    public WriteResult remove(String strQuery, Class<?> entityClass) {
         String collectionName = getCollectionName(entityClass);
-        remove(strQuery, collectionName);
+        return remove(strQuery, collectionName);
     }
 
     public Distinct distinct(String key, Class<?> entityClass) {
@@ -121,10 +121,10 @@ public class BaseJomgoTemplate extends BaseJomgoPartTemplate {
         return aggregate(pipelineOperator, collectionName, parameters);
     }
 
-    public void drop(Class<?> entityClass) {
-        String collectionName = getCollectionName(entityClass);
-        drop(collectionName);
-    }
+//    public void drop(Class<?> entityClass) {
+//        String collectionName = getCollectionName(entityClass);
+//        drop(collectionName);
+//    }
 
     public void dropIndex(String keys, Class<?> entityClass) {
         String collectionName = getCollectionName(entityClass);

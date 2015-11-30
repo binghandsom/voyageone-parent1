@@ -1,24 +1,11 @@
 package com.voyageone.cms.service.model;
 
 
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+
 import java.util.*;
 
-public class CmsBtProductModel_Field<K,V> extends LinkedHashMap<K,V> implements Map<K,V> {
-    public V getAttribute(String key) {
-        if (key == null) {
-            return null;
-        } else {
-            return  super.get((K)key);
-        }
-    }
-
-    public void setAttribute(String key, Object value) {
-        if (value == null) {
-            super.remove(key);
-        } else {
-            super.put((K)key, (V)value);
-        }
-    }
+public class CmsBtProductModel_Field extends BaseMongoMap {
 
     public String getCode() {
         return (String) getAttribute("code");
@@ -188,7 +175,7 @@ public class CmsBtProductModel_Field<K,V> extends LinkedHashMap<K,V> implements 
         setAttribute("inventory", inventory);
     }
 
-
+    //???
     public List<Map<String, Object>> getImages() {
         return (List<Map<String, Object>>) getAttribute("images");
     }
