@@ -45,8 +45,17 @@ require([
         return;
       }
       $scope.errorMessage = '';
-      $http.post('', {}).then(function(res){
-
+      $http.post('/core/access/user/login', {
+        username: $scope.username,
+        password: $scope.password,
+        timezone: -(new Date().getTimezoneOffset() / 60)
+      }).then(function(response){
+        var res = response.data;
+        if (res.result.data) {
+          location.href = 'channel.html';
+          return;
+        }
+        $scope.errorMessage = res.message || '登录失败';
       });
     };
   });
