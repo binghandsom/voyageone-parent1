@@ -468,6 +468,10 @@ public class OrderExtend implements java.io.Serializable {
 	private String LongItemNumber;
 	//	BCBG订单使用 end
 
+	// Sears订单使用 start
+	private String shippingFee;
+	// Sears订单使用 end
+
 	public static long getSerialVersionUID() {
 		return serialVersionUID;
 	}
@@ -1558,5 +1562,13 @@ public class OrderExtend implements java.io.Serializable {
 
 	public void setShipDate(String shipDate) {
 		this.shipDate = shipDate;
+	}
+
+	public String getShippingFee() {
+		return shippingFee;
+	}
+
+	public void setShippingFee(String shippingFee) {
+		this.shippingFee = shippingFee;
 	}
 }

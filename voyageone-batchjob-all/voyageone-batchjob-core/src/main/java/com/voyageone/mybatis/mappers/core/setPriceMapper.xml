@@ -188,6 +188,47 @@
         GROUP BY details.sku
     </select>
 
+    <!-- 汇总价格取得（含运费，正常订单）-->
+    <select id="getPriceDataIncludeShipping" resultType="com.voyageone.batch.core.modelbean.SetPriceBean">
+        select
+            orders.source_order_id,
+            orders.order_date_time,
+            orders.cart_id,
+            details.sku,
+            SUM(details.price_per_unit + ifnull((select SUM(price_per_unit)
+                                                    from oms_bt_order_details discount
+                                                    where details.order_number = discount.order_number
+                                                        AND (discount.STATUS not in ( 'Canceled','Returned') or discount.STATUS is null)
+                                                        and details.item_number = discount.sub_item_number),0)) as price,
+            ifnull((select SUM(price_per_unit)
+                    from oms_bt_order_details shipdetails
+                    where shipdetails.order_number	= #{order_number}
+                        and shipdetails.adjustment = 1
+                        AND (shipdetails.STATUS not in ( 'Canceled','Returned') or shipdetails.STATUS is null)
+                        and shipdetails.sub_item_number = 0 AND shipdetails.sku not in ('Shipping')),0) as shipping_price,
+            ifnull((select SUM(price_per_unit)
+                    from oms_bt_order_details shipdetails
+                    where shipdetails.order_number	= #{order_number}
+                        and shipdetails.adjustment = 1
+                        AND (shipdetails.STATUS not in ( 'Canceled','Returned') or shipdetails.STATUS is null)
+                        and shipdetails.sku = 'Shipping'),0) as shipping_fee,
+            sum(details.quantity_ordered) as quantity_ordered,
+            wdetails.client_sku
+        from
+            oms_bt_orders orders,
+            oms_bt_order_details details,
+            wms_bt_item_details wdetails
+        where
+            orders.order_channel_id = #{order_channel_id}
+            and orders.order_number = details.order_number
+            and details.adjustment = 0
+            and details.order_number = #{order_number}
+            and details.sku = wdetails.sku
+            and wdetails.order_channel_id = #{order_channel_id}
+        AND (details.STATUS not in ( 'Canceled','Returned') or details.STATUS is null)
+        GROUP BY details.sku
+    </select>
+
     <!-- 汇总价格取得（不包含运费，Cancel，Return 订单）-->
     <select id="getPriceDataNotShippingForCancelOrReturn" resultType="com.voyageone.batch.core.modelbean.SetPriceBean">
         select

@@ -9,7 +9,15 @@ public class SetPriceBean {
     private String cart_id;
     private String sku;
     private String price;
+    // 订单折扣
     private String shipping_price;
+    // 运费
+    private String shipping_fee;
+
+    // 订单数量
+    private String quantity_ordered;
+    // 第三方SKU
+    private String client_sku;
 
     public String getSource_order_id() {
         return source_order_id;
@@ -56,6 +64,30 @@ public class SetPriceBean {
 
     public void setShipping_price(String shipping_price) {
         this.shipping_price = shipping_price;
+    }
+
+    public String getShipping_fee() {
+        return shipping_fee;
+    }
+
+    public void setShipping_fee(String shipping_fee) {
+        this.shipping_fee = shipping_fee;
+    }
+
+    public String getQuantity_ordered() {
+        return quantity_ordered;
+    }
+
+    public void setQuantity_ordered(String quantity_ordered) {
+        this.quantity_ordered = quantity_ordered;
+    }
+
+    public String getClient_sku() {
+        return client_sku;
+    }
+
+    public void setClient_sku(String client_sku) {
+        this.client_sku = client_sku;
     }
 }
 

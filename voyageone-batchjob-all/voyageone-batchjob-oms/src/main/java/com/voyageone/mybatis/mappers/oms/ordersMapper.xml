@@ -2773,4 +2773,49 @@
 					ox.order_channel_id = #{orderChannelId}	and
 					ox.ext_flg1 = 1
 	</select>
+
+	<!-- 获得向第三方 推送订单信息（正常Approved 订单） -->
+	<resultMap id="ordersInfoMapforPushThirdParty" type="com.voyageone.batch.oms.modelbean.OrderExtend">
+		<result column="order_channel_id" property="orderChannelId"/>
+		<result column="source_order_id" property="sourceOrderId"/>
+		<result column="sub_source_order_id" property="subSourceOrderId"/>
+		<result column="order_number" property="orderNumber"/>
+		<result column="order_date_time" property="orderDateTime"/>
+		<result column="pay_no" property="payNo"/>
+		<result column="ship_address" property="shipAddress"/>
+		<result column="ship_address2" property="shipAddress2"/>
+		<result column="ship_zip" property="shipZip"/>
+		<result column="ship_name" property="shipName"/>
+		<result column="ship_email" property="shipEmail"/>
+		<result column="ship_city" property="shipCity"/>
+		<result column="ship_phone" property="shipPhone"/>
+		<result column="ship_state" property="shipState"/>
+	</resultMap>
+	<select id="oms_bt_order_details_getPushThirdPartyOrderInfo" parameterType="HashMap" resultMap="ordersInfoMapforPushThirdParty" >
+		select o.order_channel_id,
+			o.source_order_id,
+			o.sub_source_order_id,
+			o.order_number,
+			o.cart_id,
+			o.name,
+			o.order_date_time,
+			o.pay_no,
+			o.ship_address,
+			o.ship_address2,
+			o.ship_zip,
+			o.ship_name,
+			o.ship_email,
+			o.ship_city,
+			o.ship_phone,
+			o.ship_state
+		from
+			Synship.oms_bt_orders o
+		where
+			o.order_channel_id = #{orderChannelId} and
+			o.order_status = 'Approved' and
+			(o.client_order_id = '' or o.client_order_id is null)
+			and o.order_number = '1000068839'
+		limit 80
+	</select>
+
 </mapper>

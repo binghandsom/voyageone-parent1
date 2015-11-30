@@ -13,6 +13,7 @@ import com.voyageone.batch.oms.formbean.OutFormOrderDetailOrderDetail;
 import com.voyageone.batch.oms.formbean.OutFormOrderdetailOrders;
 import com.voyageone.batch.oms.modelbean.OrderExtend;
 import com.voyageone.batch.oms.utils.WebServiceUtil;
+import com.voyageone.common.components.baidu.translate.BaiduTranslateUtil;
 import com.voyageone.common.components.issueLog.IssueLog;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -74,8 +75,8 @@ public class PostBCBGOrderService {
 	private final String oms_upload_demands_file_path = "oms_upload_demands_file_path";
 
 	// BCBG渠道ID
-	private String orderChannelID = "012";
-//	private String orderChannelID = "001";
+//	private String orderChannelID = "012";
+	private String orderChannelID = "001";
 
 	// 正常订单推送（Shipped）
 //	private String postBCBGDailySalesFileName = "SALES_%s_%s.dat"; //"SALES_YYYYMMDD_HHMMSS.dat";
@@ -1929,7 +1930,9 @@ public class PostBCBGOrderService {
 		translateContent.add(orderInfo.getCity());
 		translateContent.add(orderInfo.getState());
 
-		List<String> afterTranslateContent = translate(translateContent, 1);
+
+//		List<String> afterTranslateContent = translate(translateContent, 1);
+		List<String> afterTranslateContent = BaiduTranslateUtil.translate(translateContent);
 
 		orderInfo.setShipName(afterTranslateContent.get(0));
 		orderInfo.setShipAddress(afterTranslateContent.get(1));

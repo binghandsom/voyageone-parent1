@@ -81,6 +81,11 @@ public class SearsBase {
 
     protected OrderResponse SearsHttpPost(String url, String charset,String content) throws Exception {
 
+        // Properties属性没有设置的场合 Properties的SSL属性设置
+        if (!System.getProperties().contains(keystore)){
+            System.getProperties().putAll(properties);
+        }
+
         HttpURLConnection http = null;
         OutputStream output = null;
         BufferedReader in = null;
