@@ -5,6 +5,7 @@ import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.core.CoreConstants;
 import com.voyageone.web2.core.dao.UserConfigDao;
 import com.voyageone.web2.core.dao.UserDao;
+import com.voyageone.web2.core.model.ChannelPermissionBean;
 import com.voyageone.web2.core.model.UserBean;
 import com.voyageone.web2.core.model.UserConfigBean;
 import com.voyageone.web2.core.model.UserSessionBean;
@@ -57,6 +58,10 @@ public class UserService extends BaseAppService {
         userSessionBean.setUserConfig(getUserConfig(userBean.getId()));
 
         return userSessionBean;
+    }
+
+    public List<ChannelPermissionBean> getPermissionCompany(UserSessionBean userSessionBean) {
+        return userDao.selectPermissionChannel(userSessionBean.getUserName());
     }
 
     private Map<String , List<UserConfigBean>> getUserConfig(int userId) {

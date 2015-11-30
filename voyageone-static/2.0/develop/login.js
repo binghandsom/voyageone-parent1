@@ -3,7 +3,7 @@
  * Login Page Main JS
  * @Date:    2015-11-24 17:03:16
  * @User:    Jonas
- * @Version: 0.2.0
+ * @Version: 2.0.0
  */
 
 require.config({
