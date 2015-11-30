@@ -24,7 +24,7 @@ public class CmsProductServiceTest {
     }
 
     private CmsBtProductModel create() {
-        CmsBtProductModel product = new CmsBtProductModel("c001");
+        CmsBtProductModel product = new CmsBtProductModel("001");
         product.setProdId(1);
         product.setCid(111112);
         product.setCidPath("-100001-111111-111112-");

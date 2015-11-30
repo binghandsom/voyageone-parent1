@@ -5,6 +5,8 @@ import org.jongo.marshall.jackson.oid.MongoObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.Date;
+
 @Document
 public class BaseMongoModel {
 
@@ -16,6 +18,43 @@ public class BaseMongoModel {
     }
     public void set_id(String _id) {
         this._id = _id;
+    }
+
+    private Date createTime = new Date();
+    private String creater = "0";
+    private Date updateTime = new Date();
+    private String updater = "0";
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public String getCreater() {
+        return creater;
+    }
+
+    public void setCreater(String creater) {
+        this.creater = creater;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public String getUpdater() {
+        return updater;
+    }
+
+    public void setUpdater(String updater) {
+        this.updater = updater;
     }
 
     @Override

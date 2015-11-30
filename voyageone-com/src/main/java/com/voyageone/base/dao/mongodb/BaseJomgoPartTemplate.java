@@ -3,6 +3,8 @@ package com.voyageone.base.dao.mongodb;
 import com.mongodb.CommandResult;
 import com.mongodb.DBCollection;
 import com.mongodb.WriteResult;
+import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
+import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
 import net.minidev.json.JSONObject;
 import org.apache.commons.collections.IteratorUtils;
 import org.bson.types.ObjectId;
@@ -10,15 +12,22 @@ import org.jongo.*;
 import org.springframework.data.mongodb.core.CollectionOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
+import javax.annotation.Resource;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class BaseJomgoPartTemplate {
 
     protected MongoTemplate mongoTemplate;
 
+
     protected Jongo jongo;
+
+    @Resource
+    MongoCollectionMapping mongoCollectionMapping;
 
     public BaseJomgoPartTemplate(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
@@ -36,6 +45,21 @@ public class BaseJomgoPartTemplate {
 
     public DBCollection createCollection(final String collectionName, final CollectionOptions collectionOptions) {
         return mongoTemplate.createCollection(collectionName, collectionOptions);
+    }
+
+    public String getCollectionName(BaseMongoModel model) {
+        if (model instanceof ChannelPartitionModel) {
+            return getCollectionName(model.getClass(), ((ChannelPartitionModel)model).getChannelId());
+        }
+        return getCollectionName(model.getClass());
+    }
+
+    public String getCollectionName(Class<?> entityClass) {
+        return mongoCollectionMapping.getCollectionName(entityClass);
+    }
+
+    public String getCollectionName(Class<?> entityClass, String channelId) {
+        return mongoCollectionMapping.getCollectionName(entityClass, channelId);
     }
 
     public MongoCollection getCollection(String collectionName) {
@@ -170,10 +194,6 @@ public class BaseJomgoPartTemplate {
     public Aggregate aggregate(String pipelineOperator, String collectionName, Object... parameters) {
         return getCollection(collectionName).aggregate(pipelineOperator, parameters);
     }
-
-//    public void drop(String collectionName) {
-//        getCollection(collectionName).drop();
-//    }
 
     public void dropIndex(String keys, String collectionName) {
         getCollection(collectionName).dropIndex(keys);

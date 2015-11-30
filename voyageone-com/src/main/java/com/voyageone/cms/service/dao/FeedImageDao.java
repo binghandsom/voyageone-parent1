@@ -1,8 +1,7 @@
 package com.voyageone.cms.service.dao;
 
-import com.voyageone.base.dao.mongodb.BaseJomgoTemplate;
+import com.voyageone.base.dao.mongodb.BaseMongoDao;
 import com.voyageone.cms.service.model.FeedImageModel;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -11,13 +10,15 @@ import java.util.List;
  * Created by james.li on 2015/11/30.
  */
 @Repository
-public class FeedImageDao {
-    @Autowired
-    BaseJomgoTemplate mongoTemplate;
+public class FeedImageDao extends BaseMongoDao {
+
+    public FeedImageDao() {
+        super.entityClass = FeedImageModel.class;
+    }
 
     public FeedImageModel selectImagebyUrl(String channelId, String url) {
         String query = "{\"url\":\"" + url + "\",\"channelId\":\""+channelId +"\"}";
-        return mongoTemplate.findOne(query, FeedImageModel.class, FeedImageModel.COLLECTION_NAME);
+        return mongoTemplate.findOne(query, FeedImageModel.class, collectionName);
     }
 
     public void updateImagebyUrl(String channelId, String url) {
@@ -28,7 +29,7 @@ public class FeedImageDao {
             feedImageModel.setUrl(url);
         }
         feedImageModel.setStatus(0);
-        mongoTemplate.save(feedImageModel,FeedImageModel.COLLECTION_NAME);
+        mongoTemplate.save(feedImageModel,collectionName);
     }
     public void updateImagebyUrl(String channelId, List<String> url) {
         url.forEach(s -> updateImagebyUrl(channelId, s));

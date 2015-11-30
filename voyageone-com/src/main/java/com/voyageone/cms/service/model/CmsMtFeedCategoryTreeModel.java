@@ -8,9 +8,8 @@ import java.util.Map;
 /**
  * Created by james.li on 2015/11/26.
  */
-public class CmsMtFeedCategoryTreeModel extends BaseMongoModel {
-    public static final String COLLECTION_NAME = "cms_mt_feed_category_tree";
 
+public class CmsMtFeedCategoryTreeModel extends BaseMongoModel {
     private String channelId;
     private List<Map> categoryTree;
 

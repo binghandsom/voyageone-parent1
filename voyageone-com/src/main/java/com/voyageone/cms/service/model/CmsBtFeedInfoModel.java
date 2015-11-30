@@ -10,7 +10,6 @@ import java.util.Map;
  * Created by james.li on 2015/11/26.
  */
 public class CmsBtFeedInfoModel extends ChannelPartitionModel {
-    public static final String COLLECTION_NAME = "cms_bt_feed_info";
 
     public CmsBtFeedInfoModel(String channelId) {
         super(channelId);
@@ -154,14 +153,6 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
 
     public void setWeight(String weight) {
         this.weight = weight;
-    }
-
-    public String getCollectionName() {
-        return getCollectionName(this.channelId);
-    }
-
-    public static String getCollectionName(String channelId) {
-        return COLLECTION_NAME + getPartitionValue(channelId);
     }
 
     public void attributeListToMap() {

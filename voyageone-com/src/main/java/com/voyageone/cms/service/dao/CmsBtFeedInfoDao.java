@@ -1,24 +1,28 @@
 package com.voyageone.cms.service.dao;
 
-import com.voyageone.base.dao.mongodb.BaseJomgoTemplate;
+import com.voyageone.base.dao.mongodb.BaseMongoDao;
 import com.voyageone.cms.service.model.CmsBtFeedInfoModel;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 /**
  * Created by james.li on 2015/11/27.
  */
+
 @Repository
-public class CmsBtFeedInfoDao {
-    @Autowired
-    BaseJomgoTemplate mongoTemplate;
+public class CmsBtFeedInfoDao extends BaseMongoDao {
+
+    public CmsBtFeedInfoDao() {
+        super.entityClass = CmsBtFeedInfoModel.class;
+    }
 
     public CmsBtFeedInfoModel selectProductByCode(String channelId, String code) {
         String query = "{\"code\":\"" + code + "\"}";
-        return mongoTemplate.findOne(query, CmsBtFeedInfoModel.class, CmsBtFeedInfoModel.getCollectionName(channelId));
+        String collectionName = mongoTemplate.getCollectionName(CmsBtFeedInfoModel.class, channelId);
+        return mongoTemplate.findOne(query, CmsBtFeedInfoModel.class, collectionName);
     }
 
     public void updateProduct(CmsBtFeedInfoModel product){
-        mongoTemplate.save(product, product.getCollectionName());
+        String collectionName = mongoTemplate.getCollectionName(product);
+        mongoTemplate.save(product, collectionName);
     }
 }

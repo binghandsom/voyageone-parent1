@@ -1,20 +1,23 @@
 package com.voyageone.batch.cms.mongoDao;
 
 import com.voyageone.base.dao.mongodb.BaseJomgoTemplate;
+import com.voyageone.base.dao.mongodb.BaseMongoDao;
 import com.voyageone.batch.cms.mongoModel.PlatformCategoryMongoModel;
+import com.voyageone.cms.service.model.CmsBtFeedInfoModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public class PlatformCategoryMongoDao {
+public class PlatformCategoryMongoDao extends BaseMongoDao {
 
-    @Autowired
-    BaseJomgoTemplate mongoTemplate;
+    public PlatformCategoryMongoDao() {
+        super.entityClass = PlatformCategoryMongoModel.class;
+    }
 
     public PlatformCategoryMongoModel findOne(String strQuery) {
-        return mongoTemplate.findOne(strQuery, PlatformCategoryMongoModel.class, PlatformCategoryMongoModel.getCollectionName());
+        return mongoTemplate.findOne(strQuery, PlatformCategoryMongoModel.class, collectionName);
     }
 
     public void savePlatformCategories(List<PlatformCategoryMongoModel> models){
@@ -23,20 +26,20 @@ public class PlatformCategoryMongoDao {
     }
 
     public void deletePlatformCategories(String cartId){
-        mongoTemplate.remove("{cartId:"+cartId+"}", PlatformCategoryMongoModel.getCollectionName());
+        mongoTemplate.remove("{cartId:"+cartId+"}", collectionName);
 
     }
 
     public void insertWithProduct(PlatformCategoryMongoModel entity) {
-        mongoTemplate.save(entity, entity.getCollectionName());
+        mongoTemplate.save(entity, collectionName);
     }
 
     public void saveWithProduct(PlatformCategoryMongoModel entity) {
-        mongoTemplate.save(entity, entity.getCollectionName());
+        mongoTemplate.save(entity, collectionName);
     }
 
     public void deleteWithProduct(PlatformCategoryMongoModel entity) {
-        mongoTemplate.removeById(entity.get_id(), entity.getCollectionName());
+        mongoTemplate.removeById(entity.get_id(), collectionName);
     }
 
 

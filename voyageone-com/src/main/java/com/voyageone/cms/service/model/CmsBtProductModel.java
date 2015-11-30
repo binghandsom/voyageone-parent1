@@ -6,7 +6,6 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import java.util.*;
 
 public class CmsBtProductModel extends ChannelPartitionModel {
-    public static final String COLLECTION_NAME = "cms_bt_product";
 
     private int prodId;
     private int cid;
@@ -17,21 +16,9 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     private List<CmsBtProductModel_Sku> skus = new ArrayList<>();
     private List<CmsBtProductModel_Tag> tags = new ArrayList<>();
     private CmsBtProductModel_Feed feedAtts = new CmsBtProductModel_Feed();
-    private Date createTime = new Date();
-    private String creater = "0";
-    private Date updateTime = new Date();
-    private String updater = "0";
 
     public CmsBtProductModel(String channelId) {
         super(channelId);
-    }
-
-    public String getCollectionName() {
-        return getCollectionName(this.channelId);
-    }
-
-    public static String getCollectionName(String channelId) {
-        return COLLECTION_NAME + getPartitionValue(channelId);
     }
 
     public int getCid() {
@@ -49,7 +36,6 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     public void setCidPath(String cidPath) {
         this.cidPath = cidPath;
     }
-
 
     public int getProdId() {
         return prodId;
@@ -97,38 +83,6 @@ public class CmsBtProductModel extends ChannelPartitionModel {
 
     public void setFeedAtts(CmsBtProductModel_Feed feedAtt) {
         this.feedAtts = feedAtt;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public String getCreater() {
-        return creater;
-    }
-
-    public void setCreater(String creater) {
-        this.creater = creater;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public String getUpdater() {
-        return updater;
-    }
-
-    public void setUpdater(String updater) {
-        this.updater = updater;
     }
 
 }

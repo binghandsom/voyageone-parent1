@@ -1,25 +1,31 @@
 package com.voyageone.cms.service.dao;
 
-import com.voyageone.base.dao.mongodb.BaseJomgoTemplate;
+import com.voyageone.base.dao.mongodb.BaseMongoDao;
 import com.voyageone.cms.service.model.CmsBtProductModel;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class CmsBtProductDao {
-    @Autowired
-    BaseJomgoTemplate mongoTemplate;
+public class CmsBtProductDao extends BaseMongoDao {
+
+    public CmsBtProductDao() {
+        super.entityClass = CmsBtProductModel.class;
+    }
 
     public CmsBtProductModel getProductByCode(String channelId, String code) {
         String query = "{\"code\":\"" + code + "\"}";
-        return mongoTemplate.findOne(query, CmsBtProductModel.class, CmsBtProductModel.getCollectionName(channelId));
+        String collectionName = mongoTemplate.getCollectionName(CmsBtProductModel.class, channelId);
+        return mongoTemplate.findOne(query, CmsBtProductModel.class, collectionName);
     }
 
     public void save(CmsBtProductModel product){
-        mongoTemplate.save(product, product.getCollectionName());
+        System.out.println(this.collectionName);
+        String collectionName = mongoTemplate.getCollectionName(product);
+//        String collectionName = product.getCollectionName();
+        mongoTemplate.save(product, collectionName);
     }
 
     public void update(CmsBtProductModel product){
-        mongoTemplate.save(product, product.getCollectionName());
+        String collectionName = mongoTemplate.getCollectionName(product);
+        mongoTemplate.save(product, collectionName);
     }
 }

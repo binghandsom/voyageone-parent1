@@ -7,7 +7,6 @@ import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
  * Created by james.li on 2015/11/30.
  */
 public class FeedImageModel extends BaseMongoModel {
-    public static final String COLLECTION_NAME = "cms_feed_image";
     private String channelId;
     private String url;
     private int status = 0;

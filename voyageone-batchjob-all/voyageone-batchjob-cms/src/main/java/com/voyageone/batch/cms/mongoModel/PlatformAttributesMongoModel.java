@@ -7,8 +7,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document
 public class PlatformAttributesMongoModel extends BaseMongoModel {
 
-    public static final String COLLECTION_NAME = "platform_attributes";
-
     private String cartId;
     private String categoryId;
     private String propsProduct;
@@ -25,14 +23,6 @@ public class PlatformAttributesMongoModel extends BaseMongoModel {
         this.categoryId = categoryId;
         this.propsProduct = propsProduct;
         this.propsItem = propsItem;
-    }
-
-    /**
-     * Get collection name.
-     * @return
-     */
-    public static String getCollectionName() {
-        return COLLECTION_NAME;
     }
 
     public String getCartId() {

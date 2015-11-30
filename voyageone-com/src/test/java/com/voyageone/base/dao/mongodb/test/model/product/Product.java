@@ -104,7 +104,7 @@ public class Product extends ChannelPartitionModel {
 
     public static String collectionName = "product";
     public static String getCollectionName(String channelId) {
-        return collectionName + getPartitionValue(channelId);
+        return collectionName;// + getPartitionValue(channelId);
     }
 
 }
