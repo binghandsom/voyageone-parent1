@@ -174,11 +174,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
                         String newValue = " " + map.get("value").toString()+ " ";
                         if (value.indexOf(newValue) == -1) {
                             this.attribute.put(map.get("attribute").toString(), value + ";" + newValue);
-                        } else {
-                            int a;
-                            a = 1;
                         }
-//                        this.attribute.put(map.get("attribute").toString(), this.attribute.get(map.get("attribute").toString()).toString() + "/" + map.get("value"));
                     } else {
                         this.attribute.put(map.get("attribute").toString(), " " + map.get("value") + " ");
                     }
