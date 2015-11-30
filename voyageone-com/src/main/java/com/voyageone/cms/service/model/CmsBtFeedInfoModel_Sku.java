@@ -3,7 +3,7 @@ package com.voyageone.cms.service.model;
 /**
  * Created by james.li on 2015/11/27.
  */
-public class FeedSkuModel {
+public class CmsBtFeedInfoModel_Sku {
     private Double price_current;
     private Double price_msrp;
     private String sku;
@@ -57,5 +57,10 @@ public class FeedSkuModel {
 
     public void setClientSku(String clientSku) {
         this.clientSku = clientSku;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+         return  this.sku.equalsIgnoreCase(((CmsBtFeedInfoModel_Sku)obj).getSku());
     }
 }

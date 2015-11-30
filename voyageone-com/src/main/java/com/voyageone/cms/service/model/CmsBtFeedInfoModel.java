@@ -1,20 +1,26 @@
 package com.voyageone.cms.service.model;
 
 import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Created by james.li on 2015/11/26.
  */
-public class FeedProductModel extends ChannelPartitionModel {
-    public static final String COLLECTION_NAME = "cms_bt_product";
+public class CmsBtFeedInfoModel extends ChannelPartitionModel {
+    public static final String COLLECTION_NAME = "cms_bt_feed_info";
 
-    public FeedProductModel(String channelId) {
+    public CmsBtFeedInfoModel(String channelId) {
         super(channelId);
     }
+
+    public CmsBtFeedInfoModel() {
+        super("");
+    }
+
+    ;
 
     private String category;
     private String code;
@@ -28,9 +34,9 @@ public class FeedProductModel extends ChannelPartitionModel {
     private String weight;
     private String short_description;
     private String long_description;
-    private List<FeedSkuModel> skus;
-    @JsonIgnore
-    private List<Map> attribute;
+    private List<CmsBtFeedInfoModel_Sku> skus;
+    private List<Map> attributeList;
+    private Map attribute = new HashMap<>();
 
     public String getCategory() {
         return category;
@@ -120,19 +126,27 @@ public class FeedProductModel extends ChannelPartitionModel {
         this.long_description = long_description;
     }
 
-    public List<FeedSkuModel> getSkus() {
+    public List<CmsBtFeedInfoModel_Sku> getSkus() {
         return skus;
     }
 
-    public void setSkus(List<FeedSkuModel> skus) {
+    public void setSkus(List<CmsBtFeedInfoModel_Sku> skus) {
         this.skus = skus;
     }
 
-    public List<Map> getAttribute() {
+    public List<Map> getAttributeList() {
+        return attributeList;
+    }
+
+    public void setAttributeList(List<Map> attributeList) {
+        this.attributeList = attributeList;
+    }
+
+    public Map getAttribute() {
         return attribute;
     }
 
-    public void setAttribute(List<Map> attribute) {
+    public void setAttribute(Map attribute) {
         this.attribute = attribute;
     }
 
@@ -150,5 +164,27 @@ public class FeedProductModel extends ChannelPartitionModel {
 
     public static String getCollectionName(String channelId) {
         return COLLECTION_NAME + getPartitionValue(channelId);
+    }
+
+    public void attributeListToMap() {
+        this.attributeList.forEach(
+                map -> {
+                    if (this.attribute.containsKey(map.get("attribute").toString())) {
+                        String value = this.attribute.get(map.get("attribute").toString()).toString();
+                        String newValue = " " + map.get("value").toString()+ " ";
+                        if (value.indexOf(newValue) == -1) {
+                            this.attribute.put(map.get("attribute").toString(), value + ";" + newValue);
+                        } else {
+                            int a;
+                            a = 1;
+                        }
+//                        this.attribute.put(map.get("attribute").toString(), this.attribute.get(map.get("attribute").toString()).toString() + "/" + map.get("value"));
+                    } else {
+                        this.attribute.put(map.get("attribute").toString(), " " + map.get("value") + " ");
+                    }
+
+                }
+        );
+        this.attributeList = null;
     }
 }

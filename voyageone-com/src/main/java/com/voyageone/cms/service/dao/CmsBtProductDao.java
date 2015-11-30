@@ -2,7 +2,6 @@ package com.voyageone.cms.service.dao;
 
 import com.voyageone.base.dao.mongodb.BaseJomgoTemplate;
 import com.voyageone.cms.service.model.CmsBtProductModel;
-import com.voyageone.cms.service.model.FeedProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 

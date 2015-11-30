@@ -1,10 +1,11 @@
 package com.voyageone.cms.service;
 
 import com.jayway.jsonpath.JsonPath;
-import com.voyageone.cms.service.model.FeedCategoryModel;
-import com.voyageone.cms.service.model.FeedProductModel;
-import com.voyageone.cms.service.dao.FeedCategoryDao;
-import com.voyageone.cms.service.dao.FeedProductDao;
+import com.voyageone.cms.service.dao.FeedImageDao;
+import com.voyageone.cms.service.model.CmsMtFeedCategoryTreeModel;
+import com.voyageone.cms.service.model.CmsBtFeedInfoModel;
+import com.voyageone.cms.service.dao.CmsMtFeedCategoryTreeDao;
+import com.voyageone.cms.service.dao.CmsBtFeedInfoDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,10 +22,13 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class FeedToCmsService {
     @Autowired
-    private FeedCategoryDao feedCategoryDao;
+    private CmsMtFeedCategoryTreeDao feedCategoryDao;
 
     @Autowired
-    private FeedProductDao feedProductDao;
+    private CmsBtFeedInfoDao feedProductDao;
+
+    @Autowired
+    private FeedImageDao feedImageDao;
 
     /**
      * 获取feed类目
@@ -33,9 +37,9 @@ public class FeedToCmsService {
      * @return
      */
     public List<Map> getFeedCategory(String channelId) {
-        FeedCategoryModel category = feedCategoryDao.getFeedCategory(channelId);
+        CmsMtFeedCategoryTreeModel category = feedCategoryDao.selectFeedCategory(channelId);
         if (category == null) {
-            category = new FeedCategoryModel();
+            category = new CmsMtFeedCategoryTreeModel();
             category.setChannelId(channelId);
             category.setCategoryTree(new ArrayList<>());
         }
@@ -49,7 +53,7 @@ public class FeedToCmsService {
      * @param tree
      */
     public void setFeedCategory(String channelId, List<Map> tree) {
-        feedCategoryDao.setFeedCategory(channelId, tree);
+        feedCategoryDao.updateFeedCategory(channelId, tree);
     }
 
     /**
@@ -61,10 +65,9 @@ public class FeedToCmsService {
      */
     public Map findCategory(List<Map> tree, String cat) {
         Object jsonObj = JsonPath.parse(tree).json();
-        System.out.println(jsonObj.toString());
-        List<Map> child = JsonPath.read(jsonObj, "$..child[?(@.category == '" + cat.replace("'","\\\'") + "')]");
+        List<Map> child = JsonPath.read(jsonObj, "$..child[?(@.category == '" + cat.replace("'", "\\\'") + "')]");
         if (child.size() == 0) {
-            child = JsonPath.read(jsonObj, "$..*[?(@.category == '" + cat.replace("'","\\\'") + "')]");
+            child = JsonPath.read(jsonObj, "$..*[?(@.category == '" + cat.replace("'", "\\\'") + "')]");
         }
         return child == null || child.size() == 0 ? null : child.get(0);
     }
@@ -135,27 +138,48 @@ public class FeedToCmsService {
      * @param products
      * @return
      */
-    public Map updateProduct(String channelId, List<FeedProductModel> products) {
+    public Map updateProduct(String channelId, List<CmsBtFeedInfoModel> products) {
 
         List<String> existCategory = new ArrayList<>();
-        for (FeedProductModel product : products) {
-            String category = product.getCategory();
-            // 判断是否追加一个新的类目
-            if (existCategory.contains(category) == false) {
-                addCategory(channelId, category);
-                existCategory.add(category);
-            }
-            List<String> imageUrls = new ArrayList<>();
-            imageUrls = product.getImage();
-            // 把Image中的Path删除只保留文件名
-            product.setImage(product.getImage().stream().map(image -> image.substring(image.lastIndexOf("/") + 1)).collect(toList()));
-            FeedProductModel befproduct = feedProductDao.getProductByCode(channelId, product.getCode());
-            if(befproduct != null){
-                product.set_id(befproduct.get_id());
-            }
-            feedProductDao.updateProduct(product);
-        }
+        List<CmsBtFeedInfoModel> failProduct = new ArrayList<>();
+        List<CmsBtFeedInfoModel> succeedProduct = new ArrayList<>();
+        for (CmsBtFeedInfoModel product : products) {
+            try {
+                String category = product.getCategory();
+                // 判断是否追加一个新的类目
+                if (existCategory.contains(category) == false) {
+                    addCategory(channelId, category);
+                    existCategory.add(category);
+                }
+                List<String> imageUrls = new ArrayList<>();
+                imageUrls = product.getImage();
 
-        return null;
+                // 把Image中的Path删除只保留文件名
+                product.setImage(product.getImage().stream().map(image -> image.substring(image.lastIndexOf("/") + 1)).collect(toList()));
+                CmsBtFeedInfoModel befproduct = feedProductDao.selectProductByCode(channelId, product.getCode());
+                if (befproduct != null) {
+                    product.set_id(befproduct.get_id());
+                    //把之前的sku（新的product中没有的sku）保存到新的product的sku中
+                    befproduct.getSkus().forEach(skuModel -> {
+                        if (!product.getSkus().contains(skuModel)) {
+                            product.getSkus().add(skuModel);
+                        }
+                    });
+                }
+                feedProductDao.updateProduct(product);
+                feedImageDao.updateImagebyUrl(channelId, imageUrls);
+                succeedProduct.add(product);
+            }catch (Exception e){
+                failProduct.add(product);
+            }
+        }
+        Map response = new HashMap<>();
+        response.put("succeed",succeedProduct);
+        response.put("fail", failProduct);
+        return response;
+    }
+
+    private void insertImgUrl(List<String>imageUrls){
+
     }
 }
