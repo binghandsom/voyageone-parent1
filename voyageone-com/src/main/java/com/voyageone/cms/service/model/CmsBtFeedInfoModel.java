@@ -20,8 +20,6 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         super("");
     }
 
-    ;
-
     private String category;
     private String code;
     private String name;

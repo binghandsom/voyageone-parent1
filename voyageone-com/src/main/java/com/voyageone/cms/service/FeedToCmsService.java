@@ -76,10 +76,13 @@ public class FeedToCmsService {
      * 追加一个类目
      *
      * @param tree
-     * @param cat
+     * @param category
      */
-    public void addCategory(List<Map> tree, String cat) {
-        String[] c = cat.split("-");
+    public List<Map> addCategory(List<Map> tree, String category) {
+        if (findCategory(tree, category) != null) {
+            return tree;
+        }
+        String[] c = category.split("-");
         String temp = "";
         Map befNode = null;
         for (int i = 0; i < c.length; i++) {
@@ -100,35 +103,17 @@ public class FeedToCmsService {
             }
             temp += "-";
         }
+        return tree;
     }
 
-    public void addCategory(String channelId, String cat) {
+    /**
+     * 对一个channelid下的类目追加一个Category
+     * @param channelId
+     * @param category
+     */
+    public void addCategory(String channelId, String category) {
         List<Map> tree = getFeedCategory(channelId);
-        //cat已存在就直接返回
-        if (findCategory(tree, cat) != null) {
-            return;
-        }
-        String[] c = cat.split("-");
-        String temp = "";
-        Map befNode = null;
-        for (int i = 0; i < c.length; i++) {
-            temp += c[i];
-            Map node = findCategory(tree, temp);
-            if (node == null) {
-                Map newNode = new HashMap<>();
-                newNode.put("category", temp);
-                newNode.put("child", new ArrayList<>());
-                if (befNode == null) {
-                    tree.add(newNode);
-                } else {
-                    ((List<Map>) befNode.get("child")).add(newNode);
-                }
-                befNode = newNode;
-            } else {
-                befNode = node;
-            }
-            temp += "-";
-        }
+        tree = addCategory(tree,category);
         setFeedCategory(channelId, tree);
     }
 
@@ -177,9 +162,5 @@ public class FeedToCmsService {
         response.put("succeed",succeedProduct);
         response.put("fail", failProduct);
         return response;
-    }
-
-    private void insertImgUrl(List<String>imageUrls){
-
     }
 }
