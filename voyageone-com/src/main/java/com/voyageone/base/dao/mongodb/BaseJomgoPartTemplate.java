@@ -34,8 +34,8 @@ public class BaseJomgoPartTemplate {
         mongoTemplate.createCollection(collectionName);
     }
 
-    public void createCollection(final String collectionName, final CollectionOptions collectionOptions) {
-        mongoTemplate.createCollection(collectionName, collectionOptions);
+    public DBCollection createCollection(final String collectionName, final CollectionOptions collectionOptions) {
+        return mongoTemplate.createCollection(collectionName, collectionOptions);
     }
 
     public MongoCollection getCollection(String collectionName) {
@@ -123,16 +123,16 @@ public class BaseJomgoPartTemplate {
         return getCollection(collectionName).count(strQuery);
     }
 
-    public void insert(Object objectToSave, String collectionName) {
-        getCollection(collectionName).insert(objectToSave);
+    public WriteResult insert(Object objectToSave, String collectionName) {
+        return getCollection(collectionName).insert(objectToSave);
     }
 
     public WriteResult insert(Collection<? extends Object> batchToSaves, String collectionName) {
         return getCollection(collectionName).insert(batchToSaves.toArray());
     }
 
-    public void save(Object objectToSave, String collectionName) {
-        getCollection(collectionName).save(objectToSave);
+    public WriteResult save(Object objectToSave, String collectionName) {
+        return getCollection(collectionName).save(objectToSave);
     }
 
     public WriteResult updateFirst(final String strQuery, final String strUpdate, final String collectionName) {
@@ -147,16 +147,16 @@ public class BaseJomgoPartTemplate {
         return getCollection(collectionName).update(strQuery).upsert().multi().with(strUpdate);
     }
 
-    public void removeById(String id, String collectionName) {
-        getCollection(collectionName).remove(new ObjectId(id));
+    public WriteResult removeById(String id, String collectionName) {
+        return getCollection(collectionName).remove(new ObjectId(id));
     }
 
-    public void removeAll(String collectionName) {
-        getCollection(collectionName).remove();
+    public WriteResult removeAll(String collectionName) {
+        return getCollection(collectionName).remove();
     }
 
-    public void remove(String strQuery, String collectionName) {
-        getCollection(collectionName).remove(strQuery);
+    public WriteResult remove(String strQuery, String collectionName) {
+        return getCollection(collectionName).remove(strQuery);
     }
 
     public Distinct distinct(String key, String collectionName) {
@@ -171,9 +171,9 @@ public class BaseJomgoPartTemplate {
         return getCollection(collectionName).aggregate(pipelineOperator, parameters);
     }
 
-    public void drop(String collectionName) {
-        getCollection(collectionName).drop();
-    }
+//    public void drop(String collectionName) {
+//        getCollection(collectionName).drop();
+//    }
 
     public void dropIndex(String keys, String collectionName) {
         getCollection(collectionName).dropIndex(keys);

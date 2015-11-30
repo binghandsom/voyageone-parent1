@@ -1,9 +1,7 @@
 package com.voyageone.cms.service;
 
 import com.voyageone.cms.service.dao.CmsBtProductDao;
-import com.voyageone.cms.service.model.CmsBtProductModel;
-import com.voyageone.cms.service.model.FeedProductModel;
-import com.voyageone.cms.service.model.FeedSkuModel;
+import com.voyageone.cms.service.model.*;
 import com.voyageone.common.util.JsonUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,9 +11,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.*;
 
-/**
- * Created by james.li on 2015/11/26.
- */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:applicationContext.xml")
 public class CmsProductServiceTest {
@@ -78,18 +73,18 @@ public class CmsProductServiceTest {
         product.getField().setAttribute("createTime", "2015-05-21 00:00:00");
         product.getField().setAttribute("creater", "2015-08-21 00:00:00");
 
-        product.setGroupAtt("msrpStart", 2500.00);
-        product.setGroupAtt("msrpEnd", 2099.00);
-        product.setGroupAtt("retailPriceStart", 2000.00);
-        product.setGroupAtt("retailPriceENd", 2099.00);
-        product.setGroupAtt("salePriceStart", 1899.00);
-        product.setGroupAtt("salePriceEnd", 2089.00);
-        product.setGroupAtt("currentPriceStart", 1099.00);
-        product.setGroupAtt("currentPriceEnd", 1289.00);
+        product.getGroup().setMsrpStart(2500.00);
+        product.getGroup().setAttribute("msrpEnd", 2099.00);
+        product.getGroup().setAttribute("retailPriceStart", 2000.00);
+        product.getGroup().setAttribute("retailPriceENd", 2099.00);
+        product.getGroup().setAttribute("salePriceStart", 1899.00);
+        product.getGroup().setAttribute("salePriceEnd", 2089.00);
+        product.getGroup().setAttribute("currentPriceStart", 1099.00);
+        product.getGroup().setAttribute("currentPriceEnd", 1289.00);
 
-        List<Map<String, Object>> platforms = new ArrayList<>();
-        Map<String, Object> platform = new LinkedHashMap<>();
-        platform.put("groupId", 1);
+        List<CmsBtProductModel_Group_Platform> platforms = product.getGroup().getPlatforms();
+        CmsBtProductModel_Group_Platform platform = new CmsBtProductModel_Group_Platform();
+        platform.setGroupId(1);
         platform.put("cartId", "21");
         platform.put("numIid", "2076132");
         platform.put("isMain", 1);
@@ -102,35 +97,34 @@ public class CmsProductServiceTest {
         platform.put("inventory", 50);
         platforms.add(platform);
 
-        platform = new LinkedHashMap<>(platform);
+        platform = new CmsBtProductModel_Group_Platform(platform);
         platform.put("groupId", 2);
         platform.put("cartId", "23");
         platforms.add(platform);
-        product.setGroupAtt("platforms", platforms);
 
-        List<Map<String, Object>> skus = new ArrayList<>();
-        Map<String, Object> sku = new LinkedHashMap<>();
-        sku.put("sku", "123456-001-7");
+        List<CmsBtProductModel_Sku> skus = product.getSkus();
+        CmsBtProductModel_Sku sku = new CmsBtProductModel_Sku();
+        sku.setSku("123456-001-7");
         sku.put("upc", "1234567890123");
         sku.put("price_msrp", 1089.00);
         sku.put("price_retail", 1089.00);
         sku.put("price_sale", 899.00);
         sku.put("platform", 899.00);
         skus.add(sku);
-        sku = new LinkedHashMap<>(sku);
+        sku = new CmsBtProductModel_Sku(sku);
         sku.put("sku", "123456-001-9");
         skus.add(sku);
-        sku = new LinkedHashMap<>(sku);
+        sku = new CmsBtProductModel_Sku(sku);
         sku.put("sku", "123456-001-10");
         skus.add(sku);
         product.setSkus(skus);
 
-        product.setTags(new ArrayList<>());
+        //product.setTags(new ArrayList<>());
 
-        product.setFeedAtt("washingtype", "dry cleaning");
-        product.setFeedAtt("collar", "mandarin collar");
-        product.setFeedAtt("style", "campus");
-        product.setFeedAtt("waspe", "dleaning");
+        product.getFeedAtts().setAttribute("washingtype", "dry cleaning");
+        product.getFeedAtts().setAttribute("collar", "mandarin collar");
+        product.getFeedAtts().setAttribute("style", "campus");
+        product.getFeedAtts().setAttribute("waspe", "dleaning");
 
         return product;
     }
