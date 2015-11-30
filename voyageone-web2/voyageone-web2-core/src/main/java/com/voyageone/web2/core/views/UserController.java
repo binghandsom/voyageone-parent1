@@ -38,6 +38,6 @@ public class UserController extends BaseController {
         getSession().setAttribute(BaseConstants.SESSION_USER, userSessionBean);
 
         // 返回用户信息
-        return success(userSessionBean);
+        return success(true);
     }
 }
