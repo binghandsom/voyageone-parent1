@@ -1,0 +1,36 @@
+<div class="aside-wrap" >
+    <!-- if you want to use a custom scroll when aside fixed, use the slimScroll
+      <div class="navi-wrap" ui-jq="slimScroll" ui-options="{height:'100%', size:'8px'}">
+    -->
+    <div class="navi-wrap" ui-jq="slimScroll" ui-options="{height:'100%', size:'8px'}">
+        <!-- expand/collpase button -->
+        <div class="vo_a_ce clearfix hidden-xs">
+            <div class="hidden-xs">
+                <a href class="btn no-shadow" ng-click="app.settings.asideFolded = !app.settings.asideFolded">
+                    <i class="h4 glyphicons {{app.settings.asideFolded ? 'glyphicons-menu-hamburger' : 'glyphicons-right-indent'}} pull-right-xs"></i>
+                </a>
+            </div>
+        </div>
+        <div class="form-inline view-main clearfix hidden-xs">
+            <div class="hidden-xs btn-group" dropdown >
+                <button type="button" class="btn btn-black" style="width:195px">-- Feed --</button>
+                <button type="button" class="btn btn-black dropdown-toggle" dropdown-toggle>
+                    <span class="caret"></span>
+                    <span class="sr-only">视图切换</span>
+                </button>
+                <ul class="dropdown-menu" style="width:220px" role="menu">
+                    <li><a href>天猫</a></li>
+                    <li><a href>天猫国际</a></li>
+                    <li><a href>京东</a></li>
+                    <li><a href>淘宝</a></li>
+                </ul>
+            </div>
+        </div><!-- .form-inline -->
+        <!-- nav -->
+        <!--<nav ui-nav class="navi clearfix" ng-include="'tpl/blocks/nav.html'"></nav>-->
+        <nav ui-nav class="navi clearfix" ng-include="'home/nav.tpl.html'"></nav>
+        <!-- nav -->
+
+
+    </div>
+</div>
