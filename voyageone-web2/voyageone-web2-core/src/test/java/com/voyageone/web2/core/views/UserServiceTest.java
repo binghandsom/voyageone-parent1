@@ -1,6 +1,6 @@
 package com.voyageone.web2.core.views;
 
-import com.voyageone.web2.core.model.UserSessionBean;
+import com.voyageone.web2.core.bean.UserSessionBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

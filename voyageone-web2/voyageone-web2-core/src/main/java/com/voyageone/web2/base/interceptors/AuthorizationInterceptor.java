@@ -5,7 +5,7 @@ import com.voyageone.common.Constants.LANGUAGE;
 import com.voyageone.web2.base.BaseConstants;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.base.message.MessageService;
-import com.voyageone.web2.core.model.UserSessionBean;
+import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

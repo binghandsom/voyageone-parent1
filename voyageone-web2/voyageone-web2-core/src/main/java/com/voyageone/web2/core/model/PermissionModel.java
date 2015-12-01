@@ -7,7 +7,7 @@ package com.voyageone.web2.core.model;
  * @author Jonas
  * @version 2.0.0
  */
-public class PermissionBean {
+public class PermissionModel {
 
     private String role;
 

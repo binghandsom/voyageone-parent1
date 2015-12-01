@@ -4,6 +4,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.core.CoreConstants;
+import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.core.dao.UserConfigDao;
 import com.voyageone.web2.core.dao.UserDao;
 import com.voyageone.web2.core.model.*;
@@ -36,7 +37,7 @@ public class UserService extends BaseAppService {
 
     public UserSessionBean login(String username, String password, int timezone) {
 
-        UserBean userBean = new UserBean();
+        UserModel userBean = new UserModel();
         userBean.setUsername(username);
 
         userBean = userDao.selectUser(userBean);
@@ -60,7 +61,7 @@ public class UserService extends BaseAppService {
         return userSessionBean;
     }
 
-    public List<ChannelPermissionBean> getPermissionCompany(UserSessionBean userSessionBean) {
+    public List<ChannelPermissionModel> getPermissionCompany(UserSessionBean userSessionBean) {
         return userDao.selectPermissionChannel(userSessionBean.getUserName());
     }
 
@@ -94,19 +95,19 @@ public class UserService extends BaseAppService {
         user.setPagePermission(pagePermissions);
     }
 
-    private Map<String , List<UserConfigBean>> getUserConfig(int userId) {
-        List<UserConfigBean> ret = userConfigDao.select(userId);
-        return ret.stream().collect(groupingBy(UserConfigBean::getCfg_name, toList()));
+    private Map<String , List<UserConfigModel>> getUserConfig(int userId) {
+        List<UserConfigModel> ret = userConfigDao.select(userId);
+        return ret.stream().collect(groupingBy(UserConfigModel::getCfg_name, toList()));
     }
 
     private List<String> getPermissionUrls(UserSessionBean userSessionBean, String channelId) {
 
-        List<PermissionBean> rolePermissions = userDao.getRolePermissions(channelId, userSessionBean.getUserName());
+        List<PermissionModel> rolePermissions = userDao.getRolePermissions(channelId, userSessionBean.getUserName());
 
-        List<PermissionBean> userPermissions = userDao.getUserPermissions(channelId, userSessionBean.getUserName());
+        List<PermissionModel> userPermissions = userDao.getUserPermissions(channelId, userSessionBean.getUserName());
 
         return Stream.concat(rolePermissions.stream(), userPermissions.stream())
-                .filter(PermissionBean::isEnabled)
+                .filter(PermissionModel::isEnabled)
                 .map(permissionBean -> String.format("/%s/%s/%s/%s",
                         permissionBean.getApplication(),
                         permissionBean.getModule(),

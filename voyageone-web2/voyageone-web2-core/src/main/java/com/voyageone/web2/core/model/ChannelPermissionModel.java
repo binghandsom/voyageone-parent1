@@ -9,7 +9,7 @@ import java.util.List;
  * @author Jonas
  * @version 2.0.0
  */
-public class ChannelPermissionBean {
+public class ChannelPermissionModel {
 
     private int companyId;
 

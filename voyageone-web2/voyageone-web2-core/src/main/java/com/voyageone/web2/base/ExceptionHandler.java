@@ -9,7 +9,7 @@ import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.base.log.ExceptionLogBean;
 import com.voyageone.web2.base.log.LogService;
 import com.voyageone.web2.base.message.MessageService;
-import com.voyageone.web2.core.model.UserSessionBean;
+import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

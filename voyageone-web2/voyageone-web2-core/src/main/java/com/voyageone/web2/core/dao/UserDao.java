@@ -2,9 +2,9 @@ package com.voyageone.web2.core.dao;
 
 import com.voyageone.web2.base.dao.WebBaseDao;
 import com.voyageone.web2.base.dao.WebDaoNs;
-import com.voyageone.web2.core.model.ChannelPermissionBean;
-import com.voyageone.web2.core.model.PermissionBean;
-import com.voyageone.web2.core.model.UserBean;
+import com.voyageone.web2.core.model.ChannelPermissionModel;
+import com.voyageone.web2.core.model.PermissionModel;
+import com.voyageone.web2.core.model.UserModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -23,19 +23,19 @@ public class UserDao extends WebBaseDao {
         return WebDaoNs.CORE;
     }
 
-    public UserBean selectUser(UserBean userBean) {
+    public UserModel selectUser(UserModel userBean) {
         return selectOne("ct_user_selectUser", userBean);
     }
 
-    public List<ChannelPermissionBean> selectPermissionChannel(String userName) {
+    public List<ChannelPermissionModel> selectPermissionChannel(String userName) {
         return selectList("ct_user_selectPermissionChannel", userName);
     }
 
-    public List<PermissionBean> getRolePermissions(String channelId, String userName) {
+    public List<PermissionModel> getRolePermissions(String channelId, String userName) {
         return selectList("ct_role_permission_getPermissionByRole", parameters("channelId", channelId, "userName", userName));
     }
 
-    public List<PermissionBean> getUserPermissions(String channelId, String userName) {
+    public List<PermissionModel> getUserPermissions(String channelId, String userName) {
         return selectList("ct_user_permission_getPermissionByUser", parameters("channelId", channelId, "userName", userName));
     }
 }
