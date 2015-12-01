@@ -23,7 +23,7 @@ public class BaseMongoModel {
 
     private String created = DateTimeUtil.getNow();
     private String creater = "0";
-    private String modified = DateTimeUtil.getNow();
+    private String modified = DateTimeUtil.getNowTimeStamp();
     private String modifier = "0";
 
     public String getCreated() {

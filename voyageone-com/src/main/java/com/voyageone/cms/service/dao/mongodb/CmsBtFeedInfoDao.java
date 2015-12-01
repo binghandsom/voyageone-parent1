@@ -17,12 +17,7 @@ public class CmsBtFeedInfoDao extends BaseMongoDao {
 
     public CmsBtFeedInfoModel selectProductByCode(String channelId, String code) {
         String query = "{\"code\":\"" + code + "\"}";
-        String collectionName = mongoTemplate.getCollectionName(CmsBtFeedInfoModel.class, channelId);
-        return mongoTemplate.findOne(query, CmsBtFeedInfoModel.class, collectionName);
+        return selectOneWithQuery(query, channelId);
     }
 
-    public void updateProduct(CmsBtFeedInfoModel product){
-        String collectionName = mongoTemplate.getCollectionName(product);
-        mongoTemplate.save(product, collectionName);
-    }
 }

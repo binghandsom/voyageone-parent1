@@ -1,12 +1,12 @@
 package com.voyageone.cms.service.dao.mongodb;
 
-import com.jayway.jsonpath.JsonPath;
 import com.voyageone.base.dao.mongodb.BaseMongoDao;
 import com.voyageone.cms.service.model.CmsBtProductModel;
+import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
 import org.springframework.stereotype.Repository;
 
+import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 @Repository
 public class CmsBtProductDao extends BaseMongoDao {
@@ -23,8 +23,7 @@ public class CmsBtProductDao extends BaseMongoDao {
      */
     public CmsBtProductModel selectProductById(String channelId, int prodId) {
         String query = "{\"prodId\":" + prodId + "}";
-        String collectionName = mongoTemplate.getCollectionName(CmsBtProductModel.class, channelId);
-        return mongoTemplate.findOne(query, CmsBtProductModel.class, collectionName);
+        return selectOneWithQuery(query, channelId);
     }
 
     /**
@@ -35,8 +34,7 @@ public class CmsBtProductDao extends BaseMongoDao {
      */
     public CmsBtProductModel selectProductByCode(String channelId, String code) {
         String query = "{\"field.code\":\"" + code + "\"}";
-        String collectionName = mongoTemplate.getCollectionName(CmsBtProductModel.class, channelId);
-        return mongoTemplate.findOne(query, CmsBtProductModel.class, collectionName);
+        return selectOneWithQuery(query, channelId);
     }
 
     /**
@@ -47,8 +45,7 @@ public class CmsBtProductDao extends BaseMongoDao {
      */
     public List<CmsBtProductModel> selectProductByGroupId(String channelId, int groupId) {
         String query = "{\"group.platforms.groupId\":" + groupId + "}";
-        String collectionName = mongoTemplate.getCollectionName(CmsBtProductModel.class, channelId);
-        return mongoTemplate.find(query, CmsBtProductModel.class, collectionName);
+        return select(query, channelId);
     }
 
     /**
@@ -57,29 +54,15 @@ public class CmsBtProductDao extends BaseMongoDao {
      * @param prodId
      * @return
      */
-    public List<CmsBtProductModel> selectSKUById(String channelId, int prodId) {
+    public List<CmsBtProductModel_Sku>  selectSKUById(String channelId, int prodId) throws IOException {
         String query = "{\"prodId\":" + prodId + "}";
-        String collectionName = mongoTemplate.getCollectionName(CmsBtProductModel.class, channelId);
-        CmsBtProductModel product = mongoTemplate.findOne(query, CmsBtProductModel.class, collectionName);
-        List<Map> authors = JsonPath.read(product, "$.skus.*");
+        CmsBtProductModel product = selectOneWithQuery(query, channelId);
+        if (product != null) {
+            return product.getSkus();
+        }
+        //Object jsonObj = JsonPath.parse(JacksonUtil.bean2Json(product)).json();
+        //List<Map> authors = JsonPath.read(jsonObj, "$.skus.*");
         return null;
     }
 
-    /**
-     * 添加商品
-     * @param product
-     */
-    public void insertProduct(CmsBtProductModel product){
-        String collectionName = mongoTemplate.getCollectionName(product);
-        mongoTemplate.save(product, collectionName);
-    }
-
-    /**
-     * 更新商品
-     * @param product
-     */
-    public void updateProduct(CmsBtProductModel product){
-        String collectionName = mongoTemplate.getCollectionName(product);
-        mongoTemplate.save(product, collectionName);
-    }
 }
