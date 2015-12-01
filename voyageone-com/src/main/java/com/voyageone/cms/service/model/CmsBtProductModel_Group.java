@@ -38,12 +38,12 @@ public class CmsBtProductModel_Group extends BaseMongoMap {
         setAttribute("retailPriceStart", retailPriceStart);
     }
 
-    public double getRetailPriceENd() {
-        return (Double) getAttribute("retailPriceENd");
+    public double getRetailPriceEnd() {
+        return (Double) getAttribute("retailPriceEnd");
     }
 
-    public void setRetailPriceENd(double retailPriceENd) {
-        setAttribute("retailPriceENd", retailPriceENd);
+    public void setRetailPriceEnd(double retailPriceEnd) {
+        setAttribute("retailPriceEnd", retailPriceEnd);
     }
 
     public double getSalePriceStart() {

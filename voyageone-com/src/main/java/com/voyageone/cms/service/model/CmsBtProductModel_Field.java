@@ -103,12 +103,12 @@ public class CmsBtProductModel_Field extends BaseMongoMap {
         setAttribute("retailPriceStart", retailPriceStart);
     }
 
-    public double getRetailPriceENd() {
-        return (Double) getAttribute("retailPriceENd");
+    public double getRetailPriceEnd() {
+        return (Double) getAttribute("retailPriceEnd");
     }
 
-    public void setRetailPriceENd(double retailPriceENd) {
-        setAttribute("retailPriceENd", retailPriceENd);
+    public void setRetailPriceEnd(double retailPriceEnd) {
+        setAttribute("retailPriceEnd", retailPriceEnd);
     }
 
     public double getSalePriceStart() {
@@ -175,13 +175,15 @@ public class CmsBtProductModel_Field extends BaseMongoMap {
         setAttribute("inventory", inventory);
     }
 
-    //???
-    public List<Map<String, Object>> getImages() {
-        return (List<Map<String, Object>>) getAttribute("images");
+    public List<CmsBtProductModel_Field_Image> getImages() {
+        if (!this.containsKey("images") || getAttribute("images") == null) {
+            setAttribute("images", new ArrayList<CmsBtProductModel_Field_Image>());
+        }
+        return (List<CmsBtProductModel_Field_Image>) getAttribute("images");
     }
 
-    public void setImages(List<Map<String, Object>> lock) {
-        setAttribute("images", lock);
+    public void setImages(List<CmsBtProductModel_Field_Image> images) {
+        setAttribute("images", images);
     }
 
     public boolean getLock() {
@@ -189,11 +191,11 @@ public class CmsBtProductModel_Field extends BaseMongoMap {
     }
 
     public void setLock(boolean lock) {
-        setAttribute("inventory", lock);
+        setAttribute("lock", lock);
     }
 
     public int getPriceChange() {
-        return (Integer) getAttribute("lock");
+        return (Integer) getAttribute("priceChange");
     }
 
     public void setPriceChange(int priceChange) {

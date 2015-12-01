@@ -1,6 +1,7 @@
 package com.voyageone.cms.service.dao.mongodb;
 
 import com.voyageone.base.dao.mongodb.BaseMongoDao;
+import com.voyageone.cms.service.model.CmsBtFeedInfoModel;
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
 import org.springframework.stereotype.Repository;
@@ -11,8 +12,9 @@ import java.util.List;
 @Repository
 public class CmsBtProductDao extends BaseMongoDao {
 
-    public CmsBtProductDao() {
-        super.entityClass = CmsBtProductModel.class;
+    @Override
+    public Class getEntityClass() {
+        return CmsBtFeedInfoModel.class;
     }
 
     /**

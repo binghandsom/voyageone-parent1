@@ -335,32 +335,34 @@ public class ImsCategoryService extends BaseTaskService{
 
         // 插入到属性表中
 //        imsCategorySubService.doInsertPlatformPropMain(platformPropBeanList, JOB_NAME);
-        PlatformCategoryMongoBean platformCategoryMongoBean = platformCategoryMongoDao.findOne(
-                platformCategories.getChannelId(),
-                "{" +
-                        "channel_id: '" + platformCategories.getChannelId() + "'" +
-                        ", cartId: '" + platformCategories.getCartId() + "'" +
-                        ", categoryId: '" + platformCategories.getPlatformCid() + "'" +
-                        "}"
-        );
 
-        if (platformCategoryMongoBean == null) {
-            platformCategoryMongoBean = new PlatformCategoryMongoBean();
 
-            platformCategoryMongoBean.setChannelId(platformCategories.getChannelId());
-            platformCategoryMongoBean.setCartId(platformCategories.getCartId().toString());
-            platformCategoryMongoBean.setCategoryId(platformCategories.getPlatformCid());
-            platformCategoryMongoBean.setCategoryName(platformCategories.getCidName());
-            platformCategoryMongoBean.setCategoryPath(platformCategories.getCidPath());
-            platformCategoryMongoBean.setParentId(platformCategories.getParentCid());
-        }
-
-        if (isProduct == 1) {
-            platformCategoryMongoBean.setPropsProduct(xmlContent);
-        } else {
-            platformCategoryMongoBean.setPropsItem(xmlContent);
-        }
-        platformCategoryMongoDao.saveWithProduct(platformCategoryMongoBean);
+//        PlatformCategoryMongoBean platformCategoryMongoBean = platformCategoryMongoDao.findOne(
+//                platformCategories.getChannelId(),
+//                "{" +
+//                        "channel_id: '" + platformCategories.getChannelId() + "'" +
+//                        ", cartId: '" + platformCategories.getCartId() + "'" +
+//                        ", categoryId: '" + platformCategories.getPlatformCid() + "'" +
+//                        "}"
+//        );
+//
+//        if (platformCategoryMongoBean == null) {
+//            platformCategoryMongoBean = new PlatformCategoryMongoBean();
+//
+//            platformCategoryMongoBean.setChannelId(platformCategories.getChannelId());
+//            platformCategoryMongoBean.setCartId(platformCategories.getCartId().toString());
+//            platformCategoryMongoBean.setCategoryId(platformCategories.getPlatformCid());
+//            platformCategoryMongoBean.setCategoryName(platformCategories.getCidName());
+//            platformCategoryMongoBean.setCategoryPath(platformCategories.getCidPath());
+//            platformCategoryMongoBean.setParentId(platformCategories.getParentCid());
+//        }
+//
+//        if (isProduct == 1) {
+//            platformCategoryMongoBean.setPropsProduct(xmlContent);
+//        } else {
+//            platformCategoryMongoBean.setPropsItem(xmlContent);
+//        }
+//        platformCategoryMongoDao.saveWithProduct(platformCategoryMongoBean);
 
 
         return new ItemSchema();
