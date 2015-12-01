@@ -28,8 +28,8 @@ public class CmsProductServiceTest {
     private CmsBtProductModel create() {
         CmsBtProductModel product = new CmsBtProductModel("001");
         product.setProdId(1);
-        product.setCid(111112);
-        product.setCidPath("-100001-111111-111112-");
+        product.setCatId(111112);
+        product.setCatIdPath("-100001-111111-111112-");
         product.getField().setCode("00342");
         String aa = product.getField().getCode();
         //product.setFieldAtt("code", "00341");

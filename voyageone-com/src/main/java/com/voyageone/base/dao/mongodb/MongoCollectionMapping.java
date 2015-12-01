@@ -35,6 +35,10 @@ public class MongoCollectionMapping {
 
     public String getCollectionName(Class<?> entityClass, String channelId) {
         String collectionName = getCollectionName(entityClass);
+        return getCollectionName(collectionName, channelId);
+    }
+
+    public String getCollectionName(String collectionName, String channelId) {
         if (collectionName != null) {
             return collectionName + getPartitionValue(channelId);
         }

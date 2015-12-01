@@ -45,27 +45,27 @@ public class BaseMongoDao {
     }
 
     public <T> T selectOne(String channelId) {
-        String collectionName = mongoTemplate.getCollectionName(entityClass, channelId);
+        String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
         return mongoTemplate.findOne((Class<T>) entityClass, collectionName);
     }
 
     public <T> T selectOneWithQuery(String strQuery, String channelId) {
-        String collectionName = mongoTemplate.getCollectionName(entityClass, channelId);
+        String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
         return mongoTemplate.findOne(strQuery, (Class < T >)entityClass, collectionName);
     }
 
     public <T> List<T> selectAll(String channelId) {
-        String collectionName = mongoTemplate.getCollectionName(entityClass, channelId);
+        String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
         return mongoTemplate.findAll((Class<T>) entityClass, collectionName);
     }
 
     public <T> List<T> select(final String strQuery, String channelId) {
-        String collectionName = mongoTemplate.getCollectionName(entityClass, channelId);
+        String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
         return mongoTemplate.find(strQuery, (Class<T>) entityClass, collectionName);
     }
 
     public <T> T selectById(String id, String channelId) {
-        String collectionName = mongoTemplate.getCollectionName(entityClass, channelId);
+        String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
         return mongoTemplate.findById(id, (Class<T>) entityClass, collectionName);
     }
 
@@ -78,37 +78,37 @@ public class BaseMongoDao {
     }
 
     public long count(String channelId) {
-        String collectionName = mongoTemplate.getCollectionName(entityClass, channelId);
+        String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
         return mongoTemplate.count(collectionName);
     }
 
     public long countByQuery(final String strQuery, String channelId) {
-        String collectionName = mongoTemplate.getCollectionName(entityClass, channelId);
+        String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
         return mongoTemplate.count(strQuery, collectionName);
     }
 
     public WriteResult insert(BaseMongoModel model) {
-        String collectionName = mongoTemplate.getCollectionName(model);
+        String collectionName = mongoTemplate.getCollectionName(this.collectionName, model);
         return mongoTemplate.insert(model, collectionName);
     }
 
     public WriteResult insertWithList(Collection<? extends Object> models) {
         if (models != null && models.size() > 0) {
             BaseMongoModel model = (BaseMongoModel)models.iterator().next();
-            String collectionName = mongoTemplate.getCollectionName(model);
+            String collectionName = mongoTemplate.getCollectionName(this.collectionName, model);
             return mongoTemplate.insert(models, collectionName);
         }
         return null;
     }
 
     public WriteResult update(BaseMongoModel model) {
-        String collectionName = mongoTemplate.getCollectionName(model);
+        String collectionName = mongoTemplate.getCollectionName(this.collectionName, model);
         model.setModified(DateTimeUtil.getNowTimeStamp());
         return mongoTemplate.save(model, collectionName);
     }
 
     public WriteResult delete(BaseMongoModel model) {
-        String collectionName = mongoTemplate.getCollectionName(model);
+        String collectionName = mongoTemplate.getCollectionName(this.collectionName, model);
         return mongoTemplate.removeById(model.get_id(), collectionName);
     }
 
@@ -125,14 +125,17 @@ public class BaseMongoDao {
     }
 
     public WriteResult deleteById(String id, String channelId) {
+        String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
         return mongoTemplate.removeById(id, collectionName);
     }
 
     public WriteResult deleteAll(String channelId) {
+        String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
         return mongoTemplate.removeAll(collectionName);
     }
 
     public WriteResult deleteWithQuery(String strQuery, String channelId) {
+        String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
         return mongoTemplate.remove(strQuery, collectionName);
     }
 
