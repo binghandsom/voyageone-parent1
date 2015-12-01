@@ -80,6 +80,12 @@ public class PostSearsOrderService {
 		int orderChannelTimeZone = 8;
 		String exchangeRate = "6.2";
 
+		try {
+			OrderLookupResponse orderResponse = searsService.getOrderInfo("400921");
+		} catch (Exception e) {
+
+		}
+
 		logger.info("	getPushCreateList");
 		List<OrderBean> pushDailySalesListList = getPushCreateList(orderChannelID, orderChannelTimeZone, exchangeRate);
 

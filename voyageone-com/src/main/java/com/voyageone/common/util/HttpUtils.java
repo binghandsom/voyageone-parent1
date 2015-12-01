@@ -66,6 +66,27 @@ public class HttpUtils {
         }
     }
 
+    public static String get(String url) {
+
+        HttpURLConnection connection = null;
+        try {
+            connection = getConnection(url, "GET");
+
+            connection.connect();
+
+            try (InputStream inputStream = connection.getInputStream()) {
+                return readConnection(inputStream);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null)
+                connection.disconnect();
+        }
+
+        return null;
+    }
+
     public static String get(String url, String param) {
 
         if (!StringUtils.isEmpty(param)) url += "?" + param;

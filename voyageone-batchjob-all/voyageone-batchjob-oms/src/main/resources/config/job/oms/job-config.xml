@@ -321,6 +321,9 @@
 
 				<!-- BCBG Demands推送 -->
 				<ref bean="postBCBGDemandJobTaskContri" />
+
+				<!-- Sears Create Order推送 -->
+				<ref bean="postSearsCreateOrderTaskContri" />
 			
 			</list>
 		</property>

@@ -112,6 +112,26 @@ public class SearsService extends SearsBase {
     }
 
     /**
+     * Order LookUp
+     *
+     * @param orderId     第几页
+     * @return
+     * @throws Exception
+     */
+    public OrderLookupResponse getOrderInfo(String orderId) throws Exception {
+
+        StringBuffer param = new StringBuffer();
+
+        String responseXml = reqSearsApi(searsOrderUrl + orderId);
+
+        logger.info("Sears response: " + responseXml);
+
+        OrderLookupResponse response = JaxbUtil.converyToJavaBean(responseXml, OrderLookupResponse.class);
+
+        return response;
+    }
+
+    /**
      * 给Sears推订单
      * @param order
      * @return
