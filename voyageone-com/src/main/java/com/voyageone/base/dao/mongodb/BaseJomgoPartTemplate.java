@@ -47,13 +47,6 @@ public class BaseJomgoPartTemplate {
         return mongoTemplate.createCollection(collectionName, collectionOptions);
     }
 
-    public String getCollectionName(BaseMongoModel model) {
-        if (model instanceof ChannelPartitionModel) {
-            return getCollectionName(model.getClass(), ((ChannelPartitionModel)model).getChannelId());
-        }
-        return getCollectionName(model.getClass());
-    }
-
     public String getCollectionName(Class<?> entityClass) {
         return mongoCollectionMapping.getCollectionName(entityClass);
     }
@@ -61,6 +54,23 @@ public class BaseJomgoPartTemplate {
     public String getCollectionName(Class<?> entityClass, String channelId) {
         return mongoCollectionMapping.getCollectionName(entityClass, channelId);
     }
+
+    public String getCollectionName(String collectionName, String channelId) {
+        return mongoCollectionMapping.getCollectionName(collectionName, channelId);
+    }
+
+    public String getCollectionName(BaseMongoModel model) {
+        String collectionName = getCollectionName(model.getClass());
+        return getCollectionName(collectionName, model);
+    }
+
+    public String getCollectionName(String collectionName, BaseMongoModel model) {
+        if (model instanceof ChannelPartitionModel) {
+            return getCollectionName(collectionName, ((ChannelPartitionModel)model).getChannelId());
+        }
+        return collectionName;
+    }
+
 
     public MongoCollection getCollection(String collectionName) {
         return jongo.getCollection(collectionName);

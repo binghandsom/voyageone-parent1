@@ -32,6 +32,14 @@ public class CmsBtProductModel_Sku extends BaseMongoMap {
         setAttribute("upc", upc);
     }
 
+    public double getCostPrice() {
+        return (double) getAttribute("costPrice");
+    }
+
+    public void setCostPrice(double costPrice) {
+        setAttribute("costPrice", costPrice);
+    }
+
     public double getPriceMsrp() {
         return (double) getAttribute("priceMsrp");
     }
