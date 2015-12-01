@@ -242,7 +242,7 @@ public class PlatformCategoryService extends BaseTaskService{
 
         if(savePlatformCatModels.size()>0){
             //保存最新的类目信息
-            platformCategoryDao.savePlatformCategories(savePlatformCatModels);
+            platformCategoryDao.insertWithList(savePlatformCatModels);
         }
 
         /** add by lewis end 2015/11/27 **/
@@ -408,11 +408,9 @@ public class PlatformCategoryService extends BaseTaskService{
 
         // 插入到属性表中
 //        imsCategorySubService.doInsertPlatformPropMain(platformPropModelList, JOB_NAME);
-        CmsMtPlatformCategoryTreeModel platformCategoryMongoBean = platformCategoryDao.findOne(
-                "{" +
-                        "cartId: '" + platformCategoriesModel.getCartId() + "'" +
-                        ", categoryId: '" + platformCategoriesModel.getPlatformCid() + "'" +
-                        "}"
+        CmsMtPlatformCategoryTreeModel platformCategoryMongoBean = platformCategoryDao.selectByCartIdCatId(
+                platformCategoriesModel.getCartId(),
+                platformCategoriesModel.getPlatformCid()
         );
 
         if (platformCategoryMongoBean == null) {

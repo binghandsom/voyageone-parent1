@@ -15,20 +15,6 @@ public class InventoryTmpDao extends BaseMongoDao {
 
     public InventoryTmpDao() {
         super.entityClass = InventoryForCmsBean.class;
-    }
-
-    public static final String COLLECTION_NAME = "wms_bt_inventory_aggregate";
-
-
-    public Long countAll() {
-        Long count = mongoTemplate.count(COLLECTION_NAME);
-        return  count;
-
-    }
-
-    public WriteResult insertAll(List<InventoryForCmsBean> codeInventoryList){
-
-        return mongoTemplate.insert(codeInventoryList,COLLECTION_NAME);
-
+        super.collectionName = "wms_bt_inventory_aggregate";
     }
 }

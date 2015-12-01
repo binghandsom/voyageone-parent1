@@ -22,7 +22,7 @@ public class CmsProductServiceTest {
     @Test
     public void testInsertCmsBtProduct() throws Exception {
         CmsBtProductModel productModel = create();
-        cmsBtProductDao.insertProduct(productModel);
+        cmsBtProductDao.insert(productModel);
     }
 
     private CmsBtProductModel create() {
@@ -156,11 +156,9 @@ public class CmsProductServiceTest {
 
     @Test
     public void testSelectSKUById() throws Exception {
-        DateTimeUtil.getNowTimeStamp();
-        List<CmsBtProductModel> listRet = cmsBtProductDao.selectSKUById("001", 1);
-        for (CmsBtProductModel ret : listRet) {
+        List<CmsBtProductModel_Sku> listRet = cmsBtProductDao.selectSKUById("001", 1);
+        for (CmsBtProductModel_Sku ret : listRet) {
             System.out.println(ret.toString());
-            System.out.println(ret.getGroup().getCurrentPriceEnd());
         }
     }
 }

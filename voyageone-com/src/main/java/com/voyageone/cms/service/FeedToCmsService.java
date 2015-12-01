@@ -151,7 +151,7 @@ public class FeedToCmsService {
                         }
                     });
                 }
-                feedProductDao.updateProduct(product);
+                feedProductDao.update(product);
                 cmsBtFeedProductImageDao.updateImagebyUrl(channelId, imageUrls);
                 succeedProduct.add(product);
             }catch (Exception e){

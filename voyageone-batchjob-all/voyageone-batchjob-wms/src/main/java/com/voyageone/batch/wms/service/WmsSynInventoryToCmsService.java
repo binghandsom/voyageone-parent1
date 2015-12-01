@@ -62,14 +62,14 @@ public class WmsSynInventoryToCmsService extends BaseTaskService {
             $info("channel_id=" + orderChannelID);
 //            threads.add(() -> new getSuperFeed(orderChannelID).doRun());
             //如果 dbserver的定时任务运行中，本任务就跳过。或者临时表记录 > 0
-            if (inventoryTmpDao.countAll() != 0 ){
+            if (inventoryTmpDao.count() != 0 ){
                 continue;
             }
             //获取本渠道所有code级别库存
             List<InventoryForCmsBean> codeInventoryList =  inventoryDao.selectInventoryCode(orderChannelID,this.getTaskName());
             $info("orderChannelID:" + orderChannelID + "    库存记录数:" + codeInventoryList.size());
             //将库存插入mongodb的临时表以便，dbserver端的cron程序进行批量处理
-            WriteResult result = inventoryTmpDao.insertAll(codeInventoryList);
+            WriteResult result = inventoryTmpDao.insertWithList(codeInventoryList);
 
 
             $info("result:" + result.toString());
