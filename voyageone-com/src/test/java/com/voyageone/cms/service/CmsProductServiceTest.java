@@ -1,7 +1,9 @@
 package com.voyageone.cms.service;
 
-import com.voyageone.cms.service.dao.CmsBtProductDao;
+
+import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.model.*;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JsonUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -154,6 +156,7 @@ public class CmsProductServiceTest {
 
     @Test
     public void testSelectSKUById() throws Exception {
+        DateTimeUtil.getNowTimeStamp();
         List<CmsBtProductModel> listRet = cmsBtProductDao.selectSKUById("001", 1);
         for (CmsBtProductModel ret : listRet) {
             System.out.println(ret.toString());

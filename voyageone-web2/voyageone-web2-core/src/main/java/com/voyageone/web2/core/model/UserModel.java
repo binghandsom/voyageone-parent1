@@ -7,7 +7,7 @@ package com.voyageone.web2.core.model;
  * @author Jonas
  * @version 2.0.0
  */
-public class UserBean {
+public class UserModel {
     private int id;
 
     private String username;

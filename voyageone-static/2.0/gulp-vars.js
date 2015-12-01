@@ -17,7 +17,7 @@ var build = {
       src: 'develop/components/angular/*/*.js',
       dist: 'develop/components/dist',
       footerFile: 'develop/components/angular/voyageone.angular.com.suffix',
-      concat: 'voyageone.angular.com.min.js',
+      concat: 'voyageone.angular.com.js',
       map: 'voyageone.angular.com.min.js.map',
       version: versions.angularCom
     },

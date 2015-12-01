@@ -21,10 +21,10 @@ public class BaseMongoModel {
         this._id = _id;
     }
 
-    private String created = DateTimeUtil.getNow();
-    private String creater = "0";
-    private String modified = DateTimeUtil.getNow();
-    private String modifier = "0";
+    protected String created = DateTimeUtil.getNow();
+    protected String creater = "0";
+    protected String modified = DateTimeUtil.getNowTimeStamp();
+    protected String modifier = "0";
 
     public String getCreated() {
         return created;

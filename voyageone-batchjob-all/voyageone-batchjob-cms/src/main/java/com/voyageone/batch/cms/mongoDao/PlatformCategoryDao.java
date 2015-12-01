@@ -18,24 +18,22 @@ public class PlatformCategoryDao extends BaseMongoDao {
         super.entityClass = CmsMtPlatformCategoryTreeModel.class;
     }
 
-    public CmsMtPlatformCategoryTreeModel findOne(String strQuery) {
-        return mongoTemplate.findOne(strQuery, CmsMtPlatformCategoryTreeModel.class, collectionName);
-    }
-
-    public void savePlatformCategories(List<CmsMtPlatformCategoryTreeModel> models){
-        mongoTemplate.insert(models, collectionName);
-
+    public CmsMtPlatformCategoryTreeModel selectByCartIdCatId(int cartId, String categoryId) {
+        String queryStr = "{" +
+                "cartId: '" + cartId + "'" +
+                ", categoryId: '" + categoryId + "'" +
+                "}";
+        return selectOneWithQuery(queryStr);
     }
 
     public void deletePlatformCategories(Integer cartId){
-        mongoTemplate.remove("{cartId:"+cartId+"}", collectionName);
-
+        String queryStr = "{cartId:"+cartId+"}";
+        deleteWithQuery(queryStr);
     }
 
     public List<CmsMtPlatformCategoryTreeModel> selectPlatformCategoriesByCartId(Integer cartId){
-
-        List<CmsMtPlatformCategoryTreeModel> categoryModels = mongoTemplate.find("{cartId:"+cartId+"}",CmsMtPlatformCategoryTreeModel.class,collectionName);
-
+        String queryStr = "{cartId:"+cartId+"}";
+        List<CmsMtPlatformCategoryTreeModel> categoryModels = select(queryStr);
         return categoryModels;
     }
 

@@ -5,7 +5,7 @@
     <title>Title</title>
     <link href="static/app.min.css" rel="stylesheet" type="text/css"/>
 </head>
-<body>
+<body ng-controller="channelController">
 <div class="navbar-header bg-black">
     <a class="navbar-brand text-lt">
         <span>Voyage One CMS</span>
@@ -49,60 +49,11 @@
 </div>
 <div class="wrapper-md clearfix">
     <div class="channel-main-con text-center">
-        <div class="channel-main">
-            <img src="static/img/01.jpg" class="img-responsive img-circle" alt="">
-            <h4>JEWELRY</h4>
+        <div class="channel-main" ng-repeat="channel in channels">
+            <img src="{{channel.channelImgUrl || 'static/img/NoImageAvailable.png'}}" class="img-responsive img-circle" alt="">
+            <h4>{{channel.channelName}}</h4>
             <ul class="list-inline channel-list">
-                <li><a href="/cms/angular/index.html#/cms/home">CMS</a>
-                </li>
-                <li><a href="/cms/angular/index.html#/cms/home">OMS</a>
-                </li>
-                <li><a href="/cms/angular/index.html#/cms/category">IMS</a>
-                </li>
-                <li><a href="/cms/angular/index.html#/cms/category">WMS</a>
-                </li>
-            </ul>
-        </div>
-        <div class="channel-main">
-            <a href="#"><img src="static/img/02.jpg" class="img-responsive img-circle" alt=""></a>
-            <h4>sneakerhead</h4>
-            <ul class="list-inline channel-list">
-                <li><a href="/cms/angular/index.html#/cms/category">CMS</a>
-                </li>
-                <li><a href="/cms/angular/index.html#/cms/category">OMS</a>
-                </li>
-                <li><a href="/cms/angular/index.html#/cms/category">IMS</a>
-                </li>
-                <li><a href="/cms/angular/index.html#/cms/category">WMS</a>
-                </li>
-            </ul>
-        </div>
-        <div class="channel-main">
-            <img src="static/img/03.jpg" class="img-responsive img-circle" alt="">
-            <h4>Spalding</h4>
-            <ul class="list-inline channel-list">
-                <li><a href="/cms/angular/index.html#/cms/category">CMS</a>
-                </li>
-                <li><a href="/cms/angular/index.html#/cms/category">OMS</a>
-                </li>
-                <li><a href="/cms/angular/index.html#/cms/category">IMS</a>
-                </li>
-                <li><a href="/cms/angular/index.html#/cms/category">WMS</a>
-                </li>
-            </ul>
-        </div>
-        <div class="channel-main">
-            <img src="static/img/04.jpg" class="img-responsive img-circle" alt="">
-            <h4>Champion</h4>
-            <ul class="list-inline channel-list">
-                <li><a href="/cms/angular/index.html#/cms/category">CMS</a>
-                </li>
-                <li><a href="/cms/angular/index.html#/cms/category">OMS</a>
-                </li>
-                <li><a href="/cms/angular/index.html#/cms/category">IMS</a>
-                </li>
-                <li><a href="/cms/angular/index.html#/cms/category">WMS</a>
-                </li>
+                <li ng-repeat="app in channel.apps"><a href="javascript:void(0);" ng-click="choose(channel, app)">{{app}}</a></li>
             </ul>
         </div>
     </div>

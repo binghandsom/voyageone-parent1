@@ -3,13 +3,15 @@ package com.voyageone.web2.core.views;
 import com.voyageone.web2.base.BaseConstants;
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
-import com.voyageone.web2.core.model.UserSessionBean;
+import com.voyageone.web2.core.model.ChannelPermissionModel;
+import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,6 +40,19 @@ public class UserController extends BaseController {
         getSession().setAttribute(BaseConstants.SESSION_USER, userSessionBean);
 
         // 返回用户信息
-        return success(userSessionBean);
+        return success(true);
+    }
+
+    @RequestMapping("getChannel")
+    public AjaxResponse getChannel() {
+        List<ChannelPermissionModel> companyBeans = userService.getPermissionCompany(getUser());
+        return success(companyBeans);
+    }
+
+    @RequestMapping("selectChannel")
+    public AjaxResponse selectChannel(@RequestBody Map<String, Object> params) {
+        userService.setSelectChannel(getUser(), String.valueOf(params.get("channelId")));
+        // 只要不报异常就是ok
+        return success(true);
     }
 }

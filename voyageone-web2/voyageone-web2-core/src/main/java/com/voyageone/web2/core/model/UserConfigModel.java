@@ -9,7 +9,7 @@ import java.io.Serializable;
  * @author Jonas
  * @version 2.0.0
  */
-public class UserConfigBean implements Serializable {
+public class UserConfigModel implements Serializable {
     private int user_id;
 
     private String cfg_name;

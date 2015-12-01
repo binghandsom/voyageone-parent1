@@ -3,12 +3,13 @@
  * Login Page Main JS
  * @Date:    2015-11-24 17:03:16
  * @User:    Jonas
- * @Version: 0.2.0
+ * @Version: 2.0.0
  */
 
 require.config({
   paths: {
     'angular': 'libs/angular.js/1.4.7/angular',
+    'angular-voyageone' : 'components/dist/voyageone.angular.com',
     'angular-translate': 'libs/angular-translate/2.8.1/angular-translate',
     'angular-block-ui': 'libs/angular-block-ui/0.2.1/angular-block-ui',
     'css': 'libs/require-css/0.1.8/css'
@@ -16,6 +17,7 @@ require.config({
   shim: {
     'angular-block-ui': ['angular', 'css!libs/angular-block-ui/0.2.1/angular-block-ui.css'],
     'angular-translate': ['angular'],
+    'angular-voyageone': ['angular'],
     'angular': {exports: 'angular'}
   }
 });
@@ -24,12 +26,14 @@ require.config({
 require([
   'angular',
   'angular-block-ui',
-  'angular-translate'
+  'angular-translate',
+  'angular-voyageone'
 ], function (angular) {
   angular.module('voyageone.cms.login', [
     'pascalprecht.translate',
-    'blockUI'
-  ]).controller('loginController', function($scope, $http) {
+    'blockUI',
+    'voyageone.angular'
+  ]).controller('loginController', function($scope, ajaxService) {
     $scope.username = '';
     $scope.password = '';
     $scope.isSavePwd = false;
@@ -45,17 +49,14 @@ require([
         return;
       }
       $scope.errorMessage = '';
-      $http.post('/core/access/user/login', {
+      ajaxService.post('/core/access/user/login', {
         username: $scope.username,
         password: $scope.password,
         timezone: -(new Date().getTimezoneOffset() / 60)
-      }).then(function(response){
-        var res = response.data;
-        if (res.result.data) {
-          location.href = 'channel.html';
-          return;
-        }
-        $scope.errorMessage = res.message || '登录失败';
+      }).then(function(){
+        location.href = 'channel.html';
+      }, function(res) {
+        $scope.errorMessage = res.message || ('登录失败(' + (res.code || '?') + ')');
       });
     };
   });
