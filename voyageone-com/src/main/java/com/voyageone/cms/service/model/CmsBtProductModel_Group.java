@@ -79,10 +79,14 @@ public class CmsBtProductModel_Group extends BaseMongoMap {
     }
 
     public List<CmsBtProductModel_Group_Platform> getPlatforms() {
+        if (!this.containsKey("platforms") || getAttribute("platforms") == null) {
+            setAttribute("platforms", new ArrayList<CmsBtProductModel_Group_Platform>());
+        }
         return (List<CmsBtProductModel_Group_Platform>) getAttribute("platforms");
     }
 
     public void setPlatforms(List<CmsBtProductModel_Group_Platform> platforms) {
         setAttribute("platforms", platforms);
     }
+
 }

@@ -14,7 +14,7 @@ public class CmsBtProductDao extends BaseMongoDao {
 
     @Override
     public Class getEntityClass() {
-        return CmsBtFeedInfoModel.class;
+        return CmsBtProductModel.class;
     }
 
     /**
