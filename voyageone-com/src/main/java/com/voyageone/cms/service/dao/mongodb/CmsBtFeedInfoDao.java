@@ -1,4 +1,4 @@
-package com.voyageone.cms.service.dao;
+package com.voyageone.cms.service.dao.mongodb;
 
 import com.voyageone.base.dao.mongodb.BaseMongoDao;
 import com.voyageone.cms.service.model.CmsBtFeedInfoModel;

@@ -1,11 +1,11 @@
 package com.voyageone.cms.service;
 
 import com.jayway.jsonpath.JsonPath;
-import com.voyageone.cms.service.dao.FeedImageDao;
+import com.voyageone.cms.service.dao.CmsBtFeedProductImageDao;
 import com.voyageone.cms.service.model.CmsMtFeedCategoryTreeModel;
 import com.voyageone.cms.service.model.CmsBtFeedInfoModel;
-import com.voyageone.cms.service.dao.CmsMtFeedCategoryTreeDao;
-import com.voyageone.cms.service.dao.CmsBtFeedInfoDao;
+import com.voyageone.cms.service.dao.mongodb.CmsMtFeedCategoryTreeDao;
+import com.voyageone.cms.service.dao.mongodb.CmsBtFeedInfoDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +28,7 @@ public class FeedToCmsService {
     private CmsBtFeedInfoDao feedProductDao;
 
     @Autowired
-    private FeedImageDao feedImageDao;
+    private CmsBtFeedProductImageDao cmsBtFeedProductImageDao;
 
     /**
      * 获取feed类目
@@ -152,7 +152,7 @@ public class FeedToCmsService {
                     });
                 }
                 feedProductDao.updateProduct(product);
-                feedImageDao.updateImagebyUrl(channelId, imageUrls);
+                cmsBtFeedProductImageDao.updateImagebyUrl(channelId, imageUrls);
                 succeedProduct.add(product);
             }catch (Exception e){
                 failProduct.add(product);
