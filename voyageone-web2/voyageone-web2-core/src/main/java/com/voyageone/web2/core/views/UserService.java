@@ -1,20 +1,20 @@
 package com.voyageone.web2.core.views;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.core.CoreConstants;
 import com.voyageone.web2.core.dao.UserConfigDao;
 import com.voyageone.web2.core.dao.UserDao;
-import com.voyageone.web2.core.model.ChannelPermissionBean;
-import com.voyageone.web2.core.model.UserBean;
-import com.voyageone.web2.core.model.UserConfigBean;
-import com.voyageone.web2.core.model.UserSessionBean;
+import com.voyageone.web2.core.model.*;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -64,12 +64,55 @@ public class UserService extends BaseAppService {
         return userDao.selectPermissionChannel(userSessionBean.getUserName());
     }
 
+    public void setSelectChannel(UserSessionBean user, String channelId) {
+
+        if (StringUtils.isEmpty(channelId))
+            throw new BusinessException("");
+
+        Channel channel = Channel.valueOfId(channelId);
+
+        if (channel == null)
+            throw new BusinessException("");
+
+        // 在设置之前,检查一下是否需要重新查询,因为画面虽然选择的 app,但是查询的数据是 channel 级别
+        if (channelId.equals(user.getSelChannel())) {
+            return;
+        }
+
+        List<String> permissionUrls = getPermissionUrls(user, channelId);
+
+        // 设置当前用户选择的公司
+        user.setSelChannel(channelId);
+        user.setActionPermission(permissionUrls);
+
+        // 转换为页面的权限地址
+        List<String> pagePermissions = permissionUrls.stream()
+                .map(url -> url.substring(0, url.lastIndexOf("/")))
+                .distinct()
+                .collect(toList());
+
+        user.setPagePermission(pagePermissions);
+    }
+
     private Map<String , List<UserConfigBean>> getUserConfig(int userId) {
-        // 查询 ct_user_config 获取所有该用户的配置信息
-        // 如果一个属性有多件的话，就放入List
-        // 也就是说 HASHMAP里的每一个属性，是一个集合，这个集合可能是一件，也可能是多件
-        // 时区和所属仓库是常用属性，所以独立出来，但是这里也会取到
         List<UserConfigBean> ret = userConfigDao.select(userId);
         return ret.stream().collect(groupingBy(UserConfigBean::getCfg_name, toList()));
+    }
+
+    private List<String> getPermissionUrls(UserSessionBean userSessionBean, String channelId) {
+
+        List<PermissionBean> rolePermissions = userDao.getRolePermissions(channelId, userSessionBean.getUserName());
+
+        List<PermissionBean> userPermissions = userDao.getUserPermissions(channelId, userSessionBean.getUserName());
+
+        return Stream.concat(rolePermissions.stream(), userPermissions.stream())
+                .filter(PermissionBean::isEnabled)
+                .map(permissionBean -> String.format("/%s/%s/%s/%s",
+                        permissionBean.getApplication(),
+                        permissionBean.getModule(),
+                        permissionBean.getController(),
+                        permissionBean.getAction()))
+                .distinct()
+                .collect(toList());
     }
 }

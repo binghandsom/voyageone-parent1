@@ -3,7 +3,7 @@ package com.voyageone.web2.core.model;
 import java.util.List;
 
 /**
- * 渠道下权限可用路径
+ * 渠道下应用系统的权限
  * Created on 11/30/15.
  *
  * @author Jonas

@@ -48,4 +48,11 @@ public class UserController extends BaseController {
         List<ChannelPermissionBean> companyBeans = userService.getPermissionCompany(getUser());
         return success(companyBeans);
     }
+
+    @RequestMapping("selectChannel")
+    public AjaxResponse selectChannel(@RequestBody Map<String, Object> params) {
+        userService.setSelectChannel(getUser(), String.valueOf(params.get("channelId")));
+        // 只要不报异常就是ok
+        return success(true);
+    }
 }

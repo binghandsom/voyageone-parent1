@@ -7,17 +7,29 @@
 angular.module('voyageone.angular.services.ajax', [])
   .service('ajaxService', AjaxService);
 
-function AjaxService($http, blockUI) {
+function AjaxService($http, blockUI, $q) {
   this.$http = $http;
   this.blockUI = blockUI;
+  this.$q = $q;
 }
 
 AjaxService.prototype.post = function(url, data) {
-  this.blockUI.start();
-  return this.$http.post(url, data).success((function(_this) {
-    return function(response) {
-      _this.blockUI.stop();
-      return response;
+  //this.blockUI.start();
+  var defer = this.$q.defer();
+  this.$http.post(url, data).then(function(response) {
+    var res = response.data;
+    if (!res) {
+      alert('相应结果不存在?????');
+      defer.reject(null);
+      return;
     }
-  })(this));
+    if (res.message || res.code) {
+      defer.reject(res);
+      return;
+    }
+    defer.resolve(res);
+  }, function(response) {
+    defer.reject(null, response);
+  });
+  return defer.promise;
 };

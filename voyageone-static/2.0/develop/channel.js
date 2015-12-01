@@ -26,9 +26,6 @@ require([
   angular.module('voyageone.cms.channel', [
     'blockUI'
   ]).controller('channelController', function($scope, $http) {
-    $scope.choose = function(app) {
-      location.href = 'views/' + app + '/app.html';
-    };
     $http.post('/core/access/user/getChannel').then(function(response) {
       var res = response.data;
       if (res.message) {
@@ -37,6 +34,20 @@ require([
       }
       $scope.channels = res.result.data;
     });
+    $scope.choose = function(channel, app) {
+      $http.post('/core/access/user/selectChannel', {channelId: channel.channelId}).then(function(response) {
+        var res = response.data;
+        if (!res.result.data) {
+          alert("fail");
+          return;
+        }
+        if (res.message) {
+          alert(res.message);
+          return;
+        }
+        location.href = 'views/' + app + '/app.html';
+      })
+    };
   });
   return angular.bootstrap(document, ['voyageone.cms.channel']);
 });
