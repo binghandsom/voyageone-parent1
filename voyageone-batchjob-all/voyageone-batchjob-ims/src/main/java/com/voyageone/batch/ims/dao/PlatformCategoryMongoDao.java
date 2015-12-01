@@ -8,24 +8,24 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class PlatformCategoryMongoDao {
 
-    @Autowired
-    BaseJomgoTemplate mongoTemplate;
-
-    public PlatformCategoryMongoBean findOne(String channelId, String strQuery) {
-        return mongoTemplate.findOne(strQuery, PlatformCategoryMongoBean.class, PlatformCategoryMongoBean.getCollectionName(channelId));
-    }
-
-    public void insertWithProduct(PlatformCategoryMongoBean entity) {
-        mongoTemplate.save(entity, entity.getCollectionName());
-    }
-
-    public void saveWithProduct(PlatformCategoryMongoBean entity) {
-        mongoTemplate.save(entity, entity.getCollectionName());
-    }
-
-    public void deleteWithProduct(PlatformCategoryMongoBean entity) {
-        mongoTemplate.removeById(entity.get_id(), entity.getCollectionName());
-    }
+//    @Autowired
+//    BaseJomgoTemplate mongoTemplate;
+//
+//    public PlatformCategoryMongoBean findOne(String channelId, String strQuery) {
+//        return mongoTemplate.findOne(strQuery, PlatformCategoryMongoBean.class, PlatformCategoryMongoBean.getCollectionName(channelId));
+//    }
+//
+//    public void insertWithProduct(PlatformCategoryMongoBean entity) {
+//        mongoTemplate.save(entity, entity.getCollectionName());
+//    }
+//
+//    public void saveWithProduct(PlatformCategoryMongoBean entity) {
+//        mongoTemplate.save(entity, entity.getCollectionName());
+//    }
+//
+//    public void deleteWithProduct(PlatformCategoryMongoBean entity) {
+//        mongoTemplate.removeById(entity.get_id(), entity.getCollectionName());
+//    }
 
 
 }

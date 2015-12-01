@@ -13,10 +13,6 @@ public class BaseJomgoTemplate extends BaseJomgoPartTemplate {
         super(mongoTemplate);
     }
 
-    protected String getCollectionName(Class<?> entityClass) {
-        return entityClass.getSimpleName().toLowerCase();
-    }
-
     public <T> T findOne(Class<T> entityClass) {
         String collectionName = getCollectionName(entityClass);
         return findOne(entityClass, collectionName);
@@ -120,11 +116,6 @@ public class BaseJomgoTemplate extends BaseJomgoPartTemplate {
         String collectionName = getCollectionName(entityClass);
         return aggregate(pipelineOperator, collectionName, parameters);
     }
-
-//    public void drop(Class<?> entityClass) {
-//        String collectionName = getCollectionName(entityClass);
-//        drop(collectionName);
-//    }
 
     public void dropIndex(String keys, Class<?> entityClass) {
         String collectionName = getCollectionName(entityClass);

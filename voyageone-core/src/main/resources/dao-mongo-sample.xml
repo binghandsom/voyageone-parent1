@@ -23,22 +23,35 @@
                        write-fsync="true"/>
     </mongo:mongo>
 
-    <mongo:db-factory id="mongoDbFactory" mongo-ref="mongo" username="admin2" password="admin123" dbname="test" authentication-dbname="admin"/>
-
-    <!-- 映射转换器，扫描back-package目录下的文件，根据注释，把它们作为mongodb的一个collection的映射 -->
-    <mongo:mapping-converter id="mongoConverter" base-package="com.voyageone.bi.dao.springdata.mongodb.model">
-        <mongo:custom-converters base-package="com.voyageone.bi.dao.springdata.mongodb.dao" />
-    </mongo:mapping-converter>
+    <mongo:db-factory id="mongoDbFactory" mongo-ref="mongo" username="admin" password="123456" dbname="cms" authentication-dbname="admin"/>
 
     <!-- mongodb的主要操作对象，所有对mongodb的增删改查的操作都是通过它完成 -->
     <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
         <constructor-arg ref="mongoDbFactory" />
-        <constructor-arg ref="mongoConverter" />
-        <property name="writeConcern" value="SAFE" />
     </bean>
 
-    <!-- mongodb bean的仓库目录，会自动扫描扩展了MongoRepository接口的接口进行注入 -->
-    <mongo:repositories base-package="com.voyageone.bi.dao.springdata.mongodb.dao" factory-class="com.voyageone.base.dao.mongodb.support.BaseMongoRepositoryFactoryBean" />
+
+    <bean id="mongoCollectionMapping" class="com.voyageone.base.dao.mongodb.MongoCollectionMapping">
+        <property name="collectionNameMap">
+            <map>
+                <entry key="CmsBtFeedInfoModel"						value="cms_bt_feed_info" />
+                <entry key="CmsBtPlatformMappingModel"			value="cms_bt_platform_mapping" />
+                <entry key="CmsBtProductModel"						value="cms_bt_product" />
+                <entry key="CmsBtProductLogModel"					value="cms_bt_product_log" />
+                <entry key="CmsBtTranErrInfoModel"					value="cms_bt_tran_err_info" />
+                <entry key="CmsMtCategorySchemaModel"				value="cms_mt_category_schema" />
+                <entry key="CmsMtCategoryTreeModel"				value="cms_mt_category_tree" />
+                <entry key="CmsMtFeedCategorySchemaModel"			value="cms_mt_feed_category_schema" />
+                <entry key="CmsMtFeedCategoryTreeModel"			value="cms_mt_feed_category_tree" />
+                <entry key="CmsMtPlatformCategorySchemaModel"	value="cms_mt_platform_category_schema" />
+                <entry key="CmsMtPlatformCategoryTreeModel"		value="cms_mt_platform_category_tree" />
+            </map>
+        </property>
+    </bean>
+
+    <bean id="baseJomgoDao" class="com.voyageone.base.dao.mongodb.BaseJomgoTemplate">
+        <constructor-arg ref="mongoTemplate" />
+    </bean>
 
     <context:annotation-config />
 </beans>

@@ -1,7 +1,9 @@
 package com.voyageone.cms.service;
 
-import com.voyageone.cms.service.dao.CmsBtProductDao;
+
+import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.model.*;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JsonUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,17 +20,17 @@ public class CmsProductServiceTest {
     CmsBtProductDao cmsBtProductDao;
 
     @Test
-    public void testSaveCmsBtProduct() throws Exception {
+    public void testInsertCmsBtProduct() throws Exception {
         CmsBtProductModel productModel = create();
-        cmsBtProductDao.save(productModel);
+        cmsBtProductDao.insert(productModel);
     }
 
     private CmsBtProductModel create() {
-        CmsBtProductModel product = new CmsBtProductModel("c001");
+        CmsBtProductModel product = new CmsBtProductModel("001");
         product.setProdId(1);
         product.setCid(111112);
         product.setCidPath("-100001-111111-111112-");
-        product.getField().setCode("00341");
+        product.getField().setCode("00342");
         String aa = product.getField().getCode();
         //product.setFieldAtt("code", "00341");
         product.getField().setAttribute("name", "Stud Earrings with Cubic Zirconia in Sterling Silver");
@@ -67,7 +69,7 @@ public class CmsProductServiceTest {
         product.getField().setAttribute("images", images);
 
         product.getField().setAttribute("lock", false);
-        product.getField().setAttribute("price_change", 0);
+        product.getField().setAttribute("priceChange", 0);
         product.getField().setAttribute("updateTime", "2015-05-21 00:00:00");
         product.getField().setAttribute("updater", "2015-08-21 00:00:00");
         product.getField().setAttribute("createTime", "2015-05-21 00:00:00");
@@ -106,9 +108,9 @@ public class CmsProductServiceTest {
         CmsBtProductModel_Sku sku = new CmsBtProductModel_Sku();
         sku.setSku("123456-001-7");
         sku.put("upc", "1234567890123");
-        sku.put("price_msrp", 1089.00);
-        sku.put("price_retail", 1089.00);
-        sku.put("price_sale", 899.00);
+        sku.put("priceMsrp", 1089.00);
+        sku.put("priceRetail", 1089.00);
+        sku.put("priceSale", 899.00);
         sku.put("platform", 899.00);
         skus.add(sku);
         sku = new CmsBtProductModel_Sku(sku);
@@ -130,11 +132,33 @@ public class CmsProductServiceTest {
     }
 
     @Test
-    public void testGetCmsBtProduct() throws Exception {
-        CmsBtProductModel ret = cmsBtProductDao.getProductByCode("010", "c001");
-        System.out.println(JsonUtil.getJsonString(ret));
+    public void testSelectCmsBtProductById() throws Exception {
+        CmsBtProductModel ret = cmsBtProductDao.selectProductById("001", 1);
+        System.out.println(ret.toString());
+        System.out.println(ret.getGroup().getCurrentPriceEnd());
     }
 
+    @Test
+    public void testSelectCmsBtProductByCode() throws Exception {
+        CmsBtProductModel ret = cmsBtProductDao.selectProductByCode("001", "00341");
+        System.out.println(ret.toString());
+        System.out.println(ret.getGroup().getCurrentPriceEnd());
+    }
 
+    @Test
+    public void testSelectCmsBtProductByGroupId() throws Exception {
+        List<CmsBtProductModel> listRet = cmsBtProductDao.selectProductByGroupId("001", 1);
+        for (CmsBtProductModel ret : listRet) {
+            System.out.println(ret.toString());
+            System.out.println(ret.getGroup().getCurrentPriceEnd());
+        }
+    }
 
+    @Test
+    public void testSelectSKUById() throws Exception {
+        List<CmsBtProductModel_Sku> listRet = cmsBtProductDao.selectSKUById("001", 1);
+        for (CmsBtProductModel_Sku ret : listRet) {
+            System.out.println(ret.toString());
+        }
+    }
 }

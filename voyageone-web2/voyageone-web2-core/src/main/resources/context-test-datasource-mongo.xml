@@ -30,6 +30,25 @@
         <constructor-arg ref="mongoDbFactory" />
     </bean>
 
+
+    <bean id="mongoCollectionMapping" class="com.voyageone.base.dao.mongodb.MongoCollectionMapping">
+        <property name="collectionNameMap">
+            <map>
+                <entry key="CmsBtFeedInfoModel"						value="cms_bt_feed_info" />
+                <entry key="CmsBtPlatformMappingModel"			value="cms_bt_platform_mapping" />
+                <entry key="CmsBtProductModel"						value="cms_bt_product" />
+                <entry key="CmsBtProductLogModel"					value="cms_bt_product_log" />
+                <entry key="CmsBtTranErrInfoModel"					value="cms_bt_tran_err_info" />
+                <entry key="CmsMtCategorySchemaModel"				value="cms_mt_category_schema" />
+                <entry key="CmsMtCategoryTreeModel"				value="cms_mt_category_tree" />
+                <entry key="CmsMtFeedCategorySchemaModel"			value="cms_mt_feed_category_schema" />
+                <entry key="CmsMtFeedCategoryTreeModel"			value="cms_mt_feed_category_tree" />
+                <entry key="CmsMtPlatformCategorySchemaModel"	value="cms_mt_platform_category_schema" />
+                <entry key="CmsMtPlatformCategoryTreeModel"		value="cms_mt_platform_category_tree" />
+            </map>
+        </property>
+    </bean>
+
     <bean id="baseJomgoDao" class="com.voyageone.base.dao.mongodb.BaseJomgoTemplate">
         <constructor-arg ref="mongoTemplate" />
     </bean>

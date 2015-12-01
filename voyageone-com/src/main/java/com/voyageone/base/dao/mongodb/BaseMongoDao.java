@@ -1,276 +1,139 @@
 package com.voyageone.base.dao.mongodb;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.query.MongoEntityInformation;
-import org.springframework.data.mongodb.repository.support.SimpleMongoRepository;
-import org.springframework.data.repository.NoRepositoryBean;
-import org.springframework.util.Assert;
+import com.mongodb.WriteResult;
+import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
+import com.voyageone.common.util.DateTimeUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.Serializable;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
 
-import static org.springframework.data.mongodb.core.query.Criteria.where;
+public class BaseMongoDao {
 
+    protected BaseJomgoTemplate mongoTemplate;
 
-@NoRepositoryBean
-public class BaseMongoDao<T, ID extends Serializable> implements MongoRepository<T, ID> {
+    protected String collectionName;
 
-    // mongoTemplate
-    protected MongoOperations mongoOperations;
-    public MongoOperations getMongoOperations() {
-        return mongoOperations;
-    }
-    // table Information
-    protected MongoEntityInformation<T, ID> entityInformation;
+    protected Class<?> entityClass;
 
-    /**
-     * Creates a new {@link SimpleMongoRepository} for the given {@link MongoEntityInformation} and {@link MongoTemplate}.
-     *
-     * @param metadata must not be {@literal null}.
-     * @param mongoOperations must not be {@literal null}.
-     */
-    public BaseMongoDao(MongoEntityInformation<T, ID> metadata, MongoOperations mongoOperations) {
-
-        Assert.notNull(mongoOperations);
-        Assert.notNull(metadata);
-
-        this.entityInformation = metadata;
-        this.mongoOperations = mongoOperations;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.springframework.data.repository.CrudRepository#save(java.lang.Object)
-     */
-    public <S extends T> S save(S entity) {
-
-        Assert.notNull(entity, "Entity must not be null!");
-
-        if (entityInformation.isNew(entity)) {
-            mongoOperations.insert(entity, entityInformation.getCollectionName());
-        } else {
-            mongoOperations.save(entity, entityInformation.getCollectionName());
+    @Autowired
+    public void setMongoTemplate(BaseJomgoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+        if (this.collectionName == null) {
+            this.collectionName = mongoTemplate.getCollectionName(entityClass);
         }
-
-        return entity;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.springframework.data.repository.CrudRepository#save(java.lang.Iterable)
-     */
-    public <S extends T> List<S> save(Iterable<S> entities) {
-
-        Assert.notNull(entities, "The given Iterable of entities not be null!");
-
-        List<S> result = convertIterableToList(entities);
-        boolean allNew = true;
-
-        for (S entity : entities) {
-            if (allNew && !entityInformation.isNew(entity)) {
-                allNew = false;
-            }
-        }
-
-        if (allNew) {
-            mongoOperations.insertAll(result);
-        } else {
-
-            for (S entity : result) {
-                save(entity);
-            }
-        }
-
-        return result;
+    public <T> T selectOne() {
+        return mongoTemplate.findOne((Class<T>) entityClass, collectionName);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.springframework.data.repository.CrudRepository#findOne(java.io.Serializable)
-     */
-    public T findOne(ID id) {
-        Assert.notNull(id, "The given id must not be null!");
-        return mongoOperations.findById(id, entityInformation.getJavaType(), entityInformation.getCollectionName());
+    public <T> T selectOneWithQuery(String strQuery) {
+        return mongoTemplate.findOne(strQuery, (Class < T >)entityClass, collectionName);
     }
 
-    private Query getIdQuery(Object id) {
-        return new Query(getIdCriteria(id));
+    public <T> List<T> selectAll() {
+        return mongoTemplate.findAll((Class<T>) entityClass, collectionName);
     }
 
-    private Criteria getIdCriteria(Object id) {
-        return where(entityInformation.getIdAttribute()).is(id);
+    public <T> List<T> select(final String strQuery) {
+        return mongoTemplate.find(strQuery, (Class<T>) entityClass, collectionName);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.springframework.data.repository.CrudRepository#exists(java.io.Serializable)
-     */
-    public boolean exists(ID id) {
-
-        Assert.notNull(id, "The given id must not be null!");
-        return mongoOperations.exists(getIdQuery(id), entityInformation.getJavaType(),
-                entityInformation.getCollectionName());
+    public <T> T selectById(String id) {
+        return mongoTemplate.findById(id, (Class<T>) entityClass, collectionName);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.springframework.data.repository.CrudRepository#count()
-     */
+    public <T> T selectOne(String channelId) {
+        String collectionName = mongoTemplate.getCollectionName(entityClass, channelId);
+        return mongoTemplate.findOne((Class<T>) entityClass, collectionName);
+    }
+
+    public <T> T selectOneWithQuery(String strQuery, String channelId) {
+        String collectionName = mongoTemplate.getCollectionName(entityClass, channelId);
+        return mongoTemplate.findOne(strQuery, (Class < T >)entityClass, collectionName);
+    }
+
+    public <T> List<T> selectAll(String channelId) {
+        String collectionName = mongoTemplate.getCollectionName(entityClass, channelId);
+        return mongoTemplate.findAll((Class<T>) entityClass, collectionName);
+    }
+
+    public <T> List<T> select(final String strQuery, String channelId) {
+        String collectionName = mongoTemplate.getCollectionName(entityClass, channelId);
+        return mongoTemplate.find(strQuery, (Class<T>) entityClass, collectionName);
+    }
+
+    public <T> T selectById(String id, String channelId) {
+        String collectionName = mongoTemplate.getCollectionName(entityClass, channelId);
+        return mongoTemplate.findById(id, (Class<T>) entityClass, collectionName);
+    }
+
     public long count() {
-        return mongoOperations.getCollection(entityInformation.getCollectionName()).count();
+        return mongoTemplate.count(collectionName);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.springframework.data.repository.CrudRepository#delete(java.io.Serializable)
-     */
-    public void delete(ID id) {
-        Assert.notNull(id, "The given id must not be null!");
-        mongoOperations.remove(getIdQuery(id), entityInformation.getJavaType(), entityInformation.getCollectionName());
+    public long countByQuery(final String strQuery) {
+        return mongoTemplate.count(strQuery, collectionName);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.springframework.data.repository.CrudRepository#delete(java.lang.Object)
-     */
-    public void delete(T entity) {
-        Assert.notNull(entity, "The given entity must not be null!");
-        delete(entityInformation.getId(entity));
+    public long count(String channelId) {
+        String collectionName = mongoTemplate.getCollectionName(entityClass, channelId);
+        return mongoTemplate.count(collectionName);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.springframework.data.repository.CrudRepository#delete(java.lang.Iterable)
-     */
-    public void delete(Iterable<? extends T> entities) {
+    public long countByQuery(final String strQuery, String channelId) {
+        String collectionName = mongoTemplate.getCollectionName(entityClass, channelId);
+        return mongoTemplate.count(strQuery, collectionName);
+    }
 
-        Assert.notNull(entities, "The given Iterable of entities not be null!");
+    public WriteResult insert(BaseMongoModel model) {
+        String collectionName = mongoTemplate.getCollectionName(model);
+        return mongoTemplate.insert(model, collectionName);
+    }
 
-        for (T entity : entities) {
-            delete(entity);
+    public WriteResult insertWithList(Collection<? extends Object> models) {
+        if (models != null && models.size() > 0) {
+            BaseMongoModel model = (BaseMongoModel)models.iterator().next();
+            String collectionName = mongoTemplate.getCollectionName(model);
+            return mongoTemplate.insert(models, collectionName);
         }
+        return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.springframework.data.repository.CrudRepository#deleteAll()
-     */
-    public void deleteAll() {
-        mongoOperations.remove(new Query(), entityInformation.getCollectionName());
+    public WriteResult update(BaseMongoModel model) {
+        String collectionName = mongoTemplate.getCollectionName(model);
+        model.setModified(DateTimeUtil.getNowTimeStamp());
+        return mongoTemplate.save(model, collectionName);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.springframework.data.repository.CrudRepository#findAll()
-     */
-    public List<T> findAll() {
-        return findAll(new Query());
+    public WriteResult delete(BaseMongoModel model) {
+        String collectionName = mongoTemplate.getCollectionName(model);
+        return mongoTemplate.removeById(model.get_id(), collectionName);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.springframework.data.repository.CrudRepository#findAll(java.lang.Iterable)
-     */
-    public Iterable<T> findAll(Iterable<ID> ids) {
-
-        Set<ID> parameters = new HashSet<ID>(tryDetermineRealSizeOrReturn(ids, 10));
-        for (ID id : ids) {
-            parameters.add(id);
-        }
-
-        return findAll(new Query(new Criteria(entityInformation.getIdAttribute()).in(parameters)));
+    public WriteResult deleteById(String id) {
+        return mongoTemplate.removeById(id, collectionName);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.springframework.data.repository.PagingAndSortingRepository#findAll(org.springframework.data.domain.Pageable)
-     */
-    public Page<T> findAll(final Pageable pageable) {
-
-        Long count = count();
-        List<T> list = findAll(new Query().with(pageable));
-
-        return new PageImpl<T>(list, pageable, count);
+    public WriteResult deleteAll() {
+        return mongoTemplate.removeAll(collectionName);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.springframework.data.repository.PagingAndSortingRepository#findAll(org.springframework.data.domain.Sort)
-     */
-    public List<T> findAll(Sort sort) {
-        return findAll(new Query().with(sort));
+    public WriteResult deleteWithQuery(String strQuery) {
+        return mongoTemplate.remove(strQuery, collectionName);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.springframework.data.mongodb.repository.MongoRepository#insert(java.lang.Object)
-     */
-    @Override
-    public <S extends T> S insert(S entity) {
-
-        Assert.notNull(entity, "Entity must not be null!");
-
-        mongoOperations.insert(entity, entityInformation.getCollectionName());
-        return entity;
+    public WriteResult deleteById(String id, String channelId) {
+        return mongoTemplate.removeById(id, collectionName);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.springframework.data.mongodb.repository.MongoRepository#insert(java.lang.Iterable)
-     */
-    @Override
-    public <S extends T> List<S> insert(Iterable<S> entities) {
-
-        Assert.notNull(entities, "The given Iterable of entities not be null!");
-
-        List<S> list = convertIterableToList(entities);
-
-        if (list.isEmpty()) {
-            return list;
-        }
-
-        mongoOperations.insertAll(list);
-        return list;
+    public WriteResult deleteAll(String channelId) {
+        return mongoTemplate.removeAll(collectionName);
     }
 
-    private List<T> findAll(Query query) {
-
-        if (query == null) {
-            return Collections.emptyList();
-        }
-
-        return mongoOperations.find(query, entityInformation.getJavaType(), entityInformation.getCollectionName());
+    public WriteResult deleteWithQuery(String strQuery, String channelId) {
+        return mongoTemplate.remove(strQuery, collectionName);
     }
 
-    private static <T> List<T> convertIterableToList(Iterable<T> entities) {
-
-        if (entities instanceof List) {
-            return (List<T>) entities;
-        }
-
-        int capacity = tryDetermineRealSizeOrReturn(entities, 10);
-
-        if (capacity == 0 || entities == null) {
-            return Collections.<T> emptyList();
-        }
-
-        List<T> list = new ArrayList<T>(capacity);
-        for (T entity : entities) {
-            list.add(entity);
-        }
-
-        return list;
-    }
-
-    private static int tryDetermineRealSizeOrReturn(Iterable<?> iterable, int defaultSize) {
-        return iterable == null ? 0 : (iterable instanceof Collection) ? ((Collection<?>) iterable).size() : defaultSize;
-    }
 }

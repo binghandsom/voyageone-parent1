@@ -1,7 +1,7 @@
 package com.voyageone.cms.service;
 
-import com.voyageone.cms.service.model.FeedProductModel;
-import com.voyageone.cms.service.model.FeedSkuModel;
+//import com.voyageone.cms.service.model.FeedProductModel;
+//import com.voyageone.cms.service.model.FeedSkuModel;
 import com.voyageone.common.util.JsonUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -63,70 +63,70 @@ public class FeedToCmsServiceTest {
 
     @Test
     public void testUpdateProduct() throws Exception {
-        List<FeedProductModel> products = new ArrayList<>();
-        FeedProductModel p1= new FeedProductModel("010");
-        p1.setCategory("Home-voyageone-james");
-        p1.setBrand("voyage");
-        p1.setCode("james");
-        p1.setColor("red");
-        p1.setLong_description("long_description");
-        p1.setShort_description("short_description");
-        p1.setModel("james-red");
-        p1.setName("james");
-        List<String> img = new ArrayList<>();
-        img.add("http://ssdsf/1.jpg");
-        img.add("http://ssdsf/2.jpg");
-        p1.setImage(img);
-
-        Map att = new HashMap<>();
-        att.put("a","1");
-        att.put("b", "2");
-//        p1.setAttribute(att);
-
-        List<FeedSkuModel> skus = new ArrayList<>();
-        FeedSkuModel sku = new FeedSkuModel();
-        sku.setBarcode("111111");
-        sku.setClientSku("");
-        sku.setPrice_current(13.01);
-        sku.setPrice_msrp(13.01);
-        skus.add(sku);
-
-        p1.setSkus(skus);
-
-        products.add(p1);
-
-        FeedProductModel p2= new FeedProductModel("010");
-        p2.setCategory("Home-voyageone-lijun");
-        //p2.setChannelId("010");
-        p2.setBrand("voyage");
-        p2.setCode("lijun");
-        p2.setColor("blue");
-        p2.setLong_description("long_description");
-        p2.setShort_description("short_description");
-        p2.setModel("james-blue");
-        p2.setName("james");
-        img = new ArrayList<>();
-        img.add("http://ssdsf/3.jpg");
-        img.add("http://ssdsf/4.jpg");
-        p2.setImage(img);
-
-        att = new HashMap<>();
-        att.put("a","1");
-        att.put("b", "2");
-//        p2.setAttribute(att);
-
-        skus = new ArrayList<>();
-        sku = new FeedSkuModel();
-        sku.setBarcode("111111");
-        sku.setClientSku("");
-        sku.setPrice_current(14.01);
-        sku.setPrice_msrp(14.01);
-        skus.add(sku);
-
-        p2.setSkus(skus);
-
-        products.add(p2);
-        feedToCmsService.updateProduct("010",products);
+//        List<FeedProductModel> products = new ArrayList<>();
+//        FeedProductModel p1= new FeedProductModel("010");
+//        p1.setCategory("Home-voyageone-james");
+//        p1.setBrand("voyage");
+//        p1.setCode("james");
+//        p1.setColor("red");
+//        p1.setLong_description("long_description");
+//        p1.setShort_description("short_description");
+//        p1.setModel("james-red");
+//        p1.setName("james");
+//        List<String> img = new ArrayList<>();
+//        img.add("http://ssdsf/1.jpg");
+//        img.add("http://ssdsf/2.jpg");
+//        p1.setImage(img);
+//
+//        Map att = new HashMap<>();
+//        att.put("a","1");
+//        att.put("b", "2");
+////        p1.setAttribute(att);
+//
+//        List<FeedSkuModel> skus = new ArrayList<>();
+//        FeedSkuModel sku = new FeedSkuModel();
+//        sku.setBarcode("111111");
+//        sku.setClientSku("");
+//        sku.setPrice_current(13.01);
+//        sku.setPrice_msrp(13.01);
+//        skus.add(sku);
+//
+//        p1.setSkus(skus);
+//
+//        products.add(p1);
+//
+//        FeedProductModel p2= new FeedProductModel("010");
+//        p2.setCategory("Home-voyageone-lijun");
+//        //p2.setChannelId("010");
+//        p2.setBrand("voyage");
+//        p2.setCode("lijun");
+//        p2.setColor("blue");
+//        p2.setLong_description("long_description");
+//        p2.setShort_description("short_description");
+//        p2.setModel("james-blue");
+//        p2.setName("james");
+//        img = new ArrayList<>();
+//        img.add("http://ssdsf/3.jpg");
+//        img.add("http://ssdsf/4.jpg");
+//        p2.setImage(img);
+//
+//        att = new HashMap<>();
+//        att.put("a","1");
+//        att.put("b", "2");
+////        p2.setAttribute(att);
+//
+//        skus = new ArrayList<>();
+//        sku = new FeedSkuModel();
+//        sku.setBarcode("111111");
+//        sku.setClientSku("");
+//        sku.setPrice_current(14.01);
+//        sku.setPrice_msrp(14.01);
+//        skus.add(sku);
+//
+//        p2.setSkus(skus);
+//
+//        products.add(p2);
+//        feedToCmsService.updateProduct("010",products);
 
     }
 }

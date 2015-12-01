@@ -16,18 +16,18 @@ public interface NewCustomerJpaDao extends MongoRepository<NewCustomer, String> 
 //    public Iterable<NewCustomer> findByFirstName(String firstName);
 //    public Iterable<NewCustomer> findByFirstNameRegex(String firstName);
 
-    default void saveWithDBObject(DBObject entity) {
-        MongoOperations mongoOperations = getMongoOperations();
-        mongoOperations.save(entity, "newCustomer");
-    }
+//    default void saveWithDBObject(DBObject entity) {
+//        MongoOperations mongoOperations = getMongoOperations();
+//        mongoOperations.save(entity, "newCustomer");
+//    }
 
-    default MongoOperations getMongoOperations() {
-        try {
-            BaseMongoDao baseMongoDao = (BaseMongoDao) ((Advised)this).getTargetSource().getTarget();
-            return baseMongoDao.getMongoOperations();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    default MongoOperations getMongoOperations() {
+//        try {
+//            BaseMongoDao baseMongoDao = (BaseMongoDao) ((Advised)this).getTargetSource().getTarget();
+//            return baseMongoDao.getMongoOperations();
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
 }
