@@ -1,5 +1,6 @@
 package com.voyageone.base.dao.mongodb.model;
 
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JsonUtil;
 import org.jongo.marshall.jackson.oid.MongoObjectId;
 import org.springframework.data.annotation.Id;
@@ -20,17 +21,17 @@ public class BaseMongoModel {
         this._id = _id;
     }
 
-    private Date createTime = new Date();
+    private String created = DateTimeUtil.getNow();
     private String creater = "0";
-    private Date updateTime = new Date();
-    private String updater = "0";
+    private String modified = DateTimeUtil.getNow();
+    private String modifier = "0";
 
-    public Date getCreateTime() {
-        return createTime;
+    public String getCreated() {
+        return created;
     }
 
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
+    public void setCreated(String created) {
+        this.created = created;
     }
 
     public String getCreater() {
@@ -41,20 +42,20 @@ public class BaseMongoModel {
         this.creater = creater;
     }
 
-    public Date getUpdateTime() {
-        return updateTime;
+    public String getModified() {
+        return modified;
     }
 
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
+    public void setModified(String modified) {
+        this.modified = modified;
     }
 
-    public String getUpdater() {
-        return updater;
+    public String getModifier() {
+        return modifier;
     }
 
-    public void setUpdater(String updater) {
-        this.updater = updater;
+    public void setModifier(String modifier) {
+        this.modifier = modifier;
     }
 
     @Override
