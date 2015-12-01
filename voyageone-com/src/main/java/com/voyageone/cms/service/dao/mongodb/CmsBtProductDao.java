@@ -1,4 +1,4 @@
-package com.voyageone.cms.service.dao;
+package com.voyageone.cms.service.dao.mongodb;
 
 import com.jayway.jsonpath.JsonPath;
 import com.voyageone.base.dao.mongodb.BaseMongoDao;

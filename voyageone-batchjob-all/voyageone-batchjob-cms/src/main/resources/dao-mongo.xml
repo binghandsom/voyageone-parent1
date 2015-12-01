@@ -25,11 +25,20 @@
 
     <mongo:db-factory id="mongoDbFactory" mongo-ref="mongo" username="admin" password="123456" dbname="cms" authentication-dbname="admin"/>
 
+    <!-- 映射转换器，扫描back-package目录下的文件，根据注释，把它们作为mongodb的一个collection的映射 -->
+    <!--<mongo:mapping-converter id="mongoConverter" base-package="com.voyageone.base.dao.mongodb.test.dao">-->
+    <!--<mongo:custom-converters base-package="com.voyageone.base.dao.mongodb.test.dao" />-->
+    <!--</mongo:mapping-converter>-->
+
     <!-- mongodb的主要操作对象，所有对mongodb的增删改查的操作都是通过它完成 -->
     <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
         <constructor-arg ref="mongoDbFactory" />
+        <!--<constructor-arg ref="mongoConverter" />-->
+        <!--<property name="writeConcern" value="SAFE" />-->
     </bean>
 
+    <!--<bean id="basePartitionMongoTemplate" class="com.voyageone.base.dao.mongodb.BasePartitionMongoTemplate">-->
+    <!--</bean>-->
 
     <bean id="mongoCollectionMapping" class="com.voyageone.base.dao.mongodb.MongoCollectionMapping">
         <property name="collectionNameMap">
@@ -40,6 +49,7 @@
                 <entry key="CmsBtProductLogModel"					value="cms_bt_product_log" />
                 <entry key="CmsBtTranErrInfoModel"					value="cms_bt_tran_err_info" />
                 <entry key="CmsMtCategorySchemaModel"				value="cms_mt_category_schema" />
+                <entry key="CmsMtCategoryTreeModel"				value="cms_mt_category_tree" />
                 <entry key="CmsMtCategoryTreeModel"				value="cms_mt_category_tree" />
                 <entry key="CmsMtFeedCategorySchemaModel"			value="cms_mt_feed_category_schema" />
                 <entry key="CmsMtFeedCategoryTreeModel"			value="cms_mt_feed_category_tree" />
@@ -52,6 +62,9 @@
     <bean id="baseJomgoDao" class="com.voyageone.base.dao.mongodb.BaseJomgoTemplate">
         <constructor-arg ref="mongoTemplate" />
     </bean>
+
+    <!-- mongodb bean的仓库目录，会自动扫描扩展了MongoRepository接口的接口进行注入 -->
+    <!--<mongo:repositories base-package="com.voyageone.base.dao.mongodb.test.dao" factory-class="com.voyageone.base.dao.mongodb.support.BaseMongoRepositoryFactoryBean" />-->
 
     <context:annotation-config />
 </beans>

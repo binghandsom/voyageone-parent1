@@ -50,7 +50,6 @@
                 <entry key="CmsBtTranErrInfoModel"					value="cms_bt_tran_err_info" />
                 <entry key="CmsMtCategorySchemaModel"				value="cms_mt_category_schema" />
                 <entry key="CmsMtCategoryTreeModel"				value="cms_mt_category_tree" />
-                <entry key="CmsMtCategoryTreeModel"				value="cms_mt_category_tree" />
                 <entry key="CmsMtFeedCategorySchemaModel"			value="cms_mt_feed_category_schema" />
                 <entry key="CmsMtFeedCategoryTreeModel"			value="cms_mt_feed_category_tree" />
                 <entry key="CmsMtPlatformCategorySchemaModel"	value="cms_mt_platform_category_schema" />
