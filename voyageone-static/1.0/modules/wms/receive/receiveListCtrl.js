@@ -232,8 +232,10 @@ define([
             }
             else if (vm.scan.scanType == '1') {
                 vm.scan.scanNo = vm.lastPrint[0].id;
-            } else {
+            } else if (vm.scan.scanType == '2') {
                 vm.scan.scanNo = vm.lastPrint[0].order_number;
+            } else if (vm.scan.scanType == '3') {
+                vm.scan.scanNo = vm.lastPrint[0].id;
             }
 
             if (!vm.scan.scanNo) {

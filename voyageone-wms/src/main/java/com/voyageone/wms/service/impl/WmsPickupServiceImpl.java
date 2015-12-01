@@ -271,6 +271,14 @@ public class WmsPickupServiceImpl implements WmsPickupService {
                         intCancelled++;
                     }
                 }
+                // 订单物品级别收货时，由于货物可能已经实际发到仓库了，即使已经取消订单，也需要将取消物品打单
+                else if (ChannelConfigEnums.Scan.ITEM.getType().equals(scanType)) {
+                    if (WmsConstants.ScanType.SCAN.equals(scanMode)) {
+                        scanInfoList.add(formPickupBean);
+                    } else {
+                        intCancelled++;
+                    }
+                }
             } else if (formPickupBean.getStatus().equals(WmsCodeConstants.Reservation_Status.Reserved)) {
                 intReserved ++;
             } else if (!reservationStatus.toString().contains(statusName)) {
@@ -818,6 +826,21 @@ public class WmsPickupServiceImpl implements WmsPickupService {
 
             // SKU
             pickupLabelBean.setSku("");
+
+        }
+        // 订单物品收货时，按照物品级别设置
+        else if (ChannelConfigEnums.Scan.ITEM.getType().equals(scanType))  {
+
+            // 配货号
+            pickupLabelBean.setReservation_id(scanNo);
+
+            // 货品名称
+            pickupLabelBean.setProduct(scanInfoList.get(0).getProduct());
+
+            // SKU（品牌方SKU存在时，显示品牌方SKU）
+            String client_sku = StringUtils.null2Space(reservationDao.getClientSku(scanInfoList.get(0).getOrder_channel_id(), scanInfoList.get(0).getSku()));
+
+            pickupLabelBean.setSku(StringUtils.isNullOrBlank2(client_sku) ? scanInfoList.get(0).getSku() : client_sku);
 
         }
 
