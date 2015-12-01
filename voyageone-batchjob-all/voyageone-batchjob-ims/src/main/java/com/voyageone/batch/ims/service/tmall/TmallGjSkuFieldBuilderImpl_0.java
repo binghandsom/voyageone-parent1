@@ -241,7 +241,8 @@ public class TmallGjSkuFieldBuilderImpl_0 extends AbstractSkuFieldBuilder {
                 String codePropFullImageUrl = UploadImageHandler.encodeImageUrl(String.format(codeImageTemplate, propImage));
                 complexValue.setInputFieldValue(propId_colorExtend_image, codePropFullImageUrl);
                 imageSet.add(codePropFullImageUrl);
-                buildSkuResult.getSrcUrlComplexValueMap().put(codePropFullImageUrl, complexValue);
+                //buildSkuResult.getSrcUrlComplexValueMap().put(codePropFullImageUrl, complexValue);
+                buildSkuResult.getSrcUrlComplexValueMap().put(entry.getKey(), complexValue);
             }
 
             //TODO BASE COLOR
@@ -318,10 +319,13 @@ public class TmallGjSkuFieldBuilderImpl_0 extends AbstractSkuFieldBuilder {
 
         for (Map.Entry<String, ComplexValue> entry : buildSkuResult.getSrcUrlComplexValueMap().entrySet())
         {
-            String srcUrl = entry.getKey();
-            String destUrl = urlMap.get(srcUrl);
-
             ComplexValue complexValue = entry.getValue();
+            String destUrl = complexValue.getInputFieldValue(propId_colorExtend_image);
+
+            for (Map.Entry<String, String> urlEntry : urlMap.entrySet()) {
+                destUrl = destUrl.replace(urlEntry.getKey(), urlEntry.getValue());
+            }
+
             complexValue.setInputFieldValue(propId_colorExtend_image, destUrl);
         }
     }
