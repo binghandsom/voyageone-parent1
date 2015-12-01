@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -1353,6 +1354,15 @@ public final class DateTimeUtil {
     public static String XMLGregorianCalendarToDate(XMLGregorianCalendar cal) throws Exception{
         GregorianCalendar ca = cal.toGregorianCalendar();
         return DateTimeUtil.format(ca.getTime(), DateTimeUtil.DEFAULT_DATETIME_FORMAT);
+    }
+
+    /**
+     * 得到当前时间TimeStamp
+     *
+     * @return 当前日期及时间
+     */
+    public static String getNowTimeStamp() {
+        return new Timestamp(System.currentTimeMillis()).toString();
     }
 
 }
