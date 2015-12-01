@@ -11,12 +11,10 @@ import java.util.Map;
  */
 public class CmsBtFeedInfoModel extends ChannelPartitionModel {
 
+    public CmsBtFeedInfoModel() {}
+
     public CmsBtFeedInfoModel(String channelId) {
         super(channelId);
-    }
-
-    public CmsBtFeedInfoModel() {
-        super("");
     }
 
     private String category;
