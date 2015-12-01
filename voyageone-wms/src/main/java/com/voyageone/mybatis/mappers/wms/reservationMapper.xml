@@ -386,10 +386,10 @@
         WHERE
         <choose>
             <when test="scanType == 1">
-                status = #{scanStatus}
+                (status = #{scanStatus})
             </when>
-            <when test="scanType == 2">
-                (status = #{scanStatus} or status = '99')
+            <when test="scanType == 2 and scanMode == 'Scan'">
+                (status = #{scanStatus} or status = '99' or status = '11')
             </when>
             <otherwise>
                 status = #{scanStatus}
