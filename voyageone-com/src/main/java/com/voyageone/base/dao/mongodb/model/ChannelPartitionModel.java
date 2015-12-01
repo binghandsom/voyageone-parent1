@@ -11,6 +11,9 @@ public class ChannelPartitionModel extends BaseMongoModel {
         this.channelId = channelId;
     }
 
+    public ChannelPartitionModel() {
+    }
+
     public ChannelPartitionModel(String channelId) {
         this.channelId = channelId;
     }

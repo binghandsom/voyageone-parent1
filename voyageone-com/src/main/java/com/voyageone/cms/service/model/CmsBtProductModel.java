@@ -17,6 +17,9 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     private List<CmsBtProductModel_Tag> tags = new ArrayList<>();
     private CmsBtProductModel_Feed feedAtts = new CmsBtProductModel_Feed();
 
+    public CmsBtProductModel() {
+    }
+
     public CmsBtProductModel(String channelId) {
         super(channelId);
     }

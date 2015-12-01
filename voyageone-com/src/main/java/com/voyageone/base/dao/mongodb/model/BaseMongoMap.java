@@ -1,9 +1,9 @@
 package com.voyageone.base.dao.mongodb.model;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class BaseMongoMap<K,V> extends HashMap<K,V> implements Map<K,V> {
+public class BaseMongoMap<K,V> extends LinkedHashMap<K,V> implements Map<K,V> {
     public V getAttribute(String key) {
         if (key == null) {
             return null;
