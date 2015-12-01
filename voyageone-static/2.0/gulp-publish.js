@@ -3,6 +3,7 @@ var ngAnnotate = require('gulp-ng-annotate');
 var header = require('gulp-header');
 var minifyHtml = require('gulp-minify-html');
 var uglify = require('gulp-uglify');
+var sourceMaps = require('gulp-sourcemaps');
 var replace = require('gulp-replace');
 var rename = require('gulp-rename');
 
@@ -27,8 +28,11 @@ gulp.task(tasks.publish.statics, [tasks.build.css.all], function () {
 
 // release voyageone.angular.com.js
 gulp.task(tasks.publish.angular, [tasks.build.angular], function () {
-  gulp.src([build.common.angular.dist + '/' + build.common.angular.concat,
-      build.common.angular.dist + '/' + build.common.angular.map])
+  gulp.src(build.common.angular.dist + '/' + build.common.angular.concat)
+    .pipe(sourceMaps.init())
+    .pipe(uglify())
+    .pipe(rename({suffix: '.min'}))
+    .pipe(sourceMaps.write('./'))
     .pipe(gulp.dest(publish.components.angular.dist))
     .pipe(gulp.dest(publish.release.components));
 });
@@ -54,7 +58,7 @@ gulp.task(tasks.publish.views, function () {
   gulp.src(publish.loginAndChannel.js)
     .pipe(ngAnnotate())
     .pipe(uglify())
-    .pipe(rename({suffix:".min"}))
+    .pipe(rename({suffix: ".min"}))
     .pipe(gulp.dest(publish.release.loginAndChannel));
 
   gulp.src(publish.loginAndChannel.html)
