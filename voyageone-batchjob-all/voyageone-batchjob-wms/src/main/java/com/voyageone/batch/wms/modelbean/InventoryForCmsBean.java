@@ -1,13 +1,13 @@
-package com.voyageone.batch.cms.model;
+package com.voyageone.batch.wms.modelbean;
 
+import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
  * Created by dell on 2015/11/27.
  */
 @Document
-public class InventoryModel {
-    String channel_id;
+public class InventoryForCmsBean extends ChannelPartitionModel {
     String code;
     String group_id;
     int qty;
@@ -18,14 +18,6 @@ public class InventoryModel {
 
     public void setGroup_id(String group_id) {
         this.group_id = group_id;
-    }
-
-    public String getChannel_id() {
-        return channel_id;
-    }
-
-    public void setChannel_id(String channel_id) {
-        this.channel_id = channel_id;
     }
 
     public String getCode() {
