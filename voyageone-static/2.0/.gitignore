@@ -1,3 +1,4 @@
 develop/*.min.js
 develop/*.map
 develop/components/dist/
+develop/static/*.min.css
