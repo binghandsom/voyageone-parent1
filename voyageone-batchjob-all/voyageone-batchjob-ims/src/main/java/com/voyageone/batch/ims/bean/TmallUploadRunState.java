@@ -49,6 +49,10 @@ public class TmallUploadRunState extends PlatformUploadRunState{
         //商品价格
         private InputField priceField;
 
+        public TmallContextBuildCustomFields() {
+            customFields = new ArrayList<>();
+        }
+
         public InputField getPriceField() {
             return priceField;
         }
