@@ -1,8 +1,7 @@
 package com.voyageone.cms.service;
 
-import com.voyageone.cms.service.dao.CmsBtProductDao;
+import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.model.*;
-import com.voyageone.common.util.JsonUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

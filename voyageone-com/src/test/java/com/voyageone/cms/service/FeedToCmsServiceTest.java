@@ -1,7 +1,6 @@
 package com.voyageone.cms.service;
 
-//import com.voyageone.cms.service.model.FeedProductModel;
-//import com.voyageone.cms.service.model.FeedSkuModel;
+import com.voyageone.cms.service.model.CmsMtFeedCategoryTreeModel;
 import com.voyageone.common.util.JsonUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,8 +23,8 @@ public class FeedToCmsServiceTest {
     FeedToCmsService feedToCmsService;
     @Test
     public void testGetFeedCategory() throws Exception {
-        List<Map> ret = feedToCmsService.getFeedCategory("010");
-        System.out.println(JsonUtil.getJsonString(ret));
+//        CmsMtFeedCategoryTreeModel ret = feedToCmsService.getFeedCategory("010");
+//        System.out.println(JsonUtil.getJsonString(ret));
     }
 
     @Test
@@ -44,21 +43,21 @@ public class FeedToCmsServiceTest {
         o.put("child",child);
         tree.add(o);
 
-        feedToCmsService.setFeedCategory("012",tree);
+//        feedToCmsService.setFeedCategory("012",tree);
     }
 
     @Test
     public void testFindCategory() throws Exception {
-        List<Map> ret = feedToCmsService.getFeedCategory("013");
+//        CmsMtFeedCategoryTreeModel ret = feedToCmsService.getFeedCategory("013");
 //        Map child =  feedToCmsService.findCategory(ret, "Home-Kitchen");
-        Map child =  feedToCmsService.findCategory(ret, "Clothing-Kids' Apparel-Boys");
+//        Map child =  feedToCmsService.findCategory(ret.getCategoryTree(), "Clothing-Kids' Apparel-Boys");
     }
 
     @Test
     public void testAddCategory() throws Exception {
-        List<Map> tree = feedToCmsService.getFeedCategory("013");
-        feedToCmsService.addCategory(tree,"Clothing-Kids' Apparel-Boys");
-        feedToCmsService.setFeedCategory("013",tree);
+//        CmsMtFeedCategoryTreeModel tree = feedToCmsService.getFeedCategory("013");
+//        feedToCmsService.addCategory(tree.getCategoryTree(),"Clothing-Kids' Apparel-Boys");
+//        feedToCmsService.setFeedCategory(tree);
     }
 
     @Test

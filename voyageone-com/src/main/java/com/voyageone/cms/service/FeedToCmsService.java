@@ -2,10 +2,12 @@ package com.voyageone.cms.service;
 
 import com.jayway.jsonpath.JsonPath;
 import com.voyageone.cms.service.dao.CmsBtFeedProductImageDao;
+import com.voyageone.cms.service.model.CmsBtFeedProductImageModel;
 import com.voyageone.cms.service.model.CmsMtFeedCategoryTreeModel;
 import com.voyageone.cms.service.model.CmsBtFeedInfoModel;
 import com.voyageone.cms.service.dao.mongodb.CmsMtFeedCategoryTreeDao;
 import com.voyageone.cms.service.dao.mongodb.CmsBtFeedInfoDao;
+import com.voyageone.common.util.DateTimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,30 +32,32 @@ public class FeedToCmsService {
     @Autowired
     private CmsBtFeedProductImageDao cmsBtFeedProductImageDao;
 
+    private String modifier;
+
     /**
      * 获取feed类目
      *
      * @param channelId
      * @return
      */
-    public List<Map> getFeedCategory(String channelId) {
+    private CmsMtFeedCategoryTreeModel getFeedCategory(String channelId) {
         CmsMtFeedCategoryTreeModel category = feedCategoryDao.selectFeedCategory(channelId);
         if (category == null) {
             category = new CmsMtFeedCategoryTreeModel();
             category.setChannelId(channelId);
             category.setCategoryTree(new ArrayList<>());
+            category.setCreater(modifier);
         }
-        return category.getCategoryTree();
+        return category;
     }
 
     /**
      * 设定feed类目
      *
-     * @param channelId
      * @param tree
      */
-    public void setFeedCategory(String channelId, List<Map> tree) {
-        feedCategoryDao.updateFeedCategory(channelId, tree);
+    private void setFeedCategory(CmsMtFeedCategoryTreeModel tree) {
+        feedCategoryDao.updateFeedCategory(tree);
     }
 
     /**
@@ -63,7 +67,7 @@ public class FeedToCmsService {
      * @param cat
      * @return
      */
-    public Map findCategory(List<Map> tree, String cat) {
+    private Map findCategory(List<Map> tree, String cat) {
         Object jsonObj = JsonPath.parse(tree).json();
         List<Map> child = JsonPath.read(jsonObj, "$..child[?(@.category == '" + cat.replace("'", "\\\'") + "')]");
         if (child.size() == 0) {
@@ -78,10 +82,7 @@ public class FeedToCmsService {
      * @param tree
      * @param category
      */
-    public List<Map> addCategory(List<Map> tree, String category) {
-        if (findCategory(tree, category) != null) {
-            return tree;
-        }
+    private List<Map> addCategory(List<Map> tree, String category) {
         String[] c = category.split("-");
         String temp = "";
         Map befNode = null;
@@ -111,10 +112,15 @@ public class FeedToCmsService {
      * @param channelId
      * @param category
      */
-    public void addCategory(String channelId, String category) {
-        List<Map> tree = getFeedCategory(channelId);
-        tree = addCategory(tree,category);
-        setFeedCategory(channelId, tree);
+    private void addCategory(String channelId, String category) {
+        CmsMtFeedCategoryTreeModel categoryTree = getFeedCategory(channelId);
+        if (findCategory(categoryTree.getCategoryTree(), category) != null) {
+            return;
+        }
+        categoryTree.setCategoryTree(addCategory(categoryTree.getCategoryTree(),category));
+        categoryTree.setModified(DateTimeUtil.getNow());
+        categoryTree.setModifier(modifier);
+        setFeedCategory(categoryTree);
     }
 
     /**
@@ -123,8 +129,8 @@ public class FeedToCmsService {
      * @param products
      * @return
      */
-    public Map updateProduct(String channelId, List<CmsBtFeedInfoModel> products) {
-
+    public Map updateProduct(String channelId, List<CmsBtFeedInfoModel> products,String modifier) {
+        this.modifier = modifier;
         List<String> existCategory = new ArrayList<>();
         List<CmsBtFeedInfoModel> failProduct = new ArrayList<>();
         List<CmsBtFeedInfoModel> succeedProduct = new ArrayList<>();
@@ -150,9 +156,18 @@ public class FeedToCmsService {
                             product.getSkus().add(skuModel);
                         }
                     });
+                    product.setCreated(befproduct.getCreated());
+                    product.setCreater(befproduct.getCreater());
                 }
+                product.setModified(DateTimeUtil.getNow());
+                product.setModifier(this.modifier);
                 feedProductDao.updateProduct(product);
-                cmsBtFeedProductImageDao.updateImagebyUrl(channelId, imageUrls);
+
+                List<CmsBtFeedProductImageModel> imageModels = new ArrayList<>();
+                imageUrls.forEach(s -> {
+                    imageModels.add(new CmsBtFeedProductImageModel(channelId,s,this.modifier));
+                });
+                cmsBtFeedProductImageDao.updateImagebyUrl(imageModels);
                 succeedProduct.add(product);
             }catch (Exception e){
                 failProduct.add(product);

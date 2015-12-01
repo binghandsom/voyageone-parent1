@@ -7,6 +7,7 @@ import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feed;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ class SearsWsdlInsert extends SearsWsdlBase {
      */
     @Override
     public String getTaskName() {
-        return "BcbgAnalysis.Insert";
+        return "SearsAnalysis";
     }
 
     @Override
@@ -183,7 +184,7 @@ class SearsWsdlInsert extends SearsWsdlBase {
                 // 分每棵树的信息取得
                 List<CmsBtFeedInfoModel> product = getCategoryInfo(categorPath);
                 product.forEach(feedProductModel1 -> feedProductModel1.attributeListToMap());
-                Map response = feedToCmsService.updateProduct(channel.getId(), product);
+                Map response = feedToCmsService.updateProduct(channel.getId(), product, getTaskName());
                 List<String>itemIds = new ArrayList<>();
                 productSucceeList = (List<CmsBtFeedInfoModel>) response.get("succeed");
                 productSucceeList.forEach(feedProductModel -> feedProductModel.getSkus().forEach(feedSkuModel -> itemIds.add(feedSkuModel.getClientSku())));
