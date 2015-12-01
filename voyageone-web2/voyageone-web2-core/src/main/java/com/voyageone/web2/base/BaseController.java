@@ -2,7 +2,7 @@ package com.voyageone.web2.base;
 
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.base.ajax.AjaxResponseData;
-import com.voyageone.web2.core.model.UserSessionBean;
+import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
