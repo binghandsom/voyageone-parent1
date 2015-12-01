@@ -12,6 +12,14 @@ var publish = vars.publish;
 var build = vars.build;
 var tasks = vars.tasks;
 
+// 压缩之前需要把 angular.com 追加 .min
+function fixCommonRef() {
+  return replace(
+    build.common.angular.concat.replace('.js', ''),
+    build.common.angular.concat.replace('.js', '.min')
+  );
+}
+
 // release static
 gulp.task(tasks.publish.statics, [tasks.build.css.all], function () {
 
@@ -56,6 +64,7 @@ gulp.task(tasks.publish.views, function () {
 
   // build login.app and channel.app
   gulp.src(publish.loginAndChannel.js)
+    .pipe(fixCommonRef())
     .pipe(ngAnnotate())
     .pipe(uglify())
     .pipe(rename({suffix: ".min"}))
@@ -68,6 +77,7 @@ gulp.task(tasks.publish.views, function () {
 
   // 压缩js文件
   gulp.src(publish.views.js)
+    .pipe(fixCommonRef())
     .pipe(uglify())
     .pipe(gulp.dest(publish.release.views));
 
