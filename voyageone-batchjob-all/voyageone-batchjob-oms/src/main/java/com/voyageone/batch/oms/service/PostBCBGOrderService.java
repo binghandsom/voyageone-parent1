@@ -13,6 +13,7 @@ import com.voyageone.batch.oms.formbean.OutFormOrderDetailOrderDetail;
 import com.voyageone.batch.oms.formbean.OutFormOrderdetailOrders;
 import com.voyageone.batch.oms.modelbean.OrderExtend;
 import com.voyageone.batch.oms.utils.WebServiceUtil;
+import com.voyageone.common.components.baidu.translate.BaiduTranslateUtil;
 import com.voyageone.common.components.issueLog.IssueLog;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -1929,7 +1930,8 @@ public class PostBCBGOrderService {
 		translateContent.add(orderInfo.getCity());
 		translateContent.add(orderInfo.getState());
 
-		List<String> afterTranslateContent = translate(translateContent, 1);
+//		List<String> afterTranslateContent = translate(translateContent, 1);
+		List<String> afterTranslateContent = BaiduTranslateUtil.translate(translateContent);
 
 		orderInfo.setShipName(afterTranslateContent.get(0));
 		orderInfo.setShipAddress(afterTranslateContent.get(1));

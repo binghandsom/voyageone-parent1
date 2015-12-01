@@ -864,6 +864,9 @@ public class ConstructPropValue {
         customPlatformPropMapping.setPlatformPropId("std_size_prop_20509_-1");
         platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
 
+        customPlatformPropMapping.setPlatformPropId("std_size_prop_20518_-1");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
         customPlatformPropMapping.setPlatformPropId("custom_prop_1");
         platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
 
@@ -874,6 +877,9 @@ public class ConstructPropValue {
         platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
 
         customPlatformPropMapping.setPlatformPropId("std_size_extends_20509");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+
+        customPlatformPropMapping.setPlatformPropId("std_size_extends_20518");
         platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
 
         customPlatformPropMapping.setPlatformPropId("size_tip");
@@ -1066,6 +1072,11 @@ public class ConstructPropValue {
         tmallSkuInfo.setSku_type(skuType);
         platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
 
+        tmallSkuInfo.setProp_id("sku_MarketTime");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_0_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_0_Schema.SKU_MARKET_TIME);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
         //颜色扩展
         tmallSkuInfo.setProp_id("prop_extend_1627207");
         skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_0_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_0_Schema.EXTENDCOLOR);
@@ -1079,6 +1090,17 @@ public class ConstructPropValue {
 
         tmallSkuInfo.setProp_id("prop_image");
         skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_0_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_0_Schema.EXTENDCOLOR_IMAGE);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("basecolor");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_0_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_0_Schema.EXTENDCOLOR_BASECOLOR);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("in_prop_1627207");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_0_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_0_Schema.SKU_COLOR,
+                SkuTemplateSchema.SkuTemplate_0_Schema.EXTENDCOLOR_COLOR);
         tmallSkuInfo.setSku_type(skuType);
         platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
         //============================================== 模板0 END ===================================================================================
@@ -1182,7 +1204,7 @@ public class ConstructPropValue {
         platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
 
         tmallSkuInfo.setProp_id("alias_name");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDCOLOR_ALIASNAME);
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDCOLOR_ALIASNAME, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_ALIASNAME);
         tmallSkuInfo.setSku_type(skuType);
         platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
 
@@ -1228,16 +1250,17 @@ public class ConstructPropValue {
         platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
 
         //项链长度
+        tmallSkuInfo.setProp_id("in_prop_148242406");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.SKU_SIZE);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        //项链长度
         tmallSkuInfo.setProp_id("in_prop_150988152");
         skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.SKU_CUSTOM_SIZE1);
         tmallSkuInfo.setSku_type(skuType);
         platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
 
-        //项链长度
-        tmallSkuInfo.setProp_id("in_prop_148242406");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.SKU_CUSTOM_SIZE1);
-        tmallSkuInfo.setSku_type(skuType);
-        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
 
         //项链长度
         tmallSkuInfo.setProp_id("prop_14067173");
@@ -1251,10 +1274,6 @@ public class ConstructPropValue {
         tmallSkuInfo.setSku_type(skuType);
         platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
 
-        tmallSkuInfo.setProp_id("alias_name");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_2_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_2_Schema.EXTENDSIZE_ALIASNAME);
-        tmallSkuInfo.setSku_type(skuType);
-        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
         //============================================== 模板2 END ======================================================================================
 
         //============================================== 模板3 BEGIN ===================================================================================
@@ -1270,8 +1289,20 @@ public class ConstructPropValue {
         tmallSkuInfo.setSku_type(skuType);
         platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
 
+        //颜色
+        tmallSkuInfo.setProp_id("in_prop_1627207");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_3_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_3_Schema.SKU_COLOR,
+                SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDCOLOR_COLOR);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
         tmallSkuInfo.setProp_id("std_size_prop_20509_-1");
-        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_3_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_3_Schema.SKU_SIZE);
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_3_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_3_Schema.SKU_SIZE, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_SIZE);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("std_size_prop_20518_-1");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_3_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_3_Schema.SKU_SIZE, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_SIZE);
         tmallSkuInfo.setSku_type(skuType);
         platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
 
@@ -1299,6 +1330,7 @@ public class ConstructPropValue {
         skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_3_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_3_Schema.SKU_MARKET_TIME);
         tmallSkuInfo.setSku_type(skuType);
         platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
         //颜色扩展
         tmallSkuInfo.setProp_id("prop_extend_1627207");
         skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_3_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDCOLOR);
@@ -1322,6 +1354,11 @@ public class ConstructPropValue {
 
         //尺码扩展
         tmallSkuInfo.setProp_id("std_size_extends_20509");
+        skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_3_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE);
+        tmallSkuInfo.setSku_type(skuType);
+        platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
+
+        tmallSkuInfo.setProp_id("std_size_extends_20518");
         skuType = SkuTemplateSchema.encodeSkuType(SkuTemplateSchema.SkuTemplate_3_Schema.TPL_INDEX, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE);
         tmallSkuInfo.setSku_type(skuType);
         platformSkuInfoDao.insertPlatformSkuInfo(tmallSkuInfo);
@@ -1565,7 +1602,7 @@ public class ConstructPropValue {
         RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
         ConstructPropValue util = new ConstructPropValue();
 
-//        constructPlatformPropMappingCustom(platformPropCustomMappingDao);
+        //constructPlatformPropMappingCustom(platformPropCustomMappingDao);
         constructTmallSkuInfo(platformSkuInfoDao);
 //        constructTmallSkuInfo(platformSkuInfoDao);
         /*

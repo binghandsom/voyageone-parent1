@@ -240,6 +240,7 @@ public class WmsPickupServiceImpl implements WmsPickupService {
         List<FormPickupBean> scanInfoList =new ArrayList<>();
         int intReserved = 0;
         int intCancelled = 0;
+        boolean blnOpen = false;
         List<String> reservationStatus = new ArrayList<>();
 
         for (FormPickupBean formPickupBean : scanInfoListALL) {
@@ -249,6 +250,14 @@ public class WmsPickupServiceImpl implements WmsPickupService {
             // 取得满足状态条件的记录
             if (formPickupBean.getStatus().equals(scanStatus)) {
                 scanInfoList.add(formPickupBean);
+            } else if (formPickupBean.getStatus().equals(WmsCodeConstants.Reservation_Status.Open)) {
+                // Open的场合，SCAN时允许拣货收货（适用于品牌方发货时的快递信息没有及时同步到我们系统刀子状态不对的场景）
+                if (WmsConstants.ScanType.SCAN.equals(scanMode) && ChannelConfigEnums.Scan.ORDER.getType().equals(scanType)) {
+                    scanInfoList.add(formPickupBean);
+                    blnOpen = true;
+                }else{
+                    reservationStatus.add(statusName);
+                }
             } else if (formPickupBean.getStatus().equals(WmsCodeConstants.Reservation_Status.Cancelled)) {
                 // 物品级别拣货时，忽略Cancel记录
                 if (ChannelConfigEnums.Scan.RES.getType().equals(scanType)) {
@@ -291,8 +300,8 @@ public class WmsPickupServiceImpl implements WmsPickupService {
             }
         }
 
-        // 需要判断港口的场合，取得相关港口（BHFO等渠道是由品牌方仓库发出后再捡货的）
-        if (!StringUtils.isNullOrBlank2(scanPort)) {
+        // 需要判断港口的场合，取得相关港口（BHFO、JE等渠道是由品牌方仓库发出后再收货的）但如果还存在Open记录的话，说明可能是物流信息同步不及时造成的，则不做检查
+        if (!StringUtils.isNullOrBlank2(scanPort) && blnOpen == false) {
             String port = reservationDao.getPort(scanInfoList.get(0).getSyn_ship_no(),scanInfoList.get(0).getId());
 
             if (!scanPort.equals(port)) {
@@ -392,7 +401,7 @@ public class WmsPickupServiceImpl implements WmsPickupService {
         }
 
         // 更新捡货物品的状态和发货渠道
-        int resultUpdatePickup = reservationDao.updatePickupStatus(reservationList, scanStatus, updateStatus, shipChannel, price, closeDayFlg, user.getUserName(),scanType);
+        int resultUpdatePickup = reservationDao.updatePickupStatus(reservationList, scanStatus, updateStatus, shipChannel, price, closeDayFlg, user.getUserName(),scanType,scanMode);
 
         if (resultUpdatePickup == 0) {
             logger.info("捡货物品更新失败" + "（scanTypeName：" + scanTypeName  + "，ScanNo：" + scanNo  + "，ReservationID：" + reservationList.toString() +  "）");
