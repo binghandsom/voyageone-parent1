@@ -5,31 +5,28 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
-public class PlatformAttributesMongoModel extends BaseMongoModel {
+public class CmsMtPlatformCategorySchemaModel extends BaseMongoModel {
 
-    private String cartId;
+    private Integer cartId;
     private String categoryId;
     private String propsProduct;
     private String propsItem;
 
-    public PlatformAttributesMongoModel() {
+    public CmsMtPlatformCategorySchemaModel() {
     }
 
-    public PlatformAttributesMongoModel(
-            String categoryId,
-            String propsProduct,
-            String propsItem
-    ) {
+    public CmsMtPlatformCategorySchemaModel(Integer cartId, String categoryId, String propsProduct, String propsItem) {
+        this.cartId = cartId;
         this.categoryId = categoryId;
         this.propsProduct = propsProduct;
         this.propsItem = propsItem;
     }
 
-    public String getCartId() {
+    public Integer getCartId() {
         return cartId;
     }
 
-    public void setCartId(String cartId) {
+    public void setCartId(Integer cartId) {
         this.cartId = cartId;
     }
 
@@ -56,7 +53,5 @@ public class PlatformAttributesMongoModel extends BaseMongoModel {
     public void setPropsItem(String propsItem) {
         this.propsItem = propsItem;
     }
-
-
 
 }

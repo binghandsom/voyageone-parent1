@@ -12,17 +12,18 @@ import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.core.util.TaskControlUtils;
 import com.voyageone.batch.cms.CmsConstants;
 import com.voyageone.batch.cms.dao.BrandDao;
-import com.voyageone.batch.cms.mongoDao.PlatformCategoryMongoDao;
-import com.voyageone.batch.cms.mongoModel.PlatformCategoryMongoModel;
+import com.voyageone.batch.cms.mongoDao.PlatformCategoryDao;
+import com.voyageone.batch.cms.mongoModel.CmsMtPlatformCategoryTreeModel;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.tmall.TbCategoryService;
 import com.voyageone.common.components.tmall.bean.ItemSchema;
-import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.ShopConfigs;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.common.util.XmlUtil;
 import org.apache.commons.logging.Log;
@@ -37,24 +38,24 @@ import java.util.Iterator;
 import java.util.List;
 
 @Service
-public class ImsCategoryService extends BaseTaskService{
+public class PlatformCategoryService extends BaseTaskService{
 
-    private final static String JOB_NAME = "imsCategoryJob";
-    private static Log logger = LogFactory.getLog(ImsCategoryService.class);
+    private final static String JOB_NAME = "platformCategoryTask";
+    private static Log logger = LogFactory.getLog(PlatformCategoryService.class);
 
     @Autowired
     BrandDao brandDao;
     @Autowired
     TbCategoryService tbCategoryService;
     @Autowired
-    PlatformCategoryMongoDao platformCategoryMongoDao;
+    PlatformCategoryDao platformCategoryDao;
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.IMS;
     }
     @Override
     public String getTaskName() {
-        return "ImsCategoryService";
+        return JOB_NAME;
     }
 
 
@@ -100,10 +101,11 @@ public class ImsCategoryService extends BaseTaskService{
         // 如果有任何一家店铺获取过类目信息，那么就需要继续做属性信息取得
         if (blnReGetCategory) {
 
-            // 获取天猫国际数据
-            doSetPlatformPropTm(CartEnums.Cart.TG.getId());
-            // 获取天猫数据
-            doSetPlatformPropTm(CartEnums.Cart.TM.getId());
+            // 获取天猫国际数据 TODO
+            doSetPlatformPropTm(Integer.valueOf(CartEnums.Cart.TG.getId()));
+            // 获取天猫数据 TODO
+            doSetPlatformPropTm(Integer.valueOf(CartEnums.Cart.TM.getId()));
+
 
         }
 
@@ -215,27 +217,34 @@ public class ImsCategoryService extends BaseTaskService{
 
         /** 保存类目信息 */
         /** add by lewis start 2015/11/27 */
-        List<PlatformCategoryMongoModel> platformCategoryMongoBeanList = new ArrayList<>();
+        List<CmsMtPlatformCategoryTreeModel> platformCategoryMongoBeanList = new ArrayList<>();
         for (PlatformCategoriesModel category: platformCategoriesModelList){
-            PlatformCategoryMongoModel mongoModel = new PlatformCategoryMongoModel();
-
-            mongoModel.setCartId(String.valueOf(category.getCartId()));
-            mongoModel.setCategoryId(category.getPlatformCid());
-            mongoModel.setCategoryName(category.getCidName());
-            mongoModel.setParentCategoryId(category.getParentCid());
+            CmsMtPlatformCategoryTreeModel mongoModel = new CmsMtPlatformCategoryTreeModel();
+            mongoModel.setCartId(null);
+            mongoModel.setCatId(category.getPlatformCid());
+            mongoModel.setCatName(category.getCidName());
+            mongoModel.setParentCatId(category.getParentCid());
             mongoModel.setIsParent(category.getIsParent());
-            mongoModel.setCategoryPath(category.getCidPath());
+            mongoModel.setCatPath(category.getCidPath());
+            mongoModel.setCreater(null);
+            mongoModel.setCreated(null);
+            mongoModel.setModifier(null);
+            mongoModel.setModified(null);
 
             platformCategoryMongoBeanList.add(mongoModel);
 
         }
         //获取类目树
-        List<PlatformCategoryMongoModel> savePlatformCatModels = this.buildPlatformCatTrees(platformCategoryMongoBeanList);
+        List<CmsMtPlatformCategoryTreeModel> savePlatformCatModels = this.buildPlatformCatTrees(platformCategoryMongoBeanList,Integer.valueOf(shop.getCart_id()),shop.getOrder_channel_id());
 
         //删除原有类目信息
-        platformCategoryMongoDao.deletePlatformCategories(shop.getCart_id());
-        //保存最新的类目信息
-        platformCategoryMongoDao.savePlatformCategories(savePlatformCatModels);
+        platformCategoryDao.deletePlatformCategories(Integer.valueOf(shop.getCart_id()));
+
+        if(savePlatformCatModels.size()>0){
+            //保存最新的类目信息
+            platformCategoryDao.savePlatformCategories(savePlatformCatModels);
+        }
+
         /** add by lewis end 2015/11/27 **/
 
 
@@ -251,31 +260,39 @@ public class ImsCategoryService extends BaseTaskService{
      *
      * @param platformCatModelList
      */
-    private List<PlatformCategoryMongoModel> buildPlatformCatTrees(List<PlatformCategoryMongoModel> platformCatModelList) {
-        // 设置属性层次关系.
-        List<PlatformCategoryMongoModel> assistPlatformCatList = new ArrayList<PlatformCategoryMongoModel>(platformCatModelList);
+    private List<CmsMtPlatformCategoryTreeModel> buildPlatformCatTrees(List<CmsMtPlatformCategoryTreeModel> platformCatModelList,int cartId,String channelId) {
+        // 设置类目层次关系.
+        List<CmsMtPlatformCategoryTreeModel> assistPlatformCatList = new ArrayList<>(platformCatModelList);
 
-        List<PlatformCategoryMongoModel> removePlatformCatList = new ArrayList<PlatformCategoryMongoModel>();
+        List<CmsMtPlatformCategoryTreeModel> removePlatformCatList = new ArrayList<>();
 
         for (int i = 0; i < platformCatModelList.size(); i++) {
-            PlatformCategoryMongoModel platformCat = platformCatModelList.get(i);
-            List<PlatformCategoryMongoModel> subPlatformCatgories = new ArrayList<PlatformCategoryMongoModel>();
+            CmsMtPlatformCategoryTreeModel platformCat = platformCatModelList.get(i);
+            List<CmsMtPlatformCategoryTreeModel> subPlatformCatgories = new ArrayList<>();
             for (Iterator assIterator = assistPlatformCatList.iterator(); assIterator.hasNext();) {
 
-                PlatformCategoryMongoModel subPlatformCatItem = (PlatformCategoryMongoModel) assIterator.next();
-                if (subPlatformCatItem.getParentCategoryId() == platformCat.getCategoryId()) {
+                CmsMtPlatformCategoryTreeModel subPlatformCatItem = (CmsMtPlatformCategoryTreeModel) assIterator.next();
+                if (subPlatformCatItem.getParentCatId().equals(platformCat.getCatId()) ) {
                     subPlatformCatgories.add(subPlatformCatItem);
                     assIterator.remove();
                 }
 
             }
-            platformCat.setSubCategories(subPlatformCatgories);
-            if ("0".equals(platformCat.getParentCategoryId())) {
+            platformCat.setChildren(subPlatformCatgories);
+            if (!"0".equals(platformCat.getParentCatId())) {
                 removePlatformCatList.add(platformCat);
+            }else {  //设置顶层类目的信息
+                platformCat.setChannelId(channelId);
+                platformCat.setCartId(cartId);
+                platformCat.setCreater(this.getTaskName());
+                platformCat.setCreated(DateTimeUtil.getNow());
+                platformCat.setModifier(this.getTaskName());
+                platformCat.setModified(DateTimeUtil.getNow());
             }
 
         }
         platformCatModelList.removeAll(removePlatformCatList);
+
         return platformCatModelList;
     }
     /** add by lewis end 2015/11/27 */
@@ -285,9 +302,12 @@ public class ImsCategoryService extends BaseTaskService{
      * 第三方平台属性信息取得（天猫系）
      * @param cartId 渠道信息
      */
-    private void doSetPlatformPropTm(String cartId) throws ApiException {
+    private void doSetPlatformPropTm(int cartId) throws ApiException {
         // TODO 调用梁兄借口 获取天猫国际叶子类目信息
         List<PlatformCategoriesModel> platformSubCategoryList = new ArrayList<>();
+        List<CmsMtPlatformCategoryTreeModel> categoryLeaves = new ArrayList<>();
+        List<CmsMtPlatformCategoryTreeModel> categoryTrees = this.platformCategoryDao.selectPlatformCategoriesByCartId(cartId);
+
 //                platformCategoryDao.getPlatformSubCatsWithoutShop(cartId);
 
         // 需要等待删除的第三方平台类目信息
@@ -388,7 +408,7 @@ public class ImsCategoryService extends BaseTaskService{
 
         // 插入到属性表中
 //        imsCategorySubService.doInsertPlatformPropMain(platformPropModelList, JOB_NAME);
-        PlatformCategoryMongoModel platformCategoryMongoBean = platformCategoryMongoDao.findOne(
+        CmsMtPlatformCategoryTreeModel platformCategoryMongoBean = platformCategoryDao.findOne(
                 "{" +
                         "cartId: '" + platformCategoriesModel.getCartId() + "'" +
                         ", categoryId: '" + platformCategoriesModel.getPlatformCid() + "'" +
@@ -396,14 +416,14 @@ public class ImsCategoryService extends BaseTaskService{
         );
 
         if (platformCategoryMongoBean == null) {
-            platformCategoryMongoBean = new PlatformCategoryMongoModel();
+            platformCategoryMongoBean = new CmsMtPlatformCategoryTreeModel();
 
 //            platformCategoryMongoBean.setChannel_id(platformCategoriesModel.getChannelId());
-            platformCategoryMongoBean.setCartId(platformCategoriesModel.getCartId().toString());
-            platformCategoryMongoBean.setCategoryId(platformCategoriesModel.getPlatformCid());
-            platformCategoryMongoBean.setCategoryName(platformCategoriesModel.getCidName());
-            platformCategoryMongoBean.setCategoryPath(platformCategoriesModel.getCidPath());
-            platformCategoryMongoBean.setParentCategoryId(platformCategoriesModel.getParentCid());
+            platformCategoryMongoBean.setCartId(platformCategoriesModel.getCartId());
+            platformCategoryMongoBean.setCatId(platformCategoriesModel.getPlatformCid());
+            platformCategoryMongoBean.setCatName(platformCategoriesModel.getCidName());
+            platformCategoryMongoBean.setCatPath(platformCategoriesModel.getCidPath());
+            platformCategoryMongoBean.setParentCatId(platformCategoriesModel.getParentCid());
         }
 
         if (isProduct == 1) {
@@ -411,7 +431,7 @@ public class ImsCategoryService extends BaseTaskService{
         } else {
 //            platformCategoryMongoBean.setPropsItem(xmlContent);
         }
-        platformCategoryMongoDao.saveWithProduct(platformCategoryMongoBean);
+//        platformCategoryDao.saveWithProduct(platformCategoryMongoBean);
 
 
         return new ItemSchema();
