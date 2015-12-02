@@ -184,7 +184,7 @@ public class ReservationDao extends BaseDao {
      * @param userName 更新者
      * @return int
      */
-    public int updatePickupStatus(List<Long>reservationList, String scanStatus, String updateStatus, String shipChannel, BigDecimal price, String closeDayFlg, String userName,String scanType) {
+    public int updatePickupStatus(List<Long>reservationList, String scanStatus, String updateStatus, String shipChannel, BigDecimal price, String closeDayFlg, String userName,String scanType,String scanMode) {
 
         Map<String, Object> params = new HashMap<>();
 
@@ -196,6 +196,7 @@ public class ReservationDao extends BaseDao {
         params.put("closeDayFlg", closeDayFlg);
         params.put("userName", userName);
         params.put("scanType", scanType);
+        params.put("scanMode", scanMode);
 
         return updateTemplate.insert(Constants.DAO_NAME_SPACE_WMS + "tt_reservation_updatePickupStatus", params);
     }

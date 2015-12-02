@@ -7731,8 +7731,11 @@ public class OmsOrderDetailsSearchServiceImpl implements OmsOrderDetailsSearchSe
 			//	CA订单取消
 			if (ret) {
 				if (isNeedCancelCAOrder(ordersInfo.getOrderChannelId())) {
-					logger.info("cancelOrderDetailInfoForCA");
-					ret = cancelOrderDetailInfoForCA(ordersInfo, getSelectedLineItems(orderDetailsList, inOrderDetailsList), user, result, false);
+
+					if (isHaveGoods(getSelectedLineItems(orderDetailsList, inOrderDetailsList))) {
+						logger.info("cancelOrderDetailInfoForCA");
+						ret = cancelOrderDetailInfoForCA(ordersInfo, getSelectedLineItems(orderDetailsList, inOrderDetailsList), user, result, false);
+					}
 				}
 			}
 			
@@ -7755,6 +7758,28 @@ public class OmsOrderDetailsSearchServiceImpl implements OmsOrderDetailsSearchSe
 			result.setResult(false, MessageConstants.MESSAGE_TYPE_BUSSINESS_EXCEPTION, "cancelLineItem error : " + e.getMessage());
 		}
 		
+		return ret;
+	}
+
+	/**
+	 * 物品有无判定
+	 *
+	 * @param judgeItems 待判定订单明细信息
+	 *
+	 * @return 判定结果
+	 */
+	private boolean isHaveGoods(List<OutFormOrderDetailOrderDetail> judgeItems) {
+		boolean ret = false;
+
+		for (int i = 0; i < judgeItems.size(); i++) {
+			OutFormOrderDetailOrderDetail itemInfo = judgeItems.get(i);
+
+			if (!itemInfo.getSku().equals("Shipping") && !itemInfo.getSku().equals("Discount")) {
+				ret = true;
+				break;
+			}
+		}
+
 		return ret;
 	}
 	

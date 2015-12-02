@@ -126,7 +126,7 @@ public class TrackingDao extends BaseDao {
      * @param task_name
      * @return
      */
-    public int insertTrackingInfo(String syn_ship_no, String tracking_no, String tracking_status, String process_time, String task_name) {
+    public int insertTrackingInfo(String syn_ship_no, String tracking_no, String tracking_status, String process_time, String status, String task_name) {
 
         Map<String, Object> params = new HashMap<>();
 
@@ -134,6 +134,7 @@ public class TrackingDao extends BaseDao {
         params.put("tracking_no", tracking_no);
         params.put("tracking_status", tracking_status);
         params.put("process_time", process_time);
+        params.put("status", status);
         params.put("task_name", task_name);
 
         return updateTemplate.insert( "synShip_InsertTrackingInfo", params);
