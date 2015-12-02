@@ -19,12 +19,8 @@
     <!-- system selection -->
     <ul class="nav navbar-nav hidden-xs">
         <li class="dropdown vo_h_system" dropdown>
-            <a href class="dropdown-toggle" dropdown-toggle>
-                <span class="m-n font thin" ng-bind="header.currentSystem"></span> <span class="caret"></span>
+            <a href ng-bind="header.userInfo.channelName" ng-click="selectChannel()">
             </a>
-            <!--TODO change to link-->
-            <ul class="dropdown-menu arrow_box left" role="menu">
-            </ul>
         </li>
     </ul>
     <!-- / system selection -->
@@ -32,11 +28,11 @@
     <ul class="nav navbar-nav hidden-xs">
         <li class="dropdown vo_h_system" dropdown>
             <a href class="dropdown-toggle" dropdown-toggle>
-                <span class="m-n font thin" ng-bind="header.currentMenu"></span><span class="caret"></span>
+                <span class="m-n font thin" ng-bind="header.userInfo.application"></span><span class="caret"></span>
             </a>
             <ul class="dropdown-menu arrow_box left" role="menu" ng-if="header.menuList.length > 1">
-                <li ng-repeat="menu in header.menuList" ng-if="menu.menuName !== header.currentMenu">
-                    <a href="" ng-click="selectMenu(menu)" ng-bind="menu.menuName"></a>
+                <li ng-repeat="menu in header.menuList" ng-if="menu.menuTitle !== header.userInfo.application">
+                    <a href="" ng-click="selectMenu(menu)" ng-bind="menu.menuTitle"></a>
                 </li>
             </ul>
         </li>
@@ -61,13 +57,13 @@
         <!-- language dropdown -->
         <li class="dropdown vo_h_locale" dropdown>
             <a href class="dropdown-toggle clear" dropdown-toggle>
-                <span class="" ng-bind="header.currentLanguage"></span><b class="caret"></b>
+                <span class="" ng-bind="header.userInfo.language"></span><b class="caret"></b>
             </a>
             <!-- dropdown -->
             <ul class="dropdown-menu arrow_box">
-                <li ng-repeat="language in header.languageList" ng-if="language.name !== header.currentLanguage">
+                <li ng-repeat="language in header.languageList" ng-if="language.add_name1 !== header.userInfo.language">
                     <a href="" ng-click="selectLanguage(language)">
-                        <span ng-bind="language.name"></span>
+                        <span ng-bind="language.add_name1"></span>
                     </a>
                 </li>
             </ul>
@@ -76,7 +72,7 @@
         <!-- user dropdown -->
         <li class="dropdown" dropdown>
             <a href class="dropdown-toggle clear" dropdown-toggle>
-                <span class="" ng-bind="header.currentUserName"></span> <b class="caret"></b>
+                <span class="" ng-bind="header.userInfo.userName"></span> <b class="caret"></b>
             </a>
             <!-- dropdown -->
             <ul class="dropdown-menu arrow_box">

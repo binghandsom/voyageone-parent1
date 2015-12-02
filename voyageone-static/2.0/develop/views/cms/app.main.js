@@ -119,37 +119,83 @@ requirejs([
       .controller('headerCtrl', fnHeaderCtrl)
       .controller('appCtrl', fnAppCtrl);
 
-  fnAppService.$inject = ['$q', 'ajaxService', 'actions'];
-  function fnAppService($q, ajaxService, actions) {
+  fnAppService.$inject = ['$q', 'ajaxService', 'cookieService', 'translateService', 'actions'];
+  function fnAppService($q, ajaxService, cookieService, translateService, actions) {
 
-    this.getSystemInfo = fnGetSystemInfo;
-    this.search = fnSearch;
+    this.getMenuHeaderInfo = fnGetMenuHeaderInfo;
+    this.setMenu = fnSetMenu;
+    this.clearChannel = fnClearChannel;
+    this.setLanguage = fnSetLanguage;
+    this.logout = fnLogout;
 
     /**
      * get the system info.
      * includes: systemMenu, languages,
      * @returns {*}
        */
-    function fnGetSystemInfo () {
+    function fnGetMenuHeaderInfo () {
       var defer = $q.defer ();
-      ajaxService.post(actions.app.common.getSystemInfo)
-          .then(function (response) {
-            defer.resolve (response.data);
+      ajaxService.post(actions.core.home.menu.getMenuHeaderInfo)
+          .then(function (data) {
+            //var data = response.data;
+            var languageType = _.isEmpty(cookieService.language()) ? translateService.getBrowserLanguage() : cookieService.language();
+            _.forEach(data.languageList, function (language) {
+
+              if (_.isEqual(languageType, language.add_name2)) {
+                data.userInfo.language = language.add_name1;
+              }
+            });
+            // TODO
+            data.userInfo.application = 'CMS';//cookieService.application();
+            defer.resolve (data);
           });
       return defer.promise;
     }
 
     /**
-     * search by input value.
+     * set menu.
+     * @param menu
      * @returns {*}
        */
-    function fnSearch () {
+    function fnSetMenu (menuTitle) {
       var defer = $q.defer ();
+      cookieService.application (menuTitle);
+      defer.resolve(menuTitle.toLocaleLowerCase());
+      return defer.promise;
+    }
 
-      ajaxService.post(actions.app.getSystemMenus)
-          .then(function (response) {
-            defer.resolve (response.data);
-          });
+    /**
+     * clear selected channel
+     * @returns {*}
+     */
+    function fnClearChannel () {
+      var defer = $q.defer ();
+      cookieService.channel ("");
+      defer.resolve();
+      return defer.promise;
+    }
+
+    /**
+     * set language.
+     * @param language
+     * @returns {*}
+       */
+    function fnSetLanguage (language) {
+      var defer = $q.defer ();
+      cookieService.language(language.add_name1);
+      translateService.setLanguage(language.add_name2);
+      defer.resolve(language.add_name1);
+      return defer.promise;
+    }
+
+    /**
+     * clear all cookie.
+     * @returns {*}
+       */
+    function fnLogout() {
+      var defer = $q.defer ();
+      cookieService.removeAll();
+      defer.resolve();
       return defer.promise;
     }
   }
@@ -227,60 +273,73 @@ requirejs([
     }
   }
 
-  fnHeaderCtrl.$inject = ['$scope', '$window', 'appService', 'cookieService'];
-  function fnHeaderCtrl($scope, $window, appService, cookieService) {
+  fnHeaderCtrl.$inject = ['$scope', '$window', '$location', 'appService'];
+  function fnHeaderCtrl($scope, $window, $location, appService) {
     var vm = this;
     vm.menuList = {};
     vm.languageList = {};
-    vm.currentSystem = "Sears";//cookieService.channel();
-    vm.currentMenu = "CMS";//cookieService.menu();
-    vm.currentLanguage = "中文";//cookieService.language();
-    vm.currentUserName = "Edward.lin";//cookieService.name();
+    vm.userInfo = {};
+    vm.searchValue = "";
 
     $scope.initialize = fnInitial;
+    $scope.selectChannel = fnSelectChannel;
     $scope.selectMenu = fnSelectMenu;
+    $scope.selectLanguage = fnSelectLanguage;
     $scope.search = fnSearch;
-    $scope.selectLanguage = fnSelectlanguage;
     $scope.logout = fnLogout;
 
     function fnInitial () {
-
-      appService.getSystemInfo().then(function (data) {
-        vm.menuList = data.menus;
-        vm.languageList = data.languages;
+      appService.getMenuHeaderInfo().then(function (data) {
+        vm.menuList = data.menuList;
+        vm.languageList = data.languageList;
+        vm.userInfo = data.userInfo;
       });
     }
 
     /**
-     * change selected menu.
+     * go to channel selected page.
+     */
+    function fnSelectChannel () {
+      appService.clearChannel().then(function () {
+        $window.location = routes.channel.templateUrl;
+      });
+    }
+
+    /**
+     * change to selected menu, and go to new system.
      * @param menu
        */
     function fnSelectMenu(menu) {
-      cookieService.menu (menu.menuName);
-      $window.location = menu.menuUrl;
+      appService.setMenu(menu.menuTitle).then(function (application) {
+        $window.location = routes.views.url + application + routes.views.templateUrl;
+      });
     }
 
     /**
      * search by input value.
      * @param value
        */
-    function fnSearch (value) {
-      appService.search (value);
+    function fnSearch () {
+      $location.path(routes.search.complex.url + vm.searchValue);
     }
 
     /**
-     * change selected language.
+     * change to selected language.
      * @param language
        */
-    function fnSelectlanguage (language) {
-      cookieService.language(language.name);
+    function fnSelectLanguage (language) {
+      appService.setLanguage(language).then(function (data) {
+        vm.userInfo.language = data;
+      })
     }
 
-      /**
-       * logout.
-       */
+    /**
+     * logout.
+     */
     function fnLogout () {
-      // todo
+      appService.logout().then(function () {
+        $window.location = routes.login.templateUrl;
+      })
     }
   }
 
