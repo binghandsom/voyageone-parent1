@@ -76,14 +76,14 @@ public class UserService extends BaseAppService {
             throw new BusinessException("");
 
         // 在设置之前,检查一下是否需要重新查询,因为画面虽然选择的 app,但是查询的数据是 channel 级别
-        if (channelId.equals(user.getSelChannel())) {
+        if (channel.equals(user.getSelChannel())) {
             return;
         }
 
         List<String> permissionUrls = getPermissionUrls(user, channelId);
 
         // 设置当前用户选择的公司
-        user.setSelChannel(channelId);
+        user.setSelChannel(channel);
         user.setActionPermission(permissionUrls);
 
         // 转换为页面的权限地址
