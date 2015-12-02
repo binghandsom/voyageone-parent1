@@ -1,10 +1,14 @@
 package com.voyageone.cms.service.model;
 
 import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
+import com.voyageone.common.Constants;
+import com.voyageone.common.configs.Enums.FeedEnums;
+import com.voyageone.common.configs.Feed;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Created by james.li on 2015/11/26.
@@ -154,16 +158,19 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     }
 
     public void attributeListToMap() {
+
+        Pattern special_symbol = Pattern.compile("[~@'.#$%&*_''/‘’^\\()]");
         this.attributeList.forEach(
                 map -> {
-                    if (this.attribute.containsKey(map.get("attribute").toString())) {
-                        String value = this.attribute.get(map.get("attribute").toString()).toString();
+                    String key = special_symbol.matcher(map.get("attribute").toString()).replaceAll(Constants.EmptyString);
+                    if (this.attribute.containsKey(key)) {
+                        String value = this.attribute.get(key).toString();
                         String newValue = " " + map.get("value").toString()+ " ";
                         if (value.indexOf(newValue) == -1) {
-                            this.attribute.put(map.get("attribute").toString(), value + ";" + newValue);
+                            this.attribute.put(key, value + ";" + newValue);
                         }
                     } else {
-                        this.attribute.put(map.get("attribute").toString(), " " + map.get("value") + " ");
+                        this.attribute.put(key, " " + map.get("value") + " ");
                     }
 
                 }

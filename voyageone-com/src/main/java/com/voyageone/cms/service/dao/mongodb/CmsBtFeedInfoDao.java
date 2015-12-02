@@ -20,5 +20,4 @@ public class CmsBtFeedInfoDao extends BaseMongoDao {
         String query = "{\"code\":\"" + code + "\"}";
         return selectOneWithQuery(query, channelId);
     }
-
 }

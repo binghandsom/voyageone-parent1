@@ -3,6 +3,7 @@ var ngAnnotate = require('gulp-ng-annotate');
 var header = require('gulp-header');
 var minifyHtml = require('gulp-minify-html');
 var uglify = require('gulp-uglify');
+var sourceMaps = require('gulp-sourcemaps');
 var replace = require('gulp-replace');
 var rename = require('gulp-rename');
 
@@ -10,6 +11,14 @@ var vars = require('./gulp-vars');
 var publish = vars.publish;
 var build = vars.build;
 var tasks = vars.tasks;
+
+// 压缩之前需要把 angular.com 追加 .min
+function fixCommonRef() {
+  return replace(
+    build.common.angular.concat.replace('.js', ''),
+    build.common.angular.concat.replace('.js', '.min')
+  );
+}
 
 // release static
 gulp.task(tasks.publish.statics, [tasks.build.css.all], function () {
@@ -27,8 +36,11 @@ gulp.task(tasks.publish.statics, [tasks.build.css.all], function () {
 
 // release voyageone.angular.com.js
 gulp.task(tasks.publish.angular, [tasks.build.angular], function () {
-  gulp.src([build.common.angular.dist + '/' + build.common.angular.concat,
-      build.common.angular.dist + '/' + build.common.angular.map])
+  gulp.src(build.common.angular.dist + '/' + build.common.angular.concat)
+    .pipe(sourceMaps.init())
+    .pipe(uglify())
+    .pipe(rename({suffix: '.min'}))
+    .pipe(sourceMaps.write('./'))
     .pipe(gulp.dest(publish.components.angular.dist))
     .pipe(gulp.dest(publish.release.components));
 });
@@ -52,9 +64,10 @@ gulp.task(tasks.publish.views, function () {
 
   // build login.app and channel.app
   gulp.src(publish.loginAndChannel.js)
+    .pipe(fixCommonRef())
     .pipe(ngAnnotate())
     .pipe(uglify())
-    .pipe(rename({suffix:".min"}))
+    .pipe(rename({suffix: ".min"}))
     .pipe(gulp.dest(publish.release.loginAndChannel));
 
   gulp.src(publish.loginAndChannel.html)
@@ -64,6 +77,7 @@ gulp.task(tasks.publish.views, function () {
 
   // 压缩js文件
   gulp.src(publish.views.js)
+    .pipe(fixCommonRef())
     .pipe(uglify())
     .pipe(gulp.dest(publish.release.views));
 

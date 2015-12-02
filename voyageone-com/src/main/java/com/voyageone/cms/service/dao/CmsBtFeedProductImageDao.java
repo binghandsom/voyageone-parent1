@@ -20,10 +20,9 @@ public class CmsBtFeedProductImageDao extends BaseDao {
         insert("insert_feed_image", feedImage);
     }
 
-    public void updateImagebyUrl(String channelId, List<String> url) {
-        url.forEach(s -> {
-            CmsBtFeedProductImageModel cmsBtFeedProductImageModel = new CmsBtFeedProductImageModel(channelId,s);
-            updateImagebyUrl(cmsBtFeedProductImageModel);
+    public void updateImagebyUrl(List<CmsBtFeedProductImageModel> imageModels) {
+        imageModels.forEach(s -> {
+            updateImagebyUrl(s);
         });
     }
 }

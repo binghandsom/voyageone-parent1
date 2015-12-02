@@ -21,7 +21,6 @@ var encode = 'utf-8';
 // build voyageone.angular.com.js
 gulp.task(tasks.build.angular, function () {
   return gulp.src(build.common.angular.src)
-    .pipe(debug())
     // 追加依赖注入语法
     .pipe(ngAnnotate())
     // 包裹每个单个组件
@@ -34,6 +33,12 @@ gulp.task(tasks.build.angular, function () {
     // 包裹整个内容
     .pipe(header(definePrefix))
     .pipe(footer(defineSuffix))
+    // 此处不进行压缩,只对合并后的内容进行格式化
+    .pipe(uglify({
+      mangle: false,
+      compress: false,
+      output: {beautify: true, indent_level: 2}
+    }))
     .pipe(gulp.dest(build.common.angular.dist));
 });
 

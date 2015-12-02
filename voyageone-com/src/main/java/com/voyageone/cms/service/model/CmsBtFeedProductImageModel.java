@@ -13,10 +13,12 @@ public class CmsBtFeedProductImageModel extends BaseMongoModel {
     private int imageTypeId = 1;
     private int sentFlag = 0;
 
-    public CmsBtFeedProductImageModel(String channelId, String imageUrl){
+    public CmsBtFeedProductImageModel(String channelId, String imageUrl,String modifier){
         this.channelId = channelId;
         this.imageUrl = imageUrl;
         this.imageName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+        this.setModifier(modifier);
+        this.setCreater(modifier);
     }
     public CmsBtFeedProductImageModel(){
         super();
