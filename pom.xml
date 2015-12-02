@@ -25,6 +25,7 @@
         <module>voyageone-batchjob-all</module>
         <module>voyageone-webservice-synship</module>
         <module>voyageone-wsdl-all</module>
+        <module>voyageone-web1</module>
         <module>voyageone-web2</module>
         <module>voyageone-components</module>
         <module>voyageone-md-schema</module>
