@@ -11,8 +11,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class CmsBtFeedInfoDao extends BaseMongoDao {
 
-    public CmsBtFeedInfoDao() {
-        super.entityClass = CmsBtFeedInfoModel.class;
+    @Override
+    public Class getEntityClass() {
+        return CmsBtFeedInfoModel.class;
     }
 
     public CmsBtFeedInfoModel selectProductByCode(String channelId, String code) {

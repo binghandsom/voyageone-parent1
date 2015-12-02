@@ -14,8 +14,9 @@ public class PlatformCategoryDao extends BaseMongoDao {
     @Autowired
     BaseJomgoTemplate mongoTemplate;
 
-    public PlatformCategoryDao() {
-        super.entityClass = CmsMtPlatformCategoryTreeModel.class;
+    @Override
+    public Class getEntityClass() {
+        return CmsMtPlatformCategoryTreeModel.class;
     }
 
     public CmsMtPlatformCategoryTreeModel selectByCartIdCatId(int cartId, String categoryId) {
@@ -36,5 +37,6 @@ public class PlatformCategoryDao extends BaseMongoDao {
         List<CmsMtPlatformCategoryTreeModel> categoryModels = select(queryStr);
         return categoryModels;
     }
+
 
 }

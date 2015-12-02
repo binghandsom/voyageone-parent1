@@ -1,5 +1,6 @@
 package com.voyageone.web2.core.bean;
 
+import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
 import com.voyageone.web2.core.model.UserConfigModel;
 
 import java.io.Serializable;
@@ -48,7 +49,7 @@ public class UserSessionBean implements Serializable {
     /**
      * 当前选择的 Channel (渠道)
      */
-    private String selChannel;
+    private Channel selChannel;
 
     public int getUserId() {
         return userId;
@@ -98,11 +99,19 @@ public class UserSessionBean implements Serializable {
         this.userConfig = userConfig;
     }
 
-    public String getSelChannel() {
+    public Channel getSelChannel() {
         return selChannel;
     }
 
-    public void setSelChannel(String selChannel) {
+    public void setSelChannel(Channel selChannel) {
         this.selChannel = selChannel;
+    }
+
+    public String getSelChannelId() {
+        return selChannel.getId();
+    }
+
+    public void setSelChannelId(String selChannelId) {
+        this.selChannel = Channel.valueOfId(selChannelId);
     }
 }

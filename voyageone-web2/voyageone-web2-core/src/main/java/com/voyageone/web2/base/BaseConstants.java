@@ -22,4 +22,12 @@ public interface BaseConstants {
      * 没有权限, 拒绝访问
      */
     String MSG_DENIED = "400001";
+    /**
+     * 跳转渠道选择的特殊 Code
+     */
+    String CODE_SEL_CHANNEL = "SYS_0";
+    /**
+     * 告知前端跳转的特殊 Code
+     */
+    String CODE_SYS_REDIRECT = "SYS_REDIRECT";
 }

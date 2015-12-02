@@ -8,28 +8,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collection;
 import java.util.List;
 
-public class BaseMongoDao {
+public abstract class BaseMongoDao {
 
     protected BaseJomgoTemplate mongoTemplate;
 
     protected String collectionName;
 
-    protected Class<?> entityClass;
+    protected Class entityClass;
 
     @Autowired
     public void setMongoTemplate(BaseJomgoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
         if (this.collectionName == null) {
+            this.entityClass = getEntityClass();
             this.collectionName = mongoTemplate.getCollectionName(entityClass);
         }
     }
+
+    public abstract Class getEntityClass();
 
     public <T> T selectOne() {
         return mongoTemplate.findOne((Class<T>) entityClass, collectionName);
     }
 
     public <T> T selectOneWithQuery(String strQuery) {
-        return mongoTemplate.findOne(strQuery, (Class < T >)entityClass, collectionName);
+        return mongoTemplate.findOne(strQuery, (Class<T>)entityClass, collectionName);
     }
 
     public <T> List<T> selectAll() {

@@ -11,8 +11,8 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     private int catId;
     private String catIdPath;
 
-    private CmsBtProductModel_Field field = new CmsBtProductModel_Field();
-    private CmsBtProductModel_Group group = new CmsBtProductModel_Group();
+    private CmsBtProductModel_Field fields = new CmsBtProductModel_Field();
+    private CmsBtProductModel_Group groups = new CmsBtProductModel_Group();
     private List<CmsBtProductModel_Sku> skus = new ArrayList<>();
     private List<CmsBtProductModel_Tag> tags = new ArrayList<>();
     private CmsBtProductModel_Feed feedAtts = new CmsBtProductModel_Feed();
@@ -48,20 +48,20 @@ public class CmsBtProductModel extends ChannelPartitionModel {
         this.prodId = prodId;
     }
 
-    public CmsBtProductModel_Field getField() {
-        return field;
+    public CmsBtProductModel_Field getFields() {
+        return fields;
     }
 
-    public void setField(CmsBtProductModel_Field field) {
-        this.field = field;
+    public void setFields(CmsBtProductModel_Field fields) {
+        this.fields = fields;
     }
 
-    public CmsBtProductModel_Group getGroup() {
-        return group;
+    public CmsBtProductModel_Group getGroups() {
+        return groups;
     }
 
-    public void setGroup(CmsBtProductModel_Group group) {
-        this.group = group;
+    public void setGroups(CmsBtProductModel_Group groups) {
+        this.groups = groups;
     }
 
     public List<CmsBtProductModel_Sku> getSkus() {
