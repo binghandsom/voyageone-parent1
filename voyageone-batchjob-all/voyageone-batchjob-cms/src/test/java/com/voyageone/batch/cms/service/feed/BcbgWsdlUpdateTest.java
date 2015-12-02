@@ -1,5 +1,7 @@
 package com.voyageone.batch.cms.service.feed;
 
+import com.google.gson.Gson;
+import com.voyageone.batch.cms.bean.ProductBean;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,5 +27,17 @@ public class BcbgWsdlUpdateTest {
     @Test
     public void testPostUpdatedProduct() throws Exception {
         bcbgWsdlUpdate.postUpdatedProduct();
+    }
+
+    @Test
+    public void testPrice() {
+        ProductBean productBean = new ProductBean();
+        productBean.setP_msrp("123.789");
+        productBean.setPs_price("100");
+        productBean.setP_product_type("Apparel");
+
+        bcbgWsdlUpdate.calePrice(productBean);
+
+        System.out.println(new Gson().toJson(productBean));
     }
 }

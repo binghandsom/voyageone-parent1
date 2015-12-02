@@ -10,6 +10,8 @@ public class SetPriceBean {
     private String sku;
     private String price;
     private String shipping_price;
+    private String discount;
+    private String sum_unit;
 
     public String getSource_order_id() {
         return source_order_id;
@@ -56,6 +58,22 @@ public class SetPriceBean {
 
     public void setShipping_price(String shipping_price) {
         this.shipping_price = shipping_price;
+    }
+
+    public String getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(String discount) {
+        this.discount = discount;
+    }
+
+    public String getSum_unit() {
+        return sum_unit;
+    }
+
+    public void setSum_unit(String sum_unit) {
+        this.sum_unit = sum_unit;
     }
 }
 

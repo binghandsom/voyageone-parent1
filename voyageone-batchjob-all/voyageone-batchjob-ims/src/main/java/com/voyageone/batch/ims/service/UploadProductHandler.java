@@ -53,6 +53,7 @@ public class UploadProductHandler extends UploadWorkloadHandler{
                 abortJob(workLoadBean, workloadStatus, failCause);
                 return;
             }
+
             //设置平台分类
             //TODO: 暂不考虑店级别的分类映射
             String platformCId = categoryMappingDao.selectPlatformCidByMasterCategoryId(

@@ -13,6 +13,7 @@ import com.voyageone.batch.oms.formbean.OutFormOrderDetailOrderDetail;
 import com.voyageone.batch.oms.formbean.OutFormOrderdetailOrders;
 import com.voyageone.batch.oms.modelbean.OrderExtend;
 import com.voyageone.batch.oms.utils.WebServiceUtil;
+import com.voyageone.common.components.baidu.translate.BaiduTranslateUtil;
 import com.voyageone.common.components.issueLog.IssueLog;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -324,10 +325,10 @@ public class PostBCBGOrderService {
 			ret = null;
 
 			logger.error("getPushDailySalesList error", e);
-			issueLog.log("PostBCBGOrderService.getPushDailySalesList",
-					"getPushDailySalesList error",
+			issueLog.log(e,
 					ErrorType.BatchJob,
-					SubSystem.OMS);
+					SubSystem.OMS,
+					"PostBCBGOrderService.getPushDailySalesList error");
 		}
 		return ret;
 	}
@@ -461,10 +462,10 @@ public class PostBCBGOrderService {
 			retForUpdate = null;
 
 			logger.error("getPushDailySalesListForReturn error", e);
-			issueLog.log("PostBCBGOrderService.getPushDailySalesListForReturn",
-					"getPushDailySalesListForReturn error",
+			issueLog.log(e,
 					ErrorType.BatchJob,
-					SubSystem.OMS);
+					SubSystem.OMS,
+					"PostBCBGOrderService.getPushDailySalesListForReturn error");
 		}
 
 		retArr.add(retRun);
@@ -766,6 +767,10 @@ public class PostBCBGOrderService {
 			}
 		} catch (Exception ex) {
 			logger.error("updateOrdersSendInfo", ex);
+			issueLog.log(ex,
+					ErrorType.BatchJob,
+					SubSystem.OMS,
+					"updateOrdersInfo error;task name = " + taskName);
 
 			isSuccess = false;
 
@@ -1162,10 +1167,10 @@ public class PostBCBGOrderService {
 			ret = null;
 
 			logger.error("getPushDemandList error", e);
-			issueLog.log("postBCBGDemands.getPushDemandList",
-					"getPushDemandList error",
+			issueLog.log(e,
 					ErrorType.BatchJob,
-					SubSystem.OMS);
+					SubSystem.OMS,
+					"postBCBGDemands.getPushDemandList error");
 		}
 		return ret;
 	}
@@ -1288,10 +1293,10 @@ public class PostBCBGOrderService {
 			retForOutput = null;
 
 			logger.error("getPushDemandListForCancel error", e);
-			issueLog.log("postBCBGDemands.getPushDemandListForCancel",
-					"getPushDemandListForCancel error",
+			issueLog.log(e,
 					ErrorType.BatchJob,
-					SubSystem.OMS);
+					SubSystem.OMS,
+					"getPushDemandListForCancel error");
 		}
 
 		retArr.add(retRun);
@@ -1344,7 +1349,7 @@ public class PostBCBGOrderService {
 		now = DateTimeUtil.getNow();
 
 		// 前七天
-		Date startDate = DateTimeUtil.addDays(DateTimeUtil.parse(now), -7);
+		Date startDate = DateTimeUtil.addDays(DateTimeUtil.parse(now), -10);
 		String startDateString =  DateTimeUtil.format(startDate, DateTimeUtil.DEFAULT_DATE_FORMAT);
 		startSearchDateGMT = startDateString + " 00:00:00";
 		endSearchDateGMT = now;
@@ -1379,7 +1384,7 @@ public class PostBCBGOrderService {
 
 			logger.error("uploadOrderFile", e);
 
-			issueLog.log(e, ErrorType.BatchJob, SubSystem.OMS);
+			issueLog.log(e, ErrorType.BatchJob, SubSystem.OMS, "uploadOrderFile error");
 
 		}
 
@@ -1929,7 +1934,8 @@ public class PostBCBGOrderService {
 		translateContent.add(orderInfo.getCity());
 		translateContent.add(orderInfo.getState());
 
-		List<String> afterTranslateContent = translate(translateContent, 1);
+//		List<String> afterTranslateContent = translate(translateContent, 1);
+		List<String> afterTranslateContent = BaiduTranslateUtil.translate(translateContent);
 
 		orderInfo.setShipName(afterTranslateContent.get(0));
 		orderInfo.setShipAddress(afterTranslateContent.get(1));
