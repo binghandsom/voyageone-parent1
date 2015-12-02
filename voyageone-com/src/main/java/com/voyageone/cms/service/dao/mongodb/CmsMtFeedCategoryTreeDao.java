@@ -21,14 +21,4 @@ public class CmsMtFeedCategoryTreeDao extends BaseMongoDao {
         String query = "{\"channelId\":\"" + channelId + "\"}";
         return mongoTemplate.findOne(query, CmsMtFeedCategoryTreeModel.class, collectionName);
     }
-
-    public void updateFeedCategory(String channelId, List<Map> tree) {
-        CmsMtFeedCategoryTreeModel treeObject = selectFeedCategory(channelId);
-        if (treeObject == null) {
-            treeObject = new CmsMtFeedCategoryTreeModel();
-            treeObject.setChannelId(channelId);
-        }
-        treeObject.setCategoryTree(tree);
-        mongoTemplate.save(treeObject, collectionName);
-    }
 }
