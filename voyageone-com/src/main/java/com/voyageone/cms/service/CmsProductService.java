@@ -1,5 +1,6 @@
 package com.voyageone.cms.service;
 
+import com.mongodb.WriteResult;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,24 +48,32 @@ public class CmsProductService {
      * 插入商品
      * @param model
      */
-    public void insert(CmsBtProductModel model) {
-        cmsBtProductDao.insert(model);
+    public WriteResult insert(CmsBtProductModel model) {
+        return cmsBtProductDao.insert(model);
     }
 
     /**
      * 插入商品
      * @param models
      */
-    public void insert(Collection<CmsBtProductModel> models) {
-        cmsBtProductDao.insertWithList(models);
+    public WriteResult insert(Collection<CmsBtProductModel> models) {
+        return cmsBtProductDao.insertWithList(models);
     }
 
     /**
      * 更新商品
      * @param model
      */
-    public void update(CmsBtProductModel model) {
-        cmsBtProductDao.update(model);
+    public WriteResult update(CmsBtProductModel model) {
+        return cmsBtProductDao.update(model);
     }
 
+    /**
+     * 删除所有商品
+     * @param channelId
+     * @return
+     */
+    public WriteResult removeAll(String channelId) {
+        return cmsBtProductDao.deleteAll(channelId);
+    }
 }

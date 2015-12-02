@@ -1,6 +1,7 @@
 package com.voyageone.cms.service;
 
 
+import com.mongodb.WriteResult;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.model.*;
 import com.voyageone.common.util.DateTimeUtil;
@@ -22,7 +23,8 @@ public class CmsProductServiceTest {
     @Test
     public void testInsertCmsBtProduct() throws Exception {
         CmsBtProductModel productModel = create("001", 1, new Random());
-        cmsProductService.insert(productModel);
+        WriteResult result = cmsProductService.insert(productModel);
+        System.out.println(result);
     }
 
     private CmsBtProductModel create(String channelId, int index, Random random) {
@@ -146,12 +148,12 @@ public class CmsProductServiceTest {
 //    }
 
     @Test
-    public void testInsert10W() throws Exception {
+    public void testInsert10W() {
         long start = System.currentTimeMillis();
         List<CmsBtProductModel> lst = new ArrayList<>();
         int index = 0;
         for(int i=1; i<=100000; i++) {
-            CmsBtProductModel productModel = create("100", i, new Random());
+            CmsBtProductModel productModel = create("101", i, new Random());
             lst.add(productModel);
             index++;
             if (i%1000 == 0) {
@@ -165,5 +167,13 @@ public class CmsProductServiceTest {
         }
         long total = System.currentTimeMillis()-start;
         System.out.println("total count:=" + index + "; totalTime:="+total);
+    }
+
+    @Test
+    public void remove10W(){
+        long start = System.currentTimeMillis();
+        cmsProductService.removeAll("101");
+        long total = System.currentTimeMillis()-start;
+        System.out.println("total totalTime:=" + total);
     }
 }
