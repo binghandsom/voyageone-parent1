@@ -90,10 +90,6 @@ requirejs([
         }
       })
 
-      .config(function (blockUIConfig) {
-        blockUIConfig.autoBlock = false;
-      })
-
       // router config.
       .config(function ($routeProvider) {
         return _.each(routes, function (module) {

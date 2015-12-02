@@ -27,7 +27,8 @@ require([
   'voyageone-angular-com'
 ], function (angular) {
   angular.module('voyageone.cms.channel', [
-    'blockUI'
+    'blockUI',
+    'voyageone.angular'
   ]).controller('channelController', function($scope, ajaxService) {
     ajaxService.post('/core/access/user/getChannel').then(function(res) {
       $scope.channels = res.result.data;
