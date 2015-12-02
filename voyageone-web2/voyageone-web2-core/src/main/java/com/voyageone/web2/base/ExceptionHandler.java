@@ -6,6 +6,7 @@ import com.voyageone.common.Constants.LANGUAGE;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.web2.base.ajax.AjaxResponse;
+import com.voyageone.web2.base.ajax.AjaxResponseData;
 import com.voyageone.web2.base.log.ExceptionLogBean;
 import com.voyageone.web2.base.log.LogService;
 import com.voyageone.web2.base.message.MessageService;
@@ -23,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * 异常统一处理器
  * Created on 2015-11-26 16:10:23
+ *
  * @author Jonas
  * @version 2.0.0
  */
@@ -41,27 +43,28 @@ public class ExceptionHandler implements HandlerExceptionResolver {
         try {
             // log4j打印出详细信息，包括堆栈信息
             logger.error(exception.getMessage(), exception);
-            // 异常信息记录至数据库
-            insertLogToDB(request, exception);
+
+            Object val = request.getSession().getAttribute(BaseConstants.SESSION_LANG);
+
+            String lang = val == null ||
+                    !val.equals(LANGUAGE.EN) ||
+                    !val.equals(LANGUAGE.CN) ||
+                    !val.equals(LANGUAGE.JP)
+                    ? LANGUAGE.EN
+                    : val.toString();
+
             // 业务异常记错误日志及堆栈信息，迁移到共通错误页面
             if (exception instanceof BusinessException) {
-                Object val = request.getSession().getAttribute(BaseConstants.SESSION_LANG);
-
-                String lang = val == null ||
-                        !val.equals(LANGUAGE.EN) ||
-                        !val.equals(LANGUAGE.CN) ||
-                        !val.equals(LANGUAGE.JP)
-                        ? LANGUAGE.EN
-                        : val.toString();
-
                 return catchBusinessException(lang, (BusinessException) exception, response);
             }
             // 系统异常记错误日志及堆栈信息，迁移到共通错误页面
             if (exception instanceof SystemException) {
-                return catchSystemException((SystemException) exception, response);
+                return catchSystemException(lang, (SystemException) exception, response);
 
                 // 其他未知异常
             } else {
+                // 异常信息记录至数据库
+                insertLogToDB(request, exception);
                 return catchDefault(exception, response);
             }
         } catch (Exception e) {
@@ -82,12 +85,21 @@ public class ExceptionHandler implements HandlerExceptionResolver {
     /**
      * 捕获系统异常处理
      */
-    private ModelAndView catchSystemException(SystemException exception,
+    private ModelAndView catchSystemException(String lang, SystemException exception,
                                               HttpServletResponse response) {
-        // 尝试根据信息获取指定的错误提示
-        String msg = exception.getMessage();
-        msg = StringUtils.isEmpty(msg) ? exception.getClass().getName(): msg;
-        return exceptionDeal(msg, response);
+
+        if (catchSysCode(exception, response)) {
+            return null;
+        }
+
+        String code = exception.getCode();
+        String msg = messageService.getMessage(lang, code);
+
+        if (StringUtils.isEmpty(msg)) msg = exception.getMessage();
+
+        msg = StringUtils.isEmpty(msg) ? exception.getClass().getName() : msg;
+
+        return exceptionDeal(msg, code, response);
     }
 
     /**
@@ -97,17 +109,17 @@ public class ExceptionHandler implements HandlerExceptionResolver {
                                       HttpServletResponse response) {
         // 尝试根据信息获取指定的错误提示
         String msg = exception.getMessage();
-        msg = StringUtils.isEmpty(msg) ? exception.getClass().getName(): msg;
-        return exceptionDeal(msg, response);
+        msg = StringUtils.isEmpty(msg) ? exception.getClass().getName() : msg;
+        return exceptionDeal(msg, "5", response);
     }
 
     /**
      * 业务异常时ajax返回处理
      */
     private ModelAndView businessExceptionDeal(String lang, BusinessException exception, HttpServletResponse response) {
-        AjaxResponse ajaxResponse = new AjaxResponse();
 
         String code = exception.getCode();
+
         String msg = messageService.getMessage(lang, code);
 
         if (StringUtils.isEmpty(msg)) {
@@ -115,6 +127,8 @@ public class ExceptionHandler implements HandlerExceptionResolver {
         } else {
             msg = String.format(msg, exception.getInfo());
         }
+
+        AjaxResponse ajaxResponse = new AjaxResponse();
 
         ajaxResponse.setCode(code);
         ajaxResponse.setMessage(msg);
@@ -125,11 +139,33 @@ public class ExceptionHandler implements HandlerExceptionResolver {
     }
 
     /**
+     * 尝试抓取系统代码,这类代码不在 ct_message_info 中有定义,是一组特殊的功能代码
+     *
+     * @param exception 携带代码的异常
+     * @param response  响应
+     * @return 是否成功处理
+     */
+    private boolean catchSysCode(SystemException exception, HttpServletResponse response) {
+
+        switch (exception.getCode()) {
+            // 由权限拦截器返回的渠道跳转代码
+            case BaseConstants.CODE_SEL_CHANNEL:
+                AjaxResponse ajaxResponse = new AjaxResponse();
+                ajaxResponse.setCode(BaseConstants.CODE_SYS_REDIRECT);
+                ajaxResponse.setResult(new AjaxResponseData(){{ setRedirectTo("/channel.html"); }});
+                ajaxResponse.writeTo(response);
+                return true;
+        }
+
+        return false;
+    }
+
+    /**
      * 业务以外异常时ajax返回处理
      */
-    private ModelAndView exceptionDeal(String msg, HttpServletResponse response) {
+    private ModelAndView exceptionDeal(String msg, String code, HttpServletResponse response) {
         AjaxResponse ajaxResponse = new AjaxResponse();
-        ajaxResponse.setCode("5");
+        ajaxResponse.setCode(code);
         ajaxResponse.setMessage(msg);
 
         ajaxResponse.writeTo(response);
