@@ -93,6 +93,9 @@ public class FeedToCmsService {
                 Map newNode = new HashMap<>();
                 newNode.put("category", temp);
                 newNode.put("child", new ArrayList<>());
+                if (i == c.length - 1) {
+                    newNode.put("isChild", 1);
+                }
                 if (befNode == null) {
                     tree.add(newNode);
                 } else {
@@ -201,6 +204,7 @@ public class FeedToCmsService {
 
     /**
      * 把一个code下的属性抽出存放到类目中
+     *
      * @param attributeMtData
      * @param product
      */
@@ -210,12 +214,11 @@ public class FeedToCmsService {
         for (Object key : map.keySet()) {
             if (attributeMtData.containsKey(key)) {
                 List<String> value = (List<String>) attributeMtData.get(key);
-                if (!value.contains(map.get(key))) {
-                    value.add(map.get(key).toString());
-                }
+                value.addAll((List<String>)map.get(key));
+                attributeMtData.put(key, value.stream().distinct().collect(toList()));
             } else {
                 List<String> value = new ArrayList<String>();
-                value.add(map.get(key).toString());
+                value.addAll((List<String>)map.get(key));
                 attributeMtData.put(key, value);
             }
         }
@@ -223,6 +226,7 @@ public class FeedToCmsService {
 
     /**
      * 属性的基本数据保存到类目中
+     *
      * @param channelId
      * @param attribute
      * @param category

@@ -5,6 +5,7 @@ import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feed;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -164,15 +165,16 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
                 map -> {
                     String key = special_symbol.matcher(map.get("attribute").toString()).replaceAll(Constants.EmptyString);
                     if (this.attribute.containsKey(key)) {
-                        String value = this.attribute.get(key).toString();
-                        String newValue = " " + map.get("value").toString()+ " ";
-                        if (value.indexOf(newValue) == -1) {
-                            this.attribute.put(key, value + ";" + newValue);
+                        List<String> value = (List<String>) this.attribute.get(key);
+                        String newValue = map.get("value").toString();
+                        if (!value.contains(newValue)) {
+                            value.add(newValue);
                         }
                     } else {
-                        this.attribute.put(key, " " + map.get("value") + " ");
+                        List<String> value = new ArrayList<String>();
+                        value.add(map.get("value").toString());
+                        this.attribute.put(key, value);
                     }
-
                 }
         );
         this.attributeList = null;
