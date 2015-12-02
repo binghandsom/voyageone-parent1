@@ -29,9 +29,10 @@ public class SkuTemplateSchema {
         public final static int SKU_QUANTITY = SKU_PRICE + 1;
         public final static int SKU_OUTERID = SKU_QUANTITY + 1;
         public final static int SKU_BARCODE = SKU_OUTERID + 1;
+        public final static int SKU_MARKET_TIME = SKU_BARCODE + 1;
 
         //EXTENDCOLOR
-        public final static int EXTENDCOLOR = SKU_BARCODE + 1;
+        public final static int EXTENDCOLOR = SKU_MARKET_TIME + 1;
         public final static int EXTENDCOLOR_ALIASNAME = EXTENDCOLOR + 1;
         public final static int EXTENDCOLOR_COLOR = EXTENDCOLOR_ALIASNAME + 1;
         public final static int EXTENDCOLOR_IMAGE = EXTENDCOLOR_COLOR + 1;
@@ -57,7 +58,7 @@ public class SkuTemplateSchema {
         public final static int SKU_QUANTITY = SKU_PRICE + 1;
         public final static int SKU_OUTERID = SKU_QUANTITY + 1;
         public final static int SKU_BARCODE = SKU_OUTERID + 1;
-        public final static int SKU_CUSTOM_SIZE1 = SKU_OUTERID + 1;
+        public final static int SKU_CUSTOM_SIZE1 = SKU_BARCODE + 1;
         public final static int SKU_CUSTOM_SIZE2 = SKU_CUSTOM_SIZE1 + 1;
         public final static int SKU_CUSTOM_SIZE3 = SKU_CUSTOM_SIZE2 + 1;
         public final static int SKU_CUSTOM_SIZE4 = SKU_CUSTOM_SIZE3 + 1;
@@ -90,7 +91,7 @@ public class SkuTemplateSchema {
         public final static int SKU_BARCODE = SKU_OUTERID + 1;
         public final static int SKU_MARKET_TIME = SKU_BARCODE + 1;
 
-        public final static int SKU_CUSTOM_SIZE1 = SKU_OUTERID + 1;
+        public final static int SKU_CUSTOM_SIZE1 = SKU_MARKET_TIME + 1;
         public final static int SKU_CUSTOM_SIZE2 = SKU_CUSTOM_SIZE1 + 1;
         public final static int SKU_CUSTOM_SIZE3 = SKU_CUSTOM_SIZE2 + 1;
         public final static int SKU_CUSTOM_SIZE4 = SKU_CUSTOM_SIZE3 + 1;

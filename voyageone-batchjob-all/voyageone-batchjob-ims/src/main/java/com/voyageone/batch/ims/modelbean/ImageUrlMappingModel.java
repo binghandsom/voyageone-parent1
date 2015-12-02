@@ -9,6 +9,8 @@ public class ImageUrlMappingModel {
 
     private String channelId;
 
+    private String modelId;
+
     private String orgImageUrl;
 
     private String platformImageUrl;
@@ -63,5 +65,13 @@ public class ImageUrlMappingModel {
 
     public void setModifier(String modifier) {
         this.modifier = modifier;
+    }
+
+    public String getModelId() {
+        return modelId;
+    }
+
+    public void setModelId(String modelId) {
+        this.modelId = modelId;
     }
 }

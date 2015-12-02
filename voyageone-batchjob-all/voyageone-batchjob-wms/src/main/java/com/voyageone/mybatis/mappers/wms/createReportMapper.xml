@@ -260,7 +260,7 @@
                 tm_order_channel_config
             WHERE
                 order_channel_id =  #{order_channel_id}
-            AND cfg_name = #{specialType}
+            AND cfg_name in ('special_goods_backboard','special_goods_ball')
           and cfg_val1 = details.sku
         )
          INNER JOIN wms_bt_item_details itemdetails ON itemdetails.sku = details.sku
