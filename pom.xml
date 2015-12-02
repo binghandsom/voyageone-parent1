@@ -27,6 +27,7 @@
         <module>voyageone-wsdl-all</module>
         <module>voyageone-web2</module>
         <module>voyageone-components</module>
+        <module>voyageone-md-schema</module>
     </modules>
 
     <repositories>
@@ -89,6 +90,7 @@
         <voyageone.web2.core.version>2.0.0-SNAPSHOT</voyageone.web2.core.version>
         <voyageone.web2.cms.version>2.0.0-SNAPSHOT</voyageone.web2.cms.version>
         <voyageone.components.version>2.0.0-SNAPSHOT</voyageone.components.version>
+        <voyageone.md.schema.version>2.0.0-SNAPSHOT</voyageone.md.schema.version>
     </properties>
 
     <dependencyManagement>
