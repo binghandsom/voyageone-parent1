@@ -14,7 +14,6 @@ function AjaxService($http, blockUI, $q) {
 }
 
 AjaxService.prototype.post = function(url, data) {
-  //this.blockUI.start();
   var defer = this.$q.defer();
   this.$http.post(url, data).then(function(response) {
     var res = response.data;

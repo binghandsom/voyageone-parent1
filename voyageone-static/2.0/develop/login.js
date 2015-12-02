@@ -9,7 +9,7 @@
 require.config({
   paths: {
     'angular': 'libs/angular.js/1.4.7/angular',
-    'angular-voyageone' : 'components/dist/voyageone.angular.com',
+    "voyageone-angular-com" : 'components/dist/voyageone.angular.com',
     'angular-translate': 'libs/angular-translate/2.8.1/angular-translate',
     'angular-block-ui': 'libs/angular-block-ui/0.2.1/angular-block-ui',
     'css': 'libs/require-css/0.1.8/css'
@@ -17,7 +17,7 @@ require.config({
   shim: {
     'angular-block-ui': ['angular', 'css!libs/angular-block-ui/0.2.1/angular-block-ui.css'],
     'angular-translate': ['angular'],
-    'angular-voyageone': ['angular'],
+    'voyageone-angular-com': ['angular'],
     'angular': {exports: 'angular'}
   }
 });
@@ -27,7 +27,7 @@ require([
   'angular',
   'angular-block-ui',
   'angular-translate',
-  'angular-voyageone'
+  'voyageone-angular-com'
 ], function (angular) {
   angular.module('voyageone.cms.login', [
     'pascalprecht.translate',

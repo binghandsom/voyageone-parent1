@@ -10,10 +10,12 @@ require.config({
   paths: {
     'angular': 'libs/angular.js/1.4.7/angular',
     'angular-block-ui': 'libs/angular-block-ui/0.2.1/angular-block-ui',
+    'voyageone-angular-com' : 'components/dist/voyageone.angular.com',
     'css': 'libs/require-css/0.1.8/css'
   },
   shim: {
     'angular-block-ui': ['angular', 'css!libs/angular-block-ui/0.2.1/angular-block-ui.css'],
+    'voyageone-angular-com': ['angular'],
     'angular': {exports: 'angular'}
   }
 });
@@ -21,32 +23,19 @@ require.config({
 // Bootstrap App !!
 require([
   'angular',
-  'angular-block-ui'
+  'angular-block-ui',
+  'voyageone-angular-com'
 ], function (angular) {
   angular.module('voyageone.cms.channel', [
     'blockUI'
-  ]).controller('channelController', function($scope, $http) {
-    $http.post('/core/access/user/getChannel').then(function(response) {
-      var res = response.data;
-      if (res.message) {
-        alert(res.message);
-        return;
-      }
+  ]).controller('channelController', function($scope, ajaxService) {
+    ajaxService.post('/core/access/user/getChannel').then(function(res) {
       $scope.channels = res.result.data;
-    });
+    }, function(res) { alert(res.message || res.code); });
     $scope.choose = function(channel, app) {
-      $http.post('/core/access/user/selectChannel', {channelId: channel.channelId}).then(function(response) {
-        var res = response.data;
-        if (!res.result.data) {
-          alert("fail");
-          return;
-        }
-        if (res.message) {
-          alert(res.message);
-          return;
-        }
+      ajaxService.post('/core/access/user/selectChannel', {channelId: channel.channelId}).then(function(res) {
         location.href = 'views/' + app + '/app.html';
-      })
+      }, function(res) { alert(res.message || res.code); })
     };
   });
   return angular.bootstrap(document, ['voyageone.cms.channel']);
