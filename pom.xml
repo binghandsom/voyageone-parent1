@@ -14,12 +14,6 @@
 
     <modules>
         <module>voyageone-com</module>
-        <module>voyageone-core</module>
-        <module>voyageone-oms</module>
-        <module>voyageone-wms</module>
-        <module>voyageone-ims</module>
-        <module>voyageone-cms</module>
-        <module>voyageone-bi</module>
         <module>voyageone-webservice</module>
         <module>voyageone-release</module>
         <module>voyageone-batchjob-all</module>
