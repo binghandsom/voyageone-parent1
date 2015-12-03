@@ -634,11 +634,9 @@ public class TmallProductService implements PlatformServiceInterface {
         TmallUploadRunState.TmallContextBuildCustomFields contextBuildCustomFields = contextBeforeUploadImage.getContextBuildCustomFields();
         AbstractSkuFieldBuilder skuFieldBuilder = contextBuildCustomFields.getSkuFieldBuilder();
         List<Field> customFields = contextBeforeUploadImage.getCustomFields();
-        int totalInventory = 0;
+        int totalInventory;
         if (skuFieldBuilder != null) {
-            logger.debug("before update inventory");
             totalInventory = skuFieldBuilder.updateInventoryField(workLoadBean.getOrder_channel_id(), contextBuildCustomFields, customFields);
-            logger.debug("After update inventory");
         }
         else {
             totalInventory = calcTotalInventory(workLoadBean.getOrder_channel_id(), workLoadBean.getCmsModelProp());
@@ -702,12 +700,17 @@ public class TmallProductService implements PlatformServiceInterface {
             throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(failCause.toString(), true));
         } else if (addItemResponse.getErrorCode() != null) {
             logger.debug("errorCode:" + addItemResponse.getErrorCode());
-            String subMsg = addItemResponse.getSubMsg();
-            numId = getNumIdFromSubMsg(subMsg, failCause);
-            if (numId != null && !"".equals(numId)) {
-                logger.debug(String.format("find numId(%s) has been uploaded before", numId));
-                return numId;
+            if (addItemResponse.getSubCode().indexOf("IC_CHECKSTEP_ALREADY_EXISTS_SAME_SPU") != -1) {
+                String subMsg = addItemResponse.getSubMsg();
+                numId = getNumIdFromSubMsg(subMsg, failCause);
+                if (failCause.length() == 0 && numId != null && !"".equals(numId)) {
+                    logger.debug(String.format("find numId(%s) has been uploaded before", numId));
+                    return numId;
+                }
+            } else {
+                failCause.append(addItemResponse.getSubMsg());
             }
+
             //天猫系统服务异常
             if (failCause.indexOf("天猫商品服务异常") != -1
                     || failCause.indexOf("访问淘宝超时") != -1) {
@@ -726,11 +729,33 @@ public class TmallProductService implements PlatformServiceInterface {
 
     private String getNumIdFromSubMsg(String subMsg, StringBuffer failCause) {
         //pattern: "您已发布过同类宝贝，不允许重复发布；已发布的商品ID列表为：521369504454"
+        //pattern: 您已发布过相同类目(腰带/皮带/腰链)，品牌(BCBG)，货号(FLTBC155)的宝贝，不允许重复发布；已发布的商品ID列表为：524127233288,上架的数量必须大于0
         String numId = null;
-        Pattern pattern = Pattern.compile("\\d+$");
+        Pattern pattern = Pattern.compile("您已发布过.*已发布的商品ID列表为：\\d+");
         Matcher matcher = pattern.matcher(subMsg);
         if (matcher.find()) {
-            numId = subMsg.substring(matcher.start());
+            String matchString = subMsg.substring(matcher.start(), matcher.end());
+            Pattern numIdPattern = Pattern.compile("\\d+");
+            Matcher numIdMatcher = numIdPattern.matcher(matchString);
+            while (numIdMatcher.find()) {
+                String matchInter = matchString.substring(numIdMatcher.start(), numIdMatcher.end());
+                if (matchInter.length() == 12) {
+                    numId = matchInter;
+                    break;
+                }
+            }
+            if (numId == null){
+                failCause.append(subMsg);
+                return null;
+            }
+
+            if (matcher.start() != 0) {
+                failCause.append(subMsg.substring(0, matcher.start()));
+            }
+
+            if (matcher.end() != subMsg.length()) {
+                failCause.append(subMsg.substring(matcher.end() + 1));
+            }
         } else {
             failCause.append(subMsg);
         }
@@ -1029,7 +1054,7 @@ public class TmallProductService implements PlatformServiceInterface {
         TmallUploadRunState.TmallContextBuildCustomFields contextBuildCustomFields = contextBeforeUploadImage.getContextBuildCustomFields();
         AbstractSkuFieldBuilder skuFieldBuilder = contextBuildCustomFields.getSkuFieldBuilder();
         List<Field> customFields = contextBeforeUploadImage.getCustomFields();
-        int totalInventory = 0;
+        int totalInventory;
         if (skuFieldBuilder != null) {
             totalInventory = skuFieldBuilder.updateInventoryField(workLoadBean.getOrder_channel_id(), contextBuildCustomFields, customFields);
         }

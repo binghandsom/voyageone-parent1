@@ -11,7 +11,8 @@
             voyageone_ims.ims_mt_platform_imageUrl_mapping
         WHERE
             cart_id = #{cartId}
-        AND channel_id = #{channelId};
+        AND channel_id = #{channelId}
+        AND model_id = #{modelId}
     </select>
 
     <!-- insert the image url -->
@@ -20,6 +21,7 @@
         (
             cart_id,
             channel_id,
+            model_id,
             org_image_url,
             platform_image_url,
             created,
@@ -31,6 +33,7 @@
             (
               #{model.cartId},
               #{model.channelId},
+              #{model.modelId},
               #{model.orgImageUrl},
               #{model.platformImageUrl},
               NOW(),

@@ -109,24 +109,16 @@ public class CreateReportDao extends BaseDao {
      * 取得特殊物品销售订单的日报基本数据记录
      * @param cartID
      * @param order_channel_id
-     * @param specialType
      * @param start_created
      * @param end_created
      * @param task_name
      * @return List<ThirdReportBean>
      */
-    public List<ThirdReportBean> getCreateReportSpecialData(String cartID,String order_channel_id,String specialType,String start_created,String end_created,String task_name) {
-        logger.info( "----------" + "getCreateReportSpecialData----------开始");
-        logger.info("cartID="+cartID);
-        logger.info("order_channel_id="+order_channel_id);
-        logger.info("specialType="+specialType);
-        logger.info("start_created="+start_created);
-        logger.info("end_created="+end_created);
-        logger.info("task_name="+task_name);
+    public List<ThirdReportBean> getCreateReportSpecialData(String cartID,String order_channel_id,String start_created,String end_created,String task_name) {
+
         Map<String, String> paramMap = new HashMap<>();
         paramMap.put("cart_id", cartID);
         paramMap.put("order_channel_id", order_channel_id);
-        paramMap.put("specialType",specialType);
         paramMap.put("start_created",start_created);
         paramMap.put("end_created",end_created);
         paramMap.put("task_name",task_name);

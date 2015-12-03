@@ -1,0 +1,145 @@
+package com.voyageone.common.masterdate.schema.field;
+
+import com.voyageone.common.masterdate.schema.Util.StringUtil;
+import com.voyageone.common.masterdate.schema.Util.XmlUtils;
+import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
+import com.voyageone.common.masterdate.schema.enums.TopSchemaErrorCodeEnum;
+import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
+import com.voyageone.common.masterdate.schema.factory.SchemaFactory;
+import com.voyageone.common.masterdate.schema.value.ComplexValue;
+import org.dom4j.Element;
+
+import java.util.*;
+
+public class ComplexField extends Field {
+    protected ComplexValue complexValue = new ComplexValue();
+    protected List<Field> fields = new ArrayList();
+
+    public ComplexField() {
+        super.type = FieldTypeEnum.COMPLEX;
+    }
+
+    public void initDefaultField() {
+        super.defaultValueField = SchemaFactory.createField(FieldTypeEnum.COMPLEX);
+    }
+
+    public Field addField(FieldTypeEnum fieldEnum) {
+        Field field = SchemaFactory.createField(fieldEnum);
+        this.add(field);
+        return field;
+    }
+
+    public void add(Field field) {
+        this.fields.add(field);
+    }
+
+    public ComplexValue getComplexValue() {
+        return this.complexValue;
+    }
+
+    public ComplexValue getDefaultComplexValue() {
+        if(this.defaultValueField == null) {
+            this.initDefaultField();
+        }
+
+        ComplexField complexField = (ComplexField)this.defaultValueField;
+        return complexField.getComplexValue();
+    }
+
+    public void setComplexValue(ComplexValue complexValue) {
+        if(complexValue != null) {
+            this.complexValue = complexValue;
+        }
+    }
+
+    public void setDefaultValue(ComplexValue complexValue) {
+        if(this.defaultValueField == null) {
+            this.initDefaultField();
+        }
+
+        ComplexField complexField = (ComplexField)this.defaultValueField;
+        complexField.setComplexValue(complexValue);
+    }
+
+    public List<Field> getFieldList() {
+        return this.fields;
+    }
+
+    public Map<String, Field> getFieldMap() {
+        HashMap map = new HashMap();
+        Iterator i$ = this.fields.iterator();
+
+        while(i$.hasNext()) {
+            Field field = (Field)i$.next();
+            map.put(field.getId(), field);
+        }
+
+        return map;
+    }
+
+    public Element toElement() throws TopSchemaException {
+        Element fieldNode = super.toElement();
+        Element fieldsNode = XmlUtils.appendElement(fieldNode, "fields");
+        if(this.fields != null && !this.fields.isEmpty()) {
+            Iterator i$ = this.fields.iterator();
+
+            while(i$.hasNext()) {
+                Field field = (Field)i$.next();
+                Element fNode = field.toElement();
+                XmlUtils.appendElement(fieldsNode, fNode);
+            }
+        }
+
+        return fieldNode;
+    }
+
+    public Element toParamElement() throws TopSchemaException {
+        Element fieldNode = XmlUtils.createRootElement("field");
+        if(StringUtil.isEmpty(this.id)) {
+            throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_30001, (String)null);
+        } else if(this.type != null && !StringUtil.isEmpty(this.type.value())) {
+            FieldTypeEnum fieldEnum = FieldTypeEnum.getEnum(this.type.value());
+            if(fieldEnum == null) {
+                throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_30003, this.id);
+            } else {
+                fieldNode.addAttribute("id", this.id);
+                fieldNode.addAttribute("name", this.name);
+                fieldNode.addAttribute("type", this.type.value());
+                Element complexValuesNode = XmlUtils.appendElement(fieldNode, "complex-values");
+                ComplexValue cValue = this.complexValue;
+                Iterator i$ = cValue.getFieldKeySet().iterator();
+
+                while(i$.hasNext()) {
+                    String keyFieldId = (String)i$.next();
+                    Field field = cValue.getValueField(keyFieldId);
+                    Element valueNode = field.toParamElement();
+                    XmlUtils.appendElement(complexValuesNode, valueNode);
+                }
+
+                return fieldNode;
+            }
+        } else {
+            throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_30002, this.id);
+        }
+    }
+
+    public Element toDefaultValueElement() throws TopSchemaException {
+        if(this.defaultValueField == null) {
+            return null;
+        } else {
+            ComplexField complexField = (ComplexField)this.defaultValueField;
+            Element defaultComplexValuesNode = XmlUtils.createRootElement("default-complex-values");
+            ComplexValue cValue = complexField.getComplexValue();
+            Iterator i$ = cValue.getFieldKeySet().iterator();
+
+            while(i$.hasNext()) {
+                String keyFieldId = (String)i$.next();
+                Field field = cValue.getValueField(keyFieldId);
+                Element valueNode = field.toParamElement();
+                XmlUtils.appendElement(defaultComplexValuesNode, valueNode);
+            }
+
+            return defaultComplexValuesNode;
+        }
+    }
+}

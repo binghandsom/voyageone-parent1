@@ -4,8 +4,9 @@
 
     <select id="ims_selectNoPublishBeansByTime" resultType="com.voyageone.batch.ims.modelbean.ProductPublishBean" parameterType="Map">
         SELECT * FROM voyageone_ims.ims_bt_product
-        WHERE publish_status = 0
-        AND cart_id = 23
+        WHERE cart_id = 23
+        AND publish_status = 0
+        AND publish_skip = 0
         ORDER BY created desc limit 0,#{count}
     </select>
 
