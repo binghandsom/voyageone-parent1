@@ -69,9 +69,9 @@ public class FeedToCmsService {
      */
     private Map findCategory(List<Map> tree, String cat) {
         Object jsonObj = JsonPath.parse(tree).json();
-        List<Map> child = JsonPath.read(jsonObj, "$..child[?(@.category == '" + cat.replace("'", "\\\'") + "')]");
+        List<Map> child = JsonPath.read(jsonObj, "$..child[?(@.path == '" + cat.replace("'", "\\\'") + "')]");
         if (child.size() == 0) {
-            child = JsonPath.read(jsonObj, "$..*[?(@.category == '" + cat.replace("'", "\\\'") + "')]");
+            child = JsonPath.read(jsonObj, "$..*[?(@.path == '" + cat.replace("'", "\\\'") + "')]");
         }
         return child == null || child.size() == 0 ? null : child.get(0);
     }
@@ -91,7 +91,9 @@ public class FeedToCmsService {
             Map node = findCategory(tree, temp);
             if (node == null) {
                 Map newNode = new HashMap<>();
-                newNode.put("category", temp);
+                newNode.put("name",c[i]);
+                newNode.put("cid", temp);
+                newNode.put("path", temp);
                 newNode.put("child", new ArrayList<>());
                 if (i == c.length - 1) {
                     newNode.put("isChild", 1);
