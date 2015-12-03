@@ -1,0 +1,42 @@
+{
+  "/": {
+    "hash": "/",
+    "templateUrl": "views/home/home.tpl.html",
+    "controllerUrl": "modules/cms/views/home/home.ctl"
+  },
+  "category": {
+    "url": "/category/",
+    "hash": "/category/:cid",
+    "templateUrl": "views/category/category.tpl.html",
+    "controllerUrl": "modules/cms/views/category/category.ctl"
+  },
+  "product": {
+    "url": "/product/",
+    "hash": "/product/:pid",
+    "templateUrl": "views/category/product.tpl.html",
+    "controllerUrl": "modules/cms/views/category/product.ctl"
+  },
+  "search.complex": {
+    "url": "search/complex/",
+    "hash": "search/complex/:value",
+    "templateUrl": "views/search/complex.tpl.html",
+    "controllerUrl": "modules/cms/views/search/complex.ctl"
+  },
+
+
+  "views": {
+    "url": "/views/",
+    "hash": "",
+    "templateUrl": "/app.html#/",
+    "controllerUrl": ""
+  },
+  "channel": {
+    "url": "",
+    "hash": "",
+    "templateUrl": "/channel.html#/",
+    "controllerUrl": ""
+  },
+  "login": {
+    "templateUrl": "/login.html#/"
+  }
+}

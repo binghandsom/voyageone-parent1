@@ -19,6 +19,7 @@ require.config({
     'angular-translate': 'libs/angular-translate/2.8.1/angular-translate',
     'angular-block-ui': 'libs/angular-block-ui/0.2.1/angular-block-ui',
     'angular-ui-bootstrap': 'libs/angular-ui-bootstrap/0.14.3/ui-bootstrap-tpls-0.14.3.min',
+    'angular-ngStorage': 'libs/angular-ngStorage/ngStorage',
     'angularAMD': 'libs/angularAMD/0.2.1/angularAMD.min',
     'ngload': 'libs/angularAMD/0.2.1/ngload.min',
     'jquery': 'libs/jquery/2.1.4/jquery',
@@ -36,6 +37,7 @@ require.config({
     'angular-translate': ['angular'],
     'angular-block-ui': ['angular', 'css!libs/angular-block-ui/0.2.1/angular-block-ui.css'],
     'angular-ui-bootstrap': ['angular'],
+    'angular-ngStorage': ['angular'],
     'angular': {exports: 'angular', deps: ['jquery']},
     'jquery': {exports: 'jQuery'},
     'json': ['text'],
@@ -56,14 +58,15 @@ requirejs([
   'angularAMD',
   'angular',
   'underscore',
-  'json!views/cms/routes.json',
-  'json!views/cms/actions.json',
-  'json!views/cms/translate/en.json',
-  'json!views/cms/translate/zh.json',
+  'json!modules/cms/routes.json',
+  'json!modules/cms/actions.json',
+  'json!modules/cms/translate/en.json',
+  'json!modules/cms/translate/zh.json',
   'voyageone-angular-com',
   'voyageone-com',
   'angular-block-ui',
-  'angular-ui-bootstrap'
+  'angular-ui-bootstrap',
+  'angular-ngStorage'
 ], function (angularAMD, angular, _, routes, actions, enTranslate, zhTranslate) {
   var mainApp = angular.module('voyageone.cms', [
         'ngRoute',
@@ -73,7 +76,8 @@ requirejs([
         'pascalprecht.translate',
         'blockUI',
         'voyageone.angular',
-        'ui.bootstrap'
+        'ui.bootstrap',
+        'ngStorage'
       ])
 
       // define
@@ -113,9 +117,10 @@ requirejs([
 
       // main controller.
       .controller('headerCtrl', fnHeaderCtrl)
-      .controller('appCtrl', fnAppCtrl);
+      .controller('appCtrl', fnAppCtrl)
+      .controller('breadcrumbsCtrl', fnBreadcrumbsCtrl);
 
-  fnAppService.$inject = ['$q', 'ajaxService', 'cookieService', 'translateService', 'actions'];
+  //fnAppService.$inject = ['$q', 'ajaxService', 'cookieService', 'translateService', 'actions'];
   function fnAppService($q, ajaxService, cookieService, translateService, actions) {
 
     this.getMenuHeaderInfo = fnGetMenuHeaderInfo;
@@ -123,6 +128,7 @@ requirejs([
     this.clearChannel = fnClearChannel;
     this.setLanguage = fnSetLanguage;
     this.logout = fnLogout;
+    this.getCategoryInfo = fnGetCategoryInfo;
 
     /**
      * get the system info.
@@ -194,9 +200,23 @@ requirejs([
       defer.resolve();
       return defer.promise;
     }
+
+    /**
+     * get categoryList.
+     * @param categoryType
+     * @returns {*}
+       */
+    function fnGetCategoryInfo () {
+      var defer = $q.defer ();
+      ajaxService.post(actions.cms.home.menu.getCategoryInfo)
+          .then(function (data) {
+            defer.resolve(data);
+          });
+      return defer.promise;
+    }
   }
 
-  fnAppCtrl.$inject = ['$scope', '$window', 'translateService'];
+  //fnAppCtrl.$inject = ['$scope', '$window', 'translateService'];
   function fnAppCtrl ($scope, $window, translateService) {
 
     var isIE = !!navigator.userAgent.match(/MSIE/i);
@@ -269,7 +289,7 @@ requirejs([
     }
   }
 
-  fnHeaderCtrl.$inject = ['$scope', '$window', '$location', 'appService'];
+  //fnHeaderCtrl.$inject = ['$scope', '$window', '$location', 'appService'];
   function fnHeaderCtrl($scope, $window, $location, appService) {
     var vm = this;
     vm.menuList = {};
@@ -336,6 +356,33 @@ requirejs([
       appService.logout().then(function () {
         $window.location = routes.login.templateUrl;
       })
+    }
+  }
+
+  function fnBreadcrumbsCtrl($scope, $localStorage, $location, appService, routes) {
+    var vm = this;
+    vm.cid = "";
+    vm.navigation = {};
+
+    $scope.initialize = fnInitialize;
+    $scope.selectCategory = fnSelectCategory;
+
+    /**
+     * initialize
+     */
+    function fnInitialize () {
+      appService.getCategoryInfo().then(function (data) {
+        vm.navigation = data;
+        vm.navigation.categoryType = "TM";
+      });
+    }
+
+    /**
+     * change to other category page.
+     * @param cid
+       */
+    function fnSelectCategory (cid) {
+      $location.path(routes.category.category.url + cid);
     }
   }
 
