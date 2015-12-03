@@ -120,4 +120,14 @@ public class SearsService extends SearsBase {
     public OrderResponse CreateOrder(OrderBean order) throws Exception {
         return SearsHttpPost(searsUrl+"orders","utf-8",JaxbUtil.convertToXml(order));
     }
+
+    /**
+     * 更新订单状态
+     * @param order
+     * @return
+     * @throws Exception
+     */
+    public OrderResponse UpdateStatus(UpdateStatusBean order) throws Exception {
+        return SearsHttpPost(String.format(updateStatusUrl,order.getOrderId()),"utf-8",JaxbUtil.convertToXml(order));
+    }
 }

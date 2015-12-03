@@ -13,6 +13,7 @@ public class AvailabilityBean {
     private String itemId;
     private Boolean available;
     private Integer quantity;
+    private String updatedAt;
 
     public Boolean getAvailable() {
         return available;
@@ -36,5 +37,13 @@ public class AvailabilityBean {
 
     public void setItemId(String itemId) {
         this.itemId = itemId;
+    }
+
+    public String getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

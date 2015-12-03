@@ -30,6 +30,8 @@ public class SearsBase {
 
     public final String searsUrl = "https://api.b2b.sears.com/v/2/";
 
+    public final String updateStatusUrl = searsUrl + "%s/update";
+
     public SearsBase(){
         properties = new Properties();
 //        properties.put("javax.net.debug", "ssl");

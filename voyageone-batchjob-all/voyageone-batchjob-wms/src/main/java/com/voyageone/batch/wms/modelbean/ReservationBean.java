@@ -57,6 +57,11 @@ public class ReservationBean {
     private long item_number;
     private String itemCode;
     private ItemCodeBean itemCodeInfo;
+    private String client_sku;
+    private String sales_check_number;
+    private String tracking_number;
+    private String reservation_status;
+    private String tracking_no;
 
     public long getId() {
         return id;
@@ -464,5 +469,45 @@ public class ReservationBean {
 
     public void setItemCodeInfo(ItemCodeBean itemCodeInfo) {
         this.itemCodeInfo = itemCodeInfo;
+    }
+
+    public String getClient_sku() {
+        return client_sku;
+    }
+
+    public void setClient_sku(String client_sku) {
+        this.client_sku = client_sku;
+    }
+
+    public String getSales_check_number() {
+        return sales_check_number;
+    }
+
+    public void setSales_check_number(String sales_check_number) {
+        this.sales_check_number = sales_check_number;
+    }
+
+    public String getTracking_number() {
+        return tracking_number;
+    }
+
+    public void setTracking_number(String tracking_number) {
+        this.tracking_number = tracking_number;
+    }
+
+    public String getReservation_status() {
+        return reservation_status;
+    }
+
+    public void setReservation_status(String reservation_status) {
+        this.reservation_status = reservation_status;
+    }
+
+    public String getTracking_no() {
+        return tracking_no;
+    }
+
+    public void setTracking_no(String tracking_no) {
+        this.tracking_no = tracking_no;
     }
 }
