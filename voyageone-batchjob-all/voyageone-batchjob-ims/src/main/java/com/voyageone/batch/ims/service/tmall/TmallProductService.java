@@ -634,11 +634,9 @@ public class TmallProductService implements PlatformServiceInterface {
         TmallUploadRunState.TmallContextBuildCustomFields contextBuildCustomFields = contextBeforeUploadImage.getContextBuildCustomFields();
         AbstractSkuFieldBuilder skuFieldBuilder = contextBuildCustomFields.getSkuFieldBuilder();
         List<Field> customFields = contextBeforeUploadImage.getCustomFields();
-        int totalInventory = 0;
+        int totalInventory;
         if (skuFieldBuilder != null) {
-            logger.debug("before update inventory");
             totalInventory = skuFieldBuilder.updateInventoryField(workLoadBean.getOrder_channel_id(), contextBuildCustomFields, customFields);
-            logger.debug("After update inventory");
         }
         else {
             totalInventory = calcTotalInventory(workLoadBean.getOrder_channel_id(), workLoadBean.getCmsModelProp());

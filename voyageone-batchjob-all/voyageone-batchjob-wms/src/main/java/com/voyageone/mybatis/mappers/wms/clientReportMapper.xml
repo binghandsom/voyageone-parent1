@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.wms.sql">
+
+
+
+    <insert id="wms_insertClientReport" parameterType="HashMap">
+        insert into wms_bt_client_report
+        (
+            seq,
+            order_channel_id,
+            order_number,
+            order_type,
+            document_id,
+            cust_account,
+            reason_code,
+            invent_site_id,
+            invent_location_id,
+            shipping_date_requested,
+            source_order_id,
+            item_id,
+            `size`,
+            qty,
+            sales_price,
+            sales_unit,
+            line_amount,
+            transcost,
+            ediscount,
+            created,
+            creater,
+            modified,
+            modifier
+        )
+        values ${values}
+    </insert>
+</mapper>

@@ -6,6 +6,7 @@
         SELECT * FROM voyageone_ims.ims_bt_product
         WHERE cart_id = 23
         AND publish_status = 0
+        AND publish_skip = 0
         ORDER BY created desc limit 0,#{count}
     </select>
 

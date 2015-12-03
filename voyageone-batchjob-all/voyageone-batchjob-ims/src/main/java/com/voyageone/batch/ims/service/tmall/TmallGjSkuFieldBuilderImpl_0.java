@@ -53,19 +53,19 @@ public class TmallGjSkuFieldBuilderImpl_0 extends AbstractSkuFieldBuilder {
         Map<String, CmsSkuPropBean> colorCmsSkuPropMap;
 
         //Build prop extend result
-        Map<String, ComplexValue> srcUrlComplexValueMap;
+        Map<String, ComplexValue> codeValueComplexValueMap;
 
         public BuildSkuResult() {
             colorCmsSkuPropMap = new HashMap<>();
-            srcUrlComplexValueMap = new HashMap<>();
+            codeValueComplexValueMap = new HashMap<>();
         }
 
         public Map<String, CmsSkuPropBean> getColorCmsSkuPropMap() {
             return colorCmsSkuPropMap;
         }
 
-        public Map<String, ComplexValue> getSrcUrlComplexValueMap() {
-            return srcUrlComplexValueMap;
+        public Map<String, ComplexValue> getCodeValueComplexValueMap() {
+            return codeValueComplexValueMap;
         }
     }
 
@@ -241,7 +241,8 @@ public class TmallGjSkuFieldBuilderImpl_0 extends AbstractSkuFieldBuilder {
                 String codePropFullImageUrl = UploadImageHandler.encodeImageUrl(String.format(codeImageTemplate, propImage));
                 complexValue.setInputFieldValue(propId_colorExtend_image, codePropFullImageUrl);
                 imageSet.add(codePropFullImageUrl);
-                buildSkuResult.getSrcUrlComplexValueMap().put(codePropFullImageUrl, complexValue);
+                //buildSkuResult.getCodeValueComplexValueMap().put(codePropFullImageUrl, complexValue);
+                buildSkuResult.getCodeValueComplexValueMap().put(entry.getKey(), complexValue);
             }
 
             //TODO BASE COLOR
@@ -316,12 +317,15 @@ public class TmallGjSkuFieldBuilderImpl_0 extends AbstractSkuFieldBuilder {
         TmallUploadRunState.TmallContextBuildCustomFields tmallContextBuildCustomFields = (TmallUploadRunState.TmallContextBuildCustomFields) contextBuildCustomFields;
         BuildSkuResult buildSkuResult = (BuildSkuResult) tmallContextBuildCustomFields.getBuildSkuResult();
 
-        for (Map.Entry<String, ComplexValue> entry : buildSkuResult.getSrcUrlComplexValueMap().entrySet())
+        for (Map.Entry<String, ComplexValue> entry : buildSkuResult.getCodeValueComplexValueMap().entrySet())
         {
-            String srcUrl = entry.getKey();
-            String destUrl = urlMap.get(srcUrl);
-
             ComplexValue complexValue = entry.getValue();
+            String destUrl = complexValue.getInputFieldValue(propId_colorExtend_image);
+
+            for (Map.Entry<String, String> urlEntry : urlMap.entrySet()) {
+                destUrl = destUrl.replace(urlEntry.getKey(), urlEntry.getValue());
+            }
+
             complexValue.setInputFieldValue(propId_colorExtend_image, destUrl);
         }
     }

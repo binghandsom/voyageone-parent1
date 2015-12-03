@@ -2667,6 +2667,7 @@
 		where
 			o.order_channel_id = #{orderChannelId}
 			and ox.ext_flg1 = 0
+			and o.order_status = 'Shipped'
 	</select>
 
 	<!-- 获得向BCBG 推送DailySales订单信息 (Returned 订单)-->
