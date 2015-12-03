@@ -31,7 +31,11 @@ public class BaseJomgoPartTemplate {
 
     public BaseJomgoPartTemplate(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
-        this.jongo = new Jongo(mongoTemplate.getDb());
+        try {
+            this.jongo = new Jongo(mongoTemplate.getDb());
+        } catch (Exception e) {
+
+        }
     }
 
     public CommandResult executeCommand(String jsonCommand) {
