@@ -103,13 +103,13 @@ public class WmsUpdateStatusService extends BaseTaskService {
 
                         try {
 
-                            // 更新发货渠道
-                            int result = reservationDao.updateReservationByShipChannel(reservationBean.getSyn_ship_no(),reservationBean.getId(),reservationBean.getStatus(),reservationBean.getShip_channel(),getTaskName());
-
-                            if (result > 0) {
-                                $info(channel.getFull_name() + "----------SynShipNo：" + reservationBean.getSyn_ship_no() + "，id:"+ reservationBean.getSyn_ship_no() + "，id:"+ reservationBean.getId() + "，ChangeShipChannel:"+ reservationBean.getShip_channel());
-                                reservationDao.insertReservationLogByID(reservationBean.getSyn_ship_no(), reservationBean.getId(), "ShipChannel change to " + reservationBean.getShip_channel(), getTaskName());
-                            }
+//                            // 更新发货渠道
+//                            int result = reservationDao.updateReservationByShipChannel(reservationBean.getSyn_ship_no(),reservationBean.getId(),reservationBean.getStatus(),reservationBean.getShip_channel(),getTaskName());
+//
+//                            if (result > 0) {
+//                                $info(channel.getFull_name() + "----------SynShipNo：" + reservationBean.getSyn_ship_no() + "，id:"+ reservationBean.getSyn_ship_no() + "，id:"+ reservationBean.getId() + "，ChangeShipChannel:"+ reservationBean.getShip_channel());
+//                                reservationDao.insertReservationLogByID(reservationBean.getSyn_ship_no(), reservationBean.getId(), "ShipChannel change to " + reservationBean.getShip_channel(), getTaskName());
+//                            }
                         } catch(Exception e) {
                             logIssue(e, channel.getFull_name() + " 更新订单相关状态错误，SynShipNo：" + reservationBean.getSyn_ship_no() + "，id:"+ reservationBean.getSyn_ship_no() + "，id:"+ reservationBean.getId() + "，ChangeShipChannel:"+ reservationBean.getShip_channel());
 
