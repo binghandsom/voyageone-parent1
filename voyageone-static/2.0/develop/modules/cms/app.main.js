@@ -19,6 +19,7 @@ require.config({
     'angular-translate': 'libs/angular-translate/2.8.1/angular-translate',
     'angular-block-ui': 'libs/angular-block-ui/0.2.1/angular-block-ui',
     'angular-ui-bootstrap': 'libs/angular-ui-bootstrap/0.14.3/ui-bootstrap-tpls-0.14.3.min',
+    'angular-ngStorage': 'libs/angular-ngStorage/ngStorage',
     'angularAMD': 'libs/angularAMD/0.2.1/angularAMD.min',
     'ngload': 'libs/angularAMD/0.2.1/ngload.min',
     'jquery': 'libs/jquery/2.1.4/jquery',
@@ -36,6 +37,7 @@ require.config({
     'angular-translate': ['angular'],
     'angular-block-ui': ['angular', 'css!libs/angular-block-ui/0.2.1/angular-block-ui.css'],
     'angular-ui-bootstrap': ['angular'],
+    'angular-ngStorage': ['angular'],
     'angular': {exports: 'angular', deps: ['jquery']},
     'jquery': {exports: 'jQuery'},
     'json': ['text'],
@@ -56,14 +58,15 @@ requirejs([
   'angularAMD',
   'angular',
   'underscore',
-  'json!views/cms/routes.json',
-  'json!views/cms/actions.json',
-  'json!views/cms/translate/en.json',
-  'json!views/cms/translate/zh.json',
+  'json!modules/cms/routes.json',
+  'json!modules/cms/actions.json',
+  'json!modules/cms/translate/en.json',
+  'json!modules/cms/translate/zh.json',
   'voyageone-angular-com',
   'voyageone-com',
   'angular-block-ui',
-  'angular-ui-bootstrap'
+  'angular-ui-bootstrap',
+  'angular-ngStorage'
 ], function (angularAMD, angular, _, routes, actions, enTranslate, zhTranslate) {
   var mainApp = angular.module('voyageone.cms', [
         'ngRoute',
@@ -73,7 +76,8 @@ requirejs([
         'pascalprecht.translate',
         'blockUI',
         'voyageone.angular',
-        'ui.bootstrap'
+        'ui.bootstrap',
+        'ngStorage'
       ])
 
       // define
@@ -113,44 +117,106 @@ requirejs([
 
       // main controller.
       .controller('headerCtrl', fnHeaderCtrl)
-      .controller('appCtrl', fnAppCtrl);
+      .controller('appCtrl', fnAppCtrl)
+      .controller('breadcrumbsCtrl', fnBreadcrumbsCtrl);
 
-  fnAppService.$inject = ['$q', 'ajaxService', 'actions'];
-  function fnAppService($q, ajaxService, actions) {
+  //fnAppService.$inject = ['$q', 'ajaxService', 'cookieService', 'translateService', 'actions'];
+  function fnAppService($q, ajaxService, cookieService, translateService, actions) {
 
-    this.getSystemInfo = fnGetSystemInfo;
-    this.search = fnSearch;
+    this.getMenuHeaderInfo = fnGetMenuHeaderInfo;
+    this.setMenu = fnSetMenu;
+    this.clearChannel = fnClearChannel;
+    this.setLanguage = fnSetLanguage;
+    this.logout = fnLogout;
+    this.getCategoryInfo = fnGetCategoryInfo;
 
     /**
      * get the system info.
      * includes: systemMenu, languages,
      * @returns {*}
        */
-    function fnGetSystemInfo () {
+    function fnGetMenuHeaderInfo () {
       var defer = $q.defer ();
-      ajaxService.post(actions.app.common.getSystemInfo)
-          .then(function (response) {
-            defer.resolve (response.data);
+      ajaxService.post(actions.core.home.menu.getMenuHeaderInfo)
+          .then(function (data) {
+            //var data = response.data;
+            var languageType = _.isEmpty(cookieService.language()) ? translateService.getBrowserLanguage() : cookieService.language();
+            _.forEach(data.languageList, function (language) {
+
+              if (_.isEqual(languageType, language.add_name2)) {
+                data.userInfo.language = language.add_name1;
+              }
+            });
+            // TODO
+            data.userInfo.application = 'CMS';//cookieService.application();
+            defer.resolve (data);
           });
       return defer.promise;
     }
 
     /**
-     * search by input value.
+     * set menu.
+     * @param menu
      * @returns {*}
        */
-    function fnSearch () {
+    function fnSetMenu (menuTitle) {
       var defer = $q.defer ();
+      cookieService.application (menuTitle);
+      defer.resolve(menuTitle.toLocaleLowerCase());
+      return defer.promise;
+    }
 
-      ajaxService.post(actions.app.getSystemMenus)
-          .then(function (response) {
-            defer.resolve (response.data);
+    /**
+     * clear selected channel
+     * @returns {*}
+     */
+    function fnClearChannel () {
+      var defer = $q.defer ();
+      cookieService.channel ("");
+      defer.resolve();
+      return defer.promise;
+    }
+
+    /**
+     * set language.
+     * @param language
+     * @returns {*}
+       */
+    function fnSetLanguage (language) {
+      var defer = $q.defer ();
+      cookieService.language(language.add_name1);
+      translateService.setLanguage(language.add_name2);
+      defer.resolve(language.add_name1);
+      return defer.promise;
+    }
+
+    /**
+     * clear all cookie.
+     * @returns {*}
+       */
+    function fnLogout() {
+      var defer = $q.defer ();
+      cookieService.removeAll();
+      defer.resolve();
+      return defer.promise;
+    }
+
+    /**
+     * get categoryList.
+     * @param categoryType
+     * @returns {*}
+       */
+    function fnGetCategoryInfo () {
+      var defer = $q.defer ();
+      ajaxService.post(actions.cms.home.menu.getCategoryInfo)
+          .then(function (data) {
+            defer.resolve(data);
           });
       return defer.promise;
     }
   }
 
-  fnAppCtrl.$inject = ['$scope', '$window', 'translateService'];
+  //fnAppCtrl.$inject = ['$scope', '$window', 'translateService'];
   function fnAppCtrl ($scope, $window, translateService) {
 
     var isIE = !!navigator.userAgent.match(/MSIE/i);
@@ -223,60 +289,100 @@ requirejs([
     }
   }
 
-  fnHeaderCtrl.$inject = ['$scope', '$window', 'appService', 'cookieService'];
-  function fnHeaderCtrl($scope, $window, appService, cookieService) {
+  //fnHeaderCtrl.$inject = ['$scope', '$window', '$location', 'appService'];
+  function fnHeaderCtrl($scope, $window, $location, appService) {
     var vm = this;
     vm.menuList = {};
     vm.languageList = {};
-    vm.currentSystem = "Sears";//cookieService.channel();
-    vm.currentMenu = "CMS";//cookieService.menu();
-    vm.currentLanguage = "中文";//cookieService.language();
-    vm.currentUserName = "Edward.lin";//cookieService.name();
+    vm.userInfo = {};
+    vm.searchValue = "";
 
     $scope.initialize = fnInitial;
+    $scope.selectChannel = fnSelectChannel;
     $scope.selectMenu = fnSelectMenu;
+    $scope.selectLanguage = fnSelectLanguage;
     $scope.search = fnSearch;
-    $scope.selectLanguage = fnSelectlanguage;
     $scope.logout = fnLogout;
 
     function fnInitial () {
-
-      appService.getSystemInfo().then(function (data) {
-        vm.menuList = data.menus;
-        vm.languageList = data.languages;
+      appService.getMenuHeaderInfo().then(function (data) {
+        vm.menuList = data.menuList;
+        vm.languageList = data.languageList;
+        vm.userInfo = data.userInfo;
       });
     }
 
     /**
-     * change selected menu.
+     * go to channel selected page.
+     */
+    function fnSelectChannel () {
+      appService.clearChannel().then(function () {
+        $window.location = routes.channel.templateUrl;
+      });
+    }
+
+    /**
+     * change to selected menu, and go to new system.
      * @param menu
        */
     function fnSelectMenu(menu) {
-      cookieService.menu (menu.menuName);
-      $window.location = menu.menuUrl;
+      appService.setMenu(menu.menuTitle).then(function (application) {
+        $window.location = routes.views.url + application + routes.views.templateUrl;
+      });
     }
 
     /**
      * search by input value.
      * @param value
        */
-    function fnSearch (value) {
-      appService.search (value);
+    function fnSearch () {
+      $location.path(routes.search.complex.url + vm.searchValue);
     }
 
     /**
-     * change selected language.
+     * change to selected language.
      * @param language
        */
-    function fnSelectlanguage (language) {
-      cookieService.language(language.name);
+    function fnSelectLanguage (language) {
+      appService.setLanguage(language).then(function (data) {
+        vm.userInfo.language = data;
+      })
     }
 
-      /**
-       * logout.
-       */
+    /**
+     * logout.
+     */
     function fnLogout () {
-      // todo
+      appService.logout().then(function () {
+        $window.location = routes.login.templateUrl;
+      })
+    }
+  }
+
+  function fnBreadcrumbsCtrl($scope, $localStorage, $location, appService, routes) {
+    var vm = this;
+    vm.cid = "";
+    vm.navigation = {};
+
+    $scope.initialize = fnInitialize;
+    $scope.selectCategory = fnSelectCategory;
+
+    /**
+     * initialize
+     */
+    function fnInitialize () {
+      appService.getCategoryInfo().then(function (data) {
+        vm.navigation = data;
+        vm.navigation.categoryType = "TM";
+      });
+    }
+
+    /**
+     * change to other category page.
+     * @param cid
+       */
+    function fnSelectCategory (cid) {
+      $location.path(routes.category.category.url + cid);
     }
   }
 

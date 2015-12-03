@@ -1,0 +1,16 @@
+{
+  "core": {
+    "home": {
+      "menu": {
+        "getMenuHeaderInfo": "/core/home/menu/getMenuHeaderInfo"
+      }
+    }
+  },
+  "cms": {
+    "home": {
+     "menu": {
+       "getCategoryInfo": "/cms/home/menu/getCategoryInfo"
+     }
+    }
+  }
+}
