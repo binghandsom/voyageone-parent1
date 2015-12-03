@@ -1066,10 +1066,6 @@ public class CmsGetSuperFeedService extends BaseTaskService {
                 updatefields.put(CmsConstants.FEED_IO_UPDATEFIELDS_LONG_DESCRIPTION, productBean.getPe_long_description());
             }
 
-            if (!productBean.getCps_cn_price_final_rmb().equals(productBeans_full.get(0).getCps_cn_price_final_rmb())) {
-                updatefields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE_FINAL_RMB, productBean.getCps_cn_price_final_rmb());
-            }
-
             // image
             String image_url = "";
             for (int j = 0; j < productBean.getImages().size(); j++) {
