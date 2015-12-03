@@ -1,0 +1,7 @@
+{
+  "app": {
+    "common": {
+      "getSystemInfo": "/core/common/getSystemInfo"
+    }
+  }
+}
