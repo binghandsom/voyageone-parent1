@@ -40,7 +40,7 @@ public abstract class BaseMongoDao {
     }
 
     public <T> List<T> select(final String strQuery) {
-        return mongoTemplate.find(strQuery, (Class<T>) entityClass, collectionName);
+        return mongoTemplate.find(strQuery, null, (Class<T>) entityClass, collectionName);
     }
 
     public <T> T selectById(String id) {
@@ -64,7 +64,7 @@ public abstract class BaseMongoDao {
 
     public <T> List<T> select(final String strQuery, String channelId) {
         String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
-        return mongoTemplate.find(strQuery, (Class<T>) entityClass, collectionName);
+        return mongoTemplate.find(strQuery, null, (Class<T>) entityClass, collectionName);
     }
 
     public <T> T selectById(String id, String channelId) {

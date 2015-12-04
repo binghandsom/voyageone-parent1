@@ -35,7 +35,7 @@ public class BaseJomgoTemplate extends BaseJomgoPartTemplate {
 
     public <T> List<T> find(final String strQuery, Class<T> entityClass) {
         String collectionName = getCollectionName(entityClass);
-        return find(strQuery, entityClass, collectionName);
+        return find(strQuery, null, entityClass, collectionName);
     }
 
     public <T> T findById(String id, Class<T> entityClass) {

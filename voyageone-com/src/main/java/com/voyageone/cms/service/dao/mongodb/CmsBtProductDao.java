@@ -4,6 +4,7 @@ import com.voyageone.base.dao.mongodb.BaseMongoDao;
 import com.voyageone.cms.service.model.CmsBtFeedInfoModel;
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
+import net.minidev.json.JSONObject;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
@@ -26,6 +27,20 @@ public class CmsBtProductDao extends BaseMongoDao {
     public CmsBtProductModel selectProductById(String channelId, int prodId) {
         String query = "{\"prodId\":" + prodId + "}";
         return selectOneWithQuery(query, channelId);
+    }
+
+    /**
+     * 获取商品 根据ID获
+     * @param channelId
+     * @param prodId
+     * @return
+     */
+    public JSONObject selectProductByIdWithJson(String channelId, int prodId) {
+        String query = "{\"prodId\":" + prodId + "}";
+        String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
+        String projection = "{catIdPath:1, channelId:1}";
+        List<JSONObject>  result = mongoTemplate.find(query, projection, collectionName);
+        return result.get(0);
     }
 
     /**

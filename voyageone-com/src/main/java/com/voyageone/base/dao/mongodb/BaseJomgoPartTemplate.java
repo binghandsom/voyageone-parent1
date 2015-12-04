@@ -114,19 +114,35 @@ public class BaseJomgoPartTemplate {
     }
 
     public <T> List<T> findAll(Class<T> entityClass, String collectionName) {
-        return find("", entityClass, collectionName);
+        return find("", null, entityClass, collectionName);
     }
 
     public List<JSONObject> find(final String strQuery, String collectionName) {
-        return find(strQuery, JSONObject.class, collectionName);
+        return find(strQuery, null, JSONObject.class, collectionName);
+    }
+
+    public List<JSONObject> find(final String strQuery, String projection, String collectionName) {
+        return find(strQuery, projection, JSONObject.class, collectionName);
     }
 
     public <T> List<T> find(final String strQuery, Class<T> entityClass, String collectionName) {
+        return find(strQuery, null, entityClass, collectionName);
+    }
+
+    public <T> List<T> find(final String strQuery, String projection, Class<T> entityClass, String collectionName) {
         List<T> result;
         if (strQuery == null) {
-            result = IteratorUtils.toList(getCollection(collectionName).find().as(entityClass));
+            Find find = getCollection(collectionName).find();
+            if (projection != null) {
+                find = find.projection(projection);
+            }
+            result = IteratorUtils.toList(find.as(entityClass));
         } else {
-            result = IteratorUtils.toList(getCollection(collectionName).find(strQuery).as(entityClass));
+            Find find = getCollection(collectionName).find(strQuery);
+            if (projection != null) {
+                find = find.projection(projection);
+            }
+            result = IteratorUtils.toList(find.as(entityClass));
         }
         return result;
     }
