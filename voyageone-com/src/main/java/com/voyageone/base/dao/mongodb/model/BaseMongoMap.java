@@ -4,19 +4,19 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class BaseMongoMap<K,V> extends LinkedHashMap<K,V> implements Map<K,V> {
-    public V getAttribute(String key) {
+    public V getAttribute(K key) {
         if (key == null) {
             return null;
         } else {
-            return  super.get((K)key);
+            return super.get(key);
         }
     }
 
-    public void setAttribute(String key, Object value) {
+    public void setAttribute(K key, V value) {
         if (value == null) {
             super.remove(key);
         } else {
-            super.put((K)key, (V)value);
+            super.put(key, value);
         }
     }
 }
