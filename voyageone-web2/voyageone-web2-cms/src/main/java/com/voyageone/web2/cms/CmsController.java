@@ -13,7 +13,12 @@ public abstract class CmsController extends BaseController{
      * 获取CMS相关session信息.
      */
     public CmsSessionBean getCmsSession() {
-        return (CmsSessionBean) getSession().getAttribute(CmsConstants.SESSION_CMS);
+        CmsSessionBean cmsSessionBean = (CmsSessionBean)getSession().getAttribute(CmsConstants.SESSION_CMS);
+        if(cmsSessionBean == null) {
+            cmsSessionBean = new CmsSessionBean();
+            setCmsSession(cmsSessionBean);
+        }
+        return cmsSessionBean;
     }
 
     /**

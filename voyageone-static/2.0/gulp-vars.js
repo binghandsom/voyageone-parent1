@@ -30,9 +30,9 @@ var build = {
     appCss: {
       src: [
         'develop/static/css/twitter-bootstrap/local/bootstrap.css',
-        'develop/static/css/animate.css',
-        'develop/static/css/font-awesome.css',
-        'develop/static/css/simple-line-icons.css',
+        'develop/static/css/assets/animate.css',
+        'develop/static/css/assets/font-awesome.css',
+        'develop/static/css/assets/simple-line-icons.css',
         'develop/static/css/font.css',
         'develop/static/css/app.css'
       ],

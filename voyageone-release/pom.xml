@@ -16,23 +16,8 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.voyageone</groupId>
-			<artifactId>voyageone-oms</artifactId>
-			<version>${voyageone.web.oms.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.voyageone</groupId>
-			<artifactId>voyageone-wms</artifactId>
-			<version>${voyageone.web.wms.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.voyageone</groupId>
-			<artifactId>voyageone-cms</artifactId>
-			<version>${voyageone.web.cms.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.voyageone</groupId>
-			<artifactId>voyageone-ims</artifactId>
-			<version>${voyageone.web.ims.version}</version>
+			<artifactId>voyageone-web2-cms</artifactId>
+			<version>${voyageone.web2.cms.version}</version>
 		</dependency>
 	</dependencies>
 	<build>

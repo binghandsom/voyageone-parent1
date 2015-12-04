@@ -12,4 +12,9 @@ public interface CmsConstants extends BaseConstants{
      * Session 内CMS信息存放的 Key
      */
     String SESSION_CMS = "voyageone.session.cms";
+
+    /**
+     * 默认的 CategoryType值 : Feed
+     */
+    String DEFAULT_CATEGORY_TYPE = "Feed";
 }

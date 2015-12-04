@@ -31,11 +31,11 @@ require([
     'voyageone.angular'
   ]).controller('channelController', function($scope, ajaxService) {
     ajaxService.post('/core/access/user/getChannel').then(function(res) {
-      $scope.channels = res.result.data;
+      $scope.channels = res.data;
     }, function(res) { alert(res.message || res.code); });
     $scope.choose = function(channel, app) {
       ajaxService.post('/core/access/user/selectChannel', {channelId: channel.channelId}).then(function(res) {
-        location.href = 'views/' + app + '/app.html';
+        location.href = 'modules/' + app + '/app.html';
       }, function(res) { alert(res.message || res.code); })
     };
   });
