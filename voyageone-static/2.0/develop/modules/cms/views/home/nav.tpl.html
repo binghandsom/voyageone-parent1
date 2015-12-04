@@ -1,20 +1,21 @@
 <!-- list -->
 <ul class="nav">
     <!-- CMS 类目管理 -->
-    <li ng-class="{active:$state.includes('ims.inventory''ims.new_inventory')}">
+    <!--<li ng-class="{active:$state.includes('ims.inventory''ims.new_inventory')}"> TODO 暂时做不了-->
+    <li>
         <a class="auto" ui-sref="cms.category">
       <span class="pull-right text-muted">
         <i class="fa fa-fw fa-angle-right text"></i>
         <i class="fa fa-fw fa-angle-down text-active"></i>
       </span>
             <i class="glyphicon glyphicon-th-list icon text-vo"></i>
-            <span class="">类目管理</span>
+            <span class="" translate="TXT_CATEGORY_MANAGER"></span>
         </a>
 
         <ul class="nav nav-sub dk">
             <li class="nav-sub-header">
                 <a href>
-                    <span>类目管理</span>
+                    <span translate="TXT_CATEGORY_MANAGER"></span>
                 </a>
             </li>
             <!--Bracelets-->
@@ -200,907 +201,116 @@
 
                 </ul>
             </li>
-            <!--第一级-->
-            <li ui-sref-active="active">
-                <a class="auto">
-      <span class="pull-right text-muted">
-        <i class="fa fa-fw fa-angle-right text"></i>
-        <i class="fa fa-fw fa-angle-down text-active"></i>
-      </span>
-                    <i class="fa fa-plus icon text-vo"></i>
-                    <span>彩妆/香水/美妆工具</span>
-                </a>
-                <ul class="nav nav-sub dk" style="padding-left:10px">
-                    <li ui-sref-active="active">
-                        <a ui-sref="cms.category">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>粉底液/膏</span>
-                        </a>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="#">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>隔离/妆前/打底</span>
-                        </a>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="#">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>睫毛膏/睫毛增长液</span>
-                        </a>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="#">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>眉笔/眉粉/眉膏</span>
-                        </a>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="#">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>其他美容工具</span>
-                        </a>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="#">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>指甲油/美甲产品（新）</span>
-                        </a>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="#">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>男士彩妆（新）</span>
-                        </a>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="#">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>指甲油/美甲产品（新）</span>
-                        </a>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="#">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>美甲工具</span>
-                        </a>
-                    </li>
-
-                </ul>
-            </li>
-
-            <!--第一级-->
-            <li ui-sref-active="active">
-                <a class="auto">
-      <span class="pull-right text-muted">
-        <i class="fa fa-fw fa-angle-right text"></i>
-        <i class="fa fa-fw fa-angle-down text-active"></i>
-      </span>
-                    <i class="fa fa-plus icon text-vo"></i>
-                    <span>床上用品</span>
-                </a>
-                <!--第二级-->
-                <ul class="nav nav-sub dk" style="padding-left:10px">
-                    <li ui-sref-active="active">
-                        <a ui-sref="cms.category">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>床品定制/定做(新)</span>
-                        </a>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="#">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>婴童床品(新)</span>
-                        </a>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="#">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>休闲毯/毛毯/绒毯</span>
-                        </a>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="#">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>枕头/枕芯/保健枕/颈椎枕</span>
-                        </a>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="#">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>床品定制/定做(新)</span>
-                        </a>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="#">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>凉席/竹席/藤席/草席/牛皮席</span>
-                        </a>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="#">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>床垫/床褥/床护垫/榻榻米床垫</span>
-                        </a>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="#">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>床品套件/四件套/多件套</span>
-                        </a>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="#">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>被子/蚕丝被/羽绒被/棉被</span>
-                        </a>
-                    </li>
-
-                </ul>
-            </li>
-
-
-            <!--第一级-->
-            <li ui-sref-active="active">
-                <a class="auto">
-      <span class="pull-right text-muted">
-        <i class="fa fa-fw fa-angle-right text"></i>
-        <i class="fa fa-fw fa-angle-down text-active"></i>
-      </span>
-                    <i class="fa fa-plus icon text-vo"></i>
-                    <span>服饰配件/皮带/帽子/围巾</span>
-                </a>
-                <!--第二级-->
-                <ul class="nav nav-sub dk" style="padding-left:10px">
-                    <li ui-sref-active="active">
-                        <a ui-sref="cms.category">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>耳套</span>
-                        </a>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="#">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>婚纱礼服配件</span>
-                        </a>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="#">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>口袋巾</span>
-                        </a>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="#">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>领部配件</span>
-                        </a>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="#">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>领带夹</span>
-                        </a>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="#">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>帽子</span>
-                        </a>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="#">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>其他配件</span>
-                        </a>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="#">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>手帕</span>
-                        </a>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="#">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>手套</span>
-                        </a>
-                    </li>
-
-                    <li ui-sref-active="active">
-                        <a ui-sref="#">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>袖扣</span>
-                        </a>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="#">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>围巾/丝巾/披肩</span>
-                        </a>
-                    </li>
-
-                    <li ui-sref-active="active">
-                        <a ui-sref="#">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>腰带/皮带/腰链</span>
-                        </a>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="#">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>制衣面料</span>
-                        </a>
-                    </li>
-
-                    <li ui-sref-active="active">
-                        <a ui-sref="#">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>鞋包/皮带配件</span>
-                        </a>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="#">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>围巾/手套/帽子套件</span>
-                        </a>
-                    </li>
-
-                    <li ui-sref-active="active">
-                        <a ui-sref="#">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>运动首饰</span>
-                        </a>
-                    </li>
-
-                </ul>
-            </li>
-
-
-            <!--第一级-->
-            <li ui-sref-active="active">
-                <a class="auto">
-      <span class="pull-right text-muted">
-        <i class="fa fa-fw fa-angle-right text"></i>
-        <i class="fa fa-fw fa-angle-down text-active"></i>
-      </span>
-                    <i class="fa fa-plus icon text-vo"></i>
-                    <span>户外/登山/野营/旅行用品</span>
-                </a>
-                <!--第二级-->
-                <ul class="nav nav-sub dk" style="padding-left:10px">
-                    <li ui-sref-active="active">
-                        <a ui-sref="cms.category">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>炉具/餐具/野餐烧烤用品</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-            <!--第一级-->
-            <li ui-sref-active="active">
-                <a class="auto">
-      <span class="pull-right text-muted">
-        <i class="fa fa-fw fa-angle-right text"></i>
-        <i class="fa fa-fw fa-angle-down text-active"></i>
-      </span>
-                    <i class="fa fa-plus icon text-vo"></i>
-                    <span>居家日用</span>
-                </a>
-                <!--第二级-->
-                <ul class="nav nav-sub dk" style="padding-left:10px">
-                    <li ui-sref-active="active">
-                        <a ui-sref="cms.category">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>保暖贴/怀炉/保暖用品</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-            <!--第一级-->
-            <li ui-sref-active="active">
-                <a class="auto">
-      <span class="pull-right text-muted">
-        <i class="fa fa-fw fa-angle-right text"></i>
-        <i class="fa fa-fw fa-angle-down text-active"></i>
-      </span>
-                    <i class="fa fa-plus icon text-vo"></i>
-                    <span>流行男鞋</span>
-                </a>
-                <!--第二级-->
-                <ul class="nav nav-sub dk" style="padding-left:10px">
-                    <li ui-sref-active="active">
-                        <a ui-sref="cms.category">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>靴子</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-            <!--第一级-->
-            <li ui-sref-active="active">
-                <a class="auto">
-      <span class="pull-right text-muted">
-        <i class="fa fa-fw fa-angle-right text"></i>
-        <i class="fa fa-fw fa-angle-down text-active"></i>
-      </span>
-                    <i class="fa fa-plus icon text-vo"></i>
-                    <span>美容护肤/美体/精油</span>
-                </a>
-                <!--第二级-->
-                <ul class="nav nav-sub dk" style="padding-left:10px">
-                    <li ui-sref-active="active">
-                        <a ui-sref="cms.category">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>化妆水/爽肤水</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-            <!--第一级-->
-            <li ui-sref-active="active">
-                <a class="auto">
-      <span class="pull-right text-muted">
-        <i class="fa fa-fw fa-angle-right text"></i>
-        <i class="fa fa-fw fa-angle-down text-active"></i>
-      </span>
-                    <i class="fa fa-plus icon text-vo"></i>
-                    <span>流行男鞋</span>
-                </a>
-                <!--第二级-->
-                <ul class="nav nav-sub dk" style="padding-left:10px">
-                    <li ui-sref-active="active">
-                        <a ui-sref="cms.category">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>靴子</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-            <!--第一级-->
-            <li ui-sref-active="active">
-                <a class="auto">
-      <span class="pull-right text-muted">
-        <i class="fa fa-fw fa-angle-right text"></i>
-        <i class="fa fa-fw fa-angle-down text-active"></i>
-      </span>
-                    <i class="fa fa-plus icon text-vo"></i>
-                    <span>男装</span>
-                </a>
-                <!--第二级-->
-                <ul class="nav nav-sub dk" style="padding-left:10px">
-                    <li ui-sref-active="active">
-                        <a ui-sref="cms.category">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>针织衫/毛衣</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-            <!--第一级-->
-            <li ui-sref-active="active">
-                <a class="auto">
-      <span class="pull-right text-muted">
-        <i class="fa fa-fw fa-angle-right text"></i>
-        <i class="fa fa-fw fa-angle-down text-active"></i>
-      </span>
-                    <i class="fa fa-plus icon text-vo"></i>
-                    <span>女/男士内衣/家居服</span>
-                </a>
-                <!--第二级-->
-                <ul class="nav nav-sub dk" style="padding-left:10px">
-                    <li ui-sref-active="active">
-                        <a ui-sref="cms.category">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>短袜/打底袜/丝袜/美腿袜</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-            <!--第一级-->
-            <li ui-sref-active="active">
-                <a class="auto">
-      <span class="pull-right text-muted">
-        <i class="fa fa-fw fa-angle-right text"></i>
-        <i class="fa fa-fw fa-angle-down text-active"></i>
-      </span>
-                    <i class="fa fa-plus icon text-vo"></i>
-                    <span>女鞋</span>
-                </a>
-                <!--第二级-->
-                <ul class="nav nav-sub dk" style="padding-left:10px">
-                    <li ui-sref-active="active">
-                        <a ui-sref="cms.category">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>高帮鞋</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-
-            <!--第一级-->
-            <li ui-sref-active="active">
-                <a class="auto">
-      <span class="pull-right text-muted">
-        <i class="fa fa-fw fa-angle-right text"></i>
-        <i class="fa fa-fw fa-angle-down text-active"></i>
-      </span>
-                    <i class="fa fa-plus icon text-vo"></i>
-                    <span>女装/女士精品</span>
-                </a>
-                <!--第二级-->
-                <ul class="nav nav-sub dk" style="padding-left:10px">
-                    <li ui-sref-active="active">
-                        <a ui-sref="cms.category">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>套装/学生校服/工作制服</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-
-            <!--第一级-->
-            <li ui-sref-active="active">
-                <a class="auto">
-      <span class="pull-right text-muted">
-        <i class="fa fa-fw fa-angle-right text"></i>
-        <i class="fa fa-fw fa-angle-down text-active"></i>
-      </span>
-                    <i class="fa fa-plus icon text-vo"></i>
-                    <span>其他</span>
-                </a>
-                <!--第二级-->
-                <ul class="nav nav-sub dk" style="padding-left:10px">
-                    <li ui-sref-active="active">
-                        <a ui-sref="cms.category">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>新品预览</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-
-            <!--第一级-->
-            <li ui-sref-active="active">
-                <a class="auto">
-      <span class="pull-right text-muted">
-        <i class="fa fa-fw fa-angle-right text"></i>
-        <i class="fa fa-fw fa-angle-down text-active"></i>
-      </span>
-                    <i class="fa fa-plus icon text-vo"></i>
-                    <span>流行首饰/时尚饰品新</span>
-                </a>
-                <!--第二级-->
-                <ul class="nav nav-sub dk" style="padding-left:10px">
-                    <li ui-sref-active="active">
-                        <a ui-sref="cms.category">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>佛珠/木质手串</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-
-            <!--第一级-->
-            <li ui-sref-active="active">
-                <a class="auto">
-      <span class="pull-right text-muted">
-        <i class="fa fa-fw fa-angle-right text"></i>
-        <i class="fa fa-fw fa-angle-down text-active"></i>
-      </span>
-                    <i class="fa fa-plus icon text-vo"></i>
-                    <span>手表</span>
-                </a>
-                <!--第二级-->
-                <ul class="nav nav-sub dk" style="padding-left:10px">
-                    <li ui-sref-active="active">
-                        <a ui-sref="cms.category">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>腕表</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-
-            <!--第一级-->
-            <li ui-sref-active="active">
-                <a class="auto">
-      <span class="pull-right text-muted">
-        <i class="fa fa-fw fa-angle-right text"></i>
-        <i class="fa fa-fw fa-angle-down text-active"></i>
-      </span>
-                    <i class="fa fa-plus icon text-vo"></i>
-                    <span>童鞋/婴儿鞋/亲子鞋</span>
-                </a>
-                <!--第二级-->
-                <ul class="nav nav-sub dk" style="padding-left:10px">
-                    <li ui-sref-active="active">
-                        <a ui-sref="cms.category">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>学步鞋/婴儿步前鞋</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-
-            <!--第一级-->
-            <li ui-sref-active="active">
-                <a class="auto">
-      <span class="pull-right text-muted">
-        <i class="fa fa-fw fa-angle-right text"></i>
-        <i class="fa fa-fw fa-angle-down text-active"></i>
-      </span>
-                    <i class="fa fa-plus icon text-vo"></i>
-                    <span>童装/婴儿装/亲子装</span>
-                </a>
-                <!--第二级-->
-                <ul class="nav nav-sub dk" style="padding-left:10px">
-                    <li ui-sref-active="active">
-                        <a ui-sref="cms.category">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>外套/夹克/大衣</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-
-            <!--第一级-->
-            <li ui-sref-active="active">
-                <a class="auto">
-      <span class="pull-right text-muted">
-        <i class="fa fa-fw fa-angle-right text"></i>
-        <i class="fa fa-fw fa-angle-down text-active"></i>
-      </span>
-                    <i class="fa fa-plus icon text-vo"></i>
-                    <span>箱包皮具/热销女包/男包</span>
-                </a>
-                <!--第二级-->
-                <ul class="nav nav-sub dk" style="padding-left:10px">
-                    <li ui-sref-active="active">
-                        <a ui-sref="cms.category">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>箱包相关配件</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-            <!--第一级-->
-            <li ui-sref-active="active">
-                <a class="auto">
-      <span class="pull-right text-muted">
-        <i class="fa fa-fw fa-angle-right text"></i>
-        <i class="fa fa-fw fa-angle-down text-active"></i>
-      </span>
-                    <i class="fa fa-plus icon text-vo"></i>
-                    <span>运动/瑜伽/健身/球迷用品</span>
-                </a>
-                <!--第二级-->
-                <ul class="nav nav-sub dk" style="padding-left:10px">
-                    <li ui-sref-active="active">
-                        <a ui-sref="cms.category">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>舞蹈/健美操/体操</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-            <!--第一级-->
-            <li ui-sref-active="active">
-                <a class="auto">
-      <span class="pull-right text-muted">
-        <i class="fa fa-fw fa-angle-right text"></i>
-        <i class="fa fa-fw fa-angle-down text-active"></i>
-      </span>
-                    <i class="fa fa-plus icon text-vo"></i>
-                    <span>运动包/户外包/配件</span>
-                </a>
-                <!--第二级-->
-                <ul class="nav nav-sub dk" style="padding-left:10px">
-                    <li ui-sref-active="active">
-                        <a ui-sref="cms.category">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>挎包/拎包/休闲包</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-            <!--第一级-->
-            <li ui-sref-active="active">
-                <a class="auto">
-      <span class="pull-right text-muted">
-        <i class="fa fa-fw fa-angle-right text"></i>
-        <i class="fa fa-fw fa-angle-down text-active"></i>
-      </span>
-                    <i class="fa fa-plus icon text-vo"></i>
-                    <span>运动服/休闲服装</span>
-                </a>
-                <!--第二级-->
-                <ul class="nav nav-sub dk" style="padding-left:10px">
-                    <li ui-sref-active="active">
-                        <a ui-sref="cms.category">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>运动茄克/外套</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-            <!--第一级-->
-            <li ui-sref-active="active">
-                <a class="auto">
-      <span class="pull-right text-muted">
-        <i class="fa fa-fw fa-angle-right text"></i>
-        <i class="fa fa-fw fa-angle-down text-active"></i>
-      </span>
-                    <i class="fa fa-plus icon text-vo"></i>
-                    <span>运动鞋new</span>
-                </a>
-                <!--第二级-->
-                <ul class="nav nav-sub dk" style="padding-left:10px">
-                    <li ui-sref-active="active">
-                        <a ui-sref="cms.category">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>运动沙滩鞋/凉鞋</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-            <!--第一级-->
-            <li ui-sref-active="active">
-                <a class="auto">
-      <span class="pull-right text-muted">
-        <i class="fa fa-fw fa-angle-right text"></i>
-        <i class="fa fa-fw fa-angle-down text-active"></i>
-      </span>
-                    <i class="fa fa-plus icon text-vo"></i>
-                    <span>珠宝/钻石/翡翠/黄金</span>
-                </a>
-                <!--第二级-->
-                <ul class="nav nav-sub dk" style="padding-left:10px">
-                    <li ui-sref-active="active">
-                        <a ui-sref="cms.category">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>专柜swarovski水晶（新）</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-            <!--第一级-->
-            <li ui-sref-active="active">
-                <a class="auto">
-      <span class="pull-right text-muted">
-        <i class="fa fa-fw fa-angle-right text"></i>
-        <i class="fa fa-fw fa-angle-down text-active"></i>
-      </span>
-                    <i class="fa fa-plus icon text-vo"></i>
-                    <span>自行车/骑行装备/零配件</span>
-                </a>
-                <!--第二级-->
-                <ul class="nav nav-sub dk" style="padding-left:10px">
-                    <li ui-sref-active="active">
-                        <a ui-sref="cms.category">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span>骑行服饰/骑行装备</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <!--charms--><!--
-      <li ui-sref-active="active">
-        <a ui-sref="#">
-          <i class="fa fa-minus icon text-vo"></i>
-          <span>手机、数码、京东通信</span>
-        </a>
-      </li>-->
 
         </ul>
     </li>
 
-    <!-- Promotion管理 -->
-    <li ng-class="{active:$state.includes('ims.category''ims.new_category')}">
+    <!-- Promotion管理 todo-->
+    <!--<li>
         <a class="auto" ui-sref="cms.promotion">
       <span class="pull-right text-muted">
         <i class="fa fa-fw fa-angle-right text"></i>
         <i class="fa fa-fw fa-angle-down text-active"></i>
       </span>
             <i class="glyphicon glyphicon-th icon text-vo"></i>
-            <span class="">Promotion管理</span>
+            <span class="" translate="TXT_PROMOTION_MANAGER"></span>
         </a>
 
         <ul class="nav nav-sub dk">
             <li class="nav-sub-header">
                 <a href>
-                    <span>Promotion管理</span>
+                    <span translate="TXT_PROMOTION_MANAGER"></span>
                 </a>
             </li>
             <li ui-sref-active="active">
                 <a ui-sref="cms.new_promotion">
                     <i class="glyphicon glyphicon-minus icon text-vo"></i>
-                    <span>新建Promotion</span>
+                    <span translate="TXT_PROMOTION_NEW"></span>
                 </a>
             </li>
             <li ui-sref-active="active">
                 <a ui-sref="cms.new_promotion">
                     <i class="glyphicon glyphicon-minus icon text-vo"></i>
-                    <span>Promotion一览</span>
+                    <span translate="TXT_PROMOTION_LIST"></span>
                 </a>
             </li>
             <li ui-sref-active="active">
                 <a ui-sref="#">
                     <i class="glyphicon glyphicon-minus icon text-vo"></i>
-                    <span>库存隔离任务一览</span>
+                    <span translate="TXT_INSULATE_TASK_LIST"></span>
                 </a>
             </li>
             <li ui-sref-active="active">
                 <a ui-sref="#">
                     <i class="glyphicon glyphicon-minus icon text-vo"></i>
-                    <span>价格披露任务一览</span>
+                    <span translate="TXT_DISCLOSURE_PRICE_LIST"></span>
                 </a>
             </li>
 
         </ul>
-    </li>
-    <!-- 翻译管理 -->
-    <li ng-class="{active:$state.includes('ims.category''ims.new_category')}">
+    </li>-->
+
+    <!-- 翻译管理 todo-->
+    <!--<li>
         <a class="auto">
       <span class="pull-right text-muted">
         <i class="fa fa-fw fa-angle-right text"></i>
         <i class="fa fa-fw fa-angle-down text-active"></i>
       </span>
             <i class="glyphicon glyphicon-education icon text-vo"></i>
-            <span class="">翻译管理</span>
+            <span class="" translate="TXT_TRANSLATION_MANAGER"></span>
         </a>
 
         <ul class="nav nav-sub dk">
             <li class="nav-sub-header">
                 <a href>
-                    <span>翻译管理</span>
+                    <span translate="TXT_TRANSLATION_MANAGER"></span>
                 </a>
             </li>
             <li ui-sref-active="active">
                 <a ui-sref="#">
                     <i class="fa fa-minus icon text-vo"></i>
-                    <span>作业统计</span>
+                    <span translate="TXT_TRANSLATION_JOB_COUNT"></span>
                 </a>
             </li>
             <li ui-sref-active="active">
                 <a ui-sref="#">
                     <i class="fa fa-minus icon text-vo"></i>
-                    <span>当前任务</span>
+                    <span translate="TXT_TRANSLATION_CURRENT_JOB"></span>
                 </a>
             </li>
         </ul>
-    </li>
-
-    <!-- 库存隔理 -->
-    <li>
-        <a ui-sref="#">
-            <i class="glyphicon glyphicon-screenshot icon text-vo"></i>
-            <span>库存隔理</span>
-        </a>
-        <ul class="nav nav-sub dk"><li class="nav-sub-header"><a href><span>Popup Setting</span></a></li></ul>
-    </li>
-
-
+    </li>-->
 
     <!-- 高级检索 -->
-    <li ng-class="{active:$state.includes('ims.category''ims.new_category')}">
-        <a class="auto">
-      <span class="pull-right text-muted">
-        <i class="fa fa-fw fa-angle-right text"></i>
-        <i class="fa fa-fw fa-angle-down text-active"></i>
-      </span>
+    <li>
+        <a href="#/search/advance">
             <i class="glyphicon glyphicon-search icon text-vo"></i>
-            <span class="">高级检索</span>
+            <span translate="TXT_SEARCH_ADVANCE"></span>
         </a>
-
-        <ul class="nav nav-sub dk">
-            <li class="nav-sub-header">
-                <a href>
-                    <span>高级检索</span>
-                </a>
-            </li>
-            <li ui-sref-active="active">
-                <a ui-sref="#">
-                    <i class="fa fa-minus icon text-vo"></i>
-                    <span>混合查询</span>
-                </a>
-            </li>
-            <li ui-sref-active="active">
-                <a ui-sref="#">
-                    <i class="fa fa-minus icon text-vo"></i>
-                    <span>快速查询</span>
-                </a>
-            </li>
-            <li ui-sref-active="active">
-                <a ui-sref="#">
-                    <i class="fa fa-minus icon text-vo"></i>
-                    <span>模糊查询</span>
-                </a>
-            </li>
-        </ul>
+        <ul class="nav nav-sub dk"><li class="nav-sub-header"><a href="#/search/advance"><span translate="TXT_SEARCH_ADVANCE"></span></a></li></ul>
     </li>
 
     <!-- 设定 -->
-    <li ng-class="{active:$state.includes('ims.category''ims.new_category')}">
-        <a class="auto">
-      <span class="pull-right text-muted">
-        <i class="fa fa-fw fa-angle-right text"></i>
-        <i class="fa fa-fw fa-angle-down text-active"></i>
-      </span>
+    <li>
+        <a ui-sref="#/setting">
             <i class="glyphicon glyphicon-cog icon text-vo"></i>
-            <span class="">设定</span>
+            <span translate="TXT_SETTING"></span>
         </a>
-
-        <ul class="nav nav-sub dk">
-            <li class="nav-sub-header">
-                <a href>
-                    <span>设定</span>
-                </a>
-            </li>
-            <li ui-sref-active="active">
-                <a ui-sref="#">
-                    <i class="fa fa-minus icon text-vo"></i>
-                    <span>类目匹配</span>
-                </a>
-            </li>
-            <li ui-sref-active="active">
-                <a ui-sref="#">
-                    <i class="fa fa-minus icon text-vo"></i>
-                    <span>类目属性匹配</span>
-                </a>
-            </li>
-            <li ui-sref-active="active">
-                <a ui-sref="#">
-                    <i class="fa fa-minus icon text-vo"></i>
-                    <span>商品属性匹配</span>
-                </a>
-            </li>
-            <li ui-sref-active="active">
-                <a ui-sref="#">
-                    <i class="fa fa-minus icon text-vo"></i>
-                    <span>默认设定</span>
-                </a>
-            </li>
-            <li ui-sref-active="active">
-                <a ui-sref="#">
-                    <i class="fa fa-minus icon text-vo"></i>
-                    <span>类目申请</span>
-                </a>
-            </li>
-        </ul>
+        <ul class="nav nav-sub dk"><li class="nav-sub-header"><a href="#/setting"><span translate="TXT_SETTING"></span></a></li></ul>
     </li>
 
     <!--产品管理 -->
-    <li>
+    <!--<li>
         <a ui-sref="#">
             <i class="fa fa-cubes icon text-vo"></i>
             <span>产品管理</span>
         </a>
         <ul class="nav nav-sub dk"><li class="nav-sub-header"><a href><span>Popup Setting</span></a></li></ul>
-    </li>
+    </li>-->
 
     <!-- 系统管理 -->
-    <li ng-class="{active:$state.includes('ims.category''ims.new_category')}">
+    <!--<li ng-class="{active:$state.includes('ims.category''ims.new_category')}">
         <a class="auto">
       <span class="pull-right text-muted">
         <i class="fa fa-fw fa-angle-right text"></i>
@@ -1153,7 +363,7 @@
                 </a>
             </li>
         </ul>
-    </li>
+    </li>-->
 
 
 
@@ -1176,4 +386,29 @@
 
 </ul>
 <!-- / list -->
+
+<!-- 璁剧疆Category鑿滃崟閫夐」 -->
+<!--<script id="categoryMenu" type="text/ng-template">-->
+    <!--<li ui-sref-active="active" ng-repeat="item in categoryMenu">-->
+        <!--<a href ng-click="goAdvancePage(item.cid)">-->
+            <!--<i class="fa fa-plus icon text-vo"></i>-->
+            <!--<span ng-bind="item.name"></span>-->
+        <!--</a>-->
+        <!--<ul class="nav nav-sub dk" style="padding-left:10px" ng-if="item.child.length" -->
+            <!--ng-include="'categoryMenu'" ng-init="categoryMenu = item.child">-->
+        <!--</ul>-->
+    <!--</li>-->
+    <!---->
+    <!---->
+    <!---->
+    <!---->
+    <!--<li class="active" ng-repeat="item in categoryMenu" ng-class="{'has-sub':item.children.length}">-->
+        <!--<a href="" ng-click="goAdvancePage(item.cid)">-->
+            <!--<span class="pull-right text-muted" ng-if="item.child.length"><i class="fa fa-fw fa-angle-right text"></i></span>-->
+            <!--<span ng-bind="item.name"></span>-->
+        <!--</a>-->
+        <!--<ul ng-if="item.child.length" ng-include="'categoryMenu'" ng-init="categoryMenu = item.child"></ul>-->
+    <!--</li>-->
+<!--</script>-->
+<!--end-->
 

@@ -16,27 +16,22 @@
     "templateUrl": "views/category/product.tpl.html",
     "controllerUrl": "modules/cms/views/category/product.ctl"
   },
-  "search.complex": {
+  "search_complex": {
     "url": "search/complex/",
     "hash": "search/complex/:value",
     "templateUrl": "views/search/complex.tpl.html",
     "controllerUrl": "modules/cms/views/search/complex.ctl"
   },
-
-
-  "views": {
-    "url": "/views/",
-    "hash": "",
-    "templateUrl": "/app.html#/",
-    "controllerUrl": ""
+  "search_advance": {
+    "url": "search/advance/",
+    "hash": "search/advance",
+    "templateUrl": "views/search/advance.tpl.html",
+    "controllerUrl": "modules/cms/views/search/advance.ctl"
   },
-  "channel": {
-    "url": "",
-    "hash": "",
-    "templateUrl": "/channel.html#/",
-    "controllerUrl": ""
-  },
-  "login": {
-    "templateUrl": "/login.html#/"
+  "setting": {
+    "url": "setting/",
+    "hash": "setting",
+    "templateUrl": "views/setting/setting.tpl.html",
+    "controllerUrl": "modules/cms/views/setting/setting.ctl"
   }
 }

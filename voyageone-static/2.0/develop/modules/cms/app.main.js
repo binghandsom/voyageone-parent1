@@ -67,7 +67,7 @@ requirejs([
   'angular-block-ui',
   'angular-ui-bootstrap',
   'angular-ngStorage'
-], function (angularAMD, angular, _, routes, actions, enTranslate, zhTranslate) {
+], function (angularAMD, angular, _, cRoutes, cActions, enTranslate, zhTranslate) {
   var mainApp = angular.module('voyageone.cms', [
         'ngRoute',
         'ngAnimate',
@@ -81,9 +81,9 @@ requirejs([
       ])
 
       // define
-      .constant('actions', actions)
-      .constant('routes', routes)
-      .constant('languageType', {
+      .constant('cActions', cActions)
+      .constant('cRoutes', cRoutes)
+      .constant('cLanguageType', {
         en: {
           name: "en",
           value: enTranslate
@@ -93,10 +93,22 @@ requirejs([
           value: zhTranslate
         }
       })
+      .constant('cCommonRoutes', {
+        "login": {
+          "url": "/login.html#/"
+        },
+        "channel": {
+          "url": "/channel.html#/"
+        },
+        "application": {
+          "modules": "/modules/",
+          "url": "/app.html#/"
+        }
+      })
 
       // router config.
       .config(function ($routeProvider) {
-        return _.each(routes, function (module) {
+        return _.each(cRoutes, function (module) {
           return $routeProvider.when(module.hash, angularAMD.route ({
             templateUrl: module.templateUrl,
             controllerUrl: module.controllerUrl
@@ -105,119 +117,29 @@ requirejs([
       })
 
       // translate config.
-      .config(function ($translateProvider, languageType) {
+      .config(function ($translateProvider, cLanguageType) {
 
-        _.forEach(languageType, function (type) {
+        _.forEach(cLanguageType, function (type) {
           $translateProvider.translations (type.name, type.value);
         });
       })
 
-      // main service.
-      .service('appService', fnAppService)
+      // menu service.
+      .service('menuService', menuService)
 
-      // main controller.
-      .controller('headerCtrl', fnHeaderCtrl)
-      .controller('appCtrl', fnAppCtrl)
-      .controller('breadcrumbsCtrl', fnBreadcrumbsCtrl);
+      .controller('appCtrl', appCtrl)
 
-  //fnAppService.$inject = ['$q', 'ajaxService', 'cookieService', 'translateService', 'actions'];
-  function fnAppService($q, ajaxService, cookieService, translateService, actions) {
+      // menu.header.
+      .controller('headerCtrl', headerCtrl)
 
-    this.getMenuHeaderInfo = fnGetMenuHeaderInfo;
-    this.setMenu = fnSetMenu;
-    this.clearChannel = fnClearChannel;
-    this.setLanguage = fnSetLanguage;
-    this.logout = fnLogout;
-    this.getCategoryInfo = fnGetCategoryInfo;
+      // menu.breadcrumbs.
+      .controller('breadcrumbsCtrl', breadcrumbsCtrl)
 
-    /**
-     * get the system info.
-     * includes: systemMenu, languages,
-     * @returns {*}
-       */
-    function fnGetMenuHeaderInfo () {
-      var defer = $q.defer ();
-      ajaxService.post(actions.core.home.menu.getMenuHeaderInfo)
-          .then(function (data) {
-            //var data = response.data;
-            var languageType = _.isEmpty(cookieService.language()) ? translateService.getBrowserLanguage() : cookieService.language();
-            _.forEach(data.languageList, function (language) {
-
-              if (_.isEqual(languageType, language.add_name2)) {
-                data.userInfo.language = language.add_name1;
-              }
-            });
-            // TODO
-            data.userInfo.application = 'CMS';//cookieService.application();
-            defer.resolve (data);
-          });
-      return defer.promise;
-    }
-
-    /**
-     * set menu.
-     * @param menu
-     * @returns {*}
-       */
-    function fnSetMenu (menuTitle) {
-      var defer = $q.defer ();
-      cookieService.application (menuTitle);
-      defer.resolve(menuTitle.toLocaleLowerCase());
-      return defer.promise;
-    }
-
-    /**
-     * clear selected channel
-     * @returns {*}
-     */
-    function fnClearChannel () {
-      var defer = $q.defer ();
-      cookieService.channel ("");
-      defer.resolve();
-      return defer.promise;
-    }
-
-    /**
-     * set language.
-     * @param language
-     * @returns {*}
-       */
-    function fnSetLanguage (language) {
-      var defer = $q.defer ();
-      cookieService.language(language.add_name1);
-      translateService.setLanguage(language.add_name2);
-      defer.resolve(language.add_name1);
-      return defer.promise;
-    }
-
-    /**
-     * clear all cookie.
-     * @returns {*}
-       */
-    function fnLogout() {
-      var defer = $q.defer ();
-      cookieService.removeAll();
-      defer.resolve();
-      return defer.promise;
-    }
-
-    /**
-     * get categoryList.
-     * @param categoryType
-     * @returns {*}
-       */
-    function fnGetCategoryInfo () {
-      var defer = $q.defer ();
-      ajaxService.post(actions.cms.home.menu.getCategoryInfo)
-          .then(function (data) {
-            defer.resolve(data);
-          });
-      return defer.promise;
-    }
-  }
+  // menu.aside.
+      .controller('asideCtrl', asideCtrl)
 
   //fnAppCtrl.$inject = ['$scope', '$window', 'translateService'];
-  function fnAppCtrl ($scope, $window, translateService) {
+  function appCtrl ($scope, $window, translateService) {
 
     var isIE = !!navigator.userAgent.match(/MSIE/i);
     isIE && angular.element($window.document.body).addClass('ie');
@@ -289,23 +211,145 @@ requirejs([
     }
   }
 
-  //fnHeaderCtrl.$inject = ['$scope', '$window', '$location', 'appService'];
-  function fnHeaderCtrl($scope, $window, $location, appService) {
+  function menuService($q, ajaxService, cookieService, translateService, cActions) {
+
+    this.getMenuHeaderInfo = getMenuHeaderInfo;
+    this.setMenu = setMenu;
+    this.clearChannel = clearChannel;
+    this.setLanguage = setLanguage;
+    this.logout = logout;
+    this.getCategoryInfo = getCategoryInfo;
+    this.getCategoryType = getCategoryType;
+    this.getCategoryTree = getCategoryTree;
+
+    /**
+     * get the system info.
+     * includes: systemMenu, languages,
+     * @returns {*}
+     */
+    function getMenuHeaderInfo () {
+      var defer = $q.defer ();
+      ajaxService.post(cActions.core.home.menu.getMenuHeaderInfo)
+          .then(function (data) {
+            //var data = response.data;
+            var languageType = _.isEmpty(cookieService.language()) ? translateService.getBrowserLanguage() : cookieService.language();
+            _.forEach(data.languageList, function (language) {
+
+              if (_.isEqual(languageType, language.add_name2)) {
+                data.userInfo.language = language.add_name1;
+              }
+            });
+            // TODO
+            data.userInfo.application = 'CMS';//cookieService.application();
+            defer.resolve (data);
+          });
+      return defer.promise;
+    }
+
+    /**
+     * set menu.
+     * @param menuTitle
+     * @returns {*}
+     */
+    function setMenu (menuTitle) {
+      var defer = $q.defer ();
+      cookieService.application (menuTitle);
+      defer.resolve(menuTitle.toLocaleLowerCase());
+      return defer.promise;
+    }
+
+    /**
+     * clear selected channel
+     * @returns {*}
+     */
+    function clearChannel () {
+      var defer = $q.defer ();
+      cookieService.channel ("");
+      defer.resolve();
+      return defer.promise;
+    }
+
+    /**
+     * set language.
+     * @param language
+     * @returns {*}
+     */
+    function setLanguage (language) {
+      var defer = $q.defer ();
+      cookieService.language(language.add_name1);
+      translateService.setLanguage(language.add_name2);
+      defer.resolve(language.add_name1);
+      return defer.promise;
+    }
+
+    /**
+     * clear all cookie.
+     * @returns {*}
+     */
+    function logout() {
+      var defer = $q.defer ();
+      cookieService.removeAll();
+      defer.resolve();
+      return defer.promise;
+    }
+
+    /**
+     * get categoryList.
+     * @returns {*}
+     */
+    function getCategoryInfo () {
+      var defer = $q.defer ();
+      ajaxService.post(cActions.cms.home.menu.getCategoryInfo)
+          .then(function (data) {
+            defer.resolve(data);
+          });
+      return defer.promise;
+    }
+
+    /**
+     * get categoryTypeList.
+     * @returns {*}
+     */
+    function getCategoryType () {
+      var defer = $q.defer ();
+      ajaxService.post(cActions.cms.home.menu.getCategoryType)
+          .then(function (data) {
+            defer.resolve(data);
+          });
+      return defer.promise;
+    }
+
+    /**
+     * get categoryTree.
+     * @returns {*}
+     */
+    function getCategoryTree () {
+      var defer = $q.defer ();
+      ajaxService.post(cActions.cms.home.menu.getCategoryTree)
+          .then(function (data) {
+            defer.resolve(data);
+          });
+      return defer.promise;
+    }
+
+  }
+
+  function headerCtrl($scope, $window, $location, menuService, cRoutes, cCommonRoutes) {
     var vm = this;
     vm.menuList = {};
     vm.languageList = {};
     vm.userInfo = {};
     vm.searchValue = "";
 
-    $scope.initialize = fnInitial;
-    $scope.selectChannel = fnSelectChannel;
-    $scope.selectMenu = fnSelectMenu;
-    $scope.selectLanguage = fnSelectLanguage;
-    $scope.search = fnSearch;
-    $scope.logout = fnLogout;
+    $scope.initialize = initialize;
+    $scope.selectChannel = selectChannel;
+    $scope.selectMenu = selectMenu;
+    $scope.selectLanguage = selectLanguage;
+    $scope.search = search;
+    $scope.logout = logout;
 
-    function fnInitial () {
-      appService.getMenuHeaderInfo().then(function (data) {
+    function initialize () {
+      menuService.getMenuHeaderInfo().then(function (data) {
         vm.menuList = data.menuList;
         vm.languageList = data.languageList;
         vm.userInfo = data.userInfo;
@@ -315,75 +359,101 @@ requirejs([
     /**
      * go to channel selected page.
      */
-    function fnSelectChannel () {
-      appService.clearChannel().then(function () {
-        $window.location = routes.channel.templateUrl;
+    function selectChannel () {
+      menuService.clearChannel().then(function () {
+        $window.location = cCommonRoutes.channel.url;
       });
     }
 
     /**
      * change to selected menu, and go to new system.
      * @param menu
-       */
-    function fnSelectMenu(menu) {
-      appService.setMenu(menu.menuTitle).then(function (application) {
-        $window.location = routes.views.url + application + routes.views.templateUrl;
+     */
+    function selectMenu(menu) {
+      menuService.setMenu(menu.menuTitle).then(function (application) {
+        $window.location = cCommonRoutes.application.modules + application + cCommonRoutes.application.url;
       });
-    }
-
-    /**
-     * search by input value.
-     * @param value
-       */
-    function fnSearch () {
-      $location.path(routes.search.complex.url + vm.searchValue);
     }
 
     /**
      * change to selected language.
      * @param language
-       */
-    function fnSelectLanguage (language) {
-      appService.setLanguage(language).then(function (data) {
+     */
+    function selectLanguage (language) {
+      menuService.setLanguage(language).then(function (data) {
         vm.userInfo.language = data;
       })
     }
 
     /**
+     * search by input value.
+     */
+    function search () {
+      $location.path(cRoutes.search_complex.url + vm.searchValue);
+    }
+
+    /**
      * logout.
      */
-    function fnLogout () {
-      appService.logout().then(function () {
-        $window.location = routes.login.templateUrl;
+    function logout () {
+      menuService.logout().then(function () {
+        $window.location = cCommonRoutes.login.url;
       })
     }
   }
 
-  function fnBreadcrumbsCtrl($scope, $localStorage, $location, appService, routes) {
+  function breadcrumbsCtrl($scope, $rootScope, $location, menuService, cRoutes) {
     var vm = this;
     vm.cid = "";
     vm.navigation = {};
 
-    $scope.initialize = fnInitialize;
-    $scope.selectCategory = fnSelectCategory;
+    $scope.initialize = initialize;
+    $scope.selectCategory = selectCategory;
 
     /**
      * initialize
      */
-    function fnInitialize () {
-      appService.getCategoryInfo().then(function (data) {
-        vm.navigation = data;
-        vm.navigation.categoryType = "TM";
+    function initialize () {
+      menuService.getCategoryInfo().then(function (data) {
+        vm.navigation = data.categoryList;
+        // TODO 来至服务器端的session
+        $rootScope.categoryType = data.categoryType;
       });
     }
 
     /**
      * change to other category page.
      * @param cid
-       */
-    function fnSelectCategory (cid) {
-      $location.path(routes.category.category.url + cid);
+     */
+    function selectCategory (cid) {
+      $location.path(cRoutes.category.url + cid);
     }
+  }
+
+  function asideCtrl($scope, $rootScope, menuService) {
+    var vm = this;
+    vm.menuInfo = {};
+
+    $scope.initialize = initialize;
+    $scope.selectCategoryType = selectCategoryType;
+
+    function initialize() {
+      menuService.getCategoryType ().then(function (data) {
+        vm.menuInfo.categoryTypeList = data;
+      });
+      menuService.getCategoryInfo().then(function (data) {
+        vm.menuInfo.categoryTreeList = data.categoryTreeList;
+      });
+    }
+
+    /**
+     * change your current categotyTYpe.
+     * @param cTypeId
+     */
+    function selectCategoryType (cTypeId) {
+      $rootScope.categoryType = cTypeId;
+    }
+
   }
 
   return angularAMD.bootstrap(mainApp);
