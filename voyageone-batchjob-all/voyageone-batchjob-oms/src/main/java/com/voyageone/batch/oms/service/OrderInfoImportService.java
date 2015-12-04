@@ -1799,9 +1799,9 @@ public class OrderInfoImportService {
 		
 		// zip
 		sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
-		String zip = newOrderInfo.getBillingAddressZip();
-		if ("000000".equals(zip) || zip == null) {
-			zip = getZipFromAddress(StringUtils.null2Space2(state), StringUtils.null2Space2(city));
+		String zip = getZipFromAddress(StringUtils.null2Space2(state), StringUtils.null2Space2(city));
+		if (Constants.EMPTY_STR.equals(zip)) {
+			zip = newOrderInfo.getBillingAddressZip();
 		}
 		sqlValueBuffer.append(transferStr(zip));
 		sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
@@ -1857,7 +1857,7 @@ public class OrderInfoImportService {
 		
 		// ship_zip
 		sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
-		sqlValueBuffer.append(transferStr(newOrderInfo.getShippingAddressZip()));
+		sqlValueBuffer.append(transferStr(zip));
 		sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
 		sqlValueBuffer.append(Constants.COMMA_CHAR);
 		
@@ -3134,33 +3134,42 @@ public class OrderInfoImportService {
 					
 				} else {
 					// 某规则前多少名也满足
-					isJudge = giftRulerJudge(newOrderInfo, giftProperty, giftPropertyMaxsum);
-					if (isJudge) {
+					int judgeNumber = giftRulerJudge(newOrderInfo, giftProperty, giftPropertyMaxsum);
+					if (judgeNumber == 1) {
 						
 						giftedCustomerListLocal.add(buyNick);
 						
 						HAVING_GIFTED_CUSTOMER_INFO_LOCAL.put(mapKeyName, giftedCustomerListLocal);
+					}
+
+					if (judgeNumber == 1 || judgeNumber == 0) {
+						isJudge = true;
 					}
 					
 					return isJudge;
 				}
 			} else {
 				// 某规则前多少名也满足
-				isJudge = giftRulerJudge(newOrderInfo, giftProperty, giftPropertyMaxsum);
-				if (isJudge) {
+				int judgeNumber = giftRulerJudge(newOrderInfo, giftProperty, giftPropertyMaxsum);
+				if (judgeNumber == 1) {
 					
 					giftedCustomerListLocal = new ArrayList<String>();
 					giftedCustomerListLocal.add(buyNick);
 					
 					HAVING_GIFTED_CUSTOMER_INFO_LOCAL.put(mapKeyName, giftedCustomerListLocal);
 				}
+
+				if (judgeNumber == 1 || judgeNumber == 0) {
+					isJudge = true;
+				}
+
 				return isJudge;
 			}
 			
 		// 某规则重复顾客送赠品可以
 		} else {
-			isJudge = giftRulerJudge(newOrderInfo, giftProperty, giftPropertyMaxsum);
-			if (isJudge) {
+			int judgeNumber = giftRulerJudge(newOrderInfo, giftProperty, giftPropertyMaxsum);
+			if (judgeNumber == 1) {
 				// 顾客名获得
 				String buyNick = newOrderInfo.getBillingBuyerNick();
 				
@@ -3176,6 +3185,11 @@ public class OrderInfoImportService {
 					HAVING_GIFTED_CUSTOMER_INFO_LOCAL.put(mapKeyName, giftedCustomerListLocal);
 				}
 			}
+
+			if (judgeNumber == 1 || judgeNumber == 0) {
+				isJudge = true;
+			}
+
 			return isJudge;
 		}
 		
@@ -3189,7 +3203,7 @@ public class OrderInfoImportService {
 	 * @param giftPropertyMaxsum
 	 * @return
 	 */
-	private boolean giftRulerJudge(NewOrderInfo4Log newOrderInfo, String giftProperty, String giftPropertyMaxsum) {
+	private int giftRulerJudge(NewOrderInfo4Log newOrderInfo, String giftProperty, String giftPropertyMaxsum) {
 		String orderChannelId = newOrderInfo.getOrderChannelId();
 		String cartId = newOrderInfo.getCartId();
 		CartBean cartBean = ShopConfigs.getCart(cartId);
@@ -3197,6 +3211,12 @@ public class OrderInfoImportService {
 		
 		// 已获某规则赠品顾客前多少名
 		String buyThanMaxSumStr = GIFT_PROPERTY_SETTING.get(orderChannelId + platformId + giftPropertyMaxsum);
+
+		// 没有配置
+		if (buyThanMaxSumStr == null) {
+			return 0;
+		}
+
 		int buyThanMaxSum = 0;
 		if (!StringUtils.isNullOrBlank2(buyThanMaxSumStr) && StringUtils.isDigit(buyThanMaxSumStr.trim())) {
 			buyThanMaxSum = Integer.valueOf(buyThanMaxSumStr);
@@ -3218,18 +3238,18 @@ public class OrderInfoImportService {
 			}
 			
 			if (count >= buyThanMaxSum) {
-				return false;
+				return -1;
 					
 			} else {
 				if ((count + countLocal) >= buyThanMaxSum) {
-					return false;
+					return -1;
 				} else {
 					HAVING_GIFTED_CUSTOMER_INFO_LOCAL.put(mapKeyCount, ++countLocal);
 				}
 			}
 		}
 		
-		return true;
+		return 1;
 	}
 	
 	/**

@@ -20,9 +20,6 @@ public class BrandMapDao extends BaseDao{
         dataMap.put("cart_id", cart_id);
         dataMap.put("cms_brand_id", cmsBrandId);
 
-        System.out.println("channel_id " + channel_id);
-        System.out.println("cart_id " + cart_id);
-        System.out.println("cms_brand_id " + cmsBrandId);
         String brand_id = selectOne(Constants.DAO_NAME_SPACE_IMS + "ims_selectBrandByCmsBrand", dataMap);
         if (brand_id == null)
         {

@@ -25,7 +25,7 @@ import static java.lang.String.format;
 
 /**
  * job 所使用的 service 基类
- * <p/>
+ * <p>
  * Created by neil on 2015-05-26.
  */
 public abstract class BaseTaskService {
@@ -100,8 +100,7 @@ public abstract class BaseTaskService {
         } catch (Exception e) {
             logIssue(e);
             status = Status.ERROR;
-            e.printStackTrace();
-            $info("出现异常，任务退出");
+            logger.error("出现异常，任务退出", e);
         }
 
         // 任务监控历史记录添加:结束
@@ -178,12 +177,7 @@ public abstract class BaseTaskService {
      * 错误信息记录
      */
     public void logIssue(Exception ex, Object attJson) {
-        if (attJson == null) {
-            issueLog.log(ex, ErrorType.BatchJob, getSubSystem(), getTaskName());
-            return;
-        }
-
-        issueLog.log(ex, ErrorType.BatchJob, getSubSystem(), getTaskName() + "|" + makeIssueAttach(attJson));
+        issueLog.log(ex, ErrorType.BatchJob, getSubSystem(), format("<p>出现未处理异常的任务是: [ %s ]</p>%s", getTaskName(), makeIssueAttach(attJson)));
     }
 
     /**
@@ -225,7 +219,7 @@ public abstract class BaseTaskService {
      * @param arg 日志信息
      */
     public void $info(String arg) {
-        if (!getLogWithThread()){
+        if (!getLogWithThread()) {
             logger.info(arg);
             return;
         }
@@ -246,8 +240,8 @@ public abstract class BaseTaskService {
     /**
      * logger.info 的辅助方法
      *
-     * @param obj 属性的对象类型
-     * @param name 属性的名称
+     * @param obj   属性的对象类型
+     * @param name  属性的名称
      * @param value 属性的值
      */
     protected void $prop(String obj, String name, Object value) {

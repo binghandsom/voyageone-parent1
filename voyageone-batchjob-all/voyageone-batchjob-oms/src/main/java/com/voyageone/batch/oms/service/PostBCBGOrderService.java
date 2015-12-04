@@ -13,6 +13,7 @@ import com.voyageone.batch.oms.formbean.OutFormOrderDetailOrderDetail;
 import com.voyageone.batch.oms.formbean.OutFormOrderdetailOrders;
 import com.voyageone.batch.oms.modelbean.OrderExtend;
 import com.voyageone.batch.oms.utils.WebServiceUtil;
+import com.voyageone.common.components.baidu.translate.BaiduTranslateUtil;
 import com.voyageone.common.components.issueLog.IssueLog;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -96,6 +97,17 @@ public class PostBCBGOrderService {
 	private final String BAIDU_TRANSLATE_CONFIG = "BAIDU_TRANSLATE_CONFIG";
 
 	private final String DummyDate = "00000000";
+
+	// Task DB 更新区分
+	// Shipped 订单
+	private final int DAILY_SALES_FOR_SHIPPED = 1;
+	// Returned 订单
+	private final int DAILY_SALES_FOR_RETURNED = 2;
+
+	// Approved 订单
+	private final int DEMAND_FOR_APPROVED = 1;
+	// Cancelled 订单
+	private final int DEMAND_FOR_CANCELLED = 2;
 	/**
 	 * 向RM正常订单推送(upload)
 	 *
@@ -125,16 +137,32 @@ public class PostBCBGOrderService {
 			return isSuccess;
 		}
 
-		// 订单数据抽出
+		// 订单数据抽出（正常订单 Shipped）
 		logger.info("getPushDailySalesList");
 		List<OrderExtend> pushDailySalesListList = getPushDailySalesList(orderChannelID, orderChannelTimeZone, exchangeRate);
 
-		// 有数据的场合
-		if (pushDailySalesListList != null && pushDailySalesListList.size() > 0) {
-			// CSV文件做成
+		// 订单数据抽出（正常订单 Return）
+		logger.info("getPushDailySalesListForReturn");
+		List<Object> pushDailySalesListListForReturn = getPushDailySalesListForReturn(orderChannelID, orderChannelTimeZone, exchangeRate);
+		boolean retReturn = (boolean)pushDailySalesListListForReturn.get(0);
+		List<OrderExtend> retReturnForOutputList = (List<OrderExtend>)pushDailySalesListListForReturn.get(1);
+		List<OrderExtend> retReturnForUpdateList = (List<OrderExtend>)pushDailySalesListListForReturn.get(2);
+
+		// 正常订单有数据的场合 && Return订单有数据的场合
+		if (pushDailySalesListList != null &&	retReturn &&
+				(pushDailySalesListList.size() > 0 || retReturnForOutputList.size() > 0)) {
+
+			// CSV文件做成（Shipped Order）
 			if (isSuccess) {
-				logger.info("createUploadFile Daily Sales record count = " + pushDailySalesListList.size());
-				isSuccess = createUploadFileForDailySales(upLoadFtpBean, fileName, pushDailySalesListList, createdDateTime);
+				if (pushDailySalesListList.size() > 0) {
+					logger.info("createUploadFile Daily Sales shipped record count = " + pushDailySalesListList.size());
+					isSuccess = createUploadFileForDailySales(upLoadFtpBean, fileName, pushDailySalesListList, createdDateTime, DAILY_SALES_FOR_SHIPPED);
+				}
+			}
+			// CSV文件做成（Returned Order）
+			if (isSuccess && retReturnForOutputList.size() > 0) {
+				logger.info("createUploadFile Daily Sales returned record count = " + retReturnForOutputList.size());
+				isSuccess = createUploadFileForDailySales(upLoadFtpBean, fileName, retReturnForOutputList, createdDateTime, DAILY_SALES_FOR_RETURNED);
 			}
 
 			// FTP目录夹Copy推送
@@ -145,8 +173,16 @@ public class PostBCBGOrderService {
 
 			// 推送标志更新
 			if (isSuccess) {
-				logger.info("updateDailySalesSendInfo");
-				isSuccess = updateOrdersInfo(POST_BCBG_DAILY_SALES, pushDailySalesListList);
+				if (pushDailySalesListList.size() > 0) {
+					logger.info("updateDailySalesSendInfo Shipped Order");
+					isSuccess = updateOrdersInfo(POST_BCBG_DAILY_SALES, pushDailySalesListList, DAILY_SALES_FOR_SHIPPED);
+				}
+
+				if (retReturnForUpdateList.size() > 0) {
+					logger.info("updateDailySalesSendInfo Returned Order");
+					isSuccess = updateOrdersInfo(POST_BCBG_DAILY_SALES, retReturnForUpdateList, DAILY_SALES_FOR_RETURNED);
+				}
+
 //
 				if (isSuccess) {
 					// 源文件
@@ -181,7 +217,7 @@ public class PostBCBGOrderService {
 	}
 
 	/**
-	 * 取得Daily Sales文件用数据
+	 * 取得Daily Sales文件用数据（Shipped）
 	 *
 	 * @param orderChannelID 订单渠道
 	 * @param timeZone 渠道时区
@@ -210,7 +246,7 @@ public class PostBCBGOrderService {
 			// 订单单位连番
 			int lineNumber = 0;
 
-			String shipDate = "";
+//			String shipDate = "";
 			for (int i = 0; i < pushOrderList.size(); i++) {
 				OrderExtend orderExtendInfo = pushOrderList.get(i);
 				// SKU金额取得
@@ -220,7 +256,7 @@ public class PostBCBGOrderService {
 
 					orderNumber = orderExtendInfo.getOrderNumber();
 					lineNumber = 1;
-					shipDate = "";
+//					shipDate = "";
 				}
 				SetPriceBean skuPriceInfo = getSKUPriceInfo(orderExtendInfo.getSku(), orderPriceDatas);
 
@@ -237,7 +273,8 @@ public class PostBCBGOrderService {
 					// 运费的场合
 					orderExtendInfo.setLongItemNumber(FREIGHT);
 
-					// ShipDate（用物品的ShipDate设定）
+					// ShipDate（用物品的ShipDate设定 -> 已发货的订单 运费含ship_date）
+					String shipDate = getLocalDate(orderExtendInfo.getShipDate(), timeZone);
 					orderExtendInfo.setShipDate(shipDate);
 
 					orderExtendInfo.setQuantityOrdered("1");
@@ -256,7 +293,7 @@ public class PostBCBGOrderService {
 					orderExtendInfo.setLongItemNumber("");
 
 					// ShipDate
-					shipDate = getLocalDate(orderExtendInfo.getShipDate(), timeZone);
+					String shipDate = getLocalDate(orderExtendInfo.getShipDate(), timeZone);
 					orderExtendInfo.setShipDate(shipDate);
 
 					// 售价含折扣 = （数量 * 单价）
@@ -288,12 +325,154 @@ public class PostBCBGOrderService {
 			ret = null;
 
 			logger.error("getPushDailySalesList error", e);
-			issueLog.log("PostBCBGOrderService.getPushDailySalesList",
-					"getPushDailySalesList error",
+			issueLog.log(e,
 					ErrorType.BatchJob,
-					SubSystem.OMS);
+					SubSystem.OMS,
+					"PostBCBGOrderService.getPushDailySalesList error");
 		}
 		return ret;
+	}
+
+	/**
+	 * 取得Daily Sales文件用数据（Returned）
+	 *
+	 * @param orderChannelID 订单渠道
+	 * @param timeZone 渠道时区
+	 * @param exchangeRate 汇率
+	 * @return		return[0]	执行结果
+	 * 				return[1]	ReturnOrderDetail 数据 文件输出用
+	 *				return[2]	ReturnOrderDetail 数据 发送标志更新用
+	 */
+	private ArrayList<Object> getPushDailySalesListForReturn(String orderChannelID, int timeZone, String exchangeRate) {
+		ArrayList<Object> retArr = new ArrayList<Object>();
+
+		// 执行结果
+		boolean retRun = true;
+		// CancelOrderDetail 数据 文件输出用
+		List<OrderExtend> retForOutput = null;
+		// CancelOrderDetail 数据 发送标志更新用
+		List<OrderExtend> retForUpdate = null;
+
+		ArrayList<String> searchDateList = getSearchDate(timeZone);
+
+		// 检索日期取得
+		// 开始检索日
+		String beginSearchDate = searchDateList.get(0);
+		// 终了检索日
+		String endSearchDate = searchDateList.get(1);
+			logger.info("getPushDailySalesListForReturn searchDate = " + beginSearchDate + " " + endSearchDate);
+
+		try {
+			// 订单数据取得 发送标志更新用
+			retForUpdate = orderDao.getPushBCBGDailySalesInfoForReturnItems(orderChannelID, beginSearchDate, endSearchDate);
+
+			// 订单数据取得
+			List<OrderExtend> pushOrderList = orderDao.getPushBCBGDailySalesInfoForReturn(orderChannelID, beginSearchDate, endSearchDate);
+
+			Float rate = Float.valueOf(exchangeRate);
+			// 订单号
+			String orderNumber = "";
+			// 订单明细价格
+			List<SetPriceBean> orderPriceDatas = new ArrayList<SetPriceBean>();
+			// 订单单位连番
+			int lineNumber = 0;
+
+//			String shipDate = "";
+			for (int i = 0; i < pushOrderList.size(); i++) {
+				OrderExtend orderExtendInfo = pushOrderList.get(i);
+				// SKU金额取得
+				if (!orderNumber.equals(orderExtendInfo.getOrderNumber())) {
+					orderPriceDatas = new ArrayList<SetPriceBean>();
+					orderPriceDatas = SetPriceUtils.setPrice(orderExtendInfo.getOrderNumber(), orderExtendInfo.getOrderChannelId(), orderExtendInfo.getCartId(), 5);
+
+					orderNumber = orderExtendInfo.getOrderNumber();
+					lineNumber = 1;
+//					shipDate = "";
+				}
+				SetPriceBean skuPriceInfo = getSKUPriceInfo(orderExtendInfo.getSku(), orderPriceDatas);
+
+				// LineNumber
+				orderExtendInfo.setLineNumber(String.valueOf(lineNumber));
+
+				String orderDateTime = orderExtendInfo.getOrderDateTime();
+				// OrderDateTime
+				orderExtendInfo.setOrderDateTime(getLocalDateTime(orderDateTime, timeZone));
+				// OrderDate
+				orderExtendInfo.setOrderDate(getLocalDate(orderDateTime, timeZone));
+
+				if ("Shipping".equals(orderExtendInfo.getSku())){
+					// 运费的场合
+					orderExtendInfo.setLongItemNumber(FREIGHT);
+
+					// ShipDate（用物品的ShipDate设定 -> 已发货的订单 运费含ship_date）
+					String shipDate = getLocalDate(orderExtendInfo.getShipDate(), timeZone);
+					orderExtendInfo.setShipDate(shipDate);
+
+					orderExtendInfo.setQuantityOrdered("-1");
+					orderExtendInfo.setQuantityShipped("-1");
+
+					float price = div2Digits(Float.valueOf(orderExtendInfo.getPricePerUnit()), rate);
+					price = mult2Digits(price, -1);
+					orderExtendInfo.setPrice(String.valueOf(price));
+
+					// SalePrice
+					orderExtendInfo.setPricePerUnit("0");
+
+					// Promo Discount
+					orderExtendInfo.setOrderDiscount("0");
+				} else {
+					// 物品的场合
+					orderExtendInfo.setLongItemNumber("");
+
+					// ShipDate
+					String shipDate = getLocalDate(orderExtendInfo.getShipDate(), timeZone);
+					orderExtendInfo.setShipDate(shipDate);
+
+					orderExtendInfo.setQuantityOrdered("-" + orderExtendInfo.getQuantityOrdered());
+					orderExtendInfo.setQuantityShipped("-" + orderExtendInfo.getQuantityShipped());
+
+					// 售价含折扣 = （数量 * 单价） ItemAmount
+					float price = div2Digits(Float.valueOf(skuPriceInfo.getPrice()), rate);
+					price = mult2Digits(price, -1);
+					orderExtendInfo.setPrice(String.valueOf(price));
+
+					// 售价不含折扣
+					String pricePerUnit = orderExtendInfo.getPricePerUnit();
+					float unitPrice = div2Digits(Float.valueOf(pricePerUnit), rate);
+					orderExtendInfo.setPricePerUnit(String.valueOf(unitPrice));
+
+					// 订单折扣（明细折扣 + 订单折扣 = 原始价格 - 销售价格）
+					float salePrice = mult2Digits(Float.valueOf(pricePerUnit), Float.valueOf(orderExtendInfo.getQuantityOrdered()));
+					float orderDiscount = sub2Digits(salePrice, Float.valueOf("-" + skuPriceInfo.getPrice()));
+					orderDiscount = mult2Digits(orderDiscount, -1);
+					orderDiscount = div2Digits(orderDiscount, rate);
+					orderExtendInfo.setOrderDiscount(String.valueOf(orderDiscount));
+				}
+
+				// 中文翻译
+				translateOrderExtend(orderExtendInfo);
+
+				lineNumber = lineNumber + 1;
+			}
+
+			retForOutput = pushOrderList;
+		} catch(Exception e) {
+			retRun = false;
+			retForOutput = null;
+			retForUpdate = null;
+
+			logger.error("getPushDailySalesListForReturn error", e);
+			issueLog.log(e,
+					ErrorType.BatchJob,
+					SubSystem.OMS,
+					"PostBCBGOrderService.getPushDailySalesListForReturn error");
+		}
+
+		retArr.add(retRun);
+		retArr.add(retForOutput);
+		retArr.add(retForUpdate);
+
+		return retArr;
 	}
 
 	/**
@@ -301,7 +480,7 @@ public class PostBCBGOrderService {
 	 *
 	 * @param fileName 待上传文件名
 	 */
-	private boolean createUploadFileForDailySales(FtpBean ftpBean, String fileName, List<OrderExtend> pushOrderList, String createdDateTime) {
+	private boolean createUploadFileForDailySales(FtpBean ftpBean, String fileName, List<OrderExtend> pushOrderList, String createdDateTime, int kind) {
 		boolean isSuccess = true;
 
 		// 本地文件生成路径
@@ -309,12 +488,12 @@ public class PostBCBGOrderService {
 		try {
 
 			File file = new File(uploadLocalPath + "/" + fileName);
-			FileOutputStream  fop = new FileOutputStream(file);
+			FileOutputStream  fop = new FileOutputStream(file, true);
 
 			FileWriteUtils fileWriter = new FileWriteUtils(fop,  Charset.forName(outputFileEncoding), "A","S");
 
 			// Body输出
-			createUploadFileBodyForDailySales(fileWriter, pushOrderList, createdDateTime);
+			createUploadFileBodyForDailySales(fileWriter, pushOrderList, createdDateTime, kind);
 
 			fileWriter.flush();
 			fileWriter.close();
@@ -337,7 +516,7 @@ public class PostBCBGOrderService {
 	 * @param pushOrderList 订单数据
 	 * @param createdDateTime 处理时间
 	 */
-	private void createUploadFileBodyForDailySales(FileWriteUtils fileWriter, List<OrderExtend> pushOrderList, String createdDateTime) throws IOException {
+	private void createUploadFileBodyForDailySales(FileWriteUtils fileWriter, List<OrderExtend> pushOrderList, String createdDateTime, int kind) throws IOException {
 
 		for (int i = 0 ; i < pushOrderList.size(); i++) {
 			OrderExtend orderInfo = pushOrderList.get(i);
@@ -346,7 +525,13 @@ public class PostBCBGOrderService {
 			fileWriter.write("", DailySalesFileFormat.CustomerID);
 			fileWriter.write("", DailySalesFileFormat.OrderNumber);
 			fileWriter.write(orderInfo.getSourceOrderId(), DailySalesFileFormat.WebOrderNumber);
-			fileWriter.write("SO", DailySalesFileFormat.OrderType);
+
+			if (DAILY_SALES_FOR_SHIPPED == kind) {
+				fileWriter.write("SO", DailySalesFileFormat.OrderType);
+			} else {
+				fileWriter.write("SR", DailySalesFileFormat.OrderType);
+			}
+
 			fileWriter.write(orderInfo.getOrderDate(), DailySalesFileFormat.OrderDate);
 			fileWriter.write(orderInfo.getShipDate(), DailySalesFileFormat.ShipDate);
 			fileWriter.write(orderInfo.getLineNumber(), DailySalesFileFormat.LineNumber);
@@ -369,7 +554,17 @@ public class PostBCBGOrderService {
 			fileWriter.write(orderInfo.getPrice(), DailySalesFileFormat.ItemAmount);
 			fileWriter.write("0.0", DailySalesFileFormat.TaxAmount);
 			fileWriter.write(Carrier, DailySalesFileFormat.Carrier);
-			fileWriter.write("", DailySalesFileFormat.ReasonCode);
+
+			if (DAILY_SALES_FOR_SHIPPED == kind) {
+				fileWriter.write("", DailySalesFileFormat.ReasonCode);
+			} else {
+				if ("Shipping".equals(orderInfo.getSku())){
+					fileWriter.write("", DailySalesFileFormat.ReasonCode);
+				} else {
+					fileWriter.write("105", DailySalesFileFormat.ReasonCode);
+				}
+			}
+
 			fileWriter.write("", DailySalesFileFormat.ShipToAddressID);
 			fileWriter.write(orderInfo.getShipName(), DailySalesFileFormat.ShipToName);
 
@@ -398,6 +593,9 @@ public class PostBCBGOrderService {
 			fileWriter.write(orderInfo.getPricePerUnit(), DailySalesFileFormat.SalePrice);
 
 			float unitOrderDiscount = div2Digits(Float.valueOf(orderInfo.getOrderDiscount()), Float.valueOf(orderInfo.getQuantityOrdered()));
+			if (DAILY_SALES_FOR_RETURNED == kind) {
+				unitOrderDiscount = mult2Digits(unitOrderDiscount, -1);
+			}
 
 			if (unitOrderDiscount == 0) {
 				fileWriter.write("", DailySalesFileFormat.Promo1);
@@ -424,11 +622,29 @@ public class PostBCBGOrderService {
 			fileWriter.write("", DailySalesFileFormat.Promo5);
 			fileWriter.write("0.0", DailySalesFileFormat.PromoDiscountAmount5);
 			fileWriter.write("", DailySalesFileFormat.PromoDiscountDescription5);
-			fileWriter.write("45010", DailySalesFileFormat.InventoryCondition);
+
+			if (DAILY_SALES_FOR_SHIPPED == kind) {
+				// Sellable
+				fileWriter.write("45010", DailySalesFileFormat.InventoryCondition);
+			} else {
+				// Non-Sellable
+				fileWriter.write("45015", DailySalesFileFormat.InventoryCondition);
+			}
+
 			fileWriter.write("", DailySalesFileFormat.AgentIDChannel);
 			fileWriter.write(orderInfo.getTrackingNo(), DailySalesFileFormat.TrackingNo);
 			fileWriter.write("", DailySalesFileFormat.OriginalOrderNumber);
-			fileWriter.write("", DailySalesFileFormat.ReasonCodeDescription);
+
+			if (DAILY_SALES_FOR_SHIPPED == kind) {
+				fileWriter.write("", DailySalesFileFormat.ReasonCodeDescription);
+			} else {
+				if ("Shipping".equals(orderInfo.getSku())){
+					fileWriter.write("", DailySalesFileFormat.ReasonCodeDescription);
+				} else {
+					fileWriter.write("Do not like style", DailySalesFileFormat.ReasonCodeDescription);
+				}
+			}
+
 			fileWriter.write(orderInfo.getOrderDateTime(), DailySalesFileFormat.WebOrderDateTime);
 			fileWriter.write(createdDateTime, DailySalesFileFormat.DateTimeFileCreated);
 			fileWriter.write("", DailySalesFileFormat.AOSStoreID);
@@ -503,7 +719,7 @@ public class PostBCBGOrderService {
 	 * DB更新
 	 *
 	 */
-	private boolean updateOrdersInfo(String taskName, List<OrderExtend> pushOrderList) {
+	private boolean updateOrdersInfo(String taskName, List<OrderExtend> pushOrderList, int updateKind) {
 		boolean isSuccess = true;
 
 		TransactionStatus status=transactionManager.getTransaction(def);
@@ -512,14 +728,26 @@ public class PostBCBGOrderService {
 
 			// Shiped订单推送
 			if (POST_BCBG_DAILY_SALES.equals(taskName)) {
-				isSuccess = orderDao.updateOrderExtFlg1(POST_BCBG_DAILY_SALES, getSelectOrderNumberList(pushOrderList));
+				if (DAILY_SALES_FOR_SHIPPED == updateKind) {
+					// Shipped Order的场合
+					isSuccess = orderDao.updateOrderExtFlg1(POST_BCBG_DAILY_SALES, getSelectOrderNumberList(pushOrderList));
+				} else {
+					// Returned Order的场合
+					isSuccess = updateReturnOrdersSendInfo(POST_BCBG_DAILY_SALES, pushOrderList);
+				}
 			// Not Shipped订单推送
 			} else if (POST_BCBG_DEMAND.equals(taskName)) {
-				isSuccess = orderDao.updateOrdersSendInfo(POST_BCBG_DEMAND, getSelectOrderNumberList(pushOrderList));
+				if (DEMAND_FOR_APPROVED == updateKind) {
+					// Approved Order的场合
+					isSuccess = orderDao.updateOrdersSendInfo(POST_BCBG_DEMAND, getSelectOrderNumberList(pushOrderList));
+				} else {
+					// Cancel Order的场合
+					isSuccess = updateExtFlag1OrdersSendInfo(POST_BCBG_DEMAND, pushOrderList);
+				}
 			}
 
 			if (isSuccess) {
-				String notesStr = getBatchNoteSqlData(pushOrderList, taskName);
+				String notesStr = getBatchNoteSqlData(pushOrderList, taskName, updateKind);
 
 				isSuccess = orderDao.insertNotesBatchData(notesStr, getSelectOrderNumberList(pushOrderList).size());
 			}
@@ -539,6 +767,10 @@ public class PostBCBGOrderService {
 			}
 		} catch (Exception ex) {
 			logger.error("updateOrdersSendInfo", ex);
+			issueLog.log(ex,
+					ErrorType.BatchJob,
+					SubSystem.OMS,
+					"updateOrdersInfo error;task name = " + taskName);
 
 			isSuccess = false;
 
@@ -548,6 +780,36 @@ public class PostBCBGOrderService {
 		return isSuccess;
 	}
 
+	private boolean updateReturnOrdersSendInfo(String taskName, List<OrderExtend> pushOrderList) {
+		boolean ret = true;
+
+		for (int i = 0; i < pushOrderList.size(); i++) {
+			OrderExtend orderExtend = pushOrderList.get(i);
+			ret = orderDao.updateReturnOrdersSendInfo(taskName, orderExtend.getOrderNumber(), orderExtend.getItemNumber());
+
+			if (!ret) {
+				break;
+			}
+		}
+
+		return ret;
+	}
+
+	private boolean updateExtFlag1OrdersSendInfo(String taskName, List<OrderExtend> pushOrderList) {
+		boolean ret = true;
+
+		for (int i = 0; i < pushOrderList.size(); i++) {
+			OrderExtend orderExtend = pushOrderList.get(i);
+			ret = orderDao.updateExtFlag1OrdersSendInfo(taskName, orderExtend.getOrderNumber(), orderExtend.getItemNumber());
+
+			if (!ret) {
+				break;
+			}
+		}
+
+		return ret;
+	}
+
 	/**
 	 * 批处理Notes信息所需数据拼装
 	 *
@@ -555,7 +817,7 @@ public class PostBCBGOrderService {
 	 * @param taskName
 	 * @return
 	 */
-	private String getBatchNoteSqlData(List<OrderExtend> orderInfoList, String taskName) {
+	private String getBatchNoteSqlData(List<OrderExtend> orderInfoList, String taskName, int updateKind) {
 		StringBuilder sqlBuffer = new StringBuilder();
 		ArrayList<String> orderNumberList = new ArrayList<String>();
 
@@ -575,10 +837,10 @@ public class PostBCBGOrderService {
 			String entryDateTime = DateTimeUtil.getNow(DateTimeUtil.DEFAULT_DATETIME_FORMAT);
 
 			if (StringUtils.isEmpty(sqlBuffer.toString())) {
-				sqlBuffer.append(prepareNotesData(orderInfo, entryDateTime, entryDateTime, taskName));
+				sqlBuffer.append(prepareNotesData(orderInfo, entryDateTime, entryDateTime, taskName, updateKind));
 			} else {
 				sqlBuffer.append(Constants.COMMA_CHAR);
-				sqlBuffer.append(prepareNotesData(orderInfo, entryDateTime, entryDateTime, taskName));
+				sqlBuffer.append(prepareNotesData(orderInfo, entryDateTime, entryDateTime, taskName, updateKind));
 			}
 		}
 
@@ -595,7 +857,7 @@ public class PostBCBGOrderService {
 	 * @param taskName
 	 * @return
 	 */
-	private String prepareNotesData(OrderExtend orderInfo, String entryDate, String entryTime, String taskName) {
+	private String prepareNotesData(OrderExtend orderInfo, String entryDate, String entryTime, String taskName, int updateKind) {
 		StringBuilder sqlValueBuffer = new StringBuilder();
 
 		sqlValueBuffer.append(Constants.LEFT_BRACKET_CHAR);
@@ -634,10 +896,18 @@ public class PostBCBGOrderService {
 		String note = "";
 		// Shipped Order 推送
 		if (POST_BCBG_DAILY_SALES.equals(taskName)) {
-			note = "Push Daily Sales File to BCBG";
+			if (DAILY_SALES_FOR_SHIPPED == updateKind) {
+				note = "Push Daily Sales File to BCBG(Shipped Order)";
+			} else {
+				note = "Push Daily Sales File to BCBG(Returned Order)";
+			}
 		// Not Shipped Order 推送
 		} else if (POST_BCBG_DEMAND.equals(taskName)) {
-			note = "Push Demand File to BCBG";
+			if (DEMAND_FOR_APPROVED == updateKind) {
+				note = "Push Demand File to BCBG(Approved Order)";
+			} else {
+				note = "Push Demand File to BCBG(Cancelled Order)";
+			}
 		}
 
 		sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
@@ -721,15 +991,27 @@ public class PostBCBGOrderService {
 			return isSuccess;
 		}
 
-		// 订单数据抽出
+		// 订单数据抽出（正常订单 Approved）
 		List<OrderExtend> pushDemandList = getPushDemandList(orderChannelID, orderChannelTimeZone, exchangeRate);
 
-		// 有数据的场合
-		if (pushDemandList != null && pushDemandList.size() > 0) {
-			// CSV文件做成
-			if (isSuccess) {
-				logger.info("createUploadFile Demands record count = " + pushDemandList.size());
-				isSuccess = createUploadFileForDemands(upLoadFtpBean, fileName, pushDemandList, createdDateTime);
+		// 订单数据抽出（正常订单 Canceled）
+		List<Object> getPushDemandListForCancel = getPushDemandListForCancel(orderChannelID, orderChannelTimeZone, exchangeRate);
+		boolean retCancel = (boolean)getPushDemandListForCancel.get(0);
+		List<OrderExtend> retCancelForOutputList = (List<OrderExtend>)getPushDemandListForCancel.get(1);
+		List<OrderExtend> retCancelForUpdateList = (List<OrderExtend>)getPushDemandListForCancel.get(2);
+
+		// 正常订单有数据的场合 && Cancel订单有数据的场合
+		if (pushDemandList != null &&	retCancel &&
+				(pushDemandList.size() > 0 || retCancelForOutputList.size() > 0)) {
+			// CSV文件做成 Approved
+			if (isSuccess && pushDemandList.size() > 0) {
+				logger.info("createUploadFile Demands Approved record count = " + pushDemandList.size());
+				isSuccess = createUploadFileForDemands(upLoadFtpBean, fileName, pushDemandList, createdDateTime, DEMAND_FOR_APPROVED);
+			}
+			// CSV文件做成 Canceled
+			if (isSuccess && retCancelForOutputList.size() > 0) {
+				logger.info("createUploadFile Demands Cancel record count = " + retCancelForOutputList.size());
+				isSuccess = createUploadFileForDemands(upLoadFtpBean, fileName, retCancelForOutputList, createdDateTime, DEMAND_FOR_CANCELLED);
 			}
 
 			// FTP目录夹Copy推送
@@ -740,8 +1022,16 @@ public class PostBCBGOrderService {
 
 			// 推送标志更新
 			if (isSuccess) {
-				logger.info("updateDemandSendInfo");
-				isSuccess = updateOrdersInfo(POST_BCBG_DEMAND, pushDemandList);
+
+				if (pushDemandList.size() > 0) {
+					logger.info("updateDemandSendInfo Approved Order");
+					isSuccess = updateOrdersInfo(POST_BCBG_DEMAND, pushDemandList, DEMAND_FOR_APPROVED);
+				}
+
+				if (isSuccess && retCancelForUpdateList.size() > 0) {
+					logger.info("updateDemandSendInfo Cancelled Order");
+					isSuccess = updateOrdersInfo(POST_BCBG_DEMAND, retCancelForUpdateList, DEMAND_FOR_CANCELLED);
+				}
 
 				if (isSuccess) {
 					// 源文件
@@ -830,7 +1120,8 @@ public class PostBCBGOrderService {
 					orderExtendInfo.setLongItemNumber(FREIGHT);
 
 					orderExtendInfo.setQuantityOrdered("1");
-					orderExtendInfo.setQuantityShipped("1");
+					// 未发货
+					orderExtendInfo.setQuantityShipped("0");
 
 					float price = div2Digits(Float.valueOf(orderExtendInfo.getPricePerUnit()), rate);
 					orderExtendInfo.setPrice(String.valueOf(price));
@@ -843,6 +1134,8 @@ public class PostBCBGOrderService {
 				} else {
 					// 物品的场合
 					orderExtendInfo.setLongItemNumber("");
+					// 未发货
+					orderExtendInfo.setQuantityShipped("0");
 
 					// 售价含折扣
 					float price = div2Digits(Float.valueOf(skuPriceInfo.getPrice()), rate);
@@ -874,12 +1167,143 @@ public class PostBCBGOrderService {
 			ret = null;
 
 			logger.error("getPushDemandList error", e);
-			issueLog.log("postBCBGDemands.getPushDemandList",
-					"getPushDemandList error",
+			issueLog.log(e,
 					ErrorType.BatchJob,
-					SubSystem.OMS);
+					SubSystem.OMS,
+					"postBCBGDemands.getPushDemandList error");
 		}
 		return ret;
+	}
+
+	/**
+	 * 取得Demand文件用数据（Cancel Order）
+	 *
+	 * @param orderChannelID 订单渠道
+	 * @param timeZone 渠道时区
+	 * @param exchangeRate 汇率
+	 * @return		return[0]	执行结果
+	 * 				return[1]	CancelOrderDetail 数据 文件输出用
+	 *				return[2]	CancelOrderDetail 数据 发送标志更新用
+	 */
+	private ArrayList<Object> getPushDemandListForCancel(String orderChannelID, int timeZone, String exchangeRate) {
+		ArrayList<Object> retArr = new ArrayList<Object>();
+
+		// 执行结果
+		boolean retRun = true;
+		// CancelOrderDetail 数据 文件输出用
+		List<OrderExtend> retForOutput = null;
+		// CancelOrderDetail 数据 发送标志更新用
+		List<OrderExtend> retForUpdate = null;
+
+		ArrayList<String> searchDateList = getSearchDate(timeZone);
+
+		// 检索日期取得
+		// 开始检索日
+		String beginSearchDate = searchDateList.get(0);
+		// 终了检索日
+		String endSearchDate = searchDateList.get(1);
+		logger.info("getPushDemandListForCancel searchDate = " + beginSearchDate + " " + endSearchDate);
+
+		try {
+			// 订单数据取得 发送标志更新用
+			retForUpdate = orderDao.getPushBCBGDemandsInfoForCancelItems(orderChannelID, beginSearchDate, endSearchDate);
+
+			// 订单数据取得 文件输出用
+			List<OrderExtend> pushOrderList = orderDao.getPushBCBGDemandsInfoForCancel(orderChannelID, beginSearchDate, endSearchDate);
+
+			Float rate = Float.valueOf(exchangeRate);
+			// 订单号
+			String orderNumber = "";
+			// 订单明细价格
+			List<SetPriceBean> orderPriceDatas = new ArrayList<SetPriceBean>();
+			// 订单单位连番
+			int lineNumber = 0;
+
+			for (int i = 0; i < pushOrderList.size(); i++) {
+				OrderExtend orderExtendInfo = pushOrderList.get(i);
+				// SKU金额取得
+				if (!orderNumber.equals(orderExtendInfo.getOrderNumber())) {
+					orderPriceDatas = new ArrayList<SetPriceBean>();
+					orderPriceDatas = SetPriceUtils.setPrice(orderExtendInfo.getOrderNumber(), orderExtendInfo.getOrderChannelId(), orderExtendInfo.getCartId(), 5);
+
+					orderNumber = orderExtendInfo.getOrderNumber();
+
+					lineNumber = 1;
+				}
+				SetPriceBean skuPriceInfo = getSKUPriceInfo(orderExtendInfo.getSku(), orderPriceDatas);
+
+				// LineNumber
+				orderExtendInfo.setLineNumber(String.valueOf(lineNumber));
+
+//				// OrderDate
+//				orderExtendInfo.setOrderDate(getLocalDate(orderExtendInfo.getOrderDateTime(), timeZone));
+				orderExtendInfo.setOrderDateTime(getLocalDateTime(orderExtendInfo.getOrderDateTime(), timeZone));
+
+				if ("Shipping".equals(orderExtendInfo.getSku())) {
+					// 运费的场合
+					orderExtendInfo.setLongItemNumber(FREIGHT);
+
+					orderExtendInfo.setQuantityOrdered("-1");
+					// 未发货
+					orderExtendInfo.setQuantityShipped("0");
+
+					float price = div2Digits(Float.valueOf(orderExtendInfo.getPricePerUnit()), rate);
+//					price = mult2Digits(price, -1);
+					orderExtendInfo.setPrice(String.valueOf(price));
+
+					// SalePrice
+					orderExtendInfo.setPricePerUnit("0");
+
+					// Promo Discount
+					orderExtendInfo.setOrderDiscount("0");
+				} else {
+					// 物品的场合
+					orderExtendInfo.setLongItemNumber("");
+
+					orderExtendInfo.setQuantityOrdered("-" + orderExtendInfo.getQuantityOrdered());
+					// 未发货
+					orderExtendInfo.setQuantityShipped("0");
+
+					// 售价含折扣 ItemAmount
+					float price = div2Digits(Float.valueOf(skuPriceInfo.getPrice()), rate);
+					price = mult2Digits(price, -1);
+					orderExtendInfo.setPrice(String.valueOf(price));
+
+					// 售价不含折扣 SalePrice
+					String pricePerUnit = orderExtendInfo.getPricePerUnit();
+					float unitPrice = div2Digits(Float.valueOf(pricePerUnit), rate);
+					orderExtendInfo.setPricePerUnit(String.valueOf(unitPrice));
+
+					// 订单折扣（明细折扣 + 订单折扣 = 原始价格 - 销售价格）
+					// Promo Dicscount Amount 1
+					float salePrice = mult2Digits(Float.valueOf(pricePerUnit), Float.valueOf(orderExtendInfo.getQuantityOrdered()));
+					float orderDiscount = sub2Digits(salePrice, Float.valueOf("-" + skuPriceInfo.getPrice()));
+					orderDiscount = mult2Digits(orderDiscount, -1);
+					orderDiscount = div2Digits(orderDiscount, rate);
+					orderExtendInfo.setOrderDiscount(String.valueOf(orderDiscount));
+				}
+
+				lineNumber = lineNumber + 1;
+			}
+
+			retForOutput = pushOrderList;
+		} catch(Exception e) {
+			retRun = false;
+			retForUpdate = null;
+			retForOutput = null;
+
+			logger.error("getPushDemandListForCancel error", e);
+			issueLog.log(e,
+					ErrorType.BatchJob,
+					SubSystem.OMS,
+					"getPushDemandListForCancel error");
+		}
+
+		retArr.add(retRun);
+		retArr.add(retForOutput);
+		retArr.add(retForUpdate);
+
+		return retArr;
 	}
 
 	private SetPriceBean getSKUPriceInfo(String SKU, List<SetPriceBean> orderPriceDatas) {
@@ -925,7 +1349,7 @@ public class PostBCBGOrderService {
 		now = DateTimeUtil.getNow();
 
 		// 前七天
-		Date startDate = DateTimeUtil.addDays(DateTimeUtil.parse(now), -7);
+		Date startDate = DateTimeUtil.addDays(DateTimeUtil.parse(now), -10);
 		String startDateString =  DateTimeUtil.format(startDate, DateTimeUtil.DEFAULT_DATE_FORMAT);
 		startSearchDateGMT = startDateString + " 00:00:00";
 		endSearchDateGMT = now;
@@ -960,7 +1384,7 @@ public class PostBCBGOrderService {
 
 			logger.error("uploadOrderFile", e);
 
-			issueLog.log(e, ErrorType.BatchJob, SubSystem.OMS);
+			issueLog.log(e, ErrorType.BatchJob, SubSystem.OMS, "uploadOrderFile error");
 
 		}
 
@@ -1027,7 +1451,7 @@ public class PostBCBGOrderService {
 	 *
 	 * @param fileName 待上传文件名
 	 */
-	private boolean createUploadFileForDemands(FtpBean ftpBean, String fileName, List<OrderExtend> pushOrderList, String createdDateTime) {
+	private boolean createUploadFileForDemands(FtpBean ftpBean, String fileName, List<OrderExtend> pushOrderList, String createdDateTime, int kind) {
 		boolean isSuccess = true;
 
 		// 本地文件生成路径
@@ -1035,12 +1459,12 @@ public class PostBCBGOrderService {
 		try {
 
 			File file = new File(uploadLocalPath + "/" + fileName);
-			FileOutputStream  fop = new FileOutputStream(file);
+			FileOutputStream  fop = new FileOutputStream(file, true);
 
 			FileWriteUtils fileWriter = new FileWriteUtils(fop,  Charset.forName(outputFileEncoding), "A","S");
 
 			// Body输出
-			createUploadFileBodyForDemands(fileWriter, pushOrderList, createdDateTime);
+			createUploadFileBodyForDemands(fileWriter, pushOrderList, createdDateTime, kind);
 
 			fileWriter.flush();
 			fileWriter.close();
@@ -1063,7 +1487,7 @@ public class PostBCBGOrderService {
 	 * @param pushOrderList
 	 * @param createdDateTime
 	 */
-	private void createUploadFileBodyForDemands(FileWriteUtils fileWriter, List<OrderExtend> pushOrderList, String createdDateTime) throws IOException {
+	private void createUploadFileBodyForDemands(FileWriteUtils fileWriter, List<OrderExtend> pushOrderList, String createdDateTime, int kind) throws IOException {
 
 		for (int i = 0 ; i < pushOrderList.size(); i++) {
 			OrderExtend orderInfo = pushOrderList.get(i);
@@ -1091,6 +1515,9 @@ public class PostBCBGOrderService {
 
 			fileWriter.write("0.0", DemandsFileFormat.TaxAmount);
 			float unitOrderDiscount = div2Digits(Float.valueOf(orderInfo.getOrderDiscount()), Float.valueOf(orderInfo.getQuantityOrdered()));
+			if (DEMAND_FOR_CANCELLED == kind) {
+				unitOrderDiscount = mult2Digits(unitOrderDiscount, -1);
+			}
 
 			if (unitOrderDiscount == 0) {
 				fileWriter.write("", DemandsFileFormat.Promo1);
@@ -1507,7 +1934,8 @@ public class PostBCBGOrderService {
 		translateContent.add(orderInfo.getCity());
 		translateContent.add(orderInfo.getState());
 
-		List<String> afterTranslateContent = translate(translateContent, 1);
+//		List<String> afterTranslateContent = translate(translateContent, 1);
+		List<String> afterTranslateContent = BaiduTranslateUtil.translate(translateContent);
 
 		orderInfo.setShipName(afterTranslateContent.get(0));
 		orderInfo.setShipAddress(afterTranslateContent.get(1));

@@ -155,6 +155,11 @@ public class SynShipGetEtkStatusService extends BaseTaskService {
 
             $info(channel.getFull_name() + "--OrderNumber：" + etkTrackingBean.getOrder_number() + "，TrackingNo：" + etkTrackingBean.getTracking_no() + "，Status：" + etkTrackingBean.getStatus());
 
+            if (!etkTrackingBean.getTracking_no().contains("HK"))
+            {
+                $info(channel.getFull_name() + "--TrackingNo：" + etkTrackingBean.getTracking_no() + "不是ETK打印的面单，不用处理");
+                continue;
+            }
             // 取得相关快递信息
             CarrierBean carrierBean = CarrierConfigs.getCarrier(etkTrackingBean.getOrder_channel_id(), CarrierEnums.Name.ETK);
 
@@ -185,12 +190,12 @@ public class SynShipGetEtkStatusService extends BaseTaskService {
                         // 结果是正确时，处理此条记录，否则忽略此条记录，继续处理其他
                         if (EtkConstants.Result.T.equals(expressTrackingRes.getResult())) {
 
-                            int index =0 ;
+                            int index = 0;
                             expressTrackingRes.getTrackingDetails().get(index).setEntry_datetime(DateTimeUtil.getGMTTime(DateTimeUtil.parse(expressTrackingRes.getTrackingDetails().get(index).getEntry_datetime(), DateTimeUtil.DATE_TIME_FORMAT_5), 8));
                             String entryDatetime = expressTrackingRes.getTrackingDetails().get(index).getEntry_datetime();
 
                             // 取得处理日期最大的记录
-                            for(int i=1;i<expressTrackingRes.getTrackingDetails().size();i++) {
+                            for (int i = 1; i < expressTrackingRes.getTrackingDetails().size(); i++) {
 
                                 expressTrackingRes.getTrackingDetails().get(i).setEntry_datetime(DateTimeUtil.getGMTTime(DateTimeUtil.parse(expressTrackingRes.getTrackingDetails().get(i).getEntry_datetime(), DateTimeUtil.DATE_TIME_FORMAT_5), 8));
 
@@ -200,7 +205,7 @@ public class SynShipGetEtkStatusService extends BaseTaskService {
                                 }
                             }
 
-                            ExpressTrackingDetail trackingDetail =expressTrackingRes.getTrackingDetails().get(index);
+                            ExpressTrackingDetail trackingDetail = expressTrackingRes.getTrackingDetails().get(index);
 
                             String json = trackingDetail == null ? "" : new Gson().toJson(trackingDetail);
                             $info(channel.getFull_name() + "--OrderNumber：" + etkTrackingBean.getOrder_number() + "，ETK返回最新状态：" + json);
@@ -254,10 +259,9 @@ public class SynShipGetEtkStatusService extends BaseTaskService {
                             // 物流状态有变化时进行更新
                             if (StringUtils.isNullOrBlank2(etkTrackingBean.getTracking_status())) {
                                 $info(channel.getFull_name() + "--Order_Number：" + etkTrackingBean.getOrder_number() + "'s Status no change");
-                            }
-                            else {
+                            } else {
 
-                                String notes = "Status changed to："+ Type.getTypeName(TypeConfigEnums.MastType.reservationStatus.getId(), etkTrackingBean.getStatus());
+                                String notes = "Status changed to：" + Type.getTypeName(TypeConfigEnums.MastType.reservationStatus.getId(), etkTrackingBean.getStatus());
 
                                 $info(channel.getFull_name() + "--Order_Number：" + etkTrackingBean.getOrder_number() + "'s" + notes);
 
@@ -268,23 +272,22 @@ public class SynShipGetEtkStatusService extends BaseTaskService {
                                 reservationDao.updateReservationByStatus(etkTrackingBean.getSyn_ship_no(), etkTrackingBean.getStatus(), etkTrackingBean.getBefore_status(), getTaskName());
 
                                 // 插入物品日志
-                                reservationDao.insertReservationLogByStatus(etkTrackingBean.getSyn_ship_no(), notes, etkTrackingBean.getStatus() , getTaskName());
+                                reservationDao.insertReservationLogByStatus(etkTrackingBean.getSyn_ship_no(), notes, etkTrackingBean.getStatus(), getTaskName());
 
                                 // 物流信息的追加
-                                trackingDao.insertTrackingInfo(etkTrackingBean.getSyn_ship_no(),etkTrackingBean.getTracking_no(),etkTrackingBean.getTracking_status(),trackingDetail.getEntry_datetime(),getTaskName());
+                                trackingDao.insertTrackingInfo(etkTrackingBean.getSyn_ship_no(), etkTrackingBean.getTracking_no(), etkTrackingBean.getTracking_status(), trackingDetail.getEntry_datetime(), etkTrackingBean.getStatus(), getTaskName());
 
                                 // 快递100未订阅时，订阅快递100
-                                if (CodeConstants.KD100_POLL.NO.equals(etkTrackingBean.getSent_kd100_poll_flg())){
+                                if (CodeConstants.KD100_POLL.NO.equals(etkTrackingBean.getSent_kd100_poll_flg())) {
                                     trackingDao.updateKD100Poll(etkTrackingBean.getTracking_type(), etkTrackingBean.getTracking_no(), CodeConstants.KD100_POLL.YES, getTaskName());
                                 }
 
                             }
 
-                        }
-                        else {
+                        } else {
                             // 结果是错误时，忽略此条记录，继续处理其他
-                            $info(channel.getFull_name() + "--Order_Number：" + etkTrackingBean.getOrder_number()+"，ETK提单状态取得错误，无法更新");
-                            logIssue(channel.getFull_name() + "--ETK提单状态取得错误，无法更新", "Order_Number：" + etkTrackingBean.getOrder_number() + "，TrackingNo：" + etkTrackingBean.getTracking_no() +  "，Message：" + expressTrackingRes.getMsg());
+                            $info(channel.getFull_name() + "--Order_Number：" + etkTrackingBean.getOrder_number() + "，ETK提单状态取得错误，无法更新");
+                            logIssue(channel.getFull_name() + "--ETK提单状态取得错误，无法更新", "Order_Number：" + etkTrackingBean.getOrder_number() + "，TrackingNo：" + etkTrackingBean.getTracking_no() + "，Message：" + expressTrackingRes.getMsg());
                         }
 
                     } catch (Exception e) {

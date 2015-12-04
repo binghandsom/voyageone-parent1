@@ -2,23 +2,22 @@ package com.voyageone.batch.cms.service;
 
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.cms.dao.AttributeDao;
-import com.voyageone.batch.cms.utils.WebServiceUtil;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
-import com.voyageone.common.components.issueLog.enums.ErrorType;
+import com.voyageone.common.components.baidu.translate.BaiduTranslateUtil;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.configs.Codes;
-import com.voyageone.common.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Created by jacky on 2015/10/15.
@@ -57,7 +56,7 @@ public class AttributeTranslateService extends BaseTaskService {
         if (attributeValueList != null && attributeValueList.size() > 0) {
 
             // 拆分多线程翻译处理
-            int count = 50;
+            int count = 100;
             int totalSize = attributeValueList.size();
             int threadCount;
             int subSize;
@@ -154,72 +153,94 @@ public class AttributeTranslateService extends BaseTaskService {
         return isSuccess;
     }
 
-    /**
-     * 翻译字符串列表
-     */
-    private List<String> translate(List<String> beforeStringList, int threadNo) throws Exception {
-        List<String> resultStrList = new ArrayList<String>();
-
-        StringBuilder url = new StringBuilder(Codes.getCodeName(BAIDU_TRANSLATE_CONFIG, "Url"));
-        String apiKey = Codes.getCodeName(BAIDU_TRANSLATE_CONFIG, "ApiKey" + threadNo);
-        String from = Codes.getCodeName(BAIDU_TRANSLATE_CONFIG, "From");
-        String to = Codes.getCodeName(BAIDU_TRANSLATE_CONFIG, "To");
-
-        StringBuilder q = new StringBuilder("q=");
-        if (beforeStringList != null && beforeStringList.size() > 0) {
-            String qSplit = URLEncoder.encode("\n", "utf-8");
-            int qSize = beforeStringList.size();
-            for (int i = 0; i < qSize; i++) {
-                if (i == 0) {
-                    q.append(URLEncoder.encode(beforeStringList.get(i), "utf-8"));
-                } else {
-                    q.append(qSplit);
-                    q.append(URLEncoder.encode(beforeStringList.get(i), "utf-8"));
-                }
-            }
-        } else {
-            return resultStrList;
-        }
-
-        url.append("?");
-        url.append("client_id=");
-        url.append(apiKey);
-        url.append("&");
-        url.append(q.toString());
-        url.append("&");
-        url.append("from=");
-        url.append(from);
-        url.append("&");
-        url.append("to=");
-        url.append(to);
-
-        $info(url.toString());
-
-        String transResult = WebServiceUtil.getByUrl(url.toString());
-
-        Map<String, Object> jsonToMap = JsonUtil.jsonToMap(transResult);
-        // 百度翻译API服务发生错误
-        if (jsonToMap.containsKey("error_code")) {
-            Object error_code = jsonToMap.get("error_code");
-            Object error_msg = jsonToMap.get("error_msg");
-            logIssue("百度翻译API服务发生错误。error_code：" + error_code + " error_msg：" + error_msg);
-
-        } else {
-            Object trans_result = jsonToMap.get("trans_result");
-            List<Map> mapList = (List<Map>) trans_result;
-            if (mapList != null && mapList.size() > 0) {
-                for (int i = 0; i < mapList.size(); i++) {
-                    Map<String, String> map = mapList.get(i);
-                    String src = map.get("src");
-                    String dst = map.get("dst");
-                    $info("src:" + src + " -> dst:" + dst);
-                    resultStrList.add(dst);
-                }
-            }
-        }
-
-        return resultStrList;
-    }
+//    /**
+//     * 翻译字符串列表
+//     */
+//    private List<String> translate(List<String> beforeStringList, int threadNo) throws Exception {
+//        List<String> resultStrList = new ArrayList<String>();
+//
+////        StringBuilder url = new StringBuilder(Codes.getCodeName(BAIDU_TRANSLATE_CONFIG, "Url"));
+////        String apiKey = Codes.getCodeName(BAIDU_TRANSLATE_CONFIG, "ApiKey" + threadNo);
+////        String from = Codes.getCodeName(BAIDU_TRANSLATE_CONFIG, "From");
+////        String to = Codes.getCodeName(BAIDU_TRANSLATE_CONFIG, "To");
+//
+//        StringBuilder url = new StringBuilder("http://api.fanyi.baidu.com/api/trans/vip/translate");
+////        String appId = "20151117000005631";
+//        String appId = "20151118000005735";
+//        String from = "auto";
+//        String to = "auto";
+////        String from = "en";
+////        String to = "zh";
+////        String secretKey = "TBqBnqgPGcwwIRjDQZ9Q";
+//        String secretKey = "7hANqRgIvnrg1Pp3tJFP";
+////        String salt = "1238179";
+//        String salt = "1435660288";
+//
+//        StringBuilder q = new StringBuilder();
+//        if (beforeStringList != null && beforeStringList.size() > 0) {
+//            String qSplit = URLEncoder.encode("\n", "utf-8");
+//            int qSize = beforeStringList.size();
+//            for (int i = 0; i < qSize; i++) {
+//                if (i == 0) {
+//                    q.append(URLEncoder.encode(beforeStringList.get(i), "utf-8"));
+//                } else {
+//                    q.append(qSplit);
+//                    q.append(URLEncoder.encode(beforeStringList.get(i), "utf-8"));
+//                }
+//            }
+//        } else {
+//            return resultStrList;
+//        }
+//
+//        String pingjie = appId + URLDecoder.decode(q.toString(), "utf-8") + salt + secretKey;
+//        String sign = MD5.getMD5(pingjie);
+//
+//        url.append("?");
+//        url.append("q=");
+//        url.append(q.toString());
+//        url.append("&");
+//        url.append("appid=");
+//        url.append(appId);
+//        url.append("&");
+//        url.append("salt=");
+//        url.append(salt);
+//        url.append("&");
+//        url.append("from=");
+//        url.append(from);
+//        url.append("&");
+//        url.append("to=");
+//        url.append(to);
+//        url.append("&");
+//        url.append("sign=");
+//        url.append(sign);
+//
+//        $info(url.toString());
+//
+//        String transResult = WebServiceUtil.getByUrl(url.toString());
+//
+//        Map<String, Object> jsonToMap = JsonUtil.jsonToMap(transResult);
+//        // 百度翻译API服务发生错误
+//        if (jsonToMap.containsKey("error_code")) {
+//            Object error_code = jsonToMap.get("error_code");
+//            Object error_msg = jsonToMap.get("error_msg");
+//            logIssue("百度翻译API服务发生错误。error_code：" + error_code + " error_msg：" + error_msg);
+//
+//        } else {
+//            Object trans_result = jsonToMap.get("trans_result");
+//            List<Map> mapList = (List<Map>) trans_result;
+//            if (mapList != null && mapList.size() > 0) {
+//                for (int i = 0; i < mapList.size(); i++) {
+//                    Map<String, String> map = mapList.get(i);
+//                    String src = map.get("src");
+//                    String dst = map.get("dst");
+//                    $info("src:" + src + " -> dst:" + dst);
+//                    resultStrList.add(dst);
+//                }
+//            }
+//        }
+//
+//        return resultStrList;
+//    }
 
     class BaiduTranslateTask implements Callable<String> {
 
@@ -255,7 +276,7 @@ public class AttributeTranslateService extends BaseTaskService {
                 transStrList.add(transStr);
             }
 
-            List<String>  translateList = translate(transStrList, threadNo);
+            List<String> translateList = BaiduTranslateUtil.translate(transStrList);
 
             if (translateList.size() > 0) {
 

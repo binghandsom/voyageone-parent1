@@ -110,9 +110,9 @@ public class SearsWsdlUpdate extends SearsWsdlBase {
             }
 
             // 返回删除数量和插入数量,理论上应该相同
-//            int[] counts = searsFeedDao.updateFull(updatedCodes);
+            updateFullByCode(updatedCodes);
 
-//            $info("已完成商品更新, 更新的商品数量 Feed [ %s ] [ %s ] Style [ %s ] [ %s ] ", counts[0], counts[1], counts[2], counts[3]);
+            $info("已完成商品更新, 更新的商品数量 Feed [ %s ]", updatedCodes.size());
         }
 
         private List<ProductBean> getLastProducts() {
@@ -144,19 +144,21 @@ public class SearsWsdlUpdate extends SearsWsdlBase {
 
             $info("准备批量获取上次记录的 Image ( Full )");
 
-            // 拼装 full 表获取的专用条件
-            String where = String.format("WHERE %s", getWhereUpdateFlg());
+
 
             // 逻辑设定上, getLastImags 将和 getLastProducts 一样, 一次 Job 只查询一次. 数据的处理移交 Java 端执行
             // 所以吧必须的两列内容按固定格式取出
             String code = Feed.getVal1(channel, FeedEnums.Name.item_code);
             String images = Feed.getVal1(channel, FeedEnums.Name.images);
 
+            // 拼装 full 表获取的专用条件
+            String where = String.format("WHERE item_id in (select item_id from %s where %s)", imageTable,getWhereUpdateFlg());
+
             // 通过组装的 SQL 查询这次需要更新的商品,其上次的图片信息
             List<String> imageArrs = superFeedDao.selectAllfeedImage(
                     where,
                     String.format("DISTINCT CONCAT(%s, '<>', %s)", code, images), // 这里定义固定格式
-                    String.format("%s_full %s", imageTable, imageJoin)); // 表部分
+                    String.format("%s_full %s", imageTable, "")); // 表部分
 
             return imageArrs
                     .stream()
@@ -179,7 +181,7 @@ public class SearsWsdlUpdate extends SearsWsdlBase {
 
                 imageBean.setImage_type("1");
                 imageBean.setImage_url(imagePath);
-                imageBean.setImage_name(imagePath.substring(imagePath.lastIndexOf("/") + 1, imagePath.lastIndexOf(".")));
+                imageBean.setImage_name(imagePath.substring(imagePath.lastIndexOf("/") + 1));
                 imageBean.setDisplay_order("0");
 
                 imageBeans.add(imageBean);

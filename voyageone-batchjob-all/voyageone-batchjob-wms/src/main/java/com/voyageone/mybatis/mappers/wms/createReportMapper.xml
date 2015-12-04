@@ -62,6 +62,16 @@
             AND except.`comment` LIKE '%赠品%'
             AND except.except_sku = provisional.transfer_sku
         )
+        AND NOT EXISTS (
+            SELECT
+                1
+            FROM
+                tm_order_channel_config
+            WHERE
+                order_channel_id = #{order_channel_id}
+            AND cfg_name = 'special_goods_ball'
+            and cfg_val1 = provisional.transfer_sku
+        )
         GROUP BY
             provisional.transfer_id,
             provisional.order_number,

@@ -42,7 +42,7 @@ class BcbgWsdlInsert extends BcbgWsdlBase {
 
         // 条件则根据类目筛选
         String where = String.format("WHERE %s AND %s = '%s' GROUP BY %s", INSERT_FLG, modelColumns.getCategory_url_key(),
-                category.getUrl_key(), grouping_model);
+                fix(category.getUrl_key()), grouping_model);
 
         List<ModelBean> modelBeans = superFeedDao.selectSuperfeedModel(where, modelColumns,
                 // 组合 Model 的表部分和Join部分
@@ -87,7 +87,8 @@ class BcbgWsdlInsert extends BcbgWsdlBase {
         // update flg 标记, 只获取哪些即将进行新增的商品的类目
         List<String> categoryPaths = superFeedDao.selectSuperfeedCategory(
                 Feed.getVal1(channel, FeedEnums.Name.category_column),
-                table_feed_full, " AND " + INSERT_FLG);
+                String.format("%s JOIN %s ON %s", table_feed_full, table_style_full, on_product),
+                " AND " + INSERT_FLG);
 
         $info("获取类目路径数 %s , 准备拆分继续处理", categoryPaths.size());
 
@@ -204,8 +205,8 @@ class BcbgWsdlInsert extends BcbgWsdlBase {
 
         $info("总共~ 失败的 Model: %s ; 失败的 Product: %s", modelFailList.size(), productFailList.size());
 
-        int count = bcbgSuperFeedDao.updateSuccessStatus(modelFailList, productFailList);
+        int[] count = bcbgSuperFeedDao.updateSuccessStatus(modelFailList, productFailList);
 
-        $info("新商品 INSERT 处理全部完成, 更新 Full 表 [ Feed: %s ]", count);
+        $info("新商品 INSERT 处理全部完成 { Feed(M): %s, Feed(C): %s }", count[0], count[1]);
     }
 }

@@ -11,8 +11,10 @@
         insert into voyageone_cms.cms_zz_worktable_sears_superfeed (
                 item_id,
                 product_id,
+                product_name,
                 brand,
                 description,
+                featureDescription,
                 manufacturer_name,
                 manufacturer_part_number,
                 image_url,
@@ -26,14 +28,17 @@
                 model_number,
                 country_groups,
                 country_of_origin,
-                price)
+                price,
+                intl_reg_price)
         values
         <foreach collection="product" item="item" index="index"
                  separator=",">
             (#{item.itemId,jdbcType=VARCHAR},
                     #{item.productDetails.productId,jdbcType=VARCHAR},
+                    #{item.productDetails.productName,jdbcType=VARCHAR},
                     #{item.productDetails.brand,jdbcType=VARCHAR},
                     #{item.productDetails.description,jdbcType=VARCHAR},
+                    #{item.productDetails.featureDescription,jdbcType=VARCHAR},
                     #{item.productDetails.manufacturerName,jdbcType=VARCHAR},
                     #{item.productDetails.manufacturerPartNumber,jdbcType=INTEGER},
                     #{item.productDetails.imageUrl,jdbcType=VARCHAR},
@@ -47,7 +52,8 @@
                     #{item.productDetails.modelNumber,jdbcType=VARCHAR},
                     #{item.productDetails.countryGroups,jdbcType=VARCHAR},
                     #{item.productDetails.countryOfOrigin,jdbcType=VARCHAR},
-                    #{item.price.sellPrice,jdbcType=DECIMAL})
+                    #{item.price.sellPrice,jdbcType=DECIMAL},
+                    #{item.price.intlRegPrice,jdbcType=DECIMAL})
         </foreach>
     </insert>
     <insert id="cms_zz_worktable_sears_attribute_insert" parameterType="com.voyageone.common.components.sears.bean.ProductResponse" >
@@ -144,9 +150,6 @@
             <result column="cps_cn_price" property="cps_cn_price" />
             <result column="cps_cn_price_rmb" property="cps_cn_price_rmb" />
             <result column="cps_cn_price_final_rmb" property="cps_cn_price_final_rmb" />
-            <result column="cps_cn_price" property="cps_cn_price" />
-            <result column="cps_cn_price" property="cps_cn_price" />
-            <result column="cps_cn_price" property="cps_cn_price" />
             <collection property="itembeans" javaType="ArrayList" ofType="com.voyageone.batch.cms.bean.ItemBean" >
                 <result column="item_code" property="code" />
                 <result column="i_sku" property="i_sku" />
@@ -232,5 +235,31 @@
             #{itemIds}
         </foreach>
         )
+    </update>
+
+
+
+    <delete id="cms_zz_worktable_sears_superfeed_full_code_del" parameterType="java.util.List">
+        DELETE
+        FROM
+        voyageone_cms.cms_zz_worktable_sears_superfeed_full
+        where model_number = #{model}
+        <if test="color != null and color != ''">
+            and  color =  #{color}
+        </if>
+    </delete>
+    <insert id="cms_zz_worktable_sears_superfeed_full_code_insert"  parameterType="java.util.List">
+        INSERT INTO voyageone_cms.cms_zz_worktable_sears_superfeed_full SELECT * from
+        voyageone_cms.cms_zz_worktable_sears_superfeed where model_number = #{model}
+        <if test="color != null and color != ''">
+           and color =  #{color}
+        </if>
+    </insert>
+    <update id="cms_zz_worktable_sears_superfeed_code_update"  parameterType="java.util.List">
+        UPDATE voyageone_cms.cms_zz_worktable_sears_superfeed set update_flg = 3
+        where model_number = #{model}
+        <if test="color != null and color != ''">
+            and  color =  #{color}
+        </if>
     </update>
 </mapper>

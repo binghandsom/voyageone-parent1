@@ -82,4 +82,19 @@ public class SearsFeedDao extends BaseDao {
     public int updateFeetStatus(List<String> itemIds){
         return delete("cms_zz_worktable_sears_superfeed_update",itemIds);
     }
+
+    // 把读入成功的FEED数据保存起来
+    public int insertFullByCode(Map code){
+        return insert("cms_zz_worktable_sears_superfeed_full_code_insert",code);
+    }
+
+    //把导入成功的FEED数据 从保存数据中删除
+    public int delFullByCode(Map code){
+        return delete("cms_zz_worktable_sears_superfeed_full_code_del", code);
+    }
+
+    // 导入成功的FEED数据的状态变更
+    public int updateFeetStatusByCode(Map code){
+        return delete("cms_zz_worktable_sears_superfeed_code_update",code);
+    }
 }
