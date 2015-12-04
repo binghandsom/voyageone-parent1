@@ -128,4 +128,10 @@ public class FeedToCmsServiceTest {
 //        feedToCmsService.updateProduct("010",products);
 
     }
+
+    @Test
+    public void testGetFinallyCategories() throws Exception {
+        List<Map> ret = feedToCmsService.getFinallyCategories("013");
+
+    }
 }

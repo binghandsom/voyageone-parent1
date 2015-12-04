@@ -10,14 +10,14 @@
 		  class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 			<list>
-				<!--&lt;!&ndash; jewely向scene7上传产品图片 &ndash;&gt;-->
-				<!--<ref bean="jewelyImagePostScene7TaskContri" />-->
+				<!-- jewely向scene7上传产品图片 -->
+				<ref bean="jewelyImagePostScene7TaskContri" />
 
-				<!--&lt;!&ndash; BCBG向scene7上传产品图片 &ndash;&gt;-->
-				<!--<ref bean="bcbgImagePostScene7TaskContri" />-->
+				<!-- BCBG向scene7上传产品图片 -->
+				<ref bean="bcbgImagePostScene7TaskContri" />
 
-				<!--&lt;!&ndash; Sears向scene7上传产品图片 &ndash;&gt;-->
-				<!--<ref bean="searsImagePostScene7TaskContri" />-->
+				<!-- Sears向scene7上传产品图片 -->
+				<ref bean="searsImagePostScene7TaskContri" />
 			</list>
 		</property>
 		<property name="quartzProperties">
