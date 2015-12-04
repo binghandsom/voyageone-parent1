@@ -29,7 +29,9 @@
             publish_datetime=#{publish_datetime},
             publish_faild_comment=#{publish_failed_comment},
             publish_product_id=#{publish_product_id},
+        <if test="main_product_flg != -1">
             main_product_flg=#{main_product_flg},
+        </if>
             publish_product_status=#{publish_product_status},
             quantity_update_type=#{quantity_update_type},
             modifier=#{modifier},
