@@ -9,7 +9,8 @@
   "cms": {
     "home": {
      "menu": {
-       "getCategoryInfo": "/cms/home/menu/getCategoryInfo"
+       "getCategoryInfo": "/cms/home/menu/getCategoryInfo",
+       "getCategoryType": "/cms/home/menu/getCategoryType"
      }
     }
   }
