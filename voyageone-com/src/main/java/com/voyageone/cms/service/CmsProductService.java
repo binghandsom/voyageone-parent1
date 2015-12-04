@@ -3,6 +3,7 @@ package com.voyageone.cms.service;
 import com.mongodb.WriteResult;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.model.CmsBtProductModel;
+import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,16 @@ public class CmsProductService {
      */
     public CmsBtProductModel getProductById(String channelId, int prodId) {
         return cmsBtProductDao.selectProductById(channelId, prodId);
+    }
+
+    /**
+     * 获取商品 根据ID获
+     * @param channelId
+     * @param prodId
+     * @return
+     */
+    public JSONObject getProductByIdWithJson(String channelId, int prodId) {
+        return cmsBtProductDao.selectProductByIdWithJson(channelId, prodId);
     }
 
     /**

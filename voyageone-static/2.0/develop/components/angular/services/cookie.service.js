@@ -11,8 +11,7 @@ var keys = {
   language: 'voyageone.user.language',
   company: 'voyageone.user.company',
   channel: 'voyageone.user.channel',
-  menu: "voyageone.user.menu",
-  name: "voyageone.user.name"
+  application: "voyageone.user.application",
 };
 
 function gentProps(key) {
@@ -32,7 +31,7 @@ function CookieService($cookieStore) {
   this.set(keys.language, '');
   this.set(keys.company, '');
   this.set(keys.channel, '');
-  this.set(keys.menu, '');
+  this.set(keys.application, '');
 }
 
 CookieService.prototype.get = function(key) {
@@ -47,9 +46,13 @@ CookieService.prototype.language = gentProps(keys.language);
 
 CookieService.prototype.company = gentProps(keys.company);
 
-// todo: channel 是否需要的是一个对象(id,name),在menu画面中需要显示channel的名称(edward.lin)
 CookieService.prototype.channel = gentProps(keys.channel);
 
-CookieService.prototype.menu = gentProps(keys.menu);
+CookieService.prototype.application = gentProps(keys.application);
 
-CookieService.prototype.name = gentProps(keys.name);
+CookieService.prototype.removeAll = function () {
+  this.$cookieStore.remove(keys.language);
+  this.$cookieStore.remove(keys.company);
+  this.$cookieStore.remove(keys.channel);
+  this.$cookieStore.remove(keys.application);
+};

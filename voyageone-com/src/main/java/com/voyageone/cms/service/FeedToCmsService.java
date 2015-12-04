@@ -40,7 +40,7 @@ public class FeedToCmsService {
      * @param channelId
      * @return
      */
-    private CmsMtFeedCategoryTreeModel getFeedCategory(String channelId) {
+    public CmsMtFeedCategoryTreeModel getFeedCategory(String channelId) {
         CmsMtFeedCategoryTreeModel category = feedCategoryDao.selectFeedCategory(channelId);
         if (category == null) {
             category = new CmsMtFeedCategoryTreeModel();

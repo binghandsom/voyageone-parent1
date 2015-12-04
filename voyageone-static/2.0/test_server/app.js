@@ -4,14 +4,9 @@ var extend = require("extend");
 var app = express();
 
 var commonError = {
-  'result': 'NG',
-  'messageType': 1,
+  'code': 1,
   'message': 'Some error',
-  'formValidateList': [],
-  'permissions': [],
-  'resultInfo': {},
-  'forward': '',
-  'token': '2015020600000001'
+  'result': {}
 };
 
 var mappings = {};
