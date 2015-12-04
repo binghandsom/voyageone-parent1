@@ -16,6 +16,13 @@ import java.util.Set;
 
 public class ComplexValue {
     protected Map<String, Field> fieldMap = new HashMap();
+    public Map<String, Field> getFieldMap() {
+        return fieldMap;
+    }
+    public void setFieldMap(Map<String, Field> fieldMap) {
+        this.fieldMap = fieldMap;
+    }
+
 
     public ComplexValue() {
     }

@@ -2,12 +2,20 @@ package com.voyageone.common.masterdate.schema.factory;
 
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.field.Field;
+import com.voyageone.common.masterdate.schema.field.InputField;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.JsonUtil;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.type.TypeFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by DELL on 2015/12/3.
@@ -333,7 +341,7 @@ public class SchemaTest {
                 "<itemRule>\n" +
                 "    <field id=\"prop_20000\" name=\"品牌\" type=\"singleCheck\">\n" +
                 "        <rules>\n" +
-                "            <rule name=\"requiredRule\" value=\"true\" />\n" +
+                "            <rule name=\"requiredRule\" value=\"true\" >12313213</rule>\n" +
                 "        </rules>\n" +
                 "        <options>\n" +
                 "            <option displayName=\"AIR JORDAN\" value=\"5003369\" />\n" +
@@ -523,5 +531,28 @@ public class SchemaTest {
                         System.out.println("equal");
                 }
         }
+
+        @Test
+        public void testReadJsonForList() throws Exception {
+                List<Field> result1 = SchemaReader.readXmlForList(docStr2);
+                for (Field field:result1) {
+                        if (field instanceof InputField) {
+                                ((InputField)field).setDefaultValue("fsfsdfddfsdf");
+                        }
+                }
+                String resultStr1 = JacksonUtil.bean2Json(result1);
+                List<Map<String, Object>> rootList = JsonUtil.jsonToMapList(resultStr1);
+                System.out.println(resultStr1);
+                //SchemaReader.readJsonForList(resultStr1);
+        }
+
+
+        public static List<Map<String, Object>> json2MapList(String jsonStr) throws JsonParseException, JsonMappingException, IOException {
+                ObjectMapper mapper = new ObjectMapper();
+                List<Map<String, Object>> list = mapper.readValue(jsonStr,
+                        TypeFactory.defaultInstance().constructCollectionType(List.class, Map.class));
+                return list;
+        }
+
 
 }
