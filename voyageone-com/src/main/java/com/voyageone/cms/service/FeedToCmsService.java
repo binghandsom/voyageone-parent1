@@ -170,6 +170,7 @@ public class FeedToCmsService {
                 }
                 product.setModified(DateTimeUtil.getNow());
                 product.setModifier(this.modifier);
+                product.setUpdFlg(0);
                 feedProductDao.update(product);
 
                 List<CmsBtFeedProductImageModel> imageModels = new ArrayList<>();
