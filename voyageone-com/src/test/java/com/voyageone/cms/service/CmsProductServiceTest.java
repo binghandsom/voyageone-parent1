@@ -6,6 +6,7 @@ import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.model.*;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JsonUtil;
+import net.minidev.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -153,7 +154,7 @@ public class CmsProductServiceTest {
         List<CmsBtProductModel> lst = new ArrayList<>();
         int index = 0;
         for(int i=1; i<=100000; i++) {
-            CmsBtProductModel productModel = create("101", i, new Random());
+            CmsBtProductModel productModel = create("100", i, new Random());
             lst.add(productModel);
             index++;
             if (i%1000 == 0) {
@@ -175,5 +176,11 @@ public class CmsProductServiceTest {
         cmsProductService.removeAll("101");
         long total = System.currentTimeMillis()-start;
         System.out.println("total totalTime:=" + total);
+    }
+
+    @Test
+    public void testSelectCmsBtProductByIdOnlyProdId() throws Exception {
+        JSONObject ret = cmsProductService.getProductByIdWithJson("001", 1);
+        System.out.println(ret.toString());
     }
 }

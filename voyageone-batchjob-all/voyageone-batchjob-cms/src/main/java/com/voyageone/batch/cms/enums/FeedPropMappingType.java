@@ -1,4 +1,4 @@
-package com.voyageone.batch.cms.emum;
+package com.voyageone.batch.cms.enums;
 
 /**
  * 主数据属性的值映射类型
