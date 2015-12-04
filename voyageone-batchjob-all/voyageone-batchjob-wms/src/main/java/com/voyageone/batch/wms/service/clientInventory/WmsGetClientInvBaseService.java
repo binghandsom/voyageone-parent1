@@ -59,7 +59,7 @@ public abstract class WmsGetClientInvBaseService extends BaseTaskService {
      * @param order_channel_id 渠道
      * @return sotreId
      */
-    protected Long getStore(String order_channel_id) {
+    protected Long getStore(String order_channel_id, String store_area) {
         OrderChannelBean channel = ChannelConfigs.getChannel(order_channel_id);
         log("获取渠道:" + channel.getFull_name() + "的store_id开始");
         try {
@@ -67,7 +67,10 @@ public abstract class WmsGetClientInvBaseService extends BaseTaskService {
             List<StoreBean> storeBeans = StoreConfigs.getChannelStoreList(order_channel_id);
             assert storeBeans != null;
             for (StoreBean storeBean : storeBeans) {
-                if (storeBean.getInventory_manager().equals(StoreConfigEnums.Manager.NO.getId()) && storeBean.getStore_kind().equals(StoreConfigEnums.Kind.REAL.getId())) {
+                // 库存不由我们管理；是真实仓库；仓库所属区域与配置相同
+                if (storeBean.getInventory_manager().equals(StoreConfigEnums.Manager.NO.getId())
+                        && storeBean.getStore_kind().equals(StoreConfigEnums.Kind.REAL.getId())
+                        && storeBean.getStore_area().equals(store_area)) {
                     storeID = storeBean.getStore_id();
                     break;
                 }

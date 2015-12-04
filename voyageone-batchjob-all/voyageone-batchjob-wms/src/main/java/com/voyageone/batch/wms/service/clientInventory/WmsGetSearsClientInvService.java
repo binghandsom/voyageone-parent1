@@ -65,35 +65,40 @@ public class WmsGetSearsClientInvService extends WmsGetClientInvBaseService {
 
                 transactionRunner.runWithTran(() -> {
                     assert channel != null;
-                    Long store_id = getStore(channelId);
-                    try {
-                        log(channel.getFull_name() + "库存插入wms_bt_client_inventory开始："+ finalInventoryBeans.size());
-                        int intCount = 0, totalRow = 0, insertRow = 0;
-                        List<ClientInventoryBean> inventoryItems = new ArrayList<>();
-                        for (ClientInventoryBean clientInventoryBean : finalInventoryBeans) {
+                    Long store_id = getStore(channelId, getInventoryParamBean.getStoreArea());
+                    if (store_id == 0) {
+                        log(channel.getFull_name() + "所属区域仓库取得失败：" + getInventoryParamBean.getStoreArea());
+                        logIssue(channel.getFull_name() + "所属区域仓库取得失败：" + getInventoryParamBean.getStoreArea());
+                    } else {
+                        try {
+                            log(channel.getFull_name() + "库存插入wms_bt_client_inventory开始：" + finalInventoryBeans.size());
+                            int intCount = 0, totalRow = 0, insertRow = 0;
+                            List<ClientInventoryBean> inventoryItems = new ArrayList<>();
+                            for (ClientInventoryBean clientInventoryBean : finalInventoryBeans) {
 
-                            inventoryItems.add(clientInventoryBean);
-                            intCount = intCount + 1;
-                            totalRow = totalRow + 1;
+                                inventoryItems.add(clientInventoryBean);
+                                intCount = intCount + 1;
+                                totalRow = totalRow + 1;
 
-                            if (intCount == getInventoryParamBean.getUpdateCount() || totalRow == finalInventoryBeans.size()) {
-                                logger.info("----------"+channel.getFull_name()+"当前更新到第【" + totalRow + "】件----------");
-                                insertRow = insertRow + insertClientInventory(channelId, inventoryItems, store_id);
-                                intCount = 0;
-                                inventoryItems = new ArrayList<>();
+                                if (intCount == getInventoryParamBean.getUpdateCount() || totalRow == finalInventoryBeans.size()) {
+                                    logger.info("----------" + channel.getFull_name() + "当前更新到第【" + totalRow + "】件----------");
+                                    insertRow = insertRow + insertClientInventory(channelId, inventoryItems, store_id);
+                                    intCount = 0;
+                                    inventoryItems = new ArrayList<>();
+                                }
+
                             }
-
+                            logger.info("----------从渠道【" + channel.getFull_name() + "】获取到的库存sku记录数为:" + totalRow + "----------");
+                            logger.info("----------" + channel.getFull_name() + "与【wms_bt_item_detail】中【client_sku】匹配且成功插入【wms_bt_client_inventory】记录数为:" + insertRow + "----------");
+                            //全部插入成功后更新标志
+                            setLastFullUpdateTime(channelId, getInventoryParamBean);
+                            log(channel.getFull_name() + "库存插入wms_bt_client_inventory结束");
+                        } catch (Exception e) {
+                            String msg = channel.getFull_name() + "库存插入wms_bt_client_inventory失败" + e;
+                            log(msg);
+                            logIssue(msg);
+                            throw new RuntimeException(msg);
                         }
-                        logger.info("----------从渠道【" + channel.getFull_name() + "】获取到的库存sku记录数为:" + totalRow + "----------");
-                        logger.info("----------" + channel.getFull_name() + "与【wms_bt_item_detail】中【client_sku】匹配且成功插入【wms_bt_client_inventory】记录数为:" + insertRow + "----------");
-                        //全部插入成功后更新标志
-                        setLastFullUpdateTime(channelId, getInventoryParamBean);
-                        log(channel.getFull_name() + "库存插入wms_bt_client_inventory结束");
-                    } catch (Exception e) {
-                        String msg = channel.getFull_name() + "库存插入wms_bt_client_inventory失败" + e;
-                        log(msg);
-                        logIssue(msg);
-                        throw new RuntimeException(msg);
                     }
                 });
             }else{
@@ -275,6 +280,7 @@ public class WmsGetSearsClientInvService extends WmsGetClientInvBaseService {
                 getInventoryParamBean.setDateTimeSince(getUpdateTime(channel.getFull_name(),"PRE"));
                 getInventoryParamBean.setnPageIndex(1);
             }
+            getInventoryParamBean.setStoreArea(thirdPartyConfigBean.getProp_val6());
             log(channel.getFull_name()+"变量更新库存时间为：" + getInventoryParamBean.getDateTimeSince() + "; 全量更新忽略此时间！");
             getInventoryParamBean.setnPageSize(Integer.parseInt(ThirdPartyConfigs.getThirdPartyConfigList(channelId, updateClientInventoryConstants.INVENTORYPAGESIZE).get(0).getProp_val1()));
             getInventoryParamBean.setUpdateCount(Integer.parseInt(ThirdPartyConfigs.getThirdPartyConfigList(channelId, updateClientInventoryConstants.INVENTORYPAGESIZE).get(0).getProp_val2()));
