@@ -592,6 +592,7 @@
 		 where t.order_channel_id = t1.order_channel_id
 			and t.cart_id = t1.cart_id
 			and t.tid = t1.tid
+			and t.sent_flag = 0
 	</update>
 	
 	<!-- 将oms_new_orders_import_history表的发送标志置位（2：批处理失败，转单条处理） -->
