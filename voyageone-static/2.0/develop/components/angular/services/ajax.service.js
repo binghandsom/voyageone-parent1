@@ -29,7 +29,7 @@ AjaxService.prototype.post = function (url, data) {
       defer.reject(res);
       return;
     }
-    defer.resolve(res);
+    defer.resolve(res.result);
   }, function (response) {
     defer.reject(null, response);
   });

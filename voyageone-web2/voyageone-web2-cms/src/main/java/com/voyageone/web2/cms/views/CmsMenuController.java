@@ -1,8 +1,11 @@
 package com.voyageone.web2.cms.views;
 
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.ajax.AjaxResponse;
+import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.CmsController;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,24 +36,24 @@ public class CmsMenuController extends CmsController{
     @RequestMapping("getCategoryInfo")
     public AjaxResponse getCategoryInfo() {
 
-        Map<String, Object> resultbean = new HashMap<>();
+        Map<String, Object> resultBean = new HashMap<>();
 
         String cTypeId = getCmsSession().getCategoryType();
         String channelId = getUser().getSelChannelId();
 
-        resultbean.put("categoryType", cTypeId);
+        resultBean.put("categoryType", cTypeId);
 
         // 获取CategoryList
         List<Map<String, Object>> categoryList = new ArrayList<>();
 //        List<Map<String, Object>> categoryList = menuService.getCategoryList(cTypeId, channelId);
-        resultbean.put("categoryList", categoryList);
+        resultBean.put("categoryList", categoryList);
 
         // 获取CategoryTreeList
         List<Map> categoryTreeList = menuService.getCategoryTreeList(cTypeId, channelId);
-        resultbean.put("categoryTreeList", categoryTreeList);
+        resultBean.put("categoryTreeList", categoryTreeList);
 
         // 返回用户信息
-        return success(resultbean);
+        return success(resultBean);
     }
 
     /**
@@ -67,6 +70,25 @@ public class CmsMenuController extends CmsController{
 
         // 返回用户信息
         return success(categoryTypeList);
+    }
+
+    /**
+     * 设置当前用户的categoryType.
+     * @return
+     */
+    @RequestMapping("setCategoryType")
+    public AjaxResponse setCategoryType(@RequestBody Map<String, Object> params) {
+
+        String cTypeId = (String) params.get("cTypeId");
+
+        // 如果cTypeId为空,设置成其默认值.
+        if(StringUtils.isEmpty(cTypeId)) {
+            cTypeId = CmsConstants.DEFAULT_CATEGORY_TYPE;
+        }
+
+        getCmsSession().setCategoryType(cTypeId);
+
+        return getCategoryInfo();
     }
 
 }

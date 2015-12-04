@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.bean;
 
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.web2.cms.CmsConstants;
 
 import java.io.Serializable;
 
@@ -14,7 +15,7 @@ public class CmsSessionBean implements Serializable {
     private String categoryType;
 
     public String getCategoryType() {
-        return StringUtils.isEmpty(categoryType) ? "Feed" : categoryType;
+        return StringUtils.isEmpty(categoryType) ? CmsConstants.DEFAULT_CATEGORY_TYPE : categoryType;
     }
 
     public void setCategoryType(String categoryType) {

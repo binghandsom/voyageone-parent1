@@ -1,5 +1,10 @@
 {
   "core": {
+    "access": {
+      "user": {
+        "logout": "/core/access/user/logout"
+      }
+    },
     "home": {
       "menu": {
         "getMenuHeaderInfo": "/core/home/menu/getMenuHeaderInfo"
@@ -10,7 +15,8 @@
     "home": {
      "menu": {
        "getCategoryInfo": "/cms/home/menu/getCategoryInfo",
-       "getCategoryType": "/cms/home/menu/getCategoryType"
+       "getCategoryType": "/cms/home/menu/getCategoryType",
+       "setCategoryType": "/cms/home/menu/setCategoryType"
      }
     }
   }
