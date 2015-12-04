@@ -52,6 +52,18 @@ public class FeedToCmsService {
     }
 
     /**
+     * 获取该channel下所有的叶子类目
+     * @param channelId
+     * @return
+     */
+    public List<Map> getFinallyCategories(String channelId){
+
+        CmsMtFeedCategoryTreeModel category = getFeedCategory(channelId);
+        Object jsonObj = JsonPath.parse(category.getCategoryTree()).json();
+        List<Map> child = JsonPath.read(jsonObj, "$..child[?(@.isChild == 1)]");
+        return child;
+    }
+    /**
      * 设定feed类目
      *
      * @param tree
