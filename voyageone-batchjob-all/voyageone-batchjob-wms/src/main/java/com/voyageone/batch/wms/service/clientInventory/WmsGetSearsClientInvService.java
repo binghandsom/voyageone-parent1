@@ -103,6 +103,9 @@ public class WmsGetSearsClientInvService extends WmsGetClientInvBaseService {
                 });
             }else{
                 log("没有从渠道：【" + channel.getFull_name() + "】获取到任何库存数据！");
+                //全部插入成功后更新标志
+                setLastFullUpdateTime(channelId, getInventoryParamBean);
+                log(channel.getFull_name() + "库存插入wms_bt_client_inventory结束");
             }
         });
     }
@@ -138,6 +141,11 @@ public class WmsGetSearsClientInvService extends WmsGetClientInvBaseService {
                 if (responseBean != null) {
                     PaginationBean pagination = responseBean.getPagination();
                     totalPage = pagination.getTotalPages();
+
+                    if (totalPage == 0 ) {
+                        logger.info("----------"+channel.getFull_name()+"该时间范围内没有库存变化！----------");
+                        break;
+                    }
 
                     for (AvailabilityBean availabilityBean : responseBean.getProduct()) {
 
