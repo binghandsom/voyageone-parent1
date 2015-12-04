@@ -217,6 +217,7 @@ requirejs([
     this.setMenu = setMenu;
     this.clearChannel = clearChannel;
     this.setLanguage = setLanguage;
+    this.setCategoryType = setCategoryType;
     this.logout = logout;
     this.getCategoryInfo = getCategoryInfo;
     this.getCategoryType = getCategoryType;
@@ -230,8 +231,8 @@ requirejs([
     function getMenuHeaderInfo () {
       var defer = $q.defer ();
       ajaxService.post(cActions.core.home.menu.getMenuHeaderInfo)
-          .then(function (data) {
-            //var data = response.data;
+          .then(function (response) {
+            var data = response.data;
             var languageType = _.isEmpty(cookieService.language()) ? translateService.getBrowserLanguage() : cookieService.language();
             _.forEach(data.languageList, function (language) {
 
@@ -288,8 +289,11 @@ requirejs([
      */
     function logout() {
       var defer = $q.defer ();
-      cookieService.removeAll();
-      defer.resolve();
+      ajaxService.post(cActions.core.access.user.logout)
+          .then(function () {
+            cookieService.removeAll();
+            defer.resolve();
+          });
       return defer.promise;
     }
 
@@ -300,8 +304,8 @@ requirejs([
     function getCategoryInfo () {
       var defer = $q.defer ();
       ajaxService.post(cActions.cms.home.menu.getCategoryInfo)
-          .then(function (data) {
-            defer.resolve(data);
+          .then(function (response) {
+            defer.resolve(response.data);
           });
       return defer.promise;
     }
@@ -313,8 +317,8 @@ requirejs([
     function getCategoryType () {
       var defer = $q.defer ();
       ajaxService.post(cActions.cms.home.menu.getCategoryType)
-          .then(function (data) {
-            defer.resolve(data);
+          .then(function (response) {
+            defer.resolve(response.data);
           });
       return defer.promise;
     }
@@ -326,8 +330,23 @@ requirejs([
     function getCategoryTree () {
       var defer = $q.defer ();
       ajaxService.post(cActions.cms.home.menu.getCategoryTree)
-          .then(function (data) {
-            defer.resolve(data);
+          .then(function (response) {
+            defer.resolve(response.data);
+          });
+      return defer.promise;
+    }
+
+    /**
+     *
+     * set categoryType.
+     * @param cTypeId
+     * @returns {*}
+     */
+    function setCategoryType(cTypeId) {
+      var defer = $q.defer ();
+      ajaxService.post(cActions.cms.home.menu.setCategoryType, {"cTypeId": cTypeId})
+          .then(function (response) {
+            defer.resolve(response.data);
           });
       return defer.promise;
     }
@@ -447,13 +466,15 @@ requirejs([
     }
 
     /**
-     * change your current categotyTYpe.
+     * change your current categoryTYpe.
      * @param cTypeId
      */
     function selectCategoryType (cTypeId) {
-      $rootScope.categoryType = cTypeId;
+      menuService.setCategoryType(cTypeId).then(function(data) {
+        $rootScope.categoryType = cTypeId;
+        vm.menuInfo.categoryTreeList = data.categoryTreeList;
+      });
     }
-
   }
 
   return angularAMD.bootstrap(mainApp);
