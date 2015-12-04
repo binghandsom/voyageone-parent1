@@ -20,9 +20,22 @@ import org.dom4j.Element;
 public abstract class Field {
     protected String id;
     protected String name;
+
     protected FieldTypeEnum type;
     protected List<Rule> rules = new ArrayList();
     protected List<Property> properties = new ArrayList();
+
+    protected String inputLevel;
+    public String getInputLevel() {
+        return inputLevel;
+    }
+
+    public void setInputLevel(String inputLevel) {
+        this.inputLevel = inputLevel;
+    }
+
+
+
     protected Field defaultValueField;
 
     public Field() {
@@ -200,6 +213,9 @@ public abstract class Field {
 
     public FieldTypeEnum getType() {
         return this.type;
+    }
+    public void setType(FieldTypeEnum type) {
+        this.type = type;
     }
 
     public List<Rule> getRules() {
