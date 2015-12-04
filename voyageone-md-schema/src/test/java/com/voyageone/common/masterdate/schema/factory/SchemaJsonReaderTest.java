@@ -61,8 +61,8 @@ public class SchemaJsonReaderTest {
         dg_result.setDependExpressList(dependExpressList);
 
         List<DependGroup> dependGroupList = new ArrayList();
-        dependGroupList.add(dg_result);
-        dg_result.setDependGroupList(dependGroupList);
+        //dependGroupList.add(dg_result);
+        //dg_result.setDependGroupList(dependGroupList);
 
         rule.setDependGroup(dg_result);
 

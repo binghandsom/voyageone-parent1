@@ -34,7 +34,23 @@ public abstract class Field {
         this.inputLevel = inputLevel;
     }
 
+    protected String dataSource;
+    public String getDataSource() {
+        return dataSource;
+    }
 
+    public void setDataSource(String dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    protected int isDisplay;
+    public int getIsDisplay() {
+        return isDisplay;
+    }
+
+    public void setIsDisplay(int isDisplay) {
+        this.isDisplay = isDisplay;
+    }
 
     protected Field defaultValueField;
 
