@@ -9,8 +9,6 @@ import org.dom4j.Element;
 
 
 public class SchemaWriter {
-    public SchemaWriter() {
-    }
 
     public static String writeRuleXmlString(List<Field> fields) throws TopSchemaException {
         Element root = XmlUtils.createRootElement("itemRule");

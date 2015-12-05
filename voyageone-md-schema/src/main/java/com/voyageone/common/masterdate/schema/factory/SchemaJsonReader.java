@@ -1,7 +1,6 @@
 package com.voyageone.common.masterdate.schema.factory;
 
 import com.voyageone.common.masterdate.schema.Util.StringUtil;
-import com.voyageone.common.masterdate.schema.Util.XmlUtils;
 import com.voyageone.common.masterdate.schema.depend.DependExpress;
 import com.voyageone.common.masterdate.schema.depend.DependGroup;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
@@ -18,28 +17,19 @@ import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.JsonUtil;
 
-import java.io.File;
 import java.util.*;
 
 public class SchemaJsonReader {
-    public SchemaJsonReader() {
-    }
 
-    public static Map<String, Field> readJsonForMap(File file) throws TopSchemaException {
-        //Element rootEle = XmlUtils.getRootElementFromFile(file);
-        //return readXmlForMap(rootEle);
-        return null;
-    }
-
+    /**
+     * readJsonForMap
+     * @param jsonStirng
+     * @return
+     * @throws TopSchemaException
+     */
     public static Map<String, Field> readJsonForMap(String jsonStirng) throws TopSchemaException {
         List<Map<String, Object>> rootList = JsonUtil.jsonToMapList(jsonStirng);
         return readJsonForMap(rootList);
-    }
-
-    public static List<Field> readXmlForList(File file) throws TopSchemaException {
-//        Element rootEle = XmlUtils.getRootElementFromFile(file);
-//        return readXmlForList(rootEle);
-        return null;
     }
 
     /**
@@ -94,7 +84,7 @@ public class SchemaJsonReader {
                     throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_30002, fieldId);
                 } else {
                     String fieldName = (String)fieldMap.get("name");
-                    FieldTypeEnum fieldEnum = FieldTypeEnum.getEnum(fieldType.toLowerCase());
+                    FieldTypeEnum fieldEnum = FieldTypeEnum.getEnum(fieldType);
                     if(fieldEnum == null) {
                         throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_30003, fieldId);
                     } else {
@@ -103,20 +93,20 @@ public class SchemaJsonReader {
                             case INPUT:
                                 field_result = mapToInputField(fieldMap, fieldId, fieldName);
                                 break;
+                            case MULTIINPUT:
+                                field_result = mapToMultiInputField(fieldMap, fieldId, fieldName);
+                                break;
                             case SINGLECHECK:
                                 field_result = mapToSingleCheckField(fieldMap, fieldId, fieldName);
-                                break;
-                            case COMPLEX:
-                                field_result = mapToComplexField(fieldMap, fieldId, fieldName);
                                 break;
                             case MULTICHECK:
                                 field_result = mapToMultiCheckField(fieldMap, fieldId, fieldName);
                                 break;
+                            case COMPLEX:
+                                field_result = mapToComplexField(fieldMap, fieldId, fieldName);
+                                break;
                             case MULTICOMPLEX:
                                 field_result = mapToMultiComplexField(fieldMap, fieldId, fieldName);
-                                break;
-                            case MULTIINPUT:
-                                field_result = mapToMultiInputField(fieldMap, fieldId, fieldName);
                                 break;
                             case LABEL:
                                 field_result = mapToLabelField(fieldMap, fieldId, fieldName);
@@ -233,6 +223,46 @@ public class SchemaJsonReader {
         }
     }
 
+    private static LabelGroup mapToLabelGroup(Map<String, Object> labelGroupMap, String fieldId) throws TopSchemaException {
+        if(labelGroupMap == null) {
+            return null;
+        } else {
+            LabelGroup lg_result = new LabelGroup();
+            String name = (String)labelGroupMap.get("name");
+            lg_result.setName(name);
+
+            List<Map<String, Object>> labelList = (List<Map<String, Object>>)labelGroupMap.get("labelList");
+            if (labelList != null) {
+                Iterator<Map<String, Object>> labelListIt = labelList.iterator();
+
+                while(labelListIt.hasNext()) {
+                    Map<String, Object> labelMap = labelListIt.next();
+                    Label subLabelGroupEle = new Label();
+                    String subGroup = (String)labelMap.get("name");
+                    String labelValue = (String)labelMap.get("value");
+                    String labelDesc = (String)labelMap.get("desc");
+                    subLabelGroupEle.setName(subGroup);
+                    subLabelGroupEle.setValue(labelValue);
+                    subLabelGroupEle.setDesc(labelDesc);
+                    lg_result.add(subLabelGroupEle);
+                }
+            }
+
+            List<Map<String, Object>> labelGroupList = (List<Map<String, Object>>)labelGroupMap.get("labelGroupList");
+            if (labelGroupList != null) {
+                Iterator labelGroupListIt = labelGroupList.iterator();
+                while(labelGroupListIt.hasNext()) {
+                    Map<String, Object> subLabelGroup = (Map<String, Object>)labelGroupListIt.next();
+//                    new LabelGroup();
+                    LabelGroup subGroup1 = mapToLabelGroup(subLabelGroup, fieldId);
+                    lg_result.add(subGroup1);
+                }
+            }
+
+            return lg_result;
+        }
+    }
+
     private static Option mapToOption(Map<String, Object> optionMap, String fieldId) throws TopSchemaException {
         Option opResult = new Option();
         String displayName = (String)optionMap.get("displayName");
@@ -343,11 +373,11 @@ public class SchemaJsonReader {
                 labelField.setProperties(properties);
             }
 
-//            Element labelGroupEle2 = XmlUtils.getChildElement(ruleMap, "label-group");
-//            if(labelGroupEle2 != null) {
-//                LabelGroup labelGroup2 = elementToLabelGroup(labelGroupEle2, fieldId);
-//                labelField.setLabelGroup(labelGroup2);
-//            }
+            if(fieldMap.containsKey("labelGroup")) {
+                Map<String, Object> labelGroupMap = (Map<String, Object>)fieldMap.get("labelGroup");
+                LabelGroup labelGroup = mapToLabelGroup(labelGroupMap, fieldId);
+                labelField.setLabelGroup(labelGroup);
+            }
 
             return labelField;
         }
@@ -387,30 +417,30 @@ public class SchemaJsonReader {
                 multiInputField.setProperties(properties);
             }
 
-//            Element defaultValuesEle2 = XmlUtils.getChildElement(fieldMap, "default-values");
-//            if(defaultValuesEle2 != null) {
-//                List valuesEle2 = XmlUtils.getChildElements(defaultValuesEle2, "default-value");
-//                Iterator valueEleList2 = valuesEle2.iterator();
-//
-//                while(valueEleList2.hasNext()) {
-//                    Element i$1 = (Element)valueEleList2.next();
-//                    String valueEle = i$1.getText();
-//                    multiInputField.addDefaultValue(valueEle);
-//                }
-//            }
-//
-//            valuesEle = XmlUtils.getChildElement(fieldMap, "values");
-//            if(valuesEle != null) {
-//                List valueEleList3 = XmlUtils.getChildElements(valuesEle, "value");
-//                Iterator i$2 = valueEleList3.iterator();
-//
-//                while(i$2.hasNext()) {
-//                    Element valueEle1 = (Element)i$2.next();
-//                    Value value = new Value();
-//                    value.setValue(XmlUtils.getElementValue(valueEle1));
-//                    multiInputField.addValue(value);
-//                }
-//            }
+            Map<String, Object> defaultValueMap = (Map<String, Object>)fieldMap.get("defaultValueField");
+            if(defaultValueMap != null) {
+                List<Map<String, Object>> defaultValues = (List<Map<String, Object>>)defaultValueMap.get("values");
+                if (defaultValues != null) {
+                    Iterator<Map<String, Object>> defaultValuesIt = defaultValues.iterator();
+                    while(defaultValuesIt.hasNext()) {
+                        Map<String, Object> defaultValueSubMap = defaultValuesIt.next();
+                        String defaultValueStr = (String)defaultValueSubMap.get("value");
+                        multiInputField.addDefaultValue(defaultValueStr);
+                    }
+                }
+            }
+
+            List<Map<String, Object>> valuesMapList = (List<Map<String, Object>>)fieldMap.get("values");
+            if(valuesMapList != null) {
+                Iterator<Map<String, Object>> valuesMapListIt = valuesMapList.iterator();
+                while(valuesMapListIt.hasNext()) {
+                    Map<String, Object> valueMap = valuesMapListIt.next();
+                    String id = (String)valueMap.get("id");
+                    String value = (String)valueMap.get("value");
+                    Value valueObj = new Value(id, value);
+                    multiInputField.addValue(valueObj);
+                }
+            }
 
             return multiInputField;
         }
@@ -458,17 +488,22 @@ public class SchemaJsonReader {
                 singleCheckField.setProperties(properties);
             }
 
-            String defaultValueStr = (String)fieldMap.get("defaultValue");
-            if(defaultValueStr != null) {
-                Value valueEle3 = new Value();
-                valueEle3.setValue(defaultValueStr);
-                singleCheckField.setDefaultValueDO(valueEle3);
+            Map<String, Object> defaultValueMap = (Map<String, Object>)fieldMap.get("defaultValueField");
+            if(defaultValueMap != null) {
+                Map<String, Object> valueMap = (Map<String, Object>)defaultValueMap.get("value");
+                if (valueMap != null) {
+                    Value value3 = new Value();
+                    value3.setId((String)valueMap.get("id"));
+                    value3.setValue((String) valueMap.get("value"));
+                    singleCheckField.setDefaultValueDO(value3);
+                }
             }
 
-            String valueStr = (String)fieldMap.get("value");
-            if(valueStr != null) {
+            Map<String, Object> valueMap = (Map<String, Object>)fieldMap.get("value");
+            if(valueMap != null) {
                 Value value3 = new Value();
-                value3.setValue(valueStr);
+                value3.setId((String)valueMap.get("id"));
+                value3.setValue((String)valueMap.get("value"));
                 singleCheckField.setValue(value3);
             }
 
@@ -523,160 +558,36 @@ public class SchemaJsonReader {
                 multiCheckField.setProperties(properties);
             }
 
-            List<Map<String, Object>> defaultValue = (List<Map<String, Object>>)fieldMap.get("defaultValue");
-            if(defaultValue != null) {
-                Iterator<Map<String, Object>> defaultValueIt = defaultValue.iterator();
-                ComplexValue defaultComplexValue = new ComplexValue();
-                while(defaultValueIt.hasNext()) {
-                    Map<String, Object> subDefaultValue = defaultValueIt.next();
-                    Value valueEle = new Value();
-                    String id = (String)subDefaultValue.get("id");
-                    valueEle.setId(id);
-                    String value = (String)subDefaultValue.get("value");
-                    valueEle.setValue(value);
-                    multiCheckField.addDefaultValueDO(valueEle);
+            Map<String, Object> defaultValueMap = (Map<String, Object>)fieldMap.get("defaultValueField");
+            if(defaultValueMap != null) {
+                List<Map<String, Object>> defaultValues = (List<Map<String, Object>>)defaultValueMap.get("values");
+                if (defaultValues != null) {
+                    Iterator<Map<String, Object>> defaultValuesIt = defaultValues.iterator();
+                    while(defaultValuesIt.hasNext()) {
+                        Map<String, Object> defaultValueSubMap = defaultValuesIt.next();
+                        String id = (String)defaultValueSubMap.get("id");
+                        String value = (String)defaultValueSubMap.get("value");
+                        Value valueObj = new Value();
+                        valueObj.setId(id);
+                        valueObj.setValue(value);
+                        multiCheckField.addDefaultValueDO(valueObj);
+                    }
                 }
             }
 
-            List<Map<String, Object>> values = (List<Map<String, Object>>)fieldMap.get("values");
-            if(values != null) {
-                Iterator<Map<String, Object>> valuesIt = values.iterator();
-
-                while(valuesIt.hasNext()) {
-                    Map<String, Object> valueSubMap = valuesIt.next();
-                    Value valueSub = new Value();
-                    String id = (String)valueSubMap.get("id");
-                    valueSub.setId(id);
-                    String value = (String)valueSubMap.get("value");
-                    valueSub.setValue(value);
-                    multiCheckField.addValue(valueSub);
+            List<Map<String, Object>> valuesMapList = (List<Map<String, Object>>)fieldMap.get("values");
+            if(valuesMapList != null) {
+                Iterator<Map<String, Object>> valuesMapListIt = valuesMapList.iterator();
+                while(valuesMapListIt.hasNext()) {
+                    Map<String, Object> valueMap = valuesMapListIt.next();
+                    String id = (String)valueMap.get("id");
+                    String value = (String)valueMap.get("value");
+                    Value valueObj = new Value(id, value);
+                    multiCheckField.addValue(valueObj);
                 }
             }
 
             return multiCheckField;
-        }
-    }
-
-    private static MultiComplexField mapToMultiComplexField(Map<String, Object> fieldMap, String fieldId, String fieldName) throws TopSchemaException {
-        if(fieldMap == null) {
-            return null;
-        } else {
-            MultiComplexField multiComplexField = (MultiComplexField) SchemaFactory.createField(FieldTypeEnum.MULTICOMPLEX);
-            multiComplexField.setId(fieldId);
-            multiComplexField.setName(fieldName);
-
-            if (fieldMap.containsKey("fields")) {
-                List<Map<String, Object>> fieldList = (List<Map<String, Object>>)fieldMap.get("fields");
-                Iterator<Map<String, Object>> fieldListIt = fieldList.iterator();
-
-                while(fieldListIt.hasNext()) {
-                    Map<String, Object> subFieldMap = fieldListIt.next();
-                    Field complexSubField = mapToField(subFieldMap);
-                    multiComplexField.add(complexSubField);
-                }
-            }
-
-            if(fieldMap.containsKey("rules")) {
-                List<Map<String, Object>> rulesMap = (List<Map<String, Object>>)fieldMap.get("rules");
-                Iterator<Map<String, Object>> rulesIt = rulesMap.iterator();
-
-                List<Rule> rules = new ArrayList();
-                while(rulesIt.hasNext()) {
-                    Map<String, Object> ruleMap = rulesIt.next();
-                    Rule rule = mapToRule(ruleMap, multiComplexField.getId());
-                    rules.add(rule);
-                }
-                multiComplexField.setRules(rules);
-            }
-
-            if(fieldMap.containsKey("properties")) {
-                List<Map<String, Object>> propertiesMap = (List<Map<String, Object>>)fieldMap.get("properties");
-                Iterator propertyIt = propertiesMap.iterator();
-
-                List<Property> properties = new ArrayList();
-                while(propertyIt.hasNext()) {
-                    Map<String, Object> propertyItMap = (Map<String, Object>)propertyIt.next();
-                    Property property = mapToProperty(propertyItMap, multiComplexField.getId());
-                    properties.add(property);
-                }
-                multiComplexField.setProperties(properties);
-            }
-
-            List<Map<String, Object>> defaultValue = (List<Map<String, Object>>)fieldMap.get("defaultValue");
-            if(defaultValue != null) {
-                Iterator<Map<String, Object>> defaultValueIt = defaultValue.iterator();
-                ComplexValue defaultComplexValue = new ComplexValue();
-                while(defaultValueIt.hasNext()) {
-                    Map<String, Object> subDefaultValue = defaultValueIt.next();
-                    Field subFiledValue = mapToField(subDefaultValue);
-                    defaultComplexValue.put(subFiledValue);
-                }
-                multiComplexField.addDefaultComplexValue(defaultComplexValue);
-            }
-
-//            defaultValuesEle = XmlUtils.getChildElement(fieldMap, "default-values");
-//            List defaultValuesSubFieldList;
-//            ComplexValue cvalue;
-//            Iterator i$1;
-//            Element subFiledValueEle;
-//            Field field;
-//            List complexValuesEle3;
-//            Iterator i$3;
-//            Element complexValue1;
-//            if(defaultValuesEle != null) {
-//                complexValuesEle3 = XmlUtils.getChildElements(defaultValuesEle, "default-complex-values");
-//                i$3 = complexValuesEle3.iterator();
-//
-//                while(i$3.hasNext()) {
-//                    complexValue1 = (Element)i$3.next();
-//                    defaultValuesSubFieldList = XmlUtils.getChildElements(complexValue1, "field");
-//                    cvalue = new ComplexValue();
-//                    i$1 = defaultValuesSubFieldList.iterator();
-//
-//                    while(i$1.hasNext()) {
-//                        subFiledValueEle = (Element)i$1.next();
-//                        field = elementToField(subFiledValueEle);
-//                        cvalue.put(field);
-//                    }
-//
-//                    multiComplexField.addDefaultComplexValue(cvalue);
-//                }
-//            }
-
-
-            Map<String, Object> complexValue = (Map<String, Object>)fieldMap.get("complexValue");
-            if(complexValue != null) {
-                Iterator complexValueFieldsIt = complexValue.values().iterator();
-                ComplexValue cvalue = new ComplexValue();
-
-                while(complexValueFieldsIt.hasNext()) {
-                    Map<String, Object> complexValueFieldMap = (Map<String, Object>)complexValueFieldsIt.next();
-                    Field subFiledValueEle = mapToField(complexValueFieldMap);
-                    cvalue.put(subFiledValueEle);
-                }
-
-                multiComplexField.addComplexValue(cvalue);
-            }
-
-//            complexValuesEle3 = XmlUtils.getChildElements(fieldMap, "complex-values");
-//            i$3 = complexValuesEle3.iterator();
-//
-//            while(i$3.hasNext()) {
-//                complexValue1 = (Element)i$3.next();
-//                defaultValuesSubFieldList = XmlUtils.getChildElements(complexValue1, "field");
-//                cvalue = new ComplexValue();
-//                i$1 = defaultValuesSubFieldList.iterator();
-//
-//                while(i$1.hasNext()) {
-//                    subFiledValueEle = (Element)i$1.next();
-//                    field = elementToField(subFiledValueEle);
-//                    cvalue.put(field);
-//                }
-//
-//                multiComplexField.addComplexValue(cvalue);
-//            }
-
-            return multiComplexField;
         }
     }
 
@@ -725,33 +636,131 @@ public class SchemaJsonReader {
                 complexField.setProperties(properties);
             }
 
-            List<Map<String, Object>> defaultValue = (List<Map<String, Object>>)fieldMap.get("defaultValue");
+            Map<String, Object> defaultValue = (Map<String, Object>)fieldMap.get("defaultValueField");
             if(defaultValue != null) {
-                Iterator<Map<String, Object>> defaultValueIt = defaultValue.iterator();
-                ComplexValue defaultComplexValue = new ComplexValue();
-                while(defaultValueIt.hasNext()) {
-                    Map<String, Object> subDefaultValue = defaultValueIt.next();
-                    Field subFiledValue = mapToField(subDefaultValue);
-                    defaultComplexValue.put(subFiledValue);
+                Map<String, Object> complexValueMap = (Map<String, Object>)defaultValue.get("complexValue");
+                if(complexValueMap != null) {
+                    ComplexValue defaultComplexValue = new ComplexValue();
+                    Map<String, Object> complexValueFieldMap = (Map<String, Object>)complexValueMap.get("fieldMap");
+                    if (complexValueFieldMap != null) {
+                        Iterator complexValueFieldMapIt = complexValueFieldMap.values().iterator();
+                        while(complexValueFieldMapIt.hasNext()) {
+                            Map<String, Object> complexValueSubFieldMap = (Map<String, Object>)complexValueFieldMapIt.next();
+                            Field subFiledValue = mapToField(complexValueSubFieldMap);
+                            defaultComplexValue.put(subFiledValue);
+                        }
+                    }
+                    complexField.setDefaultValue(defaultComplexValue);
                 }
-                complexField.setDefaultValue(defaultComplexValue);
             }
 
             Map<String, Object> complexValue = (Map<String, Object>)fieldMap.get("complexValue");
             if(complexValue != null) {
-                Iterator complexValueFieldsIt = complexValue.values().iterator();
-                ComplexValue cvalue = new ComplexValue();
-
-                while(complexValueFieldsIt.hasNext()) {
-                    Map<String, Object> complexValueFieldMap = (Map<String, Object>)complexValueFieldsIt.next();
-                    Field subFiledValueEle = mapToField(complexValueFieldMap);
-                    cvalue.put(subFiledValueEle);
+                ComplexValue defaultComplexValue = new ComplexValue();
+                Map<String, Object> complexValueFieldMap = (Map<String, Object>)complexValue.get("fieldMap");
+                if (complexValueFieldMap != null) {
+                    Iterator complexValueFieldMapIt = complexValueFieldMap.values().iterator();
+                    while(complexValueFieldMapIt.hasNext()) {
+                        Map<String, Object> complexValueSubFieldMap = (Map<String, Object>)complexValueFieldMapIt.next();
+                        Field subFiledValue = mapToField(complexValueSubFieldMap);
+                        defaultComplexValue.put(subFiledValue);
+                    }
                 }
-
-                complexField.setComplexValue(cvalue);
+                complexField.setComplexValue(defaultComplexValue);
             }
 
             return complexField;
         }
     }
+
+    private static MultiComplexField mapToMultiComplexField(Map<String, Object> fieldMap, String fieldId, String fieldName) throws TopSchemaException {
+        if(fieldMap == null) {
+            return null;
+        } else {
+            MultiComplexField multiComplexField = (MultiComplexField) SchemaFactory.createField(FieldTypeEnum.MULTICOMPLEX);
+            multiComplexField.setId(fieldId);
+            multiComplexField.setName(fieldName);
+
+            if (fieldMap.containsKey("fields")) {
+                List<Map<String, Object>> fieldList = (List<Map<String, Object>>)fieldMap.get("fields");
+                Iterator<Map<String, Object>> fieldListIt = fieldList.iterator();
+
+                while(fieldListIt.hasNext()) {
+                    Map<String, Object> subFieldMap = fieldListIt.next();
+                    Field complexSubField = mapToField(subFieldMap);
+                    multiComplexField.add(complexSubField);
+                }
+            }
+
+            if(fieldMap.containsKey("rules")) {
+                List<Map<String, Object>> rulesMap = (List<Map<String, Object>>)fieldMap.get("rules");
+                Iterator<Map<String, Object>> rulesIt = rulesMap.iterator();
+
+                List<Rule> rules = new ArrayList();
+                while(rulesIt.hasNext()) {
+                    Map<String, Object> ruleMap = rulesIt.next();
+                    Rule rule = mapToRule(ruleMap, multiComplexField.getId());
+                    rules.add(rule);
+                }
+                multiComplexField.setRules(rules);
+            }
+
+            if(fieldMap.containsKey("properties")) {
+                List<Map<String, Object>> propertiesMap = (List<Map<String, Object>>)fieldMap.get("properties");
+                Iterator propertyIt = propertiesMap.iterator();
+
+                List<Property> properties = new ArrayList();
+                while(propertyIt.hasNext()) {
+                    Map<String, Object> propertyItMap = (Map<String, Object>)propertyIt.next();
+                    Property property = mapToProperty(propertyItMap, multiComplexField.getId());
+                    properties.add(property);
+                }
+                multiComplexField.setProperties(properties);
+            }
+
+            Map<String, Object> defaultValue = (Map<String, Object>)fieldMap.get("defaultValueField");
+            if(defaultValue != null) {
+                List<Map<String, Object>> valuesMapList = (List<Map<String, Object>>)defaultValue.get("values");
+                if (valuesMapList != null) {
+                    Iterator<Map<String, Object>> valuesMapIt = valuesMapList.iterator();
+                    while(valuesMapIt.hasNext()) {
+                        Map<String, Object> complexValueMap = (Map<String, Object>)valuesMapIt.next();
+                        ComplexValue defaultComplexValue = new ComplexValue();
+                        Map<String, Object> complexValueFieldMap = (Map<String, Object>)complexValueMap.get("fieldMap");
+                        if (complexValueFieldMap != null) {
+                            Iterator complexValueFieldMapIt = complexValueFieldMap.values().iterator();
+                            while(complexValueFieldMapIt.hasNext()) {
+                                Map<String, Object> complexValueSubFieldMap = (Map<String, Object>)complexValueFieldMapIt.next();
+                                Field subFiledValue = mapToField(complexValueSubFieldMap);
+                                defaultComplexValue.put(subFiledValue);
+                            }
+                        }
+                        multiComplexField.addDefaultComplexValue(defaultComplexValue);
+                    }
+                }
+            }
+
+            List<Map<String, Object>> valuesMapList = (List<Map<String, Object>>)fieldMap.get("values");
+            if (valuesMapList != null) {
+                Iterator<Map<String, Object>> valuesMapIt = valuesMapList.iterator();
+                while(valuesMapIt.hasNext()) {
+                    Map<String, Object> complexValueMap = (Map<String, Object>)valuesMapIt.next();
+                    ComplexValue complexValue = new ComplexValue();
+                    Map<String, Object> complexValueFieldMap = (Map<String, Object>)complexValueMap.get("fieldMap");
+                    if (complexValueFieldMap != null) {
+                        Iterator complexValueFieldMapIt = complexValueFieldMap.values().iterator();
+                        while(complexValueFieldMapIt.hasNext()) {
+                            Map<String, Object> complexValueSubFieldMap = (Map<String, Object>)complexValueFieldMapIt.next();
+                            Field subFiledValue = mapToField(complexValueSubFieldMap);
+                            complexValue.put(subFiledValue);
+                        }
+                    }
+                    multiComplexField.addComplexValue(complexValue);
+                }
+            }
+
+            return multiComplexField;
+        }
+    }
+
 }
