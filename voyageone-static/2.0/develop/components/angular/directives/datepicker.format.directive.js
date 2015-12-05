@@ -9,9 +9,9 @@ angular.module('voyageone.angular.directives.datepickerFormat', [])
     return {
       restrict: "A",
       require: 'ngModel',
-      link: function (scope, elem, attr, ngModel) {
+      link: function (scope, elem, attrs, ngModel) {
         ngModel.$parsers.push(function (viewValue) {
-          return $filter['date'](viewValue, 'yyyy-MM-dd ~');
+          return $filter('date')(viewValue, attrs.datepickerFormat || 'yyyy-MM-dd HH:mm:ss');
         });
       }
     };
