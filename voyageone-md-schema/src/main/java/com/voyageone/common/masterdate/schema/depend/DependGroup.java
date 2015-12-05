@@ -14,7 +14,7 @@ public class DependGroup {
 
     public static final String OPERATOR_AND = "and";
     public static final String OPERATOR_OR = "or";
-    protected List<com.voyageone.common.masterdate.schema.depend.DependExpress> dependExpressList = new ArrayList();
+    protected List<DependExpress> dependExpressList = new ArrayList();
     protected String operator = "and";
     protected List<DependGroup> dependGroupList = new ArrayList();
 
@@ -28,7 +28,7 @@ public class DependGroup {
 
         Element dependGroupElement;
         while(i$.hasNext()) {
-            com.voyageone.common.masterdate.schema.depend.DependExpress dependGroupNode = (com.voyageone.common.masterdate.schema.depend.DependExpress)i$.next();
+            DependExpress dependGroupNode = (DependExpress)i$.next();
             dependGroupElement = XmlUtils.appendElement(dependGroup, "depend-express");
             dependGroupElement.addAttribute("fieldId", dependGroupNode.getFieldId());
             dependGroupElement.addAttribute("value", dependGroupNode.getValue());
@@ -56,7 +56,7 @@ public class DependGroup {
         Iterator i$;
         String expLocal;
         for(i$ = this.dependExpressList.iterator(); i$.hasNext(); exp = exp + expLocal) {
-            com.voyageone.common.masterdate.schema.depend.DependExpress dependGroupNode = (com.voyageone.common.masterdate.schema.depend.DependExpress)i$.next();
+            DependExpress dependGroupNode = (DependExpress)i$.next();
             expLocal = "";
             if(exp.length() > 0) {
                 expLocal = expLocal + this.operator;
@@ -82,7 +82,7 @@ public class DependGroup {
 
     public boolean excuteExpress(Map<String, Field> fieldMap) {
         Iterator i$;
-        com.voyageone.common.masterdate.schema.depend.DependExpress dependGroup;
+        DependExpress dependGroup;
         DependGroup dependGroup1;
         if("and".equals(this.operator)) {
             i$ = this.dependExpressList.iterator();
@@ -102,7 +102,7 @@ public class DependGroup {
                     return false;
                 }
 
-                dependGroup = (com.voyageone.common.masterdate.schema.depend.DependExpress)i$.next();
+                dependGroup = (DependExpress)i$.next();
             } while(dependGroup.excuteExpress(fieldMap));
 
             return false;
@@ -124,7 +124,7 @@ public class DependGroup {
                     return true;
                 }
 
-                dependGroup = (com.voyageone.common.masterdate.schema.depend.DependExpress)i$.next();
+                dependGroup = (DependExpress)i$.next();
             } while(!dependGroup.excuteExpress(fieldMap));
 
             return true;
@@ -133,14 +133,14 @@ public class DependGroup {
         }
     }
 
-    public com.voyageone.common.masterdate.schema.depend.DependExpress addDependExpress() {
-        com.voyageone.common.masterdate.schema.depend.DependExpress de = new com.voyageone.common.masterdate.schema.depend.DependExpress();
+    public DependExpress addDependExpress() {
+        DependExpress de = new DependExpress();
         this.add(de);
         return de;
     }
 
-    public com.voyageone.common.masterdate.schema.depend.DependExpress addDependExpress(String fieldId, String value) {
-        com.voyageone.common.masterdate.schema.depend.DependExpress de = new com.voyageone.common.masterdate.schema.depend.DependExpress();
+    public DependExpress addDependExpress(String fieldId, String value) {
+        DependExpress de = new DependExpress();
         de.setFieldId(fieldId);
         de.setValue(value);
         this.add(de);
@@ -153,7 +153,7 @@ public class DependGroup {
         return dg;
     }
 
-    public void add(com.voyageone.common.masterdate.schema.depend.DependExpress de) {
+    public void add(DependExpress de) {
         this.dependExpressList.add(de);
     }
 
@@ -169,11 +169,11 @@ public class DependGroup {
         this.operator = operator;
     }
 
-    public List<com.voyageone.common.masterdate.schema.depend.DependExpress> getDependExpressList() {
+    public List<DependExpress> getDependExpressList() {
         return this.dependExpressList;
     }
 
-    public void setDependExpressList(List<com.voyageone.common.masterdate.schema.depend.DependExpress> dependExpressList) {
+    public void setDependExpressList(List<DependExpress> dependExpressList) {
         this.dependExpressList = dependExpressList;
     }
 

@@ -925,9 +925,13 @@ public class SpaldingReportService extends CreateReportBaseService {
             sqlValueBuffer.append(Constants.COMMA_CHAR);
 
             // sales_price
-            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
-            sqlValueBuffer.append(wmsBtClientReport.getSales_price());
-            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            if (StringUtils.isNullOrBlank2(wmsBtClientReport.getSales_price())){
+                sqlValueBuffer.append("null");
+            }else {
+                sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+                sqlValueBuffer.append(wmsBtClientReport.getSales_price());
+                sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            }
             sqlValueBuffer.append(Constants.COMMA_CHAR);
 
             // sales_unit
@@ -937,15 +941,23 @@ public class SpaldingReportService extends CreateReportBaseService {
             sqlValueBuffer.append(Constants.COMMA_CHAR);
 
             //line_amount
-            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
-            sqlValueBuffer.append(wmsBtClientReport.getLine_amount());
-            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            if (StringUtils.isNullOrBlank2(wmsBtClientReport.getLine_amount())){
+                sqlValueBuffer.append("null");
+            }else {
+                sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+                sqlValueBuffer.append(wmsBtClientReport.getLine_amount());
+                sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            }
             sqlValueBuffer.append(Constants.COMMA_CHAR);
 
             // transcost
-            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
-            sqlValueBuffer.append(wmsBtClientReport.getTranscost());
-            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            if (StringUtils.isNullOrBlank2(wmsBtClientReport.getTranscost())){
+                sqlValueBuffer.append("null");
+            }else {
+                sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+                sqlValueBuffer.append(wmsBtClientReport.getTranscost());
+                sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            }
             sqlValueBuffer.append(Constants.COMMA_CHAR);
 
             // ediscount

@@ -176,6 +176,7 @@ public class WorkLoadBean implements Cloneable{
                 ", workload_status:" + workload_status +
                 ", num_id:" + numId +
                 ", failCause:" + failCause +
+                ", main_code:" + mainCode +
                 "]";
     }
 

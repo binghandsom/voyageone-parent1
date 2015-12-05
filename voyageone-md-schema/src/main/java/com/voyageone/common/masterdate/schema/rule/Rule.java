@@ -21,6 +21,7 @@ import java.util.List;
 import org.dom4j.Element;
 
 public abstract class Rule {
+
     protected String name;
     protected String value;
     protected String exProperty;
