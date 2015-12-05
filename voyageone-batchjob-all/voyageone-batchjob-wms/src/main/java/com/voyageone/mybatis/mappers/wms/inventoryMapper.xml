@@ -503,7 +503,7 @@
                 FROM
                     voyageone_cms.cms_zz_worktable_bcbg_superfeed_full superfeed
                 WHERE
-                    superfeed.MATNR = details.client_sku
+                    superfeed.MATNR = details.client_sku  LIMIT 1
             ),0) AS sales_price,
             IFNULL ((
                 SELECT
@@ -511,7 +511,7 @@
                 FROM
                     voyageone_cms.cms_zz_worktable_bcbg_superfeed_full superfeed
                 WHERE
-                    superfeed.MATNR = details.client_sku
+                    superfeed.MATNR = details.client_sku LIMIT 1
             ),0) AS msrp	,
             (
                 SELECT
@@ -519,7 +519,7 @@
                 FROM
                     wms_bt_client_package_item item
                 WHERE
-                    item.article_number = details.client_sku
+                    item.article_number = details.client_sku  LIMIT 1
             ) AS brand
         FROM
             `wms_bt_inventory_center` inventory
@@ -550,7 +550,7 @@
                     FROM
                         voyageone_cms.cms_zz_worktable_bcbg_superfeed_full superfeed
                     WHERE
-                        superfeed.MATNR = details.client_sku
+                        superfeed.MATNR = details.client_sku LIMIT 1
                 ),
                 0
             ) AS sales_price
