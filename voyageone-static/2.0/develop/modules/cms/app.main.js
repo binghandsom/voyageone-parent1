@@ -68,6 +68,7 @@ requirejs([
   'angular-ui-bootstrap',
   'angular-ngStorage'
 ], function (angularAMD, angular, _, cRoutes, cActions, enTranslate, zhTranslate) {
+
   var mainApp = angular.module('voyageone.cms', [
         'ngRoute',
         'ngAnimate',
@@ -109,10 +110,7 @@ requirejs([
       // router config.
       .config(function ($routeProvider) {
         return _.each(cRoutes, function (module) {
-          return $routeProvider.when(module.hash, angularAMD.route ({
-            templateUrl: module.templateUrl,
-            controllerUrl: module.controllerUrl
-          }));
+          return $routeProvider.when(module.hash, angularAMD.route (module));
         });
       })
 
@@ -135,10 +133,9 @@ requirejs([
       // menu.breadcrumbs.
       .controller('breadcrumbsCtrl', breadcrumbsCtrl)
 
-  // menu.aside.
-      .controller('asideCtrl', asideCtrl)
+      // menu.aside.
+      .controller('asideCtrl', asideCtrl);
 
-  //fnAppCtrl.$inject = ['$scope', '$window', 'translateService'];
   function appCtrl ($scope, $window, translateService) {
 
     var isIE = !!navigator.userAgent.match(/MSIE/i);
@@ -479,3 +476,4 @@ requirejs([
 
   return angularAMD.bootstrap(mainApp);
 });
+

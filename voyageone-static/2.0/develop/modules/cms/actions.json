@@ -18,6 +18,11 @@
        "getCategoryType": "/cms/home/menu/getCategoryType",
        "setCategoryType": "/cms/home/menu/setCategoryType"
      }
+    },
+    "search": {
+      "advance": {
+        "doSearch": "/cms/search/advance/doSearch"
+      }
     }
   }
 }
