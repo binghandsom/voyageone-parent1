@@ -37,6 +37,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     private List<CmsBtFeedInfoModel_Sku> skus;
     private List<Map> attributeList;
     private Map attribute = new HashMap<>();
+    private int updFlg;
 
     public String getCategory() {
         return category;
@@ -179,4 +180,13 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         );
         this.attributeList = null;
     }
+
+    public int getUpdFlg() {
+        return updFlg;
+    }
+
+    public void setUpdFlg(int updFlg) {
+        this.updFlg = updFlg;
+    }
+
 }

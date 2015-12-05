@@ -1,13 +1,11 @@
 package com.voyageone.batch.cms.service.feed;
 
-import com.voyageone.batch.cms.bean.*;
 import com.voyageone.cms.service.FeedToCmsService;
 import com.voyageone.cms.service.model.CmsBtFeedInfoModel;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feed;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -53,20 +51,14 @@ class SearsWsdlInsert extends SearsWsdlBase {
 
             // 条件则根据类目筛选
             String where = String.format("WHERE %s AND %s = '%s' %s", INSERT_FLG, colums.get("category_url_key").toString(),
-                    category.replace("'","\\\'"), Feed.getVal1(channel, FeedEnums.Name.model_sql_ending));
+                    category.replace("'", "\\\'"), Feed.getVal1(channel, FeedEnums.Name.model_sql_ending));
 
             List<CmsBtFeedInfoModel> modelBeans = superFeedDao.selectSuperfeedModel(where, colums,
                     // 组合 Model 的表部分和Join部分
-                    String.format("%s left join voyageone_cms.cms_zz_worktable_sears_attribute att on %s.item_id = att.item_id", modelTable,modelTable));
+                    String.format("%s left join voyageone_cms.cms_zz_worktable_sears_attribute att on %s.item_id = att.item_id", modelTable, modelTable));
 
             $info("取得 [ %s ] 的 Product 数 %s", category, modelBeans.size());
 
-//            for (ModelBean bean : modelBeans) {
-//                bean.setProductbeans(getProducts(bean));
-//                // 转换 Url Key 格式,这里顺序同 getCategories 一样的原理
-//                bean.setUrl_key(clearSpecialSymbol(bean.getUrl_key()));
-//                bean.setCategory_url_key(clearSpecialSymbol(bean.getCategory_url_key()));
-//            }
             return modelBeans;
         }
 
@@ -110,27 +102,6 @@ class SearsWsdlInsert extends SearsWsdlBase {
             return map;
         }
 
-        private ModelBean getModelColumns() {
-            ModelBean modelColumns = new ModelBean();
-
-            // 为每个字段指定其映射到的数据表的列.
-            // 在后面的查询,自动从数据表填充值.
-            modelColumns.setUrl_key(Feed.getVal1(channel, FeedEnums.Name.model_url_key));
-            modelColumns.setCategory_url_key(Feed.getVal1(channel, FeedEnums.Name.model_category_url_key));
-            modelColumns.setM_product_type(Feed.getVal1(channel, FeedEnums.Name.model_m_product_type));
-            modelColumns.setM_brand(Feed.getVal1(channel, FeedEnums.Name.model_m_brand));
-            modelColumns.setM_model(Feed.getVal1(channel, FeedEnums.Name.model_m_model));
-            modelColumns.setM_name(Feed.getVal1(channel, FeedEnums.Name.model_m_name));
-            modelColumns.setM_short_description(Feed.getVal1(channel, FeedEnums.Name.model_m_short_description));
-            modelColumns.setM_long_description(Feed.getVal1(channel, FeedEnums.Name.model_m_long_description));
-            modelColumns.setM_size_type(Feed.getVal1(channel, FeedEnums.Name.model_m_size_type));
-            modelColumns.setM_is_unisex(Feed.getVal1(channel, FeedEnums.Name.model_m_is_unisex));
-            modelColumns.setM_weight(Feed.getVal1(channel, FeedEnums.Name.model_m_weight));
-            modelColumns.setM_is_taxable(Feed.getVal1(channel, FeedEnums.Name.model_m_is_taxable));
-            modelColumns.setM_is_effective(Feed.getVal1(channel, FeedEnums.Name.model_m_is_effective));
-            return modelColumns;
-        }
-
         /**
          * 查询一共有多少类目
          *
@@ -140,9 +111,6 @@ class SearsWsdlInsert extends SearsWsdlBase {
 
             // 先从数据表中获取所有商品的类目路径,经过去重复的
             // update flg 标记, 只获取哪些即将进行新增的商品的类目
-//            List<String> categoryPaths = superFeedDao.selectSuperfeedCategory(
-//                    Feed.getVal1(channel, FeedEnums.Name.category_column),
-//                    table, " AND " + INSERT_FLG + " AND category_id in (95301,110)");
             List<String> categoryPaths = superFeedDao.selectSuperfeedCategory(
                     Feed.getVal1(channel, FeedEnums.Name.category_column),
                     table, " AND " + INSERT_FLG + " AND model_number != '' AND brand != ''");
@@ -185,13 +153,13 @@ class SearsWsdlInsert extends SearsWsdlBase {
                 List<CmsBtFeedInfoModel> product = getCategoryInfo(categorPath);
                 product.forEach(feedProductModel1 -> feedProductModel1.attributeListToMap());
                 Map response = feedToCmsService.updateProduct(channel.getId(), product, getTaskName());
-                List<String>itemIds = new ArrayList<>();
+                List<String> itemIds = new ArrayList<>();
                 productSucceeList = (List<CmsBtFeedInfoModel>) response.get("succeed");
                 productSucceeList.forEach(feedProductModel -> feedProductModel.getSkus().forEach(feedSkuModel -> itemIds.add(feedSkuModel.getClientSku())));
                 updateFull(itemIds);
                 productFailAllList.addAll((List<CmsBtFeedInfoModel>) response.get("fail"));
             }
-            $info("总共~ 失败的 Product: %s",  productFailAllList.size());
+            $info("总共~ 失败的 Product: %s", productFailAllList.size());
 
         }
     }

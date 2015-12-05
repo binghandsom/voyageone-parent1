@@ -52,6 +52,18 @@ public class FeedToCmsService {
     }
 
     /**
+     * 获取该channel下所有的叶子类目
+     * @param channelId
+     * @return
+     */
+    public List<Map> getFinallyCategories(String channelId){
+
+        CmsMtFeedCategoryTreeModel category = getFeedCategory(channelId);
+        Object jsonObj = JsonPath.parse(category.getCategoryTree()).json();
+        List<Map> child = JsonPath.read(jsonObj, "$..child[?(@.isChild == 1)]");
+        return child;
+    }
+    /**
      * 设定feed类目
      *
      * @param tree
@@ -69,9 +81,9 @@ public class FeedToCmsService {
      */
     private Map findCategory(List<Map> tree, String cat) {
         Object jsonObj = JsonPath.parse(tree).json();
-        List<Map> child = JsonPath.read(jsonObj, "$..child[?(@.category == '" + cat.replace("'", "\\\'") + "')]");
+        List<Map> child = JsonPath.read(jsonObj, "$..child[?(@.path == '" + cat.replace("'", "\\\'") + "')]");
         if (child.size() == 0) {
-            child = JsonPath.read(jsonObj, "$..*[?(@.category == '" + cat.replace("'", "\\\'") + "')]");
+            child = JsonPath.read(jsonObj, "$..*[?(@.path == '" + cat.replace("'", "\\\'") + "')]");
         }
         return child == null || child.size() == 0 ? null : child.get(0);
     }
@@ -91,7 +103,9 @@ public class FeedToCmsService {
             Map node = findCategory(tree, temp);
             if (node == null) {
                 Map newNode = new HashMap<>();
-                newNode.put("category", temp);
+                newNode.put("name",c[i]);
+                newNode.put("cid", temp);
+                newNode.put("path", temp);
                 newNode.put("child", new ArrayList<>());
                 if (i == c.length - 1) {
                     newNode.put("isChild", 1);
@@ -168,6 +182,7 @@ public class FeedToCmsService {
                 }
                 product.setModified(DateTimeUtil.getNow());
                 product.setModifier(this.modifier);
+                product.setUpdFlg(0);
                 feedProductDao.update(product);
 
                 List<CmsBtFeedProductImageModel> imageModels = new ArrayList<>();

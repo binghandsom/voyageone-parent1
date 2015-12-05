@@ -37,18 +37,16 @@
         <task:scheduled ref="wmsInvHisCalcJobTask" method="run" cron="0 0 12 1 * ?"/>
         <!--通过webservice获取第三方库存同步job， 每5分钟运行一次　-->
         <task:scheduled ref="wmsGetClientInvTask" method="run" cron="0 0/5 0-23 * * ?"/>
-        <!--第三方销售退货日报， 每5分钟运行一次　-->
-        <task:scheduled ref="wmsCreateReportJobTask" method="run" cron="0 0/5 0-23 * * ?"/>
-        <!--第三方销售文件， 上传FTP服务器　-->
-        <task:scheduled ref="wmsUploadFileToThirdJobTask" method="run" cron="0 0 0/1 * * ?"/>
-
+        <!--第三方销售退货日报， 每5分钟运行一次（北京时间16点到24点之间运行）　-->
+        <task:scheduled ref="wmsCreateReportJobTask" method="run" cron="0 0/5 8-15 * * ?"/>
+        <!--第三方销售文件， 每隔半小时上传FTP服务器　-->
+        <task:scheduled ref="wmsUploadFileToThirdJobTask" method="run" cron="0 0/30 0-23 * * ?"/>
         <!--Receipt Confirmation 文件生成　-->
         <task:scheduled ref="wmsReceiptConfirmationJob" method="run" cron="15 0/5 0-23 * * ?"/>
         <!--生成BCBG日报（以SKU集计物理库存）， 每天24点运行　-->
         <task:scheduled ref="wmsBCBGInventoryReportingTask" method="run" cron="0 0 16 * * ?"/>
-
         <!--每隔半小时同步一次库存信息至CMS-->
-        <task:scheduled ref="wmsSynInventoryToCmsJob" method="run" cron="0 0/1 0-23 * * ?"/>
+        <!--<task:scheduled ref="wmsSynInventoryToCmsJob" method="run" cron="0 0/1 0-23 * * ?"/>-->
     </task:scheduled-tasks>
 
     <!-- 必须需要 -->

@@ -9,7 +9,8 @@ angular.module('voyageone.angular.factories', [
   'voyageone.angular.factories.interceptor'
 ]);
 angular.module('voyageone.angular.directives', [
-  'voyageone.angular.directives.enterClick'
+  'voyageone.angular.directives.enterClick',
+  'voyageone.angular.directives.dateModelFormat'
 ]);
 angular.module('voyageone.angular.filters', [
 ]);

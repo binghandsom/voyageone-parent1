@@ -67,6 +67,8 @@ import java.util.List;
         final String updateItemDetail = tcb.getProp_val4();
         //完成处理后的备份路径，为null为不需要备份
         final String bakFilePath = tcb.getProp_val5();
+        //取得仓库的所属
+        final String storeArea = tcb.getProp_val6();
         //文件分割字符串
         final String splitStr = ",";
         //storeID取得
@@ -74,14 +76,22 @@ import java.util.List;
         List < StoreBean > storeBeans = StoreConfigs.getChannelStoreList(orderChannelId);
         assert storeBeans != null;
         for (StoreBean storeBean: storeBeans) {
-            if (storeBean.getStore_location().equals(StoreConfigEnums.Location.CB.getId()) &&
-                    storeBean.getStore_kind().equals(StoreConfigEnums.Kind.REAL.getId()) &&
-                    storeBean.getInventory_manager().equals(StoreConfigEnums.Manager.NO.getId())) {
+            // 真实仓库；库存不由我们管理；仓库所属区域和配置相同
+            if (storeBean.getStore_kind().equals(StoreConfigEnums.Kind.REAL.getId()) &&
+                    storeBean.getInventory_manager().equals(StoreConfigEnums.Manager.NO.getId()) &&
+                    storeBean.getStore_area().equals(storeArea)) {
                 storeID = storeBean.getStore_id();
                 break;
             }
         }
 
+        OrderChannelBean channel = ChannelConfigs.getChannel(orderChannelId);
+
+        if (storeID == 0) {
+            log(channel.getFull_name() + "所属区域的仓库取得失败：" + storeArea);
+            logIssue(channel.getFull_name() + "所属区域的仓库取得失败：" + storeArea);
+            return;
+        }
         final String finalFileName = fileName;
         final long finalStoreID = storeID;
         //开启事务处理
