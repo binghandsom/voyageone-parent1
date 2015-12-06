@@ -62,6 +62,10 @@ public class ReservationBean {
     private String tracking_number;
     private String reservation_status;
     private String tracking_no;
+    private String client_order_id;
+    private String client_status;
+    private String client_status_comment;
+    private boolean client_status_update;
 
     public long getId() {
         return id;
@@ -509,5 +513,37 @@ public class ReservationBean {
 
     public void setTracking_no(String tracking_no) {
         this.tracking_no = tracking_no;
+    }
+
+    public String getClient_order_id() {
+        return client_order_id;
+    }
+
+    public void setClient_order_id(String client_order_id) {
+        this.client_order_id = client_order_id;
+    }
+
+    public String getClient_status() {
+        return client_status;
+    }
+
+    public void setClient_status(String client_status) {
+        this.client_status = client_status;
+    }
+
+    public String getClient_status_comment() {
+        return client_status_comment;
+    }
+
+    public void setClient_status_comment(String client_status_comment) {
+        this.client_status_comment = client_status_comment;
+    }
+
+    public boolean isClient_status_update() {
+        return client_status_update;
+    }
+
+    public void setClient_status_update(boolean client_status_update) {
+        this.client_status_update = client_status_update;
     }
 }

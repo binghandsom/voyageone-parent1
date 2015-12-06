@@ -18,11 +18,11 @@ public class SerasConstants {
     //Notes
     public static final class Notes {
         //A note or text message that indicates the reason for certain status change.
-        public final static String PickedUp = "Warehouse PickedUp";
-        public final static String Shipped = "Warehouse Shipped";
-        public final static String Delivered = "Customer Delivered";
-        public final static String Returned = "Customer Returned";
-        public final static String Cancelled =  "Customer Cancelled";
+        public final static String PickedUp = "Picked up from sears warehouse";
+        public final static String Shipped = "Package shipped to china";
+        public final static String Delivered = "Item delivered to customer in China";
+        public final static String Returned = "Item returned by the customer in China";
+        public final static String Cancelled =  "Item cancelled by the customer in China";
     }
 
 }
