@@ -1,38 +1,4 @@
 <div class="wrapper-md">
-	<!--<div class="col-sm-12 m-b-sm">
-		<div class="form-inline pull-left" ng-controller="ModalDemoCtrl">
-			<script type="text/ng-template" id="popup_storecategorycolumn.html">
-				<div ng-include="'tpl/popup_storecategorycolumn.html'"></div>
-			</script>
-			<script type="text/ng-template" id="popup_maindatacategorycolumn.html">
-				<div ng-include="'tpl/popup_maindatacategorycolumn.html'"></div>
-			</script>
-			<script type="text/ng-template" id="popup_group_attribute_change.html">
-				<div ng-include="'tpl/popup_group_attribute_change.html'"></div>
-			</script>
-			<div ng-controller="DropdownDemoCtrl" class="btn-group" dropdown>
-				<button type="button" class="btn btn-vo">选择Promotion</button>
-				<button type="button" class="btn btn-vo dropdown-toggle" dropdown-toggle>
-					<span class="caret"></span>
-					<span class="sr-only">选择Promotion</span>
-				</button>
-				<ul class="dropdown-menu" role="menu">
-					<li><a href="#" ng-click="openpopup_alert_promotion('md')">双十一</a></li>
-					<li><a href>黑色星期五</a></li>
-					<li><a href>双十二</a></li>
-					&lt;!&ndash; .dropdown-submenu &ndash;&gt;
-				</ul>
-			</div>
-			<button class="btn btn-vo" ng-click="openpopup_maindatacategorycolumn('md')">选择主数据类目</button>
-			<button class="btn btn-vo" ng-click="openpopup_storecategorycolumn('lg')">选择店铺内类目</button>
-			<button class="btn btn-vo" ng-click="openpopup_group_attribute_change('md')">变更属性</button>
-		</div>
-		<div class="btn-group pull-right" ng-controller="ModalDemoCtrl">
-			<button type="button" class="btn btn-success-s" ng-click="openpopup_promotion_history('lg')">Promotion History（待定）</button>
-			&lt;!&ndash;
-			<button type="button" class="btn btn-success"><a href="/cms2.0/newcms/angular/index.html#/cms/promotion_price_task">Platform Link</a></button>&ndash;&gt;
-		</div>
-	</div>-->
 	<div class="col-sm-12">
 		<div class="panel vo_panel tab_panel">
 			<div class="container-fluid m-t-sm">
@@ -77,21 +43,7 @@
 							<div class="col-sm-8">
 								<textarea class="form-control no-resize" rows="2" placeholder="类目:珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石" disabled></textarea>
 							</div>
-						</div><!-- .form-group --><!--
-							<div class="form-group">
-								<label class="col-sm-3 control-label m-t-xs">上架?</label>
-								<div class="col-sm-2 control-label text-left">
-									<div class="onoffswitch">
-										<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch4" checked>
-										<label class="onoffswitch-label" for="myonoffswitch4">
-											<span class="onoffswitch-inner"></span>
-											<span class="onoffswitch-switch"></span>
-										</label>
-									</div>&lt;!&ndash; onoff switch &ndash;&gt;
-								</div>
-								<div class="col-sm-5 control-label"><input type="text" class="form-control" placeholder="上架时间"></div>
-								<label class="col-sm-2 control-label text-right"><a href="#" class="text-u-l">Platform Link</a></label>
-							</div>&lt;!&ndash; .form-group &ndash;&gt;-->
+						</div><!-- .form-group -->
 					</form><!-- .form -->
 				</div><!-- .col -->
 				<div class="col-sm-4">
@@ -112,10 +64,7 @@
 				</div><!--.col -->
 			</div><!-- .container-fluid -->
 		</div>
-		<div ng-controller="TabsDemoCtrl"><!--
-			<script type="text/ng-template" id="popup_group_attribute_change.html">
-				<div ng-include="'tpl/popup_group_attribute_change.html'"></div>
-			</script>-->
+		<div>
 			<script type="text/ng-template" id="popup_alert_promotion.html">
 				<div ng-include="'tpl/popup_alert_promotion.html'"></div>
 			</script>
@@ -130,9 +79,9 @@
 			</script>
 			<tabset class="tab-container vo_nav-tabs">
 				<!--right-btn-->
-				<div class="form-inline m-b-xs pull-right" ng-controller="ModalDemoCtrl">
+				<div class="form-inline m-b-xs pull-right">
 					<button class="btn btn-default" ng-click="openpopup_storecategorycolumn('lg')"><i class="fa fa-arrow-circle-right"></i> 选择店铺内类目</button>
-					<div ng-controller="DropdownDemoCtrl" class="btn-group" dropdown>
+					<div class="btn-group" dropdown>
 						<button type="button" class="btn btn-default"><i class="fa fa-arrow-circle-right"></i> 选择Promotion</button>
 						<button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle>
 							<span class="caret"></span>
@@ -167,7 +116,7 @@
 							<tr>
 								<th colspan="5" class="control-label text-left form-inline">
 									<label class="checkbox-inline c-radio"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label>
-									<span class="label label-success-new m-r-lg m-l"> New </span> <span class="m-r-lg">Product Code: <a href="/cms2.0/newcms/angular/index.html#/cms/product" class="text-u-l">LDB01-249</a></span> <span>Product Name: <a href="/cms2.0/newcms/angular/index.html#/cms/product" class="text-u-l">阿迪达斯</a></span>
+									<span class="label label-success-new m-r-lg m-l"> New </span> <span class="m-r-lg">Product Code: <a href="/cms2.0/newcms/angular/index.html#/cms/product" class="text-u-l">LDB01-249</a></span> <span>Product Name: <a href="#/product/list" class="text-u-l">阿迪达斯</a></span>
 								</th>
 								<th colspan="4" class="text-right">类目:珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石</th>
 							</tr>
@@ -175,7 +124,7 @@
 							<tbody>
 							<tr>
 								<td style="width:10%">
-									<img src="img/02.jpg" alt="Nike Air Max Tailwind 7" class="img-circle pull-left m-r"/>
+									<img src="../../../../static/img/02.jpg" alt="Nike Air Max Tailwind 7" class="img-circle pull-left m-r"/>
 								</td>
 								<td style="width:10%">Jewelry.com</td>
 								<td  style="width:10%">
@@ -228,7 +177,7 @@
 							<tr>
 								<th colspan="5" class="control-label text-left form-inline">
 									<label class="checkbox-inline c-radio"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label>
-									<span class="label label-yellow-new m-r-lg m-l"> Pedding </span> <span class="m-r-lg">Product Code: <a href="#" class="text-u-l">LDB01-249</a></span> <span>Product Name: <a href="#" class="text-u-l">阿迪达斯</a></span>
+									<span class="label label-yellow-new m-r-lg m-l"> Pedding </span> <span class="m-r-lg">Product Code: <a href="#" class="text-u-l">LDB01-249</a></span> <span>Product Name: <a href="#/product/list" class="text-u-l">阿迪达斯</a></span>
 								</th>
 								<th colspan="4" class="text-right">类目:珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石</th>
 							</tr>
@@ -236,7 +185,7 @@
 							<tbody>
 							<tr>
 								<td>
-									<img src="img/04.jpg" alt="Nike Air Max Tailwind 7" class="img-circle pull-left m-r"/>
+									<img src="../../../../static/img/04.jpg" alt="Nike Air Max Tailwind 7" class="img-circle pull-left m-r"/>
 								</td>
 								<td>Jewelry.com</td>
 								<td  style="width:10%">
@@ -286,7 +235,7 @@
 							<tr>
 								<th colspan="5" class="control-label text-left form-inline">
 									<label class="checkbox-inline c-radio"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label>
-									<span class="label label-danger-new m-r-lg m-l"> Ready </span> <span class="m-r-lg">Product Code: <a href="#" class="text-u-l">LDB01-249</a></span> <span>Product Name: <a href="#" class="text-u-l">阿迪达斯</a></span>
+									<span class="label label-danger-new m-r-lg m-l"> Ready </span> <span class="m-r-lg">Product Code: <a href="#" class="text-u-l">LDB01-249</a></span> <span>Product Name: <a href="#/product/list" class="text-u-l">阿迪达斯</a></span>
 								</th>
 								<th colspan="4" class="text-right">类目:珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石</th>
 							</tr>
@@ -294,7 +243,7 @@
 							<tbody>
 							<tr>
 								<td>
-									<img src="img/01.jpg" alt="Nike Air Max Tailwind 7" class="img-circle pull-left m-r"/>
+									<img src="../../../../static/img/01.jpg" alt="Nike Air Max Tailwind 7" class="img-circle pull-left m-r"/>
 								</td>
 								<td>Jewelry.com</td><td  style="width:10%">
 								<button popover="LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20" popover-title="Inventory" type="button" popover-placement="left" class="btn btn-vo btn-xs">1200</button>
@@ -349,7 +298,7 @@
 							<small class="text-muted inline m-t-sm m-b-sm">showing 20-30 of 50 items</small>
 						</div>
 						<div class="col-sm-3 text-right text-center-xs">
-							<div ng-controller="PaginationDemoCtrl">
+							<div>
 								<pagination boundary-links="true" total-items="totalItems" ng-model="currentPage" class="pagination-sm m-t-none m-b" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></pagination>
 							</div>
 						</div>

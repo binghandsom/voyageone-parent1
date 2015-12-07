@@ -31,7 +31,7 @@ public class CmsMtPlatformCategorySchemaDao extends BaseMongoDao{
 
     public List<JSONObject> getAllSchemaKeys(){
         String columnResult="{_id:1}";
-        return mongoTemplate.find(null,columnResult,collectionName);
+        return mongoTemplate.find(null, columnResult, collectionName);
     }
 
     public CmsMtPlatformCategorySchemaModel getPlatformCatSchemaModelById(String id){
@@ -39,5 +39,12 @@ public class CmsMtPlatformCategorySchemaDao extends BaseMongoDao{
         return super.selectById(id);
     }
 
+    public CmsMtPlatformCategorySchemaModel getPlatformCatSchemaModel(String catId, int cartId){
+        String queryStr = "{" +
+                "cartId: " + cartId +
+                ", catId: '" + catId + "'" +
+                "}";
+        return selectOneWithQuery(queryStr);
+    }
 
 }
