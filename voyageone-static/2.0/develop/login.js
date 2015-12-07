@@ -33,7 +33,7 @@ require([
     'pascalprecht.translate',
     'blockUI',
     'voyageone.angular'
-  ]).controller('loginController', function($scope, ajaxService) {
+  ]).controller('loginController', function($scope, $ajax) {
     $scope.username = '';
     $scope.password = '';
     $scope.isSavePwd = false;
@@ -49,7 +49,7 @@ require([
         return;
       }
       $scope.errorMessage = '';
-      ajaxService.post('/core/access/user/login', {
+      $ajax.post('/core/access/user/login', {
         username: $scope.username,
         password: $scope.password,
         timezone: -(new Date().getTimezoneOffset() / 60)
