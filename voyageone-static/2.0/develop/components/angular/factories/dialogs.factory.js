@@ -8,7 +8,6 @@ angular.module('voyageone.angular.factories.dialogs', [])
   .factory("$dialogs", function ($modal, $filter, $templateCache) {
 
     var templateName = 'voyageone.angular.factories.dialogs.tpl.html';
-
     $templateCache.put(templateName, '<div class="vo_modal"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()"><span aria-hidden="true"><i ng-click="close()" class="fa fa-close"></i></span></button><h4 class="modal-title" ng-bind-html="title"></h4></div><div class="modal-body wrapper-lg"><div class="row"><p ng-bind-html="content"></p></div></div><div class="modal-footer"><button class="btn btn-default btn-sm" ng-if="!isAlert" ng-click="close()" translate="CORE_BUTTON_CANCEL"></button> <button class="btn btn-vo btn-sm" ng-click="ok()" translate="CORE_BUTTON_OK"></button></div></div>');
 
     function tran(translationId, values) {
@@ -22,7 +21,6 @@ angular.module('voyageone.angular.factories.dialogs', [])
       var values;
 
       if (_.isObject(options.content)) {
-
         values = options.content.values;
         options.content = options.content.id;
       }
@@ -50,7 +48,7 @@ angular.module('voyageone.angular.factories.dialogs', [])
     };
   })
 
-  .factory("vAlert", function ($dialogs) {
+  .factory("alert", function ($dialogs) {
     return function (content, title) {
       return $dialogs({
         title: title || 'CORE_TXT_ALERT',
@@ -60,7 +58,7 @@ angular.module('voyageone.angular.factories.dialogs', [])
     };
   })
 
-  .factory("vConfirm", function vConfirm($dialogs) {
+  .factory("confirm", function vConfirm($dialogs) {
     return function (content, title) {
       return $dialogs({
         title: title || 'CORE_TXT_CONFIRM',
