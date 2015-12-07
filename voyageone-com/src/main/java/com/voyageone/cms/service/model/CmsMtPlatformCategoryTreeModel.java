@@ -1,4 +1,4 @@
-package com.voyageone.batch.cms.mongoModel;
+package com.voyageone.cms.service.model;
 
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;

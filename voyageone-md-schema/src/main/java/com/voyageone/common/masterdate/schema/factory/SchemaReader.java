@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 public class SchemaReader {
-    public SchemaReader() {
-    }
 
     public static Map<String, Field> readXmlForMap(File file) throws TopSchemaException {
         Element rootEle = XmlUtils.getRootElementFromFile(file);
@@ -49,7 +47,7 @@ public class SchemaReader {
     }
 
     public static List<Field> readXmlForList(Element rootEle) throws TopSchemaException {
-        List fieldList = com.voyageone.common.masterdate.schema.factory.SchemaFactory.createEmptyFieldList();
+        List fieldList = SchemaFactory.createEmptyFieldList();
         List fieldElmList = XmlUtils.getChildElements(rootEle, "field");
         Iterator i$ = fieldElmList.iterator();
 
@@ -139,9 +137,9 @@ public class SchemaReader {
                     Rule rule = null;
                     RuleTypeEnum ruleEnum = RuleTypeEnum.getEnum(ruleName);
                     if(ruleEnum != null) {
-                        rule = com.voyageone.common.masterdate.schema.factory.SchemaFactory.createRule(ruleEnum);
+                        rule = SchemaFactory.createRule(ruleEnum);
                     } else {
-                        rule = com.voyageone.common.masterdate.schema.factory.SchemaFactory.createCustomRule(ruleName, ruleValue);
+                        rule = SchemaFactory.createCustomRule(ruleName, ruleValue);
                     }
 
                     String unit;
@@ -294,7 +292,7 @@ public class SchemaReader {
         if(fieldElm == null) {
             return null;
         } else {
-            InputField inputField = (InputField) com.voyageone.common.masterdate.schema.factory.SchemaFactory.createField(FieldTypeEnum.INPUT);
+            InputField inputField = (InputField) SchemaFactory.createField(FieldTypeEnum.INPUT);
             inputField.setId(fieldId);
             inputField.setName(fieldName);
             Element rulesEle = XmlUtils.getChildElement(fieldElm, "rules");
@@ -341,7 +339,7 @@ public class SchemaReader {
         if(fieldElm == null) {
             return null;
         } else {
-            LabelField labelField = (LabelField) com.voyageone.common.masterdate.schema.factory.SchemaFactory.createField(FieldTypeEnum.LABEL);
+            LabelField labelField = (LabelField) SchemaFactory.createField(FieldTypeEnum.LABEL);
             labelField.setId(fieldId);
             labelField.setName(fieldName);
             Element rulesEle = XmlUtils.getChildElement(fieldElm, "rules");
@@ -382,7 +380,7 @@ public class SchemaReader {
         if(fieldElm == null) {
             return null;
         } else {
-            MultiInputField multiInputField = (MultiInputField) com.voyageone.common.masterdate.schema.factory.SchemaFactory.createField(FieldTypeEnum.MULTIINPUT);
+            MultiInputField multiInputField = (MultiInputField) SchemaFactory.createField(FieldTypeEnum.MULTIINPUT);
             multiInputField.setId(fieldId);
             multiInputField.setName(fieldName);
             Element rulesEle = XmlUtils.getChildElement(fieldElm, "rules");
@@ -443,7 +441,7 @@ public class SchemaReader {
         if(fieldElm == null) {
             return null;
         } else {
-            SingleCheckField singleCheckField = (SingleCheckField) com.voyageone.common.masterdate.schema.factory.SchemaFactory.createField(FieldTypeEnum.SINGLECHECK);
+            SingleCheckField singleCheckField = (SingleCheckField) SchemaFactory.createField(FieldTypeEnum.SINGLECHECK);
             singleCheckField.setId(fieldId);
             singleCheckField.setName(fieldName);
             Element rulesEle = XmlUtils.getChildElement(fieldElm, "rules");
@@ -507,7 +505,7 @@ public class SchemaReader {
         if(fieldElm == null) {
             return null;
         } else {
-            MultiCheckField multiCheckField = (MultiCheckField) com.voyageone.common.masterdate.schema.factory.SchemaFactory.createField(FieldTypeEnum.MULTICHECK);
+            MultiCheckField multiCheckField = (MultiCheckField) SchemaFactory.createField(FieldTypeEnum.MULTICHECK);
             multiCheckField.setId(fieldId);
             multiCheckField.setName(fieldName);
             Element rulesEle = XmlUtils.getChildElement(fieldElm, "rules");
@@ -583,7 +581,7 @@ public class SchemaReader {
         if(fieldElm == null) {
             return null;
         } else {
-            MultiComplexField multiComplexField = (MultiComplexField) com.voyageone.common.masterdate.schema.factory.SchemaFactory.createField(FieldTypeEnum.MULTICOMPLEX);
+            MultiComplexField multiComplexField = (MultiComplexField) SchemaFactory.createField(FieldTypeEnum.MULTICOMPLEX);
             multiComplexField.setId(fieldId);
             multiComplexField.setName(fieldName);
             Element fieldsEle = XmlUtils.getChildElement(fieldElm, "fields");
@@ -678,7 +676,7 @@ public class SchemaReader {
         if(fieldElm == null) {
             return null;
         } else {
-            ComplexField complexField = (ComplexField) com.voyageone.common.masterdate.schema.factory.SchemaFactory.createField(FieldTypeEnum.COMPLEX);
+            ComplexField complexField = (ComplexField) SchemaFactory.createField(FieldTypeEnum.COMPLEX);
             complexField.setId(fieldId);
             complexField.setName(fieldName);
             Element fieldsEle = XmlUtils.getChildElement(fieldElm, "fields");

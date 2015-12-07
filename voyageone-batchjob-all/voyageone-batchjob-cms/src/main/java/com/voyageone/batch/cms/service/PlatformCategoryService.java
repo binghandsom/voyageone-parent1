@@ -6,14 +6,13 @@ import com.taobao.api.domain.ItemCat;
 import com.taobao.api.domain.SellerAuthorize;
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.cms.model.PlatformCategoriesModel;
-import com.voyageone.batch.cms.model.PlatformPropModel;
 import com.voyageone.batch.core.Enums.TaskControlEnums;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.core.util.TaskControlUtils;
 import com.voyageone.batch.cms.CmsConstants;
 import com.voyageone.batch.cms.dao.BrandDao;
-import com.voyageone.batch.cms.mongoDao.PlatformCategoryDao;
-import com.voyageone.batch.cms.mongoModel.CmsMtPlatformCategoryTreeModel;
+import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategoryDao;
+import com.voyageone.cms.service.model.CmsMtPlatformCategoryTreeModel;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -48,7 +47,7 @@ public class PlatformCategoryService extends BaseTaskService{
     @Autowired
     TbCategoryService tbCategoryService;
     @Autowired
-    PlatformCategoryDao platformCategoryDao;
+    CmsMtPlatformCategoryDao platformCategoryDao;
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.IMS;
@@ -399,12 +398,12 @@ public class PlatformCategoryService extends BaseTaskService{
         String xmlContentRead = XmlUtil.readXml(strFileNameXML, path);
 
         // 分析XML
-        List<PlatformPropModel> platformPropModelList = TmallPropertyParser.getTmallPropertiesByXmlContent(
-                Integer.parseInt(shopProp.getCart_id()),
-                platformCategoriesModel.getPlatformCid(),
-                isProduct,
-                xmlContentRead
-        );
+//        List<PlatformPropModel> platformPropModelList = TmallPropertyParser.getTmallPropertiesByXmlContent(
+//                Integer.parseInt(shopProp.getCart_id()),
+//                platformCategoriesModel.getPlatformCid(),
+//                isProduct,
+//                xmlContentRead
+//        );
 
         // 插入到属性表中
 //        imsCategorySubService.doInsertPlatformPropMain(platformPropModelList, JOB_NAME);

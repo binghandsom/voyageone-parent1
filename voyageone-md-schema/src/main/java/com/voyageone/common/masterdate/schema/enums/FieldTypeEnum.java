@@ -67,7 +67,7 @@ public enum FieldTypeEnum {
 
         for(int i$ = 0; i$ < len$; ++i$) {
             FieldTypeEnum value = arr$[i$];
-            if(value.value().equals(name)) {
+            if(value.value().equalsIgnoreCase(name)) {
                 return value;
             }
         }
