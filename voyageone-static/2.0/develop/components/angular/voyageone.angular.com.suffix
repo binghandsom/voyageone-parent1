@@ -6,7 +6,9 @@ angular.module('voyageone.angular.services', [
   'voyageone.angular.services.translate'
 ]);
 angular.module('voyageone.angular.factories', [
-  'voyageone.angular.factories.interceptor'
+  'voyageone.angular.factories.interceptor',
+  'voyageone.angular.factories.dialogs',
+  'voyageone.angular.factories.notify'
 ]);
 angular.module('voyageone.angular.directives', [
   'voyageone.angular.directives.enterClick',

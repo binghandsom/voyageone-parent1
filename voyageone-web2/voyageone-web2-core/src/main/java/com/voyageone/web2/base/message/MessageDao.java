@@ -17,7 +17,7 @@ class MessageDao extends WebBaseDao {
         return WebDaoNs.CORE;
     }
 
-    public String selectMessage(String lang, String code) {
+    public MessageModel selectMessage(String lang, String code) {
         return selectOne("ct_message_info_selectMessage", parameters("lang", lang, "code", code));
     }
 }

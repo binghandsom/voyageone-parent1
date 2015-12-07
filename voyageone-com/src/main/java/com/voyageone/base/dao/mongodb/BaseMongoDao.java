@@ -1,5 +1,6 @@
 package com.voyageone.base.dao.mongodb;
 
+import com.mongodb.DBCollection;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.common.util.DateTimeUtil;
@@ -28,6 +29,15 @@ public abstract class BaseMongoDao {
     }
 
     public abstract Class getEntityClass();
+
+    public DBCollection getDBCollection() {
+        return mongoTemplate.getDBCollection(collectionName);
+    }
+
+    public DBCollection getDBCollection(String channelId) {
+        String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
+        return mongoTemplate.getDBCollection(collectionName);
+    }
 
     public <T> T selectOne() {
         return mongoTemplate.findOne((Class<T>) entityClass, collectionName);

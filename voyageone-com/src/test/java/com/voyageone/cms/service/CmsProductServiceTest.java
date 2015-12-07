@@ -31,7 +31,7 @@ public class CmsProductServiceTest {
     private CmsBtProductModel create(String channelId, int index, Random random) {
         CmsBtProductModel product = new CmsBtProductModel(channelId);
         product.setProdId(index);
-        int catId = random.nextInt(1000);
+        String catId = String.valueOf(random.nextInt(1000));
         product.setCatId(catId);
         product.setCatIdPath("-100-10000-" + catId + "-");
         String code = String.valueOf(100000 + index);

@@ -1,6 +1,9 @@
 package com.voyageone.cms.service.dao.mongodb;
 
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
 import com.mongodb.WriteResult;
 import com.voyageone.cms.service.CmsProductService;
 import com.voyageone.cms.service.model.*;
@@ -11,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -64,6 +68,24 @@ public class CmsProductDaoTest {
         }
     }
 
+    @Test
+    public void testUpsertTrue() throws UnknownHostException {
+        DBCollection coll = cmsBtProductDao.getDBCollection("001");
 
+        BasicDBObject o1 = new BasicDBObject();
+        o1.append("$setOnInsert", new BasicDBObject("name", "Innova1"));
+
+        BasicDBObject query = new BasicDBObject().append("catId", 982);
+
+        WriteResult c1 = coll.update(query, o1, true, false);
+        DBCursor carcursor = coll.find();
+        try {
+            while (carcursor.hasNext()) {
+                System.out.println(carcursor.next());
+            }
+        } finally {
+            carcursor.close();
+        }
+    }
 
 }

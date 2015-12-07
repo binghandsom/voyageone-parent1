@@ -29,12 +29,12 @@ require([
   angular.module('voyageone.cms.channel', [
     'blockUI',
     'voyageone.angular'
-  ]).controller('channelController', function($scope, ajaxService) {
-    ajaxService.post('/core/access/user/getChannel').then(function(res) {
+  ]).controller('channelController', function($scope, $ajax) {
+    $ajax.post('/core/access/user/getChannel').then(function(res) {
       $scope.channels = res.data;
     }, function(res) { alert(res.message || res.code); });
     $scope.choose = function(channel, app) {
-      ajaxService.post('/core/access/user/selectChannel', {channelId: channel.channelId}).then(function(res) {
+      $ajax.post('/core/access/user/selectChannel', {channelId: channel.channelId}).then(function(res) {
         location.href = 'modules/' + app + '/app.html';
       }, function(res) { alert(res.message || res.code); })
     };
