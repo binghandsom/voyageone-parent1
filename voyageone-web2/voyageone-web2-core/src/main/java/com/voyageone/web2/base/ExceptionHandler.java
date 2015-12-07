@@ -6,9 +6,10 @@ import com.voyageone.common.Constants.LANGUAGE;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.web2.base.ajax.AjaxResponse;
-import com.voyageone.web2.base.ajax.AjaxResponseData;
 import com.voyageone.web2.base.log.ExceptionLogBean;
 import com.voyageone.web2.base.log.LogService;
+import com.voyageone.web2.base.message.DisplayType;
+import com.voyageone.web2.base.message.MessageModel;
 import com.voyageone.web2.base.message.MessageService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang3.StringUtils;
@@ -79,7 +80,7 @@ public class ExceptionHandler implements HandlerExceptionResolver {
      */
     private ModelAndView catchBusinessException(String lang, BusinessException exception,
                                                 HttpServletResponse response) {
-        return businessExceptionDeal(lang, exception, response);
+        return messageDeal(lang, exception.getCode(), exception.getInfo(), response);
     }
 
     /**
@@ -93,12 +94,14 @@ public class ExceptionHandler implements HandlerExceptionResolver {
         }
 
         String code = exception.getCode();
-        String msg = messageService.getMessage(lang, code);
+        MessageModel msgModel = messageService.getMessage(lang, code);
 
-        if (StringUtils.isEmpty(msg)) msg = exception.getMessage();
+        if (msgModel != null) {
+            return messageDeal(lang, code, null, response);
+        }
 
-        msg = StringUtils.isEmpty(msg) ? exception.getClass().getName() : msg;
-
+        String msg = exception.getMessage();
+        if (StringUtils.isEmpty(msg)) msg = exception.getClass().getName();
         return exceptionDeal(msg, code, response);
     }
 
@@ -114,24 +117,26 @@ public class ExceptionHandler implements HandlerExceptionResolver {
     }
 
     /**
-     * 业务异常时ajax返回处理
+     * 信息类异常处理
+     *
+     * @param lang     选定语言
+     * @param code     信息代码
+     * @param args     格式化参数
+     * @param response 响应
+     * @return null
      */
-    private ModelAndView businessExceptionDeal(String lang, BusinessException exception, HttpServletResponse response) {
-
-        String code = exception.getCode();
-
-        String msg = messageService.getMessage(lang, code);
-
-        if (StringUtils.isEmpty(msg)) {
-            msg = String.format("this msg_code [%s(%s)] is not exists !!", code, lang);
-        } else {
-            msg = String.format(msg, exception.getInfo());
-        }
+    private ModelAndView messageDeal(String lang, String code, Object[] args, HttpServletResponse response) {
 
         AjaxResponse ajaxResponse = new AjaxResponse();
+        MessageModel msgModel = messageService.getMessage(lang, code);
 
-        ajaxResponse.setCode(code);
-        ajaxResponse.setMessage(msg);
+        if (msgModel == null) {
+            ajaxResponse.setCode(code);
+            ajaxResponse.setDisplayType(DisplayType.ALERT);
+            ajaxResponse.setMessage(String.format("this msg_code [%s(%s)] is not exists !!", code, lang));
+        } else {
+            ajaxResponse.setMessage(msgModel, args);
+        }
 
         ajaxResponse.writeTo(response);
 
@@ -152,7 +157,7 @@ public class ExceptionHandler implements HandlerExceptionResolver {
             case BaseConstants.CODE_SEL_CHANNEL:
                 AjaxResponse ajaxResponse = new AjaxResponse();
                 ajaxResponse.setCode(BaseConstants.CODE_SYS_REDIRECT);
-                ajaxResponse.setResult(new AjaxResponseData(){{ setRedirectTo("/channel.html"); }});
+                ajaxResponse.setRedirectTo("/channel.html");
                 ajaxResponse.writeTo(response);
                 return true;
         }

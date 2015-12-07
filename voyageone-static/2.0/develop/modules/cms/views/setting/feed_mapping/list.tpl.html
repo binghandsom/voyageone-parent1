@@ -1,10 +1,70 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-
-</body>
-</html>
+<div class="wrapper-md">
+  <div class="col-sm-12">
+  <div class="form-inline m-b-sm pull-left">
+    <select class="form-control m-r-xxs">
+      <option>类目匹配情况(ALL)</option>
+      <option>类目已匹配</option>
+      <option>类目未匹配</option>
+    </select>
+    <select class="form-control m-r-xxs">
+      <option>类目匹配属性情况(ALL)</option>
+      <option>类目属性已匹配完成</option>
+      <option>类目属性未匹配完成</option>
+    </select>
+    <input type="text" placeholder="快速检索" class="form-control">
+    <button type="submit" class="btn btn-vo btn-xxs"><i class="fa fa-search"></i></button>
+  </div><!-- /right-btn -->
+  </div>
+  <div class="col-sm-12">
+      <div class="box">
+        <div class="box-body">
+          <table class="table table-hover table-hover-new text-center">
+            <tr>
+              <th class="text-center">Seq.</th>
+              <th class="text-left">Feed Category</th>
+              <th class="text-left">Main Data Category</th>
+              <th class="text-center">类目匹配 / 类目属性匹配</th>
+              <th class="text-center">Action</th>
+            </tr>
+            <tr>
+              <td>1</td>
+              <td class="text-left">Bracelets > Bangles > Agate</td>
+              <td class="text-left">珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰</td>
+              <td><div class="btn-group" ng-controller="ModalDemoCtrl">
+                <script type="text/ng-template" id="popup_maindatacategorycolumns.html">
+                  <div ng-include="'tpl/popup_maindatacategorycolumns.html'"></div>
+                </script>
+                <button class="btn btn-default btn-xs" ng-click="openpopup_maindatacategorycolumns('lg')" ><i class="glyphicon glyphicon-link"></i> 类目匹配</button>
+                <a href="/cms2.0/newcms/angular/index.html#/cms/start1" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-link"></i> 类目属性匹配</a>
+              </div>
+              </td>
+              <td><button class="btn btn-primary btn-xs"><i class="fa fa-arrow-circle-right"></i> 继承</button></td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td class="text-left">Bracelets > Bangles > Cubic Zirconia</td>
+              <td class="text-left">珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰</td>
+              <td><div class="btn-group">
+                <a href="/cms2.0/newcms/angular/index.html#/cms/start1" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-link"></i> 类目匹配</a>
+                <a href="/cms2.0/newcms/angular/index.html#/cms/start1" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-link"></i> 类目属性匹配</a>
+                </div>
+              </td>
+              <td><button class="btn btn-primary btn-xs"><i class="fa fa-arrow-circle-right"></i> 继承</button></td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td class="text-left">Bracelets > Bangles > Diamond</td>
+              <td class="fontcolor-h text-left">建议类目：珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰，请点击【类目匹配】进行选择，或点击【继承】进行确认</td>
+              <td><div class="btn-group">
+                <a href="/cms2.0/newcms/angular/index.html#/cms/start1" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-link"></i> 类目匹配</a>
+                <a href="/cms2.0/newcms/angular/index.html#/cms/start1" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-link"></i> 类目属性匹配</a>
+              </div>
+              </td>
+              <td><button class="btn btn-primary btn-xs"><i class="fa fa-arrow-circle-right"></i> 继承</button></td>
+            </tr>
+          </table>
+        </div><!-- /.box-body -->
+      </div>
+    </div>
+  </div><!-- /.col -->
+</div><!-- end .wrapper-md -->

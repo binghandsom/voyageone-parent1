@@ -21,42 +21,13 @@ AjaxService.prototype.post = function (url, data) {
       defer.reject(null);
       return;
     }
-    // 对后端通知的跳转进行自动处理
-    if (autoRedirect(res) || sessionTimeout(res)) {
-      return;
-    }
     if (res.message || res.code) {
       defer.reject(res);
       return;
     }
-    defer.resolve(res.result);
+    defer.resolve(res);
   }, function (response) {
     defer.reject(null, response);
   });
   return defer.promise;
 };
-
-// 和 JAVA 同步,系统通知前端自动跳转的特殊代码
-var CODE_SYS_REDIRECT = "SYS_REDIRECT";
-// 和 JAVA 同步,回话过期的信息
-var MSG_TIMEOUT = "300001";
-
-function autoRedirect(res) {
-  if (res.code != CODE_SYS_REDIRECT) {
-    return false;
-  }
-  // 如果跳转数据异常,则默认跳转登陆页
-  location.href = (!res.data || !res.data.redirectTo)
-    ? '/login.html'
-    : res.data.redirectTo;
-  return true;
-}
-
-function sessionTimeout(res) {
-  if (res.code != MSG_TIMEOUT) {
-    return false;
-  }
-  // 会话超时,默认跳转到登陆页
-  location.href = '/login.html';
-  return true;
-}

@@ -30,6 +30,7 @@ public class UserController extends BaseController {
 
     @RequestMapping("login")
     public AjaxResponse login(@RequestBody Map<String, Object> params) {
+
         String username = (String) params.get("username");
         String password = (String) params.get("password");
         int timezone = (int) params.get("timezone");
