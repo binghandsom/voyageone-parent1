@@ -231,6 +231,7 @@ requirejs([
           .then(function (response) {
             var data = response.data;
             var languageType = _.isEmpty(cookieService.language()) ? translateService.getBrowserLanguage() : cookieService.language();
+            translateService.setLanguage(languageType);
             _.forEach(data.languageList, function (language) {
 
               if (_.isEqual(languageType, language.add_name2)) {
@@ -274,7 +275,7 @@ requirejs([
      */
     function setLanguage (language) {
       var defer = $q.defer ();
-      cookieService.language(language.add_name1);
+      cookieService.language(language.add_name2);
       translateService.setLanguage(language.add_name2);
       defer.resolve(language.add_name1);
       return defer.promise;

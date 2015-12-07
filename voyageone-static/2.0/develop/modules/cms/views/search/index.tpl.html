@@ -2,248 +2,223 @@
     <div>
         <accordion class="vo_accordion vo_attr" close-others="oneAtATime">
             <accordion-group is-open="status.open">
-                <accordion-heading ng-class="{{menu-title}}">检索条件<i class="pull-right glyphicon glyphicon-menu-down" ng-class="{'glyphicon-menu-up': status.open, 'glyphicon-menu-down': !status.open}"></i>
+                <accordion-heading><span translate="TXT_SEARCH_CONDITION"></span>
+                    <i class="pull-right glyphicon glyphicon-menu-down" ng-class="{'glyphicon-menu-up': status.open, 'glyphicon-menu-down': !status.open}"></i>
                 </accordion-heading>
                 <!-- search -->
-                <div class="col-sm-12">
-                    <div class="col-sm-5">
-                        <div class="form-horizontal">
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">Product Status</label>
-                                <div class="col-sm-9">
-                                    <label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> New </label>
-                                    <label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> Pedding </label>
-                                    <label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span> Ready </label>
-                                    <label class="checkbox-inline c-checkbox"><input type="checkbox" value="option4"><span class="fa fa-check"></span> Approved </label>
-                                    <label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span> Deleted </label>
-                                </div>
-                            </div><!-- .form-group -->
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">Publish Status</label>
-                                <div class="col-sm-9">
-                                    <label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 等待上新 </label>
-                                    <label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> 在库 </label>
-                                    <label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span> 在售 </label>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">Label</label>
-                                <div class="col-sm-9">
-                                    <label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 未翻译 </label>
-                                    <label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> 翻译完成 </label>
-                                    <label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span> 上新失败 </label>
-                                    <label class="checkbox-inline c-checkbox"><input type="checkbox" value="option4"><span class="fa fa-check"></span> 上新成功 </label>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">Price</label>
-                                <div class="col-sm-6">
-                                    <label class="checkbox-inline c-radio"><input type="checkbox" value="option1"><span class="fa fa-check"></span> MSRP </label>
-                                    <label class="checkbox-inline c-radio"><input type="checkbox" value="option2"><span class="fa fa-check"></span> Current Price </label>
-                                    <label class="checkbox-inline c-radio"><input type="checkbox" value="option3"><span class="fa fa-check"></span> Final Price </label>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label"></label>
-                                <div class="col-sm-9 form-inline">
-                                    <div class="input-group col-sm-5"><input type="text" placeholder="1" class="form-control"></div>
-                                    <div class="input-group col-sm-6"><input type="text" placeholder="2" class="form-control"></div>
-                                </div>
-                            </div><!-- .form-group -->
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">Final Discount</label>
-                                <div class="col-sm-9 form-inline">
-                                    <div class="input-group col-sm-5">
-                                        <input type="text" placeholder="1" class="form-control">
+                <form class="form-horizontal" name="advanceSearchForm">
+                    <div class="col-sm-12">
+                        <div class="col-sm-5">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" translate="TXT_PRODUCT_STATUS"></label>
+                                    <div class="col-sm-9">
+                                        <label class="checkbox-inline c-checkbox" ng-repeat="productStatus in vm.masterData.productStatusList">
+                                            <input type="checkbox" ng-value="productStatus.id" ng-model="vm.searchInfo.productStatus[productStatus.id]"><span class="fa fa-check"></span> {{productStatus.name}}
+                                        </label>
                                     </div>
-                                    <div class="input-group col-sm-6">
-                                        <input type="text" class="form-control" ng-model="g.c" ng-pattern="/^[0-9]+$/">
-                                        <span class="input-group-addon">% Off</span>
+                                </div><!-- .form-group -->
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" translate="TXT_PLATFORM_STATUS"></label>
+                                    <div class="col-sm-9">
+                                        <label class="checkbox-inline c-checkbox" ng-repeat="platformStatus in vm.masterData.platformStatusList">
+                                            <input type="checkbox" ng-value="platformStatus.id" ng-model="vm.searchInfo.platformStatus[platformStatus.id]"><span class="fa fa-check"></span> {{platformStatus.name}}
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" translate="TXT_LABEL"></label>
+                                    <div class="col-sm-9">
+                                        <label class="checkbox-inline c-checkbox" ng-repeat="labelType in vm.masterData.labelTypeList">
+                                            <input type="checkbox" ng-value="labelType.id" ng-model="vm.searchInfo.labelType[labelType.id]"><span class="fa fa-check"></span> {{labelType.name}}
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" translate="TXT_PRICE"></label>
+                                    <div class="col-sm-6">
+                                        <label class="checkbox-inline c-radio" ng-repeat="priceType in vm.masterData.priceList">
+                                            <input type="checkbox" ng-value="priceType.id" ng-model="vm.searchInfo.priceType"><span class="fa fa-check"></span> {{priceType.name}}
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label"></label>
+                                    <div class="col-sm-9 form-inline">
+                                        <div class="input-group col-sm-5"><input type="text" class="form-control" ng-model="vm.searchInfo.priceTypeStart" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/"></div>
+                                        <div class="input-group col-sm-6"><input type="text" class="form-control" ng-model="vm.searchInfo.priceTypeEnd" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/"></div>
+                                    </div>
+                                </div><!-- .form-group -->
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" translate="TXT_FINAL_DISCOUNT"></label>
+                                    <div class="col-sm-9 form-inline">
+                                        <div class="input-group col-sm-5">
+                                            <input type="text" class="form-control" ng-model="vm.searchInfo.finalDiscount">
+                                        </div>
+                                        <div class="input-group col-sm-6">
+                                            <input type="text" class="form-control" ng-model="vm.searchInfo.finalDiscountPercent" ng-pattern="/^[0-9]{1,2}(\.[0-9]{0,2})?$/">
+                                            <span class="input-group-addon" translate="TXT_DISCOUNT_PERCENT"></span>
+                                        </div>
+                                    </div>
+                                </div><!-- .form-group -->
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" translate="TXT_CREATE_TIME"></label>
+                                    <div class="col-sm-9 form-inline">
+                                        <div class="col-sm-6 input-group" ng-controller="datePickerCtrl">
+                                            <input type="text" class="form-control" datepicker-popup="yyyy-MM-dd" ng-model="$parent.vm.searchInfo.createTimeStart" date-model-format="yyyy-MM-dd"
+                                                   max-date="$parent.vm.searchInfo.createTimeTo" is-open="opened" datepicker-options="dateOptions" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+                                        </div> ~
+                                        <div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
+                                            <input type="text" class="form-control" datepicker-popup="yyyy-MM-dd" ng-model="$parent.vm.searchInfo.createTimeTo" date-model-format="yyyy-MM-dd"
+                                                   min-date="$parent.vm.searchInfo.createTimeStart" is-open="opened" datepicker-options="dateOptions" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" translate="TXT_PUBLISH_TIME"></label>
+                                    <div class="col-sm-9 form-inline">
+                                        <div class="col-sm-6 input-group" ng-controller="datePickerCtrl">
+                                            <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="$parent.vm.searchInfo.publishTimeStart" date-model-format="yyyy-MM-dd"
+                                                   max-date="$parent.vm.searchInfo.publishTimeTo" is-open="opened" datepicker-options="dateOptions" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+                                        </div> ~
+                                        <div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
+                                            <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="dt" ng-model="$parent.vm.searchInfo.publishTimeTo" date-model-format="yyyy-MM-dd"
+                                                   min-date="$parent.vm.searchInfo.publishTimeStart" is-open="opened" datepicker-options="dateOptions" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" translate="TXT_INVENTORY"></label>
+                                    <div class="col-sm-9 form-inline">
+                                        <select class="form-control m-r-xs" ng-model="vm.searchInfo.inventoryType"
+                                                ng-options="inventoryType.id as inventoryType.name for inventoryType in vm.masterData.inventoryTypeList">
+                                        </select>
+                                        <input class="form-control" ng-model="vm.searchInfo.inventory" ng-pattern="/^(\d+)$/">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" translate="TXT_BRAND"></label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" ng-model="vm.searchInfo.brand"
+                                                ng-options="brand.id as brand.name for brand in vm.masterData.brandList">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" translate="TXT_PUBLISH_STATUS"></label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" ng-model="vm.searchInfo.publishStatus"
+                                                ng-options="publishStatus.id as publishStatus.name for publishStatus in vm.masterData.publishStatusList">
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" translate="TXT_TRANSLATION_STATUS"></label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" ng-model="vm.searchInfo.translationStatus"
+                                                ng-options="translationStatus.id as translationStatus.name for translationStatus in vm.masterData.translationStatusList">
+                                        </select>
                                     </div>
                                 </div>
                             </div><!-- .form-group -->
                         </div>
-                    </div>
-                    <div class="col-sm-3">
-                        <div class="form-horizontal">
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">Create Time</label>
-                                <div class="col-sm-9 form-inline">
-                                    <div class="col-sm-6 input-group">
-                                        <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="dt" is-open="opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
-								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-								              </span>
-                                    </div> ~
-                                    <div class="col-sm-5 input-group">
-                                        <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="dt" is-open="opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
-								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-								              </span>
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" translate="TXT_CODE_LIST"></label>
+                                    <div class="col-sm-8">
+                                        <textarea class="form-control inherited" rows="4" ng-model="vm.searchInfo.codeList"></textarea>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">Publish Time</label>
-                                <div class="col-sm-9 form-inline">
-                                    <div class="col-sm-6 input-group">
-                                        <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="dt" is-open="opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
-								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-								              </span>
-                                    </div> ~
-                                    <div class="col-sm-5 input-group">
-                                        <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="dt" is-open="opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
-								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-								              </span>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" translate="TXT_SORT_1"></label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" ng-model="vm.searchInfo.sortOneName"
+                                                ng-options="sortOne.id as sortOne.name for brand in vm.masterData.sortList">
+                                        </select>
+                                        <label class="checkbox-inline c-radio">
+                                            <input name="sortOne" id="sortOneAsc" type="radio" value="asc" ng-model="vm.searchInfo.sortOneType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' | translate }}
+                                        </label>
+                                        <label class="checkbox-inline c-radio">
+                                            <input name="sortOne" id="sortOneDesc" type="radio" value="desc" ng-model="vm.searchInfo.sortOneType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}
+                                        </label>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">Inventory</label>
-                                <div class="col-sm-9 form-inline">
-                                    <select class="form-control m-r-xs">
-                                        <option>more than</option>
-                                        <option>less than</option>
-                                        <option>equal to</option>
-                                    </select><input class="form-control" placeholder="3">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" translate="TXT_SORT_2"></label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" ng-model="vm.searchInfo.sortTwoName"
+                                                ng-options="sortOne.id as sortOne.name for brand in vm.masterData.sortList">
+                                        </select>
+                                        <label class="checkbox-inline c-radio">
+                                            <input name="sortTwo" id="sortTwoAsc" type="radio" value="asc" ng-model="vm.searchInfo.sortTwoType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' | translate }}
+                                        </label>
+                                        <label class="checkbox-inline c-radio">
+                                            <input name="sortTwo" id="sortTwoDesc" type="radio" value="desc" ng-model="vm.searchInfo.sortTwoType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}
+                                        </label>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">Brand</label>
-                                <div class="col-sm-9">
-                                    <select class="form-control">
-                                        <option>Nike</option>
-                                        <option>Adidas</option>
-                                    </select>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" translate="TXT_SORT_3"></label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" ng-model="vm.searchInfo.sortThreeName"
+                                                ng-options="sortOne.id as sortOne.name for brand in vm.masterData.sortList">
+                                        </select>
+                                        <label class="checkbox-inline c-radio">
+                                            <input name="sortThree" id="sortThreeAsc" type="radio" value="asc" ng-model="vm.searchInfo.sortThreeType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' | translate }}
+                                        </label>
+                                        <label class="checkbox-inline c-radio">
+                                            <input name="sortThree" id="sortThreeDesc" type="radio" value="desc" ng-model="vm.searchInfo.sortThreeType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}
+                                        </label>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">上新情况</label>
-                                <div class="col-sm-9">
-                                    <select class="form-control">
-                                        <option>上新失败</option>
-                                        <option>上新成功</option>
-                                        <option>All</option>
-                                    </select>
-                                </div>
-                            </div>
 
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">翻译情况</label>
-                                <div class="col-sm-9">
-                                    <select class="form-control">
-                                        <option>未翻译</option>
-                                        <option>翻译成功</option>
-                                        <option>All</option>
-                                    </select>
-                                </div>
                             </div>
-
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">翻译情况</label>
-                                <div class="col-sm-9">
-                                    <select class="form-control">
-                                        <option>未翻译</option>
-                                        <option>翻译成功</option>
-                                        <option>All</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div><!-- .form-group -->
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="form-horizontal">
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">CODE列表</label>
-                                <div class="col-sm-8">
-                                    <textarea class="form-control inherited" rows="4" placeholder=""></textarea>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">Sort 1.</label>
-                                <div class="col-sm-8">
-                                    <select class="form-control">
-                                        <option>Inventory</option>
-                                        <option>MSRP</option>
-                                        <option>Current Price</option>
-                                        <option>Final Price</option>
-                                        <option>Size</option>
-                                        <option>Color</option>
-                                        <option>Group ID</option>
-                                        <option>Product Code</option>
-                                        <option>SKU</option>
-                                    </select>
-                                    <label class="checkbox-inline c-radio"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 升序 </label>
-                                    <label class="checkbox-inline c-radio"><input type="checkbox" value="option2"><span class="fa fa-check"></span> 降序 </label>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">Sort 2.</label>
-                                <div class="col-sm-8">
-                                    <select class="form-control">
-                                        <option>Inventory</option>
-                                        <option>MSRP</option>
-                                        <option>Current Price</option>
-                                        <option>Final Price</option>
-                                        <option>Size</option>
-                                        <option>Color</option>
-                                        <option>Group ID</option>
-                                        <option>Product Code</option>
-                                        <option>SKU</option>
-                                    </select>
-                                    <label class="checkbox-inline c-radio"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 升序 </label>
-                                    <label class="checkbox-inline c-radio"><input type="checkbox" value="option2"><span class="fa fa-check"></span> 降序 </label>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">Sort 3.</label>
-                                <div class="col-sm-8">
-                                    <select class="form-control">
-                                        <option>Inventory</option>
-                                        <option>MSRP</option>
-                                        <option>Current Price</option>
-                                        <option>Final Price</option>
-                                        <option>Size</option>
-                                        <option>Color</option>
-                                        <option>Group ID</option>
-                                        <option>Product Code</option>
-                                        <option>SKU</option>
-                                    </select>
-                                    <label class="checkbox-inline c-radio"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 升序 </label>
-                                    <label class="checkbox-inline c-radio"><input type="checkbox" value="option2"><span class="fa fa-check"></span> 降序 </label>
-                                </div>
-                            </div>
-
+                        </div>
+                        <div class="col-sm-12 text-center m-b-sm">
+                            <div class="form-inline">
+                                <button class="btn btn-default" ng-click="cancel()" translate="BTN_CANCEL"></button>
+                                <button class="btn btn-vo" ng-click="search()" translate="BTN_SEARCH"></button>
+                                <button class="btn btn-vo" ng-click="export()" translate="BTN_EXPORT"></button>
+                            </div><!-- .form-inline -->
                         </div>
                     </div>
-                    <div class="col-sm-12 text-center m-b-sm">
-                        <div class="form-inline">
-                            <button class="btn btn-default" ng-click="cancel()">取消</button>
-                            <button class="btn btn-vo" ng-click="ok()">检索</button>
-                            <button class="btn btn-vo" ng-click="ok()">导出</button>
-                        </div><!-- .form-inline -->
-                    </div>
-                </div>
+                </form>
             </accordion-group>
         </accordion><!-- .accordion -->
     </div><!--/search-->
     <!--category-->
     <div>
-        <script type="text/ng-template" id="popup_group_attribute_change.html">
-            <div ng-include="'tpl/popup_group_attribute_change.html'"></div>
-        </script>
-        <script type="text/ng-template" id="popup_alert_promotion.html">
-            <div ng-include="'tpl/popup_alert_promotion.html'"></div>
-        </script>
-        <script type="text/ng-template" id="newdrag.html">
-            <div ng-include="'tpl/newdrag.html'"></div>
-        </script>
+        <!--<script type="text/ng-template" id="popup_group_attribute_change.html">-->
+        <!--<div ng-include="'tpl/popup_group_attribute_change.html'"></div>-->
+        <!--</script>-->
+        <!--<script type="text/ng-template" id="popup_alert_promotion.html">-->
+        <!--<div ng-include="'tpl/popup_alert_promotion.html'"></div>-->
+        <!--</script>-->
+        <!--<script type="text/ng-template" id="newdrag.html">-->
+        <!--<div ng-include="'tpl/newdrag.html'"></div>-->
+        <!--</script>-->
         <tabset class="tab-container vo_nav-tabs">
             <!--right-btn-->
             <div class="form-inline m-b-xs pull-right">
-                <button class="btn btn-default" ng-click="opennewdrag('lg')"><i class="fa fa-cog"></i> 自定义Base Property</button>
+                <button class="btn btn-default" ng-click="opennewdrag('lg')"><i class="fa fa-cog"></i> {{'TXT_CUSTOM_BASE_PROPERTY' | translate}}</button>
                 <div class="btn-group" dropdown>
                     <button type="button" class="btn btn-default"><i class="fa fa-arrow-circle-right"></i> 选择Promotion</button>
                     <button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle>
@@ -657,6 +632,4 @@
             </tab>
         </tabset><!-- tabset -->
     </div><!-- tabs ng-controller -->
-</div><!-- .col-lg-12 -->
-</div><!-- .row -->
 </div><!-- end .wrapper-md -->
