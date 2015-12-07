@@ -1,7 +1,8 @@
 package com.voyageone.batch.cms.service;
 
-import com.voyageone.batch.cms.mongoDao.PlatformCategoryDao;
-import com.voyageone.batch.cms.mongoModel.CmsMtPlatformCategoryTreeModel;
+;
+import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategoryDao;
+import com.voyageone.cms.service.model.CmsMtPlatformCategoryTreeModel;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,7 +20,7 @@ import java.util.List;
 public class PlatformCategoryServiceTest {
 
     @Autowired
-    PlatformCategoryDao platformCategoryDao;
+    CmsMtPlatformCategoryDao cmsMtPlatformCategoryDao;
 
     @Autowired
     PlatformCategoryService platformCategoryService;
@@ -28,15 +29,15 @@ public class PlatformCategoryServiceTest {
     public void testOnStartup() throws Exception {
 
         //删除原有cartId =23的类目信息
-        platformCategoryDao.deletePlatformCategories(23);
-        List<CmsMtPlatformCategoryTreeModel> brforeTreeModels = platformCategoryDao.selectPlatformCategoriesByCartId(23);
+        cmsMtPlatformCategoryDao.deletePlatformCategories(23);
+        List<CmsMtPlatformCategoryTreeModel> brforeTreeModels = cmsMtPlatformCategoryDao.selectPlatformCategoriesByCartId(23);
         Assert.assertFalse(brforeTreeModels.size()>0);
 
         //插入类目信息
         platformCategoryService.startup();
 
         //查询插入后的结果，并断言
-        List<CmsMtPlatformCategoryTreeModel> afterTreeModels = platformCategoryDao.selectPlatformCategoriesByCartId(23);
+        List<CmsMtPlatformCategoryTreeModel> afterTreeModels = cmsMtPlatformCategoryDao.selectPlatformCategoriesByCartId(23);
 
         Assert.assertTrue(afterTreeModels.size()>0);
 

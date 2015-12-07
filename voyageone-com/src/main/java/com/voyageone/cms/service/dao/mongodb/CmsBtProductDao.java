@@ -1,13 +1,14 @@
 package com.voyageone.cms.service.dao.mongodb;
 
 import com.voyageone.base.dao.mongodb.BaseMongoDao;
-import com.voyageone.cms.service.model.CmsBtFeedInfoModel;
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
 import net.minidev.json.JSONObject;
+import org.jongo.MongoCursor;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 
 @Repository
@@ -50,7 +51,7 @@ public class CmsBtProductDao extends BaseMongoDao {
      * @return
      */
     public CmsBtProductModel selectProductByCode(String channelId, String code) {
-        String query = "{\"field.code\":\"" + code + "\"}";
+        String query = "{\"fields.code\":\"" + code + "\"}";
         return selectOneWithQuery(query, channelId);
     }
 
@@ -61,7 +62,7 @@ public class CmsBtProductDao extends BaseMongoDao {
      * @return
      */
     public List<CmsBtProductModel> selectProductByGroupId(String channelId, int groupId) {
-        String query = "{\"group.platforms.groupId\":" + groupId + "}";
+        String query = "{\"groups.platforms.groupId\":" + groupId + "}";
         return select(query, channelId);
     }
 
@@ -71,7 +72,7 @@ public class CmsBtProductDao extends BaseMongoDao {
      * @param prodId
      * @return
      */
-    public List<CmsBtProductModel_Sku>  selectSKUById(String channelId, int prodId) throws IOException {
+    public List<CmsBtProductModel_Sku>  selectSKUById(String channelId, int prodId) {
         String query = "{\"prodId\":" + prodId + "}";
         CmsBtProductModel product = selectOneWithQuery(query, channelId);
         if (product != null) {
@@ -80,6 +81,28 @@ public class CmsBtProductDao extends BaseMongoDao {
         //Object jsonObj = JsonPath.parse(JacksonUtil.bean2Json(product)).json();
         //List<Map> authors = JsonPath.read(jsonObj, "$.skus.*");
         return null;
+    }
+
+    /**
+     * 获取Product List 根据catIdPath
+     * @param channelId
+     * @param catIdPath
+     * @return
+     * @throws IOException
+     */
+    public List<CmsBtProductModel> selectLeftLikeCatIdPath(String channelId, String catIdPath) {
+        String queryTemp = "{catIdPath:{$regex:\"^%s\"}}";
+        String queryStr  = String.format(queryTemp, catIdPath);
+        return select(queryStr, channelId);
+    }
+
+    /**
+     * 获取Product ALL MongoCursor
+     * @param channelId
+     * @return
+     */
+    public Iterator<CmsBtProductModel> selectAllReturnCursor(String channelId) {
+        return selectCursorAll(channelId);
     }
 
 }
