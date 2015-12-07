@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.common.sql">
 
-    <select id="select_cms_bt_category_mapping" resultType="com.voyageone.cms.service.model.CmsBtCategoryMappingModel" parameterType="com.voyageone.cms.service.model.CmsBtCategoryMappingModel" >
+    <select id="select_cms_bt_channel_category" resultType="com.voyageone.cms.service.model.CmsBtChannelCategoryModel" parameterType="com.voyageone.cms.service.model.CmsBtChannelCategoryModel" >
         select
           channel_id channelId,
           category_id catId,
@@ -10,7 +10,7 @@
           creater,
           modified,
           modifier
-        from voyageone_cms2.cms_bt_category_mapping
+        from voyageone_cms2.cms_bt_channel_category
         <where>
             <if test="channelId != null and channelId !=''">
                 channel_id = #{channelId,jdbcType=VARCHAR}
@@ -20,8 +20,8 @@
             </if>
         </where>
     </select>
-    <insert id="insert_cms_bt_category_mapping" parameterType="com.voyageone.cms.service.model.CmsBtCategoryMappingModel" >
-        insert IGNORE into voyageone_cms2.cms_bt_category_mapping
+    <insert id="insert_cms_bt_channel_category" parameterType="com.voyageone.cms.service.model.CmsBtChannelCategoryModel" >
+        insert IGNORE into voyageone_cms2.cms_bt_channel_category
         <trim prefix="(" suffix=")" suffixOverrides="," >
             <if test="channelId != null" >
                 channel_id,

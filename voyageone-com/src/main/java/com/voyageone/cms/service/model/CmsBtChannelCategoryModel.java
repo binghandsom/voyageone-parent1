@@ -3,16 +3,16 @@ package com.voyageone.cms.service.model;
 
 import com.voyageone.base.dao.mysql.BaseModel;
 
-public class CmsBtCategoryMappingModel extends BaseModel {
+public class CmsBtChannelCategoryModel extends BaseModel {
 
     private String channelId;
 
     private String catId;
 
-    public CmsBtCategoryMappingModel(){
+    public CmsBtChannelCategoryModel(){
     }
 
-    public CmsBtCategoryMappingModel(String channelId, String catId, String modifier){
+    public CmsBtChannelCategoryModel(String channelId, String catId, String modifier){
         this.channelId = channelId;
         this.catId = catId;
         this.setModifier(modifier);
