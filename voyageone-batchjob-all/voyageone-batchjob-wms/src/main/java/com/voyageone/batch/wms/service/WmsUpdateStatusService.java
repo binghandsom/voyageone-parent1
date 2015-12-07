@@ -175,7 +175,7 @@ public class WmsUpdateStatusService extends BaseTaskService {
                             UpdateStatusBean updateStatusBean = new UpdateStatusBean();
 
                             // B2B order ID from the place order response. Same as the B2B-ORDER-ID in the URL
-                            updateStatusBean.setOrderId(String.valueOf(orderDetail.getOrder_number()));
+                            updateStatusBean.setOrderId(String.valueOf(orderDetail.getClient_order_id()));
 
                             for (ReservationBean reservation : orderDetail.getLstReservation()) {
 
@@ -213,7 +213,7 @@ public class WmsUpdateStatusService extends BaseTaskService {
                                         updateStatusItem.setInternationalTrackingNumber(reservation.getSyn_ship_no());
 
                                         // 该状态已更新的场合，忽略此记录
-                                        if (reservation.getReservation_status().equals(CodeConstants.Reservation_Status.Arrived)) {
+                                        if (reservation.getReservation_status().equals(CodeConstants.Reservation_Status.ShippedUS)) {
                                             reservation.setClient_status_update(true);
                                         }
                                         break;
@@ -231,16 +231,21 @@ public class WmsUpdateStatusService extends BaseTaskService {
                                         reservation.setClient_status_comment(SerasConstants.Notes.Returned);
 
                                         // Mandatory for cancellation and return status updates
-                                        updateStatusItem.setQuantity(1);
+                                        updateStatusItem.setQuantity("1");
 
                                         break;
 
                                     case CodeConstants.Reservation_Status.Cancelled:
-                                        reservation.setClient_status(SerasConstants.Status.Cancelled);
-                                        reservation.setClient_status_comment(SerasConstants.Notes.Cancelled);
+                                        if (StringUtils.isNullOrBlank2(reservation.getReservation_status())) {
+                                            reservation.setClient_status(SerasConstants.Status.Cancelled);
+                                            reservation.setClient_status_comment(SerasConstants.Notes.Cancelled);
+                                        } else {
+                                            reservation.setClient_status(SerasConstants.Status.Returned);
+                                            reservation.setClient_status_comment(SerasConstants.Notes.Returned);
+                                        }
 
                                         // Mandatory for cancellation and return status updates
-                                        updateStatusItem.setQuantity(1);
+                                        updateStatusItem.setQuantity("1");
                                         break;
                                 }
 
@@ -269,7 +274,7 @@ public class WmsUpdateStatusService extends BaseTaskService {
                                                 item.getStatus().equals(updateStatusItem.getStatus())) {
                                             blnFound = true;
                                            if  (item.getStatus().equals(SerasConstants.Status.Returned) || item.getStatus().equals(SerasConstants.Status.Cancelled)) {
-                                                item.setQuantity(item.getQuantity() + 1);
+                                                item.setQuantity(String.valueOf(Integer.valueOf(item.getQuantity()) + 1));
                                             }
                                             break;
                                         }
@@ -288,6 +293,7 @@ public class WmsUpdateStatusService extends BaseTaskService {
 
                             //没有可更新的物品时，不调用API
                             if (updateStatusBean.getItems() == null) {
+                                $info(channel.getFull_name() + "---------无需推送，Order_Number：" +orderDetail.getOrder_number());
                                 for (ReservationBean reservation : orderDetail.getLstReservation()) {
                                     reservationDao.updateClientStatus(reservation.getOrder_number(), reservation.getItem_number(), reservation.getReservation_status(), getTaskName());
                                 }
@@ -299,7 +305,10 @@ public class WmsUpdateStatusService extends BaseTaskService {
 
                                 orderResponse = searsService.UpdateStatus(updateStatusBean);
 
-                                if (orderResponse != null && orderResponse.getMessage().equals("Succeed")) {
+//                                orderResponse.setMessage("Succeed");
+
+                                if (orderResponse != null && StringUtils.null2Space2(orderResponse.getMessage()).equals("Succeed")) {
+                                    $info(channel.getFull_name() + "---------更新订单相关状态成功："+json);
                                     for (ReservationBean reservation : orderDetail.getLstReservation()) {
 
                                         reservationDao.updateClientStatus(reservation.getOrder_number(), reservation.getItem_number(), reservation.getReservation_status(), getTaskName());
@@ -312,11 +321,13 @@ public class WmsUpdateStatusService extends BaseTaskService {
                                     }
 
                                 } else {
-                                    logIssue(channel.getFull_name() + "更新订单相关状态错误", json + ",ErrorMessage：" + orderResponse.getMessage());
+                                    $info(channel.getFull_name() + "---------更新订单相关状态错误："+json + ",ErrorMessage：" + StringUtils.null2Space2(orderResponse.getMessage()));
+                                    logIssue(channel.getFull_name() + "更新订单相关状态错误：", json + ",ErrorMessage：" + StringUtils.null2Space2(orderResponse.getMessage()));
                                 }
                             }
 
                         } catch (Exception e) {
+                            $info(channel.getFull_name() + "---------更新订单相关状态错误，Order_Number：" +orderDetail.getOrder_number()+ "，Client_order_id：" + orderDetail.getClient_order_id());
                             logIssue(e, channel.getFull_name() + " 更新订单相关状态错误，Order_Number：" +orderDetail.getOrder_number()+ "，Client_order_id：" + orderDetail.getClient_order_id() );
 
                             throw new RuntimeException(e);

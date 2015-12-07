@@ -16,7 +16,7 @@ public class UpdateStatusItem {
     private String statusUpdatedAt;
     private String comment;
     private String internationalTrackingNumber;
-    private int quantity;
+    private String quantity;
 
     public String getItemId() {
         return itemId;
@@ -58,11 +58,11 @@ public class UpdateStatusItem {
         this.internationalTrackingNumber = internationalTrackingNumber;
     }
 
-    public int getQuantity() {
+    public String getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(String quantity) {
         this.quantity = quantity;
     }
 }

@@ -429,6 +429,7 @@
 
     <select id="synShip_selectpdateStatusInfo" resultType="com.voyageone.batch.wms.modelbean.ReservationBean">
         select
+            reservation.id,
             reservation.order_channel_id,
             reservation.order_number,
             reservation.syn_ship_no,
@@ -473,7 +474,7 @@
             reservation.sku = item.sku
         <if test="reservationStatusList != null and reservationStatusList.size() != 0">
             AND  reservation.status in
-            <foreach collection="reservationStatusList" item="status" open="(" separator="," close=")">#{status}
+            <foreach collection="reservationStatusList" item="reservationStatus" open="(" separator="," close=")">#{reservationStatus}
             </foreach>
         </if>
         AND
