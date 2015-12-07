@@ -1,7 +1,7 @@
 <div class="wrapper-md">
-	<div style="width:82%" ng-controller="TabsDemoCtrl">
+	<div style="width:82%">
 		<tabset class="tab-container vo_nav-tabs">
-			<div class="form-inline pull-right" ng-controller="ModalDemoCtrl">
+			<div class="form-inline pull-right">
 				<script type="text/ng-template" id="popup_promotion_history.html">
 					<div ng-include="'tpl/popup_promotion_history.html'"></div>
 				</script>
@@ -229,7 +229,7 @@
 						</div><!-- .col -->
 					</div>
 				</div>
-				<div ng-controller="AccordionDemoCtrl">
+				<div>
 					<accordion class="vo_accordion" close-others="oneAtATime">
 						<accordion-group is-open="status.open">
 							<accordion-heading ng-class="{{menu-title}}">类目属性<i class="pull-right glyphicon glyphicon-menu-down" ng-class="{'glyphicon-menu-up': status.open, 'glyphicon-menu-down': !status.open}"></i>
@@ -851,7 +851,7 @@
 								<small class="text-muted inline m-t-sm m-b-sm">showing 20-30 of 50 items</small>
 							</div>
 							<div class="col-sm-4 text-right text-center-xs">
-								<div ng-controller="PaginationDemoCtrl">
+								<div>
 									<pagination boundary-links="true" total-items="totalItems" ng-model="currentPage" class="pagination-sm m-t-none m-b" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></pagination>
 								</div>
 							</div>
