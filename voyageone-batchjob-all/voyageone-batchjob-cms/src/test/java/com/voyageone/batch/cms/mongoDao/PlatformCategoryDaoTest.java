@@ -1,7 +1,8 @@
 package com.voyageone.batch.cms.mongoDao;
 
 import com.jayway.jsonpath.JsonPath;
-import com.voyageone.batch.cms.mongoModel.CmsMtPlatformCategoryTreeModel;
+import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategoryDao;
+import com.voyageone.cms.service.model.CmsMtPlatformCategoryTreeModel;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,7 +22,7 @@ import java.util.Map;
 public class PlatformCategoryDaoTest {
 
     @Autowired
-    PlatformCategoryDao platformCategoryDao;
+    CmsMtPlatformCategoryDao platformCategoryDao;
 
     @Test
     public void testSavePlatformCategories() throws Exception {

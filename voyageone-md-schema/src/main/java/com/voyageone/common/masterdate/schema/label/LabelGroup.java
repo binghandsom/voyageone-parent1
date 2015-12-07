@@ -10,7 +10,7 @@ import org.dom4j.Element;
 public class LabelGroup {
     private String name;
     private List<LabelGroup> labelGroupList = new ArrayList();
-    private List<com.voyageone.common.masterdate.schema.label.Label> labelList = new ArrayList();
+    private List<Label> labelList = new ArrayList();
 
     public LabelGroup() {
     }
@@ -22,7 +22,7 @@ public class LabelGroup {
 
         Element subLabelGroupElement;
         while(i$.hasNext()) {
-            com.voyageone.common.masterdate.schema.label.Label labelGroup = (com.voyageone.common.masterdate.schema.label.Label)i$.next();
+            Label labelGroup = (Label)i$.next();
             subLabelGroupElement = XmlUtils.appendElement(labelGroupEle, "label");
             subLabelGroupElement.addAttribute("name", labelGroup.getName());
             subLabelGroupElement.addAttribute("value", labelGroup.getValue());
@@ -41,14 +41,14 @@ public class LabelGroup {
     }
 
     public void addLabel(String name, String value, String desc) {
-        com.voyageone.common.masterdate.schema.label.Label label = new com.voyageone.common.masterdate.schema.label.Label();
+        Label label = new Label();
         label.setName(name);
         label.setValue(value);
         label.setDesc(desc);
         this.labelList.add(label);
     }
 
-    public void add(com.voyageone.common.masterdate.schema.label.Label label) {
+    public void add(Label label) {
         this.labelList.add(label);
     }
 
@@ -72,11 +72,11 @@ public class LabelGroup {
         this.labelGroupList = labelGroupList;
     }
 
-    public List<com.voyageone.common.masterdate.schema.label.Label> getLabelList() {
+    public List<Label> getLabelList() {
         return this.labelList;
     }
 
-    public void setLabelList(List<com.voyageone.common.masterdate.schema.label.Label> labelList) {
+    public void setLabelList(List<Label> labelList) {
         this.labelList = labelList;
     }
 }

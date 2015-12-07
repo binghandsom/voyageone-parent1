@@ -9,18 +9,18 @@
     http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
 
     <!-- Default bean name is 'mongo' -->
-    <mongo:mongo id="mongo" host="10.0.0.59" port="27017">
+    <mongo:mongo id="mongo" host="127.0.0.1" port="27017">
         <mongo:options connections-per-host="8"
                        threads-allowed-to-block-for-connection-multiplier="4"
-                       connect-timeout="100000"
-                       max-wait-time="150000"
-                       auto-connect-retry="true"
-                       socket-keep-alive="true"
-                       socket-timeout="150000"
-                       slave-ok="true"
+                       connect-timeout="1000"
+                       max-wait-time="1500"
+                       auto-connect-retry="false"
+                       socket-keep-alive="false"
+                       socket-timeout="1500"
+                       slave-ok="false"
                        write-number="1"
                        write-timeout="0"
-                       write-fsync="true"/>
+                       write-fsync="false"/>
     </mongo:mongo>
 
     <mongo:db-factory id="mongoDbFactory" mongo-ref="mongo" username="admin" password="123456" dbname="cms" authentication-dbname="admin"/>

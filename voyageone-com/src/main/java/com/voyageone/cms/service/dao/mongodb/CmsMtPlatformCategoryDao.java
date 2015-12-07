@@ -1,15 +1,15 @@
-package com.voyageone.batch.cms.mongoDao;
+package com.voyageone.cms.service.dao.mongodb;
 
 import com.voyageone.base.dao.mongodb.BaseJomgoTemplate;
 import com.voyageone.base.dao.mongodb.BaseMongoDao;
-import com.voyageone.batch.cms.mongoModel.CmsMtPlatformCategoryTreeModel;
+import com.voyageone.cms.service.model.CmsMtPlatformCategoryTreeModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public class PlatformCategoryDao extends BaseMongoDao {
+public class CmsMtPlatformCategoryDao extends BaseMongoDao {
 
     @Autowired
     BaseJomgoTemplate mongoTemplate;
@@ -38,5 +38,23 @@ public class PlatformCategoryDao extends BaseMongoDao {
         return categoryModels;
     }
 
+    public CmsMtPlatformCategoryTreeModel selectByChannel_CartId_CatId(String channelId, int cartId, String categoryId) {
+        String queryStrTemp = "{" +
+                "channelId:'%s'" +
+                ",cartId:%s" +
+                ",catId:'%s'" +
+                "}";
+        String queryStr = String.format(queryStrTemp, channelId, cartId, categoryId);
+        return selectOneWithQuery(queryStr);
+    }
+
+    public List<CmsMtPlatformCategoryTreeModel> selectByChannel_CartId(String channelId, int cartId) {
+        String queryStrTemp = "{" +
+                "channelId:'%s'" +
+                ",cartId:%s" +
+                "}";
+        String queryStr = String.format(queryStrTemp, channelId, cartId);
+        return select(queryStr);
+    }
 
 }

@@ -2,11 +2,12 @@ package com.voyageone.cms.service.model;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
+import com.voyageone.base.dao.mysql.BaseModel;
 
 /**
  * Created by james.li on 2015/11/30.
  */
-public class CmsBtFeedProductImageModel extends BaseMongoModel {
+public class CmsBtFeedProductImageModel extends BaseModel {
     private String channelId;
     private String imageUrl;
     private String imageName;
