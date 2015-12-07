@@ -5,7 +5,8 @@
 define([], function () {
 
     return function ($scope) {
+        var vm = $scope;
 
-        $scope.title = "this is a test";
+        vm.title = "this is a test";
     };
 });

@@ -27,15 +27,11 @@ function gentProps(key) {
 
 function CookieService($cookieStore) {
   this.$cookieStore = $cookieStore;
-  // init
-  this.set(keys.language, '');
-  this.set(keys.company, '');
-  this.set(keys.channel, '');
-  this.set(keys.application, '');
 }
 
 CookieService.prototype.get = function(key) {
-  return this.$cookieStore.get(key);
+  var result = this.$cookieStore.get(key);
+  return result == undefined || result == null ? "" : this.$cookieStore.get(key);
 };
 
 CookieService.prototype.set = function(key, value) {
