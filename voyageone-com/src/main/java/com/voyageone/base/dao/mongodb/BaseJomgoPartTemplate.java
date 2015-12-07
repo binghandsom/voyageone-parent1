@@ -1,5 +1,6 @@
 package com.voyageone.base.dao.mongodb;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.CommandResult;
 import com.mongodb.DBCollection;
 import com.mongodb.WriteResult;
@@ -156,7 +157,9 @@ public class BaseJomgoPartTemplate {
     }
 
     public <T> T findById(String id, Class<T> entityClass, String collectionName) {
-        String query = "{\"_id\":ObjectId(\"" + id + "\")}";
+        BasicDBObject queryObj = new BasicDBObject();
+        queryObj.put("_id", new ObjectId(id));
+        String query = queryObj.toString();
         return findOne(query, entityClass, collectionName);
     }
 

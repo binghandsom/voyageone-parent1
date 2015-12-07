@@ -16,19 +16,19 @@ import org.dom4j.Element;
 
 public class MultiComplexField extends Field {
     protected List<ComplexValue> values = new ArrayList();
-    protected List<com.voyageone.common.masterdate.schema.field.Field> fields = new ArrayList();
+    protected List<Field> fields = new ArrayList();
 
     public MultiComplexField() {
         super.type = FieldTypeEnum.MULTICOMPLEX;
     }
 
-    public com.voyageone.common.masterdate.schema.field.Field addField(FieldTypeEnum fieldEnum) {
-        com.voyageone.common.masterdate.schema.field.Field field = SchemaFactory.createField(fieldEnum);
+    public Field addField(FieldTypeEnum fieldEnum) {
+        Field field = SchemaFactory.createField(fieldEnum);
         this.add(field);
         return field;
     }
 
-    public void add(com.voyageone.common.masterdate.schema.field.Field field) {
+    public void add(Field field) {
         if(field != null) {
             this.fields.add(field);
         }
@@ -85,16 +85,16 @@ public class MultiComplexField extends Field {
         }
     }
 
-    public List<com.voyageone.common.masterdate.schema.field.Field> getFieldList() {
+    public List<Field> getFieldList() {
         return this.fields;
     }
 
-    public Map<String, com.voyageone.common.masterdate.schema.field.Field> getFieldMap() {
+    public Map<String, Field> getFieldMap() {
         HashMap map = new HashMap();
         Iterator i$ = this.fields.iterator();
 
         while(i$.hasNext()) {
-            com.voyageone.common.masterdate.schema.field.Field field = (com.voyageone.common.masterdate.schema.field.Field)i$.next();
+            Field field = (Field)i$.next();
             map.put(field.getId(), field);
         }
 
@@ -108,7 +108,7 @@ public class MultiComplexField extends Field {
             Iterator i$ = this.fields.iterator();
 
             while(i$.hasNext()) {
-                com.voyageone.common.masterdate.schema.field.Field field = (com.voyageone.common.masterdate.schema.field.Field)i$.next();
+                Field field = (Field)i$.next();
                 Element fNode = field.toElement();
                 XmlUtils.appendElement(fieldsNode, fNode);
             }
@@ -139,7 +139,7 @@ public class MultiComplexField extends Field {
 
                     while(i$1.hasNext()) {
                         String keyFieldId = (String)i$1.next();
-                        com.voyageone.common.masterdate.schema.field.Field field = cValue.getValueField(keyFieldId);
+                        Field field = cValue.getValueField(keyFieldId);
                         Element valueNode = field.toParamElement();
                         XmlUtils.appendElement(complexValuesNode, valueNode);
                     }
@@ -168,7 +168,7 @@ public class MultiComplexField extends Field {
 
                 while(i$1.hasNext()) {
                     String keyFieldId = (String)i$1.next();
-                    com.voyageone.common.masterdate.schema.field.Field field = cValue.getValueField(keyFieldId);
+                    Field field = cValue.getValueField(keyFieldId);
                     Element valueNode = field.toParamElement();
                     XmlUtils.appendElement(complexValuesNode, valueNode);
                 }
