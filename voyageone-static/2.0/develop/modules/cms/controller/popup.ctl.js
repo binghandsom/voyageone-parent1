@@ -7,6 +7,9 @@ define([
     'angularAMD'
 ], function (angularAMD) {
     angularAMD
+        .constant('popActions', {
+
+        })
         .controller('popupCtrl', popupCtrl);
 
     function popupCtrl($scope, $modal) {
