@@ -105,8 +105,7 @@ var tasks = {
       all: 'build-css',
       app : 'build-css-app',
       login : 'build-css-login'
-    },
-    watch: 'watch-build'
+    }
   },
   publish: {
     all: 'publish',
