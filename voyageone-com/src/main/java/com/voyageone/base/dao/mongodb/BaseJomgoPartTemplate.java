@@ -35,7 +35,6 @@ public class BaseJomgoPartTemplate {
         try {
             this.jongo = new Jongo(mongoTemplate.getDb());
         } catch (Exception e) {
-
         }
     }
 
@@ -119,7 +118,7 @@ public class BaseJomgoPartTemplate {
     }
 
     public <T> List<T> findAll(Class<T> entityClass, String collectionName) {
-        return find("", null, entityClass, collectionName);
+        return find(null, null, entityClass, collectionName);
     }
 
     public List<JSONObject> find(final String strQuery, String collectionName) {
@@ -135,19 +134,43 @@ public class BaseJomgoPartTemplate {
     }
 
     public <T> List<T> find(final String strQuery, String projection, Class<T> entityClass, String collectionName) {
-        List<T> result;
+        return IteratorUtils.toList(findCursor(strQuery, projection, entityClass, collectionName));
+    }
+
+    public <T> MongoCursor<T> findCursorAll(Class<T> entityClass, String collectionName) {
+        return findCursor(null, null, entityClass, collectionName);
+    }
+
+    public MongoCursor<JSONObject> findCursorAll(final String strQuery, String collectionName) {
+        return findCursor(strQuery, null, JSONObject.class, collectionName);
+    }
+
+    public MongoCursor<JSONObject> findCursor(final String strQuery, String collectionName) {
+        return findCursor(strQuery, null, JSONObject.class, collectionName);
+    }
+
+    public MongoCursor<JSONObject> findCursor(final String strQuery, String projection, String collectionName) {
+        return findCursor(strQuery, projection, JSONObject.class, collectionName);
+    }
+
+    public <T> MongoCursor<T> findCursor(final String strQuery, Class<T> entityClass, String collectionName) {
+        return findCursor(strQuery, null, entityClass, collectionName);
+    }
+
+    public <T> MongoCursor<T> findCursor(final String strQuery, String projection, Class<T> entityClass, String collectionName) {
+        MongoCursor<T> result;
         if (strQuery == null) {
             Find find = getCollection(collectionName).find();
             if (projection != null) {
                 find = find.projection(projection);
             }
-            result = IteratorUtils.toList(find.as(entityClass));
+            result = find.as(entityClass);
         } else {
             Find find = getCollection(collectionName).find(strQuery);
             if (projection != null) {
                 find = find.projection(projection);
             }
-            result = IteratorUtils.toList(find.as(entityClass));
+            result = find.as(entityClass);
         }
         return result;
     }
