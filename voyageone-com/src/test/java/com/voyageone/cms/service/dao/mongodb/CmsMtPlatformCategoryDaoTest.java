@@ -28,4 +28,10 @@ public class CmsMtPlatformCategoryDaoTest {
             System.out.println(model);
         }
     }
+
+    @Test
+    public void testSelectById() {
+        CmsMtPlatformCategoryTreeModel model = cmsMtPlatformCategoryDao.selectById("5663df5c62b800d4e44e5a10");
+        System.out.println(model);
+    }
 }
