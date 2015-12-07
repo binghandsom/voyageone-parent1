@@ -1177,7 +1177,7 @@ define(function (require) {
                                     $scope.oldUsCnBasePriceInfo = angular.copy($scope.usCnBasePriceInfo);
                                     $scope.usCnBasePriceInfoIsChanged = false;
                                     $scope.usCnBasePriceIsChanged = false;
-                                    cnCartPriceInfo.cnPriceFinalRmbDiscount = (cnCartPriceInfo.cnPriceRmb / cnCartPriceInfo.cnPrice).toFixed(2);
+                                    cnCartPriceInfo.cnPriceFinalRmbDiscount = ((cnCartPriceInfo.cnPriceRmb / cnCartPriceInfo.cnPrice) * 100).toFixed(0);
                                     $scope.cnBasePriceInfo = cnCartPriceInfo;
                                     $scope.oldCnBasePriceInfo = angular.copy($scope.cnBasePriceInfo);
                                     $scope.cnBasePriceInfoIsChanged = false;
