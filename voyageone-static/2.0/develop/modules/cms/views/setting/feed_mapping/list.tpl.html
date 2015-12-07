@@ -18,7 +18,7 @@
   <div class="col-sm-12">
       <div class="box">
         <div class="box-body">
-          <table class="table table-hover table-hover-new text-center">
+          <table class="table table-hover table-hover-new text-center" ng-controller="popupCtrl">
             <tr>
               <th class="text-center">Seq.</th>
               <th class="text-left">Feed Category</th>
@@ -30,11 +30,8 @@
               <td>1</td>
               <td class="text-left">Bracelets > Bangles > Agate</td>
               <td class="text-left">珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰</td>
-              <td><div class="btn-group" ng-controller="ModalDemoCtrl">
-                <script type="text/ng-template" id="popup_maindatacategorycolumns.html">
-                  <div ng-include="'tpl/popup_maindatacategorycolumns.html'"></div>
-                </script>
-                <button class="btn btn-default btn-xs" ng-click="openpopup_maindatacategorycolumns('lg')" ><i class="glyphicon glyphicon-link"></i> 类目匹配</button>
+              <td><div class="btn-group">
+                <button ng-click="openNewcategory('lg')" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-link"></i> 类目匹配</button>
                 <a href="#/setting/feed_mapping/prop" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-link"></i> 类目属性匹配</a>
               </div>
               </td>
@@ -45,7 +42,7 @@
               <td class="text-left">Bracelets > Bangles > Cubic Zirconia</td>
               <td class="text-left">珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰</td>
               <td><div class="btn-group">
-                <a href="/cms2.0/newcms/angular/index.html#/cms/start1" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-link"></i> 类目匹配</a>
+                <button ng-click="openNewcategory('lg')" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-link"></i> 类目匹配</button>
                 <a href="#/setting/feed_mapping/prop" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-link"></i> 类目属性匹配</a>
                 </div>
               </td>
@@ -56,7 +53,7 @@
               <td class="text-left">Bracelets > Bangles > Diamond</td>
               <td class="fontcolor-h text-left">建议类目：珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰，请点击【类目匹配】进行选择，或点击【继承】进行确认</td>
               <td><div class="btn-group">
-                <a href="/cms2.0/newcms/angular/index.html#/cms/start1" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-link"></i> 类目匹配</a>
+                <button ng-click="openNewcategory('lg')" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-link"></i> 类目匹配</button>
                 <a href="#/setting/feed_mapping/prop" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-link"></i> 类目属性匹配</a>
               </div>
               </td>

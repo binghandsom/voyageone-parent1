@@ -207,7 +207,7 @@
 
     <!-- Promotion管理 -->
     <li>
-        <a class="auto" href="#/promotion/list">
+        <a class="auto">
         <span class="pull-right text-muted">
         <i class="fa fa-fw fa-angle-right text"></i>
         <i class="fa fa-fw fa-angle-down text-active"></i>
@@ -215,7 +215,6 @@
             <i class="glyphicon glyphicon-th icon text-vo"></i>
             <span class="">Promotion管理</span>
         </a>
-
         <ul class="nav nav-sub dk">
             <li class="nav-sub-header">
                 <a href="#/promotion/list">
@@ -223,13 +222,13 @@
                 </a>
             </li>
             <li ui-sref-active="active">
-                <a  ui-sref="cms.promotion_management">
+                <a href="#/promotion/list">
                     <i class="glyphicon glyphicon-minus icon text-vo"></i>
                     <span>Promotion一览</span>
                 </a>
             </li>
             <li ui-sref-active="active">
-                <a ui-sref="cms.promotion_managements">
+                <a href="#/promotion/task/list">
                     <i class="glyphicon glyphicon-minus icon text-vo"></i>
                     <span>Task一览</span>
                 </a>
@@ -267,18 +266,18 @@
         </a>
         <ul class="nav nav-sub dk">
             <li class="nav-sub-header">
-                <a href="#/setting/feed_mapping/list">
+                <a href>
                     <span>设置</span>
                 </a>
             </li>
             <li ui-sref-active="active">
-                <a  ui-sref="cms.start">
+                <a href="#/setting/feed_mapping/list">
                     <i class="fa fa-minus icon text-vo"></i>
                     <span>Feed匹配关系设置</span>
                 </a>
             </li>
             <li ui-sref-active="active">
-                <a ui-sref="cms.start_sys">
+                <a href="#/setting/platform_mapping/list">
                     <i class="fa fa-minus icon text-vo"></i>
                     <span>平台匹配关系设置</span>
                 </a>

@@ -27,13 +27,13 @@
 					<div class="form-group">
 						<label class="col-sm-2 control-label">Create Time</label>
 						<div class="col-sm-9 form-inline">
-							<div class="col-sm-6 input-group" ng-controller="DatepickerDemoCtrl">
+							<div class="col-sm-6 input-group" ng-controller="datePickerCtrl">
 								<input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="dt" is-open="opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
 							</div> ~
-							<div class="col-sm-5 input-group" ng-controller="DatepickerDemoCtrl">
+							<div class="col-sm-5 input-group">
 								<input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="dt" is-open="opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
@@ -53,13 +53,10 @@
 					</div><!-- .form-group -->
 				</div>
 			</div>
-			<div class="col-sm-12 text-center" ng-controller="ModalDemoCtrl">
-				<script type="text/ng-template" id="popup_new_promotion.html">
-					<div ng-include="'tpl/popup_new_promotion.html'"></div>
-				</script>
-				<div class="form-inline">
+			<div class="col-sm-12 text-center">
+				<div class="form-inline" ng-controller="popupCtrl">
 					<button class="btn btn-vo" ng-click="ok()"><i class="fa fa-search"></i>  Search</button>
-					<button class="btn btn-success" ng-click="openpopup_new_promotion('md')"><i class="fa fa-plus"></i> 新增Promotion</button>
+					<button class="btn btn-success" ng-click="openpromotion('md')"><i class="fa fa-plus"></i> 新增Promotion</button>
 				</div><!-- .form-inline -->
 			</div>
 		   </div>
@@ -98,7 +95,7 @@
 					<tr>
 						<td>2</td>
 						<td class="text-left"><span class="label label-yellow-new m-r-lg m-l"> Pedding </span></td>
-						<td><a href="/cms2.0/newcms/angular/index.html#/cms/promotion_detail">Girl's Disney's Mickey & Minnie Bracelet in 14K Two-Tone Gold</a></td>
+						<td><a href="#/promotion/detail">Girl's Disney's Mickey & Minnie Bracelet in 14K Two-Tone Gold</a></td>
 						<td>2016.1.2</td>
 						<td>2016.2.6</td>
 						<td>30</td>
@@ -111,7 +108,7 @@
 					<tr>
 						<td>3</td>
 						<td class="text-left"><span class="label label-danger-new m-r-lg m-l"> Ready </span></td>
-						<td><a href="/cms2.0/newcms/angular/index.html#/cms/promotion_detail">Girl's Disney's Mickey & Minnie Bracelet in 14K Two-Tone Gold</a></td>
+						<td><a href="#/promotion/detail">Girl's Disney's Mickey & Minnie Bracelet in 14K Two-Tone Gold</a></td>
 						<td>2016.1.2</td>
 						<td>2016.2.6</td>
 						<td>30</td>
@@ -124,7 +121,7 @@
 					<tr>
 						<td>4</td>
 						<td class="text-left"><span class="label label-success-new m-r-lg m-l"> New </span></td>
-						<td><a href="/cms2.0/newcms/angular/index.html#/cms/promotion_detail">Girl's Disney's Mickey & Minnie Bracelet in 14K Two-Tone Gold</a></td>
+						<td><a href="#/promotion/detail">Girl's Disney's Mickey & Minnie Bracelet in 14K Two-Tone Gold</a></td>
 						<td>2016.1.2</td>
 						<td>2016.2.6</td>
 						<td>30</td>
@@ -137,7 +134,7 @@
 					<tr>
 						<td>5</td>
 						<td class="text-left"><span class="label label-yellow-new m-r-lg m-l"> Pedding </span></td>
-						<td><a href="/cms2.0/newcms/angular/index.html#/cms/promotion_detail">Girl's Disney's Mickey & Minnie Bracelet in 14K Two-Tone Gold</a></td>
+						<td><a href="#/promotion/detail">Girl's Disney's Mickey & Minnie Bracelet in 14K Two-Tone Gold</a></td>
 						<td>2016.1.2</td>
 						<td>2016.2.6</td>
 						<td>30</td>
@@ -150,7 +147,7 @@
 					<tr>
 						<td>6</td>
 						<td class="text-left"><span class="label label-danger-new m-r-lg m-l"> Ready </span></td>
-						<td><a href="/cms2.0/newcms/angular/index.html#/cms/promotion_detail">Girl's Disney's Mickey & Minnie Bracelet in 14K Two-Tone Gold</a></td>
+						<td><a href="#/promotion/detail">Girl's Disney's Mickey & Minnie Bracelet in 14K Two-Tone Gold</a></td>
 						<td>2016.1.2</td>
 						<td>2016.2.6</td>
 						<td>30</td>
@@ -163,7 +160,7 @@
 					<tr>
 						<td>7</td>
 						<td class="text-left"><span class="label label-success-new m-r-lg m-l"> New </span></td>
-						<td><a href="/cms2.0/newcms/angular/index.html#/cms/promotion_detail">Girl's Disney's Mickey & Minnie Bracelet in 14K Two-Tone Gold</a></td>
+						<td><a href="#/promotion/detail">Girl's Disney's Mickey & Minnie Bracelet in 14K Two-Tone Gold</a></td>
 						<td>2016.1.2</td>
 						<td>2016.2.6</td>
 						<td>30</td>
@@ -176,7 +173,7 @@
 					<tr>
 						<td>8</td>
 						<td class="text-left"><span class="label label-yellow-new m-r-lg m-l"> Pedding </span></td>
-						<td><a href="/cms2.0/newcms/angular/index.html#/cms/promotion_detail">Girl's Disney's Mickey & Minnie Bracelet in 14K Two-Tone Gold</a></td>
+						<td><a href="#/promotion/detail">Girl's Disney's Mickey & Minnie Bracelet in 14K Two-Tone Gold</a></td>
 						<td>2016.1.2</td>
 						<td>2016.2.6</td>
 						<td>30</td>
@@ -189,7 +186,7 @@
 					<tr>
 						<td>9</td>
 						<td class="text-left"><span class="label label-danger-new m-r-lg m-l"> Ready </span></td>
-						<td><a href="/cms2.0/newcms/angular/index.html#/cms/promotion_detail">Girl's Disney's Mickey & Minnie Bracelet in 14K Two-Tone Gold</a></td>
+						<td><a href="#/promotion/detail">Girl's Disney's Mickey & Minnie Bracelet in 14K Two-Tone Gold</a></td>
 						<td>2016.1.2</td>
 						<td>2016.2.6</td>
 						<td>30</td>

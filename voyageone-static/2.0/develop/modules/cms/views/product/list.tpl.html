@@ -1,23 +1,11 @@
 <div class="wrapper-md">
 	<div style="width:82%">
 		<tabset class="tab-container vo_nav-tabs">
-			<div class="form-inline pull-right">
-				<script type="text/ng-template" id="popup_promotion_history.html">
-					<div ng-include="'tpl/popup_promotion_history.html'"></div>
-				</script>
-				<script type="text/ng-template" id="popup_price_history.html">
-					<div ng-include="'tpl/popup_price_history.html'"></div>
-				</script>
-				<script type="text/ng-template" id="popup_platformsuploadcolumn.html">
-					<div ng-include="'tpl/popup_platformsuploadcolumn.html'"></div>
-				</script>
-				<script type="text/ng-template" id="popup_storecategorycolumn.html">
-					<div ng-include="'tpl/popup_storecategorycolumn.html'"></div>
-				</script>
-				<button type="button" class="btn btn-default" ng-click="openpopup_platformsuploadcolumn('md')"><i class="fa fa-cube"></i> 其它平台(待定)</button>
-				<button class="btn btn-default" ng-click="openpopup_storecategorycolumn('lg')"><i class="fa fa-arrow-circle-right"></i> 选择店铺内类目</button>
-				<button type="button" class="btn btn-default" ng-click="openpopup_promotion_history('lg')"><i class="fa fa-rotate-left"></i> 历史Promotion</button>
-				<button type="button" class="btn btn-default" ng-click="openpopup_price_history('lg')"><i class="fa fa-jpy"></i> Price History</button>
+			<div class="form-inline pull-right" ng-controller="popupCtrl">
+				<!--<button type="button" class="btn btn-default" ng-click="openpopup_platformsuploadcolumn('md')"><i class="fa fa-cube"></i> 其它平台(待定)</button>-->
+				<button class="btn btn-default" ng-click="openshop_category('lg')"><i class="fa fa-arrow-circle-right"></i> 选择店铺内类目</button>
+				<button type="button" class="btn btn-default" ng-click="openhistorypromotion('lg')"><i class="fa fa-rotate-left"></i> 历史Promotion</button>
+				<button type="button" class="btn btn-default" ng-click="openpricepromotion('lg')"><i class="fa fa-jpy"></i> Price History</button>
 			</div>
 			<tab>
 				<tab-heading> Product详情</tab-heading>
@@ -1036,18 +1024,6 @@
 					</div><!-- .vo_prodGallery -->
 
 					<div class="wrapper-sm">
-						<!-- big kids sizes panel -->
-						<!--<div class="m-b-xs">
-							<textarea class="form-control inherited" rows="3" placeholder="系统异常" disabled></textarea>
-						</div>&lt;!&ndash; .panel &ndash;&gt;
-
-						<div class="m-b-xs">
-							<textarea class="form-control inherited" rows="3" placeholder="Note"></textarea>
-						</div>&lt;!&ndash; .panel &ndash;&gt;-->
-
-						<!--<div class="panel-body row no-gutter text-center b-t">
-
-						</div>&lt;!&ndash; .padder &ndash;&gt;-->
 						<div class="form-group">
 							<label for="input-id-13" class="col-sm-4 control-label m-t-xs">翻译完成？</label>
 							<div class="col-sm-8 text-left">
