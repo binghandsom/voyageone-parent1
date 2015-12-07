@@ -472,7 +472,7 @@
         AND
             reservation.sku = item.sku
         <if test="reservationStatusList != null and reservationStatusList.size() != 0">
-            AND  reservation.status not in
+            AND  reservation.status in
             <foreach collection="reservationStatusList" item="status" open="(" separator="," close=")">#{status}
             </foreach>
         </if>
