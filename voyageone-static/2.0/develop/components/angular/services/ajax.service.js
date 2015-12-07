@@ -5,14 +5,15 @@
  */
 
 angular.module('voyageone.angular.services.ajax', [])
+  .service('$ajax', $Ajax)
   .service('ajaxService', AjaxService);
 
-function AjaxService($http, blockUI, $q) {
+function $Ajax($http, blockUI, $q) {
   this.$http = $http;
   this.blockUI = blockUI;
   this.$q = $q;
 }
-AjaxService.prototype.post = function (url, data) {
+$Ajax.prototype.post = function (url, data) {
   var defer = this.$q.defer();
   this.$http.post(url, data).then(function (response) {
     var res = response.data;
@@ -30,4 +31,20 @@ AjaxService.prototype.post = function (url, data) {
     defer.reject(null, response);
   });
   return defer.promise;
+};
+
+function AjaxService($ajax, messageService) {
+  this.$ajax = $ajax;
+  this.messageService = messageService;
+}
+AjaxService.prototype.post = function (url, data) {
+
+  return this.$ajax.post(url, data).then(function(res) {
+    return res;
+  }, (function (_this) {
+    return function(res) {
+      _this.messageService.show(res);
+      return res;
+    };
+  })(this));
 };
