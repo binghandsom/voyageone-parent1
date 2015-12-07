@@ -1,11 +1,14 @@
 package com.voyageone.base.dao.mongodb;
 
+import com.mongodb.DBCollection;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.common.util.DateTimeUtil;
+import org.jongo.MongoCursor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 public abstract class BaseMongoDao {
@@ -27,6 +30,15 @@ public abstract class BaseMongoDao {
 
     public abstract Class getEntityClass();
 
+    public DBCollection getDBCollection() {
+        return mongoTemplate.getDBCollection(collectionName);
+    }
+
+    public DBCollection getDBCollection(String channelId) {
+        String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
+        return mongoTemplate.getDBCollection(collectionName);
+    }
+
     public <T> T selectOne() {
         return mongoTemplate.findOne((Class<T>) entityClass, collectionName);
     }
@@ -39,8 +51,16 @@ public abstract class BaseMongoDao {
         return mongoTemplate.findAll((Class<T>) entityClass, collectionName);
     }
 
+    public <T> Iterator<T> selectCursorAll() {
+        return mongoTemplate.findCursorAll((Class<T>) entityClass, collectionName);
+    }
+
     public <T> List<T> select(final String strQuery) {
         return mongoTemplate.find(strQuery, null, (Class<T>) entityClass, collectionName);
+    }
+
+    public <T> Iterator<T> selectCursor(final String strQuery) {
+        return mongoTemplate.findCursor(strQuery, null, (Class<T>) entityClass, collectionName);
     }
 
     public <T> T selectById(String id) {
@@ -62,9 +82,19 @@ public abstract class BaseMongoDao {
         return mongoTemplate.findAll((Class<T>) entityClass, collectionName);
     }
 
+    public <T> Iterator<T> selectCursorAll(String channelId) {
+        String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
+        return mongoTemplate.findCursorAll((Class<T>) entityClass, collectionName);
+    }
+
     public <T> List<T> select(final String strQuery, String channelId) {
         String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
         return mongoTemplate.find(strQuery, null, (Class<T>) entityClass, collectionName);
+    }
+
+    public <T> Iterator<T> selectCursor(final String strQuery, String channelId) {
+        String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
+        return mongoTemplate.findCursor(strQuery, null, (Class<T>) entityClass, collectionName);
     }
 
     public <T> T selectById(String id, String channelId) {

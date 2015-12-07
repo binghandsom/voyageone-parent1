@@ -33,9 +33,19 @@ public class BaseJomgoTemplate extends BaseJomgoPartTemplate {
         return findAll(entityClass, collectionName);
     }
 
+    public <T> MongoCursor<T> findCursorAll(Class<T> entityClass) {
+        String collectionName = getCollectionName(entityClass);
+        return findCursorAll(entityClass, collectionName);
+    }
+
     public <T> List<T> find(final String strQuery, Class<T> entityClass) {
         String collectionName = getCollectionName(entityClass);
         return find(strQuery, null, entityClass, collectionName);
+    }
+
+    public <T> MongoCursor<T> findCursor(final String strQuery, Class<T> entityClass) {
+        String collectionName = getCollectionName(entityClass);
+        return findCursor(strQuery, null, entityClass, collectionName);
     }
 
     public <T> T findById(String id, Class<T> entityClass) {

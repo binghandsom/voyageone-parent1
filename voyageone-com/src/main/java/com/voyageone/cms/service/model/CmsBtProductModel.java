@@ -8,7 +8,7 @@ import java.util.*;
 public class CmsBtProductModel extends ChannelPartitionModel {
 
     private int prodId;
-    private int catId;
+    private String catId;
     private String catIdPath;
 
     private CmsBtProductModel_Field fields = new CmsBtProductModel_Field();
@@ -24,11 +24,11 @@ public class CmsBtProductModel extends ChannelPartitionModel {
         super(channelId);
     }
 
-    public int getCatId() {
+    public String getCatId() {
         return catId;
     }
 
-    public void setCatId(int catId) {
+    public void setCatId(String catId) {
         this.catId = catId;
     }
 

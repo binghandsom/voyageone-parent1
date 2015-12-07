@@ -17,14 +17,14 @@ public class MessageService {
     @Autowired
     private MessageDao messageDao;
 
-    private Map<String, String> cache = new HashMap<>();
+    private Map<String, MessageModel> cache = new HashMap<>();
 
     /**
      * 获得消息
      */
-    public String getMessage(String lang, String code) {
+    public MessageModel getMessage(String lang, String code) {
 
-        String message = cache.get(lang + code);
+        MessageModel message = cache.get(lang + code);
 
         if (message == null) {
             message = messageDao.selectMessage(lang, code);

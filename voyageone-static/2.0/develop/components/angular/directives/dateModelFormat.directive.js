@@ -5,14 +5,14 @@
  */
 
 angular.module('voyageone.angular.directives.dateModelFormat', [])
-  .directive('dateModelFormat', function ($filter) {
-    return {
-      restrict: "A",
-      require: 'ngModel',
-      link: function (scope, elem, attrs, ngModel) {
-        ngModel.$parsers.push(function (viewValue) {
-          return $filter('date')(viewValue, attrs.dateModelFormat || 'yyyy-MM-dd HH:mm:ss');
-        });
-      }
-    };
-  });
+    .directive('dateModelFormat', function ($filter) {
+        return {
+            restrict: "A",
+            require: 'ngModel',
+            link: function (scope, elem, attrs, ngModel) {
+                ngModel.$parsers.push(function (viewValue) {
+                    return $filter('date')(viewValue, attrs.dateModelFormat || 'yyyy-MM-dd HH:mm:ss');
+                });
+            }
+        };
+    });

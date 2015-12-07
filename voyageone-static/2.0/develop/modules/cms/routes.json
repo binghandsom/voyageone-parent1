@@ -1,38 +1,62 @@
 {
   "/": {
-    "url": "/",
     "hash": "/",
-    "templateUrl": "views/home/home.tpl.html",
-    "controllerUrl": "modules/cms/views/home/home.ctl"
+    "templateUrl": "views/welcome/index.tpl.html",
+    "controllerUrl": "modules/cms/views/welcome/index.ctl"
   },
-  "category": {
-    "url": "/category/",
-    "hash": "/category/:cid",
-    "templateUrl": "views/category/category.tpl.html",
-    "controllerUrl": "modules/cms/views/category/category.ctl"
+  "welcome_index": {
+    "hash": "/welcome/index",
+    "templateUrl": "views/welcome/index.tpl.html",
+    "controllerUrl": "modules/cms/views/welcome/index.ctl"
   },
-  "product": {
-    "url": "/product/",
-    "hash": "/product/:pid",
-    "templateUrl": "views/category/product.tpl.html",
-    "controllerUrl": "modules/cms/views/category/product.ctl"
+  "promotion_list": {
+    "hash": "/promotion/list",
+    "templateUrl": "views/promotion/list.tpl.html",
+    "controllerUrl": "modules/cms/views/promotion/list.ctl"
   },
-  "search_complex": {
-    "url": "/search/complex/",
-    "hash": "/search/complex/:value",
-    "templateUrl": "views/search/complex.tpl.html",
-    "controllerUrl": "modules/cms/views/search/complex.ctl"
+  "promotion_detail": {
+    "hash": "/promotion/detail",
+    "templateUrl": "views/promotion/detail.tpl.html",
+    "controllerUrl": "modules/cms/views/promotion/detail.ctl"
   },
-  "search_advance": {
-    "url": "/search/advance/",
-    "hash": "/search/advance",
-    "templateUrl": "views/search/advance.tpl.html",
-    "controllerUrl": "modules/cms/views/search/advance.ctl"
+  "promotion_task_list": {
+    "hash": "/promotion/task/list",
+    "templateUrl": "views/promotion/task/list.tpl.html",
+    "controllerUrl": "modules/cms/views/promotion/task/list.ctl"
   },
-  "setting": {
-    "url": "/setting/",
-    "hash": "/setting",
-    "templateUrl": "views/setting/setting.tpl.html",
-    "controllerUrl": "modules/cms/views/setting/setting.ctl"
+  "promotion_task_detail": {
+    "hash": "/promotion/task/detail",
+    "templateUrl": "views/promotion/task/detail.tpl.html",
+    "controllerUrl": "modules/cms/views/promotion/task/detail.ctl"
+  },
+  "search_index": {
+    "hash": "/search/index",
+    "templateUrl": "views/search/index.tpl.html",
+    "controllerUrl": "modules/cms/views/search/index.ctl"
+  },
+  "group_list": {
+    "hash": "/group/list",
+    "templateUrl": "views/group/list.tpl.html",
+    "controllerUrl": "modules/cms/views/group/list.ctl"
+  },
+  "product_list": {
+    "hash": "/product/list",
+    "templateUrl": "views/product/list.tpl.html",
+    "controllerUrl": "modules/cms/views/product/list.ctl"
+  },
+  "setting_feed_mapping_list": {
+    "hash": "/setting/feed_mapping/list",
+    "templateUrl": "views/setting/feed_mapping/list.tpl.html",
+    "controllerUrl": "modules/cms/views/setting/feed_mapping/list.ctl"
+  },
+  "setting_feed_mapping_prop": {
+    "hash": "/setting/feed_mapping/prop",
+    "templateUrl": "views/setting/feed_mapping/prop.tpl.html",
+    "controllerUrl": "modules/cms/views/setting/feed_mapping/prop.ctl"
+  },
+  "setting_platform_mapping_list": {
+    "hash": "/setting/platform_mapping/list",
+    "templateUrl": "views/setting/platform_mapping/list.tpl.html",
+    "controllerUrl": "modules/cms/views/setting/platform_mapping/list.ctl"
   }
 }

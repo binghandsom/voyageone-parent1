@@ -74,9 +74,3 @@ gulp.task(tasks.build.css.login, function () {
 
 // build all css files
 gulp.task(tasks.build.css.all, [tasks.build.css.app, tasks.build.css.login]);
-
-// watch the login.css and app.css has been changed.
-gulp.task(tasks.build.watch, function () {
-  gulp.watch(build.common.appCss.src, [tasks.build.css.app]);
-  gulp.watch(build.common.loginCss.src, [tasks.build.css.login]);
-});

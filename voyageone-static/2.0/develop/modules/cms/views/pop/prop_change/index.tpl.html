@@ -1,0 +1,64 @@
+<div class="vo_modal">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i> 批量属性设置</h5>
+    </div>
+    <div class="modal-body wrapper">
+        <form role="form" class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">属性名：</label>
+                <div class="col-sm-8">
+                    <select class="form-control">
+                        <option value="3">商品状态</option>
+                        <option value="0">无变更</option>
+                        <option value="1">税号集货</option>
+                        <option value="2">税号个人</option>
+                        <option value="4">产地</option>
+                        <option value="5">销售渠道</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">属性值：</label>
+                <div class="col-sm-8">
+                    <input type="text" placeholder="1" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label"></label>
+                <label class="col-sm-3 checkbox-inline c-radio"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 出售中 </label>
+                <label class="checkbox-inline c-radio"><input type="checkbox" value="option3"><span class="fa fa-check"></span> 仓库中 </label>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label"></label>
+                <label class="col-sm-2 checkbox-inline c-radio"><input type="checkbox" value="option2"><span class="fa fa-check"></span> 定时上架 </label>
+                <div class="col-sm-6 input-group form-inline" ng-controller="DatepickerDemoCtrl">
+                    <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="dt" is-open="opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+					<span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button></span></div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label"></label>
+                <label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 天猫 </label>
+                <label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> 天猫国际 </label>
+                <label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span> 京东 </label>
+                <label class="checkbox-inline c-checkbox"><input type="checkbox" value="option4"><span class="fa fa-check"></span> 聚美</label>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label"></label>
+                <div class="col-sm-8">
+                    <select class="form-control">
+                        <option value="0">中国</option>
+                        <option value="1">日本</option>
+                        <option value="2">韩国</option>
+                        <option value="3">美国</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="cancel()">取消</button>
+        <button class="btn btn-vo" ng-click="ok()">保存</button>
+    </div>
+</div><!-- .vo_modal -->
