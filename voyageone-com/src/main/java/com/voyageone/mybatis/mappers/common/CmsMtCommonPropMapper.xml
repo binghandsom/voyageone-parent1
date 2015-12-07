@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.common.sql">
+    <resultMap id="BaseResultMap" type="com.voyageone.cms.service.model.CmsMtCommonPropModel" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="prop_id" property="propId" jdbcType="VARCHAR" />
+        <result column="prop_name" property="propName" jdbcType="VARCHAR" />
+        <result column="prop_type" property="propType" jdbcType="VARCHAR" />
+        <result column="prop_level" property="propLevel" jdbcType="VARCHAR" />
+        <result column="action_type" property="actionType" jdbcType="VARCHAR" />
+        <result column="prop_ref_id" property="propRefId" jdbcType="VARCHAR" />
+        <result column="rules" property="rules" jdbcType="VARCHAR" />
+        <result column="defult" property="defult" jdbcType="VARCHAR" />
+        <result column="tips" property="tips" jdbcType="VARCHAR" />
+        <result column="mapping" property="mapping" jdbcType="VARCHAR" />
+        <result column="created" property="created" jdbcType="TIMESTAMP" />
+        <result column="creater" property="creater" jdbcType="VARCHAR" />
+        <result column="modified" property="modified" jdbcType="TIMESTAMP" />
+        <result column="modifier" property="modifier" jdbcType="VARCHAR" />
+    </resultMap>
+    <select id="select_CmsMtCommonProp" parameterType="HashMap"  resultMap="BaseResultMap">
+        select
+            id,
+            prop_id,
+            prop_name,
+            prop_type,
+            prop_level,
+            action_type,
+            prop_ref_id,
+            rules,
+            defult,
+            tips,
+            mapping,
+            created,
+            creater,
+            modified,
+            modifier
+        from voyageone_cms2.cms_mt_common_prop
+        where mapping != ''
+
+    </select>
+
+
+</mapper>
