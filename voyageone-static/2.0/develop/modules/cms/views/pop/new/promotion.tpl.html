@@ -1,0 +1,88 @@
+<div class="vo_modal">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i> 新建Promotion</h5>
+    </div>
+    <div class="modal-body wrapper">
+        <form role="form" class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">活动名称</label>
+                <div class="col-sm-8">
+                    <input class="form-control" placeholder="天猫双11大促">
+                </div>
+            </div><!-- .form-group -->
+            <div class="form-group">
+                <label class="col-sm-3 control-label">活动渠道</label>
+                <div class="col-sm-8">
+                    <label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 天猫 </label>
+                    <label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> 天猫国际 </label>
+                    <label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span>  聚美</label>
+                    <label class="checkbox-inline c-checkbox"><input type="checkbox" value="option4"><span class="fa fa-check"></span> 京东 </label>
+                    <label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span> 京东国际 </label>
+                </div>
+            </div><!-- .form-group -->
+            <div class="form-group">
+                <label class="col-sm-3 control-label">预热时间</label>
+                <div class="col-sm-8 form-inline">
+                    <div class="col-sm-6 input-group" ng-controller="DatepickerDemoCtrl">
+                        <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="dt" is-open="opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+                    </div> ~
+                    <div class="col-sm-5 input-group" ng-controller="DatepickerDemoCtrl">
+                        <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="dt" is-open="opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">活动时间</label>
+                <div class="col-sm-8 form-inline">
+                    <div class="col-sm-6 input-group" ng-controller="DatepickerDemoCtrl">
+                        <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="dt" is-open="opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+                    </div> ~
+                    <div class="col-sm-5 input-group" ng-controller="DatepickerDemoCtrl">
+                        <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="dt" is-open="opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">活动类型</label>
+                <div class="col-sm-8">
+                    <select class="form-control">
+                        <option value="0">请选择活动类型</option>
+                        <option value="0">批量刷价格</option>
+                        <option value="1">价格披露</option>
+                        <option value="2">库存隔离</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-3 control-label"><label class="">启用特价宝？</label></div>
+                <div class="col-sm-2">
+                    <div class="onoffswitch">
+                        <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch4" checked>
+                        <label class="onoffswitch-label" for="myonoffswitch4">
+                            <span class="onoffswitch-inner"></span>
+                            <span class="onoffswitch-switch"></span>
+                        </label>
+                    </div><!-- onoff switch -->
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="cancel()">取消</button>
+        <button class="btn btn-vo" ng-click="ok()">保存</button>
+    </div>
+</div><!-- .vo_modal -->
