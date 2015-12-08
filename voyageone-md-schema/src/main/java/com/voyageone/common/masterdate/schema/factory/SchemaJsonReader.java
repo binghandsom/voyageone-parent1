@@ -1,5 +1,6 @@
 package com.voyageone.common.masterdate.schema.factory;
 
+import com.voyageone.common.masterdate.schema.Util.JsonUtil;
 import com.voyageone.common.masterdate.schema.Util.StringUtil;
 import com.voyageone.common.masterdate.schema.depend.DependExpress;
 import com.voyageone.common.masterdate.schema.depend.DependGroup;
@@ -15,7 +16,6 @@ import com.voyageone.common.masterdate.schema.property.Property;
 import com.voyageone.common.masterdate.schema.rule.*;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
-import com.voyageone.common.util.JsonUtil;
 
 import java.util.*;
 

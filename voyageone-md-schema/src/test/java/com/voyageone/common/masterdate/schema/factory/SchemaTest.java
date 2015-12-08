@@ -1,19 +1,10 @@
 package com.voyageone.common.masterdate.schema.factory;
 
-import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
+import com.voyageone.common.masterdate.schema.Util.JsonUtil;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.InputField;
-import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.common.util.JsonUtil;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.type.TypeFactory;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -540,19 +531,19 @@ public class SchemaTest {
                                 ((InputField)field).setDefaultValue("fsfsdfddfsdf");
                         }
                 }
-                String resultStr1 = JacksonUtil.bean2Json(result1);
+                String resultStr1 = JsonUtil.bean2Json(result1);
                 List<Map<String, Object>> rootList = JsonUtil.jsonToMapList(resultStr1);
                 System.out.println(resultStr1);
                 //SchemaReader.readJsonForList(resultStr1);
         }
 
 
-        public static List<Map<String, Object>> json2MapList(String jsonStr) throws JsonParseException, JsonMappingException, IOException {
-                ObjectMapper mapper = new ObjectMapper();
-                List<Map<String, Object>> list = mapper.readValue(jsonStr,
-                        TypeFactory.defaultInstance().constructCollectionType(List.class, Map.class));
-                return list;
-        }
+//        public static List<Map<String, Object>> json2MapList(String jsonStr)  {
+//                ObjectMapper mapper = new ObjectMapper();
+//                List<Map<String, Object>> list = mapper.readValue(jsonStr,
+//                        TypeFactory.defaultInstance().constructCollectionType(List.class, Map.class));
+//                return list;
+//        }
 
 
 }
