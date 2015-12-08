@@ -1,8 +1,8 @@
 package com.voyageone.common.masterdate.schema.factory;
 
+import com.voyageone.common.masterdate.schema.Util.JsonUtil;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.field.Field;
-import com.voyageone.common.util.JsonUtil;
 
 import java.util.List;
 

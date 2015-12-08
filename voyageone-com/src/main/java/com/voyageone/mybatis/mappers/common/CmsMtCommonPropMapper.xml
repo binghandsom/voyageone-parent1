@@ -36,8 +36,6 @@
             modified,
             modifier
         from voyageone_cms2.cms_mt_common_prop
-        where mapping != ''
-
     </select>
 
 

@@ -207,4 +207,22 @@ public class CmsBtProductModel_Field extends BaseMongoMap {
         setAttribute("priceChange", priceChange);
     }
 
+    @Override
+    public Object put(Object key, Object value) {
+        if ("images".equals(key)) {
+            if (value != null) {
+                List<Map> imageMaps = (List<Map>) value;
+                List<CmsBtProductModel_Field_Image> images = new ArrayList<>();
+                for (Map map : imageMaps) {
+                    if (map != null) {
+                        CmsBtProductModel_Field_Image image = new CmsBtProductModel_Field_Image(map);
+                        images.add(image);
+                    }
+                }
+                value = images;
+            }
+        }
+        return super.put(key, value);
+    }
+
 }

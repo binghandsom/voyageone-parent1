@@ -38,6 +38,14 @@ public class CmsBtProductModel_Group_Platform extends BaseMongoMap {
         setAttribute("numIId", numIId);
     }
 
+    public String getProductId() {
+        return (String) getAttribute("productId");
+    }
+
+    public void setProductId(String productId) {
+        setAttribute("productId", productId);
+    }
+
     public boolean isMain() {
         return (Boolean) getAttribute("isMain");
     }

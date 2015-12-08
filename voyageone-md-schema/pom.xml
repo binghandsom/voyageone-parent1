@@ -12,14 +12,23 @@
     <version>${voyageone.md.schema.version}</version>
     <dependencies>
         <dependency>
-            <groupId>com.voyageone</groupId>
-            <artifactId>voyageone-com</artifactId>
-            <version>${voyageone.common.version}</version>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+        </dependency>
+
+        <!-- junit -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>dom4j</groupId>
-            <artifactId>dom4j</artifactId>
+            <groupId>com.voyageone</groupId>
+            <artifactId>top-schema</artifactId>
         </dependency>
     </dependencies>
     <build>

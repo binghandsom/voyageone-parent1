@@ -108,11 +108,11 @@
 								<div class="form-group">
 									<label class="col-sm-3 control-label">MSRP</label>
 									<div class="col-sm-9 form-inline">
-										<div class="input-group">
+										<div class="input-group col-sm-4">
 											<input type="text" class="form-control"  placeholder="123" ng-model="g.c" ng-pattern="/^[0-9]+$/">
 											<span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
 										</div>
-										<div class="input-group">
+										<div class="input-group col-sm-4">
 											<input type="text" class="form-control" placeholder="123" ng-model="g.c" ng-pattern="/^[0-9]+$/">
 											<span class="input-group-addon"><i class="glyphicon glyphicon-yen"></i></span>
 										</div>
@@ -121,11 +121,11 @@
 								<div class="form-group">
 									<label class="col-sm-3 control-label">Current Price</label>
 									<div class="col-sm-9 form-inline">
-										<div class="input-group">
+										<div class="input-group col-sm-4">
 											<input type="text" class="form-control"  placeholder="123" ng-model="g.c" ng-pattern="/^[0-9]+$/">
 											<span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
 										</div>
-										<div class="input-group">
+										<div class="input-group col-sm-4">
 											<input type="text" class="form-control" placeholder="123" ng-model="g.c" ng-pattern="/^[0-9]+$/">
 											<span class="input-group-addon"><i class="glyphicon glyphicon-yen"></i></span>
 										</div>
@@ -134,11 +134,11 @@
 								<div class="form-group">
 									<label class="col-sm-3 control-label">Cost Price</label>
 									<div class="col-sm-9 form-inline">
-										<div class="input-group">
+										<div class="input-group col-sm-4">
 											<input type="text" class="form-control"  placeholder="123" ng-model="g.c" ng-pattern="/^[0-9]+$/">
 											<span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
 										</div>
-										<div class="input-group">
+										<div class="input-group col-sm-4">
 											<input type="text" class="form-control" placeholder="123" ng-model="g.c" ng-pattern="/^[0-9]+$/">
 											<span class="input-group-addon"><i class="glyphicon glyphicon-yen"></i></span>
 										</div>
@@ -646,7 +646,8 @@
 								<th>Size</th>
 								<th>Inventory</th>
 								<th>MSRP</th>
-								<th>Final Price</th>
+								<th style="width:8%">price retail</th>
+								<th style="width:8%">Final Price</th>
 								<th>Publish Status</th>
 								<th>
 									<li class="dropdown" dropdown style="list-style: none">
@@ -679,6 +680,7 @@
 									<button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button>
 								</td>
 								<td><input type="text" class="form-control"></td>
+								<td><input type="text" class="form-control"></td>
 								<td><div class="btn-group pull-left">
 									<span class="badge badge-empty m-b-xs">TM:在售</a></span>
 									<span class="badge badge-empty m-b-xs">TG:在库</a></span>
@@ -704,7 +706,7 @@
 								<td>650</td>
 								<td>
 									<button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button>
-								</td><td><input type="text" class="form-control"></td>
+								</td><td><input type="text" class="form-control"></td><td><input type="text" class="form-control"></td>
 								<td><div class="btn-group pull-left">
 									<span class="badge badge-empty m-b-xs">TM:在售</a></span>
 									<span class="badge badge-empty m-b-xs">TG:在库</a></span>
@@ -730,7 +732,7 @@
 								<td>480</td>
 								<td>
 									<button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button>
-								</td><td><input type="text" class="form-control"></td>
+								</td><td><input type="text" class="form-control"></td><td><input type="text" class="form-control"></td>
 								<td><div class="btn-group pull-left">
 									<span class="badge badge-empty m-b-xs">TM:在售</a></span>
 									<span class="badge badge-empty m-b-xs">TG:在库</a></span>
@@ -756,7 +758,7 @@
 								<td>5650</td>
 								<td>
 									<button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button>
-								</td><td><input type="text" class="form-control"></td>
+								</td><td><input type="text" class="form-control"></td><td><input type="text" class="form-control"></td>
 								<td><div class="btn-group pull-left">
 									<span class="badge badge-empty m-b-xs">TM:在售</a></span>
 									<span class="badge badge-empty m-b-xs">TG:在库</a></span>
@@ -782,7 +784,7 @@
 								<td>4650</td>
 								<td>
 									<button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button>
-								</td><td><input type="text" class="form-control"></td>
+								</td><td><input type="text" class="form-control"></td><td><input type="text" class="form-control"></td>
 								<td><div class="btn-group pull-left">
 									<span class="badge badge-empty m-b-xs">TM:在售</a></span>
 									<span class="badge badge-empty m-b-xs">TG:在库</a></span>
@@ -808,7 +810,7 @@
 								<td>2650</td>
 								<td>
 									<button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button>
-								</td><td><input type="text" class="form-control"></td>
+								</td><td><input type="text" class="form-control"></td><td><input type="text" class="form-control"></td>
 								<td><div class="btn-group pull-left">
 									<span class="badge badge-empty m-b-xs">TM:在售</a></span>
 									<span class="badge badge-empty m-b-xs">TG:在库</a></span>
