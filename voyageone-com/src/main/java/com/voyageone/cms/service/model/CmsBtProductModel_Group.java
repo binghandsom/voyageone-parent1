@@ -89,4 +89,34 @@ public class CmsBtProductModel_Group extends BaseMongoMap {
         setAttribute("platforms", platforms);
     }
 
+    public CmsBtProductModel_Group_Platform getPlatformByGroupId(int groupId) {
+        CmsBtProductModel_Group_Platform result = null;
+        List<Map> platforms = (List<Map>) getAttribute("platforms");
+        for (Map map : platforms) {
+            if (map != null) {
+                CmsBtProductModel_Group_Platform platform = new CmsBtProductModel_Group_Platform(map);
+                if (platform.getGroupId() == groupId) {
+                    result = platform;
+                    break;
+                }
+            }
+        }
+        return  result;
+    }
+
+    public CmsBtProductModel_Group_Platform getPlatformByNumIId(int cartId, String numIId) {
+        CmsBtProductModel_Group_Platform result = null;
+        List<Map> platforms = (List<Map>) getAttribute("platforms");
+        for (Map map : platforms) {
+            if (map != null) {
+                CmsBtProductModel_Group_Platform platform = new CmsBtProductModel_Group_Platform(map);
+                if (platform.getCartId() == cartId && platform.getNumIId().equals(numIId)) {
+                    result = platform;
+                    break;
+                }
+            }
+        }
+        return  result;
+    }
+
 }
