@@ -3,6 +3,7 @@ package com.voyageone.common.components.sears.bean;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.List;
 
 /**
  * Created by james.li on 2015/11/23.
@@ -16,6 +17,7 @@ public class OrderLookupItem {
     private String manufacturerPartNumber;
     private String status;
     private String statusCode;
+    private String cancelReasonCode;
     private String inStorePickupStatus;
     private String expectedInStoreDate;
     private int quantity;
@@ -29,6 +31,10 @@ public class OrderLookupItem {
     private float grandTotal;
     private String salesCheckNumber;
     private String trackingNumbers;
+
+    // trackingNumbers 再分配使用
+    private List<OrderLookupItemSub> trackingNumberList;
+
     private String shippingDate;
     private String shippingCarrier;
     private String expectedDateOfArrival;
@@ -121,6 +127,14 @@ public class OrderLookupItem {
 
     public void setStatusCode(String statusCode) {
         this.statusCode = statusCode;
+    }
+
+    public String getCancelReasonCode() {
+        return cancelReasonCode;
+    }
+
+    public void setCancelReasonCode(String cancelReasonCode) {
+        this.cancelReasonCode = cancelReasonCode;
     }
 
     public String getInStorePickupStatus() {
@@ -273,5 +287,13 @@ public class OrderLookupItem {
 
     public void setDelivery(OrderDeliveryBean delivery) {
         this.delivery = delivery;
+    }
+
+    public List<OrderLookupItemSub> getTrackingNumberList() {
+        return trackingNumberList;
+    }
+
+    public void setTrackingNumberList(List<OrderLookupItemSub> trackingNumberList) {
+        this.trackingNumberList = trackingNumberList;
     }
 }

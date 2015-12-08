@@ -18,6 +18,8 @@ public class SetPriceBean {
     private String quantity_ordered;
     // 第三方SKU
     private String client_sku;
+    // 关税率
+    private String duty_rate;
 
     public String getSource_order_id() {
         return source_order_id;
@@ -88,6 +90,14 @@ public class SetPriceBean {
 
     public void setClient_sku(String client_sku) {
         this.client_sku = client_sku;
+    }
+
+    public String getDuty_rate() {
+        return duty_rate;
+    }
+
+    public void setDuty_rate(String duty_rate) {
+        this.duty_rate = duty_rate;
     }
 }
 

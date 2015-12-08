@@ -17,6 +17,7 @@ import com.voyageone.common.components.baidu.translate.BaiduTranslateUtil;
 import com.voyageone.common.components.issueLog.IssueLog;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.components.sears.bean.OrderLookupItemSub;
 import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
@@ -2027,7 +2028,7 @@ public class PostBCBGOrderService {
 		return resultStrList;
 	}
 
-//	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception {
 ////		String temp = "中国人1";
 ////
 ////		System.out.println(temp.length());
@@ -2060,5 +2061,13 @@ public class PostBCBGOrderService {
 //		String time = DateTimeUtil.format(localTimeForDate, DateTimeUtil.DATE_TIME_FORMAT_4);
 //
 //		System.out.println(String.format("DailySales_VO_BMX_%s_%s.dat", date, time));
-//	}
+
+//		String updateSqlSub = "select '%s' order_number, '%s' item_number,'%s' tracking_number, '%s' sales_check_number";
+//		String temp = String.format(updateSqlSub, "11","22","33","44");
+//		System.out.println(temp);
+
+		OrderLookupItemSub temp = new OrderLookupItemSub();
+		System.out.println(temp.getTrackingNumber());
+		System.out.println(temp.isAllocated());
+	}
 }

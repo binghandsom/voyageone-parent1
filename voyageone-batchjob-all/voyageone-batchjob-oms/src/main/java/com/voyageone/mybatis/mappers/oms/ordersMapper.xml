@@ -2818,4 +2818,63 @@
 		limit 80
 	</select>
 
+	<!-- 获得向Sears 取得订单明细Tracking信息 订单一览 (Order Lookup)-->
+	<resultMap id="ordersDetailsInfoMapforSearsTrackingNumber" type="com.voyageone.batch.oms.modelbean.OrderExtend">
+		<result column="order_channel_id" property="orderChannelId"/>
+		<result column="order_number" property="orderNumber"/>
+		<result column="source_order_id" property="sourceOrderId"/>
+		<result column="cart_id" property="cartId"/>
+		<result column="client_order_id" property="clientOrderId"/>
+		<result column="sku" property="sku"/>
+		<result column="client_sku" property="clientSku"/>
+		<result column="item_number" property="itemNumber"/>
+		<result column="tracking_number" property="trackingNumber"/>
+	</resultMap>
+	<select id="oms_bt_order_details_getSearsOrderDetailBlankTrackingInfo" parameterType="HashMap" resultMap="ordersDetailsInfoMapforSearsTrackingNumber" >
+		select o.order_channel_id,
+			o.order_number,
+			o.source_order_id,
+			o.cart_id,
+			o.client_order_id,
+			od.sku,
+			ifnull(wd.client_sku,'') as client_sku,
+			od.item_number,
+			od.tracking_number
+		from
+			(select ods.order_number,
+						ods.adjustment,
+						ods.sku,
+						ods.item_number,
+						odx.tracking_number
+			from Synship.oms_bt_order_details ods
+			inner join Synship.oms_bt_ext_order_details odx
+				on ods.order_number = odx.order_number
+				and ods.item_number =	odx.item_number
+			where odx.tracking_number = ''
+			)od
+		inner join Synship.oms_bt_orders o
+			on o.order_number = od.order_number
+		left join Synship.wms_bt_item_details wd
+			on od.sku = wd.sku
+			and o.order_channel_id = wd.order_channel_id
+		where
+			o.order_channel_id = #{orderChannelId}
+			and o.client_order_id is not null
+			and o.client_order_id != ''
+			and od.adjustment = 0;
+	</select>
+
+	<!-- Sears 订单明细TrackingNumber信息更新-->
+	<update id="oms_bt_ext_order_details_updateSearsTrackingInfo" parameterType="String">
+		update oms_bt_ext_order_details odx ,
+			(
+			 ${values}
+			) trackingInfo
+		set odx.tracking_number = trackingInfo.tracking_number,
+				odx.sales_check_number = trackingInfo.sales_check_number
+		where
+				odx.order_number = trackingInfo.order_number and
+				odx.item_number = trackingInfo.item_number
+	</update>
 </mapper>
+

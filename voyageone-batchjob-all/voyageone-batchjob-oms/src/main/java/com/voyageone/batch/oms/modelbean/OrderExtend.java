@@ -470,6 +470,10 @@ public class OrderExtend implements java.io.Serializable {
 
 	// Sears订单使用 start
 	private String shippingFee;
+	private String trackingNumber;
+	private String salesCheckNumber;
+	private boolean isNeedUpdateFlag = false;
+	private String clientStatus;
 	// Sears订单使用 end
 
 	public static long getSerialVersionUID() {
@@ -1570,5 +1574,37 @@ public class OrderExtend implements java.io.Serializable {
 
 	public void setShippingFee(String shippingFee) {
 		this.shippingFee = shippingFee;
+	}
+
+	public String getTrackingNumber() {
+		return trackingNumber;
+	}
+
+	public void setTrackingNumber(String trackingNumber) {
+		this.trackingNumber = trackingNumber;
+	}
+
+	public String getSalesCheckNumber() {
+		return salesCheckNumber;
+	}
+
+	public void setSalesCheckNumber(String salesCheckNumber) {
+		this.salesCheckNumber = salesCheckNumber;
+	}
+
+	public boolean isNeedUpdateFlag() {
+		return isNeedUpdateFlag;
+	}
+
+	public void setIsNeedUpdateFlag(boolean isNeedUpdateFlag) {
+		this.isNeedUpdateFlag = isNeedUpdateFlag;
+	}
+
+	public String getClientStatus() {
+		return clientStatus;
+	}
+
+	public void setClientStatus(String clientStatus) {
+		this.clientStatus = clientStatus;
 	}
 }

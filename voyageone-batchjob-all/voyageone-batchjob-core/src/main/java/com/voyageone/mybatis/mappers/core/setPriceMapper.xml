@@ -213,11 +213,17 @@
                         AND (shipdetails.STATUS not in ( 'Canceled','Returned') or shipdetails.STATUS is null)
                         and shipdetails.sku = 'Shipping'),0) as shipping_fee,
             sum(details.quantity_ordered) as quantity_ordered,
-            wdetails.client_sku
+            wdetails.client_sku,
+            ifnull(taxRate.rate,'') as duty_rate
         from
             oms_bt_orders orders,
-            oms_bt_order_details details,
-            wms_bt_item_details wdetails
+            wms_bt_item_details wdetails,
+            oms_bt_order_details details
+        left join tt_reservation re
+            on details.res_id = re.id
+        left join vf_tax_rate taxRate
+            on re.hs_code_pu = taxRate.hs_code
+            and taxRate.tax_object_id = 1
         where
             orders.order_channel_id = #{order_channel_id}
             and orders.order_number = details.order_number

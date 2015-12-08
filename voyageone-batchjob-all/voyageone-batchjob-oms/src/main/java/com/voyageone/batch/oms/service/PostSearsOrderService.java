@@ -14,7 +14,9 @@ import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.sears.SearsService;
 import com.voyageone.common.components.sears.bean.*;
+import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.Codes;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.ThirdPartyConfigs;
 import com.voyageone.common.configs.beans.FtpBean;
@@ -69,6 +71,17 @@ public class PostSearsOrderService {
 //	private String orderChannelID = "013";
 	private String orderChannelID = "001";
 
+	//	异常邮件区分
+	//	订单推送异常
+	private int MAIL_PUSH_ORDER_ERROR = 1;
+	//	超卖异常
+	private int MAIL_OUT_OF_STOCK_ERROR = 2;
+	//	部分取消异常
+	private int MAIL_DIFFERENT_STATUS_ERROR = 3;
+
+	private String DUMMY_LAST_NAME = "name";
+	private String SEARS_MAIL_ADDRESS = "sears@voyageone.cn";
+	private String COMPANY_PHONE = "5626771997";
 	/**
 	 * 调用Sears(Create Order)
 	 *
@@ -80,11 +93,8 @@ public class PostSearsOrderService {
 		int orderChannelTimeZone = 8;
 		String exchangeRate = "6.2";
 
-		try {
-			OrderLookupResponse orderResponse = searsService.getOrderInfo("400921");
-		} catch (Exception e) {
-
-		}
+		// 推送异常订单一览
+		List<OrderResponse> pushErrorOrderList = new ArrayList<OrderResponse>();
 
 		logger.info("	getPushCreateList");
 		List<OrderBean> pushDailySalesListList = getPushCreateList(orderChannelID, orderChannelTimeZone, exchangeRate);
@@ -116,11 +126,9 @@ public class PostSearsOrderService {
 									SubSystem.OMS);
 						}
 					} else {
-						// TODO
-						issueLog.log("postSearsCreateOrder.CreateOrder",
-								"CreateOrder error ; Message = " + orderResponse.getMessage(),
-								ErrorType.BatchJob,
-								SubSystem.OMS);
+						// 异常的场合，订单号再设定
+						orderResponse.setOrderId(createOrderInfo.getOrderReference());
+						pushErrorOrderList.add(orderResponse);
 					}
 				} catch (Exception e) {
 					isSuccess = false;
@@ -132,11 +140,71 @@ public class PostSearsOrderService {
 							SubSystem.OMS);
 				}
 			}
+
+			// 推送异常订单，客服邮件通知
+			if (pushErrorOrderList.size() > 0) {
+				sendCustomerServiceMail(pushErrorOrderList, MAIL_PUSH_ORDER_ERROR);
+			}
 		}
 
 		logger.info("postSearsCreateOrder end");
 
 		return isSuccess;
+	}
+
+	/**
+	 * 推送异常订单客服邮件通知
+	 * @param pushErrorOrderList 异常一览订单列表
+	 * @param kind 异常种类
+	 *
+	 */
+	private void sendCustomerServiceMail(List<OrderResponse> pushErrorOrderList, int kind) {
+
+		try {
+			if (pushErrorOrderList.size() > 0) {
+
+				// 邮件标题取得
+				String mailSubject = "";
+				if (MAIL_PUSH_ORDER_ERROR == kind) {
+					mailSubject = OmsConstants.SEARS_PUSH_ORDER_ERROR_SUBJECT;
+				} else {
+					if (MAIL_OUT_OF_STOCK_ERROR == kind) {
+						mailSubject = OmsConstants.SEARS_OUT_OF_STOCK_CHECK_SUBJECT;
+					} else {
+						if (MAIL_DIFFERENT_STATUS_ERROR == kind) {
+							mailSubject = OmsConstants.SEARS_PARTIAL_CANCELLED_CHECK_SUBJECT;
+						}
+					}
+				}
+
+				StringBuilder tbody = new StringBuilder();
+
+				for (int i = 0; i < pushErrorOrderList.size(); i++) {
+					OrderResponse orderResponse = pushErrorOrderList.get(i);
+					// 邮件每行正文
+					String mailTextLine =
+							String.format(OmsConstants.PATERN_TABLE_REASON_ROW, orderResponse.getOrderId(), orderResponse.getMessage());
+					tbody.append(mailTextLine);
+				}
+
+				// 拼接table
+				String body = String.format(OmsConstants.PATERN_TABLE_REASON, mailSubject, tbody.toString());
+
+				// 拼接邮件正文
+				StringBuilder emailContent = new StringBuilder();
+				emailContent.append(Constants.EMAIL_STYLE_STRING).append(body);
+
+				// TODO 邮件组变更
+//				Mail.sendAlert("ITOMS", OmsConstants.RM_OUT_OF_STOCK_CHECK_SUBJECT, getArrayListString(sourceOrderIdList), true);
+//				Mail.sendAlert("CUSTOMER_SERVICE_REALMADRID", mailSubject, emailContent.toString(), true);
+				Mail.sendAlert("ITOMS", mailSubject, emailContent.toString(), true);
+			}
+		} catch (Exception e) {
+
+			logger.error("sendCustomerServiceMail", e);
+
+			issueLog.log(e, ErrorType.BatchJob, SubSystem.OMS, "postSearsCreateOrder.sendCustomerServiceMail error");
+		}
 	}
 
 	/**
@@ -156,9 +224,13 @@ public class PostSearsOrderService {
 					// 信息翻译
 					translateOrderInfo(orderExtendInfo);
 
+					// 订单明细信息取得
 					OrderBean orderOutputInfo = getPushOrder(orderExtendInfo, timeZone, exchangeRate);
 
-					ret.add(orderOutputInfo);
+					// 明细税率不存在的订单跳过
+					if (orderOutputInfo != null) {
+						ret.add(orderOutputInfo);
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -168,8 +240,6 @@ public class PostSearsOrderService {
 			issueLog.log(e, ErrorType.BatchJob,
 					SubSystem.OMS, "getPushCreateList error");
 		}
-
-
 		return ret;
 	}
 
@@ -178,6 +248,15 @@ public class PostSearsOrderService {
 	 *
 	 */
 	private OrderBean getPushOrder(OrderExtend orderExtendInfo, int timeZone, String exchangeRate) throws Exception {
+
+		// 公司扣点
+		float voCommission = Float.valueOf(ChannelConfigs.getVal1(orderChannelID, ChannelConfigEnums.Name.vo_commission));
+		// 阿里扣点
+		float alipayFee =  Float.valueOf(ChannelConfigs.getVal1(orderChannelID, ChannelConfigEnums.Name.alipay_fee));
+		// 天猫扣点
+		float tmallCommission = Float.valueOf(ChannelConfigs.getVal1(orderChannelID, ChannelConfigEnums.Name.tmall_commission));
+
+		// 汇率
 		Float rate = Float.valueOf(exchangeRate);
 
 		OrderBean ret = new OrderBean();
@@ -203,6 +282,12 @@ public class PostSearsOrderService {
 		List<OrderItem> itemList = new ArrayList<OrderItem>();
 		// 订单明细价格
 		List<SetPriceBean> orderPriceDatas = SetPriceUtils.setPrice(orderExtendInfo.getOrderNumber(), orderExtendInfo.getOrderChannelId(), orderExtendInfo.getCartId(), SetPriceUtils.APPROVED_ORDER_INCLUDE_SHIPPING);
+
+		// 订单明细税率检查
+		if (!chkOrderDetailData(orderPriceDatas)) {
+			return null;
+		}
+
 		for (int i = 0; i < orderPriceDatas.size(); i++) {
 			SetPriceBean orderPriceInfo = orderPriceDatas.get(i);
 
@@ -216,13 +301,16 @@ public class PostSearsOrderService {
 			float shippingFee = div2Digits(Float.valueOf(orderPriceInfo.getShipping_fee()), rate);
 			orderItem.setShipCharge(shippingFee);
 
-			// TODO
-			orderItem.setCustomsDuty(10);
+			// 关税
+			orderItem.setCustomsDuty(mult2Digits(price, Float.valueOf(orderPriceInfo.getDuty_rate())));
 
 			OrderFeesBean orderFeesInfo = new OrderFeesBean();
-			orderFeesInfo.setAlipayFee(10);
-			orderFeesInfo.setTmallCommission(10);
-			orderFeesInfo.setVoCommission(10);
+			// Ali 扣点
+			orderFeesInfo.setAlipayFee(mult2Digits(price + shippingFee, alipayFee));
+			// Tmall 扣点
+			orderFeesInfo.setTmallCommission(mult2Digits(price + shippingFee, tmallCommission));
+			// 公司 扣点
+			orderFeesInfo.setVoCommission(mult2Digits(price + shippingFee, voCommission));
 			orderItem.setFees(orderFeesInfo);
 
 			itemList.add(orderItem);
@@ -236,14 +324,17 @@ public class PostSearsOrderService {
 
 		orderShippingInfo.setAddressLine1(shippingAddressList.get(0));
 		orderShippingInfo.setAddressLine2(shippingAddressList.get(1));
-		orderShippingInfo.setAddressLine3("");
-		orderShippingInfo.setZipCode(orderExtendInfo.getShipZip());
+		orderShippingInfo.setAddressLine3(shippingAddressList.get(2));
+		// TODO 修正预定
+//		orderShippingInfo.setZipCode(orderExtendInfo.getShipZip());
+		orderShippingInfo.setZipCode("12345");
 		orderShippingInfo.setFirstName(orderExtendInfo.getShipName());
-		orderShippingInfo.setLastName("");
-		orderShippingInfo.setEmail(orderExtendInfo.getShipEmail());
+		orderShippingInfo.setLastName(DUMMY_LAST_NAME);
+		orderShippingInfo.setEmail(SEARS_MAIL_ADDRESS);
 		orderShippingInfo.setCity(orderExtendInfo.getShipCity());
-		orderShippingInfo.setDayPhone(orderExtendInfo.getShipPhone());
-		orderShippingInfo.setState("");
+		orderShippingInfo.setDayPhone(COMPANY_PHONE);
+		// TODO 修正预定
+		orderShippingInfo.setState("CN");
 		orderShippingInfo.setAddressType("S");
 		orderShippingInfo.setCountryCode("CN");
 
@@ -252,28 +343,61 @@ public class PostSearsOrderService {
 		return ret;
 	}
 
+	/**
+	 * 订单明细税率检查
+	 *
+	 */
+	private boolean chkOrderDetailData(List<SetPriceBean> orderPriceDatas) {
+		boolean ret = true;
+
+		for (int i = 0; i < orderPriceDatas.size(); i++) {
+			if (StringUtils.isEmpty(orderPriceDatas.get(i).getDuty_rate())) {
+				ret = false;
+				break;
+			}
+		}
+
+		return ret;
+	}
+
+	/**
+	 * 地址固定长度对应
+	 *
+	 */
 	private ArrayList<String> getSearsAddress(String address1, String address2) {
 		ArrayList<String> retAddress = new ArrayList<String>();
 
 		String retAddress1 = "";
 		String retAddress2 = "";
+		String retAddress3 = "";
 
 		String allAddress = address1 + address2;
-		if (allAddress.length() <= 255) {
+		if (allAddress.length() <= 45) {
 			retAddress1 = allAddress;
-		} else if (allAddress.length() > 255 && allAddress.length() <= 510) {
-			retAddress1 = allAddress.substring(0,255);
-			retAddress2 = allAddress.substring(255,allAddress.length());
+		} else if (allAddress.length() > 45 && allAddress.length() <= 90) {
+			retAddress1 = allAddress.substring(0,45);
+			retAddress2 = allAddress.substring(45,allAddress.length());
+		} else if (allAddress.length() > 90 && allAddress.length() <= 135) {
+			retAddress1 = allAddress.substring(0,45);
+			retAddress2 = allAddress.substring(45,90);
+			retAddress3 = allAddress.substring(90,allAddress.length());
 		} else {
-			retAddress1 = allAddress.substring(0,255);
-			retAddress2 = allAddress.substring(255,510);
+			retAddress1 = allAddress.substring(0,45);
+			retAddress2 = allAddress.substring(45,90);
+			retAddress3 = allAddress.substring(90,135);
 		}
 
 		retAddress.add(retAddress1);
 		retAddress.add(retAddress2);
+		retAddress.add(retAddress3);
+
 		return retAddress;
 	}
 
+	/**
+	 * 翻译对应
+	 *
+	 */
 	private void translateOrderInfo(OrderExtend orderExtendInfo) throws Exception {
 		ArrayList<String> translateContent = new ArrayList<String>();
 		translateContent.add(orderExtendInfo.getName());
@@ -291,6 +415,10 @@ public class PostSearsOrderService {
 		orderExtendInfo.setShipCity(translateList.get(4));
 	}
 
+	/**
+	 * 第三方订单号，回写本地DB
+	 *
+	 */
 	private boolean updateOrder(String orderNumber, String clientOrderId, String taskName) {
 		boolean ret = true;
 
@@ -320,6 +448,24 @@ public class PostSearsOrderService {
 	}
 
 	/**
+	 * 乘法 保留两位小数
+	 *
+	 * @param addPara1
+	 * @param addPara2
+	 * @return ret
+	 */
+	private float mult2Digits(float addPara1, float addPara2) {
+		float ret = 0f;
+
+		BigDecimal bd1 = new BigDecimal(addPara1);
+		BigDecimal bd2 = new BigDecimal(addPara2);
+
+		ret = bd1.multiply(bd2).setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();
+
+		return ret;
+	}
+
+	/** 接口XML文件保存
 	 *
 	 * @param strXML
 	 * @param type
@@ -356,4 +502,358 @@ public class PostSearsOrderService {
 			}
 		}
 	}
+
+	/**
+	 * 调用Sears(Order Lookup)
+	 *
+	 */
+	public boolean getSearsOrderLookup() {
+		logger.info("getSearsOrderLookup start");
+
+		boolean isSuccess = true;
+
+		// 超卖订单一览
+		List<OrderResponse> searOutOfStockOrderList = new ArrayList<OrderResponse>();
+		// 部分取消订单一览
+		List<OrderResponse> searPartialCancelOrderList = new ArrayList<OrderResponse>();
+
+		logger.info("	getOrderDetailForBlankTrackingNo");
+		List<OrderExtend> orderDetailListForBlankTrackingNo = getOrderDetailForBlankTrackingNo(orderChannelID);
+
+		if (orderDetailListForBlankTrackingNo != null) {
+			try {
+
+				String clientOrderId = "";
+				boolean isNeedSetTrackingNumber = false;
+				// 相同订单号只取一次
+				OrderLookupResponse orderLookupResponse = null;
+
+				// Sears Tracking Info 取得
+				for (int i = 0; i < orderDetailListForBlankTrackingNo.size(); i++) {
+					OrderExtend orderDetailInfo = orderDetailListForBlankTrackingNo.get(i);
+
+					if (!clientOrderId.equals(orderDetailInfo.getClientOrderId())) {
+						isNeedSetTrackingNumber = false;
+						clientOrderId = orderDetailInfo.getClientOrderId();
+
+						// Sears Order Lookup接口请求
+						logger.info("	searsService.OrderLookup clientOrderId = " + orderDetailInfo.getClientOrderId());
+						orderLookupResponse = searsService.getOrderInfo(orderDetailInfo.getClientOrderId());
+
+						// orderLookupResponse 再设定（根据trackingNumbers 设定 trackingNumberList）
+						resetOrderLoopupResponse(orderLookupResponse);
+
+						// 相应XML缓存
+						backupTheXmlFile(orderDetailInfo.getOrderNumber(), JaxbUtil.convertToXml(orderLookupResponse), 1);
+
+						// Sears 订单信息返回值检查
+						List<Object> chkResult = chkOrderLoopupResponse(orderLookupResponse);
+						boolean retResult = (boolean)chkResult.get(0);
+						String retStatus = (String)chkResult.get(1);
+						String statusCode = (String)chkResult.get(2);
+						String retCancelReasonCode = (String)chkResult.get(3);
+
+						if (retResult) {
+							// Cancel 以外的场合，TrackingNumber需要设定
+							if (StringUtils.isEmpty(retStatus)) {
+								isNeedSetTrackingNumber = true;
+							} else {
+								// 超卖的场合
+								if (!StringUtils.isEmpty(retCancelReasonCode)) {
+									OrderResponse outOfStockOrder = new OrderResponse();
+									outOfStockOrder.setOrderId(orderDetailInfo.getSourceOrderId());
+									outOfStockOrder.setMessage(OmsConstants.SEARS_OUT_OF_STOCK_MESSAGE);
+
+									searOutOfStockOrderList.add(outOfStockOrder);
+								}
+							}
+						} else {
+							// 部分取消的场合
+							OrderResponse partialCancelOrder = new OrderResponse();
+							partialCancelOrder.setOrderId(orderDetailInfo.getSourceOrderId());
+							partialCancelOrder.setMessage(OmsConstants.SEARS_PARTIAL_CANCELLED_MESSAGE);
+
+							searPartialCancelOrderList.add(partialCancelOrder);
+						}
+					}
+
+					if (isNeedSetTrackingNumber) {
+						// TrackingNumber 为空的明细
+						if (StringUtils.isEmpty(orderDetailInfo.getTrackingNumber())) {
+							setTrackingInfo(orderDetailInfo, orderLookupResponse);
+						}
+					}
+
+					// Status 更新
+					setClientStatusInfo(orderDetailInfo, orderLookupResponse);
+				}
+
+				// Sears Tracking Info 更新
+				isSuccess = updateSearsTrackingInfo(orderDetailListForBlankTrackingNo);
+
+				// 推送异常订单，客服邮件通知
+				if (searOutOfStockOrderList.size() > 0) {
+					sendCustomerServiceMail(searOutOfStockOrderList, MAIL_OUT_OF_STOCK_ERROR);
+				}
+
+				// 部分取消，客服邮件通知
+				if (searPartialCancelOrderList.size() > 0) {
+					sendCustomerServiceMail(searPartialCancelOrderList, MAIL_DIFFERENT_STATUS_ERROR);
+				}
+
+			} catch (Exception e) {
+				isSuccess = false;
+				logger.error("getSearsOrderLookup error", e);
+
+				issueLog.log(e,
+						ErrorType.BatchJob,
+						SubSystem.OMS,
+						"getSearsOrderLookup error");
+			}
+		}
+
+		logger.info("getSearsOrderLookup end");
+
+		return isSuccess;
+	}
+
+	/**
+	 * Order lookup 返回值检查（目前只处理Cancel状态）
+	 * @param orderLookupResponse Order lookup 返回值
+	 * @return ret ret[0] 检查结果
+	 * 				ret[1] status
+	 * 				ret[2] statusCode
+	 * 				ret[3] cancelReasonCode
+	 */
+	private List<Object> chkOrderLoopupResponse(OrderLookupResponse orderLookupResponse) {
+		List<Object> ret = new ArrayList<Object>();
+		boolean retResult = true;
+		String retStatus = "";
+		String retStatusCode = "";
+		String retCancelReasonCode = "";
+
+		List<OrderLookupItem> orderLookupResponseItems = orderLookupResponse.getItems();
+		for (int i = 0; i < orderLookupResponseItems.size(); i++) {
+			OrderLookupItem orderLookupItem = orderLookupResponseItems.get(i);
+
+			// 取消的场合
+			if (OmsConstants.SearsOrderItemStatus.Cancelled.equals(orderLookupItem.getStatus())) {
+				retStatus = orderLookupItem.getStatus();
+				retStatusCode = orderLookupItem.getStatusCode();
+
+				// 超卖原因Code设定
+				if (OmsConstants.SearsOrderItemCancelReasonCode.OutOfStock.equals(orderLookupItem.getCancelReasonCode())) {
+					retCancelReasonCode = orderLookupItem.getCancelReasonCode();
+				}
+			}
+
+			if (!StringUtils.isEmpty(retStatus)) {
+				// 明细部分Cancel的场合
+				if (!retStatus.equals(orderLookupItem.getStatus())) {
+					retResult = false;
+					break;
+				}
+			}
+		}
+
+		ret.add(retResult);
+		ret.add(retStatus);
+		ret.add(retStatusCode);
+		ret.add(retCancelReasonCode);
+
+		return ret;
+	}
+
+	/**
+	 * 待处理订单取得（trackingNumbers 为空的订单）
+	 * @param orderChannelID 订单渠道
+	 *
+	 */
+	private List<OrderExtend> getOrderDetailForBlankTrackingNo(String orderChannelID) {
+		List<OrderExtend> ret = orderDao.getSearsOrderDetailBlankTrackingInfo(orderChannelID);
+
+		return ret;
+	}
+
+	/** Order lookup 返回值再设定（trackingNumberList 设定）
+	 * @param orderLookupResponse Order lookup 返回值
+	 *
+	 */
+	private void resetOrderLoopupResponse(OrderLookupResponse orderLookupResponse) {
+		List<OrderLookupItem> responseItems = orderLookupResponse.getItems();
+
+		for (int i = 0; i < responseItems.size(); i++) {
+			OrderLookupItem item = responseItems.get(i);
+
+			if (!StringUtils.isEmpty(item.getTrackingNumbers())) {
+				List<OrderLookupItemSub> trackingNumberList = getOrderLookupItemSubList(item.getTrackingNumbers());
+				item.setTrackingNumberList(trackingNumberList);
+			} else {
+				item.setTrackingNumberList(new ArrayList<OrderLookupItemSub>());
+			}
+		}
+	}
+
+	/** Order lookup 返回值再设定（根据trackingNumbers，取得trackingNumberList）
+	 * @param trackingNumbers
+	 * @return trackingNumberList
+	 */
+	private List<OrderLookupItemSub> getOrderLookupItemSubList(String trackingNumbers) {
+		List<OrderLookupItemSub> ret = new ArrayList<OrderLookupItemSub>();
+
+		String[] trackingNumArr = trackingNumbers.split(",");
+		for (int i = 0; i < trackingNumArr.length; i++) {
+			OrderLookupItemSub orderLookupItemSub = new OrderLookupItemSub();
+			orderLookupItemSub.setTrackingNumber(trackingNumArr[i]);
+
+			ret.add(orderLookupItemSub);
+		}
+
+		return ret;
+	}
+
+
+	/**
+	 * 根据Sears 订单信息，Tracking信息设置
+	 * @param orderDetailInfo 待处理订单明细
+	 * @param orderLookupResponse Sears返回订单信息
+	 *
+	 */
+	private void setTrackingInfo(OrderExtend orderDetailInfo, OrderLookupResponse orderLookupResponse) {
+		List<OrderLookupItem> orderLookupItemList = orderLookupResponse.getItems();
+
+		for (int i = 0; i < orderLookupItemList.size(); i++) {
+			OrderLookupItem orderLookupItem = orderLookupItemList.get(i);
+
+			// Sears 侧TrackingNumbers 未产生的场合，不处理
+			if(StringUtils.isEmpty(orderLookupItem.getTrackingNumbers())) {
+				continue;
+			}
+
+			// 找到本地SKU对应的，Sears明细
+			if(orderDetailInfo.getClientSku().equals(orderLookupItem.getItemId())) {
+
+				// 订单明细 TrackingNumber 设定
+				List<OrderLookupItemSub> trackingNumberList = orderLookupItem.getTrackingNumberList();
+				for (int j = 0; j < trackingNumberList.size(); j++) {
+					OrderLookupItemSub orderLookupItemSub = trackingNumberList.get(j);
+					// 未分配的场合
+					if (!orderLookupItemSub.isAllocated()) {
+						orderDetailInfo.setTrackingNumber(orderLookupItemSub.getTrackingNumber());
+						// 分配标志设定
+						orderLookupItemSub.setIsAllocated(true);
+						break;
+					}
+				}
+
+				// 订单明细 SalesCheckNumber 设定
+				orderDetailInfo.setSalesCheckNumber(orderLookupItem.getSalesCheckNumber());
+				// 本地更新标志
+				orderDetailInfo.setIsNeedUpdateFlag(true);
+
+				break;
+			}
+		}
+	}
+
+	/**
+	 * 根据Sears 订单信息，明细扩展表client_status信息设置
+	 * @param orderDetailInfo 待处理订单明细
+	 * @param orderLookupResponse Sears返回订单信息
+	 *
+	 */
+	private void setClientStatusInfo(OrderExtend orderDetailInfo, OrderLookupResponse orderLookupResponse) {
+		List<OrderLookupItem> orderLookupItemList = orderLookupResponse.getItems();
+
+		for (int i = 0; i < orderLookupItemList.size(); i++) {
+			OrderLookupItem orderLookupItem = orderLookupItemList.get(i);
+
+			// 找到本地SKU对应的，Sears明细
+			if(orderDetailInfo.getClientSku().equals(orderLookupItem.getItemId())) {
+
+				// client SKU 更新
+				orderDetailInfo.setClientStatus(orderLookupItem.getStatus());
+
+				break;
+			}
+		}
+	}
+
+	/**
+	 * 本地TrackingNumber信息更新主函数（TrackingNumber同本公司ResId）
+	 * @param orderDetailList 待处理订单明细一览
+	 *
+	 */
+	private boolean updateSearsTrackingInfo(List<OrderExtend> orderDetailList) {
+		boolean ret = true;
+
+		List<Object> updateSql = getUpdateSql(orderDetailList);
+
+		String updateSqlStr = (String)updateSql.get(0);
+		int size = (int)updateSql.get(1);
+
+		if (size > 0) {
+
+			TransactionStatus status=transactionManager.getTransaction(def);
+
+			ret = orderDao.updateSearsTrackingInfo(updateSqlStr, size);
+
+			// 执行结果判定
+			if (ret) {
+				transactionManager.commit(status);
+
+			} else {
+				transactionManager.rollback(status);
+
+				issueLog.log("updateSearsTrackingInfo",
+						"updateSearsTrackingInfo error;size = " + size,
+						ErrorType.BatchJob,
+						SubSystem.OMS);
+			}
+		}
+
+		return ret;
+	}
+
+	/**
+	 * 本地TrackingNumber信息更新Sql文取得
+	 * @param orderDetailList 待处理订单明细一览
+	 * @return ret ret[0] 更新用Sql文
+	 *				ret[1] 更新记录件数
+	 *
+	 */
+	private List<Object> getUpdateSql(List<OrderExtend> orderDetailList) {
+		List<Object> ret = new ArrayList<>();
+
+		// 更新用Sql文
+		StringBuffer updateSql = new StringBuffer();
+		// 更新记录件数
+		int size = 0;
+
+		String updateSqlSub = "select '%s' order_number, '%s' item_number,'%s' tracking_number, '%s' sales_check_number";
+
+		for (int i = 0; i < orderDetailList.size(); i++) {
+			OrderExtend orderDetailInfo = orderDetailList.get(i);
+
+			if (orderDetailInfo.isNeedUpdateFlag()) {
+				size = size + 1;
+
+				String updateRecSql = String.format(updateSqlSub, orderDetailInfo.getOrderNumber(), orderDetailInfo.getItemNumber(), orderDetailInfo.getTrackingNumber(), orderDetailInfo.getSalesCheckNumber());
+
+				if (StringUtils.isEmpty(updateSql.toString())) {
+					updateSql.append(updateRecSql);
+				} else {
+					updateSql.append(" union all ");
+					updateSql.append(updateRecSql);
+				}
+			}
+		}
+
+		ret.add(updateSql.toString());
+		ret.add(size);
+
+		return ret;
+	}
+
+
 }

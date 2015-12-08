@@ -31,6 +31,25 @@
 		</property>
 	</bean>
 
+	<bean id="getSearsOrderLookupTask"
+		  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref local="postSearsOrderJob" />
+		</property>
+		<property name="targetMethod">
+			<value>getSearsOrderLookup</value>
+		</property>
+	</bean>
+	<bean id="getSearsOrderLookupTaskContri"
+		  name="getSearsOrderLookupTaskContri"
+		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="getSearsOrderLookupTask" />
+		</property>
+		<property name="cronExpression">
+			<value>${quartz.get.Sears.order.lookup}</value>
+		</property>
+	</bean>
 	<!-- ===================== Sears定时任务 end ===================== -->
 	
 </beans>

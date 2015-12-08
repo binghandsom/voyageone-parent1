@@ -415,6 +415,31 @@ public class OmsConstants {
 	public static final String RM_ERROR_CHECK_SUBJECT = "皇马订单导入异常，请IT及时处理";
 
 	/**
+	 * Sears 订单推送异常SUBJECT
+	 */
+	public static final String SEARS_PUSH_ORDER_ERROR_SUBJECT = "Sears 订单推送异常，请客服及时处理";
+
+	/**
+	 * Sears 订单超卖SUBJECT
+	 */
+	public static final String SEARS_OUT_OF_STOCK_CHECK_SUBJECT  = "Sears 订单无法发货，请客服及时处理";
+
+	/**
+	 * Sears 订单超卖信息
+	 */
+	public static final String SEARS_OUT_OF_STOCK_MESSAGE = "Sears 订单超卖";
+
+	/**
+	 * Sears 订单部分取消SUBJECT
+	 */
+	public static final String SEARS_PARTIAL_CANCELLED_CHECK_SUBJECT  = "Sears 订单部分取消，请客服及时处理";
+
+	/**
+	 * Sears 订单部分取消信息
+	 */
+	public static final String SEARS_PARTIAL_CANCELLED_MESSAGE = "Sears 订单部分取消";
+
+	/**
 	 * OrderDetail sku 显示信息（transaction 共用）
 	 */
 	public static final class OrderDetailSkuDsp {
@@ -471,7 +496,23 @@ public class OmsConstants {
 		public static final String AwaitingChequeRefund = "AwaitingChequeRefund";
 
 	}
-	
+
+	/**
+	 * Sears 明细项目状态
+	 */
+	public static final class SearsOrderItemStatus {
+		public static final String Cancelled = "Cancelled";
+		public static final String Returned = "Returned";
+	}
+
+	/**
+	 * Sears 明细项目CancelReasonCode
+	 */
+	public static final class SearsOrderItemCancelReasonCode {
+		// Sears item out of stock.
+		public static final String OutOfStock = "16";
+	}
+
 	/**
 	 * 未自动Approved订单检查邮件TABLE格式
 	 */
@@ -519,6 +560,25 @@ public class OmsConstants {
 			"<tr>" +
 					"<td>%s</td>" +
 					"</tr>";
+
+	/**
+	 * 第三方订单处理（含原因）
+	 */
+	public static final String PATERN_TABLE_REASON =
+			"<div><span>%s</span>" +
+					"<table><tr>" +
+						"<th>SourceOrderId</th>" +
+						"<th>Reason</th>" +
+					"</tr>%s</table></div>";
+
+	/**
+	 * 第三方订单处理ROW格式（含原因）
+	 */
+	public static final String PATERN_TABLE_REASON_ROW =
+			"<tr>" +
+					"<td>%s</td>" +
+					"<td>%s</td>" +
+			"</tr>";
 	
 	/**
 	 * sneakerhead 88店庆每小时统计消费前10顾客邮件TABLE格式

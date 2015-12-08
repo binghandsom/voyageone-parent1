@@ -1876,6 +1876,35 @@ public class OrderDao extends BaseDao {
 	}
 
 	/**
+	 * 获得Sear TrackingNo为空的订单明细
+	 *
+	 * @return
+	 */
+	public List<OrderExtend> getSearsOrderDetailBlankTrackingInfo(String orderChannelId) {
+		HashMap<String, String> inPara = new HashMap<String, String>();
+		inPara.put("orderChannelId", orderChannelId);
+
+		List<OrderExtend> ordersInfo = (List) selectList(Constants.DAO_NAME_SPACE_OMS + "oms_bt_order_details_getSearsOrderDetailBlankTrackingInfo", inPara);
+
+		return ordersInfo;
+	}
+
+	public boolean updateSearsTrackingInfo(String updateValues, int size) {
+		boolean ret = false;
+
+		Map<String, String> dataMap = new HashMap<String, String>();
+		dataMap.put("values", updateValues);
+
+		int retCount = updateTemplate.update(Constants.DAO_NAME_SPACE_OMS + "oms_bt_ext_order_details_updateSearsTrackingInfo", dataMap);
+
+		if (size == retCount) {
+			ret = true;
+		}
+
+		return ret;
+	}
+
+	/**
 	 * 订单信息更新（发送标志）
 	 *
 	 * @return
