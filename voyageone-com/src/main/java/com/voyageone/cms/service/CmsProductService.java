@@ -2,6 +2,7 @@ package com.voyageone.cms.service;
 
 import com.mongodb.WriteResult;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
+import com.voyageone.cms.service.model.CmsBtFeedInfoModel;
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,11 +65,31 @@ public class CmsProductService {
     }
 
     /**
+     * 插入商品 依据FeedInfo
+     * @param feedInfoModel
+     * @return
+     */
+    public WriteResult insertByFeed(CmsBtFeedInfoModel feedInfoModel) {
+        //TODO 需要增加实现
+        return  null;
+    }
+
+    /**
      * 插入商品
      * @param models
      */
     public WriteResult insert(Collection<CmsBtProductModel> models) {
         return cmsBtProductDao.insertWithList(models);
+    }
+
+    /**
+     * 插入商品 依据FeedInfo List
+     * @param models
+     * @return
+     */
+    public WriteResult insertByFeed(Collection<CmsBtFeedInfoModel> models) {
+        //TODO 需要增加实现
+        return  null;
     }
 
     /**

@@ -16,6 +16,10 @@ public class CmsBtProductModel_Field_Image extends BaseMongoMap {
         setAttribute("type", type);
     }
 
+    public CmsBtProductModel_Field_Image(Map map) {
+        this.putAll(map);
+    }
+
     public String getName() {
         return (String) getAttribute("name");
     }

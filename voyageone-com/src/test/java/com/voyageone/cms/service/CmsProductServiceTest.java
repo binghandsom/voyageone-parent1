@@ -133,10 +133,11 @@ public class CmsProductServiceTest {
 
     @Test
     public void testSelectCmsBtProductByGroupId() throws Exception {
-        List<CmsBtProductModel> listRet = cmsProductService.getProductByGroupId("001", 1);
+        List<CmsBtProductModel> listRet = cmsProductService.getProductByGroupId("001", 470);
         for (CmsBtProductModel ret : listRet) {
             System.out.println(ret.toString());
-            System.out.println(ret.getGroups().getCurrentPriceEnd());
+            CmsBtProductModel_Field_Image aa =  ret.getFields().getImages().get(0);
+            System.out.println(ret.getGroups().getPlatformByGroupId(470));
         }
     }
 
