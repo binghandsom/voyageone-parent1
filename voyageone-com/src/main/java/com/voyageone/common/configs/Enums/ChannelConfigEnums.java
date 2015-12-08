@@ -620,7 +620,11 @@ public class ChannelConfigEnums {
         /**
          * 订单
          */
-        ORDER("2");
+        ORDER("2"),
+        /**
+         * 订单物品
+         */
+        ITEM("3");
 
         private String type;
 

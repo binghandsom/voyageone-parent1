@@ -19,11 +19,11 @@ class BcbgWsdlConstants {
 
     protected final static String table_style_full = "voyageone_cms.cms_zz_worktable_bcbg_styles_full";
 
-    protected final static String on_product = "styleID = CONCAT(SATNR,'-',COLOR)";
+    protected final static String on_product = "styleID = feedStyleID";
 
-    protected final static String grouping_product = "CONCAT(MATKL,'-',SATNR,COLOR),MATKL,CONCAT(MATKL,'-',SATNR),CONCAT(SATNR,'-',COLOR),COLOR_ATWTB,WHERL,productDesc,A304_KBETR,A073_KBETR,A304_KBETR,A073_KBETR,A073_KBETR";
+    protected final static String grouping_product = "CONCAT(MATKL,'-',SATNR,COLOR),MATKL,CONCAT(MATKL,'-',SATNR),feedStyleID,COLOR_ATWTB,WHERL,productDesc,A304_KBETR,A073_KBETR,A304_KBETR,A073_KBETR,A073_KBETR";
 
-    protected final static String grouping_model = "CONCAT(MATKL,'-',SATNR),MATKL,WLADG,BRAND_ID,SATNR,ATBEZ,SIZE1_ATINN";
+    protected final static String grouping_model = "feedStyleID,MATKL,WLADG,BRAND_ID,SATNR,ATBEZ,SIZE1_ATINN";
 
     protected static Pattern special_symbol;
 

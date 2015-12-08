@@ -32,6 +32,8 @@ public class SearsBase {
 
     public final String searsOrderUrl = "https://api.b2b.sears.com/v/2/orders/id/";
 
+    public final String updateStatusUrl = searsUrl + "orders/id/%s/update";
+
     public SearsBase(){
         properties = new Properties();
 //        properties.put("javax.net.debug", "ssl");

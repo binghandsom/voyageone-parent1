@@ -249,7 +249,8 @@ public class SyncSynShipNewOrderJob {
 				// 品牌
 				o.setBrand("");
 				// JuicyCouture订单号
-				o.setRefOrderNumber(StringUtils.null2Space2(String.valueOf(orderInfoMap.get("clientOrderId"))));
+				//o.setRefOrderNumber(StringUtils.null2Space2(String.valueOf(orderInfoMap.get("clientOrderId"))));
+				o.setRefOrderNumber("0");
 				// 支付宝交易号
 				o.setAlipayTransNo(StringUtils.null2Space2(String.valueOf(orderInfoMap.get("payNo"))));
 				// 支付宝账号

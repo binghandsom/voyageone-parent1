@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>CMS</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/static/app.min.css" type="text/css">
+    <!--[if lte IE 8]><script src="js/zoom/ie/html5shiv.js"></script><![endif]-->
+    <!--[if lte IE 8]><link rel="stylesheet" href="css/zoom/ie8.css" /><![endif]-->
+</head>
+<body ng-controller="appCtrl as ac">
+<div class="app app-aside-fixed" id="app"
+     ng-class="{'app-header-fixed': ac.app.settings.headerFixed,
+     'app-aside-fixed': ac.app.settings.asideFixed,
+     'app-aside-folded': ac.app.settings.asideFolded,
+     'app-aside-dock': ac.app.settings.asideDock,
+     'container': ac.app.settings.container}">
+    <!-- navbar -->
+    <div data-ng-include=" 'home/header.tpl.html' " class="app-header navbar"></div>
+    <!-- / navbar -->
+
+    <!-- menu -->
+    <div data-ng-include=" 'home/aside.tpl.html' " class="app-aside hidden-xs bg-dark"></div>
+    <!-- / menu -->
+
+    <!-- content -->
+    <div class="app-content">
+        <div ui-butterbar></div>
+
+        <a href class="off-screen-toggle hide" ui-toggle-class="off-screen" data-target=".app-aside" ></a>
+
+        <!-- breadcrumbs -->
+        <div data-ng-include=" 'home/breadcrumbs.tpl.html' " class="bg-light lter hidden-xs"></div>
+
+        <!-- page content -->
+        <div class="app-content-body fade-in-up" ng-view></div>
+
+        <!-- footer -->
+        <div class="app-footer wrapper b-t bg-light">
+            <span class="pull-right">{{ac.app.version}} <a href ui-scroll-to="app" class="m-l-sm text-muted"><i class="fa fa-long-arrow-up"></i></a></span>
+            {{ac.app.copyRight}}
+        </div>
+        <!-- / footer -->
+
+
+    </div><!-- /.app-content -->
+    <!-- /content -->
+
+
+
+</div>
+<!--
+
+<script src="../libs/angular/angular-aria/angular-aria.js"></script>
+<script src="../libs/angular/angular-messages/angular-messages.js"></script>
+<script src="../libs/angular/angular-resource/angular-resource.js"></script>
+<script src="../libs/angular/angular-touch/angular-touch.js"></script>
+<script src="../libs/angular/ngstorage/ngStorage.js"></script>
+<script src="../libs/angular/angular-ui-utils/ui-utils.js"></script>
+
+&lt;!&ndash; bootstrap &ndash;&gt;
+<script src="../libs/angular/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+&lt;!&ndash; lazyload &ndash;&gt;
+<script src="../libs/angular/oclazyload/dist/ocLazyLoad.js"></script>
+<script src="../libs/angular/angular-xeditable/dist/js/xeditable.min.js"></script>
+
+&lt;!&ndash; App &ndash;&gt;
+<script src="js/app.js"></script>
+<script src="js/config.js"></script>
+<script src="js/config.lazyload.js"></script>
+<script src="js/config.router.js"></script>
+<script src="js/main.js"></script>
+
+<script src="js/services/ui-load.js"></script>
+<script src="js/filters/fromNow.js"></script>
+<script src="js/directives/setnganimate.js"></script>
+<script src="js/directives/ui-butterbar.js"></script>
+<script src="js/directives/ui-focus.js"></script>
+<script src="js/directives/ui-fullscreen.js"></script>
+<script src="js/directives/ui-jq.js"></script>
+<script src="js/directives/ui-module.js"></script>
+<script src="js/directives/ui-nav.js"></script>
+<script src="js/directives/ui-scroll.js"></script>
+<script src="js/directives/ui-shift.js"></script>
+<script src="js/directives/ui-toggleclass.js"></script>
+<script src="js/directives/sticky.js"></script>
+<script src="js/controllers/bootstrap.js"></script>&lt;!&ndash;filestyle&ndash;&gt;
+<script src="js/controllers/portlet.js"></script>
+<script src="js/filters/filestyle.js"></script>
+<script src="js/filters/filestyle.directive.js"></script>
+&lt;!&ndash; img zoom &ndash;&gt;
+<script src="js/zoom/jquery.min.js"></script>
+<script src="js/zoom/jquery.poptrox.min.js"></script>
+<script src="js/zoom/skel.min.js"></script>
+<script src="js/zoom/util.js"></script>-->
+<!--[if lte IE 8]><!--<script src="js/zoom/ie/respond.min.js"></script>--><![endif]-->
+<!--<script src="js/zoom/main.js"></script>-->
+
+</body>
+<script src="../../libs/require.js/2.1.21/require.js" data-main="app.main"></script>
+</html>

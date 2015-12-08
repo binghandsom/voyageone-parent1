@@ -592,6 +592,7 @@
 		 where t.order_channel_id = t1.order_channel_id
 			and t.cart_id = t1.cart_id
 			and t.tid = t1.tid
+			and t.sent_flag = 0
 	</update>
 	
 	<!-- 将oms_new_orders_import_history表的发送标志置位（2：批处理失败，转单条处理） -->
@@ -1746,12 +1747,13 @@
 						oms_bt_orders
 					WHERE
 						order_date_time > '2015-11-11 15:59:59'
+						AND order_status NOT IN ('Returned', 'Canceled')
 					AND
-						origin_source_order_id
+						source_order_id
 						IN
 							(
 								SELECT
-									origin_source_order_id
+									source_order_id
 								FROM
 									oms_bt_orders
 								WHERE
@@ -1759,7 +1761,6 @@
 									cart_id IN ('20', '21', '23')
 								AND order_date_time >= '2015-11-10 16:00:00'
 								AND '2015-11-11 15:59:59' >= order_date_time
-								AND order_status IN ('Returned', 'Canceled')
 							)
 		) orderTop
 		GROUP BY
@@ -2667,6 +2668,7 @@
 		where
 			o.order_channel_id = #{orderChannelId}
 			and ox.ext_flg1 = 0
+			and o.order_status = 'Shipped'
 	</select>
 
 	<!-- 获得向BCBG 推送DailySales订单信息 (Returned 订单)-->

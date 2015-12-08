@@ -19,6 +19,9 @@ public class GetInventoryParamBean {
     XMLGregorianCalendar dateTimeEnd;
     int nPageSize;
     int nPageIndex;
+    String dateTimeSince;
+    int updateCount;
+    String storeArea;
 
     public String getPostAction() {
         return postAction;
@@ -114,5 +117,29 @@ public class GetInventoryParamBean {
 
     public void setnPageIndex(int nPageIndex) {
         this.nPageIndex = nPageIndex;
+    }
+
+    public String getDateTimeSince() {
+        return dateTimeSince;
+    }
+
+    public void setDateTimeSince(String dateTimeSince) {
+        this.dateTimeSince = dateTimeSince;
+    }
+
+    public int getUpdateCount() {
+        return updateCount;
+    }
+
+    public void setUpdateCount(int updateCount) {
+        this.updateCount = updateCount;
+    }
+
+    public String getStoreArea() {
+        return storeArea;
+    }
+
+    public void setStoreArea(String storeArea) {
+        this.storeArea = storeArea;
     }
 }

@@ -246,6 +246,7 @@
             #{task_name}
         FROM tt_reservation reservation
         WHERE reservation.syn_ship_no = #{syn_ship_no}
+        and reservation.status = #{status}
         AND not exists (select 1
                             from tt_tracking_info trackingInfo
                             where trackingInfo.syn_ship_no = #{syn_ship_no}

@@ -1,0 +1,19 @@
+{
+  "/": {
+    "hash": "/",
+    "templateUrl": "home/home.html",
+    "controllerUrl": "views/cms/home/home.ctl"
+  },
+  "category": {
+    "category": {
+      "hash": "/category/:cid",
+      "templateUrl": "category/category.tpl.html",
+      "controllerUrl": "views/cms/category/category.ctl"
+    },
+    "product": {
+      "hash": "/product/:pid",
+      "templateUrl": "category/product.tpl.html",
+      "controllerUrl": "views/cms/category/product.ctl"
+    }
+  }
+}

@@ -76,8 +76,8 @@ public class PostBCBGOrderService {
 	private final String oms_upload_demands_file_path = "oms_upload_demands_file_path";
 
 	// BCBG渠道ID
-//	private String orderChannelID = "012";
-	private String orderChannelID = "001";
+	private String orderChannelID = "012";
+//	private String orderChannelID = "001";
 
 	// 正常订单推送（Shipped）
 //	private String postBCBGDailySalesFileName = "SALES_%s_%s.dat"; //"SALES_YYYYMMDD_HHMMSS.dat";
@@ -1931,7 +1931,6 @@ public class PostBCBGOrderService {
 		translateContent.add(orderInfo.getCity());
 		translateContent.add(orderInfo.getState());
 
-
 //		List<String> afterTranslateContent = translate(translateContent, 1);
 		List<String> afterTranslateContent = BaiduTranslateUtil.translate(translateContent);
 
@@ -2028,7 +2027,7 @@ public class PostBCBGOrderService {
 		return resultStrList;
 	}
 
-	public static void main(String[] args) throws Exception {
+//	public static void main(String[] args) throws Exception {
 ////		String temp = "中国人1";
 ////
 ////		System.out.println(temp.length());
@@ -2061,13 +2060,5 @@ public class PostBCBGOrderService {
 //		String time = DateTimeUtil.format(localTimeForDate, DateTimeUtil.DATE_TIME_FORMAT_4);
 //
 //		System.out.println(String.format("DailySales_VO_BMX_%s_%s.dat", date, time));
-
-//		String updateSqlSub = "select '%s' order_number, '%s' item_number,'%s' tracking_number, '%s' sales_check_number";
-//		String temp = String.format(updateSqlSub, "11","22","33","44");
-//		System.out.println(temp);
-
-		OrderLookupItemSub temp = new OrderLookupItemSub();
-		System.out.println(temp.getTrackingNumber());
-		System.out.println(temp.isAllocated());
-	}
+//	}
 }

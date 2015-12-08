@@ -504,6 +504,7 @@
                     voyageone_cms.cms_zz_worktable_bcbg_superfeed_full superfeed
                 WHERE
                     superfeed.MATNR = details.client_sku
+                order by superfeed.id desc LIMIT 1
             ),0) AS sales_price,
             IFNULL ((
                 SELECT
@@ -512,6 +513,7 @@
                     voyageone_cms.cms_zz_worktable_bcbg_superfeed_full superfeed
                 WHERE
                     superfeed.MATNR = details.client_sku
+                order by superfeed.id desc LIMIT 1
             ),0) AS msrp	,
             (
                 SELECT
@@ -519,7 +521,7 @@
                 FROM
                     wms_bt_client_package_item item
                 WHERE
-                    item.article_number = details.client_sku
+                    item.article_number = details.client_sku  LIMIT 1
             ) AS brand
         FROM
             `wms_bt_inventory_center` inventory
@@ -551,6 +553,7 @@
                         voyageone_cms.cms_zz_worktable_bcbg_superfeed_full superfeed
                     WHERE
                         superfeed.MATNR = details.client_sku
+                    order by superfeed.id desc LIMIT 1
                 ),
                 0
             ) AS sales_price
@@ -568,4 +571,15 @@
             details.client_sku
     </select>
 
+    <!-- 取出code级别的库存列表 -->
+    <select id="wms_selectInventoryCode" parameterType="String" resultType="com.voyageone.batch.wms.modelbean.InventoryForCmsBean">
+        select aa.order_channel_id channelId,
+        aa.code,
+        sum(aa.qty_orgin) qty,
+        #{modified} modifier,
+        #{modified} creater
+        from wms_bt_inventory_center_logic aa
+        where aa.order_channel_id = #{order_channel_id}
+        group by aa.order_channel_id,aa.`code`;
+    </select>
 </mapper>

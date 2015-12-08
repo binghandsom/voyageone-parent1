@@ -13,6 +13,8 @@ public class SetPriceBean {
     private String shipping_price;
     // 运费
     private String shipping_fee;
+    private String discount;
+    private String sum_unit;
 
     // 订单数量
     private String quantity_ordered;
@@ -98,6 +100,22 @@ public class SetPriceBean {
 
     public void setDuty_rate(String duty_rate) {
         this.duty_rate = duty_rate;
+    }
+
+    public String getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(String discount) {
+        this.discount = discount;
+    }
+
+    public String getSum_unit() {
+        return sum_unit;
+    }
+
+    public void setSum_unit(String sum_unit) {
+        this.sum_unit = sum_unit;
     }
 }
 
