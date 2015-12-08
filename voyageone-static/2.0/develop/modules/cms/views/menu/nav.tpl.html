@@ -217,7 +217,7 @@
         </a>
         <ul class="nav nav-sub dk">
             <li class="nav-sub-header">
-                <a href="#/promotion/list">
+                <a>
                     <span>Promotion管理</span>
                 </a>
             </li>
@@ -238,13 +238,25 @@
 
     <!-- 高级检索 -->
     <li>
-        <a class="auto" href="#/search/index">
-            <i class="glyphicon glyphicon-search icon text-vo"></i>
-            <span translate="TXT_SEARCH_ADVANCE"></span>
+        <a class="auto">
+        <span class="pull-right text-muted">
+        <i class="fa fa-fw fa-angle-right text"></i>
+        <i class="fa fa-fw fa-angle-down text-active"></i>
+        </span>
+            <i class="glyphicon glyphicon-th icon text-vo"></i>
+            <span class="" translate="TXT_SEARCH"></span>
         </a>
         <ul class="nav nav-sub dk">
             <li class="nav-sub-header">
-                <a href="#/search/index"><span translate="TXT_SEARCH_ADVANCE"></span></a>
+                <a>
+                    <span translate="TXT_SEARCH"></span>
+                </a>
+            </li>
+            <li ui-sref-active="active">
+                <a href="#/search/index">
+                    <i class="glyphicon glyphicon-minus icon text-vo"></i>
+                    <span translate="TXT_SEARCH_ADVANCE"></span>
+                </a>
             </li>
         </ul>
     </li>
