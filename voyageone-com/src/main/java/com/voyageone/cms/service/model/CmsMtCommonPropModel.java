@@ -18,7 +18,7 @@ public class CmsMtCommonPropModel extends BaseMongoModel {
 
     private String actionType;
 
-    private String propRefId;
+    private String platformPropRefId;
 
     private String rules;
 
@@ -76,12 +76,12 @@ public class CmsMtCommonPropModel extends BaseMongoModel {
         this.actionType = actionType;
     }
 
-    public String getPropRefId() {
-        return propRefId;
+    public String getPlatformPropRefId() {
+        return platformPropRefId;
     }
 
-    public void setPropRefId(String propRefId) {
-        this.propRefId = propRefId;
+    public void setPlatformPropRefId(String platformPropRefId) {
+        this.platformPropRefId = platformPropRefId;
     }
 
     public String getRules() {

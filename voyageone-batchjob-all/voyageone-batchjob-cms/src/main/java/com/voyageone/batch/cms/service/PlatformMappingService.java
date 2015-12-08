@@ -3,9 +3,11 @@ package com.voyageone.batch.cms.service;
 import com.jayway.jsonpath.JsonPath;
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
+import com.voyageone.cms.service.dao.CmsMtCommonPropDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategoryDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformMappingDao;
+import com.voyageone.cms.service.model.CmsMtCommonPropModel;
 import com.voyageone.cms.service.model.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.cms.service.model.CmsMtPlatformCategoryTreeModel;
 import com.voyageone.cms.service.model.CmsMtPlatformMappingModel;
@@ -24,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by james.li on 2015/12/7.
@@ -41,6 +44,11 @@ public class PlatformMappingService extends BaseTaskService {
     @Autowired
     CmsMtPlatformMappingDao cmsMtPlatformMappingDao;
 
+    @Autowired
+    CmsMtCommonPropDao cmsMtCommonPropDao;
+
+    private List<CmsMtCommonPropModel> commonProp;
+
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
@@ -53,6 +61,8 @@ public class PlatformMappingService extends BaseTaskService {
 
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
+
+        commonProp = cmsMtCommonPropDao.selectCommonProp().stream().filter(cmsMtCommonPropModel -> !StringUtil.isEmpty(cmsMtCommonPropModel.getMapping())).collect(Collectors.toList());
 
         String channelId = "001";
         int cartId = 23;
