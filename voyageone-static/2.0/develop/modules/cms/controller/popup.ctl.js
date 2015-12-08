@@ -16,8 +16,14 @@ define([
                 "controllerUrl": "modules/views/cms/pop/new/promotion.ctl"
             },
             "other": {
-                "templateUrl": "views/pop/other/index.tpl.html",
-                "controllerUrl": "modules/views/cms/pop/other/index.ctl"
+                "platform": {
+                    "templateUrl": "views/pop/other/platform.tpl.html",
+                    "controllerUrl": "modules/views/cms/pop/other/platform.ctl"
+                },
+                "progress": {
+                    "templateUrl": "views/pop/other/progress.tpl.html",
+                    "controllerUrl": "modules/views/cms/pop/other/progress.ctl"
+                }
             },
             "tag":{
                 "promotion": {
@@ -165,11 +171,24 @@ define([
                 }
             });
         }
-        $scope.openotherplatform = openotherplatform;
-        function openotherplatform(viewSize) {
+        $scope.openOtherPlatform = openOtherPlatform;
+        function openOtherPlatform(viewSize) {
             $modal.open({
-                templateUrl: popActions.other.templateUrl,
-                controllerUrl: popActions.other.controllerUrl,
+                templateUrl: popActions.other.platform.templateUrl,
+                controllerUrl: popActions.other.platform.controllerUrl,
+                size: viewSize,
+                resolve: {
+                    items: function () {
+                        //return data;
+                    }
+                }
+            });
+        }
+        $scope.openOtherProgress = openOtherProgress;
+        function openOtherProgress(viewSize) {
+            $modal.open({
+                templateUrl: popActions.other.progress.templateUrl,
+                controllerUrl: popActions.other.progress.controllerUrl,
                 size: viewSize,
                 resolve: {
                     items: function () {

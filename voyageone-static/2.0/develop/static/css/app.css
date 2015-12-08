@@ -104,7 +104,7 @@ a:hover .caret-white {
 }
 .progress-sm .progress-bar {
   font-size: 10px;
-  line-height: 1em;
+  line-height: 0.1em;
 }
 .progress,
 .progress-bar {
@@ -131,6 +131,12 @@ a:hover .caret-white {
 }
 .progress-bar-white {
   background-color: #fff;
+}
+.ims_text_pop{
+  text-align: center;
+}
+.ims_text_pop span{
+  color:#e67e22
 }
 .accordion-group,
 .accordion-inner {
@@ -5493,6 +5499,7 @@ a.text-black:hover {
 .mfb-x{width:8%}
 .mfb-xx{width:12%}
 .mfb-xxs{width:20%}
+.mfb-xxxs{width:30%}
 .mfb-xxxs{width:30%}
 .mfb-xxxsm{width:50%}
 
