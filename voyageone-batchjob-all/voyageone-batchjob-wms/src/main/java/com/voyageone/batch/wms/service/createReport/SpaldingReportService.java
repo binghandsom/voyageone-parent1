@@ -261,6 +261,7 @@ public class SpaldingReportService extends CreateReportBaseService {
             //============================================================================================
             //============================================================================================
             //timeRegion.set(0,"2015-06-23 00:00:00"); timeRegion.set(1,"2015-06-23 23:59:59");
+            //timeRegion.set(0,"2015-07-01 00:00:00"); timeRegion.set(1,"2015-07-01 23:59:59");
             ReportDatas  = createReportDao.getVirtualCreateReportData(cart_id,order_channel_id, CodeConstants.TransferStatus.ClOSE,CodeConstants.TransferType.OUT,
                     CodeConstants.TransferOrigin.RESERVED,timeRegion.get(0),timeRegion.get(1),taskName);
         //取得退货订单（退回TM仓库）的日报基本数据记录
@@ -268,6 +269,7 @@ public class SpaldingReportService extends CreateReportBaseService {
             //============================================================================================
             //============================================================================================
             //timeRegion.set(0,"2015-06-23 00:00:00"); timeRegion.set(1,"2015-06-23 23:59:59");
+            //timeRegion.set(0,"2015-07-01 00:00:00"); timeRegion.set(1,"2015-07-01 23:59:59");
             ReportDatas  = createReportDao.getCreateReportDataByTM(cart_id, order_channel_id, CodeConstants.TransferStatus.ClOSE, CodeConstants.TransferType.IN,
                     CodeConstants.TransferOrigin.RETURNED, timeRegion.get(0), timeRegion.get(1), taskName);
         //取得退货订单（退回福建仓库）的日报基本数据记录
@@ -275,6 +277,7 @@ public class SpaldingReportService extends CreateReportBaseService {
             //============================================================================================
             //============================================================================================
             //timeRegion.set(0,"2015-06-23 00:00:00"); timeRegion.set(1,"2015-06-23 23:59:59");
+            //timeRegion.set(0,"2015-07-01 00:00:00"); timeRegion.set(1,"2015-07-01 23:59:59");
             //timeRegion.set(0,"2015-09-07 16:00:00"); timeRegion.set(1,"2015-09-14 15:59:59");
             ReportDatas  = createReportDao.getCreateReportData(cart_id, order_channel_id, CodeConstants.TransferStatus.ClOSE, CodeConstants.TransferType.WITHDRAWAL,
                     CodeConstants.TransferOrigin.WITHDRAWAL, timeRegion.get(0), timeRegion.get(1), taskName);
@@ -284,6 +287,7 @@ public class SpaldingReportService extends CreateReportBaseService {
             //============================================================================================
             //timeRegion.set(0,"2015-09-08 00:00:00"); timeRegion.set(1,"2015-09-08 23:59:59");
             //timeRegion.set(0,"2015-06-23 00:00:00"); timeRegion.set(1,"2015-06-23 23:59:59");
+            //timeRegion.set(0,"2015-07-01 00:00:00"); timeRegion.set(1,"2015-07-01 23:59:59");
             ReportDatas  = createReportDao.getCreateReportSpecialData(cart_id, order_channel_id, timeRegion.get(0), timeRegion.get(1), taskName);
         }
 
@@ -503,13 +507,14 @@ public class SpaldingReportService extends CreateReportBaseService {
                 reportBean = changeSpecialSku(reportBean,fileFlg,order_channel_id);
             }
 
+
             //Order_number不一样
             if (!orderNumBasic.equals(reportBean.getOrder_number())){
                 //spaldingPriceDatas = new ArrayList<SpaldingPriceBean>();
                 //根据order_number，以SKU汇总取得价格
                 //spaldingPriceDatas  = setPrice(reportBean.getOrder_number(),order_channel_id);
                 spaldingPriceDatas = new ArrayList<SetPriceBean>();
-                spaldingPriceDatas  = SetPriceUtils.setPrice(reportBean.getOrder_number(), order_channel_id, cart_id, fileFlg);
+                spaldingPriceDatas = SetPriceUtils.setPriceForSP(reportBean.getOrder_number(), order_channel_id, cart_id, fileFlg);
                 orderNumBasic = reportBean.getOrder_number();
             }
             //reportBean.setSize("22*24");
@@ -564,36 +569,37 @@ public class SpaldingReportService extends CreateReportBaseService {
             //for (SpaldingPriceBean spaldingPriceData : spaldingPriceDatas){
             priceFlg = false;
             for (SetPriceBean spaldingPriceData : spaldingPriceDatas){
-                if (spaldingPriceData.getSku().equals(reportBean.getTransfer_sku())){
-                    // 	SalesPrices(按sku合计金额  /  个数)
-                    double salesPrice = Double.valueOf(spaldingPriceData.getPrice()) / Double.valueOf(reportBean.getSales_unit());
-                    BigDecimal bigDecimal =  new BigDecimal(salesPrice).setScale(3, BigDecimal.ROUND_HALF_UP);
-                    // 	SalesPrices
-                    csvWriter.write(bigDecimal.toString());
-                    wmsBtClientReport.setSales_price(bigDecimal.toString());
+                if (spaldingPriceData.getSku().toUpperCase().equals(reportBean.getTransfer_sku().toUpperCase())){
 
-                    //csvWriter.write(spaldingPriceData.getPrice());
-                    //wmsBtClientReport.setSales_price(spaldingPriceData.getPrice());
+                    // 	SalesPrices(按sku合计金额  /  个数)
+                    //double salesPrice = Double.valueOf(spaldingPriceData.getPrice()) / Double.valueOf(reportBean.getSales_unit());
+                    //BigDecimal bigDecimal =  new BigDecimal(salesPrice).setScale(3, BigDecimal.ROUND_HALF_UP);
+                    // 	SalesPrices
+                    //csvWriter.write(bigDecimal.toString());
+                    //wmsBtClientReport.setSales_price(bigDecimal.toString());
+
+                    csvWriter.write(spaldingPriceData.getPrice());
+                    wmsBtClientReport.setSales_price(spaldingPriceData.getPrice());
 
                     //Sales Unit
                     csvWriter.write(strUnit);
                     wmsBtClientReport.setSales_unit(strUnit);
                     // 	LineAmount(金额  * 个数)
-                    //double lineAmountPrice = Double.valueOf(spaldingPriceData.getPrice()) * Double.valueOf(reportBean.getSales_unit());
-                    //BigDecimal bigDecimal =  new BigDecimal(lineAmountPrice).setScale(2, BigDecimal.ROUND_HALF_UP);
+                    double lineAmountPrice = Double.valueOf(spaldingPriceData.getPrice()) * Double.valueOf(reportBean.getSales_unit());
+                    BigDecimal bigDecimal =  new BigDecimal(lineAmountPrice).setScale(2, BigDecimal.ROUND_HALF_UP);
 
-                    //csvWriter.write(bigDecimal.toString());
-                   // wmsBtClientReport.setLine_amount(bigDecimal.toString());
+                    csvWriter.write(bigDecimal.toString());
+                    wmsBtClientReport.setLine_amount(bigDecimal.toString());
 
-                    csvWriter.write(spaldingPriceData.getPrice());
-                    wmsBtClientReport.setLine_amount(spaldingPriceData.getPrice());
+                    //csvWriter.write(spaldingPriceData.getPrice());
+                    //wmsBtClientReport.setLine_amount(spaldingPriceData.getPrice());
                     // Transcost
-                    spaldingPriceData.setShipping_price("0.00");
-                    //csvWriter.write(spaldingPriceData.getShipping_price());
+                    //spaldingPriceData.setShipping_price("0.00");
+                    csvWriter.write(spaldingPriceData.getShipping_price());
                     wmsBtClientReport.setTranscost(spaldingPriceData.getShipping_price());
                     // Ediscount"
-                    spaldingPriceData.setDiscount("0.00");
-                    //csvWriter.write(StringUtils.null2Space(spaldingPriceData.getDiscount()));
+                    //spaldingPriceData.setDiscount("0.00");
+                    csvWriter.write(StringUtils.null2Space(spaldingPriceData.getDiscount()));
                     wmsBtClientReport.setEdiscount(StringUtils.null2Space(spaldingPriceData.getDiscount()));
                     priceFlg = true;
                     break;
@@ -610,10 +616,10 @@ public class SpaldingReportService extends CreateReportBaseService {
                 csvWriter.write("");
                 wmsBtClientReport.setLine_amount("");
                 // Transcost
-                //csvWriter.write("");
+                csvWriter.write("");
                 wmsBtClientReport.setTranscost("");
                 // Ediscount"
-                //csvWriter.write("");
+                csvWriter.write("");
                 wmsBtClientReport.setEdiscount("");
             }
             wmsBtClientReport.setOrder_number(reportBean.getOrder_number());
