@@ -5488,6 +5488,14 @@ a.text-black:hover {
 .m-b-n-xxl {
   margin-bottom: -50px;
 }
+
+.mfb-xt{width:5%}
+.mfb-x{width:8%}
+.mfb-xx{width:12%}
+.mfb-xxs{width:20%}
+.mfb-xxxs{width:30%}
+.mfb-xxxsm{width:50%}
+
 .avatar {
   position: relative;
   display: block;
