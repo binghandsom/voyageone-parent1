@@ -1,10 +1,7 @@
 package com.voyageone.cms.service.dao.mongodb;
 
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.WriteResult;
+import com.mongodb.*;
 import com.voyageone.cms.service.CmsProductService;
 import com.voyageone.cms.service.model.*;
 import net.minidev.json.JSONObject;
@@ -73,9 +70,9 @@ public class CmsProductDaoTest {
         DBCollection coll = cmsBtProductDao.getDBCollection("001");
 
         BasicDBObject o1 = new BasicDBObject();
-        o1.append("$setOnInsert", new BasicDBObject("name", "Innova1"));
+        o1.append("$set", new BasicDBObject("name", "Innova1"));
 
-        BasicDBObject query = new BasicDBObject().append("catId", 982);
+        BasicDBObject query = new BasicDBObject().append("catId", "959");
 
         WriteResult c1 = coll.update(query, o1, true, false);
         DBCursor carcursor = coll.find();
@@ -86,6 +83,128 @@ public class CmsProductDaoTest {
         } finally {
             carcursor.close();
         }
+    }
+
+    @Test
+    public void testUpsertBulkUnorderedDocsForUpdate() throws UnknownHostException {
+        DBCollection coll = cmsBtProductDao.getDBCollection("001");
+        // intialize and create a unordered bulk
+        BulkWriteOperation b1 = coll.initializeUnorderedBulkOperation();
+
+        BasicDBObject o1 = new BasicDBObject();
+
+        o1.append("$setOnInsert", new BasicDBObject("name", "innova").append("speed", 54));
+        o1.append("$set", new BasicDBObject("cno", "H456"));
+
+        BasicDBObject query = new BasicDBObject().append("catId", "959");
+
+        b1.find(query).upsert().update(o1);
+
+        b1.execute();
+
+        DBCursor c1 = coll.find();
+
+        System.out.println("---------------------------------");
+
+        try {
+            while (c1.hasNext()) {
+                System.out.println(c1.next());
+            }
+        } finally {
+            c1.close();
+        }
+
+    }
+
+    @Test
+    public void upsertBulkUnordereDocsForUpdateOne() throws UnknownHostException {
+        DBCollection coll = cmsBtProductDao.getDBCollection("001");
+
+        // intialize and create a unordered bulk
+        BulkWriteOperation b1 = coll.initializeUnorderedBulkOperation();
+
+        BasicDBObject o1 = new BasicDBObject();
+
+        o1.append(
+                "$set",new BasicDBObject("name", "Xylo").append("speed", 67).append("cno", "H654"));
+
+        BasicDBObject query = new BasicDBObject().append("catId", "959");
+        b1.find(query).upsert().updateOne(o1);
+
+        b1.execute();
+
+        DBCursor c1 = coll.find();
+
+        System.out.println("---------------------------------");
+
+        try {
+            while (c1.hasNext()) {
+                System.out.println(c1.next());
+            }
+        } finally {
+            c1.close();
+        }
+
+    }
+
+    @Test
+    public void upsertBulkForUpdateOneWithOperators() throws UnknownHostException {
+        DBCollection coll = cmsBtProductDao.getDBCollection("001");
+        // intialize and create a unordered bulk
+        BulkWriteOperation b1 = coll.initializeOrderedBulkOperation();
+
+        BasicDBObject o1 = new BasicDBObject();
+
+        // insert if document not found and set the fields with updated value
+        o1.append("$setOnInsert", new BasicDBObject("cno", "H123"));
+        o1.append("$set", new BasicDBObject("speed", "63"));
+
+        BasicDBObject query = new BasicDBObject().append("catId", "959");
+        b1.find(query).upsert().updateOne(o1);
+
+        b1.execute();
+
+        DBCursor c1 = coll.find();
+
+        System.out.println("---------------------------------");
+
+        try {
+            while (c1.hasNext()) {
+                System.out.println(c1.next());
+            }
+        } finally {
+            c1.close();
+        }
+    }
+
+    @Test
+    public void upsertBulkUnorderedDocsForReplaceOne()
+            throws UnknownHostException {
+        DBCollection coll = cmsBtProductDao.getDBCollection("001");
+
+        // intialize and create a unordered bulk
+        BulkWriteOperation b1 = coll.initializeOrderedBulkOperation();
+
+        // insert query
+        BasicDBObject o1 = new BasicDBObject("name", "Qualis").append("speed", null).append("color", "Palebrown");
+
+        BasicDBObject query = new BasicDBObject().append("catId", "959");
+        b1.find(query).upsert().replaceOne(o1);
+
+        b1.execute();
+
+        DBCursor c1 = coll.find();
+
+        System.out.println("---------------------------------");
+
+        try {
+            while (c1.hasNext()) {
+                System.out.println(c1.next());
+            }
+        } finally {
+            c1.close();
+        }
+
     }
 
 }
