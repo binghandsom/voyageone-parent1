@@ -40,7 +40,7 @@ body {
 	list-style: none;
 	width: 100%;
 	font-weight: 500;
-	border: 1px solid #c8c2c2;
+	border: 1px solid #EEEDED;
 	border-radius: 4px;
 	background: #fff;
 	margin: 1em 0;
@@ -74,21 +74,21 @@ body {
 	background: url(img/lock.png) no-repeat 8px 2px;
 }
 
-.login-submit input[type="button"] {
+.login-submit button {
 	font-size: 20px;
 	font-weight: 400;
-	color: #fff;
+	color: #F5AD00;
 	cursor: pointer;
 	outline: none;
 	padding: 13px 20px;
 	margin: 0;
 	width: 100%;
 	border: none;
+	background: #FFFFFF;
 	transition: 0.1s all;
 	-webkit-transition: 0.1s all;
 	-moz-transition: 0.1s all;
 	-o-transition: 0.1s all;
-	background: #ffa300;
 	border-bottom-right-radius: 0.44em;
 	-webkit-border-bottom-right-radius: 0.4em;
 	-o-border-bottom-right-radius: 0.4em;
@@ -99,7 +99,8 @@ body {
 	-moz-border-bottom-left-radius: 0.4em;
 }
 
-.login-submit input[type="button"]:hover {
+.login-submit button:hover {
+	color: #FFFFFF;
 	background: #ed9005;
 }
 
