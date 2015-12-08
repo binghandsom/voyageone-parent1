@@ -1,23 +1,11 @@
 <div class="wrapper-md">
 	<div style="width:82%">
 		<tabset class="tab-container vo_nav-tabs">
-			<div class="form-inline pull-right">
-				<script type="text/ng-template" id="popup_promotion_history.html">
-					<div ng-include="'tpl/popup_promotion_history.html'"></div>
-				</script>
-				<script type="text/ng-template" id="popup_price_history.html">
-					<div ng-include="'tpl/popup_price_history.html'"></div>
-				</script>
-				<script type="text/ng-template" id="popup_platformsuploadcolumn.html">
-					<div ng-include="'tpl/popup_platformsuploadcolumn.html'"></div>
-				</script>
-				<script type="text/ng-template" id="popup_storecategorycolumn.html">
-					<div ng-include="'tpl/popup_storecategorycolumn.html'"></div>
-				</script>
-				<button type="button" class="btn btn-default" ng-click="openpopup_platformsuploadcolumn('md')"><i class="fa fa-cube"></i> 其它平台(待定)</button>
-				<button class="btn btn-default" ng-click="openpopup_storecategorycolumn('lg')"><i class="fa fa-arrow-circle-right"></i> 选择店铺内类目</button>
-				<button type="button" class="btn btn-default" ng-click="openpopup_promotion_history('lg')"><i class="fa fa-rotate-left"></i> 历史Promotion</button>
-				<button type="button" class="btn btn-default" ng-click="openpopup_price_history('lg')"><i class="fa fa-jpy"></i> Price History</button>
+			<div class="form-inline pull-right" ng-controller="popupCtrl">
+				<!--<button type="button" class="btn btn-default" ng-click="openpopup_platformsuploadcolumn('md')"><i class="fa fa-cube"></i> 其它平台(待定)</button>-->
+				<button class="btn btn-default" ng-click="openshop_category('lg')"><i class="fa fa-arrow-circle-right"></i> 选择店铺内类目</button>
+				<button type="button" class="btn btn-default" ng-click="openhistorypromotion('lg')"><i class="fa fa-rotate-left"></i> 历史Promotion</button>
+				<button type="button" class="btn btn-default" ng-click="openpricepromotion('lg')"><i class="fa fa-jpy"></i> Price History</button>
 			</div>
 			<tab>
 				<tab-heading> Product详情</tab-heading>
@@ -120,11 +108,11 @@
 								<div class="form-group">
 									<label class="col-sm-3 control-label">MSRP</label>
 									<div class="col-sm-9 form-inline">
-										<div class="input-group">
+										<div class="input-group col-sm-4">
 											<input type="text" class="form-control"  placeholder="123" ng-model="g.c" ng-pattern="/^[0-9]+$/">
 											<span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
 										</div>
-										<div class="input-group">
+										<div class="input-group col-sm-4">
 											<input type="text" class="form-control" placeholder="123" ng-model="g.c" ng-pattern="/^[0-9]+$/">
 											<span class="input-group-addon"><i class="glyphicon glyphicon-yen"></i></span>
 										</div>
@@ -133,11 +121,11 @@
 								<div class="form-group">
 									<label class="col-sm-3 control-label">Current Price</label>
 									<div class="col-sm-9 form-inline">
-										<div class="input-group">
+										<div class="input-group col-sm-4">
 											<input type="text" class="form-control"  placeholder="123" ng-model="g.c" ng-pattern="/^[0-9]+$/">
 											<span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
 										</div>
-										<div class="input-group">
+										<div class="input-group col-sm-4">
 											<input type="text" class="form-control" placeholder="123" ng-model="g.c" ng-pattern="/^[0-9]+$/">
 											<span class="input-group-addon"><i class="glyphicon glyphicon-yen"></i></span>
 										</div>
@@ -146,11 +134,11 @@
 								<div class="form-group">
 									<label class="col-sm-3 control-label">Cost Price</label>
 									<div class="col-sm-9 form-inline">
-										<div class="input-group">
+										<div class="input-group col-sm-4">
 											<input type="text" class="form-control"  placeholder="123" ng-model="g.c" ng-pattern="/^[0-9]+$/">
 											<span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
 										</div>
-										<div class="input-group">
+										<div class="input-group col-sm-4">
 											<input type="text" class="form-control" placeholder="123" ng-model="g.c" ng-pattern="/^[0-9]+$/">
 											<span class="input-group-addon"><i class="glyphicon glyphicon-yen"></i></span>
 										</div>
@@ -650,17 +638,18 @@
 				<tab-heading> SKU List</tab-heading>
 				<div class="panel vo_panel tab_panel">
 					<div class="table-responsive">
-						<table class="table table-striped b-t b-light vo_table vo_models">
+						<table class="table table-hover b-t b-light vo_table vo_models">
 							<thead>
-							<tr><th style="width:20px;">Seq.</th>
-								<th>SKU</th>
-								<th>UPC</th>
-								<th>Size</th>
-								<th>Inventory</th>
-								<th>MSRP</th>
-								<th>Final Price</th>
-								<th>Publish Status</th>
-								<th>
+							<tr><th class="mfb-xt text-center">Seq.</th>
+								<th class="mfb-x">SKU</th>
+								<th class="mfb-xt">UPC</th>
+								<th class="mfb-xt text-center">Size</th>
+								<th class="mfb-xt text-center">Inventory</th>
+								<th class="mfb-x">MSRP</th>
+								<th class="mfb-x">price retail</th>
+								<th class="mfb-x">Final Price</th>
+								<th class="mfb-xxs">Publish Status</th>
+								<th class="mfb-xxxsm text-left">
 									<li class="dropdown" dropdown style="list-style: none">
 									<a href class="dropdown-toggle clear" dropdown-toggle>
 										<span class="">Live Status</span><b class="caret"></b>
@@ -668,7 +657,7 @@
 									<!-- dropdown -->
 									<ul class="dropdown-menu">
 										<li>
-											<label class="checkbox-inline c-checkbox m-b-xs"><input type="checkbox" value="option1"><span class="fa fa-check"></span> TM </label>
+											<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> TM </label>
 											<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> TG </label>
 											<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span> TD </label>
 											<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option4"><span class="fa fa-check"></span> JG </label>
@@ -682,163 +671,127 @@
 							</thead>
 							<tbody>
 							<tr>
-								<td>1</td>
+								<td class="text-center">1</td>
 								<td class="wtab-xs">LDB01-249</td>
-								<td></td>
-								<td>M</td>
-								<td>530</td>
+								<td>096303221174SDI163EARHD0964</td>
+								<td class="text-center">M</td>
+								<td class="text-center">530</td>
 								<td>
 									<button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button>
 								</td>
+								<td><input type="text" class="form-control"></td>
 								<td><input type="text" class="form-control"></td>
 								<td><div class="btn-group pull-left">
 									<span class="badge badge-empty m-b-xs">TM:在售</a></span>
 									<span class="badge badge-empty m-b-xs">TG:在库</a></span>
 									<span class="badge badge-empty m-b-xs">JD:未上新</a></span>
-								</div>
-									<div class="btn-group pull-left">
-										<span class="badge badge-empty m-b-xs">JD:未上新</a></span>
-										<span class="badge badge-empty m-b-xs">JG:在售</a></span>
-										<span class="badge badge-empty m-b-xs">JuM:在库</a></span>
-									</div></td>
+								</div></td>
 								<td class="text-left">
-									<label class="checkbox-inline c-checkbox m-b-xs"><input type="checkbox" value="option1"><span class="fa fa-check"></span> TM </label>
+									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> TM </label>
 									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> TG </label>
 									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span> TD </label>
 									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option4"><span class="fa fa-check"></span> JG </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span> JuM </label>
 								</td></tr>
 							<tr>
-								<td>2</td>
+								<td class="text-center">2</td>
 								<td class="wtab-xs">LDB01-249</td>
-								<td></td>
-								<td>S</td>
-								<td>650</td>
+								<td>096303221174SDI163EARHD0964</td>
+								<td class="text-center">S</td>
+								<td class="text-center">650</td>
 								<td>
 									<button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button>
-								</td><td><input type="text" class="form-control"></td>
+								</td><td><input type="text" class="form-control"></td><td><input type="text" class="form-control"></td>
 								<td><div class="btn-group pull-left">
 									<span class="badge badge-empty m-b-xs">TM:在售</a></span>
 									<span class="badge badge-empty m-b-xs">TG:在库</a></span>
 									<span class="badge badge-empty m-b-xs">JD:未上新</a></span>
-								</div>
-									<div class="btn-group pull-left">
-										<span class="badge badge-empty m-b-xs">JD:未上新</a></span>
-										<span class="badge badge-empty m-b-xs">JG:在售</a></span>
-										<span class="badge badge-empty m-b-xs">JuM:在库</a></span>
-									</div></td>
+								</div></td>
 								<td class="text-left">
-									<label class="checkbox-inline c-checkbox m-b-xs"><input type="checkbox" value="option1"><span class="fa fa-check"></span> TM </label>
+									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> TM </label>
 									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> TG </label>
 									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span> TD </label>
 									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option4"><span class="fa fa-check"></span> JG </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span> JuM </label>
 								</td></tr>
 							<tr>
-								<td>3</td>
+								<td class="text-center">3</td>
 								<td class="wtab-xs">LDB01-249</td>
-								<td></td>
-								<td>L</td>
-								<td>480</td>
+								<td>096303221174SDI163EARHD0964</td>
+								<td class="text-center">L</td>
+								<td class="text-center">480</td>
 								<td>
 									<button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button>
-								</td><td><input type="text" class="form-control"></td>
+								</td><td><input type="text" class="form-control"></td><td><input type="text" class="form-control"></td>
 								<td><div class="btn-group pull-left">
 									<span class="badge badge-empty m-b-xs">TM:在售</a></span>
 									<span class="badge badge-empty m-b-xs">TG:在库</a></span>
 									<span class="badge badge-empty m-b-xs">JD:未上新</a></span>
-								</div>
-									<div class="btn-group pull-left">
-										<span class="badge badge-empty m-b-xs">JD:未上新</a></span>
-										<span class="badge badge-empty m-b-xs">JG:在售</a></span>
-										<span class="badge badge-empty m-b-xs">JuM:在库</a></span>
-									</div></td>
+								</div></td>
 								<td class="text-left">
-									<label class="checkbox-inline c-checkbox m-b-xs"><input type="checkbox" value="option1"><span class="fa fa-check"></span> TM </label>
+									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> TM </label>
 									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> TG </label>
 									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span> TD </label>
 									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option4"><span class="fa fa-check"></span> JG </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span> JuM </label>
 								</td></tr>
 							<tr>
-								<td>4</td>
+								<td class="text-center">4</td>
 								<td class="wtab-xs">LDB01-249</td>
-								<td></td>
-								<td>S</td>
-								<td>5650</td>
+								<td>096303221174SDI163EARHD0964</td>
+								<td class="text-center">S</td>
+								<td class="text-center">5650</td>
 								<td>
 									<button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button>
-								</td><td><input type="text" class="form-control"></td>
+								</td><td><input type="text" class="form-control"></td><td><input type="text" class="form-control"></td>
 								<td><div class="btn-group pull-left">
 									<span class="badge badge-empty m-b-xs">TM:在售</a></span>
 									<span class="badge badge-empty m-b-xs">TG:在库</a></span>
 									<span class="badge badge-empty m-b-xs">JD:未上新</a></span>
-								</div>
-									<div class="btn-group pull-left">
-										<span class="badge badge-empty m-b-xs">JD:未上新</a></span>
-										<span class="badge badge-empty m-b-xs">JG:在售</a></span>
-										<span class="badge badge-empty m-b-xs">JuM:在库</a></span>
-									</div></td>
+								</div></td>
 								<td class="text-left">
-									<label class="checkbox-inline c-checkbox m-b-xs"><input type="checkbox" value="option1"><span class="fa fa-check"></span> TM </label>
+									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> TM </label>
 									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> TG </label>
 									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span> TD </label>
 									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option4"><span class="fa fa-check"></span> JG </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span> JuM </label>
 								</td></tr>
 							<tr>
-								<td>5</td>
+								<td class="text-center">5</td>
 								<td class="wtab-xs">LDB01-249</td>
-								<td></td>
-								<td>S</td>
-								<td>4650</td>
+								<td>096303221174SDI163EARHD0964</td>
+								<td class="text-center">S</td>
+								<td class="text-center">4650</td>
 								<td>
 									<button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button>
-								</td><td><input type="text" class="form-control"></td>
+								</td><td><input type="text" class="form-control"></td><td><input type="text" class="form-control"></td>
 								<td><div class="btn-group pull-left">
 									<span class="badge badge-empty m-b-xs">TM:在售</a></span>
 									<span class="badge badge-empty m-b-xs">TG:在库</a></span>
 									<span class="badge badge-empty m-b-xs">JD:未上新</a></span>
-								</div>
-									<div class="btn-group pull-left">
-										<span class="badge badge-empty m-b-xs">JD:未上新</a></span>
-										<span class="badge badge-empty m-b-xs">JG:在售</a></span>
-										<span class="badge badge-empty m-b-xs">JuM:在库</a></span>
-									</div></td>
+								</div></td>
 								<td class="text-left">
-									<label class="checkbox-inline c-checkbox m-b-xs"><input type="checkbox" value="option1"><span class="fa fa-check"></span> TM </label>
+									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> TM </label>
 									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> TG </label>
 									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span> TD </label>
 									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option4"><span class="fa fa-check"></span> JG </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span> JuM </label>
 								</td></tr>
 							<tr>
-								<td>6</td>
+								<td class="text-center">6</td>
 								<td class="wtab-xs">LDB01-249</td>
-								<td></td>
-								<td>XS</td>
-								<td>2650</td>
+								<td>096303221174SDI163EARHD0964</td>
+								<td class="text-center">XS</td>
+								<td class="text-center">2650</td>
 								<td>
 									<button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button>
-								</td><td><input type="text" class="form-control"></td>
+								</td><td><input type="text" class="form-control"></td><td><input type="text" class="form-control"></td>
 								<td><div class="btn-group pull-left">
 									<span class="badge badge-empty m-b-xs">TM:在售</a></span>
 									<span class="badge badge-empty m-b-xs">TG:在库</a></span>
 									<span class="badge badge-empty m-b-xs">JD:未上新</a></span>
-								</div>
-									<div class="btn-group pull-left">
-										<span class="badge badge-empty m-b-xs">JD:未上新</a></span>
-										<span class="badge badge-empty m-b-xs">JG:在售</a></span>
-										<span class="badge badge-empty m-b-xs">JuM:在库</a></span>
-									</div></td>
+								</div></td>
 								<td class="text-left">
-									<label class="checkbox-inline c-checkbox m-b-xs"><input type="checkbox" value="option1"><span class="fa fa-check"></span> TM </label>
+									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> TM </label>
 									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> TG </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span> TD </label>
 									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option4"><span class="fa fa-check"></span> JG </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span> JuM </label>
+									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option4"><span class="fa fa-check"></span> JG </label>
 								</td></tr>
-
 							</tbody>
 						</table>
 					</div><!-- .table-responsive -->
@@ -1036,18 +989,6 @@
 					</div><!-- .vo_prodGallery -->
 
 					<div class="wrapper-sm">
-						<!-- big kids sizes panel -->
-						<!--<div class="m-b-xs">
-							<textarea class="form-control inherited" rows="3" placeholder="系统异常" disabled></textarea>
-						</div>&lt;!&ndash; .panel &ndash;&gt;
-
-						<div class="m-b-xs">
-							<textarea class="form-control inherited" rows="3" placeholder="Note"></textarea>
-						</div>&lt;!&ndash; .panel &ndash;&gt;-->
-
-						<!--<div class="panel-body row no-gutter text-center b-t">
-
-						</div>&lt;!&ndash; .padder &ndash;&gt;-->
 						<div class="form-group">
 							<label for="input-id-13" class="col-sm-4 control-label m-t-xs">翻译完成？</label>
 							<div class="col-sm-8 text-left">

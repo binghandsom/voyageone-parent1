@@ -25,6 +25,7 @@ public abstract class Field {
     protected List<Rule> rules = new ArrayList();
     protected List<Property> properties = new ArrayList();
 
+    // input ["common":"0","1":"product","2":"item"]
     protected String inputLevel;
     public String getInputLevel() {
         return inputLevel;
@@ -32,6 +33,15 @@ public abstract class Field {
 
     public void setInputLevel(String inputLevel) {
         this.inputLevel = inputLevel;
+    }
+
+    protected String inputOrgId;
+    public String getInputOrgId() {
+        return inputOrgId;
+    }
+
+    public void setInputOrgId(String inputOrgId) {
+        this.inputOrgId = inputOrgId;
     }
 
     protected String dataSource;
@@ -56,6 +66,37 @@ public abstract class Field {
 
     public Field() {
     }
+
+    public Field getChildFieldById(String id) {
+        List<Field> fieldList = null;
+        switch(type) {
+            case COMPLEX:
+                fieldList = ((ComplexField)this).getFieldList();
+                break;
+            case MULTICOMPLEX:
+                fieldList = ((MultiComplexField)this).getFieldList();
+                break;
+        }
+
+        Field result = null;
+        if (fieldList != null) {
+            for (Field field : fieldList) {
+                if(field.getId().equals(id)) {
+                    return field;
+                } else {
+                    result = field.getChildFieldById(id);
+                    if (result != null) {
+                        return result;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+
+
 
     public Element toElement() throws TopSchemaException {
         Element fieldNode = XmlUtils.createRootElement("field");

@@ -6,7 +6,7 @@
 					<form class="form-horizontal">
 						<div class="form-group">
 							<label class="col-sm-3 control-label">Num IID</label>
-							<label class="col-sm-7 control-label text-left text-vo"><a href="https://www.tmall.com" target="_blank">123456789-123-111</a></label>
+							<label class="col-sm-7 control-label text-left text-vo"><a href="https://www.tmall.com" target="_blank" class="text-u-l">123456789-123-111</a></label>
 							<label class="col-sm-2 text-vo control-label text-left">未上新</label>
 						</div><!-- .form-group -->
 						<div class="form-group">
@@ -65,22 +65,10 @@
 			</div><!-- .container-fluid -->
 		</div>
 		<div>
-			<script type="text/ng-template" id="popup_alert_promotion.html">
-				<div ng-include="'tpl/popup_alert_promotion.html'"></div>
-			</script>
-			<script type="text/ng-template" id="newdrag.html">
-				<div ng-include="'tpl/newdrag.html'"></div>
-			</script>
-			<script type="text/ng-template" id="popup_maindatacategorycolumns.html">
-				<div ng-include="'tpl/popup_maindatacategorycolumns.html'"></div>
-			</script>
-			<script type="text/ng-template" id="popup_storecategorycolumn.html">
-				<div ng-include="'tpl/popup_storecategorycolumn.html'"></div>
-			</script>
 			<tabset class="tab-container vo_nav-tabs">
 				<!--right-btn-->
-				<div class="form-inline m-b-xs pull-right">
-					<button class="btn btn-default" ng-click="openpopup_storecategorycolumn('lg')"><i class="fa fa-arrow-circle-right"></i> 选择店铺内类目</button>
+				<div class="form-inline m-b-xs pull-right" ng-controller="popupCtrl">
+					<button class="btn btn-default" ng-click="openshop_category('lg')"><i class="fa fa-arrow-circle-right"></i> 选择店铺内类目</button>
 					<div class="btn-group" dropdown>
 						<button type="button" class="btn btn-default"><i class="fa fa-arrow-circle-right"></i> 选择Promotion</button>
 						<button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle>
@@ -88,14 +76,14 @@
 							<span class="sr-only">选择Promotion</span>
 						</button>
 						<ul class="dropdown-menu" role="menu">
-							<li><a href="#" ng-click="openpopup_alert_promotion('md')">双十一</a></li>
+							<li><a href ng-click="openNewpromotion('md')">双十一</a></li>
 							<li><a href>黑色星期五</a></li>
 							<li><a href>双十二</a></li>
 							<!-- .dropdown-submenu -->
 						</ul>
 					</div>
-					<button class="btn btn-default" ng-click="openpopup_group_attribute_change('md')"><i class="fa fa-pencil-square"></i> 批量变更属性</button>
-					<button class="btn btn-default" ng-click="openpopup_maindatacategorycolumns('lg')" ><i class="fa fa-th-list"></i> 类目切换</button>
+					<button class="btn btn-default" ng-click="openupdateProperties('md')"><i class="fa fa-pencil-square"></i> 批量变更属性</button>
+					<button class="btn btn-default" ng-click="openNewcategory('lg')"><i class="fa fa-th-list"></i> 类目切换</button>
 				</div><!-- /right-btn -->
 				<tab>
 					<tab-heading><i class="glyphicons glyphicons-more-items"></i> Product List</tab-heading>
@@ -171,7 +159,6 @@
 									</small>
 								</td>
 							</tr>
-
 							</tbody>
 							<thead>
 							<tr>

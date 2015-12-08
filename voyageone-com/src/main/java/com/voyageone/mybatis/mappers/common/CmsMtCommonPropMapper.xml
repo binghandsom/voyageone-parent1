@@ -8,7 +8,7 @@
         <result column="prop_type" property="propType" jdbcType="VARCHAR" />
         <result column="prop_level" property="propLevel" jdbcType="VARCHAR" />
         <result column="action_type" property="actionType" jdbcType="VARCHAR" />
-        <result column="prop_ref_id" property="propRefId" jdbcType="VARCHAR" />
+        <result column="platform_prop_ref_id" property="platformPropRefId" jdbcType="VARCHAR" />
         <result column="rules" property="rules" jdbcType="VARCHAR" />
         <result column="defult" property="defult" jdbcType="VARCHAR" />
         <result column="tips" property="tips" jdbcType="VARCHAR" />
@@ -26,7 +26,7 @@
             prop_type,
             prop_level,
             action_type,
-            prop_ref_id,
+            platform_prop_ref_id,
             rules,
             defult,
             tips,
@@ -36,8 +36,6 @@
             modified,
             modifier
         from voyageone_cms2.cms_mt_common_prop
-        where mapping != ''
-
     </select>
 
 
