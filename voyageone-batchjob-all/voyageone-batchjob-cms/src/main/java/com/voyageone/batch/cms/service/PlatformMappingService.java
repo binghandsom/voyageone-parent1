@@ -3,9 +3,11 @@ package com.voyageone.batch.cms.service;
 import com.jayway.jsonpath.JsonPath;
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
+import com.voyageone.cms.service.dao.CmsMtCommonPropDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategoryDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformMappingDao;
+import com.voyageone.cms.service.model.CmsMtCommonPropModel;
 import com.voyageone.cms.service.model.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.cms.service.model.CmsMtPlatformCategoryTreeModel;
 import com.voyageone.cms.service.model.CmsMtPlatformMappingModel;
@@ -20,13 +22,12 @@ import net.minidev.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by james.li on 2015/12/7.
+ * 主数据->平台的mapping做成
  */
 @Service
 public class PlatformMappingService extends BaseTaskService {
@@ -41,6 +42,12 @@ public class PlatformMappingService extends BaseTaskService {
     @Autowired
     CmsMtPlatformMappingDao cmsMtPlatformMappingDao;
 
+    @Autowired
+    CmsMtCommonPropDao cmsMtCommonPropDao;
+
+    // CmsMtCommonProp数据
+    private List<CmsMtCommonPropModel> commonProp;
+
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
@@ -53,6 +60,8 @@ public class PlatformMappingService extends BaseTaskService {
 
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
+
+        commonProp = cmsMtCommonPropDao.selectCommonProp().stream().filter(cmsMtCommonPropModel -> !StringUtil.isEmpty(cmsMtCommonPropModel.getMapping())).collect(Collectors.toList());
 
         String channelId = "001";
         int cartId = 23;
@@ -79,8 +88,6 @@ public class PlatformMappingService extends BaseTaskService {
     /**
      * 获取该channel下所有的叶子类目
      *
-     * @param channelId
-     * @return
      */
     private List<CmsMtPlatformCategoryTreeModel> getFinallyCategories(String channelId, int cartId, String categoryId) {
 
@@ -108,28 +115,26 @@ public class PlatformMappingService extends BaseTaskService {
 
     /**
      * Props生成
-     * @param cartId
-     * @param categoryId
-     * @return
+     *
      */
     private List<Map> makeProps(int cartId, String categoryId) {
 
         List<Map> props = new ArrayList<>();
         CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.getPlatformCatSchemaModel(categoryId, cartId);
         try {
-            if(cmsMtPlatformCategorySchemaModel != null) {
+            if (cmsMtPlatformCategorySchemaModel != null) {
                 //PropsItem 生成props
                 if (!StringUtil.isEmpty(cmsMtPlatformCategorySchemaModel.getPropsItem())) {
                     List<Field> fields = SchemaReader.readXmlForList(cmsMtPlatformCategorySchemaModel.getPropsItem());
                     for (Field field : fields) {
-                        props.add(makeProp(field));
+                        props.add(makeMapping(field));
                     }
                 }
                 //PropsProduct 生成props
                 if (!StringUtil.isEmpty(cmsMtPlatformCategorySchemaModel.getPropsProduct())) {
                     List<Field> fields = SchemaReader.readXmlForList(cmsMtPlatformCategorySchemaModel.getPropsItem());
                     for (Field field : fields) {
-                        props.add(makeProp(field));
+                        props.add(makeMapping(field));
                     }
                 }
             }
@@ -143,18 +148,17 @@ public class PlatformMappingService extends BaseTaskService {
 
     /**
      * 每个field生成一个具体的object
-     * @param field
-     * @return
+     *
      */
-    private Map makeProp(Field field) {
+    private Map<String,Object> makeMapping(Field field) {
 
-        Map mapping = new HashMap<>();
-        Map value = new HashMap<>();
-        Map extra = new HashMap<>();
-        Map subProps = new HashMap<>();
+        Map<String,Object> mapping = new HashMap<>();
+        Map<String,Object> value = new HashMap<>();
+        Map<String,Object> extra = new HashMap<>();
+        Map<String,Object> subProps = new HashMap<>();
         value = new HashMap<>();
         value.put("type", "MASTER");
-        value.put("value", field.getId());
+        value.put("value", SearchCommProp(field.getId()));
         switch (field.getType()) {
             case INPUT:
             case MULTIINPUT:
@@ -162,17 +166,9 @@ public class PlatformMappingService extends BaseTaskService {
                 mapping.put(field.getId(), value);
                 break;
             case SINGLECHECK:
-                extra = new HashMap<>();
-                for (Option option : ((SingleCheckField) field).getOptions()) {
-                    extra.put(option.getValue(), option.getValue());
-                }
-                ;
-                value.put("extra", extra);
-                mapping.put(field.getId(), value);
-                break;
             case MULTICHECK:
                 extra = new HashMap<>();
-                for (Option option : ((MultiCheckField) field).getOptions()) {
+                for (Option option : ((OptionsField) field).getOptions()) {
                     extra.put(option.getValue(), option.getValue());
                 }
                 ;
@@ -180,40 +176,37 @@ public class PlatformMappingService extends BaseTaskService {
                 mapping.put(field.getId(), value);
                 break;
             case COMPLEX:
-                subProps = new HashMap<>();
-                mapping.put("propId", field.getId());
-                for (Field fd : ((ComplexField) field).getFieldList()) {
-                    Map temp = makeProp(fd);
-                    if (fd instanceof ComplexField || fd instanceof MultiComplexField) {
-                        subProps.put(temp.get("propId").toString(), temp);
-                    } else {
-                        for (Object key : temp.keySet()) {
-                            subProps.put(key, temp.get(key));
-                        }
-                    }
-                }
-                ;
-                mapping.put("subProps", subProps);
-                break;
             case MULTICOMPLEX:
                 subProps = new HashMap<>();
                 mapping.put("propId", field.getId());
-                for (Field fd : ((MultiComplexField) field).getFieldList()) {
-                    Map temp = makeProp(fd);
+                List<Field> fields = new ArrayList<>();
+                if (field instanceof ComplexField) {
+                    fields =  ((ComplexField) field).getFieldList();
+                }else{
+                    fields =  ((MultiComplexField) field).getFieldList();
+                }
+                for (Field fd : fields) {
+                    Map<String,Object> temp = makeMapping(fd);
                     if (fd instanceof ComplexField || fd instanceof MultiComplexField) {
                         subProps.put(temp.get("propId").toString(), temp);
                     } else {
-                        for (Object key : temp.keySet()) {
+                        for (String key : temp.keySet()) {
                             subProps.put(key, temp.get(key));
                         }
                     }
                 }
-                ;
                 mapping.put("subProps", subProps);
                 break;
         }
-
-
         return mapping;
+    }
+
+    private String SearchCommProp(String fieldId) {
+        for (CmsMtCommonPropModel cmsMtCommonProp : commonProp) {
+            if (cmsMtCommonProp.getMapping().equalsIgnoreCase(fieldId)) {
+                return cmsMtCommonProp.getPropId();
+            }
+        }
+        return fieldId;
     }
 }

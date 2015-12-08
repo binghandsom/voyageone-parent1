@@ -1,4 +1,4 @@
-<div class="wrapper-md">
+<div class="wrapper-md" ng-controller="popupCtrl">
 	<div class="col-sm-12">
 		<div class="panel vo_panel tab_panel">
 			<div class="wrapper">
@@ -58,7 +58,7 @@
 						</form><!-- .form -->
 					</div>
 					<div class="row text-center">
-						<div class="col-sm-12" ng-controller="popupCtrl">
+						<div class="col-sm-12">
 							<div class="form-inline">
 								<button class="btn btn-vo" ng-click="ok()"><i class="fa fa-search"></i>  Search</button>
 								<button class="btn btn-success" ng-click="openpromotion('md')"><i class="fa fa-pencil"></i> 修改Promotion</button>
@@ -72,7 +72,7 @@
 			<tabset class="tab-container vo_nav-tabs">
 				<!--right-btn-->
 				<div class="form-inline m-b-xs pull-right">
-					<button class="btn btn-success"><i class="fa fa-mail-forward"></i> 批量导入</button>
+					<button class="btn btn-success" ng-click="openOtherProgress('lg')"><i class="fa fa-mail-forward"></i> 批量导入</button>
 					<button class="btn btn-success"><i class="fa fa-mail-reply"></i> 批量导出</button>
 					<button class="btn btn-success"><i class="fa fa-refresh"></i> 全部刷新</button>
 					<button class="btn btn-danger"><i class="fa fa-warning"></i> 全部停止</button>
