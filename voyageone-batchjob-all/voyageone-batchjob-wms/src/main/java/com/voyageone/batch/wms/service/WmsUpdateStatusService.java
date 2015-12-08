@@ -305,8 +305,6 @@ public class WmsUpdateStatusService extends BaseTaskService {
 
                                 orderResponse = searsService.UpdateStatus(updateStatusBean);
 
-//                                orderResponse.setMessage("Succeed");
-
                                 if (orderResponse != null && StringUtils.null2Space2(orderResponse.getMessage()).equals("Succeed")) {
                                     $info(channel.getFull_name() + "---------更新订单相关状态成功："+json);
                                     for (ReservationBean reservation : orderDetail.getLstReservation()) {
@@ -322,7 +320,7 @@ public class WmsUpdateStatusService extends BaseTaskService {
 
                                 } else {
                                     $info(channel.getFull_name() + "---------更新订单相关状态错误："+json + ",ErrorMessage：" + StringUtils.null2Space2(orderResponse.getMessage()));
-                                    logIssue(channel.getFull_name() + "更新订单相关状态错误：", json + ",ErrorMessage：" + StringUtils.null2Space2(orderResponse.getMessage()));
+                                    logIssue(channel.getFull_name() + "更新订单相关状态错误", json + ",ErrorMessage：" + StringUtils.null2Space2(orderResponse.getMessage()));
                                 }
                             }
 
