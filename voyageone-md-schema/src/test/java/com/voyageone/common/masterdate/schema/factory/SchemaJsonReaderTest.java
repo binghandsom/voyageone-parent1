@@ -29,7 +29,7 @@ public class SchemaJsonReaderTest {
     @Test
      public void tesMapToInputField() throws Exception {
         List<Field> fieldsList = new ArrayList<>();
-        InputField inputField = createInputFiled();
+        InputField inputField = createInputFiled(null);
         fieldsList.add(inputField);
 
         String jsonStr = JsonUtil.bean2Json(fieldsList);
@@ -44,9 +44,13 @@ public class SchemaJsonReaderTest {
         }
     }
 
-    private InputField createInputFiled() {
+    private InputField createInputFiled(String id) {
         InputField inputField = (InputField) SchemaFactory.createField(FieldTypeEnum.INPUT);
-        inputField.setId("InputFiled1");
+        if (id == null) {
+            inputField.setId("InputFiled1");
+        } else {
+            inputField.setId(id);
+        }
         inputField.setName("InputFiled1");
         inputField.setValue("Value1");
         inputField.setDefaultValue("DefaultValue1");
@@ -374,17 +378,17 @@ public class SchemaJsonReaderTest {
         rules.add(rule);
         complexField.setRules(rules);
 
-        complexField.add(createInputFiled());
+        complexField.add(createInputFiled("InputFiled11"));
         complexField.add(createSingleCheckField());
         complexField.add(createMultiCheckField());
 
         ComplexValue defaultValue = new ComplexValue();
-        defaultValue.put(createInputFiled());
+        defaultValue.put(createInputFiled(null));
         defaultValue.put(createSingleCheckField());
         complexField.setDefaultValue(defaultValue);
 
         ComplexValue complexValue = new ComplexValue();
-        complexValue.put(createInputFiled());
+        complexValue.put(createInputFiled(null));
         complexValue.put(createSingleCheckField());
         complexField.setComplexValue(complexValue);
 
@@ -403,6 +407,9 @@ public class SchemaJsonReaderTest {
         List<Field> newFieldsList = SchemaJsonReader.readJsonForList(jsonStr);
         String newjsonStr = JsonUtil.bean2Json(newFieldsList);
         System.out.println(newjsonStr);
+
+        Field field = newFieldsList.get(0).getChildFieldById("InputFiled11");
+        System.out.println(field);
 
         if (newjsonStr.equals(jsonStr)) {
             System.out.println("equal");
@@ -446,26 +453,26 @@ public class SchemaJsonReaderTest {
         rules.add(rule);
         complexField.setRules(rules);
 
-        complexField.add(createInputFiled());
+        complexField.add(createInputFiled(null));
         complexField.add(createSingleCheckField());
         complexField.add(createMultiCheckField());
         complexField.add(createComplexField());
 
         ComplexValue defaultValue = new ComplexValue();
-        defaultValue.put(createInputFiled());
+        defaultValue.put(createInputFiled(null));
         defaultValue.put(createSingleCheckField());
         complexField.addDefaultComplexValue(defaultValue);
         defaultValue = new ComplexValue();
-        defaultValue.put(createInputFiled());
+        defaultValue.put(createInputFiled(null));
         defaultValue.put(createMultiCheckField());
         complexField.addDefaultComplexValue(defaultValue);
 
         ComplexValue complexValue = new ComplexValue();
-        complexValue.put(createInputFiled());
+        complexValue.put(createInputFiled(null));
         complexValue.put(createSingleCheckField());
         complexField.addComplexValue(complexValue);
         complexValue = new ComplexValue();
-        complexValue.put(createInputFiled());
+        complexValue.put(createInputFiled(null));
         complexValue.put(createMultiCheckField());
         complexField.addComplexValue(complexValue);
 
