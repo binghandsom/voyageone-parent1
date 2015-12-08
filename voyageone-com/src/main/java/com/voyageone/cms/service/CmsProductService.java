@@ -1,5 +1,6 @@
 package com.voyageone.cms.service;
 
+import com.mongodb.CommandResult;
 import com.mongodb.WriteResult;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.model.CmsBtFeedInfoModel;
@@ -86,7 +87,7 @@ public class CmsProductService {
     /**
      * 删除所有商品
      */
-    public WriteResult removeAll(String channelId) {
+    public CommandResult removeAll(String channelId) {
         return cmsBtProductDao.deleteAll(channelId);
     }
 

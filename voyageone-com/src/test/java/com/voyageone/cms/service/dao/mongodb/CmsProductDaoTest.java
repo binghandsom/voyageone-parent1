@@ -317,4 +317,21 @@ public class CmsProductDaoTest {
         System.out.println("total count:=" + index + "; totalTime:=" + total);
     }
 
+    @Test
+    public void testDelete10W() {
+        long start = System.currentTimeMillis();
+        String commandStr = "{delete:\"cms_bt_product_c100\", deletes:[{ q: { }, limit: 0 }]}";
+        cmsBtProductDao.executeCommand(commandStr);
+        long total = System.currentTimeMillis()-start;
+        System.out.println("total count:=10W; totalTime:=" + total);
+    }
+
+    @Test
+    public void testDeleteAll() {
+        long start = System.currentTimeMillis();
+        cmsBtProductDao.deleteAll("001");
+        long total = System.currentTimeMillis()-start;
+        System.out.println("total count:=10W; totalTime:=" + total);
+    }
+
 }
