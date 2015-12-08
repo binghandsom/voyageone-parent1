@@ -1,5 +1,7 @@
 package com.voyageone.common.util;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -16,12 +18,12 @@ public class MD5 {
 
 		try {
 			MessageDigest md = MessageDigest.getInstance("MD5");
-			md.update(sourceStr.getBytes());
+			md.update(sourceStr.getBytes("utf-8"));
 			byte b[] = md.digest();
 			int i;
-			StringBuffer buf = new StringBuffer("");
-			for (int offset = 0; offset < b.length; offset++) {
-				i = b[offset];
+			StringBuilder buf = new StringBuilder();
+			for (byte aB : b) {
+				i = aB;
 				if (i < 0)
 					i += 256;
 				if (i < 16)
@@ -31,8 +33,8 @@ public class MD5 {
 
 			result = buf.toString();
 
-		} catch (NoSuchAlgorithmException e) {
-			System.out.println(e);
+		} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+			e.printStackTrace();
 		}
 
 		return result;
