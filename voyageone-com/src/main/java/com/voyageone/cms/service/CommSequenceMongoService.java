@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class CommSequenceMongoService {
 
+    /**
+     *  Sequence Name
+     */
     public enum CommSequenceName {
         CMS_BT_PRODUCT_GROUP_ID("cms_bt_product_groupId");
 
@@ -31,6 +34,9 @@ public class CommSequenceMongoService {
     @Autowired
     private CommSequenceDao commSequenceDao;
 
+    /**
+     * 取得 下一个 Sequence
+     */
     public long getNextSequence(CommSequenceName nameEnum) {
         return commSequenceDao.getNextSequence(nameEnum.getName());
     }

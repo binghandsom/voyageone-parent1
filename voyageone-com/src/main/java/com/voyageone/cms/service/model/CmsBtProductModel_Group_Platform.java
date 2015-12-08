@@ -2,6 +2,7 @@ package com.voyageone.cms.service.model;
 
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.common.masterdate.schema.rule.IntervalRuleInterface;
 
 import java.util.Map;
 
@@ -14,15 +15,15 @@ public class CmsBtProductModel_Group_Platform extends BaseMongoMap {
         this.putAll(m);
     }
 
-    public int getGroupId() {
-        return (int) getAttribute("groupId");
+    public Integer getGroupId() {
+        return (Integer) getAttribute("groupId");
     }
 
     public void setGroupId(int groupId) {
         setAttribute("groupId", groupId);
     }
 
-    public double getCartId() {
+    public int getCartId() {
         return (int) getAttribute("cartId");
     }
 
@@ -46,11 +47,11 @@ public class CmsBtProductModel_Group_Platform extends BaseMongoMap {
         setAttribute("productId", productId);
     }
 
-    public boolean isMain() {
-        return (Boolean) getAttribute("isMain");
+    public Integer getIsMain() {
+        return (Integer) getAttribute("isMain");
     }
 
-    public void setIsMain(boolean isMain) {
+    public void setIsMain(int isMain) {
         setAttribute("isMain", isMain);
     }
 
