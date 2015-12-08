@@ -115,4 +115,5 @@ public class CmsMtCommonPropModel extends BaseMongoModel {
     public void setMapping(String mapping) {
         this.mapping = mapping;
     }
+
 }
