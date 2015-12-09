@@ -5,6 +5,7 @@ import com.voyageone.cms.service.dao.mongodb.CmsMtCategoryTreeDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategoryDao;
 import com.voyageone.cms.service.model.CmsMtCategoryTreeModel;
 import com.voyageone.cms.service.model.CmsMtPlatformCategoryTreeModel;
+import com.voyageone.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +34,7 @@ public class CmsMtCategoryTreeService {
                 cmsMtCategoryTreeDao.delete(dbModel);
             }
             WriteResult writeResult = cmsMtCategoryTreeDao.insert(cmsMtCategoryTreeModel);
-            if (writeResult.getLastError().getInt("ok") != 1) {
+            if (writeResult.getN() > 0) {
                 result = false;
             }
         }
@@ -51,7 +52,7 @@ public class CmsMtCategoryTreeService {
             cmsMtCategoryTreeDao.delete(dbModel);
         }
         WriteResult writeResult = cmsMtCategoryTreeDao.insert(cmsMtCategoryTreeModel);
-        if(writeResult.getLastError().getInt("ok") != 1) {
+        if(writeResult.getN() > 0) {
             return true;
         }
         return false;
@@ -65,14 +66,9 @@ public class CmsMtCategoryTreeService {
         CmsMtCategoryTreeModel result = null;
         if (platformCategoryTreeModel != null) {
             result = new CmsMtCategoryTreeModel();
-            result.setCatId(platformCategoryTreeModel.getCatId());
             String catName = platformCategoryTreeModel.getCatName();
-//            if (catName != null && catName.indexOf("/")>=0) {
-//                String[] catNameArr = platformCategoryTreeModel.getCatName().split("/");
-//                if (catNameArr.length>1) {
-//                    catName = catNameArr[catNameArr.length-1];
-//                }
-//            }
+            String catId = StringUtils.encodeBase64(catName);
+            result.setCatId(catId);
             result.setCatName(catName);
             result.setCatPath(platformCategoryTreeModel.getCatPath());
             int isParent = 0;

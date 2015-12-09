@@ -1,5 +1,7 @@
 package com.voyageone.common.masterdate.schema.Util;
 
+import java.util.regex.Pattern;
+
 public class StringUtil {
     public StringUtil() {
     }
@@ -20,5 +22,20 @@ public class StringUtil {
         }
 
         return sum;
+    }
+
+    /**
+     * 把str中的【.】替换成【->】
+     */
+    public static String replaceDot(String str){
+        Pattern special_symbol = Pattern.compile("[.]");
+        return special_symbol.matcher(str).replaceAll("->");
+    }
+
+    /**
+     * 把str中的【->】替换成【.】
+     */
+    public static String replaceToDot(String str){
+        return str.replaceAll("->", ".");
     }
 }
