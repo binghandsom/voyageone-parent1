@@ -47,6 +47,9 @@ public class Initializer {
     @Autowired
     private CarrierDao carrierDao;
 
+    @Autowired
+    private TypeChannelDao channelValueDao;
+
     /**
      * 初始化所有配置类的内容
      */
@@ -73,5 +76,8 @@ public class Initializer {
         Feed.init(feedDao);
         // 初始化 Carrier
         CarrierConfigs.init(carrierDao);
+
+        // 初始化 Carrier
+        TypeChannel.init(channelValueDao);
     }
 }

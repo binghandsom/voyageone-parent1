@@ -16,6 +16,7 @@ public class CmsBtFeedMappingModel extends ChannelPartitionModel {
 
     private Scope scope;
     private int defaultMapping;
+    private int defaultMain;
     private int matchOver;
     private List<Prop> propList;
 
@@ -33,6 +34,14 @@ public class CmsBtFeedMappingModel extends ChannelPartitionModel {
 
     public void setDefaultMapping(int defaultMapping) {
         this.defaultMapping = defaultMapping;
+    }
+
+    public int getDefaultMain() {
+        return defaultMain;
+    }
+
+    public void setDefaultMain(int defaultMain) {
+        this.defaultMain = defaultMain;
     }
 
     public int getMatchOver() {
@@ -53,7 +62,7 @@ public class CmsBtFeedMappingModel extends ChannelPartitionModel {
 
     public class Scope {
         private String channelId;
-        private String feedCategory;
+        private String feedCategoryPath;
         private String mainCategoryId;
 
         public String getChannelId() {
@@ -64,12 +73,12 @@ public class CmsBtFeedMappingModel extends ChannelPartitionModel {
             this.channelId = channelId;
         }
 
-        public String getFeedCategory() {
-            return feedCategory;
+        public String getFeedCategoryPath() {
+            return feedCategoryPath;
         }
 
-        public void setFeedCategory(String feedCategory) {
-            this.feedCategory = feedCategory;
+        public void setFeedCategoryPath(String feedCategoryPath) {
+            this.feedCategoryPath = feedCategoryPath;
         }
 
         public String getMainCategoryId() {

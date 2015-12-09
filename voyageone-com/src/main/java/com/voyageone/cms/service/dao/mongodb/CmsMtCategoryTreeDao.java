@@ -35,9 +35,7 @@ public class CmsMtCategoryTreeDao extends BaseMongoDao {
     }
 
     /**
-     * select by CatId
-     * @param catId
-     * @return
+     * 取得 根据CatId
      */
     public CmsMtCategoryTreeModel selectByCatId(String catId) {
         CmsMtCategoryTreeModel result = getModelFormCache(catId);
@@ -48,6 +46,9 @@ public class CmsMtCategoryTreeDao extends BaseMongoDao {
         return result;
     }
 
+    /**
+     * 插入
+     */
     public WriteResult insert(CmsMtCategoryTreeModel model) {
         WriteResult reslt = super.insert(model);
         if (reslt.getLastError().getInt("ok") == 1) {
@@ -56,6 +57,9 @@ public class CmsMtCategoryTreeDao extends BaseMongoDao {
         return reslt;
     }
 
+    /**
+     * 删除
+     */
     public WriteResult delete(CmsMtCategoryTreeModel model) {
         WriteResult reslt = super.delete(model);
         if (reslt.getLastError().getInt("ok") == 1) {
