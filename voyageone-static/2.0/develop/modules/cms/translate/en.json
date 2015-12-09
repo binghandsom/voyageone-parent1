@@ -48,10 +48,16 @@
   "TXT_CHANGE_CATEGORY": "类目切换",
   "TXT_GROUP_LIST": "Group 一览",
   "TXT_PRODUCT_LIST": "Product 一览",
+  "TXT_COM_SHOWING_NO": "第",
+  "TXT_COM_PAGE": "页",
+  "TXT_COM_SHOWING": "showing",
+  "TXT_COM_OF": "of",
+  "TXT_COM_ITEMS": "items",
 
   "BTN_CANCEL": "Cancel",
   "BTN_CLEAR": "Clear",
   "BTN_SEARCH": "Search",
   "BTN_EXPORT": "Export",
-  "BTN_GO": "Go"
+  "BTN_GO": "Go",
+  "BTN_COM_GO": "Go"
 }
