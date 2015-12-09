@@ -5,7 +5,6 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.cms.dao.FeedPropMappingDao;
 import com.voyageone.cms.feed.Condition;
 import com.voyageone.cms.feed.Operation;
-import com.voyageone.cms.feed.OperationBean;
 import com.voyageone.cms.formbean.FeedMappingProp;
 import com.voyageone.cms.modelbean.*;
 import com.voyageone.cms.service.FeedPropMappingService;
@@ -19,7 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -160,13 +158,8 @@ public class FeedPropMappingServiceImpl extends BaseAppService implements FeedPr
      * @return Operation 集合
      */
     @Override
-    public List<OperationBean> getConditionOperations() {
-
-        List<OperationBean> operationBeans = new ArrayList<>();
-
-        for (Operation operation : Operation.values()) operationBeans.add(operation.toBean());
-
-        return operationBeans;
+    public Operation[] getConditionOperations() {
+        return Operation.values();
     }
 
     /**

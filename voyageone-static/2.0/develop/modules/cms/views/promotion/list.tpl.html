@@ -1,66 +1,67 @@
 <div class="wrapper-md">
 	<div class="col-sm-12">
-		<div class="panel vo_panel tab_panel">
-			<div class="wrapper">
-				<div class="container-fluid">
-		    	<div class="col-sm-5">
-				  <div class="form-horizontal">
-					<div class="form-group">
-						<label class="col-sm-2 control-label">Filters</label>
-						<div class="col-sm-9">
-							<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> promotion_new </label>
-							<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> promotion_ready </label>
-							<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span>  promotion_approved</label>
-						</div>
-					</div><!-- .form-group -->
-					  <div class="form-group">
-						  <label class="col-sm-2 control-label"></label>
-						  <div class="col-sm-9">
-							  <label class="checkbox-inline c-checkbox"><input type="checkbox" value="option4"><span class="fa fa-check"></span> promotion_saled </label>
-							  <label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span> promotion_over </label>
-						  </div>
-					  </div><!-- .form-group -->
+		<div class="panel panelPromotion m-t-xs">
+			<div class="container-fluid m-t-sm m-b-sm">
+				<div class="col-sm-5">
+					<div class="form-horizontal">
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Filters</label>
+							<div class="col-sm-9">
+								<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> promotion_new </label>
+								<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> promotion_ready </label>
+								<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span>  promotion_approved</label>
+							</div>
+						</div><!-- .form-group -->
+						<div class="form-group">
+							<label class="col-sm-2 control-label"></label>
+							<div class="col-sm-9">
+								<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option4"><span class="fa fa-check"></span> promotion_saled </label>
+								<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span> promotion_over </label>
+							</div>
+						</div><!-- .form-group -->
+					</div>
 				</div>
-			</div>
-			<div class="col-sm-4">
-				<div class="form-horizontal">
-					<div class="form-group">
-						<label class="col-sm-3 control-label">Create Time</label>
-						<div class="col-sm-8 form-inline">
-							<div class="col-sm-6 input-group">
-								<input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="dt" is-open="opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+				<div class="col-sm-4">
+					<div class="form-horizontal">
+						<div class="form-group">
+							<label class="col-sm-3 control-label">Create Time</label>
+							<div class="col-sm-8 form-inline">
+								<div class="col-sm-6 input-group">
+									<input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="dt" is-open="opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
-							</div> ~
-							<div class="col-sm-5 input-group">
-								<input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="dt" is-open="opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+								</div> ~
+								<div class="col-sm-5 input-group">
+									<input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="dt" is-open="opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
+								</div>
 							</div>
 						</div>
-					</div>
-				</div><!-- .form-group -->
-			</div>
-			<div class="col-sm-3">
-				<div class="form-horizontal">
-					<div class="form-group">
-						<label class="col-sm-2 control-label">Search</label>
-						<div class="col-sm-7">
-							<input class="form-control" placeholder="天猫双11大促">
-						</div>
 					</div><!-- .form-group -->
 				</div>
+				<div class="col-sm-3">
+					<div class="form-horizontal">
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Search</label>
+							<div class="col-sm-7">
+								<input class="form-control" placeholder="天猫双11大促">
+							</div>
+						</div><!-- .form-group -->
+					</div>
+				</div>
+				<div class="col-sm-12 text-center" ng-controller="popupCtrl">
+					<script type="text/ng-template" id="popup_new_promotion.html">
+						<div ng-include="'tpl/popup_new_promotion.html'"></div>
+					</script>
+					<div class="form-inline">
+						<button class="btn btn-vo" ng-click="ok()"><i class="fa fa-search"></i>  Search</button>
+						<button class="btn btn-success" ng-click="openpromotion('md')"><i class="fa fa-plus"></i> 新增Promotion</button>
+					</div><!-- .form-inline -->
+				</div>
 			</div>
-			<div class="col-sm-12 text-center">
-				<div class="form-inline" ng-controller="popupCtrl">
-					<button class="btn btn-vo" ng-click="ok()"><i class="fa fa-search"></i>  Search</button>
-					<button class="btn btn-success" ng-click="openpromotion('md')"><i class="fa fa-plus"></i> 新增Promotion</button>
-				</div><!-- .form-inline -->
-			</div>
-		   </div>
-		</div>
 		</div>
 	</div>
 	<div class="col-sm-12">
@@ -198,7 +199,7 @@
 				</table>
 			</div><!-- /.box-body -->
 		</div>
-	</div><!-- .col-lg-12 -->
+	</div>
 </div><!-- end .wrapper-md -->
 
 
