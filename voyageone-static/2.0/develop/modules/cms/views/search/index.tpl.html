@@ -1,52 +1,51 @@
 <div class="wrapper-md">
 	<accordion class="vo_accordion vo_attr" close-others="oneAtATime">
 		<accordion-group is-open="status.open">
-			<accordion-heading ng-class="{{menu-title}}"><i class="fa fa-search"></i> 检索条件<i class="pull-right glyphicon glyphicon-menu-down" ng-class="{'glyphicon-menu-up': status.open, 'glyphicon-menu-down': !status.open}"></i>
+			<accordion-heading>
+				<i class="fa fa-search"></i>&nbsp;{{'TXT_SEARCH_CONDITION' | translate}}
+				<i class="pull-right glyphicon glyphicon-menu-down" ng-class="{'glyphicon-menu-up': status.open, 'glyphicon-menu-down': !status.open}"></i>
 			</accordion-heading>
 			<!-- search -->
 			<div class="col-sm-12" >
 				<div class="col-sm-5">
 					<div class="form-horizontal">
 						<div class="form-group">
-							<label class="col-sm-3 control-label">Product Status</label>
-							<div class="col-sm-8">
-								<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> New </label>
-								<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> Pedding </label>
-								<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span> Ready </label>
-								<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option4"><span class="fa fa-check"></span> Approved </label>
-								<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span> Deleted </label>
+							<label class="col-sm-3 control-label" translate="TXT_PRODUCT_STATUS"></label>
+							<div class="col-sm-9">
+								<label class="checkbox-inline c-checkbox" ng-repeat="productStatus in vm.masterData.productStatusList">
+									<input type="checkbox" ng-value="productStatus.id" ng-model="vm.searchInfo.productStatus[productStatus.id]"><span class="fa fa-check"></span> {{productStatus.name}}
+								</label>
 							</div>
 						</div><!-- .form-group -->
 						<div class="form-group">
-							<label class="col-sm-3 control-label">Publish Status</label>
-							<div class="col-sm-8">
-								<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 等待上新 </label>
-								<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> 在库 </label>
-								<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span> 在售 </label>
+							<label class="col-sm-3 control-label" translate="TXT_PUBLISH_STATUS"></label>
+							<div class="col-sm-9">
+								<label class="checkbox-inline c-checkbox" ng-repeat="publishStatus in vm.masterData.publishStatusList">
+									<input type="checkbox" ng-value="publishStatus.id" ng-model="vm.searchInfo.publishStatus[publishStatus.id]"><span class="fa fa-check"></span> {{publishStatus.name}}
+								</label>
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-3 control-label">Label</label>
-							<div class="col-sm-8">
-								<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 未翻译 </label>
-								<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> 翻译完成 </label>
-								<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span> 上新失败 </label>
-								<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option4"><span class="fa fa-check"></span> 上新成功 </label>
+							<label class="col-sm-3 control-label" translate="TXT_LABEL"></label>
+							<div class="col-sm-9">
+								<label class="checkbox-inline c-checkbox" ng-repeat="labelType in vm.masterData.labelTypeList">
+									<input type="checkbox" ng-value="labelType.id" ng-model="vm.searchInfo.labelType[labelType.id]"><span class="fa fa-check"></span> {{labelType.name}}
+								</label>
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-3 control-label">Price</label>
+							<label class="col-sm-3 control-label" translate="TXT_PRICE"></label>
 							<div class="col-sm-6">
-								<label class="checkbox-inline c-radio"><input type="checkbox" value="option1"><span class="fa fa-check"></span> MSRP </label>
-								<label class="checkbox-inline c-radio"><input type="checkbox" value="option2"><span class="fa fa-check"></span> Current Price </label>
-								<label class="checkbox-inline c-radio"><input type="checkbox" value="option3"><span class="fa fa-check"></span> Final Price </label>
+								<label class="checkbox-inline c-radio" ng-repeat="priceType in vm.masterData.priceTypeList">
+									<input name="priceType" type="checkbox" ng-value="priceType.id" ng-model="vm.searchInfo.priceType"><span class="fa fa-check"></span> {{priceType.name}}
+								</label>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label"></label>
 							<div class="col-sm-6 form-inline">
-								<div class="input-group col-sm-4"><input type="text" placeholder="1" class="form-control"></div> ~
-								<div class="input-group col-sm-4"><input type="text" placeholder="2" class="form-control"></div>
+								<div class="input-group col-sm-4"><input type="text" class="form-control" ng-model="vm.searchInfo.priceTypeStart" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/"></div>&nbsp;~
+								<div class="input-group col-sm-4"><input type="text" class="form-control" ng-model="vm.searchInfo.priceTypeEnd" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/"></div>
 							</div>
 						</div><!-- .form-group -->
 					</div>
@@ -54,16 +53,18 @@
 				<div class="col-sm-3">
 					<div class="form-horizontal">
 						<div class="form-group">
-							<label class="col-sm-3 control-label">Create Time</label>
+							<label class="col-sm-3 control-label" translate="TXT_CREATE_TIME"></label>
 							<div class="col-sm-9 form-inline">
-								<div class="col-sm-6 input-group" >
-									<input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="dt" is-open="opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+								<div class="col-sm-6 input-group" ng-controller="datePickerCtrl">
+									<input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="$parent.vm.searchInfo.createTimeStart" date-model-format="{{format}}"
+										   max-date="$parent.vm.searchInfo.createTimeTo" is-open="opened" datepicker-options="dateOptions" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
-								</div> ~
-								<div class="col-sm-5 input-group" >
-									<input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="dt" is-open="opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+								</div>&nbsp;~
+								<div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
+									<input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="$parent.vm.searchInfo.createTimeTo" date-model-format="{{format}}"
+										   min-date="$parent.vm.searchInfo.createTimeStart" is-open="opened" datepicker-options="dateOptions" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
@@ -71,16 +72,18 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-3 control-label">Publish Time</label>
+							<label class="col-sm-3 control-label" translate="TXT_PUBLISH_TIME"></label>
 							<div class="col-sm-9 form-inline">
-								<div class="col-sm-6 input-group" >
-									<input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="dt" is-open="opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+								<div class="col-sm-6 input-group" ng-controller="datePickerCtrl">
+									<input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="$parent.vm.searchInfo.publishTimeStart" date-model-format="{{format}}"
+										   max-date="$parent.vm.searchInfo.publishTimeTo" is-open="opened" datepicker-options="dateOptions" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
 								</div> ~
-								<div class="col-sm-5 input-group" >
-									<input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="dt" is-open="opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+								<div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
+									<input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="$parent.vm.searchInfo.publishTimeTo" date-model-format="{{format}}"
+										   min-date="$parent.vm.searchInfo.publishTimeStart" is-open="opened" datepicker-options="dateOptions" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
@@ -88,34 +91,29 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-3 control-label">Inventory</label>
-							<div class="col-sm-9">
+							<label class="col-sm-3 control-label" translate="TXT_INVENTORY"></label>
+							<div class="col-sm-9 form-inline">
 								<div class="col-sm-5">
-								<select class="form-control">
-									<option>more than</option>
-									<option>less than</option>
-									<option>equal to</option>
-								</select>
+									<select class="form-control m-r-xs" ng-model="vm.searchInfo.inventoryType"
+											ng-options="inventoryType.id as inventoryType.name for inventoryType in vm.masterData.inventoryTypeList">
+									</select>
 								</div>
-								<div class="col-sm-4"><input class="form-control" placeholder="3"></div>
+								<div class="col-sm-4"><input class="form-control" ng-model="vm.searchInfo.inventory" ng-pattern="/^(\d+)$/"></div>
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-3 control-label">Brand</label>
+							<label class="col-sm-3 control-label" translate="TXT_BRAND"></label>
 							<div class="col-sm-9">
-								<select class="form-control">
-									<option>Nike</option>
-									<option>Adidas</option>
+								<select class="form-control" ng-model="vm.searchInfo.brand"
+										ng-options="brand.id as brand.name for brand in vm.masterData.brandList">
 								</select>
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-3 control-label">活动情况</label>
+							<label class="col-sm-3 control-label" translate="TXT_PROMOTION_INFO"></label>
 							<div class="col-sm-9">
-								<select class="form-control">
-									<option>ALL</option>
-									<option>双十一</option>
-									<option>双十二</option>
+								<select class="form-control" ng-model="vm.searchInfo.promotionInfo"
+										ng-options="promotion.id as promotion.name for promotion in vm.masterData.promotionList">
 								</select>
 							</div>
 						</div>
@@ -124,126 +122,112 @@
 				<div class="col-sm-4">
 					<div class="form-horizontal">
 						<div class="form-group">
-							<label class="col-sm-3 control-label">CODE列表</label>
+							<label class="col-sm-3 control-label" translate="TXT_CODE_LIST"></label>
 							<div class="col-sm-8">
-								<textarea class="form-control inherited" rows="4" placeholder=""></textarea>
+								<textarea class="form-control inherited" rows="4" ng-model="vm.searchInfo.codeList"></textarea>
 							</div>
 						</div>
 						<div class="form-group">
 							<!-- TODO -->
-							<label class="col-sm-3 control-label">Sort 1.</label>
+							<label class="col-sm-3 control-label" translate="TXT_SORT_1"></label>
 							<div class="col-sm-8">
 								<div class="col-sm-5">
-								<select class="form-control">
-									<option>待定</option>
-									<option>Inventory</option>
-									<option>MSRP</option>
-									<option>Current Price</option>
-									<option>Final Price</option>
-									<option>Size</option>
-									<option>Color</option>
-									<option>Group ID</option>
-									<option>Product Code</option>
-									<option>SKU</option>
-								</select></div>
+									<select class="form-control" ng-model="vm.searchInfo.sortOneName"
+											ng-options="sortOne.id as sortOne.name for brand in vm.masterData.sortList">
+									</select>
+								</div>
 								<div class="col-sm-3 text-right">
-								<label class="checkbox-inline c-radio"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 升序 </label></div>
+									<label class="checkbox-inline c-radio">
+										<input name="sortOne" type="radio" value="asc" ng-model="vm.searchInfo.sortOneType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' | translate }}
+									</label>
+								</div>
 								<div class="col-sm-3">
-								<label class="checkbox-inline c-radio"><input type="checkbox" value="option2"><span class="fa fa-check"></span> 降序 </label></div>
+									<label class="checkbox-inline c-radio">
+										<input name="sortOne" type="radio" value="desc" ng-model="vm.searchInfo.sortOneType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}
+									</label>
+								</div>
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-3 control-label">Sort 2.</label>
+							<!-- TODO -->
+							<label class="col-sm-3 control-label" translate="TXT_SORT_2"></label>
 							<div class="col-sm-8">
 								<div class="col-sm-5">
-									<select class="form-control">
-										<option>待定</option>
-										<option>Inventory</option>
-										<option>MSRP</option>
-										<option>Current Price</option>
-										<option>Final Price</option>
-										<option>Size</option>
-										<option>Color</option>
-										<option>Group ID</option>
-										<option>Product Code</option>
-										<option>SKU</option>
-									</select></div>
+									<select class="form-control" ng-model="vm.searchInfo.sortTwoName"
+											ng-options="sortOne.id as sortOne.name for brand in vm.masterData.sortList">
+									</select>
+								</div>
 								<div class="col-sm-3 text-right">
-									<label class="checkbox-inline c-radio"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 升序 </label></div>
+									<label class="checkbox-inline c-radio">
+										<input name="sortTwo" type="radio" value="asc" ng-model="vm.searchInfo.sortTwoType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' | translate }}
+									</label>
+								</div>
 								<div class="col-sm-3">
-									<label class="checkbox-inline c-radio"><input type="checkbox" value="option2"><span class="fa fa-check"></span> 降序 </label></div>
+									<label class="checkbox-inline c-radio">
+										<input name="sortTwo" type="radio" value="desc" ng-model="vm.searchInfo.sortTwoType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}
+									</label>
+								</div>
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-3 control-label">Sort 3.</label>
+							<!-- TODO -->
+							<label class="col-sm-3 control-label" translate="TXT_SORT_3"></label>
 							<div class="col-sm-8">
 								<div class="col-sm-5">
-									<select class="form-control">
-										<option>待定</option>
-										<option>Inventory</option>
-										<option>MSRP</option>
-										<option>Current Price</option>
-										<option>Final Price</option>
-										<option>Size</option>
-										<option>Color</option>
-										<option>Group ID</option>
-										<option>Product Code</option>
-										<option>SKU</option>
-									</select></div>
+									<select class="form-control" ng-model="vm.searchInfo.sortThreeName"
+											ng-options="sortOne.id as sortOne.name for brand in vm.masterData.sortList">
+									</select>
+								</div>
 								<div class="col-sm-3 text-right">
-									<label class="checkbox-inline c-radio"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 升序 </label></div>
+									<label class="checkbox-inline c-radio">
+										<input name="sortThree" type="radio" value="asc" ng-model="vm.searchInfo.sortThreeType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' | translate }}
+									</label>
+								</div>
 								<div class="col-sm-3">
-									<label class="checkbox-inline c-radio"><input type="checkbox" value="option2"><span class="fa fa-check"></span> 降序 </label></div>
+									<label class="checkbox-inline c-radio">
+										<input name="sortThree" type="radio" value="desc" ng-model="vm.searchInfo.sortThreeType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}
+									</label>
+								</div>
 							</div>
 						</div>
-
 					</div>
 				</div>
 				<div class="col-sm-12 text-center m-b-sm">
 					<div class="form-inline">
-						<button class="btn btn-vo" ng-click="ok()"><i class="fa fa-search"></i> 搜索</button>
-						<button class="btn btn-success" ng-click="ok()"><i class="fa fa-reply-all"></i> 导出</button>
+						<button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
+						<button class="btn btn-vo" ng-click="ok()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
+						<button class="btn btn-success" ng-click="ok()"><i class="fa fa-reply-all"></i>&nbsp;{{'BTN_EXPORT' | translate}}</button>
 					</div><!-- .form-inline -->
 				</div>
 			</div>
 		</accordion-group>
 	</accordion><!-- .accordion --><!--/search-->
-    <!--category-->
-	 <div >
-		 <script type="text/ng-template" id="popup_group_attribute_change.html">
-			 <div ng-include="'tpl/popup_group_attribute_change.html'"></div>
-		 </script>
-		 <script type="text/ng-template" id="popup_alert_promotion.html">
-			 <div ng-include="'tpl/popup_alert_promotion.html'"></div>
-		 </script>
-		 <script type="text/ng-template" id="newdrag.html">
-			 <div ng-include="'tpl/newdrag.html'"></div>
-		 </script>
-		 <script type="text/ng-template" id="popup_maindatacategorycolumns.html">
-			 <div ng-include="'tpl/popup_maindatacategorycolumns.html'"></div>
-		 </script>
+	<!--category-->
+	<div >
 		<tabset class="tab-container vo_nav-tabs">
 			<!--right-btn-->
 			<div class="form-inline m-b-xs pull-right" ng-controller="popupCtrl">
-				<button class="btn btn-default" ng-click="openCustomBaseProperty('lg')"><i class="fa fa-cog"></i> 自定义Base Property</button>
+				<button class="btn btn-default" ng-click="openCustomBaseProperty('lg')"><i class="fa fa-cog"></i>&nbsp;{{'TXT_CUSTOM_BASE_PROPERTY' | translate}}</button>
 				<div class="btn-group" dropdown>
-					<button type="button" class="btn btn-default"><i class="fa fa-arrow-circle-right"></i> 选择Promotion</button>
-					<button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle>
-						<span class="caret"></span>
-						<span class="sr-only">选择Promotion</span>
+					<button type="button" class="btn btn-default" ng-disabled="vm.masterData.promotionList.length < 0">
+						<i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_SELECT_PROMOTION' | translate}}
 					</button>
-					<ul class="dropdown-menu" role="menu">
-						<li><a href ng-click="openNewpromotion('md')">双十一</a></li>
-						<li><a href>黑色星期五</a></li>
-						<li><a href>双十二</a></li>
+					<button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle ng-disabled="vm.masterData.promotionList.length < 0">
+						<span class="caret"></span>
+						<span class="sr-only" translate="TXT_SELECT_PROMOTION"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu" ng-if="vm.masterData.promotionList.length">
+						<li ng-repeat="promotion in vm.masterData.promotionList">
+							<a href ng-click="openNewpromotion('md', promotionId)">{{promotion.name}}|{{promotion.cart}}</a>
+						</li>
 					</ul>
 				</div>
-				<button class="btn btn-default" ng-click="openupdateProperties('md')"><i class="fa fa-pencil-square"></i> 批量变更属性</button>
-				<button class="btn btn-default" ng-click="openNewcategory('lg')"><i class="fa fa-th-list"></i> 类目切换</button>
+				<button class="btn btn-default" ng-click="openupdateProperties('md')"><i class="fa fa-pencil-square"></i>&nbsp;{{'TXT_BATCH_UPDATE_ATTRIBUTE' | translate}}</button>
+				<button class="btn btn-default" ng-click="openNewcategory('lg')"><i class="fa fa-th-list"></i>&nbsp;{{'TXT_CHANGE_CATEGORY' | translate}}</button>
 			</div><!-- /right-btn -->
 			<!--tab-->
 			<tab>
-				<tab-heading><i class="glyphicons glyphicons-more-items text-default"></i> Group 一览</tab-heading>
+				<tab-heading><i class="glyphicons glyphicons-more-items text-default"></i>&nbsp;{{'TXT_GROUP_LIST' | translate}}</tab-heading>
 				<div class="table-responsive">
 					<table class="table table-hover vo_table vo_models">
 						<thead>
@@ -388,16 +372,331 @@
 									</ul>
 								</div>
 							</td><td class="text-left">
-								<small popover="Publish Time：2015-11-11 23:59:59  On Sale Time：2015-11-11 23:59:59" popover-trigger="mouseenter" popover-placement="left">
-									<div class="table_main">
-										<ul>
-											<li>Publish Time</li>
-											<li><span>2015-11-11</span></li>
-											<li><span>23:59:59</span></li>
-										</ul>
-									</div>
-								</small>
+							<small popover="Publish Time：2015-11-11 23:59:59  On Sale Time：2015-11-11 23:59:59" popover-trigger="mouseenter" popover-placement="left">
+								<div class="table_main">
+									<ul>
+										<li>Publish Time</li>
+										<li><span>2015-11-11</span></li>
+										<li><span>23:59:59</span></li>
+									</ul>
+								</div>
+							</small>
+						</td>
+						</tr>
+						</tbody>
+						<thead>
+						<tr>
+							<th colspan="5" class="control-label text-left form-inline">
+								<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label>
+								<span class="label label-danger-new m-r-lg m-l"> 等待上新 </span> <span class="m-r-lg">Number IID: <a href="https://www.tmall.com" target="_blank" class="text-u-l">LDB01</a></span> <span>Group Name:<a href="#/group/list" target="_blank" class="text-u-l">阿迪达斯</a></span>
+							</th>
+							<th colspan="3" class="text-right">类目:珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石</th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr>
+							<td colspan="3">
+								<img src="../../../../static/img/02.jpg" alt="Nike Air Max Tailwind 7" class="img-circle pull-left m-r"/>
+								<div class="table_main pull-left">
+									<ul>
+										<li>Primary Product Code</li>
+										<li><span>123456789-123-111</span></li>
+										<li>Primary Product Name</li>
+										<li><span>123456789-123-111</span></li>
+									</ul>
+								</div>
 							</td>
+							<td><button popover="LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20" popover-title="Inventory" type="button" popover-placement="left" class="btn btn-vo btn-xs">1200</button></td>
+							<td><button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button></td>
+							<td class="text-left">Jewelry.com</td>
+							<td>
+								<div class="table_main">
+									<ul>
+										<li>Size Type：Women</li>
+										<li>Style：欧美</li>
+									</ul>
+								</div>
+							</td><td class="text-left">
+							<small popover="Publish Time：2015-11-11 23:59:59  On Sale Time：2015-11-11 23:59:59" popover-trigger="mouseenter" popover-placement="left">
+								<div class="table_main">
+									<ul>
+										<li>Publish Time</li>
+										<li><span>2015-11-11</span></li>
+										<li><span>23:59:59</span></li>
+									</ul>
+								</div>
+							</small>
+						</td>
+						</tr>
+						</tbody>
+						<thead>
+						<tr>
+							<th colspan="5" class="control-label text-left form-inline">
+								<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label>
+								<span class="label label-danger-new m-r-lg m-l"> 等待上新 </span> <span class="m-r-lg">Number IID: <a href="https://www.tmall.com" target="_blank" class="text-u-l">LDB01</a></span> <span>Group Name:<a href="#/group/list" target="_blank" class="text-u-l">阿迪达斯</a></span>
+							</th>
+							<th colspan="3" class="text-right">类目:珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石</th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr>
+							<td colspan="3">
+								<img src="../../../../static/img/02.jpg" alt="Nike Air Max Tailwind 7" class="img-circle pull-left m-r"/>
+								<div class="table_main pull-left">
+									<ul>
+										<li>Primary Product Code</li>
+										<li><span>123456789-123-111</span></li>
+										<li>Primary Product Name</li>
+										<li><span>123456789-123-111</span></li>
+									</ul>
+								</div>
+							</td>
+							<td><button popover="LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20" popover-title="Inventory" type="button" popover-placement="left" class="btn btn-vo btn-xs">1200</button></td>
+							<td><button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button></td>
+							<td class="text-left">Jewelry.com</td>
+							<td>
+								<div class="table_main">
+									<ul>
+										<li>Size Type：Women</li>
+										<li>Style：欧美</li>
+									</ul>
+								</div>
+							</td><td class="text-left">
+							<small popover="Publish Time：2015-11-11 23:59:59  On Sale Time：2015-11-11 23:59:59" popover-trigger="mouseenter" popover-placement="left">
+								<div class="table_main">
+									<ul>
+										<li>Publish Time</li>
+										<li><span>2015-11-11</span></li>
+										<li><span>23:59:59</span></li>
+									</ul>
+								</div>
+							</small>
+						</td>
+						</tr>
+						</tbody>
+						<thead>
+						<tr>
+							<th colspan="5" class="control-label text-left form-inline">
+								<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label>
+								<span class="label label-danger-new m-r-lg m-l"> 等待上新 </span> <span class="m-r-lg">Number IID: <a href="https://www.tmall.com" target="_blank" class="text-u-l">LDB01</a></span> <span>Group Name:<a href="#/group/list" target="_blank" class="text-u-l">阿迪达斯</a></span>
+							</th>
+							<th colspan="3" class="text-right">类目:珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石</th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr>
+							<td colspan="3">
+								<img src="../../../../static/img/02.jpg" alt="Nike Air Max Tailwind 7" class="img-circle pull-left m-r"/>
+								<div class="table_main pull-left">
+									<ul>
+										<li>Primary Product Code</li>
+										<li><span>123456789-123-111</span></li>
+										<li>Primary Product Name</li>
+										<li><span>123456789-123-111</span></li>
+									</ul>
+								</div>
+							</td>
+							<td><button popover="LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20" popover-title="Inventory" type="button" popover-placement="left" class="btn btn-vo btn-xs">1200</button></td>
+							<td><button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button></td>
+							<td class="text-left">Jewelry.com</td>
+							<td>
+								<div class="table_main">
+									<ul>
+										<li>Size Type：Women</li>
+										<li>Style：欧美</li>
+									</ul>
+								</div>
+							</td><td class="text-left">
+							<small popover="Publish Time：2015-11-11 23:59:59  On Sale Time：2015-11-11 23:59:59" popover-trigger="mouseenter" popover-placement="left">
+								<div class="table_main">
+									<ul>
+										<li>Publish Time</li>
+										<li><span>2015-11-11</span></li>
+										<li><span>23:59:59</span></li>
+									</ul>
+								</div>
+							</small>
+						</td>
+						</tr>
+						</tbody>
+						<thead>
+						<tr>
+							<th colspan="5" class="control-label text-left form-inline">
+								<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label>
+								<span class="label label-danger-new m-r-lg m-l"> 等待上新 </span> <span class="m-r-lg">Number IID: <a href="https://www.tmall.com" target="_blank" class="text-u-l">LDB01</a></span> <span>Group Name:<a href="#/group/list" target="_blank" class="text-u-l">阿迪达斯</a></span>
+							</th>
+							<th colspan="3" class="text-right">类目:珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石</th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr>
+							<td colspan="3">
+								<img src="../../../../static/img/02.jpg" alt="Nike Air Max Tailwind 7" class="img-circle pull-left m-r"/>
+								<div class="table_main pull-left">
+									<ul>
+										<li>Primary Product Code</li>
+										<li><span>123456789-123-111</span></li>
+										<li>Primary Product Name</li>
+										<li><span>123456789-123-111</span></li>
+									</ul>
+								</div>
+							</td>
+							<td><button popover="LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20" popover-title="Inventory" type="button" popover-placement="left" class="btn btn-vo btn-xs">1200</button></td>
+							<td><button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button></td>
+							<td class="text-left">Jewelry.com</td>
+							<td>
+								<div class="table_main">
+									<ul>
+										<li>Size Type：Women</li>
+										<li>Style：欧美</li>
+									</ul>
+								</div>
+							</td><td class="text-left">
+							<small popover="Publish Time：2015-11-11 23:59:59  On Sale Time：2015-11-11 23:59:59" popover-trigger="mouseenter" popover-placement="left">
+								<div class="table_main">
+									<ul>
+										<li>Publish Time</li>
+										<li><span>2015-11-11</span></li>
+										<li><span>23:59:59</span></li>
+									</ul>
+								</div>
+							</small>
+						</td>
+						</tr>
+						</tbody>
+						<thead>
+						<tr>
+							<th colspan="5" class="control-label text-left form-inline">
+								<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label>
+								<span class="label label-danger-new m-r-lg m-l"> 等待上新 </span> <span class="m-r-lg">Number IID: <a href="https://www.tmall.com" target="_blank" class="text-u-l">LDB01</a></span> <span>Group Name:<a href="#/group/list" target="_blank" class="text-u-l">阿迪达斯</a></span>
+							</th>
+							<th colspan="3" class="text-right">类目:珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石</th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr>
+							<td colspan="3">
+								<img src="../../../../static/img/02.jpg" alt="Nike Air Max Tailwind 7" class="img-circle pull-left m-r"/>
+								<div class="table_main pull-left">
+									<ul>
+										<li>Primary Product Code</li>
+										<li><span>123456789-123-111</span></li>
+										<li>Primary Product Name</li>
+										<li><span>123456789-123-111</span></li>
+									</ul>
+								</div>
+							</td>
+							<td><button popover="LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20" popover-title="Inventory" type="button" popover-placement="left" class="btn btn-vo btn-xs">1200</button></td>
+							<td><button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button></td>
+							<td class="text-left">Jewelry.com</td>
+							<td>
+								<div class="table_main">
+									<ul>
+										<li>Size Type：Women</li>
+										<li>Style：欧美</li>
+									</ul>
+								</div>
+							</td><td class="text-left">
+							<small popover="Publish Time：2015-11-11 23:59:59  On Sale Time：2015-11-11 23:59:59" popover-trigger="mouseenter" popover-placement="left">
+								<div class="table_main">
+									<ul>
+										<li>Publish Time</li>
+										<li><span>2015-11-11</span></li>
+										<li><span>23:59:59</span></li>
+									</ul>
+								</div>
+							</small>
+						</td>
+						</tr>
+						</tbody>
+						<thead>
+						<tr>
+							<th colspan="5" class="control-label text-left form-inline">
+								<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label>
+								<span class="label label-danger-new m-r-lg m-l"> 等待上新 </span> <span class="m-r-lg">Number IID: <a href="https://www.tmall.com" target="_blank" class="text-u-l">LDB01</a></span> <span>Group Name:<a href="#/group/list" target="_blank" class="text-u-l">阿迪达斯</a></span>
+							</th>
+							<th colspan="3" class="text-right">类目:珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石</th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr>
+							<td colspan="3">
+								<img src="../../../../static/img/02.jpg" alt="Nike Air Max Tailwind 7" class="img-circle pull-left m-r"/>
+								<div class="table_main pull-left">
+									<ul>
+										<li>Primary Product Code</li>
+										<li><span>123456789-123-111</span></li>
+										<li>Primary Product Name</li>
+										<li><span>123456789-123-111</span></li>
+									</ul>
+								</div>
+							</td>
+							<td><button popover="LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20" popover-title="Inventory" type="button" popover-placement="left" class="btn btn-vo btn-xs">1200</button></td>
+							<td><button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button></td>
+							<td class="text-left">Jewelry.com</td>
+							<td>
+								<div class="table_main">
+									<ul>
+										<li>Size Type：Women</li>
+										<li>Style：欧美</li>
+									</ul>
+								</div>
+							</td><td class="text-left">
+							<small popover="Publish Time：2015-11-11 23:59:59  On Sale Time：2015-11-11 23:59:59" popover-trigger="mouseenter" popover-placement="left">
+								<div class="table_main">
+									<ul>
+										<li>Publish Time</li>
+										<li><span>2015-11-11</span></li>
+										<li><span>23:59:59</span></li>
+									</ul>
+								</div>
+							</small>
+						</td>
+						</tr>
+						</tbody>
+						<thead>
+						<tr>
+							<th colspan="5" class="control-label text-left form-inline">
+								<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label>
+								<span class="label label-danger-new m-r-lg m-l"> 等待上新 </span> <span class="m-r-lg">Number IID: <a href="https://www.tmall.com" target="_blank" class="text-u-l">LDB01</a></span> <span>Group Name:<a href="#/group/list" target="_blank" class="text-u-l">阿迪达斯</a></span>
+							</th>
+							<th colspan="3" class="text-right">类目:珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石</th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr>
+							<td colspan="3">
+								<img src="../../../../static/img/02.jpg" alt="Nike Air Max Tailwind 7" class="img-circle pull-left m-r"/>
+								<div class="table_main pull-left">
+									<ul>
+										<li>Primary Product Code</li>
+										<li><span>123456789-123-111</span></li>
+										<li>Primary Product Name</li>
+										<li><span>123456789-123-111</span></li>
+									</ul>
+								</div>
+							</td>
+							<td><button popover="LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20" popover-title="Inventory" type="button" popover-placement="left" class="btn btn-vo btn-xs">1200</button></td>
+							<td><button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button></td>
+							<td class="text-left">Jewelry.com</td>
+							<td>
+								<div class="table_main">
+									<ul>
+										<li>Size Type：Women</li>
+										<li>Style：欧美</li>
+									</ul>
+								</div>
+							</td><td class="text-left">
+							<small popover="Publish Time：2015-11-11 23:59:59  On Sale Time：2015-11-11 23:59:59" popover-trigger="mouseenter" popover-placement="left">
+								<div class="table_main">
+									<ul>
+										<li>Publish Time</li>
+										<li><span>2015-11-11</span></li>
+										<li><span>23:59:59</span></li>
+									</ul>
+								</div>
+							</small>
+						</td>
 						</tr>
 						</tbody>
 					</table>
@@ -416,226 +715,218 @@
 						</div>
 					</div>
 				</div><!-- .table-responsive -->
-							          </tab>
+			</tab>
 
-							          <tab>
-							          	<tab-heading><i class="glyphicons glyphicons-sort text-default"></i> Product 一览</tab-heading>
-							            <!-- Products table and controls -->
-										  <div class="table-responsive">
-											  <table class="table table-hover vo_table vo_models">
-												  <thead>
-												  <tr>
-													  <td><label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span> 全选 </label></td>
-													  <td class="text-left">Brand</td>
-													  <td>Inventory</td>
-													  <td>Final Price</td>
-													  <td>Size Chart</td>
-													  <td>Base Property</td>
-													  <td>SKU数</td>
-													  <td class="text-left">Platform Status</td>
-													  <td>Time</td>
-												  </tr>
-												  <tr>
-													  <th colspan="5" class="control-label text-left form-inline">
-														  <label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label>
-														  <span class="label label-success-new m-r-lg m-l"> New </span> <span class="m-r-lg">Product Code: <a href="https://www.tmall.com/" target="_blank" class="text-u-l">LDB01-249</a></span> <span>Product Name: <a href="#/product/list" target="_blank" class="text-u-l">阿迪达斯</a></span>
-													  </th>
-													  <th colspan="4" class="text-right">类目:珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石</th>
-												  </tr>
-												  </thead>
-												  <tbody>
-												  <tr>
-													  <td style="width:10%">
-														  <img src="../../../../static/img/02.jpg" alt="Nike Air Max Tailwind 7" class="img-circle pull-left m-r"/>
-													  </td>
-													  <td style="width:10%">Jewelry.com</td>
-													  <td  style="width:10%">
-														  <button popover="LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20" popover-title="Inventory" type="button" popover-placement="left" class="btn btn-vo btn-xs">1200</button>
-														  <!--<small popover="" popover-trigger="mouseenter" popover-placement="left" class="label label-vo">1200</small>-->
-													  </td>
-													  <td  style="width:10%">
-														  <button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button>
-														  <!--<small popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00 / Promotion Price:1,099.00~2,099.00" popover-trigger="mouseenter" popover-placement="left" class="label label-vo">2900</small>-->
-													  </td>
-													  <td  style="width:10%">Women</td>
-													  <td class="text-left" style="width:10%">
-														  <div class="table_main">
-															  <ul>
-																  <li>产地：中国</li>
-																  <li>颜色：红色</li>
-																  <li>材质：PU</li>
-																  <li>风格：欧美</li>
-															  </ul>
-														  </div>
-													  </td>
-													  <td style="width:5%">100</td>
-													  <td style="width:20%">
-														  <div class="btn-group pull-left">
-															  <span class="badge badge-empty m-b-xs">TM:在售</a></span>
-															  <span class="badge badge-empty m-b-xs">TG:在库</a></span>
-															  <span class="badge badge-empty m-b-xs">JD:未上新</a></span>
-														  </div>
-														  <div class="btn-group pull-left">
-															  <span class="badge badge-empty m-b-xs">JD:未上新</a></span>
-															  <span class="badge badge-empty m-b-xs">JG:在售</a></span>
-															  <span class="badge badge-empty m-b-xs">JuM:在库</a></span>
-														  </div>
-													  </td>
-													  <td class="text-left" style="width:10%">
-														  <small popover="Create Time：2015-11-11 23:59:59 Publish Time：2015-11-11 23:59:59  On Sale Time：2015-11-11 23:59:59" popover-trigger="mouseenter" popover-placement="left">
-															  <div class="table_main">
-																  <ul>
-																	  <li>Publish Time</li>
-																	  <li><span>2015-11-11</span></li>
-																	  <li><span>23:59:59</span></li>
-																  </ul>
-															  </div>
-														  </small>
-													  </td>
-												  </tr>
+			<tab>
+				<tab-heading><i class="glyphicons glyphicons-sort text-default"></i>&nbsp;{{'TXT_PRODUCT_LIST' | translate}}</tab-heading>
+				<!-- Products table and controls -->
+				<div class="table-responsive">
+					<table class="table table-hover vo_table vo_models">
+						<thead>
+						<tr>
+							<td><label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span> 全选 </label></td>
+							<td class="text-left">Brand</td>
+							<td>Inventory</td>
+							<td>Final Price</td>
+							<td>Size Chart</td>
+							<td>Base Property</td>
+							<td>SKU数</td>
+							<td class="text-left">Platform Status</td>
+							<td>Time</td>
+						</tr>
+						<tr>
+							<th colspan="5" class="control-label text-left form-inline">
+								<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label>
+								<span class="label label-success-new m-r-lg m-l"> New </span> <span class="m-r-lg">Product Code: <a href="https://www.tmall.com/" target="_blank" class="text-u-l">LDB01-249</a></span> <span>Product Name: <a href="#/product/list" target="_blank" class="text-u-l">阿迪达斯</a></span>
+							</th>
+							<th colspan="4" class="text-right">类目:珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石</th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr>
+							<td style="width:10%">
+								<img src="../../../../static/img/02.jpg" alt="Nike Air Max Tailwind 7" class="img-circle pull-left m-r"/>
+							</td>
+							<td style="width:10%">Jewelry.com</td>
+							<td  style="width:10%">
+								<button popover="LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20" popover-title="Inventory" type="button" popover-placement="left" class="btn btn-vo btn-xs">1200</button>
+								<!--<small popover="" popover-trigger="mouseenter" popover-placement="left" class="label label-vo">1200</small>-->
+							</td>
+							<td  style="width:10%">
+								<button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button>
+								<!--<small popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00 / Promotion Price:1,099.00~2,099.00" popover-trigger="mouseenter" popover-placement="left" class="label label-vo">2900</small>-->
+							</td>
+							<td  style="width:10%">Women</td>
+							<td class="text-left" style="width:10%">
+								<div class="table_main">
+									<ul>
+										<li>产地：中国</li>
+										<li>颜色：红色</li>
+										<li>材质：PU</li>
+										<li>风格：欧美</li>
+									</ul>
+								</div>
+							</td>
+							<td style="width:5%">100</td>
+							<td style="width:20%">
+								<div class="btn-group pull-left">
+									<span class="badge badge-empty m-b-xs">TM:在售</a></span>
+									<span class="badge badge-empty m-b-xs">TG:在库</a></span>
+									<span class="badge badge-empty m-b-xs">JD:未上新</a></span>
+								</div>
+								<div class="btn-group pull-left">
+									<span class="badge badge-empty m-b-xs">JD:未上新</a></span>
+									<span class="badge badge-empty m-b-xs">JG:在售</a></span>
+									<span class="badge badge-empty m-b-xs">JuM:在库</a></span>
+								</div>
+							</td>
+							<td class="text-left" style="width:10%">
+								<small popover="Create Time：2015-11-11 23:59:59 Publish Time：2015-11-11 23:59:59  On Sale Time：2015-11-11 23:59:59" popover-trigger="mouseenter" popover-placement="left">
+									<div class="table_main">
+										<ul>
+											<li>Publish Time</li>
+											<li><span>2015-11-11</span></li>
+											<li><span>23:59:59</span></li>
+										</ul>
+									</div>
+								</small>
+							</td>
+						</tr>
 
-												  </tbody>
-												  <thead>
-												  <tr>
-													  <th colspan="5" class="control-label text-left form-inline">
-														  <label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label>
-														  <span class="label label-yellow-new m-r-lg m-l"> Pedding </span> <span class="m-r-lg">Product Code: <a href="https://www.tmall.com/" target="_blank" class="text-u-l">LDB01-249</a></span> <span>Product Name: <a href="#/product/list" target="_blank" class="text-u-l">阿迪达斯</a></span>
-													  </th>
-													  <th colspan="4" class="text-right">类目:珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石</th>
-												  </tr>
-												  </thead>
-												  <tbody>
-												  <tr>
-													  <td>
-														  <img src="../../../../static/img/04.jpg" alt="Nike Air Max Tailwind 7" class="img-circle pull-left m-r"/>
-													  </td>
-													  <td>Jewelry.com</td>
-													  <td  style="width:10%">
-														  <button popover="LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20" popover-title="Inventory" type="button" popover-placement="left" class="btn btn-vo btn-xs">1200</button>
-														  <!--<small popover="" popover-trigger="mouseenter" popover-placement="left" class="label label-vo">1200</small>-->
-													  </td>
-													  <td  style="width:10%">
-														  <button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button>
-														  <!--<small popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00 / Promotion Price:1,099.00~2,099.00" popover-trigger="mouseenter" popover-placement="left" class="label label-vo">2900</small>-->
-													  </td>
-													  <td>Women</td>
-													  <td class="text-left">
-														  <div class="table_main">
-															  <ul>
-																  <li>产地：中国</li>
-																  <li>颜色：红色</li>
-																  <li>材质：PU</li>
-																  <li>风格：欧美</li>
-															  </ul>
-														  </div>
-													  </td>
-													  <td>100</td>
-													  <td><div class="btn-group pull-left">
-														  <span class="badge badge-empty m-b-xs">TM:在售</a></span>
-														  <span class="badge badge-empty m-b-xs">TG:在库</a></span>
-														  <span class="badge badge-empty m-b-xs">JD:未上新</a></span>
-													  </div>
-														  <div class="btn-group pull-left">
-															  <span class="badge badge-empty m-b-xs">JD:未上新</a></span>
-															  <span class="badge badge-empty m-b-xs">JG:在售</a></span>
-															  <span class="badge badge-empty m-b-xs">JuM:在库</a></span>
-														  </div></td>
-													  <td class="text-left">
-														  <small popover="Create Time：2015-11-11 23:59:59 Publish Time：2015-11-11 23:59:59  On Sale Time：2015-11-11 23:59:59" popover-trigger="mouseenter" popover-placement="left">
-															  <div class="table_main">
-																  <ul>
-																	  <li>Publish Time</li>
-																	  <li><span>2015-11-11</span></li>
-																	  <li><span>23:59:59</span></li>
-																  </ul>
-															  </div>
-														  </small>
-													  </td> </tr>
+						</tbody>
+						<thead>
+						<tr>
+							<th colspan="5" class="control-label text-left form-inline">
+								<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label>
+								<span class="label label-yellow-new m-r-lg m-l"> Pedding </span> <span class="m-r-lg">Product Code: <a href="https://www.tmall.com/" target="_blank" class="text-u-l">LDB01-249</a></span> <span>Product Name: <a href="#/product/list" target="_blank" class="text-u-l">阿迪达斯</a></span>
+							</th>
+							<th colspan="4" class="text-right">类目:珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石</th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr>
+							<td>
+								<img src="../../../../static/img/04.jpg" alt="Nike Air Max Tailwind 7" class="img-circle pull-left m-r"/>
+							</td>
+							<td>Jewelry.com</td>
+							<td  style="width:10%">
+								<button popover="LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20" popover-title="Inventory" type="button" popover-placement="left" class="btn btn-vo btn-xs">1200</button>
+								<!--<small popover="" popover-trigger="mouseenter" popover-placement="left" class="label label-vo">1200</small>-->
+							</td>
+							<td  style="width:10%">
+								<button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button>
+								<!--<small popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00 / Promotion Price:1,099.00~2,099.00" popover-trigger="mouseenter" popover-placement="left" class="label label-vo">2900</small>-->
+							</td>
+							<td>Women</td>
+							<td class="text-left">
+								<div class="table_main">
+									<ul>
+										<li>产地：中国</li>
+										<li>颜色：红色</li>
+										<li>材质：PU</li>
+										<li>风格：欧美</li>
+									</ul>
+								</div>
+							</td>
+							<td>100</td>
+							<td><div class="btn-group pull-left">
+								<span class="badge badge-empty m-b-xs">TM:在售</a></span>
+								<span class="badge badge-empty m-b-xs">TG:在库</a></span>
+								<span class="badge badge-empty m-b-xs">JD:未上新</a></span>
+							</div>
+								<div class="btn-group pull-left">
+									<span class="badge badge-empty m-b-xs">JD:未上新</a></span>
+									<span class="badge badge-empty m-b-xs">JG:在售</a></span>
+									<span class="badge badge-empty m-b-xs">JuM:在库</a></span>
+								</div></td>
+							<td class="text-left">
+								<small popover="Create Time：2015-11-11 23:59:59 Publish Time：2015-11-11 23:59:59  On Sale Time：2015-11-11 23:59:59" popover-trigger="mouseenter" popover-placement="left">
+									<div class="table_main">
+										<ul>
+											<li>Publish Time</li>
+											<li><span>2015-11-11</span></li>
+											<li><span>23:59:59</span></li>
+										</ul>
+									</div>
+								</small>
+							</td> </tr>
 
-												  </tbody>
-												  <thead>
-												  <tr>
-													  <th colspan="5" class="control-label text-left form-inline">
-														  <label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label>
-														  <span class="label label-danger-new m-r-lg m-l"> Ready </span> <span class="m-r-lg">Product Code: <a href="https://www.tmall.com/" target="_blank" class="text-u-l">LDB01-249</a></span> <span>Product Name: <a href="#/product/list" target="_blank" class="text-u-l">阿迪达斯</a></span>
-													  </th>
-													  <th colspan="4" class="text-right">类目:珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石</th>
-												  </tr>
-												  </thead>
-												  <tbody>
-												  <tr>
-													  <td>
-														  <img src="../../../../static/img/01.jpg" alt="Nike Air Max Tailwind 7" class="img-circle pull-left m-r"/>
-													  </td>
-													  <td>Jewelry.com</td>
-													  <td  style="width:10%">
-														  <button popover="LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20" popover-title="Inventory" type="button" popover-placement="left" class="btn btn-vo btn-xs">1200</button>
-														  <!--<small popover="" popover-trigger="mouseenter" popover-placement="left" class="label label-vo">1200</small>-->
-													  </td>
-													  <td  style="width:10%">
-														  <button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button>
-														  <!--<small popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00 / Promotion Price:1,099.00~2,099.00" popover-trigger="mouseenter" popover-placement="left" class="label label-vo">2900</small>-->
-													  </td>
-													  <td>Women</td>
-													  <td class="text-left">
-														  <div class="table_main">
-															  <ul>
-																  <li>产地：中国</li>
-																  <li>颜色：红色</li>
-																  <li>材质：PU</li>
-																  <li>风格：欧美</li>
-															  </ul>
-														  </div>
-													  </td>
-													  <td>100</td>
-													  <td><div class="btn-group pull-left">
-														  <span class="badge badge-empty m-b-xs">TM:在售</a></span>
-														  <span class="badge badge-empty m-b-xs">TG:在库</a></span>
-														  <span class="badge badge-empty m-b-xs">JD:未上新</a></span>
-													  </div>
-														  <div class="btn-group pull-left">
-															  <span class="badge badge-empty m-b-xs">JD:未上新</a></span>
-															  <span class="badge badge-empty m-b-xs">JG:在售</a></span>
-															  <span class="badge badge-empty m-b-xs">JuM:在库</a></span>
-														  </div></td>
-													  <td class="text-left">
-														  <small popover="Create Time：2015-11-11 23:59:59 Publish Time：2015-11-11 23:59:59  On Sale Time：2015-11-11 23:59:59" popover-trigger="mouseenter" popover-placement="left">
-															  <div class="table_main">
-																  <ul>
-																	  <li>Publish Time</li>
-																	  <li><span>2015-11-11</span></li>
-																	  <li><span>23:59:59</span></li>
-																  </ul>
-															  </div>
-														  </small>
-													  </td></tr>
+						</tbody>
+						<thead>
+						<tr>
+							<th colspan="5" class="control-label text-left form-inline">
+								<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label>
+								<span class="label label-danger-new m-r-lg m-l"> Ready </span> <span class="m-r-lg">Product Code: <a href="https://www.tmall.com/" target="_blank" class="text-u-l">LDB01-249</a></span> <span>Product Name: <a href="#/product/list" target="_blank" class="text-u-l">阿迪达斯</a></span>
+							</th>
+							<th colspan="4" class="text-right">类目:珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石</th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr>
+							<td>
+								<img src="../../../../static/img/01.jpg" alt="Nike Air Max Tailwind 7" class="img-circle pull-left m-r"/>
+							</td>
+							<td>Jewelry.com</td>
+							<td  style="width:10%">
+								<button popover="LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20" popover-title="Inventory" type="button" popover-placement="left" class="btn btn-vo btn-xs">1200</button>
+								<!--<small popover="" popover-trigger="mouseenter" popover-placement="left" class="label label-vo">1200</small>-->
+							</td>
+							<td  style="width:10%">
+								<button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button>
+								<!--<small popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00 / Promotion Price:1,099.00~2,099.00" popover-trigger="mouseenter" popover-placement="left" class="label label-vo">2900</small>-->
+							</td>
+							<td>Women</td>
+							<td class="text-left">
+								<div class="table_main">
+									<ul>
+										<li>产地：中国</li>
+										<li>颜色：红色</li>
+										<li>材质：PU</li>
+										<li>风格：欧美</li>
+									</ul>
+								</div>
+							</td>
+							<td>100</td>
+							<td><div class="btn-group pull-left">
+								<span class="badge badge-empty m-b-xs">TM:在售</a></span>
+								<span class="badge badge-empty m-b-xs">TG:在库</a></span>
+								<span class="badge badge-empty m-b-xs">JD:未上新</a></span>
+							</div>
+								<div class="btn-group pull-left">
+									<span class="badge badge-empty m-b-xs">JD:未上新</a></span>
+									<span class="badge badge-empty m-b-xs">JG:在售</a></span>
+									<span class="badge badge-empty m-b-xs">JuM:在库</a></span>
+								</div></td>
+							<td class="text-left">
+								<small popover="Create Time：2015-11-11 23:59:59 Publish Time：2015-11-11 23:59:59  On Sale Time：2015-11-11 23:59:59" popover-trigger="mouseenter" popover-placement="left">
+									<div class="table_main">
+										<ul>
+											<li>Publish Time</li>
+											<li><span>2015-11-11</span></li>
+											<li><span>23:59:59</span></li>
+										</ul>
+									</div>
+								</small>
+							</td></tr>
 
-												  </tbody>
-											  </table>
-										  <div class="col-sm-2">
-											  <div class="page-main form-inline">
-												  第<input type="text"/>页 <button class="btn btn-xs btn-default" type="button">GO</button>
-											  </div>
-										  </div>
-										  <div class="col-sm-7 text-center">
-											  <small class="text-muted inline m-t-sm m-b-sm">showing 20-30 of 50 items</small>
-										  </div>
-										  <div class="col-sm-3 text-right text-center-xs">
-											  <div >
-												  <pagination boundary-links="true" total-items="totalItems" ng-model="currentPage" class="pagination-sm m-t-none m-b" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></pagination>
-											  </div>
-										  </div>
+						</tbody>
+					</table>
+					<div class="col-sm-2">
+						<div class="page-main form-inline">
+							第<input type="text"/>页 <button class="btn btn-xs btn-default" type="button">GO</button>
+						</div>
+					</div>
+					<div class="col-sm-7 text-center">
+						<small class="text-muted inline m-t-sm m-b-sm">showing 20-30 of 50 items</small>
+					</div>
+					<div class="col-sm-3 text-right text-center-xs">
+						<div >
+							<pagination boundary-links="true" total-items="totalItems" ng-model="currentPage" class="pagination-sm m-t-none m-b" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></pagination>
+						</div>
+					</div>
 
-										  </div><!-- .table-responsive -->
-							          </tab>
-	      	</tabset><!-- tabset -->
-	      </div><!-- tabs ng-controller -->
-       </div><!-- .col-lg-12 -->
-
-
-
-
-
-
-
-
+				</div><!-- .table-responsive -->
+			</tab>
+		</tabset><!-- tabset -->
+	</div><!-- tabs ng-controller -->
+</div><!-- .col-lg-12 -->
