@@ -1,7 +1,5 @@
 package com.voyageone.cms.service;
 
-import com.voyageone.cms.service.model.CmsMtFeedCategoryTreeModel;
-import com.voyageone.common.util.JsonUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,9 +127,9 @@ public class FeedToCmsServiceTest {
 
     }
 
-    @Test
-    public void testGetFinallyCategories() throws Exception {
-        List<Map> ret = feedToCmsService.getFinallyCategories("013");
-
-    }
+//    @Test
+//    public void testGetFinallyCategories() throws Exception {
+//        List<Map> ret = feedToCmsService.getFinallyCategories("013");
+//
+//    }
 }
