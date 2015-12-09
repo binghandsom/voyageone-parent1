@@ -5503,7 +5503,7 @@ a.text-black:hover {
 .mfb-xxxs{width:30%}
 .mfb-xxxxs{width:40%}
 .mfb-xxxsm{width:50%}
-
+.hierarchy{padding:8px 4px 8px 4px;background:#fffaf4; border:1px solid #e7dfd4}
 .avatar {
   position: relative;
   display: block;
