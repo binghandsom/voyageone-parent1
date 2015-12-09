@@ -1,4 +1,4 @@
-package com.voyageone.batch.cms.bean;
+package com.voyageone.cms.service.bean;
 
 /**
  * Created by Leo on 15-12-9.

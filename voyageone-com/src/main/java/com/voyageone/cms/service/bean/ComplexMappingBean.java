@@ -1,4 +1,4 @@
-package com.voyageone.batch.cms.bean;
+package com.voyageone.cms.service.bean;
 
 import java.util.List;
 
