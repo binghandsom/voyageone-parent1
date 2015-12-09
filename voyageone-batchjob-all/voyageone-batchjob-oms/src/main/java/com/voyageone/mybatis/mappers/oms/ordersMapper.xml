@@ -2816,7 +2816,6 @@
 			o.order_channel_id = #{orderChannelId} and
 			o.order_status = 'Approved' and
 			(o.client_order_id = '' or o.client_order_id is null)
-			and o.order_number = '1000068839'
 		limit 80
 	</select>
 
@@ -2877,6 +2876,15 @@
 		where
 				odx.order_number = trackingInfo.order_number and
 				odx.item_number = trackingInfo.item_number
+	</update>
+
+	<!-- 把品牌方订单号更新到数据库中 -->
+	<update id="update_ClientOrderId" parameterType="HashMap" >
+		Update oms_bt_orders
+		set client_order_id = #{clientOrderId},
+		modifier = #{modifier},
+		modified = now()
+		where order_number = #{order_number}
 	</update>
 </mapper>
 

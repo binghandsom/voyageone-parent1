@@ -1,5 +1,7 @@
 package com.voyageone.batch.oms.modelbean;
 
+import com.voyageone.common.components.sears.bean.OrderBean;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -474,6 +476,7 @@ public class OrderExtend implements java.io.Serializable {
 	private String salesCheckNumber;
 	private boolean isNeedUpdateFlag = false;
 	private String clientStatus;
+	private OrderBean orderOutputInfo;
 	// Sears订单使用 end
 
 	public static long getSerialVersionUID() {
@@ -1606,5 +1609,13 @@ public class OrderExtend implements java.io.Serializable {
 
 	public void setClientStatus(String clientStatus) {
 		this.clientStatus = clientStatus;
+	}
+
+	public OrderBean getOrderOutputInfo() {
+		return orderOutputInfo;
+	}
+
+	public void setOrderOutputInfo(OrderBean orderOutputInfo) {
+		this.orderOutputInfo = orderOutputInfo;
 	}
 }

@@ -68,8 +68,8 @@ public class PostSearsOrderService {
 	private final static String POST_SEARS_CREATE_ORDER = "PostSearsCreateOrder";
 
 	// Sears渠道ID
-//	private String orderChannelID = "013";
-	private String orderChannelID = "001";
+	private String orderChannelID = "013";
+//	private String orderChannelID = "001";
 
 	//	异常邮件区分
 	//	订单推送异常
@@ -97,54 +97,55 @@ public class PostSearsOrderService {
 		List<OrderResponse> pushErrorOrderList = new ArrayList<OrderResponse>();
 
 		logger.info("	getPushCreateList");
-		List<OrderBean> pushDailySalesListList = getPushCreateList(orderChannelID, orderChannelTimeZone, exchangeRate);
+		List<OrderExtend> pushDailySalesListList = getPushCreateList(orderChannelID, orderChannelTimeZone, exchangeRate);
 
-		if (pushDailySalesListList != null) {
-			for (int i = 0; i < pushDailySalesListList.size(); i++) {
-				OrderBean createOrderInfo = pushDailySalesListList.get(i);
+		for (OrderExtend orderExtendInfo:pushDailySalesListList) {
+			OrderBean createOrderInfo = orderExtendInfo.getOrderOutputInfo();
 
-				// 请求XML缓存
-				backupTheXmlFile(createOrderInfo.getOrderReference(), JaxbUtil.convertToXml(createOrderInfo), 0);
+//			createOrderInfo.getItems().get(0).setItemPrice((float) 45.22);
 
-				try {
-					// Sears Create Order接口请求
-					logger.info("	searsService.CreateOrder sourceOrderId = " + createOrderInfo.getOrderReference());
-					OrderResponse orderResponse = searsService.CreateOrder(createOrderInfo);
+			// 请求XML缓存
+			backupTheXmlFile(createOrderInfo.getOrderReference(), JaxbUtil.convertToXml(createOrderInfo), 0);
 
-					// 相应XML缓存
-					backupTheXmlFile(createOrderInfo.getOrderReference(), orderResponse.getMessage(), 1);
+			try {
 
-					//	第三方订单号更新
-					if ("Succeed".equals(orderResponse.getMessage())) {
-						logger.info("	updateOrder");
-						isSuccess = updateOrder(createOrderInfo.getOrderReference(), orderResponse.getOrderId(), POST_SEARS_CREATE_ORDER);
+				// Sears Create Order接口请求
+				logger.info("	searsService.CreateOrder sourceOrderId = " + createOrderInfo.getOrderReference() + ",orderNumber = " + orderExtendInfo.getOrderNumber());
+				OrderResponse orderResponse = searsService.CreateOrder(createOrderInfo);
 
-						if (!isSuccess) {
-							issueLog.log("postSearsCreateOrder.updateOrder",
-									"UpdateOrder error ; OrderNumber = " + createOrderInfo.getOrderReference(),
-									ErrorType.BatchJob,
-									SubSystem.OMS);
-						}
-					} else {
-						// 异常的场合，订单号再设定
-						orderResponse.setOrderId(createOrderInfo.getOrderReference());
-						pushErrorOrderList.add(orderResponse);
+				// 相应XML缓存
+				backupTheXmlFile(createOrderInfo.getOrderReference(), orderResponse.getMessage(), 1);
+
+				//	第三方订单号更新
+				if ("Succeed".equals(orderResponse.getMessage())) {
+					logger.info("	updateOrder");
+					isSuccess = updateOrder(orderExtendInfo.getOrderNumber(), orderResponse.getOrderId(), POST_SEARS_CREATE_ORDER);
+
+					if (!isSuccess) {
+						issueLog.log("postSearsCreateOrder.updateOrder",
+								"UpdateOrder error ; OrderNumber = " + createOrderInfo.getOrderReference(),
+								ErrorType.BatchJob,
+								SubSystem.OMS);
 					}
-				} catch (Exception e) {
-					isSuccess = false;
-					logger.error("postSearsCreateOrder.CreateOrder error", e);
-
-					issueLog.log("postSearsCreateOrder.CreateOrder",
-							"CreateOrder error ; OrderNumber = " + createOrderInfo.getOrderReference(),
-							ErrorType.BatchJob,
-							SubSystem.OMS);
+				} else {
+					// 异常的场合，订单号再设定
+					orderResponse.setOrderId(createOrderInfo.getOrderReference());
+					pushErrorOrderList.add(orderResponse);
 				}
-			}
+			} catch (Exception e) {
+				isSuccess = false;
+				logger.error("postSearsCreateOrder.CreateOrder error", e);
 
-			// 推送异常订单，客服邮件通知
-			if (pushErrorOrderList.size() > 0) {
-				sendCustomerServiceMail(pushErrorOrderList, MAIL_PUSH_ORDER_ERROR);
+				issueLog.log("postSearsCreateOrder.CreateOrder",
+						"CreateOrder error ; OrderNumber = " + createOrderInfo.getOrderReference(),
+						ErrorType.BatchJob,
+						SubSystem.OMS,e.toString());
 			}
+		}
+
+		// 推送异常订单，客服邮件通知
+		if (pushErrorOrderList.size() > 0) {
+			sendCustomerServiceMail(pushErrorOrderList, MAIL_PUSH_ORDER_ERROR);
 		}
 
 		logger.info("postSearsCreateOrder end");
@@ -211,43 +212,39 @@ public class PostSearsOrderService {
 	 * 推送订单信息取得
 	 *
 	 */
-	private List<OrderBean> getPushCreateList(String orderChannelID, int timeZone, String exchangeRate) {
-		List<OrderBean> ret = new ArrayList<OrderBean>();
+	private List<OrderExtend> getPushCreateList(String orderChannelID, int timeZone, String exchangeRate) {
+//		List<OrderBean> ret = new ArrayList<OrderBean>();
 
+		List<OrderExtend> orderInfoFromDB = new ArrayList<>();
 		try {
 			// 订单信息取得
-			List<OrderExtend> orderInfoFromDB =orderDao.getPushThirdPartyOrderInfo(orderChannelID);
-			if (orderInfoFromDB.size() > 0) {
-				for (int i = 0; i < orderInfoFromDB.size(); i++) {
-					OrderExtend orderExtendInfo = orderInfoFromDB.get(i);
+			orderInfoFromDB =orderDao.getPushThirdPartyOrderInfo(orderChannelID);
+			for (OrderExtend orderExtendInfo: orderInfoFromDB) {
 
-					// 信息翻译
-					translateOrderInfo(orderExtendInfo);
+				// 信息翻译
+				translateOrderInfo(orderExtendInfo);
 
-					// 订单明细信息取得
-					OrderBean orderOutputInfo = getPushOrder(orderExtendInfo, timeZone, exchangeRate);
+				// 订单明细信息取得
+				OrderBean orderOutputInfo = getPushOrder(orderChannelID, orderExtendInfo, timeZone, exchangeRate);
 
-					// 明细税率不存在的订单跳过
-					if (orderOutputInfo != null) {
-						ret.add(orderOutputInfo);
-					}
+				// 明细税率不存在的订单跳过
+				if (orderOutputInfo != null) {
+					orderExtendInfo.setOrderOutputInfo(orderOutputInfo);
 				}
 			}
 		} catch (Exception e) {
-			ret = null;
-
 			logger.error("getPushCreateList error", e);
 			issueLog.log(e, ErrorType.BatchJob,
 					SubSystem.OMS, "getPushCreateList error");
 		}
-		return ret;
+		return orderInfoFromDB;
 	}
 
 	/**
 	 * 推送订单明细信息取得
 	 *
 	 */
-	private OrderBean getPushOrder(OrderExtend orderExtendInfo, int timeZone, String exchangeRate) throws Exception {
+	private OrderBean getPushOrder(String orderChannelID, OrderExtend orderExtendInfo, int timeZone, String exchangeRate) throws Exception {
 
 		// 公司扣点
 		float voCommission = Float.valueOf(ChannelConfigs.getVal1(orderChannelID, ChannelConfigEnums.Name.vo_commission));
@@ -320,14 +317,14 @@ public class PostSearsOrderService {
 		// shippingAddress
 		OrderShippingBean orderShippingInfo = new OrderShippingBean();
 
-		ArrayList<String> shippingAddressList = getSearsAddress(orderExtendInfo.getShipAddress(), orderExtendInfo.getShipAddress2());
+//		ArrayList<String> shippingAddressList = getSearsAddress(orderExtendInfo.getShipAddress(), orderExtendInfo.getShipAddress2());
+		ArrayList<String> shippingAddressList = getSearsAddress(ChannelConfigs.getChannel(orderChannelID).getSend_address(),"");
 
 		orderShippingInfo.setAddressLine1(shippingAddressList.get(0));
 		orderShippingInfo.setAddressLine2(shippingAddressList.get(1));
 		orderShippingInfo.setAddressLine3(shippingAddressList.get(2));
-		// TODO 修正预定
-//		orderShippingInfo.setZipCode(orderExtendInfo.getShipZip());
-		orderShippingInfo.setZipCode("12345");
+		orderShippingInfo.setZipCode(orderExtendInfo.getShipZip());
+		orderShippingInfo.setZipCode(ChannelConfigs.getChannel(orderChannelID).getSend_zip());
 		orderShippingInfo.setFirstName(orderExtendInfo.getShipName());
 		orderShippingInfo.setLastName(DUMMY_LAST_NAME);
 		orderShippingInfo.setEmail(SEARS_MAIL_ADDRESS);
@@ -483,9 +480,9 @@ public class PostSearsOrderService {
 		FileWriter fs = null;
 		try {
 			if (type == 0) {
-				fs = new FileWriter(strFolder + File.separator + "post_onestop_" + fileName + ".xml");
+				fs = new FileWriter(strFolder + File.separator + "post_sears_" + fileName + ".xml");
 			} else {
-				fs = new FileWriter(strFolder + File.separator + "ret_onestop_" + fileName + ".xml");
+				fs = new FileWriter(strFolder + File.separator + "ret_sears_" + fileName + ".xml");
 			}
 			fs.write(strXML);
 			fs.flush();

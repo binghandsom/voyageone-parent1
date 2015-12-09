@@ -9,6 +9,7 @@ import com.voyageone.batch.core.util.TaskControlUtils;
 import com.voyageone.batch.wms.dao.ReservationDao;
 import com.voyageone.batch.wms.modelbean.OrderDetailBean;
 import com.voyageone.batch.wms.modelbean.ReservationBean;
+import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.sears.SearsService;
 import com.voyageone.common.components.sears.SerasConstants;
@@ -17,11 +18,17 @@ import com.voyageone.common.components.sears.bean.UpdateStatusBean;
 import com.voyageone.common.components.sears.bean.UpdateStatusItem;
 import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.configs.ChannelConfigs;
+import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.beans.OrderChannelBean;
+import com.voyageone.common.util.JaxbUtil;
 import com.voyageone.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -303,7 +310,13 @@ public class WmsUpdateStatusService extends BaseTaskService {
 
                                 String json = updateStatusBean == null ? "" : new Gson().toJson(updateStatusBean);
 
+                                // 请求XML缓存
+                                backupTheXmlFile(orderDetail.getOrder_number(), JaxbUtil.convertToXml(updateStatusBean), 0);
+
                                 orderResponse = searsService.UpdateStatus(updateStatusBean);
+
+                                // 相应XML缓存
+                                backupTheXmlFile(orderDetail.getOrder_number(), orderResponse.getMessage(), 1);
 
                                 if (orderResponse != null && StringUtils.null2Space2(orderResponse.getMessage()).equals("Succeed")) {
                                     $info(channel.getFull_name() + "---------更新订单相关状态成功："+json);
@@ -337,6 +350,44 @@ public class WmsUpdateStatusService extends BaseTaskService {
 
             $info(channel.getFull_name() + " 更新订单相关状态结束");
 
+        }
+    }
+
+    /** 接口XML文件保存
+     *
+     * @param strXML
+     * @param type
+     */
+    private void backupTheXmlFile(long orderNumber, String strXML, int type) {
+
+        String strFolder = Properties.readValue("PostBackup") + File.separator + this.getClass().getName();
+        File file = new File(strFolder);
+        if (!file.exists() && !file.isDirectory()) {
+            file.mkdirs();
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSSS");
+        java.util.Date date = new java.util.Date();
+        String fileName = orderNumber + "_" + sdf.format(date);
+        FileWriter fs = null;
+        try {
+            if (type == 0) {
+                fs = new FileWriter(strFolder + File.separator + "post_sears_" + fileName + ".xml");
+            } else {
+                fs = new FileWriter(strFolder + File.separator + "ret_sears_" + fileName + ".xml");
+            }
+            fs.write(strXML);
+            fs.flush();
+        } catch (Exception ex) {
+            logger.error(ex.toString());
+            issueLog.log(ex, ErrorType.BatchJob, SubSystem.OMS);
+        } finally {
+            try {
+                fs.close();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                issueLog.log(e,ErrorType.BatchJob, SubSystem.OMS);
+            }
         }
     }
 

@@ -2157,15 +2157,15 @@ public class OrderDao extends BaseDao {
 	 *
 	 * @return
 	 */
-	public boolean updateOrdersClientOrderIdInfo(String orderNumber, String clientOrderId, String taskName) {
+	public boolean updateOrdersClientOrderIdInfo(String order_number, String clientOrderId, String taskName) {
 		boolean ret = false;
 
 		HashMap<String, Object> paraIn = new HashMap<String, Object>();
-		paraIn.put("jCOrderNumber", taskName);
-		paraIn.put("orderNumber", orderNumber);
+		paraIn.put("order_number", order_number);
+		paraIn.put("clientOrderId", clientOrderId);
 		paraIn.put("modifier", taskName);
 
-		int retCount = updateTemplate.update(Constants.DAO_NAME_SPACE_OMS + "update_jc_order_number", paraIn);
+		int retCount = updateTemplate.update(Constants.DAO_NAME_SPACE_OMS + "update_ClientOrderId", paraIn);
 
 		if (retCount > 0) {
 			ret = true;
