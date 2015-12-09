@@ -131,7 +131,7 @@ public class FeedToCmsServiceTest {
 
     @Test
     public void testGetFinallyCategories() throws Exception {
-        List<Map> ret = feedToCmsService.getFinallyCategories("013");
+        List<Map<String,Object>> ret = feedToCmsService.getFinallyCategories("013");
 
     }
 }

@@ -21,8 +21,6 @@ public class CmsBtChannelCategoryService {
 
     /**
      * 取得Category Tree 根据channelId
-     * @param channelId
-     * @return
      */
     public List<CmsMtCategoryTreeModel> getCategorysByChannelId(String channelId) {
         List<CmsMtCategoryTreeModel> result = new ArrayList<>();
@@ -40,8 +38,6 @@ public class CmsBtChannelCategoryService {
 
     /**
      * 取得Mapping定义 根据channelId
-     * @param channelId
-     * @return
      */
     public List<CmsBtChannelCategoryModel> getByChannelId(String channelId) {
         return cmsBtChannelCategoryDao.selectbyChannelId(channelId);
@@ -49,7 +45,6 @@ public class CmsBtChannelCategoryService {
 
     /**
      * 保存Mapping定义
-     * @param model
      */
     public void save(CmsBtChannelCategoryModel model) {
         cmsBtChannelCategoryDao.insert(model);
@@ -57,7 +52,6 @@ public class CmsBtChannelCategoryService {
 
     /**
      * 保存Mapping List定义
-     * @param models
      */
     public void saveWithList(List<CmsBtChannelCategoryModel> models) {
         cmsBtChannelCategoryDao.insertWithList(models);
