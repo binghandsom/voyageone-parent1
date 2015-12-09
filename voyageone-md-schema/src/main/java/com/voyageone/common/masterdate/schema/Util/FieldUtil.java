@@ -7,6 +7,7 @@ import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.MultiComplexField;
 import com.voyageone.common.masterdate.schema.rule.Rule;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FieldUtil {
@@ -84,11 +85,8 @@ public class FieldUtil {
     /**
      * field Id rename And replace Depend fieldId
      */
-    public static void fieldRenameId(Field inputField, String newId, List<Field> inputFields) {
-        String oldId = inputField.getId();
-        inputField.setId(newId);
-
-        for (Field field : inputFields) {
+    public static void renameDependFieldId(Field inputField, String oldId, String newId, List<Field> rootFields) {
+        for (Field field : rootFields) {
             fieldRenameDepend(field, oldId, newId);
         }
     }
@@ -137,6 +135,133 @@ public class FieldUtil {
                 }
             }
 
+        }
+    }
+
+    /**
+     * 根据Name 取得Field list
+     */
+    public static List<Field> getFieldByName(List<Field> rootFields, String name) {
+        List<Field> result = new ArrayList<>();
+        if (rootFields != null && name != null) {
+            for (Field field : rootFields) {
+                if(name.equals(field.getName())) {
+                    result.add(field);
+                } else {
+                    Field outField = getChildFieldByName(field, name);
+                    if (outField != null) {
+                        result.add(outField);
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    private static Field getChildFieldByName(Field inputField, String name) {
+        if (inputField != null) {
+            List<Field> fieldList = null;
+            switch(inputField.getType()) {
+                case COMPLEX:
+                    fieldList = ((ComplexField)inputField).getFieldList();
+                    break;
+                case MULTICOMPLEX:
+                    fieldList = ((MultiComplexField)inputField).getFieldList();
+                    break;
+            }
+
+            Field result = null;
+            if (fieldList != null) {
+                for (Field field : fieldList) {
+                    if(field.getName() != null && field.getName().equals(name)) {
+                        return field;
+                    } else {
+                        result = getChildFieldByName(field, name);
+                        if (result != null) {
+                            return result;
+                        }
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * 根据ID 取得Field
+     */
+    public static Field getFieldById(List<Field> rootFields, String id) {
+        if (rootFields != null && id != null) {
+            for (Field field : rootFields) {
+                if (id.equals(field.getId())) {
+                    return field;
+                }
+                Field outField = getChildFieldById(field, id);
+                if (outField != null) {
+                    return outField;
+                }
+            }
+        }
+        return null;
+    }
+
+    private static Field getChildFieldById(Field inputField, String id) {
+        List<Field> fieldList = null;
+        switch(inputField.getType()) {
+            case COMPLEX:
+                fieldList = ((ComplexField)inputField).getFieldList();
+                break;
+            case MULTICOMPLEX:
+                fieldList = ((MultiComplexField)inputField).getFieldList();
+                break;
+        }
+
+        Field result = null;
+        if (fieldList != null) {
+            for (Field field : fieldList) {
+                if(field.getId() != null && field.getId().equals(id)) {
+                    return field;
+                } else {
+                    result = getChildFieldById(field, id);
+                    if (result != null) {
+                        return result;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * 删除指定ID的Field
+     */
+    public static void removeFieldById(List<Field> rootFields, String id) {
+        if (rootFields != null && id != null) {
+            Field removeField = null;
+            for (Field rootField : rootFields) {
+                if (id.equals(rootField.getId())) {
+                    removeField = rootField;
+                    break;
+                } else {
+                    List<Field> fieldList = null;
+                    switch(rootField.getType()) {
+                        case COMPLEX:
+                            fieldList = ((ComplexField)rootField).getFieldList();
+                            break;
+                        case MULTICOMPLEX:
+                            fieldList = ((MultiComplexField)rootField).getFieldList();
+                            break;
+                    }
+                    if (fieldList != null) {
+                        removeFieldById(fieldList, id);
+                    }
+                }
+            }
+            if (removeField != null) {
+                rootFields.remove(removeField);
+            }
         }
     }
 
