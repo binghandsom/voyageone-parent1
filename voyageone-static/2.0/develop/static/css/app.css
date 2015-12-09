@@ -5497,12 +5497,13 @@ a.text-black:hover {
 
 .mfb-xt{width:5%}
 .mfb-x{width:8%}
+.mft-xxt{width:10%}
 .mfb-xx{width:12%}
 .mfb-xxs{width:20%}
 .mfb-xxxs{width:30%}
-.mfb-xxxs{width:30%}
+.mfb-xxxxs{width:40%}
 .mfb-xxxsm{width:50%}
-
+.hierarchy{padding:8px 4px 8px 4px;background:#fffaf4; border:1px solid #e7dfd4}
 .avatar {
   position: relative;
   display: block;

@@ -11,11 +11,11 @@ define([
 
         $scope.vm = {"searchInfo": {}, "masterData": {}};
 
-        $scope.cancel = cancel;
+        $scope.clear = clear;
         $scope.search = search;
         $scope.export = exportFile;
 
-        function cancel () {
+        function clear () {
             $scope.vm.searchInfo = {};
         }
 
