@@ -2,13 +2,7 @@ package com.voyageone.batch.oms.service;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 import javax.mail.MessagingException;
 
@@ -3084,7 +3078,25 @@ public class OrderInfoImportService {
 				}
 
 				for (String sku : skuTotalList) {
-					String mapKey = orderChannelId + Constants.COMMA_CHAR + (isFlatform ? platformId : cartId) + Constants.COMMA_CHAR + sku.toUpperCase();
+					sku = sku.toUpperCase();
+
+					String mapKeyPart = orderChannelId + Constants.COMMA_CHAR + (isFlatform ? platformId : cartId) + Constants.COMMA_CHAR;
+
+					// 对应买就送有优先顺及库存设置
+					Set<String> buyKeySet = BUY_THAN_GIFT_SETTING.keySet();
+					if (buyKeySet != null && buyKeySet.size() > 0) {
+						for (String buyKey : buyKeySet) {
+							String buySkuKey = buyKey.replace(mapKeyPart, "");
+							// 买赠购买的sku可能配置多个对应一个赠品
+							if (buySkuKey.contains(sku) && buySkuKey.contains(";")) {
+								sku = buySkuKey;
+
+								break;
+							}
+						}
+					}
+
+					String mapKey = mapKeyPart + sku;
 					List<Map<String, String>> giftMaps = BUY_THAN_GIFT_SETTING.get(mapKey);
 
 					if (giftMaps != null && giftMaps.size() > 0) {
@@ -4168,7 +4180,25 @@ public class OrderInfoImportService {
 				}
 
 				for (String sku : skuTotalList) {
-					String mapKey = orderChannelId + Constants.COMMA_CHAR + (isFlatform ? platformId : cartId) + Constants.COMMA_CHAR + sku.toUpperCase();
+					sku = sku.toUpperCase();
+
+					String mapKeyPart = orderChannelId + Constants.COMMA_CHAR + (isFlatform ? platformId : cartId) + Constants.COMMA_CHAR;
+
+					// 对应买就送有优先顺及库存设置
+					Set<String> buyKeySet = BUY_THAN_GIFT_SETTING_TRANS.keySet();
+					if (buyKeySet != null && buyKeySet.size() > 0) {
+						for (String buyKey : buyKeySet) {
+							String buySkuKey = buyKey.replace(mapKeyPart, "");
+							// 买赠购买的sku可能配置多个对应一个赠品
+							if (buySkuKey.contains(sku) && buySkuKey.contains(";")) {
+								sku = buySkuKey;
+
+								break;
+							}
+						}
+					}
+
+					String mapKey = mapKeyPart + sku;
 					List<Map<String, String>> giftMaps = BUY_THAN_GIFT_SETTING_TRANS.get(mapKey);
 
 					if (giftMaps != null && giftMaps.size() > 0) {
@@ -5053,7 +5083,25 @@ public class OrderInfoImportService {
 				}
 
 				for (String sku : skuTotalList) {
-					String mapKey = orderChannelId + Constants.COMMA_CHAR + (isFlatform ? platformId : cartId) + Constants.COMMA_CHAR + sku.toUpperCase();
+					sku = sku.toUpperCase();
+
+					String mapKeyPart = orderChannelId + Constants.COMMA_CHAR + (isFlatform ? platformId : cartId) + Constants.COMMA_CHAR;
+
+					// 对应买就送有优先顺及库存设置
+					Set<String> buyKeySet = BUY_THAN_GIFT_SETTING_EXT.keySet();
+					if (buyKeySet != null && buyKeySet.size() > 0) {
+						for (String buyKey : buyKeySet) {
+							String buySkuKey = buyKey.replace(mapKeyPart, "");
+							// 买赠购买的sku可能配置多个对应一个赠品
+							if (buySkuKey.contains(sku) && buySkuKey.contains(";")) {
+								sku = buySkuKey;
+
+								break;
+							}
+						}
+					}
+
+					String mapKey = mapKeyPart + sku;
 					List<Map<String, String>> giftMaps = BUY_THAN_GIFT_SETTING_EXT.get(mapKey);
 					if (giftMaps != null && giftMaps.size() > 0) {
 
