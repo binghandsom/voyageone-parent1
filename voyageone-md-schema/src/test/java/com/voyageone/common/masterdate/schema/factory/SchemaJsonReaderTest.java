@@ -344,7 +344,7 @@ public class SchemaJsonReaderTest {
 
     private ComplexField createComplexField() {
         ComplexField complexField = (ComplexField) SchemaFactory.createField(FieldTypeEnum.COMPLEX);
-        complexField.setId("createComplexField1");
+        complexField.setId("aa2.aa2");
         complexField.setName("createComplexField11");
         //inputField.setFieldRequired();
         List<Property> properties = new ArrayList();
@@ -408,13 +408,29 @@ public class SchemaJsonReaderTest {
         List<Field> newFieldsList = SchemaJsonReader.readJsonForList(jsonStr);
         String newjsonStr = JsonUtil.bean2Json(newFieldsList);
         System.out.println(newjsonStr);
-
-        Field field = newFieldsList.get(0).getChildFieldById("InputFiled11");
-        System.out.println(field);
-
         if (newjsonStr.equals(jsonStr)) {
             System.out.println("equal");
         }
+
+        Field field = FieldUtil.getFieldById(newFieldsList, "aa2.aa2");
+        System.out.println(JsonUtil.bean2Json(field));
+
+        System.out.println("------------");
+        List<Field> fields = FieldUtil.getFieldByName(newFieldsList, "createComplexField11");
+        for (Field fieldcell : fields) {
+            System.out.println(JsonUtil.bean2Json(fieldcell));
+            FieldUtil.removeFieldById(newFieldsList, fieldcell.getId());
+        }
+
+        System.out.println("------------");
+        String newjsonStra = JsonUtil.bean2Json(newFieldsList);
+        System.out.println(newjsonStra);
+        System.out.println("------------");
+
+
+        System.out.println(JsonUtil.bean2Json(field));
+
+
     }
 
     private MultiComplexField createMultiComplexField() {
@@ -569,7 +585,7 @@ public class SchemaJsonReaderTest {
         String jsonStr = JsonUtil.bean2Json(fieldsList);
         System.out.println(jsonStr);
 
-        FieldUtil.fieldRenameId(inputField, "rename2", fieldsList);
+        FieldUtil.renameDependFieldId(inputField, "rename1", "rename2", fieldsList);
         String newjsonStr = JsonUtil.bean2Json(fieldsList);
         System.out.println(newjsonStr);
 
