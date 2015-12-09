@@ -1,10 +1,10 @@
 package com.voyageone.cms.service.model;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
+import com.voyageone.cms.service.bean.MappingBean;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by james.li on 2015/12/7.
@@ -22,7 +22,7 @@ public class CmsMtPlatformMappingModel extends BaseMongoModel {
     //1 属性匹配完成  0 属性尚未匹配完成
     private int matchOver;
 
-    private List<Map> props;
+    private List<MappingBean> props;
 
     public String getChannelId() {
         return channelId;
@@ -64,11 +64,11 @@ public class CmsMtPlatformMappingModel extends BaseMongoModel {
         this.matchOver = matchOver;
     }
 
-    public List<Map> getProps() {
+    public List<MappingBean> getProps() {
         return props;
     }
 
-    public void setProps(List<Map> props) {
+    public void setProps(List<MappingBean> props) {
         this.props = props;
     }
 }

@@ -23,7 +23,7 @@ public class CmsFieldEnum {
     public interface CmsFieldEnumIntf {}
 
     public enum CmsModelEnum implements CmsFieldEnumIntf{
-        brand_id,
+        brand,
         model,
         category_id,
         title_cn,
