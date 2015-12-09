@@ -81,7 +81,7 @@ public abstract class Field {
         Field result = null;
         if (fieldList != null) {
             for (Field field : fieldList) {
-                if(field.getId().equals(id)) {
+                if(field.getId() != null && field.getId().equals(id)) {
                     return field;
                 } else {
                     result = field.getChildFieldById(id);
@@ -95,8 +95,33 @@ public abstract class Field {
         return null;
     }
 
+    public Field getChildFieldByName(String name) {
+        List<Field> fieldList = null;
+        switch(type) {
+            case COMPLEX:
+                fieldList = ((ComplexField)this).getFieldList();
+                break;
+            case MULTICOMPLEX:
+                fieldList = ((MultiComplexField)this).getFieldList();
+                break;
+        }
 
+        Field result = null;
+        if (fieldList != null) {
+            for (Field field : fieldList) {
+                if(field.getName() != null && field.getName().equals(name)) {
+                    return field;
+                } else {
+                    result = field.getChildFieldByName(name);
+                    if (result != null) {
+                        return result;
+                    }
+                }
+            }
+        }
 
+        return null;
+    }
 
     public Element toElement() throws TopSchemaException {
         Element fieldNode = XmlUtils.createRootElement("field");

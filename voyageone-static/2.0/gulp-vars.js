@@ -42,7 +42,7 @@ var build = {
     loginCss: {
       src: [
         'develop/static/css/login.css',
-        'develop/static/css/font-awesome.css'
+        'develop/static/css/assets/font-awesome.css'
       ],
       dist: 'develop/static/',
       concat: 'login.min.css'

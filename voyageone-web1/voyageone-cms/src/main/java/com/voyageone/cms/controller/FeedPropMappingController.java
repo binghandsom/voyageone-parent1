@@ -1,9 +1,12 @@
 package com.voyageone.cms.controller;
 
 import com.voyageone.base.BaseController;
-import com.voyageone.cms.feed.OperationBean;
+import com.voyageone.cms.feed.Operation;
 import com.voyageone.cms.formbean.FeedMappingProp;
-import com.voyageone.cms.modelbean.*;
+import com.voyageone.cms.modelbean.FeedConfig;
+import com.voyageone.cms.modelbean.FeedPropMapping;
+import com.voyageone.cms.modelbean.FeedValue;
+import com.voyageone.cms.modelbean.PropertyOption;
 import com.voyageone.cms.service.FeedPropMappingService;
 import com.voyageone.core.ajax.AjaxResponseBean;
 import com.voyageone.core.ajax.dt.DtRequest;
@@ -53,14 +56,14 @@ public class FeedPropMappingController extends BaseController {
     @RequestMapping(GET_CONST)
     public AjaxResponseBean getConst() {
 
-        List<OperationBean> operationBeans = feedPropMappingService.getConditionOperations();
+        Operation[] operations = feedPropMappingService.getConditionOperations();
 
         List<CmsFieldEnum.CmsModelEnum> cmsModelEnums = feedPropMappingService.getCmsProps();
 
         List<FeedConfig> configs = feedPropMappingService.getFeedProps(getUser().getSelChannel());
 
         JsonObj jsonObj = new JsonObj();
-        jsonObj.add("operations", operationBeans);
+        jsonObj.add("operations", operations);
         jsonObj.add("feedProps", configs);
         jsonObj.add("cmsProps", cmsModelEnums);
 

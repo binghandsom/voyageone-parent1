@@ -1,5 +1,6 @@
 package com.voyageone.common.masterdate.schema.factory;
 
+import com.voyageone.common.masterdate.schema.Util.FieldUtil;
 import com.voyageone.common.masterdate.schema.Util.JsonUtil;
 import com.voyageone.common.masterdate.schema.depend.DependExpress;
 import com.voyageone.common.masterdate.schema.depend.DependGroup;
@@ -361,7 +362,7 @@ public class SchemaJsonReaderTest {
         dg_result.setOperator("and");
         List<DependExpress> dependExpressList = new ArrayList();
         DependExpress dgSubEle = new DependExpress();
-        dgSubEle.setFieldId("dependExpressId1");
+        dgSubEle.setFieldId("rename1");
         dgSubEle.setValue("dependExpressValue1");
         dgSubEle.setSymbol("deSymbol1");
         dependExpressList.add(dgSubEle);
@@ -418,7 +419,7 @@ public class SchemaJsonReaderTest {
 
     private MultiComplexField createMultiComplexField() {
         MultiComplexField complexField = (MultiComplexField) SchemaFactory.createField(FieldTypeEnum.MULTICOMPLEX);
-        complexField.setId("aa1");
+        complexField.setId("aa1.aa1");
         complexField.setName("A11");
         //inputField.setFieldRequired();
         List<Property> properties = new ArrayList();
@@ -556,6 +557,24 @@ public class SchemaJsonReaderTest {
             System.out.println("equal");
         }
     }
+
+    @Test
+    public void testFieldRename() throws Exception {
+        List<Field> fieldsList = new ArrayList<>();
+        InputField inputField = createInputFiled("rename1");
+        fieldsList.add(inputField);
+
+        MultiComplexField complexField = createMultiComplexField();
+        fieldsList.add(complexField);
+        String jsonStr = JsonUtil.bean2Json(fieldsList);
+        System.out.println(jsonStr);
+
+        FieldUtil.fieldRenameId(inputField, "rename2", fieldsList);
+        String newjsonStr = JsonUtil.bean2Json(fieldsList);
+        System.out.println(newjsonStr);
+
+    }
+
 
 
 }

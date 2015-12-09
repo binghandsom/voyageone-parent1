@@ -1,14 +1,22 @@
 package com.voyageone.cms.service.model;
 
 import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
+import com.voyageone.cms.feed.Condition;
 
 import java.util.List;
 
 /**
- * Created by zhujiaye on 15/12/7.
+ * Feed 数据到主数据映射关系定义
+ *
+ * @author zhujiaye 15/12/7.
+ * @author Jonas 2015-12-09 14:36:37
+ * @version 2.0.1
+ * @since 2.0.0
  */
 public class CmsBtFeedMappingModel extends ChannelPartitionModel {
-    public CmsBtFeedMappingModel() {}
+
+    public CmsBtFeedMappingModel() {
+    }
 
     public CmsBtFeedMappingModel(String channelId) {
         super(channelId);
@@ -18,7 +26,7 @@ public class CmsBtFeedMappingModel extends ChannelPartitionModel {
     private int defaultMapping;
     private int defaultMain;
     private int matchOver;
-    private List<Prop> propList;
+    private List<Prop> props;
 
     public Scope getScope() {
         return scope;
@@ -52,12 +60,12 @@ public class CmsBtFeedMappingModel extends ChannelPartitionModel {
         this.matchOver = matchOver;
     }
 
-    public List<Prop> getPropList() {
-        return propList;
+    public List<Prop> getProps() {
+        return props;
     }
 
-    public void setPropList(List<Prop> propList) {
-        this.propList = propList;
+    public void setProps(List<Prop> props) {
+        this.props = props;
     }
 
     public class Scope {
@@ -91,134 +99,73 @@ public class CmsBtFeedMappingModel extends ChannelPartitionModel {
     }
 
     public class Prop {
-        private String propName;
-        private Condition condition;
-        private List<Prop> propList;
 
-        public String getPropName() {
-            return propName;
+        private String prop;
+        private Mapping mappings;
+        private List<Prop> children;
+
+        public String getProp() {
+            return prop;
         }
 
-        public void setPropName(String propName) {
-            this.propName = propName;
+        public void setProp(String prop) {
+            this.prop = prop;
         }
 
-        public Condition getCondition() {
+        public Mapping getMappings() {
+            return mappings;
+        }
+
+        public void setMappings(Mapping mappings) {
+            this.mappings = mappings;
+        }
+
+        public List<Prop> getChildren() {
+            return children;
+        }
+
+        public void setChildren(List<Prop> children) {
+            this.children = children;
+        }
+    }
+
+    public class Mapping {
+
+        private List<Condition> condition;
+        private SrcType type;
+        private String val;
+
+        public List<Condition> getCondition() {
             return condition;
         }
 
-        public void setCondition(Condition condition) {
+        public void setCondition(List<Condition> condition) {
             this.condition = condition;
         }
 
-        public List<Prop> getPropList() {
-            return propList;
+        public SrcType getType() {
+            return type;
         }
 
-        public void setPropList(List<Prop> propList) {
-            this.propList = propList;
-        }
-    }
-
-    public class Condition {
-
-        private List<Chk> chkList;
-        private SrcType srcType;
-        private String srcVal;
-
-        public List<Chk> getChkList() {
-            return chkList;
+        public void setType(SrcType type) {
+            this.type = type;
         }
 
-        public void setChkList(List<Chk> chkList) {
-            this.chkList = chkList;
+        public String getVal() {
+            return val;
         }
 
-        public SrcType getSrcType() {
-            return srcType;
+        public void setVal(String val) {
+            this.val = val;
         }
-
-        public void setSrcType(SrcType srcType) {
-            this.srcType = srcType;
-        }
-
-        public String getSrcVal() {
-            return srcVal;
-        }
-
-        public void setSrcVal(String srcVal) {
-            this.srcVal = srcVal;
-        }
-    }
-
-    public class Chk {
-
-        private String chkSrc;
-        private ChkSymbolEnum chkSymbol;
-        private String chkVal;
-
-        public String getChkSrc() {
-            return chkSrc;
-        }
-
-        public void setChkSrc(String chkSrc) {
-            this.chkSrc = chkSrc;
-        }
-
-        public ChkSymbolEnum getChkSymbol() {
-            return chkSymbol;
-        }
-
-        public void setChkSymbol(ChkSymbolEnum chkSymbol) {
-            this.chkSymbol = chkSymbol;
-        }
-
-        public String getChkVal() {
-            return chkVal;
-        }
-
-        public void setChkVal(String chkVal) {
-            this.chkVal = chkVal;
-        }
-    }
-
-    public enum ChkSymbolEnum {
-        isNull("isNull"),
-        isNotNull("isNotNull"),
-        equals("=="),
-        notEquals("!=");
-
-        private String value;
-
-        ChkSymbolEnum(String desc) {
-            this.value = desc;
-        }
-
-        public String value() {
-            return value;
-        }
-
     }
 
     public enum SrcType {
-        text("text"),
-        propFeed("propFeed"),
-        propMain("propMain"),
-        optionMain("optionMain"),
-        optionPlatform("optionPlatform"),
-        dict("dict");
-
-        private String value;
-
-        SrcType(String desc) {
-            this.value = desc;
-        }
-
-        public String value() {
-            return value;
-        }
-
+        text,
+        propFeed,
+        propMain,
+        optionMain,
+        optionPlatform,
+        dict
     }
-
-
 }

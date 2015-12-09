@@ -7,7 +7,7 @@
 			</accordion-heading>
 			<!-- search -->
 			<div class="col-sm-12" >
-				<div class="col-sm-5">
+				<div class="col-sm-4">
 					<div class="form-horizontal">
 						<div class="form-group">
 							<label class="col-sm-3 control-label" translate="TXT_PRODUCT_STATUS"></label>
@@ -50,7 +50,7 @@
 						</div><!-- .form-group -->
 					</div>
 				</div>
-				<div class="col-sm-3">
+				<div class="col-sm-4">
 					<div class="form-horizontal">
 						<div class="form-group">
 							<label class="col-sm-3 control-label" translate="TXT_CREATE_TIME"></label>
@@ -229,10 +229,24 @@
 			<tab>
 				<tab-heading><i class="glyphicons glyphicons-more-items text-default"></i>&nbsp;{{'TXT_GROUP_LIST' | translate}}</tab-heading>
 				<div class="table-responsive">
-					<table class="table table-hover vo_table vo_models">
+					<table class="table table-hover vo_table vo_models" style="border-bottom:none;margin-bottom:0px">
 						<thead>
 						<tr>
-							<td colspan="2"><label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span> 全选 </label><!--<label class="i-checks-sm m-b-none"><input type="checkbox"></label> --></td>
+							<td colspan="3" class="mfb-xxxs"><label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span> 全选 </label><!--<label class="i-checks-sm m-b-none"><input type="checkbox"></label> --></td>
+							<td class="mft-xxt text-left">Primary Product</td>
+							<td class="mft-xxt">Inventory</td>
+							<td class="mft-xxt">Final Price</td>
+							<td class="text-left">Brand</td>
+							<td class="mfb-xxs">Base Property</td>
+							<td class="mft-xxt text-left">Time</td>
+						</tr>
+						</thead>
+						</table>
+					<div class="dragList" style="float:left;min-height:620px;margin:0px;padding:0px;overflow-y: auto;-webkit-overflow-scrolling: touch;">
+					<table class="table table-hover vo_table vo_models">
+						<!--<thead>
+						<tr>
+							<td colspan="2"><label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span> 全选 </label>&lt;!&ndash;<label class="i-checks-sm m-b-none"><input type="checkbox"></label> &ndash;&gt;</td>
 							<td class="text-left">Primary Product</td>
 							<td>Inventory</td>
 							<td>Final Price</td>
@@ -240,6 +254,8 @@
 							<td>Base Property</td>
 							<td class="text-left">Time</td>
 						</tr>
+						</thead>-->
+						<thead>
 						<tr>
 							<th colspan="5" class="control-label text-left form-inline">
 								<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label></td>
@@ -712,7 +728,7 @@
 							<pagination boundary-links="true" total-items="totalItems" ng-model="currentPage" class="pagination-sm m-t-none m-b" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></pagination>
 						</div>
 					</div>
-				</div><!-- .table-responsive -->
+				</div><!-- .table-responsive --></div>
 			</tab>
 
 			<tab>

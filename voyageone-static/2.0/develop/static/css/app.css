@@ -364,7 +364,7 @@ a.list-group-item.hover {
   margin-bottom: 15px;
 }
 .tab-container .tab-content {
-  padding: 15px;
+  padding:8px;
   background-color: #fff;
   border: 1px solid #d4cfcf;
   border-top-width: 0;
@@ -537,16 +537,20 @@ a.list-group-item.hover {
 }
 .panel-group .panel-heading + .panel-collapse > .panel-body,
 .panel-group .panel-heading + .panel-collapse > .list-group {
-  border-top: 1px solid #dddddd;
+ /* border-top: 1px solid #dddddd;*/
 }
 .panel-group .panel-footer {
   border-top: 0;
 }
 .panel-group .panel-footer + .panel-collapse .panel-body {
-  border-bottom: 1px solid #dddddd;
+  /*border-bottom: 1px solid #dddddd;*/
 }
 .panel-group .panel-heading + .panel-collapse .panel-body {
   border-top: 1px solid #eaedef;
+}
+.panelPromotion{
+  border:1px solid #ddd;
+  background: #f9f9f9;
 }
 .table > tbody > tr > td,
 .table > tfoot > tr > td {
@@ -892,7 +896,7 @@ body {
   height: auto;
 }
 .app-content-body {
-  padding-bottom: 56px;
+  padding-bottom: 38px;
   float: left;
   width: 100%;
 }
@@ -1043,7 +1047,7 @@ body {
   margin:0px;
 }
 .form-group {
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 @media (min-width: 768px) {
   body {
@@ -3115,7 +3119,7 @@ fieldset[disabled] .btn-vo.active {
   right: 75px;
 }
 .vo_panel.tab_panel {
-  border-color: #d4cfcf;/*
+  /*border-color: #d4cfcf;*//*
   -webkit-box-shadow: none !important;
   box-shadow: none !important;*/
 }
@@ -5503,7 +5507,7 @@ a.text-black:hover {
 .mfb-xxxs{width:30%}
 .mfb-xxxxs{width:40%}
 .mfb-xxxsm{width:50%}
-
+.hierarchy{padding:8px 4px 8px 4px;background:#fffaf4; border:1px solid #e7dfd4}
 .avatar {
   position: relative;
   display: block;
