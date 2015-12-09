@@ -1,7 +1,9 @@
 package com.voyageone.cms.service.dao.mongodb;
 
+import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.BaseMongoDao;
 import com.voyageone.cms.service.model.CmsBtProductModel;
+import com.voyageone.cms.service.model.CmsBtProductModel_Group_Platform;
 import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
 import net.minidev.json.JSONObject;
 import org.jongo.MongoCursor;
@@ -21,9 +23,6 @@ public class CmsBtProductDao extends BaseMongoDao {
 
     /**
      * 获取商品 根据ID获
-     * @param channelId
-     * @param prodId
-     * @return
      */
     public CmsBtProductModel selectProductById(String channelId, int prodId) {
         String query = "{\"prodId\":" + prodId + "}";
@@ -32,9 +31,6 @@ public class CmsBtProductDao extends BaseMongoDao {
 
     /**
      * 获取商品 根据ID获
-     * @param channelId
-     * @param prodId
-     * @return
      */
     public JSONObject selectProductByIdWithJson(String channelId, int prodId) {
         String query = "{\"prodId\":" + prodId + "}";
@@ -46,9 +42,6 @@ public class CmsBtProductDao extends BaseMongoDao {
 
     /**
      * 获取商品 根据Code
-     * @param channelId
-     * @param code
-     * @return
      */
     public CmsBtProductModel selectProductByCode(String channelId, String code) {
         String query = "{\"fields.code\":\"" + code + "\"}";
@@ -57,9 +50,6 @@ public class CmsBtProductDao extends BaseMongoDao {
 
     /**
      * 获取商品List 根据GroupId
-     * @param channelId
-     * @param groupId
-     * @return
      */
     public List<CmsBtProductModel> selectProductByGroupId(String channelId, int groupId) {
         String query = "{\"groups.platforms.groupId\":" + groupId + "}";
@@ -68,9 +58,6 @@ public class CmsBtProductDao extends BaseMongoDao {
 
     /**
      * 获取SKUList 根据prodId
-     * @param channelId
-     * @param prodId
-     * @return
      */
     public List<CmsBtProductModel_Sku>  selectSKUById(String channelId, int prodId) {
         String query = "{\"prodId\":" + prodId + "}";
@@ -85,10 +72,6 @@ public class CmsBtProductDao extends BaseMongoDao {
 
     /**
      * 获取Product List 根据catIdPath
-     * @param channelId
-     * @param catIdPath
-     * @return
-     * @throws IOException
      */
     public List<CmsBtProductModel> selectLeftLikeCatIdPath(String channelId, String catIdPath) {
         String queryTemp = "{catIdPath:{$regex:\"^%s\"}}";
@@ -98,11 +81,35 @@ public class CmsBtProductDao extends BaseMongoDao {
 
     /**
      * 获取Product ALL MongoCursor
-     * @param channelId
-     * @return
      */
     public Iterator<CmsBtProductModel> selectAllReturnCursor(String channelId) {
         return selectCursorAll(channelId);
+    }
+
+    /**
+     *更新Platform
+     */
+    public WriteResult updateWithPlatform(String channelId, String code, CmsBtProductModel_Group_Platform platformMode) {
+        if (channelId == null || code == null || platformMode == null || platformMode.getGroupId() == null) {
+            throw new RuntimeException("channelId, code, platformMode, groupId not null");
+        }
+        String query = String.format("{\"groups.platforms.groupId\":%s}", platformMode.getGroupId());
+        String update = String.format("{$set: %s }", platformMode.toUpdateString("groups.platforms.$."));
+        String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
+        return mongoTemplate.updateFirst(query, update, collectionName);
+    }
+
+    /**
+     * 更新SKU
+     */
+    public WriteResult updateWithSku(String channelId, String code, CmsBtProductModel_Sku skuModel) {
+        if (channelId == null || code == null || skuModel == null || skuModel.getSku() == null) {
+            throw new RuntimeException("channelId, code, skuModel, sku not null");
+        }
+        String query = String.format("{\"skus.sku\":\"%s\"}", skuModel.getSku());
+        String update = String.format("{$set: %s }", skuModel.toUpdateString("skus.$."));
+        String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
+        return mongoTemplate.updateFirst(query, update, collectionName);
     }
 
 }

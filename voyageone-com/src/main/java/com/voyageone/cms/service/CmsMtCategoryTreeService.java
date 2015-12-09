@@ -22,9 +22,6 @@ public class CmsMtCategoryTreeService {
 
     /**
      * 生成并插入cms_mt_category_tree数据（channelId cartId ）
-     * @param channelId
-     * @param cartId
-     * @return
      */
     public boolean createCmsMtCategoryTreeFromPlatform(String channelId, int cartId) {
         boolean result = true;
@@ -45,10 +42,6 @@ public class CmsMtCategoryTreeService {
 
     /**
      * 生成并插入cms_mt_category_tree数据（channelId cartId categoryId ）
-     * @param channelId
-     * @param cartId
-     * @param categoryId
-     * @return
      */
     public boolean createCmsMtCategoryTreeFromPlatform(String channelId, int cartId, String categoryId) {
         CmsMtPlatformCategoryTreeModel platformCategoryTreeModel = platformCategoryDao.selectByChannel_CartId_CatId(channelId, cartId, categoryId);
@@ -58,7 +51,7 @@ public class CmsMtCategoryTreeService {
             cmsMtCategoryTreeDao.delete(dbModel);
         }
         WriteResult writeResult = cmsMtCategoryTreeDao.insert(cmsMtCategoryTreeModel);
-        if (writeResult.getLastError().getInt("ok") != 1) {
+        if(writeResult.getLastError().getInt("ok") != 1) {
             return true;
         }
         return false;
@@ -67,9 +60,6 @@ public class CmsMtCategoryTreeService {
 
     /**
      * 生成CmsMtCategoryTreeModel数据
-     * @param platformCategoryTreeModel
-     * @param isRoot
-     * @return
      */
     private CmsMtCategoryTreeModel createCategoryTreeModel(CmsMtPlatformCategoryTreeModel platformCategoryTreeModel, boolean isRoot) {
         CmsMtCategoryTreeModel result = null;
@@ -108,8 +98,6 @@ public class CmsMtCategoryTreeService {
 
     /**
      * 生成CmsMtCategoryTreeModel List 数据
-     * @param platformCategoryTreeList
-     * @return
      */
     private List<CmsMtCategoryTreeModel> createCategoryTreeModel(List<CmsMtPlatformCategoryTreeModel> platformCategoryTreeList) {
         List<CmsMtCategoryTreeModel> result = new ArrayList<>();

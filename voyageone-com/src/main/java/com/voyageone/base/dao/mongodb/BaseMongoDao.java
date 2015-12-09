@@ -1,10 +1,10 @@
 package com.voyageone.base.dao.mongodb;
 
+import com.mongodb.CommandResult;
 import com.mongodb.DBCollection;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.common.util.DateTimeUtil;
-import org.jongo.MongoCursor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
@@ -149,8 +149,9 @@ public abstract class BaseMongoDao {
         return mongoTemplate.removeById(id, collectionName);
     }
 
-    public WriteResult deleteAll() {
-        return mongoTemplate.removeAll(collectionName);
+    public CommandResult deleteAll() {
+        String commandStr = String.format("{ delete:\"%s\", deletes:[ { q: { }, limit: 0 } ] }", collectionName);
+        return mongoTemplate.executeCommand(commandStr);
     }
 
     public WriteResult deleteWithQuery(String strQuery) {
@@ -162,14 +163,19 @@ public abstract class BaseMongoDao {
         return mongoTemplate.removeById(id, collectionName);
     }
 
-    public WriteResult deleteAll(String channelId) {
+    public CommandResult deleteAll(String channelId) {
         String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
-        return mongoTemplate.removeAll(collectionName);
+        String commandStr = String.format("{ delete:\"%s\", deletes:[ { q: { }, limit: 0 } ] }", collectionName);
+        return mongoTemplate.executeCommand(commandStr);
     }
 
     public WriteResult deleteWithQuery(String strQuery, String channelId) {
         String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
         return mongoTemplate.remove(strQuery, collectionName);
+    }
+
+    public CommandResult executeCommand(String jsonCommand) {
+        return mongoTemplate.executeCommand(jsonCommand);
     }
 
 }
