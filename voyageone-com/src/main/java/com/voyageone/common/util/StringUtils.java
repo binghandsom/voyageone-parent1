@@ -1,5 +1,7 @@
 package com.voyageone.common.util;
 
+import org.apache.commons.net.util.Base64;
+
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -445,5 +447,27 @@ public final class StringUtils {
      */
     public static String replaceDot(String str){
         return special_symbol.matcher(str).replaceAll("->");
+    }
+
+    /**
+     * BASE64字符串二进制数据编码为
+     */
+    public static String decodeBase64(String input) {
+        String result = null;
+        if (input != null) {
+            result = new String(Base64.decodeBase64(input.getBytes()));
+        }
+        return result;
+    }
+
+    /**
+     * 二进制数据编码为BASE64字符串
+     */
+    public static String encodeBase64(String input) {
+        String result = null;
+        if (input != null) {
+            result = new String(Base64.encodeBase64(input.getBytes()));
+        }
+        return result;
     }
 }

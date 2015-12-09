@@ -155,7 +155,7 @@ public class CmsProductServiceTest {
         List<CmsBtProductModel> lst = new ArrayList<>();
         int index = 0;
         for(int i=1; i<=100000; i++) {
-            CmsBtProductModel productModel = create("100", i, new Random());
+            CmsBtProductModel productModel = create("200", i, new Random());
             lst.add(productModel);
             index++;
             if (i%1000 == 0) {
