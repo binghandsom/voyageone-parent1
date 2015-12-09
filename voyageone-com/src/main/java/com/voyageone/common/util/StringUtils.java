@@ -435,4 +435,14 @@ public final class StringUtils {
         }
         return (source + strAdd(chr, lenleft));
     }
+
+    /**
+     * 把str中的【.】替换成【_】
+     * @param str
+     * @return
+     */
+    public static String replaceDot(String str){
+        Pattern special_symbol = Pattern.compile("[.]");
+        return special_symbol.matcher(str).replaceAll("->");
+    }
 }
