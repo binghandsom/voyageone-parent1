@@ -192,11 +192,20 @@ public class CmsBtProductModel_Field extends BaseMongoMap {
     }
 
     public boolean getLock() {
-        return (Boolean) getAttribute("lock");
+        boolean result = false;
+        Integer lock = (Integer)getAttribute("lock");
+        if (lock != null && lock == 1) {
+            result = true;
+        }
+        return result;
     }
 
     public void setLock(boolean lock) {
-        setAttribute("lock", lock);
+        int value = 0;
+        if (lock) {
+            value = 1;
+        }
+        setAttribute("lock", value);
     }
 
     public int getPriceChange() {

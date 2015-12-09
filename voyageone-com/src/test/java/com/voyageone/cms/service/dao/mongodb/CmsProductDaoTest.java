@@ -250,7 +250,7 @@ public class CmsProductDaoTest {
         platformMode.setGroupId(45);
         platformMode.setCartId(21);
         platformMode.setNumIId("1000702");
-        platformMode.setIsMain(0);
+        platformMode.setIsMain(false);
         platformMode.setDisplayOrder(27);
         platformMode.setPublishTime("2015-10-12 16:19:00");
         platformMode.setInstockTime("2015-10-18 16:19:00");
