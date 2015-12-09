@@ -1,5 +1,6 @@
 package com.voyageone.common.masterdate.schema.factory;
 
+import com.voyageone.common.masterdate.schema.Util.FieldUtil;
 import com.voyageone.common.masterdate.schema.Util.JsonUtil;
 import com.voyageone.common.masterdate.schema.depend.DependExpress;
 import com.voyageone.common.masterdate.schema.depend.DependGroup;
@@ -343,7 +344,7 @@ public class SchemaJsonReaderTest {
 
     private ComplexField createComplexField() {
         ComplexField complexField = (ComplexField) SchemaFactory.createField(FieldTypeEnum.COMPLEX);
-        complexField.setId("createComplexField1");
+        complexField.setId("aa2.aa2");
         complexField.setName("createComplexField11");
         //inputField.setFieldRequired();
         List<Property> properties = new ArrayList();
@@ -361,7 +362,7 @@ public class SchemaJsonReaderTest {
         dg_result.setOperator("and");
         List<DependExpress> dependExpressList = new ArrayList();
         DependExpress dgSubEle = new DependExpress();
-        dgSubEle.setFieldId("dependExpressId1");
+        dgSubEle.setFieldId("rename1");
         dgSubEle.setValue("dependExpressValue1");
         dgSubEle.setSymbol("deSymbol1");
         dependExpressList.add(dgSubEle);
@@ -407,18 +408,34 @@ public class SchemaJsonReaderTest {
         List<Field> newFieldsList = SchemaJsonReader.readJsonForList(jsonStr);
         String newjsonStr = JsonUtil.bean2Json(newFieldsList);
         System.out.println(newjsonStr);
-
-        Field field = newFieldsList.get(0).getChildFieldById("InputFiled11");
-        System.out.println(field);
-
         if (newjsonStr.equals(jsonStr)) {
             System.out.println("equal");
         }
+
+        Field field = FieldUtil.getFieldById(newFieldsList, "aa2.aa2");
+        System.out.println(JsonUtil.bean2Json(field));
+
+        System.out.println("------------");
+        List<Field> fields = FieldUtil.getFieldByName(newFieldsList, "createComplexField11");
+        for (Field fieldcell : fields) {
+            System.out.println(JsonUtil.bean2Json(fieldcell));
+            FieldUtil.removeFieldById(newFieldsList, fieldcell.getId());
+        }
+
+        System.out.println("------------");
+        String newjsonStra = JsonUtil.bean2Json(newFieldsList);
+        System.out.println(newjsonStra);
+        System.out.println("------------");
+
+
+        System.out.println(JsonUtil.bean2Json(field));
+
+
     }
 
     private MultiComplexField createMultiComplexField() {
         MultiComplexField complexField = (MultiComplexField) SchemaFactory.createField(FieldTypeEnum.MULTICOMPLEX);
-        complexField.setId("aa1");
+        complexField.setId("aa1.aa1");
         complexField.setName("A11");
         //inputField.setFieldRequired();
         List<Property> properties = new ArrayList();
@@ -556,6 +573,24 @@ public class SchemaJsonReaderTest {
             System.out.println("equal");
         }
     }
+
+    @Test
+    public void testFieldRename() throws Exception {
+        List<Field> fieldsList = new ArrayList<>();
+        InputField inputField = createInputFiled("rename1");
+        fieldsList.add(inputField);
+
+        MultiComplexField complexField = createMultiComplexField();
+        fieldsList.add(complexField);
+        String jsonStr = JsonUtil.bean2Json(fieldsList);
+        System.out.println(jsonStr);
+
+        FieldUtil.renameDependFieldId(inputField, "rename1", "rename2", fieldsList);
+        String newjsonStr = JsonUtil.bean2Json(fieldsList);
+        System.out.println(newjsonStr);
+
+    }
+
 
 
 }

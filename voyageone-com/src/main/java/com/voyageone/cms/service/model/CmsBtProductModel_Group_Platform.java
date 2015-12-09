@@ -47,12 +47,21 @@ public class CmsBtProductModel_Group_Platform extends BaseMongoMap {
         setAttribute("productId", productId);
     }
 
-    public Integer getIsMain() {
-        return (Integer) getAttribute("isMain");
+    public boolean getIsMain() {
+        boolean result = false;
+        Integer isMain = (Integer)getAttribute("isMain");
+        if (isMain != null && isMain == 1) {
+            result = true;
+        }
+        return result;
     }
 
-    public void setIsMain(int isMain) {
-        setAttribute("isMain", isMain);
+    public void setIsMain(boolean isMain) {
+        int value = 0;
+        if (isMain) {
+            value = 1;
+        }
+        setAttribute("isMain", value);
     }
 
     public double getDisplayOrder() {
