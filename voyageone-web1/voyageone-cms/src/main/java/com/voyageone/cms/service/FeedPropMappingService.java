@@ -1,6 +1,6 @@
 package com.voyageone.cms.service;
 
-import com.voyageone.cms.feed.OperationBean;
+import com.voyageone.cms.feed.Operation;
 import com.voyageone.cms.formbean.FeedMappingProp;
 import com.voyageone.cms.modelbean.*;
 import com.voyageone.core.ajax.dt.DtRequest;
@@ -72,7 +72,7 @@ public interface FeedPropMappingService {
      *
      * @return Operation 集合
      */
-    List<OperationBean> getConditionOperations();
+    Operation[] getConditionOperations();
 
     /**
      * 获取主数据的可选项

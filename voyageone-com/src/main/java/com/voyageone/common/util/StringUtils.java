@@ -1,5 +1,7 @@
 package com.voyageone.common.util;
 
+import org.apache.commons.net.util.Base64;
+
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -9,6 +11,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class StringUtils {
+
+    private static final Pattern special_symbol = Pattern.compile("[.]");
 
     public static String null2Space(String input) {
         if (input == null) {
@@ -434,5 +438,36 @@ public final class StringUtils {
             lenleft = 0;
         }
         return (source + strAdd(chr, lenleft));
+    }
+
+    /**
+     * 把str中的【.】替换成【->】
+     * @param str
+     * @return
+     */
+    public static String replaceDot(String str){
+        return special_symbol.matcher(str).replaceAll("->");
+    }
+
+    /**
+     * BASE64字符串二进制数据编码为
+     */
+    public static String decodeBase64(String input) {
+        String result = null;
+        if (input != null) {
+            result = new String(Base64.decodeBase64(input.getBytes()));
+        }
+        return result;
+    }
+
+    /**
+     * 二进制数据编码为BASE64字符串
+     */
+    public static String encodeBase64(String input) {
+        String result = null;
+        if (input != null) {
+            result = new String(Base64.encodeBase64(input.getBytes()));
+        }
+        return result;
     }
 }

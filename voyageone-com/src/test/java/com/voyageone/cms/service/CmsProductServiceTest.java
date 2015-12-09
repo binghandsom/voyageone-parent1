@@ -81,7 +81,7 @@ public class CmsProductServiceTest {
         platform.setGroupId(random.nextInt(1000));
         platform.setCartId(21);
         platform.setNumIId(String.valueOf(2000000 + random.nextInt(1000)));
-        platform.setIsMain(0);
+        platform.setIsMain(false);
         platform.setDisplayOrder(random.nextInt(100));
         platform.setPublishTime("2015-11-12 16:19:00");
         platform.setInstockTime("2015-11-18 16:19:00");
@@ -155,7 +155,7 @@ public class CmsProductServiceTest {
         List<CmsBtProductModel> lst = new ArrayList<>();
         int index = 0;
         for(int i=1; i<=100000; i++) {
-            CmsBtProductModel productModel = create("100", i, new Random());
+            CmsBtProductModel productModel = create("200", i, new Random());
             lst.add(productModel);
             index++;
             if (i%1000 == 0) {

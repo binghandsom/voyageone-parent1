@@ -59,6 +59,7 @@ gulp.task(tasks.build.com, function () {
 // build app.css
 gulp.task(tasks.build.css.app, function () {
   return gulp.src(build.common.appCss.src)
+    .pipe(debug())
     .pipe(concat(build.common.appCss.concat))
     .pipe(minifyCss())
     .pipe(gulp.dest(build.common.appCss.dist));
@@ -67,6 +68,7 @@ gulp.task(tasks.build.css.app, function () {
 // build login.css
 gulp.task(tasks.build.css.login, function () {
   return gulp.src(build.common.loginCss.src)
+    .pipe(debug())
     .pipe(concat(build.common.loginCss.concat))
     .pipe(minifyCss())
     .pipe(gulp.dest(build.common.loginCss.dist));

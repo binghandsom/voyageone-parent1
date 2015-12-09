@@ -51,7 +51,7 @@ public class CmsMtCategoryTreeDao extends BaseMongoDao {
      */
     public WriteResult insert(CmsMtCategoryTreeModel model) {
         WriteResult reslt = super.insert(model);
-        if (reslt.getLastError().getInt("ok") == 1) {
+        if (reslt.getN() > 0) {
             setCache(model.getCatId(), model);
         }
         return reslt;
@@ -62,7 +62,7 @@ public class CmsMtCategoryTreeDao extends BaseMongoDao {
      */
     public WriteResult delete(CmsMtCategoryTreeModel model) {
         WriteResult reslt = super.delete(model);
-        if (reslt.getLastError().getInt("ok") == 1) {
+        if (reslt.getN() > 0) {
             setCache(model.getCatId(), null);
         }
         return reslt;
