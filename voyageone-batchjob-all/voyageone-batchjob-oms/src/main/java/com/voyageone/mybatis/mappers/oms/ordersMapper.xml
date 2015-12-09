@@ -1132,7 +1132,7 @@
 		WHERE
 		order_channel_id = #{orderChannelId}
 		AND cart_id = ${cartId}
-		AND sku = ${sku}
+		AND sku = #{sku}
 		AND gift_sku = #{giftSku}
 	</insert>
 

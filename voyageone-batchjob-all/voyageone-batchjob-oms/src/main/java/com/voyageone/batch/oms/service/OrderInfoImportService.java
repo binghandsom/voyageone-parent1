@@ -3086,12 +3086,14 @@ public class OrderInfoImportService {
 					Set<String> buyKeySet = BUY_THAN_GIFT_SETTING.keySet();
 					if (buyKeySet != null && buyKeySet.size() > 0) {
 						for (String buyKey : buyKeySet) {
-							String buySkuKey = buyKey.replace(mapKeyPart, "");
-							// 买赠购买的sku可能配置多个对应一个赠品
-							if (buySkuKey.contains(sku) && buySkuKey.contains(";")) {
-								sku = buySkuKey;
+							if (buyKey.contains(mapKeyPart)) {
+								String buySkuKey = buyKey.replace(mapKeyPart, "");
+								// 买赠购买的sku可能配置多个对应一个赠品
+								if (buySkuKey.contains(sku) && buySkuKey.contains(";")) {
+									sku = buySkuKey;
 
-								break;
+									break;
+								}
 							}
 						}
 					}
@@ -4188,12 +4190,14 @@ public class OrderInfoImportService {
 					Set<String> buyKeySet = BUY_THAN_GIFT_SETTING_TRANS.keySet();
 					if (buyKeySet != null && buyKeySet.size() > 0) {
 						for (String buyKey : buyKeySet) {
-							String buySkuKey = buyKey.replace(mapKeyPart, "");
-							// 买赠购买的sku可能配置多个对应一个赠品
-							if (buySkuKey.contains(sku) && buySkuKey.contains(";")) {
-								sku = buySkuKey;
+							if (buyKey.contains(mapKeyPart)) {
+								String buySkuKey = buyKey.replace(mapKeyPart, "");
+								// 买赠购买的sku可能配置多个对应一个赠品
+								if (buySkuKey.contains(sku) && buySkuKey.contains(";")) {
+									sku = buySkuKey;
 
-								break;
+									break;
+								}
 							}
 						}
 					}
@@ -5091,12 +5095,14 @@ public class OrderInfoImportService {
 					Set<String> buyKeySet = BUY_THAN_GIFT_SETTING_EXT.keySet();
 					if (buyKeySet != null && buyKeySet.size() > 0) {
 						for (String buyKey : buyKeySet) {
-							String buySkuKey = buyKey.replace(mapKeyPart, "");
-							// 买赠购买的sku可能配置多个对应一个赠品
-							if (buySkuKey.contains(sku) && buySkuKey.contains(";")) {
-								sku = buySkuKey;
+							if (buyKey.contains(mapKeyPart)) {
+								String buySkuKey = buyKey.replace(mapKeyPart, "");
+								// 买赠购买的sku可能配置多个对应一个赠品
+								if (buySkuKey.contains(sku) && buySkuKey.contains(";")) {
+									sku = buySkuKey;
 
-								break;
+									break;
+								}
 							}
 						}
 					}
