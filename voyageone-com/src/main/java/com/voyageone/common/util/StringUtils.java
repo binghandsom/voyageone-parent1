@@ -10,6 +10,8 @@ import java.util.regex.Pattern;
 
 public final class StringUtils {
 
+    private static final Pattern special_symbol = Pattern.compile("[.]");
+
     public static String null2Space(String input) {
         if (input == null) {
             return "";
@@ -437,12 +439,11 @@ public final class StringUtils {
     }
 
     /**
-     * 把str中的【.】替换成【_】
+     * 把str中的【.】替换成【->】
      * @param str
      * @return
      */
     public static String replaceDot(String str){
-        Pattern special_symbol = Pattern.compile("[.]");
         return special_symbol.matcher(str).replaceAll("->");
     }
 }
