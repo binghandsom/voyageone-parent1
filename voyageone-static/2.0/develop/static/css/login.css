@@ -67,11 +67,11 @@ body {
 }
 
 .login-user {
-	background: url(img/user.png) no-repeat 8px 2px;
+	background: url(../img/user.png) no-repeat 8px 2px;
 }
 
 .login-lock {
-	background: url(img/lock.png) no-repeat 8px 2px;
+	background: url(../img/lock.png) no-repeat 8px 2px;
 }
 
 .login-submit button {
