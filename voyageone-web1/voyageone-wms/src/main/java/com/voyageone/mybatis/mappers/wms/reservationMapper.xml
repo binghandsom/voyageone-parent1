@@ -290,7 +290,9 @@
         ship_country,
         shipping,
         qty,
-        cart_id
+        cart_id,
+        client_order_id,
+        tracking_number
     </sql>
 
     <select id="viw_wms_reservation_pickup_mapping_getScanInfo" resultMap="pickup_result_map">
