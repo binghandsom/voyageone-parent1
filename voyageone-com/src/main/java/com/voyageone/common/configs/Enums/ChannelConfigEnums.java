@@ -323,6 +323,10 @@ public class ChannelConfigEnums {
          */
         pickup_permit,
         /**
+         * 是否允许捡货打印拣货单
+         */
+        pickup_label_print,
+        /**
          * 是否允许收货状态
          */
         receive_permit,
@@ -342,6 +346,10 @@ public class ChannelConfigEnums {
          * 收货重打类型
          */
         receive_relabel_type,
+        /**
+         * 是否允许收货打印拣货单
+         */
+        receive_label_print,
         /**
          * 再分配标志判断
          */
