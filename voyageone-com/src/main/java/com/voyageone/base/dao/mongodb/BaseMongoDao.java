@@ -59,6 +59,10 @@ public abstract class BaseMongoDao {
         return mongoTemplate.find(strQuery, null, (Class<T>) entityClass, collectionName);
     }
 
+    public <T> List<T> selectWithProjection(final String strQuery, String projection) {
+        return mongoTemplate.find(strQuery, projection, (Class<T>) entityClass, collectionName);
+    }
+
     public <T> Iterator<T> selectCursor(final String strQuery) {
         return mongoTemplate.findCursor(strQuery, null, (Class<T>) entityClass, collectionName);
     }
@@ -90,6 +94,11 @@ public abstract class BaseMongoDao {
     public <T> List<T> select(final String strQuery, String channelId) {
         String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
         return mongoTemplate.find(strQuery, null, (Class<T>) entityClass, collectionName);
+    }
+
+    public <T> List<T> selectWithProjection(final String strQuery, String projection, String channelId) {
+        String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
+        return mongoTemplate.find(strQuery, projection, (Class<T>) entityClass, collectionName);
     }
 
     public <T> Iterator<T> selectCursor(final String strQuery, String channelId) {
