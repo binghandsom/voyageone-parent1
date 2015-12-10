@@ -53,7 +53,8 @@ public abstract class Field {
         this.dataSource = dataSource;
     }
 
-    protected int isDisplay;
+    // isDisplay ["nodisplay":"0","display":"1",]
+    protected int isDisplay = 1;
     public int getIsDisplay() {
         return isDisplay;
     }
