@@ -56,14 +56,14 @@
 							<label class="col-sm-3 control-label" translate="TXT_CREATE_TIME"></label>
 							<div class="col-sm-9 form-inline">
 								<div class="col-sm-6 input-group" ng-controller="datePickerCtrl">
-									<input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="$parent.vm.searchInfo.createTimeStart" date-model-format="{{format}}"
+									<input type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.vm.searchInfo.createTimeStart" date-model-format="{{formatDate}}"
 										   max-date="$parent.vm.searchInfo.createTimeTo" is-open="opened" datepicker-options="dateOptions" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
 								</div>&nbsp;~
 								<div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-									<input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="$parent.vm.searchInfo.createTimeTo" date-model-format="{{format}}"
+									<input type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.vm.searchInfo.createTimeTo" date-model-format="{{formatDate}}"
 										   min-date="$parent.vm.searchInfo.createTimeStart" is-open="opened" datepicker-options="dateOptions" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
@@ -75,14 +75,14 @@
 							<label class="col-sm-3 control-label" translate="TXT_PUBLISH_TIME"></label>
 							<div class="col-sm-9 form-inline">
 								<div class="col-sm-6 input-group" ng-controller="datePickerCtrl">
-									<input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="$parent.vm.searchInfo.publishTimeStart" date-model-format="{{format}}"
+									<input type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.vm.searchInfo.publishTimeStart" date-model-format="{{formatDate}}"
 										   max-date="$parent.vm.searchInfo.publishTimeTo" is-open="opened" datepicker-options="dateOptions" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
 								</div> ~
 								<div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-									<input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="$parent.vm.searchInfo.publishTimeTo" date-model-format="{{format}}"
+									<input type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.vm.searchInfo.publishTimeTo" date-model-format="{{formatDate}}"
 										   min-date="$parent.vm.searchInfo.publishTimeStart" is-open="opened" datepicker-options="dateOptions" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
@@ -714,8 +714,8 @@
 							</tr>
 							</tbody>
 						</table>
-						<vpagination config="groupPageOption"></vpagination>
 					</div><!-- .table-responsive -->
+					<vpagination config="groupPageOption"></vpagination>
 				</div>
 			</tab>
 

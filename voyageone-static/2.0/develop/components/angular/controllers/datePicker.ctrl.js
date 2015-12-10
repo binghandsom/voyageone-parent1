@@ -9,9 +9,10 @@ angular.module('voyageone.angular.controllers.datePicker', [])
     .controller('datePickerCtrl', function ($scope) {
         var vm = this;
 
-        vm.formats = ['yyyy-MM-dd', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
+        vm.formats = ['yyyy-MM-dd', 'yyyy-MM-dd HH:mm:ss'];
 
-        $scope.format = vm.formats[0];
+        $scope.formatDate = vm.formats[0];
+        $scope.formatDateTime = vm.formats[1];
 
         $scope.open = open;
 
