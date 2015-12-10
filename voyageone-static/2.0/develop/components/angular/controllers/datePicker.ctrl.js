@@ -1,14 +1,12 @@
 /**
- * Created by linanbin on 15/12/5.
+ * @Description:
+ * 弹出日期控件
+ * @User:    Edward
+ * @Version: 0.2.0, 2015-10-10
  */
 
-define([
-    'angularAMD'
-], function (angularAMD) {
-    angularAMD
-        .controller('datePickerCtrl', datePickerCtrl);
-
-    function datePickerCtrl($scope) {
+angular.module('voyageone.angular.controllers.datePicker', [])
+    .controller('datePickerCtrl', function ($scope) {
         var vm = this;
 
         vm.formats = ['yyyy-MM-dd', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
@@ -23,5 +21,4 @@ define([
 
             $scope.opened = true;
         }
-    }
-});
+    });
