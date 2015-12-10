@@ -217,7 +217,7 @@ public class WmsUpdateStatusService extends BaseTaskService {
                                         reservation.setClient_status_comment(SerasConstants.Notes.Shipped);
 
                                         // Mandatory if the status is SHIPPED or DELIVERED. VoyageOne tracking number for the order.
-                                        updateStatusItem.setInternationalTrackingNumber(reservation.getSyn_ship_no());
+//                                        updateStatusItem.setInternationalTrackingNumber(reservation.getSyn_ship_no());
 
                                         // 该状态已更新的场合，忽略此记录
                                         if (reservation.getReservation_status().equals(CodeConstants.Reservation_Status.ShippedUS)) {
@@ -230,7 +230,7 @@ public class WmsUpdateStatusService extends BaseTaskService {
                                         reservation.setClient_status_comment(SerasConstants.Notes.Delivered);
 
                                         // Mandatory if the status is SHIPPED or DELIVERED. VoyageOne tracking number for the order.
-                                        updateStatusItem.setInternationalTrackingNumber(reservation.getSyn_ship_no());
+//                                        updateStatusItem.setInternationalTrackingNumber(reservation.getSyn_ship_no());
                                         break;
 
                                     case CodeConstants.Reservation_Status.Returned:
@@ -238,7 +238,7 @@ public class WmsUpdateStatusService extends BaseTaskService {
                                         reservation.setClient_status_comment(SerasConstants.Notes.Returned);
 
                                         // Mandatory for cancellation and return status updates
-                                        updateStatusItem.setQuantity("1");
+//                                        updateStatusItem.setQuantity("1");
 
                                         break;
 
@@ -252,7 +252,7 @@ public class WmsUpdateStatusService extends BaseTaskService {
                                         }
 
                                         // Mandatory for cancellation and return status updates
-                                        updateStatusItem.setQuantity("1");
+//                                        updateStatusItem.setQuantity("1");
                                         break;
                                 }
 
@@ -260,6 +260,11 @@ public class WmsUpdateStatusService extends BaseTaskService {
                                 updateStatusItem.setStatus(reservation.getClient_status());
                                 // A note or text message that indicates the reason for certain status change
                                 updateStatusItem.setComment(reservation.getClient_status_comment());
+
+                                // Mandatory for cancellation and return status updates
+                                updateStatusItem.setQuantity("1");
+                                // Mandatory if the status is SHIPPED or DELIVERED. VoyageOne tracking number for the order.
+                                updateStatusItem.setInternationalTrackingNumber(reservation.getSyn_ship_no());
 
                                 // 更新状态回写
                                 reservation.setReservation_status(reservation.getStatus());
@@ -280,9 +285,9 @@ public class WmsUpdateStatusService extends BaseTaskService {
                                         if (item.getItemId().equals(updateStatusItem.getItemId()) &&
                                                 item.getStatus().equals(updateStatusItem.getStatus())) {
                                             blnFound = true;
-                                           if  (item.getStatus().equals(SerasConstants.Status.Returned) || item.getStatus().equals(SerasConstants.Status.Cancelled)) {
+//                                           if  (item.getStatus().equals(SerasConstants.Status.Returned) || item.getStatus().equals(SerasConstants.Status.Cancelled)) {
                                                 item.setQuantity(String.valueOf(Integer.valueOf(item.getQuantity()) + 1));
-                                            }
+//                                            }
                                             break;
                                         }
 
