@@ -10,21 +10,19 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
-
 /**
  * Created by james.li on 2015/12/7.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:context-cms-test.xml")
-public class PlatformMappingServiceTest {
+public class CmsPlatformMappingServiceTest {
 
     @Autowired
-    PlatformMappingService platformMappingService;
+    CmsPlatformMappingService cmsPlatformMappingService;
     @Test
     public void testOnStartup() throws Exception {
 
         List<TaskControlBean> taskControlList = new ArrayList<>();
-        platformMappingService.onStartup(taskControlList);
+        cmsPlatformMappingService.onStartup(taskControlList);
     }
 }

@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
  * 主数据->平台的mapping做成
  */
 @Service
-public class PlatformMappingService extends BaseTaskService {
+public class CmsPlatformMappingService extends BaseTaskService {
     private final static String JOB_NAME = "platformMappingTask";
 
     @Autowired
@@ -54,9 +54,7 @@ public class PlatformMappingService extends BaseTaskService {
     CmsMtCommonPropDao cmsMtCommonPropDao;
 
     // CmsMtCommonProp数据
-    private List<CmsMtCommonPropModel> commonProp;
-
-    ObjectMapper om = new ObjectMapper();
+    private static List<CmsMtCommonPropModel> commonProp;
 
     @Override
     public SubSystem getSubSystem() {
@@ -111,7 +109,7 @@ public class PlatformMappingService extends BaseTaskService {
         return child;
     }
 
-    private CmsMtPlatformMappingModel makePlatformMapping(CmsMtPlatformCategoryTreeModel cmsMtPlatformCategoryTree) {
+    private CmsMtPlatformMappingModel makePlatformMapping(CmsMtPlatformCategoryTreeModel cmsMtPlatformCategoryTree) throws Exception {
         CmsMtPlatformMappingModel cmsMtPlatformMappingModel = new CmsMtPlatformMappingModel();
         // channelid
         cmsMtPlatformMappingModel.setChannelId(cmsMtPlatformCategoryTree.getChannelId());
@@ -129,32 +127,26 @@ public class PlatformMappingService extends BaseTaskService {
     /**
      * Props生成
      */
-    private List<MappingBean> makeProps(int cartId, String categoryId) {
+    private List<MappingBean> makeProps(int cartId, String categoryId) throws Exception {
 
         List<MappingBean> props = new ArrayList<>();
         CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.getPlatformCatSchemaModel(categoryId, cartId);
-        try {
-            if (cmsMtPlatformCategorySchemaModel != null) {
-                //PropsItem 生成props
-                if (!StringUtil.isEmpty(cmsMtPlatformCategorySchemaModel.getPropsItem())) {
-                    List<Field> fields = SchemaReader.readXmlForList(cmsMtPlatformCategorySchemaModel.getPropsItem());
-                    for (Field field : fields) {
-                        props.add(makeMapping(field));
-                    }
-                }
-                //PropsProduct 生成props
-                if (!StringUtil.isEmpty(cmsMtPlatformCategorySchemaModel.getPropsProduct())) {
-                    List<Field> fields = SchemaReader.readXmlForList(cmsMtPlatformCategorySchemaModel.getPropsItem());
-                    for (Field field : fields) {
-                        props.add(makeMapping(field));
-                    }
+        if (cmsMtPlatformCategorySchemaModel != null) {
+            //PropsItem 生成props
+            if (!StringUtil.isEmpty(cmsMtPlatformCategorySchemaModel.getPropsItem())) {
+                List<Field> fields = SchemaReader.readXmlForList(cmsMtPlatformCategorySchemaModel.getPropsItem());
+                for (Field field : fields) {
+                    props.add(makeMapping(field));
                 }
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            //PropsProduct 生成props
+            if (!StringUtil.isEmpty(cmsMtPlatformCategorySchemaModel.getPropsProduct())) {
+                List<Field> fields = SchemaReader.readXmlForList(cmsMtPlatformCategorySchemaModel.getPropsItem());
+                for (Field field : fields) {
+                    props.add(makeMapping(field));
+                }
+            }
         }
-
         return props;
     }
 
@@ -168,7 +160,6 @@ public class PlatformMappingService extends BaseTaskService {
 
         SingleMappingBean singleMappingBean;
         MasterWord masterWord;
-        RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
         RuleExpression ruleExpression;
         MappingBean mapping = null;
         switch (field.getType()) {
@@ -183,7 +174,6 @@ public class PlatformMappingService extends BaseTaskService {
                 // 生成表达式
                 ruleExpression = new RuleExpression();
                 ruleExpression.addRuleWord(masterWord);
-//                singleMappingBean.setExpression(ruleJsonMapper.serializeRuleExpression(ruleExpression));
                 singleMappingBean.setExpression(ruleExpression);
                 mapping = singleMappingBean;
                 break;
@@ -206,8 +196,6 @@ public class PlatformMappingService extends BaseTaskService {
                     optionMapping.put(option.getValue(), option.getValue());
                 }
                 ruleExpression.addRuleWord(masterWord);
-
-//                singleMappingBean.setExpression(ruleJsonMapper.serializeRuleExpression(ruleExpression));
                 singleMappingBean.setExpression(ruleExpression);
                 mapping = singleMappingBean;
                 break;
@@ -229,7 +217,7 @@ public class PlatformMappingService extends BaseTaskService {
                     MappingBean temp = makeMapping(fd);
                     subMappings.add(temp);
                 }
-                mapping =  complexMappingBean;
+                mapping = complexMappingBean;
                 break;
         }
         return mapping;

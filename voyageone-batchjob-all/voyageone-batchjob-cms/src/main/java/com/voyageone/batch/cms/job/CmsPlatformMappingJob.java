@@ -2,7 +2,7 @@ package com.voyageone.batch.cms.job;
 
 import com.voyageone.batch.base.BaseTaskJob;
 import com.voyageone.batch.base.BaseTaskService;
-import com.voyageone.batch.cms.service.PlatformMappingService;
+import com.voyageone.batch.cms.service.CmsPlatformMappingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,10 +16,10 @@ import org.springframework.stereotype.Component;
 public class CmsPlatformMappingJob extends BaseTaskJob {
 
     @Autowired
-    private PlatformMappingService platformMappingService;
+    private CmsPlatformMappingService cmsPlatformMappingService;
 
     @Override
     protected BaseTaskService getTaskService() {
-        return platformMappingService;
+        return cmsPlatformMappingService;
     }
 }

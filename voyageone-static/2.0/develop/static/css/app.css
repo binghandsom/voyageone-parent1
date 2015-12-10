@@ -1014,7 +1014,7 @@ body {
   display: block;
   position: relative;
   width: 160px;
-  background-image: url('img/logo.png');
+  background-image: url('../img/logo.png');
   background-repeat: no-repeat;
   background-color: #e67e22;
   background-position: 0px 50%;
@@ -5500,7 +5500,7 @@ a.text-black:hover {
 }
 .mfb-xt{width:5%}
 .mfb-x{width:8%}
-.mft-xxt{width:10%}
+.mfb-xxt{width:10%}
 .mfb-xx{width:12%}
 .mfb-xxs{width:20%}
 .mfb-xxxs{width:30%}
@@ -7852,6 +7852,7 @@ a.btn-main:hover {color:#e67e22;text-decoration:underline;}
 .table_main{
   margin:0px;
   padding:4px 0px 0px 0px;
+  vertical-align: middle;
 }
 .table_main ul{
   margin:0px;
@@ -8151,4 +8152,8 @@ input:checked + ol > li {
   padding:0px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+}
+.dropdown_table_bk{
+  border-bottom:none;
+  margin-bottom:0px
 }
