@@ -38,7 +38,7 @@ angular.module('voyageone.angular.directives.vpagination', [])
         //    buttons: []
         //};
 
-        var defConfig = {size: 20, showPageNo:5};
+        var defConfig = {curr: 1, total: 0, size: 20, showPageNo:5};
 
         return {
             restrict: "AE",

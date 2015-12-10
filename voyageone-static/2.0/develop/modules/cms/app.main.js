@@ -228,8 +228,8 @@ requirejs([
     function getMenuHeaderInfo () {
       var defer = $q.defer ();
       ajaxService.post(cActions.core.home.menu.getMenuHeaderInfo)
-          .then(function (response) {
-            var data = response.data;
+          .then(function (res) {
+            var data = res.data;
             var languageType = _.isEmpty(cookieService.language()) ? translateService.getBrowserLanguage() : cookieService.language();
             translateService.setLanguage(languageType);
             _.forEach(data.languageList, function (language) {
@@ -302,8 +302,8 @@ requirejs([
     function getCategoryInfo () {
       var defer = $q.defer ();
       ajaxService.post(cActions.cms.home.menu.getCategoryInfo)
-          .then(function (response) {
-            defer.resolve(response.data);
+          .then(function (res) {
+            defer.resolve(res.data);
           });
       return defer.promise;
     }
@@ -315,8 +315,8 @@ requirejs([
     function getCategoryType () {
       var defer = $q.defer ();
       ajaxService.post(cActions.cms.home.menu.getCategoryType)
-          .then(function (response) {
-            defer.resolve(response.data);
+          .then(function (res) {
+            defer.resolve(res.data);
           });
       return defer.promise;
     }
@@ -328,8 +328,8 @@ requirejs([
     function getCategoryTree () {
       var defer = $q.defer ();
       ajaxService.post(cActions.cms.home.menu.getCategoryTree)
-          .then(function (response) {
-            defer.resolve(response.data);
+          .then(function (res) {
+            defer.resolve(res.data);
           });
       return defer.promise;
     }
@@ -343,8 +343,8 @@ requirejs([
     function setCategoryType(cTypeId) {
       var defer = $q.defer ();
       ajaxService.post(cActions.cms.home.menu.setCategoryType, {"cTypeId": cTypeId})
-          .then(function (response) {
-            defer.resolve(response.data);
+          .then(function (res) {
+            defer.resolve(res.data);
           });
       return defer.promise;
     }
