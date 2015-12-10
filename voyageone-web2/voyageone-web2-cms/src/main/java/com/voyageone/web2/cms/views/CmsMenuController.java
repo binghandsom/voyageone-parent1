@@ -4,6 +4,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.CmsController;
+import com.voyageone.web2.cms.CmsUrlConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,24 +17,23 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author Edward
- * @version 2.0.0, 15/12/2
+ * @author Edward, 15/12/2
+ * @version 2.0.0
  */
 @RestController
 @RequestMapping(
-        value  = "/cms/home/menu/",
+        value = CmsUrlConstants.MENU_ROOT,
         method = RequestMethod.POST
 )
-public class CmsMenuController extends CmsController{
+public class CmsMenuController extends CmsController {
 
     @Autowired
     private CmsMenuService menuService;
 
     /**
      * 返回categoryType, categoryList, categoryTreeList
-     * @return
      */
-    @RequestMapping("getCategoryInfo")
+    @RequestMapping(CmsUrlConstants.MENU_CATE_INFO)
     public AjaxResponse getCategoryInfo() {
 
         Map<String, Object> resultBean = new HashMap<>();
@@ -58,9 +58,8 @@ public class CmsMenuController extends CmsController{
 
     /**
      * 返回categoryTypeList
-     * @return
      */
-    @RequestMapping("getCategoryType")
+    @RequestMapping(CmsUrlConstants.MENU_CATE_TYPE)
     public AjaxResponse getCategoryType() {
 
         String channelId = getUser().getSelChannelId();
@@ -74,15 +73,14 @@ public class CmsMenuController extends CmsController{
 
     /**
      * 设置当前用户的categoryType.
-     * @return
      */
-    @RequestMapping("setCategoryType")
+    @RequestMapping(CmsUrlConstants.MENU_SET_CATE_TYPE)
     public AjaxResponse setCategoryType(@RequestBody Map<String, Object> params) {
 
         String cTypeId = (String) params.get("cTypeId");
 
         // 如果cTypeId为空,设置成其默认值.
-        if(StringUtils.isEmpty(cTypeId)) {
+        if (StringUtils.isEmpty(cTypeId)) {
             cTypeId = CmsConstants.DEFAULT_CATEGORY_TYPE;
         }
 
