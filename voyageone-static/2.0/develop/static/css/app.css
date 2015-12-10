@@ -5500,7 +5500,7 @@ a.text-black:hover {
 }
 .mfb-xt{width:5%}
 .mfb-x{width:8%}
-.mft-xxt{width:10%}
+.mfb-xxt{width:10%}
 .mfb-xx{width:12%}
 .mfb-xxs{width:20%}
 .mfb-xxxs{width:30%}
@@ -8151,4 +8151,8 @@ input:checked + ol > li {
   padding:0px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+}
+.dropdown_table_bk{
+  border-bottom:none;
+  margin-bottom:0px
 }
