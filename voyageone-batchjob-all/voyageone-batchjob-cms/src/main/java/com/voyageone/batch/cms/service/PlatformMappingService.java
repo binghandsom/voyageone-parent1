@@ -183,7 +183,8 @@ public class PlatformMappingService extends BaseTaskService {
                 // 生成表达式
                 ruleExpression = new RuleExpression();
                 ruleExpression.addRuleWord(masterWord);
-                singleMappingBean.setExpression(ruleJsonMapper.serializeRuleExpression(ruleExpression));
+//                singleMappingBean.setExpression(ruleJsonMapper.serializeRuleExpression(ruleExpression));
+                singleMappingBean.setExpression(ruleExpression);
                 mapping = singleMappingBean;
                 break;
             case SINGLECHECK:
@@ -206,7 +207,8 @@ public class PlatformMappingService extends BaseTaskService {
                 }
                 ruleExpression.addRuleWord(masterWord);
 
-                singleMappingBean.setExpression(ruleJsonMapper.serializeRuleExpression(ruleExpression));
+//                singleMappingBean.setExpression(ruleJsonMapper.serializeRuleExpression(ruleExpression));
+                singleMappingBean.setExpression(ruleExpression);
                 mapping = singleMappingBean;
                 break;
             case COMPLEX:
