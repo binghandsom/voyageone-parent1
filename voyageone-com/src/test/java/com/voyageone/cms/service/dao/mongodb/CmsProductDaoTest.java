@@ -13,10 +13,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:applicationContext.xml")
@@ -330,6 +327,43 @@ public class CmsProductDaoTest {
     public void testDeleteAll() {
         long start = System.currentTimeMillis();
         cmsBtProductDao.deleteAll("001");
+        long total = System.currentTimeMillis()-start;
+        System.out.println("total count:=10W; totalTime:=" + total);
+    }
+
+    @Test
+    public void testBathUpdateWithField() {
+        long start = System.currentTimeMillis();
+
+        CmsBtProductModel_Field field = new CmsBtProductModel_Field();
+        field.setLock(true);
+
+        List<String> codeList = new ArrayList<>();
+        codeList.add("100001");
+        codeList.add("100002");
+
+        cmsBtProductDao.bathUpdateWithField("001", codeList, field, "23232");
+
+        long total = System.currentTimeMillis()-start;
+        System.out.println("total count:=10W; totalTime:=" + total);
+    }
+
+    @Test
+    public void testBathUpdateWithFields() {
+        long start = System.currentTimeMillis();
+
+
+        Map<String, CmsBtProductModel_Field> codeFieldMap = new LinkedHashMap<>();
+        CmsBtProductModel_Field field = new CmsBtProductModel_Field();
+        field.setLock(true);
+        codeFieldMap.put("100001", field);
+        field = new CmsBtProductModel_Field();
+        field.setLock(true);
+        field.setColor("BBB");
+        codeFieldMap.put("100002", field);
+
+        cmsBtProductDao.bathUpdateWithFields("001", codeFieldMap, "23232");
+
         long total = System.currentTimeMillis()-start;
         System.out.println("total count:=10W; totalTime:=" + total);
     }
