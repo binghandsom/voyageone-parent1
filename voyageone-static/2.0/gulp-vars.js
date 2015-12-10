@@ -36,7 +36,7 @@ var build = {
         'develop/static/css/font.css',
         'develop/static/css/app.css'
       ],
-      dist: 'develop/static/',
+      dist: 'develop/static/css/',
       concat: 'app.min.css'
     },
     loginCss: {
@@ -44,7 +44,7 @@ var build = {
         'develop/static/css/login.css',
         'develop/static/css/assets/font-awesome.css'
       ],
-      dist: 'develop/static/',
+      dist: 'develop/static/css/',
       concat: 'login.min.css'
     }
   }
@@ -61,8 +61,8 @@ var publish = {
       dist: 'publish/static/' + versions.statics + '/img'
     },
     css: {
-      src: 'develop/static/*.css',
-      dist: 'publish/static/' + versions.statics
+      src: 'develop/static/css/*.min.css',
+      dist: 'publish/static/' + versions.statics + '/css'
     }
   },
   components: {
@@ -89,7 +89,7 @@ var publish = {
     static: {
       fonts: 'publish/release/' + versions.publish + '/static/fonts',
       img: 'publish/release/' + versions.publish + '/static/img',
-      css: 'publish/release/' + versions.publish + '/static'
+      css: 'publish/release/' + versions.publish + '/static/css'
     },
     components: 'publish/release/' + versions.publish + '/components/dist',
     libs: 'publish/release/' + versions.publish + '/libs',
