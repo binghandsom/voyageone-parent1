@@ -334,6 +334,12 @@ public class OmsConstants {
 
 	public static final String GIFT_PROPERTY_PRICE_THAN_SELECT_APPOINT_ONE_WITH_INVENTORY = "priceThanSelectAppointOneWithInventory";
 	public static final String GIFT_PROPERTY_PRICE_THAN_SELECT_PLATFORM_CART = "priceThanSelectPlatformCart";
+
+	public static final String GIFT_PROPERTY_BUY_THAN_SELECT_APPOINT_ONE_WITH_INVENTORY = "buyThanSelectAppointOneWithInventory";
+	public static final String GIFT_PROPERTY_BUY_THAN_SELECT_PLATFORM_CART = "buyThanSelectPlatformCart";
+
+	public static final String GIFT_PROPERTY_PRIOR_COUNT_CUSTOMER_SELECT_APPOINT_ONE_WITH_INVENTORY = "priorCountCustomerSelectAppointOneWithInventory";
+	public static final String GIFT_PROPERTY_PRIOR_COUNT_CUSTOMER_SELECT_PLATFORM_CART = "priorCountCustomerSelectPlatformCart";
     
     public static final String GIFT_PROPERTY = "";
     public static final String GIFT_PROPERTY_REPEAT = "repeat";

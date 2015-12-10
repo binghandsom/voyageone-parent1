@@ -1200,13 +1200,55 @@ public class OrderDao extends BaseDao {
 
 		return ret;
 	}
+
+	/**
+	 * 本轮订单插入结束之后回写买就送配置表里的赠品剩余库存
+	 *
+	 * @param paraMap
+	 * @return
+	 */
+	public boolean recordBuyThanGiftInventory(Map<String, String> paraMap) {
+		boolean ret = false;
+
+		try {
+			int retCount = updateTemplate.insert(Constants.DAO_NAME_SPACE_OMS + "oms_buy_than_gift_setting_recordBuyThanGiftInventory", paraMap);
+			ret = true;
+
+		} catch (Exception ex) {
+			logger.error(ex.getMessage(), ex);
+
+			ret = false;
+		}
+
+		return ret;
+	}
+
+	/**
+	 * 本轮订单插入结束之后回写买就送配置表里的赠品剩余库存
+	 *
+	 * @param paraMap
+	 * @return
+	 */
+	public boolean recordPriorCountCustomerGiftInventory(Map<String, String> paraMap) {
+		boolean ret = false;
+
+		try {
+			int retCount = updateTemplate.insert(Constants.DAO_NAME_SPACE_OMS + "oms_prior_count_gift_setting_recordPriorCountCustomerGiftInventory", paraMap);
+			ret = true;
+
+		} catch (Exception ex) {
+			logger.error(ex.getMessage(), ex);
+
+			ret = false;
+		}
+
+		return ret;
+	}
 	
 	/**
 	 * 置位synship发送标志
 	 * 
-	 * @param subSql
-	 * @param size
-	 * @param taskName
+	 * @param dataMap
 	 * @return
 	 */
 	public int resetSynShipFlag(Map<String, String> dataMap) {
@@ -1469,6 +1511,18 @@ public class OrderDao extends BaseDao {
 		List<Map<String, String>> priorCountGiftList = (List)selectList(Constants.DAO_NAME_SPACE_OMS + "oms_prior_count_gift_setting_getPriorCountGiftSetting");
 
 		return priorCountGiftList;
+	}
+
+	/**
+	 * 优先下单前多少名例外sku设定
+	 *
+	 * @return
+	 */
+	public List<Map<String, String>> getPriorCountExceptSkuSetting() {
+
+		List<Map<String, String>> priorCountExceptSkutList = (List)selectList(Constants.DAO_NAME_SPACE_OMS + "oms_prior_count_gift_except_setting_getPriorCountExceptSkuSetting");
+
+		return priorCountExceptSkutList;
 	}
 	
 	/**

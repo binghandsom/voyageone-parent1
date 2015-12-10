@@ -1124,6 +1124,27 @@
 			AND price = ${price}
 			AND gift_sku = #{giftSku}
 	</insert>
+
+	<!-- 本轮订单插入结束之后回写买就送配置表里的赠品剩余库存 -->
+	<insert id="oms_buy_than_gift_setting_recordBuyThanGiftInventory" parameterType="HashMap">
+		UPDATE oms_buy_than_gift_setting
+		SET inventory = ${inventory}
+		WHERE
+		order_channel_id = #{orderChannelId}
+		AND cart_id = ${cartId}
+		AND sku = #{sku}
+		AND gift_sku = #{giftSku}
+	</insert>
+
+	<!-- 本轮订单插入结束之后回写前多少名配置表里的赠品剩余库存 -->
+	<insert id="oms_prior_count_gift_setting_recordPriorCountCustomerGiftInventory" parameterType="HashMap">
+		UPDATE oms_prior_count_gift_setting
+		SET inventory = ${inventory}
+		WHERE
+		order_channel_id = #{orderChannelId}
+		AND cart_id = ${cartId}
+		AND gift_sku = #{giftSku}
+	</insert>
 	
 	<!-- 置位synship发送标志（->1） -->
 	<update id="oms_bt_order_details_resetSynShipFlag" parameterType="HashMap">
@@ -1368,7 +1389,9 @@
 			order_channel_id as orderChannelId,
 			cart_id as cartId,
 			sku as sku,
-			gift_sku as giftSku
+			gift_sku as giftSku,
+			prior_num as priorNum,
+			inventory
 		from
 			oms_buy_than_gift_setting
 		where
@@ -1423,12 +1446,27 @@
 		select
 			order_channel_id as orderChannelId,
 			cart_id as cartId,
-			gift_sku as giftSku
+			gift_sku as giftSku,
+			prior_num as priorNum,
+			inventory
 		from
 			oms_prior_count_gift_setting
 		where
 			now() >= ifNull(exp_date_time_start, now())
 			and ifNull(exp_date_time_end, now()) >= now()
+	</select>
+
+	<!-- 优先下单前多少名例外sku设定 -->
+	<select id="oms_prior_count_gift_except_setting_getPriorCountExceptSkuSetting" resultType="HashMap">
+		select
+		order_channel_id as orderChannelId,
+		cart_id as cartId,
+		except_sku as exceptSku
+		from
+		oms_prior_count_gift_except_setting
+		where
+		now() >= ifNull(exp_date_time_start, now())
+		and ifNull(exp_date_time_end, now()) >= now()
 	</select>
 	
 	<!-- 已获赠品顾客信息 -->
