@@ -3,20 +3,14 @@ var fs = require("fs");
 var extend = require("extend");
 var app = express();
 
-var commonError = {
-  'code': 1,
-  'message': 'Some error',
-  'result': {}
-};
-
 var mappings = {};
 
 // 按尾部的设定,进行目录注册
 (function (routes) {
   return routes.forEach(function (name) {
     var phyPath, routePath;
-    routePath = "./views/" + name + "\/" + name;
-    phyPath = __dirname + "\/views\/" + name + "\/" + name + ".js";
+    routePath = "./modules/" + name + "\/" + name;
+    phyPath = __dirname + "\/modules\/" + name + "\/" + name + ".js";
     return fs.exists(phyPath, function (isExists) {
       if (isExists) {
         return extend(mappings, require(routePath));
@@ -28,7 +22,7 @@ var mappings = {};
 })(["core","cms"]);
 
 // 设定 express 渲染根目录
-app.set("views", "./test_server/views");
+app.set("views", "./test_server/modules");
 // 设定对 json 的渲染方式
 app.engine("json", function (filePath, options, callback) {
   return fs.readFile(filePath, function (err, content) {

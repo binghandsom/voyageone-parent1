@@ -5498,7 +5498,6 @@ a.text-black:hover {
 .m-b-n-xxl {
   margin-bottom: -50px;
 }
-
 .mfb-xt{width:5%}
 .mfb-x{width:8%}
 .mft-xxt{width:10%}
@@ -8139,4 +8138,17 @@ input:checked + ol > li {
 }
 .category_ts span{
   color:#e67e22;
+}
+
+.dropdown_table{
+  float:left;
+  margin:0px;
+  padding:10px;
+  height:525px;
+}
+.dropdown_table_main{
+  margin:0px;
+  padding:0px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
