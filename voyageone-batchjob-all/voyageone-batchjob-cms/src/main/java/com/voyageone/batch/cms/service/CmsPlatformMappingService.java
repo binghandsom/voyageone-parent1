@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
  * 主数据->平台的mapping做成
  */
 @Service
-public class PlatformMappingService extends BaseTaskService {
+public class CmsPlatformMappingService extends BaseTaskService {
     private final static String JOB_NAME = "platformMappingTask";
 
     @Autowired
