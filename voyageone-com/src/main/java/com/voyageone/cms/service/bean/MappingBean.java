@@ -39,38 +39,4 @@ public class MappingBean {
         this.platformPropId = platformPropId;
     }
 
-    public static void main(String[] args) throws IOException {
-        ObjectMapper om = new ObjectMapper();
-
-        SingleMappingBean singleMappingBean = new SingleMappingBean();
-        singleMappingBean.setPlatformPropId("aaaaa");
-        RuleExpression ruleExpression = new RuleExpression();
-
-        MasterWord masterWord = new MasterWord("infos");
-        Map<String, String> optionMapping = new HashMap<>();
-        masterWord.setExtra(optionMapping);
-        optionMapping.put("red", "green");
-        optionMapping.put("blue", "white");
-        ruleExpression.addRuleWord(masterWord);
-        RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
-        String expression = ruleJsonMapper.serializeRuleExpression(ruleExpression);
-        singleMappingBean.setExpression(expression);
-        String singleMappingValue = om.writeValueAsString(singleMappingBean);
-        System.out.println(singleMappingValue);
-        MappingBean smb = om.readValue(singleMappingValue, MappingBean.class);
-
-        ComplexMappingBean complexMappingBean = new ComplexMappingBean();
-        complexMappingBean.setPlatformPropId("product_images");
-        complexMappingBean.setMasterPropId("product_images");
-        List<MappingBean> subMappings = new ArrayList<>();
-        complexMappingBean.setSubMappings(subMappings);
-
-        subMappings.add(new SingleMappingBean("product_image1", "expression1"));
-        subMappings.add(new SingleMappingBean("product_image2", "expression2"));
-
-        String complexMappingValue = om.writeValueAsString(complexMappingBean);
-        smb = om.readValue(complexMappingValue, MappingBean.class);
-
-        System.out.println(complexMappingValue);
-    }
 }
