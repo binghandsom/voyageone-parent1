@@ -13,7 +13,7 @@ angular.module('voyageone.angular.directives.vpagination', [])
         if (!$templateCache.get(templateKey)) {
             $templateCache.put(templateKey,
                 '<div class="col-sm-2">\n' +
-                '    <div class="page-main form-inline">{{\'TXT_COM_SHOWING_NO\' | translate}}&nbsp;<input type="text" ng-model="curr.pageNo"/>&nbsp;/{{totalPages}}&nbsp;{{\'TXT_COM_PAGE\' | translate}}&nbsp;' +
+                '    <div class="page-main form-inline">{{\'TXT_COM_SHOWING_NO\' | translate}}&nbsp;<input type="text" ng-model="curr.pageNo"/>&nbsp;/&nbsp;{{totalPages}}&nbsp;{{\'TXT_COM_PAGE\' | translate}}&nbsp;' +
                 '        <button class="btn btn-xs btn-default" type="button" ng-click="goPage(curr.pageNo)" translate="BTN_GO"></button>\n' +
                 '    </div>\n' +
                 '</div>\n' +
@@ -38,7 +38,7 @@ angular.module('voyageone.angular.directives.vpagination', [])
         //    buttons: []
         //};
 
-        var defConfig = {curr: 1, total: 1, size: 20, showPageNo:5};
+        var defConfig = {size: 20, showPageNo:5};
 
         return {
             restrict: "AE",
