@@ -1,8 +1,12 @@
 package com.voyageone.batch.cms.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
+import com.voyageone.cms.service.bean.ComplexMappingBean;
+import com.voyageone.cms.service.bean.MappingBean;
+import com.voyageone.cms.service.bean.SingleMappingBean;
 import com.voyageone.cms.service.dao.CmsMtCommonPropDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategoryDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategorySchemaDao;
@@ -18,6 +22,10 @@ import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.util.JsonUtil;
+import com.voyageone.common.util.StringUtils;
+import com.voyageone.ims.rule_expression.MasterWord;
+import com.voyageone.ims.rule_expression.RuleExpression;
+import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import net.minidev.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,6 +55,8 @@ public class PlatformMappingService extends BaseTaskService {
 
     // CmsMtCommonProp数据
     private List<CmsMtCommonPropModel> commonProp;
+
+    ObjectMapper om = new ObjectMapper();
 
     @Override
     public SubSystem getSubSystem() {
@@ -103,7 +113,7 @@ public class PlatformMappingService extends BaseTaskService {
         // channelid
         cmsMtPlatformMappingModel.setChannelId(cmsMtPlatformCategoryTree.getChannelId());
         // 类目ID
-        cmsMtPlatformMappingModel.setMainCategoryId(cmsMtPlatformCategoryTree.getCatId());
+        cmsMtPlatformMappingModel.setMainCategoryId(StringUtils.encodeBase64(cmsMtPlatformCategoryTree.getCatPath()));
         // 类目ID
         cmsMtPlatformMappingModel.setPlatformCategoryId(cmsMtPlatformCategoryTree.getCatId());
         // 渠道ID
@@ -117,9 +127,9 @@ public class PlatformMappingService extends BaseTaskService {
      * Props生成
      *
      */
-    private List<Map> makeProps(int cartId, String categoryId) {
+    private List<MappingBean> makeProps(int cartId, String categoryId) {
 
-        List<Map> props = new ArrayList<>();
+        List<MappingBean> props = new ArrayList<>();
         CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.getPlatformCatSchemaModel(categoryId, cartId);
         try {
             if (cmsMtPlatformCategorySchemaModel != null) {
@@ -139,7 +149,7 @@ public class PlatformMappingService extends BaseTaskService {
                 }
             }
 
-        } catch (TopSchemaException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -150,35 +160,63 @@ public class PlatformMappingService extends BaseTaskService {
      * 每个field生成一个具体的object
      *
      */
-    private Map<String,Object> makeMapping(Field field) {
+    private MappingBean makeMapping(Field field) {
 
+        field.setId(StringUtils.replaceDot(field.getId()));
         Map<String,Object> mapping = new HashMap<>();
         Map<String,Object> value = new HashMap<>();
         Map<String,Object> extra = new HashMap<>();
         Map<String,Object> subProps = new HashMap<>();
         value = new HashMap<>();
-        value.put("type", "MASTER");
-        value.put("value", SearchCommProp(field.getId()));
+        SingleMappingBean singleMappingBean;
+        MasterWord masterWord;
+        RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
+        RuleExpression ruleExpression;
         switch (field.getType()) {
             case INPUT:
             case MULTIINPUT:
             case LABEL:
-                mapping.put(field.getId(), value);
-                break;
+                singleMappingBean = new SingleMappingBean();
+                singleMappingBean.setPlatformPropId(field.getId());
+                masterWord = new MasterWord( SearchCommProp(field.getId()));
+                ruleExpression = new RuleExpression();
+                ruleExpression.addRuleWord(masterWord);
+                singleMappingBean.setExpression(ruleJsonMapper.serializeRuleExpression(ruleExpression));
+                return singleMappingBean;
             case SINGLECHECK:
             case MULTICHECK:
-                extra = new HashMap<>();
+//                extra = new HashMap<>();
+//                for (Option option : ((OptionsField) field).getOptions()) {
+//                    extra.put(option.getValue(), option.getValue());
+//                }
+//                value.put("type", "MASTER");
+//                value.put("value", SearchCommProp(field.getId()));
+//                value.put("extra", extra);
+//                mapping.put(field.getId(), value);
+
+                singleMappingBean = new SingleMappingBean();
+                singleMappingBean.setPlatformPropId(field.getId());
+                masterWord = new MasterWord( SearchCommProp(field.getId()));
+                ruleExpression = new RuleExpression();
+                ruleExpression.addRuleWord(masterWord);
+
+                Map<String, String> optionMapping = new HashMap<>();
+                masterWord.setExtra(optionMapping);
                 for (Option option : ((OptionsField) field).getOptions()) {
-                    extra.put(option.getValue(), option.getValue());
+                    optionMapping.put(option.getValue(), option.getValue());
                 }
-                ;
-                value.put("extra", extra);
-                mapping.put(field.getId(), value);
-                break;
+                ruleExpression.addRuleWord(masterWord);
+
+                singleMappingBean.setExpression(ruleJsonMapper.serializeRuleExpression(ruleExpression));
+                return singleMappingBean;
             case COMPLEX:
             case MULTICOMPLEX:
-                subProps = new HashMap<>();
-                mapping.put("propId", field.getId());
+                ComplexMappingBean complexMappingBean = new ComplexMappingBean();
+                complexMappingBean.setMasterPropId(SearchCommProp(field.getId()));
+                complexMappingBean.setPlatformPropId(field.getId());
+                List<MappingBean> subMappings = new ArrayList<>();
+                complexMappingBean.setSubMappings(subMappings);
+
                 List<Field> fields = new ArrayList<>();
                 if (field instanceof ComplexField) {
                     fields =  ((ComplexField) field).getFieldList();
@@ -186,19 +224,12 @@ public class PlatformMappingService extends BaseTaskService {
                     fields =  ((MultiComplexField) field).getFieldList();
                 }
                 for (Field fd : fields) {
-                    Map<String,Object> temp = makeMapping(fd);
-                    if (fd instanceof ComplexField || fd instanceof MultiComplexField) {
-                        subProps.put(temp.get("propId").toString(), temp);
-                    } else {
-                        for (String key : temp.keySet()) {
-                            subProps.put(key, temp.get(key));
-                        }
-                    }
+                    MappingBean temp = makeMapping(fd);
+                    subMappings.add(temp);
                 }
-                mapping.put("subProps", subProps);
-                break;
+                return complexMappingBean;
         }
-        return mapping;
+        return null;
     }
 
     private String SearchCommProp(String fieldId) {
