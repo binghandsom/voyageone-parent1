@@ -61,6 +61,7 @@ define([
             no:"",
             mode:"Scan",
             permit:"",
+            labelPrint:"",
             pickupType:"",
             pickupTypeName:"",
             pickupStatus:"",
@@ -116,6 +117,7 @@ define([
             vm.scan.relabelStatus = response.data.relabelStatus;
             vm.scan.relabelPort = response.data.relabelPort;
             vm.scan.permit = response.data.permit;
+            vm.scan.labelPrint = response.data.labelPrint;
 
             // 扫描项目的初期说明
             $('#scanNo').attr('placeholder',vm.scan.pickupTypeName).focus();
@@ -263,7 +265,9 @@ define([
 
                     vm.lastPrint = res.data.pickupLabel;
 
-                    printService.doPrint(wmsConstant.print.business.PickUp, wmsConstant.print.hardware_key.Print_PickUp, res.data.printPickupLabel);
+                    if (vm.scan.labelPrint == "1") {
+                        printService.doPrint(wmsConstant.print.business.PickUp, wmsConstant.print.hardware_key.Print_PickUp, res.data.printPickupLabel);
+                    }
 
                     vm.scan.no = "";
                     $('#scanNo').focus();
