@@ -119,11 +119,18 @@ public class GetClientShippingInfoService extends BaseTaskService {
             //调用CA服务的API 获取订单信息
             APIResultOfArrayOfOrderResponseItem response;
             try {
+                // 从tt_reservation表中取得status=11(open)的记录,同时需要再抽出oms_bt_orders中的client_order_id
+                List<ReservationClientBean> ReservationList = reservationDao.getReservationDatas(channel.getOrder_channel_id(), CodeConstants.Reservation_Status.Open);
+                HashMap<String, ReservationClientBean> reservationOpenMap = new HashMap<String, ReservationClientBean>();
+                for (ReservationClientBean reservationBean : ReservationList) {
+                    if (!StringUtils.isNullOrBlank2(reservationBean.getClient_order_id()))
+                        reservationOpenMap.put(reservationBean.getClient_order_id(), reservationBean);
+                }
                 int pageNum = 1;
                 while (true) {
                     response = orderService.getOrderList(param, configs);
                     //插入tt_client_tracking 主KEY重复时 跳过
-                    errorAllotInventoryDetailList = insertClientTracking(response, channel, errorAllotInventoryDetailList);
+                    errorAllotInventoryDetailList = insertClientTracking(response, channel, errorAllotInventoryDetailList,reservationOpenMap);
                     if(response.getResultData().getOrderResponseItem().size() < Integer.parseInt(configs.get(CaConstants.OrderList.PAGE_SIZE).getProp_val1())){
                         break;
                     }else{
@@ -189,20 +196,13 @@ public class GetClientShippingInfoService extends BaseTaskService {
      *
      * @param list    APIResultOfArrayOfOrderResponseItem
      * @param channel 渠道
+     * @param reservationOpenMap
      */
-    private List<ReservationClientBean> insertClientTracking(APIResultOfArrayOfOrderResponseItem list, OrderChannelBean channel, List<ReservationClientBean> errorAllotInventoryDetailList) throws Exception {
+    private List<ReservationClientBean> insertClientTracking(APIResultOfArrayOfOrderResponseItem list, OrderChannelBean channel, List<ReservationClientBean> errorAllotInventoryDetailList,HashMap<String, ReservationClientBean> reservationOpenMap) throws Exception {
 
         List<ClientTrackingBean> trackingList = new ArrayList<>();
         List<String> errorTrackingLst= new ArrayList<>();
         if (list != null) {
-            // 从tt_reservation表中取得status=11(open)的记录,同时需要再抽出oms_bt_orders中的client_order_id
-            List<ReservationClientBean> ReservationList = reservationDao.getReservationDatas(channel.getOrder_channel_id(), CodeConstants.Reservation_Status.Open);
-            HashMap<String, ReservationClientBean> reservationOpenMap = new HashMap<String, ReservationClientBean>();
-            for (ReservationClientBean reservationBean : ReservationList) {
-                if (!StringUtils.isNullOrBlank2(reservationBean.getClient_order_id()))
-                reservationOpenMap.put(reservationBean.getClient_order_id(), reservationBean);
-            }
-
             $info(channel.getFull_name() + "----------返回的订单件数：" + list.getResultData().getOrderResponseItem().size());
             for (OrderResponseDetailHigh order : list.getResultData().getOrderResponseItem()) {
                 order.setOrderState("Cancelled");
