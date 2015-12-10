@@ -1,8 +1,12 @@
 package com.voyageone.batch.cms.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
+import com.voyageone.cms.service.bean.ComplexMappingBean;
+import com.voyageone.cms.service.bean.MappingBean;
+import com.voyageone.cms.service.bean.SingleMappingBean;
 import com.voyageone.cms.service.dao.CmsMtCommonPropDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategoryDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategorySchemaDao;
@@ -18,6 +22,10 @@ import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.util.JsonUtil;
+import com.voyageone.common.util.StringUtils;
+import com.voyageone.ims.rule_expression.MasterWord;
+import com.voyageone.ims.rule_expression.RuleExpression;
+import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import net.minidev.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,6 +56,8 @@ public class PlatformMappingService extends BaseTaskService {
     // CmsMtCommonProp数据
     private List<CmsMtCommonPropModel> commonProp;
 
+    ObjectMapper om = new ObjectMapper();
+
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
@@ -63,22 +73,26 @@ public class PlatformMappingService extends BaseTaskService {
 
         commonProp = cmsMtCommonPropDao.selectCommonProp().stream().filter(cmsMtCommonPropModel -> !StringUtil.isEmpty(cmsMtCommonPropModel.getMapping())).collect(Collectors.toList());
 
-        String channelId = "001";
-        int cartId = 23;
-        // 获取该渠道下所有类目树
-        List<CmsMtPlatformCategoryTreeModel> platformCategoryTree = cmsMtPlatformCategoryDao.selectByChannel_CartId(channelId, cartId);
-        // 每棵数据循环
-        for (CmsMtPlatformCategoryTreeModel platformCategory : platformCategoryTree) {
-            // 找出这棵树下所有的叶子节点
-            List<CmsMtPlatformCategoryTreeModel> finallyCategories = getFinallyCategories(platformCategory.getChannelId(), platformCategory.getCartId(), platformCategory.getCatId());
-            // 叶子节点循环
-            for (CmsMtPlatformCategoryTreeModel finallyCategory : finallyCategories) {
-                // 该叶子节点mapping关系没有生成过的场合
-                if (cmsMtPlatformMappingDao.getMapping(channelId, cartId, finallyCategory.getCatId()) == null) {
-                    logger.info(finallyCategory.getCatPath());
-                    finallyCategory.setCartId(platformCategory.getCartId());
-                    // 生成mapping关系数据并插入
-                    cmsMtPlatformMappingDao.insert(makePlatformMapping(finallyCategory));
+        for (TaskControlBean taskControl : taskControlList) {
+            if ("order_channel_id".equalsIgnoreCase(taskControl.getCfg_name())) {
+                String channelId = taskControl.getCfg_val1();
+                int cartId = Integer.parseInt(taskControl.getCfg_val2());
+                // 获取该渠道下所有类目树
+                List<CmsMtPlatformCategoryTreeModel> platformCategoryTree = cmsMtPlatformCategoryDao.selectByChannel_CartId(channelId, cartId);
+                // 每棵数据循环
+                for (CmsMtPlatformCategoryTreeModel platformCategory : platformCategoryTree) {
+                    // 找出这棵树下所有的叶子节点
+                    List<CmsMtPlatformCategoryTreeModel> finallyCategories = getFinallyCategories(platformCategory.getChannelId(), platformCategory.getCartId(), platformCategory.getCatId());
+                    // 叶子节点循环
+                    for (CmsMtPlatformCategoryTreeModel finallyCategory : finallyCategories) {
+                        // 该叶子节点mapping关系没有生成过的场合
+                        if (cmsMtPlatformMappingDao.getMapping(channelId, cartId, finallyCategory.getCatId()) == null) {
+                            logger.info(finallyCategory.getCatPath());
+                            finallyCategory.setCartId(platformCategory.getCartId());
+                            // 生成mapping关系数据并插入
+                            cmsMtPlatformMappingDao.insert(makePlatformMapping(finallyCategory));
+                        }
+                    }
                 }
             }
         }
@@ -87,7 +101,6 @@ public class PlatformMappingService extends BaseTaskService {
 
     /**
      * 获取该channel下所有的叶子类目
-     *
      */
     private List<CmsMtPlatformCategoryTreeModel> getFinallyCategories(String channelId, int cartId, String categoryId) {
 
@@ -103,7 +116,7 @@ public class PlatformMappingService extends BaseTaskService {
         // channelid
         cmsMtPlatformMappingModel.setChannelId(cmsMtPlatformCategoryTree.getChannelId());
         // 类目ID
-        cmsMtPlatformMappingModel.setMainCategoryId(cmsMtPlatformCategoryTree.getCatId());
+        cmsMtPlatformMappingModel.setMainCategoryId(StringUtils.encodeBase64(cmsMtPlatformCategoryTree.getCatPath()));
         // 类目ID
         cmsMtPlatformMappingModel.setPlatformCategoryId(cmsMtPlatformCategoryTree.getCatId());
         // 渠道ID
@@ -115,11 +128,10 @@ public class PlatformMappingService extends BaseTaskService {
 
     /**
      * Props生成
-     *
      */
-    private List<Map> makeProps(int cartId, String categoryId) {
+    private List<MappingBean> makeProps(int cartId, String categoryId) {
 
-        List<Map> props = new ArrayList<>();
+        List<MappingBean> props = new ArrayList<>();
         CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.getPlatformCatSchemaModel(categoryId, cartId);
         try {
             if (cmsMtPlatformCategorySchemaModel != null) {
@@ -139,7 +151,7 @@ public class PlatformMappingService extends BaseTaskService {
                 }
             }
 
-        } catch (TopSchemaException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -148,54 +160,76 @@ public class PlatformMappingService extends BaseTaskService {
 
     /**
      * 每个field生成一个具体的object
-     *
      */
-    private Map<String,Object> makeMapping(Field field) {
+    private MappingBean makeMapping(Field field) {
 
-        Map<String,Object> mapping = new HashMap<>();
-        Map<String,Object> value = new HashMap<>();
-        Map<String,Object> extra = new HashMap<>();
-        Map<String,Object> subProps = new HashMap<>();
-        value = new HashMap<>();
-        value.put("type", "MASTER");
-        value.put("value", SearchCommProp(field.getId()));
+        // 把类目ID中的【.】替换成【->】
+        field.setId(StringUtils.replaceDot(field.getId()));
+
+        SingleMappingBean singleMappingBean;
+        MasterWord masterWord;
+        RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
+        RuleExpression ruleExpression;
+        MappingBean mapping = null;
         switch (field.getType()) {
             case INPUT:
             case MULTIINPUT:
             case LABEL:
-                mapping.put(field.getId(), value);
+                singleMappingBean = new SingleMappingBean();
+                // 设置平台的属性ID
+                singleMappingBean.setPlatformPropId(field.getId());
+                // 设置对应的主数据的属性ID
+                masterWord = new MasterWord(SearchCommProp(field.getId()));
+                // 生成表达式
+                ruleExpression = new RuleExpression();
+                ruleExpression.addRuleWord(masterWord);
+//                singleMappingBean.setExpression(ruleJsonMapper.serializeRuleExpression(ruleExpression));
+                singleMappingBean.setExpression(ruleExpression);
+                mapping = singleMappingBean;
                 break;
             case SINGLECHECK:
             case MULTICHECK:
-                extra = new HashMap<>();
+                singleMappingBean = new SingleMappingBean();
+                // 设置平台的属性ID
+                singleMappingBean.setPlatformPropId(field.getId());
+                // 设置对应的主数据的属性ID
+                masterWord = new MasterWord(SearchCommProp(field.getId()));
+
+                // 生成表达式
+                ruleExpression = new RuleExpression();
+                ruleExpression.addRuleWord(masterWord);
+
+                // option设置
+                Map<String, String> optionMapping = new HashMap<>();
+                masterWord.setExtra(optionMapping);
                 for (Option option : ((OptionsField) field).getOptions()) {
-                    extra.put(option.getValue(), option.getValue());
+                    optionMapping.put(option.getValue(), option.getValue());
                 }
-                ;
-                value.put("extra", extra);
-                mapping.put(field.getId(), value);
+                ruleExpression.addRuleWord(masterWord);
+
+//                singleMappingBean.setExpression(ruleJsonMapper.serializeRuleExpression(ruleExpression));
+                singleMappingBean.setExpression(ruleExpression);
+                mapping = singleMappingBean;
                 break;
             case COMPLEX:
             case MULTICOMPLEX:
-                subProps = new HashMap<>();
-                mapping.put("propId", field.getId());
+                ComplexMappingBean complexMappingBean = new ComplexMappingBean();
+                complexMappingBean.setMasterPropId(SearchCommProp(field.getId()));
+                complexMappingBean.setPlatformPropId(field.getId());
+                List<MappingBean> subMappings = new ArrayList<>();
+                complexMappingBean.setSubMappings(subMappings);
+
                 List<Field> fields = new ArrayList<>();
                 if (field instanceof ComplexField) {
-                    fields =  ((ComplexField) field).getFieldList();
-                }else{
-                    fields =  ((MultiComplexField) field).getFieldList();
+                    fields = ((ComplexField) field).getFieldList();
+                } else {
+                    fields = ((MultiComplexField) field).getFieldList();
                 }
                 for (Field fd : fields) {
-                    Map<String,Object> temp = makeMapping(fd);
-                    if (fd instanceof ComplexField || fd instanceof MultiComplexField) {
-                        subProps.put(temp.get("propId").toString(), temp);
-                    } else {
-                        for (String key : temp.keySet()) {
-                            subProps.put(key, temp.get(key));
-                        }
-                    }
+                    MappingBean temp = makeMapping(fd);
+                    subMappings.add(temp);
                 }
-                mapping.put("subProps", subProps);
+                mapping =  complexMappingBean;
                 break;
         }
         return mapping;

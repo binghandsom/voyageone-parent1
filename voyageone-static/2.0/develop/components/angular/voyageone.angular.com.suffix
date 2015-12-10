@@ -8,18 +8,24 @@ angular.module('voyageone.angular.services', [
 angular.module('voyageone.angular.factories', [
   'voyageone.angular.factories.interceptor',
   'voyageone.angular.factories.dialogs',
-  'voyageone.angular.factories.notify'
+  'voyageone.angular.factories.notify',
+  'voyageone.angular.factories.vpagination'
 ]);
 angular.module('voyageone.angular.directives', [
   'voyageone.angular.directives.enterClick',
   'voyageone.angular.directives.dateModelFormat',
-  'voyageone.angular.directives.uiNav'
+  'voyageone.angular.directives.uiNav',
+  'voyageone.angular.directives.vpagination'
 ]);
 angular.module('voyageone.angular.filters', [
+]);
+angular.module('voyageone.angular.controllers', [
+  'voyageone.angular.controllers.datePicker'
 ]);
 return angular.module('voyageone.angular', [
   'voyageone.angular.services',
   'voyageone.angular.factories',
   'voyageone.angular.directives',
-  'voyageone.angular.filters'
+  'voyageone.angular.filters',
+  'voyageone.angular.controllers'
 ]);

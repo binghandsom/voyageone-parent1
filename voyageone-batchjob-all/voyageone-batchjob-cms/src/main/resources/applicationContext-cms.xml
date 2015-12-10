@@ -28,7 +28,10 @@
         <task:scheduled ref="BcbgAnalySisJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
         <!-- CMS统计日报 -->
-        <!--<task:scheduled ref="SearsAnalySisJob" method="run" cron="0/3 * 0-23 * * ?"/>-->
+        <task:scheduled ref="SearsAnalySisJob" method="run" cron="0 30 17 * * ?"/>
+
+        <!-- 主数据到平台的默认mapping数据做成-->
+        <task:scheduled ref="CmsPlatformMappingJob" method="run" cron="0 30 16 * * ?"/>
 
     </task:scheduled-tasks>
 

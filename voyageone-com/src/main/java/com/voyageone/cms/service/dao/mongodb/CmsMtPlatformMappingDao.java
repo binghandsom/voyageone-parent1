@@ -20,13 +20,13 @@ public class CmsMtPlatformMappingDao extends BaseMongoDao {
         return CmsMtPlatformMappingModel.class;
     }
 
-    public CmsMtPlatformMappingModel getMapping(String channelId, int cartId, String mainCategoryId) {
+    public CmsMtPlatformMappingModel getMapping(String channelId, int cartId, String platformCategoryId) {
         String queryStrTemp = "{" +
                 "channelId:'%s'" +
                 ",platformCartId:%s" +
-                ",mainCategoryId:'%s'" +
+                ",platformCategoryId:'%s'" +
                 "}";
-        String queryStr = String.format(queryStrTemp, channelId, cartId, mainCategoryId);
+        String queryStr = String.format(queryStrTemp, channelId, cartId, platformCategoryId);
         return selectOneWithQuery(queryStr);
     }
 

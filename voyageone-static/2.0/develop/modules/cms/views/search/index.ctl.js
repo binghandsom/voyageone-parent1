@@ -3,7 +3,6 @@
  */
 
 define([
-    'modules/cms/controller/datePicker.ctl',
     'modules/cms/controller/popup.ctl'
 ], function () {
 
@@ -14,6 +13,10 @@ define([
         $scope.clear = clear;
         $scope.search = search;
         $scope.export = exportFile;
+        $scope.getGroupList = getGroupList;
+        $scope.getProductList = getProductList;
+        $scope.groupPageOption = {curr: 1, total: 198, size: 30, fetch: getGroupList};
+        $scope.productPageOption = {curr: 1, total: 250, size: 20, fetch: getProductList};
 
         function clear () {
             $scope.vm.searchInfo = {};
@@ -24,6 +27,15 @@ define([
         }
 
         function exportFile () {
+
+        }
+
+        function getGroupList () {
+
+            console.log($scope.groupPageOption);
+        }
+
+        function getProductList () {
 
         }
     };
