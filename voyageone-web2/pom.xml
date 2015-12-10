@@ -16,6 +16,7 @@
 	<modules>
 		<module>voyageone-web2-core</module>
 		<module>voyageone-web2-cms</module>
+		<module>voyageone-web2-sdk</module>
 	</modules>
 	<build>
 		<pluginManagement>
