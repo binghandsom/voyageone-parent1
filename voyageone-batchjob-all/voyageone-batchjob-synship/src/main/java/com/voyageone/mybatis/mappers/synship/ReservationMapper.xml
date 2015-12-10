@@ -197,4 +197,94 @@
         AND id = #{id}
         )
     </insert>
+
+    <select id="synShip_selectReservationDatas" resultType="com.voyageone.batch.synship.modelbean.ReservationClientBean">
+        SELECT
+          shop.shop_name,
+          orders.source_order_id,
+          res.order_number,
+          res.syn_ship_no,
+          GROUP_CONCAT(res.sku) as sku,
+          GROUP_CONCAT(res.id) as res_id,
+          orders.client_order_id,
+          ext_orders.seller_order_id,
+          orders.ship_name,
+          orders.ship_phone,
+          orders.order_date_time
+        FROM
+            tt_reservation res
+        INNER JOIN oms_bt_orders orders ON res.order_number = orders.order_number and res.order_channel_id = orders.order_channel_id
+        INNER JOIN tm_channel_shop shop ON shop.order_channel_id= res.order_channel_id and shop.cart_id = res.cart_id
+        LEFT JOIN `oms_bt_ext_orders` `ext_orders` ON res.`order_number` = ext_orders.`order_number`	AND res.`order_channel_id` = ext_orders.`order_channel_id`
+        WHERE
+            res.order_channel_id = #{order_channel_id}
+        AND res. STATUS = #{status}
+        GROUP BY res.order_number
+     </select>
+
+    <!--Reservation状态更新 -->
+    <update id="synShip_UpdateReservationBySynshipno">
+        UPDATE
+        tt_reservation
+        SET
+        status = #{status},
+        update_time = now(),
+        update_person = #{task_name}
+        WHERE
+        syn_ship_no = #{syn_ship_no}
+        and id in
+        <foreach item="item" index="index" collection="longResids"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+
+    <!--ReservationLog信息追加 -->
+    <insert id="synShip_InsertReservationLogByInID">
+        insert into
+        wms_bt_reservation_log
+        (
+        order_channel_id,
+        reservation_id,
+        store_id,
+        order_number,
+        sku,
+        product,
+        res_status,
+        ship_channel,
+        res_note,
+        syn_flg,
+        active,
+        created,
+        creater,
+        modified,
+        modifier
+        )
+        (
+        SELECT
+        order_channel_id,
+        id,
+        store_id,
+        order_number,
+        sku,
+        product,
+        status,
+        ship_channel,
+        #{res_note},
+        '0',
+        '1',
+        now(),
+        #{task_name},
+        now(),
+        #{task_name}
+        FROM tt_reservation
+        WHERE syn_ship_no = #{syn_ship_no}
+        and id in
+        <foreach item="item" index="index" collection="longResids"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        )
+    </insert>
 </mapper>
