@@ -71,7 +71,7 @@ public class CmsBtFeedMappingModel extends ChannelPartitionModel {
     public class Scope {
         private String channelId;
         private String feedCategoryPath;
-        private String mainCategoryId;
+        private String mainCategoryIdPath;
 
         public String getChannelId() {
             return channelId;
@@ -89,12 +89,12 @@ public class CmsBtFeedMappingModel extends ChannelPartitionModel {
             this.feedCategoryPath = feedCategoryPath;
         }
 
-        public String getMainCategoryId() {
-            return mainCategoryId;
+        public String getMainCategoryIdPath() {
+            return mainCategoryIdPath;
         }
 
-        public void setMainCategoryId(String mainCategoryId) {
-            this.mainCategoryId = mainCategoryId;
+        public void setMainCategoryIdPath(String mainCategoryIdPath) {
+            this.mainCategoryIdPath = mainCategoryIdPath;
         }
     }
 
