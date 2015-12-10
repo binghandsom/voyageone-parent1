@@ -1014,7 +1014,7 @@ body {
   display: block;
   position: relative;
   width: 160px;
-  background-image: url('img/logo.png');
+  background-image: url('../img/logo.png');
   background-repeat: no-repeat;
   background-color: #e67e22;
   background-position: 0px 50%;
