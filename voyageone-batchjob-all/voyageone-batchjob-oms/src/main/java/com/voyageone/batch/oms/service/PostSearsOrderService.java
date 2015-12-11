@@ -351,7 +351,7 @@ public class PostSearsOrderService {
 		orderShippingInfo.setCity(orderExtendInfo.getShipCity());
 		orderShippingInfo.setDayPhone(COMPANY_PHONE);
 		// TODO 修正预定
-		orderShippingInfo.setState("CHI");
+		orderShippingInfo.setState("IL");
 		orderShippingInfo.setAddressType("S");
 		orderShippingInfo.setCountryCode("USA");
 
