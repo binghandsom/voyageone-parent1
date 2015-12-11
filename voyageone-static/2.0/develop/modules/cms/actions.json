@@ -25,10 +25,10 @@
       }
     },
     "mapping": {
-      "feed": {
+      "feedMappingService": {
         "root" : "/cms/setting/feed_mapping",
-        "get_feed_categories" : "feed_categories",
-        "get_main_categories" : "main_categories"
+        "getFeedCategories" : "feed_categories",
+        "getMainCategories" : "main_categories"
       }
     }
   }

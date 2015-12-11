@@ -1,60 +1,4 @@
-/**
- * @Description
- * Bootstrap Main App
- * @Date:    2015-11-19 20:31:14
- * @User:    Jonas
- * @Version: 0.2.0
- */
-
-require.config({
-  baseUrl: '../../',
-  paths: {
-    'voyageone-angular-com': 'components/dist/voyageone.angular.com',
-    'voyageone-com': 'components/dist/voyageone.com.min',
-    'angular-animate': 'libs/angular.js/1.4.7/angular-animate',
-    'angular-route': 'libs/angular.js/1.4.7/angular-route',
-    'angular-sanitize': 'libs/angular.js/1.4.7/angular-sanitize',
-    'angular-cookies': 'libs/angular.js/1.4.7/angular-cookies',
-    'angular': 'libs/angular.js/1.4.7/angular',
-    'angular-translate': 'libs/angular-translate/2.8.1/angular-translate',
-    'angular-block-ui': 'libs/angular-block-ui/0.2.1/angular-block-ui',
-    'angular-ui-bootstrap': 'libs/angular-ui-bootstrap/0.14.3/ui-bootstrap-tpls-0.14.3.min',
-    'angular-ngStorage': 'libs/angular-ngStorage/ngStorage',
-    'angularAMD': 'libs/angularAMD/0.2.1/angularAMD.min',
-    'ngload': 'libs/angularAMD/0.2.1/ngload.min',
-    'jquery': 'libs/jquery/2.1.4/jquery',
-    'underscore': 'libs/underscore.js/1.8.3/underscore',
-    'css': 'libs/require-css/0.1.8/css',
-    'json': 'libs/requirejs-plugins/1.0.3/json',
-    'text': 'libs/require-text/2.0.12/text'
-  },
-  shim: {
-    'voyageone-angular-com': ['angularAMD'],
-    'angular-sanitize': ['angular'],
-    'angular-route': ['angular'],
-    'angular-animate': ['angular'],
-    'angular-cookies': ['angular'],
-    'angular-translate': ['angular'],
-    'angular-block-ui': ['angular', 'css!libs/angular-block-ui/0.2.1/angular-block-ui.css'],
-    'angular-ui-bootstrap': ['angular'],
-    'angular-ngStorage': ['angular'],
-    'angular': {exports: 'angular', deps: ['jquery']},
-    'jquery': {exports: 'jQuery'},
-    'json': ['text'],
-    'angularAMD': [
-      'angular',
-      'angular-route',
-      'angular-sanitize',
-      'angular-animate',
-      'angular-translate',
-      'angular-cookies',
-      'ngload'
-    ]
-  }
-});
-
-// Bootstrap App !!
-requirejs([
+define([
   'angularAMD',
   'angular',
   'underscore',
@@ -66,75 +10,82 @@ requirejs([
   'voyageone-com',
   'angular-block-ui',
   'angular-ui-bootstrap',
-  'angular-ngStorage'
+  'angular-ngStorage',
+  'angular-route',
+  'angular-sanitize',
+  'angular-animate',
+  'angular-translate',
+  'angular-cookies'
 ], function (angularAMD, angular, _, cRoutes, cActions, enTranslate, zhTranslate) {
 
   var mainApp = angular.module('voyageone.cms', [
-        'ngRoute',
-        'ngAnimate',
-        'ngCookies',
-        'ngSanitize',
-        'pascalprecht.translate',
-        'blockUI',
-        'voyageone.angular',
-        'ui.bootstrap',
-        'ngStorage'
-      ])
+      'ngRoute',
+      'ngAnimate',
+      'ngCookies',
+      'ngSanitize',
+      'pascalprecht.translate',
+      'blockUI',
+      'voyageone.angular',
+      'voyageone.angular.vresources',
+      'ui.bootstrap',
+      'ngStorage'
+    ])
 
-      // define
-      .constant('cActions', cActions)
-      .constant('cRoutes', cRoutes)
-      .constant('cLanguageType', {
-        en: {
-          name: "en",
-          value: enTranslate
-        },
-        zh: {
-          name: "zh",
-          value: zhTranslate
-        }
-      })
-      .constant('cCommonRoutes', {
-        "login": {
-          "url": "/login.html#/"
-        },
-        "channel": {
-          "url": "/channel.html#/"
-        },
-        "application": {
-          "modules": "/modules/",
-          "url": "/app.html#/"
-        }
-      })
+    // define
+    .constant('$actions', cActions)
+    .constant('cActions', cActions)
+    .constant('cRoutes', cRoutes)
+    .constant('cLanguageType', {
+      en: {
+        name: "en",
+        value: enTranslate
+      },
+      zh: {
+        name: "zh",
+        value: zhTranslate
+      }
+    })
+    .constant('cCommonRoutes', {
+      "login": {
+        "url": "/login.html#/"
+      },
+      "channel": {
+        "url": "/channel.html#/"
+      },
+      "application": {
+        "modules": "/modules/",
+        "url": "/app.html#/"
+      }
+    })
 
-      // router config.
-      .config(function ($routeProvider) {
-        return _.each(cRoutes, function (module) {
-          return $routeProvider.when(module.hash, angularAMD.route (module));
-        });
-      })
+    // router config.
+    .config(function ($routeProvider) {
+      return _.each(cRoutes, function (module) {
+        return $routeProvider.when(module.hash, angularAMD.route (module));
+      });
+    })
 
-      // translate config.
-      .config(function ($translateProvider, cLanguageType) {
+    // translate config.
+    .config(function ($translateProvider, cLanguageType) {
 
-        _.forEach(cLanguageType, function (type) {
-          $translateProvider.translations (type.name, type.value);
-        });
-      })
+      _.forEach(cLanguageType, function (type) {
+        $translateProvider.translations (type.name, type.value);
+      });
+    })
 
-      // menu service.
-      .service('menuService', menuService)
+    // menu service.
+    .service('menuService', menuService)
 
-      .controller('appCtrl', appCtrl)
+    .controller('appCtrl', appCtrl)
 
-      // menu.header.
-      .controller('headerCtrl', headerCtrl)
+    // menu.header.
+    .controller('headerCtrl', headerCtrl)
 
-      // menu.breadcrumbs.
-      .controller('breadcrumbsCtrl', breadcrumbsCtrl)
+    // menu.breadcrumbs.
+    .controller('breadcrumbsCtrl', breadcrumbsCtrl)
 
-      // menu.aside.
-      .controller('asideCtrl', asideCtrl);
+    // menu.aside.
+    .controller('asideCtrl', asideCtrl);
 
   function appCtrl ($scope, $window, translateService) {
 
@@ -228,20 +179,20 @@ requirejs([
     function getMenuHeaderInfo () {
       var defer = $q.defer ();
       ajaxService.post(cActions.core.home.menu.getMenuHeaderInfo)
-          .then(function (response) {
-            var data = response.data;
-            var languageType = _.isEmpty(cookieService.language()) ? translateService.getBrowserLanguage() : cookieService.language();
-            translateService.setLanguage(languageType);
-            _.forEach(data.languageList, function (language) {
+        .then(function (response) {
+          var data = response.data;
+          var languageType = _.isEmpty(cookieService.language()) ? translateService.getBrowserLanguage() : cookieService.language();
+          translateService.setLanguage(languageType);
+          _.forEach(data.languageList, function (language) {
 
-              if (_.isEqual(languageType, language.add_name2)) {
-                data.userInfo.language = language.add_name1;
-              }
-            });
-            // TODO
-            data.userInfo.application = 'CMS';//cookieService.application();
-            defer.resolve (data);
+            if (_.isEqual(languageType, language.add_name2)) {
+              data.userInfo.language = language.add_name1;
+            }
           });
+          // TODO
+          data.userInfo.application = 'CMS';//cookieService.application();
+          defer.resolve (data);
+        });
       return defer.promise;
     }
 
@@ -288,10 +239,10 @@ requirejs([
     function logout() {
       var defer = $q.defer ();
       ajaxService.post(cActions.core.access.user.logout)
-          .then(function () {
-            cookieService.removeAll();
-            defer.resolve();
-          });
+        .then(function () {
+          cookieService.removeAll();
+          defer.resolve();
+        });
       return defer.promise;
     }
 
@@ -302,9 +253,9 @@ requirejs([
     function getCategoryInfo () {
       var defer = $q.defer ();
       ajaxService.post(cActions.cms.home.menu.getCategoryInfo)
-          .then(function (response) {
-            defer.resolve(response.data);
-          });
+        .then(function (response) {
+          defer.resolve(response.data);
+        });
       return defer.promise;
     }
 
@@ -315,9 +266,9 @@ requirejs([
     function getCategoryType () {
       var defer = $q.defer ();
       ajaxService.post(cActions.cms.home.menu.getCategoryType)
-          .then(function (response) {
-            defer.resolve(response.data);
-          });
+        .then(function (response) {
+          defer.resolve(response.data);
+        });
       return defer.promise;
     }
 
@@ -328,9 +279,9 @@ requirejs([
     function getCategoryTree () {
       var defer = $q.defer ();
       ajaxService.post(cActions.cms.home.menu.getCategoryTree)
-          .then(function (response) {
-            defer.resolve(response.data);
-          });
+        .then(function (response) {
+          defer.resolve(response.data);
+        });
       return defer.promise;
     }
 
@@ -343,9 +294,9 @@ requirejs([
     function setCategoryType(cTypeId) {
       var defer = $q.defer ();
       ajaxService.post(cActions.cms.home.menu.setCategoryType, {"cTypeId": cTypeId})
-          .then(function (response) {
-            defer.resolve(response.data);
-          });
+        .then(function (response) {
+          defer.resolve(response.data);
+        });
       return defer.promise;
     }
 
@@ -477,4 +428,3 @@ requirejs([
 
   return angularAMD.bootstrap(mainApp);
 });
-
