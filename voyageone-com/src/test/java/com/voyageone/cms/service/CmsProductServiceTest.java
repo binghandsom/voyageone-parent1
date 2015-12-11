@@ -2,6 +2,7 @@ package com.voyageone.cms.service;
 
 
 import com.mongodb.WriteResult;
+import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.model.*;
 import com.voyageone.common.Constants;
@@ -21,6 +22,9 @@ import java.util.*;
 public class CmsProductServiceTest {
     @Autowired
     CmsProductService cmsProductService;
+
+    @Autowired
+    CmsBtProductDao cmsBtProductDao;
 
     @Test
     public void testInsertCmsBtProduct() throws Exception {
@@ -203,5 +207,24 @@ public class CmsProductServiceTest {
     public void testSelectCmsBtProductByIdOnlyProdId() throws Exception {
         JSONObject ret = cmsProductService.getProductByIdWithJson("001", 1);
         System.out.println(ret.toString());
+    }
+
+    @Test
+    public void bulkUpdate(){
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        System.out.println(new Date());
+        for (int i = 1; i < 100000 ; i++) {
+            HashMap<String, Object> updateMap = new HashMap<>();
+            updateMap.put("tags","tag-1-" + String.valueOf(i));
+            HashMap<String, Object> queryMap = new HashMap<>();
+            queryMap.put("prodId",i);
+            BulkUpdateModel model = new BulkUpdateModel();
+            model.setUpdateMap(updateMap);
+            model.setQueryMap(queryMap);
+            bulkList.add(model);
+        }
+        System.out.println(new Date());
+        cmsBtProductDao.bulkUpdateWithMap("100",bulkList,"init","$addToSet");
+        System.out.println(new Date());
     }
 }
