@@ -2,7 +2,6 @@ package com.voyageone.cms.service.model;
 
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
-import com.voyageone.common.masterdate.schema.rule.IntervalRuleInterface;
 
 import java.util.Map;
 

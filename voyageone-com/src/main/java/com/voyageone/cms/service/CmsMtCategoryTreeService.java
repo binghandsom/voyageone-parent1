@@ -66,11 +66,11 @@ public class CmsMtCategoryTreeService {
         CmsMtCategoryTreeModel result = null;
         if (platformCategoryTreeModel != null) {
             result = new CmsMtCategoryTreeModel();
-            String catName = platformCategoryTreeModel.getCatName();
-            String catId = StringUtils.encodeBase64(catName);
+            String catPath = platformCategoryTreeModel.getCatPath();
+            String catId = StringUtils.encodeBase64(catPath);
             result.setCatId(catId);
-            result.setCatName(catName);
-            result.setCatPath(platformCategoryTreeModel.getCatPath());
+            result.setCatName(platformCategoryTreeModel.getCatName());
+            result.setCatPath(catPath);
             int isParent = 0;
             List<CmsMtPlatformCategoryTreeModel> pChildren = platformCategoryTreeModel.getChildren();
             if (pChildren != null && pChildren.size()>0) {

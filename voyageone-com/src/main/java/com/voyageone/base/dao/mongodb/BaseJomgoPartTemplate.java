@@ -15,9 +15,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 
 import javax.annotation.Resource;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 public class BaseJomgoPartTemplate {
@@ -35,6 +33,7 @@ public class BaseJomgoPartTemplate {
         try {
             this.jongo = new Jongo(mongoTemplate.getDb());
         } catch (Exception e) {
+            throw new RuntimeException("MongoDB connection error:", e);
         }
     }
 

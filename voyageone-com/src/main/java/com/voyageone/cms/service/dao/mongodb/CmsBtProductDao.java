@@ -1,17 +1,17 @@
 package com.voyageone.cms.service.dao.mongodb;
 
-import com.mongodb.WriteResult;
+import com.mongodb.*;
 import com.voyageone.base.dao.mongodb.BaseMongoDao;
 import com.voyageone.cms.service.model.CmsBtProductModel;
+import com.voyageone.cms.service.model.CmsBtProductModel_Field;
 import com.voyageone.cms.service.model.CmsBtProductModel_Group_Platform;
 import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
 import net.minidev.json.JSONObject;
-import org.jongo.MongoCursor;
 import org.springframework.stereotype.Repository;
 
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class CmsBtProductDao extends BaseMongoDao {
@@ -110,6 +110,77 @@ public class CmsBtProductDao extends BaseMongoDao {
         String update = String.format("{$set: %s }", skuModel.toUpdateString("skus.$."));
         String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
         return mongoTemplate.updateFirst(query, update, collectionName);
+    }
+
+    public BulkWriteResult bathUpdateWithField(String channelId, List<String> codeList, CmsBtProductModel_Field field, String modifier) {
+        BulkWriteResult result = null;
+        if (codeList != null && codeList.size()>0 && field != null && field.size()>0) {
+            int step = 100;
+            DBCollection coll = getDBCollection(channelId);
+            int index  = 0;
+            BulkWriteOperation bwo = null;
+            for(String code : codeList) {
+                if (bwo == null) {
+                    bwo = coll.initializeOrderedBulkOperation();
+                }
+
+                BasicDBObject fieldUpdateObj = field.toUpdateBasicDBObject("fields.");
+                if (modifier != null && !"".equals(modifier.trim())) {
+                    fieldUpdateObj.append("modifier", modifier);
+                }
+                BasicDBObject updateObj = new BasicDBObject();
+                updateObj.append("$set", fieldUpdateObj);
+
+                BasicDBObject query = new BasicDBObject().append("fields.code", code);
+                bwo.find(query).upsert().update(updateObj);
+
+                index++;
+                if (index % step == 0) {
+                    result = bwo.execute();
+                    bwo = null;
+                }
+            }
+            if (bwo != null) {
+                result = bwo.execute();
+            }
+        }
+        return result;
+    }
+
+    public BulkWriteResult bathUpdateWithFields(String channelId, Map<String, CmsBtProductModel_Field> codeFieldMap, String modifier) {
+        BulkWriteResult result = null;
+        if (codeFieldMap != null && codeFieldMap.size()>0) {
+            int step = 100;
+            DBCollection coll = getDBCollection(channelId);
+            int index  = 0;
+            BulkWriteOperation bwo = null;
+            for(Map.Entry<String, CmsBtProductModel_Field> entry : codeFieldMap.entrySet()) {
+                String code = entry.getKey();
+                CmsBtProductModel_Field field = entry.getValue();
+                if (code == null || field == null || field.size() == 0) {
+                    continue;
+                }
+                if (bwo == null) {
+                    bwo = coll.initializeOrderedBulkOperation();
+                }
+
+                BasicDBObject updateObj = new BasicDBObject();
+                updateObj.append("$set", field.toUpdateBasicDBObject("fields."));
+
+                BasicDBObject query = new BasicDBObject().append("fields.code", code);
+                bwo.find(query).upsert().update(updateObj);
+
+                index++;
+                if (index % step == 0) {
+                    result = bwo.execute();
+                    bwo = null;
+                }
+            }
+            if (bwo != null) {
+                result = bwo.execute();
+            }
+        }
+        return result;
     }
 
 }

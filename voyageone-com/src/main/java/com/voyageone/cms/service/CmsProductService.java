@@ -1,18 +1,17 @@
 package com.voyageone.cms.service;
 
+import com.mongodb.BulkWriteResult;
 import com.mongodb.CommandResult;
 import com.mongodb.WriteResult;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
-import com.voyageone.cms.service.model.CmsBtFeedInfoModel;
-import com.voyageone.cms.service.model.CmsBtProductModel;
-import com.voyageone.cms.service.model.CmsBtProductModel_Group_Platform;
-import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
+import com.voyageone.cms.service.model.*;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class CmsProductService {
@@ -103,5 +102,19 @@ public class CmsProductService {
      */
     public WriteResult updateWithSku(String channelId, String code, CmsBtProductModel_Sku skuModel) {
         return cmsBtProductDao.updateWithSku(channelId, code, skuModel);
+    }
+
+    /**
+     * 批量更新Fields 根据CodeList，更新为相同的值
+     */
+    public BulkWriteResult bathUpdateWithField(String channelId, List<String> codeList, CmsBtProductModel_Field field, String modifier) {
+        return cmsBtProductDao.bathUpdateWithField(channelId, codeList, field, modifier);
+    }
+
+    /**
+     * 批量更新Fields 根据CodeList
+     */
+    public BulkWriteResult bathUpdateWithFields(String channelId, Map<String, CmsBtProductModel_Field> codeFieldMap, String modifier) {
+        return cmsBtProductDao.bathUpdateWithFields(channelId, codeFieldMap, modifier);
     }
 }
