@@ -23,6 +23,13 @@
       "advance": {
         "doSearch": "/cms/search/advance/doSearch"
       }
+    },
+    "mapping": {
+      "feedMappingService": {
+        "root" : "/cms/setting/feed_mapping",
+        "getFeedCategories" : "feed_categories",
+        "getMainCategories" : "main_categories"
+      }
     }
   }
 }

@@ -6,6 +6,7 @@ import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.cms.service.model.CmsBtProductModel_Field;
 import com.voyageone.cms.service.model.CmsBtProductModel_Group_Platform;
 import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
+import com.voyageone.common.util.DateTimeUtil;
 import net.minidev.json.JSONObject;
 import org.springframework.stereotype.Repository;
 
@@ -126,6 +127,7 @@ public class CmsBtProductDao extends BaseMongoDao {
 
                 BasicDBObject fieldUpdateObj = field.toUpdateBasicDBObject("fields.");
                 if (modifier != null && !"".equals(modifier.trim())) {
+                    fieldUpdateObj.append("modified", DateTimeUtil.getNowTimeStamp());
                     fieldUpdateObj.append("modifier", modifier);
                 }
                 BasicDBObject updateObj = new BasicDBObject();
@@ -164,8 +166,13 @@ public class CmsBtProductDao extends BaseMongoDao {
                     bwo = coll.initializeOrderedBulkOperation();
                 }
 
+                BasicDBObject fieldUpdateObj = field.toUpdateBasicDBObject("fields.");
+                if (modifier != null && !"".equals(modifier.trim())) {
+                    fieldUpdateObj.append("modified", DateTimeUtil.getNowTimeStamp());
+                    fieldUpdateObj.append("modifier", modifier);
+                }
                 BasicDBObject updateObj = new BasicDBObject();
-                updateObj.append("$set", field.toUpdateBasicDBObject("fields."));
+                updateObj.append("$set", fieldUpdateObj);
 
                 BasicDBObject query = new BasicDBObject().append("fields.code", code);
                 bwo.find(query).upsert().update(updateObj);

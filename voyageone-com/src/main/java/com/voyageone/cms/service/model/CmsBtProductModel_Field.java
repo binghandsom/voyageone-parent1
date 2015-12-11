@@ -7,8 +7,14 @@ import java.util.*;
 
 public class CmsBtProductModel_Field extends BaseMongoMap {
     public CmsBtProductModel_Field() {
-        if (!this.containsKey("images")) {
-            setAttribute("images", new ArrayList<CmsBtProductModel_Field_Image>());
+        if (!this.containsKey("images1")) {
+            setAttribute("images1", new ArrayList<CmsBtProductModel_Field_Image>());
+        }
+        if (!this.containsKey("images2")) {
+            setAttribute("images2", new ArrayList<CmsBtProductModel_Field_Image>());
+        }
+        if (!this.containsKey("images3")) {
+            setAttribute("images3", new ArrayList<CmsBtProductModel_Field_Image>());
         }
     }
 
@@ -180,16 +186,39 @@ public class CmsBtProductModel_Field extends BaseMongoMap {
         setAttribute("inventory", inventory);
     }
 
-    public List<CmsBtProductModel_Field_Image> getImages() {
-        if (!this.containsKey("images") || getAttribute("images") == null) {
-            setAttribute("images", new ArrayList<CmsBtProductModel_Field_Image>());
+    public List<CmsBtProductModel_Field_Image> getImages1() {
+        if (!this.containsKey("images1") || getAttribute("images1") == null) {
+            setAttribute("images1", new ArrayList<CmsBtProductModel_Field_Image>());
         }
-        return (List<CmsBtProductModel_Field_Image>) getAttribute("images");
+        return (List<CmsBtProductModel_Field_Image>) getAttribute("images1");
     }
 
-    public void setImages(List<CmsBtProductModel_Field_Image> images) {
-        setAttribute("images", images);
+    public void setImages1(List<CmsBtProductModel_Field_Image> images1) {
+        setAttribute("images1", images1);
     }
+
+    public List<CmsBtProductModel_Field_Image> getImages2() {
+        if (!this.containsKey("images2") || getAttribute("images2") == null) {
+            setAttribute("images2", new ArrayList<CmsBtProductModel_Field_Image>());
+        }
+        return (List<CmsBtProductModel_Field_Image>) getAttribute("images2");
+    }
+
+    public void setImages2(List<CmsBtProductModel_Field_Image> images2) {
+        setAttribute("images2", images2);
+    }
+
+    public List<CmsBtProductModel_Field_Image> getImages3() {
+        if (!this.containsKey("images3") || getAttribute("images3") == null) {
+            setAttribute("images3", new ArrayList<CmsBtProductModel_Field_Image>());
+        }
+        return (List<CmsBtProductModel_Field_Image>) getAttribute("images3");
+    }
+
+    public void setImages3(List<CmsBtProductModel_Field_Image> images3) {
+        setAttribute("images3", images3);
+    }
+
 
     public boolean getLock() {
         boolean result = false;
@@ -218,7 +247,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap {
 
     @Override
     public Object put(Object key, Object value) {
-        if ("images".equals(key)) {
+        if (key != null && key.toString().startsWith("images")) {
             if (value != null) {
                 List<Map> imageMaps = (List<Map>) value;
                 List<CmsBtProductModel_Field_Image> images = new ArrayList<>();

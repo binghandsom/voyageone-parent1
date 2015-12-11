@@ -1,23 +1,33 @@
 package com.voyageone.web2.cms;
 
 /**
+ * 定义所有 CMS WEB2 的地址定义, 同步前端 JS 的 actions.json
  * @author Jonas, 12/9/15
  * @version 2.0.0
  * @since 2.0.0
  */
 public interface CmsUrlConstants {
 
-    String MENU_ROOT = "/cms/home/menu/";
+    interface MENU {
 
-    String MENU_CATE_INFO = "getCategoryInfo";
+        String ROOT = "/cms/home/menu/";
 
-    String MENU_CATE_TYPE = "getCategoryType";
+        String GET_CATE_INFO = "getCategoryInfo";
 
-    String MENU_SET_CATE_TYPE = "setCategoryType";
+        String GET_CATE_TYPE = "getCategoryType";
 
-    String FEED_MAPPING_ROOT = "/cms/setting/feed_mapping";
+        String SET_CATE_TYPE = "setCategoryType";
+    }
 
-    String FEED_MAPPING_FEED_CATE = "feed_categories";
+    interface MAPPING {
 
-    String FEED_MAPPING_MAIN_CATE = "main_categories";
+        interface FEED {
+
+            String ROOT = "/cms/setting/feed_mapping";
+
+            String GET_FEED_CATEGORIES = "feed_categories";
+
+            String GET_MAIN_CATEGORIES = "main_categories";
+        }
+    }
 }
