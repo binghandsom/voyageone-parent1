@@ -2,6 +2,7 @@ package com.voyageone.common.configs;
 
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.configs.dao.TypeChannelDao;
+import com.voyageone.common.masterdate.schema.option.Option;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -109,5 +110,24 @@ public class TypeChannel {
         return ret;
     }
 
+    /**
+     * @param type type_code
+     * @param channel_id 渠道id
+     * @return List<Option>
+     */
+    public static  List<Option> getOptions(String type, String channel_id) {
+        String key =  type + "-" + channel_id;
+        List<Option> ret = new ArrayList<>();
+
+        List<TypeChannelBean> typeList = typeMap.get(key);
+
+        for (TypeChannelBean bean : typeList) {
+            Option opt = new Option();
+            opt.setDisplayName(bean.getName());
+            opt.setValue(bean.getValue());
+            ret.add(opt);
+        }
+        return ret;
+    }
 
 }
