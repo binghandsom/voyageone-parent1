@@ -19,7 +19,7 @@ angular.module('voyageone.angular.vresources', [])
      * @returns {string}
      */
     function getActionUrl(root, action) {
-      return root + (root.lastIndexOf('/') > -1 ? '' : '/') + action;
+      return root + (root.lastIndexOf('/') === root.length - 1 ? '' : '/') + action;
     }
 
     /**
