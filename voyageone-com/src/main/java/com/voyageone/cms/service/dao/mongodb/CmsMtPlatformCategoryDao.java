@@ -1,5 +1,6 @@
 package com.voyageone.cms.service.dao.mongodb;
 
+import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.BaseJomgoTemplate;
 import com.voyageone.base.dao.mongodb.BaseMongoDao;
 import com.voyageone.cms.service.model.CmsMtPlatformCategoryTreeModel;
@@ -19,17 +20,9 @@ public class CmsMtPlatformCategoryDao extends BaseMongoDao {
         return CmsMtPlatformCategoryTreeModel.class;
     }
 
-    public CmsMtPlatformCategoryTreeModel selectByCartIdCatId(int cartId, String categoryId) {
-        String queryStr = "{" +
-                "cartId: '" + cartId + "'" +
-                ", categoryId: '" + categoryId + "'" +
-                "}";
-        return selectOneWithQuery(queryStr);
-    }
-
-    public void deletePlatformCategories(Integer cartId){
-        String queryStr = "{cartId:"+cartId+"}";
-        deleteWithQuery(queryStr);
+    public WriteResult deletePlatformCategories(Integer cartId,String channelId){
+        String queryStr = "{cartId:"+cartId+",channelId:"+channelId+"}";
+        return deleteWithQuery(queryStr);
     }
 
     public List<CmsMtPlatformCategoryTreeModel> selectPlatformCategoriesByCartId(Integer cartId){
