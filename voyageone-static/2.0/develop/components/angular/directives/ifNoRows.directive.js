@@ -13,8 +13,8 @@ angular.module('voyageone.angular.directives.ifNoRows', [])
         // 没有数据显示警告
         if (!$templateCache.get(tempNoDataKey)) {
             $templateCache.put(tempNoDataKey,
-            '<div class="alert text-center">\n' +
-            '    <h4><i class="icon fa fa-warning"></i>&nbsp;{{\'TXT_COM_WARNING\' | translate}}</h4>\n' +
+            '<div class="text-center text-hs">\n' +
+            '    <h4 class="text-vo"><i class="icon fa fa-warning"></i>&nbsp;{{\'TXT_COM_WARNING\' | translate}}</h4>\n' +
             '{{\'TXT_COM_MSG_NO_DATE\' | translate}}' +
             '</dv>');
         }
