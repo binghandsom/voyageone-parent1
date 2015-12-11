@@ -7,7 +7,7 @@ public interface CmsBtProductConstants {
 	 */
 	public enum FieldImageType {
 		// type: 1-商品图片, 2-包装图片, 3-自定义图片
-		IMAGE1("image1"), IMAGE2("image2"), IMAGE3("image3");
+		PRODUCT_IMAGE("image1"), PACKAGE_IMAGE("image2"), CUSTOM_IMAGE3("image3");
 
 		// 成员变量
 		private String name;
@@ -25,6 +25,7 @@ public interface CmsBtProductConstants {
 		public void setName(String name) {
 			this.name = name;
 		}
+
 	}
 
 }
