@@ -229,7 +229,7 @@
 			<tab>
 				<tab-heading><i class="glyphicons glyphicons-more-items text-default"></i>&nbsp;{{'TXT_GROUP_LIST' | translate}}</tab-heading>
 				<div class="table-responsive">
-					<table class="table table-hover vo_table vo_models dropdown_table_bk">
+					<table class="table table-hover vo_table vo_models dropdown_table_bk font-bold text-vo">
 						<thead>
 						<tr>
 							<td colspan="3" class="mfb-xxxs"><label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span> 全选 </label>
@@ -242,8 +242,8 @@
 						</tr>
 						</thead>
 					</table>
-					<div class="col-sm-12 dropdown_table dropdown_table_main">
-						<table class="table table-hover vo_table vo_models">
+					<div class="col-sm-12 dropdown_table dropdown_table_main" if-no-rows="vm.groupList.length">
+						<table class="table table-hover vo_table vo_models" ng-if="vm.groupList.length">
 							<!--<thead>
                             <tr>
                                 <td colspan="2"><label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span> 全选 </label>&lt;!&ndash;<label class="i-checks-sm m-b-none"><input type="checkbox"></label> &ndash;&gt;</td>
@@ -544,26 +544,18 @@
 							</tr>
 							</tbody>
 						</table>
-						<div class="alert alert-warning alert-dismissable">
-							<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-							<h4><i class="icon fa fa-warning"></i> 温馨提示：</h4>
-							当前数据为空，请稍后再来....TKS!
-						</div>
 					</div><!-- .table-responsive -->
-
-
 					<div class="col-sm-12 m-t-xs">
-						<vpagination config="groupPageOption"></vpagination>
+						<vpagination config="vm.groupPageOption"></vpagination>
 					</div>
 				</div>
-
 			</tab>
 
 			<tab>
 				<tab-heading><i class="glyphicons glyphicons-sort text-default"></i>&nbsp;{{'TXT_PRODUCT_LIST' | translate}}</tab-heading>
 				<!-- Products table and controls -->
 				<div class="table-responsive">
-					<table class="table table-hover vo_table vo_models dropdown_table_bk">
+					<table class="table table-hover vo_table vo_models dropdown_table_bk font-bold text-vo">
 						<thead>
 						<tr>
 							<td class="mfb-xxt"><label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span> 全选 </label></td>
@@ -577,8 +569,8 @@
 						</tr>
 						</thead>
 					</table>
-					<div class="col-sm-12 dropdown_table dropdown_table_main">
-						<table class="table table-hover vo_table vo_models">
+					<div class="col-sm-12 dropdown_table dropdown_table_main" if-no-rows="vm.productList.length">
+						<table class="table table-hover vo_table vo_models" ng-if="vm.productList.length">
 							<thead>
 							<tr>
 								<th colspan="4" class="control-label text-left form-inline">
@@ -721,19 +713,7 @@
 					</table>
 					</div>
 					<div class="col-sm-12 m-t-sm">
-					<div class="col-sm-2">
-						<div class="page-main form-inline">
-							第<input type="text"/>页 <button class="btn btn-xs btn-default" type="button">GO</button>
-						</div>
-					</div>
-					<div class="col-sm-7 text-center">
-						<small class="text-muted inline m-t-sm m-b-sm">showing 20-30 of 50 items</small>
-					</div>
-					<div class="col-sm-3 text-right text-center-xs">
-						<div >
-							<pagination boundary-links="true" total-items="totalItems" ng-model="currentPage" class="pagination-sm m-t-none m-b" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></pagination>
-						</div>
-					</div>
+						<vpagination config="vm.productPageOption"></vpagination>
 					</div>
 				</div><!-- .table-responsive -->
 			</tab>

@@ -194,7 +194,6 @@ public class CmsPlatformMappingService extends BaseTaskService {
                 for (Option option : ((OptionsField) field).getOptions()) {
                     optionMapping.put(option.getValue(), option.getValue());
                 }
-                ruleExpression.addRuleWord(masterWord);
                 singleMappingBean.setExpression(ruleExpression);
                 mapping = singleMappingBean;
                 break;

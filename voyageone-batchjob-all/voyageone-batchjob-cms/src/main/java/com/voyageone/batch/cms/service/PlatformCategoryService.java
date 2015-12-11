@@ -1,9 +1,12 @@
 package com.voyageone.batch.cms.service;
 
+import com.jayway.jsonpath.JsonPath;
+import com.mongodb.WriteResult;
 import com.taobao.api.ApiException;
 import com.taobao.api.domain.Brand;
 import com.taobao.api.domain.ItemCat;
 import com.taobao.api.domain.SellerAuthorize;
+import com.taobao.top.schema.exception.TopSchemaException;
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.cms.model.PlatformCategoriesModel;
 import com.voyageone.batch.core.Enums.TaskControlEnums;
@@ -11,30 +14,28 @@ import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.core.util.TaskControlUtils;
 import com.voyageone.batch.cms.CmsConstants;
 import com.voyageone.batch.cms.dao.BrandDao;
-import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategoryDao;
+import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategorySchemaDao;
+import com.voyageone.cms.service.model.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.cms.service.model.CmsMtPlatformCategoryTreeModel;
+import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategoryDao;
 import com.voyageone.common.configs.Enums.CartEnums;
-import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.tmall.TbCategoryService;
 import com.voyageone.common.components.tmall.bean.ItemSchema;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
-import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.ShopConfigs;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.common.util.XmlUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.apache.commons.beanutils.BeanUtils;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 @Service
 public class PlatformCategoryService extends BaseTaskService{
@@ -48,19 +49,22 @@ public class PlatformCategoryService extends BaseTaskService{
     TbCategoryService tbCategoryService;
     @Autowired
     CmsMtPlatformCategoryDao platformCategoryDao;
+    @Autowired
+    CmsMtPlatformCategorySchemaDao cmsMtPlatformCategorySchemaDao;
+
+
     @Override
     public SubSystem getSubSystem() {
-        return SubSystem.IMS;
+        return SubSystem.CMS;
     }
     @Override
     public String getTaskName() {
         return JOB_NAME;
     }
 
-
-    @Transactional
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception{
+
 
         // 任务说明 ------------------------------------------------- START
         // 要做的事情：
@@ -76,6 +80,15 @@ public class PlatformCategoryService extends BaseTaskService{
 
         // 获取天猫系所有店铺
         List<ShopBean> shopList = ShopConfigs.getShopListByPlatform(PlatFormEnums.PlatForm.TM);
+
+        for (Iterator<ShopBean> it = shopList.iterator();it.hasNext();){
+            ShopBean shop = it.next();
+            if (StringUtils.isEmpty(shop.getAppKey())||StringUtils.isEmpty(shop.getAppSecret())){
+                logger.info("Cart "+shop.getCart_id()+" "+shop.getCart_name()+" 对应的app key 和 app secret key 不存在，不做处理！！！");
+                it.remove();
+            }
+
+        }
         // 获取该任务可以运行的销售渠道
         List<String> orderChannelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
 
@@ -237,7 +250,8 @@ public class PlatformCategoryService extends BaseTaskService{
         List<CmsMtPlatformCategoryTreeModel> savePlatformCatModels = this.buildPlatformCatTrees(platformCategoryMongoBeanList,Integer.valueOf(shop.getCart_id()),shop.getOrder_channel_id());
 
         //删除原有类目信息
-        platformCategoryDao.deletePlatformCategories(Integer.valueOf(shop.getCart_id()));
+        WriteResult delCatRes = platformCategoryDao.deletePlatformCategories(Integer.valueOf(shop.getCart_id()),shop.getOrder_channel_id());
+        logger.info("批量删除类目 CART_ID 为："+shop.getCart_id()+"  channel id: "+shop.getOrder_channel_id() + " 的数据为: "+delCatRes.getN() + "条...");
 
         if(savePlatformCatModels.size()>0){
             //保存最新的类目信息
@@ -255,7 +269,7 @@ public class PlatformCategoryService extends BaseTaskService{
 
     /** add by lewis start 2015/11/27 */
     /**
-     * 创建平台层次关系.
+     * 创建各渠道的平台类目层次关系.
      *
      * @param platformCatModelList
      */
@@ -279,8 +293,10 @@ public class PlatformCategoryService extends BaseTaskService{
             }
             platformCat.setChildren(subPlatformCatgories);
             if (!"0".equals(platformCat.getParentCatId())) {
+                //将所有非顶层类目的引用添加到待删除列表
                 removePlatformCatList.add(platformCat);
-            }else {  //设置顶层类目的信息
+            }else {
+                //设置顶层类目的信息
                 platformCat.setChannelId(channelId);
                 platformCat.setCartId(cartId);
                 platformCat.setCreater(this.getTaskName());
@@ -289,7 +305,16 @@ public class PlatformCategoryService extends BaseTaskService{
                 platformCat.setModified(DateTimeUtil.getNow());
             }
 
+            //为取得平台类目Schema方便，为每个叶子叶子结点添加channelId
+            if(platformCat.getIsParent().intValue()==0){
+
+                platformCat.setChannelId(channelId);
+
+            }
+
         }
+
+        //删除掉所有非顶层类目引用,只留下最顶层类目
         platformCatModelList.removeAll(removePlatformCatList);
 
         return platformCatModelList;
@@ -301,36 +326,48 @@ public class PlatformCategoryService extends BaseTaskService{
      * 第三方平台属性信息取得（天猫系）
      * @param cartId 渠道信息
      */
-    private void doSetPlatformPropTm(int cartId) throws ApiException {
-        // TODO 调用梁兄借口 获取天猫国际叶子类目信息
-        List<PlatformCategoriesModel> platformSubCategoryList = new ArrayList<>();
-        List<CmsMtPlatformCategoryTreeModel> categoryLeaves = new ArrayList<>();
+    private void doSetPlatformPropTm(int cartId) throws ApiException, InvocationTargetException, IllegalAccessException, TopSchemaException {
+
+        List<CmsMtPlatformCategoryTreeModel> allLeaves = new ArrayList<>();
+        Set savedList = new HashSet<>();
+        List<Map> allCategoryLeavesMap = new ArrayList<>();
         List<CmsMtPlatformCategoryTreeModel> categoryTrees = this.platformCategoryDao.selectPlatformCategoriesByCartId(cartId);
 
-//                platformCategoryDao.getPlatformSubCatsWithoutShop(cartId);
+        for (CmsMtPlatformCategoryTreeModel root:categoryTrees){
+            Object jsonObj = JsonPath.parse(root.toString()).json();
+            List<Map> leavesMap = JsonPath.read(jsonObj, "$..children[?(@.isParent == 0)]");
+            allCategoryLeavesMap.addAll(leavesMap);
+        }
 
-        // 需要等待删除的第三方平台类目信息
-        List<ItemSchema> delCats = new ArrayList<>();
+        for (Map leafMap:allCategoryLeavesMap){
+            CmsMtPlatformCategoryTreeModel leafObj = new CmsMtPlatformCategoryTreeModel();
+            BeanUtils.populate(leafObj, leafMap);
+            String key = leafObj.getCatId();
+
+            if(!savedList.contains(key)){
+                savedList.add(key);
+                leafObj.setCartId(cartId);
+                allLeaves.add(leafObj);
+            }
+
+        }
+
+
+        //删除已有的数据
+        WriteResult delResult = cmsMtPlatformCategorySchemaDao.deletePlatformCategorySchemaByCartId(cartId);
+
+        logger.info("批量删除Schema, CART_ID 为："+cartId+" 的数据为: "+delResult.getN() + "条...");
 
         int i = 1;
-        int cnt = platformSubCategoryList.size();
-        for (PlatformCategoriesModel platformCategoriesModel : platformSubCategoryList) {
+        int cnt = allLeaves.size();
+        for (CmsMtPlatformCategoryTreeModel platformCategoriesModel : allLeaves) {
 
             // 获取产品属性
-            logger.info("获取产品属性:" + i + "/" + cnt + ":CHANNEL_ID:" + platformCategoriesModel.getChannelId() + ":CART_ID:" + platformCategoriesModel.getCartId() + ":PLATFORM_CATEGORY_ID:" + platformCategoriesModel.getPlatformCid());
-            doSetPlatformPropTmSub(platformCategoriesModel, 1);
-
-            // 获取商品属性
-            logger.info("获取商品属性:" + i + "/" + cnt + ":CHANNEL_ID:" + platformCategoriesModel.getChannelId() + ":CART_ID:" + platformCategoriesModel.getCartId() + ":PLATFORM_CATEGORY_ID:" + platformCategoriesModel.getPlatformCid());
-            delCats.add(doSetPlatformPropTmSub(platformCategoriesModel, 0));
+            logger.info("获取产品和商品属性:" + i + "/" + cnt + ":CHANNEL_ID:" + platformCategoriesModel.getChannelId() + ":CART_ID:" + platformCategoriesModel.getCartId() + ":PLATFORM_CATEGORY_ID:" + platformCategoriesModel.getCatId());
+            doSetPlatformPropTmSub(platformCategoriesModel);
 
             i++;
         }
-
-//        // 第三方平台属性设定 ----------------------------------------- START
-//        // 删除无效的（第三方平台）类目 // TODO:同时要删除主数据类目和Mapping（仅第一次初始化数据的场合）
-//        platformCategoryDao.delPlatformCatsByCid(delCats);
-//        // 第三方平台属性设定 ----------------------------------------- END
 
 
     }
@@ -338,98 +375,49 @@ public class PlatformCategoryService extends BaseTaskService{
     /**
      * 第三方平台属性信息取得（天猫系）（子函数）
      * @param platformCategoriesModel 店铺信息
-     * @param isProduct 是否是产品（产品：1； 商品：0）
      */
-    private ItemSchema doSetPlatformPropTmSub(PlatformCategoriesModel platformCategoriesModel, int isProduct) throws ApiException {
+    private ItemSchema doSetPlatformPropTmSub(CmsMtPlatformCategoryTreeModel platformCategoriesModel) throws ApiException {
 
-        // xml文件的保存路径
-        String path;
-
-        // 属性规则信息
-        String xmlContent = null;
+        CmsMtPlatformCategorySchemaModel schemaModel = new CmsMtPlatformCategorySchemaModel();
+        schemaModel.setCartId(platformCategoriesModel.getCartId());
+        schemaModel.setCatId(platformCategoriesModel.getCatId());
+        schemaModel.setCreater(this.getTaskName());
+        schemaModel.setModifier(this.getTaskName());
+        schemaModel.setCatFullPath(platformCategoriesModel.getCatPath());
 
         // 获取店铺信息
         ShopBean shopProp = ShopConfigs.getShop(platformCategoriesModel.getChannelId(), String.valueOf(platformCategoriesModel.getCartId()));
         if (shopProp == null) {
             logger.error("没有获取到店铺信息 " + "channel_id:" + shopProp.getOrder_channel_id() + "  cart_id:" + shopProp.getCart_id());
+            // TODO 应该需要做异常处理
         }
 
-        if (isProduct == 1) {
-            // 产品的xml保存路径
-            path = Properties.readValue(Constants.PATH.PATH_PRODUCT_RULE_FILE);
+        // 调用API获取产品属性规则
+        String productXmlContent = tbCategoryService.getTbProductAddSchema(shopProp, Long.parseLong(platformCategoriesModel.getCatId()));
 
+
+        schemaModel.setPropsProduct(productXmlContent);
+
+            // 属性规则信息
+            String itemXmlContent = null;
             // 调用API获取产品属性规则
-            xmlContent = tbCategoryService.getTbProductAddSchema(shopProp, Long.parseLong(platformCategoriesModel.getPlatformCid()));
-
-            if (StringUtils.isEmpty(xmlContent)) {
-                return new ItemSchema();
-            }
-        } else {
-            // 商品的xml保存路径
-            path = Properties.readValue(Constants.PATH.PATH_ITEM_RULE_FILE);
-
-            // 调用API获取产品属性规则
-            ItemSchema result = tbCategoryService.getTbItemAddSchema(shopProp, Long.parseLong(platformCategoriesModel.getPlatformCid()));
+            ItemSchema result = tbCategoryService.getTbItemAddSchema(shopProp, Long.parseLong(platformCategoriesModel.getCatId()));
             //保存为XML文件
             if (result.getResult() == 0 ){
-                xmlContent = result.getItemResult();
+                itemXmlContent = result.getItemResult();
             }else if (result.getResult() == 1 ){
 //              "商品类目已被冻结, 本类目已经不能发布商品，请重新选择类目":
 //              "商品类目未授权，请重新选择类目;商品类目天猫已经废弃, 本类目已经不能发布商品，请重新选择类目":
 //              "商品类目天猫已经废弃, 本类目已经不能发布商品，请重新选择类目":
 //                以上三种类型则表明类目已经作废，需要删除
-                return result;
+//                return result;
+//                itemXmlContent = String.valueOf(result.getResult());
             }
+        schemaModel.setPropsItem(itemXmlContent);
+
+        if(!StringUtils.isEmpty(schemaModel.getPropsItem())){
+            cmsMtPlatformCategorySchemaDao.insert(schemaModel);
         }
-
-        // XML文件名字
-        String strFileNameXML = platformCategoriesModel.getPlatformCid().toString() + "_" + shopProp.getCart_id() + ".xml";
-        // 保存为XML文件
-        if (!StringUtils.isEmpty(xmlContent)){
-            XmlUtil.writeXml2File(xmlContent, strFileNameXML, path);
-        }
-
-        // 读入XML文件（TODO:暂时是读取文件, 以后调用完API后就直接可以用了，不用再保存为XML，再读取什么的了）
-        // 判断是否存在
-        File xmlFile = new File(path + strFileNameXML);
-        if (!xmlFile.exists()) {
-            return new ItemSchema();
-        }
-        String xmlContentRead = XmlUtil.readXml(strFileNameXML, path);
-
-        // 分析XML
-//        List<PlatformPropModel> platformPropModelList = TmallPropertyParser.getTmallPropertiesByXmlContent(
-//                Integer.parseInt(shopProp.getCart_id()),
-//                platformCategoriesModel.getPlatformCid(),
-//                isProduct,
-//                xmlContentRead
-//        );
-
-        // 插入到属性表中
-//        imsCategorySubService.doInsertPlatformPropMain(platformPropModelList, JOB_NAME);
-        CmsMtPlatformCategoryTreeModel platformCategoryMongoBean = platformCategoryDao.selectByCartIdCatId(
-                platformCategoriesModel.getCartId(),
-                platformCategoriesModel.getPlatformCid()
-        );
-
-        if (platformCategoryMongoBean == null) {
-            platformCategoryMongoBean = new CmsMtPlatformCategoryTreeModel();
-
-//            platformCategoryMongoBean.setChannel_id(platformCategoriesModel.getChannelId());
-            platformCategoryMongoBean.setCartId(platformCategoriesModel.getCartId());
-            platformCategoryMongoBean.setCatId(platformCategoriesModel.getPlatformCid());
-            platformCategoryMongoBean.setCatName(platformCategoriesModel.getCidName());
-            platformCategoryMongoBean.setCatPath(platformCategoriesModel.getCidPath());
-            platformCategoryMongoBean.setParentCatId(platformCategoriesModel.getParentCid());
-        }
-
-        if (isProduct == 1) {
-//            platformCategoryMongoBean.setPropsProduct(xmlContent);
-        } else {
-//            platformCategoryMongoBean.setPropsItem(xmlContent);
-        }
-//        platformCategoryDao.saveWithProduct(platformCategoryMongoBean);
-
 
         return new ItemSchema();
     }

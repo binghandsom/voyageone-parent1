@@ -1,4 +1,16 @@
 {
+  "TXT_COM_SHOWING_NO": "第",
+  "TXT_COM_PAGE": "页",
+  "TXT_COM_SHOWING": "showing",
+  "TXT_COM_OF": "of",
+  "TXT_COM_ITEMS": "items",
+  "TXT_COM_WARNING": "温馨提示：",
+  "TXT_COM_MSG_NO_DATE": "当前数据为空，请稍后再来....TKS!",
+  "TXT_COM_ERROR": "出错了：",
+  "TXT_COM_MSG_ERROR": "天嗯啊，请稍后再来....TKS!",
+
+  "BTN_COM_GO": "Go",
+
   "TXT_VOYAGE_ONE": "沃易智",
   "TXT_LOGOUT": "注销",
   "TXT_HOME": "首页",
@@ -48,16 +60,10 @@
   "TXT_CHANGE_CATEGORY": "类目切换",
   "TXT_GROUP_LIST": "Group 一览",
   "TXT_PRODUCT_LIST": "Product 一览",
-  "TXT_COM_SHOWING_NO": "第",
-  "TXT_COM_PAGE": "页",
-  "TXT_COM_SHOWING": "showing",
-  "TXT_COM_OF": "of",
-  "TXT_COM_ITEMS": "items",
 
   "BTN_CANCEL": "取消 ",
   "BTN_CLEAR": "清空",
   "BTN_SEARCH": "检索",
   "BTN_EXPORT": "导出",
-  "BTN_GO": "Go",
-  "BTN_COM_GO": "Go"
+  "BTN_GO": "Go"
 }

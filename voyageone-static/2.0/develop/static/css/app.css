@@ -1713,6 +1713,9 @@ html.bg {
 .text-vo {
   color: #e67e22;
 }
+.text-hs {
+  color: #999;
+}
 a.text-vo:hover,
 a.text-vo:focus {
   color: #bf6516;
@@ -8153,7 +8156,7 @@ input:checked + ol > li {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
-.dropdown_table_bk{
-  border-bottom:none;
+.dropdown_table_bk{/*
+  border-bottom:none;*/
   margin-bottom:0px
 }
