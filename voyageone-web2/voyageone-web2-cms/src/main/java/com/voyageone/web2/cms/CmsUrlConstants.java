@@ -30,4 +30,13 @@ public interface CmsUrlConstants {
             String GET_MAIN_CATEGORIES = "main_categories";
         }
     }
+    interface PROMOTION {
+
+        interface LIST {
+
+            String ROOT = "/cms/promotion/list";
+
+            String GET_PROMOTION_LIST = "getPromotionList";
+        }
+    }
 }

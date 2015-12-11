@@ -13,11 +13,11 @@
   },
   "cms": {
     "home": {
-     "menu": {
-       "getCategoryInfo": "/cms/home/menu/getCategoryInfo",
-       "getCategoryType": "/cms/home/menu/getCategoryType",
-       "setCategoryType": "/cms/home/menu/setCategoryType"
-     }
+      "menu": {
+        "getCategoryInfo": "/cms/home/menu/getCategoryInfo",
+        "getCategoryType": "/cms/home/menu/getCategoryType",
+        "setCategoryType": "/cms/home/menu/setCategoryType"
+      }
     },
     "search": {
       "advance": {
@@ -26,10 +26,14 @@
     },
     "mapping": {
       "feedMappingService": {
-        "root" : "/cms/setting/feed_mapping",
-        "getFeedCategories" : "feed_categories",
-        "getMainCategories" : "main_categories"
+        "root": "/cms/setting/feed_mapping",
+        "getFeedCategories": "feed_categories",
+        "getMainCategories": "main_categories"
       }
+    },
+    "promotionService": {
+      "root": "/cms/promotion/list",
+      "getPromotionList": "getPromotionList"
     }
   }
 }
