@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.views;
+package com.voyageone.web2.cms.views.menu;
 
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.ajax.AjaxResponse;
