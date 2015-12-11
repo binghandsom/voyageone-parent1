@@ -141,7 +141,7 @@ public class CmsPlatformMappingService extends BaseTaskService {
             }
             //PropsProduct 生成props
             if (!StringUtil.isEmpty(cmsMtPlatformCategorySchemaModel.getPropsProduct())) {
-                List<Field> fields = SchemaReader.readXmlForList(cmsMtPlatformCategorySchemaModel.getPropsItem());
+                List<Field> fields = SchemaReader.readXmlForList(cmsMtPlatformCategorySchemaModel.getPropsProduct());
                 for (Field field : fields) {
                     props.add(makeMapping(field));
                 }

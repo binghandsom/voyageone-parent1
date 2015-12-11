@@ -19,6 +19,7 @@
                 <entry key="CmsMtPlatformCategorySchemaModel"   value="cms_mt_platform_category_schema" />
                 <entry key="CmsMtPlatformCategoryTreeModel"	    value="cms_mt_platform_category_tree" />
                 <entry key="CmsBtFeedMappingModel"              value="cms_bt_feed_mapping" />
+                <entry key="CmsMtCommonPropDefModel"		        value="cms_mt_common_prop_def" />
             </map>
         </property>
     </bean>

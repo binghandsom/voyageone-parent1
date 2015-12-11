@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 public class CommSequenceDao extends BaseMongoDao {
 
     public CommSequenceDao() {
-        collectionName = "Sequence";
+        collectionName = "com_sequence";
     }
 
     @Override
