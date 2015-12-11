@@ -1713,6 +1713,9 @@ html.bg {
 .text-vo {
   color: #e67e22;
 }
+.text-hs {
+  color: #999;
+}
 a.text-vo:hover,
 a.text-vo:focus {
   color: #bf6516;
