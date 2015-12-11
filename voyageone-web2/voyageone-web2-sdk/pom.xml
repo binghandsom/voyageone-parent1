@@ -13,6 +13,12 @@
     <name>Voyageone Web2 SDK</name>
     <version>${voyageone.web2.sdk.version}</version>
     <dependencies>
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-com</artifactId>
+            <version>${voyageone.common.version}</version>
+        </dependency>
+
 
     </dependencies>
     <build>
