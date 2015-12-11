@@ -33,7 +33,7 @@
 								</div><!-- .form-group -->
 								<div class="form-group">
 									<label class="col-sm-2 control-label vo_reqfield">商品属性</label>
-									<div class="col-sm-7 hierarchy">
+									<div class="col-sm-7 hierarchy" style="background:#fff">
 										<div class="col-sm-4 form-inline">
 											<label class="control-label vo_reqfield">上市时间</label>
 											<select class="form-control m-r-xs">
@@ -41,18 +41,18 @@
 										        <option>2015.11.11</option>
 									         </select>
 										</div>
-										<div class="col-sm-3 form-inline">
-											<label class="control-label">是否商场同款</label>
-											<select class="form-control m-r-xs">
-											<option>是</option>
-											<option>否</option>
-										</select>
-										</div>
-										<div class="col-sm-8 form-inline hierarchy m-t-sm m-l-md">
+										<div class="col-sm-11 form-inline hierarchy m-t-sm m-l-md">
 											<label class="control-label m-l-xs">开始时间：</label>
 											<select class="form-control m-r-xs">
 												<option>2015.6.12</option>
 												<option>2015.11.11</option>
+											</select>
+										</div>
+										<div class="col-sm-3 form-inline m-t-sm">
+											<label class="control-label">是否商场同款</label>
+											<select class="form-control m-r-xs">
+												<option>是</option>
+												<option>否</option>
 											</select>
 										</div>
 									</div>
@@ -99,6 +99,7 @@
 										<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 浅黄色</label>
 										<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> 浅灰色 </label>
 										<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span> 深紫色 </label>
+
 									</div>
 								</div><!-- .form-group -->
 								<div class="form-group">
@@ -118,14 +119,14 @@
 								</div><!-- .form-group -->
 								<div class="form-group">
 									<label class="col-sm-2 control-label vo_reqfield">物流参数</label>
-									<div class="col-sm-6 hierarchy">
-										<div class="col-sm-12 form-inline m-b-sm">
-											<label class="control-label">物流体积(m3)</label>
-											<input type="text" class="form-control m-r-xs">
+									<div class="col-sm-6 hierarchy" style="background:#fff">
+										<div class="col-sm-10 form-inline m-b-sm">
+											<label class="col-sm-3 control-label text-left">物流体积(m3)</label>
+											<input type="text" class="col-sm-3 form-control m-r-xs">
 										</div>
-										<div class="col-sm-12 form-inline">
-											<label class="control-label"> 物流重量(kg)</label>
-											<label><input type="text" class="form-control m-r-xs"></label>
+										<div class="col-sm-10 form-inline">
+											<label class="col-sm-3 control-label text-left"> 物流重量(kg)</label>
+											<label><input type="text" class="col-sm-3 form-control m-r-xs"></label>
 										</div>
 									</div>
 								</div><!-- .form-group -->
@@ -189,6 +190,40 @@
 										<label class="checkbox-inline c-radio"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 有 </label>
 									</div>
 								</div><!-- .form-group -->
+								<div class="form-group">
+									<label class="col-sm-2 control-label">退换货承诺</label>
+									<div class="col-sm-9">
+										<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 凡使用支付宝服务付款购买本店商品，若存在质量问题或与描述不符，本店将主动提供退换货服务并承担来回邮费！</label>
+									</div>
+								</div><!-- .form-group -->
+								<div class="form-group">
+									<label class="col-sm-2 control-label">售后说明</label>
+									<div class="col-sm-9">
+										<button class="btn btn-default"><i class="fa fa-plus"></i> 添加说明</button>
+									</div>
+								</div><!-- .form-group -->
+								<div class="form-group">
+									<label class="col-sm-2 control-label">吊牌图</label>
+									<div class="col-sm-9">
+										<button class="btn btn-default"><i class="fa fa-plus"></i> 上传新图片</button>
+									</div>
+								</div><!-- .form-group -->
+								<div class="form-group">
+									<label class="col-sm-2 control-label">会员让利</label>
+									<div class="col-sm-8">
+										<label class="checkbox-inline c-radio"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 不参与会员让利 </label>
+										<label class="checkbox-inline c-radio"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 参与会员让利 </label>
+									</div>
+								</div><!-- .form-group -->
+
+								<div class="form-group">
+									<label class="col-sm-2 control-label">拍下减库存</label>
+									<div class="col-sm-8">
+										<label class="checkbox-inline c-radio"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 是 </label>
+										<label class="checkbox-inline c-radio"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 否 </label>
+									</div>
+								</div><!-- .form-group -->
+
 								<!--<div class="form-group">
 									<label class="col-sm-3 control-label">Description</label>
 									<div class="col-sm-8">
