@@ -238,7 +238,7 @@ public class CmsPlatformMappingService extends BaseTaskService {
         complexMappingBean.setMasterPropId(null);
         List<MappingBean> subMappings = new ArrayList<>();
         complexMappingBean.setSubMappings(subMappings);
-        for (int i = 1; i < 6; i++) {
+        for (int i = 0; i < 5; i++) {
             RuleExpression imageIndexExpression = new RuleExpression();
             imageIndexExpression.addRuleWord(new TextWord(i + ""));
 
@@ -248,7 +248,7 @@ public class CmsPlatformMappingService extends BaseTaskService {
             CustomWord productImageWord = new CustomWord(new CustomWordValueGetMainProductImages(null, imageTemplateExpression, imageIndexExpression, imageTypeExpression, null));
             RuleExpression productImageExpression = new RuleExpression();
             productImageExpression.addRuleWord(productImageWord);
-            subMappings.add(new SingleMappingBean("product_image" + i, productImageExpression));
+            subMappings.add(new SingleMappingBean("product_image_" + i, productImageExpression));
         }
         return complexMappingBean;
     }
