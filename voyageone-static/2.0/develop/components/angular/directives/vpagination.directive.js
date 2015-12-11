@@ -6,10 +6,12 @@
  */
 
 angular.module('voyageone.angular.directives.vpagination', [])
-    .directive('vpagination', function (vpagination, $templateCache) {
+    .directive('vpagination', function ($templateCache, $compile, vpagination) {
 
         var templateKey = "voyageone.angular.directives.pagination.tpl.html";
+        var templateKeyNoData = "voyageone.angular.directives.paginationNoData.tpl.html";
 
+        // 有数据分页样式
         if (!$templateCache.get(templateKey)) {
             $templateCache.put(templateKey,
                 '<div class="col-sm-2">\n' +
@@ -33,29 +35,29 @@ angular.module('voyageone.angular.directives.vpagination', [])
                 '</div>');
         }
 
-        //var defScope = {
-        //    justOne: false,
-        //    buttons: []
-        //};
+        // 无数据分页样式
+        if (!$templateCache.get(templateKeyNoData)) {
+            $templateCache.put(templateKeyNoData,
+                '<div class="col-sm-7 col-sm-offset-2 text-center">\n' +
+                '    <small class="text-muted inline m-t-sm m-b-sm">{{\'TXT_COM_SHOWING\' | translate}}&nbsp;0-0&nbsp;{{\'TXT_COM_OF\' | translate}}&nbsp;0&nbsp{{\'TXT_COM_ITEMS\' | translate}}</small>\n' +
+                '</div>');
+        }
 
-        var defConfig = {size: 20, showPageNo:5};
+        var defConfig = {curr: 1, total: 0, size: 20, showPageNo:5};
 
         return {
             restrict: "AE",
-            templateUrl: templateKey,
+            //templateUrl: templateKey,
             replace: false,
             scope: {
                 $$configNameForA: "@vpagination",
                 $$configNameForE: "@config"
             },
-            link: function (scope) {
+            link: function (scope, element) {
 
                 // 获取用户的config配置
                 var userConfigName = scope.$$configNameForA || scope.$$configNameForE;
                 var userConfig = scope.$parent.$eval(userConfigName);
-
-                // 先将默认配置创建到 scope 中
-                //angular.extend(scope, defScope);
 
                 // 将用户配置覆盖到默认配置后，在重新覆盖到用户配置上，用于补全配置属性
                 var userWithDefConfig = angular.extend({}, defConfig, userConfig);
@@ -95,6 +97,15 @@ angular.module('voyageone.angular.directives.vpagination', [])
                     scope.curr = p.getCurr();
 
                 }
+
+                // 根据总数量显示不同的分页样式
+                var tempHtml;
+                if(p.getTotal() == 0) {
+                    tempHtml = $compile($templateCache.get(templateKeyNoData))(scope);
+                } else {
+                    tempHtml = $compile($templateCache.get(templateKey))(scope);
+                }
+                element.append(tempHtml);
             }
         };
     });

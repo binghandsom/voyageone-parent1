@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.views;
+package com.voyageone.web2.cms.views.menu;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
