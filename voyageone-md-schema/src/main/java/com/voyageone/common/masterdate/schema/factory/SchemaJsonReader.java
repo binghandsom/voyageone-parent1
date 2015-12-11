@@ -25,7 +25,7 @@ public class SchemaJsonReader {
     /**
      * readJsonForMap
      */
-    public static Map<String, Field> readJsonForMap(String jsonStirng) throws TopSchemaException {
+    public static Map<String, Field> readJsonForMap(String jsonStirng) {
         List<Map<String, Object>> rootList = JsonUtil.jsonToMapList(jsonStirng);
         return readJsonForMap(rootList);
     }
@@ -33,7 +33,7 @@ public class SchemaJsonReader {
     /**
      * readJsonForList
      */
-    public static List<Field> readJsonForList(String jsonStirng) throws TopSchemaException {
+    public static List<Field> readJsonForList(String jsonStirng) {
         List<Map<String, Object>> rootList = JsonUtil.jsonToMapList(jsonStirng);
         return readJsonForList(rootList);
     }
@@ -41,7 +41,7 @@ public class SchemaJsonReader {
     /**
      * readJsonForList
      */
-    public static List<Field> readJsonForList(List<Map<String, Object>> rootList) throws TopSchemaException {
+    public static List<Field> readJsonForList(List<Map<String, Object>> rootList) {
         List<Field> fieldList = SchemaFactory.createEmptyFieldList();
         Iterator<Map<String, Object>> fieldMapListIt = rootList.iterator();
 
@@ -56,7 +56,7 @@ public class SchemaJsonReader {
     /**
      * readJsonForMap
      */
-    public static Map<String, Field> readJsonForMap(List<Map<String, Object>> rootList) throws TopSchemaException {
+    public static Map<String, Field> readJsonForMap(List<Map<String, Object>> rootList) {
         Map<String, Field> fieldMap = new HashMap<>();
         Iterator<Map<String, Object>> fieldMapListIt = rootList.iterator();
 
@@ -71,14 +71,14 @@ public class SchemaJsonReader {
     /**
      * mapToField from Object
      */
-    public static Field mapToField(Object fieldMap) throws TopSchemaException {
+    public static Field mapToField(Object fieldMap) {
         return  mapToField((Map)fieldMap);
     }
 
     /**
      * mapToField from Map
      */
-    public static Field mapToField(Map<String, Object> fieldMap) throws TopSchemaException {
+    public static Field mapToField(Map<String, Object> fieldMap) {
         if(fieldMap == null) {
             return null;
         } else {
@@ -126,7 +126,7 @@ public class SchemaJsonReader {
         }
     }
 
-    private static Rule mapToRule(Map<String, Object> ruleMap, String fieldId) throws TopSchemaException {
+    private static Rule mapToRule(Map<String, Object> ruleMap, String fieldId) {
         if(ruleMap == null) {
             return null;
         } else {
@@ -188,7 +188,7 @@ public class SchemaJsonReader {
         }
     }
 
-    private static DependGroup mapToDependGroup(Map<String, Object> dependGroupMap, String fieldId) throws TopSchemaException {
+    private static DependGroup mapToDependGroup(Map<String, Object> dependGroupMap, String fieldId) {
         if(dependGroupMap == null) {
             return null;
         } else {
@@ -230,7 +230,7 @@ public class SchemaJsonReader {
         }
     }
 
-    private static LabelGroup mapToLabelGroup(Map<String, Object> labelGroupMap, String fieldId) throws TopSchemaException {
+    private static LabelGroup mapToLabelGroup(Map<String, Object> labelGroupMap, String fieldId) {
         if(labelGroupMap == null) {
             return null;
         } else {
@@ -264,7 +264,7 @@ public class SchemaJsonReader {
         }
     }
 
-    private static Option mapToOption(Map<String, Object> optionMap, String fieldId) throws TopSchemaException {
+    private static Option mapToOption(Map<String, Object> optionMap, String fieldId) {
         Option opResult = new Option();
         String displayName = (String)optionMap.get("displayName");
         if(StringUtil.isEmpty(displayName)) {
@@ -284,7 +284,7 @@ public class SchemaJsonReader {
         }
     }
 
-    private static Property mapToProperty(Map<String, Object> propertyItMap, String fieldId) throws TopSchemaException {
+    private static Property mapToProperty(Map<String, Object> propertyItMap, String fieldId) {
         String key = (String)propertyItMap.get("key");
         String value = (String)propertyItMap.get("value");
         return new Property(key, value);
@@ -307,7 +307,7 @@ public class SchemaJsonReader {
         }
     }
 
-    private static InputField mapToInputField(Map<String, Object> fieldMap, String fieldId, String fieldName) throws TopSchemaException {
+    private static InputField mapToInputField(Map<String, Object> fieldMap, String fieldId, String fieldName) {
         if(fieldMap == null) {
             return null;
         } else {
@@ -355,7 +355,7 @@ public class SchemaJsonReader {
         }
     }
 
-    private static LabelField mapToLabelField(Map<String, Object> fieldMap, String fieldId, String fieldName) throws TopSchemaException {
+    private static LabelField mapToLabelField(Map<String, Object> fieldMap, String fieldId, String fieldName) {
         if(fieldMap == null) {
             return null;
         } else {
@@ -398,7 +398,7 @@ public class SchemaJsonReader {
         }
     }
 
-    private static MultiInputField mapToMultiInputField(Map<String, Object> fieldMap, String fieldId, String fieldName) throws TopSchemaException {
+    private static MultiInputField mapToMultiInputField(Map<String, Object> fieldMap, String fieldId, String fieldName) {
         if(fieldMap == null) {
             return null;
         } else {
@@ -456,7 +456,7 @@ public class SchemaJsonReader {
         }
     }
 
-    private static SingleCheckField mapToSingleCheckField(Map<String, Object>  fieldMap, String fieldId, String fieldName) throws TopSchemaException {
+    private static SingleCheckField mapToSingleCheckField(Map<String, Object>  fieldMap, String fieldId, String fieldName) {
         if(fieldMap == null) {
             return null;
         } else {
@@ -515,7 +515,7 @@ public class SchemaJsonReader {
         }
     }
 
-    private static MultiCheckField mapToMultiCheckField(Map<String, Object>  fieldMap, String fieldId, String fieldName) throws TopSchemaException {
+    private static MultiCheckField mapToMultiCheckField(Map<String, Object>  fieldMap, String fieldId, String fieldName)  {
         if(fieldMap == null) {
             return null;
         } else {
@@ -591,7 +591,7 @@ public class SchemaJsonReader {
     }
 
 
-    private static ComplexField mapToComplexField(Map<String, Object>  fieldMap, String fieldId, String fieldName) throws TopSchemaException {
+    private static ComplexField mapToComplexField(Map<String, Object>  fieldMap, String fieldId, String fieldName)  {
         if(fieldMap == null) {
             return null;
         } else {
@@ -669,7 +669,7 @@ public class SchemaJsonReader {
         }
     }
 
-    private static MultiComplexField mapToMultiComplexField(Map<String, Object> fieldMap, String fieldId, String fieldName) throws TopSchemaException {
+    private static MultiComplexField mapToMultiComplexField(Map<String, Object> fieldMap, String fieldId, String fieldName)  {
         if(fieldMap == null) {
             return null;
         } else {
