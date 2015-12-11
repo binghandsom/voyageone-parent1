@@ -8153,7 +8153,7 @@ input:checked + ol > li {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
-.dropdown_table_bk{
-  border-bottom:none;
+.dropdown_table_bk{/*
+  border-bottom:none;*/
   margin-bottom:0px
 }
