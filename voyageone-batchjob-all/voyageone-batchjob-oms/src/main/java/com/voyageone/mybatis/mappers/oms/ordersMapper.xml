@@ -2872,7 +2872,7 @@
 	<select id="oms_bt_order_details_getSearsOrderDetailBlankTrackingInfo" parameterType="HashMap" resultMap="ordersDetailsInfoMapforSearsTrackingNumber" >
 		select o.order_channel_id,
 			o.order_number,
-			o.source_order_id,
+			ifnull((CASE WHEN (ifnull(o.sub_source_order_id,	''	) = '') THEN o.source_order_id ELSE o.sub_source_order_id	END	),	'') AS source_order_id
 			o.cart_id,
 			o.client_order_id,
 			od.sku,
@@ -2890,6 +2890,7 @@
 				on ods.order_number = odx.order_number
 				and ods.item_number =	odx.item_number
 			where odx.tracking_number = ''
+			and client_status != 'Cancelled'
 			)od
 		inner join Synship.oms_bt_orders o
 			on o.order_number = od.order_number
@@ -2911,6 +2912,7 @@
 			) trackingInfo
 		set odx.tracking_number = trackingInfo.tracking_number,
 				odx.sales_check_number = trackingInfo.sales_check_number
+				odx.client_status = trackingInfo.client_status
 		where
 				odx.order_number = trackingInfo.order_number and
 				odx.item_number = trackingInfo.item_number

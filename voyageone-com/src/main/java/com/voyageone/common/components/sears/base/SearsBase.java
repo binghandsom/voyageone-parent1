@@ -30,7 +30,9 @@ public class SearsBase {
 
     public final String searsUrl = "https://api.b2b.sears.com/v/2/";
 
-    public final String searsOrderUrl = "https://api.b2b.sears.com/v/2/orders/id/";
+    public final String searsOrderUrlByOrderId = searsUrl + "/orders/id/";
+
+    public final String searsOrderByOrderReferenceUrl = searsUrl + "/orders/order_reference/";
 
     public final String updateStatusUrl = searsUrl + "orders/id/%s/update";
 

@@ -122,14 +122,31 @@ public class SearsService extends SearsBase {
 
         StringBuffer param = new StringBuffer();
 
-        String responseXml = reqSearsApi(searsOrderUrl + orderId);
+        String responseXml = reqSearsApi(searsOrderUrlByOrderId + orderId);
 
-        logger.info("Sears response: " + responseXml);
-
-        // TODO 测试代码
-//        responseXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><order><orderId>400921</orderId><omsOrderId>1000400921</omsOrderId><customerReference>TMALL1</customerReference><orderReference>VO1</orderReference><orderDate>2015-11-20T16:30:46Z</orderDate><items>  <item>    <itemId>02901594040</itemId>    <productName>Infant &amp; Toddler Girl's Embellished Shirt &amp; Jogger Pants</productName>    <manufacturerPartNumber>252002S</manufacturerPartNumber>    <status>Scheduled</status>    <statusCode>CNF</statusCode>    <inStorePickupStatus/>    <expectedInStoreDate/>    <quantity>1</quantity>    <billableQuantity>1</billableQuantity>    <price>35.70</price>    <subTotal>35.70</subTotal>    <shipping>10.00</shipping>    <shipTax>0.00</shipTax>    <tax>0.00</tax>    <shippingAdjustment>0.00</shippingAdjustment>    <grandTotal>55.70</grandTotal>    <salesCheckNumber>400921111467745</salesCheckNumber>    <trackingNumbers>1111,2222</trackingNumbers>    <shippingDate/>    <shippingCarrier/>    <expectedDateOfArrival/>    <returnedQuantity>0</returnedQuantity>    <shippingMode>Ground</shippingMode>    <expectedShipDate>2015-11-20T23:59:59Z</expectedShipDate>    <customsDuty>10.0</customsDuty>    <fee>      <voCommission>10.0</voCommission>      <alipayFee>1.0</alipayFee>      <tmallCommission>3.0</tmallCommission>    </fee>    <delivery>      <type>mail</type>    </delivery>  </item></items><shippingAddress>  <firstName>Isxxxx</firstName>  <lastName>Sxxxxx</lastName>  <addressLine1>1N State St</addressLine1>  <addressLine2>order_confirm</addressLine2>  <addressLine3/>  <city>Chicago</city>  <state>IL</state>  <zipCode>60602</zipCode>  <countryCode>US</countryCode>  <email>isxxx.shxxxx@searshc.com</email>  <dayPhone>3125555111</dayPhone></shippingAddress><subTotal>35.70</subTotal><shipping>10.00</shipping><shipTax>0.00</shipTax><tax>0.00</tax><shippingAdjustment>0.00</shippingAdjustment><grandTotal>55.70</grandTotal></order>";
+        //logger.info("Sears response: " + responseXml);
 
         OrderLookupResponse response = JaxbUtil.converyToJavaBean(responseXml, OrderLookupResponse.class);
+
+        return response;
+    }
+
+    /**
+     * Order LookUp
+     *
+     * @param orderReference
+     * @return
+     * @throws Exception
+     */
+    public OrderLookupsResponse getOrderInfoByOrderReference(String orderReference) throws Exception {
+
+        StringBuffer param = new StringBuffer();
+
+        String responseXml = reqSearsApi(searsOrderByOrderReferenceUrl + orderReference);
+
+        //logger.info("Sears response: " + responseXml);
+
+        OrderLookupsResponse response = JaxbUtil.converyToJavaBean(responseXml, OrderLookupsResponse.class);
 
         return response;
     }

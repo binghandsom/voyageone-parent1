@@ -1,6 +1,7 @@
 package com.voyageone.batch.oms.service;
 
 import com.jcraft.jsch.ChannelSftp;
+import com.voyageone.batch.core.CodeConstants;
 import com.voyageone.batch.core.Constants;
 import com.voyageone.batch.core.modelbean.SetPriceBean;
 import com.voyageone.batch.core.util.SetPriceUtils;
@@ -102,23 +103,40 @@ public class PostSearsOrderService {
 		for (OrderExtend orderExtendInfo:pushDailySalesListList) {
 			OrderBean createOrderInfo = orderExtendInfo.getOrderOutputInfo();
 
-//			createOrderInfo.getItems().get(0).setItemPrice((float) 45.22);
+//			createOrderInfo.getItems().get(0).setItemPrice((float) 11.89);
+//			createOrderInfo.getItems().get(1).setItemPrice((float) 11.89);
 
 			// 请求XML缓存
 			backupTheXmlFile(createOrderInfo.getOrderReference(), JaxbUtil.convertToXml(createOrderInfo), 0);
 
 			try {
 
-				// Sears Create Order接口请求
-				logger.info("	searsService.CreateOrder sourceOrderId = " + createOrderInfo.getOrderReference() + ",orderNumber = " + orderExtendInfo.getOrderNumber());
-				OrderResponse orderResponse = searsService.CreateOrder(createOrderInfo);
+				OrderLookupsResponse orderLookupsResponse = null;
+				OrderResponse orderResponse = new OrderResponse();
+
+				// Sears Order Lookup接口请求
+				logger.info("	searsService.OrderLookup sourceOrderId = " + createOrderInfo.getOrderReference() + ",orderNumber = " + orderExtendInfo.getOrderNumber());
+				orderLookupsResponse = searsService.getOrderInfoByOrderReference(createOrderInfo.getOrderReference());
 
 				// 相应XML缓存
-				backupTheXmlFile(createOrderInfo.getOrderReference(), orderResponse.getMessage(), 1);
+				backupTheXmlFile(createOrderInfo.getOrderReference(), JaxbUtil.convertToXml(orderLookupsResponse), 2);
+
+				if (orderLookupsResponse == null || orderLookupsResponse.getOrder() == null){
+					// Sears Create Order接口请求
+					logger.info("	searsService.CreateOrder sourceOrderId = " + createOrderInfo.getOrderReference() + ",orderNumber = " + orderExtendInfo.getOrderNumber());
+					orderResponse = searsService.CreateOrder(createOrderInfo);
+
+					// 相应XML缓存
+					backupTheXmlFile(createOrderInfo.getOrderReference(), orderResponse.getMessage(), 1);
+				} else {
+					orderResponse.setMessage("Succeed");
+					orderResponse.setOrderId(orderLookupsResponse.getOrder().get(0).getOrderId());
+					logger.info("	searsService.OrderLookup 订单已经推送过 orderId = " + orderResponse.getOrderId());
+				}
 
 				//	第三方订单号更新
 				if ("Succeed".equals(orderResponse.getMessage())) {
-					logger.info("	updateOrder");
+					logger.info("	searsService.CreateOrder 订单推送成功 orderId = " + orderResponse.getOrderId());
 					isSuccess = updateOrder(orderExtendInfo.getOrderNumber(), orderResponse.getOrderId(), POST_SEARS_CREATE_ORDER);
 
 					if (!isSuccess) {
@@ -128,6 +146,7 @@ public class PostSearsOrderService {
 								SubSystem.OMS);
 					}
 				} else {
+					logger.info("	searsService.CreateOrder 订单推送失败：" + orderResponse.getMessage());
 					// 异常的场合，订单号再设定
 					orderResponse.setOrderId(createOrderInfo.getOrderReference());
 					pushErrorOrderList.add(orderResponse);
@@ -198,7 +217,8 @@ public class PostSearsOrderService {
 				// TODO 邮件组变更
 //				Mail.sendAlert("ITOMS", OmsConstants.RM_OUT_OF_STOCK_CHECK_SUBJECT, getArrayListString(sourceOrderIdList), true);
 //				Mail.sendAlert("CUSTOMER_SERVICE_REALMADRID", mailSubject, emailContent.toString(), true);
-				Mail.sendAlert("ITOMS", mailSubject, emailContent.toString(), true);
+				logger.info("	Sears订单推送错误邮件发送");
+				Mail.sendAlert(CodeConstants.EmailReceiver.NEED_SOLVE, mailSubject, emailContent.toString(), true);
 			}
 		} catch (Exception e) {
 
@@ -331,9 +351,9 @@ public class PostSearsOrderService {
 		orderShippingInfo.setCity(orderExtendInfo.getShipCity());
 		orderShippingInfo.setDayPhone(COMPANY_PHONE);
 		// TODO 修正预定
-		orderShippingInfo.setState("CN");
+		orderShippingInfo.setState("CHI");
 		orderShippingInfo.setAddressType("S");
-		orderShippingInfo.setCountryCode("CN");
+		orderShippingInfo.setCountryCode("USA");
 
 		ret.setShippingAddress(orderShippingInfo);
 
@@ -481,8 +501,10 @@ public class PostSearsOrderService {
 		try {
 			if (type == 0) {
 				fs = new FileWriter(strFolder + File.separator + "post_sears_" + fileName + ".xml");
-			} else {
+			} else if (type == 1) {
 				fs = new FileWriter(strFolder + File.separator + "ret_sears_" + fileName + ".xml");
+			} else {
+				fs = new FileWriter(strFolder + File.separator + "ret_sears_lookup" + fileName + ".xml");
 			}
 			fs.write(strXML);
 			fs.flush();
@@ -541,7 +563,7 @@ public class PostSearsOrderService {
 						resetOrderLoopupResponse(orderLookupResponse);
 
 						// 相应XML缓存
-						backupTheXmlFile(orderDetailInfo.getOrderNumber(), JaxbUtil.convertToXml(orderLookupResponse), 1);
+						backupTheXmlFile(orderDetailInfo.getOrderNumber(), JaxbUtil.convertToXml(orderLookupResponse), 2);
 
 						// Sears 订单信息返回值检查
 						List<Object> chkResult = chkOrderLoopupResponse(orderLookupResponse);
@@ -827,7 +849,7 @@ public class PostSearsOrderService {
 		// 更新记录件数
 		int size = 0;
 
-		String updateSqlSub = "select '%s' order_number, '%s' item_number,'%s' tracking_number, '%s' sales_check_number";
+		String updateSqlSub = "select '%s' order_number, '%s' item_number,'%s' tracking_number, '%s' sales_check_number, '%s' client_status";
 
 		for (int i = 0; i < orderDetailList.size(); i++) {
 			OrderExtend orderDetailInfo = orderDetailList.get(i);
@@ -835,7 +857,7 @@ public class PostSearsOrderService {
 			if (orderDetailInfo.isNeedUpdateFlag()) {
 				size = size + 1;
 
-				String updateRecSql = String.format(updateSqlSub, orderDetailInfo.getOrderNumber(), orderDetailInfo.getItemNumber(), orderDetailInfo.getTrackingNumber(), orderDetailInfo.getSalesCheckNumber());
+				String updateRecSql = String.format(updateSqlSub, orderDetailInfo.getOrderNumber(), orderDetailInfo.getItemNumber(), orderDetailInfo.getTrackingNumber(), orderDetailInfo.getSalesCheckNumber(), orderDetailInfo.getClientStatus());
 
 				if (StringUtils.isEmpty(updateSql.toString())) {
 					updateSql.append(updateRecSql);
