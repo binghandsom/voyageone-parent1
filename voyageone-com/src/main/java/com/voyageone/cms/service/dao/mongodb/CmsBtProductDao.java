@@ -2,6 +2,7 @@ package com.voyageone.cms.service.dao.mongodb;
 
 import com.mongodb.*;
 import com.voyageone.base.dao.mongodb.BaseMongoDao;
+import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.cms.service.model.CmsBtProductModel_Field;
 import com.voyageone.cms.service.model.CmsBtProductModel_Group_Platform;
@@ -10,6 +11,7 @@ import com.voyageone.common.util.DateTimeUtil;
 import net.minidev.json.JSONObject;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -190,4 +192,54 @@ public class CmsBtProductDao extends BaseMongoDao {
         return result;
     }
 
+
+    /**
+     * 批量更新记录
+     * @param channelId 渠道ID
+     * @param bulkList  更新条件
+     * @param modifier  更新者
+     * @param key       MongoKey pop,set,push,addToSet
+     * @return 运行结果
+     */
+    public BulkWriteResult bulkUpdateWithMap(String channelId, List<BulkUpdateModel> bulkList, String modifier, String key) {
+        BulkWriteResult result = null;
+        //获取集合名
+        DBCollection coll = getDBCollection(channelId);
+        BulkWriteOperation bwo = coll.initializeOrderedBulkOperation();
+
+        BasicDBObject updater = new BasicDBObject();
+        updater.append("modifier",modifier);
+        updater.append("modified", DateTimeUtil.getNowTimeStamp());
+        for (BulkUpdateModel model: bulkList){
+            //生成更新对象
+            BasicDBObject updateObj = new BasicDBObject();
+            updateObj.append(key, setDBObjectWithMap(model.getUpdateMap()));
+            //设置更新者和更新时间
+            updateObj.append("$set", updater);
+            //生成查询对象
+            BasicDBObject queryObj = setDBObjectWithMap(model.getQueryMap());
+            bwo.find(queryObj).upsert().update(updateObj);
+        }
+        //最终批量运行
+        result = bwo.execute();
+
+        return result;
+    }
+
+    /**
+     * 根据 传入Map批量设置BasicDBObject
+     * @param map 条件或者值得MAP
+     * @return 处理好的结果
+     */
+    public BasicDBObject setDBObjectWithMap(HashMap<String, Object> map) {
+        BasicDBObject result = new BasicDBObject();
+        Iterator iterator = map.entrySet().iterator();
+        while(iterator.hasNext()) {
+            Map.Entry entry = (Map.Entry) iterator.next();
+            String key = (String)entry.getKey();
+            Object value = entry.getValue();
+            result.append(key, value);
+        }
+        return result;
+    }
 }
