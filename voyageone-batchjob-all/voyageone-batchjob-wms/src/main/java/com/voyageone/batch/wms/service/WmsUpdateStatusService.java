@@ -316,12 +316,12 @@ public class WmsUpdateStatusService extends BaseTaskService {
                                 String json = updateStatusBean == null ? "" : new Gson().toJson(updateStatusBean);
 
                                 // 请求XML缓存
-                                backupTheXmlFile(orderDetail.getOrder_number(), JaxbUtil.convertToXml(updateStatusBean), 0);
+                                backupTheXmlFile(orderDetail.getOrder_number(), JaxbUtil.convertToXml(updateStatusBean), 0, channel);
 
                                 orderResponse = searsService.UpdateStatus(updateStatusBean);
 
                                 // 相应XML缓存
-                                backupTheXmlFile(orderDetail.getOrder_number(), orderResponse.getMessage(), 1);
+                                backupTheXmlFile(orderDetail.getOrder_number(), orderResponse.getMessage(), 1, channel);
 
                                 if (orderResponse != null && StringUtils.null2Space2(orderResponse.getMessage()).equals("Succeed")) {
                                     $info(channel.getFull_name() + "---------更新订单相关状态成功："+json);
@@ -363,7 +363,7 @@ public class WmsUpdateStatusService extends BaseTaskService {
      * @param strXML
      * @param type
      */
-    private void backupTheXmlFile(long orderNumber, String strXML, int type) {
+    private void backupTheXmlFile(long orderNumber, String strXML, int type, OrderChannelBean channel) {
 
         String strFolder = Properties.readValue("PostBackup") + File.separator + this.getClass().getName();
         File file = new File(strFolder);
@@ -384,14 +384,16 @@ public class WmsUpdateStatusService extends BaseTaskService {
             fs.flush();
         } catch (Exception ex) {
             logger.error(ex.toString());
-            issueLog.log(ex, ErrorType.BatchJob, SubSystem.OMS);
+            $info(channel.getFull_name() + "---------备份文件做成失败：" +strFolder + File.separator + "post_sears_" + fileName + ".xml" + ",Error：" + ex.toString());
+            logIssue(channel.getFull_name() + "备份文件做成失败", strFolder + File.separator + "post_sears_" + fileName + ".xml" + "，Error：" + ex.toString());
         } finally {
             try {
                 fs.close();
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
-                issueLog.log(e,ErrorType.BatchJob, SubSystem.OMS);
+                $info(channel.getFull_name() + "---------备份文件做成失败：" +strFolder + File.separator + "post_sears_" + fileName + ".xml" + ",Error：" + e.toString());
+                logIssue(channel.getFull_name() + "备份文件做成失败", strFolder + File.separator + "post_sears_" + fileName + ".xml" + "，Error：" + e.toString());
             }
         }
     }
