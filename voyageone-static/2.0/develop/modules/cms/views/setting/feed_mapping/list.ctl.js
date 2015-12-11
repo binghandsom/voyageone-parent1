@@ -1,12 +1,21 @@
 /**
- * Created by linanbin on 15/12/7.
+ * class FeedMappingController
  */
+
 define([
-    'modules/cms/controller/popup.ctl'
-], function () {
+  'cms',
+  'modules/cms/controller/popup.ctl'
+], function (cms) {
 
-    return function ($scope) {
+  return cms.controller('feedMappingController', (function() {
 
-        $scope.vm = {"searchInfo": {}, "masterData": {}};
-    };
+    function FeedMappingController(feedMappingService) {
+      this.feedMappingService = feedMappingService;
+      console.log(this.feedMappingService);
+    }
+
+    FeedMappingController.prototype = {};
+
+    return FeedMappingController
+  })());
 });

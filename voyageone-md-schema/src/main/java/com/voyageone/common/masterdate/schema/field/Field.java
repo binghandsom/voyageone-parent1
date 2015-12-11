@@ -25,13 +25,13 @@ public abstract class Field {
     protected List<Rule> rules = new ArrayList();
     protected List<Property> properties = new ArrayList();
 
-    // input ["common":"0","1":"product","2":"item"]
-    protected String inputLevel;
-    public String getInputLevel() {
+    // input ["common":0,"product":1,"item":2]
+    protected int inputLevel;
+    public int getInputLevel() {
         return inputLevel;
     }
 
-    public void setInputLevel(String inputLevel) {
+    public void setInputLevel(int inputLevel) {
         this.inputLevel = inputLevel;
     }
 
