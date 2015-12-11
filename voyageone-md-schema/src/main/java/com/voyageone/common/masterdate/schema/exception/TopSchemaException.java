@@ -3,7 +3,7 @@ package com.voyageone.common.masterdate.schema.exception;
 
 import com.voyageone.common.masterdate.schema.enums.TopSchemaErrorCodeEnum;
 
-public class TopSchemaException extends Exception {
+public class TopSchemaException extends RuntimeException {
     private static final long serialVersionUID = -6952144909179839874L;
     private String errorCode;
     private String errorMsg;
