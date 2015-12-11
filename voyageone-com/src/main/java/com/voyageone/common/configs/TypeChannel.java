@@ -13,12 +13,13 @@ import java.util.Map;
 
 /**
  * 访问 com_mt_value_channel 表配置
- * Created by neil on 12/8/2015.
  *
- * @author neil
- * @version 0.0.1
+ * @author neil, 12/8/2015.
+ * @version 2.0.0
+ * @since 2.0.0
  */
 public class TypeChannel {
+
     private static HashMap<String, List<TypeChannelBean>> typeMap;
 
     private static Log logger = LogFactory.getLog(TypeChannel.class);
@@ -37,29 +38,26 @@ public class TypeChannel {
         List<TypeChannelBean> childList;
 
         for (TypeChannelBean bean : beans) {
-            String key = bean.getType_code()+"-"+ bean.getChannel_id();
+            String key = bean.getType_code() + "-" + bean.getChannel_id();
             childList = typeMap.get(key);
 
-            if (childList == null){
+            if (childList == null) {
                 typeMap.put(key, childList = new ArrayList<>());
-
             }
             childList.add(bean);
-
-
         }
 
         logger.debug("Type 按 ID 已存入：" + typeMap.size());
     }
 
     /**
-     * @param type        类型名
-     * @param channel_id  渠道id
-     * @return            类型List
+     * @param type       类型名
+     * @param channel_id 渠道id
+     * @return 类型List
      */
     public static List<TypeChannelBean> getTypeList(String type, String channel_id) {
 
-        String key =  type + "-" + channel_id;
+        String key = type + "-" + channel_id;
         List<TypeChannelBean> typeList = typeMap.get(key);
         List<TypeChannelBean> retTypeList = new ArrayList<>();
 
@@ -69,15 +67,14 @@ public class TypeChannel {
         return retTypeList;
     }
 
-
     /**
-     * @param type        类型名
-     * @param channel_id  渠道id
-     * @param name        类型名称
+     * @param type       类型名
+     * @param channel_id 渠道id
+     * @param name       类型名称
      * @return 对应的类型值
      */
     public static String getValue(String type, String channel_id, String name) {
-        String key =  type + "-" + channel_id;
+        String key = type + "-" + channel_id;
         List<TypeChannelBean> typeList = typeMap.get(key);
 
         for (TypeChannelBean bean : typeList) {
@@ -89,20 +86,18 @@ public class TypeChannel {
         return null;
     }
 
-
     /**
-     * @param type type_code
+     * @param type       type_code
      * @param channel_id 渠道id
-     * @return
      */
-    public static  List<Map<String,String>> getTypeMapList(String type,String channel_id) {
-        String key =  type + "-" + channel_id;
-        List<Map<String,String>> ret = new ArrayList<>();
+    public static List<Map<String, String>> getTypeMapList(String type, String channel_id) {
+        String key = type + "-" + channel_id;
+        List<Map<String, String>> ret = new ArrayList<>();
 
         List<TypeChannelBean> typeList = typeMap.get(key);
 
         for (TypeChannelBean bean : typeList) {
-            Map<String,String> tempMap = new HashMap<>();
+            Map<String, String> tempMap = new HashMap<>();
             tempMap.put("id", String.valueOf(bean.getValue()));
             tempMap.put("name", bean.getName());
             ret.add(tempMap);
@@ -111,12 +106,12 @@ public class TypeChannel {
     }
 
     /**
-     * @param type type_code
+     * @param type       type_code
      * @param channel_id 渠道id
      * @return List<Option>
      */
-    public static  List<Option> getOptions(String type, String channel_id) {
-        String key =  type + "-" + channel_id;
+    public static List<Option> getOptions(String type, String channel_id) {
+        String key = type + "-" + channel_id;
         List<Option> ret = new ArrayList<>();
 
         List<TypeChannelBean> typeList = typeMap.get(key);
@@ -129,5 +124,4 @@ public class TypeChannel {
         }
         return ret;
     }
-
 }

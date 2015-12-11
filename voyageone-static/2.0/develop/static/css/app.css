@@ -8144,7 +8144,7 @@ input:checked + ol > li {
 .dropdown_table{
   float:left;
   margin:0px;
-  padding:10px;
+  padding:0px;
   height:525px;
 }
 .dropdown_table_main{

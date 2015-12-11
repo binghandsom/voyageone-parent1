@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.views;
+package com.voyageone.web2.cms.views.menu;
 
 import com.voyageone.cms.service.FeedToCmsService;
 import com.voyageone.web2.base.BaseAppService;

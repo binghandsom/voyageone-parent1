@@ -11,10 +11,7 @@ import com.voyageone.cms.service.dao.CmsMtCommonPropDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategoryDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformMappingDao;
-import com.voyageone.cms.service.model.CmsMtCommonPropModel;
-import com.voyageone.cms.service.model.CmsMtPlatformCategorySchemaModel;
-import com.voyageone.cms.service.model.CmsMtPlatformCategoryTreeModel;
-import com.voyageone.cms.service.model.CmsMtPlatformMappingModel;
+import com.voyageone.cms.service.model.*;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.masterdate.schema.Util.StringUtil;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
@@ -23,9 +20,7 @@ import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.util.JsonUtil;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.ims.rule_expression.MasterWord;
-import com.voyageone.ims.rule_expression.RuleExpression;
-import com.voyageone.ims.rule_expression.RuleJsonMapper;
+import com.voyageone.ims.rule_expression.*;
 import net.minidev.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -155,6 +150,10 @@ public class CmsPlatformMappingService extends BaseTaskService {
      */
     private MappingBean makeMapping(Field field) {
 
+        if ("product_images".equalsIgnoreCase(field.getId())) {
+            String imgTemplate = "http://s7d5.scene7.com/is/image/sneakerhead/BHFO%%5F20150819%%5Fx1200%%5F1200x?$1200x1200$&$1200x1200$&$proudct=%s";
+            return CreateImgMapping(field.getId(),imgTemplate);
+        }
         // 把类目ID中的【.】替换成【->】
         field.setId(StringUtils.replaceDot(field.getId()));
 
@@ -230,5 +229,28 @@ public class CmsPlatformMappingService extends BaseTaskService {
             }
         }
         return fieldId;
+    }
+
+    private MappingBean CreateImgMapping(String platformPropId, String imgTemplate) {
+        RuleExpression imageTemplateExpression = new RuleExpression();
+        imageTemplateExpression.addRuleWord(new TextWord(imgTemplate));
+        ComplexMappingBean complexMappingBean = new ComplexMappingBean();
+        complexMappingBean.setPlatformPropId(platformPropId);
+        complexMappingBean.setMasterPropId(null);
+        List<MappingBean> subMappings = new ArrayList<>();
+        complexMappingBean.setSubMappings(subMappings);
+        for (int i = 1; i < 6; i++) {
+            RuleExpression imageIndexExpression = new RuleExpression();
+            imageIndexExpression.addRuleWord(new TextWord(i + ""));
+
+            RuleExpression imageTypeExpression = new RuleExpression();
+            imageTypeExpression.addRuleWord(new TextWord(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE.toString()));
+
+            CustomWord productImageWord = new CustomWord(new CustomWordValueGetMainProductImages(null, imageTemplateExpression, imageIndexExpression, imageTypeExpression, null));
+            RuleExpression productImageExpression = new RuleExpression();
+            productImageExpression.addRuleWord(productImageWord);
+            subMappings.add(new SingleMappingBean("product_image" + i, productImageExpression));
+        }
+        return complexMappingBean;
     }
 }
