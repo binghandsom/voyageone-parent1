@@ -59,12 +59,26 @@ public class CmsProductServiceTest {
         fields.setInventory(100 + random.nextInt(10));
         fields.setLock(index % 2 == 0);
         fields.setPriceChange(random.nextInt(1));
-        List<CmsBtProductModel_Field_Image> images = fields.getImages();
-        images.add(new CmsBtProductModel_Field_Image("xxxxx-" + random.nextInt(10) + ".jpg", String.valueOf(random.nextInt(2))));
-        images.add(new CmsBtProductModel_Field_Image("xxxxx-" + random.nextInt(10) + ".jpg", String.valueOf(random.nextInt(2))));
-        images.add(new CmsBtProductModel_Field_Image("xxxxx-" + random.nextInt(10) + ".jpg", String.valueOf(random.nextInt(2))));
-        images.add(new CmsBtProductModel_Field_Image("xxxxx-" + random.nextInt(10) + ".jpg", String.valueOf(random.nextInt(2))));
-        images.add(new CmsBtProductModel_Field_Image("xxxxx-" + random.nextInt(10) + ".jpg", String.valueOf(random.nextInt(2))));
+        List<CmsBtProductModel_Field_Image> images = fields.getImages1();
+        images.add(new CmsBtProductModel_Field_Image("xxxxx-" + random.nextInt(10) + ".jpg"));
+        images.add(new CmsBtProductModel_Field_Image("xxxxx-" + random.nextInt(10) + ".jpg"));
+        images.add(new CmsBtProductModel_Field_Image("xxxxx-" + random.nextInt(10) + ".jpg"));
+        images.add(new CmsBtProductModel_Field_Image("xxxxx-" + random.nextInt(10) + ".jpg"));
+        images.add(new CmsBtProductModel_Field_Image("xxxxx-" + random.nextInt(10) + ".jpg"));
+
+        images = fields.getImages2();
+        images.add(new CmsBtProductModel_Field_Image("yyyyy-" + random.nextInt(10) + ".jpg"));
+        images.add(new CmsBtProductModel_Field_Image("yyyyy-" + random.nextInt(10) + ".jpg"));
+        images.add(new CmsBtProductModel_Field_Image("yyyyy-" + random.nextInt(10) + ".jpg"));
+        images.add(new CmsBtProductModel_Field_Image("yyyyy-" + random.nextInt(10) + ".jpg"));
+        images.add(new CmsBtProductModel_Field_Image("yyyyy-" + random.nextInt(10) + ".jpg"));
+
+        images = fields.getImages3();
+        images.add(new CmsBtProductModel_Field_Image("zzzzz-" + random.nextInt(10) + ".jpg"));
+        images.add(new CmsBtProductModel_Field_Image("zzzzz-" + random.nextInt(10) + ".jpg"));
+        images.add(new CmsBtProductModel_Field_Image("zzzzz-" + random.nextInt(10) + ".jpg"));
+        images.add(new CmsBtProductModel_Field_Image("zzzzz-" + random.nextInt(10) + ".jpg"));
+        images.add(new CmsBtProductModel_Field_Image("zzzzz-" + random.nextInt(10) + ".jpg"));
 
         CmsBtProductModel_Group groups = product.getGroups();
         groups.setMsrpStart(100.00 + random.nextInt(100));
@@ -136,7 +150,6 @@ public class CmsProductServiceTest {
         List<CmsBtProductModel> listRet = cmsProductService.getProductByGroupId("001", 470);
         for (CmsBtProductModel ret : listRet) {
             System.out.println(ret.toString());
-            CmsBtProductModel_Field_Image aa =  ret.getFields().getImages().get(0);
             System.out.println(ret.getGroups().getPlatformByGroupId(470));
         }
     }
