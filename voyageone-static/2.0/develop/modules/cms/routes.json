@@ -47,7 +47,8 @@
   "setting_feed_mapping_list": {
     "hash": "/setting/feed_mapping/list",
     "templateUrl": "views/setting/feed_mapping/list.tpl.html",
-    "controllerUrl": "modules/cms/views/setting/feed_mapping/list.ctl"
+    "controllerUrl": "modules/cms/views/setting/feed_mapping/list.ctl",
+    "controller": "feedMappingController"
   },
   "setting_feed_mapping_prop": {
     "hash": "/setting/feed_mapping/prop",

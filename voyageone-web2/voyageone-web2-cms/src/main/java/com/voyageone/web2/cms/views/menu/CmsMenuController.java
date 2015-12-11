@@ -1,10 +1,10 @@
-package com.voyageone.web2.cms.views;
+package com.voyageone.web2.cms.views.menu;
 
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.CmsController;
-import com.voyageone.web2.cms.CmsUrlConstants;
+import com.voyageone.web2.cms.CmsUrlConstants.MENU;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +22,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping(
-        value = CmsUrlConstants.MENU_ROOT,
+        value = MENU.ROOT,
         method = RequestMethod.POST
 )
 public class CmsMenuController extends CmsController {
@@ -33,7 +33,7 @@ public class CmsMenuController extends CmsController {
     /**
      * 返回categoryType, categoryList, categoryTreeList
      */
-    @RequestMapping(CmsUrlConstants.MENU_CATE_INFO)
+    @RequestMapping(MENU.GET_CATE_INFO)
     public AjaxResponse getCategoryInfo() {
 
         Map<String, Object> resultBean = new HashMap<>();
@@ -59,7 +59,7 @@ public class CmsMenuController extends CmsController {
     /**
      * 返回categoryTypeList
      */
-    @RequestMapping(CmsUrlConstants.MENU_CATE_TYPE)
+    @RequestMapping(MENU.GET_CATE_TYPE)
     public AjaxResponse getCategoryType() {
 
         String channelId = getUser().getSelChannelId();
@@ -74,7 +74,7 @@ public class CmsMenuController extends CmsController {
     /**
      * 设置当前用户的categoryType.
      */
-    @RequestMapping(CmsUrlConstants.MENU_SET_CATE_TYPE)
+    @RequestMapping(MENU.SET_CATE_TYPE)
     public AjaxResponse setCategoryType(@RequestBody Map<String, Object> params) {
 
         String cTypeId = (String) params.get("cTypeId");

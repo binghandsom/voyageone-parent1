@@ -21,6 +21,7 @@ var encode = 'utf-8';
 // build voyageone.angular.com.js
 gulp.task(tasks.build.angular, function () {
   return gulp.src(build.common.angular.src)
+    .pipe(debug())
     // 追加依赖注入语法
     .pipe(ngAnnotate())
     // 包裹每个单个组件
