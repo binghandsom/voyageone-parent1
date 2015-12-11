@@ -186,6 +186,40 @@ public class CmsBtProductModel_Field extends BaseMongoMap {
         setAttribute("inventory", inventory);
     }
 
+    public List<CmsBtProductModel_Field_Image> getImages(CmsBtProductConstants.FieldImageType imageType) {
+        List<CmsBtProductModel_Field_Image> result = null;
+        if (imageType != null) {
+            switch(imageType) {
+                case IMAGE1:
+                    result = getImages1();
+                    break;
+                case IMAGE2:
+                    result = getImages2();
+                    break;
+                case IMAGE3:
+                    result = getImages3();
+                    break;
+            }
+        }
+        return result;
+    }
+
+    public void setImages(CmsBtProductConstants.FieldImageType imageType, List<CmsBtProductModel_Field_Image> images) {
+        if (imageType != null) {
+            switch(imageType) {
+                case IMAGE1:
+                    setImages1(images);
+                    break;
+                case IMAGE2:
+                    setImages2(images);
+                    break;
+                case IMAGE3:
+                    setImages3(images);
+                    break;
+            }
+        }
+    }
+
     public List<CmsBtProductModel_Field_Image> getImages1() {
         if (!this.containsKey("images1") || getAttribute("images1") == null) {
             setAttribute("images1", new ArrayList<CmsBtProductModel_Field_Image>());
