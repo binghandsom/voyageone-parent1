@@ -710,10 +710,22 @@
 							</tr>
 							</tbody>
 
-					</table ng-if>
+					</table>
 					</div>
-					<div class="col-sm-12 m-t-xs">
-						<vpagination config="vm.productPageOption"></vpagination>
+					<div class="col-sm-12 m-t-sm">
+					<div class="col-sm-2">
+						<div class="page-main form-inline">
+							第<input type="text"/>页 <button class="btn btn-xs btn-default" type="button">GO</button>
+						</div>
+					</div>
+					<div class="col-sm-7 text-center">
+						<small class="text-muted inline m-t-sm m-b-sm">showing 20-30 of 50 items</small>
+					</div>
+					<div class="col-sm-3 text-right text-center-xs">
+						<div >
+							<pagination boundary-links="true" total-items="totalItems" ng-model="currentPage" class="pagination-sm m-t-none m-b" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></pagination>
+						</div>
+					</div>
 					</div>
 				</div><!-- .table-responsive -->
 			</tab>
