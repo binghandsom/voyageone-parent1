@@ -1,5 +1,6 @@
 package com.voyageone.common.masterdate.schema.factory;
 
+import com.google.gson.JsonObject;
 import com.voyageone.common.masterdate.schema.Util.JsonUtil;
 import com.voyageone.common.masterdate.schema.Util.StringUtil;
 import com.voyageone.common.masterdate.schema.depend.DependExpress;
@@ -23,9 +24,6 @@ public class SchemaJsonReader {
 
     /**
      * readJsonForMap
-     * @param jsonStirng
-     * @return
-     * @throws TopSchemaException
      */
     public static Map<String, Field> readJsonForMap(String jsonStirng) throws TopSchemaException {
         List<Map<String, Object>> rootList = JsonUtil.jsonToMapList(jsonStirng);
@@ -34,22 +32,20 @@ public class SchemaJsonReader {
 
     /**
      * readJsonForList
-     * @param jsonStirng
-     * @return
-     * @throws TopSchemaException
      */
     public static List<Field> readJsonForList(String jsonStirng) throws TopSchemaException {
         List<Map<String, Object>> rootList = JsonUtil.jsonToMapList(jsonStirng);
         return readJsonForList(rootList);
     }
 
+    /**
+     * readJsonForList
+     */
     public static List<Field> readJsonForList(List<Map<String, Object>> rootList) throws TopSchemaException {
-        List fieldList = SchemaFactory.createEmptyFieldList();
-        List fieldMapList = rootList;
-        Iterator<Map<String, Object>> fieldMapListIt = fieldMapList.iterator();
+        List<Field> fieldList = SchemaFactory.createEmptyFieldList();
+        Iterator<Map<String, Object>> fieldMapListIt = rootList.iterator();
 
-        while(fieldMapListIt.hasNext()) {
-            Map<String, Object> fieldElm = fieldMapListIt.next();
+        for (Map<String, Object> fieldElm : rootList) {
             Field field = mapToField(fieldElm);
             fieldList.add(field);
         }
@@ -57,13 +53,14 @@ public class SchemaJsonReader {
         return fieldList;
     }
 
+    /**
+     * readJsonForMap
+     */
     public static Map<String, Field> readJsonForMap(List<Map<String, Object>> rootList) throws TopSchemaException {
-        HashMap fieldMap = new HashMap();
-        List fieldMapList = rootList;
-        Iterator<Map<String, Object>> fieldMapListIt = fieldMapList.iterator();
+        Map<String, Field> fieldMap = new HashMap<>();
+        Iterator<Map<String, Object>> fieldMapListIt = rootList.iterator();
 
-        while(fieldMapListIt.hasNext()) {
-            Map<String, Object> fieldElm = fieldMapListIt.next();
+        for (Map<String, Object> fieldElm : rootList) {
             Field field = mapToField(fieldElm);
             fieldMap.put(field.getId(), field);
         }
@@ -71,6 +68,16 @@ public class SchemaJsonReader {
         return fieldMap;
     }
 
+    /**
+     * mapToField from Object
+     */
+    public static Field mapToField(Object fieldMap) throws TopSchemaException {
+        return  mapToField((Map)fieldMap);
+    }
+
+    /**
+     * mapToField from Map
+     */
     public static Field mapToField(Map<String, Object> fieldMap) throws TopSchemaException {
         if(fieldMap == null) {
             return null;
@@ -193,10 +200,10 @@ public class SchemaJsonReader {
             DependGroup dg_result = new DependGroup();
             dg_result.setOperator(dependGroupOperator);
             List<Map<String, Object>> deList = (List<Map<String, Object>>)dependGroupMap.get("dependExpressList");
-            Iterator deListIt = deList.iterator();
-            List<DependExpress> dependExpressList = new ArrayList();
+            Iterator<Map<String, Object>> deListIt = deList.iterator();
+            List<DependExpress> dependExpressList = new ArrayList<>();
             while(deListIt.hasNext()) {
-                Map<String, Object> deMap = (Map<String, Object>)deListIt.next();
+                Map<String, Object> deMap = deListIt.next();
                 String deFieldId = (String)deMap.get("fieldId");
                 String deValue = (String)deMap.get("value");
                 String deSymbol = (String)deMap.get("symbol");
@@ -209,10 +216,10 @@ public class SchemaJsonReader {
             dg_result.setDependExpressList(dependExpressList);
 
             List<Map<String, Object>> dgList = (List<Map<String, Object>>)dependGroupMap.get("dependGroupList");
-            Iterator dgListIt = dgList.iterator();
-            List<DependGroup> dependGroupList = new ArrayList();
+            Iterator<Map<String, Object>> dgListIt = dgList.iterator();
+            List<DependGroup> dependGroupList = new ArrayList<>();
             while(dgListIt.hasNext()) {
-                Map<String, Object> dgMap = (Map<String, Object>)dgListIt.next();
+                Map<String, Object> dgMap = dgListIt.next();
                 //new DependGroup();
                 DependGroup dependGroup = mapToDependGroup(dgMap, fieldId);
                 dependGroupList.add(dependGroup);
@@ -233,10 +240,7 @@ public class SchemaJsonReader {
 
             List<Map<String, Object>> labelList = (List<Map<String, Object>>)labelGroupMap.get("labelList");
             if (labelList != null) {
-                Iterator<Map<String, Object>> labelListIt = labelList.iterator();
-
-                while(labelListIt.hasNext()) {
-                    Map<String, Object> labelMap = labelListIt.next();
+                for (Map<String, Object> labelMap : labelList) {
                     Label subLabelGroupEle = new Label();
                     String subGroup = (String)labelMap.get("name");
                     String labelValue = (String)labelMap.get("value");
@@ -250,10 +254,7 @@ public class SchemaJsonReader {
 
             List<Map<String, Object>> labelGroupList = (List<Map<String, Object>>)labelGroupMap.get("labelGroupList");
             if (labelGroupList != null) {
-                Iterator labelGroupListIt = labelGroupList.iterator();
-                while(labelGroupListIt.hasNext()) {
-                    Map<String, Object> subLabelGroup = (Map<String, Object>)labelGroupListIt.next();
-//                    new LabelGroup();
+                for(Map<String, Object> subLabelGroup : labelGroupList) {
                     LabelGroup subGroup1 = mapToLabelGroup(subLabelGroup, fieldId);
                     lg_result.add(subGroup1);
                 }
@@ -275,7 +276,6 @@ public class SchemaJsonReader {
             } else {
                 opResult.setDisplayName(displayName);
                 opResult.setValue(value);
-
                 Map<String, Object> dependGroupMap = (Map<String, Object>)optionMap.get("dependGroup");
                 DependGroup dependGroup = mapToDependGroup(dependGroupMap, fieldId);
                 opResult.setDependGroup(dependGroup);
@@ -287,8 +287,24 @@ public class SchemaJsonReader {
     private static Property mapToProperty(Map<String, Object> propertyItMap, String fieldId) throws TopSchemaException {
         String key = (String)propertyItMap.get("key");
         String value = (String)propertyItMap.get("value");
-        Property property = new Property(key, value);
-        return property;
+        return new Property(key, value);
+    }
+
+    private static void setComColumn(Field field, Map<String, Object> fieldMap) {
+        field.setId((String) fieldMap.get("id"));
+        field.setName((String) fieldMap.get("name"));
+        if (fieldMap.containsKey("inputLevel")) {
+            field.setInputLevel((int) fieldMap.get("inputLevel"));
+        }
+        if (fieldMap.containsKey("inputOrgId")) {
+            field.setInputOrgId((String) fieldMap.get("inputOrgId"));
+        }
+        if (fieldMap.containsKey("dataSource")) {
+            field.setDataSource((String) fieldMap.get("dataSource"));
+        }
+        if (fieldMap.containsKey("isDisplay")) {
+            field.setIsDisplay((int) fieldMap.get("isDisplay"));
+        }
     }
 
     private static InputField mapToInputField(Map<String, Object> fieldMap, String fieldId, String fieldName) throws TopSchemaException {
@@ -296,13 +312,13 @@ public class SchemaJsonReader {
             return null;
         } else {
             InputField inputField = (InputField) SchemaFactory.createField(FieldTypeEnum.INPUT);
-            inputField.setId(fieldId);
-            inputField.setName(fieldName);
+            setComColumn(inputField, fieldMap);
+
             if(fieldMap.containsKey("rules")) {
                 List<Map<String, Object>> rulesMap = (List<Map<String, Object>>)fieldMap.get("rules");
                 Iterator<Map<String, Object>> rulesIt = rulesMap.iterator();
 
-                List<Rule> rules = new ArrayList();
+                List<Rule> rules = new ArrayList<>();
                 while(rulesIt.hasNext()) {
                     Map<String, Object> ruleMap = rulesIt.next();
                     Rule rule = mapToRule(ruleMap, inputField.getId());
@@ -315,7 +331,7 @@ public class SchemaJsonReader {
                 List<Map<String, Object>> propertiesMap = (List<Map<String, Object>>)fieldMap.get("properties");
                 Iterator propertyIt = propertiesMap.iterator();
 
-                List<Property> properties = new ArrayList();
+                List<Property> properties = new ArrayList<>();
                 while(propertyIt.hasNext()) {
                     Map<String, Object> propertyItMap = (Map<String, Object>)propertyIt.next();
                     Property property = mapToProperty(propertyItMap, inputField.getId());
@@ -344,14 +360,13 @@ public class SchemaJsonReader {
             return null;
         } else {
             LabelField labelField = (LabelField) SchemaFactory.createField(FieldTypeEnum.LABEL);
-            labelField.setId(fieldId);
-            labelField.setName(fieldName);
+            setComColumn(labelField, fieldMap);
 
-            if(fieldMap.containsKey("rules")) {
+            if (fieldMap.containsKey("rules")) {
                 List<Map<String, Object>> rulesMap = (List<Map<String, Object>>)fieldMap.get("rules");
                 Iterator<Map<String, Object>> rulesIt = rulesMap.iterator();
 
-                List<Rule> rules = new ArrayList();
+                List<Rule> rules = new ArrayList<>();
                 while(rulesIt.hasNext()) {
                     Map<String, Object> ruleMap = rulesIt.next();
                     Rule rule = mapToRule(ruleMap, labelField.getId());
@@ -364,7 +379,7 @@ public class SchemaJsonReader {
                 List<Map<String, Object>> propertiesMap = (List<Map<String, Object>>)fieldMap.get("properties");
                 Iterator propertyIt = propertiesMap.iterator();
 
-                List<Property> properties = new ArrayList();
+                List<Property> properties = new ArrayList<>();
                 while(propertyIt.hasNext()) {
                     Map<String, Object> propertyItMap = (Map<String, Object>)propertyIt.next();
                     Property property = mapToProperty(propertyItMap, labelField.getId());
@@ -388,14 +403,13 @@ public class SchemaJsonReader {
             return null;
         } else {
             MultiInputField multiInputField = (MultiInputField) SchemaFactory.createField(FieldTypeEnum.MULTIINPUT);
-            multiInputField.setId(fieldId);
-            multiInputField.setName(fieldName);
+            setComColumn(multiInputField, fieldMap);
 
             if(fieldMap.containsKey("rules")) {
                 List<Map<String, Object>> rulesMap = (List<Map<String, Object>>)fieldMap.get("rules");
                 Iterator<Map<String, Object>> rulesIt = rulesMap.iterator();
 
-                List<Rule> rules = new ArrayList();
+                List<Rule> rules = new ArrayList<>();
                 while(rulesIt.hasNext()) {
                     Map<String, Object> ruleMap = rulesIt.next();
                     Rule rule = mapToRule(ruleMap, multiInputField.getId());
@@ -408,7 +422,7 @@ public class SchemaJsonReader {
                 List<Map<String, Object>> propertiesMap = (List<Map<String, Object>>)fieldMap.get("properties");
                 Iterator propertyIt = propertiesMap.iterator();
 
-                List<Property> properties = new ArrayList();
+                List<Property> properties = new ArrayList<>();
                 while(propertyIt.hasNext()) {
                     Map<String, Object> propertyItMap = (Map<String, Object>)propertyIt.next();
                     Property property = mapToProperty(propertyItMap, multiInputField.getId());
@@ -421,9 +435,7 @@ public class SchemaJsonReader {
             if(defaultValueMap != null) {
                 List<Map<String, Object>> defaultValues = (List<Map<String, Object>>)defaultValueMap.get("values");
                 if (defaultValues != null) {
-                    Iterator<Map<String, Object>> defaultValuesIt = defaultValues.iterator();
-                    while(defaultValuesIt.hasNext()) {
-                        Map<String, Object> defaultValueSubMap = defaultValuesIt.next();
+                    for(Map<String, Object> defaultValueSubMap : defaultValues) {
                         String defaultValueStr = (String)defaultValueSubMap.get("value");
                         multiInputField.addDefaultValue(defaultValueStr);
                     }
@@ -432,9 +444,7 @@ public class SchemaJsonReader {
 
             List<Map<String, Object>> valuesMapList = (List<Map<String, Object>>)fieldMap.get("values");
             if(valuesMapList != null) {
-                Iterator<Map<String, Object>> valuesMapListIt = valuesMapList.iterator();
-                while(valuesMapListIt.hasNext()) {
-                    Map<String, Object> valueMap = valuesMapListIt.next();
+                for(Map<String, Object> valueMap : valuesMapList) {
                     String id = (String)valueMap.get("id");
                     String value = (String)valueMap.get("value");
                     Value valueObj = new Value(id, value);
@@ -451,14 +461,11 @@ public class SchemaJsonReader {
             return null;
         } else {
             SingleCheckField singleCheckField = (SingleCheckField) SchemaFactory.createField(FieldTypeEnum.SINGLECHECK);
-            singleCheckField.setId(fieldId);
-            singleCheckField.setName(fieldName);
+            setComColumn(singleCheckField, fieldMap);
+
             if(fieldMap.containsKey("rules")) {
                 List<Map<String, Object>> rules = (List<Map<String, Object>>)fieldMap.get("rules");
-                Iterator<Map<String, Object>> rulesIt = rules.iterator();
-
-                while(rulesIt.hasNext()) {
-                    Map<String, Object> ruleMap = rulesIt.next();
+                for(Map<String, Object> ruleMap : rules) {
                     Rule valueEle = mapToRule(ruleMap, singleCheckField.getId());
                     singleCheckField.add(valueEle);
                 }
@@ -466,10 +473,7 @@ public class SchemaJsonReader {
 
             if(fieldMap.containsKey("options")) {
                 List<Map<String, Object>> options = (List<Map<String, Object>>)fieldMap.get("options");
-                Iterator<Map<String, Object>> optionsIt = options.iterator();
-
-                while(optionsIt.hasNext()) {
-                    Map<String, Object> optionMap = optionsIt.next();
+                for(Map<String, Object> optionMap : options) {
                     Option value = mapToOption(optionMap, singleCheckField.getId());
                     singleCheckField.add(value);
                 }
@@ -479,7 +483,7 @@ public class SchemaJsonReader {
                 List<Map<String, Object>> propertiesMap = (List<Map<String, Object>>)fieldMap.get("properties");
                 Iterator propertyIt = propertiesMap.iterator();
 
-                List<Property> properties = new ArrayList();
+                List<Property> properties = new ArrayList<>();
                 while(propertyIt.hasNext()) {
                     Map<String, Object> propertyItMap = (Map<String, Object>)propertyIt.next();
                     Property property = mapToProperty(propertyItMap, singleCheckField.getId());
@@ -516,14 +520,13 @@ public class SchemaJsonReader {
             return null;
         } else {
             MultiCheckField multiCheckField = (MultiCheckField) SchemaFactory.createField(FieldTypeEnum.MULTICHECK);
-            multiCheckField.setId(fieldId);
-            multiCheckField.setName(fieldName);
+            setComColumn(multiCheckField, fieldMap);
 
             if(fieldMap.containsKey("rules")) {
                 List<Map<String, Object>> rulesMap = (List<Map<String, Object>>)fieldMap.get("rules");
                 Iterator<Map<String, Object>> rulesIt = rulesMap.iterator();
 
-                List<Rule> rules = new ArrayList();
+                List<Rule> rules = new ArrayList<>();
                 while(rulesIt.hasNext()) {
                     Map<String, Object> ruleMap = rulesIt.next();
                     Rule rule = mapToRule(ruleMap, multiCheckField.getId());
@@ -536,7 +539,7 @@ public class SchemaJsonReader {
                 List<Map<String, Object>> optionsMap = (List<Map<String, Object>>)fieldMap.get("options");
                 Iterator<Map<String, Object>> optionIt = optionsMap.iterator();
 
-                List<Option> options = new ArrayList();
+                List<Option> options = new ArrayList<>();
                 while(optionIt.hasNext()) {
                     Map<String, Object> optionMap = optionIt.next();
                     Option option = mapToOption(optionMap, multiCheckField.getId());
@@ -549,7 +552,7 @@ public class SchemaJsonReader {
                 List<Map<String, Object>> propertiesMap = (List<Map<String, Object>>)fieldMap.get("properties");
                 Iterator propertyIt = propertiesMap.iterator();
 
-                List<Property> properties = new ArrayList();
+                List<Property> properties = new ArrayList<>();
                 while(propertyIt.hasNext()) {
                     Map<String, Object> propertyItMap = (Map<String, Object>)propertyIt.next();
                     Property property = mapToProperty(propertyItMap, multiCheckField.getId());
@@ -562,9 +565,7 @@ public class SchemaJsonReader {
             if(defaultValueMap != null) {
                 List<Map<String, Object>> defaultValues = (List<Map<String, Object>>)defaultValueMap.get("values");
                 if (defaultValues != null) {
-                    Iterator<Map<String, Object>> defaultValuesIt = defaultValues.iterator();
-                    while(defaultValuesIt.hasNext()) {
-                        Map<String, Object> defaultValueSubMap = defaultValuesIt.next();
+                    for(Map<String, Object> defaultValueSubMap : defaultValues) {
                         String id = (String)defaultValueSubMap.get("id");
                         String value = (String)defaultValueSubMap.get("value");
                         Value valueObj = new Value();
@@ -577,9 +578,7 @@ public class SchemaJsonReader {
 
             List<Map<String, Object>> valuesMapList = (List<Map<String, Object>>)fieldMap.get("values");
             if(valuesMapList != null) {
-                Iterator<Map<String, Object>> valuesMapListIt = valuesMapList.iterator();
-                while(valuesMapListIt.hasNext()) {
-                    Map<String, Object> valueMap = valuesMapListIt.next();
+                for(Map<String, Object> valueMap : valuesMapList) {
                     String id = (String)valueMap.get("id");
                     String value = (String)valueMap.get("value");
                     Value valueObj = new Value(id, value);
@@ -597,14 +596,11 @@ public class SchemaJsonReader {
             return null;
         } else {
             ComplexField complexField = (ComplexField) SchemaFactory.createField(FieldTypeEnum.COMPLEX);
-            complexField.setId(fieldId);
-            complexField.setName(fieldName);
+            setComColumn(complexField, fieldMap);
+
             if (fieldMap.containsKey("fields")) {
                 List<Map<String, Object>> fieldList = (List<Map<String, Object>>)fieldMap.get("fields");
-                Iterator<Map<String, Object>> fieldListIt = fieldList.iterator();
-
-                while(fieldListIt.hasNext()) {
-                    Map<String, Object> subFieldMap = fieldListIt.next();
+                for(Map<String, Object> subFieldMap : fieldList) {
                     Field complexSubField = mapToField(subFieldMap);
                     complexField.add(complexSubField);
                 }
@@ -614,7 +610,7 @@ public class SchemaJsonReader {
                 List<Map<String, Object>> rulesMap = (List<Map<String, Object>>)fieldMap.get("rules");
                 Iterator<Map<String, Object>> rulesIt = rulesMap.iterator();
 
-                List<Rule> rules = new ArrayList();
+                List<Rule> rules = new ArrayList<>();
                 while(rulesIt.hasNext()) {
                     Map<String, Object> ruleMap = rulesIt.next();
                     Rule rule = mapToRule(ruleMap, complexField.getId());
@@ -627,7 +623,7 @@ public class SchemaJsonReader {
                 List<Map<String, Object>> propertiesMap = (List<Map<String, Object>>)fieldMap.get("properties");
                 Iterator propertyIt = propertiesMap.iterator();
 
-                List<Property> properties = new ArrayList();
+                List<Property> properties = new ArrayList<>();
                 while(propertyIt.hasNext()) {
                     Map<String, Object> propertyItMap = (Map<String, Object>)propertyIt.next();
                     Property property = mapToProperty(propertyItMap, complexField.getId());
@@ -678,8 +674,7 @@ public class SchemaJsonReader {
             return null;
         } else {
             MultiComplexField multiComplexField = (MultiComplexField) SchemaFactory.createField(FieldTypeEnum.MULTICOMPLEX);
-            multiComplexField.setId(fieldId);
-            multiComplexField.setName(fieldName);
+            setComColumn(multiComplexField, fieldMap);
 
             if (fieldMap.containsKey("fields")) {
                 List<Map<String, Object>> fieldList = (List<Map<String, Object>>)fieldMap.get("fields");
@@ -696,7 +691,7 @@ public class SchemaJsonReader {
                 List<Map<String, Object>> rulesMap = (List<Map<String, Object>>)fieldMap.get("rules");
                 Iterator<Map<String, Object>> rulesIt = rulesMap.iterator();
 
-                List<Rule> rules = new ArrayList();
+                List<Rule> rules = new ArrayList<>();
                 while(rulesIt.hasNext()) {
                     Map<String, Object> ruleMap = rulesIt.next();
                     Rule rule = mapToRule(ruleMap, multiComplexField.getId());
@@ -709,7 +704,7 @@ public class SchemaJsonReader {
                 List<Map<String, Object>> propertiesMap = (List<Map<String, Object>>)fieldMap.get("properties");
                 Iterator propertyIt = propertiesMap.iterator();
 
-                List<Property> properties = new ArrayList();
+                List<Property> properties = new ArrayList<>();
                 while(propertyIt.hasNext()) {
                     Map<String, Object> propertyItMap = (Map<String, Object>)propertyIt.next();
                     Property property = mapToProperty(propertyItMap, multiComplexField.getId());
