@@ -380,8 +380,10 @@ public class WmsPickupServiceImpl implements WmsPickupService {
         BigDecimal declareRate = ChannelConfigs.getDiscountRate(orderChannelId, shipChannel);
 
         if (declareRate == null) {
-            logger.info("未取得相关发货渠道的折扣" + "（OrderChannelId：" + orderChannelId  + "，ShipChannel：" + shipChannel  +  "）");
-            throw new BusinessException(WmsMsgConstants.PickUpMsg.NOT_FOUND_DISCOUNT_RATE, orderChannelId, shipChannel);
+//            logger.info("未取得相关发货渠道的折扣" + "（OrderChannelId：" + orderChannelId  + "，ShipChannel：" + shipChannel  +  "）");
+//            throw new BusinessException(WmsMsgConstants.PickUpMsg.NOT_FOUND_DISCOUNT_RATE, orderChannelId, shipChannel);
+            // 没有设定的场合，固定用1来计算
+            declareRate = new BigDecimal("1");
         }
         price= price.multiply(declareRate);
 
