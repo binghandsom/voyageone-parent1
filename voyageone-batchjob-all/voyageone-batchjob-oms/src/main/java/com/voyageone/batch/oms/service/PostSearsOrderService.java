@@ -1,5 +1,6 @@
 package com.voyageone.batch.oms.service;
 
+import com.google.gson.Gson;
 import com.jcraft.jsch.ChannelSftp;
 import com.voyageone.batch.core.CodeConstants;
 import com.voyageone.batch.core.Constants;
@@ -164,7 +165,15 @@ public class PostSearsOrderService {
 
 		// 推送异常订单，客服邮件通知
 		if (pushErrorOrderList.size() > 0) {
-			sendCustomerServiceMail(pushErrorOrderList, MAIL_PUSH_ORDER_ERROR);
+			// 由于会重复发送，感觉给客服不妥，暂时先记入IssueLog（在订单查询任务中再将取消、超卖邮件发给客服）
+//			sendCustomerServiceMail(pushErrorOrderList, MAIL_PUSH_ORDER_ERROR);
+			for (OrderResponse errorOrderResponse : pushErrorOrderList) {
+				issueLog.log("postSearsCreateOrder.CreateOrder",
+						"CreateOrder error ; SourceOrderID = " + errorOrderResponse.getOrderId(),
+						ErrorType.BatchJob,
+						SubSystem.OMS,errorOrderResponse.getMessage());
+			}
+
 		}
 
 		logger.info("postSearsCreateOrder end");
@@ -417,19 +426,25 @@ public class PostSearsOrderService {
 	 */
 	private void translateOrderInfo(OrderExtend orderExtendInfo) throws Exception {
 		ArrayList<String> translateContent = new ArrayList<String>();
+//		translateContent.add(orderExtendInfo.getName());
+//		translateContent.add(orderExtendInfo.getShipAddress());
+//		translateContent.add(orderExtendInfo.getShipAddress2());
+//		translateContent.add(orderExtendInfo.getShipName());
+//		translateContent.add(orderExtendInfo.getShipCity());
+		//地址用仓库地址，所以不需要翻译
 		translateContent.add(orderExtendInfo.getName());
-		translateContent.add(orderExtendInfo.getShipAddress());
-		translateContent.add(orderExtendInfo.getShipAddress2());
 		translateContent.add(orderExtendInfo.getShipName());
-		translateContent.add(orderExtendInfo.getShipCity());
 
 		List<String> translateList = BaiduTranslateUtil.translate(translateContent);
 
+//		orderExtendInfo.setName(translateList.get(0));
+//		orderExtendInfo.setShipAddress(translateList.get(1));
+//		orderExtendInfo.setShipAddress2(translateList.get(2));
+//		orderExtendInfo.setShipName(translateList.get(3));
+//		orderExtendInfo.setShipCity(translateList.get(4));
+		//地址用仓库地址，所以不需要翻译
 		orderExtendInfo.setName(translateList.get(0));
-		orderExtendInfo.setShipAddress(translateList.get(1));
-		orderExtendInfo.setShipAddress2(translateList.get(2));
-		orderExtendInfo.setShipName(translateList.get(3));
-		orderExtendInfo.setShipCity(translateList.get(4));
+		orderExtendInfo.setShipName(translateList.get(1));
 	}
 
 	/**
@@ -661,7 +676,7 @@ public class PostSearsOrderService {
 				retStatusCode = orderLookupItem.getStatusCode();
 
 				// 超卖原因Code设定
-				if (OmsConstants.SearsOrderItemCancelReasonCode.OutOfStock.equals(orderLookupItem.getCancelReasonCode())) {
+				if (OmsConstants.SearsOrderItemCancelReasonCode.OutOfStock.equals(StringUtils.isNullOrBlank2(orderLookupItem.getCancelReasonCode()))) {
 					retCancelReasonCode = orderLookupItem.getCancelReasonCode();
 				}
 			}
