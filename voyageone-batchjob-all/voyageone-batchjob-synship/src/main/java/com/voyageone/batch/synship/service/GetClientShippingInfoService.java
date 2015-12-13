@@ -205,7 +205,6 @@ public class GetClientShippingInfoService extends BaseTaskService {
         if (list != null) {
             $info(channel.getFull_name() + "----------返回的订单件数：" + list.getResultData().getOrderResponseItem().size());
             for (OrderResponseDetailHigh order : list.getResultData().getOrderResponseItem()) {
-                order.setOrderState("Cancelled");
                 ClientTrackingBean bean = new ClientTrackingBean();
                 bean.setOrder_channel_id(channel.getOrder_channel_id());
                 //品牌方订单编号
