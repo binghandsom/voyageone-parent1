@@ -20,8 +20,9 @@
       }
     },
     "search": {
-      "advance": {
-        "doSearch": "/cms/search/advance/doSearch"
+      "$searchIndexService": {
+        "root": "/cms/search/index/",
+        "doSearch": "doSearch"
       }
     },
     "mapping": {
