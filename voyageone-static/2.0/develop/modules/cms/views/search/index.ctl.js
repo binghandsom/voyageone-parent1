@@ -3,10 +3,11 @@
  */
 
 define([
-    'modules/cms/controller/popup.ctl'
+    'modules/cms/controller/popup.ctl',
+    'modules/cms/service/search.service'
 ], function () {
 
-    return function ($scope) {
+    return function ($scope, searchIndexService) {
 
         $scope.vm = {
             "searchInfo": {},
@@ -28,7 +29,12 @@ define([
         }
 
         function search () {
-
+            searchIndexService.search().then(function (res) {
+                $scope.vm.groupList = res.data.groupList;
+                $scope.vm.groupPageOption.total = res.data.groupList.length;
+                $scope.vm.productList = res.data.productList;
+                $scope.vm.productPageOption.total = res.data.productList.length;
+            })
         }
 
         function exportFile () {
