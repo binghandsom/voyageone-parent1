@@ -7609,6 +7609,9 @@ a.text-black:hover {
   border-radius: 2px;
   border-bottom:1px solid #d6d5d5;
 }
+.table_bg_gray{
+  background:#f5f5f5;
+}
 
 a.btn-main:link {color:#333;text-decoration:underline;}
 a.btn-main:hover {color:#e67e22;text-decoration:underline;}

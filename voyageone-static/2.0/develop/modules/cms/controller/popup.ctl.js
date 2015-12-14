@@ -51,6 +51,10 @@ define([
                 "templateUrl": "views/pop/feed_list/index.tpl.html",
                 "controllerUrl": "modules/views/cms/pop/feed_list/index.ctl"
             },
+            "import": {
+                "templateUrl": "views/pop/import/index.tpl.html",
+                "controllerUrl": "modules/views/cms/pop/import/index.ctl"
+            },
             "product": {
                 "price": {
                     "templateUrl": "views/pop/product/price/history.tpl.html",
@@ -215,6 +219,19 @@ define([
             $modal.open({
                 templateUrl: popActions.feed_list.templateUrl,
                 controllerUrl: popActions.feed_list.controllerUrl,
+                size: viewSize,
+                resolve: {
+                    items: function () {
+                        //return data;
+                    }
+                }
+            });
+        }
+        $scope.openImport = openImport;
+        function openImport(viewSize) {
+            $modal.open({
+                templateUrl: popActions.import.templateUrl,
+                controllerUrl: popActions.import.controllerUrl,
                 size: viewSize,
                 resolve: {
                     items: function () {
