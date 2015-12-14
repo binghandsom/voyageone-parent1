@@ -4,7 +4,7 @@ import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.BaseMongoDao;
 import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
 import com.voyageone.common.masterdate.schema.field.Field;
-import com.voyageone.web2.cms.model.CmsMtCommonPropDefModel;
+import com.voyageone.cms.service.model.CmsMtCommonPropDefModel;
 import net.minidev.json.JSONObject;
 import org.springframework.stereotype.Repository;
 
@@ -32,7 +32,8 @@ public class CmsMtCommonPropDefDao extends BaseMongoDao {
             resultList = new ArrayList<>();
             for (JSONObject jsonObject : jsonList) {
                 CmsMtCommonPropDefModel model = new CmsMtCommonPropDefModel();
-                Field field = SchemaJsonReader.mapToField(jsonObject);
+                Object jsonField = jsonObject.get("field");
+                Field field = SchemaJsonReader.mapToField(jsonField);
                 model.setField(field);
                 resultList.add(model);
             }
