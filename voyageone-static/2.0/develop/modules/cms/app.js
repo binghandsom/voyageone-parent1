@@ -15,7 +15,8 @@ define([
   'angular-sanitize',
   'angular-animate',
   'angular-translate',
-  'angular-cookies'
+  'angular-cookies',
+  'filestyle'
 ], function (angularAMD, angular, _, cRoutes, cActions, enTranslate, zhTranslate) {
 
   var mainApp = angular.module('voyageone.cms', [
