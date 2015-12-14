@@ -477,6 +477,7 @@ public class OrderExtend implements java.io.Serializable {
 	private boolean isNeedUpdateFlag = false;
 	private String clientStatus;
 	private OrderBean orderOutputInfo;
+	private String errorMessage;
 	// Sears订单使用 end
 
 	public static long getSerialVersionUID() {
@@ -1609,6 +1610,14 @@ public class OrderExtend implements java.io.Serializable {
 
 	public void setClientStatus(String clientStatus) {
 		this.clientStatus = clientStatus;
+	}
+
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
 	}
 
 	public OrderBean getOrderOutputInfo() {

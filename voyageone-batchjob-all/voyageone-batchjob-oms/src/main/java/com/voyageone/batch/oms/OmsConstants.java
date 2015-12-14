@@ -657,4 +657,27 @@ public class OmsConstants {
 					"%s" +
 				html4Space + "&lt;/tr&gt;" + "<br>" +
 			"&lt;/table&gt;" + "<br>";
+
+	/**
+	 * Sears品牌方取消订单时的邮件
+	 */
+	public final class EmailPostSearsOrder {
+
+		// 表格式
+		public final static String TABLE = "<div><span>%s</span>"
+				+ "<table><tr>"
+				+ "<th></th><th>Shop</th><th>OrderNum</th><th>WebID</th><th>ClientOrderID</th><th>ReservationID</th><th>SKU</th><th>ClientSKU</th>"
+				+ "</tr>%s</table></div>";
+		// 行格式
+		public final static String ROW = "<tr>"
+				+ "<td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td>"
+				+ "</tr>";
+		// 邮件名
+		public final static String SUBJECT = "%s品牌方取消订单一览";
+		// 概要说明
+		public final static String HEAD = "<font color='red'>以下订单中的物品已被品牌方取消，请确认</font>";
+		// 件数
+		public final static String COUNT = "取消物品数：%s";
+
+	}
 }

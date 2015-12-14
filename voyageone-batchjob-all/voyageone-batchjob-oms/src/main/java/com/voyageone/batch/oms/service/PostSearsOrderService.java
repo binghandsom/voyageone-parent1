@@ -8,6 +8,7 @@ import com.voyageone.batch.core.modelbean.SetPriceBean;
 import com.voyageone.batch.core.util.SetPriceUtils;
 import com.voyageone.batch.oms.OmsConstants;
 import com.voyageone.batch.oms.dao.OrderDao;
+import com.voyageone.batch.oms.dao.ReservationDao;
 import com.voyageone.batch.oms.formbean.InFormFile;
 import com.voyageone.batch.oms.modelbean.OrderExtend;
 import com.voyageone.common.components.baidu.translate.BaiduTranslateUtil;
@@ -16,11 +17,8 @@ import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.sears.SearsService;
 import com.voyageone.common.components.sears.bean.*;
-import com.voyageone.common.configs.ChannelConfigs;
-import com.voyageone.common.configs.Codes;
+import com.voyageone.common.configs.*;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
-import com.voyageone.common.configs.Properties;
-import com.voyageone.common.configs.ThirdPartyConfigs;
 import com.voyageone.common.configs.beans.FtpBean;
 import com.voyageone.common.configs.beans.ThirdPartyConfigBean;
 import com.voyageone.common.mail.Mail;
@@ -53,6 +51,9 @@ public class PostSearsOrderService {
 	
 	@Autowired
 	private OrderDao orderDao;
+
+	@Autowired
+	private ReservationDao reservationDao;
 	
 	@Autowired
 	IssueLog issueLog;
@@ -550,6 +551,8 @@ public class PostSearsOrderService {
 		List<OrderResponse> searOutOfStockOrderList = new ArrayList<OrderResponse>();
 		// 部分取消订单一览
 		List<OrderResponse> searPartialCancelOrderList = new ArrayList<OrderResponse>();
+		// 品牌方取消订单一览
+		List<OrderExtend> searsCancelOrderList = new ArrayList<OrderExtend>();
 
 		logger.info("	getOrderDetailForBlankTrackingNo");
 		List<OrderExtend> orderDetailListForBlankTrackingNo = getOrderDetailForBlankTrackingNo(orderChannelID);
@@ -620,19 +623,32 @@ public class PostSearsOrderService {
 
 					// Status 更新
 					setClientStatusInfo(orderDetailInfo, orderLookupResponse);
+
+					// 如果是品牌方取消的话，则记入取消列表
+					if (orderDetailInfo.getClientStatus().equals(OmsConstants.SearsOrderItemStatus.Cancelled) && StringUtils.isNullOrBlank2(orderDetailInfo.getTrackingNumber())) {
+						searsCancelOrderList.add(orderDetailInfo);
+					}
 				}
 
 				// Sears Tracking Info 更新
-				isSuccess = updateSearsTrackingInfo(orderDetailListForBlankTrackingNo);
+				isSuccess = updateSearsTrackingInfo(orderDetailListForBlankTrackingNo,searsCancelOrderList);
 
-				// 推送异常订单，客服邮件通知
-				if (searOutOfStockOrderList.size() > 0) {
-					sendCustomerServiceMail(searOutOfStockOrderList, MAIL_OUT_OF_STOCK_ERROR);
-				}
+//				// 推送异常订单，客服邮件通知
+//				if (searOutOfStockOrderList.size() > 0) {
+//					sendCustomerServiceMail(searOutOfStockOrderList, MAIL_OUT_OF_STOCK_ERROR);
+//				}
+//
+//				// 部分取消，客服邮件通知
+//				if (searPartialCancelOrderList.size() > 0) {
+//					sendCustomerServiceMail(searPartialCancelOrderList, MAIL_DIFFERENT_STATUS_ERROR);
+//				}
 
-				// 部分取消，客服邮件通知
-				if (searPartialCancelOrderList.size() > 0) {
-					sendCustomerServiceMail(searPartialCancelOrderList, MAIL_DIFFERENT_STATUS_ERROR);
+				String errorMail = sendErrorMail(searsCancelOrderList);
+
+				if (!StringUtils.isNullOrBlank2(errorMail)) {
+					logger.info("错误邮件出力");
+					String subject = String.format(OmsConstants.EmailPostSearsOrder.SUBJECT, "Sears");
+					Mail.sendAlert(CodeConstants.EmailReceiver.NEED_SOLVE, subject, errorMail, true);
 				}
 
 			} catch (Exception e) {
@@ -806,7 +822,10 @@ public class PostSearsOrderService {
 			if(orderDetailInfo.getClientSku().equals(orderLookupItem.getItemId())) {
 
 				// client SKU 更新
-				orderDetailInfo.setClientStatus(orderLookupItem.getStatus());
+				orderDetailInfo.setClientStatus(StringUtils.null2Space2(orderLookupItem.getStatus()));
+
+				// ErrorMessage 设置
+				orderDetailInfo.setErrorMessage(StringUtils.null2Space2(orderLookupItem.getErrorMessage()));
 
 				break;
 			}
@@ -818,7 +837,7 @@ public class PostSearsOrderService {
 	 * @param orderDetailList 待处理订单明细一览
 	 *
 	 */
-	private boolean updateSearsTrackingInfo(List<OrderExtend> orderDetailList) {
+	private boolean updateSearsTrackingInfo(List<OrderExtend> orderDetailList, List<OrderExtend> cancelDetailList) {
 		boolean ret = true;
 
 		List<Object> updateSql = getUpdateSql(orderDetailList);
@@ -830,20 +849,43 @@ public class PostSearsOrderService {
 
 			TransactionStatus status=transactionManager.getTransaction(def);
 
-			ret = orderDao.updateSearsTrackingInfo(updateSqlStr, size);
+			try {
+				ret = orderDao.updateSearsTrackingInfo(updateSqlStr, size);
 
-			// 执行结果判定
-			if (ret) {
-				transactionManager.commit(status);
+				// 取消记录更新
+				for (OrderExtend orderExtend : cancelDetailList) {
 
-			} else {
+					if (!StringUtils.isNullOrBlank2(orderExtend.getResId())){
+						List<Long> reservationList = new ArrayList<>();
+						reservationList.add(Long.valueOf(orderExtend.getResId()));
+						reservationDao.updateReservationStatus(Long.valueOf(orderExtend.getOrderNumber()),reservationList,CodeConstants.Reservation_Status.Cancelled,POST_SEARS_CREATE_ORDER);
+						reservationDao.insertReservationLog(reservationList,"Item cancelled by the Sears：" + orderExtend.getErrorMessage(),POST_SEARS_CREATE_ORDER);
+					}
+
+				}
+
+//				// 执行结果判定
+//				if (ret) {
+//					transactionManager.commit(status);
+//
+//				} else {
+//					transactionManager.rollback(status);
+//
+//					issueLog.log("updateSearsTrackingInfo",
+//							"updateSearsTrackingInfo error;size = " + size,
+//							ErrorType.BatchJob,
+//							SubSystem.OMS);
+//				}
+			}catch (Exception e){
 				transactionManager.rollback(status);
 
 				issueLog.log("updateSearsTrackingInfo",
 						"updateSearsTrackingInfo error;size = " + size,
 						ErrorType.BatchJob,
-						SubSystem.OMS);
+						SubSystem.OMS,e.toString());
 			}
+
+
 		}
 
 		return ret;
@@ -869,7 +911,7 @@ public class PostSearsOrderService {
 		for (int i = 0; i < orderDetailList.size(); i++) {
 			OrderExtend orderDetailInfo = orderDetailList.get(i);
 
-			if (orderDetailInfo.isNeedUpdateFlag()) {
+//			if (orderDetailInfo.isNeedUpdateFlag()) {
 				size = size + 1;
 
 				String updateRecSql = String.format(updateSqlSub, orderDetailInfo.getOrderNumber(), orderDetailInfo.getItemNumber(), orderDetailInfo.getTrackingNumber(), orderDetailInfo.getSalesCheckNumber(), orderDetailInfo.getClientStatus());
@@ -880,13 +922,56 @@ public class PostSearsOrderService {
 					updateSql.append(" union all ");
 					updateSql.append(updateRecSql);
 				}
-			}
+//			}
 		}
 
 		ret.add(updateSql.toString());
 		ret.add(size);
 
 		return ret;
+	}
+
+	/**
+	 * 错误邮件出力
+	 * @param errorList 错误SKU一览
+	 * @return 错误邮件内容
+	 */
+	private String sendErrorMail(List<OrderExtend> errorList) {
+
+		StringBuilder builderContent = new StringBuilder();
+
+		if (errorList.size() > 0) {
+
+			StringBuilder builderDetail = new StringBuilder();
+
+			int index = 0;
+			for (OrderExtend error : errorList) {
+
+				index = index + 1;
+				builderDetail.append(String.format(OmsConstants.EmailPostSearsOrder.ROW,
+						index,
+						ShopConfigs.getShopNameDis(error.getOrderChannelId(), error.getCartId()),
+						error.getOrderNumber(),
+						error.getSourceOrderId(),
+						error.getClientOrderId(),
+						error.getResId(),
+						error.getSku(),
+						error.getClientSku()));
+			}
+
+			String count = String.format(OmsConstants.EmailPostSearsOrder.COUNT, errorList.size());
+
+			String detail = String.format(OmsConstants.EmailPostSearsOrder.TABLE, count, builderDetail.toString());
+
+			builderContent
+					.append(Constants.EMAIL_STYLE_STRING)
+					.append(OmsConstants.EmailPostSearsOrder.HEAD)
+					.append(detail);
+
+
+		}
+
+		return builderContent.toString();
 	}
 
 

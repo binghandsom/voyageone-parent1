@@ -2868,6 +2868,7 @@
 		<result column="client_sku" property="clientSku"/>
 		<result column="item_number" property="itemNumber"/>
 		<result column="tracking_number" property="trackingNumber"/>
+		<result column="res_id" property="resId"/>
 	</resultMap>
 	<select id="oms_bt_order_details_getSearsOrderDetailBlankTrackingInfo" parameterType="HashMap" resultMap="ordersDetailsInfoMapforSearsTrackingNumber" >
 		select o.order_channel_id,
@@ -2878,12 +2879,14 @@
 			od.sku,
 			ifnull(wd.client_sku,'') as client_sku,
 			od.item_number,
-			od.tracking_number
+			od.tracking_number,
+			od.res_id
 		from
 			(select ods.order_number,
 						ods.adjustment,
 						ods.sku,
 						ods.item_number,
+						ods.res_id,
 						odx.tracking_number
 			from Synship.oms_bt_order_details ods
 			inner join Synship.oms_bt_ext_order_details odx
