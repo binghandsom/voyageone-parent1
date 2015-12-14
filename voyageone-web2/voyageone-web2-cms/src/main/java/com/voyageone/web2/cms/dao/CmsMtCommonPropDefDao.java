@@ -32,7 +32,8 @@ public class CmsMtCommonPropDefDao extends BaseMongoDao {
             resultList = new ArrayList<>();
             for (JSONObject jsonObject : jsonList) {
                 CmsMtCommonPropDefModel model = new CmsMtCommonPropDefModel();
-                Field field = SchemaJsonReader.mapToField(jsonObject);
+                Object jsonField = jsonObject.get("field");
+                Field field = SchemaJsonReader.mapToField(jsonField);
                 model.setField(field);
                 resultList.add(model);
             }
