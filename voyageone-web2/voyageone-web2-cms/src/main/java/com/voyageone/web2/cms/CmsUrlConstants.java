@@ -51,4 +51,16 @@ public interface CmsUrlConstants {
             String SET_PRODUCT_FIELDS = "setProductFields";
         }
     }
+
+    interface PROM {
+
+        interface SELECT {
+
+            String ROOT = "/cms/pop/prom_select/";
+
+            String GET_PROM_TAGS = "getPromotionTags";
+
+            String SET_PROM_TAG = "setPromotionTag";
+        }
+    }
 }
