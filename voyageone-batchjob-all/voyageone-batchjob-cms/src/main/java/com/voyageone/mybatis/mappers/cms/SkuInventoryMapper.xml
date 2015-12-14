@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.cms.sql">
-    <resultMap id="skuInventoryMap" type="Map">
-        <result property="sku" column="sku"></result>
-        <result property="inventory" column="qty_china"></result>
-    </resultMap>
-    <select id="cms_selectInventoryBySku" resultType="Map" parameterType="Map">
+    <select id="cms_selectInventoryBySku" resultType="com.voyageone.batch.cms.model.SkuInventoryModel" parameterType="Map">
         SELECT
             sku,
-            qty_china as inventory
+            qty_china
         FROM Synship.wms_bt_inventory_center_logic
         WHERE
             sku in
