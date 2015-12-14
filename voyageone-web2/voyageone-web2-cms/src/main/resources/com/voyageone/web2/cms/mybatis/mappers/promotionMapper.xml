@@ -7,6 +7,7 @@
         <result column="cart_id" property="cartId" jdbcType="INTEGER" />
         <result column="promotion_status" property="promotionStatus" jdbcType="BOOLEAN"/>
         <result column="is_active" property="isActive" jdbcType="BOOLEAN"/>
+        <result column="ref_tag_id" property="refTagId" jdbcType="INTEGER"/>
         <result column="promotion_name" property="promotionName" jdbcType="VARCHAR" />
         <result column="pre_period_start" property="prePeriodStart" jdbcType="VARCHAR" />
         <result column="pre_period_end" property="prePeriodEnd" jdbcType="VARCHAR" />
@@ -34,6 +35,7 @@
               a.tejiabao_id,
               a.promotion_type,
               a.is_active,
+              a.ref_tag_id,
               a.created,
               a.creater,
               a.modified,
@@ -89,6 +91,9 @@
             <if test="promotionType != null" >
                 promotion_type,
             </if>
+            <if test="refTagId != null">
+                ref_tag_id,
+            </if>
                 created,
             <if test="creater != null" >
                 creater,
@@ -125,6 +130,9 @@
             </if>
             <if test="promotionType != null" >
                 #{promotionType,jdbcType=VARCHAR},
+            </if>
+            <if test="refTagId != null">
+                #{refTagId,jdbcType=INTEGER},
             </if>
                 now(),
             <if test="creater != null" >

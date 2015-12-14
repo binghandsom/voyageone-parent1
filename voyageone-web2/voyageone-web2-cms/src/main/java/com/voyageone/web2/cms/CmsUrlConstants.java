@@ -37,6 +37,10 @@ public interface CmsUrlConstants {
             String ROOT = "/cms/promotion/list";
 
             String GET_PROMOTION_LIST = "getPromotionList";
+
+            String INSERT_PROMOTION = "insertPromotion";
+
+            String UPDATE_PROMOTION = "updatePromotion";
         }
     }
 
