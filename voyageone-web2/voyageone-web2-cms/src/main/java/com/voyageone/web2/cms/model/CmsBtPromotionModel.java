@@ -29,6 +29,16 @@ public class CmsBtPromotionModel extends BaseMongoModel {
 
     private String cartName;
 
+    private Boolean isActive;
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
+    }
+
     public String getCartName() {
         return cartName;
     }

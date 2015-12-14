@@ -27,6 +27,7 @@ require.config({
     'css': 'libs/require-css/0.1.8/css',
     'json': 'libs/requirejs-plugins/1.0.3/json',
     'text': 'libs/require-text/2.0.12/text',
+    'filestyle': 'libs/bootstrap-filestyle/1.2.1/bootstrap-filestyle',
     'cms': 'modules/cms/app'
   },
   shim: {
@@ -41,6 +42,7 @@ require.config({
     'angular-ngStorage': ['angular'],
     'angular': {exports: 'angular', deps: ['jquery']},
     'jquery': {exports: 'jQuery'},
+    'filestyle': ['jquery'],
     'json': ['text'],
     'angularAMD': ['angular', 'ngload']
   },

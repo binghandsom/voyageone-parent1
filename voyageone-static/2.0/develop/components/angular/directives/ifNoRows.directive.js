@@ -13,7 +13,7 @@ angular.module('voyageone.angular.directives.ifNoRows', [])
         // 没有数据显示警告
         if (!$templateCache.get(tempNoDataKey)) {
             $templateCache.put(tempNoDataKey,
-            '<div class="text-center text-hs">\n' +
+            '<div class="text-center text-hs" id="noData">\n' +
             '    <h4 class="text-vo"><i class="icon fa fa-warning"></i>&nbsp;{{\'TXT_COM_WARNING\' | translate}}</h4>\n' +
             '{{\'TXT_COM_MSG_NO_DATE\' | translate}}' +
             '</dv>');
@@ -27,10 +27,15 @@ angular.module('voyageone.angular.directives.ifNoRows', [])
             },
             link: function (scope, element) {
 
-                // 如果数据不存在则显示警告信息
-                if(scope.$parent.$eval(scope.$$data)  == 0) {
-                    element.append($compile($templateCache.get(tempNoDataKey))(scope));
-                }
+                scope.$parent.$watch(scope.$$data, function () {
+
+                    // 如果数据不存在则显示警告信息
+                    if(scope.$parent.$eval(scope.$$data)  == 0) {
+                        element.append($compile($templateCache.get(tempNoDataKey))(scope));
+                    } else {
+                        element.find("#noData").html("");
+                    }
+                })
             }
         };
     });

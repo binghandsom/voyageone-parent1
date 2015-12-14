@@ -22,4 +22,12 @@ public class CmsPromotionService extends BaseAppService {
     public List<CmsBtPromotionModel> getPromotionList(Map<String,Object> params){
         return cmsPromotionDao.getPromotionList(params);
     }
+
+    public int insertPromotion(CmsBtPromotionModel params){
+        return cmsPromotionDao.insertPromotion(params);
+    }
+
+    public int updatePromotion(CmsBtPromotionModel params){
+        return cmsPromotionDao.updatePromotion(params);
+    }
 }

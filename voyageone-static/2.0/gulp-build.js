@@ -22,6 +22,7 @@ var encode = 'utf-8';
 gulp.task(tasks.build.angular, function () {
   return gulp.src(build.common.angular.src)
     .pipe(debug())
+    .pipe(sourceMaps.init())
     // 追加依赖注入语法
     .pipe(ngAnnotate())
     // 包裹每个单个组件
@@ -34,6 +35,7 @@ gulp.task(tasks.build.angular, function () {
     // 包裹整个内容
     .pipe(header(definePrefix))
     .pipe(footer(defineSuffix))
+    .pipe(sourceMaps.write('./'))
     // 此处不进行压缩,只对合并后的内容进行格式化
     .pipe(uglify({
       mangle: false,
