@@ -31,6 +31,7 @@ public class CmsPromotionService extends BaseAppService {
 
     @Transactional
     public int insertPromotion(CmsBtPromotionModel params) {
+        // 更新tag表
         CmsBtTagModel cmsBtTagModel = new CmsBtTagModel();
         cmsBtTagModel.setCreater(params.getCreater());
         cmsBtTagModel.setTagName(params.getPromotionName());
@@ -43,9 +44,10 @@ public class CmsPromotionService extends BaseAppService {
         cmsBtTagModel.setTagPath("-" + cmsBtTagModel.getTagId() + "-");
         cmsBtTagDao.updateCmsBtTag(cmsBtTagModel);
 
+        // 把TAGID会写到Promotion表中
         params.setRefTagId(cmsBtTagModel.getTagId());
 
-
+        // 插入Promotion
         return cmsPromotionDao.insertPromotion(params);
     }
 
