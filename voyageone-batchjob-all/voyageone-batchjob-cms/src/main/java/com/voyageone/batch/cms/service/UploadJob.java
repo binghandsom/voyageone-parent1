@@ -3,6 +3,7 @@ package com.voyageone.batch.cms.service;
 import com.voyageone.batch.cms.bean.tcb.TaskControlBlock;
 import com.voyageone.batch.cms.bean.tcb.UploadImageTcb;
 import com.voyageone.batch.cms.bean.tcb.UploadProductTcb;
+import com.voyageone.batch.cms.dao.SkuInventoryDao;
 import com.voyageone.batch.cms.model.WorkLoadBean;
 import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformMappingDao;
 import com.voyageone.common.components.issueLog.IssueLog;
@@ -32,13 +33,13 @@ public class UploadJob {
     private UploadImageHandler uploadImageHandler;
 
     public UploadJob(String channel_id, int cart_id, UploadWorkloadDispatcher.JobStateCb jobStateCb,
-                     CmsMtPlatformMappingDao cmsMtPlatformMappingDao, IssueLog issueLog) {
+                     CmsMtPlatformMappingDao cmsMtPlatformMappingDao, SkuInventoryDao skuInventoryDao, IssueLog issueLog) {
         this.channel_id = channel_id;
         this.cart_id = cart_id;
         this.jobStateCb = jobStateCb;
         isRunning = false;
 
-        uploadProductHandler = new UploadProductHandler(this, cmsMtPlatformMappingDao, issueLog);
+        uploadProductHandler = new UploadProductHandler(this, cmsMtPlatformMappingDao, skuInventoryDao, issueLog);
         uploadImageHandler = new UploadImageHandler(this, issueLog);
     }
 

@@ -294,7 +294,7 @@ public abstract class TmallGjSkuFieldBuilderImpl_0 extends AbstractSkuFieldBuild
             for (ComplexValue complexValue : skuProp.getComplexValues()) {
                 String skuOuterId = complexValue.getInputFieldValue(propId_sku_outerId);
 
-                String skuQuantityStr = skuInfoDao.getSkuInventory(orderChannelId, null, skuOuterId);
+                String skuQuantityStr = skuInfoDao.getSkuInventoryMap(orderChannelId, null, skuOuterId);
                 int skuQuantity = 0;
                 if (skuQuantityStr != null) {
                     skuQuantity = Integer.valueOf(skuQuantityStr);

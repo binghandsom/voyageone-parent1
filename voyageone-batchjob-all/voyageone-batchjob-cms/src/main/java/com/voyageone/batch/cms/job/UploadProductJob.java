@@ -30,7 +30,6 @@ public class UploadProductJob extends BaseTaskJob{
 
     @Override
     protected BaseTaskService getTaskService() {
-        //return uploadProductService;
-        return null;
+        return uploadProductService;
     }
 }

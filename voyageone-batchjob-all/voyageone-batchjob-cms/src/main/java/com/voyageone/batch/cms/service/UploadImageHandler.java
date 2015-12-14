@@ -104,7 +104,7 @@ public class UploadImageHandler extends UploadWorkloadHandler {
                     ImageUrlMappingModel imageUrlInfo = new ImageUrlMappingModel();
                     imageUrlInfo.setCartId(Integer.valueOf(uploadJob.getCart_id()));
                     imageUrlInfo.setChannelId(uploadJob.getChannel_id());
-                    imageUrlInfo.setModelId(String.valueOf(uploadImageTcb.getUploadProductTcb().getWorkLoadBean().getGroupId()));
+                    imageUrlInfo.setGroupId(String.valueOf(uploadImageTcb.getUploadProductTcb().getWorkLoadBean().getGroupId()));
                     imageUrlInfo.setOrgImageUrl(decodeSrcUrl);
                     imageUrlInfo.setPlatformImageUrl(destUrl);
                     imageUrlInfo.setCreater("uploadProductJob");

@@ -1,10 +1,10 @@
 package com.voyageone.batch.cms.service;
 
 import com.voyageone.batch.cms.bean.CustomValueSystemParam;
-import com.voyageone.batch.cms.model.CmsCodePropBean;
-import com.voyageone.batch.cms.model.CmsModelPropBean;
+import com.voyageone.batch.cms.bean.SxProductBean;
 import com.voyageone.batch.cms.service.rule_parser.ExpressionParser;
-import com.voyageone.ims.enums.CmsFieldEnum;
+import com.voyageone.cms.service.model.CmsBtProductConstants;
+import com.voyageone.cms.service.model.CmsBtProductModel_Field_Image;
 import com.voyageone.ims.rule_expression.CustomModuleUserParamGetMainPrductImages;
 import com.voyageone.ims.rule_expression.CustomWord;
 import com.voyageone.ims.rule_expression.CustomWordValueGetMainProductImages;
@@ -57,37 +57,15 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
             imageTemplate = expressionParser.parse(imageTemplateExpression, null);
 
         RuleExpression imageTypeExpression = customModuleUserParamGetMainPrductImages.getImageType();
-        String imageType = expressionParser.parse(imageTypeExpression, null);
+
+
+        String imageTypeStr = expressionParser.parse(imageTypeExpression, null);
+        CmsBtProductConstants.FieldImageType imageType = CmsBtProductConstants.FieldImageType.valueOf(imageTypeStr);
 
         //system param
-        String code = systemParam.getMainProductProp().getProp(CmsFieldEnum.CmsCodeEnum.code);
-        CmsModelPropBean cmsModelProp = systemParam.getCmsModelProp();
+        SxProductBean mainSxProduct = systemParam.getMainSxProduct();
 
-        CmsCodePropBean cmsCodeProp = null;
-
-        for (CmsCodePropBean iterCmsCodeProp: cmsModelProp.getCmsCodePropBeanList())
-        {
-            String iterCode = iterCmsCodeProp.getProp(CmsFieldEnum.CmsCodeEnum.code);
-            if (iterCode.equals(code))
-            {
-                cmsCodeProp = iterCmsCodeProp;
-                break;
-            }
-        }
-
-        if (cmsCodeProp == null)
-            return null;
-
-        String propImageProp = cmsCodeProp.getProp((CmsFieldEnum.CmsCodeEnum) CmsFieldEnum.valueOf(imageType));
-
-        String[] propImages;
-        if (propImageProp == null || "".equals(propImageProp.trim()))
-        {
-            propImages = new String[] {};
-        } else {
-            propImages = propImageProp.split(",");
-        }
-
+        List<CmsBtProductModel_Field_Image> productImages = mainSxProduct.getCmsBtProductModel().getFields().getImages(imageType);
 
         String parseResult = "";
 
@@ -95,18 +73,18 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
         //获取所有图片
         if (imageIndex == -1) {
             if (imageTemplate != null) {
-                for (String propImage : propImages) {
-                    String completeImageUrl = UploadImageHandler.encodeImageUrl(String.format(imageTemplate, propImage.trim()));
+                for (CmsBtProductModel_Field_Image productImage : productImages) {
+                    String completeImageUrl = UploadImageHandler.encodeImageUrl(String.format(imageTemplate, productImage.getName()));
                     imageUrlList.add(completeImageUrl);
                 }
             } else {
-                for (String propImage : propImages) {
-                    parseResult += propImage;
+                for (CmsBtProductModel_Field_Image productImage : productImages) {
+                    parseResult += productImage.getName();
                 }
                 return parseResult;
             }
         } //padding图片
-        else if (imageIndex > propImages.length) {
+        else if (imageIndex > productImages.size()) {
             RuleExpression paddingExpression = customModuleUserParamGetMainPrductImages.getPaddingExpression();
             String paddingImageKey = expressionParser.parse(paddingExpression, null);
             if (paddingImageKey == null || "".equalsIgnoreCase(paddingImageKey)) {
@@ -122,14 +100,13 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
                 return paddingImageKey.trim();
             }
         } else {
-            String propImage = propImages[imageIndex - 1];
+            CmsBtProductModel_Field_Image productImage = productImages.get(imageIndex);
             if(imageTemplate != null){
-                String completeImageUrl = UploadImageHandler.encodeImageUrl(String.format(imageTemplate, propImage.trim()));
+                String completeImageUrl = UploadImageHandler.encodeImageUrl(String.format(imageTemplate, productImage.getName()));
                 imageUrlList.add(completeImageUrl);
             }else {
-                return propImage.trim();
+                return productImage.getName();
             }
-
         }
         for (String imageUrl : imageUrlList) {
             if (htmlTemplate != null) {

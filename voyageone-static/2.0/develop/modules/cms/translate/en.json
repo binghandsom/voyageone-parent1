@@ -6,6 +6,8 @@
   "TXT_COM_ITEMS": "items",
   "TXT_COM_WARNING": "温馨提示：",
   "TXT_COM_MSG_NO_DATE": "当前数据为空，请稍后再来....TKS!",
+  "TXT_COM_ERROR": "出错了：",
+  "TXT_COM_MSG_ERROR": "天嗯啊，请稍后再来....TKS!",
 
   "BTN_COM_GO": "Go",
 

@@ -8,18 +8,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class CmsMtPlatformCategorySchemaModel extends BaseMongoModel {
 
     private Integer cartId;
-    private String categoryId;
+    private String catId;
+    private String catFullPath;
     private String propsProduct;
     private String propsItem;
 
     public CmsMtPlatformCategorySchemaModel() {
-    }
-
-    public CmsMtPlatformCategorySchemaModel(Integer cartId, String categoryId, String propsProduct, String propsItem) {
-        this.cartId = cartId;
-        this.categoryId = categoryId;
-        this.propsProduct = propsProduct;
-        this.propsItem = propsItem;
     }
 
     public Integer getCartId() {
@@ -30,12 +24,20 @@ public class CmsMtPlatformCategorySchemaModel extends BaseMongoModel {
         this.cartId = cartId;
     }
 
-    public String getCategoryId() {
-        return categoryId;
+    public String getCatId() {
+        return catId;
     }
 
-    public void setCategoryId(String categoryId) {
-        this.categoryId = categoryId;
+    public void setCatId(String catId) {
+        this.catId = catId;
+    }
+
+    public String getCatFullPath() {
+        return catFullPath;
+    }
+
+    public void setCatFullPath(String catFullPath) {
+        this.catFullPath = catFullPath;
     }
 
     public String getPropsProduct() {
@@ -54,4 +56,24 @@ public class CmsMtPlatformCategorySchemaModel extends BaseMongoModel {
         this.propsItem = propsItem;
     }
 
+    public class CmsMtPlatformCatSchemaKeyModel{
+        private Integer cartId;
+        private String catId;
+
+        public Integer getCartId() {
+            return cartId;
+        }
+
+        public void setCartId(Integer cartId) {
+            this.cartId = cartId;
+        }
+
+        public String getCatId() {
+            return catId;
+        }
+
+        public void setCatId(String catId) {
+            this.catId = catId;
+        }
+    }
 }

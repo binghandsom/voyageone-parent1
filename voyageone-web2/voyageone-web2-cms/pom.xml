@@ -20,6 +20,12 @@
 			<version>${voyageone.web2.core.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>com.voyageone</groupId>
+			<artifactId>voyageone-web2-sdk</artifactId>
+			<version>${voyageone.web2.sdk.version}</version>
+		</dependency>
+
+		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 		</dependency>

@@ -1,16 +1,17 @@
 package com.voyageone.batch.cms.service;
 
 import com.voyageone.batch.cms.bean.CustomValueSystemParam;
-import com.voyageone.batch.cms.model.CmsCodePropBean;
-import com.voyageone.batch.cms.model.CmsModelPropBean;
+import com.voyageone.batch.cms.bean.SxProductBean;
 import com.voyageone.batch.cms.service.rule_parser.ExpressionParser;
-import com.voyageone.ims.enums.CmsFieldEnum;
+import com.voyageone.cms.service.model.CmsBtProductConstants;
+import com.voyageone.cms.service.model.CmsBtProductModel_Field_Image;
 import com.voyageone.ims.rule_expression.CustomModuleUserParamGetAllImages;
 import com.voyageone.ims.rule_expression.CustomWord;
 import com.voyageone.ims.rule_expression.CustomWordValueGetAllImages;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -40,19 +41,19 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
 
         String imageTemplate = expressionParser.parse(imageTemplateExpression, null);
         String htmlTemplate= expressionParser.parse(htmlTemplateExpression, null);
-        String imageType = expressionParser.parse(imageTypeExpression, null);
+        String imageTypeStr = expressionParser.parse(imageTypeExpression, null);
+        CmsBtProductConstants.FieldImageType imageType = CmsBtProductConstants.FieldImageType.valueOf(imageTypeStr);
 
         //system param
-        CmsModelPropBean cmsModelProp = systemParam.getCmsModelProp();
+        List<SxProductBean> sxProductBeans = systemParam.getSxProductBeans();
 
         String parseResult = "";
 
-        for (CmsCodePropBean iterCmsCodeProp : cmsModelProp.getCmsCodePropBeanList()) {
-            String productImageOrigin = iterCmsCodeProp.getProp((CmsFieldEnum.CmsCodeEnum) CmsFieldEnum.valueOf(imageType));
-            String[] productImages = productImageOrigin.split(",");
+        for (SxProductBean sxProductBean : sxProductBeans) {
+            List<CmsBtProductModel_Field_Image> cmsBtProductModelFieldImages = sxProductBean.getCmsBtProductModel().getFields().getImages(imageType);
 
-            for (String productImage : productImages) {
-                String completeImageUrl = String.format(imageTemplate, productImage);
+            for (CmsBtProductModel_Field_Image cmsBtProductModelFieldImage : cmsBtProductModelFieldImages) {
+                String completeImageUrl = String.format(imageTemplate, cmsBtProductModelFieldImage.getName());
                 completeImageUrl = UploadImageHandler.encodeImageUrl(completeImageUrl);
                 if (htmlTemplate != null) {
                     parseResult += String.format(htmlTemplate, completeImageUrl);

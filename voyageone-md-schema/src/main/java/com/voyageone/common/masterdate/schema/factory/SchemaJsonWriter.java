@@ -1,7 +1,6 @@
 package com.voyageone.common.masterdate.schema.factory;
 
 import com.voyageone.common.masterdate.schema.Util.JsonUtil;
-import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.field.Field;
 
 import java.util.List;
@@ -9,16 +8,16 @@ import java.util.List;
 
 public class SchemaJsonWriter {
 
-    public static String writeXmlToJsonString(String xmlStirng) throws TopSchemaException {
+    public static String writeXmlToJsonString(String xmlStirng) {
         List<Field> fields = SchemaReader.readXmlForList(xmlStirng);
         return writeString(fields);
     }
 
-    public static String writeString(List<Field> fields) throws TopSchemaException {
+    public static String writeString(List<Field> fields) {
         return JsonUtil.bean2Json(fields);
     }
 
-    public static String writeString(Field field) throws TopSchemaException {
+    public static String writeString(Field field) {
         return JsonUtil.bean2Json(field);
     }
 

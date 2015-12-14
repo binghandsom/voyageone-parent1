@@ -3,7 +3,9 @@ package com.voyageone.batch.cms.model;
 import com.voyageone.batch.cms.bean.SxProductBean;
 import com.voyageone.batch.cms.bean.UpJobParamBean;
 import com.voyageone.batch.cms.enums.PlatformWorkloadStatus;
-import com.voyageone.cms.service.model.CmsBtProductModel;
+import com.voyageone.cms.service.model.CmsMtPlatformCategorySchemaModel;
+import com.voyageone.cms.service.model.CmsMtPlatformMappingModel;
+
 import java.util.*;
 
 
@@ -19,6 +21,10 @@ public class WorkLoadBean implements Cloneable{
     private UpJobParamBean upJobParam;
     private List<SxProductBean> processProducts;
     private SxProductBean mainProduct;
+    private CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel;
+    private CmsMtPlatformMappingModel cmsMtPlatformMappingModel;
+    private Map<String, Integer> skuInventoryMap;
+
 
     //任务状态
     private PlatformWorkloadStatus workload_status;
@@ -171,6 +177,30 @@ public class WorkLoadBean implements Cloneable{
             e.printStackTrace();
         }
         return cloneObj;
+    }
+
+    public CmsMtPlatformCategorySchemaModel getCmsMtPlatformCategorySchemaModel() {
+        return cmsMtPlatformCategorySchemaModel;
+    }
+
+    public void setCmsMtPlatformCategorySchemaModel(CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel) {
+        this.cmsMtPlatformCategorySchemaModel = cmsMtPlatformCategorySchemaModel;
+    }
+
+    public CmsMtPlatformMappingModel getCmsMtPlatformMappingModel() {
+        return cmsMtPlatformMappingModel;
+    }
+
+    public void setCmsMtPlatformMappingModel(CmsMtPlatformMappingModel cmsMtPlatformMappingModel) {
+        this.cmsMtPlatformMappingModel = cmsMtPlatformMappingModel;
+    }
+
+    public Map<String, Integer> getSkuInventoryMap() {
+        return skuInventoryMap;
+    }
+
+    public void setSkuInventoryMap(Map<String, Integer> skuInventoryMap) {
+        this.skuInventoryMap = skuInventoryMap;
     }
 
     public List<SxProductBean> getProcessProducts() {

@@ -1,7 +1,6 @@
 package com.voyageone.batch.cms.bean;
 
-import com.voyageone.batch.cms.model.CmsCodePropBean;
-import com.voyageone.batch.cms.model.CmsModelPropBean;
+import java.util.List;
 
 /**
  * Created by Leo on 15-6-18.
@@ -9,8 +8,8 @@ import com.voyageone.batch.cms.model.CmsModelPropBean;
 public class CustomValueSystemParam {
     private String orderChannelId;
     private int cartId;
-    private CmsCodePropBean mainProductProp;
-    private CmsModelPropBean cmsModelProp;
+    private SxProductBean mainSxProduct;
+    private List<SxProductBean> sxProductBeans;
 
     public String getOrderChannelId() {
         return orderChannelId;
@@ -28,19 +27,19 @@ public class CustomValueSystemParam {
         this.cartId = cartId;
     }
 
-    public CmsCodePropBean getMainProductProp() {
-        return mainProductProp;
+    public SxProductBean getMainSxProduct() {
+        return mainSxProduct;
     }
 
-    public void setMainProductProp(CmsCodePropBean mainProductProp) {
-        this.mainProductProp = mainProductProp;
+    public void setMainSxProduct(SxProductBean mainSxProduct) {
+        this.mainSxProduct = mainSxProduct;
     }
 
-    public CmsModelPropBean getCmsModelProp() {
-        return cmsModelProp;
+    public List<SxProductBean> getSxProductBeans() {
+        return sxProductBeans;
     }
 
-    public void setCmsModelProp(CmsModelPropBean cmsModelProp) {
-        this.cmsModelProp = cmsModelProp;
+    public void setSxProductBeans(List<SxProductBean> sxProductBeans) {
+        this.sxProductBeans = sxProductBeans;
     }
 }

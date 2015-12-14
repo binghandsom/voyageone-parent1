@@ -30,4 +30,25 @@ public interface CmsUrlConstants {
             String GET_MAIN_CATEGORIES = "main_categories";
         }
     }
+    interface PROMOTION {
+
+        interface LIST {
+
+            String ROOT = "/cms/promotion/list";
+
+            String GET_PROMOTION_LIST = "getPromotionList";
+        }
+    }
+
+    interface PROP {
+
+        interface CHANGE {
+
+            String ROOT = "/cms/pop/prop_change/";
+
+            String GET_POP_OPTIONS = "getPopOptions";
+
+            String SET_PRODUCT_FIELDS = "setProductFields";
+        }
+    }
 }

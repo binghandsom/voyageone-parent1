@@ -1,5 +1,6 @@
 package com.voyageone.batch.cms.service;
 
+import com.voyageone.batch.cms.dao.SkuInventoryDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformMappingDao;
 import com.voyageone.batch.cms.model.WorkLoadBean;
 import com.voyageone.common.components.issueLog.IssueLog;
@@ -33,6 +34,8 @@ public class UploadWorkloadDispatcher {
 
     @Autowired
     private CmsMtPlatformMappingDao cmsMtPlatformMappingDao;
+    @Autowired
+    private SkuInventoryDao skuInventoryDao;
     @Autowired
     private IssueLog issueLog;
 
@@ -100,7 +103,7 @@ public class UploadWorkloadDispatcher {
        {
            if (upJobMap.size() < MAX_JOB_COUNT) {
                uploadJob = new UploadJob(workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id(),
-                       jobStateCb, cmsMtPlatformMappingDao, issueLog);
+                       jobStateCb, cmsMtPlatformMappingDao, skuInventoryDao, issueLog);
 
                synchronized (upJobMap) {
                    upJobMap.put(storeKey, uploadJob);

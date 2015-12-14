@@ -1,13 +1,9 @@
 package com.voyageone.batch.cms.service.tmall;
 
-import com.taobao.top.schema.enums.FieldTypeEnum;
-import com.taobao.top.schema.field.Field;
-import com.taobao.top.schema.field.SingleCheckField;
-import com.voyageone.batch.cms.model.CmsCodePropBean;
-import com.voyageone.ims.enums.CmsFieldEnum;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.taobao.top.schema.option.Option;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,8 +11,41 @@ import java.util.List;
  */
 @Repository
 public class PriceSectionBuilder {
-    //@Autowired
-    //private PlatformPropDao platformPropDao;
+
+    public static class PriceOption {
+        private String optionName;
+        private String optionValue;
+
+        public PriceOption(String optionName, String optionValue) {
+            this.optionName = optionName;
+            this.optionValue = optionValue;
+        }
+
+        public String getOptionName() {
+            return optionName;
+        }
+
+        public void setOptionName(String optionName) {
+            this.optionName = optionName;
+        }
+
+        public String getOptionValue() {
+            return optionValue;
+        }
+
+        public void setOptionValue(String optionValue) {
+            this.optionValue = optionValue;
+        }
+    }
+
+    public static List<PriceOption> transferFromTmall(List<Option> tmallPriceOptions) {
+        List<PriceOption> priceOptions = new ArrayList<>();
+
+        for (Option tmallPriceOption : tmallPriceOptions) {
+            priceOptions.add(new PriceOption(tmallPriceOption.getDisplayName(), tmallPriceOption.getValue()));
+        }
+        return priceOptions;
+    }
 
     private class PriceSection {
         private double minPrice;
@@ -48,26 +77,13 @@ public class PriceSectionBuilder {
 
     }
 
-    /*
-    public Field buildPriceSectionField(PlatformPropBean platformProp, CmsCodePropBean cmsCodeProp) {
-        if (platformProp.getPlatformPropType() == ImsConstants.PlatformPropType.C_SINGLE_CHECK)
+    public String autoDetectOptionValue (List<PriceOption> priceOptions, double price) {
+        for (PriceOption priceOption : priceOptions)
         {
-            String priceStr = cmsCodeProp.getProp(CmsFieldEnum.CmsCodeEnum.price);
-            double price = Double.valueOf(priceStr);
-
-            String platformPropHash = platformProp.getPlatformPropHash();
-            List<PlatformPropOptionBean> platformoOptions = platformPropDao.selectPlatformOptionsByPropHash(platformPropHash);
-
-            for (PlatformPropOptionBean platformPropOption : platformoOptions)
+            PriceSection priceSection = parsePriceSection(priceOption.getOptionName());
+            if (inSection(price, priceSection))
             {
-                PriceSection priceSection = parsePriceSection(platformPropOption.getPlatformPropOptionName());
-                if (inSection(price, priceSection))
-                {
-                    SingleCheckField field = (SingleCheckField) FieldTypeEnum.createField(FieldTypeEnum.SINGLECHECK);
-                    field.setId(platformProp.getPlatformPropId());
-                    field.setValue(platformPropOption.getPlatformPropOptionValue());
-                    return field;
-                }
+                return priceOption.getOptionValue();
             }
         }
         return null;
@@ -114,5 +130,4 @@ public class PriceSectionBuilder {
     {
         return (price <= priceSection.getMaxPrice()) && (price >= priceSection.getMinPrice());
     }
-    */
 }

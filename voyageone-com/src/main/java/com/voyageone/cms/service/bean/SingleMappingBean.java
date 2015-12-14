@@ -9,7 +9,7 @@ public class SingleMappingBean extends MappingBean {
     private RuleExpression expression;
 
     public SingleMappingBean() {
-        mappingType = MAPPING_SINGLE;
+        mappingType = MAPPING_SIMPLE;
     }
 
     public SingleMappingBean(String platformPropId, RuleExpression expression) {

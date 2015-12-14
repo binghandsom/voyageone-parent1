@@ -9,11 +9,6 @@ import java.util.Map;
 
 public class CmsBtProductModel_Group extends BaseMongoMap {
 
-    public CmsBtProductModel_Group() {
-        if (!this.containsKey("platforms")) {
-            setAttribute("platforms", new ArrayList<CmsBtProductModel_Group_Platform>());
-        }
-    }
     public double getMsrpStart() {
         return (Double) getAttribute("msrpStart");
     }

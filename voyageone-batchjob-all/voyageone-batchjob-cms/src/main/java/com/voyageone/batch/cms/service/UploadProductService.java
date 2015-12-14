@@ -121,6 +121,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
 
             workload.setHasSku(false);
             workloadBeanListMap.put(workload, sxProductBeans);
+            workload.setProcessProducts(sxProductBeans);
         }
         return workloadBeanListMap;
     }
@@ -141,7 +142,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
 
         for (Iterator<CmsBtProductModel_Sku> productSkuIterator = cmsBtProductModelSkus.iterator(); productSkuIterator.hasNext();) {
             CmsBtProductModel_Sku cmsBtProductModel_sku = productSkuIterator.next();
-            if (false) {
+            if (!cmsBtProductModel_sku.isIncludeCart(cartId)) {
                 productSkuIterator.remove();
             }
         }

@@ -14,14 +14,9 @@ public class UploadProductTcb extends  TaskControlBlock{
     //上传新产品时业务状态
     private WorkLoadBean workLoadBean;  //全局
     private String platformCId; //全局
-    //private CmsCodePropBean mainCmsCodeProp;//全局 主产品code的属性
     private String numId;  //全局，上新后返回的numId
 
-    //private UploadProductRunState uploadProductRunState; //针对upload product
-    //private UploadItemRunState uploadItemRunState; //针对upload item
     private ExpressionParser expressionParser;
-    CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel;
-    private CmsMtPlatformMappingModel cmsMtPlatformMappingModel;
     private PlatformUploadRunState platformUploadRunState;
 
     //关联的UploadImageHandler运行的tcb
@@ -79,22 +74,6 @@ public class UploadProductTcb extends  TaskControlBlock{
 
     public void setPlatformCId(String platformCId) {
         this.platformCId = platformCId;
-    }
-
-    public CmsMtPlatformMappingModel getCmsMtPlatformMappingModel() {
-        return cmsMtPlatformMappingModel;
-    }
-
-    public void setCmsMtPlatformMappingModel(CmsMtPlatformMappingModel cmsMtPlatformMappingModel) {
-        this.cmsMtPlatformMappingModel = cmsMtPlatformMappingModel;
-    }
-
-    public CmsMtPlatformCategorySchemaModel getCmsMtPlatformCategorySchemaModel() {
-        return cmsMtPlatformCategorySchemaModel;
-    }
-
-    public void setCmsMtPlatformCategorySchemaModel(CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel) {
-        this.cmsMtPlatformCategorySchemaModel = cmsMtPlatformCategorySchemaModel;
     }
 
     public ExpressionParser getExpressionParser() {

@@ -1,24 +1,30 @@
 package com.voyageone.batch.cms.service;
 
 import com.voyageone.batch.Context;
+import com.voyageone.batch.cms.bean.SxProductBean;
 import com.voyageone.batch.cms.bean.UpJobParamBean;
 import com.voyageone.batch.cms.bean.tcb.*;
+import com.voyageone.batch.cms.dao.SkuInventoryDao;
 import com.voyageone.batch.cms.enums.PlatformWorkloadStatus;
-import com.voyageone.batch.cms.model.CmsModelPropBean;
 import com.voyageone.batch.cms.model.WorkLoadBean;
 import com.voyageone.batch.cms.service.tmall.TmallProductService;
 import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformMappingDao;
+import com.voyageone.cms.service.model.CmsBtFeedInfoModel_Sku;
+import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
 import com.voyageone.cms.service.model.CmsMtPlatformMappingModel;
 import com.voyageone.common.components.issueLog.IssueLog;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.ShopConfigs;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.ims.enums.CmsFieldEnum;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by Leo on 2015/5/28.
@@ -27,6 +33,7 @@ public class UploadProductHandler extends UploadWorkloadHandler{
 
     private UploadJob uploadJob;
     private CmsMtPlatformMappingDao cmsMtPlatformMappingDao;
+    private SkuInventoryDao skuInventoryDao;
     private Log logger = LogFactory.getLog(UploadProductHandler.class);
 
     private TmallProductService tmallProductService;
@@ -36,6 +43,7 @@ public class UploadProductHandler extends UploadWorkloadHandler{
         UploadProductTcb uploadProductTcb = (UploadProductTcb) tcb;
         WorkLoadBean workLoadBean = uploadProductTcb.getWorkLoadBean();
         PlatformWorkloadStatus workloadStatus = workLoadBean.getWorkload_status();
+        String channelId = workLoadBean.getOrder_channel_id();
 
         //如果任务是第一次开始，那么首先要初始化任务
         if (workloadStatus == null ||
@@ -55,9 +63,17 @@ public class UploadProductHandler extends UploadWorkloadHandler{
             }
 
             //设置平台分类
-            //TODO: 暂不考虑店级别的分类映射
+            //进一步初始化上新的数据，放在此处必放在UploadProductService中要好，因为此处已经分线程，速度更快，UploadProductService只做最基本的任务初始化
             CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.getMappingByMainCatId(workLoadBean.getOrder_channel_id(), uploadJob.getCart_id(), masterCId);
-            uploadProductTcb.setCmsMtPlatformMappingModel(cmsMtPlatformMappingModel);
+            workLoadBean.setCmsMtPlatformMappingModel(cmsMtPlatformMappingModel);
+
+            List<String> skus = new ArrayList<>();
+            for (SxProductBean sxProductBean : workLoadBean.getProcessProducts()) {
+                skus.addAll(sxProductBean.getCmsBtProductModel().getSkus().stream().map(CmsBtProductModel_Sku::getSku).collect(Collectors.toList()));
+            }
+            Map<String, Integer> skuInventoryMap = skuInventoryDao.getSkuInventory(channelId, skus);
+            workLoadBean.setSkuInventoryMap(skuInventoryMap);
+
             String platformCId = cmsMtPlatformMappingModel.getPlatformCategoryId();
 
             if (platformCId == null)
@@ -188,11 +204,12 @@ public class UploadProductHandler extends UploadWorkloadHandler{
     }
 
 
-    public UploadProductHandler(UploadJob uploadJob, CmsMtPlatformMappingDao cmsMtPlatformMappingDao, IssueLog issueLog) {
+    public UploadProductHandler(UploadJob uploadJob, CmsMtPlatformMappingDao cmsMtPlatformMappingDao, SkuInventoryDao skuInventoryDao, IssueLog issueLog) {
         super(issueLog);
 
         this.uploadJob = uploadJob;
         this.cmsMtPlatformMappingDao = cmsMtPlatformMappingDao;
+        this.skuInventoryDao = skuInventoryDao;
 
         this.setName(this.getClass().getSimpleName() + "_" + uploadJob.getChannel_id() + "_" + uploadJob.getCart_id());
 

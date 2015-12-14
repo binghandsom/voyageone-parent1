@@ -119,18 +119,20 @@ public class TmallUploadRunState extends PlatformUploadRunState{
     public class TmallContextBuildFields extends PlatformContextBuildFields {
         //自定义属性匹配的上下文
         private TmallContextBuildCustomFields contextBuildCustomFields;
+
+        private Map<String, Field> fieldMap;
         private List<Field> customFields;
         //通过mapping关系匹配的Fields
         private List<Field> mappingFields;
-
         //Darwin 上下文
         private List<Field> darwinFields;
 
         //key->srcUrl
-        private Map<String, UrlStashEntity> srcUrlStashEntityMap;
+        private Map<String, List<UrlStashEntity>> srcUrlStashEntityMap;
 
 
         public TmallContextBuildFields(TmallUploadRunState tmallUploadRunState) {
+            fieldMap = new HashMap<>();
             customFields = new ArrayList<>();
             darwinFields = new ArrayList<>();
             mappingFields = new ArrayList<>();
@@ -144,17 +146,26 @@ public class TmallUploadRunState extends PlatformUploadRunState{
 
         public void clearContext()
         {
+            fieldMap.clear();
             customFields.clear();
             darwinFields.clear();
             mappingFields.clear();
             srcUrlStashEntityMap.clear();
         }
 
+        public Map<String, Field> getFieldMap() {
+            return fieldMap;
+        }
+
+        public void setFieldMap(Map<String, Field> fieldMap) {
+            this.fieldMap = fieldMap;
+        }
+
         public List<Field> getMappingFields() {
             return mappingFields;
         }
 
-        public Map<String, UrlStashEntity> getSrcUrlStashEntityMap() {
+        public Map<String, List<UrlStashEntity>> getSrcUrlStashEntityMap() {
             return srcUrlStashEntityMap;
         }
 

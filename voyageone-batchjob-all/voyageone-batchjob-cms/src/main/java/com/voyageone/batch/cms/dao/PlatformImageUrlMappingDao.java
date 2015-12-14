@@ -26,7 +26,7 @@ public class PlatformImageUrlMappingDao extends BaseDao {
         Map<String, Object> parmMap = new HashMap<>();
         parmMap.put("cartId", cartId);
         parmMap.put("channelId", channelId);
-        parmMap.put("modelId", modelId);
+        parmMap.put("groupId", modelId);
 
         List<ImageUrlMappingModel> resultMap = selectList(Constants.DAO_NAME_SPACE_CMS + "getPlatformImageUrlMap", parmMap);
 

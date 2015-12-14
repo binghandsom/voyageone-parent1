@@ -38,8 +38,11 @@ public class MasterWordParser {
             MasterWord masterWord = (MasterWord) ruleWord;
             String propName = masterWord.getValue();
             Map<String, String> extra = masterWord.getExtra();
-            Object plainPropValueObj = null;
-            Map<String, Object> evaluationContext = evaluationContextStack.get(0);
+            Object plainPropValueObj;
+            Map<String, Object> evaluationContext = null;
+            if (!evaluationContextStack.isEmpty()) {
+                evaluationContext = evaluationContextStack.get(0);
+            }
             if (evaluationContext == null) {
                 plainPropValueObj = cmsBtProductModel.getFields().getAttribute(propName);
             } else {

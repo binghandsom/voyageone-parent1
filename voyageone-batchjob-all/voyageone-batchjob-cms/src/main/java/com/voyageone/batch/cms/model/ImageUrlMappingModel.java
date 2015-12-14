@@ -9,7 +9,7 @@ public class ImageUrlMappingModel {
 
     private String channelId;
 
-    private String modelId;
+    private String groupId;
 
     private String orgImageUrl;
 
@@ -67,11 +67,11 @@ public class ImageUrlMappingModel {
         this.modifier = modifier;
     }
 
-    public String getModelId() {
-        return modelId;
+    public String getGroupId() {
+        return groupId;
     }
 
-    public void setModelId(String modelId) {
-        this.modelId = modelId;
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
     }
 }
