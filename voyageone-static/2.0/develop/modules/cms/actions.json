@@ -33,7 +33,10 @@
     },
     "promotionService": {
       "root": "/cms/promotion/list",
-      "getPromotionList": "getPromotionList"
+      "getPromotionList": "getPromotionList",
+      "insertPromotion": "insertPromotion",
+      "updatePromotion": "updatePromotion",
+      "delPromotion": "delPromotion"
     }
   }
 }
