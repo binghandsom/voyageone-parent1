@@ -22,6 +22,7 @@
     "search": {
       "$searchIndexService": {
         "root": "/cms/search/index/",
+        "init": "init",
         "doSearch": "doSearch"
       }
     },

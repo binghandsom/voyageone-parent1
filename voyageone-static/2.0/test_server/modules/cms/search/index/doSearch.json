@@ -10,12 +10,22 @@
         "status": "在售",
         "platformPath": "https://detail.tmall.hk/hk/item.htm?id=524046119345",
         "numIId": "524046119345",
-        "inventoryDetail": "LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20",
+        "inventoryDetail": [
+          "LDB01-298: 20",
+          "LDB01-298: 20",
+          "LDB01-298: 20",
+          "LDB01-298: 20"
+        ],
         "inventory": "80",
-        "priceDetail": "MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00",
+        "priceDetail": [
+          "MSRP: 1,099.00~2,099.00",
+          "Current Price: 1,099.00~2,099.00"
+        ],
         "finalPrice": "1,099.00~2,099.00",
-        "publishValue": "Publish Time: 2015-11-11 23:59:59",
-        "onSaleValue": "On Sale Time: 2015-11-11 23:59:59",
+        "timeInfo": [
+          "Publish Time: 2015-11-11 23:59:59",
+          "On Sale Time: 2015-11-11 23:59:59"
+        ],
         "publishDate": "2015-11-11",
         "publishTime": "23:59:59",
         "primaryProduct": {
@@ -43,12 +53,22 @@
         "status": "在库",
         "platformPath": "https://detail.tmall.hk/hk/item.htm?id=524046119345",
         "numIId": "524046119345",
-        "inventoryDetail": "LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20",
+        "inventoryDetail": [
+          "LDB01-298: 20",
+          "LDB01-298: 20",
+          "LDB01-298: 20",
+          "LDB01-298: 20"
+        ],
         "inventory": "80",
-        "priceDetail": "MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00",
+        "priceDetail": [
+          "MSRP: 1,099.00~2,099.00",
+          "Current Price: 1,099.00~2,099.00"
+        ],
         "finalPrice": "1,099.00~2,099.00",
-        "publishValue": "Publish Time: 2015-11-11 23:59:59",
-        "onSaleValue": "On Sale Time: 2015-11-11 23:59:59",
+        "timeInfo": [
+          "Publish Time: 2015-11-11 23:59:59",
+          "On Sale Time: 2015-11-11 23:59:59"
+        ],
         "publishDate": "2015-11-11",
         "publishTime": "23:59:59",
         "primaryProduct": {
@@ -76,12 +96,22 @@
         "status": "未上新",
         "platformPath": "https://detail.tmall.hk/hk/item.htm?id=524046119345",
         "numIId": "524046119345",
-        "inventoryDetail": "LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20",
+        "inventoryDetail": [
+          "LDB01-298: 20",
+          "LDB01-298: 20",
+          "LDB01-298: 20",
+          "LDB01-298: 20"
+        ],
         "inventory": "80",
-        "priceDetail": "MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00",
+        "priceDetail": [
+          "MSRP: 1,099.00~2,099.00",
+          "Current Price: 1,099.00~2,099.00"
+        ],
         "finalPrice": "1,099.00~2,099.00",
-        "publishValue": "Publish Time: 2015-11-11 23:59:59",
-        "onSaleValue": "On Sale Time: 2015-11-11 23:59:59",
+        "timeInfo": [
+          "Publish Time: 2015-11-11 23:59:59",
+          "On Sale Time: 2015-11-11 23:59:59"
+        ],
         "publishDate": "2015-11-11",
         "publishTime": "23:59:59",
         "primaryProduct": {
@@ -110,13 +140,14 @@
         "code": "IRQ63F15",
         "statusType": "0",
         "status": "new",
+        "platformPath": "https://detail.tmall.hk/hk/item.htm?id=524046119345",
         "name": "BCBGMAXAZIRA纽扣印花长袖连衣裙IRQ63F15",
         "categoryPath": "珠宝/钻石/翡翠/黄金/彩色宝石/贵重宝石",
         "imagePath": "http://image.sneakerhead.com/is/image/sneakerhead/ONW61G70_Q0X",
         "brand": "Jewelry.com",
-        "inventoryDetail": "LDB01-298-2:20 / LDB01-298-4: 20 / LDB01-298-6:20 / LDB01-298-8: 20",
+        "inventoryDetail": ["LDB01-298-2:20 / LDB01-298-4: 20 / LDB01-298-6:20 / LDB01-298-8: 20"],
         "inventory": "20",
-        "priceDetail": "MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00",
+        "priceDetail": ["MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00"],
         "finalPrice": "1,099.00~2,099.00",
         "sizeChart": "Women",
         "basePropertyList": [
@@ -130,9 +161,11 @@
           }
         ],
         "skuCount": "100",
-        "createValue": "Create Time：2015-11-11 23:59:59",
-        "publishValue": "Publish Time：2015-11-11 23:59:59",
-        "onSaleValue": "On Sale Time：2015-11-11 23:59:59",
+        "timeInfo": [
+          "Create Time：2015-11-11 23:59:59",
+          "Publish Time: 2015-11-11 23:59:59",
+          "On Sale Time: 2015-11-11 23:59:59"
+        ],
         "publishDate": "2015-11-11",
         "publishTime": "23:59:59"
       },
@@ -141,13 +174,14 @@
         "code": "IRQ63F15",
         "statusType": "1",
         "status": "pending",
+        "platformPath": "https://detail.tmall.hk/hk/item.htm?id=524046119345",
         "name": "BCBGMAXAZIRA纽扣印花长袖连衣裙IRQ63F15",
         "categoryPath": "珠宝/钻石/翡翠/黄金/彩色宝石/贵重宝石",
         "imagePath": "http://image.sneakerhead.com/is/image/sneakerhead/ONW61G70_Q0X",
         "brand": "Jewelry.com",
-        "inventoryDetail": "LDB01-298-2:20 / LDB01-298-4: 20 / LDB01-298-6:20 / LDB01-298-8: 20",
+        "inventoryDetail": ["LDB01-298-2:20 / LDB01-298-4: 20 / LDB01-298-6:20 / LDB01-298-8: 20"],
         "inventory": "20",
-        "priceDetail": "MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00",
+        "priceDetail": ["MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00"],
         "finalPrice": "1,099.00~2,099.00",
         "sizeChart": "Women",
         "basePropertyList": [
@@ -161,9 +195,11 @@
           }
         ],
         "skuCount": "100",
-        "createValue": "Create Time：2015-11-11 23:59:59",
-        "publishValue": "Publish Time：2015-11-11 23:59:59",
-        "onSaleValue": "On Sale Time：2015-11-11 23:59:59",
+        "timeInfo": [
+          "Create Time：2015-11-11 23:59:59",
+          "Publish Time: 2015-11-11 23:59:59",
+          "On Sale Time: 2015-11-11 23:59:59"
+        ],
         "publishDate": "2015-11-11",
         "publishTime": "23:59:59"
       },
@@ -172,13 +208,14 @@
         "code": "IRQ63F15",
         "statusType": "2",
         "status": "ready",
+        "platformPath": "https://detail.tmall.hk/hk/item.htm?id=524046119345",
         "name": "BCBGMAXAZIRA纽扣印花长袖连衣裙IRQ63F15",
         "categoryPath": "珠宝/钻石/翡翠/黄金/彩色宝石/贵重宝石",
         "imagePath": "http://image.sneakerhead.com/is/image/sneakerhead/ONW61G70_Q0X",
         "brand": "Jewelry.com",
-        "inventoryDetail": "LDB01-298-2:20 / LDB01-298-4: 20 / LDB01-298-6:20 / LDB01-298-8: 20",
+        "inventoryDetail": ["LDB01-298-2:20 / LDB01-298-4: 20 / LDB01-298-6:20 / LDB01-298-8: 20"],
         "inventory": "20",
-        "priceDetail": "MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00",
+        "priceDetail": ["MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00"],
         "finalPrice": "1,099.00~2,099.00",
         "sizeChart": "Women",
         "basePropertyList": [
@@ -192,9 +229,11 @@
           }
         ],
         "skuCount": "100",
-        "createValue": "Create Time：2015-11-11 23:59:59",
-        "publishValue": "Publish Time：2015-11-11 23:59:59",
-        "onSaleValue": "On Sale Time：2015-11-11 23:59:59",
+        "timeInfo": [
+          "Create Time：2015-11-11 23:59:59",
+          "Publish Time: 2015-11-11 23:59:59",
+          "On Sale Time: 2015-11-11 23:59:59"
+        ],
         "publishDate": "2015-11-11",
         "publishTime": "23:59:59"
       },
@@ -203,13 +242,14 @@
         "code": "IRQ63F15",
         "statusType": "3",
         "status": "approved",
+        "platformPath": "https://detail.tmall.hk/hk/item.htm?id=524046119345",
         "name": "BCBGMAXAZIRA纽扣印花长袖连衣裙IRQ63F15",
         "categoryPath": "珠宝/钻石/翡翠/黄金/彩色宝石/贵重宝石",
         "imagePath": "http://image.sneakerhead.com/is/image/sneakerhead/ONW61G70_Q0X",
         "brand": "Jewelry.com",
-        "inventoryDetail": "LDB01-298-2:20 / LDB01-298-4: 20 / LDB01-298-6:20 / LDB01-298-8: 20",
+        "inventoryDetail": ["LDB01-298-2:20 / LDB01-298-4: 20 / LDB01-298-6:20 / LDB01-298-8: 20"],
         "inventory": "20",
-        "priceDetail": "MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00",
+        "priceDetail": ["MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00"],
         "finalPrice": "1,099.00~2,099.00",
         "sizeChart": "Women",
         "basePropertyList": [
@@ -223,9 +263,11 @@
           }
         ],
         "skuCount": "100",
-        "createValue": "Create Time：2015-11-11 23:59:59",
-        "publishValue": "Publish Time：2015-11-11 23:59:59",
-        "onSaleValue": "On Sale Time：2015-11-11 23:59:59",
+        "timeInfo": [
+          "Create Time：2015-11-11 23:59:59",
+          "Publish Time: 2015-11-11 23:59:59",
+          "On Sale Time: 2015-11-11 23:59:59"
+        ],
         "publishDate": "2015-11-11",
         "publishTime": "23:59:59"
       },
@@ -234,13 +276,14 @@
         "code": "IRQ63F15",
         "statusType": "4",
         "status": "delete",
+        "platformPath": "https://detail.tmall.hk/hk/item.htm?id=524046119345",
         "name": "BCBGMAXAZIRA纽扣印花长袖连衣裙IRQ63F15",
         "categoryPath": "珠宝/钻石/翡翠/黄金/彩色宝石/贵重宝石",
         "imagePath": "http://image.sneakerhead.com/is/image/sneakerhead/ONW61G70_Q0X",
         "brand": "Jewelry.com",
-        "inventoryDetail": "LDB01-298-2:20 / LDB01-298-4: 20 / LDB01-298-6:20 / LDB01-298-8: 20",
+        "inventoryDetail": ["LDB01-298-2:20 / LDB01-298-4: 20 / LDB01-298-6:20 / LDB01-298-8: 20"],
         "inventory": "20",
-        "priceDetail": "MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00",
+        "priceDetail": ["MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00"],
         "finalPrice": "1,099.00~2,099.00",
         "sizeChart": "Women",
         "basePropertyList": [
@@ -254,9 +297,11 @@
           }
         ],
         "skuCount": "100",
-        "createValue": "Create Time：2015-11-11 23:59:59",
-        "publishValue": "Publish Time：2015-11-11 23:59:59",
-        "onSaleValue": "On Sale Time：2015-11-11 23:59:59",
+        "timeInfo": [
+          "Create Time：2015-11-11 23:59:59",
+          "Publish Time: 2015-11-11 23:59:59",
+          "On Sale Time: 2015-11-11 23:59:59"
+        ],
         "publishDate": "2015-11-11",
         "publishTime": "23:59:59"
       }
