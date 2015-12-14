@@ -1,16 +1,16 @@
 package com.voyageone.batch;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
-
-import java.util.logging.Logger;
 
 /**
  * @author jacky.zhu
  */
 public class VoyageOneBatchJobService {
 
-    private static final Logger log = Logger.getLogger(VoyageOneBatchJobService.class.getName());
+    private static final Log log = LogFactory.getLog(VoyageOneBatchJobService.class.getName());
 
     private static final String BATCH_JOB_NAME = "VoyageOne_BatchJob";
 
@@ -22,7 +22,7 @@ public class VoyageOneBatchJobService {
             log.info(BATCH_JOB_NAME + "启动完成......");
         } catch (Exception ex) {
             ex.printStackTrace();
-            log.severe(ex.getMessage());
+            log.info(ex.getMessage());
         }
     }
 

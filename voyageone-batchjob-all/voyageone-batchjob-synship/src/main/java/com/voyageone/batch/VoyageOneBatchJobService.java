@@ -3,8 +3,8 @@
  */
 package com.voyageone.batch;
 
-import com.voyageone.batch.Context;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 
@@ -15,7 +15,7 @@ import org.springframework.context.support.GenericXmlApplicationContext;
  */
 public class VoyageOneBatchJobService {
 
-	private static final Logger log = Logger.getLogger(com.voyageone.batch.VoyageOneBatchJobService.class);
+	private static final Log log = LogFactory.getLog(com.voyageone.batch.VoyageOneBatchJobService.class);
 	
 	private static final String BATCH_JOB_NAME = "VoyageOne_BatchJob";
 	

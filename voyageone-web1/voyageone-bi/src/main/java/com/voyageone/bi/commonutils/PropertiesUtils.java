@@ -1,17 +1,18 @@
 package com.voyageone.bi.commonutils;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Properties;
 import java.util.Map.Entry;
-
-import org.apache.log4j.Logger;
+import java.util.Properties;
 
 public class PropertiesUtils {
 
-    private static Logger logger = Logger.getLogger(PropertiesUtils.class.getName());
+    private static Log logger = LogFactory.getLog(PropertiesUtils.class.getName());
 
     private static final String filePath = "keyvalue.properties";
 
