@@ -666,11 +666,11 @@ public class OmsConstants {
 		// 表格式
 		public final static String TABLE = "<div><span>%s</span>"
 				+ "<table><tr>"
-				+ "<th></th><th>Shop</th><th>OrderNum</th><th>WebID</th><th>ClientOrderID</th><th>ReservationID</th><th>SKU</th><th>ClientSKU</th>"
+				+ "<th></th><th>Shop</th><th>OrderNum</th><th>WebID</th><th>ClientOrderID</th><th>ReservationID</th><th>SKU</th><th>ClientSKU</th><th>ErrorMessage</th>"
 				+ "</tr>%s</table></div>";
 		// 行格式
 		public final static String ROW = "<tr>"
-				+ "<td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td>"
+				+ "<td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td>"
 				+ "</tr>";
 		// 邮件名
 		public final static String SUBJECT = "%s品牌方取消订单一览";

@@ -998,7 +998,8 @@ public class PostSearsOrderService {
 						error.getClientOrderId(),
 						error.getResId(),
 						error.getSku(),
-						error.getClientSku()));
+						error.getClientSku(),
+						error.getErrorMessage()));
 			}
 
 			String count = String.format(OmsConstants.EmailPostSearsOrder.COUNT, errorList.size());
