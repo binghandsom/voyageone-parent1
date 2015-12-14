@@ -18,6 +18,7 @@ public class OrderLookupItem {
     private String status;
     private String statusCode;
     private String cancelReasonCode;
+    private String errorMessage;
     private String inStorePickupStatus;
     private String expectedInStoreDate;
     private int quantity;
@@ -295,5 +296,13 @@ public class OrderLookupItem {
 
     public void setTrackingNumberList(List<OrderLookupItemSub> trackingNumberList) {
         this.trackingNumberList = trackingNumberList;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 }

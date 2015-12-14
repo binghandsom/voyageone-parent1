@@ -105,8 +105,46 @@ public class PostSearsOrderService {
 		for (OrderExtend orderExtendInfo:pushDailySalesListList) {
 			OrderBean createOrderInfo = orderExtendInfo.getOrderOutputInfo();
 
-//			createOrderInfo.getItems().get(0).setItemPrice((float) 11.89);
-//			createOrderInfo.getItems().get(1).setItemPrice((float) 11.89);
+//			for (OrderItem item : createOrderInfo.getItems()) {
+//
+//				if (item.getItemId().equals("04935666000")) {
+//					item.setItemPrice((float)45.22);
+//				}
+//				else if (item.getItemId().equals("00603040000")) {
+//					item.setItemPrice((float)11.89);
+//				}
+//				else if (item.getItemId().equals("00631715000")) {
+//					item.setItemPrice((float)29.74);
+//				}
+//				else if (item.getItemId().equals("00627225000")) {
+//					item.setItemPrice((float)23.79);
+//				}
+//				else if (item.getItemId().equals("00633733000")) {
+//					item.setItemPrice((float)23.79);
+//				}
+//				else if (item.getItemId().equals("00823164000")) {
+//					item.setItemPrice((float)23.79);
+//				}
+//				else if (item.getItemId().equals("00823307000")) {
+//					item.setItemPrice((float)29.74);
+//				}
+//				else if (item.getItemId().equals("00856234000")) {
+//					item.setItemPrice((float)35.69);
+//				}
+//				else if (item.getItemId().equals("00615643000")) {
+//					item.setItemPrice((float)11.89);
+//				}
+//				else if (item.getItemId().equals("00826038000")) {
+//					item.setItemPrice((float)154.63);
+//				}
+//				else if (item.getItemId().equals("04909847000")) {
+//					item.setItemPrice((float)16.66);
+//				}
+//				else if (item.getItemId().equals("04918897000")) {
+//					item.setItemPrice((float)190.39);
+//				}
+//
+//			}
 
 			// 请求XML缓存
 			backupTheXmlFile(createOrderInfo.getOrderReference(), JaxbUtil.convertToXml(createOrderInfo), 0);
@@ -864,6 +902,8 @@ public class PostSearsOrderService {
 
 				}
 
+				transactionManager.commit(status);
+
 //				// 执行结果判定
 //				if (ret) {
 //					transactionManager.commit(status);
@@ -878,6 +918,8 @@ public class PostSearsOrderService {
 //				}
 			}catch (Exception e){
 				transactionManager.rollback(status);
+
+				logger.info("updateSearsTrackingInfo error;size = " + e.toString());
 
 				issueLog.log("updateSearsTrackingInfo",
 						"updateSearsTrackingInfo error;size = " + size,
@@ -914,7 +956,7 @@ public class PostSearsOrderService {
 //			if (orderDetailInfo.isNeedUpdateFlag()) {
 				size = size + 1;
 
-				String updateRecSql = String.format(updateSqlSub, orderDetailInfo.getOrderNumber(), orderDetailInfo.getItemNumber(), orderDetailInfo.getTrackingNumber(), orderDetailInfo.getSalesCheckNumber(), orderDetailInfo.getClientStatus());
+				String updateRecSql = String.format(updateSqlSub, orderDetailInfo.getOrderNumber(), orderDetailInfo.getItemNumber(), StringUtils.null2Space2(orderDetailInfo.getTrackingNumber()), StringUtils.null2Space2(orderDetailInfo.getSalesCheckNumber()), StringUtils.null2Space2(orderDetailInfo.getClientStatus()));
 
 				if (StringUtils.isEmpty(updateSql.toString())) {
 					updateSql.append(updateRecSql);
