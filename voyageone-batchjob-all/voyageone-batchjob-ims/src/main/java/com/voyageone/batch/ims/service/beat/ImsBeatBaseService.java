@@ -279,12 +279,14 @@ public abstract class ImsBeatBaseService extends BaseTaskService {
     private boolean clearOldPic(BeatPicBean beatPicBean, ShopBean shopBean, List<Picture> pictures) throws ApiException {
         Picture picture = pictures.get(0);
         PictureDeleteResponse pictureDeleteResponse = tbPictureService.deletePictures(shopBean, picture.getPictureId());
-        boolean success = pictureDeleteResponse.getSuccess() && StringUtils.isEmpty(pictureDeleteResponse.getSubCode()) && StringUtils.isEmpty(pictureDeleteResponse.getSubMsg());
-
-        if (!success) {
-            beatPicBean.setComment(getResponseErrorMessage(pictureDeleteResponse));
+        // 如果返回为空,有可能是超时,则下次再尝试一次
+        if (pictureDeleteResponse == null) {
+            beatPicBean.setComment("清除图片时出现了未知结果, 稍后将重试.");
+            return false;
         }
-
+        boolean success = pictureDeleteResponse.getSuccess() && StringUtils.isEmpty(pictureDeleteResponse.getSubCode()) && StringUtils.isEmpty(pictureDeleteResponse.getSubMsg());
+        if (!success)
+            beatPicBean.setComment(getResponseErrorMessage(pictureDeleteResponse));
         return success;
     }
 
