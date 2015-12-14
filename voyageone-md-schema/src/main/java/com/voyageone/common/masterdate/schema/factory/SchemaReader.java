@@ -26,27 +26,27 @@ import java.util.Map;
 
 public class SchemaReader {
 
-    public static Map<String, Field> readXmlForMap(File file) throws TopSchemaException {
+    public static Map<String, Field> readXmlForMap(File file) {
         Element rootEle = XmlUtils.getRootElementFromFile(file);
         return readXmlForMap(rootEle);
     }
 
-    public static Map<String, Field> readXmlForMap(String xmlStirng) throws TopSchemaException {
+    public static Map<String, Field> readXmlForMap(String xmlStirng) {
         Element rootEle = XmlUtils.getRootElementFromString(xmlStirng);
         return readXmlForMap(rootEle);
     }
 
-    public static List<Field> readXmlForList(File file) throws TopSchemaException {
+    public static List<Field> readXmlForList(File file) {
         Element rootEle = XmlUtils.getRootElementFromFile(file);
         return readXmlForList(rootEle);
     }
 
-    public static List<Field> readXmlForList(String xmlStirng) throws TopSchemaException {
+    public static List<Field> readXmlForList(String xmlStirng) {
         Element rootEle = XmlUtils.getRootElementFromString(xmlStirng);
         return readXmlForList(rootEle);
     }
 
-    public static List<Field> readXmlForList(Element rootEle) throws TopSchemaException {
+    public static List<Field> readXmlForList(Element rootEle) {
         List fieldList = SchemaFactory.createEmptyFieldList();
         List fieldElmList = XmlUtils.getChildElements(rootEle, "field");
         Iterator i$ = fieldElmList.iterator();
@@ -60,7 +60,7 @@ public class SchemaReader {
         return fieldList;
     }
 
-    public static Map<String, Field> readXmlForMap(Element rootEle) throws TopSchemaException {
+    public static Map<String, Field> readXmlForMap(Element rootEle) {
         HashMap fieldMap = new HashMap();
         List fieldElmList = XmlUtils.getChildElements(rootEle, "field");
         Iterator i$ = fieldElmList.iterator();
@@ -74,7 +74,7 @@ public class SchemaReader {
         return fieldMap;
     }
 
-    public static Field elementToField(Element fieldElm) throws TopSchemaException {
+    public static Field elementToField(Element fieldElm) {
         if(fieldElm == null) {
             return null;
         } else {
@@ -122,7 +122,7 @@ public class SchemaReader {
         }
     }
 
-    private static Rule elementToRule(Element ruleEle, String fieldId) throws TopSchemaException {
+    private static Rule elementToRule(Element ruleEle, String fieldId) {
         if(ruleEle == null) {
             return null;
         } else {
@@ -185,7 +185,7 @@ public class SchemaReader {
         }
     }
 
-    private static DependGroup elementToDependGroup(Element dependGroupEle, String fieldId) throws TopSchemaException {
+    private static DependGroup elementToDependGroup(Element dependGroupEle, String fieldId) {
         if(dependGroupEle == null) {
             return null;
         } else {
@@ -225,7 +225,7 @@ public class SchemaReader {
         }
     }
 
-    private static LabelGroup elementToLabelGroup(Element labelGroupEle, String fieldId) throws TopSchemaException {
+    private static LabelGroup elementToLabelGroup(Element labelGroupEle, String fieldId) {
         if(labelGroupEle == null) {
             return null;
         } else {
@@ -261,7 +261,7 @@ public class SchemaReader {
         }
     }
 
-    private static Option elementToOption(Element optionEle, String fieldId) throws TopSchemaException {
+    private static Option elementToOption(Element optionEle, String fieldId) {
         Option opResult = new Option();
         String displayName = XmlUtils.getAttributeValue(optionEle, "displayName");
         if(StringUtil.isEmpty(displayName)) {
@@ -281,14 +281,14 @@ public class SchemaReader {
         }
     }
 
-    private static Property elementToProperty(Element propertyEle, String fieldId) throws TopSchemaException {
+    private static Property elementToProperty(Element propertyEle, String fieldId) {
         String key = XmlUtils.getAttributeValue(propertyEle, "key");
         String value = XmlUtils.getAttributeValue(propertyEle, "value");
         Property property = new Property(key, value);
         return property;
     }
 
-    private static InputField elementToInputField(Element fieldElm, String fieldId, String fieldName) throws TopSchemaException {
+    private static InputField elementToInputField(Element fieldElm, String fieldId, String fieldName) {
         if(fieldElm == null) {
             return null;
         } else {
@@ -335,7 +335,7 @@ public class SchemaReader {
         }
     }
 
-    private static LabelField elementToLabelField(Element fieldElm, String fieldId, String fieldName) throws TopSchemaException {
+    private static LabelField elementToLabelField(Element fieldElm, String fieldId, String fieldName) {
         if(fieldElm == null) {
             return null;
         } else {
@@ -376,7 +376,7 @@ public class SchemaReader {
         }
     }
 
-    private static MultiInputField elementToMultiInputField(Element fieldElm, String fieldId, String fieldName) throws TopSchemaException {
+    private static MultiInputField elementToMultiInputField(Element fieldElm, String fieldId, String fieldName) {
         if(fieldElm == null) {
             return null;
         } else {
@@ -437,7 +437,7 @@ public class SchemaReader {
         }
     }
 
-    private static SingleCheckField elementToSingleCheckField(Element fieldElm, String fieldId, String fieldName) throws TopSchemaException {
+    private static SingleCheckField elementToSingleCheckField(Element fieldElm, String fieldId, String fieldName) {
         if(fieldElm == null) {
             return null;
         } else {
@@ -501,7 +501,7 @@ public class SchemaReader {
         }
     }
 
-    private static MultiCheckField elementToMultiCheckField(Element fieldElm, String fieldId, String fieldName) throws TopSchemaException {
+    private static MultiCheckField elementToMultiCheckField(Element fieldElm, String fieldId, String fieldName) {
         if(fieldElm == null) {
             return null;
         } else {
@@ -577,7 +577,7 @@ public class SchemaReader {
         }
     }
 
-    private static MultiComplexField elementToMultiComplexField(Element fieldElm, String fieldId, String fieldName) throws TopSchemaException {
+    private static MultiComplexField elementToMultiComplexField(Element fieldElm, String fieldId, String fieldName) {
         if(fieldElm == null) {
             return null;
         } else {
@@ -672,7 +672,7 @@ public class SchemaReader {
         }
     }
 
-    private static ComplexField elementToComplexField(Element fieldElm, String fieldId, String fieldName) throws TopSchemaException {
+    private static ComplexField elementToComplexField(Element fieldElm, String fieldId, String fieldName) {
         if(fieldElm == null) {
             return null;
         } else {

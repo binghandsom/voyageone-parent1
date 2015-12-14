@@ -6,17 +6,6 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import java.util.*;
 
 public class CmsBtProductModel_Field extends BaseMongoMap {
-    public CmsBtProductModel_Field() {
-        if (!this.containsKey("images1")) {
-            setAttribute("images1", new ArrayList<CmsBtProductModel_Field_Image>());
-        }
-        if (!this.containsKey("images2")) {
-            setAttribute("images2", new ArrayList<CmsBtProductModel_Field_Image>());
-        }
-        if (!this.containsKey("images3")) {
-            setAttribute("images3", new ArrayList<CmsBtProductModel_Field_Image>());
-        }
-    }
 
     public String getCode() {
         return (String) getAttribute("code");

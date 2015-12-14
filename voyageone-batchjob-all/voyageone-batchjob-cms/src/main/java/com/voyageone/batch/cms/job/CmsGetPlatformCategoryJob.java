@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
  * @author lewis
  */
 @Component("platformCategoryTask")
-public class PlatformCategoryJob extends BaseTaskJob {
+public class CmsGetPlatformCategoryJob extends BaseTaskJob {
 
     @Autowired
     PlatformCategoryService platformCategoryService;
@@ -23,16 +23,6 @@ public class PlatformCategoryJob extends BaseTaskJob {
     @Override
     protected BaseTaskService getTaskService() {
         return platformCategoryService;
-    }
-
-    public static void main(String[] args) {
-        Context conext = Context.getContext();
-        ApplicationContext ctx = new GenericXmlApplicationContext("applicationContext.xml");
-        conext.putAttribute("springContext", ctx);
-
-        PlatformCategoryService platformCatService = ctx.getBean(PlatformCategoryService.class);
-
-        platformCatService.startup();
     }
 
 }

@@ -16,7 +16,7 @@ angular.module('voyageone.angular.directives', [
   'voyageone.angular.directives.dateModelFormat',
   'voyageone.angular.directives.uiNav',
   'voyageone.angular.directives.vpagination',
-  'voyageone.angular.directives.noData'
+  'voyageone.angular.directives.ifNoRows'
 ]);
 angular.module('voyageone.angular.filters', [
 ]);

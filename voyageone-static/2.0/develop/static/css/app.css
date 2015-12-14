@@ -1713,6 +1713,9 @@ html.bg {
 .text-vo {
   color: #e67e22;
 }
+.text-hs {
+  color: #999;
+}
 a.text-vo:hover,
 a.text-vo:focus {
   color: #bf6516;
@@ -5507,6 +5510,7 @@ a.text-black:hover {
 .mfb-xxxxs{width:40%}
 .mfb-xxxsm{width:50%}
 .hierarchy{padding:8px 4px 8px 4px;background:#fffaf4; border:1px solid #e7dfd4}
+.hierarchy_main{padding:8px 4px 8px 4px;background:#fff; border:1px solid #e7dfd4}
 .avatar {
   position: relative;
   display: block;
@@ -7597,6 +7601,14 @@ a.text-black:hover {
 .attribute_bg{background:#efefef;border-radius: 2px; border-color:#d4cfcf;padding:10px 0px 10px 0px;margin:0;}
 .attribute_top{padding-top:4px;border-top:1px solid #ccc}
 .attribute_top li{padding:0px 0px 4px 0px;color:#666}
+.control-title-bg{
+  margin:2px 4px 6px 4px;
+  padding:1px 0px 1px 10px;
+  background:#f3f3f3;
+  color:#e67e22;
+  border-radius: 2px;
+  border-bottom:1px solid #d6d5d5;
+}
 
 a.btn-main:link {color:#333;text-decoration:underline;}
 a.btn-main:hover {color:#e67e22;text-decoration:underline;}
@@ -8153,7 +8165,7 @@ input:checked + ol > li {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
-.dropdown_table_bk{
-  border-bottom:none;
+.dropdown_table_bk{/*
+  border-bottom:none;*/
   margin-bottom:0px
 }

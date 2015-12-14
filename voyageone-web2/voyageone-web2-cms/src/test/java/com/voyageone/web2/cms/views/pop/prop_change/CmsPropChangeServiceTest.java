@@ -1,5 +1,6 @@
-package com.voyageone.web2.cms.views;
+package com.voyageone.web2.cms.views.pop.prop_change;
 
+import com.voyageone.cms.service.model.CmsMtCommonPropDefModel;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import org.junit.Test;
@@ -9,7 +10,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author gubuchun 15/12/9
@@ -24,7 +24,7 @@ public class CmsPropChangeServiceTest {
 
     @Test
     public void testGetPropOptions() throws Exception {
-        List<JSONObject> resultList = cmsPropChangeService.getPropOptions("001");
+        List<CmsMtCommonPropDefModel> resultList = cmsPropChangeService.getPopOptions("001");
         System.out.println(resultList);
         assert resultList.size() > 0;
     }
@@ -35,11 +35,11 @@ public class CmsPropChangeServiceTest {
         JSONArray codes = new JSONArray();
         codes.add("100001");
         codes.add("100002");
-        params.put("channelId","001");
-        params.put("propId","test1");
-        params.put("propValue","ng");
-        params.put("codes",codes);
-        cmsPropChangeService.savePropOptions(params);
+        params.put("channelId", "001");
+        params.put("propId", "test1");
+        params.put("propValue", "ok");
+        params.put("codes", codes);
+        cmsPropChangeService.setProductFields(params, "aa");
         assert true;
     }
 

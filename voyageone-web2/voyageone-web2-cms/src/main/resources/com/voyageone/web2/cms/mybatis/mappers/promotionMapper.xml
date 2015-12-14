@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.web2.cms.sql">
+    <resultMap id="PromotionMap" type="com.voyageone.web2.cms.model.CmsBtPromotionModel" >
+        <id column="promotion_id" property="promotionId" jdbcType="INTEGER" />
+        <result column="channel_id" property="channelId" jdbcType="VARCHAR" />
+        <result column="cart_id" property="cartId" jdbcType="INTEGER" />
+        <result column="promotion_status" property="promotionStatus" jdbcType="BOOLEAN"/>
+        <result column="promotion_name" property="promotionName" jdbcType="VARCHAR" />
+        <result column="pre_period_start" property="prePeriodStart" jdbcType="VARCHAR" />
+        <result column="pre_period_end" property="prePeriodEnd" jdbcType="VARCHAR" />
+        <result column="activity_start" property="activityStart" jdbcType="VARCHAR" />
+        <result column="activity_end" property="activityEnd" jdbcType="VARCHAR" />
+        <result column="tejiabao_id" property="tejiabaoId" jdbcType="VARCHAR" />
+        <result column="promotion_type" property="promotionType" jdbcType="VARCHAR" />
+        <result column="created" property="created" jdbcType="TIMESTAMP" />
+        <result column="creater" property="creater" jdbcType="VARCHAR" />
+        <result column="modified" property="modified" jdbcType="TIMESTAMP" />
+        <result column="modifier" property="modifier" jdbcType="VARCHAR" />
+        <result column="cartName" property="cartName" jdbcType="VARCHAR" />
+    </resultMap>
+    <select id="select_promotion_list" resultMap="PromotionMap" parameterType="HashMap" >
+        select
+              a.promotion_id,
+              a.channel_id,
+              a.cart_id,
+              a.promotion_status,
+              a.promotion_name,
+              a.pre_period_start,
+              a.pre_period_end,
+              a.activity_start,
+              a.activity_end,
+              a.tejiabao_id,
+              a.promotion_type,
+              a.created,
+              a.creater,
+              a.modified,
+              a.modifier,
+              b.name as cartName
+        from voyageone_cms2.cms_bt_promotion a left join ct_cart b on a.cart_id = b.cart_id
+        where
+            a.channel_id = #{channelId}
+          <if test="promotionName != null and promotionName != ''">
+              and a.promotion_name LIKE '%${promotionName}%'
+          </if>
+        <if test="cartId != null and cartId != ''">
+            and a.cart_id = #{cartId,jdbcType=INTEGER}
+        </if>
+        <if test="promotionType != null and promotionType != ''" >
+           and a.promotion_type =  #{promotionType,jdbcType=VARCHAR}
+        </if>
+        <if test="createdStart != null and createdStart != ''">
+            and a.created >=   #{createdStart,jdbcType=VARCHAR}
+        </if>
+        <if test="createdEnd != null and createdEnd != ''">
+            and  #{createdEnd,jdbcType=VARCHAR} >=  a.created
+        </if>
+    </select>
+</mapper>

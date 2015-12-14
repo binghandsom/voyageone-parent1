@@ -1,6 +1,5 @@
 package com.voyageone.batch.cms.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
@@ -14,7 +13,6 @@ import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformMappingDao;
 import com.voyageone.cms.service.model.*;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.masterdate.schema.Util.StringUtil;
-import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.option.Option;
@@ -194,7 +192,6 @@ public class CmsPlatformMappingService extends BaseTaskService {
                 for (Option option : ((OptionsField) field).getOptions()) {
                     optionMapping.put(option.getValue(), option.getValue());
                 }
-                ruleExpression.addRuleWord(masterWord);
                 singleMappingBean.setExpression(ruleExpression);
                 mapping = singleMappingBean;
                 break;
@@ -239,7 +236,7 @@ public class CmsPlatformMappingService extends BaseTaskService {
         complexMappingBean.setMasterPropId(null);
         List<MappingBean> subMappings = new ArrayList<>();
         complexMappingBean.setSubMappings(subMappings);
-        for (int i = 1; i < 6; i++) {
+        for (int i = 0; i < 5; i++) {
             RuleExpression imageIndexExpression = new RuleExpression();
             imageIndexExpression.addRuleWord(new TextWord(i + ""));
 
@@ -249,7 +246,7 @@ public class CmsPlatformMappingService extends BaseTaskService {
             CustomWord productImageWord = new CustomWord(new CustomWordValueGetMainProductImages(null, imageTemplateExpression, imageIndexExpression, imageTypeExpression, null));
             RuleExpression productImageExpression = new RuleExpression();
             productImageExpression.addRuleWord(productImageWord);
-            subMappings.add(new SingleMappingBean("product_image" + i, productImageExpression));
+            subMappings.add(new SingleMappingBean("product_image_" + i, productImageExpression));
         }
         return complexMappingBean;
     }

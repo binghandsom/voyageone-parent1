@@ -1,18 +1,15 @@
-package com.voyageone.web2.cms.views;
+package com.voyageone.web2.cms.views.pop.prop_change;
 
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
-import net.minidev.json.JSONArray;
-import net.minidev.json.JSONObject;
+import com.voyageone.web2.cms.CmsUrlConstants.PROP;
+import com.voyageone.cms.service.model.CmsMtCommonPropDefModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpSession;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +20,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(
-        value  = "/cms/pop/prop_change/",
+        value  = PROP.CHANGE.ROOT,
         method = RequestMethod.POST
 )
 public class CmsPropChangeController extends CmsController {
@@ -31,16 +28,23 @@ public class CmsPropChangeController extends CmsController {
     @Autowired
     private CmsPropChangeService propChangeService;
 
-    @RequestMapping("init")
-    public AjaxResponse init() {
+    /**
+     * 获取pop画面options.
+     */
+    @RequestMapping(PROP.CHANGE.GET_POP_OPTIONS)
+    public AjaxResponse getPopOptions(){
         String channel_id = getUser().getSelChannelId();
-        List<JSONObject> result = propChangeService.getPropOptions(channel_id);
+        List<CmsMtCommonPropDefModel> result = propChangeService.getPopOptions(channel_id);
         return success(result);
     }
 
-    @RequestMapping("save")
-    public AjaxResponse save(@RequestBody JSONObject params) {
-        propChangeService.savePropOptions(params);
+    /**
+     * 批量修改属性.
+     */
+    @RequestMapping(PROP.CHANGE.SET_PRODUCT_FIELDS)
+    public AjaxResponse setProductFields(@RequestBody Map<String, Object> params) {
+        String user_name = getUser().getUserName();
+        propChangeService.setProductFields(params, user_name);
         return success(true);
     }
 }
