@@ -3,20 +3,17 @@ package com.voyageone.web2.cms.views.pop.prop_change;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.model.CmsBtProductModel_Field;
 import com.voyageone.common.configs.TypeChannel;
-import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.OptionsField;
 import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.dao.CmsMtCommonPropDefDao;
-import com.voyageone.web2.cms.model.CmsMtCommonPropDefModel;
+import com.voyageone.cms.service.model.CmsMtCommonPropDefModel;
 import net.minidev.json.JSONArray;
-import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
