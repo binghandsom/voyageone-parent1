@@ -14,11 +14,9 @@
 
     <modules>
         <module>voyageone-com</module>
-        <module>voyageone-webservice</module>
+        <module>voyageone-wsdl1</module>
         <module>voyageone-release</module>
         <module>voyageone-batchjob-all</module>
-        <module>voyageone-webservice-synship</module>
-        <module>voyageone-wsdl-all</module>
         <module>voyageone-web1</module>
         <module>voyageone-web2</module>
         <module>voyageone-components</module>
