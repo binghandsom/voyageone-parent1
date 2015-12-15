@@ -72,9 +72,8 @@ public class FeedToCmsService {
 
         CmsMtFeedCategoryTreeModel category = cmsMtFeedCategoryTreeDao.selectFeedCategory(channelId);
 
-        return JsonPath.parse(category.getCategoryTree()).read("$..child[?(@.isChild == 1)]",
-                new TypeRef<List<CmsFeedCategoryModel>>() {
-                });
+        return JsonPath.parse(category.getCategoryTree()).read("$..child[?(@.isChild == 1)]", new TypeRef<List<CmsFeedCategoryModel>>() {
+        });
     }
 
     /**
