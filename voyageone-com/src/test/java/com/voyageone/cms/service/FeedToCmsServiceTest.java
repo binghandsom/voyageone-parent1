@@ -1,63 +1,51 @@
 package com.voyageone.cms.service;
 
+import com.voyageone.cms.service.model.CmsFeedCategoryModel;
 import com.voyageone.cms.service.model.CmsMtFeedCategoryTreeModel;
-import com.voyageone.common.util.JsonUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import static java.util.stream.Collectors.toList;
 
 /**
- * Created by james.li on 2015/11/26.
+ * @author james.li, 2015/11/26.
+ * @author Jonas, 2015-12-12.
+ * @version 2.0.1
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:applicationContext.xml")
 public class FeedToCmsServiceTest {
+
     @Autowired
     FeedToCmsService feedToCmsService;
+
     @Test
     public void testGetFeedCategory() throws Exception {
-//        CmsMtFeedCategoryTreeModel ret = feedToCmsService.getFeedCategory("010");
-//        System.out.println(JsonUtil.getJsonString(ret));
+
+        CmsMtFeedCategoryTreeModel ret = feedToCmsService.getFeedCategory("013");
+
+        assert ret.getCategoryTree().size() > 0;
+
+        assert ret.getCategoryTree().get(0).getChild().size() > 0;
     }
 
     @Test
-    public void testSetFeedCategory() throws Exception {
-        List<Map> tree = new ArrayList<>();
-        Map o = new HashMap<>();
+    public void testGetFinallyCategories() throws Exception {
 
-        List<Map> child = new ArrayList<>();
-        Map b = new HashMap();
-        b.put("category","dd");
-        child.add(b);
-        Map c = new HashMap();
-        c.put("category", "c");
-        child.add(c);
-        o.put("ategory","a");
-        o.put("child",child);
-        tree.add(o);
+        List<CmsFeedCategoryModel> finallyCategories = feedToCmsService.getFinallyCategories("013");
 
-//        feedToCmsService.setFeedCategory("012",tree);
-    }
+        assert finallyCategories.size() > 1;
 
-    @Test
-    public void testFindCategory() throws Exception {
-//        CmsMtFeedCategoryTreeModel ret = feedToCmsService.getFeedCategory("013");
-//        Map child =  feedToCmsService.findCategory(ret, "Home-Kitchen");
-//        Map child =  feedToCmsService.findCategory(ret.getCategoryTree(), "Clothing-Kids' Apparel-Boys");
-    }
+        List<Integer> isChildList = finallyCategories.stream().map(CmsFeedCategoryModel::getIsChild).distinct().collect(toList());
 
-    @Test
-    public void testAddCategory() throws Exception {
-//        CmsMtFeedCategoryTreeModel tree = feedToCmsService.getFeedCategory("013");
-//        feedToCmsService.addCategory(tree.getCategoryTree(),"Clothing-Kids' Apparel-Boys");
-//        feedToCmsService.setFeedCategory(tree);
+        assert isChildList.size() == 1;
+
+        assert isChildList.get(0).equals(1);
     }
 
     @Test
@@ -126,12 +114,5 @@ public class FeedToCmsServiceTest {
 //
 //        products.add(p2);
 //        feedToCmsService.updateProduct("010",products);
-
-    }
-
-    @Test
-    public void testGetFinallyCategories() throws Exception {
-        List<Map<String,Object>> ret = feedToCmsService.getFinallyCategories("013");
-
     }
 }
