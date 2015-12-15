@@ -1,6 +1,5 @@
 package com.voyageone.cms.service.dao.mongodb;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.voyageone.base.dao.mongodb.BaseMongoDao;
 import com.voyageone.cms.service.model.CmsMtFeedCategoryTreeModel;
 import org.springframework.stereotype.Repository;
@@ -23,10 +22,5 @@ public class CmsMtFeedCategoryTreeDao extends BaseMongoDao {
     public CmsMtFeedCategoryTreeModel selectFeedCategory(String channelId) {
         String query = "{\"channelId\":\"" + channelId + "\"}";
         return mongoTemplate.findOne(query, CmsMtFeedCategoryTreeModel.class, collectionName);
-    }
-
-    public JsonNode selectFeedCategoryNode(String channelId) {
-        String query = "{\"channelId\":\"" + channelId + "\"}";
-        return mongoTemplate.findOne(query, JsonNode.class, collectionName);
     }
 }

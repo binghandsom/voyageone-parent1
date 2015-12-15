@@ -1,6 +1,5 @@
 package com.voyageone.cms.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.TypeRef;
@@ -71,9 +70,11 @@ public class FeedToCmsService {
      */
     public List<CmsFeedCategoryModel> getFinallyCategories(String channelId) {
 
-        JsonNode category = cmsMtFeedCategoryTreeDao.selectFeedCategoryNode(channelId);
+        CmsMtFeedCategoryTreeModel category = cmsMtFeedCategoryTreeDao.selectFeedCategory(channelId);
 
-        return JsonPath.parse(category).read("$..child[?(@.isChild == 1)]", new TypeRef<List<CmsFeedCategoryModel>>() {});
+        return JsonPath.parse(category.getCategoryTree()).read("$..child[?(@.isChild == 1)]",
+                new TypeRef<List<CmsFeedCategoryModel>>() {
+                });
     }
 
     /**
@@ -255,8 +256,7 @@ public class FeedToCmsService {
     private void updateFeedCategoryAttribute(String channelId, Map<String, List<String>> attribute, String category) {
 
         CmsMtFeedCategoryTreeModel categoryTree = cmsMtFeedCategoryTreeDao.selectFeedCategory(channelId);
-        List<CmsFeedCategoryModel> tree = categoryTree.getCategoryTree();
-        CmsFeedCategoryModel node = findCategory(tree, category);
+        CmsFeedCategoryModel node = findCategory(categoryTree.getCategoryTree(), category);
 
         if (node == null)
             throw new BusinessException(null, String.format("can`t find any category by \"%s\"", category));
