@@ -233,6 +233,10 @@ public class SuperFeedJEBean {
 	private String Attribute95Value;
 	private String Attribute96Name;
 	private String Attribute96Value;
+	private String attribute97Name;
+	private String attribute97Value;
+	private String attribute98Name;
+	private String attribute98Value;
 
 	public String getAuctionTitle() {
 		return AuctionTitle;
@@ -1591,5 +1595,37 @@ public class SuperFeedJEBean {
 
 	public void setAttribute96Value(String attribute96Value) {
 		Attribute96Value = attribute96Value;
+	}
+
+	public void setAttribute97Name(String attribute97Name) {
+		this.attribute97Name = attribute97Name;
+	}
+
+	public String getAttribute97Name() {
+		return attribute97Name;
+	}
+
+	public void setAttribute97Value(String attribute97Value) {
+		this.attribute97Value = attribute97Value;
+	}
+
+	public String getAttribute97Value() {
+		return attribute97Value;
+	}
+
+	public void setAttribute98Name(String attribute98Name) {
+		this.attribute98Name = attribute98Name;
+	}
+
+	public String getAttribute98Name() {
+		return attribute98Name;
+	}
+
+	public void setAttribute98Value(String attribute98Value) {
+		this.attribute98Value = attribute98Value;
+	}
+
+	public String getAttribute98Value() {
+		return attribute98Value;
 	}
 }

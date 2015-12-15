@@ -266,6 +266,11 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
             updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE_RMB, updating.getCps_cn_price_rmb());
             updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_LONG_DESCRIPTION, updating.getPe_long_description());
 
+            String strSyncFlg = Feed.getVal1(channel, FeedEnums.Name.sync_final_rmb);
+            if (Boolean.valueOf(strSyncFlg)) {
+                updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE_FINAL_RMB, updating.getCps_cn_price_final_rmb());
+            }
+
             String separator = CmsConstants.FEED_IO_UPDATEFIELDS_IMAGE_SPLIT;
             List<ImageBean> imageBeanList = updating.getImages();
             if (imageBeanList != null) {
@@ -299,6 +304,11 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
 
             if (!updating.getPe_long_description().equals(newProduct.getPe_long_description())) {
                 updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_LONG_DESCRIPTION, newProduct.getPe_long_description());
+            }
+
+            String strSyncFlg = Feed.getVal1(channel, FeedEnums.Name.sync_final_rmb);
+            if (Boolean.valueOf(strSyncFlg) && !updating.getCps_cn_price_final_rmb().equals(newProduct.getCps_cn_price_final_rmb())) {
+                updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE_FINAL_RMB, newProduct.getCps_cn_price_final_rmb());
             }
 
             String separator = CmsConstants.FEED_IO_UPDATEFIELDS_IMAGE_SPLIT;

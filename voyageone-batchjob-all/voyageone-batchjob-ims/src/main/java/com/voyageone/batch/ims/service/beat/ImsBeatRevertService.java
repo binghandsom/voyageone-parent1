@@ -65,7 +65,6 @@ public class ImsBeatRevertService extends ImsBeatBaseService {
     private Map<Integer, String> getOrgImageUrl(ShopBean shopBean, BeatPicBean beatPicBean, String category_tid, List<TaskControlBean> taskControlList) {
         // 现根据位置获取 CMS 的图片信息
         List<ImsBeatImageInfo> imageInfoList = imsBeatPicDao.getImageInfo(beatPicBean);
-
         if (imageInfoList == null) return null;
 
         Map<Integer, String> tbImageUrlMap = new HashMap<>();

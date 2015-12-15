@@ -1,12 +1,19 @@
 {
-  "/cms/xxx": {
-    "templateUrl": "views/home.html",
-    "controller": "homeController",
-    "controllerUrl": "views/home.ctrl"
+  "/": {
+    "hash": "/",
+    "templateUrl": "home/home.html",
+    "controllerUrl": "views/cms/home/home.ctl"
   },
-  "/cms/yyy": {
-    "templateUrl": "views/user.html",
-    "controller": "userController",
-    "controllerUrl": "views/user.ctrl"
+  "category": {
+    "category": {
+      "hash": "/category/:cid",
+      "templateUrl": "category/category.tpl.html",
+      "controllerUrl": "views/cms/category/category.ctl"
+    },
+    "product": {
+      "hash": "/product/:pid",
+      "templateUrl": "category/product.tpl.html",
+      "controllerUrl": "views/cms/category/product.ctl"
+    }
   }
 }

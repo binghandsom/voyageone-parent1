@@ -150,8 +150,13 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 
         CsvReader reader;
         try {
-            reader = new CsvReader(new FileInputStream(Feed.getVal1(ChannelConfigEnums.Channel.JEWELRY.getId(), FeedEnums.Name.feed_ftp_localpath) + "/"
-                    + Feed.getVal1(ChannelConfigEnums.Channel.JEWELRY.getId(), FeedEnums.Name.file_id)), '\t', Charset.forName(Feed.getVal1(ChannelConfigEnums.Channel.JEWELRY.getId(), FeedEnums.Name.feed_ftp_file_coding)));
+            String fileName = Feed.getVal1(ChannelConfigEnums.Channel.JEWELRY.getId(), FeedEnums.Name.file_id);
+            String filePath = Feed.getVal1(ChannelConfigEnums.Channel.JEWELRY.getId(), FeedEnums.Name.feed_ftp_localpath);
+            String fileFullName = String.format("%s/%s", filePath, fileName);
+
+            String encode = Feed.getVal1(ChannelConfigEnums.Channel.JEWELRY.getId(), FeedEnums.Name.feed_ftp_file_coding);
+
+            reader = new CsvReader(new FileInputStream(fileFullName), '\t', Charset.forName(encode));
 
             // Head读入
             reader.readHeaders();
@@ -386,7 +391,13 @@ public class CmsGetSuperFeedService extends BaseTaskService {
                 superfeedjebean.setAttribute95Name(reader.get(i++));
                 superfeedjebean.setAttribute95Value(reader.get(i++));
                 superfeedjebean.setAttribute96Name(reader.get(i++));
-                superfeedjebean.setAttribute96Value(reader.get(i));
+                superfeedjebean.setAttribute96Value(reader.get(i++));
+
+                // 97 / 98 (2015-12-03 16:22:59 - jonas add)
+                superfeedjebean.setAttribute97Name(reader.get(i++));
+                superfeedjebean.setAttribute97Value(reader.get(i++));
+                superfeedjebean.setAttribute98Name(reader.get(i++));
+                superfeedjebean.setAttribute98Value(reader.get(i));
 
                 superfeed.add(superfeedjebean);
             }
@@ -741,7 +752,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 
             boolean isPostSuccess = true;
 
-            // CategoryBean ModelBean ProductBean 以Category单位
+            // CategoryModel ModelBean ProductBean 以Category单位
             List<CategoryBean> categoryBeans = new ArrayList<>();
             List<ModelBean> modelBeans = new ArrayList<>();
 
@@ -1064,10 +1075,6 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 
             if (!productBean.getPe_long_description().equals(productBeans_full.get(0).getPe_long_description())) {
                 updatefields.put(CmsConstants.FEED_IO_UPDATEFIELDS_LONG_DESCRIPTION, productBean.getPe_long_description());
-            }
-
-            if (!productBean.getCps_cn_price_final_rmb().equals(productBeans_full.get(0).getCps_cn_price_final_rmb())) {
-                updatefields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE_FINAL_RMB, productBean.getCps_cn_price_final_rmb());
             }
 
             // image

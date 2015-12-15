@@ -78,7 +78,7 @@ public class SearsAnalysisService extends BaseTaskService {
 //        clearLastData();
 //
 //        // 取得feedList
-        getSearsFeedList();
+//        getSearsFeedList();
 //
 //        // 取得feed数据
 //        getSearsFeedData();
@@ -87,8 +87,8 @@ public class SearsAnalysisService extends BaseTaskService {
 //        transformer.new Context(SEARS, this).transform();
         $info("数据处理阶段结束");
 
-//        insertService.new Context(SEARS).postNewProduct();
-        updateService.new Context(SEARS).postUpdatedProduct();
+        insertService.new Context(SEARS).postNewProduct();
+//        updateService.new Context(SEARS).postUpdatedProduct();
     }
 
     /**

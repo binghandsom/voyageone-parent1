@@ -205,25 +205,26 @@ abstract class BcbgWsdlBase extends BaseTaskService {
                 throw new BusinessException("没有找到 MATKL_ATT1 ! 无法计算价格 !");
         }
 
-        int iMsrp = calePrice(msrp, duty);
-        int iPrice = calePrice(price, duty);
+        // 先计算 rmb 单位的 msrp (已格式化)
+        BigDecimal iMsrp = toRmb(msrp, duty);
+        // 计算 usd 单位下, msrp 和 price 的比例
+        BigDecimal discount = price.divide(msrp, 2, BigDecimal.ROUND_HALF_DOWN);
 
-        productBean.setCps_cn_price(String.valueOf(iMsrp));
-        productBean.setCps_cn_price_rmb(String.valueOf(iPrice));
-        productBean.setCps_cn_price_final_rmb(String.valueOf(iPrice));
+        productBean.setCps_cn_price(iMsrp.toString());
+        productBean.setCps_cn_price_rmb(iMsrp.multiply(discount).setScale(0, BigDecimal.ROUND_DOWN).toString());
+        productBean.setCps_cn_price_final_rmb(iMsrp.multiply(discount).setScale(0, BigDecimal.ROUND_DOWN).toString());
 
         // 计算完成后去除临时使用的 type 内容
         productBean.setP_product_type(Constants.EmptyString);
     }
 
-    private int calePrice(BigDecimal bigDecimal, BigDecimal duty) {
+    private BigDecimal toRmb(BigDecimal bigDecimal, BigDecimal duty) {
         return bigDecimal
                 .multiply(fixed_exchange_rate)
                 .divide(duty, BigDecimal.ROUND_DOWN)
                 .setScale(0, BigDecimal.ROUND_DOWN)
                 .divide(TEN, BigDecimal.ROUND_DOWN)
-                .multiply(TEN)
-                .intValue();
+                .multiply(TEN);
     }
 
     protected String clearSpecialSymbol(String name) {
