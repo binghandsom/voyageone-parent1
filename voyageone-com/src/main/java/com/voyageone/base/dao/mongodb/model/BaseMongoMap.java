@@ -9,7 +9,7 @@ import java.util.Map;
 public class BaseMongoMap<K, V> extends LinkedHashMap<K, V> implements Map<K, V> {
 
     @SuppressWarnings("unchecked")
-    public <T> T getAttribute(K key) {
+    protected  <T> T getAttribute(K key) {
         if (key == null) {
             return null;
         } else {
@@ -17,7 +17,7 @@ public class BaseMongoMap<K, V> extends LinkedHashMap<K, V> implements Map<K, V>
         }
     }
 
-    public void setAttribute(K key, V value) {
+    protected void setAttribute(K key, V value) {
         if (value == null) {
             super.remove(key);
         } else {
