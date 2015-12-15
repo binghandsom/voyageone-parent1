@@ -10,7 +10,19 @@
     <artifactId>voyageone-wsc1-magento</artifactId>
     <version>${voyageone.wsc1.magento.version}</version>
     <dependencies>
-
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-com</artifactId>
+            <version>${voyageone.common.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-adb</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-java2wsdl</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <finalName>voyageone-wsc1-magento</finalName>
