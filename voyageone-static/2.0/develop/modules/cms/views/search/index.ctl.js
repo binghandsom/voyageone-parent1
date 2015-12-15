@@ -18,11 +18,18 @@ define([
             "productList": [1]
         };
 
+        $scope.initialize = initialize;
         $scope.clear = clear;
         $scope.search = search;
         $scope.export = exportFile;
         $scope.getGroupList = getGroupList;
         $scope.getProductList = getProductList;
+
+        function initialize () {
+            searchIndexService.init().then(function (res) {
+                $scope.vm.masterData = res.data;
+            })
+        }
 
         function clear () {
             $scope.vm.searchInfo = {};

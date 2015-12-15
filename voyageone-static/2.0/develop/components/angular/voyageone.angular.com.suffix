@@ -22,7 +22,8 @@ angular.module('voyageone.angular.directives', [
 angular.module('voyageone.angular.filters', [
 ]);
 angular.module('voyageone.angular.controllers', [
-  'voyageone.angular.controllers.datePicker'
+  'voyageone.angular.controllers.datePicker',
+  'voyageone.angular.controllers.showPopover'
 ]);
 return angular.module('voyageone.angular', [
   'voyageone.angular.services',

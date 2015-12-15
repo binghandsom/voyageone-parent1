@@ -3,9 +3,9 @@
  */
 
 define([
-    'angularAMD'
-], function (angularAMD) {
-    angularAMD
+    'cms'
+], function (cms) {
+    cms
         .constant('popActions', {
             "column_define": {
                 "templateUrl": "views/pop/column_define/index.tpl.html",

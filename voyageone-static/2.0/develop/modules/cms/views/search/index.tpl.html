@@ -1,4 +1,4 @@
-<div class="wrapper-md">
+<div class="wrapper-md" ng-init="initialize()">
 	<accordion class="vo_accordion vo_attr" close-others="oneAtATime">
 		<accordion-group is-open="status.open">
 			<accordion-heading>
@@ -133,7 +133,7 @@
 							<div class="col-sm-8">
 								<div class="col-sm-5">
 									<select class="form-control" ng-model="vm.searchInfo.sortOneName"
-											ng-options="sortOne.id as sortOne.name for brand in vm.masterData.sortList">
+											ng-options="sortOne.id as sortOne.name for sortOne in vm.masterData.sortList">
 									</select>
 								</div>
 								<div class="col-sm-3 text-right">
@@ -154,7 +154,7 @@
 							<div class="col-sm-8">
 								<div class="col-sm-5">
 									<select class="form-control" ng-model="vm.searchInfo.sortTwoName"
-											ng-options="sortOne.id as sortOne.name for brand in vm.masterData.sortList">
+											ng-options="sortTwo.id as sortTwo.name for sortTwo in vm.masterData.sortList">
 									</select>
 								</div>
 								<div class="col-sm-3 text-right">
@@ -175,7 +175,7 @@
 							<div class="col-sm-8">
 								<div class="col-sm-5">
 									<select class="form-control" ng-model="vm.searchInfo.sortThreeName"
-											ng-options="sortOne.id as sortOne.name for brand in vm.masterData.sortList">
+											ng-options="sortThree.id as sortThree.name for sortThree in vm.masterData.sortList">
 									</select>
 								</div>
 								<div class="col-sm-3 text-right">
@@ -254,13 +254,13 @@
 										<span class="label m-r-lg m-l" ng-class="{'label-success-new': groupInfo.statusType == '1','label-yellow-new': groupInfo.statusType == '2', 'label-danger-new': groupInfo.statusType == '0'}">
 											&nbsp;{{groupInfo.status}}&nbsp;</span>
 										<span class="m-r-lg">{{'TXT_NUMBER_IID' | translate}}&nbsp;
-											<a ng-href="groupInfo.platformPath" target="_blank" class="text-u-l" ng-bind="groupInfo.numIId"></a>
+											<a ng-href="{{groupInfo.platformPath}}" target="_blank" class="text-u-l" ng-bind="groupInfo.numIId"></a>
 										</span>&nbsp;
 										<span>{{'TXT_GROUP_NAME' | translate}}&nbsp;
 											<a href="#/group/list/{{groupInfo.id}}" target="_blank" class="text-u-l" ng-bind="groupInfo.primaryProduct.name"></a>
 										</span>
 								</td>
-								<td colspan="6" class="text-right">{{'TXT_CATEGORY' | translate}}&nbsp;{{groupInfo.primaryProduct.categoryPath}}</td>
+								<td colspan="2" class="text-right">{{'TXT_CATEGORY' | translate}}&nbsp;{{groupInfo.primaryProduct.categoryPath}}</td>
 							</tr>
 							<tr>
 								<td colspan="3" class="mfb-xxxs">
@@ -273,10 +273,10 @@
 									</div>
 								</td>
 								<td class="mfb-xxt text-center">
-									<button popover="{{groupInfo.inventoryDetail}}" popover-title="{{'TXT_INVENTORY' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{groupInfo.inventory}}</button>
+									<button ng-controller="showPopoverCtrl" popover-html="showInfo({{groupInfo.inventoryDetail}})" popover-title="{{'TXT_INVENTORY' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{groupInfo.inventory}}</button>
 								</td>
 								<td class="mfb-xxt text-center">
-									<button popover="{{groupInfo.priceDetail}}" popover-title="{{'TXT_FINAL_PRICE' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{groupInfo.finalPrice}}</button>
+									<button ng-controller="showPopoverCtrl" popover-html="showInfo({{groupInfo.priceDetail}})" popover-title="{{'TXT_FINAL_PRICE' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{groupInfo.finalPrice}}</button>
 								</td>
 								<td class="mfb-xxt text-left">{{groupInfo.primaryProduct.brand}}</td>
 								<td class="mfb-xxxs text-left">
@@ -287,7 +287,8 @@
 									</div>
 								</td>
 								<td class="mfb-xxt text-left">
-									<small popover="{{groupInfo.publishValue}}&nbsp;{{groupInfo.onSaleValue}}" popover-trigger="mouseenter" popover-placement="left">
+									<!--<small popover-html="{{groupInfo.publishValue}}<br>{{groupInfo.onSaleValue}}" popover-trigger="mouseenter" popover-placement="left">-->
+									<small ng-controller="showPopoverCtrl" popover-html="showInfo({{groupInfo.timeInfo}})" popover-trigger="mouseenter" popover-placement="left">
 										<div class="table_main">
 											<ul>
 												<li>{{'TXT_PUBLISH_TIME' | translate}}</li>
@@ -337,13 +338,13 @@
 										<span class="label m-r-lg m-l" ng-class="{'label-yellow-new': productInfo.statusType == '1','label-info': productInfo.statusType == '2', 'label-primary': productInfo.statusType == '3', 'label-danger-new': productInfo.statusType == '4', 'label-success-new': productInfo.statusType == '0'}">
 											&nbsp;{{productInfo.status}}&nbsp;</span>
 										<span class="m-r-lg">{{'TXT_PRODUCT_CODE' | translate}}&nbsp;
-											<a ng-href="productInfo.platformPath" target="_blank" class="text-u-l" ng-bind="productInfo.code"></a>
+											<a ng-href="{{productInfo.platformPath}}" target="_blank" class="text-u-l" ng-bind="productInfo.code"></a>
 										</span>&nbsp;
 										<span>{{'TXT_PRODUCT_NAME' | translate}}&nbsp;
 											<a href="#/product/list/{{productInfo.id}}" target="_blank" class="text-u-l" ng-bind="productInfo.name"></a>
 										</span>
 									</td>
-									<td colspan="6" class="text-right">{{'TXT_CATEGORY' | translate}}&nbsp;{{productInfo.categoryPath}}</td>
+									<td colspan="2" class="text-right">{{'TXT_CATEGORY' | translate}}&nbsp;{{productInfo.categoryPath}}</td>
 								</tr>
 								<tr>
 									<td class="mfb-xxt">
@@ -351,10 +352,10 @@
 									</td>
 									<td class="mfb-xxt text-center">{{productInfo.brand}}</td>
 									<td class="mfb-xxs text-center">
-										<button popover="{{productInfo.inventoryDetail}}" popover-title="{{'TXT_INVENTORY' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{productInfo.inventory}}</button>
+										<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.inventoryDetail}})" popover-title="{{'TXT_INVENTORY' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{productInfo.inventory}}</button>
 									</td>
 									<td class="mfb-xxt text-center">
-										<button popover="{{productInfo.priceDetail}}" popover-title="{{'TXT_FINAL_PRICE' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{productInfo.finalPrice}}</button>
+										<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.priceDetail}})" popover-title="{{'TXT_FINAL_PRICE' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{productInfo.finalPrice}}</button>
 									</td>
 									<td class="mfb-xxt text-center">{{productInfo.sizeChart}}</td>
 									<td class="mfb-xxs text-left">
@@ -366,7 +367,7 @@
 									</td>
 									<td class="mfb-xxt text-center">{{productInfo.skuCount}}</td>
 									<td class="mfb-xxt text-left">
-										<small popover="{{productInfo.createValue}}&nbsp;{{productInfo.publishValue}}&nbsp;{{productInfo.onSaleValue}}" popover-trigger="mouseenter" popover-placement="left">
+										<small ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.timeInfo}})" popover-trigger="mouseenter" popover-placement="left">
 											<div class="table_main">
 												<ul>
 													<li>{{'TXT_PUBLISH_TIME' | translate}}</li>
