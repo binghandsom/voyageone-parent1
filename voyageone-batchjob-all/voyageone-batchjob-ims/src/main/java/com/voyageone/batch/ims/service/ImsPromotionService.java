@@ -104,7 +104,7 @@ public class ImsPromotionService extends BaseTaskService {
             TaobaoResponse response;
             try {
                 // 先删除之前的提价商品
-                tbPromotionService.removePromotion(shopBean,Integer.parseInt(item.get("num_iid").toString()),promotionId);
+                tbPromotionService.removePromotion(shopBean,Long.parseLong(item.get("num_iid").toString()),promotionId);
 
                 TipItemPromDTO tipItemPromDTO = new TipItemPromDTO();
                 tipItemPromDTO.setCampaignId(promotionId);

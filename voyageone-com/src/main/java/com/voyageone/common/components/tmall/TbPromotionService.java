@@ -55,10 +55,10 @@ public class TbPromotionService extends TbBase {
         return response;
     }
 
-    public TmallPromotionTipItemRemoveResponse removePromotion(ShopBean shopBean, int num_iid, Long campaign_id) throws ApiException {
+    public TmallPromotionTipItemRemoveResponse removePromotion(ShopBean shopBean, Long num_iid, Long campaign_id) throws ApiException {
         logger.info("天猫特价宝删除活动商品 " + num_iid);
         TmallPromotionTipItemRemoveRequest req = new TmallPromotionTipItemRemoveRequest();
-        req.setItemId((long) num_iid);
+        req.setItemId(num_iid);
         req.setCampaignId(campaign_id);
         TmallPromotionTipItemRemoveResponse response = reqTaobaoApi(shopBean, req);
         if (response.getErrorCode() != null)
