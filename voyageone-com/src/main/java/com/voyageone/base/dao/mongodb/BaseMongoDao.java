@@ -2,7 +2,7 @@ package com.voyageone.base.dao.mongodb;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.Option;
-import com.jayway.jsonpath.spi.json.JacksonJsonNodeJsonProvider;
+import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
@@ -27,7 +27,7 @@ public abstract class BaseMongoDao {
         // 在 BaseMongoDao 静态初始化时, 初始化 JsonPath 的 Provider 配置
         Configuration.setDefaults(new Configuration.Defaults() {
 
-            private final JsonProvider jsonProvider = new JacksonJsonNodeJsonProvider();
+            private final JsonProvider jsonProvider = new JacksonJsonProvider();
             private final MappingProvider mappingProvider = new JacksonMappingProvider();
 
             @Override

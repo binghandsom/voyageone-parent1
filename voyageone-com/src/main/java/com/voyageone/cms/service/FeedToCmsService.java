@@ -2,6 +2,7 @@ package com.voyageone.cms.service;
 
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
+import com.jayway.jsonpath.TypeRef;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.cms.service.dao.CmsBtFeedProductImageDao;
 import com.voyageone.cms.service.dao.mongodb.CmsBtFeedInfoDao;
@@ -71,7 +72,9 @@ public class FeedToCmsService {
 
         CmsMtFeedCategoryTreeModel category = cmsMtFeedCategoryTreeDao.selectFeedCategory(channelId);
 
-        return JsonPath.parse(category).read("$..child[?(@.isChild == 1)]");
+        return JsonPath.parse(category.getCategoryTree()).read("$..child[?(@.isChild == 1)]",
+                new TypeRef<List<CmsFeedCategoryModel>>() {
+                });
     }
 
     /**

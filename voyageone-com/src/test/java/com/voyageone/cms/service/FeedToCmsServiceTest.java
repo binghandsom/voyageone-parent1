@@ -113,6 +113,6 @@ public class FeedToCmsServiceTest {
 //        p2.setSkus(skus);
 //
 //        products.add(p2);
-        feedToCmsService.updateProduct("010", products);
+//        feedToCmsService.updateProduct("010", products);
     }
 }
