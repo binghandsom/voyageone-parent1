@@ -1,6 +1,7 @@
 package com.voyageone.batch.ims.service.beat;
 
 import com.taobao.api.ApiException;
+import com.taobao.api.TaobaoResponse;
 import com.taobao.api.domain.Picture;
 import com.taobao.api.domain.PictureCategory;
 import com.taobao.api.response.*;
@@ -9,9 +10,7 @@ import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.ims.bean.BeatPicBean;
 import com.voyageone.batch.ims.dao.ImsPicCategoryDao;
-import com.voyageone.batch.ims.dao.ImsPicDao;
 import com.voyageone.batch.ims.enums.ImsPicCategoryType;
-import com.voyageone.batch.ims.modelbean.ImsPic;
 import com.voyageone.batch.ims.modelbean.ImsPicCategory;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.tmall.TbItemSchema;
@@ -158,7 +157,7 @@ public abstract class ImsBeatBaseService extends BaseTaskService {
             TbItemSchema itemSchema = tbItemService.getUpdateSchema(shopBean, beatPicBean.getNum_iid());
 
             $info("预计更新");
-            for (Map.Entry<Integer, String> entry: tbImageUrlMap.entrySet()) {
+            for (Map.Entry<Integer, String> entry : tbImageUrlMap.entrySet()) {
                 $info("\t%s\t%s", entry.getKey(), entry.getValue());
             }
 
@@ -235,9 +234,6 @@ public abstract class ImsBeatBaseService extends BaseTaskService {
     @Autowired
     private TbPictureService tbPictureService;
 
-    @Autowired
-    private ImsPicDao imsPicDao;
-
     protected String getOrgImageUrl(ImsBeatImageInfo imageInfo, List<TaskControlBean> taskControlList) {
 
         // 通过特殊标记处理无图位置
@@ -251,56 +247,53 @@ public abstract class ImsBeatBaseService extends BaseTaskService {
 
         ShopBean shopBean = imageInfo.getShop();
 
-        ImsPic pic = imsPicDao.selectByTitle(title, cate_id);
-
-        if (pic != null)
-            return pic.getPic_url();
-
-        Picture picture;
-
         try {
             PictureGetResponse res = tbPictureService.getPictures(shopBean, title, Long.valueOf(cate_id));
-
             List<Picture> pictures = res.getPictures();
 
-            if (res.isSuccess() && pictures != null && pictures.size() > 0) {
-
-                picture = pictures.get(0);
-
-            } else {
-
-                $info("价格披露还原：没有找到图片，准备从新上传 [ %s ] [ %s ] [ %s ] [ %s ]",
-                        res.getSubMsg(), title, cate_id, shopBean.getShop_name());
-
-                picture = uploadOrg(imageInfo, taskControlList);
+            if (res.isSuccess() && pictures != null && pictures.size() > 0 && !clearOldPic(beatPicBean, shopBean, pictures)) {
+                // 如果之前有老图,并且删除失败了.则不改动标记,等待重试
+                return null;
             }
+
+            $info("准备从新上传主图 [ %s ] [ %s ] [ %s ]", title, cate_id, shopBean.getShop_name());
+
+            Picture picture = uploadOrg(imageInfo, taskControlList);
+
+            if (picture == null)
+                return null;
+
+            return picture.getPicturePath();
 
         } catch (ApiException e) {
 
-            String message = format("价格披露还原：调用淘宝图片获取接口异常 [ %s ] [ %s ] [ %s ] [ %s ]",
+            String message = format("删除或从新上传主图时出现了错误 [ %s ] [ %s ] [ %s ] [ %s ]",
                     e.getLocalizedMessage(), title, cate_id, shopBean.getShop_name());
             $info(message);
             beatPicBean.setComment(message);
 
             return null;
         }
+    }
 
-        if (picture == null)
-            return null;
+    private boolean clearOldPic(BeatPicBean beatPicBean, ShopBean shopBean, List<Picture> pictures) throws ApiException {
+        Picture picture = pictures.get(0);
+        PictureDeleteResponse pictureDeleteResponse = tbPictureService.deletePictures(shopBean, picture.getPictureId());
+        boolean success = pictureDeleteResponse.getSuccess() && StringUtils.isEmpty(pictureDeleteResponse.getSubCode()) && StringUtils.isEmpty(pictureDeleteResponse.getSubMsg());
 
-        pic = new ImsPic();
-        pic.setTitle(title);
-        pic.setCategory_tid(cate_id);
-        pic.setModifier(getTaskName());
-        pic.setCreater(getTaskName());
-        pic.setPic_tid(String.valueOf(picture.getPictureId()));
-        pic.setPic_url(picture.getPicturePath());
+        if (!success) {
+            beatPicBean.setComment(getResponseErrorMessage(pictureDeleteResponse));
+        }
 
-        int count = imsPicDao.insert(pic);
+        return success;
+    }
 
-        $info("价格披露还原：插入 pic 数据。反应行数 [ %s ]", count);
-
-        return pic.getPic_url();
+    protected String getResponseErrorMessage(TaobaoResponse taobaoResponse) {
+        return StringUtils.isEmpty(taobaoResponse.getSubMsg())
+                ? (StringUtils.isEmpty(taobaoResponse.getSubCode())
+                    ? taobaoResponse.getMsg()
+                    : taobaoResponse.getSubCode())
+                : taobaoResponse.getSubMsg();
     }
 
     private Picture uploadOrg(ImsBeatImageInfo imageInfo, List<TaskControlBean> taskControlList) {
@@ -322,7 +315,7 @@ public abstract class ImsBeatBaseService extends BaseTaskService {
 
         // 模版配置为空
         if (templateUrl == null || StringUtils.isEmpty(templateUrl.getCfg_val2())) {
-            errorMsg = format("价格披露还原：没有找到主图模板地址，当前 Cart 为：[ %s ] [ %s ]", shopBean.getCart_id(),
+            errorMsg = format("没有找到主图模板地址，当前 Cart 为：[ %s ] [ %s ]", shopBean.getCart_id(),
                     shopBean.getShop_name());
             $info(errorMsg);
             beatPicBean.setComment(errorMsg);
@@ -344,17 +337,17 @@ public abstract class ImsBeatBaseService extends BaseTaskService {
         byte[] image;
         String image_url = templateUrl.getCfg_val2().replace("{key}", imageName);
 
-        $info("价格披露还原：尝试下载图片：[ %s ]", image_url);
+        $info("尝试下载主图：[ %s ]", image_url);
 
         // 尝试下载
         try (InputStream inputStream = HttpUtils.getInputStream(image_url, null)) {
 
             image = IOUtils.toByteArray(inputStream);
 
-            $info("价格披露还原：已下载，长度：[ %s ]", image.length);
+            $info("主图已下载，长度：[ %s ]", image.length);
 
         } catch (IOException e) {
-            errorMsg = format("价格披露还原：线程内下载图片出现异常。异常信息：%s", e.getMessage());
+            errorMsg = format("下载主图出现异常：%s", e.getMessage());
             beatPicBean.setComment(errorMsg);
             $info(errorMsg);
             return null;
@@ -364,15 +357,15 @@ public abstract class ImsBeatBaseService extends BaseTaskService {
         try {
             PictureUploadResponse res = tbPictureService.uploadPicture(shopBean, image, imageInfo.getOrgTitle(),
                     cate_id);
-
             if (res.getPicture() != null) return res.getPicture();
-            errorMsg = "线程内上传图片失败：" + format("[ %s ] [ %s ]", res.getSubCode(), res.getSubMsg());
+
+            errorMsg = format("上传主图失败：[ %s ] [ %s ]", res.getSubCode(), res.getSubMsg());
+            $info(errorMsg);
             beatPicBean.setComment(errorMsg);
-            $info("价格披露还原：线程内上传图片失败 [ %s ] [ %s ]", res.getSubCode(), res.getSubMsg());
             return null;
 
         } catch (ApiException e) {
-            errorMsg = format("价格披露还原：线程内上传图片出现异常。异常信息：%s", e.getMessage());
+            errorMsg = format("上传主图出现异常：%s", e.getMessage());
             beatPicBean.setComment(errorMsg);
             $info(errorMsg);
             return null;
