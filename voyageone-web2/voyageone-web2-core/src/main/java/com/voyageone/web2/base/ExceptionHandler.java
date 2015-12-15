@@ -80,7 +80,19 @@ public class ExceptionHandler implements HandlerExceptionResolver {
      */
     private ModelAndView catchBusinessException(String lang, BusinessException exception,
                                                 HttpServletResponse response) {
-        return messageDeal(lang, exception.getCode(), exception.getInfo(), response);
+        // 如果携带的 code 为空, 则尝试使用异常的本来信息
+        if (!StringUtils.isEmpty(exception.getCode()))
+            return messageDeal(lang, exception.getCode(), exception.getInfo(), response);
+
+        AjaxResponse ajaxResponse = new AjaxResponse();
+
+        ajaxResponse.setCode(exception.getCode());
+        ajaxResponse.setDisplayType(DisplayType.ALERT);
+        ajaxResponse.setMessage(exception.getMessage());
+
+        ajaxResponse.writeTo(response);
+
+        return null;
     }
 
     /**
@@ -128,6 +140,7 @@ public class ExceptionHandler implements HandlerExceptionResolver {
     private ModelAndView messageDeal(String lang, String code, Object[] args, HttpServletResponse response) {
 
         AjaxResponse ajaxResponse = new AjaxResponse();
+
         MessageModel msgModel = messageService.getMessage(lang, code);
 
         if (msgModel == null) {
