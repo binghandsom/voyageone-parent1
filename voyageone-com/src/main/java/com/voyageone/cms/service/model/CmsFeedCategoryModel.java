@@ -1,5 +1,7 @@
 package com.voyageone.cms.service.model;
 
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+
 import java.util.List;
 import java.util.Map;
 
@@ -9,75 +11,75 @@ import java.util.Map;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class CmsFeedCategoryModel {
+public class CmsFeedCategoryModel extends BaseMongoMap<String, Object> {
 
-    private String path;
+    private final static String PATH = "path";
 
-    private String name;
+    private final static String NAME = "name";
 
-    private String cid;
+    private final static String CID = "cid";
 
-    private int isChild;
+    private final static String IS_CHILD = "isChild";
 
-    private List<CmsFeedMappingModel> mapping;
+    private final static String MAPPING = "mapping";
 
-    private List<CmsFeedCategoryModel> child;
+    private final static String CHILD = "child";
 
-    private Map<String, List<String>> attribute;
+    private final static String ATTRIBUTE = "attribute";
 
     public String getPath() {
-        return path;
+        return getAttribute(PATH);
     }
 
     public void setPath(String path) {
-        this.path = path;
+        setAttribute(PATH, path);
     }
 
     public String getName() {
-        return name;
+        return getAttribute(NAME);
     }
 
     public void setName(String name) {
-        this.name = name;
+        setAttribute(NAME, name);
     }
 
     public String getCid() {
-        return cid;
+        return getAttribute(CID);
     }
 
     public void setCid(String cid) {
-        this.cid = cid;
+        setAttribute(CID, cid);
     }
 
     public int getIsChild() {
-        return isChild;
+        return getAttribute(IS_CHILD);
     }
 
     public void setIsChild(int isChild) {
-        this.isChild = isChild;
+        setAttribute(IS_CHILD, isChild);
     }
 
     public List<CmsFeedMappingModel> getMapping() {
-        return mapping;
+        return getAttribute(MAPPING);
     }
 
     public void setMapping(List<CmsFeedMappingModel> mapping) {
-        this.mapping = mapping;
+        setAttribute(MAPPING, mapping);
     }
 
     public List<CmsFeedCategoryModel> getChild() {
-        return child;
+        return getAttribute(CHILD);
     }
 
     public void setChild(List<CmsFeedCategoryModel> child) {
-        this.child = child;
+        setAttribute(CHILD, child);
     }
 
     public Map<String, List<String>> getAttribute() {
-        return attribute;
+        return getAttribute(ATTRIBUTE);
     }
 
     public void setAttribute(Map<String, List<String>> attribute) {
-        this.attribute = attribute;
+        setAttribute(ATTRIBUTE, attribute);
     }
 }
