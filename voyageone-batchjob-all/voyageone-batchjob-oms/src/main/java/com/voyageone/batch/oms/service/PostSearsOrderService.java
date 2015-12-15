@@ -85,6 +85,9 @@ public class PostSearsOrderService {
 	private String DUMMY_LAST_NAME = "name";
 	private String SEARS_MAIL_ADDRESS = "sears@voyageone.cn";
 	private String COMPANY_PHONE = "5626771997";
+	private String COMPANY_CITY = "Chicago";
+	private String COMPANY_STATE = "IL";
+	private String COMPANY_COUNTRY = "USA";
 	/**
 	 * 调用Sears(Create Order)
 	 *
@@ -396,12 +399,12 @@ public class PostSearsOrderService {
 		orderShippingInfo.setFirstName(orderExtendInfo.getShipName());
 		orderShippingInfo.setLastName(DUMMY_LAST_NAME);
 		orderShippingInfo.setEmail(SEARS_MAIL_ADDRESS);
-		orderShippingInfo.setCity(orderExtendInfo.getShipCity());
+//		orderShippingInfo.setCity(orderExtendInfo.getShipCity());
+		orderShippingInfo.setCity(COMPANY_CITY);
 		orderShippingInfo.setDayPhone(COMPANY_PHONE);
-		// TODO 修正预定
-		orderShippingInfo.setState("IL");
+		orderShippingInfo.setState(COMPANY_STATE);
 		orderShippingInfo.setAddressType("S");
-		orderShippingInfo.setCountryCode("USA");
+		orderShippingInfo.setCountryCode(COMPANY_COUNTRY);
 
 		ret.setShippingAddress(orderShippingInfo);
 
@@ -464,26 +467,40 @@ public class PostSearsOrderService {
 	 *
 	 */
 	private void translateOrderInfo(OrderExtend orderExtendInfo) throws Exception {
-		ArrayList<String> translateContent = new ArrayList<String>();
+//		ArrayList<String> translateContent = new ArrayList<String>();
 //		translateContent.add(orderExtendInfo.getName());
 //		translateContent.add(orderExtendInfo.getShipAddress());
 //		translateContent.add(orderExtendInfo.getShipAddress2());
 //		translateContent.add(orderExtendInfo.getShipName());
 //		translateContent.add(orderExtendInfo.getShipCity());
-		//地址用仓库地址，所以不需要翻译
-		translateContent.add(orderExtendInfo.getName());
-		translateContent.add(orderExtendInfo.getShipName());
 
-		List<String> translateList = BaiduTranslateUtil.translate(translateContent);
+//		List<String> translateList = BaiduTranslateUtil.translate(translateContent);
 
 //		orderExtendInfo.setName(translateList.get(0));
 //		orderExtendInfo.setShipAddress(translateList.get(1));
 //		orderExtendInfo.setShipAddress2(translateList.get(2));
 //		orderExtendInfo.setShipName(translateList.get(3));
 //		orderExtendInfo.setShipCity(translateList.get(4));
+
 		//地址用仓库地址，所以不需要翻译
+		//由于传入字符无法确定是英文还是中文，必须各字段分别传入
+		ArrayList<String> translateContent = new ArrayList<String>();
+
+		// 旺旺ID
+		translateContent.add(orderExtendInfo.getName());
+
+		List<String> translateList = BaiduTranslateUtil.translate(translateContent);
+
 		orderExtendInfo.setName(translateList.get(0));
-		orderExtendInfo.setShipName(translateList.get(1));
+
+		// 收件人姓名
+        translateContent.clear();
+		translateContent.add(orderExtendInfo.getShipName());
+
+		translateList = BaiduTranslateUtil.translate(translateContent);
+
+		orderExtendInfo.setShipName(translateList.get(0));
+
 	}
 
 	/**
@@ -663,7 +680,7 @@ public class PostSearsOrderService {
 					setClientStatusInfo(orderDetailInfo, orderLookupResponse);
 
 					// 如果是品牌方取消的话，则记入取消列表
-					if (orderDetailInfo.getClientStatus().equals(OmsConstants.SearsOrderItemStatus.Cancelled) && StringUtils.isNullOrBlank2(orderDetailInfo.getTrackingNumber())) {
+					if (StringUtils.null2Space2(orderDetailInfo.getClientStatus()).equals(OmsConstants.SearsOrderItemStatus.Cancelled) && StringUtils.isNullOrBlank2(orderDetailInfo.getTrackingNumber())) {
 						searsCancelOrderList.add(orderDetailInfo);
 					}
 				}

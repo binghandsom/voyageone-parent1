@@ -2854,7 +2854,7 @@
 			o.order_channel_id = #{orderChannelId} and
 			o.order_status = 'Approved' and
 			(o.client_order_id = '' or o.client_order_id is null)
-		limit 80
+		limit 40
 	</select>
 
 	<!-- 获得向Sears 取得订单明细Tracking信息 订单一览 (Order Lookup)-->
