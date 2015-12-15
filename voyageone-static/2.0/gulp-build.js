@@ -8,6 +8,7 @@ var minifyCss = require('gulp-minify-css');
 var uglify = require('gulp-uglify');
 var sourceMaps = require('gulp-sourcemaps');
 var fs = require('fs');
+var suffBuilder = require('./gulp-build-suff');
 
 var build = require('./gulp-vars').build;
 var tasks = require('./gulp-vars').tasks;
@@ -18,29 +19,35 @@ var headerSingle = '(function(){\n';
 var footerSingle = '})();';
 var encode = 'utf-8';
 
+gulp.task(tasks.build.angular_suff, function () {
+  return gulp.src(build.common.angular.src)
+    .pipe(debug())
+    .pipe(suffBuilder(build.common.angular.footerFile))
+    .pipe(gulp.dest(build.common.angular.dist));
+});
+
 // build voyageone.angular.com.js
-gulp.task(tasks.build.angular, function () {
+gulp.task(tasks.build.angular, [tasks.build.angular_suff], function () {
   return gulp.src(build.common.angular.src)
     .pipe(debug())
     .pipe(sourceMaps.init())
     // 追加依赖注入语法
     .pipe(ngAnnotate())
-    // 包裹每个单个组件
-    .pipe(header(headerSingle))
-    .pipe(footer(footerSingle))
     // 合并到一个文件
     .pipe(concat(build.common.angular.concat))
     // 追加尾部声明
-    .pipe(footer(fs.readFileSync(build.common.angular.footerFile, encode)))
+    .pipe(footer(fs.readFileSync(( build.common.angular.dist + '/' + build.common.angular.footerFile), encode)))
     // 包裹整个内容
     .pipe(header(definePrefix))
     .pipe(footer(defineSuffix))
-    .pipe(sourceMaps.write('./'))
     // 此处不进行压缩,只对合并后的内容进行格式化
     .pipe(uglify({
       mangle: false,
       compress: false,
       output: {beautify: true, indent_level: 2}
+    }))
+    .pipe(sourceMaps.write('./', {
+      sourceRoot: 'components/angular'
     }))
     .pipe(gulp.dest(build.common.angular.dist));
 });

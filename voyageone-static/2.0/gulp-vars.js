@@ -16,7 +16,7 @@ var build = {
     angular: {
       src: 'develop/components/angular/*/*.js',
       dist: 'develop/components/dist',
-      footerFile: 'develop/components/angular/voyageone.angular.com.suffix',
+      footerFile: 'voyageone.angular.suffix',
       concat: 'voyageone.angular.com.js',
       version: versions.angularCom
     },
@@ -100,6 +100,7 @@ var publish = {
 var tasks = {
   build: {
     angular: 'build-angular-com',
+    angular_suff: 'build-angular-suff',
     com: 'build-com',
     css: {
       all: 'build-css',
