@@ -323,10 +323,10 @@
 				<ref bean="postBCBGDemandJobTaskContri" />
 
 				<!-- Sears Create Order推送 -->
-				<ref bean="postSearsCreateOrderTaskContri" />
+				<!--<ref bean="postSearsCreateOrderTaskContri" />-->
 
 				<!-- Sears Order Lookup订单信息取得 -->
-				<ref bean="getSearsOrderLookupTaskContri" />
+				<!--<ref bean="getSearsOrderLookupTaskContri" />-->
 			
 			</list>
 		</property>
