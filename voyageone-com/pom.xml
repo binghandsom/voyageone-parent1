@@ -210,10 +210,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.voyageone</groupId>
-			<artifactId>top-schema</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.voyageone</groupId>
 			<artifactId>jd-open-api-sdk</artifactId>
 		</dependency>
 		<dependency>
