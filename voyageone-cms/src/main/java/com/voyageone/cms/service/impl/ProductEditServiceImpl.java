@@ -625,8 +625,8 @@ public class ProductEditServiceImpl implements ProductEditService {
 		}
 
 		if (productCNPriceInfo.getIsApproved()) {
-			data.put("isPublished", false);
 			if (productDao.doUpdatePublishStatus(data) == 0) {
+				data.put("isPublished", false);
 				data.put("code", productCNPriceInfo.getCode());
 				data.put("cnGroupId", 1);
 				productDao.doInsertPublishStatus(data);
