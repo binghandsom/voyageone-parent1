@@ -23,11 +23,11 @@ public interface CmsUrlConstants {
 
         interface FEED {
 
-            String ROOT = "/cms/setting/feed_mapping";
+            String ROOT = "/cms/setting/feedMapping";
 
-            String GET_FEED_CATEGORIES = "feed_categories";
+            String GET_FEED_CATEGORY_TREE = "feedCategoryTree";
 
-            String GET_MAIN_CATEGORIES = "main_categories";
+            String GET_MAIN_CATEGORIES = "mainCategories";
         }
     }
     interface PROMOTION {

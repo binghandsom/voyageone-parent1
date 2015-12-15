@@ -4,6 +4,7 @@ import com.voyageone.cms.service.model.CmsBtFeedMappingModel;
 import com.voyageone.cms.service.model.CmsMtCategoryTreeModel;
 import com.voyageone.cms.service.model.CmsMtFeedCategoryTreeModel;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.web2.cms.views.setting.mapping.feed.CmsFeedMappingService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,13 +34,11 @@ public class CmsFeedMappingServiceTest {
     @Test
     public void testGetFeedCategories() throws Exception {
 
-        CmsMtFeedCategoryTreeModel cmsMtFeedCategoryTreeModel = cmsFeedMappingService.getFeedCategories(userSessionBean);
+        CmsMtFeedCategoryTreeModel cmsMtFeedCategoryTreeModel = cmsFeedMappingService.getFeedCategoriyTree(userSessionBean);
 
         assert cmsMtFeedCategoryTreeModel != null;
 
         assert cmsMtFeedCategoryTreeModel.getCategoryTree().size() > 0;
-
-        assert ((List) cmsMtFeedCategoryTreeModel.getCategoryTree().get(0).get("child")).size() == 4;
     }
 
     @Test

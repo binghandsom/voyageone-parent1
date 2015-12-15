@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.views;
+package com.voyageone.web2.cms.views.setting.mapping.feed;
 
 import com.voyageone.cms.service.CmsBtChannelCategoryService;
 import com.voyageone.cms.service.FeedToCmsService;
@@ -28,7 +28,7 @@ public class CmsFeedMappingService extends BaseAppService {
     @Autowired
     private com.voyageone.cms.service.CmsFeedMappingService cmsFeedMappingService;
 
-    public CmsMtFeedCategoryTreeModel getFeedCategories(UserSessionBean user) {
+    public CmsMtFeedCategoryTreeModel getFeedCategoriyTree(UserSessionBean user) {
         return feedToCmsService.getFeedCategory(user.getSelChannelId());
     }
 
