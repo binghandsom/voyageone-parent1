@@ -6,8 +6,6 @@ import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.model.*;
 import com.voyageone.common.Constants;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.JsonUtil;
 import net.minidev.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,7 +40,7 @@ public class CmsProductServiceTest {
         String code = String.valueOf(100000 + index);
         CmsBtProductModel_Field fields = product.getFields();
         fields.setCode(code);
-        fields.setAttribute("name", "Stud Earrings with Cubic Zirconia in Sterling Silver " + code);
+        fields.set("name", "Stud Earrings with Cubic Zirconia in Sterling Silver " + code);
         fields.setColor("Color" + random.nextInt(100));
         fields.setOrigin("china" + random.nextInt(10));
         fields.setYear((2000 + random.nextInt(15)));
@@ -131,10 +129,10 @@ public class CmsProductServiceTest {
         }
 
         CmsBtProductModel_Feed feed = product.getFeedAtts();
-        feed.setAttribute("washingtype", "dry cleaning");
-        feed.setAttribute("collar", "mandarin collar");
-        feed.setAttribute("style", "campus");
-        feed.setAttribute("waspe", "dleaning");
+        feed.set("washingtype", "dry cleaning");
+        feed.set("collar", "mandarin collar");
+        feed.set("style", "campus");
+        feed.set("waspe", "dleaning");
 
         return product;
     }

@@ -68,7 +68,7 @@ public class FeedToCmsServiceTest {
 //        Map att = new HashMap<>();
 //        att.put("a","1");
 //        att.put("b", "2");
-////        p1.setAttribute(att);
+////        p1.set(att);
 //
 //        List<FeedSkuModel> skus = new ArrayList<>();
 //        FeedSkuModel sku = new FeedSkuModel();
@@ -100,7 +100,7 @@ public class FeedToCmsServiceTest {
 //        att = new HashMap<>();
 //        att.put("a","1");
 //        att.put("b", "2");
-////        p2.setAttribute(att);
+////        p2.set(att);
 //
 //        skus = new ArrayList<>();
 //        sku = new FeedSkuModel();
@@ -113,6 +113,6 @@ public class FeedToCmsServiceTest {
 //        p2.setSkus(skus);
 //
 //        products.add(p2);
-//        feedToCmsService.updateProduct("010",products);
+        feedToCmsService.updateProduct("010", products);
     }
 }
