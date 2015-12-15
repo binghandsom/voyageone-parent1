@@ -8,11 +8,9 @@
         <version>0.2.0-SNAPSHOT</version>
     </parent>
     <packaging>pom</packaging>
-    <artifactId>voyageone-wsdl1</artifactId>
+    <artifactId>voyageone-wsc1</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <modules>
-        <module>voyageone-webservice</module>
-        <module>voyageone-webservice-synship</module>
-        <module>voyageone-wsdl-all</module>
+        <module>voyageone-wsc1-magento</module>
     </modules>
 </project>
