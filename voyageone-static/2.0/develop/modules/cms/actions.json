@@ -20,8 +20,10 @@
       }
     },
     "search": {
-      "advance": {
-        "doSearch": "/cms/search/advance/doSearch"
+      "$searchIndexService": {
+        "root": "/cms/search/index/",
+        "init": "init",
+        "doSearch": "doSearch"
       }
     },
     "mapping": {
@@ -33,7 +35,10 @@
     },
     "promotionService": {
       "root": "/cms/promotion/list",
-      "getPromotionList": "getPromotionList"
+      "getPromotionList": "getPromotionList",
+      "insertPromotion": "insertPromotion",
+      "updatePromotion": "updatePromotion",
+      "delPromotion": "delPromotion"
     }
   }
 }

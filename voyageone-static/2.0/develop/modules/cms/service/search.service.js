@@ -6,18 +6,30 @@ define([
     'angularAMD'
 ], function (angularAMD) {
     angularAMD
-        .service('searchService', searchService);
+        .service('searchIndexService', searchIndexService);
 
-    function searchService($q, cActions, ajaxService) {
+    function searchIndexService($q, $searchIndexService, cActions, ajaxService) {
 
+        this.init = init;
         this.search = search;
+
+        function init() {
+            var defer = $q.defer();
+            $searchIndexService.init().then(function (res) {
+                defer.resolve (res);
+            });
+            return defer.promise;
+        }
 
         function search(data) {
             var defer = $q.defer();
-            ajaxService.post(cActions.cms.search.advance.doSearch, data)
-                .then(function (res) {
-                    defer.resolve (res);
-                });
+            //ajaxService.post(cActions.cms.search.advance.doSearch, data)
+            //    .then(function (res) {
+            //        defer.resolve (res);
+            //    });
+            $searchIndexService.doSearch(data).then(function (res) {
+                defer.resolve (res);
+            });
             return defer.promise;
         }
     }

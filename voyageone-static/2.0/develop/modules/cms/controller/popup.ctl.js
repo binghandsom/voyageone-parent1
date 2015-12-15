@@ -3,62 +3,66 @@
  */
 
 define([
-    'angularAMD'
-], function (angularAMD) {
-    angularAMD
+    'cms'
+], function (cms) {
+    cms
         .constant('popActions', {
             "column_define": {
                 "templateUrl": "views/pop/column_define/index.tpl.html",
-                "controllerUrl": "modules/views/cms/pop/column_define/index.ctl"
+                "controllerUrl": "modules/cms/views/pop/column_define/index.ctl"
             },
             "new": {
                 "templateUrl": "views/pop/new/promotion.tpl.html",
-                "controllerUrl": "modules/views/cms/pop/new/promotion.ctl"
+                "controllerUrl": "modules/cms/views/pop/new/promotion.ctl"
             },
             "other": {
                 "platform": {
                     "templateUrl": "views/pop/other/platform.tpl.html",
-                    "controllerUrl": "modules/views/cms/pop/other/platform.ctl"
+                    "controllerUrl": "modules/cms/views/pop/other/platform.ctl"
                 },
                 "progress": {
                     "templateUrl": "views/pop/other/progress.tpl.html",
-                    "controllerUrl": "modules/views/cms/pop/other/progress.ctl"
+                    "controllerUrl": "modules/cms/views/pop/other/progress.ctl"
                 }
             },
             "tag":{
                 "promotion": {
                     "templateUrl": "views/pop/tag/promotion/index.tpl.html",
-                    "controllerUrl": "modules/views/cms/pop/tag/promotion/index.ctl"
+                    "controllerUrl": "modules/cms/views/pop/tag/promotion/index.ctl"
                 },
                 "shop_category": {
                     "templateUrl": "views/pop/tag/shop_category/index.tpl.html",
-                    "controllerUrl": "modules/views/cms/pop/tag/shop_category/index.ctl"
+                    "controllerUrl": "modules/cms/views/pop/tag/shop_category/index.ctl"
                 }
             },
             "prop_change": {
                 "templateUrl": "views/pop/prop_change/index.tpl.html",
-                "controllerUrl": "modules/views/cms/pop/prop_change/index.ctl"
+                "controllerUrl": "modules/cms/views/pop/prop_change/index.ctl"
             },
             "category": {
                 "templateUrl": "views/pop/category/index.tpl.html",
-                "controllerUrl": "modules/views/cms/pop/category/index.ctl"
+                "controllerUrl": "modules/cms/views/pop/category/index.ctl"
             },
             "feed": {
                 "templateUrl": "views/pop/feed/index.tpl.html",
-                "controllerUrl": "modules/views/cms/pop/feed/index.ctl"
+                "controllerUrl": "modules/cms/views/pop/feed/index.ctl"
             },
             "feed_list": {
                 "templateUrl": "views/pop/feed_list/index.tpl.html",
-                "controllerUrl": "modules/views/cms/pop/feed_list/index.ctl"
+                "controllerUrl": "modules/cms/views/pop/feed_list/index.ctl"
+            },
+            "import": {
+                "templateUrl": "views/pop/import/index.tpl.html",
+                "controllerUrl": "modules/views/cms/pop/import/index.ctl"
             },
             "product": {
                 "price": {
                     "templateUrl": "views/pop/product/price/history.tpl.html",
-                    "controllerUrl": "modules/views/cms/pop/product/price/history.ctl"
+                    "controllerUrl": "modules/cms/views/pop/product/price/history.ctl"
                 },
                 "promotion": {
                     "templateUrl": "views/pop/product/promotion/history.tpl.html",
-                    "controllerUrl": "modules/views/cms/pop/product/promotion/history.ctl"
+                    "controllerUrl": "modules/cms/views/pop/product/promotion/history.ctl"
                 }
             }
         })
@@ -159,16 +163,18 @@ define([
             });
         }
         $scope.openpromotion = openpromotion;
-        function openpromotion(viewSize) {
-            $modal.open({
-                templateUrl: popActions.new.templateUrl,
-                controllerUrl: popActions.new.controllerUrl,
-                size: viewSize,
-                resolve: {
-                    items: function () {
-                        //return data;
+        function openpromotion(viewSize,data) {
+            require([popActions.new.controllerUrl], function(){
+                $modal.open({
+                    templateUrl: popActions.new.templateUrl,
+                    controller: 'popNewPromotionCtl',
+                    size: viewSize,
+                    resolve: {
+                        items: function () {
+                            return data;
+                        }
                     }
-                }
+                });
             });
         }
         $scope.openOtherPlatform = openOtherPlatform;
@@ -215,6 +221,19 @@ define([
             $modal.open({
                 templateUrl: popActions.feed_list.templateUrl,
                 controllerUrl: popActions.feed_list.controllerUrl,
+                size: viewSize,
+                resolve: {
+                    items: function () {
+                        //return data;
+                    }
+                }
+            });
+        }
+        $scope.openImport = openImport;
+        function openImport(viewSize) {
+            $modal.open({
+                templateUrl: popActions.import.templateUrl,
+                controllerUrl: popActions.import.controllerUrl,
                 size: viewSize,
                 resolve: {
                     items: function () {

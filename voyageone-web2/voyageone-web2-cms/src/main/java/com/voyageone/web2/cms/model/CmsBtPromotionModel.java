@@ -29,6 +29,26 @@ public class CmsBtPromotionModel extends BaseMongoModel {
 
     private String cartName;
 
+    private Boolean isActive;
+
+    private int refTagId;
+
+    public int getRefTagId() {
+        return refTagId;
+    }
+
+    public void setRefTagId(int refTagId) {
+        this.refTagId = refTagId;
+    }
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
+    }
+
     public String getCartName() {
         return cartName;
     }

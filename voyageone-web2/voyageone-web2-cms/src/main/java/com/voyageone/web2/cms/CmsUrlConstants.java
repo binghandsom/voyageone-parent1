@@ -37,6 +37,10 @@ public interface CmsUrlConstants {
             String ROOT = "/cms/promotion/list";
 
             String GET_PROMOTION_LIST = "getPromotionList";
+
+            String INSERT_PROMOTION = "insertPromotion";
+
+            String UPDATE_PROMOTION = "updatePromotion";
         }
     }
 
@@ -49,6 +53,18 @@ public interface CmsUrlConstants {
             String GET_POP_OPTIONS = "getPopOptions";
 
             String SET_PRODUCT_FIELDS = "setProductFields";
+        }
+    }
+
+    interface PROM {
+
+        interface SELECT {
+
+            String ROOT = "/cms/pop/prom_select/";
+
+            String GET_PROM_TAGS = "getPromotionTags";
+
+            String SET_PROM_TAG = "setPromotionTag";
         }
     }
 }

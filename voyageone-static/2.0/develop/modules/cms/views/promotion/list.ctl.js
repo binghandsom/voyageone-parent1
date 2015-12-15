@@ -6,7 +6,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function () {
 
-    return function ($scope,promotionService) {
+    return function ($scope,promotionService,confirm) {
 
         $scope.vm = {"promotionList": []};
         $scope.searchInfo = {};
@@ -23,6 +23,21 @@ define([
             },function(res){
                 alert("e");
             })
+        }
+        $scope.del = function (data) {
+            confirm("是否要删除  "+data.promotionName,'删除').result.then(function(){
+                var index = _.indexOf($scope.vm.promotionList,data);
+                data.isActive = false
+                promotionService.updatePromotion(data).then(function(res){
+                    $scope.vm.promotionList.splice(index,1);
+                    $scope.groupPageOption.total = $scope.vm.promotionList.size;
+                },function(res){
+                    alert("e");
+                })
+            },function(){
+
+            })
+
         }
     };
 });

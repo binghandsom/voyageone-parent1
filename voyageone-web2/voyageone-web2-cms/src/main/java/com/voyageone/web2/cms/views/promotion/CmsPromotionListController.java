@@ -33,10 +33,31 @@ public class CmsPromotionListController extends CmsController {
     public AjaxResponse getPromotionList(@RequestBody Map params) {
 
         String channelId = getUser().getSelChannelId();
-        params.put("channelId" ,channelId);
+        params.put("channelId", channelId);
         List<CmsBtPromotionModel> resultBean = cmsPromotionService.getPromotionList(params);
 
         // 返回用户信息
         return success(resultBean);
+    }
+
+    @RequestMapping(PROMOTION.LIST.INSERT_PROMOTION)
+    public AjaxResponse insertPromotion(@RequestBody CmsBtPromotionModel params) {
+        String channelId = getUser().getSelChannelId();
+        params.setChannelId(channelId);
+        params.setCreater(getUser().getUserName());
+        cmsPromotionService.insertPromotion(params);
+        // 返回用户信息
+        return success(null);
+    }
+
+    @RequestMapping(PROMOTION.LIST.UPDATE_PROMOTION)
+    public AjaxResponse updatePromotion(@RequestBody CmsBtPromotionModel params) {
+
+        String channelId = getUser().getSelChannelId();
+        params.setChannelId(channelId);
+        params.setModifier(getUser().getUserName());
+        cmsPromotionService.updatePromotion(params);
+        // 返回用户信息
+        return success(null);
     }
 }
