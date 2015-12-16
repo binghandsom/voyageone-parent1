@@ -9,6 +9,7 @@
  * @Version: 2.0.0
  */
 
+//@Skip
 angular.module('voyageone.angular.vresources', [])
   .provider('$vresources', function ($provide) {
 

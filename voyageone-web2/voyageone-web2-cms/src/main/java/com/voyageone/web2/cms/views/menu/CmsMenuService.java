@@ -1,12 +1,12 @@
 package com.voyageone.web2.cms.views.menu;
 
 import com.voyageone.cms.service.FeedToCmsService;
+import com.voyageone.cms.service.model.CmsFeedCategoryModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.core.dao.ChannelShopDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -37,13 +37,10 @@ public class CmsMenuService extends BaseAppService{
 
     /**
      * 根据userId和ChannelId获取Menu列表.
-     * @param cTypeId
-     * @param channelId
-     * @return
      */
-    public List<Map> getCategoryTreeList (String cTypeId, String channelId) {
+    public List<CmsFeedCategoryModel> getCategoryTreeList (String cTypeId, String channelId) {
 
-        List<Map> categoryTreeList = new ArrayList<>();
+        List<CmsFeedCategoryModel> categoryTreeList;
 
         switch (cTypeId) {
             case CATEGORY_TYPE_FEED:

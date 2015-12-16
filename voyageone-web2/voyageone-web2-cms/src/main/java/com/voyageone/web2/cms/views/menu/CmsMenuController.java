@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.menu;
 
+import com.voyageone.cms.service.model.CmsFeedCategoryModel;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsConstants;
@@ -49,7 +50,7 @@ public class CmsMenuController extends CmsController {
         resultBean.put("categoryList", categoryList);
 
         // 获取CategoryTreeList
-        List<Map> categoryTreeList = menuService.getCategoryTreeList(cTypeId, channelId);
+        List<CmsFeedCategoryModel> categoryTreeList = menuService.getCategoryTreeList(cTypeId, channelId);
         resultBean.put("categoryTreeList", categoryTreeList);
 
         // 返回用户信息
