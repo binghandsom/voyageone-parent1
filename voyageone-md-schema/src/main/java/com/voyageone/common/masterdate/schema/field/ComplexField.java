@@ -13,7 +13,7 @@ import java.util.*;
 
 public class ComplexField extends Field {
     protected ComplexValue complexValue = new ComplexValue();
-    protected List<Field> fields = new ArrayList();
+    protected List<Field> fields = new ArrayList<>();
 
     public ComplexField() {
         super.type = FieldTypeEnum.COMPLEX;
@@ -66,11 +66,9 @@ public class ComplexField extends Field {
     }
 
     public Map<String, Field> getFieldMap() {
-        HashMap map = new HashMap();
-        Iterator i$ = this.fields.iterator();
+        Map<String, Field> map = new HashMap<>();
 
-        while(i$.hasNext()) {
-            Field field = (Field)i$.next();
+        for (Field field : this.fields) {
             map.put(field.getId(), field);
         }
 
@@ -81,10 +79,8 @@ public class ComplexField extends Field {
         Element fieldNode = super.toElement();
         Element fieldsNode = XmlUtils.appendElement(fieldNode, "fields");
         if(this.fields != null && !this.fields.isEmpty()) {
-            Iterator i$ = this.fields.iterator();
 
-            while(i$.hasNext()) {
-                Field field = (Field)i$.next();
+            for (Field field : this.fields) {
                 Element fNode = field.toElement();
                 XmlUtils.appendElement(fieldsNode, fNode);
             }
@@ -107,10 +103,8 @@ public class ComplexField extends Field {
                 fieldNode.addAttribute("type", this.type.value());
                 Element complexValuesNode = XmlUtils.appendElement(fieldNode, "complex-values");
                 ComplexValue cValue = this.complexValue;
-                Iterator i$ = cValue.getFieldKeySet().iterator();
 
-                while(i$.hasNext()) {
-                    String keyFieldId = (String)i$.next();
+                for (String keyFieldId : cValue.getFieldKeySet()) {
                     Field field = cValue.getValueField(keyFieldId);
                     Element valueNode = field.toParamElement();
                     XmlUtils.appendElement(complexValuesNode, valueNode);
@@ -130,10 +124,8 @@ public class ComplexField extends Field {
             ComplexField complexField = (ComplexField)this.defaultValueField;
             Element defaultComplexValuesNode = XmlUtils.createRootElement("default-complex-values");
             ComplexValue cValue = complexField.getComplexValue();
-            Iterator i$ = cValue.getFieldKeySet().iterator();
 
-            while(i$.hasNext()) {
-                String keyFieldId = (String)i$.next();
+            for (String keyFieldId : cValue.getFieldKeySet()) {
                 Field field = cValue.getValueField(keyFieldId);
                 Element valueNode = field.toParamElement();
                 XmlUtils.appendElement(defaultComplexValuesNode, valueNode);

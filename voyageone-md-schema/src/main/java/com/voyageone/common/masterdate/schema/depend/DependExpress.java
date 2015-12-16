@@ -14,17 +14,17 @@ import java.util.Map;
 
 public class DependExpress {
 
-    public static final String SYMBOL_IS_NULL = "is null";
-    public static final String SYMBOL_EQUALS = "==";
-    public static final String SYMBOL_NOT_EQUALS = "!=";
-    public static final String SYMBOL_GREATER = ">";
-    public static final String SYMBOL_LESS = "<";
-    public static final String SYMBOL_GREATER_AND_EQUALS = ">=";
-    public static final String SYMBOL_LESS_AND_EQUALS = "<=";
-    public static final String SYMBOL_CONTAINS = "contains";
-    public static final String SYMBOL_NOT_CONTAINS = "not contains";
-    public static final String SYMBOL_IN_FIELDOPTIONS = "this field\'s value in fieldOptions";
-    public static final String SYMBOL_NOT_IN_FIELDOPTIONS = "this field\'s value not in fieldOptions";
+//    public static final String SYMBOL_IS_NULL = "is null";
+//    public static final String SYMBOL_EQUALS = "==";
+//    public static final String SYMBOL_NOT_EQUALS = "!=";
+//    public static final String SYMBOL_GREATER = ">";
+//    public static final String SYMBOL_LESS = "<";
+//    public static final String SYMBOL_GREATER_AND_EQUALS = ">=";
+//    public static final String SYMBOL_LESS_AND_EQUALS = "<=";
+//    public static final String SYMBOL_CONTAINS = "contains";
+//    public static final String SYMBOL_NOT_CONTAINS = "not contains";
+//    public static final String SYMBOL_IN_FIELDOPTIONS = "this field\'s value in fieldOptions";
+//    public static final String SYMBOL_NOT_IN_FIELDOPTIONS = "this field\'s value not in fieldOptions";
     protected String fieldId;
     protected String value;
     protected String symbol = "==";
@@ -33,7 +33,7 @@ public class DependExpress {
     }
 
     public boolean excuteExpress(Map<String, Field> fieldMap) {
-        Field field = (Field)fieldMap.get(this.fieldId);
+        Field field = fieldMap.get(this.fieldId);
         if(field == null) {
             return false;
         } else {
@@ -66,12 +66,12 @@ public class DependExpress {
                     double contains1;
                     if(">".equals(this.symbol)) {
                         try {
-                            contains1 = Double.valueOf(this.value).doubleValue();
+                            contains1 = Double.valueOf(this.value);
                             fieldValue = values.iterator();
 
                             while(fieldValue.hasNext()) {
                                 fieldValue1 = (String)fieldValue.next();
-                                fieldValueDouble = Double.valueOf(fieldValue1).doubleValue();
+                                fieldValueDouble = Double.valueOf(fieldValue1);
                                 if(fieldValueDouble <= contains1) {
                                     return false;
                                 }
@@ -81,12 +81,12 @@ public class DependExpress {
                         }
                     } else if("<".equals(this.symbol)) {
                         try {
-                            contains1 = Double.valueOf(this.value).doubleValue();
+                            contains1 = Double.valueOf(this.value);
                             fieldValue = values.iterator();
 
                             while(fieldValue.hasNext()) {
                                 fieldValue1 = (String)fieldValue.next();
-                                fieldValueDouble = Double.valueOf(fieldValue1).doubleValue();
+                                fieldValueDouble = Double.valueOf(fieldValue1);
                                 if(fieldValueDouble >= contains1) {
                                     return false;
                                 }
@@ -96,12 +96,12 @@ public class DependExpress {
                         }
                     } else if(">=".equals(this.symbol)) {
                         try {
-                            contains1 = Double.valueOf(this.value).doubleValue();
+                            contains1 = Double.valueOf(this.value);
                             fieldValue = values.iterator();
 
                             while(fieldValue.hasNext()) {
                                 fieldValue1 = (String)fieldValue.next();
-                                fieldValueDouble = Double.valueOf(fieldValue1).doubleValue();
+                                fieldValueDouble = Double.valueOf(fieldValue1);
                                 if(fieldValueDouble < contains1) {
                                     return false;
                                 }
@@ -111,12 +111,12 @@ public class DependExpress {
                         }
                     } else if("<=".equals(this.symbol)) {
                         try {
-                            contains1 = Double.valueOf(this.value).doubleValue();
+                            contains1 = Double.valueOf(this.value);
                             fieldValue = values.iterator();
 
                             while(fieldValue.hasNext()) {
                                 fieldValue1 = (String)fieldValue.next();
-                                fieldValueDouble = Double.valueOf(fieldValue1).doubleValue();
+                                fieldValueDouble = Double.valueOf(fieldValue1);
                                 if(fieldValueDouble > contains1) {
                                     return false;
                                 }
@@ -168,7 +168,7 @@ public class DependExpress {
     }
 
     protected List<String> getFieldValues(Field field) {
-        ArrayList values = new ArrayList();
+        List<String> values = new ArrayList<>();
         switch(field.getType()) {
             case INPUT:
                 InputField inputField = (InputField)field;
@@ -181,10 +181,9 @@ public class DependExpress {
             case MULTICHECK:
                 MultiCheckField multiCheckField = (MultiCheckField)field;
                 List vList = multiCheckField.getValues();
-                Iterator multiInputField1 = vList.iterator();
 
-                while(multiInputField1.hasNext()) {
-                    Value viList1 = (Value)multiInputField1.next();
+                for (Object aVList : vList) {
+                    Value viList1 = (Value) aVList;
                     values.add(viList1.getValue());
                 }
 
@@ -192,10 +191,9 @@ public class DependExpress {
             case MULTIINPUT:
                 MultiInputField multiInputField = (MultiInputField)field;
                 List viList = multiInputField.getValues();
-                Iterator i$ = viList.iterator();
 
-                while(i$.hasNext()) {
-                    Value v = (Value)i$.next();
+                for (Object aViList : viList) {
+                    Value v = (Value) aViList;
                     values.add(v.getValue());
                 }
         }

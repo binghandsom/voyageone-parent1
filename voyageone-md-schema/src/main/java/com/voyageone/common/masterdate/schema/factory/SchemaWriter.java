@@ -11,10 +11,8 @@ public class SchemaWriter {
 
     public static String writeRuleXmlString(List<Field> fields) {
         Element root = XmlUtils.createRootElement("itemRule");
-        Iterator i$ = fields.iterator();
 
-        while(i$.hasNext()) {
-            Field field = (Field)i$.next();
+        for (Field field : fields) {
             Element fieldNode = field.toElement();
             XmlUtils.appendElement(root, fieldNode);
         }
@@ -24,10 +22,8 @@ public class SchemaWriter {
 
     public static String writeParamXmlString(List<Field> fields) {
         Element root = XmlUtils.createRootElement("itemParam");
-        Iterator i$ = fields.iterator();
 
-        while(i$.hasNext()) {
-            Field field = (Field)i$.next();
+        for (Field field : fields) {
             Element fieldNode = field.toParamElement();
             XmlUtils.appendElement(root, fieldNode);
         }

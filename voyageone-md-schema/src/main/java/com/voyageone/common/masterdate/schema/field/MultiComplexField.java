@@ -9,14 +9,13 @@ import com.voyageone.common.masterdate.schema.factory.SchemaFactory;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.dom4j.Element;
 
 public class MultiComplexField extends Field {
-    protected List<ComplexValue> values = new ArrayList();
-    protected List<Field> fields = new ArrayList();
+    protected List<ComplexValue> values = new ArrayList<>();
+    protected List<Field> fields = new ArrayList<>();
 
     public MultiComplexField() {
         super.type = FieldTypeEnum.MULTICOMPLEX;
@@ -90,11 +89,9 @@ public class MultiComplexField extends Field {
     }
 
     public Map<String, Field> getFieldMap() {
-        HashMap map = new HashMap();
-        Iterator i$ = this.fields.iterator();
+        Map<String, Field> map = new HashMap<>();
 
-        while(i$.hasNext()) {
-            Field field = (Field)i$.next();
+        for (Field field : this.fields) {
             map.put(field.getId(), field);
         }
 
@@ -105,10 +102,8 @@ public class MultiComplexField extends Field {
         Element fieldNode = super.toElement();
         Element fieldsNode = XmlUtils.appendElement(fieldNode, "fields");
         if(this.fields != null && !this.fields.isEmpty()) {
-            Iterator i$ = this.fields.iterator();
 
-            while(i$.hasNext()) {
-                Field field = (Field)i$.next();
+            for (Field field : this.fields) {
                 Element fNode = field.toElement();
                 XmlUtils.appendElement(fieldsNode, fNode);
             }
@@ -129,17 +124,11 @@ public class MultiComplexField extends Field {
                 fieldNode.addAttribute("id", this.id);
                 fieldNode.addAttribute("name", this.name);
                 fieldNode.addAttribute("type", this.type.value());
-                Iterator i$ = this.values.iterator();
 
-                while(i$.hasNext()) {
-                    ComplexValue complexValue = (ComplexValue)i$.next();
+                for (ComplexValue complexValue : this.values) {
                     Element complexValuesNode = XmlUtils.appendElement(fieldNode, "complex-values");
-                    ComplexValue cValue = complexValue;
-                    Iterator i$1 = complexValue.getFieldKeySet().iterator();
-
-                    while(i$1.hasNext()) {
-                        String keyFieldId = (String)i$1.next();
-                        Field field = cValue.getValueField(keyFieldId);
+                    for (String keyFieldId : complexValue.getFieldKeySet()) {
+                        Field field = complexValue.getValueField(keyFieldId);
                         Element valueNode = field.toParamElement();
                         XmlUtils.appendElement(complexValuesNode, valueNode);
                     }
@@ -158,17 +147,11 @@ public class MultiComplexField extends Field {
         } else {
             Element fieldNode = XmlUtils.createRootElement("default-values");
             MultiComplexField multiComplexField = (MultiComplexField)this.defaultValueField;
-            Iterator i$ = multiComplexField.getComplexValues().iterator();
 
-            while(i$.hasNext()) {
-                ComplexValue complexValue = (ComplexValue)i$.next();
+            for (ComplexValue complexValue : multiComplexField.getComplexValues()) {
                 Element complexValuesNode = XmlUtils.appendElement(fieldNode, "default-complex-values");
-                ComplexValue cValue = complexValue;
-                Iterator i$1 = complexValue.getFieldKeySet().iterator();
-
-                while(i$1.hasNext()) {
-                    String keyFieldId = (String)i$1.next();
-                    Field field = cValue.getValueField(keyFieldId);
+                for (String keyFieldId : complexValue.getFieldKeySet()) {
+                    Field field = complexValue.getValueField(keyFieldId);
                     Element valueNode = field.toParamElement();
                     XmlUtils.appendElement(complexValuesNode, valueNode);
                 }

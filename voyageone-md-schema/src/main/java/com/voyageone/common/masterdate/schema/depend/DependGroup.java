@@ -1,7 +1,6 @@
 package com.voyageone.common.masterdate.schema.depend;
 
 import com.voyageone.common.masterdate.schema.Util.XmlUtils;
-import com.voyageone.common.masterdate.schema.depend.DependExpress;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.field.Field;
 import java.util.ArrayList;
@@ -14,9 +13,9 @@ public class DependGroup {
 
     public static final String OPERATOR_AND = "and";
     public static final String OPERATOR_OR = "or";
-    protected List<DependExpress> dependExpressList = new ArrayList();
+    protected List<DependExpress> dependExpressList = new ArrayList<>();
     protected String operator = "and";
-    protected List<DependGroup> dependGroupList = new ArrayList();
+    protected List<DependGroup> dependGroupList = new ArrayList<>();
 
     public DependGroup() {
     }
