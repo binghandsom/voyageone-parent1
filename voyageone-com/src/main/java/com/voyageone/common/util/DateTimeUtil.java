@@ -1365,4 +1365,13 @@ public final class DateTimeUtil {
         return new Timestamp(System.currentTimeMillis()).toString();
     }
 
+    /**
+     * 得到当前时间TimeStamp
+     *
+     * @return 当前日期及时间
+     */
+    public static long getNowTimeStampLong() {
+        return System.currentTimeMillis();
+    }
+
 }

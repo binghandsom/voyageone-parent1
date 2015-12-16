@@ -6,6 +6,7 @@ import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.model.*;
 import com.voyageone.common.Constants;
+import com.voyageone.common.configs.Enums.CartEnums;
 import net.minidev.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -141,15 +142,15 @@ public class CmsProductServiceTest {
     public void testSelectCmsBtProductById() throws Exception {
         CmsBtProductModel ret = cmsProductService.getProductById("001", 1);
         System.out.println(ret.toString());
-        System.out.println(ret.getSkus().get(0).isIncludeCart(Constants.CartEnum.getEnum(21)));
-        System.out.println(ret.getSkus().get(0).isIncludeCart(Constants.CartEnum.getEnum(20)));
+        System.out.println(ret.getSkus().get(0).isIncludeCart(CartEnums.Cart.valueOf("21")));
+        System.out.println(ret.getSkus().get(0).isIncludeCart(CartEnums.Cart.valueOf("20")));
         System.out.println(ret.getGroups().getCurrentPriceEnd());
 
     }
 
     @Test
     public void testSelectCmsBtProductByCode() throws Exception {
-        CmsBtProductModel ret = cmsProductService.getProductByCode("001", "00341");
+        CmsBtProductModel ret = cmsProductService.getProductByCode("200", "100001");
         System.out.println(ret.toString());
         System.out.println(ret.getGroups().getCurrentPriceEnd());
     }

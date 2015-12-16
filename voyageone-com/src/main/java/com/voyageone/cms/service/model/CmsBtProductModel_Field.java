@@ -5,6 +5,12 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 
 import java.util.*;
 
+/**
+ * 的商品Model Fields
+ * @author chuanyu.liang, 12/11/15
+ * @version 2.0.0
+ * @since 2.0.0
+ */
 public class CmsBtProductModel_Field extends BaseMongoMap<Object, Object> {
 
     public String getCode() {
@@ -283,7 +289,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<Object, Object> {
                 value = images;
             }
         }
-        return value;
+        return super.put(key, value);
     }
 
 }

@@ -3,12 +3,19 @@ package com.voyageone.cms.service.model;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.Constants;
+import com.voyageone.common.configs.Enums.CartEnums;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class CmsBtProductModel_Sku extends BaseMongoMap {
+/**
+ * 的商品Model Skus
+ * @author chuanyu.liang, 12/11/15
+ * @version 2.0.0
+ * @since 2.0.0
+ */
+public class CmsBtProductModel_Sku extends BaseMongoMap<Object, Object> {
 
     public CmsBtProductModel_Sku() {
 
@@ -19,7 +26,7 @@ public class CmsBtProductModel_Sku extends BaseMongoMap {
 
 
     public String getSku() {
-        return (String) getAttribute("sku");
+        return getAttribute("sku");
     }
 
     public void setSku(String sku) {
@@ -27,7 +34,7 @@ public class CmsBtProductModel_Sku extends BaseMongoMap {
     }
 
     public String getUpc() {
-        return (String) getAttribute("upc");
+        return getAttribute("upc");
     }
 
     public void setUpc(String upc) {
@@ -35,7 +42,7 @@ public class CmsBtProductModel_Sku extends BaseMongoMap {
     }
 
     public double getCostPrice() {
-        return (double) getAttribute("costPrice");
+        return getAttribute("costPrice");
     }
 
     public void setCostPrice(double costPrice) {
@@ -43,7 +50,7 @@ public class CmsBtProductModel_Sku extends BaseMongoMap {
     }
 
     public double getPriceMsrp() {
-        return (double) getAttribute("priceMsrp");
+        return getAttribute("priceMsrp");
     }
 
     public void setPriceMsrp(double priceMsrp) {
@@ -51,7 +58,7 @@ public class CmsBtProductModel_Sku extends BaseMongoMap {
     }
 
     public double getPriceRetail() {
-        return (double) getAttribute("priceRetail");
+        return getAttribute("priceRetail");
     }
 
     public void setPriceRetail(double priceRetail) {
@@ -59,7 +66,7 @@ public class CmsBtProductModel_Sku extends BaseMongoMap {
     }
 
     public double getPriceSale() {
-        return (double) getAttribute("priceSale");
+        return getAttribute("priceSale");
     }
 
     public void setPriceSale(double priceSale) {
@@ -77,10 +84,10 @@ public class CmsBtProductModel_Sku extends BaseMongoMap {
         setAttribute("carts", carts);
     }
 
-    public boolean isIncludeCart(Constants.CartEnum cartEnum) {
+    public boolean isIncludeCart(CartEnums.Cart cartEnum) {
         boolean result = false;
         if (cartEnum != null) {
-            result = isIncludeCart(cartEnum.getName());
+            result = isIncludeCart(Integer.parseInt(cartEnum.getId()));
         }
         return result;
     }
@@ -90,9 +97,9 @@ public class CmsBtProductModel_Sku extends BaseMongoMap {
         return carts.contains(cartId);
     }
 
-    public void setCart(Constants.CartEnum cartEnum) {
+    public void setCart(CartEnums.Cart cartEnum) {
         if (cartEnum != null) {
-            setCart(cartEnum.getName());
+            setCart(Integer.parseInt(cartEnum.getId()));
         }
     }
 

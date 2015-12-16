@@ -7,10 +7,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class CmsBtProductModel_Group extends BaseMongoMap {
+/**
+ * 的商品Model Group
+ * @author chuanyu.liang, 12/11/15
+ * @version 2.0.0
+ * @since 2.0.0
+ */
+public class CmsBtProductModel_Group extends BaseMongoMap<Object, Object> {
 
     public double getMsrpStart() {
-        return (Double) getAttribute("msrpStart");
+        return getAttribute("msrpStart");
     }
 
     public void setMsrpStart(double msrpStart) {
@@ -18,7 +24,7 @@ public class CmsBtProductModel_Group extends BaseMongoMap {
     }
 
     public double getMsrpEnd() {
-        return (Double) getAttribute("msrpEnd");
+        return getAttribute("msrpEnd");
     }
 
     public void setMsrpEnd(double msrpEnd) {
@@ -26,7 +32,7 @@ public class CmsBtProductModel_Group extends BaseMongoMap {
     }
 
     public double getRetailPriceStart() {
-        return (Double) getAttribute("retailPriceStart");
+        return getAttribute("retailPriceStart");
     }
 
     public void setRetailPriceStart(double retailPriceStart) {
@@ -34,7 +40,7 @@ public class CmsBtProductModel_Group extends BaseMongoMap {
     }
 
     public double getRetailPriceEnd() {
-        return (Double) getAttribute("retailPriceEnd");
+        return getAttribute("retailPriceEnd");
     }
 
     public void setRetailPriceEnd(double retailPriceEnd) {
@@ -42,7 +48,7 @@ public class CmsBtProductModel_Group extends BaseMongoMap {
     }
 
     public double getSalePriceStart() {
-        return (Double) getAttribute("salePriceStart");
+        return getAttribute("salePriceStart");
     }
 
     public void setSalePriceStart(double salePriceStart) {
@@ -50,7 +56,7 @@ public class CmsBtProductModel_Group extends BaseMongoMap {
     }
 
     public double getSalePriceEnd() {
-        return (Double) getAttribute("salePriceEnd");
+        return getAttribute("salePriceEnd");
     }
 
     public void setSalePriceEnd(double salePriceEnd) {
@@ -58,7 +64,7 @@ public class CmsBtProductModel_Group extends BaseMongoMap {
     }
 
     public double getCurrentPriceStart() {
-        return (Double) getAttribute("currentPriceStart");
+        return getAttribute("currentPriceStart");
     }
 
     public void setCurrentPriceStart(double currentPriceStart) {
@@ -66,7 +72,7 @@ public class CmsBtProductModel_Group extends BaseMongoMap {
     }
 
     public double getCurrentPriceEnd() {
-        return (Double) getAttribute("currentPriceEnd");
+        return getAttribute("currentPriceEnd");
     }
 
     public void setCurrentPriceEnd(double currentPriceEnd) {

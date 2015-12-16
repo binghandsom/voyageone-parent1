@@ -1,10 +1,16 @@
 package com.voyageone.cms.service.model;
 
 import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * {@link CmsBtProductModel} 的商品Model
+ * @author chuanyu.liang, 12/11/15
+ * @version 2.0.0
+ * @since 2.0.0
+ */
 public class CmsBtProductModel extends ChannelPartitionModel {
 
     private int prodId;
