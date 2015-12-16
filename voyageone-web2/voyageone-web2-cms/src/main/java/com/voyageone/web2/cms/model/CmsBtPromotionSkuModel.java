@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.model;
 
 import com.voyageone.cms.service.model.CmsBtProductModel;
+import com.voyageone.web2.cms.bean.CmsPromotionSkuBean;
 
 import java.util.List;
 
@@ -11,12 +12,16 @@ import java.util.List;
 public class CmsBtPromotionSkuModel extends CmsBtPromotionGroupModel {
     private String productCode;
 
-    private List<String> productSku;
+    private List<CmsPromotionSkuBean> productSkus;
 
-    private List<Integer> qty;
 
     public CmsBtPromotionSkuModel(CmsBtProductModel productInfo, int cartId, int promotionId, String operator) {
         super(productInfo, cartId, promotionId, operator);
+        this.setProductCode(productInfo.getFields().getCode());
+        productInfo.getSkus().forEach(sku -> {
+            productSkus.add(new CmsPromotionSkuBean(sku.getSku(),1));
+        });
+
     }
 
     public CmsBtPromotionSkuModel() {
@@ -30,19 +35,11 @@ public class CmsBtPromotionSkuModel extends CmsBtPromotionGroupModel {
         this.productCode = productCode;
     }
 
-    public List<String> getProductSku() {
-        return productSku;
+    public List<CmsPromotionSkuBean> getProductSkus() {
+        return productSkus;
     }
 
-    public void setProductSku(List<String> productSku) {
-        this.productSku = productSku;
-    }
-
-    public List<Integer> getQty() {
-        return qty;
-    }
-
-    public void setQty(List<Integer> qty) {
-        this.qty = qty;
+    public void setProductSkus(List<CmsPromotionSkuBean> productSkus) {
+        this.productSkus = productSkus;
     }
 }
