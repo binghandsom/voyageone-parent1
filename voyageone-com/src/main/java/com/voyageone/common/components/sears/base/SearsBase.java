@@ -23,10 +23,10 @@ public class SearsBase {
     public static final int C_MAX_API_REPEAT_TIME = 3;
 
 //    public final String keystore = getClass().getResource("/keystore.jks").getPath();
-    public final String keystore = "/usr/task/voyageone/script/job/jar/keystore.jks";
+    public final String keystore = "/opt/app-shared/voyageone_web/contents/other/third_party/013/api_key/keystore.jks";
 
 //    public final String trustStore = getClass().getResource("/truststore.jks").getPath();
-    public final String trustStore = "/usr/task/voyageone/script/job/jar/truststore.jks";
+    public final String trustStore = "/opt/app-shared/voyageone_web/contents/other/third_party/013/api_key/truststore.jks";
 
     public final Properties properties;
 

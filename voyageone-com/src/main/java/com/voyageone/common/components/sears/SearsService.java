@@ -39,7 +39,7 @@ public class SearsService extends SearsBase {
 
         String responseXml = reqSearsApi(searsUrl + "products" + skus, param.toString());
 
-        logger.info("Sears response: " + responseXml);
+        //logger.info("Sears response: " + responseXml);
 
         ProductResponse response = JaxbUtil.converyToJavaBean(responseXml, ProductResponse.class);
 
@@ -61,7 +61,7 @@ public class SearsService extends SearsBase {
 
         String responseXml = reqSearsApi(searsUrl + "availabilities", param.toString());
 
-        logger.info("Sears response: " + responseXml);
+        //logger.info("Sears response: " + responseXml);
 
         AvailabilitiesResponse response = JaxbUtil.converyToJavaBean(responseXml, AvailabilitiesResponse.class);
 
