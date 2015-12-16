@@ -10,6 +10,8 @@ import java.util.List;
  * @version 2.0.0
  */
 public class CmsBtPromotionSkuModel extends CmsBtPromotionGroupModel {
+    private Long productId;
+
     private String productCode;
 
     private List<CmsPromotionSkuBean> productSkus;
@@ -17,11 +19,20 @@ public class CmsBtPromotionSkuModel extends CmsBtPromotionGroupModel {
 
     public CmsBtPromotionSkuModel(CmsBtProductModel productInfo, int cartId, int promotionId, String operator) {
         super(productInfo, cartId, promotionId, operator);
+        this.setProductId(productInfo.getProdId());
         this.setProductCode(productInfo.getFields().getCode());
         productInfo.getSkus().forEach(sku -> {
-            productSkus.add(new CmsPromotionSkuBean(sku.getSku(),1));
+            productSkus.add(new CmsPromotionSkuBean(sku.getSkuCode(),sku.getQty()));
         });
 
+    }
+
+    public Long getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
     }
 
     public CmsBtPromotionSkuModel() {

@@ -27,7 +27,7 @@ public class CmsPromotionDetailServiceTest {
     public void testInsertPromotionProduct() throws Exception {
 
         CmsPromotionProductPriceBean cmsPromotionProductPriceBean = new CmsPromotionProductPriceBean();
-        cmsPromotionProductPriceBean.setCode("100001");
+        cmsPromotionProductPriceBean.setCode("code1");
         cmsPromotionProductPriceBean.setPrice(20.99);
         cmsPromotionProductPriceBean.setTag("7折");
         List< CmsPromotionProductPriceBean > productPrices = new ArrayList<>();

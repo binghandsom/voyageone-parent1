@@ -8,6 +8,8 @@ import com.voyageone.cms.service.model.CmsBtProductModel;
  */
 public class CmsBtPromotionCodeModel extends CmsBtPromotionGroupModel {
 
+    private Long productId;
+
     private String productCode;
 
     private String productName;
@@ -22,11 +24,21 @@ public class CmsBtPromotionCodeModel extends CmsBtPromotionGroupModel {
 
     public CmsBtPromotionCodeModel(CmsBtProductModel productInfo, int cartId, int promotionId, String operator) {
         super(productInfo, cartId, promotionId, operator);
+        this.setProductId(productInfo.getProdId());
         this.setProductCode(productInfo.getFields().getCode());
-        this.setProductName(productInfo.getFields().getName());
+        this.setProductName(productInfo.getFields().getProductName());
+        this.setSalePrice(productInfo.getFields().getSalePriceStart());
     }
 
     public CmsBtPromotionCodeModel() {
+    }
+
+    public Long getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
     }
 
     public String getProductCode() {
