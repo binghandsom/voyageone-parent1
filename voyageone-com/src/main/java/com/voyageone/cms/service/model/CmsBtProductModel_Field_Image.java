@@ -12,7 +12,7 @@ import java.util.Map;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class CmsBtProductModel_Field_Image extends BaseMongoMap<Object, Object> {
+public class CmsBtProductModel_Field_Image extends BaseMongoMap<String, Object> {
 
     public CmsBtProductModel_Field_Image() {
     }

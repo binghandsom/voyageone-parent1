@@ -127,12 +127,10 @@ public enum RuleTypeEnum {
 
     public static RuleTypeEnum getEnum(String name) {
         RuleTypeEnum[] values = values();
-        RuleTypeEnum[] arr$ = values;
         int len$ = values.length;
 
-        for(int i$ = 0; i$ < len$; ++i$) {
-            RuleTypeEnum value = arr$[i$];
-            if(value.value().equals(name)) {
+        for (RuleTypeEnum value : values) {
+            if (value.value().equals(name)) {
                 return value;
             }
         }

@@ -62,12 +62,10 @@ public enum FieldTypeEnum {
 
     public static FieldTypeEnum getEnum(String name) {
         FieldTypeEnum[] values = values();
-        FieldTypeEnum[] arr$ = values;
         int len$ = values.length;
 
-        for(int i$ = 0; i$ < len$; ++i$) {
-            FieldTypeEnum value = arr$[i$];
-            if(value.value().equalsIgnoreCase(name)) {
+        for (FieldTypeEnum value : values) {
+            if (value.value().equalsIgnoreCase(name)) {
                 return value;
             }
         }

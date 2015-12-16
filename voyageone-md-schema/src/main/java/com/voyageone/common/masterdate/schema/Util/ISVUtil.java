@@ -6,18 +6,14 @@ import java.util.Iterator;
 import java.util.List;
 
 public class ISVUtil {
-    public ISVUtil() {
-    }
 
     public static List<Value> getValueListFromString(List<String> values) {
         if(values == null) {
             return null;
         } else {
-            ArrayList result = new ArrayList();
-            Iterator i$ = values.iterator();
+            List<Value> result = new ArrayList<>();
 
-            while(i$.hasNext()) {
-                String v = (String)i$.next();
+            for (String v : values) {
                 Value value = new Value();
                 value.setValue(v);
                 result.add(value);

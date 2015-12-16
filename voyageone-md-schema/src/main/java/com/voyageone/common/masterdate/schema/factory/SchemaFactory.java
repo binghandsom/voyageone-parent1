@@ -14,7 +14,7 @@ public class SchemaFactory {
     }
 
     public static List<Field> createEmptyFieldList() {
-        return new ArrayList();
+        return new ArrayList<>();
     }
 
     public static Field createField(FieldTypeEnum fieldEnum) {

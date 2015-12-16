@@ -22,8 +22,8 @@ public abstract class Field {
     protected String name;
 
     protected FieldTypeEnum type;
-    protected List<Rule> rules = new ArrayList();
-    protected List<Property> properties = new ArrayList();
+    protected List<Rule> rules = new ArrayList<>();
+    protected List<Property> properties = new ArrayList<>();
 
     // input ["common":0,"product":1,"item":2]
     protected int inputLevel;
@@ -181,10 +181,8 @@ public abstract class Field {
 
     public void addRules(List<Rule> ruleList) {
         if(ruleList != null && !ruleList.isEmpty()) {
-            Iterator i$ = ruleList.iterator();
 
-            while(i$.hasNext()) {
-                Rule rule = (Rule)i$.next();
+            for (Rule rule : ruleList) {
                 this.rules.add(rule);
             }
         }
@@ -212,7 +210,7 @@ public abstract class Field {
     public Rule addIntervalRule(RuleTypeEnum ruleType, String ruleValue, Boolean isInclude) {
         Rule rule = SchemaFactory.createRule(ruleType);
         rule.setValue(ruleValue);
-        if(isInclude.booleanValue()) {
+        if(isInclude) {
             rule.setExProperty("include");
         } else {
             rule.setExProperty("not include");

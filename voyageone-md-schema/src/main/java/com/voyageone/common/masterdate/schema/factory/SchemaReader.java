@@ -47,13 +47,11 @@ public class SchemaReader {
     }
 
     public static List<Field> readXmlForList(Element rootEle) {
-        List fieldList = SchemaFactory.createEmptyFieldList();
-        List fieldElmList = XmlUtils.getChildElements(rootEle, "field");
-        Iterator i$ = fieldElmList.iterator();
+        List<Field> fieldList = SchemaFactory.createEmptyFieldList();
+        List<Element> fieldElmList = XmlUtils.getChildElements(rootEle, "field");
 
-        while(i$.hasNext()) {
-            Element fieldElm = (Element)i$.next();
-            Field field = elementToField(fieldElm);
+        for (Element aFieldElmList : fieldElmList) {
+            Field field = elementToField(aFieldElmList);
             fieldList.add(field);
         }
 
@@ -61,13 +59,11 @@ public class SchemaReader {
     }
 
     public static Map<String, Field> readXmlForMap(Element rootEle) {
-        HashMap fieldMap = new HashMap();
-        List fieldElmList = XmlUtils.getChildElements(rootEle, "field");
-        Iterator i$ = fieldElmList.iterator();
+        Map<String, Field> fieldMap = new HashMap<>();
+        List<Element> fieldElmList = XmlUtils.getChildElements(rootEle, "field");
 
-        while(i$.hasNext()) {
-            Element fieldElm = (Element)i$.next();
-            Field field = elementToField(fieldElm);
+        for (Element aFieldElmList : fieldElmList) {
+            Field field = elementToField(aFieldElmList);
             fieldMap.put(field.getId(), field);
         }
 
@@ -122,6 +118,7 @@ public class SchemaReader {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private static Rule elementToRule(Element ruleEle, String fieldId) {
         if(ruleEle == null) {
             return null;
@@ -196,11 +193,9 @@ public class SchemaReader {
 
             DependGroup dg_result = new DependGroup();
             dg_result.setOperator(dependGroupOperator);
-            List deEleList = XmlUtils.getChildElements(dependGroupEle, "depend-express");
-            Iterator dgEleList = deEleList.iterator();
+            List<Element> deEleList = XmlUtils.getChildElements(dependGroupEle, "depend-express");
 
-            while(dgEleList.hasNext()) {
-                Element i$ = (Element)dgEleList.next();
+            for (Element i$ : deEleList) {
                 DependExpress dgSubEle = new DependExpress();
                 String subGroup = XmlUtils.getAttributeValue(i$, "fieldId");
                 String deValue = XmlUtils.getAttributeValue(i$, "value");
@@ -211,12 +206,9 @@ public class SchemaReader {
                 dg_result.add(dgSubEle);
             }
 
-            List dgEleList1 = XmlUtils.getChildElements(dependGroupEle, "depend-group");
-            Iterator i$1 = dgEleList1.iterator();
+            List<Element> dgEleList1 = XmlUtils.getChildElements(dependGroupEle, "depend-group");
 
-            while(i$1.hasNext()) {
-                Element dgSubEle1 = (Element)i$1.next();
-                new DependGroup();
+            for (Element dgSubEle1 : dgEleList1) {
                 DependGroup subGroup1 = elementToDependGroup(dgSubEle1, fieldId);
                 dg_result.add(subGroup1);
             }
@@ -232,11 +224,9 @@ public class SchemaReader {
             String name = XmlUtils.getAttributeValue(labelGroupEle, "name");
             LabelGroup lg_result = new LabelGroup();
             lg_result.setName(name);
-            List labelEleList = XmlUtils.getChildElements(labelGroupEle, "label");
-            Iterator labelGroupEleList = labelEleList.iterator();
+            List<Element> labelEleList = XmlUtils.getChildElements(labelGroupEle, "label");
 
-            while(labelGroupEleList.hasNext()) {
-                Element i$ = (Element)labelGroupEleList.next();
+            for (Element i$ : labelEleList) {
                 Label subLabelGroupEle = new Label();
                 String subGroup = XmlUtils.getAttributeValue(i$, "name");
                 String labelValue = XmlUtils.getAttributeValue(i$, "value");
@@ -247,11 +237,9 @@ public class SchemaReader {
                 lg_result.add(subLabelGroupEle);
             }
 
-            List labelGroupEleList1 = XmlUtils.getChildElements(labelGroupEle, "label-group");
-            Iterator i$1 = labelGroupEleList1.iterator();
+            List<Element> labelGroupEleList1 = XmlUtils.getChildElements(labelGroupEle, "label-group");
 
-            while(i$1.hasNext()) {
-                Element subLabelGroupEle1 = (Element)i$1.next();
+            for (Element subLabelGroupEle1 : labelGroupEleList1) {
                 new LabelGroup();
                 LabelGroup subGroup1 = elementToLabelGroup(subLabelGroupEle1, fieldId);
                 lg_result.add(subGroup1);
@@ -284,8 +272,7 @@ public class SchemaReader {
     private static Property elementToProperty(Element propertyEle, String fieldId) {
         String key = XmlUtils.getAttributeValue(propertyEle, "key");
         String value = XmlUtils.getAttributeValue(propertyEle, "value");
-        Property property = new Property(key, value);
-        return property;
+        return new Property(key, value);
     }
 
     private static InputField elementToInputField(Element fieldElm, String fieldId, String fieldName) {
@@ -296,25 +283,21 @@ public class SchemaReader {
             inputField.setId(fieldId);
             inputField.setName(fieldName);
             Element rulesEle = XmlUtils.getChildElement(fieldElm, "rules");
-            Element value;
+            //Element value;
             if(rulesEle != null) {
-                List propertiesEle = XmlUtils.getChildElements(rulesEle, "rule");
-                Iterator defaultValueEle = propertiesEle.iterator();
+                List<Element> propertiesEle = XmlUtils.getChildElements(rulesEle, "rule");
 
-                while(defaultValueEle.hasNext()) {
-                    value = (Element)defaultValueEle.next();
-                    Rule propertyEle = elementToRule(value, inputField.getId());
+                for (Element aPropertiesEle : propertiesEle) {
+                    Rule propertyEle = elementToRule(aPropertiesEle, inputField.getId());
                     inputField.add(propertyEle);
                 }
             }
 
             Element propertiesEle1 = XmlUtils.getChildElement(fieldElm, "properties");
             if(propertiesEle1 != null) {
-                List defaultValueEle1 = XmlUtils.getChildElements(propertiesEle1, "property");
-                Iterator value1 = defaultValueEle1.iterator();
+                List<Element> defaultValueEle1 = XmlUtils.getChildElements(propertiesEle1, "property");
 
-                while(value1.hasNext()) {
-                    Element propertyEle1 = (Element)value1.next();
+                for (Element propertyEle1 : defaultValueEle1) {
                     Property property = elementToProperty(propertyEle1, inputField.getId());
                     inputField.add(property);
                 }
@@ -326,7 +309,7 @@ public class SchemaReader {
                 inputField.setDefaultValue(value2);
             }
 
-            value = XmlUtils.getChildElement(fieldElm, "value");
+            Element value = XmlUtils.getChildElement(fieldElm, "value");
             if(value != null) {
                 inputField.setValue(XmlUtils.getElementValue(value));
             }
@@ -344,11 +327,9 @@ public class SchemaReader {
             labelField.setName(fieldName);
             Element rulesEle = XmlUtils.getChildElement(fieldElm, "rules");
             if(rulesEle != null) {
-                List propertiesEle = XmlUtils.getChildElements(rulesEle, "rule");
-                Iterator labelGroupEle = propertiesEle.iterator();
+                List<Element> propertiesEle = XmlUtils.getChildElements(rulesEle, "rule");
 
-                while(labelGroupEle.hasNext()) {
-                    Element labelGroup = (Element)labelGroupEle.next();
+                for (Element labelGroup : propertiesEle) {
                     Rule propertyEle = elementToRule(labelGroup, labelField.getId());
                     labelField.add(propertyEle);
                 }
@@ -356,11 +337,9 @@ public class SchemaReader {
 
             Element propertiesEle1 = XmlUtils.getChildElement(fieldElm, "properties");
             if(propertiesEle1 != null) {
-                List labelGroupEle1 = XmlUtils.getChildElements(propertiesEle1, "property");
-                Iterator labelGroup1 = labelGroupEle1.iterator();
+                List<Element> labelGroupEle1 = XmlUtils.getChildElements(propertiesEle1, "property");
 
-                while(labelGroup1.hasNext()) {
-                    Element propertyEle1 = (Element)labelGroup1.next();
+                for (Element propertyEle1 : labelGroupEle1) {
                     Property property = elementToProperty(propertyEle1, labelField.getId());
                     labelField.add(property);
                 }
@@ -384,13 +363,10 @@ public class SchemaReader {
             multiInputField.setId(fieldId);
             multiInputField.setName(fieldName);
             Element rulesEle = XmlUtils.getChildElement(fieldElm, "rules");
-            Element valuesEle;
             if(rulesEle != null) {
-                List propertiesEle = XmlUtils.getChildElements(rulesEle, "rule");
-                Iterator defaultValuesEle = propertiesEle.iterator();
+                List<Element> propertiesEle = XmlUtils.getChildElements(rulesEle, "rule");
 
-                while(defaultValuesEle.hasNext()) {
-                    valuesEle = (Element)defaultValuesEle.next();
+                for (Element valuesEle : propertiesEle) {
                     Rule valueEleList = elementToRule(valuesEle, multiInputField.getId());
                     multiInputField.add(valueEleList);
                 }
@@ -398,11 +374,9 @@ public class SchemaReader {
 
             Element propertiesEle1 = XmlUtils.getChildElement(fieldElm, "properties");
             if(propertiesEle1 != null) {
-                List defaultValuesEle1 = XmlUtils.getChildElements(propertiesEle1, "property");
-                Iterator valuesEle1 = defaultValuesEle1.iterator();
+                List<Element> defaultValuesEle1 = XmlUtils.getChildElements(propertiesEle1, "property");
 
-                while(valuesEle1.hasNext()) {
-                    Element valueEleList1 = (Element)valuesEle1.next();
+                for (Element valueEleList1 : defaultValuesEle1) {
                     Property i$ = elementToProperty(valueEleList1, multiInputField.getId());
                     multiInputField.add(i$);
                 }
@@ -410,23 +384,19 @@ public class SchemaReader {
 
             Element defaultValuesEle2 = XmlUtils.getChildElement(fieldElm, "default-values");
             if(defaultValuesEle2 != null) {
-                List valuesEle2 = XmlUtils.getChildElements(defaultValuesEle2, "default-value");
-                Iterator valueEleList2 = valuesEle2.iterator();
+                List<Element> valuesEle2 = XmlUtils.getChildElements(defaultValuesEle2, "default-value");
 
-                while(valueEleList2.hasNext()) {
-                    Element i$1 = (Element)valueEleList2.next();
-                    String valueEle = i$1.getText();
+                for (Element aValuesEle2 : valuesEle2) {
+                    String valueEle = aValuesEle2.getText();
                     multiInputField.addDefaultValue(valueEle);
                 }
             }
 
-            valuesEle = XmlUtils.getChildElement(fieldElm, "values");
+            Element valuesEle = XmlUtils.getChildElement(fieldElm, "values");
             if(valuesEle != null) {
-                List valueEleList3 = XmlUtils.getChildElements(valuesEle, "value");
-                Iterator i$2 = valueEleList3.iterator();
+                List<Element> valueEleList3 = XmlUtils.getChildElements(valuesEle, "value");
 
-                while(i$2.hasNext()) {
-                    Element valueEle1 = (Element)i$2.next();
+                for (Element valueEle1 : valueEleList3) {
                     Value value = new Value();
                     value.setValue(XmlUtils.getElementValue(valueEle1));
                     multiInputField.addValue(value);
@@ -447,12 +417,10 @@ public class SchemaReader {
             Element rulesEle = XmlUtils.getChildElement(fieldElm, "rules");
             Element defaultValueEle;
             if(rulesEle != null) {
-                List optionsEle = XmlUtils.getChildElements(rulesEle, "rule");
-                Iterator propertiesEle = optionsEle.iterator();
+                List<Element> optionsEle = XmlUtils.getChildElements(rulesEle, "rule");
 
-                while(propertiesEle.hasNext()) {
-                    defaultValueEle = (Element)propertiesEle.next();
-                    Rule valueEle = elementToRule(defaultValueEle, singleCheckField.getId());
+                for (Element anOptionsEle : optionsEle) {
+                    Rule valueEle = elementToRule(anOptionsEle, singleCheckField.getId());
                     singleCheckField.add(valueEle);
                 }
             }
@@ -460,23 +428,19 @@ public class SchemaReader {
             Element optionsEle1 = XmlUtils.getChildElement(fieldElm, "options");
             Element valueEle1;
             if(optionsEle1 != null) {
-                List propertiesEle1 = XmlUtils.getChildElements(optionsEle1, "option");
-                Iterator defaultValueEle1 = propertiesEle1.iterator();
+                List<Element> propertiesEle1 = XmlUtils.getChildElements(optionsEle1, "option");
 
-                while(defaultValueEle1.hasNext()) {
-                    valueEle1 = (Element)defaultValueEle1.next();
-                    Option value = elementToOption(valueEle1, singleCheckField.getId());
+                for (Element aPropertiesEle1 : propertiesEle1) {
+                    Option value = elementToOption(aPropertiesEle1, singleCheckField.getId());
                     singleCheckField.add(value);
                 }
             }
 
             Element propertiesEle2 = XmlUtils.getChildElement(fieldElm, "properties");
             if(propertiesEle2 != null) {
-                List defaultValueEle2 = XmlUtils.getChildElements(propertiesEle2, "property");
-                Iterator valueEle2 = defaultValueEle2.iterator();
+                List<Element> defaultValueEle2 = XmlUtils.getChildElements(propertiesEle2, "property");
 
-                while(valueEle2.hasNext()) {
-                    Element value1 = (Element)valueEle2.next();
+                for (Element value1 : defaultValueEle2) {
                     Property property = elementToProperty(value1, singleCheckField.getId());
                     singleCheckField.add(property);
                 }
@@ -509,14 +473,11 @@ public class SchemaReader {
             multiCheckField.setId(fieldId);
             multiCheckField.setName(fieldName);
             Element rulesEle = XmlUtils.getChildElement(fieldElm, "rules");
-            Element defaultValuesEle;
             if(rulesEle != null) {
-                List optionsEle = XmlUtils.getChildElements(rulesEle, "rule");
-                Iterator propertiesEle = optionsEle.iterator();
+                List<Element> optionsEle = XmlUtils.getChildElements(rulesEle, "rule");
 
-                while(propertiesEle.hasNext()) {
-                    defaultValuesEle = (Element)propertiesEle.next();
-                    Rule valuesEle = elementToRule(defaultValuesEle, multiCheckField.getId());
+                for (Element anOptionsEle : optionsEle) {
+                    Rule valuesEle = elementToRule(anOptionsEle, multiCheckField.getId());
                     multiCheckField.add(valuesEle);
                 }
             }
@@ -524,11 +485,10 @@ public class SchemaReader {
             Element optionsEle1 = XmlUtils.getChildElement(fieldElm, "options");
             Element valuesEle1;
             if(optionsEle1 != null) {
-                List propertiesEle1 = XmlUtils.getChildElements(optionsEle1, "option");
-                Iterator defaultValuesEle1 = propertiesEle1.iterator();
+                List<Element> propertiesEle1 = XmlUtils.getChildElements(optionsEle1, "option");
 
-                while(defaultValuesEle1.hasNext()) {
-                    valuesEle1 = (Element)defaultValuesEle1.next();
+                for (Element aPropertiesEle1 : propertiesEle1) {
+                    valuesEle1 = aPropertiesEle1;
                     Option valueEleList = elementToOption(valuesEle1, multiCheckField.getId());
                     multiCheckField.add(valueEleList);
                 }
@@ -536,23 +496,19 @@ public class SchemaReader {
 
             Element propertiesEle2 = XmlUtils.getChildElement(fieldElm, "properties");
             if(propertiesEle2 != null) {
-                List defaultValuesEle2 = XmlUtils.getChildElements(propertiesEle2, "property");
-                Iterator valuesEle2 = defaultValuesEle2.iterator();
+                List<Element> defaultValuesEle2 = XmlUtils.getChildElements(propertiesEle2, "property");
 
-                while(valuesEle2.hasNext()) {
-                    Element valueEleList1 = (Element)valuesEle2.next();
+                for (Element valueEleList1 : defaultValuesEle2) {
                     Property i$ = elementToProperty(valueEleList1, multiCheckField.getId());
                     multiCheckField.add(i$);
                 }
             }
 
-            defaultValuesEle = XmlUtils.getChildElement(fieldElm, "default-values");
+            Element defaultValuesEle = XmlUtils.getChildElement(fieldElm, "default-values");
             if(defaultValuesEle != null) {
-                List valuesEle3 = XmlUtils.getChildElements(defaultValuesEle, "default-value");
-                Iterator valueEleList2 = valuesEle3.iterator();
+                List<Element> valuesEle3 = XmlUtils.getChildElements(defaultValuesEle, "default-value");
 
-                while(valueEleList2.hasNext()) {
-                    Element i$1 = (Element)valueEleList2.next();
+                for (Element i$1 : valuesEle3) {
                     Value valueEle = new Value();
                     String value = i$1.getText();
                     valueEle.setValue(value);
@@ -562,11 +518,9 @@ public class SchemaReader {
 
             valuesEle1 = XmlUtils.getChildElement(fieldElm, "values");
             if(valuesEle1 != null) {
-                List valueEleList3 = XmlUtils.getChildElements(valuesEle1, "value");
-                Iterator i$2 = valueEleList3.iterator();
+                List<Element> valueEleList3 = XmlUtils.getChildElements(valuesEle1, "value");
 
-                while(i$2.hasNext()) {
-                    Element valueEle1 = (Element)i$2.next();
+                for (Element valueEle1 : valueEleList3) {
                     Value value1 = new Value();
                     value1.setValue(XmlUtils.getElementValue(valueEle1));
                     multiCheckField.addValue(value1);
@@ -587,23 +541,19 @@ public class SchemaReader {
             Element fieldsEle = XmlUtils.getChildElement(fieldElm, "fields");
             Element defaultValuesEle;
             if(fieldsEle != null) {
-                List rulesEle = XmlUtils.getChildElements(fieldsEle, "field");
-                Iterator propertiesEle = rulesEle.iterator();
+                List<Element> rulesEle = XmlUtils.getChildElements(fieldsEle, "field");
 
-                while(propertiesEle.hasNext()) {
-                    defaultValuesEle = (Element)propertiesEle.next();
-                    Field complexValuesEle = elementToField(defaultValuesEle);
+                for (Element aRulesEle : rulesEle) {
+                    Field complexValuesEle = elementToField(aRulesEle);
                     multiComplexField.add(complexValuesEle);
                 }
             }
 
             Element rulesEle1 = XmlUtils.getChildElement(fieldElm, "rules");
             if(rulesEle1 != null) {
-                List propertiesEle1 = XmlUtils.getChildElements(rulesEle1, "rule");
-                Iterator defaultValuesEle1 = propertiesEle1.iterator();
+                List<Element> propertiesEle1 = XmlUtils.getChildElements(rulesEle1, "rule");
 
-                while(defaultValuesEle1.hasNext()) {
-                    Element complexValuesEle1 = (Element)defaultValuesEle1.next();
+                for (Element complexValuesEle1 : propertiesEle1) {
                     Rule i$ = elementToRule(complexValuesEle1, multiComplexField.getId());
                     multiComplexField.add(i$);
                 }
@@ -611,11 +561,9 @@ public class SchemaReader {
 
             Element propertiesEle2 = XmlUtils.getChildElement(fieldElm, "properties");
             if(propertiesEle2 != null) {
-                List defaultValuesEle2 = XmlUtils.getChildElements(propertiesEle2, "property");
-                Iterator complexValuesEle2 = defaultValuesEle2.iterator();
+                List<Element> defaultValuesEle2 = XmlUtils.getChildElements(propertiesEle2, "property");
 
-                while(complexValuesEle2.hasNext()) {
-                    Element i$2 = (Element)complexValuesEle2.next();
+                for (Element i$2 : defaultValuesEle2) {
                     Property complexValue = elementToProperty(i$2, multiComplexField.getId());
                     multiComplexField.add(complexValue);
                 }
@@ -627,7 +575,7 @@ public class SchemaReader {
             Iterator i$1;
             Element subFiledValueEle;
             Field field;
-            List complexValuesEle3;
+            List<Element> complexValuesEle3;
             Iterator i$3;
             Element complexValue1;
             if(defaultValuesEle != null) {
@@ -682,12 +630,10 @@ public class SchemaReader {
             Element fieldsEle = XmlUtils.getChildElement(fieldElm, "fields");
             Element defaultComplexValueEle;
             if(fieldsEle != null) {
-                List rulesEle = XmlUtils.getChildElements(fieldsEle, "field");
-                Iterator propertiesEle = rulesEle.iterator();
+                List<Element> rulesEle = XmlUtils.getChildElements(fieldsEle, "field");
 
-                while(propertiesEle.hasNext()) {
-                    defaultComplexValueEle = (Element)propertiesEle.next();
-                    Field complexValueEle = elementToField(defaultComplexValueEle);
+                for (Element aRulesEle : rulesEle) {
+                    Field complexValueEle = elementToField(aRulesEle);
                     complexField.add(complexValueEle);
                 }
             }
@@ -695,23 +641,19 @@ public class SchemaReader {
             Element rulesEle1 = XmlUtils.getChildElement(fieldElm, "rules");
             Element complexValueEle1;
             if(rulesEle1 != null) {
-                List propertiesEle1 = XmlUtils.getChildElements(rulesEle1, "rule");
-                Iterator defaultComplexValueEle1 = propertiesEle1.iterator();
+                List<Element> propertiesEle1 = XmlUtils.getChildElements(rulesEle1, "rule");
 
-                while(defaultComplexValueEle1.hasNext()) {
-                    complexValueEle1 = (Element)defaultComplexValueEle1.next();
-                    Rule valuesSubFieldList = elementToRule(complexValueEle1, complexField.getId());
+                for (Element aPropertiesEle1 : propertiesEle1) {
+                    Rule valuesSubFieldList = elementToRule(aPropertiesEle1, complexField.getId());
                     complexField.add(valuesSubFieldList);
                 }
             }
 
             Element propertiesEle2 = XmlUtils.getChildElement(fieldElm, "properties");
             if(propertiesEle2 != null) {
-                List defaultComplexValueEle2 = XmlUtils.getChildElements(propertiesEle2, "property");
-                Iterator complexValueEle2 = defaultComplexValueEle2.iterator();
+                List<Element> defaultComplexValueEle2 = XmlUtils.getChildElements(propertiesEle2, "property");
 
-                while(complexValueEle2.hasNext()) {
-                    Element valuesSubFieldList1 = (Element)complexValueEle2.next();
+                for (Element valuesSubFieldList1 : defaultComplexValueEle2) {
                     Property cvalue = elementToProperty(valuesSubFieldList1, complexField.getId());
                     complexField.add(cvalue);
                 }
@@ -719,12 +661,10 @@ public class SchemaReader {
 
             defaultComplexValueEle = XmlUtils.getChildElement(fieldElm, "default-complex-values");
             if(defaultComplexValueEle != null) {
-                List complexValueEle3 = XmlUtils.getChildElements(defaultComplexValueEle, "field");
+                List<Element> complexValueEle3 = XmlUtils.getChildElements(defaultComplexValueEle, "field");
                 ComplexValue valuesSubFieldList2 = new ComplexValue();
-                Iterator cvalue1 = complexValueEle3.iterator();
 
-                while(cvalue1.hasNext()) {
-                    Element i$ = (Element)cvalue1.next();
+                for (Element i$ : complexValueEle3) {
                     Field subFiledValueEle = elementToField(i$);
                     valuesSubFieldList2.put(subFiledValueEle);
                 }
@@ -734,12 +674,10 @@ public class SchemaReader {
 
             complexValueEle1 = XmlUtils.getChildElement(fieldElm, "complex-values");
             if(complexValueEle1 != null) {
-                List valuesSubFieldList3 = XmlUtils.getChildElements(complexValueEle1, "field");
+                List<Element> valuesSubFieldList3 = XmlUtils.getChildElements(complexValueEle1, "field");
                 ComplexValue cvalue2 = new ComplexValue();
-                Iterator i$1 = valuesSubFieldList3.iterator();
 
-                while(i$1.hasNext()) {
-                    Element subFiledValueEle1 = (Element)i$1.next();
+                for (Element subFiledValueEle1 : valuesSubFieldList3) {
                     Field field = elementToField(subFiledValueEle1);
                     cvalue2.put(field);
                 }

@@ -1,6 +1,5 @@
 package com.voyageone.common.masterdate.schema.factory;
 
-import com.google.gson.JsonObject;
 import com.voyageone.common.masterdate.schema.Util.JsonUtil;
 import com.voyageone.common.masterdate.schema.Util.StringUtil;
 import com.voyageone.common.masterdate.schema.depend.DependExpress;
@@ -71,8 +70,9 @@ public class SchemaJsonReader {
     /**
      * mapToField from Object
      */
+    @SuppressWarnings("unchecked")
     public static Field mapToField(Object fieldMap) {
-        return  mapToField((Map)fieldMap);
+        return mapToField((Map<String, Object>)fieldMap);
     }
 
     /**
@@ -126,6 +126,7 @@ public class SchemaJsonReader {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private static Rule mapToRule(Map<String, Object> ruleMap, String fieldId) {
         if(ruleMap == null) {
             return null;
@@ -188,6 +189,7 @@ public class SchemaJsonReader {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private static DependGroup mapToDependGroup(Map<String, Object> dependGroupMap, String fieldId) {
         if(dependGroupMap == null) {
             return null;
@@ -230,6 +232,7 @@ public class SchemaJsonReader {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private static LabelGroup mapToLabelGroup(Map<String, Object> labelGroupMap, String fieldId) {
         if(labelGroupMap == null) {
             return null;
@@ -264,6 +267,7 @@ public class SchemaJsonReader {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private static Option mapToOption(Map<String, Object> optionMap, String fieldId) {
         Option opResult = new Option();
         String displayName = (String)optionMap.get("displayName");
@@ -307,6 +311,7 @@ public class SchemaJsonReader {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private static InputField mapToInputField(Map<String, Object> fieldMap, String fieldId, String fieldName) {
         if(fieldMap == null) {
             return null;
@@ -355,6 +360,7 @@ public class SchemaJsonReader {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private static LabelField mapToLabelField(Map<String, Object> fieldMap, String fieldId, String fieldName) {
         if(fieldMap == null) {
             return null;
@@ -398,6 +404,7 @@ public class SchemaJsonReader {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private static MultiInputField mapToMultiInputField(Map<String, Object> fieldMap, String fieldId, String fieldName) {
         if(fieldMap == null) {
             return null;
@@ -456,6 +463,7 @@ public class SchemaJsonReader {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private static SingleCheckField mapToSingleCheckField(Map<String, Object>  fieldMap, String fieldId, String fieldName) {
         if(fieldMap == null) {
             return null;
@@ -515,6 +523,7 @@ public class SchemaJsonReader {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private static MultiCheckField mapToMultiCheckField(Map<String, Object>  fieldMap, String fieldId, String fieldName)  {
         if(fieldMap == null) {
             return null;
@@ -590,7 +599,7 @@ public class SchemaJsonReader {
         }
     }
 
-
+    @SuppressWarnings("unchecked")
     private static ComplexField mapToComplexField(Map<String, Object>  fieldMap, String fieldId, String fieldName)  {
         if(fieldMap == null) {
             return null;
@@ -639,9 +648,8 @@ public class SchemaJsonReader {
                     ComplexValue defaultComplexValue = new ComplexValue();
                     Map<String, Object> complexValueFieldMap = (Map<String, Object>)complexValueMap.get("fieldMap");
                     if (complexValueFieldMap != null) {
-                        Iterator complexValueFieldMapIt = complexValueFieldMap.values().iterator();
-                        while(complexValueFieldMapIt.hasNext()) {
-                            Map<String, Object> complexValueSubFieldMap = (Map<String, Object>)complexValueFieldMapIt.next();
+                        for (Object o : complexValueFieldMap.values()) {
+                            Map<String, Object> complexValueSubFieldMap = (Map<String, Object>) o;
                             Field subFiledValue = mapToField(complexValueSubFieldMap);
                             defaultComplexValue.put(subFiledValue);
                         }
@@ -655,9 +663,8 @@ public class SchemaJsonReader {
                 ComplexValue defaultComplexValue = new ComplexValue();
                 Map<String, Object> complexValueFieldMap = (Map<String, Object>)complexValue.get("fieldMap");
                 if (complexValueFieldMap != null) {
-                    Iterator complexValueFieldMapIt = complexValueFieldMap.values().iterator();
-                    while(complexValueFieldMapIt.hasNext()) {
-                        Map<String, Object> complexValueSubFieldMap = (Map<String, Object>)complexValueFieldMapIt.next();
+                    for (Object o : complexValueFieldMap.values()) {
+                        Map<String, Object> complexValueSubFieldMap = (Map<String, Object>) o;
                         Field subFiledValue = mapToField(complexValueSubFieldMap);
                         defaultComplexValue.put(subFiledValue);
                     }
@@ -669,6 +676,7 @@ public class SchemaJsonReader {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private static MultiComplexField mapToMultiComplexField(Map<String, Object> fieldMap, String fieldId, String fieldName)  {
         if(fieldMap == null) {
             return null;
@@ -678,10 +686,8 @@ public class SchemaJsonReader {
 
             if (fieldMap.containsKey("fields")) {
                 List<Map<String, Object>> fieldList = (List<Map<String, Object>>)fieldMap.get("fields");
-                Iterator<Map<String, Object>> fieldListIt = fieldList.iterator();
 
-                while(fieldListIt.hasNext()) {
-                    Map<String, Object> subFieldMap = fieldListIt.next();
+                for (Map<String, Object> subFieldMap : fieldList) {
                     Field complexSubField = mapToField(subFieldMap);
                     multiComplexField.add(complexSubField);
                 }
@@ -717,15 +723,12 @@ public class SchemaJsonReader {
             if(defaultValue != null) {
                 List<Map<String, Object>> valuesMapList = (List<Map<String, Object>>)defaultValue.get("values");
                 if (valuesMapList != null) {
-                    Iterator<Map<String, Object>> valuesMapIt = valuesMapList.iterator();
-                    while(valuesMapIt.hasNext()) {
-                        Map<String, Object> complexValueMap = (Map<String, Object>)valuesMapIt.next();
+                    for (Map<String, Object> complexValueMap : valuesMapList) {
                         ComplexValue defaultComplexValue = new ComplexValue();
-                        Map<String, Object> complexValueFieldMap = (Map<String, Object>)complexValueMap.get("fieldMap");
+                        Map<String, Object> complexValueFieldMap = (Map<String, Object>) complexValueMap.get("fieldMap");
                         if (complexValueFieldMap != null) {
-                            Iterator complexValueFieldMapIt = complexValueFieldMap.values().iterator();
-                            while(complexValueFieldMapIt.hasNext()) {
-                                Map<String, Object> complexValueSubFieldMap = (Map<String, Object>)complexValueFieldMapIt.next();
+                            for (Object o : complexValueFieldMap.values()) {
+                                Map<String, Object> complexValueSubFieldMap = (Map<String, Object>) o;
                                 Field subFiledValue = mapToField(complexValueSubFieldMap);
                                 defaultComplexValue.put(subFiledValue);
                             }
@@ -737,15 +740,12 @@ public class SchemaJsonReader {
 
             List<Map<String, Object>> valuesMapList = (List<Map<String, Object>>)fieldMap.get("values");
             if (valuesMapList != null) {
-                Iterator<Map<String, Object>> valuesMapIt = valuesMapList.iterator();
-                while(valuesMapIt.hasNext()) {
-                    Map<String, Object> complexValueMap = (Map<String, Object>)valuesMapIt.next();
+                for (Map<String, Object> complexValueMap : valuesMapList) {
                     ComplexValue complexValue = new ComplexValue();
-                    Map<String, Object> complexValueFieldMap = (Map<String, Object>)complexValueMap.get("fieldMap");
+                    Map<String, Object> complexValueFieldMap = (Map<String, Object>) complexValueMap.get("fieldMap");
                     if (complexValueFieldMap != null) {
-                        Iterator complexValueFieldMapIt = complexValueFieldMap.values().iterator();
-                        while(complexValueFieldMapIt.hasNext()) {
-                            Map<String, Object> complexValueSubFieldMap = (Map<String, Object>)complexValueFieldMapIt.next();
+                        for (Object o : complexValueFieldMap.values()) {
+                            Map<String, Object> complexValueSubFieldMap = (Map<String, Object>) o;
                             Field subFiledValue = mapToField(complexValueSubFieldMap);
                             complexValue.put(subFiledValue);
                         }

@@ -4,6 +4,8 @@ import com.voyageone.base.dao.BaseDao;
 import com.voyageone.web2.cms.model.CmsBtTagModel;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * @author gubuchun 15/12/14
  * @version 2.0.0
@@ -18,5 +20,9 @@ public class CmsBtTagDao extends BaseDao{
 
     public int updateCmsBtTag(CmsBtTagModel cmsBtTagModel){
         return updateTemplate.update("update_cms_bt_tag",cmsBtTagModel);
+    }
+
+    public List<CmsBtTagModel> selectListById(int promotionId) {
+        return updateTemplate.selectList("select_list_by_id", promotionId);
     }
 }

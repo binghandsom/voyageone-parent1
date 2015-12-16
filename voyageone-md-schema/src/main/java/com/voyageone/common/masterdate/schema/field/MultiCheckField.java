@@ -8,12 +8,11 @@ import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaFactory;
 import com.voyageone.common.masterdate.schema.value.Value;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import org.dom4j.Element;
 
 public class MultiCheckField extends OptionsField {
-    protected List<Value> values = new ArrayList();
+    protected List<Value> values = new ArrayList<>();
 
     public MultiCheckField() {
         super.type = FieldTypeEnum.MULTICHECK;
@@ -65,10 +64,7 @@ public class MultiCheckField extends OptionsField {
                 defaultField.getValues().clear();
             }
 
-            Iterator i$ = values.iterator();
-
-            while(i$.hasNext()) {
-                Value v = (Value)i$.next();
+            for (Value v : values) {
                 defaultField.addValue(v);
             }
 
@@ -81,8 +77,7 @@ public class MultiCheckField extends OptionsField {
         }
 
         MultiCheckField defaultField = (MultiCheckField)super.defaultValueField;
-        List vList = defaultField.getValues();
-        return vList;
+        return defaultField.getValues();
     }
 
     public void addDefaultValue(String value) {
@@ -107,10 +102,7 @@ public class MultiCheckField extends OptionsField {
                 defaultField.getValues().clear();
             }
 
-            Iterator i$ = values.iterator();
-
-            while(i$.hasNext()) {
-                String v = (String)i$.next();
+            for (String v : values) {
                 defaultField.addValue(v);
             }
 
@@ -118,18 +110,16 @@ public class MultiCheckField extends OptionsField {
     }
 
     public List<String> getDefaultValues() {
-        ArrayList result = new ArrayList();
+        List<String> result = new ArrayList<>();
         if(super.defaultValueField == null) {
             this.initDefaultField();
         }
 
         MultiCheckField defaultField = (MultiCheckField)super.defaultValueField;
-        List vList = defaultField.getValues();
-        Iterator i$ = vList.iterator();
+        List<Value> vList = defaultField.getValues();
 
-        while(i$.hasNext()) {
-            Value v = (Value)i$.next();
-            result.add(v.getValue());
+        for (Value aVList : vList) {
+            result.add(aVList.getValue());
         }
 
         return result;
@@ -148,12 +138,10 @@ public class MultiCheckField extends OptionsField {
                 fieldNode.addAttribute("name", this.name);
                 fieldNode.addAttribute("type", this.type.value());
                 Element valuesNode = XmlUtils.appendElement(fieldNode, "values");
-                Iterator i$ = this.values.iterator();
 
-                while(i$.hasNext()) {
-                    Value value = (Value)i$.next();
+                for (Value value : this.values) {
                     Element valueNode = XmlUtils.appendElement(valuesNode, "value");
-                    if(!StringUtil.isEmpty(value.getValue())) {
+                    if (!StringUtil.isEmpty(value.getValue())) {
                         valueNode.setText(value.getValue());
                     }
                 }
@@ -168,15 +156,13 @@ public class MultiCheckField extends OptionsField {
     public Element toDefaultValueElement() throws TopSchemaException {
         MultiCheckField defaultField = (MultiCheckField)super.defaultValueField;
         Element valuesNode = XmlUtils.createRootElement("default-values");
-        List defaultValues = defaultField.getValues();
+        List<Value> defaultValues = defaultField.getValues();
         if(defaultValues != null && !defaultValues.isEmpty()) {
-            Iterator i$ = defaultValues.iterator();
 
-            while(i$.hasNext()) {
-                Value value = (Value)i$.next();
+            for (Value defaultValue : defaultValues) {
                 Element valueNode = XmlUtils.appendElement(valuesNode, "default-value");
-                if(!StringUtil.isEmpty(value.getValue())) {
-                    valueNode.setText(value.getValue());
+                if (!StringUtil.isEmpty(defaultValue.getValue())) {
+                    valueNode.setText(defaultValue.getValue());
                 }
             }
 

@@ -111,12 +111,14 @@ public class XmlUtils {
 
     public static List<Element> getChildElements(Element parent, String tagName) {
         List allNodes = parent.elements(tagName);
-        ArrayList elements = new ArrayList();
+        List<Element> elements = new ArrayList<>();
 
-        for (int i = 0; i < allNodes.size(); ++i) {
-            Element node = (Element) allNodes.get(i);
-            if (node instanceof Element && node.getParent() == parent) {
-                elements.add(node);
+        for (Object allNode : allNodes) {
+            if (allNode instanceof Element) {
+                Element node = (Element) allNode;
+                if (node.getParent() == parent) {
+                    elements.add(node);
+                }
             }
         }
 
@@ -125,11 +127,11 @@ public class XmlUtils {
 
     public static List<Element> getElements(Element parent, String tagName) {
         List allNodes = parent.elements();
-        ArrayList elements = new ArrayList();
+        List<Element> elements = new ArrayList<>();
 
-        for (int i = 0; i < allNodes.size(); ++i) {
-            Element node = (Element) allNodes.get(i);
-            if (node instanceof Element) {
+        for (Object allNode : allNodes) {
+            if (allNode instanceof Element) {
+                Element node = (Element) allNode;
                 elements.add(node);
             }
         }
@@ -187,9 +189,10 @@ public class XmlUtils {
             throw new TopSchemaException(var11.getMessage());
         } finally {
             try {
-                out.close();
-            } catch (IOException var10) {
-                throw new TopSchemaException(var10.getMessage());
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException ignored) {
             }
         }
 
@@ -205,9 +208,10 @@ public class XmlUtils {
             throw new TopSchemaException(var11.getMessage());
         } finally {
             try {
-                out.close();
-            } catch (IOException var10) {
-                throw new TopSchemaException(var10.getMessage());
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException ignored) {
             }
         }
 
