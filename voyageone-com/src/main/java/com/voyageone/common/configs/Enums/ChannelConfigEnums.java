@@ -252,6 +252,21 @@ public class ChannelConfigEnums {
         channel_time_zone,
 
         /**
+         * 公司扣点
+         */
+        vo_commission,
+
+        /**
+         * 阿里扣点
+         */
+        alipay_fee,
+
+        /**
+         * 天猫扣点
+         */
+        tmall_commission,
+
+        /**
          * 没有自动approved订单是否需要发邮件
          */
         not_approved_mail,

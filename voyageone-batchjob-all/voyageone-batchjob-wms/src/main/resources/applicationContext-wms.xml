@@ -47,6 +47,8 @@
         <task:scheduled ref="wmsBCBGInventoryReportingTask" method="run" cron="0 0 16 * * ?"/>
         <!--每隔半小时同步一次库存信息至CMS-->
         <!--<task:scheduled ref="wmsSynInventoryToCmsJob" method="run" cron="0 0/1 0-23 * * ?"/>-->
+        <!--更新订单相关状态， 每5分钟运行一次　-->
+        <!--<task:scheduled ref="wmsUpdateStatusTask" method="run" cron="0 0/5 0-23 * * ?"/>-->
     </task:scheduled-tasks>
 
     <!-- 必须需要 -->

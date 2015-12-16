@@ -231,4 +231,42 @@ public class ReservationDao extends BaseDao {
         return updateTemplate.insert(Constants.DAO_NAME_SPACE_WMS + "wms_updateReservationCloseDay", params);
     }
 
+    /**
+     * 取得状态发生变化的物品
+     * @param order_channel_id 订单渠道
+     * @param status 状态
+     * @return List<String>
+     */
+    public List<ReservationBean> getUpdateStatusInfo(String order_channel_id, String status, List<String> reservationStatusList, int rowCount) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("order_channel_id", order_channel_id);
+        params.put("status", status);
+        params.put("reservationStatusList", reservationStatusList);
+        params.put("rowCount", rowCount);
+
+        return selectList("synShip_selectpdateStatusInfo", params);
+    }
+
+    /**
+     * ExtOrderDetails的更新
+     * @param orderNumber 订单号
+     * @param itemNumber itemNumber
+     * @param reservationStatus reservationStatus
+     * @param takeName 任务名
+     * @return int
+     */
+    public int updateClientStatus(long orderNumber, long itemNumber, String reservationStatus, String takeName) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("orderNumber", orderNumber);
+        params.put("itemNumber", itemNumber);
+        params.put("reservationStatus", reservationStatus);
+        params.put("takeName", takeName);
+
+        return updateTemplate.update(Constants.DAO_NAME_SPACE_WMS + "wms_updateClientStatus", params);
+    }
+
 }

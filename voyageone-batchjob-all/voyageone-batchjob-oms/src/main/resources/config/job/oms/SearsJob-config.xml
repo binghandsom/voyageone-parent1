@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+          
+	<!-- ===================== Sears定时任务 start ===================== -->
+	<bean id="postSearsOrderJob"
+		class="com.voyageone.batch.oms.job.PostSearsOrderJob">
+	</bean>
+	
+	<bean id="postSearsCreateOrderTask"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref local="postSearsOrderJob" />
+		</property>
+		<property name="targetMethod">
+			<value>postPostSearsCreateOrder</value>
+		</property>
+	</bean>
+	<bean id="postSearsCreateOrderTaskContri"
+		name="postSearsCreateOrderTaskContri"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="postSearsCreateOrderTask" />
+		</property>
+		<property name="cronExpression">
+			<value>${quartz.post.Sears.create.order}</value>
+		</property>
+	</bean>
+
+	<bean id="getSearsOrderLookupTask"
+		  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref local="postSearsOrderJob" />
+		</property>
+		<property name="targetMethod">
+			<value>getSearsOrderLookup</value>
+		</property>
+	</bean>
+	<bean id="getSearsOrderLookupTaskContri"
+		  name="getSearsOrderLookupTaskContri"
+		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="getSearsOrderLookupTask" />
+		</property>
+		<property name="cronExpression">
+			<value>${quartz.get.Sears.order.lookup}</value>
+		</property>
+	</bean>
+	<!-- ===================== Sears定时任务 end ===================== -->
+	
+</beans>

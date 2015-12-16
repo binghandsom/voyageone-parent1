@@ -1916,6 +1916,49 @@ public class OrderDao extends BaseDao {
 	}
 
 	/**
+	 * 获得推送 第三方订单(Approved)订单信息
+	 *
+	 * @return
+	 */
+	public List<OrderExtend> getPushThirdPartyOrderInfo(String orderChannelId) {
+		HashMap<String, String> inPara = new HashMap<String, String>();
+		inPara.put("orderChannelId", orderChannelId);
+
+		List<OrderExtend> ordersInfo = (List) selectList(Constants.DAO_NAME_SPACE_OMS + "oms_bt_order_details_getPushThirdPartyOrderInfo", inPara);
+
+		return ordersInfo;
+	}
+
+	/**
+	 * 获得Sear TrackingNo为空的订单明细
+	 *
+	 * @return
+	 */
+	public List<OrderExtend> getSearsOrderDetailBlankTrackingInfo(String orderChannelId) {
+		HashMap<String, String> inPara = new HashMap<String, String>();
+		inPara.put("orderChannelId", orderChannelId);
+
+		List<OrderExtend> ordersInfo = (List) selectList(Constants.DAO_NAME_SPACE_OMS + "oms_bt_order_details_getSearsOrderDetailBlankTrackingInfo", inPara);
+
+		return ordersInfo;
+	}
+
+	public boolean updateSearsTrackingInfo(String updateValues, int size) {
+		boolean ret = false;
+
+		Map<String, String> dataMap = new HashMap<String, String>();
+		dataMap.put("values", updateValues);
+
+		int retCount = updateTemplate.update(Constants.DAO_NAME_SPACE_OMS + "oms_bt_ext_order_details_updateSearsTrackingInfo", dataMap);
+
+		if (size == retCount) {
+			ret = true;
+		}
+
+		return ret;
+	}
+
+	/**
 	 * 订单信息更新（发送标志）
 	 *
 	 * @return
@@ -2161,5 +2204,27 @@ public class OrderDao extends BaseDao {
 		}
 		
 		return zip;
+	}
+
+	/**
+	 * 订单信息更新（发送标志）
+	 *
+	 * @return
+	 */
+	public boolean updateOrdersClientOrderIdInfo(String order_number, String clientOrderId, String taskName) {
+		boolean ret = false;
+
+		HashMap<String, Object> paraIn = new HashMap<String, Object>();
+		paraIn.put("order_number", order_number);
+		paraIn.put("clientOrderId", clientOrderId);
+		paraIn.put("modifier", taskName);
+
+		int retCount = updateTemplate.update(Constants.DAO_NAME_SPACE_OMS + "update_ClientOrderId", paraIn);
+
+		if (retCount > 0) {
+			ret = true;
+		}
+
+		return ret;
 	}
 }

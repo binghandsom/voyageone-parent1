@@ -4,6 +4,8 @@ import com.voyageone.common.Constants;
 import com.voyageone.common.components.channelAdvisor.base.CaBase;
 
 import com.voyageone.common.components.channelAdvisor.bean.inventory.GetInventoryParamBean;
+import com.voyageone.common.components.channelAdvisor.soap.InventoryItemResSoapenv;
+import com.voyageone.common.components.channelAdvisor.soap.InventoryItemSoapenv;
 import com.voyageone.common.components.channelAdvisor.soap.InventoryResSoapenv;
 import com.voyageone.common.components.channelAdvisor.soap.InventorySoapenv;
 import com.voyageone.common.components.channelAdvisor.webservices.*;
@@ -19,7 +21,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 @Component
 public class InventoryService extends CaBase {
     /**
-     * @description 更新独立域名的商品库存
+     * @description 取得商品库存
      * @param paramBean 参数bean
      * @return String
      * @throws Exception
@@ -78,6 +80,60 @@ public class InventoryService extends CaBase {
     private InventoryResSoapenv xmlStr2Bean(String xmlStr) {
         try {
             return JaxbUtil.converyToJavaBean(xmlStr, InventoryResSoapenv.class);
+        }catch (Exception e){
+            throw new RuntimeException("返回的xmlStr转化成InventoryResSoapenv时发生错误" + e);
+        }
+    }
+
+    /**
+     * @description 取得商品库存
+     * @param paramBean 参数bean
+     * @return String
+     * @throws Exception
+     */
+    public InventoryItemResSoapenv GetInventoryItemList(GetInventoryParamBean paramBean) throws Exception {
+        String responseXmlStr = reqCaApiOnTimeoutRepert(paramBean.getPostUrl(), paramBean.getNameSpace() + paramBean.getPostAction(), createParamXmlStr(paramBean));
+        return xmlStr2BeanItem(responseXmlStr);
+    }
+
+    //创建参数xml
+    private String createParamXmlStr(GetInventoryParamBean paramBean) {
+        try {
+            APICredentials apiCredentials = new APICredentials();
+            apiCredentials.setDeveloperKey(paramBean.getDeveloperKey());
+            apiCredentials.setPassword(paramBean.getPassword());
+            return beanToXml(apiCredentials, setParamBean(paramBean));
+        }catch (Exception e){
+            throw new RuntimeException("创建参数xml文件出错：" + e);
+        }
+    }
+
+    //设置请求参数bean
+    private GetInventoryItemList setParamBean(GetInventoryParamBean paramBean) throws DatatypeConfigurationException {
+        GetInventoryItemList inventoryReq = new GetInventoryItemList();
+        inventoryReq.setAccountID(paramBean.getAccountId());
+        GetInventorySkuList inventorySkuList = new GetInventorySkuList();
+        inventorySkuList.setString(paramBean.getSkuList());
+        inventoryReq.setSkuList(inventorySkuList);
+        return inventoryReq;
+    }
+
+    //将参数bean转化成参数xml
+    private String beanToXml(APICredentials aPICredentials,GetInventoryItemList getInventoryItemListRequest){
+        try {
+            InventoryItemSoapenv soapenv = new InventoryItemSoapenv(aPICredentials, getInventoryItemListRequest);
+            String xmlStr = JaxbUtil.convertToXml(soapenv, "UTF-8");
+            //logger.info("参数xml内容：" + xmlStr);
+            return xmlStr;
+        }catch (Exception e){
+            throw new RuntimeException("将bean转化成Xml错误" + e);
+        }
+    }
+
+    //将结果集合的xmlStr转化成bean
+    private InventoryItemResSoapenv xmlStr2BeanItem(String xmlStr) {
+        try {
+            return JaxbUtil.converyToJavaBean(xmlStr, InventoryItemResSoapenv.class);
         }catch (Exception e){
             throw new RuntimeException("返回的xmlStr转化成InventoryResSoapenv时发生错误" + e);
         }

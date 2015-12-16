@@ -39,7 +39,7 @@ public class SearsService extends SearsBase {
 
         String responseXml = reqSearsApi(searsUrl + "products" + skus, param.toString());
 
-        logger.info("Sears response: " + responseXml);
+        //logger.info("Sears response: " + responseXml);
 
         ProductResponse response = JaxbUtil.converyToJavaBean(responseXml, ProductResponse.class);
 
@@ -61,7 +61,7 @@ public class SearsService extends SearsBase {
 
         String responseXml = reqSearsApi(searsUrl + "availabilities", param.toString());
 
-        logger.info("Sears response: " + responseXml);
+        //logger.info("Sears response: " + responseXml);
 
         AvailabilitiesResponse response = JaxbUtil.converyToJavaBean(responseXml, AvailabilitiesResponse.class);
 
@@ -112,6 +112,46 @@ public class SearsService extends SearsBase {
     }
 
     /**
+     * Order LookUp
+     *
+     * @param orderId     第几页
+     * @return
+     * @throws Exception
+     */
+    public OrderLookupResponse getOrderInfo(String orderId) throws Exception {
+
+        StringBuffer param = new StringBuffer();
+
+        String responseXml = reqSearsApi(searsOrderUrlByOrderId + orderId);
+
+        //logger.info("Sears response: " + responseXml);
+
+        OrderLookupResponse response = JaxbUtil.converyToJavaBean(responseXml, OrderLookupResponse.class);
+
+        return response;
+    }
+
+    /**
+     * Order LookUp
+     *
+     * @param orderReference
+     * @return
+     * @throws Exception
+     */
+    public OrderLookupsResponse getOrderInfoByOrderReference(String orderReference) throws Exception {
+
+        StringBuffer param = new StringBuffer();
+
+        String responseXml = reqSearsApi(searsOrderByOrderReferenceUrl + orderReference);
+
+        //logger.info("Sears response: " + responseXml);
+
+        OrderLookupsResponse response = JaxbUtil.converyToJavaBean(responseXml, OrderLookupsResponse.class);
+
+        return response;
+    }
+
+    /**
      * 给Sears推订单
      * @param order
      * @return
@@ -119,5 +159,15 @@ public class SearsService extends SearsBase {
      */
     public OrderResponse CreateOrder(OrderBean order) throws Exception {
         return SearsHttpPost(searsUrl+"orders","utf-8",JaxbUtil.convertToXml(order));
+    }
+
+    /**
+     * 更新订单状态
+     * @param order
+     * @return
+     * @throws Exception
+     */
+    public OrderResponse UpdateStatus(UpdateStatusBean order) throws Exception {
+        return SearsHttpPost(String.format(updateStatusUrl,order.getOrderId()),"utf-8",JaxbUtil.convertToXml(order));
     }
 }

@@ -9,51 +9,51 @@
 
     <insert id="cms_zz_worktable_sears_superfeed_insert" parameterType="com.voyageone.common.components.sears.bean.ProductResponse" >
         insert into voyageone_cms.cms_zz_worktable_sears_superfeed (
-                item_id,
-                product_id,
-                product_name,
-                brand,
-                description,
-                featureDescription,
-                manufacturer_name,
-                manufacturer_part_number,
-                image_url,
-                upc,
-                weight,
-                category_id,
-                categorization,
-                mailable,
-                store_pickup_eligible,
-                htc_code,
-                model_number,
-                country_groups,
-                country_of_origin,
-                price,
-                intl_reg_price)
+        item_id,
+        product_id,
+        product_name,
+        brand,
+        description,
+        featureDescription,
+        manufacturer_name,
+        manufacturer_part_number,
+        image_url,
+        upc,
+        weight,
+        category_id,
+        categorization,
+        mailable,
+        store_pickup_eligible,
+        htc_code,
+        model_number,
+        country_groups,
+        country_of_origin,
+        price,
+        intl_reg_price)
         values
         <foreach collection="product" item="item" index="index"
                  separator=",">
             (#{item.itemId,jdbcType=VARCHAR},
-                    #{item.productDetails.productId,jdbcType=VARCHAR},
-                    #{item.productDetails.productName,jdbcType=VARCHAR},
-                    #{item.productDetails.brand,jdbcType=VARCHAR},
-                    #{item.productDetails.description,jdbcType=VARCHAR},
-                    #{item.productDetails.featureDescription,jdbcType=VARCHAR},
-                    #{item.productDetails.manufacturerName,jdbcType=VARCHAR},
-                    #{item.productDetails.manufacturerPartNumber,jdbcType=INTEGER},
-                    #{item.productDetails.imageUrl,jdbcType=VARCHAR},
-                    #{item.productDetails.upc,jdbcType=VARCHAR},
-                    #{item.productDetails.weight,jdbcType=DECIMAL},
-                    #{item.productDetails.categoryId,jdbcType=INTEGER},
-                    #{item.productDetails.category,jdbcType=VARCHAR},
-                    #{item.productDetails.mailable,jdbcType=CHAR},
-                    #{item.productDetails.storePickupEligible,jdbcType=CHAR},
-                    #{item.productDetails.htcCode,jdbcType=VARCHAR},
-                    #{item.productDetails.modelNumber,jdbcType=VARCHAR},
-                    #{item.productDetails.countryGroups,jdbcType=VARCHAR},
-                    #{item.productDetails.countryOfOrigin,jdbcType=VARCHAR},
-                    #{item.price.sellPrice,jdbcType=DECIMAL},
-                    #{item.price.intlRegPrice,jdbcType=DECIMAL})
+            #{item.productDetails.productId,jdbcType=VARCHAR},
+            #{item.productDetails.productName,jdbcType=VARCHAR},
+            #{item.productDetails.brand,jdbcType=VARCHAR},
+            #{item.productDetails.description,jdbcType=VARCHAR},
+            #{item.productDetails.featureDescription,jdbcType=VARCHAR},
+            #{item.productDetails.manufacturerName,jdbcType=VARCHAR},
+            #{item.productDetails.manufacturerPartNumber,jdbcType=INTEGER},
+            #{item.productDetails.imageUrl,jdbcType=VARCHAR},
+            #{item.productDetails.upc,jdbcType=VARCHAR},
+            #{item.productDetails.weight,jdbcType=DECIMAL},
+            #{item.productDetails.categoryId,jdbcType=INTEGER},
+            #{item.productDetails.category,jdbcType=VARCHAR},
+            #{item.productDetails.mailable,jdbcType=CHAR},
+            #{item.productDetails.storePickupEligible,jdbcType=CHAR},
+            #{item.productDetails.htcCode,jdbcType=VARCHAR},
+            #{item.productDetails.modelNumber,jdbcType=VARCHAR},
+            #{item.productDetails.countryGroups,jdbcType=VARCHAR},
+            #{item.productDetails.countryOfOrigin,jdbcType=VARCHAR},
+            #{item.price.sellPrice,jdbcType=DECIMAL},
+            #{item.price.intlRegPrice,jdbcType=DECIMAL})
         </foreach>
     </insert>
     <insert id="cms_zz_worktable_sears_attribute_insert" parameterType="com.voyageone.common.components.sears.bean.ProductResponse" >
@@ -89,8 +89,8 @@
         values
         <foreach collection="product" item="item" index="index"
                  separator=",">
-                (#{item.itemId,jdbcType=VARCHAR},
-                #{item.status,jdbcType=VARCHAR})
+            (#{item.itemId,jdbcType=VARCHAR},
+            #{item.status,jdbcType=VARCHAR})
         </foreach>
     </insert>
     <select id="cms_zz_worktable_sears_list_select" parameterType="String" resultType="String">
@@ -103,57 +103,72 @@
     </select>
     <select id="cms_attribute_select" parameterType="com.voyageone.batch.cms.bean.ProductBean" resultType="HashMap">
         SELECT
-            b.cfg_name,
-            GROUP_CONCAT(DISTINCT a.`value`) as value
+        b.cfg_name,
+        GROUP_CONCAT(DISTINCT a.`value`) as value
         FROM
-            voyageone_cms.cms_zz_worktable_sears_attribute a
+        voyageone_cms.cms_zz_worktable_sears_attribute a
         LEFT JOIN voyageone_cms.cms_mt_feed_config b ON a.attribute = b.cfg_val1
         AND b.order_channel_id = '013'
         WHERE
-             b.is_attribute = 1
+        b.is_attribute = 1
         AND a.item_id IN (
-            <foreach collection="itembeans" item="item" separator=",">
-                #{item.i_client_sku}
-            </foreach>
+        <foreach collection="itembeans" item="item" separator=",">
+            #{item.i_client_sku}
+        </foreach>
         )
         GROUP BY
-           cfg_name
+        cfg_name
     </select>
-    <resultMap id="resultMap_sears" type="com.voyageone.cms.service.model.CmsBtFeedInfoModel">
-        <result column="category" property="category" />
-        <result column="channel_id" property="channelId" />
-        <result column="m_product_type" property="sizeType" />
-        <result column="m_brand" property="brand" />
-        <result column="m_model" property="model" />
-        <result column="m_name" property="name" />
-        <result column="pe_short_description" property="short_description" />
-        <result column="pe_long_description" property="long_description" />
-        <result column="m_size_type" property="sizeType" />
-        <result column="m_weight" property="weight" />
-        <result column="p_code" property="code" />
-        <result column="p_color" property="color" />
-        <result column="p_made_in_country" property="origin" />
-            <collection property="skus" javaType="ArrayList" ofType="com.voyageone.cms.service.model.CmsBtFeedInfoModel_Sku" >
-                <result column="i_sku" property="sku" />
-                <result column="i_size" property="size" />
-                <result column="i_barcode" property="barcode" />
-                <result column="i_client_sku" property="clientSku" />
-                <result column="p_msrp" property="price_msrp" />
-                <result column="cps_cn_price_rmb" property="price_current" />
+    <resultMap id="resultMap_sears" type="com.voyageone.batch.cms.bean.ModelBean">
+        <result column="model_url_key" property="url_key" typeHandler="com.voyageone.batch.cms.utils.ClearSpecial"/>
+        <result column="category_url_key" property="category_url_key" typeHandler="com.voyageone.batch.cms.utils.ClearSpecial"/>
+        <result column="m_product_type" property="m_product_type" />
+        <result column="m_brand" property="m_brand" />
+        <result column="m_model" property="m_model" />
+        <result column="m_name" property="m_name" />
+        <result column="m_short_description" property="m_short_description" />
+        <result column="m_long_description" property="m_long_description" />
+        <result column="m_size_type" property="m_size_type" />
+        <result column="m_is_unisex" property="m_is_unisex" />
+        <result column="m_weight" property="m_weight" />
+        <result column="m_is_taxable" property="m_is_taxable" />
+        <result column="m_weight" property="m_weight" />
+        <result column="m_is_taxable" property="m_is_taxable" />
+        <result column="m_is_effective" property="m_is_effective" />
+        <collection property="productbeans" javaType="ArrayList" ofType="com.voyageone.batch.cms.bean.ProductBean" >
+            <result column="url_key" property="url_key" typeHandler="com.voyageone.batch.cms.utils.ClearSpecial"/>
+            <result column="model_url_key" property="model_url_key" typeHandler="com.voyageone.batch.cms.utils.ClearSpecial"/>
+            <result column="category_url_key" property="category_url_key" typeHandler="com.voyageone.batch.cms.utils.ClearSpecial"/>
+            <result column="p_code" property="p_code" />
+            <result column="p_name" property="p_name" />
+            <result column="p_color" property="p_color" />
+            <result column="p_msrp" property="p_msrp" />
+            <result column="p_made_in_country" property="p_made_in_country" />
+            <result column="pe_short_description" property="pe_short_description" />
+            <result column="pe_long_description" property="pe_long_description" />
+            <result column="ps_price" property="ps_price" />
+            <result column="cps_cn_price" property="cps_cn_price" />
+            <result column="cps_cn_price_rmb" property="cps_cn_price_rmb" />
+            <result column="cps_cn_price_final_rmb" property="cps_cn_price_final_rmb" />
+            <collection property="itembeans" javaType="ArrayList" ofType="com.voyageone.batch.cms.bean.ItemBean" >
+                <result column="item_code" property="code" />
+                <result column="i_sku" property="i_sku" />
+                <result column="i_itemcode" property="i_itemcode" />
+                <result column="i_size" property="i_size" />
+                <result column="i_barcode" property="i_barcode" />
+                <result column="i_client_sku" property="i_client_sku" />
+                <result column="i_active" property="i_active" />
             </collection>
-            <collection property="image" javaType="ArrayList" ofType="String" >
-                <result column="image" property="image" />
+            <collection property="images" javaType="ArrayList" ofType="com.voyageone.batch.cms.bean.ImageBean" >
+                <result column="image" property="image_url" />
+                <result column="image_type" property="image_type" />
+                <result column="display_order" property="display_order" />
             </collection>
-        <collection property="attributeList"  javaType="ArrayList" ofType="HashMap" >
-            <result property="attribute" column="attribute"/>
-            <result property="value" column="value"/>
         </collection>
     </resultMap>
     <select id="cms_searsfeed_select" resultMap="resultMap_sears" parameterType="HashMap">
         select
-        ${category} as category
-        ,#{channel_id} as channel_id
-        ,${model_url_key} as model_url_key
+        ${model_url_key} as model_url_key
         ,${category_url_key} as category_url_key
         ,${m_product_type} as m_product_type
         ,${m_brand} as m_brand
@@ -191,8 +206,6 @@
         ,${image} as image
         ,1 as image_type
         ,0 as display_order
-        ,att.attribute as attribute
-        ,att.value as value
         from
         ${tableName}
         ${keyword}
@@ -239,7 +252,7 @@
         INSERT INTO voyageone_cms.cms_zz_worktable_sears_superfeed_full SELECT * from
         voyageone_cms.cms_zz_worktable_sears_superfeed where model_number = #{model}
         <if test="color != null and color != ''">
-           and color =  #{color}
+            and color =  #{color}
         </if>
     </insert>
     <update id="cms_zz_worktable_sears_superfeed_code_update"  parameterType="java.util.List">

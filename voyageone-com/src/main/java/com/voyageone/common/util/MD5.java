@@ -39,7 +39,6 @@ public class MD5 {
 		return result;
 	}
 
-
 	/**
 	 * 将输入的字符串转为16位的MD5
 	 * @param sourceStr 输入的字符串
