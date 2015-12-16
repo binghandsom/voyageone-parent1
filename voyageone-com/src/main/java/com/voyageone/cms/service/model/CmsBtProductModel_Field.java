@@ -175,6 +175,14 @@ public class CmsBtProductModel_Field extends BaseMongoMap<Object, Object> {
         setAttribute("inventory", inventory);
     }
 
+    public String getModel() {
+        return getAttribute("model");
+    }
+
+    public void setModel(String model) {
+         setAttribute("model",model);
+    }
+
     public List<CmsBtProductModel_Field_Image> getImages(CmsBtProductConstants.FieldImageType imageType) {
         List<CmsBtProductModel_Field_Image> result = null;
         if (imageType != null) {
