@@ -12,10 +12,10 @@ public class CmsBtTagModel extends BaseModel {
     private String tagName;
     private String tagPath;
     private String tagPathName;
-    int tagType;
-    int tagStatus;
-    int sortOrder;
-    int parentTagId;
+    private int tagType;
+    private int tagStatus;
+    private int sortOrder;
+    private int parentTagId;
 
     public int getTagId() {
         return tagId;
