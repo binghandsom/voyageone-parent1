@@ -5,6 +5,7 @@ import com.voyageone.batch.core.Enums.TaskControlEnums;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.core.util.TaskControlUtils;
 import com.voyageone.batch.wms.service.clientInventory.WmsGetCAClientInvService;
+import com.voyageone.batch.wms.service.clientInventory.WmsGetJewelryClientInvService;
 import com.voyageone.batch.wms.service.clientInventory.WmsGetSearsClientInvService;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
@@ -27,6 +28,9 @@ public class WmsGetClientInvService extends BaseTaskService {
     WmsGetCAClientInvService wmsGetCAClientInvService;
 
     @Autowired
+    WmsGetJewelryClientInvService wmsGetJewelryClientInvService;
+
+    @Autowired
     WmsGetSearsClientInvService wmsGetSearsClientInvService;
 
     @Override
@@ -46,8 +50,11 @@ public class WmsGetClientInvService extends BaseTaskService {
         //线程
         List<Runnable> threads = new ArrayList<>();
         for(String channelId : orderChannelIdList){
-            if (channelId.equals(ChannelConfigEnums.Channel.JEWELRY.getId()) || channelId.equals(ChannelConfigEnums.Channel.BCBG.getId())) {
+            if (channelId.equals(ChannelConfigEnums.Channel.BHFO.getId())) {
                 wmsGetCAClientInvService.sysCAInventoryByClient(channelId, threads);
+            }
+            else if (channelId.equals(ChannelConfigEnums.Channel.JEWELRY.getId())) {
+                wmsGetJewelryClientInvService.sysCAInventoryByClient(channelId, threads);
             }
             else if (channelId.equals(ChannelConfigEnums.Channel.SEARS.getId())) {
                 wmsGetSearsClientInvService.sysSearsInventoryByClient(channelId, threads);
