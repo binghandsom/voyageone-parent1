@@ -34,11 +34,11 @@ public class SearsBase {
         properties = new Properties();
 //        properties.put("javax.net.debug", "ssl");
         properties.put("javax.net.ssl.keyStore", keystore);
-        properties.put("javax.net.ssl.keyStorePassword", "password");
+        properties.put("javax.net.ssl.keyStorePassword", "tmall611");
         properties.put("javax.net.ssl.keyStoreType", "jks");
         properties.put("javax.net.ssl.trustStore", trustStore);
         properties.put("javax.net.ssl.trustStoreType", "jks");
-        properties.put("javax.net.ssl.trustStorePassword", "password");
+        properties.put("javax.net.ssl.trustStorePassword", "tmall611");
     }
     /**
      * 调用Sears的webService
