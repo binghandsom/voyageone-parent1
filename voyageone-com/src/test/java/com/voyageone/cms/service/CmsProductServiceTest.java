@@ -41,28 +41,27 @@ public class CmsProductServiceTest {
         String code = String.valueOf(100000 + index);
         CmsBtProductModel_Field fields = product.getFields();
         fields.setCode(code);
-        fields.setAttribute("name", "Stud Earrings with Cubic Zirconia in Sterling Silver " + code);
+        fields.setBrand("Jewelry" + random.nextInt(10));
+        fields.setAttribute("productName", "Stud Earrings with Cubic Zirconia in Sterling Silver " + code);
+
+        fields.setLongTitle("Stud Earrings with Cubic Zirconia in Sterling Silver- 长标题" + random.nextInt(100));
+        fields.setMiddleTitle("Stud Earrings with Cubic Zirconia in Sterling Silver- 中标题" + random.nextInt(100));
+        fields.setShortTitle("Stud Earrings with Cubic Zirconia in Sterling Silver- 短标题" + random.nextInt(100));
+
+        fields.setModel("model-aa-" + random.nextInt(100));
         fields.setColor("Color" + random.nextInt(100));
         fields.setOrigin("china" + random.nextInt(10));
-        fields.setYear((2000 + random.nextInt(15)));
-        fields.setSeason("summer" + random.nextInt(10));
-        fields.setMaterial1("silver" + random.nextInt(10));
-        fields.setMaterial2("silver" + random.nextInt(10));
-        fields.setMaterial3("silver" + random.nextInt(10));
-        fields.setMsrpStart(100.00 + random.nextInt(100));
-        fields.setMsrpEnd(200.00 + random.nextInt(100));
-        fields.setRetailPriceStart(300.00 + random.nextInt(100));
-        fields.setRetailPriceEnd(400.00 + random.nextInt(100));
-        fields.setSalePriceStart(500.00 + random.nextInt(100));
-        fields.setSalePriceEnd(600.00 + random.nextInt(100));
-        fields.setCurrentPriceStart(700.00 + random.nextInt(100));
-        fields.setCurrentPriceEnd(800.00 + random.nextInt(100));
-        fields.setStatus("pedding");
-        fields.setBrand("Jewelry" + random.nextInt(10));
-        fields.setSizeType("Men" + random.nextInt(5));
-        fields.setInventory(100 + random.nextInt(10));
-        fields.setLock(index % 2 == 0);
+
+        fields.setShortDesCn("Stud Earrings with Cubic Zirconia in Sterling Silver- 简短描述中文" + random.nextInt(100));
+        fields.setLongDesCn("Stud Earrings with Cubic Zirconia in Sterling Silver- 详情描述中文" + random.nextInt(100));
+        fields.setShortDesEn("Stud Earrings with Cubic Zirconia in Sterling Silver- 简短描述英语" + random.nextInt(100));
+        fields.setLongDesEn("Stud Earrings with Cubic Zirconia in Sterling Silver- 详情描述英语" + random.nextInt(100));
+
+        fields.setHsCodeCrop("Stud Ear"+ random.nextInt(10));
+        fields.setHsCodePrivate("Stud Ear"+ random.nextInt(10));
+
         fields.setPriceChange(random.nextInt(1));
+
         List<CmsBtProductModel_Field_Image> images = fields.getImages1();
         images.add(new CmsBtProductModel_Field_Image("xxxxx-" + random.nextInt(10) + ".jpg"));
         images.add(new CmsBtProductModel_Field_Image("xxxxx-" + random.nextInt(10) + ".jpg"));
@@ -78,11 +77,35 @@ public class CmsProductServiceTest {
         images.add(new CmsBtProductModel_Field_Image("yyyyy-" + random.nextInt(10) + ".jpg"));
 
         images = fields.getImages3();
+        images.add(new CmsBtProductModel_Field_Image("uuuuu-" + random.nextInt(10) + ".jpg"));
+        images.add(new CmsBtProductModel_Field_Image("uuuuu-" + random.nextInt(10) + ".jpg"));
+        images.add(new CmsBtProductModel_Field_Image("uuuuu-" + random.nextInt(10) + ".jpg"));
+        images.add(new CmsBtProductModel_Field_Image("uuuuu-" + random.nextInt(10) + ".jpg"));
+        images.add(new CmsBtProductModel_Field_Image("uuuuu-" + random.nextInt(10) + ".jpg"));
+
+        images = fields.getImages3();
         images.add(new CmsBtProductModel_Field_Image("zzzzz-" + random.nextInt(10) + ".jpg"));
         images.add(new CmsBtProductModel_Field_Image("zzzzz-" + random.nextInt(10) + ".jpg"));
         images.add(new CmsBtProductModel_Field_Image("zzzzz-" + random.nextInt(10) + ".jpg"));
         images.add(new CmsBtProductModel_Field_Image("zzzzz-" + random.nextInt(10) + ".jpg"));
         images.add(new CmsBtProductModel_Field_Image("zzzzz-" + random.nextInt(10) + ".jpg"));
+
+        fields.setLock(index % 2 == 0);
+
+
+        fields.setMsrpStart(100.00 + random.nextInt(100));
+        fields.setMsrpEnd(200.00 + random.nextInt(100));
+        fields.setRetailPriceStart(300.00 + random.nextInt(100));
+        fields.setRetailPriceEnd(400.00 + random.nextInt(100));
+        fields.setSalePriceStart(500.00 + random.nextInt(100));
+        fields.setSalePriceEnd(600.00 + random.nextInt(100));
+        fields.setCurrentPriceStart(700.00 + random.nextInt(100));
+        fields.setCurrentPriceEnd(800.00 + random.nextInt(100));
+        fields.setStatus("pedding");
+        fields.setSizeType("Men" + random.nextInt(5));
+        fields.setInventory(100 + random.nextInt(10));
+        fields.setPriceChange(random.nextInt(1));
+
 
         CmsBtProductModel_Group groups = product.getGroups();
         groups.setMsrpStart(100.00 + random.nextInt(100));
@@ -117,15 +140,15 @@ public class CmsProductServiceTest {
         List<CmsBtProductModel_Sku> skus = product.getSkus();
         for (int i=1; i<3+random.nextInt(5); i++) {
             CmsBtProductModel_Sku sku = new CmsBtProductModel_Sku();
-            sku.setSku(code + "-" + i);
-            sku.setUpc("1234567890" + (100 + random.nextInt(100)));
+            sku.setSkuCode(code + "-" + i);
+            sku.setBarcode("1234567890" + (100 + random.nextInt(100)));
             sku.setPriceMsrp(100.00 + random.nextInt(100));
             sku.setPriceRetail(300.00 + random.nextInt(100));
             sku.setPriceSale(800.00 + random.nextInt(100));
             List<Integer> skuCarts = new ArrayList<>();
             skuCarts.add(21);
             skuCarts.add(23);
-            sku.setCarts(skuCarts);
+            sku.setSkuCarts(skuCarts);
             skus.add(sku);
         }
 

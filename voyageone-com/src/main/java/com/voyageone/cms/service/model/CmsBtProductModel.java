@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class CmsBtProductModel extends ChannelPartitionModel {
 
-    private int prodId;
+    private long prodId;
     private String catId;
     private String catIdPath;
 
@@ -46,11 +46,11 @@ public class CmsBtProductModel extends ChannelPartitionModel {
         this.catIdPath = catIdPath;
     }
 
-    public int getProdId() {
+    public long getProdId() {
         return prodId;
     }
 
-    public void setProdId(int prodId) {
+    public void setProdId(long prodId) {
         this.prodId = prodId;
     }
 
