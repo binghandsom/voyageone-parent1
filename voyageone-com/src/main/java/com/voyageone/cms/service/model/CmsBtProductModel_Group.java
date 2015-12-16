@@ -96,11 +96,11 @@ public class CmsBtProductModel_Group extends BaseMongoMap {
         return  result;
     }
 
-    public CmsBtProductModel_Group_Platform getPlatformByNumIId(int cartId, String numIId) {
+    public CmsBtProductModel_Group_Platform getPlatformByCartId(int cartId) {
         CmsBtProductModel_Group_Platform result = null;
         List<CmsBtProductModel_Group_Platform> platforms = getPlatforms();
         for (CmsBtProductModel_Group_Platform platform : platforms) {
-            if (platform.getCartId() == cartId && platform.getNumIId().equals(numIId)) {
+            if (platform.getCartId() == cartId) {
                 result = platform;
                 break;
             }
