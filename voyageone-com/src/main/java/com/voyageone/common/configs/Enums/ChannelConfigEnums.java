@@ -389,62 +389,62 @@ public class ChannelConfigEnums {
     public enum Channel {
 
         /**
-         * Sneakerhead
+         * Sneakerhead, 001
          */
         SN("001"),
         /**
-         * PortAmerican
+         * PortAmerican, 002
          */
         PA("002"),
         /**
-         * Essuntial
+         * Essuntial, 003
          */
         GL("003"),
         /**
-         * Juicy Couture
+         * Juicy Couture, 004
          */
         JC("004"),
         /**
-         * Spalding
+         * Spalding, 005
          */
         SP("005"),
         /**
-         * BHFO
+         * BHFO, 006
          */
         BHFO("006"),
 
         /**
-         * Champion
+         * Champion, 007
          */
         CHAMPION("007"),
 
         /**
-         * Real Madrid
+         * Real Madrid, 008
          */
         REAL_MADRID("008"),
 
         /**
-         * SwissWatch
+         * SwissWatch, 009
          */
         SWISSWATCH("009"),
 
         /**
-         * Jewelry
+         * Jewelry, 010
          */
         JEWELRY("010"),
 
         /**
-         * LOCONDO
+         * LOCONDO, 011
          */
         LOCONDO("011"),
 
         /**
-         * BCBG
+         * BCBG, 012
          */
         BCBG("012"),
 
         /**
-         * SEARS
+         * SEARS, 013
          */
         SEARS("013");
 
