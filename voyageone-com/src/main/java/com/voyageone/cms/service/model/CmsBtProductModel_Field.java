@@ -267,7 +267,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<Object, Object> {
         setAttribute("msrpStart", msrpStart);
     }
 
-    //msrp价格区间-开始
+    //msrp价格区间-结束
     public double getMsrpEnd() {
         return getAttribute("msrpEnd");
     }
@@ -275,7 +275,15 @@ public class CmsBtProductModel_Field extends BaseMongoMap<Object, Object> {
         setAttribute("msrpEnd", msrpEnd);
     }
 
-    //建议市场价格区间-开始
+    //建议市场价格区间-结束
+    public double getRetailPriceStart() {
+        return getAttribute("retailPriceStart");
+    }
+    public void setRetailPriceStart(double retailPriceStart) {
+        setAttribute("retailPriceStart", retailPriceStart);
+    }
+
+    //建议市场价格区间-结束
     public double getRetailPriceEnd() {
         return getAttribute("retailPriceEnd");
     }

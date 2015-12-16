@@ -178,8 +178,8 @@ public class CmsProductDaoTest {
     @Test
     public void upsertBulkForUpdateOne() throws UnknownHostException {
         CmsBtProductModel_Sku skuModel = new CmsBtProductModel_Sku();
-        skuModel.setSku("100001-2");
-        skuModel.setUpc("12341111");
+        skuModel.setSkuCode("100001-2");
+        skuModel.setBarcode("12341111");
         skuModel.setPriceMsrp(187);
         skuModel.setPriceRetail(243);
         skuModel.setPriceSale(358);
@@ -193,7 +193,7 @@ public class CmsProductDaoTest {
         // insert if document not found and set the fields with updated value
         updateObj.append("$set", skuModel.toUpdateBasicDBObject("skus.$."));
 
-        BasicDBObject query = new BasicDBObject().append("skus.sku", skuModel.getSku());
+        BasicDBObject query = new BasicDBObject().append("skus.sku", skuModel.getSkuCode());
 
         b1.find(query).upsert().update(updateObj);
 
@@ -262,8 +262,8 @@ public class CmsProductDaoTest {
     public void testUpdateWithSku() {
         CmsBtProductModel_Sku skuModel = new CmsBtProductModel_Sku();
 
-        skuModel.setSku("100001-2");
-        skuModel.setUpc("12311111");
+        skuModel.setSkuCode("100001-2");
+        skuModel.setBarcode("12311111");
         skuModel.setPriceMsrp(387);
         skuModel.setPriceRetail(543);
         skuModel.setPriceSale(858);
@@ -291,12 +291,12 @@ public class CmsProductDaoTest {
         for(int i=1; i<=100000; i++) {
 
             String sku = String.valueOf(100000 + i) + "-2";
-            skuModel.setSku(sku);
+            skuModel.setSkuCode(sku);
 
             BasicDBObject updateObj = new BasicDBObject();
             updateObj.append("$set", skuModel.toUpdateBasicDBObject("skus.$."));
 
-            BasicDBObject query = new BasicDBObject().append("skus.sku", skuModel.getSku());
+            BasicDBObject query = new BasicDBObject().append("skus.sku", skuModel.getSkuCode());
 
             b1.find(query).upsert().update(updateObj);
 
