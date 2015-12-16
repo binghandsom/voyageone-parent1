@@ -110,7 +110,7 @@ public class TypeChannel {
      * @param channel_id 渠道id
      * @return List<Option>
      */
-    public static List<Option> getOptions(String type, String channel_id) {
+    public static List<Option> getOptions(String type, String channel_id, String...lang_id) {
         String key = type + "-" + channel_id;
         List<Option> ret = new ArrayList<>();
 

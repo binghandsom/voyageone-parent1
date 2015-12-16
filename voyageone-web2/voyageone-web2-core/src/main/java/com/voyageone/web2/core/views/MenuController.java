@@ -5,6 +5,7 @@ import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.core.CoreUrlConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -49,9 +50,19 @@ public class MenuController extends BaseController {
         Map<String, Object> userInfo = new HashMap<>();
         userInfo.put("userName", getUser().getUserName());
         userInfo.put("channelName", getUser().getSelChannel().getFullName());
+        userInfo.put("language", getLang());
         resultbean.put("userInfo", userInfo);
 
         // 返回用户信息
         return success(resultbean);
+    }
+
+    @RequestMapping(CoreUrlConstants.MENU_SEL_LANGUAGE)
+    public AjaxResponse selectLanguage(@RequestBody Map<String, Object> params) {
+
+        menuService.selectLanguage(getSession(), getUser(), params.get("language"));
+
+        // 返回用户信息
+        return success(true);
     }
 }
