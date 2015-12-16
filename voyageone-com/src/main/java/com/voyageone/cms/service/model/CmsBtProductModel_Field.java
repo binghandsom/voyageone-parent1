@@ -63,7 +63,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<Object, Object> {
         return getAttribute("shortTitle");
     }
 
-    public void getShortTitle(String shortTitle) {
+    public void setShortTitle(String shortTitle) {
         setAttribute("shortTitle", shortTitle);
     }
 
