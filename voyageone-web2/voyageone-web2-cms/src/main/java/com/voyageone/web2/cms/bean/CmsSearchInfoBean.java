@@ -1,5 +1,7 @@
 package com.voyageone.web2.cms.bean;
 
+import com.voyageone.common.util.StringUtils;
+
 /**
  * @author Edward
  * @version 2.0.0, 15/12/15
@@ -47,6 +49,14 @@ public class CmsSearchInfoBean {
     private String sortThreeName;
 
     private String sortThreeType;
+
+    private String groupPageNum;
+
+    private String groupPageSize;
+
+    private String productPageNum;
+
+    private String productPageSize;
 
     public String[] getProductStatus() {
         return productStatus;
@@ -214,5 +224,37 @@ public class CmsSearchInfoBean {
 
     public void setSortThreeType(String sortThreeType) {
         this.sortThreeType = sortThreeType;
+    }
+
+    public String getGroupPageNum() {
+        return groupPageNum;
+    }
+
+    public void setGroupPageNum(String groupPageNum) {
+        this.groupPageNum = StringUtils.isEmpty(groupPageNum) ? "1" : groupPageNum;
+    }
+
+    public String getGroupPageSize() {
+        return groupPageSize;
+    }
+
+    public void setGroupPageSize(String groupPageSize) {
+        this.groupPageSize = StringUtils.isEmpty(groupPageSize) ? "1" : groupPageSize;
+    }
+
+    public String getProductPageNum() {
+        return productPageNum;
+    }
+
+    public void setProductPageNum(String productPageNum) {
+        this.productPageNum = StringUtils.isEmpty(productPageNum) ? "1" : productPageNum;
+    }
+
+    public String getProductPageSize() {
+        return productPageSize;
+    }
+
+    public void setProductPageSize(String productPageSize) {
+        this.productPageSize = StringUtils.isEmpty(productPageSize) ? "1" : productPageSize;
     }
 }
