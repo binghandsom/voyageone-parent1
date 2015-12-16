@@ -15,7 +15,7 @@ public class CmsBtProductModel extends ChannelPartitionModel {
 
     private long prodId;
     private String catId;
-    private String catIdPath;
+    private String catPath;
 
     private CmsBtProductModel_Field fields = new CmsBtProductModel_Field();
     private CmsBtProductModel_Group groups = new CmsBtProductModel_Group();
@@ -38,12 +38,12 @@ public class CmsBtProductModel extends ChannelPartitionModel {
         this.catId = catId;
     }
 
-    public String getCatIdPath() {
-        return catIdPath;
+    public String getCatPath() {
+        return catPath;
     }
 
-    public void setCatIdPath(String catIdPath) {
-        this.catIdPath = catIdPath;
+    public void setCatPath(String catIdPath) {
+        this.catPath = catIdPath;
     }
 
     public long getProdId() {
