@@ -13,7 +13,7 @@ import java.util.Map;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class CmsBtProductModel_Group extends BaseMongoMap<Object, Object> {
+public class CmsBtProductModel_Group extends BaseMongoMap<String, Object> {
 
     public double getMsrpStart() {
         return getAttribute("msrpStart");
@@ -115,7 +115,7 @@ public class CmsBtProductModel_Group extends BaseMongoMap<Object, Object> {
     }
 
     @Override
-    public Object put(Object key, Object value) {
+    public Object put(String key, Object value) {
         if ("platforms".equals(key)) {
             List<Map> platformMaps = (List<Map>)value;
             if (platformMaps != null) {

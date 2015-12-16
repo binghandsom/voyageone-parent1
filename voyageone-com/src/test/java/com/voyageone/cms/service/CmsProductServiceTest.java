@@ -57,8 +57,8 @@ public class CmsProductServiceTest {
         fields.setShortDesEn("Stud Earrings with Cubic Zirconia in Sterling Silver- 简短描述英语" + random.nextInt(100));
         fields.setLongDesEn("Stud Earrings with Cubic Zirconia in Sterling Silver- 详情描述英语" + random.nextInt(100));
 
-        fields.setHsCodeCrop(index % 2 == 0);
-        fields.setHsCodePrivate(index % 2 == 0);
+        fields.setHsCodeCrop("Stud Ear"+ random.nextInt(10));
+        fields.setHsCodePrivate("Stud Ear"+ random.nextInt(10));
 
         fields.setPriceChange(random.nextInt(1));
 
@@ -201,7 +201,7 @@ public class CmsProductServiceTest {
         List<CmsBtProductModel> lst = new ArrayList<>();
         int index = 0;
         for(int i=1; i<=100000; i++) {
-            CmsBtProductModel productModel = create("300", i, new Random());
+            CmsBtProductModel productModel = create("100", i, new Random());
             lst.add(productModel);
             index++;
             if (i%1000 == 0) {
