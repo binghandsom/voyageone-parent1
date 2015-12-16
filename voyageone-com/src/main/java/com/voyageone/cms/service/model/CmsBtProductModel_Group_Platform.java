@@ -5,7 +5,13 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 
 import java.util.Map;
 
-public class CmsBtProductModel_Group_Platform extends BaseMongoMap {
+/**
+ * 的商品Model Group>Platform
+ * @author chuanyu.liang, 12/11/15
+ * @version 2.0.0
+ * @since 2.0.0
+ */
+public class CmsBtProductModel_Group_Platform extends BaseMongoMap<Object, Object> {
 
     public CmsBtProductModel_Group_Platform() {
 
@@ -15,7 +21,7 @@ public class CmsBtProductModel_Group_Platform extends BaseMongoMap {
     }
 
     public Integer getGroupId() {
-        return (Integer) getAttribute("groupId");
+        return getAttribute("groupId");
     }
 
     public void setGroupId(int groupId) {
@@ -23,7 +29,7 @@ public class CmsBtProductModel_Group_Platform extends BaseMongoMap {
     }
 
     public int getCartId() {
-        return (int) getAttribute("cartId");
+        return getAttribute("cartId");
     }
 
     public void setCartId(int cartId) {
@@ -31,7 +37,7 @@ public class CmsBtProductModel_Group_Platform extends BaseMongoMap {
     }
 
     public String getNumIId() {
-        return (String) getAttribute("numIId");
+        return getAttribute("numIId");
     }
 
     public void setNumIId(String numIId) {
@@ -39,7 +45,7 @@ public class CmsBtProductModel_Group_Platform extends BaseMongoMap {
     }
 
     public String getProductId() {
-        return (String) getAttribute("productId");
+        return getAttribute("productId");
     }
 
     public void setProductId(String productId) {
@@ -48,7 +54,7 @@ public class CmsBtProductModel_Group_Platform extends BaseMongoMap {
 
     public boolean getIsMain() {
         boolean result = false;
-        Integer isMain = (Integer)getAttribute("isMain");
+        Integer isMain = getAttribute("isMain");
         if (isMain != null && isMain == 1) {
             result = true;
         }
@@ -64,7 +70,7 @@ public class CmsBtProductModel_Group_Platform extends BaseMongoMap {
     }
 
     public double getDisplayOrder() {
-        return (int) getAttribute("displayOrder");
+        return getAttribute("displayOrder");
     }
 
     public void setDisplayOrder(int displayOrder) {
@@ -72,7 +78,7 @@ public class CmsBtProductModel_Group_Platform extends BaseMongoMap {
     }
 
     public String getPublishTime() {
-        return (String) getAttribute("publishTime");
+        return getAttribute("publishTime");
     }
 
     public void setPublishTime(String publishTime) {
@@ -80,7 +86,7 @@ public class CmsBtProductModel_Group_Platform extends BaseMongoMap {
     }
 
     public String getInstockTime() {
-        return (String) getAttribute("instockTime");
+        return getAttribute("instockTime");
     }
 
     public void setInstockTime(String instockTime) {
@@ -88,7 +94,7 @@ public class CmsBtProductModel_Group_Platform extends BaseMongoMap {
     }
 
     public String getStatus() {
-        return (String) getAttribute("status");
+        return getAttribute("status");
     }
 
     public void setStatus(String status) {
@@ -96,7 +102,7 @@ public class CmsBtProductModel_Group_Platform extends BaseMongoMap {
     }
 
     public String getPublishStatus() {
-        return (String) getAttribute("publishStatus");
+        return getAttribute("publishStatus");
     }
 
     public void setPublishStatus(String publishStatus) {
@@ -104,7 +110,7 @@ public class CmsBtProductModel_Group_Platform extends BaseMongoMap {
     }
 
     public String getComment() {
-        return (String) getAttribute("comment");
+        return getAttribute("comment");
     }
 
     public void setComment(String comment) {
@@ -112,7 +118,7 @@ public class CmsBtProductModel_Group_Platform extends BaseMongoMap {
     }
 
     public int getInventory() {
-        return (int) getAttribute("inventory");
+        return getAttribute("inventory");
     }
 
     public void setInventory(int inventory) {

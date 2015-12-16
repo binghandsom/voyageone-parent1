@@ -6,7 +6,13 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import java.util.List;
 import java.util.Map;
 
-public class CmsBtProductModel_Field_Image extends BaseMongoMap {
+/**
+ * 的商品Model Field>Image
+ * @author chuanyu.liang, 12/11/15
+ * @version 2.0.0
+ * @since 2.0.0
+ */
+public class CmsBtProductModel_Field_Image extends BaseMongoMap<Object, Object> {
 
     public CmsBtProductModel_Field_Image() {
     }
@@ -20,7 +26,7 @@ public class CmsBtProductModel_Field_Image extends BaseMongoMap {
     }
 
     public String getName() {
-        return (String) getAttribute("name");
+        return getAttribute("name");
     }
 
     public void setName(String name) {

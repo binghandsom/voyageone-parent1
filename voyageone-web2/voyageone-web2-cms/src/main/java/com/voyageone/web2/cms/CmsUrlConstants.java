@@ -23,11 +23,11 @@ public interface CmsUrlConstants {
 
         interface FEED {
 
-            String ROOT = "/cms/setting/feed_mapping";
+            String ROOT = "/cms/setting/feedMapping";
 
-            String GET_FEED_CATEGORIES = "feed_categories";
+            String GET_FEED_CATEGORY_TREE = "feedCategoryTree";
 
-            String GET_MAIN_CATEGORIES = "main_categories";
+            String GET_MAIN_CATEGORIES = "mainCategories";
         }
     }
     interface PROMOTION {
@@ -37,6 +37,10 @@ public interface CmsUrlConstants {
             String ROOT = "/cms/promotion/list";
 
             String GET_PROMOTION_LIST = "getPromotionList";
+
+            String INSERT_PROMOTION = "insertPromotion";
+
+            String UPDATE_PROMOTION = "updatePromotion";
         }
     }
 
@@ -49,6 +53,33 @@ public interface CmsUrlConstants {
             String GET_POP_OPTIONS = "getPopOptions";
 
             String SET_PRODUCT_FIELDS = "setProductFields";
+        }
+    }
+
+    interface PROM {
+
+        interface SELECT {
+
+            String ROOT = "/cms/pop/prom_select/";
+
+            String GET_PROM_TAGS = "getPromotionTags";
+
+            String SET_PROM_TAG = "setPromotionTag";
+        }
+    }
+    interface SEARCH {
+
+        interface INDEX {
+
+            String ROOT = "/cms/search/index/";
+
+            String INIT = "init";
+
+            String SEARCH = "search";
+
+            String GET_GROUP_LIST = "getGroupList";
+
+            String GET_PRODUCT_LIST = "getProductList";
         }
     }
 }

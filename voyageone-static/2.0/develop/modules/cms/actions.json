@@ -7,7 +7,8 @@
     },
     "home": {
       "menu": {
-        "getMenuHeaderInfo": "/core/home/menu/getMenuHeaderInfo"
+        "getMenuHeaderInfo": "/core/home/menu/getMenuHeaderInfo",
+        "selectLanguage": "/core/home/menu/selectLanguage"
       }
     }
   },
@@ -20,8 +21,12 @@
       }
     },
     "search": {
-      "advance": {
-        "doSearch": "/cms/search/advance/doSearch"
+      "$searchIndexService": {
+        "root": "/cms/search/index/",
+        "init": "init",
+        "search": "search",
+        "getGroupList": "getGroupList",
+        "getProductList": "getProductList"
       }
     },
     "mapping": {
@@ -33,7 +38,10 @@
     },
     "promotionService": {
       "root": "/cms/promotion/list",
-      "getPromotionList": "getPromotionList"
+      "getPromotionList": "getPromotionList",
+      "insertPromotion": "insertPromotion",
+      "updatePromotion": "updatePromotion",
+      "delPromotion": "delPromotion"
     }
   }
 }

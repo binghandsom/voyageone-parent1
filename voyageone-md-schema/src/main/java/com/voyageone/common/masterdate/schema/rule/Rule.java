@@ -28,12 +28,8 @@ public abstract class Rule {
     protected DependGroup dependGroup;
 
     protected boolean isTypeInNamespace(FieldTypeEnum[] namespace, FieldTypeEnum type) {
-        FieldTypeEnum[] arr$ = namespace;
-        int len$ = namespace.length;
-
-        for(int i$ = 0; i$ < len$; ++i$) {
-            FieldTypeEnum typeEnum = arr$[i$];
-            if(typeEnum.equals(type)) {
+        for (FieldTypeEnum typeEnum : namespace) {
+            if (typeEnum.equals(type)) {
                 return true;
             }
         }
@@ -42,7 +38,7 @@ public abstract class Rule {
     }
 
     protected List<String> getFieldValues(Field field) {
-        ArrayList values = new ArrayList();
+        List<String> values = new ArrayList<>();
         switch(field.getType()) {
             case INPUT:
                 InputField inputField = (InputField)field;
@@ -54,23 +50,15 @@ public abstract class Rule {
                 break;
             case MULTICHECK:
                 MultiCheckField multiCheckField = (MultiCheckField)field;
-                List vList = multiCheckField.getValues();
-                Iterator multiInputField1 = vList.iterator();
-
-                while(multiInputField1.hasNext()) {
-                    Value viList1 = (Value)multiInputField1.next();
-                    values.add(viList1.getValue());
+                for (Value aVList : multiCheckField.getValues()) {
+                    values.add(aVList.getValue());
                 }
 
                 return values;
             case MULTIINPUT:
                 MultiInputField multiInputField = (MultiInputField)field;
-                List viList = multiInputField.getValues();
-                Iterator i$ = viList.iterator();
-
-                while(i$.hasNext()) {
-                    Value v = (Value)i$.next();
-                    values.add(v.getValue());
+                for (Value aViList : multiInputField.getValues()) {
+                    values.add(aViList.getValue());
                 }
         }
 
@@ -78,27 +66,19 @@ public abstract class Rule {
     }
 
     protected List<String> getOptionValues(Field field) {
-        ArrayList values = new ArrayList();
+        List<String> values = new ArrayList<>();
         switch(field.getType()) {
             case SINGLECHECK:
                 SingleCheckField singleCheckField = (SingleCheckField)field;
-                List options = singleCheckField.getOptions();
-                Iterator multiCheckField1 = options.iterator();
-
-                while(multiCheckField1.hasNext()) {
-                    Option options21 = (Option)multiCheckField1.next();
-                    values.add(options21.getValue());
+                for (Option option1 : singleCheckField.getOptions()) {
+                    values.add(option1.getValue());
                 }
 
                 return values;
             case MULTICHECK:
                 MultiCheckField multiCheckField = (MultiCheckField)field;
-                List options2 = multiCheckField.getOptions();
-                Iterator i$ = options2.iterator();
-
-                while(i$.hasNext()) {
-                    Option option = (Option)i$.next();
-                    values.add(option.getValue());
+                for (Option anOptions2 : multiCheckField.getOptions()) {
+                    values.add(anOptions2.getValue());
                 }
         }
 

@@ -4,10 +4,14 @@ import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseConstants;
+import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.core.dao.UserRolePropertyDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpSession;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,5 +50,26 @@ public class MenuService extends BaseAppService {
      */
     public List<TypeBean> getLanguageList() {
         return TypeConfigEnums.MastType.languageType.getList(Constants.LANGUAGE.EN);
+    }
+
+    /**
+     * 设定用户选择的语言
+     * @param session
+     * @param lang
+     */
+    public void selectLanguage(HttpSession session, UserSessionBean userInfo, Object lang) {
+
+        String language = Constants.LANGUAGE.EN;
+
+        if (lang != null &&
+                Arrays.asList(Constants.LANGUAGE.ALL).contains(lang))
+            language = lang.toString();
+
+        // 设置session中的language
+        session.setAttribute(BaseConstants.SESSION_LANG, language);
+
+        // 设置用户的默认语言
+        // TODO
+        userInfo.getUserConfig().get("language_id").get(0).setCfg_val1(language);
     }
 }

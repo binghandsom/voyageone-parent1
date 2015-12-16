@@ -2,9 +2,10 @@ package com.voyageone.web2.sdk.api.exception;
 
 /**
  * vo客户端异常。
+ * Created on 2015-12-14
  *
- * @author carver.gu
- * @since 1.0, Apr 11, 2010
+ * @author chuanyu.liang
+ * @version 2.0.0
  */
 public class ApiException extends RuntimeException {
 
@@ -12,6 +13,8 @@ public class ApiException extends RuntimeException {
 
 	private String errCode;
 	private String errMsg;
+
+	private String url;
 
 	public ApiException() {
 		super();
@@ -35,6 +38,13 @@ public class ApiException extends RuntimeException {
 		this.errMsg = errMsg;
 	}
 
+	public ApiException(String errCode, String errMsg, String url) {
+		super(errCode + ":" + errMsg);
+		this.errCode = errCode;
+		this.errMsg = errMsg;
+		this.url = url;
+	}
+
 	public String getErrCode() {
 		return this.errCode;
 	}
@@ -43,4 +53,12 @@ public class ApiException extends RuntimeException {
 		return this.errMsg;
 	}
 
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
 }

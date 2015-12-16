@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.views;
+package com.voyageone.web2.cms.views.setting.mapping.feed;
 
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -21,9 +21,9 @@ public class CmsFeedMappingController extends CmsController {
     @Autowired
     private CmsFeedMappingService cmsFeedMappingService;
 
-    @RequestMapping(FEED.GET_FEED_CATEGORIES)
-    public AjaxResponse getFeedCategories() {
-        return success(cmsFeedMappingService.getFeedCategories(getUser()));
+    @RequestMapping(FEED.GET_FEED_CATEGORY_TREE)
+    public AjaxResponse getFeedCategoryTree() {
+        return success(cmsFeedMappingService.getFeedCategoriyTree(getUser()));
     }
 
     @RequestMapping(FEED.GET_MAIN_CATEGORIES)

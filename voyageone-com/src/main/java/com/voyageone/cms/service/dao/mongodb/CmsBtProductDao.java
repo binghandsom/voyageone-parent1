@@ -106,10 +106,10 @@ public class CmsBtProductDao extends BaseMongoDao {
      * 更新SKU
      */
     public WriteResult updateWithSku(String channelId, String code, CmsBtProductModel_Sku skuModel) {
-        if (channelId == null || code == null || skuModel == null || skuModel.getSku() == null) {
+        if (channelId == null || code == null || skuModel == null || skuModel.getSkuCode() == null) {
             throw new RuntimeException("channelId, code, skuModel, sku not null");
         }
-        String query = String.format("{\"skus.sku\":\"%s\"}", skuModel.getSku());
+        String query = String.format("{\"skus.sku\":\"%s\"}", skuModel.getSkuCode());
         String update = String.format("{$set: %s }", skuModel.toUpdateString("skus.$."));
         String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
         return mongoTemplate.updateFirst(query, update, collectionName);

@@ -11,7 +11,7 @@ public class CommSequenceMongoService {
      *  Sequence Name
      */
     public enum CommSequenceName {
-        CMS_BT_PRODUCT_GROUP_ID("cms_bt_product_groupId");
+        CMS_BT_PRODUCT_PROD_ID("cms_bt_product_prodId"), CMS_BT_PRODUCT_GROUP_ID("cms_bt_product_groupId") ;
 
         // 成员变量
         private String name;

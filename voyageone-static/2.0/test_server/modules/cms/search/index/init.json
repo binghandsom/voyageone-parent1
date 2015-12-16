@@ -1,0 +1,51 @@
+{
+  "code": "",
+  "displayType": "",
+  "message": "",
+  "data": {
+    "productStatusList": [
+      {"id": "0", "name": "new"},
+      {"id": "1", "name": "pending"},
+      {"id": "2", "name": "ready"},
+      {"id": "3", "name": "approved"},
+      {"id": "4", "name": "deleted"}
+    ],
+    "publishStatusList": [
+      {"id": "0", "name": "等待上新"},
+      {"id": "1", "name": "在售"},
+      {"id": "2", "name": "在库"}
+    ],
+    "labelTypeList": [
+      {"id": "0", "name": "未翻译"},
+      {"id": "1", "name": "翻译完成"},
+      {"id": "2", "name": "上新失败"},
+      {"id": "3", "name": "上新成功"}
+    ],
+    "priceTypeList": [
+      {"id": "0", "name": "MSRP"},
+      {"id": "1", "name": "Current Price"},
+      {"id": "2", "name": "Final Price"}
+    ],
+    "compareTypeList": [
+      {"id": "0", "name": "More than"},
+      {"id": "1", "name": "Less than"},
+      {"id": "2", "name": "Equal to"}
+    ],
+    "brandList": [
+      {"id": "0", "name": "Nike"},
+      {"id": "1", "name": "Jewelry"},
+      {"id": "2", "name": "Adidas"}
+    ],
+    "promotionList": [
+      {"id": "0", "name": "双十一活动"},
+      {"id": "1", "name": "双十二活动"},
+      {"id": "2", "name": "全店折扣"}
+    ],
+    "sortList": [
+      {"id": "0", "name": "Product Status"},
+      {"id": "1", "name": "Publish Status"},
+      {"id": "2", "name": "Label"}
+    ]
+  },
+  "redirectTo": ""
+}

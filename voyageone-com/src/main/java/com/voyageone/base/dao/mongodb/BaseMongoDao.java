@@ -1,5 +1,11 @@
 package com.voyageone.base.dao.mongodb;
 
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.Option;
+import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
+import com.jayway.jsonpath.spi.json.JsonProvider;
+import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
+import com.jayway.jsonpath.spi.mapper.MappingProvider;
 import com.mongodb.CommandResult;
 import com.mongodb.DBCollection;
 import com.mongodb.WriteResult;
@@ -7,9 +13,7 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.common.util.DateTimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public abstract class BaseMongoDao {
 
@@ -18,6 +22,30 @@ public abstract class BaseMongoDao {
     protected String collectionName;
 
     protected Class entityClass;
+
+    static {
+        // 在 BaseMongoDao 静态初始化时, 初始化 JsonPath 的 Provider 配置
+        Configuration.setDefaults(new Configuration.Defaults() {
+
+            private final JsonProvider jsonProvider = new JacksonJsonProvider();
+            private final MappingProvider mappingProvider = new JacksonMappingProvider();
+
+            @Override
+            public JsonProvider jsonProvider() {
+                return jsonProvider;
+            }
+
+            @Override
+            public MappingProvider mappingProvider() {
+                return mappingProvider;
+            }
+
+            @Override
+            public Set<Option> options() {
+                return EnumSet.noneOf(Option.class);
+            }
+        });
+    }
 
     @Autowired
     public void setMongoTemplate(BaseJomgoTemplate mongoTemplate) {

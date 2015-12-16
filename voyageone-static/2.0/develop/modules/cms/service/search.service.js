@@ -6,18 +6,63 @@ define([
     'angularAMD'
 ], function (angularAMD) {
     angularAMD
-        .service('searchService', searchService);
+        .service('searchIndexService', searchIndexService);
 
-    function searchService($q, cActions, ajaxService) {
+    function searchIndexService($q, $searchIndexService, cActions, ajaxService) {
 
+        this.init = init;
         this.search = search;
+        this.getGroupList = getGroupList;
+        this.getProductList = getProductList;
 
+        /**
+         * 初始化数据
+         * @returns {*}
+         */
+        function init() {
+            var defer = $q.defer();
+            $searchIndexService.init().then(function (res) {
+                defer.resolve (res);
+            });
+            return defer.promise;
+        }
+
+        /**
+         * 检索group和product
+         * @param data
+         * @returns {*}
+         */
         function search(data) {
             var defer = $q.defer();
-            ajaxService.post(cActions.cms.search.advance.doSearch, data)
-                .then(function (res) {
-                    defer.resolve (res);
-                });
+            $searchIndexService.search(data).then(function (res) {
+                defer.resolve (res);
+            });
+            return defer.promise;
+        }
+
+        /**
+         * 检索group
+         * @param data
+         * @returns {*}
+         */
+        function getGroupList(data) {
+            var defer = $q.defer();
+            $searchIndexService.getGroupList(data).then(function (res) {
+                defer.resolve (res);
+            });
+            return defer.promise;
+        }
+
+        /**
+         * 检索product
+         * @param data
+         * @returns {*}
+         */
+        function getProductList(data) {
+            var defer = $q.defer();
+            $searchIndexService.getGroupList(data).then(function (res) {
+                defer.resolve (res);
+            });
             return defer.promise;
         }
     }

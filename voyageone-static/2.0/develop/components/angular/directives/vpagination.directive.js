@@ -63,12 +63,12 @@ angular.module('voyageone.angular.directives.vpagination', [])
                 var userWithDefConfig = angular.extend({}, defConfig, userConfig);
                 scope.config = angular.extend(userConfig, userWithDefConfig);
 
+                var p = new vpagination(scope.config);
+
                 // 监视配置变动
                 scope.$parent.$watch(userConfigName, function () {
                     refresh();
                 }, true);
-
-                var p = new vpagination(scope.config);
 
                 /**
                  * 跳转到指定页
@@ -96,16 +96,16 @@ angular.module('voyageone.angular.directives.vpagination', [])
                     // 获取当前页的信息
                     scope.curr = p.getCurr();
 
-                }
+                    // 根据总数量显示不同的分页样式
+                    var tempHtml;
+                    if(p.getTotal() == 0) {
+                        tempHtml = $compile($templateCache.get(templateKeyNoData))(scope);
+                    } else {
+                        tempHtml = $compile($templateCache.get(templateKey))(scope);
+                    }
+                    element.html(tempHtml);
 
-                // 根据总数量显示不同的分页样式
-                var tempHtml;
-                if(p.getTotal() == 0) {
-                    tempHtml = $compile($templateCache.get(templateKeyNoData))(scope);
-                } else {
-                    tempHtml = $compile($templateCache.get(templateKey))(scope);
                 }
-                element.append(tempHtml);
             }
         };
     });

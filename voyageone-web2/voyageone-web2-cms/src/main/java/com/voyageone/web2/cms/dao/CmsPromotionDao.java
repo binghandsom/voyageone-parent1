@@ -22,4 +22,12 @@ public class CmsPromotionDao extends BaseDao{
         }
         return ret;
     }
+    public int insertPromotion(CmsBtPromotionModel params){
+        return updateTemplate.insert("insert_promotion",params);
+    }
+
+    public int updatePromotion(CmsBtPromotionModel params){
+        return updateTemplate.insert("update_promotion",params);
+    }
+
 }

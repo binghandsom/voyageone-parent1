@@ -47,15 +47,12 @@
 						<div class="form-group">
 							<label class="col-sm-2 control-label">Search</label>
 							<div class="col-sm-7">
-								<input class="form-control" ng-model="searchInfo.promotionName" placeholder="活动名称">
+								<input class="form-control" ng-model="searchInfo.promotionName">
 							</div>
 						</div><!-- .form-group -->
 					</div>
 				</div>
 				<div class="col-sm-12 text-center" ng-controller="popupCtrl">
-					<script type="text/ng-template" id="popup_new_promotion.html">
-						<div ng-include="'tpl/popup_new_promotion.html'"></div>
-					</script>
 					<div class="form-inline">
 						<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>  Search</button>
 						<button class="btn btn-success" ng-click="openpromotion('md')"><i class="fa fa-plus"></i> 新增Promotion</button>
@@ -77,15 +74,15 @@
 						<th class="text-center">活动渠道</th>
 						<th class="text-center">编辑</th>
 					</tr>
-					<tr ng-repeat="promotion in vm.promotionList">
+					<tr ng-repeat="promotion in vm.promotionList" >
 						<td>{{promotion.promotionId}}</td>
 						<td class="text-center"><span ng-show="promotion.promotionStatus==false" class="label label-success-new m-r-lg m-l"> Open </span><span ng-show="promotion.promotionStatus==true" class="label label-yellow-new m-r-lg m-l"> Close </span></td>
 						<td><a href="#/promotion/detail/{{promotion.promotionId}}" target="_blank">{{promotion.promotionName}}</a></td>
 						<td>{{promotion.activityStart}}</td>
 						<td>{{promotion.activityEnd}}</td>
 						<td>{{promotion.cartName}}</td>
-						<td><button title="编辑" class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button>
-							<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
+						<td ng-controller="popupCtrl"><button title="编辑" class="btn btn-success btn-xs" ng-click="openpromotion('md',promotion)"><i class="fa fa-pencil"></i></button>
+							<button title="删除" class="btn btn-danger btn-xs"  ng-click="del(promotion)"><i class="fa  fa-trash-o"></i></button>
 							<button title="下载" class="btn btn-dangerdel btn-xs"><i class="fa fa-cloud-download"></i></button>
 						</td>
 					</tr>

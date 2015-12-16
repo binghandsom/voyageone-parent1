@@ -3,12 +3,19 @@ package com.voyageone.cms.service.model;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.Constants;
+import com.voyageone.common.configs.Enums.CartEnums;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class CmsBtProductModel_Sku extends BaseMongoMap {
+/**
+ * 的商品Model Skus
+ * @author chuanyu.liang, 12/11/15
+ * @version 2.0.0
+ * @since 2.0.0
+ */
+public class CmsBtProductModel_Sku extends BaseMongoMap<Object, Object> {
 
     public CmsBtProductModel_Sku() {
 
@@ -18,32 +25,40 @@ public class CmsBtProductModel_Sku extends BaseMongoMap {
     }
 
 
-    public String getSku() {
-        return (String) getAttribute("sku");
+    public String getSkuCode() {
+        return getAttribute("skuCode");
     }
 
-    public void setSku(String sku) {
-        setAttribute("sku", sku);
+    public void setSkuCode(String skuCode) {
+        setAttribute("skuCode", skuCode);
     }
 
-    public String getUpc() {
-        return (String) getAttribute("upc");
+    public String getBarcode() {
+        return getAttribute("barcode");
     }
 
-    public void setUpc(String upc) {
-        setAttribute("upc", upc);
+    public void setBarcode(String barcode) {
+        setAttribute("barcode", barcode);
     }
 
-    public double getCostPrice() {
-        return (double) getAttribute("costPrice");
+    public String getSize() {
+        return getAttribute("size");
     }
 
-    public void setCostPrice(double costPrice) {
-        setAttribute("costPrice", costPrice);
+    public void setSize(String size) {
+        setAttribute("size", size);
+    }
+
+    public int getQty() {
+        return getAttribute("qty");
+    }
+
+    public void setQty(int qty) {
+        setAttribute("qty", qty);
     }
 
     public double getPriceMsrp() {
-        return (double) getAttribute("priceMsrp");
+        return getAttribute("priceMsrp");
     }
 
     public void setPriceMsrp(double priceMsrp) {
@@ -51,7 +66,7 @@ public class CmsBtProductModel_Sku extends BaseMongoMap {
     }
 
     public double getPriceRetail() {
-        return (double) getAttribute("priceRetail");
+        return getAttribute("priceRetail");
     }
 
     public void setPriceRetail(double priceRetail) {
@@ -59,45 +74,45 @@ public class CmsBtProductModel_Sku extends BaseMongoMap {
     }
 
     public double getPriceSale() {
-        return (double) getAttribute("priceSale");
+        return getAttribute("priceSale");
     }
 
     public void setPriceSale(double priceSale) {
         setAttribute("priceSale", priceSale);
     }
 
-    public List<Integer> getCarts() {
-        if (!this.containsKey("carts") || getAttribute("carts") == null) {
-            setAttribute("carts", new ArrayList<Integer>());
+    public List<Integer> getSkuCarts() {
+        if (!this.containsKey("skuCarts") || getAttribute("skuCarts") == null) {
+            setAttribute("skuCarts", new ArrayList<Integer>());
         }
-        return (List<Integer>) getAttribute("carts");
+        return (List<Integer>) getAttribute("skuCarts");
     }
 
-    public void setCarts(List<Integer> carts) {
-        setAttribute("carts", carts);
+    public void setSkuCarts(List<Integer> skuCarts) {
+        setAttribute("skuCarts", skuCarts);
     }
 
-    public boolean isIncludeCart(Constants.CartEnum cartEnum) {
+    public boolean isIncludeCart(CartEnums.Cart cartEnum) {
         boolean result = false;
         if (cartEnum != null) {
-            result = isIncludeCart(cartEnum.getName());
+            result = isIncludeCart(Integer.parseInt(cartEnum.getId()));
         }
         return result;
     }
 
     public boolean isIncludeCart(int cartId) {
-        List<Integer> carts = getCarts();
+        List<Integer> carts = getSkuCarts();
         return carts.contains(cartId);
     }
 
-    public void setCart(Constants.CartEnum cartEnum) {
+    public void setCart(CartEnums.Cart cartEnum) {
         if (cartEnum != null) {
-            setCart(cartEnum.getName());
+            setCart(Integer.parseInt(cartEnum.getId()));
         }
     }
 
     public void setCart(int cartId) {
-        List<Integer> carts = getCarts();
+        List<Integer> carts = getSkuCarts();
         if (!carts.contains(cartId)) {
             carts.add(cartId);
         }
