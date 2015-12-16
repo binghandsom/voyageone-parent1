@@ -125,38 +125,6 @@ public final class Constants {
     public static final int PHONE_NUM_ERR = -3;
 
 
-    /**
-     *  Cart Enum
-     */
-    public enum CartEnum {
-        // Tmall(21)
-        TMALL(20), TAOBAO(21), OFFLINE(22), TMALLG(23), JD(24), CN(25), JG(26), JM(27);
-
-        // 成员变量
-        private int name;
-
-        // 构造方法
-        private CartEnum(int name) {
-            this.name = name;
-        }
-
-        // get set 方法
-        public int getName() {
-            return name;
-        }
-
-        public void setName(int name) {
-            this.name = name;
-        }
-
-        public static CartEnum getEnum(int value) {
-            for(CartEnum v : values())
-                if(v.getName() == value) return v;
-            throw new IllegalArgumentException();
-        }
-
-    }
-
     public static final class comMtType {
         public static final String BRAND = "brand";
     }
