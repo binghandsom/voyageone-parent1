@@ -11,7 +11,7 @@ import java.util.*;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class CmsBtProductModel_Field extends BaseMongoMap<Object, Object> {
+public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
 
     //code 产品code
     public String getCode() {
@@ -131,20 +131,20 @@ public class CmsBtProductModel_Field extends BaseMongoMap<Object, Object> {
     }
 
     //hsCodeCrop 税号集货
-    public boolean getHsCodeCrop() {
+    public String getHsCodeCrop() {
         return getAttribute("hsCodeCrop");
     }
 
-    public void setHsCodeCrop(boolean hsCodeCrop) {
+    public void setHsCodeCrop(String hsCodeCrop) {
         setAttribute("hsCodeCrop", hsCodeCrop);
     }
 
     //hsCodePrivate 税号个人
-    public boolean getHsCodePrivate() {
+    public String getHsCodePrivate() {
         return getAttribute("hsCodePrivate");
     }
 
-    public void setHsCodePrivate(boolean hsCodePrivate) {
+    public void setHsCodePrivate(String hsCodePrivate) {
         setAttribute("hsCodePrivate", hsCodePrivate);
     }
 
@@ -352,7 +352,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<Object, Object> {
     }
 
     @Override
-    public Object put(Object key, Object value) {
+    public Object put(String key, Object value) {
         if (key != null && key.toString().startsWith("images")) {
             if (value != null) {
                 List<Map> imageMaps = (List<Map>) value;

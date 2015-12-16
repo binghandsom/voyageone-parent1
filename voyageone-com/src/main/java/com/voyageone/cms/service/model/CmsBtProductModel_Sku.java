@@ -15,7 +15,7 @@ import java.util.Map;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class CmsBtProductModel_Sku extends BaseMongoMap<Object, Object> {
+public class CmsBtProductModel_Sku extends BaseMongoMap<String, Object> {
 
     public CmsBtProductModel_Sku() {
 
