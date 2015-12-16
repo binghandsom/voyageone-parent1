@@ -26,7 +26,7 @@
       {"id": "1", "name": "Current Price"},
       {"id": "2", "name": "Final Price"}
     ],
-    "inventoryTypeList": [
+    "compareTypeList": [
       {"id": "0", "name": "More than"},
       {"id": "1", "name": "Less than"},
       {"id": "2", "name": "Equal to"}

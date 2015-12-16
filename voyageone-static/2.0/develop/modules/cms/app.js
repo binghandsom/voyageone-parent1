@@ -182,16 +182,24 @@ define([
       ajaxService.post(cActions.core.home.menu.getMenuHeaderInfo)
         .then(function (response) {
           var data = response.data;
-          var languageType = _.isEmpty(cookieService.language()) ? translateService.getBrowserLanguage() : cookieService.language();
-          translateService.setLanguage(languageType);
+
+          // 获取用户语言
+          var userlanguage = translateService.getBrowserLanguage();
+          if (!_.isEmpty(cookieService.language()))
+            userlanguage = cookieService.language();
+          else if (!_.isEmpty(data.userInfo.language))
+            userlanguage = data.userInfo.language;
+          translateService.setLanguage(userlanguage);
+
+          // 设置画面用户显示的语言
           _.forEach(data.languageList, function (language) {
 
-            if (_.isEqual(languageType, language.add_name2)) {
+            if (_.isEqual(userlanguage, language.add_name2)) {
               data.userInfo.language = language.add_name1;
             }
           });
-          // TODO
-          data.userInfo.application = 'CMS';//cookieService.application();
+
+          data.userInfo.application = cookieService.application();
           defer.resolve (data);
         });
       return defer.promise;
@@ -227,9 +235,12 @@ define([
      */
     function setLanguage (language) {
       var defer = $q.defer ();
-      cookieService.language(language.add_name2);
-      translateService.setLanguage(language.add_name2);
-      defer.resolve(language.add_name1);
+      ajaxService.post(cActions.core.home.menu.selectLanguage, {"language": language.name})
+          .then(function () {
+            cookieService.language(language.add_name2);
+            translateService.setLanguage(language.add_name2);
+            defer.resolve(language.add_name1);
+          });
       return defer.promise;
     }
 

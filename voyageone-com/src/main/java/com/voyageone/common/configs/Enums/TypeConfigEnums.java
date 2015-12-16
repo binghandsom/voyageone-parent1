@@ -164,7 +164,32 @@ public class TypeConfigEnums {
     	/**
 		 * 赠品规则类型
 		 */
-		giftRuleType(35);
+		giftRuleType(35),
+
+		/**
+		 * 产品状态:cms2
+		 */
+		productStatus(44),
+
+		/**
+		 * 发布状态:cms2
+		 */
+		publishStatus(45),
+
+		/**
+		 * 标签:cms2
+		 */
+		label(46),
+
+		/**
+		 * 价格种类:cms2
+		 */
+		priceType(47),
+
+		/**
+		 * 数量比较种类:cms2
+		 */
+		compareType(48);
 
     	private int id;
 

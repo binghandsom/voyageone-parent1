@@ -40,6 +40,8 @@ public class UserController extends BaseController {
         UserSessionBean userSessionBean = userService.login(username, password, timezone);
         // 保存用户
         getSession().setAttribute(BaseConstants.SESSION_USER, userSessionBean);
+        // 保存用户的默认语言
+        getSession().setAttribute(BaseConstants.SESSION_LANG, userService.getUserLanguage(userSessionBean));
 
         // 返回用户信息
         return success(true);
