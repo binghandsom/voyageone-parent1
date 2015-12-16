@@ -184,10 +184,12 @@ public interface WmsConstants {
         public final static String LABELNAME = "ca_label_name";
         public final static String DATERANGEFIELD = "ca_daterangefield";
         public final static String POSTACTION = "ca_inventory_action";
+        public final static String POSTITEMACTION ="ca_inventory_item_action";
         public final static String FULLUPDATECONFIG= "ca_full_update_config";
         public final static String PAGESIZE= "ca_update_pagesize";
         public final static String INVENTORYFULLUPDATECONFIG= "inventory_full_update_config";
         public final static String INVENTORYPAGESIZE= "inventory_update_pagesize";
+        public final static String CENTERCODE = "ca_inventory_center_code";
     }
 
     /**

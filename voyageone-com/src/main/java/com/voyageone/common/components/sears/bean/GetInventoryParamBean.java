@@ -1,4 +1,4 @@
-package com.voyageone.common.components.channelAdvisor.bean.inventory;
+package com.voyageone.common.components.sears.bean;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.List;
@@ -11,19 +11,14 @@ public class GetInventoryParamBean {
     String postAction;
     String nameSpace;
     String postUrl;
-    String postItemAction;
     String accountId;
     String developerKey;
     String password;
-    String labelName;
-    String DateRangeField;
-    XMLGregorianCalendar dateTimeStart;
-    XMLGregorianCalendar dateTimeEnd;
     int nPageSize;
     int nPageIndex;
+    String dateTimeSince;
+    int updateCount;
     String storeArea;
-    List<String> skuList;
-    String centerCode;
 
     public String getPostAction() {
         return postAction;
@@ -73,38 +68,6 @@ public class GetInventoryParamBean {
         this.password = password;
     }
 
-    public String getLabelName() {
-        return labelName;
-    }
-
-    public void setLabelName(String labelName) {
-        this.labelName = labelName;
-    }
-
-    public String getDateRangeField() {
-        return DateRangeField;
-    }
-
-    public void setDateRangeField(String dateRangeField) {
-        DateRangeField = dateRangeField;
-    }
-
-    public XMLGregorianCalendar getDateTimeStart() {
-        return dateTimeStart;
-    }
-
-    public void setDateTimeStart(XMLGregorianCalendar dateTimeStart) {
-        this.dateTimeStart = dateTimeStart;
-    }
-
-    public XMLGregorianCalendar getDateTimeEnd() {
-        return dateTimeEnd;
-    }
-
-    public void setDateTimeEnd(XMLGregorianCalendar dateTimeEnd) {
-        this.dateTimeEnd = dateTimeEnd;
-    }
-
     public int getnPageSize() {
         return nPageSize;
     }
@@ -121,35 +84,27 @@ public class GetInventoryParamBean {
         this.nPageIndex = nPageIndex;
     }
 
+    public String getDateTimeSince() {
+        return dateTimeSince;
+    }
+
+    public void setDateTimeSince(String dateTimeSince) {
+        this.dateTimeSince = dateTimeSince;
+    }
+
+    public int getUpdateCount() {
+        return updateCount;
+    }
+
+    public void setUpdateCount(int updateCount) {
+        this.updateCount = updateCount;
+    }
+
     public String getStoreArea() {
         return storeArea;
     }
 
     public void setStoreArea(String storeArea) {
         this.storeArea = storeArea;
-    }
-
-    public List<String> getSkuList() {
-        return skuList;
-    }
-
-    public void setSkuList(List<String> skuList) {
-        this.skuList = skuList;
-    }
-
-    public String getPostItemAction() {
-        return postItemAction;
-    }
-
-    public void setPostItemAction(String postItemAction) {
-        this.postItemAction = postItemAction;
-    }
-
-    public String getCenterCode() {
-        return centerCode;
-    }
-
-    public void setCenterCode(String centerCode) {
-        this.centerCode = centerCode;
     }
 }
