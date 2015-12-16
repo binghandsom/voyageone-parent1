@@ -91,6 +91,7 @@ public final class Constants {
         public static final String EN = "en";
         public static final String CN = "cn";
         public static final String JP = "jp";
+        public static final String[] ALL = {"en", "cn", "jp"};
     }
 
     /**
@@ -154,6 +155,10 @@ public final class Constants {
             throw new IllegalArgumentException();
         }
 
+    }
+
+    public static final class comMtType {
+        public static final String BRAND = "brand";
     }
 
 }

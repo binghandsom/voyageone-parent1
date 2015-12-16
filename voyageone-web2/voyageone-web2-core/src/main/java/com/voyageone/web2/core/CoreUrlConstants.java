@@ -11,6 +11,8 @@ public interface CoreUrlConstants {
 
     String MENU_HEADER_INFO = "getMenuHeaderInfo";
 
+    String MENU_SEL_LANGUAGE = "selectLanguage";
+
     String USER_ROOT = "/core/access/user/";
 
     String USER_LOGIN = "login";

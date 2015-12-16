@@ -12,4 +12,6 @@ public interface CoreConstants {
     String MD5_FIX_SALT = "crypto.voyageone.la";
     // 密码加密散列加密次数
     int MD5_HASHITERATIONS = 4;
+
+    String USER_CONFIG_LANGUAGE_ID = "language_id";
 }

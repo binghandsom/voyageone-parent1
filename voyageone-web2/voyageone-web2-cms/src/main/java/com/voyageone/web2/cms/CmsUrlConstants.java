@@ -67,4 +67,19 @@ public interface CmsUrlConstants {
             String SET_PROM_TAG = "setPromotionTag";
         }
     }
+    interface SEARCH {
+
+        interface INDEX {
+
+            String ROOT = "/cms/search/index/";
+
+            String INIT = "init";
+
+            String SEARCH = "search";
+
+            String GET_GROUP_LIST = "getGroupList";
+
+            String GET_PRODUCT_LIST = "getProductList";
+        }
+    }
 }

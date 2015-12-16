@@ -15,7 +15,7 @@ define([
             "groupPageOption": {curr: 1, total: 0, size: 30, fetch: getGroupList},
             "productPageOption": {curr: 1, total: 250, size: 20, fetch: getProductList},
             "groupList": [],
-            "productList": [1]
+            "productList": []
         };
 
         $scope.initialize = initialize;
@@ -36,12 +36,14 @@ define([
         }
 
         function search () {
-            searchIndexService.search().then(function (res) {
-                $scope.vm.groupList = res.data.groupList;
-                $scope.vm.groupPageOption.total = res.data.groupList.length;
-                $scope.vm.productList = res.data.productList;
-                $scope.vm.productPageOption.total = res.data.productList.length;
-            })
+            console.log($scope.vm.searchInfo);
+            //searchIndexService.search().then(function (res) {
+            //    $scope.vm.groupList = res.data.groupList;
+            //    $scope.vm.groupPageOption.total = res.data.groupList.length;
+            //    $scope.vm.productList = res.data.productList;
+            //    $
+            // scope.vm.productPageOption.total = res.data.productList.length;
+            //})
         }
 
         function exportFile () {

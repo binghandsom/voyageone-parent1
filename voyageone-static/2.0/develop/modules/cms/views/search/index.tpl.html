@@ -13,7 +13,7 @@
 							<label class="col-sm-3 control-label" translate="TXT_PRODUCT_STATUS"></label>
 							<div class="col-sm-9">
 								<label class="checkbox-inline c-checkbox" ng-repeat="productStatus in vm.masterData.productStatusList">
-									<input type="checkbox" ng-value="productStatus.id" ng-model="vm.searchInfo.productStatus[productStatus.id]"><span class="fa fa-check"></span> {{productStatus.name}}
+									<input type="checkbox" ng-value="productStatus.value" ng-model="vm.searchInfo.productStatus[productStatus.value]"><span class="fa fa-check"></span> {{productStatus.name}}
 								</label>
 							</div>
 						</div><!-- .form-group -->
@@ -21,7 +21,7 @@
 							<label class="col-sm-3 control-label" translate="TXT_PUBLISH_STATUS"></label>
 							<div class="col-sm-9">
 								<label class="checkbox-inline c-checkbox" ng-repeat="publishStatus in vm.masterData.publishStatusList">
-									<input type="checkbox" ng-value="publishStatus.id" ng-model="vm.searchInfo.publishStatus[publishStatus.id]"><span class="fa fa-check"></span> {{publishStatus.name}}
+									<input type="checkbox" ng-value="publishStatus.value" ng-model="vm.searchInfo.publishStatus[publishStatus.value]"><span class="fa fa-check"></span> {{publishStatus.name}}
 								</label>
 							</div>
 						</div>
@@ -29,7 +29,7 @@
 							<label class="col-sm-3 control-label" translate="TXT_LABEL"></label>
 							<div class="col-sm-9">
 								<label class="checkbox-inline c-checkbox" ng-repeat="labelType in vm.masterData.labelTypeList">
-									<input type="checkbox" ng-value="labelType.id" ng-model="vm.searchInfo.labelType[labelType.id]"><span class="fa fa-check"></span> {{labelType.name}}
+									<input type="checkbox" ng-value="labelType.value" ng-model="vm.searchInfo.labelType[labelType.value]"><span class="fa fa-check"></span> {{labelType.name}}
 								</label>
 							</div>
 						</div>
@@ -37,7 +37,7 @@
 							<label class="col-sm-3 control-label" translate="TXT_PRICE"></label>
 							<div class="col-sm-8">
 								<label class="checkbox-inline c-radio" ng-repeat="priceType in vm.masterData.priceTypeList">
-									<input name="priceType" type="checkbox" ng-value="priceType.id" ng-model="vm.searchInfo.priceType"><span class="fa fa-check"></span> {{priceType.name}}
+									<input name="priceType" type="radio" ng-value="priceType.value" ng-model="vm.searchInfo.priceType"><span class="fa fa-check"></span> {{priceType.name}}
 								</label>
 							</div>
 						</div>
@@ -94,8 +94,8 @@
 							<label class="col-sm-3 control-label" translate="TXT_INVENTORY"></label>
 							<div class="col-sm-9 form-inline">
 								<div class="col-sm-5">
-									<select class="form-control m-r-xs" ng-model="vm.searchInfo.inventoryType"
-											ng-options="inventoryType.id as inventoryType.name for inventoryType in vm.masterData.inventoryTypeList">
+									<select class="form-control m-r-xs" ng-model="vm.searchInfo.compareType"
+											ng-options="compareType.value as compareType.name for compareType in vm.masterData.compareTypeList">
 									</select>
 								</div>
 								<div class="col-sm-4"><input class="form-control" ng-model="vm.searchInfo.inventory" ng-pattern="/^(\d+)$/"></div>
@@ -105,15 +105,15 @@
 							<label class="col-sm-3 control-label" translate="TXT_BRAND"></label>
 							<div class="col-sm-9">
 								<select class="form-control" ng-model="vm.searchInfo.brand"
-										ng-options="brand.id as brand.name for brand in vm.masterData.brandList">
+										ng-options="brand.value as brand.displayName for brand in vm.masterData.brandList">
 								</select>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label" translate="TXT_PROMOTION_INFO"></label>
 							<div class="col-sm-9">
-								<select class="form-control" ng-model="vm.searchInfo.promotionInfo"
-										ng-options="promotion.id as promotion.name for promotion in vm.masterData.promotionList">
+								<select class="form-control" ng-model="vm.searchInfo.promotion"
+										ng-options="promotion.promotionId as promotion.promotionName for promotion in vm.masterData.promotionList">
 								</select>
 							</div>
 						</div>
@@ -218,7 +218,7 @@
 					</button>
 					<ul class="dropdown-menu" role="menu" ng-if="vm.masterData.promotionList.length">
 						<li ng-repeat="promotion in vm.masterData.promotionList">
-							<a href ng-click="openNewpromotion('md', promotionId)">{{promotion.name}}|{{promotion.cart}}</a>
+							<a href ng-click="openNewpromotion('md', promotion)">{{promotion.promotionName}}|{{promotion.cartName}}</a>
 						</li>
 					</ul>
 				</div>
