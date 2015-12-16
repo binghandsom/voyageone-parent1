@@ -25,28 +25,36 @@ public class CmsBtProductModel_Sku extends BaseMongoMap<Object, Object> {
     }
 
 
-    public String getSku() {
-        return getAttribute("sku");
+    public String getSkuCode() {
+        return getAttribute("skuCode");
     }
 
-    public void setSku(String sku) {
-        setAttribute("sku", sku);
+    public void setSkuCode(String skuCode) {
+        setAttribute("skuCode", skuCode);
     }
 
-    public String getUpc() {
-        return getAttribute("upc");
+    public String getBarcode() {
+        return getAttribute("barcode");
     }
 
-    public void setUpc(String upc) {
-        setAttribute("upc", upc);
+    public void setBarcode(String barcode) {
+        setAttribute("barcode", barcode);
     }
 
-    public double getCostPrice() {
-        return getAttribute("costPrice");
+    public String getSize() {
+        return getAttribute("size");
     }
 
-    public void setCostPrice(double costPrice) {
-        setAttribute("costPrice", costPrice);
+    public void setSize(String size) {
+        setAttribute("size", size);
+    }
+
+    public int getQty() {
+        return getAttribute("qty");
+    }
+
+    public void setQty(int qty) {
+        setAttribute("qty", qty);
     }
 
     public double getPriceMsrp() {
@@ -73,15 +81,15 @@ public class CmsBtProductModel_Sku extends BaseMongoMap<Object, Object> {
         setAttribute("priceSale", priceSale);
     }
 
-    public List<Integer> getCarts() {
-        if (!this.containsKey("carts") || getAttribute("carts") == null) {
-            setAttribute("carts", new ArrayList<Integer>());
+    public List<Integer> getSkuCarts() {
+        if (!this.containsKey("skuCarts") || getAttribute("skuCarts") == null) {
+            setAttribute("skuCarts", new ArrayList<Integer>());
         }
-        return (List<Integer>) getAttribute("carts");
+        return (List<Integer>) getAttribute("skuCarts");
     }
 
-    public void setCarts(List<Integer> carts) {
-        setAttribute("carts", carts);
+    public void setSkuCarts(List<Integer> skuCarts) {
+        setAttribute("skuCarts", skuCarts);
     }
 
     public boolean isIncludeCart(CartEnums.Cart cartEnum) {
@@ -93,7 +101,7 @@ public class CmsBtProductModel_Sku extends BaseMongoMap<Object, Object> {
     }
 
     public boolean isIncludeCart(int cartId) {
-        List<Integer> carts = getCarts();
+        List<Integer> carts = getSkuCarts();
         return carts.contains(cartId);
     }
 
@@ -104,7 +112,7 @@ public class CmsBtProductModel_Sku extends BaseMongoMap<Object, Object> {
     }
 
     public void setCart(int cartId) {
-        List<Integer> carts = getCarts();
+        List<Integer> carts = getSkuCarts();
         if (!carts.contains(cartId)) {
             carts.add(cartId);
         }

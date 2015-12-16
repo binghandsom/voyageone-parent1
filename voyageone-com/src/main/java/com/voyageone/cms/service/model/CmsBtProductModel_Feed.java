@@ -19,4 +19,12 @@ public class CmsBtProductModel_Feed extends BaseMongoMap<Object, Object> {
         setAttribute("catId", catId);
     }
 
+    public String getModelCode() {
+        return getAttribute("modelCode");
+    }
+
+    public void setModelCode(String modelCode) {
+        setAttribute("modelCode", modelCode);
+    }
+
 }
