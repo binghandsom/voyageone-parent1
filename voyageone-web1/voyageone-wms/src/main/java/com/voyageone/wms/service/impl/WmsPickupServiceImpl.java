@@ -116,6 +116,7 @@ public class WmsPickupServiceImpl implements WmsPickupService {
 
         // 获取相关渠道对应的扫描方式
         List<String> orderChannelList = user.getChannelList();
+        String labelPrint = "";
         String permit = "";
         String pickupType = "";
         String pickupTypeName = "";
@@ -127,6 +128,7 @@ public class WmsPickupServiceImpl implements WmsPickupService {
         String relabelPort = "";
         if (orderChannelList.size() > 0){
             if (reserveType.equals(WmsConstants.ReserveType.PickUp)) {
+                labelPrint = ChannelConfigs.getVal1(orderChannelList.get(0), ChannelConfigEnums.Name.pickup_label_print);
                 permit = ChannelConfigs.getVal1(orderChannelList.get(0), ChannelConfigEnums.Name.pickup_permit);
                 pickupType = ChannelConfigs.getVal1(orderChannelList.get(0), ChannelConfigEnums.Name.pickup_type);
                 pickupTypeName = ChannelConfigs.getVal2(orderChannelList.get(0), ChannelConfigEnums.Name.pickup_type, pickupType);
@@ -138,6 +140,7 @@ public class WmsPickupServiceImpl implements WmsPickupService {
                 relabelPort = ChannelConfigs.getVal2(orderChannelList.get(0), ChannelConfigEnums.Name.relabel_status, relabelStatus);
             }
             else  if (reserveType.equals(WmsConstants.ReserveType.Receive)) {
+                labelPrint = ChannelConfigs.getVal1(orderChannelList.get(0), ChannelConfigEnums.Name.receive_label_print);
                 permit = ChannelConfigs.getVal1(orderChannelList.get(0), ChannelConfigEnums.Name.receive_permit);
                 pickupType = ChannelConfigs.getVal1(orderChannelList.get(0), ChannelConfigEnums.Name.receive_type);
                 pickupTypeName = ChannelConfigs.getVal2(orderChannelList.get(0), ChannelConfigEnums.Name.receive_type, pickupType);
@@ -149,6 +152,8 @@ public class WmsPickupServiceImpl implements WmsPickupService {
                 relabelPort = ChannelConfigs.getVal2(orderChannelList.get(0), ChannelConfigEnums.Name.receive_relabel_status, relabelStatus);
             }
         }
+        // 如没有设定值，则默认允许打印拣货单
+        resultMap.put("labelPrint", StringUtils.isNullOrBlank2(labelPrint)? ChannelConfigEnums.Print.YES.getIs() : labelPrint);
         resultMap.put("permit", permit);
         resultMap.put("pickupType", pickupType);
         resultMap.put("pickupTypeName", pickupTypeName);
@@ -247,6 +252,13 @@ public class WmsPickupServiceImpl implements WmsPickupService {
 
             String statusName = Codes.getCodeName(WmsCodeConstants.Reservation_Status.Name, formPickupBean.getStatus());
 
+            // 品牌方订单号、品牌方物品ID的追加设定（用于画面显示用，告知仓库是扫描了哪个订单或物品）
+            if (ChannelConfigEnums.Scan.ORDER.getType().equals(scanType)) {
+                formPickupBean.setClient_id(formPickupBean.getClient_order_id());
+            } else if (ChannelConfigEnums.Scan.ITEM.getType().equals(scanType)) {
+                formPickupBean.setClient_id(formPickupBean.getTracking_number());
+            }
+
             // 取得满足状态条件的记录
             if (formPickupBean.getStatus().equals(scanStatus)) {
                 scanInfoList.add(formPickupBean);
@@ -265,6 +277,14 @@ public class WmsPickupServiceImpl implements WmsPickupService {
                 }
                 // 订单级别收货时，由于货物可能已经实际发到仓库了，即使已经取消订单，也需要将取消物品打单
                 else if (ChannelConfigEnums.Scan.ORDER.getType().equals(scanType)) {
+                    if (WmsConstants.ScanType.SCAN.equals(scanMode)) {
+                        scanInfoList.add(formPickupBean);
+                    } else {
+                        intCancelled++;
+                    }
+                }
+                // 订单物品级别收货时，由于货物可能已经实际发到仓库了，即使已经取消订单，也需要将取消物品打单
+                else if (ChannelConfigEnums.Scan.ITEM.getType().equals(scanType)) {
                     if (WmsConstants.ScanType.SCAN.equals(scanMode)) {
                         scanInfoList.add(formPickupBean);
                     } else {
@@ -360,8 +380,10 @@ public class WmsPickupServiceImpl implements WmsPickupService {
         BigDecimal declareRate = ChannelConfigs.getDiscountRate(orderChannelId, shipChannel);
 
         if (declareRate == null) {
-            logger.info("未取得相关发货渠道的折扣" + "（OrderChannelId：" + orderChannelId  + "，ShipChannel：" + shipChannel  +  "）");
-            throw new BusinessException(WmsMsgConstants.PickUpMsg.NOT_FOUND_DISCOUNT_RATE, orderChannelId, shipChannel);
+//            logger.info("未取得相关发货渠道的折扣" + "（OrderChannelId：" + orderChannelId  + "，ShipChannel：" + shipChannel  +  "）");
+//            throw new BusinessException(WmsMsgConstants.PickUpMsg.NOT_FOUND_DISCOUNT_RATE, orderChannelId, shipChannel);
+            // 没有设定的场合，固定用1来计算
+            declareRate = new BigDecimal("1");
         }
         price= price.multiply(declareRate);
 
@@ -389,14 +411,16 @@ public class WmsPickupServiceImpl implements WmsPickupService {
         logger.info("捡货单内容取得：" + printPickupLabel);
 
         // 根据仓库判断库存是否需要管理
-        StoreBean store = StoreConfigs.getStore(Long.valueOf(scanStore));
-        String inventory_manager = store.getInventory_manager();
         String closeDayFlg = "";
-        // 捡货时 需要判断closeDayFlg
-        if (WmsConstants.ScanType.SCAN.equals(scanMode)) {
-            closeDayFlg = WmsConstants.CloseDayFlg.Process;
-            if (StoreConfigEnums.Manager.NO.getId().equals(inventory_manager)) {
-                closeDayFlg = WmsConstants.CloseDayFlg.Done;
+        if (!StringUtils.isNullOrBlank2(scanStore)) {
+            StoreBean store = StoreConfigs.getStore(Long.valueOf(scanStore));
+            String inventory_manager = store.getInventory_manager();
+            // 捡货时 需要判断closeDayFlg
+            if (WmsConstants.ScanType.SCAN.equals(scanMode)) {
+                closeDayFlg = WmsConstants.CloseDayFlg.Process;
+                if (StoreConfigEnums.Manager.NO.getId().equals(inventory_manager)) {
+                    closeDayFlg = WmsConstants.CloseDayFlg.Done;
+                }
             }
         }
 
@@ -818,6 +842,21 @@ public class WmsPickupServiceImpl implements WmsPickupService {
 
             // SKU
             pickupLabelBean.setSku("");
+
+        }
+        // 订单物品收货时，按照物品级别设置
+        else if (ChannelConfigEnums.Scan.ITEM.getType().equals(scanType))  {
+
+            // 配货号
+            pickupLabelBean.setReservation_id(scanNo);
+
+            // 货品名称
+            pickupLabelBean.setProduct(scanInfoList.get(0).getProduct());
+
+            // SKU（品牌方SKU存在时，显示品牌方SKU）
+            String client_sku = StringUtils.null2Space(reservationDao.getClientSku(scanInfoList.get(0).getOrder_channel_id(), scanInfoList.get(0).getSku()));
+
+            pickupLabelBean.setSku(StringUtils.isNullOrBlank2(client_sku) ? scanInfoList.get(0).getSku() : client_sku);
 
         }
 

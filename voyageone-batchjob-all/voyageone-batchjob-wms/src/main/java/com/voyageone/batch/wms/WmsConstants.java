@@ -186,6 +186,8 @@ public interface WmsConstants {
         public final static String POSTACTION = "ca_inventory_action";
         public final static String FULLUPDATECONFIG= "ca_full_update_config";
         public final static String PAGESIZE= "ca_update_pagesize";
+        public final static String INVENTORYFULLUPDATECONFIG= "inventory_full_update_config";
+        public final static String INVENTORYPAGESIZE= "inventory_update_pagesize";
     }
 
     /**

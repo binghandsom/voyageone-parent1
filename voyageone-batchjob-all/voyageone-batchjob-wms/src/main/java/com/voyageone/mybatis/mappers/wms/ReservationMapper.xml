@@ -427,4 +427,78 @@
               );
     </insert>
 
+    <select id="synShip_selectpdateStatusInfo" resultType="com.voyageone.batch.wms.modelbean.ReservationBean">
+        select
+            reservation.id,
+            reservation.order_channel_id,
+            reservation.order_number,
+            reservation.syn_ship_no,
+            reservation.`status`,
+            reservation.sku,
+            reservation.update_time,
+            item.client_sku,
+            extDetails.item_number,
+            extDetails.sales_check_number,
+            extDetails.tracking_number,
+            extDetails.reservation_status,
+            (select tracking_no
+            from tt_tracking tracking
+            where tracking.syn_ship_no = reservation.syn_ship_no
+            and tracking.tracking_area = '0'
+            and tracking.use_flg = '1' limit 1) as tracking_no,
+            orders.client_order_id,
+            orders.source_order_id
+        from
+            tt_reservation reservation,
+            oms_bt_order_details details,
+            oms_bt_ext_order_details extDetails,
+            wms_bt_item_details item,
+            oms_bt_orders orders
+        where
+            reservation.order_channel_id = #{order_channel_id}
+        AND
+            reservation.order_number = details.order_number
+        AND
+            reservation.order_number = orders.order_number
+        AND
+            details.adjustment = 0
+        AND
+            reservation.id = details.res_id
+        AND
+            details.order_number = extDetails.order_number
+        AND
+            details.item_number = extDetails.item_number
+        AND
+            reservation.order_channel_id = item.order_channel_id
+        AND
+            reservation.sku = item.sku
+        <if test="reservationStatusList != null and reservationStatusList.size() != 0">
+            AND  reservation.status in
+            <foreach collection="reservationStatusList" item="reservationStatus" open="(" separator="," close=")">#{reservationStatus}
+            </foreach>
+        </if>
+        AND
+            not EXISTS (select 1
+                            from tt_reservation res2
+                            where res2.order_number = reservation.order_number
+                            and res2.status = #{status})
+        AND
+            reservation.`status` != extDetails.reservation_status
+        limit #{rowCount}
+    </select>
+
+    <!-- OrderDetails的更新-->
+    <update id="wms_updateClientStatus">
+        UPDATE
+            oms_bt_ext_order_details extDetails
+        SET
+            extDetails.reservation_status = #{reservationStatus},
+            extDetails.modified = now(),
+            extDetails.modifier = #{takeName}
+        WHERE
+            extDetails.order_number = #{orderNumber}
+        AND
+            extDetails.item_number = #{itemNumber};
+    </update>
+
 </mapper>

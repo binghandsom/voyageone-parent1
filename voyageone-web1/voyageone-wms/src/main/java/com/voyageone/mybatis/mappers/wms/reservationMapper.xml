@@ -290,7 +290,9 @@
         ship_country,
         shipping,
         qty,
-        cart_id
+        cart_id,
+        client_order_id,
+        tracking_number
     </sql>
 
     <select id="viw_wms_reservation_pickup_mapping_getScanInfo" resultMap="pickup_result_map">
@@ -306,11 +308,17 @@
             <when test="scanMode == 'Scan' and scanType == 2">
                 client_order_id = #{scanNo}
             </when>
+            <when test="scanMode == 'Scan' and scanType == 3">
+                tracking_number = #{scanNo}
+            </when>
             <when test="scanMode == 'ReLabel' and scanType == 1">
                 id = #{scanNo}
             </when>
             <when test="scanMode == 'ReLabel' and scanType == 2">
                 (order_number = #{scanNo} or client_order_id = #{scanNo})
+            </when>
+            <when test="scanMode == 'ReLabel' and scanType == 3">
+                (id = #{scanNo} or tracking_number = #{scanNo})
             </when>
             <otherwise>
                 1 != 1
@@ -360,6 +368,9 @@
             <when test="scanType == 2">
                 and status NOT IN ('96', '97')
             </when>
+            <when test="scanType == 3">
+                and status NOT IN ('96', '97')
+            </when>
         </choose>
 	  order by sku
     </select>
@@ -390,6 +401,9 @@
             </when>
             <when test="scanType == 2 and scanMode == 'Scan'">
                 (status = #{scanStatus} or status = '99' or status = '11')
+            </when>
+            <when test="scanType == 3 and scanMode == 'Scan'">
+                (status = #{scanStatus} or status = '98' or status = '99' or status = '11')
             </when>
             <otherwise>
                 status = #{scanStatus}

@@ -592,6 +592,7 @@
 		 where t.order_channel_id = t1.order_channel_id
 			and t.cart_id = t1.cart_id
 			and t.tid = t1.tid
+			and t.sent_flag = 0
 	</update>
 	
 	<!-- 将oms_new_orders_import_history表的发送标志置位（2：批处理失败，转单条处理） -->
@@ -1123,6 +1124,27 @@
 			AND price = ${price}
 			AND gift_sku = #{giftSku}
 	</insert>
+
+	<!-- 本轮订单插入结束之后回写买就送配置表里的赠品剩余库存 -->
+	<insert id="oms_buy_than_gift_setting_recordBuyThanGiftInventory" parameterType="HashMap">
+		UPDATE oms_buy_than_gift_setting
+		SET inventory = ${inventory}
+		WHERE
+		order_channel_id = #{orderChannelId}
+		AND cart_id = ${cartId}
+		AND sku = #{sku}
+		AND gift_sku = #{giftSku}
+	</insert>
+
+	<!-- 本轮订单插入结束之后回写前多少名配置表里的赠品剩余库存 -->
+	<insert id="oms_prior_count_gift_setting_recordPriorCountCustomerGiftInventory" parameterType="HashMap">
+		UPDATE oms_prior_count_gift_setting
+		SET inventory = ${inventory}
+		WHERE
+		order_channel_id = #{orderChannelId}
+		AND cart_id = ${cartId}
+		AND gift_sku = #{giftSku}
+	</insert>
 	
 	<!-- 置位synship发送标志（->1） -->
 	<update id="oms_bt_order_details_resetSynShipFlag" parameterType="HashMap">
@@ -1367,7 +1389,9 @@
 			order_channel_id as orderChannelId,
 			cart_id as cartId,
 			sku as sku,
-			gift_sku as giftSku
+			gift_sku as giftSku,
+			prior_num as priorNum,
+			inventory
 		from
 			oms_buy_than_gift_setting
 		where
@@ -1422,12 +1446,27 @@
 		select
 			order_channel_id as orderChannelId,
 			cart_id as cartId,
-			gift_sku as giftSku
+			gift_sku as giftSku,
+			prior_num as priorNum,
+			inventory
 		from
 			oms_prior_count_gift_setting
 		where
 			now() >= ifNull(exp_date_time_start, now())
 			and ifNull(exp_date_time_end, now()) >= now()
+	</select>
+
+	<!-- 优先下单前多少名例外sku设定 -->
+	<select id="oms_prior_count_gift_except_setting_getPriorCountExceptSkuSetting" resultType="HashMap">
+		select
+		order_channel_id as orderChannelId,
+		cart_id as cartId,
+		except_sku as exceptSku
+		from
+		oms_prior_count_gift_except_setting
+		where
+		now() >= ifNull(exp_date_time_start, now())
+		and ifNull(exp_date_time_end, now()) >= now()
 	</select>
 	
 	<!-- 已获赠品顾客信息 -->
@@ -2774,4 +2813,121 @@
 					ox.order_channel_id = #{orderChannelId}	and
 					ox.ext_flg1 = 1
 	</select>
+
+	<!-- 获得向第三方 推送订单信息（正常Approved 订单） -->
+	<resultMap id="ordersInfoMapforPushThirdParty" type="com.voyageone.batch.oms.modelbean.OrderExtend">
+		<result column="order_channel_id" property="orderChannelId"/>
+		<result column="source_order_id" property="sourceOrderId"/>
+		<result column="sub_source_order_id" property="subSourceOrderId"/>
+		<result column="order_number" property="orderNumber"/>
+		<result column="order_date_time" property="orderDateTime"/>
+		<result column="pay_no" property="payNo"/>
+		<result column="ship_address" property="shipAddress"/>
+		<result column="ship_address2" property="shipAddress2"/>
+		<result column="ship_zip" property="shipZip"/>
+		<result column="ship_name" property="shipName"/>
+		<result column="ship_email" property="shipEmail"/>
+		<result column="ship_city" property="shipCity"/>
+		<result column="ship_phone" property="shipPhone"/>
+		<result column="ship_state" property="shipState"/>
+	</resultMap>
+	<select id="oms_bt_order_details_getPushThirdPartyOrderInfo" parameterType="HashMap" resultMap="ordersInfoMapforPushThirdParty" >
+		select o.order_channel_id,
+			o.source_order_id,
+			o.sub_source_order_id,
+			o.order_number,
+			o.cart_id,
+			o.name,
+			o.order_date_time,
+			o.pay_no,
+			o.ship_address,
+			o.ship_address2,
+			o.ship_zip,
+			o.ship_name,
+			o.ship_email,
+			o.ship_city,
+			o.ship_phone,
+			o.ship_state
+		from
+			Synship.oms_bt_orders o
+		where
+			o.order_channel_id = #{orderChannelId} and
+			o.order_status = 'Approved' and
+			(o.client_order_id = '' or o.client_order_id is null)
+		limit 40
+	</select>
+
+	<!-- 获得向Sears 取得订单明细Tracking信息 订单一览 (Order Lookup)-->
+	<resultMap id="ordersDetailsInfoMapforSearsTrackingNumber" type="com.voyageone.batch.oms.modelbean.OrderExtend">
+		<result column="order_channel_id" property="orderChannelId"/>
+		<result column="order_number" property="orderNumber"/>
+		<result column="source_order_id" property="sourceOrderId"/>
+		<result column="cart_id" property="cartId"/>
+		<result column="client_order_id" property="clientOrderId"/>
+		<result column="sku" property="sku"/>
+		<result column="client_sku" property="clientSku"/>
+		<result column="item_number" property="itemNumber"/>
+		<result column="tracking_number" property="trackingNumber"/>
+		<result column="res_id" property="resId"/>
+	</resultMap>
+	<select id="oms_bt_order_details_getSearsOrderDetailBlankTrackingInfo" parameterType="HashMap" resultMap="ordersDetailsInfoMapforSearsTrackingNumber" >
+		select o.order_channel_id,
+			o.order_number,
+			ifnull((CASE WHEN (ifnull(o.sub_source_order_id,	''	) = '') THEN o.source_order_id ELSE o.sub_source_order_id	END	),	'') AS source_order_id,
+			o.cart_id,
+			o.client_order_id,
+			od.sku,
+			ifnull(wd.client_sku,'') as client_sku,
+			od.item_number,
+			od.tracking_number,
+			od.res_id
+		from
+			(select ods.order_number,
+						ods.adjustment,
+						ods.sku,
+						ods.item_number,
+						ods.res_id,
+						odx.tracking_number
+			from Synship.oms_bt_order_details ods
+			inner join Synship.oms_bt_ext_order_details odx
+				on ods.order_number = odx.order_number
+				and ods.item_number =	odx.item_number
+			where odx.tracking_number = ''
+			and client_status != 'Cancelled'
+			)od
+		inner join Synship.oms_bt_orders o
+			on o.order_number = od.order_number
+		left join Synship.wms_bt_item_details wd
+			on od.sku = wd.sku
+			and o.order_channel_id = wd.order_channel_id
+		where
+			o.order_channel_id = #{orderChannelId}
+			and o.client_order_id is not null
+			and o.client_order_id != ''
+			and od.adjustment = 0;
+	</select>
+
+	<!-- Sears 订单明细TrackingNumber信息更新-->
+	<update id="oms_bt_ext_order_details_updateSearsTrackingInfo" parameterType="String">
+		update oms_bt_ext_order_details odx ,
+			(
+			 ${values}
+			) trackingInfo
+		set odx.tracking_number = trackingInfo.tracking_number,
+				odx.sales_check_number = trackingInfo.sales_check_number,
+				odx.client_status = trackingInfo.client_status
+		where
+				odx.order_number = trackingInfo.order_number and
+				odx.item_number = trackingInfo.item_number
+	</update>
+
+	<!-- 把品牌方订单号更新到数据库中 -->
+	<update id="update_ClientOrderId" parameterType="HashMap" >
+		Update oms_bt_orders
+		set client_order_id = #{clientOrderId},
+		modifier = #{modifier},
+		modified = now()
+		where order_number = #{order_number}
+	</update>
 </mapper>
+

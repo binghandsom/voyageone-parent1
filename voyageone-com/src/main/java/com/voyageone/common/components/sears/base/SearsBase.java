@@ -32,6 +32,12 @@ public class SearsBase {
 
     public final String searsUrl = "https://api.b2b.sears.com/v/2/";
 
+    public final String searsOrderUrlByOrderId = searsUrl + "/orders/id/";
+
+    public final String searsOrderByOrderReferenceUrl = searsUrl + "/orders/order_reference/";
+
+    public final String updateStatusUrl = searsUrl + "orders/id/%s/update";
+
     public SearsBase(){
         properties = new Properties();
 //        properties.put("javax.net.debug", "ssl");
@@ -42,6 +48,23 @@ public class SearsBase {
         properties.put("javax.net.ssl.trustStoreType", "jks");
         properties.put("javax.net.ssl.trustStorePassword", "tmall611");
     }
+
+    /**
+     * 调用Sears的webService
+     * @param postUrl
+     * @return
+     * @throws Exception
+     */
+    protected String reqSearsApi(String postUrl) throws Exception {
+
+        // Properties属性没有设置的场合 Properties的SSL属性设置
+        if (!System.getProperties().contains(keystore)){
+            System.getProperties().putAll(properties);
+        }
+        return HttpUtils.get(postUrl);
+
+    }
+
     /**
      * 调用Sears的webService
      * @param postUrl
@@ -82,6 +105,11 @@ public class SearsBase {
     }
 
     protected OrderResponse SearsHttpPost(String url, String charset,String content) throws Exception {
+
+        // Properties属性没有设置的场合 Properties的SSL属性设置
+        if (!System.getProperties().contains(keystore)){
+            System.getProperties().putAll(properties);
+        }
 
         HttpURLConnection http = null;
         OutputStream output = null;

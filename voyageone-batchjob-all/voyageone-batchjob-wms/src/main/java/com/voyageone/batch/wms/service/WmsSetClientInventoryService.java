@@ -102,7 +102,7 @@ public class WmsSetClientInventoryService extends BaseTaskService {
                     // 判断是否有【库存由品牌方管理】的仓库
                     boolean inventory_manager = true;
                     for (StoreBean storeBean : storeList) {
-                        if (storeBean.getInventory_manager().equals(StoreConfigEnums.Manager.NO.getId())) {
+                        if (storeBean.getInventory_manager().equals(StoreConfigEnums.Manager.NO.getId()) && storeBean.getIs_sale().equals(StoreConfigEnums.Sale.YES.getId())) {
                             inventory_manager = false;
                             break;
                         }
