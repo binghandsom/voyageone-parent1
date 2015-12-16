@@ -6,11 +6,11 @@ package com.voyageone.web2.cms.bean;
  */
 public class CmsSearchInfoBean {
 
-    private String productStatus;
+    private String[] productStatus;
 
-    private String publishStatus;
+    private String[] publishStatus;
 
-    private String labelType;
+    private String[] labelType;
 
     private String priceType;
 
@@ -34,7 +34,7 @@ public class CmsSearchInfoBean {
 
     private String promotion;
 
-    private String codeList;
+    private String[] codeList;
 
     private String sortOneName;
 
@@ -48,27 +48,27 @@ public class CmsSearchInfoBean {
 
     private String sortThreeType;
 
-    public String getProductStatus() {
+    public String[] getProductStatus() {
         return productStatus;
     }
 
-    public void setProductStatus(String productStatus) {
+    public void setProductStatus(String[] productStatus) {
         this.productStatus = productStatus;
     }
 
-    public String getPublishStatus() {
+    public String[] getPublishStatus() {
         return publishStatus;
     }
 
-    public void setPublishStatus(String publishStatus) {
+    public void setPublishStatus(String[] publishStatus) {
         this.publishStatus = publishStatus;
     }
 
-    public String getLabelType() {
+    public String[] getLabelType() {
         return labelType;
     }
 
-    public void setLabelType(String labelType) {
+    public void setLabelType(String[] labelType) {
         this.labelType = labelType;
     }
 
@@ -160,11 +160,11 @@ public class CmsSearchInfoBean {
         this.promotion = promotion;
     }
 
-    public String getCodeList() {
+    public String[] getCodeList() {
         return codeList;
     }
 
-    public void setCodeList(String codeList) {
+    public void setCodeList(String[] codeList) {
         this.codeList = codeList;
     }
 
