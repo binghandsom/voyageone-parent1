@@ -13,6 +13,15 @@ public class CmsMtCategorySchemaModel extends BaseMongoModel {
     private String catFullPath;
     private List<Field> fields;
 
+    public CmsMtCategorySchemaModel() {
+    }
+
+    public CmsMtCategorySchemaModel(String catId, String catFullPath, List<Field> fields) {
+        this.catId = catId;
+        this.catFullPath = catFullPath;
+        this.fields = fields;
+    }
+
     public String getCatId() {
         return catId;
     }
