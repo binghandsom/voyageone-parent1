@@ -49,6 +49,7 @@ public class CnInventoryService extends CnBase {
 
         // JC官网使用https
         if (shopBean.getOrder_channel_id().equals(ChannelConfigEnums.Channel.JC.getId())) {
+            logger.info("trustStore path: "+trustStore_jc);
             System.setProperty("javax.net.ssl.trustStore", trustStore_jc);
             System.setProperty("javax.net.ssl.trustStorePassword", "voyage1#");
         }
