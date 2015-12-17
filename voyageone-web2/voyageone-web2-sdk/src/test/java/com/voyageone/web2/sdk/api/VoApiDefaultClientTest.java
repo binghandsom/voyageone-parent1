@@ -27,7 +27,7 @@ public class VoApiDefaultClientTest {
         PostProductSelectOneResponse response = voApiClient.execute(requestModel);
 
         System.out.println(response);
-        CmsBtProductModel mode = response.getData();
+        CmsBtProductModel mode = response.getProduct();
         System.out.println(mode);
     }
 }

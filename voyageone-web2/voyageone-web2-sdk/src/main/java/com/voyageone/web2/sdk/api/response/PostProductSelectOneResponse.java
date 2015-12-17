@@ -17,13 +17,13 @@ public class PostProductSelectOneResponse extends VoApiResponse {
     /**
      * 数据体信息
      */
-    private CmsBtProductModel data;
+    private CmsBtProductModel product;
 
-	public CmsBtProductModel getData() {
-		return data;
+	public CmsBtProductModel getProduct() {
+		return product;
 	}
 
-	public void setData(CmsBtProductModel data) {
-		this.data = data;
+	public void setProduct(CmsBtProductModel product) {
+		this.product = product;
 	}
 }

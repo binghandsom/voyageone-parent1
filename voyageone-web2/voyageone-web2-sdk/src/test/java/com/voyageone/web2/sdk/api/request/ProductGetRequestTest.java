@@ -39,8 +39,8 @@ public class ProductGetRequestTest {
             responseEntity = restTemplate.exchange(requestEntity, PostProductSelectOneResponse.class);
             if(HttpStatus.OK.equals(responseEntity.getStatusCode())) {
                 System.out.println(responseEntity.getBody());
-                CmsBtProductModel model = responseEntity.getBody().getData();
-                System.out.println(responseEntity.getBody().getData());
+                CmsBtProductModel model = responseEntity.getBody().getProduct();
+                System.out.println(responseEntity.getBody().getProduct());
             } else {
                 System.out.println(responseEntity);
             }
