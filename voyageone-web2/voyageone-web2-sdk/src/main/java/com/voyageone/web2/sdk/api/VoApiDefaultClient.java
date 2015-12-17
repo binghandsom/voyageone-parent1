@@ -22,21 +22,14 @@ import java.net.URI;
 public class VoApiDefaultClient implements VoApiClient {
 
 	private static final String APP_KEY = "app_key";
-//	private static final String FORMAT = "format";
-//	private static final String METHOD = "method";
 	private static final String TIMESTAMP = "timestamp";
-//	private static final String VERSION = "v";
 	private static final String SIGN = "sign";
 	private static final String SIGN_EXTEND = "voyage_sign_";
-//	private static final String SIGN_METHOD = "sign_method";
-//	private static final String PARTNER_ID = "partner_id";
 	private static final String SESSION = "session";
 
 	private String serverUrl;
 	private String appKey;
 	private String appSecret;
-	//private String format = VoApiConstants.FORMAT_JSON;
-	//private String signMethod = VoApiConstants.SIGN_METHOD_HMAC;
 	private String signMethod = VoApiConstants.SIGN_METHOD_MD5;
 
 	private int connectTimeout = 3000;//3秒
@@ -54,40 +47,11 @@ public class VoApiDefaultClient implements VoApiClient {
 		setRestTemplate();
 	}
 
-	public VoApiDefaultClient(RestTemplate restTemplate, String serverUrl, String appKey, String appSecret) {
-		this.restTemplate = restTemplate;
-		this.serverUrl = serverUrl;
-		this.appKey = appKey;
-		this.appSecret = appSecret;
-		setRestTemplate();
-	}
-
 	public VoApiDefaultClient(RestTemplate restTemplate, String serverUrl, int connectTimeout, int readTimeout) {
 		this.restTemplate = restTemplate;
 		this.serverUrl = serverUrl;
 		this.connectTimeout = connectTimeout;
 		this.readTimeout = readTimeout;
-		setRestTemplate();
-	}
-
-	public VoApiDefaultClient(RestTemplate restTemplate, String serverUrl, String appKey, String appSecret, int connectTimeout, int readTimeout) {
-		this.restTemplate = restTemplate;
-		this.serverUrl = serverUrl;
-		this.serverUrl = serverUrl;
-		this.appKey = appKey;
-		this.connectTimeout = connectTimeout;
-		this.readTimeout = readTimeout;
-		setRestTemplate();
-	}
-
-	public VoApiDefaultClient(RestTemplate restTemplate, String serverUrl, String appKey, String appSecret, int connectTimeout, int readTimeout, String signMethod) {
-		this.restTemplate = restTemplate;
-		this.serverUrl = serverUrl;
-		this.serverUrl = serverUrl;
-		this.appKey = appKey;
-		this.connectTimeout = connectTimeout;
-		this.readTimeout = readTimeout;
-		this.signMethod = signMethod;
 		setRestTemplate();
 	}
 
