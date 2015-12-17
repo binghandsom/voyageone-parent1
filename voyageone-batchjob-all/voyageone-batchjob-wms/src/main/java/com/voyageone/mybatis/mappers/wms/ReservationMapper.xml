@@ -493,6 +493,7 @@
             oms_bt_ext_order_details extDetails
         SET
             extDetails.reservation_status = #{reservationStatus},
+            extDetails.client_status = #{clientStatus},
             extDetails.modified = now(),
             extDetails.modifier = #{takeName}
         WHERE

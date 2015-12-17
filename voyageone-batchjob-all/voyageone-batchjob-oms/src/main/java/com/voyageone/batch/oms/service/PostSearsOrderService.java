@@ -882,6 +882,10 @@ public class PostSearsOrderService {
 				// ErrorMessage 设置
 				orderDetailInfo.setErrorMessage(StringUtils.null2Space2(orderLookupItem.getErrorMessage()));
 
+				if (OmsConstants.SearsOrderItemStatus.Cancelled.equals(orderDetailInfo.getClientStatus())) {
+					orderDetailInfo.setResStatus(CodeConstants.Reservation_Status.Cancelled);
+				}
+
 				break;
 			}
 		}
@@ -965,7 +969,7 @@ public class PostSearsOrderService {
 		// 更新记录件数
 		int size = 0;
 
-		String updateSqlSub = "select '%s' order_number, '%s' item_number,'%s' tracking_number, '%s' sales_check_number, '%s' client_status";
+		String updateSqlSub = "select '%s' order_number, '%s' item_number,'%s' tracking_number, '%s' sales_check_number, '%s' client_status, '%s' reservation_status";
 
 		for (int i = 0; i < orderDetailList.size(); i++) {
 			OrderExtend orderDetailInfo = orderDetailList.get(i);
@@ -973,7 +977,13 @@ public class PostSearsOrderService {
 //			if (orderDetailInfo.isNeedUpdateFlag()) {
 				size = size + 1;
 
-				String updateRecSql = String.format(updateSqlSub, orderDetailInfo.getOrderNumber(), orderDetailInfo.getItemNumber(), StringUtils.null2Space2(orderDetailInfo.getTrackingNumber()), StringUtils.null2Space2(orderDetailInfo.getSalesCheckNumber()), StringUtils.null2Space2(orderDetailInfo.getClientStatus()));
+				String updateRecSql = String.format(updateSqlSub,
+						orderDetailInfo.getOrderNumber(),
+						orderDetailInfo.getItemNumber(),
+						StringUtils.null2Space2(orderDetailInfo.getTrackingNumber()),
+						StringUtils.null2Space2(orderDetailInfo.getSalesCheckNumber()),
+						StringUtils.null2Space2(orderDetailInfo.getClientStatus()),
+						StringUtils.null2Space2(orderDetailInfo.getResStatus()));
 
 				if (StringUtils.isEmpty(updateSql.toString())) {
 					updateSql.append(updateRecSql);
