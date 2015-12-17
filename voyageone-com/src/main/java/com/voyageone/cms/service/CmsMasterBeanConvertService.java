@@ -1,7 +1,7 @@
 package com.voyageone.cms.service;
 
-import com.voyageone.base.dao.mongodb.model.CmsMtCateforySchemaWithValueModel;
-import com.voyageone.base.dao.mongodb.model.CmsMtCategorySchemaModel;
+import com.voyageone.cms.service.model.CmsMtCategorySchemaWithValueModel;
+import com.voyageone.cms.service.model.CmsMtCategorySchemaModel;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
@@ -27,7 +27,7 @@ public class CmsMasterBeanConvertService {
     @Autowired
     private CmsProductService cmsProductService;
 
-    public CmsMtCateforySchemaWithValueModel getViewModels(String channelId,int prodId){
+    public CmsMtCategorySchemaWithValueModel getViewModels(String channelId,int prodId){
 
         CmsBtProductModel valueModel = cmsProductService.getProductById(channelId,prodId);
 
@@ -47,7 +47,7 @@ public class CmsMasterBeanConvertService {
 
         this.setFieldsValue(schemaFields,valueFields);
 
-        CmsMtCateforySchemaWithValueModel schemaWithValueModel = new CmsMtCateforySchemaWithValueModel();
+        CmsMtCategorySchemaWithValueModel schemaWithValueModel = new CmsMtCategorySchemaWithValueModel();
 
         schemaWithValueModel.setFields(schemaFields);
         schemaWithValueModel.setChannelId(channelId);

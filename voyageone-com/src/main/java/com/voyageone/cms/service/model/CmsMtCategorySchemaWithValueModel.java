@@ -1,9 +1,9 @@
-package com.voyageone.base.dao.mongodb.model;
+package com.voyageone.cms.service.model;
 
 /**
  * Created by lewis on 15-12-15.
  */
-public class CmsMtCateforySchemaWithValueModel extends CmsMtCategorySchemaModel{
+public class CmsMtCategorySchemaWithValueModel extends CmsMtCategorySchemaModel{
     private String channelId;
     private int productId;
 
