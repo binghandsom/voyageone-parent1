@@ -22,9 +22,13 @@ public class SearsBase {
 
     public static final int C_MAX_API_REPEAT_TIME = 3;
 
+      // 本地测试时请用Test后缀的文件
+//    public final String keystore = getClass().getResource("/keystore_test.jks").getPath();
 //    public final String keystore = getClass().getResource("/keystore.jks").getPath();
     public final String keystore = "/opt/app-shared/voyageone_web/contents/other/third_party/013/api_key/keystore.jks";
 
+    // 本地测试时请用Test后缀的文件
+//    public final String trustStore = getClass().getResource("/truststore_test.jks").getPath();
 //    public final String trustStore = getClass().getResource("/truststore.jks").getPath();
     public final String trustStore = "/opt/app-shared/voyageone_web/contents/other/third_party/013/api_key/truststore.jks";
 
@@ -42,6 +46,7 @@ public class SearsBase {
         properties = new Properties();
 //        properties.put("javax.net.debug", "ssl");
         properties.put("javax.net.ssl.keyStore", keystore);
+        //properties.put("javax.net.ssl.keyStorePassword", "password");
         properties.put("javax.net.ssl.keyStorePassword", "tmall611");
         properties.put("javax.net.ssl.keyStoreType", "jks");
         properties.put("javax.net.ssl.trustStore", trustStore);
