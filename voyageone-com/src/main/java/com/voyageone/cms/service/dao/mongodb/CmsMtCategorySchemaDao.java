@@ -1,7 +1,7 @@
 package com.voyageone.cms.service.dao.mongodb;
 
 import com.voyageone.base.dao.mongodb.BaseMongoDao;
-import com.voyageone.base.dao.mongodb.model.CmsMtCategorySchemaModel;
+import com.voyageone.cms.service.model.CmsMtCategorySchemaModel;
 import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
 import com.voyageone.common.masterdate.schema.field.Field;
 import net.minidev.json.JSONObject;

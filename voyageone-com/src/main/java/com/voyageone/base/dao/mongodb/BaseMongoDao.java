@@ -15,6 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
+/**
+ * BaseMongoDao
+ * @author chuanyu.liang, 12/11/15
+ * @version 2.0.0
+ * @since 2.0.0
+ */
 public abstract class BaseMongoDao {
 
     protected BaseJomgoTemplate mongoTemplate;
@@ -75,6 +81,10 @@ public abstract class BaseMongoDao {
         return mongoTemplate.findOne(strQuery, (Class<T>)entityClass, collectionName);
     }
 
+    public <T> T selectOneWithQuery(JomgoQuery queryObject) {
+        return mongoTemplate.findOne(queryObject, (Class<T>)entityClass, collectionName);
+    }
+
     public <T> List<T> selectAll() {
         return mongoTemplate.findAll((Class<T>) entityClass, collectionName);
     }
@@ -91,8 +101,16 @@ public abstract class BaseMongoDao {
         return mongoTemplate.find(strQuery, projection, (Class<T>) entityClass, collectionName);
     }
 
+    public <T> List<T> select(JomgoQuery queryObject) {
+        return mongoTemplate.find(queryObject, (Class<T>) entityClass, collectionName);
+    }
+
     public <T> Iterator<T> selectCursor(final String strQuery) {
         return mongoTemplate.findCursor(strQuery, null, (Class<T>) entityClass, collectionName);
+    }
+
+    public <T> Iterator<T> selectCursor(JomgoQuery queryObject) {
+        return mongoTemplate.findCursor(queryObject, (Class<T>) entityClass, collectionName);
     }
 
     public <T> T selectById(String id) {
@@ -106,7 +124,7 @@ public abstract class BaseMongoDao {
 
     public <T> T selectOneWithQuery(String strQuery, String channelId) {
         String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
-        return mongoTemplate.findOne(strQuery, (Class < T >)entityClass, collectionName);
+        return mongoTemplate.findOne(strQuery, (Class<T>)entityClass, collectionName);
     }
 
     public <T> List<T> selectAll(String channelId) {

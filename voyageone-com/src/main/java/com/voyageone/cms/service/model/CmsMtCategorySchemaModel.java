@@ -1,5 +1,6 @@
-package com.voyageone.base.dao.mongodb.model;
+package com.voyageone.cms.service.model;
 
+import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.common.masterdate.schema.field.Field;
 
 import java.util.List;
