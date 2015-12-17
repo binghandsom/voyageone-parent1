@@ -38,5 +38,20 @@
         from voyageone_cms2.cms_mt_common_prop
     </select>
 
+    <select id="select_actionRulesModel" parameterType="HashMap"  resultType="com.voyageone.cms.service.model.MtCommPropActionDefModel">
+        select
+            prop_id AS propId,
+            prop_name AS propName,
+            prop_type AS propType,
+            prop_level AS propLevel,
+            action_type AS actionType,
+            prop_parent_id AS parentPropId,
+            platform_prop_ref_id AS platformPropRefId,
+            rules AS actionRules,
+            defult AS defaultValue,
+            tips AS tips
+        from voyageone_cms2.cms_mt_common_prop
+    </select>
+
 
 </mapper>
