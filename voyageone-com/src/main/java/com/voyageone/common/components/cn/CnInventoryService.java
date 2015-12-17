@@ -50,7 +50,7 @@ public class CnInventoryService extends CnBase {
         // JC官网使用https
         if (shopBean.getOrder_channel_id().equals(ChannelConfigEnums.Channel.JC.getId())) {
             System.setProperty("javax.net.ssl.trustStore", trustStore_jc);
-            System.setProperty("javax.net.ssl.keyStorePassword", "voyage1#");
+            System.setProperty("javax.net.ssl.trustStorePassword", "voyage1#");
         }
 
         jsonMap.put("t", synType.val()); // 设定同步的类型为全量
