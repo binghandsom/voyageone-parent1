@@ -93,12 +93,12 @@ public class CmsBtProductModel_Group_Platform extends BaseMongoMap<String, Objec
         setAttribute("instockTime", instockTime);
     }
 
-    public String getStatus() {
-        return getAttribute("status");
+    public String getProductStatus() {
+        return getAttribute("productStatus");
     }
 
-    public void setStatus(String status) {
-        setAttribute("status", status);
+    public void setProductStatus(String productStatus) {
+        setAttribute("productStatus", productStatus);
     }
 
     public String getPublishStatus() {
