@@ -4,9 +4,11 @@ package com.voyageone.cms.service.bean;
  * Created by Leo on 15-12-9.
  */
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.voyageone.common.masterdate.schema.Util.StringUtil;
 import com.voyageone.ims.rule_expression.MasterWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
@@ -37,6 +39,15 @@ public class MappingBean {
 
     public void setPlatformPropId(String platformPropId) {
         this.platformPropId = platformPropId;
+    }
+
+    @JsonProperty("platformPropId")
+    public String getPlatformIdWithConvert() {
+        return StringUtil.replaceDot(platformPropId);
+    }
+    @JsonProperty("platformPropId")
+    public void setPlatformIdWithConvert(String platformPropId) {
+        platformPropId = StringUtil.replaceToDot(platformPropId);
     }
 
 }
