@@ -132,6 +132,9 @@ public class TbCategoryService extends TbBase {
             // 设置返回值
             return response.getAddProductRule();
         } else if (response != null){
+
+
+
             String subMsg = response.getSubMsg();
             switch(subMsg)
             {
