@@ -1,12 +1,7 @@
 package com.voyageone.web2.cms.views.promotion;
 
-import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
-import com.voyageone.cms.service.CmsProductService;
 import com.voyageone.cms.service.model.CmsBtProductModel;
-import com.voyageone.cms.service.model.CmsBtProductModel_Group_Platform;
 import com.voyageone.common.components.transaction.SimpleTransaction;
-import com.voyageone.common.masterdate.schema.Util.StringUtil;
-import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.CmsPromotionProductPriceBean;
 import com.voyageone.web2.cms.dao.CmsPromotionCodeDao;
@@ -17,10 +12,10 @@ import com.voyageone.web2.cms.model.CmsBtPromotionCodeModel;
 import com.voyageone.web2.cms.model.CmsBtPromotionGroupModel;
 import com.voyageone.web2.cms.model.CmsBtPromotionModel;
 import com.voyageone.web2.cms.model.CmsBtPromotionSkuModel;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
+import com.voyageone.web2.sdk.api.VoApiDefaultClient;
+import com.voyageone.web2.sdk.api.request.PostProductSelectOneRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,7 +30,7 @@ import java.util.Map;
 public class CmsPromotionDetailService extends BaseAppService {
 
     @Autowired
-    CmsProductService cmsProductService;
+    protected VoApiDefaultClient voApiClient;
 
     @Autowired
     CmsPromotionModelDao cmsPromotionModelDao;
@@ -81,7 +76,13 @@ public class CmsPromotionDetailService extends BaseAppService {
             simpleTransaction.openTransaction();
             try {
                 // 获取Product信息
-                CmsBtProductModel productInfo = cmsProductService.getProductByCode(channelId, item.getCode());
+                //CmsBtProductModel productInfo = cmsProductService.getProductByCode(channelId, item.getCode());
+                //设置参数
+                PostProductSelectOneRequest requestModel = new PostProductSelectOneRequest(channelId);
+                requestModel.setProductCode(item.getCode());
+                //SDK取得Product 数据
+                CmsBtProductModel productInfo = voApiClient.execute(requestModel).getProduct();
+
 
                 // 插入cms_bt_promotion_model表
                 CmsBtPromotionGroupModel cmsBtPromotionGroupModel = new CmsBtPromotionGroupModel(productInfo, cartId, promotionId, operator);
@@ -116,7 +117,14 @@ public class CmsPromotionDetailService extends BaseAppService {
     public List<Map<String, Object>> getPromotionGroup(Map<String, Object> param) {
         List<Map<String, Object>> promotionGroups = cmsPromotionModelDao.getPromotionModelDetailList(param);
         promotionGroups.forEach(map -> {
-            CmsBtProductModel cmsBtProductModel = cmsProductService.getProductById("300", (Long) map.get("productId"));
+            //CmsBtProductModel cmsBtProductModel = cmsProductService.getProductById("300", (Long) map.get("productId"));
+            //是否需要提供函数？
+            //设置参数
+            PostProductSelectOneRequest requestModel = new PostProductSelectOneRequest("300");
+            requestModel.setProductId((Long) map.get("productId"));
+            //SDK取得Product 数据
+            CmsBtProductModel cmsBtProductModel = voApiClient.execute(requestModel).getProduct();
+
             if(cmsBtProductModel != null) {
                 map.put("image", cmsBtProductModel.getFields().getImages1().get(0).getName());
             }

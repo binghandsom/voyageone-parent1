@@ -34,12 +34,12 @@ public class TestPostProductSelectOneController extends CmsRestController {
      * 返回selectOne
      * @return
      */
-    @RequestMapping("selectOne1")
+    @RequestMapping("test")
     public PostProductSelectOneResponse selectOne1(@RequestBody PostProductSelectOneRequest responseMode) {
 
         //设置参数
         PostProductSelectOneRequest requestModel = new PostProductSelectOneRequest("300");
-        requestModel.setProductId((long) 2);
+        requestModel.setProductCode("100002");
         //SDK取得Product 数据
         CmsBtProductModel model = voApiClient.execute(requestModel).getProduct();
 
