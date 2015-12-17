@@ -32,12 +32,12 @@ public class SxPrepareData {
         System.out.println("complete");
     }
 
-    public static CmsBtProductModel createProduct(CmsMtCategorySchemaDao cmsMtCategorySchemaDao, String channelId, int groupId, int productId, String brand, String catId, boolean isMain) {
+    public static CmsBtProductModel createProduct(CmsMtCategorySchemaDao cmsMtCategorySchemaDao, String channelId, long groupId, long productId, String brand, String catId, boolean isMain) {
         CmsBtProductModel product = new CmsBtProductModel(channelId);
         product.setProdId(productId);
 
         product.setCatId(catId);
-        product.setCatIdPath("-100-10000-" + catId + "-");
+        product.setCatPath("-100-10000-" + catId + "-");
         String code = "code-" + productId;
         CmsBtProductModel_Field fields = product.getFields();
         fields.setCode(code);
@@ -78,7 +78,7 @@ public class SxPrepareData {
         platform.setCartId(23);
         platform.setIsMain(isMain);
         platform.setInstockTime("2015-11-18 16:19:00");
-        platform.setStatus("InStock");
+        platform.setProductStatus("InStock");
         platform.setPublishStatus("等待上新");
         platform.setComment("");
         platforms.add(platform);
