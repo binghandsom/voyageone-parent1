@@ -172,13 +172,13 @@ public class TmallProductService implements PlatformServiceInterface {
         }
 
         Long categoryCode = Long.valueOf(tcb.getPlatformCId());
-        String brandCode = brandMapDao.cmsBrandToPlatformBrand(workLoadBean.getOrder_channel_id(),
-                workLoadBean.getCart_id(), Integer.parseInt(cmsModelProp.getProp(CmsFieldEnum.CmsModelEnum.brand_id)));
+        String brandCode = null;//brandMapDao.cmsBrandToPlatformBrand(workLoadBean.getOrder_channel_id(),
+                //workLoadBean.getCart_id(), Integer.parseInt(cmsModelProp.getProp(CmsFieldEnum.CmsModelEnum.brand_id)));
 
         if (brandCode == null || "".equals(brandCode))
         {
             String abortCause = "Job abort: can not find brand_code by brandId "
-                    + cmsModelProp.getProp(CmsFieldEnum.CmsModelEnum.brand_id)
+                    //+ cmsModelProp.getProp(CmsFieldEnum.CmsModelEnum.brand_id)
                     + ", workload:" + workLoadBean;
             logger.error(abortCause);
             throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(abortCause));
@@ -913,13 +913,13 @@ public class TmallProductService implements PlatformServiceInterface {
             tcb.setPlatformUploadRunState(tmallUploadRunState);
         }
 
-        String brandCode = brandMapDao.cmsBrandToPlatformBrand(workLoadBean.getOrder_channel_id(),
-                workLoadBean.getCart_id(), Integer.parseInt(cmsModelProp.getProp(CmsFieldEnum.CmsModelEnum.brand_id)));
+        String brandCode = null;//brandMapDao.cmsBrandToPlatformBrand(workLoadBean.getOrder_channel_id(),
+                //workLoadBean.getCart_id(), Integer.parseInt(cmsModelProp.getProp(CmsFieldEnum.CmsModelEnum.brand_id)));
 
         if (brandCode == null || "".equals(brandCode))
         {
-            logger.info("Job abort: can not find brand_code by brandId " +
-                    cmsModelProp.getProp(CmsFieldEnum.CmsModelEnum.brand_id) + ", workload:" + workLoadBean);
+//            logger.info("Job abort: can not find brand_code by brandId " +
+//                    cmsModelProp.getProp(CmsFieldEnum.CmsModelEnum.brand_id) + ", workload:" + workLoadBean);
             throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("No brand found"));
         }
         else {

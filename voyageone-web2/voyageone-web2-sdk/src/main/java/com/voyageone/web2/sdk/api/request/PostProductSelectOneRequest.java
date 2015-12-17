@@ -30,9 +30,9 @@ public class PostProductSelectOneRequest extends VoApiRequest<PostProductSelectO
 	private String fields;
 
 	/**
-	 * Product的id.两种方式来查看一个产品:1.传入product_id来查询 2.传入cid和props来查询
+	 * Product的id.两种方式来查看一个产品:1.传入product_id来查询 2.传入product_code来查询 3:传入cid和props来查询
 	 */
-	private Integer productId;
+	private Long productId;
 
 	/**
 	 * 比如:诺基亚N73这个产品的关键属性列表就是:品牌:诺基亚;型号:N73,对应的PV值就是10005:10027;10006:29729.
@@ -60,10 +60,10 @@ public class PostProductSelectOneRequest extends VoApiRequest<PostProductSelectO
 		return this.fields;
 	}
 
-	public void setProductId(Integer productId) {
+	public void setProductId(Long productId) {
 		this.productId = productId;
 	}
-	public Integer getProductId() {
+	public Long getProductId() {
 		return this.productId;
 	}
 
