@@ -1,4 +1,4 @@
-<div class="wrapper-md" ng-controller="popupCtrl">
+<div class="wrapper-md" ng-init="initialize()">
 	<div class="panel panelPromotion">
 		<div class="wrapper">
 			<div class="container-fluid">
@@ -7,45 +7,46 @@
 						<div class="form-group">
 							<label class="col-sm-4 control-label">Promotion Name</label>
 							<div class="col-sm-7">
-								<input type="text" class="form-control" placeholder="天猫双11大促销" disabled>
+								<input type="text" class="form-control" ng-model="vm.promotion.promotionName" disabled>
 							</div>
 						</div>
 						<div class="form-group">
 							<label  class="col-sm-4 control-label">Promotion Date</label>
 							<div class="col-sm-7 form-inline">
-								<div class="input-group col-sm-5"><input type="text" class="form-control inherited" placeholder="2015.11.11" disabled></div>
-								<div class="input-group col-sm-6"><input type="text" class="form-control inherited" placeholder="2015.12.12" disabled></div>
+								<div class="input-group col-sm-5"><input type="text" class="form-control inherited" ng-model="vm.promotion.activityStart" disabled></div>
+								<div class="input-group col-sm-6"><input type="text" class="form-control inherited" ng-model="vm.promotion.activityEnd" disabled></div>
 							</div>
 						</div><!-- .form-group -->
 					</form><!-- .form -->
 				</div><!--.col -->
-				<div class="col-sm-4">
-					<form class="form-horizontal">
-						<div class="form-group">
-							<label class="col-sm-5 control-label">Promotion专用店铺类目</label>
-							<div class="col-sm-6">
-								<select class="form-control m-r-xs">
-									<option>more than</option>
-									<option>less than</option>
-									<option>equal to</option>
-								</select>
-							</div>
-						</div>
-						<div class="form-group">
-							<label  class="col-sm-5 control-label">Promotion Date</label>
-							<div class="col-sm-6 form-inline">
-								<div class="input-group col-sm-5"><input type="text" class="form-control inherited" placeholder="2015.11.11" disabled></div>
-								<div class="input-group col-sm-6"><input type="text" class="form-control inherited" placeholder="2015.12.12" disabled></div>
-							</div>
-						</div><!-- .form-group -->
-					</form><!-- .form -->
-				</div><!--.col -->
+				<!--<div class="col-sm-4">-->
+					<!--<form class="form-horizontal">-->
+						<!--<div class="form-group">-->
+							<!--<label class="col-sm-5 control-label">Promotion专用店铺类目</label>-->
+							<!--<div class="col-sm-6">-->
+								<!--<select class="form-control m-r-xs">-->
+									<!--<option>more than</option>-->
+									<!--<option>less than</option>-->
+									<!--<option>equal to</option>-->
+								<!--</select>-->
+							<!--</div>-->
+						<!--</div>-->
+						<!--<div class="form-group">-->
+							<!--<label  class="col-sm-5 control-label">Promotion Date</label>-->
+							<!--<div class="col-sm-6 form-inline">-->
+								<!--<div class="input-group col-sm-5"><input type="text" class="form-control inherited" placeholder="2015.11.11" disabled></div>-->
+								<!--<div class="input-group col-sm-6"><input type="text" class="form-control inherited" placeholder="2015.12.12" disabled></div>-->
+							<!--</div>-->
+						<!--</div>&lt;!&ndash; .form-group &ndash;&gt;-->
+					<!--</form>&lt;!&ndash; .form &ndash;&gt;-->
+				<!--</div>&lt;!&ndash;.col &ndash;&gt;-->
 				<div class="col-sm-4">
 					<form class="form-horizontal">
 						<div class="form-group">
 							<label class="col-sm-3 control-label">活动状态</label>
 							<div class="col-sm-8">
-								<input type="text" class="form-control" placeholder="promotion_approved" disabled>
+								<input ng-show="vm.promotion.promotionStatus==false" value="Open" type="text" class="form-control" placeholder="promotion_approved" disabled>
+								<input ng-show="vm.promotion.promotionStatus==true" value="Close" type="text" class="form-control" placeholder="promotion_approved" disabled>
 							</div>
 						</div>
 						<div class="form-group">
@@ -98,21 +99,21 @@
 					</table>
 					<div class="col-sm-12 dropdown_table dropdown_table_main">
 						<table class="table table-hover vo_table vo_models">
-						    <tbody>
+						    <tbody ng-repeat="group in vm.groupList">
 							<tr class="table_bg_gray">
 								<td colspan="3" class="control-label text-left form-inline">
 									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label>
-									<span class="label label-success-new m-r-lg m-l"> 在售 </span> <span class="m-r-lg">Number IID: <a href="/cms2.0/newcms/angular/index.html#/cms/group" class="text-u-l">LDB01</a></span> <span>Group Name:<a href="#/product/list" class="text-u-l">阿迪达斯</a></span>
+									<span class="label label-success-new m-r-lg m-l"> 在售 </span> <span class="m-r-lg">Number IID: <a href="/cms2.0/newcms/angular/index.html#/cms/group" class="text-u-l">{{group.numIid}}</a></span> <span>Group Name:<a href="#/product/list" class="Mtext-u-l">{{group.productModel}}</a></span>
 								</td>
-								<td colspan="3" class="text-right">类目:珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石</td>
+								<td colspan="3" class="text-right">{{group.catPath}}</td>
 							</tr>
 						<tr>
 							<td class="mfb-xxxs">
-								<img src="../../../../static/img/06.jpg" alt="Nike Air Max Tailwind 7" class="img-circle pull-left m-r"/>
+								<img src="http://image.sneakerhead.com/is/image/sneakerhead/{{group.image}}" alt="Nike Air Max Tailwind 7" class="img-circle pull-left m-r"/>
 								<div class="table_main pull-left">
 									<ul>
-										<li class="m-t">Primary Product Code</li>
-										<li>Primary Product Name</li>
+										<li class="m-t">{{group.productCode}}</li>
+										<li>{{group.productName}}</li>
 									</ul>
 								</div>
 							</td>
@@ -120,9 +121,9 @@
 								<button popover="LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20" popover-title="Inventory" type="button" popover-placement="left" class="btn btn-default btn-xs">1200</button>
 							</td>
 							<td class="mfb-xxs text-center">
-								<button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-default btn-xs">2900</button>
+								<button popover="Sale Price: {{group.salePriceMin != group.salePriceMax?group.salePriceMin +' - '+ group.salePriceMax:group.salePriceMin}}" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-default btn-xs">{{group.promotionPriceMin != group.promotionPriceMax?group.promotionPriceMin +' - '+ group.promotionPriceMax:group.promotionPriceMax}}</button>
 							</td>
-							<td class="mfb-xxt text-left">9.5折</td>
+							<td class="mfb-xxt text-left">{{(group.promotionPriceMin/group.salePriceMin*100).toFixed(1)}}折</td>
 							<td class="mfb-xxs text-left">
 								<div class="table_main">
 									<ul>
@@ -132,110 +133,18 @@
 								</div>
 							</td>
 							<td class="mfb-xxt text-left">
-								<small popover="Publish Time：2015-11-11 23:59:59  On Sale Time：2015-11-11 23:59:59" popover-trigger="mouseenter" popover-placement="left">
+								<small popover-trigger="mouseenter" popover-placement="left">
 									<div class="table_main">
 										<ul>
-											<li>Publish Time</li>
-											<li><span>2015-11-11</span></li>
-											<li><span>23:59:59</span></li>
+											<li>Created Time</li>
+											<li><span>{{(group.created).substring(0,10)}}</span></li>
+											<li><span>{{(group.created).substring(11)}}</span></li>
 										</ul>
 									</div>
 								</small>
 							</td>
 						</tr>
 						</tbody>
-							<tbody>
-							<tr class="table_bg_gray">
-								<td colspan="3" class="control-label text-left form-inline">
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label>
-									<span class="label label-success-new m-r-lg m-l"> 在售 </span> <span class="m-r-lg">Number IID: <a href="/cms2.0/newcms/angular/index.html#/cms/group" class="text-u-l">LDB01</a></span> <span>Group Name:<a href="#/product/list" class="text-u-l">阿迪达斯</a></span>
-								</td>
-								<td colspan="3" class="text-right">类目:珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石</td>
-							</tr>
-							<tr>
-								<td class="mfb-xxxs">
-									<img src="../../../../static/img/06.jpg" alt="Nike Air Max Tailwind 7" class="img-circle pull-left m-r"/>
-									<div class="table_main pull-left">
-										<ul>
-											<li class="m-t">Primary Product Code</li>
-											<li>Primary Product Name</li>
-										</ul>
-									</div>
-								</td>
-								<td class="mfb-xxt text-left">
-									<button popover="LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20" popover-title="Inventory" type="button" popover-placement="left" class="btn btn-default btn-xs">1200</button>
-								</td>
-								<td class="mfb-xxs text-center">
-									<button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-default btn-xs">2900</button>
-								</td>
-								<td class="mfb-xxt text-left">9.5折</td>
-								<td class="mfb-xxs text-left">
-									<div class="table_main">
-										<ul>
-											<li>Size Type：Women</li>
-											<li>Style：欧美</li>
-										</ul>
-									</div>
-								</td>
-								<td class="mfb-xxt text-left">
-									<small popover="Publish Time：2015-11-11 23:59:59  On Sale Time：2015-11-11 23:59:59" popover-trigger="mouseenter" popover-placement="left">
-										<div class="table_main">
-											<ul>
-												<li>Publish Time</li>
-												<li><span>2015-11-11</span></li>
-												<li><span>23:59:59</span></li>
-											</ul>
-										</div>
-									</small>
-								</td>
-							</tr>
-							</tbody>
-							<tbody>
-							<tr class="table_bg_gray">
-								<td colspan="3" class="control-label text-left form-inline">
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label>
-									<span class="label label-success-new m-r-lg m-l"> 在售 </span> <span class="m-r-lg">Number IID: <a href="/cms2.0/newcms/angular/index.html#/cms/group" class="text-u-l">LDB01</a></span> <span>Group Name:<a href="#/product/list" class="text-u-l">阿迪达斯</a></span>
-								</td>
-								<td colspan="3" class="text-right">类目:珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石</td>
-							</tr>
-							<tr>
-								<td class="mfb-xxxs">
-									<img src="../../../../static/img/06.jpg" alt="Nike Air Max Tailwind 7" class="img-circle pull-left m-r"/>
-									<div class="table_main pull-left">
-										<ul>
-											<li class="m-t">Primary Product Code</li>
-											<li>Primary Product Name</li>
-										</ul>
-									</div>
-								</td>
-								<td class="mfb-xxt text-left">
-									<button popover="LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20" popover-title="Inventory" type="button" popover-placement="left" class="btn btn-default btn-xs">1200</button>
-								</td>
-								<td class="mfb-xxs text-center">
-									<button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-default btn-xs">2900</button>
-								</td>
-								<td class="mfb-xxt text-left">9.5折</td>
-								<td class="mfb-xxs text-left">
-									<div class="table_main">
-										<ul>
-											<li>Size Type：Women</li>
-											<li>Style：欧美</li>
-										</ul>
-									</div>
-								</td>
-								<td class="mfb-xxt text-left">
-									<small popover="Publish Time：2015-11-11 23:59:59  On Sale Time：2015-11-11 23:59:59" popover-trigger="mouseenter" popover-placement="left">
-										<div class="table_main">
-											<ul>
-												<li>Publish Time</li>
-												<li><span>2015-11-11</span></li>
-												<li><span>23:59:59</span></li>
-											</ul>
-										</div>
-									</small>
-								</td>
-							</tr>
-							</tbody>
 							<!--
 							<tbody>
 							<tr class="table_bg_gray">

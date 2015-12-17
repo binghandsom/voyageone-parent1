@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.dao;
 
 import com.voyageone.base.dao.BaseDao;
+import com.voyageone.web2.cms.model.CmsBtPromotionCodeModel;
 import com.voyageone.web2.cms.model.CmsBtPromotionGroupModel;
 import com.voyageone.web2.cms.model.CmsBtPromotionModel;
 import org.springframework.stereotype.Repository;
@@ -23,6 +24,15 @@ public class CmsPromotionModelDao extends BaseDao{
         }
         return ret;
     }
+
+    public List<Map<String,Object>> getPromotionModelDetailList(Map<String,Object> params) {
+        List<Map<String,Object>> ret = selectList("select_promotion_detail", params);
+        if (ret == null) {
+            ret = new ArrayList<>();
+        }
+        return ret;
+    }
+
     public int insertPromotionModel(CmsBtPromotionGroupModel params){
         return updateTemplate.insert("insert_cms_bt_promotion_model",params);
     }
