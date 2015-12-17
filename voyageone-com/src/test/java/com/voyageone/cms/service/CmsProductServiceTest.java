@@ -34,10 +34,10 @@ public class CmsProductServiceTest {
 
     private CmsBtProductModel create(String channelId, int index, Random random) {
         CmsBtProductModel product = new CmsBtProductModel(channelId);
-        product.setProdId(index);
+        product.setProdId(Long.valueOf(index));
         String catId = String.valueOf(random.nextInt(1000));
         product.setCatId(catId);
-        product.setCatIdPath("-100-10000-" + catId + "-");
+        product.setCatPath("女装>休闲服>上衣>");
         String code = String.valueOf(100000 + index);
         CmsBtProductModel_Field fields = product.getFields();
         fields.setCode(code);
@@ -119,7 +119,7 @@ public class CmsProductServiceTest {
 
         List<CmsBtProductModel_Group_Platform> platforms = groups.getPlatforms();
         CmsBtProductModel_Group_Platform platform = new CmsBtProductModel_Group_Platform();
-        platform.setGroupId(random.nextInt(1000));
+        platform.setGroupId(Long.valueOf(random.nextInt(1000)));
         platform.setCartId(21);
         platform.setNumIId(String.valueOf(2000000 + random.nextInt(1000)));
         platform.setIsMain(false);
@@ -133,7 +133,7 @@ public class CmsProductServiceTest {
         platforms.add(platform);
 
         platform = new CmsBtProductModel_Group_Platform(platform);
-        platform.setGroupId(random.nextInt(1000));
+        platform.setGroupId(Long.valueOf(random.nextInt(1000)));
         platform.setCartId(23);
         platforms.add(platform);
 
@@ -152,11 +152,17 @@ public class CmsProductServiceTest {
             skus.add(sku);
         }
 
-        CmsBtProductModel_Feed feed = product.getFeedAtts();
-        feed.setAttribute("washingtype", "dry cleaning");
-        feed.setAttribute("collar", "mandarin collar");
-        feed.setAttribute("style", "campus");
-        feed.setAttribute("waspe", "dleaning");
+        CmsBtProductModel_Feed orgFeed = product.getFeedOrgAtts();
+        orgFeed.setAttribute("washingtype", "dry cleaning");
+        orgFeed.setAttribute("collar", "mandarin collar");
+        orgFeed.setAttribute("style", "campus");
+        orgFeed.setAttribute("waspe", "dleaning");
+
+        CmsBtProductModel_Feed cnFeed = product.getFeedOrgAtts();
+        cnFeed.setAttribute("washingtype", "dry cleaning");
+        cnFeed.setAttribute("collar", "mandarin collar");
+        cnFeed.setAttribute("style", "campus");
+        cnFeed.setAttribute("waspe", "dleaning");
 
         return product;
     }

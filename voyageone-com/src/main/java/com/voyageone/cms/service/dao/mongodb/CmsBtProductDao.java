@@ -27,7 +27,7 @@ public class CmsBtProductDao extends BaseMongoDao {
     /**
      * 获取商品 根据ID获
      */
-    public CmsBtProductModel selectProductById(String channelId, int prodId) {
+    public CmsBtProductModel selectProductById(String channelId, long prodId) {
         String query = "{\"prodId\":" + prodId + "}";
         return selectOneWithQuery(query, channelId);
     }
@@ -35,7 +35,7 @@ public class CmsBtProductDao extends BaseMongoDao {
     /**
      * 获取商品 根据ID获
      */
-    public JSONObject selectProductByIdWithJson(String channelId, int prodId) {
+    public JSONObject selectProductByIdWithJson(String channelId, long prodId) {
         String query = "{\"prodId\":" + prodId + "}";
         String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
         String projection = "{catIdPath:1, channelId:1}";
@@ -54,7 +54,7 @@ public class CmsBtProductDao extends BaseMongoDao {
     /**
      * 获取商品List 根据GroupId
      */
-    public List<CmsBtProductModel> selectProductByGroupId(String channelId, int groupId) {
+    public List<CmsBtProductModel> selectProductByGroupId(String channelId, long groupId) {
         String query = "{\"groups.platforms.groupId\":" + groupId + "}";
         return select(query, channelId);
     }
@@ -62,7 +62,7 @@ public class CmsBtProductDao extends BaseMongoDao {
     /**
      * 获取SKUList 根据prodId
      */
-    public List<CmsBtProductModel_Sku>  selectSKUById(String channelId, int prodId) {
+    public List<CmsBtProductModel_Sku>  selectSKUById(String channelId, long prodId) {
         String query = "{\"prodId\":" + prodId + "}";
         CmsBtProductModel product = selectOneWithQuery(query, channelId);
         if (product != null) {

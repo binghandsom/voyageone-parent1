@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.web2.cms.sql">
+    <resultMap id="bt_promotion_model_map" type="com.voyageone.web2.cms.model.CmsBtPromotionGroupModel" >
+        <id column="seq" property="seq" jdbcType="INTEGER" />
+        <result column="promotion_id" property="promotionId" jdbcType="INTEGER" />
+        <result column="model_id" property="modelId" jdbcType="INTEGER" />
+        <result column="product_model" property="productModel" jdbcType="VARCHAR" />
+        <result column="cat_path" property="catPath" jdbcType="VARCHAR" />
+        <result column="num_iid" property="numIid" jdbcType="VARCHAR" />
+        <result column="syn_flg" property="synFlg" jdbcType="VARCHAR" />
+        <result column="created" property="created" jdbcType="TIMESTAMP" />
+        <result column="creater" property="creater" jdbcType="VARCHAR" />
+        <result column="modified" property="modified" jdbcType="TIMESTAMP" />
+        <result column="modifier" property="modifier" jdbcType="VARCHAR" />
+    </resultMap>
+    <select id="select_cms_bt_promotion_model" resultMap="bt_promotion_model_map" parameterType="HashMap" >
+        SELECT
+            promotion_id,
+            model_id,
+            product_model,
+            cat_path,
+            num_iid,
+            syn_flg,
+            created,
+            creater,
+            modified,
+            modifier
+        FROM
+            voyageone_cms2.cms_bt_promotion_model
+        <where>
+            <if test="promotionId != null">
+                promotion_id =  #{promotionId,jdbcType=INTEGER}
+            </if>
+        </where>
+    </select>
+    <insert id="insert_cms_bt_promotion_model" parameterType="com.voyageone.web2.cms.model.CmsBtPromotionGroupModel" >
+        insert IGNORE into voyageone_cms2.cms_bt_promotion_model
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="promotionId != null" >
+                promotion_id,
+            </if>
+            <if test="modelId != null" >
+                model_id,
+            </if>
+            <if test="productModel != null" >
+                product_model,
+            </if>
+            <if test="catPath != null" >
+                cat_path,
+            </if>
+            <if test="numIid != null" >
+                num_iid,
+            </if>
+            <if test="synFlg != null" >
+                syn_flg,
+            </if>
+                created,
+            <if test="creater != null" >
+                creater,
+            </if>
+                modified,
+            <if test="modifier != null" >
+                modifier,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="promotionId != null" >
+                #{promotionId,jdbcType=INTEGER},
+            </if>
+            <if test="modelId != null" >
+                #{modelId,jdbcType=INTEGER},
+            </if>
+            <if test="productModel != null" >
+                #{productModel,jdbcType=VARCHAR},
+            </if>
+            <if test="catPath != null" >
+                #{catPath,jdbcType=VARCHAR},
+            </if>
+            <if test="numIid != null" >
+                #{numIid,jdbcType=VARCHAR},
+            </if>
+            <if test="synFlg != null" >
+                #{synFlg,jdbcType=VARCHAR},
+            </if>
+                now(),
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+                now(),
+            <if test="modifier != null" >
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="update_cms_bt_promotion_model" parameterType="com.voyageone.web2.cms.model.CmsBtPromotionGroupModel" >
+        update cms_bt_promotion_model
+        <set >
+            <if test="promotionId != null" >
+                promotion_id = #{promotionId,jdbcType=INTEGER},
+            </if>
+            <if test="modelId != null" >
+                model_id = #{modelId,jdbcType=INTEGER},
+            </if>
+            <if test="productModel != null" >
+                product_model = #{productModel,jdbcType=VARCHAR},
+            </if>
+            <if test="catPath != null" >
+                cat_path = #{catPath,jdbcType=VARCHAR},
+            </if>
+            <if test="numIid != null" >
+                num_iid = #{numIid,jdbcType=VARCHAR},
+            </if>
+            <if test="synFlg != null" >
+                syn_flg = #{synFlg,jdbcType=VARCHAR},
+            </if>
+                modified = now(),
+            <if test="modifier != null" >
+                modifier = #{modifier,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where seq = #{seq,jdbcType=INTEGER}
+    </update>
+</mapper>

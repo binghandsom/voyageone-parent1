@@ -15,67 +15,67 @@ import java.util.Map;
  */
 public class CmsBtProductModel_Group extends BaseMongoMap<String, Object> {
 
-    public double getMsrpStart() {
+    public Double getMsrpStart() {
         return getAttribute("msrpStart");
     }
 
-    public void setMsrpStart(double msrpStart) {
+    public void setMsrpStart(Double msrpStart) {
         setAttribute("msrpStart", msrpStart);
     }
 
-    public double getMsrpEnd() {
+    public Double getMsrpEnd() {
         return getAttribute("msrpEnd");
     }
 
-    public void setMsrpEnd(double msrpEnd) {
+    public void setMsrpEnd(Double msrpEnd) {
         setAttribute("msrpEnd", msrpEnd);
     }
 
-    public double getRetailPriceStart() {
+    public Double getRetailPriceStart() {
         return getAttribute("retailPriceStart");
     }
 
-    public void setRetailPriceStart(double retailPriceStart) {
+    public void setRetailPriceStart(Double retailPriceStart) {
         setAttribute("retailPriceStart", retailPriceStart);
     }
 
-    public double getRetailPriceEnd() {
+    public Double getRetailPriceEnd() {
         return getAttribute("retailPriceEnd");
     }
 
-    public void setRetailPriceEnd(double retailPriceEnd) {
+    public void setRetailPriceEnd(Double retailPriceEnd) {
         setAttribute("retailPriceEnd", retailPriceEnd);
     }
 
-    public double getSalePriceStart() {
+    public Double getSalePriceStart() {
         return getAttribute("salePriceStart");
     }
 
-    public void setSalePriceStart(double salePriceStart) {
+    public void setSalePriceStart(Double salePriceStart) {
         setAttribute("salePriceStart", salePriceStart);
     }
 
-    public double getSalePriceEnd() {
+    public Double getSalePriceEnd() {
         return getAttribute("salePriceEnd");
     }
 
-    public void setSalePriceEnd(double salePriceEnd) {
+    public void setSalePriceEnd(Double salePriceEnd) {
         setAttribute("salePriceEnd", salePriceEnd);
     }
 
-    public double getCurrentPriceStart() {
+    public Double getCurrentPriceStart() {
         return getAttribute("currentPriceStart");
     }
 
-    public void setCurrentPriceStart(double currentPriceStart) {
+    public void setCurrentPriceStart(Double currentPriceStart) {
         setAttribute("currentPriceStart", currentPriceStart);
     }
 
-    public double getCurrentPriceEnd() {
+    public Double getCurrentPriceEnd() {
         return getAttribute("currentPriceEnd");
     }
 
-    public void setCurrentPriceEnd(double currentPriceEnd) {
+    public void setCurrentPriceEnd(Double currentPriceEnd) {
         setAttribute("currentPriceEnd", currentPriceEnd);
     }
 

@@ -2,14 +2,13 @@ package com.voyageone.web2.cms.rest;
 
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.web2.cms.CmsRestController;
-import com.voyageone.web2.sdk.api.response.VoResponseEntity;
+import com.voyageone.web2.sdk.api.request.PostProductSelectOneRequest;
+import com.voyageone.web2.sdk.api.response.PostProductSelectOneResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
 
 /**
  * product Controller
@@ -24,27 +23,24 @@ import java.util.Map;
         value  = "/rest/puroduct",
         method = RequestMethod.POST
 )
-public class ProductController extends CmsRestController {
+public class PostProductSelectOneController extends CmsRestController {
 
     @Autowired
-    private ProductService productService;
+    private PostProductSelectOneService productService;
 
     /**
      * 返回selectOne
      * @return
      */
     @RequestMapping("selectOne")
-    public VoResponseEntity selectOne(@RequestBody Map<String, Object> params) {
+    public PostProductSelectOneResponse selectOne(@RequestBody PostProductSelectOneRequest responseMode) {
+        CmsBtProductModel model = productService.selectOne(responseMode);
 
-        CmsBtProductModel model = null;
-//        try {
-            String aa = null;
-            aa.startsWith("");
-            model = productService.selectOne("");
-//        } catch (Exception ex) {
-//            return new ResponseEntity<CmsBtProductModel>(HttpStatus.BAD_REQUEST);
-//        }
+        PostProductSelectOneResponse result = new PostProductSelectOneResponse();
+        result.setProduct(model);
+
         // 返回用户信息
-        return successEntity(model);
+        return result;
     }
+
 }

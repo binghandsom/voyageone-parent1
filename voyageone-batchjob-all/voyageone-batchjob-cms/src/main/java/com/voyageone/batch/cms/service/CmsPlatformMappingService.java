@@ -96,8 +96,8 @@ public class CmsPlatformMappingService extends BaseTaskService {
     private List<CmsMtPlatformCategoryTreeModel> getFinallyCategories(String channelId, int cartId, String categoryId) {
 
         CmsMtPlatformCategoryTreeModel cmsMtFeedCategoryTreeModel = cmsMtPlatformCategoryDao.selectByChannel_CartId_CatId(channelId, cartId, categoryId);
-        Object jsonObj = JsonPath.parse(JsonUtil.bean2Json(cmsMtFeedCategoryTreeModel)).json();
-        JSONArray jsonArray = JsonPath.read(jsonObj, "$..children[?(@.isParent == 0)]");
+//        Object jsonObj = JsonPath.parse(JsonUtil.bean2Json(cmsMtFeedCategoryTreeModel)).json();
+        LinkedList jsonArray = JsonPath.read(JsonUtil.bean2Json(cmsMtFeedCategoryTreeModel), "$..children[?(@.isParent == 0)]");
         List<CmsMtPlatformCategoryTreeModel> child = JsonUtil.jsonToBeanList(JsonUtil.bean2Json(jsonArray), CmsMtPlatformCategoryTreeModel.class);
         return child;
     }
@@ -148,7 +148,7 @@ public class CmsPlatformMappingService extends BaseTaskService {
      */
     private MappingBean makeMapping(Field field) {
 
-        if ("product_images".equalsIgnoreCase(field.getId())) {
+        if ("product_images".equalsIgnoreCase(field.getId()) || "item_images".equalsIgnoreCase(field.getId())) {
             String imgTemplate = "http://s7d5.scene7.com/is/image/sneakerhead/BHFO%%5F20150819%%5Fx1200%%5F1200x?$1200x1200$&$1200x1200$&$proudct=%s";
             return CreateImgMapping(field.getId(),imgTemplate);
         }

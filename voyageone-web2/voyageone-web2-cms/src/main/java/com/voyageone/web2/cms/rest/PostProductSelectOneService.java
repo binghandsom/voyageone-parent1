@@ -3,6 +3,7 @@ package com.voyageone.web2.cms.rest;
 import com.voyageone.cms.service.CmsProductService;
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.sdk.api.request.PostProductSelectOneRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,14 +16,17 @@ import org.springframework.stereotype.Service;
  */
 
 @Service
-public class ProductService extends BaseAppService{
+public class PostProductSelectOneService extends BaseAppService{
 
     @Autowired
     private CmsProductService cmsProductService;
 
-    public CmsBtProductModel selectOne (String param) {
-
-        CmsBtProductModel model = cmsProductService.getProductByCode("001", "100001");
+    public CmsBtProductModel selectOne(PostProductSelectOneRequest params) {
+        CmsBtProductModel model = null;
+        Long pid = params.getProductId();
+        if (pid != null) {
+            model = cmsProductService.getProductById("001", pid);
+        }
 
         return model;
     }

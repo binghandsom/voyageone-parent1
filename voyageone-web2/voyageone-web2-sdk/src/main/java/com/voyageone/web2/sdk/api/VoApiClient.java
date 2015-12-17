@@ -6,7 +6,7 @@ import com.voyageone.web2.sdk.api.exception.ApiException;
  * VoApi客户端。
  *
  * @author chuanyu.liang 2015/12/10
- * @version 2.0.1
+ * @version 2.0.0
  * @since. 2.0.0
  */
 public interface VoApiClient {
