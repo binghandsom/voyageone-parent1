@@ -1,9 +1,6 @@
 package com.voyageone.web2.cms.model;
 
 import com.voyageone.cms.service.model.CmsBtProductModel;
-import com.voyageone.web2.cms.bean.CmsPromotionSkuBean;
-
-import java.util.List;
 
 /**
  * @author james.li on 2015/12/15.
@@ -14,18 +11,35 @@ public class CmsBtPromotionSkuModel extends CmsBtPromotionGroupModel {
 
     private String productCode;
 
-    private List<CmsPromotionSkuBean> productSkus;
+    private String productSku;
 
+    private Integer qty;
 
-    public CmsBtPromotionSkuModel(CmsBtProductModel productInfo, int cartId, int promotionId, String operator) {
+    public CmsBtPromotionSkuModel(CmsBtProductModel productInfo, int cartId, int promotionId, String operator, String productSku, Integer qty) {
+
         super(productInfo, cartId, promotionId, operator);
         this.setProductId(productInfo.getProdId());
         this.setProductCode(productInfo.getFields().getCode());
-        productInfo.getSkus().forEach(sku -> {
-            productSkus.add(new CmsPromotionSkuBean(sku.getSkuCode(),sku.getQty()));
-        });
-
+        this.setProductSku(productSku);
+        this.setQty(qty == null?0:qty);
     }
+
+    public String getProductSku() {
+        return productSku;
+    }
+
+    public void setProductSku(String productSku) {
+        this.productSku = productSku;
+    }
+
+    public Integer getQty() {
+        return qty;
+    }
+
+    public void setQty(Integer qty) {
+        this.qty = qty;
+    }
+
 
     public Long getProductId() {
         return productId;
@@ -46,11 +60,4 @@ public class CmsBtPromotionSkuModel extends CmsBtPromotionGroupModel {
         this.productCode = productCode;
     }
 
-    public List<CmsPromotionSkuBean> getProductSkus() {
-        return productSkus;
-    }
-
-    public void setProductSkus(List<CmsPromotionSkuBean> productSkus) {
-        this.productSkus = productSkus;
-    }
 }

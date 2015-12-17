@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.dao;
 
 import com.voyageone.base.dao.BaseDao;
 import com.voyageone.web2.cms.model.CmsBtPromotionGroupModel;
+import com.voyageone.web2.cms.model.CmsBtPromotionSkuModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -15,19 +16,19 @@ import java.util.Map;
 @Repository
 public class CmsPromotionSkuDao extends BaseDao{
 
-    public List<CmsBtPromotionGroupModel> getPromotionModelList(Map<String,Object> params){
-        List<CmsBtPromotionGroupModel> ret = selectList("select_cms_bt_promotion_model",params);
+    public List<CmsBtPromotionSkuModel> getPromotionSkuList(Map<String,Object> params){
+        List<CmsBtPromotionSkuModel> ret = selectList("select_cms_bt_promotion_sku",params);
         if (ret == null){
             ret = new ArrayList<>();
         }
         return ret;
     }
-    public int insertPromotionModel(CmsBtPromotionGroupModel params){
-        return updateTemplate.insert("insert_cms_bt_promotion_model",params);
+    public int insertPromotionSku(CmsBtPromotionSkuModel params){
+        return updateTemplate.insert("insert_cms_bt_promotion_sku",params);
     }
 
-    public int updatePromotionModel(CmsBtPromotionGroupModel params){
-        return updateTemplate.update("update_cms_bt_promotion_model", params);
+    public int updatePromotionSku(CmsBtPromotionSkuModel params){
+        return updateTemplate.update("update_cms_bt_promotion_sku", params);
     }
 
 }
