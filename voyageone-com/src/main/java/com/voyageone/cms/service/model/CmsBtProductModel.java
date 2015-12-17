@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class CmsBtProductModel extends ChannelPartitionModel {
 
-    private long prodId;
+    private Long prodId;
     private String catId;
     private String catPath;
 
@@ -21,7 +21,10 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     private CmsBtProductModel_Group groups = new CmsBtProductModel_Group();
     private List<CmsBtProductModel_Sku> skus = new ArrayList<>();
     private List<CmsBtProductModel_Tag> tags = new ArrayList<>();
-    private CmsBtProductModel_Feed feedAtts = new CmsBtProductModel_Feed();
+
+    private CmsBtProductModel_Feed feedOrgAtts = new CmsBtProductModel_Feed();
+
+    private CmsBtProductModel_Feed feedCnAtts = new CmsBtProductModel_Feed();
 
     public CmsBtProductModel() {
     }
@@ -86,12 +89,19 @@ public class CmsBtProductModel extends ChannelPartitionModel {
         this.tags = tags;
     }
 
-    public CmsBtProductModel_Feed getFeedAtts() {
-        return feedAtts;
+    public CmsBtProductModel_Feed getFeedOrgAtts() {
+        return feedOrgAtts;
     }
 
-    public void setFeedAtts(CmsBtProductModel_Feed feedAtt) {
-        this.feedAtts = feedAtt;
+    public void setFeedOrgAtts(CmsBtProductModel_Feed feedOrgAtts) {
+        this.feedOrgAtts = feedOrgAtts;
     }
 
+    public CmsBtProductModel_Feed getFeedCnAtts() {
+        return feedCnAtts;
+    }
+
+    public void setFeedCnAtts(CmsBtProductModel_Feed feedCnAtts) {
+        this.feedCnAtts = feedCnAtts;
+    }
 }

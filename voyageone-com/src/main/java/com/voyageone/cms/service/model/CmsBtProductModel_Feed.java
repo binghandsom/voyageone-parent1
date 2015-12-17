@@ -27,4 +27,6 @@ public class CmsBtProductModel_Feed extends BaseMongoMap<String, Object> {
         setAttribute("modelCode", modelCode);
     }
 
+
+
 }
