@@ -61,15 +61,9 @@ public class PostProductSelectOneRequest extends VoApiRequest<PostProductSelectO
 		this.channelId = channelId;
 	}
 
-
-	public Class<PostProductSelectOneResponse> getResponseClass() {
-		return PostProductSelectOneResponse.class;
-	}
-
 //	public void check() throws ApiRuleException {
 //		RequestCheckUtils.checkNotEmpty(fields, "fields");
 //	}
-
 
 	public String getChannelId() {
 		return channelId;

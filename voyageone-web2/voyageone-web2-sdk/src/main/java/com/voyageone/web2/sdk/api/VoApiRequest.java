@@ -2,8 +2,12 @@ package com.voyageone.web2.sdk.api;
 
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
+import com.voyageone.web2.sdk.api.response.PostProductSelectOneResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 /**
  * TOP请求接口。
@@ -74,7 +78,12 @@ public abstract class VoApiRequest<T extends VoApiResponse> {
 	 * get Response Class type
 	 * @return class Type
 	 */
-	public abstract Class<T> getResponseClass();
+	@SuppressWarnings("unchecked")
+	public Class<T> getResponseClass() {
+		Type sooper = getClass().getGenericSuperclass();
+		Type t = ((ParameterizedType)sooper).getActualTypeArguments()[ 0 ];
+		return (Class<T>) t;
+	}
 
 	/**
 	 * 客户端参数检查，减少服务端无效调用
