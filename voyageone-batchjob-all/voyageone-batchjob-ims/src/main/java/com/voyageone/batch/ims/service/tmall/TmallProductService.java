@@ -172,13 +172,13 @@ public class TmallProductService implements PlatformServiceInterface {
         }
 
         Long categoryCode = Long.valueOf(tcb.getPlatformCId());
-        String brandCode = null;//brandMapDao.cmsBrandToPlatformBrand(workLoadBean.getOrder_channel_id(),
-                //workLoadBean.getCart_id(), Integer.parseInt(cmsModelProp.getProp(CmsFieldEnum.CmsModelEnum.brand_id)));
+        String brandCode = brandMapDao.cmsBrandToPlatformBrand(workLoadBean.getOrder_channel_id(),
+                workLoadBean.getCart_id(), Integer.parseInt(cmsModelProp.getProp(CmsFieldEnum.CmsModelEnum.brand)));
 
         if (brandCode == null || "".equals(brandCode))
         {
             String abortCause = "Job abort: can not find brand_code by brandId "
-                    //+ cmsModelProp.getProp(CmsFieldEnum.CmsModelEnum.brand_id)
+                    + cmsModelProp.getProp(CmsFieldEnum.CmsModelEnum.brand)
                     + ", workload:" + workLoadBean;
             logger.error(abortCause);
             throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(abortCause));
@@ -913,13 +913,13 @@ public class TmallProductService implements PlatformServiceInterface {
             tcb.setPlatformUploadRunState(tmallUploadRunState);
         }
 
-        String brandCode = null;//brandMapDao.cmsBrandToPlatformBrand(workLoadBean.getOrder_channel_id(),
-                //workLoadBean.getCart_id(), Integer.parseInt(cmsModelProp.getProp(CmsFieldEnum.CmsModelEnum.brand_id)));
+        String brandCode = brandMapDao.cmsBrandToPlatformBrand(workLoadBean.getOrder_channel_id(),
+                workLoadBean.getCart_id(), Integer.parseInt(cmsModelProp.getProp(CmsFieldEnum.CmsModelEnum.brand)));
 
         if (brandCode == null || "".equals(brandCode))
         {
-//            logger.info("Job abort: can not find brand_code by brandId " +
-//                    cmsModelProp.getProp(CmsFieldEnum.CmsModelEnum.brand_id) + ", workload:" + workLoadBean);
+            logger.info("Job abort: can not find brand_code by brandId " +
+                    cmsModelProp.getProp(CmsFieldEnum.CmsModelEnum.brand) + ", workload:" + workLoadBean);
             throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("No brand found"));
         }
         else {
@@ -1452,7 +1452,7 @@ public class TmallProductService implements PlatformServiceInterface {
                     {
                         throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("No sku builder find"));
                     }
-                     //
+                    //
                     DictWordBean dictWordBean = dictWordDao.selectDictWordByName(workLoadBean.getOrder_channel_id(), "属性图片模板");
                     RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
                     DictWord dictWord = (DictWord) ruleJsonMapper.deserializeRuleWord(dictWordBean.getValue());
@@ -1460,7 +1460,7 @@ public class TmallProductService implements PlatformServiceInterface {
                     skuFieldBuilder.setCodeImageTemplete(codePropImageTemplate);
 
                     List<Field> skuInfoFields = skuFieldBuilder.buildSkuInfoField(cartId, categoryCode, platformProps,
-                     workLoadBean.getCmsModelProp(), contextBuildCustomFields, imageSet);
+                            workLoadBean.getCmsModelProp(), contextBuildCustomFields, imageSet);
 
                     if (skuInfoFields == null)
                     {
@@ -1747,7 +1747,7 @@ public class TmallProductService implements PlatformServiceInterface {
                 String propValue = propValueBean.getProp_value();
                 //如果有值，那么直接使用该表中的表达式值
                 if (propValue != null && !"".equals(propValue)) {
-                        RuleExpression ruleExpression = ruleJsonMapper.deserializeRuleExpression(propValue);
+                    RuleExpression ruleExpression = ruleJsonMapper.deserializeRuleExpression(propValue);
                     if (ruleExpression == null)
                     {
                         String error = "master prop[id=" + masterPropMapping.getPropId() + "]'s value is illegal! value=" + propValue;
@@ -1760,7 +1760,7 @@ public class TmallProductService implements PlatformServiceInterface {
                     }
                 }
                 else
-                 continue;//如果没有值，那么要看主数据属性表中是否有默认值,如果有,则使用默认值
+                    continue;//如果没有值，那么要看主数据属性表中是否有默认值,如果有,则使用默认值
                 //暂时认为默认值由保存数据时考虑
                 /*
                 else {
