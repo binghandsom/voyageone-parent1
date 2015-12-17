@@ -9,15 +9,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
-
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 
 /**
  * product Controller
@@ -42,11 +33,11 @@ public class PostProductSelectOneController extends CmsRestController {
      * @return
      */
     @RequestMapping("selectOne")
-    public PostProductSelectOneResponse selectOne() {
-        CmsBtProductModel model = productService.selectOne(null);
+    public PostProductSelectOneResponse selectOne(@RequestBody PostProductSelectOneRequest responseMode) {
+        CmsBtProductModel model = productService.selectOne(responseMode);
 
         PostProductSelectOneResponse result = new PostProductSelectOneResponse();
-        result.setData(model);
+        result.setProduct(model);
 
         // 返回用户信息
         return result;

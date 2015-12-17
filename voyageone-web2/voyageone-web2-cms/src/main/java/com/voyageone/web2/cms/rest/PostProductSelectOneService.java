@@ -23,7 +23,7 @@ public class PostProductSelectOneService extends BaseAppService{
 
     public CmsBtProductModel selectOne(PostProductSelectOneRequest params) {
         CmsBtProductModel model = null;
-        Integer pid = params.getProductId();
+        Long pid = params.getProductId();
         if (pid != null) {
             model = cmsProductService.getProductById("001", pid);
         }

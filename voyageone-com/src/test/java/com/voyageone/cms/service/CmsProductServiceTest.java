@@ -152,11 +152,17 @@ public class CmsProductServiceTest {
             skus.add(sku);
         }
 
-        CmsBtProductModel_Feed feed = product.getFeedAtts();
-        feed.setAttribute("washingtype", "dry cleaning");
-        feed.setAttribute("collar", "mandarin collar");
-        feed.setAttribute("style", "campus");
-        feed.setAttribute("waspe", "dleaning");
+        CmsBtProductModel_Feed orgFeed = product.getFeedOrgAtts();
+        orgFeed.setAttribute("washingtype", "dry cleaning");
+        orgFeed.setAttribute("collar", "mandarin collar");
+        orgFeed.setAttribute("style", "campus");
+        orgFeed.setAttribute("waspe", "dleaning");
+
+        CmsBtProductModel_Feed cnFeed = product.getFeedOrgAtts();
+        cnFeed.setAttribute("washingtype", "dry cleaning");
+        cnFeed.setAttribute("collar", "mandarin collar");
+        cnFeed.setAttribute("style", "campus");
+        cnFeed.setAttribute("waspe", "dleaning");
 
         return product;
     }

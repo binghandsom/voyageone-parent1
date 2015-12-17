@@ -22,19 +22,20 @@ import java.net.URI;
 public class VoApiDefaultClient implements VoApiClient {
 
 	private static final String APP_KEY = "app_key";
-	private static final String FORMAT = "format";
-	private static final String METHOD = "method";
+//	private static final String FORMAT = "format";
+//	private static final String METHOD = "method";
 	private static final String TIMESTAMP = "timestamp";
-	private static final String VERSION = "v";
+//	private static final String VERSION = "v";
 	private static final String SIGN = "sign";
-	private static final String SIGN_METHOD = "sign_method";
-	private static final String PARTNER_ID = "partner_id";
+	private static final String SIGN_EXTEND = "voyage_sign_";
+//	private static final String SIGN_METHOD = "sign_method";
+//	private static final String PARTNER_ID = "partner_id";
 	private static final String SESSION = "session";
 
 	private String serverUrl;
 	private String appKey;
 	private String appSecret;
-	private String format = VoApiConstants.FORMAT_JSON;
+	//private String format = VoApiConstants.FORMAT_JSON;
 	//private String signMethod = VoApiConstants.SIGN_METHOD_HMAC;
 	private String signMethod = VoApiConstants.SIGN_METHOD_MD5;
 
@@ -94,12 +95,12 @@ public class VoApiDefaultClient implements VoApiClient {
 		ClientHttpRequestFactory rf = restTemplate.getRequestFactory();
 		if (rf instanceof SimpleClientHttpRequestFactory) {
 			SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = (SimpleClientHttpRequestFactory)rf;
-			simpleClientHttpRequestFactory.setConnectTimeout(1 * connectTimeout);
-			simpleClientHttpRequestFactory.setReadTimeout(1 * readTimeout);
+			simpleClientHttpRequestFactory.setConnectTimeout(connectTimeout);
+			simpleClientHttpRequestFactory.setReadTimeout(readTimeout);
 		} else if (rf instanceof HttpComponentsClientHttpRequestFactory) {
 			HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory = (HttpComponentsClientHttpRequestFactory)rf;
-			httpComponentsClientHttpRequestFactory.setConnectTimeout(1 * connectTimeout);
-			httpComponentsClientHttpRequestFactory.setReadTimeout(1 * readTimeout);
+			httpComponentsClientHttpRequestFactory.setConnectTimeout(connectTimeout);
+			httpComponentsClientHttpRequestFactory.setReadTimeout(readTimeout);
 		}
 	}
 
@@ -137,7 +138,7 @@ public class VoApiDefaultClient implements VoApiClient {
 	 * @return URI
 	 */
 	private URI getURI(VoApiRequest request) {
-		StringBuffer reqUrl = new StringBuffer(serverUrl);
+		StringBuilder reqUrl = new StringBuilder(serverUrl);
 		reqUrl.append(request.getApiURLPath());
 
 		if(reqUrl.indexOf("?") != -1){
@@ -145,15 +146,15 @@ public class VoApiDefaultClient implements VoApiClient {
 		} else {
 			reqUrl.append("?");
 		}
-		reqUrl.append("timestamp="+request.getTimestamp());
+		reqUrl.append(TIMESTAMP + "=").append(request.getTimestamp());
 
 		//appSecret appKey
 		if (appKey != null && appSecret != null) {
 			reqUrl.append("&");
-			reqUrl.append("appKey="+appKey);
+			reqUrl.append(APP_KEY + "=").append(appKey);
 			reqUrl.append("&");
-			String sign = MD5.getMD5("voyage_sign_" + appKey + "__" + appSecret);
-			reqUrl.append("sign="+sign);
+			String sign = MD5.getMD5(SIGN_EXTEND + appKey + "__" + appSecret);
+			reqUrl.append(SIGN + "=").append(sign);
 		}
 
 		return URI.create(reqUrl.toString());
@@ -228,4 +229,81 @@ public class VoApiDefaultClient implements VoApiClient {
 //	public void setUseGzipEncoding(boolean useGzipEncoding) {
 //		this.useGzipEncoding = useGzipEncoding;
 //	}
+
+
+	public String getServerUrl() {
+		return serverUrl;
+	}
+
+	public void setServerUrl(String serverUrl) {
+		this.serverUrl = serverUrl;
+	}
+
+	public String getAppKey() {
+		return appKey;
+	}
+
+	public void setAppKey(String appKey) {
+		this.appKey = appKey;
+	}
+
+	public String getAppSecret() {
+		return appSecret;
+	}
+
+	public void setAppSecret(String appSecret) {
+		this.appSecret = appSecret;
+	}
+
+	public String getSignMethod() {
+		return signMethod;
+	}
+
+	public void setSignMethod(String signMethod) {
+		this.signMethod = signMethod;
+	}
+
+	public int getConnectTimeout() {
+		return connectTimeout;
+	}
+
+	public void setConnectTimeout(int connectTimeout) {
+		this.connectTimeout = connectTimeout;
+	}
+
+	public int getReadTimeout() {
+		return readTimeout;
+	}
+
+	public void setReadTimeout(int readTimeout) {
+		this.readTimeout = readTimeout;
+	}
+
+	public boolean isNeedCheckRequest() {
+		return needCheckRequest;
+	}
+
+	public boolean isNeedEnableParser() {
+		return needEnableParser;
+	}
+
+	public void setNeedEnableParser(boolean needEnableParser) {
+		this.needEnableParser = needEnableParser;
+	}
+
+	public boolean isUseGzipEncoding() {
+		return useGzipEncoding;
+	}
+
+	public void setUseGzipEncoding(boolean useGzipEncoding) {
+		this.useGzipEncoding = useGzipEncoding;
+	}
+
+	public RestTemplate getRestTemplate() {
+		return restTemplate;
+	}
+
+	public void setRestTemplate(RestTemplate restTemplate) {
+		this.restTemplate = restTemplate;
+	}
 }
