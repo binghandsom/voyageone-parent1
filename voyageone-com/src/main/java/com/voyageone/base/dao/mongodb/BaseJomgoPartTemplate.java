@@ -117,7 +117,7 @@ public class BaseJomgoPartTemplate {
     public <T> T findOne(String strQuery, String projection, Class<T> entityClass, String collectionName) {
         JomgoQuery query = new JomgoQuery();
         query.setQuery(strQuery);
-        query.setQuery(projection);
+        query.setProjection(projection);
         return findOne(query, entityClass, collectionName);
     }
 
@@ -133,12 +133,12 @@ public class BaseJomgoPartTemplate {
         }
 
         //column
-        if (StringUtils.isEmpty(queryObject.getProjection())) {
+        if (!StringUtils.isEmpty(queryObject.getProjection())) {
             find = find.projection(queryObject.getProjection());
         }
 
         //sort
-        if (StringUtils.isEmpty(queryObject.getSort())) {
+        if (!StringUtils.isEmpty(queryObject.getSort())) {
             find = find.orderBy(queryObject.getSort());
         }
 
@@ -203,7 +203,7 @@ public class BaseJomgoPartTemplate {
     public <T> MongoCursor<T> findCursor(final String strQuery, String projection, Class<T> entityClass, String collectionName) {
         JomgoQuery query = new JomgoQuery();
         query.setQuery(strQuery);
-        query.setQuery(projection);
+        query.setProjection(projection);
         return findCursor(query, entityClass, collectionName);
     }
 
@@ -219,12 +219,12 @@ public class BaseJomgoPartTemplate {
         }
 
         //column
-        if (StringUtils.isEmpty(queryObject.getProjection())) {
+        if (!StringUtils.isEmpty(queryObject.getProjection())) {
             find = find.projection(queryObject.getProjection());
         }
 
         //sort
-        if (StringUtils.isEmpty(queryObject.getSort())) {
+        if (!StringUtils.isEmpty(queryObject.getSort())) {
             find = find.sort(queryObject.getSort());
         }
 
