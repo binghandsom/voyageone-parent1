@@ -26,6 +26,7 @@
 			<version>${voyageone.md.schema.version}</version>
 		</dependency>
 	</dependencies>
+
 	<build>
 		<finalName>voyageone-batchjob-core</finalName>
 		<plugins>
