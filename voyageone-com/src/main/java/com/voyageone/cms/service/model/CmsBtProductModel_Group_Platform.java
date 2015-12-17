@@ -24,15 +24,15 @@ public class CmsBtProductModel_Group_Platform extends BaseMongoMap<String, Objec
         return getAttribute("groupId");
     }
 
-    public void setGroupId(long groupId) {
+    public void setGroupId(Long groupId) {
         setAttribute("groupId", groupId);
     }
 
-    public int getCartId() {
+    public Integer getCartId() {
         return getAttribute("cartId");
     }
 
-    public void setCartId(int cartId) {
+    public void setCartId(Integer cartId) {
         setAttribute("cartId", cartId);
     }
 
@@ -69,11 +69,11 @@ public class CmsBtProductModel_Group_Platform extends BaseMongoMap<String, Objec
         setAttribute("isMain", value);
     }
 
-    public double getDisplayOrder() {
+    public Integer getDisplayOrder() {
         return getAttribute("displayOrder");
     }
 
-    public void setDisplayOrder(int displayOrder) {
+    public void setDisplayOrder(Integer displayOrder) {
         setAttribute("displayOrder", displayOrder);
     }
 
@@ -117,11 +117,11 @@ public class CmsBtProductModel_Group_Platform extends BaseMongoMap<String, Objec
         setAttribute("comment", comment);
     }
 
-    public int getInventory() {
+    public Integer getInventory() {
         return getAttribute("inventory");
     }
 
-    public void setInventory(int inventory) {
+    public void setInventory(Integer inventory) {
         setAttribute("inventory", inventory);
     }
 

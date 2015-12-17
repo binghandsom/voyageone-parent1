@@ -46,11 +46,11 @@ public class CmsBtProductModel extends ChannelPartitionModel {
         this.catPath = catIdPath;
     }
 
-    public long getProdId() {
+    public Long getProdId() {
         return prodId;
     }
 
-    public void setProdId(long prodId) {
+    public void setProdId(Long prodId) {
         this.prodId = prodId;
     }
 

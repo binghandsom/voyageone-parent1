@@ -11,13 +11,13 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
  */
 public class CmsBtProductModel_Feed extends BaseMongoMap<String, Object> {
 
-    public String getCatId() {
-        return getAttribute("catId");
-    }
-
-    public void setCatId(String catId) {
-        setAttribute("catId", catId);
-    }
+//    public String getCatId() {
+//        return getAttribute("catId");
+//    }
+//
+//    public void setCatId(String catId) {
+//        setAttribute("catId", catId);
+//    }
 
     public String getModelCode() {
         return getAttribute("modelCode");

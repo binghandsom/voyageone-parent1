@@ -53,31 +53,31 @@ public class CmsBtProductModel_Sku extends BaseMongoMap<String, Object> {
         return getAttribute("qty");
     }
 
-    public void setQty(int qty) {
+    public void setQty(Integer qty) {
         setAttribute("qty", qty);
     }
 
-    public double getPriceMsrp() {
+    public Double getPriceMsrp() {
         return getAttribute("priceMsrp");
     }
 
-    public void setPriceMsrp(double priceMsrp) {
+    public void setPriceMsrp(Double priceMsrp) {
         setAttribute("priceMsrp", priceMsrp);
     }
 
-    public double getPriceRetail() {
+    public Double getPriceRetail() {
         return getAttribute("priceRetail");
     }
 
-    public void setPriceRetail(double priceRetail) {
+    public void setPriceRetail(Double priceRetail) {
         setAttribute("priceRetail", priceRetail);
     }
 
-    public double getPriceSale() {
+    public Double getPriceSale() {
         return getAttribute("priceSale");
     }
 
-    public void setPriceSale(double priceSale) {
+    public void setPriceSale(Double priceSale) {
         setAttribute("priceSale", priceSale);
     }
 
