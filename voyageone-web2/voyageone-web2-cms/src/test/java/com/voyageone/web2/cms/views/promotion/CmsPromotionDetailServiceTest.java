@@ -27,11 +27,12 @@ public class CmsPromotionDetailServiceTest {
     public void testInsertPromotionProduct() throws Exception {
 
         CmsPromotionProductPriceBean cmsPromotionProductPriceBean = new CmsPromotionProductPriceBean();
-        cmsPromotionProductPriceBean.setCode("code1");
+        cmsPromotionProductPriceBean.setCode("100001");
         cmsPromotionProductPriceBean.setPrice(20.99);
         cmsPromotionProductPriceBean.setTag("7折");
         List< CmsPromotionProductPriceBean > productPrices = new ArrayList<>();
         productPrices.add(cmsPromotionProductPriceBean);
-        cmsPromotionDetailService.insertPromotionProduct(productPrices,"200",1,23,"james");
+        cmsPromotionDetailService.insertPromotionProduct(productPrices, "300", 1, 23, "james");
+        System.out.println("");
     }
 }
