@@ -14,7 +14,7 @@ import java.util.List;
 import org.dom4j.Element;
 
 public class MultiInputField extends com.voyageone.common.masterdate.schema.field.Field {
-    protected List<Value> values = new ArrayList();
+    protected List<Value> values = new ArrayList<>();
 
     public MultiInputField() {
         super.type = FieldTypeEnum.MULTIINPUT;
@@ -41,24 +41,18 @@ public class MultiInputField extends com.voyageone.common.masterdate.schema.fiel
     public void setValues(List<String> values) {
         if(values != null) {
             this.values.clear();
-            Iterator i$ = values.iterator();
-
-            while(i$.hasNext()) {
-                String value = (String)i$.next();
+            for (String value : values) {
                 Value v = new Value();
                 v.setValue(value);
                 this.values.add(v);
             }
-
         }
     }
 
     public List<String> getStringValues() {
-        ArrayList list = new ArrayList();
-        Iterator i$ = this.values.iterator();
+        List<String> list = new ArrayList<>();
 
-        while(i$.hasNext()) {
-            Value v = (Value)i$.next();
+        for (Value v : this.values) {
             list.add(v.getValue());
         }
 
@@ -85,10 +79,7 @@ public class MultiInputField extends com.voyageone.common.masterdate.schema.fiel
                 defaultField.getValues().clear();
             }
 
-            Iterator i$ = values.iterator();
-
-            while(i$.hasNext()) {
-                String v = (String)i$.next();
+            for (String v : values) {
                 defaultField.addValue(v);
             }
 
@@ -100,14 +91,11 @@ public class MultiInputField extends com.voyageone.common.masterdate.schema.fiel
             this.initDefaultField();
         }
 
-        ArrayList result = new ArrayList();
+        List<String> result = new ArrayList<>();
         MultiInputField defaultField = (MultiInputField)super.defaultValueField;
-        List vList = defaultField.getValues();
-        Iterator i$ = vList.iterator();
 
-        while(i$.hasNext()) {
-            Value v = (Value)i$.next();
-            result.add(v.getValue());
+        for (Value aVList : defaultField.getValues()) {
+            result.add(aVList.getValue());
         }
 
         return result;
@@ -126,12 +114,10 @@ public class MultiInputField extends com.voyageone.common.masterdate.schema.fiel
                 fieldNode.addAttribute("name", this.name);
                 fieldNode.addAttribute("type", this.type.value());
                 Element valuesNode = XmlUtils.appendElement(fieldNode, "values");
-                Iterator i$ = this.values.iterator();
 
-                while(i$.hasNext()) {
-                    Value value = (Value)i$.next();
+                for (Value value : this.values) {
                     Element valueNode = XmlUtils.appendElement(valuesNode, "value");
-                    if(!StringUtil.isEmpty(value.getValue())) {
+                    if (!StringUtil.isEmpty(value.getValue())) {
                         valueNode.setText(value.getValue());
                     }
                 }
@@ -145,16 +131,14 @@ public class MultiInputField extends com.voyageone.common.masterdate.schema.fiel
 
     public Element toDefaultValueElement() throws TopSchemaException {
         MultiInputField defaultField = (MultiInputField)super.defaultValueField;
-        List defaultValues = defaultField.getValues();
+        List<Value> defaultValues = defaultField.getValues();
         if(defaultValues != null && !defaultValues.isEmpty()) {
             Element valuesNode = XmlUtils.createRootElement("default-values");
-            Iterator i$ = defaultValues.iterator();
 
-            while(i$.hasNext()) {
-                Value value = (Value)i$.next();
+            for (Value defaultValue : defaultValues) {
                 Element valueNode = XmlUtils.appendElement(valuesNode, "default-value");
-                if(!StringUtil.isEmpty(value.getValue())) {
-                    valueNode.setText(value.getValue());
+                if (!StringUtil.isEmpty(defaultValue.getValue())) {
+                    valueNode.setText(defaultValue.getValue());
                 }
             }
 

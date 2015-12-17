@@ -9,7 +9,7 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class CmsBtProductModel_Feed extends BaseMongoMap<Object, Object> {
+public class CmsBtProductModel_Feed extends BaseMongoMap<String, Object> {
 
     public String getCatId() {
         return getAttribute("catId");
@@ -17,6 +17,14 @@ public class CmsBtProductModel_Feed extends BaseMongoMap<Object, Object> {
 
     public void setCatId(String catId) {
         setAttribute("catId", catId);
+    }
+
+    public String getModelCode() {
+        return getAttribute("modelCode");
+    }
+
+    public void setModelCode(String modelCode) {
+        setAttribute("modelCode", modelCode);
     }
 
 }

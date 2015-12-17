@@ -9,8 +9,8 @@ import org.dom4j.Element;
 
 public class LabelGroup {
     private String name;
-    private List<LabelGroup> labelGroupList = new ArrayList();
-    private List<Label> labelList = new ArrayList();
+    private List<LabelGroup> labelGroupList = new ArrayList<>();
+    private List<Label> labelList = new ArrayList<>();
 
     public LabelGroup() {
     }

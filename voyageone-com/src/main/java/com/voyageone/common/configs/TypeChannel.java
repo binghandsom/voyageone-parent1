@@ -124,4 +124,30 @@ public class TypeChannel {
         }
         return ret;
     }
+
+    /**
+     * @param type       type_code
+     * @param channel_id 渠道id
+     * @return List<Option>
+     */
+    public static List<Option> getOptionsWithBlank(String type, String channel_id, String...lang_id) {
+        String key = type + "-" + channel_id;
+        List<Option> ret = new ArrayList<>();
+
+        // 添加一个空白项目
+        Option blankOption = new Option();
+        blankOption.setDisplayName("select...");
+        blankOption.setValue(null);
+        ret.add(blankOption);
+
+        List<TypeChannelBean> typeList = typeMap.get(key);
+
+        for (TypeChannelBean bean : typeList) {
+            Option opt = new Option();
+            opt.setDisplayName(bean.getName());
+            opt.setValue(bean.getValue());
+            ret.add(opt);
+        }
+        return ret;
+    }
 }

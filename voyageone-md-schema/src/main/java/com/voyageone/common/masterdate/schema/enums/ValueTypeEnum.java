@@ -27,12 +27,10 @@ public enum ValueTypeEnum {
 
     public static ValueTypeEnum getEnum(String name) {
         ValueTypeEnum[] values = values();
-        ValueTypeEnum[] arr$ = values;
         int len$ = values.length;
 
-        for(int i$ = 0; i$ < len$; ++i$) {
-            ValueTypeEnum value = arr$[i$];
-            if(value.value().equals(name)) {
+        for (ValueTypeEnum value : values) {
+            if (value.value().equals(name)) {
                 return value;
             }
         }

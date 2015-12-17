@@ -58,8 +58,7 @@ public class ISPUtil {
     }
 
     public static List<Value> getFieldValues(Field field) {
-        new ArrayList();
-        List values;
+        List<Value> values = null;
         switch(field.getType()) {
             case INPUT:
                 values = null;
@@ -92,13 +91,11 @@ public class ISPUtil {
     }
 
     public static List<String> getFieldStringValues(Field field) {
-        List vList = getFieldValues(field);
-        ArrayList list = new ArrayList();
-        Iterator i$ = vList.iterator();
+        List<Value> vList = getFieldValues(field);
+        List<String> list = new ArrayList<>();
 
-        while(i$.hasNext()) {
-            Value v = (Value)i$.next();
-            list.add(v.getValue());
+        for (Value aVList : vList) {
+            list.add(aVList.getValue());
         }
 
         return list;
