@@ -2,9 +2,11 @@ package com.voyageone.web2.sdk.api.exception;
 
 /**
  * API前置检查异常。
+ * Created on 2015-12-14
  *
- * @author fengsheng
- * @since 1.0, May 23, 2012
+ * @author chuanyu.liang
+ * @version 2.0.0
+ * @since. 2.0.0
  */
 public class ApiRuleException extends ApiException {
 

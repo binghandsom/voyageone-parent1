@@ -1,98 +1,50 @@
 package com.voyageone.web2.sdk.api;
 
-import com.voyageone.web2.sdk.api.internal.mapping.ApiField;
-
-import java.io.Serializable;
-import java.util.Map;
-
 
 /**
- * TOPAPI基础响应信息。
+ * Respose Entity
+ * Created on 2015-12-14
  *
- * @author fengsheng
+ * @author chuanyu.liang
+ * @version 2.0.0
+ * @since. 2.0.0
  */
-public abstract class VoApiResponse implements Serializable {
+public class VoApiResponse {
 
-	private static final long serialVersionUID = 5014379068811962022L;
+    /**
+     * 消息code
+     */
+    private String code = "0";
 
-	@ApiField("code")
-	private String errorCode;
+    /**
+     * 消息
+     */
+    private String message;
 
-	@ApiField("msg")
-	private String msg;
+    public VoApiResponse() {
 
-	@ApiField("sub_code")
-	private String subCode;
+    }
 
-	@ApiField("sub_msg")
-	private String subMsg;
-	
-	@ApiField("top_forbidden_fields")
-	private String topForbiddenFields;
-	
 
-	private String body;
-	private Map<String, String> params;
+    public VoApiResponse(String code, String message) {
+        this.code = code;
+        this.message = message;
+    }
 
-	public String getErrorCode() {
-		return errorCode;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setErrorCode(String errorCode) {
-		this.errorCode = errorCode;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public String getMsg() {
-		return msg;
-	}
+    public String getMessage() {
+        return message;
+    }
 
-	public void setMsg(String msg) {
-		this.msg = msg;
-	}
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
-	public String getSubCode() {
-		return this.subCode;
-	}
-
-	public void setSubCode(String subCode) {
-		this.subCode = subCode;
-	}
-
-	public String getSubMsg() {
-		return this.subMsg;
-	}
-
-	public void setSubMsg(String subMsg) {
-		this.subMsg = subMsg;
-	}
-
-	public String getBody() {
-		return body;
-	}
-
-	public void setBody(String body) {
-		this.body = body;
-	}
-
-	public Map<String, String> getParams() {
-		return params;
-	}
-
-	public void setParams(Map<String, String> params) {
-		this.params = params;
-	}
-
-	public boolean isSuccess() {
-		return this.errorCode == null && this.subCode == null;
-	}
-
-	public String getTopForbiddenFields() {
-		return this.topForbiddenFields;
-	}
-
-	public void setTopForbiddenFields(String topForbiddenFields) {
-		this.topForbiddenFields = topForbiddenFields;
-	}
-	
-	
 }
