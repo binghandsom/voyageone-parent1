@@ -794,7 +794,7 @@ public class SpaldingReportService extends CreateReportBaseService {
 
         }
         //当前SKU和对方SKU不一致
-        if (!specialSku.equals(reportBean.getTransfer_sku())) {
+        if (!specialSku.equals(reportBean.getTransfer_sku()) && !StringUtils.isNullOrBlank2(specialSku)) {
             //reportBean.setTransfer_sku(specialSku);
             int value = specialSku.lastIndexOf("-");
             reportBean.setItemcode(specialSku.substring(0,value));
