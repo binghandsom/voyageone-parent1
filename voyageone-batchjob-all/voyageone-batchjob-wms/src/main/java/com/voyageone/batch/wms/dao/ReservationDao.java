@@ -257,13 +257,14 @@ public class ReservationDao extends BaseDao {
      * @param takeName 任务名
      * @return int
      */
-    public int updateClientStatus(long orderNumber, long itemNumber, String reservationStatus, String takeName) {
+    public int updateClientStatus(long orderNumber, long itemNumber, String reservationStatus, String clientStatus, String takeName) {
 
         Map<String, Object> params = new HashMap<>();
 
         params.put("orderNumber", orderNumber);
         params.put("itemNumber", itemNumber);
         params.put("reservationStatus", reservationStatus);
+        params.put("clientStatus", clientStatus);
         params.put("takeName", takeName);
 
         return updateTemplate.update(Constants.DAO_NAME_SPACE_WMS + "wms_updateClientStatus", params);
