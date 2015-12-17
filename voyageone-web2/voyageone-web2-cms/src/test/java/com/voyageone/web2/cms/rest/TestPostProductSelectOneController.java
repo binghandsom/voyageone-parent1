@@ -24,18 +24,25 @@ import org.springframework.web.bind.annotation.RestController;
         value  = "/rest/puroduct",
         method = RequestMethod.POST
 )
-public class PostProductSelectOneController extends CmsRestController {
+public class TestPostProductSelectOneController extends CmsRestController {
 
     @Autowired
-    private PostProductSelectOneService productService;
+    protected VoApiDefaultClient voApiClient;
+
 
     /**
      * 返回selectOne
      * @return
      */
-    @RequestMapping("selectOne")
-    public PostProductSelectOneResponse selectOne(@RequestBody PostProductSelectOneRequest responseMode) {
-        CmsBtProductModel model = productService.selectOne(responseMode);
+    @RequestMapping("selectOne1")
+    public PostProductSelectOneResponse selectOne1(@RequestBody PostProductSelectOneRequest responseMode) {
+
+        //设置参数
+        PostProductSelectOneRequest requestModel = new PostProductSelectOneRequest("300");
+        requestModel.setProductId((long) 2);
+        //SDK取得Product 数据
+        CmsBtProductModel model = voApiClient.execute(requestModel).getProduct();
+
 
         PostProductSelectOneResponse result = new PostProductSelectOneResponse();
         result.setProduct(model);
@@ -43,4 +50,5 @@ public class PostProductSelectOneController extends CmsRestController {
         // 返回用户信息
         return result;
     }
+
 }

@@ -1,6 +1,6 @@
 package com.voyageone.batch.cms.model.mongo;
 
-import com.voyageone.base.dao.mongodb.model.CmsMtCategorySchemaModel;
+import com.voyageone.cms.service.model.CmsMtCategorySchemaModel;
 
 /**
  * Created by lewis on 15-12-10.

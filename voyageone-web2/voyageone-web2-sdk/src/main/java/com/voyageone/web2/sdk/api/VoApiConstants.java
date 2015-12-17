@@ -47,9 +47,11 @@ public class VoApiConstants {
 
 
     public enum VoApiErrorCodeEnum {
+        ERROR_CODE_70000("70000", "Unknow Error!"),
         ERROR_CODE_70001("70001", "body is null."),
         ERROR_CODE_70002("70002", "code is null"),
-        ERROR_CODE_70000("70000", "Unknow Error!");
+        ERROR_CODE_70003("70003", "channelId not found"),
+        ;
 
         private final String errorCode;
         private final String errorMsg;
