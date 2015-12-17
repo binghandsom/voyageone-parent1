@@ -72,6 +72,8 @@
   "TXT_PRODUCT_CODE": "Product Code:",
   "TXT_PRODUCT_NAME": "Product Name:",
   "TXT_CATEGORY": "类目:",
+  "TXT_CHANNEL": "渠道:",
+  "TXT_PROMOTION": "活动:",
 
   "BTN_CANCEL": "取消 ",
   "BTN_CLEAR": "清空",

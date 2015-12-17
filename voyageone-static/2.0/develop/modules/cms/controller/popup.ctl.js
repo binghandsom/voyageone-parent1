@@ -85,29 +85,34 @@ define([
             });
         }
         $scope.openupdateProperties = openupdateProperties;
-        function openupdateProperties(viewSize) {
-            $modal.open({
-                templateUrl: popActions.prop_change.templateUrl,
-                controllerUrl: popActions.prop_change.controllerUrl,
-                size: viewSize,
-                resolve: {
-                    items: function () {
-                        //return data;
+        function openupdateProperties(viewSize,data) {
+            require([popActions.prop_change.controllerUrl], function(){
+                $modal.open({
+                    templateUrl: popActions.prop_change.templateUrl,
+                    controller: 'popPropChangeCtl',
+                    size: viewSize,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
                     }
-                }
+                });
             });
         }
+
         $scope.openNewpromotion = openNewpromotion;
-        function openNewpromotion(viewSize) {
-            $modal.open({
-                templateUrl: popActions.tag.promotion.templateUrl,
-                controllerUrl: popActions.tag.promotion.controllerUrl,
-                size: viewSize,
-                resolve: {
-                    items: function () {
-                        //return data;
+        function openNewpromotion(viewSize, promotion) {
+            require([popActions.tag.promotion.controllerUrl], function () {
+                $modal.open({
+                    templateUrl: popActions.tag.promotion.templateUrl,
+                    controller: 'popTagPromotionCtl',
+                    size: viewSize,
+                    resolve: {
+                        promotion: function () {
+                            return promotion;
+                        }
                     }
-                }
+                });
             });
         }
         $scope.openNewcategory = openNewcategory;

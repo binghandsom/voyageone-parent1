@@ -33,4 +33,12 @@ public class CmsPromotionSelectController extends CmsController {
         return success(result);
     }
 
+    @RequestMapping(CmsUrlConstants.PROM.SELECT.ADD_TO_PROMOTION)
+    public AjaxResponse addToPromotion(@RequestBody Map<String, Object> params) {
+        String channel_id = getUser().getSelChannelId();
+        String user_name = getUser().getUserName();
+        Map<String, Object> result = promotionSelectService.addToPromotion(params, channel_id, user_name);
+        return success(result);
+    }
+
 }

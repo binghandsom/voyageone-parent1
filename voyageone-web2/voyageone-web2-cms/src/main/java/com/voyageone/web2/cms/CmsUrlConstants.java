@@ -73,7 +73,7 @@ public interface CmsUrlConstants {
 
             String GET_PROM_TAGS = "getPromotionTags";
 
-            String SET_PROM_TAG = "setPromotionTag";
+            String ADD_TO_PROMOTION = "addToPromotion";
         }
     }
     interface SEARCH {
