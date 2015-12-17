@@ -1,7 +1,7 @@
-package com.voyageone.batch.ims.dao;
+package com.voyageone.batch.cms.dao;
 
 import com.voyageone.base.dao.BaseDao;
-import com.voyageone.batch.ims.modelbean.ConditionPropValue;
+import com.voyageone.batch.cms.model.ConditionPropValue;
 import com.voyageone.common.Constants;
 import org.springframework.stereotype.Repository;
 

@@ -3,6 +3,7 @@ package com.voyageone.batch.cms.service.tmall;
 import com.taobao.api.ApiException;
 import com.taobao.api.response.TmallItemSchemaAddResponse;
 import com.taobao.api.response.TmallItemSchemaUpdateResponse;
+import com.taobao.api.response.TmallItemUpdateSchemaGetResponse;
 import com.taobao.top.schema.enums.FieldTypeEnum;
 import com.taobao.top.schema.exception.TopSchemaException;
 import com.taobao.top.schema.factory.SchemaReader;
@@ -12,13 +13,14 @@ import com.taobao.top.schema.value.ComplexValue;
 import com.voyageone.batch.cms.bean.*;
 import com.voyageone.batch.cms.bean.tcb.*;
 import com.voyageone.batch.cms.dao.BrandMapDao;
+import com.voyageone.batch.cms.dao.DictWordDao;
 import com.voyageone.batch.cms.dao.PlatformPropCustomMappingDao;
 import com.voyageone.batch.cms.enums.PlatformWorkloadStatus;
 import com.voyageone.batch.cms.enums.TmallWorkloadStatus;
+import com.voyageone.batch.cms.model.ConditionPropValue;
 import com.voyageone.batch.cms.model.CustomPlatformPropMapping;
 import com.voyageone.batch.cms.model.WorkLoadBean;
-import com.voyageone.batch.cms.service.PlatformServiceInterface;
-import com.voyageone.batch.cms.service.UploadProductHandler;
+import com.voyageone.batch.cms.service.*;
 import com.voyageone.batch.cms.service.rule_parser.ExpressionParser;
 import com.voyageone.batch.cms.service.rule_parser.MasterWordParser;
 import com.voyageone.cms.service.bean.ComplexMappingBean;
@@ -35,6 +37,10 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.tmall.TbProductService;
 import com.voyageone.common.configs.ShopConfigs;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.ims.modelbean.DictWordBean;
+import com.voyageone.ims.rule_expression.DictWord;
+import com.voyageone.ims.rule_expression.RuleExpression;
+import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,25 +69,25 @@ public class TmallProductService implements PlatformServiceInterface {
     private PropValueDao propValueDao;
     @Autowired
     private PropDao propDao;
+    */
     @Autowired
     private SkuFieldBuilderFactory skuFieldBuilderFactory;
-    */
     @Autowired
     private PriceSectionBuilder priceSectionBuilder;
     /*
     @Autowired
     private SkuInfoDao skuInfoDao;
+    */
     @Autowired
     private DictWordDao dictWordDao;
-    */
     @Autowired
     private IssueLog issueLog;
     /*
     @Autowired
     private DarwinStyleMappingDao darwinStyleMappingDao;
+    */
     @Autowired
     private ConditionPropValueRepo conditionPropValueRepo;
-    */
 
     public void doJob(UploadProductTcb tcb, UploadProductHandler uploadProductHandler) throws TaskSignal {
         UpJobParamBean upJobParamBean = tcb.getWorkLoadBean().getUpJobParam();
@@ -309,9 +315,7 @@ public class TmallProductService implements PlatformServiceInterface {
                 tmallUploadRunState.getContextBuildFields().clearContext();
             } else {
                 logger.info("No product_code matched");
-                //##############临时测试
                 tmallWorkloadStatus.setValue(TmallWorkloadStatus.ADD_UPLOAD_PRODUCT);
-//                tmallWorkloadStatus.setValue(TmallWorkloadStatus.ADD_UPLOAD_ITEM);
                 tmallUploadRunState.getContextBuildFields().clearContext();
             }
         } catch (Exception e) {
@@ -1208,7 +1212,7 @@ public class TmallProductService implements PlatformServiceInterface {
             CmsBtProductModel cmsProduct = sxProduct.getCmsBtProductModel();
             for (CmsBtProductModel_Sku cmsBtProductModelSku : cmsProduct.getSkus()) {
                 int skuQuantity = 0;
-                Integer skuQuantityInteger = skuInventoryMap.get(cmsBtProductModelSku.getSku());
+                Integer skuQuantityInteger = skuInventoryMap.get(cmsBtProductModelSku.getSkuCode());
                 if (skuQuantityInteger != null) {
                     skuQuantity = skuQuantityInteger;
                 }
@@ -1216,7 +1220,7 @@ public class TmallProductService implements PlatformServiceInterface {
                 try {
                     skuPrice = Double.valueOf(cmsBtProductModelSku.getPriceSale());
                 } catch (Exception e) {
-                    logger.warn("No price for sku " + cmsBtProductModelSku.getSku());
+                    logger.warn("No price for sku " + cmsBtProductModelSku.getSkuCode());
                 }
                 if (onePrice - 0d == 0) {
                     onePrice = skuPrice;
@@ -1288,24 +1292,26 @@ public class TmallProductService implements PlatformServiceInterface {
 
                     workLoadBean.setHasSku(true);
 
-                    //TODO 将要从tmall平台获取已被占用的color, 暂时赋值为null
-                    List<String> excludeColors = null;
-                    /*
-                    AbstractSkuFieldBuilder skuFieldBuilder = skuFieldBuilderFactory.getSkuFieldBuilder(cartId, platformProps);
+                    List<Field> allSkuFields = new ArrayList<>();
+                    recursiveGetFields(processFields, allSkuFields);
+                    AbstractSkuFieldBuilder skuFieldBuilder = skuFieldBuilderFactory.getSkuFieldBuilder(cartId, allSkuFields);
+                    skuFieldBuilder.setExpressionParser(expressionParser);
 
                     if (skuFieldBuilder == null)
                     {
                         throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("No sku builder find"));
                     }
-                     //
+
                     DictWordBean dictWordBean = dictWordDao.selectDictWordByName(workLoadBean.getOrder_channel_id(), "属性图片模板");
                     RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
                     DictWord dictWord = (DictWord) ruleJsonMapper.deserializeRuleWord(dictWordBean.getValue());
                     String codePropImageTemplate = expressionParser.parse(dictWord.getExpression(), null);
                     skuFieldBuilder.setCodeImageTemplete(codePropImageTemplate);
 
-                    List<Field> skuInfoFields = skuFieldBuilder.buildSkuInfoField(cartId, categoryCode, platformProps,
-                     workLoadBean.getCmsModelProp(), contextBuildCustomFields, imageSet);
+                    List<Field> skuInfoFields = skuFieldBuilder.buildSkuInfoField(cartId, categoryCode, processFields,
+                            workLoadBean.getProcessProducts(), workLoadBean.getSkuProductMap(),
+                            workLoadBean.getCmsMtPlatformMappingModel(), workLoadBean.getSkuInventoryMap(),
+                            contextBuildCustomFields, imageSet);
 
                     if (skuInfoFields == null)
                     {
@@ -1314,7 +1320,6 @@ public class TmallProductService implements PlatformServiceInterface {
                     contextBuildFields.getCustomFields().addAll(skuInfoFields);
                     contextBuildCustomFields.setSkuFieldBuilder(skuFieldBuilder);
                     break;
-                    */
                 }
                 case PRICE_SECTION:
                 {
@@ -1348,6 +1353,9 @@ public class TmallProductService implements PlatformServiceInterface {
                     if (processFields == null || processFields.size() != 1)
                     {
                         throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("tmall style code's platformProps must have only one prop!"));
+                    }
+                    if (processFields.get(0).getType() != FieldTypeEnum.INPUT) {
+                        break;
                     }
                     InputField  field = (InputField) processFields.get(0);
 
@@ -1394,18 +1402,16 @@ public class TmallProductService implements PlatformServiceInterface {
                     contextBuildFields.addCustomField(itemPriceField);
                     break;
                 }
-                /*
                 case TMALL_XINGHAO:
                 {
-                    if (platformProps == null || platformProps.size() != 2)
+                    if (processFields == null || processFields.size() != 2)
                     {
                         throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("tmall item xinghao's platformProps must have two props!"));
                     }
 
-                    for (PlatformPropBean platformProp : platformProps) {
-                        if (platformProp.getPlatformPropType() == ImsConstants.PlatformPropType.C_SINGLE_CHECK) {
+                    for (Field processField : processFields) {
+                        if (processField.getType() == FieldTypeEnum.SINGLECHECK) {
                             SingleCheckField field = (SingleCheckField) FieldTypeEnum.createField(FieldTypeEnum.SINGLECHECK);
-                            field.setId(platformProp.getPlatformPropId());
                             //prop_1626510（型号）值设为-1(表示其他）
                             field.setValue("-1");
                             contextBuildFields.addCustomField(field);
@@ -1413,7 +1419,6 @@ public class TmallProductService implements PlatformServiceInterface {
                         else {
                             //其他的型号值填货号
                             InputField field = (InputField) FieldTypeEnum.createField(FieldTypeEnum.INPUT);
-                            field.setId(platformProp.getPlatformPropId());
 
                             String styleCode = tmallUploadRunState.getStyle_code();
                             if (styleCode == null || "".equals(styleCode)) {
@@ -1428,7 +1433,7 @@ public class TmallProductService implements PlatformServiceInterface {
                     break;
                 }
                 case TMALL_OUT_ID: {
-                    if (platformProps == null || platformProps.size() != 1)
+                    if (processFields == null || processFields.size() != 1)
                     {
                         throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("tmall item outId's platformProps must have one prop!"));
                     }
@@ -1439,44 +1444,39 @@ public class TmallProductService implements PlatformServiceInterface {
                             break;
                         }
                     }
-                    if (hasSku)
-                    {
+                    if (hasSku) {
                         logger.info("已经有sku属性，忽略商品外部编码");
                         continue;
                     }
-                    PlatformPropBean platformProp = platformProps.get(0);
-                    InputField  field = (InputField) FieldTypeEnum.createField(FieldTypeEnum.INPUT);
-                    field.setId(platformProp.getPlatformPropId());
-                    List<CmsCodePropBean> cmsCodePropBeans = workLoadBean.getCmsModelProp().getCmsCodePropBeanList();
-                    if (cmsCodePropBeans.size() != 1) {
+                    InputField  field = (InputField) processFields;
+                    List<SxProductBean> processProducts = workLoadBean.getProcessProducts();
+                    if (processProducts.size() != 1) {
                         String errorCause = "包含商品外部编码的类目必须只有一个code";
                         logger.error(errorCause);
                         throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(errorCause));
                     }
-                    CmsCodePropBean cmsCodeProp = cmsCodePropBeans.get(0);
-                    List<CmsSkuPropBean> cmsSkuProps = cmsCodeProp.getCmsSkuPropBeanList();
-                    if (cmsSkuProps.size() != 1) {
+                    SxProductBean sxProductBean = processProducts.get(0);
+                    List<CmsBtProductModel_Sku> cmsBtProductModelSkus = sxProductBean.getCmsBtProductModel().getSkus();
+                    if (cmsBtProductModelSkus.size() != 1) {
                         String errorCause = "包含商品外部编码的类目必须只有一个sku";
                         logger.error(errorCause);
                         throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(errorCause));
                     }
-                    field.setValue(cmsSkuProps.get(0).getProp(CmsFieldEnum.CmsSkuEnum.sku));
+                    field.setValue(cmsBtProductModelSkus.get(0).getSkuCode());
                     contextBuildFields.addCustomField(field);
                     break;
                 }
                 case TMALL_SHOP_CATEGORY:
                 {
-                    if (platformProps == null || platformProps.size() != 1)
+                    if (processFields == null || processFields.size() != 1)
                     {
                         throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("tmall item shop_category's platformProps must have one prop!"));
                     }
 
                     if ("010".equals(workLoadBean.getOrder_channel_id())) {
-                        PlatformPropBean platformProp = platformProps.get(0);
-                        MultiCheckField field = (MultiCheckField) FieldTypeEnum.createField(FieldTypeEnum.MULTICHECK);
-                        String platformPropId = platformProp.getPlatformPropId();
+                        Field processField = processFields.get(0);
+                        String platformPropId = processField.getId();
                         List<ConditionPropValue> conditionPropValues = conditionPropValueRepo.get(workLoadBean.getOrder_channel_id(), platformPropId);
-                        field.setId(platformPropId);
                         if (conditionPropValues != null && !conditionPropValues.isEmpty()) {
                             RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
                             for (ConditionPropValue conditionPropValue : conditionPropValues) {
@@ -1484,10 +1484,10 @@ public class TmallProductService implements PlatformServiceInterface {
                                 RuleExpression conditionExpression= ruleJsonMapper.deserializeRuleExpression(conditionExpressionStr);
                                 String propValue = expressionParser.parse(conditionExpression, null);
                                 if (propValue != null) {
-                                    field.addValue(propValue);
+                                    ((MultiCheckField)processField).addValue(propValue);
                                 }
                             }
-                            contextBuildFields.addCustomField(field);
+                            contextBuildFields.addCustomField(processField);
                         }
                     } else if ("012".equals(workLoadBean.getOrder_channel_id())) {
 //                        for (Iterator<PlatformPropBean> iter = platformPropsWillBeFilted.iterator(); iter.hasNext(); ) {
@@ -1531,7 +1531,6 @@ public class TmallProductService implements PlatformServiceInterface {
                     }
                     break;
                 }
-                    */
             }
         }
     }
@@ -1562,6 +1561,9 @@ public class TmallProductService implements PlatformServiceInterface {
             Field field = fieldMap.get(mappingBean.getPlatformPropId());
             if (field == null) {
                 continue;
+            }
+            if ("item_images".equals(mappingBean.getPlatformPropId())) {
+                logger.info("abc");
             }
             mappingFields.add(resolveMapping(cmsMainProduct, mappingBean, field, srcUrlStashEntityMap, expressionParser, imageSet));
         }
@@ -1630,6 +1632,11 @@ public class TmallProductService implements PlatformServiceInterface {
                     Map<String, Field> schemaFieldsMap = complexField.getFieldMap();
 
                     Field schemaField = schemaFieldsMap.get(platformPropId);
+                    if (schemaField == null) {
+                        logger.warn("有" + platformPropId + "的mapping关系却没有该属性");
+                        logger.warn("跳过属性" + platformPropId);
+                        continue;
+                    }
                     Field valueField = FieldTypeEnum.createField(schemaField.getType());
                     valueField.setId(platformPropId);
                     valueField = resolveMapping(cmsMainProduct, subMappingBean, valueField, srcUrlStashEntityMap, expressionParser, imageSet);
@@ -1640,6 +1647,11 @@ public class TmallProductService implements PlatformServiceInterface {
                 }
             } else if (field.getType() == FieldTypeEnum.MULTICOMPLEX) {
                 List<Map<String, Object>> masterWordEvaluationContexts = (List<Map<String, Object>>) cmsMainProduct.getFields().get(complexMappingBean.getMasterPropId());
+
+                if (masterWordEvaluationContexts == null || masterWordEvaluationContexts.isEmpty()) {
+                    logger.info("No value found for MultiComplex field: " + field.getId());
+                    return field;
+                }
 
                 MultiComplexField multiComplexField = (MultiComplexField) field;
                 List<ComplexValue> complexValues = new ArrayList<>();
@@ -1663,12 +1675,10 @@ public class TmallProductService implements PlatformServiceInterface {
 
                     expressionParser.popMasterPropContext();
                 }
-
             } else {
                 logger.error("Unexpected field type: " + field.getType());
                 return null;
             }
-
         }
         return field;
     }
@@ -1709,5 +1719,22 @@ public class TmallProductService implements PlatformServiceInterface {
             }
         }
         return allFields;
+    }
+
+    private void recursiveGetFields(List<Field> fields, List<Field> resultFields) {
+        for (Field field : fields) {
+            switch (field.getType()) {
+                case COMPLEX:
+                    recursiveGetFields(((ComplexField)field).getFieldList(), resultFields);
+                    resultFields.add(field);
+                    break;
+                case MULTICOMPLEX:
+                    recursiveGetFields(((MultiComplexField)field).getFieldList(), resultFields);
+                    resultFields.add(field);
+                    break;
+                default:
+                    resultFields.add(field);
+            }
+        }
     }
 }

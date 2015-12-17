@@ -48,9 +48,13 @@ public class MasterWordParser {
             } else {
                 plainPropValueObj = evaluationContext.get(propName);
             }
+            //如果evaluetionContext存在，但其中的某属性为空，那么从全局取
+            if (plainPropValueObj == null) {
+                plainPropValueObj = cmsBtProductModel.getFields().getAttribute(propName);
+            }
 
             if (extra == null) {
-                return (String)plainPropValueObj;
+                return String.valueOf(plainPropValueObj);
             } else {
                 if (plainPropValueObj instanceof String) {
                     return extra.get(plainPropValueObj);

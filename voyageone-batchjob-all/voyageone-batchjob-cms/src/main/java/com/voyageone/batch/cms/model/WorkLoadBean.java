@@ -3,6 +3,7 @@ package com.voyageone.batch.cms.model;
 import com.voyageone.batch.cms.bean.SxProductBean;
 import com.voyageone.batch.cms.bean.UpJobParamBean;
 import com.voyageone.batch.cms.enums.PlatformWorkloadStatus;
+import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
 import com.voyageone.cms.service.model.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.cms.service.model.CmsMtPlatformMappingModel;
 
@@ -21,10 +22,10 @@ public class WorkLoadBean implements Cloneable{
     private UpJobParamBean upJobParam;
     private List<SxProductBean> processProducts;
     private SxProductBean mainProduct;
+    private Map<CmsBtProductModel_Sku, SxProductBean> skuProductMap;
     private CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel;
     private CmsMtPlatformMappingModel cmsMtPlatformMappingModel;
     private Map<String, Integer> skuInventoryMap;
-
 
     //任务状态
     private PlatformWorkloadStatus workload_status;
@@ -201,6 +202,14 @@ public class WorkLoadBean implements Cloneable{
 
     public void setSkuInventoryMap(Map<String, Integer> skuInventoryMap) {
         this.skuInventoryMap = skuInventoryMap;
+    }
+
+    public Map<CmsBtProductModel_Sku, SxProductBean> getSkuProductMap() {
+        return skuProductMap;
+    }
+
+    public void setSkuProductMap(Map<CmsBtProductModel_Sku, SxProductBean> skuProductMap) {
+        this.skuProductMap = skuProductMap;
     }
 
     public List<SxProductBean> getProcessProducts() {

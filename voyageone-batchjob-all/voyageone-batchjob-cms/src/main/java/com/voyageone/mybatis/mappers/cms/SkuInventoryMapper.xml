@@ -4,7 +4,7 @@
     <select id="cms_selectInventoryBySku" resultType="com.voyageone.batch.cms.model.SkuInventoryModel" parameterType="Map">
         SELECT
             sku,
-            qty_china
+            qty_china as inventory
         FROM Synship.wms_bt_inventory_center_logic
         WHERE
             sku in

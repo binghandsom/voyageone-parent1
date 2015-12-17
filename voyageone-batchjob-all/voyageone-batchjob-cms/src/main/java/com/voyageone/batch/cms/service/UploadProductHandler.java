@@ -20,10 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -69,10 +66,18 @@ public class UploadProductHandler extends UploadWorkloadHandler{
 
             List<String> skus = new ArrayList<>();
             for (SxProductBean sxProductBean : workLoadBean.getProcessProducts()) {
-                skus.addAll(sxProductBean.getCmsBtProductModel().getSkus().stream().map(CmsBtProductModel_Sku::getSku).collect(Collectors.toList()));
+                skus.addAll(sxProductBean.getCmsBtProductModel().getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList()));
             }
             Map<String, Integer> skuInventoryMap = skuInventoryDao.getSkuInventory(channelId, skus);
             workLoadBean.setSkuInventoryMap(skuInventoryMap);
+
+            Map<CmsBtProductModel_Sku, SxProductBean> skuProductMap = new HashMap<>();
+            for (SxProductBean sxProductBean : workLoadBean.getProcessProducts()) {
+                for (CmsBtProductModel_Sku sku : sxProductBean.getCmsBtProductModel().getSkus()) {
+                    skuProductMap.put(sku, sxProductBean);
+                }
+            }
+            workLoadBean.setSkuProductMap(skuProductMap);
 
             String platformCId = cmsMtPlatformMappingModel.getPlatformCategoryId();
 
@@ -93,7 +98,7 @@ public class UploadProductHandler extends UploadWorkloadHandler{
                     workloadStatus.setValue(PlatformWorkloadStatus.UPDATE_START);
                     break;
                 default:
-                    String failCause = "unexpect upJob Param method: " + workLoadBean.getUpJobParam().getMethod();
+                    String failCause = "Unexpected upJob Param method: " + workLoadBean.getUpJobParam().getMethod();
                     abortJob(workLoadBean, workloadStatus, failCause);
                     return;
             }

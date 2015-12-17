@@ -16,18 +16,18 @@ import java.util.Map;
 public class DictWordDao extends BaseDao{
     public int addDictWord(DictWordBean dictWordBean)
     {
-        return updateTemplate.insert(Constants.DAO_NAME_SPACE_IMS + "ims_insertDictWord", dictWordBean);
+        return updateTemplate.insert(Constants.DAO_NAME_SPACE_CMS + "cms_insertDictWord", dictWordBean);
     }
 
     public List<DictWordBean> selectDictWords()
     {
-        return updateTemplate.selectList(Constants.DAO_NAME_SPACE_IMS + "ims_selectDictWords");
+        return updateTemplate.selectList(Constants.DAO_NAME_SPACE_CMS + "cms_selectDictWords");
     }
 
     public DictWordBean selectDictWordByName(String orderChannelId, String name) {
         Map<String, Object> dataMap = new HashMap<>();
         dataMap.put("order_channel_id", orderChannelId);
         dataMap.put("name", name);
-        return selectOne(Constants.DAO_NAME_SPACE_IMS + "ims_selectDictWordsByName", dataMap);
+        return selectOne(Constants.DAO_NAME_SPACE_CMS + "cms_selectDictWordsByName", dataMap);
     }
 }
