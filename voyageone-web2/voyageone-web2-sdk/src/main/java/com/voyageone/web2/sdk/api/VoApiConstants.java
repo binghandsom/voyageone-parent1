@@ -25,8 +25,6 @@ public class VoApiConstants {
     /** TOP XML 应格式 */
     public static final String FORMAT_XML = "xml";
 
-    /** 无签名方式 */
-    public static final String SIGN_METHOD_NONE = "";
     /** MD5签名方式 */
     public static final String SIGN_METHOD_MD5 = "md5";
     /** HMAC签名方式 */

@@ -21,14 +21,14 @@ public class CmsProductService {
     /**
      * 获取商品 根据ID获
      */
-    public CmsBtProductModel getProductById(String channelId, int prodId) {
+    public CmsBtProductModel getProductById(String channelId, long prodId) {
         return cmsBtProductDao.selectProductById(channelId, prodId);
     }
 
     /**
      * 获取商品 根据ID获
      */
-    public JSONObject getProductByIdWithJson(String channelId, int prodId) {
+    public JSONObject getProductByIdWithJson(String channelId, long prodId) {
         return cmsBtProductDao.selectProductByIdWithJson(channelId, prodId);
     }
 
@@ -42,7 +42,7 @@ public class CmsProductService {
     /**
      * 获取商品List 根据GroupId
      */
-    public List<CmsBtProductModel> getProductByGroupId(String channelId, int groupId) {
+    public List<CmsBtProductModel> getProductByGroupId(String channelId, long groupId) {
         return cmsBtProductDao.selectProductByGroupId(channelId, groupId);
     }
 
