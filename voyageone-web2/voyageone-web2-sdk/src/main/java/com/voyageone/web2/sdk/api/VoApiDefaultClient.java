@@ -1,90 +1,83 @@
 package com.voyageone.web2.sdk.api;
 
+import com.voyageone.common.util.MD5;
 import com.voyageone.web2.sdk.api.exception.ApiException;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
-import com.voyageone.web2.sdk.api.internal.parser.json.ObjectGsonParser;
-import com.voyageone.web2.sdk.api.internal.parser.xml.ObjectXmlParser;
-import com.voyageone.web2.sdk.api.internal.util.VoApiHashMap;
-import com.voyageone.web2.sdk.api.util.*;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.Map;
+import java.net.URI;
 
 /**
  * 基于REST的TOP客户端。
  *
- * @author carver.gu
- * @since 1.0, Sep 13, 2009
+ * @author chuanyu.liang 2015/12/10
+ * @version 2.0.0
+ * @since. 2.0.0
  */
 public class VoApiDefaultClient implements VoApiClient {
 
 	private static final String APP_KEY = "app_key";
-	private static final String FORMAT = "format";
-	private static final String METHOD = "method";
 	private static final String TIMESTAMP = "timestamp";
-	private static final String VERSION = "v";
 	private static final String SIGN = "sign";
-	private static final String SIGN_METHOD = "sign_method";
-	private static final String PARTNER_ID = "partner_id";
+	private static final String SIGN_EXTEND = "voyage_sign_";
 	private static final String SESSION = "session";
-	private static final String SIMPLIFY = "simplify";
 
 	private String serverUrl;
 	private String appKey;
 	private String appSecret;
-	private String format = VoApiConstants.FORMAT_JSON;
-	//private String signMethod = VoApiConstants.SIGN_METHOD_HMAC;
-	private String signMethod = VoApiConstants.SIGN_METHOD_NONE;
+	private String signMethod = VoApiConstants.SIGN_METHOD_MD5;
 
 	private int connectTimeout = 3000;//3秒
-	//private int readTimeout = 1500000;//15秒
-	//liang change
-	private int readTimeout = 1500000;//15秒
+	private int readTimeout = 6000;//60秒
 	private boolean needCheckRequest = true; // 是否在客户端校验请求
 	private boolean needEnableParser = true; // 是否对响应结果进行解释
-	private boolean useSimplifyJson = false; // 是否采用精简化的JSON返回
 	private boolean useGzipEncoding = false; // 是否启用响应GZIP压缩
 
-	public VoApiDefaultClient(String serverUrl, String appKey, String appSecret) {
-		this.appKey = appKey;
-		this.appSecret = appSecret;
+
+	protected RestTemplate restTemplate;
+
+	public VoApiDefaultClient(RestTemplate restTemplate, String serverUrl) {
+		this.restTemplate = restTemplate;
 		this.serverUrl = serverUrl;
+		setRestTemplate();
 	}
 
-	public VoApiDefaultClient(String serverUrl, String appKey, String appSecret, String format) {
-		this(serverUrl, appKey, appSecret);
-		this.format = format;
-	}
-
-	public VoApiDefaultClient(String serverUrl, String appKey, String appSecret, String format, int connectTimeout, int readTimeout) {
-		this(serverUrl, appKey, appSecret, format);
+	public VoApiDefaultClient(RestTemplate restTemplate, String serverUrl, int connectTimeout, int readTimeout) {
+		this.restTemplate = restTemplate;
+		this.serverUrl = serverUrl;
 		this.connectTimeout = connectTimeout;
 		this.readTimeout = readTimeout;
+		setRestTemplate();
 	}
 
-	public VoApiDefaultClient(String serverUrl, String appKey, String appSecret, String format, int connectTimeout, int readTimeout, String signMethod) {
-		this(serverUrl, appKey, appSecret, format, connectTimeout, readTimeout);
-		this.signMethod = signMethod;
+	private void setRestTemplate() {
+		ClientHttpRequestFactory rf = restTemplate.getRequestFactory();
+		if (rf instanceof SimpleClientHttpRequestFactory) {
+			SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = (SimpleClientHttpRequestFactory)rf;
+			simpleClientHttpRequestFactory.setConnectTimeout(connectTimeout);
+			simpleClientHttpRequestFactory.setReadTimeout(readTimeout);
+		} else if (rf instanceof HttpComponentsClientHttpRequestFactory) {
+			HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory = (HttpComponentsClientHttpRequestFactory)rf;
+			httpComponentsClientHttpRequestFactory.setConnectTimeout(connectTimeout);
+			httpComponentsClientHttpRequestFactory.setReadTimeout(readTimeout);
+		}
 	}
 
+	@Override
 	public <T extends VoApiResponse> T execute(VoApiRequest<T> request) throws ApiException {
 		return execute(request, null);
 	}
 
 	public <T extends VoApiResponse> T execute(VoApiRequest<T> request, String session) throws ApiException {
-		VoApiParser<T> parser = null;
-		if (this.needEnableParser) {
-			if (VoApiConstants.FORMAT_XML.equals(this.format)) {
-				parser = new ObjectXmlParser<T>(request.getResponseClass());
-			} else {
-				parser = new ObjectGsonParser<T>(request.getResponseClass(), this.useSimplifyJson);
-			}
-		}
-		return _execute(request, parser, session);
+		return _execute(request, session);
 	}
 
-	private <T extends VoApiResponse> T _execute(VoApiRequest<T> request, VoApiParser<T> parser, String session) throws ApiException {
+	private <T extends VoApiResponse> T _execute(VoApiRequest<T> request, String session) throws ApiException {
 		if (this.needCheckRequest) {
 			try {
 				request.check();
@@ -95,118 +88,68 @@ public class VoApiDefaultClient implements VoApiClient {
 				} catch (Exception xe) {
 					throw new ApiException(xe);
 				}
-				localResponse.setErrorCode(e.getErrCode());
-				localResponse.setMsg(e.getErrMsg());
+				localResponse.setCode(e.getErrCode());
+				localResponse.setMessage(e.getErrMsg());
 				return localResponse;
 			}
 		}
 
-		RequestParametersHolder context = doPost(request, session);
-
-		T tRsp = null;
-		if (this.needEnableParser) {
-			try {
-				tRsp = parser.parse(context.getResponseBody());
-				tRsp.setBody(context.getResponseBody());
-			} catch (RuntimeException e) {
-				VoApiLogger.logBizError(context.getResponseBody());
-				throw e;
-			}
-		} else {
-			try {
-				tRsp = request.getResponseClass().newInstance();
-				tRsp.setBody(context.getResponseBody());
-			} catch (Exception e) {
-			}
-		}
-
-		tRsp.setParams(context.getApplicationParams());
-		if (!tRsp.isSuccess()) {
-			VoApiLogger.logErrorScene(context, tRsp, appSecret);
-		}
-		return tRsp;
+		return doPost(request, session);
 	}
 
-	public <T extends VoApiResponse> RequestParametersHolder doPost(VoApiRequest<T> request, String session) throws ApiException {
-		RequestParametersHolder requestHolder = new RequestParametersHolder();
-		VoApiHashMap appParams = new VoApiHashMap(request.getTextParams());
-		requestHolder.setApplicationParams(appParams);
+	/**
+	 * URI 取得
+	 * @return URI
+	 */
+	private URI getURI(VoApiRequest request) {
+		StringBuilder reqUrl = new StringBuilder(serverUrl);
+		reqUrl.append(request.getApiURLPath());
 
-		// 添加协议级请求参数
-		VoApiHashMap protocalMustParams = new VoApiHashMap();
-		protocalMustParams.put(METHOD, request.getApiMethodName());
-		protocalMustParams.put(VERSION, "2.0");
-		protocalMustParams.put(APP_KEY, appKey);
-		Long timestamp = request.getTimestamp();// 允许用户设置时间戳
-		if (timestamp == null) {
-			timestamp = System.currentTimeMillis();
+		if(reqUrl.indexOf("?") != -1){
+			reqUrl.append("&");
+		} else {
+			reqUrl.append("?");
+		}
+		reqUrl.append(TIMESTAMP + "=").append(request.getTimestamp());
+
+		//appSecret appKey
+		if (appKey != null && appSecret != null) {
+			reqUrl.append("&");
+			reqUrl.append(APP_KEY + "=").append(appKey);
+			reqUrl.append("&");
+			String sign = MD5.getMD5(SIGN_EXTEND + appKey + "__" + appSecret);
+			reqUrl.append(SIGN + "=").append(sign);
 		}
 
-		protocalMustParams.put(TIMESTAMP, new Date(timestamp));// 因为沙箱目前只支持时间字符串，所以暂时用Date格式
-		requestHolder.setProtocalMustParams(protocalMustParams);
+		return URI.create(reqUrl.toString());
+	}
 
-		VoApiHashMap protocalOptParams = new VoApiHashMap();
-		protocalOptParams.put(FORMAT, format);
-		protocalOptParams.put(SIGN_METHOD, signMethod);
-		protocalOptParams.put(SESSION, session);
-		protocalOptParams.put(PARTNER_ID, VoApiConstants.SDK_VERSION);
-		if (this.useSimplifyJson) {
-			protocalOptParams.put(SIMPLIFY, Boolean.TRUE.toString());
-		}
-		requestHolder.setProtocalOptParams(protocalOptParams);
 
-		// 添加签名参数
-		try {
-			if (VoApiConstants.SIGN_METHOD_MD5.equals(signMethod)) {
-				protocalMustParams.put(SIGN, VoApiUtils.signTopRequestNew(requestHolder, appSecret, false));
-			} else if (VoApiConstants.SIGN_METHOD_HMAC.equals(signMethod)) {
-				protocalMustParams.put(SIGN, VoApiUtils.signTopRequestNew(requestHolder, appSecret, true));
-			} else {
-				protocalMustParams.put(SIGN, VoApiUtils.signTopRequest(requestHolder, appSecret));
-			}
-		} catch (IOException e) {
-			throw new ApiException(e);
+
+	public <T extends VoApiResponse> T doPost(VoApiRequest<T> request, String session) throws ApiException {
+
+		URI uri = getURI(request);
+
+		RequestEntity<VoApiRequest<T>> requestEntity = new RequestEntity<>(request, request.getHeaders(), request.getHttpMethod(), uri);
+		ResponseEntity<T> responseEntity = restTemplate.exchange(requestEntity, request.getResponseClass());
+		T responseBody = responseEntity.getBody();
+		if (responseBody == null) {
+			VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70001;
+			throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
 		}
 
-		StringBuffer reqUrl = new StringBuffer(serverUrl);
-		try {
-			String sysMustQuery = WebUtils.buildQuery(requestHolder.getProtocalMustParams(), VoApiConstants.CHARSET_UTF8);
-			String sysOptQuery = WebUtils.buildQuery(requestHolder.getProtocalOptParams(), VoApiConstants.CHARSET_UTF8);
-
-			if(reqUrl.indexOf("?") != -1){
-				reqUrl.append("&");
-			} else {
-				reqUrl.append("?");
-			}
-			reqUrl.append(sysMustQuery);
-			if (sysOptQuery != null & sysOptQuery.length() > 0) {
-				reqUrl.append("&").append(sysOptQuery);
-			}
-			requestHolder.setRequestUrl(reqUrl.toString());
-		} catch (IOException e) {
-			throw new ApiException(e);
+		String code = responseBody.getCode();
+		if (code == null) {
+			VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70002;
+			throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
 		}
 
-		String rsp = null;
-		try {
-			// 是否需要压缩响应
-			if (this.useGzipEncoding) {
-				request.getHeaderMap().put(VoApiConstants.ACCEPT_ENCODING, VoApiConstants.CONTENT_ENCODING_GZIP);
-			}
-			// 是否需要上传文件
-			if (request instanceof VoApiUploadRequest) {
-				VoApiUploadRequest<T> uRequest = (VoApiUploadRequest<T>) request;
-				Map<String, FileItem> fileParams = VoApiUtils.cleanupMap(uRequest.getFileParams());
-				rsp = WebUtils.doPost(reqUrl.toString(), appParams, fileParams, VoApiConstants.CHARSET_UTF8, connectTimeout, readTimeout, request.getHeaderMap());
-			} else {
-				//rsp = WebUtils.doPost(reqUrl.toString(), appParams, VoApiConstants.CHARSET_UTF8, connectTimeout, readTimeout, request.getHeaderMap());
-				rsp = WebUtils.doPost(reqUrl.toString(), appParams, VoApiConstants.CHARSET_UTF8, connectTimeout, readTimeout, request.getHeaderMap());
-			}
-			requestHolder.setResponseBody(rsp);
-		} catch (Exception e) {
-			throw new ApiException(e);
+		if (!"0".equals(code)) {
+			VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70000;
+			throw new ApiException(codeEnum.getErrorCode(), responseBody.getMessage());
 		}
-		return requestHolder;
+
+		return responseBody;
 	}
 
 	/**
@@ -216,38 +159,115 @@ public class VoApiDefaultClient implements VoApiClient {
 		this.needCheckRequest = needCheckRequest;
 	}
 
-	/**
-	 * 是否把响应字符串解释为对象。
-	 */
+//	/**
+//	 * 是否把响应字符串解释为对象。
+//	 */
+//	public void setNeedEnableParser(boolean needEnableParser) {
+//		this.needEnableParser = needEnableParser;
+//	}
+
+//	/**
+//	 * 是否采用标准化的JSON格式返回。
+//	 */
+//	public void setUseSimplifyJson(boolean useSimplifyJson) {
+//		this.useSimplifyJson = useSimplifyJson;
+//	}
+//
+//	/**
+//	 * 是否记录API请求错误日志。
+//	 */
+//	public void setNeedEnableLogger(boolean needEnableLogger) {
+//		VoApiLogger.setNeedEnableLogger(needEnableLogger);
+//	}
+//
+//	/**
+//	 * 是否忽略HTTPS证书校验。
+//	 */
+//	public void setIgnoreSSLCheck(boolean ignore) {
+//		WebUtils.setIgnoreSSLCheck(ignore);
+//	}
+
+//	/**
+//	 * 是否启用响应GZIP压缩
+//	 */
+//	public void setUseGzipEncoding(boolean useGzipEncoding) {
+//		this.useGzipEncoding = useGzipEncoding;
+//	}
+
+
+	public String getServerUrl() {
+		return serverUrl;
+	}
+
+	public void setServerUrl(String serverUrl) {
+		this.serverUrl = serverUrl;
+	}
+
+	public String getAppKey() {
+		return appKey;
+	}
+
+	public void setAppKey(String appKey) {
+		this.appKey = appKey;
+	}
+
+	public String getAppSecret() {
+		return appSecret;
+	}
+
+	public void setAppSecret(String appSecret) {
+		this.appSecret = appSecret;
+	}
+
+	public String getSignMethod() {
+		return signMethod;
+	}
+
+	public void setSignMethod(String signMethod) {
+		this.signMethod = signMethod;
+	}
+
+	public int getConnectTimeout() {
+		return connectTimeout;
+	}
+
+	public void setConnectTimeout(int connectTimeout) {
+		this.connectTimeout = connectTimeout;
+	}
+
+	public int getReadTimeout() {
+		return readTimeout;
+	}
+
+	public void setReadTimeout(int readTimeout) {
+		this.readTimeout = readTimeout;
+	}
+
+	public boolean isNeedCheckRequest() {
+		return needCheckRequest;
+	}
+
+	public boolean isNeedEnableParser() {
+		return needEnableParser;
+	}
+
 	public void setNeedEnableParser(boolean needEnableParser) {
 		this.needEnableParser = needEnableParser;
 	}
 
-	/**
-	 * 是否采用标准化的JSON格式返回。
-	 */
-	public void setUseSimplifyJson(boolean useSimplifyJson) {
-		this.useSimplifyJson = useSimplifyJson;
+	public boolean isUseGzipEncoding() {
+		return useGzipEncoding;
 	}
 
-	/**
-	 * 是否记录API请求错误日志。
-	 */
-	public void setNeedEnableLogger(boolean needEnableLogger) {
-		VoApiLogger.setNeedEnableLogger(needEnableLogger);
-	}
-
-	/**
-	 * 是否忽略HTTPS证书校验。
-	 */
-	public void setIgnoreSSLCheck(boolean ignore) {
-		WebUtils.setIgnoreSSLCheck(ignore);
-	}
-
-	/**
-	 * 是否启用响应GZIP压缩
-	 */
 	public void setUseGzipEncoding(boolean useGzipEncoding) {
 		this.useGzipEncoding = useGzipEncoding;
+	}
+
+	public RestTemplate getRestTemplate() {
+		return restTemplate;
+	}
+
+	public void setRestTemplate(RestTemplate restTemplate) {
+		this.restTemplate = restTemplate;
 	}
 }

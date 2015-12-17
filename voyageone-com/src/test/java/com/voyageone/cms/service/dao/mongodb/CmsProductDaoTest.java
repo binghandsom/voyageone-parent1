@@ -180,9 +180,9 @@ public class CmsProductDaoTest {
         CmsBtProductModel_Sku skuModel = new CmsBtProductModel_Sku();
         skuModel.setSkuCode("100001-2");
         skuModel.setBarcode("12341111");
-        skuModel.setPriceMsrp(187);
-        skuModel.setPriceRetail(243);
-        skuModel.setPriceSale(358);
+        skuModel.setPriceMsrp((double)187);
+        skuModel.setPriceRetail((double)243);
+        skuModel.setPriceSale((double)358);
 
 
         DBCollection coll = cmsBtProductDao.getDBCollection("100");
@@ -244,14 +244,14 @@ public class CmsProductDaoTest {
     @Test
     public void testUpdateWithGroupPlatform() {
         CmsBtProductModel_Group_Platform platformMode = new CmsBtProductModel_Group_Platform();
-        platformMode.setGroupId(45);
+        platformMode.setGroupId((long)45);
         platformMode.setCartId(21);
         platformMode.setNumIId("1000702");
         platformMode.setIsMain(false);
         platformMode.setDisplayOrder(27);
         platformMode.setPublishTime("2015-10-12 16:19:00");
         platformMode.setInstockTime("2015-10-18 16:19:00");
-        platformMode.setStatus("InStock1");
+        platformMode.setProductStatus("InStock1");
         platformMode.setPublishStatus(" 等待上新1");
         platformMode.setComment("1");
         platformMode.setInventory(25);
@@ -264,9 +264,9 @@ public class CmsProductDaoTest {
 
         skuModel.setSkuCode("100001-2");
         skuModel.setBarcode("12311111");
-        skuModel.setPriceMsrp(387);
-        skuModel.setPriceRetail(543);
-        skuModel.setPriceSale(858);
+        skuModel.setPriceMsrp((double)387);
+        skuModel.setPriceRetail((double)543);
+        skuModel.setPriceSale((double)858);
         //skuModel.setPlatformArrCode("1110");
 
         System.out.println(JsonUtil.bean2Json(skuModel));
@@ -281,9 +281,9 @@ public class CmsProductDaoTest {
         int index = 0;
 
         CmsBtProductModel_Sku skuModel = new CmsBtProductModel_Sku();
-        skuModel.setPriceMsrp(187);
-        skuModel.setPriceRetail(243);
-        skuModel.setPriceSale(358);
+        skuModel.setPriceMsrp((double)187);
+        skuModel.setPriceRetail((double)243);
+        skuModel.setPriceSale((double)358);
 
         BulkWriteOperation b1 = coll.initializeUnorderedBulkOperation();
 

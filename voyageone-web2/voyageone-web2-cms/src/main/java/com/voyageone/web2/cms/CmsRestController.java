@@ -3,11 +3,9 @@ package com.voyageone.web2.cms;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.base.exception.SystemException;
 import com.voyageone.web2.base.BaseController;
+import com.voyageone.web2.sdk.api.VoApiResponse;
 import com.voyageone.web2.sdk.api.exception.ApiException;
-import com.voyageone.web2.sdk.api.response.VoResponseEntity;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,44 +23,36 @@ public abstract class CmsRestController extends BaseController {
      * error Handler
      */
     @ExceptionHandler(Exception.class)
-    public ResponseEntity errorHandler(HttpServletRequest request, Exception exception) {
-        ApiException errorDetail = buildError(request, exception);
-
-        VoResponseEntity result = new VoResponseEntity(null, HttpStatus.OK);
-        result.setError(errorDetail);
-        return result;
+    public VoApiResponse errorHandler(HttpServletRequest request, Exception exception) {
+        String message = request.getRequestURL().toString();
+        System.out.println("Error Message:=" + message);
+        exception.printStackTrace();
+        logger.error(message, exception);
+        return buildError(request, exception);
     }
 
     /**
      * build Error Info
      */
-    private ApiException buildError(HttpServletRequest request, Exception exception) {
-        String msg = exception.getMessage();
-        msg = StringUtils.isEmpty(msg) ? exception.getClass().getName() : msg;
+    private VoApiResponse buildError(HttpServletRequest request, Exception exception) {
+        String code;
+        String message = exception.getMessage();
+        message = StringUtils.isEmpty(message) ? exception.getClass().getName() : message;
 
-        ApiException error = null;
         if (exception instanceof ApiException) {
-            error = (ApiException)exception;
+            ApiException apiException = (ApiException)exception;
+            code = apiException.getErrCode();
         } else if (exception instanceof BusinessException) {
             BusinessException businessException = (BusinessException)exception;
-            error = new ApiException(businessException.getCode(), msg);
+            code = businessException.getCode();
         } else if (exception instanceof SystemException) {
             SystemException systemException = (SystemException)exception;
-            error = new ApiException(systemException.getCode(), msg);
+            code = systemException.getCode();
         } else {
-            error = new ApiException("5", msg);
+            code = "5";
         }
 
-        error.setUrl(request.getRequestURL().toString());
-        return error;
+        return new VoApiResponse(code, message);
     }
-
-    /**
-     * build success Entity
-     */
-    public VoResponseEntity successEntity(Object model) {
-        return new VoResponseEntity(model, HttpStatus.OK);
-    }
-
 
 }

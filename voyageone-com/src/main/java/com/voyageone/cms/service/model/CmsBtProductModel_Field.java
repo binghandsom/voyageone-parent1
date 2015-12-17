@@ -149,11 +149,11 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     }
 
     //priceChange 价格审批flg 0:变更（未审批） 1:审批完成   Feed过来的新商品，就认为审批完成
-    public int getPriceChange() {
+    public Integer getPriceChange() {
         return getAttribute("priceChange");
     }
 
-    public void setPriceChange(int priceChange) {
+    public void setPriceChange(Integer priceChange) {
         setAttribute("priceChange", priceChange);
     }
 
@@ -260,69 +260,69 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     }
 
     //msrp价格区间-开始
-    public double getMsrpStart() {
+    public Double getMsrpStart() {
         return getAttribute("msrpStart");
     }
-    public void setMsrpStart(double msrpStart) {
+    public void setMsrpStart(Double msrpStart) {
         setAttribute("msrpStart", msrpStart);
     }
 
     //msrp价格区间-结束
-    public double getMsrpEnd() {
+    public Double getMsrpEnd() {
         return getAttribute("msrpEnd");
     }
-    public void setMsrpEnd(double msrpEnd) {
+    public void setMsrpEnd(Double msrpEnd) {
         setAttribute("msrpEnd", msrpEnd);
     }
 
     //建议市场价格区间-结束
-    public double getRetailPriceStart() {
+    public Double getRetailPriceStart() {
         return getAttribute("retailPriceStart");
     }
-    public void setRetailPriceStart(double retailPriceStart) {
+    public void setRetailPriceStart(Double retailPriceStart) {
         setAttribute("retailPriceStart", retailPriceStart);
     }
 
     //建议市场价格区间-结束
-    public double getRetailPriceEnd() {
+    public Double getRetailPriceEnd() {
         return getAttribute("retailPriceEnd");
     }
-    public void setRetailPriceEnd(double retailPriceEnd) {
+    public void setRetailPriceEnd(Double retailPriceEnd) {
         setAttribute("retailPriceEnd", retailPriceEnd);
     }
 
     //建议市场价格区间-结束
-    public double getSalePriceStart() {
+    public Double getSalePriceStart() {
         return getAttribute("salePriceStart");
     }
-    public void setSalePriceStart(double salePriceStart) {
+    public void setSalePriceStart(Double salePriceStart) {
         setAttribute("salePriceStart", salePriceStart);
     }
 
     //市场价格区间-开始
-    public double getSalePriceEnd() {
+    public Double getSalePriceEnd() {
         return getAttribute("salePriceEnd");
     }
 
-    public void setSalePriceEnd(double salePriceEnd) {
+    public void setSalePriceEnd(Double salePriceEnd) {
         setAttribute("salePriceEnd", salePriceEnd);
     }
 
     //市场价格区间-结束
-    public double getCurrentPriceStart() {
+    public Double getCurrentPriceStart() {
         return getAttribute("currentPriceStart");
     }
 
     //当前销售价格区间-开始
-    public void setCurrentPriceStart(double currentPriceStart) {
+    public void setCurrentPriceStart(Double currentPriceStart) {
         setAttribute("currentPriceStart", currentPriceStart);
     }
-    public double getCurrentPriceEnd() {
+    public Double getCurrentPriceEnd() {
         return getAttribute("currentPriceEnd");
     }
 
     //当前销售价格区间-结束
-    public void setCurrentPriceEnd(double currentPriceEnd) {
+    public void setCurrentPriceEnd(Double currentPriceEnd) {
         setAttribute("currentPriceEnd", currentPriceEnd);
     }
 
@@ -344,10 +344,10 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     }
 
     //库存数量
-    public int getInventory() {
+    public Integer getInventory() {
         return getAttribute("inventory");
     }
-    public void setInventory(int inventory) {
+    public void setInventory(Integer inventory) {
         setAttribute("inventory", inventory);
     }
 

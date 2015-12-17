@@ -7,6 +7,12 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * BaseJomgoTemplate
+ * @author chuanyu.liang, 12/11/15
+ * @version 2.0.0
+ * @since 2.0.0
+ */
 public class BaseJomgoTemplate extends BaseJomgoPartTemplate {
 
     public BaseJomgoTemplate(MongoTemplate mongoTemplate) {
@@ -21,6 +27,16 @@ public class BaseJomgoTemplate extends BaseJomgoPartTemplate {
     public <T> T findOne(String strQuery, Class<T> entityClass) {
         String collectionName = getCollectionName(entityClass);
         return findOne(strQuery, entityClass, collectionName);
+    }
+
+    public <T> T findOne(String strQuery, String projection, Class<T> entityClass) {
+        String collectionName = getCollectionName(entityClass);
+        return findOne(strQuery, projection, entityClass, collectionName);
+    }
+
+    public <T> T findOne(JomgoQuery queryObject, Class<T> entityClass) {
+        String collectionName = getCollectionName(entityClass);
+        return findOne(queryObject, entityClass, collectionName);
     }
 
     public boolean exists(String strQuery, Class<?> entityClass) {
@@ -43,9 +59,19 @@ public class BaseJomgoTemplate extends BaseJomgoPartTemplate {
         return find(strQuery, null, entityClass, collectionName);
     }
 
+    public <T> List<T> find(JomgoQuery queryObject, Class<T> entityClass) {
+        String collectionName = getCollectionName(entityClass);
+        return find(queryObject, entityClass, collectionName);
+    }
+
     public <T> MongoCursor<T> findCursor(final String strQuery, Class<T> entityClass) {
         String collectionName = getCollectionName(entityClass);
         return findCursor(strQuery, null, entityClass, collectionName);
+    }
+
+    public <T> MongoCursor<T> findCursor(JomgoQuery queryObject, Class<T> entityClass) {
+        String collectionName = getCollectionName(entityClass);
+        return findCursor(queryObject, entityClass, collectionName);
     }
 
     public <T> T findById(String id, Class<T> entityClass) {

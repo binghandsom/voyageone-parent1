@@ -3,6 +3,12 @@ package com.voyageone.base.dao.mongodb;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * MongoCollectionMapping
+ * @author chuanyu.liang, 12/11/15
+ * @version 2.0.0
+ * @since 2.0.0
+ */
 public class MongoCollectionMapping {
     private Map<String, String> collectionNameMap;
     private Map<String, String> _collectionNameMap = new HashMap<>();

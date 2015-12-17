@@ -42,6 +42,12 @@
       "insertPromotion": "insertPromotion",
       "updatePromotion": "updatePromotion",
       "delPromotion": "delPromotion"
+    },
+    "promotionDetailService": {
+      "root": "/cms/promotion/detail",
+      "getPromotionGroup": "getPromotionGroup",
+      "getPromotionCode": "getPromotionCode",
+      "getPromotionSku": "getPromotionSku"
     }
   }
 }
