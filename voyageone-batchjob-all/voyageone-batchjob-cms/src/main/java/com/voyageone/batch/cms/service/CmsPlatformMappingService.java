@@ -153,7 +153,7 @@ public class CmsPlatformMappingService extends BaseTaskService {
             return CreateImgMapping(field.getId(),imgTemplate);
         }
         // 把类目ID中的【.】替换成【->】
-        field.setId(StringUtils.replaceDot(field.getId()));
+//        field.setId(StringUtils.replaceDot(field.getId()));
 
         SingleMappingBean singleMappingBean;
         MasterWord masterWord;
