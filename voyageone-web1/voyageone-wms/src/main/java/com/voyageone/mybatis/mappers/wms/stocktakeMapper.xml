@@ -288,7 +288,7 @@
   		  	   wms_mt_location location
   		 where itemDel.order_channel_id = location.order_channel_id
 		<if test="upc != null and upc != '' ">
-			and itemDel.barcode = #{upc}
+			and itemDel.barcode = #{upc}   AND itemDel.active = '1'
 		</if>
 		<if test="sku != null and sku != '' ">
 			and itemDel.sku = #{sku}
