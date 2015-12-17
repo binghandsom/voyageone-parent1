@@ -4,6 +4,7 @@
     <resultMap id="bt_promotion_code_map" extends="bt_promotion_model_map" type="com.voyageone.web2.cms.model.CmsBtPromotionCodeModel" >
         <result column="sale_price" property="salePrice" jdbcType="DOUBLE" />
         <result column="promotion_price" property="promotionPrice" jdbcType="DOUBLE" />
+        <result column="product_id" property="productId" jdbcType="VARCHAR" />
         <result column="product_code" property="productCode" jdbcType="VARCHAR" />
         <result column="product_name" property="productName" jdbcType="VARCHAR" />
         <result column="image_url_sale" property="imageUrlSale" jdbcType="VARCHAR" />
