@@ -14,7 +14,7 @@ public class CmsBtPromotionGroupModel  extends BaseMongoModel {
 
     private int promotionId;
 
-    private int modelId;
+    private long modelId;
 
     private String productModel;
 
@@ -29,7 +29,7 @@ public class CmsBtPromotionGroupModel  extends BaseMongoModel {
     }
     public CmsBtPromotionGroupModel(CmsBtProductModel productInfo, int cartId, int promotionId, String operator){
         // catPath
-        this.setCatPath(productInfo.getCatIdPath());
+        this.setCatPath(productInfo.getCatPath());
 
         CmsBtProductModel_Group_Platform platform = productInfo.getGroups().getPlatformByCartId(cartId);
         if(platform !=  null){
@@ -66,11 +66,11 @@ public class CmsBtPromotionGroupModel  extends BaseMongoModel {
         this.promotionId = promotionId;
     }
 
-    public int getModelId() {
+    public long getModelId() {
         return modelId;
     }
 
-    public void setModelId(int modelId) {
+    public void setModelId(long modelId) {
         this.modelId = modelId;
     }
 
