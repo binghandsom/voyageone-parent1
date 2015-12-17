@@ -113,7 +113,7 @@
 							<label class="col-sm-3 control-label" translate="TXT_PROMOTION_INFO"></label>
 							<div class="col-sm-9">
 								<select class="form-control" ng-model="vm.searchInfo.promotion"
-										ng-options="promotion.promotionId as promotion.promotionName for promotion in vm.masterData.promotionList">
+										ng-options="promotion.promotionId as promotion.promotionName for promotion in vm.masterData.promotionWithBlankList">
 								</select>
 							</div>
 						</div>

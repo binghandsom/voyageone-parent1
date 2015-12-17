@@ -3,6 +3,7 @@ package com.voyageone.web2.cms.views.search;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
+import com.voyageone.web2.cms.bean.CmsSearchInfoBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,7 +42,7 @@ public class CmsSearchIndexController extends CmsController {
      * @return
      */
     @RequestMapping(CmsUrlConstants.SEARCH.INDEX.SEARCH)
-    public AjaxResponse search(@RequestBody Map<String, Object> params) {
+    public AjaxResponse search(@RequestBody CmsSearchInfoBean params) {
 
         Map<String, Object> resultBean = new HashMap<>();
 
@@ -55,7 +56,7 @@ public class CmsSearchIndexController extends CmsController {
      * @return
      */
     @RequestMapping(CmsUrlConstants.SEARCH.INDEX.GET_GROUP_LIST)
-    public AjaxResponse getGroupList(@RequestBody Map<String, Object> params) {
+    public AjaxResponse getGroupList(@RequestBody CmsSearchInfoBean params) {
 
         Map<String, Object> resultBean = new HashMap<>();
 
@@ -69,7 +70,7 @@ public class CmsSearchIndexController extends CmsController {
      * @return
      */
     @RequestMapping(CmsUrlConstants.SEARCH.INDEX.GET_PRODUCT_LIST)
-    public AjaxResponse getProductList(@RequestBody Map<String, Object> params) {
+    public AjaxResponse getProductList(@RequestBody CmsSearchInfoBean params) {
 
         Map<String, Object> resultBean = new HashMap<>();
 
