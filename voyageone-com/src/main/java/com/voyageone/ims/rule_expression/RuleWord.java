@@ -17,6 +17,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = CustomWord.class, name = "CUSTOM"),
         @JsonSubTypes.Type(value = MasterWord.class, name = "MASTER"),
         @JsonSubTypes.Type(value = ConditionWord.class, name = "CONDITION"),
+        @JsonSubTypes.Type(value = FeedCnWord.class, name = "FEED_CN"),
+        @JsonSubTypes.Type(value = FeedOrgWord.class, name = "FEED_ORG"),
         //TODO add other field
 })
 public abstract class RuleWord {

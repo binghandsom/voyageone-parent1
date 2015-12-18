@@ -11,6 +11,9 @@ import com.voyageone.batch.cms.bean.PlatformUploadRunState;
 import com.voyageone.batch.cms.bean.SkuTemplateSchema;
 import com.voyageone.batch.cms.bean.SxProductBean;
 import com.voyageone.batch.cms.bean.TmallUploadRunState;
+import com.voyageone.batch.cms.bean.tcb.AbortTaskSignalInfo;
+import com.voyageone.batch.cms.bean.tcb.TaskSignal;
+import com.voyageone.batch.cms.bean.tcb.TaskSignalType;
 import com.voyageone.batch.cms.model.PlatformSkuInfoBean;
 import com.voyageone.batch.cms.service.AbstractSkuFieldBuilder;
 import com.voyageone.batch.cms.service.UploadImageHandler;
@@ -195,7 +198,7 @@ public class TmallGjSkuFieldBuilderImpl_2 extends AbstractSkuFieldBuilder {
             }
     }
 
-    private void buildSkuSize(ComplexValue skuFieldValue, CmsBtProductModel_Sku cmsSkuProp, BuildSkuResult buildSkuResult,  MappingBean sizeMapping) {
+    private void buildSkuSize(ComplexValue skuFieldValue, CmsBtProductModel_Sku cmsSkuProp, BuildSkuResult buildSkuResult,  MappingBean sizeMapping) throws TaskSignal{
         if (sku_sizeField.getType() == FieldTypeEnum.SINGLECHECK) {
             List<Option> sizeOptions = ((SingleCheckField)sku_sizeField).getOptions();
 
@@ -203,6 +206,9 @@ public class TmallGjSkuFieldBuilderImpl_2 extends AbstractSkuFieldBuilder {
             skuFieldValue.setSingleCheckFieldValue(sku_sizeField.getId(), new Value(sizeValue));
             buildSkuResult.getSizeCmsSkuPropMap().put(sizeValue, cmsSkuProp);
         } else {
+            if (sizeMapping == null) {
+                throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("You have to set sku size's mapping when it is a input"));
+            }
             RuleExpression skuSizeExpression = ((SingleMappingBean)sizeMapping).getExpression();
             String skuSize = expressionParser.parse(skuSizeExpression, null);
             skuFieldValue.setInputFieldValue(sku_sizeField.getId(), skuSize);
@@ -210,7 +216,7 @@ public class TmallGjSkuFieldBuilderImpl_2 extends AbstractSkuFieldBuilder {
         }
     }
 
-    private Field buildSkuProp(Field skuField, List<SxProductBean> sxProducts, MappingBean skuMapping, Map<String, Integer> skuInventoryMap, TmallUploadRunState.TmallContextBuildCustomFields contextBuildCustomFields) {
+    private Field buildSkuProp(Field skuField, List<SxProductBean> sxProducts, MappingBean skuMapping, Map<String, Integer> skuInventoryMap, TmallUploadRunState.TmallContextBuildCustomFields contextBuildCustomFields) throws TaskSignal{
         BuildSkuResult buildSkuResult = new BuildSkuResult();
         contextBuildCustomFields.setBuildSkuResult(buildSkuResult);
 
@@ -221,7 +227,7 @@ public class TmallGjSkuFieldBuilderImpl_2 extends AbstractSkuFieldBuilder {
         Map<String, MappingBean> skuSubMappingMap = new HashMap<>();
         for (MappingBean mappingBean : subMappingBeans) {
             String propId = mappingBean.getPlatformPropId();
-            skuSubMappingMap.put(propId, skuSubMappingMap.get(propId));
+            skuSubMappingMap.put(propId, mappingBean);
         }
 
         List<ComplexValue> complexValues = new ArrayList<>();
@@ -366,7 +372,7 @@ public class TmallGjSkuFieldBuilderImpl_2 extends AbstractSkuFieldBuilder {
     }
 
     @Override
-    public List<Field> buildSkuInfoField(int cartId, String categoryCode, List platformProps, List<SxProductBean> processSxProducts, Map<CmsBtProductModel_Sku, SxProductBean> skuProductMap, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, Map<String, Integer> skuInventoryMap, PlatformUploadRunState.PlatformContextBuildCustomFields contextBuildCustomFields, Set<String> imageSet) {
+    public List<Field> buildSkuInfoField(int cartId, String categoryCode, List platformProps, List<SxProductBean> processSxProducts, Map<CmsBtProductModel_Sku, SxProductBean> skuProductMap, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, Map<String, Integer> skuInventoryMap, PlatformUploadRunState.PlatformContextBuildCustomFields contextBuildCustomFields, Set<String> imageSet) throws TaskSignal{
         init(platformProps, cartId);
         TmallUploadRunState.TmallContextBuildCustomFields tmallContextBuildCustomFields = (TmallUploadRunState.TmallContextBuildCustomFields) contextBuildCustomFields;
 
@@ -382,7 +388,7 @@ public class TmallGjSkuFieldBuilderImpl_2 extends AbstractSkuFieldBuilder {
             if (mappingBean.getPlatformPropId().equals(colorExtendField.getId())) {
                 colorExtendMappingBean = mappingBean;
             }
-            if (mappingBean.getPlatformPropId().equals(skuExtendField.getId())) {
+            if (skuExtendField != null && mappingBean.getPlatformPropId().equals(skuExtendField.getId())) {
                 skuExtendMappingBean = mappingBean;
             }
         }
