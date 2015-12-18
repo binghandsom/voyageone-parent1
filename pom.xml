@@ -346,9 +346,9 @@
                 <version>2.2.1</version>
             </dependency>
             <dependency>
-                <groupId>com.voyageone</groupId>
+                <groupId>com.sun.mail</groupId>
                 <artifactId>smtp</artifactId>
-                <version>1.0</version>
+                <version>1.4.5</version>
             </dependency>
 
             <dependency>
