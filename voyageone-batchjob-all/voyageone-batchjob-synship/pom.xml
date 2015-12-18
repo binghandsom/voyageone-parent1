@@ -35,7 +35,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.voyageone</groupId>
+            <groupId>org.codehaus.jettison</groupId>
             <artifactId>jettison</artifactId>
         </dependency>
     </dependencies>
