@@ -91,14 +91,8 @@ public class SkuTemplateSchema {
         public final static int SKU_BARCODE = SKU_OUTERID + 1;
         public final static int SKU_MARKET_TIME = SKU_BARCODE + 1;
 
-        public final static int SKU_CUSTOM_SIZE1 = SKU_MARKET_TIME + 1;
-        public final static int SKU_CUSTOM_SIZE2 = SKU_CUSTOM_SIZE1 + 1;
-        public final static int SKU_CUSTOM_SIZE3 = SKU_CUSTOM_SIZE2 + 1;
-        public final static int SKU_CUSTOM_SIZE4 = SKU_CUSTOM_SIZE3 + 1;
-        public final static int SKU_CUSTOM_SIZE5 = SKU_CUSTOM_SIZE4 + 1;
-
         //EXTENDCOLOR
-        public final static int EXTENDCOLOR= SKU_CUSTOM_SIZE5 + 1;
+        public final static int EXTENDCOLOR= SKU_MARKET_TIME + 1;
         public final static int EXTENDCOLOR_COLOR = EXTENDCOLOR + 1;
         public final static int EXTENDCOLOR_ALIASNAME = EXTENDCOLOR_COLOR + 1;
         public final static int EXTENDCOLOR_IMAGE = EXTENDCOLOR_ALIASNAME + 1;

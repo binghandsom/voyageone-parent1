@@ -89,5 +89,12 @@ public interface CmsUrlConstants {
 
             String ADD_TO_PROMOTION = "addToPromotion";
         }
+
+        interface PRICE {
+
+            String ROOT = "/cms/pop/price/";
+
+            String GET_PRICE_HISTORY = "getPriceHistory";
+        }
     }
 }
