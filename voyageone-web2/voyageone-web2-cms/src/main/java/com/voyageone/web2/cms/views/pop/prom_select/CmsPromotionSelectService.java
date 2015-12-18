@@ -33,11 +33,11 @@ public class CmsPromotionSelectService extends BaseAppService {
     private CmsBtTagLogDao cmsBtTagLogDao;
 
     public List<CmsBtTagModel> getPromotionTags(Map<String, Object> params) {
-        int promotion_id = (int) params.get("promotionId");
-        return this.selectListById(promotion_id);
+        int tag_id = (int) params.get("refTagId");
+        return this.selectListByParentTagId(tag_id);
     }
 
-    public void addToPromotion(Map<String, Object> params, String channelId, String modifier) {
+    public Map<String, Object> addToPromotion(Map<String, Object> params, String channelId, String modifier) {
         Object[] productIds = ((JSONArray) params.get("productIds")).toArray();
         int tag_id = (int) params.get("tagId");
 
@@ -46,14 +46,14 @@ public class CmsPromotionSelectService extends BaseAppService {
         for (Object id : productIds) {
             idList.add(id.toString());
         }
-        this.add(idList, channelId, tag_id, modifier);
+        return this.add(idList, channelId, tag_id, modifier);
     }
 
     /**
      * 获取二级Tag
      */
-    public List<CmsBtTagModel> selectListById(int promotionId) {
-        return cmsBtTagDao.selectListById(promotionId);
+    public List<CmsBtTagModel> selectListByParentTagId(int parentTagId) {
+        return cmsBtTagDao.selectListByParentTagId(parentTagId);
     }
 
     /**

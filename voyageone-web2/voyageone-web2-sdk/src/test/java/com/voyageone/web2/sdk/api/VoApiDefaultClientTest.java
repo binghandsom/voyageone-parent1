@@ -22,7 +22,7 @@ public class VoApiDefaultClientTest {
 
     @Test
     public void testExceute() {
-        PostProductSelectOneRequest requestModel = new PostProductSelectOneRequest();
+        PostProductSelectOneRequest requestModel = new PostProductSelectOneRequest("001");
         requestModel.setProductId((long)1);
         PostProductSelectOneResponse response = voApiClient.execute(requestModel);
 

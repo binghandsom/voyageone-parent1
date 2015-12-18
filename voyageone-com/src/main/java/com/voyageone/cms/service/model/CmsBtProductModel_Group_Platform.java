@@ -3,6 +3,8 @@ package com.voyageone.cms.service.model;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,7 +23,7 @@ public class CmsBtProductModel_Group_Platform extends BaseMongoMap<String, Objec
     }
 
     public Long getGroupId() {
-        return getAttribute("groupId");
+        return Long.parseLong(getAttribute("groupId").toString());
     }
 
     public void setGroupId(Long groupId) {
@@ -93,29 +95,26 @@ public class CmsBtProductModel_Group_Platform extends BaseMongoMap<String, Objec
         setAttribute("instockTime", instockTime);
     }
 
-    public String getProductStatus() {
-        return getAttribute("productStatus");
+    //0: 等待上新/1: 在售/2: 在库
+    public int getPlatformStatus() {
+        return getAttribute("platformStatus");
     }
 
-    public void setProductStatus(String productStatus) {
-        setAttribute("productStatus", productStatus);
+    public void setPlatformStatus(int platformStatus) {
+        setAttribute("platformStatus", platformStatus);
     }
 
-    public String getPublishStatus() {
-        return getAttribute("publishStatus");
+    public List<Map<String,Object>> getTaskResults() {
+        if (!this.containsKey("taskResults") || getAttribute("taskResults") == null) {
+            setAttribute("taskResults", new ArrayList<Map<String,Object>>());
+        }
+        return getAttribute("taskResults");
     }
 
-    public void setPublishStatus(String publishStatus) {
-        setAttribute("publishStatus", publishStatus);
+    public void setTaskResults(List<Map<String,Object>> taskResults) {
+        setAttribute("taskResults", taskResults);
     }
 
-    public String getComment() {
-        return getAttribute("comment");
-    }
-
-    public void setComment(String comment) {
-        setAttribute("comment", comment);
-    }
 
     public Integer getInventory() {
         return getAttribute("inventory");

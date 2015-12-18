@@ -1,6 +1,6 @@
 package com.voyageone.batch.cms.service;
 
-import com.voyageone.base.dao.mongodb.model.CmsMtCategorySchemaModel;
+import com.voyageone.cms.service.model.CmsMtCategorySchemaModel;
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.cms.dao.mongo.CmsMtPlatformFieldsRemoveHistoryDao;
 import com.voyageone.batch.cms.model.mongo.CmsMtPlatformRemoveFieldsModel;

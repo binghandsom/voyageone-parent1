@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.cms.sql">
+
+    <!-- 检查检查检查检查检查@Lewis -->
+    <select id="getPlatformImageUrlMap" parameterType="Map" resultType="com.voyageone.batch.cms.model.ImageUrlMappingModel">
+       SELECT
+            org_image_url AS orgImageUrl,
+            platform_image_url AS platformImageUrl
+        FROM
+            voyageone_cms.cms_mt_platform_imageUrl_mapping
+        WHERE
+            cart_id = #{cartId}
+            AND channel_id = #{channelId}
+            AND group_id = #{groupId}
+    </select>
+
+    <!-- insert the image url -->
+    <insert id="cms_insertPlatformImageUrl">
+        insert into voyageone_cms.cms_mt_platform_imageUrl_mapping
+        (
+            cart_id,
+            channel_id,
+            group_id,
+            org_image_url,
+            platform_image_url,
+            created,
+            creater,
+            modified,
+            modifier
+        ) values
+        <foreach collection="imgModels" item="model" separator=",">
+            (
+              #{model.cartId},
+              #{model.channelId},
+              #{model.groupId},
+              #{model.orgImageUrl},
+              #{model.platformImageUrl},
+              NOW(),
+              #{model.creater},
+              NOW(),
+              #{model.modifier}
+            )
+        </foreach>
+    </insert>
+</mapper>

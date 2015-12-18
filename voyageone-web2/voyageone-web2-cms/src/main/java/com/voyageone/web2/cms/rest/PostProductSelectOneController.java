@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.rest;
 
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.web2.cms.CmsRestController;
+import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.request.PostProductSelectOneRequest;
 import com.voyageone.web2.sdk.api.response.PostProductSelectOneResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,5 +43,4 @@ public class PostProductSelectOneController extends CmsRestController {
         // 返回用户信息
         return result;
     }
-
 }

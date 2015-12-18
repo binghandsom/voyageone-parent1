@@ -112,11 +112,22 @@
         </set>
         where tag_id = #{tagId,jdbcType=INTEGER}
     </update>
-    <select id="select_list_by_id" resultMap="TagMap" parameterType="int">
-        select a.*
-        from voyageone_cms2.cms_bt_tag a
-        inner join voyageone_cms2.cms_bt_promotion b
-        on a.parent_tag_id = b.promotion_id
-        where b.promotion_id = #{promotionId,jdbcType=INTEGER}
+    <select id="select_list_by_parent_tag_id" resultMap="TagMap" parameterType="int">
+        select
+            tag.tag_id,
+            tag.tag_name,
+            tag.tag_path,
+            tag.tag_path_name,
+            tag.tag_type,
+            tag.tag_status,
+            tag.sort_order,
+            tag.parent_tag_id,
+            tag.created,
+            tag.creater,
+            tag.modified,
+            tag.modifier
+        from voyageone_cms2.cms_bt_tag tag
+        where parent_tag_id = #{parentTagId,jdbcType=INTEGER}
+        order by tag.tag_id
     </select>
 </mapper>
