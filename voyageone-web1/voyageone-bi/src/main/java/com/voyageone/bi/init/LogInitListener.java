@@ -28,7 +28,7 @@ public class LogInitListener implements ServletContextListener  {
 		    logIn = cl.getResourceAsStream(LOG4J_CONFIG_FILE);
 			Properties p = new Properties();
 			p.load(logIn);
-			PropertyConfigurator.configure(p);
+			PropertyConfigurator.configure(p);			
 			logger.info("log4j init success------------" );				
 		} catch (Exception ex) {
 			ex.printStackTrace();

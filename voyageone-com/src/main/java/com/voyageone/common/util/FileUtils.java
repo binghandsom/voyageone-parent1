@@ -1,7 +1,6 @@
 package com.voyageone.common.util;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,7 +16,7 @@ import java.util.List;
 
 public final class FileUtils {
 
-    private static Log logger = LogFactory.getLog(FileUtils.class);
+    private static Logger logger = Logger.getLogger(FileUtils.class);
 
     /**
      * @param preFileName 源文件名

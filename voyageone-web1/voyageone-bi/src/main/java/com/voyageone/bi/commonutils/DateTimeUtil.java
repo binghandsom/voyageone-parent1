@@ -7,14 +7,13 @@
 package com.voyageone.bi.commonutils;
 
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+
+import org.apache.log4j.Logger;
 
 /**
  * 日期时间工具类 <br>
@@ -165,7 +164,7 @@ import java.util.Date;
 
 public final class DateTimeUtil {
 
-    private static Log log = LogFactory.getLog(DateTimeUtil.class);
+    private static Logger log = Logger.getLogger(DateTimeUtil.class);
 
     /**
      * 缺省的日期显示格式： yyyy-MM-dd
