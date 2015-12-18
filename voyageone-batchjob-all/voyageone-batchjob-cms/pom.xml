@@ -65,10 +65,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.voyageone</groupId>
-			<artifactId>mailapi</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.voyageone</groupId>
 			<artifactId>wsdl4j</artifactId>
 		</dependency>
 		<dependency>
