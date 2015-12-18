@@ -216,13 +216,5 @@ public class TypeConfigEnums {
 		public List<TypeBean> getList(String lang) {
 			return Type.getTypeList(getId(), lang);
 		}
-
-		public List<TypeBean> getListWithBlank() {
-			return Type.getTypeListWithBlank(getId());
-		}
-
-		public List<TypeBean> getListWithBlank(String lang) {
-			return Type.getTypeListWithBlank(getId(), lang);
-		}
 	}
 }

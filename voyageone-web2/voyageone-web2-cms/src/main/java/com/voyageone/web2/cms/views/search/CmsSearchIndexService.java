@@ -4,12 +4,12 @@ import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.TypeChannel;
 import com.voyageone.web2.cms.dao.CmsPromotionDao;
-import com.voyageone.web2.cms.model.CmsBtPromotionModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Edward
@@ -43,39 +43,16 @@ public class CmsSearchIndexService {
         masterData.put("priceTypeList", TypeConfigEnums.MastType.priceType.getList(language));
 
         // 获取compare type
-        masterData.put("compareTypeList", TypeConfigEnums.MastType.compareType.getListWithBlank(language));
+        masterData.put("compareTypeList", TypeConfigEnums.MastType.compareType.getList(language));
 
         // 获取brand list
-        masterData.put("brandList", TypeChannel.getOptionsWithBlank(Constants.comMtType.BRAND, userInfo.getSelChannelId(), language));
+        masterData.put("brandList", TypeChannel.getOptions(Constants.comMtType.BRAND, userInfo.getSelChannelId(), language));
 
         // 获取promotion list
         Map<String, Object> params = new HashMap<>();
         params.put("channelId", userInfo.getSelChannelId());
-
-        List<CmsBtPromotionModel> promotionList = cmsPromotionDao.getPromotionList(params);
-
-        masterData.put("promotionList", promotionList);
-        masterData.put("promotionWithBlankList", addBlankInPromotionList(promotionList));
+        masterData.put("promotionList", cmsPromotionDao.getPromotionList(params));
 
         return masterData;
-    }
-
-    /**
-     * 添加
-     * @param promotionList
-     * @return
-     */
-    private List<CmsBtPromotionModel> addBlankInPromotionList (List<CmsBtPromotionModel> promotionList) {
-        List<CmsBtPromotionModel> returnInfo = new ArrayList<CmsBtPromotionModel>();
-
-        CmsBtPromotionModel blankPromotion = new CmsBtPromotionModel();
-        blankPromotion.setPromotionId(null);
-        blankPromotion.setPromotionName("Select...");
-
-        returnInfo.add(blankPromotion);
-        if(promotionList != null && promotionList.size() > 0)
-            returnInfo.addAll(promotionList);
-
-        return returnInfo;
     }
 }

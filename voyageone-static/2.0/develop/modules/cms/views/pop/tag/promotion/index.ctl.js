@@ -9,29 +9,27 @@ define([
     angularAMD.controller('popTagPromotionCtl', function ($scope, $tagPromotionService, promotion) {
 
         $scope.vm = {
-            "promotionInfo": {
-                "tagId": null
+            promotionInfo: {
+                tagId: "",
+                productIds: []
             },
-            "promotion": null,
-            "subPromotionList": null,
-            "groupList": [],
-            "productList": []
+            promotion: {},
+            subPromotionList: []
         };
 
         $scope.initialize = function () {
-            $scope.vm.promotion = promotion;
+            $scope.vm.promotion = promotion.promotion;
+            $scope.vm.promotionInfo.productIds = promotion.productIds;
 
-            $tagPromotionService.getPromotionTags(promotion).then(function (res) {
+            $tagPromotionService.getPromotionTags($scope.vm.promotion).then(function (res) {
                 $scope.vm.subPromotionList = res.data;
             });
         };
 
         $scope.ok = function () {
-            $tagPromotionService.addToPromotion($scope.vm.promotion).then(
-                function (res) {
+            $tagPromotionService.addToPromotion($scope.vm.promotionInfo).then(
+                function () {
                     $scope.$close();
-                }, function (res) {
-                    alert("e");
                 })
         }
 

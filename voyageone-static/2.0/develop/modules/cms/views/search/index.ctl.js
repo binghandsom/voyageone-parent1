@@ -10,27 +10,28 @@ define([
     return function ($scope, searchIndexService) {
 
         $scope.vm = {
-            "searchInfo": {
-                "compareType": null,
-                "brand": null,
-                "promotion": null
+            searchInfo: {
+                compareType: null,
+                brand: null,
+                promotion: null
             },
-            "groupPageOption": {curr: 1, total: 30, size: 2, fetch: getGroupList},
-            "productPageOption": {curr: 1, total: 250, size: 2, fetch: getProductList},
-            "groupList": [],
-            "productList": [],
-            "groupSelList": {
+            groupPageOption: {curr: 1, total: 30, size: 2, fetch: getGroupList},
+            productPageOption: {curr: 1, total: 250, size: 2, fetch: getProductList},
+            groupList: [],
+            productList: [],
+            groupSelList: {
+                currPageRows: [],
+                selFlag: [],
+                selAllFlag: false,
+                selList: [{id: 1}, {id: 2}]
+            },
+            productSelList: {
                 currPageRows: [],
                 selFlag: [],
                 selAllFlag: false,
                 selList: []
             },
-            "productSelList": {
-                currPageRows: [],
-                selFlag: [],
-                selAllFlag: false,
-                selList: []
-            }
+            currTab: "group"
         };
 
         $scope.initialize = initialize;

@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.views.pop.prom_select;
+package com.voyageone.web2.cms.views.pop.tag.promotion;
 
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;

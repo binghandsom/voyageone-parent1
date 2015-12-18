@@ -2,7 +2,7 @@
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$close()">
             <span aria-hidden="true"><i class="fa fa-close"></i></span></button>
-        <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i> 确认将选中项目加入该活动？</h5>
+        <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i>&nbsp;{{'TXT_MSG_TAG_PROMOTION' | translate}}</h5>
     </div>
     <div class="modal-body wrapper">
         <form role="form" class="form-horizontal">
@@ -15,19 +15,19 @@
                 <label class="col-sm-7 control-label text-left">{{vm.promotion.promotionName}}</label>
             </div>
             <div class="form-group">
-                <label class="col-sm-4 control-label">Promotion专用店铺类目：</label>
+                <label class="col-sm-4 control-label">{{'TXT_ONLY_FOR_PROMOTION_CATEGORY' | translate}}</label>
 
                 <div class="col-sm-7">
                     <select class="form-control" ng-model="vm.promotionInfo.tagId"
                             ng-options="subPromotion.tagId as subPromotion.tagName for subPromotion in vm.subPromotionList">
-                        <option value="">无Promotion专用店铺类目</option>
+                        <option value="">{{'TXT_NO_ONLY_FOR_PROMOTION_CATEGORY' | translate}}</option>
                     </select>
                 </div>
             </div>
         </form>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-default" ng-click="$close()">取消</button>
-        <button class="btn btn-vo" ng-click="ok()">保存</button>
+        <button class="btn btn-default" ng-click="$close()" translate="BTN_CANCEL"></button>
+        <button class="btn btn-vo" ng-click="ok()" translate="BTN_SAVE"></button>
     </div>
 </div><!-- .vo_modal -->
