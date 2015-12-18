@@ -23,11 +23,11 @@ import java.util.Map;
         , include = JsonTypeInfo.As.PROPERTY
         , property = "mappingType")
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = SingleMappingBean.class, name = MappingBean.MAPPING_SIMPLE),
+        @JsonSubTypes.Type(value = SingleMappingBean.class, name = MappingBean.MAPPING_SINGLE),
         @JsonSubTypes.Type(value = ComplexMappingBean.class, name = MappingBean.MAPPING_COMPLEX)
 })
 public class MappingBean {
-    public static final String MAPPING_SIMPLE = "0";
+    public static final String MAPPING_SINGLE = "0";
     public static final String MAPPING_COMPLEX = "1";
 
     protected String platformPropId;
@@ -50,7 +50,4 @@ public class MappingBean {
         platformPropId = StringUtil.replaceToDot(platformPropId);
     }
 
-    public String getMappingType() {
-        return mappingType;
-    }
 }
