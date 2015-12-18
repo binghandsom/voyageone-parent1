@@ -22,7 +22,6 @@ import com.voyageone.batch.cms.model.CustomPlatformPropMapping;
 import com.voyageone.batch.cms.model.WorkLoadBean;
 import com.voyageone.batch.cms.service.*;
 import com.voyageone.batch.cms.service.rule_parser.ExpressionParser;
-import com.voyageone.batch.cms.service.rule_parser.MasterWordParser;
 import com.voyageone.cms.service.bean.ComplexMappingBean;
 import com.voyageone.cms.service.bean.MappingBean;
 import com.voyageone.cms.service.bean.SingleMappingBean;
@@ -1600,7 +1599,7 @@ public class TmallProductService implements PlatformServiceInterface {
                 case MULTIINPUT:
                     break;
                 case MULTICHECK: {
-                    String[] valueArrays = MasterWordParser.decodeString(expressionValue);
+                    String[] valueArrays = ExpressionParser.decodeString(expressionValue);
                     for (String value : valueArrays) {
                         ((MultiCheckField) field).addValue(value);
                     }

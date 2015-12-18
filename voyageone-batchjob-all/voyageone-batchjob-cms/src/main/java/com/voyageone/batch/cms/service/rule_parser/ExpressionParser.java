@@ -3,10 +3,8 @@ package com.voyageone.batch.cms.service.rule_parser;
 import com.voyageone.batch.cms.bean.CustomValueSystemParam;
 import com.voyageone.batch.cms.bean.SxProductBean;
 import com.voyageone.batch.cms.service.UploadImageHandler;
-import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
-import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.ims.rule_expression.RuleWord;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,6 +22,8 @@ public class ExpressionParser {
     private DictWordParser dictWordParser;
     private CustomWordParser customWordParser;
     private MasterWordParser masterWordParser;
+    private FeedCnWordParser feedCnWordParser;
+    private FeedOrgWordParser feedOrgWordParser;
     private CustomValueSystemParam customValueSystemParam;
 
     private static Log logger = LogFactory.getLog(ExpressionParser.class);
@@ -40,6 +40,8 @@ public class ExpressionParser {
         this.customWordParser = new CustomWordParser(this, customValueSystemParam);
 
         this.masterWordParser = new MasterWordParser(mainSxProduct.getCmsBtProductModel());
+        this.feedCnWordParser = new FeedCnWordParser(mainSxProduct.getCmsBtProductModel());
+        this.feedOrgWordParser = new FeedOrgWordParser(mainSxProduct.getCmsBtProductModel());
     }
 
     public String parse(RuleExpression ruleExpression, Set<String> imageSet) {
@@ -54,6 +56,14 @@ public class ExpressionParser {
                         break;
                     case MASTER: {
                         plainValue = masterWordParser.parse(ruleWord);
+                        break;
+                    }
+                    case FEED_ORG: {
+                        plainValue = feedOrgWordParser.parse(ruleWord);
+                        break;
+                    }
+                    case FEED_CN: {
+                        plainValue = feedCnWordParser.parse(ruleWord);
                         break;
                     }
                     case DICT: {
@@ -99,5 +109,21 @@ public class ExpressionParser {
 
     public void pushMasterPropContext(Map<String, Object> masterPropContext) {
         masterWordParser.pushEvaluationContext(masterPropContext);
+    }
+
+
+    public static String encodeStringArray(List<String> mappedPropValues) {
+        final String seperator = "$~";
+        StringBuilder encodedString = new StringBuilder();
+
+        for (String mappedPropValue : mappedPropValues) {
+            encodedString.append(mappedPropValue + seperator);
+        }
+        return encodedString.substring(0, encodedString.length() - seperator.length());
+    }
+
+    public static String[] decodeString(String encodedString) {
+        final String seperator = "$~";
+        return encodedString.split(seperator);
     }
 }
