@@ -63,28 +63,16 @@ public class TmallProductService implements PlatformServiceInterface {
     @Autowired
     private PlatformPropCustomMappingDao platformPropCustomMappingDao;
 
-    /*
-    @Autowired
-    private PropValueDao propValueDao;
-    @Autowired
-    private PropDao propDao;
-    */
     @Autowired
     private SkuFieldBuilderFactory skuFieldBuilderFactory;
     @Autowired
     private PriceSectionBuilder priceSectionBuilder;
-    /*
-    @Autowired
-    private SkuInfoDao skuInfoDao;
-    */
+
     @Autowired
     private DictWordDao dictWordDao;
     @Autowired
     private IssueLog issueLog;
-    /*
-    @Autowired
-    private DarwinStyleMappingDao darwinStyleMappingDao;
-    */
+
     @Autowired
     private ConditionPropValueRepo conditionPropValueRepo;
 
@@ -1473,11 +1461,12 @@ public class TmallProductService implements PlatformServiceInterface {
                         throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("tmall item shop_category's platformProps must have one prop!"));
                     }
 
-                    if ("010".equals(workLoadBean.getOrder_channel_id())) {
-                        Field processField = processFields.get(0);
-                        String platformPropId = processField.getId();
-                        List<ConditionPropValue> conditionPropValues = conditionPropValueRepo.get(workLoadBean.getOrder_channel_id(), platformPropId);
-                        if (conditionPropValues != null && !conditionPropValues.isEmpty()) {
+                    Field processField = processFields.get(0);
+                    String platformPropId = processField.getId();
+                    List<ConditionPropValue> conditionPropValues = conditionPropValueRepo.get(workLoadBean.getOrder_channel_id(), platformPropId);
+
+                    //优先使用条件表达式
+                    if (conditionPropValues != null && !conditionPropValues.isEmpty()) {
                             RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
                             for (ConditionPropValue conditionPropValue : conditionPropValues) {
                                 String conditionExpressionStr = conditionPropValue.getCondition_expression();
@@ -1488,14 +1477,7 @@ public class TmallProductService implements PlatformServiceInterface {
                                 }
                             }
                             contextBuildFields.addCustomField(processField);
-                        }
-                    } else if ("012".equals(workLoadBean.getOrder_channel_id())) {
-//                        for (Iterator<PlatformPropBean> iter = platformPropsWillBeFilted.iterator(); iter.hasNext(); ) {
-//                            PlatformPropBean platformPropBean = iter.next();
-//                            if ("seller_cids".equals(platformPropBean.getPlatformPropId())) {
-//                                iter.remove();
-//                            }
-//                        }
+                    } else {
                         final String sellerCategoryPropId = "seller_cids";
                         if (workLoadBean.getUpJobParam().getMethod() == UpJobParamBean.METHOD_UPDATE) {
                             String numId = workLoadBean.getNumId();
