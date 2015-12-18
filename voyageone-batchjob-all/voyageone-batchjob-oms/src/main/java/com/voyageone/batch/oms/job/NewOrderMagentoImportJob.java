@@ -118,6 +118,10 @@ public class NewOrderMagentoImportJob {
 			String strLastOrderDate = taskDao.getLastRunTime(taskID);
 			// 取得独立域名的URL
 			String postUrl = GetCNMagentoOrderURL(magentoType, strLastOrderDate);
+
+			// https
+			System.setProperty("javax.net.ssl.trustStore", "/opt/app-shared/voyageone_web/contents/other/third_party/com/trustStore/trustStore");
+
 			// 取得独立域名的订单信息
 			String response = CommonUtil.HttpPost("", "UTF-8", postUrl);
 			// String response =
