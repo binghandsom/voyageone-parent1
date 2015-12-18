@@ -108,20 +108,22 @@ define([
         $scope.openTagPromotion = openTagPromotion;
         function openTagPromotion(viewSize, promotion, selList) {
             require([popActions.tag.promotion.controllerUrl], function () {
-                $modal.open({
-                    templateUrl: popActions.tag.promotion.templateUrl,
-                    controller: 'popTagPromotionCtl',
-                    size: viewSize,
-                    resolve: {
-                        promotion: function () {
-                            var productIds = [];
-                            _.forEach(selList, function (object) {
-                                productIds.push(object.id);
-                            });
-                            return {"promotion": promotion, "productIds": productIds};
+                if (selList.length) {
+                    $modal.open({
+                        templateUrl: popActions.tag.promotion.templateUrl,
+                        controller: 'popTagPromotionCtl',
+                        size: viewSize,
+                        resolve: {
+                            promotion: function () {
+                                var productIds = [];
+                                _.forEach(selList, function (object) {
+                                    productIds.push(object.id);
+                                });
+                                return {"promotion": promotion, "productIds": productIds};
+                            }
                         }
-                    }
-                });
+                    });
+                }
             });
         }
         $scope.openNewcategory = openNewcategory;

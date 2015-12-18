@@ -23,7 +23,7 @@ define([
                 currPageRows: [],
                 selFlag: [],
                 selAllFlag: false,
-                selList: [{id: 1}, {id: 2}]
+                selList: []
             },
             productSelList: {
                 currPageRows: [],
