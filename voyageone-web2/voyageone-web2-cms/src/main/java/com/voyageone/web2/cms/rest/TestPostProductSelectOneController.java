@@ -5,6 +5,7 @@ import com.voyageone.web2.cms.CmsRestController;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.request.PostProductSelectOneRequest;
 import com.voyageone.web2.sdk.api.response.PostProductSelectOneResponse;
+import com.voyageone.web2.sdk.api.service.PostProductSelectOneClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestPostProductSelectOneController extends CmsRestController {
 
     @Autowired
-    protected VoApiDefaultClient voApiClient;
+    protected PostProductSelectOneClient productSelectOneClient;
 
 
     /**
@@ -37,11 +38,8 @@ public class TestPostProductSelectOneController extends CmsRestController {
     @RequestMapping("test")
     public PostProductSelectOneResponse selectOne1(@RequestBody PostProductSelectOneRequest responseMode) {
 
-        //设置参数
-        PostProductSelectOneRequest requestModel = new PostProductSelectOneRequest("300");
-        requestModel.setProductCode("100002");
         //SDK取得Product 数据
-        CmsBtProductModel model = voApiClient.execute(requestModel).getProduct();
+        CmsBtProductModel model = productSelectOneClient.getProductByCode("300", "100002");
 
 
         PostProductSelectOneResponse result = new PostProductSelectOneResponse();
