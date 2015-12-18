@@ -16,12 +16,15 @@ import java.util.Map;
 @Repository
 public class CmsPromotionSkuDao extends BaseDao{
 
-    public List<CmsBtPromotionSkuModel> getPromotionSkuList(Map<String,Object> params){
-        List<CmsBtPromotionSkuModel> ret = selectList("select_cms_bt_promotion_sku",params);
+    public List<Map<String,Object>> getPromotionSkuList(Map<String,Object> params){
+        List<Map<String,Object>> ret = selectList("select_cms_bt_promotion_sku",params);
         if (ret == null){
             ret = new ArrayList<>();
         }
         return ret;
+    }
+    public int getPromotionSkuListCnt(Map<String,Object> params){
+        return selectOne("select_cms_bt_promotion_sku_cnt",params);
     }
     public int insertPromotionSku(CmsBtPromotionSkuModel params){
         return updateTemplate.insert("insert_cms_bt_promotion_sku",params);
