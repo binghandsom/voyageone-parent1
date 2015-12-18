@@ -197,12 +197,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.voyageone</groupId>
-			<artifactId>proxool-cglib</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.voyageone</groupId>
-			<artifactId>proxool</artifactId>
+			<groupId>com.mchange</groupId>
+			<artifactId>c3p0</artifactId>
 		</dependency>
 
 		<dependency>
