@@ -175,7 +175,7 @@ public class TmallGjSkuFieldBuilderImpl_0 extends AbstractSkuFieldBuilder {
         Map<String, MappingBean> skuSubMappingMap = new HashMap<>();
         for (MappingBean mappingBean : subMappingBeans) {
             String propId = mappingBean.getPlatformPropId();
-            skuSubMappingMap.put(propId, skuSubMappingMap.get(propId));
+            skuSubMappingMap.put(propId, mappingBean);
         }
 
         List<ComplexValue> complexValues = new ArrayList<>();

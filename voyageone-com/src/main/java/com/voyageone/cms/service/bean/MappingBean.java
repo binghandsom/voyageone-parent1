@@ -45,9 +45,10 @@ public class MappingBean {
     public String getPlatformIdWithConvert() {
         return StringUtil.replaceDot(platformPropId);
     }
+
     @JsonProperty("platformPropId")
     public void setPlatformIdWithConvert(String platformPropId) {
-        platformPropId = StringUtil.replaceToDot(platformPropId);
+        this.platformPropId = StringUtil.replaceToDot(platformPropId);
     }
 
     public String getMappingType() {

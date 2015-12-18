@@ -189,7 +189,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                     */
 
                     //成功时，publish_status设为1
-                    cmsGroupPlatform.setPublishStatus("已上新");
+                    //cmsGroupPlatform.setPublishStatus("已上新");
                     cmsProductService.update(cmsBtProductModel);
                 }
                 break;
@@ -206,11 +206,11 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                     }
                     //失败时，如果下次需要执行，publish_status设为0，否则publish_status设为2
                     if (workLoadBean.isNextProcess()) {
-                        cmsGroupPlatform.setPublishStatus("等待上新");
+                        //cmsGroupPlatform.setPublishStatus("等待上新");
                     } else {
-                        cmsGroupPlatform.setPublishStatus("上新成功为");
+                        //cmsGroupPlatform.setPublishStatus("上新成功为");
                     }
-                    cmsGroupPlatform.setComment(workLoadBean.getFailCause());
+                    //cmsGroupPlatform.setComment(workLoadBean.getFailCause());
                     cmsProductService.update(sxProductBean.getCmsBtProductModel());
                 }
                 break;

@@ -9,7 +9,10 @@ import com.voyageone.common.masterdate.schema.option.Option;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Leo on 15-12-16.
@@ -22,7 +25,8 @@ public class SxPrepareData {
 
         CmsProductService cmsProductService = ctx.getBean(CmsProductService.class);
         CmsMtCategorySchemaDao cmsMtCategorySchemaDao = ctx.getBean(CmsMtCategorySchemaDao.class);
-        String catId = "5omL6KGoPuiFleihqA==";
+        //珠宝/钻石/翡翠/黄金>天然珍珠（新）>胸饰
+        String catId= "54+g5a6dL+mSu+efsy/nv6Hnv6Av6buE6YeRPuWkqeeEtuePjeePoO+8iOaWsO+8iT7og7jppbA=";
 
         List<CmsBtProductModel> products = new ArrayList<>();
         products.add(createProduct(cmsMtCategorySchemaDao, "200", 1111, 1, "jewelry", catId, true));
@@ -76,10 +80,6 @@ public class SxPrepareData {
         platform.setGroupId(groupId);
         platform.setCartId(23);
         platform.setIsMain(isMain);
-        platform.setInstockTime("2015-11-18 16:19:00");
-        platform.setProductStatus("InStock");
-        platform.setPublishStatus("等待上新");
-        platform.setComment("");
         platforms.add(platform);
 
         List<CmsBtProductModel_Sku> skus = product.getSkus();
@@ -98,9 +98,12 @@ public class SxPrepareData {
         //build schema fields
         CmsMtCategorySchemaModel cmsMtCategorySchemaModel = cmsMtCategorySchemaDao.getMasterSchemaModelByCatId(catId);
         for (Field field : cmsMtCategorySchemaModel.getFields()) {
-            if (!"brand".equals(field.getId()) && !"images1".equals(field.getId()) ) {
+            if ("brand".equals(field.getId()) || "images1".equals(field.getId()) ) {
+                continue;
+            } else {
                 Object fieldValue = constructFieldValue(field, 0);
-                fields.setAttribute(field.getId(), fieldValue);
+                if (fieldValue != null)
+                    fields.setAttribute(field.getId(), fieldValue);
             }
         }
 
@@ -109,16 +112,51 @@ public class SxPrepareData {
 
     private static Object constructFieldValue(Field field, int extraParam) {
         switch (field.getType()) {
-            case INPUT:
-                if (extraParam != 0) {
-                    return field.getName() + extraParam;
-                } else {
-                    return field.getName();
+            case INPUT: {
+                switch (field.getId()) {
+                    case "market_price": {
+                        return "700";
+                    }
+                    case "in_prop_1665536": {
+                        return "abcdefg";
+                    }
+                    case "sell_point_0":
+                    case "sell_point_1":
+                    case "sell_point_2":
+                    case "sell_point_3":
+                    case "sell_point_4": {
+                        return field.getId();
+                    }
+                    default: {
+                        /*
+                        if (extraParam != 0) {
+                            return field.getName() + extraParam;
+                        } else {
+                            return field.getName();
+                        }
+                        */
+                    }
                 }
+                return null;
+            }
             case SINGLECHECK: {
-                List<Option> options = ((SingleCheckField) field).getOptions();
-                if (options.size() > 0)
-                    return ((SingleCheckField) field).getOptions().get(0).getValue();
+                switch (field.getId()) {
+                    case "prop_1665536": {
+                        return "-1";
+                    }
+                    default:
+                    {
+                        List<Option> options = ((SingleCheckField) field).getOptions();
+                        if (options.size() > 0) {
+                            List<Option> optionsList = ((SingleCheckField) field).getOptions();
+                            String value = optionsList.get(0).getValue();
+                            if ("-1".equals(value) && optionsList.size() > 1) {
+                                value = ((SingleCheckField) field).getOptions().get(1).getValue();
+                            }
+                            return value;
+                        }
+                    }
+                }
                 return null;
             }
             case MULTICHECK: {

@@ -53,6 +53,10 @@ public class MasterWordParser {
                 plainPropValueObj = cmsBtProductModel.getFields().getAttribute(propName);
             }
 
+            if (plainPropValueObj == null) {
+                return null;
+            }
+
             if (extra == null) {
                 return String.valueOf(plainPropValueObj);
             } else {
@@ -64,7 +68,7 @@ public class MasterWordParser {
                     for (String plainPropValue : plainPropValues) {
                         mappedPropValues.add(extra.get(plainPropValue));
                     }
-                    return encodeStringArray(mappedPropValues);
+                    return ExpressionParser.encodeStringArray(mappedPropValues);
                 } else {
                     logger.error("Master value must be String or String[]");
                     return null;
@@ -81,20 +85,5 @@ public class MasterWordParser {
 
     public void pushEvaluationContext(Map<String, Object> evaluationContext) {
         evaluationContextStack.add(evaluationContext);
-    }
-
-    public static String encodeStringArray(List<String> mappedPropValues) {
-        final String seperator = "$~";
-        StringBuilder encodedString = new StringBuilder();
-
-        for (String mappedPropValue : mappedPropValues) {
-            encodedString.append(mappedPropValue + seperator);
-        }
-        return encodedString.substring(0, encodedString.length() - seperator.length());
-    }
-
-    public static String[] decodeString(String encodedString) {
-        final String seperator = "$~";
-        return encodedString.split(seperator);
     }
 }
