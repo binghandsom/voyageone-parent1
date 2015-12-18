@@ -488,6 +488,7 @@ public class TmallProductService implements PlatformServiceInterface {
             //输出参数，当构造image参数时，会填充url与它所在的field的映射关系，便于当图片上传结束时，能恢复url到字段中的值
 
             String productSchema = cmsMtPlatformCategorySchemaModel.getPropsProduct();
+            logger.debug("productSchema:" + productSchema);
 
             Map<String, Field> fieldMap;
             try {
@@ -571,7 +572,6 @@ public class TmallProductService implements PlatformServiceInterface {
         List<Field> productFields = resolveMappingProps(tmallUploadRunState, urlMap);
 
         //如果上传图片失败，直接在上传图片失败时进入abort状态，就不会进入该函数，因此，此处无须判断图片是否上传成功
-        /*
         String productCode;
         try {
             productCode = addTmallProduct(categoryCode, brandCode, productFields, workLoadBean);
@@ -579,9 +579,8 @@ public class TmallProductService implements PlatformServiceInterface {
             issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
             throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(e.getMessage()));
         }
-        */
         //TODO 临时随便设置一个
-        String productCode = "22222222222";
+        //String productCode = "465251179";
 
         if (productCode == null)
         {
@@ -618,6 +617,8 @@ public class TmallProductService implements PlatformServiceInterface {
         workLoadBean.setProductId(productCode);
 
         String itemSchema = cmsMtPlatformCategorySchemaModel.getPropsItem();
+
+        logger.debug("itemSchema:" + itemSchema);
 
         Map<String, Field> fieldMap;
         try {
@@ -1562,10 +1563,10 @@ public class TmallProductService implements PlatformServiceInterface {
             if (field == null) {
                 continue;
             }
-            if ("item_images".equals(mappingBean.getPlatformPropId())) {
-                logger.info("abc");
+            Field resolveField = (resolveMapping(cmsMainProduct, mappingBean, field, srcUrlStashEntityMap, expressionParser, imageSet));
+            if (resolveField != null) {
+                mappingFields.add(resolveField);
             }
-            mappingFields.add(resolveMapping(cmsMainProduct, mappingBean, field, srcUrlStashEntityMap, expressionParser, imageSet));
         }
     }
 
@@ -1576,7 +1577,7 @@ public class TmallProductService implements PlatformServiceInterface {
             SingleMappingBean simpleMappingBean = (SingleMappingBean) mappingBean;
             String expressionValue = expressionParser.parse(simpleMappingBean.getExpression(), imageSetEachProp);
             if (null == expressionValue) {
-                return field;
+                return null;
             }
             imageSet.addAll(imageSetEachProp);
             switch (field.getType()) {
@@ -1605,14 +1606,8 @@ public class TmallProductService implements PlatformServiceInterface {
                     }
                     break;
                 }
-                case COMPLEX:
-                    break;
-                case MULTICOMPLEX:
-                    break;
-                case LABEL:
-                    break;
                 default:
-                    logger.error("复杂类型的属性不能使用MAPPING_SINGLE来作为匹配类型");
+                    logger.error("复杂类型的属性:" + field.getType() + "不能使用MAPPING_SINGLE来作为匹配类型");
                     return null;
             }
         } else if (MappingBean.MAPPING_COMPLEX.equals(mappingBean.getMappingType())) {

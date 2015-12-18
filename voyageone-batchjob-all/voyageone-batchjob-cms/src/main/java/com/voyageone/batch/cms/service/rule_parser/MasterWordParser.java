@@ -53,6 +53,10 @@ public class MasterWordParser {
                 plainPropValueObj = cmsBtProductModel.getFields().getAttribute(propName);
             }
 
+            if (plainPropValueObj == null) {
+                return null;
+            }
+
             if (extra == null) {
                 return String.valueOf(plainPropValueObj);
             } else {
