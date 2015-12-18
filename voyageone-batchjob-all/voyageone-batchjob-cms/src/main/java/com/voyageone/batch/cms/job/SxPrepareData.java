@@ -1,6 +1,5 @@
 package com.voyageone.batch.cms.job;
 
-import com.voyageone.base.dao.mongodb.model.CmsMtCategorySchemaModel;
 import com.voyageone.batch.Context;
 import com.voyageone.cms.service.CmsProductService;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
