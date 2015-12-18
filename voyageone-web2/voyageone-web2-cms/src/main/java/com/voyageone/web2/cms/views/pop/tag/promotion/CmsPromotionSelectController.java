@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.views.pop.prom_select;
+package com.voyageone.web2.cms.views.pop.tag.promotion;
 
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -19,7 +19,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping(
-        value  = CmsUrlConstants.PROM.SELECT.ROOT,
+        value  = CmsUrlConstants.POP.PROM_SELECT.ROOT,
         method = RequestMethod.POST
 )
 public class CmsPromotionSelectController extends CmsController {
@@ -27,13 +27,13 @@ public class CmsPromotionSelectController extends CmsController {
     @Autowired
     private CmsPromotionSelectService promotionSelectService;
 
-    @RequestMapping(CmsUrlConstants.PROM.SELECT.GET_PROM_TAGS)
+    @RequestMapping(CmsUrlConstants.POP.PROM_SELECT.GET_PROM_TAGS)
     public AjaxResponse getPromotionTags(@RequestBody Map<String, Object> params){
         List<CmsBtTagModel> result = promotionSelectService.getPromotionTags(params);
         return success(result);
     }
 
-    @RequestMapping(CmsUrlConstants.PROM.SELECT.ADD_TO_PROMOTION)
+    @RequestMapping(CmsUrlConstants.POP.PROM_SELECT.ADD_TO_PROMOTION)
     public AjaxResponse addToPromotion(@RequestBody Map<String, Object> params) {
         String channel_id = getUser().getSelChannelId();
         String user_name = getUser().getUserName();

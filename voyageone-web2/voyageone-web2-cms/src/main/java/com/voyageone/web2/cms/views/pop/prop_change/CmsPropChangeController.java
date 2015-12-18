@@ -1,9 +1,9 @@
 package com.voyageone.web2.cms.views.pop.prop_change;
 
+import com.voyageone.cms.service.model.CmsMtCommonPropDefModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
-import com.voyageone.web2.cms.CmsUrlConstants.PROP;
-import com.voyageone.cms.service.model.CmsMtCommonPropDefModel;
+import com.voyageone.web2.cms.CmsUrlConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +20,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(
-        value  = PROP.CHANGE.ROOT,
+        value  = CmsUrlConstants.POP.PROP_CHANGE.ROOT,
         method = RequestMethod.POST
 )
 public class CmsPropChangeController extends CmsController {
@@ -31,7 +31,7 @@ public class CmsPropChangeController extends CmsController {
     /**
      * 获取pop画面options.
      */
-    @RequestMapping(PROP.CHANGE.GET_POP_OPTIONS)
+    @RequestMapping(CmsUrlConstants.POP.PROP_CHANGE.GET_POP_OPTIONS)
     public AjaxResponse getPopOptions(){
         String channel_id = getUser().getSelChannelId();
         List<CmsMtCommonPropDefModel> result = propChangeService.getPopOptions(channel_id);
@@ -41,7 +41,7 @@ public class CmsPropChangeController extends CmsController {
     /**
      * 批量修改属性.
      */
-    @RequestMapping(PROP.CHANGE.SET_PRODUCT_FIELDS)
+    @RequestMapping(CmsUrlConstants.POP.PROP_CHANGE.SET_PRODUCT_FIELDS)
     public AjaxResponse setProductFields(@RequestBody Map<String, Object> params) {
         String user_name = getUser().getUserName();
         propChangeService.setProductFields(params, user_name);
