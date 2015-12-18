@@ -13,6 +13,6 @@ import java.util.List;
 @Repository
 public class ConditionPropValueDao extends BaseDao{
     public List<ConditionPropValue> selectAllConditionPropValue() {
-        return selectList(Constants.DAO_NAME_SPACE_IMS + "ims_bt_select_all_condition_prop_value");
+        return selectList(Constants.DAO_NAME_SPACE_CMS + "cms_bt_select_all_condition_prop_value");
     }
 }

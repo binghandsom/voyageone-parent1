@@ -26,7 +26,7 @@ public class BrandMapDao extends BaseDao{
             return null;
         }
         else {
-            System.out.println("brand_id:" + brand_id);
+            System.out.println("brand:" + brand_id);
         }
         return brand_id;
     }

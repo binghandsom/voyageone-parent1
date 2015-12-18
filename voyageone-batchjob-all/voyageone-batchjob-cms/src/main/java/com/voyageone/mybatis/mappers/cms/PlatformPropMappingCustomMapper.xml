@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.cms.sql">
+
+	<!-- 查找所有特殊处理的平台属性 -->
+	<select id="cms_selectCustomMappingPlatformProp" resultType="com.voyageone.batch.cms.model.CustomPlatformPropMapping">
+		SELECT
+			platform_prop_id AS  platformPropId,
+			cart_id AS cartId,
+			mapping_type AS customMappingTypeEnum
+		FROM
+			voyageone_cms.cms_mt_platform_prop_mapping_custom
+		WHERE
+			cart_id = #{cart_id}
+	</select>
+
+	<insert id="cms_insertCustomMapping" parameterType="com.voyageone.batch.cms.model.CustomPlatformPropMapping">
+		INSERT
+		INTO voyageone_cms.cms_mt_platform_prop_mapping_custom
+		(cart_id, platform_prop_id, mapping_type)
+		VALUES (
+				#{cartId},
+				#{platformPropId},
+				#{customMappingTypeEnum}
+		)
+	</insert>
+</mapper>

@@ -833,6 +833,7 @@ public class ConstructPropValue {
         customPlatformPropMapping.setPlatformPropId("prop_image");
         platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
         customPlatformPropMapping.setPlatformPropId("prop_extend_10537981");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
         customPlatformPropMapping.setPlatformPropId("in_prop_151018199");
         platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
 
@@ -1602,8 +1603,8 @@ public class ConstructPropValue {
         RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
         ConstructPropValue util = new ConstructPropValue();
 
-        //constructPlatformPropMappingCustom(platformPropCustomMappingDao);
-        constructTmallSkuInfo(platformSkuInfoDao);
+        constructPlatformPropMappingCustom(platformPropCustomMappingDao);
+//        constructTmallSkuInfo(platformSkuInfoDao);
 //        constructTmallSkuInfo(platformSkuInfoDao);
         /*
         constructProductValue(ruleJsonMapper, propValueDao, util);

@@ -30,6 +30,16 @@ public class CmsMtPlatformMappingDao extends BaseMongoDao {
         return selectOneWithQuery(queryStr);
     }
 
+    public CmsMtPlatformMappingModel getMappingByMainCatId(String channelId, int cartId, String mainCatId) {
+        String queryStrTemp = "{" +
+                "channelId:'%s'" +
+                ",platformCartId:%s" +
+                ",mainCategoryId:'%s'" +
+                "}";
+        String queryStr = String.format(queryStrTemp, channelId, cartId, mainCatId);
+        return selectOneWithQuery(queryStr);
+    }
+
     public void insertPlatformMapping(CmsMtPlatformMappingModel cmsMtPlatformMappingModel){
         insert(cmsMtPlatformMappingModel);
     }

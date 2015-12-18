@@ -12,7 +12,7 @@
         WHERE
             cart_id = #{cartId}
         AND channel_id = #{channelId}
-        AND model_id = #{modelId}
+        AND model_id = #{catId}
     </select>
 
     <!-- insert the image url -->
@@ -33,7 +33,7 @@
             (
               #{model.cartId},
               #{model.channelId},
-              #{model.modelId},
+              #{model.catId},
               #{model.orgImageUrl},
               #{model.platformImageUrl},
               NOW(),
