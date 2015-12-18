@@ -12,7 +12,8 @@ import com.voyageone.batch.bi.spider.jumei.BiGlobalDealUpdateJob;
 import com.voyageone.batch.bi.spider.jumei.BiGlobalDealUploadJob;
 import com.voyageone.batch.bi.spider.jumei.BiGlobalProductUpdateJob;
 import com.voyageone.batch.bi.spider.jumei.BiGlobalProductUploadJob;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
@@ -25,7 +26,7 @@ import com.voyageone.batch.bi.util.FileUtils;
  */
 public class VoyageOneBatchJobService {
 
-	private static final Logger log = Logger.getLogger(VoyageOneBatchJobService.class);
+	private static final Log log = LogFactory.getLog(VoyageOneBatchJobService.class);
 	
 	private static final String BATCH_JOB_NAME = "VoyageOne_BatchJob";
 	

@@ -7,7 +7,7 @@
 package com.voyageone.common.util;
 
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.*;
 
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -169,7 +169,7 @@ import java.util.TimeZone;
 
 public final class DateTimeUtil {
 
-    private static Logger log = Logger.getLogger(DateTimeUtil.class);
+    private static Log log = LogFactory.getLog(DateTimeUtil.class);
 
     /**
      * 缺省的日期显示格式： yyyy-MM-dd
