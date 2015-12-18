@@ -121,6 +121,7 @@ public class NewOrderMagentoImportJob {
 
 			// https
 			System.setProperty("javax.net.ssl.trustStore", "/opt/app-shared/voyageone_web/contents/other/third_party/com/trustStore/trustStore");
+			logger.info(postUrl);
 
 			// 取得独立域名的订单信息
 			String response = CommonUtil.HttpPost("", "UTF-8", postUrl);
