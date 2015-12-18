@@ -91,7 +91,7 @@
         }
       },
       {
-        "id": "2",
+        "id": "3",
         "statusType": "0",
         "status": "未上新",
         "platformPath": "https://detail.tmall.hk/hk/item.htm?id=524046119345",
@@ -134,6 +134,7 @@
         }
       }
     ],
+    "groupListTotal": 3,
     "productList": [
       {
         "id": "1",
@@ -238,7 +239,7 @@
         "publishTime": "23:59:59"
       },
       {
-        "id": "2",
+        "id": "4",
         "code": "IRQ63F15",
         "statusType": "3",
         "status": "approved",
@@ -272,7 +273,7 @@
         "publishTime": "23:59:59"
       },
       {
-        "id": "2",
+        "id": "5",
         "code": "IRQ63F15",
         "statusType": "4",
         "status": "delete",
@@ -305,7 +306,8 @@
         "publishDate": "2015-11-11",
         "publishTime": "23:59:59"
       }
-    ]
+    ],
+    "productListTotal": 5
   },
   "redirectTo": ""
 }

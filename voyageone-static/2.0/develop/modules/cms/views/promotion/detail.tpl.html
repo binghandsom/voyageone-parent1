@@ -138,7 +138,7 @@
 										<ul>
 											<li>Created Time</li>
 											<li><span>{{(group.created).substring(0,10)}}</span></li>
-											<li><span>{{(group.created).substring(11)}}</span></li>
+											<li><span>{{(group.created).substring(11,19)}}</span></li>
 										</ul>
 									</div>
 								</small>
@@ -387,20 +387,8 @@
 							</tbody>-->
 					</table>
 					</div>
-					<div class="col-sm-12 m-t-sm">
-						<div class="col-sm-2">
-							<div class="page-main form-inline">
-								第<input type="text"/>页 <button class="btn btn-xs btn-default" type="button">GO</button>
-							</div>
-						</div>
-						<div class="col-sm-7 text-center">
-							<small class="text-muted inline m-t-sm m-b-sm">showing 20-30 of 50 items</small>
-						</div>
-						<div class="col-sm-3 text-right text-center-xs">
-							<div>
-								<pagination boundary-links="true" total-items="totalItems" ng-model="currentPage" class="pagination-sm m-t-none m-b" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></pagination>
-							</div>
-						</div>
+					<div class="col-sm-12 m-t-xs">
+						<vpagination config="vm.groupPageOption" total="{{vm.groupPageOption.total}}"></vpagination>
 					</div>
 				</div><!-- .table-responsive -->
 			</tab>
@@ -424,26 +412,26 @@
 						</table>
 					    <div class="col-sm-12 dropdown_table dropdown_table_main">
 						<table class="table table-hover vo_table vo_models">
-						    <tbody>
+						    <tbody  ng-repeat="code in vm.codeList">
 							<tr class="table_bg_gray">
 								<td colspan="5" class="control-label text-left form-inline">
 									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label>
-									<span class="label label-success-new m-r-lg m-l"> New </span> <span class="m-r-lg">Product Code: <a href="/cms2.0/newcms/angular/index.html#/cms/product" class="text-u-l">LDB01-249</a></span> <span>Product Name: <a href="#/product/list" class="text-u-l">阿迪达斯</a></span>
+									<span class="label label-success-new m-r-lg m-l"> New </span> <span class="m-r-lg">Product Code: <a href="/cms2.0/newcms/angular/index.html#/cms/product" class="text-u-l">{{code.productCode}}</a></span> <span>Product Name: <a href="#/product/list" class="text-u-l">{{code.productName}}</a></span>
 								</td>
-								<th colspan="3" class="text-right">类目:珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石</th>
+								<th colspan="3" class="text-right">{{code.catPath}}</th>
 							</tr>
 						    <tr>
 							<td class="mfb-xxt">
-								<img src="../../../../static/img/02.jpg" alt="Nike Air Max Tailwind 7" class="img-circle pull-left m-r"/>
+								<img src="http://image.sneakerhead.com/is/image/sneakerhead/{{code.image}}" alt="Nike Air Max Tailwind 7" class="img-circle pull-left m-r"/>
 							</td>
-							<td class="mfb-xxt text-center">9.5折</td>
+							<td class="mfb-xxt text-center">{{(code.promotionPrice/code.salePrice*100).toFixed(1)}}折</td>
 							<td class="mfb-xxs text-center">
 								<button popover="LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20" popover-title="Inventory" type="button" popover-placement="left" class="btn btn-default btn-xs">1200</button>
 							</td>
 							<td class="mfb-xxt text-center">
-								<button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-default btn-xs">2900</button>
+								<button popover="Sale Price: {{code.salePrice}}" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-default btn-xs">{{code.promotionPrice}}</button>
 							</td>
-							<td class="mfb-xxt text-center">Women</td>
+							<td class="mfb-xxt text-center">{{code.sizeType}}</td>
 							<td class="mfb-xxs text-left">
 								<div class="table_main">
 									<ul>
@@ -454,125 +442,24 @@
 									</ul>
 								</div>
 							</td>
-							<td class="mfb-xxt text-center">100</td>
+							<td class="mfb-xxt text-center">{{code.skuCount}}</td>
 							<td class="mft-xxt text-left">
-							<small popover="Create Time：2015-11-11 23:59:59 Publish Time：2015-11-11 23:59:59  On Sale Time：2015-11-11 23:59:59" popover-trigger="mouseenter" popover-placement="left">
+							<small  popover-trigger="mouseenter" popover-placement="left">
 								<div class="table_main">
 									<ul>
-										<li>Publish Time</li>
-										<li><span>2015-11-11</span></li>
-										<li><span>23:59:59</span></li>
+										<li>Created Time</li>
+										<li><span>{{(code.created).substring(0,10)}}</span></li>
+										<li><span>{{(code.created).substring(11,19)}}</span></li>
 									</ul>
 								</div>
 							</small>
 						</td>
 						</tr>
 						</tbody>
-							<tbody>
-							<tr class="table_bg_gray">
-								<td colspan="5" class="control-label text-left form-inline">
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label>
-									<span class="label label-success-new m-r-lg m-l"> New </span> <span class="m-r-lg">Product Code: <a href="/cms2.0/newcms/angular/index.html#/cms/product" class="text-u-l">LDB01-249</a></span> <span>Product Name: <a href="#/product/list" class="text-u-l">阿迪达斯</a></span>
-								</td>
-								<th colspan="3" class="text-right">类目:珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石</th>
-							</tr>
-							<tr>
-								<td class="mfb-xxt">
-									<img src="../../../../static/img/02.jpg" alt="Nike Air Max Tailwind 7" class="img-circle pull-left m-r"/>
-								</td>
-								<td class="mfb-xxt text-center">9.5折</td>
-								<td class="mfb-xxs text-center">
-									<button popover="LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20" popover-title="Inventory" type="button" popover-placement="left" class="btn btn-default btn-xs">1200</button>
-								</td>
-								<td class="mfb-xxt text-center">
-									<button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-default btn-xs">2900</button>
-								</td>
-								<td class="mfb-xxt text-center">Women</td>
-								<td class="mfb-xxs text-left">
-									<div class="table_main">
-										<ul>
-											<li>产地：中国</li>
-											<li>颜色：红色</li>
-											<li>材质：PU</li>
-											<li>风格：欧美</li>
-										</ul>
-									</div>
-								</td>
-								<td class="mfb-xxt text-center">100</td>
-								<td class="mft-xxt text-left">
-									<small popover="Create Time：2015-11-11 23:59:59 Publish Time：2015-11-11 23:59:59  On Sale Time：2015-11-11 23:59:59" popover-trigger="mouseenter" popover-placement="left">
-										<div class="table_main">
-											<ul>
-												<li>Publish Time</li>
-												<li><span>2015-11-11</span></li>
-												<li><span>23:59:59</span></li>
-											</ul>
-										</div>
-									</small>
-								</td>
-							</tr>
-							</tbody>
-							<tbody>
-							<tr class="table_bg_gray">
-								<td colspan="5" class="control-label text-left form-inline">
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label>
-									<span class="label label-success-new m-r-lg m-l"> New </span> <span class="m-r-lg">Product Code: <a href="/cms2.0/newcms/angular/index.html#/cms/product" class="text-u-l">LDB01-249</a></span> <span>Product Name: <a href="#/product/list" class="text-u-l">阿迪达斯</a></span>
-								</td>
-								<th colspan="3" class="text-right">类目:珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石</th>
-							</tr>
-							<tr>
-								<td class="mfb-xxt">
-									<img src="../../../../static/img/02.jpg" alt="Nike Air Max Tailwind 7" class="img-circle pull-left m-r"/>
-								</td>
-								<td class="mfb-xxt text-center">9.5折</td>
-								<td class="mfb-xxs text-center">
-									<button popover="LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20" popover-title="Inventory" type="button" popover-placement="left" class="btn btn-default btn-xs">1200</button>
-								</td>
-								<td class="mfb-xxt text-center">
-									<button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-default btn-xs">2900</button>
-								</td>
-								<td class="mfb-xxt text-center">Women</td>
-								<td class="mfb-xxs text-left">
-									<div class="table_main">
-										<ul>
-											<li>产地：中国</li>
-											<li>颜色：红色</li>
-											<li>材质：PU</li>
-											<li>风格：欧美</li>
-										</ul>
-									</div>
-								</td>
-								<td class="mfb-xxt text-center">100</td>
-								<td class="mft-xxt text-left">
-									<small popover="Create Time：2015-11-11 23:59:59 Publish Time：2015-11-11 23:59:59  On Sale Time：2015-11-11 23:59:59" popover-trigger="mouseenter" popover-placement="left">
-										<div class="table_main">
-											<ul>
-												<li>Publish Time</li>
-												<li><span>2015-11-11</span></li>
-												<li><span>23:59:59</span></li>
-											</ul>
-										</div>
-									</small>
-								</td>
-							</tr>
-							</tbody>
-							<!--copy-->
 					</table>
 					</div>
-					<div class="col-sm-12 m-t-sm">
-					<div class="col-sm-2">
-						<div class="page-main form-inline">
-							第<input type="text"/>页 <button class="btn btn-xs btn-default" type="button">GO</button>
-						</div>
-					</div>
-					<div class="col-sm-7 text-center">
-						<small class="text-muted inline m-t-sm m-b-sm">showing 20-30 of 50 items</small>
-					</div>
-					<div class="col-sm-3 text-right text-center-xs">
-						<div>
-							<pagination boundary-links="true" total-items="totalItems" ng-model="currentPage" class="pagination-sm m-t-none m-b" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></pagination>
-						</div>
-					</div>
+					<div class="col-sm-12 m-t-xs">
+						<vpagination config="vm.codePageOption" total="{{vm.codePageOption.total}}"></vpagination>
 					</div>
 				</div><!-- .table-responsive -->
 			</tab>
@@ -583,188 +470,24 @@
 						<table class="table table-hover b-t b-light vo_table vo_models">
 							<thead>
 							<tr>
-								<th class="mfb-xt text-center">Seq.</th>
 								<th class="mfb-xxs">SKU</th>
 								<th class="mfb-xx">折扣</th>
 								<th class="mfb-x">Size</th>
 								<th class="mfb-x">Inventory</th>
 								<th class="mfb-x">Promotion Price</th>
-								<th class="mfb-x">MSRP</th>
 								<th class="mfb-x">price retail</th>
 								<th class="mfb-xt">Edit</th>
 							</tr>
 							</thead>
 							<tbody>
-							<tr>
-								<td class="text-center">1</td>
-								<td>LDB01-249</td>
-								<td>9.5折</td>
-								<td>M</td>
-								<td><input type="text" class="col-sm-1 form-control" placeholder="530" popover-placement="left" popover="原始库存：530"></td>
-								<td><input type="text" class="form-control col-sm-2" popover-placement="left" popover="Promotion Price：1200"></td>
-								<td><input type="text" class="col-sm-1 form-control" placeholder="2,099.00" popover-placement="left" popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" disabled></td>
+							<tr  ng-repeat="sku in vm.skuList">
+								<td>{{sku.productSku}}</td>
+								<td>{{(sku.promotionPrice/sku.salePrice*100).toFixed(1)}}折</td>
+								<td>{{sku.size}}</td>
+								<td><input type="text" class="col-sm-1 form-control" placeholder="{{sku.qty}}" popover-placement="left" popover="原始库存：{{sku.qty}}"></td>
+								<td><button type="button" popover-placement="left" class="btn btn-default btn-xs">{{sku.promotionPrice}}</button></td>
 								<td><!--<input type="text" class="form-control col-sm-2" popover-placement="left" popover="price retail：1200">-->
-									<input type="text" class="form-control" placeholder="1200" disabled>
-								</td>
-								<td>
-									<button title="保存" class="btn btn-success btn-xs"><i class="fa fa-floppy-o"></i></button>
-									<button class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button>
-								</td>
-							</tr>
-							<tr>
-								<td class="text-center">2</td>
-								<td>LDB01-249</td>
-								<td>9.5折</td>
-								<td>S</td>
-								<td><input type="text" class="col-sm-1 form-control" placeholder="530" popover-placement="left" popover="原始库存：530"></td>
-								<td><input type="text" class="form-control col-sm-2" popover-placement="left" popover="Promotion Price：1200"></td>
-								<td><input type="text" class="col-sm-1 form-control" placeholder="2,099.00" popover-placement="left" popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" disabled></td>
-								<td><!--<input type="text" class="form-control col-sm-2" popover-placement="left" popover="price retail：1200">-->
-									<input type="text" class="form-control" placeholder="1200" disabled>
-								</td>
-								<td>
-									<button title="保存" class="btn btn-success btn-xs"><i class="fa fa-floppy-o"></i></button>
-									<button class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button>
-								</td>
-							</tr>
-							<tr>
-								<td class="text-center">3</td>
-								<td>LDB01-249</td>
-								<td>9.5折</td>
-								<td>L</td>
-								<td><input type="text" class="col-sm-1 form-control" placeholder="530" popover-placement="left" popover="原始库存：530"></td>
-								<td><input type="text" class="form-control col-sm-2" popover-placement="left" popover="Promotion Price：1200"></td>
-								<td><input type="text" class="col-sm-1 form-control" placeholder="2,099.00" popover-placement="left" popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" disabled></td>
-								<td><!--<input type="text" class="form-control col-sm-2" popover-placement="left" popover="price retail：1200">-->
-									<input type="text" class="form-control" placeholder="1200" disabled>
-								</td>
-								<td>
-									<button title="保存" class="btn btn-success btn-xs"><i class="fa fa-floppy-o"></i></button>
-									<button class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button>
-								</td>
-							</tr>
-							<tr>
-								<td class="text-center">4</td>
-								<td>LDB01-249</td>
-								<td>9.5折</td>
-								<td>S</td>
-								<td><input type="text" class="col-sm-1 form-control" placeholder="530" popover-placement="left" popover="原始库存：530"></td>
-								<td><input type="text" class="form-control col-sm-2" popover-placement="left" popover="Promotion Price：1200"></td>
-								<td><input type="text" class="col-sm-1 form-control" placeholder="2,099.00" popover-placement="left" popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00"disabled></td>
-								<td><!--<input type="text" class="form-control col-sm-2" popover-placement="left" popover="price retail：1200">-->
-									<input type="text" class="form-control" placeholder="1200" disabled>
-								</td>
-								<td>
-									<button title="保存" class="btn btn-success btn-xs"><i class="fa fa-floppy-o"></i></button>
-									<button class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button>
-								</td>
-							</tr>
-							<tr>
-								<td class="text-center">5</td>
-								<td>LDB01-249</td>
-								<td>9.5折</td>
-								<td>S</td>
-								<td><input type="text" class="col-sm-1 form-control" placeholder="530" popover-placement="left" popover="原始库存：530"></td>
-								<td><input type="text" class="form-control col-sm-2" popover-placement="left" popover="Promotion Price：1200"></td>
-								<td><input type="text" class="col-sm-1 form-control" placeholder="2,099.00" popover-placement="left" popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" disabled></td>
-								<td><!--<input type="text" class="form-control col-sm-2" popover-placement="left" popover="price retail：1200">-->
-									<input type="text" class="form-control" placeholder="1200" disabled>
-								</td>
-								<td>
-									<button title="保存" class="btn btn-success btn-xs"><i class="fa fa-floppy-o"></i></button>
-									<button class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button>
-								</td>
-							</tr>
-							<tr>
-								<td class="text-center">6</td>
-								<td>LDB01-249</td>
-								<td>9.5折</td>
-								<td>XS</td>
-								<td><input type="text" class="col-sm-1 form-control" placeholder="530" popover-placement="left" popover="原始库存：530"></td>
-								<td><input type="text" class="form-control col-sm-2" popover-placement="left" popover="Promotion Price：1200"></td>
-								<td><input type="text" class="col-sm-1 form-control" placeholder="2,099.00" popover-placement="left" popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" disabled></td>
-								<td><!--<input type="text" class="form-control col-sm-2" popover-placement="left" popover="price retail：1200">-->
-									<input type="text" class="form-control" placeholder="1200" disabled>
-								</td>
-								<td>
-									<button title="保存" class="btn btn-success btn-xs"><i class="fa fa-floppy-o"></i></button>
-									<button class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button>
-								</td>
-							</tr>
-							<tr>
-								<td class="text-center">2</td>
-								<td>LDB01-249</td>
-								<td>9.5折</td>
-								<td>S</td>
-								<td><input type="text" class="col-sm-1 form-control" placeholder="530" popover-placement="left" popover="原始库存：530"></td>
-								<td><input type="text" class="form-control col-sm-2" popover-placement="left" popover="Promotion Price：1200"></td>
-								<td><input type="text" class="col-sm-1 form-control" placeholder="2,099.00" popover-placement="left" popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" disabled></td>
-								<td><!--<input type="text" class="form-control col-sm-2" popover-placement="left" popover="price retail：1200">-->
-									<input type="text" class="form-control" placeholder="1200" disabled>
-								</td>
-								<td>
-									<button title="保存" class="btn btn-success btn-xs"><i class="fa fa-floppy-o"></i></button>
-									<button class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button>
-								</td>
-							</tr>
-							<tr>
-								<td class="text-center">3</td>
-								<td>LDB01-249</td>
-								<td>9.5折</td>
-								<td>L</td>
-								<td><input type="text" class="col-sm-1 form-control" placeholder="530" popover-placement="left" popover="原始库存：530"></td>
-								<td><input type="text" class="form-control col-sm-2" popover-placement="left" popover="Promotion Price：1200"></td>
-								<td><input type="text" class="col-sm-1 form-control" placeholder="2,099.00" popover-placement="left" popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" disabled></td>
-								<td><!--<input type="text" class="form-control col-sm-2" popover-placement="left" popover="price retail：1200">-->
-									<input type="text" class="form-control" placeholder="1200" disabled>
-								</td>
-								<td>
-									<button title="保存" class="btn btn-success btn-xs"><i class="fa fa-floppy-o"></i></button>
-									<button class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button>
-								</td>
-							</tr>
-							<tr>
-								<td class="text-center">4</td>
-								<td>LDB01-249</td>
-								<td>9.5折</td>
-								<td>S</td>
-								<td><input type="text" class="col-sm-1 form-control" placeholder="530" popover-placement="left" popover="原始库存：530"></td>
-								<td><input type="text" class="form-control col-sm-2" popover-placement="left" popover="Promotion Price：1200"></td>
-								<td><input type="text" class="col-sm-1 form-control" placeholder="2,099.00" popover-placement="left" popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00"disabled></td>
-								<td><!--<input type="text" class="form-control col-sm-2" popover-placement="left" popover="price retail：1200">-->
-									<input type="text" class="form-control" placeholder="1200" disabled>
-								</td>
-								<td>
-									<button title="保存" class="btn btn-success btn-xs"><i class="fa fa-floppy-o"></i></button>
-									<button class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button>
-								</td>
-							</tr>
-							<tr>
-								<td class="text-center">5</td>
-								<td>LDB01-249</td>
-								<td>9.5折</td>
-								<td>S</td>
-								<td><input type="text" class="col-sm-1 form-control" placeholder="530" popover-placement="left" popover="原始库存：530"></td>
-								<td><input type="text" class="form-control col-sm-2" popover-placement="left" popover="Promotion Price：1200"></td>
-								<td><input type="text" class="col-sm-1 form-control" placeholder="2,099.00" popover-placement="left" popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" disabled></td>
-								<td><!--<input type="text" class="form-control col-sm-2" popover-placement="left" popover="price retail：1200">-->
-									<input type="text" class="form-control" placeholder="1200" disabled>
-								</td>
-								<td>
-									<button title="保存" class="btn btn-success btn-xs"><i class="fa fa-floppy-o"></i></button>
-									<button class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button>
-								</td>
-							</tr>
-							<tr>
-								<td class="text-center">6</td>
-								<td>LDB01-249</td>
-								<td>9.5折</td>
-								<td>XS</td>
-								<td><input type="text" class="col-sm-1 form-control" placeholder="530" popover-placement="left" popover="原始库存：530"></td>
-								<td><input type="text" class="form-control col-sm-2" popover-placement="left" popover="Promotion Price：1200"></td>
-								<td><input type="text" class="col-sm-1 form-control" placeholder="2,099.00" popover-placement="left" popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" disabled></td>
-								<td><!--<input type="text" class="form-control col-sm-2" popover-placement="left" popover="price retail：1200">-->
-									<input type="text" class="form-control" placeholder="1200" disabled>
+									<button type="button" popover-placement="left" class="btn btn-default btn-xs">{{sku.salePrice}}</button></td>
 								</td>
 								<td>
 									<button title="保存" class="btn btn-success btn-xs"><i class="fa fa-floppy-o"></i></button>
@@ -775,20 +498,9 @@
 						</table>
 					</div><!-- .table-responsive -->
 
-					<footer class="panel-footer">
-						<div class="row">
-							<div class="col-sm-4 hidden-xs">
-							</div>
-							<div class="col-sm-4 text-center">
-								<small class="text-muted inline m-t-sm m-b-sm">showing 20-30 of 50 items</small>
-							</div>
-							<div class="col-sm-4 text-right text-center-xs">
-								<div>
-									<pagination boundary-links="true" total-items="totalItems" ng-model="currentPage" class="pagination-sm m-t-none m-b" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></pagination>
-								</div>
-							</div>
-						</div>
-					</footer> <!-- .panel-footer -->
+					<div class="col-sm-12 m-t-xs">
+						<vpagination config="vm.skuPageOption" total="{{vm.skuPageOption.total}}"></vpagination>
+					</div>
 				</div> <!-- .panel -->
 				<div class="row text-center">
 					<div class="col-sm-12">

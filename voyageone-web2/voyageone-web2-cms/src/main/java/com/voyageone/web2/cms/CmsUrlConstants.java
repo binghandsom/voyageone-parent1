@@ -30,6 +30,7 @@ public interface CmsUrlConstants {
             String GET_MAIN_CATEGORIES = "mainCategories";
         }
     }
+
     interface PROMOTION {
 
         interface LIST {
@@ -53,29 +54,7 @@ public interface CmsUrlConstants {
             String GET_PROMOTION_SKU = "getPromotionSku";
         }
     }
-    interface PROP {
 
-        interface CHANGE {
-
-            String ROOT = "/cms/pop/prop_change/";
-
-            String GET_POP_OPTIONS = "getPopOptions";
-
-            String SET_PRODUCT_FIELDS = "setProductFields";
-        }
-    }
-
-    interface PROM {
-
-        interface SELECT {
-
-            String ROOT = "/cms/pop/prom_select/";
-
-            String GET_PROM_TAGS = "getPromotionTags";
-
-            String ADD_TO_PROMOTION = "addToPromotion";
-        }
-    }
     interface SEARCH {
 
         interface INDEX {
@@ -89,6 +68,26 @@ public interface CmsUrlConstants {
             String GET_GROUP_LIST = "getGroupList";
 
             String GET_PRODUCT_LIST = "getProductList";
+        }
+    }
+    interface POP {
+
+        interface PROP_CHANGE {
+
+            String ROOT = "/cms/pop/prop_change/";
+
+            String GET_POP_OPTIONS = "getPopOptions";
+
+            String SET_PRODUCT_FIELDS = "setProductFields";
+        }
+
+        interface PROM_SELECT {
+
+            String ROOT = "/cms/pop/prom_select/";
+
+            String GET_PROM_TAGS = "getPromotionTags";
+
+            String ADD_TO_PROMOTION = "addToPromotion";
         }
     }
 }

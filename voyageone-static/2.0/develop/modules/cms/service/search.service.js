@@ -36,6 +36,19 @@ define([
         function search(data) {
             var defer = $q.defer();
             $searchIndexService.search(resetSearchInfo(data)).then(function (res) {
+                res.data.groupCurrPageRows  = [];
+                res.data.groupSelFlag= [];
+                _.forEach(res.data.groupList, function (groupInfo) {
+                    res.data.groupCurrPageRows.push({"id": groupInfo.id});
+                    res.data.groupSelFlag[groupInfo.id] = false;
+                });
+                res.data.productCurrPageRows = [];
+                res.data.productSelFlag= [];
+                _.forEach(res.data.productList, function (productInfo) {
+                    res.data.productCurrPageRows.push({"id": productInfo.id});
+                    res.data.productSelFlag[productInfo.id] = false;
+                });
+
                 defer.resolve (res);
             });
             return defer.promise;
@@ -75,9 +88,9 @@ define([
          */
         function resetSearchInfo (data) {
             var searchInfo = angular.copy (data);
-            searchInfo.productStatus = _.allKeys(searchInfo.productStatus);
-            searchInfo.publishStatus = _.allKeys(searchInfo.publishStatus);
-            searchInfo.labelType = _.allKeys(searchInfo.labelType);
+            searchInfo.productStatus = _.keys(searchInfo.productStatus);
+            searchInfo.publishStatus = _.keys(searchInfo.publishStatus);
+            searchInfo.labelType = _.keys(searchInfo.labelType);
             if (!_.isUndefined(searchInfo.codeList))
                 searchInfo.codeList = searchInfo.codeList.split("\n");
             return searchInfo;

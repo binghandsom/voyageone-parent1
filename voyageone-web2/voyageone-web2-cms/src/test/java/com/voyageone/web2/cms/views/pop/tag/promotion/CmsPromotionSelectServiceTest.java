@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.views.pop.prom_select;
+package com.voyageone.web2.cms.views.pop.tag.promotion;
 
 import com.voyageone.web2.cms.model.CmsBtTagModel;
 import net.minidev.json.JSONArray;
@@ -10,7 +10,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author gubuchun 15/12/9

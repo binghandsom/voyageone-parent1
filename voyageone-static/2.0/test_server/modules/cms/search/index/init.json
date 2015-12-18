@@ -4,11 +4,11 @@
   "message": "",
   "data": {
     "productStatusList": [
-      {"id": "0", "name": "new"},
-      {"id": "1", "name": "pending"},
-      {"id": "2", "name": "ready"},
-      {"id": "3", "name": "approved"},
-      {"id": "4", "name": "deleted"}
+      {"value": "0", "name": "new"},
+      {"value": "1", "name": "pending"},
+      {"value": "2", "name": "ready"},
+      {"value": "3", "name": "approved"},
+      {"value": "4", "name": "deleted"}
     ],
     "publishStatusList": [
       {"id": "0", "name": "等待上新"},

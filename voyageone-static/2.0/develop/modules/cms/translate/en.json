@@ -74,10 +74,14 @@
   "TXT_CATEGORY": "类目:",
   "TXT_CHANNEL": "Channel:",
   "TXT_PROMOTION": "Promotion:",
+  "TXT_MSG_TAG_PROMOTION": "确认将选中项目加入该活动？",
+  "TXT_ONLY_FOR_PROMOTION_CATEGORY": "Promotion专用店铺类目:",
+  "TXT_SELECT_NO_VALUE": "Select...",
 
   "BTN_CANCEL": "Cancel",
   "BTN_CLEAR": "Clear",
   "BTN_SEARCH": "Search",
   "BTN_EXPORT": "Export",
-  "BTN_GO": "Go"
+  "BTN_GO": "Go",
+  "BTN_SAVE": "Save"
 }

@@ -81,6 +81,17 @@ public class CmsBtProductModel extends ChannelPartitionModel {
         this.skus = skus;
     }
 
+    public CmsBtProductModel_Sku getSku(String skuCode) {
+        if (skuCode != null && this.skus != null) {
+            for(CmsBtProductModel_Sku sku : skus) {
+                if (skuCode.equals(sku.getSkuCode())) {
+                    return sku;
+                }
+            }
+        }
+        return null;
+    }
+
     public List<CmsBtProductModel_Tag> getTags() {
         return tags;
     }
@@ -104,4 +115,6 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     public void setFeedCnAtts(CmsBtProductModel_Feed feedCnAtts) {
         this.feedCnAtts = feedCnAtts;
     }
+
+
 }

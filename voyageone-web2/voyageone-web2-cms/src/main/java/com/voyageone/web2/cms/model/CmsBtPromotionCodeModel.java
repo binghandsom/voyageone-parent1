@@ -22,6 +22,12 @@ public class CmsBtPromotionCodeModel extends CmsBtPromotionGroupModel {
 
     private String imageUrlSaleOut;
 
+    private String image;
+
+    private Integer skuCount;
+
+    private String sizeType;
+
     public CmsBtPromotionCodeModel(CmsBtProductModel productInfo, int cartId, int promotionId, String operator) {
         super(productInfo, cartId, promotionId, operator);
         this.setProductId(productInfo.getProdId());
@@ -87,5 +93,29 @@ public class CmsBtPromotionCodeModel extends CmsBtPromotionGroupModel {
 
     public void setImageUrlSaleOut(String imageUrlSaleOut) {
         this.imageUrlSaleOut = imageUrlSaleOut;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public Integer getSkuCount() {
+        return skuCount;
+    }
+
+    public void setSkuCount(Integer skuCount) {
+        this.skuCount = skuCount;
+    }
+
+    public String getSizeType() {
+        return sizeType;
+    }
+
+    public void setSizeType(String sizeType) {
+        this.sizeType = sizeType;
     }
 }
