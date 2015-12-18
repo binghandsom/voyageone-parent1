@@ -233,14 +233,12 @@
 			<groupId>com.voyageone</groupId>
 			<artifactId>axis</artifactId>
 		</dependency>
+
 		<dependency>
-			<groupId>com.voyageone</groupId>
-			<artifactId>axiom-api</artifactId>
+			<groupId>org.apache.ws.commons.axiom</groupId>
+			<artifactId>axiom-dom</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.voyageone</groupId>
-			<artifactId>axiom-impl</artifactId>
-		</dependency>
+
 		<dependency>
 			<groupId>com.voyageone</groupId>
 			<artifactId>jaxrpc</artifactId>

@@ -315,21 +315,13 @@
                 <artifactId>axis</artifactId>
                 <version>1.4.1</version>
             </dependency>
+
             <dependency>
-                <groupId>com.voyageone</groupId>
-                <artifactId>axiom-api</artifactId>
-                <version>1.2.7</version>
-            </dependency>
-            <dependency>
-                <groupId>com.voyageone</groupId>
+                <groupId>org.apache.ws.commons.axiom</groupId>
                 <artifactId>axiom-dom</artifactId>
-                <version>1.2.7</version>
+                <version>1.2.16</version>
             </dependency>
-            <dependency>
-                <groupId>com.voyageone</groupId>
-                <artifactId>axiom-impl</artifactId>
-                <version>1.2.7</version>
-            </dependency>
+
             <dependency>
                 <groupId>org.codehaus.jettison</groupId>
                 <artifactId>jettison</artifactId>
