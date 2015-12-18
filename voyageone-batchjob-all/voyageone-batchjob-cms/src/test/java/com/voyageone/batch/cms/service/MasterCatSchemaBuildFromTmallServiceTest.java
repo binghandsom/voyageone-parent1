@@ -1,7 +1,5 @@
 package com.voyageone.batch.cms.service;
 
-import com.voyageone.base.dao.mongodb.model.CmsMtCategorySchemaModel;
-import com.voyageone.batch.cms.dao.mongo.CmsMtPlatformFieldsRemoveHistoryDao;
 import com.voyageone.cms.service.dao.CmsMtCommonPropDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
 import com.voyageone.cms.service.model.MtCommPropActionDefModel;

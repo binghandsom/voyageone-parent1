@@ -6,6 +6,12 @@ import com.voyageone.common.util.JsonUtil;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * BaseMongoMap
+ * @author chuanyu.liang, 12/11/15
+ * @version 2.0.0
+ * @since 2.0.0
+ */
 public class BaseMongoMap<K, V> extends LinkedHashMap<K, V> implements Map<K, V> {
 
     @SuppressWarnings("unchecked")

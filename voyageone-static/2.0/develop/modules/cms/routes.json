@@ -15,7 +15,7 @@
     "controllerUrl": "modules/cms/views/promotion/list.ctl"
   },
   "promotion_detail": {
-    "hash": "/promotion/detail",
+    "hash": "/promotion/detail/:promotionId",
     "templateUrl": "views/promotion/detail.tpl.html",
     "controllerUrl": "modules/cms/views/promotion/detail.ctl"
   },

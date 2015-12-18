@@ -22,7 +22,7 @@ public class CmsBtTagDao extends BaseDao{
         return updateTemplate.update("update_cms_bt_tag",cmsBtTagModel);
     }
 
-    public List<CmsBtTagModel> selectListById(int promotionId) {
-        return updateTemplate.selectList("select_list_by_id", promotionId);
+    public List<CmsBtTagModel> selectListByParentTagId(int parentTagId) {
+        return updateTemplate.selectList("select_list_by_parent_tag_id", parentTagId);
     }
 }

@@ -5,6 +5,7 @@ import com.voyageone.web2.cms.model.CmsBtPromotionModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +22,12 @@ public class CmsPromotionDao extends BaseDao{
             ret = new ArrayList<>();
         }
         return ret;
+    }
+
+    public CmsBtPromotionModel getPromotionById(int PromotionId){
+        Map<String,Object> param = new HashMap<>();
+        param.put("promotionId",PromotionId);
+        return  selectOne("select_promotion_list",param);
     }
     public int insertPromotion(CmsBtPromotionModel params){
         return updateTemplate.insert("insert_promotion",params);

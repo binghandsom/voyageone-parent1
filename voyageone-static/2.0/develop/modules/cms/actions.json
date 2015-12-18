@@ -36,12 +36,30 @@
         "getMainCategories": "main_categories"
       }
     },
+    "pop": {
+      "$propChangeService": {
+        "root": "/cms/pop/prop_change/",
+        "getPopOptions": "getPopOptions",
+        "setProductFields": "setProductFields"
+      },
+      "$tagPromotionService": {
+        "root": "/cms/pop/prom_select/",
+        "getPromotionTags": "getPromotionTags",
+        "setPromotionTag": "setPromotionTag"
+      }
+    },
     "promotionService": {
       "root": "/cms/promotion/list",
       "getPromotionList": "getPromotionList",
       "insertPromotion": "insertPromotion",
       "updatePromotion": "updatePromotion",
       "delPromotion": "delPromotion"
+    },
+    "promotionDetailService": {
+      "root": "/cms/promotion/detail",
+      "getPromotionGroup": "getPromotionGroup",
+      "getPromotionCode": "getPromotionCode",
+      "getPromotionSku": "getPromotionSku"
     }
   }
 }

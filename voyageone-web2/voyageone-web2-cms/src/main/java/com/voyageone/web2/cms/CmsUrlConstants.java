@@ -42,8 +42,17 @@ public interface CmsUrlConstants {
 
             String UPDATE_PROMOTION = "updatePromotion";
         }
-    }
+        interface DETAIL {
 
+            String ROOT = "/cms/promotion/detail";
+
+            String GET_PROMOTION_GROUP = "getPromotionGroup";
+
+            String GETP_ROMOTION_CODE = "getPromotionCode";
+
+            String GET_PROMOTION_SKU = "getPromotionSku";
+        }
+    }
     interface PROP {
 
         interface CHANGE {
@@ -64,7 +73,7 @@ public interface CmsUrlConstants {
 
             String GET_PROM_TAGS = "getPromotionTags";
 
-            String SET_PROM_TAG = "setPromotionTag";
+            String ADD_TO_PROMOTION = "addToPromotion";
         }
     }
     interface SEARCH {

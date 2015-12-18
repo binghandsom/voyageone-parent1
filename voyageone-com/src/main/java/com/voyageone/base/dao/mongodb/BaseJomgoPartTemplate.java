@@ -6,6 +6,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
+import com.voyageone.common.util.StringUtils;
 import net.minidev.json.JSONObject;
 import org.apache.commons.collections.IteratorUtils;
 import org.bson.types.ObjectId;
@@ -18,6 +19,12 @@ import java.util.Collection;
 import java.util.List;
 
 
+/**
+ * BaseJomgoPartTemplate
+ * @author chuanyu.liang, 12/11/15
+ * @version 2.0.0
+ * @since 2.0.0
+ */
 public class BaseJomgoPartTemplate {
 
     protected MongoTemplate mongoTemplate;
@@ -96,7 +103,7 @@ public class BaseJomgoPartTemplate {
     }
 
     public <T> T findOne(Class<T> entityClass, String collectionName) {
-        return getCollection(collectionName).findOne().as(entityClass);
+        return findOne("", entityClass, collectionName);
     }
 
     public JSONObject findOne(String strQuery, String collectionName) {
@@ -104,8 +111,39 @@ public class BaseJomgoPartTemplate {
     }
 
     public <T> T findOne(String strQuery, Class<T> entityClass, String collectionName) {
-        JSONObject aa = getCollection(collectionName).findOne(strQuery).as(JSONObject.class);
-        return getCollection(collectionName).findOne(strQuery).as(entityClass);
+        return findOne(strQuery, null, entityClass, collectionName);
+    }
+
+    public <T> T findOne(String strQuery, String projection, Class<T> entityClass, String collectionName) {
+        JomgoQuery query = new JomgoQuery();
+        query.setQuery(strQuery);
+        query.setProjection(projection);
+        return findOne(query, entityClass, collectionName);
+    }
+
+    public <T> T findOne(JomgoQuery queryObject, Class<T> entityClass, String collectionName) {
+        MongoCursor<T> result;
+        FindOne find;
+
+        //condition
+        if (StringUtils.isEmpty(queryObject.getQuery())) {
+            find = getCollection(collectionName).findOne();
+        } else {
+            find = getCollection(collectionName).findOne(queryObject.getQuery());
+        }
+
+        //column
+        if (!StringUtils.isEmpty(queryObject.getProjection())) {
+            find = find.projection(queryObject.getProjection());
+        }
+
+        //sort
+        if (!StringUtils.isEmpty(queryObject.getSort())) {
+            find = find.orderBy(queryObject.getSort());
+        }
+
+        //execute
+        return find.as(entityClass);
     }
 
     public boolean exists(String strQuery, String collectionName) {
@@ -132,8 +170,14 @@ public class BaseJomgoPartTemplate {
         return find(strQuery, null, entityClass, collectionName);
     }
 
+    @SuppressWarnings("unchecked")
     public <T> List<T> find(final String strQuery, String projection, Class<T> entityClass, String collectionName) {
         return IteratorUtils.toList(findCursor(strQuery, projection, entityClass, collectionName));
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> List<T> find(JomgoQuery queryObject, Class<T> entityClass, String collectionName) {
+        return IteratorUtils.toList(findCursor(queryObject, entityClass, collectionName));
     }
 
     public <T> MongoCursor<T> findCursorAll(Class<T> entityClass, String collectionName) {
@@ -157,20 +201,45 @@ public class BaseJomgoPartTemplate {
     }
 
     public <T> MongoCursor<T> findCursor(final String strQuery, String projection, Class<T> entityClass, String collectionName) {
+        JomgoQuery query = new JomgoQuery();
+        query.setQuery(strQuery);
+        query.setProjection(projection);
+        return findCursor(query, entityClass, collectionName);
+    }
+
+    public <T> MongoCursor<T> findCursor(JomgoQuery queryObject, Class<T> entityClass, String collectionName) {
         MongoCursor<T> result;
-        if (strQuery == null) {
-            Find find = getCollection(collectionName).find();
-            if (projection != null) {
-                find = find.projection(projection);
-            }
-            result = find.as(entityClass);
+        Find find;
+
+        //condition
+        if (StringUtils.isEmpty(queryObject.getQuery())) {
+            find = getCollection(collectionName).find();
         } else {
-            Find find = getCollection(collectionName).find(strQuery);
-            if (projection != null) {
-                find = find.projection(projection);
-            }
-            result = find.as(entityClass);
+            find = getCollection(collectionName).find(queryObject.getQuery());
         }
+
+        //column
+        if (!StringUtils.isEmpty(queryObject.getProjection())) {
+            find = find.projection(queryObject.getProjection());
+        }
+
+        //sort
+        if (!StringUtils.isEmpty(queryObject.getSort())) {
+            find = find.sort(queryObject.getSort());
+        }
+
+        //limit
+        if (queryObject.getLimit() != null) {
+            find = find.limit(queryObject.getLimit());
+        }
+
+        //skip
+        if (queryObject.getSkip() != null) {
+            find = find.skip(queryObject.getSkip());
+        }
+
+        //execute
+        result = find.as(entityClass);
         return result;
     }
 

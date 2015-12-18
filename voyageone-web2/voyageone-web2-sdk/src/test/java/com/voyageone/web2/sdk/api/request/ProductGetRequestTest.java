@@ -29,7 +29,7 @@ public class ProductGetRequestTest {
     public void testProductGetRequest() {
 
 
-        PostProductSelectOneRequest requestModel = new PostProductSelectOneRequest();
+        PostProductSelectOneRequest requestModel = new PostProductSelectOneRequest("001");
         requestModel.setProductId((long)1);
 
         RequestEntity<PostProductSelectOneRequest> requestEntity = new RequestEntity<PostProductSelectOneRequest>(requestModel, requestModel.getHeaders(), requestModel.getHttpMethod(), getURI(requestModel.getApiURLPath()));

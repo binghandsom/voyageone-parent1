@@ -8,7 +8,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -32,7 +34,16 @@ public class CmsPromotionDetailServiceTest {
         cmsPromotionProductPriceBean.setTag("7折");
         List< CmsPromotionProductPriceBean > productPrices = new ArrayList<>();
         productPrices.add(cmsPromotionProductPriceBean);
-        cmsPromotionDetailService.insertPromotionProduct(productPrices, "300", 1, 23, "james");
+        cmsPromotionDetailService.insertPromotionProduct(productPrices, 14, "james");
         System.out.println("");
+    }
+
+    @Test
+    public void testGetPromotionGroup() throws Exception {
+        Map<String,Object> param = new HashMap<>();
+        param.put("promotionId",1);
+        param.put("start",1);
+        param.put("length",10);
+        cmsPromotionDetailService.getPromotionGroup(param);
     }
 }

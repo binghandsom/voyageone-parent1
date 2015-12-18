@@ -26,7 +26,7 @@ public class CmsPromotionSelectServiceTest {
     @Test
     public void testGetPromotionTags() throws Exception {
         JSONObject params = new JSONObject();
-        params.put("promotionId", 1);
+        params.put("refTagId", 1);
         List<CmsBtTagModel> resultList = cmsPromotionSelectService.getPromotionTags(params);
         System.out.println(resultList);
         assert resultList.size() > 0;
