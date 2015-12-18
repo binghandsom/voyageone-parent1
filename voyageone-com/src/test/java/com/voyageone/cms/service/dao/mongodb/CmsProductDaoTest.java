@@ -244,16 +244,20 @@ public class CmsProductDaoTest {
     @Test
     public void testUpdateWithGroupPlatform() {
         CmsBtProductModel_Group_Platform platformMode = new CmsBtProductModel_Group_Platform();
-        platformMode.setGroupId((long)45);
+        platformMode.setGroupId((long) 45);
         platformMode.setCartId(21);
         platformMode.setNumIId("1000702");
         platformMode.setIsMain(false);
         platformMode.setDisplayOrder(27);
         platformMode.setPublishTime("2015-10-12 16:19:00");
         platformMode.setInstockTime("2015-10-18 16:19:00");
-        platformMode.setProductStatus("InStock1");
-        platformMode.setPublishStatus(" 等待上新1");
-        platformMode.setComment("1");
+
+        platformMode.setPlatformStatus(1 % 3);
+        List<Map<String,Object>> taskResults = platformMode.getTaskResults();
+        Map<String,Object> taskResult = new HashMap<>();
+        taskResult.put("doSx", 1);
+        taskResult.put("comment", "xxxx");
+        taskResults.add(taskResult);
         platformMode.setInventory(25);
         cmsBtProductDao.updateWithPlatform("001", "2000702", platformMode);
     }
