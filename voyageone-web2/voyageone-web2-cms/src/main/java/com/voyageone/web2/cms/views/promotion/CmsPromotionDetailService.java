@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.promotion;
 
 import com.voyageone.cms.service.model.CmsBtProductModel;
+import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
 import com.voyageone.common.components.transaction.SimpleTransaction;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.CmsPromotionProductPriceBean;
@@ -18,10 +19,8 @@ import com.voyageone.web2.sdk.api.service.PostProductSelectOneClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author james.li on 2015/12/15.
@@ -120,5 +119,46 @@ public class CmsPromotionDetailService extends BaseAppService {
         });
 
         return promotionGroups;
+    }
+    public List<CmsBtPromotionCodeModel> getPromotionCode(Map<String, Object> param) {
+
+        List<CmsBtPromotionCodeModel> promotionGroups = cmsPromotionCodeDao.getPromotionCodeList(param);
+        promotionGroups.forEach(map -> {
+            //SDK取得Product 数据
+            CmsBtProductModel cmsBtProductModel = productSelectOneClient.getProductById("300",map.getProductId());
+            if (cmsBtProductModel != null) {
+                map.setImage(cmsBtProductModel.getFields().getImages1().get(0).getName());
+                map.setSkuCount(cmsBtProductModel.getSkus().size());
+                map.setSizeType(cmsBtProductModel.getFields().getSizeType());
+            }
+        });
+        return promotionGroups;
+    }
+    public List<Map<String, Object>> getPromotionSku(Map<String, Object> param) {
+        List<Map<String, Object>> promotionSkus = cmsPromotionSkuDao.getPromotionSkuList(param);
+        promotionSkus.forEach(map -> {
+            CmsBtProductModel cmsBtProductModel = productSelectOneClient.getProductById("300", (Long) map.get("productId"));
+
+            if(cmsBtProductModel != null) {
+                for(CmsBtProductModel_Sku skuInfo :cmsBtProductModel.getSkus()){
+                    if(skuInfo.getSkuCode().equalsIgnoreCase(map.get("productSku").toString())){
+                        map.put("size", skuInfo.getSize());
+                        break;
+                    }
+                }
+            }
+        });
+
+        return promotionSkus;
+    }
+
+    public int getPromotionSkuListCnt(Map<String,Object> params){
+        return cmsPromotionSkuDao.getPromotionSkuListCnt(params);
+    }
+    public int getPromotionCodeListCnt(Map<String,Object> params){
+        return cmsPromotionCodeDao.getPromotionCodeListCnt(params);
+    }
+    public int getPromotionModelListCnt(Map<String,Object> params){
+        return cmsPromotionModelDao.getPromotionModelDetailListCnt(params);
     }
 }

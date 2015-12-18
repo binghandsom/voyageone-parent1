@@ -32,7 +32,9 @@ public class CmsPromotionModelDao extends BaseDao{
         }
         return ret;
     }
-
+    public int getPromotionModelDetailListCnt(Map<String,Object> params){
+        return selectOne("select_promotion_detail_cnt",params);
+    }
     public int insertPromotionModel(CmsBtPromotionGroupModel params){
         return updateTemplate.insert("insert_cms_bt_promotion_model",params);
     }

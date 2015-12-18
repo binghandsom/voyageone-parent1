@@ -37,6 +37,20 @@
                 promotion_id =  #{promotionId,jdbcType=INTEGER}
             </if>
         </where>
+        <if test="start != null and length != null">
+            LIMIT #{start}, #{length}
+        </if>
+    </select>
+    <select id="select_cms_bt_promotion_code_cnt" resultType="int" parameterType="HashMap" >
+        SELECT
+          count(1)
+        FROM
+        voyageone_cms2.cms_bt_promotion_code
+        <where>
+            <if test="promotionId != null">
+                promotion_id =  #{promotionId,jdbcType=INTEGER}
+            </if>
+        </where>
     </select>
     <insert id="insert_cms_bt_promotion_code" parameterType="com.voyageone.web2.cms.model.CmsBtPromotionCodeModel" >
         insert into voyageone_cms2.cms_bt_promotion_code
