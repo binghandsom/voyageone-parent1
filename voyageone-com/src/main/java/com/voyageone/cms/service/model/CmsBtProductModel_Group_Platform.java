@@ -23,7 +23,7 @@ public class CmsBtProductModel_Group_Platform extends BaseMongoMap<String, Objec
     }
 
     public Long getGroupId() {
-        return getAttribute("groupId");
+        return Long.parseLong(getAttribute("groupId").toString());
     }
 
     public void setGroupId(Long groupId) {
