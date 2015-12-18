@@ -10,15 +10,28 @@ define([
     return function ($scope, searchIndexService) {
 
         $scope.vm = {
-            "searchInfo": {
-                "compareType": null,
-                "brand": null,
-                "promotion": null
+            searchInfo: {
+                compareType: null,
+                brand: null,
+                promotion: null
             },
-            "groupPageOption": {curr: 1, total: 30, size: 30, fetch: getGroupList},
-            "productPageOption": {curr: 1, total: 250, size: 30, fetch: getProductList},
-            "groupList": [],
-            "productList": []
+            groupPageOption: {curr: 1, total: 30, size: 2, fetch: getGroupList},
+            productPageOption: {curr: 1, total: 250, size: 2, fetch: getProductList},
+            groupList: [],
+            productList: [],
+            groupSelList: {
+                currPageRows: [],
+                selFlag: [],
+                selAllFlag: false,
+                selList: []
+            },
+            productSelList: {
+                currPageRows: [],
+                selFlag: [],
+                selAllFlag: false,
+                selList: []
+            },
+            currTab: "group"
         };
 
         $scope.initialize = initialize;
@@ -54,11 +67,15 @@ define([
         function search () {
             searchIndexService.search($scope.vm.searchInfo)
                 .then(function (res) {
-                $scope.vm.groupList = res.data.groupList;
-                //$scope.vm.groupPageOption.total = res.data.groupListTotal;
+                    $scope.vm.groupList = res.data.groupList;
+                    $scope.vm.groupPageOption.total = res.data.groupListTotal;
+                    $scope.vm.groupSelList.currPageRows = res.data.groupCurrPageRows;
+                    $scope.vm.groupSelList.selFlag = res.data.groupSelFlag;
 
-                $scope.vm.productList = res.data.productList;
-                //$scope.vm.productPageOption.total = res.data.productListTotal;
+                    $scope.vm.productList = res.data.productList;
+                    $scope.vm.productPageOption.total = res.data.productListTotal;
+                    $scope.vm.productSelList.currPageRows = res.data.productCurrPageRows;
+                    $scope.vm.productSelList.selFlag = res.data.productSelFlag;
             })
         }
 

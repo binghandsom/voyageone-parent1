@@ -45,7 +45,7 @@
       "$tagPromotionService": {
         "root": "/cms/pop/prom_select/",
         "getPromotionTags": "getPromotionTags",
-        "setPromotionTag": "setPromotionTag"
+        "addToPromotion": "addToPromotion"
       }
     },
     "promotionService": {

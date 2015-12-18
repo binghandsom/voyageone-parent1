@@ -355,41 +355,6 @@ public class Type {
     }
 
     /**
-     * 返回带有默认options的数据.
-     * @param typeId
-     * @return
-     */
-    public static List<TypeBean> getTypeListWithBlank(int typeId) {
-        List<TypeBean> retTypeList = new ArrayList<>();
-        TypeBean blankTypeBean = new TypeBean();
-        blankTypeBean.setValue(null);
-        blankTypeBean.setName("Select...");
-
-        retTypeList.add(blankTypeBean);
-        retTypeList.addAll(getTypeList(typeId));
-
-        return retTypeList;
-    }
-
-    /**
-     * 返回带有默认options的数据.
-     * @param typeId
-     * @param langId
-     * @return
-     */
-    public static List<TypeBean> getTypeListWithBlank(int typeId, String langId) {
-        List<TypeBean> retTypeList = new ArrayList<>();
-        TypeBean blankTypeBean = new TypeBean();
-        blankTypeBean.setValue(null);
-        blankTypeBean.setName("Select...");
-
-        retTypeList.add(blankTypeBean);
-        retTypeList.addAll(getTypeList(typeId, langId));
-
-        return retTypeList;
-    }
-
-    /**
      * 取得 Type 对象的 value 字段
      *
      * @param typeId   type的typeId

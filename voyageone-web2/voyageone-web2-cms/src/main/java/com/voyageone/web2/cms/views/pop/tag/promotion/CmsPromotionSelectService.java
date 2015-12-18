@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.views.pop.prom_select;
+package com.voyageone.web2.cms.views.pop.tag.promotion;
 
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;

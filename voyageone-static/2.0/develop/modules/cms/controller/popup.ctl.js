@@ -3,8 +3,9 @@
  */
 
 define([
-    'cms'
-], function (cms) {
+    'cms',
+    'underscore'
+], function (cms, _) {
     cms
         .constant('popActions', {
             "column_define": {
@@ -100,19 +101,29 @@ define([
             });
         }
 
-        $scope.openNewpromotion = openNewpromotion;
-        function openNewpromotion(viewSize, promotion) {
+        /**
+         * pop出promotion选择页面,用于设置
+         * @type {openTagPromotion}
+         */
+        $scope.openTagPromotion = openTagPromotion;
+        function openTagPromotion(viewSize, promotion, selList) {
             require([popActions.tag.promotion.controllerUrl], function () {
-                $modal.open({
-                    templateUrl: popActions.tag.promotion.templateUrl,
-                    controller: 'popTagPromotionCtl',
-                    size: viewSize,
-                    resolve: {
-                        promotion: function () {
-                            return promotion;
+                if (selList.length) {
+                    $modal.open({
+                        templateUrl: popActions.tag.promotion.templateUrl,
+                        controller: 'popTagPromotionCtl',
+                        size: viewSize,
+                        resolve: {
+                            promotion: function () {
+                                var productIds = [];
+                                _.forEach(selList, function (object) {
+                                    productIds.push(object.id);
+                                });
+                                return {"promotion": promotion, "productIds": productIds};
+                            }
                         }
-                    }
-                });
+                    });
+                }
             });
         }
         $scope.openNewcategory = openNewcategory;
