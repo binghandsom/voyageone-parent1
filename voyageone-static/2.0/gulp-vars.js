@@ -12,6 +12,9 @@ var versions = {
 };
 var build = {
   version: versions.statics,
+  actions: {
+    src: 'develop/modules/*/actions.json'
+  },
   common: {
     angular: {
       src: 'develop/components/angular/*/*.js',
@@ -99,6 +102,7 @@ var publish = {
 };
 var tasks = {
   build: {
+    actions: 'build-actions-doc',
     angular: 'build-angular-com',
     angular_suff: 'build-angular-suff',
     com: 'build-com',
