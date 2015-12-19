@@ -52,8 +52,11 @@ public class ExceptionHandler implements HandlerExceptionResolver {
     public ModelAndView resolveException(HttpServletRequest request,
                                          HttpServletResponse response, Object handler, Exception exception) {
         try {
-            // log4j打印出详细信息，包括堆栈信息
-            logger.error(exception.getMessage(), exception);
+
+            String url = request.getRequestURI();
+            String simpleMessage = exception.getMessage();
+            if (StringUtils.isEmpty(simpleMessage)) simpleMessage = exception.toString();
+            logger.debug(String.format("%s => %s", url, simpleMessage));
 
             Object val = request.getSession().getAttribute(BaseConstants.SESSION_LANG);
 
@@ -79,8 +82,8 @@ public class ExceptionHandler implements HandlerExceptionResolver {
                 return catchDefault(exception, response);
             }
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
 
+            logger.error(e.getMessage(), e);
             return catchDefault(e, response);
         }
     }
