@@ -72,6 +72,10 @@ public class JomgoQuery {
                 .map(String::trim)
                 .collect(toList());
 
+        // 没有任何参数..
+        if (fields.size() == 0)
+            return this;
+
         // 当有参数时,检查第一个是否是 json 格式,如果是,则忽略后续所有参数
         // 如果不是,则默认后续所有参数都是列名,而非 json
         String first = fields.get(0);
