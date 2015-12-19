@@ -10,7 +10,7 @@ body {
 
 .login {
 	margin: 2% auto 2%;
-	width: 30%;
+	width: 350px;
 	background: #fff;
 	border-radius: 0.5em;
 	-webkit-border-radius: 0.5em;
@@ -198,42 +198,36 @@ body {
 @media (max-width: 1280px) {
 	.login {
 		margin: 2% auto 6%;
-		width: 35%;
 	}
 }
 
 @media (max-width: 1024px) {
 	.login {
 		margin: 2% auto 6%;
-		width: 40%;
 	}
 }
 
 @media (max-width: 768px) {
 	.login {
 		margin: 3% auto 8%;
-		width: 55%;
 	}
 }
 
 @media (max-width: 640px) {
 	.login {
 		margin: 3% auto 8%;
-		width: 66%;
 	}
 }
 
 @media (max-width: 480px) {
 	.login {
 		margin: 4% auto 18%;
-		width: 87%;
 	}
 }
 
 @media (max-width: 320px) {
 	.login {
 		margin: 4% auto 8%;
-		width: 89%;
 	}
 
 	.login-submit input[type="submit"] {
