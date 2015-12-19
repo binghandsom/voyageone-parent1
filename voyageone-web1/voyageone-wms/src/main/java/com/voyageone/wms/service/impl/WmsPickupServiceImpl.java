@@ -174,10 +174,10 @@ public class WmsPickupServiceImpl implements WmsPickupService {
      * @return List<FormReservation> 捡货记录
      */
     @Override
-    public List<FormReservation> getPickupInfo(Map<String, Object> paramMap, UserSessionBean user) {
+    public List<FormReservation> getPickupInfo(Map<String, Object> paramMap, UserSessionBean user,String reserveType) {
 
         // 检索参数的取得和设置
-        Map<String, Object> selectParams = getSelectParams(paramMap, user);
+        Map<String, Object> selectParams = getSelectParams(paramMap, user,reserveType);
 
         // 根据检索参数取得记录
         List<FormReservation> resultMap = reservationDao.getPickupInfo(selectParams);
@@ -198,10 +198,10 @@ public class WmsPickupServiceImpl implements WmsPickupService {
      * @return long 捡货记录的件数
      */
     @Override
-    public int getPickupCount(Map<String, Object> paramMap, UserSessionBean user) {
+    public int getPickupCount(Map<String, Object> paramMap, UserSessionBean user,String reserveType) {
 
         // 检索参数的取得和设置
-        Map<String, Object> selectParams = getSelectParams(paramMap, user);
+        Map<String, Object> selectParams = getSelectParams(paramMap, user,reserveType);
 
         // 根据检索参数取得记录
         return reservationDao.getPickupCount(selectParams);
@@ -238,7 +238,7 @@ public class WmsPickupServiceImpl implements WmsPickupService {
         List<String> orderChannelList = user.getChannelList();
 
         // 取得符合条件的记录
-        List<FormPickupBean> scanInfoListALL = reservationDao.getScanInfo(scanMode, scanType, scanNo, scanStatus, scanStore, channelStoreList, orderChannelList);
+        List<FormPickupBean> scanInfoListALL = reservationDao.getScanInfo(scanMode, scanType, scanNo, scanStatus, scanStore, channelStoreList, orderChannelList, reserveType);
 
         String StatusName = Type.getTypeName(MastType.reservationStatus.getId(),scanStatus);
 
@@ -707,7 +707,7 @@ public class WmsPickupServiceImpl implements WmsPickupService {
      * @param user 用户登录信息
      * @return Map DB检索条件
      */
-    private  Map<String, Object> getSelectParams(Map<String, Object> paramMap, UserSessionBean user) {
+    private  Map<String, Object> getSelectParams(Map<String, Object> paramMap, UserSessionBean user, String reserveType) {
 
         // 取得画面的各个检索参数
         String order_number = (String) paramMap.get("order_number");
@@ -744,6 +744,8 @@ public class WmsPickupServiceImpl implements WmsPickupService {
         resultMap.put("to", StringUtils.isNullOrBlank2(to)? "9999-99-99 99:99:99" : DateTimeUtil.getGMTTimeTo(to, user.getTimeZone()));
         resultMap.put("offset", offset);
         resultMap.put("size", size);
+        // 自有仓库捡货时，排除锁单记录
+        resultMap.put("reserveType", reserveType);
 
         return resultMap;
 
