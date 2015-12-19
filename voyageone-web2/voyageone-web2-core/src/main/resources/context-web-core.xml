@@ -8,7 +8,9 @@
     <import resource="classpath*:context-test-collecion-mapping.xml" />
     <import resource="classpath*:context-test-datasource-mongo.xml" />
 	<!-- 异常处理 -->
-	<bean id="exceptionHandler" class="com.voyageone.web2.base.ExceptionHandler"/>
+	<bean class="com.voyageone.web2.base.ExceptionHandler">
+        <property name="debug" value="true"/>
+    </bean>
     <!-- 配置内容初始化Bean -->
-    <bean id="commonConfigInit" class="com.voyageone.common.configs.Initializer" init-method="init"/>
+    <bean class="com.voyageone.common.configs.Initializer" init-method="init"/>
 </beans>

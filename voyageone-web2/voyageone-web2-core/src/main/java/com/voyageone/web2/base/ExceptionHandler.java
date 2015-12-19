@@ -39,6 +39,16 @@ public class ExceptionHandler implements HandlerExceptionResolver {
     @Autowired
     private MessageService messageService;
 
+    private boolean debug;
+
+    public boolean isDebug() {
+        return debug;
+    }
+
+    public void setDebug(boolean debug) {
+        this.debug = debug;
+    }
+
     public ModelAndView resolveException(HttpServletRequest request,
                                          HttpServletResponse response, Object handler, Exception exception) {
         try {
@@ -182,6 +192,7 @@ public class ExceptionHandler implements HandlerExceptionResolver {
      * 业务以外异常时ajax返回处理
      */
     private ModelAndView exceptionDeal(String msg, String code, HttpServletResponse response) {
+
         AjaxResponse ajaxResponse = new AjaxResponse();
         ajaxResponse.setCode(code);
         ajaxResponse.setMessage(msg);
@@ -191,6 +202,10 @@ public class ExceptionHandler implements HandlerExceptionResolver {
     }
 
     private void insertLogToDB(HttpServletRequest request, Exception exception) {
+
+        // 如果是开发阶段则不需要记录
+        if (isDebug()) return;
+
         // 异常发生时间
         String dateTime = DateTimeUtil.getNow(DateTimeUtil.DATE_TIME_FORMAT_1);
         // 取得用户信息
@@ -205,6 +220,9 @@ public class ExceptionHandler implements HandlerExceptionResolver {
         // String stackInfo = getExceptionStack(exception);
         // 异常描述
         String message = CommonUtil.getExceptionSimpleContent(exception);
+
+        // 保证不会因为数据库字段长度的问题导致报错
+        if (message.length() > 200) message = message.substring(0, 200);
 
         ExceptionLogBean exceptionBean = new ExceptionLogBean();
         exceptionBean.setDateTime(dateTime);
