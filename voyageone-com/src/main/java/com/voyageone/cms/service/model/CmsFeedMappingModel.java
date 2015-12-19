@@ -1,52 +1,50 @@
 package com.voyageone.cms.service.model;
 
-import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
-
 /**
  * {@link CmsFeedCategoryModel} 的类目关联关系,
  * @author Jonas, 12/11/15
  * @version 2.0.0
  * @since 2.0.0
  */
-public class CmsFeedMappingModel extends BaseMongoMap<String, Object> {
+public class CmsFeedMappingModel {
 
-    private final static String MAIN_CATEGORY_ID_PATH = "mainCategoryIdPath";
+    private String mainCategoryIdPath;
 
-    private final static String DEFAULT_MAPPING = "defaultMapping";
+    private int defaultMapping;
 
-    private final static String DEFAULT_MAIN = "defaultMain";
+    private int defaultMain;
 
-    private final static String MATCH_OVER = "matchOver";
+    private int matchOver;
 
     public String getMainCategoryIdPath() {
-        return getAttribute(MAIN_CATEGORY_ID_PATH);
+        return mainCategoryIdPath;
     }
 
     public void setMainCategoryIdPath(String mainCategoryIdPath) {
-        setAttribute(MAIN_CATEGORY_ID_PATH, mainCategoryIdPath);
+        this.mainCategoryIdPath = mainCategoryIdPath;
     }
 
     public int getDefaultMapping() {
-        return getAttribute(DEFAULT_MAPPING);
+        return defaultMapping;
     }
 
     public void setDefaultMapping(int defaultMapping) {
-        setAttribute(DEFAULT_MAPPING, defaultMapping);
+        this.defaultMapping = defaultMapping;
     }
 
     public int getDefaultMain() {
-        return getAttribute(DEFAULT_MAIN);
+        return defaultMain;
     }
 
     public void setDefaultMain(int defaultMain) {
-        setAttribute(DEFAULT_MAIN, defaultMain);
+        this.defaultMain = defaultMain;
     }
 
     public int getMatchOver() {
-        return getAttribute(MATCH_OVER);
+        return matchOver;
     }
 
     public void setMatchOver(int matchOver) {
-        setAttribute(MATCH_OVER, matchOver);
+        this.matchOver = matchOver;
     }
 }
