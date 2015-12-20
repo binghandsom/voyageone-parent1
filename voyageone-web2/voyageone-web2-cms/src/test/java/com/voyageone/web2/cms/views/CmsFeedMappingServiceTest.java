@@ -1,7 +1,5 @@
 package com.voyageone.web2.cms.views;
 
-import com.voyageone.cms.service.model.CmsBtFeedMappingModel;
-import com.voyageone.cms.service.model.CmsMtCategoryTreeModel;
 import com.voyageone.cms.service.model.CmsMtFeedCategoryTreeModel;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.web2.cms.views.setting.mapping.feed.CmsFeedMappingService;
@@ -11,8 +9,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.util.List;
 
 /**
  * @author Jonas, 12/10/15
@@ -39,25 +35,5 @@ public class CmsFeedMappingServiceTest {
         assert cmsMtFeedCategoryTreeModel != null;
 
         assert cmsMtFeedCategoryTreeModel.getCategoryTree().size() > 0;
-    }
-
-    @Test
-    public void testGetMainCategoryTree() throws Exception {
-
-        List<CmsMtCategoryTreeModel> cmsMtCategoryTreeModels = cmsFeedMappingService.getMainCategoryTree(userSessionBean);
-
-        assert cmsMtCategoryTreeModels != null;
-
-        assert cmsMtCategoryTreeModels.get(2).getCatId().equals("50510002");
-    }
-
-    @Test
-    public void testGetFeedMapping() throws Exception {
-
-        List<CmsBtFeedMappingModel> cmsBtFeedMappingModels = cmsFeedMappingService.getFeedMapping(userSessionBean);
-
-        assert cmsBtFeedMappingModels != null;
-
-        assert cmsBtFeedMappingModels.size() == 1;
     }
 }

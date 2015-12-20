@@ -1,4 +1,4 @@
-<div class="wrapper-md" ng-controller="feedMappingController as ctrl">
+<div class="wrapper-md" ng-controller="feedMappingController as ctrl" ng-init="ctrl.init()">
   <div class="col-sm-12">
     <div class="form-inline m-b-sm pull-left">
       <select class="form-control m-r-xxs">
@@ -19,69 +19,42 @@
     <div class="box">
       <div class="box-body">
         <table class="table table-hover table-hover-new text-center">
+          <thead>
           <tr>
             <th class="text-center">Seq.</th>
             <th class="text-left">Feed Category</th>
             <th class="text-left">Main Data Category</th>
             <th class="text-center">类目匹配</th>
-            <th class="text-center">类目属性匹配</th>
+            <th class="text-center">属性匹配</th>
           </tr>
-          <tr>
-            <td>{{$index}}</td>
-            <td class="text-left">Bracelets > Bangles > Agate</td>
-            <td class="text-left">珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰</td>
-            <td>
-              <div class="btn-group">
-                <button ng-click="openNewcategory('lg')" class="btn btn-default btn-xs"><i
-                    class="glyphicon glyphicon-link"></i> 类目匹配
-                </button>
-                <a href="#/setting/feed_mapping/prop" class="btn btn-default btn-xs" target="_blank"><i
-                    class="glyphicon glyphicon-link"></i> 类目属性匹配</a>
-              </div>
-            </td>
-            <td>
-              <button class="btn btn-primary btn-xs"><i class="fa fa-arrow-circle-up"></i> 继承</button>
-            </td>
-          </tr>
-
-
-          <tr>
-            <td>2</td>
-            <td class="text-left">Bracelets > Bangles > Cubic Zirconia</td>
-            <td class="text-left">珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰</td>
-            <td>
-              <div class="btn-group">
-                <button ng-click="openNewcategory('lg')" class="btn btn-default btn-xs"><i
-                    class="glyphicon glyphicon-link"></i> 类目匹配
-                </button>
-                <a href="#/setting/feed_mapping/prop" class="btn btn-default btn-xs" target="_blank"><i
-                    class="glyphicon glyphicon-link"></i> 类目属性匹配</a>
-              </div>
-            </td>
-            <td>
-              <button class="btn btn-primary btn-xs"><i class="fa fa-arrow-circle-up"></i> 继承</button>
-            </td>
-          </tr>
-          <tr>
-            <td>3</td>
-            <td class="text-left">Bracelets > Bangles > Diamond</td>
-            <td class="fontcolor-h text-left">建议类目：珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰，请点击【类目匹配】进行选择，或点击【继承】进行确认</td>
-            <td>
-              <div class="btn-group">
-                <button ng-click="openNewcategory('lg')" class="btn btn-default btn-xs"><i
-                    class="glyphicon glyphicon-link"></i> 类目匹配
-                </button>
-                <a href="#/setting/feed_mapping/prop" class="btn btn-default btn-xs" target="_blank"><i
-                    class="glyphicon glyphicon-link"></i> 类目属性匹配</a>
-              </div>
-            </td>
-            <td>
-              <button class="btn btn-primary btn-xs"><i class="fa fa-arrow-circle-up"></i> 继承</button>
-            </td>
-          </tr>
+          </thead>
+          <tbody ng-repeat="feedCategory in ctrl.feedCategories">
+          <tr ng-include="'category.td.html'"></tr>
+          <tr ng-repeat="child in feedCategory.child | flatTree:'child'"
+              ng-init="feedCategory = child; $isChild = true"
+              ng-include="'category.td.html'"></tr>
+          </tbody>
         </table>
-      </div><!-- /.box-body -->
+      </div>
     </div>
   </div>
-</div><!-- /.col -->
-</div><!-- end .wrapper-md -->
+  <script type="text/ng-template" id="category.td.html">
+    <td>{{ $isChild ? '' : ($index + 1) }}</td>
+    <td class="text-left">{{ feedCategory.path }}</td>
+    <td class="text-left">{{ ctrl.getDefaultMapping(feedCategory) }}</td>
+    <td>
+      <div class="btn-group" ng-controller="popupCtrl">
+        <button ng-click="openNewcategory('lg')" class="btn btn-default btn-xs">
+          <i class="glyphicon glyphicon-link"></i> 类目匹配
+        </button>
+        <button class="btn btn-primary btn-xs">
+          <i class="fa fa-arrow-circle-up"></i> 继承
+        </button>
+      </div>
+    </td>
+    <td>
+      <a href="#/setting/feed_mapping/prop" class="btn btn-default btn-xs" target="_blank"><i
+          class="glyphicon glyphicon-link"></i> 类目属性匹配</a>
+    </td>
+  </script>
+</div>
