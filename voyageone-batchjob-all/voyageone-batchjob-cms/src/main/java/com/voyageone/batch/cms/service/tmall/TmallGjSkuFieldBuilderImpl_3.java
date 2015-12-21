@@ -14,7 +14,9 @@ import com.voyageone.batch.cms.bean.TmallUploadRunState;
 import com.voyageone.batch.cms.bean.tcb.AbortTaskSignalInfo;
 import com.voyageone.batch.cms.bean.tcb.TaskSignal;
 import com.voyageone.batch.cms.bean.tcb.TaskSignalType;
+import com.voyageone.batch.cms.bean.tcb.UploadProductTcb;
 import com.voyageone.batch.cms.model.PlatformSkuInfoBean;
+import com.voyageone.batch.cms.model.WorkLoadBean;
 import com.voyageone.batch.cms.service.AbstractSkuFieldBuilder;
 import com.voyageone.batch.cms.service.UploadImageHandler;
 import com.voyageone.cms.service.bean.ComplexMappingBean;
@@ -475,10 +477,37 @@ public abstract class TmallGjSkuFieldBuilderImpl_3 extends AbstractSkuFieldBuild
     }
 
     private Field buildSizeExtendProp(Map<CmsBtProductModel_Sku, SxProductBean> skuProductMap, TmallUploadRunState.TmallContextBuildCustomFields contextBuildCustomFields, MappingBean sizeExtendMapping) {
+        UploadProductTcb uploadProductTcb = contextBuildCustomFields.getPlatformContextBuildFields().getPlatformUploadRunState().getUploadProductTcb();
+        WorkLoadBean workLoadBean = uploadProductTcb.getWorkLoadBean();
         BuildSkuResult buildSkuResult = (BuildSkuResult) contextBuildCustomFields.getBuildSkuResult();
         Map<String, Field> fieldMap = ((MultiComplexField)skuExtendField).getFieldMap();
 
+        Map<String, Map<String, String>> allCustomSizePropMap = new HashMap<>();
+        List<Map<String, Object>> allCustomSizeProps = customSizePropDao.selectCustomSizeProp(workLoadBean.getOrder_channel_id());
+        Map<String, String> customSizeNameIdMap = new HashMap<>();
+
+        //构造两个map，一个是customSizeNameIdMap sizeName->sizeId, such as: L->1
+        //另一个是allCustomSizePropMap, sizeId ->CustomSize属性map, such as: 1->[{shengao:170}, {tizhong:70}]
+        for (Map<String, Object> customSizeProp : allCustomSizeProps) {
+            String sizeId = customSizeProp.get("custom_size_id").toString();
+            String propId = customSizeProp.get("custom_prop_id").toString();
+            String propValue = customSizeProp.get("custom_prop_value").toString();
+            Map<String, String> eachCustomSizePropMap = allCustomSizePropMap.get(sizeId);
+
+            if (eachCustomSizePropMap == null) {
+                eachCustomSizePropMap = new HashMap<>();
+                allCustomSizePropMap.put(sizeId, eachCustomSizePropMap);
+            }
+            eachCustomSizePropMap.put(propId, propValue);
+
+            if (propId != null && propId.equals(skuExtend_sizeField.getId())) {
+                customSizeNameIdMap.put(propValue, sizeId);
+            }
+            allCustomSizePropMap.put(sizeId, eachCustomSizePropMap);
+        }
+
         List<ComplexValue> complexValues = new ArrayList<>();
+        List<String> skipProps = new ArrayList<>();
         for (Map.Entry<String, CmsBtProductModel_Sku> entry : buildSkuResult.getSizeCmsSkuPropMap().entrySet())
         {
             ComplexValue complexValue = new ComplexValue();
@@ -488,11 +517,25 @@ public abstract class TmallGjSkuFieldBuilderImpl_3 extends AbstractSkuFieldBuild
             } else {
                 complexValue.setInputFieldValue(skuExtend_sizeField.getId(), entry.getKey());
             }
+            skipProps.add(skuExtend_sizeField.getId());
             //TODO 从CUSTOM_SIZE表中读尺寸
+            String skuSize = entry.getKey();
+            String sizeId = customSizeNameIdMap.get(skuSize);
+            if (sizeId == null) {
+                logger.error("No customSize found for size:" + skuSize);
+                return null;
+            }
+            Map<String, String> customSizePropMap = allCustomSizePropMap.get(sizeId);
+
+            for (Map.Entry<String, String> customSizeEntry : customSizePropMap.entrySet())
+            {
+                skipProps.add(customSizeEntry.getKey());
+                complexValue.setInputFieldValue(customSizeEntry.getKey(), customSizeEntry.getValue());
+            }
 
             for (MappingBean mappingBean : ((ComplexMappingBean)sizeExtendMapping).getSubMappings()) {
                 String propId = mappingBean.getPlatformPropId();
-                if (propId.equals(skuExtend_sizeField.getId())) {
+                if (skipProps.contains(propId)) {
                     continue;
                 } else {
                     RuleExpression ruleExpression = ((SingleMappingBean)mappingBean).getExpression();
@@ -505,6 +548,7 @@ public abstract class TmallGjSkuFieldBuilderImpl_3 extends AbstractSkuFieldBuild
                     }
                 }
             }
+            skipProps.clear();
 
             complexValues.add(complexValue);
         }
