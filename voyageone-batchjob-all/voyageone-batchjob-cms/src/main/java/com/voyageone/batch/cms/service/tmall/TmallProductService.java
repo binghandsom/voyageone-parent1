@@ -20,7 +20,10 @@ import com.voyageone.batch.cms.enums.TmallWorkloadStatus;
 import com.voyageone.batch.cms.model.ConditionPropValue;
 import com.voyageone.batch.cms.model.CustomPlatformPropMapping;
 import com.voyageone.batch.cms.model.WorkLoadBean;
-import com.voyageone.batch.cms.service.*;
+import com.voyageone.batch.cms.service.AbstractSkuFieldBuilder;
+import com.voyageone.batch.cms.service.ConditionPropValueRepo;
+import com.voyageone.batch.cms.service.SkuFieldBuilderFactory;
+import com.voyageone.batch.cms.service.UploadProductHandler;
 import com.voyageone.batch.cms.service.rule_parser.ExpressionParser;
 import com.voyageone.cms.service.bean.ComplexMappingBean;
 import com.voyageone.cms.service.bean.MappingBean;
@@ -52,7 +55,7 @@ import java.util.regex.Pattern;
  * Created by Leo on 2015/5/28.
  */
 @Repository
-public class TmallProductService implements PlatformServiceInterface {
+public class TmallProductService {
     private static Log logger = LogFactory.getLog(TmallProductService.class);
     @Autowired
     TbProductService tbProductService;
