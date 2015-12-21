@@ -115,6 +115,14 @@ public class CmsBtProductDao extends BaseMongoDao {
         return mongoTemplate.updateFirst(query, update, collectionName);
     }
 
+    /**
+     * 批量更新Field记录
+     * @param channelId 渠道ID
+     * @param codeList  code List
+     * @param field  CmsBtProductModel_Field
+     * @param modifier  更新者
+     * @return 运行结果
+     */
     public BulkWriteResult bathUpdateWithField(String channelId, List<String> codeList, CmsBtProductModel_Field field, String modifier) {
         BulkWriteResult result = null;
         if (codeList != null && codeList.size()>0 && field != null && field.size()>0) {
@@ -128,15 +136,15 @@ public class CmsBtProductDao extends BaseMongoDao {
                 }
 
                 BasicDBObject fieldUpdateObj = field.toUpdateBasicDBObject("fields.");
+                fieldUpdateObj.append("modified", DateTimeUtil.getNowTimeStamp());
                 if (modifier != null && !"".equals(modifier.trim())) {
-                    fieldUpdateObj.append("modified", DateTimeUtil.getNowTimeStamp());
                     fieldUpdateObj.append("modifier", modifier);
                 }
                 BasicDBObject updateObj = new BasicDBObject();
                 updateObj.append("$set", fieldUpdateObj);
 
                 BasicDBObject query = new BasicDBObject().append("fields.code", code);
-                bwo.find(query).upsert().update(updateObj);
+                bwo.find(query).update(updateObj);
 
                 index++;
                 if (index % step == 0) {
@@ -151,6 +159,13 @@ public class CmsBtProductDao extends BaseMongoDao {
         return result;
     }
 
+    /**
+     * 批量更新Field记录
+     * @param channelId 渠道ID
+     * @param codeFieldMap  code field map
+     * @param modifier  更新者
+     * @return 运行结果
+     */
     public BulkWriteResult bathUpdateWithFields(String channelId, Map<String, CmsBtProductModel_Field> codeFieldMap, String modifier) {
         BulkWriteResult result = null;
         if (codeFieldMap != null && codeFieldMap.size()>0) {
@@ -169,15 +184,15 @@ public class CmsBtProductDao extends BaseMongoDao {
                 }
 
                 BasicDBObject fieldUpdateObj = field.toUpdateBasicDBObject("fields.");
+                fieldUpdateObj.append("modified", DateTimeUtil.getNowTimeStamp());
                 if (modifier != null && !"".equals(modifier.trim())) {
-                    fieldUpdateObj.append("modified", DateTimeUtil.getNowTimeStamp());
                     fieldUpdateObj.append("modifier", modifier);
                 }
                 BasicDBObject updateObj = new BasicDBObject();
                 updateObj.append("$set", fieldUpdateObj);
 
                 BasicDBObject query = new BasicDBObject().append("fields.code", code);
-                bwo.find(query).upsert().update(updateObj);
+                bwo.find(query).update(updateObj);
 
                 index++;
                 if (index % step == 0) {
@@ -207,18 +222,31 @@ public class CmsBtProductDao extends BaseMongoDao {
         DBCollection coll = getDBCollection(channelId);
         BulkWriteOperation bwo = coll.initializeOrderedBulkOperation();
 
-        BasicDBObject updater = new BasicDBObject();
-        updater.append("modifier",modifier);
-        updater.append("modified", DateTimeUtil.getNowTimeStamp());
+        //设置更新者和更新时间
+        BasicDBObject modifierObj = new BasicDBObject();
+        if (modifier != null) {
+            modifierObj.append("modifier", modifier);
+        }
+        modifierObj.append("modified", DateTimeUtil.getNowTimeStamp());
+
         for (BulkUpdateModel model: bulkList){
+
             //生成更新对象
             BasicDBObject updateObj = new BasicDBObject();
-            updateObj.append(key, setDBObjectWithMap(model.getUpdateMap()));
+            BasicDBObject updateContent = setDBObjectWithMap(model.getUpdateMap());
+
             //设置更新者和更新时间
-            updateObj.append("$set", updater);
+            if ("$set".equals(key)) {
+                updateContent.putAll(modifierObj.toMap());
+            } else {
+                updateObj.append("$set", modifierObj);
+            }
+            updateObj.append(key, updateContent);
+
             //生成查询对象
             BasicDBObject queryObj = setDBObjectWithMap(model.getQueryMap());
-            bwo.find(queryObj).upsert().update(updateObj);
+
+            bwo.find(queryObj).update(updateObj);
         }
         //最终批量运行
         result = bwo.execute();
@@ -233,13 +261,7 @@ public class CmsBtProductDao extends BaseMongoDao {
      */
     public BasicDBObject setDBObjectWithMap(HashMap<String, Object> map) {
         BasicDBObject result = new BasicDBObject();
-        Iterator iterator = map.entrySet().iterator();
-        while(iterator.hasNext()) {
-            Map.Entry entry = (Map.Entry) iterator.next();
-            String key = (String)entry.getKey();
-            Object value = entry.getValue();
-            result.append(key, value);
-        }
+        result.putAll(map);
         return result;
     }
 }
