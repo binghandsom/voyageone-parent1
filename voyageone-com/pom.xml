@@ -161,9 +161,10 @@
 			<artifactId>mailapi</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.voyageone</groupId>
+			<groupId>com.sun.mail</groupId>
 			<artifactId>smtp</artifactId>
 		</dependency>
+
 
 		<!-- xml -->
 		<dependency>
@@ -196,12 +197,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.voyageone</groupId>
-			<artifactId>proxool-cglib</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.voyageone</groupId>
-			<artifactId>proxool</artifactId>
+			<groupId>com.mchange</groupId>
+			<artifactId>c3p0</artifactId>
 		</dependency>
 
 		<dependency>
@@ -236,22 +233,22 @@
 			<groupId>com.voyageone</groupId>
 			<artifactId>axis</artifactId>
 		</dependency>
+
 		<dependency>
-			<groupId>com.voyageone</groupId>
-			<artifactId>axiom-api</artifactId>
+			<groupId>org.apache.ws.commons.axiom</groupId>
+			<artifactId>axiom-dom</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.voyageone</groupId>
-			<artifactId>axiom-impl</artifactId>
-		</dependency>
+
 		<dependency>
 			<groupId>com.voyageone</groupId>
 			<artifactId>jaxrpc</artifactId>
 		</dependency>
+
 		<dependency>
-			<groupId>com.voyageone</groupId>
+			<groupId>wsdl4j</groupId>
 			<artifactId>wsdl4j</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>javax.xml.soap</groupId>
 			<artifactId>saaj-api</artifactId>

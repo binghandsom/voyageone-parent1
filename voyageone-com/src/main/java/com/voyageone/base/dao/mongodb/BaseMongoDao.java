@@ -147,9 +147,19 @@ public abstract class BaseMongoDao {
         return mongoTemplate.find(strQuery, projection, (Class<T>) entityClass, collectionName);
     }
 
+    public <T> List<T> select(JomgoQuery queryObject, String channelId) {
+        String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
+        return mongoTemplate.find(queryObject, (Class<T>) entityClass, collectionName);
+    }
+
     public <T> Iterator<T> selectCursor(final String strQuery, String channelId) {
         String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
         return mongoTemplate.findCursor(strQuery, null, (Class<T>) entityClass, collectionName);
+    }
+
+    public <T> Iterator<T> selectCursor(JomgoQuery queryObject, String channelId) {
+        String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
+        return mongoTemplate.findCursor(queryObject, (Class<T>) entityClass, collectionName);
     }
 
     public <T> T selectById(String id, String channelId) {

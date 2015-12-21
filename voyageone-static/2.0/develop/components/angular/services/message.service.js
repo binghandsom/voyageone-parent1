@@ -37,10 +37,13 @@ function MessageService(alert, confirm, notify) {
 MessageService.prototype = {
   /**
    * 根据类型自动显示信息
-   * @param {DISPLAY_TYPES} displayType
-   * @param {string} message
+   * @param {{displayType:Number, message:String}} res
    */
-  show: function(displayType, message) {
+  show: function(res) {
+
+    var displayType = res.displayType;
+    var message = res.message;
+
     switch (displayType) {
       case DISPLAY_TYPES.ALERT:
         this.alert(message);

@@ -44,9 +44,11 @@ AjaxService.prototype.post = function (url, data) {
   var defer = this.$q.defer();
 
   this.$ajax.post(url, data).then(function(res) {
+    // 成功
     defer.resolve(res);
     return res;
   }, (function (_this) {
+    // 失败
     return function(res) {
       _this.messageService.show(res);
       defer.reject(res);

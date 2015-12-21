@@ -3,3 +3,4 @@ develop/*.map
 develop/components/dist/
 develop/static/css/*.min.css
 publish/
+*.doc.js
