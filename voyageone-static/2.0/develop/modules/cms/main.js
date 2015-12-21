@@ -41,6 +41,7 @@ require.config({
     'angular-block-ui': ['angular', 'css!libs/angular-block-ui/0.2.1/angular-block-ui.css'],
     'angular-ui-bootstrap': ['angular'],
     'angular-ngStorage': ['angular'],
+    'angular-file-upload': ['angular'],
     'angular': {exports: 'angular', deps: ['jquery']},
     'jquery': {exports: 'jQuery'},
     'filestyle': ['jquery'],
