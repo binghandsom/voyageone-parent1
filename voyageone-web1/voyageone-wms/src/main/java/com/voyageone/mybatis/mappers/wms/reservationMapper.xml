@@ -345,7 +345,7 @@
                 #{orderChannelId}
             </foreach>
         </if>
-        <if test="reserveType != null and reserveType != '' and reserveType = 'PickUp'">
+        <if test="reserveType != null and reserveType != '' and reserveType = 'PickUp' and scanMode == 'Scan'">
             AND isLock = '0'
         </if>
         ORDER BY
