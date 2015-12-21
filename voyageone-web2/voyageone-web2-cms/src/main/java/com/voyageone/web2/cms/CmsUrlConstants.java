@@ -90,4 +90,23 @@ public interface CmsUrlConstants {
             String ADD_TO_PROMOTION = "addToPromotion";
         }
     }
+
+    interface PRODUCT{
+
+        interface EDIT{
+
+            String ROOT = "/cms/product/edit/";
+
+            String INIT = "doInit";
+
+            String  SUBMIT = "doSubmit";
+
+            String CHANGE_CATEGORY="doChagneCategory";
+
+            String CONFIRM_CHANGE = "doConfirmChange";
+
+            String RESET = "doReset";
+        }
+    }
+
 }

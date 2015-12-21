@@ -79,9 +79,7 @@ public class MasterCatSchemaBuildFromTmallServiceTest {
                         List<Field> fieldList = FieldUtil.getFieldByName(fields,defModel.getPropName());
                         if (fieldList.size()>0){
                             for (Field field:fieldList){
-                                if ("品牌".equals(defModel.getPropName())){
-                                    Assert.assertEquals(field.getId(),"brand");
-                                }
+                                Assert.assertEquals(field.getId(),"brand");
                             }
                         }else {
                             Assert.assertEquals(fieldList.size(),0);

@@ -13,7 +13,7 @@ public class MtCommPropActionDefModel {
     private String parentPropId;
     private String propType;
     private String propLevel;
-    private String actionType;
+    private int actionType;
     private String platformPropRefId;
     private String actionRules;
     private String tips;
@@ -82,11 +82,11 @@ public class MtCommPropActionDefModel {
         this.propLevel = propLevel;
     }
 
-    public String getActionType() {
+    public int getActionType() {
         return actionType;
     }
 
-    public void setActionType(String actionType) {
+    public void setActionType(int actionType) {
         this.actionType = actionType;
     }
 

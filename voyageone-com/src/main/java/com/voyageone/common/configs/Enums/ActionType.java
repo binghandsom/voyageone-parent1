@@ -5,6 +5,9 @@ package com.voyageone.common.configs.Enums;
  */
 public enum ActionType {
 
+    //忽略
+    Ignore(-1),
+
     //添加属性
     Add(0),
 
@@ -29,6 +32,8 @@ public enum ActionType {
 
     public static ActionType valueOf(int value){
         switch (value){
+            case -1:
+                return Ignore;
             case 0:
                 return Add;
             case 1:

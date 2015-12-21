@@ -13,6 +13,7 @@ public class CmsMtCategorySchemaModel extends BaseMongoModel {
     private String catId;
     private String catFullPath;
     private List<Field> fields;
+    private Field sku;
 
     public CmsMtCategorySchemaModel() {
     }
@@ -45,5 +46,14 @@ public class CmsMtCategorySchemaModel extends BaseMongoModel {
 
     public void setFields(List<Field> fields) {
         this.fields = fields;
+    }
+
+
+    public Field getSku() {
+        return sku;
+    }
+
+    public void setSku(Field sku) {
+        this.sku = sku;
     }
 }

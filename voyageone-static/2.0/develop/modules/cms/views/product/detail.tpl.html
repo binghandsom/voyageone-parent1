@@ -1,1163 +1,314 @@
-<div class="wrapper-md">
-	<div style="width:82%">
-		<tabset class="tab-container vo_nav-tabs">
-			<div class="form-inline pull-right" ng-controller="popupCtrl">
-				<button class="btn btn-default" ng-click="openshop_category('lg')"><i class="fa fa-arrow-circle-right"></i> 选择店铺内类目</button>
-				<button type="button" class="btn btn-default" ng-click="openhistorypromotion('lg')"><i class="fa fa-rotate-left"></i> 历史Promotion</button>
-				<button type="button" class="btn btn-default" ng-click="openpricepromotion('lg')"><i class="fa fa-jpy"></i> Price History</button>
-			</div>
-			<tab>
-				<tab-heading> Product详情</tab-heading>
-				<div class="panel vo_panel">
-					<div class="container-fluid">
-						<div class="col-sm-6">
-							<form class="form-horizontal">
-								<div class="form-group">
-									<label class="col-sm-3 control-label">Product Code</label>
-									<div class="col-sm-8">
-										<input type="text" class="form-control inherited" placeholder="123456789-123-111" disabled>
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label class="col-sm-3 control-label">Product Name</label>
-									<div class="col-sm-8">
-										<input type="text" class="form-control inherited" placeholder="Product Name" disabled>
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label for="input-id-2" class="col-sm-3 control-label vo_reqfield">长标题(天猫)</label>
-									<div class="col-sm-8">
-										<input type="text" class="form-control inherited">
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label for="input-id-2" class="col-sm-3 control-label vo_reqfield">中标题(京东)</label>
-									<div class="col-sm-8">
-										<input type="text" class="form-control inherited">
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label for="input-id-2" class="col-sm-3 control-label vo_reqfield">短标题(无线)</label>
-									<div class="col-sm-8">
-										<input type="text" class="form-control inherited">
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label class="col-sm-3 control-label">Description</label>
-									<div class="col-sm-8">
-										<textarea class="form-control inherited" rows="6" placeholder="珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰" disabled></textarea>
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label class="col-sm-3 control-label">摘要</label>
-									<div class="col-sm-8">
-										<input type="text" class="form-control">
-									</div>
-									<div class="col-sm-1">
-										<span class="vo_save_state notsaved"></span>
-									</div>
+<div id="top" ng-controller='masterPropValueSettingController' ng-init="init()" ng-cloak="">
+	<div class="bg-light lter b-b wrapper-md vo_page_header clearfix">
+        <div class="row">
+            <div class="col-sm-12 text-left hidden-xs">
+                <div ng-if="isReady" class="form-inline">
+                	 <div class="col-sm-4 noPadding" dropdown>
+			           <button type="button" class="btn btn-vo btn-xl dropdown-toggle"  dropdown-toggle>
+			           	  <i class="fa fa-refresh fa-1x"></i>&nbsp;切换类目&nbsp;
+			             <span class="caret"></span>
+			             <span class="sr-only">Split button!</span>
+			           </button>
+						<ul class="dropdown-menu" role="menu">
+							<li>
+								<div id="master-category-nav">
+									<ul ng-include="'categoryNav'"></ul>
 								</div>
-								<div class="form-group">
-									<label class="col-sm-3 control-label">简短描述</label>
-									<div class="col-sm-8">
-										<textarea class="form-control no-resize" rows="6"></textarea>
-									</div>
-									<div class="col-sm-1">
-										<span class="vo_save_state"><i class="glyphicons glyphicons-remove-2"></i></span>
-									</div>
-								</div><!-- .form-group -->
+							</li>
+						</ul>
+						<button ng-if="!isSave && !isNew" style="margin-left: 10px;" class="btn btn-vo btn-xl" type="button" ng-click="switchCategory()"><i class="fa fa-check-square fa-1x"></i>&nbsp;确认</button>
+				        <button ng-if="!isSave && !isNew" style="margin-left: 10px;" class="btn btn-vo btn-xl" ng-click="revertCategory()"><i class="fa fa-undo fa-1x"></i>&nbsp;重置</button>
+         			</div>
+			        <div class="col-sm-7 pull-left">
+				       	<h4 class="m-n font-thin text-vo pull-left" translate="" ng-bind="currentCategoryName"></h4>
+				    </div>
+	     			<div class="col-sm-1 noPadding pull-right"><button class="btn btn-vo pull-right" ng-click="doGoBack()"><i class="fa fa-reply fa-1x"></i>&nbsp;返&nbsp;回</button></div>
+                </div>
+                <!-- .form-group -->
+            </div>
+        </div>
+        <!-- .row -->
+    </div>
+    <!-- .wrapper-md .vo_page_header -->
+    
+	<div class="wrapper-md ng-pristine category-search ng-valid">
+	   <div class="row">
+	       <div class="col-lg-12">
+	           <div class="vo_accordion vo_attr vo_product">
+						 <div class="panel-collapse">
+						          <div class="hbox hbox-auto-xs no-border vo_prodBox">
+									  <div ng-if="isError"  class="proErrMsg">
+										  <div class="proErrMsgList"><strong ng-bind="errMsg"></strong></div>
+									  </div>
+									  <div ng-if="isNew"  class="proErrMsg">
+										  <div class="proWarningMsgList">请选择一个类目</div>
+									  </div>
+									  <div ng-if="!isReady&&!isNew"  class="proErrMsg">
+										  <div class="proWarningMsgList"><span  translate="CMS_MSG_MASTER_PROP_VALUE_SETTING_CATEGORY_NODATA"></span><p><br>{{sec}}秒后将返回到上一个页面</p></div>
+										  <div style="padding-top: 30px;"><button class="btn btn-vo pull-right" ng-click="doGoBack()"><i class="fa fa-reply fa-1x"></i>立即返回</button></div>
+									  </div>
 
-								<div class="form-group">
-									<label class="col-sm-3 control-label">详情描述</label>
-									<div class="col-sm-8">
-										<textarea class="form-control no-resize" rows="8"></textarea>
-									</div>
-									<div class="col-sm-1">
-										<span class="vo_save_state"><i class="glyphicons glyphicons-remove-2"></i></span>
-									</div>
-								</div><!-- .form-group -->
-							</form><!-- .form -->
-						</div><!--.col -->
-						<div class="col-sm-6">
-							<form class="form-horizontal">
-								<div class="form-group">
-									<label class="col-sm-3 control-label vo_reqfield">URL Key </label>
-									<div class="col-sm-8">
-										<input type="text" class="form-control" placeholder="bracelets-bangles-no-stone-smg0469s75" disabled>
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label for="input-id-2" class="col-sm-3 control-label vo_reqfield">品牌</label>
-									<div class="col-sm-8">
-										<input type="text" class="form-control inherited">
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label for="input-id-2" class="col-sm-3 control-label vo_reqfield">类目</label>
-									<div class="col-sm-8">
-										<input type="text" class="form-control inherited" placeholder="珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰" disabled>
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label class="col-sm-3 control-label vo_reqfield">店铺内类目</label>
-									<div class="col-sm-8">
-										<textarea class="form-control inherited" rows="3" placeholder="珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰" disabled></textarea>
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label class="col-sm-3 control-label">MSRP</label>
-									<div class="col-sm-9 form-inline">
-										<div class="input-group col-sm-4">
-											<input type="text" class="form-control"  placeholder="123" ng-model="g.c" ng-pattern="/^[0-9]+$/">
-											<span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
-										</div>
-										<div class="input-group col-sm-4">
-											<input type="text" class="form-control" placeholder="123" ng-model="g.c" ng-pattern="/^[0-9]+$/">
-											<span class="input-group-addon"><i class="glyphicon glyphicon-yen"></i></span>
-										</div>
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label class="col-sm-3 control-label">Current Price</label>
-									<div class="col-sm-9 form-inline">
-										<div class="input-group col-sm-4">
-											<input type="text" class="form-control"  placeholder="123" ng-model="g.c" ng-pattern="/^[0-9]+$/">
-											<span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
-										</div>
-										<div class="input-group col-sm-4">
-											<input type="text" class="form-control" placeholder="123" ng-model="g.c" ng-pattern="/^[0-9]+$/">
-											<span class="input-group-addon"><i class="glyphicon glyphicon-yen"></i></span>
-										</div>
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label class="col-sm-3 control-label">Cost Price</label>
-									<div class="col-sm-9 form-inline">
-										<div class="input-group col-sm-4">
-											<input type="text" class="form-control"  placeholder="123" ng-model="g.c" ng-pattern="/^[0-9]+$/">
-											<span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
-										</div>
-										<div class="input-group col-sm-4">
-											<input type="text" class="form-control" placeholder="123" ng-model="g.c" ng-pattern="/^[0-9]+$/">
-											<span class="input-group-addon"><i class="glyphicon glyphicon-yen"></i></span>
-										</div>
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label for="input-id-2" class="col-sm-3 control-label">中国最终售价</label>
-									<div class="col-sm-9 form-inline">
-										<div class="input-group col-sm-3">
-											<input type="text" class="form-control" ng-model="g.c" ng-pattern="/^[0-9]+$/">
-											<span class="input-group-addon"><i class="glyphicon glyphicon-yen"></i></span>
-										</div>
-										<div class="input-group col-sm-3">
-											<input type="text" class="form-control" ng-model="g.c" ng-pattern="/^[0-9]+$/">
-											<span class="input-group-addon"><i class="glyphicon glyphicon-yen"></i></span>
-										</div>
-										<div class="input-group col-sm-3">
-											<input type="text" class="form-control" ng-model="g.c" ng-pattern="/^[0-9]+$/">
-											<span class="input-group-addon">% Off</span>
-										</div>
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label class="col-sm-3 control-label vo_reqfield">税号集货</label>
-									<div class="col-sm-8">
-										<input type="text" class="form-control inherited" placeholder="Product Name" disabled>
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label for="input-id-2" class="col-sm-3 control-label vo_reqfield">税号个人</label>
-									<div class="col-sm-8">
-										<input type="text" class="form-control inherited">
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label class="col-sm-3 control-label vo_reqfield">Size Type</label>
-									<div class="col-sm-3">
-										<input type="text" class="form-control inherited">
-									</div>
-									<label class="col-sm-2 control-label vo_reqfield">Size Chart</label>
-									<div class="col-sm-3">
-										<input type="text" class="form-control inherited">
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label class="col-sm-3 control-label vo_reqfield">颜色</label>
-									<div class="col-sm-3">
-										<input type="text" class="form-control inherited">
-									</div>
-									<label class="col-sm-2 control-label vo_reqfield">主颜色</label>
-									<div class="col-sm-3">
-										<input type="text" class="form-control inherited">
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label for="input-id-2" class="col-sm-3 control-label vo_reqfield">材质</label>
-									<div class="col-sm-8 form-inline">
-										<div class="input-group col-sm-3"><input type="text" placeholder="1" class="form-control" disabled></div>
-										<div class="input-group col-sm-3"><input type="text" placeholder="2" class="form-control" disabled></div>
-										<div class="input-group col-sm-5"><input type="text" placeholder="3" class="form-control" disabled></div>
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label for="input-id-2" class="col-sm-3 control-label vo_reqfield">产地</label>
-									<div class="col-sm-8">
-										<input type="text" class="form-control inherited">
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label for="input-id-2" class="col-sm-3 control-label">Ecomm URL</label>
-									<div class="col-sm-8">
-										<input type="text" class="form-control inherited" placeholder="http://s7d5.scene7.com/is/image/sneakerhead/BHFO-20150730-x790-600x?$790x600$&$790_600$&$product=riq9cAkAMDJmPHFIMpKuSAsdmBITmE9h-25" disabled>
-									</div>
-								</div><!-- .form-group -->
-							</form><!-- .form -->
-						</div><!-- .col -->
-					</div>
-				</div>
-				<div>
-					<accordion class="vo_accordion" close-others="oneAtATime">
-						<accordion-group is-open="status.open">
-							<accordion-heading ng-class="{{menu-title}}">类目属性<i class="pull-right glyphicon glyphicon-menu-down" ng-class="{'glyphicon-menu-up': status.open, 'glyphicon-menu-down': !status.open}"></i>
-							</accordion-heading>
-							<form class="form-horizontal col-sm-12">
-								<div class="form-group">
-									<label class="col-sm-2 control-label vo_reqfield">商品类型</label>
-									<div class="col-sm-8">
-										<label class="checkbox-inline c-radio"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 全新 </label>
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label class="col-sm-2 control-label">页面模板</label>
-									<div class="col-sm-2">
-										<select class="form-control m-r-xs">
-											<option>NB详情页模板</option>
-											<option>sneakerhead详情页模板</option>
-											<option>斯伯汀详情页模板</option>
-										</select>
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label class="col-sm-2 control-label vo_reqfield">商品属性</label>
-									<div class="col-sm-7 hierarchy_main">
-										<div class="col-sm-4 form-inline">
-											<label class="control-label vo_reqfield">上市时间</label>
-											<select class="form-control m-r-xs">
-												<option>2015.6.12</option>
-												<option>2015.11.11</option>
-											</select>
-										</div>
-										<div class="col-sm-11 form-inline hierarchy m-t-sm m-l-md">
-											<label class="control-label m-l-xs">开始时间：</label>
-											<select class="form-control m-r-xs">
-												<option>2015.6.12</option>
-												<option>2015.11.11</option>
-											</select>
-										</div>
-										<div class="col-sm-3 form-inline m-t-sm">
-											<label class="control-label">是否商场同款</label>
-											<select class="form-control m-r-xs">
-												<option>是</option>
-												<option>否</option>
-											</select>
-										</div>
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label class="col-sm-2 control-label">渠道销售类型</label>
-									<div class="col-sm-8">
-										<label class="checkbox-inline c-radio"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 纯电商（只有线上销售） </label>
-										<label class="checkbox-inline c-radio"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 线上线下 </label>
-										<label class="checkbox-inline c-radio"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 纯线下（只有线下O2O销售） </label>
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label class="col-sm-2 control-label vo_reqfield">商品标题</label>
-									<div class="col-sm-2">
-										<input type="text" class="form-control inherited">
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label class="col-sm-2 control-label vo_reqfield">商品卖点</label>
-									<div class="col-sm-8 form-inline">
-										<div class="input-group col-sm-2"><input type="text" placeholder="1" class="form-control"></div>
-										<div class="input-group col-sm-2"><input type="text" placeholder="2" class="form-control"></div>
-										<div class="input-group col-sm-2"><input type="text" placeholder="3" class="form-control"></div>
-										<div class="input-group col-sm-2"><input type="text" placeholder="2" class="form-control"></div>
-										<div class="input-group col-sm-2"><input type="text" placeholder="3" class="form-control"></div>
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label class="col-sm-2 control-label vo_reqfield">价格</label>
-									<div class="col-sm-2">
-										<input type="text" class="form-control">
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label class="col-sm-2 control-label">颜色分类</label>
-									<div class="col-sm-9">
-										<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 军绿色</label>
-										<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> 天蓝色 </label>
-										<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span> 巧克力色 </label>
-										<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 桔色</label>
-										<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> 浅灰色 </label>
-										<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span> 浅绿色 </label>
-										<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 浅黄色</label>
-										<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> 浅灰色 </label>
-										<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span> 深紫色 </label>
+						          	<div class="col-sm-10 p-l-none p-r-none"  ng-if="!isError && isReady && !isNew">
+						                <div class="col vo_prodDataPanel">
+						                    <div class="categoryFormTitle">
+												<div class="categoryList">
+													<div class="panel panel-default"  ng-controller="cmsPopupController">
+														<tabset class="tab-container vo_nav-tabs" >
+															<tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" ng-click="showEligiblyModels(tab)">
+																<div ng-repeat="item in tab.models" on-finish-render-filters>
+																	<div ng-include="'mainView'"  ng-init="model = item">
+																	</div>
+																</div>
+															</tab>
+														</tabset>
+													</div>
 
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label class="col-sm-2 control-label vo_reqfield">商家编码</label>
-									<div class="col-sm-2">
-										<input type="text" class="form-control">
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label class="col-sm-2 control-label vo_reqfield">条形码</label>
-									<div class="col-sm-2">
-										<input type="text" class="form-control">
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label class="col-sm-2 control-label vo_reqfield">物流参数</label>
-									<div class="col-sm-6 hierarchy_main">
-										<div class="col-sm-10 form-inline m-b-sm">
-											<label class="col-sm-3 control-label text-left">物流体积(m3)</label>
-											<input type="text" class="col-sm-3 form-control m-r-xs">
-										</div>
-										<div class="col-sm-10 form-inline">
-											<label class="col-sm-3 control-label text-left"> 物流重量(kg)</label>
-											<label><input type="text" class="col-sm-3 form-control m-r-xs"></label>
-										</div>
-										<div class="col-sm-11 form-inline hierarchy m-l-md">
-											<label class="control-label m-l-xs">初始重量：</label>
-											<label><input type="text" class="form-control m-r-xs"></label>
-											<div class="col-sm-11 form-inline hierarchy-main m-l-lg" style="background:#fff; border:1px solid #e7dfd4;padding:8px 4px 8px 4px;">
-												<label class="control-label m-l-xs">初始重量：</label>
-												<label><input type="text" class="form-control m-r-xs"></label>
+													<div ng-if="isSave&&!isNew" class="topPadding"><button class="btn btn-vo btn-xl" type="button" ng-click="submit()">提交</button></div>
+												</div>
 											</div>
 										</div>
 									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label class="col-sm-2 control-label vo_reqfield">所在地</label>
-									<div class="col-sm-2">
-										<select class="form-control">
-											<option>上海</option>
-											<option>北京</option>
-										</select>
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label class="col-sm-2 control-label vo_reqfield">城市</label>
-									<div class="col-sm-2">
-										<select class="form-control">
-											<option>上海市</option>
-											<option>北京市</option>
-										</select>
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label class="col-sm-2 control-label">提取方式</label>
-									<div class="col-sm-9">
-										<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 电子交易凭证</label>
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label class="col-sm-2 control-label"></label>
-									<div class="col-sm-9">
-										<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 邮寄</label>
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label class="col-sm-2 control-label"></label>
-									<div class="col-sm-9 m-l-md">
-										<label class="checkbox-inline c-radio"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 卖家承担运费 </label>
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label class="col-sm-2 control-label"></label>
-									<div class="col-sm-9 m-l-md">
-										<label class="checkbox-inline c-radio"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 买家承担运费 </label>
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label class="col-sm-2 control-label">发票</label>
-									<div class="col-sm-8">
-										<label class="checkbox-inline c-radio"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 有 </label>
-										<label class="checkbox-inline c-radio"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 线上线下 </label>
-										<label class="checkbox-inline c-radio"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 纯线下（只有线下O2O销售） </label>
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label class="col-sm-2 control-label">保修</label>
-									<div class="col-sm-8">
-										<label class="checkbox-inline c-radio"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 无 </label>
-										<label class="checkbox-inline c-radio"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 有 </label>
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label class="col-sm-2 control-label">退换货承诺</label>
-									<div class="col-sm-9">
-										<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 凡使用支付宝服务付款购买本店商品，若存在质量问题或与描述不符，本店将主动提供退换货服务并承担来回邮费！</label>
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label class="col-sm-2 control-label">售后说明</label>
-									<div class="col-sm-9">
-										<button class="btn btn-default"><i class="fa fa-plus"></i> 添加说明</button>
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label class="col-sm-2 control-label">吊牌图</label>
-									<div class="col-sm-9">
-										<button class="btn btn-default"><i class="fa fa-plus"></i> 上传新图片</button>
-									</div>
-								</div><!-- .form-group -->
-								<div class="form-group">
-									<label class="col-sm-2 control-label">会员让利</label>
-									<div class="col-sm-8">
-										<label class="checkbox-inline c-radio"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 不参与会员让利 </label>
-										<label class="checkbox-inline c-radio"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 参与会员让利 </label>
-									</div>
-								</div><!-- .form-group -->
+									
+									<div class="col-sm-2 p-l-none p-r-none col no-padder bg-light vo_prodDetailPanel" style="width:15%;border-top:1px solid #d4cfcf;margin-top: 170px;margin-right:15px;position:fixed;" ng-if="isPhotosShow">
 
-								<div class="form-group">
-									<label class="col-sm-2 control-label">拍下减库存</label>
-									<div class="col-sm-8">
-										<label class="checkbox-inline c-radio"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 是 </label>
-										<label class="checkbox-inline c-radio"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 否 </label>
-									</div>
-								</div><!-- .form-group -->
-							</form>
-							<form class="form-horizontal col-sm-12">
+										<div id="vo_fixProdPanel">
+											<p class="photosTittle">product photos</p>
+											<div class="vo_prodGallery" style="border-bottom:0px">
+												<div class="imageContainer" ng-repeat="image in images" ng-hide="currentImageIndex !== $index">
+													<div class="imageWrapper" ng-style="{'background-image' : 'url(' + image.imageUrl + ')'}" style="background-repeat: no-repeat;" ng-swipe-left="showNextImage()" ng-swipe-right="showPreviousImage()"></div>
+												</div>
+												<nav>
+													<div class="thumbnailWrapper">
+														<div ng-repeat="image in images | limitTo: 10" class="thumbnail" ng-class="{'active':currentImageIndex === $index}" ng-click="setCurrentImage($index)" ng-style="{'background-image' : 'url(' + image.imageUrl + ')'}"></div>
+													</div>
+												</nav>
+											</div>
+										</div>
+										<div class="form-inline text-center modelTop">
+											<button type="button" class="btn btn-danger" ng-click="selectTab(0)">必填项</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+											<button type="button" class="btn btn-default" ng-click="selectTab(1)">可选项</button>
+										</div>
+										<div class="modelErrMsg text-left" ng-repeat = "msg in tmallErrMsgs">
+											{{msg}}
+										</div>
 
-							</form>
-						</accordion-group>
-					</accordion><!-- .accordion -->
-				</div>
-			</tab>
-			<tab>
-				<tab-heading> Product 自定义</tab-heading>
-				<!-- Products table and controls -->
-				<div class="panel vo_panel tab_panel">
-					<div class="row wrapper">
-						<div class="container-fluid">
-							<div class="col-sm-6">
-								<form class="form-horizontal">
-									<div class="form-group">
-										<label class="col-sm-3 control-label">Status</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control"  placeholder="Pedding" disabled>
-										</div>
-									</div><!-- .form-group -->
-									<div class="form-group">
-										<label class="col-sm-3 control-label">Product ID</label>
-										<div class="col-sm-4">
-											<input type="text" class="form-control" placeholder="123456789-123-111" disabled>
-										</div>
-										<div class="col-sm-2 control-label"><label class="">Next Status?</label></div>
-										<div class="col-sm-2">
-											<div class="onoffswitch">
-												<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch1" checked>
-												<label class="onoffswitch-label" for="myonoffswitch1">
-													<span class="onoffswitch-inner"></span>
-													<span class="onoffswitch-switch"></span>
-												</label>
-											</div><!-- onoff switch -->
-										</div>
-									</div><!-- .form-group -->
-
-									<div class="form-group">
-										<label for="input-id-2" class="col-sm-3 control-label">Color</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" id="input-id-2" placeholder="Color" disabled>
-										</div>
-										<div class="col-sm-1">
-											<label class="i-checks-sm m-b-none"><input type="checkbox"></label>
-										</div>
-									</div><!-- .form-group -->
-									<div class="form-group">
-										<label for="input-id-3" class="col-sm-3 control-label">Bullet Point 1</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" id="input-id-3" placeholder="Bullet Point 1" disabled>
-										</div>
-										<div class="col-sm-1">
-											<label class="i-checks-sm m-b-none"><input type="checkbox"></label>
-										</div>
-									</div><!-- .form-group -->
-									<div class="form-group">
-										<label for="input-id-4" class="col-sm-3 control-label">Metal Stamp</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" id="input-id-4" placeholder="Metal Stamp" disabled>
-										</div>
-										<div class="col-sm-1">
-											<label class="i-checks-sm m-b-none"><input type="checkbox"></label>
-										</div>
-									</div><!-- .form-group -->
-									<div class="form-group">
-										<label for="input-id-5" class="col-sm-3 control-label">Shape Cut</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" id="input-id-5" placeholder="Shape Cut" disabled>
-										</div>
-										<div class="col-sm-1">
-											<label class="i-checks-sm m-b-none"><input type="checkbox"></label>
-										</div>
-									</div><!-- .form-group -->
-									<div class="form-group">
-										<label for="input-id-6" class="col-sm-3 control-label">Bullet Point 2</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" id="input-id-6" placeholder="Bullet Point 2" disabled>
-										</div>
-										<div class="col-sm-1">
-											<label class="i-checks-sm m-b-none"><input type="checkbox"></label>
-										</div>
-									</div><!-- .form-group -->
-									<div class="form-group">
-										<label for="input-id-7" class="col-sm-3 control-label">Stone Setting</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" id="input-id-7" placeholder="Stone Setting" disabled>
-										</div>
-										<div class="col-sm-1">
-											<label class="i-checks-sm m-b-none"><input type="checkbox"></label>
-										</div>
-									</div><!-- .form-group -->
-									<div class="form-group">
-										<label for="input-id-8" class="col-sm-3 control-label">Style</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" id="input-id-8" placeholder="Style" disabled>
-										</div>
-										<div class="col-sm-1">
-											<label class="i-checks-sm m-b-none"><input type="checkbox"></label>
-										</div>
-									</div><!-- .form-group -->
-									<div class="form-group">
-										<label for="input-id-9" class="col-sm-3 control-label">Gem Creation Manua</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" id="input-id-9" placeholder="Gem Creation Manua" disabled>
-										</div>
-										<div class="col-sm-1">
-											<label class="i-checks-sm m-b-none"><input type="checkbox"></label>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="input-id-10" class="col-sm-3 control-label">Bullet Point 3</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" id="input-id-10" placeholder="Bullet Point 3" disabled>
-										</div>
-										<div class="col-sm-1">
-											<label class="i-checks-sm m-b-none"><input type="checkbox"></label>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="input-id-11" class="col-sm-3 control-label">Merchant Category</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" id="input-id-11" placeholder="Merchant Category" disabled>
-										</div>
-										<div class="col-sm-1">
-											<label class="i-checks-sm m-b-none"><input type="checkbox"></label>
-										</div>
 									</div>
 
-									<div class="form-group">
-										<label for="input-id-12" class="col-sm-3 control-label">Auction Title</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" id="input-id-12" placeholder="Auction Title" disabled>
-										</div>
-										<div class="col-sm-1">
-											<label class="i-checks-sm m-b-none"><input type="checkbox"></label>
-										</div>
-									</div>
-
-									<div class="form-group">
-										<label for="input-id-13" class="col-sm-3 control-label">Age Group</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" id="input-id-13" placeholder="Age Group" disabled>
-										</div>
-										<div class="col-sm-1">
-											<label class="i-checks-sm m-b-none"><input type="checkbox"></label>
-										</div>
-									</div>
-
-									<div class="form-group">
-										<label for="input-id-14" class="col-sm-3 control-label">MetalColor</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" id="input-id-14" placeholder="MetalColor" disabled>
-										</div>
-										<div class="col-sm-1">
-											<label class="i-checks-sm m-b-none"><input type="checkbox"></label>
-										</div>
-									</div>
-
-									<div class="form-group">
-										<label for="input-id-15" class="col-sm-3 control-label">MetalType</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" id="input-id-15" placeholder="MetalType" disabled>
-										</div>
-										<div class="col-sm-1">
-											<label class="i-checks-sm m-b-none"><input type="checkbox"></label>
-										</div>
-									</div>
-
-									<div class="form-group">
-										<label for="input-id-16" class="col-sm-3 control-label">Stone</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" id="input-id-16" placeholder="Stone" disabled>
-										</div>
-										<div class="col-sm-1">
-											<label class="i-checks-sm m-b-none"><input type="checkbox"></label>
-										</div>
-									</div>
-
-									<div class="form-group">
-										<label for="input-id-17" class="col-sm-3 control-label">Stone Length</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" id="input-id-17" placeholder="Stone Length" disabled>
-										</div>
-										<div class="col-sm-1">
-											<label class="i-checks-sm m-b-none"><input type="checkbox"></label>
-										</div>
-									</div>
-
-								</form><!-- .form -->
-							</div><!--.col -->
-							<div class="col-sm-6">
-								<form class="form-horizontal">
-									<div class="form-group mar-top">
-										<label class="col-sm-3 control-label">URL Key</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" placeholder="bracelets-bangles-no-stone-smg0469s75" disabled>
-										</div>
-									</div><!-- .form-group -->
-
-									<div class="form-group">
-										<label for="input-id-18" class="col-sm-3 control-label">颜色</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control inherited" id="input-id-18">
-										</div>
-									</div><!-- .form-group -->
-									<div class="form-group">
-										<label for="input-id-19" class="col-sm-3 control-label">标签1</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control inherited" id="input-id-19">
-										</div>
-									</div><!-- .form-group -->
-									<div class="form-group">
-										<label for="input-id-20" class="col-sm-3 control-label">金属纯度</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control inherited" id="input-id-20">
-										</div>
-									</div><!-- .form-group -->
-									<div class="form-group">
-										<label class="col-sm-3 control-label">切割</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control inherited">
-										</div>
-									</div><!-- .form-group -->
-									<div class="form-group">
-										<label for="input-id-22" class="col-sm-3 control-label">标签2</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control inherited" id="input-id-22">
-										</div>
-									</div><!-- .form-group -->
-									<div class="form-group">
-										<label for="input-id-23" class="col-sm-3 control-label">宝石属性</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control inherited" id="input-id-23">
-										</div>
-									</div><!-- .form-group -->
-									<div class="form-group">
-										<label for="input-id-24" class="col-sm-3 control-label">品类</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control inherited" id="input-id-24">
-										</div>
-									</div><!-- .form-group -->
-									<div class="form-group">
-										<label for="input-id-25" class="col-sm-3 control-label">宝石商</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control inherited" id="input-id-25">
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="input-id-26" class="col-sm-3 control-label">标签3</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control inherited" id="input-id-26">
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="input-id-27" class="col-sm-3 control-label">商务类别</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control inherited" id="input-id-27">
-										</div>
-									</div><div class="form-group">
-									<label for="input-id-28" class="col-sm-3 control-label">标题</label>
-									<div class="col-sm-8">
-										<input type="text" class="form-control inherited" id="input-id-28">
-									</div>
-								</div><div class="form-group">
-									<label for="input-id-29" class="col-sm-3 control-label">年龄层</label>
-									<div class="col-sm-8">
-										<input type="text" class="form-control inherited" id="input-id-29">
-									</div>
-								</div><div class="form-group">
-									<label for="input-id-30" class="col-sm-3 control-label">金属颜色</label>
-									<div class="col-sm-8">
-										<input type="text" class="form-control inherited" id="input-id-30">
-									</div>
-								</div><div class="form-group">
-									<label for="input-id-31" class="col-sm-3 control-label">金属类别</label>
-									<div class="col-sm-8">
-										<input type="text" class="form-control inherited" id="input-id-311">
-									</div>
-								</div><div class="form-group">
-									<label for="input-id-32" class="col-sm-3 control-label">宝石</label>
-									<div class="col-sm-8">
-										<input type="text" class="form-control inherited" id="input-id-32">
-									</div>
-								</div><div class="form-group">
-									<label for="input-id-33" class="col-sm-3 control-label">宝石长度</label>
-									<div class="col-sm-8">
-										<input type="text" class="form-control inherited" id="input-id-33">
-									</div>
 								</div>
-								</form><!-- .form -->
-							</div><!-- .col -->
-						</div>
-					</div>
+						 </div>
 				</div>
-				<div class="row text-center">
-					<div class="col-sm-12">
-						<div class="form-inline">
-							<button type="submit" class="btn btn-vo">保存</button>
-							<button type="submit" class="btn btn-default">关闭</button>
-						</div><!-- .form-inline -->
-					</div>
-				</div>
-			</tab>
-
-			<tab>
-				<tab-heading> SKU List</tab-heading>
-				<div class="panel vo_panel tab_panel">
-					<div class="table-responsive">
-						<table class="table table-hover b-t b-light vo_table vo_models">
-							<thead>
-							<tr><th class="mfb-xt text-center">Seq.</th>
-								<th class="mfb-x">SKU</th>
-								<th class="mfb-xt">UPC</th>
-								<th class="mfb-xt text-center">Size</th>
-								<th class="mfb-xt text-center">Inventory</th>
-								<th class="mfb-x">MSRP</th>
-								<th class="mfb-x">price retail</th>
-								<th class="mfb-x">Final Price</th>
-								<th class="mfb-xxs">Publish Status</th>
-								<th class="mfb-xxxsm text-left">
-									<li class="dropdown" dropdown style="list-style: none">
-									<a href class="dropdown-toggle clear" dropdown-toggle>
-										<span class="">Live Status</span><b class="caret"></b>
-									</a>
-									<!-- dropdown -->
-									<ul class="dropdown-menu">
-										<li>
-											<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> TM </label>
-											<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> TG </label>
-											<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span> TD </label>
-											<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option4"><span class="fa fa-check"></span> JG </label>
-											<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span> JuM </label>
-										</li>
-									</ul>
-										</li>
-									<!-- / dropdown -->
-								</th>
-								<th class="mfb-xxs">Edit</th>
-							</tr>
-							</thead>
-							<tbody>
-							<tr>
-								<td class="text-center">1</td>
-								<td class="wtab-xs">LDB01-249</td>
-								<td>096303221174SDI163EARHD0964</td>
-								<td class="text-center">M</td>
-								<td class="text-center">530</td>
-								<td>
-									<button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button>
-								</td>
-								<td><input type="text" class="form-control"></td>
-								<td><input type="text" class="form-control"></td>
-								<td><div class="btn-group pull-left">
-									<span class="badge badge-empty m-b-xs">TM:在售</a></span>
-									<span class="badge badge-empty m-b-xs">TG:在库</a></span>
-									<span class="badge badge-empty m-b-xs">JD:未上新</a></span>
-								</div></td>
-								<td class="text-left">
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> TM </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> TG </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span> TD </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option4"><span class="fa fa-check"></span> JG </label>
-								</td>
-								<td><button title="保存" class="btn btn-vo btn-xs"><i class="fa fa-floppy-o"></i></button></td>
-							</tr>
-							<tr>
-								<td class="text-center">2</td>
-								<td class="wtab-xs">LDB01-249</td>
-								<td>096303221174SDI163EARHD0964</td>
-								<td class="text-center">S</td>
-								<td class="text-center">650</td>
-								<td>
-									<button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button>
-								</td><td><input type="text" class="form-control"></td><td><input type="text" class="form-control"></td>
-								<td><div class="btn-group pull-left">
-									<span class="badge badge-empty m-b-xs">TM:在售</a></span>
-									<span class="badge badge-empty m-b-xs">TG:在库</a></span>
-									<span class="badge badge-empty m-b-xs">JD:未上新</a></span>
-								</div></td>
-								<td class="text-left">
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> TM </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> TG </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span> TD </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option4"><span class="fa fa-check"></span> JG </label>
-								</td>
-								<td><button title="保存" class="btn btn-vo btn-xs"><i class="fa fa-floppy-o"></i></button></td>
-							</tr>
-							<tr>
-								<td class="text-center">3</td>
-								<td class="wtab-xs">LDB01-249</td>
-								<td>096303221174SDI163EARHD0964</td>
-								<td class="text-center">L</td>
-								<td class="text-center">480</td>
-								<td>
-									<button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button>
-								</td><td><input type="text" class="form-control"></td><td><input type="text" class="form-control"></td>
-								<td><div class="btn-group pull-left">
-									<span class="badge badge-empty m-b-xs">TM:在售</a></span>
-									<span class="badge badge-empty m-b-xs">TG:在库</a></span>
-									<span class="badge badge-empty m-b-xs">JD:未上新</a></span>
-								</div></td>
-								<td class="text-left">
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> TM </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> TG </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span> TD </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option4"><span class="fa fa-check"></span> JG </label>
-								</td>
-								<td><button title="保存" class="btn btn-vo btn-xs"><i class="fa fa-floppy-o"></i></button></td>
-							</tr>
-							<tr>
-								<td class="text-center">4</td>
-								<td class="wtab-xs">LDB01-249</td>
-								<td>096303221174SDI163EARHD0964</td>
-								<td class="text-center">S</td>
-								<td class="text-center">5650</td>
-								<td>
-									<button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button>
-								</td><td><input type="text" class="form-control"></td><td><input type="text" class="form-control"></td>
-								<td><div class="btn-group pull-left">
-									<span class="badge badge-empty m-b-xs">TM:在售</a></span>
-									<span class="badge badge-empty m-b-xs">TG:在库</a></span>
-									<span class="badge badge-empty m-b-xs">JD:未上新</a></span>
-								</div></td>
-								<td class="text-left">
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> TM </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> TG </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span> TD </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option4"><span class="fa fa-check"></span> JG </label>
-								</td>
-								<td><button title="保存" class="btn btn-vo btn-xs"><i class="fa fa-floppy-o"></i></button></td>
-							</tr>
-							<tr>
-								<td class="text-center">5</td>
-								<td class="wtab-xs">LDB01-249</td>
-								<td>096303221174SDI163EARHD0964</td>
-								<td class="text-center">S</td>
-								<td class="text-center">4650</td>
-								<td>
-									<button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button>
-								</td><td><input type="text" class="form-control"></td><td><input type="text" class="form-control"></td>
-								<td><div class="btn-group pull-left">
-									<span class="badge badge-empty m-b-xs">TM:在售</a></span>
-									<span class="badge badge-empty m-b-xs">TG:在库</a></span>
-									<span class="badge badge-empty m-b-xs">JD:未上新</a></span>
-								</div></td>
-								<td class="text-left">
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> TM </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> TG </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span> TD </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option4"><span class="fa fa-check"></span> JG </label>
-								</td>
-								<td><button title="保存" class="btn btn-vo btn-xs"><i class="fa fa-floppy-o"></i></button></td>
-							</tr>
-							<tr>
-								<td class="text-center">6</td>
-								<td class="wtab-xs">LDB01-249</td>
-								<td>096303221174SDI163EARHD0964</td>
-								<td class="text-center">XS</td>
-								<td class="text-center">2650</td>
-								<td>
-									<button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button>
-								</td><td><input type="text" class="form-control"></td><td><input type="text" class="form-control"></td>
-								<td><div class="btn-group pull-left">
-									<span class="badge badge-empty m-b-xs">TM:在售</a></span>
-									<span class="badge badge-empty m-b-xs">TG:在库</a></span>
-									<span class="badge badge-empty m-b-xs">JD:未上新</a></span>
-								</div></td>
-								<td class="text-left">
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> TM </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> TG </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option4"><span class="fa fa-check"></span> JG </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option4"><span class="fa fa-check"></span> JG </label>
-								</td>
-								<td><button title="保存" class="btn btn-vo btn-xs"><i class="fa fa-floppy-o"></i></button></td>
-							</tr>
-							</tbody>
-						</table>
-					</div><!-- .table-responsive -->
-
-					<footer class="panel-footer">
-						<div class="row">
-							<div class="col-sm-4 hidden-xs">
-							</div>
-							<div class="col-sm-4 text-center">
-								<small class="text-muted inline m-t-sm m-b-sm">showing 20-30 of 50 items</small>
-							</div>
-							<div class="col-sm-4 text-right text-center-xs">
-								<div>
-									<pagination boundary-links="true" total-items="totalItems" ng-model="currentPage" class="pagination-sm m-t-none m-b" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></pagination>
-								</div>
-							</div>
-						</div>
-					</footer> <!-- .panel-footer -->
-				</div> <!-- .panel -->
-				<div class="row text-center">
-					<div class="col-sm-12">
-						<div class="form-inline">
-							<button type="submit" class="btn btn-vo">保存</button>
-							<button type="submit" class="btn btn-default">关闭</button>
-						</div><!-- .form-inline -->
-					</div>
-				</div>
-
-			</tab>
-
-			<tab>
-				<tab-heading> 第三方属性</tab-heading>
-				<!-- Products table and controls -->
-				<div class="panel vo_panel tab_panel">
-					<div class="row wrapper">
-						<div class="container-fluid">
-							<div class="col-sm-12">
-								<form class="form-horizontal">
-									<div class="form-group">
-										<label class="col-sm-2 control-label">Product Code</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control"  placeholder="123456789-123-111" disabled>
-										</div>
-									</div><!-- .form-group -->
-									<div class="form-group">
-										<label class="col-sm-2 control-label">Product Name</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control"  placeholder="123456789-123-111" disabled>
-										</div>
-									</div><!-- .form-group -->
-									<div class="form-group">
-										<label class="col-sm-2 control-label">Overseas Official URL</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" placeholder="http://s7d5.scene7.com/is/image/sneakerhead/BHFO-20150730" disabled>
-										</div>
-									</div><!-- .form-group -->
-
-									<div class="form-group">
-										<label for="input-id-2" class="col-sm-2 control-label">Color</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" placeholder="Color" disabled>
-										</div>
-									</div><!-- .form-group -->
-									<div class="form-group">
-										<label for="input-id-3" class="col-sm-2 control-label">Bullet Point 1</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" id="input-id-31" placeholder="Bullet Point 1" disabled>
-										</div>
-									</div><!-- .form-group -->
-									<div class="form-group">
-										<label for="input-id-4" class="col-sm-2 control-label">Metal Stamp</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" id="input-id-41" placeholder="Metal Stamp" disabled>
-										</div>
-									</div><!-- .form-group -->
-									<div class="form-group">
-										<label for="input-id-5" class="col-sm-2 control-label">Shape Cut</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" id="input-id-51" placeholder="Shape Cut" disabled>
-										</div>
-									</div><!-- .form-group -->
-									<div class="form-group">
-										<label for="input-id-6" class="col-sm-2 control-label">Bullet Point 2</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" id="input-id-61" placeholder="Bullet Point 2" disabled>
-										</div>
-									</div><!-- .form-group -->
-									<div class="form-group">
-										<label for="input-id-7" class="col-sm-2 control-label">Stone Setting</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" id="input-id-71" placeholder="Stone Setting" disabled>
-										</div>
-									</div><!-- .form-group -->
-									<div class="form-group">
-										<label for="input-id-8" class="col-sm-2 control-label">Style</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" id="input-id-81" placeholder="Style" disabled>
-										</div>
-									</div><!-- .form-group -->
-									<div class="form-group">
-										<label for="input-id-9" class="col-sm-2 control-label">Gem Creation Manua</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" id="input-id-91" placeholder="Gem Creation Manua" disabled>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="input-id-10" class="col-sm-2 control-label">Bullet Point 3</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" id="input-id-101" placeholder="Bullet Point 3" disabled>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="input-id-11" class="col-sm-2 control-label">Merchant Category</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" id="input-id-111" placeholder="Merchant Category" disabled>
-										</div>
-									</div>
-
-									<div class="form-group">
-										<label for="input-id-12" class="col-sm-2 control-label">Auction Title</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" id="input-id-121" placeholder="Auction Title" disabled>
-										</div>
-									</div>
-
-									<div class="form-group">
-										<label for="input-id-13" class="col-sm-2 control-label">Age Group</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" id="input-id-131" placeholder="Age Group" disabled>
-										</div>
-									</div>
-
-									<div class="form-group">
-										<label for="input-id-14" class="col-sm-2 control-label">MetalColor</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" id="input-id-141" placeholder="MetalColor" disabled>
-										</div>
-									</div>
-
-									<div class="form-group">
-										<label for="input-id-15" class="col-sm-2 control-label">MetalType</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" id="input-id-151" placeholder="MetalType" disabled>
-										</div>
-									</div>
-
-									<div class="form-group">
-										<label for="input-id-16" class="col-sm-2 control-label">Stone</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" id="input-id-161" placeholder="Stone" disabled>
-										</div>
-									</div>
-
-									<div class="form-group">
-										<label for="input-id-17" class="col-sm-2 control-label">Stone Length</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" id="input-id-171" placeholder="Stone Length" disabled>
-										</div>
-									</div>
-
-								</form><!-- .form -->
-							</div><!--.col -->
-
-						</div>
-					</div>
-				</div>
-				<div class="row text-center">
-					<div class="col-sm-12">
-						<div class="form-inline">
-							<button type="submit" class="btn btn-vo">保存</button>
-							<button type="submit" class="btn btn-default">关闭</button>
-						</div><!-- .form-inline -->
-					</div>
-				</div>
-			</tab>
-
-		</tabset><!-- tabset -->
-		<div style="width:15%;position: fixed;right:6px;top:108px;">
-			<!-- product detail panel starts here -->
-			<div class="col no-padder w-lg bg-light vo_prodDetailPanel">
-				<div id="vo_fixProdPanel" >
-					<!-- product photos -->
-					<div class="vo_prodGallery">
-						<div class="imageContainer" ng-repeat="image in images"  ng-hide="!isCurrentIndex($index)">
-							<div class="imageWrapper" ng-style="{'background-image' : 'url(' + image.url + ')'}" ng-swipe-left="showNext()" ng-swipe-right="showPrevious()"></div>
-							<!-- <div class="imageWrapper video" ng-show="image.video">
-                                  <iframe ng-swipe-left="showNext()" ng-swipe-right="showPrevious()" width="350" height="250" src="//player.vimeo.com/video/118130413" frameborder="0" allowfullscreen></iframe>
-                              </div> -->
-						</div>
-						<nav>
-							<div class="thumbnailWrapper">
-								<div ng-repeat="image in images | limitTo: 10" class="thumbnail" ng-class="{'active':isCurrentIndex($index)}" ng-click="setCurrentIndex($index);" ng-style="{'background-image' : 'url(' + image.url + ')'}"></div>
-							</div>
-						</nav>
-					</div><!-- .vo_prodGallery -->
-
-					<div class="wrapper-sm">
-						<div class="form-group">
-							<label for="input-id-13" class="col-sm-4 control-label m-t-xs">翻译完成？</label>
-							<div class="col-sm-8 text-left">
-								<div class="onoffswitch">
-									<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch4" checked>
-									<label class="onoffswitch-label" for="myonoffswitch4">
-										<span class="onoffswitch-inner"></span>
-										<span class="onoffswitch-switch"></span>
-									</label>
-								</div><!-- onoff switch -->
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="input-id-13" class="col-sm-4 control-label m-t-xs">编辑完成？</label>
-							<div class="col-sm-8 text-left">
-								<div class="onoffswitch">
-									<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch2" checked>
-									<label class="onoffswitch-label" for="myonoffswitch2">
-										<span class="onoffswitch-inner"></span>
-										<span class="onoffswitch-switch"></span>
-									</label>
-								</div><!-- onoff switch -->
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="input-id-13" class="col-sm-4 control-label m-t-xs">Approve？</label>
-							<div class="col-sm-8 text-left">
-								<div class="onoffswitch">
-									<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch3" checked>
-									<label class="onoffswitch-label" for="myonoffswitch3">
-										<span class="onoffswitch-inner"></span>
-										<span class="onoffswitch-switch"></span>
-									</label>
-								</div><!-- onoff switch -->
-							</div>
-						</div>
-						<div class="form-inline text-center">
-							<button type="submit" class="btn btn-vo">保存</button>
-							<button type="submit" class="btn btn-default">关闭</button>
-						</div><!-- .form-inline -->
-					</div><!-- .wrapper -->
-				</div><!-- #prodFixed -->
-			</div><!-- no-padder -->
+			</div>
 
 		</div>
-	</div><!-- tabs ng-controller -->
-</div><!-- end .wrapper-md -->
+	</div>
+	<a id="bottom"></a>
+</div>
 
+<script id="categoryNav" type="text/ng-template">
+	<li class="active" ng-repeat="item in categories">
+		<a ng-if="item.subCategories.length == 0" ng-click="search(item.categoryId)">
+			<span ng-bind="item.categoryName"></span>
+		</a>
+		<a ng-if="item.subCategories.length">
+				<span class="pull-right text-muted">
+					<i class="fa fa-fw fa-angle-right text"></i>
+					<i class="fa fa-fw fa-angle-right text-active"></i>
+				</span>
+			<span ng-bind="item.categoryName"></span>
+		</a>
+		<ul ng-if="item.subCategories.length" ng-include="'categoryNav'" ng-init="categories = item.subCategories"></ul>
+	</li>
+</script>
 
+<script id="mainView" type="text/ng-template">
+	
+<!-- input -->
+		<fieldset ng-if="model.propType==1 && model.parentPropId == 0">
+			<legend>{{model.propName}}</legend>
+			<fieldset ng-if="model.rules.length>0" >
+				<legend><span class="legendTitle">填写规则：</span></legend>
+				<ul>
+					<li ng-repeat="rule in model.rules">
+						<div ng-if="rule.prop_rule_url">
+							<span>{{rule.prop_rule_value}}</span>&nbsp;<span class="rule-nolink"><a ng-href="{{rule.prop_rule_url}}">查看详情</a></span>
+						</div>
+						<div ng-if="!rule.prop_rule_url">
+							<span ng-bind="rule.decodeRule"></span>
+						</div>
+					</li>
+				</ul>
+			</fieldset>
+			<label>{{model.propName}}：</label><input type="text" ng-mousedown="openPropValueSetting(model)" ng-disabled="isNew||!isSave" ng-model="model.propValue">
+		</fieldset>
+		<div ng-if="model.propType==1 && model.parentPropId != 0">
+			<label>{{model.propName}}：</label><input type="text" ng-mousedown="openPropValueSetting(model)" ng-disabled="isNew||!isSave" ng-model="model.propValue">
+		</div>
 
+<!-- singleCheck -->
+		<fieldset ng-if="model.propType==2">
+			<legend ng-bind="model.propName"></legend>
+			<div class="pull-right"><button class="btn btn-danger btn-xs"  ng-disabled="isNew||!isSave" ng-click="clearValue(model)"><i class="fa fa-eraser"></i> 清除</button></div>
+			<div ng-if="model.rules.length==0" >
+				<br/>
+				<br/>
+			</div>
+			<fieldset ng-if="model.rules.length>0" >
+				<legend><span class="legendTitle">填写规则：</span></legend>
+				<ul>
+					<li ng-repeat="rule in model.rules">
+						<div ng-if="rule.prop_rule_url">
+							<span>{{rule.prop_rule_value}}</span>&nbsp;<span class="rule-nolink"><a ng-href="{{rule.prop_rule_url}}">查看详情</a></span>
+						</div>
+						<div ng-if="!rule.prop_rule_url">
+							<span ng-bind="rule.decodeRule"></span>
+						</div>
+					</li>
+				</ul>
+			</fieldset>
+			<label ng-repeat="option in model.options" >
+				<input type="radio" ng-model="model.propValue" ng-disabled="isNew||!isSave" ng-value="option.prop_option_value">{{option.prop_option_name}}
+			</label>
+			
+		</fieldset>
 
+<!-- multiCheck -->
+		<fieldset ng-if="model.propType==3 && model.parentPropId == 0">
+			<legend>{{model.propName}}</legend>
+			<fieldset ng-if="model.rules.length>0" >
+				<legend><span class="legendTitle">填写规则：</span></legend>
+				<ul>
+					<li ng-repeat="rule in model.rules">
+						<div ng-if="rule.prop_rule_url">
+							<span>{{rule.prop_rule_value}}</span>&nbsp;<span class="rule-nolink"><a ng-href="{{rule.prop_rule_url}}">查看详情</a></span>
+						</div>
+						<div ng-if="!rule.prop_rule_url">
+							<span ng-bind="rule.decodeRule"></span>
+						</div>
+					</li>
+				</ul>
+			</fieldset>
+			<label ng-repeat="check in model.options" >
+				<input type="checkbox" ng-model="check.selectedValue" ng-disabled="isNew||!isSave" ng-true-value="'{{check.prop_option_value}}'">{{check.prop_option_name}}&nbsp;&nbsp;
+			</label>
+		</fieldset>
+		<div ng-if="model.propType==3 && model.parentPropId != 0 ">
+			<label ng-repeat="check in model.options" >
+				<input type="checkbox" ng-model="check.selectedValue" ng-disabled="isNew||!isSave" ng-true-value="'{{check.prop_option_value}}'">{{check.prop_option_name}}&nbsp;&nbsp;
+			</label>
+		</div>
 
+<!-- label -->
+		<fieldset ng-if="model.propType==4">
+			<legend>{{model.propName}}</legend>
+			<fieldset ng-if="model.rules.length>0">
+				<legend><span class="legendTitle">填写规则：</span></legend>
+				<ul>
+					<li ng-repeat="rule in model.rules">
+						<div ng-if="rule.prop_rule_url">
+							<span>{{rule.prop_rule_value}}</span>&nbsp;<span class="rule-nolink"><a ng-href="{{rule.prop_rule_url}}">查看详情</a></span>
+						</div>
+						<div ng-if="!rule.prop_rule_url">
+							<span ng-bind="rule.decodeRule"></span>
+						</div>
+					</li>
+				</ul>
+			</fieldset>
+			<label>
+				{{model.propValue}}
+			</label>
+		</fieldset>
+<!-- complex -->
+		<fieldset ng-if="(model.propType==5)&&(model.children!=null)">
+			<legend>{{model.propName}}</legend>
+			<fieldset ng-if="model.rules.length > 0" >
+				<legend><span class="legendTitle">填写规则：</span></legend>
+				<ul>
+					<li ng-repeat="rule in model.rules">
+						<div ng-if="rule.prop_rule_url">
+							<span>{{rule.prop_rule_value}}</span>&nbsp;<span class="rule-nolink"><a ng-href="{{rule.prop_rule_url}}">查看详情</a></span>
+						</div>
+						<div ng-if="!rule.prop_rule_url">
+							<span ng-bind="rule.decodeRule"></span>
+						</div>
+					</li>
+				</ul>
+			</fieldset>
+			<fieldset ng-if="model.rules.length == 0 && model.require == 1" >
+				<legend><span class="legendTitle">填写规则：</span></legend>
+				<ul>
+					<li>
+						<span>必须填写</span>
+					</li>
+				</ul>
+			</fieldset>
+			<div ng-repeat="reModel in model.children" ng-include="'mainView'"  ng-init="model = reModel"></div>
+		</fieldset>
+<!-- multiComplex -->
+		<fieldset ng-if="(model.propType==6)&&(model.items!=null)" class="legendTitle">
+			<legend>{{model.propName}}</legend>
+			<fieldset ng-if="model.rules.length>0" >
+				<legend><span class="legendTitle">填写规则：</span></legend>
+				<ul>
+					<li ng-repeat="rule in model.rules">
+						<div ng-if="rule.prop_rule_url">
+							<span>{{rule.prop_rule_value}}</span>&nbsp;<span class="rule-nolink"><a ng-href="{{rule.prop_rule_url}}">查看详情</a></span>
+						</div>
+						<div ng-if="!rule.prop_rule_url">
+							<span ng-bind="rule.decodeRule"></span>
+						</div>
+					</li>
+				</ul>
+			</fieldset>
+			<div class="panel vo_panel tab_panel" >
+			<div class="table-responsive" >			
+							<table class="table table-striped hover b-t b-b vo_table" style="margin:0px;padding:0px">
+				<thead>
+                  
+					<tr>
+						<th ng-repeat="th in model.items[0]">{{th.propName}}</th>
+						<th>删除</th>
+					</tr>
+				</thead>
+      			<tbody>
+					<tr ng-repeat="tr in model.items as list" class="ng-scope">
+						<td ng-repeat="td in tr" >
+							
+							<input ng-if ="td.propType == 1" ng-disabled="isNew||!isSave" type="text" ng-model="td.propValue" ng-mousedown="openPropValueSetting(td)" class="ng-pristine ng-untouched ng-valid">
 
+							<select ng-if ="td.propType == 2" ng-disabled="isNew||!isSave" ng-model="td.propValue" ng-options="option.prop_option_value as option.prop_option_name for option in td.options" class="ng-pristine ng-untouched ng-valid">
+								<option value="">-- 选择 --</option>
+							</select>
 
+							<div ng-if ="td.propType == 3">
+								<label ng-repeat="check in td.options">
+									<input type="checkbox" ng-disabled="isNew||!isSave" ng-model="check.selectedValue" ng-true-value="'{{check.prop_option_value}}'">{{check.prop_option_name}}
+								</label>
+							</div>
 
+							<label ng-if ="td.propType == 4">
+								{{td.propValue}}
+							</label>
+
+							<div ng-if="td.propType == 5 && td.children!=null" ng-repeat="reModel in td.children">
+								<div ng-include="'mainView'"  ng-init="model = reModel"></div>
+							</div>
+
+						</td>
+						<td style="white-space: nowrap">
+							<div class="buttons">
+								<button ng-click="removeItem(list,$index)"  ng-disabled="isNew||!isSave" title="Delete" class="btn btn-sm btn-danger">
+									<em class="fa fa-trash"/>
+								</button>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			</div>
+			</div>
+ 			<button class="btn m-b-xs btn-sm btn-success btn-addon pull-right"  ng-disabled="isNew||!isSave" style="margin-top:20px" ng-click="addItem(list)" >
+                <i class="fa fa-plus"></i>
+                <span translate="CORE_BTN_ADD"></span>
+             </button>
+		</fieldset>
+</script>

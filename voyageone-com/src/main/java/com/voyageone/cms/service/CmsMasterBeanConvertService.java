@@ -1,9 +1,10 @@
 package com.voyageone.cms.service;
 
-import com.voyageone.cms.service.model.CmsMtCategorySchemaWithValueModel;
-import com.voyageone.cms.service.model.CmsMtCategorySchemaModel;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
 import com.voyageone.cms.service.model.CmsBtProductModel;
+import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
+import com.voyageone.cms.service.model.CmsMtCategorySchemaModel;
+import com.voyageone.cms.service.model.CmsMtCategorySchemaWithValueModel;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,17 +37,38 @@ public class CmsMasterBeanConvertService {
 
         List<Field> schemaFields = null;
 
+        List<Field> skuFields = new ArrayList<>();
+        Field skuField = null;
+
         if (valueModel != null){
             schemaModel = cmsMtCategorySchemaDao.getMasterSchemaModelByCatId(valueModel.getCatId());
         }
 
         if (schemaModel != null){
             schemaFields = schemaModel.getFields();
+            skuField = schemaModel.getSku();
+            skuFields.add(skuField);
         }
 
         Map valueFields =  valueModel.getFields();
 
+        List<Map<String,Object>> skuMaps = new ArrayList<>();
+
+        List<CmsBtProductModel_Sku> valueSkus = valueModel.getSkus();
+
+        for (CmsBtProductModel_Sku model_sku:valueSkus){
+            skuMaps.add(model_sku);
+        }
+
+        Map<String,Object> skuMap = new HashMap<>();
+
+        skuMap.put(skuField.getId(),skuMaps);
+
+        //设置一般属性的值
         this.setFieldsValue(schemaFields,valueFields);
+
+        //设置sku field的值
+        this.setFieldsValue(skuFields,skuMap);
 
         CmsMtCategorySchemaWithValueModel schemaWithValueModel = new CmsMtCategorySchemaWithValueModel();
 

@@ -70,17 +70,19 @@ public class MtCommPropActionDefRuleModel {
 
         List<MtCommPropActionDefModel> assistDefModels = new ArrayList<>(defModels);
 
-        List<MtCommPropActionDefModel> removeDefModels = new ArrayList<>();
 
         for (int i = 0; i < defModels.size(); i++) {
             MtCommPropActionDefModel defModelItem = defModels.get(i);
-            ActionType actionType = ActionType.valueOf(Integer.valueOf(defModelItem.getActionType()));
             List<MtCommPropActionDefModel> sunDefModels = new ArrayList<>();
+            ActionType actionType = ActionType.valueOf(defModelItem.getActionType());
             for (Iterator<MtCommPropActionDefModel> assIterator = assistDefModels.iterator(); assIterator.hasNext();) {
 
                 MtCommPropActionDefModel subPlatformCatItem = assIterator.next();
-                if (ActionType.Add.equals(actionType) && defModelItem.getPropId().equals(subPlatformCatItem.getParentPropId()) ) {
-                    sunDefModels.add(subPlatformCatItem);
+                ActionType subActionType = ActionType.valueOf(subPlatformCatItem.getActionType());
+                if (ActionType.Add.equals(actionType) && defModelItem.getPropId().equals(subPlatformCatItem.getParentPropId())) {
+                    if (!ActionType.RemoveById.equals(subActionType) && !ActionType.RemoveByIdAndName.equals(subActionType)){
+                        sunDefModels.add(subPlatformCatItem);
+                    }
                     assIterator.remove();
                 }
 
@@ -88,9 +90,6 @@ public class MtCommPropActionDefRuleModel {
             defModelItem.setDefModels(sunDefModels);
 
         }
-
-        //删除掉所有非顶层属性引用,只留下最顶层属性
-//        defModels.removeAll(removeDefModels);
 
         return defModels;
     }
