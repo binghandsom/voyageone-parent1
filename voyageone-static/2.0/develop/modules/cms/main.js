@@ -20,6 +20,7 @@ require.config({
     'angular-block-ui': 'libs/angular-block-ui/0.2.1/angular-block-ui',
     'angular-ui-bootstrap': 'libs/angular-ui-bootstrap/0.14.3/ui-bootstrap-tpls-0.14.3.min',
     'angular-ngStorage': 'libs/angular-ngStorage/ngStorage',
+    'angular-file-upload': 'libs/angular-file-upload/2.2.0/angular-file-upload',
     'angularAMD': 'libs/angularAMD/0.2.1/angularAMD.min',
     'ngload': 'libs/angularAMD/0.2.1/ngload.min',
     'jquery': 'libs/jquery/2.1.4/jquery',
