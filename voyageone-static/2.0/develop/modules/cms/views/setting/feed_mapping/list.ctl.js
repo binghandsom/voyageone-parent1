@@ -29,6 +29,9 @@ define([
              * @type {object}
              */
             this.selectedTop = null;
+
+            // 将被 popup 调用,需要强制绑定
+            this.bindCategory = this.bindCategory.bind(this);
         }
 
         FeedMappingController.prototype = {
@@ -63,6 +66,10 @@ define([
                 // TODO 向上查找
 
                 return defMapping ? defMapping.mainCategoryPath : '[未设定]';
+            },
+            bindCategory: function(category) {
+                console.log(this);
+                console.log(category);
             }
         };
 

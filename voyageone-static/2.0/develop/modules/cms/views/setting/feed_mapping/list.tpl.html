@@ -63,7 +63,7 @@
                         <td class="text-left">{{ ctrl.getDefaultMapping(feedCategory) }}</td>
                         <td>
                             <div class="btn-group" ng-controller="popupCtrl">
-                                <button ng-click="openNewcategory('lg', { from: feedCategory })"
+                                <button ng-click="openNewcategory('lg', { from: feedCategory }).then(ctrl.bindCategory)"
                                         class="btn btn-default btn-xs">
                                     <i class="glyphicon glyphicon-link"></i> 类目匹配
                                 </button>
@@ -82,23 +82,4 @@
             </div>
         </div>
     </div>
-    <script type="text/ng-template" id="category.td.html">
-        <td>{{ $isTop ? '' : ($index + 1) }}</td>
-        <td class="text-left">{{ feedCategory.path }}</td>
-        <td class="text-left">{{ ctrl.getDefaultMapping(feedCategory) }}</td>
-        <td>
-            <div class="btn-group" ng-controller="popupCtrl">
-                <button ng-click="openNewcategory('lg', { from: feedCategory.path })" class="btn btn-default btn-xs">
-                    <i class="glyphicon glyphicon-link"></i> 类目匹配
-                </button>
-                <button class="btn btn-primary btn-xs">
-                    <i class="fa fa-arrow-circle-up"></i> 继承
-                </button>
-            </div>
-        </td>
-        <td>
-            <a href="#/setting/feed_mapping/prop" class="btn btn-default btn-xs" target="_blank">
-                <i class="glyphicon glyphicon-link"></i> 类目属性匹配</a>
-        </td>
-    </script>
 </div>
