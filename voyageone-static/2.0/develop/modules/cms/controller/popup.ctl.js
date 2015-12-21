@@ -54,7 +54,7 @@ define([
             },
             "import": {
                 "templateUrl": "views/pop/import/index.tpl.html",
-                "controllerUrl": "modules/views/cms/pop/import/index.ctl"
+                "controllerUrl": "modules/cms/views/pop/import/index.ctl"
             },
             "product": {
                 "price": {
@@ -69,7 +69,7 @@ define([
         })
         .controller('popupCtrl', popupCtrl);
 
-    function popupCtrl($scope, $modal, popActions) {
+    function popupCtrl($scope, $modal, popActions, $q) {
 
         $scope.openCustomBaseProperty = openCustomBaseProperty;
         function openCustomBaseProperty(viewSize) {
@@ -127,18 +127,25 @@ define([
         }
         $scope.openNewcategory = openNewcategory;
         function openNewcategory(viewSize, context) {
+
+            var defer = $q.defer();
+
             require([popActions.category.controllerUrl], function() {
-                $modal.open({
-                    templateUrl: popActions.category.templateUrl,
-                    controller: 'categoryPopupController as ctrl',
-                    size: viewSize,
-                    resolve: {
-                        context: function () {
-                            return context;
+                defer.resolve(
+                    $modal.open({
+                        templateUrl: popActions.category.templateUrl,
+                        controller: 'categoryPopupController as ctrl',
+                        size: viewSize,
+                        resolve: {
+                            context: function () {
+                                return context;
+                            }
                         }
-                    }
-                });
+                    }).result
+                );
             });
+
+            return defer.promise;
         }
         $scope.openshop_category = openshop_category;
         function openshop_category(viewSize) {
@@ -247,17 +254,20 @@ define([
             });
         }
         $scope.openImport = openImport;
-        function openImport(viewSize) {
-            $modal.open({
-                templateUrl: popActions.import.templateUrl,
-                controllerUrl: popActions.import.controllerUrl,
-                size: viewSize,
-                resolve: {
-                    items: function () {
-                        //return data;
+        function openImport(viewSize,data) {
+            require([popActions.import.controllerUrl], function () {
+                $modal.open({
+                    templateUrl: popActions.import.templateUrl,
+                    controller: 'importCtl',
+                    size: viewSize,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
                     }
-                }
+                });
             });
         }
+
     }
 });

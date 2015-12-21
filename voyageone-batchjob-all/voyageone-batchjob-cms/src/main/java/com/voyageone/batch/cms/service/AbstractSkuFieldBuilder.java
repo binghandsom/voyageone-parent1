@@ -33,10 +33,6 @@ public abstract class AbstractSkuFieldBuilder {
                                            PlatformUploadRunState.PlatformContextBuildCustomFields contextBuildCustomFields,
                                            Set<String> imageSet) throws TaskSignal;
 
-    public abstract int updateInventoryField(String orderChannelId,
-                                     PlatformUploadRunState.PlatformContextBuildCustomFields contextBuildCustomFields,
-                                     List fields);
-
     public void setDao(PlatformSkuInfoDao platformSkuInfoDao, CustomSizePropDao customSizePropDao) {
         this.platformSkuInfoDao = platformSkuInfoDao;
         this.customSizePropDao = customSizePropDao;

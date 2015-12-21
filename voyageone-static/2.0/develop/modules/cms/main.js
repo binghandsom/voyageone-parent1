@@ -3,7 +3,7 @@
  * Bootstrap Main App
  * @Date:    2015-11-19 20:31:14
  * @User:    Jonas
- * @Version: 0.2.0
+ * @Version: 2.0.0
  */
 
 require.config({
@@ -20,6 +20,7 @@ require.config({
     'angular-block-ui': 'libs/angular-block-ui/0.2.1/angular-block-ui',
     'angular-ui-bootstrap': 'libs/angular-ui-bootstrap/0.14.3/ui-bootstrap-tpls-0.14.3.min',
     'angular-ngStorage': 'libs/angular-ngStorage/ngStorage',
+    'angular-file-upload': 'libs/angular-file-upload/2.2.0/angular-file-upload',
     'angularAMD': 'libs/angularAMD/0.2.1/angularAMD.min',
     'ngload': 'libs/angularAMD/0.2.1/ngload.min',
     'jquery': 'libs/jquery/2.1.4/jquery',
@@ -40,6 +41,7 @@ require.config({
     'angular-block-ui': ['angular', 'css!libs/angular-block-ui/0.2.1/angular-block-ui.css'],
     'angular-ui-bootstrap': ['angular'],
     'angular-ngStorage': ['angular'],
+    'angular-file-upload': ['angular'],
     'angular': {exports: 'angular', deps: ['jquery']},
     'jquery': {exports: 'jQuery'},
     'filestyle': ['jquery'],

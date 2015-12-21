@@ -16,6 +16,7 @@ define([
   'angular-animate',
   'angular-translate',
   'angular-cookies',
+  'angular-file-upload',
   'filestyle'
 ], function (angularAMD, angular, _, cRoutes, cActions, enTranslate, zhTranslate) {
 
@@ -29,7 +30,8 @@ define([
       'voyageone.angular',
       'voyageone.angular.vresources',
       'ui.bootstrap',
-      'ngStorage'
+      'ngStorage',
+      'angularFileUpload'
     ])
 
     // define
