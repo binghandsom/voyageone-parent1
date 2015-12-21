@@ -70,7 +70,6 @@ define([
         .controller('popupCtrl', popupCtrl);
 
     function popupCtrl($scope, $modal, popActions) {
-        var vm = this;
 
         $scope.openCustomBaseProperty = openCustomBaseProperty;
         function openCustomBaseProperty(viewSize) {
@@ -127,16 +126,18 @@ define([
             });
         }
         $scope.openNewcategory = openNewcategory;
-        function openNewcategory(viewSize) {
-            $modal.open({
-                templateUrl: popActions.category.templateUrl,
-                controllerUrl: popActions.category.controllerUrl,
-                size: viewSize,
-                resolve: {
-                    items: function () {
-                        //return data;
+        function openNewcategory(viewSize, context) {
+            require([popActions.category.controllerUrl], function() {
+                $modal.open({
+                    templateUrl: popActions.category.templateUrl,
+                    controller: 'categoryPopupController as ctrl',
+                    size: viewSize,
+                    resolve: {
+                        context: function () {
+                            return context;
+                        }
                     }
-                }
+                });
             });
         }
         $scope.openshop_category = openshop_category;

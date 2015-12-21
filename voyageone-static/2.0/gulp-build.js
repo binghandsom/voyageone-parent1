@@ -9,6 +9,7 @@ var uglify = require('gulp-uglify');
 var sourceMaps = require('gulp-sourcemaps');
 var fs = require('fs');
 var suffBuilder = require('./gulp-build-suff');
+var actionsDesc = require('./gulp-build-actions');
 
 var build = require('./gulp-vars').build;
 var tasks = require('./gulp-vars').tasks;
@@ -18,6 +19,13 @@ var defineSuffix = '});';
 var headerSingle = '(function(){\n';
 var footerSingle = '})();';
 var encode = 'utf-8';
+
+gulp.task(tasks.build.actions, function() {
+  return gulp.src(build.actions.src)
+    .pipe(debug())
+    .pipe(actionsDesc())
+    .pipe(gulp.dest('./'));
+});
 
 gulp.task(tasks.build.angular_suff, function () {
   return gulp.src(build.common.angular.src)

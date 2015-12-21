@@ -34,7 +34,7 @@ public class CmsProductServiceTest {
 
     private CmsBtProductModel create(String channelId, int index, Random random) {
         CmsBtProductModel product = new CmsBtProductModel(channelId);
-        product.setProdId(Long.valueOf(index));
+        product.setProdId(Long.parseLong("" + index));
         String catId = String.valueOf(random.nextInt(1000));
         product.setCatId(catId);
         product.setCatPath("女装>休闲服>上衣>");
@@ -119,7 +119,7 @@ public class CmsProductServiceTest {
 
         List<CmsBtProductModel_Group_Platform> platforms = groups.getPlatforms();
         CmsBtProductModel_Group_Platform platform = new CmsBtProductModel_Group_Platform();
-        platform.setGroupId(Long.valueOf(random.nextInt(1000)));
+        platform.setGroupId(Long.parseLong(""+random.nextInt(1000)));
         platform.setCartId(21);
         platform.setNumIId(String.valueOf(2000000 + random.nextInt(1000)));
         platform.setIsMain(false);
@@ -137,7 +137,7 @@ public class CmsProductServiceTest {
         platforms.add(platform);
 
         platform = new CmsBtProductModel_Group_Platform(platform);
-        platform.setGroupId(Long.valueOf(random.nextInt(1000)));
+        platform.setGroupId(Long.parseLong("" + random.nextInt(1000)));
         platform.setCartId(23);
         platforms.add(platform);
 

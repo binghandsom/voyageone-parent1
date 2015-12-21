@@ -25,9 +25,7 @@ public interface CmsUrlConstants {
 
             String ROOT = "/cms/setting/feedMapping";
 
-            String GET_FEED_CATEGORY_TREE = "feedCategoryTree";
-
-            String GET_MAIN_CATEGORIES = "mainCategories";
+            String GET_FEED_CATEGORY_TREE = "getFeedCategories";
         }
     }
 
