@@ -25,4 +25,9 @@ public class CmsFeedMappingController extends CmsController {
     public AjaxResponse getFeedCategoryTree() {
         return success(cmsFeedMappingService.getFeedCategoriyTree(getUser()));
     }
+
+    @RequestMapping(FEED.GET_MAIN_CATEGORIES)
+    public AjaxResponse getMainCategories() {
+        return success(cmsFeedMappingService.getMainCategories(getUser()));
+    }
 }

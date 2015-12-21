@@ -52,6 +52,10 @@ define([
        */
       getDefaultMapping: function (feedCategory) {
 
+        if (!feedCategory) {
+          return '?';
+        }
+
         var defMapping = _.find(feedCategory.mapping, function(mapping) {
           return mapping.defaultMapping === 1;
         });
