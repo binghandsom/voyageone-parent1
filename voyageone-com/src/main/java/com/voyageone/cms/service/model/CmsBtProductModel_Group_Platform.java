@@ -2,6 +2,7 @@ package com.voyageone.cms.service.model;
 
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.cms.CmsConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,12 +105,15 @@ public class CmsBtProductModel_Group_Platform extends BaseMongoMap<String, Objec
         setAttribute("instockTime", instockTime);
     }
 
-    //0: 等待上新/1: 在售/2: 在库
-    public int getPlatformStatus() {
+    // platform status
+    public CmsConstants.PlatformStatus getPlatformStatus() {
         return getAttribute("platformStatus");
     }
 
-    public void setPlatformStatus(int platformStatus) {
+    public void setPlatformStatus(String platformStatus) {
+        setAttribute("platformStatus", platformStatus);
+    }
+    public void setPlatformStatus(CmsConstants.PlatformStatus platformStatus) {
         setAttribute("platformStatus", platformStatus);
     }
 
