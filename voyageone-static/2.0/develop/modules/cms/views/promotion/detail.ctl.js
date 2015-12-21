@@ -9,6 +9,7 @@ define([
     return function ($scope, promotionService, promotionDetailService, $routeParams) {
         pageSize = 5;
         $scope.vm = {
+            "promotionId":$routeParams.promotionId,
             "promotion": {},
             "groupList": [],
             "codeList": [],

@@ -6,11 +6,14 @@ import com.voyageone.web2.cms.CmsUrlConstants.PROMOTION;
 import com.voyageone.web2.cms.model.CmsBtPromotionCodeModel;
 import com.voyageone.web2.cms.model.CmsBtPromotionModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +64,19 @@ public class CmsPromotionDetailController extends CmsController {
         result.put("total",cnt);
         // 返回用户信息
         return success(result);
+    }
+
+    @RequestMapping(PROMOTION.DETAIL.GET_PROMOTION_UPLOAD)
+    public AjaxResponse uploadPromotion(HttpServletRequest request, @RequestParam int promotionId) throws Exception {
+        MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+        MultipartFile file = multipartRequest.getFile("file");
+        // 获得输入流：
+        InputStream input = file.getInputStream();
+
+        Map<String, List<String>> reponse = cmsPromotionDetailService.uploadPromotion(input, promotionId, getUser().getUserName());
+
+        // 返回用户信息
+        return success(reponse);
     }
 
 }
