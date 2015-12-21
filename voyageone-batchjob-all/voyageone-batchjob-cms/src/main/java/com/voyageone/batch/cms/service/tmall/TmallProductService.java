@@ -1357,24 +1357,25 @@ public class TmallProductService implements PlatformServiceInterface {
                     contextBuildFields.addCustomField(field);
                     break;
                 }
-                /*
                 case TMALL_ITEM_QUANTITY:
                 {
-                    if (platformProps == null || platformProps.size() != 1)
+                    if (processFields == null || processFields.size() != 1)
                     {
                         throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("tmall item quantity's platformProps must have only one prop!"));
                     }
 
-                    PlatformPropBean platformProp = platformProps.get(0);
-                    InputField  field = (InputField) FieldTypeEnum.createField(FieldTypeEnum.INPUT);
-                    field.setId(platformProp.getPlatformPropId());
+                    InputField processField = (InputField) processFields.get(0);
                     //初始值先设为0，等到库存更新之后，重新更新他的值
-                    field.setValue("0");
-                    contextBuildCustomFields.setQuantityField(field);
-                    contextBuildFields.addCustomField(field);
+                    Map<String, Integer> skuInventoryMap = workLoadBean.getSkuInventoryMap();
+                    int totalInventory = 0;
+                    for (Map.Entry<String, Integer> skuInventoryEntry : skuInventoryMap.entrySet()) {
+                        totalInventory += skuInventoryEntry.getValue();
+                    }
+                    processField.setValue(String.valueOf(totalInventory));
+                    contextBuildCustomFields.setQuantityField(processField);
+                    contextBuildFields.addCustomField(processField);
                     break;
                 }
-                */
                 case TMALL_ITEM_PRICE:
                 {
                     if (processFields == null || processFields.size() != 1)
