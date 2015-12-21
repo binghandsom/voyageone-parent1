@@ -7,7 +7,7 @@ import com.voyageone.web2.sdk.api.response.PostProductSelectOneResponse;
 /**
  * /puroduct/selectOne Request Model
  *
- * Product的id.两种方式来查看一个产品:1.传入product_id来查询 2.传入product_code来查询 3:传入cid和props来查询
+ * Product的id.两种方式来查看一个产品:1.传入product_id来查询 2.传入product_code来查询 3:传入props来查询
  *
  * Created on 2015-12-14
  *
@@ -34,11 +34,10 @@ public class PostProductSelectOneRequest extends VoApiRequest<PostProductSelectO
 	private String productCode;
 
 	/**
-	 * 商品类目id.调用voapi.itemcats.get获取;必须是叶子类目id,如果没有传product_id,那么cid和props必须要传.
-	 */
-	private Long cid;
-	/**
-	 * 比如:诺基亚N73这个产品的关键属性列表就是:品牌:诺基亚;型号:N73,对应的PV值就是10005:10027;10006:29729.
+	 * 比如:诺基亚N73这个产品的关键属性列表就是:品牌:诺基亚,型号:N73,对应的PV值就是10005:10027;10006:29729.
+	 *
+	 * 例如 获取model所属所有商品
+	 *
 	 */
 	private String props;
 
@@ -87,14 +86,6 @@ public class PostProductSelectOneRequest extends VoApiRequest<PostProductSelectO
 
 	public void setProductCode(String productCode) {
 		this.productCode = productCode;
-	}
-
-	public Long getCid() {
-		return cid;
-	}
-
-	public void setCid(Long cid) {
-		this.cid = cid;
 	}
 
 	public String getProps() {
