@@ -2,6 +2,7 @@ package com.voyageone.cms.service.dao.mongodb;
 
 
 import com.mongodb.*;
+import com.voyageone.cms.CmsConstants;
 import com.voyageone.cms.service.CmsProductService;
 import com.voyageone.cms.service.model.*;
 import com.voyageone.common.util.JsonUtil;
@@ -252,7 +253,7 @@ public class CmsProductDaoTest {
         platformMode.setPublishTime("2015-10-12 16:19:00");
         platformMode.setInstockTime("2015-10-18 16:19:00");
 
-        platformMode.setPlatformStatus(1 % 3);
+        platformMode.setPlatformStatus(CmsConstants.PlatformStatus.Waitingpublish);
         List<Map<String,Object>> taskResults = platformMode.getTaskResults();
         Map<String,Object> taskResult = new HashMap<>();
         taskResult.put("doSx", 1);

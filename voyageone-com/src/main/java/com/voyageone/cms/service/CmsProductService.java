@@ -5,6 +5,7 @@ import com.mongodb.CommandResult;
 import com.mongodb.WriteResult;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.model.*;
+import com.voyageone.common.util.StringUtils;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,25 @@ public class CmsProductService {
      */
     public CmsBtProductModel getProductByCode(String channelId, String code) {
         return cmsBtProductDao.selectProductByCode(channelId, code);
+    }
+
+    /**
+     * 获取商品 根据Props
+     */
+    public CmsBtProductModel getProductByProps(String channelId, String props) {
+        if (StringUtils.isEmpty(props)) {
+            return null;
+        }
+        props = props.trim();
+        if (!props.startsWith("{")) {
+            props = "{" + props;
+        }
+
+        if (!props.endsWith("}")) {
+            props = props + "}" ;
+        }
+
+        return cmsBtProductDao.selectOneWithQuery(props, channelId);
     }
 
     /**
