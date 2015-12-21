@@ -94,5 +94,12 @@ public interface CmsUrlConstants {
 
             String GET_PRICE_HISTORY = "getPriceHistory";
         }
+
+        interface PROMOTION {
+
+            String ROOT = "/cms/pop/promotion/";
+
+            String GET_PROMOTION_HISTORY = "getPromotionHistory";
+        }
     }
 }
