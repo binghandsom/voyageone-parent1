@@ -2,6 +2,7 @@ package com.voyageone.cms.service.model;
 
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.cms.CmsConstants;
 
 import java.util.*;
 
@@ -332,6 +333,9 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     }
 
     public void setStatus(String status) {
+        setAttribute("status", status);
+    }
+    public void setStatus(CmsConstants.ProductStatus status) {
         setAttribute("status", status);
     }
 

@@ -31,9 +31,8 @@
     },
     "mapping": {
       "feedMappingService": {
-        "root": "/cms/setting/feed_mapping",
-        "getFeedCategories": "feed_categories",
-        "getMainCategories": "main_categories"
+        "root": "/cms/setting/feedMapping",
+        "getFeedCategories": "getFeedCategories"
       }
     },
     "pop": {

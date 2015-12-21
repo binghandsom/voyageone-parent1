@@ -2,6 +2,7 @@ package com.voyageone.cms.service.model;
 
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.cms.CmsConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,16 @@ public class CmsBtProductModel_Group_Platform extends BaseMongoMap<String, Objec
     }
 
     public Long getGroupId() {
-        return Long.parseLong(getAttribute("groupId").toString());
+        Long result = null;
+        Object groupIdObj = getAttribute("groupId");
+        if (groupIdObj != null) {
+            if (groupIdObj instanceof Long) {
+                result = (Long)groupIdObj;
+            } else {
+                result = Long.valueOf(groupIdObj.toString());
+            }
+        }
+        return result;
     }
 
     public void setGroupId(Long groupId) {
@@ -95,12 +105,15 @@ public class CmsBtProductModel_Group_Platform extends BaseMongoMap<String, Objec
         setAttribute("instockTime", instockTime);
     }
 
-    //0: 等待上新/1: 在售/2: 在库
-    public int getPlatformStatus() {
+    // platform status
+    public CmsConstants.PlatformStatus getPlatformStatus() {
         return getAttribute("platformStatus");
     }
 
-    public void setPlatformStatus(int platformStatus) {
+    public void setPlatformStatus(String platformStatus) {
+        setAttribute("platformStatus", platformStatus);
+    }
+    public void setPlatformStatus(CmsConstants.PlatformStatus platformStatus) {
         setAttribute("platformStatus", platformStatus);
     }
 

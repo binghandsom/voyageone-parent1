@@ -3,6 +3,7 @@ package com.voyageone.cms.service;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
+import com.voyageone.cms.CmsConstants;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.model.*;
 import com.voyageone.common.Constants;
@@ -34,7 +35,7 @@ public class CmsProductServiceTest {
 
     private CmsBtProductModel create(String channelId, int index, Random random) {
         CmsBtProductModel product = new CmsBtProductModel(channelId);
-        product.setProdId(Long.valueOf(index));
+        product.setProdId(Long.parseLong("" + index));
         String catId = String.valueOf(random.nextInt(1000));
         product.setCatId(catId);
         product.setCatPath("女装>休闲服>上衣>");
@@ -119,14 +120,14 @@ public class CmsProductServiceTest {
 
         List<CmsBtProductModel_Group_Platform> platforms = groups.getPlatforms();
         CmsBtProductModel_Group_Platform platform = new CmsBtProductModel_Group_Platform();
-        platform.setGroupId(Long.valueOf(random.nextInt(1000)));
+        platform.setGroupId(Long.parseLong(""+random.nextInt(1000)));
         platform.setCartId(21);
         platform.setNumIId(String.valueOf(2000000 + random.nextInt(1000)));
         platform.setIsMain(false);
         platform.setDisplayOrder(random.nextInt(100));
         platform.setPublishTime("2015-11-12 16:19:00");
         platform.setInstockTime("2015-11-18 16:19:00");
-        platform.setPlatformStatus(index % 3);
+        platform.setPlatformStatus(CmsConstants.PlatformStatus.Waitingpublish);
         List<Map<String,Object>> taskResults = platform.getTaskResults();
         Map<String,Object> taskResult = new HashMap<>();
         taskResult.put("doSx", 1);
@@ -137,7 +138,7 @@ public class CmsProductServiceTest {
         platforms.add(platform);
 
         platform = new CmsBtProductModel_Group_Platform(platform);
-        platform.setGroupId(Long.valueOf(random.nextInt(1000)));
+        platform.setGroupId(Long.parseLong("" + random.nextInt(1000)));
         platform.setCartId(23);
         platforms.add(platform);
 

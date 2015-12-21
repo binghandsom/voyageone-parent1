@@ -3,11 +3,29 @@ package com.voyageone.batch.cms.service.tmall;
 import com.taobao.top.schema.enums.FieldTypeEnum;
 import com.taobao.top.schema.field.Field;
 import com.taobao.top.schema.field.MultiComplexField;
+import com.taobao.top.schema.field.SingleCheckField;
+import com.taobao.top.schema.option.Option;
 import com.taobao.top.schema.value.ComplexValue;
 import com.taobao.top.schema.value.Value;
+import com.voyageone.batch.cms.bean.PlatformUploadRunState;
+import com.voyageone.batch.cms.bean.SkuTemplateSchema;
+import com.voyageone.batch.cms.bean.SxProductBean;
+import com.voyageone.batch.cms.bean.TmallUploadRunState;
+import com.voyageone.batch.cms.bean.tcb.AbortTaskSignalInfo;
+import com.voyageone.batch.cms.bean.tcb.TaskSignal;
+import com.voyageone.batch.cms.bean.tcb.TaskSignalType;
+import com.voyageone.batch.cms.bean.tcb.UploadProductTcb;
+import com.voyageone.batch.cms.model.PlatformSkuInfoBean;
+import com.voyageone.batch.cms.model.WorkLoadBean;
 import com.voyageone.batch.cms.service.AbstractSkuFieldBuilder;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.ims.enums.CmsFieldEnum;
+import com.voyageone.batch.cms.service.UploadImageHandler;
+import com.voyageone.cms.service.bean.ComplexMappingBean;
+import com.voyageone.cms.service.bean.MappingBean;
+import com.voyageone.cms.service.bean.SingleMappingBean;
+import com.voyageone.cms.service.model.CmsBtProductConstants;
+import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
+import com.voyageone.cms.service.model.CmsMtPlatformMappingModel;
+import com.voyageone.ims.rule_expression.RuleExpression;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -19,91 +37,85 @@ import java.util.*;
  * 线程安全: 否
  */
 public abstract class TmallGjSkuFieldBuilderImpl_3 extends AbstractSkuFieldBuilder {
-    /*
-    private String propId_sku;
-    private String propId_colorExtend;
-    private String propId_skuExtend;
+    private Field skuField;
+    private Field colorExtendField;
+    private Field skuExtendField;
 
-    private String propId_sku_color;
-    private String propId_sku_price;
-    private String propId_sku_quantity;
-    private String propId_sku_outerId;
-    private String propId_sku_barCode;
-    private String propId_sku_size;
+    private Field sku_colorField;
+    private Field sku_priceField;
+    private Field sku_quantityField;
+    private Field sku_outerIdField;
+    private Field sku_barCodeField;
 
-    private String propId_colorExtend_color;
-    private String propId_colorExtend_image;
+    private Field colorExtend_colorField;
+    private Field colorExtend_imageField;
 
-    private String propId_skuExtend_tip;
-    private String propId_skuExtend_shengao;
-    private String propId_skuExtend_tizhong;
-    private String propId_skuExtend_jiankuan;
-    private String propId_skuExtend_xiongwei;
-    private String propId_skuExtend_yaowei;
-    private String propId_skuExtend_xiuchang;
-    private String propId_skuExtend_beikuan;
-    private String propId_skuExtend_qianchang;
-    private String propId_skuExtend_baiwei;
-    private String propId_skuExtend_xiabaiwei;
-    private String propId_skuExtend_xiukou;
-    private String propId_skuExtend_xiufei;
-    private String propId_skuExtend_zhongyao;
-    private String propId_skuExtend_lingshen;
-    private String propId_skuExtend_linggao;
-    private String propId_skuExtend_lingkuan;
-    private String propId_skuExtend_lingwei;
-    private String propId_skuExtend_yuanbaihou;
-    private String propId_skuExtend_yuanbai;
-    private String propId_skuExtend_pingbaiyichang;
-    private String propId_skuExtend_yichang;
+    private Field skuExtend_tipField;
+    private Field skuExtend_shengaoField;
+    private Field skuExtend_tizhongField;
+    private Field skuExtend_jiankuanField;
+    private Field skuExtend_xiongweiField;
+    private Field skuExtend_yaoweiField;
+    private Field skuExtend_xiuchangField;
+    private Field skuExtend_beikuanField;
+    private Field skuExtend_qianchangField;
+    private Field skuExtend_baiweiField;
+    private Field skuExtend_xiabaiweiField;
+    private Field skuExtend_xiukouField;
+    private Field skuExtend_xiufeiField;
+    private Field skuExtend_zhongyaoField;
+    private Field skuExtend_lingshenField;
+    private Field skuExtend_linggaoField;
+    private Field skuExtend_lingkuanField;
+    private Field skuExtend_lingweiField;
+    private Field skuExtend_yuanbaihouField;
+    private Field skuExtend_yuanbaiField;
+    private Field skuExtend_pingbaiyichangField;
+    private Field skuExtend_yichangField;
 
-    private String propId_sku_market_time;
-    private String propId_skuExtend_size;
+    private Field sku_market_timeField;
+    private Field skuExtend_sizeField;
 
-    private PlatformPropBean skuPlatformProp;
 
-    private boolean colorIsSingleCheck;
-    PlatformPropBean field_colorCategory;
     private int availableColorIndex = 0;
-    List<PlatformPropOptionBean> colorOptions;
 
-    private boolean sizeIsSingleCheck;
-    PlatformPropBean sku_sizeField;
+    Field sku_sizeField;
     private int availableSizeIndex = 0;
-    List<PlatformPropOptionBean> sizeOptions;
 
     private static Log logger = LogFactory.getLog(TmallGjSkuFieldBuilderImpl_0.class);
 
     private class BuildSkuResult {
         //Build sku prop result
-        Map<String, CmsCodePropBean> colorCmsPropductMap;
-        Map<String, CmsSkuPropBean> sizeCmsSkuPropMap;
-
-        //Build prop extend result
-        Map<String, ComplexValue> srcUrlComplexValueMap;
+        Map<String, SxProductBean> colorCmsPropductMap;
+        Map<SxProductBean, String> cmsPropductColorMap;
+        Map<String, CmsBtProductModel_Sku> sizeCmsSkuPropMap;
 
         public BuildSkuResult() {
             colorCmsPropductMap = new HashMap<>();
+            cmsPropductColorMap = new HashMap<>();
             sizeCmsSkuPropMap = new HashMap<>();
-            srcUrlComplexValueMap = new HashMap<>();
         }
 
-        public Map<String, CmsCodePropBean> getColorCmsPropductMap() {
+        public Map<SxProductBean, String> getCmsPropductColorMap() {
+            return cmsPropductColorMap;
+        }
+
+        public void setCmsPropductColorMap(Map<SxProductBean, String> cmsPropductColorMap) {
+            this.cmsPropductColorMap = cmsPropductColorMap;
+        }
+
+        public Map<String, SxProductBean> getColorCmsPropductMap() {
             return colorCmsPropductMap;
         }
 
-        public Map<String, CmsSkuPropBean> getSizeCmsSkuPropMap() {
+        public Map<String, CmsBtProductModel_Sku> getSizeCmsSkuPropMap() {
             return sizeCmsSkuPropMap;
-        }
-
-        public Map<String, ComplexValue> getSrcUrlComplexValueMap() {
-            return srcUrlComplexValueMap;
         }
     }
 
-    private boolean init(List<PlatformPropBean> platformProps) {
-        for (PlatformPropBean platformProp : platformProps) {
-            List<PlatformSkuInfoBean> tmallSkuInfos = platformSkuInfoDao.selectPlatformSkuInfo(platformProp.getPlatformPropId(), platformProp.getPlatformCartId());
+    private boolean init(List<Field> platformProps, int cartId) {
+        for (Field field : platformProps) {
+            List<PlatformSkuInfoBean> tmallSkuInfos = platformSkuInfoDao.selectPlatformSkuInfo(field.getId(), cartId);
 
             PlatformSkuInfoBean tmallSkuInfo = null;
             for (PlatformSkuInfoBean tmallSkuInfoEach : tmallSkuInfos) {
@@ -114,7 +126,7 @@ public abstract class TmallGjSkuFieldBuilderImpl_3 extends AbstractSkuFieldBuild
             }
 
             if (tmallSkuInfo == null) {
-                logger.warn("No sku info find for platformProp: [prop_id=" + platformProp.getPlatformPropId() + ", cartId=" + platformProp.getPlatformCartId() + "]");
+                logger.warn("No sku info find for platformProp: [prop_id=" + field.getId() + ", cartId=" + cartId + "]");
                 logger.warn(TmallGjSkuFieldBuilderImpl_3.class.getName() + " is not applicable!");
                 return false;
             }
@@ -128,281 +140,347 @@ public abstract class TmallGjSkuFieldBuilderImpl_3 extends AbstractSkuFieldBuild
 
             //SKU
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.SKU)) {
-                propId_sku = platformProp.getPlatformPropId();
-                skuPlatformProp = platformProp;
+                skuField = field;
             }
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.SKU_SIZE)) {
-                propId_sku_size = platformProp.getPlatformPropId();
-                sizeIsSingleCheck = platformProp.getPlatformPropType() == ImsConstants.PlatformPropType.C_SINGLE_CHECK;
+                sku_sizeField = field;
             }
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.SKU_BARCODE)) {
-                propId_sku_barCode = platformProp.getPlatformPropId();
+                sku_barCodeField = field;
             }
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.SKU_COLOR)) {
-                propId_sku_color = platformProp.getPlatformPropId();
-                colorIsSingleCheck = platformProp.getPlatformPropType() == ImsConstants.PlatformPropType.C_SINGLE_CHECK;
+                sku_colorField = field;
             }
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.SKU_OUTERID)) {
-                propId_sku_outerId = platformProp.getPlatformPropId();
+                sku_outerIdField = field;
             }
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.SKU_PRICE)) {
-                propId_sku_price = platformProp.getPlatformPropId();
+                sku_priceField = field;
             }
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.SKU_QUANTITY)) {
-                propId_sku_quantity = platformProp.getPlatformPropId();
+                sku_quantityField = field;
             }
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.SKU_MARKET_TIME)) {
-                propId_sku_market_time = platformProp.getPlatformPropId();
+                sku_market_timeField = field;
             }
 
             //EXTENDCOLOR
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDCOLOR)) {
-                propId_colorExtend = platformProp.getPlatformPropId();
+                colorExtendField = field;
             }
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDCOLOR_COLOR)) {
-                propId_colorExtend_color = platformProp.getPlatformPropId();
+                colorExtend_colorField = field;
             }
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDCOLOR_IMAGE)) {
-                propId_colorExtend_image = platformProp.getPlatformPropId();
+                colorExtend_imageField = field;
             }
 
             //EXTENDSIZE
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE)) {
-                propId_skuExtend = platformProp.getPlatformPropId();
+                skuExtendField = field;
             }
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_SIZE)) {
-                propId_skuExtend_size = platformProp.getPlatformPropId();
+                skuExtend_sizeField = field;
             }
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_BAIWEI)) {
-                propId_skuExtend_baiwei = platformProp.getPlatformPropId();
+                skuExtend_baiweiField = field;
             }
 
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_BEIKUAN)) {
-                propId_skuExtend_beikuan = platformProp.getPlatformPropId();
+                skuExtend_beikuanField = field;
             }
 
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_JIANKUAN)) {
-                propId_skuExtend_jiankuan = platformProp.getPlatformPropId();
+                skuExtend_jiankuanField = field;
             }
 
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_LINGGAO)) {
-                propId_skuExtend_linggao = platformProp.getPlatformPropId();
+                skuExtend_linggaoField = field;
             }
 
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_LINGKUAN)) {
-                propId_skuExtend_lingkuan = platformProp.getPlatformPropId();
+                skuExtend_lingkuanField = field;
             }
 
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_LINGSHEN)) {
-                propId_skuExtend_lingshen = platformProp.getPlatformPropId();
+                skuExtend_lingshenField = field;
             }
 
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_LINGWEI)) {
-                propId_skuExtend_lingwei = platformProp.getPlatformPropId();
+                skuExtend_lingweiField = field;
             }
 
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_PINGBAI)) {
-                propId_skuExtend_pingbaiyichang = platformProp.getPlatformPropId();
+                skuExtend_pingbaiyichangField = field;
             }
 
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_QIANCHANG)) {
-                propId_skuExtend_qianchang = platformProp.getPlatformPropId();
+                skuExtend_qianchangField = field;
             }
 
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_SHENGAO)) {
-                propId_skuExtend_shengao = platformProp.getPlatformPropId();
+                skuExtend_shengaoField = field;
             }
 
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_TIP)) {
-                propId_skuExtend_tip = platformProp.getPlatformPropId();
+                skuExtend_tipField = field;
             }
 
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_TIZHONG)) {
-                propId_skuExtend_tizhong = platformProp.getPlatformPropId();
+                skuExtend_tizhongField = field;
             }
 
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_XIABAIWEI)) {
-                propId_skuExtend_xiabaiwei = platformProp.getPlatformPropId();
+                skuExtend_xiabaiweiField = field;
             }
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_XIONGWEI)) {
-                propId_skuExtend_xiongwei = platformProp.getPlatformPropId();
+                skuExtend_xiongweiField = field;
             }
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_XIUCHANG)) {
-                propId_skuExtend_xiuchang = platformProp.getPlatformPropId();
+                skuExtend_xiuchangField = field;
             }
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_XIUFEI)) {
-                propId_skuExtend_xiufei = platformProp.getPlatformPropId();
+                skuExtend_xiufeiField = field;
             }
 
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_XIUKOU)) {
-                propId_skuExtend_xiukou = platformProp.getPlatformPropId();
+                skuExtend_xiukouField = field;
             }
 
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_YICHANG)) {
-                propId_skuExtend_yichang = platformProp.getPlatformPropId();
+                skuExtend_yichangField = field;
             }
 
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_YAOWEI)) {
-                propId_skuExtend_yaowei = platformProp.getPlatformPropId();
+                skuExtend_yaoweiField = field;
             }
 
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_ZHONGYAO)) {
-                propId_skuExtend_zhongyao = platformProp.getPlatformPropId();
+                skuExtend_zhongyaoField = field;
             }
 
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_YUANBAIHOU)) {
-                propId_skuExtend_yuanbaihou = platformProp.getPlatformPropId();
+                skuExtend_yuanbaihouField = field;
             }
 
             if (SkuTemplateSchema.containFieldType(fieldType, SkuTemplateSchema.SkuTemplate_3_Schema.EXTENDSIZE_YUANBAI)) {
-                propId_skuExtend_yuanbai = platformProp.getPlatformPropId();
+                skuExtend_yuanbaiField = field;
             }
         }
 
+        if (skuField == null) {
+            logger.warn(this.getClass().getName() + " requires sku!");
+            return false;
+        }
+
+        if (sku_colorField == null) {
+            logger.warn(this.getClass().getName() + " requires sku color!");
+            return false;
+        }
+        if (sku_sizeField == null) {
+            logger.warn(this.getClass().getName() + " requires sku size!");
+            return false;
+        }
         return true;
     }
 
-    private void buildSkuColor(ComplexValue skuFieldValue, BuildSkuResult buildSkuResult, int cartId, CmsCodePropBean cmsCodeProp, String categoryCode, String skuPlatforomPropHash) {
-
-        if (colorIsSingleCheck) {
-            if (field_colorCategory == null) {
-                field_colorCategory = platformPropDao.selectPlatformPropByPropId(cartId, categoryCode, propId_sku_color, skuPlatforomPropHash);
+    private void buildSkuColor(ComplexValue skuFieldValue, MappingBean colorMapping, BuildSkuResult buildSkuResult, SxProductBean sxProductBean) {
+        String colorValue = buildSkuResult.getCmsPropductColorMap().get(sxProductBean);
+        if (sku_colorField.getType() == FieldTypeEnum.SINGLECHECK) {
+            List<Option> colorOptions = ((SingleCheckField) sku_colorField).getOptions();
+            if (colorValue == null) {
+                colorValue = colorOptions.get(availableColorIndex++).getValue();
+                buildSkuResult.getColorCmsPropductMap().put(colorValue, sxProductBean);
+                buildSkuResult.getCmsPropductColorMap().put(sxProductBean, colorValue);
             }
-
-            if (colorOptions == null) {
-                colorOptions = platformPropDao.selectPlatformOptionsByPropHash(field_colorCategory.getPlatformPropHash());
-            }
-            String colorValue = colorOptions.get(availableColorIndex).getPlatformPropOptionValue();
-            skuFieldValue.setSingleCheckFieldValue(propId_sku_color, new Value(colorValue));
-            buildSkuResult.getColorCmsPropductMap().put(colorValue, cmsCodeProp);
+            skuFieldValue.setSingleCheckFieldValue(sku_colorField.getId(), new Value(colorValue));
         } else {
-            String colorValue = cmsCodeProp.getProp(CmsFieldEnum.CmsCodeEnum.code);
-            skuFieldValue.setInputFieldValue(propId_sku_color, colorValue);
-            buildSkuResult.getColorCmsPropductMap().put(colorValue, cmsCodeProp);
+            if (colorValue == null) {
+                RuleExpression skuColorExpression = ((SingleMappingBean) colorMapping).getExpression();
+                colorValue = expressionParser.parse(skuColorExpression, null);
+                buildSkuResult.getColorCmsPropductMap().put(colorValue, sxProductBean);
+                buildSkuResult.getCmsPropductColorMap().put(sxProductBean, colorValue);
+            }
+            skuFieldValue.setInputFieldValue(sku_colorField.getId(), colorValue);
         }
     }
 
-    private void buildSkuSize(ComplexValue skuFieldValue, BuildSkuResult buildSkuResult, int cartId, WorkLoadBean workLoadBean, CmsSkuPropBean cmsSkuProp, String categoryCode, String skuPlatforomPropHash) {
-        if (sizeIsSingleCheck) {
-            if (sku_sizeField == null) {
-                sku_sizeField = platformPropDao.selectPlatformPropByPropId(cartId, categoryCode, propId_sku_size, skuPlatforomPropHash);
-            }
+    private void buildSkuSize(ComplexValue skuFieldValue, CmsBtProductModel_Sku cmsSkuProp, BuildSkuResult buildSkuResult,  MappingBean sizeMapping) throws TaskSignal {
+        if (sku_sizeField.getType() == FieldTypeEnum.SINGLECHECK) {
+            List<Option> sizeOptions = ((SingleCheckField)sku_sizeField).getOptions();
 
-            if (sizeOptions == null) {
-                sizeOptions = platformPropDao.selectPlatformOptionsByPropHash(sku_sizeField.getPlatformPropHash());
-            }
-            String sizeValue = sizeOptions.get(availableSizeIndex).getPlatformPropOptionValue();
-            skuFieldValue.setSingleCheckFieldValue(propId_sku_size, new Value(sizeValue));
+            String sizeValue = sizeOptions.get(availableSizeIndex++).getValue();
+            skuFieldValue.setSingleCheckFieldValue(sku_sizeField.getId(), new Value(sizeValue));
             buildSkuResult.getSizeCmsSkuPropMap().put(sizeValue, cmsSkuProp);
         } else {
-            String sku = cmsSkuProp.getProp(CmsFieldEnum.CmsSkuEnum.sku);
-            String sizeValue = skuPropValueDao.selectSkuPropValue(workLoadBean.getOrder_channel_id(), sku, propId_sku_size);
-            if (sizeValue == null) {
-                sizeValue = cmsSkuProp.getProp(CmsFieldEnum.CmsSkuEnum.size);
+            if (sizeMapping == null) {
+                throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("You have to set sku size's mapping when it is a input"));
             }
-            skuFieldValue.setInputFieldValue(propId_sku_size, sizeValue);
-            buildSkuResult.getSizeCmsSkuPropMap().put(sizeValue, cmsSkuProp);
+            RuleExpression skuSizeExpression = ((SingleMappingBean)sizeMapping).getExpression();
+            String skuSize = expressionParser.parse(skuSizeExpression, null);
+            skuFieldValue.setInputFieldValue(sku_sizeField.getId(), skuSize);
+            buildSkuResult.getSizeCmsSkuPropMap().put(skuSize, cmsSkuProp);
         }
     }
 
-    private Field buildSkuProp(int cartId, String categoryCode, PlatformPropBean platformProp, CmsModelPropBean cmsModelProp, TmallUploadRunState.TmallContextBuildCustomFields contextBuildCustomFields) {
-        UploadProductTcb uploadProductTcb = contextBuildCustomFields.getPlatformContextBuildFields().getPlatformUploadRunState().getUploadProductTcb();
-        WorkLoadBean workLoadBean = uploadProductTcb.getWorkLoadBean();
-
+    private Field buildSkuProp(Field skuField, List<SxProductBean> sxProducts, MappingBean skuMapping, Map<String, Integer> skuInventoryMap, TmallUploadRunState.TmallContextBuildCustomFields contextBuildCustomFields) throws TaskSignal{
         BuildSkuResult buildSkuResult = new BuildSkuResult();
         contextBuildCustomFields.setBuildSkuResult(buildSkuResult);
 
-        MultiComplexField skuField = (MultiComplexField) FieldTypeEnum.createField(FieldTypeEnum.MULTICOMPLEX);
-        skuField.setId(propId_sku);
+        ComplexMappingBean skuMappingComplex = (ComplexMappingBean) skuMapping;
+        List<MappingBean> subMappingBeans = skuMappingComplex.getSubMappings();
+        Map<String, Field> fieldMap = ((MultiComplexField)skuField).getFieldMap();
 
-        //SingleCheckField colorCategoryField = (SingleCheckField) FieldTypeEnum.createField(FieldTypeEnum.SINGLECHECK);
-        //colorCategoryField.setId(propId_sku_color);
-
-        List<ComplexValue> complexValues = new ArrayList<>();
-        for (CmsCodePropBean cmsCodeProp : cmsModelProp.getCmsCodePropBeanList()) {
-            List<CmsSkuPropBean> cmsSkuPropBeans = cmsCodeProp.getCmsSkuPropBeanList();
-            for (CmsSkuPropBean cmsSkuProp : cmsSkuPropBeans) {
-                ComplexValue skuFieldValue = new ComplexValue();
-
-                buildSkuColor(skuFieldValue, buildSkuResult, cartId, cmsCodeProp, categoryCode, platformProp.getPlatformPropHash());
-
-                String skuPrice = cmsSkuProp.getProp(CmsFieldEnum.CmsSkuEnum.sku_price);
-                skuFieldValue.setInputFieldValue(propId_sku_price, skuPrice);
-
-                String skuQuantity = cmsSkuProp.getProp(CmsFieldEnum.CmsSkuEnum.sku_quantity);
-                skuFieldValue.setInputFieldValue(propId_sku_quantity, skuQuantity);
-
-                String skuOuterId = cmsSkuProp.getProp(CmsFieldEnum.CmsSkuEnum.sku); //商家编码使用sku的值
-                skuFieldValue.setInputFieldValue(propId_sku_outerId, skuOuterId);
-
-                String skuBarCode = cmsSkuProp.getProp(CmsFieldEnum.CmsSkuEnum.bar_code);
-                //条形码可为空
-                if (skuBarCode != null) {
-                    skuFieldValue.setInputFieldValue(propId_sku_barCode, skuBarCode);
-                }
-
-                buildSkuSize(skuFieldValue, buildSkuResult, cartId, workLoadBean, cmsSkuProp, categoryCode, platformProp.getPlatformPropHash());
-
-                if (propId_sku_market_time != null && !"".equals(propId_sku_market_time)) {
-                    Date now = DateTimeUtil.getDate();
-                    String marketTime = String.format("%d-%d-%d", 1900 + now.getYear(), now.getMonth(), now.getDay());
-                    skuFieldValue.setInputFieldValue(propId_sku_market_time, marketTime);
-                }
-
-                complexValues.add(skuFieldValue);
-                availableSizeIndex++;
-            }
-            availableColorIndex++;
+        Map<String, MappingBean> skuSubMappingMap = new HashMap<>();
+        for (MappingBean mappingBean : subMappingBeans) {
+            String propId = mappingBean.getPlatformPropId();
+            skuSubMappingMap.put(propId, mappingBean);
         }
 
-        skuField.setComplexValues(complexValues);
+        List<ComplexValue> complexValues = new ArrayList<>();
+        for (SxProductBean sxProduct : sxProducts) {
+            List<CmsBtProductModel_Sku> cmsSkuPropBeans = sxProduct.getCmsBtProductModel().getSkus();
+            for (CmsBtProductModel_Sku cmsSkuProp : cmsSkuPropBeans) {
+                //CmsBtProductModel_Sku 是Map<String, Object>的子类
+                expressionParser.pushMasterPropContext(cmsSkuProp);
+                ComplexValue skuFieldValue = new ComplexValue();
+                complexValues.add(skuFieldValue);
+
+                buildSkuColor(skuFieldValue, skuSubMappingMap.get(sku_colorField.getId()), buildSkuResult, sxProduct);
+                buildSkuSize(skuFieldValue, cmsSkuProp, buildSkuResult, skuSubMappingMap.get(sku_sizeField.getId()));
+
+                for (MappingBean mappingBean : skuMappingComplex.getSubMappings()) {
+                    String propId = mappingBean.getPlatformPropId();
+                    if (propId.equals(sku_sizeField.getId())
+                            || propId.equals(sku_colorField.getId())) {
+                        continue;
+                    } else if (propId.equals(sku_quantityField.getId())) {
+                        Integer skuQuantity = skuInventoryMap.get(cmsSkuProp.getSkuCode());
+                        String skuQuantityStr = "0";
+                        if (skuQuantity != null) {
+                            skuQuantityStr = "" + skuQuantity.doubleValue();
+                        }
+                        skuFieldValue.setInputFieldValue(propId, skuQuantityStr);
+                    } else {
+                        RuleExpression ruleExpression = ((SingleMappingBean)mappingBean).getExpression();
+                        String propValue = expressionParser.parse(ruleExpression, null);
+                        Field subField = fieldMap.get(propId);
+                        if (subField.getType() == FieldTypeEnum.INPUT) {
+                            skuFieldValue.setInputFieldValue(mappingBean.getPlatformPropId(), propValue);
+                        } else if (subField.getType() == FieldTypeEnum.SINGLECHECK) {
+                            skuFieldValue.setSingleCheckFieldValue(mappingBean.getPlatformPropId(), new Value(propValue));
+                        }
+                    }
+                }
+                expressionParser.popMasterPropContext();
+            }
+        }
+
+        ((MultiComplexField)skuField).setComplexValues(complexValues);
         return skuField;
     }
 
-    private Field buildColorExtendProp(TmallUploadRunState.TmallContextBuildCustomFields contextBuildCustomFields, Set<String> imageSet) {
+    private Field buildColorExtendProp(Map<CmsBtProductModel_Sku, SxProductBean> skuProductMap, TmallUploadRunState.TmallContextBuildCustomFields contextBuildCustomFields, MappingBean colorExtendMapping, Set<String> imageSet) {
         BuildSkuResult buildSkuResult = (BuildSkuResult) contextBuildCustomFields.getBuildSkuResult();
-        MultiComplexField colorExtendField = (MultiComplexField) FieldTypeEnum.createField(FieldTypeEnum.MULTICOMPLEX);
-        colorExtendField.setId(propId_colorExtend);
+        Map<String, Field> fieldMap = ((MultiComplexField)colorExtendField).getFieldMap();
+        Map<String, List<TmallUploadRunState.UrlStashEntity>> srcUrlStashEntityMap = ((TmallUploadRunState.TmallContextBuildFields)contextBuildCustomFields.getPlatformContextBuildFields()).getSrcUrlStashEntityMap();
 
         List<ComplexValue> complexValues = new ArrayList<>();
-        for (Map.Entry<String, CmsCodePropBean> entry : buildSkuResult.getColorCmsPropductMap().entrySet())
+        for (Map.Entry<String, SxProductBean> entry : buildSkuResult.getColorCmsPropductMap().entrySet())
         {
-            CmsCodePropBean cmsCodeProp = entry.getValue();
+            SxProductBean sxProductBean = entry.getValue();
 
             ComplexValue complexValue = new ComplexValue();
-            if (colorIsSingleCheck) {
-                complexValue.setSingleCheckFieldValue(propId_colorExtend_color, new Value(entry.getKey()));
+
+            if (colorExtend_colorField.getType() == FieldTypeEnum.SINGLECHECK) {
+                complexValue.setSingleCheckFieldValue(colorExtend_colorField.getId(), new Value(entry.getKey()));
             } else {
-                complexValue.setInputFieldValue(propId_colorExtend_color, entry.getKey());
+                complexValue.setInputFieldValue(colorExtend_colorField.getId(), entry.getKey());
             }
 
-            //颜色图使用竖图
-            String propImageStr = cmsCodeProp.getProp(CmsFieldEnum.CmsCodeEnum.product_image);
-            if (propImageStr != null && !"".equals(propImageStr)) {
-                String propImages[] = propImageStr.split(",");
-                String propImage = propImages[0];
+            String propImage = sxProductBean.getCmsBtProductModel().getFields().getImages(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE).get(0).getName();
+            if (propImage != null && !"".equals(propImage)) {
                 String codePropFullImageUrl = UploadImageHandler.encodeImageUrl(String.format(codeImageTemplate, propImage));
-                complexValue.setInputFieldValue(propId_colorExtend_image, codePropFullImageUrl);
+                complexValue.setInputFieldValue(colorExtend_imageField.getId(), codePropFullImageUrl);
                 imageSet.add(codePropFullImageUrl);
-                buildSkuResult.getSrcUrlComplexValueMap().put(codePropFullImageUrl, complexValue);
+                List<TmallUploadRunState.UrlStashEntity> stashEntities = srcUrlStashEntityMap.get(codePropFullImageUrl);
+                if (stashEntities == null) {
+                    stashEntities = new ArrayList<>();
+                    srcUrlStashEntityMap.put(codePropFullImageUrl, stashEntities);
+                }
+                stashEntities.add(new TmallUploadRunState.UrlStashEntity(colorExtend_imageField.getId(), complexValue));
             }
+
+            for (MappingBean mappingBean : ((ComplexMappingBean)colorExtendMapping).getSubMappings()) {
+                String propId = mappingBean.getPlatformPropId();
+                if (propId.equals(colorExtend_colorField.getId())
+                        || (colorExtend_imageField  != null && propId.equals(colorExtend_imageField.getId()))) {
+                    continue;
+                } else {
+                    RuleExpression ruleExpression = ((SingleMappingBean)mappingBean).getExpression();
+                    String propValue = expressionParser.parse(ruleExpression, null);
+                    Field subField = fieldMap.get(propId);
+                    if (subField.getType() == FieldTypeEnum.INPUT) {
+                        complexValue.setInputFieldValue(mappingBean.getPlatformPropId(), propValue);
+                    } else if (subField.getType() == FieldTypeEnum.SINGLECHECK) {
+                        complexValue.setSingleCheckFieldValue(mappingBean.getPlatformPropId(), new Value(propValue));
+                    }
+                }
+            }
+
             complexValues.add(complexValue);
         }
-        colorExtendField.setComplexValues(complexValues);
+        ((MultiComplexField)colorExtendField).setComplexValues(complexValues);
         return colorExtendField;
     }
 
-    private Field buildSizeExtendProp(TmallUploadRunState.TmallContextBuildCustomFields contextBuildCustomFields) {
+    @Override
+    public boolean isYourFood(List platformProps, int cartId) {
+        return init(platformProps, cartId);
+    }
+
+
+    @Override
+    public List<Field> buildSkuInfoField(int cartId, String categoryCode, List platformProps, List<SxProductBean> processSxProducts, Map<CmsBtProductModel_Sku, SxProductBean> skuProductMap, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, Map<String, Integer> skuInventoryMap, PlatformUploadRunState.PlatformContextBuildCustomFields contextBuildCustomFields, Set<String> imageSet) throws TaskSignal{
+        init(platformProps, cartId);
+        TmallUploadRunState.TmallContextBuildCustomFields tmallContextBuildCustomFields = (TmallUploadRunState.TmallContextBuildCustomFields) contextBuildCustomFields;
+
+        List<Field> skuInfoFields = new ArrayList<>();
+
+        MappingBean skuMappingBean = null;
+        MappingBean colorExtendMappingBean = null;
+        MappingBean skuExtendMappingBean = null;
+        for (MappingBean mappingBean : cmsMtPlatformMappingModel.getProps()) {
+            if (mappingBean.getPlatformPropId().equals(skuField.getId())) {
+                skuMappingBean = mappingBean;
+            }
+            if (mappingBean.getPlatformPropId().equals(colorExtendField.getId())) {
+                colorExtendMappingBean = mappingBean;
+            }
+            if (skuExtendField != null && mappingBean.getPlatformPropId().equals(skuExtendField.getId())) {
+                skuExtendMappingBean = mappingBean;
+            }
+        }
+
+        skuField = buildSkuProp(skuField, processSxProducts, skuMappingBean, skuInventoryMap, tmallContextBuildCustomFields);
+        skuInfoFields.add(skuField);
+
+        if (colorExtendField != null) {
+            Field colorExtendField = buildColorExtendProp(skuProductMap, tmallContextBuildCustomFields, colorExtendMappingBean, imageSet);
+            skuInfoFields.add(colorExtendField);
+        }
+        if (skuExtendField != null) {
+            Field skuExtendField = buildSizeExtendProp(skuProductMap, tmallContextBuildCustomFields, skuExtendMappingBean);
+            skuInfoFields.add(skuExtendField);
+        }
+        return skuInfoFields;
+    }
+
+    private Field buildSizeExtendProp(Map<CmsBtProductModel_Sku, SxProductBean> skuProductMap, TmallUploadRunState.TmallContextBuildCustomFields contextBuildCustomFields, MappingBean sizeExtendMapping) {
         UploadProductTcb uploadProductTcb = contextBuildCustomFields.getPlatformContextBuildFields().getPlatformUploadRunState().getUploadProductTcb();
         WorkLoadBean workLoadBean = uploadProductTcb.getWorkLoadBean();
-
         BuildSkuResult buildSkuResult = (BuildSkuResult) contextBuildCustomFields.getBuildSkuResult();
-        Map<String, CmsSkuPropBean> sizeCmsSkuPropMap = buildSkuResult.getSizeCmsSkuPropMap();
-
-        MultiComplexField sizeExtendProp = (MultiComplexField) FieldTypeEnum.createField(FieldTypeEnum.MULTICOMPLEX);
-        sizeExtendProp.setId(propId_skuExtend);
-
-        List<ComplexValue> complexValueList = new ArrayList<>();
+        Map<String, Field> fieldMap = ((MultiComplexField)skuExtendField).getFieldMap();
 
         Map<String, Map<String, String>> allCustomSizePropMap = new HashMap<>();
         List<Map<String, Object>> allCustomSizeProps = customSizePropDao.selectCustomSizeProp(workLoadBean.getOrder_channel_id());
@@ -422,107 +500,61 @@ public abstract class TmallGjSkuFieldBuilderImpl_3 extends AbstractSkuFieldBuild
             }
             eachCustomSizePropMap.put(propId, propValue);
 
-            if (propId != null && propId.equals(propId_skuExtend_size)) {
+            if (propId != null && propId.equals(skuExtend_sizeField.getId())) {
                 customSizeNameIdMap.put(propValue, sizeId);
             }
             allCustomSizePropMap.put(sizeId, eachCustomSizePropMap);
         }
 
-        for (Map.Entry<String, CmsSkuPropBean> cmsSkuPropBeanEntry : sizeCmsSkuPropMap.entrySet()) {
-            String size = cmsSkuPropBeanEntry.getKey();
-            ComplexValue extendSizeComplexValue = new ComplexValue();
+        List<ComplexValue> complexValues = new ArrayList<>();
+        List<String> skipProps = new ArrayList<>();
+        for (Map.Entry<String, CmsBtProductModel_Sku> entry : buildSkuResult.getSizeCmsSkuPropMap().entrySet())
+        {
+            ComplexValue complexValue = new ComplexValue();
 
-            extendSizeComplexValue.setInputFieldValue(propId_skuExtend_size, size);
-
-            String sizeId = customSizeNameIdMap.get(size);
+            if (skuExtend_sizeField.getType() == FieldTypeEnum.SINGLECHECK) {
+                complexValue.setSingleCheckFieldValue(skuExtend_sizeField.getId(), new Value(entry.getKey()));
+            } else {
+                complexValue.setInputFieldValue(skuExtend_sizeField.getId(), entry.getKey());
+            }
+            skipProps.add(skuExtend_sizeField.getId());
+            //TODO 从CUSTOM_SIZE表中读尺寸
+            String skuSize = entry.getKey();
+            String sizeId = customSizeNameIdMap.get(skuSize);
             if (sizeId == null) {
-                logger.error("No customSize found for size:" + size);
+                logger.error("No customSize found for size:" + skuSize);
                 return null;
             }
             Map<String, String> customSizePropMap = allCustomSizePropMap.get(sizeId);
 
-            for (Map.Entry<String, String> entry : customSizePropMap.entrySet())
+            for (Map.Entry<String, String> customSizeEntry : customSizePropMap.entrySet())
             {
-                extendSizeComplexValue.setInputFieldValue(entry.getKey(), entry.getValue());
+                skipProps.add(customSizeEntry.getKey());
+                complexValue.setInputFieldValue(customSizeEntry.getKey(), customSizeEntry.getValue());
             }
 
-            complexValueList.add(extendSizeComplexValue);
-        }
-
-        sizeExtendProp.setComplexValues(complexValueList);
-        return sizeExtendProp;
-    }
-
-    @Override
-    public boolean isYourFood(List<PlatformPropBean> platformProps) {
-        return init(platformProps);
-    }
-
-    @Override
-    public List<Field> buildSkuInfoField(int cartId, String categoryCode, List<PlatformPropBean> platformProps, CmsModelPropBean cmsModelProp, PlatformUploadRunState.PlatformContextBuildCustomFields contextBuildCustomFields, Set<String> imageSet) {
-        init(platformProps);
-        TmallUploadRunState.TmallContextBuildCustomFields tmallContextBuildCustomFields = (TmallUploadRunState.TmallContextBuildCustomFields) contextBuildCustomFields;
-
-        List<Field> skuInfoFields = new ArrayList<>();
-        Field skuField = buildSkuProp(cartId, categoryCode, skuPlatformProp, cmsModelProp, tmallContextBuildCustomFields);
-        skuInfoFields.add(skuField);
-
-        if (propId_colorExtend != null) {
-            Field colorExtendField = buildColorExtendProp(tmallContextBuildCustomFields, imageSet);
-            skuInfoFields.add(colorExtendField);
-        }
-        if (propId_skuExtend != null) {
-            Field skuExtendField = buildSizeExtendProp(tmallContextBuildCustomFields);
-            skuInfoFields.add(skuExtendField);
-        }
-        return skuInfoFields;
-    }
-
-    @Override
-    public int updateInventoryField(String orderChannelId,
-                                    PlatformUploadRunState.PlatformContextBuildCustomFields contextBuildCustomFields,
-                                    List fields) {
-        MultiComplexField skuProp = null;
-        int totalInventory = 0;
-
-        for (Field field : (List<Field>)fields)
-        {
-            if (propId_sku.equals(field.getId())) {
-                skuProp = (MultiComplexField) field;
-                break;
-            }
-        }
-
-        if (skuProp != null)
-        {
-            for (ComplexValue complexValue : skuProp.getComplexValues()) {
-                String skuOuterId = complexValue.getInputFieldValue(propId_sku_outerId);
-
-                String skuQuantityStr = skuInfoDao.getSkuInventoryMap(orderChannelId, null, skuOuterId);
-                int skuQuantity = 0;
-                if (skuQuantityStr != null) {
-                    skuQuantity = Integer.valueOf(skuQuantityStr);
+            for (MappingBean mappingBean : ((ComplexMappingBean)sizeExtendMapping).getSubMappings()) {
+                String propId = mappingBean.getPlatformPropId();
+                if (skipProps.contains(propId)) {
+                    continue;
+                } else {
+                    RuleExpression ruleExpression = ((SingleMappingBean)mappingBean).getExpression();
+                    String propValue = expressionParser.parse(ruleExpression, null);
+                    Field subField = fieldMap.get(propId);
+                    if (subField.getType() == FieldTypeEnum.INPUT) {
+                        complexValue.setInputFieldValue(mappingBean.getPlatformPropId(), propValue);
+                    } else if (subField.getType() == FieldTypeEnum.SINGLECHECK) {
+                        complexValue.setSingleCheckFieldValue(mappingBean.getPlatformPropId(), new Value(propValue));
+                    }
                 }
-                totalInventory += skuQuantity;
-                complexValue.setInputFieldValue(propId_sku_quantity, String.valueOf(skuQuantity));
             }
+            skipProps.clear();
+
+            complexValues.add(complexValue);
         }
-        return totalInventory;
+
+        ((MultiComplexField)skuExtendField).setComplexValues(complexValues);
+        contextBuildCustomFields.getCustomFields().add(skuExtendField);
+        return skuExtendField;
     }
-
-    @Override
-    public void updateSkuPropImage(Map<String, String> urlMap, PlatformUploadRunState.PlatformContextBuildCustomFields contextBuildCustomFields) {
-        TmallUploadRunState.TmallContextBuildCustomFields tmallContextBuildCustomFields = (TmallUploadRunState.TmallContextBuildCustomFields) contextBuildCustomFields;
-        BuildSkuResult buildSkuResult = (BuildSkuResult) tmallContextBuildCustomFields.getBuildSkuResult();
-
-        for (Map.Entry<String, ComplexValue> entry : buildSkuResult.getSrcUrlComplexValueMap().entrySet())
-        {
-            String srcUrl = entry.getKey();
-            String destUrl = urlMap.get(srcUrl);
-
-            ComplexValue complexValue = entry.getValue();
-            complexValue.setInputFieldValue(propId_colorExtend_image, destUrl);
-        }
-    }
-    */
 }

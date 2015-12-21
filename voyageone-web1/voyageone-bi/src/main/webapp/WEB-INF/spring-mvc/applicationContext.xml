@@ -26,49 +26,19 @@
     <!-- 配置数据源 -->
 	
 	<!-- 测试环境  -->
-	<bean id="dataSource_Master"
-	    class="com.voyageone.bi.commonutils.ProxoolDataSource">
-	    <property name="driver">
-	        <value>com.mysql.jdbc.Driver</value>
-	    </property>
-	    <property name="driverUrl">
-	        <value>jdbc:mysql://10.0.0.59:3306/bi_master?user=biuser&amp;password=packpen&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8</value>
-	        <!-- <value>jdbc:mysql://10.0.1.91:3306/bigdata?user=root&amp;password=123456&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8</value> -->
-	    </property>
-	    <property name="user" value="biuser" />
-	    <property name="password" value="packpen" />
-	    <!-- <property name="password" value="123456" />本地DB对应 -->	    
-	    <!-- <property name="password" value="Sneakerhead2014" />--><!-- 园区云DB对应 -->
-	    <property name="alias" value="Pool_BI" />
-	    <property name="houseKeepingSleepTime" value="90000" />
-	    <property name="prototypeCount" value="4" />
-	    <property name="maximumConnectionCount" value="50" />
-	    <property name="minimumConnectionCount" value="2" />
-	    <property name="simultaneousBuildThrottle" value="50" />
-	    <property name="maximumConnectionLifetime" value="14400000" />
-	    <property name="houseKeepingTestSql" value="select CURRENT_DATE" />
+	<bean id="dataSource_Master" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<property name="driverClass" value="com.mysql.jdbc.Driver" />
+		<property name="jdbcUrl"
+				  value="jdbc:mysql://10.0.0.59:3306/bi_master?user=biuser&amp;password=packpen&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8" />
+		<property name="user" value="biuser"/>
+		<property name="password" value="packpen"/>
 	</bean>
-	<bean id="dataSource_Stores"
-	    class="com.voyageone.bi.commonutils.ProxoolDataSource">
-	    <property name="driver">
-	        <value>com.mysql.jdbc.Driver</value>
-	    </property>
-	    <property name="driverUrl">
-	        <value>jdbc:mysql://10.0.0.59:8066/bi_stores?user=biuser&amp;password=packpen&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8</value>
-	        <!-- <value>jdbc:mysql://10.0.1.91:3306/bigdata?user=root&amp;password=123456&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8</value> -->
-	    </property>
-	    <property name="user" value="biuser" />
-	    <property name="password" value="packpen" />
-	    <!-- <property name="password" value="123456" />本地DB对应 -->	    
-	    <!-- <property name="password" value="Sneakerhead2014" />--><!-- 园区云DB对应 -->
-	    <property name="alias" value="Pool_stores" />
-	    <property name="houseKeepingSleepTime" value="90000" />
-	    <property name="prototypeCount" value="4" />
-	    <property name="maximumConnectionCount" value="50" />
-	    <property name="minimumConnectionCount" value="2" />
-	    <property name="simultaneousBuildThrottle" value="50" />
-	    <property name="maximumConnectionLifetime" value="14400000" />
-	    <property name="houseKeepingTestSql" value="select CURRENT_DATE" />
+	<bean id="dataSource_Stores" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<property name="driverClass" value="com.mysql.jdbc.Driver" />
+		<property name="jdbcUrl"
+				  value="jdbc:mysql://10.0.0.59:8066/bi_stores?user=biuser&amp;password=packpen&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8" />
+		<property name="user" value="biuser"/>
+		<property name="password" value="packpen"/>
 	</bean>
 	
 	<!-- 阿里云环境  -->   
@@ -101,9 +71,8 @@
 	<tx:annotation-driven transaction-manager="transactionManager"/>
 	
 	<bean id="salesMondrianTemp" class="com.voyageone.bi.dao.mondrian.MondrianDaoSupport">
-		<property name="connectStr">
-			<value>jdbc:mysql://10.0.0.59:8066/bi_stores?user=biuser&amp;password=packpen&amp;useUnicode=true&amp;characterEncoding=UTF-8</value>
-	    </property>
+		<property name="connectStr"
+				  value="jdbc:mysql://10.0.0.59:8066/bi_stores?user=biuser&amp;password=packpen&amp;useUnicode=true&amp;characterEncoding=UTF-8"/>
 		<property name="schemaXml" value="/WEB-INF/mondrian/schema/sales.xml"/>
 	</bean>
 

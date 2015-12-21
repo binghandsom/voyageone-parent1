@@ -25,9 +25,7 @@ public interface CmsUrlConstants {
 
             String ROOT = "/cms/setting/feedMapping";
 
-            String GET_FEED_CATEGORY_TREE = "feedCategoryTree";
-
-            String GET_MAIN_CATEGORIES = "mainCategories";
+            String GET_FEED_CATEGORY_TREE = "getFeedCategories";
         }
     }
 
@@ -88,6 +86,20 @@ public interface CmsUrlConstants {
             String GET_PROM_TAGS = "getPromotionTags";
 
             String ADD_TO_PROMOTION = "addToPromotion";
+        }
+
+        interface PRICE {
+
+            String ROOT = "/cms/pop/price/";
+
+            String GET_PRICE_HISTORY = "getPriceHistory";
+        }
+
+        interface PROMOTION {
+
+            String ROOT = "/cms/pop/promotion/";
+
+            String GET_PROMOTION_HISTORY = "getPromotionHistory";
         }
     }
 
