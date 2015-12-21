@@ -54,7 +54,7 @@ define([
             },
             "import": {
                 "templateUrl": "views/pop/import/index.tpl.html",
-                "controllerUrl": "modules/views/cms/pop/import/index.ctl"
+                "controllerUrl": "modules/cms/views/pop/import/index.ctl"
             },
             "product": {
                 "price": {
@@ -247,17 +247,20 @@ define([
             });
         }
         $scope.openImport = openImport;
-        function openImport(viewSize) {
-            $modal.open({
-                templateUrl: popActions.import.templateUrl,
-                controllerUrl: popActions.import.controllerUrl,
-                size: viewSize,
-                resolve: {
-                    items: function () {
-                        //return data;
+        function openImport(viewSize,data) {
+            require([popActions.import.controllerUrl], function () {
+                $modal.open({
+                    templateUrl: popActions.import.templateUrl,
+                    controller: 'importCtl',
+                    size: viewSize,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
                     }
-                }
+                });
             });
         }
+
     }
 });

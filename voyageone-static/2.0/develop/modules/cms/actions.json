@@ -58,7 +58,8 @@
       "root": "/cms/promotion/detail",
       "getPromotionGroup": "getPromotionGroup",
       "getPromotionCode": "getPromotionCode",
-      "getPromotionSku": "getPromotionSku"
+      "getPromotionSku": "getPromotionSku",
+      "uploadPromotion": "uploadPromotion"
     }
   }
 }

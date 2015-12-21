@@ -13,7 +13,7 @@ define([
         $scope.groupPageOption = {curr: 1, total: 198, size: 30, fetch: $scope.search};
 
         $scope.initialize  = function () {
-
+            $scope.search();
         }
 
         $scope.search = function () {

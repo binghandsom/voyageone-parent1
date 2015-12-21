@@ -50,6 +50,8 @@ public interface CmsUrlConstants {
             String GETP_ROMOTION_CODE = "getPromotionCode";
 
             String GET_PROMOTION_SKU = "getPromotionSku";
+
+            String GET_PROMOTION_UPLOAD = "uploadPromotion";
         }
     }
 
