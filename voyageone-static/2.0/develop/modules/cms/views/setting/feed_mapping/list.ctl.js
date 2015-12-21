@@ -6,7 +6,7 @@ define([
   'cms',
   'modules/cms/controller/popup.ctl'
 ], function (cms) {
-
+  "use strict";
   return cms.controller('feedMappingController', (function() {
 
     /**
@@ -24,6 +24,11 @@ define([
        * @type {object[]}
        */
       this.feedCategories = null;
+      /**
+       * 当前选择的 TOP 类目
+       * @type {object}
+       */
+      this.selectedTop = null;
     }
 
     FeedMappingController.prototype = {
@@ -34,6 +39,10 @@ define([
 
         this.feedMappingService.getFeedCategories().then(function(res) {
           this.feedCategories = res.data.categoryTree;
+          // 如果有数据就默认选中
+          if (this.feedCategories.length) {
+            this.selectedTop = this.feedCategories[0];
+          }
         }.bind(this));
       },
       /**
