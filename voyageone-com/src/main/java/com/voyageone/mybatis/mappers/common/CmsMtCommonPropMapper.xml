@@ -12,7 +12,6 @@
         <result column="rules" property="rules" jdbcType="VARCHAR" />
         <result column="defult" property="defult" jdbcType="VARCHAR" />
         <result column="tips" property="tips" jdbcType="VARCHAR" />
-        <result column="mapping" property="mapping" jdbcType="VARCHAR" />
         <result column="created" property="created" jdbcType="TIMESTAMP" />
         <result column="creater" property="creater" jdbcType="VARCHAR" />
         <result column="modified" property="modified" jdbcType="TIMESTAMP" />
@@ -30,7 +29,6 @@
             rules,
             defult,
             tips,
-            mapping,
             created,
             creater,
             modified,
