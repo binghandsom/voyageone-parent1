@@ -71,8 +71,8 @@
 	<div>
 		<tabset class="tab-container vo_nav-tabs">
 			<!--right-btn-->
-			<div class="form-inline m-b-xs pull-right">
-				<button class="btn btn-success" ng-click="openImport('md')"><i class="fa fa-mail-forward"></i> 批量导入</button>
+			<div class="form-inline m-b-xs pull-right" ng-controller = "popupCtrl">
+				<button class="btn btn-success" ng-click="openImport('md',vm.promotionId)"><i class="fa fa-mail-forward"></i> 批量导入</button>
 				<button class="btn btn-success"><!--ng-click="openOtherProgress('lg')"--><i class="fa fa-mail-reply"></i> 批量导出</button>
 				<button class="btn btn-success"><i class="fa fa-refresh"></i> 全部刷新</button>
 				<button class="btn btn-danger"><i class="fa fa-warning"></i> 全部停止</button>
@@ -109,7 +109,7 @@
 							</tr>
 						<tr>
 							<td class="mfb-xxxs">
-								<img src="http://image.sneakerhead.com/is/image/sneakerhead/{{group.image}}" alt="Nike Air Max Tailwind 7" class="img-circle pull-left m-r"/>
+								<img src="http://image.sneakerhead.com/is/image/sneakerhead/{{group.image}}" alt="{{group.productName}}" class="img-circle pull-left m-r"/>
 								<div class="table_main pull-left">
 									<ul>
 										<li class="m-t">{{group.productCode}}</li>
@@ -422,7 +422,7 @@
 							</tr>
 						    <tr>
 							<td class="mfb-xxt">
-								<img src="http://image.sneakerhead.com/is/image/sneakerhead/{{code.image}}" alt="Nike Air Max Tailwind 7" class="img-circle pull-left m-r"/>
+								<img src="http://image.sneakerhead.com/is/image/sneakerhead/{{code.image}}" alt="{{code.productName}}" class="img-circle pull-left m-r"/>
 							</td>
 							<td class="mfb-xxt text-center">{{(code.promotionPrice/code.salePrice*100).toFixed(1)}}折</td>
 							<td class="mfb-xxs text-center">
