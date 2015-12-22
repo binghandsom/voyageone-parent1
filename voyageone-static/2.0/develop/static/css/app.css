@@ -6588,9 +6588,9 @@ input:checked + ol > li {
 }
 
 .category_drag_list{
-  float:left;
+  /*float:left;*/
   margin:0px;
-  padding:4px 0px 0px 0px;
+  padding:4px 4px 0px 4px;
   height:250px;
   overflow-y: auto;
   overflow-scrolling: touch;
@@ -6604,6 +6604,7 @@ input:checked + ol > li {
 }
 .category_drag_list li a{
    float: left;
+   width:185px;
    display: block;
    position: relative;
    list-style-type: none;
