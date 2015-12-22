@@ -210,6 +210,9 @@
                 #{orderChannelId}
             </foreach>
         </if>
+        <if test="reserveType != null and reserveType != '' and reserveType = 'PickUp'">
+            AND isLock = '0'
+        </if>
     </sql>
 
     <select id="viw_wms_reservation_pickup_mapping_getPickupInfo" resultMap="reservationInfoMap">
@@ -341,6 +344,9 @@
             <foreach collection="orderChannelList" item="orderChannelId"  open="(" separator="," close=")">
                 #{orderChannelId}
             </foreach>
+        </if>
+        <if test="reserveType != null and reserveType != '' and reserveType = 'PickUp' and scanMode == 'Scan'">
+            AND isLock = '0'
         </if>
         ORDER BY
             ship_channel_priority asc,
@@ -699,6 +705,7 @@
             rsv.barcode = client.barcode
         WHERE
             rsv.status = #{status}
+        AND rsv.isLock = '0'
         <if test="storeList != null and storeList.size() != 0">
             AND rsv.store_id in
             <foreach collection="storeList" item="store"  open="(" separator="," close=")">
@@ -742,6 +749,7 @@
                 viw_wms_reservation_pickup_mapping
             WHERE
                 status = #{status}
+            AND isLock = '0'
                 <if test="storeList != null and storeList.size() != 0">
                     AND store_id in
                     <foreach collection="storeList" item="store"  open="(" separator="," close=")">
