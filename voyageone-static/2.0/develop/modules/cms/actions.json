@@ -32,7 +32,8 @@
     "mapping": {
       "feedMappingService": {
         "root": "/cms/setting/feedMapping",
-        "getFeedCategories": "getFeedCategories"
+        "getFeedCategories": "getFeedCategories",
+        "getMainCategories": "getMainCategories"
       }
     },
     "pop": {
@@ -58,7 +59,8 @@
       "root": "/cms/promotion/detail",
       "getPromotionGroup": "getPromotionGroup",
       "getPromotionCode": "getPromotionCode",
-      "getPromotionSku": "getPromotionSku"
+      "getPromotionSku": "getPromotionSku",
+      "uploadPromotion": "uploadPromotion"
     }
   }
 }

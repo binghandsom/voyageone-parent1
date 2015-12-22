@@ -3,7 +3,7 @@
  * Bootstrap Main App
  * @Date:    2015-11-19 20:31:14
  * @User:    Jonas
- * @Version: 0.2.0
+ * @Version: 2.0.0
  */
 
 require.config({

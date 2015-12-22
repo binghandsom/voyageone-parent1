@@ -62,7 +62,7 @@ public class CmsPlatformMappingService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-        commonProp = cmsMtCommonPropDao.selectCommonProp().stream().filter(cmsMtCommonPropModel -> !StringUtil.isEmpty(cmsMtCommonPropModel.getMapping())).collect(Collectors.toList());
+        commonProp = cmsMtCommonPropDao.selectCommonProp().stream().filter(cmsMtCommonPropModel -> !StringUtil.isEmpty(cmsMtCommonPropModel.getPlatformPropRefId())).collect(Collectors.toList());
 
         for (TaskControlBean taskControl : taskControlList) {
             if ("order_channel_id".equalsIgnoreCase(taskControl.getCfg_name())) {
@@ -167,7 +167,7 @@ public class CmsPlatformMappingService extends BaseTaskService {
                 // 设置平台的属性ID
                 singleMappingBean.setPlatformPropId(field.getId());
                 // 设置对应的主数据的属性ID
-                masterWord = new MasterWord(SearchCommProp(field.getId()));
+                masterWord = new MasterWord(StringUtils.replaceDot(SearchCommProp(field.getId())));
                 // 生成表达式
                 ruleExpression = new RuleExpression();
                 ruleExpression.addRuleWord(masterWord);
@@ -180,7 +180,7 @@ public class CmsPlatformMappingService extends BaseTaskService {
                 // 设置平台的属性ID
                 singleMappingBean.setPlatformPropId(field.getId());
                 // 设置对应的主数据的属性ID
-                masterWord = new MasterWord(SearchCommProp(field.getId()));
+                masterWord = new MasterWord(StringUtils.replaceDot(SearchCommProp(field.getId())));
 
                 // 生成表达式
                 ruleExpression = new RuleExpression();
@@ -198,7 +198,7 @@ public class CmsPlatformMappingService extends BaseTaskService {
             case COMPLEX:
             case MULTICOMPLEX:
                 ComplexMappingBean complexMappingBean = new ComplexMappingBean();
-                complexMappingBean.setMasterPropId(SearchCommProp(field.getId()));
+                complexMappingBean.setMasterPropId(StringUtils.replaceDot(SearchCommProp(field.getId())));
                 complexMappingBean.setPlatformPropId(field.getId());
                 List<MappingBean> subMappings = new ArrayList<>();
                 complexMappingBean.setSubMappings(subMappings);
@@ -221,7 +221,7 @@ public class CmsPlatformMappingService extends BaseTaskService {
 
     private String SearchCommProp(String fieldId) {
         for (CmsMtCommonPropModel cmsMtCommonProp : commonProp) {
-            if (cmsMtCommonProp.getMapping().equalsIgnoreCase(fieldId)) {
+            if (cmsMtCommonProp.getPlatformPropRefId().equalsIgnoreCase(fieldId)) {
                 return cmsMtCommonProp.getPropId();
             }
         }
@@ -246,7 +246,8 @@ public class CmsPlatformMappingService extends BaseTaskService {
             CustomWord productImageWord = new CustomWord(new CustomWordValueGetMainProductImages(null, imageTemplateExpression, imageIndexExpression, imageTypeExpression, null));
             RuleExpression productImageExpression = new RuleExpression();
             productImageExpression.addRuleWord(productImageWord);
-            subMappings.add(new SingleMappingBean("product_image_" + i, productImageExpression));
+
+            subMappings.add(new SingleMappingBean(platformPropId.substring(0,platformPropId.length()-1)/* 去掉最后一个[s]*/ + "_" + i, productImageExpression));
         }
         return complexMappingBean;
     }

@@ -35,11 +35,11 @@ public class CmsPromotionSelectServiceTest {
     public void testAddToPromotion() throws Exception {
         JSONObject params = new JSONObject();
         JSONArray productIds = new JSONArray();
-        productIds.add("100001");
-        productIds.add("100002");
+        productIds.add((long)1);
+//        productIds.add("100002");
         params.put("productIds", productIds);
-        params.put("tagId", 1);
-        cmsPromotionSelectService.addToPromotion(params, "001", "testaa");
+        params.put("tagId", 6);
+        cmsPromotionSelectService.addToPromotion(params, "001", "testcc");
         assert true;
     }
 }
