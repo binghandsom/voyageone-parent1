@@ -9,6 +9,7 @@ import com.voyageone.base.dao.mysql.BaseModel;
 public class CmsBtTagModel extends BaseModel {
 
     private int tagId;
+    private String channelId;
     private String tagName;
     private String tagPath;
     private String tagPathName;
@@ -79,5 +80,13 @@ public class CmsBtTagModel extends BaseModel {
 
     public void setParentTagId(int parentTagId) {
         this.parentTagId = parentTagId;
+    }
+
+    public String getChannelId() {
+        return channelId;
+    }
+
+    public void setChannelId(String channelId) {
+        this.channelId = channelId;
     }
 }

@@ -16,7 +16,7 @@ import java.util.Map;
  *
  * @author neil, 12/8/2015.
  * @version 2.0.0
- * @since 2.0.0
+ * @since 2.0.1
  */
 public class TypeChannel {
 

@@ -56,6 +56,8 @@ public interface CmsUrlConstants {
             String GET_PROMOTION_UPLOAD = "uploadPromotion";
 
             String TEJIABAO_INIT = "tejiabaoInit";
+
+            String UPDATE_PROMOTION_PRODUCT = "updatePromotionProduct";
         }
     }
 

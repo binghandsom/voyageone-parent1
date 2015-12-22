@@ -6,7 +6,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function () {
 
-    return function ($scope, promotionService, promotionDetailService, $routeParams) {
+    return function ($scope, promotionService, promotionDetailService, notify, $routeParams) {
         pageSize = 5;
         $scope.vm = {
             "promotionId": $routeParams.promotionId,
@@ -54,6 +54,9 @@ define([
             }).then(function (res) {
                 $scope.vm.codePageOption.total = res.data.total;
                 $scope.vm.codeList = res.data.resultData;
+                _.each($scope.vm.codeList,function(item){
+                    item.promotionPriceBak = item.promotionPrice;
+                })
             }, function (err) {
 
             })
@@ -77,6 +80,14 @@ define([
             searchGroup();
             searchCode();
             searchSku();
+        }
+
+        $scope.updateCode = function(code){
+            promotionDetailService.updatePromotionProduct(code).then(function (res) {
+                notify.success("success");
+            }, function (err) {
+                notify.warning("fail");
+            })
         }
     };
 });

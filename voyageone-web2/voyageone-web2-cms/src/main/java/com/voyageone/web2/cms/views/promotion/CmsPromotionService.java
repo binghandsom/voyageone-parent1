@@ -40,6 +40,7 @@ public class CmsPromotionService extends BaseAppService {
         cmsBtTagModel.setTagStatus(0);
         cmsBtTagModel.setParentTagId(0);
         cmsBtTagModel.setTagPath("");
+        cmsBtTagModel.setChannelId(params.getChannelId());
         cmsBtTagDao.insertCmsBtTag(cmsBtTagModel);
         cmsBtTagModel.setTagPath("-" + cmsBtTagModel.getTagId() + "-");
         cmsBtTagDao.updateCmsBtTag(cmsBtTagModel);

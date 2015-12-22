@@ -74,8 +74,8 @@
 			<div class="form-inline m-b-xs pull-right" ng-controller = "popupCtrl">
 				<button class="btn btn-success" ng-click="openImport('md',vm.promotionId)"><i class="fa fa-mail-forward"></i> 批量导入</button>
 				<button class="btn btn-success"><!--ng-click="openOtherProgress('lg')"--><i class="fa fa-mail-reply"></i> 批量导出</button>
-				<button class="btn btn-success"><i class="fa fa-refresh"></i> 全部刷新</button>
-				<button class="btn btn-danger"><i class="fa fa-warning"></i> 全部停止</button>
+				<!--<button class="btn btn-success"><i class="fa fa-refresh"></i> 全部刷新</button>
+				<button class="btn btn-danger"><i class="fa fa-warning"></i> 全部停止</button>-->
 				<button class="btn btn-danger"><i class="fa fa-trash-o"></i> 全部删除</button>
 			</div><!-- /right-btn -->
 			<!--tab-->
@@ -85,15 +85,17 @@
 					<table class="table table-hover vo_table vo_models dropdown_table_bk font-bold text-vo">
 						<thead>
 						<tr>
-							<td class="mfb-xxxs">
+							<th class="mfb-xxxs">
 								<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span> 全选 </label>
 								<span class="m-l-xxl">Primary Product</span>
-							</td>
-							<td class="mfb-xxt text-left">Inventory</td>
-							<td class="mfb-xxs text-center">Promotion Price</td>
-							<td class="mfb-xxt text-left">折扣</td>
-							<td class="mfb-xxs text-left">Base Property</td>
-							<td class="mfb-xxt text-left">Time</td>
+							</th>
+							<th class="mfb-xxt text-left">Inventory</th>
+							<th class="mfb-xxt text-center">Promotion Price</th>
+							<th class="mfb-xxt text-center">MSRP</th>
+							<th class="mfb-xxt text-left">折扣</th>
+							<th class="mfb-xxt text-left">Base Property</th>
+							<th class="mfb-xxt text-left">Time</th>
+							<th class="mfb-xxt text-center"></th>
 						</tr>
 						</thead>
 					</table>
@@ -101,11 +103,11 @@
 						<table class="table table-hover vo_table vo_models">
 						    <tbody ng-repeat="group in vm.groupList">
 							<tr class="table_bg_gray">
-								<td colspan="3" class="control-label text-left form-inline">
+								<td colspan="4" class="control-label text-left form-inline">
 									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label>
 									<span class="label label-success-new m-r-lg m-l"> 在售 </span> <span class="m-r-lg">Number IID: <a href="/cms2.0/newcms/angular/index.html#/cms/group" class="text-u-l">{{group.numIid}}</a></span> <span>Group Name:<a href="#/product/list" class="Mtext-u-l">{{group.productModel}}</a></span>
 								</td>
-								<td colspan="3" class="text-right">{{group.catPath}}</td>
+								<td colspan="4" class="text-right">{{group.catPath}}</td>
 							</tr>
 						<tr>
 							<td class="mfb-xxxs">
@@ -120,11 +122,14 @@
 							<td class="mfb-xxt text-left">
 								<button popover="LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20" popover-title="Inventory" type="button" popover-placement="left" class="btn btn-default btn-xs">1200</button>
 							</td>
-							<td class="mfb-xxs text-center">
+							<td class="mfb-xxt text-center">
 								<button popover="Sale Price: {{group.salePriceMin != group.salePriceMax?group.salePriceMin +' - '+ group.salePriceMax:group.salePriceMin}}" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-default btn-xs">{{group.promotionPriceMin != group.promotionPriceMax?group.promotionPriceMin +' - '+ group.promotionPriceMax:group.promotionPriceMax}}</button>
 							</td>
+							<td class="mfb-xxt text-center">
+								<button popover="MSRP:300.00" popover-title="MSRP" type="button" popover-placement="left" class="btn btn-default btn-xs">{{group.msrp}}</button>
+							</td>
 							<td class="mfb-xxt text-left">{{(group.promotionPriceMin/group.salePriceMin*100).toFixed(1)}}折</td>
-							<td class="mfb-xxs text-left">
+							<td class="mfb-xxt text-left">
 								<div class="table_main">
 									<ul>
 										<li>Size Type：Women</li>
@@ -143,6 +148,7 @@
 									</div>
 								</small>
 							</td>
+							<td class="mfb-xxt text-right"><button class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button></td>
 						</tr>
 						</tbody>
 					</table>
@@ -161,12 +167,13 @@
 						<tr>
 							<td class="mfb-xxt"><label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span> 全选 </label></td>
 							<td class="mfb-xxt text-center">折扣</td>
-							<td class="mfb-xxs text-center">Inventory</td>
+							<td class="mfb-xxt text-center">Inventory</td>
 							<td class="mfb-xxt text-center">Promotion Price</td>
-							<td class="mfb-xxt text-center">Size Chart</td>
+							<td class="mfb-xxt text-center">MSRP</td>
 							<td class="mfb-xxs text-left">Base Property</td>
 							<td class="mfb-xxt text-center">SKU数</td>
 							<td class="mfb-xxt text-left">Time</td>
+							<td class="mfb-xxt text-right"></td>
 						</tr>
 						</thead>
 						</table>
@@ -178,20 +185,22 @@
 									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label>
 									<span class="label label-success-new m-r-lg m-l"> New </span> <span class="m-r-lg">Product Code: <a href="/cms2.0/newcms/angular/index.html#/cms/product" class="text-u-l">{{code.productCode}}</a></span> <span>Product Name: <a href="#/product/list" class="text-u-l">{{code.productName}}</a></span>
 								</td>
-								<th colspan="3" class="text-right">{{code.catPath}}</th>
+								<th colspan="4" class="text-right">{{code.catPath}}</th>
 							</tr>
 						    <tr>
 							<td class="mfb-xxt">
 								<img src="http://image.sneakerhead.com/is/image/sneakerhead/{{code.image}}" alt="{{code.productName}}" class="img-circle pull-left m-r"/>
 							</td>
 							<td class="mfb-xxt text-center">{{(code.promotionPrice/code.salePrice*100).toFixed(1)}}折</td>
-							<td class="mfb-xxs text-center">
+							<td class="mfb-xxt text-center">
 								<button popover="LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20" popover-title="Inventory" type="button" popover-placement="left" class="btn btn-default btn-xs">1200</button>
 							</td>
 							<td class="mfb-xxt text-center">
-								<button popover="Sale Price: {{code.salePrice}}" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-default btn-xs">{{code.promotionPrice}}</button>
+								<input type="text" class="col-sm-1 form-control" ng-model = "code.promotionPrice">
+								<!--<button popover="Sale Price: {{code.salePrice}}" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-default btn-xs">{{code.promotionPrice}}</button>-->
 							</td>
-							<td class="mfb-xxt text-center">{{code.sizeType}}</td>
+							<td class="mfb-xxt text-center">
+								{{code.msrp}}</td>
 							<td class="mfb-xxs text-left">
 								<div class="table_main">
 									<ul>
@@ -203,7 +212,7 @@
 								</div>
 							</td>
 							<td class="mfb-xxt text-center">{{code.skuCount}}</td>
-							<td class="mft-xxt text-left">
+							<td class="mfb-xxt text-left">
 							<small  popover-trigger="mouseenter" popover-placement="left">
 								<div class="table_main">
 									<ul>
@@ -213,6 +222,10 @@
 									</ul>
 								</div>
 							</small>
+						</td>
+						<td class="mfb-xxt text-right">
+						   <button ng-if="code.promotionPrice != code.promotionPriceBak" title="保存" class="btn btn-success btn-xs" ng-click="updateCode(code)"><i class="fa fa-floppy-o"></i></button>
+							<button class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button>
 						</td>
 						</tr>
 						</tbody>
@@ -245,9 +258,9 @@
 								<td>{{(sku.promotionPrice/sku.salePrice*100).toFixed(1)}}折</td>
 								<td>{{sku.size}}</td>
 								<td><input type="text" class="col-sm-1 form-control" placeholder="{{sku.qty}}" popover-placement="left" popover="原始库存：{{sku.qty}}"></td>
-								<td><button type="button" popover-placement="left" class="btn btn-default btn-xs">{{sku.promotionPrice}}</button></td>
+								<td><!--<button type="button" popover-placement="left" class="btn btn-default btn-xs">{{sku.promotionPrice}}</button>-->1900.00</td>
 								<td><!--<input type="text" class="form-control col-sm-2" popover-placement="left" popover="price retail：1200">-->
-									<button type="button" popover-placement="left" class="btn btn-default btn-xs">{{sku.salePrice}}</button></td>
+									<!--<button type="button" popover-placement="left" class="btn btn-default btn-xs">{{sku.salePrice}}</button>-->2500.00</td>
 								</td>
 								<td>
 									<button title="保存" class="btn btn-success btn-xs"><i class="fa fa-floppy-o"></i></button>
