@@ -21,9 +21,8 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     private CmsBtProductModel_Group groups = new CmsBtProductModel_Group();
     private List<CmsBtProductModel_Sku> skus = new ArrayList<>();
     private List<String> tags = new ArrayList<>();
-
+    private CmsBtProductModel_BatchField batchField = new CmsBtProductModel_BatchField();
     private CmsBtProductModel_Feed feedOrgAtts = new CmsBtProductModel_Feed();
-
     private CmsBtProductModel_Feed feedCnAtts = new CmsBtProductModel_Feed();
 
     public CmsBtProductModel() {
@@ -98,6 +97,14 @@ public class CmsBtProductModel extends ChannelPartitionModel {
 
     public void setTags(List<String> tags) {
         this.tags = tags;
+    }
+
+    public CmsBtProductModel_BatchField getBatchField() {
+        return batchField;
+    }
+
+    public void setBatchField(CmsBtProductModel_BatchField batchField) {
+        this.batchField = batchField;
     }
 
     public CmsBtProductModel_Feed getFeedOrgAtts() {

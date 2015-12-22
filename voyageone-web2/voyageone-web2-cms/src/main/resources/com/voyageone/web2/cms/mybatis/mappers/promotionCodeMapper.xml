@@ -3,14 +3,13 @@
 <mapper namespace="com.voyageone.web2.cms.sql">
     <resultMap id="bt_promotion_code_map" extends="bt_promotion_model_map" type="com.voyageone.web2.cms.model.CmsBtPromotionCodeModel" >
         <result column="sale_price" property="salePrice" jdbcType="DOUBLE" />
+        <result column="msrp" property="msrp" jdbcType="DOUBLE" />
         <result column="promotion_price" property="promotionPrice" jdbcType="DOUBLE" />
         <result column="product_id" property="productId" jdbcType="VARCHAR" />
         <result column="product_code" property="productCode" jdbcType="VARCHAR" />
         <result column="product_name" property="productName" jdbcType="VARCHAR" />
         <result column="image_url_sale" property="imageUrlSale" jdbcType="VARCHAR" />
         <result column="image_url_sale_out" property="imageUrlSaleOut" jdbcType="VARCHAR" />
-        <result column="tejiabao_flg" property="tejiabaoFlg" jdbcType="BOOLEAN" />
-        <result column="tejiabao_err_msg" property="tejiabaoErrMsg" jdbcType="VARCHAR" />
     </resultMap>
     <select id="select_cms_bt_promotion_code" resultMap="bt_promotion_code_map" parameterType="HashMap" >
         SELECT
@@ -23,11 +22,11 @@
             product_name,
             cat_path,
             sale_price,
+            msrp,
             promotion_price,
             num_iid,
             image_url_sale,
             image_url_sale_out,
-            tejiabao_flg,
             created,
             creater,
             modified,
@@ -96,6 +95,9 @@
             <if test="salePrice != null" >
                 sale_price,
             </if>
+            <if test="msrp != null" >
+                msrp,
+            </if>
             <if test="promotionPrice != null" >
                 promotion_price,
             </if>
@@ -107,9 +109,6 @@
             </if>
             <if test="imageUrlSaleOut != null" >
                 image_url_sale_out,
-            </if>
-            <if test="tejiabaoFlg != null" >
-                tejiabao_flg,
             </if>
                 created,
             <if test="creater != null" >
@@ -145,6 +144,9 @@
             <if test="salePrice != null" >
                 #{salePrice,jdbcType=DOUBLE},
             </if>
+            <if test="msrp != null" >
+                #{msrp,jdbcType=DOUBLE},
+            </if>
             <if test="promotionPrice != null" >
                 #{promotionPrice,jdbcType=DOUBLE},
             </if>
@@ -156,9 +158,6 @@
             </if>
             <if test="imageUrlSaleOut != null" >
                 #{imageUrlSaleOut,jdbcType=VARCHAR},
-            </if>
-            <if test="tejiabaoFlg != null" >
-                #{tejiabaoFlg,jdbcType=VARCHAR},
             </if>
                 now(),
             <if test="creater != null" >
@@ -197,6 +196,9 @@
             <if test="salePrice != null" >
                 sale_price = #{salePrice,jdbcType=DOUBLE},
             </if>
+            <if test="msrp != null" >
+                msrp = #{msrp,jdbcType=DOUBLE},
+            </if>
             <if test="promotionPrice != null" >
                 promotion_price = #{promotionPrice,jdbcType=DOUBLE},
             </if>
@@ -208,12 +210,6 @@
             </if>
             <if test="imageUrlSaleOut != null" >
                 image_url_sale_out = #{imageUrlSaleOut,jdbcType=VARCHAR},
-            </if>
-            <if test="tejiabaoFlg != null" >
-                tejiabao_flg = #{tejiabaoFlg,jdbcType=VARCHAR},
-            </if>
-            <if test="tejiabaoErrMsg != null" >
-                tejiabao_err_msg = #{tejiabaoErrMsg,jdbcType=VARCHAR},
             </if>
                 modified = now(),
             <if test="modifier != null" >

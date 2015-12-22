@@ -4,12 +4,10 @@ import com.taobao.api.ApiException;
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
 import com.voyageone.common.components.transaction.SimpleTransaction;
+import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.CmsPromotionProductPriceBean;
-import com.voyageone.web2.cms.dao.CmsPromotionCodeDao;
-import com.voyageone.web2.cms.dao.CmsPromotionDao;
-import com.voyageone.web2.cms.dao.CmsPromotionModelDao;
-import com.voyageone.web2.cms.dao.CmsPromotionSkuDao;
+import com.voyageone.web2.cms.dao.*;
 import com.voyageone.web2.cms.model.*;
 import com.voyageone.web2.cms.views.pop.tag.promotion.CmsPromotionSelectService;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
@@ -51,6 +49,9 @@ public class CmsPromotionDetailService extends BaseAppService {
     private CmsPromotionDao cmsPromotionDao;
 
     @Autowired
+    private CmsPromotionTaskDao cmsPromotionTaskDao;
+
+    @Autowired
     private SimpleTransaction simpleTransaction;
 
     @Autowired
@@ -90,9 +91,9 @@ public class CmsPromotionDetailService extends BaseAppService {
             simpleTransaction.openTransaction();
             try {
 
-                int tagId = searchTagId(tags,item.getTag());
-                if(tagId == -1){
-                    throw(new Exception("Tag不存在"));
+                int tagId = searchTagId(tags, item.getTag());
+                if (tagId == -1) {
+                    throw (new Exception("Tag不存在"));
                 }
 
                 // 获取Product信息
@@ -105,21 +106,21 @@ public class CmsPromotionDetailService extends BaseAppService {
                 // 插入cms_bt_promotion_code表
                 CmsBtPromotionCodeModel cmsBtPromotionCodeModel = new CmsBtPromotionCodeModel(productInfo, cartId, promotionId, operator);
                 cmsBtPromotionCodeModel.setPromotionPrice(item.getPrice());
-                if (cmsPromotionCodeDao.updatePromotionModel(cmsBtPromotionCodeModel) == 0) {
+                if (cmsPromotionCodeDao.updatePromotionCode(cmsBtPromotionCodeModel) == 0) {
                     cmsPromotionCodeDao.insertPromotionCode(cmsBtPromotionCodeModel);
                 }
 
                 productInfo.getSkus().forEach(sku -> {
-                    CmsBtPromotionSkuModel cmsBtPromotionSkuModel = new CmsBtPromotionSkuModel(productInfo, cartId, promotionId, operator, sku.getSkuCode(), sku.getQty());
+                    CmsBtPromotionSkuModel cmsBtPromotionSkuModel = new CmsBtPromotionSkuModel(productInfo, cartId, promotionId, operator, sku.getSkuCode(), 0);
                     if (cmsPromotionSkuDao.updatePromotionSku(cmsBtPromotionSkuModel) == 0) {
                         cmsPromotionSkuDao.insertPromotionSku(cmsBtPromotionSkuModel);
                     }
                 });
 
                 // tag写入数据库
-                List<Long> prodIds = new  ArrayList<>();
+                List<Long> prodIds = new ArrayList<>();
                 prodIds.add(productInfo.getProdId());
-                cmsPromotionSelectService.add(prodIds,channelId,tagId,operator);
+                cmsPromotionSelectService.add(prodIds, channelId, tagId, operator);
             } catch (Exception e) {
                 simpleTransaction.rollback();
                 response.get("fail").add(item.getCode());
@@ -167,7 +168,6 @@ public class CmsPromotionDetailService extends BaseAppService {
             if (cmsBtProductModel != null) {
                 map.setImage(cmsBtProductModel.getFields().getImages1().get(0).getName());
                 map.setSkuCount(cmsBtProductModel.getSkus().size());
-                map.setSizeType(cmsBtProductModel.getFields().getSizeType());
             }
         });
         return promotionGroups;
@@ -257,5 +257,42 @@ public class CmsPromotionDetailService extends BaseAppService {
             }
         }
         return -1;
+    }
+
+
+    /**
+     * 特价宝商品初期化
+     * @param promotionId 活动ID
+     * @param operator 操作者
+     */
+    public void teJiaBaoInit(Integer promotionId, String operator) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("promotionId", promotionId);
+        List<CmsBtPromotionCodeModel> codeList = cmsPromotionCodeDao.getPromotionCodeList(param);
+        simpleTransaction.openTransaction();
+        try {
+            codeList.forEach(code -> {
+                CmsBtPromotionTaskModel cmsBtPromotionTask = new CmsBtPromotionTaskModel(promotionId, PromotionTypeEnums.Type.TEJIABAO.getTypeId(), code.getProductCode(), operator);
+                if(cmsPromotionTaskDao.updatePromotionTask(cmsBtPromotionTask) == 0){
+                    cmsPromotionTaskDao.insertPromotionTask(cmsBtPromotionTask);
+                }
+            });
+        }catch (Exception e){
+            simpleTransaction.rollback();
+            throw e;
+        }
+        simpleTransaction.commit();
+    }
+
+    /**
+     * 更新promotionCode的信息
+     * @param promotionCodeModel romotionCode
+     * @param operator 操作者
+     */
+    public void updatePromotionProduct(CmsBtPromotionCodeModel promotionCodeModel, String operator){
+        if(cmsPromotionCodeDao.updatePromotionCode(promotionCodeModel) != 0){
+            CmsBtPromotionTaskModel cmsBtPromotionTask = new CmsBtPromotionTaskModel(promotionCodeModel.getPromotionId(), PromotionTypeEnums.Type.TEJIABAO.getTypeId(), promotionCodeModel.getProductCode(), operator);
+            cmsPromotionTaskDao.updatePromotionTask(cmsBtPromotionTask);
+        }
     }
 }

@@ -132,7 +132,8 @@ public class CmsProductService {
     /**
      * 批量更新上新结果 根据CodeList
      */
-    public BulkWriteResult bathUpdateWithSXResult(String channelId, int cartId, List<String> codeList,
+    public BulkWriteResult bathUpdateWithSXResult(String channelId, int cartId,
+                                                  long groupId, List<String> codeList,
                                                   String numIId, String productId,
                                                   String publishTime, String instockTime,
                                                   CmsConstants.PlatformStatus status) {

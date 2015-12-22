@@ -254,12 +254,7 @@ public class CmsProductDaoTest {
         platformMode.setInstockTime("2015-10-18 16:19:00");
 
         platformMode.setPlatformStatus(CmsConstants.PlatformStatus.Waitingpublish);
-        List<Map<String,Object>> taskResults = platformMode.getTaskResults();
-        Map<String,Object> taskResult = new HashMap<>();
-        taskResult.put("doSx", 1);
-        taskResult.put("comment", "xxxx");
-        taskResults.add(taskResult);
-        platformMode.setInventory(25);
+        platformMode.setPlatformActive(CmsConstants.PlatformActive.Instock);
         cmsBtProductDao.updateWithPlatform("001", "2000702", platformMode);
     }
 

@@ -105,36 +105,30 @@ public class CmsBtProductModel_Group_Platform extends BaseMongoMap<String, Objec
         setAttribute("instockTime", instockTime);
     }
 
-    // platform status
+    // platform status 等待上新/在售/在库
     public CmsConstants.PlatformStatus getPlatformStatus() {
         return getAttribute("platformStatus");
     }
 
-    public void setPlatformStatus(String platformStatus) {
-        setAttribute("platformStatus", platformStatus);
-    }
     public void setPlatformStatus(CmsConstants.PlatformStatus platformStatus) {
         setAttribute("platformStatus", platformStatus);
     }
 
-    public List<Map<String,Object>> getTaskResults() {
-        if (!this.containsKey("taskResults") || getAttribute("taskResults") == null) {
-            setAttribute("taskResults", new ArrayList<Map<String,Object>>());
-        }
-        return getAttribute("taskResults");
+    //"Instock"(在库)/"OnSale"(在售)
+    public CmsConstants.PlatformActive getPlatformActive() {
+        return getAttribute("platformActive");
     }
-
-    public void setTaskResults(List<Map<String,Object>> taskResults) {
-        setAttribute("taskResults", taskResults);
+    public void setPlatformActive(CmsConstants.PlatformActive platformActive) {
+        setAttribute("platformActive", platformActive);
     }
 
 
-    public Integer getInventory() {
-        return getAttribute("inventory");
+    public Integer getQty() {
+        return getAttribute("qty");
     }
 
-    public void setInventory(Integer inventory) {
-        setAttribute("inventory", inventory);
+    public void setQty(Integer qty) {
+        setAttribute("qty", qty);
     }
 
 }

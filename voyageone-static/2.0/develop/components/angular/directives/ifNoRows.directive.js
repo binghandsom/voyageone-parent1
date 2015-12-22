@@ -31,9 +31,10 @@ angular.module('voyageone.angular.directives.ifNoRows', [])
 
                     // 如果数据不存在则显示警告信息
                     if(scope.$parent.$eval(scope.$$data)  == 0) {
+                        element.find("#noData").remove();
                         element.append($compile($templateCache.get(tempNoDataKey))(scope));
                     } else {
-                        element.find("#noData").html("");
+                        element.find("#noData").remove();
                     }
                 })
             }

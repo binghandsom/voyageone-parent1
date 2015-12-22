@@ -88,4 +88,18 @@ public class CmsPromotionDetailController extends CmsController {
         return success(reponse);
     }
 
+    @RequestMapping(PROMOTION.DETAIL.TEJIABAO_INIT)
+    public AjaxResponse tejiabaoInit(@RequestBody int promotionId) throws Exception {
+
+        cmsPromotionDetailService.teJiaBaoInit(promotionId,getUser().getUserName());
+        // 返回用户信息
+        return success(null);
+    }
+    @RequestMapping(PROMOTION.DETAIL.UPDATE_PROMOTION_PRODUCT)
+    public AjaxResponse updatePromotionProduct(@RequestBody CmsBtPromotionCodeModel params) {
+
+        cmsPromotionDetailService.updatePromotionProduct(params,getUser().getUserName());
+        // 返回用户信息
+        return success(null);
+    }
 }

@@ -42,5 +42,17 @@ public class PostProductSelectOneClient {
         return voApiClient.execute(requestModel).getProduct();
     }
 
+    /**
+     * 获取主商品 根据groupId
+     */
+    public CmsBtProductModel getMainProductByGroupId(String channelId, long groupId) {
+        //设置参数
+        PostProductSelectOneRequest requestModel = new PostProductSelectOneRequest(channelId);
+        String queryTmp = "{\"groups.platforms\":{$elemMatch: {\"groupId\":%s, \"isMain\":1}}}";
+        requestModel.setProps(String.format(queryTmp, groupId));
+        //SDK取得Product 数据
+        return voApiClient.execute(requestModel).getProduct();
+    }
+
 
 }
