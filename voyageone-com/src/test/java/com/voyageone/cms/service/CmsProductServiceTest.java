@@ -3,6 +3,7 @@ package com.voyageone.cms.service;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
+import com.voyageone.cms.CmsConstants;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.model.*;
 import com.voyageone.common.Constants;
@@ -126,7 +127,7 @@ public class CmsProductServiceTest {
         platform.setDisplayOrder(random.nextInt(100));
         platform.setPublishTime("2015-11-12 16:19:00");
         platform.setInstockTime("2015-11-18 16:19:00");
-        platform.setPlatformStatus(index % 3);
+        platform.setPlatformStatus(CmsConstants.PlatformStatus.Waitingpublish);
         List<Map<String,Object>> taskResults = platform.getTaskResults();
         Map<String,Object> taskResult = new HashMap<>();
         taskResult.put("doSx", 1);
@@ -258,5 +259,13 @@ public class CmsProductServiceTest {
         System.out.println(new Date());
         cmsBtProductDao.bulkUpdateWithMap("100",bulkList,"init","$addToSet");
         System.out.println(new Date());
+    }
+
+    @Test
+    public void testBathUpdateWithSXResult() {
+        List<String> codeList = new ArrayList<>();
+        codeList.add("100001");
+        codeList.add("100002");
+        cmsProductService.bathUpdateWithSXResult("001", 21, codeList, "123123123", "product_id1", "2015-11-12 16:19:00", "2015-11-12 16:19:00", CmsConstants.PlatformStatus.Onsale);
     }
 }

@@ -5,29 +5,23 @@
         <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i> 批量导入</h5>
     </div>
     <div class="modal-body wrapper">
-        <form role="form" class="form-horizontal">
+        <form role="form" class="form-horizontal" id="uploadForm">
             <div class="form-group">
                 <label class="col-sm-3 control-label">请上传文件</label>
                 <div class="col-sm-8">
-                    <input type="file" file-style>
+                    <input type="file" file-style nv-file-select="" uploader="uploader" accept=".xlsx">
                 </div>
             </div><!-- .form-group -->
             <div class="form-group">
                 <label class="col-sm-3 control-label"></label>
                 <div class="col-sm-8">
-                    <button class="btn btn-success"><i class="fa fa-spinner"></i> 请读入数据</button>
-                </div>
-            </div><!-- .form-group -->
-            <div class="form-group">
-                <label class="col-sm-3 control-label"></label>
-                <div class="col-sm-8">
-                    <p class="text-vo"><i class="icon fa fa-warning"></i> 读入完毕！当前已读入300条数据！</p>
+                    <p class="text-vo"><i class="icon fa"></i>{{vm.messager}}</p>
                 </div>
             </div>
         </form>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-default" ng-click="cancel()">取消</button>
-        <button class="btn btn-vo" ng-click="openOtherProgress('lg')">导入数据</button>
+        <button class="btn btn-default" ng-click="$close()">取消</button>
+        <button class="btn btn-vo" ng-click="upload()">导入数据</button>
     </div>
 </div><!-- .vo_modal -->

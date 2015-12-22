@@ -406,39 +406,4 @@ public class TmallGjSkuFieldBuilderImpl_2 extends AbstractSkuFieldBuilder {
         }
         return skuInfoFields;
     }
-
-    @Override
-    public int updateInventoryField(String orderChannelId,
-                                     PlatformUploadRunState.PlatformContextBuildCustomFields contextBuildCustomFields,
-                                     List fields) {
-        /*
-        MultiComplexField skuProp = null;
-        int totalInventory = 0;
-
-        for (Field field : (List<Field>)fields)
-        {
-            if (skuField.equals(field.getId())) {
-                skuProp = (MultiComplexField) field;
-                break;
-            }
-        }
-
-        if (skuProp != null)
-        {
-            for (ComplexValue complexValue : skuProp.getComplexValues()) {
-                String skuOuterId = complexValue.getInputFieldValue(sku_outerIdField);
-
-                String skuQuantityStr = skuInfoDao.getSkuInventoryMap(orderChannelId, null, skuOuterId);
-                int skuQuantity = 0;
-                if (skuQuantityStr != null) {
-                    skuQuantity = Integer.valueOf(skuQuantityStr);
-                }
-                totalInventory += skuQuantity;
-                complexValue.setInputFieldValue(sku_quantityField, String.valueOf(skuQuantity));
-            }
-        }
-        return totalInventory;
-        */
-        return 0;
-    }
 }

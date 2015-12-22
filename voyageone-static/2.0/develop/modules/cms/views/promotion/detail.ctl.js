@@ -9,6 +9,9 @@ define([
     return function ($scope, promotionService, promotionDetailService, $routeParams) {
         pageSize = 5;
         $scope.vm = {
+            "promotionId": $routeParams.promotionId,
+            "tabIndex": 0,
+            "searchKey": '',
             "promotion": {},
             "groupList": [],
             "codeList": [],
@@ -25,15 +28,13 @@ define([
             }, function (err) {
 
             });
-            searchGroup()
-            searchCode();
-            searchSku();
-
+            $scope.search();
         }
 
-        function searchGroup(){
+        function searchGroup() {
             promotionDetailService.getPromotionGroup({
                 "promotionId": $routeParams.promotionId,
+                "key": $scope.vm.searchKey,
                 "start": ($scope.vm.groupPageOption.curr - 1) * $scope.vm.groupPageOption.size,
                 "length": $scope.vm.groupPageOption.size
             }).then(function (res) {
@@ -43,9 +44,11 @@ define([
 
             })
         }
-        function searchCode(){
+
+        function searchCode() {
             promotionDetailService.getPromotionCode({
                 "promotionId": $routeParams.promotionId,
+                "key": $scope.vm.searchKey,
                 "start": ($scope.vm.codePageOption.curr - 1) * $scope.vm.codePageOption.size,
                 "length": $scope.vm.codePageOption.size
             }).then(function (res) {
@@ -56,9 +59,10 @@ define([
             })
         }
 
-        function searchSku(){
+        function searchSku() {
             promotionDetailService.getPromotionSku({
                 "promotionId": $routeParams.promotionId,
+                "key": $scope.vm.searchKey,
                 "start": ($scope.vm.skuPageOption.curr - 1) * $scope.vm.skuPageOption.size,
                 "length": $scope.vm.skuPageOption.size
             }).then(function (res) {
@@ -67,6 +71,12 @@ define([
             }, function (err) {
 
             })
+        }
+
+        $scope.search = function () {
+            searchGroup();
+            searchCode();
+            searchSku();
         }
     };
 });

@@ -7,7 +7,6 @@ import com.taobao.top.schema.field.SingleCheckField;
 import com.taobao.top.schema.option.Option;
 import com.taobao.top.schema.value.ComplexValue;
 import com.taobao.top.schema.value.Value;
-
 import com.voyageone.batch.cms.bean.PlatformUploadRunState;
 import com.voyageone.batch.cms.bean.SkuTemplateSchema;
 import com.voyageone.batch.cms.bean.SxProductBean;
@@ -21,7 +20,6 @@ import com.voyageone.cms.service.bean.SingleMappingBean;
 import com.voyageone.cms.service.model.CmsBtProductConstants;
 import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
 import com.voyageone.cms.service.model.CmsMtPlatformMappingModel;
-import com.voyageone.common.Constants;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -304,40 +302,5 @@ public class TmallGjSkuFieldBuilderImpl_0 extends AbstractSkuFieldBuilder {
 
         skuInfoFields.add(skuField);
         return skuInfoFields;
-    }
-
-    @Override
-    public int updateInventoryField(String orderChannelId,
-                                     PlatformUploadRunState.PlatformContextBuildCustomFields contextBuildCustomFields,
-                                     List fields) {
-        /*
-        MultiComplexField skuProp = null;
-        int totalInventory = 0;
-
-        for (Field field : (List<Field>)fields)
-        {
-            if (propId_sku.equals(field.getId())) {
-                skuProp = (MultiComplexField) field;
-                break;
-            }
-        }
-
-        if (skuProp != null)
-        {
-            for (ComplexValue complexValue : skuProp.getComplexValues()) {
-                String skuOuterId = complexValue.getInputFieldValue(propId_sku_outerId);
-
-                String skuQuantityStr = skuInfoDao.getSkuInventoryMap(orderChannelId, null, skuOuterId);
-                int skuQuantity = 0;
-                if (skuQuantityStr != null) {
-                    skuQuantity = Integer.valueOf(skuQuantityStr);
-                }
-                totalInventory += skuQuantity;
-                complexValue.setInputFieldValue(propId_sku_quantity, String.valueOf(skuQuantity));
-            }
-        }
-        return totalInventory;
-        */
-        return 0;
     }
 }

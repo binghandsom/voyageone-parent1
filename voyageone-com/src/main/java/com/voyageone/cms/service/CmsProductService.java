@@ -3,15 +3,16 @@ package com.voyageone.cms.service;
 import com.mongodb.BulkWriteResult;
 import com.mongodb.CommandResult;
 import com.mongodb.WriteResult;
+import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
+import com.voyageone.cms.CmsConstants;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.model.*;
+import com.voyageone.common.util.StringUtils;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class CmsProductService {
@@ -37,6 +38,16 @@ public class CmsProductService {
      */
     public CmsBtProductModel getProductByCode(String channelId, String code) {
         return cmsBtProductDao.selectProductByCode(channelId, code);
+    }
+
+    /**
+     * 获取商品 根据query
+     */
+    public CmsBtProductModel getProductWithQuery(String channelId, String query) {
+        if (StringUtils.isEmpty(query)) {
+            return cmsBtProductDao.selectOne();
+        }
+        return cmsBtProductDao.selectOneWithQuery(query, channelId);
     }
 
     /**
@@ -116,5 +127,44 @@ public class CmsProductService {
      */
     public BulkWriteResult bathUpdateWithFields(String channelId, Map<String, CmsBtProductModel_Field> codeFieldMap, String modifier) {
         return cmsBtProductDao.bathUpdateWithFields(channelId, codeFieldMap, modifier);
+    }
+
+    /**
+     * 批量更新上新结果 根据CodeList
+     */
+    public BulkWriteResult bathUpdateWithSXResult(String channelId, int cartId, List<String> codeList,
+                                                  String numIId, String productId,
+                                                  String publishTime, String instockTime,
+                                                  CmsConstants.PlatformStatus status) {
+
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        for (String code : codeList) {
+            HashMap<String, Object> queryMap = new HashMap<>();
+            queryMap.put("fields.code", code);
+            queryMap.put("groups.platforms.cartId", cartId);
+
+            HashMap<String, Object> updateMap = new HashMap<>();
+            if (numIId != null) {
+                updateMap.put("groups.platforms.$.numIId", numIId);
+            }
+            if (productId != null) {
+                updateMap.put("groups.platforms.$.productId", productId);
+            }
+            if (publishTime != null) {
+                updateMap.put("groups.platforms.$.publishTime", publishTime);
+            }
+            if (instockTime != null) {
+                updateMap.put("groups.platforms.$.instockTime", instockTime);
+            }
+            if (status != null) {
+                updateMap.put("groups.platforms.$.platformStatus", status.toString());
+            }
+
+            BulkUpdateModel model = new BulkUpdateModel();
+            model.setUpdateMap(updateMap);
+            model.setQueryMap(queryMap);
+            bulkList.add(model);
+        }
+        return cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
     }
 }

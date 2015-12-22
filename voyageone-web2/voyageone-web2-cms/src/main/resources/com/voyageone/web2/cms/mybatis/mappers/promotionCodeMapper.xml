@@ -9,6 +9,8 @@
         <result column="product_name" property="productName" jdbcType="VARCHAR" />
         <result column="image_url_sale" property="imageUrlSale" jdbcType="VARCHAR" />
         <result column="image_url_sale_out" property="imageUrlSaleOut" jdbcType="VARCHAR" />
+        <result column="tejiabao_flg" property="tejiabaoFlg" jdbcType="BOOLEAN" />
+        <result column="tejiabao_err_msg" property="tejiabaoErrMsg" jdbcType="VARCHAR" />
     </resultMap>
     <select id="select_cms_bt_promotion_code" resultMap="bt_promotion_code_map" parameterType="HashMap" >
         SELECT
@@ -25,7 +27,7 @@
             num_iid,
             image_url_sale,
             image_url_sale_out,
-            syn_flg,
+            tejiabao_flg,
             created,
             creater,
             modified,
@@ -35,6 +37,13 @@
         <where>
             <if test="promotionId != null">
                 promotion_id =  #{promotionId,jdbcType=INTEGER}
+            </if>
+            <if test="key !=null and key != ''">
+               and (
+                product_model like '%${key}%'
+                or product_code like '%${key}%'
+                or product_name like '%${key}%'
+                )
             </if>
         </where>
         <if test="start != null and length != null">
@@ -49,6 +58,14 @@
         <where>
             <if test="promotionId != null">
                 promotion_id =  #{promotionId,jdbcType=INTEGER}
+            </if>
+            <if test="key !=null and key != ''">
+                and (
+
+                product_model like '%${key}%'
+                or product_code like '%${key}%'
+                or product_name like '%${key}%'
+                )
             </if>
         </where>
     </select>
@@ -91,8 +108,8 @@
             <if test="imageUrlSaleOut != null" >
                 image_url_sale_out,
             </if>
-            <if test="synFlg != null" >
-                syn_flg,
+            <if test="tejiabaoFlg != null" >
+                tejiabao_flg,
             </if>
                 created,
             <if test="creater != null" >
@@ -140,8 +157,8 @@
             <if test="imageUrlSaleOut != null" >
                 #{imageUrlSaleOut,jdbcType=VARCHAR},
             </if>
-            <if test="synFlg != null" >
-                #{synFlg,jdbcType=VARCHAR},
+            <if test="tejiabaoFlg != null" >
+                #{tejiabaoFlg,jdbcType=VARCHAR},
             </if>
                 now(),
             <if test="creater != null" >
@@ -192,8 +209,11 @@
             <if test="imageUrlSaleOut != null" >
                 image_url_sale_out = #{imageUrlSaleOut,jdbcType=VARCHAR},
             </if>
-            <if test="synFlg != null" >
-                syn_flg = #{synFlg,jdbcType=VARCHAR},
+            <if test="tejiabaoFlg != null" >
+                tejiabao_flg = #{tejiabaoFlg,jdbcType=VARCHAR},
+            </if>
+            <if test="tejiabaoErrMsg != null" >
+                tejiabao_err_msg = #{tejiabaoErrMsg,jdbcType=VARCHAR},
             </if>
                 modified = now(),
             <if test="modifier != null" >
