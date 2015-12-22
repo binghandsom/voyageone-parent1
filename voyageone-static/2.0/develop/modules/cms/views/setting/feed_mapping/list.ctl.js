@@ -3,56 +3,76 @@
  */
 
 define([
-  'cms',
-  'modules/cms/controller/popup.ctl'
+    'cms',
+    'modules/cms/controller/popup.ctl'
 ], function (cms) {
+    "use strict";
+    return cms.controller('feedMappingController', (function () {
 
-  return cms.controller('feedMappingController', (function() {
+        /**
+         * @description
+         * Feed Mapping 画面的 Controller 类,该类是单例,重复 new 不会返回新的实例
+         * @param {FeedMappingService} feedMappingService
+         * @constructor
+         */
+        function FeedMappingController(feedMappingService) {
 
-    /**
-     * @description
-     * Feed Mapping 画面的 Controller 类,该类是单例,重复 new 不会返回新的实例
-     * @param {FeedMappingService} feedMappingService
-     * @constructor
-     */
-    function FeedMappingController(feedMappingService) {
+            this.feedMappingService = feedMappingService;
 
-      this.feedMappingService = feedMappingService;
+            /**
+             * feed 类目集合
+             * @type {object[]}
+             */
+            this.feedCategories = null;
+            /**
+             * 当前选择的 TOP 类目
+             * @type {object}
+             */
+            this.selectedTop = null;
 
-      /**
-       * feed 类目集合
-       * @type {object[]}
-       */
-      this.feedCategories = null;
-    }
+            // 将被 popup 调用,需要强制绑定
+            this.bindCategory = this.bindCategory.bind(this);
+        }
 
-    FeedMappingController.prototype = {
-      /**
-       * 画面初始化时
-       */
-      init: function () {
+        FeedMappingController.prototype = {
+            /**
+             * 画面初始化时
+             */
+            init: function () {
 
-        this.feedMappingService.getFeedCategories().then(function(res) {
-          this.feedCategories = res.data.categoryTree;
-        }.bind(this));
-      },
-      /**
-       * 获取类目的默认 Mapping 类目
-       * @param {{mapping:object[]}} feedCategory
-       * @returns {string}
-       */
-      getDefaultMapping: function (feedCategory) {
+                this.feedMappingService.getFeedCategories().then(function (res) {
+                    this.feedCategories = res.data.categoryTree;
+                    // 如果有数据就默认选中
+                    if (this.feedCategories.length) {
+                        this.selectedTop = this.feedCategories[0];
+                    }
+                }.bind(this));
+            },
+            /**
+             * 获取类目的默认 Mapping 类目
+             * @param {{mapping:object[]}} feedCategory
+             * @returns {string}
+             */
+            getDefaultMapping: function (feedCategory) {
 
-        var defMapping = _.find(feedCategory.mapping, function(mapping) {
-          return mapping.defaultMapping === 1;
-        });
+                if (!feedCategory) {
+                    return '?';
+                }
 
-        // TODO 向上查找
+                var defMapping = _.find(feedCategory.mapping, function (mapping) {
+                    return mapping.defaultMapping === 1;
+                });
 
-        return defMapping ? defMapping.mainCategoryPath : '[未设定]';
-      }
-    };
+                // TODO 向上查找
 
-    return FeedMappingController
-  })());
+                return defMapping ? defMapping.mainCategoryPath : '[未设定]';
+            },
+            bindCategory: function(category) {
+                console.log(this);
+                console.log(category);
+            }
+        };
+
+        return FeedMappingController
+    })());
 });

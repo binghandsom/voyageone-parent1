@@ -596,7 +596,7 @@ a.list-group-item.hover {
   border-right: none;
 }
 
-.table-hover-new tr th{
+.table-hover-new>thead>tr>th{
   background-color:#e67e22;
   color:#fff;
 }

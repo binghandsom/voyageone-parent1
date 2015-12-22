@@ -1,128 +1,46 @@
 <div class="vo_modal" ng-init="ctrl.init()">
     <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="ctrl.cancel()"><span
-                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="ctrl.cancel()">
+            <span aria-hidden="true"><i class="fa fa-close"></i></span>
+        </button>
         <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i> 类目匹配</h5>
     </div>
     <div class="modal-body wrapper">
-        <!-- <div class="form-group">
-            <label class="col-sm-2 control-label text-vo text-center">原平台类目：</label>
-            <label class="col-sm-9 control-label text-left">珠宝 / 钻石 / 翡翠 / 黄金 > 彩色宝石 / 贵重宝石</label>
-        </div>-->
         <div class="category_ts">
-            <p>Feed/主数据类目：{{ ctrl.context.from }}</p>
             <!--这里是Feed和主数据相互切换的-->
+            <p>Feed/主数据类目：{{ ctrl.context.from.path }}</p>
         </div>
         <div class="category_drags">
-            <div class="category_drag col-sm-2">
+
+            <div class="category_drag col-sm-2" ng-repeat="categoryItem in ctrl.categoryPath">
                 <div class="category_drag_main">
-                    <p class="text-center text-vo font-bold">一级类目</p>
-                    <div class="form-inline">
-                    <input type="text" placeholder="快速检索" class="form-control" style="width:80%">
-                    <button type="submit" class="btn btn-vo btn-xxs"><i class="fa fa-search"></i></button>
-                    </div>
-                    <div class="category_drag_list">
-                     <ul>
-                        <li><a href="#">服装鞋包 <span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
-                        <li><a href="#">手机数码 <span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
-                        <li><a href="#">服装鞋包 <span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
-                        <li><a href="#">手机数码 <span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
-                      </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="category_drag col-sm-2">
-                <div class="category_drag_main">
-                    <p class="text-center text-vo font-bold">二级类目</p>
+                    <p class="text-center text-vo font-bold">{{ categoryItem.level }} 级类目</p>
                     <div class="form-inline">
                         <input type="text" placeholder="快速检索" class="form-control" style="width:80%">
                         <button type="submit" class="btn btn-vo btn-xxs"><i class="fa fa-search"></i></button>
                     </div>
                     <div class="category_drag_list">
                         <ul>
-                            <li><a href="#">服装鞋包 <span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
-                            <li><a href="#">手机数码 <span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
-                            <li><a href="#">服装鞋包 <span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
-                            <li><a href="#">手机数码 <span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
+                            <li ng-repeat="category in categoryItem.categories">
+                                <a href="javascript:void(0)" ng-click="ctrl.openCategory(category)">
+                                    {{ category.catName }}
+                                    <span class="pull-right text-muted">
+                                        <i class="fa fa-fw fa-angle-right text"></i>
+                                    </span>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </div>
             </div>
-            <div class="category_drag col-sm-2">
-                <div class="category_drag_main">
-                    <p class="text-center text-vo font-bold">三级类目</p>
-                    <div class="form-inline">
-                        <input type="text" placeholder="快速检索" class="form-control" style="width:80%">
-                        <button type="submit" class="btn btn-vo btn-xxs"><i class="fa fa-search"></i></button>
-                    </div>
-                    <div class="category_drag_list">
-                        <ul>
-                            <li><a href="#">服装鞋包 <span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
-                            <li><a href="#">手机数码 <span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
-                            <li><a href="#">服装鞋包 <span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
-                            <li><a href="#">手机数码 <span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="category_drag col-sm-2">
-                <div class="category_drag_main">
-                    <p class="text-center text-vo font-bold">四级类目</p>
-                    <div class="form-inline">
-                        <input type="text" placeholder="快速检索" class="form-control" style="width:80%">
-                        <button type="submit" class="btn btn-vo btn-xxs"><i class="fa fa-search"></i></button>
-                    </div>
-                    <div class="category_drag_list">
-                        <ul>
-                            <li><a href="#">服装鞋包 <span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
-                            <li><a href="#">手机数码 <span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
-                            <li><a href="#">服装鞋包 <span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
-                            <li><a href="#">手机数码 <span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="category_drag col-sm-2">
-                <div class="category_drag_main">
-                    <p class="text-center text-vo font-bold">五级类目</p>
-                    <div class="form-inline">
-                        <input type="text" placeholder="快速检索" class="form-control" style="width:80%">
-                        <button type="submit" class="btn btn-vo btn-xxs"><i class="fa fa-search"></i></button>
-                    </div>
-                    <div class="category_drag_list">
-                        <ul>
-                            <li><a href="#">服装鞋包 <span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
-                            <li><a href="#">手机数码 <span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
-                            <li><a href="#">服装鞋包 <span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
-                            <li><a href="#">手机数码 <span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="category_drag col-sm-2">
-                <div class="category_drag_main">
-                    <p class="text-center text-vo font-bold">六级类目</p>
-                    <div class="form-inline">
-                        <input type="text" placeholder="快速检索" class="form-control" style="width:80%">
-                        <button type="submit" class="btn btn-vo btn-xxs"><i class="fa fa-search"></i></button>
-                    </div>
-                    <div class="category_drag_list">
-                        <ul>
-                            <li><a href="#">服装鞋包 <span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
-                            <li><a href="#">手机数码 <span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
-                            <li><a href="#">服装鞋包 <span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
-                            <li><a href="#">手机数码 <span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+
         </div>
         <div class="category_ts">
-            <p>您当前选择的是：<span>珠宝 / 钻石 / 翡翠 / 黄金 > 彩色宝石 / 贵重宝石</span></p>
+            <p>您当前选择的是：<span> {{ ctrl.selected.catPath }} </span></p>
         </div>
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="ctrl.cancel()">取消</button>
-        <button class="btn btn-vo" ng-click="ok()">保存</button>
+        <button class="btn btn-vo" ng-click="ctrl.ok()">保存</button>
     </div>
- </div><!-- .vo_modal -->
+</div>
