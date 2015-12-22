@@ -62,6 +62,11 @@
                     <if test="promotionId != null">
                         promotion_id =  #{promotionId,jdbcType=INTEGER}
                     </if>
+                    <if test="key !=null and key != ''">
+                        and (
+                        product_model like '%${key}%'
+                        )
+                    </if>
                 </where>
                 <if test="start != null and length != null">
                     LIMIT #{start}, #{length}
@@ -95,6 +100,11 @@
         <where>
             <if test="promotionId != null">
                 promotion_id =  #{promotionId,jdbcType=INTEGER}
+            </if>
+            <if test="key !=null and key != ''">
+                and (
+                product_model like '%${key}%'
+                )
             </if>
         </where>
     </select>
