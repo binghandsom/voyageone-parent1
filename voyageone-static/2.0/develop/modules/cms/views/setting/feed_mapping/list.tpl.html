@@ -2,13 +2,9 @@
     <div class="col-sm-12">
         <div class="form-inline m-b-sm pull-left">
             <label>
-                顶层类目:
-                <select class="form-control m-r-xxs"
-                        ng-model="ctrl.selectedTop"
-                        ng-options="cate as cate.path for cate in ctrl.feedCategories">
-                </select>
+                顶层类目
+                <select class="form-control m-r-xxs" ng-model="ctrl.selectedTop" ng-options="cate as cate.path for cate in ctrl.feedCategories"></select>
             </label>
-
             <select class="form-control m-r-xxs">
                 <option>类目匹配情况(ALL)</option>
                 <option>类目已匹配</option>
@@ -21,7 +17,7 @@
             </select>
             <input type="text" placeholder="Feed检索" class="form-control">
             <button type="submit" class="btn btn-vo btn-xxs"><i class="fa fa-search"></i></button>
-        </div><!-- /right-btn -->
+        </div>
     </div>
     <div class="col-sm-12">
         <div class="box">
