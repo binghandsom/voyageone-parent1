@@ -52,6 +52,17 @@ public class PostProductSelectOneClient {
         requestModel.addProp("groups.platforms.groupId", groupId);
         requestModel.addProp("groups.platforms.isMain", 1);
 
+//        requestModel.addField("prodId");
+//        requestModel.addField("catPath");
+//
+//        requestModel.addField("fields.code");
+//        requestModel.addField("fields.brand");
+//        requestModel.addField("fields.productName");
+//        requestModel.addField("fields.middleTitle");
+//
+//        requestModel.addSort("fields.code", true);
+//        requestModel.addSort("fields.brand", false);
+
         //SDK取得Product 数据
         return voApiClient.execute(requestModel).getProduct();
     }

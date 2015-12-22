@@ -4,12 +4,16 @@ package com.voyageone.web2.sdk.api.request;
 import com.voyageone.web2.sdk.api.VoApiConstants;
 import com.voyageone.web2.sdk.api.VoApiRequest;
 import com.voyageone.web2.sdk.api.exception.ApiException;
+import com.voyageone.web2.sdk.api.response.PostProductSelectListResponse;
 import com.voyageone.web2.sdk.api.response.PostProductSelectOneResponse;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * /puroduct/selectOne Request Model
+ * /puroduct/selectList Request Model
  *
- * Product的id.两种方式来查看一个产品:1.传入product_id来查询 2.传入product_code来查询 3:传入props来查询
+ * Product的id.两种方式来查看一个产品:1.传入productId List来查询 2.传入productCode list来查询 3:传入props来查询
  *
  * Created on 2015-12-14
  *
@@ -17,10 +21,10 @@ import com.voyageone.web2.sdk.api.response.PostProductSelectOneResponse;
  * @version 2.0.0
  * @since. 2.0.0
  */
-public class PostProductSelectOneRequest extends VoApiRequest<PostProductSelectOneResponse> {
+public class PostProductSelectListRequest extends VoApiRequest<PostProductSelectListResponse> {
 
 	public String getApiURLPath() {
-		return "/puroduct/selectOne";
+		return "/puroduct/selectList";
 	}
 
 	private String channelId;
@@ -28,31 +32,43 @@ public class PostProductSelectOneRequest extends VoApiRequest<PostProductSelectO
 	/**
 	 * productId
 	 */
-	private Long productId;
+	private List<Long> productIdList = new ArrayList<>();
 
 	/**
 	 * Product的Code
 	 */
-	private String productCode;
+	private List<String> productCodeList = new ArrayList<>();
 
 	/**
-	 * 关键属性,结构：pid1:value1;pid2:value2，如果有型号，系列等子属性用: 隔开 例如：“20000:优衣库:型号:001;632501:1234”，表示“品牌:优衣库:型号:001;货号:1234”
+	 * 比如:诺基亚N73这个产品的关键属性列表就是:品牌:诺基亚,型号:N73,对应的PV值就是10005:10027;10006:29729.
 	 *
 	 * 例如 获取model所属所有商品
 	 *
 	 */
 	private String props;
 
-	/**
-	 * sort condition
-	 */
-	private String sort;
 
-	public PostProductSelectOneRequest() {
+	/**
+	 * 页码.传入值为1代表第一页,传入值为2代表第二页,依此类推.默认返回的数据是从第一页开始.
+	 */
+	private Long pageNo;
+
+	/**
+	 * 每页条数.每页返回最多返回100条,默认值为40
+	 */
+	private Long pageSize;
+
+
+	/**
+	 * 需返回的字段列表.可选值:Product数据结构中的所有字段;多个字段之间用","分隔.
+	 */
+	private String fields;
+
+	public PostProductSelectListRequest() {
 
 	}
 
-	public PostProductSelectOneRequest(String channelId) {
+	public PostProductSelectListRequest(String channelId) {
 		this.channelId = channelId;
 	}
 
@@ -68,29 +84,7 @@ public class PostProductSelectOneRequest extends VoApiRequest<PostProductSelectO
 		this.channelId = channelId;
 	}
 
-	public Long getProductId() {
-		return productId;
-	}
 
-	public void setProductId(Long productId) {
-		this.productId = productId;
-	}
-
-	public String getProductCode() {
-		return productCode;
-	}
-
-	public void setProductCode(String productCode) {
-		this.productCode = productCode;
-	}
-
-	public String getProps() {
-		return props;
-	}
-
-	public void setProps(String props) {
-		this.props = props;
-	}
 
 	public void addProp(String key, Object value) {
 		String temp = null;
@@ -113,6 +107,4 @@ public class PostProductSelectOneRequest extends VoApiRequest<PostProductSelectO
 			props = props + " ; " + propValue;
 		}
 	}
-
-
 }
