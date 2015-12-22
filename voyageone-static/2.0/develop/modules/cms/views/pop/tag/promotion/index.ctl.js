@@ -3,14 +3,13 @@
  * Modified by gubuchun on 15/12/16.
  */
 define([
-    'angularAMD',
-    'modules/cms/controller/popup.ctl'
+    'angularAMD'
 ], function (angularAMD) {
     angularAMD.controller('popTagPromotionCtl', function ($scope, $tagPromotionService, promotion) {
 
         $scope.vm = {
             promotionInfo: {
-                tagId: "",
+                tagId: promotion.tagId,
                 productIds: []
             },
             promotion: {},

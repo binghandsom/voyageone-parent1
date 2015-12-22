@@ -2,12 +2,12 @@ package com.voyageone.web2.cms.views.pop.tag.promotion;
 
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
+import com.voyageone.common.util.CommonUtil;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.dao.CmsBtTagDao;
 import com.voyageone.web2.cms.dao.CmsBtTagLogDao;
 import com.voyageone.web2.cms.model.CmsBtTagLogModel;
 import com.voyageone.web2.cms.model.CmsBtTagModel;
-import net.minidev.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,15 +38,9 @@ public class CmsPromotionSelectService extends BaseAppService {
     }
 
     public Map<String, Object> addToPromotion(Map<String, Object> params, String channelId, String modifier) {
-        Object[] productIds = ((JSONArray) params.get("productIds")).toArray();
         int tag_id = (int) params.get("tagId");
 
-        List<Long> idList = new ArrayList<>();
-
-        for (Object id : productIds) {
-            idList.add((long)id);
-        }
-        return this.add(idList, channelId, tag_id, modifier);
+        return this.add(CommonUtil.changeListType((ArrayList<Integer>)params.get("productIds")), channelId, tag_id, modifier);
     }
 
     /**

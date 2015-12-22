@@ -69,4 +69,9 @@ public class CmsPromotionDetailServiceTest {
         cmsPromotionDetailService.uploadPromotion(stream,15,"james");
         System.out.println("");
     }
+
+    @Test
+    public void testTeJiaBaoInit() throws Exception {
+        cmsPromotionDetailService.teJiaBaoInit(15,"james");
+    }
 }

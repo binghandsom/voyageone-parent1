@@ -2,6 +2,7 @@ package com.voyageone.cms.service.dao.mongodb;
 
 import com.mongodb.*;
 import com.voyageone.base.dao.mongodb.BaseMongoDao;
+import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.cms.service.model.CmsBtProductModel_Field;
@@ -87,6 +88,43 @@ public class CmsBtProductDao extends BaseMongoDao {
      */
     public Iterator<CmsBtProductModel> selectAllReturnCursor(String channelId) {
         return selectCursorAll(channelId);
+    }
+
+    /**
+     * 根据检索条件返回当前页的product列表
+     * @param query
+     * @param currPage
+     * @param pageSize
+     * @param channelId
+     * @return
+     */
+    public List<CmsBtProductModel> selectProductByQuery(String query, Integer currPage, Integer pageSize, String channelId, String[] searchItems) {
+        JomgoQuery jQuery = new JomgoQuery();
+        jQuery.setQuery(query)
+                .setSkip((currPage - 1) * pageSize)
+                .setLimit(pageSize)
+                .setProjection(searchItems);
+
+        return select(jQuery, channelId);
+    }
+
+    /**
+     * 根据检索条件返回当前页的group列表(只包含main product)
+     * @param query
+     * @param currPage
+     * @param pageSize
+     * @param channelId
+     * @return
+     */
+    public List<CmsBtProductModel> selectGroupWithMainProductByQuery(String query, Integer currPage, Integer pageSize, String channelId, String[] searchItems) {
+        JomgoQuery jQuery = new JomgoQuery();
+
+        jQuery.setQuery(query)
+                .setSkip((currPage - 1) * pageSize)
+                .setLimit(pageSize)
+                .setProjection(searchItems);
+
+        return select(jQuery, channelId);
     }
 
     /**

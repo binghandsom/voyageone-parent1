@@ -30,7 +30,7 @@ public class CmsPromotionCodeDao extends BaseDao{
         return updateTemplate.insert("insert_cms_bt_promotion_code",params);
     }
 
-    public int updatePromotionModel(CmsBtPromotionGroupModel params){
+    public int updatePromotionCode(CmsBtPromotionGroupModel params){
         return updateTemplate.update("update_cms_bt_promotion_code", params);
     }
 
