@@ -111,7 +111,9 @@ public class CmsPromotionDetailService extends BaseAppService {
                 }
 
                 productInfo.getSkus().forEach(sku -> {
-                    CmsBtPromotionSkuModel cmsBtPromotionSkuModel = new CmsBtPromotionSkuModel(productInfo, cartId, promotionId, operator, sku.getSkuCode(), sku.getQty());
+                    //liang change
+                    //CmsBtPromotionSkuModel cmsBtPromotionSkuModel = new CmsBtPromotionSkuModel(productInfo, cartId, promotionId, operator, sku.getSkuCode(), sku.getQty());
+                    CmsBtPromotionSkuModel cmsBtPromotionSkuModel = new CmsBtPromotionSkuModel(productInfo, cartId, promotionId, operator, sku.getSkuCode(), 0);
                     if (cmsPromotionSkuDao.updatePromotionSku(cmsBtPromotionSkuModel) == 0) {
                         cmsPromotionSkuDao.insertPromotionSku(cmsBtPromotionSkuModel);
                     }

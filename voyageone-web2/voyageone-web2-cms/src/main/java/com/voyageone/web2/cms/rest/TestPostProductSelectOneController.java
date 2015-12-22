@@ -39,7 +39,7 @@ public class TestPostProductSelectOneController extends CmsRestController {
     public PostProductSelectOneResponse selectOne1(@RequestBody PostProductSelectOneRequest responseMode) {
 
         //SDK取得Product 数据
-        CmsBtProductModel model = productSelectOneClient.getProductByCode("300", "100002");
+        CmsBtProductModel model = productSelectOneClient.getMainProductByGroupId("300", 134);
 
 
         PostProductSelectOneResponse result = new PostProductSelectOneResponse();

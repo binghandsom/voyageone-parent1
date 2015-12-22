@@ -13,9 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.Collator;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * product Service
@@ -41,8 +39,6 @@ public class PostProductSelectOneService extends BaseAppService{
             "skus."};
 
     public CmsBtProductModel selectOne(PostProductSelectOneRequest params) {
-        CmsBtProductModel model = null;
-
         if (params == null) {
             VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70001;
             throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
@@ -70,22 +66,28 @@ public class PostProductSelectOneService extends BaseAppService{
         //getProductByCondition
         String props = params.getProps();
         if (!StringUtils.isEmpty(props)) {
-            return cmsProductService.getProductWithQuery(channelId, props);
+            String queryStr  = convertProps(props);
+            return cmsProductService.getProductWithQuery(channelId, queryStr);
         }
 
-        return model;
+        return null;
     }
 
     private String convertProps (String props) {
         StringBuilder resultSb = new StringBuilder();
         String propsTmp = props.replaceAll("[\\s]*;[\\s]*", " ; ");
         String[] propsTmpArr = propsTmp.split(" ; ");
-        List<String> propList = new ArrayList<>();
+        Map<String, List<String>> propListMap = new TreeMap<>();
         int index = 0;
         for (String propTmp : propsTmpArr) {
             propTmp = propTmp.trim();
-            if (isArrayType(propTmp)) {
-                propList.add(propTmp);
+            String arrayTypePath = getArrayTypePath(props);
+            if (arrayTypePath != null) {
+                if (!propListMap.containsKey(arrayTypePath)) {
+                    propListMap.put(arrayTypePath, new ArrayList<String>());
+                }
+                List<String> arrayTypePathList = propListMap.get(arrayTypePath);
+                arrayTypePathList.add(propTmp);
             } else {
                 if (index > 0) {
                     resultSb.append(" , ");
@@ -95,41 +97,46 @@ public class PostProductSelectOneService extends BaseAppService{
             index++;
         }
 
-        Collections.sort(propList, Collator.getInstance());
+        for (Map.Entry<String, List<String>> entry : propListMap.entrySet()) {
+            List<String> propList = entry.getValue();
+            if (propList.size() > 1) {
+                Collections.sort(propList, Collator.getInstance());
+                if (resultSb.length() > 0) {
+                    resultSb.append(" , ");
+                }
+                String key = entry.getKey();
+                String parentPath = key.substring(0, key.length() - 1);
+                String paretnKey = String.format("%s : {$elemMatch : {", parentPath);
+                resultSb.append(paretnKey);
 
-        int preArrayTypePathIndex = 0;
-        for (String propTmp : propList) {
-            int arrayTypePathIndex = getArrayTypePathIndex(propTmp);
-            if (arrayTypePathIndex == preArrayTypePathIndex) {
+                index = 0;
+                for (String propTmp : propList) {
+                    if (index>0) {
+                        resultSb.append(" , ");
+                    }
+                    resultSb.append(propTmp.replace(key, ""));
+                    index++;
+                }
+                resultSb.append(" } } ");
 
-            } else {
-                DBObject statusQuery = new BasicDBObject("event", "WonGame");
-                statusQuery.put("playerId", "52307b8fe4b0fc612dea2c6f");
-                DBObject fields = new BasicDBObject("$elemMatch", statusQuery);
-                DBObject query = new BasicDBObject("playerHistories",fields);
-                System.out.println(query.toString());
-                System.out.println(query.toString());
+                //"fields":{$elemMatch: {"code": "100001", "isMain":1}
+            } else if (propList.size()>0) {
+                if (resultSb.length()>0) {
+                    resultSb.append(" , ");
+                }
+                resultSb.append(propList.get(0));
             }
         }
 
-        return resultSb.toString();
+        return "{ " + resultSb.toString() + " }";
     }
 
-    private boolean isArrayType(String props) {
+    private String getArrayTypePath(String propStr) {
         for (String arrayTypePath : arrayTypePaths) {
-            if (props.startsWith(arrayTypePath)) {
-                return true;
+            if (propStr.startsWith(arrayTypePath) || propStr.startsWith("\"" + arrayTypePath)) {
+                return arrayTypePath;
             }
         }
-        return false;
-    }
-
-    private int getArrayTypePathIndex(String props) {
-        for (int i=0; i<arrayTypePaths.length; i++) {
-            if (props.startsWith(arrayTypePaths[i])) {
-                return i+1;
-            }
-        }
-        return 0;
+        return null;
     }
 }

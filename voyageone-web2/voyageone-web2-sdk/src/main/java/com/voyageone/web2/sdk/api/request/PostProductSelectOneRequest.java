@@ -1,7 +1,9 @@
 package com.voyageone.web2.sdk.api.request;
 
 
+import com.voyageone.web2.sdk.api.VoApiConstants;
 import com.voyageone.web2.sdk.api.VoApiRequest;
+import com.voyageone.web2.sdk.api.exception.ApiException;
 import com.voyageone.web2.sdk.api.response.PostProductSelectOneResponse;
 
 /**
@@ -41,11 +43,6 @@ public class PostProductSelectOneRequest extends VoApiRequest<PostProductSelectO
 	 */
 	private String props;
 
-
-	/**
-	 * 用户自定义关键属性,结构：pid1:value1;pid2:value2，如果有型号，系列等子属性用: 隔开 例如：“20000:优衣库:型号:001;632501:1234”，表示“品牌:优衣库:型号:001;货号:1234”
-	 */
-	private String customerProps;
 
 	/**
 	 * 需返回的字段列表.可选值:Product数据结构中的所有字段;多个字段之间用","分隔.
@@ -96,19 +93,33 @@ public class PostProductSelectOneRequest extends VoApiRequest<PostProductSelectO
 		this.props = props;
 	}
 
-	public String getCustomerProps() {
-		return customerProps;
-	}
-
-	public void setCustomerProps(String customerProps) {
-		this.customerProps = customerProps;
-	}
-
 	public String getFields() {
 		return fields;
 	}
 
 	public void setFields(String fields) {
 		this.fields = fields;
+	}
+
+	public void addProp(String key, Object value) {
+		String temp = null;
+		if (value instanceof String) {
+			temp = "\"%s\" : \"%s\"";
+		} else if (value instanceof Integer
+				|| value instanceof Long
+				|| value instanceof Double) {
+			temp = "\"%s\" : %s";
+		} else {
+			VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70004;
+			throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
+		}
+
+		String propValue = String.format(temp, key, value.toString());
+
+		if (props == null) {
+			props = propValue;
+		} else {
+			props = props + " ; " + propValue;
+		}
 	}
 }
