@@ -34,6 +34,9 @@ public class CmsPromotionDetailController extends CmsController {
     @RequestMapping(PROMOTION.DETAIL.GET_PROMOTION_GROUP)
     public AjaxResponse getPromotionGroup(@RequestBody Map params) {
 
+        String channelId = getUser().getSelChannelId();
+        params.put("channelId", channelId);
+
         int cnt = cmsPromotionDetailService.getPromotionModelListCnt(params);
         List<Map<String,Object>> resultBean = cmsPromotionDetailService.getPromotionGroup(params);
         Map<String,Object> result = new HashMap<>();
@@ -46,6 +49,9 @@ public class CmsPromotionDetailController extends CmsController {
     @RequestMapping(PROMOTION.DETAIL.GETP_ROMOTION_CODE)
     public AjaxResponse getPromotionCode(@RequestBody Map params) {
 
+        String channelId = getUser().getSelChannelId();
+        params.put("channelId", channelId);
+
         int cnt = cmsPromotionDetailService.getPromotionCodeListCnt(params);
         List<CmsBtPromotionCodeModel> resultBean = cmsPromotionDetailService.getPromotionCode(params);
         Map<String,Object> result = new HashMap<>();
@@ -56,6 +62,9 @@ public class CmsPromotionDetailController extends CmsController {
     }
     @RequestMapping(PROMOTION.DETAIL.GET_PROMOTION_SKU)
     public AjaxResponse getPromotionSku(@RequestBody Map params) {
+
+        String channelId = getUser().getSelChannelId();
+        params.put("channelId", channelId);
 
         int cnt = cmsPromotionDetailService.getPromotionSkuListCnt(params);
         List<Map<String,Object>> resultBean = cmsPromotionDetailService.getPromotionSku(params);
