@@ -9,7 +9,7 @@ import com.voyageone.base.dao.mysql.BaseModel;
 public class CmsBtTagLogModel extends BaseModel {
 
     private int seq;
-    private String productId;
+    private long productId;
     private int tagId;
 
     public int getSeq() {
@@ -20,11 +20,11 @@ public class CmsBtTagLogModel extends BaseModel {
         this.seq = seq;
     }
 
-    public String getProductId() {
+    public long getProductId() {
         return productId;
     }
 
-    public void setProductId(String productId) {
+    public void setProductId(long productId) {
         this.productId = productId;
     }
 

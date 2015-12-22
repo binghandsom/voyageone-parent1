@@ -260,4 +260,12 @@ public class CmsProductServiceTest {
         cmsBtProductDao.bulkUpdateWithMap("100",bulkList,"init","$addToSet");
         System.out.println(new Date());
     }
+
+    @Test
+    public void testBathUpdateWithSXResult() {
+        List<String> codeList = new ArrayList<>();
+        codeList.add("100001");
+        codeList.add("100002");
+        cmsProductService.bathUpdateWithSXResult("001", 21, codeList, "123123123", "product_id1", "2015-11-12 16:19:00", "2015-11-12 16:19:00", CmsConstants.PlatformStatus.Onsale);
+    }
 }
