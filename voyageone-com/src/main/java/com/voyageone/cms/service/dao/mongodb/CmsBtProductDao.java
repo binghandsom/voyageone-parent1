@@ -63,7 +63,7 @@ public class CmsBtProductDao extends BaseMongoDao {
     /**
      * 获取SKUList 根据prodId
      */
-    public List<CmsBtProductModel_Sku>  selectSKUById(String channelId, long prodId) {
+    public List<CmsBtProductModel_Sku> selectSKUById(String channelId, long prodId) {
         String query = "{\"prodId\":" + prodId + "}";
         CmsBtProductModel product = selectOneWithQuery(query, channelId);
         if (product != null) {
