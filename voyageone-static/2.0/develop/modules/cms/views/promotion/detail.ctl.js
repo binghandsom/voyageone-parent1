@@ -54,6 +54,7 @@ define([
             }).then(function (res) {
                 $scope.vm.codePageOption.total = res.data.total;
                 $scope.vm.codeList = res.data.resultData;
+                _.each()
             }, function (err) {
 
             })
@@ -81,11 +82,9 @@ define([
 
         $scope.updateCode = function(code){
             promotionDetailService.updatePromotionProduct(code).then(function (res) {
-                var op={"message":"success","status":"success"};
-                notify(op);
+                notify.success("success");
             }, function (err) {
-                var op={"message":"fail","status":"danger"};
-                notify(op);
+                notify.warning("fail");
             })
         }
     };
