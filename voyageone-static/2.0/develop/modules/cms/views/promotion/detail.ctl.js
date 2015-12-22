@@ -54,7 +54,9 @@ define([
             }).then(function (res) {
                 $scope.vm.codePageOption.total = res.data.total;
                 $scope.vm.codeList = res.data.resultData;
-                _.each()
+                _.each($scope.vm.codeList,function(item){
+                    item.promotionPriceBak = item.promotionPrice;
+                })
             }, function (err) {
 
             })
