@@ -28,10 +28,6 @@ public class CmsBtPromotionCodeModel extends CmsBtPromotionGroupModel {
 
     private String sizeType;
 
-    private Boolean tejiabaoFlg;
-
-    private String tejiabaoErrMsg;
-
     public CmsBtPromotionCodeModel(CmsBtProductModel productInfo, int cartId, int promotionId, String operator) {
         super(productInfo, cartId, promotionId, operator);
         this.setProductId(productInfo.getProdId());
@@ -123,19 +119,4 @@ public class CmsBtPromotionCodeModel extends CmsBtPromotionGroupModel {
         this.sizeType = sizeType;
     }
 
-    public Boolean getTejiabaoFlg() {
-        return tejiabaoFlg;
-    }
-
-    public void setTejiabaoFlg(Boolean tejiabaoFlg) {
-        this.tejiabaoFlg = tejiabaoFlg;
-    }
-
-    public String getTejiabaoErrMsg() {
-        return tejiabaoErrMsg;
-    }
-
-    public void setTejiabaoErrMsg(String tejiabaoErrMsg) {
-        this.tejiabaoErrMsg = tejiabaoErrMsg;
-    }
 }
