@@ -13,10 +13,11 @@ define([
             searchInfo: {
                 compareType: null,
                 brand: null,
-                promotion: null
+                promotion: null,
+                platformCart: 23
             },
-            groupPageOption: {curr: 1, total: 30, size: 2, fetch: getGroupList},
-            productPageOption: {curr: 1, total: 250, size: 2, fetch: getProductList},
+            groupPageOption: {curr: 1, total: 0, size: 20, fetch: getGroupList},
+            productPageOption: {curr: 1, total: 0, size: 20, fetch: getProductList},
             groupList: [],
             productList: [],
             groupSelList: {
@@ -65,7 +66,7 @@ define([
          * 检索
          */
         function search () {
-            searchIndexService.search($scope.vm.searchInfo)
+            searchIndexService.search($scope.vm.searchInfo, $scope.vm.groupPageOption, $scope.vm.productPageOption)
                 .then(function (res) {
                     $scope.vm.groupList = res.data.groupList;
                     $scope.vm.groupPageOption.total = res.data.groupListTotal;
@@ -94,7 +95,9 @@ define([
             searchIndexService.getGroupList($scope.vm.searchInfo, $scope.vm.groupPageOption)
             .then(function (res) {
                 $scope.vm.groupList = res.data.groupList;
-                //$scope.vm.groupPageOption.total = res.data.groupListTotal;
+                $scope.vm.groupPageOption.total = res.data.groupListTotal;
+                $scope.vm.groupSelList.currPageRows = res.data.groupCurrPageRows;
+                $scope.vm.groupSelList.selFlag = res.data.groupSelFlag;
             });
         }
 
@@ -106,7 +109,9 @@ define([
             searchIndexService.getProductList($scope.vm.searchInfo, $scope.vm.productPageOption)
                 .then(function (res) {
                     $scope.vm.productList = res.data.productList;
-                    //$scope.vm.productPageOption.total = res.data.productListTotal;
+                    $scope.vm.productPageOption.total = res.data.productListTotal;
+                    $scope.vm.productSelList.currPageRows = res.data.productCurrPageRows;
+                    $scope.vm.productSelList.selFlag = res.data.productSelFlag;
                 });
         }
     };
