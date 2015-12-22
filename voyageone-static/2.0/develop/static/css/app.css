@@ -6606,7 +6606,6 @@ input:checked + ol > li {
    float: left;
    display: block;
    position: relative;
-   width:134px;
    list-style-type: none;
    padding:4px;
  }
@@ -6636,6 +6635,7 @@ input:checked + ol > li {
 }
 .category_drag {
   margin:0px;
+  padding:0px;
   background:#f5f9ff;
   border:1px solid #d5e4fa;
 }

@@ -1,4 +1,8 @@
 {
+  "code": "",
+  "displayType": "",
+  "message": "",
+  "data": {
   "total": 10,
   "resultData": [
     {
@@ -87,4 +91,6 @@
       "promotionPriceMax": 400.0
     }
   ]
+},
+  "redirectTo": ""
 }

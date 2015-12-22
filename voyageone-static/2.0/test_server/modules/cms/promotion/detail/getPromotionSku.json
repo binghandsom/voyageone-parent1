@@ -1,4 +1,8 @@
 {
+  "code": "",
+  "displayType": "",
+  "message": "",
+  "data": {
   "total": 40,
   "resultData": [
     {
@@ -192,4 +196,6 @@
       "modified": "2015-12-21 17:25:39.0"
     }
   ]
+},
+"redirectTo": ""
 }
