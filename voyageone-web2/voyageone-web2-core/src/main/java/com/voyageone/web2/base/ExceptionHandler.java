@@ -137,7 +137,14 @@ public class ExceptionHandler implements HandlerExceptionResolver {
                                       HttpServletResponse response) {
         // 尝试根据信息获取指定的错误提示
         String msg = exception.getMessage();
-        msg = StringUtils.isEmpty(msg) ? exception.getClass().getName() : msg;
+
+        if (isDebug()) {
+            msg = exception.getClass().getName() + ":" + exception.getStackTrace()[0].toString();
+        }
+
+        if (StringUtils.isEmpty(msg))
+            msg = "maybe in ct exception info (db)";
+
         return exceptionDeal(msg, "5", response);
     }
 

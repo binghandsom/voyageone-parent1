@@ -1,5 +1,6 @@
 package com.voyageone.cms.service.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -58,6 +59,8 @@ public class CmsFeedCategoryModel {
     }
 
     public List<CmsFeedMappingModel> getMapping() {
+        if (mapping == null)
+            mapping = new ArrayList<>();
         return mapping;
     }
 

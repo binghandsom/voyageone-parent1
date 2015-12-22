@@ -33,7 +33,8 @@
       "feedMappingService": {
         "root": "/cms/setting/feedMapping",
         "getFeedCategories": "getFeedCategories",
-        "getMainCategories": "getMainCategories"
+        "getMainCategories": "getMainCategories",
+        "setMapping": "setFeedMapping"
       }
     },
     "pop": {
