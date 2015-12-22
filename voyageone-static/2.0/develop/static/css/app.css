@@ -6168,6 +6168,7 @@ a.btn-main:hover {color:#e67e22;text-decoration:underline;}
   margin: 0 auto;
   text-align: center;
   border: 7px solid #fff;
+  width:80%;
   -webkit-box-shadow:0 0 10px rgba(0, 0, 0, .2);
   -moz-box-shadow:0 0 10px rgba(0, 0, 0, .2);
   box-shadow:0 0 10px rgba(0, 0, 0, .2);
@@ -6201,11 +6202,11 @@ a.btn-main:hover {color:#e67e22;text-decoration:underline;}
   margin:0px;
   padding:0px;
   position: relative;
-  width: 45px;
-  height: 45px;
+  width: 36px;
+  height: 36px;
   border-radius: 100%;
   font-size: 12px;
-  line-height: 45px;
+  line-height: 36px;
   color: #fff;
   background-color: #ed9005;
   -webkit-transition: all .3s;
