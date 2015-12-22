@@ -4,7 +4,9 @@ package com.voyageone.web2.sdk.api.request;
 import com.voyageone.web2.sdk.api.VoApiConstants;
 import com.voyageone.web2.sdk.api.VoApiRequest;
 import com.voyageone.web2.sdk.api.exception.ApiException;
+import com.voyageone.web2.sdk.api.exception.ApiRuleException;
 import com.voyageone.web2.sdk.api.response.PostProductSelectOneResponse;
+import com.voyageone.web2.sdk.api.util.RequestUtils;
 
 /**
  * /puroduct/selectOne Request Model
@@ -56,9 +58,10 @@ public class PostProductSelectOneRequest extends VoApiRequest<PostProductSelectO
 		this.channelId = channelId;
 	}
 
-//	public void check() throws ApiRuleException {
-//		RequestCheckUtils.checkNotEmpty(fields, "fields");
-//	}
+	public void check() throws ApiRuleException {
+		RequestUtils.checkNotEmpty(channelId);
+		RequestUtils.checkNotEmpty(" productId or productCode or props", productId, productCode, props);
+	}
 
 	public String getChannelId() {
 		return channelId;
@@ -93,25 +96,7 @@ public class PostProductSelectOneRequest extends VoApiRequest<PostProductSelectO
 	}
 
 	public void addProp(String key, Object value) {
-		String temp = null;
-		if (value instanceof String) {
-			temp = "\"%s\" : \"%s\"";
-		} else if (value instanceof Integer
-				|| value instanceof Long
-				|| value instanceof Double) {
-			temp = "\"%s\" : %s";
-		} else {
-			VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70004;
-			throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
-		}
-
-		String propValue = String.format(temp, key, value.toString());
-
-		if (props == null) {
-			props = propValue;
-		} else {
-			props = props + " ; " + propValue;
-		}
+		this.props = RequestUtils.addProp(props, key, value);
 	}
 
 

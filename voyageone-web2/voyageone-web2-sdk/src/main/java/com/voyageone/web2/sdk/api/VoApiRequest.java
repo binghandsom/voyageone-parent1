@@ -89,14 +89,13 @@ public abstract class VoApiRequest<T extends VoApiResponse> {
 	 * 客户端参数检查，减少服务端无效调用
 	 */
 	public void check() throws ApiRuleException {
-
 	}
 
 
 	/**
 	 * 需返回的字段列表.可选值:Product数据结构中的所有字段;多个字段之间用" ; "分隔.
 	 */
-	private String fields;
+	protected String fields;
 	public String getFields() {
 		return fields;
 	}
@@ -114,7 +113,7 @@ public abstract class VoApiRequest<T extends VoApiResponse> {
 	/**
 	 * sort condition
 	 */
-	private String sorts;
+	protected String sorts;
 	public String getSorts() {
 		return sorts;
 	}

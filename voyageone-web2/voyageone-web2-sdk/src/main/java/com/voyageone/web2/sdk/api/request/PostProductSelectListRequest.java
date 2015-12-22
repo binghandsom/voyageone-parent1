@@ -1,11 +1,10 @@
 package com.voyageone.web2.sdk.api.request;
 
 
-import com.voyageone.web2.sdk.api.VoApiConstants;
-import com.voyageone.web2.sdk.api.VoApiRequest;
-import com.voyageone.web2.sdk.api.exception.ApiException;
+import com.voyageone.web2.sdk.api.VoApiListRequest;
+import com.voyageone.web2.sdk.api.exception.ApiRuleException;
 import com.voyageone.web2.sdk.api.response.PostProductSelectListResponse;
-import com.voyageone.web2.sdk.api.response.PostProductSelectOneResponse;
+import com.voyageone.web2.sdk.api.util.RequestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,12 +20,15 @@ import java.util.List;
  * @version 2.0.0
  * @since. 2.0.0
  */
-public class PostProductSelectListRequest extends VoApiRequest<PostProductSelectListResponse> {
+public class PostProductSelectListRequest extends VoApiListRequest<PostProductSelectListResponse> {
 
 	public String getApiURLPath() {
 		return "/puroduct/selectList";
 	}
 
+	/**
+	 * channelId
+	 */
 	private String channelId;
 
 	/**
@@ -47,34 +49,17 @@ public class PostProductSelectListRequest extends VoApiRequest<PostProductSelect
 	 */
 	private String props;
 
-
-	/**
-	 * 页码.传入值为1代表第一页,传入值为2代表第二页,依此类推.默认返回的数据是从第一页开始.
-	 */
-	private Long pageNo;
-
-	/**
-	 * 每页条数.每页返回最多返回100条,默认值为40
-	 */
-	private Long pageSize;
-
-
-	/**
-	 * 需返回的字段列表.可选值:Product数据结构中的所有字段;多个字段之间用","分隔.
-	 */
-	private String fields;
-
-	public PostProductSelectListRequest() {
-
-	}
+	public PostProductSelectListRequest() {}
 
 	public PostProductSelectListRequest(String channelId) {
 		this.channelId = channelId;
 	}
 
-//	public void check() throws ApiRuleException {
-//		RequestCheckUtils.checkNotEmpty(fields, "fields");
-//	}
+	public void check() throws ApiRuleException {
+		RequestUtils.checkNotEmpty(channelId);
+		RequestUtils.checkNotEmpty(" productIdList or productCodeList or props", productIdList, productCodeList, props);
+		RequestUtils.checkNotEmpty(fields, "fields");
+	}
 
 	public String getChannelId() {
 		return channelId;
@@ -84,27 +69,28 @@ public class PostProductSelectListRequest extends VoApiRequest<PostProductSelect
 		this.channelId = channelId;
 	}
 
+	public List<Long> getProductIdList() {
+		return productIdList;
+	}
+	public void setProductIdList(List<Long> productIdList) {
+		this.productIdList = productIdList;
+	}
 
+	public List<String> getProductCodeList() {
+		return productCodeList;
+	}
+	public void setProductCodeList(List<String> productCodeList) {
+		this.productCodeList = productCodeList;
+	}
+
+	public String getProps() {
+		return props;
+	}
+	public void setProps(String props) {
+		this.props = props;
+	}
 
 	public void addProp(String key, Object value) {
-		String temp = null;
-		if (value instanceof String) {
-			temp = "\"%s\" : \"%s\"";
-		} else if (value instanceof Integer
-				|| value instanceof Long
-				|| value instanceof Double) {
-			temp = "\"%s\" : %s";
-		} else {
-			VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70004;
-			throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
-		}
-
-		String propValue = String.format(temp, key, value.toString());
-
-		if (props == null) {
-			props = propValue;
-		} else {
-			props = props + " ; " + propValue;
-		}
+		this.props = RequestUtils.addProp(props, key, value);
 	}
 }
