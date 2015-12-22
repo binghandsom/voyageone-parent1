@@ -95,4 +95,11 @@ public class CmsPromotionDetailController extends CmsController {
         // 返回用户信息
         return success(null);
     }
+    @RequestMapping(PROMOTION.DETAIL.UPDATE_PROMOTION_PRODUCT)
+    public AjaxResponse updatePromotionProduct(@RequestBody CmsBtPromotionCodeModel params) {
+
+        cmsPromotionDetailService.updatePromotionProduct(params,getUser().getUserName());
+        // 返回用户信息
+        return success(null);
+    }
 }

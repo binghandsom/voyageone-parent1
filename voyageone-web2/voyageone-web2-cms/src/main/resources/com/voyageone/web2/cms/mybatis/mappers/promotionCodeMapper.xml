@@ -3,6 +3,7 @@
 <mapper namespace="com.voyageone.web2.cms.sql">
     <resultMap id="bt_promotion_code_map" extends="bt_promotion_model_map" type="com.voyageone.web2.cms.model.CmsBtPromotionCodeModel" >
         <result column="sale_price" property="salePrice" jdbcType="DOUBLE" />
+        <result column="msrp" property="msrp" jdbcType="DOUBLE" />
         <result column="promotion_price" property="promotionPrice" jdbcType="DOUBLE" />
         <result column="product_id" property="productId" jdbcType="VARCHAR" />
         <result column="product_code" property="productCode" jdbcType="VARCHAR" />
@@ -21,6 +22,7 @@
             product_name,
             cat_path,
             sale_price,
+            msrp,
             promotion_price,
             num_iid,
             image_url_sale,
@@ -93,6 +95,9 @@
             <if test="salePrice != null" >
                 sale_price,
             </if>
+            <if test="msrp != null" >
+                msrp,
+            </if>
             <if test="promotionPrice != null" >
                 promotion_price,
             </if>
@@ -138,6 +143,9 @@
             </if>
             <if test="salePrice != null" >
                 #{salePrice,jdbcType=DOUBLE},
+            </if>
+            <if test="msrp != null" >
+                #{msrp,jdbcType=DOUBLE},
             </if>
             <if test="promotionPrice != null" >
                 #{promotionPrice,jdbcType=DOUBLE},
@@ -187,6 +195,9 @@
             </if>
             <if test="salePrice != null" >
                 sale_price = #{salePrice,jdbcType=DOUBLE},
+            </if>
+            <if test="msrp != null" >
+                msrp = #{msrp,jdbcType=DOUBLE},
             </if>
             <if test="promotionPrice != null" >
                 promotion_price = #{promotionPrice,jdbcType=DOUBLE},

@@ -82,7 +82,8 @@
                 MAX(a.promotion_price) AS promotion_price_max,
                 MIN(a.promotion_price) AS promotion_price_min,
                 MAX(a.sale_price) AS sale_price_max,
-                MIN(a.sale_price) AS sale_price_min
+                MIN(a.sale_price) AS sale_price_min,
+                a.msrp AS msrp
             FROM
                 voyageone_cms2.cms_bt_promotion_code a
             GROUP BY

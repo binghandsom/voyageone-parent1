@@ -14,9 +14,9 @@ public class CmsBtPromotionCodeModel extends CmsBtPromotionGroupModel {
 
     private String productName;
 
-    private double salePrice;
+    private Double salePrice;
 
-    private double promotionPrice;
+    private Double promotionPrice;
 
     private String imageUrlSale;
 
@@ -28,12 +28,15 @@ public class CmsBtPromotionCodeModel extends CmsBtPromotionGroupModel {
 
     private String sizeType;
 
+    private Double msrp;
+
     public CmsBtPromotionCodeModel(CmsBtProductModel productInfo, int cartId, int promotionId, String operator) {
         super(productInfo, cartId, promotionId, operator);
         this.setProductId(productInfo.getProdId());
         this.setProductCode(productInfo.getFields().getCode());
         this.setProductName(productInfo.getFields().getProductName());
         this.setSalePrice(productInfo.getFields().getSalePriceStart());
+        this.setMsrp(productInfo.getGroups().getMsrpEnd());
     }
 
     public CmsBtPromotionCodeModel() {
@@ -63,19 +66,19 @@ public class CmsBtPromotionCodeModel extends CmsBtPromotionGroupModel {
         this.productName = productName;
     }
 
-    public double getSalePrice() {
+    public Double getSalePrice() {
         return salePrice;
     }
 
-    public void setSalePrice(double salePrice) {
+    public void setSalePrice(Double salePrice) {
         this.salePrice = salePrice;
     }
 
-    public double getPromotionPrice() {
+    public Double getPromotionPrice() {
         return promotionPrice;
     }
 
-    public void setPromotionPrice(double promotionPrice) {
+    public void setPromotionPrice(Double promotionPrice) {
         this.promotionPrice = promotionPrice;
     }
 
@@ -119,4 +122,11 @@ public class CmsBtPromotionCodeModel extends CmsBtPromotionGroupModel {
         this.sizeType = sizeType;
     }
 
+    public Double getMsrp() {
+        return msrp;
+    }
+
+    public void setMsrp(Double msrp) {
+        this.msrp = msrp;
+    }
 }

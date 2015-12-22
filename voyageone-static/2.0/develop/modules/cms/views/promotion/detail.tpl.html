@@ -126,7 +126,7 @@
 								<button popover="Sale Price: {{group.salePriceMin != group.salePriceMax?group.salePriceMin +' - '+ group.salePriceMax:group.salePriceMin}}" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-default btn-xs">{{group.promotionPriceMin != group.promotionPriceMax?group.promotionPriceMin +' - '+ group.promotionPriceMax:group.promotionPriceMax}}</button>
 							</td>
 							<td class="mfb-xxt text-center">
-								<button popover="MSRP:300.00" popover-title="MSRP" type="button" popover-placement="left" class="btn btn-default btn-xs">1200</button>
+								<button popover="MSRP:300.00" popover-title="MSRP" type="button" popover-placement="left" class="btn btn-default btn-xs">{{group.msrp}}</button>
 							</td>
 							<td class="mfb-xxt text-left">{{(group.promotionPriceMin/group.salePriceMin*100).toFixed(1)}}折</td>
 							<td class="mfb-xxt text-left">
@@ -196,11 +196,11 @@
 								<button popover="LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20" popover-title="Inventory" type="button" popover-placement="left" class="btn btn-default btn-xs">1200</button>
 							</td>
 							<td class="mfb-xxt text-center">
-								<input type="text" class="col-sm-1 form-control" placeholder="2,099.00" popover-placement="left" popover="Promotion Price: 1,099.00~2,099.00">
+								<input type="text" class="col-sm-1 form-control" ng-model = "code.promotionPrice">
 								<!--<button popover="Sale Price: {{code.salePrice}}" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-default btn-xs">{{code.promotionPrice}}</button>-->
 							</td>
 							<td class="mfb-xxt text-center">
-								2900.00</td>
+								{{code.msrp}}</td>
 							<td class="mfb-xxs text-left">
 								<div class="table_main">
 									<ul>
@@ -224,7 +224,7 @@
 							</small>
 						</td>
 						<td class="mfb-xxt text-right">
-						   <button title="保存" class="btn btn-success btn-xs"><i class="fa fa-floppy-o"></i></button>
+						   <button title="保存" class="btn btn-success btn-xs" ng-click="updateCode(code)"><i class="fa fa-floppy-o"></i></button>
 							<button class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button>
 						</td>
 						</tr>

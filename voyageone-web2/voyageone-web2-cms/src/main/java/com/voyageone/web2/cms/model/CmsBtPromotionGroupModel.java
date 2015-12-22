@@ -25,9 +25,10 @@ public class CmsBtPromotionGroupModel  extends BaseMongoModel {
     private Boolean synFlg;
 
     public CmsBtPromotionGroupModel(){
-
+        super();
     }
     public CmsBtPromotionGroupModel(CmsBtProductModel productInfo, int cartId, int promotionId, String operator){
+        this();
         // catPath
         this.setCatPath(productInfo.getCatPath());
 
