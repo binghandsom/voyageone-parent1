@@ -23,4 +23,11 @@ public class CmsConstants {
     }
 
 
+    /**
+     * platformActive
+     */
+    public enum PlatformActive {
+        Onsale, 		// 在售
+        Instock  		// 在库
+    }
 }

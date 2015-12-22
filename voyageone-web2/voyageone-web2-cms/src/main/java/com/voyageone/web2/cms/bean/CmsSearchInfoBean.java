@@ -1,6 +1,6 @@
 package com.voyageone.web2.cms.bean;
 
-import com.voyageone.common.util.StringUtils;
+import java.math.BigDecimal;
 
 /**
  * @author Edward
@@ -10,15 +10,17 @@ public class CmsSearchInfoBean {
 
     private String[] productStatus;
 
-    private String[] publishStatus;
+    private Integer platformCart;
+
+    private String[] platformStatus;
 
     private String[] labelType;
 
     private String priceType;
 
-    private String priceTypeStart;
+    private BigDecimal priceStart;
 
-    private String priceTypeEnd;
+    private BigDecimal priceEnd;
 
     private String createTimeStart;
 
@@ -30,7 +32,7 @@ public class CmsSearchInfoBean {
 
     private String compareType;
 
-    private String inventory;
+    private Integer inventory;
 
     private String brand;
 
@@ -50,13 +52,13 @@ public class CmsSearchInfoBean {
 
     private String sortThreeType;
 
-    private String groupPageNum;
+    private Integer groupPageNum;
 
-    private String groupPageSize;
+    private Integer groupPageSize;
 
-    private String productPageNum;
+    private Integer productPageNum;
 
-    private String productPageSize;
+    private Integer productPageSize;
 
     public String[] getProductStatus() {
         return productStatus;
@@ -66,12 +68,20 @@ public class CmsSearchInfoBean {
         this.productStatus = productStatus;
     }
 
-    public String[] getPublishStatus() {
-        return publishStatus;
+    public Integer getPlatformCart() {
+        return platformCart;
     }
 
-    public void setPublishStatus(String[] publishStatus) {
-        this.publishStatus = publishStatus;
+    public void setPlatformCart(Integer platformCart) {
+        this.platformCart = platformCart;
+    }
+
+    public String[] getPlatformStatus() {
+        return platformStatus;
+    }
+
+    public void setPlatformStatus(String[] platformStatus) {
+        this.platformStatus = platformStatus;
     }
 
     public String[] getLabelType() {
@@ -90,20 +100,20 @@ public class CmsSearchInfoBean {
         this.priceType = priceType;
     }
 
-    public String getPriceTypeStart() {
-        return priceTypeStart;
+    public BigDecimal getPriceStart() {
+        return priceStart;
     }
 
-    public void setPriceTypeStart(String priceTypeStart) {
-        this.priceTypeStart = priceTypeStart;
+    public void setPriceStart(BigDecimal priceStart) {
+        this.priceStart = priceStart;
     }
 
-    public String getPriceTypeEnd() {
-        return priceTypeEnd;
+    public BigDecimal getPriceEnd() {
+        return priceEnd;
     }
 
-    public void setPriceTypeEnd(String priceTypeEnd) {
-        this.priceTypeEnd = priceTypeEnd;
+    public void setPriceEnd(BigDecimal priceEnd) {
+        this.priceEnd = priceEnd;
     }
 
     public String getCreateTimeStart() {
@@ -146,11 +156,11 @@ public class CmsSearchInfoBean {
         this.compareType = compareType;
     }
 
-    public String getInventory() {
+    public Integer getInventory() {
         return inventory;
     }
 
-    public void setInventory(String inventory) {
+    public void setInventory(Integer inventory) {
         this.inventory = inventory;
     }
 
@@ -226,35 +236,35 @@ public class CmsSearchInfoBean {
         this.sortThreeType = sortThreeType;
     }
 
-    public String getGroupPageNum() {
+    public Integer getGroupPageNum() {
         return groupPageNum;
     }
 
-    public void setGroupPageNum(String groupPageNum) {
-        this.groupPageNum = StringUtils.isEmpty(groupPageNum) ? "1" : groupPageNum;
+    public void setGroupPageNum(Integer groupPageNum) {
+        this.groupPageNum = groupPageNum != null && groupPageNum > 0 ? groupPageNum : 1;
     }
 
-    public String getGroupPageSize() {
+    public Integer getGroupPageSize() {
         return groupPageSize;
     }
 
-    public void setGroupPageSize(String groupPageSize) {
-        this.groupPageSize = StringUtils.isEmpty(groupPageSize) ? "1" : groupPageSize;
+    public void setGroupPageSize(Integer groupPageSize) {
+        this.groupPageSize = groupPageSize != null && groupPageSize > 0 ? groupPageSize : 1;
     }
 
-    public String getProductPageNum() {
+    public Integer getProductPageNum() {
         return productPageNum;
     }
 
-    public void setProductPageNum(String productPageNum) {
-        this.productPageNum = StringUtils.isEmpty(productPageNum) ? "1" : productPageNum;
+    public void setProductPageNum(Integer productPageNum) {
+        this.productPageNum = productPageNum != null && productPageNum > 0 ? productPageNum : 1;
     }
 
-    public String getProductPageSize() {
+    public Integer getProductPageSize() {
         return productPageSize;
     }
 
-    public void setProductPageSize(String productPageSize) {
-        this.productPageSize = StringUtils.isEmpty(productPageSize) ? "1" : productPageSize;
+    public void setProductPageSize(Integer productPageSize) {
+        this.productPageSize = productPageSize != null && productPageSize > 0 ? productPageSize : 1;
     }
 }

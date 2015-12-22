@@ -1,5 +1,7 @@
 package com.voyageone.web2.sdk.api;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.web2.sdk.api.request.PostProductSelectOneRequest;
 import com.voyageone.web2.sdk.api.response.PostProductSelectOneResponse;
@@ -22,6 +24,12 @@ public class VoApiDefaultClientTest {
 
     @Test
     public void testExceute() {
+//        DBObject statusQuery = new BasicDBObject("event", "WonGame");
+//        statusQuery.put("playerId", "52307b8fe4b0fc612dea2c6f");
+//        DBObject fields = new BasicDBObject("$elemMatch", statusQuery);
+//        DBObject query = new BasicDBObject("playerHistories",fields);
+//        System.out.println(query.toString());
+
         PostProductSelectOneRequest requestModel = new PostProductSelectOneRequest("001");
         requestModel.setProductId((long)1);
         PostProductSelectOneResponse response = voApiClient.execute(requestModel);

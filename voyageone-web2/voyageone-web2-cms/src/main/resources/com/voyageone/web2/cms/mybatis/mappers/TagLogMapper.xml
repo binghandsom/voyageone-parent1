@@ -3,7 +3,7 @@
 <mapper namespace="com.voyageone.web2.cms.sql">
     <resultMap id="TagLogMap" type="com.voyageone.web2.cms.model.CmsBtTagLogModel">
         <id column="seq" property="seq" jdbcType="INTEGER" />
-        <result column="product_id" property="productId" jdbcType="VARCHAR" />
+        <result column="product_id" property="productId" jdbcType="INTEGER" />
         <result column="tag_id" property="tagId" jdbcType="INTEGER" />
         <result column="created" property="created" jdbcType="TIMESTAMP" />
         <result column="creater" property="creater" jdbcType="VARCHAR" />

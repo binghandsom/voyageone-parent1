@@ -1,6 +1,6 @@
 body {
-	background-color: #eeeded;
-	font-family: sans-serif;
+	background: #000000;
+	font-family: "Helvetica neue",Helvetica,Tahoma,"lantinghei sc","Microsoft Yahei", sans-serif;
 }
 
 .login-logo {
@@ -10,7 +10,7 @@ body {
 
 .login {
 	margin: 2% auto 2%;
-	width: 350px;
+	width: 450px;
 	background: #fff;
 	border-radius: 0.5em;
 	-webkit-border-radius: 0.5em;
@@ -77,14 +77,14 @@ body {
 .login-submit button {
 	font-size: 20px;
 	font-weight: 400;
-	color: #F5AD00;
+	color: #fff;
 	cursor: pointer;
 	outline: none;
 	padding: 13px 20px;
 	margin: 0;
 	width: 100%;
 	border: none;
-	background: #FFFFFF;
+	background: #ffa300;
 	transition: 0.1s all;
 	-webkit-transition: 0.1s all;
 	-moz-transition: 0.1s all;
@@ -97,6 +97,7 @@ body {
 	-webkit-border-bottom-left-radius: 0.4em;
 	-o-border-bottom-left-radius: 0.4em;
 	-moz-border-bottom-left-radius: 0.4em;
+	font-family: "Microsoft Yahei", sans-serif;
 }
 
 .login-submit button:hover {
@@ -113,7 +114,7 @@ body {
 	color: #fff;
 	padding: 8px 0;
 	border-radius: 4px;
-	font-size: 16px;
+	font-size: 12px;
 }
 
 .loginSign:before {

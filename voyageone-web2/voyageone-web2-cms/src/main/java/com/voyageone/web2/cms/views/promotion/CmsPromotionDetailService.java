@@ -1,18 +1,15 @@
 package com.voyageone.web2.cms.views.promotion;
 
+import com.taobao.api.ApiException;
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
 import com.voyageone.common.components.transaction.SimpleTransaction;
+import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.CmsPromotionProductPriceBean;
-import com.voyageone.web2.cms.dao.CmsPromotionCodeDao;
-import com.voyageone.web2.cms.dao.CmsPromotionDao;
-import com.voyageone.web2.cms.dao.CmsPromotionModelDao;
-import com.voyageone.web2.cms.dao.CmsPromotionSkuDao;
-import com.voyageone.web2.cms.model.CmsBtPromotionCodeModel;
-import com.voyageone.web2.cms.model.CmsBtPromotionGroupModel;
-import com.voyageone.web2.cms.model.CmsBtPromotionModel;
-import com.voyageone.web2.cms.model.CmsBtPromotionSkuModel;
+import com.voyageone.web2.cms.dao.*;
+import com.voyageone.web2.cms.model.*;
+import com.voyageone.web2.cms.views.pop.tag.promotion.CmsPromotionSelectService;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.request.PostProductSelectOneRequest;
 import com.voyageone.web2.sdk.api.service.PostProductSelectOneClient;
@@ -52,7 +49,17 @@ public class CmsPromotionDetailService extends BaseAppService {
     private CmsPromotionDao cmsPromotionDao;
 
     @Autowired
+    private CmsPromotionTaskDao cmsPromotionTaskDao;
+
+    @Autowired
     private SimpleTransaction simpleTransaction;
+
+    @Autowired
+    private CmsPromotionSelectService cmsPromotionSelectService;
+
+    private static final int codeCellNum = 1;
+    private static final int priceCellNum = 2;
+    private static final int tagCellNum = 3;
 
     /**
      * promotion商品插入
@@ -76,12 +83,19 @@ public class CmsPromotionDetailService extends BaseAppService {
             });
             return response;
         }
+        List<CmsBtTagModel> tags = cmsPromotionSelectService.selectListByParentTagId(promotion.getRefTagId());
         String channelId = promotion.getChannelId();
         Integer cartId = promotion.getCartId();
         productPrices.forEach(item -> {
             boolean errflg = false;
             simpleTransaction.openTransaction();
             try {
+
+                int tagId = searchTagId(tags, item.getTag());
+                if (tagId == -1) {
+                    throw (new Exception("Tag不存在"));
+                }
+
                 // 获取Product信息
                 CmsBtProductModel productInfo = productSelectOneClient.getProductByCode(channelId, item.getCode());
 
@@ -92,7 +106,7 @@ public class CmsPromotionDetailService extends BaseAppService {
                 // 插入cms_bt_promotion_code表
                 CmsBtPromotionCodeModel cmsBtPromotionCodeModel = new CmsBtPromotionCodeModel(productInfo, cartId, promotionId, operator);
                 cmsBtPromotionCodeModel.setPromotionPrice(item.getPrice());
-                if (cmsPromotionCodeDao.updatePromotionModel(cmsBtPromotionCodeModel) == 0) {
+                if (cmsPromotionCodeDao.updatePromotionCode(cmsBtPromotionCodeModel) == 0) {
                     cmsPromotionCodeDao.insertPromotionCode(cmsBtPromotionCodeModel);
                 }
 
@@ -102,6 +116,11 @@ public class CmsPromotionDetailService extends BaseAppService {
                         cmsPromotionSkuDao.insertPromotionSku(cmsBtPromotionSkuModel);
                     }
                 });
+
+                // tag写入数据库
+                List<Long> prodIds = new ArrayList<>();
+                prodIds.add(productInfo.getProdId());
+                cmsPromotionSelectService.add(prodIds, channelId, tagId, operator);
             } catch (Exception e) {
                 simpleTransaction.rollback();
                 response.get("fail").add(item.getCode());
@@ -124,7 +143,7 @@ public class CmsPromotionDetailService extends BaseAppService {
     public List<Map<String, Object>> getPromotionGroup(Map<String, Object> param) {
         List<Map<String, Object>> promotionGroups = cmsPromotionModelDao.getPromotionModelDetailList(param);
         promotionGroups.forEach(map -> {
-            CmsBtProductModel cmsBtProductModel = productSelectOneClient.getProductById("300", (Long) map.get("productId"));
+            CmsBtProductModel cmsBtProductModel = productSelectOneClient.getProductById(param.get("channelId").toString(), (Long) map.get("productId"));
 
             if (cmsBtProductModel != null) {
                 map.put("image", cmsBtProductModel.getFields().getImages1().get(0).getName());
@@ -145,7 +164,7 @@ public class CmsPromotionDetailService extends BaseAppService {
         List<CmsBtPromotionCodeModel> promotionGroups = cmsPromotionCodeDao.getPromotionCodeList(param);
         promotionGroups.forEach(map -> {
             //SDK取得Product 数据
-            CmsBtProductModel cmsBtProductModel = productSelectOneClient.getProductById("300", map.getProductId());
+            CmsBtProductModel cmsBtProductModel = productSelectOneClient.getProductById(param.get("channelId").toString(), map.getProductId());
             if (cmsBtProductModel != null) {
                 map.setImage(cmsBtProductModel.getFields().getImages1().get(0).getName());
                 map.setSkuCount(cmsBtProductModel.getSkus().size());
@@ -167,7 +186,7 @@ public class CmsPromotionDetailService extends BaseAppService {
         promotionSkus.forEach(map -> {
             CmsBtProductModel cmsBtProductModel;
             if (!temp.containsKey(map.get("productId").toString())) {
-                cmsBtProductModel = productSelectOneClient.getProductById("300", (Long) map.get("productId"));
+                cmsBtProductModel = productSelectOneClient.getProductById(param.get("channelId").toString(), (Long) map.get("productId"));
                 temp.put(map.get("productId").toString(), cmsBtProductModel);
             } else {
                 cmsBtProductModel = temp.get(map.get("productId").toString());
@@ -206,20 +225,20 @@ public class CmsPromotionDetailService extends BaseAppService {
                 continue;
             }
             CmsPromotionProductPriceBean item = new CmsPromotionProductPriceBean();
-            if (row.getCell(0).getCellType() == Cell.CELL_TYPE_NUMERIC) {
-                int code = (int) row.getCell(0).getNumericCellValue();
+            if (row.getCell(codeCellNum).getCellType() == Cell.CELL_TYPE_NUMERIC) {
+                int code = (int) row.getCell(codeCellNum).getNumericCellValue();
                 item.setCode(code + "");
             } else {
-                item.setCode(row.getCell(0).getStringCellValue());
+                item.setCode(row.getCell(codeCellNum).getStringCellValue());
             }
 
             if (row.getCell(1).getCellType() == Cell.CELL_TYPE_NUMERIC) {
-                item.setPrice(row.getCell(1).getNumericCellValue());
+                item.setPrice(row.getCell(priceCellNum).getNumericCellValue());
             } else {
-                item.setPrice(Double.parseDouble(row.getCell(1).getStringCellValue()));
+                item.setPrice(Double.parseDouble(row.getCell(priceCellNum).getStringCellValue()));
             }
 
-            item.setTag(row.getCell(2).getStringCellValue());
+            item.setTag(row.getCell(tagCellNum).getStringCellValue());
             respones.add(item);
         }
         return respones;
@@ -228,7 +247,41 @@ public class CmsPromotionDetailService extends BaseAppService {
     public Map<String, List<String>> uploadPromotion(InputStream xls, int promotionId, String operator) throws Exception {
 
         List<CmsPromotionProductPriceBean> uploadPromotionList = resolvePromotionXls(xls);
-        return insertPromotionProduct(uploadPromotionList,promotionId,operator);
+        return insertPromotionProduct(uploadPromotionList, promotionId, operator);
     }
 
+    private int searchTagId(List<CmsBtTagModel> tags, String tagName) {
+
+        for (CmsBtTagModel tag : tags) {
+            if (tag.getTagPathName().equalsIgnoreCase(tagName)) {
+                return tag.getTagId();
+            }
+        }
+        return -1;
+    }
+
+
+    /**
+     * 特价宝商品初期化
+     * @param promotionId 活动ID
+     * @param operator 操作者
+     */
+    public void teJiaBaoInit(Integer promotionId, String operator) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("promotionId", promotionId);
+        List<CmsBtPromotionCodeModel> codeList = cmsPromotionCodeDao.getPromotionCodeList(param);
+        simpleTransaction.openTransaction();
+        try {
+            codeList.forEach(code -> {
+                CmsBtPromotionTaskModel cmsBtPromotionTask = new CmsBtPromotionTaskModel(promotionId, PromotionTypeEnums.Type.TEJIABAO.getTypeId(), code.getProductCode(), operator);
+                if(cmsPromotionTaskDao.updatePromotionTask(cmsBtPromotionTask) == 0){
+                    cmsPromotionTaskDao.insertPromotionTask(cmsBtPromotionTask);
+                }
+            });
+        }catch (Exception e){
+            simpleTransaction.rollback();
+            throw e;
+        }
+        simpleTransaction.commit();
+    }
 }

@@ -174,7 +174,7 @@ public class TypeConfigEnums {
 		/**
 		 * 发布状态:cms2
 		 */
-		publishStatus(45),
+		platFormStatus(45),
 
 		/**
 		 * 标签:cms2

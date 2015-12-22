@@ -118,4 +118,5 @@ public class CmsBtPromotionCodeModel extends CmsBtPromotionGroupModel {
     public void setSizeType(String sizeType) {
         this.sizeType = sizeType;
     }
+
 }
