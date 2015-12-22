@@ -246,7 +246,8 @@ public class CmsPlatformMappingService extends BaseTaskService {
             CustomWord productImageWord = new CustomWord(new CustomWordValueGetMainProductImages(null, imageTemplateExpression, imageIndexExpression, imageTypeExpression, null));
             RuleExpression productImageExpression = new RuleExpression();
             productImageExpression.addRuleWord(productImageWord);
-            subMappings.add(new SingleMappingBean("product_image_" + i, productImageExpression));
+
+            subMappings.add(new SingleMappingBean(platformPropId.substring(0,platformPropId.length()-1)/* 去掉最后一个[s]*/ + "_" + i, productImageExpression));
         }
         return complexMappingBean;
     }
