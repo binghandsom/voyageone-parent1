@@ -1919,32 +1919,33 @@ public class PostBCBGOrderService {
 	private void translateOrderExtend(OrderExtend orderInfo) throws Exception {
 		ArrayList<String> translateContent = new ArrayList<String>();
 
+		translateContent.add("中国");
 		translateContent.add(orderInfo.getShipName());
-		translateContent.add(orderInfo.getShipAddress());
-		translateContent.add(orderInfo.getShipAddress2());
+		translateContent.add(StringUtils.isNullOrBlank2(orderInfo.getShipAddress())?orderInfo.getShipAddress2():orderInfo.getShipAddress());
+		translateContent.add(StringUtils.isNullOrBlank2(orderInfo.getShipAddress2())?orderInfo.getShipAddress():orderInfo.getShipAddress2());
 		translateContent.add(orderInfo.getShipCity());
 		translateContent.add(orderInfo.getShipState());
 
 		translateContent.add(orderInfo.getName());
-		translateContent.add(orderInfo.getAddress());
-		translateContent.add(orderInfo.getAddress2());
+		translateContent.add(StringUtils.isNullOrBlank2(orderInfo.getAddress()) ?orderInfo.getAddress2():orderInfo.getAddress());
+		translateContent.add(StringUtils.isNullOrBlank2(orderInfo.getAddress2()) ?orderInfo.getAddress():orderInfo.getAddress2());
 		translateContent.add(orderInfo.getCity());
 		translateContent.add(orderInfo.getState());
 
 //		List<String> afterTranslateContent = translate(translateContent, 1);
 		List<String> afterTranslateContent = BaiduTranslateUtil.translate(translateContent);
 
-		orderInfo.setShipName(afterTranslateContent.get(0));
-		orderInfo.setShipAddress(afterTranslateContent.get(1));
-		orderInfo.setShipAddress2(afterTranslateContent.get(2));
-		orderInfo.setShipCity(afterTranslateContent.get(3));
-		orderInfo.setShipState(afterTranslateContent.get(4));
+		orderInfo.setShipName(afterTranslateContent.get(1));
+		orderInfo.setShipAddress(afterTranslateContent.get(2));
+		orderInfo.setShipAddress2(afterTranslateContent.get(3));
+		orderInfo.setShipCity(afterTranslateContent.get(4));
+		orderInfo.setShipState(afterTranslateContent.get(5));
 
-		orderInfo.setName(afterTranslateContent.get(5));
-		orderInfo.setAddress(afterTranslateContent.get(6));
-		orderInfo.setAddress2(afterTranslateContent.get(7));
-		orderInfo.setCity(afterTranslateContent.get(8));
-		orderInfo.setState(afterTranslateContent.get(9));
+		orderInfo.setName(afterTranslateContent.get(6));
+		orderInfo.setAddress(afterTranslateContent.get(7));
+		orderInfo.setAddress2(afterTranslateContent.get(8));
+		orderInfo.setCity(afterTranslateContent.get(9));
+		orderInfo.setState(afterTranslateContent.get(10));
 	}
 
 	private List<String> translate(List<String> beforeStringList, int threadNo) throws Exception {

@@ -2915,7 +2915,8 @@
 			) trackingInfo
 		set odx.tracking_number = trackingInfo.tracking_number,
 				odx.sales_check_number = trackingInfo.sales_check_number,
-				odx.client_status = trackingInfo.client_status
+				odx.client_status = trackingInfo.client_status,
+				odx.reservation_status = trackingInfo.reservation_status
 		where
 				odx.order_number = trackingInfo.order_number and
 				odx.item_number = trackingInfo.item_number

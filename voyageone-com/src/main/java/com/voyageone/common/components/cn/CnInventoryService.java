@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.voyageone.common.components.cn.base.CnBase;
 import com.voyageone.common.components.cn.beans.InventoryUpdateBean;
 import com.voyageone.common.components.cn.enums.InventorySynType;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.HttpUtils;
 import org.springframework.stereotype.Component;
@@ -22,6 +23,8 @@ import java.util.Map;
  */
 @Component
 public class CnInventoryService extends CnBase {
+
+    public final String trustStore_jc = "/opt/app-shared/voyageone_web/contents/other/third_party/004/cn_key/juicycouture_store";
 
     /**
      * 更新独立域名的商品库存
@@ -43,6 +46,13 @@ public class CnInventoryService extends CnBase {
         List<Map<String, Object>> p = new ArrayList<>();
 
         Map<String, Object> b;
+
+        // JC官网使用https
+        if (shopBean.getOrder_channel_id().equals(ChannelConfigEnums.Channel.JC.getId())) {
+            logger.info("trustStore path: "+trustStore_jc);
+            System.setProperty("javax.net.ssl.trustStore", trustStore_jc);
+            System.setProperty("javax.net.ssl.trustStorePassword", "voyage1#");
+        }
 
         jsonMap.put("t", synType.val()); // 设定同步的类型为全量
 

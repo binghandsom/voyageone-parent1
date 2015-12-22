@@ -307,7 +307,7 @@ public class WmsUpdateStatusService extends BaseTaskService {
                             if (updateStatusBean.getItems() == null) {
                                 $info(channel.getFull_name() + "---------无需推送，Order_Number：" +orderDetail.getOrder_number());
                                 for (ReservationBean reservation : orderDetail.getLstReservation()) {
-                                    reservationDao.updateClientStatus(reservation.getOrder_number(), reservation.getItem_number(), reservation.getReservation_status(), getTaskName());
+                                    reservationDao.updateClientStatus(reservation.getOrder_number(), reservation.getItem_number(), reservation.getReservation_status(), reservation.getClient_status(), getTaskName());
                                 }
 
                             } else {
@@ -327,7 +327,7 @@ public class WmsUpdateStatusService extends BaseTaskService {
                                     $info(channel.getFull_name() + "---------更新订单相关状态成功："+json);
                                     for (ReservationBean reservation : orderDetail.getLstReservation()) {
 
-                                        reservationDao.updateClientStatus(reservation.getOrder_number(), reservation.getItem_number(), reservation.getReservation_status(), getTaskName());
+                                        reservationDao.updateClientStatus(reservation.getOrder_number(), reservation.getItem_number(), reservation.getReservation_status(), reservation.getClient_status(), getTaskName());
 
                                         if (!reservation.isClient_status_update()) {
                                             String note = "Push status to Sears(Reservation ID:" + reservation.getId() + "，Status:" + reservation.getClient_status() + ")";
