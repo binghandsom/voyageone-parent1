@@ -1,6 +1,5 @@
 package com.voyageone.batch.wms.service;
 
-import com.mongodb.WriteResult;
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.core.Enums.TaskControlEnums;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
@@ -9,12 +8,17 @@ import com.voyageone.batch.wms.dao.InventoryDao;
 import com.voyageone.batch.wms.modelbean.InventoryForCmsBean;
 import com.voyageone.batch.wms.mongoDao.InventoryTmpDao;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.configs.ShopConfigs;
+import com.voyageone.common.configs.beans.ShopBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *
+ */
 @Service
 public class WmsSynInventoryToCmsService extends BaseTaskService {
 
@@ -56,40 +60,36 @@ public class WmsSynInventoryToCmsService extends BaseTaskService {
         // 线程
         List<Runnable> threads = new ArrayList<>();
 
+        //删除wms_bt_inventory_aggregate TODO
+
         // 根据订单渠道运行
         for (final String orderChannelID : orderChannelIdList) {
 
             $info("channel_id=" + orderChannelID);
-//            threads.add(() -> new getSuperFeed(orderChannelID).doRun());
-            //如果 dbserver的定时任务运行中，本任务就跳过。或者临时表记录 > 0
-            if (inventoryTmpDao.count() != 0 ){
-                continue;
-            }
+
             //获取本渠道所有code级别库存
             List<InventoryForCmsBean> codeInventoryList =  inventoryDao.selectInventoryCode(orderChannelID,this.getTaskName());
             $info("orderChannelID:" + orderChannelID + "    库存记录数:" + codeInventoryList.size());
-            //将库存插入mongodb的临时表以便，dbserver端的cron程序进行批量处理
-            WriteResult result = inventoryTmpDao.insertWithList(codeInventoryList);
+
+            //批量更新code级库存 TODO
+//            bulkUpdateCodeQty(codeInventoryList);
+
+            //获取本渠道的cart
+            List<ShopBean> cartList = ShopConfigs.getChannelShopList(orderChannelID);
 
 
-            $info("result:" + result.toString());
+            for (int j = 0; j < cartList.size(); j++) {
+                //获取本Cart下所有group TODO
 
-            //更新本渠道mongodb中对应code的库存值
-//            productDao.updateCodeInventory(codeInventoryList);
-//            for (Inventory item:codeInventoryList){
-//                threads.add(() -> {
-//
-//                    try {
-//                        $info(i + "/" +codeInventoryList.size() );
-//                        i++;
-//                        productDao.updateCodeInventory(item);
-//
-//                    }catch (Exception e){
-//                        $info("mongodb有错误啦："+e.getMessage());
-//                    }
-//
-//                });
-//            }
+                //批量插入group级记录到mysql 10000条插入一次 TODO
+
+
+                //获取group级别库存 TODO
+
+
+                //批量更新mongodb的group级别库存 TODO
+            }
+
         }
 //        $info("mongodb 批量更新开始");
 //        runWithThreadPool(threads, taskControlList);
