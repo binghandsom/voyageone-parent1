@@ -3,6 +3,7 @@ package com.voyageone.cms.service;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.TypeRef;
+import com.mongodb.WriteResult;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.cms.service.dao.CmsBtFeedProductImageDao;
 import com.voyageone.cms.service.dao.mongodb.CmsBtFeedInfoDao;
@@ -15,10 +16,7 @@ import com.voyageone.common.util.DateTimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
@@ -280,4 +278,37 @@ public class FeedToCmsService {
         }
     }
 
+    /**
+     * 将完整的类目转为扁平的数据流
+     *
+     * @param feedCategoryTreeModel Feed 类目树
+     * @return 扁平化后的类目数据
+     */
+    public Stream<CmsFeedCategoryModel> flatten(CmsMtFeedCategoryTreeModel feedCategoryTreeModel) {
+
+        return feedCategoryTreeModel.getCategoryTree().stream().flatMap(this::flatten);
+    }
+
+    /**
+     * 将类目和其子类目全部转化为扁平的数据流
+     *
+     * @param feedCategoryModel 某 Feed 类目
+     * @return 扁平化后的类目数据
+     */
+    public Stream<CmsFeedCategoryModel> flatten(CmsFeedCategoryModel feedCategoryModel) {
+
+        Stream<CmsFeedCategoryModel> feedCategoryModelStream = Stream.of(feedCategoryModel);
+
+        List<CmsFeedCategoryModel> children = feedCategoryModel.getChild();
+
+        if (children != null && children.size() > 0)
+            feedCategoryModelStream = Stream.concat(feedCategoryModelStream, children.stream().flatMap(this::flatten));
+
+        return feedCategoryModelStream;
+    }
+
+    public WriteResult save(CmsMtFeedCategoryTreeModel treeModel) {
+
+        return cmsMtFeedCategoryTreeDao.update(treeModel);
+    }
 }

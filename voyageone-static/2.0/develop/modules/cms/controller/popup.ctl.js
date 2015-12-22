@@ -133,6 +133,7 @@ define([
             require([popActions.category.controllerUrl], function() {
                 defer.resolve(
                     $modal.open({
+                        backdrop: 'static',
                         templateUrl: popActions.category.templateUrl,
                         controller: 'categoryPopupController as ctrl',
                         size: viewSize,

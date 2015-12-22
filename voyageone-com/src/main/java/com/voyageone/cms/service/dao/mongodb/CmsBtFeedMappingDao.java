@@ -56,7 +56,8 @@ public class CmsBtFeedMappingDao extends BaseMongoDao {
      * @return 类目和属性对应关系
      */
     public CmsBtFeedMappingModel selectByKey(String channelId, String feedCategory, String mainCategoryIdPath) {
-        String query = String.format("{ scope.channelId: '%s', scope.feedCategoryPath: '%s', scope.mainCategoryIdPath: '%s'}", channelId, feedCategory, mainCategoryIdPath);
+        String query = String.format("{ scope.channelId: '%s', scope.feedCategoryPath: '%s', scope.mainCategoryPath: '%s'}",
+                channelId, feedCategory, mainCategoryIdPath);
 
         return selectOneWithQuery(query, channelId);
     }
