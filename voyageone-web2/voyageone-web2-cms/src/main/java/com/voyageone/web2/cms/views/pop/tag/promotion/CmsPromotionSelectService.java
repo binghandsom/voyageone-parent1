@@ -38,9 +38,9 @@ public class CmsPromotionSelectService extends BaseAppService {
     }
 
     public Map<String, Object> addToPromotion(Map<String, Object> params, String channelId, String modifier) {
-        int tag_id = (int) params.get("tagId");
+        String tag_path = params.get("tagPath").toString();
 
-        return this.add((ArrayList<Long>)params.get("productIds"), channelId, tag_id, modifier);
+        return this.add((ArrayList<Long>)params.get("productIds"), channelId, tag_path, modifier);
     }
 
     /**
@@ -53,7 +53,7 @@ public class CmsPromotionSelectService extends BaseAppService {
     /**
      * 增加商品的Tag
      */
-    public Map<String, Object> add(List<Long> prodIds, String channelId, int tagId, String modifier) {
+    public Map<String, Object> add(List<Long> prodIds, String channelId, String tagPath, String modifier) {
         Map<String, Object> ret = new HashMap<>();
         if (prodIds != null && prodIds.size() <= 500) {
             List<BulkUpdateModel> bulkList = new ArrayList<>();
@@ -62,7 +62,7 @@ public class CmsPromotionSelectService extends BaseAppService {
 
             for (Long prodId : prodIds) {
                 HashMap<String, Object> updateMap = new HashMap<>();
-                updateMap.put("tags", tagId);
+                updateMap.put("tags", tagPath);
                 HashMap<String, Object> queryMap = new HashMap<>();
                 queryMap.put("prodId", prodId);
                 BulkUpdateModel model = new BulkUpdateModel();
@@ -71,7 +71,7 @@ public class CmsPromotionSelectService extends BaseAppService {
                 bulkList.add(model);
 
                 CmsBtTagLogModel cmsBtTagLogModel = new CmsBtTagLogModel();
-                cmsBtTagLogModel.setTagId(tagId);
+                cmsBtTagLogModel.setTagId((int) tagPath.charAt(tagPath.length() - 2));
                 cmsBtTagLogModel.setProductId(prodId);
                 cmsBtTagLogModel.setComment("insert");
                 cmsBtTagLogModel.setCreater(modifier);
@@ -90,7 +90,7 @@ public class CmsPromotionSelectService extends BaseAppService {
     /**
      * 删除商品的Tag
      */
-    public Map<String, Object> remove(List<Long> prodIds, String channelId, int tagId, String modifier) {
+    public Map<String, Object> remove(List<Long> prodIds, String channelId, String tagPath, String modifier) {
         Map<String, Object> ret = new HashMap<>();
         if (prodIds != null && prodIds.size() <= 500) {
             List<BulkUpdateModel> bulkList = new ArrayList<>();
@@ -99,7 +99,7 @@ public class CmsPromotionSelectService extends BaseAppService {
 
             for (Long prodId : prodIds) {
                 HashMap<String, Object> updateMap = new HashMap<>();
-                updateMap.put("tags", tagId);
+                updateMap.put("tags", tagPath);
                 HashMap<String, Object> queryMap = new HashMap<>();
                 queryMap.put("prodId", prodId);
                 BulkUpdateModel model = new BulkUpdateModel();
@@ -108,7 +108,7 @@ public class CmsPromotionSelectService extends BaseAppService {
                 bulkList.add(model);
 
                 CmsBtTagLogModel cmsBtTagLogModel = new CmsBtTagLogModel();
-                cmsBtTagLogModel.setTagId(tagId);
+                cmsBtTagLogModel.setTagId((int) tagPath.charAt(tagPath.length() - 2));
                 cmsBtTagLogModel.setProductId(prodId);
                 cmsBtTagLogModel.setComment("delete");
                 cmsBtTagLogModel.setCreater(modifier);
