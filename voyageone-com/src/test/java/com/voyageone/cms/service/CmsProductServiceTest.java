@@ -265,7 +265,7 @@ public class CmsProductServiceTest {
         codeList.add("100002");
         cmsProductService.bathUpdateWithSXResult("001", 21, 804,
                 codeList, "123123123", "product_id1",
-                "2015-11-12 16:19:00", "2015-11-12 16:19:00",
+                "2015-11-12 16:19:00", "2015-11-12 16:19:00", null,
                 CmsConstants.PlatformStatus.Onsale);
     }
 }

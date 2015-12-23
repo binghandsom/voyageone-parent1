@@ -27,10 +27,10 @@ import java.util.List;
         value  = "/rest/puroduct",
         method = RequestMethod.POST
 )
-public class PostProductGetController extends CmsRestController {
+public class ProductGetController extends CmsRestController {
 
     @Autowired
-    private PostProductGetService productService;
+    private ProductGetService productService;
 
     /**
      * selectOne

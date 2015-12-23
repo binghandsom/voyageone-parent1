@@ -2,7 +2,6 @@ package com.voyageone.web2.cms.views.pop.tag.promotion;
 
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
-import com.voyageone.common.util.CommonUtil;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.dao.CmsBtTagDao;
 import com.voyageone.web2.cms.dao.CmsBtTagLogDao;
@@ -71,7 +70,7 @@ public class CmsPromotionSelectService extends BaseAppService {
                 bulkList.add(model);
 
                 CmsBtTagLogModel cmsBtTagLogModel = new CmsBtTagLogModel();
-                cmsBtTagLogModel.setTagId((int) tagPath.charAt(tagPath.length() - 2));
+                cmsBtTagLogModel.setTagId(Integer.parseInt(String.valueOf(tagPath.charAt(tagPath.length() - 2))));
                 cmsBtTagLogModel.setProductId(prodId);
                 cmsBtTagLogModel.setComment("insert");
                 cmsBtTagLogModel.setCreater(modifier);
@@ -108,7 +107,7 @@ public class CmsPromotionSelectService extends BaseAppService {
                 bulkList.add(model);
 
                 CmsBtTagLogModel cmsBtTagLogModel = new CmsBtTagLogModel();
-                cmsBtTagLogModel.setTagId((int) tagPath.charAt(tagPath.length() - 2));
+                cmsBtTagLogModel.setTagId(Integer.parseInt(String.valueOf(tagPath.charAt(tagPath.length() - 2))));
                 cmsBtTagLogModel.setProductId(prodId);
                 cmsBtTagLogModel.setComment("delete");
                 cmsBtTagLogModel.setCreater(modifier);

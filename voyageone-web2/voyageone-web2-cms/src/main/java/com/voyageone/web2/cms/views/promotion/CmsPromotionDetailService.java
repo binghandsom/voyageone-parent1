@@ -29,7 +29,7 @@ import java.util.*;
 public class CmsPromotionDetailService extends BaseAppService {
 
     @Autowired
-    protected ProductGetClient productSelectOneClient;
+    protected ProductGetClient productGetClient;
 
     @Autowired
     CmsPromotionModelDao cmsPromotionModelDao;
@@ -92,7 +92,7 @@ public class CmsPromotionDetailService extends BaseAppService {
                 }
 
                 // 获取Product信息
-                CmsBtProductModel productInfo = productSelectOneClient.getProductByCode(channelId, item.getCode());
+                CmsBtProductModel productInfo = productGetClient.getProductByCode(channelId, item.getCode());
 
                 // 插入cms_bt_promotion_model表
                 CmsBtPromotionGroupModel cmsBtPromotionGroupModel = new CmsBtPromotionGroupModel(productInfo, cartId, promotionId, operator);
@@ -115,7 +115,7 @@ public class CmsPromotionDetailService extends BaseAppService {
                 // tag写入数据库
                 List<Long> prodIds = new ArrayList<>();
                 prodIds.add(productInfo.getProdId());
-                cmsPromotionSelectService.add(prodIds, channelId, tagId, operator);
+                //cmsPromotionSelectService.add(prodIds, channelId, tagId, operator);
             } catch (Exception e) {
                 simpleTransaction.rollback();
                 response.get("fail").add(item.getCode());
@@ -138,7 +138,7 @@ public class CmsPromotionDetailService extends BaseAppService {
     public List<Map<String, Object>> getPromotionGroup(Map<String, Object> param) {
         List<Map<String, Object>> promotionGroups = cmsPromotionModelDao.getPromotionModelDetailList(param);
         promotionGroups.forEach(map -> {
-            CmsBtProductModel cmsBtProductModel = productSelectOneClient.getProductById(param.get("channelId").toString(), (Long) map.get("productId"));
+            CmsBtProductModel cmsBtProductModel = productGetClient.getProductById(param.get("channelId").toString(), (Long) map.get("productId"));
 
             if (cmsBtProductModel != null) {
                 map.put("image", cmsBtProductModel.getFields().getImages1().get(0).getName());
@@ -159,7 +159,7 @@ public class CmsPromotionDetailService extends BaseAppService {
         List<CmsBtPromotionCodeModel> promotionGroups = cmsPromotionCodeDao.getPromotionCodeList(param);
         promotionGroups.forEach(map -> {
             //SDK取得Product 数据
-            CmsBtProductModel cmsBtProductModel = productSelectOneClient.getProductById(param.get("channelId").toString(), map.getProductId());
+            CmsBtProductModel cmsBtProductModel = productGetClient.getProductById(param.get("channelId").toString(), map.getProductId());
             if (cmsBtProductModel != null) {
                 map.setImage(cmsBtProductModel.getFields().getImages1().get(0).getName());
                 map.setSkuCount(cmsBtProductModel.getSkus().size());
@@ -180,7 +180,7 @@ public class CmsPromotionDetailService extends BaseAppService {
         promotionSkus.forEach(map -> {
             CmsBtProductModel cmsBtProductModel;
             if (!temp.containsKey(map.get("productId").toString())) {
-                cmsBtProductModel = productSelectOneClient.getProductById(param.get("channelId").toString(), (Long) map.get("productId"));
+                cmsBtProductModel = productGetClient.getProductById(param.get("channelId").toString(), (Long) map.get("productId"));
                 temp.put(map.get("productId").toString(), cmsBtProductModel);
             } else {
                 cmsBtProductModel = temp.get(map.get("productId").toString());
