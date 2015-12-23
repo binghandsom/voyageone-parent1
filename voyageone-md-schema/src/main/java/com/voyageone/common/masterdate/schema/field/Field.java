@@ -285,4 +285,6 @@ public abstract class Field {
         Field that = (Field) obj;
         return this.id.equals(that.getId());
     }
+
+    public abstract Object getValue();
 }
