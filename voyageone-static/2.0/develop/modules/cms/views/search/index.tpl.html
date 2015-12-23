@@ -1,9 +1,9 @@
 <div class="wrapper-md" ng-init="initialize()">
 	<accordion class="vo_accordion vo_attr" close-others="oneAtATime">
-		<accordion-group is-open="status.open">
+		<accordion-group is-open="vm.status.open">
 			<accordion-heading>
 				<i class="fa fa-search"></i>&nbsp;{{'TXT_SEARCH_CONDITION' | translate}}
-				<i class="pull-right glyphicon glyphicon-menu-down" ng-class="{'glyphicon-menu-up': status.open, 'glyphicon-menu-down': !status.open}"></i>
+				<i class="pull-right glyphicon glyphicon-menu-down" ng-class="{'glyphicon-menu-up': vm.status.open, 'glyphicon-menu-down': !vm.status.open}"></i>
 			</accordion-heading>
 			<!-- search -->
 			<div class="col-sm-12" >
