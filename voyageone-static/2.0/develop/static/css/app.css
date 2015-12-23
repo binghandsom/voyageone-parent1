@@ -6584,6 +6584,9 @@ input:checked + ol > li {
 .panel-drag {
   border-color: #fdecdd;
   background:#fefcf9;
+  overflow-y: auto;
+  overflow-scrolling: touch;
+  -webkit-overflow-scrolling: touch;
 }
 
 .category_drag_list{

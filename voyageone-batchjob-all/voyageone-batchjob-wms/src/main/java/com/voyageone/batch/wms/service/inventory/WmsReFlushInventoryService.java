@@ -94,8 +94,9 @@ public class WmsReFlushInventoryService extends BaseTaskService {
                     if (res == null || !res.contains("Success")) {
                         logIssue(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存刷新失败", shopBean);
                     }
-                } catch (UnsupportedEncodingException e) {
-                    logIssue(e);
+                } catch (Exception e) {
+                    logger.info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存刷新失败：" + e);
+                    logIssue(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存刷新失败", e);
                 }
             }
             logger.info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存刷新结束。" + StringUtils.null2Space2(res));
