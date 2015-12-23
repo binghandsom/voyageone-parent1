@@ -7,12 +7,12 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popPropChangeCtl', function ($scope, $propChangeService, selList) {
+    angularAMD.controller('popPropChangeCtl', function ($scope, $propChangeService, productIds) {
 
         $scope.vm = {
             propertyInfo: {
                 property: {},
-                productIds: selList
+                productIds: productIds
             },
             properties: []
         };

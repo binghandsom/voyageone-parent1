@@ -9,16 +9,14 @@ define([
 
         $scope.vm = {
             promotionInfo: {
-                tagId: promotion.tagId,
-                productIds: []
+                tagPath: null,
+                productIds: promotion.productIds
             },
-            promotion: {},
+            promotion: promotion.promotion,
             subPromotionList: []
         };
 
         $scope.initialize = function () {
-            $scope.vm.promotion = promotion.promotion;
-            $scope.vm.promotionInfo.productIds = promotion.productIds;
 
             $tagPromotionService.getPromotionTags($scope.vm.promotion).then(function (res) {
                 $scope.vm.subPromotionList = res.data;
