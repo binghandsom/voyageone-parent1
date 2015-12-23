@@ -80,31 +80,34 @@ define([
             searchGroup();
             searchCode();
             searchSku();
-        }
+        };
 
         $scope.updateCode = function(code){
             promotionDetailService.updatePromotionProduct(code).then(function (res) {
+                code.promotionPriceBak = code.promotionPrice;
                 notify.success("success");
             }, function (err) {
                 notify.warning("fail");
             })
-        }
+        };
 
         $scope.delPromotionModel = function(group){
             var data = [];
-            data.push(group)
+            data.push(group);
             promotionDetailService.delPromotionModel(data).then(function (res) {
                 notify.success("success");
+                $scope.search();
             }, function (err) {
                 notify.warning("fail");
             })
-        }
+        };
 
         $scope.delPromotionCode = function(code){
-            var data = [];
-            data.push(code)
-            promotionDetailService.delPromotionCode(data).then(function (res) {
+            var parameter = [];
+            parameter.push(code);
+            promotionDetailService.delPromotionCode(parameter).then(function (res) {
                 notify.success("success");
+                $scope.search();
             }, function (err) {
                 notify.warning("fail");
             })
