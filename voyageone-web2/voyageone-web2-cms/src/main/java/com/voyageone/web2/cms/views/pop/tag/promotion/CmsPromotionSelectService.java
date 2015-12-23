@@ -40,7 +40,7 @@ public class CmsPromotionSelectService extends BaseAppService {
     public Map<String, Object> addToPromotion(Map<String, Object> params, String channelId, String modifier) {
         int tag_id = (int) params.get("tagId");
 
-        return this.add(CommonUtil.changeListType((ArrayList<Integer>)params.get("productIds")), channelId, tag_id, modifier);
+        return this.add((ArrayList<Long>)params.get("productIds"), channelId, tag_id, modifier);
     }
 
     /**
@@ -73,10 +73,48 @@ public class CmsPromotionSelectService extends BaseAppService {
                 CmsBtTagLogModel cmsBtTagLogModel = new CmsBtTagLogModel();
                 cmsBtTagLogModel.setTagId(tagId);
                 cmsBtTagLogModel.setProductId(prodId);
+                cmsBtTagLogModel.setComment("insert");
                 cmsBtTagLogModel.setCreater(modifier);
                 cmsBtTagLogModelList.add(cmsBtTagLogModel);
             }
             cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, modifier, "$addToSet");
+            cmsBtTagLogDao.insertCmsBtTagLogList(cmsBtTagLogModelList);
+            ret.put("result", "success");
+        } else {
+            ret.put("result", "failed");
+            ret.put("errMsg", "商品数量过多");
+        }
+        return ret;
+    }
+
+    /**
+     * 删除商品的Tag
+     */
+    public Map<String, Object> remove(List<Long> prodIds, String channelId, int tagId, String modifier) {
+        Map<String, Object> ret = new HashMap<>();
+        if (prodIds != null && prodIds.size() <= 500) {
+            List<BulkUpdateModel> bulkList = new ArrayList<>();
+
+            List<CmsBtTagLogModel> cmsBtTagLogModelList = new ArrayList<>();
+
+            for (Long prodId : prodIds) {
+                HashMap<String, Object> updateMap = new HashMap<>();
+                updateMap.put("tags", tagId);
+                HashMap<String, Object> queryMap = new HashMap<>();
+                queryMap.put("prodId", prodId);
+                BulkUpdateModel model = new BulkUpdateModel();
+                model.setUpdateMap(updateMap);
+                model.setQueryMap(queryMap);
+                bulkList.add(model);
+
+                CmsBtTagLogModel cmsBtTagLogModel = new CmsBtTagLogModel();
+                cmsBtTagLogModel.setTagId(tagId);
+                cmsBtTagLogModel.setProductId(prodId);
+                cmsBtTagLogModel.setComment("delete");
+                cmsBtTagLogModel.setCreater(modifier);
+                cmsBtTagLogModelList.add(cmsBtTagLogModel);
+            }
+            cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, modifier, "$pull");
             cmsBtTagLogDao.insertCmsBtTagLogList(cmsBtTagLogModelList);
             ret.put("result", "success");
         } else {

@@ -8,8 +8,13 @@
   "TXT_COM_MSG_NO_DATE": "当前数据为空，请稍后再来....TKS!",
   "TXT_COM_ERROR": "出错了：",
   "TXT_COM_MSG_ERROR": "天嗯啊，请稍后再来....TKS!",
+  "TXT_COM_ALERT": "警告",
+  "TXT_COM_CONFIRM": "确认",
+  "TXT_COM_MSG_NO_ROWS_SELECT": "请至少选择一条数据...",
 
   "BTN_COM_GO": "Go",
+  "BTN_COM_CANCEL": "Cancel",
+  "BTN_COM_OK": "Ok",
 
   "TXT_VOYAGE_ONE": "沃易智",
   "TXT_LOGOUT": "注销",
@@ -78,11 +83,15 @@
   "TXT_MSG_TAG_PROMOTION": "确认将选中项目加入该活动？",
   "TXT_ONLY_FOR_PROMOTION_CATEGORY": "Promotion专用店铺类目:",
   "TXT_SELECT_NO_VALUE": "请选择...",
+  "TXT_BULK_UPDATE_PROPERTY": "批量属性设置",
+  "TXT_PROPERTY_NAME": "属性名:",
+  "TXT_PROPERTY_VALUE": "属性值:",
 
   "BTN_CANCEL": "取消 ",
   "BTN_CLEAR": "清空",
   "BTN_SEARCH": "检索",
   "BTN_EXPORT": "导出",
   "BTN_GO": "Go",
-  "BTN_SAVE": "保存"
+  "BTN_SAVE": "保存",
+  "BTN_OK": "Ok"
 }

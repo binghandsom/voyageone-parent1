@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /**
@@ -67,11 +68,7 @@ public class CmsFeedMappingService extends BaseAppService {
         // 记录需要删除的 Mapping,同步删除 Mapping 表的数据
         // 记录需要新增的 Mapping,同步新增的 Mapping 表
 
-        CmsFeedMappingModel defaultMapping = cmsFeedCategoryModel.getMapping()
-                .stream()
-                .filter(m -> m.getDefaultMapping() == 1)
-                .findFirst()
-                .orElse(null);
+        CmsFeedMappingModel defaultMapping = findMapping(cmsFeedCategoryModel, m -> m.getDefaultMapping() == 1);
 
         if (defaultMapping != null) {
             if (defaultMapping.getMainCategoryPath().equals(setMappingBean.getTo()))
@@ -82,11 +79,8 @@ public class CmsFeedMappingService extends BaseAppService {
             }
         }
 
-        CmsFeedMappingModel mapping = cmsFeedCategoryModel.getMapping()
-                .stream()
-                .filter(m -> m.getMainCategoryPath().equals(setMappingBean.getTo()))
-                .findFirst()
-                .orElse(null);
+        CmsFeedMappingModel mapping = findMapping(cmsFeedCategoryModel, m ->
+                m.getMainCategoryPath().equals(setMappingBean.getTo()));
 
         if (mapping != null) {
             mapping.setDefaultMapping(1);
@@ -104,7 +98,10 @@ public class CmsFeedMappingService extends BaseAppService {
             mapping.setDefaultMapping(1);
             mapping.setDefaultMain(hasDefaultMain ? 0 : 1);
 
+            setChildrenMapping(cmsFeedCategoryModel, mapping);
+
             cmsFeedCategoryModel.getMapping().add(mapping);
+
             feedMappingContext.addMapping(mapping, user.getUserName());
         }
 
@@ -112,6 +109,45 @@ public class CmsFeedMappingService extends BaseAppService {
         feedToCmsService.save(treeModel);
 
         return cmsFeedCategoryModel.getMapping();
+    }
+
+    private void setChildrenMapping(CmsFeedCategoryModel cmsFeedCategoryModel, CmsFeedMappingModel mapping) {
+
+        feedToCmsService.flatten(cmsFeedCategoryModel.getChild()).forEach(child -> {
+
+
+        });
+    }
+
+    private void setChildMapping(CmsFeedCategoryModel feedCategoryModel, CmsFeedMappingModel parentMapping) {
+
+        // 搜索 DefaultFeed Mapping
+        // 如果有,则该子类目不需要被设定 Mapping
+        // 如果没有,尝试检查目标类目是否已经被匹配到当前类目
+        // 如果有,则变更为 DefaultFeed
+        // 如果没有,则新建
+
+        CmsFeedMappingModel defaultMapping = findMapping(feedCategoryModel, m -> m.getDefaultMapping() == 1);
+
+        if (defaultMapping != null) return;
+
+        CmsFeedMappingModel mapping = findMapping(feedCategoryModel, m ->
+                m.getMainCategoryPath().equals(parentMapping.getMainCategoryPath()));
+
+        if (mapping == null) {
+            mapping = new CmsFeedMappingModel();
+            mapping.setMainCategoryPath(parentMapping.getMainCategoryPath());
+        }
+
+        mapping.setDefaultMapping(1);
+    }
+
+    private CmsFeedMappingModel findMapping(CmsFeedCategoryModel feedCategoryModel, Predicate<CmsFeedMappingModel> predicate) {
+        return feedCategoryModel.getMapping()
+                .stream()
+                .filter(predicate)
+                .findFirst()
+                .orElse(null);
     }
 
     private CmsFeedCategoryModel findByPath(String path, CmsMtFeedCategoryTreeModel treeModel) {

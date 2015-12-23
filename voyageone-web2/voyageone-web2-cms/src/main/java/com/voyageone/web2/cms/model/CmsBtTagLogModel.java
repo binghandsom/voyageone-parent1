@@ -11,6 +11,7 @@ public class CmsBtTagLogModel extends BaseModel {
     private int seq;
     private long productId;
     private int tagId;
+    private String comment;
 
     public int getSeq() {
         return seq;
@@ -34,5 +35,13 @@ public class CmsBtTagLogModel extends BaseModel {
 
     public void setTagId(int tagId) {
         this.tagId = tagId;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }

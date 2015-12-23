@@ -14,9 +14,9 @@ public class OrderItem {
 
     private String itemId;
     private int quantity;
-    private double itemPrice;
-    private double shipCharge;
-    private double customsDuty;
+    private float itemPrice;
+    private float shipCharge;
+    private float customsDuty;
     private OrderFeesBean fees;
 
     public String getItemId() {
@@ -35,27 +35,27 @@ public class OrderItem {
         this.quantity = quantity;
     }
 
-    public double getItemPrice() {
+    public float getItemPrice() {
         return itemPrice;
     }
 
-    public void setItemPrice(double itemPrice) {
+    public void setItemPrice(float itemPrice) {
         this.itemPrice = itemPrice;
     }
 
-    public double getShipCharge() {
+    public float getShipCharge() {
         return shipCharge;
     }
 
-    public void setShipCharge(double shipCharge) {
+    public void setShipCharge(float shipCharge) {
         this.shipCharge = shipCharge;
     }
 
-    public double getCustomsDuty() {
+    public float getCustomsDuty() {
         return customsDuty;
     }
 
-    public void setCustomsDuty(double customsDuty) {
+    public void setCustomsDuty(float customsDuty) {
         this.customsDuty = customsDuty;
     }
 

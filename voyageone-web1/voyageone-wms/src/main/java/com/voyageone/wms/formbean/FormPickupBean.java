@@ -80,6 +80,15 @@ public class FormPickupBean  extends ReservationBean {
     // 品牌方SKU
     public String  client_sku;
 
+    // 品牌方ID
+    public String  client_id;
+
+    // 品牌方订单号
+    public String  client_order_id;
+
+    // 品牌方物品ID
+    public String  tracking_number;
+
     public String getOrder_channel_name() {
         return order_channel_name;
     }
@@ -254,5 +263,29 @@ public class FormPickupBean  extends ReservationBean {
 
     public void setClient_sku(String client_sku) {
         this.client_sku = client_sku;
+    }
+
+    public String getClient_id() {
+        return client_id;
+    }
+
+    public void setClient_id(String client_id) {
+        this.client_id = client_id;
+    }
+
+    public String getClient_order_id() {
+        return client_order_id;
+    }
+
+    public void setClient_order_id(String client_order_id) {
+        this.client_order_id = client_order_id;
+    }
+
+    public String getTracking_number() {
+        return tracking_number;
+    }
+
+    public void setTracking_number(String tracking_number) {
+        this.tracking_number = tracking_number;
     }
 }

@@ -104,7 +104,7 @@ public class ReservationDao extends BaseDao {
      * @param orderChannelList 用户所属的ChannelID
      * @return List<FormPickupBean>
      */
-    public List<FormPickupBean> getScanInfo(String scanMode, String scanType, String scanNo, String scanStatus, String scanStore, List<ChannelStoreBean>  storeList, List<String> orderChannelList) {
+    public List<FormPickupBean> getScanInfo(String scanMode, String scanType, String scanNo, String scanStatus, String scanStore, List<ChannelStoreBean>  storeList, List<String> orderChannelList, String reserveType) {
 
         Map<String, Object> params = new HashMap<>();
 
@@ -115,6 +115,7 @@ public class ReservationDao extends BaseDao {
         params.put("scanStore", StringUtils.isNullOrBlank2(scanStore)? "0" :scanStore);
         params.put("storeList", storeList);
         params.put("orderChannelList", orderChannelList);
+        params.put("reserveType", reserveType);
 
         return updateTemplate.selectList(Constants.DAO_NAME_SPACE_WMS + "viw_wms_reservation_pickup_mapping_getScanInfo", params);
 

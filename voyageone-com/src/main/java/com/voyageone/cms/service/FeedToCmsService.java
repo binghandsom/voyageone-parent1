@@ -279,7 +279,7 @@ public class FeedToCmsService {
     }
 
     /**
-     * 将完整的类目转为扁平的数据流
+     * 将类目和其子类目全部转化为扁平的数据流
      *
      * @param feedCategoryTreeModel Feed 类目树
      * @return 扁平化后的类目数据
@@ -287,6 +287,17 @@ public class FeedToCmsService {
     public Stream<CmsFeedCategoryModel> flatten(CmsMtFeedCategoryTreeModel feedCategoryTreeModel) {
 
         return feedCategoryTreeModel.getCategoryTree().stream().flatMap(this::flatten);
+    }
+
+    /**
+     * 将类目和其子类目全部转化为扁平的数据流
+     *
+     * @param feedCategoryModels 多个类目
+     * @return 扁平化后的类目数据
+     */
+    public Stream<CmsFeedCategoryModel> flatten(List<CmsFeedCategoryModel> feedCategoryModels) {
+
+        return feedCategoryModels.stream().flatMap(this::flatten);
     }
 
     /**
@@ -311,4 +322,6 @@ public class FeedToCmsService {
 
         return cmsMtFeedCategoryTreeDao.update(treeModel);
     }
+
+
 }

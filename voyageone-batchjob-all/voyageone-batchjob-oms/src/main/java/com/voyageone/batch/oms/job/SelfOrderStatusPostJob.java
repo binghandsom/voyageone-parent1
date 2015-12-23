@@ -105,6 +105,10 @@ public class SelfOrderStatusPostJob {
 				logger.info("调用独立域名WebService：order_status_update_request.php开始");
 				String postUrl = TaskControlUtils.getVal2(taskControlList, TaskControlEnums.Name.order_channel_id, orderChannelId);
 				logger.info("postUrl:" + postUrl);
+
+				// https
+				System.setProperty("javax.net.ssl.trustStore", "/opt/app-shared/voyageone_web/contents/other/third_party/com/trustStore/trustStore");
+
 				String response= orderInfoImportService.postOrder(postXML, postUrl);
 				logger.info("返回结果：" + response);
 				

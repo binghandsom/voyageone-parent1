@@ -5,7 +5,8 @@ public enum MagentoType {
 	SPALDING_WEB("SPALDING","25","11","005","100000000"),
 	SPALDING_MOB("SPALDING","25","12","005","110000000"),
 	SNEAKER_WEB("SNEAKER","25","8","001","800000000"),
-	SNEAKER_MOB("SNEAKER","25","9","001","810000000");
+	SNEAKER_MOB("SNEAKER","25","9","001","810000000"),
+	JUICY("JUICY","25","","004","");
 
 	private	String channelName;	
 	private String cartId;
