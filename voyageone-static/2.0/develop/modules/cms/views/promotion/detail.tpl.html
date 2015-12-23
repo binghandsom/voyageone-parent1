@@ -148,7 +148,7 @@
 									</div>
 								</small>
 							</td>
-							<td class="mfb-xxt text-right"><button class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button></td>
+							<td class="mfb-xxt text-right"><button class="btn btn-danger btn-xs" ng-click="delPromotionModel(group)"><i class="fa fa-trash-o"></i></button></td>
 						</tr>
 						</tbody>
 					</table>
@@ -191,7 +191,7 @@
 							<td class="mfb-xxt">
 								<img src="http://image.sneakerhead.com/is/image/sneakerhead/{{code.image}}" alt="{{code.productName}}" class="img-circle pull-left m-r"/>
 							</td>
-							<td class="mfb-xxt text-center">{{(code.promotionPrice/code.salePrice*100).toFixed(1)}}折</td>
+							<td class="mfb-xxt text-center">{{(code.promotionPrice/code.msrp*100).toFixed(1)}}折</td>
 							<td class="mfb-xxt text-center">
 								<button popover="LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20" popover-title="Inventory" type="button" popover-placement="left" class="btn btn-default btn-xs">1200</button>
 							</td>
@@ -225,7 +225,7 @@
 						</td>
 						<td class="mfb-xxt text-right">
 						   <button ng-if="code.promotionPrice != code.promotionPriceBak" title="保存" class="btn btn-success btn-xs" ng-click="updateCode(code)"><i class="fa fa-floppy-o"></i></button>
-							<button class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button>
+							<button class="btn btn-danger btn-xs"><i class="fa fa-trash-o" ng-click="delPromotionCode(code)"></i></button>
 						</td>
 						</tr>
 						</tbody>

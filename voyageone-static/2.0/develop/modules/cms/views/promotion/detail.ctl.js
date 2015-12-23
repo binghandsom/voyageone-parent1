@@ -89,5 +89,25 @@ define([
                 notify.warning("fail");
             })
         }
+
+        $scope.delPromotionModel = function(group){
+            var data = [];
+            data.push(group)
+            promotionDetailService.delPromotionModel(data).then(function (res) {
+                notify.success("success");
+            }, function (err) {
+                notify.warning("fail");
+            })
+        }
+
+        $scope.delPromotionCode = function(code){
+            var data = [];
+            data.push(code)
+            promotionDetailService.delPromotionCode(data).then(function (res) {
+                notify.success("success");
+            }, function (err) {
+                notify.warning("fail");
+            })
+        }
     };
 });
