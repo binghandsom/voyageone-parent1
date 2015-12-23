@@ -7,7 +7,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popPropChangeCtl', function ($scope, $propChangeService, productIds) {
+    angularAMD.controller('popPropChangeCtl', function ($scope, $propChangeService, $translate, notify, productIds) {
 
         $scope.vm = {
             propertyInfo: {
@@ -28,6 +28,7 @@ define([
 
         function save () {
             $propChangeService.setProductFields($scope.vm.propertyInfo).then(function () {
+                notify.success ($translate.instant('TXT_COM_UPDATE_SUCCESS'));
                 $scope.$close();
             });
         }
