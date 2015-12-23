@@ -12,23 +12,16 @@ import java.util.Set;
 
 @Service
 public class ProductsGetClient {
+
     @Autowired
     protected VoApiDefaultClient voApiClient;
 
     /**
      * 获取商品 根据ID List
      */
-    public List<CmsBtProductModel> getProductByIds(String channelId, Set<Long> productIdList, Set<String> fields) {
-        //设置参数
-        ProductsGetRequest requestModel = new ProductsGetRequest(channelId);
-        requestModel.setProductIds(productIdList);
-        for (String field : fields) {
-            requestModel.addField(field);
-        }
-
+    public ProductsGetResponse getProducts(ProductsGetRequest request) {
         //SDK取得Product 数据
-        ProductsGetResponse response = (ProductsGetResponse)voApiClient.execute(requestModel);
-        return response.getProducts();
+        return voApiClient.execute(request);
     }
 
 //    /**
