@@ -5,6 +5,7 @@
         <id column="seq" property="seq" jdbcType="INTEGER" />
         <result column="product_id" property="productId" jdbcType="INTEGER" />
         <result column="tag_id" property="tagId" jdbcType="INTEGER" />
+        <result column="comment" property="comment" jdbcType="VARCHAR" />
         <result column="created" property="created" jdbcType="TIMESTAMP" />
         <result column="creater" property="creater" jdbcType="VARCHAR" />
         <result column="modified" property="modified" jdbcType="TIMESTAMP" />
@@ -15,6 +16,7 @@
         (
             product_id,
             tag_id,
+            comment,
             created,
             creater,
             modified,
@@ -24,6 +26,7 @@
         (
             #{item.productId},
             #{item.tagId},
+            #{item.comment},
             now(),
             #{item.creater},
             now(),
