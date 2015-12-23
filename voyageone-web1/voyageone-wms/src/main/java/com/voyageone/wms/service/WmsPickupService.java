@@ -29,7 +29,7 @@ public interface WmsPickupService {
      * @param user 用户登录信息
      * @return List<FormReservation> 捡货记录
      */
-    List<FormReservation> getPickupInfo(Map<String, Object> paramMap, UserSessionBean user);
+    List<FormReservation> getPickupInfo(Map<String, Object> paramMap, UserSessionBean user,String reserveType);
 
     /**
      * 【捡货页面】根据检索条件查询取得需要捡货的一览件数
@@ -37,7 +37,7 @@ public interface WmsPickupService {
      * @param user 用户登录信息
      * @return long 捡货记录的件数
      */
-    int getPickupCount(Map<String, Object> paramMap, UserSessionBean user);
+    int getPickupCount(Map<String, Object> paramMap, UserSessionBean user,String reserveType);
 
     /**
      * 【捡货页面】根据扫描的内容取得相关记录

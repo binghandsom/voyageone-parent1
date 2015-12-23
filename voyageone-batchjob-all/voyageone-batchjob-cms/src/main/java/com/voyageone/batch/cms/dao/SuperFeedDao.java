@@ -181,7 +181,7 @@ public class SuperFeedDao extends BaseDao {
         return selectList("cms_superfeed_selectSuperfeedModel", params);
     }
 
-    public List<CmsBtFeedInfoModel> selectSuperfeedModel(String keyword, Map params, String tableName) {
+    public List<ModelBean> selectSuperfeedModel(String keyword, Map params, String tableName) {
         params.put("keyword", keyword);
         params.put("tableName", tableName);
 

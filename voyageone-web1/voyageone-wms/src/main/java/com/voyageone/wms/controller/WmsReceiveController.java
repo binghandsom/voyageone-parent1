@@ -59,10 +59,10 @@ public class WmsReceiveController extends BaseController {
     public void searchPickup(@RequestBody Map<String, Object> paramMap, HttpServletResponse response) {
 
         // 根据检索条件取得抽出记录
-        List<FormReservation> pickupList = pickupService.getPickupInfo(paramMap, getUser());
+        List<FormReservation> pickupList = pickupService.getPickupInfo(paramMap, getUser(),WmsConstants.ReserveType.Receive);
 
         // 根据检索条件取得抽出记录的件数
-        int pickupCount = pickupService.getPickupCount(paramMap, getUser());
+        int pickupCount = pickupService.getPickupCount(paramMap, getUser(),WmsConstants.ReserveType.Receive);
 
         // 设置返回画面的值
         JsonObj result = new JsonObj()

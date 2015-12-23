@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.wms.sql">
+
+    <!-- SKU记录取出 -->
+    <select id="wms_getItemDetaiInfo" resultType="com.voyageone.batch.wms.modelbean.ItemDetailsBean">
+        SELECT
+          *
+        FROM
+          wms_bt_item_details
+        WHERE
+          order_channel_id = #{order_channel_id}
+  </select>
+
+
+</mapper>

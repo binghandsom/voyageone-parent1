@@ -2,6 +2,7 @@ package com.voyageone.batch.synship.dao;
 
 import com.voyageone.base.dao.BaseDao;
 import com.voyageone.batch.synship.modelbean.ReservationBean;
+import com.voyageone.batch.synship.modelbean.ReservationClientBean;
 import com.voyageone.batch.synship.modelbean.TrackingBean;
 import com.voyageone.batch.synship.modelbean.TrackingSyncBean;
 import org.springframework.stereotype.Repository;
@@ -153,4 +154,57 @@ public class ReservationDao extends BaseDao {
     }
 
 
+    /**
+     * 取得相关渠道订单状态为Open的订单
+     * @param order_channel_id 订单渠道
+     * @param status 状态
+     */
+    public List<ReservationClientBean> getReservationDatas(String order_channel_id, String status) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("order_channel_id", order_channel_id);
+        params.put("status", status);
+
+        return selectList("synShip_selectReservationDatas", params);
+    }
+
+    /**
+     * 根据res_id和syn_ship_no更新res_status
+     * @param syn_ship_no
+     * @param status
+     * @param task_name
+     * @param longResids
+     * @return
+     */
+    public int updateReservationBySynshipno(String syn_ship_no, String status,  String task_name,Long[] longResids) {
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("syn_ship_no", syn_ship_no);
+        params.put("status", status);
+        params.put("task_name", task_name);
+        //String resid = "(" + res_id + ")";
+        params.put("longResids", longResids);
+        return updateTemplate.update("synShip_UpdateReservationBySynshipno", params);
+    }
+
+    /**
+     * 根据res_id和syn_ship_no插入wms_bt_reservation_log表
+     * @param syn_ship_no
+     * @param res_note
+     * @param task_name
+     * @param longResids
+     * @return
+     */
+    public int insertReservationLogByInResID(String syn_ship_no, String res_note, String task_name,Long[] longResids) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("syn_ship_no", syn_ship_no);
+        params.put("res_note", res_note);
+        params.put("task_name", task_name);
+        //params.put("res_id", resid);
+        params.put("longResids", longResids);
+        return updateTemplate.insert( "synShip_InsertReservationLogByInID", params);
+    }
 }
