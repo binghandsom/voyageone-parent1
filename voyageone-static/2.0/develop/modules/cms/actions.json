@@ -78,6 +78,14 @@
     "taskPriceService": {
       "root": "/cms/task/price",
       "getPriceList": "getPriceList"
+    },
+    "productDetailService":{
+      "root":"/cms/product/detail/",
+      "getProductInfo":"getProductInfo",
+      "saveProductInfo":"saveProductInfo",
+      "chagneCategory":"chagneCategory",
+      "confirmChange":"confirmChange",
+      "revertCategory":"revertCategory"
     }
   }
 }

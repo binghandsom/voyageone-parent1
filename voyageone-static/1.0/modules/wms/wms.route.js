@@ -21,7 +21,7 @@ define(["angularAMD", "components/app", "components/util/commonUtil", "underscor
             transfer: {
                 list: {
                     hash: "/wms/transfer/list",
-                    page: "modules/wms/transfer/list.tpl.html",
+                    page: "modules/wms/transfer/productPropsEdit.tpl.html",
                     controller: "modules/wms/transfer/transferListCtrl"
                 },
                 add: {
@@ -91,7 +91,7 @@ define(["angularAMD", "components/app", "components/util/commonUtil", "underscor
             backOrder: {
                 list:{
                     hash: "/wms/backOrder/list",
-                    page: "modules/wms/backorder/list.tpl.html",
+                    page: "modules/wms/backorder/productPropsEdit.tpl.html",
                     controller: "modules/wms/backorder/listCtrl"
                 }
             },
