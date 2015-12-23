@@ -1,6 +1,7 @@
 package com.voyageone.batch.cms.service.rule_parser;
 
 import com.voyageone.cms.service.model.CmsBtProductModel;
+import com.voyageone.common.masterdate.schema.Util.StringUtil;
 import com.voyageone.ims.rule_expression.MasterWord;
 import com.voyageone.ims.rule_expression.RuleWord;
 import com.voyageone.ims.rule_expression.WordType;
@@ -44,12 +45,14 @@ public class MasterWordParser {
                 evaluationContext = evaluationContextStack.get(0);
             }
             if (evaluationContext == null) {
+                //TODO 将要删除
                 plainPropValueObj = cmsBtProductModel.getFields().getAttribute(propName);
             } else {
                 plainPropValueObj = evaluationContext.get(propName);
             }
             //如果evaluetionContext存在，但其中的某属性为空，那么从全局取
             if (plainPropValueObj == null) {
+                //TODO 将要删除
                 plainPropValueObj = cmsBtProductModel.getFields().getAttribute(propName);
             }
 
@@ -62,8 +65,8 @@ public class MasterWordParser {
             } else {
                 if (plainPropValueObj instanceof String) {
                     return extra.get(plainPropValueObj);
-                } else if (plainPropValueObj instanceof  String[]) {
-                    String[] plainPropValues = (String[]) plainPropValueObj;
+                } else if (plainPropValueObj instanceof  ArrayList) {
+                    List<String> plainPropValues = (List<String>) plainPropValueObj;
                     List<String> mappedPropValues = new ArrayList<>();
                     for (String plainPropValue : plainPropValues) {
                         mappedPropValues.add(extra.get(plainPropValue));

@@ -3,7 +3,7 @@ package com.voyageone.batch.cms.model;
 /**
  * Created by Leo on 15-9-14.
  */
-public class DarwinPropValue {
+public class DarwinPropValueModel {
     private int cart_id;
     private String style_code;
     private String platform_prop_id;

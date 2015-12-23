@@ -26,7 +26,13 @@ public class SxPrepareData {
         CmsProductService cmsProductService = ctx.getBean(CmsProductService.class);
         CmsMtCategorySchemaDao cmsMtCategorySchemaDao = ctx.getBean(CmsMtCategorySchemaDao.class);
         //珠宝/钻石/翡翠/黄金>天然珍珠（新）>胸饰
-        String catId= "54+g5a6dL+mSu+efsy/nv6Hnv6Av6buE6YeRPuWkqeeEtuePjeePoO+8iOaWsO+8iT7og7jppbA=";
+        //String catId= "54+g5a6dL+mSu+efsy/nv6Hnv6Av6buE6YeRPuWkqeeEtuePjeePoO+8iOaWsO+8iT7og7jppbA=";
+
+        //珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰   sku template 1
+        //String catId = "54+g5a6dL+mSu+efsy/nv6Hnv6Av6buE6YeRPuW9qeiJsuWuneefsy/otLXph43lrp3nn7M+5omL6aWw";
+
+        //女装/女士精品>背心吊带  sku template 3
+        String catId = "5aWz6KOFL+Wls+Wjq+eyvuWTgT7og4zlv4PlkIrluKY=";
 
         List<CmsBtProductModel> products = new ArrayList<>();
         products.add(createProduct(cmsMtCategorySchemaDao, "200", 1111, 1, "jewelry", catId, true));
@@ -86,12 +92,22 @@ public class SxPrepareData {
         for (int i=1; i<3; i++) {
             CmsBtProductModel_Sku sku = new CmsBtProductModel_Sku();
             sku.setSkuCode(code + "-sku-" + i);
-            sku.setBarcode("1234567890-" + i);
             sku.setPriceSale(500.00 + i);
             List<Integer> skuCarts = new ArrayList<>();
             skuCarts.add(21);
             skuCarts.add(23);
             sku.setSkuCarts(skuCarts);
+            sku.setAttribute("sku_MarketTime", "2015-05-14");
+
+            if (i%3 == 0) {
+                sku.setAttribute("std_size_prop_20509_-1", "L");
+            }
+            if (i%3 == 1) {
+                sku.setAttribute("std_size_prop_20509_-1", "S");
+            }
+            if (i%3 == 2) {
+                sku.setAttribute("std_size_prop_20509_-1", "M");
+            }
             skus.add(sku);
         }
 
@@ -120,13 +136,28 @@ public class SxPrepareData {
                     case "in_prop_1665536": {
                         return "abcdefg";
                     }
-                    case "sell_point_0":
-                    case "sell_point_1":
-                    case "sell_point_2":
-                    case "sell_point_3":
-                    case "sell_point_4": {
+                    case "sell0":
+                    case "sell1":
+                    case "sell2":
+                    case "sell3":
+                    case "sell4": {
                         return field.getId();
                     }
+                    case "locality_life->expirydate->severalDays":
+                        return "2";
+                    case "prov":
+                    case "city":
+                        return "上海";
+                    case "diaopai_pic":
+                        return "https://img.alicdn.com/imgextra/i1/2183719539/TB2_Q4EgVXXXXccXpXXXXXXXXXX_!!2183719539.jpg";
+                    case "description":
+                        return "商品详情页描述";
+                    case "item_size":
+                        return "100";
+                    case "item_weight":
+                        return "20";
+                    case "short_title":
+                        return "无线短标题";
                     default: {
                         /*
                         if (extraParam != 0) {
@@ -144,6 +175,14 @@ public class SxPrepareData {
                     case "prop_1665536": {
                         return "-1";
                     }
+                    case "locality_life->expirydate": {
+                        return "3";
+                    }
+                    case "delivery_way": {
+                        return "2";
+                    }
+                    case "material_prop_name":
+                        return "山羊皮";
                     default:
                     {
                         List<Option> options = ((SingleCheckField) field).getOptions();
@@ -162,6 +201,11 @@ public class SxPrepareData {
             case MULTICHECK: {
                 List<Option> options = ((MultiCheckField) field).getOptions();
                 List<String> stringValues = new ArrayList<>();
+
+                if ("delivery_way".equals(field.getId())) {
+                    stringValues.add("2");
+                    return stringValues;
+                }
                 int k = 0;
                 for (Option option : options) {
                     stringValues.add(option.getValue());
@@ -180,7 +224,7 @@ public class SxPrepareData {
             }
             case MULTICOMPLEX: {
                 List<Map<String, Object>> valueMaps = new ArrayList<>();
-                int valuesCount = 3;
+                int valuesCount = 1;
                 for (int i = 0; i<valuesCount; i++) {
                     Map<String, Object> valueMap = new HashMap<>();
                     for (Field subField : ((MultiComplexField)field).getFieldList()) {

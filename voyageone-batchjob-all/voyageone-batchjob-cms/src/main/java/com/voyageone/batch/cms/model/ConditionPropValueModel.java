@@ -3,7 +3,7 @@ package com.voyageone.batch.cms.model;
 /**
  * Created by Leo on 15-9-18.
  */
-public class ConditionPropValue {
+public class ConditionPropValueModel {
     private String channel_id;
     private String condition_expression;
     private String platform_prop_id;

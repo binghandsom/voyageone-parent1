@@ -13,7 +13,8 @@ public enum CustomMappingType {
     TMALL_ITEM_PRICE(6),
     TMALL_XINGHAO(7),
     TMALL_OUT_ID(8),
-    TMALL_SHOP_CATEGORY(9);
+    TMALL_SHOP_CATEGORY(9),
+    ITEM_STATUS(10);
 
     private int value;
 
@@ -45,6 +46,8 @@ public enum CustomMappingType {
                 return TMALL_OUT_ID;
             case 9:
                 return TMALL_SHOP_CATEGORY;
+            case 10:
+                return ITEM_STATUS;
             default:
                 return null;
         }

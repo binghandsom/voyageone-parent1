@@ -5,7 +5,7 @@ import com.voyageone.batch.cms.bean.CustomMappingType;
 /**
  * Created by Leo on 15-7-10.
  */
-public class CustomPlatformPropMapping {
+public class CustomPlatformPropMappingModel {
     private CustomMappingType customMappingType;
     private String platformPropId;
     private int cartId;

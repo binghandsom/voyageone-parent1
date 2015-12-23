@@ -2,7 +2,9 @@ package com.voyageone.web2.cms.rest;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.cms.service.CmsProductService;
+import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.BaseAppService;
@@ -27,7 +29,7 @@ import java.util.*;
 public class PostProductSelectOneService extends BaseAppService{
 
     @Autowired
-    private CmsProductService cmsProductService;
+    private CmsBtProductDao cmsBtProductDao;
 
 
     private static String[] arrayTypePaths = {
@@ -51,23 +53,32 @@ public class PostProductSelectOneService extends BaseAppService{
             throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
         }
 
+
+        JomgoQuery queryObject = new JomgoQuery();
+        //fields
+        buildProjection(params, queryObject);
+        //sorts
+        buildSort(params, queryObject);
+
         //getProductById
         Long pid = params.getProductId();
         if (pid != null) {
-            return cmsProductService.getProductById(channelId, pid);
+            queryObject.setQuery(String.format("{\"prodId\" : %s}", pid));
+            return cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
         }
 
         //getProductByCode
         String productCode = params.getProductCode();
         if (!StringUtils.isEmpty(productCode)) {
-            return cmsProductService.getProductByCode(channelId, productCode);
+            queryObject.setQuery(String.format("{\"fields.code\" : \"%s\" }", productCode));
+            return cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
         }
 
         //getProductByCondition
         String props = params.getProps();
         if (!StringUtils.isEmpty(props)) {
-            String queryStr  = convertProps(props);
-            return cmsProductService.getProductWithQuery(channelId, queryStr);
+            queryObject.setQuery(convertProps(props));
+            return cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
         }
 
         return null;
@@ -139,4 +150,22 @@ public class PostProductSelectOneService extends BaseAppService{
         }
         return null;
     }
+
+    private void buildProjection(PostProductSelectOneRequest params, JomgoQuery queryObject) {
+        if (StringUtils.isEmpty(params.getFields())) {
+            return;
+        }
+        String fieldsTmp = params.getFields().replaceAll("[\\s]*;[\\s]*", " ; ");
+        String[] fieldsTmpArr = fieldsTmp.split(" ; ");
+        queryObject.setProjection(fieldsTmpArr);
+    }
+
+    private void buildSort(PostProductSelectOneRequest params, JomgoQuery queryObject) {
+        if (StringUtils.isEmpty(params.getSorts())) {
+            return;
+        }
+        String sortsTmp = params.getSorts().replaceAll("[\\s]*;[\\s]*", ", ");
+        queryObject.setSort("{ " + sortsTmp + " }");
+    }
+
 }

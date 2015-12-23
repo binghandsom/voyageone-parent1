@@ -52,6 +52,8 @@ public class VoApiConstants {
         ERROR_CODE_70002("70002", "code is null"),
         ERROR_CODE_70003("70003", "channelId not found"),
         ERROR_CODE_70004("70004", "not string or number type"),
+        ERROR_CODE_70005("70005", ""),
+        ERROR_CODE_70006("70006", ""),
         ;
 
         private final String errorCode;

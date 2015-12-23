@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.cms.sql">
-
-   <select id="cms_selectBrandByCmsBrand" resultType="String" parameterType="Map">
-        SELECT brand_id from voyageone_cms2.cms_mt_brands_mapping
+    <select id="cms_select_custom_size_prop" parameterType="map" resultType="hashmap">
+        SELECT
+            custom_size_id,
+            custom_prop_id,
+            custom_prop_value
+        FROM voyageone_cms2.cms_bt_custom_size
         WHERE
-            cms_brand=#{cms_brand}
-        AND
-            cart_id=#{cart_id}
-        AND
             channel_id=#{channel_id}
     </select>
 </mapper>
