@@ -28,7 +28,6 @@ define([
         }
 
         function save () {
-            var data = {};
             $propChangeService.setProductFields($scope.vm.propertyInfo).then(function () {
                 $scope.$close();
             });
