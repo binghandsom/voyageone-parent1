@@ -3,7 +3,7 @@
 <mapper namespace="com.voyageone.cms.sql">
 
    <select id="cms_selectBrandByCmsBrand" resultType="String" parameterType="Map">
-        SELECT brand_id from voyageone_cms.cms_mt_brands_mapping
+        SELECT brand_id from voyageone_cms2.cms_mt_brands_mapping
         WHERE
             cms_brand=#{cms_brand}
         AND

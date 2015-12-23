@@ -10,7 +10,7 @@ import com.voyageone.batch.cms.bean.UploadImageResult;
 import com.voyageone.batch.cms.dao.PlatformImageUrlMappingDao;
 import com.voyageone.batch.cms.enums.TmallWorkloadStatus;
 import com.voyageone.batch.cms.model.ImageUrlMappingModel;
-import com.voyageone.batch.cms.model.WorkLoadBean;
+import com.voyageone.batch.cms.bean.WorkLoadBean;
 import com.voyageone.common.components.issueLog.IssueLog;
 import com.voyageone.common.components.tmall.TbPictureService;
 import com.voyageone.common.configs.beans.ShopBean;

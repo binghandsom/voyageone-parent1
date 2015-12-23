@@ -48,8 +48,21 @@ public class PostProductSelectOneClient {
     public CmsBtProductModel getMainProductByGroupId(String channelId, long groupId) {
         //设置参数
         PostProductSelectOneRequest requestModel = new PostProductSelectOneRequest(channelId);
-        String queryTmp = "{\"groups.platforms\":{$elemMatch: {\"groupId\":%s, \"isMain\":1}}}";
-        requestModel.setProps(String.format(queryTmp, groupId));
+        //String queryTmp = "{\"groups.platforms\":{$elemMatch: {\"groupId\":%s, \"isMain\":1}}}";
+        requestModel.addProp("groups.platforms.groupId", groupId);
+        requestModel.addProp("groups.platforms.isMain", 1);
+
+//        requestModel.addField("prodId");
+//        requestModel.addField("catPath");
+//
+//        requestModel.addField("fields.code");
+//        requestModel.addField("fields.brand");
+//        requestModel.addField("fields.productName");
+//        requestModel.addField("fields.middleTitle");
+//
+//        requestModel.addSort("fields.code", true);
+//        requestModel.addSort("fields.brand", false);
+
         //SDK取得Product 数据
         return voApiClient.execute(requestModel).getProduct();
     }

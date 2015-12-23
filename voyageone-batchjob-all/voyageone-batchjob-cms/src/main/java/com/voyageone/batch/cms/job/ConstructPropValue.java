@@ -1,14 +1,11 @@
 package com.voyageone.batch.cms.job;
 
-import com.voyageone.ims.rule_expression.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 import com.voyageone.batch.cms.dao.*;
 import com.voyageone.batch.cms.model.*;
 import com.voyageone.batch.cms.bean.*;
 import com.voyageone.common.configs.Enums.*;
-
-import java.util.*;
 
 /**
  * Created by Leo on 15-7-3.
@@ -19,244 +16,248 @@ public class ConstructPropValue {
     public static final String DESCRIPTION_SINGLE_IMAGE_TPL_URL = "http://s7d5.scene7.com/is/image/sneakerhead/Jewelry%5F20150819%5Fx760%5F760x?$760x760$&$JEWERLY%2D760%2D760$&$proudct=%s";
     public static final String DESCRIPTION_WENZI_IMAGE_TPL_URL = "http://s7d5.scene7.com/is/image/sneakerhead/JEWELRY%5F20150901%5Fx380%5F251x%2D1?$380%2D251$&$text05=%s&$text04=%s&$text03=%s&$text02=%s&$text01=%s";
 
-    public static void constructPlatformPropMappingCustom(PlatformPropCustomMappingDao platformPropCustomMappingDao) { CustomPlatformPropMapping customPlatformPropMapping = new CustomPlatformPropMapping();
-        customPlatformPropMapping.setCartId(23);
+    public static void constructPlatformPropMappingCustom(PlatformPropCustomMappingDao platformPropCustomMappingDao) { CustomPlatformPropMappingModel customPlatformPropMappingModel = new CustomPlatformPropMappingModel();
+        customPlatformPropMappingModel.setCartId(23);
 
-        customPlatformPropMapping.setCustomMappingType(CustomMappingType.BRAND_INFO);
-        customPlatformPropMapping.setPlatformPropId("prop_20000");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setCustomMappingType(CustomMappingType.BRAND_INFO);
+        customPlatformPropMappingModel.setPlatformPropId("prop_20000");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setCustomMappingType(CustomMappingType.TMALL_STYLE_CODE);
-        customPlatformPropMapping.setPlatformPropId("prop_13021751");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setCustomMappingType(CustomMappingType.TMALL_STYLE_CODE);
+        customPlatformPropMappingModel.setPlatformPropId("prop_13021751");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setCustomMappingType(CustomMappingType.SKU_INFO);
-        customPlatformPropMapping.setPlatformPropId("sku");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
-        customPlatformPropMapping.setPlatformPropId("prop_1627207");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
-        customPlatformPropMapping.setPlatformPropId("prop_10537981");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
-        customPlatformPropMapping.setPlatformPropId("sku_price");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
-        customPlatformPropMapping.setPlatformPropId("sku_quantity");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
-        customPlatformPropMapping.setPlatformPropId("sku_outerId");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
-        customPlatformPropMapping.setPlatformPropId("sku_barcode");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
-        customPlatformPropMapping.setPlatformPropId("prop_extend_1627207");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
-        customPlatformPropMapping.setPlatformPropId("alias_name");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
-        customPlatformPropMapping.setPlatformPropId("prop_image");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
-        customPlatformPropMapping.setPlatformPropId("prop_extend_10537981");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
-        customPlatformPropMapping.setPlatformPropId("in_prop_151018199");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setCustomMappingType(CustomMappingType.SKU_INFO);
+        customPlatformPropMappingModel.setPlatformPropId("sku");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
+        customPlatformPropMappingModel.setPlatformPropId("prop_1627207");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
+        customPlatformPropMappingModel.setPlatformPropId("prop_10537981");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
+        customPlatformPropMappingModel.setPlatformPropId("sku_price");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
+        customPlatformPropMappingModel.setPlatformPropId("sku_quantity");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
+        customPlatformPropMappingModel.setPlatformPropId("sku_outerId");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
+        customPlatformPropMappingModel.setPlatformPropId("sku_barcode");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
+        customPlatformPropMappingModel.setPlatformPropId("prop_extend_1627207");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
+        customPlatformPropMappingModel.setPlatformPropId("alias_name");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
+        customPlatformPropMappingModel.setPlatformPropId("prop_image");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
+        customPlatformPropMappingModel.setPlatformPropId("prop_extend_10537981");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
+        customPlatformPropMappingModel.setPlatformPropId("in_prop_151018199");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("in_prop_150988152");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
-        customPlatformPropMapping.setPlatformPropId("prop_9066257");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
-        customPlatformPropMapping.setPlatformPropId("prop_extend_9066257");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("in_prop_150988152");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
+        customPlatformPropMappingModel.setPlatformPropId("prop_9066257");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
+        customPlatformPropMappingModel.setPlatformPropId("prop_extend_9066257");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("in_prop_150778146");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("in_prop_150778146");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("sku_MarketTime");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("sku_MarketTime");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("in_prop_148242406");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("in_prop_148242406");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("prop_20509");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("prop_20509");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("prop_extend_20509");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("prop_extend_20509");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("prop_14067173");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("prop_14067173");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("std_size_prop_20509_-1");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("std_size_prop_20509_-1");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("std_size_prop_20518_-1");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("std_size_prop_20518_-1");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("custom_prop_1");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("custom_prop_1");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("basecolor");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("basecolor");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("in_prop_1627207");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("in_prop_1627207");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("std_size_extends_20509");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("std_size_extends_20509");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("std_size_extends_20518");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("std_size_extends_20518");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_tip");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_tip");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_shengao");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_shengao");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_shengao_range");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_shengao_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_tizhong");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_tizhong");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_tizhong_range");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_tizhong_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_jiankuan");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_jiankuan");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_jiankuan_range");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_jiankuan_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_xiongwei");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_xiongwei");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_xiongwei_range");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_xiongwei_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_yaowei");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_yaowei");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_yaowei_range");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_yaowei_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_xiuchang");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_xiuchang");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_xiuchang_range");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_xiuchang_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_yichang");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_yichang");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_yichang_range");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_yichang_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_baiwei");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_baiwei");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_baiwei_range");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_baiwei_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_xiabaiwei");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_xiabaiwei");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_xiabaiwei_range");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_xiabaiwei_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_xiukou");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_xiukou");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_xiukou_range");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_xiukou_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_xiufei");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_xiufei");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_xiufei_range");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_xiufei_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_zhongyao");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_zhongyao");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_zhongyao_range");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_zhongyao_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_lingshen");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_lingshen");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_lingshen_range");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_lingshen_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_linggao");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_linggao");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_linggao_range");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_linggao_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_lingkuan");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_lingkuan");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_lingkuan_range");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_lingkuan_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_lingwei");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_lingwei");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_lingwei_range");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_lingwei_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_yuanbaihou");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_yuanbaihou");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_yuanbaihou_range");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_yuanbaihou_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_pingbai");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_pingbai");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_pingbai_range");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_pingbai_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_yuanbai");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_yuanbai");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setPlatformPropId("size_mapping_yuanbai_range");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setPlatformPropId("size_mapping_yuanbai_range");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
         //=================================SKU_INFO END==============================
 
-        customPlatformPropMapping.setCustomMappingType(CustomMappingType.TMALL_ITEM_QUANTITY);
-        customPlatformPropMapping.setPlatformPropId("quantity");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setCustomMappingType(CustomMappingType.TMALL_ITEM_QUANTITY);
+        customPlatformPropMappingModel.setPlatformPropId("quantity");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setCustomMappingType(CustomMappingType.TMALL_ITEM_PRICE);
-        customPlatformPropMapping.setPlatformPropId("price");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setCustomMappingType(CustomMappingType.TMALL_ITEM_PRICE);
+        customPlatformPropMappingModel.setPlatformPropId("price");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setCustomMappingType(CustomMappingType.TMALL_XINGHAO);
-        customPlatformPropMapping.setPlatformPropId("prop_1626510");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
-        customPlatformPropMapping.setPlatformPropId("in_prop_1626510");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setCustomMappingType(CustomMappingType.TMALL_XINGHAO);
+        customPlatformPropMappingModel.setPlatformPropId("prop_1626510");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
+        customPlatformPropMappingModel.setPlatformPropId("in_prop_1626510");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setCustomMappingType(CustomMappingType.TMALL_SERVICE_VERSION);
-        customPlatformPropMapping.setPlatformPropId("service_version");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setCustomMappingType(CustomMappingType.TMALL_SERVICE_VERSION);
+        customPlatformPropMappingModel.setPlatformPropId("service_version");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setCustomMappingType(CustomMappingType.TMALL_OUT_ID);
-        customPlatformPropMapping.setPlatformPropId("outer_id");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setCustomMappingType(CustomMappingType.TMALL_OUT_ID);
+        customPlatformPropMappingModel.setPlatformPropId("outer_id");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setCustomMappingType(CustomMappingType.TMALL_SHOP_CATEGORY);
-        customPlatformPropMapping.setPlatformPropId("seller_cids");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setCustomMappingType(CustomMappingType.TMALL_SHOP_CATEGORY);
+        customPlatformPropMappingModel.setPlatformPropId("seller_cids");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setCustomMappingType(CustomMappingType.PRICE_SECTION);
-        customPlatformPropMapping.setPlatformPropId("prop_13618191");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setCustomMappingType(CustomMappingType.PRICE_SECTION);
+        customPlatformPropMappingModel.setPlatformPropId("prop_13618191");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
 
-        customPlatformPropMapping.setCustomMappingType(CustomMappingType.PRICE_SECTION);
-        customPlatformPropMapping.setPlatformPropId("prop_21548");
-        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMapping);
+        customPlatformPropMappingModel.setCustomMappingType(CustomMappingType.PRICE_SECTION);
+        customPlatformPropMappingModel.setPlatformPropId("prop_21548");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
+
+        customPlatformPropMappingModel.setCustomMappingType(CustomMappingType.ITEM_STATUS);
+        customPlatformPropMappingModel.setPlatformPropId("item_status");
+        platformPropCustomMappingDao.insertCustomMapping(customPlatformPropMappingModel);
     }
 
     public static void constructTmallSkuInfo(PlatformSkuInfoDao platformSkuInfoDao) {
-        PlatformSkuInfoBean tmallSkuInfo = new PlatformSkuInfoBean();
+        PlatformSkuInfoModel tmallSkuInfo = new PlatformSkuInfoModel();
         tmallSkuInfo.setCart_id(Integer.valueOf(CartEnums.Cart.TG.getId()));
 
         //============================================== 模板0 BEGIN =================================================================================
@@ -804,10 +805,8 @@ public class ConstructPropValue {
         PlatformSkuInfoDao platformSkuInfoDao = ctx.getBean(PlatformSkuInfoDao.class);
         PlatformPropCustomMappingDao platformPropCustomMappingDao = ctx.getBean(PlatformPropCustomMappingDao.class);
 
-        RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
-        ConstructPropValue util = new ConstructPropValue();
-
-//        constructPlatformPropMappingCustom(platformPropCustomMappingDao);
+        constructPlatformPropMappingCustom(platformPropCustomMappingDao);
         constructTmallSkuInfo(platformSkuInfoDao);
+        System.out.println("Complete!!");
     }
 }

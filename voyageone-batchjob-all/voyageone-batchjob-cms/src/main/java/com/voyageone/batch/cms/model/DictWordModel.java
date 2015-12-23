@@ -5,7 +5,7 @@ package com.voyageone.batch.cms.model;
  *
  * Created by Leo on 15-7-1.
  */
-public class DictWordBean {
+public class DictWordModel {
 
     private int id;
 

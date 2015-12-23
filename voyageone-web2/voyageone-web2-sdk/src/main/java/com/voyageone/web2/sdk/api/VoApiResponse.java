@@ -14,12 +14,12 @@ public class VoApiResponse {
     /**
      * 消息code
      */
-    private String code = "0";
+    protected String code = "0";
 
     /**
      * 消息
      */
-    private String message;
+    protected String message;
 
     public VoApiResponse() {
 

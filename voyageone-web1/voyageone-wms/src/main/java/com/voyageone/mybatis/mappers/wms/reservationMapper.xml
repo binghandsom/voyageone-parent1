@@ -210,6 +210,9 @@
                 #{orderChannelId}
             </foreach>
         </if>
+        <if test="reserveType != null and reserveType != '' and reserveType == 'PickUp'">
+            AND isLock = '0'
+        </if>
     </sql>
 
     <select id="viw_wms_reservation_pickup_mapping_getPickupInfo" resultMap="reservationInfoMap">
@@ -290,7 +293,9 @@
         ship_country,
         shipping,
         qty,
-        cart_id
+        cart_id,
+        client_order_id,
+        tracking_number
     </sql>
 
     <select id="viw_wms_reservation_pickup_mapping_getScanInfo" resultMap="pickup_result_map">
@@ -306,11 +311,17 @@
             <when test="scanMode == 'Scan' and scanType == 2">
                 client_order_id = #{scanNo}
             </when>
+            <when test="scanMode == 'Scan' and scanType == 3">
+                tracking_number = #{scanNo}
+            </when>
             <when test="scanMode == 'ReLabel' and scanType == 1">
                 id = #{scanNo}
             </when>
             <when test="scanMode == 'ReLabel' and scanType == 2">
                 (order_number = #{scanNo} or client_order_id = #{scanNo})
+            </when>
+            <when test="scanMode == 'ReLabel' and scanType == 3">
+                (id = #{scanNo} or tracking_number = #{scanNo})
             </when>
             <otherwise>
                 1 != 1
@@ -333,6 +344,9 @@
             <foreach collection="orderChannelList" item="orderChannelId"  open="(" separator="," close=")">
                 #{orderChannelId}
             </foreach>
+        </if>
+        <if test="reserveType != null and reserveType != '' and reserveType == 'PickUp' and scanMode == 'Scan'">
+            AND isLock = '0'
         </if>
         ORDER BY
             ship_channel_priority asc,
@@ -358,6 +372,9 @@
                 and status NOT IN ('96', '97', '98', '99')
             </when>
             <when test="scanType == 2">
+                and status NOT IN ('96', '97')
+            </when>
+            <when test="scanType == 3">
                 and status NOT IN ('96', '97')
             </when>
         </choose>
@@ -390,6 +407,9 @@
             </when>
             <when test="scanType == 2 and scanMode == 'Scan'">
                 (status = #{scanStatus} or status = '99' or status = '11')
+            </when>
+            <when test="scanType == 3 and scanMode == 'Scan'">
+                (status = #{scanStatus} or status = '98' or status = '99' or status = '11')
             </when>
             <otherwise>
                 status = #{scanStatus}
@@ -685,6 +705,7 @@
             rsv.barcode = client.barcode
         WHERE
             rsv.status = #{status}
+        AND rsv.isLock = '0'
         <if test="storeList != null and storeList.size() != 0">
             AND rsv.store_id in
             <foreach collection="storeList" item="store"  open="(" separator="," close=")">
@@ -728,6 +749,7 @@
                 viw_wms_reservation_pickup_mapping
             WHERE
                 status = #{status}
+            AND isLock = '0'
                 <if test="storeList != null and storeList.size() != 0">
                     AND store_id in
                     <foreach collection="storeList" item="store"  open="(" separator="," close=")">

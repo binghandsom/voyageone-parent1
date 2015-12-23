@@ -5,7 +5,7 @@ import com.voyageone.web2.sdk.api.VoApiResponse;
 
 
 /**
- * TOP API: product get response
+ * /puroduct/selectOne product get response
  * Created on 2015-12-14
  *
  * @author chuanyu.liang

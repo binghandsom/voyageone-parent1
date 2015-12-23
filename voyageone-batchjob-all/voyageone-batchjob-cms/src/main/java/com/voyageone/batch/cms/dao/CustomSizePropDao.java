@@ -13,7 +13,7 @@ import java.util.Map;
 @Repository
 public class CustomSizePropDao extends BaseDao{
     public List<Map<String, Object>> selectCustomSizeProp(String channelId) {
-        List<Map<String, Object>> allCustomSizeMap = selectList(Constants.DAO_NAME_SPACE_IMS + "cms_select_custom_size_prop", parameters("channel_id", channelId));
+        List<Map<String, Object>> allCustomSizeMap = selectList(Constants.DAO_NAME_SPACE_CMS + "cms_select_custom_size_prop", parameters("channel_id", channelId));
         return allCustomSizeMap;
     }
 }

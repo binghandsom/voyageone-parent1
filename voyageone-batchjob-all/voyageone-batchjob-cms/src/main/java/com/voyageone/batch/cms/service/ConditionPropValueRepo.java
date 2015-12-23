@@ -1,7 +1,7 @@
 package com.voyageone.batch.cms.service;
 
 import com.voyageone.batch.cms.dao.ConditionPropValueDao;
-import com.voyageone.batch.cms.model.ConditionPropValue;
+import com.voyageone.batch.cms.model.ConditionPropValueModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -17,25 +17,25 @@ import java.util.Map;
 public class ConditionPropValueRepo {
     @Autowired
     private ConditionPropValueDao conditionPropValueDao;
-    private static Map<String, List<ConditionPropValue>> propValueRepo;
+    private static Map<String, List<ConditionPropValueModel>> propValueRepo;
 
     public ConditionPropValueRepo() {
         propValueRepo = new HashMap<>();
     }
 
     public void init() {
-        List<ConditionPropValue> conditionPropValueList = conditionPropValueDao.selectAllConditionPropValue();
+        List<ConditionPropValueModel> conditionPropValueModelList = conditionPropValueDao.selectAllConditionPropValue();
 
-        if (conditionPropValueList != null)
+        if (conditionPropValueModelList != null)
         {
-            for (ConditionPropValue conditionPropValue : conditionPropValueList) {
-                List<ConditionPropValue> conditionPropValues = propValueRepo.get(encodeKey(conditionPropValue.getChannel_id(), conditionPropValue.getPlatform_prop_id()));
-                if (conditionPropValues == null)
+            for (ConditionPropValueModel conditionPropValueModel : conditionPropValueModelList) {
+                List<ConditionPropValueModel> conditionPropValueModels = propValueRepo.get(encodeKey(conditionPropValueModel.getChannel_id(), conditionPropValueModel.getPlatform_prop_id()));
+                if (conditionPropValueModels == null)
                 {
-                    conditionPropValues = new ArrayList<>();
-                    put(conditionPropValue.getChannel_id(), conditionPropValue.getPlatform_prop_id(), conditionPropValues);
+                    conditionPropValueModels = new ArrayList<>();
+                    put(conditionPropValueModel.getChannel_id(), conditionPropValueModel.getPlatform_prop_id(), conditionPropValueModels);
                 }
-                conditionPropValues.add(conditionPropValue);
+                conditionPropValueModels.add(conditionPropValueModel);
             }
         }
     }
@@ -44,11 +44,11 @@ public class ConditionPropValueRepo {
         return channelId + "_" + platformPropId;
     }
 
-    public void put(String channelId, String platformPropId, List<ConditionPropValue> value) {
+    public void put(String channelId, String platformPropId, List<ConditionPropValueModel> value) {
         propValueRepo.put(encodeKey(channelId, platformPropId), value);
     }
 
-    public List<ConditionPropValue> get(String channelId, String platformPropId) {
+    public List<ConditionPropValueModel> get(String channelId, String platformPropId) {
         if (propValueRepo.isEmpty()) {
             init();
         }

@@ -4,31 +4,31 @@ package com.voyageone.common.components.sears.bean;
  * Created by james.li on 2015/11/23.
  */
 public class OrderFeesBean {
-    private double voCommission;
-    private double alipayFee;
-    private double tmallCommission;
+    private float voCommission;
+    private float alipayFee;
+    private float tmallCommission;
 
-    public double getVoCommission() {
+    public float getVoCommission() {
         return voCommission;
     }
 
-    public void setVoCommission(double voCommission) {
+    public void setVoCommission(float voCommission) {
         this.voCommission = voCommission;
     }
 
-    public double getAlipayFee() {
+    public float getAlipayFee() {
         return alipayFee;
     }
 
-    public void setAlipayFee(double alipayFee) {
+    public void setAlipayFee(float alipayFee) {
         this.alipayFee = alipayFee;
     }
 
-    public double getTmallCommission() {
+    public float getTmallCommission() {
         return tmallCommission;
     }
 
-    public void setTmallCommission(double tmallCommission) {
+    public void setTmallCommission(float tmallCommission) {
         this.tmallCommission = tmallCommission;
     }
 }

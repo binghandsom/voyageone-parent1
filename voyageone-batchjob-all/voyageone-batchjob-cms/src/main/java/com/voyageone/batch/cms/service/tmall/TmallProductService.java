@@ -17,17 +17,18 @@ import com.voyageone.batch.cms.dao.DictWordDao;
 import com.voyageone.batch.cms.dao.PlatformPropCustomMappingDao;
 import com.voyageone.batch.cms.enums.PlatformWorkloadStatus;
 import com.voyageone.batch.cms.enums.TmallWorkloadStatus;
-import com.voyageone.batch.cms.model.ConditionPropValue;
-import com.voyageone.batch.cms.model.CustomPlatformPropMapping;
-import com.voyageone.batch.cms.model.WorkLoadBean;
+import com.voyageone.batch.cms.model.ConditionPropValueModel;
+import com.voyageone.batch.cms.model.CustomPlatformPropMappingModel;
+import com.voyageone.batch.cms.bean.WorkLoadBean;
 import com.voyageone.batch.cms.service.AbstractSkuFieldBuilder;
 import com.voyageone.batch.cms.service.ConditionPropValueRepo;
 import com.voyageone.batch.cms.service.SkuFieldBuilderFactory;
 import com.voyageone.batch.cms.service.UploadProductHandler;
 import com.voyageone.batch.cms.service.rule_parser.ExpressionParser;
+import com.voyageone.cms.CmsConstants;
 import com.voyageone.cms.service.bean.ComplexMappingBean;
 import com.voyageone.cms.service.bean.MappingBean;
-import com.voyageone.cms.service.bean.SingleMappingBean;
+import com.voyageone.cms.service.bean.SimpleMappingBean;
 import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
@@ -1039,7 +1040,7 @@ public class TmallProductService {
         CmsMtPlatformMappingModel cmsMtPlatformMappingModel = workLoadBean.getCmsMtPlatformMappingModel();
 
         Map<String, Field> fieldMap;
-        String itemSchema = cmsMtPlatformCategorySchemaModel.getPropsProduct();
+        String itemSchema = cmsMtPlatformCategorySchemaModel.getPropsItem();
         try {
             fieldMap = schemaToIdPropMap(itemSchema);
         } catch (TopSchemaException e) {
@@ -1241,19 +1242,19 @@ public class TmallProductService {
         SxProductBean mainSxProduct = workLoadBean.getMainProduct();
 
         //第一步，先从cms_mt_platform_prop_mapping从查找，该属性是否在范围，如果在，那么采用特殊处理
-        List<CustomPlatformPropMapping> customPlatformPropMappings = platformPropCustomMappingDao.getCustomMappingPlatformProps(workLoadBean.getCart_id());
+        List<CustomPlatformPropMappingModel> customPlatformPropMappingModels = platformPropCustomMappingDao.getCustomMappingPlatformProps(workLoadBean.getCart_id());
 
         Map<CustomMappingType, List<Field>> mappingTypePropsMap = new HashMap<>();
 
-        for (CustomPlatformPropMapping customPlatformPropMapping : customPlatformPropMappings) {
-            Field field = fieldMap.get(customPlatformPropMapping.getPlatformPropId());
+        for (CustomPlatformPropMappingModel customPlatformPropMappingModel : customPlatformPropMappingModels) {
+            Field field = fieldMap.get(customPlatformPropMappingModel.getPlatformPropId());
             if (field != null) {
-                List<Field> mappingPlatformPropBeans = mappingTypePropsMap.get(customPlatformPropMapping.getCustomMappingType());
+                List<Field> mappingPlatformPropBeans = mappingTypePropsMap.get(customPlatformPropMappingModel.getCustomMappingType());
                 if (mappingPlatformPropBeans == null) {
                     mappingPlatformPropBeans = new ArrayList<>();
-                    mappingTypePropsMap.put(customPlatformPropMapping.getCustomMappingType(), mappingPlatformPropBeans);
+                    mappingTypePropsMap.put(customPlatformPropMappingModel.getCustomMappingType(), mappingPlatformPropBeans);
                 }
-                fieldMap.remove(customPlatformPropMapping.getPlatformPropId());
+                fieldMap.remove(customPlatformPropMappingModel.getPlatformPropId());
                 mappingPlatformPropBeans.add(field);
             }
         }
@@ -1286,12 +1287,12 @@ public class TmallProductService {
                     List<Field> allSkuFields = new ArrayList<>();
                     recursiveGetFields(processFields, allSkuFields);
                     AbstractSkuFieldBuilder skuFieldBuilder = skuFieldBuilderFactory.getSkuFieldBuilder(cartId, allSkuFields);
-                    skuFieldBuilder.setExpressionParser(expressionParser);
-
                     if (skuFieldBuilder == null)
                     {
                         throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("No sku builder find"));
                     }
+
+                    skuFieldBuilder.setExpressionParser(expressionParser);
 
                     DictWordBean dictWordBean = dictWordDao.selectDictWordByName(workLoadBean.getOrder_channel_id(), "属性图片模板");
                     RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
@@ -1467,13 +1468,13 @@ public class TmallProductService {
 
                     Field processField = processFields.get(0);
                     String platformPropId = processField.getId();
-                    List<ConditionPropValue> conditionPropValues = conditionPropValueRepo.get(workLoadBean.getOrder_channel_id(), platformPropId);
+                    List<ConditionPropValueModel> conditionPropValueModels = conditionPropValueRepo.get(workLoadBean.getOrder_channel_id(), platformPropId);
 
                     //优先使用条件表达式
-                    if (conditionPropValues != null && !conditionPropValues.isEmpty()) {
+                    if (conditionPropValueModels != null && !conditionPropValueModels.isEmpty()) {
                             RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
-                            for (ConditionPropValue conditionPropValue : conditionPropValues) {
-                                String conditionExpressionStr = conditionPropValue.getCondition_expression();
+                            for (ConditionPropValueModel conditionPropValueModel : conditionPropValueModels) {
+                                String conditionExpressionStr = conditionPropValueModel.getCondition_expression();
                                 RuleExpression conditionExpression= ruleJsonMapper.deserializeRuleExpression(conditionExpressionStr);
                                 String propValue = expressionParser.parse(conditionExpression, null);
                                 if (propValue != null) {
@@ -1514,6 +1515,21 @@ public class TmallProductService {
                                 e.printStackTrace();
                             }
                         }
+                    }
+                    break;
+                }
+                case ITEM_STATUS: {
+                    if (processFields == null || processFields.size() != 1)
+                    {
+                        throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("tmall item shop_category's platformProps must have one prop!"));
+                    }
+
+                    Field processField = processFields.get(0);
+                    if (mainSxProduct.getCmsBtProductModelGroupPlatform().getPlatformActive() == CmsConstants.PlatformActive.Onsale) {
+                        ((SingleCheckField) processField).setValue("0");
+                    }
+                    else if (mainSxProduct.getCmsBtProductModelGroupPlatform().getPlatformActive() == CmsConstants.PlatformActive.Instock) {
+                        ((SingleCheckField) processField).setValue("2");
                     }
                     break;
                 }
@@ -1559,12 +1575,23 @@ public class TmallProductService {
         Set<String> imageSetEachProp = new HashSet<>();
 
         if (MappingBean.MAPPING_SIMPLE.equals(mappingBean.getMappingType())) {
-            SingleMappingBean simpleMappingBean = (SingleMappingBean) mappingBean;
+            SimpleMappingBean simpleMappingBean = (SimpleMappingBean) mappingBean;
             String expressionValue = expressionParser.parse(simpleMappingBean.getExpression(), imageSetEachProp);
             if (null == expressionValue) {
                 return null;
             }
             imageSet.addAll(imageSetEachProp);
+
+            //TODO
+            if ("item_status".equals(field.getId())) {
+                ((SingleCheckField)field).setValue("2");
+                return field;
+            } else if("title".equals(field.getId())) {
+                ((InputField)field).setValue("IT正在测试中，请不要购买");
+                return field;
+            }
+            //END TODO
+
             switch (field.getType()) {
                 case INPUT: {
                     ((InputField) field).setValue(expressionValue);

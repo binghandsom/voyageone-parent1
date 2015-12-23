@@ -11,12 +11,12 @@ import com.voyageone.batch.cms.bean.PlatformUploadRunState;
 import com.voyageone.batch.cms.bean.SkuTemplateSchema;
 import com.voyageone.batch.cms.bean.SxProductBean;
 import com.voyageone.batch.cms.bean.TmallUploadRunState;
-import com.voyageone.batch.cms.model.PlatformSkuInfoBean;
+import com.voyageone.batch.cms.model.PlatformSkuInfoModel;
 import com.voyageone.batch.cms.service.AbstractSkuFieldBuilder;
 import com.voyageone.batch.cms.service.UploadImageHandler;
 import com.voyageone.cms.service.bean.ComplexMappingBean;
 import com.voyageone.cms.service.bean.MappingBean;
-import com.voyageone.cms.service.bean.SingleMappingBean;
+import com.voyageone.cms.service.bean.SimpleMappingBean;
 import com.voyageone.cms.service.model.CmsBtProductConstants;
 import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
 import com.voyageone.cms.service.model.CmsMtPlatformMappingModel;
@@ -73,10 +73,10 @@ public class TmallGjSkuFieldBuilderImpl_0 extends AbstractSkuFieldBuilder {
 
     private boolean init(List<Field> fields, int cartId) {
         for (Field field : fields) {
-            List<PlatformSkuInfoBean> tmallSkuInfos = platformSkuInfoDao.selectPlatformSkuInfo(field.getId(), cartId);
+            List<PlatformSkuInfoModel> tmallSkuInfos = platformSkuInfoDao.selectPlatformSkuInfo(field.getId(), cartId);
 
-            PlatformSkuInfoBean tmallSkuInfo = null;
-            for (PlatformSkuInfoBean tmallSkuInfoEach : tmallSkuInfos) {
+            PlatformSkuInfoModel tmallSkuInfo = null;
+            for (PlatformSkuInfoModel tmallSkuInfoEach : tmallSkuInfos) {
                 if (SkuTemplateSchema.decodeTpl(tmallSkuInfoEach.getSku_type()) == SkuTemplateSchema.SkuTemplate_0_Schema.TPL_INDEX) {
                     tmallSkuInfo = tmallSkuInfoEach;
                     break;
@@ -155,7 +155,7 @@ public class TmallGjSkuFieldBuilderImpl_0 extends AbstractSkuFieldBuilder {
             skuFieldValue.setSingleCheckFieldValue(sku_colorField.getId(), new Value(colorValue));
             buildSkuResult.getColorCmsSkuPropMap().put(colorValue, cmsSkuProp);
         } else {
-            RuleExpression skuColorExpression = ((SingleMappingBean)colorMapping).getExpression();
+            RuleExpression skuColorExpression = ((SimpleMappingBean)colorMapping).getExpression();
             String skuColor = expressionParser.parse(skuColorExpression, null);
             skuFieldValue.setInputFieldValue(sku_colorField.getId(), skuColor);
             buildSkuResult.getColorCmsSkuPropMap().put(skuColor, cmsSkuProp);
@@ -195,7 +195,7 @@ public class TmallGjSkuFieldBuilderImpl_0 extends AbstractSkuFieldBuilder {
                         int skuQuantity = skuInventoryMap.get(cmsSkuProp.getSkuCode());
                         skuFieldValue.setInputFieldValue(propId, String.valueOf(skuQuantity));
                     } else {
-                        RuleExpression ruleExpression = ((SingleMappingBean)mappingBean).getExpression();
+                        RuleExpression ruleExpression = ((SimpleMappingBean)mappingBean).getExpression();
                         String propValue = expressionParser.parse(ruleExpression, null);
                         Field subField = fieldMap.get(propId);
                         if (subField.getType() == FieldTypeEnum.INPUT) {
@@ -254,7 +254,7 @@ public class TmallGjSkuFieldBuilderImpl_0 extends AbstractSkuFieldBuilder {
                         || (colorExtend_imageField  != null && propId.equals(colorExtend_imageField.getId()))) {
                     continue;
                 } else {
-                    RuleExpression ruleExpression = ((SingleMappingBean)mappingBean).getExpression();
+                    RuleExpression ruleExpression = ((SimpleMappingBean)mappingBean).getExpression();
                     String propValue = expressionParser.parse(ruleExpression, null);
                     Field subField = fieldMap.get(propId);
                     if (subField.getType() == FieldTypeEnum.INPUT) {

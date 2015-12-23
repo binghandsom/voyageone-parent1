@@ -1,8 +1,12 @@
 package com.voyageone.web2.sdk.api.request;
 
 
+import com.voyageone.web2.sdk.api.VoApiConstants;
 import com.voyageone.web2.sdk.api.VoApiRequest;
+import com.voyageone.web2.sdk.api.exception.ApiException;
+import com.voyageone.web2.sdk.api.exception.ApiRuleException;
 import com.voyageone.web2.sdk.api.response.PostProductSelectOneResponse;
+import com.voyageone.web2.sdk.api.util.RequestUtils;
 
 /**
  * /puroduct/selectOne Request Model
@@ -34,23 +38,17 @@ public class PostProductSelectOneRequest extends VoApiRequest<PostProductSelectO
 	private String productCode;
 
 	/**
-	 * 比如:诺基亚N73这个产品的关键属性列表就是:品牌:诺基亚,型号:N73,对应的PV值就是10005:10027;10006:29729.
+	 * 关键属性,结构：pid1:value1;pid2:value2，如果有型号，系列等子属性用: 隔开 例如：“20000:优衣库:型号:001;632501:1234”，表示“品牌:优衣库:型号:001;货号:1234”
 	 *
 	 * 例如 获取model所属所有商品
 	 *
 	 */
 	private String props;
 
-
 	/**
-	 * 用户自定义关键属性,结构：pid1:value1;pid2:value2，如果有型号，系列等子属性用: 隔开 例如：“20000:优衣库:型号:001;632501:1234”，表示“品牌:优衣库:型号:001;货号:1234”
+	 * sort condition
 	 */
-	private String customerProps;
-
-	/**
-	 * 需返回的字段列表.可选值:Product数据结构中的所有字段;多个字段之间用","分隔.
-	 */
-	private String fields;
+	private String sort;
 
 	public PostProductSelectOneRequest() {
 
@@ -60,9 +58,10 @@ public class PostProductSelectOneRequest extends VoApiRequest<PostProductSelectO
 		this.channelId = channelId;
 	}
 
-//	public void check() throws ApiRuleException {
-//		RequestCheckUtils.checkNotEmpty(fields, "fields");
-//	}
+	public void check() throws ApiRuleException {
+		RequestUtils.checkNotEmpty(channelId);
+		RequestUtils.checkNotEmpty(" productId or productCode or props", productId, productCode, props);
+	}
 
 	public String getChannelId() {
 		return channelId;
@@ -96,19 +95,9 @@ public class PostProductSelectOneRequest extends VoApiRequest<PostProductSelectO
 		this.props = props;
 	}
 
-	public String getCustomerProps() {
-		return customerProps;
+	public void addProp(String key, Object value) {
+		this.props = RequestUtils.addProp(props, key, value);
 	}
 
-	public void setCustomerProps(String customerProps) {
-		this.customerProps = customerProps;
-	}
 
-	public String getFields() {
-		return fields;
-	}
-
-	public void setFields(String fields) {
-		this.fields = fields;
-	}
 }

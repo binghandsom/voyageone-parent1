@@ -2,7 +2,9 @@ package com.voyageone.web2.cms.rest;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.cms.service.CmsProductService;
+import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.BaseAppService;
@@ -13,9 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.Collator;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * product Service
@@ -29,7 +29,7 @@ import java.util.List;
 public class PostProductSelectOneService extends BaseAppService{
 
     @Autowired
-    private CmsProductService cmsProductService;
+    private CmsBtProductDao cmsBtProductDao;
 
 
     private static String[] arrayTypePaths = {
@@ -41,8 +41,6 @@ public class PostProductSelectOneService extends BaseAppService{
             "skus."};
 
     public CmsBtProductModel selectOne(PostProductSelectOneRequest params) {
-        CmsBtProductModel model = null;
-
         if (params == null) {
             VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70001;
             throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
@@ -55,37 +53,52 @@ public class PostProductSelectOneService extends BaseAppService{
             throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
         }
 
+
+        JomgoQuery queryObject = new JomgoQuery();
+        //fields
+        buildProjection(params, queryObject);
+        //sorts
+        buildSort(params, queryObject);
+
         //getProductById
         Long pid = params.getProductId();
         if (pid != null) {
-            return cmsProductService.getProductById(channelId, pid);
+            queryObject.setQuery(String.format("{\"prodId\" : %s}", pid));
+            return cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
         }
 
         //getProductByCode
         String productCode = params.getProductCode();
         if (!StringUtils.isEmpty(productCode)) {
-            return cmsProductService.getProductByCode(channelId, productCode);
+            queryObject.setQuery(String.format("{\"fields.code\" : \"%s\" }", productCode));
+            return cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
         }
 
         //getProductByCondition
         String props = params.getProps();
         if (!StringUtils.isEmpty(props)) {
-            return cmsProductService.getProductWithQuery(channelId, props);
+            queryObject.setQuery(convertProps(props));
+            return cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
         }
 
-        return model;
+        return null;
     }
 
     private String convertProps (String props) {
         StringBuilder resultSb = new StringBuilder();
         String propsTmp = props.replaceAll("[\\s]*;[\\s]*", " ; ");
         String[] propsTmpArr = propsTmp.split(" ; ");
-        List<String> propList = new ArrayList<>();
+        Map<String, List<String>> propListMap = new TreeMap<>();
         int index = 0;
         for (String propTmp : propsTmpArr) {
             propTmp = propTmp.trim();
-            if (isArrayType(propTmp)) {
-                propList.add(propTmp);
+            String arrayTypePath = getArrayTypePath(props);
+            if (arrayTypePath != null) {
+                if (!propListMap.containsKey(arrayTypePath)) {
+                    propListMap.put(arrayTypePath, new ArrayList<String>());
+                }
+                List<String> arrayTypePathList = propListMap.get(arrayTypePath);
+                arrayTypePathList.add(propTmp);
             } else {
                 if (index > 0) {
                     resultSb.append(" , ");
@@ -95,41 +108,64 @@ public class PostProductSelectOneService extends BaseAppService{
             index++;
         }
 
-        Collections.sort(propList, Collator.getInstance());
+        for (Map.Entry<String, List<String>> entry : propListMap.entrySet()) {
+            List<String> propList = entry.getValue();
+            if (propList.size() > 1) {
+                Collections.sort(propList, Collator.getInstance());
+                if (resultSb.length() > 0) {
+                    resultSb.append(" , ");
+                }
+                String key = entry.getKey();
+                String parentPath = key.substring(0, key.length() - 1);
+                String paretnKey = String.format("%s : {$elemMatch : {", parentPath);
+                resultSb.append(paretnKey);
 
-        int preArrayTypePathIndex = 0;
-        for (String propTmp : propList) {
-            int arrayTypePathIndex = getArrayTypePathIndex(propTmp);
-            if (arrayTypePathIndex == preArrayTypePathIndex) {
+                index = 0;
+                for (String propTmp : propList) {
+                    if (index>0) {
+                        resultSb.append(" , ");
+                    }
+                    resultSb.append(propTmp.replace(key, ""));
+                    index++;
+                }
+                resultSb.append(" } } ");
 
-            } else {
-                DBObject statusQuery = new BasicDBObject("event", "WonGame");
-                statusQuery.put("playerId", "52307b8fe4b0fc612dea2c6f");
-                DBObject fields = new BasicDBObject("$elemMatch", statusQuery);
-                DBObject query = new BasicDBObject("playerHistories",fields);
-                System.out.println(query.toString());
-                System.out.println(query.toString());
+                //"fields":{$elemMatch: {"code": "100001", "isMain":1}
+            } else if (propList.size()>0) {
+                if (resultSb.length()>0) {
+                    resultSb.append(" , ");
+                }
+                resultSb.append(propList.get(0));
             }
         }
 
-        return resultSb.toString();
+        return "{ " + resultSb.toString() + " }";
     }
 
-    private boolean isArrayType(String props) {
+    private String getArrayTypePath(String propStr) {
         for (String arrayTypePath : arrayTypePaths) {
-            if (props.startsWith(arrayTypePath)) {
-                return true;
+            if (propStr.startsWith(arrayTypePath) || propStr.startsWith("\"" + arrayTypePath)) {
+                return arrayTypePath;
             }
         }
-        return false;
+        return null;
     }
 
-    private int getArrayTypePathIndex(String props) {
-        for (int i=0; i<arrayTypePaths.length; i++) {
-            if (props.startsWith(arrayTypePaths[i])) {
-                return i+1;
-            }
+    private void buildProjection(PostProductSelectOneRequest params, JomgoQuery queryObject) {
+        if (StringUtils.isEmpty(params.getFields())) {
+            return;
         }
-        return 0;
+        String fieldsTmp = params.getFields().replaceAll("[\\s]*;[\\s]*", " ; ");
+        String[] fieldsTmpArr = fieldsTmp.split(" ; ");
+        queryObject.setProjection(fieldsTmpArr);
     }
+
+    private void buildSort(PostProductSelectOneRequest params, JomgoQuery queryObject) {
+        if (StringUtils.isEmpty(params.getSorts())) {
+            return;
+        }
+        String sortsTmp = params.getSorts().replaceAll("[\\s]*;[\\s]*", ", ");
+        queryObject.setSort("{ " + sortsTmp + " }");
+    }
+
 }

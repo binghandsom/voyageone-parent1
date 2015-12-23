@@ -1,7 +1,5 @@
-package com.voyageone.batch.cms.model;
+package com.voyageone.batch.cms.bean;
 
-import com.voyageone.batch.cms.bean.SxProductBean;
-import com.voyageone.batch.cms.bean.UpJobParamBean;
 import com.voyageone.batch.cms.enums.PlatformWorkloadStatus;
 import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
 import com.voyageone.cms.service.model.CmsMtPlatformCategorySchemaModel;
