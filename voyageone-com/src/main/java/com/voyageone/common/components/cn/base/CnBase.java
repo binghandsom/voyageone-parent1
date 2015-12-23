@@ -9,6 +9,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.IOException;
+
 /**
  * 对独立域名提供接口调用基础
  *
@@ -22,16 +24,17 @@ public abstract class CnBase {
     protected Log logger = LogFactory.getLog(getClass());
 
     protected final String trustStore_jc = "/opt/app-shared/voyageone_web/contents/other/third_party/004/cn_key/juicycouture_store";
+//    protected final String trustStore_jc = "d:/juicycouture_store";
     protected final String trustStore_jc_password = "voyage1#";
 
-    protected String post(String apiAction, Object parameter, ShopBean shopBean) {
+    protected String post(String apiAction, Object parameter, ShopBean shopBean) throws Exception {
 
         String post = "";
 
         return post(apiAction, parameter, 3, 1000, shopBean);
     }
 
-    private String post(String apiAction, Object parameter, int tryCount, int tryWait, ShopBean shopBean) {
+    private String post(String apiAction, Object parameter, int tryCount, int tryWait, ShopBean shopBean) throws Exception {
 
         String json = new Gson().toJson(parameter);
 
@@ -50,6 +53,8 @@ public abstract class CnBase {
                     Thread.sleep(tryWait);
                 } catch (InterruptedException ignore) {
                 }
+            } catch (Exception e) {
+                throw e;
             }
         }
 
