@@ -97,6 +97,14 @@ public class CmsBtProductModel_Group_Platform extends BaseMongoMap<String, Objec
         setAttribute("publishTime", publishTime);
     }
 
+    public String getOnSaleTime() {
+        return getAttribute("onSaleTime");
+    }
+
+    public void setOnSaleTime(String onSaleTime) {
+        setAttribute("onSaleTime", onSaleTime);
+    }
+
     public String getInstockTime() {
         return getAttribute("instockTime");
     }

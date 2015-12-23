@@ -1,16 +1,13 @@
 package com.voyageone.web2.cms.rest;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
-import com.voyageone.cms.service.CmsProductService;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.sdk.api.VoApiConstants;
 import com.voyageone.web2.sdk.api.exception.ApiException;
-import com.voyageone.web2.sdk.api.request.PostProductSelectOneRequest;
+import com.voyageone.web2.sdk.api.request.ProductsGetRequest;
+import com.voyageone.web2.sdk.api.request.ProductGetRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,21 +23,13 @@ import java.util.*;
  */
 
 @Service
-public class PostProductSelectOneService extends BaseAppService{
+public class PostProductGetService extends BaseRestService{
 
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
 
 
-    private static String[] arrayTypePaths = {
-            "fields.images1.",
-            "fields.images2.",
-            "fields.images3.",
-            "fields.images4.",
-            "groups.platforms.",
-            "skus."};
-
-    public CmsBtProductModel selectOne(PostProductSelectOneRequest params) {
+    public CmsBtProductModel selectOne(ProductGetRequest params) {
         if (params == null) {
             VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70001;
             throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
@@ -77,14 +66,76 @@ public class PostProductSelectOneService extends BaseAppService{
         //getProductByCondition
         String props = params.getProps();
         if (!StringUtils.isEmpty(props)) {
-            queryObject.setQuery(convertProps(props));
+            queryObject.setQuery(buildProductQuery(props));
             return cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
         }
 
         return null;
     }
 
-    private String convertProps (String props) {
+
+    public List<CmsBtProductModel> selectList(ProductsGetRequest request) {
+        if (request == null) {
+            VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70001;
+            throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
+        }
+
+        //ChannelId
+        String channelId = request.getChannelId();
+        if (StringUtils.isEmpty(channelId)) {
+            VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70003;
+            throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
+        }
+
+
+        JomgoQuery queryObject = new JomgoQuery();
+        //fields
+        buildProjection(request, queryObject);
+        //sorts
+        buildSort(request, queryObject);
+
+        //getProductById
+        Set<Long> pids = request.getProductIds();
+        if (pids != null && pids.size() > 0) {
+//            queryObject.setQuery(String.format("{\"prodId\" : %s}", pid));
+//            return cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
+        }
+
+        //getProductByCode
+        Set<String> productCodes = request.getProductCodes();
+        if (productCodes != null && productCodes.size() > 0) {
+//            queryObject.setQuery(String.format("{\"fields.code\" : \"%s\" }", productCode));
+//            return cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
+        }
+
+        //getProductByCondition
+        String props = request.getProps();
+        if (!StringUtils.isEmpty(props)) {
+            queryObject.setQuery(buildProductQuery(props));
+            return cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
+        }
+
+        return null;
+    }
+
+
+    /**
+     * cms Product ArrayType Paths
+     */
+    private static String[] cmsProductArrayTypePaths = {
+            "fields.images1.",
+            "fields.images2.",
+            "fields.images3.",
+            "fields.images4.",
+            "groups.platforms.",
+            "skus."};
+
+    /**
+     * build product query
+     * @param props prop string
+     * @return query string
+     */
+    private String buildProductQuery(String props) {
         StringBuilder resultSb = new StringBuilder();
         String propsTmp = props.replaceAll("[\\s]*;[\\s]*", " ; ");
         String[] propsTmpArr = propsTmp.split(" ; ");
@@ -92,7 +143,7 @@ public class PostProductSelectOneService extends BaseAppService{
         int index = 0;
         for (String propTmp : propsTmpArr) {
             propTmp = propTmp.trim();
-            String arrayTypePath = getArrayTypePath(props);
+            String arrayTypePath = getProductArrayTypePath(props);
             if (arrayTypePath != null) {
                 if (!propListMap.containsKey(arrayTypePath)) {
                     propListMap.put(arrayTypePath, new ArrayList<String>());
@@ -142,30 +193,18 @@ public class PostProductSelectOneService extends BaseAppService{
         return "{ " + resultSb.toString() + " }";
     }
 
-    private String getArrayTypePath(String propStr) {
-        for (String arrayTypePath : arrayTypePaths) {
+    /**
+     * get Product ArrayType Path String
+     * @param propStr porp string
+     * @return Product ArrayType Path
+     */
+    private String getProductArrayTypePath(String propStr) {
+        for (String arrayTypePath : cmsProductArrayTypePaths) {
             if (propStr.startsWith(arrayTypePath) || propStr.startsWith("\"" + arrayTypePath)) {
                 return arrayTypePath;
             }
         }
         return null;
-    }
-
-    private void buildProjection(PostProductSelectOneRequest params, JomgoQuery queryObject) {
-        if (StringUtils.isEmpty(params.getFields())) {
-            return;
-        }
-        String fieldsTmp = params.getFields().replaceAll("[\\s]*;[\\s]*", " ; ");
-        String[] fieldsTmpArr = fieldsTmp.split(" ; ");
-        queryObject.setProjection(fieldsTmpArr);
-    }
-
-    private void buildSort(PostProductSelectOneRequest params, JomgoQuery queryObject) {
-        if (StringUtils.isEmpty(params.getSorts())) {
-            return;
-        }
-        String sortsTmp = params.getSorts().replaceAll("[\\s]*;[\\s]*", ", ");
-        queryObject.setSort("{ " + sortsTmp + " }");
     }
 
 }
