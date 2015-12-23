@@ -1,8 +1,8 @@
 package com.voyageone.web2.sdk.api;
 
 import com.voyageone.cms.service.model.CmsBtProductModel;
-import com.voyageone.web2.sdk.api.request.PostProductSelectOneRequest;
-import com.voyageone.web2.sdk.api.response.PostProductSelectOneResponse;
+import com.voyageone.web2.sdk.api.request.ProductGetRequest;
+import com.voyageone.web2.sdk.api.response.ProductGetResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +22,15 @@ public class VoApiDefaultClientTest {
 
     @Test
     public void testExceute() {
-        PostProductSelectOneRequest requestModel = new PostProductSelectOneRequest("001");
+//        DBObject statusQuery = new BasicDBObject("event", "WonGame");
+//        statusQuery.put("playerId", "52307b8fe4b0fc612dea2c6f");
+//        DBObject fields = new BasicDBObject("$elemMatch", statusQuery);
+//        DBObject query = new BasicDBObject("playerHistories",fields);
+//        System.out.println(query.toString());
+
+        ProductGetRequest requestModel = new ProductGetRequest("001");
         requestModel.setProductId((long)1);
-        PostProductSelectOneResponse response = voApiClient.execute(requestModel);
+        ProductGetResponse response = voApiClient.execute(requestModel);
 
         System.out.println(response);
         CmsBtProductModel mode = response.getProduct();

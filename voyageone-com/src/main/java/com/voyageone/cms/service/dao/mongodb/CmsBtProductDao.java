@@ -2,6 +2,7 @@ package com.voyageone.cms.service.dao.mongodb;
 
 import com.mongodb.*;
 import com.voyageone.base.dao.mongodb.BaseMongoDao;
+import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.cms.service.model.CmsBtProductModel_Field;
@@ -62,7 +63,7 @@ public class CmsBtProductDao extends BaseMongoDao {
     /**
      * 获取SKUList 根据prodId
      */
-    public List<CmsBtProductModel_Sku>  selectSKUById(String channelId, long prodId) {
+    public List<CmsBtProductModel_Sku> selectSKUById(String channelId, long prodId) {
         String query = "{\"prodId\":" + prodId + "}";
         CmsBtProductModel product = selectOneWithQuery(query, channelId);
         if (product != null) {
@@ -87,6 +88,43 @@ public class CmsBtProductDao extends BaseMongoDao {
      */
     public Iterator<CmsBtProductModel> selectAllReturnCursor(String channelId) {
         return selectCursorAll(channelId);
+    }
+
+    /**
+     * 根据检索条件返回当前页的product列表
+     * @param query
+     * @param currPage
+     * @param pageSize
+     * @param channelId
+     * @return
+     */
+    public List<CmsBtProductModel> selectProductByQuery(String query, Integer currPage, Integer pageSize, String channelId, String[] searchItems) {
+        JomgoQuery jQuery = new JomgoQuery();
+        jQuery.setQuery(query)
+                .setSkip((currPage - 1) * pageSize)
+                .setLimit(pageSize)
+                .setProjection(searchItems);
+
+        return select(jQuery, channelId);
+    }
+
+    /**
+     * 根据检索条件返回当前页的group列表(只包含main product)
+     * @param query
+     * @param currPage
+     * @param pageSize
+     * @param channelId
+     * @return
+     */
+    public List<CmsBtProductModel> selectGroupWithMainProductByQuery(String query, Integer currPage, Integer pageSize, String channelId, String[] searchItems) {
+        JomgoQuery jQuery = new JomgoQuery();
+
+        jQuery.setQuery(query)
+                .setSkip((currPage - 1) * pageSize)
+                .setLimit(pageSize)
+                .setProjection(searchItems);
+
+        return select(jQuery, channelId);
     }
 
     /**
@@ -118,12 +156,56 @@ public class CmsBtProductDao extends BaseMongoDao {
     /**
      * 批量更新Field记录
      * @param channelId 渠道ID
+     * @param prodIdList id List
+     * @param field  CmsBtProductModel_Field
+     * @param modifier  更新者
+     * @return 运行结果
+     */
+    public BulkWriteResult bulkUpdateFieldsByProdIds(String channelId, List<Long> prodIdList, CmsBtProductModel_Field field, String modifier) {
+        BulkWriteResult result = null;
+        if (prodIdList != null && prodIdList.size()>0 && field != null && field.size()>0) {
+            int step = 100;
+            DBCollection coll = getDBCollection(channelId);
+            int index  = 0;
+            BulkWriteOperation bwo = null;
+            for(Long prodid : prodIdList) {
+                if (bwo == null) {
+                    bwo = coll.initializeOrderedBulkOperation();
+                }
+
+                BasicDBObject fieldUpdateObj = field.toUpdateBasicDBObject("fields.");
+                fieldUpdateObj.append("modified", DateTimeUtil.getNowTimeStamp());
+                if (modifier != null && !"".equals(modifier.trim())) {
+                    fieldUpdateObj.append("modifier", modifier);
+                }
+                BasicDBObject updateObj = new BasicDBObject();
+                updateObj.append("$set", fieldUpdateObj);
+
+                BasicDBObject query = new BasicDBObject().append("prodId", prodid);
+                bwo.find(query).update(updateObj);
+
+                index++;
+                if (index % step == 0) {
+                    result = bwo.execute();
+                    bwo = null;
+                }
+            }
+            if (bwo != null) {
+                result = bwo.execute();
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 批量更新Field记录
+     * @param channelId 渠道ID
      * @param codeList  code List
      * @param field  CmsBtProductModel_Field
      * @param modifier  更新者
      * @return 运行结果
      */
-    public BulkWriteResult bathUpdateWithField(String channelId, List<String> codeList, CmsBtProductModel_Field field, String modifier) {
+    public BulkWriteResult bulkUpdateFieldsByCodes(String channelId, List<String> codeList, CmsBtProductModel_Field field, String modifier) {
         BulkWriteResult result = null;
         if (codeList != null && codeList.size()>0 && field != null && field.size()>0) {
             int step = 100;
@@ -162,11 +244,59 @@ public class CmsBtProductDao extends BaseMongoDao {
     /**
      * 批量更新Field记录
      * @param channelId 渠道ID
-     * @param codeFieldMap  code field map
+     * @param prodIdFieldMap  prodId field map
      * @param modifier  更新者
      * @return 运行结果
      */
-    public BulkWriteResult bathUpdateWithFields(String channelId, Map<String, CmsBtProductModel_Field> codeFieldMap, String modifier) {
+    public BulkWriteResult bulkUpdateFieldsByProdIds(String channelId, Map<Long, CmsBtProductModel_Field> prodIdFieldMap, String modifier) {
+        BulkWriteResult result = null;
+        if (prodIdFieldMap != null && prodIdFieldMap.size()>0) {
+            int step = 100;
+            DBCollection coll = getDBCollection(channelId);
+            int index  = 0;
+            BulkWriteOperation bwo = null;
+            for(Map.Entry<Long, CmsBtProductModel_Field> entry : prodIdFieldMap.entrySet()) {
+                Long prodId = entry.getKey();
+                CmsBtProductModel_Field field = entry.getValue();
+                if (prodId == null || field == null || field.size() == 0) {
+                    continue;
+                }
+                if (bwo == null) {
+                    bwo = coll.initializeOrderedBulkOperation();
+                }
+
+                BasicDBObject fieldUpdateObj = field.toUpdateBasicDBObject("fields.");
+                fieldUpdateObj.append("modified", DateTimeUtil.getNowTimeStamp());
+                if (modifier != null && !"".equals(modifier.trim())) {
+                    fieldUpdateObj.append("modifier", modifier);
+                }
+                BasicDBObject updateObj = new BasicDBObject();
+                updateObj.append("$set", fieldUpdateObj);
+
+                BasicDBObject query = new BasicDBObject().append("prodId", prodId);
+                bwo.find(query).update(updateObj);
+
+                index++;
+                if (index % step == 0) {
+                    result = bwo.execute();
+                    bwo = null;
+                }
+            }
+            if (bwo != null) {
+                result = bwo.execute();
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 批量更新Field记录
+     * @param channelId 渠道ID
+     * @param codeFieldMap code field map
+     * @param modifier  更新者
+     * @return 运行结果
+     */
+    public BulkWriteResult bulkUpdateFieldsByCodes(String channelId, Map<String, CmsBtProductModel_Field> codeFieldMap, String modifier) {
         BulkWriteResult result = null;
         if (codeFieldMap != null && codeFieldMap.size()>0) {
             int step = 100;
@@ -206,7 +336,6 @@ public class CmsBtProductDao extends BaseMongoDao {
         }
         return result;
     }
-
 
     /**
      * 批量更新记录

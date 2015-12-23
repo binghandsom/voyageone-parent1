@@ -127,6 +127,11 @@ public abstract class BaseMongoDao {
         return mongoTemplate.findOne(strQuery, (Class<T>)entityClass, collectionName);
     }
 
+    public <T> T selectOneWithQuery(JomgoQuery queryObject, String channelId) {
+        String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
+        return mongoTemplate.findOne(queryObject, (Class<T>)entityClass, collectionName);
+    }
+
     public <T> List<T> selectAll(String channelId) {
         String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
         return mongoTemplate.findAll((Class<T>) entityClass, collectionName);

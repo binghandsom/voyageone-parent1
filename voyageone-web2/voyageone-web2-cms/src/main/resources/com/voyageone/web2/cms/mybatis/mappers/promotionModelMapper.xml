@@ -62,6 +62,11 @@
                     <if test="promotionId != null">
                         promotion_id =  #{promotionId,jdbcType=INTEGER}
                     </if>
+                    <if test="key !=null and key != ''">
+                        and (
+                        product_model like '%${key}%'
+                        )
+                    </if>
                 </where>
                 <if test="start != null and length != null">
                     LIMIT #{start}, #{length}
@@ -77,7 +82,8 @@
                 MAX(a.promotion_price) AS promotion_price_max,
                 MIN(a.promotion_price) AS promotion_price_min,
                 MAX(a.sale_price) AS sale_price_max,
-                MIN(a.sale_price) AS sale_price_min
+                MIN(a.sale_price) AS sale_price_min,
+                a.msrp AS msrp
             FROM
                 voyageone_cms2.cms_bt_promotion_code a
             GROUP BY
@@ -95,6 +101,11 @@
         <where>
             <if test="promotionId != null">
                 promotion_id =  #{promotionId,jdbcType=INTEGER}
+            </if>
+            <if test="key !=null and key != ''">
+                and (
+                product_model like '%${key}%'
+                )
             </if>
         </where>
     </select>
@@ -185,4 +196,11 @@
         </set>
         where seq = #{seq,jdbcType=INTEGER}
     </update>
+    <delete id="delete_cms_bt_promotion_model" parameterType="com.voyageone.web2.cms.model.CmsBtPromotionGroupModel">
+        delete
+            from voyageone_cms2.cms_bt_promotion_model
+        where
+            promotion_id = #{promotionId,jdbcType=INTEGER}
+            and model_id = #{modelId,jdbcType=INTEGER}
+    </delete>
 </mapper>

@@ -2,14 +2,15 @@ package com.voyageone.web2.cms.views.pop.prop_change;
 
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.model.CmsBtProductModel_Field;
+import com.voyageone.cms.service.model.CmsMtCommonPropDefModel;
 import com.voyageone.common.configs.TypeChannel;
+import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.OptionsField;
 import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.dao.CmsMtCommonPropDefDao;
-import com.voyageone.cms.service.model.CmsMtCommonPropDefModel;
-import net.minidev.json.JSONArray;
+import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -57,21 +58,61 @@ public class CmsPropChangeService extends BaseAppService {
     /**
      * 批量修改属性.
      */
-    public void setProductFields(Map<String, Object> params, String user_name) {
+    public void setProductFields(Map<String, Object> params, UserSessionBean userInfo){
 
-        Object[] codes = ((JSONArray) params.get("codes")).toArray();
-        String channel_id = (String) params.get("channelId");
-        String prop_id = (String) params.get("propId");
-        String prop_value = (String) params.get("propValue");
+        cmsBtProductDao.bulkUpdateFieldsByProdIds(userInfo.getSelChannelId()
+                , (ArrayList<Long>)params.get("productIds")
+                , getPropValue(params)
+                , userInfo.getUserName());
+    }
 
-        List<String> codeList = new ArrayList<>();
+    /**
+     * 根据request值获取需要更新的Field数据
+     * @param params
+     * @return
+     */
+    private CmsBtProductModel_Field getPropValue (Map<String, Object> params){
+        try {
 
-        for (Object code : codes) {
-            codeList.add(code.toString());
+            CmsBtProductModel_Field field = new CmsBtProductModel_Field();
+
+            String type = ((Map<String, Object>) params.get("property")).get("type").toString();
+//            Field prop = FieldTypeEnum.createField(FieldTypeEnum.getEnum(type));
+
+            switch (FieldTypeEnum.getEnum(type)) {
+//                case INPUT:
+//                    prop_value = (String)prop.getValue();
+//                    break;
+//                case MULTIINPUT:
+//                    (List<Value>)prop.getValue();
+//                    break;
+                case SINGLECHECK:
+//                    SingleCheckField prop = new SingleCheckField();
+//                    BeanUtils.populate(prop, (Map<String, Object>) params.get("property"));
+                    Map<String, Object> prop = (Map<String, Object>) params.get("property");
+                    String prop_id = prop.get("id").toString();
+                    String prop_value = ((Map<String, Object>)prop.get("value")).get("value").toString();
+                    field.put(prop_id, prop_value);
+                    break;
+//                case MULTICHECK:
+//                    (List<Value>)prop.getValue(); List<String>
+//                        field.put(prop.getId(), ((Value)prop.getValue()).getValue());
+//                    break;
+//                case COMPLEX:Map<String, Object>
+//                    (ComplexValue)prop.getValue();
+//                    break;
+//                case MULTICOMPLEX:List<Map<String, Object>>
+//                    (List<ComplexValue>)prop.getValue();
+//                    break;
+//                case LABEL:
+//                    (String)prop.getValue();
+//                    break;
+            }
+            return field;
+        } catch (Exception e) {
+            logger.error("CmsPropChangeService: " +e.getMessage());
         }
-        CmsBtProductModel_Field field = new CmsBtProductModel_Field();
-        field.put(prop_id, prop_value);
-        cmsBtProductDao.bathUpdateWithField(channel_id, codeList, field, user_name);
 
+        return null;
     }
 }

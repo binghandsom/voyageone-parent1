@@ -49,14 +49,6 @@ public class CmsBtProductModel_Sku extends BaseMongoMap<String, Object> {
         setAttribute("size", size);
     }
 
-    public Integer getQty() {
-        return getAttribute("qty");
-    }
-
-    public void setQty(Integer qty) {
-        setAttribute("qty", qty);
-    }
-
     public Double getPriceMsrp() {
         return getAttribute("priceMsrp");
     }

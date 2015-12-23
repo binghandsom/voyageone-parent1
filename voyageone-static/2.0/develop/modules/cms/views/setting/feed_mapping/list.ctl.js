@@ -67,9 +67,19 @@ define([
 
                 return defMapping ? defMapping.mainCategoryPath : '[未设定]';
             },
-            bindCategory: function(category) {
-                console.log(this);
-                console.log(category);
+            /**
+             * 在类目 Popup 确定关闭后, 为相关类目进行绑定
+             * @param {{from:object, selected:object}} context Popup 返回的结果信息
+             */
+            bindCategory: function (context) {
+
+                this.feedMappingService.setMapping({
+                    from: context.from.path,
+                    to: context.selected.catPath
+                }).then(function (res) {
+                    // 从后台获取更新后的 mapping
+                    context.from.mapping = res.data;
+                });
             }
         };
 

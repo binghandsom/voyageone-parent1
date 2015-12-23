@@ -510,14 +510,23 @@
 
       BeatController.prototype.beatControl = function (action, item) {
         if (!this.beat || !this.beat.beat_id) {
-          this.alert('NO_SELECTED_BEAT。');
+          this.alert('NO_SELECTED_BEAT');
           return;
         }
 
-        if (!item) return console.log('beatControl: noCurrItem');
+        var item_id = !item ? null : item.beat_item_id;
 
-        var item_id = item.beat_item_id;
+        if (item_id) {
+          return this.$beatControl(action, item_id);
+        }
 
+        var ctrl = this;
+        return this.confirm('确定要对所有任务执行这一操作吗 ?').then(function() {
+          return ctrl.$beatControl(action, item_id);
+        });
+      };
+
+      BeatController.prototype.$beatControl = function (action, item_id) {
         return this.beatService.beatControl(this.beat.beat_id, item_id, action).then((function (_this) {
           return function (count) {
             _this.notify.success("[ " + (item_id || 'all') + " ] " + action + " complete. return count: [ " + count + " ]");

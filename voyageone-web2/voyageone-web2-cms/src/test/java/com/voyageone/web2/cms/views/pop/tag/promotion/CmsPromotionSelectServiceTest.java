@@ -36,10 +36,10 @@ public class CmsPromotionSelectServiceTest {
         JSONObject params = new JSONObject();
         JSONArray productIds = new JSONArray();
         productIds.add((long)1);
-//        productIds.add("100002");
         params.put("productIds", productIds);
-        params.put("tagId", 6);
+        params.put("tagPath", "-8-");
         cmsPromotionSelectService.addToPromotion(params, "001", "testcc");
         assert true;
     }
+
 }

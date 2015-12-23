@@ -4,6 +4,7 @@
     <resultMap id="TagMap" type="com.voyageone.web2.cms.model.CmsBtTagModel" >
         <id column="tag_id" property="tagId" jdbcType="INTEGER" />
         <result column="tag_name" property="tagName" jdbcType="VARCHAR" />
+        <result column="channel_id" property="channelId" jdbcType="VARCHAR" />
         <result column="tag_path" property="tagPath" jdbcType="VARCHAR" />
         <result column="tag_path_name" property="tagPathName" jdbcType="VARCHAR" />
         <result column="tag_type" property="tagType" jdbcType="INTEGER" />
@@ -24,6 +25,9 @@
             </if>
             <if test="tagPath != null" >
                 tag_path,
+            </if>
+            <if test="channelId != null" >
+                channel_id,
             </if>
             <if test="tagPathName != null" >
                 tag_path_name,
@@ -55,6 +59,9 @@
             </if>
             <if test="tagPath != null" >
                 #{tagPath,jdbcType=VARCHAR},
+            </if>
+            <if test="channelId != null" >
+                #{channelId,jdbcType=VARCHAR},
             </if>
             <if test="tagPathName != null" >
                 #{tagPathName,jdbcType=VARCHAR},
@@ -116,6 +123,7 @@
         select
             tag.tag_id,
             tag.tag_name,
+            tag.channel_id,
             tag.tag_path,
             tag.tag_path_name,
             tag.tag_type,

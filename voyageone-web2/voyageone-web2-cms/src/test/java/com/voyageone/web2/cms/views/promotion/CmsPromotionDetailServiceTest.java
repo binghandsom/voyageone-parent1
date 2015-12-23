@@ -60,7 +60,7 @@ public class CmsPromotionDetailServiceTest {
     @Test
     public void testResolvePromotionXls() throws Exception {
         InputStream stream = new FileInputStream("d:\\promotion.xlsx");
-        cmsPromotionDetailService.resolvePromotionXls(stream);
+//        cmsPromotionDetailService.resolvePromotionXls(stream);
     }
 
     @Test
@@ -68,5 +68,10 @@ public class CmsPromotionDetailServiceTest {
         InputStream stream = new FileInputStream("d:\\promotion.xlsx");
         cmsPromotionDetailService.uploadPromotion(stream,15,"james");
         System.out.println("");
+    }
+
+    @Test
+    public void testTeJiaBaoInit() throws Exception {
+        cmsPromotionDetailService.teJiaBaoInit(15,"james");
     }
 }

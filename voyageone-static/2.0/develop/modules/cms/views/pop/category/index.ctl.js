@@ -69,7 +69,8 @@ define(['cms'], function (cms) {
                 this.categoryPath.push({level:level + 1, categories: category.children});
             },
             ok: function() {
-                this.$uibModalInstance.close(this.selected);
+                this.context.selected = this.selected;
+                this.$uibModalInstance.close(this.context);
             },
             cancel: function () {
                 this.$uibModalInstance.dismiss('cancel');

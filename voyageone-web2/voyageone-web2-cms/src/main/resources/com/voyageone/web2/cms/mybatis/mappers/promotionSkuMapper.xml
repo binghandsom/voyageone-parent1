@@ -38,6 +38,13 @@
                     <if test="promotionId != null">
                         promotion_id =  #{promotionId,jdbcType=INTEGER}
                     </if>
+                    <if test="key !=null and key != ''">
+                        and (
+                        product_model like '%${key}%'
+                        or product_code like '%${key}%'
+                        or product_sku like '%${key}%'
+                        )
+                    </if>
                 </where>
                 <if test="start != null and length != null">
                     LIMIT #{start}, #{length}
@@ -54,6 +61,13 @@
         <where>
             <if test="promotionId != null">
                 promotion_id =  #{promotionId,jdbcType=INTEGER}
+            </if>
+            <if test="key !=null and key != ''">
+                and (
+                product_model like '%${key}%'
+                or product_code like '%${key}%'
+                or product_sku like '%${key}%'
+                )
             </if>
         </where>
     </select>
@@ -198,4 +212,19 @@
             </if>
         </where>
     </update>
+    <delete id="delete_cms_bt_promotion_sku" parameterType="com.voyageone.web2.cms.model.CmsBtPromotionSkuModel">
+        delete
+        from voyageone_cms2.cms_bt_promotion_sku
+        where
+        promotion_id = #{promotionId,jdbcType=INTEGER}
+        <if test="productSku != null and productSku != ''">
+          and product_sku = #{productSku,jdbcType=VARCHAR}
+        </if>
+        <if test="modelId != null and modelId != ''">
+            and model_id = #{modelId,jdbcType=INTEGER}
+        </if>
+        <if test="productId != null and productId != ''">
+            and product_id = #{productId,jdbcType=INTEGER}
+        </if>
+    </delete>
 </mapper>

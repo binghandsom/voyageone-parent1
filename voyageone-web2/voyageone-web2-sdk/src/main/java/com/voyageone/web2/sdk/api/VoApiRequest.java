@@ -2,7 +2,6 @@ package com.voyageone.web2.sdk.api;
 
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
-import com.voyageone.web2.sdk.api.response.PostProductSelectOneResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 
@@ -89,7 +88,46 @@ public abstract class VoApiRequest<T extends VoApiResponse> {
 	 * 客户端参数检查，减少服务端无效调用
 	 */
 	public void check() throws ApiRuleException {
-
 	}
 
+
+	/**
+	 * 需返回的字段列表.可选值:Product数据结构中的所有字段;多个字段之间用" ; "分隔.
+	 */
+	protected String fields;
+	public String getFields() {
+		return fields;
+	}
+	public void setFields(String fields) {
+		this.fields = fields;
+	}
+	public void addField(String field) {
+		if (fields == null) {
+			fields = field;
+		} else {
+			fields = fields + " ; " + field;
+		}
+	}
+
+	/**
+	 * sort condition
+	 */
+	protected String sorts;
+	public String getSorts() {
+		return sorts;
+	}
+	public void setSorts(String sorts) {
+		this.sorts = sorts;
+	}
+	public void addSort(String field, boolean isAsc) {
+		String asc = "-1";
+		if (isAsc) {
+			asc = "1";
+		}
+		if (sorts == null) {
+			sorts = field + " : " + asc;
+		} else {
+			sorts = sorts + " ; " + field + " : " + asc;
+		}
+	}
 }

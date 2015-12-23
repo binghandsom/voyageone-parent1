@@ -19,6 +19,7 @@ public class InputField extends Field {
         this.value = value;
     }
 
+    @Override
     public String getValue() {
         return this.value;
     }

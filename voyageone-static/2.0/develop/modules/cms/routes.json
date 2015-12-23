@@ -29,6 +29,11 @@
     "templateUrl": "views/promotion/task/detail.tpl.html",
     "controllerUrl": "modules/cms/views/promotion/task/detail.ctl"
   },
+  "promotion_task_price": {
+    "hash": "/task/price/:promotionId",
+    "templateUrl": "views/task/price.tpl.html",
+    "controllerUrl": "modules/cms/views/task/price.ctl"
+  },
   "search_index": {
     "hash": "/search/index",
     "templateUrl": "views/search/index.tpl.html",

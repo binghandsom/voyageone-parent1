@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.pop.prop_change;
 
 import com.voyageone.cms.service.model.CmsMtCommonPropDefModel;
+import com.voyageone.web2.core.bean.UserSessionBean;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import org.junit.Test;
@@ -39,7 +40,10 @@ public class CmsPropChangeServiceTest {
         params.put("propId", "test1");
         params.put("propValue", "ok");
         params.put("codes", codes);
-        cmsPropChangeService.setProductFields(params, "aa");
+        UserSessionBean userInfo = new UserSessionBean();
+        userInfo.setSelChannelId("010");
+        userInfo.setUserName("test");
+        cmsPropChangeService.setProductFields(params, userInfo);
         assert true;
     }
 

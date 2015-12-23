@@ -33,7 +33,8 @@
       "feedMappingService": {
         "root": "/cms/setting/feedMapping",
         "getFeedCategories": "getFeedCategories",
-        "getMainCategories": "getMainCategories"
+        "getMainCategories": "getMainCategories",
+        "setMapping": "setFeedMapping"
       }
     },
     "pop": {
@@ -46,6 +47,14 @@
         "root": "/cms/pop/prom_select/",
         "getPromotionTags": "getPromotionTags",
         "addToPromotion": "addToPromotion"
+      },
+      "$promotionHistoryService": {
+        "root": "/cms/pop/promotion/",
+        "getPromotionHistory": "getPromotionHistory"
+      },
+      "$priceHistoryService": {
+        "root": "/cms/pop/price/",
+        "getPriceHistory": "getPriceHistory"
       }
     },
     "promotionService": {
@@ -60,7 +69,15 @@
       "getPromotionGroup": "getPromotionGroup",
       "getPromotionCode": "getPromotionCode",
       "getPromotionSku": "getPromotionSku",
-      "uploadPromotion": "uploadPromotion"
+      "uploadPromotion": "uploadPromotion",
+      "tejiabaoInit" : "tejiabaoInit",
+      "updatePromotionProduct" : "updatePromotionProduct",
+      "delPromotionModel" : "delPromotionModel",
+      "delPromotionCode":"delPromotionCode"
+    },
+    "taskPriceService": {
+      "root": "/cms/task/price",
+      "getPriceList": "getPriceList"
     }
   }
 }

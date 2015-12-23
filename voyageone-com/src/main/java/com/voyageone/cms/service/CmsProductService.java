@@ -116,25 +116,40 @@ public class CmsProductService {
     }
 
     /**
+     * 批量更新Fields 根据ProdIdList，更新为相同的值
+     */
+    public BulkWriteResult bulkUpdateFieldsByProdIds(String channelId, List<Long> prodIdList, CmsBtProductModel_Field field, String modifier) {
+        return cmsBtProductDao.bulkUpdateFieldsByProdIds(channelId, prodIdList, field, modifier);
+    }
+
+    /**
      * 批量更新Fields 根据CodeList，更新为相同的值
      */
-    public BulkWriteResult bathUpdateWithField(String channelId, List<String> codeList, CmsBtProductModel_Field field, String modifier) {
-        return cmsBtProductDao.bathUpdateWithField(channelId, codeList, field, modifier);
+    public BulkWriteResult bulkUpdateFieldsByCodes(String channelId, List<String> codeList, CmsBtProductModel_Field field, String modifier) {
+        return cmsBtProductDao.bulkUpdateFieldsByCodes(channelId, codeList, field, modifier);
     }
 
     /**
      * 批量更新Fields 根据CodeList
      */
-    public BulkWriteResult bathUpdateWithFields(String channelId, Map<String, CmsBtProductModel_Field> codeFieldMap, String modifier) {
-        return cmsBtProductDao.bathUpdateWithFields(channelId, codeFieldMap, modifier);
+    public BulkWriteResult bulkUpdateFieldsByProdIds(String channelId, Map<Long, CmsBtProductModel_Field> prodIdFieldMap, String modifier) {
+        return cmsBtProductDao.bulkUpdateFieldsByProdIds(channelId, prodIdFieldMap, modifier);
+    }
+
+    /**
+     * 批量更新Fields 根据CodeList
+     */
+    public BulkWriteResult bulkUpdateFieldsByCodes(String channelId, Map<String, CmsBtProductModel_Field> codeFieldMap, String modifier) {
+        return cmsBtProductDao.bulkUpdateFieldsByCodes(channelId, codeFieldMap, modifier);
     }
 
     /**
      * 批量更新上新结果 根据CodeList
      */
-    public BulkWriteResult bathUpdateWithSXResult(String channelId, int cartId, List<String> codeList,
+    public BulkWriteResult bathUpdateWithSXResult(String channelId, int cartId,
+                                                  long groupId, List<String> codeList,
                                                   String numIId, String productId,
-                                                  String publishTime, String instockTime,
+                                                  String publishTime, String onSalesTime, String instockTime,
                                                   CmsConstants.PlatformStatus status) {
 
         List<BulkUpdateModel> bulkList = new ArrayList<>();
@@ -152,6 +167,9 @@ public class CmsProductService {
             }
             if (publishTime != null) {
                 updateMap.put("groups.platforms.$.publishTime", publishTime);
+            }
+            if (onSalesTime != null) {
+                updateMap.put("groups.platforms.$.onSalesTime", onSalesTime);
             }
             if (instockTime != null) {
                 updateMap.put("groups.platforms.$.instockTime", instockTime);

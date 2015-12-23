@@ -58,8 +58,8 @@ public class CmsProductServiceTest {
         fields.setShortDesEn("Stud Earrings with Cubic Zirconia in Sterling Silver- 简短描述英语" + random.nextInt(100));
         fields.setLongDesEn("Stud Earrings with Cubic Zirconia in Sterling Silver- 详情描述英语" + random.nextInt(100));
 
-        fields.setHsCodeCrop("Stud Ear"+ random.nextInt(10));
-        fields.setHsCodePrivate("Stud Ear"+ random.nextInt(10));
+        fields.setHsCodeCrop("Stud Ear" + random.nextInt(10));
+        fields.setHsCodePrivate("Stud Ear" + random.nextInt(10));
 
         fields.setPriceChange(random.nextInt(1));
 
@@ -104,7 +104,6 @@ public class CmsProductServiceTest {
         fields.setCurrentPriceEnd(800.00 + random.nextInt(100));
         fields.setStatus("pedding");
         fields.setSizeType("Men" + random.nextInt(5));
-        fields.setInventory(100 + random.nextInt(10));
         fields.setPriceChange(random.nextInt(1));
 
 
@@ -128,13 +127,8 @@ public class CmsProductServiceTest {
         platform.setPublishTime("2015-11-12 16:19:00");
         platform.setInstockTime("2015-11-18 16:19:00");
         platform.setPlatformStatus(CmsConstants.PlatformStatus.Waitingpublish);
-        List<Map<String,Object>> taskResults = platform.getTaskResults();
-        Map<String,Object> taskResult = new HashMap<>();
-        taskResult.put("doSx", 1);
-        taskResult.put("comment", "xxxx");
-        taskResults.add(taskResult);
-
-        platform.setInventory(random.nextInt(100));
+        platform.setPlatformActive(CmsConstants.PlatformActive.Onsale);
+        platform.setQty(random.nextInt(100));
         platforms.add(platform);
 
         platform = new CmsBtProductModel_Group_Platform(platform);
@@ -156,6 +150,9 @@ public class CmsProductServiceTest {
             sku.setSkuCarts(skuCarts);
             skus.add(sku);
         }
+
+        CmsBtProductModel_BatchField batchField = product.getBatchField();
+        batchField.setCodeQty(random.nextInt(1000));
 
         CmsBtProductModel_Feed orgFeed = product.getFeedOrgAtts();
         orgFeed.setAttribute("washingtype", "dry cleaning");
@@ -229,7 +226,7 @@ public class CmsProductServiceTest {
     }
 
     @Test
-    public void remove10W(){
+    public void testRemove10W(){
         long start = System.currentTimeMillis();
         cmsProductService.removeAll("101");
         long total = System.currentTimeMillis()-start;
@@ -243,7 +240,7 @@ public class CmsProductServiceTest {
     }
 
     @Test
-    public void bulkUpdate(){
+    public void testBulkUpdate(){
         List<BulkUpdateModel> bulkList = new ArrayList<>();
         System.out.println(new Date());
         for (int i = 1; i < 100000 ; i++) {
@@ -266,6 +263,9 @@ public class CmsProductServiceTest {
         List<String> codeList = new ArrayList<>();
         codeList.add("100001");
         codeList.add("100002");
-        cmsProductService.bathUpdateWithSXResult("001", 21, codeList, "123123123", "product_id1", "2015-11-12 16:19:00", "2015-11-12 16:19:00", CmsConstants.PlatformStatus.Onsale);
+        cmsProductService.bathUpdateWithSXResult("001", 21, 804,
+                codeList, "123123123", "product_id1",
+                "2015-11-12 16:19:00", "2015-11-12 16:19:00", null,
+                CmsConstants.PlatformStatus.Onsale);
     }
 }

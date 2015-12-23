@@ -28,6 +28,8 @@ public interface CmsUrlConstants {
             String GET_FEED_CATEGORY_TREE = "getFeedCategories";
 
             String GET_MAIN_CATEGORIES = "getMainCategories";
+
+            String SET_MAPPING = "setFeedMapping";
         }
     }
 
@@ -54,6 +56,25 @@ public interface CmsUrlConstants {
             String GET_PROMOTION_SKU = "getPromotionSku";
 
             String GET_PROMOTION_UPLOAD = "uploadPromotion";
+
+            String TEJIABAO_INIT = "tejiabaoInit";
+
+            String UPDATE_PROMOTION_PRODUCT = "updatePromotionProduct";
+
+            String DEL_PROMOTION_MODEL = "delPromotionModel";
+
+            String DEL_PROMOTION_CODE = "delPromotionCode";
+        }
+    }
+    interface TASK {
+
+        interface PRICE {
+
+            String ROOT = "/cms/task/price";
+
+            String GET_PRICE_LIST = "getPriceList";
+
+            String UPDATE_PRICE = "updatePrice";
         }
     }
 

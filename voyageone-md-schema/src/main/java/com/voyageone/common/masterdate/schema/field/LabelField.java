@@ -30,6 +30,7 @@ public class LabelField extends Field {
         }
     }
 
+
     public LabelGroup addSubLabelGroup(String name) {
         if(name == null) {
             return null;
@@ -90,5 +91,11 @@ public class LabelField extends Field {
         XmlUtils.appendElement(fieldEle, lgEle);
         return fieldEle;
     }
+
+    @Override
+    public String getValue() {
+        return null;
+    }
+
 }
 

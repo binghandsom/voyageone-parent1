@@ -5506,6 +5506,7 @@ a.text-black:hover {
 .mfb-x{width:8%}
 .mfb-xxt{width:10%}
 .mfb-xx{width:12%}
+.mfb-xxst{width:12%}
 .mfb-xxs{width:20%}
 .mfb-xxxs{width:30%}
 .mfb-xxxxs{width:40%}
@@ -6168,6 +6169,7 @@ a.btn-main:hover {color:#e67e22;text-decoration:underline;}
   margin: 0 auto;
   text-align: center;
   border: 7px solid #fff;
+  width:80%;
   -webkit-box-shadow:0 0 10px rgba(0, 0, 0, .2);
   -moz-box-shadow:0 0 10px rgba(0, 0, 0, .2);
   box-shadow:0 0 10px rgba(0, 0, 0, .2);
@@ -6193,19 +6195,17 @@ a.btn-main:hover {color:#e67e22;text-decoration:underline;}
   padding:0px;
 }
 .channel-list li{
-  padding-bottom:10px;
+  padding-bottom:5px;
 }
 .channel-list li a {
   display: block;
   top: 0;
-  margin:0px;
-  padding:0px;
   position: relative;
-  width: 45px;
-  height: 45px;
+  width: 36px;
+  height: 36px;
   border-radius: 100%;
   font-size: 12px;
-  line-height: 45px;
+  line-height: 36px;
   color: #fff;
   background-color: #ed9005;
   -webkit-transition: all .3s;
@@ -6585,15 +6585,18 @@ input:checked + ol > li {
   border-color: #fdecdd;
   background:#fefcf9;
   overflow-y: auto;
+  overflow-scrolling: touch;
   -webkit-overflow-scrolling: touch;
 }
 
-
 .category_drag_list{
-  float:left;
+  /*float:left;*/
   margin:0px;
-  padding:4px 0px 0px 0px;
+  padding:4px 4px 0px 4px;
   height:250px;
+  overflow-y: auto;
+  overflow-scrolling: touch;
+  -webkit-overflow-scrolling: touch;
   color:#3366cc;
 }
 .category_drag_list ul{
@@ -6603,9 +6606,9 @@ input:checked + ol > li {
 }
 .category_drag_list li a{
    float: left;
+   width:185px;
    display: block;
    position: relative;
-   width:134px;
    list-style-type: none;
    padding:4px;
  }
@@ -6635,17 +6638,17 @@ input:checked + ol > li {
 }
 .category_drag {
   margin:0px;
+  padding:0px;
   background:#f5f9ff;
-  overflow-y: auto;
-  overflow-scrolling: touch;
-  -webkit-overflow-scrolling: touch;
   border:1px solid #d5e4fa;
 }
 .category_drags {
   margin:0px;
   background:#f5f9ff;
   overflow-y: auto;
-  -webkit-overflow-scrolling: touch;/*
+  overflow-scrolling: touch;
+  -webkit-overflow-scrolling: touch;
+  /*
   border-left:1px solid #d5e4fa;
   border-right:1px solid #d5e4fa;
   border-top:1px solid #d5e4fa;

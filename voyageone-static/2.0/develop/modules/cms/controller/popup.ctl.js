@@ -69,7 +69,7 @@ define([
         })
         .controller('popupCtrl', popupCtrl);
 
-    function popupCtrl($scope, $modal, popActions, $q) {
+    function popupCtrl($scope, $modal, popActions, $q, $translate, alert) {
 
         $scope.openCustomBaseProperty = openCustomBaseProperty;
         function openCustomBaseProperty(viewSize) {
@@ -84,19 +84,28 @@ define([
                 }
             });
         }
-        $scope.openupdateProperties = openupdateProperties;
-        function openupdateProperties(viewSize,data) {
+
+        /**
+         * pop出properties变更页面,用于批量更新产品属性
+         * @type {openupdateProperties}
+         */
+        $scope.openUpdateProperties = openUpdateProperties;
+        function openUpdateProperties(viewSize, selList) {
             require([popActions.prop_change.controllerUrl], function(){
-                $modal.open({
-                    templateUrl: popActions.prop_change.templateUrl,
-                    controller: 'popPropChangeCtl',
-                    size: viewSize,
-                    resolve: {
-                        data: function () {
-                            return data;
+                if (selList.length) {
+                    $modal.open({
+                        templateUrl: popActions.prop_change.templateUrl,
+                        controller: 'popPropChangeCtl',
+                        size: viewSize,
+                        resolve: {
+                            selList: function () {
+                                return selList;
+                            }
                         }
-                    }
-                });
+                    });
+                } else {
+                    alert($translate.instant('TXT_COM_MSG_NO_ROWS_SELECT'));
+                }
             });
         }
 
@@ -122,6 +131,8 @@ define([
                             }
                         }
                     });
+                } else {
+                    alert($translate.instant('TXT_COM_MSG_NO_ROWS_SELECT'));
                 }
             });
         }
@@ -133,6 +144,7 @@ define([
             require([popActions.category.controllerUrl], function() {
                 defer.resolve(
                     $modal.open({
+                        backdrop: 'static',
                         templateUrl: popActions.category.templateUrl,
                         controller: 'categoryPopupController as ctrl',
                         size: viewSize,
@@ -160,30 +172,34 @@ define([
                 }
             });
         }
-        $scope.openhistorypromotion = openhistorypromotion;
-        function openhistorypromotion(viewSize) {
-            $modal.open({
-                templateUrl: popActions.product.promotion.templateUrl,
-                controllerUrl: popActions.product.promotion.controllerUrl,
-                size: viewSize,
-                resolve: {
-                    items: function () {
-                        //return data;
+        $scope.openHistoryPromotion = openHistoryPromotion;
+        function openHistoryPromotion(viewSize, data) {
+            require([popActions.product.promotion.controllerUrl], function () {
+                $modal.open({
+                    templateUrl: popActions.product.promotion.templateUrl,
+                    controller: 'popPromotionHistoryCtl',
+                    size: viewSize,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
                     }
-                }
+                });
             });
         }
-        $scope.openpricepromotion = openpricepromotion;
-        function openpricepromotion(viewSize) {
-            $modal.open({
-                templateUrl: popActions.product.price.templateUrl,
-                controllerUrl: popActions.product.price.controllerUrl,
-                size: viewSize,
-                resolve: {
-                    items: function () {
-                        //return data;
+        $scope.openHistoryPrice = openHistoryPrice;
+        function openHistoryPrice(viewSize, data) {
+            require([popActions.product.price.controllerUrl], function () {
+                $modal.open({
+                    templateUrl: popActions.product.price.templateUrl,
+                    controller: 'popPriceHistoryCtl',
+                    size: viewSize,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
                     }
-                }
+                });
             });
         }
         $scope.openpromotion = openpromotion;

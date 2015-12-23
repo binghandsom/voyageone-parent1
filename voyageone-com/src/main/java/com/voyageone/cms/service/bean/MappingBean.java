@@ -7,23 +7,13 @@ package com.voyageone.cms.service.bean;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voyageone.common.masterdate.schema.Util.StringUtil;
-import com.voyageone.ims.rule_expression.MasterWord;
-import com.voyageone.ims.rule_expression.RuleExpression;
-import com.voyageone.ims.rule_expression.RuleJsonMapper;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME
         , include = JsonTypeInfo.As.PROPERTY
         , property = "mappingType")
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = SingleMappingBean.class, name = MappingBean.MAPPING_SIMPLE),
+        @JsonSubTypes.Type(value = SimpleMappingBean.class, name = MappingBean.MAPPING_SIMPLE),
         @JsonSubTypes.Type(value = ComplexMappingBean.class, name = MappingBean.MAPPING_COMPLEX)
 })
 public class MappingBean {

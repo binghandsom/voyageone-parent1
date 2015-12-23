@@ -4,6 +4,7 @@ import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants.PROMOTION;
 import com.voyageone.web2.cms.model.CmsBtPromotionCodeModel;
+import com.voyageone.web2.cms.model.CmsBtPromotionGroupModel;
 import com.voyageone.web2.cms.model.CmsBtPromotionModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -88,4 +89,34 @@ public class CmsPromotionDetailController extends CmsController {
         return success(reponse);
     }
 
+    @RequestMapping(PROMOTION.DETAIL.TEJIABAO_INIT)
+    public AjaxResponse tejiabaoInit(@RequestBody int promotionId) throws Exception {
+
+        cmsPromotionDetailService.teJiaBaoInit(promotionId,getUser().getUserName());
+        // 返回用户信息
+        return success(null);
+    }
+    @RequestMapping(PROMOTION.DETAIL.UPDATE_PROMOTION_PRODUCT)
+    public AjaxResponse updatePromotionProduct(@RequestBody CmsBtPromotionCodeModel params) {
+
+        cmsPromotionDetailService.updatePromotionProduct(params, getUser().getUserName());
+        // 返回用户信息
+        return success(null);
+    }
+
+    @RequestMapping(PROMOTION.DETAIL.DEL_PROMOTION_MODEL)
+    public AjaxResponse delPromotionModel(@RequestBody List<CmsBtPromotionGroupModel> params) {
+
+        cmsPromotionDetailService.delPromotionModel(params, getUser().getSelChannelId(), getUser().getUserName());
+        // 返回用户信息
+        return success(null);
+    }
+
+    @RequestMapping(PROMOTION.DETAIL.DEL_PROMOTION_CODE)
+    public AjaxResponse delPromotionCode(@RequestBody List<CmsBtPromotionCodeModel> params) {
+
+        cmsPromotionDetailService.delPromotionCode(params, getUser().getSelChannelId(),getUser().getUserName());
+        // 返回用户信息
+        return success(null);
+    }
 }

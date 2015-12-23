@@ -3,16 +3,20 @@ package com.voyageone.batch.cms.service;
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.cms.bean.SxProductBean;
 import com.voyageone.batch.cms.bean.UpJobParamBean;
+import com.voyageone.batch.cms.dao.CmsBusinessLogDao;
 import com.voyageone.batch.cms.dao.SxWorkloadDao;
 import com.voyageone.batch.cms.enums.PlatformWorkloadStatus;
+import com.voyageone.batch.cms.model.CmsBusinessLogModel;
 import com.voyageone.batch.cms.model.SxWorkloadModel;
-import com.voyageone.batch.cms.model.WorkLoadBean;
+import com.voyageone.batch.cms.bean.WorkLoadBean;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
+import com.voyageone.cms.CmsConstants;
 import com.voyageone.cms.service.CmsProductService;
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.cms.service.model.CmsBtProductModel_Group_Platform;
 import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.util.DateTimeUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,19 +29,19 @@ import java.util.*;
  */
 @Repository
 public class UploadProductService extends BaseTaskService implements WorkloadCompleteIntf {
-
-    private static final int PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE = 100;
-    private Set<WorkLoadBean> workLoadBeans;
     @Autowired
     private CmsProductService cmsProductService;
-    private Map<WorkLoadBean, List<SxProductBean>> workLoadBeanListMap;
-
-    private static Log logger = LogFactory.getLog(UploadProductService.class);
     @Autowired
     private UploadWorkloadDispatcher workloadDispatcher;
-
     @Autowired
     private SxWorkloadDao sxWorkloadDao;
+    @Autowired
+    private CmsBusinessLogDao cmsBusinessLogDao;
+
+    private static final int PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE = 100;
+    private Map<WorkLoadBean, List<SxProductBean>> workLoadBeanListMap;
+    private Set<WorkLoadBean> workLoadBeans;
+    private static Log logger = LogFactory.getLog(UploadProductService.class);
 
     public UploadProductService() {}
 
@@ -152,29 +156,27 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
     @Override
     public void onComplete(WorkLoadBean workLoadBean) {
         List<SxProductBean> sxProductBeans = workLoadBeanListMap.get(workLoadBean);
+        CmsBtProductModel mainCmsProductModel = workLoadBean.getMainProduct().getCmsBtProductModel();
         switch (workLoadBean.getWorkload_status().getValue())
         {
-            case PlatformWorkloadStatus.JOB_DONE:
+            case PlatformWorkloadStatus.JOB_DONE: {
                 logger.info("==== JOB Done Begin ===!!!");
                 logger.info(workLoadBean);
                 logger.info("==== JOB Done End ====!!!");
-                if (sxProductBeans == null)
-                {
+                if (sxProductBeans == null) {
                     logger.info("current workload:" + workLoadBean);
-                    for (WorkLoadBean workLoadBean1 : workLoadBeans)
-                    {
+                    for (WorkLoadBean workLoadBean1 : workLoadBeans) {
                         logger.info("inter workload:" + workLoadBean1);
                     }
 
-                    for (Map.Entry<WorkLoadBean, List<SxProductBean>> entry: workLoadBeanListMap.entrySet())
-                    {
+                    for (Map.Entry<WorkLoadBean, List<SxProductBean>> entry : workLoadBeanListMap.entrySet()) {
                         logger.info("key:" + entry.getKey() + "   value:" + entry.getValue());
                     }
                     break;
                 }
 
-                for (SxProductBean sxProductBean : sxProductBeans)
-                {
+                List<String> codeList = new ArrayList<>();
+                for (SxProductBean sxProductBean : sxProductBeans) {
                     CmsBtProductModel cmsBtProductModel = sxProductBean.getCmsBtProductModel();
                     CmsBtProductModel_Group_Platform cmsGroupPlatform = cmsBtProductModel.getGroups().getPlatformByGroupId(workLoadBean.getGroupId());
                     cmsGroupPlatform.setNumIId(workLoadBean.getNumId());
@@ -191,29 +193,68 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                     //成功时，publish_status设为1
                     //cmsGroupPlatform.setPublishStatus("已上新");
                     cmsProductService.update(cmsBtProductModel);
+                    codeList.add(cmsBtProductModel.getFields().getCode());
                 }
+
+                CmsBtProductModel_Group_Platform mainProductPlatform = mainCmsProductModel.getGroups().getPlatformByGroupId(workLoadBean.getGroupId());
+
+                CmsConstants.PlatformStatus oldPlatformStatus = mainProductPlatform.getPlatformStatus();
+                CmsConstants.PlatformActive platformActive = mainProductPlatform.getPlatformActive();
+
+                String instockTime = null, onSaleTime = null, publishTime = null;
+
+                if (workLoadBean.getUpJobParam().getMethod().equals(UpJobParamBean.METHOD_ADD)) {
+                    publishTime = DateTimeUtil.getNow();
+                }
+
+                if (oldPlatformStatus != CmsConstants.PlatformStatus.Onsale && platformActive == CmsConstants.PlatformActive.Onsale) {
+                    onSaleTime = DateTimeUtil.getNow();
+                }
+                if (oldPlatformStatus != CmsConstants.PlatformStatus.Instock && platformActive == CmsConstants.PlatformActive.Instock) {
+                    instockTime = DateTimeUtil.getNow();
+                }
+
+                CmsConstants.PlatformStatus newPlatformStatus;
+                if (platformActive == CmsConstants.PlatformActive.Instock) {
+                    newPlatformStatus = CmsConstants.PlatformStatus.Instock;
+                } else {
+                    newPlatformStatus = CmsConstants.PlatformStatus.Onsale;
+                }
+                cmsProductService.bathUpdateWithSXResult(workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id(), workLoadBean.getGroupId(),
+                        codeList, workLoadBean.getNumId(), workLoadBean.getProductId(), publishTime, onSaleTime, instockTime, newPlatformStatus);
                 break;
-            case PlatformWorkloadStatus.JOB_ABORT:
+            }
+            case PlatformWorkloadStatus.JOB_ABORT: {
                 logger.error("==== JOB Abort Begin ====!!!");
                 logger.error(workLoadBean);
                 logger.error("==== JOB Abort End ====!!!");
-                for (SxProductBean sxProductBean : sxProductBeans)
-                {
+                for (SxProductBean sxProductBean : sxProductBeans) {
                     CmsBtProductModel_Group_Platform cmsGroupPlatform = sxProductBean.getCmsBtProductModelGroupPlatform();
                     String productId = workLoadBean.getProductId();
                     if (productId != null && !"".equals(productId)) {
                         cmsGroupPlatform.setProductId(productId);
                     }
-                    //失败时，如果下次需要执行，publish_status设为0，否则publish_status设为2
-                    if (workLoadBean.isNextProcess()) {
-                        //cmsGroupPlatform.setPublishStatus("等待上新");
-                    } else {
-                        //cmsGroupPlatform.setPublishStatus("上新成功为");
-                    }
-                    //cmsGroupPlatform.setComment(workLoadBean.getFailCause());
+
                     cmsProductService.update(sxProductBean.getCmsBtProductModel());
                 }
+
+                //保存错误的日志
+                CmsBusinessLogModel cmsBusinessLogModel = new CmsBusinessLogModel();
+                cmsBusinessLogModel.setCartId(workLoadBean.getCart_id());
+                cmsBusinessLogModel.setProductId(String.valueOf(mainCmsProductModel.getProdId()));
+                cmsBusinessLogModel.setCode(mainCmsProductModel.getFields().getCode());
+                cmsBusinessLogModel.setSku("");
+                cmsBusinessLogModel.setErrMsg(workLoadBean.getFailCause());
+                cmsBusinessLogModel.setErrType(1);
+                cmsBusinessLogModel.setStatus(0);
+                cmsBusinessLogModel.setModel(mainCmsProductModel.getFields().getModel());
+                cmsBusinessLogModel.setCreater(getTaskName());
+                cmsBusinessLogModel.setCreated(DateTimeUtil.getNow());
+                cmsBusinessLogModel.setModifier(getTaskName());
+                cmsBusinessLogModel.setModified(DateTimeUtil.getNow());
+                cmsBusinessLogDao.insertBusinessLog(cmsBusinessLogModel);
                 break;
+            }
             default:
                 logger.error("Unknown Status");
         }

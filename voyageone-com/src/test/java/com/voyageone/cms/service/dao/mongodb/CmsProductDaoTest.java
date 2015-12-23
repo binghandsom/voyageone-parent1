@@ -3,10 +3,8 @@ package com.voyageone.cms.service.dao.mongodb;
 
 import com.mongodb.*;
 import com.voyageone.cms.CmsConstants;
-import com.voyageone.cms.service.CmsProductService;
 import com.voyageone.cms.service.model.*;
 import com.voyageone.common.util.JsonUtil;
-import net.minidev.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -254,12 +252,7 @@ public class CmsProductDaoTest {
         platformMode.setInstockTime("2015-10-18 16:19:00");
 
         platformMode.setPlatformStatus(CmsConstants.PlatformStatus.Waitingpublish);
-        List<Map<String,Object>> taskResults = platformMode.getTaskResults();
-        Map<String,Object> taskResult = new HashMap<>();
-        taskResult.put("doSx", 1);
-        taskResult.put("comment", "xxxx");
-        taskResults.add(taskResult);
-        platformMode.setInventory(25);
+        platformMode.setPlatformActive(CmsConstants.PlatformActive.Instock);
         cmsBtProductDao.updateWithPlatform("001", "2000702", platformMode);
     }
 
@@ -347,7 +340,7 @@ public class CmsProductDaoTest {
         codeList.add("100001");
         codeList.add("100002");
 
-        cmsBtProductDao.bathUpdateWithField("001", codeList, field, "23232");
+        cmsBtProductDao.bulkUpdateFieldsByCodes("001", codeList, field, "23232");
 
         long total = System.currentTimeMillis()-start;
         System.out.println("total count:=10W; totalTime:=" + total);
@@ -367,7 +360,7 @@ public class CmsProductDaoTest {
         field.setColor("BBB");
         codeFieldMap.put("100002", field);
 
-        cmsBtProductDao.bathUpdateWithFields("001", codeFieldMap, "23232");
+        cmsBtProductDao.bulkUpdateFieldsByCodes("001", codeFieldMap, "23232");
 
         long total = System.currentTimeMillis()-start;
         System.out.println("total count:=10W; totalTime:=" + total);

@@ -2,7 +2,7 @@ package com.voyageone.batch.cms.service;
 
 import com.voyageone.batch.cms.dao.SkuInventoryDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformMappingDao;
-import com.voyageone.batch.cms.model.WorkLoadBean;
+import com.voyageone.batch.cms.bean.WorkLoadBean;
 import com.voyageone.common.components.issueLog.IssueLog;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

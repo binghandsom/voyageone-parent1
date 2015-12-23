@@ -8,7 +8,7 @@ package com.voyageone.cms.service.model;
  */
 public class CmsFeedMappingModel {
 
-    private String mainCategoryIdPath;
+    private String mainCategoryPath;
 
     private int defaultMapping;
 
@@ -16,12 +16,12 @@ public class CmsFeedMappingModel {
 
     private int matchOver;
 
-    public String getMainCategoryIdPath() {
-        return mainCategoryIdPath;
+    public String getMainCategoryPath() {
+        return mainCategoryPath;
     }
 
-    public void setMainCategoryIdPath(String mainCategoryIdPath) {
-        this.mainCategoryIdPath = mainCategoryIdPath;
+    public void setMainCategoryPath(String mainCategoryPath) {
+        this.mainCategoryPath = mainCategoryPath;
     }
 
     public int getDefaultMapping() {

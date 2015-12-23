@@ -347,14 +347,6 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setAttribute("sizeType", sizeType);
     }
 
-    //库存数量
-    public Integer getInventory() {
-        return getAttribute("inventory");
-    }
-    public void setInventory(Integer inventory) {
-        setAttribute("inventory", inventory);
-    }
-
     @Override
     public Object put(String key, Object value) {
         if (key != null && key.toString().startsWith("images")) {
