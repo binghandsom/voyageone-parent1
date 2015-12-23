@@ -66,6 +66,10 @@
       "updatePromotionProduct" : "updatePromotionProduct",
       "delPromotionModel" : "delPromotionModel",
       "delPromotionCode":"delPromotionCode"
+    },
+    "taskPriceService": {
+      "root": "/cms/task/price",
+      "getPriceList": "getPriceList"
     }
   }
 }

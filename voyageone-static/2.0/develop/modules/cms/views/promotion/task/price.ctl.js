@@ -10,12 +10,8 @@ define([
         pageSize = 5;
         $scope.vm = {
             "promotionId": $routeParams.promotionId,
-            "tabIndex": 0,
             "searchKey": '',
             "promotion": {},
-            "groupList": [],
-            "codeList": [],
-            "skuList": [],
             "groupPageOption": {curr: 1, total: 5, size: 5, fetch: searchGroup},
             "codePageOption": {curr: 1, total: 5, size: 5, fetch: searchCode},
             "skuPageOption": {curr: 1, total: 7, size: 10, fetch: searchSku}
@@ -28,7 +24,6 @@ define([
             }, function (err) {
 
             });
-            $scope.search();
         }
 
         function searchGroup() {
