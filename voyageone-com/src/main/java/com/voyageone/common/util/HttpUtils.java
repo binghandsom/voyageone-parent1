@@ -478,8 +478,9 @@ public class HttpUtils {
         return ssf;
     }
 
-    public static String post(String url, String param,String clientTrustCerFile, String clientTrustCerPwd, String clientKeyPwd) {
+    public static String post(String url, String param,String clientTrustCerFile, String clientTrustCerPwd, String clientKeyPwd) throws IOException {
 
+        String readConent = "";
         SSLSocketFactory ssf = getSsf(clientTrustCerFile, clientTrustCerPwd, clientKeyPwd);
 
         HttpsURLConnection connection = null;
@@ -487,16 +488,21 @@ public class HttpUtils {
             connection = sendHttpsPost(url, param, ssf);
 
             try (InputStream inputStream = connection.getInputStream()) {
-                return readConnection(inputStream);
+                readConent =  readConnection(inputStream);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (connection != null)
+
+            if (connection != null) {
                 connection.disconnect();
+            }
+        } catch (Exception e) {
+            if (connection != null) {
+                connection.disconnect();
+            }
+            e.printStackTrace();
+            throw e;
         }
 
-        return null;
+        return readConent;
     }
 
     /**
