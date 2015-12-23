@@ -46,7 +46,6 @@
                             </div>
                         </td>
                         <td>
-
                         </td>
                     </tr>
                     <tr ng-repeat="feedCategory in ctrl.selectedTop.child | flatTree:'child'">
@@ -65,7 +64,8 @@
                             </div>
                         </td>
                         <td>
-                            <a ng-if="feedCategory.attribute" href="#/setting/feed_mapping/prop" class="btn btn-default btn-xs" target="_blank">
+                            <a ng-if="feedCategory.attribute && ctrl.findDefaultMapping(feedCategory)"
+                               href="#/setting/feed_mapping/prop" class="btn btn-default btn-xs" target="_blank">
                                 <i class="glyphicon glyphicon-link"></i> 属性匹配</a>
                         </td>
                     </tr>

@@ -58,7 +58,7 @@ define([
              */
             extendsMapping: function(feedCategory) {
 
-                this.confirm('确定要继承吗?').result.then(function() {
+                this.confirm('确定要继承吗? 如果是已经匹配过,那么之前的会被覆盖掉.').result.then(function() {
                     this.feedMappingService.extendsMapping(feedCategory).then(function(res) {
                         if (res.data) {
                             // 从后台获取更新后的 mapping
@@ -93,6 +93,11 @@ define([
 
                 return defMapping ? ('可继承: ' + defMapping.mainCategoryPath) : '[未设定]';
             },
+            /**
+             * 查找父级类目
+             * @param {object} category
+             * @returns {object}
+             */
             findParent: function (category) {
 
                 var path = category.path.split('-');
