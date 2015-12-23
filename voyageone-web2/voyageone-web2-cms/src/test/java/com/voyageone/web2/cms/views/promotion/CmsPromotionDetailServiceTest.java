@@ -60,7 +60,7 @@ public class CmsPromotionDetailServiceTest {
     @Test
     public void testResolvePromotionXls() throws Exception {
         InputStream stream = new FileInputStream("d:\\promotion.xlsx");
-        cmsPromotionDetailService.resolvePromotionXls(stream);
+//        cmsPromotionDetailService.resolvePromotionXls(stream);
     }
 
     @Test

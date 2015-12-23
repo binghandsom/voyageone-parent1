@@ -43,8 +43,7 @@ public class CmsPropChangeController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.POP.PROP_CHANGE.SET_PRODUCT_FIELDS)
     public AjaxResponse setProductFields(@RequestBody Map<String, Object> params) {
-        String user_name = getUser().getUserName();
-        propChangeService.setProductFields(params, user_name);
+        propChangeService.setProductFields(params, getUser());
         return success(true);
     }
 }

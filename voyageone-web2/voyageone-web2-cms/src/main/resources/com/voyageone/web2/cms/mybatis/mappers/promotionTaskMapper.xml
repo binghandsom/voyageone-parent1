@@ -38,8 +38,63 @@
             </if>
         </where>
     </select>
+
+    <resultMap id="cms_bt_promotion_task_price_map" extends="cms_bt_promotion_task_map" type="HashMap" >
+        <id column="promotion_price" property="promotionPrice" jdbcType="DOUBLE" />
+    </resultMap>
+    <select id="select_cms_bt_promotion_task_price" resultMap="cms_bt_promotion_task_price_map" parameterType="HashMap" >
+        select
+        a.seq,
+        a.promotion_id,
+        a.task_type,
+        a.`key`,
+        b.promotion_price,
+        a.syn_flg,
+        a.err_msg,
+        a.created,
+        a.creater,
+        a.modified,
+        a.modifier
+        from
+          voyageone_cms2.cms_bt_promotion_task a,
+          voyageone_cms2.cms_bt_promotion_code b
+        where
+            a.promotion_id = b.promotion_id
+            and a.key = b.product_code
+            <if test="promotionId != null and promotionId != ''">
+                and a.promotion_id = #{promotionId,jdbcType=INTEGER}
+            </if>
+            <if test="taskType != null and taskType != ''">
+                and b.task_type = #{taskType,jdbcType=INTEGER}
+            </if>
+            <if test="key != null and key != ''">
+                and a.`key` = #{key,jdbcType=VARCHAR}
+            </if>
+        <if test="start != null and length != null">
+            LIMIT #{start}, #{length}
+        </if>
+    </select>
+    <select id="select_cms_bt_promotion_task_price_cnt" resultType="int" parameterType="HashMap" >
+        select
+          count(1)
+        from
+        voyageone_cms2.cms_bt_promotion_task a,
+        voyageone_cms2.cms_bt_promotion_code b
+        where
+        a.promotion_id = b.promotion_id
+        and a.key = b.product_code
+        <if test="promotionId != null and promotionId != ''">
+            and a.promotion_id = #{promotionId,jdbcType=INTEGER}
+        </if>
+        <if test="taskType != null and taskType != ''">
+            and b.task_type = #{taskType,jdbcType=INTEGER}
+        </if>
+        <if test="key != null and key != ''">
+            and a.`key` = #{key,jdbcType=VARCHAR}
+        </if>
+    </select>
     <insert id="insert_cms_bt_promotion_task" parameterType="com.voyageone.web2.cms.model.CmsBtPromotionTaskModel" >
-        insert into voyageone_cms2.cms_bt_promotion_task
+        insert IGNORE into voyageone_cms2.cms_bt_promotion_task
         <trim prefix="(" suffix=")" suffixOverrides="," >
             <if test="promotionId != null" >
                 promotion_id,

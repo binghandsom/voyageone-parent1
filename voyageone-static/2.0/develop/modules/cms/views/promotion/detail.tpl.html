@@ -19,27 +19,6 @@
 						</div><!-- .form-group -->
 					</form><!-- .form -->
 				</div><!--.col -->
-				<!--<div class="col-sm-4">-->
-					<!--<form class="form-horizontal">-->
-						<!--<div class="form-group">-->
-							<!--<label class="col-sm-5 control-label">Promotion专用店铺类目</label>-->
-							<!--<div class="col-sm-6">-->
-								<!--<select class="form-control m-r-xs">-->
-									<!--<option>more than</option>-->
-									<!--<option>less than</option>-->
-									<!--<option>equal to</option>-->
-								<!--</select>-->
-							<!--</div>-->
-						<!--</div>-->
-						<!--<div class="form-group">-->
-							<!--<label  class="col-sm-5 control-label">Promotion Date</label>-->
-							<!--<div class="col-sm-6 form-inline">-->
-								<!--<div class="input-group col-sm-5"><input type="text" class="form-control inherited" placeholder="2015.11.11" disabled></div>-->
-								<!--<div class="input-group col-sm-6"><input type="text" class="form-control inherited" placeholder="2015.12.12" disabled></div>-->
-							<!--</div>-->
-						<!--</div>&lt;!&ndash; .form-group &ndash;&gt;-->
-					<!--</form>&lt;!&ndash; .form &ndash;&gt;-->
-				<!--</div>&lt;!&ndash;.col &ndash;&gt;-->
 				<div class="col-sm-4">
 					<form class="form-horizontal">
 						<div class="form-group">
@@ -76,7 +55,7 @@
 				<button class="btn btn-success"><!--ng-click="openOtherProgress('lg')"--><i class="fa fa-mail-reply"></i> 批量导出</button>
 				<!--<button class="btn btn-success"><i class="fa fa-refresh"></i> 全部刷新</button>
 				<button class="btn btn-danger"><i class="fa fa-warning"></i> 全部停止</button>-->
-				<button class="btn btn-danger"><i class="fa fa-cny"></i><a href="#/promotion/task/price" target="_blank">批量刷价格</a></button>
+				<button class="btn btn-danger" ng-click="tejiabaoInit()"><i class="fa fa-cny"></i> 批量刷价格</button>
 				<button class="btn btn-danger"><i class="fa fa-trash-o"></i> 全部删除</button>
 			</div><!-- /right-btn -->
 			<!--tab-->
@@ -226,7 +205,7 @@
 						</td>
 						<td class="mfb-xxt text-right">
 						   <button ng-if="code.promotionPrice != code.promotionPriceBak" title="保存" class="btn btn-success btn-xs" ng-click="updateCode(code)"><i class="fa fa-floppy-o"></i></button>
-							<button class="btn btn-danger btn-xs"><i class="fa fa-trash-o" ng-click="delPromotionCode(code)"></i></button>
+							<button class="btn btn-danger btn-xs" ng-click="delPromotionCode(code)"><i class="fa fa-trash-o" ></i></button>
 						</td>
 						</tr>
 						</tbody>
@@ -238,7 +217,7 @@
 				</div><!-- .table-responsive -->
 			</tab>
 			<tab>
-				<tab-heading ng-click="vm.tabIndex = 2"> SKU List 一览</tab-heading>
+				<tab-heading ng-click="vm.tabIndex = 2"><i class="fa fa-list"></i> SKU List 一览</tab-heading>
 				<div class="panel vo_panel tab_panel">
 					<div class="table-responsive">
 						<table class="table table-hover b-t b-light vo_table vo_models">
@@ -279,8 +258,6 @@
 				<div class="row text-center">
 					<div class="col-sm-12">
 						<div class="form-inline">
-							<button type="submit" class="btn btn-vo">Save</button>
-							<button type="submit" class="btn btn-default">Cancel</button>
 						</div><!-- .form-inline -->
 					</div>
 				</div>

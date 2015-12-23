@@ -2,7 +2,6 @@ package com.voyageone.cms.service.model;
 
 import com.voyageone.common.configs.Enums.ActionType;
 import com.voyageone.common.masterdate.schema.field.Field;
-import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JsonUtil;
 
 import java.util.ArrayList;
@@ -26,12 +25,12 @@ public class MtCommPropActionDefRuleModel {
     }
 
     public Object getValue(String ruleKey) {
-       return rulMap.get(ruleKey);
+        return rulMap.get(ruleKey);
     }
 
 
     private Map getActionMap(String actionRules){
-            return JsonUtil.jsonToMap(actionRules);
+        return JsonUtil.jsonToMap(actionRules);
     }
 
 
@@ -70,7 +69,6 @@ public class MtCommPropActionDefRuleModel {
 
         List<MtCommPropActionDefModel> assistDefModels = new ArrayList<>(defModels);
 
-        List<MtCommPropActionDefModel> removeDefModels = new ArrayList<>();
 
         for (int i = 0; i < defModels.size(); i++) {
             MtCommPropActionDefModel defModelItem = defModels.get(i);
@@ -79,7 +77,7 @@ public class MtCommPropActionDefRuleModel {
             for (Iterator<MtCommPropActionDefModel> assIterator = assistDefModels.iterator(); assIterator.hasNext();) {
 
                 MtCommPropActionDefModel subPlatformCatItem = assIterator.next();
-                if (ActionType.Add.equals(actionType) && defModelItem.getPropId().equals(subPlatformCatItem.getParentPropId()) ) {
+                if (ActionType.ADD.equals(actionType) && defModelItem.getPropId().equals(subPlatformCatItem.getParentPropId())) {
                     sunDefModels.add(subPlatformCatItem);
                     assIterator.remove();
                 }
@@ -88,9 +86,6 @@ public class MtCommPropActionDefRuleModel {
             defModelItem.setDefModels(sunDefModels);
 
         }
-
-        //删除掉所有非顶层属性引用,只留下最顶层属性
-//        defModels.removeAll(removeDefModels);
 
         return defModels;
     }

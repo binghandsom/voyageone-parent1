@@ -10,13 +10,14 @@
         <result column="msrp_price" property="msrpPrice" jdbcType="DECIMAL" />
         <result column="retail_price" property="retailPrice" jdbcType="DECIMAL" />
         <result column="sale_price" property="salePrice" jdbcType="DECIMAL" />
+        <result column="comment" property="comment" jdbcType="VARCHAR" />
         <result column="created" property="created" jdbcType="TIMESTAMP" />
         <result column="creater" property="creater" jdbcType="VARCHAR" />
         <result column="modified" property="modified" jdbcType="TIMESTAMP" />
         <result column="modifier" property="modifier" jdbcType="VARCHAR" />
     </resultMap>
 
-    <select id="select_price_log_by_code" resultMap="PriceLogMap" parameterType="String">
+    <select id="select_price_log_by_code" resultMap="PriceLogMap" parameterType="HashMap">
         select
             log.seq,
             log.channelId,
@@ -26,16 +27,22 @@
             log.msrp_price,
             log.retail_price,
             log.sale_price,
+            log.comment,
             log.created,
             log.creater,
             log.modified,
             log.modifier
         from voyageone_cms2.cms_bt_price_log log
         where log.code = #{code}
-        order by log.seq
+        order by log.modified desc
+        limit #{offset}, #{rows}
     </select>
 
-    <select id="select_price_log_by_sku" resultMap="PriceLogMap" parameterType="String">
+    <select id="select_price_log_by_code_cnt" resultType="int" parameterType="HashMap">
+        select count(1) from voyageone_cms2.cms_bt_price_log log where log.code = #{code}
+    </select>
+
+    <select id="select_price_log_by_sku" resultMap="PriceLogMap" parameterType="HashMap">
         select
             log.seq,
             log.channelId,
@@ -45,12 +52,18 @@
             log.msrp_price,
             log.retail_price,
             log.sale_price,
+            log.comment,
             log.created,
             log.creater,
             log.modified,
             log.modifier
         from voyageone_cms2.cms_bt_price_log log
         where log.sku = #{sku}
-        order by log.seq
+        order by log.modified desc
+        limit #{offset}, #{rows}
+    </select>
+
+    <select id="select_price_log_by_sku_cnt" resultType="int" parameterType="HashMap">
+        select count(1) from voyageone_cms2.cms_bt_price_log log where log.sku = #{sku}
     </select>
 </mapper>

@@ -1,22 +1,13 @@
 package com.voyageone.web2.sdk.api.service;
 
-import com.mongodb.BulkWriteResult;
-import com.mongodb.CommandResult;
-import com.mongodb.WriteResult;
-import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.model.*;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.web2.sdk.api.request.PostProductSelectOneRequest;
-import net.minidev.json.JSONObject;
+import com.voyageone.web2.sdk.api.request.ProductGetRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
 @Service
-public class PostProductSelectOneClient {
+public class ProductGetClient {
     @Autowired
     protected VoApiDefaultClient voApiClient;
 
@@ -25,7 +16,7 @@ public class PostProductSelectOneClient {
      */
     public CmsBtProductModel getProductById(String channelId, long prodId) {
         //设置参数
-        PostProductSelectOneRequest requestModel = new PostProductSelectOneRequest(channelId);
+        ProductGetRequest requestModel = new ProductGetRequest(channelId);
         requestModel.setProductId(prodId);
         //SDK取得Product 数据
         return voApiClient.execute(requestModel).getProduct();
@@ -36,7 +27,7 @@ public class PostProductSelectOneClient {
      */
     public CmsBtProductModel getProductByCode(String channelId, String code) {
         //设置参数
-        PostProductSelectOneRequest requestModel = new PostProductSelectOneRequest(channelId);
+        ProductGetRequest requestModel = new ProductGetRequest(channelId);
         requestModel.setProductCode(code);
         //SDK取得Product 数据
         return voApiClient.execute(requestModel).getProduct();
@@ -47,7 +38,7 @@ public class PostProductSelectOneClient {
      */
     public CmsBtProductModel getMainProductByGroupId(String channelId, long groupId) {
         //设置参数
-        PostProductSelectOneRequest requestModel = new PostProductSelectOneRequest(channelId);
+        ProductGetRequest requestModel = new ProductGetRequest(channelId);
         //String queryTmp = "{\"groups.platforms\":{$elemMatch: {\"groupId\":%s, \"isMain\":1}}}";
         requestModel.addProp("groups.platforms.groupId", groupId);
         requestModel.addProp("groups.platforms.isMain", 1);

@@ -30,9 +30,9 @@
     "controllerUrl": "modules/cms/views/promotion/task/detail.ctl"
   },
   "promotion_task_price": {
-    "hash": "/promotion/task/price",
-    "templateUrl": "views/promotion/task/price.tpl.html",
-    "controllerUrl": "modules/cms/views/promotion/task/price.ctl"
+    "hash": "/task/price/:promotionId",
+    "templateUrl": "views/task/price.tpl.html",
+    "controllerUrl": "modules/cms/views/task/price.ctl"
   },
   "search_index": {
     "hash": "/search/index",
@@ -40,12 +40,12 @@
     "controllerUrl": "modules/cms/views/search/index.ctl"
   },
   "group_list": {
-    "hash": "/group/list",
+    "hash": "/group/list/:id",
     "templateUrl": "views/group/list.tpl.html",
     "controllerUrl": "modules/cms/views/group/list.ctl"
   },
   "product_detail": {
-    "hash": "/product/detail/:id",
+    "hash": "/product/detail/:productId",
     "templateUrl": "views/product/detail.tpl.html",
     "controllerUrl": "modules/cms/views/product/detail.ctl"
   },

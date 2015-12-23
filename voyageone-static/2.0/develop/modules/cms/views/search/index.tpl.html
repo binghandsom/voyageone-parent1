@@ -1,9 +1,9 @@
 <div class="wrapper-md" ng-init="initialize()">
 	<accordion class="vo_accordion vo_attr" close-others="oneAtATime">
-		<accordion-group is-open="status.open">
+		<accordion-group is-open="vm.status.open">
 			<accordion-heading>
 				<i class="fa fa-search"></i>&nbsp;{{'TXT_SEARCH_CONDITION' | translate}}
-				<i class="pull-right glyphicon glyphicon-menu-down" ng-class="{'glyphicon-menu-up': status.open, 'glyphicon-menu-down': !status.open}"></i>
+				<i class="pull-right glyphicon glyphicon-menu-down" ng-class="{'glyphicon-menu-up': vm.status.open, 'glyphicon-menu-down': !vm.status.open}"></i>
 			</accordion-heading>
 			<!-- search -->
 			<div class="col-sm-12" >
@@ -227,7 +227,7 @@
 						</li>
 					</ul>
 				</div>
-				<button class="btn btn-default" ng-click="openupdateProperties('md')"><i class="fa fa-pencil-square"></i>&nbsp;{{'TXT_BATCH_UPDATE_ATTRIBUTE' | translate}}</button>
+				<button class="btn btn-default" ng-click="openUpdateProperties('md', vm.currTab === 'group' ? vm.groupSelList.selList : vm.productSelList.selList)"><i class="fa fa-pencil-square"></i>&nbsp;{{'TXT_BATCH_UPDATE_ATTRIBUTE' | translate}}</button>
 				<button class="btn btn-default" ng-click="openNewcategory('lg')"><i class="fa fa-th-list"></i>&nbsp;{{'TXT_CHANGE_CATEGORY' | translate}}</button>
 			</div><!-- /right-btn -->
 			<!--tab-->
@@ -259,14 +259,14 @@
 										<input ng-model="vm.groupSelList.selFlag[groupInfo.prodId]" type="checkbox"  ng-controller="selectRowsCtrl" ng-click="selectOne(groupInfo.prodId, vm.groupSelList)">
 										<span class="fa fa-check"></span>
 									</label>
-									<span class="label m-r-lg m-l" ng-class="{'label-success-new': groupInfo.groups.platforms[0].platFormStatus == 'Onsale','label-yellow-new': groupInfo.groups.platforms[0].platFormStatus == 'Instock', 'label-danger-new': groupInfo.groups.platforms[0].platFormStatus == 'Waitingpublish'}">
-										&nbsp;{{groupInfo.groups.platforms[0].platFormStatus}}&nbsp;
+									<span class="label m-r-lg m-l" ng-class="{'label-success-new': groupInfo.groups.platforms[0].platformStatus == 'Onsale','label-yellow-new': groupInfo.groups.platforms[0].platformStatus == 'Instock', 'label-danger-new': groupInfo.groups.platforms[0].platformStatus == 'Waitingpublish'}">
+										&nbsp;{{groupInfo.groups.platforms[0].platformStatus}}&nbsp;
 									</span>
 									<span class="m-r-lg" ng-if="groupInfo.groups.platforms[0].numIId">{{'TXT_NUMBER_IID' | translate}}&nbsp;
 										<a ng-href="https://detail.tmall.com/item.htm?id={{groupInfo.groups.platforms[0].numIId}}" target="_blank" class="text-u-l" ng-bind="groupInfo.groups.platforms[0].numIId"></a>
 									</span>&nbsp;
 									<span>{{'TXT_GROUP_NAME' | translate}}&nbsp;
-										<a target="_blank" class="text-u-l" ng-bind="groupInfo.fields.productName"></a>
+										<a ng-href="#/group/list/{{groupInfo.groups.platforms[0].groupId}}" target="_blank" class="text-u-l" ng-bind="groupInfo.fields.productName"></a>
 									</span>
 								</td>
 								<td colspan="2" class="text-right">{{'TXT_CATEGORY' | translate}}&nbsp;{{groupInfo.catPath}}</td>

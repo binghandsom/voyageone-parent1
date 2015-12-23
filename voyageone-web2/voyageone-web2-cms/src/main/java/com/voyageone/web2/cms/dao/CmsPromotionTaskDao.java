@@ -7,6 +7,7 @@ import com.voyageone.web2.cms.model.CmsBtPromotionTaskModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +28,15 @@ public class CmsPromotionTaskDao extends BaseDao{
     public int getPromotionTaskListCnt(Map<String,Object> params){
         return selectOne("select_cms_bt_promotion_code_cnt",params);
     }
+
+    public int getPromotionTaskPriceListCnt(Map<String,Object> params){
+        return selectOne("select_cms_bt_promotion_task_price_cnt",params);
+    }
+
+    public List<Map<String,Object>> getPromotionTaskPriceList(Map<String,Object> params){
+        return selectList("select_cms_bt_promotion_task_price",params);
+    }
+
     public int insertPromotionTask(CmsBtPromotionTaskModel params){
         return updateTemplate.insert("insert_cms_bt_promotion_task",params);
     }

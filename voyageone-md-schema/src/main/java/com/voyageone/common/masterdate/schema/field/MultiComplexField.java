@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.voyageone.common.masterdate.schema.value.Value;
 import org.dom4j.Element;
 
 public class MultiComplexField extends Field {
@@ -163,5 +165,10 @@ public class MultiComplexField extends Field {
 
     public void initDefaultField() {
         super.defaultValueField = SchemaFactory.createField(FieldTypeEnum.MULTICOMPLEX);
+    }
+
+    @Override
+    public List<ComplexValue> getValue() {
+        return this.values;
     }
 }

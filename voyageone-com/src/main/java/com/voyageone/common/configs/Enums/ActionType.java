@@ -5,17 +5,17 @@ package com.voyageone.common.configs.Enums;
  */
 public enum ActionType {
 
+    //忽略
+    IGNORE(-1),
+
     //添加属性
-    Add(0),
+    ADD(0),
 
     //根据属性id删除
-    RemoveById(1),
-
-    //先根据id删除，再根据name删除
-    RemoveByIdAndName(2),
+    REMOVE(1),
 
     //更新id和name
-    Update(3);
+    UPDATE(2);
 
     private int value;
 
@@ -29,15 +29,14 @@ public enum ActionType {
 
     public static ActionType valueOf(int value){
         switch (value){
+            case -1:
+                return IGNORE;
             case 0:
-                return Add;
+                return ADD;
             case 1:
-                return RemoveById;
+                return REMOVE;
             case 2:
-                return RemoveByIdAndName;
-            case 3:
-                return Update;
-
+                return UPDATE;
         }
         return null;
     }
