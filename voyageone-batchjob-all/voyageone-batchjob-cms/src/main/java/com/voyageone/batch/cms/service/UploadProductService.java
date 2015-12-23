@@ -195,17 +195,25 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                     cmsProductService.update(cmsBtProductModel);
                     codeList.add(cmsBtProductModel.getFields().getCode());
                 }
-                String publishTime = DateTimeUtil.getNow();
 
                 CmsBtProductModel_Group_Platform mainProductPlatform = mainCmsProductModel.getGroups().getPlatformByGroupId(workLoadBean.getGroupId());
 
                 CmsConstants.PlatformStatus oldPlatformStatus = mainProductPlatform.getPlatformStatus();
                 CmsConstants.PlatformActive platformActive = mainProductPlatform.getPlatformActive();
 
-                String instockTime = null;
+                String instockTime = null, onSaleTime = null, publishTime = null;
+
+                if (workLoadBean.getUpJobParam().getMethod().equals(UpJobParamBean.METHOD_ADD)) {
+                    publishTime = DateTimeUtil.getNow();
+                }
+
                 if (oldPlatformStatus != CmsConstants.PlatformStatus.Onsale && platformActive == CmsConstants.PlatformActive.Onsale) {
+                    onSaleTime = DateTimeUtil.getNow();
+                }
+                if (oldPlatformStatus != CmsConstants.PlatformStatus.Instock && platformActive == CmsConstants.PlatformActive.Instock) {
                     instockTime = DateTimeUtil.getNow();
                 }
+
                 CmsConstants.PlatformStatus newPlatformStatus;
                 if (platformActive == CmsConstants.PlatformActive.Instock) {
                     newPlatformStatus = CmsConstants.PlatformStatus.Instock;
@@ -213,7 +221,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                     newPlatformStatus = CmsConstants.PlatformStatus.Onsale;
                 }
                 cmsProductService.bathUpdateWithSXResult(workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id(), workLoadBean.getGroupId(),
-                        codeList, workLoadBean.getNumId(), workLoadBean.getProductId(), publishTime, instockTime, newPlatformStatus);
+                        codeList, workLoadBean.getNumId(), workLoadBean.getProductId(), publishTime, onSaleTime, instockTime, newPlatformStatus);
                 break;
             }
             case PlatformWorkloadStatus.JOB_ABORT: {
@@ -226,13 +234,6 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                     if (productId != null && !"".equals(productId)) {
                         cmsGroupPlatform.setProductId(productId);
                     }
-                    //失败时，如果下次需要执行，publish_status设为0，否则publish_status设为2
-                    if (workLoadBean.isNextProcess()) {
-                        //cmsGroupPlatform.setPublishStatus("等待上新");
-                    } else {
-                        //cmsGroupPlatform.setPublishStatus("上新成功为");
-                    }
-                    //cmsGroupPlatform.setComment(workLoadBean.getFailCause());
 
                     cmsProductService.update(sxProductBean.getCmsBtProductModel());
                 }
