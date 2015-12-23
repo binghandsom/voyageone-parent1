@@ -3,7 +3,7 @@
 <mapper namespace="com.voyageone.cms.sql">
 
    <insert id="cms_insertCmsBusinessLog" parameterType="com.voyageone.batch.cms.model.CmsBusinessLogModel">
-      insert into voyageone_cms2.cms_bt_business_log(
+      INSERT IGNORE INTO voyageone_cms2.cms_bt_business_log(
       cart_id,
       product_id,
       err_type,
