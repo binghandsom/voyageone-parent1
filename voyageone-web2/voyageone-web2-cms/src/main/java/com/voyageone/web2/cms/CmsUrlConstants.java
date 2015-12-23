@@ -60,6 +60,10 @@ public interface CmsUrlConstants {
             String TEJIABAO_INIT = "tejiabaoInit";
 
             String UPDATE_PROMOTION_PRODUCT = "updatePromotionProduct";
+
+            String DEL_PROMOTION_MODEL = "delPromotionModel";
+
+            String DEL_PROMOTION_CODE = "delPromotionCode";
         }
     }
 

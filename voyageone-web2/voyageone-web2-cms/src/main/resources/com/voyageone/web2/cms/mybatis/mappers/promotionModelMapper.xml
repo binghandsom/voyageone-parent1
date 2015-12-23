@@ -196,4 +196,11 @@
         </set>
         where seq = #{seq,jdbcType=INTEGER}
     </update>
+    <delete id="delete_cms_bt_promotion_model" parameterType="com.voyageone.web2.cms.model.CmsBtPromotionGroupModel">
+        delete
+            from voyageone_cms2.cms_bt_promotion_model
+        where
+            promotion_id = #{promotionId,jdbcType=INTEGER}
+            and model_id = #{modelId,jdbcType=INTEGER}
+    </delete>
 </mapper>

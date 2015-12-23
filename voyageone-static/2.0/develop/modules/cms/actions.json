@@ -63,7 +63,9 @@
       "getPromotionSku": "getPromotionSku",
       "uploadPromotion": "uploadPromotion",
       "tejiabaoInit" : "tejiabaoInit",
-      "updatePromotionProduct" : "updatePromotionProduct"
+      "updatePromotionProduct" : "updatePromotionProduct",
+      "delPromotionModel" : "delPromotionModel",
+      "delPromotionCode":"delPromotionCode"
     }
   }
 }

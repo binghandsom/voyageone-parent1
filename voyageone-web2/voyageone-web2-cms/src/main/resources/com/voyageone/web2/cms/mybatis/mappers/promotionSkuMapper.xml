@@ -212,4 +212,19 @@
             </if>
         </where>
     </update>
+    <delete id="delete_cms_bt_promotion_sku" parameterType="com.voyageone.web2.cms.model.CmsBtPromotionSkuModel">
+        delete
+        from voyageone_cms2.cms_bt_promotion_sku
+        where
+        promotion_id = #{promotionId,jdbcType=INTEGER}
+        <if test="productSku != null and productSku != ''">
+          and product_sku = #{productSku,jdbcType=VARCHAR}
+        </if>
+        <if test="modelId != null and modelId != ''">
+            and model_id = #{modelId,jdbcType=INTEGER}
+        </if>
+        <if test="productId != null and productId != ''">
+            and product_id = #{productId,jdbcType=INTEGER}
+        </if>
+    </delete>
 </mapper>

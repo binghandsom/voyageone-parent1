@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.dao;
 
 import com.voyageone.base.dao.BaseDao;
+import com.voyageone.web2.cms.model.CmsBtPromotionCodeModel;
 import com.voyageone.web2.cms.model.CmsBtPromotionGroupModel;
 import com.voyageone.web2.cms.model.CmsBtPromotionSkuModel;
 import org.springframework.stereotype.Repository;
@@ -27,11 +28,26 @@ public class CmsPromotionSkuDao extends BaseDao{
         return selectOne("select_cms_bt_promotion_sku_cnt",params);
     }
     public int insertPromotionSku(CmsBtPromotionSkuModel params){
-        return updateTemplate.insert("insert_cms_bt_promotion_sku",params);
+        return updateTemplate.insert("insert_cms_bt_promotion_sku", params);
     }
 
     public int updatePromotionSku(CmsBtPromotionSkuModel params){
         return updateTemplate.update("update_cms_bt_promotion_sku", params);
     }
+    public int deletePromotionSku(CmsBtPromotionSkuModel params){
+        return updateTemplate.delete("delete_cms_bt_promotion_sku", params);
+    }
 
+    public int deletePromotionSkuByModelId(Integer promotionId, Long modelId){
+        CmsBtPromotionSkuModel params = new CmsBtPromotionSkuModel();
+        params.setPromotionId(promotionId);
+        params.setModelId(modelId);
+        return updateTemplate.delete("delete_cms_bt_promotion_sku", params);
+    }
+    public int deletePromotionSkuByProductId(Integer promotionId, Long productId){
+        CmsBtPromotionSkuModel params = new CmsBtPromotionSkuModel();
+        params.setPromotionId(promotionId);
+        params.setProductId(productId);
+        return updateTemplate.delete("delete_cms_bt_promotion_sku", params);
+    }
 }
