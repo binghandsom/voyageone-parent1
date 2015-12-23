@@ -2,7 +2,6 @@ package com.voyageone.cms.service.model;
 
 import com.voyageone.common.configs.Enums.ActionType;
 import com.voyageone.common.masterdate.schema.field.Field;
-import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JsonUtil;
 
 import java.util.ArrayList;
@@ -26,12 +25,12 @@ public class MtCommPropActionDefRuleModel {
     }
 
     public Object getValue(String ruleKey) {
-       return rulMap.get(ruleKey);
+        return rulMap.get(ruleKey);
     }
 
 
     private Map getActionMap(String actionRules){
-            return JsonUtil.jsonToMap(actionRules);
+        return JsonUtil.jsonToMap(actionRules);
     }
 
 
@@ -73,16 +72,13 @@ public class MtCommPropActionDefRuleModel {
 
         for (int i = 0; i < defModels.size(); i++) {
             MtCommPropActionDefModel defModelItem = defModels.get(i);
+            ActionType actionType = ActionType.valueOf(Integer.valueOf(defModelItem.getActionType()));
             List<MtCommPropActionDefModel> sunDefModels = new ArrayList<>();
-            ActionType actionType = ActionType.valueOf(defModelItem.getActionType());
             for (Iterator<MtCommPropActionDefModel> assIterator = assistDefModels.iterator(); assIterator.hasNext();) {
 
                 MtCommPropActionDefModel subPlatformCatItem = assIterator.next();
-                ActionType subActionType = ActionType.valueOf(subPlatformCatItem.getActionType());
-                if (ActionType.Add.equals(actionType) && defModelItem.getPropId().equals(subPlatformCatItem.getParentPropId())) {
-                    if (!ActionType.RemoveById.equals(subActionType) && !ActionType.RemoveByIdAndName.equals(subActionType)){
-                        sunDefModels.add(subPlatformCatItem);
-                    }
+                if (ActionType.ADD.equals(actionType) && defModelItem.getPropId().equals(subPlatformCatItem.getParentPropId())) {
+                    sunDefModels.add(subPlatformCatItem);
                     assIterator.remove();
                 }
 

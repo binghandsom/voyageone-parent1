@@ -1,10 +1,9 @@
 package com.voyageone.batch.cms.service;
 
+import com.voyageone.batch.cms.dao.mongo.CmsMtCommonPropDefDao;
 import com.voyageone.cms.service.model.CmsMtCategorySchemaModel;
 import com.voyageone.batch.base.BaseTaskService;
-import com.voyageone.batch.cms.dao.mongo.CmsMtCommonPropDefDao;
 import com.voyageone.batch.cms.dao.mongo.CmsMtPlatformFieldsRemoveHistoryDao;
-import com.voyageone.batch.cms.model.mongo.CmsMtCommonPropDefModel;
 import com.voyageone.batch.cms.model.mongo.CmsMtPlatformRemoveFieldsModel;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.cms.service.dao.CmsMtCommonPropDao;
@@ -17,6 +16,7 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ActionType;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.masterdate.schema.Util.FieldUtil;
+import com.voyageone.common.masterdate.schema.Util.StringUtil;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
@@ -31,8 +31,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by lewis on 15-12-3.
@@ -56,7 +57,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
     @Autowired
     private CmsMtPlatformFieldsRemoveHistoryDao cmsMtPlatformFieldsRemoveHistoryDao;
 
-    @Autowired
+//    @Autowired
 //    private CmsMtCommonPropDefDao cmsMtCommonPropDefDao;
 
     @Override
@@ -94,46 +95,29 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
 
         List<MtCommPropActionDefModel> allDefModels = cmsMtCommonPropDao.getActionModelList();
 
-        List<MtCommPropActionDefModel> allDefModelsWithHierarchical = MtCommPropActionDefRuleModel.buildComPropHierarchical(allDefModels);
+        List<MtCommPropActionDefModel> removelist =new ArrayList<>();
 
-        List<MtCommPropActionDefModel> removeByIdList =new ArrayList<>();
+        List<MtCommPropActionDefModel> addList =new ArrayList<>();
 
-        List<MtCommPropActionDefModel> removeByIdAndNameList =new ArrayList<>();
-
-        List<MtCommPropActionDefModel> addByIdList =new ArrayList<>();
-
-        List<MtCommPropActionDefModel> updateParentByIdList =new ArrayList<>();
-
-        List<MtCommPropActionDefModel> updateSubByIdList =new ArrayList<>();
+        List<MtCommPropActionDefModel> updateList =new ArrayList<>();
 
         //先根据action type 分组
-        for (MtCommPropActionDefModel actionDefModel:allDefModelsWithHierarchical){
+        for (MtCommPropActionDefModel actionDefModel:allDefModels){
             ActionType actionType = ActionType.valueOf(Integer.valueOf(actionDefModel.getActionType()));
             if(actionType != null){
                 switch (actionType){
-                    case Add:
-                        addByIdList.add(actionDefModel);
+                    case ADD:
+                        addList.add(actionDefModel);
                         break;
-                    case RemoveById:
-                        removeByIdList.add(actionDefModel);
+                    case REMOVE:
+                        removelist.add(actionDefModel);
                         break;
-                    case RemoveByIdAndName:
-                        removeByIdAndNameList.add(actionDefModel);
-                        removeByIdList.add(actionDefModel);
-                        break;
-                    case Update:
-                        if (StringUtils.isEmpty(actionDefModel.getParentPropId())){
-                            updateParentByIdList.add(actionDefModel);
-                        }else {
-                            updateSubByIdList.add(actionDefModel);
-                        }
-
+                    case UPDATE:
+                        updateList.add(actionDefModel);
                         break;
                 }
             }
-
         }
-
 
         for (JSONObject schemaId:schemaIds) {
             String id = schemaId.get("_id").toString();
@@ -186,110 +170,74 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
                     }
                 }
 
-                //1. 先只根据id删除
-                for (MtCommPropActionDefModel actionDefModel : removeByIdList) {
+                //1. 先删除
+                for (MtCommPropActionDefModel actionDefModel : removelist) {
 
-                    Field delField = FieldUtil.getFieldById(masterFields, actionDefModel.getPropId());
-                    if (delField != null) {
-                        removeFields.add(delField);
+                    Field removeByIdField = FieldUtil.getFieldById(masterFields, actionDefModel.getPropId());
+                    if (removeByIdField != null) {
+                        removeFields.add(removeByIdField);
                         FieldUtil.removeFieldById(masterFields, actionDefModel.getPropId());
                     }
-                    Field afterField = FieldUtil.getFieldById(masterFields, actionDefModel.getPropId());
-                    if (afterField != null) {
-                        System.out.println();
-                    }
-                }
 
-                //2.再根据Name删除Field
-                for (MtCommPropActionDefModel actionDefModel : removeByIdAndNameList) {
-
-                    List<Field> tarFields = FieldUtil.getFieldByName(masterFields, actionDefModel.getPropName());
-
-                    for (Field field : tarFields) {
-
-                        removeFields.add(field);
-
-                        FieldUtil.removeFieldById(masterFields, field.getId());
-
+                    List<Field> removeByNameFields = FieldUtil.getFieldByName(masterFields,actionDefModel.getPropName());
+                    for (Field byNameField:removeByNameFields){
+                        removeFields.add(byNameField);
+                        FieldUtil.removeFieldById(masterFields,byNameField.getId());
                     }
 
                 }
 
-                //3. 更新需要更新parent field
-                for (MtCommPropActionDefModel actionDefModel : updateParentByIdList) {
-                    Field updField = FieldUtil.getFieldById(masterFields, actionDefModel.getPlatformPropRefId());
-                    updateField(masterFields, actionDefModel, updField);
-                }
+                Field skuField = FieldUtil.getFieldById(masterFields,"sku");
 
                 //4. 更新需要更新的 sub field
-                for (MtCommPropActionDefModel actionDefModel : updateSubByIdList) {
+                for (MtCommPropActionDefModel actionDefModel : updateList) {
+
                     Field updField = FieldUtil.getFieldById(masterFields, actionDefModel.getPlatformPropRefId());
-                    updateField(masterFields, actionDefModel, updField);
-                }
 
-                //5. 添加该添加的field
-                for (MtCommPropActionDefModel actionDefModel : addByIdList) {
+                    if (updField == null){
+                        if (!"sku".equals(actionDefModel.getPropId())){
+                            FieldTypeEnum type = FieldTypeEnum.getEnum(actionDefModel.getPropType());
+                            updField = FieldTypeEnum.createField(type);
+                            updField.setId(actionDefModel.getPropId());
+                            updField.setName(actionDefModel.getPropName());
 
-                    Field isRmField = FieldUtil.getFieldById(masterFields, actionDefModel.getPropId());
+                            actionDefModel.getRuleMode().setFieldComProperties(updField);
 
-                    if (isRmField != null && actionDefModel.getDefModels().size() == 0) {
-                        removeFields.add(isRmField);
-                        FieldUtil.removeFieldById(masterFields, actionDefModel.getPropId());
-                    }
+                            if (StringUtil.isEmpty(actionDefModel.getParentPropId())){
+                                masterFields.add(updField);
+                            } else {
+                                Field parentField = FieldUtil.getFieldById(masterFields,actionDefModel.getParentPropId());
+                                if (parentField != null){
 
-                    FieldTypeEnum fieldType = FieldTypeEnum.getEnum(actionDefModel.getPropType());
-                    Field newField = FieldTypeEnum.createField(fieldType);
+                                    MultiComplexField complexField = (MultiComplexField)parentField;
 
-                    newField.setInputLevel(0);
-                    newField.setId(actionDefModel.getPropId());
-                    newField.setName(actionDefModel.getPropName());
-                    actionDefModel.getRuleMode().setFieldComProperties(newField);
+                                    List<Field> subSkuFields = complexField.getFieldList();
 
-                    if (StringUtils.isEmpty(actionDefModel.getParentPropId())) {
-                        if (actionDefModel.getDefModels().size() > 0) {
-
-                            List<MtCommPropActionDefModel> children = actionDefModel.getDefModels();
-                            for (MtCommPropActionDefModel model : children) {
-                                FieldTypeEnum subFieldType = FieldTypeEnum.getEnum(model.getPropType());
-                                Field newSubField = FieldTypeEnum.createField(subFieldType);
-                                newSubField.setId(model.getPropId());
-                                newSubField.setName(model.getPropName());
-                                newSubField.setInputLevel(0);
-                                model.getRuleMode().setFieldComProperties(newSubField);
-                                if (newField instanceof ComplexField) {
-                                    ComplexField complexField = (ComplexField) newField;
-                                    complexField.getFieldList().add(newSubField);
-                                } else if (newField instanceof MultiComplexField) {
-                                    MultiComplexField complexField = (MultiComplexField) newField;
-                                    complexField.getFieldList().add(newSubField);
+                                    subSkuFields.add(updField);
                                 }
-                            }
-                            if (FieldUtil.getFieldById(masterFields, actionDefModel.getPropId()) == null) {
-                                masterFields.add(newField);
-                            }
 
-
-                        } else {
-                            masterFields.add(newField);
+                            }
                         }
 
                     } else {
-                        Field parentField = FieldUtil.getFieldById(masterFields, actionDefModel.getParentPropId());
-                        if (parentField != null) {
-                            if (parentField instanceof ComplexField) {
-                                ComplexField complexField = (ComplexField) parentField;
-                                if (complexField.getFieldList() != null)
-                                    complexField.getFieldList().add(newField);
-                            } else if (parentField instanceof MultiComplexField) {
-                                MultiComplexField complexField = (MultiComplexField) parentField;
-                                if (complexField.getFieldList() != null)
-                                    complexField.getFieldList().add(newField);
-                            }
-                        }
-
+                        updateField(masterFields, actionDefModel, updField);
                     }
 
                 }
+
+                //5. 添加sku field
+                if (skuField == null){
+                    skuField = FieldTypeEnum.createField(FieldTypeEnum.MULTICOMPLEX);
+                    skuField.setId("sku");
+                    skuField.setName("SKU");
+                    skuField.setFieldRequired();
+                    skuField.setInputLevel(0);
+                    skuField.setIsDisplay(1);
+                    masterFields.add(skuField);
+                }
+
+                //6. 添加sub field
+                addField(addList, masterFields, removeFields);
 
                 //构建主数据对象并持久化
                 CmsMtCategorySchemaModel masterModel = new CmsMtCategorySchemaModel();
@@ -310,34 +258,34 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
                 cmsMtCategorySchemaDao.insert(masterModel);
 
                 //保存共通属性（TODO 只保存一次，临时性的,将来会有专门的页面生成这部分数据）
-    //            if (isSaveComProps)
-    //            {
-    //                Field itemStatus = FieldUtil.getFieldById(masterFields, "item_status");
-    //                Field startTime = FieldUtil.getFieldById(masterFields, "start_time");
-    //                Field hsCodeCrop = FieldUtil.getFieldById(masterFields, "hsCodeCrop");
-    //                Field hsCodePrivate = FieldUtil.getFieldById(masterFields, "hsCodePrivate");
-    //
-    //                List<CmsMtCommonPropDefModel> comPropModels = new ArrayList<>();
-    //                CmsMtCommonPropDefModel itemStatusModel = new CmsMtCommonPropDefModel();
-    //                CmsMtCommonPropDefModel startTimeModel = new CmsMtCommonPropDefModel();
-    //                CmsMtCommonPropDefModel hsCodeCropModel = new CmsMtCommonPropDefModel();
-    //                CmsMtCommonPropDefModel hsCodePrivateModel = new CmsMtCommonPropDefModel();
-    //
-    //                itemStatusModel.setField(itemStatus);
-    //                startTimeModel.setField(startTime);
-    //                hsCodeCropModel.setField(hsCodeCrop);
-    //                hsCodePrivateModel.setField(hsCodePrivate);
-    //
-    //                comPropModels.add(itemStatusModel);
-    //                comPropModels.add(startTimeModel);
-    //                comPropModels.add(hsCodeCropModel);
-    //                comPropModels.add(hsCodePrivateModel);
-    //
-    //                cmsMtCommonPropDefDao.insertWithList(comPropModels);
-    //
-    //                isSaveComProps = false;
-    //
-    //            }
+                //            if (isSaveComProps)
+                //            {
+                //                Field itemStatus = FieldUtil.getFieldById(masterFields, "item_status");
+                //                Field startTime = FieldUtil.getFieldById(masterFields, "start_time");
+                //                Field hsCodeCrop = FieldUtil.getFieldById(masterFields, "hsCodeCrop");
+                //                Field hsCodePrivate = FieldUtil.getFieldById(masterFields, "hsCodePrivate");
+                //
+                //                List<CmsMtCommonPropDefModel> comPropModels = new ArrayList<>();
+                //                CmsMtCommonPropDefModel itemStatusModel = new CmsMtCommonPropDefModel();
+                //                CmsMtCommonPropDefModel startTimeModel = new CmsMtCommonPropDefModel();
+                //                CmsMtCommonPropDefModel hsCodeCropModel = new CmsMtCommonPropDefModel();
+                //                CmsMtCommonPropDefModel hsCodePrivateModel = new CmsMtCommonPropDefModel();
+                //
+                //                itemStatusModel.setField(itemStatus);
+                //                startTimeModel.setField(startTime);
+                //                hsCodeCropModel.setField(hsCodeCrop);
+                //                hsCodePrivateModel.setField(hsCodePrivate);
+                //
+                //                comPropModels.add(itemStatusModel);
+                //                comPropModels.add(startTimeModel);
+                //                comPropModels.add(hsCodeCropModel);
+                //                comPropModels.add(hsCodePrivateModel);
+                //
+                //                cmsMtCommonPropDefDao.insertWithList(comPropModels);
+                //
+                //                isSaveComProps = false;
+                //
+                //            }
 
                 //save the fields which was deleted
                 CmsMtPlatformRemoveFieldsModel removeHistoryModel = new CmsMtPlatformRemoveFieldsModel();
@@ -352,18 +300,55 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
         }
     }
 
+    private void addField(List<MtCommPropActionDefModel> addList, List<Field> masterFields, List<Field> removeFields) {
+        for (MtCommPropActionDefModel actionDefModel : addList) {
+
+            Field isRmField = FieldUtil.getFieldById(masterFields, actionDefModel.getPropId());
+
+            if (isRmField != null && actionDefModel.getDefModels().size() == 0) {
+                removeFields.add(isRmField);
+                FieldUtil.removeFieldById(masterFields, actionDefModel.getPropId());
+            }
+
+            FieldTypeEnum fieldType = FieldTypeEnum.getEnum(actionDefModel.getPropType());
+            Field newField = FieldTypeEnum.createField(fieldType);
+
+            newField.setInputLevel(0);
+            newField.setId(actionDefModel.getPropId());
+            newField.setName(actionDefModel.getPropName());
+            actionDefModel.getRuleMode().setFieldComProperties(newField);
+            if(StringUtil.isEmpty(actionDefModel.getParentPropId())){
+                masterFields.add(newField);
+            }else {
+                Field parentField = FieldUtil.getFieldById(masterFields,actionDefModel.getParentPropId());
+                List<Field> subFields = null;
+                if (parentField instanceof ComplexField){
+                    subFields = ((ComplexField) parentField).getFieldList();
+
+                }else if (parentField instanceof MultiComplexField){
+                    subFields = ((MultiComplexField) parentField).getFieldList();
+                }
+
+                if (subFields != null){
+                    subFields.add(newField);
+                }
+
+            }
+
+
+        }
+    }
+
     private void updateField(List<Field> masterFields, MtCommPropActionDefModel actionDefModel, Field updField) {
 
-        if (updField != null){
 
-            updField.setId(actionDefModel.getPropId());
-            updField.setName(actionDefModel.getPropName());
-            updField.setInputOrgId(actionDefModel.getPlatformPropRefId());
+        updField.setId(actionDefModel.getPropId());
+        updField.setName(actionDefModel.getPropName());
+        updField.setInputOrgId(actionDefModel.getPlatformPropRefId());
 
-            actionDefModel.getRuleMode().setFieldComProperties(updField);
+        actionDefModel.getRuleMode().setFieldComProperties(updField);
 
-            FieldUtil.renameDependFieldId(updField,actionDefModel.getPropId(),actionDefModel.getPlatformPropRefId(),masterFields);
-        }
+        FieldUtil.renameDependFieldId(updField,actionDefModel.getPropId(),actionDefModel.getPlatformPropRefId(),masterFields);
     }
 
 

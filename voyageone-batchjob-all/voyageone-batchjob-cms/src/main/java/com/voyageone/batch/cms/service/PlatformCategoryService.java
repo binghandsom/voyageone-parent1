@@ -398,21 +398,27 @@ public class PlatformCategoryService extends BaseTaskService{
 
         schemaModel.setPropsProduct(productXmlContent);
 
-            // 属性规则信息
-            String itemXmlContent = null;
-            // 调用API获取产品属性规则
-            ItemSchema result = tbCategoryService.getTbItemAddSchema(shopProp, Long.parseLong(platformCategoriesModel.getCatId()));
-            //保存为XML文件
-            if (result.getResult() == 0 ){
-                itemXmlContent = result.getItemResult();
-            }else if (result.getResult() == 1 ){
+        // 属性规则信息
+        String itemXmlContent = null;
+        ItemSchema result =null;
+        // 调用API获取产品属性规则
+//        if ("121412004".equals("platformCategoriesModel.getCatId()")){
+//            result = tbCategoryService.getTbItemAddSchema(shopProp, Long.parseLong(platformCategoriesModel.getCatId()),466830149L);
+//        } else {
+            result = tbCategoryService.getTbItemAddSchema(shopProp, Long.parseLong(platformCategoriesModel.getCatId()),null);
+//        }
+//            result = tbCategoryService.getTbItemAddSchema(shopProp, Long.parseLong(platformCategoriesModel.getCatId()),null);
+        //保存为XML文件
+        if (result.getResult() == 0 ){
+            itemXmlContent = result.getItemResult();
+        }else if (result.getResult() == 1 ){
 //              "商品类目已被冻结, 本类目已经不能发布商品，请重新选择类目":
 //              "商品类目未授权，请重新选择类目;商品类目天猫已经废弃, 本类目已经不能发布商品，请重新选择类目":
 //              "商品类目天猫已经废弃, 本类目已经不能发布商品，请重新选择类目":
 //                以上三种类型则表明类目已经作废，需要删除
 //                return result;
 //                itemXmlContent = String.valueOf(result.getResult());
-            }
+        }
         schemaModel.setPropsItem(itemXmlContent);
 
         if(!StringUtils.isEmpty(schemaModel.getPropsItem())){

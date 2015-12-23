@@ -66,17 +66,6 @@ public interface CmsUrlConstants {
             String DEL_PROMOTION_CODE = "delPromotionCode";
         }
     }
-    interface TASK {
-
-        interface PRICE {
-
-            String ROOT = "/cms/task/price";
-
-            String GET_PRICE_LIST = "getPriceList";
-
-            String UPDATE_PRICE = "updatePrice";
-        }
-    }
 
     interface SEARCH {
 
@@ -132,17 +121,17 @@ public interface CmsUrlConstants {
 
         interface EDIT{
 
-            String ROOT = "/cms/product/edit/";
+            String ROOT = "/cms/product/detail/";
 
-            String INIT = "doInit";
+            String GET_PRODUCT_INFO = "getProductInfo";
 
-            String  SUBMIT = "doSubmit";
+            String  SAVE_PRODUCT_INFO = "saveProductInfo";
 
-            String CHANGE_CATEGORY="doChagneCategory";
+            String CHANGE_CATEGORY="chagneCategory";
 
-            String CONFIRM_CHANGE = "doConfirmChange";
+            String CONFIRM_CHANGE = "confirmChange";
 
-            String RESET = "doReset";
+            String REVERT_CATEGORY = "revertCategory";
         }
     }
 
