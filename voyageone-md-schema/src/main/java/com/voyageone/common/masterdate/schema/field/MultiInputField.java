@@ -7,6 +7,7 @@ import com.voyageone.common.masterdate.schema.enums.TopSchemaErrorCodeEnum;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaFactory;
 import com.voyageone.common.masterdate.schema.field.Field;
+import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -150,5 +151,10 @@ public class MultiInputField extends com.voyageone.common.masterdate.schema.fiel
 
     public void initDefaultField() {
         super.defaultValueField = SchemaFactory.createField(FieldTypeEnum.MULTIINPUT);
+    }
+
+    @Override
+    public List<Value> getValue() {
+        return this.values;
     }
 }
