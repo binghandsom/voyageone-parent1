@@ -7,15 +7,31 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popPropChangeCtl', function ($scope, $propChangeService, data) {
+    angularAMD.controller('popPropChangeCtl', function ($scope, $propChangeService, selList) {
 
-        $scope.promotion = {};
-        $scope.tejiabao = false;
-
-        $scope.initialize = function () {
-            if (data) {
-                $scope.promotion = items
-            }
+        $scope.vm = {
+            propertyInfo: {
+                property: {},
+                productIds: selList,
+                value: {}
+            },
+            properties: []
         };
+
+        $scope.initialize = initialize;
+        $scope.save = save;
+
+        function initialize() {
+            $propChangeService.getPopOptions().then(function (res) {
+                $scope.vm.properties = res.data;
+            });
+        }
+
+        function save () {
+            var data = {};
+            $propChangeService.setProductFields($scope.vm.propertyInfo).then(function () {
+                $scope.$close();
+            });
+        }
     });
 });

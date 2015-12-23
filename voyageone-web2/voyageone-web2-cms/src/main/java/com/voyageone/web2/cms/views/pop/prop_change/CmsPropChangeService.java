@@ -2,14 +2,14 @@ package com.voyageone.web2.cms.views.pop.prop_change;
 
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.model.CmsBtProductModel_Field;
+import com.voyageone.cms.service.model.CmsMtCommonPropDefModel;
 import com.voyageone.common.configs.TypeChannel;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.OptionsField;
 import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.dao.CmsMtCommonPropDefDao;
-import com.voyageone.cms.service.model.CmsMtCommonPropDefModel;
-import net.minidev.json.JSONArray;
+import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -57,21 +57,15 @@ public class CmsPropChangeService extends BaseAppService {
     /**
      * 批量修改属性.
      */
-    public void setProductFields(Map<String, Object> params, String user_name) {
+    public void setProductFields(Map<String, Object> params, UserSessionBean userInfo) {
 
-        Object[] codes = ((JSONArray) params.get("codes")).toArray();
-        String channel_id = (String) params.get("channelId");
-        String prop_id = (String) params.get("propId");
-        String prop_value = (String) params.get("propValue");
+        List<Long> productIds = (ArrayList<Long>)params.get("productIds");
+        String prop_id = (String) ((Map<String, Object>) params.get("property")).get("id");
+        String prop_value = (String) params.get("value");
 
-        List<String> codeList = new ArrayList<>();
-
-        for (Object code : codes) {
-            codeList.add(code.toString());
-        }
         CmsBtProductModel_Field field = new CmsBtProductModel_Field();
         field.put(prop_id, prop_value);
-        cmsBtProductDao.bathUpdateWithField(channel_id, codeList, field, user_name);
-
+        // TODO 等待liangxiong
+//        cmsBtProductDao.bathUpdateWithField(userInfo.getSelChannelId(), productIds, field, userInfo.getUserName());
     }
 }
