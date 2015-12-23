@@ -24,8 +24,6 @@ import java.util.Map;
 @Component
 public class CnInventoryService extends CnBase {
 
-    public final String trustStore_jc = "/opt/app-shared/voyageone_web/contents/other/third_party/004/cn_key/juicycouture_store";
-
     /**
      * 更新独立域名的商品库存
      *
@@ -35,7 +33,7 @@ public class CnInventoryService extends CnBase {
      * @return response
      * @throws UnsupportedEncodingException
      */
-    public String UpdateInventory(InventorySynType synType, ShopBean shopBean, List<InventoryUpdateBean> beans) throws UnsupportedEncodingException {
+    public String UpdateInventory(InventorySynType synType, ShopBean shopBean, List<InventoryUpdateBean> beans) throws Exception {
 
         String sign = shopBean.getAppKey();
 
@@ -46,13 +44,6 @@ public class CnInventoryService extends CnBase {
         List<Map<String, Object>> p = new ArrayList<>();
 
         Map<String, Object> b;
-
-        // JC官网使用https
-        if (shopBean.getOrder_channel_id().equals(ChannelConfigEnums.Channel.JC.getId())) {
-            logger.info("trustStore path: "+trustStore_jc);
-            System.setProperty("javax.net.ssl.trustStore", trustStore_jc);
-            System.setProperty("javax.net.ssl.trustStorePassword", "voyage1#");
-        }
 
         jsonMap.put("t", synType.val()); // 设定同步的类型为全量
 

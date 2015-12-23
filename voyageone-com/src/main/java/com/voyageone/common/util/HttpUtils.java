@@ -3,9 +3,18 @@ package com.voyageone.common.util;
 import com.voyageone.common.configs.beans.PostResponse;
 
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.*;
+import java.security.cert.CertificateException;
+
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 
 /**
  * HttpUtils
@@ -340,4 +349,195 @@ public class HttpUtils {
         return res;
 
     }
+
+    public static String get(String url, String clientTrustCerFile, String clientTrustCerPwd, String clientKeyPwd) {
+
+        SSLSocketFactory ssf = getSsf(clientTrustCerFile, clientTrustCerPwd, clientKeyPwd);
+
+        HttpsURLConnection connection = null;
+        try {
+
+            connection = getHttpsConnection(url, "GET");
+
+            if (ssf != null) {
+                connection.setSSLSocketFactory(ssf);
+            }
+
+            connection.connect();
+
+            try (InputStream inputStream = connection.getInputStream()) {
+                return readConnection(inputStream);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null)
+                connection.disconnect();
+        }
+
+        return null;
+    }
+
+    public static String get(String url, String param, String clientTrustCerFile, String clientTrustCerPwd, String clientKeyPwd) {
+
+        SSLSocketFactory ssf = getSsf(clientTrustCerFile, clientTrustCerPwd, clientKeyPwd);
+
+        if (!StringUtils.isEmpty(param)) url += "?" + param;
+
+        HttpsURLConnection connection = null;
+        try {
+
+            connection = getHttpsConnection(url, "GET");
+
+            if (ssf != null) {
+                connection.setSSLSocketFactory(ssf);
+            }
+
+            connection.connect();
+
+            try (InputStream inputStream = connection.getInputStream()) {
+                return readConnection(inputStream);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null)
+                connection.disconnect();
+        }
+
+        return null;
+    }
+
+    /**
+     * 获取一个还没有打开的连接
+     *
+     * @param location 需要打开的地址
+     * @param method   http 连接的方法 GET/POST
+     * @return HttpURLConnection
+     * @throws IOException
+     */
+    private static HttpsURLConnection getHttpsConnection(String location, String method) throws IOException {
+
+        return getHttpsConnection(location, method, 10000, 10000);
+    }
+
+    private static HttpsURLConnection getHttpsConnection(String location, String method, int connectTimeout, int readTimeout) throws IOException {
+
+        URL url = new URL(location);
+
+        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+        connection.setRequestMethod(method);
+
+        //设置连接超时
+        connection.setConnectTimeout(connectTimeout);
+        connection.setReadTimeout(readTimeout);
+        // 设置通用的请求属性
+        connection.setRequestProperty("accept", "*/*");
+        connection.setRequestProperty("connection", "Keep-Alive");
+        connection.setRequestProperty("user-agent",
+                "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+
+        return connection;
+    }
+
+    public static SSLSocketFactory getSsf(String clientTrustCerFile, String clientTrustCerPwd, String clientKeyPwd)  {
+
+        SSLSocketFactory ssf = null;
+
+        try {
+            // 实例化 SSL 上下文  arg1:protocol arg2:provider
+            SSLContext sslContext = SSLContext.getInstance("SSL", "SunJSSE");
+
+            // 实例化一个 key store
+            //Trust Key Store
+            KeyStore keyStore = KeyStore.getInstance("JKS");
+            // clientTrustCerFile 是证书路劲
+            // clientTrustPwd 是证书的密码
+            keyStore.load(new FileInputStream(new File(clientTrustCerFile)),
+                    clientTrustCerPwd.toCharArray());
+
+            //构建TrustManager
+            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance("SunX509");
+            trustManagerFactory.init(keyStore);
+            TrustManager[] tms = trustManagerFactory.getTrustManagers();
+
+            //构建Key Manager
+            KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("SunX509");
+            keyManagerFactory.init(keyStore, clientKeyPwd.toCharArray());
+            KeyManager[] kms = keyManagerFactory.getKeyManagers();
+
+            //初始化 SSL 上下文
+            sslContext.init(kms, tms, null);
+
+            //-----注入SSL Context
+            ssf = sslContext.getSocketFactory();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        return ssf;
+    }
+
+    public static String post(String url, String param,String clientTrustCerFile, String clientTrustCerPwd, String clientKeyPwd) throws IOException {
+
+        String readConent = "";
+        SSLSocketFactory ssf = getSsf(clientTrustCerFile, clientTrustCerPwd, clientKeyPwd);
+
+        HttpsURLConnection connection = null;
+        try {
+            connection = sendHttpsPost(url, param, ssf);
+
+            try (InputStream inputStream = connection.getInputStream()) {
+                readConent =  readConnection(inputStream);
+            }
+
+            if (connection != null) {
+                connection.disconnect();
+            }
+        } catch (Exception e) {
+            if (connection != null) {
+                connection.disconnect();
+            }
+            e.printStackTrace();
+            throw e;
+        }
+
+        return readConent;
+    }
+
+    /**
+     * 使用 post method 发送 http 请求
+     *
+     * @param url            请求地址
+     * @param param          请求参数
+     * @return http 连接
+     * @throws IOException
+     */
+    private static HttpsURLConnection sendHttpsPost(String url, String param, SSLSocketFactory ssf) throws IOException {
+
+        // 打开和URL之间的连接
+        HttpsURLConnection connection = getHttpsConnection(url, "POST");
+
+        if (ssf != null) {
+            connection.setSSLSocketFactory(ssf);
+        }
+
+        // 发送POST请求必须设置如下两行
+        connection.setDoOutput(true);
+        connection.setDoInput(true);
+
+        // 获取URLConnection对象对应的输出流
+        try (OutputStream outputStream = connection.getOutputStream();
+             PrintWriter printWriter = new PrintWriter(outputStream)) {
+
+            // 发送请求参数
+            printWriter.print(param);
+            printWriter.flush();
+        }
+
+        connection.connect();
+
+        return connection;
+    }
+
 }
