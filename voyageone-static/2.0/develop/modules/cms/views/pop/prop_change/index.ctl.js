@@ -12,8 +12,7 @@ define([
         $scope.vm = {
             propertyInfo: {
                 property: {},
-                productIds: selList,
-                value: {}
+                productIds: selList
             },
             properties: []
         };
