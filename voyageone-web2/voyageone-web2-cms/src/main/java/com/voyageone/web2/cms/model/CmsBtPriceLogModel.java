@@ -17,6 +17,7 @@ public class CmsBtPriceLogModel extends BaseModel {
     private BigDecimal msrpPrice;
     private BigDecimal retailPrice;
     private BigDecimal salePrice;
+    private String comment;
 
     public int getSeq() {
         return seq;
@@ -80,5 +81,13 @@ public class CmsBtPriceLogModel extends BaseModel {
 
     public void setSalePrice(BigDecimal salePrice) {
         this.salePrice = salePrice;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }

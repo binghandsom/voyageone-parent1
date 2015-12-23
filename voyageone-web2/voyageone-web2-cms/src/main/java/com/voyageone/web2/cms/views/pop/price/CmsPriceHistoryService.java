@@ -6,6 +6,8 @@ import com.voyageone.web2.cms.model.CmsBtPriceLogModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,14 +25,22 @@ public class CmsPriceHistoryService extends BaseAppService {
      * @param params 检索条件
      * @return 价格修改记录列表
      */
-    public List<CmsBtPriceLogModel> getPriceHistory(Map<String, Object> params) {
-        boolean flag = (boolean)params.get("flag");
+    public Map<String, Object> getPriceHistory(Map<String, Object> params) {
+        int count;
+        Map<String, Object> result = new HashMap<>();
+        List<CmsBtPriceLogModel> priceList;
+        boolean flag = (boolean) params.get("flag");
         if (flag) {
-            String code = (String)params.get("code");
-            return cmsBtPriceLogDao.selectPriceLogByCode(code);
+            String code = (String) params.get("code");
+            priceList = cmsBtPriceLogDao.selectPriceLogByCode(params);
+            count = cmsBtPriceLogDao.selectPriceLogByCodeCnt(params);
         } else {
-            String sku = (String)params.get("sku");
-            return cmsBtPriceLogDao.selectPriceLogBySku(sku);
+            String sku = (String) params.get("sku");
+            priceList = cmsBtPriceLogDao.selectPriceLogBySku(params);
+            count = cmsBtPriceLogDao.selectPriceLogBySkuCnt(params);
         }
+        result.put("list", priceList);
+        result.put("total", count);
+        return result;
     }
 }

@@ -172,30 +172,34 @@ define([
                 }
             });
         }
-        $scope.openhistorypromotion = openhistorypromotion;
-        function openhistorypromotion(viewSize) {
-            $modal.open({
-                templateUrl: popActions.product.promotion.templateUrl,
-                controllerUrl: popActions.product.promotion.controllerUrl,
-                size: viewSize,
-                resolve: {
-                    items: function () {
-                        //return data;
+        $scope.openHistoryPromotion = openHistoryPromotion;
+        function openHistoryPromotion(viewSize, data) {
+            require([popActions.product.promotion.controllerUrl], function () {
+                $modal.open({
+                    templateUrl: popActions.product.promotion.templateUrl,
+                    controller: 'popPromotionHistoryCtl',
+                    size: viewSize,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
                     }
-                }
+                });
             });
         }
-        $scope.openpricepromotion = openpricepromotion;
-        function openpricepromotion(viewSize) {
-            $modal.open({
-                templateUrl: popActions.product.price.templateUrl,
-                controllerUrl: popActions.product.price.controllerUrl,
-                size: viewSize,
-                resolve: {
-                    items: function () {
-                        //return data;
+        $scope.openHistoryPrice = openHistoryPrice;
+        function openHistoryPrice(viewSize, data) {
+            require([popActions.product.price.controllerUrl], function () {
+                $modal.open({
+                    templateUrl: popActions.product.price.templateUrl,
+                    controller: 'popPriceHistoryCtl',
+                    size: viewSize,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
                     }
-                }
+                });
             });
         }
         $scope.openpromotion = openpromotion;
