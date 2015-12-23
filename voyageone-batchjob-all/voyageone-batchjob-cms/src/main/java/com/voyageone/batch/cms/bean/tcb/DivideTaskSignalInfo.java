@@ -1,6 +1,6 @@
 package com.voyageone.batch.cms.bean.tcb;
 
-import com.voyageone.batch.cms.model.WorkLoadBean;
+import com.voyageone.batch.cms.bean.WorkLoadBean;
 
 import java.util.Set;
 

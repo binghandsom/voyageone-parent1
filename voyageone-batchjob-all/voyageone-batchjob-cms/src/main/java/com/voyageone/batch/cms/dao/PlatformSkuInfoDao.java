@@ -1,7 +1,7 @@
 package com.voyageone.batch.cms.dao;
 
 import com.voyageone.base.dao.BaseDao;
-import com.voyageone.batch.cms.model.PlatformSkuInfoBean;
+import com.voyageone.batch.cms.model.PlatformSkuInfoModel;
 import com.voyageone.common.Constants;
 import org.springframework.stereotype.Repository;
 
@@ -15,7 +15,7 @@ import java.util.Map;
 @Repository
 public class PlatformSkuInfoDao extends BaseDao{
 
-    public List<PlatformSkuInfoBean> selectPlatformSkuInfo(String propId, int cartId)
+    public List<PlatformSkuInfoModel> selectPlatformSkuInfo(String propId, int cartId)
     {
         Map<String, Object> dataMap = new HashMap<>();
         dataMap.put("prop_id", propId);
@@ -23,7 +23,7 @@ public class PlatformSkuInfoDao extends BaseDao{
         return selectList(Constants.DAO_NAME_SPACE_CMS + "cms_selectSkuInfoByPropId", dataMap);
     }
 
-    public void insertPlatformSkuInfo(PlatformSkuInfoBean tmallSkuInfo)
+    public void insertPlatformSkuInfo(PlatformSkuInfoModel tmallSkuInfo)
     {
         updateTemplate.insert(Constants.DAO_NAME_SPACE_CMS + "cms_insertSkuInfo", tmallSkuInfo);
     }

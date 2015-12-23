@@ -11,11 +11,11 @@ import com.voyageone.batch.cms.bean.PlatformUploadRunState;
 import com.voyageone.batch.cms.bean.SkuTemplateSchema;
 import com.voyageone.batch.cms.bean.SxProductBean;
 import com.voyageone.batch.cms.bean.TmallUploadRunState;
-import com.voyageone.batch.cms.model.PlatformSkuInfoBean;
+import com.voyageone.batch.cms.model.PlatformSkuInfoModel;
 import com.voyageone.batch.cms.service.AbstractSkuFieldBuilder;
 import com.voyageone.cms.service.bean.ComplexMappingBean;
 import com.voyageone.cms.service.bean.MappingBean;
-import com.voyageone.cms.service.bean.SingleMappingBean;
+import com.voyageone.cms.service.bean.SimpleMappingBean;
 import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
 import com.voyageone.cms.service.model.CmsMtPlatformMappingModel;
 import com.voyageone.ims.rule_expression.RuleExpression;
@@ -26,7 +26,7 @@ import java.util.*;
 
 /**
  * Created by Leo on 15-7-14.
- * 参考天猫分类: 50014493
+ * 参考天猫分类: 121484030  珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰
  * 线程安全: 是
  */
 public class TmallGjSkuFieldBuilderImpl_1 extends AbstractSkuFieldBuilder {
@@ -63,10 +63,10 @@ public class TmallGjSkuFieldBuilderImpl_1 extends AbstractSkuFieldBuilder {
 
     private boolean init(List<Field> platformProps, int cartId) {
         for (Field platformProp : platformProps) {
-            List<PlatformSkuInfoBean> tmallSkuInfos = platformSkuInfoDao.selectPlatformSkuInfo(platformProp.getId(), cartId);
+            List<PlatformSkuInfoModel> tmallSkuInfos = platformSkuInfoDao.selectPlatformSkuInfo(platformProp.getId(), cartId);
 
-            PlatformSkuInfoBean tmallSkuInfo = null;
-            for (PlatformSkuInfoBean tmallSkuInfoEach : tmallSkuInfos) {
+            PlatformSkuInfoModel tmallSkuInfo = null;
+            for (PlatformSkuInfoModel tmallSkuInfoEach : tmallSkuInfos) {
                 if (SkuTemplateSchema.decodeTpl(tmallSkuInfoEach.getSku_type()) == SkuTemplateSchema.SkuTemplate_1_Schema.TPL_INDEX) {
                     tmallSkuInfo = tmallSkuInfoEach;
                     break;
@@ -137,7 +137,7 @@ public class TmallGjSkuFieldBuilderImpl_1 extends AbstractSkuFieldBuilder {
             skuFieldValue.setSingleCheckFieldValue(sku_sizeField.getId(), new Value(sizeValue));
             buildSkuResult.getSizeCmsSkuPropMap().put(sizeValue, cmsSkuProp);
         } else {
-            RuleExpression skuSizeExpression = ((SingleMappingBean)sizeMapping).getExpression();
+            RuleExpression skuSizeExpression = ((SimpleMappingBean)sizeMapping).getExpression();
             String skuSize = expressionParser.parse(skuSizeExpression, null);
             skuFieldValue.setInputFieldValue(sku_sizeField.getId(), skuSize);
             buildSkuResult.getSizeCmsSkuPropMap().put(skuSize, cmsSkuProp);
@@ -177,7 +177,7 @@ public class TmallGjSkuFieldBuilderImpl_1 extends AbstractSkuFieldBuilder {
                         int skuQuantity = skuInventoryMap.get(cmsSkuProp.getSkuCode());
                         skuFieldValue.setInputFieldValue(propId, String.valueOf(skuQuantity));
                     } else {
-                        RuleExpression ruleExpression = ((SingleMappingBean)mappingBean).getExpression();
+                        RuleExpression ruleExpression = ((SimpleMappingBean)mappingBean).getExpression();
                         String propValue = expressionParser.parse(ruleExpression, null);
                         Field subField = fieldMap.get(propId);
                         if (subField.getType() == FieldTypeEnum.INPUT) {
@@ -216,7 +216,7 @@ public class TmallGjSkuFieldBuilderImpl_1 extends AbstractSkuFieldBuilder {
                 if (propId.equals(skuExtend_sizeField.getId())) {
                     continue;
                 } else {
-                    RuleExpression ruleExpression = ((SingleMappingBean)mappingBean).getExpression();
+                    RuleExpression ruleExpression = ((SimpleMappingBean)mappingBean).getExpression();
                     String propValue = expressionParser.parse(ruleExpression, null);
                     Field subField = fieldMap.get(propId);
                     if (subField.getType() == FieldTypeEnum.INPUT) {

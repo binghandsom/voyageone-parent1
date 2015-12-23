@@ -3,20 +3,20 @@
 <mapper namespace="com.voyageone.cms.sql">
 
 	<!-- 查找所有特殊处理的平台属性 -->
-	<select id="cms_selectCustomMappingPlatformProp" resultType="com.voyageone.batch.cms.model.CustomPlatformPropMapping">
+	<select id="cms_selectCustomMappingPlatformProp" resultType="com.voyageone.batch.cms.model.CustomPlatformPropMappingModel">
 		SELECT
 			platform_prop_id AS  platformPropId,
 			cart_id AS cartId,
 			mapping_type AS customMappingTypeEnum
 		FROM
-			voyageone_cms.cms_mt_platform_prop_mapping_custom
+			voyageone_cms2.cms_mt_platform_prop_mapping_custom
 		WHERE
 			cart_id = #{cart_id}
 	</select>
 
-	<insert id="cms_insertCustomMapping" parameterType="com.voyageone.batch.cms.model.CustomPlatformPropMapping">
+	<insert id="cms_insertCustomMapping" parameterType="com.voyageone.batch.cms.model.CustomPlatformPropMappingModel">
 		INSERT
-		INTO voyageone_cms.cms_mt_platform_prop_mapping_custom
+		INTO voyageone_cms2.cms_mt_platform_prop_mapping_custom
 		(cart_id, platform_prop_id, mapping_type)
 		VALUES (
 				#{cartId},

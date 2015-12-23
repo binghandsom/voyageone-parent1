@@ -1,7 +1,7 @@
 package com.voyageone.batch.cms.dao;
 
 import com.voyageone.base.dao.BaseDao;
-import com.voyageone.batch.cms.model.CustomPlatformPropMapping;
+import com.voyageone.batch.cms.model.CustomPlatformPropMappingModel;
 import com.voyageone.common.Constants;
 import org.springframework.stereotype.Repository;
 
@@ -14,15 +14,15 @@ import java.util.Map;
  */
 @Repository
 public class PlatformPropCustomMappingDao extends BaseDao{
-    public List<CustomPlatformPropMapping> getCustomMappingPlatformProps(int cartId)
+    public List<CustomPlatformPropMappingModel> getCustomMappingPlatformProps(int cartId)
     {
         Map<String, Object> dataMap = new HashMap<>();
         dataMap.put("cart_id", cartId);
         return updateTemplate.selectList(Constants.DAO_NAME_SPACE_CMS + "cms_selectCustomMappingPlatformProp", cartId);
     }
 
-    public List<CustomPlatformPropMapping> insertCustomMapping(CustomPlatformPropMapping customPlatformPropMapping)
+    public List<CustomPlatformPropMappingModel> insertCustomMapping(CustomPlatformPropMappingModel customPlatformPropMappingModel)
     {
-        return updateTemplate.selectList(Constants.DAO_NAME_SPACE_CMS + "cms_insertCustomMapping", customPlatformPropMapping);
+        return updateTemplate.selectList(Constants.DAO_NAME_SPACE_CMS + "cms_insertCustomMapping", customPlatformPropMappingModel);
     }
 }

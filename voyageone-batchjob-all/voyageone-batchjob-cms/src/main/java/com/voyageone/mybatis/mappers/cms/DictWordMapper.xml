@@ -3,7 +3,7 @@
 <mapper namespace="com.voyageone.cms.sql">
     <insert id="cms_insertDictWord" parameterType="com.voyageone.ims.modelbean.DictWordBean">
         INSERT INTO
-            voyageone_cms.cms_mt_dict
+            voyageone_cms2.cms_mt_dict
           (order_channel_id, name, value, creater, modifier)
         VALUES (#{order_channel_id}, #{name}, #{value}, #{creater}, #{modifier})
     </insert>
@@ -18,7 +18,7 @@
         SELECT order_channel_id,
             name,
             value
-        FROM voyageone_cms.cms_mt_dict
+        FROM voyageone_cms2.cms_mt_dict
         WHERE
             name = #{name}
         AND

@@ -1,7 +1,7 @@
 package com.voyageone.batch.cms.dao;
 
 import com.voyageone.base.dao.BaseDao;
-import com.voyageone.batch.cms.model.ConditionPropValue;
+import com.voyageone.batch.cms.model.ConditionPropValueModel;
 import com.voyageone.common.Constants;
 import org.springframework.stereotype.Repository;
 
@@ -12,7 +12,7 @@ import java.util.List;
  */
 @Repository
 public class ConditionPropValueDao extends BaseDao{
-    public List<ConditionPropValue> selectAllConditionPropValue() {
+    public List<ConditionPropValueModel> selectAllConditionPropValue() {
         return selectList(Constants.DAO_NAME_SPACE_CMS + "cms_bt_select_all_condition_prop_value");
     }
 }

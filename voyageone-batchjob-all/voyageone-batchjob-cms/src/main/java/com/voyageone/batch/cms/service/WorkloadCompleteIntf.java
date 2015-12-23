@@ -1,6 +1,6 @@
 package com.voyageone.batch.cms.service;
 
-import com.voyageone.batch.cms.model.WorkLoadBean;
+import com.voyageone.batch.cms.bean.WorkLoadBean;
 
 /**
  * Created by Leo on 15-7-24.

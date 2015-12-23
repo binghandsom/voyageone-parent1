@@ -12,7 +12,7 @@
             created,
             modifier,
             modified
-        FROM voyageone_cms.cms_bt_sx_workload
+        FROM voyageone_cms2.cms_bt_sx_workload
         WHERE
         publish_status=0
         <if test="channel_id != null">

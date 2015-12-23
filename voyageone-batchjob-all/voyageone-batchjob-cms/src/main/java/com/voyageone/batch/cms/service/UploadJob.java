@@ -4,7 +4,7 @@ import com.voyageone.batch.cms.bean.tcb.TaskControlBlock;
 import com.voyageone.batch.cms.bean.tcb.UploadImageTcb;
 import com.voyageone.batch.cms.bean.tcb.UploadProductTcb;
 import com.voyageone.batch.cms.dao.SkuInventoryDao;
-import com.voyageone.batch.cms.model.WorkLoadBean;
+import com.voyageone.batch.cms.bean.WorkLoadBean;
 import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformMappingDao;
 import com.voyageone.common.components.issueLog.IssueLog;
 

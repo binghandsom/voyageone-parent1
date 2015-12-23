@@ -3,7 +3,7 @@ package com.voyageone.batch.cms.model;
 /**
  * Created by Leo on 15-7-17.
  */
-public class PlatformSkuInfoBean {
+public class PlatformSkuInfoModel {
     private int cart_id;
     private String prop_id;
     private long sku_type;

@@ -15,13 +15,13 @@ import com.voyageone.batch.cms.bean.tcb.AbortTaskSignalInfo;
 import com.voyageone.batch.cms.bean.tcb.TaskSignal;
 import com.voyageone.batch.cms.bean.tcb.TaskSignalType;
 import com.voyageone.batch.cms.bean.tcb.UploadProductTcb;
-import com.voyageone.batch.cms.model.PlatformSkuInfoBean;
-import com.voyageone.batch.cms.model.WorkLoadBean;
+import com.voyageone.batch.cms.model.PlatformSkuInfoModel;
+import com.voyageone.batch.cms.bean.WorkLoadBean;
 import com.voyageone.batch.cms.service.AbstractSkuFieldBuilder;
 import com.voyageone.batch.cms.service.UploadImageHandler;
 import com.voyageone.cms.service.bean.ComplexMappingBean;
 import com.voyageone.cms.service.bean.MappingBean;
-import com.voyageone.cms.service.bean.SingleMappingBean;
+import com.voyageone.cms.service.bean.SimpleMappingBean;
 import com.voyageone.cms.service.model.CmsBtProductConstants;
 import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
 import com.voyageone.cms.service.model.CmsMtPlatformMappingModel;
@@ -33,10 +33,10 @@ import java.util.*;
 
 /**
  * Created by Leo on 15-7-14.
- * 参考天猫分类: 50014993
+ * 参考天猫分类: 121412004  女装/女士精品>背心吊带
  * 线程安全: 否
  */
-public abstract class TmallGjSkuFieldBuilderImpl_3 extends AbstractSkuFieldBuilder {
+public class TmallGjSkuFieldBuilderImpl_3 extends AbstractSkuFieldBuilder {
     private Field skuField;
     private Field colorExtendField;
     private Field skuExtendField;
@@ -113,12 +113,16 @@ public abstract class TmallGjSkuFieldBuilderImpl_3 extends AbstractSkuFieldBuild
         }
     }
 
-    private boolean init(List<Field> platformProps, int cartId) {
-        for (Field field : platformProps) {
-            List<PlatformSkuInfoBean> tmallSkuInfos = platformSkuInfoDao.selectPlatformSkuInfo(field.getId(), cartId);
+    private boolean init(List<Field> fields, int cartId) {
+        for (Field field : fields) {
+            if (isIgnore(field.getId())) {
+                logger.info("Ignore sku prop: " + field.getId());
+                continue;
+            }
+            List<PlatformSkuInfoModel> tmallSkuInfos = platformSkuInfoDao.selectPlatformSkuInfo(field.getId(), cartId);
 
-            PlatformSkuInfoBean tmallSkuInfo = null;
-            for (PlatformSkuInfoBean tmallSkuInfoEach : tmallSkuInfos) {
+            PlatformSkuInfoModel tmallSkuInfo = null;
+            for (PlatformSkuInfoModel tmallSkuInfoEach : tmallSkuInfos) {
                 if (SkuTemplateSchema.decodeTpl(tmallSkuInfoEach.getSku_type()) == SkuTemplateSchema.SkuTemplate_3_Schema.TPL_INDEX) {
                     tmallSkuInfo = tmallSkuInfoEach;
                     break;
@@ -296,7 +300,7 @@ public abstract class TmallGjSkuFieldBuilderImpl_3 extends AbstractSkuFieldBuild
             skuFieldValue.setSingleCheckFieldValue(sku_colorField.getId(), new Value(colorValue));
         } else {
             if (colorValue == null) {
-                RuleExpression skuColorExpression = ((SingleMappingBean) colorMapping).getExpression();
+                RuleExpression skuColorExpression = ((SimpleMappingBean) colorMapping).getExpression();
                 colorValue = expressionParser.parse(skuColorExpression, null);
                 buildSkuResult.getColorCmsPropductMap().put(colorValue, sxProductBean);
                 buildSkuResult.getCmsPropductColorMap().put(sxProductBean, colorValue);
@@ -316,8 +320,11 @@ public abstract class TmallGjSkuFieldBuilderImpl_3 extends AbstractSkuFieldBuild
             if (sizeMapping == null) {
                 throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("You have to set sku size's mapping when it is a input"));
             }
-            RuleExpression skuSizeExpression = ((SingleMappingBean)sizeMapping).getExpression();
+            RuleExpression skuSizeExpression = ((SimpleMappingBean)sizeMapping).getExpression();
             String skuSize = expressionParser.parse(skuSizeExpression, null);
+            if (skuSize == null) {
+                throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("sku size(" + sku_sizeField.getId() + ") can't be null"));
+            }
             skuFieldValue.setInputFieldValue(sku_sizeField.getId(), skuSize);
             buildSkuResult.getSizeCmsSkuPropMap().put(skuSize, cmsSkuProp);
         }
@@ -358,11 +365,11 @@ public abstract class TmallGjSkuFieldBuilderImpl_3 extends AbstractSkuFieldBuild
                         Integer skuQuantity = skuInventoryMap.get(cmsSkuProp.getSkuCode());
                         String skuQuantityStr = "0";
                         if (skuQuantity != null) {
-                            skuQuantityStr = "" + skuQuantity.doubleValue();
+                            skuQuantityStr = skuQuantity.toString();
                         }
                         skuFieldValue.setInputFieldValue(propId, skuQuantityStr);
                     } else {
-                        RuleExpression ruleExpression = ((SingleMappingBean)mappingBean).getExpression();
+                        RuleExpression ruleExpression = ((SimpleMappingBean)mappingBean).getExpression();
                         String propValue = expressionParser.parse(ruleExpression, null);
                         Field subField = fieldMap.get(propId);
                         if (subField.getType() == FieldTypeEnum.INPUT) {
@@ -417,7 +424,7 @@ public abstract class TmallGjSkuFieldBuilderImpl_3 extends AbstractSkuFieldBuild
                         || (colorExtend_imageField  != null && propId.equals(colorExtend_imageField.getId()))) {
                     continue;
                 } else {
-                    RuleExpression ruleExpression = ((SingleMappingBean)mappingBean).getExpression();
+                    RuleExpression ruleExpression = ((SimpleMappingBean)mappingBean).getExpression();
                     String propValue = expressionParser.parse(ruleExpression, null);
                     Field subField = fieldMap.get(propId);
                     if (subField.getType() == FieldTypeEnum.INPUT) {
@@ -535,10 +542,10 @@ public abstract class TmallGjSkuFieldBuilderImpl_3 extends AbstractSkuFieldBuild
 
             for (MappingBean mappingBean : ((ComplexMappingBean)sizeExtendMapping).getSubMappings()) {
                 String propId = mappingBean.getPlatformPropId();
-                if (skipProps.contains(propId)) {
+                if (skipProps.contains(propId) || isIgnore(propId)) {
                     continue;
                 } else {
-                    RuleExpression ruleExpression = ((SingleMappingBean)mappingBean).getExpression();
+                    RuleExpression ruleExpression = ((SimpleMappingBean)mappingBean).getExpression();
                     String propValue = expressionParser.parse(ruleExpression, null);
                     Field subField = fieldMap.get(propId);
                     if (subField.getType() == FieldTypeEnum.INPUT) {
@@ -556,5 +563,13 @@ public abstract class TmallGjSkuFieldBuilderImpl_3 extends AbstractSkuFieldBuild
         ((MultiComplexField)skuExtendField).setComplexValues(complexValues);
         contextBuildCustomFields.getCustomFields().add(skuExtendField);
         return skuExtendField;
+    }
+
+    private boolean isIgnore(String propId) {
+        if (propId.endsWith("_range") || propId.endsWith("_from")
+                || propId.endsWith("_to") || propId.startsWith("size_mapping_-")) {
+            return true;
+        }
+        return false;
     }
 }

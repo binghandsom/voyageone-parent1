@@ -8,7 +8,7 @@
             org_image_url AS orgImageUrl,
             platform_image_url AS platformImageUrl
         FROM
-            voyageone_cms.cms_mt_platform_imageUrl_mapping
+            voyageone_cms2.cms_mt_platform_imageUrl_mapping
         WHERE
             cart_id = #{cartId}
             AND channel_id = #{channelId}
@@ -17,7 +17,7 @@
 
     <!-- insert the image url -->
     <insert id="cms_insertPlatformImageUrl">
-        insert into voyageone_cms.cms_mt_platform_imageUrl_mapping
+        insert into voyageone_cms2.cms_mt_platform_imageUrl_mapping
         (
             cart_id,
             channel_id,

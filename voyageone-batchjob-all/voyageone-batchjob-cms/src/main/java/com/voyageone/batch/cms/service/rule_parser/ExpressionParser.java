@@ -113,7 +113,7 @@ public class ExpressionParser {
 
 
     public static String encodeStringArray(List<String> mappedPropValues) {
-        final String seperator = "$~";
+        final String seperator = "~~";
         StringBuilder encodedString = new StringBuilder();
 
         for (String mappedPropValue : mappedPropValues) {
@@ -123,7 +123,7 @@ public class ExpressionParser {
     }
 
     public static String[] decodeString(String encodedString) {
-        final String seperator = "$~";
+        final String seperator = "~~";
         return encodedString.split(seperator);
     }
 }

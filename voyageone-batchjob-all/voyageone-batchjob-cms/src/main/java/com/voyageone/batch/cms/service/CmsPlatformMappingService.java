@@ -5,7 +5,7 @@ import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.cms.service.bean.ComplexMappingBean;
 import com.voyageone.cms.service.bean.MappingBean;
-import com.voyageone.cms.service.bean.SingleMappingBean;
+import com.voyageone.cms.service.bean.SimpleMappingBean;
 import com.voyageone.cms.service.dao.CmsMtCommonPropDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategoryDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategorySchemaDao;
@@ -19,7 +19,6 @@ import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.util.JsonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.ims.rule_expression.*;
-import net.minidev.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -155,7 +154,7 @@ public class CmsPlatformMappingService extends BaseTaskService {
         // 把类目ID中的【.】替换成【->】
 //        field.setId(StringUtils.replaceDot(field.getId()));
 
-        SingleMappingBean singleMappingBean;
+        SimpleMappingBean simpleMappingBean;
         MasterWord masterWord;
         RuleExpression ruleExpression;
         MappingBean mapping = null;
@@ -163,22 +162,22 @@ public class CmsPlatformMappingService extends BaseTaskService {
             case INPUT:
             case MULTIINPUT:
             case LABEL:
-                singleMappingBean = new SingleMappingBean();
+                simpleMappingBean = new SimpleMappingBean();
                 // 设置平台的属性ID
-                singleMappingBean.setPlatformPropId(field.getId());
+                simpleMappingBean.setPlatformPropId(field.getId());
                 // 设置对应的主数据的属性ID
                 masterWord = new MasterWord(StringUtils.replaceDot(SearchCommProp(field.getId())));
                 // 生成表达式
                 ruleExpression = new RuleExpression();
                 ruleExpression.addRuleWord(masterWord);
-                singleMappingBean.setExpression(ruleExpression);
-                mapping = singleMappingBean;
+                simpleMappingBean.setExpression(ruleExpression);
+                mapping = simpleMappingBean;
                 break;
             case SINGLECHECK:
             case MULTICHECK:
-                singleMappingBean = new SingleMappingBean();
+                simpleMappingBean = new SimpleMappingBean();
                 // 设置平台的属性ID
-                singleMappingBean.setPlatformPropId(field.getId());
+                simpleMappingBean.setPlatformPropId(field.getId());
                 // 设置对应的主数据的属性ID
                 masterWord = new MasterWord(StringUtils.replaceDot(SearchCommProp(field.getId())));
 
@@ -192,8 +191,8 @@ public class CmsPlatformMappingService extends BaseTaskService {
                 for (Option option : ((OptionsField) field).getOptions()) {
                     optionMapping.put(option.getValue(), option.getValue());
                 }
-                singleMappingBean.setExpression(ruleExpression);
-                mapping = singleMappingBean;
+                simpleMappingBean.setExpression(ruleExpression);
+                mapping = simpleMappingBean;
                 break;
             case COMPLEX:
             case MULTICOMPLEX:
@@ -247,7 +246,7 @@ public class CmsPlatformMappingService extends BaseTaskService {
             RuleExpression productImageExpression = new RuleExpression();
             productImageExpression.addRuleWord(productImageWord);
 
-            subMappings.add(new SingleMappingBean(platformPropId.substring(0,platformPropId.length()-1)/* 去掉最后一个[s]*/ + "_" + i, productImageExpression));
+            subMappings.add(new SimpleMappingBean(platformPropId.substring(0,platformPropId.length()-1)/* 去掉最后一个[s]*/ + "_" + i, productImageExpression));
         }
         return complexMappingBean;
     }
