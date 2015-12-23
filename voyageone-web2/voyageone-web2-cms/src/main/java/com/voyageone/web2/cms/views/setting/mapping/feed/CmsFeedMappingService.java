@@ -211,4 +211,49 @@ public class CmsFeedMappingService extends BaseAppService {
 
         return feedCategoryModelStream.findFirst().orElse(null);
     }
+
+    /**
+     * 自动继承 feedCategoryModel 类目父级类目的 Mapping 关系
+     *
+     * @param feedCategoryModel Feed 类目
+     * @param user              变动用户
+     * @return 更新后的 Mapping 关系
+     */
+    public List<CmsFeedMappingModel> extendsMapping(CmsFeedCategoryModel feedCategoryModel, UserSessionBean user) {
+
+        CmsMtFeedCategoryTreeModel treeModel = getFeedCategoriyTree(user);
+
+        CmsFeedMappingModel feedMappingModel = findParentDefaultMapping(feedCategoryModel, treeModel);
+
+        if (feedMappingModel == null) return null;
+
+        SetMappingBean setMappingBean = new SetMappingBean(feedCategoryModel.getPath(), feedMappingModel.getMainCategoryPath());
+
+        return setMapping(setMappingBean, user);
+    }
+
+    /**
+     * 从下往上在类目树中查找已匹配的 Mapping
+     *
+     * @param feedCategoryModel 当前类目节点
+     * @param treeModel         完整的树
+     * @return Mapping 对象
+     */
+    private CmsFeedMappingModel findParentDefaultMapping(CmsFeedCategoryModel feedCategoryModel, CmsMtFeedCategoryTreeModel treeModel) {
+
+        // 当前类目没父级了.
+        if (!feedCategoryModel.getPath().contains("-")) return null;
+
+        String parentPath = feedCategoryModel.getPath().substring(0, feedCategoryModel.getPath().lastIndexOf("-"));
+
+        CmsFeedCategoryModel parent = findByPath(parentPath, treeModel);
+
+        CmsFeedMappingModel parentDefaultMapping = findMapping(parent, m -> m.getDefaultMapping() == 1);
+
+        if (parentDefaultMapping == null) {
+            return findParentDefaultMapping(parent, treeModel);
+        }
+
+        return parentDefaultMapping;
+    }
 }

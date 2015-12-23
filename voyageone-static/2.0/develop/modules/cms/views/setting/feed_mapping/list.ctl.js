@@ -13,10 +13,14 @@ define([
          * @description
          * Feed Mapping 画面的 Controller 类,该类是单例,重复 new 不会返回新的实例
          * @param {FeedMappingService} feedMappingService
+         * @param {function} notify
+         * @param {function} confirm
          * @constructor
          */
-        function FeedMappingController(feedMappingService) {
+        function FeedMappingController(feedMappingService, notify, confirm) {
 
+            this.confirm = confirm;
+            this.notify = notify;
             this.feedMappingService = feedMappingService;
 
             /**
@@ -49,6 +53,23 @@ define([
                 }.bind(this));
             },
             /**
+             * 继承其父类目的 Mapping
+             * @param {object} feedCategory Feed 类目
+             */
+            extendsMapping: function(feedCategory) {
+
+                this.confirm('确定要继承吗?').result.then(function() {
+                    this.feedMappingService.extendsMapping(feedCategory).then(function(res) {
+                        if (res.data) {
+                            // 从后台获取更新后的 mapping
+                            feedCategory.mapping = res.data;
+                        } else {
+                            this.notify.warning('没有找到可以继承的设置.');
+                        }
+                    }.bind(this));
+                }.bind(this));
+            },
+            /**
              * 获取类目的默认 Mapping 类目
              * @param {{mapping:object[]}} feedCategory
              * @returns {string}
@@ -72,7 +93,6 @@ define([
 
                 return defMapping ? ('可继承: ' + defMapping.mainCategoryPath) : '[未设定]';
             },
-
             findParent: function (category) {
 
                 var path = category.path.split('-');
