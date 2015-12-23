@@ -23,7 +23,7 @@ import java.util.*;
  */
 
 @Service
-public class PostProductGetService extends BaseRestService{
+public class ProductGetService extends BaseRestService{
 
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
