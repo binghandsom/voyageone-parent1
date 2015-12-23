@@ -14,7 +14,7 @@ public class CmsBtPromotionGroupModel  extends BaseMongoModel {
 
     private int promotionId;
 
-    private long modelId;
+    private Long modelId;
 
     private String productModel;
 
@@ -67,11 +67,11 @@ public class CmsBtPromotionGroupModel  extends BaseMongoModel {
         this.promotionId = promotionId;
     }
 
-    public long getModelId() {
+    public Long getModelId() {
         return modelId;
     }
 
-    public void setModelId(long modelId) {
+    public void setModelId(Long modelId) {
         this.modelId = modelId;
     }
 
