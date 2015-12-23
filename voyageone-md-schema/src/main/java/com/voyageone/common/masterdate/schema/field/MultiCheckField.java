@@ -6,6 +6,7 @@ import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.enums.TopSchemaErrorCodeEnum;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaFactory;
+import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
 import java.util.ArrayList;
 import java.util.List;
@@ -174,5 +175,10 @@ public class MultiCheckField extends OptionsField {
 
     public void initDefaultField() {
         super.defaultValueField = SchemaFactory.createField(FieldTypeEnum.MULTICHECK);
+    }
+
+    @Override
+    public List<Value> getValue() {
+        return this.values;
     }
 }
