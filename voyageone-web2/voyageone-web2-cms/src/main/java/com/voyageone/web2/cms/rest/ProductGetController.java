@@ -37,14 +37,8 @@ public class ProductGetController extends CmsRestController {
      * @return CmsBtProductModel
      */
     @RequestMapping("selectOne")
-    public ProductGetResponse selectOne(@RequestBody ProductGetRequest responseMode) {
-        CmsBtProductModel model = productService.selectOne(responseMode);
-
-        ProductGetResponse result = new ProductGetResponse();
-        result.setProduct(model);
-
-        // 返回用户信息
-        return result;
+    public ProductGetResponse selectOne(@RequestBody ProductGetRequest response) {
+        return productService.selectOne(response);
     }
 
     /**
@@ -52,13 +46,7 @@ public class ProductGetController extends CmsRestController {
      * @return List<CmsBtProductModel>
      */
     @RequestMapping("selectList")
-    public ProductsGetResponse selectList(@RequestBody ProductsGetRequest responseMode) {
-        List<CmsBtProductModel> models = productService.selectList(responseMode);
-
-        ProductsGetResponse result = new ProductsGetResponse();
-        result.setProducts(models);
-
-        // 返回用户信息
-        return result;
+    public ProductsGetResponse selectList(@RequestBody ProductsGetRequest response) {
+        return productService.selectList(response);
     }
 }

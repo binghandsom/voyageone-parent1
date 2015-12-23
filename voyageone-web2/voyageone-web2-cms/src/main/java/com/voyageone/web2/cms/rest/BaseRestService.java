@@ -3,6 +3,7 @@ package com.voyageone.web2.cms.rest;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.BaseAppComponent;
+import com.voyageone.web2.sdk.api.VoApiListRequest;
 import com.voyageone.web2.sdk.api.VoApiRequest;
 
 /**
@@ -39,6 +40,24 @@ public abstract class BaseRestService extends BaseAppComponent {
         queryObject.setSort("{ " + sortsTmp + " }");
     }
 
+    protected void buildLimit(VoApiListRequest request, JomgoQuery queryObject) {
+        int pageSize = request.getPageSize();
+        if (pageSize < 1) {
+            pageSize = 1;
+        }
+        if (pageSize > 100) {
+            pageSize = 100;
+        }
+
+        int pageNo = request.getPageNo();
+        if (pageNo < 1) {
+            pageNo = 1;
+        }
+
+        queryObject.setLimit(pageSize);
+        queryObject.setSkip((pageNo-1) * pageSize);
+        request.getPageSize();
+    }
 
 
 }
