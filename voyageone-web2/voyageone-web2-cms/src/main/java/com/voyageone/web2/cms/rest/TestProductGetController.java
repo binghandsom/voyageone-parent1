@@ -66,28 +66,33 @@ public class TestProductGetController extends CmsRestController {
     @RequestMapping("testSelectList")
     public ProductsGetResponse testSelectList(@RequestBody ProductsGetRequest responseMode) {
 
-        //SDK取得Product 数据
-        Set<Long> productIds = new LinkedHashSet<>();
-        productIds.add(1L);
-        productIds.add(2L);
+        ProductsGetRequest requestModel = new ProductsGetRequest("300");
+        // add query
+//        requestModel.getProductIds().add(1L);
+//        requestModel.getProductIds().add(2L);
 
-        Set<String> fields = new LinkedHashSet<>();
-        fields.add("fields.code");
-        fields.add("fields.brand");
-        fields.add("fields.productName");
-        fields.add("fields.middleTitle");
+//        requestModel.getProductCodes().add("100001");
+//        requestModel.getProductCodes().add("100002");
+//        requestModel.getProductCodes().add("100003");
+        requestModel.addProp("fields.brand", "Jewelry4");
+
+        // add column
+        requestModel.addField("fields.code");
+        requestModel.addField("fields.brand");
+        requestModel.addField("fields.productName");
+        requestModel.addField("fields.middleTitle");
+        // add sort
+        requestModel.addSort("fields.code", false);
+        requestModel.addSort("fields.brand", false);
+        // add pagesize
+//        requestModel.setPageNo(2);
+//        requestModel.setPageSize(1);
 
 
-        List<CmsBtProductModel> products = productsGetClient.getProductByIds("300", productIds, fields);
-
-
-
-
-        ProductsGetResponse result = new ProductsGetResponse();
-        result.setProducts(products);
+        ProductsGetResponse response = productsGetClient.getProducts(requestModel);
 
         // 返回用户信息
-        return result;
+        return response;
     }
 
 }

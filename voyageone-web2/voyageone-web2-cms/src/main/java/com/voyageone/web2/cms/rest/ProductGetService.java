@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.rest;
 
+import com.google.common.base.Joiner;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.model.CmsBtProductModel;
@@ -8,6 +9,8 @@ import com.voyageone.web2.sdk.api.VoApiConstants;
 import com.voyageone.web2.sdk.api.exception.ApiException;
 import com.voyageone.web2.sdk.api.request.ProductsGetRequest;
 import com.voyageone.web2.sdk.api.request.ProductGetRequest;
+import com.voyageone.web2.sdk.api.response.ProductGetResponse;
+import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,52 +32,10 @@ public class ProductGetService extends BaseRestService{
     private CmsBtProductDao cmsBtProductDao;
 
 
-    public CmsBtProductModel selectOne(ProductGetRequest params) {
-        if (params == null) {
-            VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70001;
-            throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
-        }
+    public ProductGetResponse selectOne(ProductGetRequest request) {
+        ProductGetResponse result = new ProductGetResponse();
 
-        //ChannelId
-        String channelId = params.getChannelId();
-        if (StringUtils.isEmpty(channelId)) {
-            VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70003;
-            throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
-        }
-
-
-        JomgoQuery queryObject = new JomgoQuery();
-        //fields
-        buildProjection(params, queryObject);
-        //sorts
-        buildSort(params, queryObject);
-
-        //getProductById
-        Long pid = params.getProductId();
-        if (pid != null) {
-            queryObject.setQuery(String.format("{\"prodId\" : %s}", pid));
-            return cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
-        }
-
-        //getProductByCode
-        String productCode = params.getProductCode();
-        if (!StringUtils.isEmpty(productCode)) {
-            queryObject.setQuery(String.format("{\"fields.code\" : \"%s\" }", productCode));
-            return cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
-        }
-
-        //getProductByCondition
-        String props = params.getProps();
-        if (!StringUtils.isEmpty(props)) {
-            queryObject.setQuery(buildProductQuery(props));
-            return cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
-        }
-
-        return null;
-    }
-
-
-    public List<CmsBtProductModel> selectList(ProductsGetRequest request) {
+        CmsBtProductModel product = null;
         if (request == null) {
             VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70001;
             throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
@@ -95,27 +56,89 @@ public class ProductGetService extends BaseRestService{
         buildSort(request, queryObject);
 
         //getProductById
-        Set<Long> pids = request.getProductIds();
-        if (pids != null && pids.size() > 0) {
-//            queryObject.setQuery(String.format("{\"prodId\" : %s}", pid));
-//            return cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
-        }
-
+        Long pid = request.getProductId();
         //getProductByCode
-        Set<String> productCodes = request.getProductCodes();
-        if (productCodes != null && productCodes.size() > 0) {
-//            queryObject.setQuery(String.format("{\"fields.code\" : \"%s\" }", productCode));
-//            return cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
-        }
-
+        String productCode = request.getProductCode();
         //getProductByCondition
         String props = request.getProps();
-        if (!StringUtils.isEmpty(props)) {
+
+        if (pid != null) {
+            queryObject.setQuery(String.format("{\"prodId\" : %s}", pid));
+            product = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
+        } else if (!StringUtils.isEmpty(productCode)) {
+            queryObject.setQuery(String.format("{\"fields.code\" : \"%s\" }", productCode));
+            product = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
+        } else if (!StringUtils.isEmpty(props)) {
             queryObject.setQuery(buildProductQuery(props));
-            return cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
+            product = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
         }
 
-        return null;
+        result.setProduct(product);
+        return result;
+    }
+
+
+    public ProductsGetResponse selectList(ProductsGetRequest request) {
+        ProductsGetResponse result = new ProductsGetResponse();
+
+        List<CmsBtProductModel> products = null;
+        long totalCount = 0L;
+
+        if (request == null) {
+            VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70001;
+            throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
+        }
+
+        //ChannelId
+        String channelId = request.getChannelId();
+        if (StringUtils.isEmpty(channelId)) {
+            VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70003;
+            throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
+        }
+
+
+        JomgoQuery queryObject = new JomgoQuery();
+        //fields
+        buildProjection(request, queryObject);
+        //sorts
+        buildSort(request, queryObject);
+        //limit
+        buildLimit(request, queryObject);
+
+        //getProductById
+        Set<Long> pids = request.getProductIds();
+        //getProductByCode
+        Set<String> productCodes = request.getProductCodes();
+        //getProductByCondition
+        String props = request.getProps();
+
+        boolean isExecute = false;
+        if (pids != null && pids.size() > 0) {
+            String pidsArrStr = Joiner.on(", ").skipNulls().join(pids);
+            queryObject.setQuery(String.format("{ \"prodId\" : { $in : [ %s ] } }", pidsArrStr));
+            isExecute = true;
+        } else if (productCodes != null && productCodes.size() > 0) {
+            String productCodesStr = "\"" + Joiner.on("\", \"").skipNulls().join(productCodes) + "\"";
+            queryObject.setQuery(String.format("{ \"fields.code\" : { $in : [ %s ] } }", productCodesStr));
+            isExecute = true;
+        } else if (!StringUtils.isEmpty(props)) {
+            queryObject.setQuery(buildProductQuery(props));
+            isExecute = true;
+        }
+
+        if (isExecute) {
+            products = cmsBtProductDao.select(queryObject, channelId);
+            if (request.getPageNo() == 1 && products != null && products.size() < request.getPageSize()) {
+                totalCount = products.size();
+            } else {
+                totalCount = cmsBtProductDao.countByQuery(queryObject.getQuery(), channelId);
+            }
+        }
+
+        result.setProducts(products);
+        result.setTotalCount(totalCount);
+
+        return result;
     }
 
 

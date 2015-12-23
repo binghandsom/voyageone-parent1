@@ -98,8 +98,12 @@ define([
                         controller: 'popPropChangeCtl',
                         size: viewSize,
                         resolve: {
-                            selList: function () {
-                                return selList;
+                            productIds: function () {
+                                var productIds = [];
+                                _.forEach(selList, function (object) {
+                                    productIds.push(object.id);
+                                });
+                                return productIds;
                             }
                         }
                     });

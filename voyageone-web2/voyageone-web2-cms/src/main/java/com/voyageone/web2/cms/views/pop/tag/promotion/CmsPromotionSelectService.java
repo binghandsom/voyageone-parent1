@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.views.pop.tag.promotion;
 
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
+import com.voyageone.common.util.CommonUtil;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.dao.CmsBtTagDao;
 import com.voyageone.web2.cms.dao.CmsBtTagLogDao;
@@ -39,7 +40,7 @@ public class CmsPromotionSelectService extends BaseAppService {
     public Map<String, Object> addToPromotion(Map<String, Object> params, String channelId, String modifier) {
         String tag_path = params.get("tagPath").toString();
 
-        return this.add((ArrayList<Long>)params.get("productIds"), channelId, tag_path, modifier);
+        return this.add(CommonUtil.changeListType((ArrayList<Integer>)params.get("productIds")), channelId, tag_path, modifier);
     }
 
     /**

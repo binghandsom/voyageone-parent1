@@ -6,9 +6,7 @@ import com.voyageone.web2.sdk.api.exception.ApiRuleException;
 import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
 import com.voyageone.web2.sdk.api.util.RequestUtils;
 
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -55,6 +53,7 @@ public class ProductsGetRequest extends VoApiListRequest<ProductsGetResponse> {
 	}
 
 	public void check() throws ApiRuleException {
+		super.check();
 		RequestUtils.checkNotEmpty(channelId);
 		RequestUtils.checkNotEmpty(" productIdList or productCodeList or props", productIds, productCodes, props);
 		RequestUtils.checkNotEmpty(fields, "fields");

@@ -8,6 +8,7 @@ import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.OptionsField;
 import com.voyageone.common.masterdate.schema.option.Option;
+import com.voyageone.common.util.CommonUtil;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.dao.CmsMtCommonPropDefDao;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -61,7 +62,7 @@ public class CmsPropChangeService extends BaseAppService {
     public void setProductFields(Map<String, Object> params, UserSessionBean userInfo){
 
         cmsBtProductDao.bulkUpdateFieldsByProdIds(userInfo.getSelChannelId()
-                , (ArrayList<Long>)params.get("productIds")
+                , CommonUtil.changeListType((ArrayList<Integer>)params.get("productIds"))
                 , getPropValue(params)
                 , userInfo.getUserName());
     }
