@@ -16,6 +16,7 @@ public class SingleCheckField extends OptionsField {
         super.type = FieldTypeEnum.SINGLECHECK;
     }
 
+    @Override
     public Value getValue() {
         return this.value;
     }

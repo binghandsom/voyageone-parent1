@@ -134,4 +134,10 @@ public class ComplexField extends Field {
             return defaultComplexValuesNode;
         }
     }
+
+    @Override
+    public ComplexValue getValue() {
+        return this.complexValue;
+    }
+
 }

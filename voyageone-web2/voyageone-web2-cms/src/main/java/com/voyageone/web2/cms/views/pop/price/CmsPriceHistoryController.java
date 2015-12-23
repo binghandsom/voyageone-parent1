@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,8 +29,8 @@ public class CmsPriceHistoryController extends CmsController {
     private CmsPriceHistoryService cmsPriceHistoryService;
 
     @RequestMapping(CmsUrlConstants.POP.PRICE.GET_PRICE_HISTORY)
-    public AjaxResponse getPriceHistory(@RequestBody Map<String, Object> params){
-        List<CmsBtPriceLogModel> result = cmsPriceHistoryService.getPriceHistory(params);
+    public AjaxResponse getPriceHistory(@RequestBody Map<String, Object> params) {
+        Map<String, Object> result = cmsPriceHistoryService.getPriceHistory(params);
         return success(result);
     }
 

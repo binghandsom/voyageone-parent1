@@ -30,6 +30,10 @@ public class CmsBtPromotionCodeModel extends CmsBtPromotionGroupModel {
 
     private Double msrp;
 
+    private Integer tagId;
+
+    private String tagPath;
+
     public CmsBtPromotionCodeModel(CmsBtProductModel productInfo, int cartId, int promotionId, String operator) {
         super(productInfo, cartId, promotionId, operator);
         this.setProductId(productInfo.getProdId());
@@ -128,5 +132,21 @@ public class CmsBtPromotionCodeModel extends CmsBtPromotionGroupModel {
 
     public void setMsrp(Double msrp) {
         this.msrp = msrp;
+    }
+
+    public Integer getTagId() {
+        return tagId;
+    }
+
+    public void setTagId(Integer tagId) {
+        this.tagId = tagId;
+    }
+
+    public String getTagPath() {
+        return tagPath;
+    }
+
+    public void setTagPath(String tagPath) {
+        this.tagPath = tagPath;
     }
 }

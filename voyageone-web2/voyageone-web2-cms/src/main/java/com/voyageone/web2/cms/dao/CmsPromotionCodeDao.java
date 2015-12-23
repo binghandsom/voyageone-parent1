@@ -17,21 +17,32 @@ import java.util.Map;
 public class CmsPromotionCodeDao extends BaseDao{
 
     public List<CmsBtPromotionCodeModel> getPromotionCodeList(Map<String,Object> params){
-        List<CmsBtPromotionCodeModel> ret = selectList("select_cms_bt_promotion_code",params);
+        List<CmsBtPromotionCodeModel> ret = updateTemplate.selectList("select_cms_bt_promotion_code",params);
         if (ret == null){
             ret = new ArrayList<>();
         }
         return ret;
     }
     public int getPromotionCodeListCnt(Map<String,Object> params){
-        return selectOne("select_cms_bt_promotion_code_cnt",params);
+        return updateTemplate.selectOne("select_cms_bt_promotion_code_cnt",params);
     }
     public int insertPromotionCode(CmsBtPromotionCodeModel params){
-        return updateTemplate.insert("insert_cms_bt_promotion_code",params);
+        return updateTemplate.insert("insert_cms_bt_promotion_code", params);
     }
 
-    public int updatePromotionCode(CmsBtPromotionGroupModel params){
+    public int updatePromotionCode(CmsBtPromotionCodeModel params){
         return updateTemplate.update("update_cms_bt_promotion_code", params);
+    }
+
+    public int deletePromotionCode(CmsBtPromotionCodeModel params){
+        return updateTemplate.delete("delete_cms_bt_promotion_code", params);
+    }
+
+    public int deletePromotionCodeByModelId(Integer promotionId, Long modelId){
+        CmsBtPromotionCodeModel params = new CmsBtPromotionCodeModel();
+        params.setPromotionId(promotionId);
+        params.setModelId(modelId);
+        return updateTemplate.delete("delete_cms_bt_promotion_code", params);
     }
 
 }
