@@ -3,11 +3,13 @@ package com.voyageone.web2.sdk.api.request;
 
 import com.voyageone.web2.sdk.api.VoApiListRequest;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
-import com.voyageone.web2.sdk.api.response.PostProductSelectListResponse;
+import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
 import com.voyageone.web2.sdk.api.util.RequestUtils;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * /puroduct/selectList Request Model
@@ -20,7 +22,7 @@ import java.util.List;
  * @version 2.0.0
  * @since. 2.0.0
  */
-public class PostProductSelectListRequest extends VoApiListRequest<PostProductSelectListResponse> {
+public class ProductsGetRequest extends VoApiListRequest<ProductsGetResponse> {
 
 	public String getApiURLPath() {
 		return "/puroduct/selectList";
@@ -34,30 +36,27 @@ public class PostProductSelectListRequest extends VoApiListRequest<PostProductSe
 	/**
 	 * productId
 	 */
-	private List<Long> productIdList = new ArrayList<>();
+	private Set<Long> productIds = new LinkedHashSet<>();
 
 	/**
 	 * Product的Code
 	 */
-	private List<String> productCodeList = new ArrayList<>();
+	private Set<String> productCodes = new LinkedHashSet<>();
 
 	/**
-	 * 比如:诺基亚N73这个产品的关键属性列表就是:品牌:诺基亚,型号:N73,对应的PV值就是10005:10027;10006:29729.
-	 *
-	 * 例如 获取model所属所有商品
-	 *
+	 * 用户自定义关键属性,结构：pid1:value1;pid2:value2，如果有型号，系列等子属性用: 隔开 例如：“20000:优衣库;型号:001;632501:1234”，表示“品牌:优衣库;型号:001;货号:1234”
 	 */
 	private String props;
 
-	public PostProductSelectListRequest() {}
+	public ProductsGetRequest() {}
 
-	public PostProductSelectListRequest(String channelId) {
+	public ProductsGetRequest(String channelId) {
 		this.channelId = channelId;
 	}
 
 	public void check() throws ApiRuleException {
 		RequestUtils.checkNotEmpty(channelId);
-		RequestUtils.checkNotEmpty(" productIdList or productCodeList or props", productIdList, productCodeList, props);
+		RequestUtils.checkNotEmpty(" productIdList or productCodeList or props", productIds, productCodes, props);
 		RequestUtils.checkNotEmpty(fields, "fields");
 	}
 
@@ -69,18 +68,20 @@ public class PostProductSelectListRequest extends VoApiListRequest<PostProductSe
 		this.channelId = channelId;
 	}
 
-	public List<Long> getProductIdList() {
-		return productIdList;
-	}
-	public void setProductIdList(List<Long> productIdList) {
-		this.productIdList = productIdList;
+	public Set<Long> getProductIds() {
+		return productIds;
 	}
 
-	public List<String> getProductCodeList() {
-		return productCodeList;
+	public void setProductIds(Set<Long> productIds) {
+		this.productIds = productIds;
 	}
-	public void setProductCodeList(List<String> productCodeList) {
-		this.productCodeList = productCodeList;
+
+	public Set<String> getProductCodes() {
+		return productCodes;
+	}
+
+	public void setProductCodes(Set<String> productCodes) {
+		this.productCodes = productCodes;
 	}
 
 	public String getProps() {

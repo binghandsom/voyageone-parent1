@@ -1,11 +1,11 @@
 package com.voyageone.web2.sdk.api.util;
 
-import com.google.common.collect.Lists;
 import com.voyageone.common.masterdate.schema.Util.StringUtil;
 import com.voyageone.web2.sdk.api.VoApiConstants;
 import com.voyageone.web2.sdk.api.exception.ApiException;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
 
+import java.util.Collection;
 import java.util.List;
 
 public class RequestUtils {
@@ -41,10 +41,27 @@ public class RequestUtils {
 						isNotEmpty = true;
 						break;
 					}
-				} else if (value instanceof List) {
-					if (((List) value).size() > 0) {
-						isNotEmpty = true;
-						break;
+				} else if (value instanceof Collection) {
+					Collection listValue = (Collection)value;
+					if (listValue.size() > 0) {
+						boolean isNotEmptyList = false;
+						for (Object cellValue : listValue) {
+							if (cellValue instanceof String) {
+								if (((String) cellValue).trim().length() > 0) {
+									isNotEmptyList = true;
+									break;
+								}
+							} else if (cellValue instanceof Integer || cellValue instanceof Long || cellValue instanceof Double) {
+								if (cellValue.toString().trim().length() > 0) {
+									isNotEmptyList = true;
+									break;
+								}
+							}
+						}
+						if (isNotEmptyList) {
+							isNotEmpty = true;
+							break;
+						}
 					}
 				}
 			}

@@ -12,7 +12,7 @@ import com.voyageone.web2.sdk.api.VoApiResponse;
  * @version 2.0.0
  * @since. 2.0.0
  */
-public class PostProductSelectOneResponse extends VoApiResponse {
+public class ProductGetResponse extends VoApiResponse {
 
     /**
      * 数据体信息
