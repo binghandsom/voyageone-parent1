@@ -1,6 +1,5 @@
 package com.voyageone.web2.cms.views.promotion;
 
-import com.taobao.api.ApiException;
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
 import com.voyageone.common.components.transaction.SimpleTransaction;
@@ -10,9 +9,7 @@ import com.voyageone.web2.cms.bean.CmsPromotionProductPriceBean;
 import com.voyageone.web2.cms.dao.*;
 import com.voyageone.web2.cms.model.*;
 import com.voyageone.web2.cms.views.pop.tag.promotion.CmsPromotionSelectService;
-import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.web2.sdk.api.request.PostProductSelectOneRequest;
-import com.voyageone.web2.sdk.api.service.PostProductSelectOneClient;
+import com.voyageone.web2.sdk.api.service.ProductGetClient;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -21,10 +18,8 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author james.li on 2015/12/15.
@@ -34,7 +29,7 @@ import java.util.stream.Collectors;
 public class CmsPromotionDetailService extends BaseAppService {
 
     @Autowired
-    protected PostProductSelectOneClient productSelectOneClient;
+    protected ProductGetClient productSelectOneClient;
 
     @Autowired
     CmsPromotionModelDao cmsPromotionModelDao;

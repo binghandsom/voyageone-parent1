@@ -1,11 +1,9 @@
 package com.voyageone.web2.sdk.api.request;
 
 
-import com.voyageone.web2.sdk.api.VoApiConstants;
 import com.voyageone.web2.sdk.api.VoApiRequest;
-import com.voyageone.web2.sdk.api.exception.ApiException;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
-import com.voyageone.web2.sdk.api.response.PostProductSelectOneResponse;
+import com.voyageone.web2.sdk.api.response.ProductGetResponse;
 import com.voyageone.web2.sdk.api.util.RequestUtils;
 
 /**
@@ -19,7 +17,7 @@ import com.voyageone.web2.sdk.api.util.RequestUtils;
  * @version 2.0.0
  * @since. 2.0.0
  */
-public class PostProductSelectOneRequest extends VoApiRequest<PostProductSelectOneResponse> {
+public class ProductGetRequest extends VoApiRequest<ProductGetResponse> {
 
 	public String getApiURLPath() {
 		return "/puroduct/selectOne";
@@ -50,11 +48,11 @@ public class PostProductSelectOneRequest extends VoApiRequest<PostProductSelectO
 	 */
 	private String sort;
 
-	public PostProductSelectOneRequest() {
+	public ProductGetRequest() {
 
 	}
 
-	public PostProductSelectOneRequest(String channelId) {
+	public ProductGetRequest(String channelId) {
 		this.channelId = channelId;
 	}
 

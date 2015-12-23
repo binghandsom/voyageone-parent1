@@ -1,7 +1,7 @@
 package com.voyageone.web2.sdk.api.request;
 
 import com.voyageone.cms.service.model.CmsBtProductModel;
-import com.voyageone.web2.sdk.api.response.PostProductSelectOneResponse;
+import com.voyageone.web2.sdk.api.response.ProductGetResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,14 +29,14 @@ public class ProductGetRequestTest {
     public void testProductGetRequest() {
 
 
-        PostProductSelectOneRequest requestModel = new PostProductSelectOneRequest("001");
+        ProductGetRequest requestModel = new ProductGetRequest("001");
         requestModel.setProductId((long)1);
 
-        RequestEntity<PostProductSelectOneRequest> requestEntity = new RequestEntity<PostProductSelectOneRequest>(requestModel, requestModel.getHeaders(), requestModel.getHttpMethod(), getURI(requestModel.getApiURLPath()));
+        RequestEntity<ProductGetRequest> requestEntity = new RequestEntity<ProductGetRequest>(requestModel, requestModel.getHeaders(), requestModel.getHttpMethod(), getURI(requestModel.getApiURLPath()));
 
-        ResponseEntity<PostProductSelectOneResponse> responseEntity = null;
+        ResponseEntity<ProductGetResponse> responseEntity = null;
         try {
-            responseEntity = restTemplate.exchange(requestEntity, PostProductSelectOneResponse.class);
+            responseEntity = restTemplate.exchange(requestEntity, ProductGetResponse.class);
             if(HttpStatus.OK.equals(responseEntity.getStatusCode())) {
                 System.out.println(responseEntity.getBody());
                 CmsBtProductModel model = responseEntity.getBody().getProduct();
