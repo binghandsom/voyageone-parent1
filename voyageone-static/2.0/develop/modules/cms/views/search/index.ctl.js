@@ -32,7 +32,10 @@ define([
                 selAllFlag: false,
                 selList: []
             },
-            currTab: "group"
+            currTab: "group",
+            status: {
+                open: true
+            }
         };
 
         $scope.initialize = initialize;

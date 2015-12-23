@@ -13,15 +13,14 @@ angular.module('voyageone.angular.directives.voption', [])
         // 显示成select样式
         if (!$templateCache.get(templateKey_select)) {
             $templateCache.put(templateKey_select,
-                '<select class="form-control" ng-model="$$value" ng-options="option.value as option.displayName for option in $$data.options"> <option value="">{{\'TXT_SELECT_NO_VALUE\' | translate}}</option></select>');
+                '<select class="form-control" ng-model="$$data.value.value" ng-options="option.value as option.displayName for option in $$data.options"> <option value="">{{\'TXT_SELECT_NO_VALUE\' | translate}}</option></select>');
         }
 
         return {
             restrict: "E",
             replace: true,
             scope: {
-                $$data: "=data",
-                $$value: "=value"
+                $$data: "=data"
             },
             link: function (scope, element) {
 

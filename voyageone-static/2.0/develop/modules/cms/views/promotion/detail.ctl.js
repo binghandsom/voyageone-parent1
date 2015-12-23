@@ -6,7 +6,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function () {
 
-    return function ($scope, promotionService, promotionDetailService, notify, $routeParams) {
+    return function ($scope, promotionService, promotionDetailService, notify, $routeParams, $location) {
         pageSize = 5;
         $scope.vm = {
             "promotionId": $routeParams.promotionId,
@@ -108,6 +108,16 @@ define([
             promotionDetailService.delPromotionCode(parameter).then(function (res) {
                 notify.success("success");
                 $scope.search();
+            }, function (err) {
+                notify.warning("fail");
+            })
+        };
+
+        $scope.tejiabaoInit = function(){
+            promotionDetailService.tejiabaoInit( $routeParams.promotionId).then(function (res) {
+                notify.success("success");
+                $location.path("/task/price/"+$routeParams.promotionId);
+                //href="#/promotion/task/price" target="_blank"-->
             }, function (err) {
                 notify.warning("fail");
             })

@@ -30,9 +30,9 @@
     "controllerUrl": "modules/cms/views/promotion/task/detail.ctl"
   },
   "promotion_task_price": {
-    "hash": "/promotion/task/price",
-    "templateUrl": "views/promotion/task/price.tpl.html",
-    "controllerUrl": "modules/cms/views/promotion/task/price.ctl"
+    "hash": "/task/price/:promotionId",
+    "templateUrl": "views/task/price.tpl.html",
+    "controllerUrl": "modules/cms/views/task/price.ctl"
   },
   "search_index": {
     "hash": "/search/index",

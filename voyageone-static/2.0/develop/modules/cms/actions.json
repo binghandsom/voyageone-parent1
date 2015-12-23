@@ -47,6 +47,14 @@
         "root": "/cms/pop/prom_select/",
         "getPromotionTags": "getPromotionTags",
         "addToPromotion": "addToPromotion"
+      },
+      "$promotionHistoryService": {
+        "root": "/cms/pop/promotion/",
+        "getPromotionHistory": "getPromotionHistory"
+      },
+      "$priceHistoryService": {
+        "root": "/cms/pop/price/",
+        "getPriceHistory": "getPriceHistory"
       }
     },
     "promotionService": {
@@ -66,6 +74,10 @@
       "updatePromotionProduct" : "updatePromotionProduct",
       "delPromotionModel" : "delPromotionModel",
       "delPromotionCode":"delPromotionCode"
+    },
+    "taskPriceService": {
+      "root": "/cms/task/price",
+      "getPriceList": "getPriceList"
     }
   }
 }

@@ -4,9 +4,11 @@ import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.model.CmsBtProductModel_Field;
 import com.voyageone.cms.service.model.CmsMtCommonPropDefModel;
 import com.voyageone.common.configs.TypeChannel;
+import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.OptionsField;
 import com.voyageone.common.masterdate.schema.option.Option;
+import com.voyageone.common.util.CommonUtil;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.dao.CmsMtCommonPropDefDao;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -57,15 +59,61 @@ public class CmsPropChangeService extends BaseAppService {
     /**
      * 批量修改属性.
      */
-    public void setProductFields(Map<String, Object> params, UserSessionBean userInfo) {
+    public void setProductFields(Map<String, Object> params, UserSessionBean userInfo){
 
-        List<Long> productIds = (ArrayList<Long>)params.get("productIds");
-        String prop_id = (String) ((Map<String, Object>) params.get("property")).get("id");
-        String prop_value = (String) params.get("value");
+        cmsBtProductDao.bulkUpdateFieldsByProdIds(userInfo.getSelChannelId()
+                , CommonUtil.changeListType((ArrayList<Integer>)params.get("productIds"))
+                , getPropValue(params)
+                , userInfo.getUserName());
+    }
 
-        CmsBtProductModel_Field field = new CmsBtProductModel_Field();
-        field.put(prop_id, prop_value);
-        // TODO 等待liangxiong
-//        cmsBtProductDao.bathUpdateWithField(userInfo.getSelChannelId(), productIds, field, userInfo.getUserName());
+    /**
+     * 根据request值获取需要更新的Field数据
+     * @param params
+     * @return
+     */
+    private CmsBtProductModel_Field getPropValue (Map<String, Object> params){
+        try {
+
+            CmsBtProductModel_Field field = new CmsBtProductModel_Field();
+
+            String type = ((Map<String, Object>) params.get("property")).get("type").toString();
+//            Field prop = FieldTypeEnum.createField(FieldTypeEnum.getEnum(type));
+
+            switch (FieldTypeEnum.getEnum(type)) {
+//                case INPUT:
+//                    prop_value = (String)prop.getValue();
+//                    break;
+//                case MULTIINPUT:
+//                    (List<Value>)prop.getValue();
+//                    break;
+                case SINGLECHECK:
+//                    SingleCheckField prop = new SingleCheckField();
+//                    BeanUtils.populate(prop, (Map<String, Object>) params.get("property"));
+                    Map<String, Object> prop = (Map<String, Object>) params.get("property");
+                    String prop_id = prop.get("id").toString();
+                    String prop_value = ((Map<String, Object>)prop.get("value")).get("value").toString();
+                    field.put(prop_id, prop_value);
+                    break;
+//                case MULTICHECK:
+//                    (List<Value>)prop.getValue(); List<String>
+//                        field.put(prop.getId(), ((Value)prop.getValue()).getValue());
+//                    break;
+//                case COMPLEX:Map<String, Object>
+//                    (ComplexValue)prop.getValue();
+//                    break;
+//                case MULTICOMPLEX:List<Map<String, Object>>
+//                    (List<ComplexValue>)prop.getValue();
+//                    break;
+//                case LABEL:
+//                    (String)prop.getValue();
+//                    break;
+            }
+            return field;
+        } catch (Exception e) {
+            logger.error("CmsPropChangeService: " +e.getMessage());
+        }
+
+        return null;
     }
 }
