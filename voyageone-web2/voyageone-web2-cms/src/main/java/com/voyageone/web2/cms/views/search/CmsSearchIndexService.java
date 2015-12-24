@@ -197,12 +197,6 @@ public class CmsSearchIndexService extends BaseAppService{
         resultPlatforms.append(MongoUtils.splicingValue("cartId", searchValue.getPlatformCart()));
         resultPlatforms.append(",");
 
-        // 获取category Id
-        if (searchValue.getCatId() != null) {
-            resultPlatforms.append(MongoUtils.splicingValue("catId", searchValue.getCatId()));
-            resultPlatforms.append(",");
-        }
-
         // 获取platform status
         if (searchValue.getPlatformStatus() != null
                 && searchValue.getPlatformStatus().length > 0) {
@@ -227,6 +221,12 @@ public class CmsSearchIndexService extends BaseAppService{
                 , "{" + resultPlatforms.toString().substring(0, resultPlatforms.toString().length() - 1) + "}"
                 , "$elemMatch"));
         result.append(",");
+
+        // 获取category Id
+        if (searchValue.getCatId() != null) {
+            result.append(MongoUtils.splicingValue("catId", searchValue.getCatId()));
+            result.append(",");
+        }
 
         // 获取product status
         if (searchValue.getProductStatus() != null
