@@ -450,6 +450,13 @@ public final class StringUtils {
     }
 
     /**
+     * 把str中的【->】替换成【.】
+     */
+    public static String replaceToDot(String str){
+        return str.replaceAll("->", ".");
+    }
+
+    /**
      * BASE64字符串二进制数据编码为
      */
     public static String decodeBase64(String input) {

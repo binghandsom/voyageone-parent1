@@ -1,8 +1,8 @@
 package com.voyageone.common.masterdate.schema.factory;
 
-import com.voyageone.common.masterdate.schema.Util.XmlUtils;
+import com.voyageone.common.masterdate.schema.util.XmlUtils;
 import com.voyageone.common.masterdate.schema.field.Field;
-import java.util.Iterator;
+
 import java.util.List;
 import org.dom4j.Element;
 

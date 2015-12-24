@@ -30,6 +30,8 @@ public interface CmsUrlConstants {
             String GET_MAIN_CATEGORIES = "getMainCategories";
 
             String SET_MAPPING = "setFeedMapping";
+
+            String EXTENDS_MAPPING = "extendsMapping";
         }
     }
 
@@ -64,6 +66,17 @@ public interface CmsUrlConstants {
             String DEL_PROMOTION_MODEL = "delPromotionModel";
 
             String DEL_PROMOTION_CODE = "delPromotionCode";
+        }
+    }
+    interface TASK {
+
+        interface PRICE {
+
+            String ROOT = "/cms/task/price";
+
+            String GET_PRICE_LIST = "getPriceList";
+
+            String UPDATE_PRICE = "updatePrice";
         }
     }
 

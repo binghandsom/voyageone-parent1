@@ -1,7 +1,7 @@
 package com.voyageone.common.masterdate.schema.rule;
 
-import com.voyageone.common.masterdate.schema.Util.StringUtil;
-import com.voyageone.common.masterdate.schema.Util.XmlUtils;
+import com.voyageone.common.masterdate.schema.util.StringUtil;
+import com.voyageone.common.masterdate.schema.util.XmlUtils;
 import com.voyageone.common.masterdate.schema.depend.DependExpress;
 import com.voyageone.common.masterdate.schema.depend.DependGroup;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
@@ -16,7 +16,6 @@ import com.voyageone.common.masterdate.schema.field.SingleCheckField;
 import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.value.Value;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import org.dom4j.Element;
 

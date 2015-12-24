@@ -44,7 +44,14 @@ public class CmsFeedMappingService extends BaseAppService {
         return cmsBtChannelCategoryService.getCategorysByChannelId(user.getSelChannelId());
     }
 
-    public Object setMapping(SetMappingBean setMappingBean, UserSessionBean user) {
+    /**
+     * 为类目更新 Mapping
+     *
+     * @param setMappingBean 参数模型,包含 Feed 类目路径和匹配的主类目路径
+     * @param user           变动用户信息
+     * @return 变动后的 Feed 类目的 Mapping 关系
+     */
+    public List<CmsFeedMappingModel> setMapping(SetMappingBean setMappingBean, UserSessionBean user) {
 
         if (StringUtils.isAnyEmpty(setMappingBean.getFrom(), setMappingBean.getTo()))
             throw new BusinessException("木有参数");
@@ -98,7 +105,7 @@ public class CmsFeedMappingService extends BaseAppService {
             mapping.setDefaultMapping(1);
             mapping.setDefaultMain(hasDefaultMain ? 0 : 1);
 
-            setChildrenMapping(cmsFeedCategoryModel, mapping);
+            setChildrenMapping(cmsFeedCategoryModel, mapping, user);
 
             cmsFeedCategoryModel.getMapping().add(mapping);
 
@@ -111,21 +118,34 @@ public class CmsFeedMappingService extends BaseAppService {
         return cmsFeedCategoryModel.getMapping();
     }
 
-    private void setChildrenMapping(CmsFeedCategoryModel cmsFeedCategoryModel, CmsFeedMappingModel mapping) {
+    /**
+     * 批量为 cmsFeedCategoryModel 的子类目追加 mapping
+     *
+     * @param cmsFeedCategoryModel Feed 类目
+     * @param mapping              要更新的 Mapping
+     * @param userSessionBean      变动的用户信息
+     */
+    private void setChildrenMapping(CmsFeedCategoryModel cmsFeedCategoryModel, CmsFeedMappingModel mapping, UserSessionBean userSessionBean) {
 
-        feedToCmsService.flatten(cmsFeedCategoryModel.getChild()).forEach(child -> {
-
-
-        });
+        feedToCmsService.flatten(cmsFeedCategoryModel.getChild()).forEach(c -> setChildMapping(c, mapping, userSessionBean));
     }
 
-    private void setChildMapping(CmsFeedCategoryModel feedCategoryModel, CmsFeedMappingModel parentMapping) {
+    /**
+     * 为 feedCategoryModel 追加 parentMapping
+     *
+     * @param feedCategoryModel Feed 类目
+     * @param parentMapping     来自父级的 Mapping
+     * @param userSessionBean   变动的用户信息
+     */
+    private void setChildMapping(CmsFeedCategoryModel feedCategoryModel, CmsFeedMappingModel parentMapping, UserSessionBean userSessionBean) {
 
         // 搜索 DefaultFeed Mapping
         // 如果有,则该子类目不需要被设定 Mapping
         // 如果没有,尝试检查目标类目是否已经被匹配到当前类目
         // 如果有,则变更为 DefaultFeed
         // 如果没有,则新建
+
+        // 同步新增和修改 Mapping 表的 DefaultFeed 设置
 
         CmsFeedMappingModel defaultMapping = findMapping(feedCategoryModel, m -> m.getDefaultMapping() == 1);
 
@@ -137,11 +157,21 @@ public class CmsFeedMappingService extends BaseAppService {
         if (mapping == null) {
             mapping = new CmsFeedMappingModel();
             mapping.setMainCategoryPath(parentMapping.getMainCategoryPath());
+            feedCategoryModel.getMapping().add(mapping);
         }
 
         mapping.setDefaultMapping(1);
+
+        cmsFeedMappingService.new CategoryContext(feedCategoryModel, userSessionBean.getSelChannel()).addMapping(mapping, userSessionBean.getUserName());
     }
 
+    /**
+     * 在类目的 mapping 属性内查找符合 predicate 的 mapping 对象
+     *
+     * @param feedCategoryModel Feed 类目对象
+     * @param predicate         查询条件
+     * @return mapping 对象
+     */
     private CmsFeedMappingModel findMapping(CmsFeedCategoryModel feedCategoryModel, Predicate<CmsFeedMappingModel> predicate) {
         return feedCategoryModel.getMapping()
                 .stream()
@@ -150,6 +180,13 @@ public class CmsFeedMappingService extends BaseAppService {
                 .orElse(null);
     }
 
+    /**
+     * 根据 path 路径在 treeModel 中查找指定的类目
+     *
+     * @param path      类目路径
+     * @param treeModel 完整的类目树
+     * @return 具体的 Feed 类目
+     */
     private CmsFeedCategoryModel findByPath(String path, CmsMtFeedCategoryTreeModel treeModel) {
 
         String[] fromPath = path.split("-");
@@ -173,5 +210,50 @@ public class CmsFeedMappingService extends BaseAppService {
         }
 
         return feedCategoryModelStream.findFirst().orElse(null);
+    }
+
+    /**
+     * 自动继承 feedCategoryModel 类目父级类目的 Mapping 关系
+     *
+     * @param feedCategoryModel Feed 类目
+     * @param user              变动用户
+     * @return 更新后的 Mapping 关系
+     */
+    public List<CmsFeedMappingModel> extendsMapping(CmsFeedCategoryModel feedCategoryModel, UserSessionBean user) {
+
+        CmsMtFeedCategoryTreeModel treeModel = getFeedCategoriyTree(user);
+
+        CmsFeedMappingModel feedMappingModel = findParentDefaultMapping(feedCategoryModel, treeModel);
+
+        if (feedMappingModel == null) return null;
+
+        SetMappingBean setMappingBean = new SetMappingBean(feedCategoryModel.getPath(), feedMappingModel.getMainCategoryPath());
+
+        return setMapping(setMappingBean, user);
+    }
+
+    /**
+     * 从下往上在类目树中查找已匹配的 Mapping
+     *
+     * @param feedCategoryModel 当前类目节点
+     * @param treeModel         完整的树
+     * @return Mapping 对象
+     */
+    private CmsFeedMappingModel findParentDefaultMapping(CmsFeedCategoryModel feedCategoryModel, CmsMtFeedCategoryTreeModel treeModel) {
+
+        // 当前类目没父级了.
+        if (!feedCategoryModel.getPath().contains("-")) return null;
+
+        String parentPath = feedCategoryModel.getPath().substring(0, feedCategoryModel.getPath().lastIndexOf("-"));
+
+        CmsFeedCategoryModel parent = findByPath(parentPath, treeModel);
+
+        CmsFeedMappingModel parentDefaultMapping = findMapping(parent, m -> m.getDefaultMapping() == 1);
+
+        if (parentDefaultMapping == null) {
+            return findParentDefaultMapping(parent, treeModel);
+        }
+
+        return parentDefaultMapping;
     }
 }

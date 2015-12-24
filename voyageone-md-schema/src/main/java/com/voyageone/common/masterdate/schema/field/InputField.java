@@ -1,12 +1,14 @@
 package com.voyageone.common.masterdate.schema.field;
 
-import com.voyageone.common.masterdate.schema.Util.StringUtil;
-import com.voyageone.common.masterdate.schema.Util.XmlUtils;
+import com.voyageone.common.masterdate.schema.util.StringUtil;
+import com.voyageone.common.masterdate.schema.util.XmlUtils;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.enums.TopSchemaErrorCodeEnum;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaFactory;
 import org.dom4j.Element;
+
+import java.util.Map;
 
 public class InputField extends Field {
     protected String value;
@@ -80,5 +82,13 @@ public class InputField extends Field {
 
     public void initDefaultField() {
         super.defaultValueField = SchemaFactory.createField(FieldTypeEnum.INPUT);
+    }
+
+    @Override
+    public void setFieldValueFromMap(Map<String, Object> valueMap) {
+        Object valueObj = valueMap.get(id);
+        if (valueObj != null) {
+            setValue(valueObj.toString());
+        }
     }
 }

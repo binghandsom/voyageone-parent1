@@ -1,7 +1,7 @@
 package com.voyageone.common.masterdate.schema.factory;
 
-import com.voyageone.common.masterdate.schema.Util.JsonUtil;
-import com.voyageone.common.masterdate.schema.Util.StringUtil;
+import com.voyageone.common.masterdate.schema.util.JsonUtil;
+import com.voyageone.common.masterdate.schema.util.StringUtil;
 import com.voyageone.common.masterdate.schema.depend.DependExpress;
 import com.voyageone.common.masterdate.schema.depend.DependGroup;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;

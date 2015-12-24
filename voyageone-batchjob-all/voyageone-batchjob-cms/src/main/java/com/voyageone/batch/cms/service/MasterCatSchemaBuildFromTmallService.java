@@ -1,6 +1,5 @@
 package com.voyageone.batch.cms.service;
 
-import com.voyageone.batch.cms.dao.mongo.CmsMtCommonPropDefDao;
 import com.voyageone.cms.service.model.CmsMtCategorySchemaModel;
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.cms.dao.mongo.CmsMtPlatformFieldsRemoveHistoryDao;
@@ -15,8 +14,7 @@ import com.voyageone.cms.service.model.MtCommPropActionDefRuleModel;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ActionType;
 import com.voyageone.common.configs.Enums.CartEnums;
-import com.voyageone.common.masterdate.schema.Util.FieldUtil;
-import com.voyageone.common.masterdate.schema.Util.StringUtil;
+import com.voyageone.common.masterdate.schema.util.FieldUtil;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
@@ -213,7 +211,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
 
                             actionDefModel.getRuleMode().setFieldComProperties(updField);
 
-                            if (StringUtil.isEmpty(actionDefModel.getParentPropId())){
+                            if (StringUtils.isEmpty(actionDefModel.getParentPropId())){
                                 masterFields.add(updField);
                             } else {
                                 Field parentField = FieldUtil.getFieldById(masterFields,actionDefModel.getParentPropId());
@@ -316,7 +314,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
             newField.setId(actionDefModel.getPropId());
             newField.setName(actionDefModel.getPropName());
             actionDefModel.getRuleMode().setFieldComProperties(newField);
-            if(StringUtil.isEmpty(actionDefModel.getParentPropId())){
+            if(StringUtils.isEmpty(actionDefModel.getParentPropId())){
                 masterFields.add(newField);
             }else {
                 Field parentField = FieldUtil.getFieldById(masterFields,actionDefModel.getParentPropId());

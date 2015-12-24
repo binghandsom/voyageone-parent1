@@ -1,7 +1,7 @@
 package com.voyageone.common.masterdate.schema.factory;
 
-import com.voyageone.common.masterdate.schema.Util.FieldUtil;
-import com.voyageone.common.masterdate.schema.Util.JsonUtil;
+import com.voyageone.common.masterdate.schema.util.FieldUtil;
+import com.voyageone.common.masterdate.schema.util.JsonUtil;
 import com.voyageone.common.masterdate.schema.depend.DependExpress;
 import com.voyageone.common.masterdate.schema.depend.DependGroup;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
@@ -20,7 +20,6 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by DELL on 2015/12/4.
