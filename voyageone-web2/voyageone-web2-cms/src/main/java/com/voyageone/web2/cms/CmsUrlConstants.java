@@ -30,6 +30,8 @@ public interface CmsUrlConstants {
             String GET_MAIN_CATEGORIES = "getMainCategories";
 
             String SET_MAPPING = "setFeedMapping";
+
+            String EXTENDS_MAPPING = "extendsMapping";
         }
     }
 

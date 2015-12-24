@@ -13,10 +13,14 @@ define([
          * @description
          * Feed Mapping 画面的 Controller 类,该类是单例,重复 new 不会返回新的实例
          * @param {FeedMappingService} feedMappingService
+         * @param {function} notify
+         * @param {function} confirm
          * @constructor
          */
-        function FeedMappingController(feedMappingService) {
+        function FeedMappingController(feedMappingService, notify, confirm) {
 
+            this.confirm = confirm;
+            this.notify = notify;
             this.feedMappingService = feedMappingService;
 
             /**
@@ -49,6 +53,23 @@ define([
                 }.bind(this));
             },
             /**
+             * 继承其父类目的 Mapping
+             * @param {object} feedCategory Feed 类目
+             */
+            extendsMapping: function(feedCategory) {
+
+                this.confirm('确定要继承吗?').result.then(function() {
+                    this.feedMappingService.extendsMapping(feedCategory).then(function(res) {
+                        if (res.data) {
+                            // 从后台获取更新后的 mapping
+                            feedCategory.mapping = res.data;
+                        } else {
+                            this.notify.warning('没有找到可以继承的设置.');
+                        }
+                    }.bind(this));
+                }.bind(this));
+            },
+            /**
              * 获取类目的默认 Mapping 类目
              * @param {{mapping:object[]}} feedCategory
              * @returns {string}
@@ -59,14 +80,66 @@ define([
                     return '?';
                 }
 
-                var defMapping = _.find(feedCategory.mapping, function (mapping) {
-                    return mapping.defaultMapping === 1;
+                var defMapping = this.findDefaultMapping(feedCategory);
+
+                if (defMapping) {
+                    return defMapping.mainCategoryPath;
+                }
+
+                var parent = null;
+                while (!defMapping && (parent = this.findParent(parent || feedCategory))) {
+                    defMapping = this.findDefaultMapping(parent);
+                }
+
+                return defMapping ? ('可继承: ' + defMapping.mainCategoryPath) : '[未设定]';
+            },
+            findParent: function (category) {
+
+                var path = category.path.split('-');
+
+                if (path === 1) return null;
+
+                // 从截取的类目路径中删除最后一个,即自己
+                path.splice(path.length - 1);
+
+                return this.findCategory(path);
+            },
+            /**
+             * 在树中查找类目
+             * @param {string[]} path 类目路径
+             * @return {object} Feed 类目对象
+             */
+            findCategory: function (path) {
+
+                var category = null;
+                var categories = this.feedCategories;
+
+                _.each(path, function (v, i) {
+
+                    category = _.find(categories, function (cate) {
+                        return cate.name === v;
+                    });
+
+                    if (i == path.length - 1)
+                        return;
+
+                    categories = category.child;
                 });
 
-                // TODO 向上查找
-
-                return defMapping ? defMapping.mainCategoryPath : '[未设定]';
+                return category;
             },
+            /**
+             * 在类目中查找默认的 Mapping 关系
+             * @param {{mapping:object[]}} category
+             * @return {object} Mapping 对象
+             */
+            findDefaultMapping: function (category) {
+
+                return _.find(category.mapping, function (mapping) {
+                    return mapping.defaultMapping === 1;
+                });
+            },
+
             /**
              * 在类目 Popup 确定关闭后, 为相关类目进行绑定
              * @param {{from:object, selected:object}} context Popup 返回的结果信息
