@@ -189,13 +189,23 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
 
                 Field skuField = FieldUtil.getFieldById(masterFields,"sku");
 
+                //5. 添加sku field
+                if (skuField == null){
+                    skuField = FieldTypeEnum.createField(FieldTypeEnum.MULTICOMPLEX);
+                    skuField.setId("sku");
+                    skuField.setName("SKU");
+                    skuField.setFieldRequired();
+                    skuField.setInputLevel(0);
+                    skuField.setIsDisplay(1);
+                    masterFields.add(skuField);
+                }
+
                 //4. 更新需要更新的 sub field
                 for (MtCommPropActionDefModel actionDefModel : updateList) {
 
                     Field updField = FieldUtil.getFieldById(masterFields, actionDefModel.getPlatformPropRefId());
 
                     if (updField == null){
-                        if (!"sku".equals(actionDefModel.getPropId())){
                             FieldTypeEnum type = FieldTypeEnum.getEnum(actionDefModel.getPropType());
                             updField = FieldTypeEnum.createField(type);
                             updField.setId(actionDefModel.getPropId());
@@ -217,7 +227,6 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
                                 }
 
                             }
-                        }
 
                     } else {
                         updateField(masterFields, actionDefModel, updField);
@@ -225,16 +234,6 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
 
                 }
 
-                //5. 添加sku field
-                if (skuField == null){
-                    skuField = FieldTypeEnum.createField(FieldTypeEnum.MULTICOMPLEX);
-                    skuField.setId("sku");
-                    skuField.setName("SKU");
-                    skuField.setFieldRequired();
-                    skuField.setInputLevel(0);
-                    skuField.setIsDisplay(1);
-                    masterFields.add(skuField);
-                }
 
                 //6. 添加sub field
                 addField(addList, masterFields, removeFields);
