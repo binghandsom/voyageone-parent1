@@ -14,7 +14,7 @@ import java.util.List;
 import org.dom4j.Element;
 
 public abstract class OptionsField extends Field {
-    protected List<Option> options = new ArrayList();
+    protected List<Option> options = new ArrayList<>();
 
     public OptionsField() {
     }

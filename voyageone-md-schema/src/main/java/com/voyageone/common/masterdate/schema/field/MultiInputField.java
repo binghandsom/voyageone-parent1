@@ -158,19 +158,38 @@ public class MultiInputField extends com.voyageone.common.masterdate.schema.fiel
     }
 
     @Override
-    public void setFieldValueFromMap(Map<String, Object> valueFields) {
-        Object valueObj = valueFields.get(id);
+    public void setFieldValueFromMap(Map<String, Object> valueMap) {
+        List<String> values = getFieldValueFromMap(valueMap);
+        setValues(values);
+    }
+
+    @Override
+    public List<String> getFieldValueFromMap(Map<String, Object> valueMap) {
+        List<String> values = new ArrayList<>();
+        Object valueObj = valueMap.get(id);
         if (valueObj != null && valueObj instanceof List) {
-            List<String> values = new ArrayList<>();
             List valuesTmp = (List)valueObj;
             for (Object value : valuesTmp) {
-                if (value != null) {
-                    values.add(value.toString());
-                }
-            }
-            for (String value : values) {
-                addValue(value);
+                values.add(value != null?(String)value:"");
             }
         }
+        return values;
+    }
+
+    @Override
+    public void getFieldValueToMap(Map<String,Object> valueMap) {
+        if (values != null) {
+            valueMap.put(id, convertEmptyList(getStringValues()));
+        }
+    }
+
+    private List<String> convertEmptyList(List<String> inputList) {
+        List<String> result = new ArrayList<>();
+        if (inputList != null) {
+            for (String cell : inputList) {
+                result.add(cell != null ? cell:"");
+            }
+        }
+        return result;
     }
 }

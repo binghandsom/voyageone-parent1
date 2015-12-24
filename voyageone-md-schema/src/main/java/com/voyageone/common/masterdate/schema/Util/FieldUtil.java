@@ -8,6 +8,7 @@ import com.voyageone.common.masterdate.schema.field.MultiComplexField;
 import com.voyageone.common.masterdate.schema.rule.Rule;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -267,12 +268,22 @@ public class FieldUtil {
     }
 
 
-    public static void setFieldsValueFromMap(List<Field> rootFields, Map<String, Object> valueFields){
-        if (rootFields != null && valueFields != null) {
+    public static void setFieldsValueFromMap(List<Field> rootFields, Map<String, Object> valueMap){
+        if (rootFields != null && valueMap != null) {
             for (Field rootField : rootFields) {
-                rootField.setFieldValueFromMap(valueFields);
+                rootField.setFieldValueFromMap(valueMap);
             }
         }
+    }
+
+    public static Map<String, Object> getFieldsValueToMap(List<Field> rootFields){
+        Map<String, Object> result = new LinkedHashMap<>();
+        if (rootFields != null) {
+            for (Field rootField : rootFields) {
+                rootField.getFieldValueToMap(result);
+            }
+        }
+        return result;
     }
 
 }

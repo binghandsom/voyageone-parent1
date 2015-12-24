@@ -86,9 +86,21 @@ public class InputField extends Field {
 
     @Override
     public void setFieldValueFromMap(Map<String, Object> valueMap) {
-        Object valueObj = valueMap.get(id);
+        Object valueObj = getFieldValueFromMap(valueMap);
+        String value = "";
         if (valueObj != null) {
-            setValue(valueObj.toString());
+            value = valueObj.toString();
         }
+        setValue(value);
+    }
+
+    @Override
+    public String getFieldValueFromMap(Map<String, Object> valueMap) {
+        return (String)valueMap.get(id);
+    }
+
+    @Override
+    public void getFieldValueToMap(Map<String,Object> valueMap) {
+        valueMap.put(id, value!=null?value:"");
     }
 }

@@ -117,9 +117,18 @@ public class SingleCheckField extends OptionsField {
 
     @Override
     public void setFieldValueFromMap(Map<String, Object> valueMap) {
+        Value valueObj = getFieldValueFromMap(valueMap);
+        setValue(valueObj);
+    }
+
+    @Override
+    public Value getFieldValueFromMap(Map<String, Object> valueMap) {
         Object valueObj = valueMap.get(id);
-        if (valueObj != null) {
-            setValue(valueObj.toString());
-        }
+        return new Value(valueObj!=null?(String)valueObj:"");
+    }
+
+    @Override
+    public void getFieldValueToMap(Map<String,Object> valueMap) {
+        valueMap.put(id, value!=null && value.getValue()!=null?value.getValue():"");
     }
 }
