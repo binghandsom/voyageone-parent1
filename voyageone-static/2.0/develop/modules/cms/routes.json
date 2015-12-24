@@ -39,6 +39,12 @@
     "templateUrl": "views/search/index.tpl.html",
     "controllerUrl": "modules/cms/views/search/index.ctl"
   },
+  "search_index_param": {
+    "url": "/search/index/",
+    "hash": "/search/index/:type/:value",
+    "templateUrl": "views/search/index.tpl.html",
+    "controllerUrl": "modules/cms/views/search/index.ctl"
+  },
   "group_list": {
     "hash": "/group/list/:id",
     "templateUrl": "views/group/list.tpl.html",
@@ -64,5 +70,10 @@
     "hash": "/setting/platform_mapping/list",
     "templateUrl": "views/setting/platform_mapping/list.tpl.html",
     "controllerUrl": "modules/cms/views/setting/platform_mapping/list.ctl"
+  },
+  "system_category": {
+    "hash": "/system/category",
+    "templateUrl": "views/system/category/index.tpl.html",
+    "controllerUrl": "modules/cms/views/system/category/index.ctl"
   }
 }
