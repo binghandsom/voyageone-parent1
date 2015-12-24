@@ -37,7 +37,7 @@ public enum TopSchemaErrorCodeEnum {
     ERROR_CODE_30060("30060", "MinValueRule format error!MinValueRule is not an Integer!"),
     ERROR_CODE_30070("30070", "MaxCheckNumRule format error!MaxCheckNumRule is not an Integer!"),
     ERROR_CODE_30080("30080", "MinCheckNumRule format error!MinCheckNumRule is not an Integer!"),
-    ERROR_CODE_40000("40000", "Util Error!");
+    ERROR_CODE_40000("40000", "util Error!");
 
     private final String errorCode;
     private final String errorMsg;

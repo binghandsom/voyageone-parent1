@@ -1,7 +1,7 @@
 package com.voyageone.common.masterdate.schema.field;
 
-import com.voyageone.common.masterdate.schema.Util.StringUtil;
-import com.voyageone.common.masterdate.schema.Util.XmlUtils;
+import com.voyageone.common.masterdate.schema.util.StringUtil;
+import com.voyageone.common.masterdate.schema.util.XmlUtils;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.enums.TopSchemaErrorCodeEnum;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
@@ -9,6 +9,8 @@ import com.voyageone.common.masterdate.schema.factory.SchemaFactory;
 import com.voyageone.common.masterdate.schema.label.Label;
 import com.voyageone.common.masterdate.schema.label.LabelGroup;
 import org.dom4j.Element;
+
+import java.util.Map;
 
 public class LabelField extends Field {
     private LabelGroup labelGroup = new LabelGroup();
@@ -95,6 +97,10 @@ public class LabelField extends Field {
     @Override
     public String getValue() {
         return null;
+    }
+
+    @Override
+    public void setFieldValueFromMap(Map<String, Object> valueMap) {
     }
 
 }
