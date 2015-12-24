@@ -139,6 +139,9 @@ public class TmallProductService implements PlatformServiceInterface {
                 uploadProductHandler.stopTcb(tcb);
                 break;
             }
+            default: {
+                throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("未知的任务状态:" + workloadStatus));
+            }
         }
     }
 
@@ -882,6 +885,9 @@ public class TmallProductService implements PlatformServiceInterface {
                 uploadProductHandler.stopTcb(tcb);
                 break;
             }
+            default: {
+                throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("未知的任务状态:" + platformWorkloadStatus));
+            }
         }
     }
 
@@ -1445,7 +1451,6 @@ public class TmallProductService implements PlatformServiceInterface {
                     workLoadBean.setHasSku(true);
 
                     //TODO 将要从tmall平台获取已被占用的color, 暂时赋值为null
-                    List<String> excludeColors = null;
                     AbstractSkuFieldBuilder skuFieldBuilder = skuFieldBuilderFactory.getSkuFieldBuilder(cartId, platformProps);
 
                     if (skuFieldBuilder == null)
