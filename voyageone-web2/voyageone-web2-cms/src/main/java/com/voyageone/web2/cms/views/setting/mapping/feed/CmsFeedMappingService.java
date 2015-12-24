@@ -36,12 +36,12 @@ public class CmsFeedMappingService extends BaseAppService {
     @Autowired
     private com.voyageone.cms.service.CmsFeedMappingService cmsFeedMappingService;
 
-    public CmsMtFeedCategoryTreeModel getFeedCategoriyTree(UserSessionBean user) {
+    public CmsMtFeedCategoryTreeModel getFeedCategoryTree(UserSessionBean user) {
         return feedToCmsService.getFeedCategory(user.getSelChannelId());
     }
 
     public List<CmsMtCategoryTreeModel> getMainCategories(UserSessionBean user) {
-        return cmsBtChannelCategoryService.getCategorysByChannelId(user.getSelChannelId());
+        return cmsBtChannelCategoryService.getCategoriesByChannelId(user.getSelChannelId());
     }
 
     /**
@@ -56,7 +56,7 @@ public class CmsFeedMappingService extends BaseAppService {
         if (StringUtils.isAnyEmpty(setMappingBean.getFrom(), setMappingBean.getTo()))
             throw new BusinessException("木有参数");
 
-        CmsMtFeedCategoryTreeModel treeModel = getFeedCategoriyTree(user);
+        CmsMtFeedCategoryTreeModel treeModel = getFeedCategoryTree(user);
 
         // 按 Path 查 FeedCategory
         CmsFeedCategoryModel cmsFeedCategoryModel = findByPath(setMappingBean.getFrom(), treeModel);
@@ -221,7 +221,7 @@ public class CmsFeedMappingService extends BaseAppService {
      */
     public List<CmsFeedMappingModel> extendsMapping(CmsFeedCategoryModel feedCategoryModel, UserSessionBean user) {
 
-        CmsMtFeedCategoryTreeModel treeModel = getFeedCategoriyTree(user);
+        CmsMtFeedCategoryTreeModel treeModel = getFeedCategoryTree(user);
 
         CmsFeedMappingModel feedMappingModel = findParentDefaultMapping(feedCategoryModel, treeModel);
 

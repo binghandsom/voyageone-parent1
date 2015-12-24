@@ -30,7 +30,7 @@ public class CmsFeedMappingServiceTest {
     @Test
     public void testGetFeedCategories() throws Exception {
 
-        CmsMtFeedCategoryTreeModel cmsMtFeedCategoryTreeModel = cmsFeedMappingService.getFeedCategoriyTree(userSessionBean);
+        CmsMtFeedCategoryTreeModel cmsMtFeedCategoryTreeModel = cmsFeedMappingService.getFeedCategoryTree(userSessionBean);
 
         assert cmsMtFeedCategoryTreeModel != null;
 

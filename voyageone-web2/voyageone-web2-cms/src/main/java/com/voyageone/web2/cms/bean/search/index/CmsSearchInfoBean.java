@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.bean;
+package com.voyageone.web2.cms.bean.search.index;
 
 import java.math.BigDecimal;
 
@@ -7,6 +7,8 @@ import java.math.BigDecimal;
  * @version 2.0.0, 15/12/15
  */
 public class CmsSearchInfoBean {
+
+    private String catId;
 
     private String[] productStatus;
 
@@ -59,6 +61,14 @@ public class CmsSearchInfoBean {
     private Integer productPageNum;
 
     private Integer productPageSize;
+
+    public String getCatId() {
+        return catId;
+    }
+
+    public void setCatId(String catId) {
+        this.catId = catId;
+    }
 
     public String[] getProductStatus() {
         return productStatus;

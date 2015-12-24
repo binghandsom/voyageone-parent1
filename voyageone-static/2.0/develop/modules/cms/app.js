@@ -81,7 +81,7 @@ define([
         .service('menuService', menuService)
 
         // searchInfo factory.
-        .factory('searchInfoFactory', searchInfoFactory)
+        //.factory('searchInfoFactory', searchInfoFactory)
 
         .controller('appCtrl', appCtrl)
 
@@ -94,7 +94,7 @@ define([
         // menu.aside.
         .controller('asideCtrl', asideCtrl);
 
-    function searchInfoFactory() {
+    /*function searchInfoFactory() {
         var searchInfo = {
             catId: null,
             productStatus: [],
@@ -123,79 +123,79 @@ define([
 
         return {
             catId: function (value) {
-                return value ? searchInfo.catId = value : searchInfo.catId;
+                return value !== undefined ? searchInfo.catId = value : searchInfo.catId;
             },
             productStatus: function (value) {
-                return value ? searchInfo.productStatus = value : searchInfo.productStatus;
+                return value !== undefined ? searchInfo.productStatus = value : searchInfo.productStatus;
             },
             platformCart: function (value) {
-                return value ? searchInfo.platformCart = value : searchInfo.platformCart;
+                return value !== undefined ? searchInfo.platformCart = value : searchInfo.platformCart;
             },
             platformStatus: function (value) {
-                return value ? searchInfo.platformStatus = value : searchInfo.platformStatus;
+                return value !== undefined ? searchInfo.platformStatus = value : searchInfo.platformStatus;
             },
             labelType: function (value) {
-                return value ? searchInfo.labelType = value : searchInfo.labelType;
+                return value !== undefined ? searchInfo.labelType = value : searchInfo.labelType;
             },
             priceType: function (value) {
-                return value ? searchInfo.priceType = value : searchInfo.priceType;
+                return value !== undefined ? searchInfo.priceType = value : searchInfo.priceType;
             },
             priceStart: function (value) {
-                return value ? searchInfo.priceStart = value : searchInfo.priceStart;
+                return value !== undefined ? searchInfo.priceStart = value : searchInfo.priceStart;
             },
             priceEnd: function (value) {
-                return value ? searchInfo.priceEnd = value : searchInfo.priceEnd;
+                return value !== undefined ? searchInfo.priceEnd = value : searchInfo.priceEnd;
             },
             createTimeStart: function (value) {
-                return value ? searchInfo.createTimeStart = value : searchInfo.createTimeStart;
+                return value !== undefined ? searchInfo.createTimeStart = value : searchInfo.createTimeStart;
             },
             createTimeTo: function (value) {
-                return value ? searchInfo.createTimeTo = value : searchInfo.createTimeTo;
+                return value !== undefined ? searchInfo.createTimeTo = value : searchInfo.createTimeTo;
             },
             publishTimeStart: function (value) {
-                return value ? searchInfo.publishTimeStart = value : searchInfo.publishTimeStart;
+                return value !== undefined ? searchInfo.publishTimeStart = value : searchInfo.publishTimeStart;
             },
             publishTimeTo: function (value) {
-                return value ? searchInfo.publishTimeTo = value : searchInfo.publishTimeTo;
+                return value !== undefined ? searchInfo.publishTimeTo = value : searchInfo.publishTimeTo;
             },
             compareType: function (value) {
-                return value ? searchInfo.compareType = value : searchInfo.compareType;
+                return value !== undefined ? searchInfo.compareType = value : searchInfo.compareType;
             },
             inventory: function (value) {
-                return value ? searchInfo.inventory = value : searchInfo.inventory;
+                return value !== undefined ? searchInfo.inventory = value : searchInfo.inventory;
             },
             brand: function (value) {
-                return value ? searchInfo.brand = value : searchInfo.brand;
+                return value !== undefined ? searchInfo.brand = value : searchInfo.brand;
             },
             promotion: function (value) {
-                return value ? searchInfo.promotion = value : searchInfo.promotion;
+                return value !== undefined ? searchInfo.promotion = value : searchInfo.promotion;
             },
             codeList: function (value) {
-                return value ? searchInfo.codeList = value : searchInfo.codeList;
+                return value !== undefined ? searchInfo.codeList = value : searchInfo.codeList;
             },
             sortOneName: function (value) {
-                return value ? searchInfo.sortOneName = value : searchInfo.sortOneName;
+                return value !== undefined ? searchInfo.sortOneName = value : searchInfo.sortOneName;
             },
             sortOneType: function (value) {
-                return value ? searchInfo.sortOneType = value : searchInfo.sortOneType;
+                return value !== undefined ? searchInfo.sortOneType = value : searchInfo.sortOneType;
             },
             sortTwoName: function (value) {
-                return value ? searchInfo.sortTwoName = value : searchInfo.sortTwoName;
+                return value !== undefined ? searchInfo.sortTwoName = value : searchInfo.sortTwoName;
             },
             sortTwoType: function (value) {
-                return value ? searchInfo.sortTwoType = value : searchInfo.sortTwoType;
+                return value !== undefined ? searchInfo.sortTwoType = value : searchInfo.sortTwoType;
             },
             sortThreeName: function (value) {
-                return value ? searchInfo.sortThreeName = value : searchInfo.sortThreeName;
+                return value !== undefined ? searchInfo.sortThreeName = value : searchInfo.sortThreeName;
             },
             sortThreeType: function (value) {
-                return value ? searchInfo.sortThreeType = value : searchInfo.sortThreeType;
+                return value !== undefined ? searchInfo.sortThreeType = value : searchInfo.sortThreeType;
             },
             searchInfo: function (object) {
-                return object ? searchInfo = value : searchInfo;
+                return object != undefined ? searchInfo = value : searchInfo;
             }
         }
-    }
+    }*/
 
     function appCtrl($scope, $window, translateService) {
 
@@ -423,7 +423,7 @@ define([
 
     }
 
-    function headerCtrl($scope, $window, $location, menuService, cRoutes, cCommonRoutes, searchInfoFactory) {
+    function headerCtrl($scope, $window, $location, menuService, cRoutes, cCommonRoutes) {
         var vm = this;
         vm.menuList = {};
         vm.languageList = {};
@@ -479,8 +479,9 @@ define([
          */
         function goSearchPage(value) {
             if(value){
-                searchInfoFactory.codeList([value]);
-                searchInfoFactory.platformCart(23);
+                //searchInfoFactory.catId(null);
+                //searchInfoFactory.codeList(value);
+                //searchInfoFactory.platformCart(23);
                 vm.searchValue = "";
                 $location.path(cRoutes.search_index_param.url + "2/" + value);
             }
@@ -524,7 +525,7 @@ define([
         }
     }
 
-    function asideCtrl($scope, $rootScope, $location, menuService, searchInfoFactory, cRoutes) {
+    function asideCtrl($scope, $rootScope, $location, menuService, cRoutes) {
         var vm = this;
         vm.menuInfo = {};
 
@@ -558,8 +559,9 @@ define([
          */
         function goSearchPage(catId) {
             if(catId){
-                searchInfoFactory.catId(catId);
-                searchInfoFactory.platformCart(23);
+                //searchInfoFactory.catId(catId);
+                //searchInfoFactory.platformCart(23);
+                //searchInfoFactory.codeList(null);
                 $location.path(cRoutes.search_index_param.url + "1/" + catId);
             }
         }
