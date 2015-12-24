@@ -68,6 +68,17 @@ public interface CmsUrlConstants {
             String DEL_PROMOTION_CODE = "delPromotionCode";
         }
     }
+    interface TASK {
+
+        interface PRICE {
+
+            String ROOT = "/cms/task/price";
+
+            String GET_PRICE_LIST = "getPriceList";
+
+            String UPDATE_PRICE = "updatePrice";
+        }
+    }
 
     interface SEARCH {
 
