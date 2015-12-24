@@ -267,7 +267,11 @@ public class FieldUtil {
         }
     }
 
-
+    /**
+     * 设置Fields的值
+     * @param rootFields fields
+     * @param valueMap value map
+     */
     public static void setFieldsValueFromMap(List<Field> rootFields, Map<String, Object> valueMap){
         if (rootFields != null && valueMap != null) {
             for (Field rootField : rootFields) {
@@ -276,6 +280,11 @@ public class FieldUtil {
         }
     }
 
+    /**
+     * 取得Field值到Map中
+     * @param rootFields fields
+     * @return null
+     */
     public static Map<String, Object> getFieldsValueToMap(List<Field> rootFields){
         Map<String, Object> result = new LinkedHashMap<>();
         if (rootFields != null) {
