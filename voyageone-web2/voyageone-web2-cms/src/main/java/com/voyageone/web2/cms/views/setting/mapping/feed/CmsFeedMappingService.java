@@ -172,7 +172,7 @@ public class CmsFeedMappingService extends BaseAppService {
      * @param predicate         查询条件
      * @return mapping 对象
      */
-    private CmsFeedMappingModel findMapping(CmsFeedCategoryModel feedCategoryModel, Predicate<CmsFeedMappingModel> predicate) {
+    protected CmsFeedMappingModel findMapping(CmsFeedCategoryModel feedCategoryModel, Predicate<CmsFeedMappingModel> predicate) {
         return feedCategoryModel.getMapping()
                 .stream()
                 .filter(predicate)
@@ -187,7 +187,7 @@ public class CmsFeedMappingService extends BaseAppService {
      * @param treeModel 完整的类目树
      * @return 具体的 Feed 类目
      */
-    private CmsFeedCategoryModel findByPath(String path, CmsMtFeedCategoryTreeModel treeModel) {
+    protected CmsFeedCategoryModel findByPath(String path, CmsMtFeedCategoryTreeModel treeModel) {
 
         String[] fromPath = path.split("-");
 
@@ -239,7 +239,7 @@ public class CmsFeedMappingService extends BaseAppService {
      * @param treeModel         完整的树
      * @return Mapping 对象
      */
-    private CmsFeedMappingModel findParentDefaultMapping(CmsFeedCategoryModel feedCategoryModel, CmsMtFeedCategoryTreeModel treeModel) {
+    protected CmsFeedMappingModel findParentDefaultMapping(CmsFeedCategoryModel feedCategoryModel, CmsMtFeedCategoryTreeModel treeModel) {
 
         // 当前类目没父级了.
         if (!feedCategoryModel.getPath().contains("-")) return null;
