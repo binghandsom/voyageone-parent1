@@ -76,7 +76,7 @@ public interface CmsUrlConstants {
 
             String GET_PRICE_LIST = "getPriceList";
 
-            String UPDATE_PRICE = "updatePrice";
+            String UPDATE_TASK_STATUS = "updateTaskStatus";
         }
     }
 
