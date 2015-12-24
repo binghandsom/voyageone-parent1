@@ -4,7 +4,7 @@ import com.voyageone.cms.service.dao.CmsMtCommonPropDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
 import com.voyageone.cms.service.model.MtCommPropActionDefModel;
 import com.voyageone.common.configs.Enums.ActionType;
-import com.voyageone.common.masterdate.schema.Util.FieldUtil;
+import com.voyageone.common.masterdate.schema.util.FieldUtil;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
 import com.voyageone.common.masterdate.schema.field.Field;

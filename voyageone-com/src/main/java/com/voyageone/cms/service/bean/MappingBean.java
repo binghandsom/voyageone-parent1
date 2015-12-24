@@ -7,7 +7,7 @@ package com.voyageone.cms.service.bean;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.voyageone.common.masterdate.schema.Util.StringUtil;
+import com.voyageone.common.util.StringUtils;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME
         , include = JsonTypeInfo.As.PROPERTY
@@ -33,12 +33,12 @@ public class MappingBean {
 
     @JsonProperty("platformPropId")
     public String getPlatformIdWithConvert() {
-        return StringUtil.replaceDot(platformPropId);
+        return StringUtils.replaceDot(platformPropId);
     }
 
     @JsonProperty("platformPropId")
     public void setPlatformIdWithConvert(String platformPropId) {
-        this.platformPropId = StringUtil.replaceToDot(platformPropId);
+        this.platformPropId = StringUtils.replaceToDot(platformPropId);
     }
 
     public String getMappingType() {

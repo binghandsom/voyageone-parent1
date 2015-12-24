@@ -1,8 +1,7 @@
-package com.voyageone.common.masterdate.schema.Util;
+package com.voyageone.common.masterdate.schema.util;
 
 import com.voyageone.common.masterdate.schema.value.Value;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class ISVUtil {
