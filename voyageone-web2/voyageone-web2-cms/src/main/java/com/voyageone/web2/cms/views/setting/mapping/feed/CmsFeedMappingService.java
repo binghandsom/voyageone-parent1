@@ -41,7 +41,7 @@ public class CmsFeedMappingService extends BaseAppService {
     }
 
     public List<CmsMtCategoryTreeModel> getMainCategories(UserSessionBean user) {
-        return cmsBtChannelCategoryService.getCategorysByChannelId(user.getSelChannelId());
+        return cmsBtChannelCategoryService.getCategoriesByChannelId(user.getSelChannelId());
     }
 
     /**

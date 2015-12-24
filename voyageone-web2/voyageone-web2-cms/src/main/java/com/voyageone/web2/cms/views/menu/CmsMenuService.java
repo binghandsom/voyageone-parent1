@@ -1,7 +1,8 @@
 package com.voyageone.web2.cms.views.menu;
 
+import com.voyageone.cms.service.CmsBtChannelCategoryService;
 import com.voyageone.cms.service.FeedToCmsService;
-import com.voyageone.cms.service.model.CmsFeedCategoryModel;
+import com.voyageone.cms.service.model.CmsMtCategoryTreeModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.core.dao.ChannelShopDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,9 @@ public class CmsMenuService extends BaseAppService{
     @Autowired
     private FeedToCmsService feedToCmsService;
 
+    @Autowired
+    private CmsBtChannelCategoryService cmsBtChannelCategoryService;
+
     //TODO 临时使用
     private static final String CATEGORY_TYPE_FEED = "Feed";
 
@@ -38,19 +42,20 @@ public class CmsMenuService extends BaseAppService{
     /**
      * 根据userId和ChannelId获取Menu列表.
      */
-    public List<CmsFeedCategoryModel> getCategoryTreeList (String cTypeId, String channelId) {
+    public List<CmsMtCategoryTreeModel> getCategoryTreeList (String cTypeId, String channelId) {
 
-        List<CmsFeedCategoryModel> categoryTreeList;
+        List<CmsMtCategoryTreeModel> categoryTreeList;
 
-        switch (cTypeId) {
-            case CATEGORY_TYPE_FEED:
-                categoryTreeList = feedToCmsService.getFeedCategory(channelId).getCategoryTree();
-                break;
-            default:
+//        switch (cTypeId) {
+//            case CATEGORY_TYPE_FEED:
+//                categoryTreeList = feedToCmsService.getFeedCategory(channelId).getCategoryTree();
+//                break;
+//            default:
                 // TODO 取得主数据的类目树,暂时使用feed的类目树
-                categoryTreeList = feedToCmsService.getFeedCategory(channelId).getCategoryTree();
-                break;
-        }
+                categoryTreeList = cmsBtChannelCategoryService.getCategoriesByChannelId(channelId);
+//                        feedToCmsService.getFeedCategory(channelId).getCategoryTree();
+//                break;
+//        }
 
         return categoryTreeList;
     }

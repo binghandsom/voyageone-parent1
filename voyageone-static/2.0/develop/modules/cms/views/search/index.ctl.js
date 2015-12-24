@@ -7,7 +7,7 @@ define([
     'modules/cms/service/search.service'
 ], function () {
 
-    return function ($scope, searchIndexService) {
+    return function ($scope, $routeParams, searchIndexService) {
 
         $scope.vm = {
             searchInfo: {
@@ -49,8 +49,20 @@ define([
          * 初始化数据.
          */
         function initialize () {
+            // 如果来至category 或者 header的检索,将初始化检索条件
+            if ($routeParams.type == "1") {
+                $scope.vm.searchInfo.catId = $routeParams.value;
+            } else if ($routeParams.type == "2") {
+                $scope.vm.searchInfo.codeList = $routeParams.value;
+            }
             searchIndexService.init().then(function (res) {
                 $scope.vm.masterData = res.data;
+            })
+            .then(function() {
+                // 如果来至category 或者header search 则默认检索
+                if ($routeParams.type == "1"
+                    || $routeParams.type == "2")
+                search();
             })
         }
 
