@@ -39,18 +39,13 @@
                         <td class="text-left">{{ ctrl.getDefaultMapping(ctrl.selectedTop) }}</td>
                         <td>
                             <div class="btn-group" ng-controller="popupCtrl">
-                                <button ng-click="openNewcategory('lg', { from: ctrl.selectedTop })"
+                                <button ng-click="openNewcategory('lg', { from: ctrl.selectedTop }).then(ctrl.bindCategory)"
                                         class="btn btn-default btn-xs">
                                     <i class="glyphicon glyphicon-link"></i> 类目匹配
-                                </button>
-                                <button class="btn btn-primary btn-xs">
-                                    <i class="fa fa-arrow-circle-up"></i> 继承
                                 </button>
                             </div>
                         </td>
                         <td>
-                            <a href="#/setting/feed_mapping/prop" class="btn btn-default btn-xs" target="_blank">
-                                <i class="glyphicon glyphicon-link"></i> 类目属性匹配</a>
                         </td>
                     </tr>
                     <tr ng-repeat="feedCategory in ctrl.selectedTop.child | flatTree:'child'">
@@ -63,14 +58,15 @@
                                         class="btn btn-default btn-xs">
                                     <i class="glyphicon glyphicon-link"></i> 类目匹配
                                 </button>
-                                <button class="btn btn-primary btn-xs">
+                                <button class="btn btn-primary btn-xs" ng-click="ctrl.extendsMapping(feedCategory)">
                                     <i class="fa fa-arrow-circle-up"></i> 继承
                                 </button>
                             </div>
                         </td>
                         <td>
-                            <a href="#/setting/feed_mapping/prop" class="btn btn-default btn-xs" target="_blank">
-                                <i class="glyphicon glyphicon-link"></i> 类目属性匹配</a>
+                            <a ng-if="feedCategory.attribute && ctrl.findDefaultMapping(feedCategory)"
+                               href="#/setting/feed_mapping/prop" class="btn btn-default btn-xs" target="_blank">
+                                <i class="glyphicon glyphicon-link"></i> 属性匹配</a>
                         </td>
                     </tr>
                     </tbody>

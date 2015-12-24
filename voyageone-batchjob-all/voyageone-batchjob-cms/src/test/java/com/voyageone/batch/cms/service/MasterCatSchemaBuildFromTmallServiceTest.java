@@ -58,11 +58,11 @@ public class MasterCatSchemaBuildFromTmallServiceTest {
                 ActionType actionType = ActionType.valueOf(Integer.valueOf(defModel.getActionType()));
                 Field verifyField = null;
                 switch (actionType){
-                    case Add:
-                         verifyField = FieldUtil.getFieldById(fields,defModel.getPropId());
+                    case ADD:
+                        verifyField = FieldUtil.getFieldById(fields,defModel.getPropId());
                         Assert.assertNotNull(verifyField);
                         break;
-                    case Update:
+                    case UPDATE:
                         verifyField = FieldUtil.getFieldById(fields,defModel.getPropId());
                         if (StringUtils.isEmpty(defModel.getParentPropId())){
                             // 如果是最
@@ -71,22 +71,10 @@ public class MasterCatSchemaBuildFromTmallServiceTest {
                         Field orgField = FieldUtil.getFieldById(fields,defModel.getPlatformPropRefId());
                         Assert.assertNull(orgField);
                         break;
-                    case RemoveById:
+                    case REMOVE:
                         verifyField = FieldUtil.getFieldById(fields,defModel.getPropId());
                         Assert.assertNull(verifyField);
                         break;
-                    case RemoveByIdAndName:
-                        List<Field> fieldList = FieldUtil.getFieldByName(fields,defModel.getPropName());
-                        if (fieldList.size()>0){
-                            for (Field field:fieldList){
-                                if ("品牌".equals(defModel.getPropName())){
-                                    Assert.assertEquals(field.getId(),"brand");
-                                }
-                            }
-                        }else {
-                            Assert.assertEquals(fieldList.size(),0);
-                        }
-
 
                 }
 

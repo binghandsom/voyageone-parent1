@@ -14,6 +14,14 @@ public class SetMappingBean {
 
     private String to;
 
+    public SetMappingBean() {
+    }
+
+    public SetMappingBean(String from, String to) {
+        this.from = from;
+        this.to = to;
+    }
+
     public String getTo() {
         return to;
     }

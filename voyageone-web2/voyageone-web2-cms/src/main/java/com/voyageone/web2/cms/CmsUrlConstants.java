@@ -30,6 +30,8 @@ public interface CmsUrlConstants {
             String GET_MAIN_CATEGORIES = "getMainCategories";
 
             String SET_MAPPING = "setFeedMapping";
+
+            String EXTENDS_MAPPING = "extendsMapping";
         }
     }
 
@@ -127,4 +129,23 @@ public interface CmsUrlConstants {
             String GET_PROMOTION_HISTORY = "getPromotionHistory";
         }
     }
+
+    interface PRODUCT{
+
+        interface EDIT{
+
+            String ROOT = "/cms/product/detail/";
+
+            String GET_PRODUCT_INFO = "getProductInfo";
+
+            String  SAVE_PRODUCT_INFO = "saveProductInfo";
+
+            String CHANGE_CATEGORY="chagneCategory";
+
+            String CONFIRM_CHANGE = "confirmChange";
+
+            String REVERT_CATEGORY = "revertCategory";
+        }
+    }
+
 }
