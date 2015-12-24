@@ -4,9 +4,11 @@
 
 define([
     'cms',
+    'json!modules/cms/enums/FieldTypes.json',
+    'json!modules/cms/enums/RuleTypes.json',
     'modules/cms/controller/popup.ctl'
-], function (cms) {
-    "use strict";
+], function (cms, FieldTypes, RuleTypes) {
+    'use strict';
     return cms.controller('feedPropMappingController', (function () {
         /**
          * @description
@@ -29,14 +31,54 @@ define([
 
                 this.feedMappingService.getMainProps({
                     feedCategoryPath: this.feedCategoryPath
-                }).then(function(res) {
+                }).then(function (res) {
 
                     this.mainCategory = res.data;
                 }.bind(this));
             }
         };
 
+
         return FeedPropMappingController;
 
-    })());
+    })()).directive('feedMappingFields', function() {
+        return {
+            restrict: 'A',
+            templateUrl: 'feedMapping.fields.tpl.html',
+            scope: {
+                fields: '=feedMappingFields'
+            },
+            controllerAs: 'ctrl',
+            controller: (function() {
+                function FeedMappingFieldsController() {
+
+                }
+
+                FeedMappingFieldsController.prototype = {
+                    isRequiredField: function (field) {
+
+                        return _.find(field.rules, function (rule) {
+                            return rule.name === RuleTypes.REQUIRED_RULE && rule.value === 'true';
+                        });
+                    },
+
+                    isSimpleType: function (field) {
+
+                        return field.type !== FieldTypes.complex &&
+                            field.type !== FieldTypes.multiComplex;
+                    },
+
+                    extendField: function (field) {
+                        return {
+                            field: field,
+                            isSimple: this.isSimpleType(field),
+                            required: this.isRequiredField(field)
+                        };
+                    }
+                };
+
+                return FeedMappingFieldsController;
+            })()
+        };
+    });
 });
