@@ -13,7 +13,7 @@ import com.voyageone.cms.service.model.MtCommPropActionDefModel;
 import com.voyageone.cms.service.model.MtCommPropActionDefRuleModel;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ActionType;
-import com.voyageone.common.masterdate.schema.Util.FieldUtil;
+import com.voyageone.common.masterdate.schema.util.FieldUtil;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;

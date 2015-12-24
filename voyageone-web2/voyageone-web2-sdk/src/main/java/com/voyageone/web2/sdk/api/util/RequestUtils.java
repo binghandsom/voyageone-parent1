@@ -1,12 +1,11 @@
 package com.voyageone.web2.sdk.api.util;
 
-import com.voyageone.common.masterdate.schema.Util.StringUtil;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.sdk.api.VoApiConstants;
 import com.voyageone.web2.sdk.api.exception.ApiException;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
 
 import java.util.Collection;
-import java.util.List;
 
 public class RequestUtils {
 
@@ -95,7 +94,7 @@ public class RequestUtils {
 	public static void checkMaxListSize(String value, int maxSize, String fieldName) throws ApiRuleException {
 		if (value != null) {
 			String[] list = value.split(",");
-			if (list != null && list.length > maxSize) {
+			if (list.length > maxSize) {
 				throw new ApiRuleException(ERROR_CODE_ARGUMENTS_INVALID, "client-error:Invalid arguments:the array size of " + fieldName + " must be less than " + maxSize + ".");
 			}
 		}
@@ -143,7 +142,7 @@ public class RequestUtils {
 		String propValue = String.format(temp, key, value.toString());
 
 		String result = null;
-		if (!StringUtil.isEmpty(props)) {
+		if (!StringUtils.isEmpty(props)) {
 			result = props + " ; " + propValue;
 		} else {
 			result = propValue;
