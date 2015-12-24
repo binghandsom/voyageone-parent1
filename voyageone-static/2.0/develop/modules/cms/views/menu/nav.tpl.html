@@ -18,188 +18,21 @@
                     <span translate="TXT_CATEGORY_MANAGER"></span>
                 </a>
             </li>
-            <!--Bracelets-->
-            <li ui-sref-active="active">
-                <a class="auto">
+
+            <li  ng-repeat="item in aside.menuInfo.categoryTreeList">
+                <a class="auto" ng-if="item.isParent == 1">
                     <span class="pull-right text-muted">
                       <i class="fa fa-fw fa-angle-right text"></i>
                       <i class="fa fa-fw fa-angle-down text-active"></i>
                     </span>
                     <i class="fa fa-plus icon-small text-vo"></i>
-                    <span>ZIPPO/瑞士军刀/眼镜</span>
+                    <span ng-bind="item.catName"></span>
                 </a>
-                <ul class="nav nav-sub dk" style="padding-left:10px">
-                    <li ui-sref-active="active">
-                        <a ui-sref="cms.category">
-                            <i class="fa fa-plus icon text-vo"></i>
-                            <span>品牌打火机及配件</span>
-                        </a>
-                        <ul class="nav nav-sub dk" style="padding-left:10px">
-                            <li ui-sref-active="active">
-                                <a ui-sref="cms.category">
-                                    <i class="fa fa-plus icon text-vo"></i>
-                                    <span>打火机配件/工具</span>
-                                </a>
-                                <ul class="nav nav-sub dk" style="padding-left:10px">
-                                    <li ui-sref-active="active">
-                                        <a ui-sref="#">
-                                            <i class="fa fa-minus icon text-vo"></i>
-                                            <span>煤油打火机</span>
-                                        </a>
-                                    </li>
-                                    <li ui-sref-active="active">
-                                        <a ui-sref="#">
-                                            <i class="fa fa-minus icon text-vo"></i>
-                                            <span>打火机用油</span>
-                                        </a>
-                                    </li>
-                                    <li ui-sref-active="active">
-                                        <a ui-sref="#">
-                                            <i class="fa fa-minus icon text-vo"></i>
-                                            <span>皮套</span>
-                                        </a>
-                                    </li>
-                                    <li ui-sref-active="active">
-                                        <a ui-sref="#">
-                                            <i class="fa fa-minus icon text-vo"></i>
-                                            <span>油壶</span>
-                                        </a>
-                                    </li>
-                                    <li ui-sref-active="active">
-                                        <a ui-sref="#">
-                                            <i class="fa fa-minus icon text-vo"></i>
-                                            <span>礼盒</span>
-                                        </a>
-                                    </li>
-                                    <li ui-sref-active="active">
-                                        <a ui-sref="#">
-                                            <i class="fa fa-minus icon text-vo"></i>
-                                            <span>一次性打火机</span>
-                                        </a>
-                                    </li>
-                                    <li ui-sref-active="active">
-                                        <a ui-sref="#">
-                                            <i class="fa fa-minus icon text-vo"></i>
-                                            <span>充气打火机</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li ui-sref-active="active">
-                                <a ui-sref="#">
-                                    <i class="fa fa-minus icon text-vo"></i>
-                                    <span>STDupont/都彭</span>
-                                </a>
-                            </li>
-                            <li ui-sref-active="active">
-                                <a ui-sref="#">
-                                    <i class="fa fa-minus icon text-vo"></i>
-                                    <span>Dunhill/登喜路</span>
-                                </a>
-                            </li>
-                            <li ui-sref-active="active">
-                                <a ui-sref="#">
-                                    <i class="fa fa-minus icon text-vo"></i>
-                                    <span>双枪</span>
-                                </a>
-                            </li>
-                            <li ui-sref-active="active">
-                                <a ui-sref="#">
-                                    <i class="fa fa-minus icon text-vo"></i>
-                                    <span>Star/恒星</span>
-                                </a>
-                            </li>
-                            <li ui-sref-active="active">
-                                <a ui-sref="#">
-                                    <i class="fa fa-minus icon text-vo"></i>
-                                    <span>Cartier/卡地亚</span>
-                                </a>
-                            </li>
-                            <li ui-sref-active="active">
-                                <a ui-sref="#">
-                                    <i class="fa fa-minus icon text-vo"></i>
-                                    <span>Givenchy/纪梵希</span>
-                                </a>
-                            </li>
-                            <li ui-sref-active="active">
-                                <a ui-sref="#">
-                                    <i class="fa fa-minus icon text-vo"></i>
-                                    <span>IMCO</span>
-                                </a>
-                            </li>
-                            <li ui-sref-active="active">
-                                <a ui-sref="#">
-                                    <i class="fa fa-minus icon text-vo"></i>
-                                    <span>Tiger/虎牌</span>
-                                </a>
-                            </li>
-                            <li ui-sref-active="active">
-                                <a ui-sref="#">
-                                    <i class="fa fa-minus icon text-vo"></i>
-                                    <span>Honest/百诚</span>
-                                </a>
-                            </li>
-                            <li ui-sref-active="active">
-                                <a ui-sref="#">
-                                    <i class="fa fa-minus icon text-vo"></i>
-                                    <span>Jobon</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <!--一级-->
-                    <li ui-sref-active="active">
-                        <a ui-sref="cms.category">
-                            <i class="fa fa-plus icon text-vo"></i>
-                            <span>眼镜配件、护理剂</span>
-                        </a>
-                        <ul class="nav nav-sub dk" style="padding-left:10px">
-                            <li ui-sref-active="active">
-                                <a ui-sref="cms.category">
-                                    <i class="fa fa-minus icon text-vo"></i>
-                                    <span>镜布</span>
-                                </a>
-                            </li>
-                            <li ui-sref-active="active">
-                                <a ui-sref="#">
-                                    <i class="fa fa-minus icon text-vo"></i>
-                                    <span>隐形眼镜伴侣盒</span>
-                                </a>
-                            </li>
-                            <li ui-sref-active="active">
-                                <a ui-sref="#">
-                                    <i class="fa fa-minus icon text-vo"></i>
-                                    <span>隐形眼镜清洁器</span>
-                                </a>
-                            </li>
-                            <li ui-sref-active="active">
-                                <a ui-sref="#">
-                                    <i class="fa fa-minus icon text-vo"></i>
-                                    <span>眼镜护理剂</span>
-                                </a>
-                            </li>
-                            <li ui-sref-active="active">
-                                <a ui-sref="#">
-                                    <i class="fa fa-minus icon text-vo"></i>
-                                    <span>眼镜螺丝刀</span>
-                                </a>
-                            </li>
-                            <li ui-sref-active="active">
-                                <a ui-sref="#">
-                                    <i class="fa fa-minus icon text-vo"></i>
-                                    <span>眼镜袋</span>
-                                </a>
-                            </li>
-                            <li ui-sref-active="active">
-                                <a ui-sref="#">
-                                    <i class="fa fa-minus icon text-vo"></i>
-                                    <span>眼镜盒</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-
-                </ul>
+                <a ng-if="item.isParent == 0" ng-click="goSearchPage(item.catId)">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span ng-bind="item.catName"></span>
+                </a>
+                <ul class="nav nav-sub dk" style="padding-left:10px" ng-if="item.isParent == 1" ng-include="'categoryMenu'" ng-init="categoryMenu = item.children"></ul>
             </li>
 
         </ul>
@@ -208,10 +41,10 @@
     <!-- Promotion管理 -->
     <li>
         <a class="auto">
-        <span class="pull-right text-muted">
-        <i class="fa fa-fw fa-angle-right text"></i>
-        <i class="fa fa-fw fa-angle-down text-active"></i>
-        </span>
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
             <i class="glyphicon glyphicon-star icon text-vo"></i>
             <span class="" translate="TXT_PROMOTION_MANAGER"></span>
         </a>
@@ -323,3 +156,20 @@
 </ul>
 <!--end-->
 
+<script id="categoryMenu" type="text/ng-template">
+    <li ng-repeat="item in categoryMenu">
+        <a class="auto" ng-if="item.isParent == 1">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="fa fa-plus icon-small text-vo"></i>
+            <span ng-bind="item.catName"></span>
+        </a>
+        <a ng-if="item.isParent == 0" ng-click="goSearchPage(item.catId)">
+            <i class="fa fa-minus icon text-vo"></i>
+            <span ng-bind="item.catName"></span>
+        </a>
+        <ul class="nav nav-sub dk" style="padding-left:10px" ng-if="item.isParent == 1" ng-include="'categoryMenu'" ng-init="categoryMenu = item.children"></ul>
+    </li>
+</script>
