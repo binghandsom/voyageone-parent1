@@ -54,17 +54,21 @@
 						<table class="table table-hover">
 							<thead>
 							<tr>
-								<th>No.</th>
+								<th class="text-center">No.</th>
 								<th>key</th>
-								<th>Promotion Price</th>
+								<th class="text-center">Promotion Price</th>
+								<th>当前状态</th>
+								<th>执行情况说明</th>
 								<th></th>
 							</tr>
 							</thead>
 							<tbody>
 							<tr ng-repeat="price in vm.priceList">
-								<td>{{$index+1+((vm.pricePageOption.curr - 1) * vm.pricePageOption.size)}}</td>
+								<td class="text-center">{{$index+1+((vm.pricePageOption.curr - 1) * vm.pricePageOption.size)}}</td>
 								<td>{{price.key}}</td>
-								<td>{{price.promotionPrice}}</td>
+								<td class="text-center">{{price.promotionPrice}}</td>
+								<td><span class="badge badge-initialize">初始化</span><span class="badge badge-refresh">等待刷新</span><span class="badge badge-success">运行成功</span><span class="badge badge-failure">运行失败</span></td>
+								<td class="text-hs">运行失败！请重新再运行！谢谢！</td>
 								<td class="text-right">
 									<button title="刷新" class="btn btn-success btn-xs"><i class="fa fa-refresh"></i></button>
 								</td>
