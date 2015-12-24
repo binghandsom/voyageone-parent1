@@ -246,6 +246,7 @@ public class WmsPickupServiceImpl implements WmsPickupService {
         int intReserved = 0;
         int intCancelled = 0;
         boolean blnOpen = false;
+        boolean blnCancel = false;
         List<String> reservationStatus = new ArrayList<>();
 
         for (FormPickupBean formPickupBean : scanInfoListALL) {
@@ -279,6 +280,7 @@ public class WmsPickupServiceImpl implements WmsPickupService {
                 else if (ChannelConfigEnums.Scan.ORDER.getType().equals(scanType)) {
                     if (WmsConstants.ScanType.SCAN.equals(scanMode)) {
                         scanInfoList.add(formPickupBean);
+                        blnCancel = true;
                     } else {
                         intCancelled++;
                     }
@@ -320,8 +322,8 @@ public class WmsPickupServiceImpl implements WmsPickupService {
             }
         }
 
-        // 需要判断港口的场合，取得相关港口（BHFO、JE等渠道是由品牌方仓库发出后再收货的）但如果还存在Open记录的话，说明可能是物流信息同步不及时造成的，则不做检查
-        if (!StringUtils.isNullOrBlank2(scanPort) && blnOpen == false) {
+        // 需要判断港口的场合，取得相关港口（BHFO、JE等渠道是由品牌方仓库发出后再收货的）但如果还存在Open、Cancel记录的话，说明可能是物流信息同步不及时造成的，则不做检查
+        if (!StringUtils.isNullOrBlank2(scanPort) && blnOpen == false &&  blnCancel == false) {
             String port = reservationDao.getPort(scanInfoList.get(0).getSyn_ship_no(),scanInfoList.get(0).getId());
 
             if (!scanPort.equals(port)) {
