@@ -1,12 +1,28 @@
 /**
- * Created by linanbin on 15/12/7.
+ * controller FeedPropMappingController
  */
+
 define([
+    'cms',
     'modules/cms/controller/popup.ctl'
-], function () {
+], function (cms) {
+    "use strict";
+    return cms.controller('feedPropMappingController', (function () {
 
-    return function ($scope) {
+        function FeedPropMappingController($routeParams) {
 
-        $scope.vm = {"searchInfo": {}, "masterData": {}};
-    };
+            this.feedCategoryPath = $routeParams['feedCategoryPath'];
+        }
+
+        FeedPropMappingController.prototype = {
+
+            init: function() {
+
+                window.alert(this.feedCategoryPath);
+            }
+        };
+
+        return FeedPropMappingController;
+
+    })());
 });

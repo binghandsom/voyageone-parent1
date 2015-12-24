@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 /**
  * Feed 映射到主数据类目画面专供
  * @author Jonas
@@ -23,9 +25,12 @@ public class CmsFeedMappingController extends CmsController {
     @Autowired
     private CmsFeedMappingService cmsFeedMappingService;
 
+    @Autowired
+    private CmsFeedPropMappingService feedPropMappingService;
+
     @RequestMapping(FEED.GET_FEED_CATEGORY_TREE)
     public AjaxResponse getFeedCategoryTree() {
-        return success(cmsFeedMappingService.getFeedCategoriyTree(getUser()));
+        return success(cmsFeedMappingService.getFeedCategoryTree(getUser()));
     }
 
     @RequestMapping(FEED.GET_MAIN_CATEGORIES)
@@ -41,5 +46,13 @@ public class CmsFeedMappingController extends CmsController {
     @RequestMapping(FEED.EXTENDS_MAPPING)
     public AjaxResponse extendsMapping(@RequestBody CmsFeedCategoryModel feedCategoryModel) {
         return success(cmsFeedMappingService.extendsMapping(feedCategoryModel, getUser()));
+    }
+
+    @RequestMapping(FEED.GET_MAIN_PROPS)
+    public AjaxResponse getMainCategoryProps(@RequestBody Map<String, Object> params) {
+
+        String categoryPath = (String) params.get("categoryPath");
+
+        return success(feedPropMappingService.getCategoryProps(categoryPath));
     }
 }
