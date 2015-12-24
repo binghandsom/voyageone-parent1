@@ -43,4 +43,8 @@ public class CmsTaskPriceService extends BaseAppService {
 
         return cmsPromotionTaskDao.getPromotionTaskPriceListCnt(param);
     }
+
+    public int updateTaskStatus(CmsBtPromotionTaskModel param){
+        return cmsPromotionTaskDao.updatePromotionTask(param);
+    }
 }

@@ -41,5 +41,32 @@ define([
 
             })
         }
+
+        $scope.updateStatus = function(item){
+            var data = _.clone(item);
+            data.synFlg = 1;
+            data.errMsg = "";
+            taskPriceService.updateTaskStatus(data).then(function (res) {
+                item.synFlg = 1;
+                item.errMsg = "";
+            }, function (err) {
+                notify.warning("fail")
+            });
+        }
+        
+        $scope.updateAllStatus = function (synFlg) {
+            taskPriceService.updateTaskStatus({"promotionId": $routeParams.promotionId,"synFlg":synFlg,"errMsg":"","taskType":0}).then(function (res) {
+                _.each($scope.vm.priceList,function(item){
+                    item.synFlg = synFlg;
+                    item.errMsg = "";
+                })
+            }, function (err) {
+                notify.warning("fail")
+            });
+        }
+        
+        
+        
+        
     };
 });

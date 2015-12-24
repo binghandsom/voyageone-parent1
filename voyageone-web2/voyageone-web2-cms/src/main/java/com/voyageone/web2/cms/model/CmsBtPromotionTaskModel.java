@@ -15,12 +15,12 @@ public class CmsBtPromotionTaskModel extends BaseMongoModel {
 
     private String key;
 
-    private Boolean synFlg;
+    private Integer synFlg;
 
     private String errMsg;
 
     public CmsBtPromotionTaskModel() {
-        this.synFlg = false;
+        this.synFlg = 0;
         this.errMsg = "";
     }
 
@@ -57,11 +57,11 @@ public class CmsBtPromotionTaskModel extends BaseMongoModel {
         this.key = key;
     }
 
-    public Boolean getSynFlg() {
+    public int getSynFlg() {
         return synFlg;
     }
 
-    public void setSynFlg(Boolean synFlg) {
+    public void setSynFlg(Integer synFlg) {
         this.synFlg = synFlg;
     }
 

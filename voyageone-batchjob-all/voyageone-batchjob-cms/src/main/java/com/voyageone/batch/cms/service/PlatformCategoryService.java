@@ -7,6 +7,7 @@ import com.taobao.api.domain.Brand;
 import com.taobao.api.domain.ItemCat;
 import com.taobao.api.domain.SellerAuthorize;
 import com.taobao.top.schema.exception.TopSchemaException;
+import com.voyageone.batch.Context;
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.cms.model.PlatformCategoriesModel;
 import com.voyageone.batch.core.Enums.TaskControlEnums;
@@ -30,10 +31,13 @@ import com.voyageone.common.util.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.apache.commons.beanutils.BeanUtils;
 
+import javax.annotation.Resource;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
@@ -52,6 +56,9 @@ public class PlatformCategoryService extends BaseTaskService{
     @Autowired
     CmsMtPlatformCategorySchemaDao cmsMtPlatformCategorySchemaDao;
 
+    Map<String,String> categoryProductMap;
+
+    List<String> paltformCartList;
 
     @Override
     public SubSystem getSubSystem() {
@@ -65,6 +72,9 @@ public class PlatformCategoryService extends BaseTaskService{
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception{
 
+        ApplicationContext ctx = new GenericXmlApplicationContext("applicationContext.xml");
+        this.categoryProductMap = (Map) ctx.getBean("categoryProductMap");
+        this.paltformCartList = (List)ctx.getBean("paltformCartList");
 
         // 任务说明 ------------------------------------------------- START
         // 要做的事情：
@@ -112,12 +122,9 @@ public class PlatformCategoryService extends BaseTaskService{
 
         // 如果有任何一家店铺获取过类目信息，那么就需要继续做属性信息取得
         if (blnReGetCategory) {
-
-            // 获取天猫国际数据 TODO
-            doSetPlatformPropTm(Integer.valueOf(CartEnums.Cart.TG.getId()));
-            // 获取天猫数据 TODO
-            doSetPlatformPropTm(Integer.valueOf(CartEnums.Cart.TM.getId()));
-
+            for (String cartId:paltformCartList){
+                doSetPlatformPropTm(Integer.valueOf(cartId));
+            }
 
         }
 
@@ -402,11 +409,13 @@ public class PlatformCategoryService extends BaseTaskService{
         String itemXmlContent = null;
         ItemSchema result =null;
         // 调用API获取产品属性规则
-//        if ("121412004".equals("platformCategoriesModel.getCatId()")){
-//            result = tbCategoryService.getTbItemAddSchema(shopProp, Long.parseLong(platformCategoriesModel.getCatId()),466830149L);
-//        } else {
+        String productIdStr =categoryProductMap.get(platformCategoriesModel.getCatId());
+        if (productIdStr != null){
+            Long productId = Long.parseLong(productIdStr);
+            result = tbCategoryService.getTbItemAddSchema(shopProp, Long.parseLong(platformCategoriesModel.getCatId()),productId);
+        } else {
             result = tbCategoryService.getTbItemAddSchema(shopProp, Long.parseLong(platformCategoriesModel.getCatId()),null);
-//        }
+        }
 //            result = tbCategoryService.getTbItemAddSchema(shopProp, Long.parseLong(platformCategoriesModel.getCatId()),null);
         //保存为XML文件
         if (result.getResult() == 0 ){

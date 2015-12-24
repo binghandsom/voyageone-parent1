@@ -78,7 +78,8 @@
     },
     "taskPriceService": {
       "root": "/cms/task/price",
-      "getPriceList": "getPriceList"
+      "getPriceList": "getPriceList",
+      "updateTaskStatus":"updateTaskStatus"
     },
     "productDetailService":{
       "root":"/cms/product/detail/",
