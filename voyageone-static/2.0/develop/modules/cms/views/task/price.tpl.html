@@ -54,7 +54,6 @@
 						<table class="table table-hover">
 							<thead>
 							<tr>
-								<th class="mfb-xt"><label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label></th>
 								<th>No.</th>
 								<th>key</th>
 								<th>Promotion Price</th>
@@ -63,8 +62,7 @@
 							</thead>
 							<tbody>
 							<tr ng-repeat="price in vm.priceList">
-								<td><label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label></td>
-								<td>{{price.seq}}</td>
+								<td>{{$index+1+((vm.pricePageOption.curr - 1) * vm.pricePageOption.size)}}</td>
 								<td>{{price.key}}</td>
 								<td>{{price.promotionPrice}}</td>
 								<td class="text-right">
