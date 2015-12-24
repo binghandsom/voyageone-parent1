@@ -21,7 +21,8 @@ public final class MongoUtils {
         if (obj != null) {
             StringBuffer result = new StringBuffer();
 
-            result.append("\"" + itemName + "\":");
+            if (compareType.length == 0 || !"$or".equals(compareType[0]))
+                result.append("\"" + itemName + "\":");
 
             // 如果obj为String类型
             if (obj instanceof String) {
@@ -59,31 +60,59 @@ public final class MongoUtils {
             }
             // 如果obj为String[]类型
             else if (obj instanceof String[]) {
-                result.append("{$in:[");
-                String[] options = (String[]) obj;
+                if (compareType.length > 0 && "$or".equals(compareType[0])) {
+                    result.append("$or:[");
+                    String[] options = (String[]) obj;
 
-                for (int i = 0; i < options.length; i++) {
-                    if (i < options.length - 1) {
-                        result.append("\"" + options[i] + "\",");
-                    } else {
-                        result.append("\"" + options[i] + "\"");
+                    for (int i = 0; i < options.length; i++) {
+                        if (i < options.length - 1) {
+                            result.append("{" + options[i] + "},");
+                        } else {
+                            result.append("{" + options[i] + "}");
+                        }
                     }
+                    result.append("]");
+                } else {
+                    result.append("{$in:[");
+                    String[] options = (String[]) obj;
+
+                    for (int i = 0; i < options.length; i++) {
+                        if (i < options.length - 1) {
+                            result.append("\"" + options[i] + "\",");
+                        } else {
+                            result.append("\"" + options[i] + "\"");
+                        }
+                    }
+                    result.append("]}");
                 }
-                result.append("]}");
             }
             // 如果obj为Object[]类型
             else if (obj instanceof Object[]) {
-                result.append("{$in:[");
-                Object[] options = (Object[]) obj;
+                if (compareType.length > 0 && "$or".equals(compareType[0])) {
+                    result.append("$or:[");
+                    Object[] options = (Object[]) obj;
 
-                for (int i = 0; i < options.length; i++) {
-                    if (i < options.length - 1) {
-                        result.append(options[i] + ",");
-                    } else {
-                        result.append(options[i]);
+                    for (int i = 0; i < options.length; i++) {
+                        if (i < options.length - 1) {
+                            result.append("{" + options[i] + "},");
+                        } else {
+                            result.append("{" + options[i] + "}");
+                        }
                     }
+                    result.append("]");
+                } else {
+                    result.append("{$in:[");
+                    Object[] options = (Object[]) obj;
+
+                    for (int i = 0; i < options.length; i++) {
+                        if (i < options.length - 1) {
+                            result.append(options[i] + ",");
+                        } else {
+                            result.append(options[i]);
+                        }
+                    }
+                    result.append("]}");
                 }
-                result.append("]}");
             }
             return result.toString();
         } else {

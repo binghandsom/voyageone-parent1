@@ -158,7 +158,7 @@ public class FeedToCmsService {
     /**
      * 根据category从tree中找到节点
      */
-    private CmsFeedCategoryModel findCategory(List<CmsFeedCategoryModel> tree, String cat) {
+    private Map<String,Object> findCategory(List<CmsFeedCategoryModel> tree, String cat) {
 
         ReadContext ctx = JsonPath.parse(tree);
 
@@ -167,6 +167,7 @@ public class FeedToCmsService {
         if (child.size() == 0) {
             child = ctx.read("$..*[?(@.path == '" + cat.replace("'", "\\\'") + "')]");
         }
+
 
         return child == null || child.size() == 0 ? null : child.get(0);
     }
@@ -177,10 +178,10 @@ public class FeedToCmsService {
     private List<CmsFeedCategoryModel> addCategory(List<CmsFeedCategoryModel> tree, String category) {
         String[] c = category.split("-");
         String temp = "";
-        CmsFeedCategoryModel befNode = null;
+        Map<String,Object> befNode = null;
         for (int i = 0; i < c.length; i++) {
             temp += c[i];
-            CmsFeedCategoryModel node = findCategory(tree, temp);
+            Map<String,Object> node = findCategory(tree, temp);
             if (node == null) {
                 CmsFeedCategoryModel newNode = new CmsFeedCategoryModel();
                 newNode.setName(c[i]);
@@ -193,7 +194,7 @@ public class FeedToCmsService {
                 if (befNode == null) {
                     tree.add(newNode);
                 } else {
-                    befNode.getChild().add(newNode);
+                    ((List<Map>)(befNode.get("child"))).add(newNode);
                 }
                 befNode = newNode;
             } else {
@@ -253,18 +254,18 @@ public class FeedToCmsService {
     private void updateFeedCategoryAttribute(String channelId, Map<String, List<String>> attribute, String category) {
 
         CmsMtFeedCategoryTreeModel categoryTree = cmsMtFeedCategoryTreeDao.selectFeedCategory(channelId);
-        CmsFeedCategoryModel node = findCategory(categoryTree.getCategoryTree(), category);
+        Map<String,Object> node = findCategory(categoryTree.getCategoryTree(), category);
 
         if (node == null)
             throw new BusinessException(null, String.format("can`t find any category by \"%s\"", category));
 
-        if (node.getAttribute() == null) {
-            node.setAttribute(attribute);
+        if (node.get("attribute") == null) {
+            node.put("attribute",attribute);
             cmsMtFeedCategoryTreeDao.update(categoryTree);
             return;
         }
 
-        Map<String, List<String>> oldAtt = node.getAttribute();
+        Map<String, List<String>> oldAtt = (Map<String, List<String>>) node.get("attribute");
 
         for (String key : attribute.keySet()) {
             if (oldAtt.containsKey(key)) {

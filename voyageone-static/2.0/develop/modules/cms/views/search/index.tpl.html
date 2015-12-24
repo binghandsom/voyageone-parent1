@@ -10,6 +10,15 @@
 				<div class="col-sm-4">
 					<div class="form-horizontal">
 						<div class="form-group">
+							<label class="col-sm-3 control-label" translate="TXT_CATEGORY"></label>
+							<div class="col-sm-9">
+								<select class="form-control" ng-model="vm.searchInfo.catId"
+										ng-options="category.catId as category.catName for category in vm.masterData.categoryList">
+									<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
 							<label class="col-sm-3 control-label" translate="TXT_PRODUCT_STATUS"></label>
 							<div class="col-sm-9">
 								<label class="checkbox-inline c-checkbox" ng-repeat="productStatus in vm.masterData.productStatusList">

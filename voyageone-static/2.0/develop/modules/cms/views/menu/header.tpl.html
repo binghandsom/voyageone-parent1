@@ -43,10 +43,10 @@
         <form class="navbar-form navbar-form-sm navbar-left shift" ui-shift="prependTo" target=".navbar-collapse" role="search">
             <div class="form-group">
                 <div class="input-group">
-                    <input type="text" ng-model="header.searchValue" typeahead="state for state in states | filter:$viewValue | limitTo:8" class="form-control input-sm bg-light no-border rounded padder" placeholder="Search...">
-              <span class="input-group-btn">
-                <button type="submit" class="btn btn-sm bg-light rounded" ng-click="search()"><i class="fa fa-search"></i></button>
-              </span>
+                    <input type="text" ng-model="header.searchValue" class="form-control input-sm bg-light no-border rounded padder" placeholder="{{'TXT_COM_MSG_SEARCH' | translate}}">
+                    <span class="input-group-btn">
+                        <button type="submit" class="btn btn-sm bg-light rounded" ng-click="goSearchPage(header.searchValue)"><i class="fa fa-search"></i></button>
+                    </span>
                 </div>
             </div>
         </form>

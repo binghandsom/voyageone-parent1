@@ -1,165 +1,60 @@
-<div class="wrapper-md">
-  <tabset class="tab-container vo_nav-tabs">
-    <div class="form-inline pull-right">
-      <select class="form-control m-r-xxs">
-        <option>必填情况(ALL)</option>
-        <option>非必填</option>
-        <option>必填</option>
-      </select>
-      <select class="form-control m-r-xxs">
-        <option>设定情况(ALL)</option>
-        <option>已设定</option>
-        <option>未设定</option>
-      </select>
-      <input type="text" placeholder="快速检索" class="form-control">
-      <button type="submit" class="btn btn-vo btn-xxs"><i class="fa fa-search"></i></button>
-    </div>
-    <tab>
-      <tab-heading> 类目属性匹配</tab-heading>
-      <div class="container-fluid" ng-controller="popupCtrl">
-        <div class="col-sm-6">
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <h4 class="panel-title">属性匹配</h4>
+<div class="wrapper-md" ng-controller="feedPropMappingController as ctrl" ng-init="ctrl.init()">
+    <tabset class="tab-container vo_nav-tabs">
+        <div class="form-inline pull-right">
+            <select class="form-control m-r-xxs">
+                <option>必填情况(ALL)</option>
+                <option>非必填</option>
+                <option>必填</option>
+            </select>
+            <select class="form-control m-r-xxs">
+                <option>设定情况(ALL)</option>
+                <option>已设定</option>
+                <option>未设定</option>
+            </select>
+            <input type="text" placeholder="快速检索" class="form-control">
+            <button type="submit" class="btn btn-vo btn-xxs"><i class="fa fa-search"></i></button>
+        </div>
+        <tab>
+            <tab-heading>类目属性匹配</tab-heading>
+            <div class="container-fluid">
+                <div class="col-sm-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">普通属性匹配</h4>
+                        </div>
+                        <form class="form-horizontal" feed-mapping-fields="ctrl.mainCategory.fields"></form>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">SKU匹配</h4>
+                        </div>
+                        <form class="form-horizontal" feed-mapping-fields="ctrl.mainCategory.sku"></form>
+                    </div>
+                </div>
             </div>
-            <form class="form-horizontal">
-              <div class="form-group m-t-sm">
-                <label class="col-sm-2 control-label vo_reqfield">商品类型</label>
-                <div class="col-sm-8">
-                  <button class="btn btn-default btn-xs" ng-click="openfeed('md')">值匹配</button>
-                  <label class="text-vo m-l-sm progress-sm">未匹配</label>
-                </div>
-              </div><!-- .form-group -->
-              <div class="form-group">
-                <label class="col-sm-2 control-label">页面模板</label>
-                <div class="col-sm-2">
-                  <button class="btn btn-default btn-xs" ng-click="openfeed('md')">值匹配</button>
-                </div>
-              </div><!-- .form-group -->
-              <div class="form-group">
-                <label class="col-sm-2 control-label vo_reqfield">商品属性</label>
-                <div class="col-sm-8 hierarchy">
-                  <div class="col-sm-4 form-inline">
-                    <label class="control-label vo_reqfield">上市时间</label>
+        </tab>
+    </tabset>
+    <script type="text/ng-template" id="feedMapping.fields.tpl.html">
+        <div class="form-group"
+             ng-repeat="field in fields"
+             ng-init="fieldx = ctrl.extendField(field)">
+            <label class="col-sm-2 control-label"
+                   ng-class="{ 'vo_reqfield': fieldx.required }">{{ fieldx.field.name }}</label>
+
+            <div class="col-sm-8 hierarchy" ng-if="!fieldx.isSimple">
+                <div class="col-sm-4 form-inline"
+                     ng-repeat="childField in fieldx.field.fieldList"
+                     ng-init="childFieldx = ctrl.extendField(childField)">
+                    <label class="control-label vo_reqfield">{{ childFieldx.field.name }}</label>
                     <button class="btn btn-default btn-xs" ng-click="openfeed('md')">值匹配</button>
-                  </div>
-                  <div class="col-sm-4 form-inline">
-                    <label class="control-label">是否商场同款</label>
-                    <button class="btn btn-default btn-xs" ng-click="openfeed('md')">值匹配</button>
-                  </div>
                 </div>
-              </div><!-- .form-group -->
-              <div class="form-group">
-                <label class="col-sm-2 control-label">渠道销售类型</label>
-                <div class="col-sm-8">
-                  <button class="btn btn-default btn-xs" ng-click="openfeed('md')">值匹配</button>
-                </div>
-              </div><!-- .form-group -->
-              <div class="form-group">
-                <label class="col-sm-2 control-label vo_reqfield">商品标题</label>
-                <div class="col-sm-2">
-                  <button class="btn btn-default btn-xs" ng-click="openfeed('md')">值匹配</button>
-                </div>
-              </div><!-- .form-group -->
-              <div class="form-group">
-                <label class="col-sm-2 control-label vo_reqfield">商品卖点</label>
-                <div class="col-sm-8">
-                  <button class="btn btn-default btn-xs" ng-click="openfeed('md')">值匹配</button>
-                </div>
-              </div><!-- .form-group -->
-              <div class="form-group">
-                <label class="col-sm-2 control-label vo_reqfield">价格</label>
-                <div class="col-sm-2">
-                  <button class="btn btn-default btn-xs" ng-click="openfeed('md')">值匹配</button>
-                </div>
-              </div><!-- .form-group -->
-              <div class="form-group">
-                <label class="col-sm-2 control-label">颜色分类</label>
-                <div class="col-sm-9">
-                  <button class="btn btn-default btn-xs" ng-click="openfeed('md')">值匹配</button>
-                </div>
-              </div><!-- .form-group -->
-              <div class="form-group">
-                <label class="col-sm-2 control-label vo_reqfield">商家编码</label>
-                <div class="col-sm-2">
-                  <button class="btn btn-default btn-xs" ng-click="openfeed('md')">值匹配</button>
-                </div>
-              </div><!-- .form-group -->
-            </form><!-- form-horizontal -->
-          </div>
-        </div><!--.col -->
-        <div class="col-sm-6">
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <h4 class="panel-title">SKU匹配</h4>
             </div>
-            <form class="form-horizontal">
-              <div class="form-group m-t-sm">
-                <label class="col-sm-2 control-label vo_reqfield">商品类型</label>
-                <div class="col-sm-8">
-                  <button class="btn btn-default btn-xs" ng-click="openfeed('md')">值匹配</button>
-                  <label class="text-vo m-l-sm progress-sm">未匹配</label>
-                </div>
-              </div><!-- .form-group -->
-              <div class="form-group">
-                <label class="col-sm-2 control-label">页面模板</label>
-                <div class="col-sm-2">
-                  <button class="btn btn-default btn-xs" ng-click="openfeed('md')">值匹配</button>
-                </div>
-              </div><!-- .form-group -->
-              <div class="form-group">
-                <label class="col-sm-2 control-label vo_reqfield">商品属性</label>
-                <div class="col-sm-8 hierarchy">
-                  <div class="col-sm-4 form-inline">
-                    <label class="control-label vo_reqfield">上市时间</label>
-                    <button class="btn btn-default btn-xs" ng-click="openfeed('md')">值匹配</button>
-                  </div>
-                  <div class="col-sm-4 form-inline">
-                    <label class="control-label">是否商场同款</label>
-                    <button class="btn btn-default btn-xs" ng-click="openfeed('md')">值匹配</button>
-                  </div>
-                </div>
-              </div><!-- .form-group -->
-              <div class="form-group">
-                <label class="col-sm-2 control-label">渠道销售类型</label>
-                <div class="col-sm-8">
-                  <button class="btn btn-default btn-xs" ng-click="openfeed('md')">值匹配</button>
-                </div>
-              </div><!-- .form-group -->
-              <div class="form-group">
-                <label class="col-sm-2 control-label vo_reqfield">商品标题</label>
-                <div class="col-sm-2">
-                  <button class="btn btn-default btn-xs" ng-click="openfeed('md')">值匹配</button>
-                </div>
-              </div><!-- .form-group -->
-              <div class="form-group">
-                <label class="col-sm-2 control-label vo_reqfield">商品卖点</label>
-                <div class="col-sm-8">
-                  <button class="btn btn-default btn-xs" ng-click="openfeed('md')">值匹配</button>
-                </div>
-              </div><!-- .form-group -->
-              <div class="form-group">
-                <label class="col-sm-2 control-label vo_reqfield">价格</label>
-                <div class="col-sm-2">
-                  <button class="btn btn-default btn-xs" ng-click="openfeed('md')">值匹配</button>
-                </div>
-              </div><!-- .form-group -->
-              <div class="form-group">
-                <label class="col-sm-2 control-label">颜色分类</label>
-                <div class="col-sm-9">
-                  <button class="btn btn-default btn-xs" ng-click="openfeed('md')">值匹配</button>
-                </div>
-              </div><!-- .form-group -->
-              <div class="form-group">
-                <label class="col-sm-2 control-label vo_reqfield">商家编码</label>
-                <div class="col-sm-2">
-                  <button class="btn btn-default btn-xs" ng-click="openfeed('md')">值匹配</button>
-                </div>
-              </div><!-- .form-group -->
-            </form><!-- form-horizontal -->
-          </div>
-        </div><!--.col -->
-      </div>
-    </tab>
-  </tabset><!-- tabset -->
-</div><!-- end .wrapper-md -->
+
+            <div class="col-sm-8" ng-if="fieldx.isSimple">
+                <button class="btn btn-default btn-xs" ng-click="openfeed('md')">值匹配</button>
+            </div>
+        </div>
+    </script>
+</div>

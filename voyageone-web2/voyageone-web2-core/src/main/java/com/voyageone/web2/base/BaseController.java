@@ -1,5 +1,6 @@
 package com.voyageone.web2.base;
 
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.io.IOUtils;
@@ -117,6 +118,11 @@ public abstract class BaseController extends BaseAppComponent {
 
         AjaxResponse response = new AjaxResponse();
         response.setData(data);
+        try {
+            logger.debug(JacksonUtil.bean2Json(response));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return response;
     }
 

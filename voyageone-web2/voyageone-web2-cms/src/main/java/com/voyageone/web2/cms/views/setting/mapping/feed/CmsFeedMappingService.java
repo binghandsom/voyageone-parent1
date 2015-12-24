@@ -36,12 +36,12 @@ public class CmsFeedMappingService extends BaseAppService {
     @Autowired
     private com.voyageone.cms.service.CmsFeedMappingService cmsFeedMappingService;
 
-    public CmsMtFeedCategoryTreeModel getFeedCategoriyTree(UserSessionBean user) {
+    public CmsMtFeedCategoryTreeModel getFeedCategoryTree(UserSessionBean user) {
         return feedToCmsService.getFeedCategory(user.getSelChannelId());
     }
 
     public List<CmsMtCategoryTreeModel> getMainCategories(UserSessionBean user) {
-        return cmsBtChannelCategoryService.getCategorysByChannelId(user.getSelChannelId());
+        return cmsBtChannelCategoryService.getCategoriesByChannelId(user.getSelChannelId());
     }
 
     /**
@@ -56,7 +56,7 @@ public class CmsFeedMappingService extends BaseAppService {
         if (StringUtils.isAnyEmpty(setMappingBean.getFrom(), setMappingBean.getTo()))
             throw new BusinessException("木有参数");
 
-        CmsMtFeedCategoryTreeModel treeModel = getFeedCategoriyTree(user);
+        CmsMtFeedCategoryTreeModel treeModel = getFeedCategoryTree(user);
 
         // 按 Path 查 FeedCategory
         CmsFeedCategoryModel cmsFeedCategoryModel = findByPath(setMappingBean.getFrom(), treeModel);
@@ -172,7 +172,7 @@ public class CmsFeedMappingService extends BaseAppService {
      * @param predicate         查询条件
      * @return mapping 对象
      */
-    private CmsFeedMappingModel findMapping(CmsFeedCategoryModel feedCategoryModel, Predicate<CmsFeedMappingModel> predicate) {
+    protected CmsFeedMappingModel findMapping(CmsFeedCategoryModel feedCategoryModel, Predicate<CmsFeedMappingModel> predicate) {
         return feedCategoryModel.getMapping()
                 .stream()
                 .filter(predicate)
@@ -187,7 +187,7 @@ public class CmsFeedMappingService extends BaseAppService {
      * @param treeModel 完整的类目树
      * @return 具体的 Feed 类目
      */
-    private CmsFeedCategoryModel findByPath(String path, CmsMtFeedCategoryTreeModel treeModel) {
+    protected CmsFeedCategoryModel findByPath(String path, CmsMtFeedCategoryTreeModel treeModel) {
 
         String[] fromPath = path.split("-");
 
@@ -221,7 +221,7 @@ public class CmsFeedMappingService extends BaseAppService {
      */
     public List<CmsFeedMappingModel> extendsMapping(CmsFeedCategoryModel feedCategoryModel, UserSessionBean user) {
 
-        CmsMtFeedCategoryTreeModel treeModel = getFeedCategoriyTree(user);
+        CmsMtFeedCategoryTreeModel treeModel = getFeedCategoryTree(user);
 
         CmsFeedMappingModel feedMappingModel = findParentDefaultMapping(feedCategoryModel, treeModel);
 
@@ -239,7 +239,7 @@ public class CmsFeedMappingService extends BaseAppService {
      * @param treeModel         完整的树
      * @return Mapping 对象
      */
-    private CmsFeedMappingModel findParentDefaultMapping(CmsFeedCategoryModel feedCategoryModel, CmsMtFeedCategoryTreeModel treeModel) {
+    protected CmsFeedMappingModel findParentDefaultMapping(CmsFeedCategoryModel feedCategoryModel, CmsMtFeedCategoryTreeModel treeModel) {
 
         // 当前类目没父级了.
         if (!feedCategoryModel.getPath().contains("-")) return null;
