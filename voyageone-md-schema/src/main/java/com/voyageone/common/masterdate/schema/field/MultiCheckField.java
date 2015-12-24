@@ -1,15 +1,16 @@
 package com.voyageone.common.masterdate.schema.field;
 
-import com.voyageone.common.masterdate.schema.Util.StringUtil;
-import com.voyageone.common.masterdate.schema.Util.XmlUtils;
+import com.voyageone.common.masterdate.schema.util.StringUtil;
+import com.voyageone.common.masterdate.schema.util.XmlUtils;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.enums.TopSchemaErrorCodeEnum;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaFactory;
-import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 import org.dom4j.Element;
 
 public class MultiCheckField extends OptionsField {
@@ -180,5 +181,22 @@ public class MultiCheckField extends OptionsField {
     @Override
     public List<Value> getValue() {
         return this.values;
+    }
+
+    @Override
+    public void setFieldValueFromMap(Map<String, Object> valueMap) {
+        Object valueObj = valueMap.get(id);
+        if (valueObj != null && valueObj instanceof List) {
+            List<String> values = new ArrayList<>();
+            List valuesTmp = (List)valueObj;
+            for (Object value : valuesTmp) {
+                if (value != null) {
+                    values.add(value.toString());
+                }
+            }
+            for (String value : values) {
+                addValue(value);
+            }
+        }
     }
 }

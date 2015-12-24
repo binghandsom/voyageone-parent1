@@ -34,15 +34,14 @@ public class CmsPromotionTaskDao extends BaseDao{
     }
 
     public List<Map<String,Object>> getPromotionTaskPriceList(Map<String,Object> params){
-        return selectList("select_cms_bt_promotion_task_price",params);
+        return selectList("select_cms_bt_promotion_task_price", params);
     }
 
     public int insertPromotionTask(CmsBtPromotionTaskModel params){
-        return updateTemplate.insert("insert_cms_bt_promotion_task",params);
+        return updateTemplate.insert("insert_cms_bt_promotion_task", params);
     }
 
     public int updatePromotionTask(CmsBtPromotionTaskModel params){
         return updateTemplate.update("update_cms_bt_promotion_task", params);
     }
-
 }

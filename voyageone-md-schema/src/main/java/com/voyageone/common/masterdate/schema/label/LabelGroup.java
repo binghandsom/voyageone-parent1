@@ -1,6 +1,6 @@
 package com.voyageone.common.masterdate.schema.label;
 
-import com.voyageone.common.masterdate.schema.Util.XmlUtils;
+import com.voyageone.common.masterdate.schema.util.XmlUtils;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import java.util.ArrayList;
 import java.util.Iterator;

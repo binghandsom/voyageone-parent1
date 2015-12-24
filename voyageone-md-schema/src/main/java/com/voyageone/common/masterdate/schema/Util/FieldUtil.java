@@ -1,4 +1,4 @@
-package com.voyageone.common.masterdate.schema.Util;
+package com.voyageone.common.masterdate.schema.util;
 
 import com.voyageone.common.masterdate.schema.depend.DependExpress;
 import com.voyageone.common.masterdate.schema.depend.DependGroup;
@@ -9,6 +9,7 @@ import com.voyageone.common.masterdate.schema.rule.Rule;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class FieldUtil {
 
@@ -261,6 +262,15 @@ public class FieldUtil {
             }
             if (removeField != null) {
                 rootFields.remove(removeField);
+            }
+        }
+    }
+
+
+    public static void setFieldsValueFromMap(List<Field> rootFields, Map<String, Object> valueFields){
+        if (rootFields != null && valueFields != null) {
+            for (Field rootField : rootFields) {
+                rootField.setFieldValueFromMap(valueFields);
             }
         }
     }

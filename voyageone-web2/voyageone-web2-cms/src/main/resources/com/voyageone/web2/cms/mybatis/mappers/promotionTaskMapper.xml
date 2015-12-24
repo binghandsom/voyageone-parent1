@@ -30,7 +30,7 @@
             <if test="promotionId != null and promotionId != ''">
                 promotion_id = #{promotionId,jdbcType=INTEGER}
             </if>
-            <if test="taskType != null and taskType != ''">
+            <if test="taskType != null">
                 and task_type = #{taskType,jdbcType=INTEGER}
             </if>
             <if test="key != null and key != ''">
@@ -64,17 +64,18 @@
             <if test="promotionId != null and promotionId != ''">
                 and a.promotion_id = #{promotionId,jdbcType=INTEGER}
             </if>
-            <if test="taskType != null and taskType != ''">
-                and b.task_type = #{taskType,jdbcType=INTEGER}
+            <if test="taskType != null">
+                and a.task_type = #{taskType,jdbcType=INTEGER}
             </if>
             <if test="key != null and key != ''">
                 and a.`key` = #{key,jdbcType=VARCHAR}
             </if>
+        ORDER BY a.syn_flg,a.key
         <if test="start != null and length != null">
             LIMIT #{start}, #{length}
         </if>
     </select>
-    <select id="select_cms_bt_promotion_task_price_cnt" resultType="INTEGER" parameterType="HashMap" >
+    <select id="select_cms_bt_promotion_task_price_cnt" resultType="int" parameterType="HashMap" >
         select
           count(1)
         from
@@ -82,12 +83,12 @@
         voyageone_cms2.cms_bt_promotion_code b
         where
         a.promotion_id = b.promotion_id
-        and a.key = b.product_id
+        and a.key = b.product_code
         <if test="promotionId != null and promotionId != ''">
             and a.promotion_id = #{promotionId,jdbcType=INTEGER}
         </if>
-        <if test="taskType != null and taskType != ''">
-            and b.task_type = #{taskType,jdbcType=INTEGER}
+        <if test="taskType != null">
+            and a.task_type = #{taskType,jdbcType=INTEGER}
         </if>
         <if test="key != null and key != ''">
             and a.`key` = #{key,jdbcType=VARCHAR}
@@ -164,7 +165,7 @@
             <if test="promotionId != null and promotionId != ''">
                 promotion_id = #{promotionId,jdbcType=INTEGER}
             </if>
-            <if test="taskType != null and taskType != ''">
+            <if test="taskType != null ">
                 and task_type = #{taskType,jdbcType=INTEGER}
             </if>
             <if test="key != null and key != ''">

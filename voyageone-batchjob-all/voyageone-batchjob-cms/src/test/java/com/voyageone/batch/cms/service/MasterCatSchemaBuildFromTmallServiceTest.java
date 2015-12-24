@@ -1,15 +1,18 @@
 package com.voyageone.batch.cms.service;
 
+import com.taobao.top.schema.factory.SchemaReader;
 import com.voyageone.cms.service.dao.CmsMtCommonPropDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
 import com.voyageone.cms.service.model.MtCommPropActionDefModel;
 import com.voyageone.common.configs.Enums.ActionType;
-import com.voyageone.common.masterdate.schema.Util.FieldUtil;
+import com.voyageone.common.masterdate.schema.util.FieldUtil;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.util.StringUtils;
 import net.minidev.json.JSONObject;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,6 +29,8 @@ import java.util.List;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:context-cms-test.xml")
 public class MasterCatSchemaBuildFromTmallServiceTest {
+
+    private static Log logger = LogFactory.getLog(MasterCatSchemaBuildFromTmallServiceTest.class);
 
     @Autowired
     private CmsMtCategorySchemaDao cmsMtCategorySchemaDao;
@@ -51,44 +57,42 @@ public class MasterCatSchemaBuildFromTmallServiceTest {
 
         for (JSONObject schemaId:maseterSchemaIds) {
             String id = schemaId.get("_id").toString();
+
             JSONObject schemaModel = cmsMtCategorySchemaDao.selectByIdRetrunJson(id);
+
+            Object skuObj = schemaModel.get("sku");
+            List skuList = new ArrayList<>();
+            skuList.add(skuObj);
+            List<Field> skuFields = SchemaJsonReader.readJsonForList(skuList);
             List<Field> fields = SchemaJsonReader.readJsonForList((List)schemaModel.get("fields"));
+            fields.addAll(skuFields);
+            logger.info("");
+            logger.info("Category Id: " + schemaModel.get("catId"));
 
             for (MtCommPropActionDefModel defModel:commPropActionDefModels){
                 ActionType actionType = ActionType.valueOf(Integer.valueOf(defModel.getActionType()));
                 Field verifyField = null;
-                switch (actionType){
-                    case Add:
-                         verifyField = FieldUtil.getFieldById(fields,defModel.getPropId());
-                        Assert.assertNotNull(verifyField);
-                        break;
-                    case Update:
-                        verifyField = FieldUtil.getFieldById(fields,defModel.getPropId());
-                        if (StringUtils.isEmpty(defModel.getParentPropId())){
-                            // 如果是最
+                    switch (actionType){
+                        case ADD:
+                            logger.info("ADD: " + defModel.getPropId());
+                            verifyField = FieldUtil.getFieldById(fields,defModel.getPropId());
                             Assert.assertNotNull(verifyField);
-                        }
-                        Field orgField = FieldUtil.getFieldById(fields,defModel.getPlatformPropRefId());
-                        Assert.assertNull(orgField);
-                        break;
-                    case RemoveById:
-                        verifyField = FieldUtil.getFieldById(fields,defModel.getPropId());
-                        Assert.assertNull(verifyField);
-                        break;
-                    case RemoveByIdAndName:
-                        List<Field> fieldList = FieldUtil.getFieldByName(fields,defModel.getPropName());
-                        if (fieldList.size()>0){
-                            for (Field field:fieldList){
-                                if ("品牌".equals(defModel.getPropName())){
-                                    Assert.assertEquals(field.getId(),"brand");
-                                }
-                            }
-                        }else {
-                            Assert.assertEquals(fieldList.size(),0);
-                        }
-
+                            break;
+                        case UPDATE:
+                            logger.info("UPDATE: " + defModel.getPropId());
+                            verifyField = FieldUtil.getFieldById(fields,defModel.getPropId());
+                            Assert.assertNotNull(verifyField);
+                            Field orgField = FieldUtil.getFieldById(fields,defModel.getPlatformPropRefId());
+                            Assert.assertNull(orgField);
+                            break;
+                        case REMOVE:
+                            logger.info("REMOVE: " + defModel.getPropId());
+                            verifyField = FieldUtil.getFieldById(fields,defModel.getPropId());
+                            Assert.assertNull(verifyField);
+                            break;
 
                 }
+
 
             }
 

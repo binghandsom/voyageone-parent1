@@ -77,6 +77,28 @@ small,
   border: 1px solid rgba(0, 0, 0, 0.15);
   color: inherit;
 }
+
+.badge-initialize {
+  background-color: #5bc0de;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #fff;
+}
+.badge-refresh {
+  background-color: #f4b400;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #fff;
+}
+.badge-success {
+  background-color: #7eb83f;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #fff;
+}
+.badge-failure {
+  background-color: #fb6e52;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #fff;
+}
+
 blockquote {
   border-color: #d4cfcf;
 }

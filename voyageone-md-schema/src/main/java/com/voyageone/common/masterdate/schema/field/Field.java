@@ -1,8 +1,8 @@
 package com.voyageone.common.masterdate.schema.field;
 
 
-import com.voyageone.common.masterdate.schema.Util.StringUtil;
-import com.voyageone.common.masterdate.schema.Util.XmlUtils;
+import com.voyageone.common.masterdate.schema.util.StringUtil;
+import com.voyageone.common.masterdate.schema.util.XmlUtils;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.enums.RuleTypeEnum;
 import com.voyageone.common.masterdate.schema.enums.TopSchemaErrorCodeEnum;
@@ -15,6 +15,8 @@ import com.voyageone.common.masterdate.schema.rule.ValueTypeRule;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
 import org.dom4j.Element;
 
 public abstract class Field {
@@ -287,4 +289,6 @@ public abstract class Field {
     }
 
     public abstract Object getValue();
+
+    public abstract void setFieldValueFromMap(Map<String, Object> valueMap);
 }

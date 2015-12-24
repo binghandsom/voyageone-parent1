@@ -1,18 +1,15 @@
 package com.voyageone.common.masterdate.schema.field;
 
-import com.voyageone.common.masterdate.schema.Util.StringUtil;
-import com.voyageone.common.masterdate.schema.Util.XmlUtils;
+import com.voyageone.common.masterdate.schema.util.StringUtil;
+import com.voyageone.common.masterdate.schema.util.XmlUtils;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.enums.TopSchemaErrorCodeEnum;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaFactory;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import com.voyageone.common.masterdate.schema.value.Value;
+import java.util.*;
+
 import org.dom4j.Element;
 
 public class MultiComplexField extends Field {
@@ -170,5 +167,37 @@ public class MultiComplexField extends Field {
     @Override
     public List<ComplexValue> getValue() {
         return this.values;
+    }
+
+    @Override
+    public void setFieldValueFromMap(Map<String, Object> valueFields) {
+        Object valueObj = valueFields.get(id);
+        if (valueObj != null && valueObj instanceof List) {
+            List<ComplexValue> complexValues = new ArrayList<>();
+
+            List valueObjList = (List)valueObj;
+            for (Object valueCellObjTmp : valueObjList) {
+                if (valueCellObjTmp != null && valueCellObjTmp instanceof Map) {
+                    Map<String, Object> valueCellMap = new LinkedHashMap<>();
+
+                    Map valueCellObjMap = (Map) valueCellObjTmp;
+                    for (Object valueTmp : valueCellObjMap.entrySet()) {
+                        Map.Entry entry = (Map.Entry) valueTmp;
+                        valueCellMap.put(entry.getKey().toString(), entry.getValue());
+                    }
+
+                    ComplexValue complexValue = new ComplexValue();
+                    if (fields != null && fields.size() > 0) {
+                        for (Field field : fields) {
+                            field.setFieldValueFromMap(valueCellMap);
+                            complexValue.put(field);
+                        }
+                    }
+                    complexValues.add(complexValue);
+                }
+            }
+
+            setComplexValues(complexValues);
+        }
     }
 }

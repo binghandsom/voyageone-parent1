@@ -1,7 +1,7 @@
 package com.voyageone.common.masterdate.schema.field;
 
-import com.voyageone.common.masterdate.schema.Util.StringUtil;
-import com.voyageone.common.masterdate.schema.Util.XmlUtils;
+import com.voyageone.common.masterdate.schema.util.StringUtil;
+import com.voyageone.common.masterdate.schema.util.XmlUtils;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.enums.TopSchemaErrorCodeEnum;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
@@ -138,6 +138,30 @@ public class ComplexField extends Field {
     @Override
     public ComplexValue getValue() {
         return this.complexValue;
+    }
+
+    @Override
+    public void setFieldValueFromMap(Map<String, Object> valueFields) {
+        Object valueObj = valueFields.get(id);
+        if (valueObj != null && valueObj instanceof Map) {
+            Map<String, Object> values = new LinkedHashMap<>();
+
+            Map valuesTmp = (Map)valueObj;
+            for (Object valueTmp : valuesTmp.entrySet()) {
+                Map.Entry entry = (Map.Entry)valueTmp;
+                values.put(entry.getKey().toString(), entry.getValue());
+            }
+
+            ComplexValue complexValue = new ComplexValue();
+
+            if (fields != null && fields.size() > 0) {
+                for (Field field : fields) {
+                    field.setFieldValueFromMap(values);
+                    complexValue.put(field);
+                }
+            }
+            setComplexValue(complexValue);
+        }
     }
 
 }

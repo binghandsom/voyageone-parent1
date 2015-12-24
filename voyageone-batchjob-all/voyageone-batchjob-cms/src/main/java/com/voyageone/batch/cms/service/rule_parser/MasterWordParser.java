@@ -1,7 +1,6 @@
 package com.voyageone.batch.cms.service.rule_parser;
 
 import com.voyageone.cms.service.model.CmsBtProductModel;
-import com.voyageone.common.masterdate.schema.Util.StringUtil;
 import com.voyageone.ims.rule_expression.MasterWord;
 import com.voyageone.ims.rule_expression.RuleWord;
 import com.voyageone.ims.rule_expression.WordType;

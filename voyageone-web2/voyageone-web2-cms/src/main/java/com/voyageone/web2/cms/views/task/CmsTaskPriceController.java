@@ -5,6 +5,7 @@ import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants.TASK;
 import com.voyageone.web2.cms.model.CmsBtPromotionCodeModel;
 import com.voyageone.web2.cms.model.CmsBtPromotionGroupModel;
+import com.voyageone.web2.cms.model.CmsBtPromotionTaskModel;
 import com.voyageone.web2.cms.views.promotion.CmsPromotionDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -42,4 +43,12 @@ public class CmsTaskPriceController extends CmsController {
         return success(result);
     }
 
+    @RequestMapping(TASK.PRICE.UPDATE_TASK_STATUS)
+    public AjaxResponse updateTaskStatus(@RequestBody CmsBtPromotionTaskModel param) {
+
+        param.setModifier(getUser().getUserName());
+        cmsTaskPriceService.updateTaskStatus(param);
+        // 返回用户信息
+        return success(null);
+    }
 }

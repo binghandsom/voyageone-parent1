@@ -1,4 +1,4 @@
-package com.voyageone.common.masterdate.schema.Util;
+package com.voyageone.common.masterdate.schema.util;
 
 import java.util.regex.Pattern;
 

@@ -34,7 +34,8 @@
         "root": "/cms/setting/feedMapping",
         "getFeedCategories": "getFeedCategories",
         "getMainCategories": "getMainCategories",
-        "setMapping": "setFeedMapping"
+        "setMapping": "setFeedMapping",
+        "extendsMapping": "extendsMapping"
       }
     },
     "pop": {
@@ -77,7 +78,16 @@
     },
     "taskPriceService": {
       "root": "/cms/task/price",
-      "getPriceList": "getPriceList"
+      "getPriceList": "getPriceList",
+      "updateTaskStatus":"updateTaskStatus"
+    },
+    "productDetailService":{
+      "root":"/cms/product/detail/",
+      "getProductInfo":"getProductInfo",
+      "saveProductInfo":"saveProductInfo",
+      "chagneCategory":"chagneCategory",
+      "confirmChange":"confirmChange",
+      "revertCategory":"revertCategory"
     }
   }
 }
