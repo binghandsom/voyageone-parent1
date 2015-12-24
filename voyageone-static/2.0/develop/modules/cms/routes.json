@@ -64,5 +64,10 @@
     "hash": "/setting/platform_mapping/list",
     "templateUrl": "views/setting/platform_mapping/list.tpl.html",
     "controllerUrl": "modules/cms/views/setting/platform_mapping/list.ctl"
+  },
+  "system_category": {
+    "hash": "/system/category",
+    "templateUrl": "views/system/category/index.tpl.html",
+    "controllerUrl": "modules/cms/views/system/category/index.ctl"
   }
 }
