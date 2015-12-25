@@ -39,22 +39,37 @@
     <script type="text/ng-template" id="feedMapping.fields.tpl.html">
         <div class="form-group"
              ng-repeat="field in fields"
-             ng-init="fieldx = ctrl.extendField(field)">
-            <label class="col-sm-2 control-label"
-                   ng-class="{ 'vo_reqfield': fieldx.required }">{{ fieldx.field.name }}</label>
+             ng-init="fieldx = ctrl.getConfig(field)"
+             ng-include="'feedMapping.field.tpl.html'"
+             ng-controller="popupCtrl">
+        </div>
+    </script>
+    <script type="text/ng-template" id="feedMapping.field.tpl.html">
+        <label class="col-sm-2 control-label"
+               ng-class="{ 'vo_reqfield': fieldx.required }">{{ field.name }}</label>
 
-            <div class="col-sm-8 hierarchy" ng-if="!fieldx.isSimple">
-                <div class="col-sm-4 form-inline"
-                     ng-repeat="childField in fieldx.field.fieldList"
-                     ng-init="childFieldx = ctrl.extendField(childField)">
-                    <label class="control-label vo_reqfield">{{ childFieldx.field.name }}</label>
-                    <button class="btn btn-default btn-xs" ng-click="openfeed('md')">值匹配</button>
-                </div>
+        <div class="col-sm-8 hierarchy" ng-if="!fieldx.isSimple">
+            <div class="col-sm-4 form-inline"
+                 ng-repeat="childField in field.fieldList"
+                 ng-init="childFieldx = ctrl.getConfig(childField)"
+                 ng-include="'feedMapping.multi.setter.tpl.html'">
             </div>
+        </div>
 
-            <div class="col-sm-8" ng-if="fieldx.isSimple">
-                <button class="btn btn-default btn-xs" ng-click="openfeed('md')">值匹配</button>
-            </div>
+        <div class="col-sm-8" ng-if="fieldx.isSimple">
+            <button class="btn btn-default btn-xs" ng-click="openfeed('md')">值匹配</button>
+        </div>
+    </script>
+    <script type="text/ng-template" id="feedMapping.multi.setter.tpl.html">
+        <div ng-if="!childFieldx.isSimple"
+             ng-repeat="tcf in childField.fieldList"
+             ng-init="childField = tcf; childFieldx = ctrl.getConfig(childField)"
+             ng-include="'feedMapping.multi.setter.tpl.html'">
+        </div>
+        <div ng-if="childFieldx.isSimple">
+            <label class="control-label"
+                   ng-class="{ 'vo_reqfield': childFieldx.required }">{{ childField.name }}</label>
+            <button class="btn btn-default btn-xs" ng-click="openfeed('md')">值匹配</button>
         </div>
     </script>
 </div>

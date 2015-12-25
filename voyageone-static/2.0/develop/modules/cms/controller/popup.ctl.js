@@ -254,17 +254,28 @@ define([
             });
         }
         $scope.openfeed = openfeed;
-        function openfeed(viewSize) {
-            $modal.open({
-                templateUrl: popActions.feed.templateUrl,
-                controllerUrl: popActions.feed.controllerUrl,
-                size: viewSize,
-                resolve: {
-                    items: function () {
-                        //return data;
-                    }
-                }
+        function openfeed(viewSize, context) {
+
+            var defer = $q.defer();
+
+            require([popActions.feed.controllerUrl], function() {
+
+                defer.resolve(
+                    $modal.open({
+                        templateUrl: popActions.feed.templateUrl,
+                        controller: 'feedPropMappingPopupController as ctrl',
+                        size: viewSize,
+                        backdrop: 'static',
+                        resolve: {
+                            context: function () {
+                                return context;
+                            }
+                        }
+                    }).result
+                );
             });
+
+            return defer.promise;
         }
         $scope.openfeed_list = openfeed_list;
         function openfeed_list(viewSize) {

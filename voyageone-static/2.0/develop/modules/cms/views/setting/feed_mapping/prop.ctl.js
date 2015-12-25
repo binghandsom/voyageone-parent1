@@ -22,6 +22,10 @@ define([
             this.feedCategoryPath = $routeParams['feedCategoryPath'];
             this.feedMappingService = feedMappingService;
 
+            /**
+             * 主类目模型
+             * @type {object}
+             */
             this.mainCategory = null;
         }
 
@@ -68,9 +72,8 @@ define([
                             field.type !== FieldTypes.multiComplex;
                     },
 
-                    extendField: function (field) {
+                    getConfig: function (field) {
                         return {
-                            field: field,
                             isSimple: this.isSimpleType(field),
                             required: this.isRequiredField(field)
                         };
