@@ -1,8 +1,8 @@
 package com.voyageone.common.masterdate.schema.field;
 
 
-import com.voyageone.common.masterdate.schema.util.StringUtil;
-import com.voyageone.common.masterdate.schema.util.XmlUtils;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.masterdate.schema.utils.XmlUtils;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.enums.RuleTypeEnum;
 import com.voyageone.common.masterdate.schema.enums.TopSchemaErrorCodeEnum;
@@ -291,4 +291,9 @@ public abstract class Field {
     public abstract Object getValue();
 
     public abstract void setFieldValueFromMap(Map<String, Object> valueMap);
+
+    public abstract Object getFieldValueFromMap(Map<String, Object> valueMap);
+
+    public abstract void getFieldValueToMap(Map<String,Object> valueMap);
 }
+

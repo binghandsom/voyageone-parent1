@@ -44,8 +44,8 @@
 			<tabset class="tab-container vo_nav-tabs">
 				<!--right-btn-->
 				<div class="form-inline m-b-xs pull-right" ng-controller = "popupCtrl">
-					<button class="btn btn-success" ng-click="openOtherProgress('lg')"><i class="fa fa-refresh"></i> 全部刷新</button>
-					<button class="btn btn-danger"><i class="fa fa-warning"></i> 全部停止</button>
+					<button class="btn btn-success" ng-click="updateAllStatus(1)"><i class="fa fa-refresh"></i> 全部刷新</button>
+					<button class="btn btn-danger"  ng-click="updateAllStatus(0)"><i class="fa fa-warning"></i> 全部停止</button>
 				</div><!-- /right-btn -->
 				<!--tab-->
 				<tab>
@@ -67,10 +67,10 @@
 								<td class="text-center">{{$index+1+((vm.pricePageOption.curr - 1) * vm.pricePageOption.size)}}</td>
 								<td>{{price.key}}</td>
 								<td class="text-center">{{price.promotionPrice}}</td>
-								<td><span class="badge badge-initialize">初始化</span><span class="badge badge-refresh">等待刷新</span><span class="badge badge-success">运行成功</span><span class="badge badge-failure">运行失败</span></td>
-								<td class="text-hs">运行失败！请重新再运行！谢谢！</td>
+								<td><span ng-if="price.synFlg == 0" class="badge badge-initialize">停止</span><span ng-if="price.synFlg == 1" class="badge badge-refresh">等待刷新</span><span ng-if="price.synFlg == 2" class="badge badge-success">运行成功</span><span ng-if="price.synFlg == 3" class="badge badge-failure">运行失败</span></td>
+								<td class="text-hs">{{price.errMsg}}</td>
 								<td class="text-right">
-									<button title="刷新" class="btn btn-success btn-xs"><i class="fa fa-refresh"></i></button>
+									<button title="刷新" class="btn btn-success btn-xs" ng-click="updateStatus(price)"><i class="fa fa-refresh"></i></button>
 								</td>
 							</tr>
 							</tbody>

@@ -1,4 +1,4 @@
-package com.voyageone.common.masterdate.schema.util;
+package com.voyageone.common.masterdate.schema.utils;
 
 import com.voyageone.common.masterdate.schema.depend.DependExpress;
 import com.voyageone.common.masterdate.schema.depend.DependGroup;
@@ -8,6 +8,7 @@ import com.voyageone.common.masterdate.schema.field.MultiComplexField;
 import com.voyageone.common.masterdate.schema.rule.Rule;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -266,13 +267,32 @@ public class FieldUtil {
         }
     }
 
-
-    public static void setFieldsValueFromMap(List<Field> rootFields, Map<String, Object> valueFields){
-        if (rootFields != null && valueFields != null) {
+    /**
+     * 设置Fields的值
+     * @param rootFields fields
+     * @param valueMap value map
+     */
+    public static void setFieldsValueFromMap(List<Field> rootFields, Map<String, Object> valueMap){
+        if (rootFields != null && valueMap != null) {
             for (Field rootField : rootFields) {
-                rootField.setFieldValueFromMap(valueFields);
+                rootField.setFieldValueFromMap(valueMap);
             }
         }
+    }
+
+    /**
+     * 取得Field值到Map中
+     * @param rootFields fields
+     * @return null
+     */
+    public static Map<String, Object> getFieldsValueToMap(List<Field> rootFields){
+        Map<String, Object> result = new LinkedHashMap<>();
+        if (rootFields != null) {
+            for (Field rootField : rootFields) {
+                rootField.getFieldValueToMap(result);
+            }
+        }
+        return result;
     }
 
 }

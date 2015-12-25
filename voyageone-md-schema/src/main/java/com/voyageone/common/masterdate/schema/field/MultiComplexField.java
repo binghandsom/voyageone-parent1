@@ -1,7 +1,7 @@
 package com.voyageone.common.masterdate.schema.field;
 
-import com.voyageone.common.masterdate.schema.util.StringUtil;
-import com.voyageone.common.masterdate.schema.util.XmlUtils;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.masterdate.schema.utils.XmlUtils;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.enums.TopSchemaErrorCodeEnum;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
@@ -170,10 +170,20 @@ public class MultiComplexField extends Field {
     }
 
     @Override
-    public void setFieldValueFromMap(Map<String, Object> valueFields) {
-        Object valueObj = valueFields.get(id);
+    public void setFieldValueFromMap(Map<String, Object> valueMap) {
+        List<ComplexValue> value = getFieldValueFromMap(valueMap);
+        if (value != null) {
+            setComplexValues(value);
+        }
+    }
+
+    @Override
+    public List<ComplexValue> getFieldValueFromMap(Map<String, Object> valueMap) {
+        List<ComplexValue> result = null;
+
+        Object valueObj = valueMap.get(id);
         if (valueObj != null && valueObj instanceof List) {
-            List<ComplexValue> complexValues = new ArrayList<>();
+            result = new ArrayList<>();
 
             List valueObjList = (List)valueObj;
             for (Object valueCellObjTmp : valueObjList) {
@@ -189,15 +199,39 @@ public class MultiComplexField extends Field {
                     ComplexValue complexValue = new ComplexValue();
                     if (fields != null && fields.size() > 0) {
                         for (Field field : fields) {
-                            field.setFieldValueFromMap(valueCellMap);
-                            complexValue.put(field);
+                            Object value = field.getFieldValueFromMap(valueCellMap);
+                            complexValue.setFieldValue(field.getId(), value, field.getType());
                         }
                     }
-                    complexValues.add(complexValue);
+                    result.add(complexValue);
                 }
             }
+        }
+        return result;
+    }
 
-            setComplexValues(complexValues);
+    @Override
+    public void getFieldValueToMap(Map<String,Object> valueMap) {
+        if (values != null && values.size() > 0
+                && fields != null && fields.size() > 0) {
+            if (!valueMap.containsKey(id)) {
+                valueMap.put(id, new ArrayList());
+            }
+            List currObj = (List)valueMap.get(id);
+            for (ComplexValue complexValue : values) {
+                Map<String, Object> valueMapCell = new LinkedHashMap<>();
+
+                for (Field field : fields) {
+                    if (complexValue != null) {
+                        Object subValue = complexValue.getFieldValue(field.id, field.getType());
+                        if (subValue != null) {
+                            valueMapCell.put(field.id, subValue);
+                        }
+                    }
+                }
+
+                currObj.add(valueMapCell);
+            }
         }
     }
 }

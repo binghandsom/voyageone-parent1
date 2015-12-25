@@ -1,7 +1,7 @@
 package com.voyageone.common.masterdate.schema.field;
 
-import com.voyageone.common.masterdate.schema.util.StringUtil;
-import com.voyageone.common.masterdate.schema.util.XmlUtils;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.masterdate.schema.utils.XmlUtils;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.enums.TopSchemaErrorCodeEnum;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
@@ -185,18 +185,31 @@ public class MultiCheckField extends OptionsField {
 
     @Override
     public void setFieldValueFromMap(Map<String, Object> valueMap) {
+        List<Value> values = getFieldValueFromMap(valueMap);
+        setValues(values);
+    }
+
+    @Override
+    public List<Value> getFieldValueFromMap(Map<String, Object> valueMap) {
+        List<Value> values = new ArrayList<>();
         Object valueObj = valueMap.get(id);
         if (valueObj != null && valueObj instanceof List) {
-            List<String> values = new ArrayList<>();
             List valuesTmp = (List)valueObj;
             for (Object value : valuesTmp) {
-                if (value != null) {
-                    values.add(value.toString());
-                }
+                values.add(new Value(value != null?(String)value:""));
             }
-            for (String value : values) {
-                addValue(value);
+        }
+        return values;
+    }
+
+    @Override
+    public void getFieldValueToMap(Map<String,Object> valueMap) {
+        if (values != null) {
+            List<String> valueStrList = new ArrayList<>();
+            for (Value valueObj : values) {
+                valueStrList.add(valueObj != null && valueObj.getValue()!=null?valueObj.getValue():"");
             }
+            valueMap.put(id, valueStrList);
         }
     }
 }

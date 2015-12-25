@@ -4,7 +4,7 @@ import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
-import com.voyageone.web2.cms.bean.CmsSearchInfoBean;
+import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,7 +34,7 @@ public class CmsSearchIndexController extends CmsController {
      * @return
      */
     @RequestMapping(CmsUrlConstants.SEARCH.INDEX.INIT)
-    public AjaxResponse init() {
+    public AjaxResponse init() throws Exception {
         return success(searchIndexService.getMasterData(getUser(), getLang()));
     }
 

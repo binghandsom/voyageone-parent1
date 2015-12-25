@@ -1,6 +1,6 @@
 package com.voyageone.web2.cms.views.menu;
 
-import com.voyageone.cms.service.model.CmsFeedCategoryModel;
+import com.voyageone.cms.service.model.CmsMtCategoryTreeModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class CmsMenuServiceTest {
 
     @Test
     public void testGetCategoryTreeList() throws Exception {
-        List<CmsFeedCategoryModel> resultList = cmsMenuService.getCategoryTreeList("Feed", "013");
+        List<CmsMtCategoryTreeModel> resultList = cmsMenuService.getCategoryTreeList("Feed", "013");
         System.out.println(resultList);
         assert resultList.size() > 0;
 

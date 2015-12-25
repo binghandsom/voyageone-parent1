@@ -1,7 +1,7 @@
 package com.voyageone.common.masterdate.schema.field;
 
-import com.voyageone.common.masterdate.schema.util.StringUtil;
-import com.voyageone.common.masterdate.schema.util.XmlUtils;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.masterdate.schema.utils.XmlUtils;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.enums.TopSchemaErrorCodeEnum;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
@@ -117,9 +117,18 @@ public class SingleCheckField extends OptionsField {
 
     @Override
     public void setFieldValueFromMap(Map<String, Object> valueMap) {
+        Value valueObj = getFieldValueFromMap(valueMap);
+        setValue(valueObj);
+    }
+
+    @Override
+    public Value getFieldValueFromMap(Map<String, Object> valueMap) {
         Object valueObj = valueMap.get(id);
-        if (valueObj != null) {
-            setValue(valueObj.toString());
-        }
+        return new Value(valueObj!=null?(String)valueObj:"");
+    }
+
+    @Override
+    public void getFieldValueToMap(Map<String,Object> valueMap) {
+        valueMap.put(id, value!=null && value.getValue()!=null?value.getValue():"");
     }
 }

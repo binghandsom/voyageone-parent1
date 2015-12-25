@@ -1,7 +1,7 @@
 package com.voyageone.common.masterdate.schema.field;
 
-import com.voyageone.common.masterdate.schema.util.StringUtil;
-import com.voyageone.common.masterdate.schema.util.XmlUtils;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.masterdate.schema.utils.XmlUtils;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.enums.TopSchemaErrorCodeEnum;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
@@ -141,8 +141,18 @@ public class ComplexField extends Field {
     }
 
     @Override
-    public void setFieldValueFromMap(Map<String, Object> valueFields) {
-        Object valueObj = valueFields.get(id);
+    public void setFieldValueFromMap(Map<String, Object> valueMap) {
+        ComplexValue value = getFieldValueFromMap(valueMap);
+        if (value != null) {
+            setComplexValue(value);
+        }
+    }
+
+    @Override
+    public ComplexValue getFieldValueFromMap(Map<String, Object> valueMap) {
+        ComplexValue result = null;
+
+        Object valueObj = valueMap.get(id);
         if (valueObj != null && valueObj instanceof Map) {
             Map<String, Object> values = new LinkedHashMap<>();
 
@@ -152,16 +162,32 @@ public class ComplexField extends Field {
                 values.put(entry.getKey().toString(), entry.getValue());
             }
 
-            ComplexValue complexValue = new ComplexValue();
+            result = new ComplexValue();
 
             if (fields != null && fields.size() > 0) {
                 for (Field field : fields) {
-                    field.setFieldValueFromMap(values);
-                    complexValue.put(field);
+                    Object value = field.getFieldValueFromMap(values);
+                    result.setFieldValue(field.getId(), value, field.getType());
                 }
             }
-            setComplexValue(complexValue);
         }
+
+        return result;
     }
 
+    @Override
+    public void getFieldValueToMap(Map<String,Object> valueMap) {
+        if (complexValue != null && fields != null && fields.size() > 0) {
+            if (!valueMap.containsKey(id)) {
+                valueMap.put(id, new LinkedHashMap());
+            }
+            Map currObj = (Map)valueMap.get(id);
+            for (Field field : fields) {
+                Object subValue = complexValue.getFieldValue(field.id, field.getType());
+                if (subValue != null) {
+                    currObj.put(field.id, subValue);
+                }
+            }
+        }
+    }
 }

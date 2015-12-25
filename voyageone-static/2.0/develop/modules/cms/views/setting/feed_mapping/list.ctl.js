@@ -1,5 +1,5 @@
 /**
- * class FeedMappingController
+ * controller FeedMappingController
  */
 
 define([
@@ -11,7 +11,7 @@ define([
 
         /**
          * @description
-         * Feed Mapping 画面的 Controller 类,该类是单例,重复 new 不会返回新的实例
+         * Feed Mapping 画面的 Controller 类
          * @param {FeedMappingService} feedMappingService
          * @param {function} notify
          * @param {function} confirm
