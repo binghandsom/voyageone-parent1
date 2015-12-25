@@ -2,9 +2,10 @@ package com.voyageone.cms.service.dao.mongodb;
 
 
 import com.mongodb.*;
-import com.voyageone.cms.CmsConstants;
+import com.voyageone.cms.service.CmsProductService;
 import com.voyageone.cms.service.model.*;
 import com.voyageone.common.util.JsonUtil;
+import net.minidev.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -243,16 +244,17 @@ public class CmsProductDaoTest {
     @Test
     public void testUpdateWithGroupPlatform() {
         CmsBtProductModel_Group_Platform platformMode = new CmsBtProductModel_Group_Platform();
-        platformMode.setGroupId((long) 45);
+        platformMode.setGroupId((long)45);
         platformMode.setCartId(21);
         platformMode.setNumIId("1000702");
         platformMode.setIsMain(false);
         platformMode.setDisplayOrder(27);
         platformMode.setPublishTime("2015-10-12 16:19:00");
         platformMode.setInstockTime("2015-10-18 16:19:00");
-
-        platformMode.setPlatformStatus(CmsConstants.PlatformStatus.Waitingpublish);
-        platformMode.setPlatformActive(CmsConstants.PlatformActive.Instock);
+//        platformMode.setStatus("InStock1");
+//        platformMode.setPublishStatus(" 等待上新1");
+//        platformMode.setComment("1");
+//        platformMode.setInventory(25);
         cmsBtProductDao.updateWithPlatform("001", "2000702", platformMode);
     }
 
@@ -340,7 +342,7 @@ public class CmsProductDaoTest {
         codeList.add("100001");
         codeList.add("100002");
 
-        cmsBtProductDao.bulkUpdateFieldsByCodes("001", codeList, field, "23232");
+//        cmsBtProductDao.bathUpdateWithField("001", codeList, field, "23232");
 
         long total = System.currentTimeMillis()-start;
         System.out.println("total count:=10W; totalTime:=" + total);
@@ -360,7 +362,7 @@ public class CmsProductDaoTest {
         field.setColor("BBB");
         codeFieldMap.put("100002", field);
 
-        cmsBtProductDao.bulkUpdateFieldsByCodes("001", codeFieldMap, "23232");
+//        cmsBtProductDao.bathUpdateWithFields("001", codeFieldMap, "23232");
 
         long total = System.currentTimeMillis()-start;
         System.out.println("total count:=10W; totalTime:=" + total);

@@ -1,0 +1,173 @@
+<div class="vo_modal" ng-init="initialize()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i> 类目属性编辑</h5>
+    </div>
+    <div class="modal-body wrapper">
+        <form role="form" class="form-horizontal" name="promotionFrom">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">属性路径</label>
+                <div class="col-sm-8">
+                    <input class="form-control" ng-required="true" placeholder="珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰" disabled>
+                </div>
+            </div><!-- .form-group -->
+            <div class="form-group">
+                <label class="col-sm-3 control-label">属性ID</label>
+                <div class="col-sm-8">
+                    <input class="form-control" ng-required="true" placeholder="类目ID" disabled>
+                </div>
+            </div><!-- .form-group -->
+            <div class="form-group">
+                <label class="col-sm-3 control-label">属性名称</label>
+                <div class="col-sm-8">
+                    <input class="form-control" ng-required="true" placeholder="类目名称" disabled>
+                </div>
+            </div><!-- .form-group -->
+            <div class="form-group">
+                <label class="col-sm-3 control-label">属性Type</label>
+                <div class="col-sm-8">
+                    <select class="form-control" ng-required="true">
+                        <option value="">input</option>
+                        <option value="0">text</option>
+                        <option value="1">singleCheck</option>
+                        <option value="2">multiCheck</option>
+                        <option value="3">multiComplex</option>
+                        <option value="3">Complex</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+        <!--<div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="panel-title">Rules</div>
+            </div>
+            <div class="panel-footer">
+                <form class="form-validate form-horizontal m-l-sm">
+                    <div class="form-group">
+                        <div class="col-sm-3">
+                            <label class="checkbox-inline c-checkbox"><input type="radio" value="20"><span class="fa fa-check"></span> requiredRule </label>
+                        </div>
+                        <div class="col-sm-4">
+                            <input class="form-control" ng-required="true" placeholder="minValueRule">
+                        </div>
+                        <div class="col-sm-3">
+                            <input class="form-control" ng-required="true" placeholder="maxValueRule">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-3">
+                            <label class="checkbox-inline c-checkbox"><input type="radio" value="20"><span class="fa fa-check"></span> valueLength </label>
+                        </div>
+                        <div class="col-sm-4">
+                            <input class="form-control" ng-required="true" >
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-3">
+                            <label class="checkbox-inline c-checkbox"><input type="radio" value="20"><span class="fa fa-check"></span> tipRule </label>
+                        </div>
+                        <div class="col-sm-8">
+                            <input class="form-control" ng-required="true" >
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>-->
+        <tabset class="tab-container vo_nav-tabs">
+            <tab>
+                <tab-heading> Options</tab-heading>
+                <div class="table-responsive">
+                    <div class="col-sm-8">
+                        <div class="input-group">
+                            <input type="text" class="input-sm form-control" placeholder="Name&Value">
+											          <span class="input-group-btn">
+                                                          <button class="btn btn-sm btn-default" type="button"><i class="fa fa-search"></i> search</button>
+											          </span>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <button class="btn m-b-xs btn-sm btn-success btn-addon pull-right"><i class="fa fa-plus"></i>新增</button>
+                    </div>
+                </div>
+                <div class="table-responsive m-l-xs m-r-xs">
+                    <table class="table table-hover-new table-hover">
+                        <thead>
+                        <tr class="control-label">
+                            <th>Name</th>
+                            <th>Value</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><input class="form-control" placeholder="复古"></td>
+                            <td><input class="form-control" placeholder="43747"></td>
+                            <td><button title="删除" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button></td>
+                        </tr>
+                        <tr>
+                            <td><input class="form-control" placeholder="淑女"></td>
+                            <td><input class="form-control" placeholder="29919"></td>
+                            <td><button title="删除" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button></td>
+                        </tr>
+                        <tr>
+                            <td><input class="form-control" placeholder="文艺"></td>
+                            <td><input class="form-control" placeholder="12571527"></td>
+                            <td><button title="删除" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button></td>
+                        </tr>
+                        <tr>
+                            <td><input class="form-control" placeholder="英伦"></td>
+                            <td><input class="form-control" placeholder="3291373"></td>
+                            <td><button title="删除" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button></td>
+                        </tr>
+                        <tr>
+                            <td><input class="form-control"></td>
+                            <td><input class="form-control"></td>
+                            <td><button title="追加" class="btn btn-success btn-xs"><i class="fa fa-plus"></i></button></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </tab>
+            <!-- .tab -->
+            <tab>
+                <tab-heading> Rules </tab-heading>
+                <form class="form-validate form-horizontal m-l-sm">
+                    <div class="form-group">
+                        <div class="col-sm-3">
+                            <label class="checkbox-inline c-checkbox"><input type="radio" value="20"><span class="fa fa-check"></span> requiredRule </label>
+                        </div>
+                        <div class="col-sm-4">
+                            <input class="form-control" ng-required="true" placeholder="minValueRule">
+                        </div>
+                        <div class="col-sm-3">
+                            <input class="form-control" ng-required="true" placeholder="maxValueRule">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-3">
+                            <label class="checkbox-inline c-checkbox"><input type="radio" value="20"><span class="fa fa-check"></span> valueLength </label>
+                        </div>
+                        <div class="col-sm-4">
+                            <input class="form-control" ng-required="true" >
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-3">
+                            <label class="checkbox-inline c-checkbox"><input type="radio" value="20"><span class="fa fa-check"></span> tipRule </label>
+                        </div>
+                        <div class="col-sm-8">
+                            <input class="form-control" ng-required="true" >
+                        </div>
+                    </div>
+                </form>
+            </tab>
+            <!-- / tab -->
+        </tabset>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="$close()">取消</button>
+        <button class="btn btn-vo" ng-click="ok()">保存</button>
+    </div>
+</div><!-- .vo_modal -->

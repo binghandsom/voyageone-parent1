@@ -191,8 +191,6 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                     */
 
                     //成功时，publish_status设为1
-                    //cmsGroupPlatform.setPublishStatus("已上新");
-                    cmsProductService.update(cmsBtProductModel);
                     codeList.add(cmsBtProductModel.getFields().getCode());
                 }
 
@@ -207,10 +205,12 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                     publishTime = DateTimeUtil.getNow();
                 }
 
-                if (oldPlatformStatus != CmsConstants.PlatformStatus.Onsale && platformActive == CmsConstants.PlatformActive.Onsale) {
+                if ((workLoadBean.getUpJobParam().getMethod().equals(UpJobParamBean.METHOD_ADD) || oldPlatformStatus != CmsConstants.PlatformStatus.Onsale)
+                        && platformActive == CmsConstants.PlatformActive.Onsale) {
                     onSaleTime = DateTimeUtil.getNow();
                 }
-                if (oldPlatformStatus != CmsConstants.PlatformStatus.Instock && platformActive == CmsConstants.PlatformActive.Instock) {
+                if ((workLoadBean.getUpJobParam().getMethod().equals(UpJobParamBean.METHOD_ADD) || oldPlatformStatus != CmsConstants.PlatformStatus.Instock)
+                        && platformActive == CmsConstants.PlatformActive.Instock) {
                     instockTime = DateTimeUtil.getNow();
                 }
 

@@ -2,34 +2,32 @@
 	<div class="col-sm-12">
 		<div class="panel panelPromotion m-t-xs">
 			<div class="container-fluid m-t-sm m-b-sm">
-				<div class="col-sm-5">
+				<div class="col-sm-3">
 					<div class="form-horizontal">
 						<div class="form-group">
-							<label class="col-sm-2 control-label">类目名称</label>
+							<label class="col-sm-3 control-label">类目名称</label>
 							<div class="col-sm-7">
 								<input class="form-control" placeholder="请输入类目名称">
 							</div>
 						</div><!-- .form-group -->
 					</div>
 				</div>
-				<div class="col-sm-4">
+				<div class="col-sm-3">
 					<div class="form-horizontal">
 						<div class="form-group">
-							<label class="col-sm-2 control-label">类目ID</label>
+							<label class="col-sm-3 control-label">类目ID</label>
 							<div class="col-sm-7">
 								<input class="form-control" placeholder="请输入类目ID">
 							</div>
 						</div><!-- .form-group -->
 					</div>
 				</div>
-				<div class="col-sm-12 text-center" ng-controller="popupCtrl">
-					<script type="text/ng-template" id="popup_new_promotion.html">
-						<div ng-include="'tpl/popup_new_promotion.html'"></div>
-					</script>
-					<div class="form-inline">
-						<button class="btn btn-vo" ng-click="ok()"><i class="fa fa-search"></i>  Search</button>
-						<button class="btn btn-success" ng-click="openpromotion('md')"><i class="fa fa-plus"></i> 新增Promotion</button>
-					</div><!-- .form-inline -->
+				<div class="col-sm-2">
+					<div class="form-horizontal">
+						<div class="form-group">
+							<button class="btn btn-vo" ng-click="ok()"><i class="fa fa-search"></i>  Search</button>
+						</div><!-- .form-group -->
+					</div>
 				</div>
 			</div>
 		</div>
@@ -41,20 +39,41 @@
 					<thead>
 					<tr>
 						<th class="mfb-xt text-center">序号</th>
-						<th class="text-center">类目名称</th>
 						<th class="text-center">类目ID</th>
-						<th class="text-center">编辑</th>
+						<th class="text-center">类目名称</th>
+						<th class="text-right">编辑</th>
 					</tr>
 					</thead>
 					<tbody>
 					<tr>
 						<td>1</td>
-						<td>30</td>
-						<td>60457</td>
-						<td><button title="编辑" class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button>
-							<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
-							<button title="下载" class="btn btn-dangerdel btn-xs"><i class="fa fa-cloud-download"></i></button>
-						</td>
+						<td>AI60457</td>
+						<td>Pearl Bracelet in 14K Yellow Gold</td>
+						<td class="text-right"><a href="#/system/category/edit"><button title="编辑" class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a></td>
+					</tr>
+					<tr>
+						<td>2</td>
+						<td>AI60457</td>
+						<td>Pearl Bracelet in 14K Yellow Gold</td>
+						<td class="text-right"><a href="#/system/category/edit"><button title="编辑" class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a></td>
+					</tr>
+					<tr>
+						<td>3</td>
+						<td>AI60457</td>
+						<td>Pearl Bracelet in 14K Yellow Gold</td>
+						<td class="text-right"><a href="#/system/category/edit"><button title="编辑" class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a></td>
+					</tr>
+					<tr>
+						<td>4</td>
+						<td>AI60457</td>
+						<td>Pearl Bracelet in 14K Yellow Gold</td>
+						<td class="text-right"><a href="#/system/category/edit"><button title="编辑" class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a></td>
+					</tr>
+					<tr>
+						<td>5</td>
+						<td>AI60457</td>
+						<td>Pearl Bracelet in 14K Yellow Gold</td>
+						<td class="text-right"><a href="#/system/category/edit"><button title="编辑" class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a></td>
 					</tr>
 					</tbody>
 				</table>
