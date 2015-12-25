@@ -3,14 +3,12 @@ package com.voyageone.web2.cms.views.pop.promotion;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
-import com.voyageone.web2.cms.model.CmsBtPromotionCodeModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,8 +26,10 @@ public class CmsPromotionHistoryController extends CmsController {
     private CmsPromotionHistoryService cmsPromotionHistoryService;
 
     @RequestMapping(CmsUrlConstants.POP.PROMOTION.GET_PROMOTION_HISTORY)
-    public AjaxResponse getPriceHistory(@RequestBody Map<String, Object> params) {
-        List<CmsBtPromotionCodeModel> result = cmsPromotionHistoryService.getPromotionList(params);
+    public AjaxResponse getPromotionHistory(@RequestBody Map<String, Object> params) {
+        String channel_id = this.getUser().getSelChannelId();
+        params.put("channelId", channel_id);
+        Map<String, Object> result = cmsPromotionHistoryService.getPromotionList(params);
         return success(result);
     }
 }
