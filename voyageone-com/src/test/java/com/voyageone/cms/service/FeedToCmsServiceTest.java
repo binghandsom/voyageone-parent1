@@ -1,6 +1,6 @@
 package com.voyageone.cms.service;
 
-import com.voyageone.cms.service.model.CmsFeedCategoryModel;
+import com.voyageone.cms.service.model.Feed.CmsFeedCategoryModel;
 import com.voyageone.cms.service.model.CmsMtFeedCategoryTreeModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
