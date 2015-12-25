@@ -120,7 +120,7 @@ public class CmsProductServiceTest {
 
         List<CmsBtProductModel_Group_Platform> platforms = groups.getPlatforms();
         CmsBtProductModel_Group_Platform platform = new CmsBtProductModel_Group_Platform();
-        platform.setGroupId(Long.parseLong(""+random.nextInt(1000)));
+        platform.setGroupId(Long.parseLong("" + random.nextInt(1000)));
         platform.setCartId(21);
         platform.setNumIId(String.valueOf(2000000 + random.nextInt(1000)));
         platform.setIsMain(false);
@@ -258,4 +258,23 @@ public class CmsProductServiceTest {
         codeList.add("100002");
 //        cmsProductService.bathUpdateWithSXResult("001", 21, codeList, "123123123", "product_id1", "2015-11-12 16:19:00", "2015-11-12 16:19:00", CmsConstants.PlatformStatus.Onsale);
     }
+
+    @Test
+    public void testGetProductCodesByCart() {
+        long start = System.currentTimeMillis();
+        List<String> productCodeList = cmsProductService.getProductCodesByCart("300", 21);
+        long end = System.currentTimeMillis();
+
+        int index = 1;
+        for (String productCode : productCodeList) {
+            System.out.println(productCode);
+            index++;
+            if (index > 10) {
+                break;
+            }
+        }
+        System.out.println(productCodeList.size());
+        System.out.println("total time:=" + (end-start));
+    }
+
 }

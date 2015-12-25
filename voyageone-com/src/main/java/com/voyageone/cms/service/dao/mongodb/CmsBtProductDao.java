@@ -3,7 +3,9 @@ package com.voyageone.cms.service.dao.mongodb;
 import com.mongodb.*;
 import com.voyageone.base.dao.mongodb.BaseMongoDao;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.cms.service.model.CmsBtProductModel_Field;
 import com.voyageone.cms.service.model.CmsBtProductModel_Group_Platform;
@@ -392,5 +394,10 @@ public class CmsBtProductDao extends BaseMongoDao {
         BasicDBObject result = new BasicDBObject();
         result.putAll(map);
         return result;
+    }
+
+    @Override
+    public WriteResult update(BaseMongoModel model) {
+        throw new BusinessException("not suppert");
     }
 }
