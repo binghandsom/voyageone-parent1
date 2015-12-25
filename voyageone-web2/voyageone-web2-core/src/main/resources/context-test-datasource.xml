@@ -15,6 +15,7 @@
         <property name="user" value="root"/>
         <property name="password" value="sneakerhead"/>
         <property name="testConnectionOnCheckout" value="true"/>
+        <property name="maxIdleTime" value="25000"/>
     </bean>
 
     <bean id="sqlSessionFactoryMaster"
@@ -42,10 +43,11 @@
     <bean id="dataSourceSlave" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
         <property name="driverClass" value="com.mysql.jdbc.Driver"/>
         <property name="jdbcUrl"
-                  value="jdbc:mysql://10.0.0.24:3306/Synship?user=root&amp;password=sneakerhead&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8"/>
+                  value="jdbc:mysql://10.0.0.24:3306/Synship?autoReconnect=true&amp;user=root&amp;password=sneakerhead&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8"/>
         <property name="user" value="root"/>
         <property name="password" value="sneakerhead"/>
         <property name="testConnectionOnCheckout" value="true"/>
+        <property name="maxIdleTime" value="25000"/>
     </bean>
 
     <bean id="sqlSessionFactorySlave"
