@@ -1,12 +1,11 @@
 package com.voyageone.web2.cms.views.setting.mapping.feed;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.cms.service.FeedToCmsService;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
 import com.voyageone.cms.service.model.CmsFeedCategoryModel;
 import com.voyageone.cms.service.model.CmsFeedMappingModel;
 import com.voyageone.cms.service.model.CmsMtCategorySchemaModel;
-import com.voyageone.cms.service.model.CmsMtFeedCategoryTreeModel;
+import com.voyageone.cms.service.model.CmsMtFeedCategoryTreeModelx;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.codec.binary.Base64;
@@ -23,9 +22,6 @@ import org.springframework.stereotype.Service;
 public class CmsFeedPropMappingService extends BaseAppService {
 
     @Autowired
-    private FeedToCmsService feedToCmsService;
-
-    @Autowired
     private CmsMtCategorySchemaDao categorySchemaDao;
 
     @Autowired
@@ -33,7 +29,7 @@ public class CmsFeedPropMappingService extends BaseAppService {
 
     public CmsMtCategorySchemaModel getCategoryPropsByFeed(String feedCategoryPath, UserSessionBean userSessionBean) {
 
-        CmsMtFeedCategoryTreeModel treeModel = feedToCmsService.getFeedCategory(userSessionBean.getSelChannelId());
+        CmsMtFeedCategoryTreeModelx treeModel = feedMappingService.getFeedCategoryTree(userSessionBean);
 
         CmsFeedCategoryModel feedCategoryModel = feedMappingService.findByPath(feedCategoryPath, treeModel);
 
