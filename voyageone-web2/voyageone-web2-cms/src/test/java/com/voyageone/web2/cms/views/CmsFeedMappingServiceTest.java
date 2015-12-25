@@ -1,6 +1,6 @@
 package com.voyageone.web2.cms.views;
 
-import com.voyageone.cms.service.model.CmsMtFeedCategoryTreeModel;
+import com.voyageone.cms.service.model.CmsMtFeedCategoryTreeModelx;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.web2.cms.views.setting.mapping.feed.CmsFeedMappingService;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -30,7 +30,7 @@ public class CmsFeedMappingServiceTest {
     @Test
     public void testGetFeedCategories() throws Exception {
 
-        CmsMtFeedCategoryTreeModel cmsMtFeedCategoryTreeModel = cmsFeedMappingService.getFeedCategoryTree(userSessionBean);
+        CmsMtFeedCategoryTreeModelx cmsMtFeedCategoryTreeModel = cmsFeedMappingService.getFeedCategoryTree(userSessionBean);
 
         assert cmsMtFeedCategoryTreeModel != null;
 
