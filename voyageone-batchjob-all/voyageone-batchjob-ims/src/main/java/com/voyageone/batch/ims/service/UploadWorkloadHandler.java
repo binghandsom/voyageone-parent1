@@ -15,6 +15,7 @@ import java.util.List;
 
 /**
  * Created by Leo on 2015/5/28.
+ * Note: 为了防止死锁发生，synchronized多个对象时的顺序必须符合pri_running_queue > running_queue > suspend_queue
  */
 public abstract class UploadWorkloadHandler extends Thread{
 
@@ -69,6 +70,7 @@ public abstract class UploadWorkloadHandler extends Thread{
                     current_tcb = currentTcb;
                     taskStatus = TaskStatus.RUNNING;
 
+                    logger.debug(getName() + " current tcb:" + currentTcb);
                     // 捕捉线程运行时异常
                     try {
                         doJob(currentTcb);
@@ -120,48 +122,63 @@ public abstract class UploadWorkloadHandler extends Thread{
     }
 
     public void suspendTask(TaskControlBlock tcb) {
-        if (tcb.getTcb_queue() != pri_running_queue && tcb.getTcb_queue() != running_queue) {
+        List<TaskControlBlock> srcTcbQueue = tcb.getTcb_queue();
+        if (srcTcbQueue == running_queue) {
+            logger.debug("suspend from running queue");
+        } else if (srcTcbQueue != pri_running_queue) {
+            logger.debug("suspend from prior running queue");
+        } else {
             logger.error("This condition must be not occurred!");
             return;
         }
 
-        logger.debug("try get lock:" + tcb.getTcb_queue());
-        synchronized (tcb.getTcb_queue()) {
-            logger.debug("success to get lock:" + tcb.getTcb_queue());
-            logger.debug("try get lock:" + tcb.getTcb_queue());
+        logger.debug("suspend task:" + tcb);
+        logger.debug("try get lock:" + srcTcbQueue);
+        synchronized (srcTcbQueue) {
+            logger.debug("success to get lock:" + srcTcbQueue);
+            logger.debug("try get lock:" + suspend_queue);
             synchronized (suspend_queue)
             {
                 logger.debug("success to get lock:" + suspend_queue);
-                Iterator it$ = tcb.getTcb_queue().iterator();
+                Iterator it$ = srcTcbQueue.iterator();
                 while(it$.hasNext())
                 {
-                    if (it$.next() == tcb)
+                    if (it$.next() == tcb) {
+                        logger.debug(String.format("find tcb %s in queue %s", tcb, srcTcbQueue));
                         it$.remove();
+                    }
                 }
 
                 tcb.setTcb_queue(suspend_queue);
                 suspend_queue.add(tcb);
+                logger.debug("release lock " + suspend_queue);
             }
-        }
-        if (pri_running_queue.isEmpty() && running_queue.isEmpty()) {
-            suspendSelf();
+            logger.debug("release lock " + srcTcbQueue);
         }
     }
 
     public void stopTcb(TaskControlBlock tcb)
     {
-        if (tcb.getTcb_queue() != null) {
-            logger.debug("try get lock:" + tcb.getTcb_queue());
-            synchronized (tcb.getTcb_queue()) {
-                logger.debug("success to get lock:" + tcb.getTcb_queue());
-                Iterator<TaskControlBlock> it$ = tcb.getTcb_queue().iterator();
+        logger.debug("try stop tcb:" + tcb);
+        List<TaskControlBlock> srcTcbQueue = tcb.getTcb_queue();
+        logger.debug("srcTcbQueue:" + srcTcbQueue);
+        if (srcTcbQueue != null) {
+            logger.debug("try get lock:" + srcTcbQueue);
+            synchronized (srcTcbQueue) {
+                logger.debug("success to get lock:" + srcTcbQueue);
+                Iterator<TaskControlBlock> it$ = srcTcbQueue.iterator();
                 while (it$.hasNext()) {
+                    logger.debug("queue length:" + srcTcbQueue.size());
                     if (it$.next().equals(tcb)) {
                         tcb.setTcb_queue(null);
                         it$.remove();
+                        logger.debug("find stop tcb " + tcb);
+                        logger.debug("queue length:" + srcTcbQueue.size());
                         break;
                     }
+                    logger.debug("not find stop tcb " + tcb);
                 }
+                logger.debug("release lock " + srcTcbQueue);
             }
         }
     }
@@ -190,11 +207,11 @@ public abstract class UploadWorkloadHandler extends Thread{
         }
 
         logger.debug("try get lock:" + suspend_queue);
-        synchronized (suspend_queue)
+        synchronized (tcbQueue)
         {
-            logger.debug("success to get lock:" + suspend_queue);
+            logger.debug("success to get lock:" + tcbQueue);
             logger.debug("try get lock:" + tcbQueue);
-            synchronized (tcbQueue) {
+            synchronized (suspend_queue) {
                 logger.debug("success to get lock:" + tcbQueue);
                 Iterator it$ = suspend_queue.iterator();
                 while (it$.hasNext()) {
@@ -204,7 +221,9 @@ public abstract class UploadWorkloadHandler extends Thread{
 
                 tcb.setTcb_queue(tcbQueue);
                 tcbQueue.add(tcb);
+                logger.debug("release lock " + tcbQueue);
             }
+            logger.debug("release lock " + suspend_queue);
         }
     }
 
@@ -219,6 +238,8 @@ public abstract class UploadWorkloadHandler extends Thread{
                 TaskControlBlock compare_tcb = it$.next();
                 if (compare_tcb.equals(tcb))
                 {
+                    logger.debug("tcb(" + tcb + ") exists, ignore it!");
+                    logger.debug("release lock " + running_queue);
                     return false;
                 }
             }
@@ -227,9 +248,13 @@ public abstract class UploadWorkloadHandler extends Thread{
 
             if (taskStatus == TaskStatus.SUSPEND)
             {
+                logger.debug(getName() + "'s taskStatus is " + taskStatus + ", invoke wake self");
                 taskStatus = TaskStatus.RUNNING;
                 wakeSelf();
+            } else {
+                logger.debug(getName() + "'s taskStatus is " + taskStatus + ", need not invoke wake self");
             }
+            logger.debug("release lock " + running_queue);
             return true;
         }
     }
@@ -250,6 +275,7 @@ public abstract class UploadWorkloadHandler extends Thread{
 
             tcb.setTcb_queue(pri_running_queue);
             pri_running_queue.add(tcb);
+            logger.debug("release lock:" + pri_running_queue);
             return true;
         }
     }
@@ -270,6 +296,7 @@ public abstract class UploadWorkloadHandler extends Thread{
             }
             tcb.setTcb_queue(suspend_queue);
             suspend_queue.add(tcb);
+            logger.debug("release lock " + running_queue);
             return true;
         }
     }
@@ -287,6 +314,7 @@ public abstract class UploadWorkloadHandler extends Thread{
                     return tcb;
                 }
             }
+            logger.debug("release lock " + running_queue);
             return null;
         }
     }
@@ -304,6 +332,7 @@ public abstract class UploadWorkloadHandler extends Thread{
                     return tcb;
                 }
             }
+            logger.debug("release lock " + pri_running_queue);
             return null;
         }
     }
@@ -325,6 +354,7 @@ public abstract class UploadWorkloadHandler extends Thread{
                     return tcb;
                 }
             }
+            logger.debug("release lock:" + suspend_queue);
         }
         return null;
     }
@@ -348,6 +378,7 @@ public abstract class UploadWorkloadHandler extends Thread{
                     e.printStackTrace();
                 }
             }
+            logger.debug("release lock " + queue_lock);
         }
     }
 
@@ -358,10 +389,11 @@ public abstract class UploadWorkloadHandler extends Thread{
         {
             logger.info(getName() + " is notified!");
             queue_lock.notify();
+            logger.debug("release lock " + queue_lock);
         }
     }
 
     protected void logIssue (String message) {
-        issueLog.log(UploadProductJob.class.getSimpleName(), message, ErrorType.BatchJob, SubSystem.IMS);
+        issueLog.log(UploadWorkloadHandler.class.getSimpleName(), message, ErrorType.BatchJob, SubSystem.IMS);
     }
 }
