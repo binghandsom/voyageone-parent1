@@ -3,6 +3,7 @@ package com.voyageone.cms.service;
 import com.mongodb.BulkWriteResult;
 import com.mongodb.CommandResult;
 import com.mongodb.WriteResult;
+import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.cms.CmsConstants;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
@@ -55,6 +56,31 @@ public class CmsProductService {
      */
     public List<CmsBtProductModel> getProductByGroupId(String channelId, long groupId) {
         return cmsBtProductDao.selectProductByGroupId(channelId, groupId);
+    }
+
+    /**
+     * 获取商品Code List 根据CartId
+     * @param channelId channel ID
+     * @param cartId cart ID
+     * @return code list
+     */
+    public List<String> getProductCodesByCart(String channelId, int cartId) {
+        List<String> result = new ArrayList<>();
+
+        JomgoQuery queryObject = new JomgoQuery();
+        queryObject.setQuery("{\"groups.platforms.cartId\":" + cartId + "}");
+        queryObject.setProjection("fields.code");
+
+        List<CmsBtProductModel> products = cmsBtProductDao.select(queryObject, channelId);
+        if (products != null && products.size() > 0) {
+            for (CmsBtProductModel product : products) {
+                if (product.getFields() != null) {
+                    result.add(product.getFields().getCode());
+                }
+            }
+        }
+
+        return result;
     }
 
     /**
