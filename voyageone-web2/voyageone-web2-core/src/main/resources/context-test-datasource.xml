@@ -14,6 +14,7 @@
                   value="jdbc:mysql://10.0.0.24:3306/Synship?autoReconnect=true&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8"/>
         <property name="user" value="root"/>
         <property name="password" value="sneakerhead"/>
+        <property name="testConnectionOnCheckout" value="true"/>
     </bean>
 
     <bean id="sqlSessionFactoryMaster"
@@ -44,6 +45,7 @@
                   value="jdbc:mysql://10.0.0.24:3306/Synship?user=root&amp;password=sneakerhead&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8"/>
         <property name="user" value="root"/>
         <property name="password" value="sneakerhead"/>
+        <property name="testConnectionOnCheckout" value="true"/>
     </bean>
 
     <bean id="sqlSessionFactorySlave"
