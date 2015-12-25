@@ -1525,12 +1525,15 @@ public class TmallProductService {
                     }
 
                     Field processField = processFields.get(0);
-                    if (mainSxProduct.getCmsBtProductModelGroupPlatform().getPlatformActive() == CmsConstants.PlatformActive.Onsale) {
+                    CmsConstants.PlatformActive platformActive = mainSxProduct.getCmsBtProductModelGroupPlatform().getPlatformActive();
+                    if (platformActive == CmsConstants.PlatformActive.Onsale) {
                         ((SingleCheckField) processField).setValue("0");
-                    }
-                    else if (mainSxProduct.getCmsBtProductModelGroupPlatform().getPlatformActive() == CmsConstants.PlatformActive.Instock) {
+                    } else if (platformActive == CmsConstants.PlatformActive.Instock) {
                         ((SingleCheckField) processField).setValue("2");
+                    } else {
+                        throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("PlatformActive must be Onsale or Instock, but now it is " + platformActive));
                     }
+                    contextBuildFields.addCustomField(processField);
                     break;
                 }
             }
