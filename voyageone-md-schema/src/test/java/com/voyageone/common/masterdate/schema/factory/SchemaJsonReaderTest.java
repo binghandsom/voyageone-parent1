@@ -1,7 +1,7 @@
 package com.voyageone.common.masterdate.schema.factory;
 
-import com.voyageone.common.masterdate.schema.util.FieldUtil;
-import com.voyageone.common.masterdate.schema.util.JsonUtil;
+import com.voyageone.common.masterdate.schema.utils.FieldUtil;
+import com.voyageone.common.masterdate.schema.utils.JsonUtil;
 import com.voyageone.common.masterdate.schema.depend.DependExpress;
 import com.voyageone.common.masterdate.schema.depend.DependGroup;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
@@ -27,7 +27,7 @@ import java.util.List;
 public class SchemaJsonReaderTest {
 
     @Test
-     public void tesMapToInputField() throws Exception {
+    public void tesMapToInputField() throws Exception {
         List<Field> fieldsList = new ArrayList<>();
         InputField inputField = createInputFiled(null);
         fieldsList.add(inputField);
@@ -44,7 +44,7 @@ public class SchemaJsonReaderTest {
         }
     }
 
-    private InputField createInputFiled(String id) {
+    public static InputField createInputFiled(String id) {
         InputField inputField = (InputField) SchemaFactory.createField(FieldTypeEnum.INPUT);
         if (id == null) {
             inputField.setId("InputFiled1");
@@ -55,12 +55,12 @@ public class SchemaJsonReaderTest {
         inputField.setValue("Value1");
         inputField.setDefaultValue("DefaultValue1");
         //inputField.setFieldRequired();
-        List<Property> properties = new ArrayList();
+        List<Property> properties = new ArrayList<>();
         properties.add(new Property("property_key1", "property_value1"));
         properties.add(new Property("property_key2", "property_value2"));
         inputField.setProperties(properties);
 
-        List<Rule> rules = new ArrayList();
+        List<Rule> rules = new ArrayList<>();
 
         RuleTypeEnum ruleEnum = RuleTypeEnum.getEnum("maxLengthRule");
         MaxLengthRule rule = (MaxLengthRule)SchemaFactory.createRule(ruleEnum);
@@ -71,7 +71,7 @@ public class SchemaJsonReaderTest {
         DependGroup dg_result = new DependGroup();
         dg_result.setOperator("and");
 
-        List<DependExpress> dependExpressList = new ArrayList();
+        List<DependExpress> dependExpressList = new ArrayList<>();
         DependExpress dgSubEle = new DependExpress();
         dgSubEle.setFieldId("dependExpressId1");
         dgSubEle.setValue("dependExpressValue1");
@@ -84,7 +84,7 @@ public class SchemaJsonReaderTest {
         dependExpressList.add(dgSubEle);
         dg_result.setDependExpressList(dependExpressList);
 
-        List<DependGroup> dependGroupList = new ArrayList();
+        List<DependGroup> dependGroupList = new ArrayList<>();
 
         dependGroupList.add(new DependGroup());
 
@@ -102,7 +102,7 @@ public class SchemaJsonReaderTest {
     @Test
     public void testMapToMultiInputField() throws Exception {
         List<Field> fieldsList = new ArrayList<>();
-        MultiInputField inputField = createMutiInputField();
+        MultiInputField inputField = createMutiInputField(null);
         fieldsList.add(inputField);
 
         String jsonStr = JsonUtil.bean2Json(fieldsList);
@@ -117,9 +117,12 @@ public class SchemaJsonReaderTest {
         }
     }
 
-    private MultiInputField createMutiInputField() {
+    public static MultiInputField createMutiInputField(String id) {
         MultiInputField inputField = (MultiInputField) SchemaFactory.createField(FieldTypeEnum.MULTIINPUT);
-        inputField.setId("MultiInputField1");
+        if (id == null) {
+            id = "MultiInputField1";
+        }
+        inputField.setId(id);
         inputField.setName("MultiInputField11");
         inputField.addValue("Value1");
 
@@ -130,12 +133,12 @@ public class SchemaJsonReaderTest {
         inputField.addDefaultValue("DefaultValue2");
 
         //inputField.setFieldRequired();
-        List<Property> properties = new ArrayList();
+        List<Property> properties = new ArrayList<>();
         properties.add(new Property("property_key1", "property_value1"));
         properties.add(new Property("property_key2", "property_value2"));
         inputField.setProperties(properties);
 
-        List<Rule> rules = new ArrayList();
+        List<Rule> rules = new ArrayList<>();
 
         RuleTypeEnum ruleEnum = RuleTypeEnum.getEnum("maxLengthRule");
         MaxLengthRule rule = (MaxLengthRule)SchemaFactory.createRule(ruleEnum);
@@ -146,7 +149,7 @@ public class SchemaJsonReaderTest {
         DependGroup dg_result = new DependGroup();
         dg_result.setOperator("and");
 
-        List<DependExpress> dependExpressList = new ArrayList();
+        List<DependExpress> dependExpressList = new ArrayList<>();
         DependExpress dgSubEle = new DependExpress();
         dgSubEle.setFieldId("dependExpressId1");
         dgSubEle.setValue("dependExpressValue1");
@@ -159,7 +162,7 @@ public class SchemaJsonReaderTest {
         dependExpressList.add(dgSubEle);
         dg_result.setDependExpressList(dependExpressList);
 
-        List<DependGroup> dependGroupList = new ArrayList();
+        List<DependGroup> dependGroupList = new ArrayList<>();
 
         dependGroupList.add(new DependGroup());
 
@@ -177,7 +180,7 @@ public class SchemaJsonReaderTest {
     @Test
     public void testmapToSingleCheckField() throws TopSchemaException {
         List<Field> fieldsList = new ArrayList<>();
-        SingleCheckField singleCheckField = createSingleCheckField();
+        SingleCheckField singleCheckField = createSingleCheckField(null);
         fieldsList.add(singleCheckField);
         String jsonStr = JsonUtil.bean2Json(fieldsList);
         System.out.println(jsonStr);
@@ -191,17 +194,20 @@ public class SchemaJsonReaderTest {
         }
     }
 
-    private SingleCheckField createSingleCheckField() {
+    public static SingleCheckField createSingleCheckField(String id) {
         SingleCheckField singleCheckField = (SingleCheckField) SchemaFactory.createField(FieldTypeEnum.SINGLECHECK);
-        singleCheckField.setId("SingleCheckField1");
+        if (id == null) {
+            id = "SingleCheckField1";
+        }
+        singleCheckField.setId(id);
         singleCheckField.setName("SingleCheckField11");
         //inputField.setFieldRequired();
-        List<Property> properties = new ArrayList();
+        List<Property> properties = new ArrayList<>();
         properties.add(new Property("property_key1", "property_value1"));
         properties.add(new Property("property_key2", "property_value2"));
         singleCheckField.setProperties(properties);
 
-        List<Rule> rules = new ArrayList();
+        List<Rule> rules = new ArrayList<>();
         RuleTypeEnum ruleEnum = RuleTypeEnum.getEnum("maxLengthRule");
         MaxLengthRule rule = (MaxLengthRule)SchemaFactory.createRule(ruleEnum);
         rule.setUnit("mm");
@@ -209,7 +215,7 @@ public class SchemaJsonReaderTest {
         rule.setExProperty("MaxLengthRule ExProperty 1");
         DependGroup dg_result = new DependGroup();
         dg_result.setOperator("and");
-        List<DependExpress> dependExpressList = new ArrayList();
+        List<DependExpress> dependExpressList = new ArrayList<>();
         DependExpress dgSubEle = new DependExpress();
         dgSubEle.setFieldId("dependExpressId1");
         dgSubEle.setValue("dependExpressValue1");
@@ -221,7 +227,7 @@ public class SchemaJsonReaderTest {
         dgSubEle.setSymbol("deSymbol2");
         dependExpressList.add(dgSubEle);
         dg_result.setDependExpressList(dependExpressList);
-        List<DependGroup> dependGroupList = new ArrayList();
+        List<DependGroup> dependGroupList = new ArrayList<>();
         dependGroupList.add(new DependGroup());
         dg_result.setDependGroupList(dependGroupList);
         rule.setDependGroup(dg_result);
@@ -251,7 +257,7 @@ public class SchemaJsonReaderTest {
     @Test
     public void testMapToMultiCheckField() throws TopSchemaException {
         List<Field> fieldsList = new ArrayList<>();
-        MultiCheckField multiCheckField = createMultiCheckField();
+        MultiCheckField multiCheckField = createMultiCheckField(null);
         fieldsList.add(multiCheckField);
         String jsonStr = JsonUtil.bean2Json(fieldsList);
         System.out.println(jsonStr);
@@ -265,17 +271,20 @@ public class SchemaJsonReaderTest {
         }
     }
 
-    private MultiCheckField createMultiCheckField() {
+    public static MultiCheckField createMultiCheckField(String id) {
         MultiCheckField multiCheckField = (MultiCheckField) SchemaFactory.createField(FieldTypeEnum.MULTICHECK);
-        multiCheckField.setId("MultiCheckField1");
+        if (id == null) {
+            id = "MultiCheckField1";
+        }
+        multiCheckField.setId(id);
         multiCheckField.setName("MultiCheckField11");
         //inputField.setFieldRequired();
-        List<Property> properties = new ArrayList();
+        List<Property> properties = new ArrayList<>();
         properties.add(new Property("property_key1", "property_value1"));
         properties.add(new Property("property_key2", "property_value2"));
         multiCheckField.setProperties(properties);
 
-        List<Rule> rules = new ArrayList();
+        List<Rule> rules = new ArrayList<>();
         RuleTypeEnum ruleEnum = RuleTypeEnum.getEnum("maxLengthRule");
         MaxLengthRule rule = (MaxLengthRule)SchemaFactory.createRule(ruleEnum);
         rule.setUnit("mm");
@@ -283,7 +292,7 @@ public class SchemaJsonReaderTest {
         rule.setExProperty("MaxLengthRule ExProperty 1");
         DependGroup dg_result = new DependGroup();
         dg_result.setOperator("and");
-        List<DependExpress> dependExpressList = new ArrayList();
+        List<DependExpress> dependExpressList = new ArrayList<>();
         DependExpress dgSubEle = new DependExpress();
         dgSubEle.setFieldId("dependExpressId1");
         dgSubEle.setValue("dependExpressValue1");
@@ -295,7 +304,7 @@ public class SchemaJsonReaderTest {
         dgSubEle.setSymbol("deSymbol2");
         dependExpressList.add(dgSubEle);
         dg_result.setDependExpressList(dependExpressList);
-        List<DependGroup> dependGroupList = new ArrayList();
+        List<DependGroup> dependGroupList = new ArrayList<>();
         dependGroupList.add(new DependGroup());
         dg_result.setDependGroupList(dependGroupList);
         rule.setDependGroup(dg_result);
@@ -327,7 +336,7 @@ public class SchemaJsonReaderTest {
     @Test
     public void testMapToComplexField() throws TopSchemaException {
         List<Field> fieldsList = new ArrayList<>();
-        ComplexField complexField = createComplexField();
+        ComplexField complexField = createComplexField(null);
         fieldsList.add(complexField);
         String jsonStr = JsonUtil.bean2Json(fieldsList);
         System.out.println(jsonStr);
@@ -341,17 +350,20 @@ public class SchemaJsonReaderTest {
         }
     }
 
-    private ComplexField createComplexField() {
+    public static ComplexField createComplexField(String id) {
         ComplexField complexField = (ComplexField) SchemaFactory.createField(FieldTypeEnum.COMPLEX);
-        complexField.setId("aa2.aa2");
+        if (id == null) {
+            id = "aa2.aa2";
+        }
+        complexField.setId(id);
         complexField.setName("createComplexField11");
         //inputField.setFieldRequired();
-        List<Property> properties = new ArrayList();
+        List<Property> properties = new ArrayList<>();
         properties.add(new Property("property_key1", "property_value1"));
         properties.add(new Property("property_key2", "property_value2"));
         complexField.setProperties(properties);
 
-        List<Rule> rules = new ArrayList();
+        List<Rule> rules = new ArrayList<>();
         RuleTypeEnum ruleEnum = RuleTypeEnum.getEnum("maxLengthRule");
         MaxLengthRule rule = (MaxLengthRule)SchemaFactory.createRule(ruleEnum);
         rule.setUnit("mm");
@@ -359,7 +371,7 @@ public class SchemaJsonReaderTest {
         rule.setExProperty("MaxLengthRule ExProperty 1");
         DependGroup dg_result = new DependGroup();
         dg_result.setOperator("and");
-        List<DependExpress> dependExpressList = new ArrayList();
+        List<DependExpress> dependExpressList = new ArrayList<>();
         DependExpress dgSubEle = new DependExpress();
         dgSubEle.setFieldId("rename1");
         dgSubEle.setValue("dependExpressValue1");
@@ -371,7 +383,7 @@ public class SchemaJsonReaderTest {
         dgSubEle.setSymbol("deSymbol2");
         dependExpressList.add(dgSubEle);
         dg_result.setDependExpressList(dependExpressList);
-        List<DependGroup> dependGroupList = new ArrayList();
+        List<DependGroup> dependGroupList = new ArrayList<>();
         dependGroupList.add(new DependGroup());
         dg_result.setDependGroupList(dependGroupList);
         rule.setDependGroup(dg_result);
@@ -379,17 +391,17 @@ public class SchemaJsonReaderTest {
         complexField.setRules(rules);
 
         complexField.add(createInputFiled("InputFiled11"));
-        complexField.add(createSingleCheckField());
-        complexField.add(createMultiCheckField());
+        complexField.add(createSingleCheckField("SingleCheck1"));
+        complexField.add(createMultiCheckField("MultiCheck1"));
 
         ComplexValue defaultValue = new ComplexValue();
         defaultValue.put(createInputFiled(null));
-        defaultValue.put(createSingleCheckField());
+        defaultValue.put(createSingleCheckField(null));
         complexField.setDefaultValue(defaultValue);
 
         ComplexValue complexValue = new ComplexValue();
         complexValue.put(createInputFiled(null));
-        complexValue.put(createSingleCheckField());
+        complexValue.put(createSingleCheckField(null));
         complexField.setComplexValue(complexValue);
 
 
@@ -399,7 +411,7 @@ public class SchemaJsonReaderTest {
     @Test
     public void testMapToMultiComplexField() throws TopSchemaException {
         List<Field> fieldsList = new ArrayList<>();
-        MultiComplexField complexField = createMultiComplexField();
+        MultiComplexField complexField = createMultiComplexField(null);
         fieldsList.add(complexField);
         String jsonStr = JsonUtil.bean2Json(fieldsList);
         System.out.println(jsonStr);
@@ -432,17 +444,20 @@ public class SchemaJsonReaderTest {
 
     }
 
-    private MultiComplexField createMultiComplexField() {
+    public static MultiComplexField createMultiComplexField(String id) {
         MultiComplexField complexField = (MultiComplexField) SchemaFactory.createField(FieldTypeEnum.MULTICOMPLEX);
-        complexField.setId("aa1.aa1");
+        if (id == null) {
+            id = "aa1.aa1";
+        }
+        complexField.setId(id);
         complexField.setName("A11");
         //inputField.setFieldRequired();
-        List<Property> properties = new ArrayList();
+        List<Property> properties = new ArrayList<>();
         properties.add(new Property("property_key1", "property_value1"));
         properties.add(new Property("property_key2", "property_value2"));
         complexField.setProperties(properties);
 
-        List<Rule> rules = new ArrayList();
+        List<Rule> rules = new ArrayList<>();
         RuleTypeEnum ruleEnum = RuleTypeEnum.getEnum("maxLengthRule");
         MaxLengthRule rule = (MaxLengthRule)SchemaFactory.createRule(ruleEnum);
         rule.setUnit("mm");
@@ -450,7 +465,7 @@ public class SchemaJsonReaderTest {
         rule.setExProperty("MaxLengthRule ExProperty 1");
         DependGroup dg_result = new DependGroup();
         dg_result.setOperator("and");
-        List<DependExpress> dependExpressList = new ArrayList();
+        List<DependExpress> dependExpressList = new ArrayList<>();
         DependExpress dgSubEle = new DependExpress();
         dgSubEle.setFieldId("dependExpressId1");
         dgSubEle.setValue("dependExpressValue1");
@@ -462,35 +477,35 @@ public class SchemaJsonReaderTest {
         dgSubEle.setSymbol("deSymbol2");
         dependExpressList.add(dgSubEle);
         dg_result.setDependExpressList(dependExpressList);
-        List<DependGroup> dependGroupList = new ArrayList();
+        List<DependGroup> dependGroupList = new ArrayList<>();
         dependGroupList.add(new DependGroup());
         dg_result.setDependGroupList(dependGroupList);
         rule.setDependGroup(dg_result);
         rules.add(rule);
         complexField.setRules(rules);
 
-        complexField.add(createInputFiled(null));
-        complexField.add(createSingleCheckField());
-        complexField.add(createMultiCheckField());
-        complexField.add(createComplexField());
+        complexField.add(createInputFiled("InputFiled2"));
+        complexField.add(createSingleCheckField("SingleCheck2"));
+        complexField.add(createMultiCheckField("MultiCheck2"));
+        complexField.add(createComplexField("Complex2"));
 
-        ComplexValue defaultValue = new ComplexValue();
-        defaultValue.put(createInputFiled(null));
-        defaultValue.put(createSingleCheckField());
-        complexField.addDefaultComplexValue(defaultValue);
-        defaultValue = new ComplexValue();
-        defaultValue.put(createInputFiled(null));
-        defaultValue.put(createMultiCheckField());
-        complexField.addDefaultComplexValue(defaultValue);
-
-        ComplexValue complexValue = new ComplexValue();
-        complexValue.put(createInputFiled(null));
-        complexValue.put(createSingleCheckField());
-        complexField.addComplexValue(complexValue);
-        complexValue = new ComplexValue();
-        complexValue.put(createInputFiled(null));
-        complexValue.put(createMultiCheckField());
-        complexField.addComplexValue(complexValue);
+//        ComplexValue defaultValue = new ComplexValue();
+//        defaultValue.put(createInputFiled(null));
+//        defaultValue.put(createSingleCheckField(null));
+//        complexField.addDefaultComplexValue(defaultValue);
+//        defaultValue = new ComplexValue();
+//        defaultValue.put(createInputFiled(null));
+//        defaultValue.put(createMultiCheckField(null));
+//        complexField.addDefaultComplexValue(defaultValue);
+//
+//        ComplexValue complexValue = new ComplexValue();
+//        complexValue.put(createInputFiled(null));
+//        complexValue.put(createSingleCheckField(null));
+//        complexField.addComplexValue(complexValue);
+//        complexValue = new ComplexValue();
+//        complexValue.put(createInputFiled(null));
+//        complexValue.put(createMultiCheckField(null));
+//        complexField.addComplexValue(complexValue);
 
 
         return complexField;
@@ -500,16 +515,16 @@ public class SchemaJsonReaderTest {
     public void tesMapToLabelField() throws Exception {
         List<Field> fieldsList = new ArrayList<>();
 
-        LabelField labelField = (LabelField) SchemaFactory.createField(FieldTypeEnum.LABEL);
+                LabelField labelField = (LabelField) SchemaFactory.createField(FieldTypeEnum.LABEL);
         labelField.setId("a1");
         labelField.setName("A11");
         //inputField.setFieldRequired();
-        List<Property> properties = new ArrayList();
+        List<Property> properties = new ArrayList<>();
         properties.add(new Property("property_key1", "property_value1"));
         properties.add(new Property("property_key2", "property_value2"));
         labelField.setProperties(properties);
 
-        List<Rule> rules = new ArrayList();
+        List<Rule> rules = new ArrayList<>();
 
         RuleTypeEnum ruleEnum = RuleTypeEnum.getEnum("maxLengthRule");
         MaxLengthRule rule = (MaxLengthRule)SchemaFactory.createRule(ruleEnum);
@@ -520,7 +535,7 @@ public class SchemaJsonReaderTest {
         DependGroup dg_result = new DependGroup();
         dg_result.setOperator("and");
 
-        List<DependExpress> dependExpressList = new ArrayList();
+        List<DependExpress> dependExpressList = new ArrayList<>();
         DependExpress dgSubEle = new DependExpress();
         dgSubEle.setFieldId("dependExpressId1");
         dgSubEle.setValue("dependExpressValue1");
@@ -533,7 +548,7 @@ public class SchemaJsonReaderTest {
         dependExpressList.add(dgSubEle);
         dg_result.setDependExpressList(dependExpressList);
 
-        List<DependGroup> dependGroupList = new ArrayList();
+        List<DependGroup> dependGroupList = new ArrayList<>();
 
         dependGroupList.add(new DependGroup());
 
@@ -579,7 +594,7 @@ public class SchemaJsonReaderTest {
         InputField inputField = createInputFiled("rename1");
         fieldsList.add(inputField);
 
-        MultiComplexField complexField = createMultiComplexField();
+        MultiComplexField complexField = createMultiComplexField(null);
         fieldsList.add(complexField);
         String jsonStr = JsonUtil.bean2Json(fieldsList);
         System.out.println(jsonStr);

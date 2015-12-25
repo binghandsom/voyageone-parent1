@@ -1,7 +1,7 @@
 package com.voyageone.common.masterdate.schema.field;
 
-import com.voyageone.common.masterdate.schema.util.StringUtil;
-import com.voyageone.common.masterdate.schema.util.XmlUtils;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.masterdate.schema.utils.XmlUtils;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.enums.TopSchemaErrorCodeEnum;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
@@ -86,9 +86,21 @@ public class InputField extends Field {
 
     @Override
     public void setFieldValueFromMap(Map<String, Object> valueMap) {
-        Object valueObj = valueMap.get(id);
+        Object valueObj = getFieldValueFromMap(valueMap);
+        String value = "";
         if (valueObj != null) {
-            setValue(valueObj.toString());
+            value = valueObj.toString();
         }
+        setValue(value);
+    }
+
+    @Override
+    public String getFieldValueFromMap(Map<String, Object> valueMap) {
+        return (String)valueMap.get(id);
+    }
+
+    @Override
+    public void getFieldValueToMap(Map<String,Object> valueMap) {
+        valueMap.put(id, value!=null?value:"");
     }
 }

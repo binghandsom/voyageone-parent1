@@ -1,15 +1,13 @@
 package com.voyageone.batch.cms.service;
 
-import com.taobao.top.schema.factory.SchemaReader;
 import com.voyageone.cms.service.dao.CmsMtCommonPropDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
 import com.voyageone.cms.service.model.MtCommPropActionDefModel;
 import com.voyageone.common.configs.Enums.ActionType;
-import com.voyageone.common.masterdate.schema.util.FieldUtil;
+import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
 import com.voyageone.common.masterdate.schema.field.Field;
-import com.voyageone.common.util.StringUtils;
 import net.minidev.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

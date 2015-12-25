@@ -1,7 +1,7 @@
 package com.voyageone.common.masterdate.schema.field;
 
-import com.voyageone.common.masterdate.schema.util.StringUtil;
-import com.voyageone.common.masterdate.schema.util.XmlUtils;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.masterdate.schema.utils.XmlUtils;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.enums.TopSchemaErrorCodeEnum;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
@@ -101,6 +101,15 @@ public class LabelField extends Field {
 
     @Override
     public void setFieldValueFromMap(Map<String, Object> valueMap) {
+    }
+
+    @Override
+    public Object getFieldValueFromMap(Map<String, Object> valueMap) {
+        return null;
+    }
+
+    @Override
+    public void getFieldValueToMap(Map<String,Object> valueMap) {
     }
 
 }

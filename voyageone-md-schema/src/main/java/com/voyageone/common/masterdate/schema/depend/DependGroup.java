@@ -1,6 +1,6 @@
 package com.voyageone.common.masterdate.schema.depend;
 
-import com.voyageone.common.masterdate.schema.util.XmlUtils;
+import com.voyageone.common.masterdate.schema.utils.XmlUtils;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.field.Field;
 import java.util.ArrayList;

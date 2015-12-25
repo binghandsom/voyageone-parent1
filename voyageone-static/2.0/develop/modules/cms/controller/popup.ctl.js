@@ -65,6 +65,12 @@ define([
                     "templateUrl": "views/pop/product/promotion/history.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/product/promotion/history.ctl"
                 }
+            },
+            "system": {
+                "category": {
+                    "templateUrl": "views/pop/system/category/edit.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/system/category/edit.ctl"
+                }
             }
         })
         .controller('popupCtrl', popupCtrl);
@@ -288,6 +294,19 @@ define([
                 });
             });
         }
-
+        $scope.openSystemCategory = openSystemCategory;
+        function openSystemCategory(viewSize, data) {
+            require([popActions.system.category.controllerUrl], function () {
+                $modal.open({
+                    templateUrl: popActions.system.category.templateUrl,
+                    size: viewSize,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
+                    }
+                });
+            });
+        }
     }
 });
