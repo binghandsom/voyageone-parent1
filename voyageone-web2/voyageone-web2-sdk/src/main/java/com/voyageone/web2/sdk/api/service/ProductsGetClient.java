@@ -7,6 +7,7 @@ import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -25,39 +26,52 @@ public class ProductsGetClient {
     }
 
 //    /**
-//     * 获取商品 根据Code
+//     * 获取商品Code List 根据CartId
+//     * @param channelId channel ID
+//     * @param cartId cart ID
+//     * @return code list
 //     */
-//    public CmsBtProductModel getProductByCode(String channelId, String code) {
-//        //设置参数
-//        ProductGetRequest requestModel = new ProductGetRequest(channelId);
-//        requestModel.setProductCode(code);
-//        //SDK取得Product 数据
-//        return voApiClient.execute(requestModel).getProduct();
-//    }
+//    public List<String> getProductCodesByCart(String channelId, int cartId) {
+//        List<String> result = new ArrayList<>();
 //
-//    /**
-//     * 获取主商品 根据groupId
-//     */
-//    public CmsBtProductModel getMainProductByGroupId(String channelId, long groupId) {
-//        //设置参数
-//        ProductGetRequest requestModel = new ProductGetRequest(channelId);
-//        //String queryTmp = "{\"groups.platforms\":{$elemMatch: {\"groupId\":%s, \"isMain\":1}}}";
-//        requestModel.addProp("groups.platforms.groupId", groupId);
-//        requestModel.addProp("groups.platforms.isMain", 1);
+//        ProductsGetRequest request = new ProductsGetRequest();
+//        request.setChannelId(channelId);
+//        request.addProp("groups.platforms.cartId", cartId);
+//        request.setPageSize(1000);
+//        request.addField("fields.code");
 //
-////        requestModel.addField("prodId");
-////        requestModel.addField("catPath");
-////
-////        requestModel.addField("fields.code");
-////        requestModel.addField("fields.brand");
-////        requestModel.addField("fields.productName");
-////        requestModel.addField("fields.middleTitle");
-////
-////        requestModel.addSort("fields.code", true);
-////        requestModel.addSort("fields.brand", false);
+//        ProductsGetResponse response = voApiClient.execute(request);
 //
-//        //SDK取得Product 数据
-//        return voApiClient.execute(requestModel).getProduct();
+//        if (response != null) {
+//            List<CmsBtProductModel> products = response.getProducts();
+//            if (products != null && products.size() > 0) {
+//                for (CmsBtProductModel product : products) {
+//                    if (product.getFields() != null) {
+//                        result.add(product.getFields().getCode());
+//                    }
+//                }
+//            }
+//
+//            long totalCount = response.getTotalCount();
+//            long pages = totalCount/1000;
+//            if (totalCount%100 > 0) {
+//                pages++;
+//            }
+//            for (int page=2; page<=pages; page++) {
+//                request.setPageNo(page);
+//                response = voApiClient.execute(request);
+//                if (products != null && products.size() > 0) {
+//                    for (CmsBtProductModel product : products) {
+//                        if (product.getFields() != null) {
+//                            result.add(product.getFields().getCode());
+//                        }
+//                    }
+//                }
+//                System.out.println(page);
+//            }
+//        }
+//
+//        return result;
 //    }
 
 
