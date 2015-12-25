@@ -47,7 +47,8 @@ public class SxPrepareData {
 
         product.setCatId(catId);
         product.setCatPath("-100-10000-" + catId + "-");
-        String code = "code-" + productId;
+        //String code = "code-" + productId;
+        String code = "code-beixindiaodai-" + productId;
         CmsBtProductModel_Field fields = product.getFields();
         fields.setCode(code);
         fields.setBrand(brand);

@@ -1,6 +1,6 @@
 package com.voyageone.common.masterdate.schema.rule;
 
-import com.voyageone.common.masterdate.schema.util.StringUtil;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.enums.RuleTypeEnum;
 import org.dom4j.Element;
 

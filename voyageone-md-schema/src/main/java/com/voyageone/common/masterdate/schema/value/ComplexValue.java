@@ -1,6 +1,6 @@
 package com.voyageone.common.masterdate.schema.value;
 
-import com.voyageone.common.masterdate.schema.util.ISPUtil;
+import com.voyageone.common.masterdate.schema.utils.ISPUtil;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.ComplexField;
 import com.voyageone.common.masterdate.schema.field.Field;

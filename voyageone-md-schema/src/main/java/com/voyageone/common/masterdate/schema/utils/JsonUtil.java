@@ -1,4 +1,4 @@
-package com.voyageone.common.masterdate.schema.util;
+package com.voyageone.common.masterdate.schema.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
