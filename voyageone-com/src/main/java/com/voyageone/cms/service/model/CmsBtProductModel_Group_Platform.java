@@ -124,7 +124,7 @@ public class CmsBtProductModel_Group_Platform extends BaseMongoMap<String, Objec
 
     //"Instock"(在库)/"OnSale"(在售)
     public CmsConstants.PlatformActive getPlatformActive() {
-        return getAttribute("platformActive");
+        return CmsConstants.PlatformActive.valueOf(getAttribute("platformActive"));
     }
     public void setPlatformActive(CmsConstants.PlatformActive platformActive) {
         setAttribute("platformActive", platformActive);
