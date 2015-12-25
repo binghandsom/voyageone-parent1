@@ -76,5 +76,10 @@
     "hash": "/system/category",
     "templateUrl": "views/system/category/index.tpl.html",
     "controllerUrl": "modules/cms/views/system/category/index.ctl"
+  },
+  "system_category_edit": {
+    "hash": "/system/category/edit",
+    "templateUrl": "views/system/category/edit.tpl.html",
+    "controllerUrl": "modules/cms/views/system/category/edit.ctl"
   }
 }

@@ -6130,6 +6130,8 @@ a.text-black:hover {
 .attribute_bg{background:#efefef;border-radius: 2px; border-color:#d4cfcf;padding:10px 0px 10px 0px;margin:0;}
 .attribute_top{padding-top:4px;border-top:1px solid #ccc}
 .attribute_top li{padding:0px 0px 4px 0px;color:#666}
+.category_mapping_bg{margin-bottom:1px;padding:6px;background:#efefef;}
+.category_mapping_bg_list{margin-bottom:1px;padding:6px;}
 .control-title-bg{
   margin:2px 4px 6px 4px;
   padding:1px 0px 1px 10px;
