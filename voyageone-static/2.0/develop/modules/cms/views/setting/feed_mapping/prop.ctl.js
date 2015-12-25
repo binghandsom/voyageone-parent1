@@ -27,6 +27,16 @@ define([
              * @type {object}
              */
             this.mainCategory = null;
+            /**
+             * 已匹配的主类目属性
+             * @type {string[]}
+             */
+            this.matchedMains = null;
+            /**
+             * 匹配关系对象
+             * @type {object}
+             */
+            this.mapping = null;
         }
 
         FeedPropMappingController.prototype = {
@@ -38,6 +48,22 @@ define([
                 }).then(function (res) {
 
                     this.mainCategory = res.data;
+
+                    this.feedMappingService.getMatched({
+                        feedCategoryPath: this.feedCategoryPath,
+                        mainCategoryPath: this.mainCategory.catFullPath
+                    }).then(function (res) {
+
+                        this.matchedMains = res.data;
+                    }.bind(this));
+
+                    this.feedMappingService.getMapping({
+                        feedCategoryPath: this.feedCategoryPath,
+                        mainCategoryPath: this.mainCategory.catFullPath
+                    }).then(function (res) {
+
+                        this.mapping = res.data;
+                    }.bind(this));
                 }.bind(this));
             }
         };
@@ -45,7 +71,7 @@ define([
 
         return FeedPropMappingController;
 
-    })()).directive('feedMappingFields', function() {
+    })()).directive('feedMappingFields', function () {
         return {
             restrict: 'A',
             templateUrl: 'feedMapping.fields.tpl.html',
@@ -53,7 +79,7 @@ define([
                 fields: '=feedMappingFields'
             },
             controllerAs: 'ctrl',
-            controller: (function() {
+            controller: (function () {
                 function FeedMappingFieldsController() {
 
                 }

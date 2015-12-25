@@ -254,7 +254,7 @@ define([
             });
         }
         $scope.openfeed = openfeed;
-        function openfeed(viewSize, context) {
+        function openfeed(context) {
 
             var defer = $q.defer();
 
@@ -264,7 +264,7 @@ define([
                     $modal.open({
                         templateUrl: popActions.feed.templateUrl,
                         controller: 'feedPropMappingPopupController as ctrl',
-                        size: viewSize,
+                        size: 'lg',
                         backdrop: 'static',
                         resolve: {
                             context: function () {

@@ -48,7 +48,6 @@ public class CmsMtCategorySchemaModel extends BaseMongoModel {
         this.fields = fields;
     }
 
-
     public Field getSku() {
         return sku;
     }

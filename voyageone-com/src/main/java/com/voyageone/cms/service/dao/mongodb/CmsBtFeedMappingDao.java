@@ -59,6 +59,6 @@ public class CmsBtFeedMappingDao extends BaseMongoDao {
         String query = String.format("{ scope.channelId: '%s', scope.feedCategoryPath: '%s', scope.mainCategoryPath: '%s'}",
                 channelId, feedCategory, mainCategoryIdPath);
 
-        return selectOneWithQuery(query, channelId);
+        return selectOneWithQuery(query);
     }
 }

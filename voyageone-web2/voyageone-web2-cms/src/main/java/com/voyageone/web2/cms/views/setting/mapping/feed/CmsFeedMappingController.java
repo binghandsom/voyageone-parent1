@@ -49,10 +49,28 @@ public class CmsFeedMappingController extends CmsController {
     }
 
     @RequestMapping(FEED.GET_MAIN_PROPS)
-    public AjaxResponse getMainCategoryProps(@RequestBody Map<String, Object> params) {
+    public AjaxResponse getMainCategoryProps(@RequestBody Map<String, String> params) {
 
-        String feedCategoryPath = (String) params.get("feedCategoryPath");
+        String feedCategoryPath = params.get("feedCategoryPath");
 
         return success(feedPropMappingService.getCategoryPropsByFeed(feedCategoryPath, getUser()));
+    }
+
+    @RequestMapping(FEED.GET_MATCHED)
+    public AjaxResponse getMatched(@RequestBody Map<String, String> params) {
+
+        String feedCategoryPath = params.get("feedCategoryPath");
+        String mainCategoryPath = params.get("mainCategoryPath");
+
+        return success(feedPropMappingService.getMatched(feedCategoryPath, mainCategoryPath, getUser()));
+    }
+
+    @RequestMapping(FEED.GET_MAPPING)
+    public AjaxResponse getMapping(@RequestBody Map<String, String> params) {
+
+        String feedCategoryPath = params.get("feedCategoryPath");
+        String mainCategoryPath = params.get("mainCategoryPath");
+
+        return success(feedPropMappingService.getMapping(feedCategoryPath, mainCategoryPath, getUser()));
     }
 }
