@@ -1,6 +1,7 @@
 package com.voyageone.batch.cms.job;
 
 import com.voyageone.batch.Context;
+import com.voyageone.cms.CmsConstants;
 import com.voyageone.cms.service.CmsProductService;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
 import com.voyageone.cms.service.model.*;
@@ -29,10 +30,10 @@ public class SxPrepareData {
         //String catId= "54+g5a6dL+mSu+efsy/nv6Hnv6Av6buE6YeRPuWkqeeEtuePjeePoO+8iOaWsO+8iT7og7jppbA=";
 
         //珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰   sku template 1
-//        String catId = "54+g5a6dL+mSu+efsy/nv6Hnv6Av6buE6YeRPuW9qeiJsuWuneefsy/otLXph43lrp3nn7M+5omL6aWw";
+        String catId = "54+g5a6dL+mSu+efsy/nv6Hnv6Av6buE6YeRPuW9qeiJsuWuneefsy/otLXph43lrp3nn7M+5omL6aWw";
 
         //女装/女士精品>背心吊带  sku template 3
-        String catId = "5aWz6KOFL+Wls+Wjq+eyvuWTgT7og4zlv4PlkIrluKY=";
+//        String catId = "5aWz6KOFL+Wls+Wjq+eyvuWTgT7og4zlv4PlkIrluKY=";
 
         List<CmsBtProductModel> products = new ArrayList<>();
         products.add(createProduct(cmsMtCategorySchemaDao, "200", 1111, 1, "jewelry", catId, true));
@@ -47,8 +48,8 @@ public class SxPrepareData {
 
         product.setCatId(catId);
         product.setCatPath("-100-10000-" + catId + "-");
-        //String code = "code-" + productId;
-        String code = "code-beixindiaodai-" + productId;
+        String code = "code-" + productId;
+//        String code = "code-beixindiaodai-" + productId;
         CmsBtProductModel_Field fields = product.getFields();
         fields.setCode(code);
         fields.setBrand(brand);
@@ -88,6 +89,7 @@ public class SxPrepareData {
         platform.setCartId(23);
         platform.setIsMain(isMain);
         platforms.add(platform);
+        platform.setPlatformActive(CmsConstants.PlatformActive.Instock);
 
         List<CmsBtProductModel_Sku> skus = product.getSkus();
         for (int i=1; i<3; i++) {

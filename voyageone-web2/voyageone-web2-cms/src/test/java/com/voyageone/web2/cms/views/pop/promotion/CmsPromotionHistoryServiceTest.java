@@ -1,7 +1,5 @@
 package com.voyageone.web2.cms.views.pop.promotion;
 
-import com.voyageone.web2.cms.model.CmsBtPriceLogModel;
-import com.voyageone.web2.cms.model.CmsBtPromotionCodeModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +7,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,8 +23,11 @@ public class CmsPromotionHistoryServiceTest {
     @Test
     public void testGetPriceHistory() throws Exception {
         Map<String, Object> params = new HashMap<>();
-        params.put("promotionId", 15);
-        List<CmsBtPromotionCodeModel> result = cmsPromotionHistoryService.getPromotionList(params);
+        params.put("productId", 15);
+        params.put("channelId","010");
+        params.put("offset",0);
+        params.put("rows",10);
+        Map<String, Object> result = cmsPromotionHistoryService.getPromotionList(params);
         assert result.size() > 0;
     }
 }
