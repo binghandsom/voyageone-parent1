@@ -10,7 +10,8 @@
         <form role="form" class="form-horizontal">
             <div class="form-group">
                 <label class="col-sm-1 checkbox-inline c-radio">
-                    <input type="checkbox" value="option1"><span class="fa fa-check"></span></label>
+                    <input type="checkbox" value="option1"><span class="fa fa-check"></span>
+                </label>
                 <label class="col-sm-2 control-label">主数据可选项</label>
                 <div class="col-sm-5">
                     <select class="form-control">
@@ -21,15 +22,21 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-1 checkbox-inline c-radio needsclick"><input type="checkbox" value="option1"><span class="fa fa-check"></span></label>
+                <label class="col-sm-1 checkbox-inline c-radio needsclick">
+                    <input type="checkbox" value="option1"><span class="fa fa-check"></span>
+                </label>
                 <label class="col-sm-2 control-label">Feed属性</label>
                 <div class="col-sm-5">
                     <input type="text" class="form-control input-group">
                 </div>
             </div>
+
             <div class="form-group attribute_bg">
-                <label class="col-sm-1 checkbox-inline c-checkbox needsclick"><input type="checkbox" value="option1"><span class="fa fa-check"></span></label>
-                <label class="col-sm-2 control-label">条件</label>
+                <label class="col-sm-1 checkbox-inline c-checkbox needsclick">
+                    <input id="pop-set-match-val-condition" type="checkbox"/>
+                    <span class="fa fa-check"></span>
+                </label>
+                <label for="pop-set-match-val-condition" class="col-sm-2 control-label">条件</label>
                 <div class="col-sm-3">
                     <select class="form-control">
                         <option value="0">1</option>
@@ -52,7 +59,6 @@
                     </select>
                 </div>
             </div>
-
         </form>
 
     </div>
