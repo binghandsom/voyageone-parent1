@@ -80,7 +80,7 @@ define([
                 "controllerUrl": "modules/cms/views/pop/feedValue/index.ctl",
                 "controller": 'feedPropValuePopupController as ctrl',
                 "backdrop": 'static',
-                "size": 'lg'
+                "size": 'md'
             }
         })
         .controller('popupCtrl', popupCtrl);

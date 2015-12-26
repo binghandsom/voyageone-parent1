@@ -4,8 +4,8 @@
 
 define([
     'cms',
-    'modules/cms/enums/FieldTypes.js',
-    'modules/cms/enums/RuleTypes.js',
+    'modules/cms/enums/FieldTypes',
+    'modules/cms/enums/RuleTypes',
     'modules/cms/controller/popup.ctl'
 ], function (cms, FieldTypes, RuleTypes) {
     'use strict';
