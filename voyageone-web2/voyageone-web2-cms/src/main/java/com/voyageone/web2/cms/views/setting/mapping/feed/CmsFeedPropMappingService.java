@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
@@ -122,6 +123,22 @@ public class CmsFeedPropMappingService extends BaseAppService {
         // 当前为 Path 的 Base64 码
         // 有可能未来更改为 MD5
         return new String(Base64.encodeBase64(categoryPath.getBytes()));
+    }
+
+    /**
+     * 按 feedCategoryPath 查找类目并返回类目的属性
+     *
+     * @param feedCategoryPath 类目路径
+     * @param userSessionBean  当前用户
+     * @return 类目的属性
+     */
+    public Map<String, List<String>> getFeedAttributes(String feedCategoryPath, UserSessionBean userSessionBean) {
+
+        CmsMtFeedCategoryTreeModelx treeModelx = feedMappingService.getFeedCategoryTree(userSessionBean);
+
+        CmsFeedCategoryModel feedCategoryModel = feedMappingService.findByPath(feedCategoryPath, treeModelx);
+
+        return feedCategoryModel == null ? null : feedCategoryModel.getAttribute();
     }
 
     private Stream<CmsBtFeedMappingModel.Prop> flattenFinalProp(List<CmsBtFeedMappingModel.Prop> props) {

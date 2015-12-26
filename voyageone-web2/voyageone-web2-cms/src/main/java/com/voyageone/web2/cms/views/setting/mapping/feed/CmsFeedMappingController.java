@@ -71,4 +71,12 @@ public class CmsFeedMappingController extends CmsController {
 
         return success(feedPropMappingService.getFieldMapping(params, getUser()));
     }
+
+    @RequestMapping(FEED.GET_FEED_ATTRS)
+    public AjaxResponse getFeedAttributes(@RequestBody Map<String, String> params) {
+
+        String feedCategoryPath = params.get("feedCategoryPath");
+
+        return success(feedPropMappingService.getFeedAttributes(feedCategoryPath, getUser()));
+    }
 }

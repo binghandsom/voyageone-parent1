@@ -38,6 +38,8 @@ public interface CmsUrlConstants {
             String GET_MATCHED = "getMatched";
 
             String GET_FIELD_MAPPING = "getFieldMapping";
+
+            String GET_FEED_ATTRS = "getFeedAttributes";
         }
     }
 
