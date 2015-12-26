@@ -4,6 +4,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
 import com.voyageone.cms.service.model.*;
 import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.cms.bean.setting.mapping.feed.GetFieldMappingBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,9 +61,27 @@ public class CmsFeedPropMappingService extends BaseAppService {
         return categorySchemaDao.getMasterSchemaModelByCatId(categoryId);
     }
 
-    public Object getMapping(String feedCategoryPath, String mainCategoryPath, UserSessionBean user) {
+    /**
+     * 获取具体到字段的 Mapping 设定
+     *
+     * @param getFieldMappingBean 查询参数
+     * @param user                当前用户
+     * @return 属性匹配设定
+     */
+    public CmsBtFeedMappingModel.Prop getFieldMapping(GetFieldMappingBean getFieldMappingBean, UserSessionBean user) {
 
-        return com$feedMappingService.getMapping(user.getSelChannel(), feedCategoryPath, mainCategoryPath);
+        CmsBtFeedMappingModel mappingModel = com$feedMappingService.getMapping(user.getSelChannel(),
+                getFieldMappingBean.getFeedCategoryPath(), getFieldMappingBean.getMainCategoryPath());
+
+        List<CmsBtFeedMappingModel.Prop> props = mappingModel.getProps();
+
+        if (props == null)
+            return null;
+
+        return flattenFinalProp(props)
+                .filter(p -> p.getProp().equals(getFieldMappingBean.getField()))
+                .findFirst()
+                .orElse(null);
     }
 
     /**

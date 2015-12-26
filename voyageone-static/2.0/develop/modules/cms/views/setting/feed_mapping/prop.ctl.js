@@ -32,11 +32,6 @@ define([
              * @type {string[]}
              */
             this.matchedMains = null;
-            /**
-             * 匹配关系对象
-             * @type {object}
-             */
-            this.mapping = null;
         }
 
         FeedPropMappingController.prototype = {
@@ -56,18 +51,33 @@ define([
 
                         this.matchedMains = res.data;
                     }.bind(this));
-
-                    this.feedMappingService.getMapping({
-                        feedCategoryPath: this.feedCategoryPath,
-                        mainCategoryPath: this.mainCategory.catFullPath
-                    }).then(function (res) {
-
-                        this.mapping = res.data;
-                    }.bind(this));
                 }.bind(this));
+            },
+            isRequiredField: function (field) {
+
+                return _.find(field.rules, function (rule) {
+                    return rule.name === RuleTypes.REQUIRED_RULE && rule.value === 'true';
+                });
+            },
+            isSimpleType: function (field) {
+
+                return field.type !== FieldTypes.complex &&
+                    field.type !== FieldTypes.multiComplex;
+            },
+            getConfig: function (field) {
+                return {
+                    isSimple: this.isSimpleType(field),
+                    required: this.isRequiredField(field)
+                };
+            },
+            popupContext: function (field) {
+                return {
+                    feedCategoryPath: this.feedCategoryPath,
+                    mainCategoryPath: this.mainCategory.catFullPath,
+                    field: field
+                };
             }
         };
-
 
         return FeedPropMappingController;
 
@@ -75,39 +85,12 @@ define([
         return {
             restrict: 'A',
             templateUrl: 'feedMapping.fields.tpl.html',
-            scope: {
-                fields: '=feedMappingFields'
-            },
-            controllerAs: 'ctrl',
-            controller: (function () {
-                function FeedMappingFieldsController() {
-
-                }
-
-                FeedMappingFieldsController.prototype = {
-                    isRequiredField: function (field) {
-
-                        return _.find(field.rules, function (rule) {
-                            return rule.name === RuleTypes.REQUIRED_RULE && rule.value === 'true';
-                        });
-                    },
-
-                    isSimpleType: function (field) {
-
-                        return field.type !== FieldTypes.complex &&
-                            field.type !== FieldTypes.multiComplex;
-                    },
-
-                    getConfig: function (field) {
-                        return {
-                            isSimple: this.isSimpleType(field),
-                            required: this.isRequiredField(field)
-                        };
-                    }
-                };
-
-                return FeedMappingFieldsController;
-            })()
+            scope: true,
+            link: function (scope, e, attrs) {
+                scope.$watch(attrs['feedMappingFields'], function(val) {
+                    scope.fields = val;
+                }, true);
+            }
         };
     });
 });

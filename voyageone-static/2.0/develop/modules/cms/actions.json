@@ -38,7 +38,7 @@
         "extendsMapping": "extendsMapping",
         "getMainProps": "getMainCategoryProps",
         "getMatched": "getMatched",
-        "getMapping": "getMapping"
+        "getFieldMapping": "getFieldMapping"
       }
     },
     "pop": {

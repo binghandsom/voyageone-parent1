@@ -37,7 +37,7 @@ public interface CmsUrlConstants {
 
             String GET_MATCHED = "getMatched";
 
-            String GET_MAPPING = "getMapping";
+            String GET_FIELD_MAPPING = "getFieldMapping";
         }
     }
 
