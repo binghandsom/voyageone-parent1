@@ -215,6 +215,23 @@ public abstract class WmsGetClientInvBaseService extends BaseTaskService {
         }
     }
 
+    /**
+     * @description 获取渠道对应的没有设置ClientSku的SKU，插入到IssueLog
+     * @param order_channel_id 渠道
+     */
+    protected void getItemDetaiInfoNoClient(String order_channel_id) {
+        OrderChannelBean channel = ChannelConfigs.getChannel(order_channel_id);
+
+        // ItemDetail表中没有的记录取得
+        List<String> notExistsClientSku = itemDetailsDao.getItemDetaiInfoNoClient(channel.getOrder_channel_id());
+
+        log(channel.getFull_name() + " ClientSku在ItemDetail中不存在件数：" + notExistsClientSku.size());
+        if (notExistsClientSku.size() > 0 ) {
+            logIssue(channel.getFull_name() + "：在ItemDetail中没有设定ClientSku，无法取得库存", notExistsClientSku);
+        }
+
+    }
+
     protected void log (String logMsg){
         logger.info("===============" + logMsg + "===============");
     }
