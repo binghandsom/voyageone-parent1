@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 /**
@@ -50,7 +51,7 @@ public class CmsFeedMappingController extends CmsController {
     }
 
     @RequestMapping(FEED.GET_MAIN_PROPS)
-    public AjaxResponse getMainCategoryProps(@RequestBody Map<String, String> params) {
+    public AjaxResponse getMainCategoryProps(@RequestBody Map<String, String> params) throws UnsupportedEncodingException {
 
         String feedCategoryPath = params.get("feedCategoryPath");
 
