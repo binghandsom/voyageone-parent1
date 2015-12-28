@@ -10,11 +10,10 @@ import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
 import com.voyageone.cms.service.model.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.cms.service.model.MtCommPropActionDefModel;
-import com.voyageone.cms.service.model.MtCommPropActionDefRuleModel;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ActionType;
 import com.voyageone.common.configs.Enums.CartEnums;
-import com.voyageone.common.masterdate.schema.util.FieldUtil;
+import com.voyageone.common.masterdate.schema.Util.FieldUtil;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
@@ -54,6 +53,8 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
 
     @Autowired
     private CmsMtPlatformFieldsRemoveHistoryDao cmsMtPlatformFieldsRemoveHistoryDao;
+
+    Map<String,MtCommPropActionDefModel> allDefModelsMap = new HashMap<>();
 
 //    @Autowired
 //    private CmsMtCommonPropDefDao cmsMtCommonPropDefDao;
@@ -101,6 +102,9 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
 
         //先根据action type 分组
         for (MtCommPropActionDefModel actionDefModel:allDefModels){
+
+            allDefModelsMap.put(actionDefModel.getPropId(),actionDefModel);
+
             ActionType actionType = ActionType.valueOf(Integer.valueOf(actionDefModel.getActionType()));
             if(actionType != null){
                 switch (actionType){
@@ -187,8 +191,10 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
 
                 Field skuField = FieldUtil.getFieldById(masterFields,"sku");
 
+                Field darwinSkuField = FieldUtil.getFieldById(masterFields,"darwin_sku");
+
                 //5. 添加sku field
-                if (skuField == null){
+                if (skuField == null && darwinSkuField == null){
                     skuField = FieldTypeEnum.createField(FieldTypeEnum.MULTICOMPLEX);
                     skuField.setId("sku");
                     skuField.setName("SKU");
@@ -198,40 +204,49 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
                     masterFields.add(skuField);
                 }
 
+                //6. 更新达尔文sku
+                if (darwinSkuField != null){
+                    updateField(masterFields, allDefModelsMap.get("sku"), darwinSkuField);
+                }
+
+
                 //4. 更新需要更新的 sub field
                 for (MtCommPropActionDefModel actionDefModel : updateList) {
 
                     Field updField = FieldUtil.getFieldById(masterFields, actionDefModel.getPlatformPropRefId());
 
-                    if (updField == null){
-                            FieldTypeEnum type = FieldTypeEnum.getEnum(actionDefModel.getPropType());
-                            updField = FieldTypeEnum.createField(type);
-                            updField.setId(actionDefModel.getPropId());
-                            updField.setName(actionDefModel.getPropName());
+                        if (!"sku".equals(actionDefModel.getPropId()) && !"darwin_sku".equals(actionDefModel.getPropId())){
 
-                            actionDefModel.getRuleMode().setFieldComProperties(updField);
+                            if (updField == null){
+                                    FieldTypeEnum type = FieldTypeEnum.getEnum(actionDefModel.getPropType());
+                                    updField = FieldTypeEnum.createField(type);
+                                    updField.setId(actionDefModel.getPropId());
+                                    updField.setName(actionDefModel.getPropName());
 
-                            if (StringUtils.isEmpty(actionDefModel.getParentPropId())){
-                                masterFields.add(updField);
+                                    actionDefModel.getRuleMode().setFieldComProperties(updField);
+
+                                    if (StringUtils.isEmpty(actionDefModel.getParentPropId())){
+                                        masterFields.add(updField);
+                                    } else {
+                                        Field parentField = FieldUtil.getFieldById(masterFields,actionDefModel.getParentPropId());
+                                        if (parentField != null){
+
+                                            MultiComplexField complexField = (MultiComplexField)parentField;
+
+                                            List<Field> subSkuFields = complexField.getFieldList();
+
+                                            subSkuFields.add(updField);
+                                        }
+
+                                    }
+
                             } else {
-                                Field parentField = FieldUtil.getFieldById(masterFields,actionDefModel.getParentPropId());
-                                if (parentField != null){
-
-                                    MultiComplexField complexField = (MultiComplexField)parentField;
-
-                                    List<Field> subSkuFields = complexField.getFieldList();
-
-                                    subSkuFields.add(updField);
-                                }
-
+                                updateField(masterFields, actionDefModel, updField);
                             }
 
-                    } else {
-                        updateField(masterFields, actionDefModel, updField);
-                    }
+                        }
 
                 }
-
 
                 //6. 添加sub field
                 addField(addList, masterFields, removeFields);
@@ -308,26 +323,48 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
             }
 
             FieldTypeEnum fieldType = FieldTypeEnum.getEnum(actionDefModel.getPropType());
-            Field newField = FieldTypeEnum.createField(fieldType);
+            Field thisField = FieldTypeEnum.createField(fieldType);
 
-            newField.setInputLevel(0);
-            newField.setId(actionDefModel.getPropId());
-            newField.setName(actionDefModel.getPropName());
-            actionDefModel.getRuleMode().setFieldComProperties(newField);
+            thisField.setInputLevel(0);
+            thisField.setId(actionDefModel.getPropId());
+            thisField.setName(actionDefModel.getPropName());
+            actionDefModel.getRuleMode().setFieldComProperties(thisField);
             if(StringUtils.isEmpty(actionDefModel.getParentPropId())){
-                masterFields.add(newField);
+                masterFields.add(thisField);
             }else {
                 Field parentField = FieldUtil.getFieldById(masterFields,actionDefModel.getParentPropId());
+
                 List<Field> subFields = null;
-                if (parentField instanceof ComplexField){
-                    subFields = ((ComplexField) parentField).getFieldList();
 
-                }else if (parentField instanceof MultiComplexField){
-                    subFields = ((MultiComplexField) parentField).getFieldList();
-                }
+                if (parentField == null){
 
-                if (subFields != null){
-                    subFields.add(newField);
+                    MtCommPropActionDefModel pModel = allDefModelsMap.get(actionDefModel.getParentPropId());
+
+                    FieldTypeEnum pType = FieldTypeEnum.getEnum(pModel.getPropType());
+
+                    //添加父结点
+                    parentField = FieldTypeEnum.createField(pType);
+
+                    if (parentField instanceof ComplexField){
+                        subFields = ((ComplexField) parentField).getFieldList();
+
+                    }else if (parentField instanceof MultiComplexField){
+                        subFields = ((MultiComplexField) parentField).getFieldList();
+                    }
+
+                    subFields.add(thisField);
+
+                    masterFields.add(parentField);
+
+                } else {
+                    if (parentField instanceof ComplexField){
+                        subFields = ((ComplexField) parentField).getFieldList();
+
+                    }else if (parentField instanceof MultiComplexField){
+                        subFields = ((MultiComplexField) parentField).getFieldList();
+                    }
+
+                    subFields.add(thisField);
                 }
 
             }

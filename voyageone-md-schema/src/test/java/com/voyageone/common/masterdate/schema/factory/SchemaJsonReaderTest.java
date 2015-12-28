@@ -1,6 +1,6 @@
 package com.voyageone.common.masterdate.schema.factory;
 
-import com.voyageone.common.masterdate.schema.util.FieldUtil;
+import com.voyageone.common.masterdate.schema.Util.FieldUtil;
 import com.voyageone.common.masterdate.schema.util.JsonUtil;
 import com.voyageone.common.masterdate.schema.depend.DependExpress;
 import com.voyageone.common.masterdate.schema.depend.DependGroup;

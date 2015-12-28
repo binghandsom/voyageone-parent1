@@ -1,4 +1,4 @@
-package com.voyageone.common.masterdate.schema.util;
+package com.voyageone.common.masterdate.schema.Util;
 
 import com.voyageone.common.masterdate.schema.depend.DependExpress;
 import com.voyageone.common.masterdate.schema.depend.DependGroup;
@@ -6,6 +6,7 @@ import com.voyageone.common.masterdate.schema.field.ComplexField;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.MultiComplexField;
 import com.voyageone.common.masterdate.schema.rule.Rule;
+import com.voyageone.common.masterdate.schema.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;

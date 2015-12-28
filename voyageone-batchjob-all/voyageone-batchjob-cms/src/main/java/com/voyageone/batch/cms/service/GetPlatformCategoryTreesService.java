@@ -7,19 +7,17 @@ import com.taobao.api.domain.Brand;
 import com.taobao.api.domain.ItemCat;
 import com.taobao.api.domain.SellerAuthorize;
 import com.taobao.top.schema.exception.TopSchemaException;
-import com.voyageone.batch.Context;
 import com.voyageone.batch.base.BaseTaskService;
+import com.voyageone.batch.cms.CmsConstants;
+import com.voyageone.batch.cms.dao.BrandDao;
 import com.voyageone.batch.cms.model.PlatformCategoriesModel;
 import com.voyageone.batch.core.Enums.TaskControlEnums;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.core.util.TaskControlUtils;
-import com.voyageone.batch.cms.CmsConstants;
-import com.voyageone.batch.cms.dao.BrandDao;
+import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategoryDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.cms.service.model.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.cms.service.model.CmsMtPlatformCategoryTreeModel;
-import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategoryDao;
-import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.tmall.TbCategoryService;
 import com.voyageone.common.components.tmall.bean.ItemSchema;
@@ -28,6 +26,7 @@ import com.voyageone.common.configs.ShopConfigs;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,17 +34,16 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.apache.commons.beanutils.BeanUtils;
 
 import javax.annotation.Resource;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 @Service
-public class PlatformCategoryService extends BaseTaskService{
+public class GetPlatformCategoryTreesService extends BaseTaskService{
 
-    private final static String JOB_NAME = "platformCategoryTask";
-    private static Log logger = LogFactory.getLog(PlatformCategoryService.class);
+    private final static String JOB_NAME = "getPlatformCategoryTreesTask";
+    private static Log logger = LogFactory.getLog(GetPlatformCategoryTreesService.class);
 
     @Autowired
     BrandDao brandDao;
@@ -56,9 +54,8 @@ public class PlatformCategoryService extends BaseTaskService{
     @Autowired
     CmsMtPlatformCategorySchemaDao cmsMtPlatformCategorySchemaDao;
 
-    Map<String,String> categoryProductMap;
-
-    List<String> paltformCartList;
+    @Resource(name = "availableChannelList")
+    List availableChannelList;
 
     @Override
     public SubSystem getSubSystem() {
@@ -71,22 +68,6 @@ public class PlatformCategoryService extends BaseTaskService{
 
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception{
-
-        ApplicationContext ctx = new GenericXmlApplicationContext("applicationContext.xml");
-        this.categoryProductMap = (Map) ctx.getBean("categoryProductMap");
-        this.paltformCartList = (List)ctx.getBean("paltformCartList");
-
-        // 任务说明 ------------------------------------------------- START
-        // 要做的事情：
-        // 1. 第三方平台类目信息取得（天猫与 TODO:京东暂时不做）
-        // 2. 第三方平台品牌信息取得（天猫与 TODO:京东暂时不做）
-        // 3. 天猫系达尔文信息取得（TODO:暂时先不做）
-        // 4. 第三方平台属性信息取得（天猫与 TODO:京东暂时不做）
-
-        // 执行频率：
-        // 按理说是每天都需要执行一次的
-        // 店铺搞活动的时候，为了不占用过多资源，可以暂停执行
-        // 任务说明 ------------------------------------------------- END
 
         // 获取天猫系所有店铺
         List<ShopBean> shopList = ShopConfigs.getShopListByPlatform(PlatFormEnums.PlatForm.TM);
@@ -102,35 +83,33 @@ public class PlatformCategoryService extends BaseTaskService{
         // 获取该任务可以运行的销售渠道
         List<String> orderChannelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
 
-        // 是否有类目重新获取过
-        boolean blnReGetCategory = false;
-
         // 循环所有店铺
         for (ShopBean shop : shopList) {
-            // 判断该Shop是否需要运行任务
-            boolean isRun = orderChannelIdList.contains(shop.getOrder_channel_id());
+            if (availableChannelList != null && availableChannelList.size()>0){
+                if (availableChannelList.contains(shop.getOrder_channel_id())){
+                    // 判断该Shop是否需要运行任务
+                    boolean isRun = orderChannelIdList.contains(shop.getOrder_channel_id());
 
-            if (isRun) {
-                blnReGetCategory = true;
+                    if (isRun) {
+                        // 第三方平台类目信息取得（天猫系）
+                        doSetPlatformCategoryTm(shop);
+                    }
+                }
+            }else {
+                // 判断该Shop是否需要运行任务
+                boolean isRun = orderChannelIdList.contains(shop.getOrder_channel_id());
 
-// TODO:临时注释掉不执行，正式环境需要放开 START
-                // 第三方平台类目信息取得（天猫系）
-                doSetPlatformCategoryTm(shop);
-// TODO:临时注释掉不执行，正式环境需要放开 END
+                if (isRun) {
+                    // 第三方平台类目信息取得（天猫系）
+                    doSetPlatformCategoryTm(shop);
+                }
             }
+
         }
 
-        // 如果有任何一家店铺获取过类目信息，那么就需要继续做属性信息取得
-        if (blnReGetCategory) {
-            for (String cartId:paltformCartList){
-                doSetPlatformPropTm(Integer.valueOf(cartId));
-            }
-
-        }
 
         //正常结束
         logger.info("正常结束");
-//        return TaskControlEnums.Status.SUCCESS.getIs();
     }
 
     /**
@@ -235,7 +214,6 @@ public class PlatformCategoryService extends BaseTaskService{
         }
 
         /** 保存类目信息 */
-        /** add by lewis start 2015/11/27 */
         List<CmsMtPlatformCategoryTreeModel> platformCategoryMongoBeanList = new ArrayList<>();
         for (PlatformCategoriesModel category: platformCategoriesModelList){
             CmsMtPlatformCategoryTreeModel mongoModel = new CmsMtPlatformCategoryTreeModel();
@@ -253,14 +231,17 @@ public class PlatformCategoryService extends BaseTaskService{
             platformCategoryMongoBeanList.add(mongoModel);
 
         }
+
         //获取类目树
         List<CmsMtPlatformCategoryTreeModel> savePlatformCatModels = this.buildPlatformCatTrees(platformCategoryMongoBeanList,Integer.valueOf(shop.getCart_id()),shop.getOrder_channel_id());
 
         //删除原有类目信息
         WriteResult delCatRes = platformCategoryDao.deletePlatformCategories(Integer.valueOf(shop.getCart_id()),shop.getOrder_channel_id());
+
         logger.info("批量删除类目 CART_ID 为："+shop.getCart_id()+"  channel id: "+shop.getOrder_channel_id() + " 的数据为: "+delCatRes.getN() + "条...");
 
         if(savePlatformCatModels.size()>0){
+            logger.info("保存最新的类目信息: "+ savePlatformCatModels.size() +"条记录。");
             //保存最新的类目信息
             platformCategoryDao.insertWithList(savePlatformCatModels);
         }
@@ -328,115 +309,6 @@ public class PlatformCategoryService extends BaseTaskService{
     }
     /** add by lewis end 2015/11/27 */
 
-
-    /**
-     * 第三方平台属性信息取得（天猫系）
-     * @param cartId 渠道信息
-     */
-    private void doSetPlatformPropTm(int cartId) throws ApiException, InvocationTargetException, IllegalAccessException, TopSchemaException {
-
-        List<CmsMtPlatformCategoryTreeModel> allLeaves = new ArrayList<>();
-        Set savedList = new HashSet<>();
-        List<Map> allCategoryLeavesMap = new ArrayList<>();
-        List<CmsMtPlatformCategoryTreeModel> categoryTrees = this.platformCategoryDao.selectPlatformCategoriesByCartId(cartId);
-
-        for (CmsMtPlatformCategoryTreeModel root:categoryTrees){
-            Object jsonObj = JsonPath.parse(root.toString()).json();
-            List<Map> leavesMap = JsonPath.read(jsonObj, "$..children[?(@.isParent == 0)]");
-            allCategoryLeavesMap.addAll(leavesMap);
-        }
-
-        for (Map leafMap:allCategoryLeavesMap){
-            CmsMtPlatformCategoryTreeModel leafObj = new CmsMtPlatformCategoryTreeModel();
-            BeanUtils.populate(leafObj, leafMap);
-            String key = leafObj.getCatId();
-
-            if(!savedList.contains(key)){
-                savedList.add(key);
-                leafObj.setCartId(cartId);
-                allLeaves.add(leafObj);
-            }
-
-        }
-
-
-        //删除已有的数据
-        WriteResult delResult = cmsMtPlatformCategorySchemaDao.deletePlatformCategorySchemaByCartId(cartId);
-
-        logger.info("批量删除Schema, CART_ID 为："+cartId+" 的数据为: "+delResult.getN() + "条...");
-
-        int i = 1;
-        int cnt = allLeaves.size();
-        for (CmsMtPlatformCategoryTreeModel platformCategoriesModel : allLeaves) {
-
-            // 获取产品属性
-            logger.info("获取产品和商品属性:" + i + "/" + cnt + ":CHANNEL_ID:" + platformCategoriesModel.getChannelId() + ":CART_ID:" + platformCategoriesModel.getCartId() + ":PLATFORM_CATEGORY_ID:" + platformCategoriesModel.getCatId());
-            doSetPlatformPropTmSub(platformCategoriesModel);
-
-            i++;
-        }
-
-
-    }
-
-    /**
-     * 第三方平台属性信息取得（天猫系）（子函数）
-     * @param platformCategoriesModel 店铺信息
-     */
-    private ItemSchema doSetPlatformPropTmSub(CmsMtPlatformCategoryTreeModel platformCategoriesModel) throws ApiException {
-
-        CmsMtPlatformCategorySchemaModel schemaModel = new CmsMtPlatformCategorySchemaModel();
-        schemaModel.setCartId(platformCategoriesModel.getCartId());
-        schemaModel.setCatId(platformCategoriesModel.getCatId());
-        schemaModel.setCreater(this.getTaskName());
-        schemaModel.setModifier(this.getTaskName());
-        schemaModel.setCatFullPath(platformCategoriesModel.getCatPath());
-
-        // 获取店铺信息
-        ShopBean shopProp = ShopConfigs.getShop(platformCategoriesModel.getChannelId(), String.valueOf(platformCategoriesModel.getCartId()));
-        if (shopProp == null) {
-            logger.error("没有获取到店铺信息 " + "channel_id:" + shopProp.getOrder_channel_id() + "  cart_id:" + shopProp.getCart_id());
-            // TODO 应该需要做异常处理
-        }
-
-        // 调用API获取产品属性规则
-        String productXmlContent = tbCategoryService.getTbProductAddSchema(shopProp, Long.parseLong(platformCategoriesModel.getCatId()));
-
-
-        schemaModel.setPropsProduct(productXmlContent);
-
-        // 属性规则信息
-        String itemXmlContent = null;
-        ItemSchema result =null;
-        // 调用API获取产品属性规则
-        String productIdStr =categoryProductMap.get(platformCategoriesModel.getCatId());
-        if (productIdStr != null){
-            Long productId = Long.parseLong(productIdStr);
-            result = tbCategoryService.getTbItemAddSchema(shopProp, Long.parseLong(platformCategoriesModel.getCatId()),productId);
-        } else {
-            result = tbCategoryService.getTbItemAddSchema(shopProp, Long.parseLong(platformCategoriesModel.getCatId()),null);
-        }
-//            result = tbCategoryService.getTbItemAddSchema(shopProp, Long.parseLong(platformCategoriesModel.getCatId()),null);
-        //保存为XML文件
-        if (result.getResult() == 0 ){
-            itemXmlContent = result.getItemResult();
-        }else if (result.getResult() == 1 ){
-//              "商品类目已被冻结, 本类目已经不能发布商品，请重新选择类目":
-//              "商品类目未授权，请重新选择类目;商品类目天猫已经废弃, 本类目已经不能发布商品，请重新选择类目":
-//              "商品类目天猫已经废弃, 本类目已经不能发布商品，请重新选择类目":
-//                以上三种类型则表明类目已经作废，需要删除
-//                return result;
-//                itemXmlContent = String.valueOf(result.getResult());
-        }
-        schemaModel.setPropsItem(itemXmlContent);
-
-        if(!StringUtils.isEmpty(schemaModel.getPropsItem())){
-            cmsMtPlatformCategorySchemaDao.insert(schemaModel);
-        }
-
-        return new ItemSchema();
-    }
-
     /**
      * 去除重复的品牌
      * @param brands
@@ -475,12 +347,13 @@ public class PlatformCategoryService extends BaseTaskService{
     @Transactional
     public void doRebuidPlatformBrand(List<Brand> brands, ShopBean shop, String JOB_NAME) {
         //删除该店的所有品牌数据
-        brandDao.delBrandsByShop(shop);
+        int delCount = brandDao.delBrandsByShop(shop);
+        logger.info("删除该店的所有品牌数据: " + delCount + "条。");
         //插入该店的所有品牌数据
         if(brands != null && brands.size() > 0){
+            logger.info("插入该店的所有品牌数据,CartId: "+shop.getCart_id());
             brandDao.insertBrands(brands, shop, JOB_NAME);
         }
     }
-
 
 }
