@@ -89,9 +89,12 @@ public class BcbgAnalysisService extends BaseTaskService {
         attributeListInsert();
 
         // 使用接口提交
-        insertService.postNewProduct();
-        updateService.postUpdatedProduct();
-        attributeService.postAttributes();
+        boolean inserted = insertService.postNewProduct();
+        boolean updated = updateService.postUpdatedProduct();
+
+        if (inserted || updated) {
+            attributeService.postAttributes();
+        }
     }
 
     protected void appendDataFromFile() throws FileNotFoundException {
