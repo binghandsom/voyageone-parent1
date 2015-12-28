@@ -3,18 +3,19 @@ package com.voyageone.web2.sdk.api.request;
 
 import com.voyageone.web2.sdk.api.VoApiListRequest;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
-import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
+import com.voyageone.web2.sdk.api.response.ProductSkusGetResponse;
 import com.voyageone.web2.sdk.api.util.RequestUtils;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * /puroduct/selectList Request Model
+ * get product sku Request Model
  *
- * Product的id.两种方式来查看一个产品:
- *  1.传入productId List来查询
- *  2.传入productCode list来查询
+ * /puroduct/sku/selectList
+ *
+ *  1.传入productId Set来查询
+ *  2.传入productCode Set来查询
  *  3:传入props来查询
  *
  * Created on 2015-12-14
@@ -23,15 +24,12 @@ import java.util.Set;
  * @version 2.0.0
  * @since. 2.0.0
  */
-public class ProductsGetRequest extends VoApiListRequest<ProductsGetResponse> {
+public class ProductSkusGetRequest extends VoApiListRequest<ProductSkusGetResponse> {
 
 	public String getApiURLPath() {
-		return "/puroduct/selectList";
+		return "/puroduct/sku/selectList";
 	}
 
-	/**
-	 * channelId
-	 */
 	private String channelId;
 
 	/**
@@ -44,22 +42,18 @@ public class ProductsGetRequest extends VoApiListRequest<ProductsGetResponse> {
 	 */
 	private Set<String> productCodes = new LinkedHashSet<>();
 
-	/**
-	 * 用户自定义关键属性,结构：pid1:value1;pid2:value2，如果有型号，系列等子属性用: 隔开 例如：“20000:优衣库;型号:001;632501:1234”，表示“品牌:优衣库;型号:001;货号:1234”
-	 */
-	private String props;
 
-	public ProductsGetRequest() {}
+	public ProductSkusGetRequest() {
+	}
 
-	public ProductsGetRequest(String channelId) {
+	public ProductSkusGetRequest(String channelId) {
 		this.channelId = channelId;
 	}
 
 	public void check() throws ApiRuleException {
 		super.check();
 		RequestUtils.checkNotEmpty(channelId);
-		RequestUtils.checkNotEmpty(" productIdList or productCodeList or props", productIds, productCodes, props);
-		RequestUtils.checkNotEmpty(fields, "fields");
+		RequestUtils.checkNotEmpty(" productIds, or productCodes", productIds, productCodes);
 	}
 
 	public String getChannelId() {
@@ -86,15 +80,12 @@ public class ProductsGetRequest extends VoApiListRequest<ProductsGetResponse> {
 		this.productCodes = productCodes;
 	}
 
-	public String getProps() {
-		return props;
-	}
-	public void setProps(String props) {
-		this.props = props;
+	public void addProductId(Long productId) {
+		productIds.add(productId);
 	}
 
-	public void addProp(String key, Object value) {
-		this.props = RequestUtils.addProp(props, key, value);
+	public void addProductCode(String productCode) {
+		productCodes.add(productCode);
 	}
 
 }
