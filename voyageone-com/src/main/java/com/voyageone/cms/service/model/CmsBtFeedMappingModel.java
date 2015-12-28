@@ -23,9 +23,13 @@ public class CmsBtFeedMappingModel extends ChannelPartitionModel {
     }
 
     private Scope scope;
+
     private int defaultMapping;
+
     private int defaultMain;
+
     private int matchOver;
+
     private List<Prop> props;
 
     public Scope getScope() {
@@ -105,7 +109,7 @@ public class CmsBtFeedMappingModel extends ChannelPartitionModel {
 
         private String prop;
 
-        private Mapping mappings;
+        private List<Mapping> mappings;
 
         private List<Prop> children;
 
@@ -117,11 +121,11 @@ public class CmsBtFeedMappingModel extends ChannelPartitionModel {
             this.prop = prop;
         }
 
-        public Mapping getMappings() {
+        public List<Mapping> getMappings() {
             return mappings;
         }
 
-        public void setMappings(Mapping mappings) {
+        public void setMappings(List<Mapping> mappings) {
             this.mappings = mappings;
         }
 

@@ -35,7 +35,11 @@
         "getFeedCategories": "getFeedCategories",
         "getMainCategories": "getMainCategories",
         "setMapping": "setFeedMapping",
-        "extendsMapping": "extendsMapping"
+        "extendsMapping": "extendsMapping",
+        "getMainProps": "getMainCategoryProps",
+        "getMatched": "getMatched",
+        "getFieldMapping": "getFieldMapping",
+        "getFeedAttrs": "getFeedAttributes"
       }
     },
     "pop": {
@@ -78,7 +82,8 @@
     },
     "taskPriceService": {
       "root": "/cms/task/price",
-      "getPriceList": "getPriceList"
+      "getPriceList": "getPriceList",
+      "updateTaskStatus":"updateTaskStatus"
     },
     "productDetailService":{
       "root":"/cms/product/detail/",

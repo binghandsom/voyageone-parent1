@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.search;
 
+import com.voyageone.cms.service.CmsBtChannelCategoryService;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.common.Constants;
@@ -7,12 +8,14 @@ import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.TypeChannel;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.web2.cms.bean.CmsSearchInfoBean;
+import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean;
 import com.voyageone.web2.cms.dao.CmsPromotionDao;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,13 +26,16 @@ import java.util.Map;
  * @version 2.0.0, 15/12/14
  */
 @Service
-public class CmsSearchIndexService {
+public class CmsSearchIndexService extends BaseAppService{
 
     @Autowired
     private CmsPromotionDao cmsPromotionDao;
 
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
+
+    @Autowired
+    private CmsBtChannelCategoryService cmsBtChannelCategoryService;
 
     private final String[] searchItems
             = {"channelId"
@@ -55,7 +61,7 @@ public class CmsSearchIndexService {
      * @param userInfo
      * @return
      */
-    public Map<String, Object> getMasterData(UserSessionBean userInfo, String language) {
+    public Map<String, Object> getMasterData(UserSessionBean userInfo, String language) throws IOException{
 
         Map<String, Object> masterData = new HashMap<>();
 
@@ -76,6 +82,9 @@ public class CmsSearchIndexService {
 
         // 获取brand list
         masterData.put("brandList", TypeChannel.getOptions(Constants.comMtType.BRAND, userInfo.getSelChannelId(), language));
+
+        // 获取category list
+        masterData.put("categoryList", cmsBtChannelCategoryService.getFinallyCategoriesByChannelId(userInfo.getSelChannelId()));
 
         // 获取promotion list
         Map<String, Object> params = new HashMap<>();
@@ -213,6 +222,12 @@ public class CmsSearchIndexService {
                 , "$elemMatch"));
         result.append(",");
 
+        // 获取category Id
+        if (searchValue.getCatId() != null) {
+            result.append(MongoUtils.splicingValue("catId", searchValue.getCatId()));
+            result.append(",");
+        }
+
         // 获取product status
         if (searchValue.getProductStatus() != null
                 && searchValue.getProductStatus().length > 0) {
@@ -265,10 +280,18 @@ public class CmsSearchIndexService {
             result.append(",");
         }
 
-        // 获取code list
+        // 获取code list用于检索code,model,productName,longTitle
         if (searchValue.getCodeList() != null
                 && searchValue.getCodeList().length > 0) {
-            result.append(MongoUtils.splicingValue("fields.code", searchValue.getCodeList()));
+            List<String> orSearch = new ArrayList<>();
+            orSearch.add(MongoUtils.splicingValue("fields.code", searchValue.getCodeList()));
+            orSearch.add(MongoUtils.splicingValue("fields.model", searchValue.getCodeList()));
+
+            if (searchValue.getCodeList().length == 1) {
+                orSearch.add(MongoUtils.splicingValue("fields.productName", searchValue.getCodeList()[0], "$regex"));
+                orSearch.add(MongoUtils.splicingValue("fields.longTitle", searchValue.getCodeList()[0], "$regex"));
+            }
+            result.append(MongoUtils.splicingValue("", orSearch.toArray(), "$or"));
             result.append(",");
         }
 

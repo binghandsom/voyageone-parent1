@@ -3,6 +3,7 @@ package com.voyageone.cms.service;
 import com.mongodb.BulkWriteResult;
 import com.mongodb.CommandResult;
 import com.mongodb.WriteResult;
+import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.cms.CmsConstants;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
@@ -55,6 +56,69 @@ public class CmsProductService {
      */
     public List<CmsBtProductModel> getProductByGroupId(String channelId, long groupId) {
         return cmsBtProductDao.selectProductByGroupId(channelId, groupId);
+    }
+
+    /**
+     * 获取商品Code List 根据CartId
+     * @param channelId channel ID
+     * @param cartId cart ID
+     * @return code list
+     */
+    public List<String> getProductCodesByCart(String channelId, int cartId) {
+        List<String> result = new ArrayList<>();
+
+        JomgoQuery queryObject = new JomgoQuery();
+        queryObject.setQuery("{\"groups.platforms.cartId\":" + cartId + "}");
+        queryObject.setProjection("fields.code");
+
+        List<CmsBtProductModel> products = cmsBtProductDao.select(queryObject, channelId);
+        if (products != null && products.size() > 0) {
+            for (CmsBtProductModel product : products) {
+                if (product.getFields() != null) {
+                    result.add(product.getFields().getCode());
+                }
+            }
+        }
+
+        return result;
+    }
+
+
+    /**
+     * 获取商品groupId Code List Map  根据CartId
+     *  key groupId
+     *  value: codeList
+     * @param channelId channel ID
+     * @param cartId cart ID
+     * @return code list
+     */
+    public Map<String, List<String>> getProductGroupIdCodesMapByCart(String channelId, int cartId) {
+        Map<String, List<String>> result = new LinkedHashMap<>();
+
+        JomgoQuery queryObject = new JomgoQuery();
+        queryObject.setQuery("{\"groups.platforms.cartId\":" + cartId + "}");
+        queryObject.setProjection("fields.code", "groups.platforms.$.groupId");
+
+        Iterator<CmsBtProductModel> productsIt = cmsBtProductDao.selectCursor(queryObject, channelId);
+        while (productsIt.hasNext()) {
+            CmsBtProductModel product = productsIt.next();
+            if (product.getGroups() != null
+                    && product.getGroups().getPlatforms() != null
+                    && product.getGroups().getPlatforms().size() > 0) {
+                Long groupId = product.getGroups().getPlatforms().get(0).getGroupId();
+                if (groupId != null) {
+                    if (!result.containsKey(groupId.toString())) {
+                        result.put(groupId.toString(), new ArrayList<>());
+                    }
+                    List<String> listCode = result.get(groupId.toString());
+                    if (product.getFields() != null) {
+                        listCode.add(product.getFields().getCode());
+                    }
+                }
+            }
+        }
+
+        return result;
     }
 
     /**

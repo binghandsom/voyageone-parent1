@@ -25,6 +25,13 @@
 			<artifactId>voyageone-masterdata-schema</artifactId>
 			<version>${voyageone.md.schema.version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.voyageone</groupId>
+			<artifactId>voyageone-web2-sdk</artifactId>
+			<version>${voyageone.web2.sdk.version}</version>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<finalName>voyageone-batchjob-core</finalName>

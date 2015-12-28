@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * {@link CmsMtFeedCategoryTreeModel} 的属性类型, 表示具体的类目
+ * {@link CmsMtFeedCategoryTreeModelx} 的属性类型, 表示具体的类目
  * @author Jonas, 12/11/15
  * @version 2.0.0
  * @since 2.0.0

@@ -158,15 +158,16 @@ public class FeedToCmsService {
     /**
      * 根据category从tree中找到节点
      */
-    private CmsFeedCategoryModel findCategory(List<CmsFeedCategoryModel> tree, String cat) {
+    private Map<String,Object> findCategory(List<Map<String,Object>> tree, String cat) {
 
         ReadContext ctx = JsonPath.parse(tree);
 
-        List<CmsFeedCategoryModel> child = ctx.read("$..child[?(@.path == '" + cat.replace("'", "\\\'") + "')]");
+        List<Map<String,Object>> child = ctx.read("$..child[?(@.path == '" + cat.replace("'", "\\\'") + "')]");
 
         if (child.size() == 0) {
             child = ctx.read("$..*[?(@.path == '" + cat.replace("'", "\\\'") + "')]");
         }
+
 
         return child == null || child.size() == 0 ? null : child.get(0);
     }
@@ -174,26 +175,24 @@ public class FeedToCmsService {
     /**
      * 追加一个类目
      */
-    private List<CmsFeedCategoryModel> addCategory(List<CmsFeedCategoryModel> tree, String category) {
+    private List<Map<String,Object>> addCategory(List<Map<String,Object>> tree, String category) {
         String[] c = category.split("-");
         String temp = "";
-        CmsFeedCategoryModel befNode = null;
+        Map<String,Object> befNode = null;
         for (int i = 0; i < c.length; i++) {
             temp += c[i];
-            CmsFeedCategoryModel node = findCategory(tree, temp);
+            Map<String,Object> node = findCategory(tree, temp);
             if (node == null) {
-                CmsFeedCategoryModel newNode = new CmsFeedCategoryModel();
-                newNode.setName(c[i]);
-                newNode.setCid(temp);
-                newNode.setPath(temp);
-                newNode.setChild(new ArrayList<>());
-
-                if (i == c.length - 1) newNode.setIsChild(1);
-
+                Map<String,Object> newNode = new HashMap<>();
+                newNode.put("name", c[i]);
+                newNode.put("cid",temp);
+                newNode.put("path",temp);
+                newNode.put("child",new ArrayList<>());
+                if (i == c.length - 1) newNode.put("isChild", 1);
                 if (befNode == null) {
                     tree.add(newNode);
                 } else {
-                    befNode.getChild().add(newNode);
+                    ((List<Map>)(befNode.get("child"))).add(newNode);
                 }
                 befNode = newNode;
             } else {
@@ -253,18 +252,18 @@ public class FeedToCmsService {
     private void updateFeedCategoryAttribute(String channelId, Map<String, List<String>> attribute, String category) {
 
         CmsMtFeedCategoryTreeModel categoryTree = cmsMtFeedCategoryTreeDao.selectFeedCategory(channelId);
-        CmsFeedCategoryModel node = findCategory(categoryTree.getCategoryTree(), category);
+        Map<String,Object> node = findCategory(categoryTree.getCategoryTree(), category);
 
         if (node == null)
             throw new BusinessException(null, String.format("can`t find any category by \"%s\"", category));
 
-        if (node.getAttribute() == null) {
-            node.setAttribute(attribute);
+        if (node.get("attribute") == null) {
+            node.put("attribute",attribute);
             cmsMtFeedCategoryTreeDao.update(categoryTree);
             return;
         }
 
-        Map<String, List<String>> oldAtt = node.getAttribute();
+        Map<String, List<String>> oldAtt = (Map<String, List<String>>) node.get("attribute");
 
         for (String key : attribute.keySet()) {
             if (oldAtt.containsKey(key)) {
@@ -277,51 +276,4 @@ public class FeedToCmsService {
             }
         }
     }
-
-    /**
-     * 将类目和其子类目全部转化为扁平的数据流
-     *
-     * @param feedCategoryTreeModel Feed 类目树
-     * @return 扁平化后的类目数据
-     */
-    public Stream<CmsFeedCategoryModel> flatten(CmsMtFeedCategoryTreeModel feedCategoryTreeModel) {
-
-        return feedCategoryTreeModel.getCategoryTree().stream().flatMap(this::flatten);
-    }
-
-    /**
-     * 将类目和其子类目全部转化为扁平的数据流
-     *
-     * @param feedCategoryModels 多个类目
-     * @return 扁平化后的类目数据
-     */
-    public Stream<CmsFeedCategoryModel> flatten(List<CmsFeedCategoryModel> feedCategoryModels) {
-
-        return feedCategoryModels.stream().flatMap(this::flatten);
-    }
-
-    /**
-     * 将类目和其子类目全部转化为扁平的数据流
-     *
-     * @param feedCategoryModel 某 Feed 类目
-     * @return 扁平化后的类目数据
-     */
-    public Stream<CmsFeedCategoryModel> flatten(CmsFeedCategoryModel feedCategoryModel) {
-
-        Stream<CmsFeedCategoryModel> feedCategoryModelStream = Stream.of(feedCategoryModel);
-
-        List<CmsFeedCategoryModel> children = feedCategoryModel.getChild();
-
-        if (children != null && children.size() > 0)
-            feedCategoryModelStream = Stream.concat(feedCategoryModelStream, children.stream().flatMap(this::flatten));
-
-        return feedCategoryModelStream;
-    }
-
-    public WriteResult save(CmsMtFeedCategoryTreeModel treeModel) {
-
-        return cmsMtFeedCategoryTreeDao.update(treeModel);
-    }
-
-
 }

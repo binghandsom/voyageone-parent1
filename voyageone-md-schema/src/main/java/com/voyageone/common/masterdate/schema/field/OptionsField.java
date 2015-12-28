@@ -1,7 +1,7 @@
 package com.voyageone.common.masterdate.schema.field;
 
-import com.voyageone.common.masterdate.schema.util.StringUtil;
-import com.voyageone.common.masterdate.schema.util.XmlUtils;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.masterdate.schema.utils.XmlUtils;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.enums.TopSchemaErrorCodeEnum;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
@@ -14,7 +14,7 @@ import java.util.List;
 import org.dom4j.Element;
 
 public abstract class OptionsField extends Field {
-    protected List<Option> options = new ArrayList();
+    protected List<Option> options = new ArrayList<>();
 
     public OptionsField() {
     }

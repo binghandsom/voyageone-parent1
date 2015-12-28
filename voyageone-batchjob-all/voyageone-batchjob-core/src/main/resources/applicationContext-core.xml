@@ -26,4 +26,13 @@
     <bean id="init" class="com.voyageone.common.configs.Initializer" init-method="init"/>
 
 	<bean class="com.voyageone.batch.core.util.SetPriceUtils"/>
+
+	<!-- REST SDK 配置 -->
+	<bean id="restTemplate" class="org.springframework.web.client.RestTemplate"/>
+	<bean id="voApiDefaultClient" class="com.voyageone.web2.sdk.api.VoApiDefaultClient">
+		<constructor-arg ref="restTemplate" />
+		<constructor-arg name="serverUrl" value="http://localhost:8080/rest"/>
+		<constructor-arg name="connectTimeout" value="3000"/><!-- ms -->
+		<constructor-arg name="readTimeout" value="90000"/><!-- ms -->
+	</bean>
 </beans>

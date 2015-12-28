@@ -12,7 +12,10 @@ import java.util.Set;
 /**
  * /puroduct/selectList Request Model
  *
- * Product的id.两种方式来查看一个产品:1.传入productId List来查询 2.传入productCode list来查询 3:传入props来查询
+ * Product的id.两种方式来查看一个产品:
+ *  1.传入productId List来查询
+ *  2.传入productCode list来查询
+ *  3:传入props来查询
  *
  * Created on 2015-12-14
  *

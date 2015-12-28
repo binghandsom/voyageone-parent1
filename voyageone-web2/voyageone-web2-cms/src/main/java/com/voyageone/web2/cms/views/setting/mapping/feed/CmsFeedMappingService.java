@@ -3,11 +3,11 @@ package com.voyageone.web2.cms.views.setting.mapping.feed;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.cms.service.CmsBtChannelCategoryService;
 import com.voyageone.cms.service.CmsFeedMappingService.CategoryContext;
-import com.voyageone.cms.service.FeedToCmsService;
+import com.voyageone.cms.service.dao.mongodb.CmsMtFeedCategoryTreeDao;
 import com.voyageone.cms.service.model.CmsFeedCategoryModel;
 import com.voyageone.cms.service.model.CmsFeedMappingModel;
 import com.voyageone.cms.service.model.CmsMtCategoryTreeModel;
-import com.voyageone.cms.service.model.CmsMtFeedCategoryTreeModel;
+import com.voyageone.cms.service.model.CmsMtFeedCategoryTreeModelx;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.setting.mapping.feed.SetMappingBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -28,7 +28,7 @@ import java.util.stream.Stream;
 public class CmsFeedMappingService extends BaseAppService {
 
     @Autowired
-    private FeedToCmsService feedToCmsService;
+    private CmsMtFeedCategoryTreeDao cmsMtFeedCategoryTreeDao;
 
     @Autowired
     private CmsBtChannelCategoryService cmsBtChannelCategoryService;
@@ -36,12 +36,12 @@ public class CmsFeedMappingService extends BaseAppService {
     @Autowired
     private com.voyageone.cms.service.CmsFeedMappingService cmsFeedMappingService;
 
-    public CmsMtFeedCategoryTreeModel getFeedCategoriyTree(UserSessionBean user) {
-        return feedToCmsService.getFeedCategory(user.getSelChannelId());
+    public CmsMtFeedCategoryTreeModelx getFeedCategoryTree(UserSessionBean user) {
+        return cmsMtFeedCategoryTreeDao.selectFeedCategoryx(user.getSelChannelId());
     }
 
     public List<CmsMtCategoryTreeModel> getMainCategories(UserSessionBean user) {
-        return cmsBtChannelCategoryService.getCategorysByChannelId(user.getSelChannelId());
+        return cmsBtChannelCategoryService.getCategoriesByChannelId(user.getSelChannelId());
     }
 
     /**
@@ -56,7 +56,7 @@ public class CmsFeedMappingService extends BaseAppService {
         if (StringUtils.isAnyEmpty(setMappingBean.getFrom(), setMappingBean.getTo()))
             throw new BusinessException("木有参数");
 
-        CmsMtFeedCategoryTreeModel treeModel = getFeedCategoriyTree(user);
+        CmsMtFeedCategoryTreeModelx treeModel = getFeedCategoryTree(user);
 
         // 按 Path 查 FeedCategory
         CmsFeedCategoryModel cmsFeedCategoryModel = findByPath(setMappingBean.getFrom(), treeModel);
@@ -94,8 +94,7 @@ public class CmsFeedMappingService extends BaseAppService {
             feedMappingContext.addMapping(mapping, user.getUserName());
         } else {
 
-            boolean hasDefaultMain = feedToCmsService
-                    .flatten(treeModel)
+            boolean hasDefaultMain = flatten(treeModel)
                     .flatMap(c -> c.getMapping().stream())
                     .anyMatch(m -> m.getMainCategoryPath().equals(setMappingBean.getTo()));
 
@@ -113,7 +112,7 @@ public class CmsFeedMappingService extends BaseAppService {
         }
 
         treeModel.setModifier(user.getUserName());
-        feedToCmsService.save(treeModel);
+        cmsMtFeedCategoryTreeDao.update(treeModel);
 
         return cmsFeedCategoryModel.getMapping();
     }
@@ -127,7 +126,7 @@ public class CmsFeedMappingService extends BaseAppService {
      */
     private void setChildrenMapping(CmsFeedCategoryModel cmsFeedCategoryModel, CmsFeedMappingModel mapping, UserSessionBean userSessionBean) {
 
-        feedToCmsService.flatten(cmsFeedCategoryModel.getChild()).forEach(c -> setChildMapping(c, mapping, userSessionBean));
+        flatten(cmsFeedCategoryModel.getChild()).forEach(c -> setChildMapping(c, mapping, userSessionBean));
     }
 
     /**
@@ -172,7 +171,7 @@ public class CmsFeedMappingService extends BaseAppService {
      * @param predicate         查询条件
      * @return mapping 对象
      */
-    private CmsFeedMappingModel findMapping(CmsFeedCategoryModel feedCategoryModel, Predicate<CmsFeedMappingModel> predicate) {
+    protected CmsFeedMappingModel findMapping(CmsFeedCategoryModel feedCategoryModel, Predicate<CmsFeedMappingModel> predicate) {
         return feedCategoryModel.getMapping()
                 .stream()
                 .filter(predicate)
@@ -187,7 +186,7 @@ public class CmsFeedMappingService extends BaseAppService {
      * @param treeModel 完整的类目树
      * @return 具体的 Feed 类目
      */
-    private CmsFeedCategoryModel findByPath(String path, CmsMtFeedCategoryTreeModel treeModel) {
+    protected CmsFeedCategoryModel findByPath(String path, CmsMtFeedCategoryTreeModelx treeModel) {
 
         String[] fromPath = path.split("-");
 
@@ -221,7 +220,7 @@ public class CmsFeedMappingService extends BaseAppService {
      */
     public List<CmsFeedMappingModel> extendsMapping(CmsFeedCategoryModel feedCategoryModel, UserSessionBean user) {
 
-        CmsMtFeedCategoryTreeModel treeModel = getFeedCategoriyTree(user);
+        CmsMtFeedCategoryTreeModelx treeModel = getFeedCategoryTree(user);
 
         CmsFeedMappingModel feedMappingModel = findParentDefaultMapping(feedCategoryModel, treeModel);
 
@@ -239,7 +238,7 @@ public class CmsFeedMappingService extends BaseAppService {
      * @param treeModel         完整的树
      * @return Mapping 对象
      */
-    private CmsFeedMappingModel findParentDefaultMapping(CmsFeedCategoryModel feedCategoryModel, CmsMtFeedCategoryTreeModel treeModel) {
+    protected CmsFeedMappingModel findParentDefaultMapping(CmsFeedCategoryModel feedCategoryModel, CmsMtFeedCategoryTreeModelx treeModel) {
 
         // 当前类目没父级了.
         if (!feedCategoryModel.getPath().contains("-")) return null;
@@ -255,5 +254,45 @@ public class CmsFeedMappingService extends BaseAppService {
         }
 
         return parentDefaultMapping;
+    }
+
+    /**
+     * 将类目和其子类目全部转化为扁平的数据流
+     *
+     * @param feedCategoryTreeModel Feed 类目树
+     * @return 扁平化后的类目数据
+     */
+    public Stream<CmsFeedCategoryModel> flatten(CmsMtFeedCategoryTreeModelx feedCategoryTreeModel) {
+
+        return feedCategoryTreeModel.getCategoryTree().stream().flatMap(this::flatten);
+    }
+
+    /**
+     * 将类目和其子类目全部转化为扁平的数据流
+     *
+     * @param feedCategoryModels 多个类目
+     * @return 扁平化后的类目数据
+     */
+    public Stream<CmsFeedCategoryModel> flatten(List<CmsFeedCategoryModel> feedCategoryModels) {
+
+        return feedCategoryModels.stream().flatMap(this::flatten);
+    }
+
+    /**
+     * 将类目和其子类目全部转化为扁平的数据流
+     *
+     * @param feedCategoryModel 某 Feed 类目
+     * @return 扁平化后的类目数据
+     */
+    public Stream<CmsFeedCategoryModel> flatten(CmsFeedCategoryModel feedCategoryModel) {
+
+        Stream<CmsFeedCategoryModel> feedCategoryModelStream = Stream.of(feedCategoryModel);
+
+        List<CmsFeedCategoryModel> children = feedCategoryModel.getChild();
+
+        if (children != null && children.size() > 0)
+            feedCategoryModelStream = Stream.concat(feedCategoryModelStream, children.stream().flatMap(this::flatten));
+
+        return feedCategoryModelStream;
     }
 }

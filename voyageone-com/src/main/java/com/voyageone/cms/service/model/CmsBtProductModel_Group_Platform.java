@@ -115,7 +115,8 @@ public class CmsBtProductModel_Group_Platform extends BaseMongoMap<String, Objec
 
     // platform status 等待上新/在售/在库
     public CmsConstants.PlatformStatus getPlatformStatus() {
-        return getAttribute("platformStatus");
+        String platformStatus = getAttribute("platformStatus");
+        return (platformStatus == null)?null:CmsConstants.PlatformStatus.valueOf(platformStatus);
     }
 
     public void setPlatformStatus(CmsConstants.PlatformStatus platformStatus) {
@@ -124,7 +125,8 @@ public class CmsBtProductModel_Group_Platform extends BaseMongoMap<String, Objec
 
     //"Instock"(在库)/"OnSale"(在售)
     public CmsConstants.PlatformActive getPlatformActive() {
-        return getAttribute("platformActive");
+        String platformActive = getAttribute("platformActive");
+        return (platformActive == null)?null:CmsConstants.PlatformActive.valueOf(platformActive);
     }
     public void setPlatformActive(CmsConstants.PlatformActive platformActive) {
         setAttribute("platformActive", platformActive);

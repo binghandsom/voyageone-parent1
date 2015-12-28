@@ -1,6 +1,6 @@
 package com.voyageone.common.masterdate.schema.factory;
 
-import com.voyageone.common.masterdate.schema.util.XmlUtils;
+import com.voyageone.common.masterdate.schema.utils.XmlUtils;
 import com.voyageone.common.masterdate.schema.field.Field;
 
 import java.util.List;

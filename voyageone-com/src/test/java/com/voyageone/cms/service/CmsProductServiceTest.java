@@ -58,8 +58,8 @@ public class CmsProductServiceTest {
         fields.setShortDesEn("Stud Earrings with Cubic Zirconia in Sterling Silver- 简短描述英语" + random.nextInt(100));
         fields.setLongDesEn("Stud Earrings with Cubic Zirconia in Sterling Silver- 详情描述英语" + random.nextInt(100));
 
-        fields.setHsCodeCrop("Stud Ear" + random.nextInt(10));
-        fields.setHsCodePrivate("Stud Ear" + random.nextInt(10));
+        fields.setHsCodeCrop("Stud Ear"+ random.nextInt(10));
+        fields.setHsCodePrivate("Stud Ear"+ random.nextInt(10));
 
         fields.setPriceChange(random.nextInt(1));
 
@@ -104,6 +104,7 @@ public class CmsProductServiceTest {
         fields.setCurrentPriceEnd(800.00 + random.nextInt(100));
         fields.setStatus("pedding");
         fields.setSizeType("Men" + random.nextInt(5));
+//        fields.setInventory(100 + random.nextInt(10));
         fields.setPriceChange(random.nextInt(1));
 
 
@@ -119,16 +120,17 @@ public class CmsProductServiceTest {
 
         List<CmsBtProductModel_Group_Platform> platforms = groups.getPlatforms();
         CmsBtProductModel_Group_Platform platform = new CmsBtProductModel_Group_Platform();
-        platform.setGroupId(Long.parseLong(""+random.nextInt(1000)));
+        platform.setGroupId(Long.parseLong("" + random.nextInt(1000)));
         platform.setCartId(21);
         platform.setNumIId(String.valueOf(2000000 + random.nextInt(1000)));
         platform.setIsMain(false);
         platform.setDisplayOrder(random.nextInt(100));
         platform.setPublishTime("2015-11-12 16:19:00");
         platform.setInstockTime("2015-11-18 16:19:00");
-        platform.setPlatformStatus(CmsConstants.PlatformStatus.Waitingpublish);
-        platform.setPlatformActive(CmsConstants.PlatformActive.Onsale);
-        platform.setQty(random.nextInt(100));
+//        platform.setStatus("InStock");
+//        platform.setPublishStatus("等待上新");
+//        platform.setComment("");
+//        platform.setInventory(random.nextInt(100));
         platforms.add(platform);
 
         platform = new CmsBtProductModel_Group_Platform(platform);
@@ -151,20 +153,11 @@ public class CmsProductServiceTest {
             skus.add(sku);
         }
 
-        CmsBtProductModel_BatchField batchField = product.getBatchField();
-        batchField.setCodeQty(random.nextInt(1000));
-
-        CmsBtProductModel_Feed orgFeed = product.getFeedOrgAtts();
-        orgFeed.setAttribute("washingtype", "dry cleaning");
-        orgFeed.setAttribute("collar", "mandarin collar");
-        orgFeed.setAttribute("style", "campus");
-        orgFeed.setAttribute("waspe", "dleaning");
-
-        CmsBtProductModel_Feed cnFeed = product.getFeedOrgAtts();
-        cnFeed.setAttribute("washingtype", "dry cleaning");
-        cnFeed.setAttribute("collar", "mandarin collar");
-        cnFeed.setAttribute("style", "campus");
-        cnFeed.setAttribute("waspe", "dleaning");
+//        CmsBtProductModel_Feed feed = product.getFeedAtts();
+//        feed.setAttribute("washingtype", "dry cleaning");
+//        feed.setAttribute("collar", "mandarin collar");
+//        feed.setAttribute("style", "campus");
+//        feed.setAttribute("waspe", "dleaning");
 
         return product;
     }
@@ -209,7 +202,7 @@ public class CmsProductServiceTest {
         List<CmsBtProductModel> lst = new ArrayList<>();
         int index = 0;
         for(int i=1; i<=100000; i++) {
-            CmsBtProductModel productModel = create("300", i, new Random());
+            CmsBtProductModel productModel = create("100", i, new Random());
             lst.add(productModel);
             index++;
             if (i%1000 == 0) {
@@ -226,7 +219,7 @@ public class CmsProductServiceTest {
     }
 
     @Test
-    public void testRemove10W(){
+    public void remove10W(){
         long start = System.currentTimeMillis();
         cmsProductService.removeAll("101");
         long total = System.currentTimeMillis()-start;
@@ -240,7 +233,7 @@ public class CmsProductServiceTest {
     }
 
     @Test
-    public void testBulkUpdate(){
+    public void bulkUpdate(){
         List<BulkUpdateModel> bulkList = new ArrayList<>();
         System.out.println(new Date());
         for (int i = 1; i < 100000 ; i++) {
@@ -263,9 +256,45 @@ public class CmsProductServiceTest {
         List<String> codeList = new ArrayList<>();
         codeList.add("100001");
         codeList.add("100002");
-        cmsProductService.bathUpdateWithSXResult("001", 21, 804,
-                codeList, "123123123", "product_id1",
-                "2015-11-12 16:19:00", "2015-11-12 16:19:00", null,
-                CmsConstants.PlatformStatus.Onsale);
+//        cmsProductService.bathUpdateWithSXResult("001", 21, codeList, "123123123", "product_id1", "2015-11-12 16:19:00", "2015-11-12 16:19:00", CmsConstants.PlatformStatus.Onsale);
     }
+
+    @Test
+    public void testGetProductCodesByCart() {
+        long start = System.currentTimeMillis();
+        List<String> productCodeList = cmsProductService.getProductCodesByCart("300", 21);
+        long end = System.currentTimeMillis();
+
+        int index = 1;
+        for (String productCode : productCodeList) {
+            System.out.println(productCode);
+            index++;
+            if (index > 10) {
+                break;
+            }
+        }
+        System.out.println(productCodeList.size());
+        System.out.println("total time:=" + (end - start));
+    }
+
+    @Test
+    public void testGetProductGroupIdCodesMapByCart() {
+        long start = System.currentTimeMillis();
+        Map<String, List<String>> productCodeMap = cmsProductService.getProductGroupIdCodesMapByCart("300", 21);
+        long end = System.currentTimeMillis();
+
+        int index = 1;
+
+        for (Map.Entry<String, List<String>> entry : productCodeMap.entrySet()) {
+            System.out.println(entry.getKey());
+            System.out.println(entry.getValue());
+            index++;
+            if (index > 10) {
+                break;
+            }
+        }
+        System.out.println(productCodeMap.size());
+        System.out.println("total time:=" + (end-start));
+    }
+
 }
