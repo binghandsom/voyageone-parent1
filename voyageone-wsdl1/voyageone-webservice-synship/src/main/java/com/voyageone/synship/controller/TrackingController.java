@@ -66,6 +66,11 @@ public class TrackingController {
 
         OrderTrackInfoBean orderTrackInfoBean = new OrderTrackInfoBean();
 
+        // type没有设定的场合，默认为WebID查询
+        if (StringUtils.isNullOrBlank2(type)) {
+            type =  TrackingType.WEBID;
+        }
+
         switch (type) {
             // 根据Source_order_id查询
             case TrackingType.WEBID:
