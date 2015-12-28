@@ -44,7 +44,7 @@ public class CmsBtFeedMappingDao extends BaseMongoDao {
         // 除了传入的参数之外,还需要一个条件,就是default=1
         String query = String.format("{ scope.channelId: '%s', scope.feedCategoryPath: %s, defaultMapping: 1}", channelId, feedCategory);
 
-        return selectOneWithQuery(query, channelId);
+        return selectOneWithQuery(query);
     }
 
     /**

@@ -46,7 +46,7 @@ public class CmsProductService {
      */
     public CmsBtProductModel getProductWithQuery(String channelId, String query) {
         if (StringUtils.isEmpty(query)) {
-            return cmsBtProductDao.selectOne();
+            return cmsBtProductDao.selectOne(channelId);
         }
         return cmsBtProductDao.selectOneWithQuery(query, channelId);
     }
