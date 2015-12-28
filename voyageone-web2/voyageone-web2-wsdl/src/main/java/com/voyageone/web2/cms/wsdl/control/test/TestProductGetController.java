@@ -7,7 +7,6 @@ import com.voyageone.web2.sdk.api.request.ProductsGetRequest;
 import com.voyageone.web2.sdk.api.response.ProductGetResponse;
 import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
 import com.voyageone.web2.sdk.api.service.ProductGetClient;
-import com.voyageone.web2.sdk.api.service.ProductsGetClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,8 +31,8 @@ public class TestProductGetController extends BaseController {
     @Autowired
     protected ProductGetClient productGetClient;
 
-    @Autowired
-    protected ProductsGetClient productsGetClient;
+//    @Autowired
+//    protected ProductsGetClient productsGetClient;
 
 
     /**
@@ -84,7 +83,7 @@ public class TestProductGetController extends BaseController {
 //        requestModel.setPageSize(1);
 
 
-        ProductsGetResponse response = productsGetClient.getProducts(requestModel);
+        ProductsGetResponse response = null;//productsGetClient.getProducts(requestModel);
 
         // 返回用户信息
         return response;

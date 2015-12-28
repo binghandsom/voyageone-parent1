@@ -8,8 +8,6 @@ import com.voyageone.web2.sdk.api.response.ProductGroupGetResponse;
 import com.voyageone.web2.sdk.api.response.ProductGroupsGetResponse;
 import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
 import com.voyageone.web2.sdk.api.service.ProductGroupGetClient;
-import com.voyageone.web2.sdk.api.service.ProductGroupsGetClient;
-import com.voyageone.web2.sdk.api.service.ProductsGetClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,8 +31,8 @@ public class TestProductGroupGetController extends BaseController {
     @Autowired
     protected ProductGroupGetClient productGroupGetClient;
 
-    @Autowired
-    protected ProductGroupsGetClient productGroupsGetClient;
+//    @Autowired
+//    protected ProductGroupsGetClient productGroupsGetClient;
 
 
     /**
@@ -89,7 +87,7 @@ public class TestProductGroupGetController extends BaseController {
 //        requestModel.setPageSize(1);
 
 
-        ProductGroupsGetResponse response = productGroupsGetClient.getMainGroups(requestModel);
+        ProductGroupsGetResponse response = null;//productGroupsGetClient.getMainGroups(requestModel);
 
         // 返回用户信息
         return response;
