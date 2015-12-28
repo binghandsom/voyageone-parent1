@@ -300,6 +300,26 @@
             created &lt;= #{process_time}
     </delete>
 
+    <delete id="wms_deleteTransferDetail">
+        DELETE FROM
+           wms_bt_transfer_detail
+        WHERE
+          transfer_id IN (select transfer_id from wms_bt_transfer where transfer_status = '1' and transfer_type = '5' and transfer_origin = '6' and created &lt;= #{process_time})
+    </delete>
+
+    <delete id="wms_deleteTransfer">
+        DELETE FROM
+          wms_bt_transfer
+        WHERE
+          transfer_status = '1'
+        AND
+          transfer_type = '5'
+        AND
+          transfer_origin = '6'
+        AND
+          created &lt;= #{process_time}
+    </delete>
+
     <!-- 取得Receipt Confirmation的记录 -->
     <select id="wms_bt_client_shipment_getReceiptConfirmation" parameterType="String" resultType="com.voyageone.batch.wms.modelbean.ReceiptConfirmationBean">
         SELECT

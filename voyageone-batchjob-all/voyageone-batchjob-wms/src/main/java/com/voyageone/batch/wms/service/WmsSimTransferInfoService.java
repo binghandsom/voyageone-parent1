@@ -54,6 +54,14 @@ public class WmsSimTransferInfoService  extends BaseTaskService {
 
         int transferCount = transferDao.deleteTransferHistory( process_time);
 
+        logger.info("处理过期TransferItem数据日期："+process_time + "，处理件数："+transferCount);
+
+        transferCount = transferDao.deleteTransferDetail(process_time);
+
+        logger.info("处理过期TransferDetail数据日期："+process_time + "，处理件数："+transferCount);
+
+        transferCount = transferDao.deleteTransfer( process_time);
+
         logger.info("处理过期Transfer数据日期："+process_time + "，处理件数："+transferCount);
 
         int inventoryCount = clientInventoryDao.deleteClientInventoryHistory(process_time);
