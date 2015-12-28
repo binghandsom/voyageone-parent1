@@ -144,6 +144,12 @@ public class CmsFeedPropMappingService extends BaseAppService {
         return feedCategoryModel == null ? null : feedCategoryModel.getAttribute();
     }
 
+    /**
+     * 保存一个字段/属性的关联关系
+     *
+     * @param saveFieldMappingBean 请求参数
+     * @param userSessionBean      当前用户
+     */
     public void saveFeedMapping(SaveFieldMappingBean saveFieldMappingBean, UserSessionBean userSessionBean) {
 
         CmsBtFeedMappingModel feedMappingModel = com$feedMappingService.getMapping(userSessionBean.getSelChannel(),

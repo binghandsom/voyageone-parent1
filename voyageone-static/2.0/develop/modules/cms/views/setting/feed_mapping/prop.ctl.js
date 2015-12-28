@@ -83,8 +83,30 @@ define([
                         field: field
                     };
                 },
+                /**
+                 * 上层 popup 返回时的调用
+                 * @param {{feedCategoryPath:string,mainCategoryPath:string,field:object,fieldMapping:object}} context
+                 */
                 saveMapping: function (context) {
-                    console.log(context);
+
+                    var path = [];
+                    var f = context.field;
+                    path.push(f.id);
+                    var p = f.x.parent;
+                    while(p) {
+                        path.push(p.id);
+                        p = p.x.parent;
+                    }
+
+                    this.feedMappingService.saveFieldMapping({
+                        feedCategoryPath: context.feedCategoryPath,
+                        mainCategoryPath: context.mainCategoryPath,
+                        fieldPath: path.reverse(),
+                        propMapping: context.fieldMapping
+                    }).then(function(res) {
+
+                        // 你猜
+                    });
                 }
             };
 
