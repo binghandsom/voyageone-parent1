@@ -3,8 +3,10 @@ package com.voyageone.web2.cms.views.setting.mapping.feed;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
 import com.voyageone.cms.service.model.*;
+import com.voyageone.cms.service.model.feed.mapping.Prop;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.setting.mapping.feed.GetFieldMappingBean;
+import com.voyageone.web2.cms.bean.setting.mapping.feed.SaveFieldMappingBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,12 +72,12 @@ public class CmsFeedPropMappingService extends BaseAppService {
      * @param user                当前用户
      * @return 属性匹配设定
      */
-    public CmsBtFeedMappingModel.Prop getFieldMapping(GetFieldMappingBean getFieldMappingBean, UserSessionBean user) {
+    public Prop getFieldMapping(GetFieldMappingBean getFieldMappingBean, UserSessionBean user) {
 
         CmsBtFeedMappingModel mappingModel = com$feedMappingService.getMapping(user.getSelChannel(),
                 getFieldMappingBean.getFeedCategoryPath(), getFieldMappingBean.getMainCategoryPath());
 
-        List<CmsBtFeedMappingModel.Prop> props = mappingModel.getProps();
+        List<Prop> props = mappingModel.getProps();
 
         if (props == null)
             return null;
@@ -102,14 +104,14 @@ public class CmsFeedPropMappingService extends BaseAppService {
         if (btFeedMappingModel == null)
             throw new BusinessException("没有找到匹配");
 
-        List<CmsBtFeedMappingModel.Prop> props = btFeedMappingModel.getProps();
+        List<Prop> props = btFeedMappingModel.getProps();
 
         if (props == null)
             return new ArrayList<>(0);
 
         return flattenFinalProp(props)
                 .filter(p -> p.getMappings() != null && p.getMappings().size() > 0)
-                .map(CmsBtFeedMappingModel.Prop::getProp)
+                .map(Prop::getProp)
                 .collect(toList());
     }
 
@@ -142,14 +144,78 @@ public class CmsFeedPropMappingService extends BaseAppService {
         return feedCategoryModel == null ? null : feedCategoryModel.getAttribute();
     }
 
-    private Stream<CmsBtFeedMappingModel.Prop> flattenFinalProp(List<CmsBtFeedMappingModel.Prop> props) {
+    public void saveFeedMapping(SaveFieldMappingBean saveFieldMappingBean, UserSessionBean userSessionBean) {
+
+        CmsBtFeedMappingModel feedMappingModel = com$feedMappingService.getMapping(userSessionBean.getSelChannel(),
+                saveFieldMappingBean.getFeedCategoryPath(), saveFieldMappingBean.getMainCategoryPath());
+
+        if (feedMappingModel == null)
+            throw new BusinessException("没找到 Mapping");
+
+        Prop Submitted = saveFieldMappingBean.getPropMapping();
+        List<String> fieldPath = saveFieldMappingBean.getFieldPath();
+
+        if (Submitted == null || fieldPath == null || fieldPath.size() < 1)
+            throw new BusinessException("没有参数");
+
+        List<Prop> props = feedMappingModel.getProps();
+
+        if (props == null)
+            feedMappingModel.setProps(props = new ArrayList<>());
+
+        Prop prop = findProp(fieldPath, props);
+
+        prop.setMappings(Submitted.getMappings());
+
+        com$feedMappingService.setMapping(feedMappingModel);
+    }
+
+    /**
+     * 按属性路径查找或创建树形的属性结构
+     *
+     * @param propPath 属性路径
+     * @param props    顶层属性集合
+     * @return 返回最叶子级
+     */
+    private Prop findProp(List<String> propPath, List<Prop> props) {
+
+        Prop prop = null;
+        String last = propPath.get(propPath.size() - 1);
+
+        for (String name : propPath) {
+            // 先找找
+            prop = findProp(props, name);
+            // 没找到就造个新的,并同时扔到父亲的子集合中
+            if (prop == null) {
+                props.add(prop = new Prop());
+                prop.setProp(name);
+            }
+            // 看看还会不会在进行下一次查询
+            if (last.equals(name)) break;
+            // 为遍历的下一次做准备
+            props = prop.getChildren();
+            // 如果没取到,就更新
+            if (props == null)
+                prop.setChildren(props = new ArrayList<>());
+        }
+
+        return prop;
+    }
+
+    private Prop findProp(List<Prop> props, String name) {
+        if (props.size() < 1) return null;
+        if (props.size() < 2) return props.get(0).getProp().equals(name) ? props.get(0) : null;
+        return props.stream().filter(p -> p.getProp().equals(name)).findFirst().orElse(null);
+    }
+
+    private Stream<Prop> flattenFinalProp(List<Prop> props) {
 
         return props.stream().flatMap(this::flattenFinalProp);
     }
 
-    private Stream<CmsBtFeedMappingModel.Prop> flattenFinalProp(CmsBtFeedMappingModel.Prop prop) {
+    private Stream<Prop> flattenFinalProp(Prop prop) {
 
-        List<CmsBtFeedMappingModel.Prop> children = prop.getChildren();
+        List<Prop> children = prop.getChildren();
 
         if (children == null || children.size() < 1)
             return Stream.of(prop);
