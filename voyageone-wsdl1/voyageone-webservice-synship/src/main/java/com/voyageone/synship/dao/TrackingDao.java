@@ -40,6 +40,42 @@ public class TrackingDao extends BaseDao {
     }
 
     /**
+     * 根据传入参数取得该订单的物流信息
+     * @param cwb 查询参数
+     * @return OrderTrackInfoBean
+     */
+    public OrderTrackInfoBean getSynshipNoByWebid(String cwb) {
+        return selectOne("orders_getSynshipNoByWebid", cwb);
+    }
+
+    /**
+     * 根据传入参数取得该订单的物流信息
+     * @param cwb 查询参数
+     * @return OrderTrackInfoBean
+     */
+    public OrderTrackInfoBean getSynshipNoByPhone(String cwb) {
+        return selectOne("orders_getSynshipNoByPhone", cwb);
+    }
+
+    /**
+     * 根据传入参数取得该订单的物流信息
+     * @param cwb 查询参数
+     * @return OrderTrackInfoBean
+     */
+    public OrderTrackInfoBean getSynshipNoByTrackingNo(String cwb) {
+        return selectOne("orders_getSynshipNoByTrackingNo", cwb);
+    }
+
+    /**
+     * 根据传入参数取得该订单的物流信息
+     * @param cwb 查询参数
+     * @return OrderTrackInfoBean
+     */
+    public OrderTrackInfoBean getSynshipNoByOrderNum(String cwb) {
+        return selectOne("orders_getSynshipNoByOrderNum", cwb);
+    }
+
+    /**
      * 获得物流信息
      * @param syn_ship_no synShip物流单号
      * @return List<FromReservation>
