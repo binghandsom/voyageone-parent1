@@ -39,7 +39,7 @@
                         <td class="text-left">{{ ctrl.getDefaultMapping(ctrl.selectedTop) }}</td>
                         <td>
                             <div class="btn-group" ng-controller="popupCtrl">
-                                <button ng-click="openNewcategory('lg', { from: ctrl.selectedTop }).then(ctrl.bindCategory)"
+                                <button ng-click="popupNewCategory({ from: ctrl.selectedTop }).then(ctrl.bindCategory)"
                                         class="btn btn-default btn-xs">
                                     <i class="glyphicon glyphicon-link"></i> 类目匹配
                                 </button>
@@ -54,7 +54,7 @@
                         <td class="text-left">{{ ctrl.getDefaultMapping(feedCategory) }}</td>
                         <td>
                             <div class="btn-group" ng-controller="popupCtrl">
-                                <button ng-click="openNewcategory('lg', { from: feedCategory }).then(ctrl.bindCategory)"
+                                <button ng-click="popupNewCategory({ from: feedCategory }).then(ctrl.bindCategory)"
                                         class="btn btn-default btn-xs">
                                     <i class="glyphicon glyphicon-link"></i> 类目匹配
                                 </button>

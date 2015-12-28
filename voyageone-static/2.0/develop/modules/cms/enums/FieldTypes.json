@@ -1,9 +1,0 @@
-{
-  "input":"INPUT",
-  "multiInput":"MULTIINPUT",
-  "singleCheck":"SINGLECHECK",
-  "multiCheck":"MULTICHECK",
-  "complex":"COMPLEX",
-  "multiComplex":"MULTICOMPLEX",
-  "label":"LABEL"
-}

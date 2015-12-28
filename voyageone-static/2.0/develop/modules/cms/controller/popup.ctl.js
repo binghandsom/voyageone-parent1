@@ -6,8 +6,8 @@ define([
     'cms',
     'underscore'
 ], function (cms, _) {
-    cms
-        .constant('popActions', {
+
+    cms.constant('popActions', {
             "column_define": {
                 "templateUrl": "views/pop/column_define/index.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/column_define/index.ctl"
@@ -40,18 +40,6 @@ define([
                 "templateUrl": "views/pop/prop_change/index.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/prop_change/index.ctl"
             },
-            "category": {
-                "templateUrl": "views/pop/category/index.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/category/index.ctl"
-            },
-            "feed": {
-                "templateUrl": "views/pop/feed/index.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/feed/index.ctl"
-            },
-            "feed_list": {
-                "templateUrl": "views/pop/feed_list/index.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/feed_list/index.ctl"
-            },
             "import": {
                 "templateUrl": "views/pop/import/index.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/import/index.ctl"
@@ -71,11 +59,48 @@ define([
                     "templateUrl": "views/pop/system/category/edit.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/system/category/edit.ctl"
                 }
+            },
+            /************ 新式 ************/
+            "category": {
+                "templateUrl": "views/pop/category/index.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/category/index.ctl",
+                "controller": 'categoryPopupController as ctrl',
+                "backdrop": 'static',
+                "size": 'lg'
+            },
+            "feed": {
+                "templateUrl": "views/pop/feed/index.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/feed/index.ctl",
+                "controller": 'feedPropMappingPopupController as ctrl',
+                "backdrop": 'static',
+                "size": 'lg'
+            },
+            "feedValue": {
+                "templateUrl": "views/pop/feedValue/index.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/feedValue/index.ctl",
+                "controller": 'feedPropValuePopupController as ctrl',
+                "backdrop": 'static',
+                "size": 'md'
             }
         })
         .controller('popupCtrl', popupCtrl);
 
     function popupCtrl($scope, $modal, popActions, $q, $translate, alert) {
+
+        function openModel(config, context) {
+
+            if (context) config.resolve = {
+                context: function() {
+                    return context;
+                }
+            };
+
+            var defer = $q.defer();
+            require([config.controllerUrl], function() {
+                defer.resolve($modal.open(config).result);
+            });
+            return defer.promise;
+        }
 
         $scope.openCustomBaseProperty = openCustomBaseProperty;
         function openCustomBaseProperty(viewSize) {
@@ -145,29 +170,6 @@ define([
                     alert($translate.instant('TXT_COM_MSG_NO_ROWS_SELECT'));
                 }
             });
-        }
-        $scope.openNewcategory = openNewcategory;
-        function openNewcategory(viewSize, context) {
-
-            var defer = $q.defer();
-
-            require([popActions.category.controllerUrl], function() {
-                defer.resolve(
-                    $modal.open({
-                        backdrop: 'static',
-                        templateUrl: popActions.category.templateUrl,
-                        controller: 'categoryPopupController as ctrl',
-                        size: viewSize,
-                        resolve: {
-                            context: function () {
-                                return context;
-                            }
-                        }
-                    }).result
-                );
-            });
-
-            return defer.promise;
         }
         $scope.openshop_category = openshop_category;
         function openshop_category(viewSize) {
@@ -253,32 +255,6 @@ define([
                 }
             });
         }
-        $scope.openfeed = openfeed;
-        function openfeed(viewSize) {
-            $modal.open({
-                templateUrl: popActions.feed.templateUrl,
-                controllerUrl: popActions.feed.controllerUrl,
-                size: viewSize,
-                resolve: {
-                    items: function () {
-                        //return data;
-                    }
-                }
-            });
-        }
-        $scope.openfeed_list = openfeed_list;
-        function openfeed_list(viewSize) {
-            $modal.open({
-                templateUrl: popActions.feed_list.templateUrl,
-                controllerUrl: popActions.feed_list.controllerUrl,
-                size: viewSize,
-                resolve: {
-                    items: function () {
-                        //return data;
-                    }
-                }
-            });
-        }
         $scope.openImport = openImport;
         function openImport(viewSize,data) {
             require([popActions.import.controllerUrl], function () {
@@ -308,5 +284,17 @@ define([
                 });
             });
         }
+
+        $scope.popupNewCategory = function (context) {
+            return openModel(popActions.category, context);
+        };
+
+        $scope.popupFeed = function (context) {
+            return openModel(popActions.feed, context);
+        };
+
+        $scope.popupFeedValue = function (context) {
+            return openModel(popActions.feedValue, context);
+        };
     }
 });

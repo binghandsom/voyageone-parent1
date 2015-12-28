@@ -4,6 +4,7 @@ import com.voyageone.cms.service.model.CmsFeedCategoryModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants.MAPPING.FEED;
+import com.voyageone.web2.cms.bean.setting.mapping.feed.GetFieldMappingBean;
 import com.voyageone.web2.cms.bean.setting.mapping.feed.SetMappingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -49,10 +50,33 @@ public class CmsFeedMappingController extends CmsController {
     }
 
     @RequestMapping(FEED.GET_MAIN_PROPS)
-    public AjaxResponse getMainCategoryProps(@RequestBody Map<String, Object> params) {
+    public AjaxResponse getMainCategoryProps(@RequestBody Map<String, String> params) {
 
-        String feedCategoryPath = (String) params.get("feedCategoryPath");
+        String feedCategoryPath = params.get("feedCategoryPath");
 
         return success(feedPropMappingService.getCategoryPropsByFeed(feedCategoryPath, getUser()));
+    }
+
+    @RequestMapping(FEED.GET_MATCHED)
+    public AjaxResponse getMatched(@RequestBody Map<String, String> params) {
+
+        String feedCategoryPath = params.get("feedCategoryPath");
+        String mainCategoryPath = params.get("mainCategoryPath");
+
+        return success(feedPropMappingService.getMatched(feedCategoryPath, mainCategoryPath, getUser()));
+    }
+
+    @RequestMapping(FEED.GET_FIELD_MAPPING)
+    public AjaxResponse getFieldMapping(@RequestBody GetFieldMappingBean params) {
+
+        return success(feedPropMappingService.getFieldMapping(params, getUser()));
+    }
+
+    @RequestMapping(FEED.GET_FEED_ATTRS)
+    public AjaxResponse getFeedAttributes(@RequestBody Map<String, String> params) {
+
+        String feedCategoryPath = params.get("feedCategoryPath");
+
+        return success(feedPropMappingService.getFeedAttributes(feedCategoryPath, getUser()));
     }
 }

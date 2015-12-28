@@ -1,6 +1,8 @@
-<div class="vo_modal">
+<div class="vo_modal" ng-init="ctrl.init()">
     <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="ctrl.cancel()">
+            <span aria-hidden="true"><i class="fa fa-close"></i></span>
+        </button>
         <h5 class="modal-title"><i class="fa fa-crosshairs"></i> 属性设定</h5>
     </div>
     <div class="modal-body">
@@ -13,73 +15,30 @@
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <td>
-                    <select class="form-control">
-                        <option>DICT</option>
-                        <option>DICT</option>
-                        <option>DICT</option>
-                    </select>
+            <tr ng-repeat="mapping in ctrl.fieldMapping.mapping">
+                <td>{{ mapping.type }}</td>
+                <td>{{ mapping.value }}</td>
+                <td class="text-center">
+                    <button title="删除" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button>
                 </td>
-                <td>
-                    <select class="form-control">
-                        <option>详情页描述</option>
-                        <option>详情页描述</option>
-                        <option>详情页描述</option>
-                    </select>
-                </td>
-                <td class="text-center"><button title="删除" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button></td>
-            </tr>
-            <tr>
-                <td>
-                    <select class="form-control">
-                        <option>DICT</option>
-                        <option>DICT</option>
-                        <option>DICT</option>
-                    </select>
-                </td>
-                <td>
-                    <select class="form-control">
-                        <option>详情页描述</option>
-                        <option>详情页描述</option>
-                        <option>详情页描述</option>
-                    </select>
-                </td>
-                <td class="text-center"><button title="删除" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button></td>
-            </tr>
-            <tr>
-                <td>
-                    <select class="form-control">
-                        <option>DICT</option>
-                        <option>DICT</option>
-                        <option>DICT</option>
-                    </select>
-                </td>
-                <td>
-                    <select class="form-control">
-                        <option>详情页描述</option>
-                        <option>详情页描述</option>
-                        <option>详情页描述</option>
-                    </select>
-                </td>
-                <td class="text-center"><button title="删除" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button></td>
             </tr>
             </tbody>
         </table>
-            <div ng-controller="popupCtrl">
-                <button class="btn btn-sm btn-success btn-addon" ng-click="openfeed('lg')"><i class="fa fa-plus"></i>添加</button></div>
+        <div ng-controller="popupCtrl">
+            <button class="btn btn-sm btn-success btn-addon"
+                    ng-click="popupFeedValue({feedCategoryPath: ctrl.context.feedCategoryPath}).then(ctrl.addValueMapping)">
+                <i class="fa fa-plus"></i>添加
+            </button>
+        </div>
     </div>
     <div class="attribute_top">
         <h5 class="text-vo m-l font-bold">输入规则：</h5>
         <ul>
-            <li>允许输入类型：超文本(html) </li>
-            <li>最小长度（包括）5</li>
-            <li>最大长度（包括）25000</li>
-            <li>必须填写</li>
+            <li ng-repeat="rule in ctrl.field.rules">{{ rule.name }}：{{ rule.value }}</li>
         </ul>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-default" ng-click="cancel()">取消</button>
+        <button class="btn btn-default" ng-click="ctrl.cancel()">取消</button>
         <button class="btn btn-vo" ng-click="ok()">保存</button>
     </div>
-</div><!-- .vo_modal -->
+</div>

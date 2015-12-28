@@ -4,7 +4,7 @@ import com.voyageone.cms.service.dao.mongodb.CmsBtFeedMappingDao;
 import com.voyageone.cms.service.model.CmsBtFeedMappingModel;
 import com.voyageone.cms.service.model.CmsFeedCategoryModel;
 import com.voyageone.cms.service.model.CmsFeedMappingModel;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,13 +19,21 @@ public class CmsFeedMappingService {
     @Autowired
     private CmsBtFeedMappingDao cmsBtFeedMappingDao;
 
+    public CmsBtFeedMappingModel getMapping(Channel channel, String feedCategory, String mainCategoryPath) {
+
+        return cmsBtFeedMappingDao.selectByKey(channel.getId(), feedCategory, mainCategoryPath);
+    }
+
+    /**
+     * 基于 FeedCategory Collection,变动 FeedMapping Collection
+     */
     public class CategoryContext {
 
         private final CmsFeedCategoryModel feedCategoryModel;
 
-        private final ChannelConfigEnums.Channel channel;
+        private final Channel channel;
 
-        public CategoryContext(CmsFeedCategoryModel feedCategoryModel, ChannelConfigEnums.Channel channel) {
+        public CategoryContext(CmsFeedCategoryModel feedCategoryModel, Channel channel) {
 
             this.feedCategoryModel = feedCategoryModel;
             this.channel = channel;
