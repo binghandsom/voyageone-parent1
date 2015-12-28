@@ -12,18 +12,17 @@
             channel_id=#{channel_id}
     </select>
     <!-- 批量插入授权类目表-->
-    <insert id="ims_insertBrands">
-        insert into voyageone_ims.ims_mt_brands (channel_id,cart_id,brand_id,brand_name,prop_name,active,created,creater,modified,modifier)
+    <insert id="cms_insertBrands">
+        insert into voyageone_cms2.cms_mt_brands (channel_id,cart_id,brand_id,brand_name,prop_name,active,created,creater,modified,modifier)
         values
         <foreach collection="brands" item="brand" separator="," >
             (#{order_channel_id},#{cart_id},#{brand.vid},#{brand.name},#{brand.propName},1,now(),#{task_name},now(),#{task_name})
         </foreach>
-
     </insert>
 
     <!-- 批量插入授权类目表-->
-    <delete id="ims_delBrandsByShop">
-        DELETE FROM voyageone_ims.ims_mt_brands
+    <delete id="cms_delBrandsByShop">
+        DELETE FROM voyageone_cms2.cms_mt_brands
         WHERE channel_id = #{order_channel_id}
         AND cart_id = #{cart_id}
     </delete>

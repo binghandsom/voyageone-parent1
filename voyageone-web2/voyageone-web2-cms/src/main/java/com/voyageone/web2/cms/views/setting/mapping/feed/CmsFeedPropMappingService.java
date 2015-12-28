@@ -10,6 +10,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +44,7 @@ public class CmsFeedPropMappingService extends BaseAppService {
      * @param userSessionBean  当前用户及配置
      * @return 主类目
      */
-    public CmsMtCategorySchemaModel getCategoryPropsByFeed(String feedCategoryPath, UserSessionBean userSessionBean) {
+    public CmsMtCategorySchemaModel getCategoryPropsByFeed(String feedCategoryPath, UserSessionBean userSessionBean) throws UnsupportedEncodingException {
 
         CmsMtFeedCategoryTreeModelx treeModel = feedMappingService.getFeedCategoryTree(userSessionBean);
 
@@ -118,11 +119,11 @@ public class CmsFeedPropMappingService extends BaseAppService {
      * @param categoryPath 类目路径
      * @return String
      */
-    public String convertPathToId(String categoryPath) {
+    public String convertPathToId(String categoryPath) throws UnsupportedEncodingException {
 
         // 当前为 Path 的 Base64 码
         // 有可能未来更改为 MD5
-        return new String(Base64.encodeBase64(categoryPath.getBytes()));
+        return new String(Base64.encodeBase64(categoryPath.getBytes("UTF-8")), "UTF-8");
     }
 
     /**

@@ -78,7 +78,7 @@ define(['cms', 'modules/cms/enums/Operations'], function (cms, operations) {
                 this.$uibModalInstance.close({
                     type: type,
                     value: value,
-                    condition: [this.condition]
+                    condition: this.mappingSetting.condition ? [this.condition] : null
                 });
             },
             cancel: function () {

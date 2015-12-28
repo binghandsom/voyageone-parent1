@@ -297,7 +297,7 @@ public class ImsCategoryService extends BaseTaskService{
             path = Properties.readValue(Constants.PATH.PATH_ITEM_RULE_FILE);
 
             // 调用API获取产品属性规则
-            ItemSchema result = tbCategoryService.getTbItemAddSchema(shopProp, Long.parseLong(platformCategories.getPlatformCid()));
+            ItemSchema result = tbCategoryService.getTbItemAddSchema(shopProp, Long.parseLong(platformCategories.getPlatformCid()),null);
             //保存为XML文件
             if (result.getResult() == 0 ){
                 xmlContent = result.getItemResult();

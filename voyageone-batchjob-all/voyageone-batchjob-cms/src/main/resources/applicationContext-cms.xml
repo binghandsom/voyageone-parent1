@@ -27,9 +27,11 @@
         <!--&lt;!&ndash; CMS统计日报 &ndash;&gt;-->
         <!--<task:scheduled ref="BcbgAnalySisJob" method="run" cron="0 0/1 0-23 * * ?"/>-->
 
-        <task:scheduled ref="platformCategoryTask" method="run" cron="0 0 04 * * ?"/>
+        <task:scheduled ref="getPlatformCategorySchemaTask" method="run" cron="0 0 04 * * ?"/>
 
         <task:scheduled ref="buildMasterSchemaFromPlatformTask" method="run" cron="0 0 04 * * ?"/>
+
+        <task:scheduled ref="getPlatformCategoryTreesTask" method="run" cron="0 0 04 * * ?"/>
 
         <!-- CMS统计日报 -->
         <task:scheduled ref="SearsAnalySisJob" method="run" cron="0 30 17 * * ?"/>
