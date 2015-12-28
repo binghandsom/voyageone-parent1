@@ -83,6 +83,44 @@ public class CmsProductService {
         return result;
     }
 
+
+    /**
+     * 获取商品groupId Code List Map  根据CartId
+     *  key groupId
+     *  value: codeList
+     * @param channelId channel ID
+     * @param cartId cart ID
+     * @return code list
+     */
+    public Map<String, List<String>> getProductGroupIdCodesMapByCart(String channelId, int cartId) {
+        Map<String, List<String>> result = new LinkedHashMap<>();
+
+        JomgoQuery queryObject = new JomgoQuery();
+        queryObject.setQuery("{\"groups.platforms.cartId\":" + cartId + "}");
+        queryObject.setProjection("fields.code", "groups.platforms.$.groupId");
+
+        Iterator<CmsBtProductModel> productsIt = cmsBtProductDao.selectCursor(queryObject, channelId);
+        while (productsIt.hasNext()) {
+            CmsBtProductModel product = productsIt.next();
+            if (product.getGroups() != null
+                    && product.getGroups().getPlatforms() != null
+                    && product.getGroups().getPlatforms().size() > 0) {
+                Long groupId = product.getGroups().getPlatforms().get(0).getGroupId();
+                if (groupId != null) {
+                    if (!result.containsKey(groupId.toString())) {
+                        result.put(groupId.toString(), new ArrayList<>());
+                    }
+                    List<String> listCode = result.get(groupId.toString());
+                    if (product.getFields() != null) {
+                        listCode.add(product.getFields().getCode());
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
     /**
      * 插入商品
      */

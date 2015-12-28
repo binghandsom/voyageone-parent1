@@ -274,6 +274,26 @@ public class CmsProductServiceTest {
             }
         }
         System.out.println(productCodeList.size());
+        System.out.println("total time:=" + (end - start));
+    }
+
+    @Test
+    public void testGetProductGroupIdCodesMapByCart() {
+        long start = System.currentTimeMillis();
+        Map<String, List<String>> productCodeMap = cmsProductService.getProductGroupIdCodesMapByCart("300", 21);
+        long end = System.currentTimeMillis();
+
+        int index = 1;
+
+        for (Map.Entry<String, List<String>> entry : productCodeMap.entrySet()) {
+            System.out.println(entry.getKey());
+            System.out.println(entry.getValue());
+            index++;
+            if (index > 10) {
+                break;
+            }
+        }
+        System.out.println(productCodeMap.size());
         System.out.println("total time:=" + (end-start));
     }
 
