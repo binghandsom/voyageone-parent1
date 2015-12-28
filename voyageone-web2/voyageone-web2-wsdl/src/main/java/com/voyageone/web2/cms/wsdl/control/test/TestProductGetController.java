@@ -1,11 +1,11 @@
-package com.voyageone.web2.cms.rest;
+package com.voyageone.web2.cms.wsdl.control.test;
 
 import com.voyageone.cms.service.model.CmsBtProductModel;
-import com.voyageone.web2.cms.CmsRestController;
-import com.voyageone.web2.sdk.api.request.ProductsGetRequest;
+import com.voyageone.web2.cms.wsdl.BaseController;
 import com.voyageone.web2.sdk.api.request.ProductGetRequest;
-import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
+import com.voyageone.web2.sdk.api.request.ProductsGetRequest;
 import com.voyageone.web2.sdk.api.response.ProductGetResponse;
+import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
 import com.voyageone.web2.sdk.api.service.ProductGetClient;
 import com.voyageone.web2.sdk.api.service.ProductsGetClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * product Controller
@@ -32,7 +27,7 @@ import java.util.Set;
         value  = "/rest/puroduct",
         method = RequestMethod.POST
 )
-public class TestProductGetController extends CmsRestController {
+public class TestProductGetController extends BaseController {
 
     @Autowired
     protected ProductGetClient productGetClient;
@@ -46,7 +41,7 @@ public class TestProductGetController extends CmsRestController {
      * @return
      */
     @RequestMapping("testSelectOne")
-    public ProductGetResponse testSelectOne(@RequestBody ProductGetRequest responseMode) {
+    public ProductGetResponse testSelectOne() {
 
         //SDK取得Product 数据
         CmsBtProductModel model = productGetClient.getMainProductByGroupId("300", 134);
@@ -64,7 +59,7 @@ public class TestProductGetController extends CmsRestController {
      * @return
      */
     @RequestMapping("testSelectList")
-    public ProductsGetResponse testSelectList(@RequestBody ProductsGetRequest responseMode) {
+    public ProductsGetResponse testSelectList() {
 
         ProductsGetRequest requestModel = new ProductsGetRequest("300");
         // add query

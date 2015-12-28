@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.rest;
+package com.voyageone.web2.cms.wsdl;
 
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.common.util.StringUtils;
@@ -11,7 +11,7 @@ import com.voyageone.web2.sdk.api.VoApiRequest;
  * Created by chuanyu.liang on 15/6/26.
  * @author chuanyu.liang
  */
-public abstract class BaseRestService extends BaseAppComponent {
+public abstract class BaseService extends BaseAppComponent {
 
     /**
      * buildProjection

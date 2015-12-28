@@ -36,7 +36,10 @@
         "getMainCategories": "getMainCategories",
         "setMapping": "setFeedMapping",
         "extendsMapping": "extendsMapping",
-        "getMainProps": "getMainCategoryProps"
+        "getMainProps": "getMainCategoryProps",
+        "getMatched": "getMatched",
+        "getFieldMapping": "getFieldMapping",
+        "getFeedAttrs": "getFeedAttributes"
       }
     },
     "pop": {

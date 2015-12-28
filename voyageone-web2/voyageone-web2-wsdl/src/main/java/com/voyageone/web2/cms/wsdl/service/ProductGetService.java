@@ -1,14 +1,15 @@
-package com.voyageone.web2.cms.rest;
+package com.voyageone.web2.cms.wsdl.service;
 
 import com.google.common.base.Joiner;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.web2.cms.wsdl.BaseService;
 import com.voyageone.web2.sdk.api.VoApiConstants;
 import com.voyageone.web2.sdk.api.exception.ApiException;
-import com.voyageone.web2.sdk.api.request.ProductsGetRequest;
 import com.voyageone.web2.sdk.api.request.ProductGetRequest;
+import com.voyageone.web2.sdk.api.request.ProductsGetRequest;
 import com.voyageone.web2.sdk.api.response.ProductGetResponse;
 import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +25,8 @@ import java.util.*;
  * @version 2.0.1
  * @since. 2.0.0
  */
-
 @Service
-public class ProductGetService extends BaseRestService{
+public class ProductGetService extends BaseService {
 
     @Autowired
     private CmsBtProductDao cmsBtProductDao;

@@ -1,8 +1,8 @@
-package com.voyageone.web2.cms;
+package com.voyageone.web2.cms.wsdl;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.base.exception.SystemException;
-import com.voyageone.web2.base.BaseController;
+import com.voyageone.web2.base.BaseAppComponent;
 import com.voyageone.web2.sdk.api.VoApiResponse;
 import com.voyageone.web2.sdk.api.exception.ApiException;
 import org.apache.commons.lang3.StringUtils;
@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Rest Controller。
+ * Base Controller。
  * Created on 2015-12-14
  *
  * @author chuanyu.liang
  * @version 2.0.0
  */
-public abstract class CmsRestController extends BaseController {
+public abstract class BaseController extends BaseAppComponent {
 
     /**
      * error Handler

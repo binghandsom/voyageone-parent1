@@ -283,7 +283,7 @@ public class FieldUtil {
     /**
      * 取得Field值到Map中
      * @param rootFields fields
-     * @return null
+     * @return Value Map
      */
     public static Map<String, Object> getFieldsValueToMap(List<Field> rootFields){
         Map<String, Object> result = new LinkedHashMap<>();

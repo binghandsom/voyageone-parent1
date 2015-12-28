@@ -9,7 +9,10 @@ import com.voyageone.web2.sdk.api.util.RequestUtils;
 /**
  * /puroduct/selectOne Request Model
  *
- * Product的id.两种方式来查看一个产品:1.传入product_id来查询 2.传入product_code来查询 3:传入props来查询
+ * Product的id.两种方式来查看一个产品:
+ *  1.传入productId来查询
+ *  2.传入productCode来查询
+ *  3:传入props来查询
  *
  * Created on 2015-12-14
  *
@@ -42,11 +45,6 @@ public class ProductGetRequest extends VoApiRequest<ProductGetResponse> {
 	 *
 	 */
 	private String props;
-
-	/**
-	 * sort condition
-	 */
-	private String sort;
 
 	public ProductGetRequest() {
 

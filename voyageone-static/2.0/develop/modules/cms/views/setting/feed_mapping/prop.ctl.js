@@ -4,81 +4,105 @@
 
 define([
     'cms',
-    'json!modules/cms/enums/FieldTypes.json',
-    'json!modules/cms/enums/RuleTypes.json',
+    'modules/cms/enums/FieldTypes',
+    'modules/cms/enums/RuleTypes',
     'modules/cms/controller/popup.ctl'
 ], function (cms, FieldTypes, RuleTypes) {
     'use strict';
-    return cms.controller('feedPropMappingController', (function () {
-        /**
-         * @description
-         * Feed Mapping 属性匹配画面的 Controller 类
-         * @param $routeParams
-         * @param {FeedMappingService} feedMappingService
-         * @constructor
-         */
-        function FeedPropMappingController($routeParams, feedMappingService) {
 
-            this.feedCategoryPath = $routeParams['feedCategoryPath'];
-            this.feedMappingService = feedMappingService;
+    function isRequiredField(field) {
 
-            this.mainCategory = null;
-        }
+        return _.find(field.rules, function (rule) {
+            return rule.name === RuleTypes.REQUIRED_RULE && rule.value === 'true';
+        });
+    }
 
-        FeedPropMappingController.prototype = {
+    function isSimpleType(field) {
 
-            init: function () {
+        return field.type !== FieldTypes.complex &&
+            field.type !== FieldTypes.multiComplex;
+    }
 
-                this.feedMappingService.getMainProps({
-                    feedCategoryPath: this.feedCategoryPath
-                }).then(function (res) {
-
-                    this.mainCategory = res.data;
-                }.bind(this));
-            }
-        };
-
-
-        return FeedPropMappingController;
-
-    })()).directive('feedMappingFields', function() {
+    function getConfig(field) {
         return {
-            restrict: 'A',
-            templateUrl: 'feedMapping.fields.tpl.html',
-            scope: {
-                fields: '=feedMappingFields'
-            },
-            controllerAs: 'ctrl',
-            controller: (function() {
-                function FeedMappingFieldsController() {
-
-                }
-
-                FeedMappingFieldsController.prototype = {
-                    isRequiredField: function (field) {
-
-                        return _.find(field.rules, function (rule) {
-                            return rule.name === RuleTypes.REQUIRED_RULE && rule.value === 'true';
-                        });
-                    },
-
-                    isSimpleType: function (field) {
-
-                        return field.type !== FieldTypes.complex &&
-                            field.type !== FieldTypes.multiComplex;
-                    },
-
-                    extendField: function (field) {
-                        return {
-                            field: field,
-                            isSimple: this.isSimpleType(field),
-                            required: this.isRequiredField(field)
-                        };
-                    }
-                };
-
-                return FeedMappingFieldsController;
-            })()
+            isSimple: isSimpleType(field),
+            required: isRequiredField(field)
         };
-    });
+    }
+
+    return cms.controller('feedPropMappingController', (function () {
+            /**
+             * @description
+             * Feed Mapping 属性匹配画面的 Controller 类
+             * @param $routeParams
+             * @param {FeedMappingService} feedMappingService
+             * @constructor
+             */
+            function FeedPropMappingController($routeParams, feedMappingService) {
+
+                this.feedCategoryPath = $routeParams['feedCategoryPath'];
+                this.feedMappingService = feedMappingService;
+
+                /**
+                 * 主类目模型
+                 * @type {object}
+                 */
+                this.mainCategory = null;
+                /**
+                 * 已匹配的主类目属性
+                 * @type {string[]}
+                 */
+                this.matchedMains = null;
+
+                this.saveMapping = this.saveMapping.bind(this);
+            }
+
+            FeedPropMappingController.prototype = {
+
+                init: function () {
+
+                    this.feedMappingService.getMainProps({
+                        feedCategoryPath: this.feedCategoryPath
+                    }).then(function (res) {
+
+                        this.mainCategory = res.data;
+
+                        this.feedMappingService.getMatched({
+                            feedCategoryPath: this.feedCategoryPath,
+                            mainCategoryPath: this.mainCategory.catFullPath
+                        }).then(function (res) {
+
+                            this.matchedMains = res.data;
+                        }.bind(this));
+                    }.bind(this));
+                },
+                popupContext: function (field) {
+                    return {
+                        feedCategoryPath: this.feedCategoryPath,
+                        mainCategoryPath: this.mainCategory.catFullPath,
+                        field: field
+                    };
+                },
+                saveMapping: function (context) {
+                    console.log(context);
+                }
+            };
+
+            return FeedPropMappingController;
+
+        })())
+        .filter('fmExtendField', function () {
+
+            return function (fields, parent) {
+
+                angular.forEach(fields, function (field) {
+
+                    field.x = getConfig(field);
+
+                    if (parent) field.x.parent = parent;
+                });
+
+                return fields;
+            }
+        });
 });

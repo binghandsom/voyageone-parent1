@@ -1,18 +1,16 @@
-package com.voyageone.web2.cms.rest;
+package com.voyageone.web2.cms.wsdl.control;
 
-import com.voyageone.cms.service.model.CmsBtProductModel;
-import com.voyageone.web2.cms.CmsRestController;
-import com.voyageone.web2.sdk.api.request.ProductsGetRequest;
+import com.voyageone.web2.cms.wsdl.BaseController;
+import com.voyageone.web2.cms.wsdl.service.ProductGetService;
 import com.voyageone.web2.sdk.api.request.ProductGetRequest;
-import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
+import com.voyageone.web2.sdk.api.request.ProductsGetRequest;
 import com.voyageone.web2.sdk.api.response.ProductGetResponse;
+import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 /**
  * product Controller
@@ -27,26 +25,28 @@ import java.util.List;
         value  = "/rest/puroduct",
         method = RequestMethod.POST
 )
-public class ProductGetController extends CmsRestController {
+public class ProductGetController extends BaseController {
 
     @Autowired
     private ProductGetService productService;
 
     /**
      * selectOne
+     *
      * @return CmsBtProductModel
      */
     @RequestMapping("selectOne")
-    public ProductGetResponse selectOne(@RequestBody ProductGetRequest response) {
-        return productService.selectOne(response);
+    public ProductGetResponse selectOne(@RequestBody ProductGetRequest request) {
+        return productService.selectOne(request);
     }
 
     /**
      * selectList
+     *
      * @return List<CmsBtProductModel>
      */
     @RequestMapping("selectList")
-    public ProductsGetResponse selectList(@RequestBody ProductsGetRequest response) {
-        return productService.selectList(response);
+    public ProductsGetResponse selectList(@RequestBody ProductsGetRequest request) {
+        return productService.selectList(request);
     }
 }
