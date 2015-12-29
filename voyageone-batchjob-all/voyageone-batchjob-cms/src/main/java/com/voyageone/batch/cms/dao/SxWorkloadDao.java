@@ -19,4 +19,8 @@ public class SxWorkloadDao extends BaseDao {
     public List<SxWorkloadModel> getSxWorkloadModel(int recordCount) {
         return selectList(Constants.DAO_NAME_SPACE_CMS + "cms_select_sx_workload", parameters("record_count", recordCount));
     }
+
+    public void updateSxWorkloadModel(SxWorkloadModel sxWorkloadModel) {
+        update(Constants.DAO_NAME_SPACE_CMS + "cms_update_sx_workload", parameters("seq", sxWorkloadModel.getSeq(), "publish_status", sxWorkloadModel.getPublishStatus()));
+    }
 }

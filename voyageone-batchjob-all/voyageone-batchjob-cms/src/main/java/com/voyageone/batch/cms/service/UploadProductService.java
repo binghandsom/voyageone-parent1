@@ -75,6 +75,8 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
         {
             WorkLoadBean workload = new WorkLoadBean();
 
+            workload.setSxWorkloadModel(sxWorkloadModel);
+
             int groupId = sxWorkloadModel.getGroupId();
             String channelId = sxWorkloadModel.getChannelId();
 
@@ -100,27 +102,26 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                 }
             }
 
-            if (mainSxProduct == null) {
-                logger.warn("No main product found, can't upload group: " + groupId);
-                continue;
-            }
             workload.setMainProduct(mainSxProduct);
-            workload.setCart_id(mainProductPlatform.getCartId());
-            workload.setCatId(mainProductModel.getCatId());
 
-            UpJobParamBean upJobParam = new UpJobParamBean();
-            upJobParam.setForceAdd(false);
-            workload.setUpJobParam(upJobParam);
+            if (mainSxProduct != null) {
+                workload.setCart_id(mainProductPlatform.getCartId());
+                workload.setCatId(mainProductModel.getCatId());
 
-            if (mainProductPlatform.getNumIId() != null && !"".equals(mainProductPlatform.getNumIId())) {
-                workload.setIsPublished(1);
-                workload.setNumId(mainProductPlatform.getNumIId());
-                upJobParam.setMethod(UpJobParamBean.METHOD_UPDATE);
-            } else {
-                workload.setIsPublished(0);
-                upJobParam.setMethod(UpJobParamBean.METHOD_ADD);
+                UpJobParamBean upJobParam = new UpJobParamBean();
+                upJobParam.setForceAdd(false);
+                workload.setUpJobParam(upJobParam);
+
+                if (mainProductPlatform.getNumIId() != null && !"".equals(mainProductPlatform.getNumIId())) {
+                    workload.setIsPublished(1);
+                    workload.setNumId(mainProductPlatform.getNumIId());
+                    upJobParam.setMethod(UpJobParamBean.METHOD_UPDATE);
+                } else {
+                    workload.setIsPublished(0);
+                    upJobParam.setMethod(UpJobParamBean.METHOD_ADD);
+                }
+                workload.setProductId(mainProductPlatform.getProductId());
             }
-            workload.setProductId(mainProductPlatform.getProductId());
             workload.setWorkload_status(new PlatformWorkloadStatus(PlatformWorkloadStatus.JOB_INIT));
 
             workload.setHasSku(false);
@@ -156,7 +157,11 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
     @Override
     public void onComplete(WorkLoadBean workLoadBean) {
         List<SxProductBean> sxProductBeans = workLoadBeanListMap.get(workLoadBean);
-        CmsBtProductModel mainCmsProductModel = workLoadBean.getMainProduct().getCmsBtProductModel();
+        SxProductBean mainSxProduct = workLoadBean.getMainProduct();
+        CmsBtProductModel mainCmsProductModel = null;
+        if (mainSxProduct != null) {
+            mainCmsProductModel = mainSxProduct.getCmsBtProductModel();
+        }
         switch (workLoadBean.getWorkload_status().getValue())
         {
             case PlatformWorkloadStatus.JOB_DONE: {
@@ -222,6 +227,10 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                 }
                 cmsProductService.bathUpdateWithSXResult(workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id(), workLoadBean.getGroupId(),
                         codeList, workLoadBean.getNumId(), workLoadBean.getProductId(), publishTime, onSaleTime, instockTime, newPlatformStatus);
+
+                SxWorkloadModel sxWorkloadModel = workLoadBean.getSxWorkloadModel();
+                sxWorkloadModel.setPublishStatus(1);
+                sxWorkloadDao.updateSxWorkloadModel(sxWorkloadModel);
                 break;
             }
             case PlatformWorkloadStatus.JOB_ABORT: {
@@ -241,18 +250,30 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                 //保存错误的日志
                 CmsBusinessLogModel cmsBusinessLogModel = new CmsBusinessLogModel();
                 cmsBusinessLogModel.setCartId(workLoadBean.getCart_id());
-                cmsBusinessLogModel.setProductId(String.valueOf(mainCmsProductModel.getProdId()));
-                cmsBusinessLogModel.setCode(mainCmsProductModel.getFields().getCode());
+                String productId = "";
+                String mainCode = "";
+                String model = "";
+                if (mainCmsProductModel != null) {
+                    productId = String.valueOf(mainCmsProductModel.getProdId());
+                    mainCode = mainCmsProductModel.getFields().getCode();
+                    model = mainCmsProductModel.getFields().getModel();
+                }
+                cmsBusinessLogModel.setProductId(productId);
+                cmsBusinessLogModel.setCode(mainCode);
                 cmsBusinessLogModel.setSku("");
                 cmsBusinessLogModel.setErrMsg(workLoadBean.getFailCause());
                 cmsBusinessLogModel.setErrType(1);
                 cmsBusinessLogModel.setStatus(0);
-                cmsBusinessLogModel.setModel(mainCmsProductModel.getFields().getModel());
+                cmsBusinessLogModel.setModel(model);
                 cmsBusinessLogModel.setCreater(getTaskName());
                 cmsBusinessLogModel.setCreated(DateTimeUtil.getNow());
                 cmsBusinessLogModel.setModifier(getTaskName());
                 cmsBusinessLogModel.setModified(DateTimeUtil.getNow());
                 cmsBusinessLogDao.insertBusinessLog(cmsBusinessLogModel);
+
+                SxWorkloadModel sxWorkloadModel = workLoadBean.getSxWorkloadModel();
+                sxWorkloadModel.setPublishStatus(2);
+                sxWorkloadDao.updateSxWorkloadModel(sxWorkloadModel);
                 break;
             }
             default:
@@ -264,7 +285,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
 
     @Override
     public SubSystem getSubSystem() {
-        return SubSystem.IMS;
+        return SubSystem.CMS;
     }
 
     @Override
