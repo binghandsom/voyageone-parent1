@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.dao.mongodb;
 
 import com.mongodb.*;
 import com.voyageone.base.dao.mongodb.BaseMongoDao;
+import com.voyageone.base.dao.mongodb.BaseMongoPartDao;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.cms.service.model.CmsBtProductModel;
@@ -18,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository("web2.cms.CmsBtProductDao")
-public class CmsBtProductDao extends BaseMongoDao {
+public class CmsBtProductDao extends BaseMongoPartDao {
 
     @Override
     public Class getEntityClass() {
