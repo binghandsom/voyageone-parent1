@@ -1,4 +1,4 @@
-<div class="wrapper-md">
+<div class="wrapper-md" ng-init="initialize()">
 	<div class="col-sm-12">
 		<div class="panel panelPromotion m-t-xs">
 			<div class="container-fluid m-t-sm m-b-sm">
@@ -70,7 +70,7 @@
 		<div class="col-sm-12 "ng-class="{'category_mapping_bg_one':level==0 && (field.type=='MULTICOMPLEX'|| field.type=='COMPLEX'),'category_mapping_bg':level==0 && field.type!='MULTICOMPLEX'&& field.type!='COMPLEX','category_mapping_bg_list':level>0}">
 			<div class="col-sm-2 text-left " ng-class="{'m-l-lg':level==1,'m-l-xlg':level==2,'m-l-xxlg':level==3,'m-l-xxxlg':level==4}"><i ng-class="{'fa fa-minus':field.fields==null,'fa fa-plus':field.fields!=null}"></i> {{field.name}}</div>
 			<div class="pull-right">
-				<span class="badge" ng-class="{'badge-initialize':field.type == 'INPUT' || field.type == 'LABEL', 'badge-success':field.type == 'SINGLECHECK' || field.type == 'MULTICHECK' , 'badge-refresh':field.type == 'COMPLEX', 'badge-failure':field.type == 'MULTICOMPLEX'}">{{field.type}}</span>
+				<span class="badge" ng-class="{'badge-initialize':field.type == 'INPUT','badge-darkPurple': field.type == 'LABEL', 'badge-success':field.type == 'SINGLECHECK','badge-darkBlue': field.type == 'MULTICHECK' , 'badge-refresh':field.type == 'COMPLEX', 'badge-failure':field.type == 'MULTICOMPLEX'}">{{field.type}}</span>
 			</div>
 			<div class="col-sm-1 text-left btn-group">
 				<button title="增加" class="btn btn-default btn-xs"><i class="fa fa-plus-circle text-vo"></i></button>
@@ -100,8 +100,8 @@
 		<!--</div>-->
 	<!--</fieldset>-->
 	<div ng-if="field.type=='MULTICOMPLEX'|| field.type=='COMPLEX'">
-		<div ng-repeat ="item in field.fields">
-			<div ng-include="'fieldView'"  ng-init="parent = field.fields; field = item; level = level + 1">
+		<div ng-repeat ="item in field.fieldList">
+			<div ng-include="'fieldView'"  ng-init="parent = field.fieldList; field = item; level = level + 1">
 			</div>
 		</div>
 	</div>

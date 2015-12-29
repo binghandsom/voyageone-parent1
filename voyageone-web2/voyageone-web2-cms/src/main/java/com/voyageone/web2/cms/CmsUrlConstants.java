@@ -93,7 +93,17 @@ public interface CmsUrlConstants {
             String GET_CODE_FILE = "getCodeFile";
         }
     }
+    interface SYSTEM {
 
+        interface CATEGORY {
+
+            String ROOT = "/cms/system/category";
+
+            String GET_CATEGORY_LIST = "getCategoryList";
+
+            String GET_CATEGORY_DETAIL = "getCategoryDetail";
+        }
+    }
     interface SEARCH {
 
         interface INDEX {
