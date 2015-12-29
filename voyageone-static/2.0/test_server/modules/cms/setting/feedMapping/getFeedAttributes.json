@@ -1,0 +1,59 @@
+{
+  "code": null,
+  "displayType": null,
+  "message": null,
+  "data": {
+    "Motor": [
+      "Belt driven"
+    ],
+    "Replaceable Cartridge": [
+      "No"
+    ],
+    "Humidistat Controls": [
+      "No"
+    ],
+    "Height in": [
+      "14.2"
+    ],
+    "Humidifier Temperature": [
+      "Cold"
+    ],
+    "Auto Shut Off": [
+      "Yes"
+    ],
+    "Number of Speeds": [
+      "Variable"
+    ],
+    "Programmable": [
+      "No"
+    ],
+    "ENERGY STAR Compliant": [
+      "Yes"
+    ],
+    "Empty Tank Indicator": [
+      "No"
+    ],
+    "Power Cord Included": [
+      "Yes"
+    ],
+    "Depth in": [
+      "8.5"
+    ],
+    "Width in": [
+      "8.5"
+    ],
+    "Maximum Recommended Room Size Sq Ft": [
+      "0"
+    ],
+    "Controls": [
+      "Electronic"
+    ],
+    "Ionic": [
+      "No"
+    ],
+    "Recommended Room Size": [
+      "Less than 100 sq feet"
+    ]
+  },
+  "redirectTo": null
+}

@@ -3,11 +3,11 @@
   "displayType": null,
   "message": null,
   "data": {
-    "_id": "5666b725029c2c5878908010",
-    "created": "2015-12-08 18:55:33",
+    "_id": "567cefd60760e102cae60d55",
+    "created": "2015-12-25 15:27:18",
     "creater": "SearsAnalysis",
-    "modified": "2015-12-08 18:59:42.45",
-    "modifier": "SearsAnalysis",
+    "modified": "2015-12-28 11:20:16.768",
+    "modifier": "will",
     "channelId": "013",
     "categoryTree": [
       {
@@ -15,21 +15,35 @@
         "name": "Appliances",
         "cid": "Appliances",
         "isChild": 0,
-        "mapping": null,
+        "mapping": [],
         "child": [
           {
             "path": "Appliances-Air Treatment Equipment",
             "name": "Air Treatment Equipment",
             "cid": "Appliances-Air Treatment Equipment",
             "isChild": 0,
-            "mapping": null,
+            "mapping": [
+              {
+                "mainCategoryPath": "自行车/骑行装备/零配件>自行车修车工具>润滑油",
+                "defaultMapping": 1,
+                "defaultMain": 1,
+                "matchOver": 0
+              }
+            ],
             "child": [
               {
                 "path": "Appliances-Air Treatment Equipment-Humidifiers",
                 "name": "Humidifiers",
                 "cid": "Appliances-Air Treatment Equipment-Humidifiers",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [
+                  {
+                    "mainCategoryPath": "自行车/骑行装备/零配件>自行车修车工具>润滑油",
+                    "defaultMapping": 1,
+                    "defaultMain": 0,
+                    "matchOver": 0
+                  }
+                ],
                 "child": [],
                 "attribute": {
                   "Motor": [
@@ -93,14 +107,28 @@
             "name": "Cooking Appliances",
             "cid": "Appliances-Cooking Appliances",
             "isChild": 0,
-            "mapping": null,
+            "mapping": [
+              {
+                "mainCategoryPath": "自行车/骑行装备/零配件>自行车修车工具>截链器",
+                "defaultMapping": 1,
+                "defaultMain": 1,
+                "matchOver": 0
+              }
+            ],
             "child": [
               {
                 "path": "Appliances-Cooking Appliances-Cooktops",
                 "name": "Cooktops",
                 "cid": "Appliances-Cooking Appliances-Cooktops",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [
+                  {
+                    "mainCategoryPath": "自行车/骑行装备/零配件>自行车零/配件>自行车轮组",
+                    "defaultMapping": 1,
+                    "defaultMain": 1,
+                    "matchOver": 0
+                  }
+                ],
                 "child": [],
                 "attribute": {
                   "Minimum Clearance Above Cooktop in": [
@@ -188,14 +216,28 @@
             "name": "Sewing & Garment Care",
             "cid": "Appliances-Sewing & Garment Care",
             "isChild": 0,
-            "mapping": null,
+            "mapping": [
+              {
+                "mainCategoryPath": "自行车/骑行装备/零配件>自行车/单车装备>自行车撑伞架",
+                "defaultMapping": 1,
+                "defaultMain": 1,
+                "matchOver": 0
+              }
+            ],
             "child": [
               {
                 "path": "Appliances-Sewing & Garment Care-Clothes Irons",
                 "name": "Clothes Irons",
                 "cid": "Appliances-Sewing & Garment Care-Clothes Irons",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [
+                  {
+                    "mainCategoryPath": "自行车/骑行装备/零配件>自行车/单车装备>自行车撑伞架",
+                    "defaultMapping": 1,
+                    "defaultMain": 0,
+                    "matchOver": 0
+                  }
+                ],
                 "child": [],
                 "attribute": {
                   "Cord Length ft": [
@@ -291,7 +333,14 @@
                 "name": "Clothes Steamers",
                 "cid": "Appliances-Sewing & Garment Care-Clothes Steamers",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [
+                  {
+                    "mainCategoryPath": "自行车/骑行装备/零配件>自行车/单车装备>自行车撑伞架",
+                    "defaultMapping": 1,
+                    "defaultMain": 0,
+                    "matchOver": 0
+                  }
+                ],
                 "child": [],
                 "attribute": {
                   "Power Cord Included": [
@@ -320,7 +369,14 @@
                 "name": "Ironing Boards & Ironing Board Accessories",
                 "cid": "Appliances-Sewing & Garment Care-Ironing Boards & Ironing Board Accessories",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [
+                  {
+                    "mainCategoryPath": "女鞋>低帮鞋",
+                    "defaultMapping": 1,
+                    "defaultMain": 1,
+                    "matchOver": 0
+                  }
+                ],
                 "child": [],
                 "attribute": {
                   "Item Type": [
@@ -336,14 +392,28 @@
             "name": "Small Kitchen Appliances",
             "cid": "Appliances-Small Kitchen Appliances",
             "isChild": 0,
-            "mapping": null,
+            "mapping": [
+              {
+                "mainCategoryPath": "自行车/骑行装备/零配件>自行车修车工具>洗链器",
+                "defaultMapping": 1,
+                "defaultMain": 1,
+                "matchOver": 0
+              }
+            ],
             "child": [
               {
                 "path": "Appliances-Small Kitchen Appliances-Blenders & Blender Accessories",
                 "name": "Blenders & Blender Accessories",
                 "cid": "Appliances-Small Kitchen Appliances-Blenders & Blender Accessories",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [
+                  {
+                    "mainCategoryPath": "自行车/骑行装备/零配件>自行车修车工具>洗链器",
+                    "defaultMapping": 1,
+                    "defaultMain": 0,
+                    "matchOver": 0
+                  }
+                ],
                 "child": [],
                 "attribute": {
                   "Cord Length ft": [
@@ -353,17 +423,17 @@
                     "2-Year Limited",
                     "1-year limited",
                     "One Year Limited Warranty",
+                    "8 Years Limited",
+                    "5 Years Limited",
                     "3-year limited warranty",
                     "1",
                     "3 years",
                     "1 Year Limited Warranty",
                     "5 year motor",
-                    "3 year limited",
                     "1 year warranty",
                     "1 Year",
                     "1-Year Limited Warranty",
                     "10 Years All-Metal Drive Limited",
-                    "1yr",
                     "1 year",
                     "1 year limited"
                   ],
@@ -371,17 +441,17 @@
                     "9.25",
                     "8.3",
                     "7",
+                    "10.7",
+                    "11",
                     "10",
                     "15",
                     "9",
                     "6",
-                    "13.5",
                     "3.85",
                     "8.4",
                     "17",
                     "5.99",
                     "13",
-                    "5.94",
                     "9.12",
                     "5.7",
                     "9.5",
@@ -391,7 +461,6 @@
                     "550",
                     "1000",
                     "1100",
-                    "600",
                     "450",
                     "1500",
                     "400",
@@ -405,15 +474,16 @@
                     "No"
                   ],
                   "Dishwasher Safe": [
-                    "Yes"
+                    "Yes",
+                    "No"
                   ],
                   "Number of Speeds": [
                     "4",
                     "1",
+                    "Variable",
                     "2",
                     "5",
                     "3",
-                    "7",
                     "10",
                     "12",
                     "6",
@@ -422,19 +492,18 @@
                   "Accessories Included": [
                     "72oz pitcher",
                     "40oz processing bowl & 72oz pitcher",
-                    "3-cup food processor attachment with feed tube and pusher, slicing/shredding disc, and chopping blade",
                     "16oz bowl & 48oz processing bowl"
                   ],
                   "Capacity oz": [
                     "48",
                     "40",
                     "24",
+                    "64",
+                    "32",
                     "56",
                     "20",
                     "72",
-                    "256",
-                    "32",
-                    "18"
+                    "256"
                   ],
                   "Power Cord Included": [
                     "Yes"
@@ -447,19 +516,19 @@
                     "15 x 8 x 6",
                     "12.00 H x 7.50 W x 12.40 D",
                     "14x5x5",
+                    "17.3 x 8.7 x 7.6",
+                    "10.75 x 19.75 x 10.25",
                     "13.6H x 10W x 7.8D",
                     "15x9x15",
                     "12.5 in H x 13 in W x 10 in D",
                     "12x16.2x10",
                     "14.9x16.8x10.5",
-                    "6.87 x 8.00 x 16.25",
                     "15x8x7.5",
                     "17x8x7",
                     "16 &#34;x 10.63&#34; x 8.25&#34;",
                     "18.3 x 9.6 x 15.7",
                     "9 x 8.75 x 15 in.",
                     "16x14x8",
-                    "13.5x9x8",
                     "15.875x8x13",
                     "11.1x12.2x7.1",
                     "14.77 x 12.84 x 7.88 in.",
@@ -473,33 +542,27 @@
                   ],
                   "Control Type": [
                     "Push button",
-                    "Digital",
                     "Dial"
                   ],
                   "Stop  Serve Feature": [
                     "Yes",
                     "No"
                   ],
-                  "Features": [
-                    "Powerful 600-watt motor, Large 56-oz. glass blender jar, Clear 2-oz. measured pour lid"
-                  ],
                   "Color Family": [
                     "Red",
                     "Black",
                     "Blue",
+                    "Gray",
                     "Metallic",
                     "Stainless steel",
-                    "Beige & Bisque",
-                    "White",
-                    "Gray"
+                    "Beige & Bisque"
                   ],
                   "Blender Type": [
                     "Countertop blender",
                     "Blender chopper mixer"
                   ],
                   "Housing Material Type": [
-                    "Plastic",
-                    "Die cast"
+                    "Plastic"
                   ],
                   "Has Pulse Option": [
                     "Yes",
@@ -508,6 +571,7 @@
                   "PitcherWork Bowl Material": [
                     "Glass",
                     "Plastic",
+                    "Specialty",
                     "Polycarbonate (PC)"
                   ]
                 }
@@ -517,7 +581,14 @@
                 "name": "Can Openers",
                 "cid": "Appliances-Small Kitchen Appliances-Can Openers",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [
+                  {
+                    "mainCategoryPath": "自行车/骑行装备/零配件>自行车修车工具>洗链器",
+                    "defaultMapping": 1,
+                    "defaultMain": 0,
+                    "matchOver": 0
+                  }
+                ],
                 "child": [],
                 "attribute": {
                   "Cord Length ft": [
@@ -574,12 +645,20 @@
                 "name": "Coffee & Espresso Makers",
                 "cid": "Appliances-Small Kitchen Appliances-Coffee & Espresso Makers",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [
+                  {
+                    "mainCategoryPath": "女鞋>帆布鞋",
+                    "defaultMapping": 1,
+                    "defaultMain": 1,
+                    "matchOver": 0
+                  }
+                ],
                 "child": [],
                 "attribute": {
                   "Coffee Maker Type": [
                     "Drip coffee maker",
                     "Percolator",
+                    "Commercial coffee maker",
                     "Single serving coffee maker",
                     "Grind & brew coffee maker"
                   ],
@@ -589,6 +668,7 @@
                     "Manual"
                   ],
                   "Water Tank Capacity": [
+                    "60",
                     "14",
                     "10-cup Decanter",
                     "60 ounce"
@@ -599,9 +679,9 @@
                   "Carafe Material": [
                     "Glass",
                     "Stainless steel",
+                    "Specialty",
                     "Not Included",
-                    "Thermal",
-                    "Specialty"
+                    "Thermal"
                   ],
                   "Wattage": [
                     "900",
@@ -613,6 +693,7 @@
                     "Yes"
                   ],
                   "Compatible Coffee": [
+                    "All Ground types",
                     "All Ground Types",
                     "Automatic drip ground coffee",
                     "Compatible with K-Cup&#174;* Packs",
@@ -648,15 +729,15 @@
                     "Black",
                     "White",
                     "Stainless steel",
-                    "Red",
                     "Metallic",
+                    "Red",
                     "Brown"
                   ],
                   "Overall Color": [
                     "Black",
                     "White",
-                    "Red",
                     "Stainless Steel w/Black",
+                    "Red",
                     "Black/Stainless",
                     "Stainless steel",
                     "N/A"
@@ -668,6 +749,7 @@
                     "1 year limited",
                     "2 year limited",
                     "1 yr limited",
+                    "1 Year Limited Warranty",
                     "1 Year",
                     "3 year limited",
                     "1 Year Limited",
@@ -699,10 +781,9 @@
                     "6",
                     "3",
                     "6.6",
-                    "10",
+                    "7.5",
                     "4",
                     "9.75",
-                    "7.5",
                     "5.58",
                     "11.4",
                     "7.1",
@@ -714,9 +795,7 @@
                     "6.8",
                     "0.8",
                     "7",
-                    "12.1",
-                    "9.48",
-                    "10.5"
+                    "12.1"
                   ],
                   "Reusable Filter": [
                     "Yes",
@@ -735,6 +814,7 @@
                   ],
                   "Maximum Cups Per Brew": [
                     "12-14 cups",
+                    "More than 14 cups",
                     "Single serving",
                     "2-5 cups",
                     "6-10 cups"
@@ -747,8 +827,9 @@
                     "11.5 x 9 x 9 in.",
                     "12.75 x 8.5 x 10",
                     "12.5 x 9.5 x 5.2 in.",
+                    "15.25x11.5x11.25",
+                    "16x12.5x9.25",
                     "14x8.2x11",
-                    "13 1/8&#8243; x10&#8243;x 11 7/8&#8243;",
                     "10 x 5.25 x 8 in.",
                     "16.1 x 10.8 x 12.5",
                     "14.5x8x9.25",
@@ -768,12 +849,9 @@
                     "10.8 x 9.6 x 15.6",
                     "1.5 x 2.8 x 5",
                     "10.25 x 9.50 x 14.30",
-                    "15 x 12 x 8 in.",
                     "15.5 x 9.5 x 9.5",
                     "7.48 x 11.20 x 15.16",
-                    "16.34 x 8.27 x 11.61 in.",
-                    "8 x 14.2 x 8.1",
-                    "10-2/3 x 8-4/9 x16-1/4"
+                    "8 x 14.2 x 8.1"
                   ],
                   "Stop  Serve Feature": [
                     "Yes",
@@ -789,7 +867,14 @@
                 "name": "Coffee Grinders",
                 "cid": "Appliances-Small Kitchen Appliances-Coffee Grinders",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [
+                  {
+                    "mainCategoryPath": "自行车/骑行装备/零配件>自行车修车工具>洗链器",
+                    "defaultMapping": 1,
+                    "defaultMain": 0,
+                    "matchOver": 0
+                  }
+                ],
                 "child": [],
                 "attribute": {
                   "Milling System": [
@@ -855,7 +940,14 @@
                 "name": "Deep Fryers",
                 "cid": "Appliances-Small Kitchen Appliances-Deep Fryers",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [
+                  {
+                    "mainCategoryPath": "自行车/骑行装备/零配件>自行车修车工具>洗链器",
+                    "defaultMapping": 1,
+                    "defaultMain": 0,
+                    "matchOver": 0
+                  }
+                ],
                 "child": [],
                 "attribute": {
                   "Power Cord Included": [
@@ -892,7 +984,14 @@
                 "name": "Dessert & Ice Cream Makers",
                 "cid": "Appliances-Small Kitchen Appliances-Dessert & Ice Cream Makers",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [
+                  {
+                    "mainCategoryPath": "女鞋>拖鞋",
+                    "defaultMapping": 1,
+                    "defaultMain": 1,
+                    "matchOver": 0
+                  }
+                ],
                 "child": [],
                 "attribute": {
                   "Makes Frozen Yogurt": [
@@ -970,7 +1069,14 @@
                 "name": "Electric Knives",
                 "cid": "Appliances-Small Kitchen Appliances-Electric Knives",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [
+                  {
+                    "mainCategoryPath": "自行车/骑行装备/零配件>自行车修车工具>洗链器",
+                    "defaultMapping": 1,
+                    "defaultMain": 0,
+                    "matchOver": 0
+                  }
+                ],
                 "child": [],
                 "attribute": {
                   "Power Cord Included": [
@@ -1006,7 +1112,14 @@
                 "name": "Entertaining",
                 "cid": "Appliances-Small Kitchen Appliances-Entertaining",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [
+                  {
+                    "mainCategoryPath": "自行车/骑行装备/零配件>自行车修车工具>洗链器",
+                    "defaultMapping": 1,
+                    "defaultMain": 0,
+                    "matchOver": 0
+                  }
+                ],
                 "child": [],
                 "attribute": {
                   "Fully Immersible": [
@@ -1022,8 +1135,7 @@
                   "Weight lbs": [
                     "3",
                     "6.2",
-                    "8.4",
-                    "5.5"
+                    "8.4"
                   ],
                   "Auto Shut Off": [
                     "No"
@@ -1051,8 +1163,7 @@
                   "Dimensions HxWxD": [
                     "5.6&#34;D x 4.4&#34;W x 7.5&#34;H",
                     "10.75 x 7.5 x 10.5 in.",
-                    "15.25 x 6.25 x 9.5",
-                    "7 x 6.12 x 10.5 in."
+                    "15.25 x 6.25 x 9.5"
                   ],
                   "Ready Indicator Light": [
                     "No"
@@ -1077,7 +1188,14 @@
                 "name": "Food Processors",
                 "cid": "Appliances-Small Kitchen Appliances-Food Processors",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [
+                  {
+                    "mainCategoryPath": "自行车/骑行装备/零配件>自行车修车工具>洗链器",
+                    "defaultMapping": 1,
+                    "defaultMain": 0,
+                    "matchOver": 0
+                  }
+                ],
                 "child": [],
                 "attribute": {
                   "Cord Length ft": [
@@ -1086,25 +1204,25 @@
                   "General Warranty": [
                     "2 year limited",
                     "1 Year Limited",
+                    "Limited 18-month Warranty",
                     "3-year limited warranty"
                   ],
                   "Size": [
                     "Mini",
-                    "Specialty",
                     "Full-size"
                   ],
                   "Capacity qt": [
                     ".5",
-                    "0.5",
                     "0",
                     "2",
+                    "1",
                     "2.25"
                   ],
                   "Weight lbs": [
                     "1.79",
-                    "2.42",
                     "7.5",
                     "7",
+                    "3.4",
                     "15.7"
                   ],
                   "Wattage": [
@@ -1133,19 +1251,19 @@
                   ],
                   "Dimensions HxWxD": [
                     "8 x 4.63 x 6.25 in.",
-                    "9.5&#34; H x 5.5&#34; W x 5.5&#34; D",
                     "14.567x10.827x8.425",
                     "15.25 x 7 x 10.5 in.",
                     "10.6x13.3x8.6",
+                    "5.38 x 7.63 x 9.94",
                     "10.13 x 7.75 x 14.75"
                   ],
                   "Features": [
                     "Everything fits in bowl for easy storage",
+                    "Exclusive Auto-reversing SmartPower Blade,Touchpad Controls,Chops or Grinds",
                     "14-Cup Work Bowl with Handle,Work Bowl Cover with Extra Large Feed Tube,Large Pusher and Sleeve Assembly"
                   ],
                   "Color Family": [
                     "White",
-                    "Black",
                     "Green",
                     "Stainless steel"
                   ],
@@ -1167,19 +1285,24 @@
                 "name": "Griddles & Grills",
                 "cid": "Appliances-Small Kitchen Appliances-Griddles & Grills",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [
+                  {
+                    "mainCategoryPath": "自行车/骑行装备/零配件>自行车修车工具>洗链器",
+                    "defaultMapping": 1,
+                    "defaultMain": 0,
+                    "matchOver": 0
+                  }
+                ],
                 "child": [],
                 "attribute": {
                   "Toasters and Grills Features": [
-                    "N/A",
                     "Non-skid Feet"
                   ],
                   "Power Source": [
                     "Electric"
                   ],
                   "Griddle Shape": [
-                    "Rectangle",
-                    "Oval"
+                    "Rectangle"
                   ],
                   "Removable Temperature Probe": [
                     "No",
@@ -1190,8 +1313,7 @@
                     "00",
                     "800",
                     "1150",
-                    "1500",
-                    "1800"
+                    "1500"
                   ],
                   "Non-stick Surface": [
                     "Yes"
@@ -1201,16 +1323,13 @@
                     "Yes"
                   ],
                   "Accessories Included": [
-                    "None",
-                    "Lid",
                     "Removable Drip Tray"
                   ],
                   "Power Cord Included": [
                     "Yes"
                   ],
                   "Indicator Light": [
-                    "Yes",
-                    "No"
+                    "Yes"
                   ],
                   "Removable Plates": [
                     "Yes",
@@ -1226,26 +1345,17 @@
                     "Electronic"
                   ],
                   "Ready Indicator Light": [
-                    "Yes",
-                    "No"
-                  ],
-                  "Features": [
-                    "BPA Free,Dishwasher-safe scraping tool for easy cleanup,Red/green indicator lights for easy operation",
-                    "14-inch round cooking surface,Cuisinart Ceramica&#174; nonstick coating,PTFE/PFOA/petroleum free"
+                    "Yes"
                   ],
                   "Color Family": [
                     "Metallic",
                     "Black",
                     "Stainless steel"
                   ],
-                  "Timer Settings": [
-                    "None"
-                  ],
                   "Reversible Plates": [
                     "No"
                   ],
                   "Cord Length ft": [
-                    "24",
                     "2"
                   ],
                   "General Warranty": [
@@ -1254,7 +1364,6 @@
                     "1 Year Limited",
                     "3 Year Limited",
                     "3 Years Limited Warranty",
-                    "3 year limited",
                     "One Year Limited",
                     "2 year limited",
                     "One Year Limited Warranty"
@@ -1265,9 +1374,8 @@
                     "6",
                     "6.79",
                     "8",
-                    "5",
-                    "11",
                     "7.2",
+                    "5",
                     "4.95"
                   ],
                   "Cooking Surface Size in": [
@@ -1276,8 +1384,6 @@
                     "10x8",
                     "36&#34;",
                     "10.25 x 6.5",
-                    "200 sq in",
-                    "150",
                     "22",
                     "60",
                     "10 x 18"
@@ -1288,8 +1394,7 @@
                   "Item Type": [
                     "Grill",
                     "Panini/Sandwich Maker",
-                    "Griddle",
-                    "Specialty"
+                    "Griddle"
                   ],
                   "Dishwasher Safe": [
                     "Yes",
@@ -1301,8 +1406,6 @@
                     "4.63x13.75x12.73",
                     "13.38 x 12.38 x 6.5",
                     "12.8 x 10.9 x 6 in.",
-                    "11.5 x 13.5 x 7.1",
-                    "18.11 x 15.24 x 8.31",
                     "14.18x4.62x26.62",
                     "10.8x12.9x6.4",
                     "3 x 12 x 20 in."
@@ -1318,23 +1421,26 @@
                 "name": "Hand Mixers",
                 "cid": "Appliances-Small Kitchen Appliances-Hand Mixers",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [
+                  {
+                    "mainCategoryPath": "自行车/骑行装备/零配件>自行车修车工具>洗链器",
+                    "defaultMapping": 1,
+                    "defaultMain": 0,
+                    "matchOver": 0
+                  }
+                ],
                 "child": [],
                 "attribute": {
                   "Cord Length ft": [
-                    "2",
                     "3"
                   ],
                   "General Warranty": [
-                    "One Year Limited Warranty",
                     "1 Year Limited"
                   ],
                   "Wattage": [
-                    "100",
                     "250"
                   ],
                   "Weight lbs": [
-                    "1.8",
                     "3"
                   ],
                   "Auto Shut Off": [
@@ -1344,27 +1450,22 @@
                     "Yes"
                   ],
                   "Number of Speeds": [
-                    "5",
                     "6"
-                  ],
-                  "Mixer Type": [
-                    "Hand mixer"
                   ],
                   "Accessories Included": [
                     "Snap-on storage case for instant storage of Traditional beaters and whisk"
+                  ],
+                  "Mixer Type": [
+                    "Hand mixer"
                   ],
                   "Power Cord Included": [
                     "Yes"
                   ],
                   "Dimensions HxWxD": [
-                    "6.5 x 3.3 x 7.8 in.",
                     "10.5X9.25X5.19"
                   ],
                   "Beater Type": [
                     "Double"
-                  ],
-                  "Features": [
-                    "Bowl Rest"
                   ],
                   "Color Family": [
                     "Black"
@@ -1376,35 +1477,49 @@
                 "name": "Juicers",
                 "cid": "Appliances-Small Kitchen Appliances-Juicers",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [
+                  {
+                    "mainCategoryPath": "自行车/骑行装备/零配件>自行车修车工具>洗链器",
+                    "defaultMapping": 1,
+                    "defaultMain": 0,
+                    "matchOver": 0
+                  }
+                ],
                 "child": [],
                 "attribute": {
                   "Power Cord Included": [
                     "Yes"
                   ],
                   "Dimensions HxWxD": [
-                    "11.25x11.5x14"
+                    "11.25x11.5x14",
+                    "17 x 16 x 8"
                   ],
                   "Juicer Type": [
-                    "Slow juicer"
+                    "Slow juicer",
+                    "Centrifugal juicer"
                   ],
                   "General Warranty": [
-                    "3-Year"
+                    "3-Year",
+                    "5 Years Limited"
                   ],
                   "Wattage": [
-                    "500"
+                    "500",
+                    "1100"
                   ],
                   "Weight lbs": [
-                    "9.9"
+                    "9.9",
+                    "13.6"
                   ],
                   "Color Family": [
-                    "Black"
+                    "Black",
+                    "Metallic"
                   ],
                   "Operation": [
                     "Electric"
                   ],
                   "Number of Speeds": [
-                    "1"
+                    "1",
+                    "2"
                   ]
                 }
               },
@@ -1413,7 +1528,14 @@
                 "name": "Popcorn Makers",
                 "cid": "Appliances-Small Kitchen Appliances-Popcorn Makers",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [
+                  {
+                    "mainCategoryPath": "自行车/骑行装备/零配件>自行车修车工具>洗链器",
+                    "defaultMapping": 1,
+                    "defaultMain": 0,
+                    "matchOver": 0
+                  }
+                ],
                 "child": [],
                 "attribute": {
                   "Capacity in Cups": [
@@ -1459,7 +1581,14 @@
                 "name": "Rice Cookers",
                 "cid": "Appliances-Small Kitchen Appliances-Rice Cookers",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [
+                  {
+                    "mainCategoryPath": "自行车/骑行装备/零配件>自行车修车工具>洗链器",
+                    "defaultMapping": 1,
+                    "defaultMain": 0,
+                    "matchOver": 0
+                  }
+                ],
                 "child": [],
                 "attribute": {
                   "Power Cord Included": [
@@ -1512,7 +1641,14 @@
                 "name": "Roasters",
                 "cid": "Appliances-Small Kitchen Appliances-Roasters",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [
+                  {
+                    "mainCategoryPath": "自行车/骑行装备/零配件>自行车修车工具>洗链器",
+                    "defaultMapping": 1,
+                    "defaultMain": 0,
+                    "matchOver": 0
+                  }
+                ],
                 "child": [],
                 "attribute": {
                   "Power Cord Included": [
@@ -1540,7 +1676,14 @@
                 "name": "Rotisseries",
                 "cid": "Appliances-Small Kitchen Appliances-Rotisseries",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [
+                  {
+                    "mainCategoryPath": "自行车/骑行装备/零配件>自行车修车工具>洗链器",
+                    "defaultMapping": 1,
+                    "defaultMain": 0,
+                    "matchOver": 0
+                  }
+                ],
                 "child": [],
                 "attribute": {
                   "Cooking Basket": [
@@ -1592,7 +1735,14 @@
                 "name": "Slow Cookers",
                 "cid": "Appliances-Small Kitchen Appliances-Slow Cookers",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [
+                  {
+                    "mainCategoryPath": "自行车/骑行装备/零配件>自行车修车工具>洗链器",
+                    "defaultMapping": 1,
+                    "defaultMain": 0,
+                    "matchOver": 0
+                  }
+                ],
                 "child": [],
                 "attribute": {
                   "General Warranty": [
@@ -1670,7 +1820,14 @@
                 "name": "Stand Mixer Accessories",
                 "cid": "Appliances-Small Kitchen Appliances-Stand Mixer Accessories",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [
+                  {
+                    "mainCategoryPath": "自行车/骑行装备/零配件>自行车修车工具>洗链器",
+                    "defaultMapping": 1,
+                    "defaultMain": 0,
+                    "matchOver": 0
+                  }
+                ],
                 "child": [],
                 "attribute": {
                   "Dimensions HxWxD": [
@@ -1686,7 +1843,14 @@
                 "name": "Stand Mixers",
                 "cid": "Appliances-Small Kitchen Appliances-Stand Mixers",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [
+                  {
+                    "mainCategoryPath": "自行车/骑行装备/零配件>自行车修车工具>洗链器",
+                    "defaultMapping": 1,
+                    "defaultMain": 0,
+                    "matchOver": 0
+                  }
+                ],
                 "child": [],
                 "attribute": {
                   "General Warranty": [
@@ -1757,7 +1921,14 @@
                 "name": "Tea Kettles",
                 "cid": "Appliances-Small Kitchen Appliances-Tea Kettles",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [
+                  {
+                    "mainCategoryPath": "自行车/骑行装备/零配件>自行车修车工具>洗链器",
+                    "defaultMapping": 1,
+                    "defaultMain": 0,
+                    "matchOver": 0
+                  }
+                ],
                 "child": [],
                 "attribute": {
                   "Power Cord Included": [
@@ -1817,7 +1988,14 @@
                 "name": "Toaster & Convection Ovens",
                 "cid": "Appliances-Small Kitchen Appliances-Toaster & Convection Ovens",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [
+                  {
+                    "mainCategoryPath": "自行车/骑行装备/零配件>自行车修车工具>洗链器",
+                    "defaultMapping": 1,
+                    "defaultMain": 0,
+                    "matchOver": 0
+                  }
+                ],
                 "child": [],
                 "attribute": {
                   "Toasters and Grills Features": [
@@ -1914,7 +2092,14 @@
                 "name": "Toasters",
                 "cid": "Appliances-Small Kitchen Appliances-Toasters",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [
+                  {
+                    "mainCategoryPath": "自行车/骑行装备/零配件>自行车修车工具>洗链器",
+                    "defaultMapping": 1,
+                    "defaultMain": 0,
+                    "matchOver": 0
+                  }
+                ],
                 "child": [],
                 "attribute": {
                   "Toasters and Grills Features": [
@@ -1940,8 +2125,7 @@
                     "Electronic"
                   ],
                   "Ready Indicator Light": [
-                    "Yes",
-                    "No"
+                    "Yes"
                   ],
                   "Defrost": [
                     "Yes"
@@ -1977,7 +2161,6 @@
                     "6.3",
                     "3",
                     "3.3",
-                    "2",
                     "4.4"
                   ],
                   "Item Type": [
@@ -1999,7 +2182,6 @@
                     "11.4 x 8.1 x 8.1",
                     "10.15x11.18x7.75",
                     "9 x 13.6 x 9",
-                    "8 x 10 x 7",
                     "9.13 x 17.75 x 9.38"
                   ],
                   "Crumb Tray": [
@@ -2022,7 +2204,14 @@
                 "name": "Vacuum Sealers",
                 "cid": "Appliances-Small Kitchen Appliances-Vacuum Sealers",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [
+                  {
+                    "mainCategoryPath": "自行车/骑行装备/零配件>自行车修车工具>洗链器",
+                    "defaultMapping": 1,
+                    "defaultMain": 0,
+                    "matchOver": 0
+                  }
+                ],
                 "child": [],
                 "attribute": {
                   "Power Cord Included": [
@@ -2048,7 +2237,8 @@
                     "Yes"
                   ],
                   "Food Sealer Accessory Type": [
-                    "Replacement roll"
+                    "Replacement roll",
+                    "Food sealer canister"
                   ],
                   "Item Type": [
                     "Accessories",
@@ -2070,7 +2260,14 @@
                 "name": "Waffle Makers",
                 "cid": "Appliances-Small Kitchen Appliances-Waffle Makers",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [
+                  {
+                    "mainCategoryPath": "自行车/骑行装备/零配件>自行车修车工具>洗链器",
+                    "defaultMapping": 1,
+                    "defaultMain": 0,
+                    "matchOver": 0
+                  }
+                ],
                 "child": [],
                 "attribute": {
                   "General Warranty": [
@@ -2144,21 +2341,21 @@
         "name": "Baby",
         "cid": "Baby",
         "isChild": 0,
-        "mapping": null,
+        "mapping": [],
         "child": [
           {
             "path": "Baby-Baby & Toddler Clothing",
             "name": "Baby & Toddler Clothing",
             "cid": "Baby-Baby & Toddler Clothing",
             "isChild": 0,
-            "mapping": null,
+            "mapping": [],
             "child": [
               {
                 "path": "Baby-Baby & Toddler Clothing-Accessories",
                 "name": "Accessories",
                 "cid": "Baby-Baby & Toddler Clothing-Accessories",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Type": [
@@ -2183,7 +2380,7 @@
                 "name": "Socks & Underwear",
                 "cid": "Baby-Baby & Toddler Clothing-Socks & Underwear",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Occasion": [
@@ -2211,14 +2408,14 @@
             "name": "Baby Gear & Travel",
             "cid": "Baby-Baby Gear & Travel",
             "isChild": 0,
-            "mapping": null,
+            "mapping": [],
             "child": [
               {
                 "path": "Baby-Baby Gear & Travel-Baby Gear Accessories",
                 "name": "Baby Gear Accessories",
                 "cid": "Baby-Baby Gear & Travel-Baby Gear Accessories",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Assembled Dimensions": [
@@ -2254,7 +2451,7 @@
                 "name": "Booster Car Seats",
                 "cid": "Baby-Baby Gear & Travel-Booster Car Seats",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Child Weight Maximum": [
@@ -2305,7 +2502,7 @@
                 "name": "Bouncers",
                 "cid": "Baby-Baby Gear & Travel-Bouncers",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Assembled Dimensions": [
@@ -2347,7 +2544,7 @@
                 "name": "Carriers & Slings & Backpacks",
                 "cid": "Baby-Baby Gear & Travel-Carriers & Slings & Backpacks",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Pattern": [
@@ -2399,7 +2596,7 @@
                 "name": "Convertible Car Seats",
                 "cid": "Baby-Baby Gear & Travel-Convertible Car Seats",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Child Weight Maximum": [
@@ -2499,7 +2696,7 @@
                 "name": "Infant Car Seats",
                 "cid": "Baby-Baby Gear & Travel-Infant Car Seats",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Child Weight Maximum": [
@@ -2575,14 +2772,14 @@
             "name": "Baby Gifts",
             "cid": "Baby-Baby Gifts",
             "isChild": 0,
-            "mapping": null,
+            "mapping": [],
             "child": [
               {
                 "path": "Baby-Baby Gifts-Baby Gifts",
                 "name": "Baby Gifts",
                 "cid": "Baby-Baby Gifts-Baby Gifts",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {}
               }
@@ -2594,14 +2791,14 @@
             "name": "Baby Health & Safety",
             "cid": "Baby-Baby Health & Safety",
             "isChild": 0,
-            "mapping": null,
+            "mapping": [],
             "child": [
               {
                 "path": "Baby-Baby Health & Safety-Baby Bathing",
                 "name": "Baby Bathing",
                 "cid": "Baby-Baby Health & Safety-Baby Bathing",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Color": [
@@ -2615,7 +2812,7 @@
                 "name": "Health & Grooming",
                 "cid": "Baby-Baby Health & Safety-Health & Grooming",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Type": [
@@ -2634,7 +2831,7 @@
                 "name": "Monitors",
                 "cid": "Baby-Baby Health & Safety-Monitors",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {}
               }
@@ -2646,14 +2843,14 @@
             "name": "Baby Toys",
             "cid": "Baby-Baby Toys",
             "isChild": 0,
-            "mapping": null,
+            "mapping": [],
             "child": [
               {
                 "path": "Baby-Baby Toys-Bath Toys",
                 "name": "Bath Toys",
                 "cid": "Baby-Baby Toys-Bath Toys",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Type of Item": [
@@ -2669,7 +2866,7 @@
                 "name": "Dolls & Stuffed Toys",
                 "cid": "Baby-Baby Toys-Dolls & Stuffed Toys",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Overall Dimensions": [
@@ -2686,7 +2883,7 @@
                 "name": "Floor & Activity Toys",
                 "cid": "Baby-Baby Toys-Floor & Activity Toys",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Age Appropriate Range": [
@@ -2705,7 +2902,7 @@
                 "name": "Rattles & Musical Toys",
                 "cid": "Baby-Baby Toys-Rattles & Musical Toys",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {}
               }
@@ -2717,18 +2914,17 @@
             "name": "Bedding",
             "cid": "Baby-Bedding",
             "isChild": 0,
-            "mapping": null,
+            "mapping": [],
             "child": [
               {
                 "path": "Baby-Bedding-Blankets",
                 "name": "Blankets",
                 "cid": "Baby-Bedding-Blankets",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Dimensions LxW": [
-                    "13&#34; x 9.5&#34;",
                     "12&#34; x 7&#34;",
                     "30&#34; x 40&#34;",
                     "12.5&#34; x 9&#34;",
@@ -2793,14 +2989,14 @@
             "name": "Decor",
             "cid": "Baby-Decor",
             "isChild": 0,
-            "mapping": null,
+            "mapping": [],
             "child": [
               {
                 "path": "Baby-Decor-Wall Decor",
                 "name": "Wall Decor",
                 "cid": "Baby-Decor-Wall Decor",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {}
               }
@@ -2812,14 +3008,14 @@
             "name": "Diapering",
             "cid": "Baby-Diapering",
             "isChild": 0,
-            "mapping": null,
+            "mapping": [],
             "child": [
               {
                 "path": "Baby-Diapering-Diaper Bags",
                 "name": "Diaper Bags",
                 "cid": "Baby-Diapering-Diaper Bags",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Includes Changing Pad": [
@@ -2849,7 +3045,7 @@
                 "name": "Potty Training",
                 "cid": "Baby-Diapering-Potty Training",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {}
               }
@@ -2861,14 +3057,14 @@
             "name": "Feeding",
             "cid": "Baby-Feeding",
             "isChild": 0,
-            "mapping": null,
+            "mapping": [],
             "child": [
               {
                 "path": "Baby-Feeding-Bottles",
                 "name": "Bottles",
                 "cid": "Baby-Feeding-Bottles",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Package Contents": [
@@ -2912,7 +3108,7 @@
                 "name": "Feeding Accessories",
                 "cid": "Baby-Feeding-Feeding Accessories",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {}
               },
@@ -2921,7 +3117,7 @@
                 "name": "High Chairs & Boosters",
                 "cid": "Baby-Feeding-High Chairs & Boosters",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "High Chair Type": [
@@ -2937,14 +3133,14 @@
             "name": "Furniture",
             "cid": "Baby-Furniture",
             "isChild": 0,
-            "mapping": null,
+            "mapping": [],
             "child": [
               {
                 "path": "Baby-Furniture-Changing Table Pads & Covers",
                 "name": "Changing Table Pads & Covers",
                 "cid": "Baby-Furniture-Changing Table Pads & Covers",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {}
               }
@@ -2959,21 +3155,21 @@
         "name": "Bed Bath & Home",
         "cid": "Bed Bath & Home",
         "isChild": 0,
-        "mapping": null,
+        "mapping": [],
         "child": [
           {
             "path": "Bed Bath & Home-Bed & Bath",
             "name": "Bed & Bath",
             "cid": "Bed Bath & Home-Bed & Bath",
             "isChild": 0,
-            "mapping": null,
+            "mapping": [],
             "child": [
               {
                 "path": "Bed Bath & Home-Bed & Bath-Bath Essentials",
                 "name": "Bath Essentials",
                 "cid": "Bed Bath & Home-Bed & Bath-Bath Essentials",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Recommended Age": [
@@ -3021,14 +3217,14 @@
             "name": "Dining",
             "cid": "Bed Bath & Home-Dining",
             "isChild": 0,
-            "mapping": null,
+            "mapping": [],
             "child": [
               {
                 "path": "Bed Bath & Home-Dining-Drinkware",
                 "name": "Drinkware",
                 "cid": "Bed Bath & Home-Dining-Drinkware",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Capacity oz": [
@@ -3073,7 +3269,7 @@
                 "name": "Serveware",
                 "cid": "Bed Bath & Home-Dining-Serveware",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Oven Safe": [
@@ -3138,14 +3334,14 @@
             "name": "Kitchen",
             "cid": "Bed Bath & Home-Kitchen",
             "isChild": 0,
-            "mapping": null,
+            "mapping": [],
             "child": [
               {
                 "path": "Bed Bath & Home-Kitchen-Bakeware",
                 "name": "Bakeware",
                 "cid": "Bed Bath & Home-Kitchen-Bakeware",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Oven Safe": [
@@ -3232,7 +3428,7 @@
                 "name": "Cookware & Gadgets",
                 "cid": "Bed Bath & Home-Kitchen-Cookware & Gadgets",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Oven Safe": [
@@ -3308,10 +3504,10 @@
                   ],
                   "Cover Material": [
                     "Aluminum",
-                    "None",
                     "Stainless steel",
                     "Glass with stainless steel rim",
-                    "Glass"
+                    "Glass",
+                    "None"
                   ],
                   "Style": [
                     "Balance",
@@ -3327,8 +3523,8 @@
                   ],
                   "Color Family": [
                     "Silver",
-                    "Black",
                     "Gray",
+                    "Black",
                     "White",
                     "Brown",
                     "Red",
@@ -3345,13 +3541,11 @@
                     "4",
                     "12",
                     "10",
-                    "18",
                     "2",
                     "7"
                   ],
                   "Item Weight lbs": [
                     "2.5",
-                    "2.9",
                     "4.1",
                     "3.9",
                     "5.30",
@@ -3402,7 +3596,6 @@
                   ],
                   "General Warranty": [
                     "Full lifetime warranty",
-                    "Full lifetime warranty.",
                     "Full 10 Year",
                     "Full 10 Years",
                     "N/A",
@@ -3412,11 +3605,11 @@
                     "Limited",
                     "1 year",
                     "Limited Lifetime",
+                    "Full lifetime warranty.",
                     "Full Lifetime",
                     "Full Lifetime Warranty",
                     "Lifetime Warranty",
                     "Limited 5 Year",
-                    "Lifetime Limited Warranty",
                     "Limited lifetime",
                     "Lifetime Customer Satisfaction - Guaranteed.",
                     "1 year limited",
@@ -3426,6 +3619,7 @@
                     "Return for replacement",
                     "Lifetime Customer Satisfaction-Guaranteed",
                     "Lifetime Customer Satisfaction",
+                    "Lifetime Limited Warranty",
                     "No",
                     "Quality Assurance"
                   ],
@@ -3444,19 +3638,18 @@
                   ],
                   "Material": [
                     "Stainless steel",
-                    "Specialty",
                     "Aluminum",
                     "Plastic",
                     "Bamboo",
                     "Metal",
                     "Stoneware",
+                    "Specialty",
                     "Ceramic",
                     "Tinned steel",
                     "Silicone"
                   ],
                   "Item Type": [
                     "Spoon",
-                    "Spatula",
                     "Grater",
                     "Specialty",
                     "Steamer/rice cooker",
@@ -3511,7 +3704,6 @@
                     "Plastic",
                     "Phenolic",
                     "Stainless steel",
-                    "Rubber",
                     "Thermoplastic",
                     "ABS",
                     "Steel/wood",
@@ -3529,7 +3721,7 @@
                 "name": "Cutlery",
                 "cid": "Bed Bath & Home-Kitchen-Cutlery",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Blade Material": [
@@ -3602,8 +3794,8 @@
                     "Chef's Knife: 8 in., Utility Knife: 5 in., Paring Knife: 3 in.",
                     "3",
                     "13",
-                    "9",
-                    "7''"
+                    "7''",
+                    "9"
                   ],
                   "Color Family": [
                     "Multi",
@@ -3666,7 +3858,7 @@
                 "name": "Kitchen Storage & Organization",
                 "cid": "Bed Bath & Home-Kitchen-Kitchen Storage & Organization",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Oven Safe": [
@@ -3725,21 +3917,21 @@
         "name": "Fitness & Sports",
         "cid": "Fitness & Sports",
         "isChild": 0,
-        "mapping": null,
+        "mapping": [],
         "child": [
           {
             "path": "Fitness & Sports-Fitness & Exercise",
             "name": "Fitness & Exercise",
             "cid": "Fitness & Sports-Fitness & Exercise",
             "isChild": 0,
-            "mapping": null,
+            "mapping": [],
             "child": [
               {
                 "path": "Fitness & Sports-Fitness & Exercise-Boxing & Mixed Martial Arts",
                 "name": "Boxing & Mixed Martial Arts",
                 "cid": "Fitness & Sports-Fitness & Exercise-Boxing & Mixed Martial Arts",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Type": [
@@ -3796,7 +3988,7 @@
                 "name": "Fitness Accessories",
                 "cid": "Fitness & Sports-Fitness & Exercise-Fitness Accessories",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Calorie Counter": [
@@ -3821,7 +4013,6 @@
                   ],
                   "Setup Requirements": [
                     "Light assembly may be required",
-                    "N/A",
                     "No assembly required"
                   ],
                   "Water Resistant": [
@@ -3862,8 +4053,7 @@
                     "Yes"
                   ],
                   "Weight Designation": [
-                    "Light",
-                    "Very light"
+                    "Light"
                   ],
                   "Style": [
                     "Clip-on",
@@ -3889,7 +4079,7 @@
                 "name": "Strength & Weight Training",
                 "cid": "Fitness & Sports-Fitness & Exercise-Strength & Weight Training",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Type": [
@@ -3903,7 +4093,6 @@
                   ],
                   "Target Area": [
                     "Total Body",
-                    "ABS",
                     "Back"
                   ],
                   "Height in": [
@@ -3918,7 +4107,6 @@
                     "Resistance Accessories"
                   ],
                   "Adjustable": [
-                    "Yes",
                     "No"
                   ],
                   "Overall Dimensions": [
@@ -3931,7 +4119,7 @@
                 "name": "Yoga & Pilates",
                 "cid": "Fitness & Sports-Fitness & Exercise-Yoga & Pilates",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Type": [
@@ -3991,23 +4179,21 @@
             "name": "Game Room",
             "cid": "Fitness & Sports-Game Room",
             "isChild": 0,
-            "mapping": null,
+            "mapping": [],
             "child": [
               {
                 "path": "Fitness & Sports-Game Room-Arcade Games",
                 "name": "Arcade Games",
                 "cid": "Fitness & Sports-Game Room-Arcade Games",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Recommended Age": [
-                    "5+",
                     "n/a",
                     "youth"
                   ],
                   "General Warranty": [
-                    "No",
                     "90 days"
                   ],
                   "Power Source": [
@@ -4016,7 +4202,6 @@
                     "Battery"
                   ],
                   "Height in": [
-                    "16.5",
                     "44",
                     "66.5"
                   ],
@@ -4027,15 +4212,12 @@
                     "No"
                   ],
                   "Trademarked Theme": [
-                    "BANZAI",
                     "No"
                   ],
                   "Width in": [
-                    "3.5",
                     "16"
                   ],
                   "Length in": [
-                    "16.5",
                     "16",
                     "22"
                   ],
@@ -4048,14 +4230,10 @@
                   "Voltage": [
                     "110/120V"
                   ],
-                  "Item Weight lbs": [
-                    "3.41"
-                  ],
                   "Scoring System": [
                     "Electronic"
                   ],
                   "ColorFinish": [
-                    "multi",
                     "black",
                     "character"
                   ]
@@ -4066,7 +4244,7 @@
                 "name": "Darts & Accessories",
                 "cid": "Fitness & Sports-Game Room-Darts & Accessories",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Hardsided or Softsided": [
@@ -4191,7 +4369,7 @@
                 "name": "Game Tables",
                 "cid": "Fitness & Sports-Game Room-Game Tables",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Paddles": [
@@ -4266,7 +4444,7 @@
                 "name": "Pool Tables & Accessories",
                 "cid": "Fitness & Sports-Game Room-Pool Tables & Accessories",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Billiard Rack Type": [
@@ -4294,7 +4472,7 @@
                 "name": "Table Top Games",
                 "cid": "Fitness & Sports-Game Room-Table Top Games",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Recommended Age": [
@@ -4334,14 +4512,14 @@
             "name": "Outdoors Activities",
             "cid": "Fitness & Sports-Outdoors Activities",
             "isChild": 0,
-            "mapping": null,
+            "mapping": [],
             "child": [
               {
                 "path": "Fitness & Sports-Outdoors Activities-Camping & Hiking",
                 "name": "Camping & Hiking",
                 "cid": "Fitness & Sports-Outdoors Activities-Camping & Hiking",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Dimensions HxWxD": [
@@ -4366,14 +4544,14 @@
             "name": "Team Sports",
             "cid": "Fitness & Sports-Team Sports",
             "isChild": 0,
-            "mapping": null,
+            "mapping": [],
             "child": [
               {
                 "path": "Fitness & Sports-Team Sports-Basketball",
                 "name": "Basketball",
                 "cid": "Fitness & Sports-Team Sports-Basketball",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Basketball Type": [
@@ -4426,7 +4604,7 @@
                 "name": "Soccer",
                 "cid": "Fitness & Sports-Team Sports-Soccer",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Cover Material": [
@@ -4457,14 +4635,14 @@
             "name": "Wheeled Sports",
             "cid": "Fitness & Sports-Wheeled Sports",
             "isChild": 0,
-            "mapping": null,
+            "mapping": [],
             "child": [
               {
                 "path": "Fitness & Sports-Wheeled Sports-Bikes & Accessories",
                 "name": "Bikes & Accessories",
                 "cid": "Fitness & Sports-Wheeled Sports-Bikes & Accessories",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Recommended Age": [
@@ -4559,21 +4737,21 @@
         "name": "Health & Beauty",
         "cid": "Health & Beauty",
         "isChild": 0,
-        "mapping": null,
+        "mapping": [],
         "child": [
           {
             "path": "Health & Beauty-Beauty",
             "name": "Beauty",
             "cid": "Health & Beauty-Beauty",
             "isChild": 0,
-            "mapping": null,
+            "mapping": [],
             "child": [
               {
                 "path": "Health & Beauty-Beauty-Hair Care",
                 "name": "Hair Care",
                 "cid": "Health & Beauty-Beauty-Hair Care",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Type": [
@@ -4593,13 +4771,11 @@
                   "General Warranty": [
                     "5-Year limited",
                     "5-Year Limited",
-                    "5 Year Limited",
                     "2 year limited",
                     "5 year limited",
                     "5 year limited-Clipper",
                     "3 Year Limited",
-                    "N/A",
-                    "1 year limited"
+                    "N/A"
                   ],
                   "Size": [
                     "Travel",
@@ -4610,7 +4786,6 @@
                     "1.3",
                     "1.4",
                     "2",
-                    "2.0",
                     "1"
                   ],
                   "Corded or Cordless": [
@@ -4618,7 +4793,6 @@
                     "Cordless"
                   ],
                   "Battery Type": [
-                    "Lithium Ion",
                     "AAA"
                   ]
                 }
@@ -4628,7 +4802,7 @@
                 "name": "Shaving & Hair Removal",
                 "cid": "Health & Beauty-Beauty-Shaving & Hair Removal",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "For Use On": [
@@ -4668,14 +4842,14 @@
             "name": "Health & Wellness",
             "cid": "Health & Beauty-Health & Wellness",
             "isChild": 0,
-            "mapping": null,
+            "mapping": [],
             "child": [
               {
                 "path": "Health & Beauty-Health & Wellness-Massage",
                 "name": "Massage",
                 "cid": "Health & Beauty-Health & Wellness-Massage",
                 "isChild": 1,
-                "mapping": null,
+                "mapping": [],
                 "child": [],
                 "attribute": {
                   "Type": [

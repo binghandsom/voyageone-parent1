@@ -3,7 +3,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="ctrl.cancel()">
             <span aria-hidden="true"><i class="fa fa-close"></i></span>
         </button>
-        <h5 class="modal-title"><i class="fa fa-crosshairs"></i> 属性设定</h5>
+        <h5 class="modal-title"><i class="fa fa-crosshairs"></i> 属性设定: {{ ctrl.context.field.name }}</h5>
     </div>
     <div class="modal-body">
         <table class="table box table-hover">
@@ -39,6 +39,6 @@
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="ctrl.cancel()">取消</button>
-        <button class="btn btn-vo" ng-click="ok()">保存</button>
+        <button class="btn btn-vo" ng-click="ctrl.ok()">保存</button>
     </div>
 </div>

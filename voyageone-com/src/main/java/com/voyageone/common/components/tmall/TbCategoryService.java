@@ -54,7 +54,7 @@ public class TbCategoryService extends TbBase {
      * @param parentCid 指定的父类目id
      * @return ItemCat
      */
-    public List<ItemCat> getCategory(ShopBean shop,Long parentCid) throws ApiException{
+    public List<ItemCat> getCategory(ShopBean shop,Long parentCid) throws ApiException {
 
         List<ItemCat> itemCatListResult = new ArrayList<>();
 
