@@ -11,8 +11,4 @@
 
 	<import resource="dao-mongo-collecion-mapping.xml"/>
 
-	<import resource="category-product-config.xml"/>
-
-	<import resource="platform-carts-config.xml"/>
-	
 </beans>

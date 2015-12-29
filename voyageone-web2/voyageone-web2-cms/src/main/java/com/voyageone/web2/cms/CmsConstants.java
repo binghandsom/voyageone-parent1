@@ -17,4 +17,13 @@ public interface CmsConstants extends BaseConstants{
      * 默认的 CategoryType值 : Feed
      */
     String DEFAULT_CATEGORY_TYPE = "Feed";
+
+    /**
+     * Property 文件Key
+     */
+    interface Props {
+
+        //  Code 文件模板文件
+        String CODE_TEMPLATE = "cms.code.template.file";
+    }
 }

@@ -4,10 +4,10 @@ import com.voyageone.cms.service.dao.CmsMtCommonPropDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
 import com.voyageone.cms.service.model.MtCommPropActionDefModel;
 import com.voyageone.common.configs.Enums.ActionType;
-import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
 import com.voyageone.common.masterdate.schema.field.Field;
+import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import net.minidev.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -49,11 +49,13 @@ public class MasterCatSchemaBuildFromTmallServiceTest {
 
     @Test
     public void verify() throws TopSchemaException {
+        logger.info("");
         List<JSONObject> maseterSchemaIds = cmsMtCategorySchemaDao.getAllSchemaIds();
-
+        logger.info("总件数： "+maseterSchemaIds.size());
         List<MtCommPropActionDefModel> commPropActionDefModels = cmsMtCommonPropDao.getActionModelList();
-
+        int schemaCount = 0;
         for (JSONObject schemaId:maseterSchemaIds) {
+            schemaCount++;
             String id = schemaId.get("_id").toString();
 
             JSONObject schemaModel = cmsMtCategorySchemaDao.selectByIdRetrunJson(id);
@@ -62,10 +64,11 @@ public class MasterCatSchemaBuildFromTmallServiceTest {
             List skuList = new ArrayList<>();
             skuList.add(skuObj);
             List<Field> skuFields = SchemaJsonReader.readJsonForList(skuList);
-            List<Field> fields = SchemaJsonReader.readJsonForList((List)schemaModel.get("fields"));
+            Object fieldsObj = schemaModel.get("fields");
+            List<Field> fields = SchemaJsonReader.readJsonForList((List)fieldsObj);
             fields.addAll(skuFields);
-            logger.info("");
-            logger.info("Category Id: " + schemaModel.get("catId"));
+
+            logger.info("Schema 数:"+schemaCount+"件， Category Id: " + schemaModel.get("catId"));
 
             for (MtCommPropActionDefModel defModel:commPropActionDefModels){
                 ActionType actionType = ActionType.valueOf(Integer.valueOf(defModel.getActionType()));

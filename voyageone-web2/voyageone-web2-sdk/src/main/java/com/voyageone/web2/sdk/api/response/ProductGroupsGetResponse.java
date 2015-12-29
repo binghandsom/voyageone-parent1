@@ -1,8 +1,7 @@
 package com.voyageone.web2.sdk.api.response;
 
 import com.voyageone.cms.service.model.CmsBtProductModel_Group_Platform;
-import com.voyageone.web2.sdk.api.VoApiResponse;
-
+import com.voyageone.web2.sdk.api.VoApiListResponse;
 import java.util.List;
 
 
@@ -15,24 +14,12 @@ import java.util.List;
  * @version 2.0.0
  * @since. 2.0.0
  */
-public class ProductGroupsGetResponse extends VoApiResponse {
+public class ProductGroupsGetResponse extends VoApiListResponse {
 
-	/**
-	 * 结果总数
-	 */
-	private Long totalCount;
     /**
      * 数据体信息
      */
     private List<CmsBtProductModel_Group_Platform> productGroupPlatforms;
-
-	public Long getTotalCount() {
-		return totalCount;
-	}
-
-	public void setTotalCount(Long totalCount) {
-		this.totalCount = totalCount;
-	}
 
 	public List<CmsBtProductModel_Group_Platform> getProductGroupPlatforms() {
 		return productGroupPlatforms;

@@ -1,19 +1,20 @@
 package com.voyageone.batch.cms.service;
 
+import com.voyageone.batch.cms.bean.WorkLoadBean;
 import com.voyageone.batch.cms.bean.tcb.TaskControlBlock;
 import com.voyageone.batch.cms.bean.tcb.UploadImageTcb;
 import com.voyageone.batch.cms.bean.tcb.UploadProductTcb;
 import com.voyageone.batch.cms.dao.SkuInventoryDao;
-import com.voyageone.batch.cms.bean.WorkLoadBean;
 import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformMappingDao;
 import com.voyageone.common.components.issueLog.IssueLog;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Leo on 15-6-8.
  */
-public class UploadJob {
+public class UploadJob implements Comparable<UploadJob> {
     private String channel_id;
     private int cart_id;
     private String channel_name;
@@ -23,22 +24,26 @@ public class UploadJob {
     private boolean isRunning;
 
     //TODO 预留，将来要实时查看Job状态时使用
-    private Set<WorkLoadBean> workLoadBeanDoneSet;
+    private List<WorkLoadBean> workLoadBeanDoneList;
     //TODO 预留，将来要实时查看Job状态时使用
-    private Set<WorkLoadBean> workLoadBeanHandleSet;
+    private List<WorkLoadBean> workLoadBeanHandleList;
 
     //主任务
     private UploadProductHandler uploadProductHandler;
     //子任务
     private UploadImageHandler uploadImageHandler;
+    private String identifer;
 
-    public UploadJob(String channel_id, int cart_id, UploadWorkloadDispatcher.JobStateCb jobStateCb,
+    public UploadJob(String channel_id, int cart_id,  String identifer, UploadWorkloadDispatcher.JobStateCb jobStateCb,
                      CmsMtPlatformMappingDao cmsMtPlatformMappingDao, SkuInventoryDao skuInventoryDao, IssueLog issueLog) {
         this.channel_id = channel_id;
         this.cart_id = cart_id;
         this.jobStateCb = jobStateCb;
         isRunning = false;
+        workLoadBeanDoneList = new ArrayList<>();
+        workLoadBeanHandleList = new ArrayList<>();
 
+        this.identifer = identifer;
         uploadProductHandler = new UploadProductHandler(this, cmsMtPlatformMappingDao, skuInventoryDao, issueLog);
         uploadImageHandler = new UploadImageHandler(this, issueLog);
     }
@@ -66,6 +71,9 @@ public class UploadJob {
     {
         TaskControlBlock tcb = new UploadProductTcb(workLoadBean);
         uploadProductHandler.addRunningTask(tcb);
+        synchronized (workLoadBeanHandleList) {
+            workLoadBeanHandleList.add(workLoadBean);
+        }
     }
 
     public void suspendMainTaskAndWakeImageTask(UploadProductTcb mainTcb, UploadImageTcb imageTcb)
@@ -87,6 +95,12 @@ public class UploadJob {
     public void workloadComplete(WorkLoadBean workLoadBean) {
         jobStateCb.onWorkloadComplete(workLoadBean);
         //add workload to done list and remove workload from handle list
+        synchronized (workLoadBeanHandleList) {
+            synchronized (workLoadBeanDoneList) {
+                workLoadBeanHandleList.remove(workLoadBean);
+                workLoadBeanDoneList.add(workLoadBean);
+            }
+        }
     }
 
     //主线程(UploadProductHandler)结束后通知UploadJob
@@ -139,5 +153,39 @@ public class UploadJob {
 
     public void setPlatform_name(String platform_name) {
         this.platform_name = platform_name;
+    }
+
+    public List<WorkLoadBean> getWorkLoadBeanDoneList() {
+        return workLoadBeanDoneList;
+    }
+
+    public void setWorkLoadBeanDoneList(List<WorkLoadBean> workLoadBeanDoneList) {
+        this.workLoadBeanDoneList = workLoadBeanDoneList;
+    }
+
+    public List<WorkLoadBean> getWorkLoadBeanHandleList() {
+        return workLoadBeanHandleList;
+    }
+
+    public void setWorkLoadBeanHandleList(List<WorkLoadBean> workLoadBeanHandleList) {
+        this.workLoadBeanHandleList = workLoadBeanHandleList;
+    }
+
+    @Override
+    public int compareTo(UploadJob compareUploadJob) {
+        int compareRs = getWorkLoadBeanHandleList().size() - compareUploadJob.getWorkLoadBeanHandleList().size();
+        if (compareRs == 0) {
+            return hashCode() - compareUploadJob.hashCode();
+        } else {
+            return compareRs;
+        }
+    }
+
+    public String getIdentifer() {
+        return identifer;
+    }
+
+    public void setIdentifer(String identifer) {
+        this.identifer = identifer;
     }
 }

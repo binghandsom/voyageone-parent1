@@ -26,6 +26,7 @@
                     <thead>
                     <tr>
                         <th class="text-center">Seq.</th>
+                        <th class="text-center">层级</th>
                         <th class="text-left">Feed Category</th>
                         <th class="text-left">Main Data Category</th>
                         <th class="text-center">类目匹配</th>
@@ -35,6 +36,7 @@
                     <tbody>
                     <tr>
                         <td>Top</td>
+                        <td><span class="badge badge-success"> 父级 <i class="fa fa-level-down"></i></span></td>
                         <td class="text-left">{{ ctrl.selectedTop.path }}</td>
                         <td class="text-left">{{ ctrl.getDefaultMapping(ctrl.selectedTop) }}</td>
                         <td>
@@ -50,6 +52,7 @@
                     </tr>
                     <tr ng-repeat="feedCategory in ctrl.selectedTop.child | flatTree:'child'">
                         <td>{{ $index + 1 }}</td>
+                        <td><span class="badge badge-empty">子级 <i class="fa fa-level-up"></i> </span></td>
                         <td class="text-left">{{ feedCategory.path }}</td>
                         <td class="text-left">{{ ctrl.getDefaultMapping(feedCategory) }}</td>
                         <td>

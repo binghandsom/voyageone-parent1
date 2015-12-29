@@ -12,6 +12,8 @@ import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformMappingDao;
 import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
 import com.voyageone.cms.service.model.CmsMtPlatformMappingModel;
 import com.voyageone.common.components.issueLog.IssueLog;
+import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.ShopConfigs;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -215,7 +217,8 @@ public class UploadProductHandler extends UploadWorkloadHandler{
         this.cmsMtPlatformMappingDao = cmsMtPlatformMappingDao;
         this.skuInventoryDao = skuInventoryDao;
 
-        this.setName(this.getClass().getSimpleName() + "_" + uploadJob.getChannel_id() + "_" + uploadJob.getCart_id());
+        this.setName(this.getClass().getSimpleName() + "_" + ChannelConfigEnums.Channel.valueOfId(uploadJob.getChannel_id()).getFullName() + "_" +
+                CartEnums.Cart.getValueByID(String.valueOf(uploadJob.getCart_id())).name() + "_" + uploadJob.getIdentifer());
 
         ApplicationContext springContext = (ApplicationContext) Context.getContext().getAttribute("springContext");
         tmallProductService = springContext.getBean(TmallProductService.class);
