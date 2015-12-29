@@ -345,4 +345,10 @@ public interface WmsConstants {
         public static final String[] PHYSICALS_TITLE_HEAD={"WERKS","DATE","LGORT","EAN/UPC","PRICE",
                 "MENGE","RECRODTYPE","PRICEFLAG","ARTICLE"};
     }
+
+    //库存同步类型 1: 不同区域；  2: 不同库存管理
+    final class ORDER_SPLIT {
+        public final static String AREA = "1";
+        public final static String INVENTORY = "2";
+    }
 }
