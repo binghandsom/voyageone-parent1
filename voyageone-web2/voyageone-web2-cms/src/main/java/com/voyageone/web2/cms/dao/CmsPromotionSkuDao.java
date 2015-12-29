@@ -2,11 +2,13 @@ package com.voyageone.web2.cms.dao;
 
 import com.voyageone.base.dao.BaseDao;
 import com.voyageone.web2.cms.model.CmsBtPromotionCodeModel;
+import com.voyageone.web2.cms.model.CmsBtInventoryOutputTmpModel;
 import com.voyageone.web2.cms.model.CmsBtPromotionGroupModel;
 import com.voyageone.web2.cms.model.CmsBtPromotionSkuModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,5 +51,35 @@ public class CmsPromotionSkuDao extends BaseDao{
         params.setPromotionId(promotionId);
         params.setProductId(productId);
         return updateTemplate.delete("delete_cms_bt_promotion_sku", params);
+    }
+    public boolean insertSkuInventoryInfo(String values) {
+        boolean ret = true;
+
+        Map<String, String> dataMap = new HashMap<String, String>();
+        dataMap.put("values", values);
+
+        int retCount = updateTemplate.insert("wms_bt_inventory_center_output_tmp_insertSKUData", dataMap);
+
+        return  ret;
+    }
+
+    public boolean delSkuInventoryInfo() {
+        updateTemplate.delete("wms_bt_inventory_center_output_tmp_deleteAll");
+
+        return true;
+    }
+
+    public int getSkuInventoryInfoRecCount() {
+        return selectOne("wms_bt_inventory_center_output_tmp_getRecCount");
+    }
+
+    public List<CmsBtInventoryOutputTmpModel> getSkuInventoryInfoRecInfo(int offset,int pagesize) {
+        Map<String, Object> dataMap = new HashMap<String, Object>();
+        dataMap.put("offset", offset * pagesize);
+        dataMap.put("pagesize", pagesize);
+
+        List<CmsBtInventoryOutputTmpModel> ret = selectList("wms_bt_inventory_center_output_tmp_getRecInfo", dataMap);
+
+        return  ret;
     }
 }
