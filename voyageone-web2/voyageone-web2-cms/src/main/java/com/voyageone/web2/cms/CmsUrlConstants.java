@@ -86,6 +86,12 @@ public interface CmsUrlConstants {
 
             String UPDATE_TASK_STATUS = "updateTaskStatus";
         }
+        interface FILE {
+
+            String ROOT = "/cms/promotion/file";
+
+            String GET_CODE_FILE = "getCodeFile";
+        }
     }
 
     interface SEARCH {
