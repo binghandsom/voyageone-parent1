@@ -9,6 +9,8 @@ import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.dao.CmsPromotionSkuDao;
 import com.voyageone.web2.cms.dao.mongodb.CmsBtProductDao;
 import com.voyageone.web2.cms.model.CmsBtInventoryOutputTmpModel;
+import com.voyageone.web2.sdk.api.VoApiDefaultClient;
+import com.voyageone.web2.sdk.api.request.ProductsGetRequest;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +56,9 @@ public class CmsPromotionFileService extends BaseAppService {
     // Sku 文件单线程用
     ReentrantLock lock = new ReentrantLock();
 
+    @Autowired
+    VoApiDefaultClient voApiDefaultClient;
+
     /**
      * Code单位，文件生成
      *
@@ -84,7 +89,8 @@ public class CmsPromotionFileService extends BaseAppService {
              Workbook book = WorkbookFactory.create(inputStream)) {
 
             for (int i = 0; i < pageCount; i++) {
-                List<CmsBtProductModel> items = cmsBtProductDao.selectProductByCartId(channelId, cartId, i, select_pagesize);
+//                List<CmsBtProductModel> items = cmsBtProductDao.selectProductByCartId(channelId, cartId, i, select_pagesize);
+                List<CmsBtProductModel> items = selectProductByCartId(channelId, cartId, i, select_pagesize);
 
                 if (items.size() == 0) {
                     break;
@@ -120,6 +126,56 @@ public class CmsPromotionFileService extends BaseAppService {
                 return outputStream.toByteArray();
             }
         }
+    }
+
+    /**
+     * 调用SDK取得Code数据（含SKU）
+     *
+     * @param channelId
+     * @param cartId
+     * @param pageNo
+     * @param pageSize
+     * @return List<CmsBtProductModel>  Code数据（含SKU）
+     */
+    private List<CmsBtProductModel> selectProductByCartId(String channelId, String cartId, int pageNo, int pageSize) {
+        //设置参数
+        ProductsGetRequest requestModel = new ProductsGetRequest(channelId);
+
+        requestModel.addProp("groups.platforms.cartId", Integer.valueOf(cartId));
+        requestModel.setPageNo(pageNo + 1);
+        requestModel.setPageSize(pageSize);
+        requestModel.setFields("{\"prodId\":1,\"groups.platforms.cartId.$\":1,\"fields.model\":1,\"fields.code\":1,\"fields.productName\":1,\"batch_update.code_qty\":1,\"fields.salePriceStart\":1,\"fields.salePriceEnd\":1,\"catPath\":1,\"skus\":1}");
+
+        //SDK取得Product 数据
+        List<CmsBtProductModel> productList = voApiDefaultClient.execute(requestModel).getProducts();
+
+        return productList;
+    }
+
+    /**
+     * 调用SDK取得Model数据
+     *
+     * @param channelId
+     * @param cartId
+     * @param pageNo
+     * @param pageSize
+     * @return List<CmsBtProductModel>  Model数据
+     */
+    private List<CmsBtProductModel> selectModelByCartId(String channelId, String cartId, int pageNo, int pageSize) {
+        //设置参数
+        ProductsGetRequest requestModel = new ProductsGetRequest(channelId);
+
+        requestModel.addProp("groups.platforms.cartId", Integer.valueOf(cartId));
+//        requestModel.addProp("groups.platforms.isMain", 1);
+        requestModel.addProp("groups.platforms.isMain", 0);
+        requestModel.setPageNo(pageNo + 1);
+        requestModel.setPageSize(pageSize);
+        requestModel.setFields("{\"groups.platforms.cartId.$\":1,\"groups.salePriceStart\":1,\"groups.salePriceEnd\":1,\"prodId\":1,\"fields.model\":1}");
+
+        //SDK取得Product 数据
+        List<CmsBtProductModel> productList = voApiDefaultClient.execute(requestModel).getProducts();
+
+        return productList;
     }
 
     /**
@@ -329,7 +385,8 @@ public class CmsPromotionFileService extends BaseAppService {
 
         int skuCount = 0;
         for (int i = 0; i < pageCount; i++) {
-            List<CmsBtProductModel> items = cmsBtProductDao.selectProductByCartId(channelId, cartId, i, select_pagesize);
+//            List<CmsBtProductModel> items = cmsBtProductDao.selectProductByCartId(channelId, cartId, i, select_pagesize);
+            List<CmsBtProductModel> items = selectProductByCartId(channelId, cartId, i, select_pagesize);
 
             if (items.size() == 0) {
                 break;
@@ -638,7 +695,8 @@ public class CmsPromotionFileService extends BaseAppService {
              Workbook book = WorkbookFactory.create(inputStream)) {
 
             for (int i = 0; i < pageCount; i++) {
-                List<CmsBtProductModel> items = cmsBtProductDao.selectModelByCartId(channelId, cartId, i, select_pagesize);
+//                List<CmsBtProductModel> items = cmsBtProductDao.selectModelByCartId(channelId, cartId, i, select_pagesize);
+                List<CmsBtProductModel> items = selectModelByCartId(channelId, cartId, i, select_pagesize);
 
                 if (items.size() == 0) {
                     break;
