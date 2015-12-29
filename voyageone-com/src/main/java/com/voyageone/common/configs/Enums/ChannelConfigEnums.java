@@ -469,7 +469,12 @@ public class ChannelConfigEnums {
         /**
          * SEARS
          */
-        SEARS("013");
+        SEARS("013"),
+
+        /**
+         * WMF
+         */
+        WMF("014");
 
         private String id;
 
@@ -507,6 +512,7 @@ public class ChannelConfigEnums {
                 case "011": return LOCONDO;
                 case "012": return BCBG;
                 case "013": return SEARS;
+                case "014": return WMF;
                 default: return null;
             }
         }
