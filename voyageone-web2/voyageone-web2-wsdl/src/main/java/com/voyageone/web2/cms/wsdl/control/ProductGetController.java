@@ -57,7 +57,7 @@ public class ProductGetController extends BaseController {
      *
      * @return List<CmsBtProductModel>
      */
-    @RequestMapping("selectList")
+    @RequestMapping("selectCount")
     public ProductsCountGetResponse selectCount(@RequestBody ProductsCountGetRequest request) {
         return productService.selectCount(request);
     }

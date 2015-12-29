@@ -59,7 +59,6 @@ public class ProductsCountGetRequest extends VoApiRequest<ProductsCountGetRespon
 		super.check();
 		RequestUtils.checkNotEmpty(channelId);
 		RequestUtils.checkNotEmpty(" productIdList or productCodeList or props", productIds, productCodes, props);
-		RequestUtils.checkNotEmpty(fields, "fields");
 	}
 
 	public String getChannelId() {
