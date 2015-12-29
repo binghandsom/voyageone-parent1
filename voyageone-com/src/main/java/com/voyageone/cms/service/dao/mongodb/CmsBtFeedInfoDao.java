@@ -1,6 +1,6 @@
 package com.voyageone.cms.service.dao.mongodb;
 
-import com.voyageone.base.dao.mongodb.BaseMongoDao;
+import com.voyageone.base.dao.mongodb.BaseMongoPartDao;
 import com.voyageone.cms.service.model.CmsBtFeedInfoModel;
 import org.springframework.stereotype.Repository;
 
@@ -11,7 +11,7 @@ import java.util.List;
  */
 
 @Repository
-public class CmsBtFeedInfoDao extends BaseMongoDao {
+public class CmsBtFeedInfoDao extends BaseMongoPartDao {
 
     @Override
     public Class getEntityClass() {

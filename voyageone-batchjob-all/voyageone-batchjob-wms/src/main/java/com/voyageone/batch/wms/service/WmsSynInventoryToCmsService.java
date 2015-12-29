@@ -7,17 +7,12 @@ import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.core.util.TaskControlUtils;
 import com.voyageone.batch.wms.dao.InventoryDao;
 import com.voyageone.batch.wms.modelbean.InventoryForCmsBean;
-import com.voyageone.batch.wms.mongoDao.InventoryTmpDao;
 import com.voyageone.cms.service.CmsProductService;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
-import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.ShopConfigs;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.CommonUtil;
-import com.voyageone.web2.sdk.api.request.ProductsGetRequest;
-import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
-import com.voyageone.web2.sdk.api.service.ProductsGetClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,18 +27,14 @@ import java.util.Map;
 @Service
 public class WmsSynInventoryToCmsService extends BaseTaskService {
 
-
-    @Autowired
-    private InventoryTmpDao inventoryTmpDao;
+//    @Autowired
+//    private InventoryTmpDao inventoryTmpDao;
 
     @Autowired
     private InventoryDao inventoryDao;
 
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
-
-    @Autowired
-    private ProductsGetClient productsGetClient;
 
     @Autowired
     private CmsProductService cmsProductService;
@@ -177,21 +168,6 @@ public class WmsSynInventoryToCmsService extends BaseTaskService {
      */
     private Map<String, List<String>> getGroupByCartList(String channelId, int cartId) {
         return cmsProductService.getProductGroupIdCodesMapByCart(channelId,cartId);
-    }
-
-    /**
-     * 根据groupID找出group下的所有的code
-     *
-     * @param channelId
-     * @param groupId
-     * @return
-     */
-    private List<CmsBtProductModel> getProductsByGroup(String channelId, Long groupId) {
-
-        ProductsGetRequest request = new ProductsGetRequest(channelId);
-        ProductsGetResponse response = productsGetClient.getProducts(request);
-
-        return response.getProducts();
     }
 
     /**

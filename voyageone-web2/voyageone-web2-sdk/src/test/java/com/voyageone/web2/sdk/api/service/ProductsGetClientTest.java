@@ -15,8 +15,8 @@ import java.util.List;
 @ContextConfiguration(locations = "classpath:applicationContext.xml")
 public class ProductsGetClientTest {
 
-    @Autowired
-    private ProductsGetClient productsGetClient;
+//    @Autowired
+//    private ProductsGetClient productsGetClient;
 
 //    @Test
 //    public void testGetProductCodesByCart() {

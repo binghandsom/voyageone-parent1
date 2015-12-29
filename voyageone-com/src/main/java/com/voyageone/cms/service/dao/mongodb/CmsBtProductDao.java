@@ -1,7 +1,7 @@
 package com.voyageone.cms.service.dao.mongodb;
 
 import com.mongodb.*;
-import com.voyageone.base.dao.mongodb.BaseMongoDao;
+import com.voyageone.base.dao.mongodb.BaseMongoPartDao;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class CmsBtProductDao extends BaseMongoDao {
+public class CmsBtProductDao extends BaseMongoPartDao {
 
     @Override
     public Class getEntityClass() {
@@ -94,11 +94,11 @@ public class CmsBtProductDao extends BaseMongoDao {
 
     /**
      * 根据检索条件返回当前页的product列表
-     * @param query
-     * @param currPage
-     * @param pageSize
-     * @param channelId
-     * @return
+     * @param query 条件
+     * @param currPage 当前Page Number
+     * @param pageSize page size
+     * @param channelId channel id
+     * @return Iterator CmsBtProductModel
      */
     public List<CmsBtProductModel> selectProductByQuery(String query, Integer currPage, Integer pageSize, String channelId, String[] searchItems) {
         JomgoQuery jQuery = new JomgoQuery();
@@ -112,11 +112,11 @@ public class CmsBtProductDao extends BaseMongoDao {
 
     /**
      * 根据检索条件返回当前页的group列表(只包含main product)
-     * @param query
-     * @param currPage
-     * @param pageSize
-     * @param channelId
-     * @return
+     * @param query 条件
+     * @param currPage 当前Page Number
+     * @param pageSize page size
+     * @param channelId channel id
+     * @return List CmsBtProductModel
      */
     public List<CmsBtProductModel> selectGroupWithMainProductByQuery(String query, Integer currPage, Integer pageSize, String channelId, String[] searchItems) {
         JomgoQuery jQuery = new JomgoQuery();
@@ -348,7 +348,6 @@ public class CmsBtProductDao extends BaseMongoDao {
      * @return 运行结果
      */
     public BulkWriteResult bulkUpdateWithMap(String channelId, List<BulkUpdateModel> bulkList, String modifier, String key) {
-        BulkWriteResult result = null;
         //获取集合名
         DBCollection coll = getDBCollection(channelId);
         BulkWriteOperation bwo = coll.initializeOrderedBulkOperation();
@@ -380,9 +379,7 @@ public class CmsBtProductDao extends BaseMongoDao {
             bwo.find(queryObj).update(updateObj);
         }
         //最终批量运行
-        result = bwo.execute();
-
-        return result;
+        return bwo.execute();
     }
 
     /**
@@ -400,4 +397,23 @@ public class CmsBtProductDao extends BaseMongoDao {
     public WriteResult update(BaseMongoModel model) {
         throw new BusinessException("not suppert");
     }
+
+
+//    public List<CmsBtProductModel> getProductCodesByCart(String channelId, int cartId) {
+//        String queryTemp = " { $match :{\"groups.platforms.cartId\":21}  }, \n" +
+//                " { $unwind : \"$groups.platforms\"}, \n" +
+//                " { $match :{\"groups.platforms.cartId\":21}  },\n" +
+//                " { $project : {\"fields.code\":1, \"groups.platforms.groupId\":1 }}";
+//
+//        String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
+//        Aggregate aggregate = mongoTemplate.aggregate(queryTemp, collectionName);
+//        Aggregate.ResultsIterator<CmsBtProductModel> aa = aggregate.as(getEntityClass());
+//        //IteratorUtils.toList(
+//        while(aa.hasNext()) {
+//            CmsBtProductModel product = aa.next();
+//            System.out.println(product.getFields().getCode());
+//            System.out.println(product.getGroups().getPlatforms().get(0).getGroupId());
+//        }
+//        return null;
+//    }
 }
