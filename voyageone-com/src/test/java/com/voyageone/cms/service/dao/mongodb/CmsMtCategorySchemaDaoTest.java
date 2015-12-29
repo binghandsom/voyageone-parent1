@@ -27,4 +27,9 @@ public class CmsMtCategorySchemaDaoTest {
         System.out.println("");
 
     }
+
+    @Test
+    public void testGetMasterSchemaModelByCatIdEx() throws Exception {
+        System.out.println("");
+    }
 }

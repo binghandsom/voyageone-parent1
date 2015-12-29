@@ -41,7 +41,7 @@ public class MasterWordParser {
             Object plainPropValueObj;
             Map<String, Object> evaluationContext = null;
             if (!evaluationContextStack.isEmpty()) {
-                evaluationContext = evaluationContextStack.get(0);
+                evaluationContext = evaluationContextStack.get(evaluationContextStack.size()-1);
             }
             if (evaluationContext == null) {
                 //TODO 将要删除

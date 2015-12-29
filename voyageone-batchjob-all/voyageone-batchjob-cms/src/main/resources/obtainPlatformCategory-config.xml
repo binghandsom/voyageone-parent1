@@ -43,4 +43,27 @@
         <entry key="121434005" value="462452269"/>
     </util:map>
 
+    <util:map id="productChannelMap" map-class="java.util.HashMap">
+        <entry key="423627289" value="002"/>
+        <entry key="457651932" value="002"/>
+        <entry key="456781204" value="002"/>
+        <entry key="457788683" value="002"/>
+        <entry key="457346710" value="002"/>
+        <entry key="456545719" value="002"/>
+        <entry key="457688704" value="002"/>
+        <entry key="457518728" value="002"/>
+        <entry key="458708052" value="002"/>
+        <entry key="457605150" value="002"/>
+        <entry key="462452269" value="002"/>
+    </util:map>
+
+    <util:list id="paltformCartList" list-class="java.util.ArrayList">
+        <value>20</value>
+        <value>23</value>
+    </util:list>
+
+    <util:list id="availableChannelList" list-class="java.util.ArrayList">
+        <!--<value>012</value>-->
+    </util:list>
+
 </beans>
