@@ -25,7 +25,7 @@
 				<div class="col-sm-2">
 					<div class="form-horizontal">
 						<div class="form-group">
-							<button class="btn btn-vo" ng-click="ok()"><i class="fa fa-search"></i>  Search</button>
+							<button class="btn btn-vo" ng-click="update(vm.category)"><i class="fa fa-search"></i>  Search</button>
 							<button class="btn btn-sm btn-success btn-addon"><i class="fa fa-plus"></i>新增类目</button>
 						</div><!-- .form-group -->
 					</div>
@@ -43,20 +43,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-sm-12 m-t-sm">
-						<div class="row">
-							<div class="col-sm-4 hidden-xs">
-							</div>
-							<div class="col-sm-4 text-center">
-								<small class="text-muted inline m-t-sm m-b-sm">showing 20-30 of 50 items</small>
-							</div>
-							<div class="col-sm-4 text-right text-center-xs">
-								<div>
-									<pagination boundary-links="true" total-items="totalItems" ng-model="currentPage" class="pagination-sm m-t-none m-b" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></pagination>
-								</div>
-							</div>
-						</div>
-					</div> <!-- .panel-footer -->
+
 				</div>
 
 			</div><!-- /.box-body -->
@@ -103,8 +90,8 @@
 		<!--</div>-->
 	<!--</fieldset>-->
 	<div ng-if="field.type=='MULTICOMPLEX'|| field.type=='COMPLEX'">
-		<div ng-repeat ="item in field.fieldList">
-			<div ng-include="'fieldView'"  ng-init="parent = field.fieldList; field = item; level = level + 1">
+		<div ng-repeat ="item in field.fields">
+			<div ng-include="'fieldView'"  ng-init="parent = field.fields; field = item; level = level + 1">
 			</div>
 		</div>
 	</div>

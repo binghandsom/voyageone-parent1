@@ -21,8 +21,16 @@ define([
             var index;
             index=_.indexOf(parent,node);
             if(index >-1 ){
-                parent=parent.splice(a,1);
+                parent=parent.splice(index,1);
             }
+        }
+
+        $scope.update = function(data){
+            systemCategoryService.updateCategorySchema(data).then(function(res){
+                alert("OK");
+            },function(err){
+                alert("NG");
+            })
         }
     };
 });
