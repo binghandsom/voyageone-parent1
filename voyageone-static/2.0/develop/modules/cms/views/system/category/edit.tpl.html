@@ -1,39 +1,39 @@
-<div class="wrapper-md" ng-init="initialize()">
+<div class="wrapper-md m-b-lg" ng-init="initialize()">
 	<div class="col-sm-12">
 		<div class="panel panelPromotion m-t-xs">
 			<div class="container-fluid m-t-sm m-b-sm">
-				<div class="col-sm-3">
+				<div class="col-sm-6">
 					<div class="form-horizontal">
 						<div class="form-group">
 							<label class="col-sm-3 control-label">类目名称</label>
 							<div class="col-sm-7">
-								<input class="form-control" placeholder="请输入类目名称">
+								<input class="form-control" ng-model ="vm.category.catFullPath"  disabled>
 							</div>
 						</div><!-- .form-group -->
 					</div>
 				</div>
-				<div class="col-sm-3">
+				<div class="col-sm-6">
 					<div class="form-horizontal">
 						<div class="form-group">
 							<label class="col-sm-3 control-label">类目ID</label>
 							<div class="col-sm-7">
-								<input class="form-control" placeholder="请输入类目ID">
+								<input class="form-control" ng-model ="vm.category.catId"  disabled>
 							</div>
 						</div><!-- .form-group -->
 					</div>
 				</div>
-				<div class="col-sm-2">
-					<div class="form-horizontal">
-						<div class="form-group">
-							<button class="btn btn-vo" ng-click="update(vm.category)"><i class="fa fa-search"></i>  Search</button>
-							<button class="btn btn-sm btn-success btn-addon"><i class="fa fa-plus"></i>新增类目</button>
-						</div><!-- .form-group -->
-					</div>
-				</div>
+				<!--<div class="col-sm-2">-->
+					<!--<div class="form-horizontal">-->
+						<!--<div class="form-group">-->
+							<!--<button class="btn btn-vo" ng-click="update(vm.category)"><i class="fa fa-search"></i>  Search</button>-->
+							<!--<button class="btn btn-sm btn-success btn-addon"><i class="fa fa-plus"></i>新增类目</button>-->
+						<!--</div>&lt;!&ndash; .form-group &ndash;&gt;-->
+					<!--</div>-->
+				<!--</div>-->
 			</div>
 		</div>
 	</div>
-	<div class="col-sm-12">
+	<div class="col-sm-12 m-b-lg">
 		<div class="box">
 			<div class="box-body">
 				<div class="panel vo_panel">
@@ -49,7 +49,7 @@
 			</div><!-- /.box-body -->
 		</div>
 	</div><!-- .col-lg-12 -->
-	<div class="row col-sm-12 text-right" style="position: fixed; bottom:0;right:10%">
+	<div class="text-right" style="position: fixed;z-index:3000; bottom:0;right:10%">
 		<button class="btn btn-danger"><i class="fa fa-save"></i> 全部保存</button>
 	</div>
 </div><!-- end .wrapper-md -->
@@ -64,7 +64,7 @@
 			</div>
 			<div class="col-sm-1 text-left btn-group">
 				<button title="增加" class="btn btn-default btn-xs"><i class="fa fa-plus-circle text-vo"></i></button>
-				<button title="编辑" class="btn btn-default btn-xs" ng-click="openSystemCategory('md')"><i class="fa fa-pencil text-vo"></i></button>
+				<button title="编辑" class="btn btn-default btn-xs" ng-click="openSystemCategory('md',field,vm.category.catFullPath)"><i class="fa fa-pencil text-vo"></i></button>
 				<button title="删除" ng-click="delNode(parent,field)" class="btn btn-default btn-xs"><i class="fa fa-trash-o text-vo"></i></button>
 			</div>
 			<div class="col-sm-4 pull-center">

@@ -13,6 +13,7 @@ public class SimpleMappingBean extends MappingBean {
     }
 
     public SimpleMappingBean(String platformPropId, RuleExpression expression) {
+        this();
         this.expression = expression;
         this.platformPropId = platformPropId;
     }

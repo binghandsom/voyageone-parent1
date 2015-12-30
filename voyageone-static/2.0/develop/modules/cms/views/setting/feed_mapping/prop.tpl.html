@@ -52,7 +52,7 @@
 
         <div class="col-sm-7 hierarchy" ng-if="!field.x.isSimple">
             <div class="col-sm-4 form-inline m-b-xs"
-                 ng-repeat="child in field.fieldList | fmExtendField:field"
+                 ng-repeat="child in field.fields | fmExtendField:field"
                  ng-include="'feedMapping.multi.setter.tpl.html'">
             </div>
         </div>
@@ -64,7 +64,7 @@
     </script>
     <script type="text/ng-template" id="feedMapping.multi.setter.tpl.html">
         <div ng-if="!child.x.isSimple"
-             ng-repeat="$child in child.fieldList | fmExtendField:child"
+             ng-repeat="$child in child.fields | fmExtendField:child"
              ng-init="child = $child"
              ng-include="'feedMapping.multi.setter.tpl.html'">
         </div>

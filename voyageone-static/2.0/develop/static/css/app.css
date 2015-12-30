@@ -6199,16 +6199,16 @@ a.btn-main:hover {color:#e67e22;text-decoration:underline;}
 .channel-main-con{
   margin:0 auto;
   padding:0;
-  width:100%;
-  text-align: center;
+  width:1000px;
 }
 .channel-main {
-  width:15%;
-  margin:2% 0% 0% 0%;/*
-  padding:16px 10px 10px 10px;*/
+  width: 220px;
+  margin: 2% 0 0 0;
+  /*
+    padding:16px 10px 10px 10px;*/
   position: relative;
   display: inline-block;
-  text-align:center;
+  text-align: center;
   /*
   background:#fff;
   */
@@ -6220,21 +6220,25 @@ a.btn-main:hover {color:#e67e22;text-decoration:underline;}
 }
 .channel-main img {
   margin: 0 auto;
-  padding:0;
+  padding: 0;
   text-align: center;
   border: 1px solid #fff;
-  width:95%;
-  -webkit-box-shadow:0 0 10px rgba(0, 0, 0, .2);
-  -moz-box-shadow:0 0 10px rgba(0, 0, 0, .2);
-  box-shadow:0 0 10px rgba(0, 0, 0, .2);
+  width: 188px;
+  height: 188px;
+  -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+  -moz-box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+  box-shadow: 0 0 10px rgba(0, 0, 0, .2);
 }
 .channel-main h4 {
-  font-size:2em;
-  color:#e67e22;
-  margin-top: 15px;
-  margin-bottom: 15px;
+  font-size: 2em;
+  color: #e67e22;
+  position: absolute;
+  top: 140px;
+  left: 26px;
+  overflow: hidden;
+  width: 165px;
   text-transform: uppercase;
-  font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-family: Montserrat, "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: 700;
   text-shadow: 0 1px 0 rgba(0, 0, 0, 0.1)
 }
@@ -6245,8 +6249,8 @@ a.btn-main:hover {color:#e67e22;text-decoration:underline;}
   background-color: transparent;
 }
 .channel-list {
-  margin:0px;
-  padding:0px;
+  margin-top: 10px;
+  padding: 0;
 }
 .channel-list li{
   padding-bottom:5px;

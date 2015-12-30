@@ -13,26 +13,6 @@ import java.util.List;
 public class MultiComplexCustomMappingBean extends MappingBean {
     private List<MultiComplexCustomMappingValue> values;
 
-    public static class MultiComplexCustomMappingValue {
-        private List<MappingBean> subMappings;
-
-        public MultiComplexCustomMappingValue() {
-            subMappings = new ArrayList<>();
-        }
-
-        public List<MappingBean> getSubMappings() {
-            return subMappings;
-        }
-
-        public void setSubMappings(List<MappingBean> subMappings) {
-            this.subMappings = subMappings;
-        }
-
-        public void addSubMapping(MappingBean mappingBean) {
-            this.subMappings.add(mappingBean);
-        }
-    }
-
     public List<MultiComplexCustomMappingValue> getValues() {
         return values;
     }
@@ -52,6 +32,7 @@ public class MultiComplexCustomMappingBean extends MappingBean {
 
     public static void main(String[] args) {
         ComplexMappingBean complexMappingBean = new ComplexMappingBean();
+        complexMappingBean.setPlatformPropId("wap_desc");
 
         RuleExpression summaryExpression = new RuleExpression();
         summaryExpression.addRuleWord(new TextWord("summary desc"));
@@ -59,6 +40,7 @@ public class MultiComplexCustomMappingBean extends MappingBean {
         complexMappingBean.addSubMapping(simpleMappingBean);
 
         MultiComplexCustomMappingBean mappingBean = new MultiComplexCustomMappingBean();
+        mappingBean.setPlatformPropId("wap_desc_content");
         MultiComplexCustomMappingValue value1 = new MultiComplexCustomMappingValue();
         RuleExpression ruleExpression11 = new RuleExpression();
         RuleExpression ruleExpression12 = new RuleExpression();
