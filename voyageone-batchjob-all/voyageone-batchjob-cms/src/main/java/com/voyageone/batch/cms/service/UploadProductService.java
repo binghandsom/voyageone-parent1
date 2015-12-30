@@ -183,17 +183,6 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                 List<String> codeList = new ArrayList<>();
                 for (SxProductBean sxProductBean : sxProductBeans) {
                     CmsBtProductModel cmsBtProductModel = sxProductBean.getCmsBtProductModel();
-                    CmsBtProductModel_Group_Platform cmsGroupPlatform = cmsBtProductModel.getGroups().getPlatformByGroupId(workLoadBean.getGroupId());
-                    cmsGroupPlatform.setNumIId(workLoadBean.getNumId());
-                    cmsGroupPlatform.setProductId(workLoadBean.getProductId());
-
-                    /* todo 将来可能会要
-                   if (workLoadBean.isHasSku()) {
-                        cmsBtProductModel.setQuantity_update_type("s");
-                    } else {
-                        cmsBtProductModel.setQuantity_update_type("p");
-                    }
-                    */
 
                     //成功时，publish_status设为1
                     codeList.add(cmsBtProductModel.getFields().getCode());
@@ -237,15 +226,16 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                 logger.error("==== JOB Abort Begin ====!!!");
                 logger.error(workLoadBean);
                 logger.error("==== JOB Abort End ====!!!");
-                for (SxProductBean sxProductBean : sxProductBeans) {
-                    CmsBtProductModel_Group_Platform cmsGroupPlatform = sxProductBean.getCmsBtProductModelGroupPlatform();
-                    String productId = workLoadBean.getProductId();
-                    if (productId != null && !"".equals(productId)) {
-                        cmsGroupPlatform.setProductId(productId);
-                    }
 
-                    cmsProductService.update(sxProductBean.getCmsBtProductModel());
+                List<String> codeList = new ArrayList<>();
+                for (SxProductBean sxProductBean : sxProductBeans) {
+                    CmsBtProductModel cmsBtProductModel = sxProductBean.getCmsBtProductModel();
+
+                    //成功时，publish_status设为1
+                    codeList.add(cmsBtProductModel.getFields().getCode());
                 }
+                cmsProductService.bathUpdateWithSXResult(workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id(), workLoadBean.getGroupId(),
+                        codeList, workLoadBean.getNumId(), workLoadBean.getProductId(), null, null, null, null);
 
                 //保存错误的日志
                 CmsBusinessLogModel cmsBusinessLogModel = new CmsBusinessLogModel();

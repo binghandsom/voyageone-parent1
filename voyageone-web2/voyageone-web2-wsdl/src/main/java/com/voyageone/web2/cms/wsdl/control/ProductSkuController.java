@@ -3,7 +3,9 @@ package com.voyageone.web2.cms.wsdl.control;
 import com.voyageone.web2.cms.wsdl.BaseController;
 import com.voyageone.web2.cms.wsdl.service.ProductSkuService;
 import com.voyageone.web2.sdk.api.request.ProductSkusGetRequest;
+import com.voyageone.web2.sdk.api.request.ProductUpdatePriceRequest;
 import com.voyageone.web2.sdk.api.response.ProductSkusGetResponse;
+import com.voyageone.web2.sdk.api.response.ProductUpdatePriceResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,5 +37,14 @@ public class ProductSkuController extends BaseController {
     @RequestMapping("selectList")
     public ProductSkusGetResponse selectList(@RequestBody ProductSkusGetRequest request) {
         return productSkuService.selectList(request);
+    }
+
+    /**
+     * selectList
+     * @return List<CmsBtProductModel>
+     */
+    @RequestMapping("updatePrices")
+    public ProductUpdatePriceRequest updatePrices(@RequestBody ProductUpdatePriceRequest request) {
+        return productSkuService.updatePrices(request);
     }
 }

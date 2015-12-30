@@ -14,11 +14,13 @@ import com.voyageone.common.util.StringUtils;
         , property = "mappingType")
 @JsonSubTypes({
         @JsonSubTypes.Type(value = SimpleMappingBean.class, name = MappingBean.MAPPING_SIMPLE),
-        @JsonSubTypes.Type(value = ComplexMappingBean.class, name = MappingBean.MAPPING_COMPLEX)
+        @JsonSubTypes.Type(value = ComplexMappingBean.class, name = MappingBean.MAPPING_COMPLEX),
+        @JsonSubTypes.Type(value = MultiComplexCustomMappingBean.class, name = MappingBean.MAPPING_MULTICOMPLEX_CUSTOM)
 })
 public class MappingBean {
     public static final String MAPPING_SIMPLE = "0";
     public static final String MAPPING_COMPLEX = "1";
+    public static final String MAPPING_MULTICOMPLEX_CUSTOM = "2";
 
     protected String platformPropId;
     protected String mappingType;

@@ -1567,6 +1567,10 @@ public class TmallProductService {
             if (field == null) {
                 continue;
             }
+
+            if ("description".equals(field.getId())){
+                System.out.println("");
+            }
             Field resolveField = (resolveMapping(cmsMainProduct, mappingBean, field, srcUrlStashEntityMap, expressionParser, imageSet));
             if (resolveField != null) {
                 mappingFields.add(resolveField);
@@ -1586,12 +1590,8 @@ public class TmallProductService {
             imageSet.addAll(imageSetEachProp);
 
             //TODO
-            if ("item_status".equals(field.getId())) {
-                ((SingleCheckField)field).setValue("2");
-                return field;
-            } else if("title".equals(field.getId())) {
-                ((InputField)field).setValue("IT正在测试中，请不要购买");
-                return field;
+            if ("description".equals(field.getId())){
+                System.out.println("");
             }
             //END TODO
 
