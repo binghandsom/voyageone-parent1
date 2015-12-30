@@ -33,22 +33,19 @@ public class ProductGetService extends BaseService {
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
 
-
+    /**
+     * selectOne
+     * @param request ProductGetRequest
+     * @return ProductGetResponse
+     */
     public ProductGetResponse selectOne(ProductGetRequest request) {
         ProductGetResponse result = new ProductGetResponse();
 
         CmsBtProductModel product = null;
-        if (request == null) {
-            VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70001;
-            throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
-        }
-
+        checkCommRequest(request);
         //ChannelId
         String channelId = request.getChannelId();
-        if (StringUtils.isEmpty(channelId)) {
-            VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70003;
-            throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
-        }
+        checkRequestChannelId(channelId);
 
 
         JomgoQuery queryObject = new JomgoQuery();
@@ -79,24 +76,21 @@ public class ProductGetService extends BaseService {
         return result;
     }
 
-
+    /**
+     * selectList
+     * @param request ProductsGetRequest
+     * @return ProductsGetResponse
+     */
     public ProductsGetResponse selectList(ProductsGetRequest request) {
         ProductsGetResponse result = new ProductsGetResponse();
 
         List<CmsBtProductModel> products = null;
         long totalCount = 0L;
 
-        if (request == null) {
-            VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70001;
-            throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
-        }
-
+        checkCommRequest(request);
         //ChannelId
         String channelId = request.getChannelId();
-        if (StringUtils.isEmpty(channelId)) {
-            VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70003;
-            throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
-        }
+        checkRequestChannelId(channelId);
 
 
         JomgoQuery queryObject = new JomgoQuery();
@@ -143,24 +137,21 @@ public class ProductGetService extends BaseService {
         return result;
     }
 
-
+    /**
+     * selectCount
+     * @param request Request
+     * @return ProductsCountGetResponse
+     */
     public ProductsCountGetResponse selectCount(ProductsCountGetRequest request) {
         ProductsCountGetResponse result = new ProductsCountGetResponse();
 
         List<CmsBtProductModel> products = null;
         long totalCount = 0L;
 
-        if (request == null) {
-            VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70001;
-            throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
-        }
-
+        checkCommRequest(request);
         //ChannelId
         String channelId = request.getChannelId();
-        if (StringUtils.isEmpty(channelId)) {
-            VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70003;
-            throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
-        }
+        checkRequestChannelId(channelId);
 
 
         JomgoQuery queryObject = new JomgoQuery();
