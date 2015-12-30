@@ -1,5 +1,7 @@
 package com.voyageone.common.util;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.commons.net.util.Base64;
 
 import java.math.BigDecimal;
@@ -13,6 +15,8 @@ import java.util.regex.Pattern;
 public final class StringUtils {
 
     private static final Pattern special_symbol = Pattern.compile("[.]");
+
+    private static Log logger = LogFactory.getLog(StringUtils.class);
 
     public static String null2Space(String input) {
         if (input == null) {
@@ -477,4 +481,9 @@ public final class StringUtils {
         }
         return result;
     }
+
+    public static String generCatId(String catPath) {
+        return MD5.getMD5(catPath);
+    }
+
 }
