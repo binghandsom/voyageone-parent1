@@ -9,6 +9,7 @@ import net.minidev.json.JSONObject;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by lewis on 15-12-9.
@@ -53,30 +54,25 @@ public class CmsMtCategorySchemaDao extends BaseMongoDao {
             List<Field> fields = SchemaJsonReader.readJsonForList((List)schemaModel.get("fields"));
             String catFullPath = (String)schemaModel.get("catFullPath");
             masterSchemaModel = new CmsMtCategorySchemaModel(catId,catFullPath,fields);
-            masterSchemaModel.setModifier(null);
-            masterSchemaModel.setCreater(null);
-            masterSchemaModel.setCreated(null);
+            masterSchemaModel.setModifier((String) schemaModel.get("modifier"));
+            masterSchemaModel.setCreater((String) schemaModel.get("creater"));
+            masterSchemaModel.setCreated((String) schemaModel.get("created"));
             masterSchemaModel.setModified(schemaModel.get("modified").toString());
+            masterSchemaModel.set_id( schemaModel.get("_id").toString());
         }
 
         return masterSchemaModel;
     }
 
-    public CmsMtCategorySchemaModel getMasterSchemaModelBytId(String id) {
+    public JSONObject getMasterSchemaJsonObjectByCatId(String catId) {
 
-        String queryStr = "{\"_id\":ObjectId(\""+id+"\")}";
+        String queryStr = "{catId:\""+catId+"\"}";
         JSONObject schemaModel = mongoTemplate.findOne(queryStr,collectionName);
-        CmsMtCategorySchemaModel masterSchemaModel = null;
-        if (schemaModel !=null){
-            List<Field> fields = SchemaJsonReader.readJsonForList((List)schemaModel.get("fields"));
-            String catFullPath = (String)schemaModel.get("catFullPath");
-            masterSchemaModel = new CmsMtCategorySchemaModel((String)schemaModel.get("catId"),catFullPath,fields);
-            masterSchemaModel.setModifier(null);
-            masterSchemaModel.setCreater(null);
-            masterSchemaModel.setCreated(null);
-            masterSchemaModel.setModified(schemaModel.get("modified").toString());
-        }
 
-        return masterSchemaModel;
+        return schemaModel;
+    }
+
+    public void updateScheam(Map<String,Object>scheam){
+        mongoTemplate.save(scheam);
     }
 }

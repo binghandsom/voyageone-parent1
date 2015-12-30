@@ -1,10 +1,16 @@
 package com.voyageone.web2.cms.wsdl;
 
 import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.BaseAppComponent;
+import com.voyageone.web2.sdk.api.VoApiConstants;
 import com.voyageone.web2.sdk.api.VoApiListRequest;
 import com.voyageone.web2.sdk.api.VoApiRequest;
+import com.voyageone.web2.sdk.api.exception.ApiException;
+import com.voyageone.web2.sdk.api.request.ProductSkusGetRequest;
+
+import java.util.List;
 
 /**
  * Rest webservice Service 层提供基类
@@ -12,6 +18,31 @@ import com.voyageone.web2.sdk.api.VoApiRequest;
  * @author chuanyu.liang
  */
 public abstract class BaseService extends BaseAppComponent {
+
+    /**
+     * Check Request
+     * @param request Request
+     */
+    protected void checkCommRequest(VoApiRequest request) {
+        List<CmsBtProductModel> products = null;
+        long totalCount = 0L;
+
+        if (request == null) {
+            VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70001;
+            throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
+        }
+    }
+
+    /**
+     * check Request ChannelId
+     * @param channelId channel ID
+     */
+    protected void checkRequestChannelId(String channelId) {
+        if (StringUtils.isEmpty(channelId)) {
+            VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70003;
+            throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
+        }
+    }
 
     /**
      * buildProjection

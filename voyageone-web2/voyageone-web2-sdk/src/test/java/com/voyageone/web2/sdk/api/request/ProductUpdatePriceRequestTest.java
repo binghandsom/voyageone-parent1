@@ -38,16 +38,16 @@ public class ProductUpdatePriceRequestTest {
 
         ProductSkuPriceModel skuPriceModel = new ProductSkuPriceModel();
         skuPriceModel.setSkuCode("100001-1");
-        skuPriceModel.setMsrp(101d);
-        skuPriceModel.setRetailPrice(102d);
-        skuPriceModel.setSalePrice(103d);
+        skuPriceModel.setPriceMsrp(101d);
+        skuPriceModel.setPriceRetail(102d);
+        skuPriceModel.setPriceSale(103d);
         model.addSkuPrice(skuPriceModel);
 
         skuPriceModel = new ProductSkuPriceModel();
         skuPriceModel.setSkuCode("100001-2");
-        skuPriceModel.setMsrp(201d);
-        skuPriceModel.setRetailPrice(202d);
-        skuPriceModel.setSalePrice(203d);
+        skuPriceModel.setPriceMsrp(201d);
+        skuPriceModel.setPriceRetail(202d);
+        skuPriceModel.setPriceSale(203d);
         model.addSkuPrice(skuPriceModel);
 
         requestModel.addProductPrices(model);

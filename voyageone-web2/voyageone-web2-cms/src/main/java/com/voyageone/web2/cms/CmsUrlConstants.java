@@ -104,6 +104,8 @@ public interface CmsUrlConstants {
             String GET_CATEGORY_LIST = "getCategoryList";
 
             String GET_CATEGORY_DETAIL = "getCategoryDetail";
+
+            String UPDATE_CATEGORY_SCHEMA = "updateCategorySchema";
         }
     }
     interface SEARCH {

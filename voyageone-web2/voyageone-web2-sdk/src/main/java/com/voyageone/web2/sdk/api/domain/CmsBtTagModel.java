@@ -3,28 +3,20 @@ package com.voyageone.web2.sdk.api.domain;
 import com.voyageone.base.dao.mysql.BaseModel;
 
 /**
- * @author gubuchun 15/12/14
+ * @author jerry 15/12/30
  * @version 2.0.0
  */
 public class CmsBtTagModel extends BaseModel {
 
-    private int tagId;
+    private Integer tagId;
     private String channelId;
     private String tagName;
     private String tagPath;
     private String tagPathName;
-    private int tagType;
-    private int tagStatus;
-    private int sortOrder;
-    private int parentTagId;
-
-    public int getTagId() {
-        return tagId;
-    }
-
-    public void setTagId(int tagId) {
-        this.tagId = tagId;
-    }
+    private Integer tagType;
+    private Integer tagStatus;
+    private Integer sortOrder;
+    private Integer parentTagId;
 
     public String getTagName() {
         return tagName;
@@ -50,43 +42,51 @@ public class CmsBtTagModel extends BaseModel {
         this.tagPathName = tagPathName;
     }
 
-    public int getTagType() {
-        return tagType;
-    }
-
-    public void setTagType(int tagType) {
-        this.tagType = tagType;
-    }
-
-    public int getTagStatus() {
-        return tagStatus;
-    }
-
-    public void setTagStatus(int tagStatus) {
-        this.tagStatus = tagStatus;
-    }
-
-    public int getSortOrder() {
-        return sortOrder;
-    }
-
-    public void setSortOrder(int sortOrder) {
-        this.sortOrder = sortOrder;
-    }
-
-    public int getParentTagId() {
-        return parentTagId;
-    }
-
-    public void setParentTagId(int parentTagId) {
-        this.parentTagId = parentTagId;
-    }
-
     public String getChannelId() {
         return channelId;
     }
 
     public void setChannelId(String channelId) {
         this.channelId = channelId;
+    }
+
+    public Integer getTagId() {
+        return tagId;
+    }
+
+    public void setTagId(Integer tagId) {
+        this.tagId = tagId;
+    }
+
+    public Integer getTagType() {
+        return tagType;
+    }
+
+    public void setTagType(Integer tagType) {
+        this.tagType = tagType;
+    }
+
+    public Integer getTagStatus() {
+        return tagStatus;
+    }
+
+    public void setTagStatus(Integer tagStatus) {
+        this.tagStatus = tagStatus;
+    }
+
+    public Integer getSortOrder() {
+        return sortOrder;
+    }
+
+    public void setSortOrder(Integer sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+
+    public Integer getParentTagId() {
+        return parentTagId;
+    }
+
+    public void setParentTagId(Integer parentTagId) {
+        this.parentTagId = parentTagId;
     }
 }

@@ -26,9 +26,7 @@ import com.voyageone.batch.cms.service.SkuFieldBuilderFactory;
 import com.voyageone.batch.cms.service.UploadProductHandler;
 import com.voyageone.batch.cms.service.rule_parser.ExpressionParser;
 import com.voyageone.cms.CmsConstants;
-import com.voyageone.cms.service.bean.ComplexMappingBean;
-import com.voyageone.cms.service.bean.MappingBean;
-import com.voyageone.cms.service.bean.SimpleMappingBean;
+import com.voyageone.cms.service.bean.*;
 import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
@@ -49,6 +47,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -1087,7 +1086,7 @@ public class TmallProductService {
         */
 
         try {
-            logger.debug("updateTmallItem: [productCode:" + productId + ", categoryCode:" + categoryCode + "]");
+            logger.debug("updateTmallItem: [productCode:" + productId + ", categoryCode:" + categoryCode + ", numIId:" + numId + "]");
             numId = updateTmallItem(productId, numId, categoryCode, itemFields, shopBean);
             tcb.setNumId(numId);
         } catch (ApiException e) {
@@ -1162,6 +1161,7 @@ public class TmallProductService {
         }
         StringBuffer failCause = new StringBuffer();
         logger.debug("tmall category code:" + categoryCode);
+        logger.debug("numId:" + numId);
         logger.debug("xmlData:" + xmlData);
         TmallItemSchemaUpdateResponse updateItemResponse = tbProductService.updateItem(productId, numId, categoryCode, xmlData, shopBean);
         if (updateItemResponse == null) {
@@ -1578,7 +1578,7 @@ public class TmallProductService {
         }
     }
 
-    public Field resolveMapping(CmsBtProductModel cmsMainProduct, MappingBean mappingBean, Field field, Map<String, List<TmallUploadRunState.UrlStashEntity>> srcUrlStashEntityMap, ExpressionParser expressionParser, Set<String> imageSet) {
+    public Field resolveMapping(CmsBtProductModel cmsMainProduct, MappingBean mappingBean, Field field, Map<String, List<TmallUploadRunState.UrlStashEntity>> srcUrlStashEntityMap, ExpressionParser expressionParser, Set<String> imageSet) throws TaskSignal{
         Set<String> imageSetEachProp = new HashSet<>();
 
         if (MappingBean.MAPPING_SIMPLE.equals(mappingBean.getMappingType())) {
@@ -1590,7 +1590,7 @@ public class TmallProductService {
             imageSet.addAll(imageSetEachProp);
 
             //TODO
-            if ("description".equals(field.getId())){
+            if ("wap_desc".equals(field.getId())){
                 System.out.println("");
             }
             //END TODO
@@ -1647,9 +1647,8 @@ public class TmallProductService {
                         logger.warn("跳过属性" + platformPropId);
                         continue;
                     }
-                    Field valueField = FieldTypeEnum.createField(schemaField.getType());
-                    valueField.setId(platformPropId);
-                    valueField = resolveMapping(cmsMainProduct, subMappingBean, valueField, srcUrlStashEntityMap, expressionParser, imageSet);
+                    Field valueField = deepCloneField(schemaField);
+                    resolveMapping(cmsMainProduct, subMappingBean, valueField, srcUrlStashEntityMap, expressionParser, imageSet);
                     complexValue.put(valueField);
                 }
                 if (masterWordEvaluationContext != null) {
@@ -1677,9 +1676,8 @@ public class TmallProductService {
                         Map<String, Field> schemaFieldsMap = multiComplexField.getFieldMap();
 
                         Field schemaField = schemaFieldsMap.get(platformPropId);
-                        Field valueField = FieldTypeEnum.createField(schemaField.getType());
-                        valueField.setId(platformPropId);
-                        valueField = resolveMapping(cmsMainProduct, subMappingBean, valueField, srcUrlStashEntityMap, expressionParser, imageSet);
+                        Field valueField = deepCloneField(schemaField);
+                        resolveMapping(cmsMainProduct, subMappingBean, valueField, srcUrlStashEntityMap, expressionParser, imageSet);
                         complexValue.put(valueField);
                     }
 
@@ -1689,6 +1687,24 @@ public class TmallProductService {
                 logger.error("Unexpected field type: " + field.getType());
                 return null;
             }
+        } else if (MappingBean.MAPPING_MULTICOMPLEX_CUSTOM.equals(mappingBean.getMappingType())) {
+            MultiComplexCustomMappingBean multiComplexCustomMappingBean = (MultiComplexCustomMappingBean) mappingBean;
+            MultiComplexField multiComplexField = (MultiComplexField) field;
+            List<ComplexValue> complexValues = new ArrayList<>();
+            for (MultiComplexCustomMappingValue multiComplexCustomMappingValue : multiComplexCustomMappingBean.getValues()) {
+                ComplexValue complexValue = new ComplexValue();
+                for (MappingBean subMapping : multiComplexCustomMappingValue.getSubMappings()) {
+                    String platformPropId = subMapping.getPlatformPropId();
+                    Map<String, Field> schemaFieldsMap = multiComplexField.getFieldMap();
+
+                    Field schemaField = schemaFieldsMap.get(platformPropId);
+                    Field valueField = deepCloneField(schemaField);
+                    resolveMapping(cmsMainProduct, subMapping, valueField, srcUrlStashEntityMap, expressionParser, imageSet);
+                    complexValue.put(valueField);
+                }
+                complexValues.add(complexValue);
+            }
+            multiComplexField.setComplexValues(complexValues);
         }
         return field;
     }
@@ -1745,6 +1761,15 @@ public class TmallProductService {
                 default:
                     resultFields.add(field);
             }
+        }
+    }
+
+
+    private Field deepCloneField(Field field) throws TaskSignal {
+        try {
+            return SchemaReader.elementToField(field.toElement());
+        } catch (Exception e) {
+            throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(e.getMessage()));
         }
     }
 }

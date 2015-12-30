@@ -21,7 +21,7 @@ define([
             var index;
             index=_.indexOf(parent,node);
             if(index >-1 ){
-                parent=parent.splice(index,1);
+                parent.splice(index,1);
             }
         }
 
