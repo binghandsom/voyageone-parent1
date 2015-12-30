@@ -89,7 +89,8 @@
     "systemCategoryService": {
       "root": "/cms/system/category",
       "getCategoryList": "getCategoryList",
-      "getCategoryDetail":"getCategoryDetail"
+      "getCategoryDetail":"getCategoryDetail",
+      "updateCategorySchema":"updateCategorySchema"
     },
     "productDetailService":{
       "root":"/cms/product/detail/",

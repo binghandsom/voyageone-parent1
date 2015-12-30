@@ -233,7 +233,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
 
                                             MultiComplexField complexField = (MultiComplexField)parentField;
 
-                                            List<Field> subSkuFields = complexField.getFieldList();
+                                            List<Field> subSkuFields = complexField.getFields();
 
                                             subSkuFields.add(updField);
                                         }
@@ -346,10 +346,10 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
                     parentField = FieldTypeEnum.createField(pType);
 
                     if (parentField instanceof ComplexField){
-                        subFields = ((ComplexField) parentField).getFieldList();
+                        subFields = ((ComplexField) parentField).getFields();
 
                     }else if (parentField instanceof MultiComplexField){
-                        subFields = ((MultiComplexField) parentField).getFieldList();
+                        subFields = ((MultiComplexField) parentField).getFields();
                     }
 
                     subFields.add(thisField);
@@ -358,10 +358,10 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
 
                 } else {
                     if (parentField instanceof ComplexField){
-                        subFields = ((ComplexField) parentField).getFieldList();
+                        subFields = ((ComplexField) parentField).getFields();
 
                     }else if (parentField instanceof MultiComplexField){
-                        subFields = ((MultiComplexField) parentField).getFieldList();
+                        subFields = ((MultiComplexField) parentField).getFields();
                     }
 
                     subFields.add(thisField);

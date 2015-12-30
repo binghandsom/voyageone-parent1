@@ -34,10 +34,10 @@ public class FieldUtil {
             List<Field> fieldList = null;
             switch(inputField.getType()) {
                 case COMPLEX:
-                    fieldList = ((ComplexField)inputField).getFieldList();
+                    fieldList = ((ComplexField)inputField).getFields();
                     break;
                 case MULTICOMPLEX:
-                    fieldList = ((MultiComplexField)inputField).getFieldList();
+                    fieldList = ((MultiComplexField)inputField).getFields();
                     break;
             }
 
@@ -69,10 +69,10 @@ public class FieldUtil {
             List<Field> fieldList = null;
             switch(inputField.getType()) {
                 case COMPLEX:
-                    fieldList = ((ComplexField)inputField).getFieldList();
+                    fieldList = ((ComplexField)inputField).getFields();
                     break;
                 case MULTICOMPLEX:
-                    fieldList = ((MultiComplexField)inputField).getFieldList();
+                    fieldList = ((MultiComplexField)inputField).getFields();
                     break;
             }
 
@@ -104,10 +104,10 @@ public class FieldUtil {
             List<Field> fieldList = null;
             switch(inputField.getType()) {
                 case COMPLEX:
-                    fieldList = ((ComplexField)inputField).getFieldList();
+                    fieldList = ((ComplexField)inputField).getFields();
                     break;
                 case MULTICOMPLEX:
-                    fieldList = ((MultiComplexField)inputField).getFieldList();
+                    fieldList = ((MultiComplexField)inputField).getFields();
                     break;
             }
 
@@ -165,10 +165,10 @@ public class FieldUtil {
             List<Field> fieldList = null;
             switch(inputField.getType()) {
                 case COMPLEX:
-                    fieldList = ((ComplexField)inputField).getFieldList();
+                    fieldList = ((ComplexField)inputField).getFields();
                     break;
                 case MULTICOMPLEX:
-                    fieldList = ((MultiComplexField)inputField).getFieldList();
+                    fieldList = ((MultiComplexField)inputField).getFields();
                     break;
             }
 
@@ -212,10 +212,10 @@ public class FieldUtil {
         List<Field> fieldList = null;
         switch(inputField.getType()) {
             case COMPLEX:
-                fieldList = ((ComplexField)inputField).getFieldList();
+                fieldList = ((ComplexField)inputField).getFields();
                 break;
             case MULTICOMPLEX:
-                fieldList = ((MultiComplexField)inputField).getFieldList();
+                fieldList = ((MultiComplexField)inputField).getFields();
                 break;
         }
 
@@ -250,10 +250,10 @@ public class FieldUtil {
                     List<Field> fieldList = null;
                     switch(rootField.getType()) {
                         case COMPLEX:
-                            fieldList = ((ComplexField)rootField).getFieldList();
+                            fieldList = ((ComplexField)rootField).getFields();
                             break;
                         case MULTICOMPLEX:
-                            fieldList = ((MultiComplexField)rootField).getFieldList();
+                            fieldList = ((MultiComplexField)rootField).getFields();
                             break;
                     }
                     if (fieldList != null) {
