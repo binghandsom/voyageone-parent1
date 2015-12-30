@@ -260,9 +260,9 @@ public class CmsFeedPropMappingService extends BaseAppService {
     private Stream<Field> flattenFinalField(Field field) {
 
         if (field.getType() == FieldTypeEnum.COMPLEX) {
-            return flattenFinalField(((ComplexField) field).getFieldList());
+            return flattenFinalField(((ComplexField) field).getFields());
         } else if (field.getType() == FieldTypeEnum.MULTICOMPLEX) {
-            return flattenFinalField(((MultiComplexField) field).getFieldList());
+            return flattenFinalField(((MultiComplexField) field).getFields());
         }
 
         return Stream.of(field);
