@@ -4,6 +4,7 @@ package com.voyageone.batch.cms.model;
  * Created by Leo on 15-12-7.
  */
 public class SxWorkloadModel {
+    private long seq;
     private String channel_id;
     private int group_id;
     private int publish_status;
@@ -59,6 +60,30 @@ public class SxWorkloadModel {
 
     public void setModifier(String modifier) {
         this.modifier = modifier;
+    }
+
+    public String getChannel_id() {
+        return channel_id;
+    }
+
+    public void setChannel_id(String channel_id) {
+        this.channel_id = channel_id;
+    }
+
+    public int getGroup_id() {
+        return group_id;
+    }
+
+    public void setGroup_id(int group_id) {
+        this.group_id = group_id;
+    }
+
+    public long getSeq() {
+        return seq;
+    }
+
+    public void setSeq(long seq) {
+        this.seq = seq;
     }
 
     public int getPublishStatus() {

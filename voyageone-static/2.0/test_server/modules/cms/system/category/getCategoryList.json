@@ -1,0 +1,341 @@
+{
+  "code": null,
+  "displayType": null,
+  "message": null,
+  "data": {
+    "total": 725,
+    "resultData": [
+      {
+        "_id": "5683386362b8dd6fcd93cb71",
+        "created": "2015-12-30 09:51:33",
+        "creater": "0",
+        "modified": "2015-12-30 09:51:33.564",
+        "modifier": "0",
+        "catId": "6Ieq6KGM6L2mL+mqkeihjOijheWkhy/pm7bphY3ku7Y+6Ieq6KGM6L2m5rS75YqoL+i1m+S6iw==",
+        "catFullPath": "自行车/骑行装备/零配件>自行车活动/赛事",
+        "fields": null,
+        "sku": null
+      },
+      {
+        "_id": "5683386362b8dd6fcd93cb73",
+        "created": "2015-12-30 09:51:33",
+        "creater": "0",
+        "modified": "2015-12-30 09:51:33.564",
+        "modifier": "0",
+        "catId": "6Ieq6KGM6L2mL+mqkeihjOijheWkhy/pm7bphY3ku7Y+6Ieq6KGM6L2m5L+u6L2m5bel5YW3PuWkmuWKn+iDvemSsw==",
+        "catFullPath": "自行车/骑行装备/零配件>自行车修车工具>多功能钳",
+        "fields": null,
+        "sku": null
+      },
+      {
+        "_id": "5683386362b8dd6fcd93cb75",
+        "created": "2015-12-30 09:51:33",
+        "creater": "0",
+        "modified": "2015-12-30 09:51:33.564",
+        "modifier": "0",
+        "catId": "6Ieq6KGM6L2mL+mqkeihjOijheWkhy/pm7bphY3ku7Y+6Ieq6KGM6L2m5L+u6L2m5bel5YW3Pua0l+mTvuWZqA==",
+        "catFullPath": "自行车/骑行装备/零配件>自行车修车工具>洗链器",
+        "fields": null,
+        "sku": null
+      },
+      {
+        "_id": "5683386362b8dd6fcd93cb77",
+        "created": "2015-12-30 09:51:33",
+        "creater": "0",
+        "modified": "2015-12-30 09:51:33.565",
+        "modifier": "0",
+        "catId": "6Ieq6KGM6L2mL+mqkeihjOijheWkhy/pm7bphY3ku7Y+6Ieq6KGM6L2m5L+u6L2m5bel5YW3PuaIqumTvuWZqA==",
+        "catFullPath": "自行车/骑行装备/零配件>自行车修车工具>截链器",
+        "fields": null,
+        "sku": null
+      },
+      {
+        "_id": "5683386362b8dd6fcd93cb79",
+        "created": "2015-12-30 09:51:33",
+        "creater": "0",
+        "modified": "2015-12-30 09:51:33.565",
+        "modifier": "0",
+        "catId": "6Ieq6KGM6L2mL+mqkeihjOijheWkhy/pm7bphY3ku7Y+6Ieq6KGM6L2m5L+u6L2m5bel5YW3PuWkmuWKn+iDveWIgA==",
+        "catFullPath": "自行车/骑行装备/零配件>自行车修车工具>多功能刀",
+        "fields": null,
+        "sku": null
+      },
+      {
+        "_id": "5683386362b8dd6fcd93cb7b",
+        "created": "2015-12-30 09:51:33",
+        "creater": "0",
+        "modified": "2015-12-30 09:51:33.565",
+        "modifier": "0",
+        "catId": "6Ieq6KGM6L2mL+mqkeihjOijheWkhy/pm7bphY3ku7Y+6Ieq6KGM6L2m5L+u6L2m5bel5YW3Pua2pua7keayuQ==",
+        "catFullPath": "自行车/骑行装备/零配件>自行车修车工具>润滑油",
+        "fields": null,
+        "sku": null
+      },
+      {
+        "_id": "5683386362b8dd6fcd93cb7d",
+        "created": "2015-12-30 09:51:33",
+        "creater": "0",
+        "modified": "2015-12-30 09:51:33.565",
+        "modifier": "0",
+        "catId": "6Ieq6KGM6L2mL+mqkeihjOijheWkhy/pm7bphY3ku7Y+6Ieq6KGM6L2m5L+u6L2m5bel5YW3PuabtOWkmuS/rui9puW3peWFtw==",
+        "catFullPath": "自行车/骑行装备/零配件>自行车修车工具>更多修车工具",
+        "fields": null,
+        "sku": null
+      },
+      {
+        "_id": "5683386462b8dd6fcd93cb7f",
+        "created": "2015-12-30 09:51:33",
+        "creater": "0",
+        "modified": "2015-12-30 09:51:33.565",
+        "modifier": "0",
+        "catId": "6Ieq6KGM6L2mL+mqkeihjOijheWkhy/pm7bphY3ku7Y+6Ieq6KGM6L2m5L+u6L2m5bel5YW3PuieuuS4neWIgA==",
+        "catFullPath": "自行车/骑行装备/零配件>自行车修车工具>螺丝刀",
+        "fields": null,
+        "sku": null
+      },
+      {
+        "_id": "5683386462b8dd6fcd93cb81",
+        "created": "2015-12-30 09:51:33",
+        "creater": "0",
+        "modified": "2015-12-30 09:51:33.565",
+        "modifier": "0",
+        "catId": "6Ieq6KGM6L2mL+mqkeihjOijheWkhy/pm7bphY3ku7Y+6Ieq6KGM6L2m5L+u6L2m5bel5YW3PuS/rui9puaetg==",
+        "catFullPath": "自行车/骑行装备/零配件>自行车修车工具>修车架",
+        "fields": null,
+        "sku": null
+      },
+      {
+        "_id": "5683386462b8dd6fcd93cb83",
+        "created": "2015-12-30 09:51:33",
+        "creater": "0",
+        "modified": "2015-12-30 09:51:33.565",
+        "modifier": "0",
+        "catId": "6Ieq6KGM6L2mL+mqkeihjOijheWkhy/pm7bphY3ku7Y+6Ieq6KGM6L2m5L+u6L2m5bel5YW3Pue6v+WJqumSsw==",
+        "catFullPath": "自行车/骑行装备/零配件>自行车修车工具>线剪钳",
+        "fields": null,
+        "sku": null
+      },
+      {
+        "_id": "5683386462b8dd6fcd93cb85",
+        "created": "2015-12-30 09:51:33",
+        "creater": "0",
+        "modified": "2015-12-30 09:51:33.565",
+        "modifier": "0",
+        "catId": "6Ieq6KGM6L2mL+mqkeihjOijheWkhy/pm7bphY3ku7Y+6Ieq6KGM6L2m5L+u6L2m5bel5YW3PuaJs+aJiw==",
+        "catFullPath": "自行车/骑行装备/零配件>自行车修车工具>扳手",
+        "fields": null,
+        "sku": null
+      },
+      {
+        "_id": "5683386462b8dd6fcd93cb87",
+        "created": "2015-12-30 09:51:33",
+        "creater": "0",
+        "modified": "2015-12-30 09:51:33.565",
+        "modifier": "0",
+        "catId": "6Ieq6KGM6L2mL+mqkeihjOijheWkhy/pm7bphY3ku7Y+6Ieq6KGM6L2m5L+u6L2m5bel5YW3PuaMq+iDjueJhw==",
+        "catFullPath": "自行车/骑行装备/零配件>自行车修车工具>挫胎片",
+        "fields": null,
+        "sku": null
+      },
+      {
+        "_id": "5683386462b8dd6fcd93cb89",
+        "created": "2015-12-30 09:51:33",
+        "creater": "0",
+        "modified": "2015-12-30 09:51:33.565",
+        "modifier": "0",
+        "catId": "6Ieq6KGM6L2mL+mqkeihjOijheWkhy/pm7bphY3ku7Y+6Ieq6KGM6L2m5L+u6L2m5bel5YW3PuawlOmXqOiKrw==",
+        "catFullPath": "自行车/骑行装备/零配件>自行车修车工具>气门芯",
+        "fields": null,
+        "sku": null
+      },
+      {
+        "_id": "5683386462b8dd6fcd93cb8b",
+        "created": "2015-12-30 09:51:33",
+        "creater": "0",
+        "modified": "2015-12-30 09:51:33.565",
+        "modifier": "0",
+        "catId": "6Ieq6KGM6L2mL+mqkeihjOijheWkhy/pm7bphY3ku7Y+6Ieq6KGM6L2m5L+u6L2m5bel5YW3PuaSrOiDjuajkg==",
+        "catFullPath": "自行车/骑行装备/零配件>自行车修车工具>撬胎棒",
+        "fields": null,
+        "sku": null
+      },
+      {
+        "_id": "5683386462b8dd6fcd93cb8d",
+        "created": "2015-12-30 09:51:33",
+        "creater": "0",
+        "modified": "2015-12-30 09:51:33.565",
+        "modifier": "0",
+        "catId": "6Ieq6KGM6L2mL+mqkeihjOijheWkhy/pm7bphY3ku7Y+6Ieq6KGM6L2m5L+u6L2m5bel5YW3PuihpeiDjuiDtuawtA==",
+        "catFullPath": "自行车/骑行装备/零配件>自行车修车工具>补胎胶水",
+        "fields": null,
+        "sku": null
+      },
+      {
+        "_id": "5683386462b8dd6fcd93cb8f",
+        "created": "2015-12-30 09:51:33",
+        "creater": "0",
+        "modified": "2015-12-30 09:51:33.565",
+        "modifier": "0",
+        "catId": "6Ieq6KGM6L2mL+mqkeihjOijheWkhy/pm7bphY3ku7Y+6Ieq6KGM6L2m5L+u6L2m5bel5YW3PuihpeiDjueJhw==",
+        "catFullPath": "自行车/骑行装备/零配件>自行车修车工具>补胎片",
+        "fields": null,
+        "sku": null
+      },
+      {
+        "_id": "5683386462b8dd6fcd93cb91",
+        "created": "2015-12-30 09:51:33",
+        "creater": "0",
+        "modified": "2015-12-30 09:51:33.565",
+        "modifier": "0",
+        "catId": "6Ieq6KGM6L2mL+mqkeihjOijheWkhy/pm7bphY3ku7Y+6Ieq6KGM6L2m6Zu2L+mFjeS7tj7kuK3ovbQ=",
+        "catFullPath": "自行车/骑行装备/零配件>自行车零/配件>中轴",
+        "fields": null,
+        "sku": null
+      },
+      {
+        "_id": "5683386462b8dd6fcd93cb93",
+        "created": "2015-12-30 09:51:33",
+        "creater": "0",
+        "modified": "2015-12-30 09:51:33.565",
+        "modifier": "0",
+        "catId": "6Ieq6KGM6L2mL+mqkeihjOijheWkhy/pm7bphY3ku7Y+6Ieq6KGM6L2m6Zu2L+mFjeS7tj7niZnnm5jmm7Lmn4TkuK3ovbTlpZfoo4U=",
+        "catFullPath": "自行车/骑行装备/零配件>自行车零/配件>牙盘曲柄中轴套装",
+        "fields": null,
+        "sku": null
+      },
+      {
+        "_id": "5683386562b8dd6fcd93cb95",
+        "created": "2015-12-30 09:51:33",
+        "creater": "0",
+        "modified": "2015-12-30 09:51:33.565",
+        "modifier": "0",
+        "catId": "6Ieq6KGM6L2mL+mqkeihjOijheWkhy/pm7bphY3ku7Y+6Ieq6KGM6L2m6Zu2L+mFjeS7tj7mm7Lmn4Q=",
+        "catFullPath": "自行车/骑行装备/零配件>自行车零/配件>曲柄",
+        "fields": null,
+        "sku": null
+      },
+      {
+        "_id": "5683386562b8dd6fcd93cb97",
+        "created": "2015-12-30 09:51:33",
+        "creater": "0",
+        "modified": "2015-12-30 09:51:33.565",
+        "modifier": "0",
+        "catId": "6Ieq6KGM6L2mL+mqkeihjOijheWkhy/pm7bphY3ku7Y+6Ieq6KGM6L2m6Zu2L+mFjeS7tj7oh6rooYzovabova7nu4Q=",
+        "catFullPath": "自行车/骑行装备/零配件>自行车零/配件>自行车轮组",
+        "fields": null,
+        "sku": null
+      },
+      {
+        "_id": "5683386562b8dd6fcd93cb99",
+        "created": "2015-12-30 09:51:33",
+        "creater": "0",
+        "modified": "2015-12-30 09:51:33.565",
+        "modifier": "0",
+        "catId": "6Ieq6KGM6L2mL+mqkeihjOijheWkhy/pm7bphY3ku7Y+6Ieq6KGM6L2m6Zu2L+mFjeS7tj7oh6rooYzovabliLnovaboo4Xnva4=",
+        "catFullPath": "自行车/骑行装备/零配件>自行车零/配件>自行车刹车装置",
+        "fields": null,
+        "sku": null
+      },
+      {
+        "_id": "5683386562b8dd6fcd93cb9b",
+        "created": "2015-12-30 09:51:33",
+        "creater": "0",
+        "modified": "2015-12-30 09:51:33.565",
+        "modifier": "0",
+        "catId": "6Ieq6KGM6L2mL+mqkeihjOijheWkhy/pm7bphY3ku7Y+6Ieq6KGM6L2m6Zu2L+mFjeS7tj7oh6rooYzovabpk77mnaEv6ZO+5p2h5omj",
+        "catFullPath": "自行车/骑行装备/零配件>自行车零/配件>自行车链条/链条扣",
+        "fields": null,
+        "sku": null
+      },
+      {
+        "_id": "5683386562b8dd6fcd93cb9d",
+        "created": "2015-12-30 09:51:33",
+        "creater": "0",
+        "modified": "2015-12-30 09:51:33.565",
+        "modifier": "0",
+        "catId": "6Ieq6KGM6L2mL+mqkeihjOijheWkhy/pm7bphY3ku7Y+6Ieq6KGM6L2m6Zu2L+mFjeS7tj7luqfnrqEv5bqn5p2G",
+        "catFullPath": "自行车/骑行装备/零配件>自行车零/配件>座管/座杆",
+        "fields": null,
+        "sku": null
+      },
+      {
+        "_id": "5683386562b8dd6fcd93cb9f",
+        "created": "2015-12-30 09:51:33",
+        "creater": "0",
+        "modified": "2015-12-30 09:51:33.565",
+        "modifier": "0",
+        "catId": "6Ieq6KGM6L2mL+mqkeihjOijheWkhy/pm7bphY3ku7Y+6Ieq6KGM6L2m6Zu2L+mFjeS7tj7lnZDlnqsv6Z6N5bqn",
+        "catFullPath": "自行车/骑行装备/零配件>自行车零/配件>坐垫/鞍座",
+        "fields": null,
+        "sku": null
+      },
+      {
+        "_id": "5683386562b8dd6fcd93cba1",
+        "created": "2015-12-30 09:51:33",
+        "creater": "0",
+        "modified": "2015-12-30 09:51:33.566",
+        "modifier": "0",
+        "catId": "6Ieq6KGM6L2mL+mqkeihjOijheWkhy/pm7bphY3ku7Y+6Ieq6KGM6L2m6Zu2L+mFjeS7tj7oh6rooYzovabovabmioo=",
+        "catFullPath": "自行车/骑行装备/零配件>自行车零/配件>自行车车把",
+        "fields": null,
+        "sku": null
+      },
+      {
+        "_id": "5683386562b8dd6fcd93cba3",
+        "created": "2015-12-30 09:51:33",
+        "creater": "0",
+        "modified": "2015-12-30 09:51:33.566",
+        "modifier": "0",
+        "catId": "6Ieq6KGM6L2mL+mqkeihjOijheWkhy/pm7bphY3ku7Y+6Ieq6KGM6L2m6Zu2L+mFjeS7tj7oh6rooYzovaboirHpvJM=",
+        "catFullPath": "自行车/骑行装备/零配件>自行车零/配件>自行车花鼓",
+        "fields": null,
+        "sku": null
+      },
+      {
+        "_id": "5683386562b8dd6fcd93cba5",
+        "created": "2015-12-30 09:51:33",
+        "creater": "0",
+        "modified": "2015-12-30 09:51:33.566",
+        "modifier": "0",
+        "catId": "6Ieq6KGM6L2mL+mqkeihjOijheWkhy/pm7bphY3ku7Y+6Ieq6KGM6L2m6Zu2L+mFjeS7tj7liY3lj4kv6YG/6ZyH6KOF572u",
+        "catFullPath": "自行车/骑行装备/零配件>自行车零/配件>前叉/避震装置",
+        "fields": null,
+        "sku": null
+      },
+      {
+        "_id": "5683386662b8dd6fcd93cba7",
+        "created": "2015-12-30 09:51:33",
+        "creater": "0",
+        "modified": "2015-12-30 09:51:33.566",
+        "modifier": "0",
+        "catId": "6Ieq6KGM6L2mL+mqkeihjOijheWkhy/pm7bphY3ku7Y+6Ieq6KGM6L2m6Zu2L+mFjeS7tj7niZnnm5g=",
+        "catFullPath": "自行车/骑行装备/零配件>自行车零/配件>牙盘",
+        "fields": null,
+        "sku": null
+      },
+      {
+        "_id": "5683386662b8dd6fcd93cba9",
+        "created": "2015-12-30 09:51:33",
+        "creater": "0",
+        "modified": "2015-12-30 09:51:33.566",
+        "modifier": "0",
+        "catId": "6Ieq6KGM6L2mL+mqkeihjOijheWkhy/pm7bphY3ku7Y+6Ieq6KGM6L2m6Zu2L+mFjeS7tj7oh6rooYzovabmiorlpZc=",
+        "catFullPath": "自行车/骑行装备/零配件>自行车零/配件>自行车把套",
+        "fields": null,
+        "sku": null
+      },
+      {
+        "_id": "5683386662b8dd6fcd93cbab",
+        "created": "2015-12-30 09:51:33",
+        "creater": "0",
+        "modified": "2015-12-30 09:51:33.566",
+        "modifier": "0",
+        "catId": "6Ieq6KGM6L2mL+mqkeihjOijheWkhy/pm7bphY3ku7Y+6Ieq6KGM6L2m6Zu2L+mFjeS7tj7mm7TlpJrpm7bku7Yv6YWN5Lu2",
+        "catFullPath": "自行车/骑行装备/零配件>自行车零/配件>更多零件/配件",
+        "fields": null,
+        "sku": null
+      }
+    ]
+  },
+  "redirectTo": null
+}

@@ -43,8 +43,11 @@ public class UploadImageHandler extends UploadWorkloadHandler {
         ApplicationContext springContext = (ApplicationContext) Context.getContext().getAttribute("springContext");
         imageUrlMappingDao = springContext.getBean(PlatformImageUrlMappingDao.class);
 
-        this.setName(this.getClass().getSimpleName() + "_" + ChannelConfigEnums.Channel.valueOfId(uploadJob.getChannel_id()).getFullName() + "_" +
-                CartEnums.Cart.getValueByID(String.valueOf(uploadJob.getCart_id())).name() + "_" + uploadJob.getIdentifer());
+        ChannelConfigEnums.Channel channel = ChannelConfigEnums.Channel.valueOfId(uploadJob.getChannel_id());
+        CartEnums.Cart cart = CartEnums.Cart.getValueByID(String.valueOf(uploadJob.getCart_id()));
+
+        this.setName(this.getClass().getSimpleName() + "_" + (channel!=null?channel.getFullName():"unknownChannel") + "_" +
+                (cart!=null?cart.name():"unknownCart") + "_" + uploadJob.getIdentifer());
     }
 
     //添加一个suspend的job防止该线程一启动，就结束

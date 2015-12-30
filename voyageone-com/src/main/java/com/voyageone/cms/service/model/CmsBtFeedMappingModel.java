@@ -1,7 +1,8 @@
 package com.voyageone.cms.service.model;
 
 import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
-import com.voyageone.cms.feed.Condition;
+import com.voyageone.cms.service.model.feed.mapping.Prop;
+import com.voyageone.cms.service.model.feed.mapping.Scope;
 
 import java.util.List;
 
@@ -72,111 +73,5 @@ public class CmsBtFeedMappingModel extends ChannelPartitionModel {
         this.props = props;
     }
 
-    public class Scope {
 
-        private String channelId;
-
-        private String feedCategoryPath;
-
-        private String mainCategoryPath;
-
-        public String getChannelId() {
-            return channelId;
-        }
-
-        public void setChannelId(String channelId) {
-            this.channelId = channelId;
-        }
-
-        public String getFeedCategoryPath() {
-            return feedCategoryPath;
-        }
-
-        public void setFeedCategoryPath(String feedCategoryPath) {
-            this.feedCategoryPath = feedCategoryPath;
-        }
-
-        public String getMainCategoryPath() {
-            return mainCategoryPath;
-        }
-
-        public void setMainCategoryPath(String mainCategoryPath) {
-            this.mainCategoryPath = mainCategoryPath;
-        }
-    }
-
-    public class Prop {
-
-        private String prop;
-
-        private List<Mapping> mappings;
-
-        private List<Prop> children;
-
-        public String getProp() {
-            return prop;
-        }
-
-        public void setProp(String prop) {
-            this.prop = prop;
-        }
-
-        public List<Mapping> getMappings() {
-            return mappings;
-        }
-
-        public void setMappings(List<Mapping> mappings) {
-            this.mappings = mappings;
-        }
-
-        public List<Prop> getChildren() {
-            return children;
-        }
-
-        public void setChildren(List<Prop> children) {
-            this.children = children;
-        }
-    }
-
-    public class Mapping {
-
-        private List<Condition> condition;
-
-        private SrcType type;
-
-        private String val;
-
-        public List<Condition> getCondition() {
-            return condition;
-        }
-
-        public void setCondition(List<Condition> condition) {
-            this.condition = condition;
-        }
-
-        public SrcType getType() {
-            return type;
-        }
-
-        public void setType(SrcType type) {
-            this.type = type;
-        }
-
-        public String getVal() {
-            return val;
-        }
-
-        public void setVal(String val) {
-            this.val = val;
-        }
-    }
-
-    public enum SrcType {
-        text,
-        propFeed,
-        propMain,
-        optionMain,
-        optionPlatform,
-        dict
-    }
 }

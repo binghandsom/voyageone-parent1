@@ -5,6 +5,7 @@ import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants.MAPPING.FEED;
 import com.voyageone.web2.cms.bean.setting.mapping.feed.GetFieldMappingBean;
+import com.voyageone.web2.cms.bean.setting.mapping.feed.SaveFieldMappingBean;
 import com.voyageone.web2.cms.bean.setting.mapping.feed.SetMappingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +18,7 @@ import java.util.Map;
 
 /**
  * Feed 映射到主数据类目画面专供
+ *
  * @author Jonas
  * @version 2.0.0, 12/8/15
  */
@@ -79,5 +81,11 @@ public class CmsFeedMappingController extends CmsController {
         String feedCategoryPath = params.get("feedCategoryPath");
 
         return success(feedPropMappingService.getFeedAttributes(feedCategoryPath, getUser()));
+    }
+
+    @RequestMapping(FEED.SAVE_FIELD_MAPPING)
+    public AjaxResponse saveFieldMapping(@RequestBody SaveFieldMappingBean params) {
+        feedPropMappingService.saveFeedMapping(params, getUser());
+        return success(true);
     }
 }
