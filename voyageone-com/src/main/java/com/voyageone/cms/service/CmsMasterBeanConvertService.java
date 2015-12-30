@@ -160,9 +160,9 @@ public class CmsMasterBeanConvertService {
     private void setComplexValue(Field field, ComplexValue complexValue, Map<String, Object> valueMap) {
         List<Field> subFields = null;
         if (field.getType() == FieldTypeEnum.COMPLEX) {
-            subFields = ((ComplexField)field).getFieldList();
+            subFields = ((ComplexField)field).getFields();
         } else if (field.getType() == FieldTypeEnum.MULTICOMPLEX) {
-            subFields = ((MultiComplexField)field).getFieldList();
+            subFields = ((MultiComplexField)field).getFields();
         }
 
         for (Field subField : subFields){

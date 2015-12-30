@@ -210,9 +210,9 @@ public class CmsPlatformMappingService extends BaseTaskService {
 
                 List<Field> fields = new ArrayList<>();
                 if (field instanceof ComplexField) {
-                    fields = ((ComplexField) field).getFieldList();
+                    fields = ((ComplexField) field).getFields();
                 } else {
-                    fields = ((MultiComplexField) field).getFieldList();
+                    fields = ((MultiComplexField) field).getFields();
                 }
                 for (Field fd : fields) {
                     MappingBean temp = makeMapping(fd);
