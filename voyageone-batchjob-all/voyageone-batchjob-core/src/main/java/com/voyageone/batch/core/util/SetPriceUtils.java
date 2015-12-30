@@ -122,10 +122,10 @@ public class SetPriceUtils {
         if (priceReportDatas != null && priceReportDatas.size() > 0){
 
             //订单折扣设定
-            discount  = Double.valueOf(priceReportDatas.get(0).getDiscount());
-            if (discount < 0){
-                discount = 0 - discount;
-            }
+//            discount  = Double.valueOf(priceReportDatas.get(0).getDiscount());
+//            if (discount < 0){
+//                discount = 0 - discount;
+//            }
             //运费设定
             Shipping  = Double.valueOf(priceReportDatas.get(0).getShipping_price());
             //分类合计

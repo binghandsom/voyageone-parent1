@@ -365,7 +365,6 @@
         AND shipdetails.adjustment = 1
         AND (
         shipdetails.STATUS IN ('Canceled', 'Returned')
-        OR shipdetails.STATUS IS NULL
         )
         AND shipdetails.sub_item_number = 0
         AND shipdetails.sku IN ('Discount','Surcharge')
