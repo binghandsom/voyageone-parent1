@@ -123,7 +123,7 @@ public class ProductSkuService extends BaseService {
         }
 
         if (bulkList.size() > 0) {
-            cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$push", true);
+            cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$push", false);
         }
 
         return result;
