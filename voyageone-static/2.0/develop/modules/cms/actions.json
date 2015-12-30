@@ -39,7 +39,8 @@
         "getMainProps": "getMainCategoryProps",
         "getMatched": "getMatched",
         "getFieldMapping": "getFieldMapping",
-        "getFeedAttrs": "getFeedAttributes"
+        "getFeedAttrs": "getFeedAttributes",
+        "saveFieldMapping": "saveFieldMapping"
       }
     },
     "pop": {
@@ -84,6 +85,12 @@
       "root": "/cms/task/price",
       "getPriceList": "getPriceList",
       "updateTaskStatus":"updateTaskStatus"
+    },
+    "systemCategoryService": {
+      "root": "/cms/system/category",
+      "getCategoryList": "getCategoryList",
+      "getCategoryDetail":"getCategoryDetail",
+      "updateCategorySchema":"updateCategorySchema"
     },
     "productDetailService":{
       "root":"/cms/product/detail/",

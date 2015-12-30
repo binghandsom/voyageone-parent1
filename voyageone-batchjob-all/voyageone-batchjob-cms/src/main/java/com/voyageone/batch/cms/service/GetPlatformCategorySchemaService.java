@@ -54,6 +54,9 @@ public class GetPlatformCategorySchemaService extends BaseTaskService {
     @Resource(name = "availableChannelList")
     List availableChannelList;
 
+    @Resource(name = "productChannelMap")
+    Map<String,String> productChannelMap;
+
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
@@ -101,10 +104,14 @@ public class GetPlatformCategorySchemaService extends BaseTaskService {
             BeanUtils.populate(leafObj, leafMap);
             String key = leafObj.getCatId();
 
-            if(!savedList.contains(key)){
-                savedList.add(key);
-                leafObj.setCartId(cartId);
-                allLeaves.add(leafObj);
+            if(!savedList.contains(key)) {
+                if (categoryProductMap.containsKey(key) && !productChannelMap.get(categoryProductMap.get(key)).equals(leafObj.getChannelId())) {
+                    continue;
+                } else {
+                    savedList.add(key);
+                    leafObj.setCartId(cartId);
+                    allLeaves.add(leafObj);
+                }
             }
 
         }

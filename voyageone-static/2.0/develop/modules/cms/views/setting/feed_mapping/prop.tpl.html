@@ -23,7 +23,7 @@
                             <h4 class="panel-title">普通属性匹配</h4>
                         </div>
                         <form class="form-horizontal">
-                            <div class="form-group"
+                            <div class="form-group m-t-xs feed_mapping_bg"
                                  ng-repeat="field in ctrl.mainCategory.fields | fmExtendField"
                                  ng-include="'feedMapping.field.tpl.html'">
                             </div>
@@ -47,11 +47,11 @@
         </tab>
     </tabset>
     <script type="text/ng-template" id="feedMapping.field.tpl.html">
-        <label class="col-sm-2 control-label"
+        <label class="col-sm-4 control-label"
                ng-class="{ 'vo_reqfield': field.x.required }">{{ field.name }}</label>
 
-        <div class="col-sm-8 hierarchy" ng-if="!field.x.isSimple">
-            <div class="col-sm-4 form-inline"
+        <div class="col-sm-7 hierarchy" ng-if="!field.x.isSimple">
+            <div class="col-sm-4 form-inline m-b-xs"
                  ng-repeat="child in field.fieldList | fmExtendField:field"
                  ng-include="'feedMapping.multi.setter.tpl.html'">
             </div>

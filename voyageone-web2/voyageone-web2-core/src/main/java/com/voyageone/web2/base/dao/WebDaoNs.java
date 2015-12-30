@@ -9,7 +9,8 @@ package com.voyageone.web2.base.dao;
  */
 public enum WebDaoNs {
     CORE("com.voyageone.web2.core.sql"),
-    CMS("com.voyageone.web2.cms.sql");
+    CMS("com.voyageone.web2.cms.sql"),
+    WSDL("com.voyageone.web2.wsdl.sql");
 
     private final String ns;
 

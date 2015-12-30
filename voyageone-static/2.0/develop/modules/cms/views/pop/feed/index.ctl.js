@@ -16,7 +16,7 @@ define(['cms'], function (cms) {
              * 具体到字段的 Mapping 设定
              * @typedef {{property:string,operation:string,value:string}} Condition
              * @typedef {{condition:Condition[],type:string,val:string}} Mapping
-             * @type {{prop:string,mapping:Mapping[]}}
+             * @type {{prop:string,mappings:Mapping[]}}
              */
             this.fieldMapping = null;
             /**
@@ -47,10 +47,17 @@ define(['cms'], function (cms) {
                 if (!this.fieldMapping) {
                     this.fieldMapping = {};
                 }
-                if (!this.fieldMapping.mapping || !this.fieldMapping.mapping.length) {
-                    this.fieldMapping.mapping = [];
+                if (!this.fieldMapping.mappings || !this.fieldMapping.mappings.length) {
+                    this.fieldMapping.mappings = [];
                 }
-                this.fieldMapping.mapping.push(mapping);
+                this.fieldMapping.mappings.push(mapping);
+            },
+            /**
+             * 移除一个mapping
+             * @param {number} index
+             */
+            remove: function(index){
+                this.fieldMapping.mappings.splice(index, 1);
             },
             ok: function () {
                 this.context.fieldMapping = this.fieldMapping;

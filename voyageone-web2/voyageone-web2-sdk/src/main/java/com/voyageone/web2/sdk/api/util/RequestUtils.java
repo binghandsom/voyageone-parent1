@@ -55,12 +55,22 @@ public class RequestUtils {
 									isNotEmptyList = true;
 									break;
 								}
+							} else {
+								if (cellValue != null) {
+									isNotEmptyList = true;
+									break;
+								}
 							}
 						}
 						if (isNotEmptyList) {
 							isNotEmpty = true;
 							break;
 						}
+					}
+				} else {
+					if (value != null) {
+						isNotEmpty = true;
+						break;
 					}
 				}
 			}

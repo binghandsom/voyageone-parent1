@@ -15,11 +15,11 @@
             </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="mapping in ctrl.fieldMapping.mapping">
+            <tr ng-repeat="mapping in ctrl.fieldMapping.mappings">
                 <td>{{ mapping.type }}</td>
-                <td>{{ mapping.value }}</td>
+                <td>{{ mapping.val }}</td>
                 <td class="text-center">
-                    <button title="删除" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button>
+                    <button title="删除" class="btn btn-danger btn-xs" ng-click="ctrl.remove($index)"><i class="fa fa-trash-o"></i></button>
                 </td>
             </tr>
             </tbody>

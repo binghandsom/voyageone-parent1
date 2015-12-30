@@ -83,7 +83,7 @@ public class MultiComplexField extends Field {
         }
     }
 
-    public List<Field> getFieldList() {
+    public List<Field> getFields() {
         return this.fields;
     }
 

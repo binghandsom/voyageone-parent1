@@ -52,8 +52,9 @@ public class VoApiConstants {
         ERROR_CODE_70002("70002", "code is null"),
         ERROR_CODE_70003("70003", "channelId not found"),
         ERROR_CODE_70004("70004", "not string or number type"),
-        ERROR_CODE_70005("70005", ""),
-        ERROR_CODE_70006("70006", ""),
+        ERROR_CODE_70005("70005", "check error1"),
+        ERROR_CODE_70006("70006", "check error2"),
+        ERROR_CODE_70007("70006", "requtest param not found"),
         ;
 
         private final String errorCode;

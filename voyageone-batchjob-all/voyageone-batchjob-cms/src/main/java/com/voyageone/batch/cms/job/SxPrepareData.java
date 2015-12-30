@@ -220,7 +220,7 @@ public class SxPrepareData {
             }
             case COMPLEX: {
                 Map<String, Object> valueMap = new HashMap<>();
-                for (Field subField : ((ComplexField)field).getFieldList()) {
+                for (Field subField : ((ComplexField)field).getFields()) {
                     valueMap.put(subField.getId(), constructFieldValue(subField, extraParam));
                 }
                 return valueMap;
@@ -230,7 +230,7 @@ public class SxPrepareData {
                 int valuesCount = 1;
                 for (int i = 0; i<valuesCount; i++) {
                     Map<String, Object> valueMap = new HashMap<>();
-                    for (Field subField : ((MultiComplexField)field).getFieldList()) {
+                    for (Field subField : ((MultiComplexField)field).getFields()) {
                         valueMap.put(subField.getId(), constructFieldValue(subField, i+1));
                     }
                     valueMaps.add(valueMap);

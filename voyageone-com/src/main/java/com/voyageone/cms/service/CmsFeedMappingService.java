@@ -1,9 +1,11 @@
 package com.voyageone.cms.service;
 
+import com.mongodb.WriteResult;
 import com.voyageone.cms.service.dao.mongodb.CmsBtFeedMappingDao;
 import com.voyageone.cms.service.model.CmsBtFeedMappingModel;
 import com.voyageone.cms.service.model.CmsFeedCategoryModel;
 import com.voyageone.cms.service.model.CmsFeedMappingModel;
+import com.voyageone.cms.service.model.feed.mapping.Scope;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,11 @@ public class CmsFeedMappingService {
     public CmsBtFeedMappingModel getMapping(Channel channel, String feedCategory, String mainCategoryPath) {
 
         return cmsBtFeedMappingDao.selectByKey(channel.getId(), feedCategory, mainCategoryPath);
+    }
+
+    public WriteResult setMapping(CmsBtFeedMappingModel feedMappingModel) {
+
+        return cmsBtFeedMappingDao.update(feedMappingModel);
     }
 
     /**
@@ -57,7 +64,7 @@ public class CmsFeedMappingService {
 
             if (feedMappingModel == null) {
                 feedMappingModel = new CmsBtFeedMappingModel();
-                CmsBtFeedMappingModel.Scope scope = feedMappingModel.new Scope();
+                Scope scope = new Scope();
                 scope.setChannelId(channel.getId());
                 scope.setFeedCategoryPath(feedCategoryModel.getPath());
                 feedMappingModel.setScope(scope);

@@ -150,6 +150,13 @@ public class CmsPlatformMappingService extends BaseTaskService {
             String imgTemplate = "http://s7d5.scene7.com/is/image/sneakerhead/BHFO%%5F20150819%%5Fx1200%%5F1200x?$1200x1200$&$1200x1200$&$proudct=%s";
             return CreateImgMapping(field.getId(),imgTemplate);
         }
+
+        if("description".equalsIgnoreCase(field.getId())){
+            RuleExpression ruleExpression = new RuleExpression();
+            ruleExpression.addRuleWord(new DictWord("详情页描述"));
+            SimpleMappingBean simpleMappingBean = new SimpleMappingBean(field.getId(),ruleExpression);
+            return simpleMappingBean;
+        }
         // 把类目ID中的【.】替换成【->】
 //        field.setId(StringUtils.replaceDot(field.getId()));
 
@@ -203,9 +210,9 @@ public class CmsPlatformMappingService extends BaseTaskService {
 
                 List<Field> fields = new ArrayList<>();
                 if (field instanceof ComplexField) {
-                    fields = ((ComplexField) field).getFieldList();
+                    fields = ((ComplexField) field).getFields();
                 } else {
-                    fields = ((MultiComplexField) field).getFieldList();
+                    fields = ((MultiComplexField) field).getFields();
                 }
                 for (Field fd : fields) {
                     MappingBean temp = makeMapping(fd);

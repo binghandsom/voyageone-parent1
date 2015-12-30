@@ -21,12 +21,6 @@ import java.util.*;
  */
 public abstract class BaseMongoDao extends BaseJomgoDao {
 
-    protected BaseJomgoTemplate mongoTemplate;
-
-    protected String collectionName;
-
-    protected Class entityClass;
-
     static {
         // 在 BaseMongoDao 静态初始化时, 初始化 JsonPath 的 Provider 配置
         Configuration.setDefaults(new Configuration.Defaults() {
@@ -50,17 +44,6 @@ public abstract class BaseMongoDao extends BaseJomgoDao {
             }
         });
     }
-
-    @Autowired
-    public void setMongoTemplate(BaseJomgoTemplate mongoTemplate) {
-        this.mongoTemplate = mongoTemplate;
-        if (this.collectionName == null) {
-            this.entityClass = getEntityClass();
-            this.collectionName = mongoTemplate.getCollectionName(entityClass);
-        }
-    }
-
-    public abstract Class getEntityClass();
 
     public DBCollection getDBCollection() {
         return mongoTemplate.getDBCollection(collectionName);
