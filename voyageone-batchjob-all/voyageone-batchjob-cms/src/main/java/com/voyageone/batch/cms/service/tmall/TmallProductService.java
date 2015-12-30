@@ -906,7 +906,7 @@ public class TmallProductService {
         WorkLoadBean workLoadBean = tcb.getWorkLoadBean();
 
         PlatformWorkloadStatus platformWorkloadStatus = workLoadBean.getWorkload_status();
-        logger.debug("Update Product, workload: " + tcb.getWorkLoadBean());
+        logger.debug("Update Product, workload: " + workLoadBean);
 
         switch (platformWorkloadStatus.getValue()) {
             case TmallWorkloadStatus.UPDATE_INIT:

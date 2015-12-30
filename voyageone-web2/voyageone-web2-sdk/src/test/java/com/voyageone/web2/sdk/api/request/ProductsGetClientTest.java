@@ -1,4 +1,4 @@
-package com.voyageone.web2.sdk.api.service;
+package com.voyageone.web2.sdk.api.request;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,8 +15,8 @@ import java.util.List;
 @ContextConfiguration(locations = "classpath:applicationContext.xml")
 public class ProductsGetClientTest {
 
-    @Autowired
-    private ProductsGetClient productsGetClient;
+//    @Autowired
+//    private ProductsGetClient productsGetClient;
 
 //    @Test
 //    public void testGetProductCodesByCart() {

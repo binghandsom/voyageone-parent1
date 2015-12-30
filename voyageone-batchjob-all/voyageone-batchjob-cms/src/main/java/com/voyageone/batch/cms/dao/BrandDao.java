@@ -28,20 +28,20 @@ public class BrandDao extends BaseDao {
         params.put("cart_id", shop.getCart_id());
         params.put("task_name", jobName);
 
-        updateTemplate.update(Constants.DAO_NAME_SPACE_CMS + "ims_insertBrands", params);
+        updateTemplate.update(Constants.DAO_NAME_SPACE_CMS + "cms_insertBrands", params);
 
     }
     /**
      * 按照店铺来删除品牌数据
      * @return List<AllotInventoryDetailBean>
      */
-    public  void delBrandsByShop( ShopBean shop) {
+    public  int delBrandsByShop( ShopBean shop) {
         Map<String, Object> params = new HashMap<>();
 
         params.put("order_channel_id", shop.getOrder_channel_id());
         params.put("cart_id", shop.getCart_id());
 
-        updateTemplate.update(Constants.DAO_NAME_SPACE_CMS + "ims_delBrandsByShop", params);
+        return updateTemplate.update(Constants.DAO_NAME_SPACE_CMS + "cms_delBrandsByShop", params);
 
     }
 }

@@ -9,8 +9,10 @@ import com.voyageone.web2.cms.wsdl.BaseService;
 import com.voyageone.web2.sdk.api.VoApiConstants;
 import com.voyageone.web2.sdk.api.exception.ApiException;
 import com.voyageone.web2.sdk.api.request.ProductGetRequest;
+import com.voyageone.web2.sdk.api.request.ProductsCountGetRequest;
 import com.voyageone.web2.sdk.api.request.ProductsGetRequest;
 import com.voyageone.web2.sdk.api.response.ProductGetResponse;
+import com.voyageone.web2.sdk.api.response.ProductsCountGetResponse;
 import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -136,6 +138,58 @@ public class ProductGetService extends BaseService {
         }
 
         result.setProducts(products);
+        result.setTotalCount(totalCount);
+
+        return result;
+    }
+
+
+    public ProductsCountGetResponse selectCount(ProductsCountGetRequest request) {
+        ProductsCountGetResponse result = new ProductsCountGetResponse();
+
+        List<CmsBtProductModel> products = null;
+        long totalCount = 0L;
+
+        if (request == null) {
+            VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70001;
+            throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
+        }
+
+        //ChannelId
+        String channelId = request.getChannelId();
+        if (StringUtils.isEmpty(channelId)) {
+            VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70003;
+            throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
+        }
+
+
+        JomgoQuery queryObject = new JomgoQuery();
+
+        //getProductById
+        Set<Long> pids = request.getProductIds();
+        //getProductByCode
+        Set<String> productCodes = request.getProductCodes();
+        //getProductByCondition
+        String props = request.getProps();
+
+        boolean isExecute = false;
+        if (pids != null && pids.size() > 0) {
+            String pidsArrStr = Joiner.on(", ").skipNulls().join(pids);
+            queryObject.setQuery(String.format("{ \"prodId\" : { $in : [ %s ] } }", pidsArrStr));
+            isExecute = true;
+        } else if (productCodes != null && productCodes.size() > 0) {
+            String productCodesStr = "\"" + Joiner.on("\", \"").skipNulls().join(productCodes) + "\"";
+            queryObject.setQuery(String.format("{ \"fields.code\" : { $in : [ %s ] } }", productCodesStr));
+            isExecute = true;
+        } else if (!StringUtils.isEmpty(props)) {
+            queryObject.setQuery(buildProductQuery(props));
+            isExecute = true;
+        }
+
+        if (isExecute) {
+            totalCount = cmsBtProductDao.countByQuery(queryObject.getQuery(), channelId);
+        }
+
         result.setTotalCount(totalCount);
 
         return result;

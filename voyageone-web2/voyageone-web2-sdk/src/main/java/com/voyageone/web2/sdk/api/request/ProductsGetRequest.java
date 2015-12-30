@@ -96,4 +96,5 @@ public class ProductsGetRequest extends VoApiListRequest<ProductsGetResponse> {
 	public void addProp(String key, Object value) {
 		this.props = RequestUtils.addProp(props, key, value);
 	}
+
 }

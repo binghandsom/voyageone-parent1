@@ -77,7 +77,6 @@ small,
   border: 1px solid rgba(0, 0, 0, 0.15);
   color: inherit;
 }
-
 .badge-initialize {
   background-color: #5bc0de;
   border: 1px solid rgba(0, 0, 0, 0.08);
@@ -98,7 +97,16 @@ small,
   border: 1px solid rgba(0, 0, 0, 0.08);
   color: #fff;
 }
-
+.badge-darkBlue {
+  background-color: #3c8dbc;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #fff;
+}
+.badge-darkPurple {
+  background-color: #c26ecc;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #fff;
+}
 blockquote {
   border-color: #d4cfcf;
 }

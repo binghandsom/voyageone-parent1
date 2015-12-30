@@ -12,6 +12,8 @@ import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformMappingDao;
 import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
 import com.voyageone.cms.service.model.CmsMtPlatformMappingModel;
 import com.voyageone.common.components.issueLog.IssueLog;
+import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.ShopConfigs;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -44,6 +46,17 @@ public class UploadProductHandler extends UploadWorkloadHandler{
         //如果任务是第一次开始，那么首先要初始化任务
         if (workloadStatus == null ||
                 workloadStatus.getValue() == PlatformWorkloadStatus.JOB_INIT) {
+
+            if (workLoadBean.getProcessProducts() == null || workLoadBean.getProcessProducts().isEmpty()) {
+                abortJob(workLoadBean, workloadStatus, "没有要上新的product或sku");
+                return;
+            }
+
+            if (workLoadBean.getMainProduct() == null) {
+                abortJob(workLoadBean, workloadStatus, "没有找到主商品");
+                return;
+            }
+
             if (workloadStatus == null)
             {
                 workloadStatus = new PlatformWorkloadStatus(PlatformWorkloadStatus.JOB_INIT);
@@ -215,7 +228,10 @@ public class UploadProductHandler extends UploadWorkloadHandler{
         this.cmsMtPlatformMappingDao = cmsMtPlatformMappingDao;
         this.skuInventoryDao = skuInventoryDao;
 
-        this.setName(this.getClass().getSimpleName() + "_" + uploadJob.getChannel_id() + "_" + uploadJob.getCart_id());
+        ChannelConfigEnums.Channel channel = ChannelConfigEnums.Channel.valueOfId(uploadJob.getChannel_id());
+        CartEnums.Cart cart = CartEnums.Cart.getValueByID(String.valueOf(uploadJob.getCart_id()));
+        this.setName(this.getClass().getSimpleName() + "_" + (channel!=null?channel.getFullName():"unknownChannel") + "_" +
+                (cart!=null?cart.name():"unknownCart") + "_" + uploadJob.getIdentifer());
 
         ApplicationContext springContext = (ApplicationContext) Context.getContext().getAttribute("springContext");
         tmallProductService = springContext.getBean(TmallProductService.class);

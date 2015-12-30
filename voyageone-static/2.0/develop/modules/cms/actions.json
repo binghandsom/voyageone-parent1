@@ -86,6 +86,11 @@
       "getPriceList": "getPriceList",
       "updateTaskStatus":"updateTaskStatus"
     },
+    "systemCategoryService": {
+      "root": "/cms/system/category",
+      "getCategoryList": "getCategoryList",
+      "getCategoryDetail":"getCategoryDetail"
+    },
     "productDetailService":{
       "root":"/cms/product/detail/",
       "getProductInfo":"getProductInfo",

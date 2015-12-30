@@ -1,4 +1,4 @@
-<div class="wrapper-md">
+<div class="wrapper-md" ng-init="initialize()">
 	<div class="col-sm-12">
 		<div class="panel panelPromotion m-t-xs">
 			<div class="container-fluid m-t-sm m-b-sm">
@@ -38,342 +38,10 @@
 			<div class="box-body">
 				<div class="panel vo_panel">
 					<div class="container-fluid" ng-controller="popupCtrl">
-						<div class="col-sm-12 category_mapping_bg">
-							<div class="col-sm-2 text-left"><i class="fa fa-minus"></i> 商品标题商品标题商品标题商品</div>
-							<div class="pull-right">
-								<span class="badge badge-initialize">input</span>
+						<div ng-repeat ="item in vm.category.fields">
+							<div ng-include="'fieldView'"  ng-init="field = item; level = 0; parent = vm.category.fields">
 							</div>
-							<div class="col-sm-1 text-left btn-group">
-								<button title="增加" class="btn btn-default btn-xs"><i class="fa fa-plus-circle text-vo"></i></button>
-								<button title="编辑" class="btn btn-default btn-xs" ng-click="openSystemCategory('md')"><i class="fa fa-pencil text-vo"></i></button>
-								<button title="删除" class="btn btn-default btn-xs"><i class="fa fa-trash-o text-vo"></i></button>
-							</div>
-							<div class="col-sm-4 pull-center">
-								<span class="badge badge-empty">comment</span>
-							</div>
-						</div><!-- .form-group -->
-						<div class="col-sm-12 category_mapping_bg">
-							<div class="col-sm-2 text-left"><i class="fa fa-minus"></i> 无线短标题</div>
-							<div class="pull-right">
-								<span class="badge badge-initialize">input</span>
-							</div>
-							<div class="col-sm-1 text-left btn-group">
-								<button title="增加" class="btn btn-default btn-xs"><i class="fa fa-plus-circle text-vo"></i></button>
-								<button title="编辑" class="btn btn-default btn-xs" ng-click="openSystemCategory('md')"><i class="fa fa-pencil text-vo"></i></button>
-								<button title="删除" class="btn btn-default btn-xs"><i class="fa fa-trash-o text-vo"></i></button>
-							</div>
-							<div class="col-sm-4 pull-center">
-								<span class="badge badge-empty">comment</span>
-							</div>
-						</div><!-- .form-group -->
-						<div class="col-sm-12 category_mapping_bg_one">
-							<div class="col-sm-2 text-left"><i class="fa fa-plus"></i> 商品卖点</div>
-							<div class="pull-right">
-								<span class="badge badge-refresh">complex</span>
-							</div>
-							<div class="col-sm-1 text-left btn-group">
-								<button title="增加" class="btn btn-default btn-xs"><i class="fa fa-plus-circle text-vo"></i></button>
-								<button title="编辑" class="btn btn-default btn-xs" ng-click="openSystemCategory('md')"><i class="fa fa-pencil text-vo"></i></button>
-								<button title="删除" class="btn btn-default btn-xs"><i class="fa fa-trash-o text-vo"></i></button>
-							</div>
-							<div class="col-sm-4 pull-center">
-								<span class="badge badge-empty">comment</span>
-							</div>
-						</div><!-- .form-group -->
-						<div class="col-sm-12 category_mapping_bg_list">
-							<div class="col-sm-2 text-left m-l-lg"><i class="fa fa-minus"></i> 商品卖点1</div>
-							<div class="pull-right">
-								<span class="badge badge-initialize">input</span>
-							</div>
-							<div class="col-sm-1 text-left btn-group">
-								<button title="增加" class="btn btn-default btn-xs"><i class="fa fa-plus-circle text-vo"></i></button>
-								<button title="编辑" class="btn btn-default btn-xs" ng-click="openSystemCategory('md')"><i class="fa fa-pencil text-vo"></i></button>
-								<button title="删除" class="btn btn-default btn-xs"><i class="fa fa-trash-o text-vo"></i></button>
-							</div>
-							<div class="col-sm-4 pull-center">
-								<span class="badge badge-empty">comment</span>
-							</div>
-						</div><!-- .form-group -->
-						<div class="col-sm-12 category_mapping_bg_list">
-							<div class="col-sm-2 text-left m-l-lg"><i class="fa fa-plus"></i> 商品卖点2</div>
-							<div class="pull-right">
-								<span class="badge badge-initialize">input</span>
-							</div>
-							<div class="col-sm-1 text-left btn-group">
-								<button title="增加" class="btn btn-default btn-xs"><i class="fa fa-plus-circle text-vo"></i></button>
-								<button title="编辑" class="btn btn-default btn-xs" ng-click="openSystemCategory('md')"><i class="fa fa-pencil text-vo"></i></button>
-								<button title="删除" class="btn btn-default btn-xs"><i class="fa fa-trash-o text-vo"></i></button>
-							</div>
-							<div class="col-sm-4 pull-center">
-								<span class="badge badge-empty">comment</span>
-							</div>
-						</div><!-- .form-group -->
-						<div class="col-sm-12 category_mapping_bg_list">
-							<div class="col-sm-2 text-left m-l-xlg"><i class="fa fa-plus"></i> 商品卖点21</div>
-							<div class="pull-right">
-								<span class="badge badge-initialize">input</span>
-							</div>
-							<div class="col-sm-1 text-left btn-group">
-								<button title="增加" class="btn btn-default btn-xs"><i class="fa fa-plus-circle text-vo"></i></button>
-								<button title="编辑" class="btn btn-default btn-xs" ng-click="openSystemCategory('md')"><i class="fa fa-pencil text-vo"></i></button>
-								<button title="删除" class="btn btn-default btn-xs"><i class="fa fa-trash-o text-vo"></i></button>
-							</div>
-							<div class="col-sm-4 pull-center">
-								<span class="badge badge-empty">comment</span>
-							</div>
-						</div><!-- .form-group -->
-						<div class="col-sm-12 category_mapping_bg_list">
-							<div class="col-sm-2 text-left m-l-xxlg"><i class="fa fa-minus"></i> 商品卖点201</div>
-							<div class="pull-right">
-								<span class="badge badge-initialize">input</span>
-							</div>
-							<div class="col-sm-1 text-left btn-group">
-								<button title="增加" class="btn btn-default btn-xs"><i class="fa fa-plus-circle text-vo"></i></button>
-								<button title="编辑" class="btn btn-default btn-xs" ng-click="openSystemCategory('md')"><i class="fa fa-pencil text-vo"></i></button>
-								<button title="删除" class="btn btn-default btn-xs"><i class="fa fa-trash-o text-vo"></i></button>
-							</div>
-							<div class="col-sm-4 pull-center">
-								<span class="badge badge-empty">comment</span>
-							</div>
-						</div><!-- .form-group -->
-						<div class="col-sm-12 category_mapping_bg_list">
-							<div class="col-sm-2 text-left m-l-xxlg"><i class="fa fa-minus"></i> 商品卖点202</div>
-							<div class="pull-right">
-								<span class="badge badge-initialize">input</span>
-							</div>
-							<div class="col-sm-1 text-left btn-group">
-								<button title="增加" class="btn btn-default btn-xs"><i class="fa fa-plus-circle text-vo"></i></button>
-								<button title="编辑" class="btn btn-default btn-xs" ng-click="openSystemCategory('md')"><i class="fa fa-pencil text-vo"></i></button>
-								<button title="删除" class="btn btn-default btn-xs"><i class="fa fa-trash-o text-vo"></i></button>
-							</div>
-							<div class="col-sm-4 pull-center">
-								<span class="badge badge-empty">comment</span>
-							</div>
-						</div><!-- .form-group -->
-						<div class="col-sm-12 category_mapping_bg_list">
-							<div class="col-sm-2 text-left m-l-xxlg"><i class="fa fa-minus"></i> 商品卖点203</div>
-							<div class="pull-right">
-								<span class="badge badge-initialize">input</span>
-							</div>
-							<div class="col-sm-1 text-left btn-group">
-								<button title="增加" class="btn btn-default btn-xs"><i class="fa fa-plus-circle text-vo"></i></button>
-								<button title="编辑" class="btn btn-default btn-xs" ng-click="openSystemCategory('md')"><i class="fa fa-pencil text-vo"></i></button>
-								<button title="删除" class="btn btn-default btn-xs"><i class="fa fa-trash-o text-vo"></i></button>
-							</div>
-							<div class="col-sm-4 pull-center">
-								<span class="badge badge-empty">comment</span>
-							</div>
-						</div><!-- .form-group -->
-						<div class="col-sm-12 category_mapping_bg_list">
-							<div class="col-sm-2 text-left m-l-xlg"><i class="fa fa-minus"></i> 商品卖点22</div>
-							<div class="pull-right">
-								<span class="badge badge-initialize">input</span>
-							</div>
-							<div class="col-sm-1 text-left btn-group">
-								<button title="增加" class="btn btn-default btn-xs"><i class="fa fa-plus-circle text-vo"></i></button>
-								<button title="编辑" class="btn btn-default btn-xs" ng-click="openSystemCategory('md')"><i class="fa fa-pencil text-vo"></i></button>
-								<button title="删除" class="btn btn-default btn-xs"><i class="fa fa-trash-o text-vo"></i></button>
-							</div>
-							<div class="col-sm-4 pull-center">
-								<span class="badge badge-empty">comment</span>
-							</div>
-						</div><!-- .form-group -->
-						<div class="col-sm-12 category_mapping_bg_list">
-							<div class="col-sm-2 text-left m-l-xlg"><i class="fa fa-minus"></i> 商品卖点23</div>
-							<div class="pull-right">
-								<span class="badge badge-initialize">input</span>
-							</div>
-							<div class="col-sm-1 text-left btn-group">
-								<button title="增加" class="btn btn-default btn-xs"><i class="fa fa-plus-circle text-vo"></i></button>
-								<button title="编辑" class="btn btn-default btn-xs" ng-click="openSystemCategory('md')"><i class="fa fa-pencil text-vo"></i></button>
-								<button title="删除" class="btn btn-default btn-xs"><i class="fa fa-trash-o text-vo"></i></button>
-							</div>
-							<div class="col-sm-4 pull-center">
-								<span class="badge badge-empty">comment</span>
-							</div>
-						</div><!-- .form-group -->
-						<div class="col-sm-12 category_mapping_bg_list">
-							<div class="col-sm-2 text-left m-l-xlg"><i class="fa fa-minus"></i> 商品卖点24</div>
-							<div class="pull-right">
-								<span class="badge badge-initialize">input</span>
-							</div>
-							<div class="col-sm-1 text-left btn-group">
-								<button title="增加" class="btn btn-default btn-xs"><i class="fa fa-plus-circle text-vo"></i></button>
-								<button title="编辑" class="btn btn-default btn-xs" ng-click="openSystemCategory('md')"><i class="fa fa-pencil text-vo"></i></button>
-								<button title="删除" class="btn btn-default btn-xs"><i class="fa fa-trash-o text-vo"></i></button>
-							</div>
-							<div class="col-sm-4 pull-center">
-								<span class="badge badge-empty">comment</span>
-							</div>
-						</div><!-- .form-group -->
-						<div class="col-sm-12 category_mapping_bg_list">
-							<div class="col-sm-2 text-left m-l-lg"><i class="fa fa-minus"></i> 商品卖点3</div>
-							<div class="pull-right">
-								<span class="badge badge-initialize">input</span>
-							</div>
-							<div class="col-sm-1 text-left btn-group">
-								<button title="增加" class="btn btn-default btn-xs"><i class="fa fa-plus-circle text-vo"></i></button>
-								<button title="编辑" class="btn btn-default btn-xs" ng-click="openSystemCategory('md')"><i class="fa fa-pencil text-vo"></i></button>
-								<button title="删除" class="btn btn-default btn-xs"><i class="fa fa-trash-o text-vo"></i></button>
-							</div>
-							<div class="col-sm-4 pull-center">
-								<span class="badge badge-empty">comment</span>
-							</div>
-						</div><!-- .form-group -->
-						<div class="col-sm-12 category_mapping_bg_list">
-							<div class="col-sm-2 text-left m-l-lg"><i class="fa fa-minus"></i> 商品卖点4</div>
-							<div class="pull-right">
-								<span class="badge badge-initialize">input</span>
-							</div>
-							<div class="col-sm-1 text-left btn-group">
-								<button title="增加" class="btn btn-default btn-xs"><i class="fa fa-plus-circle text-vo"></i></button>
-								<button title="编辑" class="btn btn-default btn-xs" ng-click="openSystemCategory('md')"><i class="fa fa-pencil text-vo"></i></button>
-								<button title="删除" class="btn btn-default btn-xs"><i class="fa fa-trash-o text-vo"></i></button>
-							</div>
-							<div class="col-sm-4 pull-center">
-								<span class="badge badge-empty">comment</span>
-							</div>
-						</div><!-- .form-group -->
-						<div class="col-sm-12 category_mapping_bg_list">
-							<div class="col-sm-2 text-left m-l-lg"><i class="fa fa-minus"></i> 商品卖点5</div>
-							<div class="pull-right">
-								<span class="badge badge-initialize">input</span>
-							</div>
-							<div class="col-sm-1 text-left btn-group">
-								<button title="增加" class="btn btn-default btn-xs"><i class="fa fa-plus-circle text-vo"></i></button>
-								<button title="编辑" class="btn btn-default btn-xs" ng-click="openSystemCategory('md')"><i class="fa fa-pencil text-vo"></i></button>
-								<button title="删除" class="btn btn-default btn-xs"><i class="fa fa-trash-o text-vo"></i></button>
-							</div>
-							<div class="col-sm-4 pull-center">
-								<span class="badge badge-empty">comment</span>
-							</div>
-						</div><!-- .form-group -->
-						<div class="col-sm-12 category_mapping_bg">
-							<div class="col-sm-2 text-left"><i class="fa fa-minus"></i> 商品状态</div>
-							<div class="pull-right">
-								<span class="badge badge-success">singleCheck</span>
-							</div>
-							<div class="col-sm-1 text-left btn-group">
-								<button title="增加" class="btn btn-default btn-xs"><i class="fa fa-plus-circle text-vo"></i></button>
-								<button title="编辑" class="btn btn-default btn-xs" ng-click="openSystemCategory('md')"><i class="fa fa-pencil text-vo"></i></button>
-								<button title="删除" class="btn btn-default btn-xs"><i class="fa fa-trash-o text-vo"></i></button>
-							</div>
-							<div class="col-sm-4 pull-center">
-								<span class="badge badge-empty">comment</span>
-							</div>
-						</div><!-- .form-group -->
-						<div class="col-sm-12 category_mapping_bg">
-							<div class="col-sm-2 text-left"><i class="fa fa-minus"></i> 开始时间</div>
-							<div class="pull-right">
-								<span class="badge badge-initialize">input</span>
-							</div>
-							<div class="col-sm-1 text-left btn-group">
-								<button title="增加" class="btn btn-default btn-xs"><i class="fa fa-plus-circle text-vo"></i></button>
-								<button title="编辑" class="btn btn-default btn-xs" ng-click="openSystemCategory('md')"><i class="fa fa-pencil text-vo"></i></button>
-								<button title="删除" class="btn btn-default btn-xs"><i class="fa fa-trash-o text-vo"></i></button>
-							</div>
-							<div class="col-sm-4 pull-center">
-								<span class="badge badge-empty">comment</span>
-							</div>
-						</div><!-- .form-group -->
-						<div class="col-sm-12 category_mapping_bg">
-							<div class="col-sm-2 text-left"><i class="fa fa-minus"></i> 发布类型</div>
-							<div class="pull-right">
-								<span class="badge badge-success">singleCheck</span>
-							</div>
-							<div class="col-sm-1 text-left btn-group">
-								<button title="增加" class="btn btn-default btn-xs"><i class="fa fa-plus-circle text-vo"></i></button>
-								<button title="编辑" class="btn btn-default btn-xs" ng-click="openSystemCategory('md')"><i class="fa fa-pencil text-vo"></i></button>
-								<button title="删除" class="btn btn-default btn-xs"><i class="fa fa-trash-o text-vo"></i></button>
-							</div>
-							<div class="col-sm-4 pull-center">
-								<span class="badge badge-empty">comment</span>
-							</div>
-						</div><!-- .form-group -->
-						<div class="col-sm-12 category_mapping_bg">
-							<div class="col-sm-2 text-left"><i class="fa fa-minus"></i> 宝贝类型</div>
-							<div class="pull-right">
-								<span class="badge badge-success">singleCheck</span>
-							</div>
-							<div class="col-sm-1 text-left btn-group">
-								<button title="增加" class="btn btn-default btn-xs"><i class="fa fa-plus-circle text-vo"></i></button>
-								<button title="编辑" class="btn btn-default btn-xs" ng-click="openSystemCategory('md')"><i class="fa fa-pencil text-vo"></i></button>
-								<button title="删除" class="btn btn-default btn-xs"><i class="fa fa-trash-o text-vo"></i></button>
-							</div>
-							<div class="col-sm-4 pull-center">
-								<span class="badge badge-empty">comment</span>
-							</div>
-						</div><!-- .form-group -->
-						<div class="col-sm-12 category_mapping_bg">
-							<div class="col-sm-2 text-left"><i class="fa fa-minus"></i> 拍下减库存</div>
-							<div class="pull-right">
-								<span class="badge badge-success">singleCheck</span>
-							</div>
-							<div class="col-sm-1 text-left btn-group">
-								<button title="增加" class="btn btn-default btn-xs"><i class="fa fa-plus-circle text-vo"></i></button>
-								<button title="编辑" class="btn btn-default btn-xs" ng-click="openSystemCategory('md')"><i class="fa fa-pencil text-vo"></i></button>
-								<button title="删除" class="btn btn-default btn-xs"><i class="fa fa-trash-o text-vo"></i></button>
-							</div>
-							<div class="col-sm-4 pull-center">
-								<span class="badge badge-empty">comment</span>
-							</div>
-						</div><!-- .form-group -->
-						<div class="col-sm-12 category_mapping_bg">
-							<div class="col-sm-2 text-left"><i class="fa fa-minus"></i> 商品秒杀</div>
-							<div class="pull-right">
-								<span class="badge badge-failure">multiComplex</span>
-							</div>
-							<div class="col-sm-1 text-left btn-group">
-								<button title="增加" class="btn btn-default btn-xs"><i class="fa fa-plus-circle text-vo"></i></button>
-								<button title="编辑" class="btn btn-default btn-xs" ng-click="openSystemCategory('md')"><i class="fa fa-pencil text-vo"></i></button>
-								<button title="删除" class="btn btn-default btn-xs"><i class="fa fa-trash-o text-vo"></i></button>
-							</div>
-							<div class="col-sm-4 pull-center">
-								<span class="badge badge-empty">comment</span>
-							</div>
-						</div><!-- .form-group -->
-						<div class="col-sm-12 category_mapping_bg">
-							<div class="col-sm-2 text-left"><i class="fa fa-minus"></i> 风格</div>
-							<div class="pull-right">
-								<span class="badge badge-success">singleCheck</span>
-							</div>
-							<div class="col-sm-1 text-left btn-group">
-								<button title="增加" class="btn btn-default btn-xs"><i class="fa fa-plus-circle text-vo"></i></button>
-								<button title="编辑" class="btn btn-default btn-xs" ng-click="openSystemCategory('md')"><i class="fa fa-pencil text-vo"></i></button>
-								<button title="删除" class="btn btn-default btn-xs"><i class="fa fa-trash-o text-vo"></i></button>
-							</div>
-							<div class="col-sm-4 pull-center">
-								<span class="badge badge-empty">comment</span>
-							</div>
-						</div><!-- .form-group -->
-						<div class="col-sm-12 category_mapping_bg">
-							<div class="col-sm-2 text-left"><i class="fa fa-minus"></i> 尺码分组</div>
-							<div class="pull-right">
-								<span class="badge badge-success">singleCheck</span>
-							</div>
-							<div class="col-sm-1 text-left btn-group">
-								<button title="增加" class="btn btn-default btn-xs"><i class="fa fa-plus-circle text-vo"></i></button>
-								<button title="编辑" class="btn btn-default btn-xs" ng-click="openSystemCategory('md')"><i class="fa fa-pencil text-vo"></i></button>
-								<button title="删除" class="btn btn-default btn-xs"><i class="fa fa-trash-o text-vo"></i></button>
-							</div>
-							<div class="col-sm-4 pull-center">
-								<span class="badge badge-empty">comment</span>
-							</div>
-						</div><!-- .form-group -->
-						<div class="col-sm-12 category_mapping_bg">
-							<div class="col-sm-2 text-left"><i class="fa fa-minus"></i> 自定义销售属性分组</div>
-							<div class="pull-right">
-								<span class="badge badge-success">singleCheck</span>
-							</div>
-							<div class="col-sm-1 text-left btn-group">
-								<button title="增加" class="btn btn-default btn-xs"><i class="fa fa-plus-circle text-vo"></i></button>
-								<button title="编辑" class="btn btn-default btn-xs" ng-click="openSystemCategory('md')"><i class="fa fa-pencil text-vo"></i></button>
-								<button title="删除" class="btn btn-default btn-xs"><i class="fa fa-trash-o text-vo"></i></button>
-							</div>
-							<div class="col-sm-4 pull-center">
-								<span class="badge badge-empty">comment</span>
-							</div>
-						</div><!-- .form-group -->
+						</div>
 					</div>
 					<div class="col-sm-12">
 						<div class="row">
@@ -396,7 +64,48 @@
 	</div><!-- .col-lg-12 -->
 </div><!-- end .wrapper-md -->
 
+<script id="fieldView" type="text/ng-template">
+	<!-- input -->
+	<!--<fieldset ng-if="field.type=='INPUT' || field.type=='SINGLECHECK' || field.type=='MULTICHECK' || field.type =='LABEL'">-->
+		<div class="col-sm-12 "ng-class="{'category_mapping_bg_one':level==0 && (field.type=='MULTICOMPLEX'|| field.type=='COMPLEX'),'category_mapping_bg':level==0 && field.type!='MULTICOMPLEX'&& field.type!='COMPLEX','category_mapping_bg_list':level>0}">
+			<div class="col-sm-2 text-left " ng-class="{'m-l-lg':level==1,'m-l-xlg':level==2,'m-l-xxlg':level==3,'m-l-xxxlg':level==4}"><i ng-class="{'fa fa-minus':field.fields==null,'fa fa-plus':field.fields!=null}"></i> {{field.name}}</div>
+			<div class="pull-right">
+				<span class="badge" ng-class="{'badge-initialize':field.type == 'INPUT','badge-darkPurple': field.type == 'LABEL', 'badge-success':field.type == 'SINGLECHECK','badge-darkBlue': field.type == 'MULTICHECK' , 'badge-refresh':field.type == 'COMPLEX', 'badge-failure':field.type == 'MULTICOMPLEX'}">{{field.type}}</span>
+			</div>
+			<div class="col-sm-1 text-left btn-group">
+				<button title="增加" class="btn btn-default btn-xs"><i class="fa fa-plus-circle text-vo"></i></button>
+				<button title="编辑" class="btn btn-default btn-xs" ng-click="openSystemCategory('md')"><i class="fa fa-pencil text-vo"></i></button>
+				<button title="删除" ng-click="delNode(parent,field)" class="btn btn-default btn-xs"><i class="fa fa-trash-o text-vo"></i></button>
+			</div>
+			<div class="col-sm-4 pull-center">
+				<span class="badge badge-empty">comment</span>
+			</div>
+		</div>
 
+	<!-- multicomplex -->
+	<!--<fieldset ng-if="field.type=='MULTICOMPLEX'|| field.type=='COMPLEX'">-->
+		<!--<div class="col-sm-12" ng-class="{'category_mapping_bg_one':level==0,'category_mapping_bg_list':level>0}">-->
+			<!--<div class="col-sm-2 text-left" ng-class="{'m-l-lg':level==1,'m-l-xlg':level==2,'m-l-xxlg':level==3,'m-l-xxxlg':level==4}"><i class="fa fa-plus"></i>{{field.name}}</div>-->
+			<!--<div class="pull-right">-->
+				<!--<span class="badge badge-initialize">{{field.type}}</span>-->
+			<!--</div>-->
+			<!--<div class="col-sm-1 text-left btn-group">-->
+				<!--<button title="增加" class="btn btn-default btn-xs"><i class="fa fa-plus-circle text-vo"></i></button>-->
+				<!--<button title="编辑" class="btn btn-default btn-xs" ng-click="openSystemCategory('md')"><i class="fa fa-pencil text-vo"></i></button>-->
+				<!--<button title="删除" class="btn btn-default btn-xs"><i class="fa fa-trash-o text-vo"></i></button>-->
+			<!--</div>-->
+			<!--<div class="col-sm-4 pull-center">-->
+				<!--<span class="badge badge-empty">comment</span>-->
+			<!--</div>-->
+		<!--</div>-->
+	<!--</fieldset>-->
+	<div ng-if="field.type=='MULTICOMPLEX'|| field.type=='COMPLEX'">
+		<div ng-repeat ="item in field.fieldList">
+			<div ng-include="'fieldView'"  ng-init="parent = field.fieldList; field = item; level = level + 1">
+			</div>
+		</div>
+	</div>
+</script>
 
 
 
