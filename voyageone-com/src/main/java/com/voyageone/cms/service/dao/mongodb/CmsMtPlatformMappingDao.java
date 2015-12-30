@@ -28,8 +28,18 @@ public class CmsMtPlatformMappingDao extends BaseMongoDao {
                 "}";
         String queryStr = String.format(queryStrTemp, channelId, cartId, platformCategoryId);
         return selectOneWithQuery(queryStr);
-    }
 
+
+    }
+    public long isExist(String channelId, int cartId, String platformCategoryId) {
+        String queryStrTemp = "{" +
+                "channelId:'%s'" +
+                ",platformCartId:%s" +
+                ",platformCategoryId:'%s'" +
+                "}";
+        String queryStr = String.format(queryStrTemp, channelId, cartId, platformCategoryId);
+        return mongoTemplate.count(queryStr,collectionName);
+    }
     public CmsMtPlatformMappingModel getMappingByMainCatId(String channelId, int cartId, String mainCatId) {
         String queryStrTemp = "{" +
                 "channelId:'%s'" +
