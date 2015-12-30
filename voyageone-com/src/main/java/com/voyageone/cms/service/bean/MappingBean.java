@@ -15,7 +15,7 @@ import com.voyageone.common.util.StringUtils;
 @JsonSubTypes({
         @JsonSubTypes.Type(value = SimpleMappingBean.class, name = MappingBean.MAPPING_SIMPLE),
         @JsonSubTypes.Type(value = ComplexMappingBean.class, name = MappingBean.MAPPING_COMPLEX),
-        @JsonSubTypes.Type(value = MultiComplexCustomMappingBean.MultiComplexCustomMappingValue.class, name = MappingBean.MAPPING_MULTICOMPLEX_CUSTOM)
+        @JsonSubTypes.Type(value = MultiComplexCustomMappingBean.class, name = MappingBean.MAPPING_MULTICOMPLEX_CUSTOM)
 })
 public class MappingBean {
     public static final String MAPPING_SIMPLE = "0";

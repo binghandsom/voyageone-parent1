@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
         value  = "/rest/puroduct/group",
         method = RequestMethod.POST
 )
-public class ProductGroupGetController extends BaseController {
+public class ProductGroupController extends BaseController {
 
     @Autowired
     private ProductGroupGetService productGroupService;

@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
         value  = "/rest/puroduct",
         method = RequestMethod.POST
 )
-public class ProductGetController extends BaseController {
+public class ProductController extends BaseController {
 
     @Autowired
     private ProductGetService productService;
