@@ -51,7 +51,7 @@
     <div class="channel-main-con text-center">
         <div class="channel-main" ng-repeat="channel in channels">
             <img src="{{channel.channelImgUrl || 'static/img/NoImageAvailable.png'}}" alt="">
-            <h4 ng-if="!channel.channelImgUrl">{{channel.channelName}}</h4>
+            <h4>{{channel.channelName}}</h4>
             <ul class="list-inline channel-list">
                 <li ng-repeat="app in channel.apps"><a href="javascript:void(0);" ng-click="choose(channel, app)">{{app}}</a></li>
             </ul>
