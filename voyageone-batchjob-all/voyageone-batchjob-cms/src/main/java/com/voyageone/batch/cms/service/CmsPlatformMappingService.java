@@ -3,9 +3,7 @@ package com.voyageone.batch.cms.service;
 import com.jayway.jsonpath.JsonPath;
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
-import com.voyageone.cms.service.bean.ComplexMappingBean;
-import com.voyageone.cms.service.bean.MappingBean;
-import com.voyageone.cms.service.bean.SimpleMappingBean;
+import com.voyageone.cms.service.bean.*;
 import com.voyageone.cms.service.dao.CmsMtCommonPropDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategoryDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategorySchemaDao;
@@ -75,7 +73,8 @@ public class CmsPlatformMappingService extends BaseTaskService {
                     // 叶子节点循环
                     for (CmsMtPlatformCategoryTreeModel finallyCategory : finallyCategories) {
                         // 该叶子节点mapping关系没有生成过的场合
-                        if (cmsMtPlatformMappingDao.getMapping(channelId, cartId, finallyCategory.getCatId()) == null) {
+                        if (cmsMtPlatformMappingDao.isExist(channelId, cartId, finallyCategory.getCatId()) == 0) {
+//                        if (cmsMtPlatformMappingDao.getMapping(channelId, cartId, finallyCategory.getCatId()) == null) {
                             logger.info(finallyCategory.getCatPath());
                             finallyCategory.setCartId(platformCategory.getCartId());
                             // 生成mapping关系数据并插入
@@ -156,6 +155,39 @@ public class CmsPlatformMappingService extends BaseTaskService {
             ruleExpression.addRuleWord(new DictWord("详情页描述"));
             SimpleMappingBean simpleMappingBean = new SimpleMappingBean(field.getId(),ruleExpression);
             return simpleMappingBean;
+        }
+
+        if("wap_desc".equalsIgnoreCase(field.getId())){
+            ComplexMappingBean complexMappingBean = new ComplexMappingBean();
+            complexMappingBean.setPlatformPropId("wap_desc");
+
+            RuleExpression summaryExpression = new RuleExpression();
+            summaryExpression.addRuleWord(new TextWord("summary desc"));
+            SimpleMappingBean simpleMappingBean = new SimpleMappingBean("wap_desc_summary", summaryExpression);
+            complexMappingBean.addSubMapping(simpleMappingBean);
+
+            MultiComplexCustomMappingBean mappingBean = new MultiComplexCustomMappingBean();
+            mappingBean.setPlatformPropId("wap_desc_content");
+            MultiComplexCustomMappingValue value1 = new MultiComplexCustomMappingValue();
+            RuleExpression ruleExpression11 = new RuleExpression();
+            RuleExpression ruleExpression12 = new RuleExpression();
+            ruleExpression11.addRuleWord(new TextWord("image"));
+            ruleExpression12.addRuleWord(new TextWord("https://img.alicdn.com/imgextra/i4/2183719539/TB2WnY7iVXXXXXSXpXXXXXXXXXX_!!2183719539.jpg"));
+            value1.addSubMapping(new SimpleMappingBean("wap_desc_content_type", ruleExpression11));
+            value1.addSubMapping(new SimpleMappingBean("wap_desc_content_content", ruleExpression12));
+
+            MultiComplexCustomMappingValue value2 = new MultiComplexCustomMappingValue();
+            RuleExpression ruleExpression21 = new RuleExpression();
+            RuleExpression ruleExpression22 = new RuleExpression();
+            ruleExpression21.addRuleWord(new TextWord("text"));
+            ruleExpression22.addRuleWord(new MasterWord("longTitle"));
+            value2.addSubMapping(new SimpleMappingBean("wap_desc_content_type", ruleExpression21));
+            value2.addSubMapping(new SimpleMappingBean("wap_desc_content_content", ruleExpression22));
+            mappingBean.addValue(value1);
+            mappingBean.addValue(value2);
+
+            complexMappingBean.addSubMapping(mappingBean);
+            return complexMappingBean;
         }
         // 把类目ID中的【.】替换成【->】
 //        field.setId(StringUtils.replaceDot(field.getId()));
