@@ -4,6 +4,10 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
 import com.voyageone.cms.service.model.*;
 import com.voyageone.cms.service.model.feed.mapping.Prop;
+import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
+import com.voyageone.common.masterdate.schema.field.ComplexField;
+import com.voyageone.common.masterdate.schema.field.Field;
+import com.voyageone.common.masterdate.schema.field.MultiComplexField;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.setting.mapping.feed.GetFieldMappingBean;
 import com.voyageone.web2.cms.bean.setting.mapping.feed.SaveFieldMappingBean;
@@ -46,7 +50,7 @@ public class CmsFeedPropMappingService extends BaseAppService {
      * @param userSessionBean  当前用户及配置
      * @return 主类目
      */
-    public CmsMtCategorySchemaModel getCategoryPropsByFeed(String feedCategoryPath, UserSessionBean userSessionBean) throws UnsupportedEncodingException {
+    public CmsMtCategorySchemaModel getCategoryPropsByFeed(String feedCategoryPath, UserSessionBean userSessionBean) {
 
         CmsMtFeedCategoryTreeModelx treeModel = feedMappingService.getFeedCategoryTree(userSessionBean);
 
@@ -121,11 +125,15 @@ public class CmsFeedPropMappingService extends BaseAppService {
      * @param categoryPath 类目路径
      * @return String
      */
-    public String convertPathToId(String categoryPath) throws UnsupportedEncodingException {
+    public String convertPathToId(String categoryPath) {
 
         // 当前为 Path 的 Base64 码
         // 有可能未来更改为 MD5
-        return new String(Base64.encodeBase64(categoryPath.getBytes("UTF-8")), "UTF-8");
+        try {
+            return new String(Base64.encodeBase64(categoryPath.getBytes("UTF-8")), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            return null;
+        }
     }
 
     /**
@@ -173,7 +181,22 @@ public class CmsFeedPropMappingService extends BaseAppService {
 
         prop.setMappings(Submitted.getMappings());
 
+        feedMappingModel.setMatchOver(hasComplete(feedMappingModel) ? 1 : 0);
+
         com$feedMappingService.setMapping(feedMappingModel);
+    }
+
+    private boolean hasComplete(CmsBtFeedMappingModel feedMappingModel) {
+
+        String categoryId = convertPathToId(feedMappingModel.getScope().getMainCategoryPath());
+
+        CmsMtCategorySchemaModel categorySchemaModel = categorySchemaDao.getMasterSchemaModelByCatId(categoryId);
+
+        long fieldCount = flattenFinalField(categorySchemaModel.getFields()).count();
+
+        long propCount = flattenFinalProp(feedMappingModel.getProps()).count();
+
+        return fieldCount == propCount;
     }
 
     /**
@@ -227,5 +250,21 @@ public class CmsFeedPropMappingService extends BaseAppService {
             return Stream.of(prop);
 
         return flattenFinalProp(children);
+    }
+
+    private Stream<Field> flattenFinalField(List<Field> fields) {
+
+        return fields.stream().flatMap(this::flattenFinalField);
+    }
+
+    private Stream<Field> flattenFinalField(Field field) {
+
+        if (field.getType() == FieldTypeEnum.COMPLEX) {
+            return flattenFinalField(((ComplexField) field).getFieldList());
+        } else if (field.getType() == FieldTypeEnum.MULTICOMPLEX) {
+            return flattenFinalField(((MultiComplexField) field).getFieldList());
+        }
+
+        return Stream.of(field);
     }
 }
