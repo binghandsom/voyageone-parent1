@@ -6,47 +6,48 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popNewPromotionCtl', function ($scope,promotionService,items) {
+    angularAMD.controller('popCategorySchemaCtl', function ($scope, systemCategoryService, item, catFullName) {
 
-        $scope.promotion = {};
-        $scope.tejiabao=false;
+        $scope.vm = {"schema": {}};
+        $scope.newOption = {};
 
-        $scope.initialize  = function () {
-            if(items){
-                $scope.promotion = items
+        $scope.initialize = function () {
+            if (item) {
+                $scope.vm.schema = _.clone(item);
+                if (item.options) {
+                    $scope.vm.schema.options = _.map(item.options, _.clone);
+                }
+                $scope.vm.catFullName = catFullName;
             }
         }
+        // 添加option
+        $scope.addOption = function () {
+            $scope.vm.schema.options.push($scope.newOption);
+            $scope.newOption = {};
+        }
 
-        $scope.ok = function(){
-
-            if(!items) {
-                promotionService.insertPromotion($scope.promotion).then(function (res) {
-                    $scope.$close();
-                }, function (res) {
-                    alert("e");
-                })
-            }else{
-                promotionService.updatePromotion($scope.promotion).then(function (res) {
-                    $scope.$close();
-                }, function (res) {
-                    alert("e");
-                })
+        $scope.delOption = function (option) {
+            var index;
+            index = _.indexOf($scope.vm.schema.options, option);
+            if (index > -1) {
+                $scope.vm.schema.options.splice(index, 1);
             }
+        }
+        $scope.ok = function () {
+            for (key in $scope.vm.schema) {
+                item[key] = $scope.vm.schema[key];
+            }
+            switch (item.type) {
+                case "INPUT":
+                case "LABEL":
+                case "MULTICOMPLEX":
+                case "COMPLEX":
+                    if (item.options) {
+                        delete item.options;
+                    }
+                    break;
+            }
+            $scope.$close();
         }
     });
-
-    //return function ($scope,promotionService) {
-    //
-    //    $scope.promotion = {};
-    //    $scope.name = "123";
-    //
-    //    $scope.initialize  = function () {
-    //        alert("a");
-    //    }
-    //
-    //    $scope.ok = function(){
-    //        alert("e");
-    //    }
-    //
-    //};
 });
