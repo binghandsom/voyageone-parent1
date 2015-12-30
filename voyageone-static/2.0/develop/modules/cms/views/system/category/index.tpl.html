@@ -47,8 +47,8 @@
 					<tbody>
 					<tr ng-repeat="item in vm.categoryList">
 						<td>{{$index+1+((categoryPageOption.curr - 1) * categoryPageOption.size)}}</td>
-						<td>{{item.catFullPath}}</td>
-						<td>{{item.catId}}</td>
+						<td class="text-left">{{item.catFullPath}}</td>
+						<td class="text-left">{{item.catId}}</td>
 						<td class="text-right"><a href="#/system/category/edit/{{item.catId.replace('/','2fff')}}"><button title="编辑" class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a></td>
 					</tr>
 					</tbody>
