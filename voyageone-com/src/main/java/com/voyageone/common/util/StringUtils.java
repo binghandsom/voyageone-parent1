@@ -5,8 +5,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.commons.net.util.Base64;
 
 import java.math.BigDecimal;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
