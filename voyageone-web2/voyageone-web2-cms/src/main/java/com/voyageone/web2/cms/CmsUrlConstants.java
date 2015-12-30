@@ -40,6 +40,8 @@ public interface CmsUrlConstants {
             String GET_FIELD_MAPPING = "getFieldMapping";
 
             String GET_FEED_ATTRS = "getFeedAttributes";
+
+            String SAVE_FIELD_MAPPING = "saveFieldMapping";
         }
     }
 

@@ -39,7 +39,8 @@
         "getMainProps": "getMainCategoryProps",
         "getMatched": "getMatched",
         "getFieldMapping": "getFieldMapping",
-        "getFeedAttrs": "getFeedAttributes"
+        "getFeedAttrs": "getFeedAttributes",
+        "saveFieldMapping": "saveFieldMapping"
       }
     },
     "pop": {

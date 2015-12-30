@@ -10,11 +10,11 @@
             <div class="form-group category_mapping_bg">
                 <label class="col-sm-1 checkbox-inline c-radio needsclick">
                     <input id="pop-set-match-val-radios-feed" type="radio" name="pop-set-match-val-radios"
-                           ng-model="ctrl.mappingSetting.type" ng-value="'feed'"/>
+                           ng-model="ctrl.mappingSetting.type" ng-value="'propFeed'"/>
                     <span class="fa fa-check"></span>
                 </label>
                 <label for="pop-set-match-val-radios-feed" class="col-sm-2 control-label">Feed 属性</label>
-                <div class="col-sm-5" ng-if="ctrl.mappingSetting.type === 'feed'">
+                <div class="col-sm-5" ng-if="ctrl.mappingSetting.type === 'propFeed'">
                     <select class="form-control" title="Feed Attributes"
                             ng-options="k as k for (k,v) in ctrl.feedAttributes"
                             ng-model="ctrl.value.feed"></select>
