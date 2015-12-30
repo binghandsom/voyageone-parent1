@@ -52,7 +52,7 @@ public class ExpressionParser {
                 String plainValue = "";
                 switch (ruleWord.getWordType()) {
                     case TEXT:
-                        plainValue = textWordParser.parse(ruleWord);
+                        plainValue = textWordParser.parse(ruleWord, imageSet);
                         break;
                     case MASTER: {
                         plainValue = masterWordParser.parse(ruleWord);
