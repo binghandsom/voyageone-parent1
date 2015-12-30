@@ -46,10 +46,19 @@ public class CmsCategoryListController extends CmsController {
     @RequestMapping(SYSTEM.CATEGORY.GET_CATEGORY_DETAIL)
     public AjaxResponse getCategoryById(@RequestBody String id) {
 
+//        JSONObject resultBean = cmsCategoryListService.getMasterSchemaJsonObjectByCatId(id);
         CmsMtCategorySchemaModel resultBean = cmsCategoryListService.getMasterSchemaModelByCatId(id);
 
         // 返回用户信息
         return success(resultBean);
+    }
+
+    @RequestMapping(SYSTEM.CATEGORY.UPDATE_CATEGORY_SCHEMA)
+    public  AjaxResponse updateCategorySchema(@RequestBody Map categorySchema) {
+
+        CmsMtCategorySchemaModel resultBean = cmsCategoryListService.updateCategorySchema(categorySchema, getUser().getUserName());
+        // 返回用户信息
+        return success(resultBean.getModified());
     }
 
 }

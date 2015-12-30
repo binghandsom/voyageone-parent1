@@ -348,6 +348,18 @@ public class CmsBtProductDao extends BaseMongoPartDao {
      * @return 运行结果
      */
     public BulkWriteResult bulkUpdateWithMap(String channelId, List<BulkUpdateModel> bulkList, String modifier, String key) {
+        return bulkUpdateWithMap(channelId, bulkList, modifier, key, false);
+    }
+
+    /**
+     * 批量更新记录
+     * @param channelId 渠道ID
+     * @param bulkList  更新条件
+     * @param modifier  更新者
+     * @param key       MongoKey pop,set,push,addToSet
+     * @return 运行结果
+     */
+    public BulkWriteResult bulkUpdateWithMap(String channelId, List<BulkUpdateModel> bulkList, String modifier, String key, boolean isUpsert) {
         //获取集合名
         DBCollection coll = getDBCollection(channelId);
         BulkWriteOperation bwo = coll.initializeOrderedBulkOperation();
@@ -376,7 +388,11 @@ public class CmsBtProductDao extends BaseMongoPartDao {
             //生成查询对象
             BasicDBObject queryObj = setDBObjectWithMap(model.getQueryMap());
 
-            bwo.find(queryObj).update(updateObj);
+            if (isUpsert) {
+                bwo.find(queryObj).upsert().update(updateObj);
+            } else {
+                bwo.find(queryObj).update(updateObj);
+            }
         }
         //最终批量运行
         return bwo.execute();

@@ -5,15 +5,25 @@ package com.voyageone.ims.rule_expression;
  */
 public class TextWord extends RuleWord {
     private String value;
+    private boolean isUrl;
 
     public TextWord() {
         setWordType(WordType.TEXT);
+        isUrl = false;
     }
 
     public TextWord(String value)
     {
         this();
         this.value = value;
+    }
+
+    public boolean isUrl() {
+        return isUrl;
+    }
+
+    public void setUrl(boolean url) {
+        isUrl = url;
     }
 
     @Override

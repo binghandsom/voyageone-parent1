@@ -12,11 +12,11 @@ public class ProductSkuPriceModel {
     //skuCode
     private String skuCode;
     //msrp价格区间
-    private Double msrp;
+    private Double priceMsrp;
     //建议市场价格区间
-    private Double retailPrice;
+    private Double priceRetail;
     //当前销售价格区间
-    private Double salePrice;
+    private Double priceSale;
 
     public String getSkuCode() {
         return skuCode;
@@ -26,27 +26,27 @@ public class ProductSkuPriceModel {
         this.skuCode = skuCode;
     }
 
-    public Double getMsrp() {
-        return msrp;
+    public Double getPriceMsrp() {
+        return priceMsrp;
     }
 
-    public void setMsrp(Double msrp) {
-        this.msrp = msrp;
+    public void setPriceMsrp(Double priceMsrp) {
+        this.priceMsrp = priceMsrp;
     }
 
-    public Double getRetailPrice() {
-        return retailPrice;
+    public Double getPriceRetail() {
+        return priceRetail;
     }
 
-    public void setRetailPrice(Double retailPrice) {
-        this.retailPrice = retailPrice;
+    public void setPriceRetail(Double priceRetail) {
+        this.priceRetail = priceRetail;
     }
 
-    public Double getSalePrice() {
-        return salePrice;
+    public Double getPriceSale() {
+        return priceSale;
     }
 
-    public void setSalePrice(Double salePrice) {
-        this.salePrice = salePrice;
+    public void setPriceSale(Double priceSale) {
+        this.priceSale = priceSale;
     }
 }
