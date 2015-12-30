@@ -53,20 +53,20 @@ public class SxPrepareData {
         CmsBtProductModel_Field fields = product.getFields();
         fields.setCode(code);
         fields.setBrand(brand);
-        fields.setAttribute("productName", "Stud Earrings with Cubic Zirconia in Sterling Silver " + code);
+        fields.setAttribute("productName", "Stud Zirconia in Sterling Silver " + code);
 
-        fields.setLongTitle("Stud Earrings with Cubic Zirconia in Sterling Silver- 长标题" + code);
-        fields.setMiddleTitle("Stud Earrings with Cubic Zirconia in Sterling Silver- 中标题" + code);
-        fields.setShortTitle("Stud Earrings with Cubic Zirconia in Sterling Silver- 短标题" + code);
+        fields.setLongTitle("Stud Earrings with Cubic Silver- 长标题" + code);
+        fields.setMiddleTitle("Stud Earrings with Cubic Silver- 中标题" + code);
+        fields.setShortTitle("Stud Earrings with Cubic Silver- 短标题" + code);
 
         fields.setModel("model-aa-" + code);
         fields.setColor("Color" + code);
         fields.setOrigin("china-" + code);
 
-        fields.setShortDesCn("Stud Earrings with Cubic Zirconia in Sterling Silver- 简短描述中文" + code);
-        fields.setLongDesCn("Stud Earrings with Cubic Zirconia in Sterling Silver- 详情描述中文" + code);
-        fields.setShortDesEn("Stud Earrings with Cubic Zirconia in Sterling Silver- 简短描述英语" + code);
-        fields.setLongDesEn("Stud Earrings with Cubic Zirconia in Sterling Silver- 详情描述英语" + code);
+        fields.setShortDesCn("Stud Earrings with in Sterling Silver- 简短描述中文" + code);
+        fields.setLongDesCn("Stud Earrings with Sterling Silver- 详情描述中文" + code);
+        fields.setShortDesEn("Stud Earrings with in Sterling Silver- 简短描述英语" + code);
+        fields.setLongDesEn("Stud Earrings with Sterling Silver- 详情描述英语" + code);
 
         List<CmsBtProductModel_Field_Image> images = fields.getImages1();
         images.add(new CmsBtProductModel_Field_Image("DTW68F16_001"));
