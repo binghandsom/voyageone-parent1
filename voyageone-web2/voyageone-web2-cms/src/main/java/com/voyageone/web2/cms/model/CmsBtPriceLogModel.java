@@ -2,8 +2,6 @@ package com.voyageone.web2.cms.model;
 
 import com.voyageone.base.dao.mysql.BaseModel;
 
-import java.math.BigDecimal;
-
 /**
  * @author gubuchun 15/12/18
  * @version 2.0.0
@@ -14,9 +12,9 @@ public class CmsBtPriceLogModel extends BaseModel {
     private int productId;
     private String code;
     private String sku;
-    private BigDecimal msrpPrice;
-    private BigDecimal retailPrice;
-    private BigDecimal salePrice;
+    private String msrpPrice;
+    private String retailPrice;
+    private String salePrice;
     private String comment;
 
     public int getSeq() {
@@ -59,27 +57,27 @@ public class CmsBtPriceLogModel extends BaseModel {
         this.sku = sku;
     }
 
-    public BigDecimal getMsrpPrice() {
+    public String getMsrpPrice() {
         return msrpPrice;
     }
 
-    public void setMsrpPrice(BigDecimal msrpPrice) {
+    public void setMsrpPrice(String msrpPrice) {
         this.msrpPrice = msrpPrice;
     }
 
-    public BigDecimal getRetailPrice() {
+    public String getRetailPrice() {
         return retailPrice;
     }
 
-    public void setRetailPrice(BigDecimal retailPrice) {
+    public void setRetailPrice(String retailPrice) {
         this.retailPrice = retailPrice;
     }
 
-    public BigDecimal getSalePrice() {
+    public String getSalePrice() {
         return salePrice;
     }
 
-    public void setSalePrice(BigDecimal salePrice) {
+    public void setSalePrice(String salePrice) {
         this.salePrice = salePrice;
     }
 
