@@ -6,7 +6,7 @@
  */
 
 angular.module('voyageone.angular.directives.voption', [])
-    .directive('voption', function ($templateCache, $compile, vpagination) {
+    .directive('voption', function ($templateCache, $compile) {
 
         var templateKey_select = "voyageone.angular.directives.optionSelect.tpl.html";
 
