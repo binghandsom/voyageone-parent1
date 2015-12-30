@@ -68,7 +68,7 @@ define(['cms', 'modules/cms/enums/Operations'], function (cms, operations) {
                     return;
                 }
 
-                var value = type === 'feed' ? this.value.feed : this.value.text;
+                var value = type === 'propFeed' ? this.value.feed : this.value.text;
 
                 if (!value) {
                     alert('没有匹配到任何属性或内容上.');
@@ -77,7 +77,7 @@ define(['cms', 'modules/cms/enums/Operations'], function (cms, operations) {
 
                 this.$uibModalInstance.close({
                     type: type,
-                    value: value,
+                    val: value,
                     condition: this.mappingSetting.condition ? [this.condition] : null
                 });
             },

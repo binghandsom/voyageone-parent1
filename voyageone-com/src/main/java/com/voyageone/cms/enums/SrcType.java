@@ -1,5 +1,7 @@
 package com.voyageone.cms.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 /**
  * 表示 feed mapping 时,其关联值的类型. 参考 {@link com.voyageone.cms.service.model.feed.mapping.Mapping}
  *
@@ -13,5 +15,10 @@ public enum SrcType {
     propMain,
     optionMain,
     optionPlatform,
-    dict
+    dict;
+
+    @JsonCreator
+    public static SrcType fromJson(String srcType) {
+        return SrcType.valueOf(srcType);
+    }
 }
