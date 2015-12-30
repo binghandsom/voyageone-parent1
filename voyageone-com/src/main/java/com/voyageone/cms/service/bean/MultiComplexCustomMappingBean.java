@@ -13,26 +13,6 @@ import java.util.List;
 public class MultiComplexCustomMappingBean extends MappingBean {
     private List<MultiComplexCustomMappingValue> values;
 
-    public static class MultiComplexCustomMappingValue {
-        private List<MappingBean> subMappings;
-
-        public MultiComplexCustomMappingValue() {
-            subMappings = new ArrayList<>();
-        }
-
-        public List<MappingBean> getSubMappings() {
-            return subMappings;
-        }
-
-        public void setSubMappings(List<MappingBean> subMappings) {
-            this.subMappings = subMappings;
-        }
-
-        public void addSubMapping(MappingBean mappingBean) {
-            this.subMappings.add(mappingBean);
-        }
-    }
-
     public List<MultiComplexCustomMappingValue> getValues() {
         return values;
     }
