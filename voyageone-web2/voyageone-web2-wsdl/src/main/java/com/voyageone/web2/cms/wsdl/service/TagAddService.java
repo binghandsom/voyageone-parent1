@@ -17,15 +17,18 @@ import com.voyageone.web2.sdk.api.response.ProductGetResponse;
 import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
 import com.voyageone.web2.sdk.api.response.TagAddResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.text.Collator;
 import java.util.*;
 
 /**
- * product Service
+ * Tag Service
  *
- * @author chuanyu.liang 15/12/9
+ * @author jerry 15/12/30
  * @version 2.0.1
  * @since. 2.0.0
  */
@@ -35,27 +38,67 @@ public class TagAddService extends BaseService {
     @Autowired
     private CmsBtTagDao cmsBtTagDao;
 
-    public TagAddResponse addTag(TagAddRequest request) {
-        TagAddResponse result = new TagAddResponse();
-        CmsBtTagModel tag = null;
+    // TagPath 分割符
+    private String tagPathSeparator = "-";
 
-        // tag 新追加
-        int tagId = insertTag(request);
+    @Autowired
+    private DataSourceTransactionManager transactionManager;
+    DefaultTransactionDefinition def =new DefaultTransactionDefinition();
+
+    public TagAddResponse addTag(TagAddRequest request) {
+        // 返回结果
+        TagAddResponse result = new TagAddResponse();
+        // 返回值Tag设定
+        CmsBtTagModel tag = null;
+        // 执行结果
+        boolean ret = true;
+        // 新追加TagId
+        int tagId = 0;
+
+        TransactionStatus status=transactionManager.getTransaction(def);
+
+        ret = checkAddTagParam(request, result);
+
+        if (ret) {
+            // tag 新追加
+            tagId = insertTag(request);
+            if (tagId == 0) {
+                ret = false;
+            }
+        }
 
         // tagPath 更新
+        if (ret) {
+            ret = updateTagPathName(request.getParentTagId(), tagId);
+        }
 
+        if (ret) {
+            transactionManager.commit(status);
+        } else {
+            transactionManager.rollback(status);
+        }
+
+        // 返回值设定
+        tag = new CmsBtTagModel();
         tag.setTagId(tagId);
-
         result.setTag(tag);
+
         return result;
     }
 
+    /**
+     * Tag追加
+     * @param request TagAddRequest
+     * @return 新追加TagID
+     */
     private int insertTag(TagAddRequest request) {
         int tagId = 0;
 
         CmsBtTagModel cmsBtTagModel = new CmsBtTagModel();
         cmsBtTagModel.setChannelId(request.getChannelId());
         cmsBtTagModel.setTagName(request.getTagName());
+        // 初期值插入
+        cmsBtTagModel.setTagPath("");
         cmsBtTagModel.setTagPathName(getTagPathName(request.getParentTagId(), request.getTagName()));
         cmsBtTagModel.setTagType(request.getTagType());
         cmsBtTagModel.setTagStatus(request.getTagStatus());
@@ -73,11 +116,74 @@ public class TagAddService extends BaseService {
         return tagId;
     }
 
+    /**
+     * 追加TagPathName取得
+     * @param parentTagId 父TagId
+     * @param tagName 新追加Tag名
+     * @return 追加TagPathName
+     */
     private String getTagPathName(Integer parentTagId, String tagName) {
         String ret = "";
 
         CmsBtTagModel cmsBtTagModel = cmsBtTagDao.getCmsBtTagByTagId(parentTagId);
         ret = cmsBtTagModel.getTagName() + ">" + tagName;
+
+        return ret;
+    }
+
+    /**
+     * 更新TagPath
+     * @param parentTagId 父TagId
+     * @param tagId 子TagId
+     * @return 更新结果
+     */
+    private boolean updateTagPathName(Integer parentTagId, Integer tagId) {
+        boolean ret = false;
+
+        String tagPath = tagPathSeparator + parentTagId + tagPathSeparator + tagId + tagPathSeparator;
+
+        CmsBtTagModel cmsBtTagModel = new CmsBtTagModel();
+        cmsBtTagModel.setTagId(tagId);
+        cmsBtTagModel.setTagPath(tagPath);
+
+        int updateRecCount = cmsBtTagDao.updateCmsBtTag(cmsBtTagModel);
+
+        if (updateRecCount > 0) {
+            ret = true;
+        }
+
+        return ret;
+    }
+
+    /**
+     * Tag追加，输入参数检查
+     * @param request 请求参数
+     * @param result 返回结果
+     * @return 检查结果
+     */
+    private boolean checkAddTagParam(TagAddRequest request, TagAddResponse result) {
+        boolean ret = true;
+
+        // 父TagId存在检查
+        CmsBtTagModel cmsBtTagModel = cmsBtTagDao.getCmsBtTagByTagId(request.getParentTagId());
+        if (cmsBtTagModel == null) {
+            VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70008;
+            result.setCode(codeEnum.getErrorCode());
+            result.setMessage(codeEnum.getErrorMsg());
+
+            ret = false;
+        }
+
+        if (ret) {
+            List<CmsBtTagModel> cmsBtTagModelList = cmsBtTagDao.selectListByParentTagId(request.getChannelId(), request.getParentTagId(), request.getTagName());
+            if (cmsBtTagModelList.size() > 0) {
+                VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70009;
+                result.setCode(codeEnum.getErrorCode());
+                result.setMessage(codeEnum.getErrorMsg());
+
+                ret = false;
+            }
+        }
 
         return ret;
     }
