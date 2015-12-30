@@ -48,7 +48,7 @@
         shipdetails.order_number = #{order_number}
         AND shipdetails.adjustment = 1
         AND shipdetails.sub_item_number = 0
-        AND shipdetails.sku = 'Discount'
+        AND shipdetails.sku IN ('Discount','Surcharge')
         AND shipdetails.ship_date IS NOT NULL
         ),
         0
@@ -183,7 +183,7 @@
         OR shipdetails.STATUS IS NULL
         )
         AND shipdetails.sub_item_number = 0
-        AND shipdetails.sku = 'Discount'
+        AND shipdetails.sku IN ('Discount','Surcharge')
         AND shipdetails.ship_date IS NOT NULL
         ),
         0
@@ -368,7 +368,7 @@
         OR shipdetails.STATUS IS NULL
         )
         AND shipdetails.sub_item_number = 0
-        AND shipdetails.sku = 'Discount'
+        AND shipdetails.sku IN ('Discount','Surcharge')
         AND shipdetails.ship_date IS NOT NULL
         ),
         0
