@@ -36,13 +36,14 @@ public class ProductSkusPutRequest extends VoApiListRequest<ProductSkusPutRespon
 	/**
 	 * productId
 	 */
-	private Map<Long, List<CmsBtProductModel_Sku>> productIdSkuMap = new LinkedHashMap<>();
+	private Long productId;
 
 	/**
 	 * Product的Code
 	 */
-	private Map<String, List<CmsBtProductModel_Sku>> productCodeSkuMap = new LinkedHashMap<>();
+	private String productCode;
 
+	private List<CmsBtProductModel_Sku> skus = new ArrayList<>();
 
 	public ProductSkusPutRequest() {
 	}
@@ -54,15 +55,8 @@ public class ProductSkusPutRequest extends VoApiListRequest<ProductSkusPutRespon
 	public void check() throws ApiRuleException {
 		super.check();
 		RequestUtils.checkNotEmpty(channelId);
-		RequestUtils.checkNotEmpty(" productIdSkuMap, or productCodeSkuMap", productIdSkuMap, productCodeSkuMap);
-		if (productIdSkuMap.size() > 0) {
-			RequestUtils.checkMinValue((long) productIdSkuMap.size(), 1, "productIdSkuMap");
-			RequestUtils.checkMaxValue((long) productIdSkuMap.size(), 100, "productIdSkuMap");
-		}
-		if (productCodeSkuMap.size() > 0) {
-			RequestUtils.checkMinValue((long) productCodeSkuMap.size(), 1, "productIdSkuMap");
-			RequestUtils.checkMaxValue((long) productCodeSkuMap.size(), 100, "productIdSkuMap");
-		}
+		RequestUtils.checkNotEmpty(" productId, or productCode", productId, productCode);
+		RequestUtils.checkNotEmpty(" skus", skus);
 	}
 
 	public String getChannelId() {
@@ -73,28 +67,32 @@ public class ProductSkusPutRequest extends VoApiListRequest<ProductSkusPutRespon
 		this.channelId = channelId;
 	}
 
-	public Map<Long, List<CmsBtProductModel_Sku>> getProductIdSkuMap() {
-		return productIdSkuMap;
+	public Long getProductId() {
+		return productId;
 	}
 
-	public void setProductIdSkuMap(Map<Long, List<CmsBtProductModel_Sku>> productIdSkuMap) {
-		this.productIdSkuMap = productIdSkuMap;
+	public void setProductId(Long productId) {
+		this.productId = productId;
 	}
 
-	public Map<String, List<CmsBtProductModel_Sku>> getProductCodeSkuMap() {
-		return productCodeSkuMap;
+	public String getProductCode() {
+		return productCode;
 	}
 
-	public void setProductCodeSkuMap(Map<String, List<CmsBtProductModel_Sku>> productCodeSkuMap) {
-		this.productCodeSkuMap = productCodeSkuMap;
+	public void setProductCode(String productCode) {
+		this.productCode = productCode;
 	}
 
-	public void addProductId(Long productId, List<CmsBtProductModel_Sku> skus) {
-		productIdSkuMap.put(productId, skus);
+	public List<CmsBtProductModel_Sku> getSkus() {
+		return skus;
 	}
 
-	public void addProductCode(String productCode, List<CmsBtProductModel_Sku> skus) {
-		productCodeSkuMap.put(productCode, skus);
+	public void setSkus(List<CmsBtProductModel_Sku> skus) {
+		this.skus = skus;
+	}
+
+	public void addSkus(CmsBtProductModel_Sku sku) {
+		skus.add(sku);
 	}
 
 }
