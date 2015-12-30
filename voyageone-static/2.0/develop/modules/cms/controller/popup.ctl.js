@@ -271,14 +271,18 @@ define([
             });
         }
         $scope.openSystemCategory = openSystemCategory;
-        function openSystemCategory(viewSize, data) {
+        function openSystemCategory(viewSize, data,catFullName) {
             require([popActions.system.category.controllerUrl], function () {
                 $modal.open({
                     templateUrl: popActions.system.category.templateUrl,
+                    controller: 'popCategorySchemaCtl',
                     size: viewSize,
                     resolve: {
-                        data: function () {
+                        item: function () {
                             return data;
+                        },
+                        catFullName:function(){
+                            return catFullName;
                         }
                     }
                 });

@@ -3,7 +3,7 @@
 <mapper namespace="com.voyageone.web2.wsdl.sql">
 
     <!-- Tag信息追加 -->
-    <insert id="insert_cms_bt_tag1" parameterType="com.voyageone.web2.cms.model.CmsBtTagModel"  useGeneratedKeys="true" keyProperty="tagId">
+    <insert id="insert_cms_bt_tag" parameterType="com.voyageone.web2.sdk.api.domain.CmsBtTagModel"  useGeneratedKeys="true" keyProperty="tagId">
         insert into voyageone_cms2.cms_bt_tag
         <trim prefix="(" suffix=")" suffixOverrides="," >
             <if test="tagName != null" >
@@ -76,7 +76,7 @@
     </insert>
 
     <!-- Tag信息更新 -->
-    <update id="update_cms_bt_tag1" parameterType="com.voyageone.web2.cms.model.CmsBtTagModel" >
+    <update id="update_cms_bt_tag" parameterType="com.voyageone.web2.sdk.api.domain.CmsBtTagModel" >
         update voyageone_cms2.cms_bt_tag
         <set >
             <if test="tagName != null" >
@@ -109,7 +109,7 @@
     </update>
 
     <!-- Tag信息检索 （根据 tag_id，取得对应Tag）-->
-    <resultMap id="TagMap" type="com.voyageone.web2.cms.model.CmsBtTagModel" >
+    <resultMap id="TagMap" type="com.voyageone.web2.sdk.api.domain.CmsBtTagModel" >
         <id column="tag_id" property="tagId" jdbcType="INTEGER" />
         <result column="tag_name" property="tagName" jdbcType="VARCHAR" />
         <result column="channel_id" property="channelId" jdbcType="VARCHAR" />
@@ -124,7 +124,7 @@
         <result column="modified" property="modified" jdbcType="TIMESTAMP" />
         <result column="modifier" property="modifier" jdbcType="VARCHAR" />
     </resultMap>
-    <select id="select_one_by_tag_id1" resultMap="TagMap">
+    <select id="select_one_by_tag_id" resultMap="TagMap">
         select
             tag.tag_id,
             tag.tag_name,
@@ -141,6 +141,29 @@
             tag.modifier
         from voyageone_cms2.cms_bt_tag tag
         where tag_id = #{tagId}
+    </select>
+
+    <!-- Tag信息检索 （根据channel_id，parent_tag_id, tag_name 取得对应子TagList）-->
+    <select id="select_one_by_tag_name" resultMap="TagMap">
+        select
+            tag.tag_id,
+            tag.tag_name,
+            tag.channel_id,
+            tag.tag_path,
+            tag.tag_path_name,
+            tag.tag_type,
+            tag.tag_status,
+            tag.sort_order,
+            tag.parent_tag_id,
+            tag.created,
+            tag.creater,
+            tag.modified,
+            tag.modifier
+        from voyageone_cms2.cms_bt_tag tag
+        where
+              channel_id = #{channelId}
+          and parent_tag_id = #{parentTagId}
+          and tag_name = #{tagName}
     </select>
 
     <!-- Tag信息检索 （根据父tag_id，取得对应子TagList）-->
