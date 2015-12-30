@@ -61,7 +61,7 @@ public class ComplexField extends Field {
         complexField.setComplexValue(complexValue);
     }
 
-    public List<Field> getFieldList() {
+    public List<Field> getFields() {
         return this.fields;
     }
 

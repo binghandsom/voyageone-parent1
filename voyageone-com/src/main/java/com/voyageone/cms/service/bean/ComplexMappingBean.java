@@ -1,5 +1,6 @@
 package com.voyageone.cms.service.bean;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,6 +12,7 @@ public class ComplexMappingBean extends MappingBean {
 
     public ComplexMappingBean() {
         mappingType = MAPPING_COMPLEX;
+        subMappings = new ArrayList<>();
     }
 
     public List<MappingBean> getSubMappings() {
@@ -27,5 +29,9 @@ public class ComplexMappingBean extends MappingBean {
 
     public void setMasterPropId(String masterPropId) {
         this.masterPropId = masterPropId;
+    }
+
+    public void addSubMapping(MappingBean subMapping) {
+        subMappings.add(subMapping);
     }
 }
