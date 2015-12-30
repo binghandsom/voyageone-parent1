@@ -1,12 +1,10 @@
 package com.voyageone.batch.cms.service;
 
-import com.jayway.jsonpath.JsonPath;
 import com.mongodb.WriteResult;
 import com.taobao.api.ApiException;
 import com.taobao.api.domain.Brand;
 import com.taobao.api.domain.ItemCat;
 import com.taobao.api.domain.SellerAuthorize;
-import com.taobao.top.schema.exception.TopSchemaException;
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.cms.CmsConstants;
 import com.voyageone.batch.cms.dao.BrandDao;
@@ -16,27 +14,21 @@ import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.core.util.TaskControlUtils;
 import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategoryDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategorySchemaDao;
-import com.voyageone.cms.service.model.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.cms.service.model.CmsMtPlatformCategoryTreeModel;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.tmall.TbCategoryService;
-import com.voyageone.common.components.tmall.bean.ItemSchema;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.ShopConfigs;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 @Service

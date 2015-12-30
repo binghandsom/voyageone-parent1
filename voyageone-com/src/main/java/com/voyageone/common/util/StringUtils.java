@@ -1,8 +1,12 @@
 package com.voyageone.common.util;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.commons.net.util.Base64;
 
 import java.math.BigDecimal;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -13,6 +17,8 @@ import java.util.regex.Pattern;
 public final class StringUtils {
 
     private static final Pattern special_symbol = Pattern.compile("[.]");
+
+    private static Log logger = LogFactory.getLog(StringUtils.class);
 
     public static String null2Space(String input) {
         if (input == null) {
@@ -477,4 +483,39 @@ public final class StringUtils {
         }
         return result;
     }
+
+    //静态方法，便于作为工具类
+    public static String getMd5(String inputStr) {
+
+        try {
+
+            MessageDigest md = MessageDigest.getInstance("MD5");
+
+            md.update(inputStr.getBytes());
+
+            byte b[] = md.digest();
+
+            int i;
+
+            StringBuffer buf = new StringBuffer("");
+
+            for (int offset = 0; offset < b.length; offset++) {
+                i = b[offset];
+                if (i < 0)
+                    i += 256;
+                if (i < 16)
+                    buf.append("0");
+                buf.append(Integer.toHexString(i));
+            }
+
+            //32位加密
+            return buf.toString();
+
+        } catch (NoSuchAlgorithmException e) {
+            logger.error(e.getMessage());
+            return null;
+        }
+
+    }
+
 }
