@@ -253,7 +253,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
 
                 //构建主数据对象并持久化
                 CmsMtCategorySchemaModel masterModel = new CmsMtCategorySchemaModel();
-                masterModel.setCatId(StringUtils.getMd5(schemaModel.getCatFullPath()));
+                masterModel.setCatId(StringUtils.generCatId(schemaModel.getCatFullPath()));
                 masterModel.setCatFullPath(schemaModel.getCatFullPath());
                 FieldUtil.replaceFieldIdDot(masterFields);
                 Field sku = FieldUtil.getFieldById(masterFields, "sku");
@@ -301,7 +301,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
 
                 //save the fields which was deleted
                 CmsMtPlatformRemoveFieldsModel removeHistoryModel = new CmsMtPlatformRemoveFieldsModel();
-                removeHistoryModel.setCatId(StringUtils.getMd5(schemaModel.getCatFullPath()));
+                removeHistoryModel.setCatId(StringUtils.generCatId(schemaModel.getCatFullPath()));
                 removeHistoryModel.setCatFullPath(schemaModel.getCatFullPath());
                 removeHistoryModel.setFields(removeFields);
                 removeHistoryModel.setCreater(this.JOB_NAME);
