@@ -2,6 +2,9 @@ package com.voyageone.web2.cms.views.system;
 
 import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
 import com.voyageone.cms.service.model.CmsMtCategorySchemaModel;
+import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
+import com.voyageone.common.masterdate.schema.field.Field;
+import com.voyageone.common.util.DateTimeUtil;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,4 +34,26 @@ public class CmsCategoryListService {
     public CmsMtCategorySchemaModel getMasterSchemaModelByCatId(String id){
         return cmsMtCategorySchemaDao.getMasterSchemaModelByCatId(id);
     }
+
+    public JSONObject getMasterSchemaJsonObjectByCatId(String catId){
+        return cmsMtCategorySchemaDao.getMasterSchemaJsonObjectByCatId(catId);
+    }
+
+    public CmsMtCategorySchemaModel updateCategorySchema(Map<String,Object> schemaModel, String operator){
+
+        CmsMtCategorySchemaModel masterSchemaModel = null;
+        if (schemaModel !=null){
+            List<Field> fields = SchemaJsonReader.readJsonForList((List) schemaModel.get("fields"));
+            String catFullPath = (String) schemaModel.get("catFullPath");
+            masterSchemaModel = new CmsMtCategorySchemaModel( schemaModel.get("catId").toString(),catFullPath,fields);
+            masterSchemaModel.setModifier(operator);
+            masterSchemaModel.setCreater((String) schemaModel.get("creater"));
+            masterSchemaModel.setCreated((String) schemaModel.get("created"));
+            masterSchemaModel.setModified(DateTimeUtil.getNowTimeStamp());
+            masterSchemaModel.set_id( schemaModel.get("_id").toString());
+        }
+        cmsMtCategorySchemaDao.update(masterSchemaModel);
+        return masterSchemaModel;
+    }
+
 }
