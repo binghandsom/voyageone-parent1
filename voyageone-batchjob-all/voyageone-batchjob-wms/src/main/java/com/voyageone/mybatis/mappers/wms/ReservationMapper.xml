@@ -46,11 +46,17 @@
             details.product,
             orders.cart_id,
             details.sku,
+            details.price_per_unit,
             itemdel.itemcode
         FROM
             oms_bt_orders orders,
-            oms_bt_order_details details,
+            oms_bt_order_details details
+        LEFT JOIN
             wms_bt_item_details itemdel
+        ON
+            itemdel.order_channel_id = #{order_channel_id}
+        AND
+            itemdel.sku = details.sku
         WHERE
             orders.order_channel_id = #{order_channel_id}
         AND
@@ -67,38 +73,6 @@
             details.quantity_shipped = 1
         AND
             details.res_id = 0
-        AND
-            orders.order_channel_id = itemdel.order_channel_id
-        AND
-            details.sku = itemdel.sku
-        AND
-            NOT EXISTS (SELECT
-                                1
-                            FROM
-                                oms_bt_orders orders1,
-                                oms_bt_order_details details1
-                            WHERE
-                                orders1.order_number = orders.order_number
-                            AND
-                                orders1.approved = 1
-                            AND
-                                orders1.cancelled = 0
-                            AND
-                                orders1.order_number = details1.order_number
-                            AND
-                                details1.res_allot_flg = '0'
-                            AND
-                                details1.adjustment = 0
-                            AND
-                                details1.quantity_shipped = 1
-                            AND
-                                details1.res_id = 0
-                            AND
-                                not exists
-                                (select 1
-                                 from wms_bt_item_details itemdel1
-                                 where orders1.order_channel_id = itemdel1.order_channel_id
-                                       and details1.sku = itemdel1.sku))
         ORDER BY
             orders.order_number,
             details.item_number
