@@ -1182,21 +1182,28 @@
         	   tt2.item_number                                    
           from                                     
              (                                    
-               select t.order_number,                                    
+               select DISTINCT
+               		  t.order_number,
         			  t.source_order_id,                                    
         			  t.cart_id                                    
-                 from oms_bt_orders t
-                 left join tt_idcard i
+                 from
+                  	oms_bt_orders t
+                 inner join
+                  (SELECT
+						DISTINCT t1.order_number
+					FROM
+						oms_bt_order_details t1
+					WHERE
+						t1.quantity_shipped = 1
+					AND t1.res_allot_flg = '0'
+					AND t1.adjustment = 0
+					AND t1.res_id = 0) a1
+				  on t.approved = 1
+				 and t.cancelled = 0
+				 and t.order_channel_id = #{order_channel_id}
+				 and t.order_number = a1.order_number
+				left join tt_idcard i
 				 on t.ship_name = i.receive_name and t.ship_phone = i.phone and i.approved = '1'
-                where t.approved = 1                                    
-                  and t.cancelled = 0                                    
-                  and t.order_channel_id = #{order_channel_id}  
-				  and exists(select 1 from oms_bt_order_details t1 
-							  where t1.quantity_shipped = 1
-							  	and t1.res_allot_flg = '0'
-							  	and t1.adjustment = 0
-                  				and t1.res_id = 0
-								and t.order_number = t1.order_number)
 				order by i.approved desc ,t.order_number
                 limit #{intRowCount}
              ) tt1,                                    
