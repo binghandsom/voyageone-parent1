@@ -29,7 +29,7 @@ import java.util.*;
  * @since. 2.0.0
  */
 @Service
-public class TagAddService extends BaseService {
+public class TagService extends BaseService {
 
     @Autowired
     // mysql
