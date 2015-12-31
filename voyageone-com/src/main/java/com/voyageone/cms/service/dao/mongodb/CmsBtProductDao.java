@@ -63,6 +63,14 @@ public class CmsBtProductDao extends BaseMongoPartDao {
     }
 
     /**
+     * 获取商品List 根据TagId
+     */
+    public List<CmsBtProductModel> selectProductByTagId(String channelId, Integer tagId) {
+        String query = "{\"tags\":{$regex:\".*-" + tagId + "-.*\"}}";
+        return select(query, channelId);
+    }
+
+    /**
      * 获取SKUList 根据prodId
      */
     public List<CmsBtProductModel_Sku> selectSKUById(String channelId, long prodId) {
