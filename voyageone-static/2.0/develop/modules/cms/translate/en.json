@@ -13,10 +13,13 @@
   "TXT_COM_MSG_NO_ROWS_SELECT": "请至少选择一条数据...",
   "TXT_COM_UPDATE_SUCCESS": "更新操作成功",
   "TXT_COM_MSG_SEARCH": "Search...",
+  "TXT_COM_EDIT": "Edit",
 
   "BTN_COM_GO": "Go",
   "BTN_COM_CANCEL": "Cancel",
   "BTN_COM_OK": "Ok",
+  "BTN_COM_ADD": "Add",
+  "BTN_COM_DELETE": "Delete",
 
   "TXT_VOYAGE_ONE": "VoyageOne",
   "TXT_LOGOUT": "Logout",

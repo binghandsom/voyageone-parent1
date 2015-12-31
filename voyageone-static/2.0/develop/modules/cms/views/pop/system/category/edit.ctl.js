@@ -6,47 +6,65 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popNewPromotionCtl', function ($scope,promotionService,items) {
+    angularAMD.controller('popCategorySchemaCtl', function ($scope, systemCategoryService, item, category,addOrEditFlg) {
 
-        $scope.promotion = {};
-        $scope.tejiabao=false;
+        $scope.vm = {"schema": {}};
+        $scope.newOption = {};
+        $scope.addOrEditFlg = addOrEditFlg;
+        $scope.initialize = function () {
+            $scope.vm = {"schema": {}};
+            $scope.newOption = {};
+            $scope.addOrEditFlg = addOrEditFlg;
+            $scope.vm.catFullName = category.catFullPath;
+            // 编辑的场合
+            if(addOrEditFlg == 1){
+                if (item) {
+                    $scope.vm.schema = _.clone(item);
+                    if (item.options) {
+                        $scope.vm.schema.options = _.map(item.options, _.clone);
+                    }
+                }
+            }else{
 
-        $scope.initialize  = function () {
-            if(items){
-                $scope.promotion = items
             }
         }
+        // 添加option
+        $scope.addOption = function () {
+            if(!$scope.vm.schema.options) $scope.vm.schema.options=[];
+            $scope.vm.schema.options.push($scope.newOption);
+            $scope.newOption = {};
+        }
 
-        $scope.ok = function(){
-
-            if(!items) {
-                promotionService.insertPromotion($scope.promotion).then(function (res) {
-                    $scope.$close();
-                }, function (res) {
-                    alert("e");
-                })
-            }else{
-                promotionService.updatePromotion($scope.promotion).then(function (res) {
-                    $scope.$close();
-                }, function (res) {
-                    alert("e");
-                })
+        $scope.delOption = function (option) {
+            var index;
+            index = _.indexOf($scope.vm.schema.options, option);
+            if (index > -1) {
+                $scope.vm.schema.options.splice(index, 1);
             }
+        }
+        $scope.ok = function () {
+
+
+            if($scope.vm.schema.type != "SINGLECHECK" && $scope.vm.schema.type != "MULTICHECK"){
+                if ($scope.vm.schema.options) {
+                    delete $scope.vm.schema.options;
+                }
+            }
+            if($scope.vm.schema.type == "MULTICOMPLEX" || $scope.vm.schema.type == "COMPLEX") {
+                if (!$scope.vm.schema.fields) {
+                    $scope.vm.schema.fields = [];
+                }
+            }
+
+            if($scope.addOrEditFlg == 1){
+                for (key in $scope.vm.schema) {
+                    item[key] = $scope.vm.schema[key];
+                }
+            }else{
+                item.fields.push($scope.vm.schema);
+            }
+            category.isEditFlg = true;
+            $scope.$close();
         }
     });
-
-    //return function ($scope,promotionService) {
-    //
-    //    $scope.promotion = {};
-    //    $scope.name = "123";
-    //
-    //    $scope.initialize  = function () {
-    //        alert("a");
-    //    }
-    //
-    //    $scope.ok = function(){
-    //        alert("e");
-    //    }
-    //
-    //};
 });

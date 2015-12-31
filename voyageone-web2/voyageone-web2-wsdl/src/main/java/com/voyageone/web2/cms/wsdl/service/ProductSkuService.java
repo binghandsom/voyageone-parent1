@@ -1,6 +1,8 @@
 package com.voyageone.web2.cms.wsdl.service;
 
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
+import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.model.CmsBtProductModel;
@@ -21,10 +23,7 @@ import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *  Product Group Service
@@ -104,26 +103,34 @@ public class ProductSkuService extends BaseService {
         String channelId = request.getChannelId();
         checkRequestChannelId(channelId);
 
-        List<BulkUpdateModel> bulkList = new ArrayList<>();
-        Map<Long, List<CmsBtProductModel_Sku>> productIdSkuMap = request.getProductIdSkuMap();
-        Map<String, List<CmsBtProductModel_Sku>> productCodeSkuMap = request.getProductCodeSkuMap();
-        if (productIdSkuMap != null && productIdSkuMap.size() > 0) {
-            for (Map.Entry<Long, List<CmsBtProductModel_Sku>> entry : productIdSkuMap.entrySet()) {
-                Long productId = entry.getKey();
-                saveSkusAddBlukUpdateModel(channelId, productId, null, entry.getValue(), bulkList);
-            }
-        } else if (productCodeSkuMap != null && productCodeSkuMap.size() > 0) {
-            for (Map.Entry<String, List<CmsBtProductModel_Sku>> entry : productCodeSkuMap.entrySet()) {
-                String productCode = entry.getKey();
-                saveSkusAddBlukUpdateModel(channelId, null, productCode, entry.getValue(), bulkList);
-            }
+        List<BulkUpdateModel> bulkInsertList = new ArrayList<>();
+        List<BulkUpdateModel> bulkUpdateList = new ArrayList<>();
+
+        Long productId = request.getProductId();
+        String productCode = request.getProductCode();
+        List<CmsBtProductModel_Sku> skus = request.getSkus();
+        if (productId != null) {
+            saveSkusAddBlukUpdateModel(channelId, productId, null, skus, bulkInsertList, bulkUpdateList);
+        } else if (!StringUtils.isEmpty(productCode)) {
+            saveSkusAddBlukUpdateModel(channelId, null, productCode, skus, bulkInsertList, bulkUpdateList);
         } else {
             VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70007;
             throw new ApiException(codeEnum.getErrorCode(), "productIdSkuMap or productCodeSkuMap not found!");
         }
 
-        if (bulkList.size() > 0) {
-            cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$push", false);
+        if (bulkInsertList.size() > 0) {
+            BasicDBObject queryObj = (BasicDBObject)bulkInsertList.get(0).getQueryMap();
+            BasicDBList skusList = new BasicDBList();
+            for (BulkUpdateModel bulkInsert : bulkInsertList) {
+                skusList.add(bulkInsert.getUpdateMap());
+            }
+            BasicDBObject skusObj = new BasicDBObject().append("skus", skusList);
+            BasicDBObject pushObj = new BasicDBObject().append("$pushAll", skusObj);
+            cmsBtProductDao.getDBCollection(channelId).update(queryObj, pushObj);
+        }
+
+        if (bulkUpdateList.size() > 0) {
+            cmsBtProductDao.bulkUpdateWithMap(channelId, bulkUpdateList, null, "$set", false);
         }
 
         return result;
@@ -135,9 +142,10 @@ public class ProductSkuService extends BaseService {
      * @param productId product Id
      * @param productCode product Code
      * @param models CmsBtProductModel_Sku
-     * @param bulkList List<BulkUpdateModel>
+     * @param bulkUpdateList List<BulkUpdateModel>
+     * @param bulkInsertList List<BulkUpdateModel>
      */
-    private void saveSkusAddBlukUpdateModel(String channelId, Long productId, String productCode, List<CmsBtProductModel_Sku> models, List<BulkUpdateModel> bulkList) {
+    private void saveSkusAddBlukUpdateModel(String channelId, Long productId, String productCode, List<CmsBtProductModel_Sku> models, List<BulkUpdateModel> bulkInsertList, List<BulkUpdateModel> bulkUpdateList) {
         VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70007;
         if (models == null || models.size() == 0) {
             return;
@@ -147,39 +155,65 @@ public class ProductSkuService extends BaseService {
             throw new ApiException(codeEnum.getErrorCode(), "productId or productCode not found!");
         }
 
-        long findCount = 0;
+        CmsBtProductModel findModel = null;
+        JomgoQuery queryObject = new JomgoQuery();
+        queryObject.setProjection("skus.skuCode");
         if (productId != null) {
             String query = "{\"prodId\":" + productId + "}";
-            findCount = cmsBtProductDao.countByQuery(query, channelId);
+            queryObject.setQuery(query);
+            findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
         } else if (StringUtils.isEmpty(productCode)) {
             String query = "{\"fields.code\":\"" + productCode + "\"}";
-            findCount = cmsBtProductDao.countByQuery(query, channelId);
+            findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
         }
 
-        if (findCount > 0) {
+        if (findModel != null) {
+            Set<String> findSkuSet = new HashSet<>();
+            if (findModel.getSkus() != null) {
+                for (CmsBtProductModel_Sku findSku : findModel.getSkus()) {
+                    if (findSku != null && findSku.getSkuCode() != null) {
+                        findSkuSet.add(findSku.getSkuCode());
+                    }
+                }
+            }
+
             for (CmsBtProductModel_Sku model : models) {
                 if (model == null) {
                     continue;
                 }
-                HashMap<String, Object> queryMap = new HashMap<>();
+                BasicDBObject queryMap = new BasicDBObject();
                 if (productId != null) {
-                    queryMap.put("prodId", productId);
+                    queryMap.append("prodId", productId);
                 } else {
-                    queryMap.put("fields.code", productCode);
+                    queryMap.append("fields.code", productCode);
                 }
                 if (StringUtils.isEmpty(model.getSkuCode())) {
                     throw new ApiException(codeEnum.getErrorCode(), "SkuCode not found!");
                 }
-                //queryMap.put("skus.skuCode", model.getSkuCode());
+                if (findSkuSet.contains(model.getSkuCode())) {
+                    queryMap.put("skus.skuCode", model.getSkuCode());
 
-                BasicDBObject dbObject = model.toUpdateBasicDBObject("skus.");
+                    BasicDBObject dbObject = model.toUpdateBasicDBObject("skus.$.");
 
-                if (dbObject.size() > 0) {
-                    BulkUpdateModel skuUpdateModel = new BulkUpdateModel();
-                    skuUpdateModel.setUpdateMap(dbObject);
-                    skuUpdateModel.setQueryMap(queryMap);
+                    if (dbObject.size() > 0) {
+                        BulkUpdateModel skuUpdateModel = new BulkUpdateModel();
+                        skuUpdateModel.setUpdateMap(dbObject);
+                        skuUpdateModel.setQueryMap(queryMap);
 
-                    bulkList.add(skuUpdateModel);
+                        bulkUpdateList.add(skuUpdateModel);
+                    }
+                } else {
+                    //BasicDBObject skuCodeObject = new BasicDBObject();
+                    //skuCodeObject.append("$ne", model.getSkuCode());
+                    //queryMap.put("skus.skuCode", skuCodeObject);
+
+                    BasicDBObject dbObject = model.toUpdateBasicDBObject("");
+                    if (dbObject.size() > 0) {
+                        BulkUpdateModel skuUpdateModel = new BulkUpdateModel();
+                        skuUpdateModel.setUpdateMap(dbObject);
+                        skuUpdateModel.setQueryMap(queryMap);
+                        bulkInsertList.add(skuUpdateModel);
+                    }
                 }
             }
         }
