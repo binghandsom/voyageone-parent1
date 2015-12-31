@@ -6,6 +6,7 @@ import com.voyageone.batch.wms.modelbean.ClientInventoryBean;
 import com.voyageone.batch.wms.modelbean.ItemDetailsBean;
 import com.voyageone.common.components.channelAdvisor.bean.inventory.GetInventoryParamBean;
 import com.voyageone.common.components.channelAdvisor.soap.InventoryItemResSoapenv;
+import com.voyageone.common.components.channelAdvisor.soap.InventoryResSoapenv;
 import com.voyageone.common.components.channelAdvisor.webservices.ArrayOfDistributionCenterInfoResponse;
 import com.voyageone.common.components.channelAdvisor.webservices.DistributionCenterInfoResponse;
 import com.voyageone.common.components.channelAdvisor.webservices.InventoryItemResponse;
@@ -49,28 +50,49 @@ public class WmsGetWmfClientInvService extends WmsGetClientInvBaseService  {
      */
     public void sysSearsInventoryByClient(String channelId,  List<Runnable> threads){
         threads.add(() -> {
+            ThirdPartyConfigBean thirdPartyConfigBean = setParamBean(channelId);
+            String updateType = getUpdateType(channelId,thirdPartyConfigBean);
             OrderChannelBean channel = ChannelConfigs.getChannel(channelId);
-            GetInventoryParamBean getInventoryParamBean = setParamBean(channelId);
             List<String> processSkuList = new ArrayList<String>();
 
-            log(channel.getFull_name()+"全量库存取得");
-            // 取得该渠道下的所有SKU（没有设定ClientSku）
-            getItemDetaiInfoNoClient(channelId);
-            // 取得该渠道下的所有SKU（有设定ClientSku）
-            List<ItemDetailsBean> itemDetailBeans = itemDetailsDao.getItemDetaiInfo(channelId);
-            for (ItemDetailsBean itemDetailsBean : itemDetailBeans) {
-                processSkuList.add(itemDetailsBean.getClient_sku());
+            if (WmsConstants.updateClientInventoryConstants.FULL.equals(updateType)) {
+                log(channel.getFull_name()+"全量库存取得");
+
+                // 取得该渠道下的所有SKU（没有设定ClientSku）
+                getItemDetaiInfoNoClient(channelId);
+
+                // 取得该渠道下的所有SKU（有设定ClientSku）
+                List<ItemDetailsBean> itemDetailBeans = itemDetailsDao.getItemDetaiInfo(channelId);
+
+                for (ItemDetailsBean itemDetailsBean : itemDetailBeans) {
+                    processSkuList.add(itemDetailsBean.getClient_sku());
+                }
+            } else {
+//                log(channel.getFull_name()+"时间段：【" + getInventoryParamBean.getDateTimeStart() + " - " + getInventoryParamBean.getDateTimeEnd() + "】库存变化取得");
+//                List<InventoryResSoapenv> inventoryResSoapenvs = getClientInvIncreace(getInventoryParamBean, channelId, updateType);
+//
+//                //有库存变化的SKU取得
+//                for (InventoryResSoapenv responseBean : inventoryResSoapenvs) {
+//                    List<InventoryItemResponse> inventoryItemResponseList = responseBean.getBody().getFilteredInventoryItemListResponse().getGetFilteredInventoryItemListResult().getResultData().getInventoryItemResponse();
+//
+//                    for (InventoryItemResponse inventoryItemResponse : inventoryItemResponseList) {
+//                        processSkuList.add(inventoryItemResponse.getSku());
+//                    }
+//                }
             }
+
             log(channel.getFull_name()+"需要取得库存的SKU件数："+processSkuList.size());
+
+
             List<InventoryItemResSoapenv> responseBeans = getClientInv(getInventoryParamBean,processSkuList, channelId);
 
             if(responseBeans.size() > 0) {
                 transactionRunner.runWithTran(() -> {
                     assert channel != null;
-                    Long store_id = getStore(channelId, getInventoryParamBean.getStoreArea());
+                    Long store_id = getStore(channelId, thirdPartyConfigBean.getProp_val6());
                     if (store_id == 0) {
-                        log(channel.getFull_name() + "所属区域仓库取得失败：" + getInventoryParamBean.getStoreArea());
-                        logIssue(channel.getFull_name() + "所属区域仓库取得失败：" + getInventoryParamBean.getStoreArea());
+                        log(channel.getFull_name() + "所属区域仓库取得失败：" + thirdPartyConfigBean.getProp_val6());
+                        logIssue(channel.getFull_name() + "所属区域仓库取得失败：" + thirdPartyConfigBean.getProp_val6());
                     } else {
                         try {
                             log(channel.getFull_name() + "库存插入wms_bt_client_inventory开始");
@@ -78,12 +100,12 @@ public class WmsGetWmfClientInvService extends WmsGetClientInvBaseService  {
                             for (InventoryItemResSoapenv responseBean : responseBeans) {
                                 List<InventoryItemResponse> inventoryItemResponseList = responseBean.getBody().getInventoryItemListResponse().getGetInventoryItemListResult().getResultData().getInventoryItemResponse();
                                 totalRow = totalRow + inventoryItemResponseList.size();
-                                insertRow = insertRow + insertClientInventory(channelId, inventoryItemResponseList, store_id, getInventoryParamBean.getCenterCode());
+                                insertRow = insertRow + insertClientInventory(channelId, inventoryItemResponseList, store_id,ThirdPartyConfigs.getThirdPartyConfigList(channelId, WmsConstants.updateClientInventoryConstants.CENTERCODE).get(0).getProp_val1());
                             }
                             logger.info("----------从渠道【" + channel.getFull_name() + "】LabelName【" + getInventoryParamBean.getLabelName() + "】获取到的库存sku记录数为:" + totalRow + "----------");
                             logger.info("----------与【wms_bt_item_detail】中【client_sku】匹配且成功插入【wms_bt_client_inventory】记录数为:" + insertRow + "----------");
                             //全部插入成功后更新标志
-                            setLastFullUpdateTime(channelId, getInventoryParamBean);
+                            setLastFullUpdateTime(channelId, thirdPartyConfigBean);
                             log(channel.getFull_name() + "库存插入wms_bt_client_inventory结束");
                         } catch (Exception e) {
                             String msg = channel.getFull_name() + "库存插入wms_bt_client_inventory失败" + e;
@@ -104,42 +126,30 @@ public class WmsGetWmfClientInvService extends WmsGetClientInvBaseService  {
      * @param channelId PRE： 取上一次任务运行的开始时间； CUR： 取本次任务运行的开始时间
      * @return GetInventoryParamBean 参数bean
      */
-    private com.voyageone.common.components.channelAdvisor.bean.inventory.GetInventoryParamBean setParamBean(String channelId) {
+    private ThirdPartyConfigBean setParamBean(String channelId) {
         OrderChannelBean channel = ChannelConfigs.getChannel(channelId);
         //获取上一次任务执行失败的配置项（pv4:上一次任务失败的起始时间（正常结束时，清空为0）;pv5、下一次更新的起始pageIndex（pv4非0时使用））
         ThirdPartyConfigBean thirdPartyConfigBean = getFullUpdtConfig(channelId, WmsConstants.updateClientInventoryConstants.FULLUPDATECONFIG);
-        com.voyageone.common.components.channelAdvisor.bean.inventory.GetInventoryParamBean getInventoryParamBean = new com.voyageone.common.components.channelAdvisor.bean.inventory.GetInventoryParamBean();
-        try {
-            getInventoryParamBean.setPostAction(ThirdPartyConfigs.getThirdPartyConfigList(channelId, WmsConstants.updateClientInventoryConstants.POSTACTION).get(0).getProp_val1());
-            getInventoryParamBean.setPostItemAction(ThirdPartyConfigs.getThirdPartyConfigList(channelId, WmsConstants.updateClientInventoryConstants.POSTITEMACTION).get(0).getProp_val1());
-            getInventoryParamBean.setNameSpace(ThirdPartyConfigs.getThirdPartyConfigList(channelId, WmsConstants.updateClientInventoryConstants.NAMESPACE).get(0).getProp_val1());
-            getInventoryParamBean.setPostUrl(ThirdPartyConfigs.getThirdPartyConfigList(channelId, WmsConstants.updateClientInventoryConstants.URL).get(0).getProp_val1());
-            getInventoryParamBean.setAccountId(ThirdPartyConfigs.getThirdPartyConfigList(channelId, WmsConstants.updateClientInventoryConstants.ACCOUNTID).get(0).getProp_val1());
-            getInventoryParamBean.setDeveloperKey(ThirdPartyConfigs.getThirdPartyConfigList(channelId, WmsConstants.updateClientInventoryConstants.DEVELOPERKEY).get(0).getProp_val1());
-            getInventoryParamBean.setPassword(ThirdPartyConfigs.getThirdPartyConfigList(channelId, WmsConstants.updateClientInventoryConstants.PASSWORD).get(0).getProp_val1());
-            getInventoryParamBean.setLabelName(ThirdPartyConfigs.getThirdPartyConfigList(channelId, WmsConstants.updateClientInventoryConstants.LABELNAME).get(0).getProp_val1());
-            getInventoryParamBean.setDateRangeField(ThirdPartyConfigs.getThirdPartyConfigList(channelId, WmsConstants.updateClientInventoryConstants.DATERANGEFIELD).get(0).getProp_val1());
-            //CUR： 取本次任务运行的开始时间
-            getInventoryParamBean.setDateTimeEnd(getUpdateTime(channel.getFull_name(), "CUR"));
-            getInventoryParamBean.setCenterCode(ThirdPartyConfigs.getThirdPartyConfigList(channelId, WmsConstants.updateClientInventoryConstants.CENTERCODE).get(0).getProp_val1());
-            String perFaildTime =  thirdPartyConfigBean.getProp_val4();
-            if(!"0".equals(perFaildTime)){
-                getInventoryParamBean.setDateTimeStart(DateTimeUtil.strDateTimeTOXMLGregorianCalendar(perFaildTime));
-                getInventoryParamBean.setnPageIndex(Integer.parseInt(thirdPartyConfigBean.getProp_val5()));
-            }else{
-                //PRE： 取上一次任务运行的开始时间
-                getInventoryParamBean.setDateTimeStart(getUpdateTime(channel.getFull_name(),"PRE"));
-                getInventoryParamBean.setnPageIndex(1);
-            }
-            getInventoryParamBean.setStoreArea(thirdPartyConfigBean.getProp_val6());
-            log(channel.getFull_name() + "变量更新库存时间为：" + getInventoryParamBean.getDateTimeStart() + "-" + getInventoryParamBean.getDateTimeEnd() + "; 全量更新忽略此时间！");
-            getInventoryParamBean.setnPageSize(Integer.parseInt(ThirdPartyConfigs.getThirdPartyConfigList(channelId, WmsConstants.updateClientInventoryConstants.PAGESIZE).get(0).getProp_val1()));
-        }catch (Exception e){
-            String msg = channel.getFull_name()+"设置库存取得请求参数错误：" + e;
-            logger.error(msg);
-            throw new RuntimeException(msg);
+        //配置缺少
+        if (thirdPartyConfigBean == null || StringUtils.isNullOrBlank2(thirdPartyConfigBean.getProp_val2())){
+            String errmsg = channel.getFull_name()+"在com_mt_third_party_config表中的ca_full_update_config配置缺少";
+            //logIssue(errmsg);
+            throw new RuntimeException(errmsg);
         }
-        return getInventoryParamBean;
+        return thirdPartyConfigBean;
+    }
+
+    /**
+     * @description 获取更新类型
+     * @param order_channel_id 渠道
+     * @return String FULL、全量； INCREACE、增量
+     */
+    private String getUpdateType(String order_channel_id,ThirdPartyConfigBean thirdPartyConfigBean) {
+        if(thirdPartyConfigBean.getProp_val1().equals("0") || StringUtils.isEmpty(thirdPartyConfigBean.getProp_val3())){
+            return WmsConstants.updateClientInventoryConstants.FULL;
+        }else {
+            return WmsConstants.updateClientInventoryConstants.INCREACE;
+        }
     }
 
     /**
@@ -180,23 +190,18 @@ public class WmsGetWmfClientInvService extends WmsGetClientInvBaseService  {
             List<String> skuList = new ArrayList<>();
 
             getInventoryParamBean.setPostAction(getInventoryParamBean.getPostItemAction());
-
+            MagentoApiServiceImpl magentoApiService = new MagentoApiServiceImpl (channelId);
             for (String sku : processSkuList) {
-
                 skuList.add(sku);
                 intCount = intCount +1;
                 totalCount = totalCount +1;
-
                 if (intCount == 80 || totalCount == processSkuList.size()) {
-
-                    getInventoryParamBean.setSkuList(skuList);
-
+                    //getInventoryParamBean.setSkuList(skuList);
                     while (true) {
                         logger.info("----------" + channel.getFull_name() + "当前处理到第【" + totalCount + "】件----------");
-
                         InventoryItemResSoapenv responseBean ;
                         try {
-                            responseBean = inventoryService.GetInventoryItemList(getInventoryParamBean);
+                            responseBean = magentoApiService.inventoryStockItemList(skuList);
                         } catch (Exception e) {
                             if(losePageCount == ALLOWLOSEPAGECOUNT){
                                 logger.info("----------" + channel.getFull_name() + "第【" + totalCount + "】件数据请求失败！----------");
@@ -207,12 +212,10 @@ public class WmsGetWmfClientInvService extends WmsGetClientInvBaseService  {
                             losePageCount ++;
                             continue;
                         }
-
                         losePageCount = 1;
                         if(null != responseBean) {
                             inventoryResSoapenvList.add(responseBean);
                         }
-
                         break;
                     }
 
@@ -220,7 +223,6 @@ public class WmsGetWmfClientInvService extends WmsGetClientInvBaseService  {
                     skuList = new ArrayList<>();
                 }
             }
-
             log(channel.getFull_name() + "库存取得结束");
             return inventoryResSoapenvList;
         } catch (Exception e) {
