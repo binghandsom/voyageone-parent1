@@ -4,6 +4,7 @@ import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.domain.ProductPriceModel;
 import com.voyageone.web2.sdk.api.domain.ProductSkuPriceModel;
+import com.voyageone.web2.sdk.api.response.ProductUpdatePriceResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,7 @@ public class ProductUpdatePriceRequestTest {
         requestModel.addProductPrices(model);
 
         //SDK取得Product 数据
-        voApiClient.execute(requestModel);
+        ProductUpdatePriceResponse response = voApiClient.execute(requestModel);
+        System.out.println(response);
     }
 }
