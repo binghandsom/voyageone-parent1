@@ -8,7 +8,6 @@ define([
 
     return function ($scope,systemCategoryService,$routeParams) {
         $scope.vm={"category":{}};
-
         $scope.initialize  = function () {
             systemCategoryService.getCategoryDetail($routeParams.catId.replace("2fff","/")).then(function (res) {
                 $scope.vm.category = res.data;
