@@ -855,11 +855,23 @@ public class CmsGetSuperFeedService extends BaseTaskService {
                 productsFeed.setCategorybeans(categoryBeans);
                 productsFeed.setChannel_id(channel_id);
 
+                // 2015-12-31 16:29:55 By Jonas
+                // 在输出之前输出所有将处理的 Model 标识类字段
+                $info("准备调用 WS API");
+                for (CategoryBean categoryBean: categoryBeans) {
+                    $info("\t处理类目是: %s", categoryBean.getUrl_key());
+                    for (ModelBean modelBean: categoryBean.getModelbeans()) {
+                        $info("\t\t处理 Model 是: %s", modelBean.getUrl_key());
+                        for (ProductBean productBean: modelBean.getProductbeans()) {
+                            $info("\t\t\t处理 Product Code: %s", productBean.getP_code());
+                        }
+                    }
+                }
+
                 // post web servies
                 WsdlResponseBean wsdlResponseBean = jsonBeanOutInsert(channel_id, productsFeed);
                 // 处理失败
                 if (wsdlResponseBean == null) {
-                    logger.error("cms 数据导入处理，新产品推送失败！");
                     $info("cms 数据导入处理，新产品推送失败！");
                     isPostSuccess = false;
                     break;
