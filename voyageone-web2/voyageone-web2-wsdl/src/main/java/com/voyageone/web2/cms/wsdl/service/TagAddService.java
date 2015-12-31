@@ -10,12 +10,8 @@ import com.voyageone.web2.cms.wsdl.dao.CmsBtTagDao;
 import com.voyageone.web2.sdk.api.VoApiConstants;
 import com.voyageone.web2.sdk.api.domain.CmsBtTagModel;
 import com.voyageone.web2.sdk.api.exception.ApiException;
-import com.voyageone.web2.sdk.api.request.ProductGetRequest;
-import com.voyageone.web2.sdk.api.request.ProductsGetRequest;
-import com.voyageone.web2.sdk.api.request.TagAddRequest;
-import com.voyageone.web2.sdk.api.response.ProductGetResponse;
-import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
-import com.voyageone.web2.sdk.api.response.TagAddResponse;
+import com.voyageone.web2.sdk.api.request.*;
+import com.voyageone.web2.sdk.api.response.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
@@ -36,7 +32,12 @@ import java.util.*;
 public class TagAddService extends BaseService {
 
     @Autowired
+    // mysql
     private CmsBtTagDao cmsBtTagDao;
+
+    @Autowired
+    // mongodb
+    private CmsBtProductDao cmsBtProductDao;
 
     // TagPath 分割符
     private String tagPathSeparator = "-";
@@ -45,6 +46,11 @@ public class TagAddService extends BaseService {
     private DataSourceTransactionManager transactionManager;
     DefaultTransactionDefinition def =new DefaultTransactionDefinition();
 
+    /**
+     * Tag追加
+     * @param request TagAddRequest
+     * @return TagAddResponse
+     */
     public TagAddResponse addTag(TagAddRequest request) {
         // 返回结果
         TagAddResponse result = new TagAddResponse();
@@ -57,6 +63,7 @@ public class TagAddService extends BaseService {
 
         TransactionStatus status=transactionManager.getTransaction(def);
 
+        // 输入参数检查
         ret = checkAddTagParam(request, result);
 
         if (ret) {
@@ -186,5 +193,103 @@ public class TagAddService extends BaseService {
         }
 
         return ret;
+    }
+
+    /**
+     * Tag移除
+     * @param request TagRemoveRequest
+     * @return TagRemoveResponse
+     */
+    public TagRemoveResponse removeTag(TagRemoveRequest request) {
+        boolean ret = true;
+        // 返回结果
+        TagRemoveResponse result = new TagRemoveResponse();
+
+        // 输入参数检查
+        ret = checkRemoveTagParam(request, result);
+
+        if (ret) {
+            // tag 删除
+            ret = deleteTag(request);
+        }
+
+        // 返回值设定
+        result.setRemoveResult(ret);
+        return result;
+    }
+
+    /**
+     * Tag删除
+     * @param request TagAddRequest
+     * @return 新追加TagID
+     */
+    private boolean deleteTag(TagRemoveRequest request) {
+        boolean ret = false;
+
+        CmsBtTagModel cmsBtTagModel = new CmsBtTagModel();
+        cmsBtTagModel.setChannelId(request.getChannelId());
+        cmsBtTagModel.setTagId(request.getTagId());
+
+        int recordCount = cmsBtTagDao.deleteCmsBtTag(cmsBtTagModel);
+
+        if (recordCount > 0) {
+            ret = true;
+        }
+
+        return ret;
+    }
+
+    /**
+     * Tag删除，输入参数检查
+     * @param request 请求参数
+     * @param result 返回结果
+     * @return 检查结果
+     */
+    private boolean checkRemoveTagParam(TagRemoveRequest request, TagRemoveResponse result) {
+        boolean ret = true;
+
+        // Tag 使用检查
+        List<CmsBtProductModel> productModelList = cmsBtProductDao.selectProductByTagId(request.getChannelId(), request.getTagId());
+        if (productModelList.size() > 0) {
+            VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70010;
+            result.setCode(codeEnum.getErrorCode());
+            result.setMessage(codeEnum.getErrorMsg());
+
+            ret = false;
+        }
+
+        return ret;
+    }
+
+    /**
+     * 根据ParentTagId检索Tags
+     * @param request TagsGetByParentTagIdRequest
+     * @return TagsGetByParentTagIdResponse
+     */
+    public TagsGetByParentTagIdResponse selectListByParentTagId(TagsGetByParentTagIdRequest request) {
+        // 返回结果
+        TagsGetByParentTagIdResponse result = new TagsGetByParentTagIdResponse();
+
+        List<CmsBtTagModel> tagModelList = cmsBtTagDao.selectListByParentTagId(request.getParentTagId());
+
+        // 返回值设定
+        result.setTags(tagModelList);
+        return result;
+    }
+
+    /**
+     * 根据ChannelId检索Tags
+     * @param request TagsGetByChannelIdRequest
+     * @return TagsGetByChannelIdResponse
+     */
+    public TagsGetByChannelIdResponse selectListByChannelId(TagsGetByChannelIdRequest request) {
+        // 返回结果
+        TagsGetByChannelIdResponse result = new TagsGetByChannelIdResponse();
+
+        List<CmsBtTagModel> tagModelList = cmsBtTagDao.selectListByChannelId(request.getChannelId());
+
+        // 返回值设定
+        result.setTags(tagModelList);
+        return result;
     }
 }
