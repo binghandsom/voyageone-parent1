@@ -104,7 +104,7 @@ public class CmsPlatformMappingService extends BaseTaskService {
         // channelid
         cmsMtPlatformMappingModel.setChannelId(cmsMtPlatformCategoryTree.getChannelId());
         // 类目ID
-        cmsMtPlatformMappingModel.setMainCategoryId(StringUtils.encodeBase64(cmsMtPlatformCategoryTree.getCatPath()));
+        cmsMtPlatformMappingModel.setMainCategoryId(StringUtils.generCatId(cmsMtPlatformCategoryTree.getCatPath()));
         // 类目ID
         cmsMtPlatformMappingModel.setPlatformCategoryId(cmsMtPlatformCategoryTree.getCatId());
         // 渠道ID
@@ -172,7 +172,9 @@ public class CmsPlatformMappingService extends BaseTaskService {
             RuleExpression ruleExpression11 = new RuleExpression();
             RuleExpression ruleExpression12 = new RuleExpression();
             ruleExpression11.addRuleWord(new TextWord("image"));
-            ruleExpression12.addRuleWord(new TextWord("https://img.alicdn.com/imgextra/i4/2183719539/TB2WnY7iVXXXXXSXpXXXXXXXXXX_!!2183719539.jpg"));
+            TextWord textWord = new TextWord("http://img4.imgtn.bdimg.com/it/u=783206025,938869075&fm=21&gp=0.jpg");
+            textWord.setUrl(true);
+            ruleExpression12.addRuleWord(textWord);
             value1.addSubMapping(new SimpleMappingBean("wap_desc_content_type", ruleExpression11));
             value1.addSubMapping(new SimpleMappingBean("wap_desc_content_content", ruleExpression12));
 

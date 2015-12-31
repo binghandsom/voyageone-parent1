@@ -6,7 +6,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function () {
 
-    return function ($scope,systemCategoryService,$routeParams) {
+    return function ($scope,systemCategoryService,$routeParams,notify) {
         $scope.vm={"category":{}};
         $scope.initialize  = function () {
             systemCategoryService.getCategoryDetail($routeParams.catId.replace("2fff","/")).then(function (res) {
@@ -26,9 +26,9 @@ define([
 
         $scope.update = function(data){
             systemCategoryService.updateCategorySchema(data).then(function(res){
-                alert("OK");
+                $scope.vm.category.modified = res.data;
+                notify.success("success");
             },function(err){
-                alert("NG");
             })
         }
     };
