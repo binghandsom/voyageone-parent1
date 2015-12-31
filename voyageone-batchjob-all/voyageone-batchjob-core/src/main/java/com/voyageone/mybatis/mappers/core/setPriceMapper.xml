@@ -145,7 +145,6 @@
         OR discount. STATUS IS NULL
         )
         AND details.item_number = discount.sub_item_number
-        AND discount.ship_date IS NOT NULL
         ),
         0
         )
@@ -165,7 +164,6 @@
         )
         AND shipdetails.sub_item_number = 0
         AND shipdetails.sku = 'Shipping'
-        AND shipdetails.ship_date IS NOT NULL
         ),
         0
         ) AS shipping_price,
@@ -184,7 +182,6 @@
         )
         AND shipdetails.sub_item_number = 0
         AND shipdetails.sku IN ('Discount','Surcharge')
-        AND shipdetails.ship_date IS NOT NULL
         ),
         0
         ) AS discount,
@@ -204,7 +201,6 @@
         details. STATUS NOT IN ('Canceled', 'Returned')
         OR details. STATUS IS NULL
         )
-        AND details.ship_date IS NOT NULL
         AND NOT EXISTS (
         SELECT
         1

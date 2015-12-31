@@ -261,7 +261,6 @@ public class SpaldingReportService extends CreateReportBaseService {
             //============================================================================================
             //============================================================================================
             //timeRegion.set(0,"2015-06-23 00:00:00"); timeRegion.set(1,"2015-06-23 23:59:59");
-            //timeRegion.set(0,"2015-07-01 00:00:00"); timeRegion.set(1,"2015-07-01 23:59:59");
             ReportDatas  = createReportDao.getVirtualCreateReportData(cart_id,order_channel_id, CodeConstants.TransferStatus.ClOSE,CodeConstants.TransferType.OUT,
                     CodeConstants.TransferOrigin.RESERVED,timeRegion.get(0),timeRegion.get(1),taskName);
         //取得退货订单（退回TM仓库）的日报基本数据记录
