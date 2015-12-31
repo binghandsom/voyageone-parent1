@@ -271,7 +271,7 @@ define([
             });
         }
         $scope.openSystemCategory = openSystemCategory;
-        function openSystemCategory(viewSize, data,catFullName,addOrEditFlg) {
+        function openSystemCategory(viewSize, data,category,addOrEditFlg) {
             require([popActions.system.category.controllerUrl], function () {
                 $modal.open({
                     templateUrl: popActions.system.category.templateUrl,
@@ -281,8 +281,8 @@ define([
                         item: function () {
                             return data;
                         },
-                        catFullName:function(){
-                            return catFullName;
+                        category:function(){
+                            return category;
                         },
                         addOrEditFlg:function(){
                             return addOrEditFlg;

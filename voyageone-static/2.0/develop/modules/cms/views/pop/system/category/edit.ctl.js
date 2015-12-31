@@ -6,7 +6,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popCategorySchemaCtl', function ($scope, systemCategoryService, item, catFullName,addOrEditFlg) {
+    angularAMD.controller('popCategorySchemaCtl', function ($scope, systemCategoryService, item, category,addOrEditFlg) {
 
         $scope.vm = {"schema": {}};
         $scope.newOption = {};
@@ -15,6 +15,7 @@ define([
             $scope.vm = {"schema": {}};
             $scope.newOption = {};
             $scope.addOrEditFlg = addOrEditFlg;
+            $scope.vm.catFullName = category.catFullPath;
             // 编辑的场合
             if(addOrEditFlg == 1){
                 if (item) {
@@ -22,7 +23,6 @@ define([
                     if (item.options) {
                         $scope.vm.schema.options = _.map(item.options, _.clone);
                     }
-                    $scope.vm.catFullName = catFullName;
                 }
             }else{
 
@@ -63,6 +63,7 @@ define([
             }else{
                 item.fields.push($scope.vm.schema);
             }
+            category.isEditFlg = true;
             $scope.$close();
         }
     });
