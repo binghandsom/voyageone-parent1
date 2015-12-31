@@ -6,6 +6,7 @@ import com.voyageone.batch.cms.service.UploadImageHandler;
 import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleWord;
+import com.voyageone.ims.rule_expression.TextWord;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -52,7 +53,11 @@ public class ExpressionParser {
                 String plainValue = "";
                 switch (ruleWord.getWordType()) {
                     case TEXT:
-                        plainValue = textWordParser.parse(ruleWord, imageSet);
+                        plainValue = textWordParser.parse(ruleWord);
+                        if (((TextWord)ruleWord).isUrl()) {
+                            plainValue = UploadImageHandler.encodeImageUrl(plainValue);
+                            imageSet.add(plainValue);
+                        }
                         break;
                     case MASTER: {
                         plainValue = masterWordParser.parse(ruleWord);
@@ -77,7 +82,8 @@ public class ExpressionParser {
                         plainValue = parse(dictWordDefine.getExpression(), imageSet);
 
                         if (plainValue != null && imageSet != null && dictWordDefine.getIsUrl()) {
-                            imageSet.add(UploadImageHandler.encodeImageUrl(plainValue));
+                            plainValue = UploadImageHandler.encodeImageUrl(plainValue);
+                            imageSet.add(plainValue);
                         }
 
                         break;
