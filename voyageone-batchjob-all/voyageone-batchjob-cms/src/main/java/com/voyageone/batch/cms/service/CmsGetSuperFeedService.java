@@ -855,17 +855,47 @@ public class CmsGetSuperFeedService extends BaseTaskService {
                 productsFeed.setCategorybeans(categoryBeans);
                 productsFeed.setChannel_id(channel_id);
 
+                /************* 2015-12-31 16:29:55 By Jonas *************/
+                // 在输出之前输出所有将处理的 Model 标识类字段
+                $info("准备调用 WS API");
+                for (CategoryBean categoryBean: categoryBeans) {
+                    $info("\t处理类目是: %s", categoryBean.getUrl_key());
+                    for (ModelBean modelBean: categoryBean.getModelbeans()) {
+                        $info("\t\t处理 Model 是: %s", modelBean.getUrl_key());
+                        for (ProductBean productBean: modelBean.getProductbeans()) {
+                            $info("\t\t\t处理 Product Code: %s", productBean.getP_code());
+                        }
+                    }
+                }
+                /************* 2015-12-31 16:29:55 By Jonas *************/
+
                 // post web servies
                 WsdlResponseBean wsdlResponseBean = jsonBeanOutInsert(channel_id, productsFeed);
+
                 // 处理失败
                 if (wsdlResponseBean == null) {
-                    logger.error("cms 数据导入处理，新产品推送失败！");
                     $info("cms 数据导入处理，新产品推送失败！");
                     isPostSuccess = false;
                     break;
                 }
 
                 ProductFeedResponseBean productFeedResponseBean = JsonUtil.jsonToBean(JsonUtil.getJsonString(wsdlResponseBean.getResultInfo()), ProductFeedResponseBean.class);
+
+                /************* 2015-12-31 16:29:55 By Jonas *************/
+                // 输出处理结果
+                $info("调用 WS API 完成");
+                $info("\t最终结果: %s", wsdlResponseBean.getResult());
+                $info("\t携带信息及代码: %s / %s", wsdlResponseBean.getMessageCode(), wsdlResponseBean.getMessage());
+                $info("\t以下是成功的");
+                for (ProductFeedDetailBean productFeedDetailBean: productFeedResponseBean.getSuccess()) {
+                    $info("\t\t(%s)%s", productFeedDetailBean.getBeanType(), productFeedDetailBean.getDealObject().getUrl_key());
+                }
+                $info("\t以下是失败的");
+                for (ProductFeedDetailBean productFeedDetailBean: productFeedResponseBean.getSuccess()) {
+                    $info("\t\t(%s)%s", productFeedDetailBean.getBeanType(), productFeedDetailBean.getDealObject().getUrl_key());
+                }
+                /************* 2015-12-31 16:29:55 By Jonas *************/
+
                 if (wsdlResponseBean.getResult().equals("OK") && productFeedResponseBean.getSuccess().size() > 0) {
                     // 出错统计
                     List<ProductFeedDetailBean> productFeedDetailBeans = productFeedResponseBean.getFailure();
