@@ -7,9 +7,9 @@
         <result column="product_id" property="productId" jdbcType="INTEGER" />
         <result column="code" property="code" jdbcType="VARCHAR" />
         <result column="sku" property="sku" jdbcType="VARCHAR" />
-        <result column="msrp_price" property="msrpPrice" jdbcType="DECIMAL" />
-        <result column="retail_price" property="retailPrice" jdbcType="DECIMAL" />
-        <result column="sale_price" property="salePrice" jdbcType="DECIMAL" />
+        <result column="msrp_price" property="msrpPrice" jdbcType="VARCHAR" />
+        <result column="retail_price" property="retailPrice" jdbcType="VARCHAR" />
+        <result column="sale_price" property="salePrice" jdbcType="VARCHAR" />
         <result column="comment" property="comment" jdbcType="VARCHAR" />
         <result column="created" property="created" jdbcType="TIMESTAMP" />
         <result column="creater" property="creater" jdbcType="VARCHAR" />
@@ -66,4 +66,67 @@
     <select id="select_price_log_by_sku_cnt" resultType="int" parameterType="HashMap">
         select count(1) from voyageone_cms2.cms_bt_price_log log where log.sku = #{sku}
     </select>
+
+    <insert id="insert_cms_bt_price_log" parameterType="com.voyageone.web2.cms.model.CmsBtPriceLogModel" useGeneratedKeys="true" keyProperty="seq">
+        insert into voyageone_cms2.cms_bt_price_log (
+            channelId,
+            product_id,
+            code,
+            sku,
+            msrp_price,
+            retail_price,
+            sale_price,
+            comment,
+            created,
+            creater,
+            modified,
+            modifier
+        ) values (
+            #{item.channelId},
+            #{item.productId},
+            #{item.code},
+            #{item.sku},
+            #{item.msrpPrice},
+            #{item.retailPrice},
+            #{item.salePrice},
+            #{item.comment},
+            now(),
+            #{item.creater},
+            now(),
+            #{item.creater}
+        )
+    </insert>
+
+    <insert id="insert_cms_bt_price_log_list" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="seq">
+        insert into voyageone_cms2.cms_bt_price_log (
+            channelId,
+            product_id,
+            code,
+            sku,
+            msrp_price,
+            retail_price,
+            sale_price,
+            comment,
+            created,
+            creater,
+            modified,
+            modifier
+        ) values
+        <foreach collection="list" item="item" separator=",">
+            (
+                #{item.channelId},
+                #{item.productId},
+                #{item.code},
+                #{item.sku},
+                #{item.msrpPrice},
+                #{item.retailPrice},
+                #{item.salePrice},
+                #{item.comment},
+                now(),
+                #{item.creater},
+                now(),
+                #{item.creater}
+            )
+        </foreach>
+    </insert>
 </mapper>

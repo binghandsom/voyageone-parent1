@@ -67,7 +67,7 @@ public class CmsMtCategoryTreeService {
         if (platformCategoryTreeModel != null) {
             result = new CmsMtCategoryTreeModel();
             String catPath = platformCategoryTreeModel.getCatPath();
-            String catId = StringUtils.encodeBase64(catPath);
+            String catId = StringUtils.generCatId(catPath);
             result.setCatId(catId);
             result.setCatName(platformCategoryTreeModel.getCatName());
             result.setCatPath(catPath);

@@ -54,7 +54,10 @@ public class VoApiConstants {
         ERROR_CODE_70004("70004", "not string or number type"),
         ERROR_CODE_70005("70005", "check error1"),
         ERROR_CODE_70006("70006", "check error2"),
-        ERROR_CODE_70007("70006", "requtest param not found"),
+        ERROR_CODE_70007("70007", "requtest param not found"),
+
+        ERROR_CODE_70008("70008", "parent tag not found"),
+        ERROR_CODE_70009("70009", "tag name is exist"),
         ;
 
         private final String errorCode;

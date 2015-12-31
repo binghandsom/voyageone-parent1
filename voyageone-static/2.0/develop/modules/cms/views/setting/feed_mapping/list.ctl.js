@@ -33,6 +33,19 @@ define([
              * @type {object}
              */
             this.selectedTop = null;
+            /**
+             * 表格的数据源
+             * @type {object[]}
+             */
+            this.tableSource = null;
+            /**
+             * 匹配情况筛选条件
+             * @type {{category: boolean|null, prop: boolean|null}}
+             */
+            this.matched = {
+                category: null,
+                prop: null
+            };
 
             // 将被 popup 调用,需要强制绑定
             this.bindCategory = this.bindCategory.bind(this);
@@ -50,16 +63,18 @@ define([
                     if (this.feedCategories.length) {
                         this.selectedTop = this.feedCategories[0];
                     }
+
+                    this.refreshTable();
                 }.bind(this));
             },
             /**
              * 继承其父类目的 Mapping
              * @param {object} feedCategory Feed 类目
              */
-            extendsMapping: function(feedCategory) {
+            extendsMapping: function (feedCategory) {
 
-                this.confirm('确定要继承吗? 如果是已经匹配过,那么之前的会被覆盖掉.').result.then(function() {
-                    this.feedMappingService.extendsMapping(feedCategory).then(function(res) {
+                this.confirm('确定要继承吗? 如果是已经匹配过,那么之前的会被覆盖掉.').result.then(function () {
+                    this.feedMappingService.extendsMapping(feedCategory).then(function (res) {
                         if (res.data) {
                             // 从后台获取更新后的 mapping
                             feedCategory.mapping = res.data;
@@ -144,7 +159,6 @@ define([
                     return mapping.defaultMapping === 1;
                 });
             },
-
             /**
              * 在类目 Popup 确定关闭后, 为相关类目进行绑定
              * @param {{from:object, selected:object}} context Popup 返回的结果信息
@@ -158,6 +172,62 @@ define([
                     // 从后台获取更新后的 mapping
                     context.from.mapping = res.data;
                 });
+            },
+            /**
+             * 刷新表格
+             */
+            refreshTable: function () {
+
+                function multi(children) {
+                    var flatten = [];
+                    angular.forEach(children, function (child) {
+                        flatten = flatten.concat(single(child));
+                    });
+                    return flatten;
+                }
+
+                function single(child) {
+                    child.level = child.path.split('-').length;
+                    return child.child && child.child.length
+                        ? [child].concat(multi(child.child))
+                        : [child];
+                }
+
+                function has(val) {
+                    return val !== null && val !== "";
+                }
+
+                function boolean(val) {
+                    return val === "1";
+                }
+
+                var _default = function (row) {
+                    var bool = boolean(this.matched.category);
+                    return bool === !!this.findDefaultMapping(row);
+                }.bind(this);
+
+                var matchOver = function (row) {
+                    var bool = boolean(this.matched.prop);
+                    var def = this.findDefaultMapping(row);
+                    return bool === (!!def && def.matchOver);
+                }.bind(this);
+
+                // 拍平
+                var rows = single(this.selectedTop);
+                // 过滤
+                rows = _.filter(rows, function (row) {
+
+                    var result = true;
+                    if (has(this.matched.category)) {
+                        result = _default(row);
+                    }
+                    if (has(this.matched.prop)) {
+                        result = matchOver(row);
+                    }
+                    return result;
+                }.bind(this));
+                // 显示
+                this.tableSource = rows;
             }
         };
 

@@ -6230,17 +6230,19 @@ a.btn-main:hover {color:#e67e22;text-decoration:underline;}
   box-shadow: 0 0 10px rgba(0, 0, 0, .2);
 }
 .channel-main h4 {
-  font-size: 2em;
-  color: #e67e22;
+  font-size: 1.6em;
+  color: #666;
   position: absolute;
-  top: 140px;
-  left: 26px;
+  padding: 4px 0px 4px 0px;
+  top: 190px;
+  left: 17px;
   overflow: hidden;
-  width: 165px;
+  width: 186px;
   text-transform: uppercase;
   font-family: Montserrat, "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-weight: 700;
-  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.1)
+  font-weight: 300;
+  text-shadow: 0 1px 4px rgba(254,254,254,.1);/*
+  background:rgba(254,254,254,.2);*/
 }
 .channel-main li a:hover{
   top: -5px;
@@ -6249,7 +6251,7 @@ a.btn-main:hover {color:#e67e22;text-decoration:underline;}
   background-color: transparent;
 }
 .channel-list {
-  margin-top: 10px;
+  margin-top: 50px;
   padding: 0;
 }
 .channel-list li{
