@@ -30,6 +30,10 @@ public class CmsBtTagDao extends WebBaseDao{
         return update("update_cms_bt_tag", cmsBtTagModel);
     }
 
+    public int deleteCmsBtTag(CmsBtTagModel cmsBtTagModel){
+        return delete("delete_cms_bt_tag", cmsBtTagModel);
+    }
+
     public CmsBtTagModel getCmsBtTagByTagId(int tagId) {
         HashMap<String, Object> paraIn = new HashMap<String, Object>();
         paraIn.put("tagId", tagId);
@@ -38,6 +42,10 @@ public class CmsBtTagDao extends WebBaseDao{
 
     public List<CmsBtTagModel> selectListByParentTagId(int parentTagId) {
         return selectList("select_list_by_parent_tag_id", parentTagId);
+    }
+
+    public List<CmsBtTagModel> selectListByChannelId(String channelId) {
+        return selectList("select_list_by_channel_id", channelId);
     }
 
     public List<CmsBtTagModel> selectListByParentTagId(String channelId, int parentTagId, String tagName) {

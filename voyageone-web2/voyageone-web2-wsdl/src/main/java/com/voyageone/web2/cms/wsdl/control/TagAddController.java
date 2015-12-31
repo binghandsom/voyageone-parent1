@@ -3,12 +3,8 @@ package com.voyageone.web2.cms.wsdl.control;
 import com.voyageone.web2.cms.wsdl.BaseController;
 import com.voyageone.web2.cms.wsdl.service.ProductGetService;
 import com.voyageone.web2.cms.wsdl.service.TagAddService;
-import com.voyageone.web2.sdk.api.request.ProductGetRequest;
-import com.voyageone.web2.sdk.api.request.ProductsGetRequest;
-import com.voyageone.web2.sdk.api.request.TagAddRequest;
-import com.voyageone.web2.sdk.api.response.ProductGetResponse;
-import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
-import com.voyageone.web2.sdk.api.response.TagAddResponse;
+import com.voyageone.web2.sdk.api.request.*;
+import com.voyageone.web2.sdk.api.response.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,5 +37,35 @@ public class TagAddController extends BaseController {
     @RequestMapping("add")
     public TagAddResponse add(@RequestBody TagAddRequest request) {
         return tagAddService.addTag(request);
+    }
+
+    /**
+     * selectOne
+     *
+     * @return CmsBtProductModel
+     */
+    @RequestMapping("remove")
+    public TagRemoveResponse remove(@RequestBody TagRemoveRequest request) {
+        return tagAddService.removeTag(request);
+    }
+
+    /**
+     * selectOne
+     *
+     * @return CmsBtProductModel
+     */
+    @RequestMapping("selectListByParentTagId")
+    public TagsGetByParentTagIdResponse selectListByParentTagId(@RequestBody TagsGetByParentTagIdRequest request) {
+        return tagAddService.selectListByParentTagId(request);
+    }
+
+    /**
+     * selectOne
+     *
+     * @return CmsBtProductModel
+     */
+    @RequestMapping("selectParentTagByChannel")
+    public TagsGetByChannelIdResponse selectListByChannelId(@RequestBody TagsGetByChannelIdRequest request) {
+        return tagAddService.selectListByChannelId(request);
     }
 }
