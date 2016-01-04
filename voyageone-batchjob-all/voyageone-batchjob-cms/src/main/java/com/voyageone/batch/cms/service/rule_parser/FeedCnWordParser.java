@@ -34,7 +34,7 @@ public class FeedCnWordParser {
             FeedCnWord feedCnWord = (FeedCnWord) ruleWord;
             String propName = feedCnWord.getValue();
             Map<String, String> extra = feedCnWord.getExtra();
-            Object plainPropValueObj = cmsBtProductModel.getFeedCnAtts().getAttribute(propName);
+            Object plainPropValueObj = cmsBtProductModel.getFeed().getCnAtts().getAttribute(propName);
 
             if (plainPropValueObj == null) {
                 return null;
