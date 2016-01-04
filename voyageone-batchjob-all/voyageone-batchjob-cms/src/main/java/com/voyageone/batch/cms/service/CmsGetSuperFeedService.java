@@ -948,7 +948,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
      */
     public boolean AttributeInsert(String channel_id, String keyword, String category, String product) {
         boolean isSuccess = true;
-        $info("产品Attribute处理开始");
+
         AttributeBean attributebean_param = new AttributeBean();
 
         attributebean_param.setCategory_url_key(Feed.getVal1(channel_id, FeedEnums.Name.product_category_url_key));
@@ -1052,7 +1052,6 @@ public class CmsGetSuperFeedService extends BaseTaskService {
             isSuccess = false;
         }
 
-        $info("产品Attribute处理结束");
         return isSuccess;
     }
 
@@ -1717,8 +1716,6 @@ public class CmsGetSuperFeedService extends BaseTaskService {
      * 更新ZZ_Work_Superfeed_Full产品信息
      */
     private boolean SuperfeedFullUpdate(String channel_id, String product_code) {
-        $info("更新ZZ_Work_Superfeed_Full产品处理开始");
-
         // 单事务处理
         transactionRunner.runWithTran(() -> {
 
@@ -1742,7 +1739,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
             }
         });
 
-        $info("更新ZZ_Work_Superfeed_Full产品处理结束");
+        $info("更新ZZ_Work_Superfeed_Full产品处理结束 [ %s ]", product_code);
         return true;
     }
 
