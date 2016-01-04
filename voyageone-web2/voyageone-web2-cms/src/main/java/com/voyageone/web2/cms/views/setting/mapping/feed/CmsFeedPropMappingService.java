@@ -9,15 +9,14 @@ import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.ComplexField;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.MultiComplexField;
+import com.voyageone.common.util.MD5;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.setting.mapping.feed.GetFieldMappingBean;
 import com.voyageone.web2.cms.bean.setting.mapping.feed.SaveFieldMappingBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -130,14 +129,7 @@ public class CmsFeedPropMappingService extends BaseAppService {
      * @return String
      */
     public String convertPathToId(String categoryPath) {
-
-        // 当前为 Path 的 Base64 码
-        // 有可能未来更改为 MD5
-        try {
-            return new String(Base64.encodeBase64(categoryPath.getBytes("UTF-8")), "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            return null;
-        }
+        return MD5.getMD5(categoryPath);
     }
 
     /**
