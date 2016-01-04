@@ -1268,7 +1268,6 @@ public class CmsGetSuperFeedService extends BaseTaskService {
      * @return productBeans
      */
     public List<ProductBean> createProduct(String channel_id, String category, String models, String codes, String keyword, String tablename) {
-        $info("产品Product处理开始");
 
         List<ProductBean> productBeans;
         String category_keyword = "";
@@ -1381,7 +1380,6 @@ public class CmsGetSuperFeedService extends BaseTaskService {
             productBeans.set(i, productbean);
         }
 
-        $info("产品Product处理完成");
         return productBeans;
     }
 
