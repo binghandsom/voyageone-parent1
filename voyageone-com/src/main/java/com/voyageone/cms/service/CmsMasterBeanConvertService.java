@@ -43,14 +43,16 @@ public class CmsMasterBeanConvertService {
 
             CmsMtCategorySchemaModel schemaModel = cmsMtCategorySchemaDao.getMasterSchemaModelByCatId(valueModel.getCatId());
 
-            Field skuField = null;
+            Field skuField;
 
-            List<Field> schemaFields = null;
+            List<Field> schemaFields;
 
             if (schemaModel != null){
 
                 schemaFields = schemaModel.getFields();
+
                 skuField = schemaModel.getSku();
+
                 skuFields.add(skuField);
 
                 Map valueFields =  valueModel.getFields();
@@ -78,18 +80,10 @@ public class CmsMasterBeanConvertService {
                 schemaWithValueModel.setProductId(prodId);
                 schemaWithValueModel.setCatId(schemaModel.getCatId());
                 schemaWithValueModel.setCatFullPath(schemaModel.getCatFullPath());
+                schemaWithValueModel.setSku(skuField);
             }
         }
 
-        if (schemaWithValueModel.getFields()==null || schemaWithValueModel.getFields().isEmpty()){
-            CmsMtCategorySchemaModel testSchemaModel = cmsMtCategorySchemaDao.getMasterSchemaModelByCatId("5omL6KGoPueRnuWjq+iFleihqA==");
-            schemaWithValueModel.setFields(testSchemaModel.getFields());
-            schemaWithValueModel.setChannelId(channelId);
-            schemaWithValueModel.setProductId(prodId);
-            schemaWithValueModel.setCatId(testSchemaModel.getCatId());
-            schemaWithValueModel.setCatFullPath(testSchemaModel.getCatFullPath());
-            schemaWithValueModel.setSku(testSchemaModel.getSku());
-        }
         return schemaWithValueModel;
     }
 

@@ -58,6 +58,7 @@ public class VoApiConstants {
 
         ERROR_CODE_70008("70008", "parent tag not found"),
         ERROR_CODE_70009("70009", "tag name is exist"),
+        ERROR_CODE_70010("70010", "tag is not allowed to delete in use"),
         ;
 
         private final String errorCode;

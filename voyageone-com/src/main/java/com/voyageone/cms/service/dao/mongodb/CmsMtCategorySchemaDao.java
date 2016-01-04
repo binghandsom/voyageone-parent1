@@ -8,6 +8,7 @@ import com.voyageone.common.masterdate.schema.field.Field;
 import net.minidev.json.JSONObject;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -50,15 +51,26 @@ public class CmsMtCategorySchemaDao extends BaseMongoDao {
         String queryStr = "{catId:\""+catId+"\"}";
         JSONObject schemaModel = mongoTemplate.findOne(queryStr,collectionName);
         CmsMtCategorySchemaModel masterSchemaModel = null;
-        if (schemaModel !=null){
-            List<Field> fields = SchemaJsonReader.readJsonForList((List)schemaModel.get("fields"));
+        List skuList = new ArrayList<>();
+        if (schemaModel != null){
+
+            List fieldList = (List)schemaModel.get("fields");
+
+            Map skuJson = (Map) schemaModel.get("sku");
+
+            skuList.add(skuJson);
+
+            List<Field> skuFields = SchemaJsonReader.readJsonForList(skuList);
+
+            List<Field> fields = SchemaJsonReader.readJsonForList(fieldList);
             String catFullPath = (String)schemaModel.get("catFullPath");
             masterSchemaModel = new CmsMtCategorySchemaModel(catId,catFullPath,fields);
             masterSchemaModel.setModifier((String) schemaModel.get("modifier"));
             masterSchemaModel.setCreater((String) schemaModel.get("creater"));
             masterSchemaModel.setCreated((String) schemaModel.get("created"));
             masterSchemaModel.setModified(schemaModel.get("modified").toString());
-            masterSchemaModel.set_id( schemaModel.get("_id").toString());
+            masterSchemaModel.set_id(schemaModel.get("_id").toString());
+            masterSchemaModel.setSku(skuFields.get(0));
         }
 
         return masterSchemaModel;

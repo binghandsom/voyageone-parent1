@@ -6,22 +6,31 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popCategorySchemaCtl', function ($scope, systemCategoryService, item, catFullName) {
+    angularAMD.controller('popCategorySchemaCtl', function ($scope, systemCategoryService, item, category,addOrEditFlg) {
 
         $scope.vm = {"schema": {}};
         $scope.newOption = {};
-
+        $scope.addOrEditFlg = addOrEditFlg;
         $scope.initialize = function () {
-            if (item) {
-                $scope.vm.schema = _.clone(item);
-                if (item.options) {
-                    $scope.vm.schema.options = _.map(item.options, _.clone);
+            $scope.vm = {"schema": {}};
+            $scope.newOption = {};
+            $scope.addOrEditFlg = addOrEditFlg;
+            $scope.vm.catFullName = category.catFullPath;
+            // 编辑的场合
+            if(addOrEditFlg == 1){
+                if (item) {
+                    $scope.vm.schema = _.clone(item);
+                    if (item.options) {
+                        $scope.vm.schema.options = _.map(item.options, _.clone);
+                    }
                 }
-                $scope.vm.catFullName = catFullName;
+            }else{
+
             }
         }
         // 添加option
         $scope.addOption = function () {
+            if(!$scope.vm.schema.options) $scope.vm.schema.options=[];
             $scope.vm.schema.options.push($scope.newOption);
             $scope.newOption = {};
         }
@@ -34,19 +43,27 @@ define([
             }
         }
         $scope.ok = function () {
-            for (key in $scope.vm.schema) {
-                item[key] = $scope.vm.schema[key];
+
+
+            if($scope.vm.schema.type != "SINGLECHECK" && $scope.vm.schema.type != "MULTICHECK"){
+                if ($scope.vm.schema.options) {
+                    delete $scope.vm.schema.options;
+                }
             }
-            switch (item.type) {
-                case "INPUT":
-                case "LABEL":
-                case "MULTICOMPLEX":
-                case "COMPLEX":
-                    if (item.options) {
-                        delete item.options;
-                    }
-                    break;
+            if($scope.vm.schema.type == "MULTICOMPLEX" || $scope.vm.schema.type == "COMPLEX") {
+                if (!$scope.vm.schema.fields) {
+                    $scope.vm.schema.fields = [];
+                }
             }
+
+            if($scope.addOrEditFlg == 1){
+                for (key in $scope.vm.schema) {
+                    item[key] = $scope.vm.schema[key];
+                }
+            }else{
+                item.fields.push($scope.vm.schema);
+            }
+            category.isEditFlg = true;
             $scope.$close();
         }
     });

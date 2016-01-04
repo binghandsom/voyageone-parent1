@@ -15,9 +15,9 @@ import java.util.*;
  *
  * /puroduct/sku/selectList
  *
- *  1.传入productId Set来查询
- *  2.传入productCode Set来查询
- *  3:传入props来查询
+ *  传入productId 或 productCode
+ *  传入addSkus(CmsBtProductModel_Sku)
+ *  存在的作更新操作，不存在作新建操作。
  *
  * Created on 2015-12-14
  *

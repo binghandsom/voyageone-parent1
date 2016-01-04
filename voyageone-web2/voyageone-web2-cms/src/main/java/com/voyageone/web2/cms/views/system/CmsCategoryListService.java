@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.system;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
 import com.voyageone.cms.service.model.CmsMtCategorySchemaModel;
 import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
@@ -41,19 +42,24 @@ public class CmsCategoryListService {
 
     public CmsMtCategorySchemaModel updateCategorySchema(Map<String,Object> schemaModel, String operator){
 
-        CmsMtCategorySchemaModel masterSchemaModel = null;
-        if (schemaModel !=null){
-            List<Field> fields = SchemaJsonReader.readJsonForList((List) schemaModel.get("fields"));
-            String catFullPath = (String) schemaModel.get("catFullPath");
-            masterSchemaModel = new CmsMtCategorySchemaModel( schemaModel.get("catId").toString(),catFullPath,fields);
-            masterSchemaModel.setModifier(operator);
-            masterSchemaModel.setCreater((String) schemaModel.get("creater"));
-            masterSchemaModel.setCreated((String) schemaModel.get("created"));
-            masterSchemaModel.setModified(DateTimeUtil.getNowTimeStamp());
-            masterSchemaModel.set_id( schemaModel.get("_id").toString());
+        CmsMtCategorySchemaModel oldData = getMasterSchemaModelByCatId(schemaModel.get("catId").toString());
+        // 检查数据没有没有被更新过
+        if(schemaModel.get("modified").toString().equalsIgnoreCase(oldData.getModified())){
+            CmsMtCategorySchemaModel masterSchemaModel = null;
+            if (schemaModel !=null){
+                List<Field> fields = SchemaJsonReader.readJsonForList((List) schemaModel.get("fields"));
+                String catFullPath = (String) schemaModel.get("catFullPath");
+                masterSchemaModel = new CmsMtCategorySchemaModel( schemaModel.get("catId").toString(),catFullPath,fields);
+                masterSchemaModel.setModifier(operator);
+                masterSchemaModel.setCreater((String) schemaModel.get("creater"));
+                masterSchemaModel.setCreated((String) schemaModel.get("created"));
+                masterSchemaModel.setModified(DateTimeUtil.getNowTimeStamp());
+                masterSchemaModel.set_id( schemaModel.get("_id").toString());
+            }
+            cmsMtCategorySchemaDao.update(masterSchemaModel);
+            return masterSchemaModel;
         }
-        cmsMtCategorySchemaDao.update(masterSchemaModel);
-        return masterSchemaModel;
+        throw new BusinessException("4000010",oldData.getModifier());
     }
 
 }
