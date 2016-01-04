@@ -855,14 +855,15 @@ public class CmsGetSuperFeedService extends BaseTaskService {
                 productsFeed.setCategorybeans(categoryBeans);
                 productsFeed.setChannel_id(channel_id);
 
+
                 /************* 2015-12-31 16:29:55 By Jonas *************/
                 // 在输出之前输出所有将处理的 Model 标识类字段
                 $info("准备调用 WS API");
-                for (CategoryBean categoryBean: categoryBeans) {
+                for (CategoryBean categoryBean : categoryBeans) {
                     $info("\t处理类目是: %s", categoryBean.getUrl_key());
-                    for (ModelBean modelBean: categoryBean.getModelbeans()) {
+                    for (ModelBean modelBean : notNull(categoryBean.getModelbeans())) {
                         $info("\t\t处理 Model 是: %s", modelBean.getUrl_key());
-                        for (ProductBean productBean: modelBean.getProductbeans()) {
+                        for (ProductBean productBean : notNull(modelBean.getProductbeans())) {
                             $info("\t\t\t处理 Product Code: %s", productBean.getP_code());
                         }
                     }
@@ -887,13 +888,14 @@ public class CmsGetSuperFeedService extends BaseTaskService {
                 $info("\t最终结果: %s", wsdlResponseBean.getResult());
                 $info("\t携带信息及代码: %s / %s", wsdlResponseBean.getMessageCode(), wsdlResponseBean.getMessage());
                 $info("\t以下是成功的");
-                for (ProductFeedDetailBean productFeedDetailBean: productFeedResponseBean.getSuccess()) {
+                for (ProductFeedDetailBean productFeedDetailBean : notNull(productFeedResponseBean.getSuccess())) {
                     $info("\t\t(%s)%s", productFeedDetailBean.getBeanType(), productFeedDetailBean.getDealObject().getUrl_key());
                 }
                 $info("\t以下是失败的");
-                for (ProductFeedDetailBean productFeedDetailBean: productFeedResponseBean.getSuccess()) {
+                for (ProductFeedDetailBean productFeedDetailBean : notNull(productFeedResponseBean.getFailure())) {
                     $info("\t\t(%s)%s", productFeedDetailBean.getResultMessage(), productFeedDetailBean.getDealObject().getUrl_key());
                 }
+                $info("调用日志输出完毕");
                 /************* 2015-12-31 16:29:55 By Jonas *************/
 
                 if (wsdlResponseBean.getResult().equals("OK") && productFeedResponseBean.getSuccess().size() > 0) {
@@ -1745,5 +1747,8 @@ public class CmsGetSuperFeedService extends BaseTaskService {
         $info("更新ZZ_Work_Superfeed_Full产品处理结束");
         return true;
     }
-}
 
+    private <T> List<T> notNull(List<T> list) {
+        return list == null ? new ArrayList<>(0) : list;
+    }
+}
