@@ -70,6 +70,15 @@ public class CmsBtProductDao extends BaseMongoPartDao {
         return select(query, channelId);
     }
 
+
+    /**
+     * 获取商品List count 根据TagId
+     */
+    public long selectProductCountByTagId(String channelId, Integer tagId) {
+        String query = "{\"tags\":{$regex:\".*-" + tagId + "-.*\"}}";
+        return countByQuery(query, channelId);
+    }
+
     /**
      * 获取SKUList 根据prodId
      */

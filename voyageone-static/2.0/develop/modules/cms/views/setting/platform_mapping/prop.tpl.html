@@ -1,0 +1,248 @@
+<div class="wrapper-md">
+    <tabset class="tab-container vo_nav-tabs">
+        <div class="form-inline pull-right">
+            <select class="form-control m-r-xxs">
+                <option>必填情况(ALL)</option>
+                <option>非必填</option>
+                <option>必填</option>
+            </select>
+            <select class="form-control m-r-xxs">
+                <option>设定情况(ALL)</option>
+                <option>已设定</option>
+                <option>未设定</option>
+            </select>
+            <input type="text" placeholder="快速检索" class="form-control">
+            <button type="submit" class="btn btn-vo btn-xxs"><i class="fa fa-search"></i></button>
+        </div>
+        <tab>
+            <tab-heading> 平台类目属性匹配</tab-heading>
+            <div class="container-fluid">
+                <div class="col-sm-12">
+                    <div class="panel panel-default">
+                        <form class="form-horizontal" ng-controller="popupCtrl">
+                            <div class="container-fluid">
+                                <div class="col-sm-12 platform_mapping_bg">
+                                    <div class="col-sm-2 text-left"><i class="fa fa-minus"></i> 商品标题商品标题商品标题商品</div>
+                                    <div class="pull-right">
+                                        <span class="badge badge-initialize">input</span>
+                                    </div>
+                                    <div class="col-sm-4 pull-center">
+                                        <button class="badge badge-empty" ng-click="openPlatformMapping('lg')">值匹配</button>
+                                    </div>
+                                </div><!-- .form-group -->
+                                <div class="col-sm-12 platform_mapping_bg">
+                                    <div class="col-sm-2 text-left"><i class="fa fa-minus"></i> 无线短标题</div>
+                                    <div class="pull-right">
+                                        <span class="badge badge-initialize">input</span>
+                                    </div>
+                                    <div class="col-sm-4 pull-center">
+                                        <button class="badge badge-empty">值匹配</button>
+                                    </div>
+                                </div><!-- .form-group -->
+                                <div class="col-sm-12 platform_mapping_bg_one">
+                                    <div class="col-sm-2 text-left"><i class="fa fa-plus"></i> 商品卖点</div>
+                                    <div class="pull-right">
+                                        <span class="badge badge-refresh">complex</span>
+                                    </div>
+                                    <div class="col-sm-4 pull-center">
+                                        <button class="badge badge-empty">值匹配</button>
+                                    </div>
+                                </div><!-- .form-group -->
+                                <div class="col-sm-12 platform_mapping_bg_list">
+                                    <div class="col-sm-2 text-left m-l-lg"><i class="fa fa-minus"></i> 商品卖点1</div>
+                                    <div class="pull-right">
+                                        <span class="badge badge-initialize">input</span>
+                                    </div>
+                                    <div class="col-sm-4 pull-center">
+                                        <button class="badge badge-empty">值匹配</button>
+                                    </div>
+                                </div><!-- .form-group -->
+                                <div class="col-sm-12 platform_mapping_bg_list">
+                                    <div class="col-sm-2 text-left m-l-lg"><i class="fa fa-plus"></i> 商品卖点2</div>
+                                    <div class="pull-right">
+                                        <span class="badge badge-initialize">input</span>
+                                    </div>
+                                    <div class="col-sm-4 pull-center">
+                                        <button class="badge badge-empty">值匹配</button>
+                                    </div>
+                                </div><!-- .form-group -->
+                                <div class="col-sm-12 platform_mapping_bg_list">
+                                    <div class="col-sm-2 text-left m-l-xlg"><i class="fa fa-plus"></i> 商品卖点21</div>
+                                    <div class="pull-right">
+                                        <span class="badge badge-initialize">input</span>
+                                    </div>
+                                    <div class="col-sm-4 pull-center">
+                                        <button class="badge badge-empty">值匹配</button>
+                                    </div>
+                                </div><!-- .form-group -->
+                                <div class="col-sm-12 platform_mapping_bg_list">
+                                    <div class="col-sm-2 text-left m-l-xxlg"><i class="fa fa-minus"></i> 商品卖点201</div>
+                                    <div class="pull-right">
+                                        <span class="badge badge-initialize">input</span>
+                                    </div>
+                                    <div class="col-sm-4 pull-center">
+                                        <button class="badge badge-empty">值匹配</button>
+                                    </div>
+                                </div><!-- .form-group -->
+                                <div class="col-sm-12 platform_mapping_bg_list">
+                                    <div class="col-sm-2 text-left m-l-xxlg"><i class="fa fa-minus"></i> 商品卖点202</div>
+                                    <div class="pull-right">
+                                        <span class="badge badge-initialize">input</span>
+                                    </div>
+                                    <div class="col-sm-4 pull-center">
+                                        <button class="badge badge-empty">值匹配</button>
+                                    </div>
+                                </div><!-- .form-group -->
+                                <div class="col-sm-12 platform_mapping_bg_list">
+                                    <div class="col-sm-2 text-left m-l-xxlg"><i class="fa fa-minus"></i> 商品卖点203</div>
+                                    <div class="pull-right">
+                                        <span class="badge badge-initialize">input</span>
+                                    </div>
+                                    <div class="col-sm-4 pull-center">
+                                        <button class="badge badge-empty">值匹配</button>
+                                    </div>
+                                </div><!-- .form-group -->
+                                <div class="col-sm-12 platform_mapping_bg_list">
+                                    <div class="col-sm-2 text-left m-l-xlg"><i class="fa fa-minus"></i> 商品卖点22</div>
+                                    <div class="pull-right">
+                                        <span class="badge badge-initialize">input</span>
+                                    </div>
+                                    <div class="col-sm-4 pull-center">
+                                        <button class="badge badge-empty">值匹配</button>
+                                    </div>
+                                </div><!-- .form-group -->
+                                <div class="col-sm-12 platform_mapping_bg_list">
+                                    <div class="col-sm-2 text-left m-l-xlg"><i class="fa fa-minus"></i> 商品卖点23</div>
+                                    <div class="pull-right">
+                                        <span class="badge badge-initialize">input</span>
+                                    </div>
+                                    <div class="col-sm-4 pull-center">
+                                        <button class="badge badge-empty">值匹配</button>
+                                    </div>
+                                </div><!-- .form-group -->
+                                <div class="col-sm-12 platform_mapping_bg_list">
+                                    <div class="col-sm-2 text-left m-l-xlg"><i class="fa fa-minus"></i> 商品卖点24</div>
+                                    <div class="pull-right">
+                                        <span class="badge badge-initialize">input</span>
+                                    </div>
+                                    <div class="col-sm-4 pull-center">
+                                        <button class="badge badge-empty">值匹配</button>
+                                    </div>
+                                </div><!-- .form-group -->
+                                <div class="col-sm-12 platform_mapping_bg_list">
+                                    <div class="col-sm-2 text-left m-l-lg"><i class="fa fa-minus"></i> 商品卖点3</div>
+                                    <div class="pull-right">
+                                        <span class="badge badge-initialize">input</span>
+                                    </div>
+                                    <div class="col-sm-4 pull-center">
+                                        <button class="badge badge-empty">值匹配</button>
+                                    </div>
+                                </div><!-- .form-group -->
+                                <div class="col-sm-12 platform_mapping_bg_list">
+                                    <div class="col-sm-2 text-left m-l-lg"><i class="fa fa-minus"></i> 商品卖点4</div>
+                                    <div class="pull-right">
+                                        <span class="badge badge-initialize">input</span>
+                                    </div>
+                                    <div class="col-sm-4 pull-center">
+                                        <button class="badge badge-empty">值匹配</button>
+                                    </div>
+                                </div><!-- .form-group -->
+                                <div class="col-sm-12 platform_mapping_bg_list">
+                                    <div class="col-sm-2 text-left m-l-lg"><i class="fa fa-minus"></i> 商品卖点5</div>
+                                    <div class="pull-right">
+                                        <span class="badge badge-initialize">input</span>
+                                    </div>
+                                    <div class="col-sm-4 pull-center">
+                                        <button class="badge badge-empty">值匹配</button>
+                                    </div>
+                                </div><!-- .form-group -->
+                                <div class="col-sm-12 platform_mapping_bg">
+                                    <div class="col-sm-2 text-left"><i class="fa fa-minus"></i> 商品状态</div>
+                                    <div class="pull-right">
+                                        <span class="badge badge-success">singleCheck</span>
+                                    </div>
+                                    <div class="col-sm-4 pull-center">
+                                        <button class="badge badge-empty">值匹配</button>
+                                    </div>
+                                </div><!-- .form-group -->
+                                <div class="col-sm-12 platform_mapping_bg">
+                                    <div class="col-sm-2 text-left"><i class="fa fa-minus"></i> 开始时间</div>
+                                    <div class="pull-right">
+                                        <span class="badge badge-initialize">input</span>
+                                    </div>
+                                    <div class="col-sm-4 pull-center">
+                                        <button class="badge badge-empty">值匹配</button>
+                                    </div>
+                                </div><!-- .form-group -->
+                                <div class="col-sm-12 platform_mapping_bg">
+                                    <div class="col-sm-2 text-left"><i class="fa fa-minus"></i> 发布类型</div>
+                                    <div class="pull-right">
+                                        <span class="badge badge-success">singleCheck</span>
+                                    </div>
+                                    <div class="col-sm-4 pull-center">
+                                        <button class="badge badge-empty">值匹配</button>
+                                    </div>
+                                </div><!-- .form-group -->
+                                <div class="col-sm-12 platform_mapping_bg">
+                                    <div class="col-sm-2 text-left"><i class="fa fa-minus"></i> 宝贝类型</div>
+                                    <div class="pull-right">
+                                        <span class="badge badge-success">singleCheck</span>
+                                    </div>
+                                    <div class="col-sm-4 pull-center">
+                                        <button class="badge badge-empty">值匹配</button>
+                                    </div>
+                                </div><!-- .form-group -->
+                                <div class="col-sm-12 platform_mapping_bg">
+                                    <div class="col-sm-2 text-left"><i class="fa fa-minus"></i> 拍下减库存</div>
+                                    <div class="pull-right">
+                                        <span class="badge badge-success">singleCheck</span>
+                                    </div>
+                                    <div class="col-sm-4 pull-center">
+                                        <button class="badge badge-empty">值匹配</button>
+                                    </div>
+                                </div><!-- .form-group -->
+                                <div class="col-sm-12 platform_mapping_bg">
+                                    <div class="col-sm-2 text-left"><i class="fa fa-minus"></i> 商品秒杀</div>
+                                    <div class="pull-right">
+                                        <span class="badge badge-failure">multiComplex</span>
+                                    </div>
+                                    <div class="col-sm-4 pull-center">
+                                        <button class="badge badge-empty">值匹配</button>
+                                    </div>
+                                </div><!-- .form-group -->
+                                <div class="col-sm-12 platform_mapping_bg">
+                                    <div class="col-sm-2 text-left"><i class="fa fa-minus"></i> 风格</div>
+                                    <div class="pull-right">
+                                        <span class="badge badge-success">singleCheck</span>
+                                    </div>
+                                    <div class="col-sm-4 pull-center">
+                                        <button class="badge badge-empty">值匹配</button>
+                                    </div>
+                                </div><!-- .form-group -->
+                                <div class="col-sm-12 platform_mapping_bg">
+                                    <div class="col-sm-2 text-left"><i class="fa fa-minus"></i> 尺码分组</div>
+                                    <div class="pull-right">
+                                        <span class="badge badge-success">singleCheck</span>
+                                    </div>
+                                    <div class="col-sm-4 pull-center">
+                                        <button class="badge badge-empty">值匹配</button>
+                                    </div>
+                                </div><!-- .form-group -->
+                                <div class="col-sm-12 platform_mapping_bg">
+                                    <div class="col-sm-2 text-left"><i class="fa fa-minus"></i> 自定义销售属性分组</div>
+                                    <div class="pull-right">
+                                        <span class="badge badge-success">singleCheck</span>
+                                    </div>
+                                    <div class="col-sm-4 pull-center">
+                                        <button class="badge badge-empty">值匹配</button>
+                                    </div>
+                                </div><!-- .form-group -->
+                            </div>
+                        </form><!-- form-horizontal -->
+                    </div>
+                </div><!--.col -->
+
+            </div>
+        </tab>
+    </tabset><!-- tabset -->
+</div><!-- end .wrapper-md -->
