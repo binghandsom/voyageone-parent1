@@ -30,7 +30,7 @@ public class SxPrepareData {
         //String catId= "54+g5a6dL+mSu+efsy/nv6Hnv6Av6buE6YeRPuWkqeeEtuePjeePoO+8iOaWsO+8iT7og7jppbA=";
 
         //珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰   sku template 1
-        String catId = "54+g5a6dL+mSu+efsy/nv6Hnv6Av6buE6YeRPuW9qeiJsuWuneefsy/otLXph43lrp3nn7M+5omL6aWw";
+        String catId = "2d0e4b1c769c3d21ce8925621deb72b2";
 
         //女装/女士精品>背心吊带  sku template 3
 //        String catId = "5aWz6KOFL+Wls+Wjq+eyvuWTgT7og4zlv4PlkIrluKY=";

@@ -37,7 +37,7 @@ public class FeedOrgWordParser {
             Map<String, String> extra = feedOrgWord.getExtra();
             Object plainPropValueObj;
 
-            plainPropValueObj = cmsBtProductModel.getFeedOrgAtts().getAttribute(propName);
+            plainPropValueObj = cmsBtProductModel.getFeed().getOrgAtts().getAttribute(propName);
 
             if (plainPropValueObj == null) {
                 return null;
