@@ -27,13 +27,13 @@ define([
             }else{
 
             }
-        }
+        };
         // 添加option
         $scope.addOption = function () {
             if(!$scope.vm.schema.options) $scope.vm.schema.options=[];
             $scope.vm.schema.options.push($scope.newOption);
             $scope.newOption = {};
-        }
+        };
 
         $scope.delOption = function (option) {
             var index;
@@ -41,7 +41,14 @@ define([
             if (index > -1) {
                 $scope.vm.schema.options.splice(index, 1);
             }
-        }
+        };
+        $scope.onChecked = function(data){
+            if(data.value == "false"){
+                data.value = "true"
+            }else{
+                data.value = "false"
+            }
+        };
         $scope.ok = function () {
 
 
