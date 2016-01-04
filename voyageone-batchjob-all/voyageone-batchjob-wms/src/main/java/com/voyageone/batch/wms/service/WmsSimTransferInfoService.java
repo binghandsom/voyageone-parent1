@@ -6,6 +6,7 @@ import com.voyageone.batch.core.Enums.TaskControlEnums;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.core.util.TaskControlUtils;
 import com.voyageone.batch.wms.dao.ClientInventoryDao;
+import com.voyageone.batch.wms.dao.InventoryDao;
 import com.voyageone.batch.wms.dao.TransferDao;
 import com.voyageone.batch.wms.modelbean.SimTransferBean;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -30,6 +31,9 @@ public class WmsSimTransferInfoService  extends BaseTaskService {
     ClientInventoryDao clientInventoryDao;
 
     @Autowired
+    InventoryDao inventoryDao;
+
+    @Autowired
     private TransactionRunner transactionRunner;
 
     @Override
@@ -50,9 +54,23 @@ public class WmsSimTransferInfoService  extends BaseTaskService {
         // 线程
         List<Runnable> threads = new ArrayList<>();
 
+        // 在北京时间零点三十分，清除现有逻辑库存，重新计算最新的库存（全量推送）
+        if (DateTimeUtil.getCurrentHour() == 16 && DateTimeUtil.getCurrentMinute() == 30) {
+            int logicyCount = inventoryDao.deleteLogicInventory();
+            logger.info("清除逻辑库存的件数："+logicyCount);
+        }
+
         String process_time = DateTimeUtil.getLocalTime(DateTimeUtil.getDate(), -4);
 
         int transferCount = transferDao.deleteTransferHistory( process_time);
+
+        logger.info("处理过期TransferItem数据日期："+process_time + "，处理件数："+transferCount);
+
+        transferCount = transferDao.deleteTransferDetail(process_time);
+
+        logger.info("处理过期TransferDetail数据日期："+process_time + "，处理件数："+transferCount);
+
+        transferCount = transferDao.deleteTransfer( process_time);
 
         logger.info("处理过期Transfer数据日期："+process_time + "，处理件数："+transferCount);
 

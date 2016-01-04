@@ -400,7 +400,11 @@ public class ChannelConfigEnums {
         /**
          * 短信客服号(营销)
          */
-        sms_add_serial_marketing
+        sms_add_serial_marketing,
+        /**
+         * 分配仓库
+         */
+        allot_store
 
     }
 

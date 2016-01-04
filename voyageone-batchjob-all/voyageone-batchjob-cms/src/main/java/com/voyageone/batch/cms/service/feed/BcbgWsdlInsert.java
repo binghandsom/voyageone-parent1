@@ -158,7 +158,7 @@ class BcbgWsdlInsert extends BcbgWsdlBase {
      *
      * @throws Exception
      */
-    protected void postNewProduct() throws Exception {
+    protected boolean postNewProduct() throws Exception {
         // 接口的主服务
         WsdlProductService service = new WsdlProductService(channel);
 
@@ -208,5 +208,7 @@ class BcbgWsdlInsert extends BcbgWsdlBase {
         int[] count = bcbgSuperFeedDao.updateSuccessStatus(modelFailList, productFailList);
 
         $info("新商品 INSERT 处理全部完成 { Feed(M): %s, Feed(C): %s }", count[0], count[1]);
+
+        return (count[0] + count[1]) > 0;
     }
 }

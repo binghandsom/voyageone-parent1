@@ -410,6 +410,10 @@
         DELETE FROM wms_bt_inventory_center_logic_syn
     </update>
 
+    <update id="wms_deleteLogicInventory">
+        DELETE FROM wms_bt_inventory_center_logic
+    </update>
+
     <update id="wms_updateBackOrder">
         UPDATE
             wms_bt_backorder backorder,

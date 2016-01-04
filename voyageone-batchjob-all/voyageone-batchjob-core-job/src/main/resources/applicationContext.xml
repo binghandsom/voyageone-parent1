@@ -9,15 +9,17 @@
 
 		<import resource="applicationContext-core.xml"/>
 
+		<import resource="dao-mongo-collecion-mapping.xml"/>
+
 		<task:scheduled-tasks scheduler="core-job-scheduler">
 			<!--每隔10分钟任务错误信息上报-->
 			<task:scheduled ref="CoreIssueTaskErrorTask" method="run" cron="0 0/10 0-23 * * ?"/>
 			<!--每隔10分钟检查从库同步情况-->
 			<task:scheduled ref="CheckSlaveStatusTask" method="run" cron="0 0/10 0-23 * * ?"/>
-			<!--每天凌晨5点执行 -->
-			<task:scheduled ref="historyDataTransferTask" method="run" cron="0 0 5 * * ?"/>
+			<!--每天北京时间20点30分执行 -->
+			<task:scheduled ref="historyDataTransferTask" method="run" cron="0 30 12 * * ?"/>
 		</task:scheduled-tasks>
 
-		<task:scheduler id="core-job-scheduler" pool-size="1"/><!-- 必须需要 -->
+		<task:scheduler id="core-job-scheduler" pool-size="3"/><!-- 必须需要 -->
 
 </beans>

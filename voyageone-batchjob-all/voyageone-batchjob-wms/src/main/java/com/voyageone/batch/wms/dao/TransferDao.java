@@ -103,7 +103,7 @@ public class TransferDao extends BaseDao {
     }
 
     /**
-     * 将一段时间之前的TransferHistory删除
+     * 将一段时间之前的TransferHistory删除(刷新库存的记录删除)
      *
      * @param process_time 出力时间
      */
@@ -114,6 +114,34 @@ public class TransferDao extends BaseDao {
         params.put("process_time", process_time);
 
         return updateTemplate.delete(Constants.DAO_NAME_SPACE_WMS + "wms_deleteTransferHistory", process_time);
+    }
+
+    /**
+     * 将一段时间之前的TransferDetail删除(刷新库存的记录删除)
+     *
+     * @param process_time 出力时间
+     */
+    public int deleteTransferDetail(String process_time) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("process_time", process_time);
+
+        return updateTemplate.delete(Constants.DAO_NAME_SPACE_WMS + "wms_deleteTransferDetail", process_time);
+    }
+
+    /**
+     * 将一段时间之前的Transfer删除(刷新库存的记录删除)
+     *
+     * @param process_time 出力时间
+     */
+    public int deleteTransfer(String process_time) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("process_time", process_time);
+
+        return updateTemplate.delete(Constants.DAO_NAME_SPACE_WMS + "wms_deleteTransfer", process_time);
     }
 
     /**

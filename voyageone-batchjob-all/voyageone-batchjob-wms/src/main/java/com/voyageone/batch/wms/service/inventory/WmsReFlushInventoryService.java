@@ -12,6 +12,7 @@ import com.voyageone.common.components.cn.enums.InventorySynType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.configs.Enums.ShopConfigEnums;
 import com.voyageone.common.configs.ShopConfigs;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -81,6 +82,11 @@ public class WmsReFlushInventoryService extends BaseTaskService {
 
         public void reFlushCn() {
 
+            if (!needSync(shopBean)) {
+                logger.info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存不需要刷新");
+                return;
+            }
+
             List<ViwLogicInventoryBean> all = inventoryDao.getLogicInventory(getTaskName(), shopBean.getOrder_channel_id(), shopBean.getCart_id());
             logger.info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存刷新件数：" + all.size());
 
@@ -122,6 +128,18 @@ public class WmsReFlushInventoryService extends BaseTaskService {
             }
 
             return list;
+        }
+
+        /**
+         * 如果 sync_inventory_flg 配置正是字符串 0。则说明需要同步，否则都不同步
+         *
+         * @param shopBean 店铺
+         * @return boolean
+         */
+        private boolean needSync(ShopBean shopBean) {
+            String value = ShopConfigs.getVal1(shopBean, ShopConfigEnums.Name.sync_inventory_flg);
+
+            return value.equals("1");
         }
     }
 }

@@ -228,6 +228,14 @@ public class InventoryDao extends BaseDao {
     }
 
     /**
+     * 将wms_bt_inventory_center_logic初始化
+     * @return
+     */
+    public int deleteLogicInventory() {
+        return updateTemplate.update(Constants.DAO_NAME_SPACE_WMS + "wms_deleteLogicInventory");
+    }
+
+    /**
      * 更新处理完毕的Reservation记录
      *
      * @param transfer_id 处理的transfer_id
