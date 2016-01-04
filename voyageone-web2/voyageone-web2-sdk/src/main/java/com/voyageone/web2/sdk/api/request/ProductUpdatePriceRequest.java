@@ -1,10 +1,9 @@
 package com.voyageone.web2.sdk.api.request;
 
-
 import com.voyageone.web2.sdk.api.VoApiRequest;
 import com.voyageone.web2.sdk.api.domain.ProductPriceModel;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
-import com.voyageone.web2.sdk.api.response.ProductsCountGetResponse;
+import com.voyageone.web2.sdk.api.response.ProductUpdatePriceResponse;
 import com.voyageone.web2.sdk.api.util.RequestUtils;
 
 import java.util.ArrayList;
@@ -24,7 +23,7 @@ import java.util.List;
  * @version 2.0.0
  * @since. 2.0.0
  */
-public class ProductUpdatePriceRequest extends VoApiRequest<ProductsCountGetResponse> {
+public class ProductUpdatePriceRequest extends VoApiRequest<ProductUpdatePriceResponse> {
 
 	public String getApiURLPath() {
 		return "/puroduct/sku/updatePrices";

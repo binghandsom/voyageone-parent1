@@ -2,9 +2,11 @@ package com.voyageone.web2.cms.wsdl.control;
 
 import com.voyageone.web2.cms.wsdl.BaseController;
 import com.voyageone.web2.cms.wsdl.service.ProductSkuService;
+import com.voyageone.web2.sdk.api.request.ProductSkusDeleteRequest;
 import com.voyageone.web2.sdk.api.request.ProductSkusGetRequest;
 import com.voyageone.web2.sdk.api.request.ProductSkusPutRequest;
 import com.voyageone.web2.sdk.api.request.ProductUpdatePriceRequest;
+import com.voyageone.web2.sdk.api.response.ProductSkusDeleteResponse;
 import com.voyageone.web2.sdk.api.response.ProductSkusGetResponse;
 import com.voyageone.web2.sdk.api.response.ProductSkusPutResponse;
 import com.voyageone.web2.sdk.api.response.ProductUpdatePriceResponse;
@@ -34,7 +36,7 @@ public class ProductSkuController extends BaseController {
 
     /**
      * selectList
-     * @return List<CmsBtProductModel>
+     * @return ProductSkusGetResponse
      */
     @RequestMapping("selectList")
     public ProductSkusGetResponse selectList(@RequestBody ProductSkusGetRequest request) {
@@ -44,7 +46,7 @@ public class ProductSkuController extends BaseController {
 
     /**
      * selectList
-     * @return List<CmsBtProductModel>
+     * @return ProductSkusPutResponse
      */
     @RequestMapping("put")
     public ProductSkusPutResponse put(@RequestBody ProductSkusPutRequest request) {
@@ -53,10 +55,19 @@ public class ProductSkuController extends BaseController {
 
     /**
      * updatePrices
-     * @return List<CmsBtProductModel>
+     * @return ProductUpdatePriceRequest
      */
     @RequestMapping("updatePrices")
-    public ProductUpdatePriceRequest updatePrices(@RequestBody ProductUpdatePriceRequest request) {
+    public ProductUpdatePriceResponse updatePrices(@RequestBody ProductUpdatePriceRequest request) {
         return productSkuService.updatePrices(request);
+    }
+
+    /**
+     * delete
+     * @return ProductSkusDeleteRequest
+     */
+    @RequestMapping("deletes")
+    public ProductSkusDeleteResponse updatePrices(@RequestBody ProductSkusDeleteRequest  request) {
+        return productSkuService.deletes(request);
     }
 }
