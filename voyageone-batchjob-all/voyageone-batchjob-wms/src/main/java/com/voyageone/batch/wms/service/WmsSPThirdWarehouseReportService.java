@@ -2,27 +2,35 @@ package com.voyageone.batch.wms.service;
 
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.core.CodeConstants;
+import com.voyageone.batch.core.Constants;
 import com.voyageone.batch.core.Enums.TaskControlEnums;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.core.util.TaskControlUtils;
+import com.voyageone.batch.wms.WmsConstants;
 import com.voyageone.batch.wms.dao.CreateReportDao;
 import com.voyageone.batch.wms.modelbean.SPThirdWarehouseReportBean;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.ThirdPartyConfigs;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.ThirdPartyConfigBean;
+import com.voyageone.common.mail.Mail;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
+import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+
+import static java.lang.String.format;
 
 /**
  * Created by Dell on 2016/1/4.
@@ -74,6 +82,8 @@ public class WmsSPThirdWarehouseReportService extends BaseTaskService {
         private final String create_sp_third_warehouse_report = "create_sp_third_warehouse_report";
         // 已生成文件列表
         private List<String> createFileName = new ArrayList<String>();
+
+        private final String report_file_extension = ".xls";
 
         public spThirdWarehouseReporting(String orderChannelId) {
             this.channel = ChannelConfigs.getChannel(orderChannelId);
@@ -130,7 +140,8 @@ public class WmsSPThirdWarehouseReportService extends BaseTaskService {
                         // 日报文件生成后继处理
                         processCreateAfter(thirdPartyConfigBean, timeRegion.get(2), isSuccess, isCreated);
                     } else {
-                        logger.info("没有到达时间点" + thirdPartyConfigBean.getProp_val1() + ":00:00,以SKU集计生成斯伯丁第三方仓库发货日报，不需要处理！");
+                        int hours = Integer.valueOf(thirdPartyConfigBean.getProp_val2()) + 1;
+                        logger.info("没有到达时间点" + hours + ":00:00,以SKU集计生成斯伯丁第三方仓库发货日报，不需要处理！");
                     }
                 }
             }
@@ -305,8 +316,13 @@ public class WmsSPThirdWarehouseReportService extends BaseTaskService {
             List<SPThirdWarehouseReportBean> spThirdWarehouseReports = new ArrayList<SPThirdWarehouseReportBean>();
             try {
                 spThirdWarehouseReports = createReportDao.getSPThirdWarehouseReportBySKU(channel.getOrder_channel_id(),timeRegion.get(0),timeRegion.get(1), CodeConstants.Reservation_Status.Open,getTaskName());
+                logger.info(format("取得 [ %s ] 条数据", spThirdWarehouseReports.size()));
                 //生成日报文件开始
-                isSuccess = createReportDat(thirdPartyConfigBean, spThirdWarehouseReports, timeRegion);
+                isSuccess = createReportExcel(thirdPartyConfigBean, spThirdWarehouseReports, timeRegion);
+                //生成的日报文件发给第三发
+                if (isSuccess == true){
+                    isSuccess = sendThirdMail(timeRegion,String.valueOf(spThirdWarehouseReports.size()),thirdPartyConfigBean.getProp_val4());
+                }
             } catch (Exception e) {
                 logger.error(e.getMessage());
                 logger.info("取得斯伯丁第三方仓库发货日报数据发生错误");
@@ -315,6 +331,182 @@ public class WmsSPThirdWarehouseReportService extends BaseTaskService {
             }
 
             return (isSuccess);
+        }
+
+        /**
+         * @description 生成日报文件
+         * @param thirdPartyConfigBean
+         * @param ReportDatas 日报表基本数据
+         * @param timeRegion  判断今日生成的文件
+         *
+         */
+        private boolean createReportExcel(ThirdPartyConfigBean thirdPartyConfigBean,List<SPThirdWarehouseReportBean>  ReportDatas,List<String> timeRegion) {
+            String fileName = String.format(thirdPartyConfigBean.getProp_val3(), timeRegion.get(2)) + report_file_extension;
+            logger.info(format("生成斯伯丁第三方仓库发货日报文件 [ %s ]开始", fileName));
+            String templateFile = Properties.readValue(WmsConstants.spaldingReportTemplateFile.SPALDING_REPORT_TEMPLATE);
+            HashMap<String, String>  fileTile = new HashMap<String, String>();
+            logger.info(format("读取斯伯丁第三方仓库发货日报文档模板文件 [ %s ]", templateFile));
+
+
+            try (InputStream inputStream = new FileInputStream(templateFile);
+                 // FileOutputStream fileOut = new FileOutputStream(filePath + "e:/workbook.xls");
+                 FileOutputStream fileOut = new FileOutputStream(thirdPartyConfigBean.getProp_val4() + "/" + fileName);
+                 Workbook book = WorkbookFactory.create(inputStream)) {
+                    writeReportExcel(book,fileName,ReportDatas);
+                    book.write(fileOut);
+                    //已生成文件名保存
+                    createFileName.add(fileName);
+
+            } catch (Exception e) {
+                logger.info(format("生成斯伯丁第三方仓库发货日报文件 [ %s ]发生错误", fileName));
+                logger.error(e.getMessage());
+                logIssue(channel.getFull_name() + " " + format("生成日报文件 [ %s ]发生错误：", fileName)+ " " + e);
+                return false;
+
+            }
+            logger.info(format("生成斯伯丁第三方仓库发货日报文件 [ %s ]结束", fileName));
+            return true;
+        }
+
+        /**
+         * @description 日报文件内容输出
+         * @param book
+         * @param fileName  文件名
+         * @param ReportDatas 日报表基本数据
+         *
+         */
+        private void writeReportExcel(Workbook book, String fileName,
+                                      List<SPThirdWarehouseReportBean>  ReportDatas)  throws Exception {
+            String sourceOrderIdBasic = "";
+            String orderNumBasic = "";
+            String sizeValue = "";
+            logger.info(format(" [ %s ]斯伯丁第三方仓库发货日报文件内容输出开始", fileName));
+
+            // 从模版中克隆第一个
+            Sheet sheet = book.cloneSheet(WmsConstants.SPThirdWarehouseReportItems.TEMPLATE_SHEET);
+
+            // 设置SheetName
+            book.setSheetName(book.getSheetIndex(sheet), fileName);
+
+            // 设置报表内容
+            int rowStart = 1;
+            int rowLine = 1;
+            logger.info(format("[ %s ]  条数据准备写入开始", ReportDatas.size()));
+            for (SPThirdWarehouseReportBean reportBean : ReportDatas) {
+                //日报文件，Size变换
+                sizeValue =  changeSize(StringUtils.null2Space(reportBean.getSize()));
+
+                if(rowLine >= WmsConstants.SPThirdWarehouseReportItems.ADD_START_ROWS){
+                    // 仓库没改变时，增加新行
+                    Row newRow = sheet.createRow(rowStart);
+                    Row oldRow = sheet.getRow(WmsConstants.SPThirdWarehouseReportItems.OLD_ROWS);
+                    for (int col = WmsConstants.SPThirdWarehouseReportItems.Column_Start; col < WmsConstants.SPThirdWarehouseReportItems.Column_End; col++) {
+                        Cell newCell = newRow.createCell(col);
+                        Cell oldCell = oldRow.getCell(col);
+                        newCell.setCellStyle(oldCell.getCellStyle());
+                    }
+                }
+                Row row = sheet.getRow(rowStart);
+                //Order_number不一样
+                if (!sourceOrderIdBasic.equals(reportBean.getSource_order_id()) && !orderNumBasic.equals(reportBean.getOrder_number())){
+
+                    //序号
+                    row.getCell(WmsConstants.SPThirdWarehouseReportItems.Column_Index).setCellValue(rowLine);
+                    //付款时间
+                    row.getCell(WmsConstants.SPThirdWarehouseReportItems.Column_Order_date_time).setCellValue(reportBean.getOrder_date_time());
+                    //官网订单号
+                    row.getCell(WmsConstants.SPThirdWarehouseReportItems.Column_Source_order_id).setCellValue(reportBean.getSource_order_id());
+                    // 	内部订单号
+                    row.getCell(WmsConstants.SPThirdWarehouseReportItems.Column_Order_number).setCellValue(reportBean.getOrder_number());
+                    //购买物品
+                    row.getCell(WmsConstants.SPThirdWarehouseReportItems.Column_Sku).setCellValue(reportBean.getItemcode() + "-" + sizeValue);
+                    // 	数量
+                    row.getCell(WmsConstants.SPThirdWarehouseReportItems.Column_Qty).setCellValue(reportBean.getQty());
+                    // 	物品类型
+                    row.getCell(WmsConstants.SPThirdWarehouseReportItems.Column_Product).setCellValue(reportBean.getProduct());
+                    // 	收货人姓名
+                    row.getCell(WmsConstants.SPThirdWarehouseReportItems.Column_Ship_name).setCellValue(reportBean.getShip_name());
+                    // 	手机
+                    row.getCell(WmsConstants.SPThirdWarehouseReportItems.Column_Ship_phone).setCellValue(reportBean.getShip_phone());
+                    // 	省
+                    row.getCell(WmsConstants.SPThirdWarehouseReportItems.Column_Ship_state).setCellValue(reportBean.getShip_state());
+                    // 	市
+                    row.getCell(WmsConstants.SPThirdWarehouseReportItems.Column_Ship_city).setCellValue(reportBean.getShip_city());
+                    // 	详细地址
+                    row.getCell(WmsConstants.SPThirdWarehouseReportItems.Column_Ship_address).setCellValue(reportBean.getShip_address());
+                    // 	备注
+                    row.getCell(WmsConstants.SPThirdWarehouseReportItems.Column_Customer_comments).setCellValue(reportBean.getCustomer_comments());
+                    // 	承运方
+                    // 	运单号
+                    sourceOrderIdBasic = reportBean.getSource_order_id();
+                    orderNumBasic = reportBean.getOrder_number();
+                }else{
+                    //序号
+                    row.getCell(0).setCellValue(rowLine);
+                    //购买物品
+                    row.getCell(4).setCellValue(reportBean.getItemcode() + "-" + sizeValue);
+                    // 数量
+                    row.getCell(5).setCellValue(reportBean.getQty());
+                }
+                rowStart = rowStart + 1;
+                rowLine = rowLine + 1;
+            }
+            logger.info(format("[ %s ]  条数据准备写入结束", ReportDatas.size()));
+            book.removeSheetAt(0);
+            logger.info(format(" [ %s ]斯伯丁第三方仓库发货日报文件内容输出结束", fileName));
+        }
+
+
+        /**
+         * 日报文件，Size变换
+         * @param sizeValue String
+         * @return String
+         */
+        private  String changeSize(String sizeValue) throws Exception{
+            if (WmsConstants.spaldingReportSizeChange.SIZE_LIST.containsKey(sizeValue)){
+                sizeValue = sizeValue.replace(sizeValue,WmsConstants.spaldingReportSizeChange.SIZE_LIST.get(sizeValue));
+            }else if (sizeValue.indexOf("*") >= 0 ){
+                sizeValue = sizeValue.replace("*","-");
+            }
+            return sizeValue;
+        }
+
+
+        /**
+         * 斯伯丁第三方仓库发货日报邮件发送
+         * @param timeRegion
+         * @return 邮件内容
+         */
+        private boolean sendThirdMail(List<String> timeRegion,String listSize,String filePath) {
+            // 存放邮件附件
+            List<String> fileAffix = new ArrayList<String>();
+            logger.info("斯伯丁第三方仓库发货日报邮件发送");
+            try{
+                int timeZone = getTimeZone(channel.getOrder_channel_id());
+                StringBuilder builderContent = new StringBuilder();
+                String detail = String.format(WmsConstants.EmailSPThirdWarehouseReport.HEAD,DateTimeUtil.getLocalTime(timeRegion.get(0),timeZone),DateTimeUtil.getLocalTime(timeRegion.get(1),timeZone), listSize);
+                builderContent
+                        .append(Constants.EMAIL_STYLE_STRING)
+                        .append(detail);
+
+
+                String subject = String.format(WmsConstants.EmailSPThirdWarehouseReport.SUBJECT, timeRegion.get(2));
+                //Mail.sendAlert(CodeConstants.EmailReceiver.NEED_SOLVE, subject, builderContent.toString(), true);
+
+
+                // 源文件
+                String srcFile = filePath + "/" + createFileName.get(0);
+                fileAffix.add(srcFile);
+
+                Mail.send(CodeConstants.EmailReceiver.NEED_SOLVE, subject, builderContent.toString(), fileAffix, false);
+                return true;
+            } catch (Exception e) {
+                logger.info("斯伯丁第三方仓库发货日报邮件发送发生错误");
+                logger.error(e.getMessage());
+                logIssue(channel.getFull_name() + " 斯伯丁第三方仓库发货日报邮件发送发生错误：" + e);
+                return false;
+
+            }
         }
     }
 }

@@ -351,4 +351,64 @@ public interface WmsConstants {
         public final static String AREA = "1";
         public final static String INVENTORY = "2";
     }
+
+    /**
+     * 斯伯丁第三方仓库发货日报
+     */
+    public final static class SPThirdWarehouseReportItems {
+        // 模板Sheet
+        public final static int TEMPLATE_SHEET = 0;
+
+        // 增加标准行
+        public final static int OLD_ROWS = 1;
+
+        // 增加起始行数
+        public final static int ADD_START_ROWS = 2;
+
+        // 开始列
+        public final static int Column_Start = 0;
+        // 结束列
+        public final static int Column_End = 15;
+
+        //序号
+        public final static int Column_Index = 0;
+        //付款时间
+        public final static int Column_Order_date_time = 1;
+        //官网订单号
+        public final static int Column_Source_order_id = 2;
+        // 	内部订单号
+        public final static int Column_Order_number = 3;
+        //购买物品
+        public final static int Column_Sku = 4;
+        // 	数量
+        public final static int Column_Qty = 5;
+        // 	物品类型
+        public final static int Column_Product = 6;
+        // 	收货人姓名
+        public final static int Column_Ship_name = 7;
+        // 	手机
+        public final static int Column_Ship_phone = 8;
+        // 	省
+        public final static int Column_Ship_state = 9;
+        // 	市
+        public final static int Column_Ship_city = 10;
+        // 	详细地址
+        public final static int Column_Ship_address = 11;
+        // 	备注
+        public final static int Column_Customer_comments = 12;
+
+    }
+
+    /**
+     * 斯伯丁第三方仓库发货日报邮件
+     */
+    final class EmailSPThirdWarehouseReport {
+
+        // 邮件名
+        public final static String SUBJECT = "%s斯伯丁第三方仓库发货日报";
+        // 概要说明
+        public final static String HEAD = "<font color='red'>%s至%s有在附件中所列订单需要发货，一共%s单，请按附件发货，谢谢。</font>";
+
+    }
+
 }

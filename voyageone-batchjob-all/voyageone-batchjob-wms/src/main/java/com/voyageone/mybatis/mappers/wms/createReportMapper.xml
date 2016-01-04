@@ -300,7 +300,7 @@
      </select>
 
     <!-- 以SKU集计斯伯丁第三方仓库发货日报数据-->
-    <select id="wms_selectSumInventoryBySKU" resultType="com.voyageone.batch.wms.modelbean.SumInventoryBean">
+    <select id="wms_selectSPThirdWarehouseReportBySKU" resultType="com.voyageone.batch.wms.modelbean.SumInventoryBean">
         SELECT
             date_add(
                 orders.order_date_time,
@@ -319,10 +319,15 @@
                 orders.ship_address,
                 orders.ship_address2
             ) AS ship_address,
-            orders.customer_comments
+            orders.customer_comments,
+            reservation.sku,
+            itemdetails.itemcode,
+            itemdetails.size
         FROM
             oms_bt_orders orders,
             tt_reservation reservation
+            INNER JOIN wms_bt_item_details itemdetails ON itemdetails.sku = reservation.sku
+            and itemdetails.order_channel_id = #{order_channel_id}
         WHERE
             orders.order_channel_id = #{order_channel_id}
         AND orders.cart_id = '25'

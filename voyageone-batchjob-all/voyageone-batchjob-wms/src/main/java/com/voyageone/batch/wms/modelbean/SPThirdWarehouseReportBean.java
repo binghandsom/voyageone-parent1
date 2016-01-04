@@ -17,6 +17,9 @@ public class SPThirdWarehouseReportBean {
     private String ship_city;
     private String ship_address;
     private String customer_comments;
+    private String sku;
+    private String itemcode;
+    private String size;
 
     public String getOrder_date_time() {
         return order_date_time;
@@ -112,5 +115,29 @@ public class SPThirdWarehouseReportBean {
 
     public void setCustomer_comments(String customer_comments) {
         this.customer_comments = customer_comments;
+    }
+
+    public String getSku() {
+        return sku;
+    }
+
+    public void setSku(String sku) {
+        this.sku = sku;
+    }
+
+    public String getItemcode() {
+        return itemcode;
+    }
+
+    public void setItemcode(String itemcode) {
+        this.itemcode = itemcode;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
     }
 }
