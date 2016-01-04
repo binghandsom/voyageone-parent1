@@ -6447,11 +6447,23 @@ a.btn-main:hover {color:#e67e22;text-decoration:underline;}
   margin:0px;
   padding:0px;
 }
-.table_main,.table_mains li{
+.table_main li{
   list-style-type: none;
 }
 .table_main span{
   color:#7c7c7c;
+}
+.table_mains{
+  margin:0px;
+  padding:4px 0px 0px 0px;
+  vertical-align: middle;
+}
+.table_mains ul{
+  margin:0px;
+  padding:0px;
+}
+.table_mains li{
+  list-style-type: none;
 }
 /*菜单*/
 li input {
