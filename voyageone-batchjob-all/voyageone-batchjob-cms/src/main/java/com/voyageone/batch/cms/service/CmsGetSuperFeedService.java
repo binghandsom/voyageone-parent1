@@ -892,7 +892,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
                 }
                 $info("\t以下是失败的");
                 for (ProductFeedDetailBean productFeedDetailBean: productFeedResponseBean.getSuccess()) {
-                    $info("\t\t(%s)%s", productFeedDetailBean.getBeanType(), productFeedDetailBean.getDealObject().getUrl_key());
+                    $info("\t\t(%s)%s", productFeedDetailBean.getResultMessage(), productFeedDetailBean.getDealObject().getUrl_key());
                 }
                 /************* 2015-12-31 16:29:55 By Jonas *************/
 
