@@ -888,13 +888,14 @@ public class CmsGetSuperFeedService extends BaseTaskService {
                 $info("\t最终结果: %s", wsdlResponseBean.getResult());
                 $info("\t携带信息及代码: %s / %s", wsdlResponseBean.getMessageCode(), wsdlResponseBean.getMessage());
                 $info("\t以下是成功的");
-                for (ProductFeedDetailBean productFeedDetailBean : productFeedResponseBean.getSuccess()) {
+                for (ProductFeedDetailBean productFeedDetailBean : notNull(productFeedResponseBean.getSuccess())) {
                     $info("\t\t(%s)%s", productFeedDetailBean.getBeanType(), productFeedDetailBean.getDealObject().getUrl_key());
                 }
                 $info("\t以下是失败的");
-                for (ProductFeedDetailBean productFeedDetailBean : productFeedResponseBean.getSuccess()) {
+                for (ProductFeedDetailBean productFeedDetailBean : notNull(productFeedResponseBean.getFailure())) {
                     $info("\t\t(%s)%s", productFeedDetailBean.getResultMessage(), productFeedDetailBean.getDealObject().getUrl_key());
                 }
+                $info("调用日志输出完毕");
                 /************* 2015-12-31 16:29:55 By Jonas *************/
 
                 if (wsdlResponseBean.getResult().equals("OK") && productFeedResponseBean.getSuccess().size() > 0) {
