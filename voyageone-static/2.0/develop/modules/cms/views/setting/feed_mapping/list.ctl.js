@@ -4,11 +4,14 @@
 
 define([
     'cms',
+    'underscore',
     'modules/cms/controller/popup.ctl'
-], function (cms) {
+], function (cms, _) {
     "use strict";
     return cms.controller('feedMappingController', (function () {
-
+        /**
+         * @typedef {{parentPath:string,level:int,model:object,mapping:object}} FeedCategoryBean
+         */
         /**
          * @description
          * Feed Mapping 画面的 Controller 类
@@ -25,12 +28,17 @@ define([
 
             /**
              * feed 类目集合
-             * @type {object[]}
+             * @type {object}
              */
             this.feedCategories = null;
             /**
+             * 所有顶层的 Key 值
+             * @type {string[]}
+             */
+            this.topKeys = null;
+            /**
              * 当前选择的 TOP 类目
-             * @type {object}
+             * @type {string}
              */
             this.selectedTop = null;
             /**
@@ -40,11 +48,11 @@ define([
             this.tableSource = null;
             /**
              * 匹配情况筛选条件
-             * @type {{category: boolean|null, prop: boolean|null}}
+             * @type {{category: boolean, property: boolean}}
              */
             this.matched = {
                 category: null,
-                prop: null
+                property: null
             };
 
             // 将被 popup 调用,需要强制绑定
@@ -53,17 +61,32 @@ define([
 
         FeedMappingController.prototype = {
             /**
+             * select 的绑定数据源
+             */
+            options: {
+                category: {
+                    '类目匹配情况(ALL)': null,
+                    '类目已匹配': true,
+                    '类目未匹配': false
+                },
+                property: {
+                    '匹配属性情况(ALL)': null,
+                    '属性已匹配完成': true,
+                    '属性未匹配完成': false
+                }
+            },
+            /**
              * 画面初始化时
              */
             init: function () {
 
-                this.feedMappingService.getFeedCategories().then(function (res) {
-                    this.feedCategories = res.data.categoryTree;
+                this.feedMappingService.getFeedCategoryTree().then(function (res) {
+                    this.feedCategories = res.data;
+                    this.topKeys = _.keys(this.feedCategories);
                     // 如果有数据就默认选中
-                    if (this.feedCategories.length) {
-                        this.selectedTop = this.feedCategories[0];
+                    if (this.topKeys.length) {
+                        this.selectedTop = this.topKeys[0];
                     }
-
                     this.refreshTable();
                 }.bind(this));
             },
@@ -77,7 +100,11 @@ define([
                     this.feedMappingService.extendsMapping(feedCategory).then(function (res) {
                         if (res.data) {
                             // 从后台获取更新后的 mapping
-                            feedCategory.mapping = res.data;
+                            // 刷新数据
+                            var feedCategoryBean = this.findCategory(feedCategory.path);
+                            feedCategoryBean.mapping = _.find(res.data, function(m){
+                                return m.defaultMapping === 1;
+                            });
                         } else {
                             this.notify.warning('没有找到可以继承的设置.');
                         }
@@ -86,7 +113,7 @@ define([
             },
             /**
              * 获取类目的默认 Mapping 类目
-             * @param {{mapping:object[]}} feedCategory
+             * @param {FeedCategoryBean} feedCategory
              * @returns {string}
              */
             getDefaultMapping: function (feedCategory) {
@@ -115,49 +142,27 @@ define([
              */
             findParent: function (category) {
 
-                var path = category.path.split('-');
-
-                if (path === 1) return null;
-
-                // 从截取的类目路径中删除最后一个,即自己
-                path.splice(path.length - 1);
-
-                return this.findCategory(path);
+                var path = category.model.path;
+                var index = path.lastIndexOf('-');
+                return index < 0
+                    ? null
+                    : this.findCategory(path.substring(0, index));
             },
             /**
              * 在树中查找类目
-             * @param {string[]} path 类目路径
-             * @return {object} Feed 类目对象
+             * @param {string} path 类目路径
+             * @return {object|undefined} Feed 类目对象
              */
             findCategory: function (path) {
-
-                var category = null;
-                var categories = this.feedCategories;
-
-                _.each(path, function (v, i) {
-
-                    category = _.find(categories, function (cate) {
-                        return cate.name === v;
-                    });
-
-                    if (i == path.length - 1)
-                        return;
-
-                    categories = category.child;
-                });
-
-                return category;
+                return this.feedCategories[this.selectedTop][path];
             },
             /**
              * 在类目中查找默认的 Mapping 关系
-             * @param {{mapping:object[]}} category
+             * @param {FeedCategoryBean} category
              * @return {object} Mapping 对象
              */
             findDefaultMapping: function (category) {
-
-                return _.find(category.mapping, function (mapping) {
-                    return mapping.defaultMapping === 1;
-                });
+                return category.mapping;
             },
             /**
              * 在类目 Popup 确定关闭后, 为相关类目进行绑定
@@ -170,63 +175,49 @@ define([
                     to: context.selected.catPath
                 }).then(function (res) {
                     // 从后台获取更新后的 mapping
-                    context.from.mapping = res.data;
-                });
+                    // 刷新数据
+                    var feedCategoryBean = this.findCategory(context.from.path);
+                    feedCategoryBean.mapping = _.find(res.data, function(m){
+                        return m.defaultMapping === 1;
+                    });
+                }.bind(this));
+            },
+            /**
+             * 检查当前类目是否已进行类目匹配
+             * @param {FeedCategoryBean} feedCategoryBean
+             * @return {boolean}
+             */
+            isCategoryMatched: function(feedCategoryBean) {
+                // 只要默认 mapping 存在即已匹配
+                return !!feedCategoryBean.mapping;
+            },
+            /**
+             * 检查当前类目是否已经完成了属性匹配
+             * @param {FeedCategoryBean} feedCategoryBean
+             * @return {boolean}
+             */
+            isPropertyMatched: function(feedCategoryBean) {
+                // 如果有匹配并且确实匹配完了,才算是属性匹配完成
+                return this.isCategoryMatched(feedCategoryBean) && feedCategoryBean.mapping.matchOver;
             },
             /**
              * 刷新表格
              */
             refreshTable: function () {
-
-                function multi(children) {
-                    var flatten = [];
-                    angular.forEach(children, function (child) {
-                        flatten = flatten.concat(single(child));
-                    });
-                    return flatten;
-                }
-
-                function single(child) {
-                    child.level = child.path.split('-').length;
-                    return child.child && child.child.length
-                        ? [child].concat(multi(child.child))
-                        : [child];
-                }
-
-                function has(val) {
-                    return val !== null && val !== "";
-                }
-
-                function boolean(val) {
-                    return val === "1";
-                }
-
-                var _default = function (row) {
-                    var bool = boolean(this.matched.category);
-                    return bool === !!this.findDefaultMapping(row);
-                }.bind(this);
-
-                var matchOver = function (row) {
-                    var bool = boolean(this.matched.prop);
-                    var def = this.findDefaultMapping(row);
-                    return bool === (!!def && def.matchOver);
-                }.bind(this);
-
-                // 拍平
-                var rows = single(this.selectedTop);
+                // 选定数据源
+                var rows = this.feedCategories[this.selectedTop];
                 // 过滤
-                rows = _.filter(rows, function (row) {
-
+                rows = _.filter(rows, function (val) {
                     var result = true;
-                    if (has(this.matched.category)) {
-                        result = _default(row);
+                    if (this.matched.category !== null) {
+                        result = this.isCategoryMatched(val);
                     }
-                    if (has(this.matched.prop)) {
-                        result = matchOver(row);
+                    if (this.matched.property !== null) {
+                        result = this.isPropertyMatched(val);
                     }
                     return result;
                 }.bind(this));
-                // 显示
+                // 绑定&显示
                 this.tableSource = rows;
             }
         };

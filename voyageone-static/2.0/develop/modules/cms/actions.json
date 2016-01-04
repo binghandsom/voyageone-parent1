@@ -32,7 +32,7 @@
     "mapping": {
       "feedMappingService": {
         "root": "/cms/setting/feedMapping",
-        "getFeedCategories": "getFeedCategories",
+        "getFeedCategoryTree": "getFeedCategoryTree",
         "getMainCategories": "getMainCategories",
         "setMapping": "setFeedMapping",
         "extendsMapping": "extendsMapping",

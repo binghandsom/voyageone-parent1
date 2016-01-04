@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.views.setting.mapping.feed;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
+import com.voyageone.cms.service.dao.mongodb.CmsMtFeedCategoryTreeDao;
 import com.voyageone.cms.service.model.*;
 import com.voyageone.cms.service.model.feed.mapping.Prop;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
@@ -35,6 +36,9 @@ import static java.util.stream.Collectors.toList;
 public class CmsFeedPropMappingService extends BaseAppService {
 
     @Autowired
+    private CmsMtFeedCategoryTreeDao cmsMtFeedCategoryTreeDao;
+
+    @Autowired
     private CmsMtCategorySchemaDao categorySchemaDao;
 
     @Autowired
@@ -52,9 +56,9 @@ public class CmsFeedPropMappingService extends BaseAppService {
      */
     public CmsMtCategorySchemaModel getCategoryPropsByFeed(String feedCategoryPath, UserSessionBean userSessionBean) {
 
-        CmsMtFeedCategoryTreeModelx treeModel = feedMappingService.getFeedCategoryTree(userSessionBean);
+        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(userSessionBean.getSelChannelId());
 
-        CmsFeedCategoryModel feedCategoryModel = feedMappingService.findByPath(feedCategoryPath, treeModel);
+        CmsFeedCategoryModel feedCategoryModel = feedMappingService.findByPath(feedCategoryPath, treeModelx);
 
         if (feedCategoryModel == null)
             throw new BusinessException("根据路径没找到类目");
@@ -145,7 +149,7 @@ public class CmsFeedPropMappingService extends BaseAppService {
      */
     public Map<String, List<String>> getFeedAttributes(String feedCategoryPath, UserSessionBean userSessionBean) {
 
-        CmsMtFeedCategoryTreeModelx treeModelx = feedMappingService.getFeedCategoryTree(userSessionBean);
+        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(userSessionBean.getSelChannelId());
 
         CmsFeedCategoryModel feedCategoryModel = feedMappingService.findByPath(feedCategoryPath, treeModelx);
 
