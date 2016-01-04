@@ -92,6 +92,7 @@ public abstract class UploadWorkloadHandler extends Thread{
     }
 
     protected void abortTcb(TaskControlBlock currentTcb, RuntimeException re) {
+        logger.error(re.getMessage(), re);
         re.printStackTrace();
         stopTcb(currentTcb);
     }
