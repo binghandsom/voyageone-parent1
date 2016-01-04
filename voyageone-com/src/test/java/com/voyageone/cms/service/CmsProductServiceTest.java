@@ -2,6 +2,7 @@ package com.voyageone.cms.service;
 
 
 import com.mongodb.WriteResult;
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.cms.CmsConstants;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
@@ -153,11 +154,17 @@ public class CmsProductServiceTest {
             skus.add(sku);
         }
 
-//        CmsBtProductModel_Feed feed = product.getFeedAtts();
-//        feed.setAttribute("washingtype", "dry cleaning");
-//        feed.setAttribute("collar", "mandarin collar");
-//        feed.setAttribute("style", "campus");
-//        feed.setAttribute("waspe", "dleaning");
+        BaseMongoMap feedOrgAtts = product.getFeed().getOrgAtts();
+        feedOrgAtts.setAttribute("washingtype", "dry cleaning");
+        feedOrgAtts.setAttribute("collar", "mandarin collar");
+        feedOrgAtts.setAttribute("style", "campus");
+        feedOrgAtts.setAttribute("waspe", "dleaning");
+
+        BaseMongoMap feedCnAtts = product.getFeed().getCnAtts();
+        feedCnAtts.setAttribute("washingtype", "dry cleaning");
+        feedCnAtts.setAttribute("collar", "mandarin collar");
+        feedCnAtts.setAttribute("style", "campus");
+        feedCnAtts.setAttribute("waspe", "dleaning");
 
         return product;
     }
@@ -202,7 +209,7 @@ public class CmsProductServiceTest {
         List<CmsBtProductModel> lst = new ArrayList<>();
         int index = 0;
         for(int i=1; i<=100000; i++) {
-            CmsBtProductModel productModel = create("100", i, new Random());
+            CmsBtProductModel productModel = create("300", i, new Random());
             lst.add(productModel);
             index++;
             if (i%1000 == 0) {
