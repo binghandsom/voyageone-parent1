@@ -96,7 +96,14 @@ public class InputField extends Field {
 
     @Override
     public String getFieldValueFromMap(Map<String, Object> valueMap) {
-        return (String)valueMap.get(id);
+        String result;
+        Object valueObj =  valueMap.get(id);
+        if (valueObj instanceof String) {
+            result = (String)valueMap.get(id);
+        } else {
+            result = valueObj != null ? valueObj.toString():"";
+        }
+        return result;
     }
 
     @Override

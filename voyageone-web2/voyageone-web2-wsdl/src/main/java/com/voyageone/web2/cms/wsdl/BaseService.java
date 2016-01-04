@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.wsdl;
 
+import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.common.util.StringUtils;
@@ -7,6 +8,7 @@ import com.voyageone.web2.base.BaseAppComponent;
 import com.voyageone.web2.sdk.api.VoApiConstants;
 import com.voyageone.web2.sdk.api.VoApiListRequest;
 import com.voyageone.web2.sdk.api.VoApiRequest;
+import com.voyageone.web2.sdk.api.VoApiUpdateResponse;
 import com.voyageone.web2.sdk.api.exception.ApiException;
 import com.voyageone.web2.sdk.api.request.ProductSkusGetRequest;
 
@@ -88,6 +90,13 @@ public abstract class BaseService extends BaseAppComponent {
         queryObject.setLimit(pageSize);
         queryObject.setSkip((pageNo-1) * pageSize);
         request.getPageSize();
+    }
+
+    protected void setResultCount(VoApiUpdateResponse response, BulkWriteResult bulkWriteResult) {
+        response.setInsertedCount(response.getInsertedCount() + bulkWriteResult.getInsertedCount());
+        response.setMatchedCount(response.getMatchedCount() + bulkWriteResult.getMatchedCount());
+        response.setModifiedCount(response.getModifiedCount() + bulkWriteResult.getModifiedCount());
+        response.setRemovedCount(response.getRemovedCount() + bulkWriteResult.getRemovedCount());
     }
 
 
