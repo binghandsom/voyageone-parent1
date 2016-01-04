@@ -210,15 +210,15 @@ define([
                 rows = _.filter(rows, function (val) {
                     var result = true;
                     if (this.matched.category !== null) {
-                        result = this.isCategoryMatched(val);
+                        result = this.matched.category === this.isCategoryMatched(val);
                     }
                     if (this.matched.property !== null) {
-                        result = this.isPropertyMatched(val);
+                        result = this.matched.property === this.isPropertyMatched(val);
                     }
                     return result;
                 }.bind(this));
                 // 绑定&显示
-                this.tableSource = rows;
+                this.tableSource = rows.sort(function(a,b){return a.seq > b.seq ? 1 : -1;});
             }
         };
 

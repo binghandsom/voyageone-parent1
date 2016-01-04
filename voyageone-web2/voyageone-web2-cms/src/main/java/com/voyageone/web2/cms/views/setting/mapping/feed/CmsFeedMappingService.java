@@ -48,11 +48,18 @@ public class CmsFeedMappingService extends BaseAppService {
         // 将树形转化为利于画面查询数据的键值结构
         Map<String, Map<String, FeedCategoryBean>> map = new HashMap<>();
 
-        for (CmsFeedCategoryModel feedCategoryModel: treeModelx.getCategoryTree()) {
+        for (CmsFeedCategoryModel feedCategoryModel : treeModelx.getCategoryTree()) {
+
+            final int[] seq = {0};
 
             Stream<FeedCategoryBean> feedCategoryBeanStream = buildFeedCategoryBean(feedCategoryModel);
 
             Map<String, FeedCategoryBean> children = feedCategoryBeanStream
+                    .map(f -> {
+                        f.setSeq(seq[0]);
+                        seq[0]++;
+                        return f;
+                    })
                     .collect(toMap(f -> f.getModel().getPath(), f -> f));
 
             map.put(feedCategoryModel.getPath(), children);
