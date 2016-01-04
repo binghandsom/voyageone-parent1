@@ -126,7 +126,7 @@ public abstract class UploadWorkloadHandler extends Thread{
         List<TaskControlBlock> srcTcbQueue = tcb.getTcb_queue();
         if (srcTcbQueue == running_queue) {
             logger.debug("suspend from running queue");
-        } else if (srcTcbQueue != pri_running_queue) {
+        } else if (srcTcbQueue == pri_running_queue) {
             logger.debug("suspend from prior running queue");
         } else {
             logger.error("This condition must be not occurred!");
