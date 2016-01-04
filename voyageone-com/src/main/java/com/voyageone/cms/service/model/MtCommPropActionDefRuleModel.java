@@ -1,7 +1,10 @@
 package com.voyageone.cms.service.model;
 
 import com.voyageone.common.configs.Enums.ActionType;
+import com.voyageone.common.masterdate.schema.enums.RuleTypeEnum;
+import com.voyageone.common.masterdate.schema.factory.SchemaFactory;
 import com.voyageone.common.masterdate.schema.field.Field;
+import com.voyageone.common.masterdate.schema.rule.Rule;
 import com.voyageone.common.util.JsonUtil;
 
 import java.util.ArrayList;
@@ -41,7 +44,22 @@ public class MtCommPropActionDefRuleModel {
     public void setFieldComProperties(Field field){
         if (this.rulMap != null){
             if (this.rulMap.get(this.IS_REQUIRED) != null){
-                field.setFieldRequired();
+
+                List<Rule> rules = field.getRules();
+
+                boolean isRequire = false;
+
+                for (Rule r:rules){
+                    if ("requiredRule".equals(r.getName()) && "true".equals(r.getValue())){
+                        isRequire = true;
+                        break;
+                    }
+                }
+
+                if (!isRequire){
+                    field.setFieldRequired();
+                }
+
             }
 
             if (this.rulMap.get(this.DATASOURCE) !=null){
