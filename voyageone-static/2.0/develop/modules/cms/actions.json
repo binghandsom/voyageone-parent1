@@ -32,7 +32,7 @@
     "mapping": {
       "feedMappingService": {
         "root": "/cms/setting/feedMapping",
-        "getFeedCategories": "getFeedCategories",
+        "getFeedCategoryTree": "getFeedCategoryTree",
         "getMainCategories": "getMainCategories",
         "setMapping": "setFeedMapping",
         "extendsMapping": "extendsMapping",
@@ -92,11 +92,11 @@
       "getCategoryDetail":"getCategoryDetail",
       "updateCategorySchema":"updateCategorySchema"
     },
-    "productDetailService":{
+    "$productDetailService":{
       "root":"/cms/product/detail/",
       "getProductInfo":"getProductInfo",
       "saveProductInfo":"saveProductInfo",
-      "chagneCategory":"chagneCategory",
+      "changeCategory":"changeCategory",
       "confirmChange":"confirmChange",
       "revertCategory":"revertCategory"
     }

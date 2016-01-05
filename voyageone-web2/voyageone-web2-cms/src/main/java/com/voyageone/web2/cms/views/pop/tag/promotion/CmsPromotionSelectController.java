@@ -1,15 +1,19 @@
 package com.voyageone.web2.cms.views.pop.tag.promotion;
 
+import com.voyageone.common.util.CommonUtil;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.model.CmsBtTagModel;
+import com.voyageone.web2.sdk.api.response.ProductsTagPutResponse;
+import com.voyageone.web2.sdk.api.service.ProductTagClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +31,9 @@ public class CmsPromotionSelectController extends CmsController {
     @Autowired
     private CmsPromotionSelectService promotionSelectService;
 
+    @Autowired
+    private ProductTagClient productTagClient;
+
     @RequestMapping(CmsUrlConstants.POP.PROM_SELECT.GET_PROM_TAGS)
     public AjaxResponse getPromotionTags(@RequestBody Map<String, Object> params){
         List<CmsBtTagModel> result = promotionSelectService.getPromotionTags(params);
@@ -35,9 +42,14 @@ public class CmsPromotionSelectController extends CmsController {
 
     @RequestMapping(CmsUrlConstants.POP.PROM_SELECT.ADD_TO_PROMOTION)
     public AjaxResponse addToPromotion(@RequestBody Map<String, Object> params) {
-        String channel_id = getUser().getSelChannelId();
-        String user_name = getUser().getUserName();
-        Map<String, Object> result = promotionSelectService.addToPromotion(params, channel_id, user_name);
+        String channelId = getUser().getSelChannelId();
+        String modifier = getUser().getUserName();
+
+        String tag_path = params.get("tagPath").toString();
+        List<Long> productIds = CommonUtil.changeListType((ArrayList<Integer>) params.get("productIds"));
+
+        Map<String, Object> result = productTagClient.addTagProducts(channelId, tag_path, productIds, modifier);
+
         return success(result);
     }
 

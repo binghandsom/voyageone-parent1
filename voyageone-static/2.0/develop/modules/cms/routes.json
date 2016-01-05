@@ -51,7 +51,7 @@
     "controllerUrl": "modules/cms/views/group/list.ctl"
   },
   "product_detail": {
-    "hash": "/product/detail/:productId",
+    "hash": "/product/detail/:id",
     "templateUrl": "views/product/detail.tpl.html",
     "controllerUrl": "modules/cms/views/product/detail.ctl",
     "controller": "productDetailController"
@@ -73,6 +73,11 @@
     "templateUrl": "views/setting/platform_mapping/list.tpl.html",
     "controllerUrl": "modules/cms/views/setting/platform_mapping/list.ctl"
   },
+  "setting_platform_mapping_prop": {
+    "hash": "/setting/platform_mapping/prop",
+    "templateUrl": "views/setting/platform_mapping/prop.tpl.html",
+    "controllerUrl": "modules/cms/views/setting/platform_mapping/prop.ctl"
+  },
   "system_category": {
     "hash": "/system/category",
     "templateUrl": "views/system/category/index.tpl.html",
@@ -87,5 +92,15 @@
     "hash": "/system/category/edit2",
     "templateUrl": "views/system/category/edit2.tpl.html",
     "controllerUrl": "modules/cms/views/system/category/edit.ctl"
+  },
+  "system_error_op": {
+    "hash": "/system/error_management_op",
+    "templateUrl": "views/system/error/management_op.tpl.html",
+    "controllerUrl": "modules/cms/views/system/error/management_op.ctl"
+  },
+  "system_error_con": {
+    "hash": "/system/error_management_con",
+    "templateUrl": "views/system/error/management_con.tpl.html",
+    "controllerUrl": "modules/cms/views/system/error/management_con.ctl"
   }
 }

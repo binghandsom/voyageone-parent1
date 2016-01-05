@@ -2,21 +2,21 @@ package com.voyageone.web2.cms.views.setting.mapping.feed;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
+import com.voyageone.cms.service.dao.mongodb.CmsMtFeedCategoryTreeDao;
 import com.voyageone.cms.service.model.*;
 import com.voyageone.cms.service.model.feed.mapping.Prop;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.ComplexField;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.MultiComplexField;
+import com.voyageone.common.util.MD5;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.setting.mapping.feed.GetFieldMappingBean;
 import com.voyageone.web2.cms.bean.setting.mapping.feed.SaveFieldMappingBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +33,9 @@ import static java.util.stream.Collectors.toList;
  */
 @Service
 public class CmsFeedPropMappingService extends BaseAppService {
+
+    @Autowired
+    private CmsMtFeedCategoryTreeDao cmsMtFeedCategoryTreeDao;
 
     @Autowired
     private CmsMtCategorySchemaDao categorySchemaDao;
@@ -52,9 +55,9 @@ public class CmsFeedPropMappingService extends BaseAppService {
      */
     public CmsMtCategorySchemaModel getCategoryPropsByFeed(String feedCategoryPath, UserSessionBean userSessionBean) {
 
-        CmsMtFeedCategoryTreeModelx treeModel = feedMappingService.getFeedCategoryTree(userSessionBean);
+        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(userSessionBean.getSelChannelId());
 
-        CmsFeedCategoryModel feedCategoryModel = feedMappingService.findByPath(feedCategoryPath, treeModel);
+        CmsFeedCategoryModel feedCategoryModel = feedMappingService.findByPath(feedCategoryPath, treeModelx);
 
         if (feedCategoryModel == null)
             throw new BusinessException("根据路径没找到类目");
@@ -126,14 +129,7 @@ public class CmsFeedPropMappingService extends BaseAppService {
      * @return String
      */
     public String convertPathToId(String categoryPath) {
-
-        // 当前为 Path 的 Base64 码
-        // 有可能未来更改为 MD5
-        try {
-            return new String(Base64.encodeBase64(categoryPath.getBytes("UTF-8")), "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            return null;
-        }
+        return MD5.getMD5(categoryPath);
     }
 
     /**
@@ -145,7 +141,7 @@ public class CmsFeedPropMappingService extends BaseAppService {
      */
     public Map<String, List<String>> getFeedAttributes(String feedCategoryPath, UserSessionBean userSessionBean) {
 
-        CmsMtFeedCategoryTreeModelx treeModelx = feedMappingService.getFeedCategoryTree(userSessionBean);
+        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(userSessionBean.getSelChannelId());
 
         CmsFeedCategoryModel feedCategoryModel = feedMappingService.findByPath(feedCategoryPath, treeModelx);
 
