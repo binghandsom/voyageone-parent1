@@ -1,7 +1,6 @@
 package com.voyageone.web2.sdk.api.request;
 
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.web2.sdk.api.domain.CmsBtTagModel;
 import com.voyageone.web2.sdk.api.response.ProductsTagPutResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,18 +21,9 @@ public class ProductsTagPutRequestTest {
     @Test
     public void testPut() {
         ProductsTagPutRequest request = new ProductsTagPutRequest("001");
-
-        CmsBtTagModel tagModel = new CmsBtTagModel();
-
-
-        String tagPath = "-8-";
-        tagModel.setTagPath(tagPath);
-        //???
-        int tagId = Integer.parseInt(String.valueOf(tagPath.charAt(tagPath.length() - 2)));
-        tagModel.setTagId(tagId);
         request.setModifier("testcc");
-        request.addProductIdTag(1L, tagModel);
-
+        String tagPath = "-8-";
+        request.addProductIdTagPathsMap(1L, tagPath);
         ProductsTagPutResponse response = voApiClient.execute(request);
         System.out.println(response);
     }
