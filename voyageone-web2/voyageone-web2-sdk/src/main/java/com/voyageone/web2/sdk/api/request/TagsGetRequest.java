@@ -3,14 +3,14 @@ package com.voyageone.web2.sdk.api.request;
 
 import com.voyageone.web2.sdk.api.VoApiRequest;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
-import com.voyageone.web2.sdk.api.response.TagRemoveResponse;
-import com.voyageone.web2.sdk.api.response.TagsGetByParentTagIdResponse;
+import com.voyageone.web2.sdk.api.response.TagsGetResponse;
 import com.voyageone.web2.sdk.api.util.RequestUtils;
 
 /**
  * /tag/selectListByParentTagId tag get by parent_tag_id Request
  *
- * 根据传入的参数取得对应Tag
+ * 1.parentTagId get Tag Child
+ * 2.channelId get ALl channel root tag
  *
  * Created on 2015-12-31
  *
@@ -18,31 +18,25 @@ import com.voyageone.web2.sdk.api.util.RequestUtils;
  * @version 2.0.0
  * @since. 2.0.0
  */
-public class TagsGetByParentTagIdRequest extends VoApiRequest<TagsGetByParentTagIdResponse> {
+public class TagsGetRequest extends VoApiRequest<TagsGetResponse> {
 
 	public String getApiURLPath() {
-		return "/tag/selectListByParentTagId";
+		return "/tag/selectList";
 	}
-
-	private String channelId;
 
 	/**
 	 * parentTagId
 	 */
 	private Integer parentTagId;
 
-	public TagsGetByParentTagIdRequest() {
-
-	}
-
-	public TagsGetByParentTagIdRequest(String channelId) {
-		this.channelId = channelId;
-	}
+	/**
+	 * channelId
+	 */
+	private String channelId;
 
 	public void check() throws ApiRuleException {
 		super.check();
-		RequestUtils.checkNotEmpty(channelId);
-		RequestUtils.checkNotEmpty("parentTagId", parentTagId);
+		RequestUtils.checkNotEmpty(" channelId or parentTagId", channelId, parentTagId);
 	}
 
 	public String getChannelId() {

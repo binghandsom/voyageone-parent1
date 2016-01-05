@@ -8,6 +8,7 @@ import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.CmsPromotionProductPriceBean;
 import com.voyageone.web2.cms.dao.*;
 import com.voyageone.web2.cms.model.*;
+import com.voyageone.web2.sdk.api.domain.CmsBtTagModel;
 import com.voyageone.web2.cms.views.pop.tag.promotion.CmsPromotionSelectService;
 import com.voyageone.web2.sdk.api.service.ProductGetClient;
 import com.voyageone.web2.sdk.api.service.ProductTagClient;

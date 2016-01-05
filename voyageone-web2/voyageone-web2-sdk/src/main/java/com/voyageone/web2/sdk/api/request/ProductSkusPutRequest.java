@@ -54,7 +54,7 @@ public class ProductSkusPutRequest extends VoApiRequest<ProductSkusPutResponse> 
 
 	public void check() throws ApiRuleException {
 		super.check();
-		RequestUtils.checkNotEmpty(channelId);
+		RequestUtils.checkNotEmpty(" channelId", channelId);
 		RequestUtils.checkNotEmpty(" productId, or productCode", productId, productCode);
 		RequestUtils.checkNotEmpty(" skus", skus);
 	}

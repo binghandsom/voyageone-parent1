@@ -56,18 +56,15 @@ public class TagAddRequest extends VoApiRequest<TagAddResponse> {
 	 */
 	private String creater;
 
-	public TagAddRequest() {
-
-	}
-
-	public TagAddRequest(String channelId) {
-		this.channelId = channelId;
-	}
-
 	public void check() throws ApiRuleException {
 		super.check();
-		RequestUtils.checkNotEmpty(channelId);
-		RequestUtils.checkNotEmpty(" tagName or tagType or tagStatus or sortOrder", tagName, tagType, tagStatus, sortOrder);
+		RequestUtils.checkNotEmpty("channelId", channelId);
+		RequestUtils.checkNotEmpty("tagName", tagName);
+		RequestUtils.checkNotEmpty("tagType", tagType);
+		RequestUtils.checkNotEmpty("tagStatus",tagStatus);
+		RequestUtils.checkNotEmpty("sortOrder",sortOrder);
+		RequestUtils.checkNotEmpty("parentTagId",parentTagId);
+		RequestUtils.checkNotEmpty("creater",creater);
 	}
 
 	public String getChannelId() {

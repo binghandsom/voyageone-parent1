@@ -6,26 +6,26 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popCategorySchemaCtl', function ($scope, systemCategoryService, item, category,addOrEditFlg) {
+    angularAMD.controller('popCategorySchemaCtl', function ($scope, systemCategoryService,context) {
 
         $scope.vm = {"schema": {}};
         $scope.newOption = {};
-        $scope.addOrEditFlg = addOrEditFlg;
+        $scope.addOrEditFlg = context.addOrEditFlg;
         $scope.initialize = function () {
             $scope.vm = {"schema": {}};
             $scope.newOption = {};
-            $scope.addOrEditFlg = addOrEditFlg;
-            $scope.vm.catFullName = category.catFullPath;
+            $scope.addOrEditFlg = context.addOrEditFlg;
+            $scope.vm.catFullName = context.vm.category.catFullPath;
             // 编辑的场合
-            if(addOrEditFlg == 1){
-                if (item) {
-                    $scope.vm.schema = _.clone(item);
-                    if (item.options) {
-                        $scope.vm.schema.options = _.map(item.options, _.clone);
+            if($scope.addOrEditFlg == 1){
+                if (context.field) {
+                    $scope.vm.schema = _.clone(context.field);
+                    if (context.field.options) {
+                        $scope.vm.schema.options = _.map(context.field.options, _.clone);
                     }
                 }
             }else{
-
+                if(!$scope.vm.schema.rules) $scope.vm.schema.rules=[{"name":"requiredRule","value":"false"}]
             }
         };
         // 添加option
@@ -65,12 +65,12 @@ define([
 
             if($scope.addOrEditFlg == 1){
                 for (key in $scope.vm.schema) {
-                    item[key] = $scope.vm.schema[key];
+                    context.field[key] = $scope.vm.schema[key];
                 }
             }else{
-                item.fields.push($scope.vm.schema);
+                context.field.fields.push($scope.vm.schema);
             }
-            category.isEditFlg = true;
+            context.vm.isEditFlg = true;
             $scope.$close();
         }
     });

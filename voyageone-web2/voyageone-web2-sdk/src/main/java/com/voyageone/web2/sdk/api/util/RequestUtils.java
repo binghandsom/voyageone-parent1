@@ -12,16 +12,16 @@ public class RequestUtils {
 	public static final String ERROR_CODE_ARGUMENTS_MISSING = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70005.getErrorCode();
 	public static final String ERROR_CODE_ARGUMENTS_INVALID = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70006.getErrorCode();
 
-	public static void checkNotEmpty(Object value, String fieldName) throws ApiRuleException {
-		if (value == null) {
-			throw new ApiRuleException(ERROR_CODE_ARGUMENTS_MISSING, "client-error:Missing required arguments:" + fieldName + "");
-		}
-		if (value instanceof String) {
-			if (((String) value).trim().length() == 0) {
-				throw new ApiRuleException(ERROR_CODE_ARGUMENTS_MISSING, "client-error:Missing required arguments:" + fieldName + "");
-			}
-		}
-	}
+//	public static void checkNotEmpty(Object value, String fieldName) throws ApiRuleException {
+//		if (value == null) {
+//			throw new ApiRuleException(ERROR_CODE_ARGUMENTS_MISSING, "client-error:Missing required arguments:" + fieldName + "");
+//		}
+//		if (value instanceof String) {
+//			if (((String) value).trim().length() == 0) {
+//				throw new ApiRuleException(ERROR_CODE_ARGUMENTS_MISSING, "client-error:Missing required arguments:" + fieldName + "");
+//			}
+//		}
+//	}
 
 	public static void checkNotEmpty(String fieldName, Object... args) throws ApiRuleException {
 		if (args.length == 0)

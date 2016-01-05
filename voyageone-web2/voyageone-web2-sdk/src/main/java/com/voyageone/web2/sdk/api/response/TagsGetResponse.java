@@ -14,7 +14,7 @@ import java.util.List;
  * @version 2.0.0
  * @since. 2.0.0
  */
-public class TagsGetByParentTagIdResponse extends VoApiResponse {
+public class TagsGetResponse extends VoApiResponse {
 
     /**
      * 数据体信息

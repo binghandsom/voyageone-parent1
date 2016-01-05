@@ -57,7 +57,7 @@ public class ProductsCountGetRequest extends VoApiRequest<ProductsCountGetRespon
 
 	public void check() throws ApiRuleException {
 		super.check();
-		RequestUtils.checkNotEmpty(channelId);
+		RequestUtils.checkNotEmpty(" channelId", channelId);
 		RequestUtils.checkNotEmpty(" productIdList or productCodeList or props", productIds, productCodes, props);
 	}
 

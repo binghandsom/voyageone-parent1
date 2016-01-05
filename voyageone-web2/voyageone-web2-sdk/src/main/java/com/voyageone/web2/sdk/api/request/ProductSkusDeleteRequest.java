@@ -52,7 +52,7 @@ public class ProductSkusDeleteRequest extends VoApiRequest<ProductSkusDeleteResp
 
 	public void check() throws ApiRuleException {
 		super.check();
-		RequestUtils.checkNotEmpty(channelId);
+		RequestUtils.checkNotEmpty(" channelId", channelId);
 
 		RequestUtils.checkNotEmpty(" productIdSkuMap, or productCodeSkuMap", productIdSkuCodeListMap, productCodeSkuCodeListMap);
 		if (productIdSkuCodeListMap.size() > 0) {

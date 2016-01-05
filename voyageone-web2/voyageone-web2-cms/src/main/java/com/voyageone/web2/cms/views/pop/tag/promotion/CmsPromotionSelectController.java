@@ -4,7 +4,8 @@ import com.voyageone.common.util.CommonUtil;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
-import com.voyageone.web2.cms.model.CmsBtTagModel;
+//import com.voyageone.web2.cms.model.CmsBtTagModel;
+import com.voyageone.web2.sdk.api.domain.CmsBtTagModel;
 import com.voyageone.web2.sdk.api.response.ProductsTagPutResponse;
 import com.voyageone.web2.sdk.api.service.ProductTagClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,10 +46,7 @@ public class CmsPromotionSelectController extends CmsController {
         String channelId = getUser().getSelChannelId();
         String modifier = getUser().getUserName();
 
-        String tag_path = params.get("tagPath").toString();
-        List<Long> productIds = CommonUtil.changeListType((ArrayList<Integer>) params.get("productIds"));
-
-        Map<String, Object> result = productTagClient.addTagProducts(channelId, tag_path, productIds, modifier);
+        Map<String, Object> result = promotionSelectService.addToPromotion(params, channelId, modifier);
 
         return success(result);
     }
