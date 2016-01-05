@@ -46,10 +46,7 @@ public class CmsPromotionSelectController extends CmsController {
         String channelId = getUser().getSelChannelId();
         String modifier = getUser().getUserName();
 
-        String tag_path = params.get("tagPath").toString();
-        List<Long> productIds = CommonUtil.changeListType((ArrayList<Integer>) params.get("productIds"));
-
-        Map<String, Object> result = productTagClient.addTagProducts(channelId, tag_path, productIds, modifier);
+        Map<String, Object> result = promotionSelectService.addToPromotion(params, channelId, modifier);
 
         return success(result);
     }

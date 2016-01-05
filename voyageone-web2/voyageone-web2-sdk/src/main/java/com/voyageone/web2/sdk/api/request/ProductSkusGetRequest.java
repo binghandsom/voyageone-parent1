@@ -52,7 +52,7 @@ public class ProductSkusGetRequest extends VoApiListRequest<ProductSkusGetRespon
 
 	public void check() throws ApiRuleException {
 		super.check();
-		RequestUtils.checkNotEmpty(channelId);
+		RequestUtils.checkNotEmpty(" channelId", channelId);
 		RequestUtils.checkNotEmpty(" productIds, or productCodes", productIds, productCodes);
 	}
 

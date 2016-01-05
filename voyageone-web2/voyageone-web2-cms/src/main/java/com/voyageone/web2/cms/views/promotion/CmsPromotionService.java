@@ -1,10 +1,8 @@
 package com.voyageone.web2.cms.views.promotion;
 
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.web2.cms.dao.CmsBtTagDao;
 import com.voyageone.web2.cms.dao.CmsPromotionDao;
 import com.voyageone.web2.cms.model.CmsBtPromotionModel;
-//import com.voyageone.web2.cms.model.CmsBtTagModel;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.domain.CmsBtTagModel;
 import com.voyageone.web2.sdk.api.request.TagAddRequest;
@@ -26,9 +24,6 @@ public class CmsPromotionService extends BaseAppService {
     @Autowired
     private CmsPromotionDao cmsPromotionDao;
 
-//    @Autowired
-//    private CmsBtTagDao cmsBtTagDao;
-
     @Autowired
     VoApiDefaultClient voApiClient;
 
@@ -38,21 +33,9 @@ public class CmsPromotionService extends BaseAppService {
 
     @Transactional
     public int insertPromotion(CmsBtPromotionModel params) {
-//        // 更新tag表
-//        CmsBtTagModel cmsBtTagModel = new CmsBtTagModel();
-//        cmsBtTagModel.setCreater(params.getCreater());
-//        cmsBtTagModel.setTagName(params.getPromotionName());
-//        cmsBtTagModel.setTagPathName(params.getPromotionName());
-//        cmsBtTagModel.setTagType(2);
-//        cmsBtTagModel.setTagStatus(0);
-//        cmsBtTagModel.setParentTagId(0);
-//        cmsBtTagModel.setTagPath("");
-//        cmsBtTagModel.setChannelId(params.getChannelId());
-//        cmsBtTagDao.insertCmsBtTag(cmsBtTagModel);
-//        cmsBtTagModel.setTagPath("-" + cmsBtTagModel.getTagId() + "-");
-//        cmsBtTagDao.updateCmsBtTag(cmsBtTagModel);
         // Tag 新追加
-        TagAddRequest requestModel = new TagAddRequest(params.getChannelId());
+        TagAddRequest requestModel = new TagAddRequest();
+        requestModel.setChannelId(params.getChannelId());
         requestModel.setTagName(params.getPromotionName());
         requestModel.setTagType(2);
         requestModel.setTagStatus(0);
