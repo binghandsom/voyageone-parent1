@@ -22,11 +22,10 @@
                         <div class="panel-heading">
                             <h4 class="panel-title">普通属性匹配</h4>
                         </div>
-                        <form class="form-horizontal">
-                            <div class="form-group m-t-xs feed_mapping_bg"
-                                 ng-repeat="field in ctrl.mainCategory.fields | fmExtendField"
-                                 ng-include="'feedMapping.field.tpl.html'">
-                            </div>
+                        <form class="form-horizontal clearfix">
+                            <div class="col-sm-12 platform_mapping_bg_list"
+                                 ng-repeat="bean in ctrl.fields | fmExtendField"
+                                 ng-include="'feedMapping.fieldBean.html'"></div>
                         </form>
                     </div>
                 </div>
@@ -35,44 +34,32 @@
                         <div class="panel-heading">
                             <h4 class="panel-title">SKU匹配</h4>
                         </div>
-                        <form class="form-horizontal">
-                            <div class="form-group"
-                                 ng-repeat="field in ctrl.mainCategory.sku | fmExtendField"
-                                 ng-include="'feedMapping.field.tpl.html'">
-                            </div>
+                        <form class="form-horizontal clearfix">
+                            <div class="col-sm-12 platform_mapping_bg_list"
+                                 ng-repeat="bean in ctrl.skuFields | fmExtendField"
+                                 ng-include="'feedMapping.fieldBean.html'"></div>
                         </form>
                     </div>
                 </div>
             </div>
         </tab>
     </tabset>
-    <script type="text/ng-template" id="feedMapping.field.tpl.html">
-        <label class="col-sm-4 control-label"
-               ng-class="{ 'vo_reqfield': field.x.required }">{{ field.name }}</label>
-
-        <div class="col-sm-7 hierarchy" ng-if="!field.x.isSimple">
-            <div class="col-sm-4 form-inline m-b-xs"
-                 ng-repeat="child in field.fields | fmExtendField:field"
-                 ng-include="'feedMapping.multi.setter.tpl.html'">
-            </div>
+    <script type="text/ng-template" id="feedMapping.fieldBean.html">
+        <div class="col-sm-5 text-left"
+             ng-style="{'margin-left': (bean.level - 1) * 25}">
+            <i class="fa"
+               ng-class="{'fa-plus':!bean.x.isSimple, 'fa-minus': bean.x.isSimple}"></i>
+            {{ bean.field.name }}
+            <span ng-if="bean.x.required">(必填)</span>
         </div>
-
-        <div class="col-sm-8" ng-if="field.x.isSimple">
-            <button class="btn btn-default btn-xs"
-                    ng-click="popupFeed(ctrl.popupContext(field)).then(ctrl.saveMapping)">值匹配</button>
+        <div class="col-sm-1 pull-center">
+            <button class="badge badge-empty"
+                    ng-click="popupFeed(ctrl.popupContext(bean)).then(ctrl.saveMapping)">
+                值匹配
+            </button>
         </div>
-    </script>
-    <script type="text/ng-template" id="feedMapping.multi.setter.tpl.html">
-        <div ng-if="!child.x.isSimple"
-             ng-repeat="$child in child.fields | fmExtendField:child"
-             ng-init="child = $child"
-             ng-include="'feedMapping.multi.setter.tpl.html'">
-        </div>
-        <div ng-if="child.x.isSimple">
-            <label class="control-label"
-                   ng-class="{ 'vo_reqfield': child.x.required }">{{ child.name }}</label>
-            <button class="btn btn-default btn-xs"
-                    ng-click="popupFeed(ctrl.popupContext(child)).then(ctrl.saveMapping)">值匹配</button>
+        <div class="pull-right">
+            <span class="{{ bean.x.iconClass }}">{{ bean.field.type }}</span>
         </div>
     </script>
 </div>
