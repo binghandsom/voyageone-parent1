@@ -37,7 +37,7 @@
                         </div>
                         <form class="form-horizontal">
                             <div class="form-group"
-                                 ng-repeat="field in ctrl.mainCategory.sku | fmExtendField"
+                                 ng-repeat="field in ctrl.mainCategory.sku.fields | fmExtendField"
                                  ng-include="'feedMapping.field.tpl.html'">
                             </div>
                         </form>
