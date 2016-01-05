@@ -298,4 +298,60 @@
             details.order_number,
             details.sku;
      </select>
+
+    <!-- 以SKU集计斯伯丁第三方仓库发货日报数据-->
+    <select id="wms_selectSumInventoryBySKU" resultType="com.voyageone.batch.wms.modelbean.SumInventoryBean">
+        SELECT
+            date_add(
+                orders.order_date_time,
+                INTERVAL 8 HOUR
+            ) order_date_time,
+            orders.source_order_id,
+            orders.order_number,
+            reservation.product,
+            count(1) qty,
+            '' AS style,
+            orders.ship_name,
+            orders.ship_phone,
+            orders.ship_state,
+            orders.ship_city,
+            CONCAT(
+                orders.ship_address,
+                orders.ship_address2
+            ) AS ship_address,
+            orders.customer_comments
+        FROM
+            oms_bt_orders orders,
+            tt_reservation reservation
+        WHERE
+            orders.order_channel_id = #{order_channel_id}
+        AND orders.cart_id = '25'
+        AND orders.approval_date BETWEEN #{start_created}
+        AND #{end_created}
+        AND reservation.order_number = orders.order_number
+        AND reservation.`status` = #{res_status}
+        AND EXISTS (
+            SELECT
+                1
+            FROM
+                tm_task_control
+            WHERE
+                task_id = #{task_name}
+            AND cfg_name = 'order_channel_id'
+            AND cfg_val1 = orders.order_channel_id
+        )
+        AND NOT EXISTS (
+            SELECT
+                1
+            FROM
+                tm_order_channel_config
+            WHERE
+                order_channel_id = #{order_channel_id}
+            AND cfg_name = 'special_goods_ball'
+            AND cfg_val1 = reservation.sku
+        )
+        GROUP BY
+            orders.order_number,
+            reservation.sku
+    </select>
 </mapper>

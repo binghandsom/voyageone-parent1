@@ -49,6 +49,8 @@
         <!--<task:scheduled ref="wmsSynInventoryToCmsJob" method="run" cron="0 0/1 0-23 * * ?"/>-->
         <!--更新订单相关状态， 每5分钟运行一次　-->
         <!--<task:scheduled ref="wmsUpdateStatusTask" method="run" cron="0 0/5 0-23 * * ?"/>-->
+        <!--生成给斯伯丁第三方仓库发货日报， （北京时间11点到24点之间运行）　-->
+        <task:scheduled ref="wmsSPThirdWarehouseReportTask" method="run" cron="0 0/5 3-15 * * ?"/>
     </task:scheduled-tasks>
 
     <!-- 必须需要 -->

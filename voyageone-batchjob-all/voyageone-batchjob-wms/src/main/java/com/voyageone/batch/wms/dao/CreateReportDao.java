@@ -2,9 +2,7 @@ package com.voyageone.batch.wms.dao;
 
 import com.voyageone.base.dao.BaseDao;
 import com.voyageone.batch.core.CodeConstants;
-import com.voyageone.batch.wms.modelbean.ClientInventoryBean;
-import com.voyageone.batch.wms.modelbean.SpaldingPriceBean;
-import com.voyageone.batch.wms.modelbean.ThirdReportBean;
+import com.voyageone.batch.wms.modelbean.*;
 import com.voyageone.common.Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -145,5 +143,24 @@ public class CreateReportDao extends BaseDao {
         paramMap.put("order_number",order_number);
 
         return selectList(Constants.DAO_NAME_SPACE_WMS + "wms_getPriceData", paramMap);
+    }
+
+    /**
+     * 以SKU集计斯伯丁第三方仓库发货日报数据
+     * @param order_channel_id
+     * @param start_created
+     * @param end_created
+     * @param task_name
+     * @param status
+     * @return
+     */
+    public List<SPThirdWarehouseReportBean> getSPThirdWarehouseReportBySKU(String order_channel_id,String start_created,String end_created,String task_name,String status) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("res_status", status);
+        params.put("order_channel_id", order_channel_id);
+        params.put("start_created",start_created);
+        params.put("end_created",end_created);
+        params.put("task_name",task_name);
+        return selectList(Constants.DAO_NAME_SPACE_WMS + "wms_selectSPThirdWarehouseReportBySKU", params);
     }
 }

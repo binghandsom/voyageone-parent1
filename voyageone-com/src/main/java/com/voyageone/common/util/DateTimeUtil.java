@@ -1365,4 +1365,50 @@ public final class DateTimeUtil {
         return new Timestamp(System.currentTimeMillis()).toString();
     }
 
+
+    /**
+     * 取得本地时间对应的GMT时间(一天的开始)SP第三方仓库发货日报用
+     *
+     * @param day      格式 yyyy-MM-dd
+     * @param timezone like +8 / -7
+     * @return String
+     */
+    public static String getGMTTimeSPFrom(String day, int timezone, String hours) {
+        try {
+            String date = day + " " + hours + ":00:00";
+
+            SimpleDateFormat df = new SimpleDateFormat(DateTimeUtil.DEFAULT_DATETIME_FORMAT);
+            Date fromDate = df.parse(date);
+
+            Date toDate = DateTimeUtil.addHours(fromDate, timezone * -1);
+
+            return format(toDate, DateTimeUtil.DEFAULT_DATETIME_FORMAT);
+        } catch (ParseException e) {
+            return ("getGMTTimeTo :date format error");
+        }
+    }
+
+    /**
+     * 取得本地时间对应的GMT时间(一天的结束)SP第三方仓库发货日报用
+     *
+     * @param day      格式 yyyy-MM-dd
+     * @param timezone like +8 / -7
+     * @return String
+     */
+    public static String getGMTTimeSPTo(String day, int timezone, String hours) {
+        try {
+            String date = day + " " + hours + ":59:59";
+
+            SimpleDateFormat df = new SimpleDateFormat(DateTimeUtil.DEFAULT_DATETIME_FORMAT);
+            Date fromDate = df.parse(date);
+
+            Date toDate = DateTimeUtil.addHours(fromDate, timezone * -1);
+
+            return format(toDate, DateTimeUtil.DEFAULT_DATETIME_FORMAT);
+        } catch (ParseException e) {
+            return ("getGMTTimeTo :date format error");
+        }
+    }
+
+
 }
