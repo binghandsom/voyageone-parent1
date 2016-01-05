@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class TagAddClient {
+public class TagClient {
     @Autowired
     protected VoApiDefaultClient voApiClient;
 
@@ -46,22 +46,11 @@ public class TagAddClient {
     /**
      * 根据ParentTagId检索Tags
      */
-    public List<CmsBtTagModel> getTagsByParentTagId(String channelId, Integer parentTagId) {
+    public List<CmsBtTagModel> getTags(String channelId, Integer parentTagId) {
         //设置参数
-        TagsGetByParentTagIdRequest requestModel = new TagsGetByParentTagIdRequest(channelId);
+        TagsGetRequest requestModel = new TagsGetRequest(channelId);
         requestModel.setChannelId(channelId);
         requestModel.setParentTagId(parentTagId);
-
-        return voApiClient.execute(requestModel).getTags();
-    }
-
-    /**
-     * 根据ChanelId检索Tags
-     */
-    public List<CmsBtTagModel> getParentTagsByChannelId(String channelId) {
-        //设置参数
-        TagsGetByChannelIdRequest requestModel = new TagsGetByChannelIdRequest(channelId);
-        requestModel.setChannelId(channelId);
 
         return voApiClient.execute(requestModel).getTags();
     }

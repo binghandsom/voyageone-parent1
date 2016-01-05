@@ -21,7 +21,6 @@ define([
                 $scope.vm.promotionList = res.data;
                 $scope.groupPageOption.total = $scope.vm.promotionList.size;
             },function(res){
-                alert("e");
             })
         }
         $scope.del = function (data) {
@@ -32,7 +31,6 @@ define([
                     $scope.vm.promotionList.splice(index,1);
                     $scope.groupPageOption.total = $scope.vm.promotionList.size;
                 },function(res){
-                    alert("e");
                 })
             },function(){
 

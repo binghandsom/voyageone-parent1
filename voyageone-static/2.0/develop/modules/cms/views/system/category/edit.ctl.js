@@ -10,6 +10,7 @@ define([
         $scope.vm={"category":{},"isEditFlg":false};
         $scope.initialize  = function () {
             $scope.getCategoryDetail();
+            $scope.vm.isEditFlg = false;
         };
 
         $scope.getCategoryDetail = function(){

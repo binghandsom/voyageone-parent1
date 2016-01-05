@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.pop.tag.promotion;
 
-import com.voyageone.web2.cms.model.CmsBtTagModel;
+//import com.voyageone.web2.cms.model.CmsBtTagModel;
+import com.voyageone.web2.sdk.api.domain.CmsBtTagModel;
 import net.minidev.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;

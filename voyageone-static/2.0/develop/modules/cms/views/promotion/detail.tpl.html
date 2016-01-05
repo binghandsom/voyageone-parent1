@@ -229,7 +229,7 @@
 								<th class="mfb-x">Inventory</th>
 								<th class="mfb-x">Promotion Price</th>
 								<th class="mfb-x">price retail</th>
-								<th class="mfb-xt">Edit</th>
+								<!--<th class="mfb-xt">Edit</th>-->
 							</tr>
 							</thead>
 							<tbody>
@@ -238,14 +238,14 @@
 								<td>{{(sku.promotionPrice/sku.salePrice*100).toFixed(1)}}折</td>
 								<td>{{sku.size}}</td>
 								<td><input type="text" class="col-sm-1 form-control" placeholder="{{sku.qty}}" popover-placement="left" popover="原始库存：{{sku.qty}}"></td>
-								<td><!--<button type="button" popover-placement="left" class="btn btn-default btn-xs">{{sku.promotionPrice}}</button>-->1900.00</td>
+								<td><!--<button type="button" popover-placement="left" class="btn btn-default btn-xs">{{sku.promotionPrice}}</button>-->{{sku.promotionPrice}}</td>
 								<td><!--<input type="text" class="form-control col-sm-2" popover-placement="left" popover="price retail：1200">-->
-									<!--<button type="button" popover-placement="left" class="btn btn-default btn-xs">{{sku.salePrice}}</button>-->2500.00</td>
+									<!--<button type="button" popover-placement="left" class="btn btn-default btn-xs">{{sku.salePrice}}</button>-->{{sku.salePrice}}</td>
 								</td>
-								<td>
-									<button title="保存" class="btn btn-success btn-xs"><i class="fa fa-floppy-o"></i></button>
-									<button class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button>
-								</td>
+								<!--<td>-->
+									<!--<button title="保存" class="btn btn-success btn-xs"><i class="fa fa-floppy-o"></i></button>-->
+									<!--<button class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button>-->
+								<!--</td>-->
 							</tr>
 							</tbody>
 						</table>

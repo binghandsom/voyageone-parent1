@@ -1,9 +1,15 @@
 package com.voyageone.web2.cms.views.pop.tag.promotion;
 
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
+import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.dao.CmsBtTagDao;
-import com.voyageone.web2.cms.model.CmsBtTagModel;
+//import com.voyageone.web2.cms.model.CmsBtTagModel;
+
+import com.voyageone.web2.sdk.api.VoApiDefaultClient;
+import com.voyageone.web2.sdk.api.domain.CmsBtTagModel;
+import com.voyageone.web2.sdk.api.request.ProductsGetRequest;
+import com.voyageone.web2.sdk.api.request.TagsGetRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,14 +25,17 @@ import java.util.Map;
 @Service
 public class CmsPromotionSelectService extends BaseAppService {
 
-    @Autowired
-    private CmsBtTagDao cmsBtTagDao;
+//    @Autowired
+//    private CmsBtTagDao cmsBtTagDao;
 
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
 
 //    @Autowired
 //    private CmsBtTagLogDao cmsBtTagLogDao;
+
+    @Autowired
+    VoApiDefaultClient voApiClient;
 
     public List<CmsBtTagModel> getPromotionTags(Map<String, Object> params) {
         int tag_id = (int) params.get("refTagId");
@@ -43,7 +52,16 @@ public class CmsPromotionSelectService extends BaseAppService {
      * 获取二级Tag
      */
     public List<CmsBtTagModel> selectListByParentTagId(int parentTagId) {
-        return cmsBtTagDao.selectListByParentTagId(parentTagId);
+//        return cmsBtTagDao.selectListByParentTagId(parentTagId);
+
+        //设置参数
+        TagsGetRequest requestModel = new TagsGetRequest("dummy");
+        requestModel.setParentTagId(parentTagId);
+
+        //SDK取得Product 数据
+        List<CmsBtTagModel> tagList = voApiClient.execute(requestModel).getTags();
+
+        return tagList;
     }
 
 //    /**

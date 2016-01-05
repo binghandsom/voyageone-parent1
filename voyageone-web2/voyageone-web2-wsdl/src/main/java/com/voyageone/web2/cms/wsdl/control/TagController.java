@@ -1,8 +1,7 @@
 package com.voyageone.web2.cms.wsdl.control;
 
 import com.voyageone.web2.cms.wsdl.BaseController;
-import com.voyageone.web2.cms.wsdl.service.ProductGetService;
-import com.voyageone.web2.cms.wsdl.service.TagAddService;
+import com.voyageone.web2.cms.wsdl.service.TagService;
 import com.voyageone.web2.sdk.api.request.*;
 import com.voyageone.web2.sdk.api.response.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +23,10 @@ import org.springframework.web.bind.annotation.RestController;
         value  = "/rest/tag",
         method = RequestMethod.POST
 )
-public class TagAddController extends BaseController {
+public class TagController extends BaseController {
 
     @Autowired
-    private TagAddService tagAddService;
+    private TagService tagService;
 
     /**
      * selectOne
@@ -36,7 +35,7 @@ public class TagAddController extends BaseController {
      */
     @RequestMapping("add")
     public TagAddResponse add(@RequestBody TagAddRequest request) {
-        return tagAddService.addTag(request);
+        return tagService.addTag(request);
     }
 
     /**
@@ -46,26 +45,16 @@ public class TagAddController extends BaseController {
      */
     @RequestMapping("remove")
     public TagRemoveResponse remove(@RequestBody TagRemoveRequest request) {
-        return tagAddService.removeTag(request);
+        return tagService.removeTag(request);
     }
 
     /**
-     * selectOne
+     * selectList
      *
      * @return CmsBtProductModel
      */
-    @RequestMapping("selectListByParentTagId")
-    public TagsGetByParentTagIdResponse selectListByParentTagId(@RequestBody TagsGetByParentTagIdRequest request) {
-        return tagAddService.selectListByParentTagId(request);
-    }
-
-    /**
-     * selectOne
-     *
-     * @return CmsBtProductModel
-     */
-    @RequestMapping("selectParentTagByChannel")
-    public TagsGetByChannelIdResponse selectListByChannelId(@RequestBody TagsGetByChannelIdRequest request) {
-        return tagAddService.selectListByChannelId(request);
+    @RequestMapping("selectList")
+    public TagsGetResponse selectList(@RequestBody TagsGetRequest request) {
+        return tagService.selectList(request);
     }
 }
