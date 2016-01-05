@@ -1,7 +1,7 @@
 package com.voyageone.web2.sdk.api.request;
 
 
-import com.voyageone.web2.sdk.api.VoApiListRequest;
+import com.voyageone.web2.sdk.api.VoApiRequest;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
 import com.voyageone.web2.sdk.api.response.ProductSkusDeleteResponse;
 import com.voyageone.web2.sdk.api.util.RequestUtils;
@@ -25,7 +25,7 @@ import java.util.Set;
  * @version 2.0.0
  * @since. 2.0.0
  */
-public class ProductSkusDeleteRequest extends VoApiListRequest<ProductSkusDeleteResponse> {
+public class ProductSkusDeleteRequest extends VoApiRequest<ProductSkusDeleteResponse> {
 
 	public String getApiURLPath() {
 		return "/puroduct/sku/deletes";

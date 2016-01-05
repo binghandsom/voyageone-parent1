@@ -1,10 +1,8 @@
 package com.voyageone.web2.cms.views;
 
-import com.voyageone.cms.service.model.CmsMtFeedCategoryTreeModelx;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.web2.cms.views.setting.mapping.feed.CmsFeedMappingService;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -26,14 +24,4 @@ public class CmsFeedMappingServiceTest {
         setUserName("wms");
         setSelChannel(ChannelConfigEnums.Channel.SN);
     }};
-
-    @Test
-    public void testGetFeedCategories() throws Exception {
-
-        CmsMtFeedCategoryTreeModelx cmsMtFeedCategoryTreeModel = cmsFeedMappingService.getFeedCategoryTree(userSessionBean);
-
-        assert cmsMtFeedCategoryTreeModel != null;
-
-        assert cmsMtFeedCategoryTreeModel.getCategoryTree().size() > 0;
-    }
 }

@@ -9,6 +9,7 @@ import com.voyageone.cms.service.model.CmsFeedMappingModel;
 import com.voyageone.cms.service.model.CmsMtCategoryTreeModel;
 import com.voyageone.cms.service.model.CmsMtFeedCategoryTreeModelx;
 import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.cms.bean.setting.mapping.feed.FeedCategoryBean;
 import com.voyageone.web2.cms.bean.setting.mapping.feed.SetMappingBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang3.StringUtils;
@@ -16,9 +17,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toMap;
 
 /**
  * @author Jonas, 12/8/15
@@ -36,8 +41,49 @@ public class CmsFeedMappingService extends BaseAppService {
     @Autowired
     private com.voyageone.cms.service.CmsFeedMappingService cmsFeedMappingService;
 
-    public CmsMtFeedCategoryTreeModelx getFeedCategoryTree(UserSessionBean user) {
-        return cmsMtFeedCategoryTreeDao.selectFeedCategoryx(user.getSelChannelId());
+    public Map<String, Map<String, FeedCategoryBean>> getFeedCategoryMap(UserSessionBean user) {
+
+        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(user.getSelChannelId());
+
+        // 将树形转化为利于画面查询数据的键值结构
+        Map<String, Map<String, FeedCategoryBean>> map = new HashMap<>();
+
+        for (CmsFeedCategoryModel feedCategoryModel : treeModelx.getCategoryTree()) {
+
+            final int[] seq = {0};
+
+            Stream<FeedCategoryBean> feedCategoryBeanStream = buildFeedCategoryBean(feedCategoryModel);
+
+            Map<String, FeedCategoryBean> children = feedCategoryBeanStream
+                    .map(f -> {
+                        f.setSeq(seq[0]);
+                        seq[0]++;
+                        return f;
+                    })
+                    .collect(toMap(f -> f.getModel().getPath(), f -> f));
+
+            map.put(feedCategoryModel.getPath(), children);
+        }
+
+        return map;
+    }
+
+    private Stream<FeedCategoryBean> buildFeedCategoryBean(CmsFeedCategoryModel feedCategoryModel) {
+        // 先取出暂时保存
+        List<CmsFeedCategoryModel> children = feedCategoryModel.getChild();
+        // 创建新模型
+        FeedCategoryBean feedCategoryBean = new FeedCategoryBean();
+        feedCategoryBean.setLevel(StringUtils.countMatches(feedCategoryModel.getPath(), "-"));
+        feedCategoryBean.setModel(feedCategoryModel);
+        feedCategoryBean.setMapping(findMapping(feedCategoryModel, m -> m.getDefaultMapping() == 1));
+        // 输出流
+        Stream<FeedCategoryBean> feedCategoryBeanStream = Stream.of(feedCategoryBean);
+        // 如果有子,则继续输出子
+        if (children != null && !children.isEmpty())
+            feedCategoryBeanStream = Stream.concat(feedCategoryBeanStream,
+                    children.stream().flatMap(this::buildFeedCategoryBean));
+
+        return feedCategoryBeanStream;
     }
 
     public List<CmsMtCategoryTreeModel> getMainCategories(UserSessionBean user) {
@@ -56,10 +102,10 @@ public class CmsFeedMappingService extends BaseAppService {
         if (StringUtils.isAnyEmpty(setMappingBean.getFrom(), setMappingBean.getTo()))
             throw new BusinessException("木有参数");
 
-        CmsMtFeedCategoryTreeModelx treeModel = getFeedCategoryTree(user);
+        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(user.getSelChannelId());
 
         // 按 Path 查 FeedCategory
-        CmsFeedCategoryModel cmsFeedCategoryModel = findByPath(setMappingBean.getFrom(), treeModel);
+        CmsFeedCategoryModel cmsFeedCategoryModel = findByPath(setMappingBean.getFrom(), treeModelx);
 
         // 准备同步操作 Mapping 数据
         CategoryContext feedMappingContext = cmsFeedMappingService.new CategoryContext(cmsFeedCategoryModel, user.getSelChannel());
@@ -94,7 +140,7 @@ public class CmsFeedMappingService extends BaseAppService {
             feedMappingContext.addMapping(mapping, user.getUserName());
         } else {
 
-            boolean hasDefaultMain = flatten(treeModel)
+            boolean hasDefaultMain = flatten(treeModelx)
                     .flatMap(c -> c.getMapping().stream())
                     .anyMatch(m -> m.getMainCategoryPath().equals(setMappingBean.getTo()));
 
@@ -111,8 +157,8 @@ public class CmsFeedMappingService extends BaseAppService {
             feedMappingContext.addMapping(mapping, user.getUserName());
         }
 
-        treeModel.setModifier(user.getUserName());
-        cmsMtFeedCategoryTreeDao.update(treeModel);
+        treeModelx.setModifier(user.getUserName());
+        cmsMtFeedCategoryTreeDao.update(treeModelx);
 
         return cmsFeedCategoryModel.getMapping();
     }
@@ -220,9 +266,9 @@ public class CmsFeedMappingService extends BaseAppService {
      */
     public List<CmsFeedMappingModel> extendsMapping(CmsFeedCategoryModel feedCategoryModel, UserSessionBean user) {
 
-        CmsMtFeedCategoryTreeModelx treeModel = getFeedCategoryTree(user);
+        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(user.getSelChannelId());
 
-        CmsFeedMappingModel feedMappingModel = findParentDefaultMapping(feedCategoryModel, treeModel);
+        CmsFeedMappingModel feedMappingModel = findParentDefaultMapping(feedCategoryModel, treeModelx);
 
         if (feedMappingModel == null) return null;
 

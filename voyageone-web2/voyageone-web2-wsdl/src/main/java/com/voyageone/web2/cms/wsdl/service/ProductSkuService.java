@@ -383,7 +383,7 @@ public class ProductSkuService extends BaseService {
     }
 
     /**
-     * 批量更新价格信息 根据CodeList
+     * addDeleteSkusBulk
      */
     public void addDeleteSkusBulk(String channelId, Long productId, String productCode, Set<String> skuCodes, List<BulkUpdateModel> bulkList) {
         VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70007;
