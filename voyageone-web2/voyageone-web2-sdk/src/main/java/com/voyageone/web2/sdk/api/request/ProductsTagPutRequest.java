@@ -2,7 +2,6 @@ package com.voyageone.web2.sdk.api.request;
 
 
 import com.voyageone.web2.sdk.api.VoApiRequest;
-import com.voyageone.web2.sdk.api.domain.CmsBtTagModel;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
 import com.voyageone.web2.sdk.api.response.ProductsTagPutResponse;
 import com.voyageone.web2.sdk.api.util.RequestUtils;
@@ -34,9 +33,9 @@ public class ProductsTagPutRequest extends VoApiRequest<ProductsTagPutResponse> 
 	private String channelId;
 
 	/**
-	 * productIdTagsMap
+	 * productIdTagPathsMap
 	 */
-	private Map<Long, List<CmsBtTagModel>> productIdTagsMap = new LinkedHashMap<>();
+	private Map<Long, List<String>> productIdTagPathsMap = new LinkedHashMap<>();
 
 	public ProductsTagPutRequest() {
 	}
@@ -48,9 +47,9 @@ public class ProductsTagPutRequest extends VoApiRequest<ProductsTagPutResponse> 
 	public void check() throws ApiRuleException {
 		super.check();
 		RequestUtils.checkNotEmpty(channelId);
-		RequestUtils.checkNotEmpty(" productIdTagsMap", productIdTagsMap);
-		RequestUtils.checkMinValue((long) productIdTagsMap.size(), 1, "productIds");
-		RequestUtils.checkMaxValue((long) productIdTagsMap.size(), 500, "productIds");
+		RequestUtils.checkNotEmpty(" productIdTagPathsMap", productIdTagPathsMap);
+		RequestUtils.checkMinValue((long) productIdTagPathsMap.size(), 1, "productIds");
+		RequestUtils.checkMaxValue((long) productIdTagPathsMap.size(), 500, "productIds");
 	}
 
 	public String getChannelId() {
@@ -61,19 +60,21 @@ public class ProductsTagPutRequest extends VoApiRequest<ProductsTagPutResponse> 
 		this.channelId = channelId;
 	}
 
-	public Map<Long, List<CmsBtTagModel>> getProductIdTagsMap() {
-		return productIdTagsMap;
+	public Map<Long, List<String>> getProductIdTagPathsMap() {
+		return productIdTagPathsMap;
 	}
 
-	public void setProductIdTagsMap(Map<Long, List<CmsBtTagModel>> productIdTagsMap) {
-		this.productIdTagsMap = productIdTagsMap;
+	public void setProductIdTagPathsMap(Map<Long, List<String>> productIdTagPathsMap) {
+		this.productIdTagPathsMap = productIdTagPathsMap;
 	}
 
-	public void addProductIdTag(Long productId, CmsBtTagModel tagModel) {
-		if (!productIdTagsMap.containsKey(productId)) {
-			productIdTagsMap.put(productId, new ArrayList<>());
+	public void addProductIdTagPathsMap(Long productId, String tagPath) {
+		if (!productIdTagPathsMap.containsKey(productId)) {
+			productIdTagPathsMap.put(productId, new ArrayList<>());
 		}
-		List<CmsBtTagModel> tagModelList = productIdTagsMap.get(productId);
-		tagModelList.add(tagModel);
+		List<String> tagModelList = productIdTagPathsMap.get(productId);
+		if (!tagModelList.contains(tagPath)) {
+			tagModelList.add(tagPath);
+		}
 	}
 }

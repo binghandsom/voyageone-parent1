@@ -7,7 +7,6 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.cms.wsdl.BaseService;
 import com.voyageone.web2.cms.wsdl.dao.CmsBtTagProductLogDao;
 import com.voyageone.web2.sdk.api.VoApiConstants;
-import com.voyageone.web2.sdk.api.domain.CmsBtTagModel;
 import com.voyageone.web2.sdk.api.domain.CmsBtTagProductLogModel;
 import com.voyageone.web2.sdk.api.exception.ApiException;
 import com.voyageone.web2.sdk.api.request.ProductSkusGetRequest;
@@ -106,7 +105,7 @@ public class ProductTagService extends BaseService {
         List<BulkUpdateModel> bulkUpdateList = new ArrayList<>();
 
         VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70007;
-        Map<Long, List<CmsBtTagModel>> productIdTagsMap = request.getProductIdTagsMap();
+        Map<Long, List<String>> productIdTagsMap = request.getProductIdTagPathsMap();
         if (productIdTagsMap == null || productIdTagsMap.size() == 0) {
             throw new ApiException(codeEnum.getErrorCode(), "productIdTagsMap is not empty!");
         }
@@ -120,25 +119,23 @@ public class ProductTagService extends BaseService {
         List<BulkUpdateModel> bulkProductList = new ArrayList<>();
         List<CmsBtTagProductLogModel> cmsBtTagLogModelList = new ArrayList<>();
 
-        for (Map.Entry<Long, List<CmsBtTagModel>> entry: productIdTagsMap.entrySet()) {
+
+        for (Map.Entry<Long, List<String>> entry: productIdTagsMap.entrySet()) {
 
             Long productId = entry.getKey();
-            List<CmsBtTagModel> tagModelList = entry.getValue();
-            if (tagModelList == null || tagModelList.size() == 0) {
+            List<String> tagPathList = entry.getValue();
+            if (tagPathList == null || tagPathList.size() == 0) {
                 continue;
             }
 
-            for (CmsBtTagModel tagModel : tagModelList) {
-                if (tagModel == null) {
-                    continue;
-                }
-                Integer tagId = tagModel.getTagId();
-                if (tagId == null) {
-                    throw new ApiException(codeEnum.getErrorCode(), "tagId is not empty!");
-                }
-                String tagPath  = tagModel.getTagPath();
-                if (StringUtils.isEmpty(tagPath)) {
+            for (String tagPath : tagPathList) {
+                if (tagPath == null || StringUtils.isEmpty(tagPath)) {
                     throw new ApiException(codeEnum.getErrorCode(), "tagPath is not empty!");
+                }
+
+                Integer tagId = getTagIdByTagPath(tagPath);
+                if (tagId == null) {
+                    throw new ApiException(codeEnum.getErrorCode(), "tagPath is incorrect, not get tagId!");
                 }
 
                 addSaveTagProducts(channelId, tagId, tagPath, modifier, productId, bulkProductList, cmsBtTagLogModelList);
@@ -200,7 +197,7 @@ public class ProductTagService extends BaseService {
         checkRequestChannelId(channelId);
 
         VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70007;
-        Map<Long, List<CmsBtTagModel>> productIdTagsMap = request.getProductIdTagsMap();
+        Map<Long, List<String>> productIdTagsMap = request.getProductIdTagPathsMap();
         if (productIdTagsMap == null || productIdTagsMap.size() == 0) {
             throw new ApiException(codeEnum.getErrorCode(), "productIdTagsMap is not empty!");
         }
@@ -214,25 +211,22 @@ public class ProductTagService extends BaseService {
         List<BulkUpdateModel> bulkProductList = new ArrayList<>();
         List<CmsBtTagProductLogModel> cmsBtTagLogModelList = new ArrayList<>();
 
-        for (Map.Entry<Long, List<CmsBtTagModel>> entry: productIdTagsMap.entrySet()) {
+        for (Map.Entry<Long, List<String>> entry: productIdTagsMap.entrySet()) {
 
             Long productId = entry.getKey();
-            List<CmsBtTagModel> tagModelList = entry.getValue();
-            if (tagModelList == null || tagModelList.size() == 0) {
+            List<String> tagPathList = entry.getValue();
+            if (tagPathList == null || tagPathList.size() == 0) {
                 continue;
             }
 
-            for (CmsBtTagModel tagModel : tagModelList) {
-                if (tagModel == null) {
-                    continue;
-                }
-                Integer tagId = tagModel.getTagId();
-                if (tagId == null) {
-                    throw new ApiException(codeEnum.getErrorCode(), "tagId is not empty!");
-                }
-                String tagPath  = tagModel.getTagPath();
-                if (StringUtils.isEmpty(tagPath)) {
+            for (String tagPath : tagPathList) {
+                if (tagPath == null || StringUtils.isEmpty(tagPath)) {
                     throw new ApiException(codeEnum.getErrorCode(), "tagPath is not empty!");
+                }
+
+                Integer tagId = getTagIdByTagPath(tagPath);
+                if (tagId == null) {
+                    throw new ApiException(codeEnum.getErrorCode(), "tagPath is incorrect, not get tagId!");
                 }
 
                 addDeleteTagBulk(channelId, tagId, tagPath, modifier, productId, bulkProductList, cmsBtTagLogModelList);
@@ -278,6 +272,24 @@ public class ProductTagService extends BaseService {
         tagLogModel.setComment("delete");
         tagLogModel.setCreater(modifier);
         cmsBtTagLogModelList.add(tagLogModel);
+    }
+
+    /**
+     * 取得tagID
+     * @param tagPath tag Path
+     */
+    private Integer getTagIdByTagPath(String tagPath) {
+        Integer result = null;
+        if (tagPath != null) {
+            String[] tagPathArr = tagPath.split("-");
+            if (tagPathArr.length>1) {
+                String tagIdStr = tagPathArr[tagPathArr.length-1];
+                if (StringUtils.isDigit(tagIdStr)) {
+                    result = Integer.parseInt(tagIdStr);
+                }
+            }
+        }
+        return result;
     }
 
 }

@@ -145,8 +145,7 @@ public class VoApiDefaultClient implements VoApiClient {
 		}
 
 		if (!"0".equals(code)) {
-			VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70000;
-			throw new ApiException(codeEnum.getErrorCode(), responseBody.getMessage());
+			throw new ApiException(code, responseBody.getMessage());
 		}
 
 		return responseBody;
