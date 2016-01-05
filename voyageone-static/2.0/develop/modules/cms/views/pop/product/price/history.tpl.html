@@ -24,11 +24,11 @@
                             <td><span class="label label-danger-new">{{list.modifier}}</span></td>
                         </tr>
                     </table>
+                    <vpagination config="vm.groupPageOption" total="{{vm.groupPageOption.total}}"></vpagination>
                 </div><!-- /.box-body -->
             </div>
         </form>
     </div>
-    <vpagination config="vm.groupPageOption" total="{{vm.groupPageOption.total}}"></vpagination>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="$close()">{{'BTN_CANCEL' | translate}}</button>
     </div>

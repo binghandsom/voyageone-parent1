@@ -51,7 +51,7 @@
     "controllerUrl": "modules/cms/views/group/list.ctl"
   },
   "product_detail": {
-    "hash": "/product/detail/:productId",
+    "hash": "/product/detail/:id",
     "templateUrl": "views/product/detail.tpl.html",
     "controllerUrl": "modules/cms/views/product/detail.ctl",
     "controller": "productDetailController"
