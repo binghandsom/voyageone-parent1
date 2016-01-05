@@ -16,6 +16,7 @@ import com.voyageone.common.configs.Enums.StoreConfigEnums;
 import com.voyageone.common.configs.StoreConfigs;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.StoreBean;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -55,6 +56,12 @@ public class WmsSetClientInventoryService extends BaseTaskService {
 
         // 线程
         List<Runnable> threads = new ArrayList<>();
+
+        // 在北京时间零点三十分，清除现有逻辑库存，重新计算最新的库存（全量推送）
+        if (DateTimeUtil.getCurrentHour() == 16 && DateTimeUtil.getCurrentMinute() == 30) {
+            int logicyCount = inventoryDao.deleteLogicInventory();
+            logger.info("清除逻辑库存的件数："+logicyCount);
+        }
 
         // 初始化临时表
         inventoryDao.truncateInventorySynTable();
@@ -183,6 +190,7 @@ public class WmsSetClientInventoryService extends BaseTaskService {
                         // 如果库存需要管理 或者物理库存发生过变动，进行逻辑库存计算
                         if ( inventory_manager == true ) {
                             logger.info(channel.getFull_name() + "-----逻辑库存计算" );
+
                             inventoryDao.setLogicInventory(channel.getOrder_channel_id());
                         }
                     } catch (Exception e) {
