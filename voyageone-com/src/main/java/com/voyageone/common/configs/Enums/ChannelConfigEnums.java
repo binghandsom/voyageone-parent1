@@ -478,7 +478,12 @@ public class ChannelConfigEnums {
         /**
          * WMF
          */
-        WMF("014");
+        WMF("014"),
+
+        /**
+         * JUMEI
+         */
+        JUMEI("998");
 
         private String id;
 
@@ -517,6 +522,7 @@ public class ChannelConfigEnums {
                 case "012": return BCBG;
                 case "013": return SEARS;
                 case "014": return WMF;
+                case "998": return JUMEI;
                 default: return null;
             }
         }
