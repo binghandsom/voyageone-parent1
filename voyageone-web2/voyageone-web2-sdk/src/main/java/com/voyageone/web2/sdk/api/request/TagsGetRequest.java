@@ -3,12 +3,11 @@ package com.voyageone.web2.sdk.api.request;
 
 import com.voyageone.web2.sdk.api.VoApiRequest;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
-import com.voyageone.web2.sdk.api.response.TagsGetByChannelIdResponse;
-import com.voyageone.web2.sdk.api.response.TagsGetByParentTagIdResponse;
+import com.voyageone.web2.sdk.api.response.TagsGetResponse;
 import com.voyageone.web2.sdk.api.util.RequestUtils;
 
 /**
- * /tag/selectParentTagByChannel tag get by channelId Request
+ * /tag/selectListByParentTagId tag get by parent_tag_id Request
  *
  * 根据传入的参数取得对应Tag
  *
@@ -18,19 +17,24 @@ import com.voyageone.web2.sdk.api.util.RequestUtils;
  * @version 2.0.0
  * @since. 2.0.0
  */
-public class TagsGetByChannelIdRequest extends VoApiRequest<TagsGetByChannelIdResponse> {
+public class TagsGetRequest extends VoApiRequest<TagsGetResponse> {
 
 	public String getApiURLPath() {
-		return "/tag/selectParentTagByChannel";
+		return "/tag/selectList";
 	}
 
 	private String channelId;
 
-	public TagsGetByChannelIdRequest() {
+	/**
+	 * parentTagId
+	 */
+	private Integer parentTagId;
+
+	public TagsGetRequest() {
 
 	}
 
-	public TagsGetByChannelIdRequest(String channelId) {
+	public TagsGetRequest(String channelId) {
 		this.channelId = channelId;
 	}
 
@@ -47,4 +51,11 @@ public class TagsGetByChannelIdRequest extends VoApiRequest<TagsGetByChannelIdRe
 		this.channelId = channelId;
 	}
 
+	public Integer getParentTagId() {
+		return parentTagId;
+	}
+
+	public void setParentTagId(Integer parentTagId) {
+		this.parentTagId = parentTagId;
+	}
 }

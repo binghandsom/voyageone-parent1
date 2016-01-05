@@ -4,10 +4,7 @@ import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.domain.CmsBtTagModel;
 import com.voyageone.web2.sdk.api.request.*;
-import com.voyageone.web2.sdk.api.response.TagAddResponse;
-import com.voyageone.web2.sdk.api.response.TagRemoveResponse;
-import com.voyageone.web2.sdk.api.response.TagsGetByChannelIdResponse;
-import com.voyageone.web2.sdk.api.response.TagsGetByParentTagIdResponse;
+import com.voyageone.web2.sdk.api.response.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +26,10 @@ public class TagAddClientTest {
     @Test
     public void testAddTag() {
         TagAddRequest requestModel = new TagAddRequest("100");
-        requestModel.setTagName("6.5折");
+        requestModel.setTagName("6.81折");
         requestModel.setTagType(2);
         requestModel.setTagStatus(0);
-        requestModel.setParentTagId(11);
+        requestModel.setParentTagId(34);
         requestModel.setSortOrder(0);
         requestModel.setCreater("jerry");
 
@@ -48,7 +45,7 @@ public class TagAddClientTest {
     @Test
     public void testRemoveTag() {
         TagRemoveRequest requestModel = new TagRemoveRequest("100");
-        requestModel.setTagId(13);
+        requestModel.setTagId(34);
         requestModel.setModifier("jerry");
 
         //SDK取得Product 数据
@@ -62,25 +59,30 @@ public class TagAddClientTest {
 
     @Test
     public void testGetByParentTagId() {
-        TagsGetByParentTagIdRequest requestModel = new TagsGetByParentTagIdRequest("100");
+        TagsGetRequest requestModel = new TagsGetRequest("100");
         requestModel.setParentTagId(11);
 
         //SDK取得Product 数据
-        TagsGetByParentTagIdResponse res = voApiClient.execute(requestModel);
+        TagsGetResponse res = voApiClient.execute(requestModel);
         List<CmsBtTagModel> tagModelList = res.getTags();
 
         System.out.println("res Code = " + res.getCode());
         System.out.println("res Message = " + res.getMessage());
         System.out.println("tagList.size = " + tagModelList.size());
+
+        if (tagModelList.size() > 0) {
+            for (int i = 0; i < tagModelList.size(); i++) {
+                System.out.println("tag id = " + tagModelList.get(i).getTagId());
+            }
+        }
     }
 
     @Test
     public void testGetByChannelId() {
-        TagsGetByChannelIdRequest requestModel = new TagsGetByChannelIdRequest("100");
-        requestModel.setChannelId("100");
+        TagsGetRequest requestModel = new TagsGetRequest("100");
 
         //SDK取得Product 数据
-        TagsGetByChannelIdResponse res = voApiClient.execute(requestModel);
+        TagsGetResponse res = voApiClient.execute(requestModel);
         List<CmsBtTagModel> tagModelList = res.getTags();
 
         System.out.println("res Code = " + res.getCode());

@@ -108,11 +108,18 @@
         where tag_id = #{tagId,jdbcType=INTEGER}
     </update>
 
-    <!-- Tag信息删除 -->
-    <delete id="delete_cms_bt_tag">
+    <!-- Tag信息删除（TagId 对应Tag删除） -->
+    <delete id="delete_cms_bt_tag_by_tag_id">
         delete from voyageone_cms2.cms_bt_tag
         where channel_id = #{channelId,jdbcType=VARCHAR}
             and tag_id = #{tagId,jdbcType=INTEGER}
+    </delete>
+
+    <!-- Tag信息删除（根据parent_tag_id 删除子 tag） -->
+    <delete id="delete_cms_bt_tag_by_parent_tag_id">
+        delete from voyageone_cms2.cms_bt_tag
+        where channel_id = #{channelId,jdbcType=VARCHAR}
+        and parent_tag_id = #{parentTagId,jdbcType=INTEGER}
     </delete>
 
     <!-- Tag信息检索 （根据 tag_id，取得对应Tag）-->
@@ -148,6 +155,27 @@
             tag.modifier
         from voyageone_cms2.cms_bt_tag tag
         where tag_id = #{tagId}
+    </select>
+
+    <!-- Tag信息检索 （根据 父tag_id，取得对应Tag）-->
+    <select id="select_one_by_parent_tag_id" resultMap="TagMap">
+        select
+            tag.tag_id,
+            tag.tag_name,
+            tag.channel_id,
+            tag.tag_path,
+            tag.tag_path_name,
+            tag.tag_type,
+            tag.tag_status,
+            tag.sort_order,
+            tag.parent_tag_id,
+            tag.created,
+            tag.creater,
+            tag.modified,
+            tag.modifier
+        from voyageone_cms2.cms_bt_tag tag
+        where tag_id = #{tagId}
+          and parent_tag_id = 0
     </select>
 
     <!-- Tag信息检索 （根据channel_id，parent_tag_id, tag_name 取得对应子TagList）-->

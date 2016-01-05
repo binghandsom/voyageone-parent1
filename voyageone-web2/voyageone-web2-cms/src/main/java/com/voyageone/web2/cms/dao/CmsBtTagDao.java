@@ -14,15 +14,15 @@ import java.util.List;
 @Repository
 public class CmsBtTagDao extends BaseDao{
 
-    public int insertCmsBtTag(CmsBtTagModel cmsBtTagModel){
-        return updateTemplate.insert("insert_cms_bt_tag",cmsBtTagModel);
-    }
-
-    public int updateCmsBtTag(CmsBtTagModel cmsBtTagModel){
-        return updateTemplate.update("update_cms_bt_tag",cmsBtTagModel);
-    }
-
-    public List<CmsBtTagModel> selectListByParentTagId(int parentTagId) {
-        return updateTemplate.selectList("select_list_by_parent_tag_id", parentTagId);
-    }
+//    public int insertCmsBtTag(CmsBtTagModel cmsBtTagModel){
+//        return updateTemplate.insert("insert_cms_bt_tag",cmsBtTagModel);
+//    }
+//
+//    public int updateCmsBtTag(CmsBtTagModel cmsBtTagModel){
+//        return updateTemplate.update("update_cms_bt_tag",cmsBtTagModel);
+//    }
+//
+//    public List<CmsBtTagModel> selectListByParentTagId(int parentTagId) {
+//        return updateTemplate.selectList("select_list_by_parent_tag_id", parentTagId);
+//    }
 }
