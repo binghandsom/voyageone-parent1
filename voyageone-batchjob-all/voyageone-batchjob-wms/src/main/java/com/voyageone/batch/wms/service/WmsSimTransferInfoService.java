@@ -54,12 +54,6 @@ public class WmsSimTransferInfoService  extends BaseTaskService {
         // 线程
         List<Runnable> threads = new ArrayList<>();
 
-        // 在北京时间零点三十分，清除现有逻辑库存，重新计算最新的库存（全量推送）
-        if (DateTimeUtil.getCurrentHour() == 16 && DateTimeUtil.getCurrentMinute() == 30) {
-            int logicyCount = inventoryDao.deleteLogicInventory();
-            logger.info("清除逻辑库存的件数："+logicyCount);
-        }
-
         String process_time = DateTimeUtil.getLocalTime(DateTimeUtil.getDate(), -4);
 
         int transferCount = transferDao.deleteTransferHistory( process_time);
