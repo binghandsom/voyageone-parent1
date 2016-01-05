@@ -1,37 +1,20 @@
 <div class="wrapper-md">
 	<div class="col-sm-12">
-		<div class="panel panelPromotion m-t-xs">
-			<div class="container-fluid m-t-sm m-b-sm">
+		<div class="panel panelPromotion">
+			<div class="container-fluid m-t-xs">
 				<div class="col-sm-12">
-					<div class="form-horizontal">
-						<div class="form-group">
-							<div class="m-l-md">
-								<label class="col-sm-2"><button  class="btn btn-default form-control"><i class="fa fa-arrow-circle-right"></i> Feed类目未匹配：123</button></label>
-								<label class="col-sm-2"><button  class="btn btn-default form-control"><i class="fa fa-arrow-circle-right"></i> Feed类目属性未匹配：234</button></label>
-								<label class="col-sm-2"><button  class="btn btn-default form-control"><i class="fa fa-arrow-circle-right"></i> 平台类目未匹配：123</button></label>
-								<label class="col-sm-2"><button  class="btn btn-default form-control"><i class="fa fa-arrow-circle-right"></i> 平台类目属性未匹配：234</button></label>
-							</div>
-						</div><!-- .form-group -->
-						<div class="form-group">
-							<div class="m-l-lg">
-								<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 平台上新失败 ： 311 </label>
-								<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> 强制下架 ： 234 </label>
-								<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span> 品牌方建议售价变更 ： 343</label>
-								<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option4"><span class="fa fa-check"></span> 有库存未上架 ： 232 </label>
-								<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span> 商品信息未Approve： 232 </label>
-							</div>
-						</div><!-- .form-group -->
+					<div class="m-l-xs">
+						<label class="checkbox-inline c-checkbox m-t-xs"><input type="checkbox" value="option1"><span class="fa fa-check"></span> <b>平台上新失败</b> ： 311 条</label>
+						<label class="checkbox-inline c-checkbox m-t-xs"><input type="checkbox" value="option2"><span class="fa fa-check"></span> <b>强制下架</b> ： 234 条</label>
+						<label class="checkbox-inline c-checkbox m-t-xs"><input type="checkbox" value="option3"><span class="fa fa-check"></span> <b>品牌方建议售价变更</b> ： 343 条</label>
+						<label class="checkbox-inline c-checkbox m-t-xs"><input type="checkbox" value="option4"><span class="fa fa-check"></span> <b>有库存未上架</b> ： 232 条</label>
+						<label class="checkbox-inline c-checkbox m-t-xs"><input type="checkbox" value="option5"><span class="fa fa-check"></span> <b>商品信息未Approve</b>： 232 条</label>
+						<label class="btn-group pull-right form-inline">
+							<input type="text" placeholder="检索" class="col-sm-2 form-control">
+							<button type="submit" class="btn btn-vo"><i class="fa fa-search"></i></button>
+						</label>
 					</div>
 				</div>
-				<!--<div class="col-sm-12 text-center" ng-controller="popupCtrl">
-					<script type="text/ng-template" id="popup_new_promotion.html">
-						<div ng-include="'tpl/popup_new_promotion.html'"></div>
-					</script>
-					<div class="form-inline">
-						<button class="btn btn-vo" ng-click="ok()"><i class="fa fa-search"></i>  Search</button>
-						<button class="btn btn-success" ng-click="openpromotion('md')"><i class="fa fa-plus"></i> 新增Promotion</button>
-					</div>&lt;!&ndash; .form-inline &ndash;&gt;
-				</div>-->
 			</div>
 		</div>
 	</div>
@@ -44,14 +27,11 @@
 						<th class="text-center">Seq.</th>
 						<th class="text-left mfb-x">Product Status</th>
 						<th class="text-center">Platform Status</th>
-						<th class="text-center">Price</th>
 						<th class="text-center">Group IID</th>
 						<th class="text-center">Product Code</th>
 						<th class="text-center">Inventory</th>
-						<th class="text-center mfb-xs">Error Code</th>
-						<th class="text-center mfb-xxs">Error Messege</th>
-						<th>Lock</th>
-						<th>Approve</th>
+						<th class="text-center">Error Code</th>
+						<th class="text-left mfb-xxxs">Error Messege</th>
 					</tr>
 					</thead>
 					<tbody>
@@ -59,171 +39,51 @@
 						<td class="text-center">1</td>
 						<td class="text-left"><span class="label label-success-new m-r-lg m-l"> New </span></td>
 						<td class="text-center">Onsale</td>
-						<td class="text-left">
-							<div class="table_mains">
-								<ul>
-									<li>MSRP：1221</li>
-									<li>Retail Price:1111</li>
-									<li>Sale Price:1000</li>
-								</ul>
-							</div>
-						</td>
 						<td class="text-center text-u-l"><a href="#/promotion/detail" target="_blank">123456</a></td>
 						<td class="text-center text-u-l"><a href="#/promotion/detail" target="_blank">555-222</a></td>
 						<td class="text-center text-u-l"><a href="#/promotion/detail" target="_blank">555-222</a></td>
 						<td class="text-center">900</td>
-						<td class="text-center">30</td>
-						<td>
-							<div class="onoffswitch">
-							<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch1" checked>
-							<label class="onoffswitch-label" for="myonoffswitch1">
-								<span class="onoffswitch-inner"></span>
-								<span class="onoffswitch-switch"></span>
-							</label>
-						</div><!-- onoff switch --></td>
-						<td><div class="onoffswitch">
-							<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked>
-							<label class="onoffswitch-label" for="myonoffswitch">
-								<span class="onoffswitch-inner"></span>
-								<span class="onoffswitch-switch"></span>
-							</label>
-						</div><!-- onoff switch --></td>
+						<td class="text-left">976c5cb468a89ddb4e5d074f06f7a109</td>
 					</tr>
 					<tr>
 						<td class="text-center">2</td>
 						<td class="text-left"><span class="label label-yellow-new m-r-lg m-l"> Pedding </span></td>
 						<td class="text-center">Onsale</td>
-						<td class="text-left">
-							<div class="table_mains">
-								<ul>
-									<li>MSRP：1221</li>
-									<li>Retail Price:1111</li>
-									<li>Sale Price:1000</li>
-								</ul>
-							</div>
-						</td>
 						<td class="text-center text-u-l"><a href="#/promotion/detail" target="_blank">123456</a></td>
 						<td class="text-center text-u-l"><a href="#/promotion/detail" target="_blank">555-222</a></td>
 						<td class="text-center text-u-l"><a href="#/promotion/detail" target="_blank">555-222</a></td>
 						<td class="text-center">900</td>
-						<td class="text-center">30</td>
-						<td>
-							<div class="onoffswitch">
-								<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch1" checked>
-								<label class="onoffswitch-label" for="myonoffswitch1">
-									<span class="onoffswitch-inner"></span>
-									<span class="onoffswitch-switch"></span>
-								</label>
-							</div><!-- onoff switch --></td>
-						<td><div class="onoffswitch">
-							<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked>
-							<label class="onoffswitch-label" for="myonoffswitch">
-								<span class="onoffswitch-inner"></span>
-								<span class="onoffswitch-switch"></span>
-							</label>
-						</div><!-- onoff switch --></td>
+						<td class="text-left">976c5cb468a89ddb4e5d074f06f7a109</td>
 					</tr>
 					<tr>
 						<td class="text-center">3</td>
 						<td class="text-left"><span class="label label-info m-r-lg m-l"> Ready </span></td>
 						<td class="text-center">Onsale</td>
-						<td class="text-left">
-							<div class="table_mains">
-								<ul>
-									<li>MSRP：1221</li>
-									<li>Retail Price:1111</li>
-									<li>Sale Price:1000</li>
-								</ul>
-							</div>
-						</td>
 						<td class="text-center text-u-l"><a href="#/promotion/detail" target="_blank">123456</a></td>
 						<td class="text-center text-u-l"><a href="#/promotion/detail" target="_blank">555-222</a></td>
 						<td class="text-center text-u-l"><a href="#/promotion/detail" target="_blank">555-222</a></td>
 						<td class="text-center">900</td>
-						<td class="text-center">30</td>
-						<td>
-							<div class="onoffswitch">
-								<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch1" checked>
-								<label class="onoffswitch-label" for="myonoffswitch1">
-									<span class="onoffswitch-inner"></span>
-									<span class="onoffswitch-switch"></span>
-								</label>
-							</div><!-- onoff switch --></td>
-						<td><div class="onoffswitch">
-							<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked>
-							<label class="onoffswitch-label" for="myonoffswitch">
-								<span class="onoffswitch-inner"></span>
-								<span class="onoffswitch-switch"></span>
-							</label>
-						</div><!-- onoff switch --></td>
+						<td class="text-left">976c5cb468a89ddb4e5d074f06f7a109</td>
 					</tr>
 					<tr>
 						<td class="text-center">4</td>
 						<td class="text-left"><span class="label label-primary m-r-lg m-l"> approved </span></td>
 						<td class="text-center">Onsale</td>
-						<td class="text-left">
-							<div class="table_mains">
-								<ul>
-									<li>MSRP：1221</li>
-									<li>Retail Price:1111</li>
-									<li>Sale Price:1000</li>
-								</ul>
-							</div>
-						</td>
 						<td class="text-center text-u-l"><a href="#/promotion/detail" target="_blank">123456</a></td>
 						<td class="text-center text-u-l"><a href="#/promotion/detail" target="_blank">555-222</a></td>
 						<td class="text-center text-u-l"><a href="#/promotion/detail" target="_blank">555-222</a></td>
 						<td class="text-center">900</td>
-						<td class="text-center">30</td>
-						<td>
-							<div class="onoffswitch">
-								<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch1" checked>
-								<label class="onoffswitch-label" for="myonoffswitch1">
-									<span class="onoffswitch-inner"></span>
-									<span class="onoffswitch-switch"></span>
-								</label>
-							</div><!-- onoff switch --></td>
-						<td><div class="onoffswitch">
-							<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked>
-							<label class="onoffswitch-label" for="myonoffswitch">
-								<span class="onoffswitch-inner"></span>
-								<span class="onoffswitch-switch"></span>
-							</label>
-						</div><!-- onoff switch --></td>
+						<td class="text-left">976c5cb468a89ddb4e5d074f06f7a109</td>
 					</tr>
 					<tr>
 						<td class="text-center">5</td>
 						<td class="text-left"><span class="label label-danger-new m-r-lg m-l"> deleted </span></td>
 						<td class="text-center">Onsale</td>
-						<td class="text-left">
-							<div class="table_mains">
-								<ul>
-									<li>MSRP：1221</li>
-									<li>Retail Price:1111</li>
-									<li>Sale Price:1000</li>
-								</ul>
-							</div>
-						</td>
 						<td class="text-center text-u-l"><a href="#/promotion/detail" target="_blank">123456</a></td>
 						<td class="text-center text-u-l"><a href="#/promotion/detail" target="_blank">555-222</a></td>
 						<td class="text-center text-u-l"><a href="#/promotion/detail" target="_blank">555-222</a></td>
 						<td class="text-center">900</td>
-						<td class="text-center">30</td>
-						<td>
-							<div class="onoffswitch">
-								<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch1" checked>
-								<label class="onoffswitch-label" for="myonoffswitch1">
-									<span class="onoffswitch-inner"></span>
-									<span class="onoffswitch-switch"></span>
-								</label>
-							</div><!-- onoff switch --></td>
-						<td><div class="onoffswitch">
-							<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked>
-							<label class="onoffswitch-label" for="myonoffswitch">
-								<span class="onoffswitch-inner"></span>
-								<span class="onoffswitch-switch"></span>
-							</label>
-						</div><!-- onoff switch --></td>
+						<td class="text-left">976c5cb468a89ddb4e5d074f06f7a109</td>
 					</tr>
 					</tbody>
 				</table>

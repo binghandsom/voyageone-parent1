@@ -1,0 +1,47 @@
+{
+  "code": "",
+  "displayType": "",
+  "message": "",
+  "data": {
+
+    "fields": [
+    ],
+    "feedOrgAtts": [
+      {"test1": "value1"},
+      {"test2": "value2"},
+      {"test3": "value3"},
+      {"test4": "value4"},
+      {"test5": "value5"}
+    ],
+    "feedCnAtts": [
+      {"test1": "值1"},
+      {"test2": "值2"},
+      {"test3": "值3"},
+      {"test4": "值4"},
+      {"test5": "值5"}
+    ],
+    "feedAtts": [
+      {"test1": "value1"},
+      {"test2": "value2"},
+      {"test3": "value3"},
+      {"test4": "value4"},
+      {"test5": "value5"},
+      {"test11": "value11"},
+      {"test21": "value21"},
+      {"test31": "value31"},
+      {"test41": "value41"},
+      {"test51": "value51"}
+    ],
+    "customFeedIdList": [
+      "test1", "test2", "test4"
+    ],
+    "images1": [
+      {"name": "4027_vanilla_l"},
+      {"name": "4027_vanilla_b"},
+      {"name": "4027_vanilla_c"},
+      {"name": "4027_vanilla_f"}
+    ]
+  },
+  "redirectTo": ""
+}
+

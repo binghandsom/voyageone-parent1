@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.model;
+package com.voyageone.web2.sdk.api.domain;
 
 import com.voyageone.base.dao.mysql.BaseModel;
 
@@ -6,7 +6,7 @@ import com.voyageone.base.dao.mysql.BaseModel;
  * @author gubuchun 15/12/14
  * @version 2.0.0
  */
-public class CmsBtTagLogModel extends BaseModel {
+public class CmsBtTagProductLogModel extends BaseModel {
 
     private int seq;
     private long productId;

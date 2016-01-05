@@ -2,13 +2,13 @@ package com.voyageone.web2.sdk.api.request;
 
 
 import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
-import com.voyageone.web2.sdk.api.VoApiListRequest;
-import com.voyageone.web2.sdk.api.domain.ProductPriceModel;
+import com.voyageone.web2.sdk.api.VoApiRequest;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
 import com.voyageone.web2.sdk.api.response.ProductSkusPutResponse;
 import com.voyageone.web2.sdk.api.util.RequestUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * get product sku Request Model
@@ -25,7 +25,7 @@ import java.util.*;
  * @version 2.0.0
  * @since. 2.0.0
  */
-public class ProductSkusPutRequest extends VoApiListRequest<ProductSkusPutResponse> {
+public class ProductSkusPutRequest extends VoApiRequest<ProductSkusPutResponse> {
 
 	public String getApiURLPath() {
 		return "/puroduct/sku/put";
