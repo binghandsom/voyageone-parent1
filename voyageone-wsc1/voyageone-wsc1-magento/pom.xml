@@ -23,6 +23,18 @@
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-java2wsdl</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>axiom-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>axiom-dom</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>axiom-impl</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <finalName>voyageone-wsc1-magento</finalName>
