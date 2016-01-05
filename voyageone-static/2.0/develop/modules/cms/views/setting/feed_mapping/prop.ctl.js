@@ -80,6 +80,11 @@ define([
                  */
                 this.fields = null;
                 /**
+                 * 共通字段的 Map
+                 * @type {object}
+                 */
+                this.commonFields = null;
+                /**
                  * 类目 SKU 级别字段 Map
                  * @type {object}
                  */
@@ -104,6 +109,7 @@ define([
                         this.mainCategory = res.data.category;
                         this.fields = res.data.fields;
                         this.skuFields = res.data.sku;
+                        this.commonFields = res.data.common;
 
                         // 根据类目信息继续查询
                         this.feedMappingService.getMatched({
