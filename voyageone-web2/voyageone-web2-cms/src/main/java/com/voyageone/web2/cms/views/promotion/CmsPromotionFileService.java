@@ -7,9 +7,9 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.dao.CmsPromotionSkuDao;
-import com.voyageone.web2.cms.dao.mongodb.CmsBtProductDao;
 import com.voyageone.web2.cms.model.CmsBtInventoryOutputTmpModel;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
+import com.voyageone.web2.sdk.api.request.ProductsCountGetRequest;
 import com.voyageone.web2.sdk.api.request.ProductsGetRequest;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -46,10 +45,6 @@ public class CmsPromotionFileService extends BaseAppService {
     private int max_excel_reccount = 1000;
 
     @Autowired
-    // MongoDB
-    CmsBtProductDao cmsBtProductDao;
-
-    @Autowired
     // MysqlDB
     CmsPromotionSkuDao cmsPromotionSkuDao;
 
@@ -57,7 +52,7 @@ public class CmsPromotionFileService extends BaseAppService {
     ReentrantLock lock = new ReentrantLock();
 
     @Autowired
-    VoApiDefaultClient voApiDefaultClient;
+    VoApiDefaultClient voApiClient;
 
     /**
      * Code单位，文件生成
@@ -73,7 +68,7 @@ public class CmsPromotionFileService extends BaseAppService {
         String cartId = (String)params.get("cartId");
         String channelId = (String)params.get("channelId");
 
-        long recCount = cmsBtProductDao.selectProductByCartIdRecCount(channelId, cartId);
+        long recCount = selectProductByCartIdRecCount(channelId, cartId);
 
         int pageCount = 0;
         if ((int) recCount % select_pagesize > 0) {
@@ -128,6 +123,27 @@ public class CmsPromotionFileService extends BaseAppService {
         }
     }
 
+
+    /**
+     * selectProductByCartIdRecCount
+     * @param channelId channel Id
+     * @param cartId cart Id
+     * @return count
+     */
+    private long selectProductByCartIdRecCount(String channelId, String cartId) {
+        ProductsCountGetRequest requestModel = new ProductsCountGetRequest(channelId);
+        requestModel.addProp("groups.platforms.cartId", Integer.valueOf(cartId));
+        return voApiClient.execute(requestModel).getTotalCount();
+    }
+
+    private long selectMainGroupByCartIdRecCount(String channelId, String cartId) {
+        ProductsCountGetRequest requestModel = new ProductsCountGetRequest(channelId);
+        requestModel.addProp("groups.platforms.cartId", Integer.valueOf(cartId));
+//        requestModel.addProp("groups.platforms.isMain", 1);
+        requestModel.addProp("groups.platforms.isMain", 0);
+        return voApiClient.execute(requestModel).getTotalCount();
+    }
+
     /**
      * 调用SDK取得Code数据（含SKU）
      *
@@ -147,7 +163,7 @@ public class CmsPromotionFileService extends BaseAppService {
         requestModel.setFields("{\"prodId\":1,\"groups.platforms.cartId.$\":1,\"fields.model\":1,\"fields.code\":1,\"fields.productName\":1,\"batch_update.code_qty\":1,\"fields.salePriceStart\":1,\"fields.salePriceEnd\":1,\"catPath\":1,\"skus\":1}");
 
         //SDK取得Product 数据
-        List<CmsBtProductModel> productList = voApiDefaultClient.execute(requestModel).getProducts();
+        List<CmsBtProductModel> productList = voApiClient.execute(requestModel).getProducts();
 
         return productList;
     }
@@ -173,7 +189,7 @@ public class CmsPromotionFileService extends BaseAppService {
         requestModel.setFields("{\"groups.platforms.cartId.$\":1,\"groups.salePriceStart\":1,\"groups.salePriceEnd\":1,\"prodId\":1,\"fields.model\":1}");
 
         //SDK取得Product 数据
-        List<CmsBtProductModel> productList = voApiDefaultClient.execute(requestModel).getProducts();
+        List<CmsBtProductModel> productList = voApiClient.execute(requestModel).getProducts();
 
         return productList;
     }
@@ -374,7 +390,7 @@ public class CmsPromotionFileService extends BaseAppService {
         String cartId = (String)params.get("cartId");
         String channelId = (String)params.get("channelId");
 
-        long recCount = cmsBtProductDao.selectProductByCartIdRecCount(channelId, cartId);
+        long recCount = selectProductByCartIdRecCount(channelId, cartId);
 
         int pageCount = 0;
         if ((int) recCount % select_pagesize > 0) {
@@ -679,7 +695,7 @@ public class CmsPromotionFileService extends BaseAppService {
         String cartId = (String)params.get("cartId");
         String channelId = (String)params.get("channelId");
 
-        long recCount = cmsBtProductDao.selectModelByCartIdRecCount(channelId, cartId);
+        long recCount = selectMainGroupByCartIdRecCount(channelId, cartId);
 
         int pageCount = 0;
         if ((int) recCount % select_pagesize > 0) {
