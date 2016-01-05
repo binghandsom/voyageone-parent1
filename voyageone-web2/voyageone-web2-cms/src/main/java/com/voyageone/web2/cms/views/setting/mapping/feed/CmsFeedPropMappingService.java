@@ -11,9 +11,10 @@ import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.MultiComplexField;
 import com.voyageone.common.util.MD5;
 import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.cms.bean.setting.mapping.feed.FieldBean;
 import com.voyageone.web2.cms.bean.setting.mapping.feed.GetFieldMappingBean;
-import com.voyageone.web2.cms.bean.setting.mapping.feed.MainFieldBean;
 import com.voyageone.web2.cms.bean.setting.mapping.feed.SaveFieldMappingBean;
+import com.voyageone.web2.cms.dao.CmsMtCommonPropDefDao;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,6 +48,9 @@ public class CmsFeedPropMappingService extends BaseAppService {
     private CmsFeedMappingService feedMappingService;
 
     @Autowired
+    private CmsMtCommonPropDefDao commonPropDefDao;
+
+    @Autowired
     private com.voyageone.cms.service.CmsFeedMappingService com$feedMappingService;
 
     /**
@@ -69,41 +73,34 @@ public class CmsFeedPropMappingService extends BaseAppService {
 
         if (feedMappingModel == null)
             throw new BusinessException("类目没有默认的类目匹配");
+
         // 通过 Mapping 获取主类目的 Path
         // 通过 Path 转换获取到 ID (这部分是规定的 MD5 转换)
         String categoryId = convertPathToId(feedMappingModel.getMainCategoryPath());
         // 查询主类目信息
         CmsMtCategorySchemaModel categorySchemaModel = categorySchemaDao.getMasterSchemaModelByCatId(categoryId);
+
         // 拍平主类目的字段信息
         // 并构造画面特供模型
-        final int[] seq = {0};
-        Map<String, MainFieldBean> mainFieldBeanMap = categorySchemaModel.getFields()
-                .stream()
-                .flatMap(f -> flattenField(1, null, f))
-                .map(f -> {
-                    f.setSeq(seq[0]);
-                    seq[0]++;
-                    return f;
-                })
-                .collect(toMap(mfb -> mfb.getField().getId(), mfb -> mfb));
-        // 对 SKU 这一特殊属性进行和上述相同的操作
-        Map<String, MainFieldBean> skuFieldBeanMap = ((MultiComplexField) categorySchemaModel.getSku()).getFields().stream()
-                .flatMap(f -> flattenField(1, null, f))
-                .map(f -> {
-                    f.setSeq(seq[0]);
-                    seq[0]++;
-                    return f;
-                })
-                .collect(toMap(mfb -> mfb.getField().getId(), mfb -> mfb));
+        Map<String, FieldBean> mainFieldBeanMap = wrapFields(categorySchemaModel.getFields().stream());
+
+        Map<String, FieldBean> skuFieldBeanMap = wrapFields(
+                ((MultiComplexField) categorySchemaModel.getSku())
+                        .getFields().stream());
+
+        // 对共通属性同样处理
+        Stream<Field> commonFieldStream = commonPropDefDao.selectAll().stream().map(CmsMtCommonPropDefModel::getField);
+        Map<String, FieldBean> commonFieldBeanMap = wrapFields(commonFieldStream);
 
         // 最后清除主类目模型的字段信息,因为不需要再重复提供
         categorySchemaModel.setFields(null);
         categorySchemaModel.setSku(null);
 
-        return new HashMap<String, Object>(){{
+        return new HashMap<String, Object>() {{
             put("category", categorySchemaModel);
             put("fields", mainFieldBeanMap);
             put("sku", skuFieldBeanMap);
+            put("common", commonFieldBeanMap);
         }};
     }
 
@@ -287,16 +284,30 @@ public class CmsFeedPropMappingService extends BaseAppService {
         return flattenFinalProp(children);
     }
 
-    private Stream<MainFieldBean> flattenField(int level, String parentId, Field field) {
+    private Map<String, FieldBean> wrapFields(Stream<Field> fieldStream) {
 
-        MainFieldBean mainFieldBean = new MainFieldBean();
-        mainFieldBean.setField(field);
-        mainFieldBean.setParentId(parentId);
-        mainFieldBean.setLevel(level);
+        final int[] seq = {0};
 
-        Stream<MainFieldBean> stream = Stream.of(mainFieldBean);
+        return fieldStream
+                .flatMap(f -> flattenField(0, null, f))
+                .map(f -> {
+                    f.setSeq(seq[0]);
+                    seq[0]++;
+                    return f;
+                })
+                .collect(toMap(mfb -> mfb.getField().getId(), mfb -> mfb));
+    }
 
-        Stream<MainFieldBean> children = null;
+    private Stream<FieldBean> flattenField(int level, String parentId, Field field) {
+
+        FieldBean fieldBean = new FieldBean();
+        fieldBean.setField(field);
+        fieldBean.setParentId(parentId);
+        fieldBean.setLevel(level);
+
+        Stream<FieldBean> stream = Stream.of(fieldBean);
+
+        Stream<FieldBean> children = null;
 
         if (field.getType() == FieldTypeEnum.COMPLEX) {
             children = ((ComplexField) field)

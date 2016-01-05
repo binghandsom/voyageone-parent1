@@ -9,7 +9,7 @@ import com.voyageone.common.masterdate.schema.field.Field;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class MainFieldBean {
+public class FieldBean {
 
     private int seq;
 

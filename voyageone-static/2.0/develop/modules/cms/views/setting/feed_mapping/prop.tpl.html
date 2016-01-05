@@ -32,6 +32,18 @@
                 <div class="col-sm-6">
                     <div class="panel panel-default">
                         <div class="panel-heading">
+                            <h4 class="panel-title">通用属性</h4>
+                        </div>
+                        <form class="form-horizontal clearfix">
+                            <div class="col-sm-12 platform_mapping_bg_list"
+                                 ng-repeat="bean in ctrl.commonFields | fmExtendField"
+                                 ng-include="'feedMapping.fieldBean.html'"></div>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
                             <h4 class="panel-title">SKU匹配</h4>
                         </div>
                         <form class="form-horizontal clearfix">
@@ -46,13 +58,13 @@
     </tabset>
     <script type="text/ng-template" id="feedMapping.fieldBean.html">
         <div class="col-sm-5 text-left"
-             ng-style="{'margin-left': (bean.level - 1) * 25}">
+             ng-style="{'margin-left': bean.level * 30}">
             <i class="fa"
                ng-class="{'fa-plus':!bean.x.isSimple, 'fa-minus': bean.x.isSimple}"></i>
             {{ bean.field.name }}
             <span ng-if="bean.x.required">(必填)</span>
         </div>
-        <div class="col-sm-1 pull-center">
+        <div class="col-sm-1 pull-center" ng-if="bean.x.isSimple">
             <button class="badge badge-empty"
                     ng-click="popupFeed(ctrl.popupContext(bean)).then(ctrl.saveMapping)">
                 值匹配
