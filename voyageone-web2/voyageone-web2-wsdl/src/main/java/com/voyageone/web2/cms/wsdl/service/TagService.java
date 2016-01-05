@@ -132,8 +132,13 @@ public class TagService extends BaseService {
     private String getTagPathName(Integer parentTagId, String tagName) {
         String ret = "";
 
-        CmsBtTagModel cmsBtTagModel = cmsBtTagDao.getCmsBtTagByTagId(parentTagId);
-        ret = cmsBtTagModel.getTagName() + ">" + tagName;
+        // 父Tag的场合
+        if (parentTagId == 0) {
+            ret = tagName;
+        } else {
+            CmsBtTagModel cmsBtTagModel = cmsBtTagDao.getCmsBtTagByTagId(parentTagId);
+            ret = cmsBtTagModel.getTagName() + ">" + tagName;
+        }
 
         return ret;
     }
@@ -147,7 +152,14 @@ public class TagService extends BaseService {
     private boolean updateTagPathName(Integer parentTagId, Integer tagId) {
         boolean ret = false;
 
-        String tagPath = tagPathSeparator + parentTagId + tagPathSeparator + tagId + tagPathSeparator;
+        String tagPath = "";
+
+        // 父Tag的场合
+        if (parentTagId == 0) {
+            tagPath = tagPathSeparator + tagId + tagPathSeparator;
+        } else {
+            tagPath = tagPathSeparator + parentTagId + tagPathSeparator + tagId + tagPathSeparator;
+        }
 
         CmsBtTagModel cmsBtTagModel = new CmsBtTagModel();
         cmsBtTagModel.setTagId(tagId);
@@ -171,17 +183,9 @@ public class TagService extends BaseService {
     private boolean checkAddTagParam(TagAddRequest request, TagAddResponse result) {
         boolean ret = true;
 
-        // 父TagId存在检查
-        CmsBtTagModel cmsBtTagModel = cmsBtTagDao.getCmsBtTagByTagId(request.getParentTagId());
-        if (cmsBtTagModel == null) {
-            VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70008;
-            result.setCode(codeEnum.getErrorCode());
-            result.setMessage(codeEnum.getErrorMsg());
-
-            ret = false;
-        }
-
-        if (ret) {
+        // 父Tag追加的场合
+        if (request.getParentTagId() == 0) {
+            // TagName 对应Tag存在检查
             List<CmsBtTagModel> cmsBtTagModelList = cmsBtTagDao.selectListByParentTagId(request.getChannelId(), request.getParentTagId(), request.getTagName());
             if (cmsBtTagModelList.size() > 0) {
                 VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70009;
@@ -190,7 +194,31 @@ public class TagService extends BaseService {
 
                 ret = false;
             }
+        // 子Tag追加的场合
+        } else {
+            // 父TagId存在检查
+            CmsBtTagModel cmsBtTagModel = cmsBtTagDao.getCmsBtTagByParentTagId(request.getParentTagId());
+            if (cmsBtTagModel == null) {
+                VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70008;
+                result.setCode(codeEnum.getErrorCode());
+                result.setMessage(codeEnum.getErrorMsg());
+
+                ret = false;
+            }
+
+            if (ret) {
+                // TagName 对应Tag存在检查
+                List<CmsBtTagModel> cmsBtTagModelList = cmsBtTagDao.selectListByParentTagId(request.getChannelId(), request.getParentTagId(), request.getTagName());
+                if (cmsBtTagModelList.size() > 0) {
+                    VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70009;
+                    result.setCode(codeEnum.getErrorCode());
+                    result.setMessage(codeEnum.getErrorMsg());
+
+                    ret = false;
+                }
+            }
         }
+
 
         return ret;
     }
@@ -226,14 +254,32 @@ public class TagService extends BaseService {
     private boolean deleteTag(TagRemoveRequest request) {
         boolean ret = false;
 
-        CmsBtTagModel cmsBtTagModel = new CmsBtTagModel();
-        cmsBtTagModel.setChannelId(request.getChannelId());
-        cmsBtTagModel.setTagId(request.getTagId());
+        // 当前Tag取得
+        CmsBtTagModel cmsBtTagModel = cmsBtTagDao.getCmsBtTagByTagId(request.getTagId());
 
-        int recordCount = cmsBtTagDao.deleteCmsBtTag(cmsBtTagModel);
+        TransactionStatus status=transactionManager.getTransaction(def);
 
+        // 当前Tag删除
+        CmsBtTagModel cmsBtTagModelPara = new CmsBtTagModel();
+        cmsBtTagModelPara.setChannelId(request.getChannelId());
+        cmsBtTagModelPara.setTagId(request.getTagId());
+        int recordCount = cmsBtTagDao.deleteCmsBtTagByTagId(cmsBtTagModelPara);
         if (recordCount > 0) {
             ret = true;
+        }
+
+        // 父Tag删除的场合
+        if (cmsBtTagModel.getParentTagId() == 0) {
+            cmsBtTagModelPara = new CmsBtTagModel();
+            cmsBtTagModelPara.setChannelId(request.getChannelId());
+            cmsBtTagModelPara.setParentTagId(request.getTagId());
+            cmsBtTagDao.deleteCmsBtTagByParentTagId(cmsBtTagModelPara);
+        }
+
+        if (ret) {
+            transactionManager.commit(status);
+        } else {
+            transactionManager.rollback(status);
         }
 
         return ret;
@@ -249,8 +295,8 @@ public class TagService extends BaseService {
         boolean ret = true;
 
         // Tag 使用检查
-        List<CmsBtProductModel> productModelList = cmsBtProductDao.selectProductByTagId(request.getChannelId(), request.getTagId());
-        if (productModelList.size() > 0) {
+        long productCountByTagId = cmsBtProductDao.selectProductCountByTagId(request.getChannelId(), request.getTagId());
+        if (productCountByTagId > 0) {
             VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70010;
             result.setCode(codeEnum.getErrorCode());
             result.setMessage(codeEnum.getErrorMsg());
@@ -262,34 +308,40 @@ public class TagService extends BaseService {
     }
 
     /**
-     * 根据ParentTagId检索Tags
-     * @param request TagsGetByParentTagIdRequest
-     * @return TagsGetByParentTagIdResponse
+     * 根据ChannelId，ParentTagId检索Tags
+     * @param request TagsGetRequest
+     * @return TagsGetResponse
      */
-    public TagsGetByParentTagIdResponse selectListByParentTagId(TagsGetByParentTagIdRequest request) {
+    public TagsGetResponse selectList(TagsGetRequest request) {
         // 返回结果
-        TagsGetByParentTagIdResponse result = new TagsGetByParentTagIdResponse();
+        TagsGetResponse result = new TagsGetResponse();
+        List<CmsBtTagModel> tagModelList = null;
 
-        List<CmsBtTagModel> tagModelList = cmsBtTagDao.selectListByParentTagId(request.getParentTagId());
+        // ParentTagId 存在的场合
+        if (request.getParentTagId() == null) {
+            tagModelList = cmsBtTagDao.selectListByChannelId(request.getChannelId());
+        } else {
+            tagModelList = cmsBtTagDao.selectListByParentTagId(request.getParentTagId());
+        }
 
         // 返回值设定
         result.setTags(tagModelList);
         return result;
     }
 
-    /**
-     * 根据ChannelId检索Tags
-     * @param request TagsGetByChannelIdRequest
-     * @return TagsGetByChannelIdResponse
-     */
-    public TagsGetByChannelIdResponse selectListByChannelId(TagsGetByChannelIdRequest request) {
-        // 返回结果
-        TagsGetByChannelIdResponse result = new TagsGetByChannelIdResponse();
-
-        List<CmsBtTagModel> tagModelList = cmsBtTagDao.selectListByChannelId(request.getChannelId());
-
-        // 返回值设定
-        result.setTags(tagModelList);
-        return result;
-    }
+//    /**
+//     * 根据ChannelId检索Tags
+//     * @param request TagsGetByChannelIdRequest
+//     * @return TagsGetByChannelIdResponse
+//     */
+//    public TagsGetByChannelIdResponse selectListByChannelId(TagsGetByChannelIdRequest request) {
+//        // 返回结果
+//        TagsGetByChannelIdResponse result = new TagsGetByChannelIdResponse();
+//
+//        List<CmsBtTagModel> tagModelList = cmsBtTagDao.selectListByChannelId(request.getChannelId());
+//
+//        // 返回值设定
+//        result.setTags(tagModelList);
+//        return result;
+//    }
 }

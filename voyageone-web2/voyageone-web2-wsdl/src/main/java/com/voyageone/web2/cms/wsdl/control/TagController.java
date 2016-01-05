@@ -49,22 +49,12 @@ public class TagController extends BaseController {
     }
 
     /**
-     * selectOne
+     * selectList
      *
      * @return CmsBtProductModel
      */
-    @RequestMapping("selectListByParentTagId")
-    public TagsGetByParentTagIdResponse selectListByParentTagId(@RequestBody TagsGetByParentTagIdRequest request) {
-        return tagService.selectListByParentTagId(request);
-    }
-
-    /**
-     * selectOne
-     *
-     * @return CmsBtProductModel
-     */
-    @RequestMapping("selectParentTagByChannel")
-    public TagsGetByChannelIdResponse selectListByChannelId(@RequestBody TagsGetByChannelIdRequest request) {
-        return tagService.selectListByChannelId(request);
+    @RequestMapping("selectList")
+    public TagsGetResponse selectList(@RequestBody TagsGetRequest request) {
+        return tagService.selectList(request);
     }
 }

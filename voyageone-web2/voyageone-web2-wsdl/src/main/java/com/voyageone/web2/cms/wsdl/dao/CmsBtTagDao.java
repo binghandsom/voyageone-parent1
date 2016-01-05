@@ -30,14 +30,24 @@ public class CmsBtTagDao extends WebBaseDao{
         return update("update_cms_bt_tag", cmsBtTagModel);
     }
 
-    public int deleteCmsBtTag(CmsBtTagModel cmsBtTagModel){
-        return delete("delete_cms_bt_tag", cmsBtTagModel);
+    public int deleteCmsBtTagByTagId(CmsBtTagModel cmsBtTagModel){
+        return delete("delete_cms_bt_tag_by_tag_id", cmsBtTagModel);
+    }
+
+    public int deleteCmsBtTagByParentTagId(CmsBtTagModel cmsBtTagModel){
+        return delete("delete_cms_bt_tag_by_parent_tag_id", cmsBtTagModel);
     }
 
     public CmsBtTagModel getCmsBtTagByTagId(int tagId) {
         HashMap<String, Object> paraIn = new HashMap<String, Object>();
         paraIn.put("tagId", tagId);
         return selectOne("select_one_by_tag_id", paraIn);
+    }
+
+    public CmsBtTagModel getCmsBtTagByParentTagId(int tagId) {
+        HashMap<String, Object> paraIn = new HashMap<String, Object>();
+        paraIn.put("tagId", tagId);
+        return selectOne("select_one_by_parent_tag_id", paraIn);
     }
 
     public List<CmsBtTagModel> selectListByParentTagId(int parentTagId) {
