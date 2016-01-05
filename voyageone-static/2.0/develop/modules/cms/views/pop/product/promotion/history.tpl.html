@@ -10,13 +10,13 @@
                 <div class="box-body">
                     <table class="table table-striped text-center">
                         <tr>
-                            <th class="text-center mfb-xx">{{'TXT_PROMOTION_NAME' | translate}}</th>
+                            <th class="text-center mfb-xxt">{{'TXT_PROMOTION_NAME' | translate}}</th>
                             <th class="text-center mfb-x">{{'TXT_CHANNEL' | translate}}</th>
-                            <th class="text-center mfb-xxxs">{{'TXT_PROMOTION_TIME' | translate}}</th>
+                            <th class="text-center mfb-xxs">{{'TXT_PROMOTION_TIME' | translate}}</th>
                             <th class="text-center mfb-xx">官方建议零售价格(促销折扣)</th>
-                            <th class="text-center mfb-xx">中国最终售价(促销折扣)</th>
+                            <th class="text-center mfb-xx">中国最终零售价格(促销折扣)</th>
                             <th class="text-center mfb-x">隔离价格</th>
-                            <th class="text-center mfb-xxt">隔离库存（原始库存）</th>
+                            <th class="text-center mfb-xxs">隔离库存（原始库存）</th>
                         </tr>
                         <tr ng-repeat="list in vm.promotionList">
                             <td>{{list.promotionName}}</td>
@@ -28,8 +28,10 @@
                             <td><span class="label label-success-new">205(155)</span></td>
                         </tr>
                     </table>
-                    <vpagination config="vm.groupPageOption" total="{{vm.groupPageOption.total}}"></vpagination>
                 </div><!-- /.box-body -->
+                <div class="container-fluid">
+                    <vpagination config="vm.groupPageOption" total="{{vm.groupPageOption.total}}"></vpagination>
+                </div>
             </div>
         </form>
     </div>
