@@ -154,7 +154,7 @@ public class CreateReportDao extends BaseDao {
      * @param status
      * @return
      */
-    public List<SPThirdWarehouseReportBean> getSPThirdWarehouseReportBySKU(String order_channel_id,String start_created,String end_created,String task_name,String status) {
+    public List<SPThirdWarehouseReportBean> getSPThirdWarehouseReportBySKU(String order_channel_id,String start_created,String end_created,String status,String task_name) {
         Map<String, Object> params = new HashMap<>();
         params.put("res_status", status);
         params.put("order_channel_id", order_channel_id);

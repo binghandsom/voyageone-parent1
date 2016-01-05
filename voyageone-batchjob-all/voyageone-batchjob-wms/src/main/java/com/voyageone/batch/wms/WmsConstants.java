@@ -407,7 +407,7 @@ public interface WmsConstants {
         // 邮件名
         public final static String SUBJECT = "%s斯伯丁第三方仓库发货日报";
         // 概要说明
-        public final static String HEAD = "<font color='red'>%s至%s有在附件中所列订单需要发货，一共%s单，请按附件发货，谢谢。</font>";
+        public final static String HEAD = "<font color='black'>从%s至%s共有%s单需要发货，请按附件中所列订单信息发货，谢谢。</font>";
 
     }
 

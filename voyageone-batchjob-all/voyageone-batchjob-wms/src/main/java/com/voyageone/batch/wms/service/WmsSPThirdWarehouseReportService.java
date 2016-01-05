@@ -11,6 +11,7 @@ import com.voyageone.batch.wms.dao.CreateReportDao;
 import com.voyageone.batch.wms.modelbean.SPThirdWarehouseReportBean;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.ChannelConfigs;
+import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.ThirdPartyConfigs;
@@ -112,7 +113,7 @@ public class WmsSPThirdWarehouseReportService extends BaseTaskService {
                     // 判断时间是否可以运行
                     int timeZone = getTimeZone(channel.getOrder_channel_id());
                     String localTime = DateTimeUtil.getLocalTime(DateTimeUtil.getNow(), timeZone);
-                    if (DateTimeUtil.getDateHour(DateTimeUtil.parse(localTime)) >= Integer.valueOf(thirdPartyConfigBean.getProp_val1())) {
+                    if (DateTimeUtil.getDateHour(DateTimeUtil.parse(localTime)) >= Integer.valueOf(thirdPartyConfigBean.getProp_val2())) {
                         //获取取得数据时间区间
                         List<String> timeRegion = getThirdPartyTime(channel.getOrder_channel_id(), thirdPartyConfigBean.getProp_val1(), thirdPartyConfigBean.getProp_val2(), timeZone);
                         try {
@@ -174,7 +175,8 @@ public class WmsSPThirdWarehouseReportService extends BaseTaskService {
                 GMTTimeFrom = DateTimeUtil.getGMTTimeSPFrom(localTime, timeZone, hoursFrom);
                 GMTTimeTo = DateTimeUtil.getGMTTimeSPTo(localTime, timeZone, hoursTo);
             }
-            String reportDateYyyyMMdd = DateTimeUtil.format(DateTimeUtil.getDate(), DateTimeUtil.DATE_TIME_FORMAT_3) + hoursTo;
+            int intHoursTo = Integer.valueOf(hoursTo) + 1;
+            String reportDateYyyyMMdd = DateTimeUtil.format(DateTimeUtil.getDate(), DateTimeUtil.DATE_TIME_FORMAT_3) + String.valueOf(intHoursTo);
             timeRegion.add(GMTTimeFrom);
             timeRegion.add(GMTTimeTo);
             timeRegion.add(reportDateYyyyMMdd);
@@ -423,7 +425,7 @@ public class WmsSPThirdWarehouseReportService extends BaseTaskService {
                     // 	数量
                     row.getCell(WmsConstants.SPThirdWarehouseReportItems.Column_Qty).setCellValue(reportBean.getQty());
                     // 	物品类型
-                    row.getCell(WmsConstants.SPThirdWarehouseReportItems.Column_Product).setCellValue(reportBean.getProduct());
+                    row.getCell(WmsConstants.SPThirdWarehouseReportItems.Column_Product).setCellValue(reportBean.getStyle());
                     // 	收货人姓名
                     row.getCell(WmsConstants.SPThirdWarehouseReportItems.Column_Ship_name).setCellValue(reportBean.getShip_name());
                     // 	手机
@@ -489,16 +491,14 @@ public class WmsSPThirdWarehouseReportService extends BaseTaskService {
                         .append(Constants.EMAIL_STYLE_STRING)
                         .append(detail);
 
-
-                String subject = String.format(WmsConstants.EmailSPThirdWarehouseReport.SUBJECT, timeRegion.get(2));
+                String subject = String.format(WmsConstants.EmailSPThirdWarehouseReport.SUBJECT, timeRegion.get(2)+"0000");
                 //Mail.sendAlert(CodeConstants.EmailReceiver.NEED_SOLVE, subject, builderContent.toString(), true);
-
 
                 // 源文件
                 String srcFile = filePath + "/" + createFileName.get(0);
                 fileAffix.add(srcFile);
-
-                Mail.send(CodeConstants.EmailReceiver.NEED_SOLVE, subject, builderContent.toString(), fileAffix, false);
+                String emailReceiver = Codes.getCodeName(com.voyageone.common.Constants.MAIL.EMAIL_RECEIVER, CodeConstants.EmailReceiver.NEED_SOLVE);
+                Mail.send(emailReceiver, subject, builderContent.toString(), fileAffix, false);
                 return true;
             } catch (Exception e) {
                 logger.info("斯伯丁第三方仓库发货日报邮件发送发生错误");
