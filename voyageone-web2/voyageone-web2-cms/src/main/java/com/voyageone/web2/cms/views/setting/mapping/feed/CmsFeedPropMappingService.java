@@ -12,17 +12,20 @@ import com.voyageone.common.masterdate.schema.field.MultiComplexField;
 import com.voyageone.common.util.MD5;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.setting.mapping.feed.GetFieldMappingBean;
+import com.voyageone.web2.cms.bean.setting.mapping.feed.MainFieldBean;
 import com.voyageone.web2.cms.bean.setting.mapping.feed.SaveFieldMappingBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * 为属性匹配画面提供功能
@@ -53,23 +56,55 @@ public class CmsFeedPropMappingService extends BaseAppService {
      * @param userSessionBean  当前用户及配置
      * @return 主类目
      */
-    public CmsMtCategorySchemaModel getCategoryPropsByFeed(String feedCategoryPath, UserSessionBean userSessionBean) {
-
+    public Map<String, Object> getCategoryPropsByFeed(String feedCategoryPath, UserSessionBean userSessionBean) {
+        // 获取完整的 Feed 类目树
         CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(userSessionBean.getSelChannelId());
-
+        // 从全部 Feed 类目中查询具体的类目
         CmsFeedCategoryModel feedCategoryModel = feedMappingService.findByPath(feedCategoryPath, treeModelx);
 
         if (feedCategoryModel == null)
             throw new BusinessException("根据路径没找到类目");
-
+        // 从查询到的 Feed 类目查询默认的 Mapping 关系
         CmsFeedMappingModel feedMappingModel = feedMappingService.findMapping(feedCategoryModel, m -> m.getDefaultMapping() == 1);
 
         if (feedMappingModel == null)
             throw new BusinessException("类目没有默认的类目匹配");
-
+        // 通过 Mapping 获取主类目的 Path
+        // 通过 Path 转换获取到 ID (这部分是规定的 MD5 转换)
         String categoryId = convertPathToId(feedMappingModel.getMainCategoryPath());
+        // 查询主类目信息
+        CmsMtCategorySchemaModel categorySchemaModel = categorySchemaDao.getMasterSchemaModelByCatId(categoryId);
+        // 拍平主类目的字段信息
+        // 并构造画面特供模型
+        final int[] seq = {0};
+        Map<String, MainFieldBean> mainFieldBeanMap = categorySchemaModel.getFields()
+                .stream()
+                .flatMap(f -> flattenField(1, null, f))
+                .map(f -> {
+                    f.setSeq(seq[0]);
+                    seq[0]++;
+                    return f;
+                })
+                .collect(toMap(mfb -> mfb.getField().getId(), mfb -> mfb));
+        // 对 SKU 这一特殊属性进行和上述相同的操作
+        Map<String, MainFieldBean> skuFieldBeanMap = ((MultiComplexField) categorySchemaModel.getSku()).getFields().stream()
+                .flatMap(f -> flattenField(1, null, f))
+                .map(f -> {
+                    f.setSeq(seq[0]);
+                    seq[0]++;
+                    return f;
+                })
+                .collect(toMap(mfb -> mfb.getField().getId(), mfb -> mfb));
 
-        return categorySchemaDao.getMasterSchemaModelByCatId(categoryId);
+        // 最后清除主类目模型的字段信息,因为不需要再重复提供
+        categorySchemaModel.setFields(null);
+        categorySchemaModel.setSku(null);
+
+        return new HashMap<String, Object>(){{
+            put("category", categorySchemaModel);
+            put("fields", mainFieldBeanMap);
+            put("sku", skuFieldBeanMap);
+        }};
     }
 
     /**
@@ -188,7 +223,11 @@ public class CmsFeedPropMappingService extends BaseAppService {
 
         CmsMtCategorySchemaModel categorySchemaModel = categorySchemaDao.getMasterSchemaModelByCatId(categoryId);
 
-        long fieldCount = flattenFinalField(categorySchemaModel.getFields()).count();
+        long fieldCount = categorySchemaModel
+                .getFields()
+                .stream()
+                .flatMap(this::flattenFinalField)
+                .count();
 
         long propCount = flattenFinalProp(feedMappingModel.getProps()).count();
 
@@ -248,17 +287,38 @@ public class CmsFeedPropMappingService extends BaseAppService {
         return flattenFinalProp(children);
     }
 
-    private Stream<Field> flattenFinalField(List<Field> fields) {
+    private Stream<MainFieldBean> flattenField(int level, String parentId, Field field) {
 
-        return fields.stream().flatMap(this::flattenFinalField);
+        MainFieldBean mainFieldBean = new MainFieldBean();
+        mainFieldBean.setField(field);
+        mainFieldBean.setParentId(parentId);
+        mainFieldBean.setLevel(level);
+
+        Stream<MainFieldBean> stream = Stream.of(mainFieldBean);
+
+        Stream<MainFieldBean> children = null;
+
+        if (field.getType() == FieldTypeEnum.COMPLEX) {
+            children = ((ComplexField) field)
+                    .getFields()
+                    .stream()
+                    .flatMap(f -> flattenField(level + 1, field.getId(), f));
+        } else if (field.getType() == FieldTypeEnum.MULTICOMPLEX) {
+            children = ((MultiComplexField) field)
+                    .getFields()
+                    .stream()
+                    .flatMap(f -> flattenField(level + 1, field.getId(), f));
+        }
+
+        return children == null ? stream : Stream.concat(stream, children);
     }
 
     private Stream<Field> flattenFinalField(Field field) {
 
         if (field.getType() == FieldTypeEnum.COMPLEX) {
-            return flattenFinalField(((ComplexField) field).getFields());
+            return ((ComplexField) field).getFields().stream().flatMap(this::flattenFinalField);
         } else if (field.getType() == FieldTypeEnum.MULTICOMPLEX) {
-            return flattenFinalField(((MultiComplexField) field).getFields());
+            return ((MultiComplexField) field).getFields().stream().flatMap(this::flattenFinalField);
         }
 
         return Stream.of(field);
