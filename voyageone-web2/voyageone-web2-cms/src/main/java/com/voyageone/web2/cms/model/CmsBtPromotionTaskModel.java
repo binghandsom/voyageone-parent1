@@ -1,7 +1,6 @@
 package com.voyageone.web2.cms.model;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
-import com.voyageone.cms.service.model.CmsBtProductModel;
 
 /**
  * @author james.li on 2015/12/15.

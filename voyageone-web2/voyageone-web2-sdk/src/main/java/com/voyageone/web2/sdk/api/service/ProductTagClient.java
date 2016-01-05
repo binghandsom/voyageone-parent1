@@ -1,7 +1,6 @@
 package com.voyageone.web2.sdk.api.service;
 
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.web2.sdk.api.domain.CmsBtTagModel;
 import com.voyageone.web2.sdk.api.request.ProductsTagDeleteRequest;
 import com.voyageone.web2.sdk.api.request.ProductsTagPutRequest;
 import com.voyageone.web2.sdk.api.response.ProductsTagDeleteResponse;
@@ -33,15 +32,10 @@ public class ProductTagClient {
     public Map<String, Object> addTagProducts(String channelId, String tagPath, List<Long> productIds, String modifier) {
         Map<String, Object> ret = new HashMap<>();
         ProductsTagPutRequest request = new ProductsTagPutRequest(channelId);
-        CmsBtTagModel tagModel = new CmsBtTagModel();
-        //???
-        int tagId = Integer.parseInt(String.valueOf(tagPath.charAt(tagPath.length() - 2)));
-        tagModel.setTagId(tagId);
-        tagModel.setTagPath(tagPath);
         request.setModifier(modifier);
 
         for (Long productId : productIds) {
-            request.addProductIdTag(productId, tagModel);
+            request.addProductIdTagPathsMap(productId, tagPath);
         }
 
         ProductsTagPutResponse response = voApiClient.execute(request);
@@ -56,15 +50,10 @@ public class ProductTagClient {
     public Map<String, Object> removeTagProducts(String channelId, String tagPath, List<Long> productIds, String modifier) {
         Map<String, Object> ret = new HashMap<>();
         ProductsTagDeleteRequest request = new ProductsTagDeleteRequest(channelId);
-        CmsBtTagModel tagModel = new CmsBtTagModel();
-        //???
-        int tagId = Integer.parseInt(String.valueOf(tagPath.charAt(tagPath.length() - 2)));
-        tagModel.setTagId(tagId);
-        tagModel.setTagPath(tagPath);
-
+        request.setModifier(modifier);
 
         for (Long productId : productIds) {
-            request.addProductIdTag(productId, tagModel);
+            request.addProductIdTagPathsMap(productId, tagPath);
         }
 
         ProductsTagDeleteResponse response = voApiClient.execute(request);
@@ -79,15 +68,10 @@ public class ProductTagClient {
     public Map<String, Object> removeTagsProduct(String channelId, List<String> tagPaths, Long productId, String modifier) {
         Map<String, Object> ret = new HashMap<>();
         ProductsTagDeleteRequest request = new ProductsTagDeleteRequest(channelId);
+        request.setModifier(modifier);
 
         for (String tagPath : tagPaths) {
-            CmsBtTagModel tagModel = new CmsBtTagModel();
-            //???
-            int tagId = Integer.parseInt(String.valueOf(tagPath.charAt(tagPath.length() - 2)));
-            tagModel.setTagId(tagId);
-            tagModel.setTagPath(tagPath);
-
-            request.addProductIdTag(productId, tagModel);
+            request.addProductIdTagPathsMap(productId, tagPath);
         }
 
         ret.put("result", "success");
