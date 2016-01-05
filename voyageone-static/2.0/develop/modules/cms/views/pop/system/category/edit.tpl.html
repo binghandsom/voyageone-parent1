@@ -85,7 +85,7 @@
                     <div class="form-group" ng-repeat="rule in vm.schema.rules">
                         <div ng-if="rule.name == 'requiredRule'">
                             <div class="col-sm-3">
-                                <label class="checkbox-inline c-checkbox"><input type="checkbox"  ng-checked="rule.value == 'true'" ng-click="onChecked(rule)" ng-model="rule.value" value="20"><span class="fa fa-check"></span> {{rule.name}} </label>
+                                <label class="checkbox-inline c-checkbox"><input type="checkbox"  ng-checked="rule.value == 'true'" ng-click="onChecked(rule)"  value="20"><span class="fa fa-check"></span> {{rule.name}} </label>
                             </div>
                         </div>
                         <div ng-if="rule.name != 'requiredRule'">

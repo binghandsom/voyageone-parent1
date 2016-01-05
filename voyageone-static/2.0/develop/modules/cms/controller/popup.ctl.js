@@ -57,7 +57,10 @@ define([
             "system": {
                 "category": {
                     "templateUrl": "views/pop/system/category/edit.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/system/category/edit.ctl"
+                    "controllerUrl": "modules/cms/views/pop/system/category/edit.ctl",
+                    "controller": 'popCategorySchemaCtl as ctrl',
+                    "backdrop": 'static',
+                    "size": 'md'
                 }
             },
             /************ 新式 ************/
@@ -270,27 +273,10 @@ define([
                 });
             });
         }
-        $scope.openSystemCategory = openSystemCategory;
-        function openSystemCategory(viewSize, data,category,addOrEditFlg) {
-            require([popActions.system.category.controllerUrl], function () {
-                $modal.open({
-                    templateUrl: popActions.system.category.templateUrl,
-                    controller: 'popCategorySchemaCtl',
-                    size: viewSize,
-                    resolve: {
-                        item: function () {
-                            return data;
-                        },
-                        category:function(){
-                            return category;
-                        },
-                        addOrEditFlg:function(){
-                            return addOrEditFlg;
-                        }
-                    }
-                });
-            });
-        }
+
+        $scope.openSystemCategory = function (context) {
+            return openModel(popActions.system.category, context);
+        };
 
         $scope.popupNewCategory = function (context) {
             return openModel(popActions.category, context);
