@@ -1,5 +1,6 @@
 package com.voyageone.common.magento.api.service;
 
+import com.voyageone.common.components.issueLog.IssueLog;
 import com.voyageone.common.configs.Codes;
 import com.voyageone.common.magento.api.bean.*;
 import com.voyageone.common.magento.api.base.*;
@@ -7,10 +8,19 @@ import com.voyageone.common.magento.api.service.*;
 import com.voyageone.common.util.StringUtils;
 import magento.*;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class MagentoApiServiceImpl {
+	private static Log logger = LogFactory.getLog(MagentoApiServiceImpl.class);
+
+	@Autowired
+	IssueLog issueLog;
+
 	/**
 	 * 配置头
 	 */
@@ -43,7 +53,7 @@ public class MagentoApiServiceImpl {
 		super();
 		this.orderChannelId = orderChannelId;
 
-//		String realConfigName = MAGENTO_API_CONFIG + orderChannelId;
+//		String realConfigName = MAGENTO_API_CONFIG + this.orderChannelId;
 //
 //		// magento api调用 URL
 //		String url = Codes.getCodeName(realConfigName, "url");
@@ -55,10 +65,10 @@ public class MagentoApiServiceImpl {
 //		loginParam.setUsername(userName);
 //		loginParam.setApiKey(apiKey);
 		
-//		loginParam.setUsername("juicy_couture");
-//		loginParam.setApiKey("abc.123");
-		loginParam.setUsername("VOYAGEONE_API_USER");
-		loginParam.setApiKey("hjA=fs2H0n+%PFd,b4wB");
+		loginParam.setUsername("juicy_couture");
+		loginParam.setApiKey("abc.123");
+//		loginParam.setUsername("VOYAGEONE_API_USER");
+//		loginParam.setApiKey("hjA=fs2H0n+%PFd,b4wB");
 
 //		String customerId = Codes.getCodeName(realConfigName, "customerId");
 //		String customerMode = Codes.getCodeName(realConfigName, "customerMode");
@@ -92,7 +102,7 @@ public class MagentoApiServiceImpl {
 	public void setOrderChannelId(String orderChannelId) {
 		this.orderChannelId = orderChannelId;
 
-		String realConfigName = MAGENTO_API_CONFIG + orderChannelId;
+		String realConfigName = MAGENTO_API_CONFIG + this.orderChannelId;
 
 		// magento api调用 userName
 		String userName = Codes.getCodeName(realConfigName, "userName");
@@ -137,16 +147,24 @@ public class MagentoApiServiceImpl {
 //		// magento api调用 URL
 //		String url = Codes.getCodeName(realConfigName, "url");
 //		stub = new MagentoServiceStub(url);
-		stub = new MagentoServiceStub("http://www.wmf.com/api/v2_soap");
-//		System.setProperty("javax.net.ssl.trustStore", "D:/tmp/trustStore");
-//
-//		stub = new MagentoServiceStub("https://api.juicycouture.asia/api/v2_soap");
+//		stub = new MagentoServiceStub("http://www.wmf.com/api/v2_soap");
+		System.setProperty("javax.net.ssl.trustStore", "D:/tmp/trustStore");
+
+		stub = new MagentoServiceStub("https://api.juicycouture.asia/api/v2_soap");
 		
 		// 登陆
 		LoginResponseParam response = stub.login(loginParam);
 
 		// session ID
 		String sessionId = response.getResult();
+
+//		ResourcesRequestParam resourcesRequestParam = new ResourcesRequestParam();
+//		resourcesRequestParam.setSessionId(sessionId);
+//		ResourcesResponseParam resourceResponse = stub.resources(resourcesRequestParam);
+
+//		DirectoryCountryListRequestParam requestCountry = new DirectoryCountryListRequestParam();
+//		requestCountry.setSessionId(sessionId);
+//		DirectoryCountryListResponseParam responseParam = stub.directoryCountryList(requestCountry);
 		
 		return sessionId;
 	}
@@ -323,49 +341,49 @@ public class MagentoApiServiceImpl {
 											orderCreateResult = orderResponse.getResult();
 											
 										} else {
-//											logger.info("支付方式设定失败");
+											logger.info("支付方式设定失败");
 										}
 									} else {
-//										logger.info("发货方式设定失败");
+										logger.info("发货方式设定失败");
 									}
 								} else {
-//									logger.info("购物车中顾客账单地址和收货地址设置失败");
+									logger.info("购物车中顾客账单地址和收货地址设置失败");
 								}
 							} else {
-//								logger.info("购物车中商品追加失败");
+								logger.info("购物车中商品追加失败");
 							}
 						} else {
-//							logger.info("购物车中顾客对象设置失败");
+							logger.info("购物车中顾客对象设置失败");
 						}
 					} else {
-//						logger.info("购物车创建失败");
+						logger.info("购物车创建失败");
 					}
 					
 				} else {
-//					logger.info("购物车创建失败");
+					logger.info("购物车创建失败");
 				}
 			} else {
-//				logger.info("login is failure");
+				logger.info("login is failure");
 			}
 		} catch (Exception ex) {
-//			logger.error(ex, ex.getMessage());
+			logger.error(ex.getMessage(), ex);
 			
 			isException = true;
 			
 			throw ex;
 		} finally {
 			// end session
-//			if (!StringUtils.isNullOrBlank2(sessionId)) {
+			if (!StringUtils.isNullOrBlank2(sessionId)) {
 				try {
 					logout(sessionId);
 				} catch (Exception ex) {
-//					logger.error(ex, ex.getMessage());
+					logger.error(ex.getMessage(), ex);
 					
 					if (!isException) {
 						throw ex;
 					}
 				}
-//			}
+			}
 		}
 		
 		// 返回订单号
@@ -387,7 +405,21 @@ public class MagentoApiServiceImpl {
 		boolean isException = false;
 		
 		if (skuList != null && skuList.size() > 0) {
-		
+
+			String realConfigName = MAGENTO_API_CONFIG + this.orderChannelId;
+			// magento api调用 库存sku数
+			String inventoryMaxSize = Codes.getCodeName(realConfigName, "inventoryMaxSize");
+			int inventoryMaxSizeInt = Integer.valueOf(inventoryMaxSize);
+
+			List<List<String>> skuTotalList = new ArrayList<List<String>>();
+			// 传递的sku数超过每次查询的上限
+			if (skuList.size() > inventoryMaxSizeInt) {
+				getTotalSkuList(skuTotalList, skuList, inventoryMaxSizeInt);
+
+			} else {
+				skuTotalList.add(skuList);
+			}
+
 			// login
 			String sessionId = "";
 			
@@ -399,67 +431,93 @@ public class MagentoApiServiceImpl {
 				// 入力参数设置sessionId
 				request.setSessionId(sessionId);
 				
-				ArrayOfString productIds = new ArrayOfString();
-				for (String sku : skuList) {
-		//			if (StringUtils.isNullOrBlank2(sku)) {
-						// sku列表追加
-						productIds.addComplexObjectArray(sku);
-		//			}
-					
-				}
-				
-				// 请求的sku列表不为空
-				if (productIds.getComplexObjectArray().length > 0) {
-					// 入力参数设置sku列表
-					request.setProductIds(productIds);
-					
-					// 向magento请求sku列表的库存
-					CatalogInventoryStockItemListResponseParam inventoryParam = stub.catalogInventoryStockItemList(request);
-					
-					// 解析返回值
-					CatalogInventoryStockItemEntity[] inventoryArray = inventoryParam.getResult().getComplexObjectArray();
-					if (inventoryArray != null && inventoryArray.length > 0) {
-						
-						for (CatalogInventoryStockItemEntity inventory : inventoryArray) {
-							InventoryStockItemBean item = new InventoryStockItemBean();
-							// Defines whether the product is in stock
-							item.setIsInStock(inventory.getIs_in_stock());
-							// Product ID
-							item.setProductId(inventory.getProduct_id());
-							// Product SKU
-							item.setSku(inventory.getSku());
-							// Product quantity
-							item.setQty(inventory.getQty());
-							
-							inventoryList.add(item);
+				for (List<String> skuListItem : skuTotalList) {
+					if (skuListItem != null && skuListItem.size() > 0) {
+						ArrayOfString productIds = new ArrayOfString();
+
+						for (String sku : skuListItem) {
+							if (StringUtils.isNullOrBlank2(sku)) {
+								// sku列表追加
+								productIds.addComplexObjectArray(sku);
+							}
+						}
+
+						// 请求的sku列表不为空
+						if (productIds.getComplexObjectArray().length > 0) {
+							// 入力参数设置sku列表
+							request.setProductIds(productIds);
+
+							// 向magento请求sku列表的库存
+							CatalogInventoryStockItemListResponseParam inventoryParam = stub.catalogInventoryStockItemList(request);
+
+							// 解析返回值
+							CatalogInventoryStockItemEntity[] inventoryArray = inventoryParam.getResult().getComplexObjectArray();
+							if (inventoryArray != null && inventoryArray.length > 0) {
+
+								for (CatalogInventoryStockItemEntity inventory : inventoryArray) {
+									InventoryStockItemBean item = new InventoryStockItemBean();
+									// Defines whether the product is in stock
+									item.setIsInStock(inventory.getIs_in_stock());
+									// Product ID
+									item.setProductId(inventory.getProduct_id());
+									// Product SKU
+									item.setSku(inventory.getSku());
+									// Product quantity
+									item.setQty(inventory.getQty());
+
+									inventoryList.add(item);
+								}
+							}
+
 						}
 					}
-					
 				}
 			} catch (Exception ex) {
-//				logger.error(ex, ex.getMessage());
-				
+				logger.error(ex.getMessage(), ex);
+
 				isException = true;
-				
+
 				throw ex;
 			} finally {
 				// end session
-//				if (!StringUtils.isNullOrBlank2(sessionId)) {
+				if (!StringUtils.isNullOrBlank2(sessionId)) {
 					try {
 						logout(sessionId);
 					} catch (Exception ex) {
-//						logger.error(ex, ex.getMessage());
-						
+						logger.error(ex.getMessage(), ex);
+
 						if (!isException) {
 							throw ex;
 						}
 					}
-//				}
+				}
 			}
 		}
 		
 		// 返回库存列表信息
 		return inventoryList;
+	}
+
+	/**
+	 * 过大时拆分sku列表
+	 * @param skuTotalList
+	 * @param skuList
+	 * @param inventoryMaxSizeInt
+	 */
+	private void getTotalSkuList(List<List<String>> skuTotalList, List<String> skuList, int inventoryMaxSizeInt) {
+		int skuListSize = skuList.size();
+		int count = skuListSize / inventoryMaxSizeInt + 1;
+		for (int i = 0; i < count; i++) {
+			int start = i * inventoryMaxSizeInt;
+			int end = (i + 1) * inventoryMaxSizeInt;
+			if (end > skuListSize) {
+				end = skuListSize;
+			}
+			List<String> skuListItem = skuList.subList(start, end);
+			if (skuList != null && skuList.size() > 0) {
+				skuTotalList.add(skuListItem);
+			}
+		}
 	}
 	
 	/**
@@ -484,24 +542,67 @@ public class MagentoApiServiceImpl {
 			return response;
 			
 		} catch (Exception ex) {
-//			logger.error(ex, ex.getMessage());
+			logger.error(ex.getMessage(), ex);
 			
 			isException = true;
 			
 			throw ex;
 		} finally {
 			// end session
-//			if (!StringUtils.isNullOrBlank2(sessionId)) {
+			if (!StringUtils.isNullOrBlank2(sessionId)) {
 				try {
 					logout(sessionId);
 				} catch (Exception ex) {
-//					logger.error(ex, ex.getMessage());
+					logger.error(ex.getMessage(), ex);
 					
 					if (!isException) {
 						throw ex;
 					}
 				}
-//			}
+			}
+		}
+	}
+
+	/**
+	 * 取消订单
+	 * @param orderNumber
+	 */
+	public SalesOrderCancelResponseParam cancelSalesOrder(String orderNumber) throws Exception {
+		// 获得magento订单信息时是否发生异常
+		boolean isException = false;
+
+		String sessionId = "";
+		try {
+			// login
+			sessionId = login();
+
+			SalesOrderCancelRequestParam request = new SalesOrderCancelRequestParam();
+			request.setOrderIncrementId(orderNumber);
+			request.setSessionId(sessionId);
+
+			SalesOrderCancelResponseParam response = stub.salesOrderCancel(request);
+
+			return response;
+
+		} catch (Exception ex) {
+			logger.error(ex.getMessage(), ex);
+
+			isException = true;
+
+			throw ex;
+		} finally {
+			// end session
+			if (!StringUtils.isNullOrBlank2(sessionId)) {
+				try {
+					logout(sessionId);
+				} catch (Exception ex) {
+					logger.error(ex.getMessage(), ex);
+
+					if (!isException) {
+						throw ex;
+					}
+				}
+			}
 		}
 	}
 
@@ -510,11 +611,11 @@ public class MagentoApiServiceImpl {
 	 */
 	public static void main(String[] args) throws Exception {
 		MagentoApiServiceImpl service = new MagentoApiServiceImpl("004");
-		service.login();
+//		service.login();
 
-		List<String> skuList = new ArrayList<String>();
-		skuList.add("0892179531");
-		service.inventoryStockItemList(skuList);
+//		List<String> skuList = new ArrayList<String>();
+//		skuList.add("0892179531");
+//		service.inventoryStockItemList(skuList);
 //		OrderDataBean order = new OrderDataBean();
 //		String orderNumber = service.pushOrder();
 //		order.setShippingMethod("freeshipping_freeshipping");
@@ -522,9 +623,9 @@ public class MagentoApiServiceImpl {
 		service.getSalesOrderInfo("400000121");
 		
 //		System.out.println(orderNumber);
-//		List<String> skuList= new ArrayList<String>();
-//		skuList.add("wfwd32469-032-L");
-//		List<CatalogInventoryStockItemEntity> inventoryList = service.catalogInventoryStockItemList(skuList);
+		List<String> skuList= new ArrayList<String>();
+		skuList.add("wfwd32469-032-L");
+		List<InventoryStockItemBean> inventoryList = service.inventoryStockItemList(skuList);
 //		System.out.print(inventoryList);
 	}
 
