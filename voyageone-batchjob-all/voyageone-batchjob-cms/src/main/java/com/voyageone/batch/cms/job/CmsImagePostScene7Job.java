@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  *
  * @author james
  */
-@Component("cmsImagePostScene7Job")
+@Component("CmsImagePostScene7Job")
 public class CmsImagePostScene7Job extends BaseTaskJob {
 
     @Autowired
