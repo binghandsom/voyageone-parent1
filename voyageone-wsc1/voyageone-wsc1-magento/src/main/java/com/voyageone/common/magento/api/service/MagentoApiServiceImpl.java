@@ -53,40 +53,30 @@ public class MagentoApiServiceImpl {
 		super();
 		this.orderChannelId = orderChannelId;
 
-//		String realConfigName = MAGENTO_API_CONFIG + this.orderChannelId;
-//
-//		// magento api调用 URL
-//		String url = Codes.getCodeName(realConfigName, "url");
-//		// magento api调用 userName
-//		String userName = Codes.getCodeName(realConfigName, "userName");
-//		// magento api调用 密钥
-//		String apiKey = Codes.getCodeName(realConfigName, "apiKey");
-//
-//		loginParam.setUsername(userName);
-//		loginParam.setApiKey(apiKey);
-		
-		loginParam.setUsername("juicy_couture");
-		loginParam.setApiKey("abc.123");
+		String realConfigName = MAGENTO_API_CONFIG + this.orderChannelId;
+
+		// magento api调用 userName
+		String userName = Codes.getCodeName(realConfigName, "userName");
+		// magento api调用 密钥
+		String apiKey = Codes.getCodeName(realConfigName, "apiKey");
+
+		loginParam.setUsername(userName);
+		loginParam.setApiKey(apiKey);
 //		loginParam.setUsername("VOYAGEONE_API_USER");
 //		loginParam.setApiKey("hjA=fs2H0n+%PFd,b4wB");
 
-//		String customerId = Codes.getCodeName(realConfigName, "customerId");
-//		String customerMode = Codes.getCodeName(realConfigName, "customerMode");
-//		String storeId = Codes.getCodeName(realConfigName, "storeId");
-//		String webSiteId = Codes.getCodeName(realConfigName, "webSiteId");
-//		String storeName = Codes.getCodeName(realConfigName, "storeName");
-//
-//		customer.setCustomerId(Integer.valueOf(customerId));
-//		customer.setMode(customerMode);
-//		customer.setStoreId(Integer.valueOf(storeId));
-//		customer.setWebsiteId(Integer.valueOf(webSiteId));
-//		customer.setStore(storeName);
+		String customerId = Codes.getCodeName(realConfigName, "customerId");
+		String customerMode = Codes.getCodeName(realConfigName, "customerMode");
+		String storeId = Codes.getCodeName(realConfigName, "storeId");
+		String webSiteId = Codes.getCodeName(realConfigName, "webSiteId");
+		String storeName = Codes.getCodeName(realConfigName, "storeName");
+
+		customer.setCustomerId(Integer.valueOf(customerId));
+		customer.setMode(customerMode);
+		customer.setStoreId(Integer.valueOf(storeId));
+		customer.setWebsiteId(Integer.valueOf(webSiteId));
+		customer.setStore(storeName);
 		
-//		customer.setCustomerId(21);
-//		customer.setMode("customer");
-//		customer.setStoreId(1);
-//		customer.setWebsiteId(1);
-//		customer.setStore("juicy_cn");
 	}
 	
 	/**
@@ -112,8 +102,6 @@ public class MagentoApiServiceImpl {
 		loginParam.setUsername(userName);
 		loginParam.setApiKey(apiKey);
 
-//		loginParam.setUsername("juicy_couture");
-//		loginParam.setApiKey("abc.123");
 //		loginParam.setUsername("VOYAGEONE_API_USER");
 //		loginParam.setApiKey("hjA=fs2H0n+%PFd,b4wB");
 
@@ -128,12 +116,6 @@ public class MagentoApiServiceImpl {
 		customer.setStoreId(Integer.valueOf(storeId));
 		customer.setWebsiteId(Integer.valueOf(webSiteId));
 		customer.setStore(storeName);
-
-//		customer.setCustomerId(21);
-//		customer.setMode("customer");
-//		customer.setStoreId(1);
-//		customer.setWebsiteId(1);
-//		customer.setStore("juicy_cn");
 	}
 	
 	/**
@@ -142,15 +124,13 @@ public class MagentoApiServiceImpl {
 	 * @return
 	 */
 	private String login() throws Exception {
-//		String realConfigName = MAGENTO_API_CONFIG + this.orderChannelId;
-//
-//		// magento api调用 URL
-//		String url = Codes.getCodeName(realConfigName, "url");
-//		stub = new MagentoServiceStub(url);
+		String realConfigName = MAGENTO_API_CONFIG + this.orderChannelId;
+
+		// magento api调用 URL
+		String url = Codes.getCodeName(realConfigName, "url");
+		stub = new MagentoServiceStub(url);
 //		stub = new MagentoServiceStub("http://www.wmf.com/api/v2_soap");
 		System.setProperty("javax.net.ssl.trustStore", "D:/tmp/trustStore");
-
-		stub = new MagentoServiceStub("https://api.juicycouture.asia/api/v2_soap");
 		
 		// 登陆
 		LoginResponseParam response = stub.login(loginParam);
@@ -158,14 +138,6 @@ public class MagentoApiServiceImpl {
 		// session ID
 		String sessionId = response.getResult();
 
-//		ResourcesRequestParam resourcesRequestParam = new ResourcesRequestParam();
-//		resourcesRequestParam.setSessionId(sessionId);
-//		ResourcesResponseParam resourceResponse = stub.resources(resourcesRequestParam);
-
-//		DirectoryCountryListRequestParam requestCountry = new DirectoryCountryListRequestParam();
-//		requestCountry.setSessionId(sessionId);
-//		DirectoryCountryListResponseParam responseParam = stub.directoryCountryList(requestCountry);
-		
 		return sessionId;
 	}
 	
@@ -611,7 +583,6 @@ public class MagentoApiServiceImpl {
 	 */
 	public static void main(String[] args) throws Exception {
 		MagentoApiServiceImpl service = new MagentoApiServiceImpl("004");
-//		service.login();
 
 //		List<String> skuList = new ArrayList<String>();
 //		skuList.add("0892179531");
@@ -625,6 +596,21 @@ public class MagentoApiServiceImpl {
 //		System.out.println(orderNumber);
 		List<String> skuList= new ArrayList<String>();
 		skuList.add("wfwd32469-032-L");
+		skuList.add("WFWb32587-495-27");
+		skuList.add("WFWB32587-495-26");
+		skuList.add("WTKT34248-468-XS");
+		skuList.add("WTKT34248-468-S");
+		skuList.add("WTKT34247-160-L");
+		skuList.add("WTKT34248-419-L");
+		skuList.add("WTKT34244-519-XS");
+		skuList.add("WTKT34244-519-S");
+		skuList.add("WTKT31342-160-S");
+		skuList.add("WTKT31342-160-M");
+		skuList.add("WTKT31340-119-M");
+		skuList.add("WTKT31337-009-M");
+		skuList.add("WTKT31330-501-L");
+		skuList.add("WTKT31321-689-S");
+		skuList.add("WTKT25268-419-S");
 		List<InventoryStockItemBean> inventoryList = service.inventoryStockItemList(skuList);
 //		System.out.print(inventoryList);
 	}
