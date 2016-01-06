@@ -11,10 +11,12 @@ import magento.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class MagentoApiServiceImpl {
 	private static Log logger = LogFactory.getLog(MagentoApiServiceImpl.class);
 
@@ -28,49 +30,49 @@ public class MagentoApiServiceImpl {
 	/**
 	 * 店铺渠道
 	 */
-	@Autowired
 	private String orderChannelId;
 	/**
 	 * 登陆用数据Bean
 	 */
-	private LoginParam loginParam = new LoginParam();
+	private LoginParam loginParam;
 	
 	/**
 	 * 顾客信息
 	 */
-	private CustomerBean customer = new CustomerBean();
+	private CustomerBean customer;
 	
 	private MagentoServiceStub stub;
-	
-	public MagentoApiServiceImpl(String orderChannelId) {
-		super();
-		this.orderChannelId = orderChannelId;
 
-		String realConfigName = MAGENTO_API_CONFIG + this.orderChannelId;
-
-		// magento api调用 userName
-		String userName = Codes.getCodeName(realConfigName, "userName");
-		// magento api调用 密钥
-		String apiKey = Codes.getCodeName(realConfigName, "apiKey");
-
-		loginParam.setUsername(userName);
-		loginParam.setApiKey(apiKey);
-//		loginParam.setUsername("VOYAGEONE_API_USER");
-//		loginParam.setApiKey("hjA=fs2H0n+%PFd,b4wB");
-
-		String customerId = Codes.getCodeName(realConfigName, "customerId");
-		String customerMode = Codes.getCodeName(realConfigName, "customerMode");
-		String storeId = Codes.getCodeName(realConfigName, "storeId");
-		String webSiteId = Codes.getCodeName(realConfigName, "webSiteId");
-		String storeName = Codes.getCodeName(realConfigName, "storeName");
-
-		customer.setCustomerId(Integer.valueOf(customerId));
-		customer.setMode(customerMode);
-		customer.setStoreId(Integer.valueOf(storeId));
-		customer.setWebsiteId(Integer.valueOf(webSiteId));
-		customer.setStore(storeName);
-		
-	}
+//	@Autowired
+//	public MagentoApiServiceImpl(String orderChannelId) {
+//		super();
+//		this.orderChannelId = orderChannelId;
+//
+//		String realConfigName = MAGENTO_API_CONFIG + this.orderChannelId;
+//
+//		// magento api调用 userName
+//		String userName = Codes.getCodeName(realConfigName, "userName");
+//		// magento api调用 密钥
+//		String apiKey = Codes.getCodeName(realConfigName, "apiKey");
+//
+//		loginParam.setUsername(userName);
+//		loginParam.setApiKey(apiKey);
+////		loginParam.setUsername("VOYAGEONE_API_USER");
+////		loginParam.setApiKey("hjA=fs2H0n+%PFd,b4wB");
+//
+//		String customerId = Codes.getCodeName(realConfigName, "customerId");
+//		String customerMode = Codes.getCodeName(realConfigName, "customerMode");
+//		String storeId = Codes.getCodeName(realConfigName, "storeId");
+//		String webSiteId = Codes.getCodeName(realConfigName, "webSiteId");
+//		String storeName = Codes.getCodeName(realConfigName, "storeName");
+//
+//		customer.setCustomerId(Integer.valueOf(customerId));
+//		customer.setMode(customerMode);
+//		customer.setStoreId(Integer.valueOf(storeId));
+//		customer.setWebsiteId(Integer.valueOf(webSiteId));
+//		customer.setStore(storeName);
+//
+//	}
 	
 	/**
 	 * @return the orderChannelId
@@ -92,6 +94,7 @@ public class MagentoApiServiceImpl {
 		// magento api调用 密钥
 		String apiKey = Codes.getCodeName(realConfigName, "apiKey");
 
+		loginParam = new LoginParam();
 		loginParam.setUsername(userName);
 		loginParam.setApiKey(apiKey);
 
@@ -104,6 +107,7 @@ public class MagentoApiServiceImpl {
 		String webSiteId = Codes.getCodeName(realConfigName, "webSiteId");
 		String storeName = Codes.getCodeName(realConfigName, "storeName");
 
+		customer = new CustomerBean();
 		customer.setCustomerId(Integer.valueOf(customerId));
 		customer.setMode(customerMode);
 		customer.setStoreId(Integer.valueOf(storeId));
@@ -575,7 +579,7 @@ public class MagentoApiServiceImpl {
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception {
-		MagentoApiServiceImpl service = new MagentoApiServiceImpl("004");
+//		MagentoApiServiceImpl service = new MagentoApiServiceImpl("004");
 
 //		List<String> skuList = new ArrayList<String>();
 //		skuList.add("0892179531");
@@ -584,7 +588,7 @@ public class MagentoApiServiceImpl {
 //		String orderNumber = service.pushOrder();
 //		order.setShippingMethod("freeshipping_freeshipping");
 //		order.setPaymentMethod("cashondelivery");
-		service.getSalesOrderInfo("400000121");
+//		service.getSalesOrderInfo("400000121");
 		
 //		System.out.println(orderNumber);
 		List<String> skuList= new ArrayList<String>();
@@ -604,7 +608,7 @@ public class MagentoApiServiceImpl {
 		skuList.add("WTKT31330-501-L");
 		skuList.add("WTKT31321-689-S");
 		skuList.add("WTKT25268-419-S");
-		List<InventoryStockItemBean> inventoryList = service.inventoryStockItemList(skuList);
+//		List<InventoryStockItemBean> inventoryList = service.inventoryStockItemList(skuList);
 //		System.out.print(inventoryList);
 	}
 
