@@ -247,11 +247,7 @@
         FROM
             oms_bt_orders orders
         INNER JOIN oms_bt_order_details details ON details.order_number = orders.order_number
-        AND (
-            details. STATUS NOT IN ('Canceled', 'Returned')
-            OR details. STATUS IS NULL
-        )
-        AND orders.order_status = 'Approved'
+        AND details.`status` = 'Approved'
         AND details.adjustment = 0
         AND EXISTS (
             SELECT
