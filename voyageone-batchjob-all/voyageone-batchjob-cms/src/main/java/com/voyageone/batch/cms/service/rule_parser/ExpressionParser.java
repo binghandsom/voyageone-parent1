@@ -75,7 +75,7 @@ public class ExpressionParser {
                         DictWord dictWordDefine = dictWordParser.parseToDefineDict(ruleWord);
                         if (dictWordDefine == null)
                         {
-                            logger.error("unknow dict word:" + ruleWord);
+                            logger.error("unknown dict word:" + ruleWord);
                             return null;
                         }
 
