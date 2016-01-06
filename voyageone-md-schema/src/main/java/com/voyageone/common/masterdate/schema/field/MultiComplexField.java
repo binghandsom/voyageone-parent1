@@ -1,5 +1,6 @@
 package com.voyageone.common.masterdate.schema.field;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.utils.XmlUtils;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
@@ -54,6 +55,7 @@ public class MultiComplexField extends Field {
         return complexValue;
     }
 
+    @JsonIgnore
     public List<ComplexValue> getComplexValues() {
         return this.values;
     }
