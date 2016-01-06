@@ -76,6 +76,10 @@ define([
         return !!child;
     }
 
+    function getHeadClass(bean) {
+        return bean.isSimple ? 'fa-minus' : 'fa-plus';
+    }
+
     function toArray(beans) {
 
         // 转换为包装后的数组
@@ -108,6 +112,7 @@ define([
             bean.hasOptional = hasRequired(bean, beans, false);
             bean.hasMatched = hasMatched(bean, beans, true);
             bean.hasUnMatched = hasMatched(bean, beans, false);
+            bean.headClass = getHeadClass(bean);
         });
 
         // 整理展示顺序
@@ -123,170 +128,177 @@ define([
     toArray.matchedMains = null;
 
     return cms.controller('feedPropMappingController', (function () {
-        /**
-         * @description
-         * Feed Mapping 属性匹配画面的 Controller 类
-         * @param $scope
-         * @param $routeParams
-         * @param {FeedMappingService} feedMappingService
-         * @constructor
-         */
-        function FeedPropMappingController($scope, $routeParams, feedMappingService) {
+            /**
+             * @description
+             * Feed Mapping 属性匹配画面的 Controller 类
+             * @param $scope
+             * @param $routeParams
+             * @param {FeedMappingService} feedMappingService
+             * @constructor
+             */
+            function FeedPropMappingController($scope, $routeParams, feedMappingService) {
 
-            this.$scope = $scope;
-            this.feedCategoryPath = $routeParams['feedCategoryPath'];
-            this.feedMappingService = feedMappingService;
+                this.$scope = $scope;
+                this.feedCategoryPath = $routeParams['feedCategoryPath'];
+                this.feedMappingService = feedMappingService;
 
-            /**
-             * 主类目模型,不包含字段信息
-             * @type {object}
-             */
-            this.mainCategory = null;
-            /**
-             * 类目字段的 Map
-             * @type {object}
-             */
-            this.fields = null;
-            /**
-             * 共通字段的 Map
-             * @type {object}
-             */
-            this.commonFields = null;
-            /**
-             * 类目 SKU 级别字段 Map
-             * @type {object}
-             */
-            this.skuFields = null;
-            /**
-             * 上述字段的真实绑定对象
-             * @type {{fields: object[], common: object[], sku: object[]}}
-             */
-            this.dataSources = {
-                fields: null,
-                common: null,
-                sku: null
-            };
-            /**
-             * 显示的过滤条件
-             * @type {{hasRequired: boolean|null, matched: boolean|null}}
-             */
-            this.show = {
-                hasRequired: null,
-                matched: null
-            };
+                /**
+                 * 主类目模型,不包含字段信息
+                 * @type {object}
+                 */
+                this.mainCategory = null;
+                /**
+                 * 类目字段的 Map
+                 * @type {object}
+                 */
+                this.fields = null;
+                /**
+                 * 共通字段的 Map
+                 * @type {object}
+                 */
+                this.commonFields = null;
+                /**
+                 * 类目 SKU 级别字段 Map
+                 * @type {object}
+                 */
+                this.skuFields = null;
+                /**
+                 * 上述字段的真实绑定对象
+                 * @type {{fields: object[], common: object[], sku: object[]}}
+                 */
+                this.dataSources = {
+                    fields: null,
+                    common: null,
+                    sku: null
+                };
+                /**
+                 * 显示的过滤条件
+                 * @type {{hasRequired: boolean|null, matched: boolean|null}}
+                 */
+                this.show = {
+                    hasRequired: null,
+                    matched: null
+                };
 
-            this.saveMapping = this.saveMapping.bind(this);
-        }
+                this.saveMapping = this.saveMapping.bind(this);
+            }
 
-        FeedPropMappingController.prototype = {
+            FeedPropMappingController.prototype = {
 
-            options: {
-                hasRequired: {
-                    '必填情况(ALL)': null,
-                    '非必填': false,
-                    '必填': true
+                options: {
+                    hasRequired: {
+                        '必填情况(ALL)': null,
+                        '非必填': false,
+                        '必填': true
+                    },
+                    matched: {
+                        '设定情况(ALL)': null,
+                        '已设定': true,
+                        '未设定': false
+                    }
                 },
-                matched: {
-                    '设定情况(ALL)': null,
-                    '已设定': true,
-                    '未设定': false
-                }
-            },
 
-            init: function () {
+                init: function () {
 
-                this.feedMappingService.getMainProps({
-                    feedCategoryPath: this.feedCategoryPath
-                }).then(function (res) {
-
-                    // 保存主数据类目(完整类目)
-                    this.mainCategory = res.data.category;
-
-                    // 保存字段 Map 数据
-                    this.fields = res.data.fields;
-                    this.skuFields = res.data.sku;
-                    this.commonFields = res.data.common;
-
-                    // 根据类目信息继续查询
-                    this.feedMappingService.getMatched({
-                        feedCategoryPath: this.feedCategoryPath,
-                        mainCategoryPath: this.mainCategory.catFullPath
+                    this.feedMappingService.getMainProps({
+                        feedCategoryPath: this.feedCategoryPath
                     }).then(function (res) {
 
-                        // 保存已匹配的属性
-                        toArray.matchedMains = res.data;
+                        // 保存主数据类目(完整类目)
+                        this.mainCategory = res.data.category;
 
-                        // 包装数据源
-                        this.dataSources.fields = toArray(this.fields);
-                        this.dataSources.common = toArray(this.commonFields);
-                        this.dataSources.sku = toArray(this.skuFields);
+                        // 保存字段 Map 数据
+                        this.fields = res.data.fields;
+                        this.skuFields = res.data.sku;
+                        this.commonFields = res.data.common;
 
+                        // 根据类目信息继续查询
+                        this.feedMappingService.getMatched({
+                            feedCategoryPath: this.feedCategoryPath,
+                            mainCategoryPath: this.mainCategory.catFullPath
+                        }).then(function (res) {
+
+                            // 保存已匹配的属性
+                            toArray.matchedMains = res.data;
+
+                            // 包装数据源
+                            this.dataSources.fields = toArray(this.fields);
+                            this.dataSources.common = toArray(this.commonFields);
+                            this.dataSources.sku = toArray(this.skuFields);
+
+                        }.bind(this));
                     }.bind(this));
-                }.bind(this));
-            },
-            popupContext: function (bean) {
-                return {
-                    feedCategoryPath: this.feedCategoryPath,
-                    mainCategoryPath: this.mainCategory.catFullPath,
-                    field: bean.field,
-                    bean: bean
-                };
-            },
-            /**
-             * 上层 popup 返回时的调用
-             * @param {{feedCategoryPath:string,mainCategoryPath:string,field:object,fieldMapping:object}} context
-             */
-            saveMapping: function (context) {
+                },
+                popupContext: function (bean) {
+                    return {
+                        feedCategoryPath: this.feedCategoryPath,
+                        mainCategoryPath: this.mainCategory.catFullPath,
+                        field: bean.field,
+                        bean: bean
+                    };
+                },
+                /**
+                 * 上层 popup 返回时的调用
+                 * @param {{feedCategoryPath:string,mainCategoryPath:string,field:object,fieldMapping:object}} context
+                 */
+                saveMapping: function (context) {
 
-                var path = [];
-                var f = context.field;
-                path.push(f.id);
-                var p = context.bean.parent;
-                while (p) {
-                    path.push(p.field.id);
-                    p = p.parent;
-                }
-
-                this.feedMappingService.saveFieldMapping({
-                    feedCategoryPath: context.feedCategoryPath,
-                    mainCategoryPath: context.mainCategoryPath,
-                    fieldPath: path.reverse(),
-                    propMapping: context.fieldMapping
-                }).then(function (res) {
-
-                    var bool = res.data;
-                    if (!bool) return;
-
-                    var bean = context.bean;
-                    var mappings = context.fieldMapping.mappings;
-
-                    bean.matched = !!mappings && !!mappings.length;
-
-                    // 循环设定上层标识
-                    var parent = bean.parent;
-                    while (!!parent) {
-                        parent.hasUnMatched = !(parent.hasMatched = bean.matched);
-                        parent = parent.parent;
+                    var path = [];
+                    var f = context.field;
+                    path.push(f.id);
+                    var p = context.bean.parent;
+                    while (p) {
+                        path.push(p.field.id);
+                        p = p.parent;
                     }
-                }.bind(this));
-            },
-            /**
-             * 确定某字段是否要显示
-             * @param {object} bean
-             * @return {boolean}
-             */
-            shown: function (bean) {
-                var result = true;
-                if (this.show.hasRequired !== null) {
-                    result = (this.show.hasRequired ? bean.hasRequired : bean.hasOptional);
-                } else if (this.show.matched !== null) {
-                    result = (this.show.matched ? bean.hasMatched : bean.hasUnMatched);
+
+                    this.feedMappingService.saveFieldMapping({
+                        feedCategoryPath: context.feedCategoryPath,
+                        mainCategoryPath: context.mainCategoryPath,
+                        fieldPath: path.reverse(),
+                        propMapping: context.fieldMapping
+                    }).then(function (res) {
+
+                        var bool = res.data;
+                        if (!bool) return;
+
+                        var bean = context.bean;
+                        var mappings = context.fieldMapping.mappings;
+
+                        bean.matched = !!mappings && !!mappings.length;
+
+                        // 循环设定上层标识
+                        var parent = bean.parent;
+                        while (!!parent) {
+                            parent.hasUnMatched = !(parent.hasMatched = bean.matched);
+                            parent = parent.parent;
+                        }
+                    }.bind(this));
+                },
+                /**
+                 * 确定某字段是否要显示
+                 * @param {object} bean
+                 * @return {boolean}
+                 */
+                shown: function (bean) {
+                    var result = true;
+                    if (this.show.hasRequired !== null) {
+                        result = (this.show.hasRequired ? bean.hasRequired : bean.hasOptional);
+                    } else if (this.show.matched !== null) {
+                        result = (this.show.matched ? bean.hasMatched : bean.hasUnMatched);
+                    }
+                    return result;
                 }
-                return result;
-            }
-        };
+            };
 
-        return FeedPropMappingController;
+            return FeedPropMappingController;
 
-    })());
+        })())
+        .directive('fieldBean', function () {
+            return {
+                restrict: 'A',
+                templateUrl: 'feedMapping.fieldBean.html',
+                scope: true
+            };
+        });
 });

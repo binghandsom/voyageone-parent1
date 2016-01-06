@@ -21,8 +21,8 @@
                         <form class="form-horizontal clearfix">
                             <div class="col-sm-12 platform_mapping_bg_list"
                                  ng-repeat="bean in ctrl.dataSources.fields"
-                                 ng-include="'feedMapping.fieldBean.html'"
-                                 ng-if="ctrl.shown(bean)"></div>
+                                 ng-if="ctrl.shown(bean)" field-bean>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -34,8 +34,7 @@
                         <form class="form-horizontal clearfix">
                             <div class="col-sm-12 platform_mapping_bg_list"
                                  ng-repeat="bean in ctrl.dataSources.common"
-                                 ng-include="'feedMapping.fieldBean.html'"
-                                 ng-if="ctrl.shown(bean)"></div>
+                                 ng-if="ctrl.shown(bean)" field-bean></div>
                         </form>
                     </div>
                 </div>
@@ -48,7 +47,7 @@
                             <div class="col-sm-12 platform_mapping_bg_list"
                                  ng-repeat="bean in ctrl.dataSources.sku"
                                  ng-include="'feedMapping.fieldBean.html'"
-                                 ng-if="ctrl.shown(bean)"></div>
+                                 ng-if="ctrl.shown(bean)" field-bean></div>
                         </form>
                     </div>
                 </div>
@@ -56,11 +55,9 @@
         </tab>
     </tabset>
     <script type="text/ng-template" id="feedMapping.fieldBean.html">
-        <div class="col-sm-5 text-left"
-             ng-style="{'margin-left': bean.level * 30}">
-            <i class="fa"
-               ng-class="{'fa-plus':!bean.isSimple, 'fa-minus': bean.isSimple}"></i>
-            {{ bean.field.name }}
+        <div class="col-sm-5 text-left" style="margin-left:{{::bean.level*30}}px">
+            <i class="fa {{::bean.headClass}}"></i>
+            <span>{{::bean.field.name }}</span>
             <span ng-if="bean.required">(必填)</span>
         </div>
         <div class="col-sm-1 pull-center" ng-if="bean.isSimple">
@@ -70,9 +67,11 @@
             </button>
         </div>
         <div class="pull-right">
-            <span class="{{ bean.iconClass }}">{{ bean.field.type }}</span>
+            <span class="{{::bean.iconClass}}">{{::bean.field.type}}</span>
             <span ng-if="bean.isSimple"
-                  ng-class="{'badge':bean.matched, 'badge badge-failure': !bean.matched}">{{ bean.matched ? '已匹配' : '未匹配' }}</span>
+                  ng-class="{'badge':bean.matched, 'badge badge-failure': !bean.matched}">
+                <span>{{ bean.matched ? '已匹配' : '未匹配' }}</span>
+            </span>
         </div>
     </script>
 </div>
