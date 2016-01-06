@@ -139,12 +139,16 @@ public class SxPrepareData {
                     case "in_prop_1665536": {
                         return "abcdefg";
                     }
-                    case "sell0":
-                    case "sell1":
-                    case "sell2":
-                    case "sell3":
-                    case "sell4": {
-                        return field.getId();
+                    case "sell_point_0":
+                        return "sp0";
+                    case "sell_point_1":
+                        return "sp1";
+                    case "sell_point_2":
+                        return "sp2";
+                    case "sell_point_3":
+                        return "sp3";
+                    case "sell_point_4": {
+                        return "sp4";
                     }
                     case "locality_life->expirydate->severalDays":
                         return "2";
@@ -161,6 +165,10 @@ public class SxPrepareData {
                         return "20";
                     case "short_title":
                         return "无线短标题";
+                    case "start_time":
+                        return "2015-06-05 16:22:39";
+                    case "postage_id":
+                        return "1364418490";//PA
                     default: {
                         /*
                         if (extraParam != 0) {
