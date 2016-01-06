@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(
-        value  = "/rest/puroduct/tag",
+        value  = "/rest/product/tag",
         method = RequestMethod.POST
 )
 public class ProductTagController extends BaseController {

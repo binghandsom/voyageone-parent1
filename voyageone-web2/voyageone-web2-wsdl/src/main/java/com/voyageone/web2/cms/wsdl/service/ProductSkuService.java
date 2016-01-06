@@ -37,7 +37,7 @@ import java.util.*;
 public class ProductSkuService extends BaseService {
 
     @Autowired
-    private ProductGetService productService;
+    private ProductService productService;
 
     @Autowired
     private CmsBtProductDao cmsBtProductDao;

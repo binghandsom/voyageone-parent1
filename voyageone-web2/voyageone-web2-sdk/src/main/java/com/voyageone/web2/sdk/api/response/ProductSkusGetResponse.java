@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * product sku get response
- * /puroduct/sku/selectList
+ * /product/sku/selectList
  * Created on 2015-12-14
  *
  * @author chuanyu.liang

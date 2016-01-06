@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * /puroduct/sku/updatePrice Request
+ * /product/sku/updatePrice Request
  *
  * 1.addProductPrices(ProductPriceModel) add model
  * 2.max ProductPriceModel 100
@@ -26,7 +26,7 @@ import java.util.List;
 public class ProductUpdatePriceRequest extends VoApiRequest<ProductUpdatePriceResponse> {
 
 	public String getApiURLPath() {
-		return "/puroduct/sku/updatePrices";
+		return "/product/sku/updatePrices";
 	}
 
 	/**

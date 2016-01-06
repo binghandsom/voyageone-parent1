@@ -9,7 +9,7 @@ import com.voyageone.web2.sdk.api.util.RequestUtils;
 /**
  * get main group Request Model
  *
- * /puroduct/group/selectOne
+ * /product/group/selectOne
  *
  *  1.传入groupId来查询
  *  2.传入cartId&numIId来查询
@@ -24,7 +24,7 @@ import com.voyageone.web2.sdk.api.util.RequestUtils;
 public class ProductGroupGetRequest extends VoApiRequest<ProductGroupGetResponse> {
 
 	public String getApiURLPath() {
-		return "/puroduct/group/selectOne";
+		return "/product/group/selectOne";
 	}
 
 	private String channelId;

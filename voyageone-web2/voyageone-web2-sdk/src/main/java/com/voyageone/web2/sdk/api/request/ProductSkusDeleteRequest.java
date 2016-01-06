@@ -13,7 +13,7 @@ import java.util.Set;
 /**
  * remove product sku Request Model
  *
- * /puroduct/sku/delete
+ * /product/sku/delete
  *
  *  1.传入productId Set 或 productCode Set
  *  2 productId Set或 productCode Set最多100条
@@ -28,7 +28,7 @@ import java.util.Set;
 public class ProductSkusDeleteRequest extends VoApiRequest<ProductSkusDeleteResponse> {
 
 	public String getApiURLPath() {
-		return "/puroduct/sku/deletes";
+		return "/product/sku/deletes";
 	}
 
 	private String channelId;

@@ -4,7 +4,7 @@ import com.voyageone.web2.sdk.api.VoApiUpdateResponse;
 
 
 /**
- * /puroduct/sku/updatePrice Response
+ * /product/sku/updatePrice Response
  * Created on 2015-12-14
  *
  * @author chuanyu.liang

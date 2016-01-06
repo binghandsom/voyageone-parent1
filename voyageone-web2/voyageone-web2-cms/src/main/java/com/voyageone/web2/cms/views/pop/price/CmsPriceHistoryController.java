@@ -29,7 +29,7 @@ public class CmsPriceHistoryController extends CmsController {
 
     @RequestMapping(CmsUrlConstants.POP.PRICE.GET_PRICE_HISTORY)
     public AjaxResponse getPriceHistory(@RequestBody Map<String, Object> params) {
-        Map<String, Object> result = cmsPriceHistoryService.getPriceHistory(params);
+        Map<String, Object> result = cmsPriceHistoryService.getPriceHistory(params, getUser().getSelChannelId());
         return success(result);
     }
 
