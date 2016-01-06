@@ -61,7 +61,7 @@ public class WmsGetWmfClientInvService extends WmsGetClientInvBaseService {
                 inventoryBeans = getClientInvIncreace(getInventoryParamBean, channelId);
             }
 
-            MagentoApiServiceImpl s = new MagentoApiServiceImpl("123");
+            MagentoApiServiceImpl s = new MagentoApiServiceImpl(channelId);
 
             if(inventoryBeans.size() > 0) {
 
