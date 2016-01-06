@@ -38,27 +38,26 @@ public class MasterWordParser {
             MasterWord masterWord = (MasterWord) ruleWord;
             String propName = masterWord.getValue();
             Map<String, String> extra = masterWord.getExtra();
-            Object plainPropValueObj;
-            Map<String, Object> evaluationContext = null;
-            if (!evaluationContextStack.isEmpty()) {
-                evaluationContext = evaluationContextStack.get(evaluationContextStack.size()-1);
-            }
-            if (evaluationContext == null) {
-                //TODO 将要删除
-                plainPropValueObj = cmsBtProductModel.getFields().getAttribute(propName);
+            Object plainPropValueObj = null;
+            if (evaluationContextStack.isEmpty()) {
+                plainPropValueObj = getPropValue(cmsBtProductModel.getFields(), propName);
             } else {
-                plainPropValueObj = evaluationContext.get(propName);
-            }
-            //如果evaluetionContext存在，但其中的某属性为空，那么从全局取
-            if (plainPropValueObj == null) {
-                //TODO 将要删除
-                plainPropValueObj = cmsBtProductModel.getFields().getAttribute(propName);
+                for (int i = evaluationContextStack.size(); i>0; i--) {
+                    Map<String, Object> evaluationContext = evaluationContextStack.get(i-1);
+                    plainPropValueObj = getPropValue(evaluationContext, propName);
+                    if (plainPropValueObj != null) {
+                        break;
+                    }
+                }
+                //如果evaluationContext存在，但其中的某属性为空，那么从全局取
+                if (plainPropValueObj == null) {
+                    plainPropValueObj = getPropValue(cmsBtProductModel.getFields(), propName);
+                }
             }
 
             if (plainPropValueObj == null) {
                 return null;
             }
-
             if (extra == null) {
                 return String.valueOf(plainPropValueObj);
             } else {
@@ -77,6 +76,20 @@ public class MasterWordParser {
                 }
             }
         }
+    }
+
+    private Object getPropValue(Map<String, Object> evaluationContext, String propName) {
+        char separator = '.';
+        if (evaluationContext == null) {
+            return null;
+        }
+        int separatorPos = propName.indexOf(separator);
+        if (separatorPos == -1) {
+            return evaluationContext.get(propName);
+        }
+        String firstPropName = propName.substring(0, separatorPos);
+        String leftPropName = propName.substring(separatorPos + 1);
+        return getPropValue((Map<String, Object>) evaluationContext.get(firstPropName), leftPropName);
     }
 
     public Map<String, Object> popEvaluationContext() {

@@ -19,7 +19,6 @@ import com.voyageone.batch.cms.enums.PlatformWorkloadStatus;
 import com.voyageone.batch.cms.enums.TmallWorkloadStatus;
 import com.voyageone.batch.cms.model.ConditionPropValueModel;
 import com.voyageone.batch.cms.model.CustomPlatformPropMappingModel;
-import com.voyageone.batch.cms.bean.WorkLoadBean;
 import com.voyageone.batch.cms.service.AbstractSkuFieldBuilder;
 import com.voyageone.batch.cms.service.ConditionPropValueRepo;
 import com.voyageone.batch.cms.service.SkuFieldBuilderFactory;
@@ -47,7 +46,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -1568,8 +1566,8 @@ public class TmallProductService {
                 continue;
             }
 
-            if ("description".equals(field.getId())){
-                System.out.println("");
+            if ("description".equals(field.getId())) {
+                System.out.println();
             }
             Field resolveField = (resolveMapping(cmsMainProduct, mappingBean, field, srcUrlStashEntityMap, expressionParser, imageSet));
             if (resolveField != null) {
@@ -1589,15 +1587,11 @@ public class TmallProductService {
             }
             imageSet.addAll(imageSetEachProp);
 
-            //TODO
-            if ("wap_desc".equals(field.getId())){
-                System.out.println("");
-            }
-            //END TODO
-
             switch (field.getType()) {
                 case INPUT: {
-                    ((InputField) field).setValue(expressionValue);
+                    if (expressionValue != null) {
+                        ((InputField) field).setValue(expressionValue);
+                    }
                     for (String imageUrl : imageSetEachProp) {
                         List<TmallUploadRunState.UrlStashEntity> destUrlStashEntities = srcUrlStashEntityMap.get(imageUrl);
                         if (destUrlStashEntities == null) {
@@ -1609,15 +1603,19 @@ public class TmallProductService {
                     break;
                 }
                 case SINGLECHECK: {
-                    ((SingleCheckField) field).setValue(expressionValue);
+                    if (expressionValue != null) {
+                        ((SingleCheckField) field).setValue(expressionValue);
+                    }
                     break;
                 }
                 case MULTIINPUT:
                     break;
                 case MULTICHECK: {
                     String[] valueArrays = ExpressionParser.decodeString(expressionValue);
-                    for (String value : valueArrays) {
-                        ((MultiCheckField) field).addValue(value);
+                    if (valueArrays != null) {
+                        for (String value : valueArrays) {
+                            ((MultiCheckField) field).addValue(value);
+                        }
                     }
                     break;
                 }
