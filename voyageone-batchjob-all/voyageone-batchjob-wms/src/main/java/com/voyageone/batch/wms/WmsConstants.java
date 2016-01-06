@@ -405,9 +405,9 @@ public interface WmsConstants {
     final class EmailSPThirdWarehouseReport {
 
         // 邮件名
-        public final static String SUBJECT = "%s斯伯丁第三方仓库发货日报";
+        public final static String SUBJECT = "斯伯丁第三方仓库发货日报【%s】 ";
         // 概要说明
-        public final static String HEAD = "<font color='black'>从%s至%s共有%s单需要发货，请按附件中所列订单信息发货，谢谢。</font>";
+        public final static String HEAD = "<font color='black'>从%s至%s官网共有%s单需要发货，请按附件中所列订单信息发货，谢谢。</font>";
 
     }
 

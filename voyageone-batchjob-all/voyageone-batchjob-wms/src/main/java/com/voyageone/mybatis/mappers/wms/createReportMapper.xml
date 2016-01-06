@@ -300,7 +300,7 @@
      </select>
 
     <!-- 以SKU集计斯伯丁第三方仓库发货日报数据-->
-    <select id="wms_selectSPThirdWarehouseReportBySKU" resultType="com.voyageone.batch.wms.modelbean.SumInventoryBean">
+    <select id="wms_selectSPThirdWarehouseReportBySKU" resultType="com.voyageone.batch.wms.modelbean.SPThirdWarehouseReportBean">
         SELECT
             date_add(
                 orders.order_date_time,
