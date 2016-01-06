@@ -87,4 +87,10 @@ public class CmsFeedMappingController extends CmsController {
         feedPropMappingService.saveFeedMapping(params, getUser());
         return success(true);
     }
+
+    @RequestMapping(FEED.DIRECT_MATCH_OVER)
+    public AjaxResponse directMatchOver(@RequestBody Map<String, String> params) {
+        String feedCategoryPath = params.get("feedCategoryPath");
+        return success(cmsFeedMappingService.setMatchOver(feedCategoryPath, getUser()));
+    }
 }

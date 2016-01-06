@@ -3,7 +3,6 @@ package com.voyageone.cms.service;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.TypeRef;
-import com.mongodb.WriteResult;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.cms.service.dao.CmsBtFeedProductImageDao;
 import com.voyageone.cms.service.dao.mongodb.CmsBtFeedInfoDao;
@@ -120,7 +119,7 @@ public class FeedToCmsService {
 
                 List<CmsBtFeedProductImageModel> imageModels = new ArrayList<>();
                 imageUrls.forEach(s -> imageModels.add(new CmsBtFeedProductImageModel(channelId, s, this.modifier)));
-                cmsBtFeedProductImageDao.updateImagebyUrl(imageModels);
+                cmsBtFeedProductImageDao.insertImagebyUrl(imageModels);
 
                 Map<String, List<String>> attributeMtData;
                 if (attributeMtDatas.get(category) == null) {

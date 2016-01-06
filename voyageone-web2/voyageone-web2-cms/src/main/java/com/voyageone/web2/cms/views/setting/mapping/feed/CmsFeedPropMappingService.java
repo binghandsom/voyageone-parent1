@@ -5,6 +5,8 @@ import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtFeedCategoryTreeDao;
 import com.voyageone.cms.service.model.*;
 import com.voyageone.cms.service.model.feed.mapping.Prop;
+import com.voyageone.common.configs.Type;
+import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.ComplexField;
 import com.voyageone.common.masterdate.schema.field.Field;
@@ -88,8 +90,29 @@ public class CmsFeedPropMappingService extends BaseAppService {
                 ((MultiComplexField) categorySchemaModel.getSku())
                         .getFields().stream());
 
+        // 构造一个纯字段名的集合,用于共通属性的检查
+        List<String> names = Stream.concat(
+                mainFieldBeanMap.entrySet().stream(),
+                skuFieldBeanMap.entrySet().stream()
+        )
+                .map(e -> e.getValue().getField().getName())
+                .distinct()
+                .collect(toList());
+
         // 对共通属性同样处理
-        Stream<Field> commonFieldStream = commonPropDefDao.selectAll().stream().map(CmsMtCommonPropDefModel::getField);
+        // 但如果普通属性里已经有的则需要忽略掉
+        Stream<Field> commonFieldStream = commonPropDefDao.selectAll()
+                .stream()
+                .map(CmsMtCommonPropDefModel::getField)
+                .filter(f -> {
+                    // 过滤 ID 相同的
+                    if (mainFieldBeanMap.containsKey(f.getId()))
+                        return false;
+                    if (skuFieldBeanMap.containsKey(f.getId()))
+                        return false;
+                    // 过滤名称相同的
+                    return !names.contains(f.getName());
+                });
         Map<String, FieldBean> commonFieldBeanMap = wrapFields(commonFieldStream);
 
         // 最后清除主类目模型的字段信息,因为不需要再重复提供
@@ -177,7 +200,17 @@ public class CmsFeedPropMappingService extends BaseAppService {
 
         CmsFeedCategoryModel feedCategoryModel = feedMappingService.findByPath(feedCategoryPath, treeModelx);
 
-        return feedCategoryModel == null ? null : feedCategoryModel.getAttribute();
+        // 从 type/value 中取得 Feed 通用的属性
+        Map<String, List<String>> attributes = Type.getTypeList(49, "en")
+                .stream()
+                .collect(toMap(TypeBean::getValue, t -> new ArrayList<>(0)));
+
+        if (feedCategoryModel == null)
+            return attributes;
+
+        attributes.putAll(feedCategoryModel.getAttribute());
+
+        return attributes;
     }
 
     /**

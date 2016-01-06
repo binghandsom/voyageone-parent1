@@ -1,5 +1,6 @@
 package com.voyageone.common.masterdate.schema.field;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.utils.XmlUtils;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
@@ -34,6 +35,7 @@ public class MultiInputField extends com.voyageone.common.masterdate.schema.fiel
         }
     }
 
+    @JsonIgnore
     public List<Value> getValues() {
         return this.values;
     }
@@ -49,6 +51,7 @@ public class MultiInputField extends com.voyageone.common.masterdate.schema.fiel
         }
     }
 
+    @JsonIgnore
     public List<String> getStringValues() {
         List<String> list = new ArrayList<>();
 

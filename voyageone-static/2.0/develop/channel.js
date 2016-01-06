@@ -33,7 +33,7 @@ require([
     'blockUI',
     'ngCookies',
     'voyageone.angular'
-  ]).controller('channelController', function($scope, $ajax, cookieService) {
+  ]).controller('channelController', function($scope, $ajax, cookieService, $window) {
     $ajax.post('/core/access/user/getChannel').then(function(res) {
       $scope.channels = res.data;
     }, function(res) { alert(res.message || res.code); });
@@ -43,6 +43,13 @@ require([
         location.href = 'modules/' + app + '/app.html';
       }, function(res) { alert(res.message || res.code); })
     };
+    $scope.logout = function () {
+      $ajax.post('/core/access/user/logout')
+          .then(function () {
+            cookieService.removeAll();
+            $window.location = '/login.html#/';
+          });
+    }
   });
   return angular.bootstrap(document, ['voyageone.cms.channel']);
 });

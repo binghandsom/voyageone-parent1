@@ -40,7 +40,8 @@
         "getMatched": "getMatched",
         "getFieldMapping": "getFieldMapping",
         "getFeedAttrs": "getFeedAttributes",
-        "saveFieldMapping": "saveFieldMapping"
+        "saveFieldMapping": "saveFieldMapping",
+        "directMatchOver": "directMatchOver"
       }
     },
     "pop": {

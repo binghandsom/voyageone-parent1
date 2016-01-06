@@ -12,7 +12,7 @@ public class CmsBtFeedProductImageModel extends BaseModel {
     private String imageUrl;
     private String imageName;
     private int imageTypeId = 1;
-    private int sentFlag = 0;
+    private Integer sentFlag = 0;
 
     public CmsBtFeedProductImageModel(String channelId, String imageUrl,String modifier){
         this.channelId = channelId;
@@ -48,7 +48,7 @@ public class CmsBtFeedProductImageModel extends BaseModel {
         this.imageTypeId = imageTypeId;
     }
 
-    public int getSentFlag() {
+    public Integer getSentFlag() {
         return sentFlag;
     }
 
