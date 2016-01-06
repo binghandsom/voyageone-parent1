@@ -60,7 +60,7 @@ public class ProductGroupGetRequest extends VoApiRequest<ProductGroupGetResponse
 
 	public void check() throws ApiRuleException {
 		super.check();
-		RequestUtils.checkNotEmpty(channelId);
+		RequestUtils.checkNotEmpty(" channelId", channelId);
 		RequestUtils.checkNotEmpty(" groupId, cartId, numIId or props", groupId, cartId, numIId, props);
 	}
 

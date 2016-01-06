@@ -261,7 +261,6 @@ public class TagService extends BaseService {
 
         // 当前Tag删除
         CmsBtTagModel cmsBtTagModelPara = new CmsBtTagModel();
-        cmsBtTagModelPara.setChannelId(request.getChannelId());
         cmsBtTagModelPara.setTagId(request.getTagId());
         int recordCount = cmsBtTagDao.deleteCmsBtTagByTagId(cmsBtTagModelPara);
         if (recordCount > 0) {
@@ -271,7 +270,6 @@ public class TagService extends BaseService {
         // 父Tag删除的场合
         if (cmsBtTagModel.getParentTagId() == 0) {
             cmsBtTagModelPara = new CmsBtTagModel();
-            cmsBtTagModelPara.setChannelId(request.getChannelId());
             cmsBtTagModelPara.setParentTagId(request.getTagId());
             cmsBtTagDao.deleteCmsBtTagByParentTagId(cmsBtTagModelPara);
         }

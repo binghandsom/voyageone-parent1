@@ -1,4 +1,4 @@
-package com.voyageone.web2.sdk.api.service;
+package com.voyageone.web2.sdk.api.request;
 
 import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
@@ -18,18 +18,20 @@ import java.util.List;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:applicationContext.xml")
-public class TagAddClientTest {
+public class TagAddRequestTest {
 
     @Autowired
     protected VoApiDefaultClient voApiClient;
 
     @Test
     public void testAddTag() {
-        TagAddRequest requestModel = new TagAddRequest("100");
-        requestModel.setTagName("6.81折");
+        TagAddRequest requestModel = new TagAddRequest();
+
+        requestModel.setChannelId("100");
+        requestModel.setTagName("6.82折");
         requestModel.setTagType(2);
         requestModel.setTagStatus(0);
-        requestModel.setParentTagId(34);
+        requestModel.setParentTagId(0);
         requestModel.setSortOrder(0);
         requestModel.setCreater("jerry");
 
@@ -44,8 +46,9 @@ public class TagAddClientTest {
 
     @Test
     public void testRemoveTag() {
-        TagRemoveRequest requestModel = new TagRemoveRequest("100");
-        requestModel.setTagId(34);
+        TagRemoveRequest requestModel = new TagRemoveRequest();
+        requestModel.setChannelId("100");
+        requestModel.setTagId(37);
         requestModel.setModifier("jerry");
 
         //SDK取得Product 数据
@@ -59,7 +62,7 @@ public class TagAddClientTest {
 
     @Test
     public void testGetByParentTagId() {
-        TagsGetRequest requestModel = new TagsGetRequest("100");
+        TagsGetRequest requestModel = new TagsGetRequest();
         requestModel.setParentTagId(11);
 
         //SDK取得Product 数据
@@ -79,8 +82,8 @@ public class TagAddClientTest {
 
     @Test
     public void testGetByChannelId() {
-        TagsGetRequest requestModel = new TagsGetRequest("100");
-
+        TagsGetRequest requestModel = new TagsGetRequest();
+        requestModel.setChannelId("100");
         //SDK取得Product 数据
         TagsGetResponse res = voApiClient.execute(requestModel);
         List<CmsBtTagModel> tagModelList = res.getTags();

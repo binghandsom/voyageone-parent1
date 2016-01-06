@@ -44,7 +44,7 @@ public class ProductUpdatePriceRequest extends VoApiRequest<ProductUpdatePriceRe
 
 	public void check() throws ApiRuleException {
 		super.check();
-		RequestUtils.checkNotEmpty(channelId);
+		RequestUtils.checkNotEmpty(" channelId", channelId);
 		RequestUtils.checkNotEmpty(" productPrices ", productPrices);
 		for (ProductPriceModel model : productPrices) {
 			RequestUtils.checkNotEmpty(" ProductPriceModel ", model);

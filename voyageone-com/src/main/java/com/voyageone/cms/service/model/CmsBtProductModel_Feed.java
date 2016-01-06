@@ -12,38 +12,35 @@ import java.util.List;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class CmsBtProductModel_Feed extends BaseMongoMap<String, Object> {
+public class CmsBtProductModel_Feed  {
+
+    private BaseMongoMap<String, Object> orgAtts = new BaseMongoMap<String, Object>();
+
+    private BaseMongoMap<String, Object> cnAtts = new BaseMongoMap<String, Object>();
+
+    private List<String> customIds = new ArrayList<String>();
 
     public BaseMongoMap<String, Object> getOrgAtts() {
-        if (!this.containsKey("orgAtts")) {
-            this.put("orgAtts", new BaseMongoMap<String, Object>());
-        }
-        return getAttribute("orgAtts");
+        return orgAtts;
     }
 
     public void setOrgAtts(BaseMongoMap<String, Object> orgAtts) {
-        setAttribute("orgAtts", orgAtts);
+        this.orgAtts = orgAtts;
     }
 
     public BaseMongoMap<String, Object> getCnAtts() {
-        if (!this.containsKey("cnAtts")) {
-            this.put("cnAtts", new BaseMongoMap<String, Object>());
-        }
-        return getAttribute("cnAtts");
+        return cnAtts;
     }
 
     public void setCnAtts(BaseMongoMap<String, Object> cnAtts) {
-        setAttribute("cnAtts", cnAtts);
+        this.cnAtts = cnAtts;
     }
 
     public List<String> getCustomIds() {
-        if (!this.containsKey("customIds")) {
-            this.put("customIds", new ArrayList<String>());
-        }
-        return getAttribute("customIds");
+        return customIds;
     }
 
     public void setCustomIds(List<String> customIds) {
-        setAttribute("customIds", customIds);
+        this.customIds = customIds;
     }
 }

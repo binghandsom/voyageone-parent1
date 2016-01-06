@@ -9,7 +9,8 @@ import com.voyageone.web2.sdk.api.util.RequestUtils;
 /**
  * /tag/selectListByParentTagId tag get by parent_tag_id Request
  *
- * 根据传入的参数取得对应Tag
+ * 1.parentTagId get Tag Child
+ * 2.channelId get ALl channel root tag
  *
  * Created on 2015-12-31
  *
@@ -23,24 +24,19 @@ public class TagsGetRequest extends VoApiRequest<TagsGetResponse> {
 		return "/tag/selectList";
 	}
 
-	private String channelId;
-
 	/**
 	 * parentTagId
 	 */
 	private Integer parentTagId;
 
-	public TagsGetRequest() {
-
-	}
-
-	public TagsGetRequest(String channelId) {
-		this.channelId = channelId;
-	}
+	/**
+	 * channelId
+	 */
+	private String channelId;
 
 	public void check() throws ApiRuleException {
 		super.check();
-		RequestUtils.checkNotEmpty(channelId);
+		RequestUtils.checkNotEmpty(" channelId or parentTagId", channelId, parentTagId);
 	}
 
 	public String getChannelId() {

@@ -68,7 +68,7 @@ angular.module('voyageone.angular.directives.validator', [])
                     ctrl.$validate();
                 });
                 ctrl.$validators.minlength = function(modelValue, viewValue) {
-                    return (maxlength < 0) || ctrl.$isEmpty(viewValue) || (getByteLength(viewValue) >= minlength);
+                    return (minlength < 0) || ctrl.$isEmpty(viewValue) || (getByteLength(viewValue) >= minlength);
                 };
             }
         };

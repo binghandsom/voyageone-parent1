@@ -1,4 +1,68 @@
 define(function() {
+  angular.module("voyageone.angular.controllers.datePicker", []).controller("datePickerCtrl", [ "$scope", function($scope) {
+    var vm = this;
+    vm.formats = [ "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss" ];
+    $scope.formatDate = vm.formats[0];
+    $scope.formatDateTime = vm.formats[1];
+    $scope.open = open;
+    function open($event) {
+      $event.preventDefault();
+      $event.stopPropagation();
+      $scope.opened = true;
+    }
+  } ]);
+  angular.module("voyageone.angular.controllers.selectRows", []).controller("selectRowsCtrl", [ "$scope", function($scope) {
+    $scope.selectAll = selectAll;
+    $scope.selectOne = selectOne;
+    function selectAll(objectList) {
+      objectList.selAllFlag = !objectList.selAllFlag;
+      angular.forEach(objectList.currPageRows, function(object) {
+        if (objectList.selFlag.hasOwnProperty(object.id)) {
+          objectList.selFlag[object.id] = objectList.selAllFlag;
+          if (objectList.hasOwnProperty("selList")) {
+            if (objectList.selAllFlag && objectList.selList.indexOf(object) < 0) {
+              objectList.selList.push(object);
+            } else if (!objectList.selAllFlag && objectList.selList.indexOf(object) > -1) {
+              objectList.selList.splice(objectList.selList.indexOf(object), 1);
+            }
+          }
+        }
+      });
+    }
+    function selectOne(currentId, objectList) {
+      currentId = parseInt(currentId);
+      if (objectList.hasOwnProperty("selList")) {
+        angular.forEach(objectList.selList, function(object) {
+          if (_.isEqual(object.id, currentId)) {
+            if (objectList.selList.indexOf(object) > -1) {
+              objectList.selList.splice(objectList.selList.indexOf(object), 1);
+            } else {
+              objectList.selList.push(object);
+            }
+          }
+        });
+      }
+      objectList.selAllFlag = true;
+      angular.forEach(objectList.currPageRows, function(object) {
+        if (!objectList.selFlag[object.id]) {
+          objectList.selAllFlag = false;
+        }
+      });
+    }
+  } ]);
+  angular.module("voyageone.angular.controllers.showPopover", []).controller("showPopoverCtrl", [ "$scope", function($scope) {
+    $scope.showInfo = showInfo;
+    function showInfo(values) {
+      var tempHtml = "";
+      angular.forEach(values, function(data, index) {
+        tempHtml += data;
+        if (index !== values.length) {
+          tempHtml += "<br>";
+        }
+      });
+      return tempHtml;
+    }
+  } ]);
   angular.module("voyageone.angular.directives.dateModelFormat", []).directive("dateModelFormat", [ "$filter", function($filter) {
     return {
       restrict: "A",
@@ -237,11 +301,11 @@ define(function() {
     }
     var templateKey_date = "voyageone.angular.directives.schemaDate.tpl.html";
     if (!$templateCache.get(templateKey_date)) {
-      $templateCache.put(templateKey_date, '<div class="input-group" style="width: 180px;" ng-controller="datePickerCtrl"><input replaceInfo type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.$$data.value" date-model-format="{{formatDate}}" is-open="opened" datepicker-options="dateOptions" close-text="Close" /><span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button></span></div>');
+      $templateCache.put(templateKey_date, '<div class="input-group" style="width: 180px;" ng-controller="datePickerCtrl"><input replaceInfo type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.$$data.value" date-model-format="{{formatDate}}" is-open="opened" datepicker-options="dateOptions" close-text="Close" /><span class="input-group-btn"><button replaceInfo type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button></span></div>');
     }
     var templateKey_datetime = "voyageone.angular.directives.schemaDatetime.tpl.html";
     if (!$templateCache.get(templateKey_datetime)) {
-      $templateCache.put(templateKey_datetime, '<div class="input-group" style="width: 180px;" ng-controller="datePickerCtrl"><input replaceInfo type="text" class="form-control" datepicker-popup="{{formatDateTime}}" ng-model="$parent.$$data.value" is-open="opened" datepicker-options="dateOptions" close-text="Close" /><span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button></span></div>');
+      $templateCache.put(templateKey_datetime, '<div class="input-group" style="width: 180px;" ng-controller="datePickerCtrl"><input replaceInfo type="text" class="form-control" datepicker-popup="{{formatDateTime}}" ng-model="$parent.$$data.value" is-open="opened" datepicker-options="dateOptions" close-text="Close" /><span class="input-group-btn"><button replaceInfo type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button></span></div>');
     }
     var templateKey_textarea = "voyageone.angular.directives.schemaTextarea.tpl.html";
     if (!$templateCache.get(templateKey_textarea)) {
@@ -257,7 +321,7 @@ define(function() {
     }
     var templateKey_checkbox = "voyageone.angular.directives.schemaCheckbox.tpl.html";
     if (!$templateCache.get(templateKey_checkbox)) {
-      $templateCache.put(templateKey_checkbox, '<label class="checkbox-inline c-checkbox" ng-repeat="option in $$data.options"><input type="checkbox" ng-value="option.value" ng-click="checkboxValue()" ng-model="showHtmlData.checkValues[option.value]"><span class="fa fa-check"></span> {{option.displayName}}</label>');
+      $templateCache.put(templateKey_checkbox, '<label class="checkbox-inline c-checkbox" ng-repeat="option in $$data.options"><input type="checkbox" ng-value="option.value" ng-click="checkboxValue(option.value)" ng-checked="isSelected(option.value)"><span class="fa fa-check"></span> {{option.displayName}}</label>');
     }
     var templateKey_multiComplex = "voyageone.angular.directives.schemaMultiComplex.tpl.html";
     if (!$templateCache.get(templateKey_multiComplex)) {
@@ -290,11 +354,11 @@ define(function() {
           break;
 
          case fieldTypes.DATE:
-          tempHtml = $templateCache.get(templateKey_date).replace("replaceInfo", schema.html());
+          tempHtml = $templateCache.get(templateKey_date).replace("replaceInfo", schema.html()).replace("replaceInfo", schema.html());
           break;
 
          case fieldTypes.DATETIME:
-          tempHtml = $templateCache.get(templateKey_datetime).replace("replaceInfo", schema.html());
+          tempHtml = $templateCache.get(templateKey_datetime).replace("replaceInfo", schema.html()).replace("replaceInfo", schema.html());
           break;
 
          case fieldTypes.TEXTAREA:
@@ -330,14 +394,22 @@ define(function() {
         }
         scope.showHtmlData = angular.copy(schema.schemaInfo());
         element.html($compile(tempHtml)(scope));
-        scope.checkboxValue = function() {
+        scope.checkboxValue = function(value) {
+          if (_.contains(scope.showHtmlData.checkValues, value)) {
+            scope.showHtmlData.checkValues.splice(_.indexOf(scope.showHtmlData.checkValues, value), 1);
+          } else {
+            scope.showHtmlData.checkValues.push(value);
+          }
           scope.$$data.values = [];
-          angular.forEach(_returnKey(scope.showHtmlData.checkValues), function(obj) {
+          angular.forEach(scope.showHtmlData.checkValues, function(obj) {
             scope.$$data.values.push({
               id: null,
               value: obj
             });
           });
+        };
+        scope.isSelected = function(value) {
+          return _.contains(scope.showHtmlData.checkValues, value);
         };
         scope.delField = function(index) {
           scope.$$data.values.splice(index, 1);
@@ -365,7 +437,7 @@ define(function() {
         function _setCheckValues(values) {
           if (values != undefined && values != null) {
             angular.forEach(values, function(obj) {
-              schema.checkValues(obj.value, true);
+              schema.checkValues(obj.value);
             });
           }
         }
@@ -374,15 +446,30 @@ define(function() {
           angular.forEach(data.values, function(value) {
             var tempFieldMap = {};
             angular.forEach(data.fields, function(field) {
-              if (value.fieldMap[field.id] != undefined) tempFieldMap[field.id] = value.fieldMap[field.id]; else tempFieldMap[field.id] = field;
+              var tempField = angular.copy(field);
+              if (value.fieldMap[field.id] != undefined) {
+                tempField.value = value.fieldMap[field.id].value;
+              }
+              tempFieldMap[field.id] = tempField;
             });
             tempValues.push({
               fieldMap: angular.copy(tempFieldMap)
             });
           });
+          if (_.isEmpty(data.values)) {
+            var newFieldMap = {};
+            angular.forEach(data.fields, function(field) {
+              eval("newFieldMap." + field.id + "=field");
+            });
+            tempValues.push({
+              fieldMap: angular.copy(newFieldMap)
+            });
+          }
           return tempValues;
         }
-        function _resetComplex(data) {}
+        function _resetComplex(data) {
+          return data.values;
+        }
         function _operateRule(rules) {
           angular.forEach(rules, function(rule) {
             switch (rule.name) {
@@ -477,7 +564,7 @@ define(function() {
           }
         }
         function _disableRule(disableRule) {
-          if ("true" == disableRule.value) {
+          if ("true" == disableRule.value && disableRule.dependGroup == null) {
             schema.html('ng-disabled="true"');
           }
         }
@@ -521,13 +608,6 @@ define(function() {
           var value = isNaN(parseInt(maxInputNumRule.value)) || 0;
           if ("not include" === maxInputNumRule.exProperty) value = value > 0 ? value - 1 : 0;
           schema.html('ng-maxinputnum="' + value + '"');
-        }
-        function _returnKey(object) {
-          var result = [];
-          angular.forEach(object, function(value, index) {
-            if (value) result.push(index);
-          });
-          return result;
         }
       }
     };
@@ -659,7 +739,7 @@ define(function() {
           ctrl.$validate();
         });
         ctrl.$validators.minlength = function(modelValue, viewValue) {
-          return maxlength < 0 || ctrl.$isEmpty(viewValue) || getByteLength(viewValue) >= minlength;
+          return minlength < 0 || ctrl.$isEmpty(viewValue) || getByteLength(viewValue) >= minlength;
         };
       }
     };
@@ -743,70 +823,6 @@ define(function() {
       }
     };
   });
-  angular.module("voyageone.angular.controllers.datePicker", []).controller("datePickerCtrl", [ "$scope", function($scope) {
-    var vm = this;
-    vm.formats = [ "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss" ];
-    $scope.formatDate = vm.formats[0];
-    $scope.formatDateTime = vm.formats[1];
-    $scope.open = open;
-    function open($event) {
-      $event.preventDefault();
-      $event.stopPropagation();
-      $scope.opened = true;
-    }
-  } ]);
-  angular.module("voyageone.angular.controllers.selectRows", []).controller("selectRowsCtrl", [ "$scope", function($scope) {
-    $scope.selectAll = selectAll;
-    $scope.selectOne = selectOne;
-    function selectAll(objectList) {
-      objectList.selAllFlag = !objectList.selAllFlag;
-      angular.forEach(objectList.currPageRows, function(object) {
-        if (objectList.selFlag.hasOwnProperty(object.id)) {
-          objectList.selFlag[object.id] = objectList.selAllFlag;
-          if (objectList.hasOwnProperty("selList")) {
-            if (objectList.selAllFlag && objectList.selList.indexOf(object) < 0) {
-              objectList.selList.push(object);
-            } else if (!objectList.selAllFlag && objectList.selList.indexOf(object) > -1) {
-              objectList.selList.splice(objectList.selList.indexOf(object), 1);
-            }
-          }
-        }
-      });
-    }
-    function selectOne(currentId, objectList) {
-      currentId = parseInt(currentId);
-      if (objectList.hasOwnProperty("selList")) {
-        angular.forEach(objectList.selList, function(object) {
-          if (_.isEqual(object.id, currentId)) {
-            if (objectList.selList.indexOf(object) > -1) {
-              objectList.selList.splice(objectList.selList.indexOf(object), 1);
-            } else {
-              objectList.selList.push(object);
-            }
-          }
-        });
-      }
-      objectList.selAllFlag = true;
-      angular.forEach(objectList.currPageRows, function(object) {
-        if (!objectList.selFlag[object.id]) {
-          objectList.selAllFlag = false;
-        }
-      });
-    }
-  } ]);
-  angular.module("voyageone.angular.controllers.showPopover", []).controller("showPopoverCtrl", [ "$scope", function($scope) {
-    $scope.showInfo = showInfo;
-    function showInfo(values) {
-      var tempHtml = "";
-      angular.forEach(values, function(data, index) {
-        tempHtml += data;
-        if (index !== values.length) {
-          tempHtml += "<br>";
-        }
-      });
-      return tempHtml;
-    }
-  } ]);
   angular.module("voyageone.angular.factories.dialogs", []).factory("$dialogs", [ "$modal", "$filter", "$templateCache", function($modal, $filter, $templateCache) {
     var templateName = "voyageone.angular.factories.dialogs.tpl.html";
     $templateCache.put(templateName, '<div class="vo_modal"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()"><span aria-hidden="true"><i ng-click="close()" class="fa fa-close"></i></span></button><h4 class="modal-title" ng-bind-html="title"></h4></div><div class="modal-body wrapper-lg"><div class="row"><p ng-bind-html="content"></p></div></div><div class="modal-footer"><button class="btn btn-default btn-sm" ng-if="!isAlert" ng-click="close()" translate="BTN_COM_CANCEL"></button><button class="btn btn-vo btn-sm" ng-click="ok()" translate="BTN_COM_OK"></button></div></div>');
@@ -982,8 +998,8 @@ define(function() {
       this.tipMsg = function(value) {
         return value !== undefined ? _schemaInfo.tipMsg.push(value) : _schemaInfo.tipMsg;
       };
-      this.checkValues = function(index, value) {
-        return value !== undefined ? _schemaInfo.checkValues[index] = value : _schemaInfo.checkValues;
+      this.checkValues = function(value) {
+        return value !== undefined ? _schemaInfo.checkValues.push(value) : _schemaInfo.checkValues;
       };
       this.schemaInfo = function() {
         return _schemaInfo;

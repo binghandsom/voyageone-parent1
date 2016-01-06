@@ -36,18 +36,10 @@ public class TagRemoveRequest extends VoApiRequest<TagRemoveResponse> {
 	 */
 	private String modifier;
 
-	public TagRemoveRequest() {
-
-	}
-
-	public TagRemoveRequest(String channelId) {
-		this.channelId = channelId;
-	}
-
 	public void check() throws ApiRuleException {
 		super.check();
-		RequestUtils.checkNotEmpty(channelId);
-		RequestUtils.checkNotEmpty("tagId", tagId);
+		RequestUtils.checkNotEmpty(" channelId", channelId);
+		RequestUtils.checkNotEmpty(" tagId", tagId);
 	}
 
 	public String getChannelId() {

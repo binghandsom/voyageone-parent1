@@ -46,7 +46,7 @@ public class ProductsTagPutRequest extends VoApiRequest<ProductsTagPutResponse> 
 
 	public void check() throws ApiRuleException {
 		super.check();
-		RequestUtils.checkNotEmpty(channelId);
+		RequestUtils.checkNotEmpty(" channelId", channelId);
 		RequestUtils.checkNotEmpty(" productIdTagPathsMap", productIdTagPathsMap);
 		RequestUtils.checkMinValue((long) productIdTagPathsMap.size(), 1, "productIds");
 		RequestUtils.checkMaxValue((long) productIdTagPathsMap.size(), 500, "productIds");

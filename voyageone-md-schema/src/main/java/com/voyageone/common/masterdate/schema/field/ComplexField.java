@@ -1,5 +1,6 @@
 package com.voyageone.common.masterdate.schema.field;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.utils.XmlUtils;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
@@ -33,6 +34,7 @@ public class ComplexField extends Field {
         this.fields.add(field);
     }
 
+    @JsonIgnore
     public ComplexValue getComplexValue() {
         return this.complexValue;
     }
@@ -65,6 +67,7 @@ public class ComplexField extends Field {
         return this.fields;
     }
 
+    @JsonIgnore
     public Map<String, Field> getFieldMap() {
         Map<String, Field> map = new HashMap<>();
 
