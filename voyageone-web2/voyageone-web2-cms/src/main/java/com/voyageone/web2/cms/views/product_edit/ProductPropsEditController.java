@@ -1,9 +1,9 @@
-package com.voyageone.web2.cms.views.product_data_edit;
+package com.voyageone.web2.cms.views.product_edit;
 
-import com.voyageone.cms.service.model.CmsMtCategorySchemaWithValueModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
+import com.voyageone.web2.cms.bean.ProductInfoBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,15 +28,25 @@ public class ProductPropsEditController extends CmsController{
 
         int productId = Integer.valueOf(params.get("productId").toString());
 
-        CmsMtCategorySchemaWithValueModel schemaModel = productPropsEditService.handleInit(getUser().getSelChannelId(),productId);
-        Map<String,Object> categorySchema = new HashMap<>();
-        categorySchema.put("categorySchema",schemaModel);
-        return success(categorySchema);
-//        Map<String,Object> response = new HashMap<>();
+//       String channelId = super.getUser().getSelChannelId();
 
-//        String word = "Hi, "+productId+", Hello World!!!";
-//        response.put("sayHello",word);
-//        return success(response);
+        String channelId = "200";
+
+        Map<String,Object> categoryInfo = new HashMap<>();
+
+        try {
+
+           ProductInfoBean productInfo = productPropsEditService.getProductInfo(channelId,productId);
+
+           categoryInfo.put("productInfo",productInfo);
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+        return success(categoryInfo);
+
     }
 
 

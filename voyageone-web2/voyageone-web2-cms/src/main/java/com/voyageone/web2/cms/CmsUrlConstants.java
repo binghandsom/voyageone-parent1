@@ -170,7 +170,7 @@ public interface CmsUrlConstants {
 
             String  SAVE_PRODUCT_INFO = "saveProductInfo";
 
-            String CHANGE_CATEGORY="chagneCategory";
+            String CHANGE_CATEGORY="changeCategory";
 
             String CONFIRM_CHANGE = "confirmChange";
 
