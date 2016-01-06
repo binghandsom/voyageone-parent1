@@ -35,7 +35,6 @@ public class MultiCheckField extends OptionsField {
         }
     }
 
-    @JsonIgnore
     public List<Value> getValues() {
         return this.values;
     }
@@ -181,6 +180,7 @@ public class MultiCheckField extends OptionsField {
     }
 
     @Override
+    @JsonIgnore
     public List<Value> getValue() {
         return this.values;
     }

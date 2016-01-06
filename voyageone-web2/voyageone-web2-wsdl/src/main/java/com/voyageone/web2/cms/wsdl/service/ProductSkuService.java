@@ -8,10 +8,13 @@ import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.model.CmsBtProductModel;
+import com.voyageone.cms.service.model.CmsBtProductModel_Field;
 import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.cms.wsdl.BaseService;
+import com.voyageone.web2.cms.wsdl.dao.CmsBtPriceLogDao;
 import com.voyageone.web2.sdk.api.VoApiConstants;
+import com.voyageone.web2.sdk.api.domain.CmsBtPriceLogModel;
 import com.voyageone.web2.sdk.api.domain.ProductPriceModel;
 import com.voyageone.web2.sdk.api.domain.ProductSkuPriceModel;
 import com.voyageone.web2.sdk.api.exception.ApiException;
@@ -20,6 +23,7 @@ import com.voyageone.web2.sdk.api.response.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -37,6 +41,9 @@ public class ProductSkuService extends BaseService {
 
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
+
+    @Autowired
+    private CmsBtPriceLogDao cmsBtPriceLogDao;
 
     /**
      * select List
@@ -115,7 +122,6 @@ public class ProductSkuService extends BaseService {
             throw new ApiException(codeEnum.getErrorCode(), "productIdSkuMap or productCodeSkuMap not found!");
         }
 
-        int insertCount = 0;
         if (bulkInsertList.size() > 0) {
             BasicDBObject queryObj = (BasicDBObject)bulkInsertList.get(0).getQueryMap();
             BasicDBList skusList = new BasicDBList();
@@ -159,11 +165,10 @@ public class ProductSkuService extends BaseService {
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setProjection("skus.skuCode");
         if (productId != null) {
-            String query = "{\"prodId\":" + productId + "}";
-            queryObject.setQuery(query);
+            queryObject.setQuery("{\"prodId\":" + productId + "}");
             findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
         } else if (StringUtils.isEmpty(productCode)) {
-            String query = "{\"fields.code\":\"" + productCode + "\"}";
+            queryObject.setQuery("{\"fields.code\":\"" + productCode + "\"}");
             findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
         }
 
@@ -232,6 +237,8 @@ public class ProductSkuService extends BaseService {
         String channelId = request.getChannelId();
         checkRequestChannelId(channelId);
 
+        String modifier = request.getModifier();
+
         //request.getProductPrices()
         if (request.getProductPrices() == null || request.getProductPrices().size() == 0) {
             VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70007;
@@ -239,6 +246,7 @@ public class ProductSkuService extends BaseService {
         }
 
         List<BulkUpdateModel> bulkList = new ArrayList<>();
+        List<CmsBtPriceLogModel> logList = new ArrayList<>();
 
         for (ProductPriceModel model : request.getProductPrices()) {
             VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70007;
@@ -248,7 +256,11 @@ public class ProductSkuService extends BaseService {
             if (model.getProductId() == null && model.getProductCode() == null) {
                 throw new ApiException(codeEnum.getErrorCode(), "ProductPrices ProductId or ProductCode not found!");
             }
-            updatePricesAddBlukUpdateModel(model, bulkList);
+            updatePricesAddBlukUpdateModel(channelId, model, bulkList, logList, modifier);
+        }
+
+        if (logList.size()>0) {
+            cmsBtPriceLogDao.insertCmsBtPriceLogList(logList);
         }
 
         if (bulkList.size() > 0) {
@@ -256,47 +268,158 @@ public class ProductSkuService extends BaseService {
             setResultCount(result, bulkWriteResult);
         }
 
+
+
         return result;
     }
 
     /**
      * 批量更新价格信息 根据CodeList
      */
-    public void updatePricesAddBlukUpdateModel(ProductPriceModel model, List<BulkUpdateModel> bulkList) {
+    public void updatePricesAddBlukUpdateModel(String channelId, ProductPriceModel model,
+                                               List<BulkUpdateModel> bulkList, List<CmsBtPriceLogModel> logList,
+                                               String modifier) {
         VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70007;
 
         HashMap<String, Object> productQueryMap = new HashMap<>();
+        CmsBtProductModel findModel;
+        JomgoQuery queryObject = new JomgoQuery();
+        queryObject.setProjection("prodId", "fields", "skus");
         if (model.getProductId() != null) {
             productQueryMap.put("prodId", model.getProductId());
+            queryObject.setQuery("{\"prodId\":" + model.getProductId() + "}");
+            findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
         } else {
             productQueryMap.put("fields.code", model.getProductCode());
+            queryObject.setQuery("{\"fields.code\":\"" + model.getProductCode() + "\"}");
+            findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
         }
 
+        if (findModel == null || findModel.getSkus() == null) {
+            return;
+        }
+        List<CmsBtProductModel_Sku> findSkuList = findModel.getSkus();
+
+        //Sku price set
+        List<Double> msrpPriceList = new ArrayList<>();
+        List<Double> retailPriceList = new ArrayList<>();
+        List<Double> salePriceList = new ArrayList<>();
+
+        if (model.getSkuPrices() != null && model.getSkuPrices().size()>0) {
+
+            for (CmsBtProductModel_Sku skuModelBefore : findSkuList) {
+                boolean isFindSku = false;
+
+                for (ProductSkuPriceModel skuModel : model.getSkuPrices()) {
+                    if (skuModel.getSkuCode().equals(skuModelBefore.getSkuCode())) {
+                        if (isPriceChanged(skuModelBefore, skuModel)) {
+                            CmsBtPriceLogModel cmsBtPriceLogModel = new CmsBtPriceLogModel();
+                            cmsBtPriceLogModel.setChannelId(channelId);
+                            cmsBtPriceLogModel.setProductId(findModel.getProdId().intValue());
+                            cmsBtPriceLogModel.setCode(findModel.getFields().getCode());
+                            cmsBtPriceLogModel.setSku(skuModel.getSkuCode());
+                            cmsBtPriceLogModel.setMsrpPrice(skuModel.getPriceMsrp().toString());
+                            cmsBtPriceLogModel.setRetailPrice(skuModel.getPriceRetail().toString());
+                            cmsBtPriceLogModel.setSalePrice(skuModel.getPriceSale().toString());
+                            cmsBtPriceLogModel.setComment("价格更新");
+                            cmsBtPriceLogModel.setCreater(modifier);
+                            logList.add(cmsBtPriceLogModel);
+
+                            HashMap<String, Object> skuQueryMap = new HashMap<>();
+                            if (model.getProductId() != null) {
+                                skuQueryMap.put("prodId", model.getProductId());
+                            } else {
+                                skuQueryMap.put("fields.code", model.getProductCode());
+                            }
+                            if (StringUtils.isEmpty(skuModel.getSkuCode())) {
+                                throw new ApiException(codeEnum.getErrorCode(), "SkuPrices.SkuCode not found!");
+                            }
+                            skuQueryMap.put("skus.skuCode", skuModel.getSkuCode());
+
+                            HashMap<String, Object> updateMap = new HashMap<>();
+                            if (skuModel.getPriceMsrp() != null) {
+                                updateMap.put("skus.$.priceMsrp", skuModel.getPriceMsrp());
+                                msrpPriceList.add(skuModel.getPriceMsrp());
+                            }
+                            if (skuModel.getPriceRetail() != null) {
+                                updateMap.put("skus.$.priceRetail", skuModel.getPriceRetail());
+                                retailPriceList.add(skuModel.getPriceMsrp());
+                            }
+                            if (skuModel.getPriceSale() != null) {
+                                updateMap.put("skus.$.priceSale", skuModel.getPriceSale());
+                                salePriceList.add(skuModel.getPriceMsrp());
+                            }
+
+                            if (updateMap.size() > 0) {
+                                BulkUpdateModel skuUpdateModel = new BulkUpdateModel();
+                                skuUpdateModel.setUpdateMap(updateMap);
+                                skuUpdateModel.setQueryMap(skuQueryMap);
+
+                                bulkList.add(skuUpdateModel);
+                            }
+                        }
+                        isFindSku = true;
+                        break;
+                    }
+                }
+
+                if (!isFindSku) {
+                    if (skuModelBefore.getPriceMsrp() != null) {
+                        msrpPriceList.add(skuModelBefore.getPriceMsrp());
+                    }
+                    if (skuModelBefore.getPriceRetail() != null) {
+                        retailPriceList.add(skuModelBefore.getPriceMsrp());
+                    }
+                    if (skuModelBefore.getPriceSale() != null) {
+                        salePriceList.add(skuModelBefore.getPriceMsrp());
+                    }
+                }
+            }
+        }
+
+        //get price price
+        Map<String, Object> resultField = getNewPriceWithFields(findModel.getFields(), msrpPriceList, retailPriceList, salePriceList);
+
         HashMap<String, Object> productUpdateMap = new HashMap<>();
-        if (model.getMsrpStart() != null) {
-            productUpdateMap.put("fields.msrpStart", model.getMsrpStart());
+        if (model.getPriceChange() != null) {
+            productUpdateMap.put("fields.priceChange", model.getPriceChange());
         }
-        if (model.getMsrpEnd() != null) {
-            productUpdateMap.put("fields.msrpEnd", model.getMsrpEnd());
+
+        //update product price
+        if ((boolean)resultField.get("isChanged")) {
+
+            if (resultField.get("priceMsrpSt") != null) {
+                productUpdateMap.put("fields.priceMsrpSt", resultField.get("priceMsrpSt"));
+            }
+            if (resultField.get("priceMsrpEd") != null) {
+                productUpdateMap.put("fields.priceMsrpEd", resultField.get("priceMsrpEd"));
+            }
+            if (resultField.get("priceRetailSt") != null) {
+                productUpdateMap.put("fields.priceRetailSt", resultField.get("priceRetailSt"));
+            }
+            if (resultField.get("priceRetailEd") != null) {
+                productUpdateMap.put("fields.priceRetailEd", resultField.get("priceRetailEd"));
+            }
+            if (resultField.get("priceSaleSt") != null) {
+                productUpdateMap.put("fields.priceSaleSt", resultField.get("priceSaleSt"));
+            }
+            if (resultField.get("priceSaleEd") != null) {
+                productUpdateMap.put("fields.priceSaleEd", resultField.get("priceSaleEd"));
+            }
+
+            CmsBtPriceLogModel cmsBtPriceLogModel = new CmsBtPriceLogModel();
+            cmsBtPriceLogModel.setChannelId(channelId);
+            cmsBtPriceLogModel.setProductId(findModel.getProdId().intValue());
+            cmsBtPriceLogModel.setCode(findModel.getFields().getCode());
+            cmsBtPriceLogModel.setSku("0");
+            cmsBtPriceLogModel.setMsrpPrice(resultField.get("priceMsrpSt") + "-" + resultField.get("priceMsrpEd"));
+            cmsBtPriceLogModel.setRetailPrice(resultField.get("priceRetailSt") + "-" + resultField.get("priceRetailEd"));
+            cmsBtPriceLogModel.setSalePrice(resultField.get("priceSaleSt") + "-" + resultField.get("priceSaleEd"));
+            cmsBtPriceLogModel.setComment("价格更新");
+            cmsBtPriceLogModel.setCreater(modifier);
+            logList.add(cmsBtPriceLogModel);
         }
-        if (model.getRetailPriceStart() != null) {
-            productUpdateMap.put("fields.retailPriceStart", model.getRetailPriceStart());
-        }
-        if (model.getRetailPriceEnd() != null) {
-            productUpdateMap.put("fields.retailPriceEnd", model.getRetailPriceEnd());
-        }
-        if (model.getSalePriceStart() != null) {
-            productUpdateMap.put("fields.salePriceStart", model.getSalePriceStart());
-        }
-        if (model.getSalePriceEnd() != null) {
-            productUpdateMap.put("fields.salePriceEnd", model.getSalePriceEnd());
-        }
-        if (model.getCurrentPriceStart() != null) {
-            productUpdateMap.put("fields.currentPriceStart", model.getCurrentPriceStart());
-        }
-        if (model.getCurrentPriceEnd() != null) {
-            productUpdateMap.put("fields.currentPriceEnd", model.getCurrentPriceEnd());
-        }
+
 
         if (productUpdateMap.size() > 0) {
             BulkUpdateModel productUpdateModel = new BulkUpdateModel();
@@ -305,42 +428,73 @@ public class ProductSkuService extends BaseService {
 
             bulkList.add(productUpdateModel);
         }
-
-        if (model.getSkuPrices() != null && model.getSkuPrices().size()>0) {
-            for (ProductSkuPriceModel skuMode : model.getSkuPrices()) {
-                HashMap<String, Object> skuQueryMap = new HashMap<>();
-                if (model.getProductId() != null) {
-                    skuQueryMap.put("prodId", model.getProductId());
-                } else {
-                    skuQueryMap.put("fields.code", model.getProductCode());
-                }
-                if (StringUtils.isEmpty(skuMode.getSkuCode())) {
-                    throw new ApiException(codeEnum.getErrorCode(), "SkuPrices.SkuCode not found!");
-                }
-                skuQueryMap.put("skus.skuCode", skuMode.getSkuCode());
-
-                HashMap<String, Object> updateMap = new HashMap<>();
-                if (skuMode.getPriceMsrp() != null) {
-                    updateMap.put("skus.$.priceMsrp", skuMode.getPriceMsrp());
-                }
-                if (skuMode.getPriceRetail() != null) {
-                    updateMap.put("skus.$.priceRetail", skuMode.getPriceRetail());
-                }
-                if (skuMode.getPriceSale() != null) {
-                    updateMap.put("skus.$.priceSale", skuMode.getPriceSale());
-                }
-
-                if (updateMap.size() > 0) {
-                    BulkUpdateModel skuUpdateModel = new BulkUpdateModel();
-                    skuUpdateModel.setUpdateMap(updateMap);
-                    skuUpdateModel.setQueryMap(skuQueryMap);
-
-                    bulkList.add(skuUpdateModel);
-                }
-            }
-        }
     }
 
+    /**
+     * 判断价格是否变更
+     */
+    private boolean isPriceChanged(CmsBtProductModel_Sku model1, ProductSkuPriceModel model2) {
+        BigDecimal msrp1 = new BigDecimal(model1.getPriceMsrp());
+        BigDecimal retail1 = new BigDecimal(model1.getPriceRetail());
+        BigDecimal sale1 = new BigDecimal(model1.getPriceSale());
+
+        BigDecimal msrp2 = new BigDecimal(model2.getPriceMsrp());
+        BigDecimal retail2 = new BigDecimal(model2.getPriceRetail());
+        BigDecimal sale2 = new BigDecimal(model2.getPriceSale());
+
+        return !(msrp1.compareTo(msrp2) == 0 && retail1.compareTo(retail2) == 0 && sale1.compareTo(sale2) == 0);
+    }
+
+    /**
+     * 更新field价格
+     */
+    private Map<String, Object> getNewPriceWithFields(
+            CmsBtProductModel_Field field,
+            List<Double> msrpPriceList,
+            List<Double> retailPriceList,
+            List<Double> salePriceList) {
+        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> msrpMap = getNewPriceScope(msrpPriceList, field.getPriceMsrpSt(), field.getPriceMsrpEd());
+        Map<String, Object> retailMap = getNewPriceScope(retailPriceList, field.getPriceRetailSt(), field.getPriceRetailEd());
+        Map<String, Object> saleMap = getNewPriceScope(salePriceList, field.getPriceSaleSt(), field.getPriceSaleEd());
+        if ((boolean) msrpMap.get("isChanged") || (boolean) retailMap.get("isChanged") || (boolean) saleMap.get("isChanged")) {
+            result.put("priceMsrpSt", msrpMap.get("start"));
+            result.put("priceMsrpEd", msrpMap.get("end"));
+            result.put("priceRetailSt", retailMap.get("start"));
+            result.put("priceRetailEd", retailMap.get("end"));
+            result.put("priceSaleSt", saleMap.get("start"));
+            result.put("priceSaleEd", saleMap.get("end"));
+            result.put("isChanged", true);
+        } else {
+            result.put("isChanged", false);
+        }
+        result.put("field", field);
+        return result;
+    }
+
+    /**
+     * 获取价格范围
+     */
+    private Map<String, Object> getNewPriceScope(List<Double> priceList, Double priceStart, Double priceEnd) {
+        Map<String, Object> result = new HashMap<>();
+        Double start = priceStart;
+        Double end = priceEnd;
+        Boolean isChanged = false;
+        if (priceList.size() > 0) {
+            priceList.sort((o1, o2) -> o2.compareTo(o1));
+            start = priceList.get(priceList.size() - 1);
+            end = priceList.get(0);
+            if (priceStart == null || priceEnd == null
+                || start.compareTo(priceStart) != 0
+                || end.compareTo(priceEnd) != 0) {
+                isChanged = true;
+            }
+        }
+        result.put("start", start);
+        result.put("end", end);
+        result.put("isChanged", isChanged);
+        return result;
+    }
 
     /**
      * sku deletes
@@ -362,7 +516,6 @@ public class ProductSkuService extends BaseService {
             throw new ApiException(codeEnum.getErrorCode(), "ProductIdSkuCodeListMap or ProductCodeSkuCodeListMap is not empty!");
         }
 
-        VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70007;
         List<BulkUpdateModel> bulkList = new ArrayList<>();
         if (request.getProductIdSkuCodeListMap() != null && request.getProductIdSkuCodeListMap().size() > 0) {
             for (Map.Entry<Long, Set<String>> product : request.getProductIdSkuCodeListMap().entrySet()) {
@@ -386,19 +539,15 @@ public class ProductSkuService extends BaseService {
      * addDeleteSkusBulk
      */
     public void addDeleteSkusBulk(String channelId, Long productId, String productCode, Set<String> skuCodes, List<BulkUpdateModel> bulkList) {
-        VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70007;
-
         if (skuCodes != null && skuCodes.size()>0) {
-
             CmsBtProductModel findModel = null;
             JomgoQuery queryObject = new JomgoQuery();
             queryObject.setProjection("skus");
             if (productId != null) {
-                String query = "{\"prodId\":" + productId + "}";
-                queryObject.setQuery(query);
+                queryObject.setQuery("{\"prodId\":" + productId + "}");
                 findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
             } else if (StringUtils.isEmpty(productCode)) {
-                String query = "{\"fields.code\":\"" + productCode + "\"}";
+                queryObject.setQuery("{\"fields.code\":\"" + productCode + "\"}");
                 findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
             }
 
@@ -413,28 +562,27 @@ public class ProductSkuService extends BaseService {
                 }
 
                 for (String skuCode : skuCodes) {
-                    if (StringUtils.isEmpty(skuCode)) {
-                        continue;
-                    }
-                    HashMap<String, Object> skuQueryMap = new HashMap<>();
-                    if (productId != null) {
-                        skuQueryMap.put("prodId", productId);
-                    } else {
-                        skuQueryMap.put("fields.code", productCode);
-                    }
-                    skuQueryMap.put("skus.skuCode", skuCode);
+                    if (!StringUtils.isEmpty(skuCode)) {
+                        HashMap<String, Object> skuQueryMap = new HashMap<>();
+                        if (productId != null) {
+                            skuQueryMap.put("prodId", productId);
+                        } else {
+                            skuQueryMap.put("fields.code", productCode);
+                        }
+                        skuQueryMap.put("skus.skuCode", skuCode);
 
-                    CmsBtProductModel_Sku findSku = findSkuMap.get(skuCode);
-                    if (findSku != null) {
-                        BasicDBObject skuObj = findSku.toUpdateBasicDBObject("");
+                        CmsBtProductModel_Sku findSku = findSkuMap.get(skuCode);
+                        if (findSku != null) {
+                            BasicDBObject skuObj = findSku.toUpdateBasicDBObject("");
 
-                        HashMap<String, Object> updateMap = new HashMap<>();
-                        updateMap.put("skus", skuObj);
+                            HashMap<String, Object> updateMap = new HashMap<>();
+                            updateMap.put("skus", skuObj);
 
-                        BulkUpdateModel skuUpdateModel = new BulkUpdateModel();
-                        skuUpdateModel.setUpdateMap(updateMap);
-                        skuUpdateModel.setQueryMap(skuQueryMap);
-                        bulkList.add(skuUpdateModel);
+                            BulkUpdateModel skuUpdateModel = new BulkUpdateModel();
+                            skuUpdateModel.setUpdateMap(updateMap);
+                            skuUpdateModel.setQueryMap(skuQueryMap);
+                            bulkList.add(skuUpdateModel);
+                        }
                     }
                 }
             }

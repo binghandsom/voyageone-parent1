@@ -75,8 +75,8 @@ public class SxPrepareData {
         images.add(new CmsBtProductModel_Field_Image("DTW68F16_001_b"));
         images.add(new CmsBtProductModel_Field_Image("DTW68F16_001_c"));
 
-        fields.setSalePriceStart(500.00);
-        fields.setSalePriceEnd(800.00);
+        fields.setPriceSaleSt(500.00);
+        fields.setPriceSaleEd(800.00);
 
         CmsBtProductModel_Group groups = product.getGroups();
 

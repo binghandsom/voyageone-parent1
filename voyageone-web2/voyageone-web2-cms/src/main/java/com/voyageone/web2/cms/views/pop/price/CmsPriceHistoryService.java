@@ -1,8 +1,8 @@
 package com.voyageone.web2.cms.views.pop.price;
 
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.web2.cms.dao.CmsBtPriceLogDao;
-import com.voyageone.web2.cms.model.CmsBtPriceLogModel;
+//import com.voyageone.web2.cms.dao.CmsBtPriceLogDao;
+import com.voyageone.web2.sdk.api.domain.CmsBtPriceLogModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,8 +18,8 @@ import java.util.Map;
 @Service
 public class CmsPriceHistoryService extends BaseAppService {
 
-    @Autowired
-    private CmsBtPriceLogDao cmsBtPriceLogDao;
+//    @Autowired
+//    private CmsBtPriceLogDao cmsBtPriceLogDao;
 
     /**
      * @param params 检索条件
@@ -28,19 +28,19 @@ public class CmsPriceHistoryService extends BaseAppService {
     public Map<String, Object> getPriceHistory(Map<String, Object> params) {
         int count;
         Map<String, Object> result = new HashMap<>();
-        List<CmsBtPriceLogModel> priceList;
-        boolean flag = (boolean) params.get("flag");
-        if (flag) {
-            String code = (String) params.get("code");
-            priceList = cmsBtPriceLogDao.selectPriceLogByCode(params);
-            count = cmsBtPriceLogDao.selectPriceLogByCodeCnt(params);
-        } else {
-            String sku = (String) params.get("sku");
-            priceList = cmsBtPriceLogDao.selectPriceLogBySku(params);
-            count = cmsBtPriceLogDao.selectPriceLogBySkuCnt(params);
-        }
-        result.put("list", priceList);
-        result.put("total", count);
+//        List<CmsBtPriceLogModel> priceList;
+//        boolean flag = (boolean) params.get("flag");
+//        if (flag) {
+//            String code = (String) params.get("code");
+//            priceList = cmsBtPriceLogDao.selectPriceLogByCode(params);
+//            count = cmsBtPriceLogDao.selectPriceLogByCodeCnt(params);
+//        } else {
+//            String sku = (String) params.get("sku");
+//            priceList = cmsBtPriceLogDao.selectPriceLogBySku(params);
+//            count = cmsBtPriceLogDao.selectPriceLogBySkuCnt(params);
+//        }
+//        result.put("list", priceList);
+//        result.put("total", count);
         return result;
     }
 }

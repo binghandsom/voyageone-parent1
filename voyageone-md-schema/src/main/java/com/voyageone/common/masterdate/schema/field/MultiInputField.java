@@ -35,7 +35,6 @@ public class MultiInputField extends com.voyageone.common.masterdate.schema.fiel
         }
     }
 
-    @JsonIgnore
     public List<Value> getValues() {
         return this.values;
     }
@@ -156,6 +155,7 @@ public class MultiInputField extends com.voyageone.common.masterdate.schema.fiel
     }
 
     @Override
+    @JsonIgnore
     public List<Value> getValue() {
         return this.values;
     }

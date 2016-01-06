@@ -251,11 +251,11 @@ public class CmsPromotionFileService extends BaseAppService {
 
             cell(row, 5, unlock).setCellValue(item.getFields().getCode());
 
-            cell(row, 6, unlock).setCellValue(item.getFields().getProductName());
+            cell(row, 6, unlock).setCellValue(item.getFields().getProductNameEn());
 
             cell(row, 7, unlock).setCellValue(StringUtils.null2Space2(String.valueOf(item.getBatchField().getCodeQty())));
 
-            cell(row, 8, unlock).setCellValue(getOutputPrice(item.getFields().getSalePriceStart(), item.getFields().getSalePriceEnd()));
+            cell(row, 8, unlock).setCellValue(getOutputPrice(item.getFields().getPriceSaleSt(), item.getFields().getPriceSaleEd()));
 
             cell(row, 9, unlock).setCellValue(item.getCatPath());
 
@@ -505,7 +505,7 @@ public class CmsPromotionFileService extends BaseAppService {
                         cmsBtProductModel.getFields().getModel(),
                         cmsBtProductModel.getFields().getCode(),
                         sku.getSkuCode(),
-                        cmsBtProductModel.getFields().getProductName(),
+                        cmsBtProductModel.getFields().getProductNameEn(),
                         sku.getPriceSale(),
                         "now()"
                         );

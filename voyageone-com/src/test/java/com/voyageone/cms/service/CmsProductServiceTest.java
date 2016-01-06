@@ -59,8 +59,8 @@ public class CmsProductServiceTest {
         fields.setShortDesEn("Stud Earrings with Cubic Zirconia in Sterling Silver- 简短描述英语" + random.nextInt(100));
         fields.setLongDesEn("Stud Earrings with Cubic Zirconia in Sterling Silver- 详情描述英语" + random.nextInt(100));
 
-        fields.setHsCodeCrop("Stud Ear"+ random.nextInt(10));
-        fields.setHsCodePrivate("Stud Ear"+ random.nextInt(10));
+        fields.setHsCodeCrop("Stud Ear" + random.nextInt(10));
+        fields.setHsCodePrivate("Stud Ear" + random.nextInt(10));
 
         fields.setPriceChange(random.nextInt(1));
 
@@ -95,15 +95,17 @@ public class CmsProductServiceTest {
         fields.setLock(index % 2 == 0);
 
 
-        fields.setMsrpStart(100.00 + random.nextInt(100));
-        fields.setMsrpEnd(200.00 + random.nextInt(100));
-        fields.setRetailPriceStart(300.00 + random.nextInt(100));
-        fields.setRetailPriceEnd(400.00 + random.nextInt(100));
-        fields.setSalePriceStart(500.00 + random.nextInt(100));
-        fields.setSalePriceEnd(600.00 + random.nextInt(100));
-        fields.setCurrentPriceStart(700.00 + random.nextInt(100));
-        fields.setCurrentPriceEnd(800.00 + random.nextInt(100));
+        fields.setPriceMsrpSt(100.00 + random.nextInt(100));
+        fields.setPriceMsrpEd(200.00 + random.nextInt(100));
+        fields.setPriceRetailSt(300.00 + random.nextInt(100));
+        fields.setPriceRetailEd(400.00 + random.nextInt(100));
+        fields.setPriceSaleSt(500.00 + random.nextInt(100));
+        fields.setPriceSaleEd(600.00 + random.nextInt(100));
+        fields.setCurPriceSt(700.00 + random.nextInt(100));
+        fields.setCurPriceEd(800.00 + random.nextInt(100));
         fields.setStatus("pedding");
+        fields.setTranslateStatus("0");
+        fields.setEditStatus("0");
         fields.setSizeType("Men" + random.nextInt(5));
 //        fields.setInventory(100 + random.nextInt(10));
         fields.setPriceChange(random.nextInt(1));
@@ -172,7 +174,7 @@ public class CmsProductServiceTest {
     @Test
     public void testSelectCmsBtProductById() throws Exception {
         CmsBtProductModel ret = cmsProductService.getProductById("001", 1);
-        System.out.println(ret.toString());
+        System.out.println(ret.getFeed().getCnAtts());
         System.out.println(ret.getSkus().get(0).isIncludeCart(CartEnums.Cart.valueOf("21")));
         System.out.println(ret.getSkus().get(0).isIncludeCart(CartEnums.Cart.valueOf("20")));
         System.out.println(ret.getGroups().getCurrentPriceEnd());
@@ -209,7 +211,7 @@ public class CmsProductServiceTest {
         List<CmsBtProductModel> lst = new ArrayList<>();
         int index = 0;
         for(int i=1; i<=100000; i++) {
-            CmsBtProductModel productModel = create("300", i, new Random());
+            CmsBtProductModel productModel = create("010", i, new Random());
             lst.add(productModel);
             index++;
             if (i%1000 == 0) {

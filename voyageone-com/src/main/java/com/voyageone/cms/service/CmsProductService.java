@@ -242,11 +242,18 @@ public class CmsProductService {
                 updateMap.put("groups.platforms.$.platformStatus", status.toString());
             }
 
-            BulkUpdateModel model = new BulkUpdateModel();
-            model.setUpdateMap(updateMap);
-            model.setQueryMap(queryMap);
-            bulkList.add(model);
+            if (updateMap.size() > 0) {
+                BulkUpdateModel model = new BulkUpdateModel();
+                model.setUpdateMap(updateMap);
+                model.setQueryMap(queryMap);
+                bulkList.add(model);
+            }
         }
-        return cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
+
+        BulkWriteResult result = null;
+        if (bulkList.size()>0) {
+            result = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
+        }
+        return result;
     }
 }

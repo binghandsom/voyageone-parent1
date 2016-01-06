@@ -80,16 +80,52 @@ public class CmsBtProductDao extends BaseMongoPartDao {
     }
 
     /**
+     * 获取商品Code 数量 根据CartId（含SKU）
+     * @param channelId
+     * @param cartId
+     *
+     */
+    public long selectProductByCartIdRecCount(String channelId, String cartId) {
+        String query = "{\"groups.platforms.cartId\":" + cartId + "}";
+
+        return countByQuery(query, channelId);
+    }
+
+    /**
+     * 获取商品Model 数量 根据CartId（含SKU）
+     * @param channelId
+     * @param cartId
+     */
+    public long selectGroupByCartIdRecCount(String channelId, String cartId) {
+        String query = "{\"groups.platforms.cartId\":" + cartId + ",\"groups.platforms.isMain\":1}";
+        return countByQuery(query, channelId);
+    }
+
+    /**
      * 获取SKUList 根据prodId
      */
     public List<CmsBtProductModel_Sku> selectSKUById(String channelId, long prodId) {
-        String query = "{\"prodId\":" + prodId + "}";
-        CmsBtProductModel product = selectOneWithQuery(query, channelId);
+        JomgoQuery queryObject = new JomgoQuery();
+        queryObject.setProjection("skus.skuCode");
+        queryObject.setQuery("{\"prodId\":" + prodId + "}");
+        CmsBtProductModel product = selectOneWithQuery(queryObject, channelId);
         if (product != null) {
             return product.getSkus();
         }
-        //Object jsonObj = JsonPath.parse(JacksonUtil.bean2Json(product)).json();
-        //List<Map> authors = JsonPath.read(jsonObj, "$.skus.*");
+        return null;
+    }
+
+    /**
+     * 获取SKUList 根据prodId
+     */
+    public List<CmsBtProductModel_Sku> selectSKUByCode(String channelId, String productCode) {
+        JomgoQuery queryObject = new JomgoQuery();
+        queryObject.setProjection("skus.skuCode");
+        queryObject.setQuery("{\"fields.code\":\"" + productCode + "\"}");
+        CmsBtProductModel product = selectOneWithQuery(queryObject, channelId);
+        if (product != null) {
+            return product.getSkus();
+        }
         return null;
     }
 

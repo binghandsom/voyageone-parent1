@@ -38,8 +38,8 @@ public class CmsBtPromotionCodeModel extends CmsBtPromotionGroupModel {
         super(productInfo, cartId, promotionId, operator);
         this.setProductId(productInfo.getProdId());
         this.setProductCode(productInfo.getFields().getCode());
-        this.setProductName(productInfo.getFields().getProductName());
-        this.setSalePrice(productInfo.getFields().getSalePriceStart());
+        this.setProductName(productInfo.getFields().getProductNameEn());
+        this.setSalePrice(productInfo.getFields().getPriceSaleSt());
         this.setMsrp(productInfo.getGroups().getMsrpEnd());
     }
 
