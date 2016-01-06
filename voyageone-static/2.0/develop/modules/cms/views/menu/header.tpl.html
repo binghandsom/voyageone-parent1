@@ -28,10 +28,10 @@
     <ul class="nav navbar-nav hidden-xs">
         <li class="dropdown vo_h_system" dropdown>
             <a href class="dropdown-toggle" dropdown-toggle>
-                <span class="m-n font thin" ng-bind="header.userInfo.application"></span><span class="caret"></span>
+                <span class="m-n font thin" ng-bind="header.userInfo.application.toUpperCase()"></span><span class="caret"></span>
             </a>
             <ul class="dropdown-menu arrow_box left" role="menu" ng-if="header.menuList.length > 1">
-                <li ng-repeat="menu in header.menuList" ng-if="menu.menuTitle !== header.userInfo.application">
+                <li ng-repeat="menu in header.menuList" ng-if="menu.menuTitle !== header.userInfo.application.toUpperCase()">
                     <a href="" ng-click="selectMenu(menu)" ng-bind="menu.menuTitle"></a>
                 </li>
             </ul>

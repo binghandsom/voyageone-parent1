@@ -112,6 +112,8 @@
   "TXT_RETAIL_PRICE": "Retail Price",
   "TXT_LIVE_STATUS": "Live Status",
   "TXT_TG": "TG",
+  "TXT_ERROR_MANAGER_MARKETING": "错误管理（运营）",
+  "TXT_ERROR_MANAGER_MAINTENANCE": "错误管理（维护）",
 
   "BTN_CANCEL": "Cancel",
   "BTN_CLEAR": "Clear",
