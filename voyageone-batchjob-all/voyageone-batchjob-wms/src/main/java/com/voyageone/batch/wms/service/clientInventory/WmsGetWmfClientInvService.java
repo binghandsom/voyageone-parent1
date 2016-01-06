@@ -61,8 +61,6 @@ public class WmsGetWmfClientInvService extends WmsGetClientInvBaseService {
                 inventoryBeans = getClientInvIncreace(getInventoryParamBean, channelId);
             }
 
-            MagentoApiServiceImpl s = new MagentoApiServiceImpl(channelId);
-
             if(inventoryBeans.size() > 0) {
 
                 final List<ClientInventoryBean> finalInventoryBeans = inventoryBeans;
@@ -140,7 +138,7 @@ public class WmsGetWmfClientInvService extends WmsGetClientInvBaseService {
 
             logger.info("----------"+channel.getFull_name() + " ItemDetail total size:" + itemDetailBeans.size());
 
-            MagentoApiServiceImpl magentoApiServiceImpl = new MagentoApiServiceImpl(channelId);
+            magentoApiServiceImpl.setOrderChannelId(channelId);
 
             int intCount = 0;
             int totalCount = 0;
