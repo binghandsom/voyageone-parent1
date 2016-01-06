@@ -24,7 +24,7 @@ define([
             field.type !== FieldTypes.multiComplex;
     }
 
-    function getConfig(field) {
+    function getIconClass(field) {
 
         var iconClass = '';
 
@@ -49,11 +49,56 @@ define([
                 break;
         }
 
-        return {
-            iconClass: iconClass,
-            isSimple: isSimpleType(field),
-            required: isRequiredField(field)
-        };
+        return iconClass;
+    }
+
+    function hasRequired(bean, beans, required) {
+
+        if (!bean.children || !bean.children.length) {
+            return (!!bean.required) === required;
+        }
+        var child = _.find(bean.children, function(id) {
+            return hasRequired(beans[id], beans, required);
+        });
+
+        return !!child;
+    }
+
+    function toArray(beans) {
+
+        // 转换为包装后的数组
+        var beanArray = _.map(beans, function (bean) {
+
+            if (bean.parentId) {
+                var parent
+                    = bean.parent
+                    = beans[bean.parentId];
+
+                if (!parent.children) {
+                    parent.children = [];
+                }
+
+                parent.children.push(bean.field.id);
+            }
+
+            bean.iconClass = getIconClass(bean.field);
+            bean.isSimple = isSimpleType(bean.field);
+            bean.required = isRequiredField(bean.field);
+
+            return bean;
+        });
+
+        // 设定字段,是否其子字段为必填
+        // 用于过滤
+        _.each(beanArray, function(bean) {
+            bean.hasRequired = hasRequired(bean, beans, true);
+            bean.hasOptional = hasRequired(bean, beans, false);
+        });
+
+        // 整理展示顺序
+        return beanArray.sort(function (a, b) {
+            return a.seq > b.seq ? 1 : -1
+        });
     }
 
     return cms.controller('feedPropMappingController', (function () {
@@ -90,6 +135,23 @@ define([
                  */
                 this.skuFields = null;
                 /**
+                 * 上述字段的真实绑定对象
+                 * @type {{fields: object[], common: object[], sku: object[]}}
+                 */
+                this.dataSources = {
+                    fields: null,
+                    common: null,
+                    sku: null
+                };
+                /**
+                 * 显示的过滤条件
+                 * @type {{hasRequired: boolean|null, matched: boolean|null}}
+                 */
+                this.show = {
+                    hasRequired: null,
+                    matched: null
+                };
+                /**
                  * 已匹配的主类目属性
                  * @type {string[]}
                  */
@@ -100,16 +162,35 @@ define([
 
             FeedPropMappingController.prototype = {
 
+                options: {
+                    hasRequired: {
+                        '必填情况(ALL)': null,
+                        '非必填': false,
+                        '必填': true
+                    },
+                    matched: {
+                        '设定情况(ALL)': null,
+                        '已设定': true,
+                        '未设定': false
+                    }
+                },
+
                 init: function () {
 
                     this.feedMappingService.getMainProps({
                         feedCategoryPath: this.feedCategoryPath
                     }).then(function (res) {
+
                         // 保存主数据类目(完整类目)
                         this.mainCategory = res.data.category;
                         this.fields = res.data.fields;
                         this.skuFields = res.data.sku;
                         this.commonFields = res.data.common;
+
+                        // 包装数据源
+                        this.dataSources.fields = toArray(this.fields);
+                        this.dataSources.common = toArray(this.commonFields);
+                        this.dataSources.sku = toArray(this.skuFields);
 
                         // 根据类目信息继续查询
                         this.feedMappingService.getMatched({
@@ -153,28 +234,24 @@ define([
 
                         // 你猜
                     });
+                },
+                /**
+                 * 确定某字段是否要显示
+                 * @param {object} bean
+                 * @return {boolean}
+                 */
+                shown: function(bean) {
+                    var result = true;
+                    if (this.show.hasRequired !== null) {
+                        result = (this.show.hasRequired ? bean.hasRequired : bean.hasOptional);
+                    } else if (this.show.matched !== null) {
+                        result = this.show.matched === _.contains(this.matchedMains, bean.field.id);
+                    }
+                    return result;
                 }
             };
 
             return FeedPropMappingController;
 
-        })())
-        .filter('fmExtendField', function () {
-
-            return function (fields) {
-
-                var fieldArray = _.map(fields, function (bean) {
-
-                    bean.x = getConfig(bean.field);
-
-                    if (bean.parentId) bean.x.parent = fields[bean.parentId];
-
-                    return bean;
-                });
-
-                return fieldArray.sort(function (a, b) {
-                    return a.seq > b.seq ? 1 : -1
-                });
-            }
-        });
+        })());
 });
