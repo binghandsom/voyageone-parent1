@@ -64,7 +64,7 @@ public class WmsGetClientInvService extends BaseTaskService {
                 wmsGetSearsClientInvService.sysSearsInventoryByClient(channelId, threads);
             }
             else if(channelId.equals(ChannelConfigEnums.Channel.WMF.getId())) {
-                wmsGetWmfClientInvService.sysSearsInventoryByClient(channelId, threads);
+                wmsGetWmfClientInvService.sysWmfInventoryByClient(channelId, threads);
             }
 
         }
