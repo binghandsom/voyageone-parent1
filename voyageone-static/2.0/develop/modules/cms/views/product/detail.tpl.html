@@ -8,17 +8,28 @@
 			</div>
 			<tab>
 				<tab-heading>&nbsp;{{'TXT_PRODUCT_DETAIL' | translate}}</tab-heading>
-				<div class="panel vo_panel">
-					<div class="container-fluid">
-						<div class="col-sm-12">
-							<form class="form-horizontal">
-								<schema-header ng-repeat="field in ctrl.productDetails.fields" data="field">
-									<schema-item data="field"></schema-item>
-								</schema-header>
-							</form>
-						</div><!--.col -->
+				<!-- Products table and controls -->
+				<form class="form-horizontal" name="productFieldForm">
+					<div class="panel vo_panel tab_panel">
+						<div class="row wrapper">
+							<div class="container-fluid">
+								<div class="col-sm-12">
+									<schema-header ng-repeat="field in ctrl.productDetails.masterFields" data="field" ng-if="field.isDisplay != 0">
+										<schema-item data="field"></schema-item>
+									</schema-header>
+								</div>
+							</div>
+						</div>
 					</div>
-				</div>
+					<div class="row text-center">
+						<div class="col-sm-12">
+							<div class="form-inline">
+								<button type="submit" class="btn btn-vo" translate="BTN_SAVE" ng-click="ctrl.saveProductInfo()"></button>
+								<button type="submit" class="btn btn-default" translate="BTN_CANCEL" ng-click="ctrl.cancelProductInfo()"></button>
+							</div><!-- .form-inline -->
+						</div>
+					</div>
+				</form><!-- .form -->
 			</tab>
 
 			<tab>
@@ -29,7 +40,7 @@
 						<div class="row wrapper">
 							<div class="container-fluid">
 								<div class="col-sm-6">
-									<div class="form-group" ng-repeat="feedOrgAttr in ctrl.productDetails.feedOrgAtts">
+									<div class="form-group" ng-repeat="feedOrgAttr in ctrl.productDetails.feedAttributes.orgAtts">
 										<label class="col-sm-3 control-label" ng-bind="feedOrgAttr.key"></label>
 										<div class="col-sm-8">
 											<input type="text" class="form-control" ng-model="feedOrgAttr.value" readonly>
@@ -40,7 +51,7 @@
 									</div>
 								</div><!--.col -->
 								<div class="col-sm-6">
-									<div class="form-group" ng-repeat="feedCnAttr in ctrl.productDetails.feedCnAtts">
+									<div class="form-group" ng-repeat="feedCnAttr in ctrl.productDetails.feedAttributes.cnAtts">
 										<label class="col-sm-3 control-label" ng-bind="feedCnAttr.key"></label>
 										<div class="col-sm-8">
 											<input type="text" class="form-control" ng-model="feedCnAttr.value">
@@ -53,8 +64,8 @@
 					<div class="row text-center">
 						<div class="col-sm-12">
 							<div class="form-inline">
-								<button type="submit" class="btn btn-vo" translate="BTN_SAVE"></button>
-								<button type="submit" class="btn btn-default" translate="BTN_CANCEL"></button>
+								<button type="submit" class="btn btn-vo" translate="BTN_SAVE" ng-click="ctrl.saveProductInfo()"></button>
+								<button type="submit" class="btn btn-default" translate="BTN_CANCEL" ng-click="ctrl.cancelProductCustomInfo()"></button>
 							</div><!-- .form-inline -->
 						</div>
 					</div>
@@ -67,163 +78,56 @@
 					<div class="table-responsive">
 						<table class="table table-hover b-t b-light vo_table vo_models">
 							<thead>
-							<tr><th class="mfb-xt text-center">Seq.</th>
-								<th class="mfb-x">SKU</th>
-								<th class="mfb-xt">UPC</th>
-								<th class="mfb-xt text-center">Size</th>
-								<th class="mfb-xt text-center">Inventory</th>
-								<th class="mfb-x">MSRP</th>
-								<th class="mfb-xx">price retail</th>
-								<th class="mfb-xx">Final Price</th>
+							<tr>
+								<th class="mfb-xt text-center" translate="TXT_SEQ"></th>
+								<th class="mfb-x" translate="TXT_SKU"></th>
+								<th class="mfb-xt" translate="TXT_UPC"></th>
+								<th class="mfb-xt text-center" translate="TXT_SIZE"></th>
+								<th class="mfb-xt text-center" translate="TXT_Inventory"></th>
+								<th class="mfb-x" translate="TXT_MSRP"></th>
+								<th class="mfb-xx" translate="TXT_RETAIL_PRICE"></th>
+								<th class="mfb-xx" translate="TXT_SALE_PRICE"></th>
 								<th class="mfb-xxxsm text-left">
 									<li class="dropdown" dropdown style="list-style: none">
-									<a href class="dropdown-toggle clear" dropdown-toggle>
-										<span class="">Live Status</span><b class="caret"></b>
-									</a>
-									<!-- dropdown -->
-									<ul class="dropdown-menu">
-										<li class="m-r-sm">
-											<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> TM </label>
-											<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> TG </label>
-											<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span> TD </label>
-											<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option4"><span class="fa fa-check"></span> JG </label>
-										</li>
-									</ul>
-										</li>
+										<a href class="dropdown-toggle clear" dropdown-toggle>
+											<span class="" translate="TXT_LIVE_STATUS"></span><b class="caret"></b>
+										</a>
+										<!-- dropdown -->
+										<ul class="dropdown-menu" ng-if="ctrl.productDetails.skus.length">
+											<li class="m-r-sm">
+												<label class="checkbox-inline c-checkbox"><input type="checkbox" ng-model="ctrl.bulkCartStatus[23]" ng-click="ctrl.selSkuCart(23)"><span class="fa fa-check"></span>&nbsp;{{'TXT_TG' | translate}}</label>
+											</li>
+										</ul>
+									</li>
 									<!-- / dropdown -->
 								</th>
-								<th class="mfb-xxs">Edit</th>
 							</tr>
 							</thead>
 							<tbody>
-							<tr>
-								<td class="text-center">1</td>
-								<td class="wtab-xs">LDB01-249</td>
-								<td>096303221174SDI163EARHD0964</td>
-								<td class="text-center">M</td>
-								<td class="text-center">530</td>
+							<tr ng-repeat="sku in ctrl.productDetails.skus">
+								<td class="text-center">{{$index + 1}}</td>
+								<td class="wtab-xs" ng-bind="sku.skuCode"></td>
+								<td ng-bind="sku.barcode"></td>
+								<td class="text-center" ng-bind="sku.size"></td>
+								<td class="text-center" ng-bind="sku.qty"></td>
 								<td>
-									<button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button>
+									<button type="button" popover-placement="left" class="btn btn-vo btn-xs" ng-bind="sku.priceMsrp"></button>
 								</td>
-								<td><input type="text" class="form-control"></td>
-								<td><input type="text" class="form-control"></td>
+								<td><input type="text" class="form-control" ng-model="sku.priceRetail"></td>
+								<td><input type="text" class="form-control" ng-model="sku.priceSale"></td>
 								<td class="text-left">
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> TM </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> TG </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span> TD </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option4"><span class="fa fa-check"></span> JG </label>
+									<label class="checkbox-inline c-checkbox"><input type="checkbox" ng-model="sku.SelSkuCarts[23]"><span class="fa fa-check"></span>&nbsp;{{'TXT_TG' | translate}}</label>
 								</td>
-								<td><button title="保存" class="btn btn-vo btn-xs"><i class="fa fa-floppy-o"></i></button></td>
-							</tr>
-							<tr>
-								<td class="text-center">2</td>
-								<td class="wtab-xs">LDB01-249</td>
-								<td>096303221174SDI163EARHD0964</td>
-								<td class="text-center">S</td>
-								<td class="text-center">650</td>
-								<td>
-									<button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button>
-								</td><td><input type="text" class="form-control"></td><td><input type="text" class="form-control"></td>
-								<td class="text-left">
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> TM </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> TG </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span> TD </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option4"><span class="fa fa-check"></span> JG </label>
-								</td>
-								<td><button title="保存" class="btn btn-vo btn-xs"><i class="fa fa-floppy-o"></i></button></td>
-							</tr>
-							<tr>
-								<td class="text-center">3</td>
-								<td class="wtab-xs">LDB01-249</td>
-								<td>096303221174SDI163EARHD0964</td>
-								<td class="text-center">L</td>
-								<td class="text-center">480</td>
-								<td>
-									<button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button>
-								</td><td><input type="text" class="form-control"></td><td><input type="text" class="form-control"></td>
-								<td class="text-left">
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> TM </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> TG </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span> TD </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option4"><span class="fa fa-check"></span> JG </label>
-								</td>
-								<td><button title="保存" class="btn btn-vo btn-xs"><i class="fa fa-floppy-o"></i></button></td>
-							</tr>
-							<tr>
-								<td class="text-center">4</td>
-								<td class="wtab-xs">LDB01-249</td>
-								<td>096303221174SDI163EARHD0964</td>
-								<td class="text-center">S</td>
-								<td class="text-center">5650</td>
-								<td>
-									<button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button>
-								</td><td><input type="text" class="form-control"></td><td><input type="text" class="form-control"></td>
-								<td class="text-left">
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> TM </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> TG </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span> TD </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option4"><span class="fa fa-check"></span> JG </label>
-								</td>
-								<td><button title="保存" class="btn btn-vo btn-xs"><i class="fa fa-floppy-o"></i></button></td>
-							</tr>
-							<tr>
-								<td class="text-center">5</td>
-								<td class="wtab-xs">LDB01-249</td>
-								<td>096303221174SDI163EARHD0964</td>
-								<td class="text-center">S</td>
-								<td class="text-center">4650</td>
-								<td>
-									<button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button>
-								</td><td><input type="text" class="form-control"></td><td><input type="text" class="form-control"></td>
-								<td class="text-left">
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> TM </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> TG </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span> TD </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option4"><span class="fa fa-check"></span> JG </label>
-								</td>
-								<td><button title="保存" class="btn btn-vo btn-xs"><i class="fa fa-floppy-o"></i></button></td>
-							</tr>
-							<tr>
-								<td class="text-center">6</td>
-								<td class="wtab-xs">LDB01-249</td>
-								<td>096303221174SDI163EARHD0964</td>
-								<td class="text-center">XS</td>
-								<td class="text-center">2650</td>
-								<td>
-									<button popover="MSRP: 1,099.00~2,099.00 / Current Price: 1,099.00~2,099.00" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-vo btn-xs">2900</button>
-								</td><td><input type="text" class="form-control"></td><td><input type="text" class="form-control"></td>
-								<td class="text-left">
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> TM </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> TG </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option4"><span class="fa fa-check"></span> JG </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option4"><span class="fa fa-check"></span> JG </label>
-								</td>
-								<td><button title="保存" class="btn btn-vo btn-xs"><i class="fa fa-floppy-o"></i></button></td>
 							</tr>
 							</tbody>
 						</table>
 					</div><!-- .table-responsive -->
-
-					<footer class="panel-footer">
-						<div class="row">
-							<div class="col-sm-4 hidden-xs">
-							</div>
-							<div class="col-sm-4 text-center">
-								<small class="text-muted inline m-t-sm m-b-sm">showing 20-30 of 50 items</small>
-							</div>
-							<div class="col-sm-4 text-right text-center-xs">
-								<div>
-									<pagination boundary-links="true" total-items="totalItems" ng-model="currentPage" class="pagination-sm m-t-none m-b" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></pagination>
-								</div>
-							</div>
-						</div>
-					</footer> <!-- .panel-footer -->
 				</div> <!-- .panel -->
 				<div class="row text-center">
 					<div class="col-sm-12">
 						<div class="form-inline">
-							<button type="submit" class="btn btn-vo">保存</button>
-							<button type="submit" class="btn btn-default">关闭</button>
+							<button type="submit" class="btn btn-vo" translate="BTN_SAVE" ng-click="ctrl.saveSkuInfo()"></button>
+							<button type="submit" class="btn btn-default" translate="BTN_CANCEL" ng-click="ctrl.cancelSkuInfo()"></button>
 						</div><!-- .form-inline -->
 					</div>
 				</div>
@@ -254,7 +158,7 @@
 					<div class="row text-center">
 						<div class="col-sm-12">
 							<div class="form-inline">
-								<button type="submit" class="btn btn-vo" translate="BTN_SAVE" ng-click="ctrl.AddFeedAttrToCustom()"></button>
+								<button type="submit" class="btn btn-vo" translate="BTN_SAVE" ng-click="ctrl.addFeedAttrToCustom()"></button>
 								<button type="submit" class="btn btn-default" translate="BTN_CANCEL" ng-click="ctrl.cancelAddFeedAttrToCustom()"></button>
 							</div><!-- .form-inline -->
 						</div>
