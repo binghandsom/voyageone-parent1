@@ -16,13 +16,17 @@ public class CmsBtFeedProductImageDao extends BaseDao {
         return selectList("select_feed_image", feedImage);
     }
 
-    public void updateImagebyUrl(CmsBtFeedProductImageModel feedImage) {
+    public void insertImagebyUrl(CmsBtFeedProductImageModel feedImage) {
         insert("insert_feed_image", feedImage);
     }
 
-    public void updateImagebyUrl(List<CmsBtFeedProductImageModel> imageModels) {
+    public void insertImagebyUrl(List<CmsBtFeedProductImageModel> imageModels) {
         imageModels.forEach(s -> {
-            updateImagebyUrl(s);
+            insertImagebyUrl(s);
         });
+    }
+
+    public void updateImage(CmsBtFeedProductImageModel feedImage) {
+        update("update_feed_image", feedImage);
     }
 }
