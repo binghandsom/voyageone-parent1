@@ -84,6 +84,7 @@ define([
             bean.iconClass = getIconClass(bean.field);
             bean.isSimple = isSimpleType(bean.field);
             bean.required = isRequiredField(bean.field);
+            bean.matched = _.contains(toArray.matchedMains, bean.field.id);
 
             return bean;
         });
@@ -100,6 +101,12 @@ define([
             return a.seq > b.seq ? 1 : -1
         });
     }
+
+    /**
+     * 已匹配的主类目属性
+     * @type {string[]}
+     */
+    toArray.matchedMains = null;
 
     return cms.controller('feedPropMappingController', (function () {
             /**
@@ -151,11 +158,6 @@ define([
                     hasRequired: null,
                     matched: null
                 };
-                /**
-                 * 已匹配的主类目属性
-                 * @type {string[]}
-                 */
-                this.matchedMains = null;
 
                 this.saveMapping = this.saveMapping.bind(this);
             }
@@ -183,22 +185,26 @@ define([
 
                         // 保存主数据类目(完整类目)
                         this.mainCategory = res.data.category;
+
+                        // 保存字段 Map 数据
                         this.fields = res.data.fields;
                         this.skuFields = res.data.sku;
                         this.commonFields = res.data.common;
-
-                        // 包装数据源
-                        this.dataSources.fields = toArray(this.fields);
-                        this.dataSources.common = toArray(this.commonFields);
-                        this.dataSources.sku = toArray(this.skuFields);
 
                         // 根据类目信息继续查询
                         this.feedMappingService.getMatched({
                             feedCategoryPath: this.feedCategoryPath,
                             mainCategoryPath: this.mainCategory.catFullPath
                         }).then(function (res) {
+
                             // 保存已匹配的属性
-                            this.matchedMains = res.data;
+                            toArray.matchedMains = res.data;
+
+                            // 包装数据源
+                            this.dataSources.fields = toArray(this.fields);
+                            this.dataSources.common = toArray(this.commonFields);
+                            this.dataSources.sku = toArray(this.skuFields);
+
                         }.bind(this));
                     }.bind(this));
                 },
@@ -245,7 +251,7 @@ define([
                     if (this.show.hasRequired !== null) {
                         result = (this.show.hasRequired ? bean.hasRequired : bean.hasOptional);
                     } else if (this.show.matched !== null) {
-                        result = this.show.matched === _.contains(this.matchedMains, bean.field.id);
+                        result = this.show.matched === bean.matched;
                     }
                     return result;
                 }

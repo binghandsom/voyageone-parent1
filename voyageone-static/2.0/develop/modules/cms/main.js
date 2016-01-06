@@ -33,6 +33,7 @@ require.config({
         'cms': 'modules/cms/app'
     },
     shim: {
+        'voyageone-com': ['jquery'],
         'voyageone-angular-com': ['angularAMD'],
         'angular-sanitize': ['angular'],
         'angular-route': ['angular'],

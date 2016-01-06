@@ -211,8 +211,7 @@ define([
                     var result = true;
                     if (this.matched.category !== null) {
                         result = this.matched.category === this.isCategoryMatched(val);
-                    }
-                    if (this.matched.property !== null) {
+                    } else if (this.matched.property !== null) {
                         result = this.matched.property === this.isPropertyMatched(val);
                     }
                     return result;
