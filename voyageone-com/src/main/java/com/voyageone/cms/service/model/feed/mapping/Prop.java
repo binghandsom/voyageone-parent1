@@ -1,5 +1,6 @@
 package com.voyageone.cms.service.model.feed.mapping;
 
+import com.voyageone.cms.enums.MappingPropType;
 import com.voyageone.cms.service.model.CmsBtFeedMappingModel;
 
 import java.util.List;
@@ -13,11 +14,21 @@ import java.util.List;
  */
 public class Prop {
 
+    private MappingPropType type;
+
     private String prop;
 
     private List<Mapping> mappings;
 
     private List<Prop> children;
+
+    public MappingPropType getType() {
+        return type;
+    }
+
+    public void setType(MappingPropType type) {
+        this.type = type;
+    }
 
     public String getProp() {
         return prop;
