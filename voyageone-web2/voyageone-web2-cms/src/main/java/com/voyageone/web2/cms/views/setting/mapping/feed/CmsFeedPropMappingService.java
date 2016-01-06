@@ -5,6 +5,8 @@ import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtFeedCategoryTreeDao;
 import com.voyageone.cms.service.model.*;
 import com.voyageone.cms.service.model.feed.mapping.Prop;
+import com.voyageone.common.configs.Type;
+import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.ComplexField;
 import com.voyageone.common.masterdate.schema.field.Field;
@@ -198,7 +200,17 @@ public class CmsFeedPropMappingService extends BaseAppService {
 
         CmsFeedCategoryModel feedCategoryModel = feedMappingService.findByPath(feedCategoryPath, treeModelx);
 
-        return feedCategoryModel == null ? null : feedCategoryModel.getAttribute();
+        // 从 type/value 中取得 Feed 通用的属性
+        Map<String, List<String>> attributes = Type.getTypeList(49, "en")
+                .stream()
+                .collect(toMap(TypeBean::getValue, t -> new ArrayList<>(0)));
+
+        if (feedCategoryModel == null)
+            return attributes;
+
+        attributes.putAll(feedCategoryModel.getAttribute());
+
+        return attributes;
     }
 
     /**

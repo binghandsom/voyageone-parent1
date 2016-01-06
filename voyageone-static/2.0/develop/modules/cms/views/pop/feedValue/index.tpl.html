@@ -50,7 +50,10 @@
                                 ng-model="ctrl.condition.operation"></select>
                     </div>
                     <div class="col-sm-3" ng-hide="ctrl.condition.operation.isSingle">
+                        <input type="text" ng-if="!ctrl.feedAttributes[ctrl.condition.property].length"
+                               ng-model="ctrl.condition.value" title="条件值"/>
                         <select class="form-control" title="条件检查的值"
+                                ng-if="ctrl.feedAttributes[ctrl.condition.property].length"
                                 ng-options="v as v for v in ctrl.feedAttributes[ctrl.condition.property]"
                                 ng-model="ctrl.condition.value"></select>
                     </div>
