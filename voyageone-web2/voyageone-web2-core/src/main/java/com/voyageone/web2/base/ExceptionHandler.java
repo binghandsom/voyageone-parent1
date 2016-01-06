@@ -166,7 +166,9 @@ public class ExceptionHandler implements HandlerExceptionResolver {
         if (msgModel == null) {
             ajaxResponse.setCode(code);
             ajaxResponse.setDisplayType(DisplayType.ALERT);
-            ajaxResponse.setMessage(String.format("this msg_code [%s(%s)] is not exists !!", code, lang));
+            // TODO 暂时未处理根据Code来获取message
+//            ajaxResponse.setMessage(String.format("this msg_code [%s(%s)] is not exists !!", code, lang));
+            ajaxResponse.setMessage(code);
         } else {
             ajaxResponse.setMessage(msgModel, args);
         }
