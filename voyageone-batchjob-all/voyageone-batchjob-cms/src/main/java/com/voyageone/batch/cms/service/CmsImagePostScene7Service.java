@@ -112,6 +112,7 @@ public class CmsImagePostScene7Service extends BaseTaskService {
 
             subSuccessImageUrlList.forEach(cmsBtFeedProductImageModel -> {
                 cmsBtFeedProductImageModel.setSentFlag(1);
+                cmsBtFeedProductImageModel.setModifier(getTaskName());
                 cmsBtFeedProductImageDao.updateImage(cmsBtFeedProductImageModel);
             });
         }
