@@ -351,4 +351,10 @@ public interface WmsConstants {
         public final static String AREA = "1";
         public final static String INVENTORY = "2";
     }
+
+    //是否有库存
+    final class IN_STOCK {
+        public final static String YES = "1";
+        public final static String NO = "0";
+    }
 }
