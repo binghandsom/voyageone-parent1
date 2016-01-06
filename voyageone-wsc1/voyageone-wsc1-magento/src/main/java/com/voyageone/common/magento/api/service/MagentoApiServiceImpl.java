@@ -28,6 +28,7 @@ public class MagentoApiServiceImpl {
 	/**
 	 * 店铺渠道
 	 */
+	@Autowired
 	private String orderChannelId;
 	/**
 	 * 登陆用数据Bean
@@ -38,14 +39,6 @@ public class MagentoApiServiceImpl {
 	 * 顾客信息
 	 */
 	private CustomerBean customer = new CustomerBean();
-	/**
-	 * 用户名
-	 */
-	private String userName;
-	/**
-	 * 密码
-	 */
-	private String apiKey;
 	
 	private MagentoServiceStub stub;
 	
@@ -408,14 +401,14 @@ public class MagentoApiServiceImpl {
 						ArrayOfString productIds = new ArrayOfString();
 
 						for (String sku : skuListItem) {
-							if (StringUtils.isNullOrBlank2(sku)) {
+							if (!StringUtils.isNullOrBlank2(sku)) {
 								// sku列表追加
 								productIds.addComplexObjectArray(sku);
 							}
 						}
 
 						// 请求的sku列表不为空
-						if (productIds.getComplexObjectArray().length > 0) {
+						if (productIds.getComplexObjectArray() != null && productIds.getComplexObjectArray().length > 0) {
 							// 入力参数设置sku列表
 							request.setProductIds(productIds);
 
@@ -486,7 +479,7 @@ public class MagentoApiServiceImpl {
 				end = skuListSize;
 			}
 			List<String> skuListItem = skuList.subList(start, end);
-			if (skuList != null && skuList.size() > 0) {
+			if (skuListItem != null && skuListItem.size() > 0) {
 				skuTotalList.add(skuListItem);
 			}
 		}
