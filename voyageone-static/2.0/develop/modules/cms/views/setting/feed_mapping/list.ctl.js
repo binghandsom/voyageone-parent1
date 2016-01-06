@@ -198,7 +198,8 @@ define([
              */
             isPropertyMatched: function (feedCategoryBean) {
                 // 如果有匹配并且确实匹配完了,才算是属性匹配完成
-                return this.isCategoryMatched(feedCategoryBean) && feedCategoryBean.mapping.matchOver;
+                return this.isCategoryMatched(feedCategoryBean)
+                    && !!feedCategoryBean.mapping.matchOver;
             },
             /**
              * 刷新表格

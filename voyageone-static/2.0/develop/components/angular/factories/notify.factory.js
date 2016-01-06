@@ -37,38 +37,46 @@
  */
 
 angular.module('voyageone.angular.factories.notify', [])
-  .factory('notify', function ($filter) {
-    function notify(options) {
 
-      if (!options) return;
-      if (_.isString(options)) options = {message: options};
-      if (!_.isObject(options)) return;
+    .factory('notify', function ($filter) {
 
-      var values;
+        /**
+         * @ngdoc function
+         * @name voNotify
+         * @description
+         * 自动关闭的弹出提示框
+         */
+        function notify(options) {
 
-      // 为 translate 的格式化提供支持，检测类型并转换
-      if (_.isObject(options.message)) {
+            if (!options) return;
+            if (_.isString(options)) options = {message: options};
+            if (!_.isObject(options)) return;
 
-        values = options.message.values;
-        options.message = options.message.id;
-      }
+            var values;
 
-      options.message = $filter('translate')(options.message, values);
+            // 为 translate 的格式化提供支持，检测类型并转换
+            if (_.isObject(options.message)) {
 
-      return $.notify(options.message, options);
-    }
+                values = options.message.values;
+                options.message = options.message.id;
+            }
 
-    notify.success = function (message) {
-      return notify({message: message, className: "success"});
-    };
+            options.message = $filter('translate')(options.message, values);
 
-    notify.warning = function (message) {
-      return notify({message: message, className: "warning"});
-    };
+            return $.notify(options.message, options);
+        }
 
-    notify.danger = function (message) {
-      return notify({message: message, className: "danger"});
-    };
+        notify.success = function (message) {
+            return notify({message: message, className: "success"});
+        };
 
-    return notify;
-  });
+        notify.warning = function (message) {
+            return notify({message: message, className: "warning"});
+        };
+
+        notify.danger = function (message) {
+            return notify({message: message, className: "danger"});
+        };
+
+        return notify;
+    });
