@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.setting.mapping.feed;
 
+import com.mongodb.WriteResult;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.cms.service.CmsBtChannelCategoryService;
 import com.voyageone.cms.service.CmsFeedMappingService.CategoryContext;
@@ -340,5 +341,33 @@ public class CmsFeedMappingService extends BaseAppService {
             feedCategoryModelStream = Stream.concat(feedCategoryModelStream, children.stream().flatMap(this::flatten));
 
         return feedCategoryModelStream;
+    }
+
+    /**
+     * 设定 MatchOver 为 True (1)
+     *
+     * @param feedCategoryPath Feed 类目路径
+     * @param user             UserSessionBean
+     * @return Update 结果
+     */
+    public boolean setMatchOver(String feedCategoryPath, UserSessionBean user) {
+
+        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(user.getSelChannelId());
+
+        CmsFeedCategoryModel feedCategoryModel = findByPath(feedCategoryPath, treeModelx);
+
+        if (feedCategoryModel == null)
+            throw new BusinessException("没找到 Feed 类目");
+
+        CmsFeedMappingModel feedMappingModel = findMapping(feedCategoryModel, m -> m.getDefaultMapping() == 1);
+
+        if (feedMappingModel == null)
+            throw new BusinessException("没找到 Mapping");
+
+        feedMappingModel.setMatchOver(1);
+
+        WriteResult result = cmsMtFeedCategoryTreeDao.update(treeModelx);
+
+        return result.getN() > 0;
     }
 }

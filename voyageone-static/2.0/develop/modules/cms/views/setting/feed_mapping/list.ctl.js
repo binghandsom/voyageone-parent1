@@ -16,7 +16,7 @@ define([
          * @description
          * Feed Mapping 画面的 Controller 类
          * @param {FeedMappingService} feedMappingService
-         * @param {function} notify
+         * @param {voNotify} notify
          * @param {function} confirm
          * @constructor
          */
@@ -102,7 +102,7 @@ define([
                             // 从后台获取更新后的 mapping
                             // 刷新数据
                             var feedCategoryBean = this.findCategory(feedCategory.path);
-                            feedCategoryBean.mapping = _.find(res.data, function(m){
+                            feedCategoryBean.mapping = _.find(res.data, function (m) {
                                 return m.defaultMapping === 1;
                             });
                         } else {
@@ -177,7 +177,7 @@ define([
                     // 从后台获取更新后的 mapping
                     // 刷新数据
                     var feedCategoryBean = this.findCategory(context.from.path);
-                    feedCategoryBean.mapping = _.find(res.data, function(m){
+                    feedCategoryBean.mapping = _.find(res.data, function (m) {
                         return m.defaultMapping === 1;
                     });
                 }.bind(this));
@@ -187,7 +187,7 @@ define([
              * @param {FeedCategoryBean} feedCategoryBean
              * @return {boolean}
              */
-            isCategoryMatched: function(feedCategoryBean) {
+            isCategoryMatched: function (feedCategoryBean) {
                 // 只要默认 mapping 存在即已匹配
                 return !!feedCategoryBean.mapping;
             },
@@ -196,7 +196,7 @@ define([
              * @param {FeedCategoryBean} feedCategoryBean
              * @return {boolean}
              */
-            isPropertyMatched: function(feedCategoryBean) {
+            isPropertyMatched: function (feedCategoryBean) {
                 // 如果有匹配并且确实匹配完了,才算是属性匹配完成
                 return this.isCategoryMatched(feedCategoryBean) && feedCategoryBean.mapping.matchOver;
             },
@@ -217,7 +217,28 @@ define([
                     return result;
                 }.bind(this));
                 // 绑定&显示
-                this.tableSource = rows.sort(function(a,b){return a.seq > b.seq ? 1 : -1;});
+                this.tableSource = rows.sort(function (a, b) {
+                    return a.seq > b.seq ? 1 : -1;
+                });
+            },
+
+            directMatchOver: function (feedCategoryBean) {
+
+                this.confirm('确定要直接完成该类目的属性匹配吗?').result.then(function () {
+
+                    this.feedMappingService.directMatchOver({
+                        feedCategoryPath: feedCategoryBean.model.path
+                    }).then(function (res) {
+
+                        var bool = res.data;
+                        if (bool) {
+                            this.notify.success('保存成功')
+                        } else {
+                            this.notify.danger('保存失败');
+                        }
+
+                    }.bind(this));
+                }.bind(this));
             }
         };
 
