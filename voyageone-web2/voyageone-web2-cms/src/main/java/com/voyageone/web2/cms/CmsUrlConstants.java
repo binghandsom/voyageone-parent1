@@ -42,6 +42,8 @@ public interface CmsUrlConstants {
             String GET_FEED_ATTRS = "getFeedAttributes";
 
             String SAVE_FIELD_MAPPING = "saveFieldMapping";
+
+            String DIRECT_MATCH_OVER = "directMatchOver";
         }
     }
 
@@ -168,7 +170,7 @@ public interface CmsUrlConstants {
 
             String  SAVE_PRODUCT_INFO = "saveProductInfo";
 
-            String CHANGE_CATEGORY="chagneCategory";
+            String CHANGE_CATEGORY="changeCategory";
 
             String CONFIRM_CHANGE = "confirmChange";
 

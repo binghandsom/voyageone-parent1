@@ -16,18 +16,38 @@ define([
 	function productDetailService ($q, $productDetailService) {
 
 		this.getProductInfo = getProductInfo;
+		this.saveProductInfo = saveProductInfo;
+		this.saveSkuInfo = saveSkuInfo;
+		this.saveProductDetail = saveProductDetail;
 
+		/**
+		 * 获取页面产品信息
+		 * @param formData
+         * @returns {*}
+         */
 		function getProductInfo (formData) {
 			var defer = $q.defer();
 			$productDetailService.getProductInfo(formData)
 			.then (function (res) {
 				var result = angular.copy(res);
-				result.data.feedOrgAtts = _returnNew(res.data.feedOrgAtts, res.data.customFeedIdList);
-				result.data.feedCnAtts = _returnNew(res.data.feedCnAtts);
 
-				var feedKeys = _returnKeys(res.data.feedOrgAtts);
+				// 设定custom列表中的feed被选中
+				result.data.productInfo.feedAttributes.orgAtts = _returnNew(res.data.productInfo.feedAttributes.orgAtts, result.data.productInfo.feedAttributes.customIds);
+				result.data.productInfo.feedAttributes.cnAtts = _returnNew(res.data.productInfo.feedAttributes.cnAtts);
+
+				// 设定哪些原始feed被添加到custom列表
+				var feedKeys = _returnKeys(res.data.productInfo.feedAttributes.orgAtts);
 				result.data.feedKeys = feedKeys;
 				result.data.feedAtts = _returnNew(res.data.feedAtts, feedKeys);
+
+				// 设置sku的渠道列表是否被选中
+				angular.forEach(result.data.skus, function (sku) {
+					var SelSkuCarts = [];
+					angular.forEach(sku.skuCarts, function(skuCart) {
+						SelSkuCarts[skuCart] = true;
+					});
+					sku.SelSkuCarts = SelSkuCarts;
+				});
 
 				defer.resolve(result);
 			});
@@ -35,6 +55,39 @@ define([
 			return defer.promise;
 		}
 
+		/**
+		 * 保存产品详情和产品自定义
+		 * @param formData
+		 * @returns {*|Promise}
+         */
+		function saveProductInfo (formData) {
+
+			// TODO 需要对formData做处理
+			return $productDetailService.saveProductInfo(formData);
+		}
+
+		/**
+		 * 保存SKU列表信息
+		 * @param formData
+		 * @returns {*}
+         */
+		function saveSkuInfo (formData) {
+			// TODO 需要对formData做处理
+			return $productDetailService.saveSkuInfo(formData);
+		}
+
+		/**
+		 * 同时保存产品详情,产品自定义,SKU列表信息
+		 * @param productFormData
+		 * @param skuFormData
+		 * @returns {*|Promise.<T>}
+         */
+		function saveProductDetail (productFormData, skuFormData) {
+			// TODO 需要对formData做处理
+			return saveProductInfo(productFormData).then(function () {
+				return saveSkuInfo(skuFormData);
+			})
+		}
 
 		/**
 		 * 返回新对象
@@ -43,12 +96,12 @@ define([
 		 */
 		function _returnNew (data, list) {
 			var result = [];
-			_.forEach(data, function (value) {
+			for(var key in data) {
 				if (list != null)
-					result.push({key: _.keys(value)[0], value: _.values(value)[0], selected: _.contains(list, _.keys(value)[0])});
+					result.push({key: key, value: data[key], selected: _.contains(list, key)});
 				else
-					result.push({key: _.keys(value)[0], value: _.values(value)[0]});
-			});
+					result.push({key: key, value: data[key]});
+			}
 			return result;
 		}
 
@@ -60,114 +113,12 @@ define([
          */
 		function _returnKeys (data) {
 			var result = [];
-			_.forEach(data, function (value) {
-				result.push(_.keys(value)[0]);
-			});
+			for(var key in data) {
+				result.push(key);
+			}
 			return result;
 		}
 
 	}
-/*
-	function productPropsEditService{
-			/!**
-			 * 页面初始化.
-			 *!/
-			//this.doInit=function(formData){
-			//
-			//	 var defer = $q.defer();
-		     //       ajaxService.ajaxPost(formData, cmsAction.masterPropSetting.init,null)
-		     //           .then(function(response) {
-		     //
-		     //               defer.resolve(response);
-		     //           });
-		     //       return defer.promise;
-			//};
-			
-			/!**
-			 * 类目搜索.
-			 *!/
-	        this.doSearch = function (formData) {
-	            var defer = $q.defer();
-	            ajaxService.ajaxPost(formData, cmsAction.masterPropSetting.search,null)
-	                .then(function(response) {
-	                    
-	                    defer.resolve(response);
-	                });
-	            return defer.promise;
-	        };
-	        /!**
-	         * 处理提交.
-	         *!/
-	        this.doSubmit = function (formData) {
-	            var defer = $q.defer();
-	            ajaxService.ajaxPost(formData, cmsAction.masterPropSetting.submit,null)
-	                .then(function(response) {
-	                    
-	                    defer.resolve(response);
-	                });
-	            return defer.promise;
-	        };
-	        /!**
-	         * 获取类目菜单.
-	         *!/
-	        this.getCategoryNav = function () {
-	            var defer = $q.defer();
-	            ajaxService.ajaxPost({}, cmsAction.masterPropSetting.getCategoryNav,null)
-	                .then(function(response) {
-	                    
-	                    defer.resolve(response);
-	                });
-	            return defer.promise;
-	        };
-	        
-	        /!**
-	         * 清空表格最后一行数据.
-	         *!/
-	        this.clearItem= function(source) {
-
-			    for (var key in source) {
-					if (source[key].propType===1) {
-						source[key].propValue="";
-					}else if (source[key].propType===2) {
-						source[key].propValue="";
-					}else if (source[key].propType===3) {
-						var options = source[key].propValue;
-						for (var optionKey in options) {
-							options[optionKey].optionValue="";
-						}
-					}else if (source[key].propType===4) {
-						source[key].propValue="";
-					}else if (source[key].propType===5 || source[key].propType===6) {
-						this.clearItem(source[key].children);
-					}
-			   } 
-			};
-			
-			/!**
-			 * 设置必填项样式.
-			 *!/
-			this.setBackgroundColor =function() {
-				//设定必填项背景颜色
-				$('li:contains("必须填写")').parents("fieldset").css('background-color', '#fcf0ef');
-				$('li:contains("必须填写")').parents("fieldset").find("fieldset").css('background-color', '#fcf0ef');
-				$('li:contains("必须填写")').parent().children().filter('li:contains("禁用规则")').parents("fieldset").css('background-color', '#fbf6ee');
-				$('li:contains("必须填写")').parent().children().filter('li:contains("禁用规则")').parents("fieldset").find("fieldset").css('background-color', '#fbf6ee');
-				
-			};
-			
-			 /!**
-	         * 获取类目菜单.
-	         *!/
-	        this.doSwitchCategory = function (parms) {
-	            var defer = $q.defer();
-	            ajaxService.ajaxPost(parms, cmsAction.masterPropSetting.switchCategory,null)
-	                .then(function(response) {
-	                    
-	                    defer.resolve(response);
-	                });
-	            return defer.promise;
-	        };
-
-    }]);*/
 
 });

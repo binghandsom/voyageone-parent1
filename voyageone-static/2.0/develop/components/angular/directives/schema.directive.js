@@ -171,12 +171,12 @@ angular.module('voyageone.angular.directives.schema', [])
         // data
         var templateKey_date = "voyageone.angular.directives.schemaDate.tpl.html";
         if (!$templateCache.get(templateKey_date)) {$templateCache.put(templateKey_date,
-            '<div class="input-group" style="width: 180px;" ng-controller="datePickerCtrl"><input replaceInfo type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.$$data.value" date-model-format="{{formatDate}}" is-open="opened" datepicker-options="dateOptions" close-text="Close" /><span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button></span></div>');}
+            '<div class="input-group" style="width: 180px;" ng-controller="datePickerCtrl"><input replaceInfo type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.$$data.value" date-model-format="{{formatDate}}" is-open="opened" datepicker-options="dateOptions" close-text="Close" /><span class="input-group-btn"><button replaceInfo type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button></span></div>');}
 
         // datetime
         var templateKey_datetime = "voyageone.angular.directives.schemaDatetime.tpl.html";
         if (!$templateCache.get(templateKey_datetime)) {$templateCache.put(templateKey_datetime,
-            '<div class="input-group" style="width: 180px;" ng-controller="datePickerCtrl"><input replaceInfo type="text" class="form-control" datepicker-popup="{{formatDateTime}}" ng-model="$parent.$$data.value" is-open="opened" datepicker-options="dateOptions" close-text="Close" /><span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button></span></div>');}
+            '<div class="input-group" style="width: 180px;" ng-controller="datePickerCtrl"><input replaceInfo type="text" class="form-control" datepicker-popup="{{formatDateTime}}" ng-model="$parent.$$data.value" is-open="opened" datepicker-options="dateOptions" close-text="Close" /><span class="input-group-btn"><button replaceInfo type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button></span></div>');}
 
         // textarea
         var templateKey_textarea = "voyageone.angular.directives.schemaTextarea.tpl.html";
@@ -196,7 +196,7 @@ angular.module('voyageone.angular.directives.schema', [])
         // multi check-checkbox
         var templateKey_checkbox = "voyageone.angular.directives.schemaCheckbox.tpl.html";
         if (!$templateCache.get(templateKey_checkbox)) {$templateCache.put(templateKey_checkbox,
-            '<label class="checkbox-inline c-checkbox" ng-repeat="option in $$data.options"><input type="checkbox" ng-value="option.value" ng-click="checkboxValue()" ng-model="showHtmlData.checkValues[option.value]"><span class="fa fa-check"></span> {{option.displayName}}</label>');}
+            '<label class="checkbox-inline c-checkbox" ng-repeat="option in $$data.options"><input type="checkbox" ng-value="option.value" ng-click="checkboxValue(option.value)" ng-checked="isSelected(option.value)"><span class="fa fa-check"></span> {{option.displayName}}</label>');}
 
         // multi complex
         var templateKey_multiComplex = "voyageone.angular.directives.schemaMultiComplex.tpl.html";
@@ -245,10 +245,10 @@ angular.module('voyageone.angular.directives.schema', [])
                         tempHtml = $templateCache.get(templateKey_input).replace("replaceInfo", schema.html());
                         break;
                     case fieldTypes.DATE:
-                        tempHtml = $templateCache.get(templateKey_date).replace("replaceInfo", schema.html());
+                        tempHtml = $templateCache.get(templateKey_date).replace("replaceInfo", schema.html()).replace("replaceInfo", schema.html());
                         break;
                     case fieldTypes.DATETIME:
-                        tempHtml = $templateCache.get(templateKey_datetime).replace("replaceInfo", schema.html());
+                        tempHtml = $templateCache.get(templateKey_datetime).replace("replaceInfo", schema.html()).replace("replaceInfo", schema.html());
                         break;
                     case fieldTypes.TEXTAREA:
                         tempHtml = $templateCache.get(templateKey_textarea).replace("replaceInfo", schema.html());
@@ -284,11 +284,24 @@ angular.module('voyageone.angular.directives.schema', [])
                 * 设置checkbox被选中的value值处理
                 * @param value
                 */
-                scope.checkboxValue = function () {
+                scope.checkboxValue = function (value) {
+                    if (_.contains(scope.showHtmlData.checkValues, value)) {
+                        scope.showHtmlData.checkValues.splice(_.indexOf(scope.showHtmlData.checkValues, value), 1);
+                    } else {
+                        scope.showHtmlData.checkValues.push(value);
+                    }
                     scope.$$data.values = [];
-                    angular.forEach(_returnKey(scope.showHtmlData.checkValues), function (obj) {
+                    angular.forEach(scope.showHtmlData.checkValues, function (obj) {
                         scope.$$data.values.push({id: null, value: obj});
                     })
+                };
+
+                /**
+                 * 判断是否被选中
+                 * @param value
+                 */
+                scope.isSelected = function (value) {
+                    return _.contains(scope.showHtmlData.checkValues, value)
                 };
 
                 /**
@@ -332,7 +345,7 @@ angular.module('voyageone.angular.directives.schema', [])
                 function _setCheckValues (values) {
                     if (values != undefined && values != null) {
                         angular.forEach(values, function (obj) {
-                            schema.checkValues(obj.value, true);
+                            schema.checkValues(obj.value);
                         })
                     }
                 }
@@ -347,13 +360,24 @@ angular.module('voyageone.angular.directives.schema', [])
                     angular.forEach(data.values, function (value) {
                         var tempFieldMap = {};
                         angular.forEach(data.fields, function (field) {
-                            if (value.fieldMap[field.id] != undefined)
-                                tempFieldMap[field.id] = value.fieldMap[field.id];
-                            else
-                                tempFieldMap[field.id] = field;
+                            var tempField = angular.copy(field);
+                            if (value.fieldMap[field.id] != undefined) {
+                                tempField.value = value.fieldMap[field.id].value;
+                            }
+                            tempFieldMap[field.id] = tempField;
                         });
                         tempValues.push({fieldMap: angular.copy(tempFieldMap)});
                     });
+
+                    // 如果values为空,默认添加空白行
+                    if (_.isEmpty(data.values)) {
+                        var newFieldMap = {};
+                        angular.forEach(data.fields, function (field) {
+                            eval("newFieldMap." + field.id + "=field");
+                        });
+
+                        tempValues.push({fieldMap: angular.copy(newFieldMap)});
+                    }
 
                     return tempValues;
                 }
@@ -364,6 +388,7 @@ angular.module('voyageone.angular.directives.schema', [])
                  * @private
                  */
                 function _resetComplex (data) {
+                    return data.values;
                     //var tempValues = {};
                     //angular.forEach(data.fields, function (value) {
                     //    if (value.type === fieldTypes.COMPLEX) {
@@ -475,7 +500,8 @@ angular.module('voyageone.angular.directives.schema', [])
                  * @private
                  */
                 function _disableRule (disableRule) {
-                    if ("true" == disableRule.value) {
+                    if ("true" == disableRule.value
+                    && disableRule.dependGroup == null) {
                         schema.html("ng-disabled=\"true\"");
                     }
                 }
@@ -606,13 +632,13 @@ angular.module('voyageone.angular.directives.schema', [])
                  * @param object
                  * @returns {*}
                  */
-                function _returnKey(object) {
-                    var result = [];
-                    angular.forEach(object, function(value, index) {
-                        if (value) result.push(index);
-                    });
-                    return result;
-                }
+                //function _returnKey(object) {
+                //    var result = [];
+                //    angular.forEach(object, function(value, index) {
+                //        if (value) result.push(index);
+                //    });
+                //    return result;
+                //}
             }
         }
     });

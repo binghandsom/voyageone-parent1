@@ -82,8 +82,8 @@ angular.module('voyageone.angular.factories.schema', [])
                 return value !== undefined ? _schemaInfo.tipMsg.push(value) : _schemaInfo.tipMsg;
             };
 
-            this.checkValues = function (index, value) {
-                return value !== undefined ? _schemaInfo.checkValues[index] = value : _schemaInfo.checkValues;
+            this.checkValues = function (value) {
+                return value !== undefined ? _schemaInfo.checkValues.push(value) : _schemaInfo.checkValues;
             };
 
             this.schemaInfo = function () {
