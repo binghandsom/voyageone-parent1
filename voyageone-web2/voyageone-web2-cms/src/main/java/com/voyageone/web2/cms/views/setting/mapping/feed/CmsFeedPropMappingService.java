@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.setting.mapping.feed;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.cms.enums.MappingPropType;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtFeedCategoryTreeDao;
 import com.voyageone.cms.service.model.*;
@@ -27,8 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.*;
 
 /**
  * 为属性匹配画面提供功能
@@ -84,11 +84,13 @@ public class CmsFeedPropMappingService extends BaseAppService {
 
         // 拍平主类目的字段信息
         // 并构造画面特供模型
-        Map<String, FieldBean> mainFieldBeanMap = wrapFields(categorySchemaModel.getFields().stream());
+        Map<String, FieldBean> mainFieldBeanMap = wrapFields(categorySchemaModel.getFields().stream(),
+                MappingPropType.FIELD);
 
         Map<String, FieldBean> skuFieldBeanMap = wrapFields(
                 ((MultiComplexField) categorySchemaModel.getSku())
-                        .getFields().stream());
+                        .getFields().stream(),
+                MappingPropType.SKU);
 
         // 构造一个纯字段名的集合,用于共通属性的检查
         List<String> names = Stream.concat(
@@ -113,7 +115,8 @@ public class CmsFeedPropMappingService extends BaseAppService {
                     // 过滤名称相同的
                     return !names.contains(f.getName());
                 });
-        Map<String, FieldBean> commonFieldBeanMap = wrapFields(commonFieldStream);
+        Map<String, FieldBean> commonFieldBeanMap = wrapFields(commonFieldStream,
+                MappingPropType.COMMON);
 
         // 最后清除主类目模型的字段信息,因为不需要再重复提供
         categorySchemaModel.setFields(null);
@@ -145,7 +148,8 @@ public class CmsFeedPropMappingService extends BaseAppService {
             return null;
 
         return flattenFinalProp(props)
-                .filter(p -> p.getProp().equals(getFieldMappingBean.getField()))
+                .filter(p -> p.getProp().equals(getFieldMappingBean.getField())
+                        && getFieldMappingBean.getType().equals(p.getType()))
                 .findFirst()
                 .orElse(null);
     }
@@ -158,7 +162,7 @@ public class CmsFeedPropMappingService extends BaseAppService {
      * @param userSessionBean  当前用户
      * @return 属性名集合
      */
-    public List<String> getMatched(String feedCategoryPath, String mainCategoryPath, UserSessionBean userSessionBean) {
+    public Map<MappingPropType, List<String>> getMatched(String feedCategoryPath, String mainCategoryPath, UserSessionBean userSessionBean) {
 
         CmsBtFeedMappingModel btFeedMappingModel = com$feedMappingService.getMapping(userSessionBean.getSelChannel(),
                 feedCategoryPath, mainCategoryPath);
@@ -169,12 +173,11 @@ public class CmsFeedPropMappingService extends BaseAppService {
         List<Prop> props = btFeedMappingModel.getProps();
 
         if (props == null)
-            return new ArrayList<>(0);
+            return new HashMap<>(0);
 
         return flattenFinalProp(props)
-                .filter(p -> p.getMappings() != null && p.getMappings().size() > 0)
-                .map(Prop::getProp)
-                .collect(toList());
+                .filter(p -> p.getMappings() != null && p.getMappings().size() > 0 && p.getType() != null)
+                .collect(groupingBy(Prop::getType, mapping(Prop::getProp, toList())));
     }
 
     /**
@@ -227,10 +230,10 @@ public class CmsFeedPropMappingService extends BaseAppService {
         if (feedMappingModel == null)
             throw new BusinessException("没找到 Mapping");
 
-        Prop Submitted = saveFieldMappingBean.getPropMapping();
+        Prop submitted = saveFieldMappingBean.getPropMapping();
         List<String> fieldPath = saveFieldMappingBean.getFieldPath();
 
-        if (Submitted == null || fieldPath == null || fieldPath.size() < 1)
+        if (submitted == null || fieldPath == null || fieldPath.size() < 1 || submitted.getType() == null)
             throw new BusinessException("没有参数");
 
         List<Prop> props = feedMappingModel.getProps();
@@ -238,9 +241,9 @@ public class CmsFeedPropMappingService extends BaseAppService {
         if (props == null)
             feedMappingModel.setProps(props = new ArrayList<>());
 
-        Prop prop = findProp(fieldPath, props);
+        Prop prop = findProp(fieldPath, submitted.getType(), props);
 
-        prop.setMappings(Submitted.getMappings());
+        prop.setMappings(submitted.getMappings());
 
         feedMappingModel.setMatchOver(hasComplete(feedMappingModel) ? 1 : 0);
 
@@ -268,21 +271,23 @@ public class CmsFeedPropMappingService extends BaseAppService {
      * 按属性路径查找或创建树形的属性结构
      *
      * @param propPath 属性路径
+     * @param type     Mapping 的属性类型
      * @param props    顶层属性集合
      * @return 返回最叶子级
      */
-    private Prop findProp(List<String> propPath, List<Prop> props) {
+    private Prop findProp(List<String> propPath, MappingPropType type, List<Prop> props) {
 
         Prop prop = null;
         String last = propPath.get(propPath.size() - 1);
 
         for (String name : propPath) {
             // 先找找
-            prop = findProp(props, name);
+            prop = findProp(props, type, name);
             // 没找到就造个新的,并同时扔到父亲的子集合中
             if (prop == null) {
                 props.add(prop = new Prop());
                 prop.setProp(name);
+                prop.setType(type);
             }
             // 看看还会不会在进行下一次查询
             if (last.equals(name)) break;
@@ -296,10 +301,13 @@ public class CmsFeedPropMappingService extends BaseAppService {
         return prop;
     }
 
-    private Prop findProp(List<Prop> props, String name) {
+    private Prop findProp(List<Prop> props, MappingPropType type, String name) {
         if (props.size() < 1) return null;
         if (props.size() < 2) return props.get(0).getProp().equals(name) ? props.get(0) : null;
-        return props.stream().filter(p -> p.getProp().equals(name)).findFirst().orElse(null);
+        return props.stream()
+                .filter(p -> p.getProp().equals(name) && type.equals(p.getType()))
+                .findFirst()
+                .orElse(null);
     }
 
     private Stream<Prop> flattenFinalProp(List<Prop> props) {
@@ -317,12 +325,12 @@ public class CmsFeedPropMappingService extends BaseAppService {
         return flattenFinalProp(children);
     }
 
-    private Map<String, FieldBean> wrapFields(Stream<Field> fieldStream) {
+    private Map<String, FieldBean> wrapFields(Stream<Field> fieldStream, MappingPropType type) {
 
         final int[] seq = {0};
 
         return fieldStream
-                .flatMap(f -> flattenField(0, null, f))
+                .flatMap(f -> flattenField(0, null, type, f))
                 .map(f -> {
                     f.setSeq(seq[0]);
                     seq[0]++;
@@ -331,12 +339,13 @@ public class CmsFeedPropMappingService extends BaseAppService {
                 .collect(toMap(mfb -> mfb.getField().getId(), mfb -> mfb));
     }
 
-    private Stream<FieldBean> flattenField(int level, String parentId, Field field) {
+    private Stream<FieldBean> flattenField(int level, String parentId, MappingPropType type, Field field) {
 
         FieldBean fieldBean = new FieldBean();
         fieldBean.setField(field);
         fieldBean.setParentId(parentId);
         fieldBean.setLevel(level);
+        fieldBean.setType(type);
 
         Stream<FieldBean> stream = Stream.of(fieldBean);
 
@@ -346,12 +355,12 @@ public class CmsFeedPropMappingService extends BaseAppService {
             children = ((ComplexField) field)
                     .getFields()
                     .stream()
-                    .flatMap(f -> flattenField(level + 1, field.getId(), f));
+                    .flatMap(f -> flattenField(level + 1, field.getId(), type, f));
         } else if (field.getType() == FieldTypeEnum.MULTICOMPLEX) {
             children = ((MultiComplexField) field)
                     .getFields()
                     .stream()
-                    .flatMap(f -> flattenField(level + 1, field.getId(), f));
+                    .flatMap(f -> flattenField(level + 1, field.getId(), type, f));
         }
 
         return children == null ? stream : Stream.concat(stream, children);

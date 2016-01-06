@@ -1,5 +1,7 @@
 package com.voyageone.web2.cms.bean.setting.mapping.feed;
 
+import com.voyageone.cms.enums.MappingPropType;
+
 /**
  * 获取具体到字段的 Mapping 设定的请求参数
  *
@@ -14,6 +16,8 @@ public class GetFieldMappingBean {
     private String mainCategoryPath;
 
     private String field;
+
+    private MappingPropType type;
 
     public String getFeedCategoryPath() {
         return feedCategoryPath;
@@ -37,5 +41,13 @@ public class GetFieldMappingBean {
 
     public void setField(String field) {
         this.field = field;
+    }
+
+    public MappingPropType getType() {
+        return type;
+    }
+
+    public void setType(MappingPropType type) {
+        this.type = type;
     }
 }

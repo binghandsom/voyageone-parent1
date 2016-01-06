@@ -7,7 +7,7 @@
     <h5 class="text-vo m-l">珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰</h5>
     <div class="p-l-r">
         <form role="form" class="form-horizontal m-r-sm m-l-sm">
-            <div class="form-group category_mapping_bg">
+            <div class="form-group">
                 <label class="col-sm-1 checkbox-inline c-radio needsclick">
                     <input id="pop-set-match-val-radios-feed" type="radio" name="pop-set-match-val-radios"
                            ng-model="ctrl.mappingSetting.type" ng-value="'propFeed'"/>
@@ -20,7 +20,7 @@
                             ng-model="ctrl.value.feed"></select>
                 </div>
             </div>
-            <div class="form-group category_mapping_bg">
+            <div class="form-group">
                 <label class="col-sm-1 checkbox-inline c-radio needsclick">
                     <input id="pop-set-match-val-radios-text" type="radio" name="pop-set-match-val-radios"
                            ng-model="ctrl.mappingSetting.type" ng-value="'text'"/>
@@ -32,7 +32,7 @@
                 </div>
             </div>
 
-            <div class="form-group category_mapping_bg">
+            <div class="form-group">
                 <label class="col-sm-1 checkbox-inline c-checkbox needsclick">
                     <input id="pop-set-match-val-condition" type="checkbox" ng-model="ctrl.mappingSetting.condition"/>
                     <span class="fa fa-check"></span>
@@ -60,6 +60,39 @@
                 </div>
             </div>
         </form>
+        <div class="table-responsive">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>选择条件</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    <div class="form-inline col-sm-12">
+                            <select class="form-control m-r-sm" title="被用来判断的 Feed 属性">
+                                <option>12312345612</option>
+                                <option>123123456</option>
+                                <option>123123456</option>
+                            </select>
+                            <select class="form-control m-r-sm" title="条件操作">
+                                <option>12312345612</option>
+                                <option>123123456</option>
+                                <option>123123456</option>
+                            </select>
+                            <select class="form-control m-r-sm" title="条件检查的值">
+                                <option>123123456125612</option>
+                                <option>123123456</option>
+                                <option>123123456</option>
+                            </select>
+                        <button title="追加" ng-click="addOption()" class="btn btn-success pull-right"><i class="fa fa-plus"></i></button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
     </div>
     <div class="attribute_top">
         <h5 class="text-vo m-l font-bold">值设定说明：</h5>
