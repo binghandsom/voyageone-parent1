@@ -6,19 +6,21 @@
 define(function () {
     /**
      * 条件操作
-     * @param name 描述名称
+     * @param name 名称(必须同步Java,否则无法构造)
+     * @param desc 描述名称
      * @param isSingle 是否是单值操作
      * @constructor
      */
-    function Operation(name, isSingle) {
+    function Operation(name, desc, isSingle) {
         this.name = name;
+        this.desc = desc;
         this.isSingle = !!isSingle;
     }
 
     return {
-        IS_NULL: new Operation("为空", true),
-        IS_NOT_NULL: new Operation("不为空", true),
-        EQUALS: new Operation("等于"),
-        NOT_EQUALS: new Operation("不等于")
-    }
+        IS_NULL: new Operation("IS_NULL", "为空", true),
+        IS_NOT_NULL: new Operation("IS_NOT_NULL", "不为空", true),
+        EQUALS: new Operation("EQUALS", "等于"),
+        NOT_EQUALS: new Operation("NOT_EQUALS", "不等于")
+    };
 });
