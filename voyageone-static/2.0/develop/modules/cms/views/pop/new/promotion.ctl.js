@@ -13,7 +13,7 @@ define([
 
         $scope.initialize  = function () {
             if(items){
-                $scope.promotion = items
+                $scope.promotion = _.clone(items);
             }
         }
 
@@ -21,15 +21,19 @@ define([
 
             if(!items) {
                 promotionService.insertPromotion($scope.promotion).then(function (res) {
+                    for (key in $scope.promotion) {
+                        items[key] = $scope.promotion[key];
+                    }
                     $scope.$close();
                 }, function (res) {
-                    alert("e");
                 })
             }else{
                 promotionService.updatePromotion($scope.promotion).then(function (res) {
+                    for (key in $scope.promotion) {
+                        items[key] = $scope.promotion[key];
+                    }
                     $scope.$close();
                 }, function (res) {
-                    alert("e");
                 })
             }
         }
