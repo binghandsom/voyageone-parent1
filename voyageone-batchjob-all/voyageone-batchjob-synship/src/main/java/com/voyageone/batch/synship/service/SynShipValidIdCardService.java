@@ -258,8 +258,10 @@ public class SynShipValidIdCardService extends BaseTaskService {
         SmsConfigBean configBean = smsConfig.getAvailable(channel, targetCode1);
 
         if (configBean == null || StringUtils.isEmpty(configBean.getContent())) {
-            // 如果短信内容的配置，完全没有获取到的话，说明配置错误，不能继续
-            throw new BusinessException(String.format("没找到可用的短信内容，渠道 [ %s ]，Code1 [ %s ]", channel, targetCode1));
+            // 如果短信内容的配置，完全没有获取到的话，说明不需要发送短信，处理中止
+            $info("没找到可用的短信内容，渠道 [ %s ]，Code1 [ %s ]", channel, targetCode1);
+            return;
+//            throw new BusinessException(String.format("没找到可用的短信内容，渠道 [ %s ]，Code1 [ %s ]", channel, targetCode1));
         }
 
         $info("发送短信");
