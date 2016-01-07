@@ -386,10 +386,10 @@ public class CmsSetMainPropService extends BaseTaskService {
                     if (feedPropMappingType == FeedPropMappingType.FEED) {
                         // 获取属性的值
                         value = mapMainPropTodoItemListBeanList.get(feedMappingBean.getValue());
-                        value = "{\"ruleWordList\":[{\"type\":\"TEXT\", \"value\":\"" + value + "\"}]}";
+                        value = "{\"ruleWordList\":[{\"type\":\"TEXT\", \"value\":\"" + value.replace("\"", "\\\"") + "\"}]}";
                     } else if (feedPropMappingType == FeedPropMappingType.OPTIONS) {
                         value = feedMappingBean.getValue();
-                        value = "{\"ruleWordList\":[{\"type\":\"TEXT\", \"value\":\"" + value + "\"}]}";
+                        value = "{\"ruleWordList\":[{\"type\":\"TEXT\", \"value\":\"" + value.replace("\"", "\\\"") + "\"}]}";
                     } else if (feedPropMappingType == FeedPropMappingType.CMS) {
                         value = feedMappingBean.getValue();
                         value = "{\"ruleWordList\":[{\"type\":\"CMS\", \"value\":[\"CmsModelEnum\",\"" + value + "\"]}]}";
@@ -400,7 +400,7 @@ public class CmsSetMainPropService extends BaseTaskService {
                             value = feedMappingBean.getValue();
                         } else {
                             value = feedMappingBean.getValue();
-                            value = "{\"ruleWordList\":[{\"type\":\"TEXT\", \"value\":\"" + value + "\"}]}";
+                            value = "{\"ruleWordList\":[{\"type\":\"TEXT\", \"value\":\"" + value.replace("\"", "\\\"") + "\"}]}";
                         }
 
                     }
