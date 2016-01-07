@@ -192,6 +192,19 @@ public class SynShipValidIdCardService extends BaseTaskService {
             // 调用跨境易的接口，验证身份证信息的有效性
             IdCardHistory idCardHistory = callEmsValid(idCardBean);
 
+            // 超时错误时，下次继续验证
+            if (isTimeout(idCardHistory)) {
+                $info("超时错误，等待下次验证");
+                continue;
+            }
+
+            // 身份证接口异常，下次继续验证
+            if (isInterfaceError(idCardHistory)){
+                $info("接口异常，等待下次验证");
+                logIssue("跨境易身份证接口异常", "Name：" + idCardHistory.getShip_name() + "，IdCard：" + idCardHistory.getId_card() + "，Message：" + idCardHistory.getMessage());
+                continue;
+            }
+
             // 获取 ShortUrl，尝试从其中获取 channel
             // 后续多处使用
             ShortUrlBean shortUrlBean = shortUrlDao.getInfosBySourceOrderId(idCardHistory.getSource_order_id());
@@ -203,19 +216,6 @@ public class SynShipValidIdCardService extends BaseTaskService {
             // 如果通过了，继续执行一些后续逻辑，然后继续下一个
             if (isPass(idCardHistory)) {
                 afterPass(idCardHistory, idCardBean, shortUrlBean);
-                continue;
-            }
-
-            // 超时错误时，下次继续验证
-            if (isTimeout(idCardHistory)) {
-                $info("超时错误，等待下次验证");
-                continue;
-            }
-
-            // 身份证接口异常，下次继续验证
-            if (isInterfaceError(idCardHistory)){
-                $info("接口异常，等待下次验证");
-                logIssue("跨境易身份证接口异常", "Name：" + idCardHistory.getShip_name() + "，IdCard：" + idCardHistory.getId_card() + "，Message：" + idCardHistory.getMessage());
                 continue;
             }
 

@@ -674,7 +674,7 @@ public class ProductController extends BaseController {
 			// 输入参数出力
 			logger.info("参数：" + JsonUtil.toJson(requestMap));
 
-			productEditService.doUpdateCustomInfo(requestMap, getUser().getUserName());
+			productEditService.doUpdateCustomInfo(requestMap, getUser());
 		} catch (Exception e) {
 			logger.info(e);
 			msgCode = MessageConstants.MESSAGE_CODE_500001;

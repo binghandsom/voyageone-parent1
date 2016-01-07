@@ -64,7 +64,7 @@ public interface ProductEditService {
 
 	public boolean doUpdateProductImg(Map<String, Object> requestMap) throws Exception;
 
-	public void doUpdateCustomInfo(List<Map<String, Object>> requestMap, String userName) throws Exception;
+	public void doUpdateCustomInfo(List<Map<String, Object>> requestMap, UserSessionBean userName) throws Exception;
 
 //	public void doDelProductImg(ProductImage requestMap);
 }
