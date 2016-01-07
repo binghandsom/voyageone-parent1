@@ -1,11 +1,11 @@
 <div class="wrapper-md m-b-lg" ng-init="initialize()">
 	<div class="col-sm-12">
 		<div class="panel panelPromotion m-t-xs">
-			<div class="container-fluid m-t-sm m-b-sm">
+			<div class="container-fluid m-t-sm">
 				<div class="col-sm-5">
 					<div class="form-horizontal">
 						<div class="form-group">
-							<label class="col-sm-3 control-label">类目名称</label>
+							<label class="col-sm-2 control-label">类目名称</label>
 							<div class="col-sm-7">
 								<input class="form-control" ng-model ="vm.category.catFullPath"  disabled>
 							</div>
@@ -15,8 +15,8 @@
 				<div class="col-sm-5">
 					<div class="form-horizontal">
 						<div class="form-group">
-							<label class="col-sm-3 control-label">类目ID</label>
-							<div class="col-sm-7">
+							<label class="col-sm-2 control-label">类目ID</label>
+							<div class="col-sm-9">
 								<input class="form-control" ng-model ="vm.category.catId"  disabled>
 							</div>
 						</div><!-- .form-group -->
@@ -25,8 +25,8 @@
 				<div class="col-sm-2" ng-controller="popupCtrl">
 					<div class="form-horizontal">
 						<div class="form-group">
-							<button class="btn btn-vo" ng-click="getCategoryDetail()"><i class="fa fa-search"></i>  刷新</button>
-							<button ng-click="openSystemCategory({'field':vm.category,'vm':vm,'addOrEditFlg':0})" class="btn btn-sm btn-success btn-addon"><i class="fa fa-plus"></i>新增属性</button>
+							<button class="btn btn-vo btn-sm" ng-click="getCategoryDetail()"><i class="fa fa-search"></i>  刷新</button>
+							<button ng-click="openSystemCategory({'field':vm.category,'vm':vm,'addOrEditFlg':0})" class="btn btn-sm btn-success"><i class="fa fa-plus"></i> 新增属性</button>
 						</div><!-- .form-group -->
 					</div>
 				</div>
