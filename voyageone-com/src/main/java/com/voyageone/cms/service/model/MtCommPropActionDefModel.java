@@ -18,6 +18,7 @@ public class MtCommPropActionDefModel {
     private String platformPropRefId;
     private String actionRules;
     private String tips;
+    private String valueType;
     private String defaultValue;
     private MtCommPropActionDefRuleModel ruleMode;
 
@@ -128,4 +129,11 @@ public class MtCommPropActionDefModel {
         this.isCom = isCom;
     }
 
+    public String getValueType() {
+        return valueType;
+    }
+
+    public void setValueType(String valueType) {
+        this.valueType = valueType;
+    }
 }
