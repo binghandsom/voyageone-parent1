@@ -30,7 +30,7 @@
         </table>
         <div ng-controller="popupCtrl">
             <button class="btn btn-sm btn-success btn-addon"
-                    ng-click="popupFeedValue({feedCategoryPath: ctrl.context.feedCategoryPath}).then(ctrl.addValueMapping)">
+                    ng-click="popupFeedValue(ctrl.context).then(ctrl.addValueMapping)">
                 <i class="fa fa-plus"></i>添加
             </button>
         </div>

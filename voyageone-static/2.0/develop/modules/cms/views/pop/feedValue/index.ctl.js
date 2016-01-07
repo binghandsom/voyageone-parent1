@@ -14,9 +14,14 @@ define(['cms', 'modules/cms/enums/Operations', 'underscore'], function (cms, ope
 
             /**
              * 画面传递的上下文参数
-             * @type {{feedCategoryPath:string}}
+             * @type {FeedPropMappingPopupContext}
              */
             this.context = context;
+            /**
+             * 当前处理的主类目属性
+             * @type {Field}
+             */
+            this.field = this.context.field;
             /**
              * feed 类目的所有属性
              * @type {object[]}
@@ -35,21 +40,15 @@ define(['cms', 'modules/cms/enums/Operations', 'underscore'], function (cms, ope
              * @type {Condition[]}
              */
             this.conditions = null;
-            /**
-             * 当前编辑的值
-             * @type {{feed: string, text: string}}
-             */
-            this.value = {
-                feed: null,
-                text: null
-            };
         }
 
         FeedPropValuePopupController.prototype = {
             init: function () {
 
                 this.feedMappingService.getFeedAttrs({
+
                     feedCategoryPath: this.context.feedCategoryPath
+
                 }).then(function (res) {
 
                     this.feedAttributes = res.data;
@@ -74,7 +73,9 @@ define(['cms', 'modules/cms/enums/Operations', 'underscore'], function (cms, ope
                     return;
                 }
 
-                var value = type === 'propFeed' ? this.value.feed : this.value.text;
+                // value 会保存在 field 中. 取出后,需要清空
+                var value = this.field.value;
+                this.field.value = null;
 
                 if (!value) {
                     alert('没有匹配到任何属性或内容上.');
