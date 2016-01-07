@@ -12,4 +12,5 @@ public enum WordType{
     CUSTOM,
     FEED_ORG,
     FEED_CN,
+    SKU,
 }
