@@ -97,13 +97,18 @@ small,
   border: 1px solid rgba(0, 0, 0, 0.08);
   color: #fff;
 }
+.badge-stop {
+  background-color: #f05050;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #fff;
+}
 .badge-darkBlue {
   background-color: #3c8dbc;
   border: 1px solid rgba(0, 0, 0, 0.08);
   color: #fff;
 }
 .badge-darkPurple {
-  background-color: #c26ecc;
+  background-color: #7266ba;
   border: 1px solid rgba(0, 0, 0, 0.08);
   color: #fff;
 }
@@ -6149,12 +6154,12 @@ a.text-black:hover {
 .attribute_bg{background:#efefef;border-radius: 2px; border-color:#d4cfcf;padding:10px 0px 10px 0px;margin:8px;}
 .attribute_top{color:#999}
 .attribute_top li{padding:0px 0px 4px 0px;color:#999}
-.category_mapping_bg{margin-bottom:1px;padding:6px;background:#f9f2eb;color:#9d5312}
-.category_mapping_bg:hover{margin-bottom:1px;padding:6px;background:#ffe8d4;color:#e67e22}
-.category_mapping_bg_one{margin-bottom:1px;padding:6px;background:#fcead9;color:#9d5312}
-.category_mapping_bg_one:hover{margin-bottom:1px;padding:6px;background:#ffe8d4;color:#e67e22}
+.category_mapping_bg{margin-bottom:1px;padding:6px;background:#f8f8f8;color:#282828}
+.category_mapping_bg:hover{margin-bottom:1px;padding:6px;background:#f2f2f2;color:#e67e22}
+.category_mapping_bg_one{margin-bottom:1px;padding:6px;background:#f2f2f2;color:#282828}
+.category_mapping_bg_one:hover{margin-bottom:1px;padding:6px;background:#f8f8f8;color:#e67e22}
 .category_mapping_bg_list{margin-bottom:1px;padding:6px;color:#666}
-.category_mapping_bg_list:hover{margin-bottom:1px;padding:6px;background:#fdf5ed;color:#e67e22}
+.category_mapping_bg_list:hover{margin-bottom:1px;padding:6px;background:#f8f8f8;color:#e67e22}
 
 .platform_mapping_bg{margin-bottom:1px;padding:6px;background:#f8f8f8;color:#282828}
 .platform_mapping_bg:hover{margin-bottom:1px;padding:6px;background:#f2f2f2;color:#e67e22}
