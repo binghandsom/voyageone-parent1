@@ -1,11 +1,13 @@
 package com.voyageone.web2.cms.wsdl.control;
 
 import com.voyageone.web2.cms.wsdl.BaseController;
-import com.voyageone.web2.cms.wsdl.service.ProductGetService;
+import com.voyageone.web2.cms.wsdl.service.ProductService;
 import com.voyageone.web2.sdk.api.request.ProductGetRequest;
+import com.voyageone.web2.sdk.api.request.ProductPriceLogGetRequest;
 import com.voyageone.web2.sdk.api.request.ProductsCountGetRequest;
 import com.voyageone.web2.sdk.api.request.ProductsGetRequest;
 import com.voyageone.web2.sdk.api.response.ProductGetResponse;
+import com.voyageone.web2.sdk.api.response.ProductPriceLogGetResponse;
 import com.voyageone.web2.sdk.api.response.ProductsCountGetResponse;
 import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +26,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(
-        value  = "/rest/puroduct",
+        value  = "/rest/product",
         method = RequestMethod.POST
 )
 public class ProductController extends BaseController {
 
     @Autowired
-    private ProductGetService productService;
+    private ProductService productService;
 
     /**
      * selectOne
@@ -55,10 +57,20 @@ public class ProductController extends BaseController {
     /**
      * selectList
      *
-     * @return List<CmsBtProductModel>
+     * @return ProductsCountGetResponse
      */
     @RequestMapping("selectCount")
     public ProductsCountGetResponse selectCount(@RequestBody ProductsCountGetRequest request) {
         return productService.selectCount(request);
+    }
+
+    /**
+     * getPriceLog
+     *
+     * @return ProductPriceLogGetResponse
+     */
+    @RequestMapping("priceLog/get")
+    public ProductPriceLogGetResponse getPriceLog(@RequestBody ProductPriceLogGetRequest request) {
+        return productService.getPriceLog(request);
     }
 }

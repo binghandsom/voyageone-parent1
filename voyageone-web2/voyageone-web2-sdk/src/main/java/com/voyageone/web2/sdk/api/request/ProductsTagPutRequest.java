@@ -11,7 +11,7 @@ import java.util.*;
 /**
  * create product tag Request Model
  *
- * /puroduct/tag/put
+ * /product/tag/put
  *
  *  传入productId & CmsBtTagModel
  *  Max处理条数:500
@@ -27,7 +27,7 @@ import java.util.*;
 public class ProductsTagPutRequest extends VoApiRequest<ProductsTagPutResponse> {
 
 	public String getApiURLPath() {
-		return "/puroduct/tag/put";
+		return "/product/tag/put";
 	}
 
 	private String channelId;

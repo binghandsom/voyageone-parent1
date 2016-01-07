@@ -13,7 +13,7 @@ import java.util.Set;
 /**
  * get main group Request Model
  *
- * /puroduct/group/selectOne
+ * /product/group/selectOne
  *
  *  1.传入groupId来查询
  *  2.传入cartId&numIId来查询
@@ -28,7 +28,7 @@ import java.util.Set;
 public class ProductGroupsGetRequest extends VoApiListRequest<ProductGroupsGetResponse> {
 
 	public String getApiURLPath() {
-		return "/puroduct/group/selectList";
+		return "/product/group/selectList";
 	}
 
 	private String channelId;

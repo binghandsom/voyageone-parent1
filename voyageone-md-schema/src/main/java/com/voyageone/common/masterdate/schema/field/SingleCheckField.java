@@ -78,7 +78,7 @@ public class SingleCheckField extends OptionsField {
     public Element toParamElement() throws TopSchemaException {
         Element fieldNode = XmlUtils.createRootElement("field");
         if(StringUtil.isEmpty(this.id)) {
-            throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_30001, (String)null);
+            throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_30001, null);
         } else if(this.type != null && !StringUtil.isEmpty(this.type.value())) {
             FieldTypeEnum fieldEnum = FieldTypeEnum.getEnum(this.type.value());
             if(fieldEnum == null) {
@@ -123,12 +123,11 @@ public class SingleCheckField extends OptionsField {
 
     @Override
     public Value getFieldValueFromMap(Map<String, Object> valueMap) {
-        Object valueObj = valueMap.get(id);
-        return new Value(valueObj!=null?(String)valueObj:"");
+        return new Value(StringUtil.getStringValue(valueMap.get(id)));
     }
 
     @Override
     public void getFieldValueToMap(Map<String,Object> valueMap) {
-        valueMap.put(id, value!=null && value.getValue()!=null?value.getValue():"");
+        valueMap.put(id, StringUtil.getStringValue(value));
     }
 }

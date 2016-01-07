@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.bean.setting.mapping.feed;
 
+import com.voyageone.cms.enums.MappingPropType;
 import com.voyageone.common.masterdate.schema.field.Field;
 
 /**
@@ -11,6 +12,8 @@ import com.voyageone.common.masterdate.schema.field.Field;
  */
 public class FieldBean {
 
+    private MappingPropType type;
+
     private int seq;
 
     private Field field;
@@ -18,6 +21,14 @@ public class FieldBean {
     private int level;
 
     private String parentId;
+
+    public MappingPropType getType() {
+        return type;
+    }
+
+    public void setType(MappingPropType type) {
+        this.type = type;
+    }
 
     public int getSeq() {
         return seq;

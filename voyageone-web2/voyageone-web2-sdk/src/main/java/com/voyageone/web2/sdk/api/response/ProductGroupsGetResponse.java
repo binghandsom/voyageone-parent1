@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * product groups get response
- * /puroduct/group/selectList
+ * /product/group/selectList
  * Created on 2015-12-14
  *
  * @author chuanyu.liang

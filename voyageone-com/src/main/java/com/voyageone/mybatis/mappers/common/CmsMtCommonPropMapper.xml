@@ -45,6 +45,7 @@
             platform_prop_ref_id AS platformPropRefId,
             rules AS actionRules,
             defult AS defaultValue,
+            is_comm AS isCom,
             tips AS tips
         from voyageone_cms2.cms_mt_common_prop
     </select>

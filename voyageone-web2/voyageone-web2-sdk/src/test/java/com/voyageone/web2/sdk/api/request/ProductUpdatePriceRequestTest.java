@@ -28,30 +28,24 @@ public class ProductUpdatePriceRequestTest {
         ProductUpdatePriceRequest requestModel = new ProductUpdatePriceRequest("300");
         ProductPriceModel model = new ProductPriceModel();
         model.setProductId(1L);
-        model.setMsrpStart(100d);
-        model.setMsrpEnd(200d);
-        model.setRetailPriceStart(101d);
-        model.setRetailPriceEnd(201d);
-        model.setSalePriceStart(102d);
-        model.setSalePriceEnd(102d);
-        model.setCurrentPriceStart(103d);
-        model.setCurrentPriceEnd(203d);
 
         ProductSkuPriceModel skuPriceModel = new ProductSkuPriceModel();
         skuPriceModel.setSkuCode("100001-1");
-        skuPriceModel.setPriceMsrp(101d);
-        skuPriceModel.setPriceRetail(102d);
-        skuPriceModel.setPriceSale(103d);
+        skuPriceModel.setPriceMsrp(108d);
+        skuPriceModel.setPriceRetail(109d);
+        skuPriceModel.setPriceSale(110d);
         model.addSkuPrice(skuPriceModel);
 
         skuPriceModel = new ProductSkuPriceModel();
         skuPriceModel.setSkuCode("100001-2");
-        skuPriceModel.setPriceMsrp(201d);
-        skuPriceModel.setPriceRetail(202d);
-        skuPriceModel.setPriceSale(203d);
+        skuPriceModel.setPriceMsrp(301d);
+        skuPriceModel.setPriceRetail(302d);
+        skuPriceModel.setPriceSale(303d);
         model.addSkuPrice(skuPriceModel);
 
+
         requestModel.addProductPrices(model);
+        requestModel.setModifier("testLiang");
 
         //SDK取得Product 数据
         ProductUpdatePriceResponse response = voApiClient.execute(requestModel);

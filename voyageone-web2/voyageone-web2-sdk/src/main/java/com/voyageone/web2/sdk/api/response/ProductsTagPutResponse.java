@@ -5,7 +5,7 @@ import com.voyageone.web2.sdk.api.VoApiUpdateResponse;
 
 /**
  * products create tag
- * /puroduct/tag/put
+ * /product/tag/put
  * Created on 2015-12-14
  *
  * @author chuanyu.liang

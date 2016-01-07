@@ -1,12 +1,9 @@
 package com.voyageone.common.masterdate.schema.field;
 
 
+import com.voyageone.common.masterdate.schema.enums.*;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.utils.XmlUtils;
-import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
-import com.voyageone.common.masterdate.schema.enums.RuleTypeEnum;
-import com.voyageone.common.masterdate.schema.enums.TopSchemaErrorCodeEnum;
-import com.voyageone.common.masterdate.schema.enums.ValueTypeEnum;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaFactory;
 import com.voyageone.common.masterdate.schema.property.Property;
@@ -24,6 +21,7 @@ public abstract class Field {
     protected String name;
 
     protected FieldTypeEnum type;
+    protected FieldValueTypeEnum fieldValueType = FieldValueTypeEnum.NONE;
     protected List<Rule> rules = new ArrayList<>();
     protected List<Property> properties = new ArrayList<>();
 
@@ -73,7 +71,7 @@ public abstract class Field {
     public Element toElement() throws TopSchemaException {
         Element fieldNode = XmlUtils.createRootElement("field");
         if(StringUtil.isEmpty(this.id)) {
-            throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_30001, (String)null);
+            throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_30001, null);
         } else if(this.type != null && !StringUtil.isEmpty(this.type.value())) {
             FieldTypeEnum fieldEnum = FieldTypeEnum.getEnum(this.type.value());
             if(fieldEnum == null) {
@@ -243,6 +241,14 @@ public abstract class Field {
     }
     public void setType(FieldTypeEnum type) {
         this.type = type;
+    }
+
+    public FieldValueTypeEnum getFieldValueType() {
+        return fieldValueType;
+    }
+
+    public void setFieldValueType(FieldValueTypeEnum fieldValueType) {
+        this.fieldValueType = fieldValueType;
     }
 
     public List<Rule> getRules() {

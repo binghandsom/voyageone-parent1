@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.model;
+package com.voyageone.web2.sdk.api.domain;
 
 import com.voyageone.base.dao.mysql.BaseModel;
 

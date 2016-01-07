@@ -42,7 +42,7 @@ public class ProductPropsEditController extends CmsController{
 
         } catch (Exception e) {
 
-            e.printStackTrace();
+
         }
 
         return success(categoryInfo);

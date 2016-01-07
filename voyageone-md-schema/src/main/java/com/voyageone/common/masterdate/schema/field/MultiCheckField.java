@@ -35,7 +35,6 @@ public class MultiCheckField extends OptionsField {
         }
     }
 
-    @JsonIgnore
     public List<Value> getValues() {
         return this.values;
     }
@@ -132,7 +131,7 @@ public class MultiCheckField extends OptionsField {
     public Element toParamElement() throws TopSchemaException {
         Element fieldNode = XmlUtils.createRootElement("field");
         if(StringUtil.isEmpty(this.id)) {
-            throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_30001, (String)null);
+            throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_30001, null);
         } else if(this.type != null && !StringUtil.isEmpty(this.type.value())) {
             FieldTypeEnum fieldEnum = FieldTypeEnum.getEnum(this.type.value());
             if(fieldEnum == null) {
@@ -181,6 +180,7 @@ public class MultiCheckField extends OptionsField {
     }
 
     @Override
+    @JsonIgnore
     public List<Value> getValue() {
         return this.values;
     }
@@ -198,7 +198,7 @@ public class MultiCheckField extends OptionsField {
         if (valueObj != null && valueObj instanceof List) {
             List valuesTmp = (List)valueObj;
             for (Object value : valuesTmp) {
-                values.add(new Value(value != null?(String)value:""));
+                values.add(new Value(StringUtil.getStringValue(value)));
             }
         }
         return values;
@@ -209,7 +209,7 @@ public class MultiCheckField extends OptionsField {
         if (values != null) {
             List<String> valueStrList = new ArrayList<>();
             for (Value valueObj : values) {
-                valueStrList.add(valueObj != null && valueObj.getValue()!=null?valueObj.getValue():"");
+                valueStrList.add(StringUtil.getStringValue(valueObj));
             }
             valueMap.put(id, valueStrList);
         }
