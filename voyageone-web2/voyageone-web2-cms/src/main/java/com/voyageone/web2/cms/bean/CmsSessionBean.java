@@ -1,9 +1,10 @@
 package com.voyageone.web2.cms.bean;
 
-import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.cms.CmsConstants;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Edward
@@ -12,13 +13,20 @@ import java.io.Serializable;
 public class CmsSessionBean implements Serializable {
 
     // categoryType
-    private String categoryType;
+    private Map<String, Object> categoryType;
 
-    public String getCategoryType() {
-        return StringUtils.isEmpty(categoryType) ? CmsConstants.DEFAULT_CATEGORY_TYPE : categoryType;
+    public Map<String, Object> getCategoryType() {
+        if (categoryType != null) {
+            return categoryType;
+        } else {
+            Map<String, Object> newCategoryType = new HashMap<String, Object>();
+            newCategoryType.put("cTypeId", CmsConstants.DEFAULT_CATEGORY_TYPE);
+            newCategoryType.put("cartId", CmsConstants.DEFAULT_CART_ID);
+            return newCategoryType;
+        }
     }
 
-    public void setCategoryType(String categoryType) {
+    public void setCategoryType(Map<String, Object> categoryType) {
         this.categoryType = categoryType;
     }
 }

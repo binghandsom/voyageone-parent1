@@ -39,10 +39,10 @@ public class CmsMenuController extends CmsController {
 
         Map<String, Object> resultBean = new HashMap<>();
 
-        String cTypeId = getCmsSession().getCategoryType();
+        String cTypeId = getCmsSession().getCategoryType().get("cTypeId").toString();
         String channelId = getUser().getSelChannelId();
 
-        resultBean.put("categoryType", cTypeId);
+        resultBean.put("categoryType", getCmsSession().getCategoryType());
 
         // 获取CategoryList
         List<Map<String, Object>> categoryList = new ArrayList<>();
@@ -79,13 +79,18 @@ public class CmsMenuController extends CmsController {
     public AjaxResponse setCategoryType(@RequestBody Map<String, Object> params) {
 
         String cTypeId = (String) params.get("cTypeId");
+        Integer cartId = (Integer) params.get("cartId");
 
         // 如果cTypeId为空,设置成其默认值.
         if (StringUtils.isEmpty(cTypeId)) {
-            cTypeId = CmsConstants.DEFAULT_CATEGORY_TYPE;
+            params.put("cTypeId", CmsConstants.DEFAULT_CATEGORY_TYPE);
         }
 
-        getCmsSession().setCategoryType(cTypeId);
+        if (cartId == null) {
+            params.put("cartId", CmsConstants.DEFAULT_CART_ID);
+        }
+
+        getCmsSession().setCategoryType(params);
 
         return getCategoryInfo();
     }

@@ -26,7 +26,7 @@
 								</label>
 							</div>
 						</div><!-- .form-group -->
-						<!-- TODO 暂时认为是以TM为默认检索 -->
+						<!-- TODO 暂时未实现 -->
 						<div class="form-group">
 							<label class="col-sm-3 control-label" translate="TXT_PLATFORM_STATUS"></label>
 							<div class="col-sm-9">
@@ -35,7 +35,7 @@
 								</label>
 							</div>
 						</div>
-						<!-- TODO label暂时不提供检索 -->
+						<!-- TODO 暂时未实现 -->
 						<div class="form-group">
 							<label class="col-sm-3 control-label" translate="TXT_LABEL"></label>
 							<div class="col-sm-9">
@@ -72,7 +72,7 @@
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
-								</div>&nbsp;~
+								</div>&nbsp;~&nbsp;
 								<div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
 									<input type="text" class="form-control" datepicker-popup="{{formatDateTime}}" ng-model="$parent.vm.searchInfo.createTimeTo" date-model-format
 										   min-date="$parent.vm.searchInfo.createTimeStart" is-open="opened" datepicker-options="dateOptions" close-text="Close" />
@@ -91,7 +91,7 @@
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
-								</div> ~
+								</div>&nbsp;~&nbsp;
 								<div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
 									<input type="text" class="form-control" datepicker-popup="{{formatDateTime}}" ng-model="$parent.vm.searchInfo.publishTimeTo" date-model-format
 										   min-date="$parent.vm.searchInfo.publishTimeStart" is-open="opened" datepicker-options="dateOptions" close-text="Close" />
@@ -141,8 +141,8 @@
 								<textarea class="form-control inherited" rows="4" ng-model="vm.searchInfo.codeList"></textarea>
 							</div>
 						</div>
+						<!-- TODO 暂时未实现 -->
 						<div class="form-group">
-							<!-- TODO -->
 							<label class="col-sm-3 control-label" translate="TXT_SORT_1"></label>
 							<div class="col-sm-8">
 								<div class="col-sm-5">
@@ -162,8 +162,8 @@
 								</div>
 							</div>
 						</div>
+						<!-- TODO 暂时未实现 -->
 						<div class="form-group">
-							<!-- TODO -->
 							<label class="col-sm-3 control-label" translate="TXT_SORT_2"></label>
 							<div class="col-sm-8">
 								<div class="col-sm-5">
@@ -183,8 +183,8 @@
 								</div>
 							</div>
 						</div>
+						<!-- TODO 暂时未实现 -->
 						<div class="form-group">
-							<!-- TODO -->
 							<label class="col-sm-3 control-label" translate="TXT_SORT_3"></label>
 							<div class="col-sm-8">
 								<div class="col-sm-5">
@@ -210,7 +210,8 @@
 					<div class="form-inline">
 						<button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
 						<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
-						<button class="btn btn-success" ng-click="exportFile()"><i class="fa fa-reply-all"></i>&nbsp;{{'BTN_EXPORT' | translate}}</button>
+						<!-- TODO 暂时未实现-->
+						<!--<button class="btn btn-success" ng-click="exportFile()"><i class="fa fa-reply-all"></i>&nbsp;{{'BTN_EXPORT' | translate}}</button>-->
 					</div><!-- .form-inline -->
 				</div>
 			</div>
@@ -221,7 +222,8 @@
 		<tabset class="tab-container vo_nav-tabs">
 			<!--right-btn-->
 			<div class="form-inline m-b-xs pull-right" ng-controller="popupCtrl">
-				<button class="btn btn-default" ng-click="openCustomBaseProperty('lg')"><i class="fa fa-cog"></i>&nbsp;{{'TXT_CUSTOM_BASE_PROPERTY' | translate}}</button>
+				<!-- TODO 暂时未实现-->
+				<!--<button class="btn btn-default" ng-click="openCustomBaseProperty('lg')"><i class="fa fa-cog"></i>&nbsp;{{'TXT_CUSTOM_BASE_PROPERTY' | translate}}</button>-->
 				<div class="btn-group" dropdown>
 					<button type="button" class="btn btn-default" ng-disabled="vm.masterData.promotionList.length < 0">
 						<i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_SELECT_PROMOTION' | translate}}
@@ -237,7 +239,8 @@
 					</ul>
 				</div>
 				<button class="btn btn-default" ng-click="openUpdateProperties('md', vm.currTab === 'group' ? vm.groupSelList.selList : vm.productSelList.selList)"><i class="fa fa-pencil-square"></i>&nbsp;{{'TXT_BATCH_UPDATE_ATTRIBUTE' | translate}}</button>
-				<button class="btn btn-default" ng-click="openNewcategory('lg')"><i class="fa fa-th-list"></i>&nbsp;{{'TXT_CHANGE_CATEGORY' | translate}}</button>
+				<!-- TODO 暂时未实现 -->
+				<!--<button class="btn btn-default" ng-click="openNewCategory('lg')"><i class="fa fa-th-list"></i>&nbsp;{{'TXT_CHANGE_CATEGORY' | translate}}</button>-->
 			</div><!-- /right-btn -->
 			<!--tab-->
 			<tab ng-click="vm.currTab = 'group'">
@@ -247,7 +250,7 @@
 						<thead>
 						<tr>
 							<td colspan="3" class="mfb-xxxs"><label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
-								<input type="checkbox" ng-checked="vm.groupSelList.selAllFlag" ng-click="selectAll(vm.groupSelList)">
+								<input type="checkbox" ng-checked="vm.groupSelList.selAllFlag" ng-click="selectAll(vm.groupSelList)" ng-disabled="!vm.groupList.length">
 								<span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;</label>
 								<span class="m-l-xxl" translate="TXT_PRIMARY_PRODUCT"></span>
 							</td>
@@ -291,10 +294,10 @@
 									</div>
 								</td>
 								<td class="mfb-xxt text-center"><!--TODO 目前只能返回group的主product,所有拿不到group下面所有的product的库存--><!--popover-html="showInfo({{groupInfo.inventoryDetail}})"-->
-									<button ng-controller="showPopoverCtrl" popover-title="{{'TXT_INVENTORY' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{groupInfo.fields.inventory}}</button>
+									<button ng-controller="showPopoverCtrl" popover-title="{{'TXT_INVENTORY' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{groupInfo.fields.inventory || 0}}</button>
 								</td>
 								<td class="mfb-xxt text-center">
-									<button ng-controller="showPopoverCtrl" popover-html="showInfo({{groupInfo.groups.priceDetail}})" popover-title="{{'TXT_SALE_PRICE' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{groupInfo.groups.salePriceStart}}&nbsp;~&nbsp;{{groupInfo.groups.salePriceEnd}}</button>
+									<button ng-controller="showPopoverCtrl" popover-html="showInfo({{groupInfo.groups.priceDetail}})" popover-title="{{'TXT_SALE_PRICE' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{groupInfo.groups.salePriceStart || 0.00}}&nbsp;~&nbsp;{{groupInfo.groups.salePriceEnd || 0.00}}</button>
 								</td>
 								<td class="mfb-xxt text-left">{{groupInfo.fields.brand}}</td>
 								<td class="mfb-xxxs text-left">
@@ -334,7 +337,7 @@
 						<thead>
 						<tr>
 							<td class="mfb-xxt"><label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
-								<input type="checkbox" ng-checked="vm.productSelList.selAllFlag" ng-click="selectAll(vm.productSelList)">
+								<input type="checkbox" ng-checked="vm.productSelList.selAllFlag" ng-click="selectAll(vm.productSelList)" ng-disabled="!vm.productList.length">
 								<span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;</label>
 							</td>
 							<td class="mfb-xxt text-center" translate="TXT_BRAND"></td>
@@ -374,10 +377,10 @@
 									</td>
 									<td class="mfb-xxt text-center">{{productInfo.fields.brand}}</td>
 									<td class="mfb-xxs text-center">
-										<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.inventoryDetail}})" popover-title="{{'TXT_INVENTORY' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{productInfo.fields.inventory}}</button>
+										<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.inventoryDetail}})" popover-title="{{'TXT_INVENTORY' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{productInfo.fields.inventory || 0}}</button>
 									</td>
 									<td class="mfb-xxt text-center">
-										<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.groups.priceDetail}})" popover-title="{{'TXT_SALE_PRICE' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{productInfo.fields.salePriceStart}}&nbsp;~&nbsp;{{productInfo.fields.salePriceEnd}}</button>
+										<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.groups.priceDetail}})" popover-title="{{'TXT_SALE_PRICE' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{productInfo.fields.salePriceStart || 0.00}}&nbsp;~&nbsp;{{productInfo.fields.salePriceEnd || 0.00}}</button>
 									</td>
 									<td class="mfb-xxt text-center">{{productInfo.fields.sizeType}}</td>
 									<td class="mfb-xxs text-left">
