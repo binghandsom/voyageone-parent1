@@ -1,5 +1,7 @@
 package com.voyageone.cms.feed;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * 枚举 Operation 的 Bean 定义
  * @author Jonas 9/2/15.
@@ -26,6 +28,7 @@ public class OperationBean {
         return getOperation().name();
     }
 
+    @JsonIgnore
     public Operation getOperation() {
         return operation;
     }
