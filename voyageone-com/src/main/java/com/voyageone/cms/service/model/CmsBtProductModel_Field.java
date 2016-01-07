@@ -32,13 +32,22 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setAttribute("brand", brand);
     }
 
-    //productName 产品名称
-    public String getProductName() {
-        return getAttribute("productName");
+    //产品名称（英文）
+    public String getProductNameEn() {
+        return getAttribute("productNameEn");
     }
 
-    public void setProductName(String productName) {
-        setAttribute("productName", productName);
+    public void setProductNameEn(String productNameEn) {
+        setAttribute("productNameEn", productNameEn);
+    }
+
+    //产品名称（中文）
+    public String getProductNameCn() {
+        return getAttribute("productNameCn");
+    }
+
+    public void setProductNameCn(String productNameCn) {
+        setAttribute("productNameCn", productNameCn);
     }
 
     //longTitle 长标题
@@ -147,6 +156,62 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
 
     public void setHsCodePrivate(String hsCodePrivate) {
         setAttribute("hsCodePrivate", hsCodePrivate);
+    }
+
+    //msrp价格区间
+    public Double getPriceMsrpSt() {
+        return getAttribute("priceMsrpSt");
+    }
+    public void setPriceMsrpSt(Double priceMsrpSt) {
+        setAttribute("priceMsrpSt", priceMsrpSt);
+    }
+    public Double getPriceMsrpEd() {
+        return getAttribute("priceMsrpEd");
+    }
+    public void setPriceMsrpEd(Double priceMsrpEd) {
+        setAttribute("priceMsrpEd", priceMsrpEd);
+    }
+
+    //建议市场价格区间
+    public Double getPriceRetailSt() {
+        return getAttribute("priceRetailSt");
+    }
+    public void setPriceRetailSt(Double priceRetailSt) {
+        setAttribute("priceRetailSt", priceRetailSt);
+    }
+    public Double getPriceRetailEd() {
+        return getAttribute("priceRetailEd");
+    }
+    public void setPriceRetailEd(Double priceRetailEd) {
+        setAttribute("priceRetailEd", priceRetailEd);
+    }
+
+    //销售价格价格区间
+    public Double getPriceSaleSt() {
+        return getAttribute("priceSaleSt");
+    }
+    public void setPriceSaleSt(Double priceSaleSt) {
+        setAttribute("priceSaleSt", priceSaleSt);
+    }
+    public Double getPriceSaleEd() {
+        return getAttribute("priceSaleEd");
+    }
+    public void setPriceSaleEd(Double priceSaleEd) {
+        setAttribute("priceSaleEd", priceSaleEd);
+    }
+
+    //当前销售价格价格区间 暂时不使用
+    public Double getCurPriceSt() {
+        return getAttribute("curPriceSt");
+    }
+    public void setCurPriceSt(Double curPriceSt) {
+        setAttribute("curPriceSt", curPriceSt);
+    }
+    public Double getCurPriceEd() {
+        return getAttribute("curPriceSt");
+    }
+    public void setCurPriceEd(Double curPriceSt) {
+        setAttribute("curPriceSt", curPriceSt);
     }
 
     //priceChange 价格审批flg 0:变更（未审批） 1:审批完成   Feed过来的新商品，就认为审批完成
@@ -260,83 +325,31 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setAttribute("lock", value);
     }
 
-    //msrp价格区间-开始
-    public Double getMsrpStart() {
-        return getAttribute("msrpStart");
-    }
-    public void setMsrpStart(Double msrpStart) {
-        setAttribute("msrpStart", msrpStart);
-    }
-
-    //msrp价格区间-结束
-    public Double getMsrpEnd() {
-        return getAttribute("msrpEnd");
-    }
-    public void setMsrpEnd(Double msrpEnd) {
-        setAttribute("msrpEnd", msrpEnd);
-    }
-
-    //建议市场价格区间-结束
-    public Double getRetailPriceStart() {
-        return getAttribute("retailPriceStart");
-    }
-    public void setRetailPriceStart(Double retailPriceStart) {
-        setAttribute("retailPriceStart", retailPriceStart);
-    }
-
-    //建议市场价格区间-结束
-    public Double getRetailPriceEnd() {
-        return getAttribute("retailPriceEnd");
-    }
-    public void setRetailPriceEnd(Double retailPriceEnd) {
-        setAttribute("retailPriceEnd", retailPriceEnd);
-    }
-
-    //建议市场价格区间-结束
-    public Double getSalePriceStart() {
-        return getAttribute("salePriceStart");
-    }
-    public void setSalePriceStart(Double salePriceStart) {
-        setAttribute("salePriceStart", salePriceStart);
-    }
-
-    //市场价格区间-开始
-    public Double getSalePriceEnd() {
-        return getAttribute("salePriceEnd");
-    }
-
-    public void setSalePriceEnd(Double salePriceEnd) {
-        setAttribute("salePriceEnd", salePriceEnd);
-    }
-
-    //市场价格区间-结束
-    public Double getCurrentPriceStart() {
-        return getAttribute("currentPriceStart");
-    }
-
-    //当前销售价格区间-开始
-    public void setCurrentPriceStart(Double currentPriceStart) {
-        setAttribute("currentPriceStart", currentPriceStart);
-    }
-    public Double getCurrentPriceEnd() {
-        return getAttribute("currentPriceEnd");
-    }
-
-    //当前销售价格区间-结束
-    public void setCurrentPriceEnd(Double currentPriceEnd) {
-        setAttribute("currentPriceEnd", currentPriceEnd);
-    }
-
     //状态 new/pending/ready/approved/deleted
     public String getStatus() {
         return getAttribute("status");
     }
-
     public void setStatus(String status) {
         setAttribute("status", status);
     }
     public void setStatus(CmsConstants.ProductStatus status) {
         setAttribute("status", status);
+    }
+
+    //translateStatus 0:未完成；1:完成
+    public String getTranslateStatus() {
+        return getAttribute("translateStatus");
+    }
+    public void setTranslateStatus(String status) {
+        setAttribute("translateStatus", status);
+    }
+
+    //editStatus 0:未完成；1:完成
+    public String getEditStatus() {
+        return getAttribute("editStatus");
+    }
+    public void setEditStatus(String editStatus) {
+        setAttribute("editStatus", editStatus);
     }
 
     //适合人群

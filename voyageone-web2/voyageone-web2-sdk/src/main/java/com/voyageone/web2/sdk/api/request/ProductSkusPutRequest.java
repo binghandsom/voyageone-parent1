@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * get product sku Request Model
  *
- * /puroduct/sku/selectList
+ * /product/sku/selectList
  *
  *  传入productId 或 productCode
  *  传入addSkus(CmsBtProductModel_Sku)
@@ -28,7 +28,7 @@ import java.util.List;
 public class ProductSkusPutRequest extends VoApiRequest<ProductSkusPutResponse> {
 
 	public String getApiURLPath() {
-		return "/puroduct/sku/put";
+		return "/product/sku/put";
 	}
 
 	private String channelId;

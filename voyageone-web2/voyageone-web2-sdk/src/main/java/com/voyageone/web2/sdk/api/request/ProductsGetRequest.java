@@ -10,7 +10,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * /puroduct/selectList Request Model
+ * /product/selectList Request Model
  *
  * Product的id.两种方式来查看一个产品:
  *  1.传入productId List来查询
@@ -26,7 +26,7 @@ import java.util.Set;
 public class ProductsGetRequest extends VoApiListRequest<ProductsGetResponse> {
 
 	public String getApiURLPath() {
-		return "/puroduct/selectList";
+		return "/product/selectList";
 	}
 
 	/**

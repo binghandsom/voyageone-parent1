@@ -6,12 +6,16 @@ import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.cms.wsdl.BaseService;
+import com.voyageone.web2.cms.wsdl.dao.CmsBtPriceLogDao;
 import com.voyageone.web2.sdk.api.VoApiConstants;
+import com.voyageone.web2.sdk.api.domain.CmsBtPriceLogModel;
 import com.voyageone.web2.sdk.api.exception.ApiException;
 import com.voyageone.web2.sdk.api.request.ProductGetRequest;
+import com.voyageone.web2.sdk.api.request.ProductPriceLogGetRequest;
 import com.voyageone.web2.sdk.api.request.ProductsCountGetRequest;
 import com.voyageone.web2.sdk.api.request.ProductsGetRequest;
 import com.voyageone.web2.sdk.api.response.ProductGetResponse;
+import com.voyageone.web2.sdk.api.response.ProductPriceLogGetResponse;
 import com.voyageone.web2.sdk.api.response.ProductsCountGetResponse;
 import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +32,13 @@ import java.util.*;
  * @since. 2.0.0
  */
 @Service
-public class ProductGetService extends BaseService {
+public class ProductService extends BaseService {
 
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
+
+    @Autowired
+    private CmsBtPriceLogDao cmsBtPriceLogDao;
 
     /**
      * selectOne
@@ -274,5 +281,46 @@ public class ProductGetService extends BaseService {
         }
         return null;
     }
+
+    public ProductPriceLogGetResponse getPriceLog(ProductPriceLogGetRequest request) {
+        ProductPriceLogGetResponse result = new ProductPriceLogGetResponse();
+
+        checkCommRequest(request);
+        //ChannelId
+        String channelId = request.getChannelId();
+        checkRequestChannelId(channelId);
+
+        String productCode = request.getProductCode();
+        String productSkuCode = request.getProductSkuCode();
+        int offset = request.getOffset();
+        int rows = request.getRows();
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("channelId", channelId);
+        params.put("offset", offset);
+        params.put("rows", rows);
+
+        boolean isExecute = false;
+        List<CmsBtPriceLogModel> priceList;
+        int count;
+
+        if (productCode != null) {
+            params.put("code", productCode);
+            isExecute = true;
+        } else if (productSkuCode != null) {
+            params.put("sku", productSkuCode);
+            isExecute = true;
+        }
+
+        if (isExecute) {
+            priceList = cmsBtPriceLogDao.selectPriceLogByCode(params);
+            count = cmsBtPriceLogDao.selectPriceLogByCodeCnt(params);
+            result.setPriceList(priceList);
+            result.setTotalCount((long)count);
+        }
+
+        return result;
+    }
+
 
 }

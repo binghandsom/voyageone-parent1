@@ -5,7 +5,7 @@ import com.voyageone.web2.sdk.api.VoApiUpdateResponse;
 
 /**
  * product sku delete response
- * /puroduct/sku/delete
+ * /product/sku/delete
  * Created on 2015-12-14
  *
  * @author chuanyu.liang

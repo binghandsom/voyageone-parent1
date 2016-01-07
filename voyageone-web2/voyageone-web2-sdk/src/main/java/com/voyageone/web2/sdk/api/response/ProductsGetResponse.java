@@ -7,7 +7,7 @@ import java.util.List;
 
 
 /**
- * /puroduct/selectList products get response
+ * /product/selectList products get response
  * Created on 2015-12-14
  *
  * @author chuanyu.liang

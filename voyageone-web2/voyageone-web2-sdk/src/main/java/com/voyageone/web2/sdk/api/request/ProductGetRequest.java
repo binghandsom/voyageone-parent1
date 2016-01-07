@@ -7,7 +7,7 @@ import com.voyageone.web2.sdk.api.response.ProductGetResponse;
 import com.voyageone.web2.sdk.api.util.RequestUtils;
 
 /**
- * /puroduct/selectOne Request Model
+ * /product/selectOne Request Model
  *
  * Product的id.两种方式来查看一个产品:
  *  1.传入productId来查询
@@ -23,7 +23,7 @@ import com.voyageone.web2.sdk.api.util.RequestUtils;
 public class ProductGetRequest extends VoApiRequest<ProductGetResponse> {
 
 	public String getApiURLPath() {
-		return "/puroduct/selectOne";
+		return "/product/selectOne";
 	}
 
 	private String channelId;

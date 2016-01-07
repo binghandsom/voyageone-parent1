@@ -34,7 +34,6 @@ public class ComplexField extends Field {
         this.fields.add(field);
     }
 
-    @JsonIgnore
     public ComplexValue getComplexValue() {
         return this.complexValue;
     }
@@ -139,6 +138,7 @@ public class ComplexField extends Field {
     }
 
     @Override
+    @JsonIgnore
     public ComplexValue getValue() {
         return this.complexValue;
     }

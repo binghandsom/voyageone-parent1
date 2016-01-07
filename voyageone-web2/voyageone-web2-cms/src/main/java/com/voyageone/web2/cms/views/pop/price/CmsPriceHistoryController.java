@@ -3,7 +3,6 @@ package com.voyageone.web2.cms.views.pop.price;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
-import com.voyageone.web2.cms.model.CmsBtPriceLogModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +29,7 @@ public class CmsPriceHistoryController extends CmsController {
 
     @RequestMapping(CmsUrlConstants.POP.PRICE.GET_PRICE_HISTORY)
     public AjaxResponse getPriceHistory(@RequestBody Map<String, Object> params) {
-        Map<String, Object> result = cmsPriceHistoryService.getPriceHistory(params);
+        Map<String, Object> result = cmsPriceHistoryService.getPriceHistory(params, getUser().getSelChannelId());
         return success(result);
     }
 

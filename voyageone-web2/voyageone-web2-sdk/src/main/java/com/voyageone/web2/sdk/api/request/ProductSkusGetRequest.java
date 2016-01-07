@@ -12,7 +12,7 @@ import java.util.Set;
 /**
  * get product sku Request Model
  *
- * /puroduct/sku/selectList
+ * /product/sku/selectList
  *
  *  1.传入productId Set来查询
  *  2.传入productCode Set来查询
@@ -27,7 +27,7 @@ import java.util.Set;
 public class ProductSkusGetRequest extends VoApiListRequest<ProductSkusGetResponse> {
 
 	public String getApiURLPath() {
-		return "/puroduct/sku/selectList";
+		return "/product/sku/selectList";
 	}
 
 	private String channelId;

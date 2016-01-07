@@ -33,7 +33,8 @@ define(['cms'], function (cms) {
                 this.feedMappingService.getFieldMapping({
                     feedCategoryPath: this.context.feedCategoryPath,
                     mainCategoryPath: this.context.mainCategoryPath,
-                    field: this.context.field.id
+                    field: this.context.field.id,
+                    type: this.context.bean.type
                 }).then(function (res) {
 
                     this.fieldMapping = res.data;

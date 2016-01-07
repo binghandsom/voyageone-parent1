@@ -11,7 +11,7 @@ import java.util.*;
 /**
  * delete product tag Request Model
  *
- * /puroduct/tag/delete
+ * /product/tag/delete
  *
  *  传入productId & CmsBtTagModel
  *  Max处理条数:500
@@ -27,7 +27,7 @@ import java.util.*;
 public class ProductsTagDeleteRequest extends VoApiRequest<ProductsTagDeleteResponse> {
 
 	public String getApiURLPath() {
-		return "/puroduct/tag/delete";
+		return "/product/tag/delete";
 	}
 
 	private String channelId;

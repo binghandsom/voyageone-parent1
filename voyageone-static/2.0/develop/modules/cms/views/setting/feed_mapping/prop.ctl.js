@@ -100,7 +100,7 @@ define([
             bean.iconClass = getIconClass(bean.field);
             bean.isSimple = isSimpleType(bean.field);
             bean.required = isRequiredField(bean.field);
-            bean.matched = _.contains(toArray.matchedMains, bean.field.id);
+            bean.matched = _.contains(toArray.matchedMains[bean.type], bean.field.id);
 
             return bean;
         });
@@ -243,14 +243,18 @@ define([
                  */
                 saveMapping: function (context) {
 
+                    var bean = context.bean;
+
                     var path = [];
                     var f = context.field;
                     path.push(f.id);
-                    var p = context.bean.parent;
+                    var p = bean.parent;
                     while (p) {
                         path.push(p.field.id);
                         p = p.parent;
                     }
+
+                    context.fieldMapping.type = bean.type;
 
                     this.feedMappingService.saveFieldMapping({
                         feedCategoryPath: context.feedCategoryPath,
@@ -262,7 +266,6 @@ define([
                         var bool = res.data;
                         if (!bool) return;
 
-                        var bean = context.bean;
                         var mappings = context.fieldMapping.mappings;
 
                         bean.matched = !!mappings && !!mappings.length;

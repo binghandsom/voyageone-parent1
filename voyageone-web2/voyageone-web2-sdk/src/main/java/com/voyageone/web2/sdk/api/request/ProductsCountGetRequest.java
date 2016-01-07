@@ -10,7 +10,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * /puroduct/selectCount Request Model
+ * /product/selectCount Request Model
  *
  * Product的id.两种方式来查看一个产品:
  *  1.传入productId List来查询Count
@@ -26,7 +26,7 @@ import java.util.Set;
 public class ProductsCountGetRequest extends VoApiRequest<ProductsCountGetResponse> {
 
 	public String getApiURLPath() {
-		return "/puroduct/selectCount";
+		return "/product/selectCount";
 	}
 
 	/**
