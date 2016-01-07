@@ -17,6 +17,7 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ActionType;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
+import com.voyageone.common.masterdate.schema.enums.FieldValueTypeEnum;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.*;
@@ -61,9 +62,6 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
     private CmsMtCommonSchemaDao cmsMtCommonSchemaDao;
 
     Map<String,MtCommPropActionDefModel> allDefModelsMap = new HashMap<>();
-
-//    @Autowired
-//    private CmsMtCommonPropDefDao cmsMtCommonPropDefDao;
 
     @Override
     public SubSystem getSubSystem() {
@@ -237,8 +235,9 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
                                     updField = FieldTypeEnum.createField(type);
                                     updField.setId(actionDefModel.getPropId());
                                     updField.setName(actionDefModel.getPropName());
+                                    setValueType(actionDefModel, updField);
 
-                                    actionDefModel.getRuleMode().setFieldComProperties(updField);
+                                actionDefModel.getRuleMode().setFieldComProperties(updField);
 
                                     if (StringUtils.isEmpty(actionDefModel.getParentPropId())){
                                         masterFields.add(updField);
@@ -301,36 +300,6 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
                 //保存主数据schema
                 cmsMtCategorySchemaDao.insert(masterModel);
 
-                //保存共通属性（TODO 只保存一次，临时性的,将来会有专门的页面生成这部分数据）
-                //            if (isSaveComProps)
-                //            {
-                //                Field itemStatus = FieldUtil.getFieldById(masterFields, "item_status");
-                //                Field startTime = FieldUtil.getFieldById(masterFields, "start_time");
-                //                Field hsCodeCrop = FieldUtil.getFieldById(masterFields, "hsCodeCrop");
-                //                Field hsCodePrivate = FieldUtil.getFieldById(masterFields, "hsCodePrivate");
-                //
-                //                List<CmsMtCommonPropDefModel> comPropModels = new ArrayList<>();
-                //                CmsMtCommonPropDefModel itemStatusModel = new CmsMtCommonPropDefModel();
-                //                CmsMtCommonPropDefModel startTimeModel = new CmsMtCommonPropDefModel();
-                //                CmsMtCommonPropDefModel hsCodeCropModel = new CmsMtCommonPropDefModel();
-                //                CmsMtCommonPropDefModel hsCodePrivateModel = new CmsMtCommonPropDefModel();
-                //
-                //                itemStatusModel.setField(itemStatus);
-                //                startTimeModel.setField(startTime);
-                //                hsCodeCropModel.setField(hsCodeCrop);
-                //                hsCodePrivateModel.setField(hsCodePrivate);
-                //
-                //                comPropModels.add(itemStatusModel);
-                //                comPropModels.add(startTimeModel);
-                //                comPropModels.add(hsCodeCropModel);
-                //                comPropModels.add(hsCodePrivateModel);
-                //
-                //                cmsMtCommonPropDefDao.insertWithList(comPropModels);
-                //
-                //                isSaveComProps = false;
-                //
-                //            }
-
                 //save the fields which was deleted
                 CmsMtPlatformRemoveFieldsModel removeHistoryModel = new CmsMtPlatformRemoveFieldsModel();
                 removeHistoryModel.setCatId(StringUtils.generCatId(schemaModel.getCatFullPath()));
@@ -341,6 +310,13 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
 
                 cmsMtPlatformFieldsRemoveHistoryDao.insert(removeHistoryModel);
             }
+        }
+    }
+
+    private void setValueType(MtCommPropActionDefModel actionDefModel, Field updField) {
+        if (!StringUtil.isEmpty(actionDefModel.getValueType())){
+            FieldValueTypeEnum valueType = FieldValueTypeEnum.getEnum(actionDefModel.getValueType());
+            updField.setFieldValueType(valueType);
         }
     }
 
@@ -363,6 +339,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
             actionDefModel.getRuleMode().setFieldComProperties(thisField);
             //设定field默认值.
             setFieldDefaultValue(actionDefModel,thisField);
+            setValueType(actionDefModel, thisField);
 
             if(StringUtils.isEmpty(actionDefModel.getParentPropId())){
 
@@ -415,6 +392,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
         updField.setId(actionDefModel.getPropId());
         updField.setName(actionDefModel.getPropName());
         updField.setInputOrgId(actionDefModel.getPlatformPropRefId());
+        setValueType(actionDefModel, updField);
 
         actionDefModel.getRuleMode().setFieldComProperties(updField);
 
