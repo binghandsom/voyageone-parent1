@@ -2,9 +2,8 @@ package com.voyageone.common.masterdate.schema.enums;
 
 public enum FieldValueTypeEnum {
     NONE(""),
-    INT("Int"),
-    DOUBLE("Double"),
-    LIST_INT("LIST<Int>")
+    INT("INT"),
+    DOUBLE("DOUBLE")
     ;
 
     private final String type;

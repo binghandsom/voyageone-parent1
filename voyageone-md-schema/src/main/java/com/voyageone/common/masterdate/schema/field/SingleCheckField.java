@@ -1,5 +1,6 @@
 package com.voyageone.common.masterdate.schema.field;
 
+import com.voyageone.common.masterdate.schema.enums.FieldValueTypeEnum;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.utils.XmlUtils;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
@@ -128,6 +129,36 @@ public class SingleCheckField extends OptionsField {
 
     @Override
     public void getFieldValueToMap(Map<String,Object> valueMap) {
-        valueMap.put(id, StringUtil.getStringValue(value));
+        valueMap.put(id, getValue(value, fieldValueType));
+    }
+
+    public static Object getValue(Value value, FieldValueTypeEnum fieldValueType) {
+        Object result = null;
+        if (value == null || value.getValue() == null) {
+            return null;
+        }
+        if (fieldValueType == null) {
+            return value;
+        }
+        String valueStr = value.getValue();
+        switch(fieldValueType) {
+            case NONE:
+                result = valueStr;
+                break;
+            case INT:
+                if (valueStr.length() > 0) {
+                    result = new Integer(valueStr);
+                }
+                break;
+            case DOUBLE:
+                if (valueStr.length() > 0) {
+                    result = new Double(valueStr);
+                }
+                break;
+            default:
+                result = valueStr;
+                break;
+        }
+        return result;
     }
 }

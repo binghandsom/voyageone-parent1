@@ -1,6 +1,7 @@
 package com.voyageone.common.masterdate.schema.field;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.voyageone.common.masterdate.schema.enums.FieldValueTypeEnum;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.utils.XmlUtils;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
@@ -181,8 +182,44 @@ public class MultiInputField extends com.voyageone.common.masterdate.schema.fiel
 
     @Override
     public void getFieldValueToMap(Map<String,Object> valueMap) {
-        if (values != null) {
-            valueMap.put(id, StringUtil.convertNull2Space(getStringValues()));
+        valueMap.put(id, getValue(getStringValues(), fieldValueType));
+    }
+
+    public static Object getValue(List<String> value, FieldValueTypeEnum fieldValueType) {
+        Object result;
+        if (value == null) {
+            return null;
         }
+        if (fieldValueType == null) {
+            return value;
+        }
+
+        switch(fieldValueType) {
+            case NONE:
+                result = value;
+                break;
+            case INT:
+                List<Integer> listInt = new ArrayList<>();
+                for (String v : value) {
+                    if (v != null && v.length() > 0) {
+                        listInt.add(new Integer(v));
+                    }
+                }
+                result = listInt;
+                break;
+            case DOUBLE:
+                List<Double> listDouble = new ArrayList<>();
+                for (String v : value) {
+                    if (v != null && v.length() > 0) {
+                        listDouble.add(new Double(v));
+                    }
+                }
+                result = listDouble;
+                break;
+            default:
+                result = value;
+                break;
+        }
+        return result;
     }
 }
