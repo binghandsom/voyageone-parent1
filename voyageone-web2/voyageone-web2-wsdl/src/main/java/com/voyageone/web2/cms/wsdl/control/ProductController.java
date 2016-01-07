@@ -51,10 +51,10 @@ public class ProductController extends BaseController {
     /**
      * selectList
      *
-     * @return ProductsCountGetResponse
+     * @return ProductsCountResponse
      */
     @RequestMapping("selectCount")
-    public ProductsCountGetResponse selectCount(@RequestBody ProductsCountGetRequest request) {
+    public ProductsCountResponse selectCount(@RequestBody ProductsCountRequest request) {
         return productService.selectCount(request);
     }
 
@@ -66,6 +66,16 @@ public class ProductController extends BaseController {
     @RequestMapping("priceLog/get")
     public ProductPriceLogGetResponse getPriceLog(@RequestBody ProductPriceLogGetRequest request) {
         return productService.getPriceLog(request);
+    }
+
+    /**
+     * update product
+     *
+     * @return ProductPriceLogGetResponse
+     */
+    @RequestMapping("add")
+    public ProductsAddResponse addProduct(@RequestBody ProductsAddRequest request) {
+        return productService.addProducts(request);
     }
 
     /**

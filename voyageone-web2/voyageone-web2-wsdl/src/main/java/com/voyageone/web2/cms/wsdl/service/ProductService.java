@@ -151,10 +151,10 @@ public class ProductService extends BaseService {
     /**
      * selectCount
      * @param request Request
-     * @return ProductsCountGetResponse
+     * @return ProductsCountResponse
      */
-    public ProductsCountGetResponse selectCount(ProductsCountGetRequest request) {
-        ProductsCountGetResponse result = new ProductsCountGetResponse();
+    public ProductsCountResponse selectCount(ProductsCountRequest request) {
+        ProductsCountResponse result = new ProductsCountResponse();
 
         long totalCount = 0L;
 
@@ -330,11 +330,66 @@ public class ProductService extends BaseService {
         return result;
     }
 
+    /**
+     * add products
+     *
+     * @return ProductUpdateResponse
+     */
+    public ProductsAddResponse addProducts(ProductsAddRequest request) {
+        ProductsAddResponse response = new ProductsAddResponse();
+
+        checkCommRequest(request);
+        //ChannelId
+        String channelId = request.getChannelId();
+        checkRequestChannelId(channelId);
+
+        request.check();
+
+        VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70007;
+
+        List<CmsBtProductModel> products = request.getProducts();
+
+        List<Long> pids = new ArrayList<>();
+        List<String> productCodes = new ArrayList<>();
+        for (CmsBtProductModel product : products) {
+            pids.add(product.getProdId());
+            productCodes.add(product.getFields().getCode());
+            product.setChannelId(channelId);
+            product.setCreater(request.getCreater());
+            product.setCreated(DateTimeUtil.getNow());
+            product.setModifier(request.getCreater());
+            product.setModified(DateTimeUtil.getNowTimeStamp());
+        }
+
+        /**
+         * check row exist
+         */
+        String pidsArrStr = Joiner.on(", ").skipNulls().join(pids);
+        String query = String.format("{ \"prodId\" : { $in : [ %s ] } }", pidsArrStr);
+        long count = cmsBtProductDao.countByQuery(query, channelId);
+        if (count > 0) {
+            throw new ApiException(codeEnum.getErrorCode(), "prodId has existed, not add!");
+        }
+        String productCodesStr = "\"" + Joiner.on("\", \"").skipNulls().join(productCodes) + "\"";
+        query = String.format("{ \"fields.code\" : { $in : [ %s ] } }", productCodesStr);
+        count = cmsBtProductDao.countByQuery(query, channelId);
+        if (count > 0) {
+            throw new ApiException(codeEnum.getErrorCode(), "fields.code has existed, not add!");
+        }
+
+        /**
+         * execute insert
+         */
+        cmsBtProductDao.insertWithList(products);
+        response.setInsertedCount(products.size());
+
+        return response;
+    }
 
     /**
      * update product
      *
-     * @return ProductPriceLogGetResponse
+     * @return ProductUpdateResponse
      */
     public ProductUpdateResponse updateProduct(ProductUpdateRequest request) {
         ProductUpdateResponse response = new ProductUpdateResponse();
