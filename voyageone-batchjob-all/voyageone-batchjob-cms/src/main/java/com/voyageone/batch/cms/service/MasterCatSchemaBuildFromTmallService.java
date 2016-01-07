@@ -1,5 +1,7 @@
 package com.voyageone.batch.cms.service;
 
+import com.mongodb.WriteResult;
+import com.voyageone.cms.service.dao.mongodb.CmsMtCommonSchemaDao;
 import com.voyageone.cms.service.model.CmsMtCategorySchemaModel;
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.cms.dao.mongo.CmsMtPlatformFieldsRemoveHistoryDao;
@@ -7,6 +9,7 @@ import com.voyageone.batch.cms.model.mongo.CmsMtPlatformRemoveFieldsModel;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.cms.service.dao.CmsMtCommonPropDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
+import com.voyageone.cms.service.model.CmsMtComSchemaModel;
 import com.voyageone.cms.service.model.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.cms.service.model.MtCommPropActionDefModel;
@@ -16,10 +19,10 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
-import com.voyageone.common.masterdate.schema.field.ComplexField;
-import com.voyageone.common.masterdate.schema.field.Field;
-import com.voyageone.common.masterdate.schema.field.MultiComplexField;
+import com.voyageone.common.masterdate.schema.field.*;
+import com.voyageone.common.masterdate.schema.label.Label;
 import com.voyageone.common.masterdate.schema.utils.FieldUtil;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.StringUtils;
 import net.minidev.json.JSONObject;
 import org.apache.commons.logging.Log;
@@ -53,6 +56,9 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
 
     @Autowired
     private CmsMtPlatformFieldsRemoveHistoryDao cmsMtPlatformFieldsRemoveHistoryDao;
+
+    @Autowired
+    private CmsMtCommonSchemaDao cmsMtCommonSchemaDao;
 
     Map<String,MtCommPropActionDefModel> allDefModelsMap = new HashMap<>();
 
@@ -100,12 +106,21 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
 
         List<MtCommPropActionDefModel> updateList =new ArrayList<>();
 
+        List<MtCommPropActionDefModel> comPropList =new ArrayList<>();
+
+        List<Field> comCategorySchema = new ArrayList<>();
+
         //先根据action type 分组
         for (MtCommPropActionDefModel actionDefModel:allDefModels){
 
             allDefModelsMap.put(actionDefModel.getPropId(),actionDefModel);
 
+            if (actionDefModel.getIsCom() == 1){
+                comPropList.add(actionDefModel);
+            }
+
             ActionType actionType = ActionType.valueOf(Integer.valueOf(actionDefModel.getActionType()));
+
             if(actionType != null){
                 switch (actionType){
                     case ADD:
@@ -259,13 +274,30 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
                 Field sku = FieldUtil.getFieldById(masterFields, "sku");
                 FieldUtil.removeFieldById(masterFields, "sku");
                 masterModel.setSku(sku);
+
+                for (MtCommPropActionDefModel comModel:comPropList){
+                    Field comField = FieldUtil.getFieldById(masterFields,comModel.getPropId());
+                    comCategorySchema.add(comField);
+                    FieldUtil.removeFieldById(masterFields,comModel.getPropId());
+                }
+
                 masterModel.setFields(masterFields);
                 masterModel.setCreater(this.JOB_NAME);
                 masterModel.setModifier(this.JOB_NAME);
 
+                if (isSaveComProps){
+
+                    CmsMtComSchemaModel comSchemaModel = new CmsMtComSchemaModel();
+                    comSchemaModel.setFields(comCategorySchema);
+                    WriteResult result = cmsMtCommonSchemaDao.insert(comSchemaModel);
+                    isSaveComProps = false;
+
+                }
+
                 index++;
 
                 logger.info("生成第" + index + "/" + schemaIds.size() + "个的主数据Schema，类目id为 " + masterModel.getCatId());
+
                 //保存主数据schema
                 cmsMtCategorySchemaDao.insert(masterModel);
 
@@ -329,7 +361,11 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
             thisField.setId(actionDefModel.getPropId());
             thisField.setName(actionDefModel.getPropName());
             actionDefModel.getRuleMode().setFieldComProperties(thisField);
+            //设定field默认值.
+            setFieldDefaultValue(actionDefModel,thisField);
+
             if(StringUtils.isEmpty(actionDefModel.getParentPropId())){
+
                 masterFields.add(thisField);
             }else {
                 Field parentField = FieldUtil.getFieldById(masterFields,actionDefModel.getParentPropId());
@@ -383,6 +419,33 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
         actionDefModel.getRuleMode().setFieldComProperties(updField);
 
         FieldUtil.renameDependFieldId(updField,actionDefModel.getPropId(),actionDefModel.getPlatformPropRefId(),masterFields);
+    }
+
+    private void setFieldDefaultValue(MtCommPropActionDefModel defModel, Field field){
+
+        FieldTypeEnum type = FieldTypeEnum.getEnum(defModel.getPropType());
+
+        if (!StringUtil.isEmpty(defModel.getDefaultValue())) {
+            switch (type) {
+                case LABEL:
+                    LabelField labelField = (LabelField) field;
+                    Label label = new Label();
+                    label.setValue(defModel.getDefaultValue());
+                    labelField.add(label);
+                    break;
+                case INPUT:
+                    InputField inputField = (InputField) field;
+                    inputField.setDefaultValue(defModel.getDefaultValue());
+                    break;
+                case SINGLECHECK:
+                    SingleCheckField singleCheckField = (SingleCheckField) field;
+                    singleCheckField.setDefaultValue(defModel.getDefaultValue());
+                    break;
+                default:
+                    break;
+            }
+        }
+
     }
 
 

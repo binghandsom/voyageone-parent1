@@ -57,11 +57,16 @@
                             </div>
                         </td>
                         <td>
-                            <a ng-if="feedCategory.model.attribute && ctrl.findDefaultMapping(feedCategory)"
-                               ng-href="#/setting/feed_mapping/prop/{{feedCategory.model.path}}"
-                               class="btn btn-default btn-xs" target="_blank">
-                                <i class="glyphicon glyphicon-link"></i> 属性匹配
-                            </a>
+                            <div class="btn-group" ng-if="feedCategory.model.attribute && ctrl.findDefaultMapping(feedCategory)">
+                                <a ng-href="#/setting/feed_mapping/prop/{{feedCategory.model.path}}"
+                                   class="btn btn-default btn-xs" target="_blank">
+                                    <i class="glyphicon glyphicon-link"></i> 属性匹配
+                                </a>
+                                <button class="btn btn-default btn-xs" ng-click="ctrl.directMatchOver(feedCategory)">
+                                    <i class="glyphicon glyphicon-link"></i> 直接完成
+                                </button>
+                            </div>
+
                         </td>
                     </tr>
                     </tbody>

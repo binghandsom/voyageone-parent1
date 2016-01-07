@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(
-        value  = "/rest/puroduct/group",
+        value  = "/rest/product/group",
         method = RequestMethod.POST
 )
 public class ProductGroupController extends BaseController {

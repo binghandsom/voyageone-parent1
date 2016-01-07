@@ -6,7 +6,7 @@ import java.util.List;
 
 
 /**
- * /puroduct/selectCount products count get response
+ * /product/selectCount products count get response
  * Created on 2015-12-14
  *
  * @author chuanyu.liang

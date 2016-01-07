@@ -17,22 +17,7 @@ public class ProductPriceModel {
     //product Code
     private String productCode;
 
-    //msrp价格区间-开始
-    private Double msrpStart;
-    //msrp价格区间-结束
-    private Double msrpEnd;
-    //建议市场价格区间-结束
-    private Double retailPriceStart;
-    //建议市场价格区间-结束
-    private Double retailPriceEnd;
-    //市场价格区间-开始
-    private Double salePriceStart;
-    //市场价格区间-结束
-    private Double salePriceEnd;
-    //当前销售价格区间-开始
-    private Double currentPriceStart;
-    //当前销售价格区间-结束
-    private Double currentPriceEnd;
+    private Integer priceChange;
 
     private List<ProductSkuPriceModel> skuPrices = new ArrayList<>();
 
@@ -52,68 +37,12 @@ public class ProductPriceModel {
         this.productCode = productCode;
     }
 
-    public Double getMsrpStart() {
-        return msrpStart;
+    public Integer getPriceChange() {
+        return priceChange;
     }
 
-    public void setMsrpStart(Double msrpStart) {
-        this.msrpStart = msrpStart;
-    }
-
-    public Double getMsrpEnd() {
-        return msrpEnd;
-    }
-
-    public void setMsrpEnd(Double msrpEnd) {
-        this.msrpEnd = msrpEnd;
-    }
-
-    public Double getRetailPriceStart() {
-        return retailPriceStart;
-    }
-
-    public void setRetailPriceStart(Double retailPriceStart) {
-        this.retailPriceStart = retailPriceStart;
-    }
-
-    public Double getRetailPriceEnd() {
-        return retailPriceEnd;
-    }
-
-    public void setRetailPriceEnd(Double retailPriceEnd) {
-        this.retailPriceEnd = retailPriceEnd;
-    }
-
-    public Double getSalePriceStart() {
-        return salePriceStart;
-    }
-
-    public void setSalePriceStart(Double salePriceStart) {
-        this.salePriceStart = salePriceStart;
-    }
-
-    public Double getSalePriceEnd() {
-        return salePriceEnd;
-    }
-
-    public void setSalePriceEnd(Double salePriceEnd) {
-        this.salePriceEnd = salePriceEnd;
-    }
-
-    public Double getCurrentPriceStart() {
-        return currentPriceStart;
-    }
-
-    public void setCurrentPriceStart(Double currentPriceStart) {
-        this.currentPriceStart = currentPriceStart;
-    }
-
-    public Double getCurrentPriceEnd() {
-        return currentPriceEnd;
-    }
-
-    public void setCurrentPriceEnd(Double currentPriceEnd) {
-        this.currentPriceEnd = currentPriceEnd;
+    public void setPriceChange(Integer priceChange) {
+        this.priceChange = priceChange;
     }
 
     public List<ProductSkuPriceModel> getSkuPrices() {

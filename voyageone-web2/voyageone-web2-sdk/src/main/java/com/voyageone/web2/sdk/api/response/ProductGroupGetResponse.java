@@ -6,7 +6,7 @@ import com.voyageone.web2.sdk.api.VoApiResponse;
 
 /**
  * main group product get response
- * /puroduct/group/selectOne
+ * /product/group/selectOne
  * Created on 2015-12-14
  *
  * @author chuanyu.liang

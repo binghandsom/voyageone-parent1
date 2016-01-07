@@ -55,7 +55,6 @@ public class MultiComplexField extends Field {
         return complexValue;
     }
 
-    @JsonIgnore
     public List<ComplexValue> getComplexValues() {
         return this.values;
     }
@@ -89,6 +88,7 @@ public class MultiComplexField extends Field {
         return this.fields;
     }
 
+    @JsonIgnore
     public Map<String, Field> getFieldMap() {
         Map<String, Field> map = new HashMap<>();
 
@@ -167,6 +167,7 @@ public class MultiComplexField extends Field {
     }
 
     @Override
+    @JsonIgnore
     public List<ComplexValue> getValue() {
         return this.values;
     }

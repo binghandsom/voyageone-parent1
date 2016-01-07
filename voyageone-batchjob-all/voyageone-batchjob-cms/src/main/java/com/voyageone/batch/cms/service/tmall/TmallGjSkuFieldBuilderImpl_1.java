@@ -179,6 +179,9 @@ public class TmallGjSkuFieldBuilderImpl_1 extends AbstractSkuFieldBuilder {
                     } else {
                         RuleExpression ruleExpression = ((SimpleMappingBean)mappingBean).getExpression();
                         String propValue = expressionParser.parse(ruleExpression, null);
+                        if (propValue == null) {
+                            continue;
+                        }
                         Field subField = fieldMap.get(propId);
                         if (subField.getType() == FieldTypeEnum.INPUT) {
                             skuFieldValue.setInputFieldValue(mappingBean.getPlatformPropId(), propValue);

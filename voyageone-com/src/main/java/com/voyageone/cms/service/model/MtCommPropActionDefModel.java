@@ -14,6 +14,7 @@ public class MtCommPropActionDefModel {
     private String propType;
     private String propLevel;
     private int actionType;
+    private int isCom;
     private String platformPropRefId;
     private String actionRules;
     private String tips;
@@ -117,6 +118,14 @@ public class MtCommPropActionDefModel {
 
     public Object getRuleValue(String ruleKey) {
         return this.ruleMode.getValue(ruleKey);
+    }
+
+    public int getIsCom() {
+        return isCom;
+    }
+
+    public void setIsCom(int isCom) {
+        this.isCom = isCom;
     }
 
 }

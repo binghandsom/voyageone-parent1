@@ -5,7 +5,7 @@ import com.voyageone.web2.sdk.api.VoApiUpdateResponse;
 
 /**
  * products delete tag
- * /puroduct/tag/delete
+ * /product/tag/delete
  * Created on 2015-12-14
  *
  * @author chuanyu.liang

@@ -20,10 +20,10 @@ public class CmsBtProductModel_Sku extends BaseMongoMap<String, Object> {
     public CmsBtProductModel_Sku() {
 
     }
+
     public CmsBtProductModel_Sku(Map m) {
         this.putAll(m);
     }
-
 
     public String getSkuCode() {
         return getAttribute("skuCode");

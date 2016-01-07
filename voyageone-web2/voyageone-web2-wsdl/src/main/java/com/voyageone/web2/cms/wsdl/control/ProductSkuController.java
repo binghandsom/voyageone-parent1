@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(
-        value  = "/rest/puroduct/sku",
+        value  = "/rest/product/sku",
         method = RequestMethod.POST
 )
 public class ProductSkuController extends BaseController {

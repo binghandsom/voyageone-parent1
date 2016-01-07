@@ -1,16 +1,12 @@
 <div class="wrapper-md" ng-controller="feedPropMappingController as ctrl" ng-init="ctrl.init()">
     <tabset class="tab-container vo_nav-tabs">
         <div class="form-inline pull-right">
-            <select class="form-control m-r-xxs">
-                <option>必填情况(ALL)</option>
-                <option>非必填</option>
-                <option>必填</option>
-            </select>
-            <select class="form-control m-r-xxs">
-                <option>设定情况(ALL)</option>
-                <option>已设定</option>
-                <option>未设定</option>
-            </select>
+            <select class="form-control m-r-xxs" title="必填情况"
+                    ng-model="ctrl.show.hasRequired"
+                    ng-options="v as k for (k,v) in ctrl.options.hasRequired"></select>
+            <select class="form-control m-r-xxs" title="设定情况"
+                    ng-model="ctrl.show.matched"
+                    ng-options="v as k for (k,v) in ctrl.options.matched"></select>
             <input type="text" placeholder="快速检索" class="form-control">
             <button type="submit" class="btn btn-vo btn-xxs"><i class="fa fa-search"></i></button>
         </div>
@@ -24,8 +20,9 @@
                         </div>
                         <form class="form-horizontal clearfix">
                             <div class="col-sm-12 platform_mapping_bg_list"
-                                 ng-repeat="bean in ctrl.fields | fmExtendField"
-                                 ng-include="'feedMapping.fieldBean.html'"></div>
+                                 ng-repeat="bean in ctrl.dataSources.fields"
+                                 ng-if="ctrl.shown(bean)" field-bean>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -36,8 +33,8 @@
                         </div>
                         <form class="form-horizontal clearfix">
                             <div class="col-sm-12 platform_mapping_bg_list"
-                                 ng-repeat="bean in ctrl.commonFields | fmExtendField"
-                                 ng-include="'feedMapping.fieldBean.html'"></div>
+                                 ng-repeat="bean in ctrl.dataSources.common"
+                                 ng-if="ctrl.shown(bean)" field-bean></div>
                         </form>
                     </div>
                 </div>
@@ -48,8 +45,9 @@
                         </div>
                         <form class="form-horizontal clearfix">
                             <div class="col-sm-12 platform_mapping_bg_list"
-                                 ng-repeat="bean in ctrl.skuFields | fmExtendField"
-                                 ng-include="'feedMapping.fieldBean.html'"></div>
+                                 ng-repeat="bean in ctrl.dataSources.sku"
+                                 ng-include="'feedMapping.fieldBean.html'"
+                                 ng-if="ctrl.shown(bean)" field-bean></div>
                         </form>
                     </div>
                 </div>
@@ -57,21 +55,23 @@
         </tab>
     </tabset>
     <script type="text/ng-template" id="feedMapping.fieldBean.html">
-        <div class="col-sm-5 text-left"
-             ng-style="{'margin-left': bean.level * 30}">
-            <i class="fa"
-               ng-class="{'fa-plus':!bean.x.isSimple, 'fa-minus': bean.x.isSimple}"></i>
-            {{ bean.field.name }}
-            <span ng-if="bean.x.required">(必填)</span>
+        <div class="col-sm-5 text-left" style="margin-left:{{::bean.level*30}}px">
+            <i class="fa {{::bean.headClass}}"></i>
+            <span>{{::bean.field.name }}</span>
+            <span ng-if="bean.required">(必填)</span>
         </div>
-        <div class="col-sm-1 pull-center" ng-if="bean.x.isSimple">
+        <div class="col-sm-1 pull-center" ng-if="bean.isSimple">
             <button class="badge badge-empty"
                     ng-click="popupFeed(ctrl.popupContext(bean)).then(ctrl.saveMapping)">
                 值匹配
             </button>
         </div>
         <div class="pull-right">
-            <span class="{{ bean.x.iconClass }}">{{ bean.field.type }}</span>
+            <span class="{{::bean.iconClass}}">{{::bean.field.type}}</span>
+            <span ng-if="bean.isSimple"
+                  ng-class="{'badge':bean.matched, 'badge badge-failure': !bean.matched}">
+                <span>{{ bean.matched ? '已匹配' : '未匹配' }}</span>
+            </span>
         </div>
     </script>
 </div>

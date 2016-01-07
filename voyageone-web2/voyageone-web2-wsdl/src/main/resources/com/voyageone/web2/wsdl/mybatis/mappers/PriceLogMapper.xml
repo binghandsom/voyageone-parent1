@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.voyageone.web2.cms.sql">
-    <resultMap id="PriceLogMap" type="com.voyageone.web2.cms.model.CmsBtPriceLogModel">
+<mapper namespace="com.voyageone.web2.wsdl.sql">
+    <resultMap id="PriceLogMap" type="com.voyageone.web2.sdk.api.domain.CmsBtPriceLogModel">
         <id column="seq" property="seq" jdbcType="INTEGER" />
         <result column="channelId" property="channelId" jdbcType="VARCHAR" />
         <result column="product_id" property="productId" jdbcType="INTEGER" />
@@ -67,7 +67,7 @@
         select count(1) from voyageone_cms2.cms_bt_price_log log where log.sku = #{sku}
     </select>
 
-    <insert id="insert_cms_bt_price_log" parameterType="com.voyageone.web2.cms.model.CmsBtPriceLogModel" useGeneratedKeys="true" keyProperty="seq">
+    <insert id="insert_cms_bt_price_log" parameterType="com.voyageone.web2.sdk.api.domain.CmsBtPriceLogModel" useGeneratedKeys="true" keyProperty="seq">
         insert into voyageone_cms2.cms_bt_price_log (
             channelId,
             product_id,
@@ -81,7 +81,7 @@
             creater,
             modified,
             modifier
-        ) values (
+        ) value (
             #{item.channelId},
             #{item.productId},
             #{item.code},
@@ -111,7 +111,7 @@
             creater,
             modified,
             modifier
-        ) values
+        ) value
         <foreach collection="list" item="item" separator=",">
             (
                 #{item.channelId},
