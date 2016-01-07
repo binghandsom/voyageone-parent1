@@ -2,6 +2,7 @@ package com.voyageone.common.magento.api.service;
 
 import com.voyageone.common.components.issueLog.IssueLog;
 import com.voyageone.common.configs.Codes;
+import com.voyageone.common.configs.ThirdPartyConfigs;
 import com.voyageone.common.magento.api.bean.*;
 import com.voyageone.common.magento.api.base.*;
 import com.voyageone.common.magento.api.service.*;
@@ -20,13 +21,8 @@ import java.util.List;
 public class MagentoApiServiceImpl {
 	private static Log logger = LogFactory.getLog(MagentoApiServiceImpl.class);
 
-	@Autowired
-	IssueLog issueLog;
-
-	/**
-	 * 配置头
-	 */
-	private static final String MAGENTO_API_CONFIG = "MAGENTO_API_CONFIG_";
+//	@Autowired
+//	IssueLog issueLog;
 	/**
 	 * 店铺渠道
 	 */
@@ -35,44 +31,12 @@ public class MagentoApiServiceImpl {
 	 * 登陆用数据Bean
 	 */
 	private LoginParam loginParam;
-	
 	/**
 	 * 顾客信息
 	 */
 	private CustomerBean customer;
 	
 	private MagentoServiceStub stub;
-
-//	@Autowired
-//	public MagentoApiServiceImpl(String orderChannelId) {
-//		super();
-//		this.orderChannelId = orderChannelId;
-//
-//		String realConfigName = MAGENTO_API_CONFIG + this.orderChannelId;
-//
-//		// magento api调用 userName
-//		String userName = Codes.getCodeName(realConfigName, "userName");
-//		// magento api调用 密钥
-//		String apiKey = Codes.getCodeName(realConfigName, "apiKey");
-//
-//		loginParam.setUsername(userName);
-//		loginParam.setApiKey(apiKey);
-////		loginParam.setUsername("VOYAGEONE_API_USER");
-////		loginParam.setApiKey("hjA=fs2H0n+%PFd,b4wB");
-//
-//		String customerId = Codes.getCodeName(realConfigName, "customerId");
-//		String customerMode = Codes.getCodeName(realConfigName, "customerMode");
-//		String storeId = Codes.getCodeName(realConfigName, "storeId");
-//		String webSiteId = Codes.getCodeName(realConfigName, "webSiteId");
-//		String storeName = Codes.getCodeName(realConfigName, "storeName");
-//
-//		customer.setCustomerId(Integer.valueOf(customerId));
-//		customer.setMode(customerMode);
-//		customer.setStoreId(Integer.valueOf(storeId));
-//		customer.setWebsiteId(Integer.valueOf(webSiteId));
-//		customer.setStore(storeName);
-//
-//	}
 	
 	/**
 	 * @return the orderChannelId
@@ -87,12 +51,10 @@ public class MagentoApiServiceImpl {
 	public void setOrderChannelId(String orderChannelId) {
 		this.orderChannelId = orderChannelId;
 
-		String realConfigName = MAGENTO_API_CONFIG + this.orderChannelId;
-
 		// magento api调用 userName
-		String userName = Codes.getCodeName(realConfigName, "userName");
+		String userName = ThirdPartyConfigs.getVal1(this.orderChannelId, "userName");
 		// magento api调用 密钥
-		String apiKey = Codes.getCodeName(realConfigName, "apiKey");
+		String apiKey = ThirdPartyConfigs.getVal1(this.orderChannelId, "apiKey");
 
 		loginParam = new LoginParam();
 		loginParam.setUsername(userName);
@@ -101,11 +63,11 @@ public class MagentoApiServiceImpl {
 //		loginParam.setUsername("VOYAGEONE_API_USER");
 //		loginParam.setApiKey("hjA=fs2H0n+%PFd,b4wB");
 
-		String customerId = Codes.getCodeName(realConfigName, "customerId");
-		String customerMode = Codes.getCodeName(realConfigName, "customerMode");
-		String storeId = Codes.getCodeName(realConfigName, "storeId");
-		String webSiteId = Codes.getCodeName(realConfigName, "webSiteId");
-		String storeName = Codes.getCodeName(realConfigName, "storeName");
+		String customerId = ThirdPartyConfigs.getVal1(this.orderChannelId, "customerId");
+		String customerMode = ThirdPartyConfigs.getVal1(this.orderChannelId, "customerMode");
+		String storeId = ThirdPartyConfigs.getVal1(this.orderChannelId, "storeId");
+		String webSiteId = ThirdPartyConfigs.getVal1(this.orderChannelId, "webSiteId");
+		String storeName = ThirdPartyConfigs.getVal1(this.orderChannelId, "storeName");
 
 		customer = new CustomerBean();
 		customer.setCustomerId(Integer.valueOf(customerId));
@@ -121,10 +83,8 @@ public class MagentoApiServiceImpl {
 	 * @return
 	 */
 	private String login() throws Exception {
-		String realConfigName = MAGENTO_API_CONFIG + this.orderChannelId;
-
 		// magento api调用 URL
-		String url = Codes.getCodeName(realConfigName, "url");
+		String url = ThirdPartyConfigs.getVal1(this.orderChannelId, "url");
 		stub = new MagentoServiceStub(url);
 //		stub = new MagentoServiceStub("http://www.wmf.com/api/v2_soap");
 		System.setProperty("javax.net.ssl.trustStore", "D:/tmp/trustStore");
@@ -374,10 +334,8 @@ public class MagentoApiServiceImpl {
 		boolean isException = false;
 		
 		if (skuList != null && skuList.size() > 0) {
-
-			String realConfigName = MAGENTO_API_CONFIG + this.orderChannelId;
 			// magento api调用 库存sku数
-			String inventoryMaxSize = Codes.getCodeName(realConfigName, "inventoryMaxSize");
+			String inventoryMaxSize = ThirdPartyConfigs.getVal1(this.orderChannelId, "inventoryMaxSize");
 			int inventoryMaxSizeInt = Integer.valueOf(inventoryMaxSize);
 
 			List<List<String>> skuTotalList = new ArrayList<List<String>>();
