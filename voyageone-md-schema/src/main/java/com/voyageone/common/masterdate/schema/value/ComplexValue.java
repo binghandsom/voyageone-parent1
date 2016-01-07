@@ -9,6 +9,7 @@ import com.voyageone.common.masterdate.schema.field.MultiCheckField;
 import com.voyageone.common.masterdate.schema.field.MultiComplexField;
 import com.voyageone.common.masterdate.schema.field.MultiInputField;
 import com.voyageone.common.masterdate.schema.field.SingleCheckField;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 
 import java.util.*;
 
@@ -139,34 +140,24 @@ public class ComplexValue {
         List valueList = null;
         switch (fieldType){
             case INPUT:
-                setInputFieldValue(fieldId, (String)value);
+                setInputFieldValue(fieldId, StringUtil.getStringValue(value));
                 break;
             case MULTIINPUT:
                 valueList = (List)value;
                 List<String> objValuesStr = new ArrayList<>();
                 for (Object cellValue : valueList) {
-                    if (cellValue instanceof String) {
-                        objValuesStr.add((String)cellValue);
-                    }
+                    objValuesStr.add(StringUtil.getStringValue(cellValue));
                 }
                 setMultiInputFieldValues(fieldId, objValuesStr);
                 break;
             case SINGLECHECK:
-                if (value instanceof String) {
-                    setSingleCheckFieldValue(fieldId, new Value((String)value));
-                } else if (value instanceof Value) {
-                    setSingleCheckFieldValue(fieldId, (Value)value);
-                }
+                setSingleCheckFieldValue(fieldId, new Value(StringUtil.getStringValue(value)));
                 break;
             case MULTICHECK: {
                 valueList = (List)value;
                 List<Value> objValuesValue = new ArrayList<>();
                 for (Object cellValue : valueList) {
-                    if (cellValue instanceof String) {
-                        objValuesValue.add(new Value((String)cellValue));
-                    } else if (cellValue instanceof Value) {
-                        objValuesValue.add((Value)cellValue);
-                    }
+                    objValuesValue.add(new Value(StringUtil.getStringValue(cellValue)));
                 }
                 setMultiCheckFieldValues(fieldId, objValuesValue);
                 break;
