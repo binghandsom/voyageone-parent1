@@ -56,14 +56,4 @@ public class StringUtil {
         }
         return result;
     }
-
-    public static List<String> convertNull2Space(List<String> inputList) {
-        List<String> result = new ArrayList<>();
-        if (inputList != null) {
-            for (String cell : inputList) {
-                result.add(cell != null ? cell:"");
-            }
-        }
-        return result;
-    }
 }

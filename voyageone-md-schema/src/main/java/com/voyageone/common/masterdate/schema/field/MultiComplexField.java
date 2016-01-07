@@ -226,7 +226,7 @@ public class MultiComplexField extends Field {
 
                 for (Field field : fields) {
                     if (complexValue != null) {
-                        Object subValue = complexValue.getFieldValue(field.id, field.getType());
+                        Object subValue = complexValue.getFieldValue(field.id, field.getType(), field.getFieldValueType());
                         if (subValue != null) {
                             valueMapCell.put(field.id, subValue);
                         }

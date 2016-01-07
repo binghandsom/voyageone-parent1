@@ -186,7 +186,7 @@ public class ComplexField extends Field {
             }
             Map currObj = (Map)valueMap.get(id);
             for (Field field : fields) {
-                Object subValue = complexValue.getFieldValue(field.id, field.getType());
+                Object subValue = complexValue.getFieldValue(field.id, field.getType(), field.getFieldValueType());
                 if (subValue != null) {
                     currObj.put(field.id, subValue);
                 }

@@ -1,5 +1,6 @@
 package com.voyageone.common.masterdate.schema.field;
 
+import com.voyageone.common.masterdate.schema.enums.FieldValueTypeEnum;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.utils.XmlUtils;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
@@ -96,6 +97,35 @@ public class InputField extends Field {
 
     @Override
     public void getFieldValueToMap(Map<String,Object> valueMap) {
-        valueMap.put(id, value!=null?value:"");
+        valueMap.put(id, getValue(value, fieldValueType));
+    }
+
+    public static Object getValue(String value, FieldValueTypeEnum fieldValueType) {
+        Object result = null;
+        if (value == null) {
+            return null;
+        }
+        if (fieldValueType == null) {
+            return value;
+        }
+        switch(fieldValueType) {
+            case NONE:
+                result = value;
+                break;
+            case INT:
+                if (value.length() > 0) {
+                    result = new Integer(value);
+                }
+                break;
+            case DOUBLE:
+                if (value.length() > 0) {
+                    result = new Double(value);
+                }
+                break;
+            default:
+                result = value;
+                break;
+        }
+        return result;
     }
 }

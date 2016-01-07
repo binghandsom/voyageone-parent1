@@ -1,5 +1,6 @@
 package com.voyageone.common.masterdate.schema.value;
 
+import com.voyageone.common.masterdate.schema.enums.FieldValueTypeEnum;
 import com.voyageone.common.masterdate.schema.utils.ISPUtil;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.ComplexField;
@@ -182,20 +183,22 @@ public class ComplexValue {
     }
 
 
-    public Object getFieldValue(String fieldId, FieldTypeEnum fieldType) {
+    public Object getFieldValue(String fieldId, FieldTypeEnum fieldType, FieldValueTypeEnum valueType) {
         Object result = null;
 
         switch (fieldType){
             case INPUT:
-                result = getInputFieldValue(fieldId);
+                String resultStr = getInputFieldValue(fieldId);
+                result = InputField.getValue(resultStr, valueType);
                 break;
             case MULTIINPUT:
-                result = convertEmptyList(getMultiInputFieldValues(fieldId));
+                List<String> resultMList = getMultiInputFieldValues(fieldId);
+                result = MultiInputField.getValue(resultMList, valueType);
                 break;
             case SINGLECHECK:
                 Value valueSingleChec = getSingleCheckFieldValue(fieldId);
                 if (valueSingleChec != null) {
-                    result = valueSingleChec.getValue();
+                    result = SingleCheckField.getValue(valueSingleChec, valueType);
                 }
                 break;
             case MULTICHECK: {
@@ -203,10 +206,10 @@ public class ComplexValue {
                 List<Value> valueList = getMultiCheckFieldValues(fieldId);
                 if (valueList != null) {
                     for (Value cellValue : valueList) {
-                        objValuesStr.add(cellValue.getValue() != null ? cellValue.getValue() : "");
+                        objValuesStr.add(cellValue.getValue());
                     }
                 }
-                result = objValuesStr;
+                result = MultiCheckField.getValue(objValuesStr, valueType);
                 break;
             }
             case COMPLEX: {
@@ -241,15 +244,5 @@ public class ComplexValue {
             }
         }
         return subvalueMapCell;
-    }
-
-    private List<String> convertEmptyList(List<String> inputList) {
-        List<String> result = new ArrayList<>();
-        if (inputList != null) {
-            for (String cell : inputList) {
-                result.add(cell != null ? cell:"");
-            }
-        }
-        return result;
     }
 }
