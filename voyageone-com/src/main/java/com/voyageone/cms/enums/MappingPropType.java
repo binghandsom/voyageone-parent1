@@ -30,7 +30,7 @@ public enum MappingPropType {
     }
 
     @JsonCreator
-    private MappingPropType fromJson(String value) {
+    private static MappingPropType fromJson(String value) {
         return valueOf(value);
     }
 }
