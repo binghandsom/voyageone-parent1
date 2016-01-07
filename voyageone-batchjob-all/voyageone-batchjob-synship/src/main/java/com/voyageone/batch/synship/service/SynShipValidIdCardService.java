@@ -146,6 +146,7 @@ public class SynShipValidIdCardService extends BaseTaskService {
                 try {
                     validOnThread(subList);
                 } catch (Exception e) {
+                    $info(e.toString());
                     exceptions.add(e);
                 }
             });
