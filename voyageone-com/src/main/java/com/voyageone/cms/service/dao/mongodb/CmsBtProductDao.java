@@ -81,8 +81,8 @@ public class CmsBtProductDao extends BaseMongoPartDao {
 
     /**
      * 获取商品Code 数量 根据CartId（含SKU）
-     * @param channelId
-     * @param cartId
+     * @param channelId channel Id
+     * @param cartId cart Id
      *
      */
     public long selectProductByCartIdRecCount(String channelId, String cartId) {
@@ -93,8 +93,8 @@ public class CmsBtProductDao extends BaseMongoPartDao {
 
     /**
      * 获取商品Model 数量 根据CartId（含SKU）
-     * @param channelId
-     * @param cartId
+     * @param channelId channel Id
+     * @param cartId cart Id
      */
     public long selectGroupByCartIdRecCount(String channelId, String cartId) {
         String query = "{\"groups.platforms.cartId\":" + cartId + ",\"groups.platforms.isMain\":1}";

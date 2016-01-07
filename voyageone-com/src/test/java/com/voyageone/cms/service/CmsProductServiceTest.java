@@ -4,11 +4,10 @@ package com.voyageone.cms.service;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
-import com.voyageone.cms.CmsConstants;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.model.*;
-import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.util.StringUtils;
 import net.minidev.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,9 +36,9 @@ public class CmsProductServiceTest {
     private CmsBtProductModel create(String channelId, int index, Random random) {
         CmsBtProductModel product = new CmsBtProductModel(channelId);
         product.setProdId(Long.parseLong("" + index));
-        String catId = String.valueOf(random.nextInt(1000));
-        product.setCatId(catId);
+        //String catId = String.valueOf(random.nextInt(1000));
         product.setCatPath("女装>休闲服>上衣>");
+        product.setCatId(StringUtils.generCatId(product.getCatPath()));
         String code = String.valueOf(100000 + index);
         CmsBtProductModel_Field fields = product.getFields();
         fields.setCode(code);
