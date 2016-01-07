@@ -16,6 +16,7 @@ import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.StoreBean;
 import com.voyageone.common.configs.beans.ThirdPartyConfigBean;
 import com.voyageone.common.configs.dao.ThirdPartConfigDao;
+import com.voyageone.common.magento.api.service.MagentoApiServiceImpl;
 import com.voyageone.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,9 @@ public abstract class WmsGetClientInvBaseService extends BaseTaskService {
 
     @Autowired
     SearsService searsService;
+
+    @Autowired
+    MagentoApiServiceImpl magentoApiServiceImpl;
 
     @Override
     public SubSystem getSubSystem() {
