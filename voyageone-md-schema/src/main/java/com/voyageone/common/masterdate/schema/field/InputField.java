@@ -47,7 +47,7 @@ public class InputField extends Field {
     public Element toParamElement() throws TopSchemaException {
         Element fieldNode = XmlUtils.createRootElement("field");
         if(StringUtil.isEmpty(this.id)) {
-            throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_30001, (String)null);
+            throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_30001, null);
         } else if(this.type != null && !StringUtil.isEmpty(this.type.value())) {
             FieldTypeEnum fieldEnum = FieldTypeEnum.getEnum(this.type.value());
             if(fieldEnum == null) {
@@ -86,24 +86,12 @@ public class InputField extends Field {
 
     @Override
     public void setFieldValueFromMap(Map<String, Object> valueMap) {
-        Object valueObj = getFieldValueFromMap(valueMap);
-        String value = "";
-        if (valueObj != null) {
-            value = valueObj.toString();
-        }
-        setValue(value);
+        setValue(getFieldValueFromMap(valueMap));
     }
 
     @Override
     public String getFieldValueFromMap(Map<String, Object> valueMap) {
-        String result;
-        Object valueObj =  valueMap.get(id);
-        if (valueObj instanceof String) {
-            result = (String)valueMap.get(id);
-        } else {
-            result = valueObj != null ? valueObj.toString():"";
-        }
-        return result;
+        return StringUtil.getStringValue(valueMap.get(id));
     }
 
     @Override

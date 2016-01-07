@@ -75,53 +75,14 @@
 			<tab>
 				<tab-heading>&nbsp;{{'TXT_PRODUCT_SKU_LIST' | translate}}</tab-heading>
 				<div class="panel vo_panel tab_panel">
-					<div class="table-responsive">
-						<table class="table table-hover b-t b-light vo_table vo_models">
-							<thead>
-							<tr>
-								<th class="mfb-xt text-center" translate="TXT_SEQ"></th>
-								<th class="mfb-x" translate="TXT_SKU"></th>
-								<th class="mfb-xt" translate="TXT_UPC"></th>
-								<th class="mfb-xt text-center" translate="TXT_SIZE"></th>
-								<th class="mfb-xt text-center" translate="TXT_Inventory"></th>
-								<th class="mfb-x" translate="TXT_MSRP"></th>
-								<th class="mfb-xx" translate="TXT_RETAIL_PRICE"></th>
-								<th class="mfb-xx" translate="TXT_SALE_PRICE"></th>
-								<th class="mfb-xxxsm text-left">
-									<li class="dropdown" dropdown style="list-style: none">
-										<a href class="dropdown-toggle clear" dropdown-toggle>
-											<span class="" translate="TXT_LIVE_STATUS"></span><b class="caret"></b>
-										</a>
-										<!-- dropdown -->
-										<ul class="dropdown-menu" ng-if="ctrl.productDetails.skus.length">
-											<li class="m-r-sm">
-												<label class="checkbox-inline c-checkbox"><input type="checkbox" ng-model="ctrl.bulkCartStatus[23]" ng-click="ctrl.selSkuCart(23)"><span class="fa fa-check"></span>&nbsp;{{'TXT_TG' | translate}}</label>
-											</li>
-										</ul>
-									</li>
-									<!-- / dropdown -->
-								</th>
-							</tr>
-							</thead>
-							<tbody>
-							<tr ng-repeat="sku in ctrl.productDetails.skus">
-								<td class="text-center">{{$index + 1}}</td>
-								<td class="wtab-xs" ng-bind="sku.skuCode"></td>
-								<td ng-bind="sku.barcode"></td>
-								<td class="text-center" ng-bind="sku.size"></td>
-								<td class="text-center" ng-bind="sku.qty"></td>
-								<td>
-									<button type="button" popover-placement="left" class="btn btn-vo btn-xs" ng-bind="sku.priceMsrp"></button>
-								</td>
-								<td><input type="text" class="form-control" ng-model="sku.priceRetail"></td>
-								<td><input type="text" class="form-control" ng-model="sku.priceSale"></td>
-								<td class="text-left">
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" ng-model="sku.SelSkuCarts[23]"><span class="fa fa-check"></span>&nbsp;{{'TXT_TG' | translate}}</label>
-								</td>
-							</tr>
-							</tbody>
-						</table>
-					</div><!-- .table-responsive -->
+					<div class="row wrapper">
+						<div class="container-fluid">
+							<schema-item class="hierarchy_main modal-open col-sm-11" data="ctrl.productDetails.skuFields" ng-if="ctrl.productDetails.skuFields != null"></schema-item>
+							<div class="col-sm-1">
+								<button class="btn btn-success" ng-click="addField(ctrl.productDetails.skuFields)"><i class="fa fa-plus"></i>{{'BTN_COM_ADD' | translate}}</button>
+							</div>
+						</div>
+					</div>
 				</div> <!-- .panel -->
 				<div class="row text-center">
 					<div class="col-sm-12">
@@ -131,7 +92,6 @@
 						</div><!-- .form-inline -->
 					</div>
 				</div>
-
 			</tab>
 
 			<tab>

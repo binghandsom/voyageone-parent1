@@ -26,9 +26,9 @@ public class CmsPriceHistoryServiceTest {
         params.put("flag", true);
         params.put("code", "0");
         params.put("sku", "1");
-        params.put("offset",0);
-        params.put("rows",30);
-        Map<String, Object> result = cmsPriceHistoryService.getPriceHistory(params, "300");
+        params.put("offset", 0);
+        params.put("rows", 30);
+        Map<String, Object> result = cmsPriceHistoryService.getPriceHistory(params, "010");
         assert result.size() > 0;
     }
 }

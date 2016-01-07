@@ -23,13 +23,14 @@ define([
             this.productDetailsCopy = null;
             // 显示sku列表中
             this.bulkCartStatus = [];
+            this.currentImage = "";
         }
 
         productDetailController.prototype = {
 
             // 获取初始化数据
             initialize: function () {
-                var data = {productId: this.routeParams.id};
+                var data = {productId: this.routeParams.productId};
                 this.productDetailService.getProductInfo(data)
                     .then(function (res) {
                         this.productDetails = res.data.productInfo;
