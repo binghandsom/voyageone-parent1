@@ -163,7 +163,7 @@ public class TmallGjSkuFieldBuilderImpl_1 extends AbstractSkuFieldBuilder {
             List<CmsBtProductModel_Sku> cmsSkuPropBeans = sxProduct.getCmsBtProductModel().getSkus();
             for (CmsBtProductModel_Sku cmsSkuProp : cmsSkuPropBeans) {
                 //CmsBtProductModel_Sku 是Map<String, Object>的子类
-                expressionParser.pushMasterPropContext(cmsSkuProp);
+                expressionParser.setSkuPropContext(cmsSkuProp);
                 ComplexValue skuFieldValue = new ComplexValue();
                 complexValues.add(skuFieldValue);
 
@@ -190,7 +190,6 @@ public class TmallGjSkuFieldBuilderImpl_1 extends AbstractSkuFieldBuilder {
                         }
                     }
                 }
-                expressionParser.popMasterPropContext();
             }
         }
 
@@ -206,6 +205,7 @@ public class TmallGjSkuFieldBuilderImpl_1 extends AbstractSkuFieldBuilder {
         List<ComplexValue> complexValues = new ArrayList<>();
         for (Map.Entry<String, CmsBtProductModel_Sku> entry : buildSkuResult.getSizeCmsSkuPropMap().entrySet())
         {
+            expressionParser.setSkuPropContext(entry.getValue());
             ComplexValue complexValue = new ComplexValue();
 
             if (skuExtend_sizeField.getType() == FieldTypeEnum.SINGLECHECK) {

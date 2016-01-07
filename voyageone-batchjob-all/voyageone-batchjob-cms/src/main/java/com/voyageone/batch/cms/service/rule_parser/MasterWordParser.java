@@ -101,4 +101,12 @@ public class MasterWordParser {
     public void pushEvaluationContext(Map<String, Object> evaluationContext) {
         evaluationContextStack.add(evaluationContext);
     }
+
+    public CmsBtProductModel getCmsBtProductModel() {
+        return cmsBtProductModel;
+    }
+
+    public void setCmsBtProductModel(CmsBtProductModel cmsBtProductModel) {
+        this.cmsBtProductModel = cmsBtProductModel;
+    }
 }

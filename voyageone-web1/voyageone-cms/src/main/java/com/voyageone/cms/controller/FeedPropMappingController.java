@@ -1,7 +1,7 @@
 package com.voyageone.cms.controller;
 
 import com.voyageone.base.BaseController;
-import com.voyageone.cms.feed.Operation;
+import com.voyageone.cms.feed.OperationBean;
 import com.voyageone.cms.formbean.FeedMappingProp;
 import com.voyageone.cms.modelbean.FeedConfig;
 import com.voyageone.cms.modelbean.FeedPropMapping;
@@ -56,7 +56,7 @@ public class FeedPropMappingController extends BaseController {
     @RequestMapping(GET_CONST)
     public AjaxResponseBean getConst() {
 
-        Operation[] operations = feedPropMappingService.getConditionOperations();
+        List<OperationBean> operations = feedPropMappingService.getConditionOperations();
 
         List<CmsFieldEnum.CmsModelEnum> cmsModelEnums = feedPropMappingService.getCmsProps();
 

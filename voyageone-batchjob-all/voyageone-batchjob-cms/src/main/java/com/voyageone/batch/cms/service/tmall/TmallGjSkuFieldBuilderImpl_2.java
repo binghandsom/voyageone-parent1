@@ -21,6 +21,7 @@ import com.voyageone.cms.service.bean.ComplexMappingBean;
 import com.voyageone.cms.service.bean.MappingBean;
 import com.voyageone.cms.service.bean.SimpleMappingBean;
 import com.voyageone.cms.service.model.CmsBtProductConstants;
+import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
 import com.voyageone.cms.service.model.CmsMtPlatformMappingModel;
 import com.voyageone.ims.rule_expression.RuleExpression;
@@ -235,7 +236,7 @@ public class TmallGjSkuFieldBuilderImpl_2 extends AbstractSkuFieldBuilder {
             List<CmsBtProductModel_Sku> cmsSkuPropBeans = sxProduct.getCmsBtProductModel().getSkus();
             for (CmsBtProductModel_Sku cmsSkuProp : cmsSkuPropBeans) {
                 //CmsBtProductModel_Sku 是Map<String, Object>的子类
-                expressionParser.pushMasterPropContext(cmsSkuProp);
+                expressionParser.setSkuPropContext(cmsSkuProp);
                 ComplexValue skuFieldValue = new ComplexValue();
                 complexValues.add(skuFieldValue);
 
@@ -265,7 +266,6 @@ public class TmallGjSkuFieldBuilderImpl_2 extends AbstractSkuFieldBuilder {
                         }
                     }
                 }
-                expressionParser.popMasterPropContext();
             }
         }
 
@@ -279,9 +279,12 @@ public class TmallGjSkuFieldBuilderImpl_2 extends AbstractSkuFieldBuilder {
         Map<String, List<TmallUploadRunState.UrlStashEntity>> srcUrlStashEntityMap = ((TmallUploadRunState.TmallContextBuildFields)contextBuildCustomFields.getPlatformContextBuildFields()).getSrcUrlStashEntityMap();
 
         List<ComplexValue> complexValues = new ArrayList<>();
+        CmsBtProductModel oldCmsBtProduct = expressionParser.getMasterWordCmsBtProduct();
         for (Map.Entry<String, SxProductBean> entry : buildSkuResult.getColorCmsPropductMap().entrySet())
         {
             SxProductBean sxProductBean = entry.getValue();
+
+            expressionParser.setMasterWordCmsBtProduct(sxProductBean.getCmsBtProductModel());
 
             ComplexValue complexValue = new ComplexValue();
 
@@ -323,6 +326,7 @@ public class TmallGjSkuFieldBuilderImpl_2 extends AbstractSkuFieldBuilder {
 
             complexValues.add(complexValue);
         }
+        expressionParser.setMasterWordCmsBtProduct(oldCmsBtProduct);
         ((MultiComplexField)colorExtendField).setComplexValues(complexValues);
         return colorExtendField;
     }
@@ -335,6 +339,7 @@ public class TmallGjSkuFieldBuilderImpl_2 extends AbstractSkuFieldBuilder {
         for (Map.Entry<String, CmsBtProductModel_Sku> entry : buildSkuResult.getSizeCmsSkuPropMap().entrySet())
         {
             ComplexValue complexValue = new ComplexValue();
+            expressionParser.setSkuPropContext(entry.getValue());
 
             if (skuExtend_sizeField.getType() == FieldTypeEnum.SINGLECHECK) {
                 complexValue.setSingleCheckFieldValue(skuExtend_sizeField.getId(), new Value(entry.getKey()));
