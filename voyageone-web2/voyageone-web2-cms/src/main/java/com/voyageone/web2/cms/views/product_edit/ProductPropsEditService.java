@@ -2,12 +2,13 @@ package com.voyageone.web2.cms.views.product_edit;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.cms.service.CmsProductService;
+import com.voyageone.cms.service.dao.mongodb.CmsBtFeedInfoDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCommonSchemaDao;
 import com.voyageone.cms.service.model.*;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.utils.FieldUtil;
-import com.voyageone.web2.cms.bean.FeedAttributesBean;
+import com.voyageone.web2.cms.bean.CustomAttributesBean;
 import com.voyageone.web2.cms.bean.ProductInfoBean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,17 +37,30 @@ public class ProductPropsEditService {
     @Autowired
     private CmsMtCommonSchemaDao cmsMtCommonSchemaDao;
 
-
+    @Autowired
+    private CmsBtFeedInfoDao cmsBtFeedInfoDao;
 
     public ProductInfoBean getProductInfo(String channelId, int prodId) throws BusinessException{
 
         ProductInfoBean productInfo = new ProductInfoBean();
 
-        FeedAttributesBean feedAttributes = new FeedAttributesBean();
-
+        //自定义属性.
+        CustomAttributesBean customAttributes = new CustomAttributesBean();
 
         // 获取product data.
         CmsBtProductModel productValueModel = getProductModel(channelId, prodId);
+
+        //商品各种状态.
+        ProductInfoBean.ProductStatus productStatus = productInfo.getProductStautsInstance();
+        productStatus.setStatus(productValueModel.getFields().getStatus());
+        productStatus.setEditStatus(productValueModel.getFields().getEditStatus());
+        productStatus.setTranslateStatus(productValueModel.getFields().getTranslateStatus());
+
+        //获取商品图片信息.
+        List<CmsBtProductModel_Field_Image> productImages = productValueModel.getFields().getImages(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE);
+
+        // 获取feed方数据.
+        CmsBtFeedInfoModel feedInfoModel = getCmsBtFeedInfoModel(channelId, prodId, productValueModel);
 
         // 获取product 对应的 schema
         CmsMtCategorySchemaModel categorySchemaModel = getCmsMtCategorySchemaModel(productValueModel);
@@ -57,9 +71,10 @@ public class ProductPropsEditService {
         // 获取master schema.
         List<Field> masterSchemaFields = categorySchemaModel.getFields();
 
-        //添加共通schema.
+        // 向主数据schema 添加共通schema.
         masterSchemaFields.addAll(comSchemaModel.getFields());
 
+        //获取主数据的值.
         Map masterSchemaValue =  productValueModel.getFields();
 
         //填充master schema
@@ -75,9 +90,9 @@ public class ProductPropsEditService {
         FieldUtil.setFieldsValueFromMap(skuSchemaFields,skuSchemaValue);
 
         //设置feed属性值
-        feedAttributes.setOrgAtts(productValueModel.getFeed().getOrgAtts());
-        feedAttributes.setCnAtts(productValueModel.getFeed().getCnAtts());
-        feedAttributes.setCustomIds(productValueModel.getFeed().getCustomIds());
+        customAttributes.setOrgAtts(productValueModel.getFeed().getOrgAtts());
+        customAttributes.setCnAtts(productValueModel.getFeed().getCnAtts());
+        customAttributes.setCustomIds(productValueModel.getFeed().getCustomIds());
 
         productInfo.setMasterFields(masterSchemaFields);
         productInfo.setChannelId(channelId);
@@ -85,9 +100,34 @@ public class ProductPropsEditService {
         productInfo.setCategoryId(categorySchemaModel.getCatId());
         productInfo.setCategoryFullPath(categorySchemaModel.getCatFullPath());
         productInfo.setSkuFields(skuSchemaFields.get(0));
-        productInfo.setFeedAttributes(feedAttributes);
+        productInfo.setCustomAttributes(customAttributes);
+        productInfo.setFeedInfoModel(feedInfoModel);
+        productInfo.setProductImages(productImages);
+        productInfo.setProductStatus(productStatus);
 
         return productInfo;
+    }
+
+    /**
+     * 
+     * @param channelId
+     * @param prodId
+     * @param productValueModel
+     * @return
+     */
+    private CmsBtFeedInfoModel getCmsBtFeedInfoModel(String channelId, int prodId, CmsBtProductModel productValueModel) {
+
+        CmsBtFeedInfoModel feedInfoModel = cmsBtFeedInfoDao.selectProductByCode(channelId,productValueModel.getFields().getCode());
+
+        if (feedInfoModel == null){
+            //feed 信息不存在时异常处理.
+            String errMsg = "channel id: " + channelId +" product id: " +prodId+" 对应的品牌方信息不存在！";
+
+            logger.error(errMsg);
+
+            throw new BusinessException(errMsg);
+        }
+        return feedInfoModel;
     }
 
     /**
@@ -194,17 +234,4 @@ public class ProductPropsEditService {
 
     }
 
-    /**
-     * 获取图片信息. TODO
-     */
-    private void getPictures(){
-
-    }
-
-    /**
-     * 获取feed数据. TODO
-     */
-    private void getFeedInfo(){
-
-    }
 }
