@@ -1,10 +1,12 @@
 package com.voyageone.common.masterdate.schema.utils;
 
+import com.voyageone.common.masterdate.schema.value.Value;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class StringUtil {
-    public StringUtil() {
-    }
 
     public static boolean isEmpty(String str) {
         return str == null || str.trim().length() == 0;
@@ -37,5 +39,31 @@ public class StringUtil {
      */
     public static String replaceToDot(String str){
         return str.replaceAll("->", ".");
+    }
+
+    public static String getStringValue(Object valueObj) {
+        String result = "";
+        if (valueObj == null) {
+            return result;
+        }
+        if (valueObj instanceof String) {
+            result = (String) valueObj;
+        } else if (valueObj instanceof Value) {
+            Value value = (Value)valueObj;
+            result = value.getValue()!=null?value.getValue():"";
+        } else {
+            result = valueObj.toString();
+        }
+        return result;
+    }
+
+    public static List<String> convertNull2Space(List<String> inputList) {
+        List<String> result = new ArrayList<>();
+        if (inputList != null) {
+            for (String cell : inputList) {
+                result.add(cell != null ? cell:"");
+            }
+        }
+        return result;
     }
 }

@@ -106,7 +106,7 @@ public class ISPUtil {
             SimpleDateFormat sdf = new SimpleDateFormat(e);
             return sdf.parse(fieldValue);
         } catch (ParseException var3) {
-            throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_20032, (String)null);
+            throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_20032, null);
         }
     }
 
@@ -116,7 +116,7 @@ public class ISPUtil {
             SimpleDateFormat sdf = new SimpleDateFormat(e);
             return sdf.parse(fieldValue);
         } catch (ParseException var3) {
-            throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_20033, (String)null);
+            throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_20033, null);
         }
     }
 }

@@ -106,7 +106,7 @@ public class MultiInputField extends com.voyageone.common.masterdate.schema.fiel
     public Element toParamElement() throws TopSchemaException {
         Element fieldNode = XmlUtils.createRootElement("field");
         if(StringUtil.isEmpty(this.id)) {
-            throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_30001, (String)null);
+            throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_30001, null);
         } else if(this.type != null && !StringUtil.isEmpty(this.type.value())) {
             FieldTypeEnum fieldEnum = FieldTypeEnum.getEnum(this.type.value());
             if(fieldEnum == null) {
@@ -171,9 +171,9 @@ public class MultiInputField extends com.voyageone.common.masterdate.schema.fiel
         List<String> values = new ArrayList<>();
         Object valueObj = valueMap.get(id);
         if (valueObj != null && valueObj instanceof List) {
-            List valuesTmp = (List)valueObj;
-            for (Object value : valuesTmp) {
-                values.add(value != null?(String)value:"");
+            List valueList = (List)valueObj;
+            for (Object value : valueList) {
+                values.add(StringUtil.getStringValue(value));
             }
         }
         return values;
@@ -182,17 +182,7 @@ public class MultiInputField extends com.voyageone.common.masterdate.schema.fiel
     @Override
     public void getFieldValueToMap(Map<String,Object> valueMap) {
         if (values != null) {
-            valueMap.put(id, convertEmptyList(getStringValues()));
+            valueMap.put(id, StringUtil.convertNull2Space(getStringValues()));
         }
-    }
-
-    private List<String> convertEmptyList(List<String> inputList) {
-        List<String> result = new ArrayList<>();
-        if (inputList != null) {
-            for (String cell : inputList) {
-                result.add(cell != null ? cell:"");
-            }
-        }
-        return result;
     }
 }
