@@ -21,6 +21,7 @@
                 <entry key="CmsMtPlatformMappingModel"		    value="cms_mt_platform_mapping" />
                 <entry key="CmsMtPlatformRemoveFieldsModel"		value="cms_mt_platform_removedFields" />
                 <entry key="CmsMtCommonPropDefModel"		    value="cms_mt_common_prop_def" />
+                <entry key="CmsMtComSchemaModel"                value="cms_mt_common_schema" />
             </map>
         </property>
     </bean>
