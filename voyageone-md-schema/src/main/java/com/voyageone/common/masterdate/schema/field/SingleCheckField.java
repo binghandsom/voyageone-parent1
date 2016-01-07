@@ -1,5 +1,6 @@
 package com.voyageone.common.masterdate.schema.field;
 
+import com.voyageone.common.masterdate.schema.enums.FieldValueTypeEnum;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.utils.XmlUtils;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
@@ -78,7 +79,7 @@ public class SingleCheckField extends OptionsField {
     public Element toParamElement() throws TopSchemaException {
         Element fieldNode = XmlUtils.createRootElement("field");
         if(StringUtil.isEmpty(this.id)) {
-            throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_30001, (String)null);
+            throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_30001, null);
         } else if(this.type != null && !StringUtil.isEmpty(this.type.value())) {
             FieldTypeEnum fieldEnum = FieldTypeEnum.getEnum(this.type.value());
             if(fieldEnum == null) {
@@ -123,12 +124,41 @@ public class SingleCheckField extends OptionsField {
 
     @Override
     public Value getFieldValueFromMap(Map<String, Object> valueMap) {
-        Object valueObj = valueMap.get(id);
-        return new Value(valueObj!=null?(String)valueObj:"");
+        return new Value(StringUtil.getStringValue(valueMap.get(id)));
     }
 
     @Override
     public void getFieldValueToMap(Map<String,Object> valueMap) {
-        valueMap.put(id, value!=null && value.getValue()!=null?value.getValue():"");
+        valueMap.put(id, getValue(value, fieldValueType));
+    }
+
+    public static Object getValue(Value value, FieldValueTypeEnum fieldValueType) {
+        Object result = null;
+        if (value == null || value.getValue() == null) {
+            return null;
+        }
+        if (fieldValueType == null) {
+            return value;
+        }
+        String valueStr = value.getValue();
+        switch(fieldValueType) {
+            case NONE:
+                result = valueStr;
+                break;
+            case INT:
+                if (valueStr.length() > 0) {
+                    result = new Integer(valueStr);
+                }
+                break;
+            case DOUBLE:
+                if (valueStr.length() > 0) {
+                    result = new Double(valueStr);
+                }
+                break;
+            default:
+                result = valueStr;
+                break;
+        }
+        return result;
     }
 }

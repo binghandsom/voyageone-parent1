@@ -116,7 +116,7 @@ public class MultiComplexField extends Field {
     public Element toParamElement() throws TopSchemaException {
         Element fieldNode = XmlUtils.createRootElement("field");
         if(StringUtil.isEmpty(this.id)) {
-            throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_30001, (String)null);
+            throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_30001, null);
         } else if(this.type != null && !StringUtil.isEmpty(this.type.value())) {
             FieldTypeEnum fieldEnum = FieldTypeEnum.getEnum(this.type.value());
             if(fieldEnum == null) {
@@ -226,7 +226,7 @@ public class MultiComplexField extends Field {
 
                 for (Field field : fields) {
                     if (complexValue != null) {
-                        Object subValue = complexValue.getFieldValue(field.id, field.getType());
+                        Object subValue = complexValue.getFieldValue(field.id, field.getType(), field.getFieldValueType());
                         if (subValue != null) {
                             valueMapCell.put(field.id, subValue);
                         }

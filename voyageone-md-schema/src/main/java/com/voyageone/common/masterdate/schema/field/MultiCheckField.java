@@ -1,6 +1,7 @@
 package com.voyageone.common.masterdate.schema.field;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.voyageone.common.masterdate.schema.enums.FieldValueTypeEnum;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.utils.XmlUtils;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
@@ -37,6 +38,17 @@ public class MultiCheckField extends OptionsField {
 
     public List<Value> getValues() {
         return this.values;
+    }
+
+    @JsonIgnore
+    public List<String> getStringValues() {
+        List<String> list = new ArrayList<>();
+
+        for (Value v : this.values) {
+            list.add(v.getValue());
+        }
+
+        return list;
     }
 
     public void setValues(List<Value> values) {
@@ -131,7 +143,7 @@ public class MultiCheckField extends OptionsField {
     public Element toParamElement() throws TopSchemaException {
         Element fieldNode = XmlUtils.createRootElement("field");
         if(StringUtil.isEmpty(this.id)) {
-            throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_30001, (String)null);
+            throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_30001, null);
         } else if(this.type != null && !StringUtil.isEmpty(this.type.value())) {
             FieldTypeEnum fieldEnum = FieldTypeEnum.getEnum(this.type.value());
             if(fieldEnum == null) {
@@ -198,7 +210,7 @@ public class MultiCheckField extends OptionsField {
         if (valueObj != null && valueObj instanceof List) {
             List valuesTmp = (List)valueObj;
             for (Object value : valuesTmp) {
-                values.add(new Value(value != null?(String)value:""));
+                values.add(new Value(StringUtil.getStringValue(value)));
             }
         }
         return values;
@@ -206,12 +218,44 @@ public class MultiCheckField extends OptionsField {
 
     @Override
     public void getFieldValueToMap(Map<String,Object> valueMap) {
-        if (values != null) {
-            List<String> valueStrList = new ArrayList<>();
-            for (Value valueObj : values) {
-                valueStrList.add(valueObj != null && valueObj.getValue()!=null?valueObj.getValue():"");
-            }
-            valueMap.put(id, valueStrList);
+        valueMap.put(id, getValue(getStringValues(), fieldValueType));
+    }
+
+    public static Object getValue(List<String> value, FieldValueTypeEnum fieldValueType) {
+        Object result;
+        if (value == null) {
+            return null;
         }
+        if (fieldValueType == null) {
+            return value;
+        }
+
+        switch(fieldValueType) {
+            case NONE:
+                result = value;
+                break;
+            case INT:
+                List<Integer> listInt = new ArrayList<>();
+                for (String v : value) {
+                    if (v != null && v.length() > 0) {
+                        listInt.add(new Integer(v));
+                    }
+                }
+                result = listInt;
+                break;
+            case DOUBLE:
+                List<Double> listDouble = new ArrayList<>();
+                for (String v : value) {
+                    if (v != null && v.length() > 0) {
+                        listDouble.add(new Double(v));
+                    }
+                }
+                result = listDouble;
+                break;
+            default:
+                result = value;
+                break;
+        }
+        return result;
     }
 }

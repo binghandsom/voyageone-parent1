@@ -19,6 +19,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = ConditionWord.class, name = "CONDITION"),
         @JsonSubTypes.Type(value = FeedCnWord.class, name = "FEED_CN"),
         @JsonSubTypes.Type(value = FeedOrgWord.class, name = "FEED_ORG"),
+        @JsonSubTypes.Type(value = SkuWord.class, name = "SKU"),
         //TODO add other field
 })
 public abstract class RuleWord {

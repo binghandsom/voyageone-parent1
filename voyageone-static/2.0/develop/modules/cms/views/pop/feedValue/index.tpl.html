@@ -1,6 +1,7 @@
 <div class="vo_modal" ng-init="ctrl.init()">
     <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="ctrl.cancel()"><span aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="ctrl.cancel()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
         <h5 class="modal-title"><i class="fa fa-crosshairs"></i> 值匹配</h5>
     </div>
     <h5 class="m-l">当前属性可检索到的默认值：</h5>
@@ -8,97 +9,77 @@
     <div class="p-l-r">
         <form role="form" class="form-horizontal m-r-sm m-l-sm">
             <div class="form-group">
-                <label class="col-sm-1 checkbox-inline c-radio needsclick">
-                    <input id="pop-set-match-val-radios-feed" type="radio" name="pop-set-match-val-radios"
-                           ng-model="ctrl.mappingSetting.type" ng-value="'propFeed'"/>
-                    <span class="fa fa-check"></span>
+                <label class="col-sm-3 m-l-sm">
+                    <input type="radio" ng-model="ctrl.mappingSetting.type" ng-value="'propFeed'"/>
+                    <span>&nbsp; Feed 属性</span>
                 </label>
-                <label for="pop-set-match-val-radios-feed" class="col-sm-2 control-label">Feed 属性</label>
-                <div class="col-sm-5" ng-if="ctrl.mappingSetting.type === 'propFeed'">
+                <div class="col-sm-6" ng-if="ctrl.mappingSetting.type === 'propFeed'">
                     <select class="form-control" title="Feed Attributes"
                             ng-options="k as k for (k,v) in ctrl.feedAttributes"
-                            ng-model="ctrl.value.feed"></select>
+                            ng-model="ctrl.field.value"></select>
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-1 checkbox-inline c-radio needsclick">
-                    <input id="pop-set-match-val-radios-text" type="radio" name="pop-set-match-val-radios"
-                           ng-model="ctrl.mappingSetting.type" ng-value="'text'"/>
-                    <span class="fa fa-check"></span>
+                <label class="col-sm-3 m-l-sm">
+                    <input type="radio" ng-model="ctrl.mappingSetting.type" ng-value="'text'"/>
+                    <span>&nbsp; 文本值</span>
                 </label>
-                <label for="pop-set-match-val-radios-text" class="col-sm-2 control-label">文本值</label>
-                <div class="col-sm-5" ng-show="ctrl.mappingSetting.type === 'text'">
-                    <input type="text" class="form-control input-group" title="Text Value" ng-model="ctrl.value.text">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="col-sm-1 checkbox-inline c-checkbox needsclick">
-                    <input id="pop-set-match-val-condition" type="checkbox" ng-model="ctrl.mappingSetting.condition"/>
-                    <span class="fa fa-check"></span>
-                </label>
-                <label for="pop-set-match-val-condition" class="col-sm-2 control-label">条件</label>
-                <div ng-show="ctrl.mappingSetting.condition">
-                    <div class="col-sm-3">
-                        <select class="form-control" title="被用来判断的 Feed 属性"
-                                ng-options="k as k for (k,v) in ctrl.feedAttributes"
-                                ng-model="ctrl.condition.property"></select>
-                    </div>
-                    <div class="col-sm-3">
-                        <select class="form-control" title="条件操作"
-                                ng-options="o as o.name for o in ctrl.operations"
-                                ng-model="ctrl.condition.operation"></select>
-                    </div>
-                    <div class="col-sm-3" ng-hide="ctrl.condition.operation.isSingle">
-                        <input type="text" ng-if="!ctrl.feedAttributes[ctrl.condition.property].length"
-                               ng-model="ctrl.condition.value" title="条件值"/>
-                        <select class="form-control" title="条件检查的值"
-                                ng-if="ctrl.feedAttributes[ctrl.condition.property].length"
-                                ng-options="v as v for v in ctrl.feedAttributes[ctrl.condition.property]"
-                                ng-model="ctrl.condition.value"></select>
-                    </div>
+                <div class="col-sm-6" ng-show="ctrl.mappingSetting.type === 'text'">
+                    <schema-item  data="ctrl.field"></schema-item>
                 </div>
             </div>
         </form>
         <div class="table-responsive">
-        <table class="table">
-            <thead>
-            <tr>
-                <th>选择条件</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>
-                    <div class="form-inline col-sm-12">
-                            <select class="form-control m-r-sm" title="被用来判断的 Feed 属性">
-                                <option>12312345612</option>
-                                <option>123123456</option>
-                                <option>123123456</option>
-                            </select>
-                            <select class="form-control m-r-sm" title="条件操作">
-                                <option>12312345612</option>
-                                <option>123123456</option>
-                                <option>123123456</option>
-                            </select>
-                            <select class="form-control m-r-sm" title="条件检查的值">
-                                <option>123123456125612</option>
-                                <option>123123456</option>
-                                <option>123123456</option>
-                            </select>
-                        <button title="追加" ng-click="addOption()" class="btn btn-success pull-right"><i class="fa fa-plus"></i></button>
-                    </div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>选择条件</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="condition in ctrl.conditions">
+                    <td class="form-inline">
+                        <select class="form-control m-r-sm" title="被用来判断的 Feed 属性"
+                                ng-options="k as k for (k,v) in ctrl.feedAttributes track by k"
+                                ng-model="condition.property"></select>
+
+                        <select class="form-control m-r-sm" title="条件操作"
+                                ng-options="o as o.desc for o in ctrl.operations track by o.desc"
+                                ng-model="condition.operation"></select>
+
+                        <span ng-if="!condition.operation.isSingle">
+                            <input class="form-control" type="text"
+                                   ng-if="!ctrl.feedAttributes[condition.property].length"
+                                   ng-model="condition.value" title="条件值"/>
+
+                            <select class="form-control" title="条件检查的值"
+                                    ng-if="ctrl.feedAttributes[condition.property].length"
+                                    ng-options="v as v for v in ctrl.feedAttributes[condition.property] track by v"
+                                    ng-model="condition.value"></select>
+                        </span>
+                    </td>
+                    <td>
+                        <button title="删除" ng-click="ctrl.removeCondition($index)" class="btn btn-danger btn-xs">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <button title="添加" ng-click="ctrl.addCondition()" class="btn btn-success pull-right">
+                <i class="fa fa-plus"></i>
+                <span>新增条件</span>
+            </button>
+        </div>
     </div>
     <div class="attribute_top">
         <h5 class="text-vo m-l font-bold">值设定说明：</h5>
         <ul>
-            <li>如果不对属性进行任何值设定，则会使用默认值。 </li>
-            <li>如果对属性进行了多个值设定，则会使用顺序验证可用性。即如果条件，则先验证条件，无条件的，直接为可用。一旦某一条设定生效（可用） </li>
+            <li>如果不对属性进行任何值设定，则会使用默认值。</li>
+            <li>如果对属性进行了多个值设定，则会使用顺序验证可用性。即如果条件，则先验证条件，无条件的，直接为可用。一旦某一条设定生效（可用）</li>
         </ul>
     </div>
     <div class="modal-footer">

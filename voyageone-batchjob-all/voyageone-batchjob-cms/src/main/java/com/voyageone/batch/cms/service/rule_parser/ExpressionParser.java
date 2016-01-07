@@ -3,6 +3,7 @@ package com.voyageone.batch.cms.service.rule_parser;
 import com.voyageone.batch.cms.bean.CustomValueSystemParam;
 import com.voyageone.batch.cms.bean.SxProductBean;
 import com.voyageone.batch.cms.service.UploadImageHandler;
+import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleWord;
@@ -25,6 +26,7 @@ public class ExpressionParser {
     private MasterWordParser masterWordParser;
     private FeedCnWordParser feedCnWordParser;
     private FeedOrgWordParser feedOrgWordParser;
+    private SkuWordParser skuWordParser;
     private CustomValueSystemParam customValueSystemParam;
 
     private static Log logger = LogFactory.getLog(ExpressionParser.class);
@@ -43,6 +45,7 @@ public class ExpressionParser {
         this.masterWordParser = new MasterWordParser(mainSxProduct.getCmsBtProductModel());
         this.feedCnWordParser = new FeedCnWordParser(mainSxProduct.getCmsBtProductModel());
         this.feedOrgWordParser = new FeedOrgWordParser(mainSxProduct.getCmsBtProductModel());
+        this.skuWordParser = new SkuWordParser();
     }
 
     public String parse(RuleExpression ruleExpression, Set<String> imageSet) {
@@ -92,6 +95,10 @@ public class ExpressionParser {
                         plainValue = customWordParser.parse(ruleWord, imageSet);
                         break;
                     }
+                    case SKU: {
+                        plainValue = skuWordParser.parse(ruleWord);
+                        break;
+                    }
                 }
 
                 if (resultStr != null) {
@@ -117,6 +124,17 @@ public class ExpressionParser {
         masterWordParser.pushEvaluationContext(masterPropContext);
     }
 
+    public void setSkuPropContext(Map<String, Object> skuPropContext) {
+        skuWordParser.setEvaluationContext(skuPropContext);
+    }
+
+    public void setMasterWordCmsBtProduct(CmsBtProductModel cmsBtProduct) {
+        masterWordParser.setCmsBtProductModel(cmsBtProduct);
+    }
+
+    public CmsBtProductModel getMasterWordCmsBtProduct() {
+        return masterWordParser.getCmsBtProductModel();
+    }
 
     public static String encodeStringArray(List<String> mappedPropValues) {
         final String seperator = "~~";

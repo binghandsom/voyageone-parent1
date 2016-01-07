@@ -14,17 +14,17 @@
 
             <div class="category_drag col-sm-3" ng-repeat="categoryItem in ctrl.categoryPath">
                 <div class="category_drag_main">
-                    <p class="text-center text-vo font-bold">{{ categoryItem.level }} 级类目</p>
+                    <p class="text-center text-vo font-bold">{{:: categoryItem.level }} 级类目</p>
                     <div class="form-inline text-center">
                         <input type="text" placeholder="快速检索" class="form-control" style="width:80%">
                         <button type="submit" class="btn btn-vo btn-xxs"><i class="fa fa-search"></i></button>
                     </div>
                     <div class="category_drag_list">
                         <ul>
-                            <li ng-repeat="category in categoryItem.categories">
+                            <li ng-repeat="category in categoryItem.categories track by category.catId">
                                 <a href="javascript:void(0)" ng-click="ctrl.openCategory(category)">
-                                    {{ category.catName }}
-                                    <span class="pull-right text-muted">
+                                    <span>{{:: category.catName }}</span>
+                                    <span class="pull-right text-muted" ng-if="category.children && category.children.length">
                                         <i class="fa fa-fw fa-angle-right text"></i>
                                     </span>
                                 </a>

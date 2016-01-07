@@ -11,6 +11,12 @@ define(['cms'], function (cms) {
             this.$uibModalInstance = $uibModalInstance;
             this.feedMappingService = feedMappingService;
 
+            /**
+             * @typedef {{type:FieldType, options:object[], rules:object[], name:string, id:string}} Field *部分属性标明
+             * @typedef {object} FieldBean
+             * @typedef {{feedCategoryPath:string, mainCategoryPath:string, field:Field, bean:FieldBean}} FeedPropMappingPopupContext
+             * @type {FeedPropMappingPopupContext}
+             */
             this.context = context;
             /**
              * 具体到字段的 Mapping 设定
@@ -31,10 +37,12 @@ define(['cms'], function (cms) {
             init: function () {
 
                 this.feedMappingService.getFieldMapping({
+
                     feedCategoryPath: this.context.feedCategoryPath,
                     mainCategoryPath: this.context.mainCategoryPath,
                     field: this.context.field.id,
                     type: this.context.bean.type
+
                 }).then(function (res) {
 
                     this.fieldMapping = res.data;
@@ -57,7 +65,7 @@ define(['cms'], function (cms) {
              * 移除一个mapping
              * @param {number} index
              */
-            remove: function(index){
+            remove: function (index) {
                 this.fieldMapping.mappings.splice(index, 1);
             },
             ok: function () {
