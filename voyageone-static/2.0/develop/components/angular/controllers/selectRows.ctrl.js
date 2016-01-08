@@ -15,16 +15,19 @@ angular.module('voyageone.angular.controllers.selectRows', [])
          * 全部选中当前页数据
          * @param objectList
          */
-        function selectAll(objectList) {
+        function selectAll(objectList,id) {
 
             objectList.selAllFlag = !objectList.selAllFlag;
+            if(!id){
+                id="id";
+            }
 
             // 循环处理全选中的数据
             angular.forEach(objectList.currPageRows, function (object) {
-                if(objectList.selFlag.hasOwnProperty(object.id)) {
+                //if(objectList.selFlag.hasOwnProperty(object[id])) {
 
                     // 单签页面所有产品选中flag被标示
-                    objectList.selFlag[object.id] = objectList.selAllFlag;
+                    objectList.selFlag[object[id]] = objectList.selAllFlag;
 
                     if (objectList.hasOwnProperty('selList')) {
                         if (objectList.selAllFlag && objectList.selList.indexOf(object) < 0) {
@@ -33,7 +36,7 @@ angular.module('voyageone.angular.controllers.selectRows', [])
                             objectList.selList.splice(objectList.selList.indexOf(object), 1);
                         }
                     }
-                }
+                //}
             });
         }
 
@@ -42,13 +45,15 @@ angular.module('voyageone.angular.controllers.selectRows', [])
          * @param currentId
          * @param objectList
          */
-        function selectOne(currentId, objectList) {
-            currentId = parseInt(currentId);
+        function selectOne(currentId, objectList,id) {
+            if(!id){
+                id="id";
+            }
             if (objectList.hasOwnProperty('selList')) {
 
-                angular.forEach(objectList.selList, function(object) {
+                angular.forEach(objectList.currPageRows, function(object) {
 
-                    if (_.isEqual(object.id, currentId)) {
+                    if (_.isEqual(object[id], currentId)) {
                         if (objectList.selList.indexOf(object) > -1) {
                             objectList.selList.splice(objectList.selList.indexOf(object), 1);
                         } else {
@@ -60,7 +65,10 @@ angular.module('voyageone.angular.controllers.selectRows', [])
 
             objectList.selAllFlag = true;
             angular.forEach(objectList.currPageRows, function(object) {
-                if (!objectList.selFlag[object.id]) {
+                //if (!objectList.selFlag[object.id]) {
+                //    objectList.selAllFlag = false;
+                //}
+                if (objectList.selList.indexOf(object) == -1) {
                     objectList.selAllFlag = false;
                 }
             })

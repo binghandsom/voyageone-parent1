@@ -70,7 +70,8 @@
 								<td><span ng-if="price.synFlg == 0" class="badge badge-stop">停止</span><span ng-if="price.synFlg == 1" class="badge badge-refresh">等待刷新</span><span ng-if="price.synFlg == 2" class="badge badge-success">运行成功</span><span ng-if="price.synFlg == 3" class="badge badge-failure">运行失败</span></td>
 								<td class="text-hs">{{price.errMsg}}</td>
 								<td class="text-right">
-									<button title="刷新" class="btn btn-success btn-xs" ng-click="updateStatus(price)"><i class="fa fa-refresh"></i></button>
+									<button title="刷新" class="btn btn-success btn-xs" ng-click="updateStatus(price,1)"><i class="fa fa-refresh"></i></button>
+									<button title="停止" class="btn btn-danger btn-xs" ng-click="updateStatus(price,0)"><i class="fa fa-refresh"></i></button>
 								</td>
 							</tr>
 							</tbody>
