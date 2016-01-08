@@ -4,7 +4,8 @@
     <select id="tm_channel_shop_selectCartListByChannelId" resultType="HashMap">
         SELECT DISTINCT
             b.short_name as cTypeId,
-            b.name
+            b.name,
+            b.cart_id as cartId
         FROM Synship.tm_channel_shop a
         INNER JOIN Synship.ct_cart b on a.cart_id = b.cart_id
         WHERE a.order_channel_id = #{channelId}#

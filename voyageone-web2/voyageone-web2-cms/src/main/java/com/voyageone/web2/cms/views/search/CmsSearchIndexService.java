@@ -9,6 +9,7 @@ import com.voyageone.common.configs.TypeChannel;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean;
 import com.voyageone.web2.cms.dao.CmsPromotionDao;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -100,10 +101,10 @@ public class CmsSearchIndexService extends BaseAppService{
      * @param userInfo
      * @return
      */
-    public List<CmsBtProductModel> getGroupList(CmsSearchInfoBean searchValue, UserSessionBean userInfo) {
+    public List<CmsBtProductModel> getGroupList(CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
 
         // 根据条件获取product列表
-        List<CmsBtProductModel> productList = cmsBtProductDao.selectProductByQuery(getSearchQueryForProduct(searchValue)
+        List<CmsBtProductModel> productList = cmsBtProductDao.selectProductByQuery(getSearchQueryForProduct(searchValue, cmsSessionBean)
                 , searchValue.getProductPageNum()
                 , searchValue.getProductPageSize()
                 , userInfo.getSelChannelId()
@@ -118,7 +119,7 @@ public class CmsSearchIndexService extends BaseAppService{
 
         if(groupIdList.size() > 0)
             // 获取group列表
-            return cmsBtProductDao.selectGroupWithMainProductByQuery(getSearchQueryForGroup(searchValue, groupIdList.toArray())
+            return cmsBtProductDao.selectGroupWithMainProductByQuery(getSearchQueryForGroup(groupIdList.toArray(), cmsSessionBean)
                     , searchValue.getGroupPageNum()
                     , searchValue.getGroupPageSize()
                     , userInfo.getSelChannelId()
@@ -133,8 +134,8 @@ public class CmsSearchIndexService extends BaseAppService{
      * @param userInfo
      * @return
      */
-    public List<CmsBtProductModel> GetProductList(CmsSearchInfoBean searchValue, UserSessionBean userInfo) {
-        return cmsBtProductDao.selectProductByQuery(getSearchQueryForProduct(searchValue)
+    public List<CmsBtProductModel> GetProductList(CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
+        return cmsBtProductDao.selectProductByQuery(getSearchQueryForProduct(searchValue, cmsSessionBean)
                 , searchValue.getProductPageNum()
                 , searchValue.getProductPageSize()
                 , userInfo.getSelChannelId()
@@ -146,12 +147,12 @@ public class CmsSearchIndexService extends BaseAppService{
      * @param groupIdList
      * @return
      */
-    private String getSearchQueryForGroup (CmsSearchInfoBean searchValue, Object[] groupIdList) {
+    private String getSearchQueryForGroup (Object[] groupIdList, CmsSessionBean cmsSessionBean) {
 
         StringBuffer result = new StringBuffer();
         StringBuffer sbQuery = new StringBuffer();
         // 添加platform cart
-        sbQuery.append(MongoUtils.splicingValue("cartId", searchValue.getPlatformCart()));
+        sbQuery.append(MongoUtils.splicingValue("cartId", cmsSessionBean.getCategoryType().get("cartId")).toString());
         sbQuery.append(",");
         // 设置查询主商品
         sbQuery.append(MongoUtils.splicingValue("isMain", 1));
@@ -175,8 +176,8 @@ public class CmsSearchIndexService extends BaseAppService{
      * @param searchValue
      * @return
      */
-    private String getSearchQueryForProduct (CmsSearchInfoBean searchValue) {
-        String productSearchValue = getSearchValueForMongo(searchValue);
+    private String getSearchQueryForProduct (CmsSearchInfoBean searchValue, CmsSessionBean cmsSessionBean) {
+        String productSearchValue = getSearchValueForMongo(searchValue, cmsSessionBean);
 
         return StringUtils.isEmpty(productSearchValue) ? "" : "{" + productSearchValue + "}";
     }
@@ -186,7 +187,7 @@ public class CmsSearchIndexService extends BaseAppService{
      * @param searchValue
      * @return
      */
-    private String getSearchValueForMongo (CmsSearchInfoBean searchValue) {
+    private String getSearchValueForMongo (CmsSearchInfoBean searchValue, CmsSessionBean cmsSessionBean) {
 
         StringBuffer result = new StringBuffer();
 
@@ -194,7 +195,7 @@ public class CmsSearchIndexService extends BaseAppService{
         StringBuffer resultPlatforms = new StringBuffer();
 
         // 添加platform cart
-        resultPlatforms.append(MongoUtils.splicingValue("cartId", searchValue.getPlatformCart()));
+        resultPlatforms.append(MongoUtils.splicingValue("cartId", cmsSessionBean.getCategoryType().get("cartId")).toString());
         resultPlatforms.append(",");
 
         // 获取platform status

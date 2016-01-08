@@ -49,12 +49,12 @@ public class CmsSearchIndexController extends CmsController {
         Map<String, Object> resultBean = new HashMap<>();
 
         // 获取product列表
-        List<CmsBtProductModel> productList = searchIndexService.GetProductList(params, getUser());
+        List<CmsBtProductModel> productList = searchIndexService.GetProductList(params, getUser(), getCmsSession());
         resultBean.put("productList", productList);
         resultBean.put("productListTotal", productList.size());
 
         // 获取group列表
-        List<CmsBtProductModel> groupList = searchIndexService.getGroupList(params, getUser());
+        List<CmsBtProductModel> groupList = searchIndexService.getGroupList(params, getUser(), getCmsSession());
         resultBean.put("groupList", groupList);
         resultBean.put("groupListTotal", groupList.size());
 
@@ -72,7 +72,7 @@ public class CmsSearchIndexController extends CmsController {
 
         Map<String, Object> resultBean = new HashMap<>();
 
-        List<CmsBtProductModel> groupList = searchIndexService.getGroupList(params, getUser());
+        List<CmsBtProductModel> groupList = searchIndexService.getGroupList(params, getUser(), getCmsSession());
         resultBean.put("groupList", groupList);
         resultBean.put("groupListTotal", groupList.size());
 
@@ -90,7 +90,7 @@ public class CmsSearchIndexController extends CmsController {
 
         Map<String, Object> resultBean = new HashMap<>();
 
-        List<CmsBtProductModel> productList = searchIndexService.GetProductList(params, getUser());
+        List<CmsBtProductModel> productList = searchIndexService.GetProductList(params, getUser(), getCmsSession());
         resultBean.put("productList", productList);
         resultBean.put("productListTotal", productList.size());
 
