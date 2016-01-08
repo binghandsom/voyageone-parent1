@@ -1,15 +1,21 @@
 package com.voyageone.web2.cms.views.product_edit;
 
+import com.google.gson.JsonObject;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.cms.service.CmsProductService;
 import com.voyageone.cms.service.dao.mongodb.CmsBtFeedInfoDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCommonSchemaDao;
 import com.voyageone.cms.service.model.*;
+import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.utils.FieldUtil;
+import com.voyageone.common.masterdate.schema.utils.JsonUtil;
 import com.voyageone.web2.cms.bean.CustomAttributesBean;
 import com.voyageone.web2.cms.bean.ProductInfoBean;
+import com.voyageone.web2.sdk.api.VoApiDefaultClient;
+import com.voyageone.web2.sdk.api.VoApiResponse;
+import com.voyageone.web2.sdk.api.request.ProductUpdateRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +45,9 @@ public class ProductPropsEditService {
 
     @Autowired
     private CmsBtFeedInfoDao cmsBtFeedInfoDao;
+
+    @Autowired
+    protected VoApiDefaultClient voApiClient;
 
     public ProductInfoBean getProductInfo(String channelId, int prodId) throws BusinessException{
 
@@ -109,7 +118,7 @@ public class ProductPropsEditService {
     }
 
     /**
-     * 
+     * 获取 feed info model.
      * @param channelId
      * @param prodId
      * @param productValueModel
@@ -167,7 +176,7 @@ public class ProductPropsEditService {
     }
 
     /**
-     *
+     * 获取 master schema.
      * @param productValueModel
      * @return
      */
@@ -186,7 +195,7 @@ public class ProductPropsEditService {
     }
 
     /**
-     *
+     * 获取product model.
      * @param channelId
      * @param prodId
      * @return
@@ -209,7 +218,7 @@ public class ProductPropsEditService {
     }
 
     /**
-     *
+     * 获取common schema.
      * @return
      */
     private CmsMtComSchemaModel getComSchemaModel() {
@@ -228,9 +237,80 @@ public class ProductPropsEditService {
         return comSchemaModel;
     }
 
+
+    /**
+     * 更新product values.
+     * @param channelId
+     * @param user
+     * @param requestMap
+     */
+    public void updateProductMastertInfo(String channelId,String user, Map requestMap){
+
+
+
+        Map masterFieldsMap = (Map) requestMap.get("masterFields");
+
+        CmsBtProductModel_Feed customAttributesValue =(CmsBtProductModel_Feed) requestMap.get("customAttributes");
+
+        List<Field> masterFields = SchemaJsonReader.readJsonForList(JsonUtil.bean2Json(masterFieldsMap));
+
+        CmsBtProductModel_Field masterFieldsValue = (CmsBtProductModel_Field)FieldUtil.getFieldsValueToMap(masterFields);
+
+
+        ProductUpdateRequest updateRequest = new ProductUpdateRequest(channelId);
+
+        CmsBtProductModel productModel = new CmsBtProductModel();
+
+        productModel.setCatId(requestMap.get("categoryId").toString());
+        productModel.setProdId(Long.valueOf(requestMap.get("productId").toString()));
+        productModel.setCatPath(requestMap.get("categoryFullPath").toString());
+        productModel.setFields(masterFieldsValue);
+        productModel.setFeed(customAttributesValue);
+
+        updateRequest.setProductModel(productModel);
+        updateRequest.setModifier(user);
+
+        voApiClient.execute(updateRequest);
+
+    }
+
+    /**
+     * 更新product values.
+     * @param channelId
+     * @param user
+     * @param categoryId
+     * @param productId
+     * @param categoryFullPath
+     * @param skuFieldMap
+     */
+    public void updateProductSkuInfo(String channelId,String user,String categoryId,Long productId,String categoryFullPath, Map skuFieldMap){
+
+        Field skuField = SchemaJsonReader.mapToField(skuFieldMap);
+
+        Map<String,Object> skuFieldValueMap = new HashMap<>();
+
+        skuField.getFieldValueToMap(skuFieldValueMap);
+
+        List<CmsBtProductModel_Sku> skus = (List<CmsBtProductModel_Sku>)skuFieldMap.get("skuFields");
+
+        ProductUpdateRequest updateRequest = new ProductUpdateRequest(channelId);
+
+        CmsBtProductModel productModel = new CmsBtProductModel();
+
+        productModel.setCatId(categoryId);
+        productModel.setProdId(productId);
+        productModel.setCatPath(categoryFullPath);
+        productModel.setSkus(skus);
+
+        updateRequest.setProductModel(productModel);
+        updateRequest.setModifier(user);
+
+        voApiClient.execute(updateRequest);
+
+    }
+
     // TODO 设置field的options
     private void fillFieldOptions(){
 
     }
-
 }

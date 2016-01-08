@@ -96,7 +96,7 @@
     "$productDetailService":{
       "root":"/cms/product/detail/",
       "getProductInfo":"getProductInfo",
-      "saveProductInfo":"saveProductInfo",
+      "saveProductInfo":"updateProductInfo",
       "changeCategory":"changeCategory",
       "confirmChange":"confirmChange",
       "revertCategory":"revertCategory"
