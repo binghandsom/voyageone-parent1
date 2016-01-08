@@ -123,9 +123,8 @@ public class ProductPropsEditService {
             //feed 信息不存在时异常处理.
             String errMsg = "channel id: " + channelId +" product id: " +prodId+" 对应的品牌方信息不存在！";
 
-            logger.error(errMsg);
+            logger.warn(errMsg);
 
-            throw new BusinessException(errMsg);
         }
         return feedInfoModel;
     }
