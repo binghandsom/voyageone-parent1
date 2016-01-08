@@ -14,7 +14,6 @@ import com.voyageone.common.util.DateTimeUtil;
 import net.minidev.json.JSONObject;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -162,6 +161,19 @@ public class CmsBtProductDao extends BaseMongoPartDao {
 
         return select(jQuery, channelId);
     }
+    /**
+     * 根据检索条件返回当前页的product列表
+     * @param query 条件
+     * @param channelId channel id
+     * @return Iterator CmsBtProductModel
+     */
+    public List<CmsBtProductModel> selectProductCountByQuery(String query, String channelId, String[] searchItems) {
+        JomgoQuery jQuery = new JomgoQuery();
+        jQuery.setQuery(query)
+                .setProjection(searchItems);
+
+        return select(jQuery, channelId);
+    }
 
     /**
      * 根据检索条件返回当前页的group列表(只包含main product)
@@ -177,6 +189,21 @@ public class CmsBtProductDao extends BaseMongoPartDao {
         jQuery.setQuery(query)
                 .setSkip((currPage - 1) * pageSize)
                 .setLimit(pageSize)
+                .setProjection(searchItems);
+
+        return select(jQuery, channelId);
+    }
+
+    /**
+     * 根据检索条件返回当前页的group列表(只包含main product)
+     * @param query 条件
+     * @param channelId channel id
+     * @return List CmsBtProductModel
+     */
+    public List<CmsBtProductModel> selectGroupCountByQuery(String query, String channelId, String[] searchItems) {
+        JomgoQuery jQuery = new JomgoQuery();
+
+        jQuery.setQuery(query)
                 .setProjection(searchItems);
 
         return select(jQuery, channelId);

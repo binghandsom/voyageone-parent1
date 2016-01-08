@@ -100,6 +100,7 @@ public class CmsSearchIndexService extends BaseAppService{
      * 返回当前页的group列表
      * @param searchValue
      * @param userInfo
+     * @param cmsSessionBean
      * @return
      */
     public List<SearchGroupsBean> getGroupList(CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
@@ -147,25 +148,52 @@ public class CmsSearchIndexService extends BaseAppService{
                 }
             });
 
-
-
-            // 获取group列表
-//            List<CmsBtProductModel_Products> groupAllProductList = cmsBtProductDao.selectGroupWithMainProductByQuery(getSearchQueryForGroupAllProducts(groupIdList.toArray(), cmsSessionBean)
-//                    , searchValue.getGroupPageNum()
-//                    , searchValue.getGroupPageSize()
-//                    , userInfo.getSelChannelId()
-//                    , searchItems);
-
             return result;
         }
         else
             return new ArrayList<>();
     }
 
+
+    /**
+     * 返回当前页的group总件数
+     * @param searchValue
+     * @param userInfo
+     * @param cmsSessionBean
+     * @return
+     */
+    public Integer getGroupListCount(CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
+
+        // 根据条件获取product列表
+        List<CmsBtProductModel> productList = cmsBtProductDao.selectProductByQuery(getSearchQueryForProduct(searchValue, cmsSessionBean)
+                , searchValue.getProductPageNum()
+                , searchValue.getProductPageSize()
+                , userInfo.getSelChannelId()
+                , searchItems);
+
+        // 获取满足条件的product的groupId列表
+        List<Long> groupIdList = new ArrayList<>();
+        for (CmsBtProductModel cmsBtProductModel : productList) {
+            if (!groupIdList.contains(cmsBtProductModel.getGroups().getPlatforms().get(0).getGroupId()))
+                groupIdList.add(cmsBtProductModel.getGroups().getPlatforms().get(0).getGroupId());
+        }
+
+        if(groupIdList.size() > 0) {
+
+            // 获取group列表
+            return cmsBtProductDao.selectGroupCountByQuery(getSearchQueryForGroup(groupIdList.toArray(), cmsSessionBean)
+                    , userInfo.getSelChannelId()
+                    , searchItems).size();
+        }
+        else
+            return 0;
+    }
+
     /**
      * 获取当前页的product列表
      * @param searchValue
      * @param userInfo
+     * @param cmsSessionBean
      * @return
      */
     public List<CmsBtProductModel> GetProductList(CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
@@ -174,6 +202,19 @@ public class CmsSearchIndexService extends BaseAppService{
                 , searchValue.getProductPageSize()
                 , userInfo.getSelChannelId()
                 , searchItems);
+    }
+
+    /**
+     * 获取当前页的product总件数
+     * @param searchValue
+     * @param userInfo
+     * @param cmsSessionBean
+     * @return
+     */
+    public Integer GetProductListCount(CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
+        return cmsBtProductDao.selectProductCountByQuery(getSearchQueryForProduct(searchValue, cmsSessionBean)
+                , userInfo.getSelChannelId()
+                , searchItems).size();
     }
 
     /**

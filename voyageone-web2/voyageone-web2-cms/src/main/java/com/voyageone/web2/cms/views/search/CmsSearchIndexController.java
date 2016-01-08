@@ -52,12 +52,12 @@ public class CmsSearchIndexController extends CmsController {
         // 获取product列表
         List<CmsBtProductModel> productList = searchIndexService.GetProductList(params, getUser(), getCmsSession());
         resultBean.put("productList", productList);
-        resultBean.put("productListTotal", productList.size());
+        resultBean.put("productListTotal", searchIndexService.GetProductListCount(params, getUser(), getCmsSession()));
 
         // 获取group列表
         List<SearchGroupsBean> groupList = searchIndexService.getGroupList(params, getUser(), getCmsSession());
         resultBean.put("groupList", groupList);
-        resultBean.put("groupListTotal", groupList.size());
+        resultBean.put("groupListTotal", searchIndexService.getGroupListCount(params, getUser(), getCmsSession()));
 
         // 返回用户信息
         return success(resultBean);
