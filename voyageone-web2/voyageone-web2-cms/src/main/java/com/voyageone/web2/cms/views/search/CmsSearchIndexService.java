@@ -1,9 +1,6 @@
 package com.voyageone.web2.cms.views.search;
 
 import com.voyageone.cms.service.CmsBtChannelCategoryService;
-import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
-import com.voyageone.cms.service.model.CmsBtProductModel;
-import com.voyageone.web2.cms.bean.search.index.SearchGroupsBean;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.TypeChannel;
@@ -14,6 +11,9 @@ import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean;
 import com.voyageone.web2.cms.dao.CmsPromotionDao;
 import com.voyageone.web2.core.bean.UserSessionBean;
+import com.voyageone.web2.sdk.api.VoApiDefaultClient;
+import com.voyageone.web2.sdk.api.request.ProductsGetRequest;
+import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,29 +34,14 @@ public class CmsSearchIndexService extends BaseAppService{
     private CmsPromotionDao cmsPromotionDao;
 
     @Autowired
-    private CmsBtProductDao cmsBtProductDao;
+    protected VoApiDefaultClient voApiClient;
 
     @Autowired
     private CmsBtChannelCategoryService cmsBtChannelCategoryService;
 
-    private final String[] searchItems
-            = {"channelId"
-            , "prodId"
-            , "catId"
-            , "catPath"
-            , "created"
-            , "creater"
-            , "modified"
-            , "modifier"
-            , "fields"
-            , "groups.msrpStart"
-            , "groups.msrpEnd"
-            , "groups.retailPriceStart"
-            , "groups:retailPriceEnd"
-            , "groups.salePriceStart"
-            , "groups.salePriceEnd"
-            , "groups.platforms.$"
-            , "skus"};
+    private final String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;" +
+            "modifier;fields;groups.msrpStart;groups.msrpEnd;groups.retailPriceStart;groups:retailPriceEnd;" +
+            "groups.salePriceStart;groups.salePriceEnd;groups.platforms.$;skus";
 
     /**
      * 获取检索页面初始化的master data数据
@@ -103,90 +88,16 @@ public class CmsSearchIndexService extends BaseAppService{
      * @param cmsSessionBean
      * @return
      */
-    public List<SearchGroupsBean> getGroupList(CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
+    public ProductsGetResponse getGroupList(CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
 
-        // 根据条件获取product列表
-        List<CmsBtProductModel> productList = cmsBtProductDao.selectProductByQuery(getSearchQueryForProduct(searchValue, cmsSessionBean)
-                , searchValue.getProductPageNum()
-                , searchValue.getProductPageSize()
-                , userInfo.getSelChannelId()
-                , searchItems);
+        ProductsGetRequest groupRequest = new ProductsGetRequest(userInfo.getSelChannelId());
+        groupRequest.setPageNo(searchValue.getGroupPageNum());
+        groupRequest.setPageSize(searchValue.getGroupPageSize());
+        groupRequest.setQueryString(getSearchQueryForGroup(searchValue, cmsSessionBean));
+        groupRequest.setFields(searchItems);
 
-        // 获取满足条件的product的groupId列表
-        List<Long> groupIdList = new ArrayList<>();
-        for (CmsBtProductModel cmsBtProductModel : productList) {
-            if (!groupIdList.contains(cmsBtProductModel.getGroups().getPlatforms().get(0).getGroupId()))
-                groupIdList.add(cmsBtProductModel.getGroups().getPlatforms().get(0).getGroupId());
-        }
-
-        if(groupIdList.size() > 0) {
-            List<SearchGroupsBean> result = new ArrayList<>();
-
-            // 获取group列表
-            List<CmsBtProductModel> groupMainProductList = cmsBtProductDao.selectGroupWithMainProductByQuery(getSearchQueryForGroup(groupIdList.toArray(), cmsSessionBean)
-                    , searchValue.getGroupPageNum()
-                    , searchValue.getGroupPageSize()
-                    , userInfo.getSelChannelId()
-                    , searchItems);
-
-            // 获取每个group包含的productIds
-            Map<String, List<Long>> groupProducts = new HashMap<>();
-            groupMainProductList.forEach(item -> {
-                List<Long> productIds = groupProducts.get(item.getGroups().getPlatforms().get(0).getGroupId());
-                if (productIds == null) productIds = new ArrayList<Long>();
-                productIds.add(item.getProdId());
-                groupProducts.put(item.getGroups().getPlatforms().get(0).getGroupId().toString(), productIds);
-            });
-
-            // 重新返回group一览,包括该group下所有的productIds
-            groupMainProductList.forEach(item -> {
-                if (item.getGroups().getPlatforms().get(0).getIsMain()) {
-                    SearchGroupsBean mainProduct = new SearchGroupsBean();
-                    mainProduct.setGroup(item);
-                    mainProduct.setProductIds(groupProducts.get(item.getGroups().getPlatforms().get(0).getGroupId().toString()));
-                    result.add(mainProduct);
-                }
-            });
-
-            return result;
-        }
-        else
-            return new ArrayList<>();
-    }
-
-
-    /**
-     * 返回当前页的group总件数
-     * @param searchValue
-     * @param userInfo
-     * @param cmsSessionBean
-     * @return
-     */
-    public Integer getGroupListCount(CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
-
-        // 根据条件获取product列表
-        List<CmsBtProductModel> productList = cmsBtProductDao.selectProductByQuery(getSearchQueryForProduct(searchValue, cmsSessionBean)
-                , searchValue.getProductPageNum()
-                , searchValue.getProductPageSize()
-                , userInfo.getSelChannelId()
-                , searchItems);
-
-        // 获取满足条件的product的groupId列表
-        List<Long> groupIdList = new ArrayList<>();
-        for (CmsBtProductModel cmsBtProductModel : productList) {
-            if (!groupIdList.contains(cmsBtProductModel.getGroups().getPlatforms().get(0).getGroupId()))
-                groupIdList.add(cmsBtProductModel.getGroups().getPlatforms().get(0).getGroupId());
-        }
-
-        if(groupIdList.size() > 0) {
-
-            // 获取group列表
-            return cmsBtProductDao.selectGroupCountByQuery(getSearchQueryForGroup(groupIdList.toArray(), cmsSessionBean)
-                    , userInfo.getSelChannelId()
-                    , searchItems).size();
-        }
-        else
-            return 0;
+        //SDK取得Product 数据
+        return voApiClient.execute(groupRequest);
     }
 
     /**
@@ -196,100 +107,25 @@ public class CmsSearchIndexService extends BaseAppService{
      * @param cmsSessionBean
      * @return
      */
-    public List<CmsBtProductModel> GetProductList(CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
-        return cmsBtProductDao.selectProductByQuery(getSearchQueryForProduct(searchValue, cmsSessionBean)
-                , searchValue.getProductPageNum()
-                , searchValue.getProductPageSize()
-                , userInfo.getSelChannelId()
-                , searchItems);
+    public ProductsGetResponse GetProductList(CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
+
+        ProductsGetRequest productRequest = new ProductsGetRequest(userInfo.getSelChannelId());
+        productRequest.setPageNo(searchValue.getProductPageNum());
+        productRequest.setPageSize(searchValue.getProductPageSize());
+        productRequest.setQueryString(getSearchQueryForProduct(searchValue, cmsSessionBean));
+        productRequest.setFields(searchItems);
+
+        //SDK取得Product 数据
+        return voApiClient.execute(productRequest);
     }
-
-    /**
-     * 获取当前页的product总件数
-     * @param searchValue
-     * @param userInfo
-     * @param cmsSessionBean
-     * @return
-     */
-    public Integer GetProductListCount(CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
-        return cmsBtProductDao.selectProductCountByQuery(getSearchQueryForProduct(searchValue, cmsSessionBean)
-                , userInfo.getSelChannelId()
-                , searchItems).size();
-    }
-
-    /**
-     * 获取group的检索条件
-     * @param groupIdList
-     * @return
-     */
-    private String getSearchQueryForGroup (Object[] groupIdList, CmsSessionBean cmsSessionBean) {
-
-        StringBuffer result = new StringBuffer();
-        StringBuffer sbQuery = new StringBuffer();
-        // 添加platform cart
-        sbQuery.append(MongoUtils.splicingValue("cartId", cmsSessionBean.getCategoryType().get("cartId")).toString());
-        sbQuery.append(",");
-        // 设置查询主商品
-//        sbQuery.append(MongoUtils.splicingValue("isMain", 1));
-//        sbQuery.append(",");
-        // 设置groupIds
-        if (groupIdList.length > 0) {
-            sbQuery.append(MongoUtils.splicingValue("groupId", groupIdList));
-            sbQuery.append(",");
-        }
-
-        result.append("{");
-        result.append(MongoUtils.splicingValue("groups.platforms"
-                , "{" + sbQuery.toString().substring(0, sbQuery.toString().length() - 1) + "}"
-                , "$elemMatch"));
-        result.append("}");
-        return result.toString();
-    }
-
-    /**
-     * 获取group下面所有的product
-     * @param groupIdList
-     * @param cmsSessionBean
-     * @return
-     */
-    /*private String getSearchQueryForGroupAllProducts (Object[] groupIdList, CmsSessionBean cmsSessionBean) {
-
-        StringBuffer result = new StringBuffer();
-        StringBuffer sbQuery = new StringBuffer();
-        // 添加platform cart
-        sbQuery.append(MongoUtils.splicingValue("cartId", cmsSessionBean.getCategoryType().get("cartId")).toString());
-        sbQuery.append(",");
-        // 设置groupIds
-        if (groupIdList.length > 0) {
-            sbQuery.append(MongoUtils.splicingValue("groupId", groupIdList));
-            sbQuery.append(",");
-        }
-
-        result.append("{");
-        result.append(MongoUtils.splicingValue("groups.platforms"
-                , "{" + sbQuery.toString().substring(0, sbQuery.toString().length() - 1) + "}"
-                , "$elemMatch"));
-        result.append("}");
-        return result.toString();
-    }*/
 
     /**
      * 获取product的检索条件
      * @param searchValue
+     * @param cmsSessionBean
      * @return
      */
     private String getSearchQueryForProduct (CmsSearchInfoBean searchValue, CmsSessionBean cmsSessionBean) {
-        String productSearchValue = getSearchValueForMongo(searchValue, cmsSessionBean);
-
-        return StringUtils.isEmpty(productSearchValue) ? "" : "{" + productSearchValue + "}";
-    }
-
-    /**
-     * 返回页面端的检索条件拼装成mongo使用的条件
-     * @param searchValue
-     * @return
-     */
-    private String getSearchValueForMongo (CmsSearchInfoBean searchValue, CmsSessionBean cmsSessionBean) {
 
         StringBuffer result = new StringBuffer();
 
@@ -324,6 +160,82 @@ public class CmsSearchIndexService extends BaseAppService{
                 , "{" + resultPlatforms.toString().substring(0, resultPlatforms.toString().length() - 1) + "}"
                 , "$elemMatch"));
         result.append(",");
+
+        // 获取其他检索条件
+        result.append(getSearchValueForMongo(searchValue));
+
+        if (!StringUtils.isEmpty(result.toString())) {
+            return "{" + result.toString().substring(0, result.toString().length() - 1) + "}";
+        }
+        else {
+            return "";
+        }
+    }
+
+    /**
+     * 返回页面端的检索条件拼装成mongo使用的条件
+     * @param searchValue
+     * @param cmsSessionBean
+     * @return
+     */
+    private String getSearchQueryForGroup (CmsSearchInfoBean searchValue, CmsSessionBean cmsSessionBean) {
+
+        StringBuffer result = new StringBuffer();
+
+        // 设置platform检索条件
+        StringBuffer resultPlatforms = new StringBuffer();
+
+        // 添加platform cart
+        resultPlatforms.append(MongoUtils.splicingValue("cartId", cmsSessionBean.getCategoryType().get("cartId")).toString());
+        resultPlatforms.append(",");
+
+        // 获取platform status
+        if (searchValue.getPlatformStatus() != null
+                && searchValue.getPlatformStatus().length > 0) {
+            // 获取platform status
+            resultPlatforms.append(MongoUtils.splicingValue("platformStatus", searchValue.getPlatformStatus()));
+            resultPlatforms.append(",");
+        }
+
+        // 获取publishTime start
+        if (searchValue.getPublishTimeStart() != null ) {
+            resultPlatforms.append(MongoUtils.splicingValue("publishTime", searchValue.getPublishTimeStart(), "$gte"));
+            resultPlatforms.append(",");
+        }
+
+        // 获取publishTime End
+        if (searchValue.getPublishTimeTo() != null) {
+            resultPlatforms.append(MongoUtils.splicingValue("publishTime", searchValue.getPublishTimeTo(), "$lte"));
+            resultPlatforms.append(",");
+        }
+
+        // 设置查询主商品
+        resultPlatforms.append(MongoUtils.splicingValue("isMain", 1));
+        resultPlatforms.append(",");
+
+        result.append(MongoUtils.splicingValue("groups.platforms"
+                , "{" + resultPlatforms.toString().substring(0, resultPlatforms.toString().length() - 1) + "}"
+                , "$elemMatch"));
+        result.append(",");
+
+        // 获取其他检索条件
+        result.append(getSearchValueForMongo(searchValue));
+
+        if (!StringUtils.isEmpty(result.toString())) {
+            return "{" + result.toString().substring(0, result.toString().length() - 1) + "}";
+        }
+        else {
+            return "";
+        }
+    }
+
+    /**
+     * 获取其他检索条件
+     * @param searchValue
+     * @return
+     */
+    private String getSearchValueForMongo (CmsSearchInfoBean searchValue) {
+        StringBuffer result = new StringBuffer();
 
         // 获取category Id
         if (searchValue.getCatId() != null) {
@@ -398,11 +310,6 @@ public class CmsSearchIndexService extends BaseAppService{
             result.append(",");
         }
 
-        if (!StringUtils.isEmpty(result.toString())) {
-            return result.toString().substring(0, result.toString().length() - 1);
-        }
-        else {
-            return "";
-        }
+        return result.toString();
     }
 }

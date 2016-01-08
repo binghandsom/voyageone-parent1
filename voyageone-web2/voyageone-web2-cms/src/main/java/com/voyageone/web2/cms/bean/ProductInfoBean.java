@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.bean;
 
+import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.cms.service.model.CmsBtFeedInfoModel;
 import com.voyageone.cms.service.model.CmsBtProductModel_Field_Image;
 import com.voyageone.common.masterdate.schema.field.Field;
@@ -26,6 +27,8 @@ public class ProductInfoBean {
     private CustomAttributesBean customAttributes;
 
     private ProductStatus productStatus;
+
+    protected String modified;
 
     //商品图片信息.
     private List<CmsBtProductModel_Field_Image> productImages;
@@ -116,6 +119,15 @@ public class ProductInfoBean {
     public ProductStatus getProductStautsInstance(){
         return new ProductStatus();
     }
+
+    public String getModified() {
+        return modified;
+    }
+
+    public void setModified(String modified) {
+        this.modified = modified;
+    }
+
     /**
      * 产品各种状态.
      */

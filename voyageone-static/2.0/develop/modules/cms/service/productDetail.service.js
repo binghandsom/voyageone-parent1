@@ -67,6 +67,7 @@ define([
 				categoryId: formData.categoryId,
 				categoryFullPath: formData.categoryFullPath,
 				productId: formData.productId,
+				modified: formData.modified,
 				masterFields: [],
 				customAttributes: formData.customAttributes
 			};
@@ -131,6 +132,22 @@ define([
 				result.push(key);
 			}
 			return result;
+		}
+
+		/**
+		 * 判断当前页的选中状态
+		 * @param list
+		 * @private
+		 */
+		function _setCurrentPage (list) {
+			list.selAllFlag = true;
+			_.forEach(list.currPageRows, function (item) {
+				if (_.findIndex(list.selList, item) > -1) {
+					list.selFlag[item.id] = true;
+				} else {
+					list.selAllFlag = false;
+				}
+			});
 		}
 
 	}
