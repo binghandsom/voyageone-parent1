@@ -222,6 +222,73 @@
         GROUP BY res.order_number
      </select>
 
+    <select id="synShip_selectReservationDatasByShop" resultType="com.voyageone.batch.synship.modelbean.ReservationClientBean">
+        SELECT
+            shop.shop_name,
+            orders.source_order_id,
+            res.order_number,
+            res.syn_ship_no,
+            res.order_channel_id,
+            res.cart_id,
+            GROUP_CONCAT(res.sku) as sku,
+            GROUP_CONCAT(res.id) as res_id,
+            orders.client_order_id,
+            orders.ship_name,
+            orders.ship_phone,
+            orders.order_date_time,
+            cainiao.taobao_logistics_id,
+            res.status
+        FROM
+            tt_reservation res,
+            tm_channel_shop shop,
+            oms_bt_orders orders
+            left join tt_cainiao_order cainiao on orders.source_order_id = cainiao.source_order_id
+        WHERE
+            res.order_channel_id = #{order_channel_id}
+        AND res.cart_id = #{cart_id}
+        AND res. STATUS = #{status}
+        AND res.order_number = orders.order_number
+        AND res.order_channel_id = orders.order_channel_id
+        AND shop.order_channel_id= res.order_channel_id
+        AND shop.cart_id = res.cart_id
+        GROUP BY res.order_number
+    </select>
+
+    <select id="synShip_selectReservationDatasByShop" resultType="com.voyageone.batch.synship.modelbean.ReservationClientBean">
+        SELECT
+            shop.shop_name,
+            orders.source_order_id,
+            res.order_number,
+            res.syn_ship_no,
+            res.order_channel_id,
+            res.cart_id,
+            GROUP_CONCAT(res.sku) as sku,
+            GROUP_CONCAT(res.id) as res_id,
+            orders.client_order_id,
+            orders.ship_name,
+            orders.ship_phone,
+            orders.order_date_time,
+            cainiao.taobao_logistics_id,
+            res.status
+        FROM
+            tt_reservation res,
+            tm_channel_shop shop,
+            oms_bt_ext_orders ext_orders,
+            oms_bt_orders orders
+            left join tt_cainiao_order cainiao on orders.source_order_id = cainiao.source_order_id
+        WHERE
+            res.order_channel_id = #{order_channel_id}
+        AND res.cart_id = #{cart_id}
+        AND res. STATUS = #{status}
+        AND res.order_number = orders.order_number
+        AND res.order_channel_id = orders.order_channel_id
+        AND shop.order_channel_id= res.order_channel_id
+        AND shop.cart_id = res.cart_id
+        AND res.order_number = ext_orders.order_number
+        AND ext_flg3 = 0
+        GROUP BY res.order_number
+    </select>
+
     <!--Reservation状态更新 -->
     <update id="synShip_UpdateReservationBySynshipno">
         UPDATE

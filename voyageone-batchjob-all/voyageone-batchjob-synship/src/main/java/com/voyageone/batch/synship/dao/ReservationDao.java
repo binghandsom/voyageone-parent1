@@ -170,6 +170,38 @@ public class ReservationDao extends BaseDao {
     }
 
     /**
+     * 取得相关渠道店铺订单状态为Open的订单
+     * @param order_channel_id 订单渠道
+     * @param status 状态
+     */
+    public List<ReservationClientBean> getReservationDatasByShop(String order_channel_id, String cart_id, String status) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("order_channel_id", order_channel_id);
+        params.put("cart_id", cart_id);
+        params.put("status", status);
+
+        return selectList("synShip_selectReservationDatasByShop", params);
+    }
+
+    /**
+     * 取得相关渠道店铺订单状态为Open的订单
+     * @param order_channel_id 订单渠道
+     * @param status 状态
+     */
+    public List<ReservationClientBean> getCancelReservationDatasByShop(String order_channel_id, String cart_id, String status) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("order_channel_id", order_channel_id);
+        params.put("cart_id", cart_id);
+        params.put("status", status);
+
+        return selectList("synShip_selectCancelReservationDatasByShop", params);
+    }
+
+    /**
      * 根据res_id和syn_ship_no更新res_status
      * @param syn_ship_no
      * @param status

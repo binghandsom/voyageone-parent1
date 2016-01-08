@@ -45,7 +45,7 @@ public class GetJewelryClientShippingInfoService extends GetClientShippingBaseSe
     }
 
     /**
-     * 按渠道进行逻辑库存计算
+     * 获取Jewelry的物流以及超卖信息
      */
     public void  getJewelryShippingInfo(String channelId,  List<Runnable> threads) {
 
