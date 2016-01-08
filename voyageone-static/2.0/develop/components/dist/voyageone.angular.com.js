@@ -252,7 +252,7 @@ define(function() {
           angular.forEach(data.fields, function(field) {
             eval("newFieldMap." + field.id + "=field");
           });
-          scope.$$data.values.push({
+          data.values.push({
             fieldMap: angular.copy(newFieldMap)
           });
         };
@@ -325,7 +325,7 @@ define(function() {
     }
     var templateKey_multiComplex = "voyageone.angular.directives.schemaMultiComplex.tpl.html";
     if (!$templateCache.get(templateKey_multiComplex)) {
-      $templateCache.put(templateKey_multiComplex, '<table class="table text-center">' + "<thead><tr>" + '<th ng-repeat="field in $$data.fields" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" class="text-center" style="min-width: 180px;">{{field.name}}</th>' + '<th style="min-width: 60px;" class="text-center" translate="TXT_COM_EDIT"></th>' + "</tr></thead>" + '<tbody><tr ng-repeat="value in $$data.values">' + '<td class="text-left" ng-repeat="field in value.fieldMap"><schema-item data="field" hastip="true" complex="true"></schema-item></td>' + '<td style="min-width: 60px;"><button title="{\'BTN_COM_DELETE\' | translate}" class="btn btn-danger btn-xs" ng-click="delField($index)"><i class="fa  fa-trash-o"></i></button></td>' + "</tr></tbody>" + "</table>");
+      $templateCache.put(templateKey_multiComplex, '<table class="table text-center">' + "<thead><tr>" + '<th ng-repeat="field in $$data.fields" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" class="text-center" style="min-width: 180px;">{{field.name}}</th>' + '<th style="min-width: 60px;" class="text-center" translate="TXT_COM_EDIT"></th>' + "</tr></thead>" + '<tbody><tr ng-repeat="value in $$data.complexValues">' + '<td class="text-left" ng-repeat="field in value.fieldMap"><schema-item data="field" hastip="true" complex="true"></schema-item></td>' + '<td style="min-width: 60px;"><button title="{\'BTN_COM_DELETE\' | translate}" class="btn btn-danger btn-xs" ng-click="delField($index)"><i class="fa  fa-trash-o"></i></button></td>' + "</tr></tbody>" + "</table>");
     }
     var templateKey_complex = "voyageone.angular.directives.schemaComplex.tpl.html";
     if (!$templateCache.get(templateKey_complex)) {
@@ -345,7 +345,6 @@ define(function() {
       },
       link: function(scope, element) {
         var schema = new schemaFactory();
-        console.log(scope.$$data);
         _returnType(scope.$$data.type);
         _operateRule(scope.$$data.rules);
         var tempHtml = "";
@@ -427,11 +426,11 @@ define(function() {
             break;
 
            case fieldTypes.MULTI_COMPLEX:
-            scope.$$data.values = _resetMultiComplex(scope.$$data);
+            scope.$$data.complexValues = _resetMultiComplex(scope.$$data);
             break;
 
            case fieldTypes.COMPLEX:
-            scope.$$data.values = _resetComplex(scope.$$data);
+            _resetComplex(scope.$$data);
             break;
           }
         }
@@ -444,12 +443,35 @@ define(function() {
         }
         function _resetMultiComplex(data) {
           var tempValues = [];
-          angular.forEach(data.values, function(value) {
+          angular.forEach(data.complexValues, function(value) {
             var tempFieldMap = {};
             angular.forEach(data.fields, function(field) {
               var tempField = angular.copy(field);
               if (value.fieldMap[field.id] != undefined) {
-                tempField.value = value.fieldMap[field.id].value;
+                switch (field.type) {
+                 case fieldTypes.INPUT:
+                 case fieldTypes.LABEL:
+                 case fieldTypes.DATE:
+                 case fieldTypes.DATETIME:
+                 case fieldTypes.TEXTAREA:
+                 case fieldTypes.SINGLE_CHECK:
+                 case fieldTypes.RADIO:
+                  tempField.value = value.fieldMap[field.id].value;
+                  break;
+
+                 case fieldTypes.MULTI_INPUT:
+                 case fieldTypes.MULTI_CHECK:
+                  tempField.values = value.fieldMap[field.id].values;
+                  break;
+
+                 case fieldTypes.COMPLEX:
+                  tempField.complexValue = value.fieldMap[field.id].complexValue;
+                  break;
+
+                 case fieldTypes.MULTI_COMPLEX:
+                  tempField.complexValues = value.fieldMap[field.id].complexValues;
+                  break;
+                }
               }
               tempFieldMap[field.id] = tempField;
             });
@@ -457,7 +479,7 @@ define(function() {
               fieldMap: angular.copy(tempFieldMap)
             });
           });
-          if (_.isEmpty(data.values)) {
+          if (_.isEmpty(data.complexValues)) {
             var newFieldMap = {};
             angular.forEach(data.fields, function(field) {
               eval("newFieldMap." + field.id + "=field");
@@ -469,7 +491,32 @@ define(function() {
           return tempValues;
         }
         function _resetComplex(data) {
-          return data.values;
+          angular.forEach(data.fields, function(field) {
+            switch (field.type) {
+             case fieldTypes.INPUT:
+             case fieldTypes.LABEL:
+             case fieldTypes.DATE:
+             case fieldTypes.DATETIME:
+             case fieldTypes.TEXTAREA:
+             case fieldTypes.SINGLE_CHECK:
+             case fieldTypes.RADIO:
+              field.value = data.complexValue.fieldMap[field.id].value;
+              break;
+
+             case fieldTypes.MULTI_INPUT:
+             case fieldTypes.MULTI_CHECK:
+              field.values = data.complexValue.fieldMap[field.id].values;
+              break;
+
+             case fieldTypes.COMPLEX:
+              field.complexValue = data.complexValue.fieldMap[field.id].complexValue;
+              break;
+
+             case fieldTypes.MULTI_COMPLEX:
+              field.complexValues = data.complexValue.fieldMap[field.id].complexValues;
+              break;
+            }
+          });
         }
         function _operateRule(rules) {
           angular.forEach(rules, function(rule) {
@@ -1301,10 +1348,10 @@ define(function() {
       return currentLang.substr(0, 2);
     }
   };
+  angular.module("voyageone.angular.controllers", [ "voyageone.angular.controllers.datePicker", "voyageone.angular.controllers.selectRows", "voyageone.angular.controllers.showPopover" ]);
   angular.module("voyageone.angular.directives", [ "voyageone.angular.directives.dateModelFormat", "voyageone.angular.directives.enterClick", "voyageone.angular.directives.fileStyle", "voyageone.angular.directives.ifNoRows", "voyageone.angular.directives.uiNav", "voyageone.angular.directives.schema", "voyageone.angular.directives.voption", "voyageone.angular.directives.vpagination", "voyageone.angular.directives.validator" ]);
   angular.module("voyageone.angular.factories", [ "voyageone.angular.factories.dialogs", "voyageone.angular.factories.interceptor", "voyageone.angular.factories.notify", "voyageone.angular.factories.schema", "voyageone.angular.factories.vpagination" ]);
   angular.module("voyageone.angular.services", [ "voyageone.angular.services.ajax", "voyageone.angular.services.cookie", "voyageone.angular.services.message", "voyageone.angular.services.permission", "voyageone.angular.services.translate" ]);
-  angular.module("voyageone.angular.controllers", [ "voyageone.angular.controllers.datePicker", "voyageone.angular.controllers.selectRows", "voyageone.angular.controllers.showPopover" ]);
-  return angular.module("voyageone.angular", [ "voyageone.angular.directives", "voyageone.angular.factories", "voyageone.angular.services", "voyageone.angular.controllers" ]);
+  return angular.module("voyageone.angular", [ "voyageone.angular.controllers", "voyageone.angular.directives", "voyageone.angular.factories", "voyageone.angular.services" ]);
 });
 //# sourceMappingURL=voyageone.angular.com.js.map
