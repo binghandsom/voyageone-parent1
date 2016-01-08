@@ -2,7 +2,6 @@ package com.voyageone.web2.cms.views.pop.tag.promotion;
 
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.web2.base.BaseAppService;
-
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.domain.CmsBtTagModel;
 import com.voyageone.web2.sdk.api.request.TagsGetRequest;
@@ -48,6 +47,7 @@ public class CmsPromotionSelectService extends BaseAppService {
     public Map<String, Object> addToPromotion(Map<String, Object> params, String channelId, String modifier) {
         String tag_path = params.get("tagPath").toString();
         List<Long> productIds = CommonUtil.changeListType((ArrayList<Integer>) params.get("productIds"));
+        // TODO 2016-01-08 目前处理逻辑只往product表中添加tag,不会将对应的产品添加到promotion中
         return productTagClient.addTagProducts(channelId, tag_path, productIds, modifier);
     }
 }

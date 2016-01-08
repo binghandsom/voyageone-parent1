@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * Created by lewis on 16-1-5.
  */
-public class FeedAttributesBean {
+public class CustomAttributesBean {
 
     private Map<String,Object> orgAtts;
 

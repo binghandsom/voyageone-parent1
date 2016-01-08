@@ -214,7 +214,7 @@ define([
         function _setInventoryDetail(skus) {
             var result = [];
             _.forEach(skus, function (sku) {
-                result.push(sku.skuCode + ": " + sku.qty);
+                result.push(sku.skuCode + ": " + (sku.qty ? sku.qty: 0));
             });
             return result;
         }

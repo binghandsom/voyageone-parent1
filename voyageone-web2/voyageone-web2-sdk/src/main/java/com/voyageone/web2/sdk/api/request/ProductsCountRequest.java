@@ -3,7 +3,7 @@ package com.voyageone.web2.sdk.api.request;
 
 import com.voyageone.web2.sdk.api.VoApiRequest;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
-import com.voyageone.web2.sdk.api.response.ProductsCountGetResponse;
+import com.voyageone.web2.sdk.api.response.ProductsCountResponse;
 import com.voyageone.web2.sdk.api.util.RequestUtils;
 
 import java.util.LinkedHashSet;
@@ -23,7 +23,7 @@ import java.util.Set;
  * @version 2.0.0
  * @since. 2.0.0
  */
-public class ProductsCountGetRequest extends VoApiRequest<ProductsCountGetResponse> {
+public class ProductsCountRequest extends VoApiRequest<ProductsCountResponse> {
 
 	public String getApiURLPath() {
 		return "/product/selectCount";
@@ -45,26 +45,30 @@ public class ProductsCountGetRequest extends VoApiRequest<ProductsCountGetRespon
 	private Set<String> productCodes = new LinkedHashSet<>();
 
 	/**
+	 * query String
+	 */
+	private String queryString;
+
+	/**
 	 * 用户自定义关键属性,结构：pid1:value1;pid2:value2，如果有型号，系列等子属性用: 隔开 例如：“20000:优衣库;型号:001;632501:1234”，表示“品牌:优衣库;型号:001;货号:1234”
 	 */
 	private String props;
 
-	public ProductsCountGetRequest() {}
+	public ProductsCountRequest() {}
 
-	public ProductsCountGetRequest(String channelId) {
+	public ProductsCountRequest(String channelId) {
 		this.channelId = channelId;
 	}
 
 	public void check() throws ApiRuleException {
 		super.check();
 		RequestUtils.checkNotEmpty(" channelId", channelId);
-		RequestUtils.checkNotEmpty(" productIdList or productCodeList or props", productIds, productCodes, props);
+		RequestUtils.checkNotEmpty(" productIds productCodes queryString props", productIds, productCodes, queryString, props);
 	}
 
 	public String getChannelId() {
 		return channelId;
 	}
-
 	public void setChannelId(String channelId) {
 		this.channelId = channelId;
 	}
@@ -72,7 +76,6 @@ public class ProductsCountGetRequest extends VoApiRequest<ProductsCountGetRespon
 	public Set<Long> getProductIds() {
 		return productIds;
 	}
-
 	public void setProductIds(Set<Long> productIds) {
 		this.productIds = productIds;
 	}
@@ -80,9 +83,15 @@ public class ProductsCountGetRequest extends VoApiRequest<ProductsCountGetRespon
 	public Set<String> getProductCodes() {
 		return productCodes;
 	}
-
 	public void setProductCodes(Set<String> productCodes) {
 		this.productCodes = productCodes;
+	}
+
+	public String getQueryString() {
+		return queryString;
+	}
+	public void setQueryString(String queryString) {
+		this.queryString = queryString;
 	}
 
 	public String getProps() {

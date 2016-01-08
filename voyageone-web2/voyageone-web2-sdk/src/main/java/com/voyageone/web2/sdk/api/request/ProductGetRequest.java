@@ -39,6 +39,11 @@ public class ProductGetRequest extends VoApiRequest<ProductGetResponse> {
 	private String productCode;
 
 	/**
+	 * query String
+	 */
+	private String queryString;
+
+	/**
 	 * 关键属性,结构：pid1:value1;pid2:value2，如果有型号，系列等子属性用: 隔开 例如：“20000:优衣库:型号:001;632501:1234”，表示“品牌:优衣库:型号:001;货号:1234”
 	 *
 	 * 例如 获取model所属所有商品
@@ -57,13 +62,12 @@ public class ProductGetRequest extends VoApiRequest<ProductGetResponse> {
 	public void check() throws ApiRuleException {
 		super.check();
 		RequestUtils.checkNotEmpty(" channelId", channelId);
-		RequestUtils.checkNotEmpty(" productId or productCode or props", productId, productCode, props);
+		RequestUtils.checkNotEmpty(" productId productCode queryString props", productId, productCode, queryString, props);
 	}
 
 	public String getChannelId() {
 		return channelId;
 	}
-
 	public void setChannelId(String channelId) {
 		this.channelId = channelId;
 	}
@@ -71,7 +75,6 @@ public class ProductGetRequest extends VoApiRequest<ProductGetResponse> {
 	public Long getProductId() {
 		return productId;
 	}
-
 	public void setProductId(Long productId) {
 		this.productId = productId;
 	}
@@ -79,15 +82,20 @@ public class ProductGetRequest extends VoApiRequest<ProductGetResponse> {
 	public String getProductCode() {
 		return productCode;
 	}
-
 	public void setProductCode(String productCode) {
 		this.productCode = productCode;
+	}
+
+	public String getQueryString() {
+		return queryString;
+	}
+	public void setQueryString(String queryString) {
+		this.queryString = queryString;
 	}
 
 	public String getProps() {
 		return props;
 	}
-
 	public void setProps(String props) {
 		this.props = props;
 	}

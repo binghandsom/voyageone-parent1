@@ -9,7 +9,7 @@ import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.dao.CmsPromotionSkuDao;
 import com.voyageone.web2.cms.model.CmsBtInventoryOutputTmpModel;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.web2.sdk.api.request.ProductsCountGetRequest;
+import com.voyageone.web2.sdk.api.request.ProductsCountRequest;
 import com.voyageone.web2.sdk.api.request.ProductsGetRequest;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
@@ -131,13 +131,13 @@ public class CmsPromotionFileService extends BaseAppService {
      * @return count
      */
     private long selectProductByCartIdRecCount(String channelId, String cartId) {
-        ProductsCountGetRequest requestModel = new ProductsCountGetRequest(channelId);
+        ProductsCountRequest requestModel = new ProductsCountRequest(channelId);
         requestModel.addProp("groups.platforms.cartId", Integer.valueOf(cartId));
         return voApiClient.execute(requestModel).getTotalCount();
     }
 
     private long selectMainGroupByCartIdRecCount(String channelId, String cartId) {
-        ProductsCountGetRequest requestModel = new ProductsCountGetRequest(channelId);
+        ProductsCountRequest requestModel = new ProductsCountRequest(channelId);
         requestModel.addProp("groups.platforms.cartId", Integer.valueOf(cartId));
 //        requestModel.addProp("groups.platforms.isMain", 1);
         requestModel.addProp("groups.platforms.isMain", 0);

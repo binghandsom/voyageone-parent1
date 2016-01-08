@@ -99,5 +99,4 @@ public abstract class BaseService extends BaseAppComponent {
         response.setRemovedCount(response.getRemovedCount() + bulkWriteResult.getRemovedCount());
     }
 
-
 }

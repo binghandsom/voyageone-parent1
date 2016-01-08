@@ -24,7 +24,7 @@
 					<div class="row text-center">
 						<div class="col-sm-12">
 							<div class="form-inline">
-								<button type="submit" class="btn btn-vo" translate="BTN_SAVE" ng-click="ctrl.saveProductInfo()"></button>
+								<button type="submit" class="btn btn-vo" translate="BTN_SAVE" ng-click="ctrl.updateProductInfo()"></button>
 								<button type="submit" class="btn btn-default" translate="BTN_CANCEL" ng-click="ctrl.cancelProductInfo()"></button>
 							</div><!-- .form-inline -->
 						</div>
@@ -64,7 +64,7 @@
 					<div class="row text-center">
 						<div class="col-sm-12">
 							<div class="form-inline">
-								<button type="submit" class="btn btn-vo" translate="BTN_SAVE" ng-click="ctrl.saveProductInfo()"></button>
+								<button type="submit" class="btn btn-vo" translate="BTN_SAVE" ng-click="ctrl.updateProductInfo()"></button>
 								<button type="submit" class="btn btn-default" translate="BTN_CANCEL" ng-click="ctrl.cancelProductCustomInfo()"></button>
 							</div><!-- .form-inline -->
 						</div>
@@ -79,7 +79,7 @@
 						<div class="container-fluid">
 							<schema-item class="hierarchy_main modal-open col-sm-11" data="ctrl.productDetails.skuFields" ng-if="ctrl.productDetails.skuFields != null"></schema-item>
 							<div class="col-sm-1">
-								<button class="btn btn-success" ng-click="addField(ctrl.productDetails.skuFields)"><i class="fa fa-plus"></i>{{'BTN_COM_ADD' | translate}}</button>
+								<button class="btn btn-success" ng-click="ctrl.addField(ctrl.productDetails.skuFields)"><i class="fa fa-plus"></i>{{'BTN_COM_ADD' | translate}}</button>
 							</div>
 						</div>
 					</div>
@@ -87,7 +87,7 @@
 				<div class="row text-center">
 					<div class="col-sm-12">
 						<div class="form-inline">
-							<button type="submit" class="btn btn-vo" translate="BTN_SAVE" ng-click="ctrl.saveSkuInfo()"></button>
+							<button type="submit" class="btn btn-vo" translate="BTN_SAVE" ng-click="ctrl.updateSkuInfo()"></button>
 							<button type="submit" class="btn btn-default" translate="BTN_CANCEL" ng-click="ctrl.cancelSkuInfo()"></button>
 						</div><!-- .form-inline -->
 					</div>
@@ -134,11 +134,11 @@
 					<!-- product photos -->
 					<div class="vo_prodGallery">
 						<div class="imageContainer">
-							<div class="imageWrapper" style="background-image: url('http://image.sneakerhead.com/is/image/sneakerhead/{{!ctrl.currentImage ? ctrl.productDetails.images1[0].name : ctrl.currentImage}}')"></div>
+							<div class="imageWrapper" style="background-image: url('http://image.sneakerhead.com/is/image/sneakerhead/{{!ctrl.currentImage ? ctrl.productDetails.productImages[0].name : ctrl.currentImage}}')"></div>
 						</div>
 						<nav>
 							<div class="thumbnailWrapper">
-								<div ng-repeat="image in ctrl.productDetails.images1 | limitTo: 10" class="thumbnail" ng-class="{'active':ctrl.currentImage == image.name}"
+								<div ng-repeat="image in ctrl.productDetails.productImages | limitTo: 10" class="thumbnail" ng-class="{'active':ctrl.currentImage == image.name}"
 									 ng-click="ctrl.currentImage = image.name" ng-style="{'background-image' : 'url(http://image.sneakerhead.com/is/image/sneakerhead/' + image.name + ')'}"></div>
 							</div>
 						</nav>
@@ -149,7 +149,7 @@
 							<label class="col-sm-4 control-label m-t-xs" translate="TXT_IS_FIX_TRANSLATED"></label>
 							<div class="col-sm-8 text-left">
 								<div class="onoffswitch">
-									<input type="checkbox" name="switchIsTranslated" class="onoffswitch-checkbox" id="switchIsTranslated" ng-model="ctrl.isTranslated">
+									<input type="checkbox" name="switchIsTranslated" class="onoffswitch-checkbox" id="switchIsTranslated" ng-model="ctrl.productStatus.translateStatus">
 									<label class="onoffswitch-label" for="switchIsTranslated">
 										<span class="onoffswitch-inner"></span>
 										<span class="onoffswitch-switch"></span>
@@ -161,7 +161,7 @@
 							<label class="col-sm-4 control-label m-t-xs" translate="TXT_IS_FIX_EDIT"></label>
 							<div class="col-sm-8 text-left">
 								<div class="onoffswitch">
-									<input type="checkbox" name="switchIsEdit" class="onoffswitch-checkbox" id="switchIsEdit" ng-model="ctrl.isEdit">
+									<input type="checkbox" name="switchIsEdit" class="onoffswitch-checkbox" id="switchIsEdit" ng-model="ctrl.productStatus.editStatus">
 									<label class="onoffswitch-label" for="switchIsEdit">
 										<span class="onoffswitch-inner"></span>
 										<span class="onoffswitch-switch"></span>
@@ -173,7 +173,7 @@
 							<label class="col-sm-4 control-label m-t-xs" translate="TXT_IS_FIX_APPROVED"></label>
 							<div class="col-sm-8 text-left">
 								<div class="onoffswitch">
-									<input type="checkbox" name="switchIsApprove" class="onoffswitch-checkbox" id="switchIsApprove" ng-model="ctrl.isApprove">
+									<input type="checkbox" name="switchIsApprove" class="onoffswitch-checkbox" id="switchIsApprove" ng-model="ctrl.productStatus.status">
 									<label class="onoffswitch-label" for="switchIsApprove">
 										<span class="onoffswitch-inner"></span>
 										<span class="onoffswitch-switch"></span>
@@ -182,7 +182,7 @@
 							</div>
 						</div>
 						<div class="form-inline text-center">
-							<button type="submit" class="btn btn-vo" translate="BTN_SAVE" ng-click="ctrl.saveProductDetail()"></button>
+							<button type="submit" class="btn btn-vo" translate="BTN_SAVE" ng-click="ctrl.updateProductDetail()"></button>
 							<button type="submit" class="btn btn-default" translate="BTN_CANCEL" ng-click="ctrl.cancelProductDetail()"></button>
 						</div><!-- .form-inline -->
 					</div><!-- .wrapper -->

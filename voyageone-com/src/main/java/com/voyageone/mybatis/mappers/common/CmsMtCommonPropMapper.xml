@@ -46,7 +46,8 @@
             rules AS actionRules,
             defult AS defaultValue,
             is_comm AS isCom,
-            tips AS tips
+            tips AS tips,
+            value_type AS valueType
         from voyageone_cms2.cms_mt_common_prop
     </select>
 

@@ -93,7 +93,7 @@ angular.module('voyageone.angular.directives.schema', [])
                         eval("newFieldMap." + field.id + "=field");
                     });
 
-                    scope.$$data.values.push({fieldMap: angular.copy(newFieldMap)});
+                    data.values.push({fieldMap: angular.copy(newFieldMap)});
                 };
 
                 /**
@@ -207,7 +207,7 @@ angular.module('voyageone.angular.directives.schema', [])
             '<th ng-repeat="field in $$data.fields" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" class="text-center" style="min-width: 180px;">{{field.name}}</th>' +
             '<th style="min-width: 60px;" class="text-center" translate="TXT_COM_EDIT"></th>' +
             '</tr></thead>' +
-            '<tbody><tr ng-repeat="value in $$data.values">' +
+            '<tbody><tr ng-repeat="value in $$data.complexValues">' +
             '<td class="text-left" ng-repeat="field in value.fieldMap"><schema-item data="field" hastip="true" complex="true"></schema-item></td>' +
             '<td style="min-width: 60px;"><button title="{\'BTN_COM_DELETE\' | translate}" class="btn btn-danger btn-xs" ng-click="delField($index)"><i class="fa  fa-trash-o"></i></button></td>' +
             '</tr></tbody>' +
@@ -329,10 +329,10 @@ angular.module('voyageone.angular.directives.schema', [])
                             _setCheckValues(scope.$$data.values);
                             break;
                         case fieldTypes.MULTI_COMPLEX:
-                            scope.$$data.values = _resetMultiComplex(scope.$$data);
+                            scope.$$data.complexValues = _resetMultiComplex(scope.$$data);
                             break;
                         case fieldTypes.COMPLEX:
-                            scope.$$data.values = _resetComplex(scope.$$data);
+                            _resetComplex(scope.$$data);
                             break;
                     }
                 }
@@ -357,12 +357,32 @@ angular.module('voyageone.angular.directives.schema', [])
                 */
                 function _resetMultiComplex (data) {
                     var tempValues = [];
-                    angular.forEach(data.values, function (value) {
+                    angular.forEach(data.complexValues, function (value) {
                         var tempFieldMap = {};
                         angular.forEach(data.fields, function (field) {
                             var tempField = angular.copy(field);
                             if (value.fieldMap[field.id] != undefined) {
-                                tempField.value = value.fieldMap[field.id].value;
+                                switch (field.type) {
+                                    case fieldTypes.INPUT:
+                                    case fieldTypes.LABEL:
+                                    case fieldTypes.DATE:
+                                    case fieldTypes.DATETIME:
+                                    case fieldTypes.TEXTAREA:
+                                    case fieldTypes.SINGLE_CHECK:
+                                    case fieldTypes.RADIO:
+                                        tempField.value = value.fieldMap[field.id].value;
+                                        break;
+                                    case fieldTypes.MULTI_INPUT:
+                                    case fieldTypes.MULTI_CHECK:
+                                        tempField.values = value.fieldMap[field.id].values;
+                                        break;
+                                    case fieldTypes.COMPLEX:
+                                        tempField.complexValue = value.fieldMap[field.id].complexValue;
+                                        break;
+                                    case fieldTypes.MULTI_COMPLEX:
+                                        tempField.complexValues = value.fieldMap[field.id].complexValues;
+                                        break;
+                                }
                             }
                             tempFieldMap[field.id] = tempField;
                         });
@@ -370,7 +390,7 @@ angular.module('voyageone.angular.directives.schema', [])
                     });
 
                     // 如果values为空,默认添加空白行
-                    if (_.isEmpty(data.values)) {
+                    if (_.isEmpty(data.complexValues)) {
                         var newFieldMap = {};
                         angular.forEach(data.fields, function (field) {
                             eval("newFieldMap." + field.id + "=field");
@@ -388,15 +408,29 @@ angular.module('voyageone.angular.directives.schema', [])
                  * @private
                  */
                 function _resetComplex (data) {
-                    return data.values;
-                    //var tempValues = {};
-                    //angular.forEach(data.fields, function (value) {
-                    //    if (value.type === fieldTypes.COMPLEX) {
-                    //        tempValues[]
-                    //    } else if (value.type === fieldTypes.MULTI_COMPLEX) {
-                    //        tempValues[value.id] =
-                    //    }
-                    //})
+                    angular.forEach(data.fields, function (field) {
+                        switch (field.type) {
+                            case fieldTypes.INPUT:
+                            case fieldTypes.LABEL:
+                            case fieldTypes.DATE:
+                            case fieldTypes.DATETIME:
+                            case fieldTypes.TEXTAREA:
+                            case fieldTypes.SINGLE_CHECK:
+                            case fieldTypes.RADIO:
+                                field.value = data.complexValue.fieldMap[field.id].value;
+                                break;
+                            case fieldTypes.MULTI_INPUT:
+                            case fieldTypes.MULTI_CHECK:
+                                field.values = data.complexValue.fieldMap[field.id].values;
+                                break;
+                            case fieldTypes.COMPLEX:
+                                field.complexValue = data.complexValue.fieldMap[field.id].complexValue;
+                                break;
+                            case fieldTypes.MULTI_COMPLEX:
+                                field.complexValues = data.complexValue.fieldMap[field.id].complexValues;
+                                break;
+                        }
+                    });
                 }
 
                 /**

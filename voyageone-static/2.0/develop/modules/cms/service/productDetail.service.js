@@ -16,9 +16,9 @@ define([
 	function productDetailService ($q, $productDetailService) {
 
 		this.getProductInfo = getProductInfo;
-		this.saveProductInfo = saveProductInfo;
-		this.saveSkuInfo = saveSkuInfo;
-		this.saveProductDetail = saveProductDetail;
+		this.updateProductInfo = updateProductInfo;
+		this.updateSkuInfo = updateSkuInfo;
+		this.updateProductDetail = updateProductDetail;
 
 		/**
 		 * 获取页面产品信息
@@ -32,13 +32,14 @@ define([
 				var result = angular.copy(res);
 
 				// 设定custom列表中的feed被选中
-				result.data.productInfo.feedAttributes.orgAtts = _returnNew(res.data.productInfo.feedAttributes.orgAtts, result.data.productInfo.feedAttributes.customIds);
-				result.data.productInfo.feedAttributes.cnAtts = _returnNew(res.data.productInfo.feedAttributes.cnAtts);
+				result.data.productInfo.customAttributes.orgAtts = _returnNew(res.data.productInfo.customAttributes.orgAtts, result.data.productInfo.customAttributes.customIds);
+				result.data.productInfo.customAttributes.cnAtts = _returnNew(res.data.productInfo.customAttributes.cnAtts);
 
 				// 设定哪些原始feed被添加到custom列表
-				var feedKeys = _returnKeys(res.data.productInfo.feedAttributes.orgAtts);
+				var feedKeys = _returnKeys(res.data.productInfo.customAttributes.orgAtts);
 				result.data.feedKeys = feedKeys;
-				result.data.feedAtts = _returnNew(res.data.feedAtts, feedKeys);
+				if(res.data.productInfo.feedInfoModel)
+					result.data.productInfo.feedInfoModel.attributeList = _returnNew(res.data.productInfo.feedInfoModel.attributeList, feedKeys);
 
 				// 设置sku的渠道列表是否被选中
 				angular.forEach(result.data.skus, function (sku) {
@@ -60,10 +61,23 @@ define([
 		 * @param formData
 		 * @returns {*|Promise}
          */
-		function saveProductInfo (formData) {
+		function updateProductInfo (formData) {
+
+			var data = {
+				categoryId: formData.categoryId,
+				categoryFullPath: formData.categoryFullPath,
+				productId: formData.productId,
+				masterFields: [],
+				customAttributes: formData.customAttributes
+			};
+
+			angular.forEach(formData.masterFields, function (field) {
+				if (field.type != "LABEL" && field.isDisplay != 0)
+					data.masterFields.push(field);
+			});
 
 			// TODO 需要对formData做处理
-			return $productDetailService.saveProductInfo(formData);
+			return $productDetailService.updateProductMasterInfo(data);
 		}
 
 		/**
@@ -71,9 +85,9 @@ define([
 		 * @param formData
 		 * @returns {*}
          */
-		function saveSkuInfo (formData) {
+		function updateSkuInfo (formData) {
 			// TODO 需要对formData做处理
-			return $productDetailService.saveSkuInfo(formData);
+			return $productDetailService.updateProductSkuInfo(formData);
 		}
 
 		/**
@@ -82,10 +96,10 @@ define([
 		 * @param skuFormData
 		 * @returns {*|Promise.<T>}
          */
-		function saveProductDetail (productFormData, skuFormData) {
+		function updateProductDetail (productFormData, skuFormData) {
 			// TODO 需要对formData做处理
-			return saveProductInfo(productFormData).then(function () {
-				return saveSkuInfo(skuFormData);
+			return updateProductInfo(productFormData).then(function () {
+				return updateSkuInfo(skuFormData);
 			})
 		}
 

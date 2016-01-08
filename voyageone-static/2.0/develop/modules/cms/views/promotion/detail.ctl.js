@@ -18,7 +18,25 @@ define([
             "skuList": [],
             "groupPageOption": {curr: 1, total: 5, size: 5, fetch: searchGroup},
             "codePageOption": {curr: 1, total: 5, size: 5, fetch: searchCode},
-            "skuPageOption": {curr: 1, total: 7, size: 10, fetch: searchSku}
+            "skuPageOption": {curr: 1, total: 7, size: 10, fetch: searchSku},
+            groupSelList: {
+                currPageRows: [],
+                selFlag: [],
+                selAllFlag: false,
+                selList: []
+            },
+            codeSelList: {
+                currPageRows: [],
+                selFlag: [],
+                selAllFlag: false,
+                selList: []
+            },
+            skuSelList: {
+                currPageRows: [],
+                selFlag: [],
+                selAllFlag: false,
+                selList: []
+            }
         };
 
 
@@ -30,7 +48,17 @@ define([
             });
             $scope.search();
         }
-
+        function selAllFlag(objectList,id){
+            objectList.selAllFlag = true;
+            if(!id){
+                id="id";
+            }
+            angular.forEach(objectList.currPageRows, function(object) {
+                if (!objectList.selFlag[object[id]]) {
+                    objectList.selAllFlag = false;
+                }
+            })
+        }
         function searchGroup() {
             promotionDetailService.getPromotionGroup({
                 "promotionId": $routeParams.promotionId,
@@ -40,6 +68,8 @@ define([
             }).then(function (res) {
                 $scope.vm.groupPageOption.total = res.data.total;
                 $scope.vm.groupList = res.data.resultData;
+                $scope.vm.groupSelList.currPageRows = res.data.resultData;
+                selAllFlag($scope.vm.groupSelList,"modelId");
             }, function (err) {
 
             })
@@ -56,7 +86,9 @@ define([
                 $scope.vm.codeList = res.data.resultData;
                 _.each($scope.vm.codeList,function(item){
                     item.promotionPriceBak = item.promotionPrice;
-                })
+                });
+                $scope.vm.codeSelList.currPageRows = res.data.resultData;
+                selAllFlag($scope.vm.codeSelList,"productCode");
             }, function (err) {
 
             })
