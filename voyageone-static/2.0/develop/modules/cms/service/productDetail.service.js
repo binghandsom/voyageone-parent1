@@ -16,9 +16,9 @@ define([
 	function productDetailService ($q, $productDetailService) {
 
 		this.getProductInfo = getProductInfo;
-		this.saveProductInfo = saveProductInfo;
-		this.saveSkuInfo = saveSkuInfo;
-		this.saveProductDetail = saveProductDetail;
+		this.updateProductInfo = updateProductInfo;
+		this.updateSkuInfo = updateSkuInfo;
+		this.updateProductDetail = updateProductDetail;
 
 		/**
 		 * 获取页面产品信息
@@ -61,16 +61,23 @@ define([
 		 * @param formData
 		 * @returns {*|Promise}
          */
-		function saveProductInfo (formData) {
+		function updateProductInfo (formData) {
 
-			var fields = [];
-			angular.forEach(formData.fields, function (field) {
+			var data = {
+				categoryId: formData.categoryId,
+				categoryFullPath: formData.categoryFullPath,
+				productId: formData.productId,
+				masterFields: [],
+				customAttributes: formData.customAttributes
+			};
+
+			angular.forEach(formData.masterFields, function (field) {
 				if (field.type != "LABEL" && field.isDisplay != 0)
-					fields.add(field);
+					data.masterFields.push(field);
 			});
 
 			// TODO 需要对formData做处理
-			return $productDetailService.saveProductInfo(formData);
+			return $productDetailService.updateProductMasterInfo(data);
 		}
 
 		/**
@@ -78,9 +85,9 @@ define([
 		 * @param formData
 		 * @returns {*}
          */
-		function saveSkuInfo (formData) {
+		function updateSkuInfo (formData) {
 			// TODO 需要对formData做处理
-			return $productDetailService.saveSkuInfo(formData);
+			return $productDetailService.updateProductSkuInfo(formData);
 		}
 
 		/**
@@ -89,10 +96,10 @@ define([
 		 * @param skuFormData
 		 * @returns {*|Promise.<T>}
          */
-		function saveProductDetail (productFormData, skuFormData) {
+		function updateProductDetail (productFormData, skuFormData) {
 			// TODO 需要对formData做处理
-			return saveProductInfo(productFormData).then(function () {
-				return saveSkuInfo(skuFormData);
+			return updateProductInfo(productFormData).then(function () {
+				return updateSkuInfo(skuFormData);
 			})
 		}
 
