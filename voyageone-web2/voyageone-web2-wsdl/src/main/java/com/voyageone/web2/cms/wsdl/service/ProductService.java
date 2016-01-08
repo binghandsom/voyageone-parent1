@@ -52,12 +52,12 @@ public class ProductService extends BaseService {
     public ProductGetResponse selectOne(ProductGetRequest request) {
         ProductGetResponse result = new ProductGetResponse();
 
-        CmsBtProductModel product = null;
         checkCommRequest(request);
         //ChannelId
         String channelId = request.getChannelId();
         checkRequestChannelId(channelId);
 
+        request.check();
 
         JomgoQuery queryObject = new JomgoQuery();
         //fields
@@ -69,21 +69,26 @@ public class ProductService extends BaseService {
         Long pid = request.getProductId();
         //getProductByCode
         String productCode = request.getProductCode();
+        //getQueryString
+        String queryString = request.getQueryString();
         //getProductByCondition
         String props = request.getProps();
 
         if (pid != null) {
             queryObject.setQuery(String.format("{\"prodId\" : %s}", pid));
-            product = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
         } else if (!StringUtils.isEmpty(productCode)) {
             queryObject.setQuery(String.format("{\"fields.code\" : \"%s\" }", productCode));
-            product = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
+        } else if (!StringUtils.isEmpty(queryString)) {
+            queryObject.setQuery(queryString);
         } else if (!StringUtils.isEmpty(props)) {
             queryObject.setQuery(buildProductQuery(props));
-            product = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
         }
 
-        result.setProduct(product);
+        if (queryObject.getQuery() != null) {
+            CmsBtProductModel product = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
+            result.setProduct(product);
+        }
+
         return result;
     }
 
@@ -95,14 +100,12 @@ public class ProductService extends BaseService {
     public ProductsGetResponse selectList(ProductsGetRequest request) {
         ProductsGetResponse result = new ProductsGetResponse();
 
-        List<CmsBtProductModel> products = null;
-        long totalCount = 0L;
-
         checkCommRequest(request);
         //ChannelId
         String channelId = request.getChannelId();
         checkRequestChannelId(channelId);
 
+        request.check();
 
         JomgoQuery queryObject = new JomgoQuery();
         //fields
@@ -116,6 +119,8 @@ public class ProductService extends BaseService {
         Set<Long> pids = request.getProductIds();
         //getProductByCode
         Set<String> productCodes = request.getProductCodes();
+        //getQueryString
+        String queryString = request.getQueryString();
         //getProductByCondition
         String props = request.getProps();
 
@@ -128,11 +133,16 @@ public class ProductService extends BaseService {
             String productCodesStr = "\"" + Joiner.on("\", \"").skipNulls().join(productCodes) + "\"";
             queryObject.setQuery(String.format("{ \"fields.code\" : { $in : [ %s ] } }", productCodesStr));
             isExecute = true;
+        } else if (!StringUtils.isEmpty(queryString)) {
+            queryObject.setQuery(queryString);
+            isExecute = true;
         } else if (!StringUtils.isEmpty(props)) {
             queryObject.setQuery(buildProductQuery(props));
             isExecute = true;
         }
 
+        List<CmsBtProductModel> products = null;
+        long totalCount = 0L;
         if (isExecute) {
             products = cmsBtProductDao.select(queryObject, channelId);
             if (request.getPageNo() == 1 && products != null && products.size() < request.getPageSize()) {
@@ -156,13 +166,12 @@ public class ProductService extends BaseService {
     public ProductsCountResponse selectCount(ProductsCountRequest request) {
         ProductsCountResponse result = new ProductsCountResponse();
 
-        long totalCount = 0L;
-
         checkCommRequest(request);
         //ChannelId
         String channelId = request.getChannelId();
         checkRequestChannelId(channelId);
 
+        request.check();
 
         JomgoQuery queryObject = new JomgoQuery();
 
@@ -170,6 +179,8 @@ public class ProductService extends BaseService {
         Set<Long> pids = request.getProductIds();
         //getProductByCode
         Set<String> productCodes = request.getProductCodes();
+        //getQueryString
+        String queryString = request.getQueryString();
         //getProductByCondition
         String props = request.getProps();
 
@@ -182,11 +193,15 @@ public class ProductService extends BaseService {
             String productCodesStr = "\"" + Joiner.on("\", \"").skipNulls().join(productCodes) + "\"";
             queryObject.setQuery(String.format("{ \"fields.code\" : { $in : [ %s ] } }", productCodesStr));
             isExecute = true;
+        } else if (!StringUtils.isEmpty(queryString)) {
+            queryObject.setQuery(queryString);
+            isExecute = true;
         } else if (!StringUtils.isEmpty(props)) {
             queryObject.setQuery(buildProductQuery(props));
             isExecute = true;
         }
 
+        long totalCount = 0L;
         if (isExecute) {
             totalCount = cmsBtProductDao.countByQuery(queryObject.getQuery(), channelId);
         }
@@ -552,8 +567,10 @@ public class ProductService extends BaseService {
         }
 
         if (isExecute) {
-            BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkRemoveWithMap(channelId, bulkList);
-            setResultCount(response, bulkWriteResult);
+            if (bulkList.size() > 0) {
+                BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkRemoveWithMap(channelId, bulkList);
+                setResultCount(response, bulkWriteResult);
+            }
         }
 
         return response;

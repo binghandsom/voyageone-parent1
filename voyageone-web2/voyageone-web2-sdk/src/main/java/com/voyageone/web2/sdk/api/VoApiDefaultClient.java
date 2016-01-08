@@ -79,19 +79,19 @@ public class VoApiDefaultClient implements VoApiClient {
 
 	private <T extends VoApiResponse> T _execute(VoApiRequest<T> request, String session) throws ApiException {
 		if (this.needCheckRequest) {
-			try {
-				request.check();
-			} catch (ApiRuleException e) {
-				T localResponse = null;
-				try {
-					localResponse = request.getResponseClass().newInstance();
-				} catch (Exception xe) {
-					throw new ApiException(xe);
-				}
-				localResponse.setCode(e.getErrCode());
-				localResponse.setMessage(e.getErrMsg());
-				return localResponse;
-			}
+//			try {
+			request.check();
+//			} catch (ApiRuleException e) {
+//				T localResponse = null;
+//				try {
+//					localResponse = request.getResponseClass().newInstance();
+//				} catch (Exception xe) {
+//					throw new ApiException(xe);
+//				}
+//				localResponse.setCode(e.getErrCode());
+//				localResponse.setMessage(e.getErrMsg());
+//				return localResponse;
+//			}
 		}
 
 		return doPost(request, session);

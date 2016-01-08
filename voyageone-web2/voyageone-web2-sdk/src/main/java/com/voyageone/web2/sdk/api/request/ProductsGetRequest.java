@@ -45,9 +45,15 @@ public class ProductsGetRequest extends VoApiListRequest<ProductsGetResponse> {
 	private Set<String> productCodes = new LinkedHashSet<>();
 
 	/**
+	 * query String
+	 */
+	private String queryString;
+
+	/**
 	 * 用户自定义关键属性,结构：pid1:value1;pid2:value2，如果有型号，系列等子属性用: 隔开 例如：“20000:优衣库;型号:001;632501:1234”，表示“品牌:优衣库;型号:001;货号:1234”
 	 */
 	private String props;
+
 
 	public ProductsGetRequest() {}
 
@@ -58,14 +64,13 @@ public class ProductsGetRequest extends VoApiListRequest<ProductsGetResponse> {
 	public void check() throws ApiRuleException {
 		super.check();
 		RequestUtils.checkNotEmpty(" channelId", channelId);
-		RequestUtils.checkNotEmpty(" productIdList or productCodeList or props", productIds, productCodes, props);
+		RequestUtils.checkNotEmpty(" productIds productCodes queryString props", productIds, productCodes, queryString, props);
 		RequestUtils.checkNotEmpty(" fields", fields);
 	}
 
 	public String getChannelId() {
 		return channelId;
 	}
-
 	public void setChannelId(String channelId) {
 		this.channelId = channelId;
 	}
@@ -73,7 +78,6 @@ public class ProductsGetRequest extends VoApiListRequest<ProductsGetResponse> {
 	public Set<Long> getProductIds() {
 		return productIds;
 	}
-
 	public void setProductIds(Set<Long> productIds) {
 		this.productIds = productIds;
 	}
@@ -81,9 +85,15 @@ public class ProductsGetRequest extends VoApiListRequest<ProductsGetResponse> {
 	public Set<String> getProductCodes() {
 		return productCodes;
 	}
-
 	public void setProductCodes(Set<String> productCodes) {
 		this.productCodes = productCodes;
+	}
+
+	public String getQueryString() {
+		return queryString;
+	}
+	public void setQueryString(String queryString) {
+		this.queryString = queryString;
 	}
 
 	public String getProps() {

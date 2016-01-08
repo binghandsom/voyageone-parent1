@@ -12,7 +12,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:applicationContext.xml")
-public class ProductsCountResponseTest {
+public class ProductsCountRequestTest {
 
     @Autowired
     protected VoApiDefaultClient voApiClient;
@@ -21,6 +21,15 @@ public class ProductsCountResponseTest {
     public void testProductsCountGet() {
         ProductsCountRequest requestModel = new ProductsCountRequest("300");
         requestModel.addProp("groups.platforms.groupId", 101);
+        //SDK取得Product 数据
+        System.out.println(voApiClient.execute(requestModel).getTotalCount());
+    }
+
+    @Test
+    public void testCountWithQueryString() {
+        ProductsCountRequest requestModel = new ProductsCountRequest("001");
+        String queryString = "{\"groups.platforms\":{$elemMatch: {\"groupId\":589, \"isMain\":1}}}";
+        requestModel.setQueryString(queryString);
         //SDK取得Product 数据
         System.out.println(voApiClient.execute(requestModel).getTotalCount());
     }
