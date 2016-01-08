@@ -29,9 +29,9 @@ public class ProductPropsEditController extends CmsController{
 
         int productId = Integer.valueOf(params.get("productId").toString());
 
-        String channelId = super.getUser().getSelChannelId();
+//        String channelId = super.getUser().getSelChannelId();
 
-//        String channelId = "200";
+        String channelId = "200";
 
         Map<String,Object> categoryInfo = new HashMap<>();
 
@@ -48,7 +48,9 @@ public class ProductPropsEditController extends CmsController{
     @RequestMapping(CmsUrlConstants.PRODUCT.EDIT.UPDATE_PRODUCT_MASTER_INFO)
     public AjaxResponse doUpdateProductMasterInfo(@RequestBody Map requestMap){
 
-        String channelId = super.getUser().getSelChannelId();
+//        String channelId = super.getUser().getSelChannelId();
+
+        String channelId = "200";
         String user = super.getUser().getUserName();
 
         productPropsEditService.updateProductMastertInfo(channelId,user,requestMap);
@@ -60,7 +62,8 @@ public class ProductPropsEditController extends CmsController{
     @RequestMapping(CmsUrlConstants.PRODUCT.EDIT.UPDATE_PRODUCT_SKU_INFO)
     public AjaxResponse doUpdateProductSkuInfo(@RequestBody Map requestMap){
 
-        String channelId = super.getUser().getSelChannelId();
+//        String channelId = super.getUser().getSelChannelId();
+        String channelId = "200";
         String user = super.getUser().getUserName();
         String categoryId = requestMap.get("categoryId").toString();
         Long productId = Long.valueOf(requestMap.get("productId").toString());
@@ -74,7 +77,7 @@ public class ProductPropsEditController extends CmsController{
     }
 
     @RequestMapping(CmsUrlConstants.PRODUCT.EDIT.CHANGE_CATEGORY)
-    public AjaxResponse doChangeCategory(@RequestBody JsonObject params){
+    public AjaxResponse doChangeCategory(@RequestBody Map requestMap){
 
 
         Map<String,Object> categoryInfo = new HashMap<>();
@@ -85,7 +88,7 @@ public class ProductPropsEditController extends CmsController{
     }
 
     @RequestMapping(CmsUrlConstants.PRODUCT.EDIT.CONFIRM_CHANGE)
-    public AjaxResponse doConfirmChange(@RequestBody JsonObject params){
+    public AjaxResponse doConfirmChange(@RequestBody Map requestMap){
 
 
         Map<String,Object> categoryInfo = new HashMap<>();
@@ -96,7 +99,7 @@ public class ProductPropsEditController extends CmsController{
     }
 
     @RequestMapping(CmsUrlConstants.PRODUCT.EDIT.REVERT_CATEGORY)
-    public AjaxResponse doRevertCategory(@RequestBody JsonObject params){
+    public AjaxResponse doRevertCategory(@RequestBody Map requestMap){
 
 
         Map<String,Object> categoryInfo = new HashMap<>();
