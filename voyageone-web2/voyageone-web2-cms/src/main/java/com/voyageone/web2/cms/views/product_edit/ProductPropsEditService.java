@@ -1,14 +1,21 @@
 package com.voyageone.web2.cms.views.product_edit;
 
 import com.google.gson.JsonObject;
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.cms.service.CmsProductService;
 import com.voyageone.cms.service.dao.mongodb.CmsBtFeedInfoDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCommonSchemaDao;
 import com.voyageone.cms.service.model.*;
+import com.voyageone.common.configs.TypeChannel;
+import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
 import com.voyageone.common.masterdate.schema.field.Field;
+import com.voyageone.common.masterdate.schema.field.InputField;
+import com.voyageone.common.masterdate.schema.field.MultiComplexField;
+import com.voyageone.common.masterdate.schema.field.OptionsField;
+import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.masterdate.schema.utils.JsonUtil;
 import com.voyageone.web2.cms.bean.CustomAttributesBean;
@@ -49,6 +56,8 @@ public class ProductPropsEditService {
     @Autowired
     protected VoApiDefaultClient voApiClient;
 
+    private static final String optionDataSource = "optConfig";
+
     public ProductInfoBean getProductInfo(String channelId, int prodId) throws BusinessException{
 
         ProductInfoBean productInfo = new ProductInfoBean();
@@ -77,11 +86,15 @@ public class ProductPropsEditService {
         // 获取共通schema.
         CmsMtComSchemaModel comSchemaModel = getComSchemaModel();
 
+        List<Field> comSchemaFields = comSchemaModel.getFields();
+
+        this.fillFieldOptions(comSchemaFields,channelId);
+
         // 获取master schema.
         List<Field> masterSchemaFields = categorySchemaModel.getFields();
 
         // 向主数据schema 添加共通schema.
-        masterSchemaFields.addAll(comSchemaModel.getFields());
+        masterSchemaFields.addAll(comSchemaFields);
 
         //获取主数据的值.
         Map masterSchemaValue =  productValueModel.getFields();
@@ -91,6 +104,12 @@ public class ProductPropsEditService {
 
         //获取sku schema.
         List<Field> skuSchemaFields = this.buildSkuSchema(categorySchemaModel);
+
+        MultiComplexField skuField = (MultiComplexField)skuSchemaFields.get(0);
+
+        List<Field> subSkuFields = skuField.getFields();
+
+        this.fillFieldOptions(subSkuFields,channelId);
 
         //获取sku schemaValue
         Map<String, Object> skuSchemaValue = buildSkuSchemaValue(productValueModel, categorySchemaModel);
@@ -108,11 +127,12 @@ public class ProductPropsEditService {
         productInfo.setProductId(prodId);
         productInfo.setCategoryId(categorySchemaModel.getCatId());
         productInfo.setCategoryFullPath(categorySchemaModel.getCatFullPath());
-        productInfo.setSkuFields(skuSchemaFields.get(0));
+        productInfo.setSkuFields(skuField);
         productInfo.setCustomAttributes(customAttributes);
         productInfo.setFeedInfoModel(feedInfoModel);
         productInfo.setProductImages(productImages);
         productInfo.setProductStatus(productStatus);
+        productInfo.setModified(productValueModel.getModified());
 
         return productInfo;
     }
@@ -248,13 +268,31 @@ public class ProductPropsEditService {
 
 
 
-        Map masterFieldsMap = (Map) requestMap.get("masterFields");
+        List<Map<String,Object>> masterFieldsList = (List<Map<String,Object>>) requestMap.get("masterFields");
 
-        CmsBtProductModel_Feed customAttributesValue =(CmsBtProductModel_Feed) requestMap.get("customAttributes");
+        Map<String,Object> customAttributesValue =(Map<String,Object>) requestMap.get("customAttributes");
 
-        List<Field> masterFields = SchemaJsonReader.readJsonForList(JsonUtil.bean2Json(masterFieldsMap));
+        BaseMongoMap<String, Object> orgAtts = new BaseMongoMap<>();
+        List<Object> orgAttsList =(List<Object>) customAttributesValue.get("orgAtts");
+        orgAtts.put("orgAtts",orgAttsList);
 
-        CmsBtProductModel_Field masterFieldsValue = (CmsBtProductModel_Field)FieldUtil.getFieldsValueToMap(masterFields);
+        BaseMongoMap<String, Object> cnAtts = new BaseMongoMap<>();
+        List<Object> cnAttsList =(List<Object>) customAttributesValue.get("cnAtts");
+        cnAtts.put("cnAtts",cnAttsList);
+
+        List<String> customIds = (List<String>)  customAttributesValue.get("customIds");
+
+        CmsBtProductModel_Feed feedModel = new CmsBtProductModel_Feed();
+        feedModel.setOrgAtts(orgAtts);
+        feedModel.setCnAtts(cnAtts);
+        feedModel.setCustomIds(customIds);
+
+        List<Field> masterFields = SchemaJsonReader.readJsonForList(masterFieldsList);
+
+        CmsBtProductModel_Field masterFieldsValue = new CmsBtProductModel_Field();
+
+        Map masterFieldsValueMap = FieldUtil.getFieldsValueToMap(masterFields);
+        masterFieldsValue.putAll(masterFieldsValueMap);
 
 
         ProductUpdateRequest updateRequest = new ProductUpdateRequest(channelId);
@@ -265,7 +303,8 @@ public class ProductPropsEditService {
         productModel.setProdId(Long.valueOf(requestMap.get("productId").toString()));
         productModel.setCatPath(requestMap.get("categoryFullPath").toString());
         productModel.setFields(masterFieldsValue);
-        productModel.setFeed(customAttributesValue);
+        productModel.setFeed(feedModel);
+        productModel.setModified(requestMap.get("modified").toString());
 
         updateRequest.setProductModel(productModel);
         updateRequest.setModifier(user);
@@ -309,8 +348,41 @@ public class ProductPropsEditService {
 
     }
 
-    // TODO 设置field的options
-    private void fillFieldOptions(){
+    /**
+     * 填充field选项值.
+     * @param fields
+     * @param channelId
+     */
+    private void fillFieldOptions(List<Field> fields,String channelId){
+
+        for (Field field : fields) {
+
+            if (optionDataSource.equals(field.getDataSource())) {
+
+                FieldTypeEnum type = field.getType();
+
+                switch (type){
+                    case LABEL:
+                        break;
+                    case INPUT:
+                        break;
+                    case SINGLECHECK:
+                    case MULTICHECK:
+                        List<Option> options = TypeChannel.getOptions(field.getId(), channelId);
+                        OptionsField optionsField = (OptionsField) field;
+                        optionsField.setOptions(options);
+                        break;
+                    default:
+                        break;
+
+                }
+
+                if(field instanceof OptionsField){
+
+                }
+
+            }
+        }
 
     }
 }
