@@ -54,8 +54,16 @@ public class ProductGroupsPutRequest extends VoApiRequest<ProductGroupsPutRespon
 	public void check() throws ApiRuleException {
 		super.check();
 		RequestUtils.checkNotEmpty(" channelId", channelId);
-		RequestUtils.checkNotEmpty(" productIds or productCodes", productIds, productCodes);
 		RequestUtils.checkNotEmpty(" platform", platform);
+		RequestUtils.checkNotEmpty(" productIds or productCodes", productIds, productCodes);
+		if (productIds != null && productIds.size()>0) {
+			RequestUtils.checkMinValue((long) productIds.size(), 1, "productIds");
+			RequestUtils.checkMaxValue((long) productIds.size(), 100, "productIds");
+		}
+		if (productCodes != null && productCodes.size()>0) {
+			RequestUtils.checkMinValue((long) productCodes.size(), 1, "productCodes");
+			RequestUtils.checkMaxValue((long) productCodes.size(), 100, "productCodes");
+		}
 	}
 
 	public String getChannelId() {
