@@ -42,12 +42,12 @@ define([
             })
         }
 
-        $scope.updateStatus = function(item){
+        $scope.updateStatus = function(item,synFlg){
             var data = _.clone(item);
-            data.synFlg = 1;
+            data.synFlg = synFlg;
             data.errMsg = "";
             taskPriceService.updateTaskStatus(data).then(function (res) {
-                item.synFlg = 1;
+                item.synFlg = synFlg;
                 item.errMsg = "";
             }, function (err) {
                 notify.warning("fail")
