@@ -60,7 +60,7 @@
 			</div><!-- /right-btn -->
 			<!--tab-->
 			<tab>
-				<tab-heading ng-click="vm.tabIndex = 0"><i class="glyphicons glyphicons-more-items text-default"></i> Group 一览</tab-heading>
+				<tab-heading ng-click="vm.tabIndex = 0"><i class="glyphicons glyphicons-more-items text-default"></i> {{'TXT_GROUP_LIST' | translate}}</tab-heading>
 				<div class="table-responsive">
 					<table class="table table-hover vo_table vo_models dropdown_table_bk font-bold text-vo">
 						<thead>
@@ -140,13 +140,13 @@
 				</div><!-- .table-responsive -->
 			</tab>
 			<tab>
-				<tab-heading ng-click="vm.tabIndex = 1"><i class="glyphicons glyphicons-sort text-default"></i> Product 一览</tab-heading>
+				<tab-heading ng-click="vm.tabIndex = 1"><i class="glyphicons glyphicons-sort text-default"></i> {{'TXT_PRODUCT_LIST' | translate}}</tab-heading>
 				<!-- Products table and controls -->
 				<div class="table-responsive">
 					<table class="table table-hover vo_table vo_models dropdown_table_bk font-bold text-vo">
 						<thead>
 						<tr ng-controller="selectRowsCtrl">
-							<td class="mfb-xxt"><label class="checkbox-inline c-checkbox"><input type="checkbox" ng-checked="vm.codeSelList.selAllFlag" ng-click="selectAll(vm.codeSelList,'productCode')"><span class="fa fa-check"></span> 全选 </label></td>
+							<td class="mfb-xxt"><label class="checkbox-inline c-checkbox"><input type="checkbox" ng-checked="vm.codeSelList.selAllFlag" ng-click="selectAll(vm.codeSelList,'productCode')"><span class="fa fa-check"></span>  {{'TXT_SELECT_ALL' | translate}} </label></td>
 							<td class="mfb-xxt text-center">折扣</td>
 							<td class="mfb-xxt text-center">Inventory</td>
 							<td class="mfb-xxt text-center">Promotion Price</td>
@@ -218,7 +218,7 @@
 				</div><!-- .table-responsive -->
 			</tab>
 			<tab>
-				<tab-heading ng-click="vm.tabIndex = 2"><i class="fa fa-list"></i> SKU List 一览</tab-heading>
+				<tab-heading ng-click="vm.tabIndex = 2"><i class="fa fa-list"></i>{{'TXT_SKU_LIST' | translate}}</tab-heading>
 				<div class="panel vo_panel tab_panel">
 					<div class="table-responsive">
 						<table class="table table-hover b-t b-light vo_table vo_models">

@@ -8,14 +8,21 @@ import java.util.List;
 
 /**
  * Created by james.li on 2015/12/7.
+ *
+ * @version 2.0.0
+ * @since 2.0.0
  */
 @Document
 public class CmsMtPlatformMappingModel extends BaseMongoModel {
-    private  String channelId;
+
+    private String channelId;
+
     // 主数据的类目id
     private String mainCategoryId;
+
     // 第三方平台的渠道id
     private int platformCartId;
+
     // 第三方平台的类目id
     private String platformCategoryId;
 
