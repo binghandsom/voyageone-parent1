@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.search;
 
 import com.voyageone.cms.service.model.CmsBtProductModel;
+import com.voyageone.web2.cms.bean.search.index.SearchGroupsBean;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -51,12 +52,12 @@ public class CmsSearchIndexController extends CmsController {
         // 获取product列表
         List<CmsBtProductModel> productList = searchIndexService.GetProductList(params, getUser(), getCmsSession());
         resultBean.put("productList", productList);
-        resultBean.put("productListTotal", productList.size());
+        resultBean.put("productListTotal", searchIndexService.GetProductListCount(params, getUser(), getCmsSession()));
 
         // 获取group列表
-        List<CmsBtProductModel> groupList = searchIndexService.getGroupList(params, getUser(), getCmsSession());
+        List<SearchGroupsBean> groupList = searchIndexService.getGroupList(params, getUser(), getCmsSession());
         resultBean.put("groupList", groupList);
-        resultBean.put("groupListTotal", groupList.size());
+        resultBean.put("groupListTotal", searchIndexService.getGroupListCount(params, getUser(), getCmsSession()));
 
         // 返回用户信息
         return success(resultBean);
@@ -72,7 +73,7 @@ public class CmsSearchIndexController extends CmsController {
 
         Map<String, Object> resultBean = new HashMap<>();
 
-        List<CmsBtProductModel> groupList = searchIndexService.getGroupList(params, getUser(), getCmsSession());
+        List<SearchGroupsBean> groupList = searchIndexService.getGroupList(params, getUser(), getCmsSession());
         resultBean.put("groupList", groupList);
         resultBean.put("groupListTotal", groupList.size());
 

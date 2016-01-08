@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.product_edit;
 
+import com.google.gson.JsonObject;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -28,16 +29,80 @@ public class ProductPropsEditController extends CmsController{
 
         int productId = Integer.valueOf(params.get("productId").toString());
 
-//       String channelId = super.getUser().getSelChannelId();
+//        String channelId = super.getUser().getSelChannelId();
 
         String channelId = "200";
 
         Map<String,Object> categoryInfo = new HashMap<>();
 
 
-       ProductInfoBean productInfo = productPropsEditService.getProductInfo(channelId,productId);
+        ProductInfoBean productInfo = productPropsEditService.getProductInfo(channelId,productId);
 
-       categoryInfo.put("productInfo",productInfo);
+        categoryInfo.put("productInfo",productInfo);
+
+
+        return success(categoryInfo);
+
+    }
+
+    @RequestMapping(CmsUrlConstants.PRODUCT.EDIT.UPDATE_PRODUCT_MASTER_INFO)
+    public AjaxResponse doUpdateProductMasterInfo(@RequestBody Map requestMap){
+
+//        String channelId = super.getUser().getSelChannelId();
+
+        String channelId = "200";
+        String user = super.getUser().getUserName();
+
+        productPropsEditService.updateProductMastertInfo(channelId,user,requestMap);
+
+        return success(true);
+
+    }
+
+    @RequestMapping(CmsUrlConstants.PRODUCT.EDIT.UPDATE_PRODUCT_SKU_INFO)
+    public AjaxResponse doUpdateProductSkuInfo(@RequestBody Map requestMap){
+
+//        String channelId = super.getUser().getSelChannelId();
+        String channelId = "200";
+        String user = super.getUser().getUserName();
+        String categoryId = requestMap.get("categoryId").toString();
+        Long productId = Long.valueOf(requestMap.get("productId").toString());
+        String categoryFullPath = requestMap.get("categoryFullPath").toString();
+        Map skuMap = (Map) requestMap.get("skuFields");
+
+        productPropsEditService.updateProductSkuInfo(channelId,user,categoryId,productId,categoryFullPath,skuMap);
+
+        return success(true);
+
+    }
+
+    @RequestMapping(CmsUrlConstants.PRODUCT.EDIT.CHANGE_CATEGORY)
+    public AjaxResponse doChangeCategory(@RequestBody Map requestMap){
+
+
+        Map<String,Object> categoryInfo = new HashMap<>();
+
+
+        return success(categoryInfo);
+
+    }
+
+    @RequestMapping(CmsUrlConstants.PRODUCT.EDIT.CONFIRM_CHANGE)
+    public AjaxResponse doConfirmChange(@RequestBody Map requestMap){
+
+
+        Map<String,Object> categoryInfo = new HashMap<>();
+
+
+        return success(categoryInfo);
+
+    }
+
+    @RequestMapping(CmsUrlConstants.PRODUCT.EDIT.REVERT_CATEGORY)
+    public AjaxResponse doRevertCategory(@RequestBody Map requestMap){
+
+
+        Map<String,Object> categoryInfo = new HashMap<>();
 
 
         return success(categoryInfo);

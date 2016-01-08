@@ -41,11 +41,8 @@ define([
             },
 
             // 保存product详情和product自定义
-            saveProductInfo: function () {
-                var data = {};
-                data.fields = this.productDetails.fields;
-                data.customAttributes = this.productDetails.customAttributes;
-                this.productDetailService.saveProductInfo(data)
+            updateProductInfo: function () {
+                this.productDetailService.updateProductInfo(this.productDetails)
                     .then(function () {
                         this.notify.success (this.translate.instant('TXT_COM_UPDATE_SUCCESS'));
                     }.bind(this))
@@ -66,8 +63,8 @@ define([
             },
 
             // 保存sku的变更
-            saveSkuInfo: function () {
-                this.productDetailService.saveSkuInfo(this.productDetails.skus).then(function () {
+            updateSkuInfo: function () {
+                this.productDetailService.updateSkuInfo(this.productDetails.skus).then(function () {
                     this.notify.success (this.translate.instant('TXT_COM_UPDATE_SUCCESS'));
                 }.bind(this))
             },
@@ -124,8 +121,8 @@ define([
             },
 
             // 保存所有的变更
-            saveProductDetail: function () {
-                this.productDetailService.saveProductDetail(this.productDetails)
+            updateProductDetail: function () {
+                this.productDetailService.updateProductDetail(this.productDetails)
                     .then(function (){
                         this.notify.success (this.translate.instant('TXT_COM_UPDATE_SUCCESS'));
                     }.bind(this))

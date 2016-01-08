@@ -3,6 +3,7 @@ package com.voyageone.web2.cms.views.search;
 import com.voyageone.cms.service.CmsBtChannelCategoryService;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.model.CmsBtProductModel;
+import com.voyageone.web2.cms.bean.search.index.SearchGroupsBean;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.TypeChannel;
@@ -99,9 +100,10 @@ public class CmsSearchIndexService extends BaseAppService{
      * 返回当前页的group列表
      * @param searchValue
      * @param userInfo
+     * @param cmsSessionBean
      * @return
      */
-    public List<CmsBtProductModel> getGroupList(CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
+    public List<SearchGroupsBean> getGroupList(CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
 
         // 根据条件获取product列表
         List<CmsBtProductModel> productList = cmsBtProductDao.selectProductByQuery(getSearchQueryForProduct(searchValue, cmsSessionBean)
@@ -117,21 +119,81 @@ public class CmsSearchIndexService extends BaseAppService{
                 groupIdList.add(cmsBtProductModel.getGroups().getPlatforms().get(0).getGroupId());
         }
 
-        if(groupIdList.size() > 0)
+        if(groupIdList.size() > 0) {
+            List<SearchGroupsBean> result = new ArrayList<>();
+
             // 获取group列表
-            return cmsBtProductDao.selectGroupWithMainProductByQuery(getSearchQueryForGroup(groupIdList.toArray(), cmsSessionBean)
+            List<CmsBtProductModel> groupMainProductList = cmsBtProductDao.selectGroupWithMainProductByQuery(getSearchQueryForGroup(groupIdList.toArray(), cmsSessionBean)
                     , searchValue.getGroupPageNum()
                     , searchValue.getGroupPageSize()
                     , userInfo.getSelChannelId()
                     , searchItems);
+
+            // 获取每个group包含的productIds
+            Map<String, List<Long>> groupProducts = new HashMap<>();
+            groupMainProductList.forEach(item -> {
+                List<Long> productIds = groupProducts.get(item.getGroups().getPlatforms().get(0).getGroupId());
+                if (productIds == null) productIds = new ArrayList<Long>();
+                productIds.add(item.getProdId());
+                groupProducts.put(item.getGroups().getPlatforms().get(0).getGroupId().toString(), productIds);
+            });
+
+            // 重新返回group一览,包括该group下所有的productIds
+            groupMainProductList.forEach(item -> {
+                if (item.getGroups().getPlatforms().get(0).getIsMain()) {
+                    SearchGroupsBean mainProduct = new SearchGroupsBean();
+                    mainProduct.setGroup(item);
+                    mainProduct.setProductIds(groupProducts.get(item.getGroups().getPlatforms().get(0).getGroupId().toString()));
+                    result.add(mainProduct);
+                }
+            });
+
+            return result;
+        }
         else
             return new ArrayList<>();
+    }
+
+
+    /**
+     * 返回当前页的group总件数
+     * @param searchValue
+     * @param userInfo
+     * @param cmsSessionBean
+     * @return
+     */
+    public Integer getGroupListCount(CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
+
+        // 根据条件获取product列表
+        List<CmsBtProductModel> productList = cmsBtProductDao.selectProductByQuery(getSearchQueryForProduct(searchValue, cmsSessionBean)
+                , searchValue.getProductPageNum()
+                , searchValue.getProductPageSize()
+                , userInfo.getSelChannelId()
+                , searchItems);
+
+        // 获取满足条件的product的groupId列表
+        List<Long> groupIdList = new ArrayList<>();
+        for (CmsBtProductModel cmsBtProductModel : productList) {
+            if (!groupIdList.contains(cmsBtProductModel.getGroups().getPlatforms().get(0).getGroupId()))
+                groupIdList.add(cmsBtProductModel.getGroups().getPlatforms().get(0).getGroupId());
+        }
+
+        if(groupIdList.size() > 0) {
+
+            // 获取group列表
+            return cmsBtProductDao.selectGroupCountByQuery(getSearchQueryForGroup(groupIdList.toArray(), cmsSessionBean)
+                    , userInfo.getSelChannelId()
+                    , searchItems).size();
+        }
+        else
+            return 0;
     }
 
     /**
      * 获取当前页的product列表
      * @param searchValue
      * @param userInfo
+     * @param cmsSessionBean
      * @return
      */
     public List<CmsBtProductModel> GetProductList(CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
@@ -140,6 +202,19 @@ public class CmsSearchIndexService extends BaseAppService{
                 , searchValue.getProductPageSize()
                 , userInfo.getSelChannelId()
                 , searchItems);
+    }
+
+    /**
+     * 获取当前页的product总件数
+     * @param searchValue
+     * @param userInfo
+     * @param cmsSessionBean
+     * @return
+     */
+    public Integer GetProductListCount(CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
+        return cmsBtProductDao.selectProductCountByQuery(getSearchQueryForProduct(searchValue, cmsSessionBean)
+                , userInfo.getSelChannelId()
+                , searchItems).size();
     }
 
     /**
@@ -155,8 +230,8 @@ public class CmsSearchIndexService extends BaseAppService{
         sbQuery.append(MongoUtils.splicingValue("cartId", cmsSessionBean.getCategoryType().get("cartId")).toString());
         sbQuery.append(",");
         // 设置查询主商品
-        sbQuery.append(MongoUtils.splicingValue("isMain", 1));
-        sbQuery.append(",");
+//        sbQuery.append(MongoUtils.splicingValue("isMain", 1));
+//        sbQuery.append(",");
         // 设置groupIds
         if (groupIdList.length > 0) {
             sbQuery.append(MongoUtils.splicingValue("groupId", groupIdList));
@@ -170,6 +245,33 @@ public class CmsSearchIndexService extends BaseAppService{
         result.append("}");
         return result.toString();
     }
+
+    /**
+     * 获取group下面所有的product
+     * @param groupIdList
+     * @param cmsSessionBean
+     * @return
+     */
+    /*private String getSearchQueryForGroupAllProducts (Object[] groupIdList, CmsSessionBean cmsSessionBean) {
+
+        StringBuffer result = new StringBuffer();
+        StringBuffer sbQuery = new StringBuffer();
+        // 添加platform cart
+        sbQuery.append(MongoUtils.splicingValue("cartId", cmsSessionBean.getCategoryType().get("cartId")).toString());
+        sbQuery.append(",");
+        // 设置groupIds
+        if (groupIdList.length > 0) {
+            sbQuery.append(MongoUtils.splicingValue("groupId", groupIdList));
+            sbQuery.append(",");
+        }
+
+        result.append("{");
+        result.append(MongoUtils.splicingValue("groups.platforms"
+                , "{" + sbQuery.toString().substring(0, sbQuery.toString().length() - 1) + "}"
+                , "$elemMatch"));
+        result.append("}");
+        return result.toString();
+    }*/
 
     /**
      * 获取product的检索条件
