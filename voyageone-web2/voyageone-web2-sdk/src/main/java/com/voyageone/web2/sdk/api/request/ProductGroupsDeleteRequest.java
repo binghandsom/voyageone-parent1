@@ -3,21 +3,20 @@ package com.voyageone.web2.sdk.api.request;
 
 import com.voyageone.web2.sdk.api.VoApiListRequest;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
+import com.voyageone.web2.sdk.api.response.ProductGroupsDeleteResponse;
 import com.voyageone.web2.sdk.api.response.ProductGroupsGetResponse;
 import com.voyageone.web2.sdk.api.util.RequestUtils;
 
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
- * get main group Request Model
+ * remove group Request Model
  *
- * /product/group/selectOne
+ * /product/group/delete
  *
- *  1.传入groupId来查询
- *  2.传入cartId&numIId来查询
- *  3:传入props来查询
+ *  1.传入groupId来删除
+ *  2.传入cartId&numIIds来删除
  *
  * Created on 2015-12-14
  *
@@ -25,10 +24,10 @@ import java.util.Set;
  * @version 2.0.0
  * @since. 2.0.0
  */
-public class ProductGroupsGetRequest extends VoApiListRequest<ProductGroupsGetResponse> {
+public class ProductGroupsDeleteRequest extends VoApiListRequest<ProductGroupsDeleteResponse> {
 
 	public String getApiURLPath() {
-		return "/product/group/selectList";
+		return "/product/group/delete";
 	}
 
 	private String channelId;
@@ -48,24 +47,19 @@ public class ProductGroupsGetRequest extends VoApiListRequest<ProductGroupsGetRe
 	 */
 	private Set<String> numIIds = new LinkedHashSet<>();
 
-	/**
-	 * props
-	 * 同 product
-	 */
-	private String props;
 
-	public ProductGroupsGetRequest() {
+	public ProductGroupsDeleteRequest() {
 
 	}
 
-	public ProductGroupsGetRequest(String channelId) {
+	public ProductGroupsDeleteRequest(String channelId) {
 		this.channelId = channelId;
 	}
 
 	public void check() throws ApiRuleException {
 		super.check();
 		RequestUtils.checkNotEmpty(" channelId", channelId);
-		RequestUtils.checkNotEmpty(" groupIds, numIIds or props", groupIds, cartId, numIIds, props);
+		RequestUtils.checkNotEmpty(" groupIds, numIIds", groupIds, numIIds);
 		if (groupIds != null && groupIds.size()>0) {
 			RequestUtils.checkMinValue((long) groupIds.size(), 1, "groupIds");
 			RequestUtils.checkMaxValue((long) groupIds.size(), 100, "groupIds");
@@ -109,16 +103,8 @@ public class ProductGroupsGetRequest extends VoApiListRequest<ProductGroupsGetRe
 		this.numIIds = numIIds;
 	}
 
-	public String getProps() {
-		return props;
-	}
-
-	public void setProps(String props) {
-		this.props = props;
-	}
-
-	public void addProp(String key, Object value) {
-		this.props = RequestUtils.addProp(props, key, value);
+	public void addGroupId(Long groupId) {
+		groupIds.add(groupId);
 	}
 
 }

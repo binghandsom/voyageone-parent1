@@ -552,8 +552,10 @@ public class ProductService extends BaseService {
         }
 
         if (isExecute) {
-            BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkRemoveWithMap(channelId, bulkList);
-            setResultCount(response, bulkWriteResult);
+            if (bulkList.size() > 0) {
+                BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkRemoveWithMap(channelId, bulkList);
+                setResultCount(response, bulkWriteResult);
+            }
         }
 
         return response;

@@ -1,23 +1,28 @@
 package com.voyageone.web2.cms.wsdl.service;
 
 import com.google.common.base.Joiner;
+import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.cms.service.model.CmsBtProductModel_Group_Platform;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.cms.wsdl.BaseService;
-import com.voyageone.web2.sdk.api.VoApiConstants;
-import com.voyageone.web2.sdk.api.exception.ApiException;
 import com.voyageone.web2.sdk.api.request.ProductGroupGetRequest;
+import com.voyageone.web2.sdk.api.request.ProductGroupsDeleteRequest;
 import com.voyageone.web2.sdk.api.request.ProductGroupsGetRequest;
 import com.voyageone.web2.sdk.api.response.ProductGroupGetResponse;
+import com.voyageone.web2.sdk.api.response.ProductGroupsDeleteResponse;
 import com.voyageone.web2.sdk.api.response.ProductGroupsGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
-import java.text.Collator;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 
 /**
  *  Product Group Service
@@ -27,7 +32,7 @@ import java.util.*;
  * @since. 2.0.0
  */
 @Service
-public class ProductGroupGetService extends BaseService {
+public class ProductGroupService extends BaseService {
 
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
@@ -160,6 +165,95 @@ public class ProductGroupGetService extends BaseService {
         result.setTotalCount(totalCount);
 
         return result;
+    }
+
+
+    /**
+     * deleteList
+     * @param request ProductGroupsDeleteResponse
+     * @return ProductGroupsDeleteResponse
+     */
+    public ProductGroupsDeleteResponse deleteList(@RequestBody ProductGroupsDeleteRequest request) {
+        ProductGroupsDeleteResponse response = new ProductGroupsDeleteResponse();
+
+        checkCommRequest(request);
+        //ChannelId
+        String channelId = request.getChannelId();
+        checkRequestChannelId(channelId);
+
+        request.check();
+
+        //get GroupId
+        Set<Long> groupIds = request.getGroupIds();
+        //get CartId
+        Integer cartId = request.getCartId();
+        //get NumIId
+        Set<String> numIIds = request.getNumIIds();
+
+        boolean isExecute = false;
+        JomgoQuery queryObject = new JomgoQuery();
+        queryObject.setProjection("prodId", "groups.platforms");
+        if (groupIds != null && groupIds.size() > 0) {
+            String groupIdsArrStr = Joiner.on(", ").skipNulls().join(groupIds);
+            String queryTmp = "{\"groups.platforms.groupId\":{$in:[%s]}}";
+            queryObject.setQuery(String.format(queryTmp, groupIdsArrStr));
+            isExecute = true;
+        } else if (cartId != null && numIIds != null && numIIds.size() > 0) {
+            String productCodesStr = "\"" + Joiner.on("\", \"").skipNulls().join(numIIds) + "\"";
+            String queryTmp = "{\"groups.platforms\":{$elemMatch: {\"cartId\":%s, \"numIId\":{$in:[%s]}}}}";
+            queryObject.setQuery(String.format(queryTmp, cartId, productCodesStr));
+            isExecute = true;
+        }
+
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        if (isExecute) {
+            List<CmsBtProductModel> products = cmsBtProductDao.select(queryObject, channelId);
+            addDeleteGroupBulk(products, groupIds, cartId, numIIds, bulkList);
+
+            if (bulkList.size() > 0) {
+                BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$pull");
+                setResultCount(response, bulkWriteResult);
+            }
+        }
+
+        return response;
+    }
+
+    /**
+     * addDeleteGroupBulk
+     */
+    public void addDeleteGroupBulk(List<CmsBtProductModel> products,
+                                   Set<Long> groupIds, Integer cartId, Set<String> numIIds,
+                                   List<BulkUpdateModel> bulkList) {
+        if (products != null) {
+            for(CmsBtProductModel product: products) {
+                if (product != null && product.getGroups() != null && product.getGroups().getPlatforms() != null) {
+                    for (CmsBtProductModel_Group_Platform platform : product.getGroups().getPlatforms()) {
+                        if (platform != null) {
+                            boolean isExist = false;
+                            if (groupIds != null && groupIds.size() > 0 && groupIds.contains(platform.getGroupId())) {
+                                isExist = true;
+                            } else if (cartId != null && numIIds != null && numIIds.size() > 0
+                                    && cartId.equals(platform.getCartId()) && numIIds.contains(platform.getNumIId())) {
+                                isExist = true;
+                            }
+                            if (isExist) {
+                                HashMap<String, Object> skuQueryMap = new HashMap<>();
+                                skuQueryMap.put("prodId", product.getProdId());
+
+                                HashMap<String, Object> updateMap = new HashMap<>();
+                                updateMap.put("groups.platforms", platform);
+
+                                BulkUpdateModel skuUpdateModel = new BulkUpdateModel();
+                                skuUpdateModel.setUpdateMap(updateMap);
+                                skuUpdateModel.setQueryMap(skuQueryMap);
+                                bulkList.add(skuUpdateModel);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
 }
