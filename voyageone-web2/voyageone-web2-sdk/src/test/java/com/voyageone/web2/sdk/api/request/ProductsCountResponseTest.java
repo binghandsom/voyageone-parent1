@@ -25,6 +25,15 @@ public class ProductsCountResponseTest {
         System.out.println(voApiClient.execute(requestModel).getTotalCount());
     }
 
+    @Test
+    public void testCountWithQueryString() {
+        ProductsCountRequest requestModel = new ProductsCountRequest("001");
+        String queryString = "{\"groups.platforms\":{$elemMatch: {\"groupId\":589, \"isMain\":1}}}";
+        requestModel.setQueryString(queryString);
+        //SDK取得Product 数据
+        System.out.println(voApiClient.execute(requestModel).getTotalCount());
+    }
+
 
 
 }

@@ -1,6 +1,7 @@
 package com.voyageone.web2.sdk.api.request;
 
 import com.voyageone.cms.service.model.CmsBtProductModel;
+import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.response.ProductGetResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -59,5 +60,18 @@ public class ProductGetRequestTest {
      */
     public URI getURI(String apiURLPath) {
         return URI.create(baseUri + apiURLPath);
+    }
+
+
+    @Autowired
+    protected VoApiDefaultClient voApiClient;
+
+    @Test
+    public void testCountWithQueryString() {
+        ProductGetRequest requestModel = new ProductGetRequest("001");
+        String queryString = "{\"groups.platforms\":{$elemMatch: {\"groupId\":589, \"isMain\":1}}}";
+        requestModel.setQueryString(queryString);
+        //SDK取得Product 数据
+        System.out.println(voApiClient.execute(requestModel).getProduct());
     }
 }
