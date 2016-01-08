@@ -181,7 +181,7 @@ public class TmallGjSkuFieldBuilderImpl_0 extends AbstractSkuFieldBuilder {
             List<CmsBtProductModel_Sku> cmsSkuPropBeans = sxProduct.getCmsBtProductModel().getSkus();
             for (CmsBtProductModel_Sku cmsSkuProp : cmsSkuPropBeans) {
                 //CmsBtProductModel_Sku 是Map<String, Object>的子类
-                expressionParser.pushMasterPropContext(cmsSkuProp);
+                expressionParser.setSkuPropContext(cmsSkuProp);
                 ComplexValue skuFieldValue = new ComplexValue();
                 complexValues.add(skuFieldValue);
 
@@ -205,7 +205,6 @@ public class TmallGjSkuFieldBuilderImpl_0 extends AbstractSkuFieldBuilder {
                         }
                     }
                 }
-                expressionParser.popMasterPropContext();
             }
         }
 
@@ -222,6 +221,7 @@ public class TmallGjSkuFieldBuilderImpl_0 extends AbstractSkuFieldBuilder {
         for (Map.Entry<String, CmsBtProductModel_Sku> entry : buildSkuResult.getColorCmsSkuPropMap().entrySet())
         {
             CmsBtProductModel_Sku cmsSkuProp = entry.getValue();
+            expressionParser.setSkuPropContext(cmsSkuProp);
 
             ComplexValue complexValue = new ComplexValue();
 

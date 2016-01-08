@@ -1,6 +1,7 @@
 package com.voyageone.common.masterdate.schema.field;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.voyageone.common.masterdate.schema.enums.FieldValueTypeEnum;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.utils.XmlUtils;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
@@ -106,7 +107,7 @@ public class MultiInputField extends com.voyageone.common.masterdate.schema.fiel
     public Element toParamElement() throws TopSchemaException {
         Element fieldNode = XmlUtils.createRootElement("field");
         if(StringUtil.isEmpty(this.id)) {
-            throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_30001, (String)null);
+            throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_30001, null);
         } else if(this.type != null && !StringUtil.isEmpty(this.type.value())) {
             FieldTypeEnum fieldEnum = FieldTypeEnum.getEnum(this.type.value());
             if(fieldEnum == null) {
@@ -171,9 +172,9 @@ public class MultiInputField extends com.voyageone.common.masterdate.schema.fiel
         List<String> values = new ArrayList<>();
         Object valueObj = valueMap.get(id);
         if (valueObj != null && valueObj instanceof List) {
-            List valuesTmp = (List)valueObj;
-            for (Object value : valuesTmp) {
-                values.add(value != null?(String)value:"");
+            List valueList = (List)valueObj;
+            for (Object value : valueList) {
+                values.add(StringUtil.getStringValue(value));
             }
         }
         return values;
@@ -181,17 +182,43 @@ public class MultiInputField extends com.voyageone.common.masterdate.schema.fiel
 
     @Override
     public void getFieldValueToMap(Map<String,Object> valueMap) {
-        if (values != null) {
-            valueMap.put(id, convertEmptyList(getStringValues()));
-        }
+        valueMap.put(id, getValue(getStringValues(), fieldValueType));
     }
 
-    private List<String> convertEmptyList(List<String> inputList) {
-        List<String> result = new ArrayList<>();
-        if (inputList != null) {
-            for (String cell : inputList) {
-                result.add(cell != null ? cell:"");
-            }
+    public static Object getValue(List<String> value, FieldValueTypeEnum fieldValueType) {
+        Object result;
+        if (value == null) {
+            return null;
+        }
+        if (fieldValueType == null) {
+            return value;
+        }
+
+        switch(fieldValueType) {
+            case NONE:
+                result = value;
+                break;
+            case INT:
+                List<Integer> listInt = new ArrayList<>();
+                for (String v : value) {
+                    if (v != null && v.length() > 0) {
+                        listInt.add(new Integer(v));
+                    }
+                }
+                result = listInt;
+                break;
+            case DOUBLE:
+                List<Double> listDouble = new ArrayList<>();
+                for (String v : value) {
+                    if (v != null && v.length() > 0) {
+                        listDouble.add(new Double(v));
+                    }
+                }
+                result = listDouble;
+                break;
+            default:
+                result = value;
+                break;
         }
         return result;
     }

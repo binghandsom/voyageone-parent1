@@ -3,7 +3,7 @@ package com.voyageone.web2.sdk.api.request;
 
 import com.voyageone.web2.sdk.api.VoApiRequest;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
-import com.voyageone.web2.sdk.api.response.ProductsCountGetResponse;
+import com.voyageone.web2.sdk.api.response.ProductsCountResponse;
 import com.voyageone.web2.sdk.api.util.RequestUtils;
 
 import java.util.LinkedHashSet;
@@ -23,7 +23,7 @@ import java.util.Set;
  * @version 2.0.0
  * @since. 2.0.0
  */
-public class ProductsCountGetRequest extends VoApiRequest<ProductsCountGetResponse> {
+public class ProductsCountRequest extends VoApiRequest<ProductsCountResponse> {
 
 	public String getApiURLPath() {
 		return "/product/selectCount";
@@ -49,9 +49,9 @@ public class ProductsCountGetRequest extends VoApiRequest<ProductsCountGetRespon
 	 */
 	private String props;
 
-	public ProductsCountGetRequest() {}
+	public ProductsCountRequest() {}
 
-	public ProductsCountGetRequest(String channelId) {
+	public ProductsCountRequest(String channelId) {
 		this.channelId = channelId;
 	}
 

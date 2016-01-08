@@ -152,7 +152,7 @@ define([
          * @type {openTagPromotion}
          */
         $scope.openTagPromotion = openTagPromotion;
-        function openTagPromotion(viewSize, promotion, selList) {
+        function openTagPromotion(viewSize, promotion, name, selList) {
             require([popActions.tag.promotion.controllerUrl], function () {
                 if (selList.length) {
                     $modal.open({
@@ -162,9 +162,17 @@ define([
                         resolve: {
                             promotion: function () {
                                 var productIds = [];
-                                _.forEach(selList, function (object) {
-                                    productIds.push(object.id);
-                                });
+                                if ('group' == name) {
+                                    _.forEach(selList, function (object) {
+                                        _.forEach(object.productIds, function (productId) {
+                                            productIds.push(productId);
+                                        })
+                                    });
+                                } else {
+                                    _.forEach(selList, function (object) {
+                                        productIds.push(object.id);
+                                    });
+                                }
                                 return {"promotion": promotion, "productIds": productIds};
                             }
                         }

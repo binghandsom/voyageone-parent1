@@ -1,5 +1,6 @@
 package com.voyageone.common.masterdate.schema.field;
 
+import com.voyageone.common.masterdate.schema.enums.FieldValueTypeEnum;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.utils.XmlUtils;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
@@ -47,7 +48,7 @@ public class InputField extends Field {
     public Element toParamElement() throws TopSchemaException {
         Element fieldNode = XmlUtils.createRootElement("field");
         if(StringUtil.isEmpty(this.id)) {
-            throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_30001, (String)null);
+            throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_30001, null);
         } else if(this.type != null && !StringUtil.isEmpty(this.type.value())) {
             FieldTypeEnum fieldEnum = FieldTypeEnum.getEnum(this.type.value());
             if(fieldEnum == null) {
@@ -86,28 +87,45 @@ public class InputField extends Field {
 
     @Override
     public void setFieldValueFromMap(Map<String, Object> valueMap) {
-        Object valueObj = getFieldValueFromMap(valueMap);
-        String value = "";
-        if (valueObj != null) {
-            value = valueObj.toString();
-        }
-        setValue(value);
+        setValue(getFieldValueFromMap(valueMap));
     }
 
     @Override
     public String getFieldValueFromMap(Map<String, Object> valueMap) {
-        String result;
-        Object valueObj =  valueMap.get(id);
-        if (valueObj instanceof String) {
-            result = (String)valueMap.get(id);
-        } else {
-            result = valueObj != null ? valueObj.toString():"";
-        }
-        return result;
+        return StringUtil.getStringValue(valueMap.get(id));
     }
 
     @Override
     public void getFieldValueToMap(Map<String,Object> valueMap) {
-        valueMap.put(id, value!=null?value:"");
+        valueMap.put(id, getValue(value, fieldValueType));
+    }
+
+    public static Object getValue(String value, FieldValueTypeEnum fieldValueType) {
+        Object result = null;
+        if (value == null) {
+            return null;
+        }
+        if (fieldValueType == null) {
+            return value;
+        }
+        switch(fieldValueType) {
+            case NONE:
+                result = value;
+                break;
+            case INT:
+                if (value.length() > 0) {
+                    result = new Integer(value);
+                }
+                break;
+            case DOUBLE:
+                if (value.length() > 0) {
+                    result = new Double(value);
+                }
+                break;
+            default:
+                result = value;
+                break;
+        }
+        return result;
     }
 }

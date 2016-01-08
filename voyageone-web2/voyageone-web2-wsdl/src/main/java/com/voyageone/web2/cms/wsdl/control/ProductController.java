@@ -2,14 +2,8 @@ package com.voyageone.web2.cms.wsdl.control;
 
 import com.voyageone.web2.cms.wsdl.BaseController;
 import com.voyageone.web2.cms.wsdl.service.ProductService;
-import com.voyageone.web2.sdk.api.request.ProductGetRequest;
-import com.voyageone.web2.sdk.api.request.ProductPriceLogGetRequest;
-import com.voyageone.web2.sdk.api.request.ProductsCountGetRequest;
-import com.voyageone.web2.sdk.api.request.ProductsGetRequest;
-import com.voyageone.web2.sdk.api.response.ProductGetResponse;
-import com.voyageone.web2.sdk.api.response.ProductPriceLogGetResponse;
-import com.voyageone.web2.sdk.api.response.ProductsCountGetResponse;
-import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
+import com.voyageone.web2.sdk.api.request.*;
+import com.voyageone.web2.sdk.api.response.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -57,10 +51,10 @@ public class ProductController extends BaseController {
     /**
      * selectList
      *
-     * @return ProductsCountGetResponse
+     * @return ProductsCountResponse
      */
     @RequestMapping("selectCount")
-    public ProductsCountGetResponse selectCount(@RequestBody ProductsCountGetRequest request) {
+    public ProductsCountResponse selectCount(@RequestBody ProductsCountRequest request) {
         return productService.selectCount(request);
     }
 
@@ -72,5 +66,35 @@ public class ProductController extends BaseController {
     @RequestMapping("priceLog/get")
     public ProductPriceLogGetResponse getPriceLog(@RequestBody ProductPriceLogGetRequest request) {
         return productService.getPriceLog(request);
+    }
+
+    /**
+     * add product
+     *
+     * @return ProductsAddResponse
+     */
+    @RequestMapping("add")
+    public ProductsAddResponse addProduct(@RequestBody ProductsAddRequest request) {
+        return productService.addProducts(request);
+    }
+
+    /**
+     * update product
+     *
+     * @return ProductUpdateResponse
+     */
+    @RequestMapping("update")
+    public ProductUpdateResponse updateProduct(@RequestBody ProductUpdateRequest request) {
+        return productService.updateProduct(request);
+    }
+
+    /**
+     * remove product
+     *
+     * @return ProductsDeleteResponse
+     */
+    @RequestMapping("delete")
+    public ProductsDeleteResponse deleteProducts(@RequestBody ProductsDeleteRequest request) {
+        return productService.deleteProducts(request);
     }
 }

@@ -14,9 +14,14 @@ public interface CmsConstants extends BaseConstants{
     String SESSION_CMS = "voyageone.session.cms";
 
     /**
-     * 默认的 CategoryType值 : Feed
+     * 默认的 CategoryType值 : TG
      */
-    String DEFAULT_CATEGORY_TYPE = "Feed";
+    String DEFAULT_CATEGORY_TYPE = "TG";
+
+    /**
+     * 默认的 CartId值 : 23
+     */
+    Integer DEFAULT_CART_ID = 23;
 
     /**
      * Property 文件Key

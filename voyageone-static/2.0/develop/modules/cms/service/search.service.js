@@ -160,18 +160,18 @@ define([
             data.groupSelFlag= [];
             _.forEach(data.groupList, function (groupInfo) {
                 // 初始化数据选中需要的数组
-                data.groupCurrPageRows.push({"id": groupInfo.prodId});
-                data.groupSelFlag[groupInfo.prodId] = false;
+                data.groupCurrPageRows.push({"id": groupInfo.group.prodId, "productIds": groupInfo.productIds});
+                data.groupSelFlag[groupInfo.group.prodId] = false;
 
                 // 设置Inventory Detail
                 // TODO 因为group显示的时候只返回了主商品的信息,所以无法拿到下面所有product的库存.
                 //groupInfo.inventoryDetail = _setInventoryDetail(groupInfo.skus);
 
                 // 设置price detail
-                groupInfo.groups.priceDetail = _setPriceDetail(groupInfo.groups);
+                groupInfo.group.groups.priceDetail = _setPriceDetail(groupInfo.group.groups);
 
                 // 设置time detail
-                groupInfo.groups.platforms[0].timeDetail = _setTimeDetail(groupInfo.groups.platforms[0]);
+                groupInfo.group.groups.platforms[0].timeDetail = _setTimeDetail(groupInfo.group.groups.platforms[0]);
 
             });
 
@@ -214,7 +214,7 @@ define([
         function _setInventoryDetail(skus) {
             var result = [];
             _.forEach(skus, function (sku) {
-                result.push(sku.skuCode + ": " + sku.qty);
+                result.push(sku.skuCode + ": " + (sku.qty ? sku.qty: 0));
             });
             return result;
         }

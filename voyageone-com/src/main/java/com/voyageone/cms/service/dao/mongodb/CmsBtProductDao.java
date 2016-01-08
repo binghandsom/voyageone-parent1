@@ -14,7 +14,6 @@ import com.voyageone.common.util.DateTimeUtil;
 import net.minidev.json.JSONObject;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -81,8 +80,8 @@ public class CmsBtProductDao extends BaseMongoPartDao {
 
     /**
      * 获取商品Code 数量 根据CartId（含SKU）
-     * @param channelId
-     * @param cartId
+     * @param channelId channel Id
+     * @param cartId cart Id
      *
      */
     public long selectProductByCartIdRecCount(String channelId, String cartId) {
@@ -93,8 +92,8 @@ public class CmsBtProductDao extends BaseMongoPartDao {
 
     /**
      * 获取商品Model 数量 根据CartId（含SKU）
-     * @param channelId
-     * @param cartId
+     * @param channelId channel Id
+     * @param cartId cart Id
      */
     public long selectGroupByCartIdRecCount(String channelId, String cartId) {
         String query = "{\"groups.platforms.cartId\":" + cartId + ",\"groups.platforms.isMain\":1}";
@@ -162,6 +161,19 @@ public class CmsBtProductDao extends BaseMongoPartDao {
 
         return select(jQuery, channelId);
     }
+    /**
+     * 根据检索条件返回当前页的product列表
+     * @param query 条件
+     * @param channelId channel id
+     * @return Iterator CmsBtProductModel
+     */
+    public List<CmsBtProductModel> selectProductCountByQuery(String query, String channelId, String[] searchItems) {
+        JomgoQuery jQuery = new JomgoQuery();
+        jQuery.setQuery(query)
+                .setProjection(searchItems);
+
+        return select(jQuery, channelId);
+    }
 
     /**
      * 根据检索条件返回当前页的group列表(只包含main product)
@@ -177,6 +189,21 @@ public class CmsBtProductDao extends BaseMongoPartDao {
         jQuery.setQuery(query)
                 .setSkip((currPage - 1) * pageSize)
                 .setLimit(pageSize)
+                .setProjection(searchItems);
+
+        return select(jQuery, channelId);
+    }
+
+    /**
+     * 根据检索条件返回当前页的group列表(只包含main product)
+     * @param query 条件
+     * @param channelId channel id
+     * @return List CmsBtProductModel
+     */
+    public List<CmsBtProductModel> selectGroupCountByQuery(String query, String channelId, String[] searchItems) {
+        JomgoQuery jQuery = new JomgoQuery();
+
+        jQuery.setQuery(query)
                 .setProjection(searchItems);
 
         return select(jQuery, channelId);
@@ -452,11 +479,33 @@ public class CmsBtProductDao extends BaseMongoPartDao {
     }
 
     /**
+     * 批量删除记录
+     * @param channelId 渠道ID
+     * @param bulkList  更新条件
+     * @return 运行结果
+     */
+    public BulkWriteResult bulkRemoveWithMap(String channelId, List<Map<String, Object>> bulkList) {
+        //获取集合名
+        DBCollection coll = getDBCollection(channelId);
+        BulkWriteOperation bwo = coll.initializeOrderedBulkOperation();
+
+        //设置更新者和更新时间
+        BasicDBObject modifierObj = new BasicDBObject();
+        for (Map<String, Object> queryMap: bulkList){
+            //生成查询对象
+            BasicDBObject queryObj = setDBObjectWithMap(queryMap);
+            bwo.find(queryObj).remove();
+        }
+        //最终批量运行
+        return bwo.execute();
+    }
+
+    /**
      * 根据 传入Map批量设置BasicDBObject
      * @param map 条件或者值得MAP
      * @return 处理好的结果
      */
-    public BasicDBObject setDBObjectWithMap(HashMap<String, Object> map) {
+    public BasicDBObject setDBObjectWithMap(Map<String, Object> map) {
         BasicDBObject result = new BasicDBObject();
         result.putAll(map);
         return result;

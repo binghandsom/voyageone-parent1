@@ -1,10 +1,7 @@
 package com.voyageone.cms.feed;
 
-import com.fasterxml.jackson.annotation.JsonValue;
-
 /**
  * 第三方品牌数据条件可用的比较操作
- * <p>
  * Created by Jonas on 9/2/15.
  */
 public enum Operation {
@@ -43,7 +40,6 @@ public enum Operation {
         return single;
     }
 
-    @JsonValue
     public OperationBean bean() {
         return bean;
     }

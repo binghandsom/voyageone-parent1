@@ -412,9 +412,9 @@ define([
          * @param cTypeId
          * @returns {*}
          */
-        function setCategoryType(cTypeId) {
+        function setCategoryType(cType) {
             var defer = $q.defer();
-            ajaxService.post(cActions.cms.home.menu.setCategoryType, {"cTypeId": cTypeId})
+            ajaxService.post(cActions.cms.home.menu.setCategoryType, {"cTypeId": cType.cTypeId, "cartId": cType.cartId})
                 .then(function (response) {
                     defer.resolve(response.data);
                 });
@@ -546,9 +546,9 @@ define([
          * change your current categoryTYpe.
          * @param cTypeId
          */
-        function selectCategoryType(cTypeId) {
-            menuService.setCategoryType(cTypeId).then(function (data) {
-                $rootScope.categoryType = cTypeId;
+        function selectCategoryType(cType) {
+            menuService.setCategoryType(cType).then(function (data) {
+                $rootScope.categoryType = {cTypeId: cType.cTypeId, cartId: cType.cartId};
                 vm.menuInfo.categoryTreeList = data.categoryTreeList;
             });
         }
@@ -559,9 +559,6 @@ define([
          */
         function goSearchPage(catId) {
             if(catId){
-                //searchInfoFactory.catId(catId);
-                //searchInfoFactory.platformCart(23);
-                //searchInfoFactory.codeList(null);
                 $location.path(cRoutes.search_index_param.url + "1/" + catId);
             }
         }

@@ -336,7 +336,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setAttribute("status", status);
     }
 
-    //translateStatus 0:未完成；1:完成
+    //translateStatus "0":未完成；"1":完成
     public String getTranslateStatus() {
         return getAttribute("translateStatus");
     }
@@ -344,7 +344,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setAttribute("translateStatus", status);
     }
 
-    //editStatus 0:未完成；1:完成
+    //editStatus "0":未完成；"1":完成
     public String getEditStatus() {
         return getAttribute("editStatus");
     }
@@ -362,7 +362,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
 
     @Override
     public Object put(String key, Object value) {
-        if (key != null && key.toString().startsWith("images")) {
+        if (key != null && key.startsWith("images")) {
             if (value != null) {
                 List<Map> imageMaps = (List<Map>) value;
                 List<CmsBtProductModel_Field_Image> images = new ArrayList<>();

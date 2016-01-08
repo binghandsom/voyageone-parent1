@@ -7,14 +7,13 @@ define([
     'modules/cms/service/search.service'
 ], function () {
 
-    return function ($scope, $routeParams, searchIndexService) {
+    return function ($scope, $rootScope, $routeParams, searchIndexService) {
 
         $scope.vm = {
             searchInfo: {
                 compareType: null,
                 brand: null,
-                promotion: null,
-                platformCart: 23
+                promotion: null
             },
             groupPageOption: {curr: 1, total: 0, size: 20, fetch: getGroupList},
             productPageOption: {curr: 1, total: 0, size: 20, fetch: getProductList},
@@ -71,9 +70,9 @@ define([
          */
         function clear () {
             $scope.vm.searchInfo = {
-                "compareType": null,
-                "brand": null,
-                "promotion": null
+                compareType: null,
+                brand: null,
+                promotion: null
             };
         }
 
@@ -98,6 +97,7 @@ define([
         /**
          * 数据导出
          */
+        // TODO
         function exportFile () {
 
         }
