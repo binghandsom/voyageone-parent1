@@ -29,7 +29,7 @@ public class ProductsAddRequestTest {
     public void testAdd() {
 
         ProductsAddRequest requestModel = new ProductsAddRequest("001");
-        requestModel.addProduct(createProduct(11, "a12"+11));
+        requestModel.addProduct(createProduct(11, "a12" + 11));
         requestModel.addProduct(createProduct(12, "a12" + 12));
 
         //modifier

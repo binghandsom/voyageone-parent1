@@ -452,11 +452,33 @@ public class CmsBtProductDao extends BaseMongoPartDao {
     }
 
     /**
+     * 批量删除记录
+     * @param channelId 渠道ID
+     * @param bulkList  更新条件
+     * @return 运行结果
+     */
+    public BulkWriteResult bulkRemoveWithMap(String channelId, List<Map<String, Object>> bulkList) {
+        //获取集合名
+        DBCollection coll = getDBCollection(channelId);
+        BulkWriteOperation bwo = coll.initializeOrderedBulkOperation();
+
+        //设置更新者和更新时间
+        BasicDBObject modifierObj = new BasicDBObject();
+        for (Map<String, Object> queryMap: bulkList){
+            //生成查询对象
+            BasicDBObject queryObj = setDBObjectWithMap(queryMap);
+            bwo.find(queryObj).remove();
+        }
+        //最终批量运行
+        return bwo.execute();
+    }
+
+    /**
      * 根据 传入Map批量设置BasicDBObject
      * @param map 条件或者值得MAP
      * @return 处理好的结果
      */
-    public BasicDBObject setDBObjectWithMap(HashMap<String, Object> map) {
+    public BasicDBObject setDBObjectWithMap(Map<String, Object> map) {
         BasicDBObject result = new BasicDBObject();
         result.putAll(map);
         return result;

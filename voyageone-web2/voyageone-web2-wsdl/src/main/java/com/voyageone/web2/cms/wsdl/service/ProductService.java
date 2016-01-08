@@ -512,4 +512,51 @@ public class ProductService extends BaseService {
         return response;
     }
 
+
+    /**
+     * delete product
+     *
+     * @return ProductsDeleteResponse
+     */
+    public ProductsDeleteResponse deleteProducts(ProductsDeleteRequest request) {
+        ProductsDeleteResponse response = new ProductsDeleteResponse();
+
+        checkCommRequest(request);
+        //ChannelId
+        String channelId = request.getChannelId();
+        checkRequestChannelId(channelId);
+
+        request.check();
+
+        //getProductById
+        Set<Long> pids = request.getProductIds();
+        //getProductByCode
+        Set<String> productCodes = request.getProductCodes();
+
+        boolean isExecute = false;
+        List<Map<String, Object>> bulkList = new ArrayList<>();
+        if (pids != null && pids.size() > 0) {
+            for (Long pid : pids) {
+                Map<String, Object> queryMap = new HashMap<>();
+                queryMap.put("prodId", pid);
+                bulkList.add(queryMap);
+            }
+            isExecute = true;
+        } else if (productCodes != null && productCodes.size() > 0) {
+            for (String productCode : productCodes) {
+                Map<String, Object> queryMap = new HashMap<>();
+                queryMap.put("fields.code", productCode);
+                bulkList.add(queryMap);
+            }
+            isExecute = true;
+        }
+
+        if (isExecute) {
+            BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkRemoveWithMap(channelId, bulkList);
+            setResultCount(response, bulkWriteResult);
+        }
+
+        return response;
+    }
+
 }

@@ -69,9 +69,9 @@ public class ProductController extends BaseController {
     }
 
     /**
-     * update product
+     * add product
      *
-     * @return ProductPriceLogGetResponse
+     * @return ProductsAddResponse
      */
     @RequestMapping("add")
     public ProductsAddResponse addProduct(@RequestBody ProductsAddRequest request) {
@@ -81,10 +81,20 @@ public class ProductController extends BaseController {
     /**
      * update product
      *
-     * @return ProductPriceLogGetResponse
+     * @return ProductUpdateResponse
      */
     @RequestMapping("update")
     public ProductUpdateResponse updateProduct(@RequestBody ProductUpdateRequest request) {
         return productService.updateProduct(request);
+    }
+
+    /**
+     * remove product
+     *
+     * @return ProductsDeleteResponse
+     */
+    @RequestMapping("delete")
+    public ProductsDeleteResponse deleteProducts(@RequestBody ProductsDeleteRequest request) {
+        return productService.deleteProducts(request);
     }
 }

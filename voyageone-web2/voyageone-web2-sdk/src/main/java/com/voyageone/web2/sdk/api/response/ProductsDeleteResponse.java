@@ -1,6 +1,6 @@
 package com.voyageone.web2.sdk.api.response;
 
-import com.voyageone.web2.sdk.api.VoApiListResponse;
+import com.voyageone.web2.sdk.api.VoApiUpdateResponse;
 
 
 /**
@@ -11,5 +11,5 @@ import com.voyageone.web2.sdk.api.VoApiListResponse;
  * @version 2.0.0
  * @since. 2.0.0
  */
-public class ProductsDeleteResponse extends VoApiListResponse {
+public class ProductsDeleteResponse extends VoApiUpdateResponse {
 }

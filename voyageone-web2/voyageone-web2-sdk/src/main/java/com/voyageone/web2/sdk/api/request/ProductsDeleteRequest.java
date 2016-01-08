@@ -3,19 +3,18 @@ package com.voyageone.web2.sdk.api.request;
 
 import com.voyageone.web2.sdk.api.VoApiRequest;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
-import com.voyageone.web2.sdk.api.response.ProductsCountResponse;
+import com.voyageone.web2.sdk.api.response.ProductsDeleteResponse;
 import com.voyageone.web2.sdk.api.util.RequestUtils;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * /product/selectCount Request Model
+ * /product/delete Request Model
  *
- * Product的id.两种方式来查看一个产品:
- *  1.传入productId List来查询Count
- *  2.传入productCode list来查询Count
- *  3:传入props来查询Count
+ * Product的id.两种方式来delete:
+ *  1.传入productId List来delete
+ *  2.传入productCode list来delete
  *
  * Created on 2015-12-14
  *
@@ -23,10 +22,10 @@ import java.util.Set;
  * @version 2.0.0
  * @since. 2.0.0
  */
-public class ProductsDeleteRequest extends VoApiRequest<ProductsCountResponse> {
+public class ProductsDeleteRequest extends VoApiRequest<ProductsDeleteResponse> {
 
 	public String getApiURLPath() {
-		return "/product/selectCount";
+		return "/product/delete";
 	}
 
 	/**
@@ -44,11 +43,6 @@ public class ProductsDeleteRequest extends VoApiRequest<ProductsCountResponse> {
 	 */
 	private Set<String> productCodes = new LinkedHashSet<>();
 
-	/**
-	 * 用户自定义关键属性,结构：pid1:value1;pid2:value2，如果有型号，系列等子属性用: 隔开 例如：“20000:优衣库;型号:001;632501:1234”，表示“品牌:优衣库;型号:001;货号:1234”
-	 */
-	private String props;
-
 	public ProductsDeleteRequest() {}
 
 	public ProductsDeleteRequest(String channelId) {
@@ -58,7 +52,7 @@ public class ProductsDeleteRequest extends VoApiRequest<ProductsCountResponse> {
 	public void check() throws ApiRuleException {
 		super.check();
 		RequestUtils.checkNotEmpty(" channelId", channelId);
-		RequestUtils.checkNotEmpty(" productIdList or productCodeList or props", productIds, productCodes, props);
+		RequestUtils.checkNotEmpty(" productIdList or productCodeList", productIds, productCodes);
 	}
 
 	public String getChannelId() {
@@ -85,15 +79,12 @@ public class ProductsDeleteRequest extends VoApiRequest<ProductsCountResponse> {
 		this.productCodes = productCodes;
 	}
 
-	public String getProps() {
-		return props;
-	}
-	public void setProps(String props) {
-		this.props = props;
+	public void addProductId(Long productId) {
+		productIds.add(productId);
 	}
 
-	public void addProp(String key, Object value) {
-		this.props = RequestUtils.addProp(props, key, value);
+	public void addProductCode(String productCode) {
+		productCodes.add(productCode);
 	}
 
 }
