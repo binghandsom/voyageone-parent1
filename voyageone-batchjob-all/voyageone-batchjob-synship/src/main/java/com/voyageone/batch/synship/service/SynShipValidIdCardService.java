@@ -201,7 +201,7 @@ public class SynShipValidIdCardService extends BaseTaskService {
             // 身份证接口异常，下次继续验证
             if (isInterfaceError(idCardHistory)){
                 $info("接口异常，等待下次验证");
-                logIssue("跨境易身份证接口异常", "Name：" + idCardHistory.getShip_name() + "，IdCard：" + idCardHistory.getId_card() + "，Message：" + idCardHistory.getMessage());
+                logIssue("跨境易身份证接口异常或验证频繁", "Name：" + idCardHistory.getShip_name() + "，IdCard：" + idCardHistory.getId_card() + "，Message：" + idCardHistory.getMessage());
                 continue;
             }
 
@@ -308,7 +308,7 @@ public class SynShipValidIdCardService extends BaseTaskService {
     }
 
     private boolean isInterfaceError(IdCardHistory idCardHistory) {
-        return idCardHistory.getMessage().contains("接口异常");
+        return idCardHistory.getMessage().contains("接口异常") ||  idCardHistory.getMessage().contains("验证频繁");
     }
 
     private void afterPass(IdCardHistory idCardHistory, IdCardBean idCardBean, ShortUrlBean shortUrlBean) {
