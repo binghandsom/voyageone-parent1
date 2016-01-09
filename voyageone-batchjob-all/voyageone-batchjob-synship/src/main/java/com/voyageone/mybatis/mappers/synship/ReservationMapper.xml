@@ -254,7 +254,7 @@
         GROUP BY res.order_number
     </select>
 
-    <select id="synShip_selectReservationDatasByShop" resultType="com.voyageone.batch.synship.modelbean.ReservationClientBean">
+    <select id="synShip_selectCancelReservationDatasByShop" resultType="com.voyageone.batch.synship.modelbean.ReservationClientBean">
         SELECT
             shop.shop_name,
             orders.source_order_id,
