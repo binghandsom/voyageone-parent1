@@ -333,6 +333,9 @@
 
 				<!-- 向JuicyCouture独立域名推送订单状态 -->
 				<ref bean="selfJuicyCoutureOrderStatusPostTaskContri" />
+
+				<!-- WMF准备取消订单推送 -->
+				<ref bean="postWMFPendingCancelOrderJobTaskContri" />
 			
 			</list>
 		</property>

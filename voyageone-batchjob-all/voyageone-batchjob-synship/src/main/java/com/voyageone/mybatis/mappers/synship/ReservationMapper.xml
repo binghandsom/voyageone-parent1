@@ -285,7 +285,7 @@
         AND shop.order_channel_id= res.order_channel_id
         AND shop.cart_id = res.cart_id
         AND res.order_number = ext_orders.order_number
-        AND ext_flg3 = 0
+        AND (ext_flg2 = 0 or ext_flg3 = 0)
         GROUP BY res.order_number
     </select>
 

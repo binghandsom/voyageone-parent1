@@ -52,7 +52,7 @@ public class GetWmfClientShippingInfoService extends GetClientShippingBaseServic
 
             $info(channel.getFull_name() + "获取物流信息Start");
 
-           for (ShopBean shop : shops){
+            for (ShopBean shop : shops){
 
                if (shop.getCart_id().equals(CartEnums.Cart.TG.getId())) {
                    getTgWmfShippingInfo(channel, shop);
