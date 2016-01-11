@@ -233,9 +233,9 @@ public class SynShipValidIdCardService extends BaseTaskService {
             }
 
             // 连接重置错误，下次继续验证
-            if (isResetError(idCardHistory)){
-                $info("重置错误，等待下次验证");
-                logIssue("跨境易身份证重置错误", "Name：" + idCardHistory.getShip_name() + "，IdCard：" + idCardHistory.getId_card() + "，Message：" + idCardHistory.getMessage());
+            if (isConnectionError(idCardHistory)){
+                $info("Connection错误，等待下次验证");
+                logIssue("跨境易身份证Connection错误", "Name：" + idCardHistory.getShip_name() + "，IdCard：" + idCardHistory.getId_card() + "，Message：" + idCardHistory.getMessage());
                 continue;
             }
 
@@ -362,8 +362,8 @@ public class SynShipValidIdCardService extends BaseTaskService {
         return  idCardHistory.getMessage().contains("账号或密码错误");
     }
 
-    private boolean isResetError(IdCardHistory idCardHistory) {
-        return  idCardHistory.getMessage().contains("reset");
+    private boolean isConnectionError(IdCardHistory idCardHistory) {
+        return  idCardHistory.getMessage().contains("reset") ||  idCardHistory.getMessage().contains("refused") ||  idCardHistory.getMessage().contains("Connection");
     }
 
     private void afterPass(IdCardHistory idCardHistory, IdCardBean idCardBean, ShortUrlBean shortUrlBean) {
