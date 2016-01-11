@@ -7,6 +7,7 @@ import com.voyageone.batch.cms.dao.SuperFeedDao;
 import com.voyageone.batch.core.Enums.TaskControlEnums;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.core.util.TaskControlUtils;
+import com.voyageone.cms.CmsConstants;
 import com.voyageone.cms.enums.MappingPropType;
 import com.voyageone.cms.enums.SrcType;
 import com.voyageone.cms.feed.Condition;
@@ -35,7 +36,9 @@ import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.domain.ProductPriceModel;
 import com.voyageone.web2.sdk.api.domain.ProductSkuPriceModel;
 import com.voyageone.web2.sdk.api.request.ProductUpdatePriceRequest;
+import com.voyageone.web2.sdk.api.request.ProductUpdateRequest;
 import com.voyageone.web2.sdk.api.request.ProductsAddRequest;
+import com.voyageone.web2.sdk.api.response.ProductUpdateResponse;
 import com.voyageone.web2.sdk.api.response.ProductsAddResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -175,9 +178,16 @@ public class CmsSetMainPropService extends BaseTaskService {
             if (blnProductExist) {
                 // 修改商品数据
                 // 一般只改改价格神马的
-                // TODO: 最后再写
+                cmsProduct = doUpdateCmsBtProductModel(feed, cmsProduct, mapping);
 
+                ProductUpdateRequest requestModel = new ProductUpdateRequest(channelId);
+                requestModel.setProductModel(cmsProduct);
+                requestModel.setModifier(getTaskName());
+                requestModel.setIsCheckModifed(false); // 不做最新修改时间ｃｈｅｃｋ
 
+                ProductUpdateResponse response = voApiClient.execute(requestModel);
+
+                logger.info(getTaskName() + ":更新:" + cmsProduct.getChannelId() + ":" + cmsProduct.getFields().getCode() + ":" + response.getCode() + ":" + response.getMessage());
 
             } else {
                 // 不存在的场合, 新建一个product
@@ -188,7 +198,7 @@ public class CmsSetMainPropService extends BaseTaskService {
                 requestModel.setCreater(getTaskName());
                 ProductsAddResponse response = voApiClient.execute(requestModel);
 
-                logger.info(cmsProduct.getChannelId() + ":" + cmsProduct.getFields().getCode() +":" + response.getCode() + ":" + response.getMessage());
+                logger.info(getTaskName() + ":新增:" + cmsProduct.getChannelId() + ":" + cmsProduct.getFields().getCode() + ":" + response.getCode() + ":" + response.getMessage());
 
             }
 
@@ -213,7 +223,7 @@ public class CmsSetMainPropService extends BaseTaskService {
          * 生成一个新的product
          * @param feed feed的商品信息
          * @param mapping feed与main的匹配关系
-         * @return 一个新的product
+         * @return 一个新的product的内容
          */
         private CmsBtProductModel doCreateCmsBtProductModel(CmsBtFeedInfoModel feed, CmsBtFeedMappingModel mapping) {
             // 新创建的product
@@ -386,6 +396,52 @@ public class CmsSetMainPropService extends BaseTaskService {
                 }
             }
             product.getFeed().setCnAtts(mainFeedCnAtts);
+
+            return product;
+        }
+
+        /**
+         * 更新product
+         * @param feed feed的商品信息
+         * @param product 主数据的product
+         * @param mapping feed与main的匹配关系
+         * @return 修改过的product的内容
+         */
+        private CmsBtProductModel doUpdateCmsBtProductModel(CmsBtFeedInfoModel feed, CmsBtProductModel product, CmsBtFeedMappingModel mapping) {
+
+            // 注意: 价格是在外面共通方法更新的, 这里不需要更新
+
+            // 遍历feed的skus
+            for (CmsBtFeedInfoModel_Sku feedSku : feed.getSkus()) {
+                // 遍历主数据product里的sku,看看有没有
+                boolean blnFound = false;
+                for (CmsBtProductModel_Sku sku : product.getSkus()) {
+                    if (feedSku.getSku().equals(sku.getSkuCode())) {
+                        blnFound = true;
+                        break;
+                    }
+                }
+
+                // 如果找到了,那就什么都不做,如果没有找到,那么就需要添加
+                if (!blnFound) {
+                    CmsBtProductModel_Sku sku = new CmsBtProductModel_Sku();
+                    sku.setSkuCode(feedSku.getSku());
+                    sku.setBarcode(feedSku.getBarcode()); // barcode
+                    sku.setSize(feedSku.getSize()); // 尺码
+
+                    sku.setPriceMsrp(feedSku.getPrice_msrp()); // msrp
+                    sku.setPriceRetail(feedSku.getPrice_current()); // 零售价: 未审批
+
+                    product.getSkus().add(sku);
+                }
+
+            }
+
+            // 更新状态, 准备重新上传到各个平台
+            for (CmsBtProductModel_Group_Platform platform : product.getGroups().getPlatforms()) {
+                platform.setPlatformStatus(CmsConstants.PlatformStatus.Waitingpublish);
+            }
+
 
             return product;
         }
