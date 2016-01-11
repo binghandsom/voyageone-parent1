@@ -38,4 +38,10 @@
         SET approved = #{approved}, automatic_type = #{automatic_type}, comments = #{comments}, update_time = NOW(), update_person = #{update_person}
         WHERE id_no = #{id_no} AND update_time = #{update_time}
     </update>
+
+    <update id="tt_idcard_setValidInterval">
+        UPDATE Synship.tm_task_control
+        SET cfg_val2 = NOW()
+        WHERE task_id = #{task_id} AND cfg_name = #{cfg_name}
+    </update>
 </mapper>

@@ -454,7 +454,8 @@
 		b.is_show as isShow,
 		b.product_url_key,
 		b.channel_id,
-		b.attribute_name
+		b.attribute_name,
+		a.product_id
 	FROM
 		cms_bt_product a,
 		cms_mt_product_attribute b,
@@ -2463,8 +2464,10 @@ VALUES
 			   t.modifier = #{modifier},
 			   t.publish_promotion_price_status = 0,
 			   t.modified = now()
-		 where t.cart_id = #{cartId}
-		   and t.channel_id = #{channelId}
+		 where t.channel_id = #{channelId}
+		<if test="cartId != null" >
+			and t.cart_id = #{cartId}
+		</if>
 		   and t.product_id in (
 		<foreach collection="productIdList" item="item" separator=",">
 			#{item}
