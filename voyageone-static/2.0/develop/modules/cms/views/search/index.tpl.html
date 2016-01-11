@@ -250,7 +250,7 @@
 						<thead>
 						<tr>
 							<td colspan="3" class="mfb-xxxs"><label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
-								<input type="checkbox" ng-checked="vm.groupSelList.selAllFlag" ng-click="selectAll(vm.groupSelList)" ng-disabled="!vm.groupList.length">
+								<input type="checkbox" ng-click="selectAll(vm.groupSelList)" ng-checked="isAllSelected(vm.groupSelList)" ng-disabled="!vm.groupList.length">
 								<span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;</label>
 								<span class="m-l-xxl" translate="TXT_PRIMARY_PRODUCT"></span>
 							</td>
@@ -337,7 +337,7 @@
 						<thead>
 						<tr>
 							<td class="mfb-xxt"><label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
-								<input type="checkbox" ng-checked="vm.productSelList.selAllFlag" ng-click="selectAll(vm.productSelList)" ng-disabled="!vm.productList.length">
+								<input type="checkbox" ng-click="selectAll(vm.productSelList)" ng-checked="isAllSelected(vm.productSelList)" ng-disabled="!vm.productList.length">
 								<span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;</label>
 							</td>
 							<td class="mfb-xxt text-center" translate="TXT_BRAND"></td>
