@@ -1,7 +1,10 @@
 package com.voyageone.web2.cms.wsdl.service;
 
 import com.google.common.base.Joiner;
+import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
 import com.mongodb.BulkWriteResult;
+import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
@@ -9,20 +12,21 @@ import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.cms.service.model.CmsBtProductModel_Group_Platform;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.cms.wsdl.BaseService;
+import com.voyageone.web2.sdk.api.VoApiConstants;
+import com.voyageone.web2.sdk.api.exception.ApiException;
 import com.voyageone.web2.sdk.api.request.ProductGroupGetRequest;
 import com.voyageone.web2.sdk.api.request.ProductGroupsDeleteRequest;
 import com.voyageone.web2.sdk.api.request.ProductGroupsGetRequest;
+import com.voyageone.web2.sdk.api.request.ProductGroupsPutRequest;
 import com.voyageone.web2.sdk.api.response.ProductGroupGetResponse;
 import com.voyageone.web2.sdk.api.response.ProductGroupsDeleteResponse;
 import com.voyageone.web2.sdk.api.response.ProductGroupsGetResponse;
+import com.voyageone.web2.sdk.api.response.ProductGroupsPutResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  *  Product Group Service
@@ -51,6 +55,7 @@ public class ProductGroupService extends BaseService {
         String channelId = request.getChannelId();
         checkRequestChannelId(channelId);
 
+        request.check();
 
         JomgoQuery queryObject = new JomgoQuery();
         //fields
@@ -68,7 +73,7 @@ public class ProductGroupService extends BaseService {
         //get NumIId
         String numIId = request.getNumIId();
         //getProductByCondition
-        String props = request.getProps();
+//        String props = request.getProps();
 
         if (groupId != null) {
             String queryTmp = "{\"groups.platforms\":{$elemMatch: {\"groupId\":%s, \"isMain\":1}}}";
@@ -78,12 +83,11 @@ public class ProductGroupService extends BaseService {
             String queryTmp = "{\"groups.platforms\":{$elemMatch: {\"cartId\":%s, \"numIId\":\"%s\", \"isMain\":1}}}";
             queryObject.setQuery(String.format(queryTmp, cartId, numIId));
             product = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
-        } else if (!StringUtils.isEmpty(props)) {
-            //queryObject.setQuery(buildProductQuery(props));
-            //product = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
         }
 
-        if (product != null && product.getGroups() != null && product.getGroups().getPlatforms() != null && product.getGroups().getPlatforms().size() > 0) {
+        if (product != null && product.getGroups() != null
+                && product.getGroups().getPlatforms() != null
+                && product.getGroups().getPlatforms().size() > 0) {
             result.setProductGroupPlatform(product.getGroups().getPlatforms().get(0));
         }
         return result;
@@ -97,15 +101,12 @@ public class ProductGroupService extends BaseService {
     public ProductGroupsGetResponse selectList(ProductGroupsGetRequest request) {
         ProductGroupsGetResponse result = new ProductGroupsGetResponse();
 
-        List<CmsBtProductModel> products = null;
-        List<CmsBtProductModel_Group_Platform> productGroups = null;
-        long totalCount = 0L;
-
         checkCommRequest(request);
         //ChannelId
         String channelId = request.getChannelId();
         checkRequestChannelId(channelId);
 
+        request.check();
 
         JomgoQuery queryObject = new JomgoQuery();
         //fields
@@ -125,8 +126,7 @@ public class ProductGroupService extends BaseService {
         //get NumIId
         Set<String> numIIds = request.getNumIIds();
         //getProductByCondition
-        String props = request.getProps();
-
+//        String props = request.getProps();
 
         boolean isExecute = false;
         if (groupIds != null && groupIds.size() > 0) {
@@ -139,11 +139,15 @@ public class ProductGroupService extends BaseService {
             String queryTmp = "{\"groups.platforms\":{$elemMatch: {\"cartId\":%s, \"numIId\":{$in:[%s]}, \"isMain\":1}}}";
             queryObject.setQuery(String.format(queryTmp, cartId, productCodesStr));
             isExecute = true;
-        } else if (!StringUtils.isEmpty(props)) {
-            //queryObject.setQuery(buildProductQuery(props));
-            isExecute = false;
         }
+//        else if (!StringUtils.isEmpty(props)) {
+//            //queryObject.setQuery(buildProductQuery(props));
+//            isExecute = false;
+//        }
 
+        List<CmsBtProductModel> products;
+        List<CmsBtProductModel_Group_Platform> productGroups = null;
+        long totalCount = 0L;
         if (isExecute) {
             products = cmsBtProductDao.select(queryObject, channelId);
             if (request.getPageNo() == 1 && products != null && products.size() < request.getPageSize()) {
@@ -167,6 +171,122 @@ public class ProductGroupService extends BaseService {
         return result;
     }
 
+    /**
+     * save Groups
+     * @param request ProductGroupsPutRequest
+     * @return ProductGroupsPutResponse
+     */
+    public ProductGroupsPutResponse saveGroups(ProductGroupsPutRequest request) {
+        ProductGroupsPutResponse result = new ProductGroupsPutResponse();
+        checkCommRequest(request);
+        //ChannelId
+        String channelId = request.getChannelId();
+        checkRequestChannelId(channelId);
+
+        request.check();
+
+        Set<Long> productIds = request.getProductIds();
+        Set<String> productCodes = request.getProductCodes();
+        CmsBtProductModel_Group_Platform platform = request.getPlatform();
+
+        List<BulkUpdateModel> bulkInsertList = new ArrayList<>();
+        List<BulkUpdateModel> bulkUpdateList = new ArrayList<>();
+        if (productIds != null && productIds.size() > 0) {
+            for (Long productId : productIds) {
+                saveAddGroupBlukUpdate(channelId, productId, null, platform, bulkInsertList, bulkUpdateList);
+            }
+        } else if (productCodes != null && productCodes.size() > 0) {
+            for (String productCode : productCodes) {
+                saveAddGroupBlukUpdate(channelId, null, productCode, platform, bulkInsertList, bulkUpdateList);
+            }
+        }
+
+        if (bulkInsertList.size() > 0) {
+            BasicDBObject queryObj = (BasicDBObject)bulkInsertList.get(0).getQueryMap();
+            BasicDBList platformListObj = new BasicDBList();
+            for (BulkUpdateModel bulkInsert : bulkInsertList) {
+                platformListObj.add(bulkInsert.getUpdateMap());
+            }
+            BasicDBObject platformsObj = new BasicDBObject().append("groups.platforms", platformListObj);
+            BasicDBObject pushObj = new BasicDBObject().append("$pushAll", platformsObj);
+            WriteResult writeResult = cmsBtProductDao.getDBCollection(channelId).update(queryObj, pushObj);
+            result.setInsertedCount(writeResult.getN());
+        }
+
+        if (bulkUpdateList.size() > 0) {
+            BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkUpdateList, null, "$set");
+            setResultCount(result, bulkWriteResult);
+        }
+
+        return result;
+    }
+
+    /**
+     * saveAddGroupBlukUpdate
+     */
+    private void saveAddGroupBlukUpdate(String channelId,
+                                        Long productId, String productCode,
+                                        CmsBtProductModel_Group_Platform platform,
+                                        List<BulkUpdateModel> bulkInsertList, List<BulkUpdateModel> bulkUpdateList) {
+        VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70007;
+        if (platform == null || platform.size() == 0 || platform.getGroupId() == null) {
+            return;
+        }
+
+        if (productId == null && StringUtils.isEmpty(productCode)) {
+            throw new ApiException(codeEnum.getErrorCode(), "productId or productCode not found!");
+        }
+
+        CmsBtProductModel findModel = null;
+        JomgoQuery queryObject = new JomgoQuery();
+        queryObject.setProjection("groups.platforms.groupId");
+        if (productId != null) {
+            queryObject.setQuery("{\"prodId\":" + productId + "}");
+            findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
+        } else if (StringUtils.isEmpty(productCode)) {
+            queryObject.setQuery("{\"fields.code\":\"" + productCode + "\"}");
+            findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
+        }
+
+        if (findModel != null) {
+            Set<Long> findGroupIdSet = new HashSet<>();
+            if (findModel.getGroups() != null && findModel.getGroups().getPlatforms() != null) {
+                for (CmsBtProductModel_Group_Platform platformTemp : findModel.getGroups().getPlatforms()) {
+                    if (platformTemp != null && platformTemp.getGroupId() != null) {
+                        findGroupIdSet.add(platformTemp.getGroupId());
+                    }
+                }
+            }
+
+            BasicDBObject queryMap = new BasicDBObject();
+            if (productId != null) {
+                queryMap.append("prodId", productId);
+            } else {
+                queryMap.append("fields.code", productCode);
+            }
+            if (findGroupIdSet.contains(platform.getGroupId())) {
+                queryMap.put("groups.platforms.groupId", platform.getGroupId());
+
+                BasicDBObject dbObject = platform.toUpdateBasicDBObject("groups.platforms.$.");
+
+                if (dbObject.size() > 0) {
+                    BulkUpdateModel groupUpdateModel = new BulkUpdateModel();
+                    groupUpdateModel.setUpdateMap(dbObject);
+                    groupUpdateModel.setQueryMap(queryMap);
+
+                    bulkUpdateList.add(groupUpdateModel);
+                }
+            } else {
+                BasicDBObject dbObject = platform.toUpdateBasicDBObject("");
+                if (dbObject.size() > 0) {
+                    BulkUpdateModel groupUpdateModel = new BulkUpdateModel();
+                    groupUpdateModel.setUpdateMap(dbObject);
+                    groupUpdateModel.setQueryMap(queryMap);
+                    bulkInsertList.add(groupUpdateModel);
+                }
+            }
+        }
+    }
 
     /**
      * deleteList
@@ -238,16 +358,16 @@ public class ProductGroupService extends BaseService {
                                 isExist = true;
                             }
                             if (isExist) {
-                                HashMap<String, Object> skuQueryMap = new HashMap<>();
-                                skuQueryMap.put("prodId", product.getProdId());
+                                HashMap<String, Object> groupQueryMap = new HashMap<>();
+                                groupQueryMap.put("prodId", product.getProdId());
 
                                 HashMap<String, Object> updateMap = new HashMap<>();
                                 updateMap.put("groups.platforms", platform);
 
-                                BulkUpdateModel skuUpdateModel = new BulkUpdateModel();
-                                skuUpdateModel.setUpdateMap(updateMap);
-                                skuUpdateModel.setQueryMap(skuQueryMap);
-                                bulkList.add(skuUpdateModel);
+                                BulkUpdateModel groupUpdateModel = new BulkUpdateModel();
+                                groupUpdateModel.setUpdateMap(updateMap);
+                                groupUpdateModel.setQueryMap(groupQueryMap);
+                                bulkList.add(groupUpdateModel);
                             }
                         }
                     }

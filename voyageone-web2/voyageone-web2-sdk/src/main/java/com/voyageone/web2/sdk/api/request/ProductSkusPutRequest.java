@@ -11,9 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * get product sku Request Model
- *
- * /product/sku/selectList
+ * /product/sku/put Request Model
  *
  *  传入productId 或 productCode
  *  传入addSkus(CmsBtProductModel_Sku)

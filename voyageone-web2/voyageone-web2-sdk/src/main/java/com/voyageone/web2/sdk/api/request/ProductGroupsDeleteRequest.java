@@ -62,11 +62,11 @@ public class ProductGroupsDeleteRequest extends VoApiListRequest<ProductGroupsDe
 		RequestUtils.checkNotEmpty(" groupIds, numIIds", groupIds, numIIds);
 		if (groupIds != null && groupIds.size()>0) {
 			RequestUtils.checkMinValue((long) groupIds.size(), 1, "groupIds");
-			RequestUtils.checkMaxValue((long) groupIds.size(), 100, "groupIds");
+			RequestUtils.checkMaxValue((long) groupIds.size(), 10, "groupIds");
 		}
 		if (numIIds != null && numIIds.size()>0) {
 			RequestUtils.checkMinValue((long) numIIds.size(), 1, "numIIds");
-			RequestUtils.checkMaxValue((long) numIIds.size(), 100, "numIIds");
+			RequestUtils.checkMaxValue((long) numIIds.size(), 10, "numIIds");
 			RequestUtils.checkNotEmpty(" cartId", cartId);
 		}
 	}

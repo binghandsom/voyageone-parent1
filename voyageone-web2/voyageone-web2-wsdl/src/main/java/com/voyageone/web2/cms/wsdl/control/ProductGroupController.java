@@ -2,12 +2,8 @@ package com.voyageone.web2.cms.wsdl.control;
 
 import com.voyageone.web2.cms.wsdl.BaseController;
 import com.voyageone.web2.cms.wsdl.service.ProductGroupService;
-import com.voyageone.web2.sdk.api.request.ProductGroupGetRequest;
-import com.voyageone.web2.sdk.api.request.ProductGroupsDeleteRequest;
-import com.voyageone.web2.sdk.api.request.ProductGroupsGetRequest;
-import com.voyageone.web2.sdk.api.response.ProductGroupGetResponse;
-import com.voyageone.web2.sdk.api.response.ProductGroupsDeleteResponse;
-import com.voyageone.web2.sdk.api.response.ProductGroupsGetResponse;
+import com.voyageone.web2.sdk.api.request.*;
+import com.voyageone.web2.sdk.api.response.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,6 +46,14 @@ public class ProductGroupController extends BaseController {
         return productGroupService.selectList(request);
     }
 
+    /**
+     * selectList
+     * @return ProductSkusPutResponse
+     */
+    @RequestMapping("put")
+    public ProductGroupsPutResponse put(@RequestBody ProductGroupsPutRequest request) {
+        return productGroupService.saveGroups(request);
+    }
 
     /**
      * delete
