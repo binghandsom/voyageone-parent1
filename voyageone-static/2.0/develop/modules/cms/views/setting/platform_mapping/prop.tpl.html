@@ -1,4 +1,4 @@
-<div class="wrapper-md">
+<div class="wrapper-md" ng-init="initialize()">
     <tabset class="tab-container vo_nav-tabs">
         <div class="form-inline pull-right">
             <select class="form-control m-r-xxs">
@@ -19,15 +19,15 @@
             <div class="container-fluid">
                 <div class="col-sm-12">
                     <div class="panel panel-default">
-                        <form class="form-horizontal" ng-controller="popupCtrl">
-                            <div class="container-fluid">
+                        <form class="form-horizontal">
+                            <div class="container-fluid" ng-controller="popupCtrl">
                                 <div class="col-sm-12 platform_mapping_bg">
                                     <div class="col-sm-2 text-left"><i class="fa fa-minus"></i> 商品标题商品标题商品标题商品</div>
                                     <div class="pull-right">
                                         <span class="badge badge-initialize">input</span>
                                     </div>
                                     <div class="col-sm-4 pull-center">
-                                        <button class="badge badge-empty" ng-click="openPlatformMapping('lg')">值匹配</button>
+                                        <button class="badge badge-empty" ng-click="openColumnMappingSetting()">值匹配</button>
                                     </div>
                                 </div><!-- .form-group -->
                                 <div class="col-sm-12 platform_mapping_bg">
@@ -36,7 +36,7 @@
                                         <span class="badge badge-initialize">input</span>
                                     </div>
                                     <div class="col-sm-4 pull-center">
-                                        <button class="badge badge-empty">值匹配</button>
+                                        <button class="badge badge-empty" ng-click="openColumnMapping()">值匹配</button>
                                     </div>
                                 </div><!-- .form-group -->
                                 <div class="col-sm-12 platform_mapping_bg_one">
@@ -54,7 +54,7 @@
                                         <span class="badge badge-initialize">input</span>
                                     </div>
                                     <div class="col-sm-4 pull-center">
-                                        <button class="badge badge-empty">值匹配</button>
+                                        <button class="badge badge-empty" ng-click="openColumnMapping()">值匹配</button>
                                     </div>
                                 </div><!-- .form-group -->
                                 <div class="col-sm-12 platform_mapping_bg_list">
