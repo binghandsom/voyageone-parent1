@@ -1,5 +1,6 @@
 package com.voyageone.cms.service.model;
 
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.FeedEnums;
@@ -37,6 +38,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     private List<CmsBtFeedInfoModel_Sku> skus;
     private List<Map> attributeList;
     private Map<String,List<String>> attribute = new HashMap<>();
+    private Map<String, Object> fullAttribute = new HashMap<>();
     private int updFlg;
 
     public String getCategory() {
@@ -149,6 +151,31 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
 
     public void setAttribute(Map<String,List<String>> attribute) {
         this.attribute = attribute;
+    }
+
+    public Map<String, Object> getFullAttribute() {
+        return this.fullAttribute;
+    }
+
+    public void setFullAttribute() {
+        Map<String, Object> attribute = new HashMap<>();
+
+        attribute.put("category", this.category);
+        attribute.put("code", this.code);
+        attribute.put("name", this.name);
+        attribute.put("model", this.model);
+        attribute.put("color", this.color);
+        attribute.put("origin", this.origin);
+        attribute.put("sizeType", this.sizeType);
+        attribute.put("image", this.image);
+        attribute.put("brand", this.brand);
+        attribute.put("weight", this.weight);
+        attribute.put("short_description", this.short_description);
+        attribute.put("long_description", this.long_description);
+        attribute.put("skus", this.skus);
+        attribute.put("attribut", this.attribute);
+
+        this.fullAttribute = attribute;
     }
 
     public String getWeight() {
