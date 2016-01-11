@@ -145,6 +145,28 @@ define([
             })
         };
 
+        $scope.delSelPromotion = function(){
+            if($scope.vm.tabIndex == 0){
+                if($scope.vm.groupSelList.selList.length>0){
+                    promotionDetailService.delPromotionModel($scope.vm.groupSelList.selList).then(function (res) {
+                        notify.success("success");
+                        $scope.search();
+                    }, function (err) {
+                        notify.warning("fail");
+                    })
+                }
+            }else if($scope.vm.tabIndex == 1){
+                if($scope.vm.codeSelList.selList.length>0) {
+                    promotionDetailService.delPromotionCode($scope.vm.codeSelList.selList).then(function (res) {
+                        notify.success("success");
+                        $scope.search();
+                    }, function (err) {
+                        notify.warning("fail");
+                    })
+                }
+            }
+
+        };
         $scope.tejiabaoInit = function(){
             promotionDetailService.tejiabaoInit( $routeParams.promotionId).then(function (res) {
                 notify.success("success");
