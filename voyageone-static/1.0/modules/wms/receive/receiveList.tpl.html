@@ -102,12 +102,12 @@
                         <thead>
                         <tr>
                             <th style="text-align: center;" translate="WMS_ORDERNUMBER"></th>
+                            <th style="text-align: center;" translate="WMS_ClIENTID"></th>
                             <th style="text-align: center;" translate="WMS_RESID"></th>
                             <th style="text-align: center;" translate="WMS_CHANNEL"></th>
                             <th style="text-align: center;" translate="WMS_SHIP"></th>
                             <th style="text-align: center;" translate="WMS_STORE"></th>
                             <th style="text-align: center;" translate="WMS_SKU"></th>
-                            <th style="text-align: center;" translate="WMS_DESCRIPTION"></th>
                             <th style="text-align: center;" translate="WMS_STATUS"></th>
                             <th style="text-align: center;" translate="WMS_CREATETIME"></th>
                             <th style="text-align: center;" translate="WMS_MODIFYTIME"></th>
@@ -121,12 +121,12 @@
                         </tr>
                         <tr class="success" ng-repeat="r in vm.lastPrint">
                             <td style="text-align: center;">{{ r.order_number }}</td>
+                            <td style="text-align: center;">{{ r.client_id }}</td>
                             <td style="text-align: center;">{{ r.id }}</td>
                             <td style="text-align: center;">{{ r.order_channel_name }}</td>
-                            <td style="text-align: center;">{{ r.ship_channel }}</td>
+                            <td style="text-align: center;font-weight:bold;color: red;">{{ r.ship_channel }}</td>
                             <td style="text-align: center;">{{ r.store }}</td>
                             <td>{{ r.sku }}</td>
-                            <td>{{ r.product }}</td>
                             <td>{{ r.status_name }}</td>
                             <td style="text-align: center;">{{ r.created_local }}</td>
                             <td style="text-align: center;">{{ r.modified_local }}</td>

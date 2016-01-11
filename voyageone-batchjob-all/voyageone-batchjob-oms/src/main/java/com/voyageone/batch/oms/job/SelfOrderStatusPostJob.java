@@ -3,6 +3,8 @@ package com.voyageone.batch.oms.job;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.util.HttpUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,10 @@ public class SelfOrderStatusPostJob {
 	IssueLog issueLog;
 	
 	private final static String taskCheck = "SelfOrderStatusPost";
+
+	protected final String trustStore_jc = "/opt/app-shared/voyageone_web/contents/other/third_party/004/cn_key/juicycouture_store";
+
+	protected final String trustStore_jc_password = "voyage1#";
 	
 	/**
 	 * 独立域名推送状态变化信息
@@ -105,7 +111,16 @@ public class SelfOrderStatusPostJob {
 				logger.info("调用独立域名WebService：order_status_update_request.php开始");
 				String postUrl = TaskControlUtils.getVal2(taskControlList, TaskControlEnums.Name.order_channel_id, orderChannelId);
 				logger.info("postUrl:" + postUrl);
-				String response= orderInfoImportService.postOrder(postXML, postUrl);
+
+				String response = "";
+				// JC的场合
+				if (ChannelConfigEnums.Channel.JC.getId().equals(orderChannelId)) {
+					response = HttpUtils.post(postUrl, postXML, trustStore_jc, trustStore_jc_password, trustStore_jc_password);
+				} else {
+					response = HttpUtils.post(postUrl, postXML);
+				}
+
+//				String response= orderInfoImportService.postOrder(postXML, postUrl);
 				logger.info("返回结果：" + response);
 				
 				if (response != null) {

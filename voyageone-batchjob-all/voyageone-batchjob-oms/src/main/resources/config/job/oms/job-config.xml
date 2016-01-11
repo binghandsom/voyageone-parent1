@@ -321,6 +321,18 @@
 
 				<!-- BCBG Demands推送 -->
 				<ref bean="postBCBGDemandJobTaskContri" />
+
+				<!-- Sears Create Order推送 -->
+				<!--<ref bean="postSearsCreateOrderTaskContri" />-->
+
+				<!-- Sears Order Lookup订单信息取得 -->
+				<!--<ref bean="getSearsOrderLookupTaskContri" />-->
+
+				<!-- JuicyCouture独立域名订单取得 -->
+				<ref bean="OrderFromJuicyCoutureContri" />
+
+				<!-- 向JuicyCouture独立域名推送订单状态 -->
+				<ref bean="selfJuicyCoutureOrderStatusPostTaskContri" />
 			
 			</list>
 		</property>

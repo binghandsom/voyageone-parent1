@@ -1,5 +1,7 @@
 package com.voyageone.batch.oms.modelbean;
 
+import com.voyageone.common.components.sears.bean.OrderBean;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -467,6 +469,16 @@ public class OrderExtend implements java.io.Serializable {
 	private String MSRP;
 	private String LongItemNumber;
 	//	BCBG订单使用 end
+
+	// Sears订单使用 start
+	private String shippingFee;
+	private String trackingNumber;
+	private String salesCheckNumber;
+	private boolean isNeedUpdateFlag = false;
+	private String clientStatus;
+	private OrderBean orderOutputInfo;
+	private String errorMessage;
+	// Sears订单使用 end
 
 	public static long getSerialVersionUID() {
 		return serialVersionUID;
@@ -1558,5 +1570,61 @@ public class OrderExtend implements java.io.Serializable {
 
 	public void setShipDate(String shipDate) {
 		this.shipDate = shipDate;
+	}
+
+	public String getShippingFee() {
+		return shippingFee;
+	}
+
+	public void setShippingFee(String shippingFee) {
+		this.shippingFee = shippingFee;
+	}
+
+	public String getTrackingNumber() {
+		return trackingNumber;
+	}
+
+	public void setTrackingNumber(String trackingNumber) {
+		this.trackingNumber = trackingNumber;
+	}
+
+	public String getSalesCheckNumber() {
+		return salesCheckNumber;
+	}
+
+	public void setSalesCheckNumber(String salesCheckNumber) {
+		this.salesCheckNumber = salesCheckNumber;
+	}
+
+	public boolean isNeedUpdateFlag() {
+		return isNeedUpdateFlag;
+	}
+
+	public void setIsNeedUpdateFlag(boolean isNeedUpdateFlag) {
+		this.isNeedUpdateFlag = isNeedUpdateFlag;
+	}
+
+	public String getClientStatus() {
+		return clientStatus;
+	}
+
+	public void setClientStatus(String clientStatus) {
+		this.clientStatus = clientStatus;
+	}
+
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
+
+	public OrderBean getOrderOutputInfo() {
+		return orderOutputInfo;
+	}
+
+	public void setOrderOutputInfo(OrderBean orderOutputInfo) {
+		this.orderOutputInfo = orderOutputInfo;
 	}
 }

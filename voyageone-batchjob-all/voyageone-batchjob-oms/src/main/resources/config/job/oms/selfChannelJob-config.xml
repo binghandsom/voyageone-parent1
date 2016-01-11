@@ -10,6 +10,8 @@
 	<bean id="selfOrderStatusPostJob"
 		class="com.voyageone.batch.oms.job.SelfOrderStatusPostJob">
 	</bean>
+
+	<!-- ===================== Spalding ===================== -->
 	<bean id="selfSpaldingOrderStatusPostTask"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject">
@@ -35,9 +37,10 @@
 			<value>${quartz.self.orderstatus.spalding.post}</value>
 		</property>
 	</bean>
-	
+
+	<!-- ===================== Sneakerhead ===================== -->
 	<bean id="selfSneakerheadOrderStatusPostTask"
-		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				 class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject">
 			<ref local="selfOrderStatusPostJob" />
 		</property>
@@ -52,13 +55,40 @@
 		</property>
 	</bean>
 	<bean id="selfSneakerheadOrderStatusPostTaskContri"
-		name="selfSneakerheadOrderStatusPostTaskContri"
-		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		  name="selfSneakerheadOrderStatusPostTaskContri"
+		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
 		<property name="jobDetail">
 			<ref bean="selfSneakerheadOrderStatusPostTask" />
 		</property>
 		<property name="cronExpression">
 			<value>${quartz.self.orderstatus.sneakerhead.post}</value>
+		</property>
+	</bean>
+
+	<!-- ===================== JuicyCouture ===================== -->
+	<bean id="selfJuicyCoutureOrderStatusPostTask"
+		  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref local="selfOrderStatusPostJob" />
+		</property>
+		<property name="targetMethod">
+			<value>run</value>
+		</property>
+		<property name="arguments">
+			<value>004</value>
+		</property>
+		<property name="concurrent">
+			<value>false</value>
+		</property>
+	</bean>
+	<bean id="selfJuicyCoutureOrderStatusPostTaskContri"
+		  name="selfJuicyCoutureOrderStatusPostTaskContri"
+		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="selfJuicyCoutureOrderStatusPostTask" />
+		</property>
+		<property name="cronExpression">
+			<value>${quartz.self.orderstatus.juicycouture.post}</value>
 		</property>
 	</bean>
 	<!-- ===================== 独立域名国际定时任务 end ===================== -->

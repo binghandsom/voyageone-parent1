@@ -1,6 +1,7 @@
 package com.voyageone.common.components.channelAdvisor.bean.inventory;
 
 import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.List;
 
 /**
  *
@@ -10,6 +11,7 @@ public class GetInventoryParamBean {
     String postAction;
     String nameSpace;
     String postUrl;
+    String postItemAction;
     String accountId;
     String developerKey;
     String password;
@@ -19,6 +21,9 @@ public class GetInventoryParamBean {
     XMLGregorianCalendar dateTimeEnd;
     int nPageSize;
     int nPageIndex;
+    String storeArea;
+    List<String> skuList;
+    String centerCode;
 
     public String getPostAction() {
         return postAction;
@@ -114,5 +119,37 @@ public class GetInventoryParamBean {
 
     public void setnPageIndex(int nPageIndex) {
         this.nPageIndex = nPageIndex;
+    }
+
+    public String getStoreArea() {
+        return storeArea;
+    }
+
+    public void setStoreArea(String storeArea) {
+        this.storeArea = storeArea;
+    }
+
+    public List<String> getSkuList() {
+        return skuList;
+    }
+
+    public void setSkuList(List<String> skuList) {
+        this.skuList = skuList;
+    }
+
+    public String getPostItemAction() {
+        return postItemAction;
+    }
+
+    public void setPostItemAction(String postItemAction) {
+        this.postItemAction = postItemAction;
+    }
+
+    public String getCenterCode() {
+        return centerCode;
+    }
+
+    public void setCenterCode(String centerCode) {
+        this.centerCode = centerCode;
     }
 }
