@@ -11,13 +11,12 @@ import com.voyageone.cms.service.model.*;
 import com.voyageone.common.configs.TypeChannel;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
-import com.voyageone.common.masterdate.schema.field.Field;
-import com.voyageone.common.masterdate.schema.field.InputField;
-import com.voyageone.common.masterdate.schema.field.MultiComplexField;
-import com.voyageone.common.masterdate.schema.field.OptionsField;
+import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.masterdate.schema.utils.JsonUtil;
+import com.voyageone.common.masterdate.schema.value.ComplexValue;
+import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.web2.cms.bean.CustomAttributesBean;
 import com.voyageone.web2.cms.bean.ProductInfoBean;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
@@ -289,6 +288,18 @@ public class ProductPropsEditService {
 
         List<Field> masterFields = SchemaJsonReader.readJsonForList(masterFieldsList);
 
+        // setComplexValue
+        for (Field field:masterFields){
+
+            if (field instanceof ComplexField){
+                ComplexField complexField = (ComplexField)field;
+                List<Field> complexFields = complexField.getFields();
+                ComplexValue complexValue = complexField.getComplexValue();
+                setComplexValue(complexFields,complexValue);
+            }
+
+        }
+
         CmsBtProductModel_Field masterFieldsValue = new CmsBtProductModel_Field();
 
         Map masterFieldsValueMap = FieldUtil.getFieldsValueToMap(masterFields);
@@ -312,6 +323,63 @@ public class ProductPropsEditService {
         voApiClient.execute(updateRequest);
 
     }
+
+
+    /**
+     * set complex value.
+     * @param fields
+     * @param complexValue
+     */
+    private void setComplexValue(List<Field> fields, ComplexValue complexValue){
+
+        for (Field fieldItem:fields){
+
+            complexValue.put(fieldItem);
+
+            FieldTypeEnum fieldType = fieldItem.getType();
+
+            switch (fieldType){
+                case INPUT:
+                    InputField inputField = (InputField)fieldItem;
+                    String inputValue = inputField.getValue();
+                    complexValue.setInputFieldValue(inputField.getId(),inputValue);
+                    break;
+                case SINGLECHECK:
+                    SingleCheckField singleCheckField = (SingleCheckField)fieldItem;
+                    Value checkValue = singleCheckField.getValue();
+                    complexValue.setSingleCheckFieldValue(singleCheckField.getId(),checkValue);
+                    break;
+                case MULTICHECK:
+                    MultiCheckField multiCheckField = (MultiCheckField)fieldItem;
+                    List<Value> checkValues = multiCheckField.getValues();
+                    complexValue.setMultiCheckFieldValues(multiCheckField.getId(),checkValues);
+                    break;
+                case MULTIINPUT:
+                    MultiInputField multiInputField = (MultiInputField)fieldItem;
+                    List<String> inputValues = multiInputField.getStringValues();
+                    complexValue.setMultiInputFieldValues(multiInputField.getId(),inputValues);
+                    break;
+                case COMPLEX:
+                    ComplexField complexField = (ComplexField)fieldItem;
+                    List<Field> subFields = complexField.getFields();
+                    ComplexValue subComplexValue = complexField.getComplexValue();
+                    setComplexValue(subFields,subComplexValue);
+                    break;
+                case MULTICOMPLEX:
+                    MultiComplexField multiComplexField = (MultiComplexField)fieldItem;
+                    List<ComplexValue> complexValueList = multiComplexField.getComplexValues();
+                    complexValue.setMultiComplexFieldValues(multiComplexField.getId(),complexValueList);
+                    break;
+
+                default:
+                    break;
+            }
+
+
+        }
+
+    }
+
 
     /**
      * 更新product values.
