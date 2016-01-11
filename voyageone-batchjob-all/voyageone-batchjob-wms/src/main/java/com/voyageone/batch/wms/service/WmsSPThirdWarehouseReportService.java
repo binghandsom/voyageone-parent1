@@ -322,9 +322,9 @@ public class WmsSPThirdWarehouseReportService extends BaseTaskService {
             try {
                 //'2015-07-01 16:00:00'
                 //'2016-01-05 23:59:59'
-                spThirdWarehouseReports = createReportDao.getSPThirdWarehouseReportBySKU(channel.getOrder_channel_id(),"2015-07-01 16:00:00","2016-01-05 23:59:59", CodeConstants.Reservation_Status.Open,getTaskName());
+                //spThirdWarehouseReports = createReportDao.getSPThirdWarehouseReportBySKU(channel.getOrder_channel_id(),"2015-07-01 16:00:00","2016-01-05 23:59:59", CodeConstants.Reservation_Status.Open,getTaskName());
 
-                //spThirdWarehouseReports = createReportDao.getSPThirdWarehouseReportBySKU(channel.getOrder_channel_id(),timeRegion.get(0),timeRegion.get(1), CodeConstants.Reservation_Status.Open,getTaskName());
+                spThirdWarehouseReports = createReportDao.getSPThirdWarehouseReportBySKU(channel.getOrder_channel_id(),timeRegion.get(0),timeRegion.get(1), CodeConstants.Reservation_Status.Open,getTaskName());
                 logger.info(format("取得 [ %s ] 条数据", spThirdWarehouseReports.size()));
                 //生成日报文件开始
                 isSuccess = createReportExcel(thirdPartyConfigBean, spThirdWarehouseReports, timeRegion);
