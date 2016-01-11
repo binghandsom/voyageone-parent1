@@ -34,15 +34,15 @@
             <artifactId>axis2-java2wsdl</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.voyageone</groupId>
+            <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.voyageone</groupId>
+            <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-dom</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.voyageone</groupId>
+            <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-impl</artifactId>
         </dependency>
 
