@@ -232,6 +232,13 @@ public class SynShipValidIdCardService extends BaseTaskService {
                 continue;
             }
 
+            // 获取 ShortUrl，尝试从其中获取 channel
+            // 后续多处使用
+            ShortUrlBean shortUrlBean = shortUrlDao.getInfosBySourceOrderId(idCardHistory.getSource_order_id());
+
+            trySetChannel(idCardHistory, shortUrlBean);
+
+            idCardHistoryDao.insert(idCardHistory);
 
             // 身份证接口异常，停止验证
             if (isInterfaceError(idCardHistory)){
@@ -241,14 +248,6 @@ public class SynShipValidIdCardService extends BaseTaskService {
                 Mail.sendAlert(CodeConstants.EmailReceiver.ITSYNSHIP, "跨境易身份证接口异常", "跨境易身份证接口异常，请及时联络跨境易相关人员，Name：" + idCardHistory.getShip_name() + "，IdCard：" + idCardHistory.getId_card() + "，Message：" + idCardHistory.getMessage(), true);
                 break;
             }
-
-            // 获取 ShortUrl，尝试从其中获取 channel
-            // 后续多处使用
-            ShortUrlBean shortUrlBean = shortUrlDao.getInfosBySourceOrderId(idCardHistory.getSource_order_id());
-
-            trySetChannel(idCardHistory, shortUrlBean);
-
-            idCardHistoryDao.insert(idCardHistory);
 
             // 如果通过了，继续执行一些后续逻辑，然后继续下一个
             if (isPass(idCardHistory)) {
