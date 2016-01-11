@@ -101,12 +101,12 @@ public class ProductController extends BaseController {
 
 
     /**
-     * remove product
+     * update Status Product
      *
-     * @return ProductsDeleteResponse
+     * @return ProductGroupsPutResponse
      */
     @RequestMapping("/status/update")
-    public ProductGroupsPutResponse updateStatusProducts(@RequestBody ProductStatusPutRequest request) {
-        return productService.updateStatusProducts(request);
+    public ProductGroupsPutResponse updateStatusProduct(@RequestBody ProductStatusPutRequest request) {
+        return productService.updateStatusProduct(request);
     }
 }

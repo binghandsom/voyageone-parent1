@@ -590,11 +590,11 @@ public class ProductService extends BaseService {
     }
 
     /**
-     * updateStatusProducts
+     * updateStatusProduct
      * @param request ProductStatusPutRequest
      * @return ProductGroupsPutResponse
      */
-    public ProductGroupsPutResponse updateStatusProducts(@RequestBody ProductStatusPutRequest  request) {
+    public ProductGroupsPutResponse updateStatusProduct(@RequestBody ProductStatusPutRequest  request) {
         ProductGroupsPutResponse response = new ProductGroupsPutResponse();
 
         checkCommRequest(request);
