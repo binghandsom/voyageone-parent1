@@ -13,6 +13,7 @@
           "id": "prop_13021751",
           "name": "货号",
           "type": "INPUT",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "requiredRule",
@@ -27,13 +28,14 @@
           "inputOrgId": null,
           "dataSource": null,
           "isDisplay": 1,
-          "value": "",
+          "value": "111111",
           "defaultValue": null
         },
         {
           "id": "prop_122216416",
           "name": "宝石类型",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "requiredRule",
@@ -139,6 +141,7 @@
           "id": "prop_122276315",
           "name": "款式",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "requiredRule",
@@ -194,6 +197,7 @@
           "id": "prop_20930",
           "name": "售后服务",
           "type": "MULTICHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "requiredRule",
@@ -235,16 +239,6 @@
               "value": "60513"
             }
           ],
-          "value": [
-            {
-              "id": null,
-              "value": "60510"
-            },
-            {
-              "id": null,
-              "value": "60513"
-            }
-          ],
           "defaultValues": [],
           "defaultValuesDO": []
         },
@@ -252,6 +246,7 @@
           "id": "prop_122216325",
           "name": "镶嵌材质",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "requiredRule",
@@ -317,6 +312,7 @@
           "id": "market_price",
           "name": "市场价格",
           "type": "INPUT",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "valueTypeRule",
@@ -352,6 +348,7 @@
           "id": "longTitle",
           "name": "长标题",
           "type": "INPUT",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "valueTypeRule",
@@ -396,6 +393,7 @@
           "id": "sell_points",
           "name": "商品卖点",
           "type": "COMPLEX",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "minLengthRule",
@@ -433,65 +431,70 @@
                 "id": "sell_point_0",
                 "name": null,
                 "type": "INPUT",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
                 "inputOrgId": null,
                 "dataSource": null,
                 "isDisplay": 1,
-                "value": "",
+                "value": "sp0",
                 "defaultValue": null
               },
               "sell_point_1": {
                 "id": "sell_point_1",
                 "name": null,
                 "type": "INPUT",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
                 "inputOrgId": null,
                 "dataSource": null,
                 "isDisplay": 1,
-                "value": "",
+                "value": "sp1",
                 "defaultValue": null
               },
               "sell_point_2": {
                 "id": "sell_point_2",
                 "name": null,
                 "type": "INPUT",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
                 "inputOrgId": null,
                 "dataSource": null,
                 "isDisplay": 1,
-                "value": "",
+                "value": "sp2",
                 "defaultValue": null
               },
               "sell_point_3": {
                 "id": "sell_point_3",
                 "name": null,
                 "type": "INPUT",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
                 "inputOrgId": null,
                 "dataSource": null,
                 "isDisplay": 1,
-                "value": "",
+                "value": "sp3",
                 "defaultValue": null
               },
               "sell_point_4": {
                 "id": "sell_point_4",
                 "name": null,
                 "type": "INPUT",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
                 "inputOrgId": null,
                 "dataSource": null,
                 "isDisplay": 1,
-                "value": "",
+                "value": "sp4",
                 "defaultValue": null
               }
             },
@@ -508,6 +511,7 @@
               "id": "sell_point_0",
               "name": "商品卖点",
               "type": "INPUT",
+              "fieldValueType": "NONE",
               "rules": [
                 {
                   "name": "valueTypeRule",
@@ -545,6 +549,7 @@
               "id": "sell_point_1",
               "name": "商品卖点",
               "type": "INPUT",
+              "fieldValueType": "NONE",
               "rules": [
                 {
                   "name": "valueTypeRule",
@@ -582,6 +587,7 @@
               "id": "sell_point_2",
               "name": "商品卖点",
               "type": "INPUT",
+              "fieldValueType": "NONE",
               "rules": [
                 {
                   "name": "valueTypeRule",
@@ -619,6 +625,7 @@
               "id": "sell_point_3",
               "name": "商品卖点",
               "type": "INPUT",
+              "fieldValueType": "NONE",
               "rules": [
                 {
                   "name": "valueTypeRule",
@@ -656,6 +663,7 @@
               "id": "sell_point_4",
               "name": "商品卖点",
               "type": "INPUT",
+              "fieldValueType": "NONE",
               "rules": [
                 {
                   "name": "valueTypeRule",
@@ -690,278 +698,16 @@
               "defaultValue": null
             }
           ],
-          "value": {
-            "fieldMap": {
-              "sell_point_0": {
-                "id": "sell_point_0",
-                "name": null,
-                "type": "INPUT",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "value": "",
-                "defaultValue": null
-              },
-              "sell_point_1": {
-                "id": "sell_point_1",
-                "name": null,
-                "type": "INPUT",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "value": "",
-                "defaultValue": null
-              },
-              "sell_point_2": {
-                "id": "sell_point_2",
-                "name": null,
-                "type": "INPUT",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "value": "",
-                "defaultValue": null
-              },
-              "sell_point_3": {
-                "id": "sell_point_3",
-                "name": null,
-                "type": "INPUT",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "value": "",
-                "defaultValue": null
-              },
-              "sell_point_4": {
-                "id": "sell_point_4",
-                "name": null,
-                "type": "INPUT",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "value": "",
-                "defaultValue": null
-              }
-            },
-            "fieldKeySet": [
-              "sell_point_0",
-              "sell_point_1",
-              "sell_point_2",
-              "sell_point_3",
-              "sell_point_4"
-            ]
-          },
           "defaultComplexValue": {
             "fieldMap": {},
             "fieldKeySet": []
-          },
-          "fieldMap": {
-            "sell_point_1": {
-              "id": "sell_point_1",
-              "name": "商品卖点",
-              "type": "INPUT",
-              "rules": [
-                {
-                  "name": "valueTypeRule",
-                  "value": "text",
-                  "exProperty": null,
-                  "dependGroup": null,
-                  "valueIntervalInclude": false
-                },
-                {
-                  "name": "minLengthRule",
-                  "value": "0",
-                  "exProperty": "include",
-                  "dependGroup": null,
-                  "unit": "character",
-                  "valueIntervalInclude": true
-                },
-                {
-                  "name": "maxLengthRule",
-                  "value": "6",
-                  "exProperty": "include",
-                  "dependGroup": null,
-                  "unit": "character",
-                  "valueIntervalInclude": true
-                }
-              ],
-              "properties": [],
-              "inputLevel": 0,
-              "inputOrgId": null,
-              "dataSource": null,
-              "isDisplay": 1,
-              "value": null,
-              "defaultValue": null
-            },
-            "sell_point_0": {
-              "id": "sell_point_0",
-              "name": "商品卖点",
-              "type": "INPUT",
-              "rules": [
-                {
-                  "name": "valueTypeRule",
-                  "value": "text",
-                  "exProperty": null,
-                  "dependGroup": null,
-                  "valueIntervalInclude": false
-                },
-                {
-                  "name": "minLengthRule",
-                  "value": "0",
-                  "exProperty": "include",
-                  "dependGroup": null,
-                  "unit": "character",
-                  "valueIntervalInclude": true
-                },
-                {
-                  "name": "maxLengthRule",
-                  "value": "6",
-                  "exProperty": "include",
-                  "dependGroup": null,
-                  "unit": "character",
-                  "valueIntervalInclude": true
-                }
-              ],
-              "properties": [],
-              "inputLevel": 0,
-              "inputOrgId": null,
-              "dataSource": null,
-              "isDisplay": 1,
-              "value": null,
-              "defaultValue": null
-            },
-            "sell_point_3": {
-              "id": "sell_point_3",
-              "name": "商品卖点",
-              "type": "INPUT",
-              "rules": [
-                {
-                  "name": "valueTypeRule",
-                  "value": "text",
-                  "exProperty": null,
-                  "dependGroup": null,
-                  "valueIntervalInclude": false
-                },
-                {
-                  "name": "minLengthRule",
-                  "value": "0",
-                  "exProperty": "include",
-                  "dependGroup": null,
-                  "unit": "character",
-                  "valueIntervalInclude": true
-                },
-                {
-                  "name": "maxLengthRule",
-                  "value": "6",
-                  "exProperty": "include",
-                  "dependGroup": null,
-                  "unit": "character",
-                  "valueIntervalInclude": true
-                }
-              ],
-              "properties": [],
-              "inputLevel": 0,
-              "inputOrgId": null,
-              "dataSource": null,
-              "isDisplay": 1,
-              "value": null,
-              "defaultValue": null
-            },
-            "sell_point_2": {
-              "id": "sell_point_2",
-              "name": "商品卖点",
-              "type": "INPUT",
-              "rules": [
-                {
-                  "name": "valueTypeRule",
-                  "value": "text",
-                  "exProperty": null,
-                  "dependGroup": null,
-                  "valueIntervalInclude": false
-                },
-                {
-                  "name": "minLengthRule",
-                  "value": "0",
-                  "exProperty": "include",
-                  "dependGroup": null,
-                  "unit": "character",
-                  "valueIntervalInclude": true
-                },
-                {
-                  "name": "maxLengthRule",
-                  "value": "6",
-                  "exProperty": "include",
-                  "dependGroup": null,
-                  "unit": "character",
-                  "valueIntervalInclude": true
-                }
-              ],
-              "properties": [],
-              "inputLevel": 0,
-              "inputOrgId": null,
-              "dataSource": null,
-              "isDisplay": 1,
-              "value": null,
-              "defaultValue": null
-            },
-            "sell_point_4": {
-              "id": "sell_point_4",
-              "name": "商品卖点",
-              "type": "INPUT",
-              "rules": [
-                {
-                  "name": "valueTypeRule",
-                  "value": "text",
-                  "exProperty": null,
-                  "dependGroup": null,
-                  "valueIntervalInclude": false
-                },
-                {
-                  "name": "minLengthRule",
-                  "value": "0",
-                  "exProperty": "include",
-                  "dependGroup": null,
-                  "unit": "character",
-                  "valueIntervalInclude": true
-                },
-                {
-                  "name": "maxLengthRule",
-                  "value": "6",
-                  "exProperty": "include",
-                  "dependGroup": null,
-                  "unit": "character",
-                  "valueIntervalInclude": true
-                }
-              ],
-              "properties": [],
-              "inputLevel": 0,
-              "inputOrgId": null,
-              "dataSource": null,
-              "isDisplay": 1,
-              "value": null,
-              "defaultValue": null
-            }
           }
         },
         {
           "id": "start_time",
           "name": "开始时间",
           "type": "INPUT",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "valueTypeRule",
@@ -994,13 +740,14 @@
           "inputOrgId": null,
           "dataSource": null,
           "isDisplay": 1,
-          "value": "",
+          "value": "2015-06-05 16:22:39",
           "defaultValue": "2015-12-28 18:11:23"
         },
         {
           "id": "item_type",
           "name": "发布类型",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "requiredRule",
@@ -1036,6 +783,7 @@
           "id": "stuff_status",
           "name": "宝贝类型",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "requiredRule",
@@ -1071,6 +819,7 @@
           "id": "sub_stock",
           "name": "拍下减库存",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "tipRule",
@@ -1112,6 +861,7 @@
           "id": "second_kill",
           "name": "商品秒杀",
           "type": "MULTICHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "tipRule",
@@ -1157,16 +907,6 @@
               "value": "wap"
             }
           ],
-          "value": [
-            {
-              "id": null,
-              "value": "web"
-            },
-            {
-              "id": null,
-              "value": "wap"
-            }
-          ],
           "defaultValues": [],
           "defaultValuesDO": []
         },
@@ -1174,6 +914,7 @@
           "id": "prop_8560225",
           "name": "上市时间",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [],
           "properties": [],
           "inputLevel": 2,
@@ -1246,6 +987,7 @@
           "id": "in_prop_8560225",
           "name": "上市时间",
           "type": "INPUT",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "disableRule",
@@ -1278,6 +1020,7 @@
           "id": "prop_153662255",
           "name": "优化处理方式",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [],
           "properties": [],
           "inputLevel": 2,
@@ -1345,6 +1088,7 @@
           "id": "prop_129498239",
           "name": "是否商场同款",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [],
           "properties": [],
           "inputLevel": 2,
@@ -1377,6 +1121,7 @@
           "id": "prop_149804137",
           "name": "鉴定标识",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [],
           "properties": [],
           "inputLevel": 2,
@@ -1414,6 +1159,7 @@
           "id": "prop_149854176",
           "name": "鉴定类别",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "disableRule",
@@ -1535,6 +1281,7 @@
           "id": "prop_151956665",
           "name": "认证标识",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "disableRule",
@@ -1575,6 +1322,7 @@
           "id": "prop_149866190",
           "name": "认证标识",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "disableRule",
@@ -1651,6 +1399,7 @@
           "id": "prop_152020497",
           "name": "认证标识",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "disableRule",
@@ -1691,6 +1440,7 @@
           "id": "prop_149864171",
           "name": "认证标识",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "disableRule",
@@ -1767,6 +1517,7 @@
           "id": "prop_149850216",
           "name": "认证标识",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "disableRule",
@@ -1843,6 +1594,7 @@
           "id": "prop_149868181",
           "name": "认证标识",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "disableRule",
@@ -1919,6 +1671,7 @@
           "id": "prop_152022484",
           "name": "认证标识",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "disableRule",
@@ -1959,6 +1712,7 @@
           "id": "prop_149882172",
           "name": "认证标识",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "disableRule",
@@ -2035,6 +1789,7 @@
           "id": "prop_149870202",
           "name": "认证标识",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "disableRule",
@@ -2099,7 +1854,7 @@
           ],
           "value": {
             "id": null,
-            "value": "4074818"
+            "value": "867720272"
           },
           "defaultValue": null,
           "defaultValueDO": {
@@ -2111,6 +1866,7 @@
           "id": "prop_149874174",
           "name": "认证标识",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "disableRule",
@@ -2187,6 +1943,7 @@
           "id": "prop_149846248",
           "name": "认证标识",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "disableRule",
@@ -2263,6 +2020,7 @@
           "id": "prop_149864170",
           "name": "认证标识",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "disableRule",
@@ -2339,6 +2097,7 @@
           "id": "prop_152018522",
           "name": "认证标识",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "disableRule",
@@ -2379,6 +2138,7 @@
           "id": "prop_152002574",
           "name": "认证标识",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "disableRule",
@@ -2419,6 +2179,7 @@
           "id": "prop_151992601",
           "name": "认证标识",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "disableRule",
@@ -2459,6 +2220,7 @@
           "id": "prop_149894142",
           "name": "认证标识",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "disableRule",
@@ -2535,6 +2297,7 @@
           "id": "prop_149868143",
           "name": "鉴定类别",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "disableRule",
@@ -2599,7 +2362,7 @@
           ],
           "value": {
             "id": null,
-            "value": "47795221"
+            "value": "60503"
           },
           "defaultValue": null,
           "defaultValueDO": {
@@ -2611,6 +2374,7 @@
           "id": "try_weared_item",
           "name": "是否试戴",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [],
           "properties": [],
           "inputLevel": 2,
@@ -2631,7 +2395,7 @@
           ],
           "value": {
             "id": null,
-            "value": "true"
+            "value": "false"
           },
           "defaultValue": "false",
           "defaultValueDO": {
@@ -2643,6 +2407,7 @@
           "id": "prop_extend_9066257",
           "name": "戒指手寸扩展",
           "type": "MULTICOMPLEX",
+          "fieldValueType": "NONE",
           "rules": [],
           "properties": [],
           "inputLevel": 2,
@@ -2654,6 +2419,7 @@
               "id": "prop_9066257",
               "name": "戒指手寸",
               "type": "SINGLECHECK",
+              "fieldValueType": "NONE",
               "rules": [],
               "properties": [],
               "inputLevel": 0,
@@ -2846,6 +2612,7 @@
               "id": "alias_name",
               "name": "别名",
               "type": "INPUT",
+              "fieldValueType": "NONE",
               "rules": [
                 {
                   "name": "valueTypeRule",
@@ -2880,51 +2647,6 @@
               "defaultValue": null
             }
           ],
-          "values": [
-            {
-              "fieldMap": {
-                "prop_9066257": {
-                  "id": "prop_9066257",
-                  "name": null,
-                  "type": "SINGLECHECK",
-                  "rules": [],
-                  "properties": [],
-                  "inputLevel": 0,
-                  "inputOrgId": null,
-                  "dataSource": null,
-                  "isDisplay": 1,
-                  "options": [],
-                  "value": {
-                    "id": null,
-                    "value": "86345530"
-                  },
-                  "defaultValue": null,
-                  "defaultValueDO": {
-                    "id": null,
-                    "value": null
-                  }
-                },
-                "alias_name": {
-                  "id": "alias_name",
-                  "name": null,
-                  "type": "INPUT",
-                  "rules": [],
-                  "properties": [],
-                  "inputLevel": 0,
-                  "inputOrgId": null,
-                  "dataSource": null,
-                  "isDisplay": 1,
-                  "value": "tests",
-                  "defaultValue": null
-                }
-              },
-              "fieldKeySet": [
-                "prop_9066257",
-                "alias_name"
-              ]
-            }
-          ],
-          "defaultComplexValues": [],
           "complexValues": [
             {
               "fieldMap": {
@@ -2932,6 +2654,7 @@
                   "id": "prop_9066257",
                   "name": null,
                   "type": "SINGLECHECK",
+                  "fieldValueType": "NONE",
                   "rules": [],
                   "properties": [],
                   "inputLevel": 0,
@@ -2953,6 +2676,7 @@
                   "id": "alias_name",
                   "name": null,
                   "type": "INPUT",
+                  "fieldValueType": "NONE",
                   "rules": [],
                   "properties": [],
                   "inputLevel": 0,
@@ -2969,242 +2693,13 @@
               ]
             }
           ],
-          "fieldMap": {
-            "prop_9066257": {
-              "id": "prop_9066257",
-              "name": "戒指手寸",
-              "type": "SINGLECHECK",
-              "rules": [],
-              "properties": [],
-              "inputLevel": 0,
-              "inputOrgId": null,
-              "dataSource": null,
-              "isDisplay": 1,
-              "options": [
-                {
-                  "displayName": "女士6号",
-                  "value": "86345530",
-                  "dependGroup": null
-                },
-                {
-                  "displayName": "8号",
-                  "value": "3755861",
-                  "dependGroup": null
-                },
-                {
-                  "displayName": "9号",
-                  "value": "3478988",
-                  "dependGroup": null
-                },
-                {
-                  "displayName": "10号",
-                  "value": "3388352",
-                  "dependGroup": null
-                },
-                {
-                  "displayName": "11号",
-                  "value": "3979749",
-                  "dependGroup": null
-                },
-                {
-                  "displayName": "12号",
-                  "value": "3979774",
-                  "dependGroup": null
-                },
-                {
-                  "displayName": "13号",
-                  "value": "3979815",
-                  "dependGroup": null
-                },
-                {
-                  "displayName": "14号",
-                  "value": "3979844",
-                  "dependGroup": null
-                },
-                {
-                  "displayName": "15号",
-                  "value": "3979889",
-                  "dependGroup": null
-                },
-                {
-                  "displayName": "16号",
-                  "value": "86345532",
-                  "dependGroup": null
-                },
-                {
-                  "displayName": "女士6号",
-                  "value": "158478274",
-                  "dependGroup": null
-                },
-                {
-                  "displayName": "男士15号",
-                  "value": "266404500",
-                  "dependGroup": null
-                },
-                {
-                  "displayName": "女士8号",
-                  "value": "266396745",
-                  "dependGroup": null
-                },
-                {
-                  "displayName": "女士11号",
-                  "value": "266408186",
-                  "dependGroup": null
-                },
-                {
-                  "displayName": "男士18号",
-                  "value": "266414020",
-                  "dependGroup": null
-                },
-                {
-                  "displayName": "女士10号",
-                  "value": "36778573",
-                  "dependGroup": null
-                },
-                {
-                  "displayName": "女士17号",
-                  "value": "266396743",
-                  "dependGroup": null
-                },
-                {
-                  "displayName": "活口",
-                  "value": "64416021",
-                  "dependGroup": null
-                },
-                {
-                  "displayName": "男士17号",
-                  "value": "266408185",
-                  "dependGroup": null
-                },
-                {
-                  "displayName": "女士13号",
-                  "value": "266414016",
-                  "dependGroup": null
-                },
-                {
-                  "displayName": "男士23号",
-                  "value": "266414017",
-                  "dependGroup": null
-                },
-                {
-                  "displayName": "女士7号",
-                  "value": "146647476",
-                  "dependGroup": null
-                },
-                {
-                  "displayName": "男士20号",
-                  "value": "266410085",
-                  "dependGroup": null
-                },
-                {
-                  "displayName": "女士15号",
-                  "value": "266390961",
-                  "dependGroup": null
-                },
-                {
-                  "displayName": "男士16号",
-                  "value": "266392909",
-                  "dependGroup": null
-                },
-                {
-                  "displayName": "女士14号",
-                  "value": "266392907",
-                  "dependGroup": null
-                },
-                {
-                  "displayName": "女士12号",
-                  "value": "266392906",
-                  "dependGroup": null
-                },
-                {
-                  "displayName": "女士18号",
-                  "value": "266400644",
-                  "dependGroup": null
-                },
-                {
-                  "displayName": "男士21号",
-                  "value": "266412039",
-                  "dependGroup": null
-                },
-                {
-                  "displayName": "女士9号",
-                  "value": "158480393",
-                  "dependGroup": null
-                },
-                {
-                  "displayName": "男士14号",
-                  "value": "266400646",
-                  "dependGroup": null
-                },
-                {
-                  "displayName": "男士19号",
-                  "value": "266402619",
-                  "dependGroup": null
-                },
-                {
-                  "displayName": "男士22号",
-                  "value": "266394766",
-                  "dependGroup": null
-                },
-                {
-                  "displayName": "女士16号",
-                  "value": "266394767",
-                  "dependGroup": null
-                }
-              ],
-              "value": {
-                "id": null,
-                "value": null
-              },
-              "defaultValue": null,
-              "defaultValueDO": {
-                "id": null,
-                "value": null
-              }
-            },
-            "alias_name": {
-              "id": "alias_name",
-              "name": "别名",
-              "type": "INPUT",
-              "rules": [
-                {
-                  "name": "valueTypeRule",
-                  "value": "text",
-                  "exProperty": null,
-                  "dependGroup": null,
-                  "valueIntervalInclude": false
-                },
-                {
-                  "name": "minLengthRule",
-                  "value": "0",
-                  "exProperty": "include",
-                  "dependGroup": null,
-                  "unit": "byte",
-                  "valueIntervalInclude": true
-                },
-                {
-                  "name": "maxLengthRule",
-                  "value": "60",
-                  "exProperty": "include",
-                  "dependGroup": null,
-                  "unit": "byte",
-                  "valueIntervalInclude": true
-                }
-              ],
-              "properties": [],
-              "inputLevel": 0,
-              "inputOrgId": null,
-              "dataSource": null,
-              "isDisplay": 1,
-              "value": null,
-              "defaultValue": null
-            }
-          }
+          "defaultComplexValues": []
         },
         {
           "id": "lang",
           "name": "商品文字的字符集",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [],
           "properties": [],
           "inputLevel": 2,
@@ -3237,6 +2732,7 @@
           "id": "quantity",
           "name": "商品数量",
           "type": "INPUT",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "valueTypeRule",
@@ -3294,6 +2790,7 @@
           "id": "price",
           "name": "商品价格",
           "type": "INPUT",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "valueTypeRule",
@@ -3366,6 +2863,7 @@
           "id": "barcode",
           "name": "条形码",
           "type": "INPUT",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "valueTypeRule",
@@ -3403,6 +2901,7 @@
           "id": "has_discount",
           "name": "是否支持会员折扣",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [],
           "properties": [],
           "inputLevel": 2,
@@ -3435,6 +2934,7 @@
           "id": "inner_shop",
           "name": "页面模板-淘宝店铺",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [],
           "properties": [],
           "inputLevel": 2,
@@ -3467,6 +2967,7 @@
           "id": "outer_shop",
           "name": "页面模板-官方网店",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [],
           "properties": [],
           "inputLevel": 2,
@@ -3494,6 +2995,7 @@
           "id": "delivery_way",
           "name": "提取方式",
           "type": "MULTICHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "requiredRule",
@@ -3524,12 +3026,10 @@
             {
               "id": null,
               "value": "2"
-            }
-          ],
-          "value": [
+            },
             {
               "id": null,
-              "value": "2"
+              "value": "1"
             }
           ],
           "defaultValues": [],
@@ -3539,6 +3039,7 @@
           "id": "locality_life->expirydate",
           "name": "有效期",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "disableRule",
@@ -3595,6 +3096,7 @@
           "id": "locality_life->expirydate->startend",
           "name": "有效期按时间区间",
           "type": "COMPLEX",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "disableRule",
@@ -3626,6 +3128,7 @@
                 "id": "locality_life->expirydate->startend->start",
                 "name": null,
                 "type": "INPUT",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
@@ -3639,6 +3142,7 @@
                 "id": "locality_life->expirydate->startend->end",
                 "name": null,
                 "type": "INPUT",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
@@ -3659,6 +3163,7 @@
               "id": "locality_life->expirydate->startend->start",
               "name": "开始时间",
               "type": "INPUT",
+              "fieldValueType": "NONE",
               "rules": [
                 {
                   "name": "valueTypeRule",
@@ -3680,6 +3185,7 @@
               "id": "locality_life->expirydate->startend->end",
               "name": "结束时间",
               "type": "INPUT",
+              "fieldValueType": "NONE",
               "rules": [
                 {
                   "name": "valueTypeRule",
@@ -3698,93 +3204,16 @@
               "defaultValue": null
             }
           ],
-          "value": {
-            "fieldMap": {
-              "locality_life->expirydate->startend->start": {
-                "id": "locality_life->expirydate->startend->start",
-                "name": null,
-                "type": "INPUT",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "value": "",
-                "defaultValue": null
-              },
-              "locality_life->expirydate->startend->end": {
-                "id": "locality_life->expirydate->startend->end",
-                "name": null,
-                "type": "INPUT",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "value": "",
-                "defaultValue": null
-              }
-            },
-            "fieldKeySet": [
-              "locality_life->expirydate->startend->start",
-              "locality_life->expirydate->startend->end"
-            ]
-          },
           "defaultComplexValue": {
             "fieldMap": {},
             "fieldKeySet": []
-          },
-          "fieldMap": {
-            "locality_life->expirydate->startend->start": {
-              "id": "locality_life->expirydate->startend->start",
-              "name": "开始时间",
-              "type": "INPUT",
-              "rules": [
-                {
-                  "name": "valueTypeRule",
-                  "value": "date",
-                  "exProperty": null,
-                  "dependGroup": null,
-                  "valueIntervalInclude": false
-                }
-              ],
-              "properties": [],
-              "inputLevel": 0,
-              "inputOrgId": null,
-              "dataSource": null,
-              "isDisplay": 1,
-              "value": null,
-              "defaultValue": null
-            },
-            "locality_life->expirydate->startend->end": {
-              "id": "locality_life->expirydate->startend->end",
-              "name": "结束时间",
-              "type": "INPUT",
-              "rules": [
-                {
-                  "name": "valueTypeRule",
-                  "value": "date",
-                  "exProperty": null,
-                  "dependGroup": null,
-                  "valueIntervalInclude": false
-                }
-              ],
-              "properties": [],
-              "inputLevel": 0,
-              "inputOrgId": null,
-              "dataSource": null,
-              "isDisplay": 1,
-              "value": null,
-              "defaultValue": null
-            }
           }
         },
         {
           "id": "locality_life->expirydate->end",
           "name": "有效期按购买日起时间区间",
           "type": "INPUT",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "valueTypeRule",
@@ -3817,13 +3246,14 @@
           "inputOrgId": null,
           "dataSource": null,
           "isDisplay": 1,
-          "value": "",
+          "value": "2016-01-08",
           "defaultValue": null
         },
         {
           "id": "locality_life->expirydate->severalDays",
           "name": "有效期按购买日起有效天数区间",
           "type": "INPUT",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "valueTypeRule",
@@ -3863,6 +3293,7 @@
           "id": "locality_life->network_id",
           "name": "网点id",
           "type": "INPUT",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "valueTypeRule",
@@ -3902,6 +3333,7 @@
           "id": "locality_life->merchant",
           "name": "码商",
           "type": "COMPLEX",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "requiredRule",
@@ -3940,6 +3372,7 @@
                 "id": "locality_life->merchant->id",
                 "name": null,
                 "type": "INPUT",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
@@ -3953,6 +3386,7 @@
                 "id": "locality_life->merchant->name",
                 "name": null,
                 "type": "INPUT",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
@@ -3973,6 +3407,7 @@
               "id": "locality_life->merchant->id",
               "name": "码商ID",
               "type": "INPUT",
+              "fieldValueType": "NONE",
               "rules": [
                 {
                   "name": "valueTypeRule",
@@ -3994,6 +3429,7 @@
               "id": "locality_life->merchant->name",
               "name": "码商名称",
               "type": "INPUT",
+              "fieldValueType": "NONE",
               "rules": [
                 {
                   "name": "valueTypeRule",
@@ -4012,93 +3448,16 @@
               "defaultValue": null
             }
           ],
-          "value": {
-            "fieldMap": {
-              "locality_life->merchant->id": {
-                "id": "locality_life->merchant->id",
-                "name": null,
-                "type": "INPUT",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "value": "",
-                "defaultValue": null
-              },
-              "locality_life->merchant->name": {
-                "id": "locality_life->merchant->name",
-                "name": null,
-                "type": "INPUT",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "value": "",
-                "defaultValue": null
-              }
-            },
-            "fieldKeySet": [
-              "locality_life->merchant->id",
-              "locality_life->merchant->name"
-            ]
-          },
           "defaultComplexValue": {
             "fieldMap": {},
             "fieldKeySet": []
-          },
-          "fieldMap": {
-            "locality_life->merchant->id": {
-              "id": "locality_life->merchant->id",
-              "name": "码商ID",
-              "type": "INPUT",
-              "rules": [
-                {
-                  "name": "valueTypeRule",
-                  "value": "long",
-                  "exProperty": null,
-                  "dependGroup": null,
-                  "valueIntervalInclude": false
-                }
-              ],
-              "properties": [],
-              "inputLevel": 0,
-              "inputOrgId": null,
-              "dataSource": null,
-              "isDisplay": 1,
-              "value": null,
-              "defaultValue": null
-            },
-            "locality_life->merchant->name": {
-              "id": "locality_life->merchant->name",
-              "name": "码商名称",
-              "type": "INPUT",
-              "rules": [
-                {
-                  "name": "valueTypeRule",
-                  "value": "text",
-                  "exProperty": null,
-                  "dependGroup": null,
-                  "valueIntervalInclude": false
-                }
-              ],
-              "properties": [],
-              "inputLevel": 0,
-              "inputOrgId": null,
-              "dataSource": null,
-              "isDisplay": 1,
-              "value": null,
-              "defaultValue": null
-            }
           }
         },
         {
           "id": "expired_refund",
           "name": "过期退款",
           "type": "COMPLEX",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "requiredRule",
@@ -4137,6 +3496,7 @@
                 "id": "support_expired_refund_rate",
                 "name": null,
                 "type": "SINGLECHECK",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
@@ -4158,6 +3518,7 @@
                 "id": "expired_refund_rate",
                 "name": null,
                 "type": "INPUT",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
@@ -4178,6 +3539,7 @@
               "id": "support_expired_refund_rate",
               "name": "支持过期退款",
               "type": "SINGLECHECK",
+              "fieldValueType": "NONE",
               "rules": [],
               "properties": [],
               "inputLevel": 0,
@@ -4205,6 +3567,7 @@
               "id": "expired_refund_rate",
               "name": "过期退款比例",
               "type": "INPUT",
+              "fieldValueType": "NONE",
               "rules": [
                 {
                   "name": "valueTypeRule",
@@ -4270,154 +3633,16 @@
               "defaultValue": null
             }
           ],
-          "value": {
-            "fieldMap": {
-              "support_expired_refund_rate": {
-                "id": "support_expired_refund_rate",
-                "name": null,
-                "type": "SINGLECHECK",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "options": [],
-                "value": {
-                  "id": null,
-                  "value": "1"
-                },
-                "defaultValue": null,
-                "defaultValueDO": {
-                  "id": null,
-                  "value": null
-                }
-              },
-              "expired_refund_rate": {
-                "id": "expired_refund_rate",
-                "name": null,
-                "type": "INPUT",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "value": "",
-                "defaultValue": null
-              }
-            },
-            "fieldKeySet": [
-              "support_expired_refund_rate",
-              "expired_refund_rate"
-            ]
-          },
           "defaultComplexValue": {
             "fieldMap": {},
             "fieldKeySet": []
-          },
-          "fieldMap": {
-            "support_expired_refund_rate": {
-              "id": "support_expired_refund_rate",
-              "name": "支持过期退款",
-              "type": "SINGLECHECK",
-              "rules": [],
-              "properties": [],
-              "inputLevel": 0,
-              "inputOrgId": null,
-              "dataSource": null,
-              "isDisplay": 1,
-              "options": [
-                {
-                  "displayName": "是",
-                  "value": "1",
-                  "dependGroup": null
-                }
-              ],
-              "value": {
-                "id": null,
-                "value": null
-              },
-              "defaultValue": null,
-              "defaultValueDO": {
-                "id": null,
-                "value": null
-              }
-            },
-            "expired_refund_rate": {
-              "id": "expired_refund_rate",
-              "name": "过期退款比例",
-              "type": "INPUT",
-              "rules": [
-                {
-                  "name": "valueTypeRule",
-                  "value": "integer",
-                  "exProperty": null,
-                  "dependGroup": null,
-                  "valueIntervalInclude": false
-                },
-                {
-                  "name": "minValueRule",
-                  "value": "1",
-                  "exProperty": "include",
-                  "dependGroup": null,
-                  "valueIntervalInclude": true
-                },
-                {
-                  "name": "maxValueRule",
-                  "value": "100",
-                  "exProperty": "include",
-                  "dependGroup": null,
-                  "valueIntervalInclude": true
-                },
-                {
-                  "name": "requiredRule",
-                  "value": "true",
-                  "exProperty": null,
-                  "dependGroup": null,
-                  "valueIntervalInclude": false
-                },
-                {
-                  "name": "tipRule",
-                  "value": "退款比例请输入1-100之间的整数",
-                  "exProperty": null,
-                  "dependGroup": null,
-                  "url": null,
-                  "valueIntervalInclude": false
-                },
-                {
-                  "name": "disableRule",
-                  "value": "true",
-                  "exProperty": null,
-                  "dependGroup": {
-                    "dependExpressList": [
-                      {
-                        "fieldId": "support_expired_refund_rate",
-                        "value": "1",
-                        "symbol": "!="
-                      }
-                    ],
-                    "operator": "and",
-                    "dependGroupList": [],
-                    "empty": false
-                  },
-                  "valueIntervalInclude": false
-                }
-              ],
-              "properties": [],
-              "inputLevel": 0,
-              "inputOrgId": null,
-              "dataSource": null,
-              "isDisplay": 1,
-              "value": null,
-              "defaultValue": null
-            }
           }
         },
         {
           "id": "locality_life->verification",
           "name": "核销打款",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "disableRule",
@@ -4464,6 +3689,7 @@
           "id": "auto_refund",
           "name": "自动退款",
           "type": "COMPLEX",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "disableRule",
@@ -4495,6 +3721,7 @@
                 "id": "support_auto_refund_rate",
                 "name": null,
                 "type": "SINGLECHECK",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
@@ -4504,7 +3731,7 @@
                 "options": [],
                 "value": {
                   "id": null,
-                  "value": "1"
+                  "value": ""
                 },
                 "defaultValue": null,
                 "defaultValueDO": {
@@ -4516,6 +3743,7 @@
                 "id": "auto_refund_rate",
                 "name": null,
                 "type": "INPUT",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
@@ -4536,6 +3764,7 @@
               "id": "support_auto_refund_rate",
               "name": "支持自动退款",
               "type": "SINGLECHECK",
+              "fieldValueType": "NONE",
               "rules": [],
               "properties": [],
               "inputLevel": 0,
@@ -4563,6 +3792,7 @@
               "id": "auto_refund_rate",
               "name": "过期自动比例",
               "type": "INPUT",
+              "fieldValueType": "NONE",
               "rules": [
                 {
                   "name": "valueTypeRule",
@@ -4621,54 +3851,13 @@
               "defaultValue": null
             }
           ],
-          "value": {
-            "fieldMap": {
-              "support_auto_refund_rate": {
-                "id": "support_auto_refund_rate",
-                "name": null,
-                "type": "SINGLECHECK",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "options": [],
-                "value": {
-                  "id": null,
-                  "value": "1"
-                },
-                "defaultValue": null,
-                "defaultValueDO": {
-                  "id": null,
-                  "value": null
-                }
-              },
-              "auto_refund_rate": {
-                "id": "auto_refund_rate",
-                "name": null,
-                "type": "INPUT",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "value": "",
-                "defaultValue": null
-              }
-            },
-            "fieldKeySet": [
-              "support_auto_refund_rate",
-              "auto_refund_rate"
-            ]
-          },
           "defaultComplexValue": {
             "fieldMap": {
               "auto_refund_rate": {
                 "id": "auto_refund_rate",
                 "name": null,
                 "type": "INPUT",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
@@ -4682,102 +3871,13 @@
             "fieldKeySet": [
               "auto_refund_rate"
             ]
-          },
-          "fieldMap": {
-            "support_auto_refund_rate": {
-              "id": "support_auto_refund_rate",
-              "name": "支持自动退款",
-              "type": "SINGLECHECK",
-              "rules": [],
-              "properties": [],
-              "inputLevel": 0,
-              "inputOrgId": null,
-              "dataSource": null,
-              "isDisplay": 1,
-              "options": [
-                {
-                  "displayName": "是",
-                  "value": "1",
-                  "dependGroup": null
-                }
-              ],
-              "value": {
-                "id": null,
-                "value": null
-              },
-              "defaultValue": null,
-              "defaultValueDO": {
-                "id": null,
-                "value": null
-              }
-            },
-            "auto_refund_rate": {
-              "id": "auto_refund_rate",
-              "name": "过期自动比例",
-              "type": "INPUT",
-              "rules": [
-                {
-                  "name": "valueTypeRule",
-                  "value": "integer",
-                  "exProperty": null,
-                  "dependGroup": null,
-                  "valueIntervalInclude": false
-                },
-                {
-                  "name": "minValueRule",
-                  "value": "90",
-                  "exProperty": "include",
-                  "dependGroup": null,
-                  "valueIntervalInclude": true
-                },
-                {
-                  "name": "maxValueRule",
-                  "value": "100",
-                  "exProperty": "include",
-                  "dependGroup": null,
-                  "valueIntervalInclude": true
-                },
-                {
-                  "name": "tipRule",
-                  "value": "售中自动退款比例请输入90-100之间的整数",
-                  "exProperty": null,
-                  "dependGroup": null,
-                  "url": null,
-                  "valueIntervalInclude": false
-                },
-                {
-                  "name": "disableRule",
-                  "value": "true",
-                  "exProperty": null,
-                  "dependGroup": {
-                    "dependExpressList": [
-                      {
-                        "fieldId": "support_auto_refund_rate",
-                        "value": "1",
-                        "symbol": "!="
-                      }
-                    ],
-                    "operator": "and",
-                    "dependGroupList": [],
-                    "empty": false
-                  },
-                  "valueIntervalInclude": false
-                }
-              ],
-              "properties": [],
-              "inputLevel": 0,
-              "inputOrgId": null,
-              "dataSource": null,
-              "isDisplay": 1,
-              "value": null,
-              "defaultValue": null
-            }
           }
         },
         {
           "id": "location",
           "name": "所在地",
           "type": "COMPLEX",
+          "fieldValueType": "NONE",
           "rules": [],
           "properties": [],
           "inputLevel": 2,
@@ -4790,6 +3890,7 @@
                 "id": "prov",
                 "name": null,
                 "type": "INPUT",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
@@ -4803,6 +3904,7 @@
                 "id": "city",
                 "name": null,
                 "type": "INPUT",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
@@ -4823,6 +3925,7 @@
               "id": "prov",
               "name": "省份",
               "type": "INPUT",
+              "fieldValueType": "NONE",
               "rules": [
                 {
                   "name": "valueTypeRule",
@@ -4851,6 +3954,7 @@
               "id": "city",
               "name": "城市",
               "type": "INPUT",
+              "fieldValueType": "NONE",
               "rules": [
                 {
                   "name": "valueTypeRule",
@@ -4876,107 +3980,16 @@
               "defaultValue": null
             }
           ],
-          "value": {
-            "fieldMap": {
-              "prov": {
-                "id": "prov",
-                "name": null,
-                "type": "INPUT",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "value": "上海",
-                "defaultValue": null
-              },
-              "city": {
-                "id": "city",
-                "name": null,
-                "type": "INPUT",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "value": "上海",
-                "defaultValue": null
-              }
-            },
-            "fieldKeySet": [
-              "prov",
-              "city"
-            ]
-          },
           "defaultComplexValue": {
             "fieldMap": {},
             "fieldKeySet": []
-          },
-          "fieldMap": {
-            "city": {
-              "id": "city",
-              "name": "城市",
-              "type": "INPUT",
-              "rules": [
-                {
-                  "name": "valueTypeRule",
-                  "value": "text",
-                  "exProperty": null,
-                  "dependGroup": null,
-                  "valueIntervalInclude": false
-                },
-                {
-                  "name": "requiredRule",
-                  "value": "true",
-                  "exProperty": null,
-                  "dependGroup": null,
-                  "valueIntervalInclude": false
-                }
-              ],
-              "properties": [],
-              "inputLevel": 0,
-              "inputOrgId": null,
-              "dataSource": null,
-              "isDisplay": 1,
-              "value": null,
-              "defaultValue": null
-            },
-            "prov": {
-              "id": "prov",
-              "name": "省份",
-              "type": "INPUT",
-              "rules": [
-                {
-                  "name": "valueTypeRule",
-                  "value": "text",
-                  "exProperty": null,
-                  "dependGroup": null,
-                  "valueIntervalInclude": false
-                },
-                {
-                  "name": "requiredRule",
-                  "value": "true",
-                  "exProperty": null,
-                  "dependGroup": null,
-                  "valueIntervalInclude": false
-                }
-              ],
-              "properties": [],
-              "inputLevel": 0,
-              "inputOrgId": null,
-              "dataSource": null,
-              "isDisplay": 1,
-              "value": null,
-              "defaultValue": null
-            }
           }
         },
         {
           "id": "freight_payer",
           "name": "运费承担方式",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "disableRule",
@@ -5028,6 +4041,7 @@
           "id": "freight_by_buyer",
           "name": "买家承担运费",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "disableRule",
@@ -5074,6 +4088,7 @@
           "id": "postage_id",
           "name": "运费模板ID",
           "type": "INPUT",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "valueTypeRule",
@@ -5106,13 +4121,14 @@
           "inputOrgId": null,
           "dataSource": null,
           "isDisplay": 1,
-          "value": "",
+          "value": "1364418490",
           "defaultValue": null
         },
         {
           "id": "seller_cids",
           "name": "商品所属的店铺类目列表",
           "type": "MULTICHECK",
+          "fieldValueType": "NONE",
           "rules": [],
           "properties": [],
           "inputLevel": 2,
@@ -5379,6 +4395,10 @@
             {
               "id": null,
               "value": "1020298978"
+            },
+            {
+              "id": null,
+              "value": "1037851337"
             }
           ],
           "defaultValues": [],
@@ -5388,6 +4408,7 @@
           "id": "after_sale_id",
           "name": "售后说明模板ID",
           "type": "INPUT",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "valueTypeRule",
@@ -5417,6 +4438,7 @@
           "id": "has_warranty",
           "name": "保修",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "requiredRule",
@@ -5445,7 +4467,7 @@
           ],
           "value": {
             "id": null,
-            "value": "true"
+            "value": "false"
           },
           "defaultValue": "false",
           "defaultValueDO": {
@@ -5457,6 +4479,7 @@
           "id": "sell_promise",
           "name": "退换货服务",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [],
           "properties": [],
           "inputLevel": 2,
@@ -5477,7 +4500,7 @@
           ],
           "value": {
             "id": null,
-            "value": "true"
+            "value": "false"
           },
           "defaultValue": "true",
           "defaultValueDO": {
@@ -5489,6 +4512,7 @@
           "id": "has_showcase",
           "name": "橱窗推荐",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [],
           "properties": [],
           "inputLevel": 2,
@@ -5509,7 +4533,7 @@
           ],
           "value": {
             "id": null,
-            "value": "true"
+            "value": "false"
           },
           "defaultValue": "false",
           "defaultValueDO": {
@@ -5521,6 +4545,7 @@
           "id": "outer_id",
           "name": "商家外部编码",
           "type": "INPUT",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "valueTypeRule",
@@ -5550,6 +4575,7 @@
           "id": "is_xinpin",
           "name": "是否新品",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "tipRule",
@@ -5579,7 +4605,7 @@
           ],
           "value": {
             "id": null,
-            "value": "true"
+            "value": "false"
           },
           "defaultValue": "false",
           "defaultValueDO": {
@@ -5591,6 +4617,7 @@
           "id": "description",
           "name": "商品描述",
           "type": "INPUT",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "valueTypeRule",
@@ -5635,6 +4662,7 @@
           "id": "wap_desc",
           "name": "无线商品描述",
           "type": "COMPLEX",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "maxLengthRule",
@@ -5656,6 +4684,7 @@
                 "id": "wap_desc_summary",
                 "name": null,
                 "type": "INPUT",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
@@ -5669,6 +4698,7 @@
                 "id": "wap_desc_audio",
                 "name": null,
                 "type": "COMPLEX",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
@@ -5681,6 +4711,7 @@
                       "id": "wap_desc_audio_title",
                       "name": null,
                       "type": "INPUT",
+                      "fieldValueType": "NONE",
                       "rules": [],
                       "properties": [],
                       "inputLevel": 0,
@@ -5694,6 +4725,7 @@
                       "id": "wap_desc_audio_url",
                       "name": null,
                       "type": "INPUT",
+                      "fieldValueType": "NONE",
                       "rules": [],
                       "properties": [],
                       "inputLevel": 0,
@@ -5710,50 +4742,16 @@
                   ]
                 },
                 "fields": [],
-                "value": {
-                  "fieldMap": {
-                    "wap_desc_audio_title": {
-                      "id": "wap_desc_audio_title",
-                      "name": null,
-                      "type": "INPUT",
-                      "rules": [],
-                      "properties": [],
-                      "inputLevel": 0,
-                      "inputOrgId": null,
-                      "dataSource": null,
-                      "isDisplay": 1,
-                      "value": "",
-                      "defaultValue": null
-                    },
-                    "wap_desc_audio_url": {
-                      "id": "wap_desc_audio_url",
-                      "name": null,
-                      "type": "INPUT",
-                      "rules": [],
-                      "properties": [],
-                      "inputLevel": 0,
-                      "inputOrgId": null,
-                      "dataSource": null,
-                      "isDisplay": 1,
-                      "value": "",
-                      "defaultValue": null
-                    }
-                  },
-                  "fieldKeySet": [
-                    "wap_desc_audio_title",
-                    "wap_desc_audio_url"
-                  ]
-                },
                 "defaultComplexValue": {
                   "fieldMap": {},
                   "fieldKeySet": []
-                },
-                "fieldMap": {}
+                }
               },
               "wap_desc_content": {
                 "id": "wap_desc_content",
                 "name": null,
                 "type": "MULTICOMPLEX",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
@@ -5761,96 +4759,8 @@
                 "dataSource": null,
                 "isDisplay": 1,
                 "fields": [],
-                "value": [
-                  {
-                    "fieldMap": {
-                      "wap_desc_content_type": {
-                        "id": "wap_desc_content_type",
-                        "name": null,
-                        "type": "SINGLECHECK",
-                        "rules": [],
-                        "properties": [],
-                        "inputLevel": 0,
-                        "inputOrgId": null,
-                        "dataSource": null,
-                        "isDisplay": 1,
-                        "options": [],
-                        "value": {
-                          "id": null,
-                          "value": "image"
-                        },
-                        "defaultValue": null,
-                        "defaultValueDO": {
-                          "id": null,
-                          "value": null
-                        }
-                      },
-                      "wap_desc_content_content": {
-                        "id": "wap_desc_content_content",
-                        "name": null,
-                        "type": "INPUT",
-                        "rules": [],
-                        "properties": [],
-                        "inputLevel": 0,
-                        "inputOrgId": null,
-                        "dataSource": null,
-                        "isDisplay": 1,
-                        "value": "",
-                        "defaultValue": null
-                      }
-                    },
-                    "fieldKeySet": [
-                      "wap_desc_content_type",
-                      "wap_desc_content_content"
-                    ]
-                  }
-                ],
-                "defaultComplexValues": [],
-                "complexValues": [
-                  {
-                    "fieldMap": {
-                      "wap_desc_content_type": {
-                        "id": "wap_desc_content_type",
-                        "name": null,
-                        "type": "SINGLECHECK",
-                        "rules": [],
-                        "properties": [],
-                        "inputLevel": 0,
-                        "inputOrgId": null,
-                        "dataSource": null,
-                        "isDisplay": 1,
-                        "options": [],
-                        "value": {
-                          "id": null,
-                          "value": "image"
-                        },
-                        "defaultValue": null,
-                        "defaultValueDO": {
-                          "id": null,
-                          "value": null
-                        }
-                      },
-                      "wap_desc_content_content": {
-                        "id": "wap_desc_content_content",
-                        "name": null,
-                        "type": "INPUT",
-                        "rules": [],
-                        "properties": [],
-                        "inputLevel": 0,
-                        "inputOrgId": null,
-                        "dataSource": null,
-                        "isDisplay": 1,
-                        "value": "",
-                        "defaultValue": null
-                      }
-                    },
-                    "fieldKeySet": [
-                      "wap_desc_content_type",
-                      "wap_desc_content_content"
-                    ]
-                  }
-                ],
-                "fieldMap": {}
+                "complexValues": [],
+                "defaultComplexValues": []
               }
             },
             "fieldKeySet": [
@@ -5864,697 +4774,7 @@
               "id": "wap_desc_summary",
               "name": "无线商品描述摘要",
               "type": "INPUT",
-              "rules": [
-                {
-                  "name": "valueTypeRule",
-                  "value": "textarea",
-                  "exProperty": null,
-                  "dependGroup": null,
-                  "valueIntervalInclude": false
-                },
-                {
-                  "name": "maxLengthRule",
-                  "value": "140",
-                  "exProperty": "include",
-                  "dependGroup": null,
-                  "unit": "character",
-                  "valueIntervalInclude": true
-                }
-              ],
-              "properties": [],
-              "inputLevel": 0,
-              "inputOrgId": null,
-              "dataSource": null,
-              "isDisplay": 1,
-                "value": null,
-              "defaultValue": null
-            },
-            {
-              "id": "wap_desc_audio",
-              "name": "无线商品音频描述",
-              "type": "COMPLEX",
-              "rules": [],
-              "properties": [],
-              "inputLevel": 0,
-              "inputOrgId": null,
-              "dataSource": null,
-              "isDisplay": 1,
-              "complexValue": {
-                "fieldMap": {},
-                "fieldKeySet": []
-              },
-              "fields": [
-                {
-                  "id": "wap_desc_audio_title",
-                  "name": "无线商品描述音频标题",
-                  "type": "INPUT",
-                  "rules": [
-                    {
-                      "name": "valueTypeRule",
-                      "value": "text",
-                      "exProperty": null,
-                      "dependGroup": null,
-                      "valueIntervalInclude": false
-                    }
-                  ],
-                  "properties": [],
-                  "inputLevel": 0,
-                  "inputOrgId": null,
-                  "dataSource": null,
-                  "isDisplay": 1,
-                  "value": null,
-                  "defaultValue": null
-                },
-                {
-                  "id": "wap_desc_audio_url",
-                  "name": "无线商品描述音频文件地址",
-                  "type": "INPUT",
-                  "rules": [
-                    {
-                      "name": "valueTypeRule",
-                      "value": "url",
-                      "exProperty": null,
-                      "dependGroup": null,
-                      "valueIntervalInclude": false
-                    },
-                    {
-                      "name": "regexRule",
-                      "value": "^.*\\.mp3$",
-                      "exProperty": null,
-                      "dependGroup": null,
-                      "valueIntervalInclude": false
-                    },
-                    {
-                      "name": "maxInputNumRule",
-                      "value": "1",
-                      "exProperty": "include",
-                      "dependGroup": null,
-                      "valueIntervalInclude": true
-                    },
-                    {
-                      "name": "maxTargetSizeRule",
-                      "value": "204800",
-                      "exProperty": "include",
-                      "dependGroup": null,
-                      "unit": "byte",
-                      "valueIntervalInclude": true
-                    }
-                  ],
-                  "properties": [],
-                  "inputLevel": 0,
-                  "inputOrgId": null,
-                  "dataSource": null,
-                  "isDisplay": 1,
-                  "value": null,
-                  "defaultValue": null
-                }
-              ],
-              "value": {
-                "fieldMap": {},
-                "fieldKeySet": []
-              },
-              "defaultComplexValue": {
-                "fieldMap": {},
-                "fieldKeySet": []
-              },
-              "fieldMap": {
-                "wap_desc_audio_title": {
-                  "id": "wap_desc_audio_title",
-                  "name": "无线商品描述音频标题",
-                  "type": "INPUT",
-                  "rules": [
-                    {
-                      "name": "valueTypeRule",
-                      "value": "text",
-                      "exProperty": null,
-                      "dependGroup": null,
-                      "valueIntervalInclude": false
-                    }
-                  ],
-                  "properties": [],
-                  "inputLevel": 0,
-                  "inputOrgId": null,
-                  "dataSource": null,
-                  "isDisplay": 1,
-                  "value": null,
-                  "defaultValue": null
-                },
-                "wap_desc_audio_url": {
-                  "id": "wap_desc_audio_url",
-                  "name": "无线商品描述音频文件地址",
-                  "type": "INPUT",
-                  "rules": [
-                    {
-                      "name": "valueTypeRule",
-                      "value": "url",
-                      "exProperty": null,
-                      "dependGroup": null,
-                      "valueIntervalInclude": false
-                    },
-                    {
-                      "name": "regexRule",
-                      "value": "^.*\\.mp3$",
-                      "exProperty": null,
-                      "dependGroup": null,
-                      "valueIntervalInclude": false
-                    },
-                    {
-                      "name": "maxInputNumRule",
-                      "value": "1",
-                      "exProperty": "include",
-                      "dependGroup": null,
-                      "valueIntervalInclude": true
-                    },
-                    {
-                      "name": "maxTargetSizeRule",
-                      "value": "204800",
-                      "exProperty": "include",
-                      "dependGroup": null,
-                      "unit": "byte",
-                      "valueIntervalInclude": true
-                    }
-                  ],
-                  "properties": [],
-                  "inputLevel": 0,
-                  "inputOrgId": null,
-                  "dataSource": null,
-                  "isDisplay": 1,
-                  "value": null,
-                  "defaultValue": null
-                }
-              }
-            },
-            {
-              "id": "wap_desc_content",
-              "name": "无线商品描述内容（文本或图片）",
-              "type": "MULTICOMPLEX",
-              "rules": [],
-              "properties": [],
-              "inputLevel": 0,
-              "inputOrgId": null,
-              "dataSource": null,
-              "isDisplay": 1,
-              "fields": [
-                {
-                  "id": "wap_desc_content_type",
-                  "name": "无线商品描述类型",
-                  "type": "SINGLECHECK",
-                  "rules": [],
-                  "properties": [],
-                  "inputLevel": 0,
-                  "inputOrgId": null,
-                  "dataSource": null,
-                  "isDisplay": 1,
-                  "options": [
-                    {
-                      "displayName": "图片",
-                      "value": "image",
-                      "dependGroup": null
-                    },
-                    {
-                      "displayName": "文本",
-                      "value": "text",
-                      "dependGroup": null
-                    }
-                  ],
-                  "value": {
-                    "id": null,
-                    "value": null
-                  },
-                  "defaultValue": null,
-                  "defaultValueDO": {
-                    "id": null,
-                    "value": null
-                  }
-                },
-                {
-                  "id": "wap_desc_content_content",
-                  "name": "无线商品描述内容",
-                  "type": "INPUT",
-                  "rules": [
-                    {
-                      "name": "valueTypeRule",
-                      "value": "textarea",
-                      "exProperty": null,
-                      "dependGroup": {
-                        "dependExpressList": [
-                          {
-                            "fieldId": "wap_desc_content_type",
-                            "value": "text",
-                            "symbol": "=="
-                          }
-                        ],
-                        "operator": "and",
-                        "dependGroupList": [],
-                        "empty": false
-                      },
-                      "valueIntervalInclude": false
-                    },
-                    {
-                      "name": "valueTypeRule",
-                      "value": "url",
-                      "exProperty": null,
-                      "dependGroup": {
-                        "dependExpressList": [
-                          {
-                            "fieldId": "wap_desc_content_type",
-                            "value": "image",
-                            "symbol": "=="
-                          }
-                        ],
-                        "operator": "and",
-                        "dependGroupList": [],
-                        "empty": false
-                      },
-                      "valueIntervalInclude": false
-                    },
-                    {
-                      "name": "maxLengthRule",
-                      "value": "500",
-                      "exProperty": "include",
-                      "dependGroup": {
-                        "dependExpressList": [
-                          {
-                            "fieldId": "wap_desc_content_type",
-                            "value": "text",
-                            "symbol": "=="
-                          }
-                        ],
-                        "operator": "and",
-                        "dependGroupList": [],
-                        "empty": false
-                      },
-                      "unit": "character",
-                      "valueIntervalInclude": true
-                    },
-                    {
-                      "name": "minImageSizeRule",
-                      "value": "0x480",
-                      "exProperty": "include",
-                      "dependGroup": {
-                        "dependExpressList": [
-                          {
-                            "fieldId": "wap_desc_content_type",
-                            "value": "image",
-                            "symbol": "=="
-                          }
-                        ],
-                        "operator": "and",
-                        "dependGroupList": [],
-                        "empty": false
-                      },
-                      "valueIntervalInclude": true
-                    },
-                    {
-                      "name": "maxImageSizeRule",
-                      "value": "960x620",
-                      "exProperty": "include",
-                      "dependGroup": {
-                        "dependExpressList": [
-                          {
-                            "fieldId": "wap_desc_content_type",
-                            "value": "image",
-                            "symbol": "=="
-                          }
-                        ],
-                        "operator": "and",
-                        "dependGroupList": [],
-                        "empty": false
-                      },
-                      "valueIntervalInclude": true
-                    }
-                  ],
-                  "properties": [],
-                  "inputLevel": 0,
-                  "inputOrgId": null,
-                  "dataSource": null,
-                  "isDisplay": 1,
-                  "value": null,
-                  "defaultValue": null
-                }
-              ],
-              "values": [],
-              "defaultComplexValues": [],
-              "complexValues": [],
-              "fieldMap": {
-                "wap_desc_content_content": {
-                  "id": "wap_desc_content_content",
-                  "name": "无线商品描述内容",
-                  "type": "INPUT",
-                  "rules": [
-                    {
-                      "name": "valueTypeRule",
-                      "value": "textarea",
-                      "exProperty": null,
-                      "dependGroup": {
-                        "dependExpressList": [
-                          {
-                            "fieldId": "wap_desc_content_type",
-                            "value": "text",
-                            "symbol": "=="
-                          }
-                        ],
-                        "operator": "and",
-                        "dependGroupList": [],
-                        "empty": false
-                      },
-                      "valueIntervalInclude": false
-                    },
-                    {
-                      "name": "valueTypeRule",
-                      "value": "url",
-                      "exProperty": null,
-                      "dependGroup": {
-                        "dependExpressList": [
-                          {
-                            "fieldId": "wap_desc_content_type",
-                            "value": "image",
-                            "symbol": "=="
-                          }
-                        ],
-                        "operator": "and",
-                        "dependGroupList": [],
-                        "empty": false
-                      },
-                      "valueIntervalInclude": false
-                    },
-                    {
-                      "name": "maxLengthRule",
-                      "value": "500",
-                      "exProperty": "include",
-                      "dependGroup": {
-                        "dependExpressList": [
-                          {
-                            "fieldId": "wap_desc_content_type",
-                            "value": "text",
-                            "symbol": "=="
-                          }
-                        ],
-                        "operator": "and",
-                        "dependGroupList": [],
-                        "empty": false
-                      },
-                      "unit": "character",
-                      "valueIntervalInclude": true
-                    },
-                    {
-                      "name": "minImageSizeRule",
-                      "value": "0x480",
-                      "exProperty": "include",
-                      "dependGroup": {
-                        "dependExpressList": [
-                          {
-                            "fieldId": "wap_desc_content_type",
-                            "value": "image",
-                            "symbol": "=="
-                          }
-                        ],
-                        "operator": "and",
-                        "dependGroupList": [],
-                        "empty": false
-                      },
-                      "valueIntervalInclude": true
-                    },
-                    {
-                      "name": "maxImageSizeRule",
-                      "value": "960x620",
-                      "exProperty": "include",
-                      "dependGroup": {
-                        "dependExpressList": [
-                          {
-                            "fieldId": "wap_desc_content_type",
-                            "value": "image",
-                            "symbol": "=="
-                          }
-                        ],
-                        "operator": "and",
-                        "dependGroupList": [],
-                        "empty": false
-                      },
-                      "valueIntervalInclude": true
-                    }
-                  ],
-                  "properties": [],
-                  "inputLevel": 0,
-                  "inputOrgId": null,
-                  "dataSource": null,
-                  "isDisplay": 1,
-                  "value": null,
-                  "defaultValue": null
-                },
-                "wap_desc_content_type": {
-                  "id": "wap_desc_content_type",
-                  "name": "无线商品描述类型",
-                  "type": "SINGLECHECK",
-                  "rules": [],
-                  "properties": [],
-                  "inputLevel": 0,
-                  "inputOrgId": null,
-                  "dataSource": null,
-                  "isDisplay": 1,
-                  "options": [
-                    {
-                      "displayName": "图片",
-                      "value": "image",
-                      "dependGroup": null
-                    },
-                    {
-                      "displayName": "文本",
-                      "value": "text",
-                      "dependGroup": null
-                    }
-                  ],
-                  "value": {
-                    "id": null,
-                    "value": null
-                  },
-                  "defaultValue": null,
-                  "defaultValueDO": {
-                    "id": null,
-                    "value": null
-                  }
-                }
-              }
-            }
-          ],
-          "value": {
-            "fieldMap": {
-              "wap_desc_summary": {
-                "id": "wap_desc_summary",
-                "name": null,
-                "type": "INPUT",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "value": "",
-                "defaultValue": null
-              },
-              "wap_desc_audio": {
-                "id": "wap_desc_audio",
-                "name": null,
-                "type": "COMPLEX",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "complexValue": {
-                  "fieldMap": {
-                    "wap_desc_audio_title": {
-                      "id": "wap_desc_audio_title",
-                      "name": null,
-                      "type": "INPUT",
-                      "rules": [],
-                      "properties": [],
-                      "inputLevel": 0,
-                      "inputOrgId": null,
-                      "dataSource": null,
-                      "isDisplay": 1,
-                      "value": "",
-                      "defaultValue": null
-                    },
-                    "wap_desc_audio_url": {
-                      "id": "wap_desc_audio_url",
-                      "name": null,
-                      "type": "INPUT",
-                      "rules": [],
-                      "properties": [],
-                      "inputLevel": 0,
-                      "inputOrgId": null,
-                      "dataSource": null,
-                      "isDisplay": 1,
-                      "value": "",
-                      "defaultValue": null
-                    }
-                  },
-                  "fieldKeySet": [
-                    "wap_desc_audio_title",
-                    "wap_desc_audio_url"
-                  ]
-                },
-                "fields": [],
-                "value": {
-                  "fieldMap": {
-                    "wap_desc_audio_title": {
-                      "id": "wap_desc_audio_title",
-                      "name": null,
-                      "type": "INPUT",
-                      "rules": [],
-                      "properties": [],
-                      "inputLevel": 0,
-                      "inputOrgId": null,
-                      "dataSource": null,
-                      "isDisplay": 1,
-                      "value": "",
-                      "defaultValue": null
-                    },
-                    "wap_desc_audio_url": {
-                      "id": "wap_desc_audio_url",
-                      "name": null,
-                      "type": "INPUT",
-                      "rules": [],
-                      "properties": [],
-                      "inputLevel": 0,
-                      "inputOrgId": null,
-                      "dataSource": null,
-                      "isDisplay": 1,
-                      "value": "",
-                      "defaultValue": null
-                    }
-                  },
-                  "fieldKeySet": [
-                    "wap_desc_audio_title",
-                    "wap_desc_audio_url"
-                  ]
-                },
-                "defaultComplexValue": {
-                  "fieldMap": {},
-                  "fieldKeySet": []
-                },
-                "fieldMap": {}
-              },
-              "wap_desc_content": {
-                "id": "wap_desc_content",
-                "name": null,
-                "type": "MULTICOMPLEX",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "fields": [],
-                "value": [
-                  {
-                    "fieldMap": {
-                      "wap_desc_content_type": {
-                        "id": "wap_desc_content_type",
-                        "name": null,
-                        "type": "SINGLECHECK",
-                        "rules": [],
-                        "properties": [],
-                        "inputLevel": 0,
-                        "inputOrgId": null,
-                        "dataSource": null,
-                        "isDisplay": 1,
-                        "options": [],
-                        "value": {
-                          "id": null,
-                          "value": "image"
-                        },
-                        "defaultValue": null,
-                        "defaultValueDO": {
-                          "id": null,
-                          "value": null
-                        }
-                      },
-                      "wap_desc_content_content": {
-                        "id": "wap_desc_content_content",
-                        "name": null,
-                        "type": "INPUT",
-                        "rules": [],
-                        "properties": [],
-                        "inputLevel": 0,
-                        "inputOrgId": null,
-                        "dataSource": null,
-                        "isDisplay": 1,
-                        "value": "",
-                        "defaultValue": null
-                      }
-                    },
-                    "fieldKeySet": [
-                      "wap_desc_content_type",
-                      "wap_desc_content_content"
-                    ]
-                  }
-                ],
-                "defaultComplexValues": [],
-                "complexValues": [
-                  {
-                    "fieldMap": {
-                      "wap_desc_content_type": {
-                        "id": "wap_desc_content_type",
-                        "name": null,
-                        "type": "SINGLECHECK",
-                        "rules": [],
-                        "properties": [],
-                        "inputLevel": 0,
-                        "inputOrgId": null,
-                        "dataSource": null,
-                        "isDisplay": 1,
-                        "options": [],
-                        "value": {
-                          "id": null,
-                          "value": "image"
-                        },
-                        "defaultValue": null,
-                        "defaultValueDO": {
-                          "id": null,
-                          "value": null
-                        }
-                      },
-                      "wap_desc_content_content": {
-                        "id": "wap_desc_content_content",
-                        "name": null,
-                        "type": "INPUT",
-                        "rules": [],
-                        "properties": [],
-                        "inputLevel": 0,
-                        "inputOrgId": null,
-                        "dataSource": null,
-                        "isDisplay": 1,
-                        "value": "",
-                        "defaultValue": null
-                      }
-                    },
-                    "fieldKeySet": [
-                      "wap_desc_content_type",
-                      "wap_desc_content_content"
-                    ]
-                  }
-                ],
-                "fieldMap": {}
-              }
-            },
-            "fieldKeySet": [
-              "wap_desc_summary",
-              "wap_desc_audio",
-              "wap_desc_content"
-            ]
-          },
-          "defaultComplexValue": {
-            "fieldMap": {},
-            "fieldKeySet": []
-          },
-          "fieldMap": {
-            "wap_desc_summary": {
-              "id": "wap_desc_summary",
-              "name": "无线商品描述摘要",
-              "type": "INPUT",
+              "fieldValueType": "NONE",
               "rules": [
                 {
                   "name": "valueTypeRule",
@@ -6580,302 +4800,11 @@
               "value": null,
               "defaultValue": null
             },
-            "wap_desc_content": {
-              "id": "wap_desc_content",
-              "name": "无线商品描述内容（文本或图片）",
-              "type": "MULTICOMPLEX",
-              "rules": [],
-              "properties": [],
-              "inputLevel": 0,
-              "inputOrgId": null,
-              "dataSource": null,
-              "isDisplay": 1,
-              "fields": [
-                {
-                  "id": "wap_desc_content_type",
-                  "name": "无线商品描述类型",
-                  "type": "SINGLECHECK",
-                  "rules": [],
-                  "properties": [],
-                  "inputLevel": 0,
-                  "inputOrgId": null,
-                  "dataSource": null,
-                  "isDisplay": 1,
-                  "options": [
-                    {
-                      "displayName": "图片",
-                      "value": "image",
-                      "dependGroup": null
-                    },
-                    {
-                      "displayName": "文本",
-                      "value": "text",
-                      "dependGroup": null
-                    }
-                  ],
-                  "value": {
-                    "id": null,
-                    "value": null
-                  },
-                  "defaultValue": null,
-                  "defaultValueDO": {
-                    "id": null,
-                    "value": null
-                  }
-                },
-                {
-                  "id": "wap_desc_content_content",
-                  "name": "无线商品描述内容",
-                  "type": "INPUT",
-                  "rules": [
-                    {
-                      "name": "valueTypeRule",
-                      "value": "textarea",
-                      "exProperty": null,
-                      "dependGroup": {
-                        "dependExpressList": [
-                          {
-                            "fieldId": "wap_desc_content_type",
-                            "value": "text",
-                            "symbol": "=="
-                          }
-                        ],
-                        "operator": "and",
-                        "dependGroupList": [],
-                        "empty": false
-                      },
-                      "valueIntervalInclude": false
-                    },
-                    {
-                      "name": "valueTypeRule",
-                      "value": "url",
-                      "exProperty": null,
-                      "dependGroup": {
-                        "dependExpressList": [
-                          {
-                            "fieldId": "wap_desc_content_type",
-                            "value": "image",
-                            "symbol": "=="
-                          }
-                        ],
-                        "operator": "and",
-                        "dependGroupList": [],
-                        "empty": false
-                      },
-                      "valueIntervalInclude": false
-                    },
-                    {
-                      "name": "maxLengthRule",
-                      "value": "500",
-                      "exProperty": "include",
-                      "dependGroup": {
-                        "dependExpressList": [
-                          {
-                            "fieldId": "wap_desc_content_type",
-                            "value": "text",
-                            "symbol": "=="
-                          }
-                        ],
-                        "operator": "and",
-                        "dependGroupList": [],
-                        "empty": false
-                      },
-                      "unit": "character",
-                      "valueIntervalInclude": true
-                    },
-                    {
-                      "name": "minImageSizeRule",
-                      "value": "0x480",
-                      "exProperty": "include",
-                      "dependGroup": {
-                        "dependExpressList": [
-                          {
-                            "fieldId": "wap_desc_content_type",
-                            "value": "image",
-                            "symbol": "=="
-                          }
-                        ],
-                        "operator": "and",
-                        "dependGroupList": [],
-                        "empty": false
-                      },
-                      "valueIntervalInclude": true
-                    },
-                    {
-                      "name": "maxImageSizeRule",
-                      "value": "960x620",
-                      "exProperty": "include",
-                      "dependGroup": {
-                        "dependExpressList": [
-                          {
-                            "fieldId": "wap_desc_content_type",
-                            "value": "image",
-                            "symbol": "=="
-                          }
-                        ],
-                        "operator": "and",
-                        "dependGroupList": [],
-                        "empty": false
-                      },
-                      "valueIntervalInclude": true
-                    }
-                  ],
-                  "properties": [],
-                  "inputLevel": 0,
-                  "inputOrgId": null,
-                  "dataSource": null,
-                  "isDisplay": 1,
-                  "value": null,
-                  "defaultValue": null
-                }
-              ],
-              "value": [],
-              "defaultComplexValues": [],
-              "complexValues": [],
-              "fieldMap": {
-                "wap_desc_content_content": {
-                  "id": "wap_desc_content_content",
-                  "name": "无线商品描述内容",
-                  "type": "INPUT",
-                  "rules": [
-                    {
-                      "name": "valueTypeRule",
-                      "value": "textarea",
-                      "exProperty": null,
-                      "dependGroup": {
-                        "dependExpressList": [
-                          {
-                            "fieldId": "wap_desc_content_type",
-                            "value": "text",
-                            "symbol": "=="
-                          }
-                        ],
-                        "operator": "and",
-                        "dependGroupList": [],
-                        "empty": false
-                      },
-                      "valueIntervalInclude": false
-                    },
-                    {
-                      "name": "valueTypeRule",
-                      "value": "url",
-                      "exProperty": null,
-                      "dependGroup": {
-                        "dependExpressList": [
-                          {
-                            "fieldId": "wap_desc_content_type",
-                            "value": "image",
-                            "symbol": "=="
-                          }
-                        ],
-                        "operator": "and",
-                        "dependGroupList": [],
-                        "empty": false
-                      },
-                      "valueIntervalInclude": false
-                    },
-                    {
-                      "name": "maxLengthRule",
-                      "value": "500",
-                      "exProperty": "include",
-                      "dependGroup": {
-                        "dependExpressList": [
-                          {
-                            "fieldId": "wap_desc_content_type",
-                            "value": "text",
-                            "symbol": "=="
-                          }
-                        ],
-                        "operator": "and",
-                        "dependGroupList": [],
-                        "empty": false
-                      },
-                      "unit": "character",
-                      "valueIntervalInclude": true
-                    },
-                    {
-                      "name": "minImageSizeRule",
-                      "value": "0x480",
-                      "exProperty": "include",
-                      "dependGroup": {
-                        "dependExpressList": [
-                          {
-                            "fieldId": "wap_desc_content_type",
-                            "value": "image",
-                            "symbol": "=="
-                          }
-                        ],
-                        "operator": "and",
-                        "dependGroupList": [],
-                        "empty": false
-                      },
-                      "valueIntervalInclude": true
-                    },
-                    {
-                      "name": "maxImageSizeRule",
-                      "value": "960x620",
-                      "exProperty": "include",
-                      "dependGroup": {
-                        "dependExpressList": [
-                          {
-                            "fieldId": "wap_desc_content_type",
-                            "value": "image",
-                            "symbol": "=="
-                          }
-                        ],
-                        "operator": "and",
-                        "dependGroupList": [],
-                        "empty": false
-                      },
-                      "valueIntervalInclude": true
-                    }
-                  ],
-                  "properties": [],
-                  "inputLevel": 0,
-                  "inputOrgId": null,
-                  "dataSource": null,
-                  "isDisplay": 1,
-                  "value": null,
-                  "defaultValue": null
-                },
-                "wap_desc_content_type": {
-                  "id": "wap_desc_content_type",
-                  "name": "无线商品描述类型",
-                  "type": "SINGLECHECK",
-                  "rules": [],
-                  "properties": [],
-                  "inputLevel": 0,
-                  "inputOrgId": null,
-                  "dataSource": null,
-                  "isDisplay": 1,
-                  "options": [
-                    {
-                      "displayName": "图片",
-                      "value": "image",
-                      "dependGroup": null
-                    },
-                    {
-                      "displayName": "文本",
-                      "value": "text",
-                      "dependGroup": null
-                    }
-                  ],
-                  "value": {
-                    "id": null,
-                    "value": null
-                  },
-                  "defaultValue": null,
-                  "defaultValueDO": {
-                    "id": null,
-                    "value": null
-                  }
-                }
-              }
-            },
-            "wap_desc_audio": {
+            {
               "id": "wap_desc_audio",
               "name": "无线商品音频描述",
               "type": "COMPLEX",
+              "fieldValueType": "NONE",
               "rules": [],
               "properties": [],
               "inputLevel": 0,
@@ -6891,6 +4820,7 @@
                   "id": "wap_desc_audio_title",
                   "name": "无线商品描述音频标题",
                   "type": "INPUT",
+                  "fieldValueType": "NONE",
                   "rules": [
                     {
                       "name": "valueTypeRule",
@@ -6912,6 +4842,7 @@
                   "id": "wap_desc_audio_url",
                   "name": "无线商品描述音频文件地址",
                   "type": "INPUT",
+                  "fieldValueType": "NONE",
                   "rules": [
                     {
                       "name": "valueTypeRule",
@@ -6952,68 +4883,151 @@
                   "defaultValue": null
                 }
               ],
-              "value": {
-                "fieldMap": {},
-                "fieldKeySet": []
-              },
               "defaultComplexValue": {
                 "fieldMap": {},
                 "fieldKeySet": []
-              },
-              "fieldMap": {
-                "wap_desc_audio_title": {
-                  "id": "wap_desc_audio_title",
-                  "name": "无线商品描述音频标题",
-                  "type": "INPUT",
-                  "rules": [
-                    {
-                      "name": "valueTypeRule",
-                      "value": "text",
-                      "exProperty": null,
-                      "dependGroup": null,
-                      "valueIntervalInclude": false
-                    }
-                  ],
+              }
+            },
+            {
+              "id": "wap_desc_content",
+              "name": "无线商品描述内容（文本或图片）",
+              "type": "MULTICOMPLEX",
+              "fieldValueType": "NONE",
+              "rules": [],
+              "properties": [],
+              "inputLevel": 0,
+              "inputOrgId": null,
+              "dataSource": null,
+              "isDisplay": 1,
+              "fields": [
+                {
+                  "id": "wap_desc_content_type",
+                  "name": "无线商品描述类型",
+                  "type": "SINGLECHECK",
+                  "fieldValueType": "NONE",
+                  "rules": [],
                   "properties": [],
                   "inputLevel": 0,
                   "inputOrgId": null,
                   "dataSource": null,
                   "isDisplay": 1,
-                  "value": null,
-                  "defaultValue": null
+                  "options": [
+                    {
+                      "displayName": "图片",
+                      "value": "image",
+                      "dependGroup": null
+                    },
+                    {
+                      "displayName": "文本",
+                      "value": "text",
+                      "dependGroup": null
+                    }
+                  ],
+                  "value": {
+                    "id": null,
+                    "value": null
+                  },
+                  "defaultValue": null,
+                  "defaultValueDO": {
+                    "id": null,
+                    "value": null
+                  }
                 },
-                "wap_desc_audio_url": {
-                  "id": "wap_desc_audio_url",
-                  "name": "无线商品描述音频文件地址",
+                {
+                  "id": "wap_desc_content_content",
+                  "name": "无线商品描述内容",
                   "type": "INPUT",
+                  "fieldValueType": "NONE",
                   "rules": [
+                    {
+                      "name": "valueTypeRule",
+                      "value": "textarea",
+                      "exProperty": null,
+                      "dependGroup": {
+                        "dependExpressList": [
+                          {
+                            "fieldId": "wap_desc_content_type",
+                            "value": "text",
+                            "symbol": "=="
+                          }
+                        ],
+                        "operator": "and",
+                        "dependGroupList": [],
+                        "empty": false
+                      },
+                      "valueIntervalInclude": false
+                    },
                     {
                       "name": "valueTypeRule",
                       "value": "url",
                       "exProperty": null,
-                      "dependGroup": null,
+                      "dependGroup": {
+                        "dependExpressList": [
+                          {
+                            "fieldId": "wap_desc_content_type",
+                            "value": "image",
+                            "symbol": "=="
+                          }
+                        ],
+                        "operator": "and",
+                        "dependGroupList": [],
+                        "empty": false
+                      },
                       "valueIntervalInclude": false
                     },
                     {
-                      "name": "regexRule",
-                      "value": "^.*\\.mp3$",
-                      "exProperty": null,
-                      "dependGroup": null,
-                      "valueIntervalInclude": false
-                    },
-                    {
-                      "name": "maxInputNumRule",
-                      "value": "1",
+                      "name": "maxLengthRule",
+                      "value": "500",
                       "exProperty": "include",
-                      "dependGroup": null,
+                      "dependGroup": {
+                        "dependExpressList": [
+                          {
+                            "fieldId": "wap_desc_content_type",
+                            "value": "text",
+                            "symbol": "=="
+                          }
+                        ],
+                        "operator": "and",
+                        "dependGroupList": [],
+                        "empty": false
+                      },
+                      "unit": "character",
                       "valueIntervalInclude": true
                     },
                     {
-                      "name": "maxTargetSizeRule",
-                      "value": "204800",
+                      "name": "minImageSizeRule",
+                      "value": "0x480",
                       "exProperty": "include",
-                      "dependGroup": null,
-                      "unit": "byte",
+                      "dependGroup": {
+                        "dependExpressList": [
+                          {
+                            "fieldId": "wap_desc_content_type",
+                            "value": "image",
+                            "symbol": "=="
+                          }
+                        ],
+                        "operator": "and",
+                        "dependGroupList": [],
+                        "empty": false
+                      },
+                      "valueIntervalInclude": true
+                    },
+                    {
+                      "name": "maxImageSizeRule",
+                      "value": "960x620",
+                      "exProperty": "include",
+                      "dependGroup": {
+                        "dependExpressList": [
+                          {
+                            "fieldId": "wap_desc_content_type",
+                            "value": "image",
+                            "symbol": "=="
+                          }
+                        ],
+                        "operator": "and",
+                        "dependGroupList": [],
+                        "empty": false
+                      },
                       "valueIntervalInclude": true
                     }
                   ],
@@ -7025,14 +5039,21 @@
                   "value": null,
                   "defaultValue": null
                 }
-              }
+              ],
+              "complexValues": [],
+              "defaultComplexValues": []
             }
+          ],
+          "defaultComplexValue": {
+            "fieldMap": {},
+            "fieldKeySet": []
           }
         },
         {
           "id": "item_size_weight",
           "name": "商品物流重量体积",
           "type": "COMPLEX",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "requiredRule",
@@ -7053,6 +5074,7 @@
                 "id": "item_size",
                 "name": null,
                 "type": "INPUT",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
@@ -7066,6 +5088,7 @@
                 "id": "item_weight",
                 "name": null,
                 "type": "INPUT",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
@@ -7086,6 +5109,7 @@
               "id": "item_size",
               "name": "商品物流体积(立方米)",
               "type": "INPUT",
+              "fieldValueType": "NONE",
               "rules": [
                 {
                   "name": "valueTypeRule",
@@ -7107,6 +5131,7 @@
               "id": "item_weight",
               "name": "商品物流重量(千克)",
               "type": "INPUT",
+              "fieldValueType": "NONE",
               "rules": [
                 {
                   "name": "valueTypeRule",
@@ -7132,100 +5157,16 @@
               "defaultValue": null
             }
           ],
-          "value": {
-            "fieldMap": {
-              "item_size": {
-                "id": "item_size",
-                "name": null,
-                "type": "INPUT",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "value": "100",
-                "defaultValue": null
-              },
-              "item_weight": {
-                "id": "item_weight",
-                "name": null,
-                "type": "INPUT",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "value": "20",
-                "defaultValue": null
-              }
-            },
-            "fieldKeySet": [
-              "item_size",
-              "item_weight"
-            ]
-          },
           "defaultComplexValue": {
             "fieldMap": {},
             "fieldKeySet": []
-          },
-          "fieldMap": {
-            "item_weight": {
-              "id": "item_weight",
-              "name": "商品物流重量(千克)",
-              "type": "INPUT",
-              "rules": [
-                {
-                  "name": "valueTypeRule",
-                  "value": "text",
-                  "exProperty": null,
-                  "dependGroup": null,
-                  "valueIntervalInclude": false
-                },
-                {
-                  "name": "regexRule",
-                  "value": "^\\d+(\\.\\d+)?$",
-                  "exProperty": null,
-                  "dependGroup": null,
-                  "valueIntervalInclude": false
-                }
-              ],
-              "properties": [],
-              "inputLevel": 0,
-              "inputOrgId": null,
-              "dataSource": null,
-              "isDisplay": 1,
-              "value": null,
-              "defaultValue": null
-            },
-            "item_size": {
-              "id": "item_size",
-              "name": "商品物流体积(立方米)",
-              "type": "INPUT",
-              "rules": [
-                {
-                  "name": "valueTypeRule",
-                  "value": "text",
-                  "exProperty": null,
-                  "dependGroup": null,
-                  "valueIntervalInclude": false
-                }
-              ],
-              "properties": [],
-              "inputLevel": 0,
-              "inputOrgId": null,
-              "dataSource": null,
-              "isDisplay": 1,
-              "value": null,
-              "defaultValue": null
-            }
           }
         },
         {
           "id": "valid_thru",
           "name": "有效期",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "requiredRule",
@@ -7266,6 +5207,7 @@
           "id": "diaopai_pic",
           "name": "吊牌图",
           "type": "INPUT",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "valueTypeRule",
@@ -7287,6 +5229,7 @@
           "id": "is_taobao",
           "name": "是否在淘宝和天猫显示",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "tipRule",
@@ -7328,6 +5271,7 @@
           "id": "is_ex",
           "name": "是否在外店显示",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [],
           "properties": [],
           "inputLevel": 2,
@@ -7360,6 +5304,7 @@
           "id": "is_3D",
           "name": "是否是3D",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [],
           "properties": [],
           "inputLevel": 2,
@@ -7392,6 +5337,7 @@
           "id": "viewschema_separateDelivery",
           "name": "单独发货",
           "type": "MULTICHECK",
+          "fieldValueType": "NONE",
           "rules": [],
           "properties": [],
           "inputLevel": 2,
@@ -7411,12 +5357,6 @@
               "value": "83202"
             }
           ],
-          "value": [
-            {
-              "id": null,
-              "value": "83202"
-            }
-          ],
           "defaultValues": [],
           "defaultValuesDO": []
         },
@@ -7424,6 +5364,7 @@
           "id": "images1",
           "name": "商品图片",
           "type": "MULTICOMPLEX",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "requiredRule",
@@ -7443,6 +5384,7 @@
               "id": "image1",
               "name": "商品图片1",
               "type": "INPUT",
+              "fieldValueType": "NONE",
               "rules": [],
               "properties": [],
               "inputLevel": 0,
@@ -7453,109 +5395,6 @@
               "defaultValue": null
             }
           ],
-          "values": [
-            {
-              "fieldMap": {
-                "image1": {
-                  "id": "image1",
-                  "name": null,
-                  "type": "INPUT",
-                  "rules": [],
-                  "properties": [],
-                  "inputLevel": 0,
-                  "inputOrgId": null,
-                  "dataSource": null,
-                  "isDisplay": 1,
-                  "value": "",
-                  "defaultValue": null
-                }
-              },
-              "fieldKeySet": [
-                "image1"
-              ]
-            },
-            {
-              "fieldMap": {
-                "image1": {
-                  "id": "image1",
-                  "name": null,
-                  "type": "INPUT",
-                  "rules": [],
-                  "properties": [],
-                  "inputLevel": 0,
-                  "inputOrgId": null,
-                  "dataSource": null,
-                  "isDisplay": 1,
-                  "value": "",
-                  "defaultValue": null
-                }
-              },
-              "fieldKeySet": [
-                "image1"
-              ]
-            },
-            {
-              "fieldMap": {
-                "image1": {
-                  "id": "image1",
-                  "name": null,
-                  "type": "INPUT",
-                  "rules": [],
-                  "properties": [],
-                  "inputLevel": 0,
-                  "inputOrgId": null,
-                  "dataSource": null,
-                  "isDisplay": 1,
-                  "value": "",
-                  "defaultValue": null
-                }
-              },
-              "fieldKeySet": [
-                "image1"
-              ]
-            },
-            {
-              "fieldMap": {
-                "image1": {
-                  "id": "image1",
-                  "name": null,
-                  "type": "INPUT",
-                  "rules": [],
-                  "properties": [],
-                  "inputLevel": 0,
-                  "inputOrgId": null,
-                  "dataSource": null,
-                  "isDisplay": 1,
-                  "value": "",
-                  "defaultValue": null
-                }
-              },
-              "fieldKeySet": [
-                "image1"
-              ]
-            },
-            {
-              "fieldMap": {
-                "image1": {
-                  "id": "image1",
-                  "name": null,
-                  "type": "INPUT",
-                  "rules": [],
-                  "properties": [],
-                  "inputLevel": 0,
-                  "inputOrgId": null,
-                  "dataSource": null,
-                  "isDisplay": 1,
-                  "value": "",
-                  "defaultValue": null
-                }
-              },
-              "fieldKeySet": [
-                "image1"
-              ]
-            }
-          ],
-          "defaultComplexValues": [],
           "complexValues": [
             {
               "fieldMap": {
@@ -7563,6 +5402,7 @@
                   "id": "image1",
                   "name": null,
                   "type": "INPUT",
+                  "fieldValueType": "NONE",
                   "rules": [],
                   "properties": [],
                   "inputLevel": 0,
@@ -7583,6 +5423,7 @@
                   "id": "image1",
                   "name": null,
                   "type": "INPUT",
+                  "fieldValueType": "NONE",
                   "rules": [],
                   "properties": [],
                   "inputLevel": 0,
@@ -7603,6 +5444,7 @@
                   "id": "image1",
                   "name": null,
                   "type": "INPUT",
+                  "fieldValueType": "NONE",
                   "rules": [],
                   "properties": [],
                   "inputLevel": 0,
@@ -7623,6 +5465,7 @@
                   "id": "image1",
                   "name": null,
                   "type": "INPUT",
+                  "fieldValueType": "NONE",
                   "rules": [],
                   "properties": [],
                   "inputLevel": 0,
@@ -7643,6 +5486,7 @@
                   "id": "image1",
                   "name": null,
                   "type": "INPUT",
+                  "fieldValueType": "NONE",
                   "rules": [],
                   "properties": [],
                   "inputLevel": 0,
@@ -7658,47 +5502,13 @@
               ]
             }
           ],
-          "fieldMap": {
-            "image1": {
-              "id": "image1",
-              "name": "商品图片1",
-              "type": "INPUT",
-              "rules": [],
-              "properties": [],
-              "inputLevel": 0,
-              "inputOrgId": null,
-              "dataSource": null,
-              "isDisplay": 1,
-              "value": null,
-              "defaultValue": null
-            }
-          }
-        },
-        {
-          "id": "code",
-          "name": "产品code",
-          "type": "INPUT",
-          "rules": [
-            {
-              "name": "requiredRule",
-              "value": "true",
-              "exProperty": null,
-              "dependGroup": null,
-              "valueIntervalInclude": false
-            }
-          ],
-          "properties": [],
-          "inputLevel": 0,
-          "inputOrgId": null,
-          "dataSource": null,
-          "isDisplay": 1,
-          "value": "code-1",
-          "defaultValue": null
+          "defaultComplexValues": []
         },
         {
           "id": "brand",
           "name": "品牌",
           "type": "LABEL",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "requiredRule",
@@ -7724,6 +5534,7 @@
           "id": "productNameCn",
           "name": "产品名称（中文）",
           "type": "INPUT",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "requiredRule",
@@ -7738,13 +5549,14 @@
           "inputOrgId": null,
           "dataSource": null,
           "isDisplay": 1,
-          "value": "",
+          "value": "1",
           "defaultValue": null
         },
         {
           "id": "productNameEn",
           "name": "产品名称（英文）",
           "type": "INPUT",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "requiredRule",
@@ -7759,13 +5571,14 @@
           "inputOrgId": null,
           "dataSource": null,
           "isDisplay": 1,
-          "value": "",
+          "value": "1",
           "defaultValue": null
         },
         {
           "id": "middleTitle",
           "name": "中标题",
           "type": "INPUT",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "requiredRule",
@@ -7787,6 +5600,7 @@
           "id": "shortTitle",
           "name": "短标题",
           "type": "INPUT",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "requiredRule",
@@ -7808,6 +5622,7 @@
           "id": "model",
           "name": "款号",
           "type": "INPUT",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "requiredRule",
@@ -7829,6 +5644,7 @@
           "id": "color",
           "name": "颜色",
           "type": "INPUT",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "requiredRule",
@@ -7850,6 +5666,7 @@
           "id": "origin",
           "name": "产地",
           "type": "INPUT",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "requiredRule",
@@ -7871,6 +5688,7 @@
           "id": "shortDesCn",
           "name": "简短描述中文",
           "type": "INPUT",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "requiredRule",
@@ -7892,6 +5710,7 @@
           "id": "longDesCn",
           "name": "详情描述中文",
           "type": "INPUT",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "requiredRule",
@@ -7913,6 +5732,7 @@
           "id": "shortDesEn",
           "name": "简短描述英语",
           "type": "INPUT",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "requiredRule",
@@ -7934,6 +5754,7 @@
           "id": "longDesEn",
           "name": "详情描述英语",
           "type": "INPUT",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "requiredRule",
@@ -7952,9 +5773,166 @@
           "defaultValue": null
         },
         {
-          "id": "hsCodeCrop",
-          "name": "税号集货",
+          "id": "images2",
+          "name": "包装图片",
+          "type": "MULTICOMPLEX",
+          "fieldValueType": "NONE",
+          "rules": [],
+          "properties": [],
+          "inputLevel": 0,
+          "inputOrgId": null,
+          "dataSource": null,
+          "isDisplay": 1,
+          "fields": [
+            {
+              "id": "image2",
+              "name": "包装图片2",
+              "type": "INPUT",
+              "fieldValueType": "NONE",
+              "rules": [],
+              "properties": [],
+              "inputLevel": 0,
+              "inputOrgId": null,
+              "dataSource": null,
+              "isDisplay": 1,
+              "value": null,
+              "defaultValue": null
+            }
+          ],
+          "complexValues": [
+            {
+              "fieldMap": {
+                "image2": {
+                  "id": "image2",
+                  "name": null,
+                  "type": "INPUT",
+                  "fieldValueType": "NONE",
+                  "rules": [],
+                  "properties": [],
+                  "inputLevel": 0,
+                  "inputOrgId": null,
+                  "dataSource": null,
+                  "isDisplay": 1,
+                  "value": "",
+                  "defaultValue": null
+                }
+              },
+              "fieldKeySet": [
+                "image2"
+              ]
+            }
+          ],
+          "defaultComplexValues": []
+        },
+        {
+          "id": "images3",
+          "name": "带角度图片",
+          "type": "MULTICOMPLEX",
+          "fieldValueType": "NONE",
+          "rules": [],
+          "properties": [],
+          "inputLevel": 0,
+          "inputOrgId": null,
+          "dataSource": null,
+          "isDisplay": 1,
+          "fields": [
+            {
+              "id": "image3",
+              "name": "带角度图片3",
+              "type": "INPUT",
+              "fieldValueType": "NONE",
+              "rules": [],
+              "properties": [],
+              "inputLevel": 0,
+              "inputOrgId": null,
+              "dataSource": null,
+              "isDisplay": 1,
+              "value": null,
+              "defaultValue": null
+            }
+          ],
+          "complexValues": [
+            {
+              "fieldMap": {
+                "image3": {
+                  "id": "image3",
+                  "name": null,
+                  "type": "INPUT",
+                  "fieldValueType": "NONE",
+                  "rules": [],
+                  "properties": [],
+                  "inputLevel": 0,
+                  "inputOrgId": null,
+                  "dataSource": null,
+                  "isDisplay": 1,
+                  "value": "",
+                  "defaultValue": null
+                }
+              },
+              "fieldKeySet": [
+                "image3"
+              ]
+            }
+          ],
+          "defaultComplexValues": []
+        },
+        {
+          "id": "images4",
+          "name": "自定义图片",
+          "type": "MULTICOMPLEX",
+          "fieldValueType": "NONE",
+          "rules": [],
+          "properties": [],
+          "inputLevel": 0,
+          "inputOrgId": null,
+          "dataSource": null,
+          "isDisplay": 1,
+          "fields": [
+            {
+              "id": "image4",
+              "name": "自定义图片4",
+              "type": "INPUT",
+              "fieldValueType": "NONE",
+              "rules": [],
+              "properties": [],
+              "inputLevel": 0,
+              "inputOrgId": null,
+              "dataSource": null,
+              "isDisplay": 1,
+              "value": null,
+              "defaultValue": null
+            }
+          ],
+          "complexValues": [
+            {
+              "fieldMap": {
+                "image4": {
+                  "id": "image4",
+                  "name": null,
+                  "type": "INPUT",
+                  "fieldValueType": "NONE",
+                  "rules": [],
+                  "properties": [],
+                  "inputLevel": 0,
+                  "inputOrgId": null,
+                  "dataSource": null,
+                  "isDisplay": 1,
+                  "value": "",
+                  "defaultValue": null
+                }
+              },
+              "fieldKeySet": [
+                "image4"
+              ]
+            }
+          ],
+          "defaultComplexValues": []
+        },
+        {
+          "id": "code",
+          "name": "产品code",
           "type": "INPUT",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "requiredRule",
@@ -7967,15 +5945,54 @@
           "properties": [],
           "inputLevel": 0,
           "inputOrgId": null,
+          "dataSource": null,
+          "isDisplay": 1,
+          "value": "code-1",
+          "defaultValue": null
+        },
+        {
+          "id": "hsCodeCrop",
+          "name": "税号集货",
+          "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
+          "rules": [],
+          "properties": [],
+          "inputLevel": 0,
+          "inputOrgId": null,
           "dataSource": "optConfig",
           "isDisplay": 1,
-          "value": "",
-          "defaultValue": null
+          "options": [
+            {
+              "displayName": "服饰",
+              "value": "100010",
+              "dependGroup": null
+            },
+            {
+              "displayName": "鞋子",
+              "value": "100020",
+              "dependGroup": null
+            },
+            {
+              "displayName": "饰品",
+              "value": "100030",
+              "dependGroup": null
+            }
+          ],
+          "value": {
+            "id": null,
+            "value": ""
+          },
+          "defaultValue": null,
+          "defaultValueDO": {
+            "id": null,
+            "value": null
+          }
         },
         {
           "id": "hsCodePrivate",
           "name": "税号个人",
-          "type": "INPUT",
+          "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "requiredRule",
@@ -7990,13 +6007,33 @@
           "inputOrgId": null,
           "dataSource": "optConfig",
           "isDisplay": 1,
-          "value": "",
-          "defaultValue": null
+          "options": [
+            {
+              "displayName": "女装",
+              "value": "100040",
+              "dependGroup": null
+            },
+            {
+              "displayName": "男装",
+              "value": "100050",
+              "dependGroup": null
+            }
+          ],
+          "value": {
+            "id": null,
+            "value": "100040"
+          },
+          "defaultValue": null,
+          "defaultValueDO": {
+            "id": null,
+            "value": null
+          }
         },
         {
           "id": "priceMsrpSt",
           "name": "官方建议售价",
           "type": "LABEL",
+          "fieldValueType": "NONE",
           "rules": [],
           "properties": [],
           "inputLevel": 0,
@@ -8014,6 +6051,7 @@
           "id": "priceMsrpEd",
           "name": "官方建议售价",
           "type": "LABEL",
+          "fieldValueType": "NONE",
           "rules": [],
           "properties": [],
           "inputLevel": 0,
@@ -8031,6 +6069,7 @@
           "id": "priceRetailSt",
           "name": "销售价格（未审批）",
           "type": "LABEL",
+          "fieldValueType": "NONE",
           "rules": [],
           "properties": [],
           "inputLevel": 0,
@@ -8048,6 +6087,7 @@
           "id": "priceRetailEd",
           "name": "销售价格（未审批）",
           "type": "LABEL",
+          "fieldValueType": "NONE",
           "rules": [],
           "properties": [],
           "inputLevel": 0,
@@ -8065,6 +6105,7 @@
           "id": "priceSaleSt",
           "name": "销售价格（已审批）",
           "type": "LABEL",
+          "fieldValueType": "NONE",
           "rules": [],
           "properties": [],
           "inputLevel": 0,
@@ -8082,6 +6123,7 @@
           "id": "priceSaleEd",
           "name": "销售价格（已审批）",
           "type": "LABEL",
+          "fieldValueType": "NONE",
           "rules": [],
           "properties": [],
           "inputLevel": 0,
@@ -8099,6 +6141,7 @@
           "id": "status",
           "name": "商品状态",
           "type": "LABEL",
+          "fieldValueType": "NONE",
           "rules": [],
           "properties": [],
           "inputLevel": 0,
@@ -8111,11 +6154,78 @@
             "labelList": []
           },
           "value": null
+        },
+        {
+          "id": "translateStatus",
+          "name": "商品翻译状态",
+          "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
+          "rules": [],
+          "properties": [],
+          "inputLevel": 0,
+          "inputOrgId": null,
+          "dataSource": "optConfig",
+          "isDisplay": 0,
+          "options": [
+            {
+              "displayName": "翻译未完成",
+              "value": "0",
+              "dependGroup": null
+            },
+            {
+              "displayName": "翻译完成",
+              "value": "1",
+              "dependGroup": null
+            }
+          ],
+          "value": {
+            "id": null,
+            "value": ""
+          },
+          "defaultValue": "0",
+          "defaultValueDO": {
+            "id": null,
+            "value": "0"
+          }
+        },
+        {
+          "id": "editStatus",
+          "name": "商品编辑状态",
+          "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
+          "rules": [],
+          "properties": [],
+          "inputLevel": 0,
+          "inputOrgId": null,
+          "dataSource": "optConfig",
+          "isDisplay": 0,
+          "options": [
+            {
+              "displayName": "编辑未完成",
+              "value": "0",
+              "dependGroup": null
+            },
+            {
+              "displayName": "编辑完成",
+              "value": "1",
+              "dependGroup": null
+            }
+          ],
+          "value": {
+            "id": null,
+            "value": ""
+          },
+          "defaultValue": "0",
+          "defaultValueDO": {
+            "id": null,
+            "value": "0"
+          }
         },
         {
           "id": "priceChange",
           "name": "价格审批flg",
           "type": "LABEL",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "requiredRule",
@@ -8133,272 +6243,21 @@
           "labelGroup": {
             "name": null,
             "labelGroupList": [],
-            "labelList": []
+            "labelList": [
+              {
+                "name": null,
+                "value": "0",
+                "desc": null
+              }
+            ]
           },
           "value": null
-        },
-        {
-          "id": "images2",
-          "name": "包装图片",
-          "type": "MULTICOMPLEX",
-          "rules": [],
-          "properties": [],
-          "inputLevel": 0,
-          "inputOrgId": null,
-          "dataSource": null,
-          "isDisplay": 1,
-          "fields": [
-            {
-              "id": "image2",
-              "name": "包装图片2",
-              "type": "INPUT",
-              "rules": [],
-              "properties": [],
-              "inputLevel": 0,
-              "inputOrgId": null,
-              "dataSource": null,
-              "isDisplay": 1,
-              "value": null,
-              "defaultValue": null
-            }
-          ],
-          "values": [
-            {
-              "fieldMap": {
-                "image2": {
-                  "id": "image2",
-                  "name": null,
-                  "type": "INPUT",
-                  "rules": [],
-                  "properties": [],
-                  "inputLevel": 0,
-                  "inputOrgId": null,
-                  "dataSource": null,
-                  "isDisplay": 1,
-                  "value": "",
-                  "defaultValue": null
-                }
-              },
-              "fieldKeySet": [
-                "image2"
-              ]
-            }
-          ],
-          "defaultComplexValues": [],
-          "complexValues": [
-            {
-              "fieldMap": {
-                "image2": {
-                  "id": "image2",
-                  "name": null,
-                  "type": "INPUT",
-                  "rules": [],
-                  "properties": [],
-                  "inputLevel": 0,
-                  "inputOrgId": null,
-                  "dataSource": null,
-                  "isDisplay": 1,
-                  "value": "",
-                  "defaultValue": null
-                }
-              },
-              "fieldKeySet": [
-                "image2"
-              ]
-            }
-          ],
-          "fieldMap": {
-            "image2": {
-              "id": "image2",
-              "name": "包装图片2",
-              "type": "INPUT",
-              "rules": [],
-              "properties": [],
-              "inputLevel": 0,
-              "inputOrgId": null,
-              "dataSource": null,
-              "isDisplay": 1,
-              "value": null,
-              "defaultValue": null
-            }
-          }
-        },
-        {
-          "id": "images3",
-          "name": "带角度图片",
-          "type": "MULTICOMPLEX",
-          "rules": [],
-          "properties": [],
-          "inputLevel": 0,
-          "inputOrgId": null,
-          "dataSource": null,
-          "isDisplay": 1,
-          "fields": [
-            {
-              "id": "image3",
-              "name": "带角度图片3",
-              "type": "INPUT",
-              "rules": [],
-              "properties": [],
-              "inputLevel": 0,
-              "inputOrgId": null,
-              "dataSource": null,
-              "isDisplay": 1,
-              "value": null,
-              "defaultValue": null
-            }
-          ],
-          "values": [
-            {
-              "fieldMap": {
-                "image3": {
-                  "id": "image3",
-                  "name": null,
-                  "type": "INPUT",
-                  "rules": [],
-                  "properties": [],
-                  "inputLevel": 0,
-                  "inputOrgId": null,
-                  "dataSource": null,
-                  "isDisplay": 1,
-                  "value": "",
-                  "defaultValue": null
-                }
-              },
-              "fieldKeySet": [
-                "image3"
-              ]
-            }
-          ],
-          "defaultComplexValues": [],
-          "complexValues": [
-            {
-              "fieldMap": {
-                "image3": {
-                  "id": "image3",
-                  "name": null,
-                  "type": "INPUT",
-                  "rules": [],
-                  "properties": [],
-                  "inputLevel": 0,
-                  "inputOrgId": null,
-                  "dataSource": null,
-                  "isDisplay": 1,
-                  "value": "",
-                  "defaultValue": null
-                }
-              },
-              "fieldKeySet": [
-                "image3"
-              ]
-            }
-          ],
-          "fieldMap": {
-            "image3": {
-              "id": "image3",
-              "name": "带角度图片3",
-              "type": "INPUT",
-              "rules": [],
-              "properties": [],
-              "inputLevel": 0,
-              "inputOrgId": null,
-              "dataSource": null,
-              "isDisplay": 1,
-              "value": null,
-              "defaultValue": null
-            }
-          }
-        },
-        {
-          "id": "images4",
-          "name": "自定义图片",
-          "type": "MULTICOMPLEX",
-          "rules": [],
-          "properties": [],
-          "inputLevel": 0,
-          "inputOrgId": null,
-          "dataSource": null,
-          "isDisplay": 1,
-          "fields": [
-            {
-              "id": "image4",
-              "name": "自定义图片4",
-              "type": "INPUT",
-              "rules": [],
-              "properties": [],
-              "inputLevel": 0,
-              "inputOrgId": null,
-              "dataSource": null,
-              "isDisplay": 1,
-              "value": null,
-              "defaultValue": null
-            }
-          ],
-          "values": [
-            {
-              "fieldMap": {
-                "image4": {
-                  "id": "image4",
-                  "name": null,
-                  "type": "INPUT",
-                  "rules": [],
-                  "properties": [],
-                  "inputLevel": 0,
-                  "inputOrgId": null,
-                  "dataSource": null,
-                  "isDisplay": 1,
-                  "value": "",
-                  "defaultValue": null
-                }
-              },
-              "fieldKeySet": [
-                "image4"
-              ]
-            }
-          ],
-          "defaultComplexValues": [],
-          "complexValues": [
-            {
-              "fieldMap": {
-                "image4": {
-                  "id": "image4",
-                  "name": null,
-                  "type": "INPUT",
-                  "rules": [],
-                  "properties": [],
-                  "inputLevel": 0,
-                  "inputOrgId": null,
-                  "dataSource": null,
-                  "isDisplay": 1,
-                  "value": "",
-                  "defaultValue": null
-                }
-              },
-              "fieldKeySet": [
-                "image4"
-              ]
-            }
-          ],
-          "fieldMap": {
-            "image4": {
-              "id": "image4",
-              "name": "自定义图片4",
-              "type": "INPUT",
-              "rules": [],
-              "properties": [],
-              "inputLevel": 0,
-              "inputOrgId": null,
-              "dataSource": null,
-              "isDisplay": 1,
-              "value": null,
-              "defaultValue": null
-            }
-          }
         },
         {
           "id": "lock",
           "name": "lock商品",
           "type": "SINGLECHECK",
+          "fieldValueType": "NONE",
           "rules": [
             {
               "name": "requiredRule",
@@ -8411,17 +6270,28 @@
           "properties": [],
           "inputLevel": 0,
           "inputOrgId": null,
-          "dataSource": null,
+          "dataSource": "optConfig",
           "isDisplay": 1,
-          "options": [],
+          "options": [
+            {
+              "displayName": "unlock商品",
+              "value": "0",
+              "dependGroup": null
+            },
+            {
+              "displayName": "lock商品",
+              "value": "1",
+              "dependGroup": null
+            }
+          ],
           "value": {
             "id": null,
-            "value": ""
+            "value": "1"
           },
-          "defaultValue": null,
+          "defaultValue": "0",
           "defaultValueDO": {
             "id": null,
-            "value": null
+            "value": "0"
           }
         }
       ],
@@ -8429,6 +6299,7 @@
         "id": "sku",
         "name": "SKU",
         "type": "MULTICOMPLEX",
+        "fieldValueType": "NONE",
         "rules": [
           {
             "name": "1720656222_1",
@@ -8455,6 +6326,7 @@
             "id": "in_prop_151018199",
             "name": "手链长度",
             "type": "INPUT",
+            "fieldValueType": "NONE",
             "rules": [
               {
                 "name": "tipRule",
@@ -8477,6 +6349,7 @@
             "id": "prop_9066257",
             "name": "戒指手寸",
             "type": "SINGLECHECK",
+            "fieldValueType": "NONE",
             "rules": [],
             "properties": [],
             "inputLevel": 0,
@@ -8669,6 +6542,7 @@
             "id": "priceSale",
             "name": "销售价格（已审批）",
             "type": "INPUT",
+            "fieldValueType": "NONE",
             "rules": [
               {
                 "name": "valueTypeRule",
@@ -8718,6 +6592,7 @@
             "id": "qty",
             "name": "库存",
             "type": "INPUT",
+            "fieldValueType": "NONE",
             "rules": [
               {
                 "name": "valueTypeRule",
@@ -8760,6 +6635,7 @@
             "id": "skuCode",
             "name": "skuCode",
             "type": "INPUT",
+            "fieldValueType": "NONE",
             "rules": [
               {
                 "name": "valueTypeRule",
@@ -8796,6 +6672,7 @@
             "id": "barcode",
             "name": "barcode",
             "type": "INPUT",
+            "fieldValueType": "NONE",
             "rules": [
               {
                 "name": "valueTypeRule",
@@ -8831,6 +6708,7 @@
             "id": "size",
             "name": "尺码",
             "type": "LABEL",
+            "fieldValueType": "NONE",
             "rules": [
               {
                 "name": "requiredRule",
@@ -8856,6 +6734,7 @@
             "id": "priceMsrp",
             "name": "官方建议售价",
             "type": "INPUT",
+            "fieldValueType": "NONE",
             "rules": [
               {
                 "name": "requiredRule",
@@ -8877,6 +6756,7 @@
             "id": "priceRetail",
             "name": "销售价格（未审批）",
             "type": "INPUT",
+            "fieldValueType": "NONE",
             "rules": [
               {
                 "name": "requiredRule",
@@ -8895,9 +6775,10 @@
             "defaultValue": null
           },
           {
-            "id": "platform",
+            "id": "skuCarts",
             "name": "平台状态",
-            "type": "INPUT",
+            "type": "MULTICHECK",
+            "fieldValueType": "NONE",
             "rules": [
               {
                 "name": "requiredRule",
@@ -8910,295 +6791,55 @@
             "properties": [],
             "inputLevel": 0,
             "inputOrgId": null,
-            "dataSource": null,
+            "dataSource": "optConfig",
             "isDisplay": 1,
-            "value": null,
-            "defaultValue": null
+            "options": [
+              {
+                "displayName": "天猫",
+                "value": "20",
+                "dependGroup": null
+              },
+              {
+                "displayName": "淘宝",
+                "value": "21",
+                "dependGroup": null
+              },
+              {
+                "displayName": "线下",
+                "value": "22",
+                "dependGroup": null
+              },
+              {
+                "displayName": "天猫国际",
+                "value": "23",
+                "dependGroup": null
+              },
+              {
+                "displayName": "京东",
+                "value": "24",
+                "dependGroup": null
+              },
+              {
+                "displayName": "独立域名",
+                "value": "25",
+                "dependGroup": null
+              },
+              {
+                "displayName": "京东国际",
+                "value": "26",
+                "dependGroup": null
+              },
+              {
+                "displayName": "聚美优品",
+                "value": "27",
+                "dependGroup": null
+              }
+            ],
+            "values": [],
+            "defaultValues": [],
+            "defaultValuesDO": []
           }
         ],
-        "values": [
-          {
-            "fieldMap": {
-              "in_prop_151018199": {
-                "id": "in_prop_151018199",
-                "name": null,
-                "type": "INPUT",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "value": "",
-                "defaultValue": null
-              },
-              "prop_9066257": {
-                "id": "prop_9066257",
-                "name": null,
-                "type": "SINGLECHECK",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "options": [],
-                "value": {
-                  "id": null,
-                  "value": ""
-                },
-                "defaultValue": null,
-                "defaultValueDO": {
-                  "id": null,
-                  "value": null
-                }
-              },
-              "priceSale": {
-                "id": "priceSale",
-                "name": null,
-                "type": "INPUT",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "value": "501.0",
-                "defaultValue": null
-              },
-              "qty": {
-                "id": "qty",
-                "name": null,
-                "type": "INPUT",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "value": "",
-                "defaultValue": null
-              },
-              "skuCode": {
-                "id": "skuCode",
-                "name": null,
-                "type": "INPUT",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "value": "code-1-sku-1",
-                "defaultValue": null
-              },
-              "barcode": {
-                "id": "barcode",
-                "name": null,
-                "type": "INPUT",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "value": "",
-                "defaultValue": null
-              },
-              "priceMsrp": {
-                "id": "priceMsrp",
-                "name": null,
-                "type": "INPUT",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "value": "",
-                "defaultValue": null
-              },
-              "priceRetail": {
-                "id": "priceRetail",
-                "name": null,
-                "type": "INPUT",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "value": "",
-                "defaultValue": null
-              },
-              "platform": {
-                "id": "platform",
-                "name": null,
-                "type": "INPUT",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "value": "",
-                "defaultValue": null
-              }
-            },
-            "fieldKeySet": [
-              "in_prop_151018199",
-              "prop_9066257",
-              "priceSale",
-              "qty",
-              "skuCode",
-              "barcode",
-              "priceMsrp",
-              "priceRetail",
-              "platform"
-            ]
-          },
-          {
-            "fieldMap": {
-              "in_prop_151018199": {
-                "id": "in_prop_151018199",
-                "name": null,
-                "type": "INPUT",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "value": "",
-                "defaultValue": null
-              },
-              "prop_9066257": {
-                "id": "prop_9066257",
-                "name": null,
-                "type": "SINGLECHECK",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "options": [],
-                "value": {
-                  "id": null,
-                  "value": ""
-                },
-                "defaultValue": null,
-                "defaultValueDO": {
-                  "id": null,
-                  "value": null
-                }
-              },
-              "priceSale": {
-                "id": "priceSale",
-                "name": null,
-                "type": "INPUT",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "value": "502.0",
-                "defaultValue": null
-              },
-              "qty": {
-                "id": "qty",
-                "name": null,
-                "type": "INPUT",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "value": "",
-                "defaultValue": null
-              },
-              "skuCode": {
-                "id": "skuCode",
-                "name": null,
-                "type": "INPUT",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "value": "code-1-sku-2",
-                "defaultValue": null
-              },
-              "barcode": {
-                "id": "barcode",
-                "name": null,
-                "type": "INPUT",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "value": "",
-                "defaultValue": null
-              },
-              "priceMsrp": {
-                "id": "priceMsrp",
-                "name": null,
-                "type": "INPUT",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "value": "",
-                "defaultValue": null
-              },
-              "priceRetail": {
-                "id": "priceRetail",
-                "name": null,
-                "type": "INPUT",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "value": "",
-                "defaultValue": null
-              },
-              "platform": {
-                "id": "platform",
-                "name": null,
-                "type": "INPUT",
-                "rules": [],
-                "properties": [],
-                "inputLevel": 0,
-                "inputOrgId": null,
-                "dataSource": null,
-                "isDisplay": 1,
-                "value": "",
-                "defaultValue": null
-              }
-            },
-            "fieldKeySet": [
-              "in_prop_151018199",
-              "prop_9066257",
-              "priceSale",
-              "qty",
-              "skuCode",
-              "barcode",
-              "priceMsrp",
-              "priceRetail",
-              "platform"
-            ]
-          }
-        ],
-        "defaultComplexValues": [],
         "complexValues": [
           {
             "fieldMap": {
@@ -9206,6 +6847,7 @@
                 "id": "in_prop_151018199",
                 "name": null,
                 "type": "INPUT",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
@@ -9219,6 +6861,7 @@
                 "id": "prop_9066257",
                 "name": null,
                 "type": "SINGLECHECK",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
@@ -9240,6 +6883,7 @@
                 "id": "priceSale",
                 "name": null,
                 "type": "INPUT",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
@@ -9253,6 +6897,7 @@
                 "id": "qty",
                 "name": null,
                 "type": "INPUT",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
@@ -9266,6 +6911,7 @@
                 "id": "skuCode",
                 "name": null,
                 "type": "INPUT",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
@@ -9279,6 +6925,7 @@
                 "id": "barcode",
                 "name": null,
                 "type": "INPUT",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
@@ -9292,6 +6939,7 @@
                 "id": "priceMsrp",
                 "name": null,
                 "type": "INPUT",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
@@ -9305,6 +6953,7 @@
                 "id": "priceRetail",
                 "name": null,
                 "type": "INPUT",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
@@ -9314,18 +6963,30 @@
                 "value": "",
                 "defaultValue": null
               },
-              "platform": {
-                "id": "platform",
+              "skuCarts": {
+                "id": "skuCarts",
                 "name": null,
-                "type": "INPUT",
+                "type": "MULTICHECK",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
                 "inputOrgId": null,
                 "dataSource": null,
                 "isDisplay": 1,
-                "value": "",
-                "defaultValue": null
+                "options": [],
+                "values": [
+                  {
+                    "id": null,
+                    "value": "21"
+                  },
+                  {
+                    "id": null,
+                    "value": "23"
+                  }
+                ],
+                "defaultValues": [],
+                "defaultValuesDO": []
               }
             },
             "fieldKeySet": [
@@ -9337,7 +6998,7 @@
               "barcode",
               "priceMsrp",
               "priceRetail",
-              "platform"
+              "skuCarts"
             ]
           },
           {
@@ -9346,6 +7007,7 @@
                 "id": "in_prop_151018199",
                 "name": null,
                 "type": "INPUT",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
@@ -9359,6 +7021,7 @@
                 "id": "prop_9066257",
                 "name": null,
                 "type": "SINGLECHECK",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
@@ -9380,6 +7043,7 @@
                 "id": "priceSale",
                 "name": null,
                 "type": "INPUT",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
@@ -9393,6 +7057,7 @@
                 "id": "qty",
                 "name": null,
                 "type": "INPUT",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
@@ -9406,6 +7071,7 @@
                 "id": "skuCode",
                 "name": null,
                 "type": "INPUT",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
@@ -9419,6 +7085,7 @@
                 "id": "barcode",
                 "name": null,
                 "type": "INPUT",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
@@ -9432,6 +7099,7 @@
                 "id": "priceMsrp",
                 "name": null,
                 "type": "INPUT",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
@@ -9445,6 +7113,7 @@
                 "id": "priceRetail",
                 "name": null,
                 "type": "INPUT",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
@@ -9454,18 +7123,30 @@
                 "value": "",
                 "defaultValue": null
               },
-              "platform": {
-                "id": "platform",
+              "skuCarts": {
+                "id": "skuCarts",
                 "name": null,
-                "type": "INPUT",
+                "type": "MULTICHECK",
+                "fieldValueType": "NONE",
                 "rules": [],
                 "properties": [],
                 "inputLevel": 0,
                 "inputOrgId": null,
                 "dataSource": null,
                 "isDisplay": 1,
-                "value": "",
-                "defaultValue": null
+                "options": [],
+                "values": [
+                  {
+                    "id": null,
+                    "value": "21"
+                  },
+                  {
+                    "id": null,
+                    "value": "23"
+                  }
+                ],
+                "defaultValues": [],
+                "defaultValuesDO": []
               }
             },
             "fieldKeySet": [
@@ -9477,494 +7158,93 @@
               "barcode",
               "priceMsrp",
               "priceRetail",
-              "platform"
+              "skuCarts"
             ]
           }
         ],
-        "fieldMap": {
-          "size": {
-            "id": "size",
-            "name": "尺码",
-            "type": "LABEL",
-            "rules": [
-              {
-                "name": "requiredRule",
-                "value": "true",
-                "exProperty": null,
-                "dependGroup": null,
-                "valueIntervalInclude": false
-              }
-            ],
-            "properties": [],
-            "inputLevel": 0,
-            "inputOrgId": null,
-            "dataSource": null,
-            "isDisplay": 1,
-            "labelGroup": {
-              "name": null,
-              "labelGroupList": [],
-              "labelList": []
-            },
-            "value": null
-          },
-          "priceMsrp": {
-            "id": "priceMsrp",
-            "name": "官方建议售价",
-            "type": "INPUT",
-            "rules": [
-              {
-                "name": "requiredRule",
-                "value": "true",
-                "exProperty": null,
-                "dependGroup": null,
-                "valueIntervalInclude": false
-              }
-            ],
-            "properties": [],
-            "inputLevel": 0,
-            "inputOrgId": null,
-            "dataSource": null,
-            "isDisplay": 1,
-            "value": null,
-            "defaultValue": null
-          },
-          "prop_9066257": {
-            "id": "prop_9066257",
-            "name": "戒指手寸",
-            "type": "SINGLECHECK",
-            "rules": [],
-            "properties": [],
-            "inputLevel": 0,
-            "inputOrgId": null,
-            "dataSource": null,
-            "isDisplay": 1,
-            "options": [
-              {
-                "displayName": "女士6号",
-                "value": "86345530",
-                "dependGroup": null
-              },
-              {
-                "displayName": "8号",
-                "value": "3755861",
-                "dependGroup": null
-              },
-              {
-                "displayName": "9号",
-                "value": "3478988",
-                "dependGroup": null
-              },
-              {
-                "displayName": "10号",
-                "value": "3388352",
-                "dependGroup": null
-              },
-              {
-                "displayName": "11号",
-                "value": "3979749",
-                "dependGroup": null
-              },
-              {
-                "displayName": "12号",
-                "value": "3979774",
-                "dependGroup": null
-              },
-              {
-                "displayName": "13号",
-                "value": "3979815",
-                "dependGroup": null
-              },
-              {
-                "displayName": "14号",
-                "value": "3979844",
-                "dependGroup": null
-              },
-              {
-                "displayName": "15号",
-                "value": "3979889",
-                "dependGroup": null
-              },
-              {
-                "displayName": "16号",
-                "value": "86345532",
-                "dependGroup": null
-              },
-              {
-                "displayName": "女士6号",
-                "value": "158478274",
-                "dependGroup": null
-              },
-              {
-                "displayName": "男士15号",
-                "value": "266404500",
-                "dependGroup": null
-              },
-              {
-                "displayName": "女士8号",
-                "value": "266396745",
-                "dependGroup": null
-              },
-              {
-                "displayName": "女士11号",
-                "value": "266408186",
-                "dependGroup": null
-              },
-              {
-                "displayName": "男士18号",
-                "value": "266414020",
-                "dependGroup": null
-              },
-              {
-                "displayName": "女士10号",
-                "value": "36778573",
-                "dependGroup": null
-              },
-              {
-                "displayName": "女士17号",
-                "value": "266396743",
-                "dependGroup": null
-              },
-              {
-                "displayName": "活口",
-                "value": "64416021",
-                "dependGroup": null
-              },
-              {
-                "displayName": "男士17号",
-                "value": "266408185",
-                "dependGroup": null
-              },
-              {
-                "displayName": "女士13号",
-                "value": "266414016",
-                "dependGroup": null
-              },
-              {
-                "displayName": "男士23号",
-                "value": "266414017",
-                "dependGroup": null
-              },
-              {
-                "displayName": "女士7号",
-                "value": "146647476",
-                "dependGroup": null
-              },
-              {
-                "displayName": "男士20号",
-                "value": "266410085",
-                "dependGroup": null
-              },
-              {
-                "displayName": "女士15号",
-                "value": "266390961",
-                "dependGroup": null
-              },
-              {
-                "displayName": "男士16号",
-                "value": "266392909",
-                "dependGroup": null
-              },
-              {
-                "displayName": "女士14号",
-                "value": "266392907",
-                "dependGroup": null
-              },
-              {
-                "displayName": "女士12号",
-                "value": "266392906",
-                "dependGroup": null
-              },
-              {
-                "displayName": "女士18号",
-                "value": "266400644",
-                "dependGroup": null
-              },
-              {
-                "displayName": "男士21号",
-                "value": "266412039",
-                "dependGroup": null
-              },
-              {
-                "displayName": "女士9号",
-                "value": "158480393",
-                "dependGroup": null
-              },
-              {
-                "displayName": "男士14号",
-                "value": "266400646",
-                "dependGroup": null
-              },
-              {
-                "displayName": "男士19号",
-                "value": "266402619",
-                "dependGroup": null
-              },
-              {
-                "displayName": "男士22号",
-                "value": "266394766",
-                "dependGroup": null
-              },
-              {
-                "displayName": "女士16号",
-                "value": "266394767",
-                "dependGroup": null
-              }
-            ],
-            "value": {
-              "id": null,
-              "value": null
-            },
-            "defaultValue": null,
-            "defaultValueDO": {
-              "id": null,
-              "value": null
-            }
-          },
-          "qty": {
-            "id": "qty",
-            "name": "库存",
-            "type": "INPUT",
-            "rules": [
-              {
-                "name": "valueTypeRule",
-                "value": "integer",
-                "exProperty": null,
-                "dependGroup": null,
-                "valueIntervalInclude": false
-              },
-              {
-                "name": "minValueRule",
-                "value": "0",
-                "exProperty": "include",
-                "dependGroup": null,
-                "valueIntervalInclude": true
-              },
-              {
-                "name": "maxValueRule",
-                "value": "1000000",
-                "exProperty": "not include",
-                "dependGroup": null,
-                "valueIntervalInclude": false
-              },
-              {
-                "name": "requiredRule",
-                "value": "true",
-                "exProperty": null,
-                "dependGroup": null,
-                "valueIntervalInclude": false
-              }
-            ],
-            "properties": [],
-            "inputLevel": 0,
-            "inputOrgId": "sku_quantity",
-            "dataSource": null,
-            "isDisplay": 1,
-            "value": null,
-            "defaultValue": null
-          },
-          "priceSale": {
-            "id": "priceSale",
-            "name": "销售价格（已审批）",
-            "type": "INPUT",
-            "rules": [
-              {
-                "name": "valueTypeRule",
-                "value": "decimal",
-                "exProperty": null,
-                "dependGroup": null,
-                "valueIntervalInclude": false
-              },
-              {
-                "name": "minValueRule",
-                "value": "0.00",
-                "exProperty": "not include",
-                "dependGroup": null,
-                "valueIntervalInclude": false
-              },
-              {
-                "name": "maxValueRule",
-                "value": "100000000.00",
-                "exProperty": "not include",
-                "dependGroup": null,
-                "valueIntervalInclude": false
-              },
-              {
-                "name": "686309844_1",
-                "value": "SKU价格受类目限制",
-                "exProperty": null,
-                "dependGroup": null,
-                "valueIntervalInclude": false
-              },
-              {
-                "name": "requiredRule",
-                "value": "true",
-                "exProperty": null,
-                "dependGroup": null,
-                "valueIntervalInclude": false
-              }
-            ],
-            "properties": [],
-            "inputLevel": 0,
-            "inputOrgId": "sku_price",
-            "dataSource": null,
-            "isDisplay": 1,
-            "value": null,
-            "defaultValue": null
-          },
-          "priceRetail": {
-            "id": "priceRetail",
-            "name": "销售价格（未审批）",
-            "type": "INPUT",
-            "rules": [
-              {
-                "name": "requiredRule",
-                "value": "true",
-                "exProperty": null,
-                "dependGroup": null,
-                "valueIntervalInclude": false
-              }
-            ],
-            "properties": [],
-            "inputLevel": 0,
-            "inputOrgId": null,
-            "dataSource": null,
-            "isDisplay": 1,
-            "value": null,
-            "defaultValue": null
-          },
-          "barcode": {
-            "id": "barcode",
-            "name": "barcode",
-            "type": "INPUT",
-            "rules": [
-              {
-                "name": "valueTypeRule",
-                "value": "text",
-                "exProperty": null,
-                "dependGroup": null,
-                "valueIntervalInclude": false
-              },
-              {
-                "name": "674880071_1",
-                "value": "条形码必须符合EAN和UPC编码规则",
-                "exProperty": null,
-                "dependGroup": null,
-                "valueIntervalInclude": false
-              },
-              {
-                "name": "requiredRule",
-                "value": "true",
-                "exProperty": null,
-                "dependGroup": null,
-                "valueIntervalInclude": false
-              }
-            ],
-            "properties": [],
-            "inputLevel": 0,
-            "inputOrgId": "sku_barcode",
-            "dataSource": null,
-            "isDisplay": 1,
-            "value": null,
-            "defaultValue": null
-          },
-          "in_prop_151018199": {
-            "id": "in_prop_151018199",
-            "name": "手链长度",
-            "type": "INPUT",
-            "rules": [
-              {
-                "name": "tipRule",
-                "value": "手链长度格式为 :值单位，单位为cm，小数点后最多保留2位.",
-                "exProperty": null,
-                "dependGroup": null,
-                "url": null,
-                "valueIntervalInclude": false
-              }
-            ],
-            "properties": [],
-            "inputLevel": 0,
-            "inputOrgId": null,
-            "dataSource": null,
-            "isDisplay": 1,
-            "value": null,
-            "defaultValue": null
-          },
-          "skuCode": {
-            "id": "skuCode",
-            "name": "skuCode",
-            "type": "INPUT",
-            "rules": [
-              {
-                "name": "valueTypeRule",
-                "value": "text",
-                "exProperty": null,
-                "dependGroup": null,
-                "valueIntervalInclude": false
-              },
-              {
-                "name": "maxLengthRule",
-                "value": "64",
-                "exProperty": "include",
-                "dependGroup": null,
-                "unit": "byte",
-                "valueIntervalInclude": true
-              },
-              {
-                "name": "requiredRule",
-                "value": "true",
-                "exProperty": null,
-                "dependGroup": null,
-                "valueIntervalInclude": false
-              }
-            ],
-            "properties": [],
-            "inputLevel": 0,
-            "inputOrgId": "sku_outerId",
-            "dataSource": null,
-            "isDisplay": 1,
-            "value": null,
-            "defaultValue": null
-          },
-          "platform": {
-            "id": "platform",
-            "name": "平台状态",
-            "type": "INPUT",
-            "rules": [
-              {
-                "name": "requiredRule",
-                "value": "true",
-                "exProperty": null,
-                "dependGroup": null,
-                "valueIntervalInclude": false
-              }
-            ],
-            "properties": [],
-            "inputLevel": 0,
-            "inputOrgId": null,
-            "dataSource": null,
-            "isDisplay": 1,
-            "value": null,
-            "defaultValue": null
-          }
-        }
+        "defaultComplexValues": []
       },
-      "feedAttributes": {
+      "customAttributes": {
         "orgAtts": {
-          "washingtype": "dry cleaning",
-          "collar": "mandarin collar",
-          "style": "campus",
-          "waspe": "dleaning"
+          "orgAtts": [
+            {
+              "key": "orgAtts",
+              "value": [
+                {
+                  "key": "orgAtts",
+                  "value": [
+                    {
+                      "key": "orgAtts",
+                      "value": [
+                        {
+                          "key": "orgAtts",
+                          "value": [],
+                          "selected": false
+                        }
+                      ],
+                      "selected": false
+                    }
+                  ],
+                  "selected": false
+                }
+              ],
+              "selected": false
+            }
+          ]
         },
         "cnAtts": {
-          "washingtype": "dry cleaning",
-          "collar": "mandarin collar",
-          "style": "campus",
-          "waspe": "dleaning"
+          "cnAtts": [
+            {
+              "key": "cnAtts",
+              "value": [
+                {
+                  "key": "cnAtts",
+                  "value": [
+                    {
+                      "key": "cnAtts",
+                      "value": [
+                        {
+                          "key": "cnAtts",
+                          "value": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         },
-        "customIds": [
-          "collar",
-          "style"
-        ]
+        "customIds": []
+      },
+      "productStatus": {
+        "status": null,
+        "translateStatus": null,
+        "editStatus": null
+      },
+      "modified": "2016-01-08 18:55:46.274",
+      "productImages": [
+        {
+          "name": "DTW68F16_001"
+        },
+        {
+          "name": "DTW68F16_001_a"
+        },
+        {
+          "name": "DTW68F16_001_c"
+        },
+        {
+          "name": "DTW68F16_001_b"
+        },
+        {
+          "name": "DTW68F16_001_c"
+        }
+      ],
+      "feedInfoModel": null,
+      "productStautsInstance": {
+        "status": null,
+        "translateStatus": null,
+        "editStatus": null
       }
     }
   },
