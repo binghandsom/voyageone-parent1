@@ -28,7 +28,7 @@ public class CarrierConfigs {
      */
     public static void init(CarrierDao carrierDao) {
         if (carriers == null) {
-            List<CarrierBean> allCarriers = carrierDao.getAll();
+            allCarriers = carrierDao.getAll();
 
             logger.info("Carrier 读取数量: " + allCarriers.size());
 
