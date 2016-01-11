@@ -71,7 +71,8 @@
   "setting_platform_mapping_list": {
     "hash": "/setting/platform_mapping/list",
     "templateUrl": "views/setting/platform_mapping/list.tpl.html",
-    "controllerUrl": "modules/cms/views/setting/platform_mapping/list.ctl"
+    "controllerUrl": "modules/cms/views/setting/platform_mapping/list.ctl",
+    "controller": "platformMappingController"
   },
   "setting_platform_mapping_prop": {
     "hash": "/setting/platform_mapping/prop",

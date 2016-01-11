@@ -1,12 +1,33 @@
-/**
- * Created by linanbin on 15/12/7.
- */
 define([
+    'cms',
+    'underscore',
     'modules/cms/controller/popup.ctl'
-], function () {
+], function (cms, _) {
+    'use strict';
+    /**
+     * @ngdoc object
+     * @name platformMappingController
+     * @description
+     *
+     * 平台类目到主数据类目的匹配
+     */
+    return cms.controller('platformMappingController', (function () {
 
-    return function ($scope) {
+        /**
+         * @description
+         * 创建平台到主数据类目匹配的画面 Controller 类
+         * @constructor
+         */
+        function PlatformMappingController() {
+        }
 
-        $scope.vm = {"searchInfo": {}, "masterData": {}};
-    };
+        PlatformMappingController.prototype = {
+
+            init: function () {
+                console.log('已加载');
+            }
+        };
+
+        return PlatformMappingController;
+    })());
 });
