@@ -21,7 +21,6 @@ import com.voyageone.cms.service.model.feed.mapping.Mapping;
 import com.voyageone.cms.service.model.feed.mapping.Prop;
 import com.voyageone.common.components.baidu.translate.BaiduTranslateUtil;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.ShopConfigs;
 import com.voyageone.common.configs.beans.OrderChannelBean;
@@ -33,6 +32,9 @@ import com.voyageone.common.masterdate.schema.field.MultiComplexField;
 import com.voyageone.common.util.MD5;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
+import com.voyageone.web2.sdk.api.domain.ProductPriceModel;
+import com.voyageone.web2.sdk.api.domain.ProductSkuPriceModel;
+import com.voyageone.web2.sdk.api.request.ProductUpdatePriceRequest;
 import com.voyageone.web2.sdk.api.request.ProductsAddRequest;
 import com.voyageone.web2.sdk.api.response.ProductsAddResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,9 +47,6 @@ public class CmsSetMainPropService extends BaseTaskService {
 
     @Autowired
     SuperFeedDao superfeeddao;
-
-    @Autowired
-    private TransactionRunner transactionRunner;
 
 	@Autowired
 	MainPropDao mainPropDao;
@@ -178,6 +177,8 @@ public class CmsSetMainPropService extends BaseTaskService {
                 // 一般只改改价格神马的
                 // TODO: 最后再写
 
+
+
             } else {
                 // 不存在的场合, 新建一个product
                 cmsProduct = doCreateCmsBtProductModel(feed, mapping);
@@ -188,7 +189,11 @@ public class CmsSetMainPropService extends BaseTaskService {
                 ProductsAddResponse response = voApiClient.execute(requestModel);
 
                 logger.info(cmsProduct.getChannelId() + ":" + cmsProduct.getFields().getCode() +":" + response.getCode() + ":" + response.getMessage());
+
             }
+
+            // 调用共通方法来设置价格
+            doSetPrice(channelId, feed, cmsProduct);
 
             // 更新price_log信息
             // TODO:更新price_log信息 -> 共通代码里会处理的,我这边就不需要写了
@@ -265,33 +270,33 @@ public class CmsSetMainPropService extends BaseTaskService {
             // 创建新的group
             CmsBtProductModel_Group group = new CmsBtProductModel_Group();
 
-            // 价格区间设置
-            Double minMsrp = 99999999.99; // 九千九百九十九万 九千九百九十九 点 九九
-            Double maxMsrp = 0.0;
-            Double minRetail = 99999999.99; // 九千九百九十九万 九千九百九十九 点 九九
-            Double maxRetail = 0.0;
-//            Double minSale = 99999999.99; // 九千九百九十九万 九千九百九十九 点 九九
-//            Double maxSale = 0.0;
-            for (CmsBtProductModel_Sku sku : mainSkuList) {
-                Double nowMsrp = sku.getPriceMsrp();
-                Double nowRetail = sku.getPriceRetail();
-//                Double nowSale = sku.getPriceSale();
-
-                if (nowMsrp < minMsrp) minMsrp = nowMsrp;
-                if (nowMsrp > maxMsrp) maxMsrp = nowMsrp;
-
-                if (nowRetail < minRetail) minRetail = nowRetail;
-                if (nowRetail > maxRetail) maxRetail = nowRetail;
-
-//                if (nowSale < minSale) minSale = nowSale;
-//                if (nowSale > maxSale) maxSale = nowSale;
-            }
-            group.setMsrpStart(minMsrp);
-            group.setMsrpEnd(maxMsrp);
-            group.setRetailPriceStart(minRetail);
-            group.setRetailPriceEnd(maxRetail);
-//            group.setSalePriceStart(minSale);
-//            group.setSalePriceEnd(maxSale);
+//            // 价格区间设置 ( -> 调用顾步春的api自动会去设置,这里不需要设置了)
+//            Double minMsrp = 99999999.99; // 九千九百九十九万 九千九百九十九 点 九九
+//            Double maxMsrp = 0.0;
+//            Double minRetail = 99999999.99; // 九千九百九十九万 九千九百九十九 点 九九
+//            Double maxRetail = 0.0;
+////            Double minSale = 99999999.99; // 九千九百九十九万 九千九百九十九 点 九九
+////            Double maxSale = 0.0;
+//            for (CmsBtProductModel_Sku sku : mainSkuList) {
+//                Double nowMsrp = sku.getPriceMsrp();
+//                Double nowRetail = sku.getPriceRetail();
+////                Double nowSale = sku.getPriceSale();
+//
+//                if (nowMsrp < minMsrp) minMsrp = nowMsrp;
+//                if (nowMsrp > maxMsrp) maxMsrp = nowMsrp;
+//
+//                if (nowRetail < minRetail) minRetail = nowRetail;
+//                if (nowRetail > maxRetail) maxRetail = nowRetail;
+//
+////                if (nowSale < minSale) minSale = nowSale;
+////                if (nowSale > maxSale) maxSale = nowSale;
+//            }
+//            group.setMsrpStart(minMsrp);
+//            group.setMsrpEnd(maxMsrp);
+//            group.setRetailPriceStart(minRetail);
+//            group.setRetailPriceEnd(maxRetail);
+////            group.setSalePriceStart(minSale);
+////            group.setSalePriceEnd(maxSale);
 
             // 获取当前channel, 有多少个platform, 最后增加一个id为0的platform
             List<ShopBean> shopList = ShopConfigs.getChannelShopList(feed.getChannelId());
@@ -587,6 +592,35 @@ public class CmsSetMainPropService extends BaseTaskService {
             }
 
             return null;
+
+        }
+
+        /**
+         * doSetPrice 设置product的价格
+         * @param channelId channel id
+         * @param feed feed信息
+         * @param cmsProduct cms product信息
+         */
+        private void doSetPrice(String channelId, CmsBtFeedInfoModel feed, CmsBtProductModel cmsProduct) {
+            ProductUpdatePriceRequest requestModel = new ProductUpdatePriceRequest(channelId);
+            ProductPriceModel model = new ProductPriceModel();
+            ProductSkuPriceModel skuPriceModel;
+
+            model.setProductId(cmsProduct.getProdId());
+
+            for (CmsBtFeedInfoModel_Sku sku : feed.getSkus()) {
+                skuPriceModel = new ProductSkuPriceModel();
+
+                skuPriceModel.setSkuCode(sku.getSku());
+                skuPriceModel.setPriceMsrp(sku.getPrice_msrp());
+                skuPriceModel.setPriceRetail(sku.getPrice_current());
+                model.addSkuPrice(skuPriceModel);
+            }
+
+            requestModel.addProductPrices(model);
+
+            //SDK取得Product 数据
+            voApiClient.execute(requestModel);
 
         }
 
