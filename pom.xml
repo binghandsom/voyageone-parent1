@@ -314,17 +314,17 @@
                 <version>1.4.1</version>
             </dependency>
             <dependency>
-                <groupId>com.voyageone</groupId>
+                <groupId>org.apache.ws.commons.axiom</groupId>
                 <artifactId>axiom-api</artifactId>
                 <version>1.2.14</version>
             </dependency>
             <dependency>
-                <groupId>com.voyageone</groupId>
+                <groupId>org.apache.ws.commons.axiom</groupId>
                 <artifactId>axiom-dom</artifactId>
                 <version>1.2.14</version>
             </dependency>
             <dependency>
-                <groupId>com.voyageone</groupId>
+                <groupId>org.apache.ws.commons.axiom</groupId>
                 <artifactId>axiom-impl</artifactId>
                 <version>1.2.14</version>
             </dependency>
