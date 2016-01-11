@@ -4,6 +4,7 @@ package com.voyageone.cms.service;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
+import com.voyageone.cms.CmsConstants;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.model.*;
 import com.voyageone.common.configs.Enums.CartEnums;
@@ -102,7 +103,7 @@ public class CmsProductServiceTest {
         fields.setPriceSaleEd(600.00 + random.nextInt(100));
         fields.setCurPriceSt(700.00 + random.nextInt(100));
         fields.setCurPriceEd(800.00 + random.nextInt(100));
-        fields.setStatus("pedding");
+        fields.setStatus(CmsConstants.ProductStatus.New);
         fields.setTranslateStatus("0");
         fields.setEditStatus("0");
         fields.setSizeType("Men" + random.nextInt(5));

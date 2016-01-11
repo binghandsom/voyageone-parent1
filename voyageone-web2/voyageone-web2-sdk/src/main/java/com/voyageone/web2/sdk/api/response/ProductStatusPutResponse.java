@@ -4,13 +4,13 @@ import com.voyageone.web2.sdk.api.VoApiUpdateResponse;
 
 
 /**
- * product groups create/update response
- * /product/group/put
+ * product status update response
+ * /product/status/update
  * Created on 2015-12-14
  *
  * @author chuanyu.liang
  * @version 2.0.0
  * @since. 2.0.0
  */
-public class ProductGroupsPutResponse extends VoApiUpdateResponse {
+public class ProductStatusPutResponse extends VoApiUpdateResponse {
 }

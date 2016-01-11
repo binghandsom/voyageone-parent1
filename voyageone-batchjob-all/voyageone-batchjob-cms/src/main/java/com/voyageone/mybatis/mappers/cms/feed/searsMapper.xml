@@ -4,11 +4,11 @@
 
 
     <delete id="cms_zz_worktable_sears_superfeed_delete">
-        DELETE FROM voyageone_cms.cms_zz_worktable_sears_superfeed;
+        DELETE FROM voyageone_cms2.cms_zz_worktable_sears_superfeed;
     </delete>
 
     <insert id="cms_zz_worktable_sears_superfeed_insert" parameterType="com.voyageone.common.components.sears.bean.ProductResponse" >
-        insert into voyageone_cms.cms_zz_worktable_sears_superfeed (
+        insert into voyageone_cms2.cms_zz_worktable_sears_superfeed (
                 item_id,
                 product_id,
                 product_name,
@@ -57,7 +57,7 @@
         </foreach>
     </insert>
     <insert id="cms_zz_worktable_sears_attribute_insert" parameterType="com.voyageone.common.components.sears.bean.ProductResponse" >
-        insert ignore into voyageone_cms.cms_zz_worktable_sears_attribute (
+        insert ignore into voyageone_cms2.cms_zz_worktable_sears_attribute (
         item_id,
         label,
         attribute,
@@ -77,13 +77,13 @@
         </foreach>
     </insert>
     <delete id="cms_zz_worktable_sears_attribute_delete">
-        DELETE FROM voyageone_cms.cms_zz_worktable_sears_attribute;
+        DELETE FROM voyageone_cms2.cms_zz_worktable_sears_attribute;
     </delete>
     <delete id="cms_zz_worktable_sears_list_delete">
-        DELETE FROM voyageone_cms.cms_zz_worktable_sears_list;
+        DELETE FROM voyageone_cms2.cms_zz_worktable_sears_list;
     </delete>
     <insert id="cms_zz_worktable_sears_list_insert" parameterType="com.voyageone.common.components.sears.bean.ProductResponse" >
-        insert into voyageone_cms.cms_zz_worktable_sears_list (
+        insert into voyageone_cms2.cms_zz_worktable_sears_list (
         item_id,
         status)
         values
@@ -97,7 +97,7 @@
         select
           item_id
         from
-          voyageone_cms.cms_zz_worktable_sears_list
+          voyageone_cms2.cms_zz_worktable_sears_list
         where
           status = #{status}
     </select>
@@ -106,8 +106,8 @@
             b.cfg_name,
             GROUP_CONCAT(DISTINCT a.`value`) as value
         FROM
-            voyageone_cms.cms_zz_worktable_sears_attribute a
-        LEFT JOIN voyageone_cms.cms_mt_feed_config b ON a.attribute = b.cfg_val1
+            voyageone_cms2.cms_zz_worktable_sears_attribute a
+        LEFT JOIN voyageone_cms2.cms_mt_feed_config b ON a.attribute = b.cfg_val1
         AND b.order_channel_id = '013'
         WHERE
              b.is_attribute = 1
@@ -200,7 +200,7 @@
     <delete id="cms_zz_worktable_sears_superfeed_full_del" parameterType="java.util.List">
         DELETE
         FROM
-        voyageone_cms.cms_zz_worktable_sears_superfeed_full
+        voyageone_cms2.cms_zz_worktable_sears_superfeed_full
         where item_id in (
         <foreach collection="list" item="itemIds" index="index" separator=",">
             #{itemIds}
@@ -208,8 +208,8 @@
         )
     </delete>
     <insert id="cms_zz_worktable_sears_superfeed_full_insert"  parameterType="java.util.List">
-        INSERT INTO voyageone_cms.cms_zz_worktable_sears_superfeed_full SELECT * from
-        voyageone_cms.cms_zz_worktable_sears_superfeed where item_id in
+        INSERT INTO voyageone_cms2.cms_zz_worktable_sears_superfeed_full SELECT * from
+        voyageone_cms2.cms_zz_worktable_sears_superfeed where item_id in
         (
         <foreach collection="list" item="itemIds" index="index" separator=",">
             #{itemIds}
@@ -217,7 +217,7 @@
         )
     </insert>
     <update id="cms_zz_worktable_sears_superfeed_update"  parameterType="java.util.List">
-        UPDATE voyageone_cms.cms_zz_worktable_sears_superfeed set update_flg = 3 where item_id in (
+        UPDATE voyageone_cms2.cms_zz_worktable_sears_superfeed set update_flg = 3 where item_id in (
         <foreach collection="list" item="itemIds" index="index" separator=",">
             #{itemIds}
         </foreach>
@@ -229,21 +229,21 @@
     <delete id="cms_zz_worktable_sears_superfeed_full_code_del" parameterType="java.util.List">
         DELETE
         FROM
-        voyageone_cms.cms_zz_worktable_sears_superfeed_full
+        voyageone_cms2.cms_zz_worktable_sears_superfeed_full
         where model_number = #{model}
         <if test="color != null and color != ''">
             and  color =  #{color}
         </if>
     </delete>
     <insert id="cms_zz_worktable_sears_superfeed_full_code_insert"  parameterType="java.util.List">
-        INSERT INTO voyageone_cms.cms_zz_worktable_sears_superfeed_full SELECT * from
-        voyageone_cms.cms_zz_worktable_sears_superfeed where model_number = #{model}
+        INSERT INTO voyageone_cms2.cms_zz_worktable_sears_superfeed_full SELECT * from
+        voyageone_cms2.cms_zz_worktable_sears_superfeed where model_number = #{model}
         <if test="color != null and color != ''">
            and color =  #{color}
         </if>
     </insert>
     <update id="cms_zz_worktable_sears_superfeed_code_update"  parameterType="java.util.List">
-        UPDATE voyageone_cms.cms_zz_worktable_sears_superfeed set update_flg = 3
+        UPDATE voyageone_cms2.cms_zz_worktable_sears_superfeed set update_flg = 3
         where model_number = #{model}
         <if test="color != null and color != ''">
             and  color =  #{color}
