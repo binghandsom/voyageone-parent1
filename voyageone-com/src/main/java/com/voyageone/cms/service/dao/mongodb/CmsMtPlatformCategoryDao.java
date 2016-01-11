@@ -27,8 +27,7 @@ public class CmsMtPlatformCategoryDao extends BaseMongoDao {
 
     public List<CmsMtPlatformCategoryTreeModel> selectPlatformCategoriesByCartId(Integer cartId){
         String queryStr = "{cartId:"+cartId+"}";
-        List<CmsMtPlatformCategoryTreeModel> categoryModels = select(queryStr);
-        return categoryModels;
+        return select(queryStr);
     }
 
     public CmsMtPlatformCategoryTreeModel selectByChannel_CartId_CatId(String channelId, int cartId, String categoryId) {
