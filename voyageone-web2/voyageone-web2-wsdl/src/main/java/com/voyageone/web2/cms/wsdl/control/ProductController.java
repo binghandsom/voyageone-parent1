@@ -97,4 +97,16 @@ public class ProductController extends BaseController {
     public ProductsDeleteResponse deleteProducts(@RequestBody ProductsDeleteRequest request) {
         return productService.deleteProducts(request);
     }
+
+
+
+    /**
+     * remove product
+     *
+     * @return ProductsDeleteResponse
+     */
+    @RequestMapping("/status/update")
+    public ProductGroupsPutResponse updateStatusProducts(@RequestBody ProductStatusPutRequest request) {
+        return productService.updateStatusProducts(request);
+    }
 }

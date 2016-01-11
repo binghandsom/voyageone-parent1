@@ -5,6 +5,8 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
+import com.voyageone.cms.CmsConstants;
+import com.voyageone.cms.service.CmsProductLogService;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.cms.service.model.CmsBtProductModel_Feed;
@@ -21,6 +23,7 @@ import com.voyageone.web2.sdk.api.request.*;
 import com.voyageone.web2.sdk.api.response.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.text.Collator;
 import java.util.*;
@@ -37,6 +40,9 @@ public class ProductService extends BaseService {
 
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
+
+    @Autowired
+    protected CmsProductLogService cmsProductLogService;
 
     @Autowired
     private CmsBtPriceLogDao cmsBtPriceLogDao;
@@ -436,7 +442,7 @@ public class ProductService extends BaseService {
         VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70007;
         if (!StringUtils.isEmpty(queryStr)) {
             JomgoQuery queryObject = new JomgoQuery();
-            queryObject.setProjection("prodId", "modified");
+            queryObject.setProjection("prodId", "modified", "fields.status");
 
             CmsBtProductModel findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
             if (findModel == null) {
@@ -521,6 +527,13 @@ public class ProductService extends BaseService {
             if (bulkList.size() > 0) {
                 BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
                 setResultCount(response, bulkWriteResult);
+                //insertProductHistory
+                if (findModel.getFields() != null && findModel.getFields().getStatus() != null
+                    && productModel.getFields() != null && productModel.getFields().getStatus() != null) {
+                    CmsConstants.ProductStatus befStatus = CmsConstants.ProductStatus.valueOf(findModel.getFields().getStatus());
+                    CmsConstants.ProductStatus aftStatus = CmsConstants.ProductStatus.valueOf(productModel.getFields().getStatus());
+                    insertProductHistory(befStatus, aftStatus, channelId, findModel.getProdId());
+                }
             }
         }
 
@@ -574,6 +587,83 @@ public class ProductService extends BaseService {
         }
 
         return response;
+    }
+
+    /**
+     * updateStatusProducts
+     * @param request ProductStatusPutRequest
+     * @return ProductGroupsPutResponse
+     */
+    public ProductGroupsPutResponse updateStatusProducts(@RequestBody ProductStatusPutRequest  request) {
+        ProductGroupsPutResponse response = new ProductGroupsPutResponse();
+
+        checkCommRequest(request);
+        //ChannelId
+        String channelId = request.getChannelId();
+        checkRequestChannelId(channelId);
+
+        request.check();
+
+        CmsConstants.ProductStatus aftStatus = request.getStatus();
+
+        HashMap<String, Object> queryMap = new HashMap<>();
+        JomgoQuery queryObject = new JomgoQuery();
+        queryObject.setProjection("prodId", "fields.status");
+        if (request.getProductId() != null) {
+            queryObject.setQuery("{\"prodId\":" + request.getProductId() + "}");
+        } else {
+            queryObject.setQuery("{\"fields.code\":\"" + request.getProductCode() + "\"}");
+        }
+
+        CmsBtProductModel findModel = null;
+        if (!StringUtils.isEmpty(queryObject.getQuery())) {
+            findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
+        }
+
+        HashMap<String, Object> updateMap = new HashMap<>();
+        if (findModel != null) {
+            String findStatus = null;
+            if (findModel.getFields() != null && findModel.getFields().getStatus() != null) {
+                findStatus = findModel.getFields().getStatus();
+            }
+            if (aftStatus != null && !aftStatus.toString().equals(findStatus)) {
+                updateMap.put("fields.status", aftStatus.toString());
+
+                if (!StringUtils.isEmpty(request.getModifier())) {
+                    updateMap.put("modified", DateTimeUtil.getNowTimeStamp());
+                    updateMap.put("modifier", request.getModifier());
+                }
+            }
+        }
+
+        if (updateMap.size() > 0) {
+            BulkUpdateModel model = new BulkUpdateModel();
+            model.setUpdateMap(updateMap);
+            model.setQueryMap(queryMap);
+
+            List<BulkUpdateModel> bulkList = new ArrayList<>();
+            bulkList.add(model);
+            BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
+            setResultCount(response, bulkWriteResult);
+            //insertProductHistory
+            if (findModel !=null && findModel.getFields() != null) {
+                CmsConstants.ProductStatus befStatus = CmsConstants.ProductStatus.valueOf(findModel.getFields().getStatus());
+                insertProductHistory(befStatus, aftStatus, channelId, findModel.getProdId());
+            }
+        }
+
+        return response;
+    }
+
+
+    private void insertProductHistory(CmsConstants.ProductStatus befStatus, CmsConstants.ProductStatus aftStatus,
+                                      String channelId, Long productId) {
+        if (befStatus != null && aftStatus != null && !befStatus.equals(aftStatus)) {
+            if (productId != null) {
+                CmsBtProductModel productModel = cmsBtProductDao.selectProductById(channelId, productId);
+                cmsProductLogService.insertProductHistory(productModel);
+            }
+        }
     }
 
 }
