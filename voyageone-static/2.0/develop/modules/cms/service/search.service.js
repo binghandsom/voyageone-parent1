@@ -9,12 +9,15 @@ define([
     angularAMD
         .service('searchIndexService', searchIndexService);
 
-    function searchIndexService($q, $searchIndexService) {
+    function searchIndexService($q, selectRowsFactory, $searchIndexService) {
 
         this.init = init;
         this.search = search;
         this.getGroupList = getGroupList;
         this.getProductList = getProductList;
+
+        var tempGroupSelect = new selectRowsFactory();
+        var tempProductSelect = new selectRowsFactory();
 
         /**
          * 初始化数据
@@ -44,15 +47,14 @@ define([
             data.productPageSize = productPagination.size;
 
             $searchIndexService.search(data).then(function (res) {
-                var resultGroup = _resetGroupList(res.data);
-                res.data.groupCurrPageRows  = resultGroup.groupCurrPageRows;
-                res.data.groupSelFlag= resultGroup.groupSelFlag;
-                res.data.groupList = resultGroup.groupList;
 
-                var resultProduct =  _resetProductList(res.data);
-                res.data.groupCurrPageRows = resultProduct.groupCurrPageRows;
-                res.data.groupSelFlag = resultProduct.groupSelFlag;
-                res.data.productList = resultProduct.productList;
+                // 重新初始化选中标签
+                tempGroupSelect = new selectRowsFactory();
+                tempProductSelect = new selectRowsFactory();
+                // 获取group列表
+                _resetGroupList(res.data);
+                // 获取product列表
+                _resetProductList(res.data);
 
                 defer.resolve (res);
             });
@@ -64,14 +66,11 @@ define([
          * @param data
          * @returns {*}
          */
-        function getGroupList(data, pagination) {
+        function getGroupList(data, pagination, list) {
             var defer = $q.defer();
 
             $searchIndexService.getGroupList(resetGroupPagination(data, pagination)).then(function (res) {
-                var result = _resetGroupList(res.data);
-                res.data.groupCurrPageRows  = result.groupCurrPageRows;
-                res.data.groupSelFlag= result.groupSelFlag;
-                res.data.groupList = result.groupList;
+                _resetGroupList(res.data);
                 defer.resolve (res);
             });
             return defer.promise;
@@ -82,13 +81,10 @@ define([
          * @param data
          * @returns {*}
          */
-        function getProductList(data, pagination) {
+        function getProductList(data, pagination, list) {
             var defer = $q.defer();
             $searchIndexService.getProductList(resetProductPagination(data, pagination)).then(function (res) {
-                var result =  _resetProductList(res.data);
-                res.data.groupCurrPageRows = result.groupCurrPageRows;
-                res.data.groupSelFlag = result.groupSelFlag;
-                res.data.productList = result.productList;
+                _resetProductList(res.data);
                 defer.resolve (res);
             });
             return defer.promise;
@@ -156,12 +152,10 @@ define([
          * @private
          */
         function _resetGroupList (data) {
-            data.groupCurrPageRows  = [];
-            data.groupSelFlag= [];
+            tempGroupSelect.clearCurrPageRows();
             _.forEach(data.groupList, function (groupInfo) {
                 // 初始化数据选中需要的数组
-                data.groupCurrPageRows.push({"id": groupInfo.prodId});
-                data.groupSelFlag[groupInfo.prodId] = false;
+                tempGroupSelect.currPageRows({"id": groupInfo.prodId});
 
                 // 设置Inventory Detail
                 // TODO 因为group显示的时候只返回了主商品的信息,所以无法拿到下面所有product的库存.
@@ -174,6 +168,7 @@ define([
                 groupInfo.groups.platforms[0].timeDetail = _setTimeDetail(groupInfo.groups.platforms[0]);
 
             });
+            data.groupSelList = tempGroupSelect.selectRowsInfo;
 
             return data;
         }
@@ -185,12 +180,10 @@ define([
          * @private
          */
         function _resetProductList (data) {
-            data.productCurrPageRows  = [];
-            data.productSelFlag= [];
+            tempProductSelect.clearCurrPageRows();
             _.forEach(data.productList, function (productInfo) {
                 // 初始化数据选中需要的数组
-                data.productCurrPageRows.push({"id": productInfo.prodId});
-                data.productSelFlag[productInfo.prodId] = false;
+                tempProductSelect.currPageRows({"id": productInfo.prodId});
 
                 // 设置Inventory Detail
                 productInfo.inventoryDetail = _setInventoryDetail(productInfo.skus);
@@ -202,6 +195,7 @@ define([
                 productInfo.groups.platforms[0].timeDetail = _setTimeDetail(productInfo.groups.platforms[0]);
 
             });
+            data.productSelList = tempProductSelect.selectRowsInfo;
 
             return data;
         }

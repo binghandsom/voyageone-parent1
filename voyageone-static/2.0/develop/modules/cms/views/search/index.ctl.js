@@ -19,18 +19,6 @@ define([
             productPageOption: {curr: 1, total: 0, size: 20, fetch: getProductList},
             groupList: [],
             productList: [],
-            groupSelList: {
-                currPageRows: [],
-                selFlag: [],
-                selAllFlag: false,
-                selList: []
-            },
-            productSelList: {
-                currPageRows: [],
-                selFlag: [],
-                selAllFlag: false,
-                selList: []
-            },
             currTab: "group",
             status: {
                 open: true
@@ -84,13 +72,11 @@ define([
                 .then(function (res) {
                     $scope.vm.groupList = res.data.groupList;
                     $scope.vm.groupPageOption.total = res.data.groupListTotal;
-                    $scope.vm.groupSelList.currPageRows = res.data.groupCurrPageRows;
-                    $scope.vm.groupSelList.selFlag = res.data.groupSelFlag;
+                    $scope.vm.groupSelList = res.data.groupSelList;
 
                     $scope.vm.productList = res.data.productList;
                     $scope.vm.productPageOption.total = res.data.productListTotal;
-                    $scope.vm.productSelList.currPageRows = res.data.productCurrPageRows;
-                    $scope.vm.productSelList.selFlag = res.data.productSelFlag;
+                    $scope.vm.productSelList = res.data.productSelList;
             })
         }
 
@@ -107,12 +93,11 @@ define([
          */
         function getGroupList () {
 
-            searchIndexService.getGroupList($scope.vm.searchInfo, $scope.vm.groupPageOption)
+            searchIndexService.getGroupList($scope.vm.searchInfo, $scope.vm.groupPageOption, $scope.vm.groupSelList)
             .then(function (res) {
                 $scope.vm.groupList = res.data.groupList;
                 $scope.vm.groupPageOption.total = res.data.groupListTotal;
-                $scope.vm.groupSelList.currPageRows = res.data.groupCurrPageRows;
-                $scope.vm.groupSelList.selFlag = res.data.groupSelFlag;
+                $scope.vm.groupSelList = res.data.groupSelList;
             });
         }
 
@@ -121,12 +106,11 @@ define([
          */
         function getProductList () {
 
-            searchIndexService.getProductList($scope.vm.searchInfo, $scope.vm.productPageOption)
+            searchIndexService.getProductList($scope.vm.searchInfo, $scope.vm.productPageOption, $scope.vm.productSelList)
                 .then(function (res) {
                     $scope.vm.productList = res.data.productList;
                     $scope.vm.productPageOption.total = res.data.productListTotal;
-                    $scope.vm.productSelList.currPageRows = res.data.productCurrPageRows;
-                    $scope.vm.productSelList.selFlag = res.data.productSelFlag;
+                    $scope.vm.productSelList = res.data.productSelList;
                 });
         }
     };

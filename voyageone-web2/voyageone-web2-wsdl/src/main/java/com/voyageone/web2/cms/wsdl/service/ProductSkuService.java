@@ -434,13 +434,31 @@ public class ProductSkuService extends BaseService {
      * 判断价格是否变更
      */
     private boolean isPriceChanged(CmsBtProductModel_Sku model1, ProductSkuPriceModel model2) {
-        BigDecimal msrp1 = new BigDecimal(model1.getPriceMsrp());
-        BigDecimal retail1 = new BigDecimal(model1.getPriceRetail());
-        BigDecimal sale1 = new BigDecimal(model1.getPriceSale());
+        BigDecimal msrp1 = new BigDecimal(0);
+        if (model1.getPriceMsrp() != null) {
+            msrp1 = new BigDecimal(model1.getPriceMsrp());
+        }
+        BigDecimal retail1 = new BigDecimal(0);
+        if (model1.getPriceRetail() != null) {
+            retail1 = new BigDecimal(model1.getPriceRetail());
+        }
+        BigDecimal sale1 = new BigDecimal(0);
+        if (model1.getPriceSale() != null) {
+            sale1 = new BigDecimal(model1.getPriceSale());
+        }
 
-        BigDecimal msrp2 = new BigDecimal(model2.getPriceMsrp());
-        BigDecimal retail2 = new BigDecimal(model2.getPriceRetail());
-        BigDecimal sale2 = new BigDecimal(model2.getPriceSale());
+        BigDecimal msrp2 = new BigDecimal(0);
+        if (model2.getPriceMsrp() != null) {
+            msrp2 = new BigDecimal(model2.getPriceMsrp());
+        }
+        BigDecimal retail2 = new BigDecimal(0);
+        if (model2.getPriceRetail() != null) {
+            retail2 = new BigDecimal(model2.getPriceRetail());
+        }
+        BigDecimal sale2 = new BigDecimal(0);
+        if (model2.getPriceSale() != null) {
+            sale2 = new BigDecimal(model2.getPriceSale());
+        }
 
         return !(msrp1.compareTo(msrp2) == 0 && retail1.compareTo(retail2) == 0 && sale1.compareTo(sale2) == 0);
     }
