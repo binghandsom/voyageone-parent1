@@ -56,11 +56,11 @@
 				<!--<button class="btn btn-success"><i class="fa fa-refresh"></i> 全部刷新</button>
 				<button class="btn btn-danger"><i class="fa fa-warning"></i> 全部停止</button>-->
 				<button class="btn btn-danger" ng-click="tejiabaoInit()"><i class="fa fa-cny"></i> 批量刷价格</button>
-				<button class="btn btn-danger"><i class="fa fa-trash-o"></i> 全部删除</button>
+				<button class="btn btn-danger" ng-click="delSelPromotion()"><i class="fa fa-trash-o"></i> 全部删除</button>
 			</div><!-- /right-btn -->
 			<!--tab-->
 			<tab>
-				<tab-heading ng-click="vm.tabIndex = 0"><i class="glyphicons glyphicons-more-items text-default"></i> {{'TXT_GROUP_LIST' | translate}}</tab-heading>
+				<tab-heading ng-click="vm.tabIndex = 0" ><i class="glyphicons glyphicons-more-items text-default"></i> {{'TXT_GROUP_LIST' | translate}}</tab-heading>
 				<div class="table-responsive">
 					<table class="table table-hover vo_table vo_models dropdown_table_bk font-bold text-vo">
 						<thead>
