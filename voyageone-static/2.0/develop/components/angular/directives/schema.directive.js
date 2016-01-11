@@ -161,53 +161,54 @@ angular.module('voyageone.angular.directives.schema', [])
         // label
         var templateKey_label = "voyageone.angular.directives.schemaLabel.tpl.html";
         if (!$templateCache.get(templateKey_label)) {$templateCache.put(templateKey_label,
-            '<input style="min-width: 150px; max-width: 250px;" type="text" readonly ng-model="$$data.value" class="form-control inherited">');}
+            '<input style="min-width: 150px; max-width: 250px;" type="text" readonly ng-model="vm.$$data.value" class="form-control inherited">');}
 
         // input
         var templateKey_input = "voyageone.angular.directives.schemaInput.tpl.html";
         if (!$templateCache.get(templateKey_input)) {$templateCache.put(templateKey_input,
-            '<input style="min-width: 150px; max-width: 250px;" ng-model="$$data.value" class="form-control inherited" replaceInfo>');}
+            '<input id="quantity" name="quantity" style="min-width: 150px; max-width: 250px;" ng-model="vm.$$data.value" class="form-control inherited" replaceInfo>' +
+            '{{vm.$$from.quantity}}<span ng-bind="vm.$$from.quantity"></span>');}
 
         // data
         var templateKey_date = "voyageone.angular.directives.schemaDate.tpl.html";
         if (!$templateCache.get(templateKey_date)) {$templateCache.put(templateKey_date,
-            '<div class="input-group" style="width: 180px;" ng-controller="datePickerCtrl"><input replaceInfo type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.$$data.value" date-model-format="{{formatDate}}" is-open="opened" datepicker-options="dateOptions" close-text="Close" /><span class="input-group-btn"><button replaceInfo type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button></span></div>');}
+            '<div class="input-group" style="width: 180px;" ng-controller="datePickerCtrl"><input replaceInfo type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="vm.$parent.$$data.value" date-model-format="{{formatDate}}" is-open="opened" datepicker-options="dateOptions" close-text="Close" /><span class="input-group-btn"><button replaceInfo type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button></span></div>');}
 
         // datetime
         var templateKey_datetime = "voyageone.angular.directives.schemaDatetime.tpl.html";
         if (!$templateCache.get(templateKey_datetime)) {$templateCache.put(templateKey_datetime,
-            '<div class="input-group" style="width: 180px;" ng-controller="datePickerCtrl"><input replaceInfo type="text" class="form-control" datepicker-popup="{{formatDateTime}}" ng-model="$parent.$$data.value" is-open="opened" datepicker-options="dateOptions" close-text="Close" /><span class="input-group-btn"><button replaceInfo type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button></span></div>');}
+            '<div class="input-group" style="width: 180px;" ng-controller="datePickerCtrl"><input replaceInfo type="text" class="form-control" datepicker-popup="{{formatDateTime}}" ng-model="vm.$parent.$$data.value" is-open="opened" datepicker-options="dateOptions" close-text="Close" /><span class="input-group-btn"><button replaceInfo type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button></span></div>');}
 
         // textarea
         var templateKey_textarea = "voyageone.angular.directives.schemaTextarea.tpl.html";
         if (!$templateCache.get(templateKey_textarea)) {$templateCache.put(templateKey_textarea,
-            '<textarea style="min-width: 150px; max-width: 650px;" class="form-control no-resize" ng-model="$$data.value" rows="{{showHtmlData.rowNum}}" replaceInfo></textarea>');}
+            '<textarea style="min-width: 150px; max-width: 650px;" class="form-control no-resize" ng-model="vm.$$data.value" rows="{{showHtmlData.rowNum}}" replaceInfo></textarea>');}
 
         // single check-select
         var templateKey_select = "voyageone.angular.directives.schemaSelect.tpl.html";
         if (!$templateCache.get(templateKey_select)) {$templateCache.put(templateKey_select,
-            '<select style="min-width: 150px; max-width: 250px;" replaceInfo class="form-control" ng-model="$$data.value.value" ng-options="option.value as option.displayName for option in $$data.options"> <option value="">{{\'TXT_SELECT_NO_VALUE\' | translate}}</option></select>');}
+            '<select style="min-width: 150px; max-width: 250px;" replaceInfo class="form-control" ng-model="vm.$$data.value.value" ng-options="option.value as option.displayName for option in vm.$$data.options"> <option value="">{{\'TXT_SELECT_NO_VALUE\' | translate}}</option></select>');}
 
         // single check-radio
         var templateKey_radio = "voyageone.angular.directives.schemaRadio.tpl.html";
         if (!$templateCache.get(templateKey_radio)) {$templateCache.put(templateKey_radio,
-            '<label class="checkbox-inline c-radio" ng-repeat="option in $$data.options"><input name="{{$$data.id}}" type="radio" ng-value="option.value" ng-model="$$data.value.value"><span class="fa fa-check"></span> {{option.displayName}}</label>');}
+            '<label class="checkbox-inline c-radio" ng-repeat="option in vm.$$data.options"><input name="{{vm.$$data.id}}" type="radio" ng-value="option.value" ng-model="vm.$$data.value.value"><span class="fa fa-check"></span> {{option.displayName}}</label>');}
 
         // multi check-checkbox
         var templateKey_checkbox = "voyageone.angular.directives.schemaCheckbox.tpl.html";
         if (!$templateCache.get(templateKey_checkbox)) {$templateCache.put(templateKey_checkbox,
-            '<label class="checkbox-inline c-checkbox" ng-repeat="option in $$data.options"><input type="checkbox" ng-value="option.value" ng-click="checkboxValue(option.value)" ng-checked="isSelected(option.value)"><span class="fa fa-check"></span> {{option.displayName}}</label>');}
+            '<label class="checkbox-inline c-checkbox" ng-repeat="option in vm.$$data.options"><input type="checkbox" ng-value="option.value" ng-click="checkboxValue(option.value)" ng-checked="isSelected(option.value)"><span class="fa fa-check"></span> {{option.displayName}}</label>');}
 
         // multi complex
         var templateKey_multiComplex = "voyageone.angular.directives.schemaMultiComplex.tpl.html";
         if (!$templateCache.get(templateKey_multiComplex)) {$templateCache.put(templateKey_multiComplex,
             '<table class="table text-center">' +
             '<thead><tr>' +
-            //'<schema-header ng-repeat="field in $$data.fields" data="field" is-complex="true"></schema-header>' +
-            '<th ng-repeat="field in $$data.fields" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" class="text-center" style="min-width: 180px;">{{field.name}}</th>' +
+                //'<schema-header ng-repeat="field in vm.$$data.fields" data="field" is-complex="true"></schema-header>' +
+            '<th ng-repeat="field in vm.$$data.fields" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" class="text-center" style="min-width: 180px;">{{field.name}}</th>' +
             '<th style="min-width: 60px;" class="text-center" translate="TXT_COM_EDIT"></th>' +
             '</tr></thead>' +
-            '<tbody><tr ng-repeat="value in $$data.complexValues">' +
+            '<tbody><tr ng-repeat="value in vm.$$data.complexValues">' +
             '<td class="text-left" ng-repeat="field in value.fieldMap"><schema-item data="field" hastip="true" complex="true"></schema-item></td>' +
             '<td style="min-width: 60px;"><button title="{\'BTN_COM_DELETE\' | translate}" class="btn btn-danger btn-xs" ng-click="delField($index)"><i class="fa  fa-trash-o"></i></button></td>' +
             '</tr></tbody>' +
@@ -216,7 +217,7 @@ angular.module('voyageone.angular.directives.schema', [])
         // complex
         var templateKey_complex = "voyageone.angular.directives.schemaComplex.tpl.html";
         if (!$templateCache.get(templateKey_complex)) {$templateCache.put(templateKey_complex,
-            '<schema-header ng-repeat="field in $$data.fields" data="field"><schema-item data="field"></schema-item></schema-header>');}
+            '<schema-header ng-repeat="field in vm.$$data.fields" data="field"><schema-item data="field"></schema-item></schema-header>');}
 
         // multi complex tip
         var templateKey_multiComplex_tip = "voyageone.angular.directives.schemaMultiComplexTip.tpl.html";
@@ -225,18 +226,26 @@ angular.module('voyageone.angular.directives.schema', [])
 
         return {
             restrict: "E",
+            require: ['^?form'],
             replace: true,
+            bindToController: true,
+            controllerAs: "vm",
+            controller: function () {},
             scope: {
                 $$data: "=data",
                 $$hastip: "=hastip",
                 $$complex: "=complex"
             },
-            link: function (scope, element) {
+            link: function (scope, element, ctrl) {
 
                 var schema = new schemaFactory();
+                scope.vm.$$from = ctrl;
 
-                _returnType (scope.$$data.type);
-                _operateRule (scope.$$data.rules);
+                // 设置空间name
+                schema.name(scope.vm.$$data.id);
+
+                _returnType (scope.vm.$$data.type);
+                _operateRule (scope.vm.$$data.rules);
 
                 var tempHtml = "";
                 // 拼接body
@@ -274,25 +283,25 @@ angular.module('voyageone.angular.directives.schema', [])
                 }
 
                 // 添加规则说明
-                if (schema.tipMsg() != null && scope.$$hastip) {
+                if (schema.tipMsg() != null && scope.vm.$$hastip) {
                     tempHtml += $templateCache.get(templateKey_multiComplex_tip);
                 }
                 scope.showHtmlData = angular.copy(schema.schemaInfo());
                 element.html($compile(tempHtml)(scope));
 
                 /**
-                * 设置checkbox被选中的value值处理
-                * @param value
-                */
+                 * 设置checkbox被选中的value值处理
+                 * @param value
+                 */
                 scope.checkboxValue = function (value) {
                     if (_.contains(scope.showHtmlData.checkValues, value)) {
                         scope.showHtmlData.checkValues.splice(_.indexOf(scope.showHtmlData.checkValues, value), 1);
                     } else {
                         scope.showHtmlData.checkValues.push(value);
                     }
-                    scope.$$data.values = [];
+                    scope.vm.$$data.values = [];
                     angular.forEach(scope.showHtmlData.checkValues, function (obj) {
-                        scope.$$data.values.push({id: null, value: obj});
+                        scope.vm.$$data.values.push({id: null, value: obj});
                     })
                 };
 
@@ -305,43 +314,43 @@ angular.module('voyageone.angular.directives.schema', [])
                 };
 
                 /**
-                * 设置multi complex删除该条记录
-                * @param index
-                */
+                 * 设置multi complex删除该条记录
+                 * @param index
+                 */
                 scope.delField = function (index) {
-                    scope.$$data.values.splice(index, 1);
+                    scope.vm.$$data.values.splice(index, 1);
                 };
 
                 /**
-                * 返回需要展示的页面样式
-                * @param type
-                * @param valueTypeRule
-                * @private
-                */
+                 * 返回需要展示的页面样式
+                 * @param type
+                 * @param valueTypeRule
+                 * @private
+                 */
                 function _returnType (type) {
                     schema.type(type);
                     switch (type) {
                         case fieldTypes.RADIO:
-                            if (scope.$$complex)
+                            if (scope.vm.$$complex)
                                 schema.type(fieldTypes.SINGLE_CHECK);
                             break;
                         case fieldTypes.MULTI_CHECK:
-                            _setCheckValues(scope.$$data.values);
+                            _setCheckValues(scope.vm.$$data.values);
                             break;
                         case fieldTypes.MULTI_COMPLEX:
-                            scope.$$data.complexValues = _resetMultiComplex(scope.$$data);
+                            scope.vm.$$data.complexValues = _resetMultiComplex(scope.vm.$$data);
                             break;
                         case fieldTypes.COMPLEX:
-                            _resetComplex(scope.$$data);
+                            _resetComplex(scope.vm.$$data);
                             break;
                     }
                 }
 
                 /**
-                * 设置checkvalues
-                * @param values
-                * @private
-                */
+                 * 设置checkvalues
+                 * @param values
+                 * @private
+                 */
                 function _setCheckValues (values) {
                     if (values != undefined && values != null) {
                         angular.forEach(values, function (obj) {
@@ -351,10 +360,10 @@ angular.module('voyageone.angular.directives.schema', [])
                 }
 
                 /**
-                * 重新设置multicomplex的一些属性
-                * @param fields
-                * @private
-                */
+                 * 重新设置multicomplex的一些属性
+                 * @param fields
+                 * @private
+                 */
                 function _resetMultiComplex (data) {
                     var tempValues = [];
                     angular.forEach(data.complexValues, function (value) {
@@ -434,10 +443,10 @@ angular.module('voyageone.angular.directives.schema', [])
                 }
 
                 /**
-                * 处理rules
-                * @param rules
-                * @private
-                */
+                 * 处理rules
+                 * @param rules
+                 * @private
+                 */
                 function _operateRule (rules) {
                     angular.forEach(rules, function (rule) {
                         switch (rule.name) {
@@ -535,7 +544,7 @@ angular.module('voyageone.angular.directives.schema', [])
                  */
                 function _disableRule (disableRule) {
                     if ("true" == disableRule.value
-                    && disableRule.dependGroup == null) {
+                        && disableRule.dependGroup == null) {
                         schema.html("ng-disabled=\"true\"");
                     }
                 }
@@ -609,7 +618,7 @@ angular.module('voyageone.angular.directives.schema', [])
                  * @private
                  */
                 function _minValueRule (minValueRule) {
-                    var value = isNaN(parseFloat(minValueRule.value)) || 0;
+                    var value = isNaN(parseFloat(minValueRule.value)) ? 0 : parseFloat(minValueRule.value);
 
                     if ("not include" === minValueRule.exProperty)
                         value = (value > 0) ? value - 0.01 : 0;
@@ -623,7 +632,7 @@ angular.module('voyageone.angular.directives.schema', [])
                  * @private
                  */
                 function _maxValueRule (maxValueRule) {
-                    var value = isNaN(parseFloat(maxValueRule.value)) || 0;
+                    var value = isNaN(parseFloat(maxValueRule.value)) ? 0 : parseFloat(maxValueRule.value);
 
                     if ("not include" === maxValueRule.exProperty)
                         value = (value > 0) ? value - 0.01 : 0;
@@ -638,7 +647,7 @@ angular.module('voyageone.angular.directives.schema', [])
                  * @private
                  */
                 function _minInputNumRule (minInputNumRule) {
-                    var value = isNaN(parseInt(minInputNumRule.value)) || 0;
+                    var value = isNaN(parseInt(minInputNumRule.value)) ? 0 : parseInt(minInputNumRule.value);
 
                     if ("not include" === minInputNumRule.exProperty)
                         value = (value > 0) ? value - 1 : 0;
@@ -652,7 +661,7 @@ angular.module('voyageone.angular.directives.schema', [])
                  * @private
                  */
                 function _maxInputNumRule (maxInputNumRule) {
-                    var value = isNaN(parseInt(maxInputNumRule.value)) || 0;
+                    var value = isNaN(parseInt(maxInputNumRule.value)) ? 0 : parseInt(maxInputNumRule.value);
 
                     if ("not include" === maxInputNumRule.exProperty)
                         value = (value > 0) ? value - 1 : 0;

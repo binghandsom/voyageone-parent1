@@ -44,6 +44,20 @@ define([
                 "templateUrl": "views/pop/import/index.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/import/index.ctl"
             },
+           "columnMapping": {
+            "templateUrl": "views/pop/columnMapping/index.tpl.html",
+            "controllerUrl": "modules/cms/views/pop/columnMapping/index.ctl",
+            "controller": 'ColumnMappingCtl',
+            "size": 'md'/*
+               windowClass: 'xxx',
+               "windowTopClass": "yyy"*/
+           },
+        "columnMappingSetting": {
+            "templateUrl": "views/pop/columnMappingSetting/index.tpl.html",
+            "controllerUrl": "modules/cms/views/pop/columnMappingSetting/index.ctl",
+            "controller": 'ColumnMappingSettingCtl',
+            "size": 'lg'
+        },
             "product": {
                 "price": {
                     "templateUrl": "views/pop/product/price/history.tpl.html",
@@ -273,6 +287,9 @@ define([
                 });
             });
         }
+        $scope.openColumnMapping = function (context) {
+            return openModel(popActions.columnMapping, context);
+        };
 
         $scope.openSystemCategory = function (context) {
             return openModel(popActions.system.category, context);
@@ -288,6 +305,10 @@ define([
 
         $scope.popupFeedValue = function (context) {
             return openModel(popActions.feedValue, context);
+        };
+
+        $scope.openColumnMappingSetting = function (context) {
+            return openModel(popActions.columnMappingSetting, context);
         };
     }
 });

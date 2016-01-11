@@ -9,22 +9,30 @@
 			<tab>
 				<tab-heading>&nbsp;{{'TXT_PRODUCT_DETAIL' | translate}}</tab-heading>
 				<!-- Products table and controls -->
-				<form class="form-horizontal" name="productFieldForm">
+				<form class="form-horizontal" name="productFieldForm" ng-submit="ctrl.updateProductInfo()" novalidate>
 					<div class="panel vo_panel tab_panel">
 						<div class="row wrapper">
 							<div class="container-fluid">
 								<div class="col-sm-12">
+									<!--<ng-form ng-repeat="field in ctrl.productDetails.masterFields" name="subForm" novalidate>-->
+										<!--<schema-header data="field" ng-if="field.isDisplay != 0">-->
+											<!--<schema-item data="field"></schema-item>-->
+										<!--</schema-header>-->
+									<!--</ng-form>-->
 									<schema-header ng-repeat="field in ctrl.productDetails.masterFields" data="field" ng-if="field.isDisplay != 0">
 										<schema-item data="field"></schema-item>
 									</schema-header>
 								</div>
+								<!--<div>-->
+									<!--<input type="text" name="test" ng-model="ctrl.testvalue" ng-pattern="/^[0-9]*$/">-->
+								<!--</div>-->
 							</div>
 						</div>
 					</div>
 					<div class="row text-center">
 						<div class="col-sm-12">
 							<div class="form-inline">
-								<button type="submit" class="btn btn-vo" translate="BTN_SAVE" ng-click="ctrl.updateProductInfo()"></button>
+								<button type="submit" class="btn btn-vo" ng-disabled="productFieldForm.$invalid" translate="BTN_SAVE"></button>
 								<button type="submit" class="btn btn-default" translate="BTN_CANCEL" ng-click="ctrl.cancelProductInfo()"></button>
 							</div><!-- .form-inline -->
 						</div>
