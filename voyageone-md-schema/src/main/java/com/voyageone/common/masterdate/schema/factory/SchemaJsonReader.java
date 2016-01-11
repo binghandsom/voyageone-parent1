@@ -739,6 +739,9 @@ public class SchemaJsonReader {
             }
 
             List<Map<String, Object>> valuesMapList = (List<Map<String, Object>>)fieldMap.get("values");
+            if (valuesMapList == null || valuesMapList.size() == 0) {
+                valuesMapList = (List<Map<String, Object>>)fieldMap.get("complexValues");
+            }
             if (valuesMapList != null) {
                 for (Map<String, Object> complexValueMap : valuesMapList) {
                     ComplexValue complexValue = new ComplexValue();

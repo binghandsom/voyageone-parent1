@@ -5,7 +5,6 @@
  * @Version: 2.0.0, 15/12/25
  */
 
-
 angular.module('voyageone.angular.factories.schema', [])
 
     // 定义schemaHeaderFactory

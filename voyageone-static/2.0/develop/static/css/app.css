@@ -1753,7 +1753,8 @@ html.bg {
   color: #999;
 }
 .text-warnings {
-  color: #fdb97d;
+  color: #ee903d;
+  padding:4px 0px 0px 12px;
 }
 a.text-vo:hover,
 a.text-vo:focus {
@@ -2058,14 +2059,17 @@ a.text-vo:focus {
 }
 .vo_prodGallery {
   width: 100%;
+  background:#fff;
+  border:1px solid #ddd;
   border-bottom: 1px solid rgba(255, 255, 255, 0.5);
 }
 .vo_prodGallery .imageWrapper {
   display: block;
   width: 100%;
   height: 250px;
-  background-size: cover;
+  background-size: contain;
   background-position: center;
+  background-repeat:no-repeat;
   transition: all 1s;
 }
 .vo_prodGallery .thumbnailWrapper {
@@ -2087,9 +2091,10 @@ a.text-vo:focus {
   margin-right: 1%;
   margin-top: 2px;
   margin-bottom: 2px;
-  background-color: transparent;
-  background-size: cover;
+  background-color: #fff;
+  background-size: contain;
   background-position: center;
+  background-repeat:no-repeat;
   cursor: pointer;
   vertical-align: top;
   border-radius: 2px;
@@ -5149,7 +5154,12 @@ a.text-black:hover {
 }
 .wrapper-sm {
   padding: 10px;
-  background:#e2e2e2;
+  background:#fff;
+  border-left:1px solid #ddd;
+  border-right:1px solid #ddd;
+  border-bottom:1px solid #ddd;
+  -webkit-box-shadow:0 1px 1px rgba(0,0,0,.1);
+  box-shadow:0 1px 1px rgba(0,0,0,.1)
 }
 .wrapper {
   padding: 15px;
@@ -5556,9 +5566,9 @@ a.text-black:hover {
 .mfb-xxxs{width:30%}
 .mfb-xxxxs{width:40%}
 .mfb-xxxsm{width:50%}
-.hierarchy{padding:8px 4px 8px 4px;background:#fffaf4; border:1px solid #e7dfd4}
+.hierarchy{/*padding:8px 4px 8px 4px;background:#fffaf4; border:1px solid #e7dfd4*/}
 .hierarchy button{margin:2px 0px 2px 0px}
-.hierarchy_main{padding:8px 4px 8px 4px;background:#fff; border:1px solid #e7dfd4}
+.hierarchy_main{padding:8px 4px 0px 4px;background:#f8f8f8; }
 .avatar {
   position: relative;
   display: block;
