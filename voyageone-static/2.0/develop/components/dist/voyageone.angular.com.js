@@ -14,26 +14,29 @@ define(function() {
   angular.module("voyageone.angular.controllers.selectRows", []).controller("selectRowsCtrl", [ "$scope", function($scope) {
     $scope.selectAll = selectAll;
     $scope.selectOne = selectOne;
-    function selectAll(objectList) {
+    function selectAll(objectList, id) {
       objectList.selAllFlag = !objectList.selAllFlag;
+      if (!id) {
+        id = "id";
+      }
       angular.forEach(objectList.currPageRows, function(object) {
-        if (objectList.selFlag.hasOwnProperty(object.id)) {
-          objectList.selFlag[object.id] = objectList.selAllFlag;
-          if (objectList.hasOwnProperty("selList")) {
-            if (objectList.selAllFlag && objectList.selList.indexOf(object) < 0) {
-              objectList.selList.push(object);
-            } else if (!objectList.selAllFlag && objectList.selList.indexOf(object) > -1) {
-              objectList.selList.splice(objectList.selList.indexOf(object), 1);
-            }
+        objectList.selFlag[object[id]] = objectList.selAllFlag;
+        if (objectList.hasOwnProperty("selList")) {
+          if (objectList.selAllFlag && objectList.selList.indexOf(object) < 0) {
+            objectList.selList.push(object);
+          } else if (!objectList.selAllFlag && objectList.selList.indexOf(object) > -1) {
+            objectList.selList.splice(objectList.selList.indexOf(object), 1);
           }
         }
       });
     }
-    function selectOne(currentId, objectList) {
-      currentId = parseInt(currentId);
+    function selectOne(currentId, objectList, id) {
+      if (!id) {
+        id = "id";
+      }
       if (objectList.hasOwnProperty("selList")) {
-        angular.forEach(objectList.selList, function(object) {
-          if (_.isEqual(object.id, currentId)) {
+        angular.forEach(objectList.currPageRows, function(object) {
+          if (_.isEqual(object[id], currentId)) {
             if (objectList.selList.indexOf(object) > -1) {
               objectList.selList.splice(objectList.selList.indexOf(object), 1);
             } else {
@@ -44,7 +47,7 @@ define(function() {
       }
       objectList.selAllFlag = true;
       angular.forEach(objectList.currPageRows, function(object) {
-        if (!objectList.selFlag[object.id]) {
+        if (objectList.selList.indexOf(object) == -1) {
           objectList.selAllFlag = false;
         }
       });
@@ -63,6 +66,280 @@ define(function() {
       return tempHtml;
     }
   } ]);
+  angular.module("voyageone.angular.factories.dialogs", []).factory("$dialogs", [ "$modal", "$filter", "$templateCache", function($modal, $filter, $templateCache) {
+    var templateName = "voyageone.angular.factories.dialogs.tpl.html";
+    $templateCache.put(templateName, '<div class="vo_modal"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()"><span aria-hidden="true"><i ng-click="close()" class="fa fa-close"></i></span></button><h4 class="modal-title" ng-bind-html="title"></h4></div><div class="modal-body wrapper-lg"><div class="row"><p ng-bind-html="content"></p></div></div><div class="modal-footer"><button class="btn btn-default btn-sm" ng-if="!isAlert" ng-click="close()" translate="BTN_COM_CANCEL"></button><button class="btn btn-vo btn-sm" ng-click="ok()" translate="BTN_COM_OK"></button></div></div>');
+    function tran(translationId, values) {
+      return $filter("translate")(translationId, values);
+    }
+    return function(options) {
+      if (!_.isObject(options)) throw "arg type must be object";
+      var values;
+      if (_.isObject(options.content)) {
+        values = options.content.values;
+        options.content = options.content.id;
+      }
+      options.title = tran(options.title);
+      options.content = tran(options.content, values);
+      var modalInstance = $modal.open({
+        templateUrl: templateName,
+        controller: [ "$scope", function(scope) {
+          _.extend(scope, options);
+        } ],
+        size: "md"
+      });
+      options.close = function() {
+        modalInstance.dismiss("close");
+      };
+      options.ok = function() {
+        modalInstance.close("");
+      };
+      return modalInstance;
+    };
+  } ]).factory("alert", [ "$dialogs", function($dialogs) {
+    return function(content, title) {
+      return $dialogs({
+        title: title || "TXT_COM_ALERT",
+        content: content,
+        isAlert: true
+      });
+    };
+  } ]).factory("confirm", [ "$dialogs", function vConfirm($dialogs) {
+    return function(content, title) {
+      return $dialogs({
+        title: title || "TXT_COM_CONFIRM",
+        content: content,
+        isAlert: false
+      });
+    };
+  } ]);
+  angular.module("voyageone.angular.factories.interceptor", []).factory("interceptorFactory", InterceptorFactory).config([ "$httpProvider", function($httpProvider) {
+    $httpProvider.interceptors.push("interceptorFactory");
+  } ]);
+  function InterceptorFactory() {
+    var UNKNOWN_CODE = "5";
+    var CODE_SYS_REDIRECT = "SYS_REDIRECT";
+    var MSG_TIMEOUT = "300001";
+    function autoRedirect(res) {
+      if (res.code != CODE_SYS_REDIRECT) {
+        return false;
+      }
+      location.href = res.redirectTo || "/login.html";
+      return true;
+    }
+    function sessionTimeout(res) {
+      if (res.code != MSG_TIMEOUT) {
+        return false;
+      }
+      location.href = "/login.html";
+      return true;
+    }
+    function unknownException(response) {
+      if (response.data.code !== UNKNOWN_CODE) {
+        return;
+      }
+      window.$$lastUnknow = response;
+      console.error("Server throw unknown exceptio. Message:", response.data.message);
+    }
+    return {
+      request: function(config) {
+        return config;
+      },
+      response: function(res) {
+        var result = res.data;
+        if (autoRedirect(result) || sessionTimeout(result)) {
+          return res;
+        }
+        unknownException(res);
+        return res;
+      },
+      requestError: function(config) {
+        return config;
+      },
+      responseError: function(res) {}
+    };
+  }
+  angular.module("voyageone.angular.factories.notify", []).factory("notify", [ "$filter", function($filter) {
+    function notify(options) {
+      if (!options) return;
+      if (_.isString(options)) options = {
+        message: options
+      };
+      if (!_.isObject(options)) return;
+      var values;
+      if (_.isObject(options.message)) {
+        values = options.message.values;
+        options.message = options.message.id;
+      }
+      options.message = $filter("translate")(options.message, values);
+      return $.notify(options.message, options);
+    }
+    notify.success = function(message) {
+      return notify({
+        message: message,
+        className: "success"
+      });
+    };
+    notify.warning = function(message) {
+      return notify({
+        message: message,
+        className: "warning"
+      });
+    };
+    notify.danger = function(message) {
+      return notify({
+        message: message,
+        className: "danger"
+      });
+    };
+    return notify;
+  } ]);
+  angular.module("voyageone.angular.factories.schema", []).factory("schemaHeaderFactory", function() {
+    return function(config) {
+      var _schemaHeaderInfo = config ? config : {
+        isRequired: false,
+        isMultiComplex: false,
+        isComplex: false,
+        tipMsg: []
+      };
+      this.isRequired = function(value) {
+        return value !== undefined ? _schemaHeaderInfo.isRequired = value : _schemaHeaderInfo.isRequired;
+      };
+      this.isComplex = function(value) {
+        return value !== undefined ? _schemaHeaderInfo.isComplex = value : _schemaHeaderInfo.isComplex;
+      };
+      this.isMultiComplex = function(value) {
+        return value !== undefined ? _schemaHeaderInfo.isMultiComplex = value : _schemaHeaderInfo.isMultiComplex;
+      };
+      this.tipMsg = function(value) {
+        return value !== undefined ? _schemaHeaderInfo.tipMsg.push(value) : _schemaHeaderInfo.tipMsg;
+      };
+      this.schemaHearInfo = _schemaHeaderInfo;
+    };
+  }).factory("schemaFactory", function() {
+    return function(config) {
+      var _schemaInfo = config ? config : {
+        type: null,
+        name: null,
+        rowNum: null,
+        isRequired: false,
+        checkValues: [],
+        tipMsg: [],
+        html: []
+      };
+      this.type = function(value) {
+        return value !== undefined ? _schemaInfo.type = value : _schemaInfo.type;
+      };
+      this.name = function(value) {
+        return value !== undefined ? _schemaInfo.name = value : _schemaInfo.name;
+      };
+      this.html = function(value) {
+        return value !== undefined ? _schemaInfo.html.push(value) : htmlToString(_schemaInfo.html);
+      };
+      this.isRequired = function(value) {
+        return value !== undefined ? _schemaInfo.isRequired = value : _schemaInfo.isRequired;
+      };
+      this.rowNum = function(value) {
+        return value !== undefined ? _schemaInfo.rowNum = value : _schemaInfo.rowNum;
+      };
+      this.tipMsg = function(value) {
+        return value !== undefined ? _schemaInfo.tipMsg.push(value) : _schemaInfo.tipMsg;
+      };
+      this.checkValues = function(value) {
+        return value !== undefined ? _schemaInfo.checkValues.push(value) : _schemaInfo.checkValues;
+      };
+      this.schemaInfo = function() {
+        return _schemaInfo;
+      };
+      function htmlToString(htmls) {
+        var result = "";
+        angular.forEach(htmls, function(html) {
+          result += " " + html + " ";
+        });
+        return result;
+      }
+    };
+  });
+  angular.module("voyageone.angular.factories.vpagination", []).factory("vpagination", function() {
+    return function(config) {
+      var _pages, _lastTotal = 0, _showPages = [];
+      this.getTotal = function() {
+        return config.total;
+      };
+      this.getCurr = function() {
+        return {
+          pageNo: curr(),
+          start: getCurrStartItems(),
+          end: getCurrEndItems(),
+          isFirst: isFirst(),
+          isLast: isLast(),
+          pages: createShowPages(),
+          isShowStart: isShowStart(),
+          isShowEnd: isShowEnd()
+        };
+      };
+      this.goPage = load;
+      this.getPageCount = getPages;
+      this.isCurr = isCurr;
+      function load(page) {
+        page = page || config.curr;
+        if (page < 1 || page > getPages() || isCurr(page)) return;
+        config.curr = page;
+        config.fetch(page, config.size);
+      }
+      function createShowPages() {
+        var minPage, maxPage, _showPages = [];
+        if (config.curr < config.showPageNo) {
+          minPage = 1;
+          if (_pages <= config.showPageNo) maxPage = _pages; else maxPage = config.showPageNo;
+        } else if (config.curr + 2 > _pages) {
+          minPage = _pages + 1 - config.showPageNo;
+          maxPage = _pages;
+        } else {
+          minPage = config.curr + 3 - config.showPageNo;
+          maxPage = config.curr + 2;
+        }
+        for (var i = minPage; i <= maxPage; i++) {
+          _showPages.push(i);
+        }
+        return _showPages;
+      }
+      function getPages() {
+        if (_lastTotal != config.total) {
+          _pages = parseInt(config.total / config.size) + (config.total % config.size > 0 ? 1 : 0);
+          _lastTotal = config.total;
+        }
+        return _pages;
+      }
+      function getCurrStartItems() {
+        return (config.curr - 1) * config.size + 1;
+      }
+      function getCurrEndItems() {
+        var currEndItems = config.curr * config.size;
+        return currEndItems <= config.total ? currEndItems : config.total;
+      }
+      function isLast() {
+        return config.curr == getPages();
+      }
+      function isFirst() {
+        return config.curr == 1;
+      }
+      function isCurr(page) {
+        return config.curr == page;
+      }
+      function curr() {
+        return config.curr;
+      }
+      function isShowStart() {
+        _showPages = createShowPages();
+        return _showPages[0] > 1;
+      }
+      function isShowEnd() {
+        _showPages = createShowPages();
+        return _showPages[_showPages.length - 1] < _pages;
+      }
+    };
+  });
   angular.module("voyageone.angular.directives.dateModelFormat", []).directive("dateModelFormat", [ "$filter", function($filter) {
     return {
       restrict: "A",
@@ -293,43 +570,43 @@ define(function() {
   } ]).directive("schemaItem", [ "$templateCache", "$compile", "schemaFactory", "fieldTypes", "ruleTypes", "valueTypes", function($templateCache, $compile, schemaFactory, fieldTypes, ruleTypes, valueTypes) {
     var templateKey_label = "voyageone.angular.directives.schemaLabel.tpl.html";
     if (!$templateCache.get(templateKey_label)) {
-      $templateCache.put(templateKey_label, '<input style="min-width: 150px; max-width: 250px;" type="text" readonly ng-model="$$data.value" class="form-control inherited">');
+      $templateCache.put(templateKey_label, '<input style="min-width: 150px; max-width: 250px;" type="text" readonly ng-model="vm.$$data.value" class="form-control inherited">');
     }
     var templateKey_input = "voyageone.angular.directives.schemaInput.tpl.html";
     if (!$templateCache.get(templateKey_input)) {
-      $templateCache.put(templateKey_input, '<input style="min-width: 150px; max-width: 250px;" ng-model="$$data.value" class="form-control inherited" replaceInfo>');
+      $templateCache.put(templateKey_input, '<input id="quantity" name="quantity" style="min-width: 150px; max-width: 250px;" ng-model="vm.$$data.value" class="form-control inherited" replaceInfo>' + '{{vm.$$from.quantity}}<span ng-bind="vm.$$from.quantity"></span>');
     }
     var templateKey_date = "voyageone.angular.directives.schemaDate.tpl.html";
     if (!$templateCache.get(templateKey_date)) {
-      $templateCache.put(templateKey_date, '<div class="input-group" style="width: 180px;" ng-controller="datePickerCtrl"><input replaceInfo type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.$$data.value" date-model-format="{{formatDate}}" is-open="opened" datepicker-options="dateOptions" close-text="Close" /><span class="input-group-btn"><button replaceInfo type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button></span></div>');
+      $templateCache.put(templateKey_date, '<div class="input-group" style="width: 180px;" ng-controller="datePickerCtrl"><input replaceInfo type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="vm.$parent.$$data.value" date-model-format="{{formatDate}}" is-open="opened" datepicker-options="dateOptions" close-text="Close" /><span class="input-group-btn"><button replaceInfo type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button></span></div>');
     }
     var templateKey_datetime = "voyageone.angular.directives.schemaDatetime.tpl.html";
     if (!$templateCache.get(templateKey_datetime)) {
-      $templateCache.put(templateKey_datetime, '<div class="input-group" style="width: 180px;" ng-controller="datePickerCtrl"><input replaceInfo type="text" class="form-control" datepicker-popup="{{formatDateTime}}" ng-model="$parent.$$data.value" is-open="opened" datepicker-options="dateOptions" close-text="Close" /><span class="input-group-btn"><button replaceInfo type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button></span></div>');
+      $templateCache.put(templateKey_datetime, '<div class="input-group" style="width: 180px;" ng-controller="datePickerCtrl"><input replaceInfo type="text" class="form-control" datepicker-popup="{{formatDateTime}}" ng-model="vm.$parent.$$data.value" is-open="opened" datepicker-options="dateOptions" close-text="Close" /><span class="input-group-btn"><button replaceInfo type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button></span></div>');
     }
     var templateKey_textarea = "voyageone.angular.directives.schemaTextarea.tpl.html";
     if (!$templateCache.get(templateKey_textarea)) {
-      $templateCache.put(templateKey_textarea, '<textarea style="min-width: 150px; max-width: 650px;" class="form-control no-resize" ng-model="$$data.value" rows="{{showHtmlData.rowNum}}" replaceInfo></textarea>');
+      $templateCache.put(templateKey_textarea, '<textarea style="min-width: 150px; max-width: 650px;" class="form-control no-resize" ng-model="vm.$$data.value" rows="{{showHtmlData.rowNum}}" replaceInfo></textarea>');
     }
     var templateKey_select = "voyageone.angular.directives.schemaSelect.tpl.html";
     if (!$templateCache.get(templateKey_select)) {
-      $templateCache.put(templateKey_select, '<select style="min-width: 150px; max-width: 250px;" replaceInfo class="form-control" ng-model="$$data.value.value" ng-options="option.value as option.displayName for option in $$data.options"> <option value="">{{\'TXT_SELECT_NO_VALUE\' | translate}}</option></select>');
+      $templateCache.put(templateKey_select, '<select style="min-width: 150px; max-width: 250px;" replaceInfo class="form-control" ng-model="vm.$$data.value.value" ng-options="option.value as option.displayName for option in vm.$$data.options"> <option value="">{{\'TXT_SELECT_NO_VALUE\' | translate}}</option></select>');
     }
     var templateKey_radio = "voyageone.angular.directives.schemaRadio.tpl.html";
     if (!$templateCache.get(templateKey_radio)) {
-      $templateCache.put(templateKey_radio, '<label class="checkbox-inline c-radio" ng-repeat="option in $$data.options"><input name="{{$$data.id}}" type="radio" ng-value="option.value" ng-model="$$data.value.value"><span class="fa fa-check"></span> {{option.displayName}}</label>');
+      $templateCache.put(templateKey_radio, '<label class="checkbox-inline c-radio" ng-repeat="option in vm.$$data.options"><input name="{{vm.$$data.id}}" type="radio" ng-value="option.value" ng-model="vm.$$data.value.value"><span class="fa fa-check"></span> {{option.displayName}}</label>');
     }
     var templateKey_checkbox = "voyageone.angular.directives.schemaCheckbox.tpl.html";
     if (!$templateCache.get(templateKey_checkbox)) {
-      $templateCache.put(templateKey_checkbox, '<label class="checkbox-inline c-checkbox" ng-repeat="option in $$data.options"><input type="checkbox" ng-value="option.value" ng-click="checkboxValue(option.value)" ng-checked="isSelected(option.value)"><span class="fa fa-check"></span> {{option.displayName}}</label>');
+      $templateCache.put(templateKey_checkbox, '<label class="checkbox-inline c-checkbox" ng-repeat="option in vm.$$data.options"><input type="checkbox" ng-value="option.value" ng-click="checkboxValue(option.value)" ng-checked="isSelected(option.value)"><span class="fa fa-check"></span> {{option.displayName}}</label>');
     }
     var templateKey_multiComplex = "voyageone.angular.directives.schemaMultiComplex.tpl.html";
     if (!$templateCache.get(templateKey_multiComplex)) {
-      $templateCache.put(templateKey_multiComplex, '<table class="table text-center">' + "<thead><tr>" + '<th ng-repeat="field in $$data.fields" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" class="text-center" style="min-width: 180px;">{{field.name}}</th>' + '<th style="min-width: 60px;" class="text-center" translate="TXT_COM_EDIT"></th>' + "</tr></thead>" + '<tbody><tr ng-repeat="value in $$data.complexValues">' + '<td class="text-left" ng-repeat="field in value.fieldMap"><schema-item data="field" hastip="true" complex="true"></schema-item></td>' + '<td style="min-width: 60px;"><button title="{\'BTN_COM_DELETE\' | translate}" class="btn btn-danger btn-xs" ng-click="delField($index)"><i class="fa  fa-trash-o"></i></button></td>' + "</tr></tbody>" + "</table>");
+      $templateCache.put(templateKey_multiComplex, '<table class="table text-center">' + "<thead><tr>" + '<th ng-repeat="field in vm.$$data.fields" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" class="text-center" style="min-width: 180px;">{{field.name}}</th>' + '<th style="min-width: 60px;" class="text-center" translate="TXT_COM_EDIT"></th>' + "</tr></thead>" + '<tbody><tr ng-repeat="value in vm.$$data.complexValues">' + '<td class="text-left" ng-repeat="field in value.fieldMap"><schema-item data="field" hastip="true" complex="true"></schema-item></td>' + '<td style="min-width: 60px;"><button title="{\'BTN_COM_DELETE\' | translate}" class="btn btn-danger btn-xs" ng-click="delField($index)"><i class="fa  fa-trash-o"></i></button></td>' + "</tr></tbody>" + "</table>");
     }
     var templateKey_complex = "voyageone.angular.directives.schemaComplex.tpl.html";
     if (!$templateCache.get(templateKey_complex)) {
-      $templateCache.put(templateKey_complex, '<schema-header ng-repeat="field in $$data.fields" data="field"><schema-item data="field"></schema-item></schema-header>');
+      $templateCache.put(templateKey_complex, '<schema-header ng-repeat="field in vm.$$data.fields" data="field"><schema-item data="field"></schema-item></schema-header>');
     }
     var templateKey_multiComplex_tip = "voyageone.angular.directives.schemaMultiComplexTip.tpl.html";
     if (!$templateCache.get(templateKey_multiComplex_tip)) {
@@ -337,16 +614,22 @@ define(function() {
     }
     return {
       restrict: "E",
+      require: [ "^?form" ],
       replace: true,
+      bindToController: true,
+      controllerAs: "vm",
+      controller: function() {},
       scope: {
         $$data: "=data",
         $$hastip: "=hastip",
         $$complex: "=complex"
       },
-      link: function(scope, element) {
+      link: function(scope, element, ctrl) {
         var schema = new schemaFactory();
-        _returnType(scope.$$data.type);
-        _operateRule(scope.$$data.rules);
+        scope.vm.$$from = ctrl;
+        schema.name(scope.vm.$$data.id);
+        _returnType(scope.vm.$$data.type);
+        _operateRule(scope.vm.$$data.rules);
         var tempHtml = "";
         switch (schema.type()) {
          case fieldTypes.INPUT:
@@ -389,7 +672,7 @@ define(function() {
           tempHtml = $templateCache.get(templateKey_complex);
           break;
         }
-        if (schema.tipMsg() != null && scope.$$hastip) {
+        if (schema.tipMsg() != null && scope.vm.$$hastip) {
           tempHtml += $templateCache.get(templateKey_multiComplex_tip);
         }
         scope.showHtmlData = angular.copy(schema.schemaInfo());
@@ -400,9 +683,9 @@ define(function() {
           } else {
             scope.showHtmlData.checkValues.push(value);
           }
-          scope.$$data.values = [];
+          scope.vm.$$data.values = [];
           angular.forEach(scope.showHtmlData.checkValues, function(obj) {
-            scope.$$data.values.push({
+            scope.vm.$$data.values.push({
               id: null,
               value: obj
             });
@@ -412,25 +695,25 @@ define(function() {
           return _.contains(scope.showHtmlData.checkValues, value);
         };
         scope.delField = function(index) {
-          scope.$$data.values.splice(index, 1);
+          scope.vm.$$data.values.splice(index, 1);
         };
         function _returnType(type) {
           schema.type(type);
           switch (type) {
            case fieldTypes.RADIO:
-            if (scope.$$complex) schema.type(fieldTypes.SINGLE_CHECK);
+            if (scope.vm.$$complex) schema.type(fieldTypes.SINGLE_CHECK);
             break;
 
            case fieldTypes.MULTI_CHECK:
-            _setCheckValues(scope.$$data.values);
+            _setCheckValues(scope.vm.$$data.values);
             break;
 
            case fieldTypes.MULTI_COMPLEX:
-            scope.$$data.complexValues = _resetMultiComplex(scope.$$data);
+            scope.vm.$$data.complexValues = _resetMultiComplex(scope.vm.$$data);
             break;
 
            case fieldTypes.COMPLEX:
-            _resetComplex(scope.$$data);
+            _resetComplex(scope.vm.$$data);
             break;
           }
         }
@@ -638,22 +921,22 @@ define(function() {
           if ("character" == maxLengthRule.unit) schema.html('ng-maxlength="' + value + '"'); else schema.html('ng-char-maxlength="' + value + '"');
         }
         function _minValueRule(minValueRule) {
-          var value = isNaN(parseFloat(minValueRule.value)) || 0;
+          var value = isNaN(parseFloat(minValueRule.value)) ? 0 : parseFloat(minValueRule.value);
           if ("not include" === minValueRule.exProperty) value = value > 0 ? value - .01 : 0;
           schema.html('ng-minvalue="' + value + '"');
         }
         function _maxValueRule(maxValueRule) {
-          var value = isNaN(parseFloat(maxValueRule.value)) || 0;
+          var value = isNaN(parseFloat(maxValueRule.value)) ? 0 : parseFloat(maxValueRule.value);
           if ("not include" === maxValueRule.exProperty) value = value > 0 ? value - .01 : 0;
           schema.html('ng-maxvalue="' + value + '"');
         }
         function _minInputNumRule(minInputNumRule) {
-          var value = isNaN(parseInt(minInputNumRule.value)) || 0;
+          var value = isNaN(parseInt(minInputNumRule.value)) ? 0 : parseInt(minInputNumRule.value);
           if ("not include" === minInputNumRule.exProperty) value = value > 0 ? value - 1 : 0;
           schema.html('ng-mininputnum="' + value + '"');
         }
         function _maxInputNumRule(maxInputNumRule) {
-          var value = isNaN(parseInt(maxInputNumRule.value)) || 0;
+          var value = isNaN(parseInt(maxInputNumRule.value)) ? 0 : parseInt(maxInputNumRule.value);
           if ("not include" === maxInputNumRule.exProperty) value = value > 0 ? value - 1 : 0;
           schema.html('ng-maxinputnum="' + value + '"');
         }
@@ -871,276 +1154,6 @@ define(function() {
       }
     };
   });
-  angular.module("voyageone.angular.factories.dialogs", []).factory("$dialogs", [ "$modal", "$filter", "$templateCache", function($modal, $filter, $templateCache) {
-    var templateName = "voyageone.angular.factories.dialogs.tpl.html";
-    $templateCache.put(templateName, '<div class="vo_modal"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()"><span aria-hidden="true"><i ng-click="close()" class="fa fa-close"></i></span></button><h4 class="modal-title" ng-bind-html="title"></h4></div><div class="modal-body wrapper-lg"><div class="row"><p ng-bind-html="content"></p></div></div><div class="modal-footer"><button class="btn btn-default btn-sm" ng-if="!isAlert" ng-click="close()" translate="BTN_COM_CANCEL"></button><button class="btn btn-vo btn-sm" ng-click="ok()" translate="BTN_COM_OK"></button></div></div>');
-    function tran(translationId, values) {
-      return $filter("translate")(translationId, values);
-    }
-    return function(options) {
-      if (!_.isObject(options)) throw "arg type must be object";
-      var values;
-      if (_.isObject(options.content)) {
-        values = options.content.values;
-        options.content = options.content.id;
-      }
-      options.title = tran(options.title);
-      options.content = tran(options.content, values);
-      var modalInstance = $modal.open({
-        templateUrl: templateName,
-        controller: [ "$scope", function(scope) {
-          _.extend(scope, options);
-        } ],
-        size: "md"
-      });
-      options.close = function() {
-        modalInstance.dismiss("close");
-      };
-      options.ok = function() {
-        modalInstance.close("");
-      };
-      return modalInstance;
-    };
-  } ]).factory("alert", [ "$dialogs", function($dialogs) {
-    return function(content, title) {
-      return $dialogs({
-        title: title || "TXT_COM_ALERT",
-        content: content,
-        isAlert: true
-      });
-    };
-  } ]).factory("confirm", [ "$dialogs", function vConfirm($dialogs) {
-    return function(content, title) {
-      return $dialogs({
-        title: title || "TXT_COM_CONFIRM",
-        content: content,
-        isAlert: false
-      });
-    };
-  } ]);
-  angular.module("voyageone.angular.factories.interceptor", []).factory("interceptorFactory", InterceptorFactory).config([ "$httpProvider", function($httpProvider) {
-    $httpProvider.interceptors.push("interceptorFactory");
-  } ]);
-  function InterceptorFactory() {
-    var UNKNOWN_CODE = "5";
-    var CODE_SYS_REDIRECT = "SYS_REDIRECT";
-    var MSG_TIMEOUT = "300001";
-    function autoRedirect(res) {
-      if (res.code != CODE_SYS_REDIRECT) {
-        return false;
-      }
-      location.href = res.redirectTo || "/login.html";
-      return true;
-    }
-    function sessionTimeout(res) {
-      if (res.code != MSG_TIMEOUT) {
-        return false;
-      }
-      location.href = "/login.html";
-      return true;
-    }
-    function unknownException(response) {
-      if (response.data.code !== UNKNOWN_CODE) {
-        return;
-      }
-      window.$$lastUnknow = response;
-      console.error("Server throw unknown exceptio. Message:", response.data.message);
-    }
-    return {
-      request: function(config) {
-        return config;
-      },
-      response: function(res) {
-        var result = res.data;
-        if (autoRedirect(result) || sessionTimeout(result)) {
-          return res;
-        }
-        unknownException(res);
-        return res;
-      },
-      requestError: function(config) {
-        return config;
-      },
-      responseError: function(res) {}
-    };
-  }
-  angular.module("voyageone.angular.factories.notify", []).factory("notify", [ "$filter", function($filter) {
-    function notify(options) {
-      if (!options) return;
-      if (_.isString(options)) options = {
-        message: options
-      };
-      if (!_.isObject(options)) return;
-      var values;
-      if (_.isObject(options.message)) {
-        values = options.message.values;
-        options.message = options.message.id;
-      }
-      options.message = $filter("translate")(options.message, values);
-      return $.notify(options.message, options);
-    }
-    notify.success = function(message) {
-      return notify({
-        message: message,
-        className: "success"
-      });
-    };
-    notify.warning = function(message) {
-      return notify({
-        message: message,
-        className: "warning"
-      });
-    };
-    notify.danger = function(message) {
-      return notify({
-        message: message,
-        className: "danger"
-      });
-    };
-    return notify;
-  } ]);
-  angular.module("voyageone.angular.factories.schema", []).factory("schemaHeaderFactory", function() {
-    return function(config) {
-      var _schemaHeaderInfo = config ? config : {
-        isRequired: false,
-        isMultiComplex: false,
-        isComplex: false,
-        tipMsg: []
-      };
-      this.isRequired = function(value) {
-        return value !== undefined ? _schemaHeaderInfo.isRequired = value : _schemaHeaderInfo.isRequired;
-      };
-      this.isComplex = function(value) {
-        return value !== undefined ? _schemaHeaderInfo.isComplex = value : _schemaHeaderInfo.isComplex;
-      };
-      this.isMultiComplex = function(value) {
-        return value !== undefined ? _schemaHeaderInfo.isMultiComplex = value : _schemaHeaderInfo.isMultiComplex;
-      };
-      this.tipMsg = function(value) {
-        return value !== undefined ? _schemaHeaderInfo.tipMsg.push(value) : _schemaHeaderInfo.tipMsg;
-      };
-      this.schemaHearInfo = _schemaHeaderInfo;
-    };
-  }).factory("schemaFactory", function() {
-    return function(config) {
-      var _schemaInfo = config ? config : {
-        type: null,
-        rowNum: null,
-        isRequired: false,
-        checkValues: [],
-        tipMsg: [],
-        html: []
-      };
-      this.type = function(value) {
-        return value !== undefined ? _schemaInfo.type = value : _schemaInfo.type;
-      };
-      this.html = function(value) {
-        return value !== undefined ? _schemaInfo.html.push(value) : htmlToString(_schemaInfo.html);
-      };
-      this.isRequired = function(value) {
-        return value !== undefined ? _schemaInfo.isRequired = value : _schemaInfo.isRequired;
-      };
-      this.rowNum = function(value) {
-        return value !== undefined ? _schemaInfo.rowNum = value : _schemaInfo.rowNum;
-      };
-      this.tipMsg = function(value) {
-        return value !== undefined ? _schemaInfo.tipMsg.push(value) : _schemaInfo.tipMsg;
-      };
-      this.checkValues = function(value) {
-        return value !== undefined ? _schemaInfo.checkValues.push(value) : _schemaInfo.checkValues;
-      };
-      this.schemaInfo = function() {
-        return _schemaInfo;
-      };
-      function htmlToString(htmls) {
-        var result = "";
-        angular.forEach(htmls, function(html) {
-          result += " " + html + " ";
-        });
-        return result;
-      }
-    };
-  });
-  angular.module("voyageone.angular.factories.vpagination", []).factory("vpagination", function() {
-    return function(config) {
-      var _pages, _lastTotal = 0, _showPages = [];
-      this.getTotal = function() {
-        return config.total;
-      };
-      this.getCurr = function() {
-        return {
-          pageNo: curr(),
-          start: getCurrStartItems(),
-          end: getCurrEndItems(),
-          isFirst: isFirst(),
-          isLast: isLast(),
-          pages: createShowPages(),
-          isShowStart: isShowStart(),
-          isShowEnd: isShowEnd()
-        };
-      };
-      this.goPage = load;
-      this.getPageCount = getPages;
-      this.isCurr = isCurr;
-      function load(page) {
-        page = page || config.curr;
-        if (page < 1 || page > getPages() || isCurr(page)) return;
-        config.curr = page;
-        config.fetch(page, config.size);
-      }
-      function createShowPages() {
-        var minPage, maxPage, _showPages = [];
-        if (config.curr < config.showPageNo) {
-          minPage = 1;
-          if (_pages <= config.showPageNo) maxPage = _pages; else maxPage = config.showPageNo;
-        } else if (config.curr + 2 > _pages) {
-          minPage = _pages + 1 - config.showPageNo;
-          maxPage = _pages;
-        } else {
-          minPage = config.curr + 3 - config.showPageNo;
-          maxPage = config.curr + 2;
-        }
-        for (var i = minPage; i <= maxPage; i++) {
-          _showPages.push(i);
-        }
-        return _showPages;
-      }
-      function getPages() {
-        if (_lastTotal != config.total) {
-          _pages = parseInt(config.total / config.size) + (config.total % config.size > 0 ? 1 : 0);
-          _lastTotal = config.total;
-        }
-        return _pages;
-      }
-      function getCurrStartItems() {
-        return (config.curr - 1) * config.size + 1;
-      }
-      function getCurrEndItems() {
-        var currEndItems = config.curr * config.size;
-        return currEndItems <= config.total ? currEndItems : config.total;
-      }
-      function isLast() {
-        return config.curr == getPages();
-      }
-      function isFirst() {
-        return config.curr == 1;
-      }
-      function isCurr(page) {
-        return config.curr == page;
-      }
-      function curr() {
-        return config.curr;
-      }
-      function isShowStart() {
-        _showPages = createShowPages();
-        return _showPages[0] > 1;
-      }
-      function isShowEnd() {
-        _showPages = createShowPages();
-        return _showPages[_showPages.length - 1] < _pages;
-      }
-    };
-  });
   angular.module("voyageone.angular.vresources", []).provider("$vresources", [ "$provide", function($provide) {
     function getActionUrl(root, action) {
       return root + (root.lastIndexOf("/") === root.length - 1 ? "" : "/") + action;
@@ -1348,10 +1361,10 @@ define(function() {
       return currentLang.substr(0, 2);
     }
   };
-  angular.module("voyageone.angular.controllers", [ "voyageone.angular.controllers.datePicker", "voyageone.angular.controllers.selectRows", "voyageone.angular.controllers.showPopover" ]);
   angular.module("voyageone.angular.directives", [ "voyageone.angular.directives.dateModelFormat", "voyageone.angular.directives.enterClick", "voyageone.angular.directives.fileStyle", "voyageone.angular.directives.ifNoRows", "voyageone.angular.directives.uiNav", "voyageone.angular.directives.schema", "voyageone.angular.directives.voption", "voyageone.angular.directives.vpagination", "voyageone.angular.directives.validator" ]);
   angular.module("voyageone.angular.factories", [ "voyageone.angular.factories.dialogs", "voyageone.angular.factories.interceptor", "voyageone.angular.factories.notify", "voyageone.angular.factories.schema", "voyageone.angular.factories.vpagination" ]);
   angular.module("voyageone.angular.services", [ "voyageone.angular.services.ajax", "voyageone.angular.services.cookie", "voyageone.angular.services.message", "voyageone.angular.services.permission", "voyageone.angular.services.translate" ]);
-  return angular.module("voyageone.angular", [ "voyageone.angular.controllers", "voyageone.angular.directives", "voyageone.angular.factories", "voyageone.angular.services" ]);
+  angular.module("voyageone.angular.controllers", [ "voyageone.angular.controllers.datePicker", "voyageone.angular.controllers.selectRows", "voyageone.angular.controllers.showPopover" ]);
+  return angular.module("voyageone.angular", [ "voyageone.angular.directives", "voyageone.angular.factories", "voyageone.angular.services", "voyageone.angular.controllers" ]);
 });
 //# sourceMappingURL=voyageone.angular.com.js.map

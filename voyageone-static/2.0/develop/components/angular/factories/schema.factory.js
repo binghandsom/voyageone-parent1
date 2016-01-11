@@ -50,7 +50,7 @@ angular.module('voyageone.angular.factories.schema', [])
 
             var _schemaInfo = config ? config : {
                 type: null,
-                //size: null,
+                name: null,
                 rowNum: null,
                 isRequired: false,
                 checkValues: [],
@@ -62,9 +62,9 @@ angular.module('voyageone.angular.factories.schema', [])
                 return value !== undefined ? _schemaInfo.type = value : _schemaInfo.type;
             };
 
-            //this.size = function (value) {
-            //    return value !== undefined ? _schemaInfo.size = value : _schemaInfo.size;
-            //};
+            this.name = function (value) {
+                return value !== undefined ? _schemaInfo.name = value : _schemaInfo.name;
+            };
 
             this.html = function (value) {
                 return value !== undefined ? _schemaInfo.html.push(value) : htmlToString(_schemaInfo.html);
