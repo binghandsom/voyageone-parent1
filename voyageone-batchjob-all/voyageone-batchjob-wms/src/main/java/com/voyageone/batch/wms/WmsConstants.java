@@ -250,13 +250,16 @@ public interface WmsConstants {
     final class spaldingReportTitleHead {
         //销售订单标题
         public static final String[] SALES_ORDER_TITLE_HEAD={"OrderType","DocumentID","CustAccount","InventSiteId","InventLocationId",
-                "ShippingDateRequested","E-ComSalesId","ItemId","Size","Qty","SalesPrice","SalesUnit","LineAmount"};
+                "ShippingDateRequested","E-ComSalesId","ItemId","Size","Qty","SalesPrice","SalesUnit","LineAmount","Transcost","Ediscount"};
 
 
         //退货订单标题
         public static final String[]  RETURN_TP_TITLE_HEAD = {"OrderType","DocumentID","CustAccount","ReasonCode","InventSiteId","InventLocationId",
-                "ShippingDateRequested","E-ComSalesId","ItemId","Size","Qty","SalesPrice","SalesUnit","LineAmount"};
+                "ShippingDateRequested","E-ComSalesId","ItemId","Size","Qty","SalesPrice","SalesUnit","LineAmount","Transcost","Ediscount"};
     }
+
+
+
 
 
         //斯伯丁日报文件用

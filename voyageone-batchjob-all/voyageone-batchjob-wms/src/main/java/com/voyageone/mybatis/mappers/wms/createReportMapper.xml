@@ -36,6 +36,7 @@
                 AND transfer.created BETWEEN #{start_created}
                 AND #{end_created}
                 LEFT JOIN wms_bt_virtual_sku virtual ON transferitem.transfer_sku = virtual.provisional_sku
+                INNER JOIN oms_bt_order_details details ON details.res_id = transferitem.reservation_id and details.ship_date IS NOT NULL
             ) AS provisional
         INNER JOIN oms_bt_orders orders ON orders.order_number = provisional.order_number
         AND orders.cart_id = #{cart_id}
@@ -108,6 +109,7 @@
         INNER JOIN oms_bt_orders orders ON orders.order_number = transferitem.order_number
         AND orders.cart_id = #{cart_id}
         INNER JOIN wms_bt_item_details itemdetails on itemdetails.sku =  transferitem.transfer_sku
+        INNER JOIN oms_bt_order_details details ON details.res_id = transferitem.reservation_id and details.ship_date IS NOT NULL
         WHERE
             transfer.created BETWEEN #{start_created}
         AND #{end_created}
@@ -179,6 +181,7 @@
         INNER JOIN oms_bt_orders orders ON orders.order_number = transferitem.order_number
         AND orders.cart_id = #{cart_id}
         INNER JOIN wms_bt_item_details itemdetails on itemdetails.sku =  transferitem.transfer_sku
+        INNER JOIN oms_bt_order_details details ON details.res_id = transferitem.reservation_id and details.ship_date IS NOT NULL
         WHERE
         transfer.created BETWEEN #{start_created}
         AND #{end_created}
