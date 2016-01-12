@@ -30,4 +30,10 @@ public interface JumeiUploadDataService {
 
     void insertJumeiRecord(JumeiRecordBean jumeiRecord);
 
+    void synchronizeJumeiProductRecord();
+
+    void synchronizeJumeiDealRecord();
+
+    void updateJumeiRecord();
+
 }

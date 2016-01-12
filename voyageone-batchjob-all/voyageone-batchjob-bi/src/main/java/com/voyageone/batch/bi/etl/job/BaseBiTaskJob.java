@@ -70,7 +70,7 @@ public abstract class BaseBiTaskJob {
 
         for (ChannelBean channelBean : listChannel) {
         	String code = channelBean.getCode();
-//        	if (!"006".equals(code)) {
+//        	if (!"007".equals(code)) {
 //        		continue;
 //        	}
     		String jobXmlPath = FileProperties.readValue("job_xml_path_channel_"+code);
