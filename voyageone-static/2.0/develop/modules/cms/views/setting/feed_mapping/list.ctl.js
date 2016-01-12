@@ -54,9 +54,6 @@ define([
                 category: null,
                 property: null
             };
-
-            // 将被 popup 调用,需要强制绑定
-            this.bindCategory = this.bindCategory.bind(this);
         }
 
         FeedMappingController.prototype = {
@@ -166,17 +163,17 @@ define([
             },
             /**
              * 在类目 Popup 确定关闭后, 为相关类目进行绑定
-             * @param {{from:object, selected:object}} context Popup 返回的结果信息
+             * @param {{from:string, selected:object}} context Popup 返回的结果信息
              */
             bindCategory: function (context) {
 
                 this.feedMappingService.setMapping({
-                    from: context.from.path,
+                    from: context.from,
                     to: context.selected.catPath
                 }).then(function (res) {
                     // 从后台获取更新后的 mapping
                     // 刷新数据
-                    var feedCategoryBean = this.findCategory(context.from.path);
+                    var feedCategoryBean = this.findCategory(context.from);
                     feedCategoryBean.mapping = _.find(res.data, function (m) {
                         return m.defaultMapping === 1;
                     });
@@ -240,6 +237,21 @@ define([
 
                     }.bind(this));
                 }.bind(this));
+            },
+
+            openCategoryMapping: function (categoryModel, popupNewCategory) {
+
+                this.feedMappingService.getMainCategories()
+                    .then(function (res) {
+
+                        popupNewCategory({
+
+                            categories: res.data,
+                            from: categoryModel.path
+
+                        }).then(this.bindCategory.bind(this));
+
+                    }.bind(this));
             }
         };
 

@@ -47,7 +47,7 @@
                         <td class="text-left">{{ ctrl.getDefaultMapping(feedCategory) }}</td>
                         <td>
                             <div class="btn-group" ng-controller="popupCtrl">
-                                <button ng-click="popupNewCategory({ from: feedCategory.model }).then(ctrl.bindCategory)"
+                                <button ng-click="ctrl.openCategoryMapping(feedCategory.model, popupNewCategory)"
                                         class="btn btn-default btn-xs">
                                     <i class="glyphicon glyphicon-link"></i> 类目匹配
                                 </button>

@@ -6,14 +6,13 @@ define(['cms'], function (cms) {
 
     return cms.controller('categoryPopupController', (function () {
 
-        function CategoryPopupController(context, feedMappingService, $uibModalInstance) {
+        function CategoryPopupController(context, $uibModalInstance) {
 
             this.$uibModalInstance = $uibModalInstance;
-            this.feedMappingService = feedMappingService;
 
             /**
              * 画面传递的上下文
-             * @type {{from:object}}
+             * @type {{categories: object[], from: string}}
              */
             this.context = context;
             /**
@@ -38,12 +37,11 @@ define(['cms'], function (cms) {
              * 初始化时,加载必需数据
              */
             init: function () {
-                // 加载主类目,如果主类目数据已经缓存则从本地读取
-                this.feedMappingService.getMainCategories().then(function (res) {
-                    this.categories = res.data;
-                    // 每次加载,都初始化 TOP 为第一级
-                    this.categoryPath = [{level:1, categories: this.categories}];
-                }.bind(this));
+
+                this.categories = this.context.categories;
+
+                // 每次加载,都初始化 TOP 为第一级
+                this.categoryPath = [{level:1, categories: this.categories}];
             },
             /**
              * 打开一个类目(选定一个类目)
