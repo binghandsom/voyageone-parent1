@@ -250,13 +250,16 @@ public interface WmsConstants {
     final class spaldingReportTitleHead {
         //销售订单标题
         public static final String[] SALES_ORDER_TITLE_HEAD={"OrderType","DocumentID","CustAccount","InventSiteId","InventLocationId",
-                "ShippingDateRequested","E-ComSalesId","ItemId","Size","Qty","SalesPrice","SalesUnit","LineAmount"};
+                "ShippingDateRequested","E-ComSalesId","ItemId","Size","Qty","SalesPrice","SalesUnit","LineAmount","Transcost","Ediscount"};
 
 
         //退货订单标题
         public static final String[]  RETURN_TP_TITLE_HEAD = {"OrderType","DocumentID","CustAccount","ReasonCode","InventSiteId","InventLocationId",
-                "ShippingDateRequested","E-ComSalesId","ItemId","Size","Qty","SalesPrice","SalesUnit","LineAmount"};
+                "ShippingDateRequested","E-ComSalesId","ItemId","Size","Qty","SalesPrice","SalesUnit","LineAmount","Transcost","Ediscount"};
     }
+
+
+
 
 
         //斯伯丁日报文件用
@@ -396,6 +399,10 @@ public interface WmsConstants {
         public final static int Column_Ship_address = 11;
         // 	备注
         public final static int Column_Customer_comments = 12;
+        // 	承运方
+        public final static int Tracking_type = 13;
+        // 	运单号
+        public final static int Tracking_no = 14;
 
     }
 
@@ -409,6 +416,50 @@ public interface WmsConstants {
         // 概要说明
         public final static String HEAD = "<font color='black'>从%s至%s官网共有%s单需要发货，请按附件中所列订单信息发货，谢谢。</font>";
 
+    }
+
+    /**
+     * SP第三方仓库发货文件错误记录邮件（EmailSpThirdReportErrShipping）
+     */
+    final class EmailSpThirdReportErrShipping {
+
+        // 表格式
+        public final static String TABLE = "<div><span>%s</span>"
+                + "<table><tr>"
+                + "<th></th><th>WebID</th><th>OrderNum</th><th>Sku</th><th>TrackingType</th><th>TrackingNo</th>"
+                + "<th>OrderDateTime</th><th>ErrReason</th>"
+                + "</tr>%s</table></div>";
+        // 行格式
+        public final static String ROW = "<tr>"
+                + "<td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td>"
+                + "<td>%s</td><td>%s</td>"
+                + "</tr>";
+        // 邮件名
+        public final static String SUBJECT = "%s第三方仓库发货文件错误记录一览";
+        // 概要说明
+        public final static String HEAD = "<font color='red'>%s文件中，以下订单数据解析时有错误，请确认</font>";
+        // 件数
+        public final static String COUNT = "订单总数：%s";
+
+    }
+
+
+    /**
+     * SP第三方仓库发货文件错误理由（SpThirdReportErrReason）
+     */
+    final class SpThirdReportErrReason {
+        // 承运方为空
+        public final static String TRACHING_TYPE_NULL = "承运方为空,运单号不为空，数据没有保持一致";
+        // 承运方不是规定的物流公司
+        public final static String TRACHING_TYPE_ERR = "承运方不是规定的物流公司";
+        // 运单号为空
+        public final static String TRACHING_NO_NULL = "运单号为空,承运方不为空，数据没有保持一致";
+        // 运单号中间有空格
+        public final static String TRACHING_NO_ERR = "运单号中间有空格";
+        // 订单不存在
+        public final static String ORDER_NO_ERR = "订单不存在";
+        // 该订单已经有运单号
+        public final static String ClIENT_TRACKING_ERR = "该订单已经有运单号";
     }
 
 }

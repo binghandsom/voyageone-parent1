@@ -178,9 +178,11 @@ public class WmsSPThirdWarehouseReportService extends BaseTaskService {
             }
             int intHoursTo = Integer.valueOf(hoursTo) + 1;
             String reportDateYyyyMMdd = DateTimeUtil.format(DateTimeUtil.getDate(), DateTimeUtil.DATE_TIME_FORMAT_3) + String.valueOf(intHoursTo);
+            String reportDateYyMMdd = DateTimeUtil.format(DateTimeUtil.getDate(), DateTimeUtil.DATE_TIME_FORMAT_10) + String.valueOf(intHoursTo);
             timeRegion.add(GMTTimeFrom);
             timeRegion.add(GMTTimeTo);
             timeRegion.add(reportDateYyyyMMdd);
+            timeRegion.add(reportDateYyMMdd);
             logger.info("计算开始时间为：" + "本地时间：" + localTime + "；格林威治时间：" + GMTTimeFrom);
             logger.info("计算截止时间为：" + "本地时间：" + localTime + "；格林威治时间：" + GMTTimeTo);
             return timeRegion;
@@ -320,9 +322,9 @@ public class WmsSPThirdWarehouseReportService extends BaseTaskService {
             try {
                 //'2015-07-01 16:00:00'
                 //'2016-01-05 23:59:59'
-                spThirdWarehouseReports = createReportDao.getSPThirdWarehouseReportBySKU(channel.getOrder_channel_id(),"2015-07-01 16:00:00","2016-01-05 23:59:59", CodeConstants.Reservation_Status.Open,getTaskName());
+                //spThirdWarehouseReports = createReportDao.getSPThirdWarehouseReportBySKU(channel.getOrder_channel_id(),"2015-07-01 16:00:00","2016-01-05 23:59:59", CodeConstants.Reservation_Status.Open,getTaskName());
 
-                //spThirdWarehouseReports = createReportDao.getSPThirdWarehouseReportBySKU(channel.getOrder_channel_id(),timeRegion.get(0),timeRegion.get(1), CodeConstants.Reservation_Status.Open,getTaskName());
+                spThirdWarehouseReports = createReportDao.getSPThirdWarehouseReportBySKU(channel.getOrder_channel_id(),timeRegion.get(0),timeRegion.get(1), CodeConstants.Reservation_Status.Open,getTaskName());
                 logger.info(format("取得 [ %s ] 条数据", spThirdWarehouseReports.size()));
                 //生成日报文件开始
                 isSuccess = createReportExcel(thirdPartyConfigBean, spThirdWarehouseReports, timeRegion);
@@ -349,6 +351,7 @@ public class WmsSPThirdWarehouseReportService extends BaseTaskService {
          */
         private boolean createReportExcel(ThirdPartyConfigBean thirdPartyConfigBean,List<SPThirdWarehouseReportBean>  ReportDatas,List<String> timeRegion) {
             String fileName = String.format(thirdPartyConfigBean.getProp_val3(), timeRegion.get(2)) + report_file_extension;
+            String sheetName = String.format(thirdPartyConfigBean.getProp_val3(), timeRegion.get(3));
             logger.info(format("生成斯伯丁第三方仓库发货日报文件 [ %s ]开始", fileName));
             String templateFile = Properties.readValue(WmsConstants.spaldingReportTemplateFile.SPALDING_REPORT_TEMPLATE);
             HashMap<String, String>  fileTile = new HashMap<String, String>();
@@ -359,7 +362,7 @@ public class WmsSPThirdWarehouseReportService extends BaseTaskService {
                  // FileOutputStream fileOut = new FileOutputStream(filePath + "e:/workbook.xls");
                  FileOutputStream fileOut = new FileOutputStream(thirdPartyConfigBean.getProp_val4() + "/" + fileName);
                  Workbook book = WorkbookFactory.create(inputStream)) {
-                    writeReportExcel(book,fileName,ReportDatas);
+                    writeReportExcel(book,fileName,ReportDatas,sheetName);
                     book.write(fileOut);
                     //已生成文件名保存
                     createFileName.add(fileName);
@@ -384,7 +387,7 @@ public class WmsSPThirdWarehouseReportService extends BaseTaskService {
          *
          */
         private void writeReportExcel(Workbook book, String fileName,
-                                      List<SPThirdWarehouseReportBean>  ReportDatas)  throws Exception {
+                                      List<SPThirdWarehouseReportBean>  ReportDatas,String sheetName)  throws Exception {
             String sourceOrderIdBasic = "";
             String orderNumBasic = "";
             String sizeValue = "";
@@ -394,7 +397,7 @@ public class WmsSPThirdWarehouseReportService extends BaseTaskService {
             Sheet sheet = book.cloneSheet(WmsConstants.SPThirdWarehouseReportItems.TEMPLATE_SHEET);
 
             // 设置SheetName
-            book.setSheetName(book.getSheetIndex(sheet), fileName);
+            book.setSheetName(book.getSheetIndex(sheet), sheetName);
 
             // 设置报表内容
             int rowStart = 1;

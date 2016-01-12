@@ -41,6 +41,9 @@ public class WmsThirdFileDataProcessingService extends BaseTaskService {
     @Autowired
     WmsInventoryIncomingPro wmsInventoryIncomingPro;
 
+    @Autowired
+    WmsSPThirdWarehouseResolveDataPro wmsSPThirdWarehouseResolveDataPro;
+
     private static String PRO_INVFILE_CONFIG = "pro_invFile_config";
 
     private static String PRO_ORDFILE_CONFIG = "pro_ordFile_config";
@@ -49,8 +52,10 @@ public class WmsThirdFileDataProcessingService extends BaseTaskService {
 
     private static String PRO_INVENTORY_INCOMING = "pro_inventory_incoming";
 
+    private static String PRO_SP_THIRD_RESOLVE = "pro_sp_third_resolve";
+
     //第三方文件配置prop_namme
-    private static String[] PRO_FILE_CONFIG = {PRO_INVFILE_CONFIG, PRO_ORDFILE_CONFIG, PRO_ORDSTAFILE_CONFIG, PRO_INVENTORY_INCOMING};
+    private static String[] PRO_FILE_CONFIG = {PRO_INVFILE_CONFIG, PRO_ORDFILE_CONFIG, PRO_ORDSTAFILE_CONFIG, PRO_INVENTORY_INCOMING,PRO_SP_THIRD_RESOLVE};
 
     @Override
     public SubSystem getSubSystem() {
@@ -99,9 +104,13 @@ public class WmsThirdFileDataProcessingService extends BaseTaskService {
                     }else if (proName.equals(PRO_ORDSTAFILE_CONFIG)){
                         logger.info(channel.getFull_name()+"解析订单文件(JCTR_OrdersData_*.txt)");
                         thirdFileProBaseService = wmsThirdUpdtOrdStaPro;
-                    }else if (proName.equals(PRO_INVENTORY_INCOMING)){
-                        logger.info(channel.getFull_name()+"解析Shipment文件(ASN_*.dat)");
+                    }else if (proName.equals(PRO_INVENTORY_INCOMING)) {
+                        logger.info(channel.getFull_name() + "解析Shipment文件(ASN_*.dat)");
                         thirdFileProBaseService = wmsInventoryIncomingPro;
+
+                    }else if (proName.equals(PRO_SP_THIRD_RESOLVE)) {
+                        logger.info(channel.getFull_name() + "解析SP第三方仓库发货文件");
+                        thirdFileProBaseService = wmsSPThirdWarehouseResolveDataPro;
                     }else {
                         logger.info(channel.getFull_name()+"无相关需要解析的文件");
                         break;
@@ -117,6 +126,8 @@ public class WmsThirdFileDataProcessingService extends BaseTaskService {
                             logger.error(channel.getFull_name()+"解析订单文件出现错误"+e);
                         }else if(proName.equals(PRO_INVENTORY_INCOMING)) {
                             logger.error(channel.getFull_name()+"解析Shipment文件出现错误"+e);
+                        }else if(proName.equals(PRO_SP_THIRD_RESOLVE)) {
+                            logger.error(channel.getFull_name()+"解析SP第三方仓库发货文件出现错误"+e);
                         }
 
                         break;

@@ -20,6 +20,9 @@ public class SPThirdWarehouseReportBean {
     private String sku;
     private String itemcode;
     private String size;
+    private String tracking_type;
+    private String tracking_no;
+    private String err_reason;
 
     public String getOrder_date_time() {
         return order_date_time;
@@ -139,5 +142,29 @@ public class SPThirdWarehouseReportBean {
 
     public void setSize(String size) {
         this.size = size;
+    }
+
+    public String getTracking_type() {
+        return tracking_type;
+    }
+
+    public void setTracking_type(String tracking_type) {
+        this.tracking_type = tracking_type;
+    }
+
+    public String getTracking_no() {
+        return tracking_no;
+    }
+
+    public void setTracking_no(String tracking_no) {
+        this.tracking_no = tracking_no;
+    }
+
+    public String getErr_reason() {
+        return err_reason;
+    }
+
+    public void setErr_reason(String err_reason) {
+        this.err_reason = err_reason;
     }
 }
