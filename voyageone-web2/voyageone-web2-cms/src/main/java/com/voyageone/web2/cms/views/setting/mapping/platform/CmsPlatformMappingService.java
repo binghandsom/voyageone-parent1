@@ -57,14 +57,14 @@ public class CmsPlatformMappingService extends BaseAppService {
 
         // 获取所有渠道和平台下的 mapping 关系, 画面需要显示
 
-        Map<String, String> platformPathMap = getPlatformPathMap(user.getSelChannel(), cartId);
+        Map<String, CmsMtPlatformCategoryTreeModel> platformMap = getPlatformMap(user.getSelChannel(), cartId);
 
         Map<String, String> mappings = platformMappingDao.selectMappings(user.getSelChannel(), cartId)
                 .stream()
-                .filter(m -> !platformPathMap.containsKey(m.getPlatformCategoryId()))
+                .filter(m -> !platformMap.containsKey(m.getPlatformCategoryId()))
                 .collect(toMap(
                         CmsMtPlatformMappingModel::getMainCategoryId,
-                        m -> platformPathMap.get(m.getPlatformCategoryId())));
+                        m -> platformMap.get(m.getPlatformCategoryId()).getCatPath()));
 
         return new HashMap<String, Object>() {{
             put("categories", treeModelMap);
@@ -125,7 +125,7 @@ public class CmsPlatformMappingService extends BaseAppService {
      * @param cartId  平台 ID
      * @return Map 键 -> CategoryId, 值 -> CategoryPath
      */
-    private Map<String, String> getPlatformPathMap(ChannelConfigEnums.Channel channel, Integer cartId) {
+    protected Map<String, CmsMtPlatformCategoryTreeModel> getPlatformMap(ChannelConfigEnums.Channel channel, Integer cartId) {
 
         // --> 取平台所有类目
         List<CmsMtPlatformCategoryTreeModel> platformCategoryTreeModels =
@@ -139,7 +139,7 @@ public class CmsPlatformMappingService extends BaseAppService {
         return platformCategoryTreeModelStream
                 .collect(toMap(
                         CmsMtPlatformCategoryTreeModel::getCatId,
-                        CmsMtPlatformCategoryTreeModel::getCatPath));
+                        model -> model));
     }
 
     /**

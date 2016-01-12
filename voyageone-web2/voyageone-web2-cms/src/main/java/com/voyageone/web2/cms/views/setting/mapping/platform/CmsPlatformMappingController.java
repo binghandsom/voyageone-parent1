@@ -39,7 +39,7 @@ public class CmsPlatformMappingController extends CmsController {
     }
 
     @RequestMapping(CmsUrlConstants.MAPPING.PLATFORM.GET_PLATFORM_CATEGORY)
-    public AjaxResponse get(@RequestBody Map<String, Integer> params) {
+    public AjaxResponse getPlatformCategories(@RequestBody Map<String, Integer> params) {
 
         Integer cartId = params.get("cartId");
 

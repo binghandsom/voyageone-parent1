@@ -8,7 +8,7 @@
         <property name="collectionNameMap">
             <map>
                 <entry key="CmsBtFeedInfoModel"				    value="cms_bt_feed_info" />
-                <entry key="CmsMtPlatformMappingModel"		    value="cms_bt_platform_mapping" />
+                <entry key="CmsMtPlatformMappingModel"		    value="cms_mt_platform_mapping" />
                 <entry key="CmsBtProductModel"				    value="cms_bt_product" />
                 <entry key="CmsBtProductLogModel"			    value="cms_bt_product_log" />
                 <entry key="CmsBtTranErrInfoModel"			    value="cms_bt_tran_err_info" />
