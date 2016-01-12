@@ -1,7 +1,7 @@
 /**
  * 平台枚举
  */
-define(function () {
+define(['underscore'], function (_) {
 
     /**
      * @description
@@ -57,6 +57,27 @@ define(function () {
         /**
          * 聚美优品
          */
-        JM: new Cart('JM', 27, '聚美优品')
+        JM: new Cart('JM', 27, '聚美优品'),
+
+        /**
+         * 获取枚举, desc 不支持
+         * @param {string|number} val
+         */
+        valueOf: function(val) {
+
+            // 如果是数字,则默认按 id 查找
+            if (_.isNumber(val)) {
+                return _.find(this, function(v) {
+                    if (_.isFunction(v)) return false;
+                    return v.id === val;
+                });
+            }
+
+            // 否则按 name 查找
+            // 暂时不支持按 desc 查找
+            var cart = this[val];
+
+            return (cart instanceof Cart) ? cart : null;
+        }
     };
 });
