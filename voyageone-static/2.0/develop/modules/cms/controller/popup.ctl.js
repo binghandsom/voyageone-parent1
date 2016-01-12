@@ -26,7 +26,7 @@ define([
                     "controllerUrl": "modules/cms/views/pop/other/progress.ctl"
                 }
             },
-            "tag":{
+            "tag": {
                 "promotion": {
                     "templateUrl": "views/pop/tag/promotion/index.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/tag/promotion/index.ctl"
@@ -44,26 +44,26 @@ define([
                 "templateUrl": "views/pop/import/index.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/import/index.ctl"
             },
-           "columnMapping": {
-            "templateUrl": "views/pop/columnMapping/index.tpl.html",
-            "controllerUrl": "modules/cms/views/pop/columnMapping/index.ctl",
-            "controller": 'ColumnMappingCtl',
-            "size": 'md'/*
-               windowClass: 'xxx',
-               "windowTopClass": "yyy"*/
-           },
-        "columnMappingSetting": {
-            "templateUrl": "views/pop/columnMappingSetting/index.tpl.html",
-            "controllerUrl": "modules/cms/views/pop/columnMappingSetting/index.ctl",
-            "controller": 'ColumnMappingSettingCtl',
-            "size": 'lg'
-        },
-        "otherDownload": {
-            "templateUrl": "views/pop/other/download.tpl.html",
-            "controllerUrl": "modules/cms/views/pop/other/download.ctl",
-            "controller": 'OtherDownloadCtl',
-            "size": 'md'
-        },
+            "columnMapping": {
+                "templateUrl": "views/pop/columnMapping/index.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/columnMapping/index.ctl",
+                "controller": 'ColumnMappingCtl',
+                "size": 'md'/*
+                 windowClass: 'xxx',
+                 "windowTopClass": "yyy"*/
+            },
+            "columnMappingSetting": {
+                "templateUrl": "views/pop/columnMappingSetting/index.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/columnMappingSetting/index.ctl",
+                "controller": 'ColumnMappingSettingCtl',
+                "size": 'lg'
+            },
+            "otherDownload": {
+                "templateUrl": "views/pop/other/download.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/other/download.ctl",
+                "controller": 'OtherDownloadCtl',
+                "size": 'md'
+            },
             "product": {
                 "price": {
                     "templateUrl": "views/pop/product/price/history.tpl.html",
@@ -112,13 +112,13 @@ define([
         function openModel(config, context) {
 
             if (context) config.resolve = {
-                context: function() {
+                context: function () {
                     return context;
                 }
             };
 
             var defer = $q.defer();
-            require([config.controllerUrl], function() {
+            require([config.controllerUrl], function () {
                 defer.resolve($modal.open(config).result);
             });
             return defer.promise;
@@ -144,7 +144,7 @@ define([
          */
         $scope.openUpdateProperties = openUpdateProperties;
         function openUpdateProperties(viewSize, selList) {
-            require([popActions.prop_change.controllerUrl], function(){
+            require([popActions.prop_change.controllerUrl], function () {
                 if (selList.length) {
                     $modal.open({
                         templateUrl: popActions.prop_change.templateUrl,
@@ -193,6 +193,7 @@ define([
                 }
             });
         }
+
         $scope.openshop_category = openshop_category;
         function openshop_category(viewSize) {
             $modal.open({
@@ -206,6 +207,7 @@ define([
                 }
             });
         }
+
         $scope.openHistoryPromotion = openHistoryPromotion;
         function openHistoryPromotion(viewSize, data) {
             require([popActions.product.promotion.controllerUrl], function () {
@@ -221,6 +223,7 @@ define([
                 });
             });
         }
+
         $scope.openHistoryPrice = openHistoryPrice;
         function openHistoryPrice(viewSize, data) {
             require([popActions.product.price.controllerUrl], function () {
@@ -236,9 +239,10 @@ define([
                 });
             });
         }
+
         $scope.openpromotion = openpromotion;
-        function openpromotion(viewSize,data) {
-            require([popActions.new.controllerUrl], function(){
+        function openpromotion(viewSize, data) {
+            require([popActions.new.controllerUrl], function () {
                 $modal.open({
                     templateUrl: popActions.new.templateUrl,
                     controller: 'popNewPromotionCtl',
@@ -251,6 +255,7 @@ define([
                 });
             });
         }
+
         $scope.openOtherPlatform = openOtherPlatform;
         function openOtherPlatform(viewSize) {
             $modal.open({
@@ -264,6 +269,7 @@ define([
                 }
             });
         }
+
         $scope.openOtherProgress = openOtherProgress;
         function openOtherProgress(viewSize) {
             $modal.open({
@@ -277,8 +283,9 @@ define([
                 }
             });
         }
+
         $scope.openImport = openImport;
-        function openImport(viewSize,data) {
+        function openImport(viewSize, data) {
             require([popActions.import.controllerUrl], function () {
                 $modal.open({
                     templateUrl: popActions.import.templateUrl,
@@ -292,6 +299,7 @@ define([
                 });
             });
         }
+
         $scope.openColumnMapping = function (context) {
             return openModel(popActions.columnMapping, context);
         };
