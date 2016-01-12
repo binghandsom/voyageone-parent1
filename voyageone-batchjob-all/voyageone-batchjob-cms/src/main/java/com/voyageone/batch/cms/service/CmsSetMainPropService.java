@@ -2,6 +2,8 @@ package com.voyageone.batch.cms.service;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.batch.base.BaseTaskService;
+import com.voyageone.batch.cms.bean.ItemDetailsBean;
+import com.voyageone.batch.cms.dao.ItemDetailsDao;
 import com.voyageone.batch.cms.dao.MainPropDao;
 import com.voyageone.batch.cms.dao.SuperFeedDao;
 import com.voyageone.batch.core.Enums.TaskControlEnums;
@@ -64,6 +66,8 @@ public class CmsSetMainPropService extends BaseTaskService {
     CommSequenceMongoService commSequenceMongoService; // DAO: Sequence
     @Autowired
     CmsMtCategorySchemaDao cmsMtCategorySchemaDao; // DAO: 主类目属性结构
+    @Autowired
+    ItemDetailsDao itemDetailsDao; // DAO: ItemDetailsDao
     @Autowired
     protected VoApiDefaultClient voApiClient; // VoyageOne共通API
 
@@ -204,6 +208,9 @@ public class CmsSetMainPropService extends BaseTaskService {
 
             // 调用共通方法来设置价格
             doSetPrice(channelId, feed, cmsProduct);
+
+            // 更新wms_bt_item_details表的数据
+            doSaveItemDetails(channelId, cmsProduct.getProdId(), feed);
 
             // 更新price_log信息
             // TODO:更新price_log信息 -> 共通代码里会处理的,我这边就不需要写了
@@ -478,6 +485,8 @@ public class CmsSetMainPropService extends BaseTaskService {
          * @param schemaModel 主类目的schema信息
          * @return 匹配好的属性
          */
+        private int m_mulitComplex_index = 0; // 暂时只支持一层multiComplex, 如果需要多层, 就需要改成list, 先进后出
+        private boolean m_mulitComplex_run = false; // 暂时只支持一层multiComplex, 如果需要多层, 就需要改成list, 先进后出
         private Object getPropValueByMapping(
                 String propPath,
                 Prop prop,
@@ -530,14 +539,20 @@ public class CmsSetMainPropService extends BaseTaskService {
                     // 处理完所有的子属性之后就可以返回了
                     return complexChildren;
                 } else if (FieldTypeEnum.MULTICOMPLEX.equals(fieldCurrent.getType())) {
-                    complexChildren = new HashMap<>();
 
-                    for (Prop p : prop.getChildren()) {
-                        complexChildren.put(p.getProp(), getPropValueByMapping(propPath + strPathSplit + p.getProp(), p, feed, field, schemaModel));
+                    m_mulitComplex_run = true;
+                    m_mulitComplex_index = 0;
+
+                    while (m_mulitComplex_run) {
+                        complexChildren = new HashMap<>();
+                        for (Prop p : prop.getChildren()) {
+                            complexChildren.put(p.getProp(), getPropValueByMapping(propPath + strPathSplit + p.getProp(), p, feed, field, schemaModel));
+                        }
+                        multiComplexChildren.add(complexChildren);
+                        m_mulitComplex_index++;
                     }
 
                     // 处理完所有的子属性之后就可以返回了
-                    multiComplexChildren.add(complexChildren);
                     return multiComplexChildren;
                 }
 
@@ -640,6 +655,17 @@ public class CmsSetMainPropService extends BaseTaskService {
                             logger.info(String.format("[CMS2.0][测试] 找不到feed的这个属性 ( channel: [%s], code: [%s], attr: [%s] )", feed.getChannelId(), feed.getCode(), mappingCondition.getVal()));
                         }
 
+                        if (m_mulitComplex_run) {
+                            if (attributeValue.getClass().equals(ArrayList.class)) {
+                                Object attTemp = ((List)attributeValue).get(m_mulitComplex_index);
+
+                                if (m_mulitComplex_index == (((List) attributeValue).size() - 1)) {
+                                    m_mulitComplex_run = false;
+                                }
+                                attributeValue = attTemp;
+                            }
+                        }
+
                     }
 
                     return attributeValue;
@@ -677,6 +703,54 @@ public class CmsSetMainPropService extends BaseTaskService {
 
             //SDK取得Product 数据
             voApiClient.execute(requestModel);
+
+        }
+
+        /**
+         * doSaveItemDetails 保存item details的数据
+         * @param channelId channel id
+         * @param productId product id
+         * @param feed feed信息
+         */
+        private void doSaveItemDetails(String channelId, Long productId, CmsBtFeedInfoModel feed) {
+
+            // 如果feed里,没有sku的数据的话,那么就不需要做下去了
+            if (feed.getSkus() == null || feed.getSkus().size() == 0) {
+                return;
+            }
+
+            // 根据product id, 获取现有的item details表的数据
+            List<String> skuList = new ArrayList<>();
+            List<ItemDetailsBean> itemDetailsBeanList = itemDetailsDao.selectByCode(channelId, feed.getCode());
+            for (ItemDetailsBean itemDetailsBean : itemDetailsBeanList) {
+                skuList.add(itemDetailsBean.getSku());
+            }
+
+            // 遍历feed的sku信息
+            for (CmsBtFeedInfoModel_Sku feedSku : feed.getSkus()) {
+                // 如果有存在的话,那么就跳过不需要再插入了
+                if (skuList.contains(feedSku.getSku())) {
+                    continue;
+                }
+
+                // 数据准备
+                ItemDetailsBean itemDetailsBean = new ItemDetailsBean();
+                itemDetailsBean.setOrder_channel_id(channelId);
+                itemDetailsBean.setSku(feedSku.getSku());
+                itemDetailsBean.setProduct_id(productId);
+                itemDetailsBean.setItemcode(feed.getCode());
+                itemDetailsBean.setSize(feedSku.getSize());
+                itemDetailsBean.setBarcode(feedSku.getBarcode());
+                itemDetailsBean.setIs_sale("1");
+                itemDetailsBean.setClient_sku(feedSku.getClientSku());
+                itemDetailsBean.setActive(1);
+
+                // 插入数据库
+                itemDetailsDao.insertItemDetails(itemDetailsBean, getTaskName());
+
+            }
+
+
 
         }
 

@@ -47,8 +47,12 @@ gulp.task(tasks.publish.angular, [tasks.build.angular], function () {
 
 // release voyageone.com.js.
 gulp.task(tasks.publish.com, [tasks.build.com], function () {
-  gulp.src([build.common.native.dist + '/' + build.common.native.concat,
-      build.common.native.dist + '/' + build.common.native.map])
+  gulp.src(build.common.native.dist + '/' + build.common.native.concat)
+      .pipe(sourceMaps.init())
+      //build.common.native.dist + '/' + build.common.native.map])
+      .pipe(uglify())
+      .pipe(rename({suffix: '.min'}))
+      .pipe(sourceMaps.write('./'))
     .pipe(gulp.dest(publish.components.native.dist))
     .pipe(gulp.dest(publish.release.components));
 });
@@ -59,37 +63,39 @@ gulp.task(tasks.publish.libs, function () {
     .pipe(gulp.dest(publish.release.libs));
 });
 
-// release views.
-gulp.task(tasks.publish.views, function () {
+// release modules.
+gulp.task(tasks.publish.modules, function () {
 
   // build login.app and channel.app
   gulp.src(publish.loginAndChannel.js)
     .pipe(fixCommonRef())
-    .pipe(ngAnnotate())
-    .pipe(uglify())
-    .pipe(rename({suffix: ".min"}))
-    .pipe(gulp.dest(publish.release.loginAndChannel));
+      .pipe(ngAnnotate())
+      .pipe(uglify())
+      .pipe(rename({suffix: ".min"}))
+      .pipe(gulp.dest(publish.release.loginAndChannel));
 
   gulp.src(publish.loginAndChannel.html)
-    .pipe(replace(/data-main=["'](.+?)["']/g, 'data-main="$1.min"'))
-    .pipe(minifyHtml())
-    .pipe(gulp.dest(publish.release.loginAndChannel));
+      .pipe(replace(/data-main=["'](.+?)["']/g, 'data-main="$1.min"'))
+      //.pipe(replace('require.js', 'require.min.js'))
+      .pipe(minifyHtml())
+      .pipe(gulp.dest(publish.release.loginAndChannel));
 
   // 压缩js文件
-  gulp.src(publish.views.js)
-    .pipe(fixCommonRef())
-    .pipe(uglify())
-    .pipe(gulp.dest(publish.release.views));
+  gulp.src(publish.modules.js)
+      .pipe(fixCommonRef())
+      //.pipe(uglify())
+      .pipe(gulp.dest(publish.release.modules));
 
   // 压缩html文件
-  gulp.src(publish.views.html)
-    .pipe(minifyHtml())
-    .pipe(gulp.dest(publish.release.views));
+  gulp.src(publish.modules.html)
+      //.pipe(replace('require.js', 'require.min.js'))
+      .pipe(minifyHtml())
+      .pipe(gulp.dest(publish.release.modules));
 
   // copy json文件
-  gulp.src(publish.views.json)
-    .pipe(gulp.dest(publish.release.views));
+  gulp.src(publish.modules.json)
+      .pipe(gulp.dest(publish.release.modules));
 
 });
 
-gulp.task(tasks.publish.all, [tasks.publish.statics, tasks.publish.angular, tasks.publish.com, tasks.publish.libs, tasks.publish.views]);
+gulp.task(tasks.publish.all, [tasks.publish.statics, tasks.publish.angular, tasks.publish.com, tasks.publish.libs, tasks.publish.modules]);

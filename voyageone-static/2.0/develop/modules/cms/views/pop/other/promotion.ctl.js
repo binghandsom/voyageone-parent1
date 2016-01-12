@@ -21,7 +21,9 @@ define([
 
             if(!items) {
                 promotionService.insertPromotion($scope.promotion).then(function (res) {
-
+                    for (key in $scope.promotion) {
+                        items[key] = $scope.promotion[key];
+                    }
                     $scope.$close();
                 }, function (res) {
                 })

@@ -26,8 +26,8 @@ var build = {
     native: {
       src: 'develop/components/js/*.js',
       dist: 'develop/components/dist',
-      concat: 'voyageone.com.min.js',
-      map: 'voyageone.com.min.js.map',
+      concat: 'voyageone.com.js',
+      map: 'voyageone.com.js.map',
       version: versions.com
     },
     appCss: {
@@ -77,16 +77,16 @@ var publish = {
     }
   },
   libs: {
-    src: 'develop/libs/**/*min.js'
+    src: ['develop/libs/**/*.js','develop/libs/**/*.css']
   },
   loginAndChannel: {
     js: 'develop/*.js',
     html: 'develop/*.html'
   },
-  views: {
-    js: 'develop/views/**/*.js',
-    html: 'develop/views/**/*.html',
-    json: 'develop/views/**/*.json'
+  modules: {
+    js: 'develop/modules/**/*.js',
+    html: 'develop/modules/**/*.html',
+    json: 'develop/modules/**/*.json'
   },
   release: {
     static: {
@@ -96,7 +96,7 @@ var publish = {
     },
     components: 'publish/release/' + versions.publish + '/components/dist',
     libs: 'publish/release/' + versions.publish + '/libs',
-    views: 'publish/release/' + versions.publish + '/views',
+    modules: 'publish/release/' + versions.publish + '/modules',
     loginAndChannel: 'publish/release/' + versions.publish
   }
 };
@@ -118,7 +118,7 @@ var tasks = {
     angular: 'publish-angular-com',
     com: 'publish-com',
     libs: 'publish-libs',
-    views: 'publish-views'
+    modules: 'publish-modules'
   }
 };
 

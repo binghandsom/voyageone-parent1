@@ -40,6 +40,18 @@
 								</div>
 							</div>
 						</div>
+						<div class="form-group">
+							<label class="col-sm-3  control-label">Platform</label>
+							<div class="col-sm-8">
+								<select class="form -control" ng-model="searchInfo.cartId">
+									<option value=''>All</option>
+									<option value=20>天猫</option>
+									<option value=23>天猫国际</option>
+									<option value=27>聚美</option>
+									<option value=24>京东</option>
+								</select>
+							</div>
+						</div>
 					</div><!-- .form-group -->
 				</div>
 				<div class="col-sm-3">
@@ -77,7 +89,7 @@
 					</tr>
 					</thead>
 					<tbody>
-					<tr ng-repeat="promotion in vm.promotionList" >
+					<tr ng-repeat="promotion in vm.promotionList">
 						<td>{{promotion.promotionId}}</td>
 						<td class="text-center"><span ng-show="promotion.promotionStatus==false" class="label label-success-new m-r-lg m-l"> Open </span><span ng-show="promotion.promotionStatus==true" class="label label-yellow-new m-r-lg m-l"> Close </span></td>
 						<td><a href="#/promotion/detail/{{promotion.promotionId}}" target="_blank">{{promotion.promotionName}}</a></td>
@@ -86,7 +98,7 @@
 						<td>{{promotion.cartName}}</td>
 						<td ng-controller="popupCtrl"><button title="编辑" class="btn btn-success btn-xs" ng-click="openpromotion('md',promotion)"><i class="fa fa-pencil"></i></button>
 							<button title="删除" class="btn btn-danger btn-xs"  ng-click="del(promotion)"><i class="fa  fa-trash-o"></i></button>
-							<button title="下载" class="btn btn-dangerdel btn-xs"><i class="fa fa-cloud-download"></i></button>
+							<button title="下载" class="btn btn-dangerdel btn-xs" ng-click="openOtherDownload()"><i class="fa fa-cloud-download"></i></button>
 						</td>
 					</tr>
 					</tbody>
