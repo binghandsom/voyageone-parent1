@@ -31,7 +31,7 @@ public class ProductPropsEditController extends CmsController{
 
 //        String channelId = super.getUser().getSelChannelId();
 
-        String channelId = "200";
+        String channelId = "013";
 
         Map<String,Object> categoryInfo = new HashMap<>();
 
@@ -50,7 +50,7 @@ public class ProductPropsEditController extends CmsController{
 
 //        String channelId = super.getUser().getSelChannelId();
 
-        String channelId = "200";
+        String channelId = "013";
         String user = super.getUser().getUserName();
 
         productPropsEditService.updateProductMastertInfo(channelId,user,requestMap);
@@ -63,7 +63,7 @@ public class ProductPropsEditController extends CmsController{
     public AjaxResponse doUpdateProductSkuInfo(@RequestBody Map requestMap){
 
 //        String channelId = super.getUser().getSelChannelId();
-        String channelId = "200";
+        String channelId = "013";
         String user = super.getUser().getUserName();
         String categoryId = requestMap.get("categoryId").toString();
         Long productId = Long.valueOf(requestMap.get("productId").toString());

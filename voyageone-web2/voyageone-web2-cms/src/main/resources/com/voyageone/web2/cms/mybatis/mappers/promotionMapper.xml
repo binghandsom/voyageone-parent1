@@ -11,6 +11,8 @@
         <result column="promotion_name" property="promotionName" jdbcType="VARCHAR" />
         <result column="pre_period_start" property="prePeriodStart" jdbcType="VARCHAR" />
         <result column="pre_period_end" property="prePeriodEnd" jdbcType="VARCHAR" />
+        <result column="pre_sale_start" property="preSaleStart" jdbcType="VARCHAR" />
+        <result column="pre_sale_end" property="preSaleEnd" jdbcType="VARCHAR" />
         <result column="activity_start" property="activityStart" jdbcType="VARCHAR" />
         <result column="activity_end" property="activityEnd" jdbcType="VARCHAR" />
         <result column="tejiabao_id" property="tejiabaoId" jdbcType="VARCHAR" />
@@ -30,6 +32,8 @@
               a.promotion_name,
               a.pre_period_start,
               a.pre_period_end,
+              a.pre_sale_start,
+              a.pre_sale_end,
               a.activity_start,
               a.activity_end,
               a.tejiabao_id,
@@ -78,6 +82,12 @@
             <if test="promotionName != null" >
                 promotion_name,
             </if>
+            <if test="preSaleStart != null" >
+                pre_sale_start,
+            </if>
+            <if test="preSaleEnd != null" >
+                pre_sale_end,
+            </if>
             <if test="prePeriodStart != null" >
                 pre_period_start,
             </if>
@@ -117,6 +127,12 @@
             </if>
             <if test="promotionName != null" >
                 #{promotionName,jdbcType=VARCHAR},
+            </if>
+            <if test="preSaleStart != null" >
+                #{preSaleStart,jdbcType=VARCHAR},
+            </if>
+            <if test="preSaleEnd != null" >
+                #{preSaleEnd,jdbcType=VARCHAR},
             </if>
             <if test="prePeriodStart != null" >
                 #{prePeriodStart,jdbcType=VARCHAR},
@@ -160,6 +176,12 @@
             </if>
             <if test="promotionName != null" >
                 promotion_name = #{promotionName,jdbcType=VARCHAR},
+            </if>
+            <if test="preSaleStart != null" >
+                pre_sale_start = #{preSaleStart,jdbcType=VARCHAR},
+            </if>
+            <if test="preSaleEnd != null" >
+                pre_sale_end = #{preSaleEnd,jdbcType=VARCHAR},
             </if>
             <if test="prePeriodStart != null" >
                 pre_period_start = #{prePeriodStart,jdbcType=VARCHAR},
