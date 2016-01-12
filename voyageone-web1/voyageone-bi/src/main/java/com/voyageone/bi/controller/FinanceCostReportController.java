@@ -5,7 +5,7 @@ import com.voyageone.bi.base.AjaxResponseBean;
 import com.voyageone.bi.base.BiException;
 import com.voyageone.bi.commonutils.Contants;
 import com.voyageone.bi.commonutils.SessionKey;
-import com.voyageone.bi.task.DataReportTask;
+import com.voyageone.bi.task.FinanceReportTask;
 import com.voyageone.bi.tranbean.UserInfoBean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,7 +26,7 @@ public class FinanceCostReportController {
 
     // 页面初期化
     @Autowired
-    private DataReportTask dataReportTask;
+    private FinanceReportTask financeReportTask;
 
     // 成本报表页面
     @RequestMapping(value = "/manage/goCostReport")
@@ -60,13 +60,13 @@ public class FinanceCostReportController {
     }
 
     /**
-     * getDataReportCost数据取得
+     * getFinanceReportCost数据取得
      */
-    @RequestMapping(value = "/manage/getDataReportCost")
-    public void getDataReportCost(HttpServletResponse response,
+    @RequestMapping(value = "/manage/getFinanceReportCost")
+    public void getFinanceReportCost(HttpServletResponse response,
                                   HttpServletRequest request,
                                   AjaxFinancialCostReportBean bean) throws BiException {
-        logger.info("getDataReportCost");
+        logger.info("getFinanceReportCost");
         if (!bean.checkInput()) {
             bean.WriteTo(response);
             return;
@@ -74,7 +74,7 @@ public class FinanceCostReportController {
 
         HttpSession session = request.getSession();
         UserInfoBean user = (UserInfoBean) session.getAttribute(SessionKey.LOGIN_INFO);
-        dataReportTask.ajaxGetFinancialCostReportData(bean, user);
+        financeReportTask.ajaxGetFinancialCostReportData(bean, user);
         bean.WriteTo(response);
     }
 

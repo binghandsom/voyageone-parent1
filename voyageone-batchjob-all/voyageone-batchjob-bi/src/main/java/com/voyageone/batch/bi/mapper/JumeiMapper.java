@@ -31,4 +31,14 @@ public interface JumeiMapper {
     List<String> select_sku_ims_jumei_vl_sku(Map<String, Object> mapParameter);
 
     void insert_ims_jumei_vl_record(JumeiRecordBean jumeiRecord);
+
+    void update_ims_jumei_vl_record();
+
+    void update_ims_jumei_vl_product_status();
+
+    void update_ims_jumei_vl_product_status_0();
+
+    void update_ims_jumei_vl_deal_status();
+
+    void update_ims_jumei_vl_deal_status_0();
 }

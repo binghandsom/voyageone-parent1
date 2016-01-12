@@ -30,7 +30,7 @@ function initSearchParam() {
         checkFinanceUploadDataParam();
     })
 
-    //	[检索]按钮
+    //	[更新]按钮
     $('#update').button();
     $("#update").click(function(){
         initGetCond();

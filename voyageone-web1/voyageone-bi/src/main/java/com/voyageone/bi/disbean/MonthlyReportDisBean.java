@@ -18,6 +18,7 @@ public class MonthlyReportDisBean {
     private BigDecimal mail_fee;
     private BigDecimal ground_handling_fee;
     private BigDecimal storage_charges;
+    private BigDecimal identification_fee;
 
     public int getYear_calc() {
         return year_calc;
@@ -113,5 +114,13 @@ public class MonthlyReportDisBean {
 
     public void setStorage_charges(BigDecimal storage_charges) {
         this.storage_charges = storage_charges;
+    }
+
+    public BigDecimal getIdentification_fee() {
+        return identification_fee;
+    }
+
+    public void setIdentification_fee(BigDecimal identification_fee) {
+        this.identification_fee = identification_fee;
     }
 }

@@ -18,6 +18,8 @@ public class JumeiDealBean {
     private String title_short;
     private String cms_production_place;
     private String usage;
+    private String usage2;
+    private String usage3;
 	private String jumei_production_place;
     private String quality_period;
     private String applicable_crowd;
@@ -25,6 +27,10 @@ public class JumeiDealBean {
     private String custom_sear_label;
     private String cms_long_description;
     private String detail;
+    private String detail2;
+    private String detail3;
+    private String detail4;
+    private String detail5;
     private String product_image_url_from1;
     private String product_image_url_from2;
     private String product_image_url_from3;
@@ -140,7 +146,15 @@ public class JumeiDealBean {
 	public void setUsage(String usage) {
 		this.usage = usage;
 	}
-	
+
+    public String getUsage2() {
+        return usage2;
+    }
+
+    public void setUsage2(String usage2) {
+        this.usage2 = usage2;
+    }
+
     public String getJumei_production_place() {
         return jumei_production_place;
     }
@@ -285,5 +299,45 @@ public class JumeiDealBean {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getUsage3() {
+        return usage3;
+    }
+
+    public void setUsage3(String usage3) {
+        this.usage3 = usage3;
+    }
+
+    public String getDetail2() {
+        return detail2;
+    }
+
+    public void setDetail2(String detail2) {
+        this.detail2 = detail2;
+    }
+
+    public String getDetail3() {
+        return detail3;
+    }
+
+    public void setDetail3(String detail3) {
+        this.detail3 = detail3;
+    }
+
+    public String getDetail4() {
+        return detail4;
+    }
+
+    public void setDetail4(String detail4) {
+        this.detail4 = detail4;
+    }
+
+    public String getDetail5() {
+        return detail5;
+    }
+
+    public void setDetail5(String detail5) {
+        this.detail5 = detail5;
     }
 }

@@ -43,8 +43,10 @@ public class PhantomjsDriverServiceImpl implements PhantomjsDriverService {
     @Override
     public WebDriver openProcessDriver(DriverConfigBean driverConfigBean) throws Exception {
 
-
-        String sessionId = getSessionId(driverConfigBean.getShopBean().getShop_id());
+		String sessionId = null;
+		if (driverConfigBean != null && driverConfigBean.getShopBean() != null) {
+			sessionId = getSessionId(driverConfigBean.getShopBean().getShop_id());
+		}
 
         if (sessionId != null) {
         	PhantomJSDriver driverGetData = null;
