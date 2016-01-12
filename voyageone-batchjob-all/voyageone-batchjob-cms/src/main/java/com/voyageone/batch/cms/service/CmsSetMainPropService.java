@@ -485,6 +485,8 @@ public class CmsSetMainPropService extends BaseTaskService {
          * @param schemaModel 主类目的schema信息
          * @return 匹配好的属性
          */
+        private int m_mulitComplex_index = 0; // 暂时只支持一层multiComplex, 如果需要多层, 就需要改成list, 先进后出
+        private boolean m_mulitComplex_run = false; // 暂时只支持一层multiComplex, 如果需要多层, 就需要改成list, 先进后出
         private Object getPropValueByMapping(
                 String propPath,
                 Prop prop,
@@ -537,14 +539,20 @@ public class CmsSetMainPropService extends BaseTaskService {
                     // 处理完所有的子属性之后就可以返回了
                     return complexChildren;
                 } else if (FieldTypeEnum.MULTICOMPLEX.equals(fieldCurrent.getType())) {
-                    complexChildren = new HashMap<>();
 
-                    for (Prop p : prop.getChildren()) {
-                        complexChildren.put(p.getProp(), getPropValueByMapping(propPath + strPathSplit + p.getProp(), p, feed, field, schemaModel));
+                    m_mulitComplex_run = true;
+                    m_mulitComplex_index = 0;
+
+                    while (m_mulitComplex_run) {
+                        complexChildren = new HashMap<>();
+                        for (Prop p : prop.getChildren()) {
+                            complexChildren.put(p.getProp(), getPropValueByMapping(propPath + strPathSplit + p.getProp(), p, feed, field, schemaModel));
+                        }
+                        multiComplexChildren.add(complexChildren);
+                        m_mulitComplex_index++;
                     }
 
                     // 处理完所有的子属性之后就可以返回了
-                    multiComplexChildren.add(complexChildren);
                     return multiComplexChildren;
                 }
 
@@ -645,6 +653,17 @@ public class CmsSetMainPropService extends BaseTaskService {
                             // 记下log, 无视当前属性
                             logIssue(getTaskName(), String.format("[CMS2.0][测试] 找不到feed的这个属性 ( channel: [%s], code: [%s], attr: [%s] )", feed.getChannelId(), feed.getCode(), mappingCondition.getVal()));
                             logger.info(String.format("[CMS2.0][测试] 找不到feed的这个属性 ( channel: [%s], code: [%s], attr: [%s] )", feed.getChannelId(), feed.getCode(), mappingCondition.getVal()));
+                        }
+
+                        if (m_mulitComplex_run) {
+                            if (attributeValue.getClass().equals(ArrayList.class)) {
+                                Object attTemp = ((List)attributeValue).get(m_mulitComplex_index);
+
+                                if (m_mulitComplex_index == (((List) attributeValue).size() - 1)) {
+                                    m_mulitComplex_run = false;
+                                }
+                                attributeValue = attTemp;
+                            }
                         }
 
                     }
