@@ -69,8 +69,9 @@ public class ProductPropsEditController extends CmsController{
         Long productId = Long.valueOf(requestMap.get("productId").toString());
         String categoryFullPath = requestMap.get("categoryFullPath").toString();
         Map skuMap = (Map) requestMap.get("skuFields");
+        String modified = requestMap.get("modified").toString();
 
-        productPropsEditService.updateProductSkuInfo(channelId,user,categoryId,productId,categoryFullPath,skuMap);
+        productPropsEditService.updateProductSkuInfo(channelId,user,categoryId,productId,modified,categoryFullPath,skuMap);
 
         return success(true);
 

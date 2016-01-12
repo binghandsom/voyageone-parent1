@@ -87,7 +87,7 @@ define([
                     eval("newFieldMap." + field.id + "=field");
                 });
 
-                data.values.push({fieldMap: angular.copy(newFieldMap)});
+                data.complexValues.push({fieldMap: angular.copy(newFieldMap)});
             },
 
             // 从第三方属性中添加feed属性到product自定义中,或者从product自定义中删除feed属性
