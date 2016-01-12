@@ -45,4 +45,16 @@ public class CmsPlatformMappingController extends CmsController {
 
         return success(platformMappingService.getPlatformCategories(getUser(), cartId));
     }
+
+    @RequestMapping(CmsUrlConstants.MAPPING.PLATFORM.SET_PLATFORM_MAPPING)
+    public AjaxResponse setPlatformMapping(@RequestBody Map<String, Object> params) {
+
+        String from = (String) params.get("from");
+        String to = (String) params.get("to");
+        Integer cartId = (Integer) params.get("cartId");
+
+        platformMappingService.setPlatformMapping(from, to, cartId, getUser());
+
+        return success(true);
+    }
 }

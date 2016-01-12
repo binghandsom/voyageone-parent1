@@ -1,5 +1,6 @@
 package com.voyageone.cms.service.dao.mongodb;
 
+import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.BaseJomgoTemplate;
 import com.voyageone.base.dao.mongodb.BaseMongoDao;
 import com.voyageone.cms.service.model.CmsMtPlatformMappingModel;
@@ -34,8 +35,6 @@ public class CmsMtPlatformMappingDao extends BaseMongoDao {
                 "}";
         String queryStr = String.format(queryStrTemp, channelId, cartId, platformCategoryId);
         return selectOneWithQuery(queryStr);
-
-
     }
 
     public long isExist(String channelId, int cartId, String platformCategoryId) {
@@ -63,12 +62,12 @@ public class CmsMtPlatformMappingDao extends BaseMongoDao {
         return select(String.format("{ channelId: '%s', platformCartId: %s }", channel.getId(), catId));
     }
 
-    public void insertPlatformMapping(CmsMtPlatformMappingModel cmsMtPlatformMappingModel) {
-        insert(cmsMtPlatformMappingModel);
+    public WriteResult insertPlatformMapping(CmsMtPlatformMappingModel cmsMtPlatformMappingModel) {
+        return insert(cmsMtPlatformMappingModel);
     }
 
     public List<CmsMtPlatformMappingModel> getMappingByMainCatId(ChannelConfigEnums.Channel selChannel, String mainCategoryId) {
 
-        return select(String.format("{ channelId: '%s', mainCategoryId: %s }", selChannel.getId(), mainCategoryId));
+        return select(String.format("{ channelId: '%s', mainCategoryId: '%s' }", selChannel.getId(), mainCategoryId));
     }
 }

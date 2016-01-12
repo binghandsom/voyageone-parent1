@@ -19,10 +19,12 @@ define([
          * @description
          * 创建平台到主数据类目匹配的画面 Controller 类
          * @param {PlatformMappingService} platformMappingService
+         * @param {function} alert
          * @constructor
          */
-        function PlatformMappingController(platformMappingService) {
+        function PlatformMappingController(platformMappingService, alert) {
 
+            this.alert = alert;
             this.platformMappingService = platformMappingService;
             this.carts = Carts;
 
@@ -51,7 +53,8 @@ define([
 
                 this.loadCategories();
             },
-            loadCategories: function() {
+
+            loadCategories: function () {
 
                 if (!this.selected.cart)
                     return;
@@ -60,12 +63,41 @@ define([
 
                     cartId: this.selected.cart.toString()
 
-                }).then(function(res) {
+                }).then(function (res) {
 
                     this.mainCategories = res.data.categories;
 
                     this.mappings = res.data.mappings;
 
+                }.bind(this));
+            },
+
+            popupMapping: function (category, popupNewCategory) {
+
+                this.platformMappingService.getPlatformCategory({
+                    cartId: this.selected.cart
+                }).then(function (res) {
+
+                    if (!res.data || !res.data.length) {
+                        this.alert('没有取到任何平台类目... 尝试换一个平台试试 ?');
+                        return;
+                    }
+
+                    popupNewCategory({
+                        from: category.catPath,
+                        categories: res.data
+                    }).then(function (context) {
+
+                        this.platformMappingService.setPlatformMapping({
+                            from: category.catId,
+                            to: context.selected.catId,
+                            cartId: this.selected.cart
+                        }).then(function() {
+
+                            this.mappings[category.catId] = context.selected.catPath;
+
+                        }.bind(this));
+                    }.bind(this))
                 }.bind(this));
             }
         };

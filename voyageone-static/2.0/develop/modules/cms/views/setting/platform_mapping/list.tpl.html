@@ -35,18 +35,18 @@
                     <tr ng-repeat="category in ctrl.mainCategories track by category.catId">
                         <td>{{::$index + 1}}</td>
                         <td class="text-left">{{::category.catPath}}</td>
-                        <td class="text-left">{{::ctrl.mappings[category.catId] || '未匹配'}}</td>
+                        <td class="text-left">{{ctrl.mappings[category.catId] || '未匹配'}}</td>
                         <td>
                             <div class="btn-group">
-                                <button ng-click="popupNewCategory()" class="btn btn-default btn-xs"><i
-                                        class="glyphicon glyphicon-link"></i> 类目匹配
+                                <button ng-click="ctrl.popupMapping(category, popupNewCategory)" class="btn btn-default btn-xs">
+                                    <i class="glyphicon glyphicon-link"></i> 类目匹配
                                 </button>
                                 <button class="btn btn-default btn-xs"
                                         ng-click="openOtherPlatform({mainCategoryId: category.catId})">
                                     <i class="glyphicon glyphicon-link"></i> 其它平台
                                 </button>
                                 <a href="#/setting/platform_mapping/prop" class="btn btn-default btn-xs"
-                                   target="_blank"><i class="glyphicon glyphicon-link"></i> 类目属性匹配</a>
+                                   target="_blank"><i class="glyphicon glyphicon-link"></i> 属性匹配</a>
                             </div>
                         </td>
                     </tr>
