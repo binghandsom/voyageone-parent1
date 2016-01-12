@@ -5,21 +5,18 @@ import com.taobao.api.ApiException;
 import com.taobao.api.domain.Shipping;
 import com.taobao.api.request.LogisticsOrdersGetRequest;
 import com.taobao.api.response.LogisticsOrdersGetResponse;
-import com.voyageone.batch.core.CodeConstants;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.synship.modelbean.ClientTrackingBean;
 import com.voyageone.batch.synship.modelbean.Order;
 import com.voyageone.batch.synship.modelbean.ReservationClientBean;
-import com.voyageone.common.components.channelAdvisor.CaConstants;
-import com.voyageone.common.components.channelAdvisor.bean.orders.OrderCriteria;
-import com.voyageone.common.components.channelAdvisor.bean.orders.OrderResponseDetailHigh;
-import com.voyageone.common.components.channelAdvisor.webservices.APIResultOfArrayOfOrderResponseItem;
+import com.voyageone.common.components.tmall.TbConstants;
 import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.ShopConfigs;
 import com.voyageone.common.configs.ThirdPartyConfigs;
+import com.voyageone.common.configs.beans.CodeBean;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.configs.beans.ThirdPartyConfigBean;
@@ -28,9 +25,7 @@ import com.voyageone.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.voyageone.common.configs.beans.CodeBean;
 
-import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -95,7 +90,7 @@ public class GetSpaldingClientShippingInfoService extends GetClientShippingBaseS
                         insertClientTracking(response, channel);
 
                         // 判定分页是否结束
-                        if (response.getShippings().size() < Integer.parseInt(configs.get(CaConstants.OrderList.TM_PAGE_SIZE).getProp_val1())) {
+                        if (response.getShippings().size() < Integer.parseInt(configs.get(TbConstants.OrderList.TM_PAGE_SIZE).getProp_val1())) {
                             break;
                         } else {
                             pageNum++;
@@ -148,8 +143,8 @@ public class GetSpaldingClientShippingInfoService extends GetClientShippingBaseS
 
         // 默认时间间隔24小时
         int timeInterval = 24;
-        if (!StringUtils.isNullOrBlank2(configs.get(CaConstants.OrderList.TM_TIME_INTERVAL).getProp_val1())) {
-            timeInterval = Integer.parseInt(configs.get(CaConstants.OrderList.TM_TIME_INTERVAL).getProp_val1());
+        if (!StringUtils.isNullOrBlank2(configs.get(TbConstants.OrderList.TM_TIME_INTERVAL).getProp_val1())) {
+            timeInterval = Integer.parseInt(configs.get(TbConstants.OrderList.TM_TIME_INTERVAL).getProp_val1());
         }
 
         //当前时间
@@ -163,7 +158,7 @@ public class GetSpaldingClientShippingInfoService extends GetClientShippingBaseS
         param.setStartCreated(startTimeDate);
         param.setEndCreated(endTimeDate);
         param.setPageNo(1L);
-        param.setPageSize(Long.parseLong(configs.get(CaConstants.OrderList.TM_PAGE_SIZE).getProp_val1()));
+        param.setPageSize(Long.parseLong(configs.get(TbConstants.OrderList.TM_PAGE_SIZE).getProp_val1()));
 
         $info("startTime:" + startTime);
         $info("endTime:" + endTime);
