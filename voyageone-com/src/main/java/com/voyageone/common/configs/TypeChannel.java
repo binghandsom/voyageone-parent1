@@ -116,12 +116,17 @@ public class TypeChannel {
 
         List<TypeChannelBean> typeList = typeMap.get(key);
 
-        for (TypeChannelBean bean : typeList) {
-            Option opt = new Option();
-            opt.setDisplayName(bean.getName());
-            opt.setValue(bean.getValue());
-            ret.add(opt);
+        if (typeList != null){
+            for (TypeChannelBean bean : typeList) {
+                Option opt = new Option();
+                opt.setDisplayName(bean.getName());
+                opt.setValue(bean.getValue());
+                ret.add(opt);
+            }
+        } else {
+            logger.warn("channel id: " + channel_id + "property id: "+type +" 对应的options没有配置！！！");
         }
+
         return ret;
     }
 }
