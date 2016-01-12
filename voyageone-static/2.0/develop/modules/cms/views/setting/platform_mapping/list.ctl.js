@@ -35,19 +35,32 @@ define([
             this.selected = {
                 cart: this.carts.TM.id
             };
+
+            this.matched = {
+                category: null,
+                property: null
+            };
             /**
              * 主数据类目
              * @type {object[]}
              */
             this.mainCategories = null;
-            /**
-             * 映射路径
-             * @type {object}
-             */
-            this.mappings = null;
         }
 
         PlatformMappingController.prototype = {
+
+            options: {
+                category: {
+                    '类目匹配情况(ALL)': null,
+                    '类目已匹配': true,
+                    '类目未匹配': false
+                },
+                property: {
+                    '类目属性匹配情况(ALL)': null,
+                    '类目属性已匹配完成': true,
+                    '类目属性未匹配完成': false
+                }
+            },
 
             init: function () {
 
@@ -66,8 +79,16 @@ define([
                 }).then(function (res) {
 
                     this.mainCategories = res.data.categories;
+                    var mappings = res.data.mappings;
 
-                    this.mappings = res.data.mappings;
+                    // 追加附加属性
+                    _.each(this.mainCategories, function (category) {
+
+                        var platformPath = mappings[category.catId];
+
+                        category.mapping = platformPath || '未匹配';
+                        category.matched = !!platformPath;
+                    });
 
                 }.bind(this));
             },
@@ -92,13 +113,20 @@ define([
                             from: category.catId,
                             to: context.selected.catId,
                             cartId: this.selected.cart
-                        }).then(function() {
+                        }).then(function () {
 
-                            this.mappings[category.catId] = context.selected.catPath;
+                            // 更新附加属性
+                            category.mapping = context.selected.catPath;
+                            category.matched = true;
 
                         }.bind(this));
                     }.bind(this))
                 }.bind(this));
+            },
+
+            shown: function (category) {
+
+                return (this.matched.category === null || this.matched.category === category.matched);
             }
         };
 
