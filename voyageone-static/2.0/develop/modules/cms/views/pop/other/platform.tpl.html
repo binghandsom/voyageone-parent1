@@ -1,7 +1,7 @@
-<div class="vo_modal">
+<div class="vo_modal" ng-init="ctrl.init()">
     <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span
-                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="ctrl.cancel()">
+            <span aria-hidden="true"><i class="fa fa-close"></i></span></button>
         <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i> 其它平台 </h5>
     </div>
     <div class="modal-body wrapper">
@@ -13,28 +13,16 @@
                             <th class="text-center">Platform</th>
                             <th class="text-center">Platform Category</th>
                         </tr>
-                        <tr>
-                            <td><span class="badge badge-empty">天猫</span></td>
-                            <td>珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰</td>
-                        </tr>
-                        <tr>
-                            <td><span class="badge badge-empty">京东</span></td>
-                            <td>珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰</td>
-                        </tr>
-                        <tr>
-                            <td><span class="badge badge-empty">天猫</span></td>
-                            <td>珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰</td>
-                        </tr>
-                        <tr>
-                            <td><span class="badge badge-empty">京东</span></td>
-                            <td>珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰</td>
+                        <tr ng-repeat="mapping in ctrl.mappingPaths">
+                            <td><span class="badge badge-empty">{{::ctrl.carts.valueOf(mapping.platform).desc}}</span></td>
+                            <td>{{::mapping.categoryPath}}</td>
                         </tr>
                     </table>
-                </div><!-- /.box-body -->
+                </div>
             </div>
         </form>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-default" ng-click="cancel()">关闭</button>
+        <button class="btn btn-default" ng-click="ctrl.cancel()">关闭</button>
     </div>
-</div><!-- .vo_modal -->
+</div>

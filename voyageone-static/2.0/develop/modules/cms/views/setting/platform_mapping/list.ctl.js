@@ -8,6 +8,7 @@ define([
     /**
      * @ngdoc object
      * @name platformMappingController
+     * @type {PlatformMappingController}
      * @description
      *
      * 平台类目到主数据类目的匹配

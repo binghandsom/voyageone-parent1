@@ -41,8 +41,9 @@
                                 <button ng-click="openNewcategory('lg')" class="btn btn-default btn-xs"><i
                                         class="glyphicon glyphicon-link"></i> 类目匹配
                                 </button>
-                                <button class="btn btn-default btn-xs" ng-click="openOtherPlatform('md')"><i
-                                        class="glyphicon glyphicon-link"></i> 其它平台
+                                <button class="btn btn-default btn-xs"
+                                        ng-click="openOtherPlatform({mainCategoryId: category.catId})">
+                                    <i class="glyphicon glyphicon-link"></i> 其它平台
                                 </button>
                                 <a href="#/setting/platform_mapping/prop" class="btn btn-default btn-xs"
                                    target="_blank"><i class="glyphicon glyphicon-link"></i> 类目属性匹配</a>
