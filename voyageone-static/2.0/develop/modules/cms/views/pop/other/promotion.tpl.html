@@ -1,0 +1,109 @@
+<div class="vo_modal" ng-init="initialize()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$close()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i> 新增Promotion</h5>
+    </div>
+    <div class="modal-body wrapper">
+        <form role="form" class="form-horizontal" name="promotionFrom">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">活动名称</label>
+                <div class="col-sm-8">
+                    <input class="form-control" ng-model="promotion.promotionName" ng-required="true" >
+                </div>
+            </div><!-- .form-group -->
+            <div class="form-group">
+                <label class="col-sm-3 control-label">活动渠道</label>
+                <div class="col-sm-8">
+                    <label class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId"  ng-required="true" value="20"><span class="fa fa-check"></span> 天猫 </label>
+                    <label class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId" ng-required="true" value="23"><span class="fa fa-check"></span> 天猫国际 </label>
+                    <label class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId" ng-required="true" value="27"><span class="fa fa-check"></span>  聚美</label>
+                    <label class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId" ng-required="true" value="24"><span class="fa fa-check"></span> 京东 </label>
+                    <label class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId" ng-required="true" value="26"><span class="fa fa-check"></span> 京东国际 </label>
+                </div>
+            </div><!-- .form-group -->
+            <div class="form-group">
+                <label class="col-sm-3 control-label">预热时间</label>
+                <div class="col-sm-8 form-inline">
+                    <div class="col-sm-6 input-group" ng-controller="datePickerCtrl">
+                        <input type="text" ng-model="$parent.promotion.prePeriodStart" class="form-control" datepicker-popup="{{formatDate}}" is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+                    </div> ~
+                    <div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
+                        <input type="text" ng-model="$parent.promotion.prePeriodEnd" class="form-control" datepicker-popup="{{formatDate}}" is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">预售时间</label>
+                <div class="col-sm-8 form-inline">
+                    <div class="col-sm-6 input-group" ng-controller="datePickerCtrl">
+                        <input type="text" ng-model="$parent.promotion.prePeriodStart" class="form-control" datepicker-popup="{{formatDate}}" is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+                    </div> ~
+                    <div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
+                        <input type="text" ng-model="$parent.promotion.prePeriodEnd" class="form-control" datepicker-popup="{{formatDate}}" is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">活动时间</label>
+                <div class="col-sm-8 form-inline">
+                    <div class="col-sm-6 input-group" ng-controller="datePickerCtrl">
+                        <input type="text" ng-model="$parent.promotion.activityStart" class="form-control" datepicker-popup="{{formatDate}}" is-open="opened" datepicker-options="dateOptions" date-model-format="{{formatDate}}" ng-required="true" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+                    </div> ~
+                    <div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
+                        <input type="text" ng-model="$parent.promotion.activityEnd" class="form-control" datepicker-popup="{{formatDate}}" is-open="opened" datepicker-options="dateOptions" date-model-format="{{formatDate}}" ng-required="true" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">活动类型</label>
+                <div class="col-sm-8">
+                    <select class="form-control" ng-model="promotion.promotionType" ng-required="true">
+                        <option value="">请选择活动类型</option>
+                        <option value="0">促销</option>
+                        <option value="1">批量刷价格</option>
+                        <option value="2">价格披露</option>
+                        <option value="3">库存隔离</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group" ng-show="promotion.cartId == 20 || promotion.cartId == 23">
+                <div class="col-sm-3 control-label"><label class="">启用特价宝？</label></div>
+                <div class="col-sm-2">
+                    <div class="onoffswitch">
+                        <input type="checkbox" name="onoffswitch" ng-model="tejiabao" class="onoffswitch-checkbox" id="myonoffswitch4" checked>
+                        <label class="onoffswitch-label" for="myonoffswitch4">
+                            <span class="onoffswitch-inner"></span>
+                            <span class="onoffswitch-switch"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <input class="form-control" ng-if="tejiabao == true" ng-model="promotion.tejiabaoId" placeholder="特价宝ID">
+                </div><!-- onoff switch -->
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="$close()">取消</button>
+        <button class="btn btn-vo" ng-click="ok()">保存</button>
+    </div>
+</div><!-- .vo_modal -->
