@@ -1,9 +1,6 @@
 package com.voyageone.common.components.jumei;
 
-import com.voyageone.common.components.jumei.Bean.GetOrderDetailRes;
-import com.voyageone.common.components.jumei.Bean.GetOrderIdsReq;
-import com.voyageone.common.components.jumei.Bean.GetOrderIdsRes;
-import com.voyageone.common.components.jumei.Bean.SetShippingReq;
+import com.voyageone.common.components.jumei.Bean.*;
 import com.voyageone.common.components.jumei.base.JmBase;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.JsonUtil;
@@ -25,6 +22,8 @@ public class JumeiService extends JmBase{
     //单个订单详情获取接口
     public static final String C_URL_GET_ORDERDETAIL_BY_ORDERID = "HtOrder/GetOrderDetailByOrderId";
     public static final String C_URL_SET_SHIPPING = "HtOrder/setShipping";
+    //SKU库存同步接口
+    public static final String C_URL_STOCK_SYNC = "HtOrder/StockSync";
 
     /**
      * 根据订单ID获取订单详情
@@ -39,7 +38,7 @@ public class JumeiService extends JmBase{
         parms.put("order_id", orderId);
 
         String result = reqJmApi(shopBean, C_URL_GET_ORDERDETAIL_BY_ORDERID, parms);
-//        result = "{    \"error\": \"0\",    \"result\": {        \"id\": \"2691712\",        \"order_id\": \"368866791315\",        \"quantity\": \"1\",        \"total_price\": \"11.00\",        \"uid\": \"67498315\",        \"timestamp\": \"1425219690\",        \"status\": \"6\",        \"delivery_fee\": \"10.00\",        \"creation_time\": \"1425219688\",        \"payment_time\": \"1425219690\",        \"delivery_time\": \"1425278780\",        \"completed_time\": \"0\",        \"payment_method\": \"Balance\",        \"trade_no\": \"5027145214303041572846\",        \"payment_amount\": \"0\",        \"logistic_preference\": \"0\",        \"target_shipping_time\": \"0\",        \"price_discount_amount\": \"0.00\",        \"price_discount_ratio\": \"1.00\",        \"promo_cards\": \"\",        \"order_status\": \"returned\",        \"payment_status\": \"paid\",        \"confirm_type\": \"\",        \"balance_paid_amount\": \"11.00\",        \"shipping_system_id\": \"24\",        \"shipping_system_type\": \"media\",        \"prefer_delivery_time_note\": \"weekday\",        \"cart_key\": \"media/24/media\",        \"logistic_id\": \"0\",        \"logistic_track_no\": \"\",        \"shipping_status\": \"\",        \"sync_version\": \"0\",        \"promo_card_discount_price\": \"0.00\",        \"order_discount_price\": \"0.00\",        \"shipping_load_confirm_time\": \"\",        \"user_privilege_group\": \"0\",        \"order_ip\": \"182.138.102.81\",        \"order_site\": \"cd\",        \"red_envelope_card_no\": \"\",        \"red_envelope_discount_price\": \"0.00\",        \"red_envelope_discount_price_real\": \"0.00\",        \"updated_at\": \"1425279311\",        \"is_deleted\": \"0\",        \"order_type\": \"普通订单\",        \"ext_info\": \"newpay\",        \"referer_site\": \"sogou_mz\",        \"attribute_selections\": \"\",        \"notify_mobile\": \"\",        \"deposit\": \"\",        \"deposit_payment_time\": \"\",        \"deposit_payment_method\": \"\",        \"deposit_payment_amount\": \"\",        \"deposit_balance_paid_amount\": \"\",        \"balance_due\": \"\",        \"balance_due_payment_time\": \"\",        \"balance_due_payment_method\": \"\",        \"balance_due_payment_amount\": \"\",        \"balance_due_balance_paid_amount\": \"\",        \"created_time\": \"\",        \"invoice_header\": \"\",        \"invoice_medium\": \"\",        \"invoice_contents\": \"\",        \"need_invoice\": \"否\",        \"product_infos\": [            {                \"deal_hash_id\": \"df140710p848085\",                \"deal_price\": \"1.00\",                \"quantity\": \"1\",                \"sku_no\": \"df2414049934417127\",                \"settlement_price\": \"1.000\",                \"deal_short_name\": \"个性百搭水墨风印花T 恤\",                \"supplier_code\": \"123123123213\",                \"upc_code\": \"5456dd\",                \"customs_product_number\": \"41565645\",                \"attribute\": \"L\",                \"is_bom\": \"false\"            },            {                \"deal_hash_id\": \"df140710p848085\",                \"deal_price\": \"100\",                \"quantity\": \"2\",                \"sku_no\": \"df2414049934417127\",                \"settlement_price\": \"1.000\",                \"deal_short_name\": \"个性百搭水墨风印花T 恤\",                \"is_bom\": \"true\",                \"virtual_data\": [                    {                        \"sku_no\": \"701009874\",                        \"supplier_code\": \"702002653\",                        \"upc_code\": \"4901301230881\",                        \"customs_product_number\": \"41565645\",                        \"attribute\": \"L\",                        \"num\": \"4\",                        \"price\": \"50\"                    }                ]            }        ],        \"receiver_infos\": {            \"receiver_name\": \"邓叶川\",            \"address\": \"四川省-成都市-武侯区益州大道1800 号G35 楼\",            \"postalcode\": \"000000\",            \"hp\": \"18782208077\",            \"phone\": \"\",            \"email\": \"yechuand@jumei.com\",            \"id_card_num\": \"513428198702020012\"        },        \"total_products_price\": \"1\",        \"refund_info\": [            {                \"refund_id\": \"6335009\",                \"refund_status\": \"已退款\"            },            {                \"refund_id\": \"6332213\",                \"refund_status\": \"等待确认收到退货\"            }        ]    }}";
+
         GetOrderDetailRes res = JsonUtil.jsonToBean(result, GetOrderDetailRes.class);
 
         return res;
@@ -103,6 +102,28 @@ public class JumeiService extends JmBase{
         GetOrderIdsRes res = JsonUtil.jsonToBean(result, GetOrderIdsRes.class);
 
         return  res;
+
+    }
+
+    /**
+     * SKU库存同步接口
+     * 接口说明：商家可以通过该接口修改自己的商品库存数量
+     * @param shopBean
+     * @param req
+     * @return
+     * @throws Exception
+     */
+    public String stockSync(ShopBean shopBean, StockSyncReq req) throws Exception {
+
+        Map<String, String> parms = new HashMap<String, String>();
+        //商家编码
+        parms.put("businessman_code", req.getBusinessman_code());
+        //该SKU的最新可售库存量
+        parms.put("enable_num", req.getEnable_num());
+
+        String result = reqJmApi(shopBean, C_URL_STOCK_SYNC, parms);
+
+        return  result;
 
     }
     
