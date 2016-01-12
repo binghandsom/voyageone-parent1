@@ -66,6 +66,7 @@ public class WmsSyncToTaobaoSubService extends WmsSyncInventoryBaseService {
             res = tbInventoryService.itemQuantityUpdate(shopBean, itemQuantityBean);
         } catch (ApiException ae) {
             logFailRecord(ae, inventorySynLogBean);
+            return;
         } catch (Exception e) {
             logFailRecord(e, inventorySynLogBean);
             return;
