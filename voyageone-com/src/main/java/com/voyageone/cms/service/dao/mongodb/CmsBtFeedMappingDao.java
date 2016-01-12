@@ -1,5 +1,7 @@
 package com.voyageone.cms.service.dao.mongodb;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBCollection;
 import com.voyageone.base.dao.mongodb.BaseMongoDao;
 import com.voyageone.cms.service.model.CmsBtFeedMappingModel;
 import org.springframework.stereotype.Repository;
@@ -41,8 +43,9 @@ public class CmsBtFeedMappingDao extends BaseMongoDao {
      * @return 类目和属性对应关系
      */
     public CmsBtFeedMappingModel selectByDefault(String channelId, String feedCategory) {
+
         // 除了传入的参数之外,还需要一个条件,就是default=1
-        String query = String.format("{ scope.channelId: '%s', scope.feedCategoryPath: %s, defaultMapping: 1}", channelId, feedCategory);
+        String query = String.format("{ \"scope.channelId\": \"%s\", \"scope.feedCategoryPath\": \"%s\", defaultMapping: 1}", channelId, feedCategory);
 
         return selectOneWithQuery(query);
     }
@@ -56,7 +59,7 @@ public class CmsBtFeedMappingDao extends BaseMongoDao {
      * @return 类目和属性对应关系
      */
     public CmsBtFeedMappingModel selectByKey(String channelId, String feedCategory, String mainCategoryIdPath) {
-        String query = String.format("{ scope.channelId: '%s', scope.feedCategoryPath: '%s', scope.mainCategoryPath: '%s'}",
+        String query = String.format("{ \"scope.channelId\": \"%s\", \"scope.feedCategoryPath\": \"%s\", \"scope.mainCategoryPath\": \"%s\"}",
                 channelId, feedCategory, mainCategoryIdPath);
 
         return selectOneWithQuery(query);
