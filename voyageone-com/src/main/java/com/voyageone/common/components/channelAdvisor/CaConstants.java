@@ -24,6 +24,9 @@ public class CaConstants {
         public final static String SHIPPING_STATUS_FILTER = "ca_orderList_shippingStatusFilter";
         public final static String PAGE_SIZE = "ca_orderList_pageSize";
         public final static String TIME_INTERVAL =  "ca_orderList_timeInterval";
+
+        public final static String TM_TIME_INTERVAL =  "tm_orderList_timeInterval";
+        public final static String TM_PAGE_SIZE = "tm_orderList_pageSize";
     }
 
 }

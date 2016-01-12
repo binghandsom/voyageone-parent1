@@ -5,6 +5,7 @@ import com.voyageone.batch.core.Enums.TaskControlEnums;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.core.util.TaskControlUtils;
 import com.voyageone.batch.synship.service.clientShippingInfo.GetJewelryClientShippingInfoService;
+import com.voyageone.batch.synship.service.clientShippingInfo.GetSpaldingClientShippingInfoService;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ public class GetClientShippingInfoService extends BaseTaskService {
 
     @Autowired
     GetJewelryClientShippingInfoService getJewelryClientShippingInfoService;
+
+    @Autowired
+    GetSpaldingClientShippingInfoService getSpaldingClientShippingInfoService;
 
     @Override
     public SubSystem getSubSystem() {
@@ -51,8 +55,9 @@ public class GetClientShippingInfoService extends BaseTaskService {
         for(String channelId : orderChannelIdList){
             if (channelId.equals(ChannelConfigEnums.Channel.JEWELRY.getId())) {
                 getJewelryClientShippingInfoService.getJewelryShippingInfo(channelId, threads);
+            } else if (channelId.equals(ChannelConfigEnums.Channel.SP.getId())) {
+                getSpaldingClientShippingInfoService.getSpaldingShippingInfo(channelId, threads);
             }
-
         }
         runWithThreadPool(threads, taskControlList);
         $info(getTaskName() + "----------结束");
