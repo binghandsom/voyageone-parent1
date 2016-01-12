@@ -6,9 +6,10 @@ define(['cms'], function (cms) {
 
     return cms.controller('categoryPopupController', (function () {
 
-        function CategoryPopupController(context, $uibModalInstance) {
+        function CategoryPopupController(context, $uibModalInstance, notify) {
 
             this.$uibModalInstance = $uibModalInstance;
+            this.notify = notify;
 
             /**
              * 画面传递的上下文
@@ -41,7 +42,7 @@ define(['cms'], function (cms) {
                 this.categories = this.context.categories;
 
                 // 每次加载,都初始化 TOP 为第一级
-                this.categoryPath = [{level:1, categories: this.categories}];
+                this.categoryPath = [{level: 1, categories: this.categories}];
             },
             /**
              * 打开一个类目(选定一个类目)
@@ -64,9 +65,20 @@ define(['cms'], function (cms) {
 
                 if (!category.children || !category.children.length) return;
 
-                this.categoryPath.push({level:level + 1, categories: category.children});
+                this.categoryPath.push({level: level + 1, categories: category.children});
             },
-            ok: function() {
+            ok: function () {
+
+                if (!this.selected) {
+                    this.notify.danger('没有选中任何类目');
+                    return;
+                }
+
+                if (this.selected.isParent === 1) {
+                    this.notify.danger('不是叶子类目, 不能匹配类目到父级.');
+                    return;
+                }
+
                 this.context.selected = this.selected;
                 this.$uibModalInstance.close(this.context);
             },
