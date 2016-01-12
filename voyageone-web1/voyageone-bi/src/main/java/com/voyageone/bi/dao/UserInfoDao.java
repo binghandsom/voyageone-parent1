@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.voyageone.bi.tranbean.UserPortBean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,13 +101,14 @@ public class UserInfoDao {
 	 * @return
 	 */
 	public List<UserChannelBean> selectUserChannelById(String userID) {
-		String sql = "SELECT s.id, s.code, "
-				+ "s.name, s.name_en, s.name_cn"
+		String sql = "SELECT s.id, s.code,s.name, s.name_en, s.name_cn"
 				+ " FROM vm_user_shop us "
-				+ "inner join vm_user u on us.user_id=u.id and u.enable=1 "
-				+ "INNER JOIN vm_channel s ON us.channel_id = s.id and s.enable=1 "
+				+ "INNER JOIN vm_user u on us.user_id=u.id and u.enable=1 "
+				+ "INNER JOIN vm_shop shop on shop.id=us.shop_id and shop.enable=1 "
+				+ "INNER JOIN vm_channel s ON shop.channel_id = s.id and s.enable=1 "
 				+ "where u.uid = ?"
 				+ "GROUP BY s.id";
+
 
 		Object[] param ={userID};
 		SqlRowSet rs = jdbcTemplate.queryForRowSet(sql, param);
@@ -115,6 +117,32 @@ public class UserInfoDao {
 
 		while (rs.next()) {
 			UserChannelBean bean = new UserChannelBean();
+			bean.setId(rs.getInt("id"));
+			bean.setCode(rs.getString("code"));
+			bean.setName(rs.getString("name"));
+			bean.setName_en(rs.getString("name_en"));
+			ret.add(bean);
+		}
+
+		return ret;
+	}
+
+	/**
+	 * selectUserShopById
+	 * @param userID
+	 * @return
+	 */
+	public List<UserPortBean> selectUserPortById(String userID) {
+		String sql = "SELECT p.id, p.code,p.name, p.name_en, p.name_cn"
+				+ " FROM vm_port p "
+				+ " WHERE p.code <> '00'";
+
+		SqlRowSet rs = jdbcTemplate.queryForRowSet(sql);
+
+		List<UserPortBean> ret = new ArrayList<UserPortBean>();
+
+		while (rs.next()) {
+			UserPortBean bean = new UserPortBean();
 			bean.setId(rs.getInt("id"));
 			bean.setCode(rs.getString("code"));
 			bean.setName(rs.getString("name"));
@@ -200,7 +228,7 @@ public class UserInfoDao {
 				+ "INNER JOIN vm_user_menu u_menu ON usr.id=u_menu.user_id "
 				+ "INNER JOIN vm_menu menu ON menu.id=u_menu.menu_id AND menu.enable=1 "
 				+ "WHERE usr.uid = ? "
-				+ "ORDER BY code ";
+				+ "ORDER BY orderby,code ";
     	
 		Object[] param ={userID};
     	SqlRowSet rs = jdbcTemplate.queryForRowSet(sql, param);

@@ -58,6 +58,12 @@ define([
             "controller": 'ColumnMappingSettingCtl',
             "size": 'lg'
         },
+        "otherDownload": {
+            "templateUrl": "views/pop/other/download.tpl.html",
+            "controllerUrl": "modules/cms/views/pop/other/download.ctl",
+            "controller": 'OtherDownloadCtl',
+            "size": 'md'
+        },
             "product": {
                 "price": {
                     "templateUrl": "views/pop/product/price/history.tpl.html",
@@ -309,6 +315,10 @@ define([
 
         $scope.openColumnMappingSetting = function (context) {
             return openModel(popActions.columnMappingSetting, context);
+        };
+
+        $scope.openOtherDownload = function (context) {
+            return openModel(popActions.otherDownload, context);
         };
     }
 });

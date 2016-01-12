@@ -48,7 +48,7 @@ public class DealDataService {
 		if (ecommID == DataSearchConstants.ECOMM_TM
 				|| ecommID == DataSearchConstants.ECOMM_TB
 				|| ecommID == DataSearchConstants.ECOMM_TG) {
-			icircle = Constants.DAILY_WEEK_SIZE;
+			icircle = Constants.DAILY_WEEK_SIZE * 4;
 		} else if (ecommID == DataSearchConstants.ECOMM_JD
 				|| ecommID == DataSearchConstants.ECOMM_JG) {
 			

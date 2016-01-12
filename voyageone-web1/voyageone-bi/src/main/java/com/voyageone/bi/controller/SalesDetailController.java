@@ -274,6 +274,7 @@ public class SalesDetailController {
 		
 		bean.WriteTo(response);
 	}
+
 	/**
 	 * getSalesDetailSizeDataExcel
 	 */
@@ -296,7 +297,49 @@ public class SalesDetailController {
         }
 		bean.WriteTo(response);
 	}
-	
+
+	/**
+	 * getSalesDetailModelData
+	 */
+	@RequestMapping(value = "/manage/getSalesDetailModelData")
+	public void getSalesDetailModelData(HttpServletResponse response, HttpServletRequest request, AjaxSalesDetailBean bean) throws BiException {
+		logger.info("getSalesDetailModelData数据取得");
+		if (!bean.checkInput()) {
+			bean.WriteTo(response);
+			return;
+		}
+		
+		HttpSession session = request.getSession();
+		UserInfoBean userInfoBean = (UserInfoBean)session.getAttribute(SessionKey.LOGIN_INFO);
+
+		salesDetailTask.ajaxGetSalesModelData(bean, userInfoBean);
+		
+		bean.WriteTo(response);
+	}
+
+	/**
+	 * getSalesDetailModelDataExcel
+	 */
+	@RequestMapping(value = "/manage/getSalesDetailModelDataExcel")
+	public void getSalesDetailModelDataExcel(HttpServletResponse response, HttpServletRequest request, AjaxSalesDetailBean bean) throws BiException {
+		logger.info("getSalesDetailModelDataExcel download");
+		if (!bean.checkInput()) {
+			bean.WriteTo(response);
+			return;
+		}
+		
+		HttpSession session = request.getSession();
+		UserInfoBean userInfoBean = (UserInfoBean)session.getAttribute(SessionKey.LOGIN_INFO);
+		try {
+			String fileName = salesDetailTask.ajaxGetSalesModelDataExcel(request, bean, userInfoBean);
+			String outFileName = "bi_sales_detail_model_list_" + DateTimeUtil.getDate() + ".xls";
+			responseExcel(fileName, response, outFileName);
+        } catch (Exception ex) {
+            logger.error("getSalesDetailModelDataExcel", ex);
+        }
+		bean.WriteTo(response);
+	}	
+
 	/**
 	 * getSalesDetailProductData
 	 */
@@ -315,7 +358,7 @@ public class SalesDetailController {
 		
 		bean.WriteTo(response);
 	}
-	
+
 	/**
 	 * getSalesDetailProductData
 	 */
@@ -334,11 +377,11 @@ public class SalesDetailController {
 			String outFileName = "bi_sales_detail_product_list_" + DateTimeUtil.getDate() + ".xls";
 			responseExcel(fileName, response, outFileName);
         } catch (Exception ex) {
-            logger.error("getSalesDetailSkuDataExcel", ex);
+            logger.error("getSalesDetailProductDataExcel", ex);
         }
 		bean.WriteTo(response);
 	}
-	
+
 	/**
 	 * getSalesDetailProductData
 	 */
@@ -357,7 +400,7 @@ public class SalesDetailController {
 		
 		bean.WriteTo(response);
 	}
-	
+
 	/**
 	 * getSalesDetailProductData
 	 */
@@ -382,7 +425,14 @@ public class SalesDetailController {
 		
 		bean.WriteTo(response);
 	}
-	
+
+	/**
+	 * responseExcel
+	 * @param fileName
+	 * @param response
+	 * @param outFileName
+	 * @throws Exception
+	 */
 	private void responseExcel(String fileName, HttpServletResponse response, String outFileName) throws Exception {
         // 以流的形式下载文件。
         InputStream fis = new BufferedInputStream(new FileInputStream(fileName));
@@ -401,7 +451,5 @@ public class SalesDetailController {
         toClient.flush();
         toClient.close();
 	}
-
-	
 	
 }

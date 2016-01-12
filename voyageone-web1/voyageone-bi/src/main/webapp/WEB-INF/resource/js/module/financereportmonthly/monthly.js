@@ -53,7 +53,8 @@ function init_monthly_report_table() {
             'Express Fee',
             'Mail Fee',
             'Ground Handling Fee',
-            'Storage Charges'
+            'Storage Charges',
+            'Identification Fee'
         ],
         colModel: [
             {name: 'year_calc', index: 'year_calc', width: 50, editable: false, sortable: false, frozen: true},
@@ -67,7 +68,8 @@ function init_monthly_report_table() {
             {name: 'transpotation_amount', width: 100, editable: false, sortable: false},
             {name: 'mail_fee', width: 100, editable: false, sortable: false},
             {name: 'ground_handling_fee', width: 100, editable: false, sortable: false},
-            {name: 'storage_charges', width: 100, editable: false, sortable: false}
+            {name: 'storage_charges', width: 100, editable: false, sortable: false},
+            {name: 'identification_fee', width: 100, editable: false, sortable: false}
         ],
         viewrecords : true,
         rowNum:100,
@@ -89,10 +91,10 @@ function doGetFinancialReportMonthlyReportDataReq() {
 function post_monthly() {
     $("#gbox_monthly_report_table .loading").css("display", "block");
     finance_search_cond.report_page = monthly_page;
-    bigdata.post(rootPath + "/manage/getDataReportMonthly.html", finance_search_cond, doGetDataReportMonthlyDataReq_end, '');
+    bigdata.post(rootPath + "/manage/getFinanceReportMonthly.html", finance_search_cond, doGetFinanceReportMonthlyDataReq_end, '');
 }
 
-function doGetDataReportMonthlyDataReq_end(json) {
+function doGetFinanceReportMonthlyDataReq_end(json) {
     // 表格控件
     var grid_selector = "#monthly_report_table";
     // 请求后数据缓存
@@ -128,7 +130,8 @@ function refresh_monthly_report_table_data() {
                 'transpotation_amount': row.transpotation_amount,
                 'mail_fee': row.mail_fee,
                 'ground_handling_fee': row.ground_handling_fee,
-                'storage_charges': row.storage_charges
+                'storage_charges': row.storage_charges,
+                'identification_fee': row.identification_fee
             });
     }
     // 表格控件

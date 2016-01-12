@@ -1,6 +1,5 @@
 package com.voyageone.web2.cms.views.product_edit;
 
-import com.google.gson.JsonObject;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.cms.service.CmsProductService;
@@ -14,13 +13,11 @@ import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
 import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.utils.FieldUtil;
-import com.voyageone.common.masterdate.schema.utils.JsonUtil;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.web2.cms.bean.CustomAttributesBean;
 import com.voyageone.web2.cms.bean.ProductInfoBean;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.web2.sdk.api.VoApiResponse;
 import com.voyageone.web2.sdk.api.request.ProductUpdateRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -390,7 +387,7 @@ public class ProductPropsEditService {
      * @param categoryFullPath
      * @param skuFieldMap
      */
-    public void updateProductSkuInfo(String channelId,String user,String categoryId,Long productId,String categoryFullPath, Map skuFieldMap){
+    public void updateProductSkuInfo(String channelId,String user,String categoryId,Long productId,String modified,String categoryFullPath, Map skuFieldMap){
 
         Field skuField = SchemaJsonReader.mapToField(skuFieldMap);
 
@@ -398,7 +395,14 @@ public class ProductPropsEditService {
 
         skuField.getFieldValueToMap(skuFieldValueMap);
 
-        List<CmsBtProductModel_Sku> skus = (List<CmsBtProductModel_Sku>)skuFieldMap.get("skuFields");
+        List<Map> skuValuesMap = (List<Map>) skuFieldValueMap.get("sku");
+
+        List<CmsBtProductModel_Sku> skuValues = new ArrayList<>();
+
+        for (Map skuMap:skuValuesMap){
+            CmsBtProductModel_Sku skuModel = new CmsBtProductModel_Sku(skuMap);
+            skuValues.add(skuModel);
+        }
 
         ProductUpdateRequest updateRequest = new ProductUpdateRequest(channelId);
 
@@ -407,7 +411,8 @@ public class ProductPropsEditService {
         productModel.setCatId(categoryId);
         productModel.setProdId(productId);
         productModel.setCatPath(categoryFullPath);
-        productModel.setSkus(skus);
+        productModel.setSkus(skuValues);
+        productModel.setModified(modified);
 
         updateRequest.setProductModel(productModel);
         updateRequest.setModifier(user);

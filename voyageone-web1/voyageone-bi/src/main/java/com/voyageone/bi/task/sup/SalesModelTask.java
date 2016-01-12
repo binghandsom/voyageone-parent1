@@ -77,12 +77,12 @@ public class SalesModelTask {
 	
 	@Autowired
 	private SqlOlapDaoSupport sqlOlapDaoSupport;
-	
+
 	/**
-	 * getTopSalesProductInfo
+	 * getTopSalesModelInfo
 	 * @param condition
 	 * @param userInfoBean
-	 * @param i
+	 * @param topCount
 	 * @return
 	 */
 	public List<ChartGridDisBean> getTopSalesModelInfo(ConditionBean condition, UserInfoBean userInfoBean, int topCount) {
@@ -95,14 +95,14 @@ public class SalesModelTask {
 	}
 
 	/**
-	 * getProductBeanLst
+	 * getModelBeanLst
 	 * @param condition
 	 * @param userInfoBean
 	 * @return
 	 */
 	public List<ChartGridDisBean> getModelBeanLst(ConditionBean condition, UserInfoBean userInfoBean) {
 		//data condition
-		Dimension dimension = Dimension.Product;
+		Dimension dimension = Dimension.Model;
 		String queryStrOrg = MODEL_SQL;
 		String tableName = SqlOlapSalesUtils.getTableName(condition, dimension);
 		if ("vt_sales_product".equals(tableName)) {

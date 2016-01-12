@@ -285,6 +285,28 @@ public class DealTBdataServiceImpl implements DealTBdataService {
         int index = 0;
         while (strJsonCheck.equals("")) {
             try {
+//                int index11 = 1;
+//                for (int i=1; i<=90; i++) {
+//                    String url = strDataURL + "&page=" + i;
+//                    //运行查询URL
+//                    driver.get(url);
+//                    //获得返回数据
+//                    strJsonCheck = driver.getPageSource();
+//                    //strJsonCheck = UtilResolveData.replaceJson(driverConfigBean.getShopBean().getEcomm_id(), strJsonCheck);
+//                    Document doc = Jsoup.parse(strJsonCheck);
+//                    Elements jufee_list = doc.getElementsByClass("jufee-list");
+//                    Element jufee = jufee_list.iterator().next();
+//                    Elements trs = jufee.getElementsByTag("tbody").get(0).getElementsByTag("tr");
+//                    for (Element tr : trs) {
+//                        Elements tds = tr.getElementsByTag("td");
+//                        String message = String.valueOf(index11);
+//                        for (Element td : tds) {
+//                            message = message  + ";;;" + td.text();
+//                        }
+//                        System.out.println(message);
+//                    }
+//                    Thread.sleep(2000);
+//                }
                 //运行查询URL
                 driver.get(strDataURL);
                 //获得返回数据

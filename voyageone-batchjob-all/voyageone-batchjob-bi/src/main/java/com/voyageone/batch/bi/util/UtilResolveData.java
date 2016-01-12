@@ -28,7 +28,8 @@ public class UtilResolveData {
 
         Boolean boolState;
 
-        if ((strJsonCheck.contains("data") || strJsonCheck.contains("Data")) && strJsonCheck.substring(0, 1).equals("{")) {
+        //if ((strJsonCheck.contains("data") || strJsonCheck.contains("Data")) && strJsonCheck.substring(0, 1).equals("{")) {
+        if (strJsonCheck.contains("data") || strJsonCheck.contains("Data")) {
             boolState = true;
         } else {
             boolState = false;
@@ -53,7 +54,7 @@ public class UtilResolveData {
                 strDataUrl = DataUrlConstants.TB_DATA_TITLE + DataUrlConstants.TB_DATE_TYPE_STATIC_FROM
                         + DateTimeUtil.format(DateTimeUtil.addDays(dateTo, -7), Constants.FORMAT_JSON_DATE)
                         + DataUrlConstants.TB_DATE_TYPE_STATIC_MIDDLE
-                        + DateTimeUtil.format(dateTo, Constants.FORMAT_JSON_DATE)
+                        + DateTimeUtil.format(DateTimeUtil.addDays(dateTo, -1), Constants.FORMAT_JSON_DATE)
                         + DataUrlConstants.TB_STORE_DATE_TYPE_STATIC_TO
                         + DataUrlConstants.TB_DESCRIPTION_STORE + DataUrlConstants.TB_SHOP_SHOW;
                 break;
@@ -63,7 +64,7 @@ public class UtilResolveData {
                 strDataUrl = DataUrlConstants.TB_DATA_TITLE + DataUrlConstants.TB_DATE_TYPE_STATIC_FROM
                         + DateTimeUtil.format(DateTimeUtil.addDays(dateTo, -7), Constants.FORMAT_JSON_DATE)
                         + DataUrlConstants.TB_DATE_TYPE_STATIC_MIDDLE
-                        + DateTimeUtil.format(dateTo, Constants.FORMAT_JSON_DATE)
+                        + DateTimeUtil.format(DateTimeUtil.addDays(dateTo, -1), Constants.FORMAT_JSON_DATE)
                         + DataUrlConstants.TB_PRODUCT_DATE_TYPE_STATIC_TO
                         + DataUrlConstants.TB_DESCRIPTION_PRODUCT + strProductIID + DataUrlConstants.TB_PRODUCT_SHOW;
                 break;
@@ -117,8 +118,16 @@ public class UtilResolveData {
 
         //截取Web取得项目在Json中的分类说明
         String key[] = {"content", "data", "title"};
+
+        String strJsonTmp = strJson;
+        if (strJsonTmp != null) {
+            int start = strJsonTmp.indexOf("{");
+            int end = strJsonTmp.lastIndexOf("}")+1;
+            strJsonTmp = strJsonTmp.substring(start, end);
+        }
+
         //json取得，遍历。
-        JSONObject jsonObj = JSONObject.fromObject(strJson);
+        JSONObject jsonObj = JSONObject.fromObject(strJsonTmp);
         for (int i = 0; i < key.length - 1; i++) {
             if (jsonObj.containsKey(key[i])) {
                 jsonObj = jsonObj.getJSONObject(key[i]);
@@ -152,8 +161,16 @@ public class UtilResolveData {
         List<String> listValueTM = new ArrayList<>();
         //截取Web取得项目在Json中的分类说明
         String key[] = {"content", "data", "data"};
+
+        String strJsonTmp = strJson;
+        if (strJsonTmp != null) {
+            int start = strJsonTmp.indexOf("{");
+            int end = strJsonTmp.lastIndexOf("}")+1;
+            strJsonTmp = strJsonTmp.substring(start, end);
+        }
+
         //json取得，遍历。
-        JSONObject jsonObj = JSONObject.fromObject(strJson);
+        JSONObject jsonObj = JSONObject.fromObject(strJsonTmp);
         for (int i = 0; i < key.length - 1; i++) {
             if (jsonObj.containsKey(key[i])) {
                 jsonObj = jsonObj.getJSONObject(key[i]);

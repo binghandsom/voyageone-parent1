@@ -158,24 +158,27 @@ public class FireFoxDriverServiceImpl implements FireFoxDriverService {
             try {
                 String strReflashUrl = driverBean.getShopBean().getReflash_url();
                 driver.get(strReflashUrl); 
-                String curUrlTmp = driver.getCurrentUrl().replace("http://", "").replace("https://", "").toLowerCase();
-                if (curUrlTmp.indexOf("login")<0 || curUrlTmp.indexOf("err")<0) {
-                	isLogin = true;
-                }
-            } catch (WebDriverException wex) {
-            	logger.error("reflashFireFoxDriver Error:", wex);
-            	driverBean.setInitial_driver(null);
+//                String curUrlTmp = driver.getCurrentUrl().replace("http://", "").replace("https://", "").toLowerCase();
+//                if (curUrlTmp.indexOf("login")>=0 || curUrlTmp.indexOf("err")>=0) {
+//                    isLogin = false;
+//                } else {
+                isLogin = true;
+//                }
+//            } catch (WebDriverException wex) {
+//            	logger.error("reflashFireFoxDriver Error:", wex);
+//            	driverBean.setInitial_driver(null);
             } catch (Exception ex) {
                 logger.error("reflashFireFoxDriver Error:", ex);
-                break;
+                //break;
             }
             try {
 	            if (isLogin) {
 	            	int number = (int) ((double)(1 + Math.random()) * 5.0);
-	            	Thread.sleep(600000 * number);
+	            	Thread.sleep(60000 * number);
 	            } else {
-	            	Thread.sleep(10000*3);
+	            	Thread.sleep(10000 * 1);
 	            	initialRemoteLoginFireFoxDriver(driverBean);
+                    Thread.sleep(10000 * 3);
 	            }
             } catch (InterruptedException e) {
                 logger.error("reflashFireFoxDriver Interrupte Error:", e);
@@ -218,6 +221,21 @@ public class FireFoxDriverServiceImpl implements FireFoxDriverService {
         }
     }
 
+    public WebDriver openProcessRemoteFireFoxDriver() throws Exception {
+        DesiredCapabilities capability = DesiredCapabilities.firefox();
+        capability.setBrowserName("firefox");
+        capability.setPlatform(Platform.WINDOWS);
+        capability.setVersion("3.8");
+
+        FirefoxProfile firefoxProfile = new FirefoxProfile();
+        firefoxProfile.setPreference("network.cookie.cookieBehavior", 0);
+        capability.setCapability(FirefoxDriver.PROFILE, firefoxProfile);
+        String url = FileProperties.readValue("bi.spider.driver.path");
+        WebDriver driver = new RemoteWebDriver(new URL(url), capability);
+        driver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
+        driver.manage().timeouts().pageLoadTimeout(60, TimeUnit.SECONDS);
+        return driver;
+    }
     /**
      * 进行登录
      *
@@ -390,6 +408,7 @@ public class FireFoxDriverServiceImpl implements FireFoxDriverService {
 
             boolean logined = false;
             for (int i = 0; i < 10; i++) {
+                Thread.sleep(DataSearchConstants.THREAD_SLEEP_LOGIN);
                 if (!loginTitle.equals(driver.getTitle())) {
                     logined = true;
                     break;
