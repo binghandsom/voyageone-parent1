@@ -947,10 +947,7 @@ define(function() {
       });
     };
   } ]);
-  angular.module("voyageone.angular.factories.interceptor", []).factory("interceptorFactory", InterceptorFactory).config([ "$httpProvider", function($httpProvider) {
-    $httpProvider.interceptors.push("interceptorFactory");
-  } ]);
-  function InterceptorFactory() {
+  angular.module("voyageone.angular.factories.interceptor", []).factory("interceptorFactory", function() {
     var UNKNOWN_CODE = "5";
     var CODE_SYS_REDIRECT = "SYS_REDIRECT";
     var MSG_TIMEOUT = "300001";
@@ -992,7 +989,9 @@ define(function() {
       },
       responseError: function(res) {}
     };
-  }
+  }).config([ "$httpProvider", function($httpProvider) {
+    $httpProvider.interceptors.push("interceptorFactory");
+  } ]);
   angular.module("voyageone.angular.factories.notify", []).factory("notify", [ "$filter", function($filter) {
     function notify(options) {
       if (!options) return;
