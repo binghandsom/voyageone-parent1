@@ -32,7 +32,7 @@ public class PostWMFOrderJob {
 	/**
 	 * 准备取消订单推送
 	 */
-	public void postWMFPendingCancelOrder() {
+	public void postWMFPendingCancelOrder() throws Exception {
 
 		List<TaskControlBean> taskControlList = taskDao.getTaskControlList(POST_WMF_CANCEL_ORDER);
 		// 是否可以运行的判断
