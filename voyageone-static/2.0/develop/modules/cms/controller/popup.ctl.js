@@ -8,113 +8,117 @@ define([
 ], function (cms, _) {
 
     cms.constant('popActions', {
-        "column_define": {
-            "templateUrl": "views/pop/column_define/index.tpl.html",
-            "controllerUrl": "modules/cms/views/pop/column_define/index.ctl"
-        },
-        "new": {
-            "templateUrl": "views/pop/new/promotion.tpl.html",
-            "controllerUrl": "modules/cms/views/pop/new/promotion.ctl"
-        },
-        "other": {
-            "platform": {
-                "templateUrl": "views/pop/other/platform.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/other/platform.ctl",
-                "controller": 'otherPlatformPopupController as ctrl',
-                "size": 'md',
-                "backdrop": 'static'
+            "column_define": {
+                "templateUrl": "views/pop/column_define/index.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/column_define/index.ctl"
             },
-            "progress": {
-                "templateUrl": "views/pop/other/progress.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/other/progress.ctl"
-            }
-        },
-        "tag": {
-            "promotion": {
-                "templateUrl": "views/pop/tag/promotion/index.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/tag/promotion/index.ctl"
+            "new": {
+                "templateUrl": "views/pop/new/promotion.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/new/promotion.ctl"
             },
-            "shop_category": {
-                "templateUrl": "views/pop/tag/shop_category/index.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/tag/shop_category/index.ctl"
-            }
-        },
-        "prop_change": {
-            "templateUrl": "views/pop/prop_change/index.tpl.html",
-            "controllerUrl": "modules/cms/views/pop/prop_change/index.ctl"
-        },
-        "import": {
-            "templateUrl": "views/pop/import/index.tpl.html",
-            "controllerUrl": "modules/cms/views/pop/import/index.ctl"
-        },
-        "columnMapping": {
+            "other": {
+                "platform": {
+                    "templateUrl": "views/pop/other/platform.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/other/platform.ctl"
+                },
+                "progress": {
+                    "templateUrl": "views/pop/other/progress.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/other/progress.ctl"
+                }
+            },
+            "tag":{
+                "promotion": {
+                    "templateUrl": "views/pop/tag/promotion/index.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/tag/promotion/index.ctl"
+                },
+                "shop_category": {
+                    "templateUrl": "views/pop/tag/shop_category/index.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/tag/shop_category/index.ctl"
+                }
+            },
+            "prop_change": {
+                "templateUrl": "views/pop/prop_change/index.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/prop_change/index.ctl"
+            },
+            "import": {
+                "templateUrl": "views/pop/import/index.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/import/index.ctl"
+            },
+           "columnMapping": {
             "templateUrl": "views/pop/columnMapping/index.tpl.html",
             "controllerUrl": "modules/cms/views/pop/columnMapping/index.ctl",
             "controller": 'ColumnMappingCtl',
             "size": 'md'/*
-             windowClass: 'xxx',
-             "windowTopClass": "yyy"*/
-        },
+               windowClass: 'xxx',
+               "windowTopClass": "yyy"*/
+           },
         "columnMappingSetting": {
             "templateUrl": "views/pop/columnMappingSetting/index.tpl.html",
             "controllerUrl": "modules/cms/views/pop/columnMappingSetting/index.ctl",
             "controller": 'ColumnMappingSettingCtl',
             "size": 'lg'
         },
-        "product": {
-            "price": {
-                "templateUrl": "views/pop/product/price/history.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/product/price/history.ctl"
-            },
-            "promotion": {
-                "templateUrl": "views/pop/product/promotion/history.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/product/promotion/history.ctl"
-            }
+        "otherDownload": {
+            "templateUrl": "views/pop/other/download.tpl.html",
+            "controllerUrl": "modules/cms/views/pop/other/download.ctl",
+            "controller": 'OtherDownloadCtl',
+            "size": 'md'
         },
-        "system": {
+            "product": {
+                "price": {
+                    "templateUrl": "views/pop/product/price/history.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/product/price/history.ctl"
+                },
+                "promotion": {
+                    "templateUrl": "views/pop/product/promotion/history.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/product/promotion/history.ctl"
+                }
+            },
+            "system": {
+                "category": {
+                    "templateUrl": "views/pop/system/category/edit.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/system/category/edit.ctl",
+                    "controller": 'popCategorySchemaCtl as ctrl',
+                    "backdrop": 'static',
+                    "size": 'md'
+                }
+            },
             "category": {
-                "templateUrl": "views/pop/system/category/edit.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/system/category/edit.ctl",
-                "controller": 'popCategorySchemaCtl as ctrl',
+                "templateUrl": "views/pop/category/index.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/category/index.ctl",
+                "controller": 'categoryPopupController as ctrl',
+                "backdrop": 'static',
+                "size": 'lg'
+            },
+            "feed": {
+                "templateUrl": "views/pop/feed/index.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/feed/index.ctl",
+                "controller": 'feedPropMappingPopupController as ctrl',
+                "backdrop": 'static',
+                "size": 'lg'
+            },
+            "feedValue": {
+                "templateUrl": "views/pop/feedValue/index.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/feedValue/index.ctl",
+                "controller": 'feedPropValuePopupController as ctrl',
                 "backdrop": 'static',
                 "size": 'md'
             }
-        },
-        "category": {
-            "templateUrl": "views/pop/category/index.tpl.html",
-            "controllerUrl": "modules/cms/views/pop/category/index.ctl",
-            "controller": 'categoryPopupController as ctrl',
-            "backdrop": 'static',
-            "size": 'lg'
-        },
-        "feed": {
-            "templateUrl": "views/pop/feed/index.tpl.html",
-            "controllerUrl": "modules/cms/views/pop/feed/index.ctl",
-            "controller": 'feedPropMappingPopupController as ctrl',
-            "backdrop": 'static',
-            "size": 'lg'
-        },
-        "feedValue": {
-            "templateUrl": "views/pop/feedValue/index.tpl.html",
-            "controllerUrl": "modules/cms/views/pop/feedValue/index.ctl",
-            "controller": 'feedPropValuePopupController as ctrl',
-            "backdrop": 'static',
-            "size": 'md'
-        }
-    }).controller('popupCtrl', popupCtrl);
+        })
+        .controller('popupCtrl', popupCtrl);
 
     function popupCtrl($scope, $modal, popActions, $q, $translate, alert) {
 
         function openModel(config, context) {
 
             if (context) config.resolve = {
-                context: function () {
+                context: function() {
                     return context;
                 }
             };
 
             var defer = $q.defer();
-            require([config.controllerUrl], function () {
+            require([config.controllerUrl], function() {
                 defer.resolve($modal.open(config).result);
             });
             return defer.promise;
@@ -140,7 +144,7 @@ define([
          */
         $scope.openUpdateProperties = openUpdateProperties;
         function openUpdateProperties(viewSize, selList) {
-            require([popActions.prop_change.controllerUrl], function () {
+            require([popActions.prop_change.controllerUrl], function(){
                 if (selList.length) {
                     $modal.open({
                         templateUrl: popActions.prop_change.templateUrl,
@@ -189,7 +193,6 @@ define([
                 }
             });
         }
-
         $scope.openshop_category = openshop_category;
         function openshop_category(viewSize) {
             $modal.open({
@@ -203,7 +206,6 @@ define([
                 }
             });
         }
-
         $scope.openHistoryPromotion = openHistoryPromotion;
         function openHistoryPromotion(viewSize, data) {
             require([popActions.product.promotion.controllerUrl], function () {
@@ -219,7 +221,6 @@ define([
                 });
             });
         }
-
         $scope.openHistoryPrice = openHistoryPrice;
         function openHistoryPrice(viewSize, data) {
             require([popActions.product.price.controllerUrl], function () {
@@ -235,10 +236,9 @@ define([
                 });
             });
         }
-
         $scope.openpromotion = openpromotion;
-        function openpromotion(viewSize, data) {
-            require([popActions.new.controllerUrl], function () {
+        function openpromotion(viewSize,data) {
+            require([popActions.new.controllerUrl], function(){
                 $modal.open({
                     templateUrl: popActions.new.templateUrl,
                     controller: 'popNewPromotionCtl',
@@ -251,7 +251,19 @@ define([
                 });
             });
         }
-
+        $scope.openOtherPlatform = openOtherPlatform;
+        function openOtherPlatform(viewSize) {
+            $modal.open({
+                templateUrl: popActions.other.platform.templateUrl,
+                controllerUrl: popActions.other.platform.controllerUrl,
+                size: viewSize,
+                resolve: {
+                    items: function () {
+                        //return data;
+                    }
+                }
+            });
+        }
         $scope.openOtherProgress = openOtherProgress;
         function openOtherProgress(viewSize) {
             $modal.open({
@@ -265,9 +277,8 @@ define([
                 }
             });
         }
-
         $scope.openImport = openImport;
-        function openImport(viewSize, data) {
+        function openImport(viewSize,data) {
             require([popActions.import.controllerUrl], function () {
                 $modal.open({
                     templateUrl: popActions.import.templateUrl,
@@ -281,11 +292,6 @@ define([
                 });
             });
         }
-
-        $scope.openOtherPlatform = function (context) {
-            return openModel(popActions.other.platform, context);
-        };
-
         $scope.openColumnMapping = function (context) {
             return openModel(popActions.columnMapping, context);
         };

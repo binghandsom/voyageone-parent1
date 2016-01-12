@@ -16,6 +16,12 @@
 	
 </style>
 <!-- End define -->
+						<div class="panel panel-grey margin-bottom-5 rounded">
+							<div class="panel-heading">
+								<div><h3 class="panel-title">Channel:</h3></div>
+								<div class="input-group" style="padding-left: 30px"><select id="search_channel_id" class="selectpicker" data-live-search="false" data-size="7"></select></div>
+							</div>
+						</div>
  						<div class="panel-group" id="accordion" style="margin-bottom:10px">
 					        <div class="panel panel-grey" style="border-color:#8D8D8D;">
 					            <div class="panel-heading row">

@@ -46,6 +46,8 @@ function init_cost_report_table() {
             'Month',
             'Channel',
             'Tracking No.',
+            'Synship No.',
+            'B/L No.',
             'Web Order No.',
             'VO Order No.',
             'Client Order No.',
@@ -58,13 +60,16 @@ function init_cost_report_table() {
             'Express Fee',
             'Mail Fee',
             'Ground Handling Fee',
-            'Storage Charges'
+            'Storage Charges',
+            'Identification Fee'
         ],
         colModel: [
             {name: 'year_calc', index: 'year_calc', width: 50, editable: false, sortable: false, frozen: true},
             {name: 'month_calc', width: 50, editable: false, sortable: false, frozen: true},
             {name: 'order_channel_name', width: 150, editable: false, sortable: false, frozen: true},
             {name: 'tracking_no', width: 150, editable: false, sortable: false, frozen: true},
+            {name: 'syn_ship_no', width: 150, editable: false, sortable: false, frozen: true},
+            {name: 'main_waybill_num', width: 150, editable: false, sortable: false},
             {name: 'source_order_id', width: 150, editable: false, sortable: false},
             {name: 'order_number', width: 150, editable: false, sortable: false},
             {name: 'client_order_number', width: 150, editable: false, sortable: false},
@@ -77,7 +82,8 @@ function init_cost_report_table() {
             {name: 'transpotation_amount', width: 100, editable: false, sortable: false},
             {name: 'mail_fee', width: 100, editable: false, sortable: false},
             {name: 'ground_handling_fee', width: 100, editable: false, sortable: false},
-            {name: 'storage_charges', width: 100, editable: false, sortable: false}
+            {name: 'storage_charges', width: 100, editable: false, sortable: false},
+            {name: 'identification_fee', width: 100, editable: false, sortable: false}
         ],
         viewrecords : true,
         rowNum:100,
@@ -104,10 +110,10 @@ function doGetFinancialReportCostReportDataReq() {
 function post_cost() {
     $("#gbox_cost_report_table .loading").css("display", "block");
     finance_search_cond.report_page = cost_page;
-    bigdata.post(rootPath + "/manage/getDataReportCost.html", finance_search_cond, doGetDataReportCostDataReq_end, '');
+    bigdata.post(rootPath + "/manage/getFinanceReportCost.html", finance_search_cond, doGetFinanceReportCostDataReq_end, '');
 }
 
-function doGetDataReportCostDataReq_end(json) {
+function doGetFinanceReportCostDataReq_end(json) {
     // 表格控件
     var grid_selector = "#cost_report_table";
     // 请求后数据缓存
@@ -136,6 +142,8 @@ function refresh_cost_report_table_data() {
                 'month_calc': row.month_calc,
                 'order_channel_name': row.order_channel_name,
                 'tracking_no': row.tracking_no,
+                'syn_ship_no': row.syn_ship_no,
+                'main_waybill_num': row.main_waybill_num,
                 'source_order_id': row.source_order_id,
                 'order_number': row.order_number,
                 'client_order_number': row.client_order_number,
@@ -148,7 +156,8 @@ function refresh_cost_report_table_data() {
                 'transpotation_amount': row.transpotation_amount,
                 'mail_fee': row.mail_fee,
                 'ground_handling_fee': row.ground_handling_fee,
-                'storage_charges': row.storage_charges
+                'storage_charges': row.storage_charges,
+                'identification_fee': row.identification_fee
             });
     }
     // 表格控件

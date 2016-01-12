@@ -5,7 +5,7 @@ import com.voyageone.bi.base.AjaxResponseBean;
 import com.voyageone.bi.base.BiException;
 import com.voyageone.bi.commonutils.Contants;
 import com.voyageone.bi.commonutils.SessionKey;
-import com.voyageone.bi.task.DataReportTask;
+import com.voyageone.bi.task.FinanceReportTask;
 import com.voyageone.bi.tranbean.UserInfoBean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,7 +25,7 @@ public class FinanceMonthlyReportController {
 
     // 页面初期化
     @Autowired
-    private DataReportTask dataReportTask;
+    private FinanceReportTask financeReportTask;
 
     // 月度报表页面
     @RequestMapping(value = "/manage/goMonthlyReport")
@@ -59,13 +59,13 @@ public class FinanceMonthlyReportController {
     }
 
     /**
-     * getDataReportMonthly数据取得
+     * getFinanceReportMonthly数据取得
      */
-    @RequestMapping(value = "/manage/getDataReportMonthly")
-    public void getDataReportMonthly(HttpServletResponse response,
+    @RequestMapping(value = "/manage/getFinanceReportMonthly")
+    public void getFinanceReportMonthly(HttpServletResponse response,
                                      HttpServletRequest request,
                                      AjaxFinancialMonthlyReportBean bean) throws BiException {
-        logger.info("getDataReportMonthly");
+        logger.info("getFinanceReportMonthly");
         if (!bean.checkInput()) {
             bean.WriteTo(response);
             return;
@@ -73,7 +73,7 @@ public class FinanceMonthlyReportController {
 
         HttpSession session = request.getSession();
         UserInfoBean user = (UserInfoBean) session.getAttribute(SessionKey.LOGIN_INFO);
-        dataReportTask.ajaxGetFinancialMonthlyReportData(bean, user);
+        financeReportTask.ajaxGetFinancialMonthlyReportData(bean, user);
         bean.WriteTo(response);
     }
 

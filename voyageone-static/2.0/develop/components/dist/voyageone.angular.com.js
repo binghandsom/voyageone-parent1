@@ -1,91 +1,4 @@
 define(function() {
-  angular.module("voyageone.angular.controllers.datePicker", []).controller("datePickerCtrl", [ "$scope", function($scope) {
-    var vm = this;
-    vm.formats = [ "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss" ];
-    $scope.formatDate = vm.formats[0];
-    $scope.formatDateTime = vm.formats[1];
-    $scope.open = open;
-    function open($event) {
-      $event.preventDefault();
-      $event.stopPropagation();
-      $scope.opened = true;
-    }
-  } ]);
-  angular.module("voyageone.angular.controllers.selectRows", []).controller("selectRowsCtrl", [ "$scope", function($scope) {
-    $scope.selectAll = selectAll;
-    $scope.selectOne = selectOne;
-    $scope.isAllSelected = isAllSelected;
-    function selectAll(objectList, id) {
-      objectList.selAllFlag = !objectList.selAllFlag;
-      if (!id) {
-        id = "id";
-      }
-      angular.forEach(objectList.currPageRows, function(object) {
-        objectList.selFlag[object[id]] = objectList.selAllFlag;
-        if (objectList.hasOwnProperty("selList")) {
-          var tempList = _.pluck(objectList.selList, id);
-          if (objectList.selAllFlag && tempList.indexOf(object[id]) < 0) {
-            objectList.selList.push(object);
-          } else if (!objectList.selAllFlag && tempList.indexOf(object[id]) > -1) {
-            objectList.selList.splice(tempList.indexOf(object[id]), 1);
-          }
-        }
-      });
-    }
-    function selectOne(currentId, objectList, id) {
-      if (!id) {
-        id = "id";
-      }
-      if (objectList.hasOwnProperty("selList")) {
-        angular.forEach(objectList.currPageRows, function(object) {
-          var tempList = _.pluck(objectList.selList, id);
-          if (_.isEqual(object[id], currentId)) {
-            if (tempList.indexOf(object[id]) > -1) {
-              objectList.selList.splice(tempList.indexOf(object[id]), 1);
-            } else {
-              objectList.selList.push(object);
-            }
-          }
-        });
-      }
-      objectList.selAllFlag = true;
-      tempList = _.pluck(objectList.selList, id);
-      angular.forEach(objectList.currPageRows, function(object) {
-        if (tempList.indexOf(object[id]) == -1) {
-          objectList.selAllFlag = false;
-        }
-      });
-    }
-    function isAllSelected(objectList, id) {
-      if (!id) {
-        id = "id";
-      }
-      if (objectList != undefined) {
-        objectList.selAllFlag = true;
-        var tempList = _.pluck(objectList.selList, id);
-        angular.forEach(objectList.currPageRows, function(object) {
-          if (tempList.indexOf(object[id]) == -1) {
-            objectList.selAllFlag = false;
-          }
-        });
-        return objectList.selAllFlag;
-      }
-      return false;
-    }
-  } ]);
-  angular.module("voyageone.angular.controllers.showPopover", []).controller("showPopoverCtrl", [ "$scope", function($scope) {
-    $scope.showInfo = showInfo;
-    function showInfo(values) {
-      var tempHtml = "";
-      angular.forEach(values, function(data, index) {
-        tempHtml += data;
-        if (index !== values.length) {
-          tempHtml += "<br>";
-        }
-      });
-      return tempHtml;
-    }
-  } ]);
   angular.module("voyageone.angular.directives.dateModelFormat", []).directive("dateModelFormat", [ "$filter", function($filter) {
     return {
       restrict: "A",
@@ -255,7 +168,7 @@ define(function() {
   }).directive("schemaHeader", [ "$templateCache", "schemaHeaderFactory", "fieldTypes", "ruleTypes", "valueTypes", function($templateCache, schemaHeaderFactory, fieldTypes, ruleTypes, valueTypes) {
     var templateKey_header = "voyageone.angular.directives.schemaHeader.tpl.html";
     if (!$templateCache.get(templateKey_header)) {
-      $templateCache.put(templateKey_header, '<div class="form-group">' + '  <label class="col-sm-2 control-label" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" ng-bind="$$data.name"></label>' + "  <div class=\"col-sm-8\" ng-class=\"{'hierarchy_main modal-open' : showHtmlData.isMultiComplex, 'hierarchy_main': showHtmlData.isComplex}\" ng-transclude></div>" + '  <div class="col-sm-2" ng-if="showHtmlData.isMultiComplex"><button class="btn btn-success" ng-click="addField($$data)"><i class="fa fa-plus"></i>{{\'BTN_COM_ADD\' | translate}}</button></div>' + '  <div class="row" ng-repeat="tipMsg in showHtmlData.tipMsg"><div class="col-sm-8 col-sm-offset-2 text-warnings"><i class="icon fa fa-bell-o"></i>&nbsp;{{tipMsg}}</div></div>' + "</div>");
+      $templateCache.put(templateKey_header, '<div class="form-group">' + '  <label class="col-sm-2 control-label" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" ng-bind="$$data.name"></label>' + "  <div class=\"col-sm-8\" ng-class=\"{'modal-open' : showHtmlData.isMultiComplex, 'hierarchy_main': showHtmlData.isComplex}\" ng-transclude></div>" + '  <div class="col-sm-2" ng-if="showHtmlData.isMultiComplex"><button class="btn btn-success" ng-click="addField($$data)"><i class="fa fa-plus"></i>{{\'BTN_COM_ADD\' | translate}}</button></div>' + '  <div class="row" ng-repeat="tipMsg in showHtmlData.tipMsg"><div class="col-sm-8 col-sm-offset-2 text-warnings"><i class="icon fa fa-bell-o"></i>&nbsp;{{tipMsg}}</div></div>' + "</div>");
     }
     return {
       restrict: "E",
@@ -275,7 +188,7 @@ define(function() {
           angular.forEach(data.fields, function(field) {
             eval("newFieldMap." + field.id + "=field");
           });
-          data.values.push({
+          data.complexValues.push({
             fieldMap: angular.copy(newFieldMap)
           });
         };
@@ -320,15 +233,15 @@ define(function() {
     }
     var templateKey_input = "voyageone.angular.directives.schemaInput.tpl.html";
     if (!$templateCache.get(templateKey_input)) {
-      $templateCache.put(templateKey_input, '<input id="quantity" name="quantity" style="min-width: 150px; max-width: 250px;" ng-model="vm.$$data.value" class="form-control inherited" replaceInfo>' + '{{vm.$$from.quantity}}<span ng-bind="vm.$$from.quantity"></span>');
+      $templateCache.put(templateKey_input, '<input style="min-width: 150px; max-width: 250px;" ng-model="vm.$$data.value" class="form-control inherited" replaceInfo>');
     }
     var templateKey_date = "voyageone.angular.directives.schemaDate.tpl.html";
     if (!$templateCache.get(templateKey_date)) {
-      $templateCache.put(templateKey_date, '<div class="input-group" style="width: 180px;" ng-controller="datePickerCtrl"><input replaceInfo type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="vm.$parent.$$data.value" date-model-format="{{formatDate}}" is-open="opened" datepicker-options="dateOptions" close-text="Close" /><span class="input-group-btn"><button replaceInfo type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button></span></div>');
+      $templateCache.put(templateKey_date, '<div class="input-group" style="width: 180px;" ng-controller="datePickerCtrl"><input replaceInfo type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.vm.$$data.value" date-model-format="{{formatDate}}" is-open="opened" datepicker-options="dateOptions" close-text="Close" /><span class="input-group-btn"><button replaceInfo type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button></span></div>');
     }
     var templateKey_datetime = "voyageone.angular.directives.schemaDatetime.tpl.html";
     if (!$templateCache.get(templateKey_datetime)) {
-      $templateCache.put(templateKey_datetime, '<div class="input-group" style="width: 180px;" ng-controller="datePickerCtrl"><input replaceInfo type="text" class="form-control" datepicker-popup="{{formatDateTime}}" ng-model="vm.$parent.$$data.value" is-open="opened" datepicker-options="dateOptions" close-text="Close" /><span class="input-group-btn"><button replaceInfo type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button></span></div>');
+      $templateCache.put(templateKey_datetime, '<div class="input-group" style="width: 180px;" ng-controller="datePickerCtrl"><input replaceInfo type="text" class="form-control" datepicker-popup="{{formatDateTime}}" ng-model="$parent.vm.$$data.value" date-model-format="{{formatDateTime}}" is-open="opened" datepicker-options="dateOptions" close-text="Close" /><span class="input-group-btn"><button replaceInfo type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button></span></div>');
     }
     var templateKey_textarea = "voyageone.angular.directives.schemaTextarea.tpl.html";
     if (!$templateCache.get(templateKey_textarea)) {
@@ -441,7 +354,7 @@ define(function() {
           return _.contains(scope.showHtmlData.checkValues, value);
         };
         scope.delField = function(index) {
-          scope.vm.$$data.values.splice(index, 1);
+          scope.vm.$$data.complexValues.splice(index, 1);
         };
         function _returnType(type) {
           schema.type(type);
@@ -1406,6 +1319,93 @@ define(function() {
       return currentLang.substr(0, 2);
     }
   };
+  angular.module("voyageone.angular.controllers.datePicker", []).controller("datePickerCtrl", [ "$scope", function($scope) {
+    var vm = this;
+    vm.formats = [ "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss" ];
+    $scope.formatDate = vm.formats[0];
+    $scope.formatDateTime = vm.formats[1];
+    $scope.open = open;
+    function open($event) {
+      $event.preventDefault();
+      $event.stopPropagation();
+      $scope.opened = true;
+    }
+  } ]);
+  angular.module("voyageone.angular.controllers.selectRows", []).controller("selectRowsCtrl", [ "$scope", function($scope) {
+    $scope.selectAll = selectAll;
+    $scope.selectOne = selectOne;
+    $scope.isAllSelected = isAllSelected;
+    function selectAll(objectList, id) {
+      objectList.selAllFlag = !objectList.selAllFlag;
+      if (!id) {
+        id = "id";
+      }
+      angular.forEach(objectList.currPageRows, function(object) {
+        objectList.selFlag[object[id]] = objectList.selAllFlag;
+        if (objectList.hasOwnProperty("selList")) {
+          var tempList = _.pluck(objectList.selList, id);
+          if (objectList.selAllFlag && tempList.indexOf(object[id]) < 0) {
+            objectList.selList.push(object);
+          } else if (!objectList.selAllFlag && tempList.indexOf(object[id]) > -1) {
+            objectList.selList.splice(tempList.indexOf(object[id]), 1);
+          }
+        }
+      });
+    }
+    function selectOne(currentId, objectList, id) {
+      if (!id) {
+        id = "id";
+      }
+      if (objectList.hasOwnProperty("selList")) {
+        angular.forEach(objectList.currPageRows, function(object) {
+          var tempList = _.pluck(objectList.selList, id);
+          if (_.isEqual(object[id], currentId)) {
+            if (tempList.indexOf(object[id]) > -1) {
+              objectList.selList.splice(tempList.indexOf(object[id]), 1);
+            } else {
+              objectList.selList.push(object);
+            }
+          }
+        });
+      }
+      objectList.selAllFlag = true;
+      tempList = _.pluck(objectList.selList, id);
+      angular.forEach(objectList.currPageRows, function(object) {
+        if (tempList.indexOf(object[id]) == -1) {
+          objectList.selAllFlag = false;
+        }
+      });
+    }
+    function isAllSelected(objectList, id) {
+      if (!id) {
+        id = "id";
+      }
+      if (objectList != undefined) {
+        objectList.selAllFlag = true;
+        var tempList = _.pluck(objectList.selList, id);
+        angular.forEach(objectList.currPageRows, function(object) {
+          if (tempList.indexOf(object[id]) == -1) {
+            objectList.selAllFlag = false;
+          }
+        });
+        return objectList.selAllFlag;
+      }
+      return false;
+    }
+  } ]);
+  angular.module("voyageone.angular.controllers.showPopover", []).controller("showPopoverCtrl", [ "$scope", function($scope) {
+    $scope.showInfo = showInfo;
+    function showInfo(values) {
+      var tempHtml = "";
+      angular.forEach(values, function(data, index) {
+        tempHtml += data;
+        if (index !== values.length) {
+          tempHtml += "<br>";
+        }
+      });
+      return tempHtml;
+    }
+  } ]);
   angular.module("voyageone.angular.controllers", [ "voyageone.angular.controllers.datePicker", "voyageone.angular.controllers.selectRows", "voyageone.angular.controllers.showPopover" ]);
   angular.module("voyageone.angular.directives", [ "voyageone.angular.directives.dateModelFormat", "voyageone.angular.directives.enterClick", "voyageone.angular.directives.fileStyle", "voyageone.angular.directives.ifNoRows", "voyageone.angular.directives.uiNav", "voyageone.angular.directives.schema", "voyageone.angular.directives.voption", "voyageone.angular.directives.vpagination", "voyageone.angular.directives.validator" ]);
   angular.module("voyageone.angular.factories", [ "voyageone.angular.factories.dialogs", "voyageone.angular.factories.interceptor", "voyageone.angular.factories.notify", "voyageone.angular.factories.schema", "voyageone.angular.factories.selectRows", "voyageone.angular.factories.vpagination" ]);

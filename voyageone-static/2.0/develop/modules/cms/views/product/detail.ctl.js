@@ -64,19 +64,19 @@ define([
 
             // 保存sku的变更
             updateSkuInfo: function () {
-                this.productDetailService.updateSkuInfo(this.productDetails.skus).then(function () {
+                this.productDetailService.updateSkuInfo(this.productDetails).then(function () {
                     this.notify.success (this.translate.instant('TXT_COM_UPDATE_SUCCESS'));
                 }.bind(this))
             },
 
             // 取消sku的变更
             cancelSkuInfo: function () {
-                this.productDetails.skus = angular.copy(this.productDetailsCopy.skus);
+                this.productDetails.skuFields = angular.copy(this.productDetailsCopy.skuFields);
             },
 
             // sku列表页面选中
             selSkuCart: function (cartId) {
-                _.each(this.productDetails.skus, function (sku) {
+                _.each(this.productDetails.skuFields, function (sku) {
                     sku.SelSkuCarts[cartId] = this.bulkCartStatus[cartId];
                 }.bind(this))
             },
@@ -87,7 +87,7 @@ define([
                     eval("newFieldMap." + field.id + "=field");
                 });
 
-                data.values.push({fieldMap: angular.copy(newFieldMap)});
+                data.complexValues.push({fieldMap: angular.copy(newFieldMap)});
             },
 
             // 从第三方属性中添加feed属性到product自定义中,或者从product自定义中删除feed属性

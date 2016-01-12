@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.voyageone.bi.tranbean.UserChannelBean;
+import com.voyageone.bi.tranbean.UserPortBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -64,7 +65,7 @@ public class UserInfoTask {
 		result.setReqResult(Contants.AJAX_RESULT_OK);
 	}
 
-	//ajaxGetUserShopList
+	//ajaxGetUserChannelList
 	public void ajaxGetUserChannelList(AjaxUserInfoBean bean, UserInfoBean userInfoBean) throws BiException{
 		if (!bean.checkInput()) {
 			return;
@@ -84,6 +85,64 @@ public class UserInfoTask {
 		}
 		// 画面店铺控件
 		result.setCmbChannels(cmbChannel);
+		result.setReqResult(Contants.AJAX_RESULT_OK);
+	}
+
+	//ajaxGetUserChannelShopList
+	public void ajaxGetUserChannelShopList(AjaxUserInfoBean bean, UserInfoBean userInfoBean) throws BiException{
+		if (!bean.checkInput()) {
+			return;
+		}
+
+		// AJAX 返回值
+		AjaxUserInfoBean.Result result = bean.getResponseBean();
+
+		// 画面店铺显示数据
+		List<PageCmbBoxDisBean> cmbChannel = new ArrayList<PageCmbBoxDisBean>();
+		List<UserChannelBean> userChannelList = userInfoDao.selectUserChannelById(userInfoBean.getUid());
+		List<UserShopBean> userShopList = userInfoDao.selectUserShopById(userInfoBean.getUid());
+		for (UserChannelBean userChannelBean: userChannelList) {
+			PageCmbBoxDisBean disBean = new PageCmbBoxDisBean();
+			disBean.setCode(userChannelBean.getCode());
+			disBean.setName(userChannelBean.getName());
+			// add channel shop
+			List<PageCmbBoxDisBean> shopList = new ArrayList<>();
+			for (UserShopBean userShopBean: userShopList) {
+				if (userShopBean.getChannel_id().equals(String.valueOf(userChannelBean.getId()))) {
+					PageCmbBoxDisBean shopBean = new PageCmbBoxDisBean();
+					shopBean.setCode(String.valueOf(userShopBean.getId()));
+					shopBean.setName(userShopBean.getName());
+					shopList.add(shopBean);
+				}
+			}
+			disBean.setChildren(shopList);
+			cmbChannel.add(disBean);
+		}
+		// 画面店铺控件
+		result.setCmbChannels(cmbChannel);
+		result.setReqResult(Contants.AJAX_RESULT_OK);
+	}
+
+	//ajaxGetUserChannelList
+	public void ajaxGetUserPortList(AjaxUserInfoBean bean, UserInfoBean userInfoBean) throws BiException{
+		if (!bean.checkInput()) {
+			return;
+		}
+
+		// AJAX 返回值
+		AjaxUserInfoBean.Result result = bean.getResponseBean();
+
+		// 画面店铺显示数据
+		List<PageCmbBoxDisBean> cmbPort = new ArrayList<PageCmbBoxDisBean>();
+		List<UserPortBean> userPortList = userInfoDao.selectUserPortById(userInfoBean.getUid());
+		for (UserPortBean userPortBean: userPortList) {
+			PageCmbBoxDisBean disBean = new PageCmbBoxDisBean();
+			disBean.setCode(String.valueOf(userPortBean.getCode()));
+			disBean.setName(userPortBean.getName());
+			cmbPort.add(disBean);
+		}
+		// 画面店铺控件
+		result.setCmbPorts(cmbPort);
 		result.setReqResult(Contants.AJAX_RESULT_OK);
 	}
 	
