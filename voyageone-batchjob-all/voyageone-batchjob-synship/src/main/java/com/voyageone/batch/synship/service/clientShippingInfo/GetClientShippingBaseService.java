@@ -5,11 +5,13 @@ import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.core.CodeConstants;
 import com.voyageone.batch.core.Constants;
 import com.voyageone.batch.synship.dao.ClientTrackingDao;
+import com.voyageone.batch.synship.dao.OrderDao;
 import com.voyageone.batch.synship.dao.ReservationDao;
 import com.voyageone.batch.synship.modelbean.ReservationClientBean;
 import com.voyageone.common.components.channelAdvisor.service.OrderService;
 import com.voyageone.common.components.issueLog.IssueLog;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.components.tmall.TbLogisticsService;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.mail.Mail;
 import com.voyageone.common.util.DateTimeUtil;
@@ -29,6 +31,9 @@ public abstract class GetClientShippingBaseService extends BaseTaskService {
     OrderService orderService;
 
     @Autowired
+    TbLogisticsService tbLogisticsService;
+
+    @Autowired
     protected IssueLog issueLog;
 
     @Autowired
@@ -36,6 +41,9 @@ public abstract class GetClientShippingBaseService extends BaseTaskService {
 
     @Autowired
     ReservationDao reservationDao;
+
+    @Autowired
+    OrderDao orderDao;
 
     @Override
     public SubSystem getSubSystem() {
