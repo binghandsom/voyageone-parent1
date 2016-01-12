@@ -19,7 +19,9 @@ define([
             "other": {
                 "platform": {
                     "templateUrl": "views/pop/other/platform.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/other/platform.ctl"
+                    "controllerUrl": "modules/cms/views/pop/other/platform.ctl",
+                    "controller": 'otherPlatformPopupController as ctrl',
+                    "size": 'md'
                 },
                 "progress": {
                     "templateUrl": "views/pop/other/progress.tpl.html",
@@ -256,20 +258,6 @@ define([
             });
         }
 
-        $scope.openOtherPlatform = openOtherPlatform;
-        function openOtherPlatform(viewSize) {
-            $modal.open({
-                templateUrl: popActions.other.platform.templateUrl,
-                controllerUrl: popActions.other.platform.controllerUrl,
-                size: viewSize,
-                resolve: {
-                    items: function () {
-                        //return data;
-                    }
-                }
-            });
-        }
-
         $scope.openOtherProgress = openOtherProgress;
         function openOtherProgress(viewSize) {
             $modal.open({
@@ -299,6 +287,10 @@ define([
                 });
             });
         }
+
+        $scope.openOtherPlatform = function (context) {
+            return openModel(popActions.other.platform, context);
+        };
 
         $scope.openColumnMapping = function (context) {
             return openModel(popActions.columnMapping, context);
