@@ -6,7 +6,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function () {
 
-    return function ($scope, promotionService, promotionDetailService, notify, $routeParams, $location) {
+    function detailController($scope, promotionService, promotionDetailService, notify, $routeParams, $location) {
         pageSize = 5;
         $scope.vm = {
             "promotionId": $routeParams.promotionId,
@@ -177,4 +177,7 @@ define([
             })
         }
     };
+
+    detailController.$inject = ['$scope', 'promotionService', 'promotionDetailService', 'notify', '$routeParams', '$location'];
+    return detailController;
 });

@@ -7,7 +7,7 @@ define([
     'modules/cms/service/search.service'
 ], function () {
 
-    return function ($scope, $rootScope, $routeParams, searchIndexService) {
+    function searchIndex($scope, $routeParams, searchIndexService) {
 
         $scope.vm = {
             searchInfo: {
@@ -114,4 +114,7 @@ define([
                 });
         }
     };
+
+    searchIndex.$inject = ['$scope', '$routeParams', 'searchIndexService'];
+    return searchIndex;
 });
