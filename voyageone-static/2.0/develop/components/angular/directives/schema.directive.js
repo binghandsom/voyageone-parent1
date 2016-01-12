@@ -166,18 +166,17 @@ angular.module('voyageone.angular.directives.schema', [])
         // input
         var templateKey_input = "voyageone.angular.directives.schemaInput.tpl.html";
         if (!$templateCache.get(templateKey_input)) {$templateCache.put(templateKey_input,
-            '<input id="quantity" name="quantity" style="min-width: 150px; max-width: 250px;" ng-model="vm.$$data.value" class="form-control inherited" replaceInfo>' +
-            '{{vm.$$from.quantity}}<span ng-bind="vm.$$from.quantity"></span>');}
+            '<input style="min-width: 150px; max-width: 250px;" ng-model="vm.$$data.value" class="form-control inherited" replaceInfo>');}
 
         // data
         var templateKey_date = "voyageone.angular.directives.schemaDate.tpl.html";
         if (!$templateCache.get(templateKey_date)) {$templateCache.put(templateKey_date,
-            '<div class="input-group" style="width: 180px;" ng-controller="datePickerCtrl"><input replaceInfo type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="vm.$parent.$$data.value" date-model-format="{{formatDate}}" is-open="opened" datepicker-options="dateOptions" close-text="Close" /><span class="input-group-btn"><button replaceInfo type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button></span></div>');}
+            '<div class="input-group" style="width: 180px;" ng-controller="datePickerCtrl"><input replaceInfo type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.vm.$$data.value" date-model-format="{{formatDate}}" is-open="opened" datepicker-options="dateOptions" close-text="Close" /><span class="input-group-btn"><button replaceInfo type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button></span></div>');}
 
         // datetime
         var templateKey_datetime = "voyageone.angular.directives.schemaDatetime.tpl.html";
         if (!$templateCache.get(templateKey_datetime)) {$templateCache.put(templateKey_datetime,
-            '<div class="input-group" style="width: 180px;" ng-controller="datePickerCtrl"><input replaceInfo type="text" class="form-control" datepicker-popup="{{formatDateTime}}" ng-model="vm.$parent.$$data.value" is-open="opened" datepicker-options="dateOptions" close-text="Close" /><span class="input-group-btn"><button replaceInfo type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button></span></div>');}
+            '<div class="input-group" style="width: 180px;" ng-controller="datePickerCtrl"><input replaceInfo type="text" class="form-control" datepicker-popup="{{formatDateTime}}" ng-model="$parent.vm.$$data.value" date-model-format="{{formatDateTime}}" is-open="opened" datepicker-options="dateOptions" close-text="Close" /><span class="input-group-btn"><button replaceInfo type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button></span></div>');}
 
         // textarea
         var templateKey_textarea = "voyageone.angular.directives.schemaTextarea.tpl.html";
