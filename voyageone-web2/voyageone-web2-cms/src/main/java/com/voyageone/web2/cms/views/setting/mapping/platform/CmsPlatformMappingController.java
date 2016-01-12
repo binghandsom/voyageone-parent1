@@ -33,9 +33,9 @@ public class CmsPlatformMappingController extends CmsController {
     @RequestMapping(CmsUrlConstants.MAPPING.PLATFORM.GET_OTHER_MAPPING_PATH)
     public AjaxResponse getOtherPlatformMapping(@RequestBody Map<String, String> params) {
 
-        String platformCategoryId = params.get("platformCategoryId");
+        String mainCategoryId = params.get("mainCategoryId");
 
-        return success(platformMappingService.getOtherPlatformMapping(platformCategoryId, getUser()));
+        return success(platformMappingService.getOtherPlatformMapping(mainCategoryId, getUser()));
     }
 
     @RequestMapping(CmsUrlConstants.MAPPING.PLATFORM.GET_PLATFORM_CATEGORY)
