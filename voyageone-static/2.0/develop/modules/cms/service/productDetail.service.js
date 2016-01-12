@@ -77,7 +77,6 @@ define([
 					data.masterFields.push(field);
 			});
 
-			// TODO 需要对formData做处理
 			return $productDetailService.updateProductMasterInfo(data);
 		}
 
@@ -87,8 +86,15 @@ define([
 		 * @returns {*}
          */
 		function updateSkuInfo (formData) {
-			// TODO 需要对formData做处理
-			return $productDetailService.updateProductSkuInfo(formData);
+
+			var data = {
+				categoryId: formData.categoryId,
+				categoryFullPath: formData.categoryFullPath,
+				productId: formData.productId,
+				modified: formData.modified,
+				skuFields: formData.skuFields
+			};
+			return $productDetailService.updateProductSkuInfo(data);
 		}
 
 		/**
@@ -97,10 +103,9 @@ define([
 		 * @param skuFormData
 		 * @returns {*|Promise.<T>}
          */
-		function updateProductDetail (productFormData, skuFormData) {
-			// TODO 需要对formData做处理
-			return updateProductInfo(productFormData).then(function () {
-				return updateSkuInfo(skuFormData);
+		function updateProductDetail (formData) {
+			return updateProductInfo(formData).then(function () {
+				return updateSkuInfo(formData);
 			})
 		}
 

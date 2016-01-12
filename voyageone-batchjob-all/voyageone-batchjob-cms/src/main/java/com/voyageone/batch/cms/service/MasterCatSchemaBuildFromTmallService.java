@@ -325,7 +325,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
 
             Field isRmField = FieldUtil.getFieldById(masterFields, actionDefModel.getPropId());
 
-            if (isRmField != null && actionDefModel.getDefModels().size() == 0) {
+            if (isRmField != null && StringUtil.isEmpty(actionDefModel.getParentPropId())) {
                 removeFields.add(isRmField);
                 FieldUtil.removeFieldById(masterFields, actionDefModel.getPropId());
             }
