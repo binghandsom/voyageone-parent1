@@ -20,4 +20,6 @@ public interface FireFoxDriverService {
 
     WebDriver openProcessFireFoxDriver(DriverConfigBean driverConfigBean) throws Exception;
 
+    WebDriver openProcessRemoteFireFoxDriver() throws Exception;
+
 }

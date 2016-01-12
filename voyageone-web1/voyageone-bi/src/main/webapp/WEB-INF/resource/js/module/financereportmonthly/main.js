@@ -50,6 +50,6 @@ function doExportExcel(json) {
 		failMessageHtml: "There was a problem generating your report, please try again."
 	});
 
-	doGetDataReportMonthlyDataReq_end;
+	doGetFinanceReportMonthlyDataReq_end;
 
 }

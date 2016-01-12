@@ -134,4 +134,17 @@ public class JumeiUploadDataServiceImpl implements JumeiUploadDataService {
         jumeiMapper.insert_ims_jumei_vl_record(jumeiRecord);
     }
 
+    public void synchronizeJumeiProductRecord(){
+        jumeiMapper.update_ims_jumei_vl_product_status();
+        jumeiMapper.update_ims_jumei_vl_product_status_0();
+    }
+
+    public void synchronizeJumeiDealRecord(){
+        jumeiMapper.update_ims_jumei_vl_deal_status();
+        jumeiMapper.update_ims_jumei_vl_deal_status_0();
+    }
+
+    public void updateJumeiRecord(){
+        jumeiMapper.update_ims_jumei_vl_record();
+    }
 }

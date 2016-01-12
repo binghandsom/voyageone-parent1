@@ -248,6 +248,9 @@ public class SalesHomeTask {
 				for (ChartGridDisBean skuBean:listSkuBean) {
 					skuBean.setType("sku");
 					if (productBean.getId().equals(skuBean.getParent())) {
+						if (productBean.getId().equals(skuBean.getId())) {
+							skuBean.setId(skuBean.getId()+"_s");
+						}
 						result.add(skuBean);
 					}
 				}

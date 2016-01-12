@@ -19,6 +19,10 @@ public class CmsBtPromotionModel extends BaseMongoModel {
 
     private String prePeriodEnd;
 
+    private String preSaleStart;
+
+    private String preSaleEnd;
+
     private String activityStart;
 
     private String activityEnd;
@@ -143,5 +147,21 @@ public class CmsBtPromotionModel extends BaseMongoModel {
 
     public void setPromotionStatus(Boolean promotionStatus) {
         this.promotionStatus = promotionStatus;
+    }
+
+    public String getPreSaleStart() {
+        return preSaleStart;
+    }
+
+    public void setPreSaleStart(String preSaleStart) {
+        this.preSaleStart = preSaleStart;
+    }
+
+    public String getPreSaleEnd() {
+        return preSaleEnd;
+    }
+
+    public void setPreSaleEnd(String preSaleEnd) {
+        this.preSaleEnd = preSaleEnd;
     }
 }

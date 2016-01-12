@@ -15,31 +15,14 @@ public class SqlOlapSalesUtils {
 	
 	//private static final Log logger = LogFactory.getLog(SqlOlapSalesUtils.class);
 	
-	/**
-	 * setColumnValue
-	 * @param columnName
-	 * @param cell
-	 * @param chartGridDisBean
-	 */
 	public static void setColumnValue(String columnName, SqlRowSet rs, ChartGridDisBean chartGridDisBean) {
 		String value = rs.getString(columnName);
 		MondrianSalesUtils.setColumnValueShort(columnName, value, chartGridDisBean);
 	}
 
-	/**
-	 * @param queryStr
-	 * @param condition
-	 * @param cubeName
-	 * @param dimension
-	 * @return
-	 */
 	public static String builderSql(String queryStr, ConditionBean condition, String tableName, Dimension dimension) {
 		String result = queryStr;
 		 
-		//String cubeName = getSalesCubeName(condition, dimension);
-		String schemaName = getSchemaName();
-		result = result.replaceAll("#schema#", schemaName);
-		
 		result = result.replaceAll("#table_name#", tableName);
 		
 		/**
@@ -240,15 +223,6 @@ public class SqlOlapSalesUtils {
 		return result;
 	}
 	
-	/**
-	 * executeSqlAndMomYoy
-	 * @param queryStrOrg
-	 * @param cubeName
-	 * @param condition
-	 * @param dimension
-	 * @param mondrianDaoSupport
-	 * @return
-	 */
 	public static List<ChartGridDisBean> executeSqlAndMomYoy(
 			String queryStrOrg, 
 			String tableName, 

@@ -190,25 +190,25 @@ function doUpdateFinancialCheckUploadDataReq() {
             bigdata.alert("Upload数据仍有错误，无法提交。");
         } else {
             post_update();
-            doGetDataCheckUploadDataReq_end;
+            doGetFinanceCheckUploadDataReq_end;
         }
     } else {
         post_update();
-        doGetDataCheckUploadDataReq_end;
+        doGetFinanceCheckUploadDataReq_end;
     }
 }
 
 function post_check() {
     $("#gbox_check_upload_table .loading").css("display", "block");
     finance_search_cond.error_page = check_page;
-    bigdata.post(rootPath + "/manage/getDataCheckUpload.html", finance_search_cond, doGetDataCheckUploadDataReq_end, '');
+    bigdata.post(rootPath + "/manage/getFinanceCheckUpload.html", finance_search_cond, doGetFinanceCheckUploadDataReq_end, '');
 }
 
 function post_explanation() {
     $("#gbox_explanation_upload_table .loading").css("display", "block");
     finance_search_cond.explanation_page = explanation_page;
     finance_search_cond.explanation_error_status = $("#search_error_status").val();
-    bigdata.post(rootPath + "/manage/getDataCheckUploadExplanation.html", finance_search_cond, doGetDataCheckUploadExplanationDataReq_end, '');
+    bigdata.post(rootPath + "/manage/getFinanceCheckUpdateExplanation.html", finance_search_cond, doGetFinanceCheckUpdateExplanationDataReq_end, '');
 }
 
 function post_update() {
@@ -217,10 +217,10 @@ function post_update() {
     finance_search_cond.error_page = check_page;
     finance_search_cond.explanation_page = explanation_page;
     finance_search_cond.explanation_error_status = $("#search_error_status").val();
-    bigdata.post(rootPath + "/manage/getDataCheckUpdate.html", finance_search_cond, doGetDataCheckUploadExplanationDataReq_end, '');
+    bigdata.post(rootPath + "/manage/getFinanceCheckUpdate.html", finance_search_cond, doGetFinanceCheckUpdateExplanationDataReq_end, '');
 }
 
-function doGetDataCheckUploadDataReq_end(json) {
+function doGetFinanceCheckUploadDataReq_end(json) {
     // 表格控件
     var grid_selector = "#check_upload_table";
     // 请求后数据缓存
@@ -234,7 +234,7 @@ function doGetDataCheckUploadDataReq_end(json) {
     initGrid(grid_selector);
 }
 
-function doGetDataCheckUploadExplanationDataReq_end(json) {
+function doGetFinanceCheckUpdateExplanationDataReq_end(json) {
     // 表格控件
     var grid_selector = "#explanation_upload_table";
     // 请求后数据缓存

@@ -46,6 +46,9 @@
             <if test="tracking_no != null and tracking_no != '' ">
                 and vf_bc_track_detail.tracking_no = #{tracking_no}
             </if>
+            <if test="main_waybill_num != null and main_waybill_num != '' ">
+                and vf_bc_track_detail.main_waybill_num = #{main_waybill_num}
+            </if>
             <if test="source_order_id != null and source_order_id != '' ">
                 and vf_bc_track_detail.source_order_id = #{source_order_id}
             </if>
@@ -56,14 +59,13 @@
                 and vf_bc_track_detail.order_number = #{order_number}
             </if>
             <if test="ship_date_from != null and ship_date_from != '' ">
-                AND convert(vf_shipment_group.ship_date, datetime) <![CDATA[>=]]> convert(#{ship_date_from},
-                datetime)
+                AND vf_bc_track_detail.ship_date <![CDATA[>=]]> convert(#{ship_date_from}, datetime)
             </if>
             <if test="ship_date_to != null and ship_date_to != '' ">
-                AND convert(vf_shipment_group.ship_date, datetime) <![CDATA[<=]]> convert(#{ship_date_to}, datetime)
+                AND vf_bc_track_detail.ship_date <![CDATA[<=]]> convert(#{ship_date_to}, datetime)
             </if>
             <if test="data_null_check != null and data_null_check != '' ">
-                and vf_tax_detail.tax_actual > 0
+                AND (vf_tax_detail.tax_actual IS NOT NULL OR vf_tax_detail.tax_actual > 0)
             </if>
         </where>
     </sql>
@@ -91,6 +93,9 @@
             <if test="tracking_no != null and tracking_no != '' ">
                 and vf_bc_track_detail.tracking_no LIKE CONCAT('%',#{tracking_no},'%' )
             </if>
+            <if test="main_waybill_num != null and main_waybill_num != '' ">
+                and vf_bc_track_detail.main_waybill_num LIKE CONCAT('%',#{main_waybill_num},'%' )
+            </if>
             <if test="source_order_id != null and source_order_id != '' ">
                 and vf_bc_track_detail.source_order_id LIKE CONCAT('%',#{source_order_id},'%' )
             </if>
@@ -101,11 +106,10 @@
                 and vf_bc_track_detail.order_number LIKE CONCAT('%',#{order_number},'%' )
             </if>
             <if test="ship_date_from != null and ship_date_from != '' ">
-                AND convert(vf_shipment_group.ship_date, datetime) <![CDATA[>=]]> convert(#{ship_date_from},
-                datetime)
+                AND vf_bc_track_detail.ship_date <![CDATA[>=]]> convert(#{ship_date_from}, datetime)
             </if>
             <if test="ship_date_to != null and ship_date_to != '' ">
-                AND convert(vf_shipment_group.ship_date, datetime) <![CDATA[<=]]> convert(#{ship_date_to}, datetime)
+                AND vf_bc_track_detail.ship_date <![CDATA[<=]]> convert(#{ship_date_to}, datetime)
             </if>
             <if test="data_null_check != null and data_null_check != '' ">
                 and vf_tax_detail.tax_actual > 0
@@ -123,10 +127,6 @@
         bi_master.vf_track_orders AS vf_track_orders
         ON
         vf_bc_track_detail.tracking_no = vf_track_orders.tracking_no
-        LEFT JOIN
-        bi_master.vf_shipment_group AS vf_shipment_group
-        ON
-        vf_bc_track_detail.syn_ship_no = vf_shipment_group.syn_ship_no
         LEFT JOIN
         bi_master.vf_tax_detail AS vf_tax_detail
         ON
@@ -149,6 +149,8 @@
         vf_bc_track_detail.month_calc AS 'month_calc',
         vf_bc_track_detail.order_channel_name AS 'order_channel_name',
         vf_bc_track_detail.tracking_no AS 'tracking_no',
+        vf_bc_track_detail.syn_ship_no AS 'syn_ship_no',
+        vf_bc_track_detail.main_waybill_num AS 'main_waybill_num',
         vf_bc_track_detail.source_order_id AS 'source_order_id',
         vf_bc_track_detail.client_order_number AS 'client_order_number',
         vf_bc_track_detail.pay_in_warrant_num AS 'pay_in_warrant_num',
@@ -160,7 +162,7 @@
         IF(ROUND(vf_transpotation_detail.goods_weight_lb) >
         vf_transpotation_detail.goods_weight_lb,ROUND(vf_transpotation_detail.goods_weight_lb),ROUND(vf_transpotation_detail.goods_weight_lb)
         + 1) AS 'express_weight_lb',
-        DATE_FORMAT(vf_shipment_group.ship_date,'%Y-%m-%d') AS 'ship_date',
+        DATE_FORMAT(vf_bc_track_detail.ship_date,'%Y-%m-%d') AS 'ship_date',
         vf_bc_track_detail.order_number AS 'order_number',
         vf_tax_detail.tax_actual AS 'tax_actual',
         vf_tax_detail.tax_actual_usd AS 'tax_actual_usd',
@@ -171,10 +173,6 @@
         bi_master.vf_track_orders AS vf_track_orders
         ON
         vf_bc_track_detail.tracking_no = vf_track_orders.tracking_no
-        LEFT JOIN
-        bi_master.vf_shipment_group AS vf_shipment_group
-        ON
-        vf_bc_track_detail.syn_ship_no = vf_shipment_group.syn_ship_no
         LEFT JOIN
         bi_master.vf_tax_detail AS vf_tax_detail
         ON

@@ -17,4 +17,7 @@ public interface JumeiUpdateService {
 
     void updateDeal(WebDriver driver, String strPID, JumeiDealBean jumeiDealBean, List<JumeiSkuBean> skuLst) throws Exception;
 
+    void checkProductImageWait(WebDriver driver, String strPID, JumeiProductBean jumeiProductBean) throws Exception;
+    void checkProductImageReview(WebDriver driver, String strPID, JumeiProductBean jumeiProductBean) throws Exception;
+
 }

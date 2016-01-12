@@ -274,15 +274,16 @@ function setSearchDate(option, searchDateStart, searchDateEnd) {
 // 画面初期显示内容取得
 function doPageInitDataReq() {
 	// 画面初期值请求
-    bigdata.post(rootPath + "/manage/getUserShopList.html", sales_search_cond, doPageInitDataReq_end, '');
+    bigdata.post(rootPath + "/manage/getUserChannelShopList.html", sales_search_cond, doPageInitDataReq_end, '');
 }
 
 //画面初期值取得结束
+var channels_buff = [];
 function doPageInitDataReq_end(json) {
 	// 店铺信息获得
-	shops = json.cmbShops;
+	channels_buff = json.cmbChannels;
 	// 店铺初期化
-	initShops(shops);
+	initChannelShops(channels_buff);
 	// 画面检索条件取得
 	initGetCond();
 	//send event
@@ -291,6 +292,31 @@ function doPageInitDataReq_end(json) {
 
 // 店铺初期化
 //		shops：店铺信息
+function initChannelShops(channels){
+	for (var i = 0; i < channels.length; i++){
+		// 渠道信息取得
+		var channel_code  = channels[i].code;
+		var channel_name = channels[i].name;
+		$("#search_channel_id").append("<option value='"+channel_code+"'>" + channel_name + "</option>");
+		if (i==0) {
+			//init shop
+			initShops(channels[i].children);
+		}
+	}
+	$('#search_channel_id').selectpicker('refresh');
+	$('#search_channel_id').on('change', function(){
+		var selected = $(this).find("option:selected").val();
+		for (var i = 0; i < channels_buff.length; i++){
+			var channel_code  = channels_buff[i].code;
+			if (channel_code == selected) {
+				initShops(channels_buff[i].children);
+				// set shop select all
+				$("#shop_selectall").attr("checked",'true');
+			}
+		}
+	});
+}
+
 function initShops(shops){
 	// 既存项目清空
 	$("#search_shop_list").empty();
@@ -300,10 +326,10 @@ function initShops(shops){
 		var code  = shops[i].code;
 		var name = shops[i].name;
 		$("#search_shop_list").append("<li class='list-group-item' style='padding:5px 15px;'>" +
-					"<label class='checkbox inline' style='margin-top: 5px;margin-bottom: 5px;font-weight:500'>" +
-						"<input type='checkbox' id='shop_selectall_sub' value='" + code +"'  onclick='setSelectAll(\"shop_selectall\");' checked/>" + name + 
-					"</label>" +
-				"</li>");
+			"<label class='checkbox inline' style='margin-top: 5px;margin-bottom: 5px;font-weight:500'>" +
+			"<input type='checkbox' id='shop_selectall_sub' value='" + code +"'  onclick='setSelectAll(\"shop_selectall\");' checked/>" + name +
+			"</label>" +
+			"</li>");
 	}
 }
 

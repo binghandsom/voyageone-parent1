@@ -79,6 +79,9 @@ public class AjaxFinancialTaxReportBean extends AjaxRequestBean {
     // 快件单号
     private String tracking_no = null;
 
+    // 提单号
+    private String main_waybill_num = null;
+
     // 店铺订单号
     private String source_order_id = null;
 
@@ -224,6 +227,14 @@ public class AjaxFinancialTaxReportBean extends AjaxRequestBean {
 
     public void setReport_file_name(String report_file_name) {
         this.report_file_name = report_file_name;
+    }
+
+    public String getMain_waybill_num() {
+        return main_waybill_num;
+    }
+
+    public void setMain_waybill_num(String main_waybill_num) {
+        this.main_waybill_num = main_waybill_num;
     }
 
     // 入力参数检查

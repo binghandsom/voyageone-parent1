@@ -46,6 +46,8 @@ function init_tax_report_table() {
             'Month',
             'Channel',
             'Tracking No.',
+            'Synship No.',
+            'B/L No.',
             'VO Order No.',
             'Client Order No.',
             'Tax Bill ID',
@@ -64,6 +66,8 @@ function init_tax_report_table() {
             {name: 'month_calc', width: 50, editable: false, sortable: false, frozen: true},
             {name: 'order_channel_name', width: 150, editable: false, sortable: false, frozen: true},
             {name: 'tracking_no', width: 150, editable: false, sortable: false, frozen: true},
+            {name: 'syn_ship_no', width: 150, editable: false, sortable: false},
+            {name: 'main_waybill_num', width: 150, editable: false, sortable: false},
             {name: 'source_order_id', width: 150, editable: false, sortable: false},
             {name: 'client_order_number', width: 150, editable: false, sortable: false},
             {name: 'pay_in_warrant_num', width: 150, editable: false, sortable: false},
@@ -97,10 +101,10 @@ function doGetFinancialReportTaxReportDataReq() {
 function post_tax() {
     $("#gbox_tax_report_table .loading").css("display", "block");
     finance_search_cond.report_page = tax_page;
-    bigdata.post(rootPath + "/manage/getDataReportTax.html", finance_search_cond, doGetDataReportTaxDataReq_end, '');
+    bigdata.post(rootPath + "/manage/getFinanceReportTax.html", finance_search_cond, doGetFinanceReportTaxDataReq_end, '');
 }
 
-function doGetDataReportTaxDataReq_end(json) {
+function doGetFinanceReportTaxDataReq_end(json) {
     // 表格控件
     var grid_selector = "#tax_report_table";
     // 请求后数据缓存
@@ -129,6 +133,8 @@ function refresh_tax_report_table_data() {
                 'month_calc': row.month_calc,
                 'order_channel_name': row.order_channel_name,
                 'tracking_no': row.tracking_no,
+                'syn_ship_no': row.syn_ship_no,
+                'main_waybill_num': row.main_waybill_num,
                 'source_order_id': row.source_order_id,
                 'client_order_number': row.client_order_number,
                 'pay_in_warrant_num': row.pay_in_warrant_num,
