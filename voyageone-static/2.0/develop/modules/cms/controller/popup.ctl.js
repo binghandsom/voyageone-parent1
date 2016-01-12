@@ -283,7 +283,6 @@ define([
         }
 
         $scope.openOtherPlatform = function (context) {
-            //otherPlatformPopupController
             return openModel(popActions.other.platform, context);
         };
 
