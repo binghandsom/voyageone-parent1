@@ -1,7 +1,7 @@
 define([
     'modules/cms/controller/popup.ctl'
 ], function () {
-    return function ($scope,systemCategoryService) {
+    function indexController($scope,systemCategoryService) {
         $scope.vm = {"categoryList": []};
         $scope.searchInfo = {};
         $scope.categoryPageOption = {curr: 1, total: 198, size: 30, fetch: search};
@@ -25,4 +25,7 @@ define([
         }
         $scope.search = search;
     }
-})
+
+    indexController.$inject = ['$scope', 'systemCategoryService'];
+    return indexController;
+});

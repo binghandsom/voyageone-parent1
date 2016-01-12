@@ -55,6 +55,7 @@ var build = {
 var publish = {
   version: versions.publish,
   static: {
+    path: 'publish/static/' + versions.statics,
     fonts: {
       src: 'develop/static/fonts/**',
       dist: 'publish/static/' + versions.statics + '/fonts'
@@ -77,7 +78,7 @@ var publish = {
     }
   },
   libs: {
-    src: ['develop/libs/**/*.js','develop/libs/**/*.css']
+    src: ['develop/libs/**/*min.js','develop/libs/**/*min.css']
   },
   loginAndChannel: {
     js: 'develop/*.js',
@@ -90,6 +91,7 @@ var publish = {
   },
   release: {
     static: {
+      path: 'publish/release/' + versions.publish + '/static',
       fonts: 'publish/release/' + versions.publish + '/static/fonts',
       img: 'publish/release/' + versions.publish + '/static/img',
       css: 'publish/release/' + versions.publish + '/static/css'
@@ -98,6 +100,30 @@ var publish = {
     libs: 'publish/release/' + versions.publish + '/libs',
     modules: 'publish/release/' + versions.publish + '/modules',
     loginAndChannel: 'publish/release/' + versions.publish
+  },
+  replace_value: {
+    voyageone_angular_com: 'components/dist/voyageone.angular.com',
+    'voyageone_com': 'components/dist/voyageone.com',
+    'angular_animate': 'libs/angular.js/1.5.0-RC.0/angular-animate',
+    'angular_route': 'libs/angular.js/1.5.0-RC.0/angular-route',
+    'angular_sanitize': 'libs/angular.js/1.5.0-RC.0/angular-sanitize',
+    'angular_cookies': 'libs/angular.js/1.5.0-RC.0/angular-cookies',
+    'angular': 'libs/angular.js/1.5.0-RC.0/angular',
+    'angular_translate': 'libs/angular-translate/2.8.1/angular-translate',
+    'angular_block_ui': 'libs/angular-block-ui/0.2.1/angular-block-ui',
+    'angular_ui_bootstrap': 'libs/angular-ui-bootstrap/0.14.3/ui-bootstrap-tpls-0.14.3',
+    'angular_ngStorage': 'libs/angular-ngStorage/ngStorage',
+    'angular_file_upload': 'libs/angular-file-upload/2.2.0/angular-file-upload',
+    'angularAMD': 'libs/angularAMD/0.2.1/angularAMD',
+    'ngload': 'libs/angularAMD/0.2.1/ngload',
+    'jquery': 'libs/jquery/2.1.4/jquery.js',
+    'underscore': 'libs/underscore.js/1.8.3/underscore',
+    'css': 'libs/require-css/0.1.8/css',
+    'json': 'libs/requirejs-plugins/1.0.3/json',
+    'text': 'libs/require-text/2.0.12/text',
+    'filestyle': 'libs/bootstrap-filestyle/1.2.1/bootstrap-filestyle',
+    'notify': 'libs/notify/0.4.0/notify',
+    'angular_block_ui_css': 'css!libs/angular-block-ui/0.2.1/angular-block-ui.css'
   }
 };
 var tasks = {
@@ -118,7 +144,8 @@ var tasks = {
     angular: 'publish-angular-com',
     com: 'publish-com',
     libs: 'publish-libs',
-    modules: 'publish-modules'
+    modules: 'publish-modules',
+    del: 'publish-del'
   }
 };
 

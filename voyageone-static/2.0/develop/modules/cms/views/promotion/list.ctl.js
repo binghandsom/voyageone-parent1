@@ -6,7 +6,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function () {
 
-    return function ($scope,promotionService,confirm) {
+    function listController($scope,promotionService,confirm) {
 
         $scope.vm = {"promotionList": []};
         $scope.searchInfo = {};
@@ -38,4 +38,7 @@ define([
 
         }
     };
+
+    listController.$inject = ['$scope','promotionService', 'confirm'];
+    return listController;
 });
