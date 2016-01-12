@@ -115,13 +115,17 @@ public final class FileUtils {
      * @param filePath 文件所在目录
      * @description 在指定目录下获取全部文件组
      */
-    public static List getFileGroup(String filePath) {
-        ArrayList<String> fileNameList = new ArrayList<>();
+    public static ArrayList <String[]> getFileGroup(String filePath) {
+        ArrayList<String[]> fileNameList = new ArrayList<String[]>();
         File file = new File(filePath);
         for (String fileName : file.list()) {
             File file2 = new File(filePath + "/" + fileName);
             if (file2.isFile() && file2.exists()){
-                fileNameList.add(fileName);
+                String[] fileUpload = new String[2];
+                fileUpload[0] = fileName;
+                //是否上传标志位，默认上传
+                fileUpload[1] = "1";
+                fileNameList.add(fileUpload);
             }
         }
         return fileNameList;

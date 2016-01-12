@@ -210,7 +210,7 @@ public interface WmsConstants {
         public static final HashMap<String, String> SALES_ORDER_TITLE = new HashMap<String, String>() {
             {
                 put("SalesType", "销售订单");
-                put("Warehouse", "0501");
+                put("Warehouse", "0503");
                 put("Ordertype", "0");
                 put("Site","01");
             }

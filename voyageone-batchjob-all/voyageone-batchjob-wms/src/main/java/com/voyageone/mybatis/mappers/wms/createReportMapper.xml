@@ -37,10 +37,12 @@
                 AND #{end_created}
                 LEFT JOIN wms_bt_virtual_sku virtual ON transferitem.transfer_sku = virtual.provisional_sku
                 INNER JOIN oms_bt_order_details details ON details.res_id = transferitem.reservation_id and details.ship_date IS NOT NULL
+                AND details.order_number = transferitem.order_number
             ) AS provisional
         INNER JOIN oms_bt_orders orders ON orders.order_number = provisional.order_number
         AND orders.cart_id = #{cart_id}
         INNER JOIN wms_bt_item_details itemdetails ON itemdetails.sku = provisional.transfer_sku
+        AND itemdetails.order_channel_id = #{order_channel_id}
         WHERE
             EXISTS (
                 SELECT
@@ -109,7 +111,9 @@
         INNER JOIN oms_bt_orders orders ON orders.order_number = transferitem.order_number
         AND orders.cart_id = #{cart_id}
         INNER JOIN wms_bt_item_details itemdetails on itemdetails.sku =  transferitem.transfer_sku
+        AND itemdetails.order_channel_id = #{order_channel_id}
         INNER JOIN oms_bt_order_details details ON details.res_id = transferitem.reservation_id and details.ship_date IS NOT NULL
+        AND details.order_number = transferitem.order_number
         WHERE
             transfer.created BETWEEN #{start_created}
         AND #{end_created}
@@ -181,7 +185,9 @@
         INNER JOIN oms_bt_orders orders ON orders.order_number = transferitem.order_number
         AND orders.cart_id = #{cart_id}
         INNER JOIN wms_bt_item_details itemdetails on itemdetails.sku =  transferitem.transfer_sku
+        AND itemdetails.order_channel_id = #{order_channel_id}
         INNER JOIN oms_bt_order_details details ON details.res_id = transferitem.reservation_id and details.ship_date IS NOT NULL
+        AND details.order_number = transferitem.order_number
         WHERE
         transfer.created BETWEEN #{start_created}
         AND #{end_created}
@@ -318,7 +324,7 @@
                 orders.ship_address,
                 orders.ship_address2
             ) AS ship_address,
-            orders.customer_comments,
+            orders.internal_message AS customer_comments,
             reservation.sku,
             itemdetails.itemcode,
             itemdetails.size
@@ -330,20 +336,10 @@
         WHERE
             orders.order_channel_id = #{order_channel_id}
         AND orders.cart_id = '25'
-        AND orders.approval_date BETWEEN #{start_created}
+        AND reservation.create_time BETWEEN #{start_created}
         AND #{end_created}
         AND reservation.order_number = orders.order_number
         AND reservation.`status` = #{res_status}
-        AND EXISTS (
-            SELECT
-                1
-            FROM
-                tm_task_control
-            WHERE
-                task_id = #{task_name}
-            AND cfg_name = 'order_channel_id'
-            AND cfg_val1 = orders.order_channel_id
-        )
         AND NOT EXISTS (
             SELECT
                 1
