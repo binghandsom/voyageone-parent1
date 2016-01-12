@@ -54,6 +54,23 @@ public class UserAuthController {
 		UserInfoBean user = (UserInfoBean)session.getAttribute(SessionKey.LOGIN_INFO);
 
 		userInfoTask.ajaxGetUserChannelList(bean, user);
+		userInfoTask.ajaxGetUserPortList(bean, user);
+		bean.WriteTo(response);
+	}
+
+	/**
+	 * getUserChannelShopList
+	 */
+	@RequestMapping(value = "/manage/getUserChannelShopList")
+	public void getUserChannelShopList(HttpServletResponse response,
+								   HttpServletRequest request,
+								   AjaxUserInfoBean bean) throws BiException {
+		logger.info("getUserChannelShopList");
+
+		HttpSession session = request.getSession();
+		UserInfoBean user = (UserInfoBean)session.getAttribute(SessionKey.LOGIN_INFO);
+
+		userInfoTask.ajaxGetUserChannelShopList(bean, user);
 		bean.WriteTo(response);
 	}
 

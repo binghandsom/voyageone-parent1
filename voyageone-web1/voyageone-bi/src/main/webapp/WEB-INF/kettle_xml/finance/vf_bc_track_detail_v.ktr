@@ -259,8 +259,41 @@
     </attributes>
   </connection>
   <order>
-  <hop> <from>get track detail</from><to>set track detail</to><enabled>Y</enabled> </hop>
+  <hop> <from>get track detail</from><to>set master track detail</to><enabled>Y</enabled> </hop>
+  <hop> <from>Delete vf_bc_track_detail</from><to>get track detail</to><enabled>Y</enabled> </hop>
   </order>
+  <step>
+    <name>Delete vf_bc_track_detail</name>
+    <type>ExecSQL</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <connection>bi_master</connection>
+    <execute_each_row>N</execute_each_row>
+    <single_statement>N</single_statement>
+    <replace_variables>Y</replace_variables>
+    <quoteString>N</quoteString>
+    <sql>DELETE&#xd;&#xa;bi_master.vf_bc_track_detail.&#x2a;&#xd;&#xa;FROM&#xd;&#xa;	bi_master.vf_bc_track_detail&#xd;&#xa;INNER JOIN bi_source.synship_tt_tracking t&#xd;&#xa;ON bi_master.vf_bc_track_detail.tracking_no &#x3d; t.tracking_no AND t.use_flg &#x3d; &#x27;0&#x27; AND t.sent_kd100_flg &#x3d; &#x27;0&#x27;</sql>
+    <set_params>N</set_params>
+    <insert_field/>
+    <update_field/>
+    <delete_field/>
+    <read_field/>
+    <arguments>
+    </arguments>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>100</xloc>
+      <yloc>306</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
   <step>
     <name>get track detail</name>
     <type>TableInput</type>
@@ -273,11 +306,11 @@
            <schema_name/>
            </partitioning>
     <connection>bi_master</connection>
-    <sql>SELECT&#xd;&#xa;vf_track_orders.year_calc,&#xd;&#xa;vf_track_orders.month_calc,&#xd;&#xa;vf_track_orders.date_calc,&#xd;&#xa;vf_shipment_group.ship_date,&#xd;&#xa;vf_track_orders.channel_code,&#xd;&#xa;vf_track_orders.order_channel_name,&#xd;&#xa;vf_track_orders.tracking_no,&#xd;&#xa;vf_shipment_group.syn_ship_no,&#xd;&#xa;vf_shipment_group.shipment_id,&#xd;&#xa;vf_track_orders.client_order_number,&#xd;&#xa;vf_track_orders.order_number,&#xd;&#xa;vf_track_orders.source_order_id,&#xd;&#xa;IFNULL&#x28;vf_transpotation_detail.main_waybill_num, vf_shipment_group.main_waybill_num&#x29; AS main_waybill_num,&#xd;&#xa;vf_tax_detail.pay_in_warrant_num&#xd;&#xa;FROM&#xd;&#xa;vf_track_orders&#xd;&#xa;LEFT JOIN&#xd;&#xa;vf_shipment_group&#xd;&#xa;ON vf_track_orders.syn_ship_no &#x3d; vf_shipment_group.syn_ship_no&#xd;&#xa;LEFT JOIN&#xd;&#xa;vf_transpotation_detail&#xd;&#xa;ON vf_track_orders.tracking_no &#x3d; vf_transpotation_detail.tracking_no&#xd;&#xa;LEFT JOIN&#xd;&#xa;vf_tax_detail&#xd;&#xa;ON vf_track_orders.tracking_no &#x3d; vf_tax_detail.tracking_no&#xd;&#xa;WHERE DATE_ADD&#x28;STR_TO_DATE&#x28;vf_shipment_group.ship_date,&#x27;&#x25;Y-&#x25;m-&#x25;d &#x25;H&#x3a;&#x25;i&#x3a;&#x25;s&#x27;&#x29;,INTERVAL 2 MONTH&#x29; &#x3e;&#x3d;&#x27;&#x24;&#x7b;start_date&#x7d;&#x27;</sql>
+    <sql>SELECT&#xd;&#xa;	vf_track_orders.year_calc,&#xd;&#xa;	vf_track_orders.month_calc,&#xd;&#xa;	vf_track_orders.date_calc,&#xd;&#xa;	CONVERT &#x28;&#xd;&#xa;		IFNULL&#x28;&#xd;&#xa;			vf_shipment_group.ship_date,&#xd;&#xa;			vf_track_orders.ship_date&#xd;&#xa;		&#x29;,&#xd;&#xa;		DATETIME&#xd;&#xa;	&#x29; AS ship_date,&#xd;&#xa;	IF&#x28;vf_track_orders.channel_code &#x3d; &#x27;008&#x27;,&#x27;16&#x27;,vf_shipment_group.&#x60;port&#x60;&#x29; AS &#x60;port&#x60;,&#xd;&#xa;	vf_track_orders.channel_code,&#xd;&#xa;	vf_track_orders.order_channel_name,&#xd;&#xa;	vf_track_orders.tracking_no,&#xd;&#xa;	vf_track_orders.syn_ship_no,&#xd;&#xa;	vf_shipment_group.shipment_id,&#xd;&#xa;	vf_track_orders.client_order_number,&#xd;&#xa;	vf_track_orders.order_number,&#xd;&#xa;	vf_track_orders.source_order_id,&#xd;&#xa;	IFNULL&#x28;&#xd;&#xa;		vf_transpotation_detail.main_waybill_num,&#xd;&#xa;		vf_shipment_group.main_waybill_num&#xd;&#xa;	&#x29; AS main_waybill_num,&#xd;&#xa;	vf_tax_detail.pay_in_warrant_num&#xd;&#xa;FROM&#xd;&#xa;	vf_track_orders&#xd;&#xa;LEFT JOIN vf_shipment_group ON vf_track_orders.shipment_port &#x3d; vf_shipment_group.&#x60;port&#x60;&#xd;&#xa;AND vf_track_orders.order_number &#x3d; vf_shipment_group.order_number&#xd;&#xa;AND vf_track_orders.syn_ship_no &#x3d; vf_shipment_group.syn_ship_no&#xd;&#xa;LEFT JOIN vf_transpotation_detail ON vf_track_orders.tracking_no &#x3d; vf_transpotation_detail.tracking_no&#xd;&#xa;LEFT JOIN vf_tax_detail ON vf_track_orders.tracking_no &#x3d; vf_tax_detail.tracking_no&#xd;&#xa;WHERE&#xd;&#xa;vf_track_orders.shipment_port &#x3c;&#x3e; &#x27;14&#x27;&#xd;&#xa;AND&#xd;&#xa;IF&#x28;vf_track_orders.channel_code &#x3d; &#x27;008&#x27;,&#x27;16&#x27;,vf_shipment_group.&#x60;port&#x60;&#x29; IS NOT NULL&#xd;&#xa;AND DATE_ADD&#x28;&#xd;&#xa;	STR_TO_DATE&#x28;&#xd;&#xa;		IFNULL&#x28;&#xd;&#xa;			vf_shipment_group.ship_date,&#xd;&#xa;			vf_track_orders.ship_date&#xd;&#xa;		&#x29;,&#xd;&#xa;		&#x27;&#x25;Y-&#x25;m-&#x25;d &#x25;H&#x3a;&#x25;i&#x3a;&#x25;s&#x27;&#xd;&#xa;	&#x29;,&#xd;&#xa;	INTERVAL 2 MONTH&#xd;&#xa;&#x29; &#x3e;&#x3d; &#x27;&#x24;&#x7b;start_date&#x7d;&#x27;&#x3b;</sql>
     <limit>0</limit>
     <lookup/>
     <execute_each_row>N</execute_each_row>
-    <variables_active>N</variables_active>
+    <variables_active>Y</variables_active>
     <lazy_conversion_active>N</lazy_conversion_active>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
@@ -288,7 +321,7 @@
     </step>
 
   <step>
-    <name>set track detail</name>
+    <name>set master track detail</name>
     <type>InsertUpdate</type>
     <description/>
     <distribute>Y</distribute>
@@ -334,6 +367,11 @@
       <value>
         <name>ship_date</name>
         <rename>ship_date</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>port_id</name>
+        <rename>port</rename>
         <update>Y</update>
       </value>
       <value>
