@@ -1,15 +1,12 @@
 package com.voyageone.bi.controller;
 
-import com.voyageone.bi.ajax.bean.AjaxFinancialBillBean;
-import com.voyageone.bi.ajax.bean.AjaxFinancialCostReportBean;
-import com.voyageone.bi.ajax.bean.AjaxFinancialMonthlyReportBean;
-import com.voyageone.bi.ajax.bean.AjaxFinancialTaxReportBean;
+import com.voyageone.bi.ajax.bean.*;
 import com.voyageone.bi.base.BiApplication;
 import com.voyageone.bi.base.BiException;
 import com.voyageone.bi.commonutils.DateTimeUtil;
 import com.voyageone.bi.commonutils.BiFileUtils;
 import com.voyageone.bi.commonutils.SessionKey;
-import com.voyageone.bi.task.DataExportTask;
+import com.voyageone.bi.task.FinanceExportTask;
 import com.voyageone.bi.tranbean.UserInfoBean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,7 +26,7 @@ public class FinanceReportExportController {
 
     // 页面初期化
     @Autowired
-    private DataExportTask dataExportTask;
+    private FinanceExportTask financeExportTask;
 
     /**
      * getReportCost
@@ -55,7 +52,7 @@ public class FinanceReportExportController {
             bean.setWeb_file_path(webFilePath + BiApplication.readValue("finance_sub_path") + file_name);
             HttpSession session = request.getSession();
             UserInfoBean user = (UserInfoBean) session.getAttribute(SessionKey.LOGIN_INFO);
-            dataExportTask.ajaxExportFinancialCostReport(bean, user);
+            financeExportTask.ajaxExportFinancialCostReport(bean, user);
             bean.WriteTo(response);
         } catch (Exception ex) {
             logger.error("getReportCost", ex);
@@ -87,7 +84,7 @@ public class FinanceReportExportController {
             bean.setWeb_file_path(webFilePath + BiApplication.readValue("finance_sub_path") + file_name);
             HttpSession session = request.getSession();
             UserInfoBean user = (UserInfoBean) session.getAttribute(SessionKey.LOGIN_INFO);
-            dataExportTask.ajaxExportFinancialTaxReport(bean, user);
+            financeExportTask.ajaxExportFinancialTaxReport(bean, user);
             bean.WriteTo(response);
         } catch (Exception ex) {
             logger.error("getReportTax", ex);
@@ -102,7 +99,7 @@ public class FinanceReportExportController {
     public void getReportMonthly(HttpServletResponse response,
                                  HttpServletRequest request,
                                  AjaxFinancialMonthlyReportBean bean) throws BiException {
-        logger.info("getDataReportMonthly");
+        logger.info("getReportMonthly");
         if (!bean.checkInput()) {
             bean.WriteTo(response);
             return;
@@ -119,7 +116,7 @@ public class FinanceReportExportController {
             bean.setWeb_file_path(webFilePath + BiApplication.readValue("finance_sub_path") + file_name);
             HttpSession session = request.getSession();
             UserInfoBean user = (UserInfoBean) session.getAttribute(SessionKey.LOGIN_INFO);
-            dataExportTask.ajaxExportFinancialMonthlyReport(bean, user);
+            financeExportTask.ajaxExportFinancialMonthlyReport(bean, user);
             bean.WriteTo(response);
         } catch (Exception ex) {
             logger.error("getReportMonthly", ex);
@@ -151,10 +148,42 @@ public class FinanceReportExportController {
             bean.setWeb_file_path(webFilePath + BiApplication.readValue("finance_sub_path") + file_name);
             HttpSession session = request.getSession();
             UserInfoBean user = (UserInfoBean) session.getAttribute(SessionKey.LOGIN_INFO);
-            dataExportTask.ajaxExportFinancialBillReport(bean, user);
+            financeExportTask.ajaxExportFinancialBillReport(bean, user);
             bean.WriteTo(response);
         } catch (Exception ex) {
             logger.error("getReportInvoice", ex);
+        }
+
+    }
+
+    /**
+     * getReportOfficialTax
+     */
+    @RequestMapping(value = "/manage/getReportOfficialTax")
+    public void getReportOfficialTax(HttpServletResponse response,
+                             HttpServletRequest request,
+                             AjaxFinancialOfficialTaxReportBean bean) throws BiException {
+        logger.info("getReportTax");
+        if (!bean.checkInput()) {
+            bean.WriteTo(response);
+            return;
+        }
+        try {
+            String webRootPath = BiFileUtils.getAbsolutRootPath(request);
+            String file_name_sub = (DateTimeUtil.getDateTime()).replace(":", "_").replace("-", "_").replace(" ", "_") + BiApplication.readValue("finance_report_file");
+            String file_name = BiApplication.readValue("finance_report_official_tax") + file_name_sub;
+            String file_path = webRootPath + BiApplication.readValue("finance_report_path") + file_name;
+            bean.setWeb_root_path(webRootPath);
+            bean.setReport_file_name(file_name);
+            bean.setReport_file_path(file_path);
+            String webFilePath = request.getContextPath();
+            bean.setWeb_file_path(webFilePath + BiApplication.readValue("finance_sub_path") + file_name);
+            HttpSession session = request.getSession();
+            UserInfoBean user = (UserInfoBean) session.getAttribute(SessionKey.LOGIN_INFO);
+            financeExportTask.ajaxExportFinancialOfficialTaxReport(bean, user);
+            bean.WriteTo(response);
+        } catch (Exception ex) {
+            logger.error("getReportOfficialTax", ex);
         }
 
     }
@@ -310,6 +339,44 @@ public class FinanceReportExportController {
             logger.error("downloadReportMonthly", ex);
         } catch (Exception ex) {
             logger.error("downloadReportMonthly", ex);
+        }
+    }
+
+    /**
+     * downloadReportTax
+     */
+    @RequestMapping(value = "/manage/downloadReportOfficialTax")
+    private void downloadReportOfficialTax (HttpServletResponse response,
+                                    HttpServletRequest request,
+                                    AjaxFinancialOfficialTaxReportBean bean)throws BiException {
+        try {
+            String webRootPath = BiFileUtils.getAbsolutRootPath(request);
+            String strAbsoluteFilePath = webRootPath + BiApplication.readValue("finance_report_path") + bean.getReport_file_name();
+            // path是指欲下载的文件的路径。
+            File file = new File(strAbsoluteFilePath);
+            // 取得文件名。
+            String filename = file.getName();
+            // 以流的形式下载文件。
+            InputStream fis = new BufferedInputStream(new FileInputStream(strAbsoluteFilePath));
+            byte[] buffer = new byte[fis.available()];
+            fis.read(buffer);
+            fis.close();
+            // 清空response
+            response.reset();
+            // 设置response的Header
+            response.addHeader("Content-Disposition", "attachment;filename="
+                    + new String(filename.getBytes()));
+            response.addHeader("Content-Length", "" + file.length());
+            OutputStream toClient = new BufferedOutputStream(
+                    response.getOutputStream());
+            response.setContentType("application/vnd.ms-excel;charset=gb2312");
+            toClient.write(buffer);
+            toClient.flush();
+            toClient.close();
+        } catch (IOException ex) {
+            logger.error("downloadReportTax", ex);
+        } catch (Exception ex) {
+            logger.error("downloadReportTax", ex);
         }
     }
 }

@@ -1,6 +1,13 @@
-// 销售用js[时间]
-// 图表实例化------------------
-// srcipt标签式引入
+//请求返回缓存
+var objModel_buf = [];
+var isHaveModel_buf = false;
+//请求返回缓存
+var objProduct_buf = [];
+var isHaveProduct_buf = false;
+//请求返回缓存
+var objSku_buf = [];
+var isHaveSku_buf = false;
+
 function product_sku_init(eventTriggerFlag) {
 	//画面Botton初期化
 	productSkuBtnInit();
@@ -32,7 +39,13 @@ function productSkuBtnInit() {
 	$('#product_sku_radioset').buttonset();
 	$("#product_sku_radioset :radio").click(function(){
 		var value = getProductSkuBtnActiveId();
-		if (value == 'product_radioset') {
+		if (value == 'model_radioset') {
+			if (isHaveModel_buf) {
+				refresh_model_table_data();
+			} else {
+				doGetModelDataReq("0")
+			}
+		} else if (value == 'product_radioset') {
 			if (isHaveProduct_buf) {
 				refresh_product_table_data();
 			} else {
@@ -50,55 +63,57 @@ function productSkuBtnInit() {
 	init_product_table();
 }
 
-//请求返回缓存
-var objProduct_buf = [];
-var isHaveProduct_buf = false;
-//请求返回缓存
-var objSku_buf = [];
-var isHaveSku_buf = false;
-
 // flush
 function product_sku_refush(eventTriggerFlag) {
+	isHaveModel_buf = false;
 	isHaveProduct_buf = false;
 	isHaveSku_buf = false;
 	var value = getProductSkuBtnActiveId();
-	if (value == 'product_radioset') {
+	if (value == 'model_radioset') {
+		doGetModelDataReq(eventTriggerFlag);
+	} else if (value == 'product_radioset') {
 		doGetProductDataReq(eventTriggerFlag);
 	} else if (value == 'sku_radioset') {
 		doGetSkuDataReq(eventTriggerFlag);
 	}
 }
 
-//请求 
+//ModelData请求 
+function doGetModelDataReq(eventTriggerFlag) {
+	$("#gbox_sales_product_grid_table .loading").css("display", "block");
+	// 载入开始
+	bigdata.post(rootPath + "/manage/getSalesDetailModelData.html", sales_search_cond, doGetModelDataReq_end, '', eventTriggerFlag);
+}
+function doGetModelDataReq_end(json, eventTriggerFlag) {
+	// 请求后数据缓存
+	objModel_buf = json;
+	isHaveModel_buf = true;
+	// 刷新表格
+	refresh_model_table_data();
+}
+
+//ProductData请求 
 function doGetProductDataReq(eventTriggerFlag) {
-	// show loading
 	$("#gbox_sales_product_grid_table .loading").css("display", "block");
 	// 载入开始
 	bigdata.post(rootPath + "/manage/getSalesDetailProductData.html", sales_search_cond, doGetProductDataReq_end, '', eventTriggerFlag);
 }
-
-//请求  结束
 function doGetProductDataReq_end(json, eventTriggerFlag) {
 	// 请求后数据缓存
-	//		图表显示内容（数组）
 	objProduct_buf = json;
 	isHaveProduct_buf = true;
 	// 刷新表格
 	refresh_product_table_data();
 }
 
-//请求 
+//GetSkuData请求 
 function doGetSkuDataReq(eventTriggerFlag) {
-	// show loading
 	$("#gbox_sales_product_grid_table .loading").css("display", "block");
 	// 载入开始
 	bigdata.post(rootPath + "/manage/getSalesDetailSkuData.html", sales_search_cond, doGetSkuDataReq_end, '', eventTriggerFlag);
 }
-
-//请求  结束
 function doGetSkuDataReq_end(json, eventTriggerFlag) {
 	// 请求后数据缓存
-	//		图表显示内容（数组）
 	objSku_buf = json;
 	isHaveSku_buf = true;
 	// 刷新表格
@@ -189,7 +204,10 @@ function init_product_table() {
 			sales_search_cond.sort_col = index;
 			sales_search_cond.sord = sord;
 			var value = getProductSkuBtnActiveId();
-			if (value == 'product_radioset') {
+			if (value == 'model_radioset') {
+				isHaveModel_buf = false;
+				doGetModelDataReq("0");
+			} else if (value == 'product_radioset') {
 				isHaveProduct_buf = false;
 				doGetProductDataReq("0");
 			} else if (value == 'sku_radioset') {
@@ -203,16 +221,27 @@ function init_product_table() {
 
 function genProductExportExcel() {
 	var url_param = $.param(sales_search_cond);
-	
-	var download_url =rootPath + "/manage/getSalesDetailProductDataExcel.html?"+url_param;
+	// get url
 	var value = getProductSkuBtnActiveId();
-	if (value == 'sku_radioset') {
-		var download_url =rootPath + "/manage/getSalesDetailSkuDataExcel.html?"+url_param;
+	var download_url ='';
+	if (value == 'model_radioset') {
+		download_url =rootPath + "/manage/getSalesDetailModelDataExcel.html?"   +url_param;
+	} else if (value == 'product_radioset') {
+		download_url =rootPath + "/manage/getSalesDetailProductDataExcel.html?"+url_param;
+	} else if (value == 'sku_radioset') {
+		download_url =rootPath + "/manage/getSalesDetailSkuDataExcel.html?"       +url_param;
 	}
-	
+	//file download
 	$.fileDownload(download_url, {
 		failMessageHtml: "There was a problem generating your report, please try again."
 	});
+}
+
+//model表格数据刷新
+function refresh_model_table_data() {
+	$('#product_sku_title').empty().append("Top 100 Model List");
+	disBeans = objModel_buf.modelDisBean;
+	refresh_product_sku_table_data(disBeans);
 }
 
 //product表格数据刷新

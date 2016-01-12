@@ -16,6 +16,7 @@
         <result column="mail_fee" property="mail_fee"/>
         <result column="ground_handling_fee" property="ground_handling_fee"/>
         <result column="storage_charges" property="storage_charges"/>
+        <result column="identification_fee" property="identification_fee"/>
     </resultMap>
     <!-- 设定monthly_report检索条件 -->
     <sql id="monthly_report_condition">
@@ -24,10 +25,10 @@
                 vf_bc_track_detail.tracking_no LIKE CONCAT(#{tracking_no},'%' )
             </if>
             <if test="date_calc_from != null and date_calc_from != '' ">
-                AND convert(vf_bc_track_detail.date_calc, datetime) <![CDATA[>=]]> convert(#{date_calc_from}, datetime)
+                AND vf_bc_track_detail.date_calc <![CDATA[>=]]> convert(#{date_calc_from}, datetime)
             </if>
             <if test="date_calc_to != null and date_calc_to != '' ">
-                AND convert(vf_bc_track_detail.date_calc, datetime) <![CDATA[<=]]> convert(#{date_calc_to}, datetime)
+                AND vf_bc_track_detail.date_calc <![CDATA[<=]]> convert(#{date_calc_to}, datetime)
             </if>
             <if test="channel_code != null and channel_code != '' ">
                 and vf_bc_track_detail.channel_code IN ( ${channel_code} )
@@ -41,10 +42,10 @@
                 vf_bc_track_detail.tracking_no LIKE CONCAT(#{tracking_no},'%' )
             </if>
             <if test="date_calc_from != null and date_calc_from != '' ">
-                AND convert(vf_bc_track_detail.date_calc, datetime) <![CDATA[>=]]> convert(#{date_calc_from}, datetime)
+                AND vf_bc_track_detail.date_calc <![CDATA[>=]]> convert(#{date_calc_from}, datetime)
             </if>
             <if test="date_calc_to != null and date_calc_to != '' ">
-                AND convert(vf_bc_track_detail.date_calc, datetime) <![CDATA[<=]]> convert(#{date_calc_to}, datetime)
+                AND vf_bc_track_detail.date_calc <![CDATA[<=]]> convert(#{date_calc_to}, datetime)
             </if>
             <if test="channel_code != null and channel_code != '' ">
                 and vf_bc_track_detail.channel_code IN ( ${channel_code} )
@@ -65,10 +66,6 @@
         ON
         vf_bc_track_detail.tracking_no = vf_track_orders.tracking_no
         LEFT JOIN
-        bi_master.vf_shipment_group AS vf_shipment_group
-        ON
-        vf_bc_track_detail.syn_ship_no = vf_shipment_group.syn_ship_no
-        LEFT JOIN
         bi_master.vf_tax_detail AS vf_tax_detail
         ON
         vf_bc_track_detail.tracking_no = vf_tax_detail.tracking_no
@@ -80,6 +77,9 @@
         bi_master.vf_bs_incidentals_detail AS vf_bs_incidentals_detail
         ON
         vf_bc_track_detail.main_waybill_num = vf_bs_incidentals_detail.main_waybill_num
+        LEFT JOIN
+        bi_master.vf_idcard AS idcard
+        ON vf_bc_track_detail.source_order_id = idcard.source_order_id
         <include refid="monthly_report_condition_fuzzy"/>
         ORDER BY
         vf_bc_track_detail.year_calc,
@@ -106,17 +106,14 @@
         SUM(vf_transpotation_detail.mail_fee) AS 'mail_fee',
         SUM((vf_bs_incidentals_detail.ground_handling_fee + 0.24)/vf_bs_incidentals_detail.tracking_qty) AS
         'ground_handling_fee',
-        SUM(vf_bs_incidentals_detail.storage_charges/vf_bs_incidentals_detail.tracking_qty) AS 'storage_charges'
+        SUM(vf_bs_incidentals_detail.storage_charges/vf_bs_incidentals_detail.tracking_qty) AS 'storage_charges',
+        SUM(IFNULL(idcard.price, 0)) AS 'identification_fee'
         FROM
         bi_master.vf_bc_track_detail AS vf_bc_track_detail
         LEFT JOIN
         bi_master.vf_track_orders AS vf_track_orders
         ON
         vf_bc_track_detail.tracking_no = vf_track_orders.tracking_no
-        LEFT JOIN
-        bi_master.vf_shipment_group AS vf_shipment_group
-        ON
-        vf_bc_track_detail.syn_ship_no = vf_shipment_group.syn_ship_no
         LEFT JOIN
         bi_master.vf_tax_detail AS vf_tax_detail
         ON
@@ -129,6 +126,9 @@
         bi_master.vf_bs_incidentals_detail AS vf_bs_incidentals_detail
         ON
         vf_bc_track_detail.main_waybill_num = vf_bs_incidentals_detail.main_waybill_num
+        LEFT JOIN
+        bi_master.vf_idcard AS idcard
+        ON vf_bc_track_detail.source_order_id = idcard.source_order_id
         <include refid="monthly_report_condition_fuzzy"/>
         GROUP BY
         vf_bc_track_detail.year_calc,

@@ -3,21 +3,12 @@
  */
 package com.voyageone.batch;
 
-import java.io.IOException;
-
-import com.voyageone.batch.bi.spider.job.BiSpiderFireFoxDriverInitialJob;
-import com.voyageone.batch.bi.spider.job.BiSpiderProductDataJob;
-import com.voyageone.batch.bi.spider.job.BiSpiderViewProductDataJob;
-import com.voyageone.batch.bi.spider.jumei.BiGlobalDealUpdateJob;
-import com.voyageone.batch.bi.spider.jumei.BiGlobalDealUploadJob;
-import com.voyageone.batch.bi.spider.jumei.BiGlobalProductUpdateJob;
-import com.voyageone.batch.bi.spider.jumei.BiGlobalProductUploadJob;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import com.voyageone.batch.bi.util.FileUtils;
+import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
-import com.voyageone.batch.bi.util.FileUtils;
+import java.io.IOException;
 
 
 /**
@@ -26,7 +17,7 @@ import com.voyageone.batch.bi.util.FileUtils;
  */
 public class VoyageOneBatchJobService {
 
-	private static final Log log = LogFactory.getLog(VoyageOneBatchJobService.class);
+	private static final Logger log = Logger.getLogger(VoyageOneBatchJobService.class);
 	
 	private static final String BATCH_JOB_NAME = "VoyageOne_BatchJob";
 	
@@ -74,6 +65,14 @@ public class VoyageOneBatchJobService {
 //		jobService.setParams(params);
 //		jobService.startup();
 
+//		//BiVmMasterSyncJob
+//		BiVmMasterSyncJob job = ctx.getBean(BiVmMasterSyncJob.class);
+//		job.repRun();
+
+//		//BiVsProductIIDSyncJob
+//		BiVsProductIIDSyncJob job = ctx.getBean(BiVsProductIIDSyncJob.class);
+//		job.repRun();
+
 		// BiVtOrderSyncJob
 //		BiVtOrderSyncJob job = ctx.getBean(BiVtOrderSyncJob.class);
 //		job.run();
@@ -96,17 +95,12 @@ public class VoyageOneBatchJobService {
 //		BiGlobalProductListJob jobDriver = ctx.getBean(BiGlobalProductListJob.class);
 //		jobDriver.run();
 
-//		BiGlobalDealUploadJob jobDriver = ctx.getBean(BiGlobalDealUploadJob.class);
-//		jobDriver.run();
 
 //		BiGlobalProductUploadJob jobDriver = ctx.getBean(BiGlobalProductUploadJob.class);
 //		jobDriver.run();
-		
-//		BiGlobalProductUpdateJob jobDriver = ctx.getBean(BiGlobalProductUpdateJob.class);
+
+//		BiGlobalDealUploadJob jobDriver = ctx.getBean(BiGlobalDealUploadJob.class);
 //		jobDriver.run();
-		
-		BiGlobalDealUpdateJob jobDriver = ctx.getBean(BiGlobalDealUpdateJob.class);
-		jobDriver.run();
 	}
 
 }

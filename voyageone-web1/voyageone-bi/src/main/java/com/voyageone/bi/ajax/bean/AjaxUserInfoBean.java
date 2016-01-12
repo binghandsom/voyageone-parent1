@@ -12,20 +12,14 @@ public class AjaxUserInfoBean extends AjaxRequestBean {
 		
 		// 店铺显示内容
 		private List<PageCmbBoxDisBean> cmbShops;
-		public List<PageCmbBoxDisBean> getCmbShops() {
-			return cmbShops;
-		}
-		public void setCmbShops(List<PageCmbBoxDisBean> cmbShops) {
-			this.cmbShops = cmbShops;
-		}
+		public List<PageCmbBoxDisBean> getCmbShops() { return cmbShops; }
+		public void setCmbShops(List<PageCmbBoxDisBean> cmbShops) { this.cmbShops = cmbShops;}
 
 		// 渠道显示内容
 		private List<PageCmbBoxDisBean> cmbChannels;
-
 		public List<PageCmbBoxDisBean> getCmbChannels() {
 			return cmbChannels;
 		}
-
 		public void setCmbChannels(List<PageCmbBoxDisBean> cmbChannels) {
 			this.cmbChannels = cmbChannels;
 		}
@@ -74,7 +68,17 @@ public class AjaxUserInfoBean extends AjaxRequestBean {
 		public void setCmbProducts(List<PageCmbBoxDisBean> cmbProducts) {
 			this.cmbProducts = cmbProducts;
 		}
-		
+
+		// port显示内容
+		private List<PageCmbBoxDisBean> cmbPorts;
+
+		public List<PageCmbBoxDisBean> getCmbPorts() {
+			return cmbPorts;
+		}
+
+		public void setCmbPorts(List<PageCmbBoxDisBean> cmbPorts) {
+			this.cmbPorts = cmbPorts;
+		}
 	}
 	
 	//产品检索

@@ -5,7 +5,7 @@ import com.voyageone.bi.base.AjaxResponseBean;
 import com.voyageone.bi.base.BiException;
 import com.voyageone.bi.commonutils.Contants;
 import com.voyageone.bi.commonutils.SessionKey;
-import com.voyageone.bi.task.DataReportTask;
+import com.voyageone.bi.task.FinanceReportTask;
 import com.voyageone.bi.tranbean.UserInfoBean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,7 +25,7 @@ public class FinanceTaxReportController {
 
     // 页面初期化
     @Autowired
-    private DataReportTask dataReportTask;
+    private FinanceReportTask financeReportTask;
 
     // 月度报表页面
     @RequestMapping(value = "/manage/goTaxReport")
@@ -44,7 +44,7 @@ public class FinanceTaxReportController {
      * @throws BiException
      */
     @RequestMapping(value = "/manage/checkFinanceTaxReportDataParam")
-    public void doCheckSalesHomeParam(HttpServletResponse response,
+    public void checkFinanceTaxReportDataParam(HttpServletResponse response,
                                       HttpServletRequest request,
                                       AjaxFinancialTaxReportBean bean) throws BiException {
         if (!bean.checkInput()) {
@@ -58,13 +58,13 @@ public class FinanceTaxReportController {
     }
 
     /**
-     * getDataReportTax数据取得
+     * getFinanceReportTax数据取得
      */
-    @RequestMapping(value = "/manage/getDataReportTax")
-    public void getDataReportTax(HttpServletResponse response,
+    @RequestMapping(value = "/manage/getFinanceReportTax")
+    public void getFinanceReportTax(HttpServletResponse response,
                                  HttpServletRequest request,
                                  AjaxFinancialTaxReportBean bean) throws BiException {
-        logger.info("getDataReportTax");
+        logger.info("getFinanceReportTax");
         if (!bean.checkInput()) {
             bean.WriteTo(response);
             return;
@@ -72,7 +72,7 @@ public class FinanceTaxReportController {
 
         HttpSession session = request.getSession();
         UserInfoBean user = (UserInfoBean) session.getAttribute(SessionKey.LOGIN_INFO);
-        dataReportTask.ajaxGetFinancialTaxReportData(bean, user);
+        financeReportTask.ajaxGetFinancialTaxReportData(bean, user);
         bean.WriteTo(response);
     }
 
