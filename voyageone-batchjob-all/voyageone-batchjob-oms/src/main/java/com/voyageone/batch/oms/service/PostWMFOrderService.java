@@ -1,42 +1,27 @@
 package com.voyageone.batch.oms.service;
 
-import com.csvreader.CsvReader;
-import com.csvreader.CsvWriter;
-import com.jcraft.jsch.ChannelSftp;
 import com.voyageone.batch.core.Constants;
-import com.voyageone.batch.oms.OmsConstants;
 import com.voyageone.batch.oms.dao.OrderDao;
-import com.voyageone.batch.oms.formbean.InFormFile;
-import com.voyageone.batch.oms.formbean.OutFormOrderDetailOrderDetail;
-import com.voyageone.batch.oms.formbean.OutFormOrderdetailOrders;
 import com.voyageone.batch.oms.modelbean.OrderExtend;
 import com.voyageone.common.components.issueLog.IssueLog;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.configs.ThirdPartyConfigs;
-import com.voyageone.common.configs.beans.FtpBean;
-import com.voyageone.common.configs.beans.ThirdPartyConfigBean;
 import com.voyageone.common.magento.api.MagentoConstants;
 import com.voyageone.common.magento.api.service.MagentoApiServiceImpl;
-import com.voyageone.common.mail.Mail;
-import com.voyageone.common.util.*;
+import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.StringUtils;
 import magento.SalesOrderCancelResponseParam;
 import magento.SalesOrderEntity;
 import magento.SalesOrderInfoResponseParam;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import java.io.*;
-import java.math.BigDecimal;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -66,7 +51,7 @@ public class PostWMFOrderService {
 	private final static String POST_WMF_CANCEL_ORDER = "PostWMFPendingCancelOrder";
 
 	// 皇马渠道ID
-	private String orderChannelID = "008";
+	private String orderChannelID = "014";
 
 
 	/**
