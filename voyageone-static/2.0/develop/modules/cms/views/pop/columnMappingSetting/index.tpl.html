@@ -3,12 +3,8 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="ctrl.cancel()"><span aria-hidden="true"><i class="fa fa-close"></i></span></button>
         <h5 class="modal-title"><i class="fa fa-crosshairs"></i> 平台值匹配</h5>
     </div>
-    <div class="attribute_top">
-        <h5 class="text-vo m-l font-bold">值设定说明：</h5>
-        <ul>
-            <li>如果对属性进行了多个值设定，则按照顺序进行显示</li>
-        </ul>
-    </div>
+    <h5 class="text-vo m-l">Feed类目：Fitness & Sports</h5>
+    <h5 class="m-l">主数据类目：Fitness & Sports</h5>
     <div class="p-l-r">
         <div class="table-responsive">
             <table class="table table-hover">
@@ -117,17 +113,28 @@
             <div ng-controller="popupCtrl">
                 <button class="btn btn-sm btn-success btn-addon" ng-click="openColumnMapping()"><i class="fa fa-plus"></i> 添加</button>
             </div>
+            <div class="col-sm-12">
+            <div class="attribute_top col-sm-6">
+                <h5 class="text-vo font-bold">值设定说明：</h5>
+                <ul>
+                    <li>如果对属性进行了多个值设定，则按照顺序进行显示</li>
+                    <li>如果对属性进行了多个值设定，则按照顺序进行显示</li>
+                    <li>如果对属性进行了多个值设定，则按照顺序进行显示</li>
+                </ul>
+            </div>
+            <div class="attribute_top col-sm-6">
+                <h5 class="text-vo font-bold">输入规则：</h5>
+                <ul>
+                    <li>valueTypeRule：text</li>
+                    <li>minLengthRule：0 </li>
+                    <li>maxLengthRule：6</li>
+                </ul>
+            </div>
         </div>
+        </div>
+
     </div>
 
-    <div class="attribute_top">
-        <h5 class="text-vo m-l font-bold">输入规则：</h5>
-        <ul>
-            <li>valueTypeRule：text</li>
-            <li>minLengthRule：0 </li>
-            <li>maxLengthRule：6</li>
-        </ul>
-    </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="ctrl.cancel()">取消</button>
         <button class="btn btn-vo" ng-click="ctrl.ok()">保存</button>
