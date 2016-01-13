@@ -404,6 +404,8 @@ public class CmsSetMainPropService extends BaseTaskService {
                     mainFeedCnAtts.setAttribute(aMainFeedOrgAttsKeyList, "");
                 }
             }
+            // 增加一个modelCode(来源是feed的field的model, 无需翻译)
+            mainFeedCnAtts.setAttribute("modelCode", feed.getModel());
             product.getFeed().setCnAtts(mainFeedCnAtts);
 
             return product;
