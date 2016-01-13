@@ -43,10 +43,10 @@ define([
                     scope.close = close;
 
                     //点击查询按钮
-                    scope.doChange = doChange;
+                    scope.doSave = doSave;
 
                     // 根据检索条件查询相关记录
-                    function doChange() {
+                    function doSave() {
 
                         if (!vm.itemCode) {
                             alert("Please Input Item Code.");
