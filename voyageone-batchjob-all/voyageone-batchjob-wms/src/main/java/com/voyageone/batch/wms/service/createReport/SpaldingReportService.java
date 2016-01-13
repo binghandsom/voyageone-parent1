@@ -2,13 +2,21 @@ package com.voyageone.batch.wms.service.createReport;
 
 import com.csvreader.CsvWriter;
 import com.voyageone.batch.core.CodeConstants;
+import com.voyageone.batch.core.Constants;
 import com.voyageone.batch.core.modelbean.SetPriceBean;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.core.util.SetPriceUtils;
 import com.voyageone.batch.wms.WmsConstants;
+import com.voyageone.batch.wms.dao.ClientInventoryDao;
+import com.voyageone.batch.wms.dao.ClientRrportDao;
 import com.voyageone.batch.wms.dao.CreateReportDao;
+import com.voyageone.batch.wms.modelbean.ClientInventoryBean;
 import com.voyageone.batch.wms.modelbean.ThirdReportBean;
+import com.voyageone.batch.wms.modelbean.WmsBtClientReportBean;
+import com.voyageone.common.components.channelAdvisor.soap.InventoryResSoapenv;
+import com.voyageone.common.components.channelAdvisor.webservices.InventoryItemResponse;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.ShopConfigs;
@@ -56,11 +64,23 @@ public class SpaldingReportService extends CreateReportBaseService {
 
     protected final Log logger = LogFactory.getLog(getClass());
 
+    //插入数据库时批次处理记录数
+    private final int insertRow = 500;
+
+
     //private HashMap<String, List<SmsConfigBean>> mapSmsConfig = new HashMap<String, List<SmsConfigBean>>();
     private List<String> reportFileName = new ArrayList<String>();
+    //第三方日报插入数据表用
+    private List<WmsBtClientReportBean> wmsBtClientReportBeans = new ArrayList<WmsBtClientReportBean>();
 
     @Autowired
     private CreateReportDao createReportDao;
+
+    @Autowired
+    private ClientRrportDao clientRrportDao;
+
+    @Autowired
+    private TransactionRunner transactionRunner;
 
     @Override public String getTaskName() {
         return "SpaldingReportService";
@@ -69,6 +89,7 @@ public class SpaldingReportService extends CreateReportBaseService {
     @Override public SubSystem getSubSystem() {
         return SubSystem.WMS;
     }
+
 
     @Override protected void onStartup(List <TaskControlBean> taskControlList) throws Exception {
 
@@ -239,21 +260,21 @@ public class SpaldingReportService extends CreateReportBaseService {
         if (fileFlg == 0){
             //============================================================================================
             //============================================================================================
-            //timeRegion.set(0,"2015-07-01 00:00:00"); timeRegion.set(1,"2015-07-01 23:59:59");
+            //timeRegion.set(0,"2015-06-23 00:00:00"); timeRegion.set(1,"2015-06-23 23:59:59");
             ReportDatas  = createReportDao.getVirtualCreateReportData(cart_id,order_channel_id, CodeConstants.TransferStatus.ClOSE,CodeConstants.TransferType.OUT,
                     CodeConstants.TransferOrigin.RESERVED,timeRegion.get(0),timeRegion.get(1),taskName);
         //取得退货订单（退回TM仓库）的日报基本数据记录
         }else if (fileFlg == 1){
             //============================================================================================
             //============================================================================================
-            //timeRegion.set(0,"2015-07-01 00:00:00"); timeRegion.set(1,"2015-07-01 23:59:59");
+            //timeRegion.set(0,"2015-06-23 00:00:00"); timeRegion.set(1,"2015-06-23 23:59:59");
             ReportDatas  = createReportDao.getCreateReportDataByTM(cart_id, order_channel_id, CodeConstants.TransferStatus.ClOSE, CodeConstants.TransferType.IN,
                     CodeConstants.TransferOrigin.RETURNED, timeRegion.get(0), timeRegion.get(1), taskName);
         //取得退货订单（退回福建仓库）的日报基本数据记录
         }else if (fileFlg == 2){
             //============================================================================================
             //============================================================================================
-            //timeRegion.set(0,"2015-07-01 00:00:00"); timeRegion.set(1,"2015-07-01 23:59:59");
+            //timeRegion.set(0,"2015-06-23 00:00:00"); timeRegion.set(1,"2015-06-23 23:59:59");
             //timeRegion.set(0,"2015-09-07 16:00:00"); timeRegion.set(1,"2015-09-14 15:59:59");
             ReportDatas  = createReportDao.getCreateReportData(cart_id, order_channel_id, CodeConstants.TransferStatus.ClOSE, CodeConstants.TransferType.WITHDRAWAL,
                     CodeConstants.TransferOrigin.WITHDRAWAL, timeRegion.get(0), timeRegion.get(1), taskName);
@@ -262,7 +283,8 @@ public class SpaldingReportService extends CreateReportBaseService {
             //============================================================================================
             //============================================================================================
             //timeRegion.set(0,"2015-09-08 00:00:00"); timeRegion.set(1,"2015-09-08 23:59:59");
-            ReportDatas  = createReportDao.getCreateReportSpecialData(cart_id, order_channel_id, WmsConstants.specialType.BALL, timeRegion.get(0), timeRegion.get(1), taskName);
+            //timeRegion.set(0,"2015-06-23 00:00:00"); timeRegion.set(1,"2015-06-23 23:59:59");
+            ReportDatas  = createReportDao.getCreateReportSpecialData(cart_id, order_channel_id, timeRegion.get(0), timeRegion.get(1), taskName);
         }
 
         logger.info("取得日报表基本数据结束");
@@ -353,15 +375,27 @@ public class SpaldingReportService extends CreateReportBaseService {
         }
 
         try {
+            //第三方日报插入数据表用初期化
+            wmsBtClientReportBeans = new ArrayList<WmsBtClientReportBean>();
             // CSV文件做成
             createCSVReportFile(fullName,fileFlg,fileNameA,filePath,Customer,ReportDatas,order_channel_id,fileTitleHeads,fileTile,cart_id);
             // bom 追加
             addBom(filePath, fullName, fileName);
-            writeFileCreated(checkFileName,fileNameA);
+
+            transactionRunner.runWithTran(() -> {
+                try {
+                    logger.info(fullName + "第三方日报插入wms_bt_client_report开始");
+                    if (wmsBtClientReportBeans.size() > 0) {
+                        insertWmsBtClientReport(wmsBtClientReportBeans);
+                    }
+                    logger.info(fullName + "第三方日报插入wms_bt_client_report结束");
+                    writeFileCreated(checkFileName, fileNameA);
+                } catch (Exception e) {
+                    logger.info(fullName + "第三方日报插入wms_bt_client_report失败");
+                    logIssue(fullName + " 第三方日报插入wms_bt_client_report失败" + e);
+                }
+            });
         } catch (Exception e) {
-            //String msg = fullName + "解析第三方库存文件发生错误" + e;
-//            logger.info(format("生成日报文件 [ %s ]发生错误", fileName));
-//            logger.error(e.getMessage());
             logIssue(fullName + " " + format("生成日报文件 [ %s ]发生错误：", fileName)+ " " + e);
             return false;
         }
@@ -462,6 +496,8 @@ public class SpaldingReportService extends CreateReportBaseService {
         logger.info(format(" [ %s ]日报文件内容输出开始", fileNameA));
         logger.info(format("[ %s ]  条数据准备写入开始", ReportDatas.size()));
         for (ThirdReportBean reportBean : ReportDatas) {
+            //第三方日报插入数据表用
+            WmsBtClientReportBean wmsBtClientReport = new WmsBtClientReportBean();
             //特殊商品SKU装换
             if (fileFlg == 3 ) {
                 reportBean = changeSpecialSku(reportBean,fileFlg,order_channel_id);
@@ -473,7 +509,7 @@ public class SpaldingReportService extends CreateReportBaseService {
                 //根据order_number，以SKU汇总取得价格
                 //spaldingPriceDatas  = setPrice(reportBean.getOrder_number(),order_channel_id);
                 spaldingPriceDatas = new ArrayList<SetPriceBean>();
-                spaldingPriceDatas  = SetPriceUtils.setPrice(reportBean.getOrder_number(),order_channel_id,cart_id,fileFlg);
+                spaldingPriceDatas  = SetPriceUtils.setPrice(reportBean.getOrder_number(), order_channel_id, cart_id, fileFlg);
                 orderNumBasic = reportBean.getOrder_number();
             }
             //reportBean.setSize("22*24");
@@ -481,27 +517,39 @@ public class SpaldingReportService extends CreateReportBaseService {
             sizeValue =  changeSize(StringUtils.null2Space(reportBean.getSize()));
             //Ordertype
             csvWriter.write(fileTile.get("Ordertype"));
+            wmsBtClientReport.setOrder_type(fileTile.get("Ordertype"));
             //DocumentID
             csvWriter.write(fileNameA);
+            wmsBtClientReport.setDocument_id(fileNameA);
             //CustAccount
             csvWriter.write(Customer);
+            wmsBtClientReport.setCust_account(Customer);
             //ReasonCode
             if (fileFlg == 1 || fileFlg == 2) {
                 csvWriter.write("残次品");
+                wmsBtClientReport.setReason_code("残次品");
+            }else{
+                wmsBtClientReport.setReason_code("");
             }
             //InventSiteId
             csvWriter.write(fileTile.get("Site"));
+            wmsBtClientReport.setInvent_site_id(fileTile.get("Site"));
             //InventLocationId
             csvWriter.write(fileTile.get("Warehouse"));
+            wmsBtClientReport.setInvent_location_id(fileTile.get("Warehouse"));
             //ShippingDateRequested
             csvWriter.write(DateTimeUtil.parseStr(DateTimeUtil.getLocalTime(reportBean.getCreated(),8), DateTimeUtil.DATE_TIME_FORMAT_3));
+            wmsBtClientReport.setShipping_date_requested(DateTimeUtil.parseStr(DateTimeUtil.getLocalTime(reportBean.getCreated(),8), DateTimeUtil.DATE_TIME_FORMAT_3));
             //E-ComSalesId
             csvWriter.write(reportBean.getSource_order_id());
+            wmsBtClientReport.setSource_order_id(reportBean.getSource_order_id());
             //ItemId
             csvWriter.write(StringUtils.null2Space(reportBean.getItemcode()));
+            wmsBtClientReport.setItem_id(StringUtils.null2Space(reportBean.getItemcode()));
             //Size
             //OneSize时显示为空
             csvWriter.write(sizeValue);
+            wmsBtClientReport.setSize(sizeValue);
             if (StringUtils.null2Space(reportBean.getSize()).equals(ONE_SIZE)){
                 strUnit = "个";
             }else{
@@ -511,7 +559,7 @@ public class SpaldingReportService extends CreateReportBaseService {
 
             //SalesQty
             csvWriter.write(reportBean.getSales_unit());
-
+            wmsBtClientReport.setQty(reportBean.getSales_unit());
 
             //for (SpaldingPriceBean spaldingPriceData : spaldingPriceDatas){
             priceFlg = false;
@@ -522,10 +570,31 @@ public class SpaldingReportService extends CreateReportBaseService {
                     BigDecimal bigDecimal =  new BigDecimal(salesPrice).setScale(3, BigDecimal.ROUND_HALF_UP);
                     // 	SalesPrices
                     csvWriter.write(bigDecimal.toString());
+                    wmsBtClientReport.setSales_price(bigDecimal.toString());
+
+                    //csvWriter.write(spaldingPriceData.getPrice());
+                    //wmsBtClientReport.setSales_price(spaldingPriceData.getPrice());
+
                     //Sales Unit
                     csvWriter.write(strUnit);
-                    // 	LineAmount
+                    wmsBtClientReport.setSales_unit(strUnit);
+                    // 	LineAmount(金额  * 个数)
+                    //double lineAmountPrice = Double.valueOf(spaldingPriceData.getPrice()) * Double.valueOf(reportBean.getSales_unit());
+                    //BigDecimal bigDecimal =  new BigDecimal(lineAmountPrice).setScale(2, BigDecimal.ROUND_HALF_UP);
+
+                    //csvWriter.write(bigDecimal.toString());
+                   // wmsBtClientReport.setLine_amount(bigDecimal.toString());
+
                     csvWriter.write(spaldingPriceData.getPrice());
+                    wmsBtClientReport.setLine_amount(spaldingPriceData.getPrice());
+                    // Transcost
+                    spaldingPriceData.setShipping_price("0.00");
+                    //csvWriter.write(spaldingPriceData.getShipping_price());
+                    wmsBtClientReport.setTranscost(spaldingPriceData.getShipping_price());
+                    // Ediscount"
+                    spaldingPriceData.setDiscount("0.00");
+                    //csvWriter.write(StringUtils.null2Space(spaldingPriceData.getDiscount()));
+                    wmsBtClientReport.setEdiscount(StringUtils.null2Space(spaldingPriceData.getDiscount()));
                     priceFlg = true;
                     break;
                 }
@@ -533,11 +602,23 @@ public class SpaldingReportService extends CreateReportBaseService {
             if (priceFlg == false){
                 // 	SalesPrices
                 csvWriter.write("");
+                wmsBtClientReport.setSales_price("");
                 //Sales Unit
                 csvWriter.write(strUnit);
+                wmsBtClientReport.setSales_unit(strUnit);
                 // 	LineAmount
                 csvWriter.write("");
+                wmsBtClientReport.setLine_amount("");
+                // Transcost
+                //csvWriter.write("");
+                wmsBtClientReport.setTranscost("");
+                // Ediscount"
+                //csvWriter.write("");
+                wmsBtClientReport.setEdiscount("");
             }
+            wmsBtClientReport.setOrder_number(reportBean.getOrder_number());
+            wmsBtClientReport.setOrder_channel_id(order_channel_id);
+            wmsBtClientReportBeans.add(wmsBtClientReport);
             csvWriter.endRecord();
         }
         logger.info(format("[ %s ]  条数据准备写入结束", ReportDatas.size()));
@@ -699,17 +780,221 @@ public class SpaldingReportService extends CreateReportBaseService {
         if (fileFlg == 3 ) {
             //对方定制球SKU取得
             specialSku = ChannelConfigs.getVal2(order_channel_id, ChannelConfigEnums.Name.special_goods_ball, reportBean.getTransfer_sku());
+            if (StringUtils.isNullOrBlank2(specialSku)) {
+                //对方篮板SKU取得
+                specialSku = ChannelConfigs.getVal2(order_channel_id, ChannelConfigEnums.Name.special_goods_backboard, reportBean.getTransfer_sku());
+            }
         } else {
-            //对方篮板SKU取得
-            specialSku = ChannelConfigs.getVal2(order_channel_id, ChannelConfigEnums.Name.special_goods_backboard, reportBean.getTransfer_sku());
+
         }
         //当前SKU和对方SKU不一致
-        if (!specialSku.equals(reportBean.getTransfer_sku())) {
+        if (!specialSku.equals(reportBean.getTransfer_sku())&& !StringUtils.isNullOrBlank2(specialSku)) {
             //reportBean.setTransfer_sku(specialSku);
             int value = specialSku.lastIndexOf("-");
             reportBean.setItemcode(specialSku.substring(0,value));
             reportBean.setSize(specialSku.substring(value+1));
         }
         return reportBean;
+    }
+
+    /**
+     * @description 将第三方日报插入wms_bt_client_report表
+     * @param wmsBtClientReportBeans 第三方日报
+     */
+    private void insertWmsBtClientReport( List<WmsBtClientReportBean> wmsBtClientReportBeans) {
+        int intTimes = 0;
+        intTimes = wmsBtClientReportBeans.size()/insertRow;
+        int intTimesY = wmsBtClientReportBeans.size()%insertRow;
+        if (intTimesY > 0){
+            intTimes = intTimes + 1;
+        }
+        try {
+            for (int i = 0; i < intTimes; i++){
+                //计算批次插入数据的起始记录数
+                int intStartRow = insertRow * i;
+                //计算批次插入数据的终了记录数
+                int intEndRow = insertRow * (i + 1);
+                if (intEndRow > wmsBtClientReportBeans.size()){
+                    intEndRow = wmsBtClientReportBeans.size();
+                }
+                //批次数据设定
+                String tempTable = preparetClientInventoryData(wmsBtClientReportBeans,intStartRow,intEndRow);
+                //插入wms_bt_client_report表
+                int rows =  clientRrportDao.insertClientReport(tempTable);
+                logger.info("第" + (intStartRow +1) + "至第" + intEndRow + "条记录插入wms_bt_client_report完毕");
+            }
+        }catch (Exception e){
+            String msg = "将第三方日报数据插入wms_bt_client_report表失败";
+            throw new RuntimeException(msg + ":" + e);
+        }
+    }
+
+    /**
+     * 批次数据设定
+     * @param wmsBtClientReportBeans 要插入的数据
+     * @param intStartRow 起始记录数
+     * @param intEndRow 终了记录数
+     * @return 拼接好的Sql
+     */
+    private String preparetClientInventoryData(List<WmsBtClientReportBean> wmsBtClientReportBeans , int intStartRow, int intEndRow) {
+        StringBuilder sqlValueBuffer = new StringBuilder();
+        //插入wms_bt_client_report表
+        for (int j = intStartRow; j < intEndRow; j++){
+            WmsBtClientReportBean wmsBtClientReport = wmsBtClientReportBeans.get(j);
+            sqlValueBuffer.append(Constants.LEFT_BRACKET_CHAR);
+            // seq
+            sqlValueBuffer.append("null");
+            sqlValueBuffer.append(Constants.COMMA_CHAR);
+
+            // order_channel_id
+            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            sqlValueBuffer.append(wmsBtClientReport.getOrder_channel_id());
+            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            sqlValueBuffer.append(Constants.COMMA_CHAR);
+
+            //order_number
+            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            sqlValueBuffer.append(wmsBtClientReport.getOrder_number());
+            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            sqlValueBuffer.append(Constants.COMMA_CHAR);
+
+            //order_type
+            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            sqlValueBuffer.append(wmsBtClientReport.getOrder_type());
+            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            sqlValueBuffer.append(Constants.COMMA_CHAR);
+
+            //document_id
+            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            sqlValueBuffer.append(wmsBtClientReport.getDocument_id());
+            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            sqlValueBuffer.append(Constants.COMMA_CHAR);
+
+            //cust_account
+            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            sqlValueBuffer.append(wmsBtClientReport.getCust_account());
+            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            sqlValueBuffer.append(Constants.COMMA_CHAR);
+
+            //reason_code
+            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            sqlValueBuffer.append(wmsBtClientReport.getReason_code());
+            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            sqlValueBuffer.append(Constants.COMMA_CHAR);
+
+            //invent_site_id
+            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            sqlValueBuffer.append(wmsBtClientReport.getInvent_site_id());
+            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            sqlValueBuffer.append(Constants.COMMA_CHAR);
+
+            //invent_location_id
+            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            sqlValueBuffer.append(wmsBtClientReport.getInvent_location_id());
+            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            sqlValueBuffer.append(Constants.COMMA_CHAR);
+
+            //shipping_date_requested
+            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            sqlValueBuffer.append(wmsBtClientReport.getShipping_date_requested());
+            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            sqlValueBuffer.append(Constants.COMMA_CHAR);
+
+            //source_order_id
+            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            sqlValueBuffer.append(wmsBtClientReport.getSource_order_id());
+            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            sqlValueBuffer.append(Constants.COMMA_CHAR);
+
+            //item_id
+            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            sqlValueBuffer.append(wmsBtClientReport.getItem_id());
+            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            sqlValueBuffer.append(Constants.COMMA_CHAR);
+
+            //size` varchar(100) DEFAULT NULL,
+            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            sqlValueBuffer.append(wmsBtClientReport.getSize());
+            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            sqlValueBuffer.append(Constants.COMMA_CHAR);
+
+            // qty
+            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            sqlValueBuffer.append(wmsBtClientReport.getQty());
+            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            sqlValueBuffer.append(Constants.COMMA_CHAR);
+
+            // sales_price
+            if (StringUtils.isNullOrBlank2(wmsBtClientReport.getSales_price())){
+                sqlValueBuffer.append("null");
+            }else {
+                sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+                sqlValueBuffer.append(wmsBtClientReport.getSales_price());
+                sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            }
+            sqlValueBuffer.append(Constants.COMMA_CHAR);
+
+            // sales_unit
+            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            sqlValueBuffer.append(wmsBtClientReport.getSales_unit());
+            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            sqlValueBuffer.append(Constants.COMMA_CHAR);
+
+            //line_amount
+            if (StringUtils.isNullOrBlank2(wmsBtClientReport.getLine_amount())){
+                sqlValueBuffer.append("null");
+            }else {
+                sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+                sqlValueBuffer.append(wmsBtClientReport.getLine_amount());
+                sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            }
+            sqlValueBuffer.append(Constants.COMMA_CHAR);
+
+            // transcost
+            if (StringUtils.isNullOrBlank2(wmsBtClientReport.getTranscost())){
+                sqlValueBuffer.append("null");
+            }else {
+                sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+                sqlValueBuffer.append(wmsBtClientReport.getTranscost());
+                sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            }
+            sqlValueBuffer.append(Constants.COMMA_CHAR);
+
+            // ediscount
+
+            if (StringUtils.isNullOrBlank2(wmsBtClientReport.getEdiscount())){
+                sqlValueBuffer.append("null");
+            }else {
+                sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+                sqlValueBuffer.append(wmsBtClientReport.getEdiscount());
+                sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            }
+            sqlValueBuffer.append(Constants.COMMA_CHAR);
+
+            // created
+            sqlValueBuffer.append(Constants.NOW_MYSQL);
+            sqlValueBuffer.append(Constants.COMMA_CHAR);
+
+            // creater
+            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            sqlValueBuffer.append(getTaskName());
+            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            sqlValueBuffer.append(Constants.COMMA_CHAR);
+
+            // modified
+            sqlValueBuffer.append(Constants.NOW_MYSQL);
+            sqlValueBuffer.append(Constants.COMMA_CHAR);
+
+            // modifier
+            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            sqlValueBuffer.append(getTaskName());
+            sqlValueBuffer.append(Constants.APOSTROPHE_CHAR);
+            sqlValueBuffer.append(Constants.RIGHT_BRACKET_CHAR);
+            if(j+1 != intEndRow) {
+                sqlValueBuffer.append(Constants.COMMA_CHAR);
+            }
+        }
+        logger.info("第" + (intStartRow +1) + "至第" + intEndRow + "条记录数据准备完毕");
+        return sqlValueBuffer.toString();
     }
 }

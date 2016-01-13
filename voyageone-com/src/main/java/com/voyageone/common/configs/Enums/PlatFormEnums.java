@@ -10,6 +10,10 @@ public class PlatFormEnums {
      */
     public enum PlatForm {
         /**
+         * 共通
+         */
+        COM("99"),
+        /**
          * 线下平台
          */
         OF("0"),
@@ -38,6 +42,8 @@ public class PlatFormEnums {
 
         public static PlatFormEnums.PlatForm getValueByID(String id) {
             switch (id) {
+                case "99":
+                    return COM;
                 case "0":
                     return OF;
                 case "1":

@@ -2,6 +2,7 @@ package com.voyageone.batch.cms.dao;
 
 import com.voyageone.base.dao.BaseDao;
 import com.voyageone.batch.cms.bean.*;
+import com.voyageone.cms.service.model.CmsBtFeedInfoModel;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import org.springframework.stereotype.Repository;
@@ -186,6 +187,7 @@ public class SuperFeedDao extends BaseDao {
 
         return selectList("cms_searsfeed_select", params);
     }
+
     /**
      * 取得 Product 信息
      *

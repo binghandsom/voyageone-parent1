@@ -1,0 +1,20 @@
+{
+  "menus":[
+    {
+      "menuName": "CMS",
+      "menuUrl": "/cms"
+    },
+    {
+      "menuName": "OMS",
+      "menuUrl": "/oms"
+    }
+  ],
+  "languages": [
+    {
+      "name": "en"
+    },
+    {
+      "name": "中文"
+    }
+  ]
+}

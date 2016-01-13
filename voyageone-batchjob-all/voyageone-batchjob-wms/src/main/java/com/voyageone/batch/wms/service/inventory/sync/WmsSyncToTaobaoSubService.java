@@ -66,6 +66,7 @@ public class WmsSyncToTaobaoSubService extends WmsSyncInventoryBaseService {
             res = tbInventoryService.itemQuantityUpdate(shopBean, itemQuantityBean);
         } catch (ApiException ae) {
             logFailRecord(ae, inventorySynLogBean);
+            return;
         } catch (Exception e) {
             logFailRecord(e, inventorySynLogBean);
             return;
@@ -134,9 +135,9 @@ public class WmsSyncToTaobaoSubService extends WmsSyncInventoryBaseService {
         itemQuantityBean.setQuantity(inventorySynLogBean.getQty());
 
         // JC暂定特殊处理
-        if (inventorySynLogBean.getOrder_channel_id().equals(ChannelConfigEnums.Channel.JC.getId())) {
-            sku = sku.toUpperCase();
-        }
+//        if (inventorySynLogBean.getOrder_channel_id().equals(ChannelConfigEnums.Channel.JC.getId())) {
+//            sku = sku.toUpperCase();
+//        }
 
         // 判断是按Product还是按SKU来同步库存
         if (WmsConstants.QuantityUpdateType.PRODUCT.equals(inventorySynLogBean.getQuantity_update_type())) {

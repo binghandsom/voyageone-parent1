@@ -1,6 +1,7 @@
 package com.voyageone.batch.wms.dao;
 
 import com.voyageone.base.dao.BaseDao;
+import com.voyageone.batch.wms.modelbean.InventoryForCmsBean;
 import com.voyageone.batch.wms.modelbean.InventorySynLogBean;
 import com.voyageone.batch.wms.modelbean.SumInventoryBean;
 import com.voyageone.batch.wms.modelbean.ViwLogicInventoryBean;
@@ -227,6 +228,14 @@ public class InventoryDao extends BaseDao {
     }
 
     /**
+     * 将wms_bt_inventory_center_logic初始化
+     * @return
+     */
+    public int deleteLogicInventory() {
+        return updateTemplate.update(Constants.DAO_NAME_SPACE_WMS + "wms_deleteLogicInventory");
+    }
+
+    /**
      * 更新处理完毕的Reservation记录
      *
      * @param transfer_id 处理的transfer_id
@@ -287,5 +296,21 @@ public class InventoryDao extends BaseDao {
         params.put("order_channel_id", order_channel_id);
         return selectList(Constants.DAO_NAME_SPACE_WMS + "wms_selectSumInventoryByStoreSKU", params);
     }
+
+    /**
+     * 获取code级别的库存值
+     * @param order_channel_id
+     * @return
+     */
+    public List<InventoryForCmsBean> selectInventoryCode(String order_channel_id, String modified) {
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("order_channel_id", order_channel_id);
+        params.put("modified", modified);
+        params.put("creater", modified);
+
+        return selectList(Constants.DAO_NAME_SPACE_WMS + "wms_selectInventoryCode", params);
+    }
+
 
 }

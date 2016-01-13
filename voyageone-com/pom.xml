@@ -254,6 +254,21 @@
 			<groupId>javax.xml.soap</groupId>
 			<artifactId>saaj-api</artifactId>
 		</dependency>
+
+		<!-- srping mongodb -->
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-mongodb</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jongo</groupId>
+			<artifactId>jongo</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.jayway.jsonpath</groupId>
+			<artifactId>json-path</artifactId>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<finalName>voyageone-com</finalName>

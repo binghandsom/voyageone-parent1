@@ -235,4 +235,29 @@ public interface SynshipConstants {
     String SMS_STATUS_NOT_SENT = "0";
 
     String SMS_TYPE_CLOUD_CLIENT = "cloud_client";
+
+    /**
+     * 获取品牌方物流信息时超卖警告邮件（SynshipGetClientShipping）
+     */
+    final class EmailSynshipGetClientShipping {
+
+        // 表格式
+        public final static String TABLE = "<div><span>%s</span>"
+                + "<table><tr>"
+                + "<th></th><th>Shop</th><th>OrderNum</th><th>WebID</th><th>SynShipNo</th><th>ClientOrderId</th>"
+                + "<th>SellerOrderId</th><th>Sku</th><th>ResId</th><th>ShipName</th><th>ShipPhone</th><th>OrderDateTime</th>"
+                + "</tr>%s</table></div>";
+        // 行格式
+        public final static String ROW = "<tr>"
+                + "<td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td>"
+                + "<td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td>"
+                + "</tr>";
+        // 邮件名
+        public final static String SUBJECT = "%s品牌方取消订单一览";
+        // 概要说明
+        public final static String HEAD = "<font color='red'>以下订单已经被品牌方取消，请确认</font>";
+        // 件数
+        public final static String COUNT = "取消总数：%s";
+
+    }
 }

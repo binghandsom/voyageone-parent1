@@ -57,6 +57,16 @@ public class ReservationBean {
     private long item_number;
     private String itemCode;
     private ItemCodeBean itemCodeInfo;
+    private String client_sku;
+    private String sales_check_number;
+    private String tracking_number;
+    private String reservation_status;
+    private String tracking_no;
+    private String client_order_id;
+    private String client_status;
+    private String client_status_comment;
+    private boolean client_status_update;
+    private String price_per_unit;
 
     public long getId() {
         return id;
@@ -464,5 +474,85 @@ public class ReservationBean {
 
     public void setItemCodeInfo(ItemCodeBean itemCodeInfo) {
         this.itemCodeInfo = itemCodeInfo;
+    }
+
+    public String getClient_sku() {
+        return client_sku;
+    }
+
+    public void setClient_sku(String client_sku) {
+        this.client_sku = client_sku;
+    }
+
+    public String getSales_check_number() {
+        return sales_check_number;
+    }
+
+    public void setSales_check_number(String sales_check_number) {
+        this.sales_check_number = sales_check_number;
+    }
+
+    public String getTracking_number() {
+        return tracking_number;
+    }
+
+    public void setTracking_number(String tracking_number) {
+        this.tracking_number = tracking_number;
+    }
+
+    public String getReservation_status() {
+        return reservation_status;
+    }
+
+    public void setReservation_status(String reservation_status) {
+        this.reservation_status = reservation_status;
+    }
+
+    public String getTracking_no() {
+        return tracking_no;
+    }
+
+    public void setTracking_no(String tracking_no) {
+        this.tracking_no = tracking_no;
+    }
+
+    public String getClient_order_id() {
+        return client_order_id;
+    }
+
+    public void setClient_order_id(String client_order_id) {
+        this.client_order_id = client_order_id;
+    }
+
+    public String getClient_status() {
+        return client_status;
+    }
+
+    public void setClient_status(String client_status) {
+        this.client_status = client_status;
+    }
+
+    public String getClient_status_comment() {
+        return client_status_comment;
+    }
+
+    public void setClient_status_comment(String client_status_comment) {
+        this.client_status_comment = client_status_comment;
+    }
+
+    public boolean isClient_status_update() {
+        return client_status_update;
+    }
+
+    public void setClient_status_update(boolean client_status_update) {
+        this.client_status_update = client_status_update;
+    }
+
+    public String getPrice_per_unit() {
+        return price_per_unit;
+    }
+
+    public void setPrice_per_unit(String price_per_unit) {
+        this.price_per_unit = price_per_unit;
     }
 }

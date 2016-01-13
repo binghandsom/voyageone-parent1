@@ -2,9 +2,11 @@ package com.voyageone.common.components.sears.base;
 
 import com.voyageone.common.components.sears.bean.OrderResponse;
 import com.voyageone.common.util.HttpUtils;
+import javax.net.ssl.HttpsURLConnection;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.net.ssl.SSLSocketFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -22,24 +24,54 @@ public class SearsBase {
 
     public static final int C_MAX_API_REPEAT_TIME = 3;
 
-    public final String keystore = getClass().getResource("/keystore.jks").getPath();
+      // 本地测试时请用Test后缀的文件
+//    public final String keystore = getClass().getResource("/keystore_test.jks").getPath();
+//    public final String keystore_password = "password";
+    public final String keystore = "/opt/app-shared/voyageone_web/contents/other/third_party/013/api_key/keystore.jks";
+    public final String keystore_password = "tmall611";
 
-    public final String trustStore = getClass().getResource("/truststore.jks").getPath();
+    // 本地测试时请用Test后缀的文件
+//    public final String trustStore = getClass().getResource("/truststore_test.jks").getPath();
+//    public final String trustStore_password = "password";
+    public final String trustStore = "/opt/app-shared/voyageone_web/contents/other/third_party/013/api_key/truststore.jks";
+    public final String trustStore_password = "tmall611";
 
     public final Properties properties;
 
     public final String searsUrl = "https://api.b2b.sears.com/v/2/";
 
+    public final String searsOrderUrlByOrderId = searsUrl + "/orders/id/";
+
+    public final String searsOrderByOrderReferenceUrl = searsUrl + "/orders/order_reference/";
+
+    public final String updateStatusUrl = searsUrl + "orders/id/%s/update";
+
     public SearsBase(){
         properties = new Properties();
-//        properties.put("javax.net.debug", "ssl");
-        properties.put("javax.net.ssl.keyStore", keystore);
-        properties.put("javax.net.ssl.keyStorePassword", "password");
+        properties.put("javax.net.ssl.keyStorePassword", keystore_password);
         properties.put("javax.net.ssl.keyStoreType", "jks");
         properties.put("javax.net.ssl.trustStore", trustStore);
         properties.put("javax.net.ssl.trustStoreType", "jks");
-        properties.put("javax.net.ssl.trustStorePassword", "password");
+        properties.put("javax.net.ssl.trustStorePassword", trustStore_password);
     }
+
+    /**
+     * 调用Sears的webService
+     * @param postUrl
+     * @return
+     * @throws Exception
+     */
+    protected String reqSearsApi(String postUrl) throws Exception {
+
+//        logger.info("keystore path: "+keystore);
+        // Properties属性没有设置的场合 Properties的SSL属性设置
+//        if (!System.getProperties().contains(keystore)){
+//            System.getProperties().putAll(properties);
+//        }
+        return HttpUtils.get(postUrl, trustStore, trustStore_password, keystore_password);
+
+    }
+
     /**
      * 调用Sears的webService
      * @param postUrl
@@ -49,11 +81,13 @@ public class SearsBase {
      */
     protected String reqSearsApi(String postUrl, String param) throws Exception {
 
+//        logger.info("keystore path: "+keystore);
         // Properties属性没有设置的场合 Properties的SSL属性设置
-        if (!System.getProperties().contains(keystore)){
-            System.getProperties().putAll(properties);
-        }
-        return HttpUtils.get(postUrl,param);
+//        if (!System.getProperties().contains(keystore)){
+//            System.getProperties().putAll(properties);
+//        }
+        return HttpUtils.get(postUrl,param, trustStore, trustStore_password, keystore_password);
+//        return HttpUtils.get(postUrl,param);
 
     }
 
@@ -69,7 +103,7 @@ public class SearsBase {
 
         for (int intApiErrorCount = 0; intApiErrorCount < C_MAX_API_REPEAT_TIME; intApiErrorCount++) {
             try {
-                return HttpUtils.get(postUrl, param);
+                return HttpUtils.get(postUrl, param, trustStore, trustStore_password, keystore_password);
             } catch (Exception e) {
                 // 最后一次出错则直接抛出
                 Thread.sleep(1000);
@@ -81,15 +115,26 @@ public class SearsBase {
 
     protected OrderResponse SearsHttpPost(String url, String charset,String content) throws Exception {
 
-        HttpURLConnection http = null;
+        // Properties属性没有设置的场合 Properties的SSL属性设置
+//        if (!System.getProperties().contains(keystore)){
+//            System.getProperties().putAll(properties);
+//        }
+
+        HttpsURLConnection http = null;
         OutputStream output = null;
         BufferedReader in = null;
         String ret = null;
         OrderResponse orderResponse = new OrderResponse();
 
+        SSLSocketFactory ssf = HttpUtils.getSsf(trustStore, trustStore_password, keystore_password);
+
         try {
             URL u = new URL(url);
-            http = (HttpURLConnection) u.openConnection();
+            http = (HttpsURLConnection) u.openConnection();
+
+            if (ssf != null) {
+                http.setSSLSocketFactory(ssf);
+            }
 
             http.setDoOutput(true);
             http.setDoInput(true);

@@ -58,10 +58,11 @@ public class WmsSyncToCnSubService extends WmsSyncInventoryBaseService {
 
                         movePass(inventorySynLogBean);
                 }
-            } catch (UnsupportedEncodingException e) {
-
+            } catch (Exception e) {
+                logger.info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步失败：" + e);
                 logFailRecord(e, shopBean);
             }
+
         }
 
         logger.info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步结束。" + StringUtils.null2Space2(res));

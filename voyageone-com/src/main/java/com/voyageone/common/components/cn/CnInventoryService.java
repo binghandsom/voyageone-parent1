@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.voyageone.common.components.cn.base.CnBase;
 import com.voyageone.common.components.cn.beans.InventoryUpdateBean;
 import com.voyageone.common.components.cn.enums.InventorySynType;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.HttpUtils;
 import org.springframework.stereotype.Component;
@@ -32,7 +33,7 @@ public class CnInventoryService extends CnBase {
      * @return response
      * @throws UnsupportedEncodingException
      */
-    public String UpdateInventory(InventorySynType synType, ShopBean shopBean, List<InventoryUpdateBean> beans) throws UnsupportedEncodingException {
+    public String UpdateInventory(InventorySynType synType, ShopBean shopBean, List<InventoryUpdateBean> beans) throws Exception {
 
         String sign = shopBean.getAppKey();
 

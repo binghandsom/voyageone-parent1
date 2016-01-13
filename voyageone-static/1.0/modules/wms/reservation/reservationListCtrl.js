@@ -117,10 +117,15 @@ define([
 						liViewCtl.cancel = true;
 						liViewCtl.backOrder = true;
 					}
-					//状态为98(backOrder)的时候才展示【打开】、【确认】按钮
+					//状态为98(backOrder)的时候才展示【打开】、【取消】、【确认】按钮
 					if(reservationInfo.res_status_id == '98'){
 						liViewCtl.open  = true;
+						liViewCtl.cancel = true;
 						liViewCtl.backOrderConfirmed  = true;
+					}
+					//状态为96(backOrderConfirmed)的时候允许【取消】按钮
+					if(reservationInfo.res_status_id == '96'){
+						liViewCtl.cancel = true;
 					}
 
 				}

@@ -8,7 +8,6 @@
      http://www.springframework.org/schema/context
      http://www.springframework.org/schema/context/spring-context-3.2.xsd">
 
-    <context:component-scan base-package="com.voyageone"/>
 
     <bean id="dataSourceMaster" class="com.voyageone.base.dao.ProxoolDataSource">
         <property name="driver" value="com.mysql.jdbc.Driver"/>

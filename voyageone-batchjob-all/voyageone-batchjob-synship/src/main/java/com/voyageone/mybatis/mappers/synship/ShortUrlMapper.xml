@@ -11,5 +11,6 @@
             short_key
         FROM Synship.tt_shorturl
         WHERE source_order_id = #{source_order_id} AND type = '1'
+        limit 1
     </select>
 </mapper>

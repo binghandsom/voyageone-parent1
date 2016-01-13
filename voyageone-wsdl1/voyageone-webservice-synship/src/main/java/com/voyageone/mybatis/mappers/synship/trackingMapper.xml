@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.synship.sql">
+
+    <select id="tt_orders_getSynShipNo" resultType="String">
+        SELECT
+            orders.syn_ship_no
+        FROM
+            oms_bt_orders  omsOrders,
+            tt_orders orders
+        WHERE
+            omsOrders.source_order_id = #{cwb}
+        AND
+            omsOrders.order_kind = '0'
+        AND
+            omsOrders.order_number = orders.order_number
+    </select>
+
+    <select id="orders_getOrderTrackInfo" resultType="com.voyageone.synship.formbean.OrderTrackInfoBean">
+        SELECT
+            orders.syn_ship_no,
+            omsOrders.order_channel_id,
+            omsOrders.cart_id
+        FROM
+            oms_bt_orders  omsOrders,
+            tt_orders orders
+        WHERE
+            omsOrders.source_order_id = #{cwb}
+        AND
+            omsOrders.order_kind = '0'
+        AND
+            omsOrders.order_number = orders.order_number
+    </select>
+
+    <select id="orders_getSynshipNoByWebid" resultType="com.voyageone.synship.formbean.OrderTrackInfoBean">
+        SELECT
+            orders.syn_ship_no
+        FROM
+            oms_bt_orders  omsOrders,
+            tt_orders orders
+        WHERE
+            omsOrders.source_order_id = #{cwb}
+        AND
+            omsOrders.order_kind = '0'
+        AND
+            omsOrders.order_number = orders.order_number
+    </select>
+
+    <select id="orders_getSynshipNoByPhone" resultType="com.voyageone.synship.formbean.OrderTrackInfoBean">
+        SELECT
+            orders.syn_ship_no
+        FROM
+            oms_bt_orders  omsOrders,
+            tt_orders orders
+        WHERE
+            omsOrders.ship_phone = #{cwb}
+        AND
+            omsOrders.order_kind = '0'
+        AND
+            omsOrders.order_number = orders.order_number
+        ORDER BY
+            omsOrders.order_date_time DESC
+        limit 1
+    </select>
+
+
+    <select id="orders_getSynshipNoByTrackingNo" resultType="com.voyageone.synship.formbean.OrderTrackInfoBean">
+        SELECT
+            tracking.syn_ship_no
+        FROM
+            tt_tracking tracking
+        WHERE
+            tracking.tracking_no = #{cwb}
+        AND
+            tracking.use_flg = '1'
+		AND
+			tracking.tracking_area = '0'
+        ORDER BY
+            tracking.create_time DESC
+		limit 1
+    </select>
+
+    <select id="orders_getSynshipNoByOrderNum" resultType="com.voyageone.synship.formbean.OrderTrackInfoBean">
+        SELECT
+            orders.syn_ship_no
+        FROM
+            tt_orders orders
+        WHERE
+            orders.order_number = #{cwb}
+    </select>
+
+    <select id="tt_tracking_info_select" resultType="com.voyageone.synship.formbean.TrackInfoBean">
+        select
+            info.syn_ship_no,
+            info.tracking_status,
+            info.process_time,
+            config.order_channel_id,
+            config.cart_id,
+            if (info.msg = '',config.tracking_info,info.msg) tracking_info,
+            config.location,
+            config.display_flg,
+            config.display_status,
+            config.tracking_area,
+            config.tracking_spread_flg,
+            if (info.tracking_no = '',
+                (select tracking.tracking_no
+                 from tt_tracking tracking,tt_res_tracking res
+                 where res.syn_ship_no = info.syn_ship_no
+                   and res.tracking_no = tracking.tracking_no
+                   and tracking.tracking_area = config.tracking_area
+                   and tracking.use_flg = '1'
+                 order by tracking.create_time,tracking.tracking_no limit 1),
+                 info.tracking_no) as tracking_no,
+            if (info.tracking_no = '',
+                (select tracking.tracking_type
+                 from tt_tracking tracking,tt_res_tracking res
+                 where res.syn_ship_no = info.syn_ship_no
+                   and res.tracking_no = tracking.tracking_no
+                   and tracking.tracking_area = config.tracking_area
+                   and tracking.use_flg = '1'
+                 order by tracking.create_time,tracking.tracking_no limit 1),
+                 (select tracking.tracking_type
+                  from tt_tracking tracking
+                  where tracking.tracking_no = info.tracking_no
+                 order by tracking.create_time,tracking.tracking_no limit 1)) as tracking_type
+        from
+            (select
+                 info.syn_ship_no,
+                 info.tracking_status,
+                 info.tracking_no,
+                 '' msg,
+                 min(info.process_time) as process_time
+             from
+                 tt_tracking_info info
+             where info.syn_ship_no = #{syn_ship_no}
+             group by info.syn_ship_no,info.tracking_status
+
+             union
+
+             select
+                 DISTINCT
+                 items.syn_ship_no,
+                 info.tracking_status,
+                 '' tracking_no,
+                 info.msg,
+                 min(info.proccess_time) as process_time
+             from
+                 tt_shipment shipment,
+                 tt_package_items items,
+                 tt_shipment_info info
+             where shipment.shipment_id = items.shipment_id
+               and items.shipment_id = info.shipment_id
+               and items.del_flg = '0'
+               and items.syn_ship_no = #{syn_ship_no}
+             group by items.syn_ship_no,info.tracking_status
+            ) info,
+            tt_orders orders,
+            oms_bt_orders oms_orders,
+            com_mt_tracking_info_config config
+        where info.syn_ship_no = orders.syn_ship_no
+          and orders.order_number = oms_orders.order_number
+          and oms_orders.order_channel_id = config.order_channel_id
+          and oms_orders.cart_id = config.cart_id
+          and info.tracking_status = config.tracking_status
+        order by info.process_time,info.tracking_status
+    </select>
+
+    <select id="tt_waybillRoute_select" resultType="com.voyageone.synship.modelbean.WaybillRouteBean">
+        select
+            auto_no,
+            id,
+            mailno,
+            orderid,
+            acceptTime,
+            acceptAddress,
+            remark,
+            opCode,
+            carrier_alias_name,
+            create_time,
+            update_time,
+            create_person,
+            update_person
+        from
+            tt_waybillroute waybillroute,
+            tm_carrier carrier
+        where carrier.carrier = #{tracking_type}
+          and waybillroute.mailno = #{tracking_no}
+          and waybillroute.carrier_alias_name = carrier.alias_name
+          and waybillroute.remark !='null'
+        order by waybillroute.acceptTime asc,waybillroute.id asc
+    </select>
+</mapper>

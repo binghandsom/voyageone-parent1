@@ -17,6 +17,7 @@ import com.voyageone.common.components.baidu.translate.BaiduTranslateUtil;
 import com.voyageone.common.components.issueLog.IssueLog;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.components.sears.bean.OrderLookupItemSub;
 import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
@@ -325,10 +326,10 @@ public class PostBCBGOrderService {
 			ret = null;
 
 			logger.error("getPushDailySalesList error", e);
-			issueLog.log(e,
+			issueLog.log("PostBCBGOrderService.getPushDailySalesList",
+					"getPushDailySalesList error",
 					ErrorType.BatchJob,
-					SubSystem.OMS,
-					"PostBCBGOrderService.getPushDailySalesList error");
+					SubSystem.OMS);
 		}
 		return ret;
 	}
@@ -462,10 +463,10 @@ public class PostBCBGOrderService {
 			retForUpdate = null;
 
 			logger.error("getPushDailySalesListForReturn error", e);
-			issueLog.log(e,
+			issueLog.log("PostBCBGOrderService.getPushDailySalesListForReturn",
+					"getPushDailySalesListForReturn error",
 					ErrorType.BatchJob,
-					SubSystem.OMS,
-					"PostBCBGOrderService.getPushDailySalesListForReturn error");
+					SubSystem.OMS);
 		}
 
 		retArr.add(retRun);
@@ -767,10 +768,6 @@ public class PostBCBGOrderService {
 			}
 		} catch (Exception ex) {
 			logger.error("updateOrdersSendInfo", ex);
-			issueLog.log(ex,
-					ErrorType.BatchJob,
-					SubSystem.OMS,
-					"updateOrdersInfo error;task name = " + taskName);
 
 			isSuccess = false;
 
@@ -1167,10 +1164,10 @@ public class PostBCBGOrderService {
 			ret = null;
 
 			logger.error("getPushDemandList error", e);
-			issueLog.log(e,
+			issueLog.log("postBCBGDemands.getPushDemandList",
+					"getPushDemandList error",
 					ErrorType.BatchJob,
-					SubSystem.OMS,
-					"postBCBGDemands.getPushDemandList error");
+					SubSystem.OMS);
 		}
 		return ret;
 	}
@@ -1293,10 +1290,10 @@ public class PostBCBGOrderService {
 			retForOutput = null;
 
 			logger.error("getPushDemandListForCancel error", e);
-			issueLog.log(e,
+			issueLog.log("postBCBGDemands.getPushDemandListForCancel",
+					"getPushDemandListForCancel error",
 					ErrorType.BatchJob,
-					SubSystem.OMS,
-					"getPushDemandListForCancel error");
+					SubSystem.OMS);
 		}
 
 		retArr.add(retRun);
@@ -1349,7 +1346,7 @@ public class PostBCBGOrderService {
 		now = DateTimeUtil.getNow();
 
 		// 前七天
-		Date startDate = DateTimeUtil.addDays(DateTimeUtil.parse(now), -10);
+		Date startDate = DateTimeUtil.addDays(DateTimeUtil.parse(now), -7);
 		String startDateString =  DateTimeUtil.format(startDate, DateTimeUtil.DEFAULT_DATE_FORMAT);
 		startSearchDateGMT = startDateString + " 00:00:00";
 		endSearchDateGMT = now;
@@ -1384,7 +1381,7 @@ public class PostBCBGOrderService {
 
 			logger.error("uploadOrderFile", e);
 
-			issueLog.log(e, ErrorType.BatchJob, SubSystem.OMS, "uploadOrderFile error");
+			issueLog.log(e, ErrorType.BatchJob, SubSystem.OMS);
 
 		}
 
@@ -1922,32 +1919,33 @@ public class PostBCBGOrderService {
 	private void translateOrderExtend(OrderExtend orderInfo) throws Exception {
 		ArrayList<String> translateContent = new ArrayList<String>();
 
+		translateContent.add("中国");
 		translateContent.add(orderInfo.getShipName());
-		translateContent.add(orderInfo.getShipAddress());
-		translateContent.add(orderInfo.getShipAddress2());
+		translateContent.add(StringUtils.isNullOrBlank2(orderInfo.getShipAddress())?orderInfo.getShipAddress2():orderInfo.getShipAddress());
+		translateContent.add(StringUtils.isNullOrBlank2(orderInfo.getShipAddress2())?orderInfo.getShipAddress():orderInfo.getShipAddress2());
 		translateContent.add(orderInfo.getShipCity());
 		translateContent.add(orderInfo.getShipState());
 
 		translateContent.add(orderInfo.getName());
-		translateContent.add(orderInfo.getAddress());
-		translateContent.add(orderInfo.getAddress2());
+		translateContent.add(StringUtils.isNullOrBlank2(orderInfo.getAddress()) ?orderInfo.getAddress2():orderInfo.getAddress());
+		translateContent.add(StringUtils.isNullOrBlank2(orderInfo.getAddress2()) ?orderInfo.getAddress():orderInfo.getAddress2());
 		translateContent.add(orderInfo.getCity());
 		translateContent.add(orderInfo.getState());
 
 //		List<String> afterTranslateContent = translate(translateContent, 1);
 		List<String> afterTranslateContent = BaiduTranslateUtil.translate(translateContent);
 
-		orderInfo.setShipName(afterTranslateContent.get(0));
-		orderInfo.setShipAddress(afterTranslateContent.get(1));
-		orderInfo.setShipAddress2(afterTranslateContent.get(2));
-		orderInfo.setShipCity(afterTranslateContent.get(3));
-		orderInfo.setShipState(afterTranslateContent.get(4));
+		orderInfo.setShipName(afterTranslateContent.get(1));
+		orderInfo.setShipAddress(afterTranslateContent.get(2));
+		orderInfo.setShipAddress2(afterTranslateContent.get(3));
+		orderInfo.setShipCity(afterTranslateContent.get(4));
+		orderInfo.setShipState(afterTranslateContent.get(5));
 
-		orderInfo.setName(afterTranslateContent.get(5));
-		orderInfo.setAddress(afterTranslateContent.get(6));
-		orderInfo.setAddress2(afterTranslateContent.get(7));
-		orderInfo.setCity(afterTranslateContent.get(8));
-		orderInfo.setState(afterTranslateContent.get(9));
+		orderInfo.setName(afterTranslateContent.get(6));
+		orderInfo.setAddress(afterTranslateContent.get(7));
+		orderInfo.setAddress2(afterTranslateContent.get(8));
+		orderInfo.setCity(afterTranslateContent.get(9));
+		orderInfo.setState(afterTranslateContent.get(10));
 	}
 
 	private List<String> translate(List<String> beforeStringList, int threadNo) throws Exception {
