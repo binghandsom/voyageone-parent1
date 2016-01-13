@@ -6,7 +6,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function () {
 
-    return function ($scope,systemCategoryService,$routeParams,notify) {
+    function editController($scope,systemCategoryService,$routeParams,notify) {
         $scope.vm={"category":{},"isEditFlg":false};
         $scope.initialize  = function () {
             $scope.getCategoryDetail();
@@ -39,4 +39,7 @@ define([
             })
         }
     };
+
+    editController.$inject = ['$scope', 'systemCategoryService', '$routeParams', 'notify'];
+    return editController;
 });

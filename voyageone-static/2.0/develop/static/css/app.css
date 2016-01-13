@@ -112,6 +112,11 @@ small,
   border: 1px solid rgba(0, 0, 0, 0.08);
   color: #fff;
 }
+.badge-Purple {
+  background-color: #e1a4dd;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #fff;
+}
 blockquote {
   border-color: #d4cfcf;
 }
@@ -1774,10 +1779,13 @@ a.text-vo:focus {
 .breadcrumb > li + li:before {
   content: "/\00a0";
   padding: 0 4px;
-  color: #42413a;
+  color: #666;
 }
 .breadcrumb > .active {
   color: #e67e22;
+}
+.breadcrumb > .activeTitle {
+  color: #666;
 }
 .vo_page_header {
   padding: 15px 20px 15px 20px !important;

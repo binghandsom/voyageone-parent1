@@ -45,6 +45,19 @@ public interface CmsUrlConstants {
 
             String DIRECT_MATCH_OVER = "directMatchOver";
         }
+
+        interface PLATFORM {
+
+            String ROOT = "/cms/setting/platformMapping";
+
+            String GET_MAIN_CATEGORY = "getMainDataFinalCategoryMap";
+
+            String GET_OTHER_MAPPING_PATH = "getOtherMappingCategoryPath";
+
+            String GET_PLATFORM_CATEGORY = "getPlatformCategories";
+
+            String SET_PLATFORM_MAPPING = "setPlatformMapping";
+        }
     }
 
     interface PROMOTION {

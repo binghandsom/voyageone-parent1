@@ -42,6 +42,13 @@
         "getFeedAttrs": "getFeedAttributes",
         "saveFieldMapping": "saveFieldMapping",
         "directMatchOver": "directMatchOver"
+      },
+      "platformMappingService": {
+        "root": "/cms/setting/platformMapping",
+        "getMainCategory": "getMainDataFinalCategoryMap",
+        "getOtherMappingPath": "getOtherMappingCategoryPath",
+        "getPlatformCategory": "getPlatformCategories",
+        "setPlatformMapping": "setPlatformMapping"
       }
     },
     "pop": {

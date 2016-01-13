@@ -1,4 +1,91 @@
 define(function() {
+  angular.module("voyageone.angular.controllers.datePicker", []).controller("datePickerCtrl", [ "$scope", function($scope) {
+    var vm = this;
+    vm.formats = [ "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss" ];
+    $scope.formatDate = vm.formats[0];
+    $scope.formatDateTime = vm.formats[1];
+    $scope.open = open;
+    function open($event) {
+      $event.preventDefault();
+      $event.stopPropagation();
+      $scope.opened = true;
+    }
+  } ]);
+  angular.module("voyageone.angular.controllers.selectRows", []).controller("selectRowsCtrl", [ "$scope", function($scope) {
+    $scope.selectAll = selectAll;
+    $scope.selectOne = selectOne;
+    $scope.isAllSelected = isAllSelected;
+    function selectAll(objectList, id) {
+      objectList.selAllFlag = !objectList.selAllFlag;
+      if (!id) {
+        id = "id";
+      }
+      angular.forEach(objectList.currPageRows, function(object) {
+        objectList.selFlag[object[id]] = objectList.selAllFlag;
+        if (objectList.hasOwnProperty("selList")) {
+          var tempList = _.pluck(objectList.selList, id);
+          if (objectList.selAllFlag && tempList.indexOf(object[id]) < 0) {
+            objectList.selList.push(object);
+          } else if (!objectList.selAllFlag && tempList.indexOf(object[id]) > -1) {
+            objectList.selList.splice(tempList.indexOf(object[id]), 1);
+          }
+        }
+      });
+    }
+    function selectOne(currentId, objectList, id) {
+      if (!id) {
+        id = "id";
+      }
+      if (objectList.hasOwnProperty("selList")) {
+        angular.forEach(objectList.currPageRows, function(object) {
+          var tempList = _.pluck(objectList.selList, id);
+          if (_.isEqual(object[id], currentId)) {
+            if (tempList.indexOf(object[id]) > -1) {
+              objectList.selList.splice(tempList.indexOf(object[id]), 1);
+            } else {
+              objectList.selList.push(object);
+            }
+          }
+        });
+      }
+      objectList.selAllFlag = true;
+      tempList = _.pluck(objectList.selList, id);
+      angular.forEach(objectList.currPageRows, function(object) {
+        if (tempList.indexOf(object[id]) == -1) {
+          objectList.selAllFlag = false;
+        }
+      });
+    }
+    function isAllSelected(objectList, id) {
+      if (!id) {
+        id = "id";
+      }
+      if (objectList != undefined) {
+        objectList.selAllFlag = true;
+        var tempList = _.pluck(objectList.selList, id);
+        angular.forEach(objectList.currPageRows, function(object) {
+          if (tempList.indexOf(object[id]) == -1) {
+            objectList.selAllFlag = false;
+          }
+        });
+        return objectList.selAllFlag;
+      }
+      return false;
+    }
+  } ]);
+  angular.module("voyageone.angular.controllers.showPopover", []).controller("showPopoverCtrl", [ "$scope", function($scope) {
+    $scope.showInfo = showInfo;
+    function showInfo(values) {
+      var tempHtml = "";
+      angular.forEach(values, function(data, index) {
+        tempHtml += data;
+        if (index !== values.length) {
+          tempHtml += "<br>";
+        }
+      });
+      return tempHtml;
+    }
+  } ]);
   angular.module("voyageone.angular.directives.dateModelFormat", []).directive("dateModelFormat", [ "$filter", function($filter) {
     return {
       restrict: "A",
@@ -813,6 +900,56 @@ define(function() {
       }
     };
   });
+  angular.module("voyageone.angular.vresources", []).provider("$vresources", [ "$provide", function($provide) {
+    function getActionUrl(root, action) {
+      return root + (root.lastIndexOf("/") === root.length - 1 ? "" : "/") + action;
+    }
+    function closureDataService(name, actions, ajaxService) {
+      function DataResource() {
+        if (!actions) {
+          return;
+        }
+        if (typeof actions !== "object") {
+          console.log("Failed to new DataResource: [" + actions + "] is not a object");
+          return;
+        }
+        if (!actions.root) {
+          console.log("Failed to new DataResource: no root prop" + (JSON && JSON.stringify ? ": " + JSON.stringify(actions) : ""));
+          return;
+        }
+        for (var name in actions) {
+          if (name === "root") continue;
+          if (actions.hasOwnProperty(name)) {
+            this[name] = function(actionUrl) {
+              return function(data) {
+                return ajaxService.post(actionUrl, data);
+              };
+            }(getActionUrl(actions.root, actions[name]));
+          }
+        }
+      }
+      $provide.service(name, DataResource);
+    }
+    this.$get = [ "ajaxService", function(ajaxService) {
+      return {
+        register: function(name, actions) {
+          if (!actions) return;
+          if (typeof actions !== "object") return;
+          if (actions.root) {
+            closureDataService(name, actions, ajaxService);
+            return;
+          }
+          for (var childName in actions) {
+            if (actions.hasOwnProperty(childName)) {
+              this.register(childName, actions[childName]);
+            }
+          }
+        }
+      };
+    } ];
+  } ]).run([ "$vresources", "$actions", function($vresources, $actions) {
+    $vresources.register(null, $actions);
+  } ]);
   angular.module("voyageone.angular.factories.dialogs", []).factory("$dialogs", [ "$modal", "$filter", "$templateCache", function($modal, $filter, $templateCache) {
     var templateName = "voyageone.angular.factories.dialogs.tpl.html";
     $templateCache.put(templateName, '<div class="vo_modal"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()"><span aria-hidden="true"><i ng-click="close()" class="fa fa-close"></i></span></button><h4 class="modal-title" ng-bind-html="title"></h4></div><div class="modal-body wrapper-lg"><div class="row"><p ng-bind-html="content"></p></div></div><div class="modal-footer"><button class="btn btn-default btn-sm" ng-if="!isAlert" ng-click="close()" translate="BTN_COM_CANCEL"></button><button class="btn btn-vo btn-sm" ng-click="ok()" translate="BTN_COM_OK"></button></div></div>');
@@ -860,10 +997,7 @@ define(function() {
       });
     };
   } ]);
-  angular.module("voyageone.angular.factories.interceptor", []).factory("interceptorFactory", InterceptorFactory).config([ "$httpProvider", function($httpProvider) {
-    $httpProvider.interceptors.push("interceptorFactory");
-  } ]);
-  function InterceptorFactory() {
+  angular.module("voyageone.angular.factories.interceptor", []).factory("interceptorFactory", function() {
     var UNKNOWN_CODE = "5";
     var CODE_SYS_REDIRECT = "SYS_REDIRECT";
     var MSG_TIMEOUT = "300001";
@@ -905,7 +1039,9 @@ define(function() {
       },
       responseError: function(res) {}
     };
-  }
+  }).config([ "$httpProvider", function($httpProvider) {
+    $httpProvider.interceptors.push("interceptorFactory");
+  } ]);
   angular.module("voyageone.angular.factories.notify", []).factory("notify", [ "$filter", function($filter) {
     function notify(options) {
       if (!options) return;
@@ -1113,56 +1249,6 @@ define(function() {
       }
     };
   });
-  angular.module("voyageone.angular.vresources", []).provider("$vresources", [ "$provide", function($provide) {
-    function getActionUrl(root, action) {
-      return root + (root.lastIndexOf("/") === root.length - 1 ? "" : "/") + action;
-    }
-    function closureDataService(name, actions, ajaxService) {
-      function DataResource() {
-        if (!actions) {
-          return;
-        }
-        if (typeof actions !== "object") {
-          console.log("Failed to new DataResource: [" + actions + "] is not a object");
-          return;
-        }
-        if (!actions.root) {
-          console.log("Failed to new DataResource: no root prop" + (JSON && JSON.stringify ? ": " + JSON.stringify(actions) : ""));
-          return;
-        }
-        for (var name in actions) {
-          if (name === "root") continue;
-          if (actions.hasOwnProperty(name)) {
-            this[name] = function(actionUrl) {
-              return function(data) {
-                return ajaxService.post(actionUrl, data);
-              };
-            }(getActionUrl(actions.root, actions[name]));
-          }
-        }
-      }
-      $provide.service(name, DataResource);
-    }
-    this.$get = [ "ajaxService", function(ajaxService) {
-      return {
-        register: function(name, actions) {
-          if (!actions) return;
-          if (typeof actions !== "object") return;
-          if (actions.root) {
-            closureDataService(name, actions, ajaxService);
-            return;
-          }
-          for (var childName in actions) {
-            if (actions.hasOwnProperty(childName)) {
-              this.register(childName, actions[childName]);
-            }
-          }
-        }
-      };
-    } ];
-  } ]).run([ "$vresources", "$actions", function($vresources, $actions) {
-    $vresources.register(null, $actions);
-  } ]);
   angular.module("voyageone.angular.services.ajax", []).service("$ajax", $Ajax).service("ajaxService", AjaxService);
   function $Ajax($http, blockUI, $q) {
     this.$http = $http;
@@ -1320,93 +1406,6 @@ define(function() {
       return currentLang.substr(0, 2);
     }
   };
-  angular.module("voyageone.angular.controllers.datePicker", []).controller("datePickerCtrl", [ "$scope", function($scope) {
-    var vm = this;
-    vm.formats = [ "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss" ];
-    $scope.formatDate = vm.formats[0];
-    $scope.formatDateTime = vm.formats[1];
-    $scope.open = open;
-    function open($event) {
-      $event.preventDefault();
-      $event.stopPropagation();
-      $scope.opened = true;
-    }
-  } ]);
-  angular.module("voyageone.angular.controllers.selectRows", []).controller("selectRowsCtrl", [ "$scope", function($scope) {
-    $scope.selectAll = selectAll;
-    $scope.selectOne = selectOne;
-    $scope.isAllSelected = isAllSelected;
-    function selectAll(objectList, id) {
-      objectList.selAllFlag = !objectList.selAllFlag;
-      if (!id) {
-        id = "id";
-      }
-      angular.forEach(objectList.currPageRows, function(object) {
-        objectList.selFlag[object[id]] = objectList.selAllFlag;
-        if (objectList.hasOwnProperty("selList")) {
-          var tempList = _.pluck(objectList.selList, id);
-          if (objectList.selAllFlag && tempList.indexOf(object[id]) < 0) {
-            objectList.selList.push(object);
-          } else if (!objectList.selAllFlag && tempList.indexOf(object[id]) > -1) {
-            objectList.selList.splice(tempList.indexOf(object[id]), 1);
-          }
-        }
-      });
-    }
-    function selectOne(currentId, objectList, id) {
-      if (!id) {
-        id = "id";
-      }
-      if (objectList.hasOwnProperty("selList")) {
-        angular.forEach(objectList.currPageRows, function(object) {
-          var tempList = _.pluck(objectList.selList, id);
-          if (_.isEqual(object[id], currentId)) {
-            if (tempList.indexOf(object[id]) > -1) {
-              objectList.selList.splice(tempList.indexOf(object[id]), 1);
-            } else {
-              objectList.selList.push(object);
-            }
-          }
-        });
-      }
-      objectList.selAllFlag = true;
-      tempList = _.pluck(objectList.selList, id);
-      angular.forEach(objectList.currPageRows, function(object) {
-        if (tempList.indexOf(object[id]) == -1) {
-          objectList.selAllFlag = false;
-        }
-      });
-    }
-    function isAllSelected(objectList, id) {
-      if (!id) {
-        id = "id";
-      }
-      if (objectList != undefined) {
-        objectList.selAllFlag = true;
-        var tempList = _.pluck(objectList.selList, id);
-        angular.forEach(objectList.currPageRows, function(object) {
-          if (tempList.indexOf(object[id]) == -1) {
-            objectList.selAllFlag = false;
-          }
-        });
-        return objectList.selAllFlag;
-      }
-      return false;
-    }
-  } ]);
-  angular.module("voyageone.angular.controllers.showPopover", []).controller("showPopoverCtrl", [ "$scope", function($scope) {
-    $scope.showInfo = showInfo;
-    function showInfo(values) {
-      var tempHtml = "";
-      angular.forEach(values, function(data, index) {
-        tempHtml += data;
-        if (index !== values.length) {
-          tempHtml += "<br>";
-        }
-      });
-      return tempHtml;
-    }
-  } ]);
   angular.module("voyageone.angular.controllers", [ "voyageone.angular.controllers.datePicker", "voyageone.angular.controllers.selectRows", "voyageone.angular.controllers.showPopover" ]);
   angular.module("voyageone.angular.directives", [ "voyageone.angular.directives.dateModelFormat", "voyageone.angular.directives.enterClick", "voyageone.angular.directives.fileStyle", "voyageone.angular.directives.ifNoRows", "voyageone.angular.directives.uiNav", "voyageone.angular.directives.schema", "voyageone.angular.directives.voption", "voyageone.angular.directives.vpagination", "voyageone.angular.directives.validator" ]);
   angular.module("voyageone.angular.factories", [ "voyageone.angular.factories.dialogs", "voyageone.angular.factories.interceptor", "voyageone.angular.factories.notify", "voyageone.angular.factories.schema", "voyageone.angular.factories.selectRows", "voyageone.angular.factories.vpagination" ]);

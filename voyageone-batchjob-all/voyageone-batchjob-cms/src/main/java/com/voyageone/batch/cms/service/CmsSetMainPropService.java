@@ -1,5 +1,6 @@
 package com.voyageone.batch.cms.service;
 
+import com.google.common.base.Joiner;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.cms.bean.ItemDetailsBean;
@@ -373,12 +374,13 @@ public class CmsSetMainPropService extends BaseTaskService {
             List<String> mainFeedOrgAttsValueList = new ArrayList<>();
             // 遍历所有的feed属性
             for (Map.Entry<String,List<String>> attr : feed.getAttribute().entrySet() ) {
+                String valString = Joiner.on(", ").skipNulls().join(attr.getValue());
                 // 原始语言
-                mainFeedOrgAtts.setAttribute(attr.getKey(), attr.getValue());
+                mainFeedOrgAtts.setAttribute(attr.getKey(), valString);
 
                 // 放到list里, 用来后面的程序翻译用
                 mainFeedOrgAttsKeyList.add(attr.getKey());
-                mainFeedOrgAttsValueList.add(attr.getValue().toString());
+                mainFeedOrgAttsValueList.add(valString);
             }
             // 增加一个modelCode(来源是feed的field的model, 无需翻译)
             mainFeedOrgAtts.setAttribute("modelCode", feed.getModel());
@@ -402,6 +404,8 @@ public class CmsSetMainPropService extends BaseTaskService {
                     mainFeedCnAtts.setAttribute(aMainFeedOrgAttsKeyList, "");
                 }
             }
+            // 增加一个modelCode(来源是feed的field的model, 无需翻译)
+            mainFeedCnAtts.setAttribute("modelCode", feed.getModel());
             product.getFeed().setCnAtts(mainFeedCnAtts);
 
             return product;
@@ -477,6 +481,8 @@ public class CmsSetMainPropService extends BaseTaskService {
             return product.getGroups().getPlatforms().get(0).getGroupId();
         }
 
+        private int m_mulitComplex_index = 0; // 暂时只支持一层multiComplex, 如果需要多层, 就需要改成list, 先进后出
+        private boolean m_mulitComplex_run = false; // 暂时只支持一层multiComplex, 如果需要多层, 就需要改成list, 先进后出
         /**
          * getPropValueByMapping 属性匹配(递归)
          * @param prop mapping表里的一个属性
@@ -485,8 +491,6 @@ public class CmsSetMainPropService extends BaseTaskService {
          * @param schemaModel 主类目的schema信息
          * @return 匹配好的属性
          */
-        private int m_mulitComplex_index = 0; // 暂时只支持一层multiComplex, 如果需要多层, 就需要改成list, 先进后出
-        private boolean m_mulitComplex_run = false; // 暂时只支持一层multiComplex, 如果需要多层, 就需要改成list, 先进后出
         private Object getPropValueByMapping(
                 String propPath,
                 Prop prop,
@@ -496,7 +500,6 @@ public class CmsSetMainPropService extends BaseTaskService {
 
             String strPathSplit = ">";
 
-            String simpleValue = "";
             Map<String, Object> complexChildren = new HashMap<>();
             List<Map<String, Object>> multiComplexChildren = new LinkedList<>();
 

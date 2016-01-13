@@ -10,7 +10,7 @@ require.config({
     baseUrl: '../../',
     paths: {
         'voyageone-angular-com': 'components/dist/voyageone.angular.com',
-        'voyageone-com': 'components/dist/voyageone.com.min',
+        'voyageone-com': 'components/dist/voyageone.com',
         'angular-animate': 'libs/angular.js/1.5.0-RC.0/angular-animate',
         'angular-route': 'libs/angular.js/1.5.0-RC.0/angular-route',
         'angular-sanitize': 'libs/angular.js/1.5.0-RC.0/angular-sanitize',
@@ -18,7 +18,7 @@ require.config({
         'angular': 'libs/angular.js/1.5.0-RC.0/angular',
         'angular-translate': 'libs/angular-translate/2.8.1/angular-translate',
         'angular-block-ui': 'libs/angular-block-ui/0.2.1/angular-block-ui',
-        'angular-ui-bootstrap': 'libs/angular-ui-bootstrap/0.14.3/ui-bootstrap-tpls-0.14.3.min',
+        'angular-ui-bootstrap': 'libs/angular-ui-bootstrap/0.14.3/ui-bootstrap-tpls-0.14.3',
         'angular-ngStorage': 'libs/angular-ngStorage/ngStorage',
         'angular-file-upload': 'libs/angular-file-upload/2.2.0/angular-file-upload',
         'angularAMD': 'libs/angularAMD/0.2.1/angularAMD.min',

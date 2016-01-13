@@ -8,7 +8,7 @@
 
 require.config({
   paths: {
-    'angular': 'libs/angular.js/1.4.7/angular',
+    'angular': 'libs/angular.js/1.5.0-RC.0/angular',
     'angular-block-ui': 'libs/angular-block-ui/0.2.1/angular-block-ui',
     'angular-cookies': 'libs/angular.js/1.4.7/angular-cookies',
     'voyageone-angular-com' : 'components/dist/voyageone.angular.com',

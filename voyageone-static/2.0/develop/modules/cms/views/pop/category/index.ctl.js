@@ -6,14 +6,14 @@ define(['cms'], function (cms) {
 
     return cms.controller('categoryPopupController', (function () {
 
-        function CategoryPopupController(context, feedMappingService, $uibModalInstance) {
+        function CategoryPopupController(context, $uibModalInstance, notify) {
 
             this.$uibModalInstance = $uibModalInstance;
-            this.feedMappingService = feedMappingService;
+            this.notify = notify;
 
             /**
              * 画面传递的上下文
-             * @type {{from:object}}
+             * @type {{categories: object[], from: string}}
              */
             this.context = context;
             /**
@@ -38,12 +38,11 @@ define(['cms'], function (cms) {
              * 初始化时,加载必需数据
              */
             init: function () {
-                // 加载主类目,如果主类目数据已经缓存则从本地读取
-                this.feedMappingService.getMainCategories().then(function (res) {
-                    this.categories = res.data;
-                    // 每次加载,都初始化 TOP 为第一级
-                    this.categoryPath = [{level:1, categories: this.categories}];
-                }.bind(this));
+
+                this.categories = this.context.categories;
+
+                // 每次加载,都初始化 TOP 为第一级
+                this.categoryPath = [{level: 1, categories: this.categories}];
             },
             /**
              * 打开一个类目(选定一个类目)
@@ -66,9 +65,20 @@ define(['cms'], function (cms) {
 
                 if (!category.children || !category.children.length) return;
 
-                this.categoryPath.push({level:level + 1, categories: category.children});
+                this.categoryPath.push({level: level + 1, categories: category.children});
             },
-            ok: function() {
+            ok: function () {
+
+                if (!this.selected) {
+                    this.notify.danger('没有选中任何类目');
+                    return;
+                }
+
+                if (this.selected.isParent === 1) {
+                    this.notify.danger('不是叶子类目, 不能匹配类目到父级.');
+                    return;
+                }
+
                 this.context.selected = this.selected;
                 this.$uibModalInstance.close(this.context);
             },

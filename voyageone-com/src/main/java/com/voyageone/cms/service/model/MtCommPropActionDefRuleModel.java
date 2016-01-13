@@ -2,8 +2,8 @@ package com.voyageone.cms.service.model;
 
 import com.voyageone.common.configs.Enums.ActionType;
 import com.voyageone.common.masterdate.schema.enums.RuleTypeEnum;
-import com.voyageone.common.masterdate.schema.factory.SchemaFactory;
 import com.voyageone.common.masterdate.schema.field.Field;
+import com.voyageone.common.masterdate.schema.rule.ReadOnlyRule;
 import com.voyageone.common.masterdate.schema.rule.Rule;
 import com.voyageone.common.util.JsonUtil;
 
@@ -20,6 +20,7 @@ public class MtCommPropActionDefRuleModel {
     private final String IS_REQUIRED = "required";
     private final String IS_DISPLAY = "isDisplay";
     private final String DATASOURCE = "dataSource";
+    private final String READONLY = "readOnlyRule";
 
     private Map<String, Object> rulMap;
 
@@ -43,9 +44,11 @@ public class MtCommPropActionDefRuleModel {
      */
     public void setFieldComProperties(Field field){
         if (this.rulMap != null){
+
+            List<Rule> rules = field.getRules();
+
             if (this.rulMap.get(this.IS_REQUIRED) != null){
 
-                List<Rule> rules = field.getRules();
 
                 boolean isRequire = false;
 
@@ -62,7 +65,7 @@ public class MtCommPropActionDefRuleModel {
 
             }
 
-            if (this.rulMap.get(this.DATASOURCE) !=null){
+            if (this.rulMap.get(this.DATASOURCE) != null){
                 field.setDataSource(this.rulMap.get(this.DATASOURCE).toString());
             }
 
@@ -74,6 +77,24 @@ public class MtCommPropActionDefRuleModel {
                 }
 
             }
+
+            if(this.rulMap.get(this.READONLY) != null){
+
+                boolean isReadOnly = false;
+
+                for (Rule r:rules){
+                    if ("readOnlyRule".equals(r.getName()) && "true".equals(r.getValue())){
+                        isReadOnly = true;
+                        break;
+                    }
+                }
+
+                if (!isReadOnly){
+                    ReadOnlyRule rule = new ReadOnlyRule("true");
+                    field.add(rule);
+                }
+            }
+
         }
 
     }
