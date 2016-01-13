@@ -1,6 +1,5 @@
 package com.voyageone.cms.service;
 
-import com.mongodb.WriteResult;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCategoryTreeDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategoryDao;
 import com.voyageone.cms.service.model.CmsMtCategoryTreeModel;
@@ -22,40 +21,71 @@ public class CmsMtCategoryTreeService {
     private CmsMtPlatformCategoryDao platformCategoryDao;
 
     /**
+     * 生成并插入cms_mt_category_tree数据（cartId ）
+     */
+    public boolean createCmsMtCategoryTreeFromPlatform(int cartId) {
+        return createCmsMtCategoryTreeFromPlatform(cartId, false);
+    }
+    public boolean createCmsMtCategoryTreeFromPlatform(int cartId, boolean isUpdate) {
+        List<CmsMtPlatformCategoryTreeModel> platformCategoryTreeModels = platformCategoryDao.selectPlatformCategoriesByCartId(cartId);
+        for (CmsMtPlatformCategoryTreeModel platformCategoryTreeModel : platformCategoryTreeModels) {
+            CmsMtCategoryTreeModel cmsMtCategoryTreeModel = createCategoryTreeModel(platformCategoryTreeModel, true);
+            CmsMtCategoryTreeModel dbModel = cmsMtCategoryTreeDao.selectByCatId(cmsMtCategoryTreeModel.getCatId());
+            if (dbModel != null) {
+                if (isUpdate) {
+                    cmsMtCategoryTreeDao.delete(dbModel);
+                    cmsMtCategoryTreeDao.insert(cmsMtCategoryTreeModel);
+                }
+            } else {
+                cmsMtCategoryTreeDao.insert(cmsMtCategoryTreeModel);
+            }
+        }
+        return true;
+    }
+
+    /**
      * 生成并插入cms_mt_category_tree数据（channelId cartId ）
      */
     public boolean createCmsMtCategoryTreeFromPlatform(String channelId, int cartId) {
-        boolean result = true;
+        return createCmsMtCategoryTreeFromPlatform(channelId, cartId, false);
+    }
+    public boolean createCmsMtCategoryTreeFromPlatform(String channelId, int cartId, boolean isUpdate) {
         List<CmsMtPlatformCategoryTreeModel> platformCategoryTreeModels = platformCategoryDao.selectByChannel_CartId(channelId, cartId);
         for (CmsMtPlatformCategoryTreeModel platformCategoryTreeModel : platformCategoryTreeModels) {
             CmsMtCategoryTreeModel cmsMtCategoryTreeModel = createCategoryTreeModel(platformCategoryTreeModel, true);
             CmsMtCategoryTreeModel dbModel = cmsMtCategoryTreeDao.selectByCatId(cmsMtCategoryTreeModel.getCatId());
             if (dbModel != null) {
-                cmsMtCategoryTreeDao.delete(dbModel);
-            }
-            WriteResult writeResult = cmsMtCategoryTreeDao.insert(cmsMtCategoryTreeModel);
-            if (writeResult.getN() > 0) {
-                result = false;
+                if (isUpdate) {
+                    cmsMtCategoryTreeDao.delete(dbModel);
+                    cmsMtCategoryTreeDao.insert(cmsMtCategoryTreeModel);
+                }
+            } else {
+                cmsMtCategoryTreeDao.insert(cmsMtCategoryTreeModel);
             }
         }
-        return result;
+        return true;
     }
+
 
     /**
      * 生成并插入cms_mt_category_tree数据（channelId cartId categoryId ）
      */
     public boolean createCmsMtCategoryTreeFromPlatform(String channelId, int cartId, String categoryId) {
+        return createCmsMtCategoryTreeFromPlatform(channelId, cartId, categoryId, false);
+    }
+    public boolean createCmsMtCategoryTreeFromPlatform(String channelId, int cartId, String categoryId, boolean isUpdate) {
         CmsMtPlatformCategoryTreeModel platformCategoryTreeModel = platformCategoryDao.selectByChannel_CartId_CatId(channelId, cartId, categoryId);
         CmsMtCategoryTreeModel cmsMtCategoryTreeModel = createCategoryTreeModel(platformCategoryTreeModel, true);
         CmsMtCategoryTreeModel dbModel = cmsMtCategoryTreeDao.selectByCatId(cmsMtCategoryTreeModel.getCatId());
         if (dbModel != null) {
-            cmsMtCategoryTreeDao.delete(dbModel);
+            if (isUpdate) {
+                cmsMtCategoryTreeDao.delete(dbModel);
+                cmsMtCategoryTreeDao.insert(cmsMtCategoryTreeModel);
+            }
+        } else {
+            cmsMtCategoryTreeDao.insert(cmsMtCategoryTreeModel);
         }
-        WriteResult writeResult = cmsMtCategoryTreeDao.insert(cmsMtCategoryTreeModel);
-        if(writeResult.getN() > 0) {
-            return true;
-        }
-        return false;
+        return true;
     }
 
 

@@ -25,5 +25,11 @@ public class CmsMtCategoryTreeServiceTest {
 
     }
 
+    @Test
+    public void testCreateCmsMtCategoryTreeFromPlatform3() throws Exception {
+        boolean ret = cmsMtCategoryTree.createCmsMtCategoryTreeFromPlatform(23);
+        System.out.println(ret);
+    }
+
 }
 
