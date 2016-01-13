@@ -6,7 +6,7 @@ var uglify = require('gulp-uglify');
 var sourceMaps = require('gulp-sourcemaps');
 var replace = require('gulp-replace');
 var rename = require('gulp-rename');
-var clean = require('gulp-clean')
+//var clean = require('gulp-clean')
 
 var vars = require('./gulp-vars');
 var publish = vars.publish;
