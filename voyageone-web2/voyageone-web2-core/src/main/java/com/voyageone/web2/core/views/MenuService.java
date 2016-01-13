@@ -5,6 +5,7 @@ import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.base.BaseConstants;
+import com.voyageone.web2.core.CoreConstants;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.core.dao.UserRolePropertyDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +70,6 @@ public class MenuService extends BaseAppService {
         session.setAttribute(BaseConstants.SESSION_LANG, language);
 
         // 设置用户的默认语言
-        // TODO
-        userInfo.getUserConfig().get("language_id").get(0).setCfg_val1(language);
+        userInfo.getUserConfig().get(CoreConstants.USER_CONFIG_LANGUAGE_ID).get(0).setCfg_val1(language);
     }
 }

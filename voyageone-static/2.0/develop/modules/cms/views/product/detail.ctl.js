@@ -50,7 +50,7 @@ define([
 
             // 取消product详情的变更
             cancelProductInfo: function () {
-                this.productDetails.fields = angular.copy(this.productDetailsCopy.fields);
+                this.productDetails.masterFields = angular.copy(this.productDetailsCopy.masterFields);
             },
 
             // 取消product自定义的变更
