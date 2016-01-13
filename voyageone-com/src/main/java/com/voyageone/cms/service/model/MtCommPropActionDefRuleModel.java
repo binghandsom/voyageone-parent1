@@ -1,8 +1,6 @@
 package com.voyageone.cms.service.model;
 
 import com.voyageone.common.configs.Enums.ActionType;
-import com.voyageone.common.masterdate.schema.enums.RuleTypeEnum;
-import com.voyageone.common.masterdate.schema.factory.SchemaFactory;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.rule.Rule;
 import com.voyageone.common.util.JsonUtil;
