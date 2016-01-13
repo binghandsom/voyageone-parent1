@@ -112,6 +112,11 @@ small,
   border: 1px solid rgba(0, 0, 0, 0.08);
   color: #fff;
 }
+.badge-Purple {
+  background-color: #e1a4dd;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #fff;
+}
 blockquote {
   border-color: #d4cfcf;
 }
