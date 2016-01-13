@@ -8,77 +8,66 @@
             provisional.transfer_id,
             provisional.order_number,
             provisional.transfer_sku,
-            count(provisional.transfer_id) AS sales_unit,
+            provisional.sales_unit,
             provisional.order_channel_id,
             provisional.created,
-            orders.source_order_id,
-            orders.cart_id,
+            provisional.source_order_id,
+            provisional.cart_id,
             itemdetails.itemcode,
             itemdetails.size
         FROM
             (
                 SELECT
-                    transferitem.transfer_id,
-                    transferitem.order_number,
-                    ifnull(
-                        virtual.sku,
-                        transferitem.transfer_sku
-                    ) AS transfer_sku,
-                    transfer.order_channel_id,
-                    transfer.created
+                    '0' AS transfer_id,
+                    details.order_number,
+                    ifnull(virtual.sku, details.sku) AS transfer_sku,
+                    count(details.sku) AS sales_unit,
+                    orders.order_channel_id,
+                    details.ship_date AS created,
+                    orders.source_order_id,
+                    orders.cart_id
                 FROM
-                    wms_bt_transfer_item transferitem
-                INNER JOIN wms_bt_transfer transfer ON transfer.transfer_id = transferitem.transfer_id
-                AND transfer.order_channel_id = #{order_channel_id}
-                AND transfer.transfer_status =  #{transfer_status}
-                AND transfer.transfer_type = #{transfer_type}
-                AND transfer.transfer_origin = #{transfer_origin}
-                AND transfer.created BETWEEN #{start_created}
+                    oms_bt_order_details details
+                LEFT JOIN wms_bt_virtual_sku virtual ON details.sku = virtual.provisional_sku
+                INNER JOIN oms_bt_orders orders ON details.order_number = orders.order_number
+                AND orders.order_channel_id = #{order_channel_id}
+                AND orders.cart_id = #{cart_id}
+                WHERE
+                    details.ship_date BETWEEN #{start_created}
                 AND #{end_created}
-                LEFT JOIN wms_bt_virtual_sku virtual ON transferitem.transfer_sku = virtual.provisional_sku
-                INNER JOIN oms_bt_order_details details ON details.res_id = transferitem.reservation_id and details.ship_date IS NOT NULL
-                AND details.order_number = transferitem.order_number
+                AND details.synship_flg = '1'
+                AND details.res_allot_flg = '1'
+                AND details.adjustment = 0
+                AND details.res_id > 0
+                AND details.ship_date IS NOT NULL
+                AND NOT EXISTS (
+                    SELECT
+                        1
+                    FROM
+                        voyageone_ims.ims_bt_product_except except
+                    WHERE
+                        except.order_channel_id = #{order_channel_id}
+                    AND except.cart_id = #{cart_id}
+                    AND except.`comment` LIKE '%赠品%'
+                    AND except.except_sku = details.sku
+                )
+                AND NOT EXISTS (
+                    SELECT
+                        1
+                    FROM
+                        tm_order_channel_config
+                    WHERE
+                        order_channel_id = #{order_channel_id}
+                    AND cfg_name = 'special_goods_ball'
+                    AND cfg_val1 = details.sku
+                )
+                GROUP BY
+                    transfer_id,
+                    order_number,
+                    transfer_sku
             ) AS provisional
-        INNER JOIN oms_bt_orders orders ON orders.order_number = provisional.order_number
-        AND orders.cart_id = #{cart_id}
         INNER JOIN wms_bt_item_details itemdetails ON itemdetails.sku = provisional.transfer_sku
         AND itemdetails.order_channel_id = #{order_channel_id}
-        WHERE
-            EXISTS (
-                SELECT
-                    1
-                FROM
-                    tm_task_control
-                WHERE
-                    task_id = #{task_name}
-                AND cfg_name = 'order_channel_id'
-                AND cfg_val1 = orders.order_channel_id
-            )
-        AND NOT EXISTS (
-            SELECT
-                1
-            FROM
-                voyageone_ims.ims_bt_product_except except
-            WHERE
-                except.order_channel_id = #{order_channel_id}
-            AND except.cart_id = #{cart_id}
-            AND except.`comment` LIKE '%赠品%'
-            AND except.except_sku = provisional.transfer_sku
-        )
-        AND NOT EXISTS (
-            SELECT
-                1
-            FROM
-                tm_order_channel_config
-            WHERE
-                order_channel_id = #{order_channel_id}
-            AND cfg_name = 'special_goods_ball'
-            and cfg_val1 = provisional.transfer_sku
-        )
-        GROUP BY
-            provisional.transfer_id,
-            provisional.order_number,
-            provisional.transfer_sku
         ORDER BY
             provisional.transfer_id,
             provisional.order_number,
@@ -265,7 +254,7 @@
                 tm_order_channel_config
             WHERE
                 order_channel_id =  #{order_channel_id}
-            AND cfg_name in ('special_goods_backboard','special_goods_ball')
+            AND cfg_name = 'special_goods_ball'
           and cfg_val1 = details.sku
         )
          INNER JOIN wms_bt_item_details itemdetails ON itemdetails.sku = details.sku
@@ -340,6 +329,7 @@
         AND #{end_created}
         AND reservation.order_number = orders.order_number
         AND reservation.`status` = #{res_status}
+        AND reservation..order_channel_id = #{order_channel_id}
         AND NOT EXISTS (
             SELECT
                 1

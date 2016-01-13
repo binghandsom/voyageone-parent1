@@ -219,7 +219,7 @@ public interface WmsConstants {
         public static final HashMap<String, String> RETURN_TP_TITLE = new HashMap<String, String>() {
             {
                 put("SalesType", "退货订单");
-                put("Warehouse", "0501");
+                put("Warehouse", "0504");
                 put("Ordertype", "1");
                 put("Site","01");
             }
@@ -228,7 +228,7 @@ public interface WmsConstants {
         public static final HashMap<String, String> RETURN_SPALDING_TITLE = new HashMap<String, String>() {
             {
                 put("SalesType", "退货订单");
-                put("Warehouse", "0502");
+                put("Warehouse", "0504");
                 put("Ordertype", "2");
                 put("Site","01");
             }
@@ -250,12 +250,12 @@ public interface WmsConstants {
     final class spaldingReportTitleHead {
         //销售订单标题
         public static final String[] SALES_ORDER_TITLE_HEAD={"OrderType","DocumentID","CustAccount","InventSiteId","InventLocationId",
-                "ShippingDateRequested","E-ComSalesId","ItemId","Size","Qty","SalesPrice","SalesUnit","LineAmount","Transcost","Ediscount"};
+                "ShippingDateRequested","E-ComSalesId","ItemId","Size","Qty","SalesPrice","SalesUnit","LineAmount","Transcost","Discount"};
 
 
         //退货订单标题
         public static final String[]  RETURN_TP_TITLE_HEAD = {"OrderType","DocumentID","CustAccount","ReasonCode","InventSiteId","InventLocationId",
-                "ShippingDateRequested","E-ComSalesId","ItemId","Size","Qty","SalesPrice","SalesUnit","LineAmount","Transcost","Ediscount"};
+                "ShippingDateRequested","E-ComSalesId","ItemId","Size","Qty","SalesPrice","SalesUnit","LineAmount","Transcost","Discount"};
     }
 
 

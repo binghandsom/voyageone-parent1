@@ -24,25 +24,16 @@ public class CreateReportDao extends BaseDao {
      *
      * @param cartID
      * @param order_channel_id
-     * @param transfer_status
-     * @param transfer_type
-     * @param transfer_origin
      * @param start_created
      * @param end_created
-     * @param task_name
      * @return List<ThirdReportBean>
      */
-    public List<ThirdReportBean> getVirtualCreateReportData(String cartID,String order_channel_id,String transfer_status,String transfer_type,
-                                                     String transfer_origin,String start_created,String end_created,String task_name) {
+    public List<ThirdReportBean> getVirtualCreateReportData(String cartID,String order_channel_id,String start_created,String end_created) {
         Map<String, String> paramMap = new HashMap<>();
         paramMap.put("cart_id", cartID);
         paramMap.put("order_channel_id", order_channel_id);
-        paramMap.put("transfer_status",transfer_status);
-        paramMap.put("transfer_type",transfer_type);
-        paramMap.put("transfer_origin",transfer_origin);
         paramMap.put("start_created",start_created);
         paramMap.put("end_created",end_created);
-        paramMap.put("task_name",task_name);
 
         return selectList(Constants.DAO_NAME_SPACE_WMS + "wms_getVirtualCreateReportData", paramMap);
     }
