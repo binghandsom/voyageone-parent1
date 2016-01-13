@@ -329,7 +329,7 @@
         AND #{end_created}
         AND reservation.order_number = orders.order_number
         AND reservation.`status` = #{res_status}
-        AND reservation..order_channel_id = #{order_channel_id}
+        AND reservation.order_channel_id = #{order_channel_id}
         AND NOT EXISTS (
             SELECT
                 1
