@@ -20,15 +20,13 @@ import com.voyageone.wms.WmsCodeConstants.TransferType;
 import com.voyageone.wms.WmsConstants;
 import com.voyageone.wms.WmsMsgConstants;
 import com.voyageone.wms.WmsMsgConstants.TransferMsg;
+import com.voyageone.wms.dao.ClientShipmentDao;
 import com.voyageone.wms.dao.ItemDao;
 import com.voyageone.wms.dao.StoreDao;
 import com.voyageone.wms.dao.TransferDao;
 import com.voyageone.wms.formbean.TransferFormBean;
 import com.voyageone.wms.formbean.TransferMapBean;
-import com.voyageone.wms.modelbean.TransferBean;
-import com.voyageone.wms.modelbean.TransferDetailBean;
-import com.voyageone.wms.modelbean.TransferItemBean;
-import com.voyageone.wms.modelbean.TransferMappingBean;
+import com.voyageone.wms.modelbean.*;
 import com.voyageone.wms.service.WmsTransferService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -64,6 +62,9 @@ public class WmsTransferServiceImpl implements WmsTransferService {
 
     @Autowired
     private ItemDao itemDao;
+
+    @Autowired
+    private ClientShipmentDao clientShipmentDao;
 
     @Autowired
     private HttpServletRequest request;
@@ -563,7 +564,7 @@ public class WmsTransferServiceImpl implements WmsTransferService {
      * @return List
      */
     @Override
-    public Map<String, Object> allStores(UserSessionBean user) {
+    public Map<String, Object> allConfigs(UserSessionBean user) {
 
         Map<String, Object> resultMap = new HashMap<>();
 
@@ -607,6 +608,21 @@ public class WmsTransferServiceImpl implements WmsTransferService {
             }
         }
         resultMap.put("companyStoreToList", companyStoreToList);
+
+        // 获取品牌方发货的Shipment信息
+        List<ClientShipmentBean> notMatchClientShipmentList = new ArrayList<>();
+
+        ClientShipmentBean clientShipmentBean = new ClientShipmentBean();
+        clientShipmentBean.setShipment_id(0);
+        clientShipmentBean.setFile_name("                               ");
+
+        notMatchClientShipmentList.add(clientShipmentBean);
+
+        List<ClientShipmentBean> clientShipmentList = clientShipmentDao.getNotMatchShipmentList(orderChannelIdList);
+
+        notMatchClientShipmentList.addAll(clientShipmentList);
+
+        resultMap.put("notMatchClientShipmentList", notMatchClientShipmentList);
 
         return resultMap;
 

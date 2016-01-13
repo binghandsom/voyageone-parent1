@@ -119,8 +119,8 @@ define([
             /**
              * 获取所有的仓库 和 Type （Edit 页面）
              */
-            this.getStores = function () {
-                return http.ajaxPost(null, actions.transfer.store.all);
+            this.getConfigs = function () {
+                return http.ajaxPost(null, actions.transfer.config.all);
             };
 
             /**

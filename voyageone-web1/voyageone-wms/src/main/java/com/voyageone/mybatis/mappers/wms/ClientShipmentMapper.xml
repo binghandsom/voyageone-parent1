@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.wms.sql">
+
+     <!-- 获取未匹配的ClientShipment -->
+    <select id="client_shipment_selectNotMatchShipment" resultType="com.voyageone.wms.modelbean.ClientShipmentBean">
+        SELECT
+          *
+        FROM
+          wms_bt_client_shipment shipment
+        WHERE
+          shipment.transfer_id = 0
+        AND
+          shipment.syn_flg = '0'
+        <if test="orderChannelIdList != null and orderChannelIdList.size() != 0 ">
+            and shipment.order_channel_id in
+            <foreach item="order_channel_id" index="index" collection="orderChannelIdList" open="(" separator="," close=")">
+                #{order_channel_id}
+            </foreach>
+        </if>
+    </select>
+
+
+
+</mapper>

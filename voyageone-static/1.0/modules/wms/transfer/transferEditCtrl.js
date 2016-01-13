@@ -57,6 +57,9 @@ define([
 
         vm.transfer_map_target = "";
 
+        vm.transfer_client_shipment = 0;
+        vm.transfer_client_shipments = "";
+
         // 当前的 Transfer
         vm.transfer = {};
 
@@ -124,10 +127,11 @@ define([
         }
 
         function init() {
-            transferService.getStores().then(function (res) {
+            transferService.getConfigs().then(function (res) {
                 channelStores = res.data.storeList;
                 companyStores = res.data.companyStoreList;
                 storesTo = res.data.companyStoreToList;
+                vm.transfer_client_shipments = res.data.notMatchClientShipmentList;
 
                 if (vm.isAddMode) {
                     vm.transfer = newTransfer();

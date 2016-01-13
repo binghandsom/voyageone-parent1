@@ -34,8 +34,8 @@ define(function () {
                     }
                 },
 
-                store: {
-                    all: "/wms/transfer/edit/getAllStores"
+                config: {
+                    all: "/wms/transfer/edit/getAllConfigs"
                 }
             },
 
