@@ -52,7 +52,7 @@
               <include refid="promotion_fileds"/>
               b.name as cartName
         from voyageone_cms2.cms_bt_promotion a left join synship.ct_cart b on a.cart_id = b.cart_id
-        where a.is_active = 1 and a.channel_id = #{channelId} and a.promotion_id = #{promotionId}
+        where a.is_active = 1 and a.promotion_id = #{promotionId}
     </select>
     
     <!-- 根据条件查询多条记录 -->
@@ -87,7 +87,7 @@
     </select>
     
     <!-- 插入 -->
-    <insert id="insert" parameterType="com.voyageone.web2.cms.model.CmsBtPromotionModel" >
+    <insert id="insert" parameterType="com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel" >
         insert into voyageone_cms2.cms_bt_promotion
         <trim prefix="(" suffix=")" suffixOverrides="," >
             <if test="channelId != null" >
@@ -184,7 +184,7 @@
     </insert>
     
     <!-- 修改 -->
-    <update id="update" parameterType="com.voyageone.web2.cms.model.CmsBtPromotionModel" >
+    <update id="update" parameterType="com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel" >
         update voyageone_cms2.cms_bt_promotion
         <set >
             <if test="channelId != null" >
@@ -233,6 +233,6 @@
     
     <!-- 根据id修改状态 增加条件 is_active = 1-->
 	<update id="delete_By_Id" parameterType="Map" >
-		update voyageone_cms2.cms_bt_promotion set is_active = 0 where is_active = 1 and channel_id = #{channelId} and promotion_id = #{promotionId}
+		update voyageone_cms2.cms_bt_promotion set is_active = 0 where is_active = 1 and promotion_id = #{promotionId}
     </update>
 </mapper>
