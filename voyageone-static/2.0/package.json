@@ -19,5 +19,11 @@
     "through2": "latest",
     "gulp-util": "latest",
     "gulp-clean": "^0.3.1"
-  }
+  },
+  "description": "VoyageOne Front Project v2",
+  "scripts": {
+    "test": "node test_server/app.js"
+  },
+  "author": "VoyageOne",
+  "license": "ISC"
 }
