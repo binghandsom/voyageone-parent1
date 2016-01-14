@@ -15,7 +15,7 @@
         <RollingFile name="RollingFile" fileName="${filename}"
                      filePattern="${filePattern}">
             <PatternLayout>
-                <Pattern>%d %p [%t] %m%n</Pattern>
+                <Pattern>[%d{yy-MM-dd HH:mm:ss}] %50.50c[%-5.5p]:%-4.4L | %m%n</Pattern>
             </PatternLayout>
             <Policies>
                 <OnStartupTriggeringPolicy />
