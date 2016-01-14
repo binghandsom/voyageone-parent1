@@ -66,9 +66,22 @@ public class ProductPropsEditService {
 
         //商品各种状态.
         ProductInfoBean.ProductStatus productStatus = productInfo.getProductStautsInstance();
-        productStatus.setStatus(productValueModel.getFields().getStatus());
-        productStatus.setEditStatus(productValueModel.getFields().getEditStatus());
-        productStatus.setTranslateStatus(productValueModel.getFields().getTranslateStatus());
+        if ("true".equals(productValueModel.getFields().getStatus())){
+            productStatus.setApproveStatus(true);
+        }else {
+            productStatus.setApproveStatus(false);
+        }
+
+        if ("true".equals(productValueModel.getFields().getTranslateStatus())){
+            productStatus.setTranslateStatus(true);
+        }else {
+            productStatus.setTranslateStatus(false);
+        }
+        if ("true".equals(productValueModel.getFields().getEditStatus())){
+            productStatus.setEditStatus(true);
+        }else {
+            productStatus.setEditStatus(false);
+        }
 
         //获取商品图片信息.
         List<CmsBtProductModel_Field_Image> productImages = productValueModel.getFields().getImages(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE);
@@ -171,7 +184,7 @@ public class ProductPropsEditService {
 
         Map<String,Object> skuSchemaValue = new HashMap<>();
 
-        skuSchemaValue.put(categorySchemaModel.getSku().getId(),skuValueModel);
+        skuSchemaValue.put(categorySchemaModel.getSku().getId(), skuValueModel);
 
         return skuSchemaValue;
     }
@@ -218,7 +231,7 @@ public class ProductPropsEditService {
      */
     private CmsBtProductModel getProductModel(String channelId, int prodId) {
 
-        CmsBtProductModel productValueModel = cmsProductService.getProductById(channelId,prodId);
+        CmsBtProductModel productValueModel = cmsProductService.getProductById(channelId, prodId);
 
         if (productValueModel == null){
 
@@ -269,14 +282,29 @@ public class ProductPropsEditService {
         Map<String,Object> customAttributesValue =(Map<String,Object>) requestMap.get("customAttributes");
 
         BaseMongoMap<String, Object> orgAtts = new BaseMongoMap<>();
-        List<Object> orgAttsList =(List<Object>) customAttributesValue.get("orgAtts");
-        orgAtts.put("orgAtts",orgAttsList);
+
+        List<String> customIds = new ArrayList<>();
+
+        List<Map<String, String>> orgAttsList =(List<Map<String, String>>) customAttributesValue.get("orgAtts");
+        for (Map<String, String> orgAttMap : orgAttsList) {
+
+            orgAtts.put(orgAttMap.get("key"), orgAttMap.get("value"));
+
+            Object selected = orgAttMap.get("selected");
+
+            Boolean isSelected = (Boolean)selected;
+
+            if (isSelected){
+                customIds.add(orgAttMap.get("key"));
+            }
+        }
 
         BaseMongoMap<String, Object> cnAtts = new BaseMongoMap<>();
-        List<Object> cnAttsList =(List<Object>) customAttributesValue.get("cnAtts");
-        cnAtts.put("cnAtts",cnAttsList);
+        List<Map<String, String>> cnAttsList =(List<Map<String, String>>) customAttributesValue.get("cnAtts");
+        for (Map<String, String> cnAttsMap : cnAttsList) {
+            cnAtts.put(cnAttsMap.get("key"), cnAttsMap.get("value"));
+        }
 
-        List<String> customIds = (List<String>)  customAttributesValue.get("customIds");
 
         CmsBtProductModel_Feed feedModel = new CmsBtProductModel_Feed();
         feedModel.setOrgAtts(orgAtts);

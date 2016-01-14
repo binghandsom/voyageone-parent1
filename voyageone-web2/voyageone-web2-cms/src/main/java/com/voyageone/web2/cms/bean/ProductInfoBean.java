@@ -134,35 +134,36 @@ public class ProductInfoBean {
     public class ProductStatus {
 
         //是否approved.
-        private String status;
+        private Boolean approveStatus;
 
         //是否翻译完成.
-        private String translateStatus;
+        private Boolean translateStatus;
 
         //是否编辑完成.
-        private String editStatus;
+        private Boolean editStatus;
 
-        public String getStatus() {
-            return status;
+
+        public Boolean getApproveStatus() {
+            return approveStatus;
         }
 
-        public void setStatus(String status) {
-            this.status = status;
+        public void setApproveStatus(Boolean approveStatus) {
+            this.approveStatus = approveStatus;
         }
 
-        public String getTranslateStatus() {
+        public Boolean getTranslateStatus() {
             return translateStatus;
         }
 
-        public void setTranslateStatus(String translateStatus) {
+        public void setTranslateStatus(Boolean translateStatus) {
             this.translateStatus = translateStatus;
         }
 
-        public String getEditStatus() {
+        public Boolean getEditStatus() {
             return editStatus;
         }
 
-        public void setEditStatus(String editStatus) {
+        public void setEditStatus(Boolean editStatus) {
             this.editStatus = editStatus;
         }
     }
