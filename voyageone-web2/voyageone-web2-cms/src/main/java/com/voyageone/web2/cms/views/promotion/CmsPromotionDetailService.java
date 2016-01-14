@@ -8,6 +8,7 @@ import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.CmsPromotionProductPriceBean;
 import com.voyageone.web2.cms.dao.*;
 import com.voyageone.web2.cms.model.*;
+import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
 import com.voyageone.web2.sdk.api.domain.CmsBtTagModel;
 import com.voyageone.web2.cms.views.pop.tag.promotion.CmsPromotionSelectService;
 import com.voyageone.web2.sdk.api.service.ProductSdkClient;
@@ -46,7 +47,7 @@ public class CmsPromotionDetailService extends BaseAppService {
     CmsPromotionSkuDao cmsPromotionSkuDao;
 
     @Autowired
-    private CmsPromotionDao cmsPromotionDao;
+    private CmsPromotionService cmsPromotionService;
 
     @Autowired
     private CmsPromotionTaskDao cmsPromotionTaskDao;
@@ -76,7 +77,7 @@ public class CmsPromotionDetailService extends BaseAppService {
         response.put("fail", new ArrayList<>());
 
         // 获取promotion信息
-        CmsBtPromotionModel promotion = cmsPromotionDao.getPromotionById(promotionId);
+        CmsBtPromotionModel promotion = cmsPromotionService.queryById(promotionId);
         if (promotion == null) {
             logger.info("promotionId不存在：" + promotionId);
             productPrices.forEach(m -> {

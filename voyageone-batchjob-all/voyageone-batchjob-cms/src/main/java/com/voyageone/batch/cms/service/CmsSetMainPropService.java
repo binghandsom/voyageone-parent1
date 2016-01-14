@@ -264,6 +264,7 @@ public class CmsSetMainPropService extends BaseTaskService {
             // 主数据的field里,强制写死的字段
             field.setCode(feed.getCode());
             field.setProductNameEn(feed.getName());
+            field.setModel(feed.getModel());
             field.setStatus(com.voyageone.cms.CmsConstants.ProductStatus.New); // 产品状态: 初始时期为(新建) Synship.com_mt_type : id = 44 : productStatus
 
             product.setFields(field);
@@ -278,8 +279,8 @@ public class CmsSetMainPropService extends BaseTaskService {
                 mainSku.setBarcode(sku.getBarcode()); // barcode
                 mainSku.setSize(sku.getSize()); // 尺码
 
-                mainSku.setPriceMsrp(sku.getPrice_msrp());// msrp
-                mainSku.setPriceRetail(sku.getPrice_current()); // 零售价: 未审批
+//                mainSku.setPriceMsrp(sku.getPrice_msrp());// msrp -> 共通API进行设置
+//                mainSku.setPriceRetail(sku.getPrice_current()); // 零售价: 未审批 -> 共通API进行设置
 //                mainSku.setPriceSale(sku); // 销售价: 已审批 (不用自动设置)
 
                 mainSkuList.add(mainSku);
@@ -442,8 +443,8 @@ public class CmsSetMainPropService extends BaseTaskService {
                     sku.setBarcode(feedSku.getBarcode()); // barcode
                     sku.setSize(feedSku.getSize()); // 尺码
 
-                    sku.setPriceMsrp(feedSku.getPrice_msrp()); // msrp
-                    sku.setPriceRetail(feedSku.getPrice_current()); // 零售价: 未审批
+//                    sku.setPriceMsrp(feedSku.getPrice_msrp()); // msrp -> 共通API进行设置
+//                    sku.setPriceRetail(feedSku.getPrice_current()); // 零售价: 未审批 -> 共通API进行设置
 
                     product.getSkus().add(sku);
                 }
