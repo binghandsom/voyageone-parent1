@@ -87,7 +87,7 @@
     </select>
     
     <!-- 插入 -->
-    <insert id="insert" parameterType="com.voyageone.web2.cms.model.CmsBtPromotionModel" >
+    <insert id="insert" parameterType="com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel" >
         insert into voyageone_cms2.cms_bt_promotion
         <trim prefix="(" suffix=")" suffixOverrides="," >
             <if test="channelId != null" >
@@ -184,7 +184,7 @@
     </insert>
     
     <!-- 修改 -->
-    <update id="update" parameterType="com.voyageone.web2.cms.model.CmsBtPromotionModel" >
+    <update id="update" parameterType="com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel" >
         update voyageone_cms2.cms_bt_promotion
         <set >
             <if test="channelId != null" >
