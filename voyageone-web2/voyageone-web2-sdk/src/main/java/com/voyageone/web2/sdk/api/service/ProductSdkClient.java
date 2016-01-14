@@ -1,6 +1,7 @@
 package com.voyageone.web2.sdk.api.service;
 
 import com.voyageone.cms.service.model.*;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.request.ProductGetRequest;
 import com.voyageone.web2.sdk.api.request.ProductUpdateRequest;
@@ -63,15 +64,10 @@ public class ProductSdkClient {
 
 
     public String updateProductRetModified(ProductUpdateRequest request) {
-        ProductUpdateResponse response = voApiClient.execute(request);
-
-        //设置参数
-        ProductGetRequest requestModel = new ProductGetRequest(request.getProductModel().getChannelId());
-        requestModel.setProductId(request.getProductModel().getProdId());
-        requestModel.addField("modified");
-        //SDK取得Product 数据
-        return voApiClient.execute(requestModel).getProduct().getModified();
-
+        String modified = DateTimeUtil.getNowTimeStamp();
+        request.setModified(modified);
+        voApiClient.execute(request);
+        return modified;
     }
 
 }
