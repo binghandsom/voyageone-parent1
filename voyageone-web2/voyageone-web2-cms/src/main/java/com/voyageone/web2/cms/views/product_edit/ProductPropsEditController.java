@@ -53,9 +53,13 @@ public class ProductPropsEditController extends CmsController{
         String channelId = "013";
         String user = super.getUser().getUserName();
 
-        productPropsEditService.updateProductMastertInfo(channelId,user,requestMap);
+        String updateTime = productPropsEditService.updateProductMastertInfo(channelId, user, requestMap);
 
-        return success(true);
+        Map<String,Object> updateInfo = new HashMap<>();
+
+        updateInfo.put("modified",updateTime);
+
+        return success(updateInfo);
 
     }
 
@@ -71,9 +75,13 @@ public class ProductPropsEditController extends CmsController{
         Map skuMap = (Map) requestMap.get("skuFields");
         String modified = requestMap.get("modified").toString();
 
-        productPropsEditService.updateProductSkuInfo(channelId,user,categoryId,productId,modified,categoryFullPath,skuMap);
+        String updateTime = productPropsEditService.updateProductSkuInfo(channelId, user, categoryId, productId, modified, categoryFullPath, skuMap);
 
-        return success(true);
+        Map<String,Object> updateInfo = new HashMap<>();
+
+        updateInfo.put("modified", updateTime);
+
+        return success(updateInfo);
 
     }
 
