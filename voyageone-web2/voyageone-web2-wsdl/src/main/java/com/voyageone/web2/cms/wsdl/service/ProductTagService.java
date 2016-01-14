@@ -39,31 +39,6 @@ public class ProductTagService extends BaseService {
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
 
-//    /**
-//     * select List
-//     * @param request ProductSkusGetRequest
-//     * @return ProductSkusGetResponse
-//     */
-//    public ProductSkusGetResponse selectList(ProductSkusGetRequest request) {
-//        ProductSkusGetResponse result = new ProductSkusGetResponse();
-//        List<CmsBtProductModel_Sku> productSkus = new ArrayList<>();
-//
-//        ProductsGetRequest productsRequest = createProductsRequest(request);
-//        ProductsGetResponse productsResponse = productService.selectList(productsRequest);
-//
-//        if (productsResponse != null && productsResponse.getProducts() != null) {
-//            for (CmsBtProductModel productModel : productsResponse.getProducts()) {
-//                if (productModel != null && productModel.getSkus() != null && productModel.getSkus().size()>0) {
-//                    productSkus.addAll(productModel.getSkus());
-//                }
-//            }
-//        }
-//        result.setProductSkus(productSkus);
-//        result.setTotalCount((long) productSkus.size());
-//
-//        return result;
-//    }
-
     /**
      * ProductSkusGetRequest - > ProductsGetRequest
      * @param inputRequest ProductSkusGetRequest

@@ -30,16 +30,6 @@ public class ProductTagController extends BaseController {
 
     /**
      * selectList
-     * @return ProductSkusGetResponse
-     */
-    @RequestMapping("get")
-    public ProductSkusGetResponse selectList(@RequestBody ProductSkusGetRequest request) {
-        return null;//productTagService.selectList(request);
-    }
-
-
-    /**
-     * selectList
      * @return ProductSkusPutResponse
      */
     @RequestMapping("put")
@@ -52,7 +42,7 @@ public class ProductTagController extends BaseController {
      * @return ProductsTagDeleteResponse
      */
     @RequestMapping("delete")
-    public ProductsTagDeleteResponse updatePrices(@RequestBody ProductsTagDeleteRequest  request) {
+    public ProductsTagDeleteResponse delete(@RequestBody ProductsTagDeleteRequest  request) {
         return productTagService.delete(request);
     }
 }
