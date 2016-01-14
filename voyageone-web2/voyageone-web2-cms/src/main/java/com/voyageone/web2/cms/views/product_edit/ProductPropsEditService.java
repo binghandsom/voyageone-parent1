@@ -19,6 +19,7 @@ import com.voyageone.web2.cms.bean.CustomAttributesBean;
 import com.voyageone.web2.cms.bean.ProductInfoBean;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.request.ProductUpdateRequest;
+import com.voyageone.web2.sdk.api.service.ProductSdkClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,9 @@ public class ProductPropsEditService {
 
     @Autowired
     protected VoApiDefaultClient voApiClient;
+
+    @Autowired
+    protected ProductSdkClient productClient;
 
     private static final String optionDataSource = "optConfig";
 
@@ -317,7 +321,7 @@ public class ProductPropsEditService {
         updateRequest.setProductModel(productModel);
         updateRequest.setModifier(user);
 
-        voApiClient.execute(updateRequest);
+        String updateModified = productClient.updateProductRetModified(updateRequest);
 
     }
 

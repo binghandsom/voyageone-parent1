@@ -10,7 +10,7 @@ import com.voyageone.web2.cms.dao.*;
 import com.voyageone.web2.cms.model.*;
 import com.voyageone.web2.sdk.api.domain.CmsBtTagModel;
 import com.voyageone.web2.cms.views.pop.tag.promotion.CmsPromotionSelectService;
-import com.voyageone.web2.sdk.api.service.ProductGetClient;
+import com.voyageone.web2.sdk.api.service.ProductSdkClient;
 import com.voyageone.web2.sdk.api.service.ProductTagClient;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -31,7 +31,7 @@ import java.util.*;
 public class CmsPromotionDetailService extends BaseAppService {
 
     @Autowired
-    protected ProductGetClient ProductGetClient;
+    protected ProductSdkClient ProductGetClient;
 
     @Autowired
     private ProductTagClient productTagClient;

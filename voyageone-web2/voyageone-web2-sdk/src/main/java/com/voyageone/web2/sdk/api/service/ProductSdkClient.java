@@ -3,11 +3,14 @@ package com.voyageone.web2.sdk.api.service;
 import com.voyageone.cms.service.model.*;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.request.ProductGetRequest;
+import com.voyageone.web2.sdk.api.request.ProductUpdateRequest;
+import com.voyageone.web2.sdk.api.response.ProductGetResponse;
+import com.voyageone.web2.sdk.api.response.ProductUpdateResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ProductGetClient {
+public class ProductSdkClient {
     @Autowired
     protected VoApiDefaultClient voApiClient;
 
@@ -58,5 +61,17 @@ public class ProductGetClient {
         return voApiClient.execute(requestModel).getProduct();
     }
 
+
+    public String updateProductRetModified(ProductUpdateRequest request) {
+        ProductUpdateResponse response = voApiClient.execute(request);
+
+        //设置参数
+        ProductGetRequest requestModel = new ProductGetRequest(request.getProductModel().getChannelId());
+        requestModel.setProductId(request.getProductModel().getProdId());
+        requestModel.addField("modified");
+        //SDK取得Product 数据
+        return voApiClient.execute(requestModel).getProduct().getModified();
+
+    }
 
 }
