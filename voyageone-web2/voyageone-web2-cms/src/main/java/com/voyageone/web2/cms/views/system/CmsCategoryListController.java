@@ -4,7 +4,6 @@ import com.voyageone.cms.service.model.CmsMtCategorySchemaModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants.SYSTEM;
-import com.voyageone.web2.cms.model.CmsBtPromotionModel;
 import com.voyageone.web2.cms.views.promotion.CmsPromotionService;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;

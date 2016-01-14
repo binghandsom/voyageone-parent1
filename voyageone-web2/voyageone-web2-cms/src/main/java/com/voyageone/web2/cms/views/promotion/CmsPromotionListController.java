@@ -3,7 +3,7 @@ package com.voyageone.web2.cms.views.promotion;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
-import com.voyageone.web2.cms.model.CmsBtPromotionModel;
+import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,35 +29,23 @@ public class CmsPromotionListController extends CmsController {
     @Autowired
     private CmsPromotionService cmsPromotionService;
 
-    @RequestMapping(PROMOTION.LIST.GET_PROMOTION_LIST)
-    public AjaxResponse getPromotionList(@RequestBody Map params) {
-
+    @RequestMapping(PROMOTION.LIST.QUERY_LIST)
+    public AjaxResponse queryList(@RequestBody Map params) {
         String channelId = getUser().getSelChannelId();
         params.put("channelId", channelId);
-        List<CmsBtPromotionModel> resultBean = cmsPromotionService.getPromotionList(params);
-
-        // 返回用户信息
-        return success(resultBean);
+        return success(cmsPromotionService.queryByCondition(params));
     }
 
-    @RequestMapping(PROMOTION.LIST.INSERT_PROMOTION)
-    public AjaxResponse insertPromotion(@RequestBody CmsBtPromotionModel params) {
+    @RequestMapping(PROMOTION.LIST.INSERT_UPDATE)
+    public AjaxResponse insertOrUpdate(@RequestBody CmsBtPromotionModel cmsBtPromotionModel) {
         String channelId = getUser().getSelChannelId();
-        params.setChannelId(channelId);
-        params.setCreater(getUser().getUserName());
-        cmsPromotionService.insertPromotion(params);
-        // 返回用户信息
-        return success(null);
+        cmsBtPromotionModel.setChannelId(channelId);
+        cmsBtPromotionModel.setCreater(getUser().getUserName());
+        return success(cmsPromotionService.addOrUpdate(cmsBtPromotionModel));
     }
 
-    @RequestMapping(PROMOTION.LIST.UPDATE_PROMOTION)
-    public AjaxResponse updatePromotion(@RequestBody CmsBtPromotionModel params) {
-
-        String channelId = getUser().getSelChannelId();
-        params.setChannelId(channelId);
-        params.setModifier(getUser().getUserName());
-        cmsPromotionService.updatePromotion(params);
-        // 返回用户信息
-        return success(null);
+    @RequestMapping(PROMOTION.LIST.DELETE_BYID)
+    public AjaxResponse deleteById(@RequestBody CmsBtPromotionModel cmsBtPromotionModel) {
+        return success(cmsPromotionService.deleteById(cmsBtPromotionModel.getPromotionId()));
     }
 }

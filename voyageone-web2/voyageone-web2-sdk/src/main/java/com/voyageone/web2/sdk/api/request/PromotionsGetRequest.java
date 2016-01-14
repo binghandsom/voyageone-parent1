@@ -17,7 +17,7 @@ public class PromotionsGetRequest extends VoApiRequest<PromotionsGetResponse> {
 	private String channelId;
 
 	/** promotionId */
-	private Long promotionId;
+	private Integer promotionId;
 
 	/*
 	 * (non-Javadoc)
@@ -48,7 +48,7 @@ public class PromotionsGetRequest extends VoApiRequest<PromotionsGetResponse> {
 	/**
 	 * @return the promotionId
 	 */
-	public Long getPromotionId() {
+	public Integer getPromotionId() {
 		return promotionId;
 	}
 
@@ -56,7 +56,7 @@ public class PromotionsGetRequest extends VoApiRequest<PromotionsGetResponse> {
 	 * @param promotionId
 	 *            the promotionId to set
 	 */
-	public void setPromotionId(Long promotionId) {
+	public void setPromotionId(Integer promotionId) {
 		this.promotionId = promotionId;
 	}
 

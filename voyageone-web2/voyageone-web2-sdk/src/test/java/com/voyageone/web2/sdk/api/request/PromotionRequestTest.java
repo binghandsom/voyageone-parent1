@@ -42,7 +42,7 @@ public class PromotionRequestTest {
 	public void testSelect() {
 		PromotionsGetRequest request = new PromotionsGetRequest();
 		request.setChannelId("001");
-		request.setPromotionId(Long.parseLong("1"));
+		request.setPromotionId(1);
 		processRequest(request, PromotionsGetResponse.class);
 	}
 
@@ -64,7 +64,7 @@ public class PromotionRequestTest {
 	public void testDelete() {
 		PromotionsDeleteRequest request = new PromotionsDeleteRequest();
 		request.setChannelId("001");
-		request.setPromotionId(Long.parseLong("13"));
+		request.setPromotionId(13);
 
 		processRequest(request, PromotionsPutResponse.class);
 	}
