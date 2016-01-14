@@ -42,8 +42,8 @@ public class CmsBtChannelCategoryService {
 
     /**
      * 返回子category列表
-     * @param channelId
-     * @return
+     * @param channelId channel Id
+     * @return List<CmsMtCategoryTreeModel>
      */
     public List<CmsMtCategoryTreeModel> getFinallyCategoriesByChannelId(String channelId) throws IOException{
         List<CmsMtCategoryTreeModel> result = new ArrayList<>();

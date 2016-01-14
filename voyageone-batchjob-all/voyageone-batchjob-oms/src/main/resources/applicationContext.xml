@@ -7,7 +7,5 @@
 	<import resource="applicationContext-core.xml"/>
 	
 	<import resource="applicationContext-oms.xml"/>
-
-	<import resource="dao-mongo-collecion-mapping.xml"/>
 	
 </beans>

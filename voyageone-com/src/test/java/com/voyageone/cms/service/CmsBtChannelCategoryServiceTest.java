@@ -24,7 +24,7 @@ public class CmsBtChannelCategoryServiceTest {
 
     @Test
     public void testGeCategorysByChannelId() {
-        String channelId = "001";
+        String channelId = "013";
         List<CmsMtCategoryTreeModel> lst = cmsBtChannelCategoryService.getCategoriesByChannelId(channelId);
         for (CmsMtCategoryTreeModel model:lst) {
             System.out.println(model);

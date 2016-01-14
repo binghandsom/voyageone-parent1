@@ -8,6 +8,4 @@
 
 	<import resource="file:/usr/web/spring-config/datasource-cms-config.xml" />
     <import resource="file:/usr/web/spring-config/datasource-config-mongo.xml" />
-
-    <import resource="dao-mongo-collecion-mapping.xml" />
 </beans>
