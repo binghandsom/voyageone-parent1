@@ -42,14 +42,16 @@ public class ClientSkuDao extends BaseDao {
      * 判定ClientSku是否存在 根据 item_code，size
      * @param order_channel_id
      * @param item_code
+     * @param color
      * @param size
      * @return int
      */
-    public int getRecCountByItemCodeAndSize(String order_channel_id, String item_code, String size) {
+    public int getRecCountByItemCodeAndSize(String order_channel_id, String item_code, String color, String size) {
         Map<String, Object> params = new HashMap<>();
 
         params.put("order_channel_id", order_channel_id);
         params.put("item_code", item_code);
+        params.put("color", color);
         params.put("size", size);
 
         return (int)selectOne("wms_bt_client_sku_get_rec_countByItemCodeAndSize", params);

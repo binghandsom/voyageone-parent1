@@ -1,14 +1,15 @@
 package com.voyageone.wms.modelbean;
 
 /**
- * Created by Tester on 4/30/2015.
+ * Created by Jerry on 1/14/2016.
  *
- * @author Jonas
+ * @author Jerry
  */
 public class ClientSkuBean {
     private String order_channel_id;
     private String barcode;
     private String item_code;
+    private String color;
     private String size;
     private int active;
     private String created;
@@ -38,6 +39,14 @@ public class ClientSkuBean {
 
     public void setItem_code(String item_code) {
         this.item_code = item_code;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 
     public String getSize() {

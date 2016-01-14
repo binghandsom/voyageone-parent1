@@ -47,12 +47,19 @@ define([
 
                     // 根据检索条件查询相关记录
                     function doChange() {
-
+                        // Code 空检查
                         if (!vm.itemCode) {
                             alert("Please Input Item Code.");
                             return;
                         }
 
+                        // Color 空检查
+                        if (!vm.color) {
+                            alert("Please Input Color.");
+                            return;
+                        }
+
+                        // Size 空检查
                         if (!vm.size) {
                             alert("Please Input Size.");
                             return;
@@ -63,6 +70,7 @@ define([
                             vm.code,
                             vm.num,
                             vm.itemCode,
+                            vm.color,
                             vm.size
                             )
                             .then(function (sku) {

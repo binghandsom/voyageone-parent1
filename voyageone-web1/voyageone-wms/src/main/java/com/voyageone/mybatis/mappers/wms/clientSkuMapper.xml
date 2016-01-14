@@ -14,6 +14,7 @@
         from wms_bt_client_sku
         where order_channel_id = #{order_channel_id}
             and item_code = #{item_code}
+            and color = #{color}
             and size = #{size}
     </select>
 
@@ -22,6 +23,7 @@
             order_channel_id,
             barcode,
             item_code,
+            color,
             size,
             active,
             created,
@@ -34,6 +36,7 @@
             #{order_channel_id},
             #{barcode},
             #{item_code},
+            #{color},
             #{size},
             #{active},
             now(),
