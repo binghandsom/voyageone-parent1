@@ -61,7 +61,7 @@ define([
 		 * @param formData
 		 * @returns {*|Promise}
          */
-		function updateProductInfo (formData) {
+		function updateProductInfo (formData, detailFlag) {
 
 			var data = {
 				categoryId: formData.categoryId,
@@ -71,6 +71,10 @@ define([
 				masterFields: [],
 				customAttributes: formData.customAttributes
 			};
+
+			// 如果是productDetail更新时传递productStatus
+			if (detailFlag)
+				data.productStatus = formData.productStatus;
 
 			angular.forEach(formData.masterFields, function (field) {
 				if (field.type != "LABEL" && field.isDisplay != 0)
@@ -104,9 +108,11 @@ define([
 		 * @returns {*|Promise.<T>}
          */
 		function updateProductDetail (formData) {
-			return updateProductInfo(formData).then(function () {
-				return updateSkuInfo(formData);
-			})
+			return updateProductInfo(formData, true)
+					.then(function (res) {
+						formData.modified = res.data.modified;
+						return updateSkuInfo(formData);
+					})
 		}
 
 		/**

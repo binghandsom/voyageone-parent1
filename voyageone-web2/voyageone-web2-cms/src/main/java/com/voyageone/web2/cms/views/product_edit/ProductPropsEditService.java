@@ -19,6 +19,7 @@ import com.voyageone.web2.cms.bean.CustomAttributesBean;
 import com.voyageone.web2.cms.bean.ProductInfoBean;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.request.ProductUpdateRequest;
+import com.voyageone.web2.sdk.api.service.ProductSdkClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,9 @@ public class ProductPropsEditService {
     @Autowired
     protected VoApiDefaultClient voApiClient;
 
+    @Autowired
+    protected ProductSdkClient productClient;
+
     private static final String optionDataSource = "optConfig";
 
     public ProductInfoBean getProductInfo(String channelId, int prodId) throws BusinessException{
@@ -66,9 +70,22 @@ public class ProductPropsEditService {
 
         //商品各种状态.
         ProductInfoBean.ProductStatus productStatus = productInfo.getProductStautsInstance();
-        productStatus.setStatus(productValueModel.getFields().getStatus());
-        productStatus.setEditStatus(productValueModel.getFields().getEditStatus());
-        productStatus.setTranslateStatus(productValueModel.getFields().getTranslateStatus());
+        if ("true".equals(productValueModel.getFields().getStatus())){
+            productStatus.setApproveStatus(true);
+        }else {
+            productStatus.setApproveStatus(false);
+        }
+
+        if ("true".equals(productValueModel.getFields().getTranslateStatus())){
+            productStatus.setTranslateStatus(true);
+        }else {
+            productStatus.setTranslateStatus(false);
+        }
+        if ("true".equals(productValueModel.getFields().getEditStatus())){
+            productStatus.setEditStatus(true);
+        }else {
+            productStatus.setEditStatus(false);
+        }
 
         //获取商品图片信息.
         List<CmsBtProductModel_Field_Image> productImages = productValueModel.getFields().getImages(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE);
@@ -171,7 +188,7 @@ public class ProductPropsEditService {
 
         Map<String,Object> skuSchemaValue = new HashMap<>();
 
-        skuSchemaValue.put(categorySchemaModel.getSku().getId(),skuValueModel);
+        skuSchemaValue.put(categorySchemaModel.getSku().getId(), skuValueModel);
 
         return skuSchemaValue;
     }
@@ -218,7 +235,7 @@ public class ProductPropsEditService {
      */
     private CmsBtProductModel getProductModel(String channelId, int prodId) {
 
-        CmsBtProductModel productValueModel = cmsProductService.getProductById(channelId,prodId);
+        CmsBtProductModel productValueModel = cmsProductService.getProductById(channelId, prodId);
 
         if (productValueModel == null){
 
@@ -260,7 +277,7 @@ public class ProductPropsEditService {
      * @param user
      * @param requestMap
      */
-    public void updateProductMastertInfo(String channelId,String user, Map requestMap){
+    public String  updateProductMastertInfo(String channelId,String user, Map requestMap){
 
 
 
@@ -269,14 +286,29 @@ public class ProductPropsEditService {
         Map<String,Object> customAttributesValue =(Map<String,Object>) requestMap.get("customAttributes");
 
         BaseMongoMap<String, Object> orgAtts = new BaseMongoMap<>();
-        List<Object> orgAttsList =(List<Object>) customAttributesValue.get("orgAtts");
-        orgAtts.put("orgAtts",orgAttsList);
+
+        List<String> customIds = new ArrayList<>();
+
+        List<Map<String, String>> orgAttsList =(List<Map<String, String>>) customAttributesValue.get("orgAtts");
+        for (Map<String, String> orgAttMap : orgAttsList) {
+
+            orgAtts.put(orgAttMap.get("key"), orgAttMap.get("value"));
+
+            Object selected = orgAttMap.get("selected");
+
+            Boolean isSelected = (Boolean)selected;
+
+            if (isSelected){
+                customIds.add(orgAttMap.get("key"));
+            }
+        }
 
         BaseMongoMap<String, Object> cnAtts = new BaseMongoMap<>();
-        List<Object> cnAttsList =(List<Object>) customAttributesValue.get("cnAtts");
-        cnAtts.put("cnAtts",cnAttsList);
+        List<Map<String, String>> cnAttsList =(List<Map<String, String>>) customAttributesValue.get("cnAtts");
+        for (Map<String, String> cnAttsMap : cnAttsList) {
+            cnAtts.put(cnAttsMap.get("key"), cnAttsMap.get("value"));
+        }
 
-        List<String> customIds = (List<String>)  customAttributesValue.get("customIds");
 
         CmsBtProductModel_Feed feedModel = new CmsBtProductModel_Feed();
         feedModel.setOrgAtts(orgAtts);
@@ -305,7 +337,7 @@ public class ProductPropsEditService {
 
         ProductUpdateRequest updateRequest = new ProductUpdateRequest(channelId);
 
-        CmsBtProductModel productModel = new CmsBtProductModel();
+        CmsBtProductModel productModel = new CmsBtProductModel(channelId);
 
         productModel.setCatId(requestMap.get("categoryId").toString());
         productModel.setProdId(Long.valueOf(requestMap.get("productId").toString()));
@@ -317,7 +349,7 @@ public class ProductPropsEditService {
         updateRequest.setProductModel(productModel);
         updateRequest.setModifier(user);
 
-        voApiClient.execute(updateRequest);
+        return productClient.updateProductRetModified(updateRequest);
 
     }
 
@@ -387,7 +419,7 @@ public class ProductPropsEditService {
      * @param categoryFullPath
      * @param skuFieldMap
      */
-    public void updateProductSkuInfo(String channelId,String user,String categoryId,Long productId,String modified,String categoryFullPath, Map skuFieldMap){
+    public String updateProductSkuInfo(String channelId,String user,String categoryId,Long productId,String modified,String categoryFullPath, Map skuFieldMap){
 
         Field skuField = SchemaJsonReader.mapToField(skuFieldMap);
 
@@ -406,7 +438,7 @@ public class ProductPropsEditService {
 
         ProductUpdateRequest updateRequest = new ProductUpdateRequest(channelId);
 
-        CmsBtProductModel productModel = new CmsBtProductModel();
+        CmsBtProductModel productModel = new CmsBtProductModel(channelId);
 
         productModel.setCatId(categoryId);
         productModel.setProdId(productId);
@@ -417,7 +449,9 @@ public class ProductPropsEditService {
         updateRequest.setProductModel(productModel);
         updateRequest.setModifier(user);
 
-        voApiClient.execute(updateRequest);
+//        voApiClient.execute(updateRequest);
+
+        return productClient.updateProductRetModified(updateRequest);
 
     }
 
@@ -447,10 +481,6 @@ public class ProductPropsEditService {
                         break;
                     default:
                         break;
-
-                }
-
-                if(field instanceof OptionsField){
 
                 }
 

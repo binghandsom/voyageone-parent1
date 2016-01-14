@@ -152,4 +152,15 @@ public abstract class VoApiRequest<T extends VoApiResponse> {
 	public void setModifier(String modifier) {
 		this.modifier = modifier;
 	}
+
+	/**
+	 * modifier
+	 */
+	protected String modified;
+	public String getModified() {
+		return modified;
+	}
+	public void setModified(String modified) {
+		this.modified = modified;
+	}
 }

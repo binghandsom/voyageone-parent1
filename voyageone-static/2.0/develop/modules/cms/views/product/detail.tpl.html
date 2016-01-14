@@ -48,7 +48,7 @@
 						<div class="row wrapper">
 							<div class="container-fluid">
 								<div class="col-sm-6">
-									<div class="form-group" ng-repeat="feedOrgAttr in ctrl.productDetails.feedAttributes.orgAtts">
+									<div class="form-group" ng-repeat="feedOrgAttr in ctrl.productDetails.customAttributes.orgAtts">
 										<label class="col-sm-3 control-label" ng-bind="feedOrgAttr.key"></label>
 										<div class="col-sm-8">
 											<input type="text" class="form-control" ng-model="feedOrgAttr.value" readonly>
@@ -59,7 +59,7 @@
 									</div>
 								</div><!--.col -->
 								<div class="col-sm-6">
-									<div class="form-group" ng-repeat="feedCnAttr in ctrl.productDetails.feedAttributes.cnAtts">
+									<div class="form-group" ng-repeat="feedCnAttr in ctrl.productDetails.customAttributes.cnAtts">
 										<label class="col-sm-3 control-label" ng-bind="feedCnAttr.key"></label>
 										<div class="col-sm-8">
 											<input type="text" class="form-control" ng-model="feedCnAttr.value">
@@ -181,7 +181,7 @@
 							<label class="col-sm-4 control-label m-t-xs" translate="TXT_IS_FIX_APPROVED"></label>
 							<div class="col-sm-8 text-left">
 								<div class="onoffswitch">
-									<input type="checkbox" name="switchIsApprove" class="onoffswitch-checkbox" id="switchIsApprove" ng-model="ctrl.productStatus.status">
+									<input type="checkbox" name="switchIsApprove" class="onoffswitch-checkbox" id="switchIsApprove" ng-model="ctrl.productStatus.approveStatus">
 									<label class="onoffswitch-label" for="switchIsApprove">
 										<span class="onoffswitch-inner"></span>
 										<span class="onoffswitch-switch"></span>

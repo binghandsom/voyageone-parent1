@@ -1,5 +1,6 @@
 package com.voyageone.batch.cms.service;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.cms.service.dao.CmsBtFeedProductImageDao;
@@ -153,6 +154,11 @@ public class CmsImagePostScene7Service extends BaseTaskService {
 
             //FTP服务器保存目录设定
             String uploadPath = ChannelConfigs.getVal1(orderChannelId, ChannelConfigEnums.Name.scene7_image_folder);
+            if(StringUtils.isEmpty(uploadPath)){
+                String err = String.format("channelId(%s)的scene7上的路径没有配置 请配置tm_order_channel_config表",orderChannelId);
+                logger.error(orderChannelId);
+                throw new BusinessException(err);
+            }
             ftpBean.setUpload_path(uploadPath);
 
             FtpUtil ftpUtil = new FtpUtil();

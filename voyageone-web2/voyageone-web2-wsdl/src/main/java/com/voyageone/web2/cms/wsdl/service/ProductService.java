@@ -354,7 +354,7 @@ public class ProductService extends BaseService {
     /**
      * add products
      *
-     * @return ProductUpdateResponse
+     * @return ProductsAddResponse
      */
     public ProductsAddResponse addProducts(ProductsAddRequest request) {
         ProductsAddResponse response = new ProductsAddResponse();
@@ -470,7 +470,12 @@ public class ProductService extends BaseService {
             if (catPath != null) {
                 updateMap.put("catPath", catPath);
             }
-            updateMap.put("modified", DateTimeUtil.getNowTimeStamp());
+
+            String modified = DateTimeUtil.getNowTimeStamp();
+            if (request.getModified() != null) {
+                modified = request.getModified();
+            }
+            updateMap.put("modified", modified);
             updateMap.put("modifier", request.getModifier());
 
             /**

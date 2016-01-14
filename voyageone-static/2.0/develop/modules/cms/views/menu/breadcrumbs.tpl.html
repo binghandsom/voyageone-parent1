@@ -1,7 +1,9 @@
 <div ng-controller="breadcrumbsCtrl as breadcrumbs" ng-init="initialize()">
     <ul class="breadcrumb">
         <li><span class="label label-vo" ng-bind="$root.categoryType.cTypeId"></span></li>
-        <li class="active"><a href="#/" ><i class="fa fa-home"></i> <span translate="TXT_HOME"></span></a></li>
+        <a href="#/"class="active"><i class="fa fa-home"></i> <span translate="TXT_HOME"></span></a>
+        <li class="active"></li>
+        <li class="activeTitle">类目管理</li>
         <!-- TODO -->
         <!--<li ng-bind="breadcrumbs.navigation.modelName">类目管理</li>-->
         <!--<li ng-bind="braedcrumbs.navigation.categoryPath">-->
