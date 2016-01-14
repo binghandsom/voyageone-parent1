@@ -236,7 +236,7 @@ public class CmsPromotionDetailService extends BaseAppService {
                 item.setCode(row.getCell(codeCellNum).getStringCellValue());
             }
 
-            if (row.getCell(1).getCellType() == Cell.CELL_TYPE_NUMERIC) {
+            if (row.getCell(priceCellNum).getCellType() == Cell.CELL_TYPE_NUMERIC) {
                 item.setPrice(row.getCell(priceCellNum).getNumericCellValue());
             } else {
                 item.setPrice(Double.parseDouble(row.getCell(priceCellNum).getStringCellValue()));

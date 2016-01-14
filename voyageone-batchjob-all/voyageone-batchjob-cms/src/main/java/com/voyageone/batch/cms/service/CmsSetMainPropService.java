@@ -261,7 +261,9 @@ public class CmsSetMainPropService extends BaseTaskService {
                 field.put(prop.getProp(), getPropValueByMapping(prop.getProp(), prop, feed, field, schemaModel));
             }
 
+            // 主数据的field里,强制写死的字段
             field.setCode(feed.getCode());
+            field.setProductNameEn(feed.getName());
             field.setStatus(com.voyageone.cms.CmsConstants.ProductStatus.New); // 产品状态: 初始时期为(新建) Synship.com_mt_type : id = 44 : productStatus
 
             product.setFields(field);

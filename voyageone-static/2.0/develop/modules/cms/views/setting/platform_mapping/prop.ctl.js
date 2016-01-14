@@ -1,12 +1,28 @@
 /**
- * Created by linanbin on 15/12/7.
+ * platformPropMappingController
  */
 define([
+    'cms',
     'modules/cms/controller/popup.ctl'
-], function () {
+], function (cms) {
+    'use strict';
+    return cms.controller('platformPropMappingController', (function () {
 
-    return function ($scope) {
+        function PlatformMappingController(platformMappingService, $routeParams) {
 
-        $scope.vm = {"searchInfo": {}, "masterData": {}};
-    };
+            this.platformMappingService = platformMappingService;
+
+            this.platformCategoryId = $routeParams['platformCategoryId'];
+        }
+
+        PlatformMappingController.prototype = {
+
+            init: function () {
+
+                alert(this.platformCategoryId);
+            }
+        };
+
+        return PlatformMappingController;
+    })());
 });

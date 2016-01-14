@@ -43,7 +43,9 @@ define([
             // 保存product详情和product自定义
             updateProductInfo: function () {
                 this.productDetailService.updateProductInfo(this.productDetails)
-                    .then(function () {
+                    .then(function (res) {
+                        this.productDetails.modified = res.data.modified;
+                        this.productDetailsCopy = angular.copy(this.productDetails);
                         this.notify.success (this.translate.instant('TXT_COM_UPDATE_SUCCESS'));
                     }.bind(this))
             },
@@ -63,10 +65,13 @@ define([
             },
 
             // 保存sku的变更
-            updateSkuInfo: function () {
-                this.productDetailService.updateSkuInfo(this.productDetails).then(function () {
-                    this.notify.success (this.translate.instant('TXT_COM_UPDATE_SUCCESS'));
-                }.bind(this))
+            updateSkuInfo: function res() {
+                this.productDetailService.updateSkuInfo(this.productDetails)
+                    .then(function () {
+                        this.productDetails.modified = res.data.modified;
+                        this.productDetailsCopy = angular.copy(this.productDetails);
+                        this.notify.success (this.translate.instant('TXT_COM_UPDATE_SUCCESS'));
+                    }.bind(this))
             },
 
             // 取消sku的变更
@@ -123,7 +128,9 @@ define([
             // 保存所有的变更
             updateProductDetail: function () {
                 this.productDetailService.updateProductDetail(this.productDetails)
-                    .then(function (){
+                    .then(function (res){
+                        this.productDetails.modified = res.data.modified;
+                        this.productDetailsCopy = angular.copy(this.productDetails);
                         this.notify.success (this.translate.instant('TXT_COM_UPDATE_SUCCESS'));
                     }.bind(this))
             },
