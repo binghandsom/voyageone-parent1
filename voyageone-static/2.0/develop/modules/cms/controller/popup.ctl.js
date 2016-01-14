@@ -147,7 +147,7 @@ define([
         $scope.openUpdateProperties = openUpdateProperties;
         function openUpdateProperties(viewSize, selList) {
             require([popActions.prop_change.controllerUrl], function () {
-                if (selList.length) {
+                if (selList && selList.length) {
                     $modal.open({
                         templateUrl: popActions.prop_change.templateUrl,
                         controller: 'popPropChangeCtl',
@@ -175,7 +175,7 @@ define([
         $scope.openTagPromotion = openTagPromotion;
         function openTagPromotion(viewSize, promotion, selList) {
             require([popActions.tag.promotion.controllerUrl], function () {
-                if (selList.length) {
+                if (selList && selList.length) {
                     $modal.open({
                         templateUrl: popActions.tag.promotion.templateUrl,
                         controller: 'popTagPromotionCtl',
