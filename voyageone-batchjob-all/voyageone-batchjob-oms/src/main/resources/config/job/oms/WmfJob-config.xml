@@ -7,14 +7,14 @@
           http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
           
 	<!-- ===================== WMF定时任务 start ===================== -->
-	<bean id="postRMOrderJob"
-		class="com.voyageone.batch.oms.job.PostRMOrderJob">
+	<bean id="postWMFOrderJob"
+		class="com.voyageone.batch.oms.job.PostWMFOrderJob">
 	</bean>
 	
 	<bean id="postWMFPendingCancelOrderJobTask"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject">
-			<ref local="postRMOrderJob" />
+			<ref local="postWMFOrderJob" />
 		</property>
 		<property name="targetMethod">
 			<value>postWMFPendingCancelOrder</value>

@@ -7,6 +7,7 @@ import com.voyageone.common.components.issueLog.IssueLog;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.magento.api.MagentoConstants;
+import com.voyageone.common.magento.api.bean.OrderDataBean;
 import com.voyageone.common.magento.api.service.MagentoApiServiceImpl;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
@@ -65,6 +66,22 @@ public class PostWMFOrderService {
 	}
 
 	/**
+	 * 向WMF新订单推送
+	 *
+	 */
+	public boolean postWMFNewOrder() throws Exception {
+		boolean isSuccess = true;
+
+		// 取出OMS中需要向WMF推送的订单
+		List<OrderDataBean> orderDataBeanList = new ArrayList<OrderDataBean>();
+
+		for (OrderDataBean orderDataBean : orderDataBeanList) {
+			magentoApiServiceImpl.pushOrder(orderDataBean);
+		}
+		return isSuccess;
+	}
+
+	/**
 	 * 向WMF取消订单推送(upload)
 	 *
 	 */
@@ -75,58 +92,59 @@ public class PostWMFOrderService {
 		List<OrderExtend> pushOrderList = orderDao.getPendingCancelOrdersInfo(orderChannelID);
 
 		logger.info("-----取消订单件数：" + pushOrderList.size());
+		// 有需要取消的订单
+		if (pushOrderList != null && pushOrderList.size() > 0) {
 
-		magentoApiServiceImpl.setOrderChannelId(orderChannelID);
+			magentoApiServiceImpl.setOrderChannelId(orderChannelID);
 
-		List<OrderExtend> cancelOrderList = new ArrayList<>();
+			List<OrderExtend> cancelOrderList = new ArrayList<>();
 
-		isSuccess = updateOrdersInfo(POST_WMF_CANCEL_ORDER, pushOrderList);
+			for (OrderExtend order : pushOrderList) {
+				logger.info("-------Order_Number：" + order.getOrderNumber() + "，Client_order_id：" + order.getClientOrderId());
 
-		for (OrderExtend order :pushOrderList) {
-			logger.info("-------Order_Number：" + order.getOrderNumber() + "，Client_order_id：" + order.getClientOrderId());
-
-			//品牌方订单号未设定的场合，说明还没向品牌方推送过订单，直接取消
-			if (StringUtils.isNullOrBlank2(order.getClientOrderId())) {
-				cancelOrderList.add(order);
-				continue;
-			}
-
-			//调用Magento服务的API 获取订单信息
-			SalesOrderInfoResponseParam response = magentoApiServiceImpl.getSalesOrderInfo(order.getClientOrderId());
-
-			if (response != null) {
-				SalesOrderEntity salesOrderEntity = response.getResult();
-				//已经取消的场合，直接更新标志位
-				if (MagentoConstants.WMF_Status.Cancelled.equals(salesOrderEntity.getStatus())) {
+				//品牌方订单号未设定的场合，说明还没向品牌方推送过订单，直接取消
+				if (StringUtils.isNullOrBlank2(order.getClientOrderId())) {
 					cancelOrderList.add(order);
 					continue;
 				}
-			} else{
-				issueLog.log(POST_WMF_CANCEL_ORDER,
-						"WMF订单信息取得失败，Order_Number：" + order.getOrderNumber() + "，Client_order_id：" + order.getClientOrderId() ,
-						ErrorType.BatchJob,
-						SubSystem.OMS);
-				continue;
+
+				//调用Magento服务的API 获取订单信息
+				SalesOrderInfoResponseParam response = magentoApiServiceImpl.getSalesOrderInfoWithOneSession(order.getClientOrderId());
+
+				if (response != null) {
+					SalesOrderEntity salesOrderEntity = response.getResult();
+					//已经取消的场合，直接更新标志位
+					if (MagentoConstants.WMF_Status.Canceled.equalsIgnoreCase(salesOrderEntity.getStatus())) {
+						cancelOrderList.add(order);
+						continue;
+					}
+				} else {
+					issueLog.log(POST_WMF_CANCEL_ORDER,
+							"WMF订单信息取得失败，Order_Number：" + order.getOrderNumber() + "，Client_order_id：" + order.getClientOrderId(),
+							ErrorType.BatchJob,
+							SubSystem.OMS);
+					continue;
+				}
+
+				//调用Magento服务的API 取消订单
+				SalesOrderCancelResponseParam cancelResponse = magentoApiServiceImpl.cancelSalesOrderWithOneSession(order.getClientOrderId());
+				// 取消成功
+				if (cancelResponse.getResult() == 1) {
+					cancelOrderList.add(order);
+					continue;
+				} else {
+					issueLog.log(POST_WMF_CANCEL_ORDER,
+							"WMF订单取消失败，Order_Number：" + order.getOrderNumber() + "，Client_order_id：" + order.getClientOrderId(),
+							ErrorType.BatchJob,
+							SubSystem.OMS);
+					continue;
+				}
+
 			}
 
-			//调用Magento服务的API 取消订单
-			SalesOrderCancelResponseParam cancelResponse = magentoApiServiceImpl.cancelSalesOrder(order.getClientOrderId());
-
-			if (cancelResponse.getResult() == 0 ) {
-				cancelOrderList.add(order);
-				continue;
-			} else{
-				issueLog.log(POST_WMF_CANCEL_ORDER,
-						"WMF订单取消失败，Order_Number：" + order.getOrderNumber() + "，Client_order_id：" + order.getClientOrderId() ,
-						ErrorType.BatchJob,
-						SubSystem.OMS);
-				continue;
+			if (cancelOrderList.size() > 0) {
+				isSuccess = updateOrdersInfo(POST_WMF_CANCEL_ORDER, cancelOrderList);
 			}
-
-		}
-
-		if (cancelOrderList.size() > 0) {
-			isSuccess = updateOrdersInfo(POST_WMF_CANCEL_ORDER, cancelOrderList);
 		}
 
 		return isSuccess;
