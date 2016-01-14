@@ -277,7 +277,7 @@ public class ProductPropsEditService {
      * @param user
      * @param requestMap
      */
-    public void updateProductMastertInfo(String channelId,String user, Map requestMap){
+    public String  updateProductMastertInfo(String channelId,String user, Map requestMap){
 
 
 
@@ -337,7 +337,7 @@ public class ProductPropsEditService {
 
         ProductUpdateRequest updateRequest = new ProductUpdateRequest(channelId);
 
-        CmsBtProductModel productModel = new CmsBtProductModel();
+        CmsBtProductModel productModel = new CmsBtProductModel(channelId);
 
         productModel.setCatId(requestMap.get("categoryId").toString());
         productModel.setProdId(Long.valueOf(requestMap.get("productId").toString()));
@@ -349,7 +349,7 @@ public class ProductPropsEditService {
         updateRequest.setProductModel(productModel);
         updateRequest.setModifier(user);
 
-        String updateModified = productClient.updateProductRetModified(updateRequest);
+        return productClient.updateProductRetModified(updateRequest);
 
     }
 
@@ -419,7 +419,7 @@ public class ProductPropsEditService {
      * @param categoryFullPath
      * @param skuFieldMap
      */
-    public void updateProductSkuInfo(String channelId,String user,String categoryId,Long productId,String modified,String categoryFullPath, Map skuFieldMap){
+    public String updateProductSkuInfo(String channelId,String user,String categoryId,Long productId,String modified,String categoryFullPath, Map skuFieldMap){
 
         Field skuField = SchemaJsonReader.mapToField(skuFieldMap);
 
@@ -438,7 +438,7 @@ public class ProductPropsEditService {
 
         ProductUpdateRequest updateRequest = new ProductUpdateRequest(channelId);
 
-        CmsBtProductModel productModel = new CmsBtProductModel();
+        CmsBtProductModel productModel = new CmsBtProductModel(channelId);
 
         productModel.setCatId(categoryId);
         productModel.setProdId(productId);
@@ -449,7 +449,9 @@ public class ProductPropsEditService {
         updateRequest.setProductModel(productModel);
         updateRequest.setModifier(user);
 
-        voApiClient.execute(updateRequest);
+//        voApiClient.execute(updateRequest);
+
+        return productClient.updateProductRetModified(updateRequest);
 
     }
 
@@ -479,10 +481,6 @@ public class ProductPropsEditService {
                         break;
                     default:
                         break;
-
-                }
-
-                if(field instanceof OptionsField){
 
                 }
 
