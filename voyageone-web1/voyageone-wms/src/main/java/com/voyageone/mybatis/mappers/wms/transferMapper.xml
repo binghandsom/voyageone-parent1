@@ -17,6 +17,7 @@
         <result column="transfer_to_store" property="transfer_to_store"/>
         <result column="syn_flg" property="syn_flg"/>
         <result column="syn_time" property="syn_time"/>
+        <result column="client_shipment_id" property="client_shipment_id"/>
         <result column="active" property="active"/>
         <result column="created" property="created"/>
         <result column="creater" property="creater"/>
@@ -36,6 +37,7 @@
         transfer_to_store,
         transfer_origin,
         sim_flg,
+        client_shipment_id,
         comment
     </sql>
 
@@ -99,6 +101,7 @@
             origin_id,
             sim_flg,
             comment,
+            client_shipment_id,
             active,
             created,
             creater,
@@ -120,6 +123,7 @@
             #{origin_id},
             #{sim_flg},
             #{comment},
+            #{client_shipment_id},
             #{active},
             #{created},
             #{creater},
@@ -140,6 +144,7 @@
             transfer_from_store = #{transfer.transfer_from_store},
             transfer_to_store = #{transfer.transfer_to_store},
             comment = #{transfer.comment},
+            client_shipment_id = #{transfer.client_shipment_id},
             modified = #{transfer.modified},
             modifier = #{transfer.modifier}
         where transfer_id = #{transfer.transfer_id} and modified = #{lastModified}
@@ -170,6 +175,7 @@
             transfer_origin,
             sim_flg,
             comment,
+            t.client_shipment_id,
             t.active,
             t.created,
             t.creater,

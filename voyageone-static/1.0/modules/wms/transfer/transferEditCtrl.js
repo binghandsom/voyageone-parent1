@@ -57,7 +57,6 @@ define([
 
         vm.transfer_map_target = "";
 
-        vm.transfer_client_shipment = 0;
         vm.transfer_client_shipments = "";
 
         // 当前的 Transfer
@@ -624,7 +623,8 @@ define([
                 transfer_name: "",
                 transfer_from_store: "",
                 transfer_to_store: "",
-                comment: ""
+                comment: "",
+                client_shipment_id : 0
             };
         }
 

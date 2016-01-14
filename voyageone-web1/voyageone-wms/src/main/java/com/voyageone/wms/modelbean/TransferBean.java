@@ -12,7 +12,9 @@ public class TransferBean {
     private int transfer_to_store;
     private String transfer_origin;
     private int origin_id;
-    private String sim_flg,comment;
+    private String sim_flg;
+    private String comment;
+    private String client_shipment_id;
     private boolean active;
     private String created;
     private String creater;
@@ -161,5 +163,13 @@ public class TransferBean {
 
     public void setModifier(String modifier) {
         this.modifier = modifier;
+    }
+
+    public String getClient_shipment_id() {
+        return client_shipment_id;
+    }
+
+    public void setClient_shipment_id(String client_shipment_id) {
+        this.client_shipment_id = client_shipment_id;
     }
 }
