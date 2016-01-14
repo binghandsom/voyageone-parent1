@@ -7,6 +7,10 @@ package com.voyageone.web2.cms.wsdl.service;
 import java.util.Arrays;
 import java.util.Map;
 
+import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
+import com.voyageone.web2.sdk.api.domain.CmsBtTagModel;
+import com.voyageone.web2.sdk.api.request.TagAddRequest;
+import com.voyageone.web2.sdk.api.response.TagAddResponse;
 import org.apache.commons.beanutils.BeanMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +34,9 @@ public class PromotionService extends BaseService {
 	@Autowired
 	private CmsBtPromotionDao cmsBtPromotionDao;
 
+	@Autowired
+	private TagService tagService;
+
 	/**
 	 * 添加或者修改
 	 * 
@@ -46,9 +53,28 @@ public class PromotionService extends BaseService {
 					.update(promotionPutRequest.getCmsBtPromotionModel()));
 		} else {
 			response.setInsertedCount(cmsBtPromotionDao
-					.insert(promotionPutRequest.getCmsBtPromotionModel()));
+					.insert(insertTagsAndGetNewModel(promotionPutRequest.getCmsBtPromotionModel())));
 		}
 		return response;
+	}
+
+	/**
+	 *
+	 * @param cmsBtPromotionModel
+	 * @return
+     */
+	private CmsBtPromotionModel insertTagsAndGetNewModel(CmsBtPromotionModel cmsBtPromotionModel){
+		TagAddRequest requestModel = new TagAddRequest();
+		requestModel.setChannelId(cmsBtPromotionModel.getChannelId());
+		requestModel.setTagName(cmsBtPromotionModel.getPromotionName());
+		requestModel.setTagType(2);
+		requestModel.setTagStatus(0);
+		requestModel.setParentTagId(0);
+		requestModel.setSortOrder(0);
+		requestModel.setCreater(cmsBtPromotionModel.getCreater());
+		TagAddResponse res =tagService.addTag(requestModel);
+		cmsBtPromotionModel.setRefTagId(res.getTag().getTagId());
+		return cmsBtPromotionModel;
 	}
 
 	/**
