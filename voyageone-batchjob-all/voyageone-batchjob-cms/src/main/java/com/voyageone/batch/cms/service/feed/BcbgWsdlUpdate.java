@@ -38,7 +38,7 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
         return "BcbgAnalysis.Update";
     }
 
-    protected void postUpdatedProduct() throws Exception {
+    protected boolean postUpdatedProduct() throws Exception {
 
         $info("准备处理更新商品");
 
@@ -49,7 +49,7 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
 
         if (updatingProduct.size() < 1) {
             $info("没有商品需要更新");
-            return;
+            return false;
         }
 
         // 从 _full 后缀的表里取上次的数据
@@ -68,7 +68,7 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
         if (feedUpdates == null || feedUpdates.size() < 1) {
             int[] counts = bcbgSuperFeedDao.updateUpdatingSuccess();
             $info("没有商品需要更新. 商品更新信息 Feed [ %s ] [ %s ]", counts[0], counts[1]);
-            return;
+            return false;
         }
 
         List<ProductsFeedUpdate> noNeedUpdating = feedMap.get(false);
@@ -118,11 +118,15 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
             }
         }
 
-        if (updatedCodes.size() > 0) {
-            // 返回删除数量和插入数量,理论上应该相同
-            int[] counts = bcbgSuperFeedDao.updateFull(updatedCodes);
-            $info("已完成商品更新, DEL/INS/UPD: %s / %s / %s", counts[0], counts[1], counts[2]);
+        if (updatedCodes.size() < 1) {
+            return false;
         }
+
+        // 返回删除数量和插入数量,理论上应该相同
+        int[] counts = bcbgSuperFeedDao.updateFull(updatedCodes);
+        $info("已完成商品更新, DEL/INS/UPD: %s / %s / %s", counts[0], counts[1], counts[2]);
+
+        return (counts[1] + counts[2]) > 0;
     }
 
     private List<ProductBean> getNewProducts() {
@@ -265,7 +269,11 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
             updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE, updating.getCps_cn_price());
             updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE_RMB, updating.getCps_cn_price_rmb());
             updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_LONG_DESCRIPTION, updating.getPe_long_description());
-            updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE_FINAL_RMB, updating.getCps_cn_price_final_rmb());
+
+            String strSyncFlg = Feed.getVal1(channel, FeedEnums.Name.sync_final_rmb);
+            if (Boolean.valueOf(strSyncFlg)) {
+                updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE_FINAL_RMB, updating.getCps_cn_price_final_rmb());
+            }
 
             String separator = CmsConstants.FEED_IO_UPDATEFIELDS_IMAGE_SPLIT;
             List<ImageBean> imageBeanList = updating.getImages();
@@ -302,7 +310,8 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
                 updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_LONG_DESCRIPTION, newProduct.getPe_long_description());
             }
 
-            if (!updating.getCps_cn_price_final_rmb().equals(newProduct.getCps_cn_price_final_rmb())) {
+            String strSyncFlg = Feed.getVal1(channel, FeedEnums.Name.sync_final_rmb);
+            if (Boolean.valueOf(strSyncFlg) && !updating.getCps_cn_price_final_rmb().equals(newProduct.getCps_cn_price_final_rmb())) {
                 updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE_FINAL_RMB, newProduct.getCps_cn_price_final_rmb());
             }
 

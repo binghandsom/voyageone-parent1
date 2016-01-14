@@ -14,6 +14,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.util.HttpUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
@@ -65,6 +67,10 @@ public class NewOrderMagentoImportJob {
 	private String taskCheck;
 
 	private MagentoType magentoType;
+
+	protected final String trustStore_jc = "/opt/app-shared/voyageone_web/contents/other/third_party/004/cn_key/juicycouture_store";
+
+	protected final String trustStore_jc_password = "voyage1#";
 
 	/**
 	 * @return the magentoType1
@@ -118,8 +124,15 @@ public class NewOrderMagentoImportJob {
 			String strLastOrderDate = taskDao.getLastRunTime(taskID);
 			// 取得独立域名的URL
 			String postUrl = GetCNMagentoOrderURL(magentoType, strLastOrderDate);
+
 			// 取得独立域名的订单信息
-			String response = CommonUtil.HttpPost("", "UTF-8", postUrl);
+			String response = "";
+			// JC的场合
+			if (ChannelConfigEnums.Channel.JC.getId().equals(magentoType.getChannelId())) {
+				response = HttpUtils.post(postUrl, "", trustStore_jc, trustStore_jc_password, trustStore_jc_password);
+			} else {
+				response = HttpUtils.post(postUrl, "");
+			}
 			// String response =
 			// "<?xml version=\"1.0\" encoding=\"UTF-8\"?><SETIOrders><Response><ResponseCode>1</ResponseCode><ResponseDescription>success</ResponseDescription></Response><Order><OrderNumber>100003111</OrderNumber><OrderDate>08-May-2015 10:32:40 AM</OrderDate><Billing><FullName>常景苏 </FullName><Company></Company><Email>877733222@qq.com</Email><Phone>15263819689</Phone><Address><Street1>东营区</Street1><Street2>石油大学北门，路北往西走200米万家乐专卖店</Street2><City>东营市</City><State>山东省</State><Code>257000</Code><Country>CN</Country></Address></Billing><Shipping><FullName>常景苏 </FullName><Company></Company><Email></Email><Phone>15263819689</Phone><Address><Street1>东营区</Street1><Street2>石油大学北门，路北往西走200米万家乐专卖店</Street2><City>东营市</City><State>山东省</State><Code>257000</Code><Country>CN</Country></Address><Product><Name>NBA经典\"掌控\"室内室外篮球</Name><SKU>74-604y-OneSize</SKU><ItemPrice>220.0000</ItemPrice><Quantity>1.0000</Quantity><Weight></Weight><CustomerText></CustomerText><OrderOption><OptionName>篮球型号</OptionName><SelectedOption>7号球(标准球)</SelectedOption></OrderOption></Product></Shipping><Payment><Generic1><Name>Cnpay</Name><Description>网银在线 </Description><TradeNo>20150507000010000300</TradeNo></Generic1></Payment><Totals><ProductTotal>220.0000</ProductTotal><Tax><TaxAmount>0.0000</TaxAmount></Tax><GrandTotal>220.0000</GrandTotal><ShippingTotal><Total>0.0000</Total><Description>顺丰</Description></ShippingTotal></Totals><Other><IPHostName>61.156.217.67</IPHostName><TotalOrderWeight>0.0000</TotalOrderWeight><GiftMessage></GiftMessage><Comments>要黑色网兜发票类型: 普通发票  发票抬头: 个人 开票内容: 篮球</Comments></Other></Order></SETIOrders>";
 			// xml转MagentoTradeBean

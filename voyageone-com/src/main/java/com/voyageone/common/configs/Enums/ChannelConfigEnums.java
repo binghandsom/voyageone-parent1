@@ -252,6 +252,21 @@ public class ChannelConfigEnums {
         channel_time_zone,
 
         /**
+         * 公司扣点
+         */
+        vo_commission,
+
+        /**
+         * 阿里扣点
+         */
+        alipay_fee,
+
+        /**
+         * 天猫扣点
+         */
+        tmall_commission,
+
+        /**
          * 没有自动approved订单是否需要发邮件
          */
         not_approved_mail,
@@ -323,6 +338,10 @@ public class ChannelConfigEnums {
          */
         pickup_permit,
         /**
+         * 是否允许捡货打印拣货单
+         */
+        pickup_label_print,
+        /**
          * 是否允许收货状态
          */
         receive_permit,
@@ -342,6 +361,10 @@ public class ChannelConfigEnums {
          * 收货重打类型
          */
         receive_relabel_type,
+        /**
+         * 是否允许收货打印拣货单
+         */
+        receive_label_print,
         /**
          * 再分配标志判断
          */
@@ -377,7 +400,11 @@ public class ChannelConfigEnums {
         /**
          * 短信客服号(营销)
          */
-        sms_add_serial_marketing
+        sms_add_serial_marketing,
+        /**
+         * 分配仓库
+         */
+        allot_store
 
     }
 
@@ -446,7 +473,17 @@ public class ChannelConfigEnums {
         /**
          * SEARS
          */
-        SEARS("013");
+        SEARS("013"),
+
+        /**
+         * WMF
+         */
+        WMF("014"),
+
+        /**
+         * JUMEI
+         */
+        JUMEI("998");
 
         private String id;
 
@@ -484,6 +521,8 @@ public class ChannelConfigEnums {
                 case "011": return LOCONDO;
                 case "012": return BCBG;
                 case "013": return SEARS;
+                case "014": return WMF;
+                case "998": return JUMEI;
                 default: return null;
             }
         }

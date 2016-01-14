@@ -30,6 +30,9 @@ public class WmsSyncInventoryService extends WmsSyncInventoryBaseService {
     @Autowired
     private WmsSyncToCnSubService wmsSyncToCnSubService;
 
+    @Autowired
+    private WmsSyncToJuMeiSubService wmsSyncToJuMeiSubService;
+
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
@@ -106,6 +109,7 @@ public class WmsSyncInventoryService extends WmsSyncInventoryBaseService {
                             wmsSyncToCnSubService.syncSite(inventorySynLogBeans, shopBean);
                             break;
                         case JM:
+//                            wmsSyncToJuMeiSubService.syncJumei(inventorySynLogBeans, shopBean);
                             break;
                     }
                 } catch (Exception e) {

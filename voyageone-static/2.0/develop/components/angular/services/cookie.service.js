@@ -10,7 +10,9 @@ angular.module('voyageone.angular.services.cookie', [])
 var keys = {
   language: 'voyageone.user.language',
   company: 'voyageone.user.company',
-  channel: 'voyageone.user.channel'
+  channel: 'voyageone.user.channel',
+  menu: "voyageone.user.menu",
+  name: "voyageone.user.name"
 };
 
 function gentProps(key) {
@@ -27,9 +29,10 @@ function gentProps(key) {
 function CookieService($cookieStore) {
   this.$cookieStore = $cookieStore;
   // init
-  this.set(this.keys.language, '');
-  this.set(this.keys.company, '');
-  this.set(this.keys.channel, '');
+  this.set(keys.language, '');
+  this.set(keys.company, '');
+  this.set(keys.channel, '');
+  this.set(keys.menu, '');
 }
 
 CookieService.prototype.get = function(key) {
@@ -44,4 +47,9 @@ CookieService.prototype.language = gentProps(keys.language);
 
 CookieService.prototype.company = gentProps(keys.company);
 
+// todo: channel 是否需要的是一个对象(id,name),在menu画面中需要显示channel的名称(edward.lin)
 CookieService.prototype.channel = gentProps(keys.channel);
+
+CookieService.prototype.menu = gentProps(keys.menu);
+
+CookieService.prototype.name = gentProps(keys.name);

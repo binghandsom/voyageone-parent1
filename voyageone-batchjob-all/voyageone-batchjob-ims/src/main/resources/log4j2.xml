@@ -8,7 +8,7 @@
     <Appenders>
         <Console name="STDOUT">
             <PatternLayout>
-                <Pattern>%d %p [%t] %m%n</Pattern>
+                <Pattern>[%d{yy-MM-dd HH:mm:ss}] %50.50c[%-5.5p]:%-4.4L | %m%n</Pattern>
             </PatternLayout>
         </Console>
 
@@ -27,7 +27,8 @@
     </Appenders>
 
     <Loggers>
-        <Logger name="com.voyageone.batch.ims" level="debug" additivity="false">
+        <!--有需要时,这里修改为 debug 查看更详细的信息(仅限上新模块)-->
+        <Logger name="com.voyageone.batch.ims" level="info" additivity="false">
             <AppenderRef ref="STDOUT"/>
             <AppenderRef ref="RollingFile"/>
         </Logger>

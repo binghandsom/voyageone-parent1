@@ -3,6 +3,7 @@ package com.voyageone.batch.synship.service;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.batch.SynshipConstants;
 import com.voyageone.batch.base.BaseTaskService;
+import com.voyageone.batch.core.CodeConstants;
 import com.voyageone.batch.core.Enums.TaskControlEnums;
 import com.voyageone.batch.core.Enums.TaskControlEnums.Name;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
@@ -17,16 +18,19 @@ import com.voyageone.batch.synship.service.ems.EmsService;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
+import com.voyageone.common.mail.Mail;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import org.apache.axis2.AxisFault;
-import org.apache.commons.lang3.StringUtils;
+import com.voyageone.common.util.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -106,8 +110,24 @@ public class SynShipValidIdCardService extends BaseTaskService {
         // 抽出件数
         String row_count = TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.row_count);
 
+        // 验证间隔
+        String valid_interval = TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.valid_interval);
+        String valid_interval_time = TaskControlUtils.getVal2(taskControlList, TaskControlEnums.Name.valid_interval, valid_interval);
+
+        if (!StringUtils.isNullOrBlank2(valid_interval_time)) {
+            Date currDate = DateTimeUtil.getDate();
+            Date validIntervalDate = DateTimeUtil.parse(valid_interval_time);
+            Date nextValidIntervalDate = DateTimeUtil.addHours(validIntervalDate, Integer.parseInt(valid_interval));
+            if (currDate.before(nextValidIntervalDate)) {
+                $info("接口异常间隔时间未到，暂停验证，上次接口异常时间：" + valid_interval_time);
+                return;
+            }
+
+        }
+
+
         int intRowCount = 1;
-        if (!com.voyageone.common.util.StringUtils.isNullOrBlank2(row_count)) {
+        if (!StringUtils.isNullOrBlank2(row_count)) {
             intRowCount = Integer.valueOf(row_count);
         }
 
@@ -159,7 +179,7 @@ public class SynShipValidIdCardService extends BaseTaskService {
         exceptions.forEach(this::logIssue);
     }
 
-    protected void validOnThread(List<IdCardBean> idCardBeans) throws JSONException, InterruptedException {
+    protected void validOnThread(List<IdCardBean> idCardBeans) throws JSONException, InterruptedException, MessagingException {
         $info("跨境易身份证验证开始");
 
         // 有数据的话，那么开始加载一些固定的配置
@@ -192,6 +212,33 @@ public class SynShipValidIdCardService extends BaseTaskService {
             // 调用跨境易的接口，验证身份证信息的有效性
             IdCardHistory idCardHistory = callEmsValid(idCardBean);
 
+            // 超时错误时，下次继续验证
+            if (isTimeout(idCardHistory)) {
+                $info("超时错误，等待下次验证");
+                continue;
+            }
+
+            // 身份证验证频繁，下次继续验证
+            if (isFrequently(idCardHistory)){
+                $info("验证频繁，等待下次验证");
+                logIssue("跨境易身份证验证频繁", "Name：" + idCardHistory.getShip_name() + "，IdCard：" + idCardHistory.getId_card() + "，Message：" + idCardHistory.getMessage());
+                continue;
+            }
+
+            // 接口密码错误，下次继续验证
+            if (isPasswordError(idCardHistory)){
+                $info("账号或密码错误，等待下次验证");
+                logIssue("跨境易身份证账号或密码错误", "Name：" + idCardHistory.getShip_name() + "，IdCard：" + idCardHistory.getId_card() + "，Message：" + idCardHistory.getMessage());
+                continue;
+            }
+
+            // 连接重置错误，下次继续验证
+            if (isConnectionError(idCardHistory)){
+                $info("Connection错误，等待下次验证");
+                logIssue("跨境易身份证Connection错误", "Name：" + idCardHistory.getShip_name() + "，IdCard：" + idCardHistory.getId_card() + "，Message：" + idCardHistory.getMessage());
+                continue;
+            }
+
             // 获取 ShortUrl，尝试从其中获取 channel
             // 后续多处使用
             ShortUrlBean shortUrlBean = shortUrlDao.getInfosBySourceOrderId(idCardHistory.getSource_order_id());
@@ -200,22 +247,18 @@ public class SynShipValidIdCardService extends BaseTaskService {
 
             idCardHistoryDao.insert(idCardHistory);
 
-            // 如果通过了，继续执行一些后续逻辑，然后继续下一个
-            if (isPass(idCardHistory)) {
-                afterPass(idCardHistory, idCardBean, shortUrlBean);
-                continue;
-            }
-
-            // 超时错误时，下次继续验证
-            if (isTimeout(idCardHistory)) {
-                $info("超时错误，等待下次验证");
-                continue;
-            }
-
-            // 身份证接口异常，下次继续验证
+            // 身份证接口异常，停止验证
             if (isInterfaceError(idCardHistory)){
                 $info("接口异常，等待下次验证");
                 logIssue("跨境易身份证接口异常", "Name：" + idCardHistory.getShip_name() + "，IdCard：" + idCardHistory.getId_card() + "，Message：" + idCardHistory.getMessage());
+                idCardDao.setValidInterval(getTaskName(),  TaskControlEnums.Name.valid_interval.toString());
+                Mail.sendAlert(CodeConstants.EmailReceiver.ITSYNSHIP, "跨境易身份证接口异常", "跨境易身份证接口异常，请及时联络跨境易相关人员，Name：" + idCardHistory.getShip_name() + "，IdCard：" + idCardHistory.getId_card() + "，Message：" + idCardHistory.getMessage(), true);
+                break;
+            }
+
+            // 如果通过了，继续执行一些后续逻辑，然后继续下一个
+            if (isPass(idCardHistory)) {
+                afterPass(idCardHistory, idCardBean, shortUrlBean);
                 continue;
             }
 
@@ -258,8 +301,10 @@ public class SynShipValidIdCardService extends BaseTaskService {
         SmsConfigBean configBean = smsConfig.getAvailable(channel, targetCode1);
 
         if (configBean == null || StringUtils.isEmpty(configBean.getContent())) {
-            // 如果短信内容的配置，完全没有获取到的话，说明配置错误，不能继续
-            throw new BusinessException(String.format("没找到可用的短信内容，渠道 [ %s ]，Code1 [ %s ]", channel, targetCode1));
+            // 如果短信内容的配置，完全没有获取到的话，说明不需要发送短信，处理中止
+            $info("没找到可用的短信内容，渠道 [ %s ]，Code1 [ %s ]", channel, targetCode1);
+            return;
+//            throw new BusinessException(String.format("没找到可用的短信内容，渠道 [ %s ]，Code1 [ %s ]", channel, targetCode1));
         }
 
         $info("发送短信");
@@ -306,7 +351,19 @@ public class SynShipValidIdCardService extends BaseTaskService {
     }
 
     private boolean isInterfaceError(IdCardHistory idCardHistory) {
-        return idCardHistory.getMessage().contains("接口异常");
+        return idCardHistory.getMessage().contains("接口异常") ;
+    }
+
+    private boolean isFrequently(IdCardHistory idCardHistory) {
+        return  idCardHistory.getMessage().contains("验证频繁");
+    }
+
+    private boolean isPasswordError(IdCardHistory idCardHistory) {
+        return  idCardHistory.getMessage().contains("账号或密码错误");
+    }
+
+    private boolean isConnectionError(IdCardHistory idCardHistory) {
+        return  idCardHistory.getMessage().contains("reset") ||  idCardHistory.getMessage().contains("refused") ||  idCardHistory.getMessage().contains("Connection");
     }
 
     private void afterPass(IdCardHistory idCardHistory, IdCardBean idCardBean, ShortUrlBean shortUrlBean) {

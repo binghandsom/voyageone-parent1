@@ -13,6 +13,8 @@ import java.util.List;
  */
 public class SetPriceUtils {
 
+    public static int APPROVED_ORDER_INCLUDE_SHIPPING = 6;
+
     private static SetPriceDao setPriceDao;
 
     @Autowired
@@ -31,7 +33,9 @@ public class SetPriceUtils {
      */
     public static  List<SetPriceBean> setPrice(String order_number,String order_channel_id,String cart_id,int fileFlg)  throws Exception{
         List<SetPriceBean>  priceReportDatas  = new ArrayList<SetPriceBean>();
+        // 物品总金额（含物品折扣）
         double priceCount = 0;
+        // 物品总金额（含订单折扣）
         double priceCountAfter = 0;
         int lastIndex = 0;
         //销售订单基本价格数据取得
@@ -46,40 +50,81 @@ public class SetPriceUtils {
         //退货订单基本价格数据取得
         }else if(fileFlg == 1 || fileFlg == 2) {
             priceReportDatas = setPriceDao.getReturnedPriceData(order_number, order_channel_id, cart_id);
+        // Approved正常订单推送（不含运费）
         } else if(fileFlg == 4) {
             priceReportDatas = setPriceDao.getPriceDataNotIncludeShipping(order_number, order_channel_id, cart_id);
+        // Cancel，Return订单推送（不含运费）
         } else if(fileFlg == 5) {
             priceReportDatas = setPriceDao.getPriceDataNotIncludeShippingForCancelOrReturn(order_number, order_channel_id, cart_id);
+        // Approved正常订单推送（含运费）
+        } else if(fileFlg == APPROVED_ORDER_INCLUDE_SHIPPING) {
+            priceReportDatas = setPriceDao.getPriceDataIncludeShipping(order_number, order_channel_id, cart_id);
         }
 
         if (priceReportDatas != null && priceReportDatas.size() > 0){
             //分类合计
             //订单折扣和运费合计为0，不需要计算
-            if (Double.valueOf(priceReportDatas.get(0).getShipping_price()) == 0 ){
+            if (Double.valueOf(priceReportDatas.get(0).getShipping_price()) == 0){
                 return priceReportDatas;
             } else {
+                if (fileFlg == APPROVED_ORDER_INCLUDE_SHIPPING && Double.valueOf(priceReportDatas.get(0).getShipping_fee()) == 0) {
+                    return priceReportDatas;
+                }
+
                 //合计金额算出
                 for (SetPriceBean priceReportData : priceReportDatas ){
                     priceCount = Double.valueOf(priceReportData.getPrice()) + priceCount;
                 }
                 //按金额占合计金额百分比，分摊订单折扣和运费
                 int index = 0;
+
+                // 计算前运费总金额
+                double priceCountBeforeShipping = 0;
+                // 计算后运费总金额
+                double priceCountAfterShipping = 0;
+
                 for (SetPriceBean priceReportData : priceReportDatas ){
                     if (!(Double.valueOf(priceReportData.getPrice())== 0)) {
+                        // 百分比取得
                         double percentPrice = Double.valueOf(priceReportData.getPrice()) / priceCount;
+
+                        // 折扣计算
                         double percentPriceShip = percentPrice * Double.valueOf(priceReportData.getShipping_price()) + Double.valueOf(priceReportData.getPrice());
                         BigDecimal bigDecimal = new BigDecimal(percentPriceShip).setScale(2, BigDecimal.ROUND_HALF_UP);
                         priceReportData.setPrice(String.valueOf(bigDecimal.toString()));
+
                         //分摊订单折扣和运费后的总计金额
                         priceCountAfter = bigDecimal.doubleValue() + priceCountAfter;
+
+                        // Approved正常订单推送（含运费）
+                        if (fileFlg == APPROVED_ORDER_INCLUDE_SHIPPING) {
+                            if (priceCountBeforeShipping == 0) {
+                                priceCountBeforeShipping = Double.valueOf(priceReportData.getShipping_fee());
+                            }
+
+                            // 运费计算
+                            double percentPriceShippingFee = percentPrice *  Double.valueOf(priceReportData.getShipping_fee());
+                            BigDecimal bigDecimalShippingFee = new BigDecimal(percentPriceShippingFee).setScale(2, BigDecimal.ROUND_HALF_UP);
+                            priceReportData.setShipping_fee(String.valueOf(bigDecimalShippingFee));
+
+                            priceCountAfterShipping = bigDecimalShippingFee.doubleValue() + priceCountAfterShipping;
+                        }
+
                         lastIndex = index;
                     }
                     index =index +1;
                 }
+
                 //为防止最后有余数，合计金额 + 订单折扣和运费合计 - 分摊订单折扣和运费后的总计金额 = 剩余金额全部归入最后一个sku合计数据
                 double lastPrice = priceCount + Double.valueOf(priceReportDatas.get(0).getShipping_price()) - priceCountAfter + Double.valueOf(priceReportDatas.get(lastIndex).getPrice());
                 BigDecimal bigLastPrice = new BigDecimal(lastPrice).setScale(2, BigDecimal.ROUND_HALF_UP);
                 priceReportDatas.get(lastIndex).setPrice(String.valueOf(bigLastPrice.doubleValue()));
+
+                if (fileFlg == APPROVED_ORDER_INCLUDE_SHIPPING) {
+                    double lastPriceShippingFee = priceCountBeforeShipping -  priceCountAfterShipping + Double.valueOf(priceReportDatas.get(lastIndex).getShipping_fee());
+                    BigDecimal bigLastPriceShippingFee = new BigDecimal(lastPriceShippingFee).setScale(2, BigDecimal.ROUND_HALF_UP);
+                    priceReportDatas.get(lastIndex).setShipping_fee(String.valueOf(bigLastPriceShippingFee.doubleValue()));
+                }
             }
         }
         return priceReportDatas;

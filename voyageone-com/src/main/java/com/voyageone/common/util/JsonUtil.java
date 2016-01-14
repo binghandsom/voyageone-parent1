@@ -94,4 +94,9 @@ public final class JsonUtil {
     public static String getJsonString(Object data) {
         return new GsonBuilder().serializeNulls().create().toJson(data);
     }
+
+    public static String bean2Json(Object obj){
+        Gson gson = new GsonBuilder().create();
+        return gson.toJson(obj);
+    }
 }

@@ -12,7 +12,7 @@
         <!--test 每5分钟运行一次　
         <task:scheduled ref ="cmsGetSuperFeedTask" method="run" cron="0 0/1 0-23 * * ?"/>-->
         <!-- 每12小时运行一次　-->
-        <task:scheduled ref="cmsGetSuperFeedTask" method="run" cron="0 0 0/12 * * ?"/>
+        <task:scheduled ref="cmsGetSuperFeedTask" method="run" cron="0 0 0/6 * * ?"/>
 
         <!-- 每天凌晨5点开始将产品导入到主数据的值表 > 由于运营可能需要随时修改主类目，所以改为3分钟运行一次 -->
         <!--<task:scheduled ref="cmsSetMainPropTask" method="run" cron="0 0 5 * * ?"/>-->
@@ -26,6 +26,8 @@
 
         <!-- CMS统计日报 -->
         <task:scheduled ref="BcbgAnalySisJob" method="run" cron="0 0/1 0-23 * * ?"/>
+
+        <task:scheduled ref="SearsAnalySisJob" method="run" cron="0 0/3 * * * ?"/>
 
     </task:scheduled-tasks>
 

@@ -237,6 +237,10 @@
   ,`Attribute95Value`
   ,`Attribute96Name`
   ,`Attribute96Value`
+    ,`Attribute97Name`
+    ,`Attribute97Value`
+    ,`Attribute98Name`
+    ,`Attribute98Value`
   ,UpdateFlag
   )
   values
@@ -465,6 +469,10 @@
   #{Attribute95Value},
   #{Attribute96Name},
   #{Attribute96Value},
+   #{Attribute97Name},
+   #{Attribute97Value},
+   #{Attribute98Name},
+   #{Attribute98Value},
   '0'
   )
  </insert>

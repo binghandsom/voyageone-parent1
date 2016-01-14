@@ -184,8 +184,12 @@ public interface WmsConstants {
         public final static String LABELNAME = "ca_label_name";
         public final static String DATERANGEFIELD = "ca_daterangefield";
         public final static String POSTACTION = "ca_inventory_action";
+        public final static String POSTITEMACTION ="ca_inventory_item_action";
         public final static String FULLUPDATECONFIG= "ca_full_update_config";
         public final static String PAGESIZE= "ca_update_pagesize";
+        public final static String INVENTORYFULLUPDATECONFIG= "inventory_full_update_config";
+        public final static String INVENTORYPAGESIZE= "inventory_update_pagesize";
+        public final static String CENTERCODE = "ca_inventory_center_code";
     }
 
     /**
@@ -340,5 +344,11 @@ public interface WmsConstants {
         //销售订单标题
         public static final String[] PHYSICALS_TITLE_HEAD={"WERKS","DATE","LGORT","EAN/UPC","PRICE",
                 "MENGE","RECRODTYPE","PRICEFLAG","ARTICLE"};
+    }
+
+    //库存同步类型 1: 不同区域；  2: 不同库存管理
+    final class ORDER_SPLIT {
+        public final static String AREA = "1";
+        public final static String INVENTORY = "2";
     }
 }
