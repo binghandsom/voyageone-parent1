@@ -160,6 +160,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     public void setFullAttribute() {
         Map<String, Object> attribute = new HashMap<>();
 
+        // 增加了code级别的共通属性的支持
         attribute.put("category", this.category);
         attribute.put("code", this.code);
         attribute.put("name", this.name);
@@ -172,8 +173,15 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         attribute.put("weight", this.weight);
         attribute.put("short_description", this.short_description);
         attribute.put("long_description", this.long_description);
-        attribute.put("skus", this.skus);
-        attribute.put("attribut", this.attribute);
+
+        // 增加了sku级别的价格属性的支持
+        if (this.getSkus() != null && this.getSkus().size() > 0) {
+            attribute.put("price_current", this.getSkus().get(0).getPrice_current());
+            attribute.put("price_msrp", this.getSkus().get(0).getPrice_msrp());
+        } else {
+            attribute.put("price_current", "0");
+            attribute.put("price_msrp", "0");
+        }
 
         this.fullAttribute = attribute;
     }
