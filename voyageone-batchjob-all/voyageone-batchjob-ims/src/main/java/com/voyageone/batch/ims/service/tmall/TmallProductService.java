@@ -10,6 +10,7 @@ import com.taobao.top.schema.factory.SchemaReader;
 import com.taobao.top.schema.factory.SchemaWriter;
 import com.taobao.top.schema.field.*;
 import com.taobao.top.schema.value.ComplexValue;
+import com.taobao.top.schema.value.Value;
 import com.voyageone.batch.ims.ImsConstants;
 import com.voyageone.batch.ims.bean.*;
 import com.voyageone.batch.ims.bean.tcb.*;
@@ -25,6 +26,7 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.tmall.TbProductService;
 import com.voyageone.common.configs.ShopConfigs;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.ims.enums.CmsFieldEnum;
 import com.voyageone.ims.modelbean.DictWordBean;
 import com.voyageone.ims.rule_expression.DictWord;
@@ -1471,65 +1473,6 @@ public class TmallProductService implements PlatformServiceInterface {
                     {
                         throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("Can't build SkuInfoField"));
                     }
-
-                    // 20160106 tom 这里增加一段排序 START
-                    // 准备排序用的顺序
-                    List<String> lstSortRuleList = new ArrayList<>();
-                    // 纯数字系列
-                    for (int i = 0; i < 100; i++) {
-                        lstSortRuleList.add(String.valueOf(i));
-                        lstSortRuleList.add(String.valueOf(i) + ".5");
-                    }
-                    // SM系列
-                    lstSortRuleList.add("XXX");
-                    lstSortRuleList.add("XXS");
-                    lstSortRuleList.add("XS");
-                    lstSortRuleList.add("XS/S");
-                    lstSortRuleList.add("XSS");
-                    lstSortRuleList.add("S");
-                    lstSortRuleList.add("S/M");
-                    lstSortRuleList.add("M");
-                    lstSortRuleList.add("M/L");
-                    lstSortRuleList.add("L");
-                    lstSortRuleList.add("XL");
-                    lstSortRuleList.add("XXL");
-
-                    // 包的尺码不参与排序(放最后)
-                    lstSortRuleList.add("N/S");
-                    // OneSize尺码不参与排序(放最后)
-                    lstSortRuleList.add("O/S");
-                    lstSortRuleList.add("OneSize");
-
-                    // 寻找尺码扩展
-                    for (Field multiOne : skuInfoFields){
-                        MultiComplexField multiField = (MultiComplexField) multiOne;
-                        if ("std_size_extends_20509".equals(multiField.getId())
-                                || "sku".equals(multiField.getId()) ) {
-
-                            // 复制一份出来
-                            List<ComplexValue> multiValueCopy = multiField.getComplexValues();
-                            // 新做的一份
-                            List<ComplexValue> multiValueNew = new ArrayList<>();
-
-                            for (String strValue : lstSortRuleList) {
-                                for (ComplexValue value : multiValueCopy) {
-                                    if (strValue.equals(value.getValue("std_size_prop_20509_-1").getValue())) {
-                                        multiValueNew.add(value);
-                                    }
-                                }
-                            }
-
-                            // 把剩下不在排序表里的例外的情况,放到最后面
-                            for (ComplexValue value : multiValueCopy) {
-                                if (!lstSortRuleList.contains(value.getValue("std_size_prop_20509_-1").getValue())) {
-                                    multiValueNew.add(value);
-                                }
-                            }
-
-                            multiField.setComplexValues(multiValueNew);
-                        }
-                    }
-                    // 20160106 tom 这里增加一段排序 END
 
                     contextBeforeUploadImage.getCustomFields().addAll(skuInfoFields);
                     contextBuildCustomFields.setSkuFieldBuilder(skuFieldBuilder);
