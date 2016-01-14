@@ -393,7 +393,7 @@ public class WmsTransferServiceImpl implements WmsTransferService {
         num = item.getTransfer_qty() + num;
 
         // 如果数量全部抵消。则删除这个 Item 行
-        if (num < 0) {
+        if (num <= 0) {
             if (transferDao.deleteItem(item.getTransfer_item_id()) > 0)
                 return item.getTransfer_sku();
             else
