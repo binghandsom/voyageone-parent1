@@ -1,8 +1,8 @@
 /**
- * @User: Jack
- * @Date: 2015-06-04 15:39:01
+ * @User: Jerry
+ * @Date: 2016-01-14 15:39:01
  * @Version: 0.0.1
- * @modify sky 20150604
+ * @modify jerry 20160114
  */
 
 define([
@@ -43,11 +43,11 @@ define([
                     scope.close = close;
 
                     //点击查询按钮
-                    scope.doChange = doChange;
+                    scope.doSave = doSave;
 
                     // 根据检索条件查询相关记录
-                    function doChange() {
-                        // Code 空检查
+                    function doSave() {
+
                         if (!vm.itemCode) {
                             alert("Please Input Item Code.");
                             return;
