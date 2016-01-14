@@ -101,7 +101,7 @@ public class UserService extends BaseAppService {
     public String getUserLanguage (UserSessionBean user) {
         List<UserConfigModel> languageInfo = user.getUserConfig().get(CoreConstants.USER_CONFIG_LANGUAGE_ID);
 
-        return languageInfo != null && languageInfo.size() > 0 ? languageInfo.get(0).getCfg_val1() : "";
+        return languageInfo != null && languageInfo.size() > 0 ? languageInfo.get(0).getCfg_val1() : "en";
     }
 
     private Map<String , List<UserConfigModel>> getUserConfig(int userId) {
