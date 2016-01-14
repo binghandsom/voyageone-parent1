@@ -1,6 +1,5 @@
 package com.voyageone.cms.service.model;
 
-
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -8,13 +7,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class CmsMtPlatformCategorySchemaModel extends BaseMongoModel {
 
     private Integer cartId;
-    private String catId;
-    private String catFullPath;
-    private String propsProduct;
-    private String propsItem;
 
-    public CmsMtPlatformCategorySchemaModel() {
-    }
+    private String catId;
+
+    private String catFullPath;
+
+    private String propsProduct;
+
+    private String propsItem;
 
     public Integer getCartId() {
         return cartId;
@@ -56,7 +56,7 @@ public class CmsMtPlatformCategorySchemaModel extends BaseMongoModel {
         this.propsItem = propsItem;
     }
 
-    public class CmsMtPlatformCatSchemaKeyModel{
+    public class CmsMtPlatformCatSchemaKeyModel {
         private Integer cartId;
         private String catId;
 

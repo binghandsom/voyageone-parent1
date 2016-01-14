@@ -66,12 +66,15 @@ public class CmsPlatformMappingService extends BaseAppService {
 
         Map<String, CmsMtPlatformCategoryTreeModel> platformMap = getPlatformMap(user.getSelChannel(), cartId);
 
-        Map<String, String> mappings = platformMappingDao.selectMappings(user.getSelChannel(), cartId)
+        Map<String, Object> mappings = platformMappingDao.selectMappings(user.getSelChannel(), cartId)
                 .stream()
                 .filter(m -> platformMap.containsKey(m.getPlatformCategoryId()))
                 .collect(toMap(
                         CmsMtPlatformMappingModel::getMainCategoryId,
-                        m -> platformMap.get(m.getPlatformCategoryId()).getCatPath()));
+                        m -> new HashMap<String, Object>() {{
+                            put("matched", m.getMatchOver());
+                            put("path", platformMap.get(m.getPlatformCategoryId()).getCatPath());
+                        }}));
 
         return new HashMap<String, Object>() {{
             put("categories", treeModelMap);
@@ -116,9 +119,9 @@ public class CmsPlatformMappingService extends BaseAppService {
      * @param to     平台类目 ID
      * @param cartId 平台 ID
      * @param user   用户配置
-     * @return 更新影响行数
+     * @return 新/老 mapping 的 matchOver
      */
-    public void setPlatformMapping(String from, String to, Integer cartId, UserSessionBean user) {
+    public boolean setPlatformMapping(String from, String to, Integer cartId, UserSessionBean user) {
 
         // 检查下数据
         if (StringUtils.isEmpty(from)) {
@@ -140,7 +143,7 @@ public class CmsPlatformMappingService extends BaseAppService {
         } else if (platformMappingModel.getPlatformCategoryId().equals(to)) {
             // 如果有老数据
             // 老数据是不是和 to 一样, 一样就不用折腾了
-            return;
+            return platformMappingModel.getMatchOver() == 1;
         }
 
         // 重置老数据, 然后更改为 to 的新数据
@@ -149,6 +152,8 @@ public class CmsPlatformMappingService extends BaseAppService {
         platformMappingModel.setProps(new ArrayList<>(0));
 
         platformMappingDao.update(platformMappingModel);
+
+        return false;
     }
 
     /**

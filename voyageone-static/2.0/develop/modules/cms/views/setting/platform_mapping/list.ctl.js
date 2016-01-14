@@ -84,10 +84,13 @@ define([
                     // 追加附加属性
                     _.each(this.mainCategories, function (category) {
 
-                        var platformPath = mappings[category.catId];
+                        var map = mappings[category.catId];
 
-                        category.mapping = platformPath || '未匹配';
-                        category.matched = !!platformPath;
+                        category.matched = !!(map && map.path);
+
+                        category.mapping = category.matched ? map.path : '未匹配';
+
+                        category.propertyMatched = category.matched && map.matched === 1;
                     });
 
                 }.bind(this));
@@ -95,38 +98,44 @@ define([
 
             popupMapping: function (category, popupNewCategory) {
 
-                this.platformMappingService.getPlatformCategory({
-                    cartId: this.selected.cart
-                }).then(function (res) {
+                this.platformMappingService
 
-                    if (!res.data || !res.data.length) {
-                        this.alert('没有取到任何平台类目... 尝试换一个平台试试 ?');
-                        return;
-                    }
+                    .getPlatformCategory({cartId: this.selected.cart})
 
-                    popupNewCategory({
-                        from: category.catPath,
-                        categories: res.data
-                    }).then(function (context) {
+                    .then(function (res) {
+                        if (!res.data || !res.data.length) {
+                            this.alert('没有取到任何平台类目... 尝试换一个平台试试 ?');
+                            return null;
+                        }
+
+                        return popupNewCategory({
+                            from: category.catPath,
+                            categories: res.data
+                        });
+                    }.bind(this))
+
+                    .then(function (context) {
+
+                        if (!context) return null;
 
                         this.platformMappingService.setPlatformMapping({
                             from: category.catId,
                             to: context.selected.catId,
                             cartId: this.selected.cart
-                        }).then(function () {
-
+                        }).then(function (res) {
                             // 更新附加属性
                             category.mapping = context.selected.catPath;
                             category.matched = true;
+                            category.propertyMatched = res.data;
+                        });
 
-                        }.bind(this));
-                    }.bind(this))
-                }.bind(this));
+                    }.bind(this));
             },
 
             shown: function (category) {
 
-                return (this.matched.category === null || this.matched.category === category.matched);
+                return (this.matched.category === null || this.matched.category === category.matched)
+                    && (this.matched.property === null || this.matched.property === category.propertyMatched);
             }
         };
 
