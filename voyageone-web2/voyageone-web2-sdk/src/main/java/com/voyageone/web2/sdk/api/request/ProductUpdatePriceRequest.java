@@ -53,6 +53,7 @@ public class ProductUpdatePriceRequest extends VoApiRequest<ProductUpdatePriceRe
 
 		RequestUtils.checkMinValue((long) productPrices.size(), 1, "productPrices");
 		RequestUtils.checkMaxValue((long) productPrices.size(), 100, "productPrices");
+		RequestUtils.checkNotEmpty(" modifier", modifier);
 	}
 
 	public String getChannelId() {
