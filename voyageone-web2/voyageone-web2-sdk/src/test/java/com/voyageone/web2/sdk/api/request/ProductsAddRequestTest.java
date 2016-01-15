@@ -33,7 +33,7 @@ public class ProductsAddRequestTest {
         requestModel.addProduct(createProduct(12, "a12" + 12));
 
         //modifier
-        requestModel.setCreater("liang");
+        requestModel.setModified("liang");
 
         //SDK取得Product 数据
         ProductsAddResponse response = voApiClient.execute(requestModel);

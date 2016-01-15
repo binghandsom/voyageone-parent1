@@ -33,7 +33,7 @@ public class TagAddRequestTest {
         requestModel.setTagStatus(0);
         requestModel.setParentTagId(0);
         requestModel.setSortOrder(0);
-        requestModel.setCreater("jerry");
+        requestModel.setModifier("jerry");
 
         //SDK取得Product 数据
         TagAddResponse res = voApiClient.execute(requestModel);
@@ -93,8 +93,8 @@ public class TagAddRequestTest {
         System.out.println("tagList.size = " + tagModelList.size());
 
         if (tagModelList.size() > 0) {
-            for (int i = 0; i < tagModelList.size(); i++) {
-                System.out.println("tag id = " + tagModelList.get(i).getTagId());
+            for (CmsBtTagModel aTagModelList : tagModelList) {
+                System.out.println("tag id = " + aTagModelList.getTagId());
             }
         }
     }

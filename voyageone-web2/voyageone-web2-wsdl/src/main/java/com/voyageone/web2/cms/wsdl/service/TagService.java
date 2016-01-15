@@ -1,25 +1,23 @@
 package com.voyageone.web2.cms.wsdl.service;
 
-import com.google.common.base.Joiner;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
-import com.voyageone.cms.service.model.CmsBtProductModel;
-import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.cms.wsdl.BaseService;
 import com.voyageone.web2.cms.wsdl.dao.CmsBtTagDao;
 import com.voyageone.web2.sdk.api.VoApiConstants;
 import com.voyageone.web2.sdk.api.domain.CmsBtTagModel;
-import com.voyageone.web2.sdk.api.exception.ApiException;
-import com.voyageone.web2.sdk.api.request.*;
-import com.voyageone.web2.sdk.api.response.*;
+import com.voyageone.web2.sdk.api.request.TagAddRequest;
+import com.voyageone.web2.sdk.api.request.TagRemoveRequest;
+import com.voyageone.web2.sdk.api.request.TagsGetRequest;
+import com.voyageone.web2.sdk.api.response.TagAddResponse;
+import com.voyageone.web2.sdk.api.response.TagRemoveResponse;
+import com.voyageone.web2.sdk.api.response.TagsGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import java.text.Collator;
-import java.util.*;
+import java.util.List;
 
 /**
  * Tag Service
@@ -40,7 +38,7 @@ public class TagService extends BaseService {
     private CmsBtProductDao cmsBtProductDao;
 
     // TagPath 分割符
-    private String tagPathSeparator = "-";
+    private static String tagPathSeparator = "-";
 
     @Autowired
     private DataSourceTransactionManager transactionManager;
@@ -111,8 +109,8 @@ public class TagService extends BaseService {
         cmsBtTagModel.setTagStatus(request.getTagStatus());
         cmsBtTagModel.setSortOrder(request.getSortOrder());
         cmsBtTagModel.setParentTagId(request.getParentTagId());
-        cmsBtTagModel.setCreater(request.getCreater());
-        cmsBtTagModel.setModifier(request.getCreater());
+        cmsBtTagModel.setCreater(request.getModifier());
+        cmsBtTagModel.setModifier(request.getModifier());
 
         int recordCount = cmsBtTagDao.insertCmsBtTag(cmsBtTagModel);
 

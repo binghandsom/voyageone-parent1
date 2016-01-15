@@ -4,24 +4,22 @@
 
 package com.voyageone.web2.cms.wsdl.service;
 
-import java.util.Arrays;
-import java.util.Map;
-
+import com.voyageone.web2.cms.wsdl.BaseService;
+import com.voyageone.web2.cms.wsdl.dao.CmsBtPromotionDao;
 import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
-import com.voyageone.web2.sdk.api.domain.CmsBtTagModel;
+import com.voyageone.web2.sdk.api.request.PromotionsDeleteRequest;
+import com.voyageone.web2.sdk.api.request.PromotionsGetRequest;
+import com.voyageone.web2.sdk.api.request.PromotionsPutRequest;
 import com.voyageone.web2.sdk.api.request.TagAddRequest;
+import com.voyageone.web2.sdk.api.response.PromotionsGetResponse;
+import com.voyageone.web2.sdk.api.response.PromotionsPutResponse;
 import com.voyageone.web2.sdk.api.response.TagAddResponse;
 import org.apache.commons.beanutils.BeanMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.voyageone.web2.cms.wsdl.BaseService;
-import com.voyageone.web2.cms.wsdl.dao.CmsBtPromotionDao;
-import com.voyageone.web2.sdk.api.request.PromotionsDeleteRequest;
-import com.voyageone.web2.sdk.api.request.PromotionsGetRequest;
-import com.voyageone.web2.sdk.api.request.PromotionsPutRequest;
-import com.voyageone.web2.sdk.api.response.PromotionsGetResponse;
-import com.voyageone.web2.sdk.api.response.PromotionsPutResponse;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * @description
@@ -40,8 +38,8 @@ public class PromotionService extends BaseService {
 	/**
 	 * 添加或者修改
 	 * 
-	 * @param promotionPutRequest
-	 * @return
+	 * @param promotionPutRequest Request
+	 * @return PromotionsPutResponse
 	 */
 	public PromotionsPutResponse saveOrUpdate(
 			PromotionsPutRequest promotionPutRequest) {
@@ -60,8 +58,8 @@ public class PromotionService extends BaseService {
 
 	/**
 	 *
-	 * @param cmsBtPromotionModel
-	 * @return
+	 * @param cmsBtPromotionModel PromotionModel
+	 * @return CmsBtPromotionModel
      */
 	private CmsBtPromotionModel insertTagsAndGetNewModel(CmsBtPromotionModel cmsBtPromotionModel){
 		TagAddRequest requestModel = new TagAddRequest();
@@ -71,8 +69,8 @@ public class PromotionService extends BaseService {
 		requestModel.setTagStatus(0);
 		requestModel.setParentTagId(0);
 		requestModel.setSortOrder(0);
-		requestModel.setCreater(cmsBtPromotionModel.getCreater());
-		TagAddResponse res =tagService.addTag(requestModel);
+		requestModel.setModifier(cmsBtPromotionModel.getModifier());
+		TagAddResponse res = tagService.addTag(requestModel);
 		cmsBtPromotionModel.setRefTagId(res.getTag().getTagId());
 		return cmsBtPromotionModel;
 	}
@@ -80,14 +78,14 @@ public class PromotionService extends BaseService {
 	/**
 	 * 根据条件查询
 	 * 
-	 * @param promotionGetRequest
-	 * @return
+	 * @param promotionGetRequest Request
+	 * @return PromotionsGetResponse
 	 */
 	public PromotionsGetResponse selectByCondition(
 			PromotionsGetRequest promotionGetRequest) {
 		PromotionsGetResponse response = new PromotionsGetResponse();
-		if (promotionGetRequest.getPromotionId()!=null&&promotionGetRequest.getPromotionId().intValue() > 0) {
-			response.setCmsBtPromotionModels(Arrays.asList(cmsBtPromotionDao
+		if (promotionGetRequest.getPromotionId()!=null && promotionGetRequest.getPromotionId() > 0) {
+			response.setCmsBtPromotionModels(Collections.singletonList(cmsBtPromotionDao
 					.findById(constructionCondtionMap(promotionGetRequest))));
 		} else {
 			response.setCmsBtPromotionModels(cmsBtPromotionDao
@@ -99,8 +97,8 @@ public class PromotionService extends BaseService {
 	/**
 	 * 删除
 	 * 
-	 * @param condtionParams
-	 * @return
+	 * @param promotionsDeleteRequest Request
+	 * @return PromotionsPutResponse
 	 */
 	public PromotionsPutResponse deleteById(
 			PromotionsDeleteRequest promotionsDeleteRequest) {
@@ -113,8 +111,8 @@ public class PromotionService extends BaseService {
 	/**
 	 * 构造条件map
 	 * 
-	 * @param obj
-	 * @return
+	 * @param obj input
+	 * @return Map
 	 */
 	private static Map<?, ?> constructionCondtionMap(Object obj) {
 		return new BeanMap(obj);
