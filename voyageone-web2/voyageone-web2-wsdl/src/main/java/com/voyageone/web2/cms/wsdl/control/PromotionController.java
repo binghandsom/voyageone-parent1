@@ -1,6 +1,3 @@
-/**
- * (c) Copyright Voyageone Corp 2016
- */
 package com.voyageone.web2.cms.wsdl.control;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +14,11 @@ import com.voyageone.web2.sdk.api.response.PromotionsGetResponse;
 import com.voyageone.web2.sdk.api.response.PromotionsPutResponse;
 
 /**
- * @description
+ * product Controller
  *
- * @author gbb
+ * @author binbin.gao 16/01/14
+ * @version 2.0.0
+ * @since. 2.0.0
  */
 @RestController
 @RequestMapping(value = "/rest/promotion", method = RequestMethod.POST)
@@ -31,8 +30,8 @@ public class PromotionController {
 	/**
 	 * 添加或者修改
 	 * 
-	 * @param promotionPutRequest
-	 * @return
+	 * @param promotionPutRequest Request
+	 * @return PromotionsPutResponse
 	 */
 	@RequestMapping("saveOrUpdate")
 	public PromotionsPutResponse saveOrUpdate(
@@ -43,8 +42,8 @@ public class PromotionController {
 	/**
 	 * 根据条件查询
 	 * 
-	 * @param promotionGetRequest
-	 * @return
+	 * @param promotionGetRequest Request
+	 * @return PromotionsGetResponse
 	 */
 	@RequestMapping("selectByCondtion")
 	public PromotionsGetResponse selectByCondition(
@@ -55,8 +54,8 @@ public class PromotionController {
 	/**
 	 * 删除
 	 * 
-	 * @param condtionParams
-	 * @return
+	 * @param promotionsDeleteRequest Request
+	 * @return PromotionsPutResponse
 	 */
 	@RequestMapping("deleteById")
 	public PromotionsPutResponse deleteById(
