@@ -227,7 +227,7 @@ define([
         }
 
         $scope.openHistoryPrice = openHistoryPrice;
-        function openHistoryPrice(viewSize, data) {
+        function openHistoryPrice(viewSize, data, type) {
             require([popActions.product.price.controllerUrl], function () {
                 $modal.open({
                     templateUrl: popActions.product.price.templateUrl,
@@ -235,7 +235,10 @@ define([
                     size: viewSize,
                     resolve: {
                         data: function () {
-                            return data;
+                            return {
+                                code: data,
+                                type: type
+                            };
                         }
                     }
                 });
