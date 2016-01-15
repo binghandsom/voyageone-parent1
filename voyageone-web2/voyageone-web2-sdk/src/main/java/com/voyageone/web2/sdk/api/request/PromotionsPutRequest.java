@@ -1,30 +1,35 @@
-/**
- * (c) Copyright Voyageone Corp 2016
- */
-
 package com.voyageone.web2.sdk.api.request;
 
 import com.voyageone.web2.sdk.api.VoApiRequest;
 import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
+import com.voyageone.web2.sdk.api.exception.ApiRuleException;
 import com.voyageone.web2.sdk.api.response.PromotionsPutResponse;
+import com.voyageone.web2.sdk.api.util.RequestUtils;
 
 /**
- * @description 添加或修改请求
- * @author gbb
+ * /promotion/saveOrUpdate Request Model
+ *
+ * 1. add cmsBtPromotionModel
+ * 2. cmsBtPromotionModel.
+ *
+ * Created on 2016-01-14
+ *
+ * @author binbin.gao
+ * @version 2.0.0
+ * @since. 2.0.0
  */
 public class PromotionsPutRequest extends VoApiRequest<PromotionsPutResponse> {
 
-	/** 模型 */
+	/** model */
 	private CmsBtPromotionModel cmsBtPromotionModel;
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.voyageone.web2.sdk.api.VoApiRequest#getApiURLPath()
 	 */
 	@Override
 	public String getApiURLPath() {
-		// TODO Auto-generated method stub
 		return "/promotion/saveOrUpdate";
 	}
 
@@ -44,7 +49,7 @@ public class PromotionsPutRequest extends VoApiRequest<PromotionsPutResponse> {
 	}
 
 	/**
-	 * @param cmsBtPromotionModel
+	 * @param cmsBtPromotionModel model
 	 */
 	public PromotionsPutRequest(CmsBtPromotionModel cmsBtPromotionModel) {
 		super();
@@ -56,6 +61,20 @@ public class PromotionsPutRequest extends VoApiRequest<PromotionsPutResponse> {
 	 */
 	public PromotionsPutRequest() {
 		super();
+	}
+
+	@Override
+	public void check() throws ApiRuleException {
+		super.check();
+		RequestUtils.checkNotEmpty(" cmsBtPromotionModel", cmsBtPromotionModel);
+		if (cmsBtPromotionModel.getPromotionId() == null) {
+			//add
+			RequestUtils.checkNotEmpty(" cmsBtPromotionModel.channelId", cmsBtPromotionModel.getChannelId());
+		} else {
+			//update
+
+		}
+
 	}
 
 }

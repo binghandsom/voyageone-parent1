@@ -18,13 +18,17 @@ import org.apache.commons.beanutils.BeanMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
- * @description
+ * product Service
  *
- * @author gbb
+ * @author binbin.gao 16/01/14
+ * @version 2.0.0
+ * @since. 2.0.0
  */
 @Service
 public class PromotionService extends BaseService {
@@ -43,10 +47,9 @@ public class PromotionService extends BaseService {
 	 */
 	public PromotionsPutResponse saveOrUpdate(
 			PromotionsPutRequest promotionPutRequest) {
+		//事物处理？？?
 		PromotionsPutResponse response = new PromotionsPutResponse();
-		if (cmsBtPromotionDao
-				.findById(constructionCondtionMap(promotionPutRequest
-						.getCmsBtPromotionModel())) != null) {
+		if (promotionPutRequest.getCmsBtPromotionModel().getPromotionId() > 0) {
 			response.setMatchedCount(cmsBtPromotionDao
 					.update(promotionPutRequest.getCmsBtPromotionModel()));
 		} else {
@@ -84,13 +87,21 @@ public class PromotionService extends BaseService {
 	public PromotionsGetResponse selectByCondition(
 			PromotionsGetRequest promotionGetRequest) {
 		PromotionsGetResponse response = new PromotionsGetResponse();
-		if (promotionGetRequest.getPromotionId()!=null && promotionGetRequest.getPromotionId() > 0) {
-			response.setCmsBtPromotionModels(Collections.singletonList(cmsBtPromotionDao
-					.findById(constructionCondtionMap(promotionGetRequest))));
+		List<CmsBtPromotionModel> models = new ArrayList<>();
+		if (promotionGetRequest.getPromotionId() != null && promotionGetRequest.getPromotionId() > 0) {
+			CmsBtPromotionModel model = cmsBtPromotionDao.findById(convertCondtionMap(promotionGetRequest));
+			if (model != null) {
+				models.add(model);
+			}
+
 		} else {
-			response.setCmsBtPromotionModels(cmsBtPromotionDao
-					.findByCondition(constructionCondtionMap(promotionGetRequest)));
+			List<CmsBtPromotionModel> modelsTmp = cmsBtPromotionDao.findByCondition(convertCondtionMap(promotionGetRequest));
+			if (modelsTmp != null) {
+				models.addAll(modelsTmp);
+			}
 		}
+		response.setCmsBtPromotionModels(models);
+		response.setTotalCount((long)models.size());
 		return response;
 	}
 
@@ -104,7 +115,7 @@ public class PromotionService extends BaseService {
 			PromotionsDeleteRequest promotionsDeleteRequest) {
 		PromotionsPutResponse response = new PromotionsPutResponse();
 		response.setRemovedCount(cmsBtPromotionDao
-				.deleteById(constructionCondtionMap(promotionsDeleteRequest)));
+				.deleteById(convertCondtionMap(promotionsDeleteRequest)));
 		return response;
 	}
 
@@ -114,7 +125,7 @@ public class PromotionService extends BaseService {
 	 * @param obj input
 	 * @return Map
 	 */
-	private static Map<?, ?> constructionCondtionMap(Object obj) {
+	private static Map<?, ?> convertCondtionMap(Object obj) {
 		return new BeanMap(obj);
 	}
 }
