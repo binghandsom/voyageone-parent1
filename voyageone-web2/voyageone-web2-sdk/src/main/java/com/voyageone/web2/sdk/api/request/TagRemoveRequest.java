@@ -36,8 +36,8 @@ public class TagRemoveRequest extends VoApiRequest<TagRemoveResponse> {
 	 */
 	private String modifier;
 
-	public void check() throws ApiRuleException {
-		super.check();
+	@Override
+	public void requestCheck() throws ApiRuleException {
 		RequestUtils.checkNotEmpty(" channelId", channelId);
 		RequestUtils.checkNotEmpty(" tagId", tagId);
 	}

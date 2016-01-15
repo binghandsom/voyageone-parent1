@@ -3,9 +3,9 @@ package com.voyageone.web2.cms.views.promotion;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
-import com.voyageone.web2.sdk.api.request.PromotionsDeleteRequest;
+import com.voyageone.web2.sdk.api.request.PromotionDeleteRequest;
 import com.voyageone.web2.sdk.api.request.PromotionsGetRequest;
-import com.voyageone.web2.sdk.api.request.PromotionsPutRequest;
+import com.voyageone.web2.sdk.api.request.PromotionPutRequest;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,7 +40,7 @@ public class CmsPromotionService extends BaseAppService {
     }
 
     public int addOrUpdate(CmsBtPromotionModel cmsBtPromotionModel) {
-        PromotionsPutRequest request=new PromotionsPutRequest();
+        PromotionPutRequest request=new PromotionPutRequest();
         request.setCmsBtPromotionModel(cmsBtPromotionModel);
         if(cmsBtPromotionModel.getPromotionId()!=null){
             return voApiClient.execute(request).getModifiedCount();
@@ -50,7 +50,7 @@ public class CmsPromotionService extends BaseAppService {
     }
 
     public int deleteById(Integer promotionId) {
-        PromotionsDeleteRequest request=new PromotionsDeleteRequest();
+        PromotionDeleteRequest request=new PromotionDeleteRequest();
         request.setPromotionId(promotionId);
         return voApiClient.execute(request).getRemovedCount();
     }

@@ -7,9 +7,9 @@ package com.voyageone.web2.cms.wsdl.service;
 import com.voyageone.web2.cms.wsdl.BaseService;
 import com.voyageone.web2.cms.wsdl.dao.CmsBtPromotionDao;
 import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
-import com.voyageone.web2.sdk.api.request.PromotionsDeleteRequest;
+import com.voyageone.web2.sdk.api.request.PromotionDeleteRequest;
 import com.voyageone.web2.sdk.api.request.PromotionsGetRequest;
-import com.voyageone.web2.sdk.api.request.PromotionsPutRequest;
+import com.voyageone.web2.sdk.api.request.PromotionPutRequest;
 import com.voyageone.web2.sdk.api.request.TagAddRequest;
 import com.voyageone.web2.sdk.api.response.PromotionsGetResponse;
 import com.voyageone.web2.sdk.api.response.PromotionsPutResponse;
@@ -17,16 +17,16 @@ import com.voyageone.web2.sdk.api.response.TagAddResponse;
 import org.apache.commons.beanutils.BeanMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 /**
  * product Service
  *
- * @author binbin.gao 16/01/14
+ * @author aooer 16/01/14
  * @version 2.0.0
  * @since. 2.0.0
  */
@@ -45,9 +45,10 @@ public class PromotionService extends BaseService {
 	 * @param promotionPutRequest Request
 	 * @return PromotionsPutResponse
 	 */
+	@Transactional
 	public PromotionsPutResponse saveOrUpdate(
-			PromotionsPutRequest promotionPutRequest) {
-		//事物处理？？?
+			PromotionPutRequest promotionPutRequest) {
+		promotionPutRequest.check();
 		PromotionsPutResponse response = new PromotionsPutResponse();
 		if (promotionPutRequest.getCmsBtPromotionModel().getPromotionId() > 0) {
 			response.setMatchedCount(cmsBtPromotionDao
@@ -86,6 +87,7 @@ public class PromotionService extends BaseService {
 	 */
 	public PromotionsGetResponse selectByCondition(
 			PromotionsGetRequest promotionGetRequest) {
+		promotionGetRequest.check();
 		PromotionsGetResponse response = new PromotionsGetResponse();
 		List<CmsBtPromotionModel> models = new ArrayList<>();
 		if (promotionGetRequest.getPromotionId() != null && promotionGetRequest.getPromotionId() > 0) {
@@ -108,14 +110,15 @@ public class PromotionService extends BaseService {
 	/**
 	 * 删除
 	 * 
-	 * @param promotionsDeleteRequest Request
+	 * @param promotionDeleteRequest Request
 	 * @return PromotionsPutResponse
 	 */
 	public PromotionsPutResponse deleteById(
-			PromotionsDeleteRequest promotionsDeleteRequest) {
+			PromotionDeleteRequest promotionDeleteRequest) {
+		promotionDeleteRequest.check();
 		PromotionsPutResponse response = new PromotionsPutResponse();
 		response.setRemovedCount(cmsBtPromotionDao
-				.deleteById(convertCondtionMap(promotionsDeleteRequest)));
+				.deleteById(convertCondtionMap(promotionDeleteRequest)));
 		return response;
 	}
 

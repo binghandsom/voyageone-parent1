@@ -61,8 +61,8 @@ public class ProductsGetRequest extends VoApiListRequest<ProductsGetResponse> {
 		this.channelId = channelId;
 	}
 
-	public void check() throws ApiRuleException {
-		super.check();
+	@Override
+	public void requestCheck() throws ApiRuleException {
 		RequestUtils.checkNotEmpty(" channelId", channelId);
 		RequestUtils.checkNotEmpty(" productIds productCodes queryString props", productIds, productCodes, queryString, props);
 		RequestUtils.checkNotEmpty(" fields", fields);

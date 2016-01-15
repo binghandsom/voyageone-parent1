@@ -51,8 +51,8 @@ public class ProductGroupsPutRequest extends VoApiRequest<ProductGroupsPutRespon
 		this.channelId = channelId;
 	}
 
-	public void check() throws ApiRuleException {
-		super.check();
+	@Override
+	public void requestCheck() throws ApiRuleException {
 		RequestUtils.checkNotEmpty(" channelId", channelId);
 		RequestUtils.checkNotEmpty(" platform", platform);
 		RequestUtils.checkNotEmpty(" productIds or productCodes", productIds, productCodes);

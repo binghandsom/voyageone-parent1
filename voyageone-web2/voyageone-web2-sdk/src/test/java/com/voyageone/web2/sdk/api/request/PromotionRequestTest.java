@@ -14,7 +14,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.RestTemplate;
 
-import com.jd.open.api.sdk.internal.JSON.JSON;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.VoApiRequest;
 import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
@@ -47,7 +46,7 @@ public class PromotionRequestTest {
 
 	@Test
 	public void testPut() {
-		PromotionsPutRequest request = new PromotionsPutRequest();
+		PromotionPutRequest request = new PromotionPutRequest();
 		CmsBtPromotionModel cmsBtPromotionModel = new CmsBtPromotionModel();
 		cmsBtPromotionModel.setPromotionId(31);
 		cmsBtPromotionModel.setChannelId("001");
@@ -61,7 +60,7 @@ public class PromotionRequestTest {
 
 	@Test
 	public void testDelete() {
-		PromotionsDeleteRequest request = new PromotionsDeleteRequest();
+		PromotionDeleteRequest request = new PromotionDeleteRequest();
 		request.setPromotionId(36);
 
 		processRequest(request, PromotionsPutResponse.class);

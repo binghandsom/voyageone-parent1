@@ -88,7 +88,14 @@ public abstract class VoApiRequest<T extends VoApiResponse> {
 	 * 客户端参数检查，减少服务端无效调用
 	 */
 	public void check() throws ApiRuleException {
+		requestCheck();
 	}
+
+	/**
+	 * 客户端参数检查
+	 * @throws ApiRuleException
+     */
+	public abstract void requestCheck() throws ApiRuleException;
 
 
 	/**

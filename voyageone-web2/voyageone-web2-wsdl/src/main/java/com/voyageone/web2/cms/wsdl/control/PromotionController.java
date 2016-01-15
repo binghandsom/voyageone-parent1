@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.voyageone.web2.cms.wsdl.service.PromotionService;
-import com.voyageone.web2.sdk.api.request.PromotionsDeleteRequest;
+import com.voyageone.web2.sdk.api.request.PromotionDeleteRequest;
 import com.voyageone.web2.sdk.api.request.PromotionsGetRequest;
-import com.voyageone.web2.sdk.api.request.PromotionsPutRequest;
+import com.voyageone.web2.sdk.api.request.PromotionPutRequest;
 import com.voyageone.web2.sdk.api.response.PromotionsGetResponse;
 import com.voyageone.web2.sdk.api.response.PromotionsPutResponse;
 
@@ -35,7 +35,7 @@ public class PromotionController {
 	 */
 	@RequestMapping("saveOrUpdate")
 	public PromotionsPutResponse saveOrUpdate(
-			@RequestBody PromotionsPutRequest promotionPutRequest) {
+			@RequestBody PromotionPutRequest promotionPutRequest) {
 		return promotionService.saveOrUpdate(promotionPutRequest);
 	}
 
@@ -54,13 +54,13 @@ public class PromotionController {
 	/**
 	 * 删除
 	 * 
-	 * @param promotionsDeleteRequest Request
+	 * @param promotionDeleteRequest Request
 	 * @return PromotionsPutResponse
 	 */
 	@RequestMapping("deleteById")
 	public PromotionsPutResponse deleteById(
-			@RequestBody PromotionsDeleteRequest promotionsDeleteRequest) {
-		return promotionService.deleteById(promotionsDeleteRequest);
+			@RequestBody PromotionDeleteRequest promotionDeleteRequest) {
+		return promotionService.deleteById(promotionDeleteRequest);
 	}
 
 }

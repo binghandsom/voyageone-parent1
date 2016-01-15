@@ -34,8 +34,8 @@ public class TagsGetRequest extends VoApiRequest<TagsGetResponse> {
 	 */
 	private String channelId;
 
-	public void check() throws ApiRuleException {
-		super.check();
+	@Override
+	public void requestCheck() throws ApiRuleException {
 		RequestUtils.checkNotEmpty(" channelId or parentTagId", channelId, parentTagId);
 	}
 
