@@ -9,24 +9,24 @@ define([
     angularAMD.controller('popPromotionHistoryCtl', function ($scope, $promotionHistoryService, data) {
 
         $scope.vm = {
-            data: {'productCode': '100000', 'offset': 0, 'rows': 5},
-            groupPageOption: {curr: 1, total: 1, size: 5, fetch: getPromotionList},
+            code: data,
+            pageOption: {curr: 1, total: 0, size: 10, fetch: getPromotionList},
             promotionList: []
         };
 
         $scope.initialize = function () {
-            //$scope.vm.data = data;
-            $promotionHistoryService.getPromotionHistory($scope.vm.data).then(function (res) {
-                $scope.vm.promotionList = res.data.list;
-                $scope.vm.groupPageOption.total = res.data.total;
-            });
+            getPromotionList();
         };
 
-        function getPromotionList(page) {
-            $scope.vm.data.offset = (page - 1) * ($scope.vm.data.rows);
-            $promotionHistoryService.getPromotionHistory($scope.vm.data).then(function (res) {
+        function getPromotionList() {
+            var data = {
+                code: $scope.vm.code,
+                offset: ($scope.vm.pageOption.curr - 1) * $scope.vm.pageOption.size,
+                rows: $scope.vm.pageOption.size
+            };
+            $promotionHistoryService.getPromotionHistory(data).then(function (res) {
                 $scope.vm.promotionList = res.data.list;
-                $scope.vm.groupPageOption.curr = page;
+                $scope.vm.pageOption.total = res.data.total;
             });
         }
     });

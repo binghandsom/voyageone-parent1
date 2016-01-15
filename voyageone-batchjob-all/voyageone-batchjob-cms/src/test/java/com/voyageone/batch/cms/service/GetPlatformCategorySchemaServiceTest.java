@@ -1,12 +1,12 @@
 package com.voyageone.batch.cms.service;
 
-;
-import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategoryDao;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategoryDao;
 
 /**
  * Created by lewis on 15-11-28.
@@ -15,18 +15,18 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration("classpath:context-cms-test.xml")
 public class GetPlatformCategorySchemaServiceTest {
 
-    @Autowired
-    CmsMtPlatformCategoryDao cmsMtPlatformCategoryDao;
+	@Autowired
+	CmsMtPlatformCategoryDao cmsMtPlatformCategoryDao;
 
-    @Autowired
-    GetPlatformCategorySchemaService getPlatformCategorySchemaService;
+	@Autowired
+	GetPlatformCategorySchemaService getPlatformCategorySchemaService;
 
-    @Test
-    public void testOnStartup() throws Exception {
+	@Test
+	public void testOnStartup() throws Exception {
 
-        //插入类目信息
-        getPlatformCategorySchemaService.startup();
+		// 插入类目信息
+		getPlatformCategorySchemaService.startup();
 
-    }
+	}
 
 }

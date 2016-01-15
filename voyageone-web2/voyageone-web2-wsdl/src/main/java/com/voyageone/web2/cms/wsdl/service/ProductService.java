@@ -376,9 +376,9 @@ public class ProductService extends BaseService {
             pids.add(product.getProdId());
             productCodes.add(product.getFields().getCode());
             product.setChannelId(channelId);
-            product.setCreater(request.getCreater());
+            product.setCreater(request.getModifier());
             product.setCreated(DateTimeUtil.getNow());
-            product.setModifier(request.getCreater());
+            product.setModifier(request.getModifier());
             product.setModified(DateTimeUtil.getNowTimeStamp());
         }
 

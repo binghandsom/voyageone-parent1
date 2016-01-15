@@ -42,8 +42,8 @@ public class ProductUpdatePriceRequest extends VoApiRequest<ProductUpdatePriceRe
 		this.channelId = channelId;
 	}
 
-	public void check() throws ApiRuleException {
-		super.check();
+	@Override
+	public void requestCheck() throws ApiRuleException {
 		RequestUtils.checkNotEmpty(" channelId", channelId);
 		RequestUtils.checkNotEmpty(" productPrices ", productPrices);
 		for (ProductPriceModel model : productPrices) {
@@ -53,6 +53,7 @@ public class ProductUpdatePriceRequest extends VoApiRequest<ProductUpdatePriceRe
 
 		RequestUtils.checkMinValue((long) productPrices.size(), 1, "productPrices");
 		RequestUtils.checkMaxValue((long) productPrices.size(), 100, "productPrices");
+		RequestUtils.checkNotEmpty(" modifier", modifier);
 	}
 
 	public String getChannelId() {

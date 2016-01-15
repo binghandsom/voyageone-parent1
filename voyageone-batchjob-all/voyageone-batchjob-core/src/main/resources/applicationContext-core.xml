@@ -14,6 +14,11 @@
 	<!--<import resource="file:C:/usr/web/spring-config/datasource-config.xml" />-->
 	<import resource="file:/usr/web/spring-config/datasource-config.xml" />
 	<import resource="file:/usr/web/spring-config/datasource-config-mongo.xml" />
+
+	<!-- SDK Client Config -->
+	<!--<import resource="file:/usr/web/spring-config/sdk-client-config-sample.xml" />-->
+	<import resource="sdk-client-config-sample.xml" />
+
 	<!-- 定时任务 -->
 	<import resource="classpath*:config/job/**/*-config.xml" />
 	<import resource="classpath*:obtainPlatformCategory-config.xml"/>
@@ -25,12 +30,4 @@
 
 	<bean class="com.voyageone.batch.core.util.SetPriceUtils"/>
 
-	<!-- REST SDK 配置 -->
-	<bean id="restTemplate" class="org.springframework.web.client.RestTemplate"/>
-	<bean id="voApiDefaultClient" class="com.voyageone.web2.sdk.api.VoApiDefaultClient">
-		<constructor-arg ref="restTemplate" />
-		<constructor-arg name="serverUrl" value="http://localhost:8080/rest"/>
-		<constructor-arg name="connectTimeout" value="3000"/><!-- ms -->
-		<constructor-arg name="readTimeout" value="90000"/><!-- ms -->
-	</bean>
 </beans>

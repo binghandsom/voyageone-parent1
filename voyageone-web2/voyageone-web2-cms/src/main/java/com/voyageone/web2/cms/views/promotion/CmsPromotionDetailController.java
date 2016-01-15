@@ -5,7 +5,6 @@ import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants.PROMOTION;
 import com.voyageone.web2.cms.model.CmsBtPromotionCodeModel;
 import com.voyageone.web2.cms.model.CmsBtPromotionGroupModel;
-import com.voyageone.web2.cms.model.CmsBtPromotionModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;

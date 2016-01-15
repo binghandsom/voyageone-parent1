@@ -49,8 +49,8 @@ public class ProductsDeleteRequest extends VoApiRequest<ProductsDeleteResponse> 
 		this.channelId = channelId;
 	}
 
-	public void check() throws ApiRuleException {
-		super.check();
+	@Override
+	public void requestCheck() throws ApiRuleException {
 		RequestUtils.checkNotEmpty(" channelId", channelId);
 		RequestUtils.checkNotEmpty(" productIdList or productCodeList", productIds, productCodes);
 		if (productIds != null && productIds.size() > 0) {
@@ -61,6 +61,7 @@ public class ProductsDeleteRequest extends VoApiRequest<ProductsDeleteResponse> 
 			RequestUtils.checkMinValue((long) productCodes.size(), 1, "productCodes");
 			RequestUtils.checkMaxValue((long) productCodes.size(), 100, "productCodes");
 		}
+		RequestUtils.checkNotEmpty(" modifier", modifier);
 	}
 
 	public String getChannelId() {

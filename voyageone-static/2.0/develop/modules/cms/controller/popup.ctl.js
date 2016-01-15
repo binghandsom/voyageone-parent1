@@ -147,7 +147,7 @@ define([
         $scope.openUpdateProperties = openUpdateProperties;
         function openUpdateProperties(viewSize, selList) {
             require([popActions.prop_change.controllerUrl], function () {
-                if (selList.length) {
+                if (selList && selList.length) {
                     $modal.open({
                         templateUrl: popActions.prop_change.templateUrl,
                         controller: 'popPropChangeCtl',
@@ -175,7 +175,7 @@ define([
         $scope.openTagPromotion = openTagPromotion;
         function openTagPromotion(viewSize, promotion, selList) {
             require([popActions.tag.promotion.controllerUrl], function () {
-                if (selList.length) {
+                if (selList && selList.length) {
                     $modal.open({
                         templateUrl: popActions.tag.promotion.templateUrl,
                         controller: 'popTagPromotionCtl',
@@ -227,7 +227,7 @@ define([
         }
 
         $scope.openHistoryPrice = openHistoryPrice;
-        function openHistoryPrice(viewSize, data) {
+        function openHistoryPrice(viewSize, data, type) {
             require([popActions.product.price.controllerUrl], function () {
                 $modal.open({
                     templateUrl: popActions.product.price.templateUrl,
@@ -235,7 +235,10 @@ define([
                     size: viewSize,
                     resolve: {
                         data: function () {
-                            return data;
+                            return {
+                                code: data,
+                                type: type
+                            };
                         }
                     }
                 });

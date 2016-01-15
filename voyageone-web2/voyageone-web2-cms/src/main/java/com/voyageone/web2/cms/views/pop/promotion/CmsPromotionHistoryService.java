@@ -26,7 +26,6 @@ public class CmsPromotionHistoryService extends BaseAppService {
         Map<String, Object> result = new HashMap<>();
         List<CmsBtPromotionLogModel> promotionList;
 
-        String code = (String) params.get("code");
         promotionList = cmsBtPromotionLogDao.selectPromotionLog(params);
         count = cmsBtPromotionLogDao.selectPromotionLogCnt(params);
         result.put("list", promotionList);

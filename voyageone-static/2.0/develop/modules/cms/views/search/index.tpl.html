@@ -278,7 +278,7 @@
 										<a ng-href="https://detail.tmall.com/item.htm?id={{groupInfo.groups.platforms[0].numIId}}" target="_blank" class="text-u-l" ng-bind="groupInfo.groups.platforms[0].numIId"></a>
 									</span>&nbsp;
 									<span>{{'TXT_GROUP_NAME' | translate}}&nbsp;
-										<a ng-href="#/group/list/{{groupInfo.groups.platforms[0].groupId}}" target="_blank" class="text-u-l" ng-bind="groupInfo.fields.productName"></a>
+										<a ng-href="#/group/list/{{groupInfo.groups.platforms[0].groupId}}" target="_blank" class="text-u-l" ng-bind="groupInfo.fields.productName || groupInfo.fields.productNameEn"></a>
 									</span>
 								</td>
 								<td colspan="2" class="text-right">{{'TXT_CATEGORY' | translate}}&nbsp;{{groupInfo.catPath}}</td>
@@ -289,7 +289,7 @@
 									<div class="table_main pull-left">
 										<ul>
 											<li class="m-t">{{groupInfo.fields.code}}</li>
-											<li>{{groupInfo.fields.productName}}</li>
+											<li>{{groupInfo.fields.productName || groupInfo.fields.productNameEn}}</li>
 										</ul>
 									</div>
 								</td>
@@ -366,7 +366,7 @@
 											<a ng-href="https://detail.tmall.com/item.htm?id={{productInfo.groups.platforms[0].numIId}}" target="_blank" class="text-u-l" ng-bind="productInfo.fields.code"></a>
 										</span>&nbsp;
 										<span>{{'TXT_PRODUCT_NAME' | translate}}&nbsp;
-											<a href="#/product/detail/{{productInfo.prodId}}" target="_blank" class="text-u-l" ng-bind="productInfo.fields.productName"></a>
+											<a href="#/product/detail/{{productInfo.prodId}}" target="_blank" class="text-u-l" ng-bind="productInfo.fields.productName || productInfo.fields.productNameEn"></a>
 										</span>
 									</td>
 									<td colspan="2" class="text-right">{{'TXT_CATEGORY' | translate}}&nbsp;{{productInfo.catPath}}</td>

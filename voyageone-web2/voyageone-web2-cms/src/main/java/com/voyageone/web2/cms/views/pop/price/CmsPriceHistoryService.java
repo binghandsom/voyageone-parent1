@@ -30,11 +30,11 @@ public class CmsPriceHistoryService extends BaseAppService {
         requestModel.setOffset((int)params.get("offset"));
         requestModel.setRows((int) params.get("rows"));
 
-        boolean flag = (boolean) params.get("flag");
-        if (flag) {
+        String flag = (String) params.get("flag");
+        if ("code".equals(flag)) {
             String code = (String) params.get("code");
             requestModel.setProductCode(code);
-        } else {
+        } else if ("sku".equals(flag)){
             String sku = (String) params.get("sku");
             requestModel.setProductSkuCode(sku);
         }

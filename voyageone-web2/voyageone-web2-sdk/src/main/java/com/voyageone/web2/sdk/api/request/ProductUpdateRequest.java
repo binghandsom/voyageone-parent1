@@ -35,8 +35,8 @@ public class ProductUpdateRequest extends VoApiRequest<ProductUpdateResponse> {
 		this.channelId = channelId;
 	}
 
-	public void check() throws ApiRuleException {
-		super.check();
+	@Override
+	public void requestCheck() throws ApiRuleException {
 		RequestUtils.checkNotEmpty(" channelId", channelId);
 		RequestUtils.checkNotEmpty(" productModel", productModel);
 		if (productModel.getFields() != null) {

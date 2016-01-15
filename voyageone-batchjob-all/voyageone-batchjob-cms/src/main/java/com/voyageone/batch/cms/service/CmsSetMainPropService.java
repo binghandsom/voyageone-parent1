@@ -23,12 +23,15 @@ import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
 import com.voyageone.cms.service.model.*;
 import com.voyageone.cms.service.model.feed.mapping.Mapping;
 import com.voyageone.cms.service.model.feed.mapping.Prop;
+import com.voyageone.common.Constants;
 import com.voyageone.common.components.baidu.translate.BaiduTranslateUtil;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.ShopConfigs;
+import com.voyageone.common.configs.TypeChannel;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.ComplexField;
 import com.voyageone.common.masterdate.schema.field.Field;
@@ -122,13 +125,31 @@ public class CmsSetMainPropService extends BaseTaskService {
             // 查找当前渠道,所有等待反映到主数据的商品
             List<CmsBtFeedInfoModel> feedList = cmsBtFeedInfoDao.selectProductByUpdFlg(channelId, 0);
 
+            Map<String, String> mapBrandMapping = new HashMap<>();
+            if (feedList.size() > 0) {
+                List<TypeChannelBean> typeChannelBeanList;
+                typeChannelBeanList = TypeChannel.getTypeList("brand", channelId);
+
+                if (typeChannelBeanList != null) {
+                    for (TypeChannelBean typeChannelBean : typeChannelBeanList) {
+                        if (
+                                !StringUtils.isEmpty(typeChannelBean.getAdd_name1())
+                                && !StringUtils.isEmpty(typeChannelBean.getName())
+                                && Constants.LANGUAGE.EN.equals(typeChannelBean.getLang_id())
+                                ) {
+                            mapBrandMapping.put(typeChannelBean.getAdd_name1(), typeChannelBean.getName());
+                        }
+                    }
+                }
+            }
+
             // 遍历所有数据
             for (CmsBtFeedInfoModel feed : feedList) {
                 // 将商品从feed导入主数据
                 // 注意: 保存单条数据到主数据的时候, 由于要生成group数据, group数据的生成需要检索数据库进行一系列判断
                 //       所以单个渠道的数据, 最好不要使用多线程, 如果以后一定要加多线程的话, 注意要自己写带锁的代码.
                 feed.setFullAttribute();
-                doSaveProductMainProp(feed, channelId);
+                doSaveProductMainProp(feed, channelId, mapBrandMapping);
             }
 
             logger.info(channel.getFull_name() + "产品导入主数据结束");
@@ -139,8 +160,9 @@ public class CmsSetMainPropService extends BaseTaskService {
          * 将商品从feed导入主数据
          * @param feed 商品信息
          * @param channelId channel id
+         * @param mapBrandMapping 品牌mapping一览
          */
-        private void doSaveProductMainProp(CmsBtFeedInfoModel feed, String channelId) {
+        private void doSaveProductMainProp(CmsBtFeedInfoModel feed, String channelId, Map<String, String> mapBrandMapping) {
             // feed类目名称
             String feedCategory = feed.getCategory();
 
@@ -196,11 +218,17 @@ public class CmsSetMainPropService extends BaseTaskService {
 
             } else {
                 // 不存在的场合, 新建一个product
-                cmsProduct = doCreateCmsBtProductModel(feed, mapping);
+                cmsProduct = doCreateCmsBtProductModel(feed, mapping, mapBrandMapping);
+                if (cmsProduct == null) {
+                    // 有出错, 跳过
+                    logger.error(getTaskName() + ":新增:编辑商品的时候出错:" + cmsProduct.getChannelId() + ":" + cmsProduct.getFields().getCode());
+
+                    return;
+                }
 
                 ProductsAddRequest requestModel = new ProductsAddRequest(channelId);
                 requestModel.addProduct(cmsProduct);
-                requestModel.setCreater(getTaskName());
+                requestModel.setModifier(getTaskName());
                 ProductsAddResponse response = voApiClient.execute(requestModel);
 
                 logger.info(getTaskName() + ":新增:" + cmsProduct.getChannelId() + ":" + cmsProduct.getFields().getCode() + ":" + response.getCode() + ":" + response.getMessage());
@@ -231,9 +259,10 @@ public class CmsSetMainPropService extends BaseTaskService {
          * 生成一个新的product
          * @param feed feed的商品信息
          * @param mapping feed与main的匹配关系
+         * @param mapBrandMapping 品牌mapping一览
          * @return 一个新的product的内容
          */
-        private CmsBtProductModel doCreateCmsBtProductModel(CmsBtFeedInfoModel feed, CmsBtFeedMappingModel mapping) {
+        private CmsBtProductModel doCreateCmsBtProductModel(CmsBtFeedInfoModel feed, CmsBtFeedMappingModel mapping, Map<String, String> mapBrandMapping) {
             // 新创建的product
             CmsBtProductModel product = new CmsBtProductModel();
 
@@ -261,8 +290,26 @@ public class CmsSetMainPropService extends BaseTaskService {
                 field.put(prop.getProp(), getPropValueByMapping(prop.getProp(), prop, feed, field, schemaModel));
             }
 
+            // 主数据的field里,强制写死的字段
+            // code
             field.setCode(feed.getCode());
+            // 英文名字
+            field.setProductNameEn(feed.getName());
+            // model
+            field.setModel(feed.getModel());
+            // 产品状态
             field.setStatus(com.voyageone.cms.CmsConstants.ProductStatus.New); // 产品状态: 初始时期为(新建) Synship.com_mt_type : id = 44 : productStatus
+            // 品牌
+            if (mapBrandMapping.containsKey(feed.getBrand())) {
+                field.setBrand(mapBrandMapping.get(feed.getBrand()));
+            } else {
+                logger.error(getTaskName() + ":新增:feed->main的品牌mapping没做:feed brand:" + feed.getBrand());
+
+                // 记下log, 跳过当前记录
+                logIssue(getTaskName(), String.format("[CMS2.0][测试]feed->main的品牌mapping没做 ( channel id: [%s], feed brand: [%s] )", feed.getChannelId(), feed.getBrand()));
+
+                return null;
+            }
 
             product.setFields(field);
 
@@ -276,8 +323,8 @@ public class CmsSetMainPropService extends BaseTaskService {
                 mainSku.setBarcode(sku.getBarcode()); // barcode
                 mainSku.setSize(sku.getSize()); // 尺码
 
-                mainSku.setPriceMsrp(sku.getPrice_msrp());// msrp
-                mainSku.setPriceRetail(sku.getPrice_current()); // 零售价: 未审批
+//                mainSku.setPriceMsrp(sku.getPrice_msrp());// msrp -> 共通API进行设置
+//                mainSku.setPriceRetail(sku.getPrice_current()); // 零售价: 未审批 -> 共通API进行设置
 //                mainSku.setPriceSale(sku); // 销售价: 已审批 (不用自动设置)
 
                 mainSkuList.add(mainSku);
@@ -440,8 +487,8 @@ public class CmsSetMainPropService extends BaseTaskService {
                     sku.setBarcode(feedSku.getBarcode()); // barcode
                     sku.setSize(feedSku.getSize()); // 尺码
 
-                    sku.setPriceMsrp(feedSku.getPrice_msrp()); // msrp
-                    sku.setPriceRetail(feedSku.getPrice_current()); // 零售价: 未审批
+//                    sku.setPriceMsrp(feedSku.getPrice_msrp()); // msrp -> 共通API进行设置
+//                    sku.setPriceRetail(feedSku.getPrice_current()); // 零售价: 未审批 -> 共通API进行设置
 
                     product.getSkus().add(sku);
                 }
@@ -702,6 +749,7 @@ public class CmsSetMainPropService extends BaseTaskService {
                 model.addSkuPrice(skuPriceModel);
             }
 
+            requestModel.setModifier(getTaskName());
             requestModel.addProductPrices(model);
 
             //SDK取得Product 数据

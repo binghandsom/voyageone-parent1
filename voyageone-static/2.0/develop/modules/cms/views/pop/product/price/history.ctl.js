@@ -9,23 +9,27 @@ define([
     angularAMD.controller('popPriceHistoryCtl', function ($scope, $priceHistoryService, data) {
 
         $scope.vm = {
-            data: {'flag': true, 'code': '0', 'offset': 0, 'rows': 10, 'sku': '0'},
-            groupPageOption: {curr: 1, total: 1, size: 10, fetch: getPriceList},
+            code: data.code,
+            type: data.type,
+            pageOption: {curr: 1, total: 1, size: 10, fetch: getPriceList},
             priceList: []
         };
 
         $scope.initialize = function () {
-            $priceHistoryService.getPriceHistory($scope.vm.data).then(function (res) {
-                $scope.vm.priceList = res.data.list;
-                $scope.vm.groupPageOption.total = res.data.total;
-            });
+            getPriceList();
         };
 
-        function getPriceList(page) {
-            $scope.vm.data.offset = (page - 1) * ($scope.vm.data.rows);
-            $priceHistoryService.getPriceHistory($scope.vm.data).then(function (res) {
+        function getPriceList() {
+            var data = {
+                code: $scope.vm.code,
+                flag: $scope.vm.type,
+                offset: ($scope.vm.pageOption.curr - 1) * $scope.vm.pageOption.size,
+                rows: $scope.vm.pageOption.size
+            };
+
+            $priceHistoryService.getPriceHistory(data).then(function (res) {
                 $scope.vm.priceList = res.data.list;
-                $scope.vm.groupPageOption.curr = page;
+                $scope.vm.pageOption.total = res.data.total;
             });
         }
     });

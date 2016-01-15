@@ -70,6 +70,7 @@ public class MenuService extends BaseAppService {
         session.setAttribute(BaseConstants.SESSION_LANG, language);
 
         // 设置用户的默认语言
-        userInfo.getUserConfig().get(CoreConstants.USER_CONFIG_LANGUAGE_ID).get(0).setCfg_val1(language);
+        if (userInfo.getUserConfig().get(CoreConstants.USER_CONFIG_LANGUAGE_ID) != null)
+            userInfo.getUserConfig().get(CoreConstants.USER_CONFIG_LANGUAGE_ID).get(0).setCfg_val1(language);
     }
 }

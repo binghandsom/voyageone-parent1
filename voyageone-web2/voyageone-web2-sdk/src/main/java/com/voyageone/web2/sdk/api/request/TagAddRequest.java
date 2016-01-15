@@ -56,15 +56,15 @@ public class TagAddRequest extends VoApiRequest<TagAddResponse> {
 	 */
 	private String creater;
 
-	public void check() throws ApiRuleException {
-		super.check();
+	@Override
+	public void requestCheck() throws ApiRuleException {
 		RequestUtils.checkNotEmpty("channelId", channelId);
 		RequestUtils.checkNotEmpty("tagName", tagName);
 		RequestUtils.checkNotEmpty("tagType", tagType);
 		RequestUtils.checkNotEmpty("tagStatus",tagStatus);
 		RequestUtils.checkNotEmpty("sortOrder",sortOrder);
 		RequestUtils.checkNotEmpty("parentTagId",parentTagId);
-		RequestUtils.checkNotEmpty("creater",creater);
+		RequestUtils.checkNotEmpty("modifier",modifier);
 	}
 
 	public String getChannelId() {
