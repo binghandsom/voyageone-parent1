@@ -61,6 +61,7 @@ public class ProductsDeleteRequest extends VoApiRequest<ProductsDeleteResponse> 
 			RequestUtils.checkMinValue((long) productCodes.size(), 1, "productCodes");
 			RequestUtils.checkMaxValue((long) productCodes.size(), 100, "productCodes");
 		}
+		RequestUtils.checkNotEmpty(" modifier", modifier);
 	}
 
 	public String getChannelId() {

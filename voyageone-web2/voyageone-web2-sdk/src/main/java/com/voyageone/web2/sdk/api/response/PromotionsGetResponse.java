@@ -5,14 +5,19 @@ package com.voyageone.web2.sdk.api.response;
 
 import java.util.List;
 
-import com.voyageone.web2.sdk.api.VoApiUpdateResponse;
+import com.voyageone.web2.sdk.api.VoApiListResponse;
 import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
 
 /**
- * @description 查询响应数据
- * @author gbb
+ * /promotion/selectByCondtion Response Model
+ *
+ * Created on 2016-01-14
+ *
+ * @author binbin.gao
+ * @version 2.0.0
+ * @since. 2.0.0
  */
-public class PromotionsGetResponse extends VoApiUpdateResponse {
+public class PromotionsGetResponse extends VoApiListResponse {
 
 	/** */
 	private List<CmsBtPromotionModel> cmsBtPromotionModels;

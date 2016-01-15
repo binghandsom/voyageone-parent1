@@ -33,7 +33,7 @@ public class ProductsDeleteRequestTest {
         requestModel.addProductCode("a1212");
 
         //modifier
-        requestModel.setCreater("liang");
+        requestModel.setModifier("liang");
 
         //SDK取得Product 数据
         ProductsDeleteResponse response = voApiClient.execute(requestModel);

@@ -228,7 +228,7 @@ public class CmsSetMainPropService extends BaseTaskService {
 
                 ProductsAddRequest requestModel = new ProductsAddRequest(channelId);
                 requestModel.addProduct(cmsProduct);
-                requestModel.setCreater(getTaskName());
+                requestModel.setModifier(getTaskName());
                 ProductsAddResponse response = voApiClient.execute(requestModel);
 
                 logger.info(getTaskName() + ":新增:" + cmsProduct.getChannelId() + ":" + cmsProduct.getFields().getCode() + ":" + response.getCode() + ":" + response.getMessage());
