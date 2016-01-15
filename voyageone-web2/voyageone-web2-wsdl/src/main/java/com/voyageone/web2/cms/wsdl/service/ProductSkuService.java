@@ -455,6 +455,9 @@ public class ProductSkuService extends BaseService {
         return !(msrp1.compareTo(msrp2) == 0 && retail1.compareTo(retail2) == 0 && sale1.compareTo(sale2) == 0);
     }
 
+    /**
+     * 创建 SKU PriceLog Model
+     */
     private CmsBtPriceLogModel createPriceLogModel(String channelId, CmsBtProductModel productModel, ProductSkuPriceModel skuModel, String modifier) {
         CmsBtPriceLogModel cmsBtPriceLogModel = new CmsBtPriceLogModel();
         cmsBtPriceLogModel.setChannelId(channelId);

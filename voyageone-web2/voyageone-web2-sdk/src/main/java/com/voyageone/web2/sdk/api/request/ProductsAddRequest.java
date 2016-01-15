@@ -64,7 +64,7 @@ public class ProductsAddRequest extends VoApiRequest<ProductsAddResponse> {
 		RequestUtils.checkMinValue((long) products.size(), 1, "products");
 		RequestUtils.checkMaxValue((long) products.size(), 100, "products");
 
-		RequestUtils.checkNotEmpty(" creater", creater);
+		RequestUtils.checkNotEmpty(" modifier", modifier);
 	}
 
 	public String getChannelId() {
