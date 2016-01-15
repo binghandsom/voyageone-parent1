@@ -3,7 +3,6 @@ package com.voyageone.web2.cms.dao;
 import com.voyageone.base.dao.BaseDao;
 import com.voyageone.web2.cms.model.CmsBtPromotionCodeModel;
 import com.voyageone.web2.cms.model.CmsBtPromotionGroupModel;
-import com.voyageone.web2.cms.model.CmsBtPromotionModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;

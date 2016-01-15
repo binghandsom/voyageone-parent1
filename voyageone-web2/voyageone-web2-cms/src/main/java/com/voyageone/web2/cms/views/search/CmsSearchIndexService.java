@@ -9,7 +9,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean;
-import com.voyageone.web2.cms.dao.CmsPromotionDao;
+import com.voyageone.web2.cms.views.promotion.CmsPromotionService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.request.ProductsGetRequest;
@@ -31,7 +31,7 @@ import java.util.Map;
 public class CmsSearchIndexService extends BaseAppService{
 
     @Autowired
-    private CmsPromotionDao cmsPromotionDao;
+    private CmsPromotionService cmsPromotionService;
 
     @Autowired
     protected VoApiDefaultClient voApiClient;
@@ -76,7 +76,7 @@ public class CmsSearchIndexService extends BaseAppService{
         // 获取promotion list
         Map<String, Object> params = new HashMap<>();
         params.put("channelId", userInfo.getSelChannelId());
-        masterData.put("promotionList", cmsPromotionDao.getPromotionList(params));
+        masterData.put("promotionList", cmsPromotionService.queryByCondition(params));
 
         return masterData;
     }

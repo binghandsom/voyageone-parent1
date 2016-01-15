@@ -1,12 +1,15 @@
 package com.voyageone.web2.cms.views.promotion;
 
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.web2.cms.dao.CmsPromotionDao;
-import com.voyageone.web2.cms.model.CmsBtPromotionModel;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
+import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
 import com.voyageone.web2.sdk.api.domain.CmsBtTagModel;
+import com.voyageone.web2.sdk.api.request.PromotionsDeleteRequest;
+import com.voyageone.web2.sdk.api.request.PromotionsGetRequest;
+import com.voyageone.web2.sdk.api.request.PromotionsPutRequest;
 import com.voyageone.web2.sdk.api.request.TagAddRequest;
 import com.voyageone.web2.sdk.api.response.TagAddResponse;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,38 +25,39 @@ import java.util.Map;
 public class CmsPromotionService extends BaseAppService {
 
     @Autowired
-    private CmsPromotionDao cmsPromotionDao;
-
-    @Autowired
     VoApiDefaultClient voApiClient;
 
-    public List<CmsBtPromotionModel> getPromotionList(Map<String, Object> params) {
-        return cmsPromotionDao.getPromotionList(params);
+    public CmsBtPromotionModel queryById(Integer promotionId) {
+        PromotionsGetRequest request=new PromotionsGetRequest();
+        request.setPromotionId(promotionId);
+        List<CmsBtPromotionModel> models=voApiClient.execute(request).getCmsBtPromotionModels();
+        if(models!=null&& models.size()==1){
+            return models.get(0);
+        }else {
+            return null;
+        }
     }
 
-    @Transactional
-    public int insertPromotion(CmsBtPromotionModel params) {
-        // Tag 新追加
-        TagAddRequest requestModel = new TagAddRequest();
-        requestModel.setChannelId(params.getChannelId());
-        requestModel.setTagName(params.getPromotionName());
-        requestModel.setTagType(2);
-        requestModel.setTagStatus(0);
-        requestModel.setParentTagId(0);
-        requestModel.setSortOrder(0);
-        requestModel.setCreater(params.getCreater());
-        //SDK取得Product 数据
-        TagAddResponse res = voApiClient.execute(requestModel);
-        CmsBtTagModel cmsBtTagModel = res.getTag();
-
-        // 把TAGID会写到Promotion表中
-        params.setRefTagId(cmsBtTagModel.getTagId());
-
-        // 插入Promotion
-        return cmsPromotionDao.insertPromotion(params);
+    public List<CmsBtPromotionModel> queryByCondition(Map<String, Object> conditionParams) {
+        PromotionsGetRequest request=new PromotionsGetRequest();
+        BeanUtils.copyProperties(conditionParams,request);
+        return voApiClient.execute(request).getCmsBtPromotionModels();
     }
 
-    public int updatePromotion(CmsBtPromotionModel params) {
-        return cmsPromotionDao.updatePromotion(params);
+    public int addOrUpdate(CmsBtPromotionModel cmsBtPromotionModel) {
+        PromotionsPutRequest request=new PromotionsPutRequest();
+        request.setCmsBtPromotionModel(cmsBtPromotionModel);
+        if(cmsBtPromotionModel.getPromotionId()!=null){
+            return voApiClient.execute(request).getModifiedCount();
+        }else{
+            return voApiClient.execute(request).getInsertedCount();
+        }
     }
+
+    public int deleteById(Integer promotionId) {
+        PromotionsDeleteRequest request=new PromotionsDeleteRequest();
+        request.setPromotionId(promotionId);
+        return voApiClient.execute(request).getRemovedCount();
+    }
+
 }

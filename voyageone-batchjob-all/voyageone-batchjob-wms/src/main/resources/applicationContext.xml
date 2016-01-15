@@ -8,6 +8,4 @@
 	
 	<import resource="applicationContext-wms.xml"/>
 
-	<import resource="dao-mongo-collecion-mapping.xml"/>
-
 </beans>

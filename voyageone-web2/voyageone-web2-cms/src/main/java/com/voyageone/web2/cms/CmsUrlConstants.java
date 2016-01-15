@@ -66,11 +66,11 @@ public interface CmsUrlConstants {
 
             String ROOT = "/cms/promotion/list";
 
-            String GET_PROMOTION_LIST = "getPromotionList";
+            String QUERY_LIST = "getPromotionList";
 
-            String INSERT_PROMOTION = "insertPromotion";
+            String INSERT_UPDATE = "insertPromotion";
 
-            String UPDATE_PROMOTION = "updatePromotion";
+            String DELETE_BYID = "updatePromotion";
         }
         interface DETAIL {
 
