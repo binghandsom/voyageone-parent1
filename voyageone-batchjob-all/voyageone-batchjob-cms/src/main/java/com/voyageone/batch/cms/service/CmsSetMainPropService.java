@@ -705,6 +705,7 @@ public class CmsSetMainPropService extends BaseTaskService {
                 model.addSkuPrice(skuPriceModel);
             }
 
+            requestModel.setModifier(getTaskName());
             requestModel.addProductPrices(model);
 
             //SDK取得Product 数据
