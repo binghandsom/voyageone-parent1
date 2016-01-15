@@ -221,12 +221,12 @@ define([
          */
         function _setPriceDetail(object) {
             var result = [];
-            var tempMsrpDetail = _setOnePriceDetail("MSRP", object.msrpStart, object.msrpEnd);
+            var tempMsrpDetail = _setOnePriceDetail("MSRP", object.priceMsrpSt, object.priceMsrpEd);
             if (!_.isNull(tempMsrpDetail))
                 result.push(tempMsrpDetail);
 
             // 设置retail price
-            var tempRetailPriceDetail = _setOnePriceDetail("Retail Price", object.retailPriceStart, object.retailPriceEnd);
+            var tempRetailPriceDetail = _setOnePriceDetail("Retail Price", object.priceRetailPriceSt, object.priceRetailPriceEd);
             if (!_.isNull(tempRetailPriceDetail))
                 result.push(tempRetailPriceDetail);
 
