@@ -14,11 +14,17 @@ define([
         $scope.initialize  = function () {
             if(items){
                 $scope.promotion = _.clone(items);
+                if($scope.promotion.tejiabaoId != "0"){
+                    $scope.tejiabao=true;
+                }
             }
         }
 
         $scope.ok = function(){
 
+            if(!$scope.tejiabao){
+                $scope.promotion.tejiabaoId = "0";
+            }
             if(!items) {
                 promotionService.insertPromotion($scope.promotion).then(function (res) {
 
