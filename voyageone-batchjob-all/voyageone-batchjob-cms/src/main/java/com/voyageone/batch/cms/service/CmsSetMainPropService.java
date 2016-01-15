@@ -279,8 +279,8 @@ public class CmsSetMainPropService extends BaseTaskService {
                 mainSku.setBarcode(sku.getBarcode()); // barcode
                 mainSku.setSize(sku.getSize()); // 尺码
 
-                mainSku.setPriceMsrp(sku.getPrice_msrp());// msrp
-                mainSku.setPriceRetail(sku.getPrice_current()); // 零售价: 未审批
+//                mainSku.setPriceMsrp(sku.getPrice_msrp());// msrp -> 共通API进行设置
+//                mainSku.setPriceRetail(sku.getPrice_current()); // 零售价: 未审批 -> 共通API进行设置
 //                mainSku.setPriceSale(sku); // 销售价: 已审批 (不用自动设置)
 
                 mainSkuList.add(mainSku);
@@ -443,8 +443,8 @@ public class CmsSetMainPropService extends BaseTaskService {
                     sku.setBarcode(feedSku.getBarcode()); // barcode
                     sku.setSize(feedSku.getSize()); // 尺码
 
-                    sku.setPriceMsrp(feedSku.getPrice_msrp()); // msrp
-                    sku.setPriceRetail(feedSku.getPrice_current()); // 零售价: 未审批
+//                    sku.setPriceMsrp(feedSku.getPrice_msrp()); // msrp -> 共通API进行设置
+//                    sku.setPriceRetail(feedSku.getPrice_current()); // 零售价: 未审批 -> 共通API进行设置
 
                     product.getSkus().add(sku);
                 }

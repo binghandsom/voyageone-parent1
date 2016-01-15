@@ -313,16 +313,7 @@ public class ProductSkuService extends BaseService {
                 for (ProductSkuPriceModel skuModel : model.getSkuPrices()) {
                     if (skuModel.getSkuCode().equals(skuModelBefore.getSkuCode())) {
                         if (isPriceChanged(skuModelBefore, skuModel)) {
-                            CmsBtPriceLogModel cmsBtPriceLogModel = new CmsBtPriceLogModel();
-                            cmsBtPriceLogModel.setChannelId(channelId);
-                            cmsBtPriceLogModel.setProductId(findModel.getProdId().intValue());
-                            cmsBtPriceLogModel.setCode(findModel.getFields().getCode());
-                            cmsBtPriceLogModel.setSku(skuModel.getSkuCode());
-                            cmsBtPriceLogModel.setMsrpPrice(skuModel.getPriceMsrp().toString());
-                            cmsBtPriceLogModel.setRetailPrice(skuModel.getPriceRetail().toString());
-                            cmsBtPriceLogModel.setSalePrice(skuModel.getPriceSale().toString());
-                            cmsBtPriceLogModel.setComment("价格更新");
-                            cmsBtPriceLogModel.setCreater(modifier);
+                            CmsBtPriceLogModel cmsBtPriceLogModel = createPriceLogModel(channelId, findModel, skuModel, modifier);
                             logList.add(cmsBtPriceLogModel);
 
                             HashMap<String, Object> skuQueryMap = new HashMap<>();
@@ -417,6 +408,7 @@ public class ProductSkuService extends BaseService {
             cmsBtPriceLogModel.setSalePrice(resultField.get("priceSaleSt") + "-" + resultField.get("priceSaleEd"));
             cmsBtPriceLogModel.setComment("价格更新");
             cmsBtPriceLogModel.setCreater(modifier);
+
             logList.add(cmsBtPriceLogModel);
         }
 
@@ -461,6 +453,35 @@ public class ProductSkuService extends BaseService {
         }
 
         return !(msrp1.compareTo(msrp2) == 0 && retail1.compareTo(retail2) == 0 && sale1.compareTo(sale2) == 0);
+    }
+
+    private CmsBtPriceLogModel createPriceLogModel(String channelId, CmsBtProductModel productModel, ProductSkuPriceModel skuModel, String modifier) {
+        CmsBtPriceLogModel cmsBtPriceLogModel = new CmsBtPriceLogModel();
+        cmsBtPriceLogModel.setChannelId(channelId);
+        cmsBtPriceLogModel.setProductId(productModel.getProdId().intValue());
+        cmsBtPriceLogModel.setCode(productModel.getFields().getCode());
+        cmsBtPriceLogModel.setSku(skuModel.getSkuCode());
+
+        Double priceMsrp  = -1d;
+        if (skuModel.getPriceMsrp() != null) {
+            priceMsrp = skuModel.getPriceMsrp();
+        }
+        cmsBtPriceLogModel.setMsrpPrice(priceMsrp.toString());
+
+        Double priceRetail  = -1d;
+        if (skuModel.getPriceRetail() != null) {
+            priceRetail = skuModel.getPriceRetail();
+        }
+        cmsBtPriceLogModel.setRetailPrice(priceRetail.toString());
+
+        Double priceSale  = -1d;
+        if (skuModel.getPriceSale() != null) {
+            priceSale = skuModel.getPriceSale();
+        }
+        cmsBtPriceLogModel.setSalePrice(priceSale.toString());
+        cmsBtPriceLogModel.setComment("价格更新");
+        cmsBtPriceLogModel.setCreater(modifier);
+        return cmsBtPriceLogModel;
     }
 
     /**

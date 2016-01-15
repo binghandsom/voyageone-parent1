@@ -19,7 +19,7 @@ public class PromotionsDeleteRequest extends
 	private String channelId;
 
 	/** promotionId */
-	private Long promotionId;
+	private Integer promotionId;
 
 	/*
 	 * (non-Javadoc)
@@ -50,7 +50,7 @@ public class PromotionsDeleteRequest extends
 	/**
 	 * @return the promotionId
 	 */
-	public Long getPromotionId() {
+	public Integer getPromotionId() {
 		return promotionId;
 	}
 
@@ -58,7 +58,7 @@ public class PromotionsDeleteRequest extends
 	 * @param promotionId
 	 *            the promotionId to set
 	 */
-	public void setPromotionId(Long promotionId) {
+	public void setPromotionId(Integer promotionId) {
 		this.promotionId = promotionId;
 	}
 
