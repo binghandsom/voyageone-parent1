@@ -26,7 +26,6 @@ public class PromotionsGetRequest extends VoApiRequest<PromotionsGetResponse> {
 	 */
 	@Override
 	public String getApiURLPath() {
-		// TODO Auto-generated method stub
 		return "/promotion/selectByCondtion";
 	}
 

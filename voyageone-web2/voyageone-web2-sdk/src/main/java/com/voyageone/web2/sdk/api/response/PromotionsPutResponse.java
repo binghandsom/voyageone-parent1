@@ -7,10 +7,13 @@ package com.voyageone.web2.sdk.api.response;
 import com.voyageone.web2.sdk.api.VoApiUpdateResponse;
 
 /**
- * @description
+ * /promotion/saveOrUpdate Response Model
  *
- * @author gbb
- * @date Jan 13, 2016
+ * Created on 2016-01-14
+ *
+ * @author binbin.gao
+ * @version 2.0.0
+ * @since. 2.0.0
  */
 public class PromotionsPutResponse extends VoApiUpdateResponse {
 

@@ -64,7 +64,7 @@ public class TagAddRequest extends VoApiRequest<TagAddResponse> {
 		RequestUtils.checkNotEmpty("tagStatus",tagStatus);
 		RequestUtils.checkNotEmpty("sortOrder",sortOrder);
 		RequestUtils.checkNotEmpty("parentTagId",parentTagId);
-		RequestUtils.checkNotEmpty("creater",creater);
+		RequestUtils.checkNotEmpty("modifier",modifier);
 	}
 
 	public String getChannelId() {

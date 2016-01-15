@@ -132,17 +132,6 @@ public abstract class VoApiRequest<T extends VoApiResponse> {
 	}
 
 	/**
-	 * creater
-	 */
-	protected String creater;
-	public String getCreater() {
-		return creater;
-	}
-	public void setCreater(String creater) {
-		this.creater = creater;
-	}
-
-	/**
 	 *modifier
 	 */
 	protected String modifier;
@@ -154,7 +143,7 @@ public abstract class VoApiRequest<T extends VoApiResponse> {
 	}
 
 	/**
-	 * modifier
+	 * modified
 	 */
 	protected String modified;
 	public String getModified() {
