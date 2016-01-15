@@ -22,8 +22,7 @@ import com.voyageone.web2.sdk.api.response.PromotionsGetResponse;
 import com.voyageone.web2.sdk.api.response.PromotionsPutResponse;
 
 /**
- * @description
- *
+ * @description promotionRequest请求测试
  * @author gbb
  */
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -52,9 +51,9 @@ public class PromotionRequestTest {
 		CmsBtPromotionModel cmsBtPromotionModel = new CmsBtPromotionModel();
 		cmsBtPromotionModel.setPromotionId(31);
 		cmsBtPromotionModel.setChannelId("001");
-		cmsBtPromotionModel.setCartId(25);
+		cmsBtPromotionModel.setCartId(2000);
 		cmsBtPromotionModel.setPromotionStatus(true);
-		cmsBtPromotionModel.setPromotionName("双12大促");
+		cmsBtPromotionModel.setPromotionName("测试大促");
 		request.setCmsBtPromotionModel(cmsBtPromotionModel);
 
 		processRequest(request, PromotionsPutResponse.class);
@@ -63,8 +62,7 @@ public class PromotionRequestTest {
 	@Test
 	public void testDelete() {
 		PromotionsDeleteRequest request = new PromotionsDeleteRequest();
-		request.setChannelId("001");
-		request.setPromotionId(13);
+		request.setPromotionId(36);
 
 		processRequest(request, PromotionsPutResponse.class);
 	}
@@ -81,20 +79,20 @@ public class PromotionRequestTest {
 	/**
 	 * Request 处理方法
 	 * 
-	 * @param <E>
+	 * @param <E> 实际类型
+	 *
 	 * 
-	 * 
-	 * @param request
-	 * @param response
+	 * @param request 请求体
+	 * @param clazz 响应类
 	 */
-	private <E> void processRequest(VoApiRequest<?> request, Class<E> clazz) {
-		RequestEntity<VoApiRequest<?>> requestEntity = new RequestEntity<VoApiRequest<?>>(
+	private <E> void processRequest(VoApiRequest request, Class<E> clazz) {
+		RequestEntity<VoApiRequest> requestEntity = new RequestEntity<VoApiRequest>(
 				request, request.getHeaders(), request.getHttpMethod(),
 				getURI(request.getApiURLPath()));
-		ResponseEntity<E> responseEntity = null;
+		ResponseEntity<E> responseEntity;
 		try {
 			responseEntity = restTemplate.exchange(requestEntity, clazz);
-			System.out.println(JSON.toString(responseEntity));
+			System.out.println(responseEntity);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

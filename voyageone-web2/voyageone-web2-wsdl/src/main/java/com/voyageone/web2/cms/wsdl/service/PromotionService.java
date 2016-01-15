@@ -22,10 +22,10 @@ import com.voyageone.web2.sdk.api.request.PromotionsGetRequest;
 import com.voyageone.web2.sdk.api.request.PromotionsPutRequest;
 import com.voyageone.web2.sdk.api.response.PromotionsGetResponse;
 import com.voyageone.web2.sdk.api.response.PromotionsPutResponse;
+import org.springframework.util.Assert;
 
 /**
- * @description
- *
+ * @description promotion sdk服务
  * @author gbb
  */
 @Service
@@ -40,28 +40,29 @@ public class PromotionService extends BaseService {
 	/**
 	 * 添加或者修改
 	 * 
-	 * @param promotionPutRequest
-	 * @return
+	 * @param promotionsPutRequest put请求参数
+	 * @return put响应
 	 */
 	public PromotionsPutResponse saveOrUpdate(
-			PromotionsPutRequest promotionPutRequest) {
+			PromotionsPutRequest promotionsPutRequest) {
+		validatePutParameters(promotionsPutRequest);
 		PromotionsPutResponse response = new PromotionsPutResponse();
-		if (cmsBtPromotionDao
-				.findById(constructionCondtionMap(promotionPutRequest
-						.getCmsBtPromotionModel())) != null) {
-			response.setMatchedCount(cmsBtPromotionDao
-					.update(promotionPutRequest.getCmsBtPromotionModel()));
-		} else {
+		CmsBtPromotionModel cmsBtPromotionModel=promotionsPutRequest
+				.getCmsBtPromotionModel();
+		if(cmsBtPromotionModel.getPromotionId()>0){
+			response.setModifiedCount(cmsBtPromotionDao
+					.update(cmsBtPromotionModel));
+		}else {
 			response.setInsertedCount(cmsBtPromotionDao
-					.insert(insertTagsAndGetNewModel(promotionPutRequest.getCmsBtPromotionModel())));
+					.insert(insertTagsAndGetNewModel(cmsBtPromotionModel)));
 		}
 		return response;
 	}
 
 	/**
-	 *
-	 * @param cmsBtPromotionModel
-	 * @return
+	 * 添加标签并设置标签id到model
+	 * @param cmsBtPromotionModel 模型
+	 * @return set TagId后的模型
      */
 	private CmsBtPromotionModel insertTagsAndGetNewModel(CmsBtPromotionModel cmsBtPromotionModel){
 		TagAddRequest requestModel = new TagAddRequest();
@@ -80,30 +81,33 @@ public class PromotionService extends BaseService {
 	/**
 	 * 根据条件查询
 	 * 
-	 * @param promotionGetRequest
-	 * @return
+	 * @param promotionsGetRequest 查询条件
+	 * @return 查询结果
 	 */
 	public PromotionsGetResponse selectByCondition(
-			PromotionsGetRequest promotionGetRequest) {
+			PromotionsGetRequest promotionsGetRequest) {
+		validateGetParameters(promotionsGetRequest);
 		PromotionsGetResponse response = new PromotionsGetResponse();
-		if (promotionGetRequest.getPromotionId()!=null&&promotionGetRequest.getPromotionId().intValue() > 0) {
+		if (promotionsGetRequest.getPromotionId() > 0) {
 			response.setCmsBtPromotionModels(Arrays.asList(cmsBtPromotionDao
-					.findById(constructionCondtionMap(promotionGetRequest))));
+					.findById(constructionCondtionMap(promotionsGetRequest))));
 		} else {
 			response.setCmsBtPromotionModels(cmsBtPromotionDao
-					.findByCondition(constructionCondtionMap(promotionGetRequest)));
+					.findByCondition(constructionCondtionMap(promotionsGetRequest)));
 		}
 		return response;
 	}
 
+
 	/**
 	 * 删除
 	 * 
-	 * @param condtionParams
-	 * @return
+	 * @param promotionsDeleteRequest 删除参数
+	 * @return 删除结果
 	 */
 	public PromotionsPutResponse deleteById(
 			PromotionsDeleteRequest promotionsDeleteRequest) {
+		validateDeleteParameters(promotionsDeleteRequest);
 		PromotionsPutResponse response = new PromotionsPutResponse();
 		response.setRemovedCount(cmsBtPromotionDao
 				.deleteById(constructionCondtionMap(promotionsDeleteRequest)));
@@ -113,10 +117,35 @@ public class PromotionService extends BaseService {
 	/**
 	 * 构造条件map
 	 * 
-	 * @param obj
-	 * @return
+	 * @param obj 对象
+	 * @return beanMap of Map
 	 */
 	private static Map<?, ?> constructionCondtionMap(Object obj) {
 		return new BeanMap(obj);
+	}
+
+	/**
+	 * Put参数校验
+	 * @param promotionsPutRequest Put参数
+	 */
+	private void validatePutParameters(PromotionsPutRequest promotionsPutRequest){
+		Assert.notNull(promotionsPutRequest,"request不能为null");
+		Assert.notNull(promotionsPutRequest.getCmsBtPromotionModel(),"cmsBtPromotionModel不能为null");
+	}
+
+	/**
+	 * Get参数校验
+	 * @param promotionGetRequest Get参数
+	 */
+	private void validateGetParameters(PromotionsGetRequest promotionGetRequest){
+		Assert.notNull(promotionGetRequest,"request不能为null");
+	}
+
+	/**
+	 * Del参数校验
+	 * @param promotionsDeleteRequest Del参数
+	 */
+	private void validateDeleteParameters(PromotionsDeleteRequest promotionsDeleteRequest){
+		Assert.notNull(promotionsDeleteRequest.getPromotionId(),"promotionId不能为null");
 	}
 }
