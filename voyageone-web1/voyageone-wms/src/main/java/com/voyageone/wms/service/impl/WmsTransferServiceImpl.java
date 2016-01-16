@@ -627,12 +627,12 @@ public class WmsTransferServiceImpl implements WmsTransferService {
     }
 
     /**
-     * 获取可用的所有 Store
+     * 获取可用的所有 配置项
      *
      * @return List
      */
     @Override
-    public Map<String, Object> allStores(UserSessionBean user) {
+    public Map<String, Object> allConfigs(UserSessionBean user) {
 
         Map<String, Object> resultMap = new HashMap<>();
 
@@ -676,6 +676,21 @@ public class WmsTransferServiceImpl implements WmsTransferService {
             }
         }
         resultMap.put("companyStoreToList", companyStoreToList);
+
+        // 获取品牌方发货的Shipment信息
+        List<ClientShipmentBean> notMatchClientShipmentList = new ArrayList<>();
+
+        ClientShipmentBean clientShipmentBean = new ClientShipmentBean();
+        clientShipmentBean.setShipment_id(0);
+        clientShipmentBean.setFile_name("                               ");
+
+        notMatchClientShipmentList.add(clientShipmentBean);
+
+        List<ClientShipmentBean> clientShipmentList = clientShipmentDao.getNotMatchShipmentList(orderChannelIdList);
+
+        notMatchClientShipmentList.addAll(clientShipmentList);
+
+        resultMap.put("notMatchClientShipmentList", notMatchClientShipmentList);
 
         return resultMap;
 
