@@ -24,7 +24,7 @@ public interface WmsTransferService {
 
     TransferBean get(int transferId);
 
-    Map<String, Object> allConfigs(UserSessionBean user);
+    Map<String, Object> allConfigs(String transferId, UserSessionBean user);
 
     int getSearchCount(String po, int Store, String status, String from, String to, List<ChannelStoreBean> channelStoreList);
 

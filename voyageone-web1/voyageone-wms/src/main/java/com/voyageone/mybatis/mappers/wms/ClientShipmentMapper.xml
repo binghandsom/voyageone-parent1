@@ -18,6 +18,25 @@
                 #{order_channel_id}
             </foreach>
         </if>
+        AND
+          Not exists (select 1
+                        from wms_bt_transfer transfer
+                        where transfer.order_channel_id = shipment.order_channel_id
+                        and transfer.client_shipment_id = shipment.shipment_id)
+
+        <if test="transfer_id != null and transfer_id != 0 ">
+        UNION
+
+            SELECT
+                shipment.*
+            FROM
+                wms_bt_client_shipment shipment,
+                wms_bt_transfer transfer
+            WHERE
+                transfer.transfer_id = #{transfer_id}
+            and transfer.order_channel_id = shipment.order_channel_id
+            and transfer.client_shipment_id = shipment.shipment_id
+        </if>
     </select>
 
 

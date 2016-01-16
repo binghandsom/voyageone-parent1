@@ -119,8 +119,10 @@ define([
             /**
              * 获取所有的仓库 和 Type （Edit 页面）
              */
-            this.getConfigs = function () {
-                return http.ajaxPost(null, actions.transfer.config.all);
+            this.getConfigs = function (transfer_id) {
+                return http.ajaxPost({
+                    transferId: transfer_id
+                }, actions.transfer.config.all);
             };
 
             /**

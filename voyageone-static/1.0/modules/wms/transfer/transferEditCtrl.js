@@ -129,7 +129,7 @@ define([
         }
 
         function init() {
-            transferService.getConfigs().then(function (res) {
+            transferService.getConfigs($routeParams.id).then(function (res) {
                 channelStores = res.data.storeList;
                 companyStores = res.data.companyStoreList;
                 storesTo = res.data.companyStoreToList;

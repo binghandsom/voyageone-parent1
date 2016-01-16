@@ -105,8 +105,11 @@ public class WmsTransferController extends BaseController {
      * 获取所有启用的仓库
      */
     @RequestMapping(TransferUrls.Configs.ALL)
-    public void getAllConfigs(HttpServletResponse response) {
-        Map<String, Object> result = transferService.allConfigs(getUser());
+    public void getAllConfigs(@RequestBody Map<String, Object> params, HttpServletResponse response) {
+
+        String transferId = (String) params.get("transferId");
+
+        Map<String, Object> result = transferService.allConfigs(transferId, getUser());
 
         AjaxResponseBean
                 .newResult(true)

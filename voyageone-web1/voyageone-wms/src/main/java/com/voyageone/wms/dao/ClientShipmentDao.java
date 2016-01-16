@@ -22,11 +22,12 @@ public class ClientShipmentDao extends BaseDao {
      * @param orderChannelIdList 对象
      * @return List<ClientShipmentBean>
      */
-    public List<ClientShipmentBean> getNotMatchShipmentList(List<String> orderChannelIdList) {
+    public List<ClientShipmentBean> getNotMatchShipmentList(List<String> orderChannelIdList,String transfer_id) {
 
         Map<String, Object> params = new HashMap<>();
 
         params.put("orderChannelIdList", orderChannelIdList);
+        params.put("transfer_id", transfer_id);
 
         return selectList("client_shipment_selectNotMatchShipment", params);
     }

@@ -632,7 +632,7 @@ public class WmsTransferServiceImpl implements WmsTransferService {
      * @return List
      */
     @Override
-    public Map<String, Object> allConfigs(UserSessionBean user) {
+    public Map<String, Object> allConfigs(String transferId, UserSessionBean user) {
 
         Map<String, Object> resultMap = new HashMap<>();
 
@@ -682,11 +682,11 @@ public class WmsTransferServiceImpl implements WmsTransferService {
 
         ClientShipmentBean clientShipmentBean = new ClientShipmentBean();
         clientShipmentBean.setShipment_id(0);
-        clientShipmentBean.setFile_name("                               ");
+        clientShipmentBean.setFile_name("Nothing");
 
         notMatchClientShipmentList.add(clientShipmentBean);
 
-        List<ClientShipmentBean> clientShipmentList = clientShipmentDao.getNotMatchShipmentList(orderChannelIdList);
+        List<ClientShipmentBean> clientShipmentList = clientShipmentDao.getNotMatchShipmentList(orderChannelIdList,StringUtils.isNullOrBlank2(transferId)?"0":transferId);
 
         notMatchClientShipmentList.addAll(clientShipmentList);
 
