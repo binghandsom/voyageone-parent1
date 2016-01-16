@@ -20,6 +20,7 @@ import com.voyageone.common.configs.beans.ThirdPartyConfigBean;
 import com.voyageone.common.mail.Mail;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -262,6 +263,10 @@ public class WmsSPThirdWarehouseReportService extends BaseTaskService {
          */
         private void processCreateAfter(ThirdPartyConfigBean fileConfig, String createDate, boolean isSuccess, boolean isCreated) {
 
+            //生成备份文件
+            if (isSuccess) {
+                isSuccess = moveReportFileForBack(fileConfig);
+            }
             //处理出错
             if (!isSuccess) {
                 //删除所有生成日报文件
@@ -323,6 +328,7 @@ public class WmsSPThirdWarehouseReportService extends BaseTaskService {
                 //'2015-07-01 16:00:00'
                 //'2016-01-05 23:59:59'
                 //spThirdWarehouseReports = createReportDao.getSPThirdWarehouseReportBySKU(channel.getOrder_channel_id(),"2015-07-01 16:00:00","2016-01-05 23:59:59", CodeConstants.Reservation_Status.Open,getTaskName());
+                //spThirdWarehouseReports = createReportDao.getSPThirdWarehouseReportBySKU(channel.getOrder_channel_id(),"2016-01-11 08:00:00","2016-01-13 02:59:59", CodeConstants.Reservation_Status.ShippedCN,getTaskName());
 
                 spThirdWarehouseReports = createReportDao.getSPThirdWarehouseReportBySKU(channel.getOrder_channel_id(),timeRegion.get(0),timeRegion.get(1), CodeConstants.Reservation_Status.Open,getTaskName());
                 logger.info(format("取得 [ %s ] 条数据", spThirdWarehouseReports.size()));
@@ -531,6 +537,32 @@ public class WmsSPThirdWarehouseReportService extends BaseTaskService {
                 return false;
 
             }
+        }
+
+        /**
+         * 斯伯丁第三方仓库发货日报文件生成备份文件
+         * @param fileConfig
+         *
+         */
+        private boolean moveReportFileForBack(ThirdPartyConfigBean fileConfig) {
+            boolean isSuccess = true;
+            for (String fileName :createFileName) {
+                // 源文件
+                String srcFile =fileConfig.getProp_val4() + "/" + fileName;
+                // 目标文件
+                String destFile = fileConfig.getProp_val6() + "/" + fileName;
+                logger.info("生成备份文件： " + srcFile + " " + destFile);
+                try {
+                    //生成备份文件
+                    FileUtils.moveFileByBcbg(srcFile, destFile);
+                }catch (Exception e) {
+                    isSuccess = false;
+                    logger.error("斯伯丁第三方仓库发货日报文件生成备份文件出错", e);
+                    logIssue(channel.getFull_name() + " " + "斯伯丁第三方仓库发货日报文件生成备份文件出错：",  e);
+                    break;
+                }
+            }
+            return isSuccess;
         }
     }
 }
