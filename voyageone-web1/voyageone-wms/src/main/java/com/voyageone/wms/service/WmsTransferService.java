@@ -52,6 +52,8 @@ public interface WmsTransferService {
 
     TransferBean submitTransfer(TransferMapBean transfer, UserSessionBean user);
 
+    Map<String, Object> compareTransfer(TransferBean transfer);
+
     List<TransferItemBean> allItemInTransfer(int transfer_in_id);
 
     List<TransferItemBean> getItemsInPackage(int package_id);

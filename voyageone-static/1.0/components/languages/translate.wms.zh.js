@@ -136,6 +136,7 @@ define(['components/app', 'components/services/language.service', "underscore"],
 
                     WMS_ALERT_TRANSFER_DELETE: "是否确定删除 Transfer： [ {{transfer_name}} ]？",
                     WMS_ALERT_TRANSFER_DELETE_FAIL: "删除失败了。请检查以下 Transfer 的当前状态。",
+                    WMS_ALERT_TRANSFER_COMPARE:"入库数量和品牌方提供的数量不一致，是否继续提交？ <br />可以下载比对报表进行确认。",
 
                     WMS_ALERT_TRANSFER_EDIT_NO_TYPE: "没有找到对应的 Transfer 类型，所以不能进行创建",
                     WMS_ALERT_TRANSFER_EDIT_CLOSED: "Transfer 已经关闭了！",

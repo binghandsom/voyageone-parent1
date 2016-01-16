@@ -515,6 +515,22 @@ public class WmsTransferServiceImpl implements WmsTransferService {
     }
 
     /**
+     * 获取可用的所有 配置项
+     *
+     * @return List
+     */
+    @Override
+    public Map<String, Object> compareTransfer(TransferBean transfer) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        String compareResult = "1";
+
+        resultMap.put("compareResult", compareResult);
+
+        return resultMap;
+    }
+
+    /**
      * 提交 Transfer， 保存信息外，强制变更状态，并关闭 Mapping
      *
      * @param map  TransferMapBean

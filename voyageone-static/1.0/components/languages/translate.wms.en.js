@@ -136,6 +136,7 @@ define(['components/app', 'components/services/language.service', "underscore"],
 
                     WMS_ALERT_TRANSFER_DELETE: "Will delete this transfer [ {{transfer_name}} ], sure ?",
                     WMS_ALERT_TRANSFER_DELETE_FAIL: "delete transfer failed. please check its status.",
+                    WMS_ALERT_TRANSFER_COMPARE: "Transfer quantity is different with the quantity Client provided,whether to continue to submit? <br />You can download compare report to confirm.",
 
                     WMS_ALERT_TRANSFER_EDIT_NO_TYPE: "No transfer type, cant add transfer.",
                     WMS_ALERT_TRANSFER_EDIT_CLOSED: "Current Transfer, already closed.",

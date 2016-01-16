@@ -244,14 +244,7 @@ define([
                 return http.ajaxPost({
                         transfer_id: transfer_id
                     },
-                    actions.transfer.package.item.compare)
-
-                    .then(function (res) {
-                        return {
-                            inItems: res.data.inItems,
-                            outItems: res.data.outItems
-                        };
-                    });
+                    actions.transfer.package.item.compare);
             };
 
             /**
@@ -259,6 +252,20 @@ define([
              */
             this.doListInit = function (data, scope) {
                 return http.ajaxPost(data, actions.transfer.init, scope);
+            };
+
+            /**
+             * 比较transfer的数量
+             */
+            this.compareTransfer = function (transfer) {
+                return http.ajaxPost({
+                        transfer: transfer
+                    },
+                    actions.transfer.compare)
+
+                    .then(function (res) {
+                        return res.data;
+                    });
             };
 
         }]);

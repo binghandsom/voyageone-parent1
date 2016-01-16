@@ -251,7 +251,21 @@ define([
                 return;
             }
 
-            reqSubmitTransfer();
+            if (vm.transfer.client_shipment_id == "0") {
+                reqSubmitTransfer();
+            } else {
+                // 有ClientShipment时，数量比对有差异，则出确认框
+                transferService.compareTransfer(vm.transfer).then(function (res) {
+
+                    if (res.compareResult == "1") {
+                        confirm("WMS_ALERT_TRANSFER_COMPARE").then(reqSubmitTransfer);
+                    } else {
+                        reqSubmitTransfer();
+                    }
+                });
+
+            }
+
         }
 
         function acceptPackage() {

@@ -305,6 +305,22 @@ public class WmsTransferController extends BaseController {
     }
 
     /**
+     * 获取所有启用的仓库
+     */
+    @RequestMapping(TransferUrls.COMPARE)
+    public void compareTransfer(@RequestBody TransferMapBean map, HttpServletResponse response) {
+
+        TransferBean transfer = map.getTransfer();
+
+        Map<String, Object> result = transferService.compareTransfer(transfer);
+
+        AjaxResponseBean
+                .newResult(true)
+                .setResultInfo(result)
+                .writeTo(getRequest(), response);
+    }
+
+    /**
      * 获取两个Transfer， Out 和 In 的所有 Item。
      */
     @RequestMapping(TransferUrls.Item.COMPARE)
