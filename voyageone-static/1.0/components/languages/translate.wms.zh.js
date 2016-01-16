@@ -126,6 +126,8 @@ define(['components/app', 'components/services/language.service', "underscore"],
                     WMS_ORDERNUMBERANDTRANSFERNAME: '订单号/入出库名',
                     WMS_RECORDNUMBER: '全部记录数 : ',
                     WMS_RETURNTYPE: '退货类型',
+                    WMS_SIZE: '尺寸',
+                    WMS_ITEM_CODE: '型号',
 
                     // 弹出提示框的内容翻译部分
                     WMS_ALERT_UPC_MSRP: "官方建议售价，必须是数字！",

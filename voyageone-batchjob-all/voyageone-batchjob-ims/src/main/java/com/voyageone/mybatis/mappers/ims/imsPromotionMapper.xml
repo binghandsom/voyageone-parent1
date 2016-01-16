@@ -32,6 +32,7 @@
             <result column="product_id" property="product_id" />
             <result column="publish_promotion_price_status" property="publish_promotion_price_status" />
             <collection property="skuList" javaType="ArrayList" ofType="HashMap" >
+                <result column="cnPrice" property="cnPrice" />
                 <result column="cnPriceFinalRmb" property="cnPriceFinalRmb" />
                 <result column="cnPriceRmb" property="cnPriceRmb" />
                 <result column="sku" property="sku"/>
@@ -44,6 +45,7 @@
             t1.product_id,
             t1.channel_id,
             t1.publish_promotion_price_status,
+            floor(t2.cn_price * 100) AS cnPrice,
             floor(t2.cn_price_final_rmb * 100) AS cnPriceFinalRmb,
             floor(t2.cn_price_rmb * 100) AS cnPriceRmb,
             t3.sku

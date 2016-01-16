@@ -21,6 +21,7 @@ import com.voyageone.wms.WmsConstants;
 import com.voyageone.wms.WmsMsgConstants;
 import com.voyageone.wms.WmsMsgConstants.TransferMsg;
 import com.voyageone.wms.dao.ClientShipmentDao;
+import com.voyageone.wms.dao.ClientSkuDao;
 import com.voyageone.wms.dao.ItemDao;
 import com.voyageone.wms.dao.StoreDao;
 import com.voyageone.wms.dao.TransferDao;
@@ -67,7 +68,15 @@ public class WmsTransferServiceImpl implements WmsTransferService {
     private ClientShipmentDao clientShipmentDao;
 
     @Autowired
+    private ClientSkuDao clientSkuDao;
+
+    @Autowired
     private HttpServletRequest request;
+
+    // 第三方barcode输入框，输入提示
+    private String popupInput = "popupInput";
+    // 第三方barcode输入框，ItemCode,Size 重复输入
+    private String repeatInput = "repeatInput";
 
     /**
      * 【Transfer画面】初始化
@@ -344,11 +353,14 @@ public class WmsTransferServiceImpl implements WmsTransferService {
      * @param package_id int
      * @param barcode    String
      * @param num        int
+     * @param itemCode  String
+     * @param color  String
+     * @param size        String
      * @param user       UserSessionBean
      * @return 商品的 SKU
      */
     @Override
-    public String addItem(int package_id, String barcode, int num, UserSessionBean user) {
+    public String addItem(int package_id, String barcode, int num, String itemCode, String color, String size, UserSessionBean user) {
 
         // 获取容器
         TransferDetailBean detailBean = transferDao.getPackage(package_id);
@@ -366,11 +378,16 @@ public class WmsTransferServiceImpl implements WmsTransferService {
         if (item == null) {
             // 如果数据库没有，并且 num 为添加操作，则创建一个
             if (num > 0) {
-                item = createItem(transfer, detailBean, barcode, num, user);
-                if (transferDao.insertItem(item) > 0)
+                item = createItem(transfer, detailBean, barcode, num, itemCode, color, size, user);
+
+                if (popupInput.equals(item.getTransfer_sku()) || repeatInput.equals(item.getTransfer_sku())) {
                     return item.getTransfer_sku();
-                else
-                    throw new BusinessException(ComMsg.UPDATE_BY_OTHER);
+                } else {
+                    if (insertItem(item, itemCode, color, size, transfer))
+                        return item.getTransfer_sku();
+                    else
+                        throw new BusinessException(ComMsg.UPDATE_BY_OTHER);
+                }
             }
             // 否则，为减数量操作，而正好数据库没有，所以直接返回成功
             return null;
@@ -380,7 +397,7 @@ public class WmsTransferServiceImpl implements WmsTransferService {
         num = item.getTransfer_qty() + num;
 
         // 如果数量全部抵消。则删除这个 Item 行
-        if (num < 0) {
+        if (num <= 0) {
             if (transferDao.deleteItem(item.getTransfer_item_id()) > 0)
                 return item.getTransfer_sku();
             else
@@ -400,6 +417,57 @@ public class WmsTransferServiceImpl implements WmsTransferService {
             return item.getTransfer_sku();
         else
             throw new BusinessException(ComMsg.UPDATE_BY_OTHER);
+    }
+
+    /**
+     * 入出库项目追加（wms_bt_transfer_item，wms_bt_client_sku）
+     *
+     * @param item 入出库项目
+     * @param itemCode
+     * @param color
+     * @param size
+     * @param transfer  String
+     * @return 追加结果
+     */
+    private boolean insertItem(TransferItemBean item, String itemCode, String color, String size, TransferBean transfer) {
+        boolean ret = true;
+
+        // 第三方ItemCode,color,Size 输入的场合
+        if (!StringUtils.isEmpty(itemCode)) {
+            // wms_bt_client_sku追加
+            String to_store_channel_id;
+
+            if (isOut(transfer)) {
+                to_store_channel_id = storeDao.getChannel_id(transfer.getTransfer_to_store());
+            } else {
+                to_store_channel_id = transfer.getOrder_channel_id();
+            }
+
+            ClientSkuBean clientSkuBean = new ClientSkuBean();
+            clientSkuBean.setOrder_channel_id(to_store_channel_id);
+            clientSkuBean.setBarcode(item.getTransfer_barcode());
+            clientSkuBean.setItem_code(itemCode);
+            clientSkuBean.setColor(color);
+            clientSkuBean.setSize(size);
+            clientSkuBean.setActive(1);
+            clientSkuBean.setCreater(item.getCreater());
+            clientSkuBean.setModifier(item.getModifier());
+
+            int recCount = clientSkuDao.insertItem(clientSkuBean);
+            if (recCount == 0) {
+                ret = false;
+            }
+        }
+
+        if (ret) {
+            // wms_bt_transfer_item 追加
+            int recCount = transferDao.insertItem(item);
+            if (recCount == 0) {
+                ret = false;
+            }
+        }
+
+        return ret;
     }
 
     /**
@@ -564,7 +632,7 @@ public class WmsTransferServiceImpl implements WmsTransferService {
      * @return List
      */
     @Override
-    public Map<String, Object> allConfigs(UserSessionBean user) {
+    public Map<String, Object> allStores(UserSessionBean user) {
 
         Map<String, Object> resultMap = new HashMap<>();
 
@@ -608,21 +676,6 @@ public class WmsTransferServiceImpl implements WmsTransferService {
             }
         }
         resultMap.put("companyStoreToList", companyStoreToList);
-
-        // 获取品牌方发货的Shipment信息
-        List<ClientShipmentBean> notMatchClientShipmentList = new ArrayList<>();
-
-        ClientShipmentBean clientShipmentBean = new ClientShipmentBean();
-        clientShipmentBean.setShipment_id(0);
-        clientShipmentBean.setFile_name("                               ");
-
-        notMatchClientShipmentList.add(clientShipmentBean);
-
-        List<ClientShipmentBean> clientShipmentList = clientShipmentDao.getNotMatchShipmentList(orderChannelIdList);
-
-        notMatchClientShipmentList.addAll(clientShipmentList);
-
-        resultMap.put("notMatchClientShipmentList", notMatchClientShipmentList);
 
         return resultMap;
 
@@ -1041,7 +1094,7 @@ public class WmsTransferServiceImpl implements WmsTransferService {
     /**
      * 在指定的 Package 自动创建 Item
      */
-    private TransferItemBean createItem(TransferBean transfer, TransferDetailBean detail, String barcode, int num, UserSessionBean user) {
+    private TransferItemBean createItem(TransferBean transfer, TransferDetailBean detail, String barcode, int num, String itemCode, String color, String size, UserSessionBean user) {
         String to_store_channel_id;
 
         if (isOut(transfer)) {
@@ -1066,12 +1119,26 @@ public class WmsTransferServiceImpl implements WmsTransferService {
         // 不允许的场合，直接抛出错误
         if (StringUtils.isEmpty(sku)) {
             if (to_store_channel_id.equals(ChannelConfigEnums.Channel.JC.getId())) {
-                sku = barcode;
+
+                // 初次输入的场合
+                if (StringUtils.isEmpty(itemCode)) {
+                    if (isClientSKUExist(to_store_channel_id, barcode)) {
+                        sku = barcode;
+                    } else {
+                        sku = popupInput;
+                    }
+                // ItemCode，Size 输入的场合
+                } else {
+                    if (isClientSKUExistByItemCodeAndSize(to_store_channel_id, itemCode, color, size)) {
+                        sku = repeatInput;
+                    } else {
+                        sku = barcode;
+                    }
+                }
                 item.setSyn_flg(WmsConstants.SynFlg.IGNORE);
             } else {
                 throw new BusinessException(TransferMsg.INVALID_SKU);
             }
-
         }
 
         item.setTransfer_id(detail.getTransfer_id());
@@ -1095,6 +1162,34 @@ public class WmsTransferServiceImpl implements WmsTransferService {
         item.setModifier(user.getUserName());
 
         return item;
+    }
+
+    /**
+     * wms_bt_client_sku 存在判定（根据barcode）
+     */
+    private boolean isClientSKUExist(String orderChannelId, String barcode) {
+        boolean ret = false;
+
+        int recCount = clientSkuDao.getRecCount(orderChannelId, barcode);
+        if (recCount > 0) {
+            ret = true;
+        }
+
+        return ret;
+    }
+
+    /**
+     * wms_bt_client_sku 存在判定（根据itemCode，size）
+     */
+    private boolean isClientSKUExistByItemCodeAndSize(String orderChannelId, String itemCode, String color, String size) {
+        boolean ret = false;
+
+        int recCount = clientSkuDao.getRecCountByItemCodeAndSize(orderChannelId, itemCode, color, size);
+        if (recCount > 0) {
+            ret = true;
+        }
+
+        return ret;
     }
 
     /**

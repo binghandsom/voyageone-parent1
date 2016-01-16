@@ -7,6 +7,7 @@
 define([
     "modules/wms/wms.module",
     "modules/wms/transfer/transferService",
+    "modules/wms/directives/popInputClientSku/popInputClientSku",
     "components/directives/dialogs/dialogs",
     "components/directives/enterClick"
 ], function (wms) {
@@ -21,6 +22,7 @@ define([
         "ngDialog",
         "notify",
         "$window",
+        "wmsInputClientSku",
         transferEditCtrl
     ])
         .filter("statusName", function () {
@@ -38,7 +40,8 @@ define([
                               alert,
                               ngDialog,
                               notify,
-                              $window) {
+                              $window,
+                              wmsInputClientSku) {
         var channelStores = [];
         var companyStores = [];
         var storesTo = [];
@@ -318,6 +321,11 @@ define([
 
                     // 没有内容，则放弃继续
                     if (!sku) return;
+
+                    if(sku == 'popupInput') {
+                        wmsInputClientSku($scope,vm.package.transfer_package_id, code, num);
+                        return;
+                    }
 
                     // 如果返回内容，有值。那么就反映到画面中
                     vm.packageItems.unshift({

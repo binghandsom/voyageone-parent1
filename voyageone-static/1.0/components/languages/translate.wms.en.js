@@ -126,6 +126,8 @@ define(['components/app', 'components/services/language.service', "underscore"],
                     WMS_ORDERNUMBERANDTRANSFERNAME: 'Order#/Transfer Name',
                     WMS_RECORDNUMBER: 'Total Record Number : ',
                     WMS_RETURNTYPE: 'Return Type',
+                    WMS_SIZE: 'Size',
+                    WMS_ITEM_CODE: 'ItemCode',
 
                     // 弹出提示框的内容翻译部分
                     WMS_ALERT_UPC_MSRP: "Msrp must be number!",
