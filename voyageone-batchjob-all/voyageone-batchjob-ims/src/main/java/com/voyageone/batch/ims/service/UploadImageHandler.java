@@ -13,6 +13,8 @@ import com.voyageone.batch.ims.modelbean.ImageUrlMappingModel;
 import com.voyageone.batch.ims.modelbean.WorkLoadBean;
 import com.voyageone.common.components.issueLog.IssueLog;
 import com.voyageone.common.components.tmall.TbPictureService;
+import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,7 +29,7 @@ import java.util.*;
  * Created by Leo on 2015/5/28.
  */
 public class UploadImageHandler extends UploadWorkloadHandler {
-    private static Log logger = LogFactory.getLog(UploadProductHandler.class);
+    private static Log logger = LogFactory.getLog(UploadImageHandler.class);
     private UploadJob uploadJob;
     private TbPictureService tbPictureService;
 
@@ -41,7 +43,8 @@ public class UploadImageHandler extends UploadWorkloadHandler {
         ApplicationContext springContext = (ApplicationContext) Context.getContext().getAttribute("springContext");
         imageUrlMappingDao = springContext.getBean(PlatformImageUrlMappingDao.class);
 
-        this.setName(this.getClass().getSimpleName() + "_" + uploadJob.getChannel_id() + "_" + uploadJob.getCart_id());
+        this.setName(this.getClass().getSimpleName() + "_" + ChannelConfigEnums.Channel.valueOfId(uploadJob.getChannel_id()).getFullName() + "_" +
+                CartEnums.Cart.getValueByID(uploadJob.getCart_id()).name() + "_" + uploadJob.getIdentifer());
     }
 
     //添加一个suspend的job防止该线程一启动，就结束

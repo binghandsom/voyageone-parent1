@@ -8,9 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 上传任务分为两个线程handler，一个是上传商品handler，一个是上传图片handler
@@ -19,8 +17,10 @@ import java.util.Set;
  */
 @Repository
 public class UploadWorkloadDispatcher {
-    private Map<StoreKey, UploadJob> upJobMap;
+    private Map<StoreKey, List<UploadJob>> upJobMap;
     private static Log logger = LogFactory.getLog(UploadWorkloadDispatcher.class);
+    private int jobCountPerCartChannel;
+    private final static int DEFAULT_JOB_COUNT_PER_CART_CHANNEL = 3;
 
     //Job回调函数
     private WorkloadCompleteIntf workloadComplete;
@@ -36,14 +36,18 @@ public class UploadWorkloadDispatcher {
     @Autowired
     private IssueLog issueLog;
 
-    private static final int MAX_JOB_COUNT = 3;
+    public UploadWorkloadDispatcher() {
+        this(DEFAULT_JOB_COUNT_PER_CART_CHANNEL);
+    }
 
-    public UploadWorkloadDispatcher()
+    public UploadWorkloadDispatcher(int jobCountPerCartChannel)
     {
         upJobMap = new HashMap<>();
         jobStateCb = new JobStateCb();
         mainThreadSingal = new Object();
+        this.jobCountPerCartChannel = jobCountPerCartChannel;
     }
+
     private class StoreKey
     {
         private String _channel_id;
@@ -95,25 +99,26 @@ public class UploadWorkloadDispatcher {
    {
        StoreKey storeKey;
        storeKey = new StoreKey(workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id());
-       UploadJob uploadJob = upJobMap.get(storeKey);
-       if (uploadJob == null)
-       {
-           if (upJobMap.size() < MAX_JOB_COUNT) {
-               uploadJob = new UploadJob(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()),
+       List<UploadJob> uploadJobs = upJobMap.get(storeKey);
+       synchronized (upJobMap) {
+           if (uploadJobs == null)
+           {
+               uploadJobs = new ArrayList<>();
+               upJobMap.put(storeKey, uploadJobs);
+           }
+           if (uploadJobs.size() < jobCountPerCartChannel) {
+               UploadJob uploadJob = new UploadJob(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()), String.valueOf(uploadJobs.size()),
                        jobStateCb, categoryMappingDao, issueLog);
 
-               synchronized (upJobMap) {
-                   upJobMap.put(storeKey, uploadJob);
-               }
+               uploadJobs.add(uploadJob);
+               uploadJob.addWorkLoad(workLoadBean);
            }
            else {
-               logger.info("Count of upload job has reached to " + MAX_JOB_COUNT + " ignore workload" + workLoadBean);
-               return;
+               uploadJobs.get(0).addWorkLoad(workLoadBean);
+               Collections.sort(uploadJobs);
            }
        }
-       uploadJob.addWorkLoad(workLoadBean);
        logger.debug("add workload to UploadProductHandler, storeKey:" + storeKey + ", workloadBean:" + workLoadBean);
-
    }
 
     /**
@@ -123,7 +128,12 @@ public class UploadWorkloadDispatcher {
      */
     public int getJobCount()
     {
-        return upJobMap.size();
+        int jobCount = 0;
+        for (Map.Entry<StoreKey, List<UploadJob>> upJobEntry : upJobMap.entrySet()) {
+            List<UploadJob> uploadJobs = upJobEntry.getValue();
+            jobCount += uploadJobs.size();
+        }
+        return jobCount;
     }
 
     /**
@@ -131,9 +141,13 @@ public class UploadWorkloadDispatcher {
      */
     public void runAllJobs()
     {
-        for (Map.Entry<StoreKey, UploadJob> upJobEntry : upJobMap.entrySet())
-        {
-            upJobEntry.getValue().run();
+        synchronized (upJobMap) {
+            for (Map.Entry<StoreKey, List<UploadJob>> upJobEntry : upJobMap.entrySet()) {
+                List<UploadJob> uploadJobs = upJobEntry.getValue();
+                for (UploadJob uploadJob : uploadJobs) {
+                    uploadJob.run();
+                }
+            }
         }
     }
 
@@ -166,13 +180,19 @@ public class UploadWorkloadDispatcher {
     {
         StoreKey storeKeySelected = null;
         synchronized (upJobMap) {
-            for (Map.Entry<StoreKey, UploadJob> entry : upJobMap.entrySet()) {
-                if (entry.getValue() == uploadJob) {
-                    storeKeySelected = entry.getKey();
+            for (Map.Entry<StoreKey, List<UploadJob>> entry : upJobMap.entrySet()) {
+                 List<UploadJob> uploadJobs = entry.getValue();
+                if (uploadJobs.contains(uploadJob)) {
+                    uploadJobs.remove(uploadJob);
+                    if (uploadJobs.isEmpty()) {
+                        storeKeySelected = entry.getKey();
+                    }
                     break;
                 }
             }
-            upJobMap.remove(storeKeySelected);
+            if (storeKeySelected != null) {
+                upJobMap.remove(storeKeySelected);
+            }
         }
 
         synchronized (mainThreadSingal) {
