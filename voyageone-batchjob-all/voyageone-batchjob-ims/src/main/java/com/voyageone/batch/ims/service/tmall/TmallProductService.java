@@ -10,6 +10,7 @@ import com.taobao.top.schema.factory.SchemaReader;
 import com.taobao.top.schema.factory.SchemaWriter;
 import com.taobao.top.schema.field.*;
 import com.taobao.top.schema.value.ComplexValue;
+import com.taobao.top.schema.value.Value;
 import com.voyageone.batch.ims.ImsConstants;
 import com.voyageone.batch.ims.bean.*;
 import com.voyageone.batch.ims.bean.tcb.*;
@@ -25,6 +26,7 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.tmall.TbProductService;
 import com.voyageone.common.configs.ShopConfigs;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.ims.enums.CmsFieldEnum;
 import com.voyageone.ims.modelbean.DictWordBean;
 import com.voyageone.ims.rule_expression.DictWord;
@@ -138,6 +140,9 @@ public class TmallProductService implements PlatformServiceInterface {
             case PlatformWorkloadStatus.JOB_ABORT: {
                 uploadProductHandler.stopTcb(tcb);
                 break;
+            }
+            default: {
+                throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("未知的任务状态:" + workloadStatus));
             }
         }
     }
@@ -854,7 +859,7 @@ public class TmallProductService implements PlatformServiceInterface {
         WorkLoadBean workLoadBean = tcb.getWorkLoadBean();
 
         PlatformWorkloadStatus platformWorkloadStatus = workLoadBean.getWorkload_status();
-        logger.debug("Update Product, workload: " + tcb.getWorkLoadBean());
+        logger.debug("Update Product, workload: " + workLoadBean);
 
         switch (platformWorkloadStatus.getValue()) {
             case TmallWorkloadStatus.UPDATE_INIT:
@@ -881,6 +886,9 @@ public class TmallProductService implements PlatformServiceInterface {
             case PlatformWorkloadStatus.JOB_ABORT: {
                 uploadProductHandler.stopTcb(tcb);
                 break;
+            }
+            default: {
+                throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("未知的任务状态:" + platformWorkloadStatus));
             }
         }
     }
@@ -1445,7 +1453,6 @@ public class TmallProductService implements PlatformServiceInterface {
                     workLoadBean.setHasSku(true);
 
                     //TODO 将要从tmall平台获取已被占用的color, 暂时赋值为null
-                    List<String> excludeColors = null;
                     AbstractSkuFieldBuilder skuFieldBuilder = skuFieldBuilderFactory.getSkuFieldBuilder(cartId, platformProps);
 
                     if (skuFieldBuilder == null)
@@ -1466,6 +1473,7 @@ public class TmallProductService implements PlatformServiceInterface {
                     {
                         throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("Can't build SkuInfoField"));
                     }
+
                     contextBeforeUploadImage.getCustomFields().addAll(skuInfoFields);
                     contextBuildCustomFields.setSkuFieldBuilder(skuFieldBuilder);
                     break;

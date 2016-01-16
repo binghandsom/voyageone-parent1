@@ -255,7 +255,11 @@ public class WmsTransferController extends BaseController {
         String barcode = (String) params.get("barcode");
         int num = (int) params.get("num");
 
-        String sku = transferService.addItem(package_id, barcode, num, getUser());
+        String itemCode = (String) params.get("itemCode");
+        String color = (String) params.get("color");
+        String size = (String) params.get("size");
+
+        String sku = transferService.addItem(package_id, barcode, num, itemCode, color, size, getUser());
 
         AjaxResponseBean.newResult(true)
                 .setResultInfo(sku)

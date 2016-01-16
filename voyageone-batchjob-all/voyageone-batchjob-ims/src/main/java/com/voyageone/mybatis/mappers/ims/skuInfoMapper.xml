@@ -30,5 +30,6 @@
         size
         FROM Synship.wms_bt_item_details
         Where sku = #{sku}
+        AND order_channel_id = #{channel_id}
     </select>
 </mapper>

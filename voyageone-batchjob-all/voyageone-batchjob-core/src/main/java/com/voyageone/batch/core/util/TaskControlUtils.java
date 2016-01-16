@@ -2,7 +2,8 @@ package com.voyageone.batch.core.util;
 
 import com.voyageone.batch.core.Enums.TaskControlEnums;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,7 +12,7 @@ import static java.util.stream.Collectors.toList;
 
 public class TaskControlUtils {
 
-    private static Logger logger = Logger.getLogger(TaskControlUtils.class.getName());
+    private static Log logger = LogFactory.getLog(TaskControlUtils.class);
 
     /**
      * 取得任务是否可以运行的标志位

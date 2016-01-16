@@ -9,6 +9,8 @@ import com.voyageone.batch.ims.modelbean.CmsModelPropBean;
 import com.voyageone.batch.ims.modelbean.WorkLoadBean;
 import com.voyageone.batch.ims.service.tmall.TmallProductService;
 import com.voyageone.common.components.issueLog.IssueLog;
+import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.ShopConfigs;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -76,7 +78,7 @@ public class UploadProductHandler extends UploadWorkloadHandler{
                     workloadStatus.setValue(PlatformWorkloadStatus.UPDATE_START);
                     break;
                 default:
-                    String failCause = "unexpect upJob Param method: " + workLoadBean.getUpJobParam().getMethod();
+                    String failCause = "unexpected upJob Param method: " + workLoadBean.getUpJobParam().getMethod();
                     abortJob(workLoadBean, workloadStatus, failCause);
                     return;
             }
@@ -109,8 +111,8 @@ public class UploadProductHandler extends UploadWorkloadHandler{
                 {
                     MainToUploadImageTaskSignalInfo signalInfo = (MainToUploadImageTaskSignalInfo)
                             signal.getSignalInfo();
-                    uploadJob.addUploadImageTask(signalInfo.getUploadImageTcb());
                     suspendCurrentTask();
+                    uploadJob.addUploadImageTask(signalInfo.getUploadImageTcb());
                     logger.info(String.format("tcb:%s is paused, add new image tcb!", signalInfo.getUploadProductTcb().getWorkLoadBean().toString()));
                     return;
                 }
@@ -193,7 +195,8 @@ public class UploadProductHandler extends UploadWorkloadHandler{
         this.uploadJob = uploadJob;
         this.categoryMappingDao = categoryMappingDao;
 
-        this.setName(this.getClass().getSimpleName() + "_" + uploadJob.getChannel_id() + "_" + uploadJob.getCart_id());
+        this.setName(this.getClass().getSimpleName() + "_" + ChannelConfigEnums.Channel.valueOfId(uploadJob.getChannel_id()).getFullName() + "_" +
+                CartEnums.Cart.getValueByID(uploadJob.getCart_id()).name() + "_" + uploadJob.getIdentifer());
 
         ApplicationContext springContext = (ApplicationContext) Context.getContext().getAttribute("springContext");
         tmallProductService = springContext.getBean(TmallProductService.class);
