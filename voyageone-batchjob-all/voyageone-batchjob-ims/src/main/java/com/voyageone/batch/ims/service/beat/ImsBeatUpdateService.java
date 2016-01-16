@@ -104,7 +104,7 @@ public class ImsBeatUpdateService extends ImsBeatBaseService {
 
         Map<Integer, String> tbImageUrlMap = new HashMap<>();
 
-        for (ImsBeatImageInfo imageInfo: imageInfoList) {
+        for (ImsBeatImageInfo imageInfo : imageInfoList) {
             // 补全信息
             imageInfo.setBeatInfo(beatPicBean);
             imageInfo.setCategoryTid(category_tid);
@@ -129,7 +129,7 @@ public class ImsBeatUpdateService extends ImsBeatBaseService {
             // 如果是 Repeat 的话, 把第一个放置到各个位置上即可
             // 所以最后直接 return 结束
             if (beatPicBean.isRepeat()) {
-                for (Integer i: indexList) {
+                for (Integer i : indexList) {
                     tbImageUrlMap.put(i, tbImageUrl);
                 }
                 return tbImageUrlMap;
@@ -158,7 +158,7 @@ public class ImsBeatUpdateService extends ImsBeatBaseService {
 
         int size = imageInfoList.size();
 
-        for (String target: targets.split(",")) {
+        for (String target : targets.split(",")) {
 
             int index = Integer.valueOf(target);
 
@@ -232,6 +232,11 @@ public class ImsBeatUpdateService extends ImsBeatBaseService {
         }
     }
 
+    /**
+     * 删除商品在淘宝的价格披露图片空间里的老图
+     *
+     * @param imageInfo 图片所有信息
+     */
     private void clearLastImage(ImsBeatImageInfo imageInfo) {
         // 价格披露的图片，在上传之前先检查是否已有，有则删除
         // 老图检测和删除时出现的错误和异常不会影响正常逻辑执行。所以此处都忽略

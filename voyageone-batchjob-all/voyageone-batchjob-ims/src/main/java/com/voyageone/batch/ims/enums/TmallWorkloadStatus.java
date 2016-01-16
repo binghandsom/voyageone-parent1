@@ -63,8 +63,9 @@ public class TmallWorkloadStatus extends PlatformWorkloadStatus {
                                 return "UPDATE_WAIT_ITEM_PIC";
                         case UPDATE_ITEM_PIC_UPLOADED:
                                 return "UPDATE_ITEM_PIC_UPLOADED";
+                        default:
+                                return super.toString();
                 }
-                return null;
         }
 
 }
