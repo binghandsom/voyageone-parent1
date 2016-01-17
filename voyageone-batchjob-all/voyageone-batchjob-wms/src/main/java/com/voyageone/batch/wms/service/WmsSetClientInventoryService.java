@@ -12,6 +12,7 @@ import com.voyageone.batch.wms.modelbean.TransferBean;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.configs.ChannelConfigs;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.StoreConfigEnums;
 import com.voyageone.common.configs.StoreConfigs;
 import com.voyageone.common.configs.beans.OrderChannelBean;
@@ -115,6 +116,12 @@ public class WmsSetClientInventoryService extends BaseTaskService {
                         }
                     }
 
+                    //分配仓库取得（如果能够取得相应的值，则说明只是模拟分配而已，不再进行逻辑库存计算）
+                    String allot_store = ChannelConfigs.getVal1(channel.getOrder_channel_id(), ChannelConfigEnums.Name.allot_store);
+                    if (StringUtils.isNullOrBlank2(allot_store)) {
+                        inventory_manager = true;
+                    }
+
                     try {
                         for (TransferBean transfer : transferList) {
                             logger.info(channel.getFull_name() + "，transfer_id：" + transfer.getTransfer_id() + "，Store：" + transfer.getStore_id() + "，Origin：" + transfer.getTransfer_origin()+ "，Item_id：" + transfer.getTransfer_item_id());
@@ -123,7 +130,7 @@ public class WmsSetClientInventoryService extends BaseTaskService {
                             StoreBean storebean = StoreConfigs.getStore(transfer.getStore_id());
 
                             // 如果是品牌方仓库引起的变化，则允许进行逻辑库存计算（这是为了防止品牌方库存推送延迟导致库存不一致的问题）
-                            if (storebean.getInventory_manager().equals(StoreConfigEnums.Manager.NO.getId())) {
+                            if (storebean.getInventory_manager().equals(StoreConfigEnums.Manager.NO.getId()) && StringUtils.isNullOrBlank2(allot_store)) {
                                 inventory_manager = true;
                             }
 
