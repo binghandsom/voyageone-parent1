@@ -10,6 +10,7 @@ import com.voyageone.common.configs.Type;
 import com.voyageone.common.configs.beans.MasterInfoBean;
 import com.voyageone.common.configs.beans.StoreBean;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JsonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.core.CoreConstants;
 import com.voyageone.core.MessageConstants.ComMsg;
@@ -26,6 +27,7 @@ import com.voyageone.wms.dao.ItemDao;
 import com.voyageone.wms.dao.StoreDao;
 import com.voyageone.wms.dao.TransferDao;
 import com.voyageone.wms.formbean.ClientShipmentCompareBean;
+import com.voyageone.wms.formbean.FormStocktake;
 import com.voyageone.wms.formbean.TransferFormBean;
 import com.voyageone.wms.formbean.TransferMapBean;
 import com.voyageone.wms.modelbean.*;
@@ -36,6 +38,7 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -1364,5 +1367,107 @@ public class WmsTransferServiceImpl implements WmsTransferService {
         UserSessionBean userSessionBean = getUser();
 
         return userSessionBean == null ? 0 : userSessionBean.getTimeZone();
+    }
+
+    @Override
+    public byte[] downloadClientShipment(String param, UserSessionBean user) {
+        TransferBean transfer = JsonUtil.jsonToBean(param, TransferBean.class);
+        List<ClientShipmentCompareBean>  clientShipmentCompareList = clientShipmentDao.getCompareResult(String.valueOf(transfer.getTransfer_id()),transfer.getClient_shipment_id());
+        return createTransferCompare(clientShipmentCompareList);
+    }
+
+
+    @Override
+    public byte[] downloadTransferCompare(String param, UserSessionBean user) {
+        TransferBean transfer = JsonUtil.jsonToBean(param, TransferBean.class);
+        List<ClientShipmentCompareBean>  clientShipmentCompareList = clientShipmentDao.getCompareResult(String.valueOf(transfer.getTransfer_id()),transfer.getClient_shipment_id());
+        return createTransferCompare(clientShipmentCompareList);
+    }
+
+    private byte[] createTransferCompare(List<ClientShipmentCompareBean>  clientShipmentCompareList) {
+        byte[] bytes;
+        try{
+            // 报表模板名取得
+            String templateFile = com.voyageone.common.configs.Properties.readValue(WmsConstants.ReportItems.TransferCompare.TEMPLATE_PATH) + WmsConstants.ReportItems.TransferCompare.TEMPLATE_NAME;
+            // 报表模板名读入
+            InputStream templateInput = new FileInputStream(templateFile);
+            Workbook workbook = WorkbookFactory.create(templateInput);
+            // 设置内容
+            setTransferCompare(workbook, clientShipmentCompareList);
+            // 输出内容
+            ByteArrayOutputStream outData = new ByteArrayOutputStream();
+            workbook.write(outData);
+            bytes = outData.toByteArray();
+            // 关闭
+            templateInput.close();
+            workbook.close();
+            outData.close();
+        } catch (Exception e) {
+            logger.info("TransferCompare报表下载失败：" + e);
+            throw new BusinessException(WmsMsgConstants.TransferMsg.REPORT_FAILED, WmsConstants.ReportItems.TransferCompare.RPT_NAME);
+        }
+        return bytes;
+    }
+
+    /**
+     * 设置compRes报表内容
+     * @param workbook 报表模板
+     * @param clientShipmentCompareList 库存内容按sku
+     */
+    private void setTransferCompare(Workbook workbook, List<ClientShipmentCompareBean>  clientShipmentCompareList) {
+        // 模板Sheet
+        int sheetNo = WmsConstants.ReportItems.TransferCompare.TEMPLATE_SHEET_NO;
+        // 初始行
+        int intRow = WmsConstants.ReportItems.TransferCompare.TEMPLATE_FIRSTROW_NO;
+
+        // 按照模板克隆一个sheet
+        Sheet sheet = workbook.cloneSheet(sheetNo);
+
+        // 设置模板sheet页后的sheet名为报告sheet名
+        workbook.setSheetName(sheetNo + 1, WmsConstants.ReportItems.TransferCompare.RPT_SHEET_NAME);
+
+        for (ClientShipmentCompareBean clientShipmentCompareBean : clientShipmentCompareList) {
+            if(intRow != WmsConstants.ReportItems.TransferCompare.TEMPLATE_FIRSTROW_NO) {
+                Row newRow = sheet.createRow(intRow);
+                //根据第2行（第一行是标题）格式设置每行的格式,第一列不处理
+                for (int col = 0; col < WmsConstants.ReportItems.TransferCompare.COLNUM_MAX; col++) {
+                    Cell newCell = newRow.createCell(col);
+                    Cell oldCell = sheet.getRow(WmsConstants.ReportItems.TransferCompare.TEMPLATE_FIRSTROW_NO).getCell(col);
+                    newCell.setCellStyle(oldCell.getCellStyle());
+                }
+            }
+            // 得到当前行
+            Row currentRow = sheet.getRow(intRow);
+            // No
+            currentRow.getCell(WmsConstants.ReportItems.TransferCompare.Col.COLNUM_NO).setCellValue(intRow -  WmsConstants.ReportItems.TransferCompare.TEMPLATE_FIRSTROW_NO + 1);
+            // ASN_FILE
+            currentRow.getCell(WmsConstants.ReportItems.TransferCompare.Col.COLNUM_ASN_FILE).setCellValue(StringUtils.null2Space2(clientShipmentCompareBean.getFile_name()));
+            // ASN_CLIENT_SKU
+            currentRow.getCell(WmsConstants.ReportItems.TransferCompare.Col.COLNUM_ASN_CLIENT_SKU).setCellValue(StringUtils.null2Space2(clientShipmentCompareBean.getArticle_number()));
+            // ASN_UPC
+            currentRow.getCell(WmsConstants.ReportItems.TransferCompare.Col.COLNUM_ASN_UPC).setCellValue(StringUtils.null2Space2(clientShipmentCompareBean.getUpc()));
+            // ASN_SKU
+            currentRow.getCell(WmsConstants.ReportItems.TransferCompare.Col.COLNUM_ASN_SKU).setCellValue(StringUtils.null2Space2(clientShipmentCompareBean.getSku()));
+            // ASN_QTY
+            currentRow.getCell(WmsConstants.ReportItems.TransferCompare.Col.COLNUM_ASN_QTY).setCellValue(StringUtils.null2Space2(clientShipmentCompareBean.getQty()));
+            // TRANSFER_NAME
+            currentRow.getCell(WmsConstants.ReportItems.TransferCompare.Col.COLNUM_TRANSFER_NAME).setCellValue(StringUtils.null2Space2(clientShipmentCompareBean.getTransfer_name()));
+            // TRANSFER_PO
+            currentRow.getCell(WmsConstants.ReportItems.TransferCompare.Col.COLNUM_TRANSFER_PO).setCellValue(StringUtils.null2Space2(clientShipmentCompareBean.getPo_number()));
+            // TRANSFER_CLIENT_SKU
+            currentRow.getCell(WmsConstants.ReportItems.TransferCompare.Col.COLNUM_TRANSFER_CLIENT_SKU).setCellValue(StringUtils.null2Space2(clientShipmentCompareBean.getClient_sku()));
+            // TRANSFER_UPC
+            currentRow.getCell(WmsConstants.ReportItems.TransferCompare.Col.COLNUM_TRANSFER_UPC).setCellValue(StringUtils.null2Space2(clientShipmentCompareBean.getTransfer_barcode()));
+            // TRANSFER_SKU
+            currentRow.getCell(WmsConstants.ReportItems.TransferCompare.Col.COLNUM_TRANSFER_SKU).setCellValue(StringUtils.null2Space2(clientShipmentCompareBean.getTransfer_sku()));
+            // TRANSFER_QTY
+            currentRow.getCell(WmsConstants.ReportItems.TransferCompare.Col.COLNUM_TRANSFER_QTY).setCellValue(StringUtils.null2Space2(clientShipmentCompareBean.getTransfer_qty()));
+
+            intRow = intRow + 1;
+        }
+        // 如果有记录的话，删除模板sheet
+        if (clientShipmentCompareList.size() > 0) {
+            workbook.removeSheetAt(sheetNo);
+        }
     }
 }

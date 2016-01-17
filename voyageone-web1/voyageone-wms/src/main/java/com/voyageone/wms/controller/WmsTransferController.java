@@ -7,6 +7,7 @@ import com.voyageone.core.ajax.AjaxResponseBean;
 import com.voyageone.base.BaseController;
 import com.voyageone.wms.WmsConstants;
 import com.voyageone.wms.WmsCodeConstants.TransferType;
+import com.voyageone.wms.WmsConstants.ReportItems;
 import com.voyageone.wms.WmsUrlConstants.TransferUrls;
 import com.voyageone.wms.formbean.TransferFormBean;
 import com.voyageone.wms.formbean.TransferMapBean;
@@ -365,6 +366,26 @@ public class WmsTransferController extends BaseController {
     }
 
     /**
+     * ClientShipment详情报表下载
+     */
+    @RequestMapping(value = TransferUrls.DOWNLOAD_CLIENT_SHIPMENT, method = RequestMethod.GET)
+    public ResponseEntity<byte[]> downloadClientShipment(String param) throws IOException {
+        byte[] bytes = transferService.downloadClientShipment(param, getUser());
+        String outFile = ReportItems.ClientShipment.RPT_NAME + "_" + DateTimeUtil.getNow() + ReportItems.ClientShipment.RPT_SUFFIX;
+        return  genResponseEntityFromBytes(outFile, bytes);
+    }
+
+    /**
+     * CompareTransfer详情报表下载
+     */
+    @RequestMapping(value = TransferUrls.DOWNLOAD_TRANSFER_COMPARE, method = RequestMethod.GET)
+    public ResponseEntity<byte[]> downloadTransferCompare(String param) throws IOException {
+        byte[] bytes = transferService.downloadTransferCompare(param, getUser());
+        String outFile = ReportItems.TransferCompare.RPT_NAME + "_" + DateTimeUtil.getNow() + ReportItems.TransferCompare.RPT_SUFFIX;
+        return  genResponseEntityFromBytes(outFile, bytes);
+    }
+
+    /**
      * 在保存或提交 Transfer 之前，对其进行输入校验
      */
     private List<String> checkTransferForSave(TransferMapBean map) {
@@ -402,4 +423,5 @@ public class WmsTransferController extends BaseController {
         }
         return msgList;
     }
+
 }

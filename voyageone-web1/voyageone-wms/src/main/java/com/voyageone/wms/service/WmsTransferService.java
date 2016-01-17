@@ -63,4 +63,8 @@ public interface WmsTransferService {
     Map<String,List<TransferItemBean>> allItemInMap(long transfer_in_id);
 
     byte[] downloadTransferList(String transfer_id, UserSessionBean user);
+
+    byte[] downloadClientShipment(String param, UserSessionBean user);
+
+    byte[] downloadTransferCompare(String param, UserSessionBean user);
 }
