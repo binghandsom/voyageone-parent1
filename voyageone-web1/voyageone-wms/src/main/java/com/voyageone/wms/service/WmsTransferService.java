@@ -20,9 +20,9 @@ public interface WmsTransferService {
 
     List<TransferFormBean> search(String po, int Store, String status, String from, String to, List<ChannelStoreBean> channelStoreList, int page, int i, UserSessionBean user);
 
-    boolean delete(int transferId, String modified);
+    boolean delete(long transferId, String modified);
 
-    TransferBean get(int transferId);
+    TransferBean get(long transferId);
 
     Map<String, Object> allConfigs(String transferId, UserSessionBean user);
 
@@ -32,19 +32,19 @@ public interface WmsTransferService {
 
     TransferBean insert(TransferMapBean bean, UserSessionBean user);
 
-    List<TransferDetailBean> getPackages(int transfer_id);
+    List<TransferDetailBean> getPackages(long transfer_id);
 
-    TransferDetailBean getPackage(int transferId, String packageName);
+    TransferDetailBean getPackage(long transferId, String packageName);
 
-    TransferDetailBean createPackage(int transferId, String packageName, UserSessionBean user) throws BusinessException;
+    TransferDetailBean createPackage(long transferId, String packageName, UserSessionBean user) throws BusinessException;
 
-    boolean deletePackage(int package_id, String modified);
+    boolean deletePackage(long package_id, String modified);
 
-    boolean reOpenPackage(int package_id, String modified);
+    boolean reOpenPackage(long package_id, String modified);
 
-    String addItem(int package_id, String barcode, int num, String itemCode, String color, String size, UserSessionBean user);
+    String addItem(long package_id, String barcode, int num, String itemCode, String color, String size, UserSessionBean user);
 
-    boolean closePackage(int package_id, String modified, UserSessionBean user);
+    boolean closePackage(long package_id, String modified, UserSessionBean user);
 
     TransferBean save(TransferMapBean mapBean, UserSessionBean user);
 
@@ -54,13 +54,13 @@ public interface WmsTransferService {
 
     Map<String, Object> compareTransfer(TransferBean transfer);
 
-    List<TransferItemBean> allItemInTransfer(int transfer_in_id);
+    List<TransferItemBean> allItemInTransfer(long transfer_in_id);
 
-    List<TransferItemBean> getItemsInPackage(int package_id);
+    List<TransferItemBean> getItemsInPackage(long package_id);
 
-    String getMapTarget(int transferId);
+    String getMapTarget(long transferId);
 
-    Map<String,List<TransferItemBean>> allItemInMap(int transfer_in_id);
+    Map<String,List<TransferItemBean>> allItemInMap(long transfer_in_id);
 
     byte[] downloadTransferList(String transfer_id, UserSessionBean user);
 }

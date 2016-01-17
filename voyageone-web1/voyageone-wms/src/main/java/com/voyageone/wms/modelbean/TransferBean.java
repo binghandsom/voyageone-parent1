@@ -1,7 +1,7 @@
 package com.voyageone.wms.modelbean;
 
 public class TransferBean {
-    private int transfer_id;
+    private long transfer_id;
     private String order_channel_id;
     private int store_id;
     private String transfer_status;
@@ -21,11 +21,11 @@ public class TransferBean {
     private String modified;
     private String modifier;
 
-    public int getTransfer_id() {
+    public long getTransfer_id() {
         return transfer_id;
     }
 
-    public void setTransfer_id(int transfer_id) {
+    public void setTransfer_id(long transfer_id) {
         this.transfer_id = transfer_id;
     }
 

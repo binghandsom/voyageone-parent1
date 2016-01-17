@@ -25,6 +25,7 @@ import com.voyageone.wms.dao.ClientSkuDao;
 import com.voyageone.wms.dao.ItemDao;
 import com.voyageone.wms.dao.StoreDao;
 import com.voyageone.wms.dao.TransferDao;
+import com.voyageone.wms.formbean.ClientShipmentCompareBean;
 import com.voyageone.wms.formbean.TransferFormBean;
 import com.voyageone.wms.formbean.TransferMapBean;
 import com.voyageone.wms.modelbean.*;
@@ -166,7 +167,7 @@ public class WmsTransferServiceImpl implements WmsTransferService {
      */
     @Transactional
     @Override
-    public boolean delete(int transferId, String modified) {
+    public boolean delete(long transferId, String modified) {
         TransferBean transfer = get(transferId);
 
         // 状态验证在 SQL 中
@@ -198,7 +199,7 @@ public class WmsTransferServiceImpl implements WmsTransferService {
      * @return TransferBean
      */
     @Override
-    public TransferBean get(int transferId) {
+    public TransferBean get(long transferId) {
         return transferDao.getTransfer(transferId);
     }
 
@@ -245,7 +246,7 @@ public class WmsTransferServiceImpl implements WmsTransferService {
      * @return List
      */
     @Override
-    public List<TransferDetailBean> getPackages(int transfer_id) {
+    public List<TransferDetailBean> getPackages(long transfer_id) {
         List<TransferDetailBean> beans = transferDao.getPackages(transfer_id);
 
         for (TransferDetailBean bean: beans) bean.setModified_local(getUser().getTimeZone());
@@ -261,7 +262,7 @@ public class WmsTransferServiceImpl implements WmsTransferService {
      * @return TransferDetailBean
      */
     @Override
-    public TransferDetailBean getPackage(int transferId, String packageName) {
+    public TransferDetailBean getPackage(long transferId, String packageName) {
 
         TransferDetailBean transferDetailBean = transferDao.getPackage(transferId, packageName);
 
@@ -279,7 +280,7 @@ public class WmsTransferServiceImpl implements WmsTransferService {
      * @return TransferDetailBean
      */
     @Override
-    public TransferDetailBean createPackage(int transferId, String packageName, UserSessionBean user) {
+    public TransferDetailBean createPackage(long transferId, String packageName, UserSessionBean user) {
         // 获取目标 Transfer，新的 Package 创建在该对象之下
         TransferBean transferBean = get(transferId);
 
@@ -321,7 +322,7 @@ public class WmsTransferServiceImpl implements WmsTransferService {
      * @return 是否删除成功
      */
     @Override
-    public boolean deletePackage(int package_id, String modified) {
+    public boolean deletePackage(long package_id, String modified) {
         // 状态验证直接写死在 SQL 中
         if (transferDao.deleteDetail(package_id, modified) < 1)
             return false;
@@ -339,7 +340,7 @@ public class WmsTransferServiceImpl implements WmsTransferService {
      * @return 是否打开成功
      */
     @Override
-    public boolean reOpenPackage(int package_id, String modified) {
+    public boolean reOpenPackage(long package_id, String modified) {
         // 状态验证直接写死在 SQL 中
         if (transferDao.reOpenPackage(package_id, modified) < 1)
             return false;
@@ -360,7 +361,7 @@ public class WmsTransferServiceImpl implements WmsTransferService {
      * @return 商品的 SKU
      */
     @Override
-    public String addItem(int package_id, String barcode, int num, String itemCode, String color, String size, UserSessionBean user) {
+    public String addItem(long package_id, String barcode, int num, String itemCode, String color, String size, UserSessionBean user) {
 
         // 获取容器
         TransferDetailBean detailBean = transferDao.getPackage(package_id);
@@ -479,7 +480,7 @@ public class WmsTransferServiceImpl implements WmsTransferService {
      * @return 是否成功
      */
     @Override
-    public boolean closePackage(int package_id, String modified, UserSessionBean user) {
+    public boolean closePackage(long package_id, String modified, UserSessionBean user) {
         if (transferDao.getItemCountInPackage(package_id) < 1)
             throw new BusinessException(TransferMsg.NO_PACKAGE_ITEM_EXISTS);
 
@@ -515,7 +516,7 @@ public class WmsTransferServiceImpl implements WmsTransferService {
     }
 
     /**
-     * 获取可用的所有 配置项
+     * 获取ClientShipment和Transfer的比较结果
      *
      * @return List
      */
@@ -523,9 +524,14 @@ public class WmsTransferServiceImpl implements WmsTransferService {
     public Map<String, Object> compareTransfer(TransferBean transfer) {
         Map<String, Object> resultMap = new HashMap<>();
 
-        String compareResult = "1";
+        List<ClientShipmentCompareBean>  clientShipmentCompareList= new ArrayList<>();
 
-        resultMap.put("compareResult", compareResult);
+        // 设置有ClientShipment的场合，需要比较实际入库数量，如数量不一致则需要报警
+        if (!StringUtils.null2Space2(transfer.getClient_shipment_id()).equals("0")) {
+            clientShipmentCompareList= clientShipmentDao.getCompareResult(String.valueOf(transfer.getTransfer_id()),transfer.getClient_shipment_id());
+        }
+
+        resultMap.put("compareResult", clientShipmentCompareList.size() > 0 ? "1" :"0");
 
         return resultMap;
     }
@@ -580,7 +586,7 @@ public class WmsTransferServiceImpl implements WmsTransferService {
      * @return List
      */
     @Override
-    public List<TransferItemBean> allItemInTransfer(int transfer_id) {
+    public List<TransferItemBean> allItemInTransfer(long transfer_id) {
         if (transfer_id < 1)
             throw new BusinessException(TransferMsg.TRANSFER_NOT_EXISTS);
 
@@ -594,7 +600,7 @@ public class WmsTransferServiceImpl implements WmsTransferService {
      * @return List
      */
     @Override
-    public List<TransferItemBean> getItemsInPackage(int package_id) {
+    public List<TransferItemBean> getItemsInPackage(long package_id) {
         if (package_id < 1)
             throw new BusinessException(TransferMsg.NO_PACKAGE_EXISTS);
 
@@ -608,7 +614,7 @@ public class WmsTransferServiceImpl implements WmsTransferService {
      * @return Transfer Name
      */
     @Override
-    public String getMapTarget(int transferId) {
+    public String getMapTarget(long transferId) {
         Integer out_id = transferDao.getMapTarget(transferId);
 
         if (out_id == null) return null;
@@ -625,7 +631,7 @@ public class WmsTransferServiceImpl implements WmsTransferService {
      * @return Map
      */
     @Override
-    public Map<String, List<TransferItemBean>> allItemInMap(int transfer_in_id) {
+    public Map<String, List<TransferItemBean>> allItemInMap(long transfer_in_id) {
         Integer out_id = transferDao.getMapTarget(transfer_in_id);
 
         if (out_id == null)

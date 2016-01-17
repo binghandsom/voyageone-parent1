@@ -90,7 +90,7 @@ public class WmsTransferController extends BaseController {
      */
     @RequestMapping(TransferUrls.DELETE)
     public void delete(@RequestBody Map<String, Object> params, HttpServletResponse response) {
-        int transferId = (int) params.get("transferId");
+        long transferId = Long.valueOf((String) params.get("transferId"));
         String modified = (String) params.get("modified");
 
         boolean isSuccess = transferService.delete(transferId, modified);
@@ -122,7 +122,7 @@ public class WmsTransferController extends BaseController {
      */
     @RequestMapping(TransferUrls.GET)
     public void getTransfer(@RequestBody Map<String, Object> params, HttpServletResponse response) {
-        int transferId = (int) params.get("transferId");
+        long transferId = Long.valueOf((String) params.get("transferId"));
 
         TransferBean transfer = transferService.get(transferId);
 
@@ -181,7 +181,7 @@ public class WmsTransferController extends BaseController {
      */
     @RequestMapping(TransferUrls.Package.GET)
     public void getPackage(@RequestBody Map<String, Object> params, HttpServletResponse response) {
-        int transferId = (int) params.get("transferId");
+        long transferId = Long.valueOf((String) params.get("transferId"));
         String packageName = (String) params.get("packageName");
 
         TransferDetailBean detail = transferService.getPackage(transferId, packageName);
@@ -196,7 +196,7 @@ public class WmsTransferController extends BaseController {
      */
     @RequestMapping(TransferUrls.Package.CREATE)
     public void createPackage(@RequestBody Map<String, Object> params, HttpServletResponse response) {
-        int transferId = (int) params.get("transferId");
+        long transferId = Long.valueOf((String) params.get("transferId"));
         String packageName = (String) params.get("packageName");
 
         TransferDetailBean detail = transferService.createPackage(transferId, packageName, getUser());
@@ -211,7 +211,7 @@ public class WmsTransferController extends BaseController {
      */
     @RequestMapping(TransferUrls.Package.CLOSE)
     public void closePackage(@RequestBody Map<String, Object> params, HttpServletResponse response) {
-        int package_id = (int) params.get("package_id");
+        long package_id = Long.valueOf((String) params.get("package_id"));
         String modified = (String) params.get("modified");
 
         boolean isSuccess = transferService.closePackage(package_id, modified, getUser());
@@ -224,7 +224,7 @@ public class WmsTransferController extends BaseController {
      */
     @RequestMapping(TransferUrls.Package.DELETE)
     public void deletePackage(@RequestBody Map<String, Object> params, HttpServletResponse response) {
-        int package_id = (int) params.get("package_id");
+        long package_id = Long.valueOf((String) params.get("package_id"));
         String modified = (String) params.get("modified");
 
         boolean is = transferService.deletePackage(package_id, modified);
@@ -239,7 +239,7 @@ public class WmsTransferController extends BaseController {
      */
     @RequestMapping(TransferUrls.Package.REOPEN)
     public void reOpenPackage(@RequestBody Map<String, Object> params, HttpServletResponse response) {
-        int package_id = (int) params.get("package_id");
+        long package_id = Long.valueOf((String) params.get("package_id"));
         String modified = (String) params.get("modified");
 
         boolean is = transferService.reOpenPackage(package_id, modified);
@@ -254,7 +254,7 @@ public class WmsTransferController extends BaseController {
      */
     @RequestMapping(TransferUrls.Item.ADD)
     public void addItem(@RequestBody Map<String, Object> params, HttpServletResponse response) {
-        int package_id = (int) params.get("package_id");
+        long package_id = Long.valueOf((String) params.get("package_id"));
         String barcode = (String) params.get("barcode");
         int num = (int) params.get("num");
 
@@ -325,7 +325,7 @@ public class WmsTransferController extends BaseController {
      */
     @RequestMapping(TransferUrls.Item.COMPARE)
     public void compare(@RequestBody Map<String, Object> params, HttpServletResponse response) {
-        int transfer_in_id = (int) params.get("transfer_id");
+        long transfer_in_id = Long.valueOf((String) params.get("transfer_id"));
 
         Map<String, List<TransferItemBean>> items = transferService.allItemInMap(transfer_in_id);
 
@@ -340,7 +340,7 @@ public class WmsTransferController extends BaseController {
      */
     @RequestMapping(TransferUrls.Item.SELECT)
     public void getPackageItems(@RequestBody Map<String, Object> params, HttpServletResponse response) {
-        int package_id = (int) params.get("package_id");
+        long package_id = Long.valueOf((String) params.get("package_id"));
 
         List<TransferItemBean> items = transferService.getItemsInPackage(package_id);
 

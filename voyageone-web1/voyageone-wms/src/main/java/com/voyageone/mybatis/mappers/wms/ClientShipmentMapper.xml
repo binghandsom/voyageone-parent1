@@ -39,6 +39,77 @@
         </if>
     </select>
 
+    <!-- 获取ClientShipment和Trasfer的比较结果 -->
+    <select id="client_shipment_selectCompareResult" resultType="com.voyageone.wms.formbean.ClientShipmentCompareBean">
+        select
+            *
+        from
+            (select
+                *
+            from
+                (select
+                    shipment.shipment_id,
+                    shipment.file_name,
+                    item.article_number,
+                    (select sku from wms_bt_item_details details where details.order_channel_id = shipment.order_channel_id and details.barcode = item.upc order by details.active desc LIMIT 1) sku,
+                    item.upc,sum(calc_qty) qty
+                from
+                    wms_bt_client_shipment shipment,
+                    wms_bt_client_package_item item
+                where shipment.shipment_id = #{shipment_id}
+                and shipment.shipment_id = item.shipment_id
+                GROUP BY item.article_number,item.upc) client
+                left join
+                (select
+                    transfer.transfer_id,
+                    transfer.transfer_name,
+                    transfer.po_number,
+                    item.transfer_sku,
+                    (select client_sku from wms_bt_item_details details where details.order_channel_id = transfer.order_channel_id and details.barcode = item.transfer_barcode order by details.active desc LIMIT 1) client_sku,
+                    item.transfer_barcode,
+                    sum(item.transfer_qty) transfer_qty
+                from
+                    wms_bt_transfer transfer,
+                    wms_bt_transfer_item item
+                where transfer.transfer_id =  #{transfer_id}
+                and transfer.transfer_id = item.transfer_id
+                group by item.transfer_sku,item.transfer_barcode) transfer
+                on  client.upc = transfer.transfer_barcode
 
+            union
 
+            select
+                *
+            from
+                (select
+                    shipment.shipment_id,
+                    shipment.file_name,
+                    item.article_number,
+                    (select sku from wms_bt_item_details details where details.order_channel_id = shipment.order_channel_id and details.barcode = item.upc order by details.active desc LIMIT 1) sku,
+                    item.upc,sum(calc_qty) qty
+                from
+                    wms_bt_client_shipment shipment,
+                    wms_bt_client_package_item item
+                where shipment.shipment_id = #{shipment_id}
+                and shipment.shipment_id = item.shipment_id
+                GROUP BY item.article_number,item.upc) client
+                right join
+                (select
+                    transfer.transfer_id,
+                    transfer.transfer_name,
+                    transfer.po_number,
+                    item.transfer_sku,
+                    (select client_sku from wms_bt_item_details details where details.order_channel_id = transfer.order_channel_id and details.barcode = item.transfer_barcode order by details.active desc LIMIT 1) client_sku,
+                    item.transfer_barcode,
+                    sum(item.transfer_qty) transfer_qty
+                from
+                    wms_bt_transfer transfer,
+                    wms_bt_transfer_item item
+                where transfer.transfer_id = #{transfer_id}
+                and transfer.transfer_id = item.transfer_id
+                group by item.transfer_sku,item.transfer_barcode) transfer
+                on  client.upc = transfer.transfer_barcode
+            ) compare
+        where ifnull(compare.qty,0) != ifnull(compare.transfer_qty,0)
+    </select>
 </mapper>
