@@ -112,4 +112,30 @@
             ) compare
         where ifnull(compare.qty,0) != ifnull(compare.transfer_qty,0)
     </select>
+
+    <!-- 获取指定ID的ClientShipment -->
+    <select id="client_shipment_selectPackageResult" resultType="com.voyageone.wms.formbean.FormClientShipmentBean">
+        select
+            shipment.file_name,
+            package.ucc128_carton_no,
+            package.total_carton_quantity,
+            item.article_number,
+            item.upc,
+            (select sku from wms_bt_item_details details where details.order_channel_id = shipment.order_channel_id and details.barcode = item.upc order by details.active desc LIMIT 1) sku,
+            item.calc_qty,
+            (SELECT sum(calc_qty) FROM wms_bt_client_package_item WHERE shipment_id = #{shipment_id}) AS total_qty
+        from
+            wms_bt_client_shipment shipment,
+            wms_bt_client_package package,
+            wms_bt_client_package_item item
+        where
+            shipment.shipment_id = #{shipment_id}
+        and
+            shipment.shipment_id = package.shipment_id
+        and
+            shipment.shipment_id = item.shipment_id
+        and
+            package.package_id = item.package_id
+        order by package.ucc128_carton_no,item.package_item_id
+    </select>
 </mapper>

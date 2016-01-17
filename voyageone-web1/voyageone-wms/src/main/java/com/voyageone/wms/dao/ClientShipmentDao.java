@@ -3,6 +3,7 @@ package com.voyageone.wms.dao;
 import com.voyageone.base.dao.BaseDao;
 import com.voyageone.common.Constants;
 import com.voyageone.wms.formbean.ClientShipmentCompareBean;
+import com.voyageone.wms.formbean.FormClientShipmentBean;
 import com.voyageone.wms.modelbean.ClientShipmentBean;
 import org.springframework.stereotype.Repository;
 
@@ -48,6 +49,20 @@ public class ClientShipmentDao extends BaseDao {
         params.put("shipment_id", client_shipment_id);
 
         return selectList("client_shipment_selectCompareResult", params);
+    }
+
+    /**
+     * @Description 获取指定ID的ClientShipment
+     * @param shipment_id 对象ClientShipment
+     * @return List<ClientShipmentCompareBean>
+     */
+    public List<FormClientShipmentBean> getPackageResult(String shipment_id) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("shipment_id", shipment_id);
+
+        return selectList("client_shipment_selectPackageResult", params);
     }
 
 }
