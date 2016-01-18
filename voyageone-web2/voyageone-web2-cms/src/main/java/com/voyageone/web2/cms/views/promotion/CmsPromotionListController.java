@@ -29,14 +29,14 @@ public class CmsPromotionListController extends CmsController {
     @Autowired
     private CmsPromotionService cmsPromotionService;
 
-    @RequestMapping(PROMOTION.LIST.QUERY_LIST)
+    @RequestMapping(PROMOTION.LIST.GET_PROMOTION_LIST)
     public AjaxResponse queryList(@RequestBody Map params) {
         String channelId = getUser().getSelChannelId();
         params.put("channelId", channelId);
         return success(cmsPromotionService.queryByCondition(params));
     }
 
-    @RequestMapping(PROMOTION.LIST.INSERT_UPDATE)
+    @RequestMapping({PROMOTION.LIST.INSERT_PROMOTION,PROMOTION.LIST.UPDATE_PROMOTION})
     public AjaxResponse insertOrUpdate(@RequestBody CmsBtPromotionModel cmsBtPromotionModel) {
         String channelId = getUser().getSelChannelId();
         cmsBtPromotionModel.setChannelId(channelId);
@@ -44,8 +44,4 @@ public class CmsPromotionListController extends CmsController {
         return success(cmsPromotionService.addOrUpdate(cmsBtPromotionModel));
     }
 
-    @RequestMapping(PROMOTION.LIST.DELETE_BYID)
-    public AjaxResponse deleteById(@RequestBody CmsBtPromotionModel cmsBtPromotionModel) {
-        return success(cmsPromotionService.deleteById(cmsBtPromotionModel.getPromotionId()));
-    }
 }
