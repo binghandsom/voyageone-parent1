@@ -115,6 +115,9 @@ public class ProductPropsEditService {
         //填充master schema
         FieldUtil.setFieldsValueFromMap(masterSchemaFields,masterSchemaValue);
 
+        //没有值的情况下设定complexField、MultiComplexField的默认值.
+        setDefaultComplexValues(masterSchemaFields);
+
         //获取sku schema.
         List<Field> skuSchemaFields = this.buildSkuSchema(categorySchemaModel);
 
@@ -409,6 +412,102 @@ public class ProductPropsEditService {
         }
 
     }
+
+
+    private void setDefaultComplexValues(List<Field> fields){
+
+        for (Field fieldItem:fields){
+
+            FieldTypeEnum fieldType = fieldItem.getType();
+
+            switch (fieldType){
+                case COMPLEX:
+                    ComplexField complexField = (ComplexField)fieldItem;
+                    if (complexField.getComplexValue().getFieldMap().isEmpty() && complexField.getDefaultComplexValue().getFieldMap().isEmpty()){
+
+                        ComplexValue defComplexValue = new ComplexValue();
+                        Map<String,Field> complexValueMap = new HashMap<>();
+                        List<Field> complexFields = complexField.getFields();
+                        setDefaultValueFieldMap(complexFields,complexValueMap);
+                        defComplexValue.setFieldMap(complexValueMap);
+                        complexField.setDefaultValue(defComplexValue);
+
+                    }
+                    break;
+                case MULTICOMPLEX:
+                    MultiComplexField multiComplexField = (MultiComplexField)fieldItem;
+                    if (multiComplexField.getComplexValues().isEmpty() && multiComplexField.getDefaultComplexValues().isEmpty()) {
+                        List<Field> complexFields = multiComplexField.getFields();
+                        ComplexValue defComplexValue = new ComplexValue();
+                        Map<String, Field> complexValueMap = new HashMap<>();
+                        setDefaultValueFieldMap(complexFields, complexValueMap);
+                        defComplexValue.setFieldMap(complexValueMap);
+                        multiComplexField.addDefaultComplexValue(defComplexValue);
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+
+        }
+
+    }
+
+
+    private void setDefaultValueFieldMap(List<Field> fields,Map<String,Field> complexValueMap){
+
+        for (Field field:fields){
+            FieldTypeEnum type = field.getType();
+            switch (type){
+                case INPUT:
+                case SINGLECHECK:
+                case MULTICHECK:
+                case MULTIINPUT:
+                    complexValueMap.put(field.getId(),field);
+                    break;
+                case COMPLEX:
+
+                    ComplexField complexField = (ComplexField)field;
+
+                    if (complexField.getComplexValue().getFieldMap().isEmpty() && complexField.getDefaultComplexValue().getFieldMap().isEmpty()){
+
+                        ComplexValue complexValue = new ComplexValue();
+
+                        Map<String,Field> subComplexValueMap = new HashMap<>();
+
+                        List<Field> subFields = complexField.getFields();
+
+                        setDefaultValueFieldMap(subFields,subComplexValueMap);
+
+                        complexValue.setFieldMap(subComplexValueMap);
+
+                        complexField.setDefaultValue(complexValue);
+
+                        complexValueMap.put(complexField.getId(),complexField);
+                    }
+                    break;
+                case MULTICOMPLEX:
+                    MultiComplexField multiComplexField = (MultiComplexField)field;
+                    if (multiComplexField.getComplexValues().isEmpty() && multiComplexField.getDefaultComplexValues().isEmpty()){
+                        ComplexValue complexValue = new ComplexValue();
+                        Map<String,Field> subComplexValueMap = new HashMap<>();
+                        List<Field> subFields = multiComplexField.getFields();
+
+                        setDefaultValueFieldMap(subFields,subComplexValueMap);
+
+                        multiComplexField.addDefaultComplexValue(complexValue);
+                        complexValueMap.put(multiComplexField.getId(),multiComplexField);
+
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+        }
+    }
+
 
 
     /**
