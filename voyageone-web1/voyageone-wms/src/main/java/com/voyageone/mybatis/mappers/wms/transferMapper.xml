@@ -524,8 +524,8 @@
             transfer.comment,
             transfer.created,
             transfer.transfer_sku,
-            item_details.itemcode,
-            item_details.size,
+            ifnull(item_details.itemcode,transfer.transfer_sku) as itemcode,
+            ifnull(item_details.size,'0') as size,
             transfer.transfer_qty,
             (select count(1) from wms_bt_transfer_detail details where transfer.transfer_id = details.transfer_id) as details_num
         from
@@ -547,22 +547,15 @@
             WHERE
                 transfer_id = #{transferId}
             group by
-                transfer_id,
-                order_channel_id,
-                store_id,
-                transfer_type,
-                transfer_name,
-                po_number,
-                transfer_from_store,
-                transfer_to_store,
-                comment,
-                created,
-                transfer_sku) transfer,
+            transfer_sku) transfer
+        left join
             wms_bt_item_details  item_details
-        where
+        on
             transfer.order_channel_id = item_details.order_channel_id
-        AND
+        and
             transfer.transfer_sku = item_details.sku
+        WHERE
+            transfer.transfer_id = #{transferId}
             <if test="storeList != null and storeList.size() != 0">
                 AND transfer.store_id in
                 <foreach collection="storeList" item="store"  open="(" separator="," close=")">
