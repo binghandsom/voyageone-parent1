@@ -2,10 +2,12 @@
 	<div style="width:80%">
 		<tabset class="tab-container vo_nav-tabs">
 			<div class="form-inline pull-right" ng-controller="popupCtrl">
-				<button class="btn btn-default" ng-click="openshop_category('lg')"><i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_SELECT_STORE_CATEGORY' | translate}}</button>
-				<button type="button" class="btn btn-default" ng-click="openHistoryPromotion('lg')"><i class="fa fa-rotate-left"></i>&nbsp;{{'TXT_HISTORY_PROMOTION' | translate}}</button>
-				<button type="button" class="btn btn-default" ng-click="openHistoryPrice('lg')"><i class="fa fa-jpy"></i>&nbsp;{{'TXT_HISTORY_PRICE' | translate}}</button>
-				<button class="btn btn-default" ng-click="openNewcategory('lg')"><i class="fa fa-th-list"></i> 主类目切换</button>
+				<!-- TODO 暂时未实现 -->
+				<!--<button class="btn btn-default" ng-click="openshop_category('lg')"><i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_SELECT_STORE_CATEGORY' | translate}}</button>-->
+				<button type="button" class="btn btn-default" ng-click="openHistoryPromotion('lg', ctrl.productDetails.productCode)"><i class="fa fa-rotate-left"></i>&nbsp;{{'TXT_HISTORY_PROMOTION' | translate}}</button>
+				<button type="button" class="btn btn-default" ng-click="openHistoryPrice('lg', ctrl.productDetails.productCode, 'code')"><i class="fa fa-jpy"></i>&nbsp;{{'TXT_HISTORY_PRICE' | translate}}</button>
+				<!-- TODO 暂时未开发-->
+				<!--<button class="btn btn-default" ng-click="openNewcategory('lg')"><i class="fa fa-th-list"></i> 主类目切换</button>-->
 			</div>
 			<tab>
 				<tab-heading>&nbsp;{{'TXT_PRODUCT_DETAIL' | translate}}</tab-heading>

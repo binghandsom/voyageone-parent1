@@ -2,7 +2,7 @@
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$close()"><span
                 aria-hidden="true"><i class="fa fa-close"></i></span></button>
-        <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i> Promotion History</h5>
+        <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i>&nbsp;{{ 'TXT_PROMOTION_HISTORY' | translate}}</h5>
     </div>
     <div class="modal-body wrapper">
         <form role="form" class="form-horizontal">
@@ -10,22 +10,23 @@
                 <div class="box-body">
                     <table class="table table-striped text-center">
                         <tr>
-                            <th class="text-center mfb-xxt">{{'TXT_PROMOTION_NAME' | translate}}</th>
-                            <th class="text-center mfb-x">{{'TXT_CHANNEL' | translate}}</th>
-                            <th class="text-center mfb-xxs">{{'TXT_PROMOTION_TIME' | translate}}</th>
-                            <th class="text-center mfb-xx">官方建议零售价格(促销折扣)</th>
-                            <th class="text-center mfb-xx">中国最终零售价格(促销折扣)</th>
-                            <th class="text-center mfb-x">隔离价格</th>
-                            <th class="text-center mfb-xxs">隔离库存（原始库存）</th>
+                            <th class="text-center mfb-xxt" translate="TXT_PROMOTION_NAME"></th>
+                            <th class="text-center mfb-x" translate="TXT_CHANNEL"></th>
+                            <th class="text-center mfb-xxs" translate="TXT_PROMOTION_TIME"></th>
+                            <th class="text-center mfb-xx" translate="TXT_OFFICIAL_DISCOUNT_MSRP"></th>
+                            <th class="text-center mfb-xx" translate="TXT_CN_OFFICIAL_DISCOUNT_SALE_PRICE"></th>
+                            <th class="text-center mfb-x" translate="TXT_ISOLATE_PRICE"></th>
+                            <!-- TODO 暂时未实现 -->
+                            <!--<th class="text-center mfb-xxs" translate="TXT_ISOLATE_QUANTITY"></th>-->
                         </tr>
                         <tr ng-repeat="list in vm.promotionList">
-                            <td>{{list.promotionName}}</td>
-                            <td><span class="badge badge-empty">{{list.name}}</span></td>
-                            <td>{{list.activityStart}}~ {{list.activityEnd}}</td>
-                            <td>{{list.msrp}}(9.5折)</td>
-                            <td>{{list.salePrice}}(1.5折)</td>
-                            <td><span class="label label-danger-new">1,899.00</span></td>
-                            <td><span class="label label-success-new">205(155)</span></td>
+                            <td ng-bind="list.promotionName"></td>
+                            <td><span class="badge badge-empty" ng-bind="list.name"></span></td>
+                            <td>{{list.activityStart}}&nbsp;~&nbsp;{{list.activityEnd}}</td>
+                            <td>{{list.msrp}}&nbsp;({{(list.promotionPrice/list.msrp).toFixed(2)*10}}&nbsp;{{ 'TXT_DISCOUNT_WORD' | translate}})</td>
+                            <td>{{list.salePrice}}&nbsp;({{(list.promotionPrice/list.salePrice).toFixed(2)*10}}&nbsp;{{ 'TXT_DISCOUNT_WORD' | translate}})</td>
+                            <td><span class="label label-danger-new"ng-bind="list.promotionPrice"></span></td>
+                            <!--<td><span class="label label-success-new"></span></td>-->
                         </tr>
                     </table>
                 </div><!-- /.box-body -->
