@@ -8,14 +8,14 @@
 
 require.config({
   paths: {
-    'angular': 'libs/angular.js/1.5.0-RC.0/angular',
+    'angular': 'libs/angular.js/1.5.0-RC.0/angular.min',
     "voyageone-angular-com" : 'components/dist/voyageone.angular.com',
-    'angular-translate': 'libs/angular-translate/2.8.1/angular-translate',
-    'angular-block-ui': 'libs/angular-block-ui/0.2.1/angular-block-ui',
-    'css': 'libs/require-css/0.1.8/css'
+    'angular-translate': 'libs/angular-translate/2.8.1/angular-translate.min',
+    'angular-block-ui': 'libs/angular-block-ui/0.2.1/angular-block-ui.min',
+    'css': 'libs/require-css/0.1.8/css.min'
   },
   shim: {
-    'angular-block-ui': ['angular', 'css!libs/angular-block-ui/0.2.1/angular-block-ui.css'],
+    'angular-block-ui': ['angular', 'css!libs/angular-block-ui/0.2.1/angular-block-ui.min.css'],
     'angular-translate': ['angular'],
     'voyageone-angular-com': ['angular'],
     'angular': {exports: 'angular'}

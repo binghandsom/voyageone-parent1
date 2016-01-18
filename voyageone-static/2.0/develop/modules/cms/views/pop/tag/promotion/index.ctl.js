@@ -5,7 +5,7 @@
 define([
     'angularAMD'
 ], function (angularAMD) {
-    angularAMD.controller('popTagPromotionCtl', function ($scope, $tagPromotionService, $translate, notify, promotion) {
+    angularAMD.controller('popTagPromotionCtl', function ($scope, $tagPromotionService, $translate, $modalInstance, notify, promotion) {
 
         $scope.vm = {
             promotionInfo: {
@@ -27,7 +27,8 @@ define([
             $tagPromotionService.addToPromotion($scope.vm.promotionInfo).then(
                 function () {
                     notify.success ($translate.instant('TXT_COM_UPDATE_SUCCESS'));
-                    $scope.$close();
+                    //$scope.$close();
+                    $modalInstance.close('');
                 })
         }
 

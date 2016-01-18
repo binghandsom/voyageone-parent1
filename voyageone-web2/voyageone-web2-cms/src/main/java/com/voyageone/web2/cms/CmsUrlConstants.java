@@ -197,4 +197,17 @@ public interface CmsUrlConstants {
         }
     }
 
+    interface GROUP{
+
+        interface LIST {
+            String ROOT = "/cms/group/list";
+
+            String INIT = "init";
+
+            String GET_PRODUCT_LIST = "getProductList";
+
+            String SET_MAIN_PRODUCT = "setMainProduct";
+        }
+    }
+
 }

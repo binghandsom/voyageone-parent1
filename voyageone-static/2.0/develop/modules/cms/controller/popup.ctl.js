@@ -154,10 +154,10 @@ define([
          * @type {openupdateProperties}
          */
         $scope.openUpdateProperties = openUpdateProperties;
-        function openUpdateProperties(viewSize, selList) {
+        function openUpdateProperties(viewSize, selList, fnInitial) {
             require([popActions.prop_change.controllerUrl], function () {
                 if (selList && selList.length) {
-                    $modal.open({
+                    var modalInstance = $modal.open({
                         templateUrl: popActions.prop_change.templateUrl,
                         controller: 'popPropChangeCtl',
                         size: viewSize,
@@ -171,6 +171,12 @@ define([
                             }
                         }
                     });
+
+                    // 回调主页面的刷新操作
+                    modalInstance.result.then(function(){
+                        fnInitial();
+                    })
+
                 } else {
                     alert($translate.instant('TXT_COM_MSG_NO_ROWS_SELECT'));
                 }
@@ -182,10 +188,10 @@ define([
          * @type {openTagPromotion}
          */
         $scope.openTagPromotion = openTagPromotion;
-        function openTagPromotion(viewSize, promotion, selList) {
+        function openTagPromotion(viewSize, promotion, selList, fnInitial) {
             require([popActions.tag.promotion.controllerUrl], function () {
                 if (selList && selList.length) {
-                    $modal.open({
+                    var modalInstance = $modal.open({
                         templateUrl: popActions.tag.promotion.templateUrl,
                         controller: 'popTagPromotionCtl',
                         size: viewSize,
@@ -199,6 +205,11 @@ define([
                             }
                         }
                     });
+
+                    // 回调主页面的刷新操作
+                    modalInstance.result.then(function(){
+                        fnInitial();
+                    })
                 } else {
                     alert($translate.instant('TXT_COM_MSG_NO_ROWS_SELECT'));
                 }

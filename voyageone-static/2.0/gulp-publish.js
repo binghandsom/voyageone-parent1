@@ -17,8 +17,8 @@ var tasks = vars.tasks;
 function fixCommonRef() {
 
   return replace(
-      publish.replace_value.angular.replace('.js', ''),
-      publish.replace_value.angular.replace('.js', '.min')
+      build.common.angular.concat.replace('.js', ''),
+      build.common.angular.concat.replace('.js', '.min')
   );
 }
 
@@ -70,6 +70,7 @@ gulp.task(tasks.publish.modules, function () {
 
   // build login.app and channel.app
   gulp.src(publish.loginAndChannel.js)
+      .pipe(fixCommonRef())
       .pipe(ngAnnotate())
       .pipe(uglify())
       .pipe(rename({suffix: ".min"}))
@@ -78,22 +79,23 @@ gulp.task(tasks.publish.modules, function () {
   gulp.src(publish.loginAndChannel.html)
       .pipe(replace(/data-main=["'](.+?)["']/g, 'data-main="$1.min"'))
       .pipe(replace('libs/require.js/2.1.21/require.js', 'libs/require.js/2.1.21/require.min.js'))
-      .pipe(minifyHtml())
+      .pipe(minifyHtml({ empty: true }))
       .pipe(gulp.dest(publish.release.loginAndChannel));
 
   // 压缩js文件
   gulp.src(publish.modules.js)
-      .pipe(sourceMaps.init())
+      .pipe(fixCommonRef())
+      //.pipe(sourceMaps.init())
       // 追加依赖注入语法
-      .pipe(ngAnnotate())
-      .pipe(uglify())
-      .pipe(sourceMaps.write('./'))
+      //.pipe(ngAnnotate())
+      //.pipe(uglify())
+      //.pipe(sourceMaps.write('./'))
       .pipe(gulp.dest(publish.release.modules));
 
   // 压缩html文件
   gulp.src(publish.modules.html)
       .pipe(replace('libs/require.js/2.1.21/require.js', 'libs/require.js/2.1.21/require.min.js'))
-      .pipe(minifyHtml())
+      .pipe(minifyHtml({ empty: true }))
       .pipe(gulp.dest(publish.release.modules));
 
   // copy json文件

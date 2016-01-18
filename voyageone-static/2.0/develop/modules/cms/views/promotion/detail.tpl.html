@@ -107,7 +107,7 @@
 								<button popover="Sale Price: {{group.salePriceMin != group.salePriceMax?group.salePriceMin +' - '+ group.salePriceMax:group.salePriceMin}}" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-default btn-xs">{{group.promotionPriceMin != group.promotionPriceMax?group.promotionPriceMin +' - '+ group.promotionPriceMax:group.promotionPriceMax}}</button>
 							</td>
 							<td class="mfb-xxt text-center">
-								<button popover="MSRP:300.00" popover-title="MSRP" type="button" popover-placement="left" class="btn btn-default btn-xs">{{group.msrp}}</button>
+								<button type="button" popover-placement="left" class="btn btn-default btn-xs">{{group.msrp}}</button>
 							</td>
 							<td class="mfb-xxt text-left">{{(group.promotionPriceMin/group.salePriceMin*100).toFixed(1)}}折</td>
 							<td class="mfb-xxt text-left">
