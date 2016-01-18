@@ -94,8 +94,8 @@ define([
             },
             "platformMapping": {
                 "complex": {
-                    "templateUrl": "views/pop/complexMapping/index.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/complexMapping/index.ctl",
+                    "templateUrl": "views/pop/platformMapping/ppComplex.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/platformMapping/ppComplex.ctl",
                     "controller": 'complexMappingPopupController as ctrl',
                     "size": 'md',
                     "backdrop": "static"
@@ -325,7 +325,6 @@ define([
              * Complex Mapping 设定弹出框的上下文参数
              * @typedef {object} ComplexMappingPopupContext
              * @property {string} platformCategoryPath 平台类目路径
-             * @property {string} mainCategoryPath 主数据类目路径
              * @property {string} mainCategoryId 主数据类目 ID
              */
 

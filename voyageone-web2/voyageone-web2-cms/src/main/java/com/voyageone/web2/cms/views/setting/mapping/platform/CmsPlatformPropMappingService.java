@@ -74,14 +74,21 @@ public class CmsPlatformPropMappingService extends BaseAppService {
         // 清除信息
         platformCatSchemaModel.setPropsItem(null);
 
-        CmsMtCategorySchemaModel categorySchemaModel = categorySchemaDao.getMasterSchemaModelByCatId(categoryId);
-
         return new HashMap<String, Object>() {{
             put("categorySchema", platformCatSchemaModel);
             put("properties", fieldMap);
             put("mapping", mappingMap);
-            put("mainCategoryPath", categorySchemaModel.getCatFullPath());
         }};
+    }
+
+    /**
+     * 获取主数据类目 Schema
+     * @param categoryId 主数据类目
+     * @return CmsMtCategorySchemaModel
+     */
+    public CmsMtCategorySchemaModel getMainCategorySchema(String categoryId) {
+
+        return categorySchemaDao.getMasterSchemaModelByCatId(categoryId);
     }
 
     /**

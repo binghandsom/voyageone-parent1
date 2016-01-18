@@ -1,0 +1,46 @@
+<div class="vo_modal" ng-init="ctrl.init()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="ctrl.cancel()">
+            <span aria-hidden="true"><i class="fa fa-close"></i></span>
+        </button>
+        <h5 class="modal-title"><i class="fa fa-crosshairs"></i> Complex 父级属性匹配</h5>
+    </div>
+    <h5 class="m-l">主数据类目：{{ctrl.mainCategoryPath}}</h5>
+    <h5 class="text-vo m-l">=> 平台类目：{{::ctrl.context.platformCategoryPath}}</h5>
+
+    <div class="p-l-r">
+        <form role="form" class="form-horizontal m-r-sm m-l-sm">
+            <div class="form-group">
+                <div class="col-sm-3">
+                    <label>属性</label>
+                </div>
+                <div class="col-sm-9 form-inline">
+                    <select class="form-control" title="数据来源类型"
+                            ng-options="v as v.desc for (k, v) in ctrl.options.valueFrom"
+                            ng-model="ctrl.selected.valueFrom"
+                            ng-change="ctrl.loadValue()"></select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-9 col-sm-offset-3 form-inline">
+                    <select class="form-control" title="值选择"
+                            ng-options="f as f.name for f in ctrl.options.values"
+                            ng-model="ctrl.selected.value">
+                    </select>
+                </div>
+            </div>
+        </form>
+        <div class="attribute_top">
+            <h5 class="text-vo font-bold">值设定说明：</h5>
+            <ul>
+                <li>父级属性匹配的情况下，如果匹配的对象为主属性，则只能匹配父级属性。</li>
+                <li>如果不对属性进行任何值设定，则会使用默认值。</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="ctrl.cancel()">取消</button>
+        <button class="btn btn-vo" ng-click="ctrl.ok()">保存</button>
+    </div>
+</div>

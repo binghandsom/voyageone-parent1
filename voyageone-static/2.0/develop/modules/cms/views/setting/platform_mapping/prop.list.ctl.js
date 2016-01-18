@@ -24,11 +24,6 @@ define([
              */
             this.category = null;
             /**
-             * 主数据类目的类目路径
-             * @type {string}
-             */
-            this.mainCategoryPath = null;
-            /**
              * 平台类目属性的 Map, Key 为属性名, 值为 Field
              * @type {object}
              */
@@ -73,7 +68,6 @@ define([
                     this.category = res.data.categorySchema;
                     this.properties = res.data.properties;
                     this.mappings = res.data.mapping;
-                    this.mainCategoryPath = res.data.mainCategoryPath;
 
                 }.bind(this));
             },
@@ -112,7 +106,6 @@ define([
 
                 ppPlatformMapping.complex({
                     mainCategoryId: this.mainCategoryId,
-                    mainCategoryPath: this.mainCategoryPath,
                     platformCategoryPath: this.category.catFullPath
                 });
 
