@@ -56,9 +56,9 @@ public interface CmsUrlConstants {
 
             String GET_PLATFORM_CATEGORIES = "getPlatformCategories";
 
-            String SET_PLATFORM_MAPPING = "setPlatformMapping";
-
             String GET_PLATFORM_CATEGORY = "getPlatformCategory";
+
+            String SET_PLATFORM_MAPPING = "setPlatformMapping";
         }
     }
 
