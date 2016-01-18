@@ -49,7 +49,6 @@
         "getOtherMappingPath": "getOtherMappingCategoryPath",
         "getPlatformCategories": "getPlatformCategories",
         "setPlatformMapping": "setPlatformMapping",
-
         "getPlatformCategory": "getPlatformCategory"
       }
     },
