@@ -6,6 +6,8 @@
     <!-- DAO相关配置 -->
     <import resource="classpath*:context-test-datasource.xml" />
     <import resource="classpath*:context-test-datasource-mongo.xml" />
+    <!--<import resource="file:/usr/web/spring-config/datasource-config.xml" />-->
+    <!--<import resource="file:/usr/web/spring-config/datasource-config-mongo.xml" />-->
 
     <!-- SDK Client Config -->
     <!--<import resource="file:/usr/web/spring-config/sdk-client-config-sample.xml" />-->
