@@ -847,7 +847,7 @@ public class WmsTransferServiceImpl implements WmsTransferService {
 
         // PO Number行数、列数
         currentRow = sheet.getRow(WmsConstants.ReportTransferItems.PO.Row);
-        currentRow.getCell(WmsConstants.ReportTransferItems.PO.Column).setCellValue(transfer.getPo_number());
+        currentRow.getCell(WmsConstants.ReportTransferItems.PO.Column).setCellValue(StringUtils.null2Space2(transfer.getPo_number()));
 
         // Date行数、列数
         String created = transfer.getCreated();
@@ -866,15 +866,15 @@ public class WmsTransferServiceImpl implements WmsTransferService {
 
         // TransferNumber行数、列数
         currentRow = sheet.getRow(WmsConstants.ReportTransferItems.TransferNumber.Row);
-        currentRow.getCell(WmsConstants.ReportTransferItems.TransferNumber.Column).setCellValue(transfer.getTransfer_name());
+        currentRow.getCell(WmsConstants.ReportTransferItems.TransferNumber.Column).setCellValue(StringUtils.null2Space2(transfer.getTransfer_name()));
 
         // Number of Cartons行数、列数
         currentRow = sheet.getRow(WmsConstants.ReportTransferItems.Cartons.Row);
-        currentRow.getCell(WmsConstants.ReportTransferItems.Cartons.Column).setCellValue(transfer.getDetails_num());
+        currentRow.getCell(WmsConstants.ReportTransferItems.Cartons.Column).setCellValue(StringUtils.null2Space2(transfer.getDetails_num()));
 
         // Notes行数、列数
         currentRow = sheet.getRow(WmsConstants.ReportTransferItems.Notes.Row);
-        currentRow.getCell(WmsConstants.ReportTransferItems.Notes.Column).setCellValue(transfer.getComment());
+        currentRow.getCell(WmsConstants.ReportTransferItems.Notes.Column).setCellValue(StringUtils.null2Space2(transfer.getComment()));
 
         //Code具体统计明细设置用
         String itemCode = "";
@@ -890,7 +890,7 @@ public class WmsTransferServiceImpl implements WmsTransferService {
             // 按照Code统计数量
             if (StringUtils.isNullOrBlank2((itemCode)) || itemCode.equals(transferFormBean.getItemcode()) ) {
 
-                skuTotal.put(transferFormBean.getSize(),transferFormBean.getTransfer_qty());
+                skuTotal.put(StringUtils.null2Space2(transferFormBean.getSize()), transferFormBean.getTransfer_qty());
 
                 skuTotalQty = skuTotalQty + transferFormBean.getTransfer_qty();
 
@@ -942,7 +942,7 @@ public class WmsTransferServiceImpl implements WmsTransferService {
 
         // Code
         currentRow = sheet.getRow(WmsConstants.ReportTransferItems.Code.Row + addRows);
-        currentRow.getCell(WmsConstants.ReportTransferItems.Code.Column_Start).setCellValue(WmsConstants.ReportTransferItems.Code.Name + itemCode);
+        currentRow.getCell(WmsConstants.ReportTransferItems.Code.Column_Start).setCellValue(WmsConstants.ReportTransferItems.Code.Name + StringUtils.null2Space2(itemCode));
 
         // Size,Qty
         int skuCell = 0;
