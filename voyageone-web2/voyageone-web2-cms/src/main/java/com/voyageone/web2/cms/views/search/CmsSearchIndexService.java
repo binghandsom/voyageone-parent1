@@ -253,14 +253,14 @@ public class CmsSearchIndexService extends BaseAppService{
         // 获取price start
         if(searchValue.getPriceType() != null
                 && searchValue.getPriceStart() != null) {
-            result.append(MongoUtils.splicingValue("fields." + searchValue.getPriceType() + "Start", searchValue.getPriceStart(), "$gte"));
+            result.append(MongoUtils.splicingValue("fields." + searchValue.getPriceType() + "St", searchValue.getPriceStart(), "$gte"));
             result.append(",");
         }
 
         // 获取price end
         if (searchValue.getPriceType() != null
                 && searchValue.getPriceEnd() != null) {
-            result.append(MongoUtils.splicingValue("fields." + searchValue.getPriceType() + "End", searchValue.getPriceEnd(), "$lte"));
+            result.append(MongoUtils.splicingValue("fields." + searchValue.getPriceType() + "Ed", searchValue.getPriceEnd(), "$lte"));
             result.append(",");
         }
 
@@ -279,7 +279,7 @@ public class CmsSearchIndexService extends BaseAppService{
         // 获取inventory
         if (searchValue.getCompareType() != null
                 && searchValue.getInventory() != null) {
-            result.append(MongoUtils.splicingValue("fields.inventory", searchValue.getInventory(), searchValue.getCompareType()));
+            result.append(MongoUtils.splicingValue("fields.qty", searchValue.getInventory(), searchValue.getCompareType()));
             result.append(",");
         }
 
