@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.setting.mapping.platform;
 
+import com.taobao.top.schema.exception.TopSchemaException;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -22,6 +23,9 @@ public class CmsPlatformMappingController extends CmsController {
     @Autowired
     private CmsPlatformMappingService platformMappingService;
 
+    @Autowired
+    private CmsPlatformPropMappingService platformPropMappingService;
+
     @RequestMapping(CmsUrlConstants.MAPPING.PLATFORM.GET_MAIN_CATEGORY)
     public AjaxResponse getMainFinalCategoryMap(@RequestBody Map<String, Integer> params) {
 
@@ -38,7 +42,7 @@ public class CmsPlatformMappingController extends CmsController {
         return success(platformMappingService.getOtherPlatformMapping(mainCategoryId, getUser()));
     }
 
-    @RequestMapping(CmsUrlConstants.MAPPING.PLATFORM.GET_PLATFORM_CATEGORY)
+    @RequestMapping(CmsUrlConstants.MAPPING.PLATFORM.GET_PLATFORM_CATEGORIES)
     public AjaxResponse getPlatformCategories(@RequestBody Map<String, Integer> params) {
 
         Integer cartId = params.get("cartId");
@@ -56,5 +60,15 @@ public class CmsPlatformMappingController extends CmsController {
         platformMappingService.setPlatformMapping(from, to, cartId, getUser());
 
         return success(true);
+    }
+
+    @RequestMapping(CmsUrlConstants.MAPPING.PLATFORM.GET_PLATFORM_CATEGORY)
+    public AjaxResponse getPlatformCategory(@RequestBody Map<String, Object> params) throws TopSchemaException {
+
+        String categoryId = (String) params.get("categoryId");
+
+        Integer cartId = (Integer) params.get("cartId");
+
+        return success(platformPropMappingService.getPlatformCategory(categoryId, cartId, getUser()));
     }
 }

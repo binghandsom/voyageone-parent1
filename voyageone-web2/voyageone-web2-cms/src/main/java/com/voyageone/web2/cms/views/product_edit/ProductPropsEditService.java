@@ -146,6 +146,7 @@ public class ProductPropsEditService {
         productInfo.setProductImages(productImages);
         productInfo.setProductStatus(productStatus);
         productInfo.setModified(productValueModel.getModified());
+        productInfo.setProductCode(productValueModel.getFields().getCode());
 
         return productInfo;
     }

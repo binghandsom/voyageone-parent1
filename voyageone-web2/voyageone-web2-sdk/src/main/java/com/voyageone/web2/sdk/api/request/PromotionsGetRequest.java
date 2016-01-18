@@ -3,15 +3,24 @@
  */
 package com.voyageone.web2.sdk.api.request;
 
+import com.voyageone.web2.sdk.api.VoApiListRequest;
 import com.voyageone.web2.sdk.api.VoApiRequest;
+import com.voyageone.web2.sdk.api.exception.ApiRuleException;
 import com.voyageone.web2.sdk.api.response.PromotionsGetResponse;
 
 /**
- * @description
+ * /promotion/selectByCondtion
  *
- * @author gbb
+ * 1 selectById
+ * 2 selectByOtherCondtion
+ *
+ * Created on 2015-1-15
+ *
+ * @author aooer
+ * @version 2.0.0
+ * @since. 2.0.0
  */
-public class PromotionsGetRequest extends VoApiRequest<PromotionsGetResponse> {
+public class PromotionsGetRequest extends VoApiListRequest<PromotionsGetResponse> {
 
 	/** channelId */
 	private String channelId;
@@ -26,7 +35,6 @@ public class PromotionsGetRequest extends VoApiRequest<PromotionsGetResponse> {
 	 */
 	@Override
 	public String getApiURLPath() {
-		// TODO Auto-generated method stub
 		return "/promotion/selectByCondtion";
 	}
 
@@ -60,4 +68,8 @@ public class PromotionsGetRequest extends VoApiRequest<PromotionsGetResponse> {
 		this.promotionId = promotionId;
 	}
 
+	@Override
+	public void requestCheck() throws ApiRuleException {
+
+	}
 }

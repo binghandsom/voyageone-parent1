@@ -75,7 +75,7 @@
     "controller": "platformMappingController"
   },
   "setting_platform_mapping_prop": {
-    "hash": "/setting/platform_mapping/:platformCategoryId",
+    "hash": "/setting/platform_mapping/:cartId/:mainCategoryId",
     "templateUrl": "views/setting/platform_mapping/prop.tpl.html",
     "controllerUrl": "modules/cms/views/setting/platform_mapping/prop.ctl",
     "controller": "platformPropMappingController"

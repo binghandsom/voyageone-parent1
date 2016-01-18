@@ -115,6 +115,13 @@
   "TXT_TG": "TG",
   "TXT_ERROR_MANAGER_MARKETING": "错误管理（运营）",
   "TXT_ERROR_MANAGER_MAINTENANCE": "错误管理（维护）",
+  "TXT_NUM_IID": "Num iid",
+  "TXT_MODEL": "Model",
+  "TXT_PLATFORM_CATEGORY": "平台类目",
+  "TXT_MASTER_CATEGORY": "主数据类目",
+  "TXT_STORE_CATEGORY": "店铺类目",
+  "TXT_ON_SALE_TIME": "On Sale Time",
+  "TXT_MAIN_PRODUCT": "主商品",
 
   "BTN_CANCEL": "取消 ",
   "BTN_CLEAR": "清空",

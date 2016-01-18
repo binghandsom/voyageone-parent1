@@ -29,6 +29,14 @@
         "getProductList": "getProductList"
       }
     },
+    "group": {
+      "$groupListService": {
+        "root": "/cms/group/list/",
+        "init": "init",
+        "getProductList": "getProductList",
+        "setMainProduct": "setMainProduct"
+      }
+    },
     "mapping": {
       "feedMappingService": {
         "root": "/cms/setting/feedMapping",
@@ -47,8 +55,9 @@
         "root": "/cms/setting/platformMapping",
         "getMainCategory": "getMainDataFinalCategoryMap",
         "getOtherMappingPath": "getOtherMappingCategoryPath",
-        "getPlatformCategory": "getPlatformCategories",
-        "setPlatformMapping": "setPlatformMapping"
+        "getPlatformCategories": "getPlatformCategories",
+        "setPlatformMapping": "setPlatformMapping",
+        "getPlatformCategory": "getPlatformCategory"
       }
     },
     "pop": {

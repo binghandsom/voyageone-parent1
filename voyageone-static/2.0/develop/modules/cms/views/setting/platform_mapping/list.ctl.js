@@ -100,7 +100,7 @@ define([
 
                 this.platformMappingService
 
-                    .getPlatformCategory({cartId: this.selected.cart})
+                    .getPlatformCategories({cartId: this.selected.cart})
 
                     .then(function (res) {
                         if (!res.data || !res.data.length) {

@@ -278,7 +278,7 @@
 										<a ng-href="https://detail.tmall.com/item.htm?id={{groupInfo.groups.platforms[0].numIId}}" target="_blank" class="text-u-l" ng-bind="groupInfo.groups.platforms[0].numIId"></a>
 									</span>&nbsp;
 									<span>{{'TXT_GROUP_NAME' | translate}}&nbsp;
-										<a ng-href="#/group/list/{{groupInfo.groups.platforms[0].groupId}}" target="_blank" class="text-u-l" ng-bind="groupInfo.fields.productName"></a>
+										<a ng-href="#/group/list/{{groupInfo.groups.platforms[0].groupId}}" target="_blank" class="text-u-l" ng-bind="groupInfo.fields.productName || groupInfo.fields.productNameEn"></a>
 									</span>
 								</td>
 								<td colspan="2" class="text-right">{{'TXT_CATEGORY' | translate}}&nbsp;{{groupInfo.catPath}}</td>
@@ -297,7 +297,7 @@
 									<button ng-controller="showPopoverCtrl" popover-title="{{'TXT_INVENTORY' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{groupInfo.fields.inventory || 0}}</button>
 								</td>
 								<td class="mfb-xxt text-center">
-									<button ng-controller="showPopoverCtrl" popover-html="showInfo({{groupInfo.groups.priceDetail}})" popover-title="{{'TXT_SALE_PRICE' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{groupInfo.groups.salePriceStart || 0.00}}&nbsp;~&nbsp;{{groupInfo.groups.salePriceEnd || 0.00}}</button>
+									<button ng-controller="showPopoverCtrl" popover-html="showInfo({{groupInfo.groups.priceDetail}})" popover-title="{{'TXT_SALE_PRICE' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{groupInfo.groups.priceSaleSt || 0.00}}&nbsp;~&nbsp;{{groupInfo.groups.priceSaleEd || 0.00}}</button>
 								</td>
 								<td class="mfb-xxt text-left">{{groupInfo.fields.brand}}</td>
 								<td class="mfb-xxxs text-left">
@@ -377,10 +377,10 @@
 									</td>
 									<td class="mfb-xxt text-center">{{productInfo.fields.brand}}</td>
 									<td class="mfb-xxs text-center">
-										<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.inventoryDetail}})" popover-title="{{'TXT_INVENTORY' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{productInfo.fields.inventory || 0}}</button>
+										<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.inventoryDetail}})" popover-title="{{'TXT_INVENTORY' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{productInfo.fields.qty || 0}}</button>
 									</td>
 									<td class="mfb-xxt text-center">
-										<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.groups.priceDetail}})" popover-title="{{'TXT_SALE_PRICE' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{productInfo.fields.salePriceStart || 0.00}}&nbsp;~&nbsp;{{productInfo.fields.salePriceEnd || 0.00}}</button>
+										<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.groups.priceDetail}})" popover-title="{{'TXT_SALE_PRICE' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{productInfo.fields.priceSaleSt || 0.00}}&nbsp;~&nbsp;{{productInfo.fields.priceSaleEd || 0.00}}</button>
 									</td>
 									<td class="mfb-xxt text-center">{{productInfo.fields.sizeType}}</td>
 									<td class="mfb-xxs text-left">

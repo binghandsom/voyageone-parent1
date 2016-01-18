@@ -30,6 +30,8 @@ public class ProductInfoBean {
 
     protected String modified;
 
+    private String productCode;
+
     //商品图片信息.
     private List<CmsBtProductModel_Field_Image> productImages;
 
@@ -126,6 +128,14 @@ public class ProductInfoBean {
 
     public void setModified(String modified) {
         this.modified = modified;
+    }
+
+    public String getProductCode() {
+        return productCode;
+    }
+
+    public void setProductCode(String productCode) {
+        this.productCode = productCode;
     }
 
     /**

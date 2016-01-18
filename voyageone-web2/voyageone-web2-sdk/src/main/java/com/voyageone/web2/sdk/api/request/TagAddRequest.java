@@ -56,8 +56,8 @@ public class TagAddRequest extends VoApiRequest<TagAddResponse> {
 	 */
 	private String creater;
 
-	public void check() throws ApiRuleException {
-		super.check();
+	@Override
+	public void requestCheck() throws ApiRuleException {
 		RequestUtils.checkNotEmpty("channelId", channelId);
 		RequestUtils.checkNotEmpty("tagName", tagName);
 		RequestUtils.checkNotEmpty("tagType", tagType);

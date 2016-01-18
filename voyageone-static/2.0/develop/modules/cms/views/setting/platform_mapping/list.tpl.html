@@ -24,7 +24,8 @@
                         <th class="text-center">Seq.</th>
                         <th class="text-left">Main Data Category</th>
                         <th class="text-left">Platform Category</th>
-                        <th class="text-center">类目匹配 / 其它平台 / 类目属性匹配</th>
+                        <th class="text-center">类目匹配 / 其它平台</th>
+                        <th class="text-center">类目属性匹配</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -42,9 +43,14 @@
                                         ng-click="openOtherPlatform({mainCategoryId: category.catId})">
                                     <i class="glyphicon glyphicon-link"></i> 其它平台
                                 </button>
-                                <a href="#/setting/platform_mapping/prop" class="btn btn-default btn-xs"
-                                   target="_blank"><i class="glyphicon glyphicon-link"></i> 属性匹配</a>
                             </div>
+                        </td>
+                        <td>
+                            <a class="btn btn-default btn-xs" target="_blank"
+                               ng-href="#/setting/platform_mapping/{{ctrl.selected.cart}}/{{::category.catId}}"
+                               ng-if="category.matched">
+                                <i class="glyphicon glyphicon-link"></i> 属性匹配
+                            </a>
                         </td>
                     </tr>
                     </tbody>

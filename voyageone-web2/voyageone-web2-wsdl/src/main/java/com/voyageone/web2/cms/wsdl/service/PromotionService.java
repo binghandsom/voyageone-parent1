@@ -7,9 +7,9 @@ package com.voyageone.web2.cms.wsdl.service;
 import com.voyageone.web2.cms.wsdl.BaseService;
 import com.voyageone.web2.cms.wsdl.dao.CmsBtPromotionDao;
 import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
-import com.voyageone.web2.sdk.api.request.PromotionsDeleteRequest;
+import com.voyageone.web2.sdk.api.request.PromotionDeleteRequest;
 import com.voyageone.web2.sdk.api.request.PromotionsGetRequest;
-import com.voyageone.web2.sdk.api.request.PromotionsPutRequest;
+import com.voyageone.web2.sdk.api.request.PromotionPutRequest;
 import com.voyageone.web2.sdk.api.request.TagAddRequest;
 import com.voyageone.web2.sdk.api.response.PromotionsGetResponse;
 import com.voyageone.web2.sdk.api.response.PromotionsPutResponse;
@@ -17,14 +17,18 @@ import com.voyageone.web2.sdk.api.response.TagAddResponse;
 import org.apache.commons.beanutils.BeanMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
- * @description
+ * product Service
  *
- * @author gbb
+ * @author aooer 16/01/14
+ * @version 2.0.0
+ * @since. 2.0.0
  */
 @Service
 public class PromotionService extends BaseService {
@@ -41,12 +45,12 @@ public class PromotionService extends BaseService {
 	 * @param promotionPutRequest Request
 	 * @return PromotionsPutResponse
 	 */
+	@Transactional
 	public PromotionsPutResponse saveOrUpdate(
-			PromotionsPutRequest promotionPutRequest) {
+			PromotionPutRequest promotionPutRequest) {
+		promotionPutRequest.check();
 		PromotionsPutResponse response = new PromotionsPutResponse();
-		if (cmsBtPromotionDao
-				.findById(constructionCondtionMap(promotionPutRequest
-						.getCmsBtPromotionModel())) != null) {
+		if (promotionPutRequest.getCmsBtPromotionModel().getPromotionId() > 0) {
 			response.setMatchedCount(cmsBtPromotionDao
 					.update(promotionPutRequest.getCmsBtPromotionModel()));
 		} else {
@@ -83,28 +87,39 @@ public class PromotionService extends BaseService {
 	 */
 	public PromotionsGetResponse selectByCondition(
 			PromotionsGetRequest promotionGetRequest) {
+		promotionGetRequest.check();
 		PromotionsGetResponse response = new PromotionsGetResponse();
-		if (promotionGetRequest.getPromotionId()!=null && promotionGetRequest.getPromotionId() > 0) {
-			response.setCmsBtPromotionModels(Collections.singletonList(cmsBtPromotionDao
-					.findById(constructionCondtionMap(promotionGetRequest))));
+		List<CmsBtPromotionModel> models = new ArrayList<>();
+		if (promotionGetRequest.getPromotionId() != null && promotionGetRequest.getPromotionId() > 0) {
+			CmsBtPromotionModel model = cmsBtPromotionDao.findById(convertCondtionMap(promotionGetRequest));
+			if (model != null) {
+				models.add(model);
+			}
+
 		} else {
-			response.setCmsBtPromotionModels(cmsBtPromotionDao
-					.findByCondition(constructionCondtionMap(promotionGetRequest)));
+			List<CmsBtPromotionModel> modelsTmp = cmsBtPromotionDao.findByCondition(convertCondtionMap(promotionGetRequest));
+			if (modelsTmp != null) {
+				models.addAll(modelsTmp);
+			}
 		}
+		response.setCmsBtPromotionModels(models);
+		response.setTotalCount((long)models.size());
 		return response;
 	}
 
 	/**
 	 * 删除
 	 * 
-	 * @param promotionsDeleteRequest Request
+	 * @param promotionDeleteRequest Request
 	 * @return PromotionsPutResponse
 	 */
+	@Transactional
 	public PromotionsPutResponse deleteById(
-			PromotionsDeleteRequest promotionsDeleteRequest) {
+			PromotionDeleteRequest promotionDeleteRequest) {
+		promotionDeleteRequest.check();
 		PromotionsPutResponse response = new PromotionsPutResponse();
 		response.setRemovedCount(cmsBtPromotionDao
-				.deleteById(constructionCondtionMap(promotionsDeleteRequest)));
+				.deleteById(convertCondtionMap(promotionDeleteRequest)));
 		return response;
 	}
 
@@ -114,7 +129,7 @@ public class PromotionService extends BaseService {
 	 * @param obj input
 	 * @return Map
 	 */
-	private static Map<?, ?> constructionCondtionMap(Object obj) {
+	private static Map<?, ?> convertCondtionMap(Object obj) {
 		return new BeanMap(obj);
 	}
 }

@@ -62,8 +62,8 @@ public class ProductGroupsGetRequest extends VoApiListRequest<ProductGroupsGetRe
 		this.channelId = channelId;
 	}
 
-	public void check() throws ApiRuleException {
-		super.check();
+	@Override
+	public void requestCheck() throws ApiRuleException {
 		RequestUtils.checkNotEmpty(" channelId", channelId);
 		RequestUtils.checkNotEmpty(" groupIds, numIIds or props", groupIds, cartId, numIIds, props);
 		if (groupIds != null && groupIds.size()>0) {

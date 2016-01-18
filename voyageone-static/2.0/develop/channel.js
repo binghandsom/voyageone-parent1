@@ -8,14 +8,14 @@
 
 require.config({
   paths: {
-    'angular': 'libs/angular.js/1.5.0-RC.0/angular',
-    'angular-block-ui': 'libs/angular-block-ui/0.2.1/angular-block-ui',
-    'angular-cookies': 'libs/angular.js/1.4.7/angular-cookies',
+    'angular': 'libs/angular.js/1.5.0-RC.0/angular.min',
+    'angular-block-ui': 'libs/angular-block-ui/0.2.1/angular-block-ui.min',
+    'angular-cookies': 'libs/angular.js/1.4.7/angular-cookies.min',
     'voyageone-angular-com' : 'components/dist/voyageone.angular.com',
-    'css': 'libs/require-css/0.1.8/css'
+    'css': 'libs/require-css/0.1.8/css.min'
   },
   shim: {
-    'angular-block-ui': ['angular', 'css!libs/angular-block-ui/0.2.1/angular-block-ui.css'],
+    'angular-block-ui': ['angular', 'css!libs/angular-block-ui/0.2.1/angular-block-ui.min.css'],
     'voyageone-angular-com': ['angular'],
     'angular-cookies': ['angular'],
     'angular': {exports: 'angular'}

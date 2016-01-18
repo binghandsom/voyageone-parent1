@@ -54,7 +54,9 @@ public interface CmsUrlConstants {
 
             String GET_OTHER_MAPPING_PATH = "getOtherMappingCategoryPath";
 
-            String GET_PLATFORM_CATEGORY = "getPlatformCategories";
+            String GET_PLATFORM_CATEGORIES = "getPlatformCategories";
+
+            String GET_PLATFORM_CATEGORY = "getPlatformCategory";
 
             String SET_PLATFORM_MAPPING = "setPlatformMapping";
         }
@@ -66,11 +68,11 @@ public interface CmsUrlConstants {
 
             String ROOT = "/cms/promotion/list";
 
-            String QUERY_LIST = "getPromotionList";
+            String GET_PROMOTION_LIST = "getPromotionList";
 
-            String INSERT_UPDATE = "insertPromotion";
+            String INSERT_PROMOTION = "insertPromotion";
 
-            String DELETE_BYID = "updatePromotion";
+            String UPDATE_PROMOTION = "updatePromotion";
         }
         interface DETAIL {
 
@@ -190,6 +192,19 @@ public interface CmsUrlConstants {
             String CONFIRM_CHANGE = "confirmChange";
 
             String REVERT_CATEGORY = "revertCategory";
+        }
+    }
+
+    interface GROUP{
+
+        interface LIST {
+            String ROOT = "/cms/group/list";
+
+            String INIT = "init";
+
+            String GET_PRODUCT_LIST = "getProductList";
+
+            String SET_MAIN_PRODUCT = "setMainProduct";
         }
     }
 

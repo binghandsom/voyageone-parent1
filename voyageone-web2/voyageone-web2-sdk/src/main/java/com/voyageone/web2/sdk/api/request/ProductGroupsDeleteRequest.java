@@ -56,8 +56,8 @@ public class ProductGroupsDeleteRequest extends VoApiListRequest<ProductGroupsDe
 		this.channelId = channelId;
 	}
 
-	public void check() throws ApiRuleException {
-		super.check();
+	@Override
+	public void requestCheck() throws ApiRuleException {
 		RequestUtils.checkNotEmpty(" channelId", channelId);
 		RequestUtils.checkNotEmpty(" groupIds, numIIds", groupIds, numIIds);
 		if (groupIds != null && groupIds.size()>0) {

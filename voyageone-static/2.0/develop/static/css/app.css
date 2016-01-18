@@ -6028,7 +6028,8 @@ a.text-black:hover {
 }
 .c-checkbox,
 .c-radio {
-  margin-left: 0px;
+  margin-left: 10px;
+  margin-bottom:4px;
 }
 
 .c-checkbox *,
