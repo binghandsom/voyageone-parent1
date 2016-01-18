@@ -113,6 +113,7 @@ public class PromotionService extends BaseService {
 	 * @param promotionDeleteRequest Request
 	 * @return PromotionsPutResponse
 	 */
+	@Transactional
 	public PromotionsPutResponse deleteById(
 			PromotionDeleteRequest promotionDeleteRequest) {
 		promotionDeleteRequest.check();

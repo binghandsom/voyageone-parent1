@@ -42,7 +42,7 @@ public class CmsPlatformMappingController extends CmsController {
         return success(platformMappingService.getOtherPlatformMapping(mainCategoryId, getUser()));
     }
 
-    @RequestMapping(CmsUrlConstants.MAPPING.PLATFORM.GET_PLATFORM_CATEGORY)
+    @RequestMapping(CmsUrlConstants.MAPPING.PLATFORM.GET_PLATFORM_CATEGORIES)
     public AjaxResponse getPlatformCategories(@RequestBody Map<String, Integer> params) {
 
         Integer cartId = params.get("cartId");
