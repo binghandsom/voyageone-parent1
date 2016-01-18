@@ -113,7 +113,7 @@ define([
 				result.push(tempMsrpDetail);
 
 			// 设置retail price
-			var tempRetailPriceDetail = _setOnePriceDetail("Retail Price", object.priceRetailPriceSt, object.priceRetailPriceEd);
+			var tempRetailPriceDetail = _setOnePriceDetail("Retail Price", object.priceRetailSt, object.priceRetailEd);
 			if (!_.isNull(tempRetailPriceDetail))
 				result.push(tempRetailPriceDetail);
 

@@ -273,7 +273,7 @@ define(function() {
         scope.addField = function(data) {
           var newFieldMap = {};
           angular.forEach(data.fields, function(field) {
-            eval("newFieldMap." + field.id + "=field");
+            newFieldMap[field.id] = field;
           });
           data.complexValues.push({
             fieldMap: angular.copy(newFieldMap)
@@ -515,7 +515,8 @@ define(function() {
             if (_.isEmpty(data.complexValues)) {
               var newFieldMap = {};
               angular.forEach(data.fields, function(field) {
-                eval("newFieldMap." + field.id + "=field");
+                console.log(field);
+                newFieldMap[field.id] = field;
               });
               tempValues.push({
                 fieldMap: angular.copy(newFieldMap)
@@ -533,20 +534,20 @@ define(function() {
                case fieldTypes.TEXTAREA:
                case fieldTypes.SINGLE_CHECK:
                case fieldTypes.RADIO:
-                field.value = data.complexValue.fieldMap[field.id].value;
+                if (!_.isEmpty(data.complexValue.fieldMap)) field.value = data.complexValue.fieldMap[field.id].value; else field.value = data.defaultComplexValue.fieldMap[field.id].value;
                 break;
 
                case fieldTypes.MULTI_INPUT:
                case fieldTypes.MULTI_CHECK:
-                field.values = data.complexValue.fieldMap[field.id].values;
+                if (!_.isEmpty(data.complexValue.fieldMap)) field.values = data.complexValue.fieldMap[field.id].values; else field.values = data.defaultComplexValue.fieldMap[field.id].values;
                 break;
 
                case fieldTypes.COMPLEX:
-                field.complexValue = data.complexValue.fieldMap[field.id].complexValue;
+                if (!_.isEmpty(data.complexValue.fieldMap)) field.complexValue = data.complexValue.fieldMap[field.id].complexValue; else field.complexValue = data.defaultComplexValue.fieldMap[field.id].complexValue;
                 break;
 
                case fieldTypes.MULTI_COMPLEX:
-                field.complexValues = data.complexValue.fieldMap[field.id].complexValues;
+                if (!_.isEmpty(data.complexValue.fieldMap)) field.complexValues = data.complexValue.fieldMap[field.id].complexValues; else field.complexValues = data.defaultComplexValue.fieldMap[field.id].complexValues;
                 break;
               }
             });
@@ -1411,10 +1412,10 @@ define(function() {
       return currentLang.substr(0, 2);
     }
   };
+  angular.module("voyageone.angular.controllers", [ "voyageone.angular.controllers.datePicker", "voyageone.angular.controllers.selectRows", "voyageone.angular.controllers.showPopover" ]);
   angular.module("voyageone.angular.directives", [ "voyageone.angular.directives.dateModelFormat", "voyageone.angular.directives.enterClick", "voyageone.angular.directives.fileStyle", "voyageone.angular.directives.ifNoRows", "voyageone.angular.directives.uiNav", "voyageone.angular.directives.schema", "voyageone.angular.directives.voption", "voyageone.angular.directives.vpagination", "voyageone.angular.directives.validator" ]);
   angular.module("voyageone.angular.factories", [ "voyageone.angular.factories.dialogs", "voyageone.angular.factories.interceptor", "voyageone.angular.factories.notify", "voyageone.angular.factories.schema", "voyageone.angular.factories.selectRows", "voyageone.angular.factories.vpagination" ]);
   angular.module("voyageone.angular.services", [ "voyageone.angular.services.ajax", "voyageone.angular.services.cookie", "voyageone.angular.services.message", "voyageone.angular.services.permission", "voyageone.angular.services.translate" ]);
-  angular.module("voyageone.angular.controllers", [ "voyageone.angular.controllers.datePicker", "voyageone.angular.controllers.selectRows", "voyageone.angular.controllers.showPopover" ]);
-  return angular.module("voyageone.angular", [ "voyageone.angular.directives", "voyageone.angular.factories", "voyageone.angular.services", "voyageone.angular.controllers" ]);
+  return angular.module("voyageone.angular", [ "voyageone.angular.controllers", "voyageone.angular.directives", "voyageone.angular.factories", "voyageone.angular.services" ]);
 });
 //# sourceMappingURL=voyageone.angular.com.js.map

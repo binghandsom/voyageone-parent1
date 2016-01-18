@@ -150,7 +150,7 @@
 						<nav>
 							<div class="thumbnailWrapper">
 								<div ng-repeat="image in ctrl.productDetails.productImages | limitTo: 10" class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image1}"
-									 ng-click="ctrl.currentImage = image.name" ng-style="{'background-image' : 'url(http://image.sneakerhead.com/is/image/sneakerhead/' + image.image1 + ')'}"></div>
+									 ng-click="ctrl.currentImage = image.image1" ng-style="{'background-image' : 'url(http://image.sneakerhead.com/is/image/sneakerhead/' + image.image1 + ')'}"></div>
 							</div>
 						</nav>
 					</div><!-- .vo_prodGallery -->
