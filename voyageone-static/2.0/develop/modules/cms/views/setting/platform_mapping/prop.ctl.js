@@ -4,53 +4,10 @@
 define([
     'cms',
     'underscore',
-    'modules/cms/enums/FieldTypes',
-    'modules/cms/enums/RuleTypes',
-    'modules/cms/controller/popup.ctl'
-], function (cms, _, FieldTypes, RuleTypes) {
+    'modules/cms/controller/popup.ctl',
+    'modules/cms/views/setting/platform_mapping/prop.item.d'
+], function (cms, _) {
     'use strict';
-
-    function isRequiredField(field) {
-
-        return !!_.find(field.rules, function (rule) {
-            return rule.name === RuleTypes.REQUIRED_RULE && rule.value === 'true';
-        });
-    }
-
-    function isSimpleType(field) {
-
-        return field.type !== FieldTypes.complex &&
-            field.type !== FieldTypes.multiComplex;
-    }
-
-    function getIconClass(field) {
-
-        var iconClass = '';
-
-        switch (field.type) {
-            case FieldTypes.label:
-                iconClass = 'badge badge-initialize';
-                break;
-            case FieldTypes.input:
-                iconClass = 'badge badge-initialize';
-                break;
-            case FieldTypes.complex:
-                iconClass = 'badge badge-refresh';
-                break;
-            case FieldTypes.singleCheck:
-                iconClass = 'badge badge-success';
-                break;
-            case FieldTypes.multiCheck:
-                iconClass = 'badge badge-success';
-                break;
-            case FieldTypes.multiComplex:
-                iconClass = 'badge badge-failure';
-                break;
-        }
-
-        return iconClass;
-    }
-
     return cms.controller('platformPropMappingController', (function () {
 
         function PlatformMappingController(platformMappingService, $routeParams) {
@@ -66,6 +23,11 @@ define([
              * @type {object}
              */
             this.category = null;
+            /**
+             * 主数据类目的类目路径
+             * @type {string}
+             */
+            this.mainCategoryPath = null;
             /**
              * 平台类目属性的 Map, Key 为属性名, 值为 Field
              * @type {object}
@@ -111,6 +73,8 @@ define([
                     this.category = res.data.categorySchema;
                     this.properties = res.data.properties;
                     this.mappings = res.data.mapping;
+                    this.mainCategoryPath = res.data.mainCategoryPath;
+
                 }.bind(this));
             },
             filteringData: function () {
@@ -131,39 +95,31 @@ define([
                 // 复杂类型计算前, 默认其不显示
                 property.hide = true;
 
-                _.each(property.fieldList, function(child) {
+                _.each(property.fieldList, function (child) {
 
                     // 如果子级有需要显示, 则父级跟随显示
                     if (!this.setHide(child))
                         property.hide = false;
 
                 }.bind(this));
+            },
+            /**
+             * 更具属性类型,选择打开 Mapping 弹出框
+             * @param property 属性
+             * @param ppPlatformMapping 包含不同弹出框的对象
+             */
+            popup: function (property, ppPlatformMapping) {
+
+                ppPlatformMapping.complex({
+                    mainCategoryId: this.mainCategoryId,
+                    mainCategoryPath: this.mainCategoryPath,
+                    platformCategoryPath: this.category.catFullPath
+                });
+
             }
         };
 
         return PlatformMappingController;
 
-    })()).directive('platformProp', function () {
-
-        return {
-            restrict: 'A',
-            templateUrl: 'platform.p.item.d.html',
-            scope: {
-                property: '=platformProp',
-                parent: '=platformPropParent'
-            },
-            link: function ($scope) {
-
-                var property = $scope.property;
-                var parent = $scope.parent;
-
-                // 计算每个属性的属性
-                property.iconClass = getIconClass(property);
-                property.isSimple = isSimpleType(property);
-                property.required = isRequiredField(property);
-                property.parentRequired = !parent ? false : (parent.required || parent.parentRequired);
-                property.headClass = property.isSimple ? 'fa-minus' : 'fa-plus';
-            }
-        }
-    });
+    })());
 });
