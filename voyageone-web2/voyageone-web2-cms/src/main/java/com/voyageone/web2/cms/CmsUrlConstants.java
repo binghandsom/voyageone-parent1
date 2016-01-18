@@ -54,9 +54,11 @@ public interface CmsUrlConstants {
 
             String GET_OTHER_MAPPING_PATH = "getOtherMappingCategoryPath";
 
-            String GET_PLATFORM_CATEGORY = "getPlatformCategories";
+            String GET_PLATFORM_CATEGORIES = "getPlatformCategories";
 
             String SET_PLATFORM_MAPPING = "setPlatformMapping";
+
+            String GET_PLATFORM_CATEGORY = "getPlatformCategory";
         }
     }
 
