@@ -74,82 +74,103 @@ public class GetWmfClientShippingInfoService extends GetClientShippingBaseServic
      * 获取Wmf的天猫国际店的物流以及超卖信息
      */
     private void getTgWmfShippingInfo(OrderChannelBean channel, ShopBean shop) {
+        // 渠道ID
+        String orderChannelId = channel.getOrder_channel_id();
+        // 店铺全名
+        String fullName = channel.getFull_name();
+        // 店铺名
+        String shopName = shop.getShop_name();
 
-        $info(channel.getFull_name()+"（"+ shop.getShop_name() + "）" + "获取物流信息Start");
+        $info(fullName + "（" + shopName + "）" + "获取物流信息Start");
 
         transactionRunner.runWithTran(() -> {
 
             //超卖订单初期化
             List<ReservationClientBean> BackClientOrderList = new ArrayList<>();
-
             //发货订单初期化
             List<ReservationClientBean> ShipClientOrderList = new ArrayList<>();
 
-
             try {
-
                 List<ReservationClientBean> clientOrderList = new ArrayList<>();
 
                 // 从tt_reservation表中取得该店铺的status=11(open)的记录,同时需要再抽出oms_bt_orders中的client_order_id
-                List<ReservationClientBean> openclientOrderList = reservationDao.getReservationDatasByShop(channel.getOrder_channel_id(), shop.getCart_id(), CodeConstants.Reservation_Status.Open);
+                List<ReservationClientBean> openclientOrderList = reservationDao.getReservationDatasByShop(orderChannelId, shop.getCart_id(), CodeConstants.Reservation_Status.Open);
                 clientOrderList.addAll(openclientOrderList);
 
                 // 从tt_reservation表中取得该店铺的status=99(cancel)的记录,同时品牌方还没有取消
-                List<ReservationClientBean> cancelclientOrderList = reservationDao.getCancelReservationDatasByShop(channel.getOrder_channel_id(), shop.getCart_id(), CodeConstants.Reservation_Status.Cancelled);
+                List<ReservationClientBean> cancelclientOrderList = reservationDao.getCancelReservationDatasByShop(orderChannelId, shop.getCart_id(), CodeConstants.Reservation_Status.Cancelled);
                 clientOrderList.addAll(cancelclientOrderList);
 
-                $info(channel.getFull_name() + "（" + shop.getShop_name() + "）" + "-----Open订单件数：" + clientOrderList.size());
+                int clientOrderListSize = clientOrderList.size();
+                $info(fullName + "（" + shopName + "）" + "-----Open订单件数：" + clientOrderListSize);
 
-                // Magento初始化
-                magentoApiServiceImpl.setOrderChannelId(channel.getOrder_channel_id());
+                if (clientOrderListSize > 0) {
+                    // Magento初始化
+                    magentoApiServiceImpl.setOrderChannelId(orderChannelId);
 
-                for (ReservationClientBean clientOrder : clientOrderList) {
-                    $info(channel.getFull_name()+"（"+ shop.getShop_name() + "）" + "-----Order_Number：" + clientOrder.getOrder_number() + "，Client_order_id：" + clientOrder.getClient_order_id());
+                    for (ReservationClientBean clientOrder : clientOrderList) {
+                        // OMS订单号
+                        String orderNumber = String.valueOf(clientOrder.getOrder_number());
+                        // 品牌方订单号
+                        String clientOrderId = clientOrder.getClient_order_id();
 
-                    if (StringUtils.isNullOrBlank2(clientOrder.getClient_order_id())) {
-                        $info(channel.getFull_name()+"（"+ shop.getShop_name() + "）" + "-----的品牌方订单号未设置，无法取得相关信息，Order_Number：" + clientOrder.getOrder_number() + "，Client_order_id：" + clientOrder.getClient_order_id());
-                        logIssue(channel.getFull_name()+"（"+ shop.getShop_name() + "）" + "的品牌方订单号未设置，无法取得相关信息","Order_Number：" + clientOrder.getOrder_number() + "，Client_order_id：" + clientOrder.getClient_order_id());
-                        continue;
-                    }else {
-                        //调用Magento服务的API 获取订单信息
-                        SalesOrderInfoResponseParam response = magentoApiServiceImpl.getSalesOrderInfo(clientOrder.getClient_order_id());
+                        $info(fullName + "（" + shopName + "）" + "-----Order_Number：" + orderNumber + "，Client_order_id：" + clientOrderId);
 
-                        if (response != null) {
+                        if (StringUtils.isNullOrBlank2(clientOrderId)) {
+                            $info(fullName + "（" + shopName + "）" + "-----的品牌方订单号未设置，无法取得相关信息，Order_Number：" + orderNumber + "，Client_order_id：" + clientOrderId);
+                            logIssue(fullName + "（" + shopName + "）" + "的品牌方订单号未设置，无法取得相关信息", "Order_Number：" + orderNumber + "，Client_order_id：" + clientOrderId);
+                            continue;
 
-                            SalesOrderEntity salesOrderEntity = response.getResult();
+                        } else {
+                            //调用Magento服务的API 获取订单信息
+                            SalesOrderInfoResponseParam response = magentoApiServiceImpl.getSalesOrderInfoWithOneSession(clientOrderId);
 
-                            // 品牌方发货
-                            if (MagentoConstants.WMF_Status.Shipped.equals(salesOrderEntity.getStatus())) {
-                                ShipClientOrderList.add(clientOrder);
-                            }
-                            // 品牌方取消订单
-                            else if (MagentoConstants.WMF_Status.Cancelled.equals(salesOrderEntity.getStatus())) {
-                                if (CodeConstants.Reservation_Status.Open.equals(clientOrder.getStatus())) {
-                                    BackClientOrderList.add(clientOrder);
+                            if (response != null) {
+                                // Magento服务的返回结果
+                                SalesOrderEntity salesOrderEntity = response.getResult();
+                                // 订单状态
+                                String magentoOrderStatus = salesOrderEntity.getStatus();
+
+                                // 品牌方发货
+                                if (MagentoConstants.WMF_Status.Shipped.equalsIgnoreCase(magentoOrderStatus)) {
+                                    ShipClientOrderList.add(clientOrder);
                                 }
-                            }
 
+                                // 品牌方取消订单
+                                else if (MagentoConstants.WMF_Status.Canceled.equalsIgnoreCase(magentoOrderStatus)) {
+                                    if (CodeConstants.Reservation_Status.Open.equals(clientOrder.getStatus())) {
+                                        BackClientOrderList.add(clientOrder);
+                                    }
+                                }
+
+                            }
                         }
+
                     }
 
+                    // 更新发货订单状态
+                    int shipOrderSize = ShipClientOrderList.size();
+                    $info(channel.getFull_name() + "（" + shop.getShop_name() + "）" + "-----发货订单件数：" + shipOrderSize);
+                    if (shipOrderSize > 0) {
+                        SetShipOrderList(channel, ShipClientOrderList, PortConfigEnums.Port.SYB.getId());
+                    }
+
+                    // 更新超卖订单状态
+                    int backOrderSize = BackClientOrderList.size();
+                    $info(channel.getFull_name() + "（" + shop.getShop_name() + "）" + "-----超卖订单件数：" + backOrderSize);
+                    if (backOrderSize > 0) {
+                        SetBackOrderList(channel, BackClientOrderList);
+                    }
                 }
 
-                // 更新超卖订单状态
-                $info(channel.getFull_name()+"（"+ shop.getShop_name() + "）" + "-----发货订单件数：" + ShipClientOrderList.size());
-                SetShipOrderList(channel, ShipClientOrderList, PortConfigEnums.Port.SYB.getId());
-
-                // 更新超卖订单状态
-                $info(channel.getFull_name()+"（"+ shop.getShop_name() + "）" + "-----超卖订单件数：" + BackClientOrderList.size());
-                SetBackOrderList(channel, BackClientOrderList);
-
             } catch (Exception e) {
-                $info(channel.getFull_name()+"（"+ shop.getShop_name() + "）" + "获取物流信息失败：" + e.getMessage());
-                logIssue(channel.getFull_name()+"（"+ shop.getShop_name() + "）" + "获取物流信息失败：" + e.getMessage());
+                $info(fullName + "（" + shopName + "）" + "获取物流信息失败：" + e.getMessage());
+                logIssue(fullName + "（" + shopName + "）" + "获取物流信息失败：" + e.getMessage());
                 throw new RuntimeException(e);
             }
         });
 
-        $info(channel.getFull_name() + "（" + shop.getShop_name() + "）" + "获取物流信息End");
+        $info(fullName + "（" + shopName + "）" + "获取物流信息End");
 
     }
 

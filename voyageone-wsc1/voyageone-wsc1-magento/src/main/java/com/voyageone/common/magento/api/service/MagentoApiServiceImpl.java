@@ -57,18 +57,20 @@ public class MagentoApiServiceImpl {
 	 * @param orderChannelId the orderChannelId to set
 	 */
 	public void setOrderChannelId(String orderChannelId) {
-		this.orderChannelId = orderChannelId;
 
-		// magento api调用 userName
+		if (StringUtils.isNullOrBlank2(this.orderChannelId)) {
+			this.orderChannelId = orderChannelId;
+
+			// magento api调用 userName
 //		String userName = ThirdPartyConfigs.getVal1(this.orderChannelId, "userName");
 //		// magento api调用 密钥
 //		String apiKey = ThirdPartyConfigs.getVal1(this.orderChannelId, "apiKey");
 
-		loginParam = new LoginParam();
+			loginParam = new LoginParam();
 //		loginParam.setUsername(userName);
 //		loginParam.setApiKey(apiKey);
-		loginParam.setUsername("juicy_couture");
-		loginParam.setApiKey("abc.123");
+			loginParam.setUsername("juicy_couture");
+			loginParam.setApiKey("abc.123");
 
 //		loginParam.setUsername("VOYAGEONE_API_USER");
 //		loginParam.setApiKey("hjA=fs2H0n+%PFd,b4wB");
@@ -79,19 +81,20 @@ public class MagentoApiServiceImpl {
 //		String webSiteId = ThirdPartyConfigs.getVal1(this.orderChannelId, "webSiteId");
 //		String storeName = ThirdPartyConfigs.getVal1(this.orderChannelId, "storeName");
 
-		String customerId = "20";
-		String customerMode = "customer";
+			String customerId = "20";
+			String customerMode = "customer";
 //		String customerMode = "guest";
-		String storeId = "1";
-		String webSiteId = "1";
-		String storeName = "juicy_cn";
+			String storeId = "1";
+			String webSiteId = "1";
+			String storeName = "juicy_cn";
 
-		customer = new CustomerBean();
-		customer.setCustomerId(Integer.valueOf(customerId));
-		customer.setMode(customerMode);
-		customer.setStoreId(Integer.valueOf(storeId));
-		customer.setWebsiteId(Integer.valueOf(webSiteId));
-		customer.setStore(storeName);
+			customer = new CustomerBean();
+			customer.setCustomerId(Integer.valueOf(customerId));
+			customer.setMode(customerMode);
+			customer.setStoreId(Integer.valueOf(storeId));
+			customer.setWebsiteId(Integer.valueOf(webSiteId));
+			customer.setStore(storeName);
+		}
 	}
 	
 	/**
