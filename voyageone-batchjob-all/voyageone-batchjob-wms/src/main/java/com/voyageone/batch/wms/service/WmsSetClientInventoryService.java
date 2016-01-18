@@ -118,8 +118,8 @@ public class WmsSetClientInventoryService extends BaseTaskService {
 
                     //分配仓库取得（如果能够取得相应的值，则说明只是模拟分配而已，不再进行逻辑库存计算）
                     String allot_store = ChannelConfigs.getVal1(channel.getOrder_channel_id(), ChannelConfigEnums.Name.allot_store);
-                    if (StringUtils.isNullOrBlank2(allot_store)) {
-                        inventory_manager = true;
+                    if (!StringUtils.isNullOrBlank2(allot_store)) {
+                        inventory_manager = false;
                     }
 
                     try {
