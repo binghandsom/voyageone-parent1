@@ -12,7 +12,7 @@ define(['cms'], function (cms) {
             this.feedMappingService = feedMappingService;
 
             /**
-             * @typedef {{type:FieldType, options:object[], rules:object[], name:string, id:string}} Field *部分属性标明
+             * @typedef {{type:string, options:object[], rules:object[], name:string, id:string}} Field *部分属性标明
              * @typedef {object} FieldBean
              * @typedef {{feedCategoryPath:string, mainCategoryPath:string, field:Field, bean:FieldBean}} FeedPropMappingPopupContext
              * @type {FeedPropMappingPopupContext}
