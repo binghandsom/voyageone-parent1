@@ -29,6 +29,14 @@
         "getProductList": "getProductList"
       }
     },
+    "group": {
+      "$groupListService": {
+        "root": "/cms/group/list/",
+        "init": "init",
+        "getProductList": "getProductList",
+        "setMainProduct": "setMainProduct"
+      }
+    },
     "mapping": {
       "feedMappingService": {
         "root": "/cms/setting/feedMapping",
