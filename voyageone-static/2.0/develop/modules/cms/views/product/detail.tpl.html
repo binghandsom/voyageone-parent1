@@ -145,12 +145,12 @@
 					<!-- product photos -->
 					<div class="vo_prodGallery">
 						<div class="imageContainer">
-							<div class="imageWrapper" style="background-image: url('http://image.sneakerhead.com/is/image/sneakerhead/{{!ctrl.currentImage ? ctrl.productDetails.productImages[0].name : ctrl.currentImage}}')"></div>
+							<div class="imageWrapper" style="background-image: url('http://image.sneakerhead.com/is/image/sneakerhead/{{!ctrl.currentImage ? ctrl.productDetails.productImages[0].image1 : ctrl.currentImage}}')"></div>
 						</div>
 						<nav>
 							<div class="thumbnailWrapper">
-								<div ng-repeat="image in ctrl.productDetails.productImages | limitTo: 10" class="thumbnail" ng-class="{'active':ctrl.currentImage == image.name}"
-									 ng-click="ctrl.currentImage = image.name" ng-style="{'background-image' : 'url(http://image.sneakerhead.com/is/image/sneakerhead/' + image.name + ')'}"></div>
+								<div ng-repeat="image in ctrl.productDetails.productImages | limitTo: 10" class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image1}"
+									 ng-click="ctrl.currentImage = image.name" ng-style="{'background-image' : 'url(http://image.sneakerhead.com/is/image/sneakerhead/' + image.image1 + ')'}"></div>
 							</div>
 						</nav>
 					</div><!-- .vo_prodGallery -->
