@@ -55,8 +55,10 @@
         "root": "/cms/setting/platformMapping",
         "getMainCategory": "getMainDataFinalCategoryMap",
         "getOtherMappingPath": "getOtherMappingCategoryPath",
-        "getPlatformCategory": "getPlatformCategories",
-        "setPlatformMapping": "setPlatformMapping"
+        "getPlatformCategories": "getPlatformCategories",
+        "setPlatformMapping": "setPlatformMapping",
+
+        "getPlatformCategory": "getPlatformCategory"
       }
     },
     "pop": {
