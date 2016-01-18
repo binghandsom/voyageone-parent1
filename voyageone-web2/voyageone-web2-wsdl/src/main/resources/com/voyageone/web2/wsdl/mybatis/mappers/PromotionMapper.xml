@@ -51,7 +51,7 @@
         select
               <include refid="promotion_fileds"/>
               b.name as cartName
-        from voyageone_cms2.cms_bt_promotion a left join synship.ct_cart b on a.cart_id = b.cart_id
+        from voyageone_cms2.cms_bt_promotion a left join Synship.ct_cart b on a.cart_id = b.cart_id
         where a.is_active = 1 and a.promotion_id = #{promotionId}
     </select>
     
