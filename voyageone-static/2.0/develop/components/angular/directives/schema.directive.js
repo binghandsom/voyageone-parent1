@@ -409,7 +409,6 @@ angular.module('voyageone.angular.directives.schema', [])
                         if (_.isEmpty(data.complexValues)) {
                             var newFieldMap = {};
                             angular.forEach(data.fields, function (field) {
-                                console.log(field);
                                 newFieldMap[field.id] = field;
                                 //eval("newFieldMap." + field.id + "=field");
                             });

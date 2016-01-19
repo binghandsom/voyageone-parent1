@@ -42,10 +42,10 @@
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3  control-label">Platform</label>
-							<div class="col-sm-8">
-								<select class="form -control" ng-model="searchInfo.cartId">
+							<div class="col-sm-5">
+								<select class="form-control" ng-model="searchInfo.cartId">
 									<option value=''>All</option>
-									<option ng-repeat="cart in vm.cartList" value={{cart.cartId}}>{{cart.cTypeId}}</option>
+									<option ng-repeat="cart in vm.cartList" value={{cart.cartId}}>{{cart.name}}</option>
 								</select>
 							</div>
 						</div>
