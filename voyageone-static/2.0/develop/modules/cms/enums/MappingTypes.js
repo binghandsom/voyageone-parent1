@@ -4,15 +4,15 @@ define(function () {
         /**
          * 对应 SimpleMappingBean
          */
-        'SIMPLE': '0',
+        'SIMPLE_MAPPING': '0',
         /**
          * 对应 ComplexMappingBean
          */
-        'COMPLEX': '1',
+        'COMPLEX_MAPPING': '1',
         /**
          * 对应 MultiComplexMappingBean
          */
-        'MULTI_COMPLEX': '2'
+        'MULTI_COMPLEX_MAPPING': '2'
     };
 
 });

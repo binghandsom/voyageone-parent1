@@ -19,7 +19,7 @@ define([
          * 当前匹配类型, 对应 MappingTypes 的 SIMPLE
          * @type {string}
          */
-        this.mappingType = MappingTypes.COMPLEX;
+        this.mappingType = MappingTypes.COMPLEX_MAPPING;
         /**
          * 主数据属性 ID
          * @type {string}
