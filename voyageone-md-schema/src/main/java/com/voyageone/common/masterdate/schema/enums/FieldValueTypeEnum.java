@@ -28,6 +28,6 @@ public enum FieldValueTypeEnum {
             }
         }
 
-        return null;
+        return FieldValueTypeEnum.NONE;
     }
 }

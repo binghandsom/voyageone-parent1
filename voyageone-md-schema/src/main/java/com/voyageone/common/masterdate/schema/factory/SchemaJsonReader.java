@@ -1,5 +1,6 @@
 package com.voyageone.common.masterdate.schema.factory;
 
+import com.voyageone.common.masterdate.schema.enums.FieldValueTypeEnum;
 import com.voyageone.common.masterdate.schema.utils.JsonUtil;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.depend.DependExpress;
@@ -57,8 +58,6 @@ public class SchemaJsonReader {
      */
     public static Map<String, Field> readJsonForMap(List<Map<String, Object>> rootList) {
         Map<String, Field> fieldMap = new HashMap<>();
-        Iterator<Map<String, Object>> fieldMapListIt = rootList.iterator();
-
         for (Map<String, Object> fieldElm : rootList) {
             Field field = mapToField(fieldElm);
             fieldMap.put(field.getId(), field);
@@ -356,6 +355,12 @@ public class SchemaJsonReader {
                 inputField.setValue(valueStr);
             }
 
+            String fieldValueTypeStr = (String)fieldMap.get("fieldValueType");
+            if(fieldValueTypeStr != null) {
+                FieldValueTypeEnum fieldValueTypeEnum = FieldValueTypeEnum.getEnum(fieldValueTypeStr);
+                inputField.setFieldValueType(fieldValueTypeEnum);
+            }
+
             return inputField;
         }
     }
@@ -398,6 +403,12 @@ public class SchemaJsonReader {
                 Map<String, Object> labelGroupMap = (Map<String, Object>)fieldMap.get("labelGroup");
                 LabelGroup labelGroup = mapToLabelGroup(labelGroupMap, fieldId);
                 labelField.setLabelGroup(labelGroup);
+            }
+
+            String fieldValueTypeStr = (String)fieldMap.get("fieldValueType");
+            if(fieldValueTypeStr != null) {
+                FieldValueTypeEnum fieldValueTypeEnum = FieldValueTypeEnum.getEnum(fieldValueTypeStr);
+                labelField.setFieldValueType(fieldValueTypeEnum);
             }
 
             return labelField;
@@ -459,6 +470,12 @@ public class SchemaJsonReader {
                 }
             }
 
+            String fieldValueTypeStr = (String)fieldMap.get("fieldValueType");
+            if(fieldValueTypeStr != null) {
+                FieldValueTypeEnum fieldValueTypeEnum = FieldValueTypeEnum.getEnum(fieldValueTypeStr);
+                multiInputField.setFieldValueType(fieldValueTypeEnum);
+            }
+
             return multiInputField;
         }
     }
@@ -517,6 +534,12 @@ public class SchemaJsonReader {
                 value3.setId((String)valueMap.get("id"));
                 value3.setValue((String)valueMap.get("value"));
                 singleCheckField.setValue(value3);
+            }
+
+            String fieldValueTypeStr = (String)fieldMap.get("fieldValueType");
+            if(fieldValueTypeStr != null) {
+                FieldValueTypeEnum fieldValueTypeEnum = FieldValueTypeEnum.getEnum(fieldValueTypeStr);
+                singleCheckField.setFieldValueType(fieldValueTypeEnum);
             }
 
             return singleCheckField;
@@ -595,6 +618,12 @@ public class SchemaJsonReader {
                 }
             }
 
+            String fieldValueTypeStr = (String)fieldMap.get("fieldValueType");
+            if(fieldValueTypeStr != null) {
+                FieldValueTypeEnum fieldValueTypeEnum = FieldValueTypeEnum.getEnum(fieldValueTypeStr);
+                multiCheckField.setFieldValueType(fieldValueTypeEnum);
+            }
+
             return multiCheckField;
         }
     }
@@ -670,6 +699,12 @@ public class SchemaJsonReader {
                     }
                 }
                 complexField.setComplexValue(defaultComplexValue);
+            }
+
+            String fieldValueTypeStr = (String)fieldMap.get("fieldValueType");
+            if(fieldValueTypeStr != null) {
+                FieldValueTypeEnum fieldValueTypeEnum = FieldValueTypeEnum.getEnum(fieldValueTypeStr);
+                complexField.setFieldValueType(fieldValueTypeEnum);
             }
 
             return complexField;
@@ -755,6 +790,12 @@ public class SchemaJsonReader {
                     }
                     multiComplexField.addComplexValue(complexValue);
                 }
+            }
+
+            String fieldValueTypeStr = (String)fieldMap.get("fieldValueType");
+            if(fieldValueTypeStr != null) {
+                FieldValueTypeEnum fieldValueTypeEnum = FieldValueTypeEnum.getEnum(fieldValueTypeStr);
+                multiComplexField.setFieldValueType(fieldValueTypeEnum);
             }
 
             return multiComplexField;
