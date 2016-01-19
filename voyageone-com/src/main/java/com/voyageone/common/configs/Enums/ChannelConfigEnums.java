@@ -404,7 +404,11 @@ public class ChannelConfigEnums {
         /**
          * 分配仓库
          */
-        allot_store
+        allot_store,
+        /**
+         * 第三方订单(1：代表订单由商家自行管理)
+         */
+        third_order
 
     }
 
