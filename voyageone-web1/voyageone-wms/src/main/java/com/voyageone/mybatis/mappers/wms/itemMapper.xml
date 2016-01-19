@@ -15,7 +15,7 @@
     </sql>
 
     <select id="wms_bt_item_details_get_sku" resultType="string">
-        select sku from wms_bt_item_details where order_channel_id = #{channel_id} and barcode = #{barcode} and active = '1'
+        select sku from wms_bt_item_details where order_channel_id = #{channel_id} and barcode = #{barcode}  order by active desc limit 1
     </select>
 
     <select id="wms_bt_item_details_search_item_code" resultType="string">

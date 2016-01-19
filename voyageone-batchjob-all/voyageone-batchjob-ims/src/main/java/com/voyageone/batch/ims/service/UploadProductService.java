@@ -7,10 +7,13 @@ import com.voyageone.batch.ims.bean.tcb.AbortTaskSignalInfo;
 import com.voyageone.batch.ims.bean.tcb.TaskSignal;
 import com.voyageone.batch.ims.dao.ProductPublishDao;
 import com.voyageone.batch.ims.enums.PlatformWorkloadStatus;
+import com.voyageone.batch.ims.modelbean.CmsCodePropBean;
+import com.voyageone.batch.ims.modelbean.CmsSkuPropBean;
 import com.voyageone.batch.ims.modelbean.ProductPublishBean;
 import com.voyageone.batch.ims.modelbean.WorkLoadBean;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.ims.enums.CmsFieldEnum;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,6 +75,70 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                 if (null == workload.getLevelValue() || "".equals(workload.getLevelValue())) {
                     workload.setFailCause("Master prop is not set, workload: " + workload);
                     $i.remove();
+                } else {
+                    // 20160106 tom 这里增加一段排序 START
+                    // 准备排序用的顺序
+                    List<String> lstSortRuleList = new ArrayList<>();
+                    // 纯数字系列
+                    for (int i = 0; i < 100; i++) {
+                        lstSortRuleList.add(String.valueOf(i));
+                        lstSortRuleList.add(String.valueOf(i) + ".5");
+                    }
+                    // 纯数字系列(cm)
+                    for (int i = 0; i < 100; i++) {
+                        lstSortRuleList.add(String.valueOf(i) + "cm");
+                        lstSortRuleList.add(String.valueOf(i) + ".5cm");
+                    }
+                    // SM系列
+                    lstSortRuleList.add("XXX");
+                    lstSortRuleList.add("XXS");
+                    lstSortRuleList.add("XS");
+                    lstSortRuleList.add("XS/S");
+                    lstSortRuleList.add("XSS");
+                    lstSortRuleList.add("S");
+                    lstSortRuleList.add("S/M");
+                    lstSortRuleList.add("M");
+                    lstSortRuleList.add("M/L");
+                    lstSortRuleList.add("L");
+                    lstSortRuleList.add("XL");
+                    lstSortRuleList.add("XXL");
+
+                    // 包的尺码不参与排序(放最后)
+                    lstSortRuleList.add("N/S");
+                    // OneSize尺码不参与排序(放最后)
+                    lstSortRuleList.add("O/S");
+                    lstSortRuleList.add("OneSize");
+
+                    // 给sku排序一下
+                    for (CmsCodePropBean cmsCodePropBean : workload.getCmsModelProp().getCmsCodePropBeanList()) {
+                        // 复制一份出来
+                        List<CmsSkuPropBean> multiValueCopy = cmsCodePropBean.getCmsSkuPropBeanList();
+                        // 新做的一份
+                        List<CmsSkuPropBean> multiValueNew = new ArrayList<>();
+
+                        for (String strValue : lstSortRuleList) {
+                            for (CmsSkuPropBean value : multiValueCopy) {
+                                String valueCheck = value.getProp(CmsFieldEnum.CmsSkuEnum.size);
+
+                                if (strValue.equals(valueCheck)) {
+                                    multiValueNew.add(value);
+                                }
+                            }
+                        }
+
+                        // 把剩下不在排序表里的例外的情况,放到最后面
+                        for (CmsSkuPropBean value : multiValueCopy) {
+                            String valueCheck = value.getProp(CmsFieldEnum.CmsSkuEnum.size);
+
+                            if (!lstSortRuleList.contains(valueCheck)) {
+                                multiValueNew.add(value);
+                            }
+                        }
+
+                        cmsCodePropBean.setCmsSkuPropBeanList(multiValueNew);
+
+                    }
+                    // 20160106 tom 这里增加一段排序 END
                 }
                 //sku
             }

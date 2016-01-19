@@ -57,11 +57,11 @@ public class WmsSyncToJuMeiSubService extends WmsSyncInventoryBaseService {
             req.setBusinessman_code(inventorySynLogBean.getSku());
             req.setEnable_num(String.valueOf(inventorySynLogBean.getQty()));
 
-            $info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步记录：" + new Gson().toJson(req));
+            //$info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步记录：" + new Gson().toJson(req));
 
             res = jumeiService.stockSync(shopBean, req);
 
-            $info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步结果：" + res);
+            //$info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步结果：" + res);
 
         } catch (Exception e) {
             logFailRecord(e, inventorySynLogBean);
