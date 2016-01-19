@@ -13,7 +13,7 @@
 						<div class="form-group">
 							<label  class="col-sm-4 control-label">Promotion Date</label>
 							<div class="col-sm-7 form-inline">
-								<div class="input-group col-sm-5"><input type="text" class="form-control inherited" ng-model="vm.promotion.activityStart" disabled></div>
+								<div class="input-group col-sm-5"><input type="text" class="form-control inherited" ng-model="vm.promotion.activityStart" disabled></div>&nbsp;~&nbsp;
 								<div class="input-group col-sm-6"><input type="text" class="form-control inherited" ng-model="vm.promotion.activityEnd" disabled></div>
 							</div>
 						</div><!-- .form-group -->
@@ -100,8 +100,8 @@
 									</ul>
 								</div>
 							</td>
-							<td class="mfb-xxt text-left">
-								<button popover="LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20" popover-title="Inventory" type="button" popover-placement="left" class="btn btn-default btn-xs">1200</button>
+							<td class="mfb-xxt text-left"><!-- TODO 目前库存是假的,而且显示code库存未实现 popover="LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20" popover-title="Inventory"  -->
+								<button type="button" popover-placement="left" class="btn btn-default btn-xs">0</button>
 							</td>
 							<td class="mfb-xxt text-center">
 								<button popover="Sale Price: {{group.salePriceMin != group.salePriceMax?group.salePriceMin +' - '+ group.salePriceMax:group.salePriceMin}}" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-default btn-xs">{{group.promotionPriceMin != group.promotionPriceMax?group.promotionPriceMin +' - '+ group.promotionPriceMax:group.promotionPriceMax}}</button>
@@ -111,14 +111,14 @@
 							</td>
 							<td class="mfb-xxt text-left">{{(group.promotionPriceMin/group.salePriceMin*100).toFixed(1)}}折</td>
 							<td class="mfb-xxt text-left">
-								<div class="table_main">
-									<ul>
-										<li>Size Type：Women</li>
-										<li>Style：欧美</li>
-									</ul>
+								<div class="table_main"><!-- TODO 未实现 -->
+									<!--<ul>-->
+										<!--<li>Size Type：Women</li>-->
+										<!--<li>Style：欧美</li>-->
+									<!--</ul>-->
 								</div>
 							</td>
-							<td class="mfb-xxt text-left">
+							<td class="mfb-xxt text-left"><!-- TODO 显示产品的publish时间未实现-->
 								<small popover-trigger="mouseenter" popover-placement="left">
 									<div class="table_main">
 										<ul>
@@ -173,8 +173,8 @@
 								<img src="http://image.sneakerhead.com/is/image/sneakerhead/{{code.image}}" alt="{{code.productName}}" class="img-circle pull-left m-r"/>
 							</td>
 							<td class="mfb-xxt text-center">{{(code.promotionPrice/code.msrp*100).toFixed(1)}}折</td>
-							<td class="mfb-xxt text-center">
-								<button popover="LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20" popover-title="Inventory" type="button" popover-placement="left" class="btn btn-default btn-xs">1200</button>
+							<td class="mfb-xxt text-center"><!-- TODO 未实现 popover="LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20" popover-title="Inventory"  -->
+								<button type="button" popover-placement="left" class="btn btn-default btn-xs">0</button>
 							</td>
 							<td class="mfb-xxt text-center">
 								<input type="text" class="col-sm-1 form-control" ng-model = "code.promotionPrice">
@@ -183,18 +183,18 @@
 							<td class="mfb-xxt text-center">
 								{{code.msrp}}</td>
 							<td class="mfb-xxs text-left">
-								<div class="table_main">
-									<ul>
-										<li>产地：中国</li>
-										<li>颜色：红色</li>
-										<li>材质：PU</li>
-										<li>风格：欧美</li>
-									</ul>
+								<div class="table_main"><!-- TODO 未实现 -->
+									<!--<ul>-->
+										<!--<li>产地：中国</li>-->
+										<!--<li>颜色：红色</li>-->
+										<!--<li>材质：PU</li>-->
+										<!--<li>风格：欧美</li>-->
+									<!--</ul>-->
 								</div>
 							</td>
 							<td class="mfb-xxt text-center">{{code.skuCount}}</td>
 							<td class="mfb-xxt text-left">
-							<small  popover-trigger="mouseenter" popover-placement="left">
+							<small  popover-trigger="mouseenter" popover-placement="left"><!-- TODO 未实现pulishtime -->
 								<div class="table_main">
 									<ul>
 										<li>Created Time</li>
