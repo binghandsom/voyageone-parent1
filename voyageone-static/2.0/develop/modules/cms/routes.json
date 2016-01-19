@@ -76,8 +76,8 @@
   },
   "setting_platform_mapping_prop": {
     "hash": "/setting/platform_mapping/:cartId/:mainCategoryId",
-    "templateUrl": "views/setting/platform_mapping/prop.tpl.html",
-    "controllerUrl": "modules/cms/views/setting/platform_mapping/prop.ctl",
+    "templateUrl": "views/setting/platform_mapping/prop.list.tpl.html",
+    "controllerUrl": "modules/cms/views/setting/platform_mapping/prop.list.ctl",
     "controller": "platformPropMappingController"
   },
   "system_category": {

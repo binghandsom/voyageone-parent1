@@ -5,8 +5,10 @@ import com.taobao.top.schema.factory.SchemaReader;
 import com.taobao.top.schema.field.Field;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.cms.service.bean.*;
+import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformMappingDao;
+import com.voyageone.cms.service.model.CmsMtCategorySchemaModel;
 import com.voyageone.cms.service.model.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.cms.service.model.CmsMtPlatformMappingModel;
 import com.voyageone.ims.rule_expression.RuleExpression;
@@ -39,11 +41,15 @@ public class CmsPlatformPropMappingService extends BaseAppService {
     @Autowired
     private CmsMtPlatformMappingDao platformMappingDao;
 
+    @Autowired
+    private CmsMtCategorySchemaDao categorySchemaDao;
+
     /**
      * 获取平台类目和 Mapping 的所有信息
+     *
      * @param categoryId 主数据类目 ID
-     * @param cartId 平台 ID
-     * @param user 用户配置
+     * @param cartId     平台 ID
+     * @param user       用户配置
      * @return 携带所有信息的 Map 包含: categorySchema / properties / mapping
      * @throws TopSchemaException
      */
@@ -51,6 +57,9 @@ public class CmsPlatformPropMappingService extends BaseAppService {
 
         CmsMtPlatformMappingModel platformMappingModel =
                 platformMappingDao.getMappingByMainCatId(user.getSelChannelId(), cartId, categoryId);
+
+        if (platformMappingModel == null)
+            throw new BusinessException("没找到 Mapping");
 
         CmsMtPlatformCategorySchemaModel platformCatSchemaModel =
                 platformCategorySchemaDao.getPlatformCatSchemaModel(platformMappingModel.getPlatformCategoryId(), cartId);
@@ -73,9 +82,20 @@ public class CmsPlatformPropMappingService extends BaseAppService {
     }
 
     /**
+     * 获取主数据类目 Schema
+     * @param categoryId 主数据类目
+     * @return CmsMtCategorySchemaModel
+     */
+    public CmsMtCategorySchemaModel getMainCategorySchema(String categoryId) {
+
+        return categorySchemaDao.getMasterSchemaModelByCatId(categoryId);
+    }
+
+    /**
      * 计算 MappingBean 是否匹配的结果
+     *
      * @param mappingBean 任意类型的 Mapping
-     * @return 不同类型返回不同,分别为 Boolean / Map / List[Map]
+     * @return 不同类型返回不同, 分别为 Boolean / Map / List[Map]
      */
     private Object getMatched(MappingBean mappingBean) {
 

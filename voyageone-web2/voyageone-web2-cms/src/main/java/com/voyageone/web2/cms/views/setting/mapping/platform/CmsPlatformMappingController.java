@@ -42,7 +42,7 @@ public class CmsPlatformMappingController extends CmsController {
         return success(platformMappingService.getOtherPlatformMapping(mainCategoryId, getUser()));
     }
 
-    @RequestMapping(CmsUrlConstants.MAPPING.PLATFORM.GET_PLATFORM_CATEGORIES)
+//    @RequestMapping(CmsUrlConstants.MAPPING.PLATFORM.GET_PLATFORM_CATEGORIES)
     public AjaxResponse getPlatformCategories(@RequestBody Map<String, Integer> params) {
 
         Integer cartId = params.get("cartId");
@@ -70,5 +70,13 @@ public class CmsPlatformMappingController extends CmsController {
         Integer cartId = (Integer) params.get("cartId");
 
         return success(platformPropMappingService.getPlatformCategory(categoryId, cartId, getUser()));
+    }
+
+    @RequestMapping(CmsUrlConstants.MAPPING.PLATFORM.GET_MAIN_CATEGORY_SCHEMA)
+    public AjaxResponse getMainCategorySchema(@RequestBody Map<String, String> params) {
+
+        String mainCategoryId = params.get("mainCategoryId");
+
+        return success(platformPropMappingService.getMainCategorySchema(mainCategoryId));
     }
 }

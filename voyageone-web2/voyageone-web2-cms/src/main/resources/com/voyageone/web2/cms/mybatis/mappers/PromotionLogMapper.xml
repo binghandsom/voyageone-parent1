@@ -60,7 +60,7 @@
             INNER JOIN Synship.ct_cart c
             ON p.cart_id = c.cart_id) b
         ON a.promotion_id = b.promotion_id
-        WHERE a.product_code = #{productCode} AND b.channel_id = #{channelId}
+        WHERE a.product_code = #{code} AND b.channel_id = #{channelId}
         LIMIT #{offset}, #{rows}
     </select>
 
@@ -82,6 +82,6 @@
             INNER JOIN Synship.ct_cart c
             ON p.cart_id = c.cart_id) b
         ON a.promotion_id = b.promotion_id
-        WHERE a.product_code = #{productCode} AND b.channel_id = #{channelId}
+        WHERE a.product_code = #{code} AND b.channel_id = #{channelId}
     </select>
 </mapper>

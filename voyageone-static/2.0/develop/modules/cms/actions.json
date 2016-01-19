@@ -57,7 +57,8 @@
         "getOtherMappingPath": "getOtherMappingCategoryPath",
         "getPlatformCategories": "getPlatformCategories",
         "setPlatformMapping": "setPlatformMapping",
-        "getPlatformCategory": "getPlatformCategory"
+        "getPlatformCategory": "getPlatformCategory",
+        "getMainCategorySchema": "getMainCategorySchema"
       }
     },
     "pop": {

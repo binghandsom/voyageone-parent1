@@ -32,10 +32,11 @@
                 <div class="col-sm-12">
                     <div class="panel panel-default">
                         <form class="form-horizontal">
-                            <div class="container-fluid">
+                            <div class="container-fluid" ng-controller="popupCtrl">
                                 <div ng-repeat="(k, property) in ctrl.properties track by property.id"
                                      ng-if="!property.hide"
-                                     platform-prop="property"></div>
+                                     platform-prop="property"
+                                     platform-prop-popup="ctrl.popup(property, ppPlatformMapping)"></div>
                             </div>
                         </form>
                     </div>
@@ -43,26 +44,4 @@
             </div>
         </tab>
     </tabset>
-    <script type="text/ng-template" id="platform.p.item.d.html">
-        <div class="col-sm-12 platform_mapping_bg">
-            <div class="col-sm-3 text-left">
-                <i class="fa {{::property.headClass}}"></i>
-                <span>{{::property.name||property.id}}</span>
-                <span>{{::property.required ? '(必填)' : ''}}</span>
-            </div>
-            <div class="pull-right">
-                <span class="{{::property.iconClass}}">{{::property.type}}</span>
-            </div>
-            <div class="col-sm-3 pull-center">
-                <button class="badge badge-empty"
-                        ng-controller="popupCtrl"
-                        ng-click="openColumnMappingSetting()">值匹配</button>
-            </div>
-        </div>
-        <div class="m-l-xl"
-             ng-repeat="child in property.fieldList track by child.id"
-             ng-if="!child.hide"
-             platform-prop="child"
-             platform-prop-parent="property"></div>
-    </script>
 </div>

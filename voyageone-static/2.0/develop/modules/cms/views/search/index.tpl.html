@@ -234,11 +234,11 @@
 					</button>
 					<ul class="dropdown-menu" role="menu" ng-if="vm.masterData.promotionList.length">
 						<li ng-repeat="promotion in vm.masterData.promotionList">
-							<a href ng-click="openTagPromotion('md', promotion, vm.currTab === 'group' ? vm.groupSelList.selList : vm.productSelList.selList)">{{promotion.promotionName}}|{{promotion.cartName}}</a>
+							<a href ng-click="openTagPromotion('md', promotion, vm.currTab === 'group' ? vm.groupSelList.selList : vm.productSelList.selList, search)">{{promotion.promotionName}}|{{promotion.cartName}}</a>
 						</li>
 					</ul>
 				</div>
-				<button class="btn btn-default" ng-click="openUpdateProperties('md', vm.currTab === 'group' ? vm.groupSelList.selList : vm.productSelList.selList)"><i class="fa fa-pencil-square"></i>&nbsp;{{'TXT_BATCH_UPDATE_ATTRIBUTE' | translate}}</button>
+				<button class="btn btn-default" ng-click="openUpdateProperties('md', vm.currTab === 'group' ? vm.groupSelList.selList : vm.productSelList.selList, search)"><i class="fa fa-pencil-square"></i>&nbsp;{{'TXT_BATCH_UPDATE_ATTRIBUTE' | translate}}</button>
 				<!-- TODO 暂时未实现 -->
 				<!--<button class="btn btn-default" ng-click="openNewCategory('lg')"><i class="fa fa-th-list"></i>&nbsp;{{'TXT_CHANGE_CATEGORY' | translate}}</button>-->
 			</div><!-- /right-btn -->

@@ -3,57 +3,40 @@
  */
 
 define(function () {
-    /**
-     * @typedef {string} FieldType 枚举实例的类型
-     */
     return {
         /**
-         * @description
-         *
          * 文本输入
-         * @type {FieldType}
+         * @type {string}
          */
         "input": "INPUT",
         /**
-         * @description
-         *
          * 多行文本输入
-         * @type {FieldType}
+         * @type {string}
          */
         "multiInput": "MULTIINPUT",
         /**
-         * @description
-         *
          * 单选
-         * @type {FieldType}
+         * @type {string}
          */
         "singleCheck": "SINGLECHECK",
         /**
-         * @description
-         *
          * 多选
-         * @type {FieldType}
+         * @type {string}
          */
         "multiCheck": "MULTICHECK",
         /**
-         * @description
-         *
          * 组合属性(属性与值一对一)
-         * @type {FieldType}
+         * @type {string}
          */
         "complex": "COMPLEX",
         /**
-         * @description
-         *
          * 复合属性(属性与值一对多)
-         * @type {FieldType}
+         * @type {string}
          */
         "multiComplex": "MULTICOMPLEX",
         /**
-         * @description
-         *
          * 文本
-         * @type {FieldType}
+         * @type {string}
          */
         "label": "LABEL"
     };

@@ -46,20 +46,6 @@ define([
                 "templateUrl": "views/pop/import/index.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/import/index.ctl"
             },
-            "columnMapping": {
-                "templateUrl": "views/pop/columnMapping/index.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/columnMapping/index.ctl",
-                "controller": 'ColumnMappingCtl',
-                "size": 'md'/*
-                 windowClass: 'xxx',
-                 "windowTopClass": "yyy"*/
-            },
-            "columnMappingSetting": {
-                "templateUrl": "views/pop/columnMappingSetting/index.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/columnMappingSetting/index.ctl",
-                "controller": 'ColumnMappingSettingCtl',
-                "size": 'lg'
-            },
             "otherDownload": {
                 "templateUrl": "views/pop/other/download.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/other/download.ctl",
@@ -105,6 +91,29 @@ define([
                 "controller": 'feedPropValuePopupController as ctrl',
                 "backdrop": 'static',
                 "size": 'md'
+            },
+            "platformMapping": {
+                "complex": {
+                    "templateUrl": "views/pop/platformMapping/ppComplex.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/platformMapping/ppComplex.ctl",
+                    "controller": 'complexMappingPopupController as ctrl',
+                    "size": 'md',
+                    "backdrop": "static"
+                },
+                "simple": {
+                    "templateUrl": "views/pop/complexMapping/index.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/complexMapping/index.ctl",
+                    "controller": 'complexMappingPopupController as ctrl',
+                    "size": 'md',
+                    "backdrop": "static"
+                },
+                "multiComplex": {
+                    "templateUrl": "views/pop/multiComplexMapping/index.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/multiComplexMapping/index.ctl",
+                    "controller": 'multiComplexMapping as ctrl',
+                    "size": 'lg',
+                    "backdrop": "static"
+                }
             }
         })
         .controller('popupCtrl', popupCtrl);
@@ -145,10 +154,10 @@ define([
          * @type {openupdateProperties}
          */
         $scope.openUpdateProperties = openUpdateProperties;
-        function openUpdateProperties(viewSize, selList) {
+        function openUpdateProperties(viewSize, selList, fnInitial) {
             require([popActions.prop_change.controllerUrl], function () {
                 if (selList && selList.length) {
-                    $modal.open({
+                    var modalInstance = $modal.open({
                         templateUrl: popActions.prop_change.templateUrl,
                         controller: 'popPropChangeCtl',
                         size: viewSize,
@@ -162,6 +171,12 @@ define([
                             }
                         }
                     });
+
+                    // 回调主页面的刷新操作
+                    modalInstance.result.then(function(){
+                        fnInitial();
+                    })
+
                 } else {
                     alert($translate.instant('TXT_COM_MSG_NO_ROWS_SELECT'));
                 }
@@ -173,10 +188,10 @@ define([
          * @type {openTagPromotion}
          */
         $scope.openTagPromotion = openTagPromotion;
-        function openTagPromotion(viewSize, promotion, selList) {
+        function openTagPromotion(viewSize, promotion, selList, fnInitial) {
             require([popActions.tag.promotion.controllerUrl], function () {
                 if (selList && selList.length) {
-                    $modal.open({
+                    var modalInstance = $modal.open({
                         templateUrl: popActions.tag.promotion.templateUrl,
                         controller: 'popTagPromotionCtl',
                         size: viewSize,
@@ -190,6 +205,11 @@ define([
                             }
                         }
                     });
+
+                    // 回调主页面的刷新操作
+                    modalInstance.result.then(function(){
+                        fnInitial();
+                    })
                 } else {
                     alert($translate.instant('TXT_COM_MSG_NO_ROWS_SELECT'));
                 }
@@ -295,10 +315,6 @@ define([
             return openModel(popActions.other.platform, context);
         };
 
-        $scope.openColumnMapping = function (context) {
-            return openModel(popActions.columnMapping, context);
-        };
-
         $scope.openSystemCategory = function (context) {
             return openModel(popActions.system.category, context);
         };
@@ -315,8 +331,30 @@ define([
             return openModel(popActions.feedValue, context);
         };
 
-        $scope.openColumnMappingSetting = function (context) {
-            return openModel(popActions.columnMappingSetting, context);
+        $scope.ppPlatformMapping = {
+            /**
+             * Complex Mapping 设定弹出框的上下文参数
+             * @typedef {object} ComplexMappingPopupContext
+             * @property {string} platformCategoryPath 平台类目路径
+             * @property {string} mainCategoryId 主数据类目 ID
+             */
+
+            /**
+             * 弹出 Complex 属性的值匹配窗
+             * @param {ComplexMappingPopupContext} context 上下文参数
+             * @returns {Promise}
+             */
+            complex: function (context) {
+                return openModel(popActions.platformMapping.complex, context);
+            },
+
+            simple: function (context) {
+                return openModel(popActions.platformMapping.simple, context);
+            },
+
+            multiComplex: function (context) {
+                return openModel(popActions.platformMapping.multiComplex, context);
+            }
         };
     }
 });

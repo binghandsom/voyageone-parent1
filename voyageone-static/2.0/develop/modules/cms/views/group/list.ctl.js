@@ -41,9 +41,9 @@ define([
 
             groupListService.getProductList($routeParams.id, $scope.vm.productPageOption)
                 .then(function (res) {
-                    this.vm.productList = res.data.productList;
-                    this.vm.productPageOption.total = res.data.productListTotal;
-                    this.vm.productIds = res.data.productIds;
+                    $scope.vm.productList = res.data.productList;
+                    $scope.vm.productPageOption.total = res.data.productListTotal;
+                    $scope.vm.productIds = res.data.productIds;
                 });
         }
 
