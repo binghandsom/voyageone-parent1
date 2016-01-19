@@ -8,9 +8,16 @@ import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.CmsPromotionProductPriceBean;
 import com.voyageone.web2.cms.dao.*;
 import com.voyageone.web2.cms.model.*;
-import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
-import com.voyageone.web2.sdk.api.domain.CmsBtTagModel;
+import com.voyageone.web2.cms.wsdl.dao.CmsPromotionCodeDao;
+import com.voyageone.web2.cms.wsdl.dao.CmsPromotionModelDao;
+import com.voyageone.web2.cms.wsdl.dao.CmsPromotionSkuDao;
+import com.voyageone.web2.cms.wsdl.dao.CmsPromotionTaskDao;
+import com.voyageone.web2.sdk.api.VoApiDefaultClient;
+import com.voyageone.web2.sdk.api.domain.*;
 import com.voyageone.web2.cms.views.pop.tag.promotion.CmsPromotionSelectService;
+import com.voyageone.web2.sdk.api.request.PromotionDetailAddRequest;
+import com.voyageone.web2.sdk.api.request.PromotionDetailDeleteRequest;
+import com.voyageone.web2.sdk.api.request.PromotionDetailUpdateRequest;
 import com.voyageone.web2.sdk.api.service.ProductSdkClient;
 import com.voyageone.web2.sdk.api.service.ProductTagClient;
 import org.apache.poi.ss.usermodel.Row;
@@ -38,13 +45,13 @@ public class CmsPromotionDetailService extends BaseAppService {
     private ProductTagClient productTagClient;
 
     @Autowired
-    CmsPromotionModelDao cmsPromotionModelDao;
+    private CmsPromotionModelDao cmsPromotionModelDao;
 
     @Autowired
-    CmsPromotionCodeDao cmsPromotionCodeDao;
+    private CmsPromotionCodeDao cmsPromotionCodeDao;
 
     @Autowired
-    CmsPromotionSkuDao cmsPromotionSkuDao;
+    private CmsPromotionSkuDao cmsPromotionSkuDao;
 
     @Autowired
     private CmsPromotionService cmsPromotionService;
@@ -57,6 +64,10 @@ public class CmsPromotionDetailService extends BaseAppService {
 
     @Autowired
     private CmsPromotionSelectService cmsPromotionSelectService;
+
+    @Autowired
+    protected VoApiDefaultClient voApiClient;
+
 
     private static final int codeCellNum = 1;
     private static final int priceCellNum = 2;
@@ -93,40 +104,23 @@ public class CmsPromotionDetailService extends BaseAppService {
             boolean errflg = false;
             simpleTransaction.openTransaction();
             try {
-
                 CmsBtTagModel tagId = searchTag(tags, item.getTag());
                 if (tagId == null) {
                     throw (new Exception("Tag不存在"));
                 }
 
-                // 获取Product信息
-                CmsBtProductModel productInfo = ProductGetClient.getProductByCode(channelId, item.getCode());
+                PromotionDetailAddRequest request=new PromotionDetailAddRequest();
+                request.setModifier(operator);
+                request.setChannelId(channelId);
+                request.setCartId(cartId);
+                request.setProductCode(item.getCode());
+                request.setPromotionId(promotionId);
+                request.setPromotionPrice(item.getPrice());
+                request.setTagId(tagId.getTagId());
+                request.setTagPath(tagId.getTagPath());
 
-                // 插入cms_bt_promotion_model表
-                CmsBtPromotionGroupModel cmsBtPromotionGroupModel = new CmsBtPromotionGroupModel(productInfo, cartId, promotionId, operator);
-                cmsPromotionModelDao.insertPromotionModel(cmsBtPromotionGroupModel);
+                voApiClient.execute(request);
 
-                // 插入cms_bt_promotion_code表
-                CmsBtPromotionCodeModel cmsBtPromotionCodeModel = new CmsBtPromotionCodeModel(productInfo, cartId, promotionId, operator);
-                cmsBtPromotionCodeModel.setPromotionPrice(item.getPrice());
-                cmsBtPromotionCodeModel.setTagId(tagId.getTagId());
-                if (cmsPromotionCodeDao.updatePromotionCode(cmsBtPromotionCodeModel) == 0) {
-                    cmsPromotionCodeDao.insertPromotionCode(cmsBtPromotionCodeModel);
-                }
-
-                productInfo.getSkus().forEach(sku -> {
-                    CmsBtPromotionSkuModel cmsBtPromotionSkuModel = new CmsBtPromotionSkuModel(productInfo, cartId, promotionId, operator, sku.getSkuCode(), 0);
-                    if (cmsPromotionSkuDao.updatePromotionSku(cmsBtPromotionSkuModel) == 0) {
-                        cmsPromotionSkuDao.insertPromotionSku(cmsBtPromotionSkuModel);
-                    }
-                });
-
-                // tag写入数据库
-                List<Long> prodIds = new ArrayList<>();
-                prodIds.add(productInfo.getProdId());
-                //liang change
-                //cmsPromotionSelectService.add(prodIds, channelId, tagId.getTagPath(), operator);
-                productTagClient.addTagProducts(channelId, tagId.getTagPath(), prodIds, operator);
             } catch (Exception e) {
                 simpleTransaction.rollback();
                 response.get("fail").add(item.getCode());
@@ -314,37 +308,24 @@ public class CmsPromotionDetailService extends BaseAppService {
      * @param operator           操作者
      */
     public void updatePromotionProduct(CmsBtPromotionCodeModel promotionCodeModel, String operator) {
-        if (cmsPromotionCodeDao.updatePromotionCode(promotionCodeModel) != 0) {
-            CmsBtPromotionTaskModel cmsBtPromotionTask = new CmsBtPromotionTaskModel(promotionCodeModel.getPromotionId(), PromotionTypeEnums.Type.TEJIABAO.getTypeId(), promotionCodeModel.getProductCode(), operator);
-            cmsPromotionTaskDao.updatePromotionTask(cmsBtPromotionTask);
-        }
+        PromotionDetailUpdateRequest request=new PromotionDetailUpdateRequest();
+        request.setPromotionCodeModel(promotionCodeModel);
+        request.setModifier(operator);
+        voApiClient.execute(request);
     }
 
+    /**
+     * 删除
+     * @param promotionModes promotionModes
+     * @param channelId channelId
+     * @param operator operator
+     */
     public void delPromotionModel(List<CmsBtPromotionGroupModel> promotionModes, String channelId, String operator) {
-        simpleTransaction.openTransaction();
-        try {
-            for (CmsBtPromotionGroupModel item : promotionModes) {
-                cmsPromotionModelDao.deleteCmsPromotionModel(item);
-                HashMap<String, Object> param = new HashMap<>();
-                param.put("promotionId", item.getPromotionId());
-                param.put("modelId", item.getModelId());
-
-                List<CmsBtPromotionCodeModel> codes = cmsPromotionCodeDao.getPromotionCodeList(param);
-                codes.forEach(code -> {
-                    List<Long> poIds = new ArrayList<>();
-                    poIds.add(code.getProductId());
-                    //liang change
-                    //cmsPromotionSelectService.remove(poIds, channelId, code.getTagPath(), operator);
-                    productTagClient.removeTagProducts(channelId, code.getTagPath(), poIds, operator);
-                });
-                cmsPromotionCodeDao.deletePromotionCodeByModelId(item.getPromotionId(), item.getModelId());
-                cmsPromotionSkuDao.deletePromotionSkuByModelId(item.getPromotionId(), item.getModelId());
-            }
-        } catch (Exception e) {
-            simpleTransaction.rollback();
-            throw e;
-        }
-        simpleTransaction.commit();
+        PromotionDetailDeleteRequest request=new PromotionDetailDeleteRequest();
+        request.setPromotionModes(promotionModes);
+        request.setChannelId(channelId);
+        request.setModifier(operator);
+        voApiClient.execute(request);
     }
 
     public void delPromotionCode(List<CmsBtPromotionCodeModel> promotionModes, String channelId, String operator) {

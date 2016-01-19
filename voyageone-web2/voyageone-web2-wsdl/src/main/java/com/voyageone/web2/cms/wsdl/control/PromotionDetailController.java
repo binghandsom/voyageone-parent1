@@ -1,6 +1,6 @@
 package com.voyageone.web2.cms.wsdl.control;
 
-import com.voyageone.web2.cms.wsdl.service.CmsPromotionDetailService;
+import com.voyageone.web2.cms.wsdl.service.PromotionDetailService;
 import com.voyageone.web2.sdk.api.request.PromotionDetailAddRequest;
 import com.voyageone.web2.sdk.api.request.PromotionDetailDeleteRequest;
 import com.voyageone.web2.sdk.api.request.PromotionDetailUpdateRequest;
@@ -21,23 +21,23 @@ import org.springframework.web.bind.annotation.RestController;
 public class PromotionDetailController {
 
     @Autowired
-    private CmsPromotionDetailService cmsPromotionDetailService;
+    private PromotionDetailService promotionDetailService;
 
     @RequestMapping("insert")
     public PromotionDetailPutResponse insert(
             @RequestBody PromotionDetailAddRequest promotionDetailAddRequest) {
-        return cmsPromotionDetailService.insert(promotionDetailAddRequest);
+        return promotionDetailService.insert(promotionDetailAddRequest);
     }
 
     @RequestMapping("update")
     public PromotionDetailPutResponse update(
             @RequestBody PromotionDetailUpdateRequest promotionDetailUpdateRequest) {
-        return cmsPromotionDetailService.update(promotionDetailUpdateRequest);
+        return promotionDetailService.update(promotionDetailUpdateRequest);
     }
 
     @RequestMapping("remove")
     public PromotionDetailPutResponse remove(
             @RequestBody PromotionDetailDeleteRequest promotionDetailDeleteRequest) {
-        return cmsPromotionDetailService.remove(promotionDetailDeleteRequest);
+        return promotionDetailService.remove(promotionDetailDeleteRequest);
     }
 }

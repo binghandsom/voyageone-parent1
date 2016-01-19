@@ -27,7 +27,7 @@ import java.util.List;
  * @since 2.0.0
  */
 @Service
-public class CmsPromotionDetailService extends BaseService {
+public class PromotionDetailService extends BaseService {
 
     @Autowired
     private CmsPromotionModelDao cmsPromotionModelDao;
