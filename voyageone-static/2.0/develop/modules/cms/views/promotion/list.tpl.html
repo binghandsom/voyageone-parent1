@@ -45,10 +45,7 @@
 							<div class="col-sm-8">
 								<select class="form -control" ng-model="searchInfo.cartId">
 									<option value=''>All</option>
-									<option value=20>天猫</option>
-									<option value=23>天猫国际</option>
-									<option value=27>聚美</option>
-									<option value=24>京东</option>
+									<option ng-repeat="cart in vm.cartList" value={{cart.cartId}}>{{cart.cTypeId}}</option>
 								</select>
 							</div>
 						</div>
