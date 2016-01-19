@@ -28,6 +28,16 @@ public class PromotionsGetRequest extends VoApiListRequest<PromotionsGetResponse
 	/** promotionId */
 	private Integer promotionId;
 
+	private String promotionName;
+
+	private Integer cartId;
+
+	private String promotionType;
+
+	private String createdStart;
+
+	private String createdEnd;
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -71,5 +81,45 @@ public class PromotionsGetRequest extends VoApiListRequest<PromotionsGetResponse
 	@Override
 	public void requestCheck() throws ApiRuleException {
 
+	}
+
+	public String getPromotionName() {
+		return promotionName;
+	}
+
+	public void setPromotionName(String promotionName) {
+		this.promotionName = promotionName;
+	}
+
+	public Integer getCartId() {
+		return cartId;
+	}
+
+	public void setCartId(Integer cartId) {
+		this.cartId = cartId;
+	}
+
+	public String getPromotionType() {
+		return promotionType;
+	}
+
+	public void setPromotionType(String promotionType) {
+		this.promotionType = promotionType;
+	}
+
+	public String getCreatedStart() {
+		return createdStart;
+	}
+
+	public void setCreatedStart(String createdStart) {
+		this.createdStart = createdStart;
+	}
+
+	public String getCreatedEnd() {
+		return createdEnd;
+	}
+
+	public void setCreatedEnd(String createdEnd) {
+		this.createdEnd = createdEnd;
 	}
 }
