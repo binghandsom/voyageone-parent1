@@ -43,8 +43,6 @@ public class SchemaJsonReader {
      */
     public static List<Field> readJsonForList(List<Map<String, Object>> rootList) {
         List<Field> fieldList = SchemaFactory.createEmptyFieldList();
-        Iterator<Map<String, Object>> fieldMapListIt = rootList.iterator();
-
         for (Map<String, Object> fieldElm : rootList) {
             Field field = mapToField(fieldElm);
             fieldList.add(field);
@@ -83,7 +81,7 @@ public class SchemaJsonReader {
         } else {
             String fieldId = (String)fieldMap.get("id");
             if(StringUtil.isEmpty(fieldId)) {
-                throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_30001, (String)null);
+                throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_30001, null);
             } else {
                 String fieldType = (String)fieldMap.get("type");
                 if(StringUtil.isEmpty(fieldType)) {
@@ -138,7 +136,7 @@ public class SchemaJsonReader {
                 if(StringUtil.isEmpty(ruleValue)) {
                     throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_31002, fieldId);
                 } else {
-                    Rule rule = null;
+                    Rule rule;
                     RuleTypeEnum ruleEnum = RuleTypeEnum.getEnum(ruleName);
                     if(ruleEnum != null) {
                         rule = SchemaFactory.createRule(ruleEnum);
@@ -308,6 +306,11 @@ public class SchemaJsonReader {
         if (fieldMap.containsKey("isDisplay")) {
             field.setIsDisplay((int) fieldMap.get("isDisplay"));
         }
+        String fieldValueTypeStr = (String)fieldMap.get("fieldValueType");
+        if(fieldValueTypeStr != null) {
+            FieldValueTypeEnum fieldValueTypeEnum = FieldValueTypeEnum.getEnum(fieldValueTypeStr);
+            field.setFieldValueType(fieldValueTypeEnum);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -355,12 +358,6 @@ public class SchemaJsonReader {
                 inputField.setValue(valueStr);
             }
 
-            String fieldValueTypeStr = (String)fieldMap.get("fieldValueType");
-            if(fieldValueTypeStr != null) {
-                FieldValueTypeEnum fieldValueTypeEnum = FieldValueTypeEnum.getEnum(fieldValueTypeStr);
-                inputField.setFieldValueType(fieldValueTypeEnum);
-            }
-
             return inputField;
         }
     }
@@ -403,12 +400,6 @@ public class SchemaJsonReader {
                 Map<String, Object> labelGroupMap = (Map<String, Object>)fieldMap.get("labelGroup");
                 LabelGroup labelGroup = mapToLabelGroup(labelGroupMap, fieldId);
                 labelField.setLabelGroup(labelGroup);
-            }
-
-            String fieldValueTypeStr = (String)fieldMap.get("fieldValueType");
-            if(fieldValueTypeStr != null) {
-                FieldValueTypeEnum fieldValueTypeEnum = FieldValueTypeEnum.getEnum(fieldValueTypeStr);
-                labelField.setFieldValueType(fieldValueTypeEnum);
             }
 
             return labelField;
@@ -470,12 +461,6 @@ public class SchemaJsonReader {
                 }
             }
 
-            String fieldValueTypeStr = (String)fieldMap.get("fieldValueType");
-            if(fieldValueTypeStr != null) {
-                FieldValueTypeEnum fieldValueTypeEnum = FieldValueTypeEnum.getEnum(fieldValueTypeStr);
-                multiInputField.setFieldValueType(fieldValueTypeEnum);
-            }
-
             return multiInputField;
         }
     }
@@ -534,12 +519,6 @@ public class SchemaJsonReader {
                 value3.setId((String)valueMap.get("id"));
                 value3.setValue((String)valueMap.get("value"));
                 singleCheckField.setValue(value3);
-            }
-
-            String fieldValueTypeStr = (String)fieldMap.get("fieldValueType");
-            if(fieldValueTypeStr != null) {
-                FieldValueTypeEnum fieldValueTypeEnum = FieldValueTypeEnum.getEnum(fieldValueTypeStr);
-                singleCheckField.setFieldValueType(fieldValueTypeEnum);
             }
 
             return singleCheckField;
@@ -618,12 +597,6 @@ public class SchemaJsonReader {
                 }
             }
 
-            String fieldValueTypeStr = (String)fieldMap.get("fieldValueType");
-            if(fieldValueTypeStr != null) {
-                FieldValueTypeEnum fieldValueTypeEnum = FieldValueTypeEnum.getEnum(fieldValueTypeStr);
-                multiCheckField.setFieldValueType(fieldValueTypeEnum);
-            }
-
             return multiCheckField;
         }
     }
@@ -699,12 +672,6 @@ public class SchemaJsonReader {
                     }
                 }
                 complexField.setComplexValue(defaultComplexValue);
-            }
-
-            String fieldValueTypeStr = (String)fieldMap.get("fieldValueType");
-            if(fieldValueTypeStr != null) {
-                FieldValueTypeEnum fieldValueTypeEnum = FieldValueTypeEnum.getEnum(fieldValueTypeStr);
-                complexField.setFieldValueType(fieldValueTypeEnum);
             }
 
             return complexField;
@@ -790,12 +757,6 @@ public class SchemaJsonReader {
                     }
                     multiComplexField.addComplexValue(complexValue);
                 }
-            }
-
-            String fieldValueTypeStr = (String)fieldMap.get("fieldValueType");
-            if(fieldValueTypeStr != null) {
-                FieldValueTypeEnum fieldValueTypeEnum = FieldValueTypeEnum.getEnum(fieldValueTypeStr);
-                multiComplexField.setFieldValueType(fieldValueTypeEnum);
             }
 
             return multiComplexField;
