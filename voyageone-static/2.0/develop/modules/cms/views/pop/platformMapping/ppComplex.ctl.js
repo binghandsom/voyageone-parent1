@@ -13,7 +13,7 @@ define([
     return cms.controller('complexMappingPopupController', (function () {
 
         /**
-         * Simple / Complex Mapping 弹出框的 Controller
+         * Complex Mapping 弹出框的 Controller
          * @param {ComplexMappingPopupContext} context
          * @param $uibModalInstance
          * @param {PopupPlatformMappingService} ppPlatformMappingService
