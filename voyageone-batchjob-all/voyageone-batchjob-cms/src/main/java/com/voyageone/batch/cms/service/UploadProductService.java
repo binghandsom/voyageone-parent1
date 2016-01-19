@@ -239,6 +239,8 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
 
                 //保存错误的日志
                 CmsBusinessLogModel cmsBusinessLogModel = new CmsBusinessLogModel();
+                cmsBusinessLogModel.setChannelId(workLoadBean.getOrder_channel_id());
+                cmsBusinessLogModel.setCatId(workLoadBean.getCatId());
                 cmsBusinessLogModel.setCartId(workLoadBean.getCart_id());
                 String productId = "";
                 String mainCode = "";
@@ -247,6 +249,14 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                     productId = String.valueOf(mainCmsProductModel.getProdId());
                     mainCode = mainCmsProductModel.getFields().getCode();
                     model = mainCmsProductModel.getFields().getModel();
+                }
+                if (workLoadBean.getMainProduct() != null
+                        && workLoadBean.getMainProduct().getCmsBtProductModel() != null
+                        && workLoadBean.getMainProduct().getCmsBtProductModel().getFields() != null
+                        && workLoadBean.getMainProduct().getCmsBtProductModel().getFields().size() > 0
+                        && workLoadBean.getMainProduct().getCmsBtProductModel().getFields().getProductNameCn() != null
+                        ) {
+                    cmsBusinessLogModel.setProductName(workLoadBean.getMainProduct().getCmsBtProductModel().getFields().getProductNameCn());
                 }
                 cmsBusinessLogModel.setProductId(productId);
                 cmsBusinessLogModel.setCode(mainCode);
