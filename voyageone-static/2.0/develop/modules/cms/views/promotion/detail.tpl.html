@@ -13,7 +13,7 @@
 						<div class="form-group">
 							<label  class="col-sm-4 control-label">Promotion Date</label>
 							<div class="col-sm-7 form-inline">
-								<div class="input-group col-sm-5"><input type="text" class="form-control inherited" ng-model="vm.promotion.activityStart" disabled></div>
+								<div class="input-group col-sm-5"><input type="text" class="form-control inherited" ng-model="vm.promotion.activityStart" disabled></div>&nbsp;~&nbsp;
 								<div class="input-group col-sm-6"><input type="text" class="form-control inherited" ng-model="vm.promotion.activityEnd" disabled></div>
 							</div>
 						</div><!-- .form-group -->
@@ -52,11 +52,12 @@
 			<!--right-btn-->
 			<div class="form-inline m-b-xs pull-right" ng-controller = "popupCtrl">
 				<button class="btn btn-success" ng-click="openImport('md',vm.promotionId)"><i class="fa fa-mail-forward"></i> 批量导入</button>
-				<button class="btn btn-success"><!--ng-click="openOtherProgress('lg')"--><i class="fa fa-mail-reply"></i> 批量导出</button>
+				<!-- TODO 暂时未实现 -->
+				<!--<button class="btn btn-success">&lt;!&ndash;ng-click="openOtherProgress('lg')"&ndash;&gt;<i class="fa fa-mail-reply"></i> 批量导出</button>-->
 				<!--<button class="btn btn-success"><i class="fa fa-refresh"></i> 全部刷新</button>
 				<button class="btn btn-danger"><i class="fa fa-warning"></i> 全部停止</button>-->
 				<button class="btn btn-danger" ng-click="tejiabaoInit()"><i class="fa fa-cny"></i> 批量刷价格</button>
-				<button class="btn btn-danger" ng-click="delSelPromotion()"><i class="fa fa-trash-o"></i> 全部删除</button>
+				<button class="btn btn-danger" ng-click="delSelPromotion()"><i class="fa fa-trash-o"></i> 删除</button>
 			</div><!-- /right-btn -->
 			<!--tab-->
 			<tab>
@@ -86,7 +87,7 @@
 							<tr class="table_bg_gray">
 								<td colspan="4" class="control-label text-left form-inline">
 									<label class="checkbox-inline c-checkbox"><input ng-model="vm.groupSelList.selFlag[group.modelId]" type="checkbox" ng-controller="selectRowsCtrl" ng-click="selectOne(group.modelId, vm.groupSelList, 'modelId')"><span class="fa fa-check"></span></label>
-									<span class="label label-success-new m-r-lg m-l"> 在售 </span> <span class="m-r-lg">Number IID: <a href="/cms2.0/newcms/angular/index.html#/cms/group" class="text-u-l">{{group.numIid}}</a></span> <span>Group Name:<a href="#/product/list" class="Mtext-u-l">{{group.productModel}}</a></span>
+									<span class="label label-success-new m-r-lg m-l"> 在售 </span> <span class="m-r-lg">Number IID: <a ng-href="https://detail.tmall.com/item.htm?id={{group.numIid}}" target="_blank" class="text-u-l">{{group.numIid}}</a></span> <span>Group Name:<a ng-href="#/group/list/{{group.modelId}}" target="_blank" class="Mtext-u-l">{{group.productModel}}</a></span>
 								</td>
 								<td colspan="4" class="text-right">{{group.catPath}}</td>
 							</tr>
@@ -100,8 +101,8 @@
 									</ul>
 								</div>
 							</td>
-							<td class="mfb-xxt text-left">
-								<button popover="LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20" popover-title="Inventory" type="button" popover-placement="left" class="btn btn-default btn-xs">1200</button>
+							<td class="mfb-xxt text-left"><!-- TODO 目前库存是假的,而且显示code库存未实现 popover="LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20" popover-title="Inventory"  -->
+								<button type="button" popover-placement="left" class="btn btn-default btn-xs">0</button>
 							</td>
 							<td class="mfb-xxt text-center">
 								<button popover="Sale Price: {{group.salePriceMin != group.salePriceMax?group.salePriceMin +' - '+ group.salePriceMax:group.salePriceMin}}" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-default btn-xs">{{group.promotionPriceMin != group.promotionPriceMax?group.promotionPriceMin +' - '+ group.promotionPriceMax:group.promotionPriceMax}}</button>
@@ -111,14 +112,14 @@
 							</td>
 							<td class="mfb-xxt text-left">{{(group.promotionPriceMin/group.salePriceMin*100).toFixed(1)}}折</td>
 							<td class="mfb-xxt text-left">
-								<div class="table_main">
-									<ul>
-										<li>Size Type：Women</li>
-										<li>Style：欧美</li>
-									</ul>
+								<div class="table_main"><!-- TODO 未实现 -->
+									<!--<ul>-->
+										<!--<li>Size Type：Women</li>-->
+										<!--<li>Style：欧美</li>-->
+									<!--</ul>-->
 								</div>
 							</td>
-							<td class="mfb-xxt text-left">
+							<td class="mfb-xxt text-left"><!-- TODO 显示产品的publish时间未实现-->
 								<small popover-trigger="mouseenter" popover-placement="left">
 									<div class="table_main">
 										<ul>
@@ -164,7 +165,7 @@
 							<tr class="table_bg_gray">
 								<td colspan="5" class="control-label text-left form-inline">
 									<label class="checkbox-inline c-checkbox"><input type="checkbox" ng-model="vm.codeSelList.selFlag[code.productCode]" type="checkbox" ng-controller="selectRowsCtrl" ng-click="selectOne(code.productCode, vm.codeSelList, 'productCode')"><span class="fa fa-check"></span></label>
-									<span class="label label-success-new m-r-lg m-l"> New </span> <span class="m-r-lg">Product Code: <a href="/cms2.0/newcms/angular/index.html#/cms/product" class="text-u-l">{{code.productCode}}</a></span> <span>Product Name: <a href="#/product/list" class="text-u-l">{{code.productName}}</a></span>
+									<span class="label label-success-new m-r-lg m-l"> New </span> <span class="m-r-lg">Product Code: <a ng-href="https://detail.tmall.com/item.htm?id={{code.numIid}}" target="_blank" class="text-u-l">{{code.productCode}}</a></span> <span>Product Name: <a href="#/product/detail/{{code.productId}}" target="_blank" class="text-u-l">{{code.productName}}</a></span>
 								</td>
 								<th colspan="4" class="text-right">{{code.catPath}}</th>
 							</tr>
@@ -173,8 +174,8 @@
 								<img src="http://image.sneakerhead.com/is/image/sneakerhead/{{code.image}}" alt="{{code.productName}}" class="img-circle pull-left m-r"/>
 							</td>
 							<td class="mfb-xxt text-center">{{(code.promotionPrice/code.msrp*100).toFixed(1)}}折</td>
-							<td class="mfb-xxt text-center">
-								<button popover="LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20" popover-title="Inventory" type="button" popover-placement="left" class="btn btn-default btn-xs">1200</button>
+							<td class="mfb-xxt text-center"><!-- TODO 未实现 popover="LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20" popover-title="Inventory"  -->
+								<button type="button" popover-placement="left" class="btn btn-default btn-xs">0</button>
 							</td>
 							<td class="mfb-xxt text-center">
 								<input type="text" class="col-sm-1 form-control" ng-model = "code.promotionPrice">
@@ -183,18 +184,18 @@
 							<td class="mfb-xxt text-center">
 								{{code.msrp}}</td>
 							<td class="mfb-xxs text-left">
-								<div class="table_main">
-									<ul>
-										<li>产地：中国</li>
-										<li>颜色：红色</li>
-										<li>材质：PU</li>
-										<li>风格：欧美</li>
-									</ul>
+								<div class="table_main"><!-- TODO 未实现 -->
+									<!--<ul>-->
+										<!--<li>产地：中国</li>-->
+										<!--<li>颜色：红色</li>-->
+										<!--<li>材质：PU</li>-->
+										<!--<li>风格：欧美</li>-->
+									<!--</ul>-->
 								</div>
 							</td>
 							<td class="mfb-xxt text-center">{{code.skuCount}}</td>
 							<td class="mfb-xxt text-left">
-							<small  popover-trigger="mouseenter" popover-placement="left">
+							<small  popover-trigger="mouseenter" popover-placement="left"><!-- TODO 未实现pulishtime -->
 								<div class="table_main">
 									<ul>
 										<li>Created Time</li>

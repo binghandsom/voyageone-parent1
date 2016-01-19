@@ -266,9 +266,9 @@ define([
         }
 
         $scope.openpromotion = openpromotion;
-        function openpromotion(viewSize, data) {
+        function openpromotion(viewSize, data, fnInitial) {
             require([popActions.new.controllerUrl], function () {
-                $modal.open({
+                var modalInstance = $modal.open({
                     templateUrl: popActions.new.templateUrl,
                     controller: 'popNewPromotionCtl',
                     size: viewSize,
@@ -278,6 +278,10 @@ define([
                         }
                     }
                 });
+
+                modalInstance.result.then(function(){
+                    fnInitial();
+                })
             });
         }
 

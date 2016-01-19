@@ -6,7 +6,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function () {
 
-    function detailController($scope, promotionService, promotionDetailService, notify, $routeParams, $location) {
+    function detailController($scope, promotionService, promotionDetailService, notify, $routeParams, $location, alert, $translate) {
         pageSize = 5;
         $scope.vm = {
             "promotionId": $routeParams.promotionId,
@@ -154,6 +154,8 @@ define([
                     }, function (err) {
                         notify.warning("fail");
                     })
+                } else {
+                    alert($translate.instant('TXT_COM_MSG_NO_ROWS_SELECT'));
                 }
             }else if($scope.vm.tabIndex == 1){
                 if($scope.vm.codeSelList.selList.length>0) {
@@ -163,6 +165,8 @@ define([
                     }, function (err) {
                         notify.warning("fail");
                     })
+                } else {
+                    alert($translate.instant('TXT_COM_MSG_NO_ROWS_SELECT'));
                 }
             }
 
@@ -178,6 +182,6 @@ define([
         }
     };
 
-    detailController.$inject = ['$scope', 'promotionService', 'promotionDetailService', 'notify', '$routeParams', '$location'];
+    detailController.$inject = ['$scope', 'promotionService', 'promotionDetailService', 'notify', '$routeParams', '$location', 'alert', '$translate'];
     return detailController;
 });

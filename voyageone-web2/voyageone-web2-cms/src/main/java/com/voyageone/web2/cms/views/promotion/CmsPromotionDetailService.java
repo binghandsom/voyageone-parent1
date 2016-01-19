@@ -152,7 +152,7 @@ public class CmsPromotionDetailService extends BaseAppService {
             CmsBtProductModel cmsBtProductModel = ProductGetClient.getProductById(param.get("channelId").toString(), (Long) map.get("productId"));
 
             if (cmsBtProductModel != null) {
-                map.put("image", cmsBtProductModel.getFields().getImages1().get(0).getName());
+                map.put("image", cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
             }
         });
 
@@ -172,7 +172,7 @@ public class CmsPromotionDetailService extends BaseAppService {
             //SDK取得Product 数据
             CmsBtProductModel cmsBtProductModel = ProductGetClient.getProductById(param.get("channelId").toString(), map.getProductId());
             if (cmsBtProductModel != null) {
-                map.setImage(cmsBtProductModel.getFields().getImages1().get(0).getName());
+                map.setImage((String)cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
                 map.setSkuCount(cmsBtProductModel.getSkus().size());
             }
         });
