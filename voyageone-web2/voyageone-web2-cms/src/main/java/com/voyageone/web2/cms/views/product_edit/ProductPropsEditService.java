@@ -70,18 +70,19 @@ public class ProductPropsEditService {
 
         //商品各种状态.
         ProductInfoBean.ProductStatus productStatus = productInfo.getProductStautsInstance();
-        if ("true".equals(productValueModel.getFields().getStatus())){
-            productStatus.setApproveStatus(true);
-        }else {
-            productStatus.setApproveStatus(false);
-        }
+//        if ("true".equals(productValueModel.getFields().getStatus())){
+//            productStatus.setApproveStatus(true);
+//        }else {
+//            productStatus.setApproveStatus(false);
+//        }
+        productStatus.setApproveStatus(productValueModel.getFields().getStatus());
 
-        if ("true".equals(productValueModel.getFields().getTranslateStatus())){
+        if ("1".equals(productValueModel.getFields().getTranslateStatus())){
             productStatus.setTranslateStatus(true);
         }else {
             productStatus.setTranslateStatus(false);
         }
-        if ("true".equals(productValueModel.getFields().getEditStatus())){
+        if ("1".equals(productValueModel.getFields().getEditStatus())){
             productStatus.setEditStatus(true);
         }else {
             productStatus.setEditStatus(false);
@@ -313,7 +314,6 @@ public class ProductPropsEditService {
             cnAtts.put(cnAttsMap.get("key"), cnAttsMap.get("value"));
         }
 
-
         CmsBtProductModel_Feed feedModel = new CmsBtProductModel_Feed();
         feedModel.setOrgAtts(orgAtts);
         feedModel.setCnAtts(cnAtts);
@@ -321,8 +321,14 @@ public class ProductPropsEditService {
 
         List<Field> masterFields = SchemaJsonReader.readJsonForList(masterFieldsList);
 
+        // 获取productStatus
+        Map<String,Object> productStatus = new HashMap<String, Object>();
+        if(requestMap.containsKey("productStatus")) {
+            productStatus = (Map<String,Object>)requestMap.get("productStatus");
+        }
+
         // setComplexValue
-        for (Field field:masterFields){
+        for (Field field: masterFields){
 
             if (field instanceof ComplexField){
                 ComplexField complexField = (ComplexField)field;
@@ -331,6 +337,14 @@ public class ProductPropsEditService {
                 setComplexValue(complexFields,complexValue);
             }
 
+            // 更新productStatus的值
+            if ("status".equals(field.getId())) {
+                ((InputField)field).setValue(productStatus.get("approveStatus").toString());
+            } else if ("translateStatus".equals(field.getId())) {
+                ((InputField)field).setValue(productStatus.get("translateStatus").toString());
+            } else if ("editStatus".equals(field.getId())) {
+                ((InputField)field).setValue(productStatus.get("editStatus").toString());
+            }
         }
 
         CmsBtProductModel_Field masterFieldsValue = new CmsBtProductModel_Field();

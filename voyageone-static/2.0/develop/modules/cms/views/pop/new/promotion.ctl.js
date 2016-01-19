@@ -6,10 +6,11 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popNewPromotionCtl', function ($scope,promotionService,items) {
+    angularAMD.controller('popNewPromotionCtl', function ($scope,promotionService,cartList,items) {
 
         $scope.promotion = {};
         $scope.tejiabao=false;
+        $scope.cartList = cartList;
 
         $scope.initialize  = function () {
             if(items){

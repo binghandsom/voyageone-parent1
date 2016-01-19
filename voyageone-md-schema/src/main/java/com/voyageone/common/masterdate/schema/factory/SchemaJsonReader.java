@@ -1,5 +1,6 @@
 package com.voyageone.common.masterdate.schema.factory;
 
+import com.voyageone.common.masterdate.schema.enums.FieldValueTypeEnum;
 import com.voyageone.common.masterdate.schema.utils.JsonUtil;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.depend.DependExpress;
@@ -42,8 +43,6 @@ public class SchemaJsonReader {
      */
     public static List<Field> readJsonForList(List<Map<String, Object>> rootList) {
         List<Field> fieldList = SchemaFactory.createEmptyFieldList();
-        Iterator<Map<String, Object>> fieldMapListIt = rootList.iterator();
-
         for (Map<String, Object> fieldElm : rootList) {
             Field field = mapToField(fieldElm);
             fieldList.add(field);
@@ -57,8 +56,6 @@ public class SchemaJsonReader {
      */
     public static Map<String, Field> readJsonForMap(List<Map<String, Object>> rootList) {
         Map<String, Field> fieldMap = new HashMap<>();
-        Iterator<Map<String, Object>> fieldMapListIt = rootList.iterator();
-
         for (Map<String, Object> fieldElm : rootList) {
             Field field = mapToField(fieldElm);
             fieldMap.put(field.getId(), field);
@@ -84,7 +81,7 @@ public class SchemaJsonReader {
         } else {
             String fieldId = (String)fieldMap.get("id");
             if(StringUtil.isEmpty(fieldId)) {
-                throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_30001, (String)null);
+                throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_30001, null);
             } else {
                 String fieldType = (String)fieldMap.get("type");
                 if(StringUtil.isEmpty(fieldType)) {
@@ -139,7 +136,7 @@ public class SchemaJsonReader {
                 if(StringUtil.isEmpty(ruleValue)) {
                     throw new TopSchemaException(TopSchemaErrorCodeEnum.ERROR_CODE_31002, fieldId);
                 } else {
-                    Rule rule = null;
+                    Rule rule;
                     RuleTypeEnum ruleEnum = RuleTypeEnum.getEnum(ruleName);
                     if(ruleEnum != null) {
                         rule = SchemaFactory.createRule(ruleEnum);
@@ -308,6 +305,11 @@ public class SchemaJsonReader {
         }
         if (fieldMap.containsKey("isDisplay")) {
             field.setIsDisplay((int) fieldMap.get("isDisplay"));
+        }
+        String fieldValueTypeStr = (String)fieldMap.get("fieldValueType");
+        if(fieldValueTypeStr != null) {
+            FieldValueTypeEnum fieldValueTypeEnum = FieldValueTypeEnum.getEnum(fieldValueTypeStr);
+            field.setFieldValueType(fieldValueTypeEnum);
         }
     }
 

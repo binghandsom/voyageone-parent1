@@ -4,7 +4,10 @@ package com.voyageone.batch.cms.model;
  * Created by Leo on 15-12-21.
  */
 public class CmsBusinessLogModel {
+    private String channelId;
+    private String catId;
     private int cartId;
+    private String productName;
     private String productId;
     private int errType;
     private int status;
@@ -16,6 +19,30 @@ public class CmsBusinessLogModel {
     private String creater;
     private String modified;
     private String modifier;
+
+    public String getChannelId() {
+        return channelId;
+    }
+
+    public void setChannelId(String channelId) {
+        this.channelId = channelId;
+    }
+
+    public String getCatId() {
+        return catId;
+    }
+
+    public void setCatId(String catId) {
+        this.catId = catId;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
 
     public int getCartId() {
         return cartId;

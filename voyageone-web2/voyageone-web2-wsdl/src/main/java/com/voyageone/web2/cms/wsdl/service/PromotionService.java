@@ -50,7 +50,7 @@ public class PromotionService extends BaseService {
 			PromotionPutRequest promotionPutRequest) {
 		promotionPutRequest.check();
 		PromotionsPutResponse response = new PromotionsPutResponse();
-		if (promotionPutRequest.getCmsBtPromotionModel().getPromotionId() > 0) {
+		if (promotionPutRequest.getCmsBtPromotionModel().getPromotionId() != null) {
 			response.setMatchedCount(cmsBtPromotionDao
 					.update(promotionPutRequest.getCmsBtPromotionModel()));
 		} else {

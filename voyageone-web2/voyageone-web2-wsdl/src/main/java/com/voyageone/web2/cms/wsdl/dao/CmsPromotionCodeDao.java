@@ -1,8 +1,7 @@
-package com.voyageone.web2.cms.dao;
+package com.voyageone.web2.cms.wsdl.dao;
 
 import com.voyageone.base.dao.BaseDao;
-import com.voyageone.web2.cms.model.CmsBtPromotionCodeModel;
-import com.voyageone.web2.cms.model.CmsBtPromotionGroupModel;
+import com.voyageone.web2.sdk.api.domain.CmsBtPromotionCodeModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;

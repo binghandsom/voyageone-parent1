@@ -6,13 +6,14 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function () {
 
-    function listController($scope,promotionService,confirm) {
+    function listController($scope,promotionService,confirm,menuService) {
 
-        $scope.vm = {"promotionList": []};
+        $scope.vm = {"promotionList": [],"cartList":[]};
         $scope.searchInfo = {};
         $scope.groupPageOption = {curr: 1, total: 198, size: 30, fetch: $scope.search};
 
         $scope.initialize  = function () {
+            $scope.getCategoryType();
             $scope.search();
         }
 
@@ -37,8 +38,15 @@ define([
             })
 
         }
+
+
+        $scope.getCategoryType = function() {
+            menuService.getCategoryType().then(function(res){
+                $scope.vm.cartList = res;
+            })
+        }
     };
 
-    listController.$inject = ['$scope','promotionService', 'confirm'];
+    listController.$inject = ['$scope','promotionService', 'confirm', 'menuService'];
     return listController;
 });

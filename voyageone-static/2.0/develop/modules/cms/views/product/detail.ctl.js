@@ -9,7 +9,7 @@ define([
     'cms',
     'modules/cms/controller/popup.ctl',
     'modules/cms/service/productDetail.service'
-], function (cms) {
+], function (cms, Status) {
     return cms.controller('productDetailController', (function () {
 
         function productDetailController($routeParams, $translate, productDetailService, notify) {
@@ -24,6 +24,7 @@ define([
             // 显示sku列表中
             this.bulkCartStatus = [];
             this.currentImage = "";
+            this.isApprovedStatus = false;
         }
 
         productDetailController.prototype = {
@@ -35,6 +36,7 @@ define([
                     .then(function (res) {
                         this.productDetails = res.data.productInfo;
                         this.productDetailsCopy = angular.copy(this.productDetails);
+
                     }.bind(this), function (res) {
                         this.notify.danger(res.message);
                     }.bind(this))
