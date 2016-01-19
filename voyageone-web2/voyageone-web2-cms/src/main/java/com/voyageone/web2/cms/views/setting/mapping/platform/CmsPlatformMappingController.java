@@ -71,4 +71,12 @@ public class CmsPlatformMappingController extends CmsController {
 
         return success(platformPropMappingService.getPlatformCategory(categoryId, cartId, getUser()));
     }
+
+    @RequestMapping(CmsUrlConstants.MAPPING.PLATFORM.GET_MAIN_CATEGORY_SCHEMA)
+    public AjaxResponse getMainCategorySchema(@RequestBody Map<String, String> params) {
+
+        String mainCategoryId = params.get("mainCategoryId");
+
+        return success(platformPropMappingService.getMainCategorySchema(mainCategoryId));
+    }
 }
