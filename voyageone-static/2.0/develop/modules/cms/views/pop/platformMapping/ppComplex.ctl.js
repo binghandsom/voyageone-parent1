@@ -21,17 +21,29 @@ define([
          * @constructor
          */
         function ComplexMappingPopupController(context, $uibModalInstance, ppPlatformMappingService, alert) {
+
             this.$uibModalInstance = $uibModalInstance;
+            // context 中的平台类目路径将直接绑定到画面,这里没有显式操作
             this.context = context;
-            this.mainCategoryId = this.context.mainCategoryId;
             this.ppPlatformMappingService = ppPlatformMappingService;
             this.alert = alert;
 
+            // 主类目路径
             this.mainCategoryPath = null;
+            // 主类目 ID
+            this.mainCategoryId = this.context.mainCategoryId;
+            // 当前选中的属性 ID
             this.selected = {
+                /**
+                 * @type {Field|null}
+                 */
                 value: null
             };
+            // 当前可选的所有属性
             this.options = {
+                /**
+                 * @type {Field[]}
+                 */
                 values: null
             };
         }
@@ -46,19 +58,24 @@ define([
                     return;
                 }
 
+                // 先加载主数据类目的路径
                 this.ppPlatformMappingService.getMainCategoryPath(this.mainCategoryId).then(function (path) {
                     this.mainCategoryPath = path;
+                    // 之后加载所有属性
                     this.loadValue();
                 }.bind(this));
             },
             loadValue: function () {
                 this.ppPlatformMappingService.getMainCategoryPropsWithSku(this.mainCategoryId).then(function (props) {
+                    // 绑定所有属性
                     this.options.values = props;
+                    // 同时指定第一个为默认值
                     this.selected.value = props[0];
                 }.bind(this));
             },
             ok: function () {
                 var complexMapping = new ComplexMappingBean(this.context.property.id, this.selected.value.id);
+                // 返回新创建的 complex mapping 实例
                 this.$uibModalInstance.close(complexMapping);
             },
             cancel: function () {
