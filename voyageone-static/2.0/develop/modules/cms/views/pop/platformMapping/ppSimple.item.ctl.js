@@ -66,7 +66,7 @@ define([
                     'FEED_CN': {desc: 'FEED_CN ( Product画面->自定义属性中文部分 )'},
                     'FEED_ORG': {desc: 'FEED_ORG ( Product画面->自定义属性英文部分 )'},
                     'SKU': {desc: 'SKU ( Product画面->SKU属性 )'},
-                    'DICT': {desc: 'DICT'}
+                    'DICT': {desc: 'DICT ( 自定义字典 )'}
                 },
 
                 /**
@@ -128,6 +128,13 @@ define([
 
                         break;
                     case this.options.valueFrom.DICT:
+
+                        this.ppPlatformMappingService.getDictList().then(function(dictList) {
+                            this.options.values = [
+                                {selected: null, props: dictList}
+                            ];
+                        }.bind(this));
+
                         break;
                     case this.options.valueFrom.FEED_CN:
                     case this.options.valueFrom.FEED_ORG:
@@ -179,7 +186,7 @@ define([
                 );
             },
             ok: function () {
-                console.log(this.selected.fixedValue);
+                console.log(this.selected);
             },
             cancel: function () {
                 this.$uibModalInstance.dismiss('cancel');

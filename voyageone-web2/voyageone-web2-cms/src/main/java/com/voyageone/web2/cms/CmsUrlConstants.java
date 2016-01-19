@@ -61,6 +61,8 @@ public interface CmsUrlConstants {
             String SET_PLATFORM_MAPPING = "setPlatformMapping";
 
             String GET_MAIN_CATEGORY_SCHEMA = "getMainCategorySchema";
+
+            String GET_DICT_LIST = "getDictList";
         }
     }
 

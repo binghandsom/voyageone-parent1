@@ -42,6 +42,7 @@ require([
         $scope.choose = function (channel, app) {
             $ajax.post('/core/access/user/selectChannel', {channelId: channel.channelId}).then(function (res) {
                 cookieService.application(app);
+                cookieService.channel(channel.channelId);
                 location.href = 'modules/' + app + '/app.html';
             }, function (res) {
                 alert(res.message || res.code);

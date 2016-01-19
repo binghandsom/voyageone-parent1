@@ -14,6 +14,8 @@ import com.voyageone.cms.service.model.CmsMtPlatformMappingModel;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleWord;
 import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.cms.dao.CmsMtDictDao;
+import com.voyageone.web2.cms.model.CmsMtDictModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,6 +45,9 @@ public class CmsPlatformPropMappingService extends BaseAppService {
 
     @Autowired
     private CmsMtCategorySchemaDao categorySchemaDao;
+
+    @Autowired
+    private CmsMtDictDao dictDao;
 
     /**
      * 获取平台类目和 Mapping 的所有信息
@@ -89,6 +94,14 @@ public class CmsPlatformPropMappingService extends BaseAppService {
     public CmsMtCategorySchemaModel getMainCategorySchema(String categoryId) {
 
         return categorySchemaDao.getMasterSchemaModelByCatId(categoryId);
+    }
+
+    /**
+     * 获取当前渠道的所有可用字典
+     */
+    public List<CmsMtDictModel> getDictList(UserSessionBean user) {
+
+        return dictDao.selectByChannel(user.getSelChannel());
     }
 
     /**

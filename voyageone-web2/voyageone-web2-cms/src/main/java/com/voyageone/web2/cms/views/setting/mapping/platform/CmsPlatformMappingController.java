@@ -79,4 +79,9 @@ public class CmsPlatformMappingController extends CmsController {
 
         return success(platformPropMappingService.getMainCategorySchema(mainCategoryId));
     }
+
+    @RequestMapping(CmsUrlConstants.MAPPING.PLATFORM.GET_DICT_LIST)
+    public AjaxResponse getDictList() {
+        return success(platformPropMappingService.getDictList(getUser()));
+    }
 }
