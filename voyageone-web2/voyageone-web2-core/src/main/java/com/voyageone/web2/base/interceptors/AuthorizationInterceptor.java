@@ -33,6 +33,9 @@ class AuthorizationInterceptor {
         HttpSession session = request.getSession();
         UserSessionBean user = (UserSessionBean) session.getAttribute(BaseConstants.SESSION_USER);
 
+        if (user.getSelChannel() == null)
+            throw new SystemException(BaseConstants.CODE_SEL_CHANNEL, Constants.EmptyString);
+
         String url = request.getRequestURI();
         String project = request.getContextPath();
 
