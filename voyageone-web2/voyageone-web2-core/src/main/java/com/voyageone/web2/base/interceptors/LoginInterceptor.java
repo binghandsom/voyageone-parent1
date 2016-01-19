@@ -14,7 +14,7 @@ import javax.servlet.http.HttpSession;
  * @version 2.0.0, 2015-12-02 15:42:18
  */
 @Component
-public class LoginInterceptor {
+class LoginInterceptor {
 
     public boolean preHandle(HttpServletRequest request) throws Exception {
 
