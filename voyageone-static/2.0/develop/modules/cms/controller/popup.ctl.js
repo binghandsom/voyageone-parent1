@@ -101,9 +101,9 @@ define([
                     "backdrop": "static"
                 },
                 "simple": {
-                    "templateUrl": "views/pop/complexMapping/index.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/complexMapping/index.ctl",
-                    "controller": 'complexMappingPopupController as ctrl',
+                    "templateUrl": "views/pop/platformMapping/ppSimple.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/platformMapping/ppSimple.ctl",
+                    "controller": 'simpleMappingPopupController as ctrl',
                     "size": 'md',
                     "backdrop": "static"
                 },
@@ -349,6 +349,19 @@ define([
                 return openModel(popActions.platformMapping.complex, context);
             },
 
+            /**
+             * Simple Mapping 设定弹出框的上下文参数
+             * @typedef {object} SimpleMappingPopupContext
+             * @property {string} platformCategoryPath 平台类目路径
+             * @property {string} mainCategoryId 主数据类目 ID
+             * @property {Field} property 平台属性
+             */
+
+            /**
+             * 弹出 Simple 属性的值匹配窗
+             * @param {SimpleMappingPopupContext} context
+             * @returns {Promise}
+             */
             simple: function (context) {
                 return openModel(popActions.platformMapping.simple, context);
             },
