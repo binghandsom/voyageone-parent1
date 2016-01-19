@@ -101,7 +101,13 @@ define([
                     "backdrop": "static"
                 },
                 "simple": {
-                    list: {},
+                    list: {
+                        "templateUrl": "views/pop/platformMapping/ppSimple.list.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/platformMapping/ppSimple.list.ctl",
+                        "controller": 'simpleListMappingPopupController as ctrl',
+                        "size": 'lg',
+                        "backdrop": "static"
+                    },
                     item: {
                         "templateUrl": "views/pop/platformMapping/ppSimple.item.tpl.html",
                         "controllerUrl": "modules/cms/views/pop/platformMapping/ppSimple.item.ctl",

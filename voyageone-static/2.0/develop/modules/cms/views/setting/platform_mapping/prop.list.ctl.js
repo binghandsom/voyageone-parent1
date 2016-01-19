@@ -118,7 +118,7 @@ define([
                     case FieldTypes.multiComplex:
                         break;
                     default: // simple ~
-                        ppPlatformMapping.simple(context);
+                        ppPlatformMapping.simple.list(context);
                         break;
                 }
             }
