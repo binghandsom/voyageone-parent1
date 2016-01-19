@@ -182,6 +182,6 @@ define([
         }
     };
 
-    detailController.$inject = ['$scope', 'promotionService', 'promotionDetailService', 'notify', '$routeParams', '$location'];
+    detailController.$inject = ['$scope', 'promotionService', 'promotionDetailService', 'notify', '$routeParams', '$location', 'alert', '$translate'];
     return detailController;
 });
