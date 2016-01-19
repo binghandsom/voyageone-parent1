@@ -4,7 +4,10 @@
 
    <insert id="cms_insertCmsBusinessLog" parameterType="com.voyageone.batch.cms.model.CmsBusinessLogModel">
       INSERT IGNORE INTO voyageone_cms2.cms_bt_business_log(
+      channel_id,
+      cat_id,
       cart_id,
+      product_name,
       product_id,
       err_type,
       status,
@@ -17,7 +20,10 @@
       modified,
       modifier)
       VALUES (
+      #{channelId},
+      #{catId},
       #{cartId},
+      #{productName},
       #{productId},
       #{errType},
       #{status},

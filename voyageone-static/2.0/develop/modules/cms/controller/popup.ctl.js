@@ -266,7 +266,7 @@ define([
         }
 
         $scope.openpromotion = openpromotion;
-        function openpromotion(viewSize, data, fnInitial) {
+        function openpromotion(viewSize, cartList,data, fnInitial) {
             require([popActions.new.controllerUrl], function () {
                 var modalInstance = $modal.open({
                     templateUrl: popActions.new.templateUrl,
@@ -275,12 +275,18 @@ define([
                     resolve: {
                         items: function () {
                             return data;
+                        },
+                        cartList:function(){
+                            return cartList;
                         }
                     }
                 });
 
                 modalInstance.result.then(function(){
-                    fnInitial();
+                    if(fnInitial){
+                        fnInitial();
+                    }
+
                 })
             });
         }

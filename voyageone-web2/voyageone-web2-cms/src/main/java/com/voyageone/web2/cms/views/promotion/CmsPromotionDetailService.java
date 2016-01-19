@@ -147,6 +147,7 @@ public class CmsPromotionDetailService extends BaseAppService {
 
             if (cmsBtProductModel != null) {
                 map.put("image", cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
+                map.put("platformStatus",cmsBtProductModel.getGroups().getPlatforms().get(0).getPlatformStatus());
             }
         });
 
@@ -161,16 +162,17 @@ public class CmsPromotionDetailService extends BaseAppService {
      */
     public List<CmsBtPromotionCodeModel> getPromotionCode(Map<String, Object> param) {
 
-        List<CmsBtPromotionCodeModel> promotionGroups = cmsPromotionCodeDao.getPromotionCodeList(param);
-        promotionGroups.forEach(map -> {
+        List<CmsBtPromotionCodeModel> promotionCodes = cmsPromotionCodeDao.getPromotionCodeList(param);
+        promotionCodes.forEach(map -> {
             //SDK取得Product 数据
             CmsBtProductModel cmsBtProductModel = ProductGetClient.getProductById(param.get("channelId").toString(), map.getProductId());
             if (cmsBtProductModel != null) {
-                map.setImage((String)cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
+                map.setImage((String) cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
                 map.setSkuCount(cmsBtProductModel.getSkus().size());
+                map.setPlatformStatus(cmsBtProductModel.getGroups().getPlatforms().get(0).getPlatformStatus());
             }
         });
-        return promotionGroups;
+        return promotionCodes;
     }
 
     /**

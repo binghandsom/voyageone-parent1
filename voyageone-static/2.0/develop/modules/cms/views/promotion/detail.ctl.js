@@ -6,7 +6,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function () {
 
-    function detailController($scope, promotionService, promotionDetailService, notify, $routeParams, $location, alert, $translate) {
+    function detailController($scope, promotionService, promotionDetailService, notify, $routeParams, $location, alert, $translate,menuService) {
         pageSize = 5;
         $scope.vm = {
             "promotionId": $routeParams.promotionId,
@@ -16,6 +16,7 @@ define([
             "groupList": [],
             "codeList": [],
             "skuList": [],
+            "cartList":[],
             "groupPageOption": {curr: 1, total: 5, size: 5, fetch: searchGroup},
             "codePageOption": {curr: 1, total: 5, size: 5, fetch: searchCode},
             "skuPageOption": {curr: 1, total: 7, size: 10, fetch: searchSku},
@@ -41,6 +42,7 @@ define([
 
 
         $scope.initialize = function () {
+            $scope.getCategoryType();
             promotionService.getPromotionList({"promotionId": $routeParams.promotionId}).then(function (res) {
                 $scope.vm.promotion = res.data[0];
             }, function (err) {
@@ -107,7 +109,11 @@ define([
 
             })
         }
-
+        $scope.getCategoryType = function() {
+            menuService.getCategoryType().then(function(res){
+                $scope.vm.cartList = res;
+            })
+        }
         $scope.search = function () {
             searchGroup();
             searchCode();
@@ -181,7 +187,6 @@ define([
             })
         }
     };
-
-    detailController.$inject = ['$scope', 'promotionService', 'promotionDetailService', 'notify', '$routeParams', '$location', 'alert', '$translate'];
+    detailController.$inject = ['$scope', 'promotionService', 'promotionDetailService', 'notify', '$routeParams', '$location','alert','$translate','menuService'];
     return detailController;
 });

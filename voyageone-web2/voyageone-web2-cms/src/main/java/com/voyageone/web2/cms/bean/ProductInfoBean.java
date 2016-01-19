@@ -144,7 +144,7 @@ public class ProductInfoBean {
     public class ProductStatus {
 
         //是否approved.
-        private Boolean approveStatus;
+        private String approveStatus;
 
         //是否翻译完成.
         private Boolean translateStatus;
@@ -152,12 +152,11 @@ public class ProductInfoBean {
         //是否编辑完成.
         private Boolean editStatus;
 
-
-        public Boolean getApproveStatus() {
+        public String getApproveStatus() {
             return approveStatus;
         }
 
-        public void setApproveStatus(Boolean approveStatus) {
+        public void setApproveStatus(String approveStatus) {
             this.approveStatus = approveStatus;
         }
 
