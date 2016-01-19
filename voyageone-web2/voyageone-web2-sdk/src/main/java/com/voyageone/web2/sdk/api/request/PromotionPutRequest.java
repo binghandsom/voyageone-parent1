@@ -66,7 +66,7 @@ public class PromotionPutRequest extends VoApiRequest<PromotionsPutResponse> {
 	@Override
 	public void requestCheck() throws ApiRuleException {
 		RequestUtils.checkNotEmpty(" cmsBtPromotionModel", cmsBtPromotionModel);
-		if (cmsBtPromotionModel.getPromotionId() >0) {
+		if (cmsBtPromotionModel.getPromotionId() != null) {
 			//add
 			RequestUtils.checkNotEmpty(" cmsBtPromotionModel.channelId", cmsBtPromotionModel.getChannelId());
 		} else {
