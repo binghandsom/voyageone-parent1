@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.model;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
+import com.voyageone.cms.CmsConstants;
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.cms.service.model.CmsBtProductModel_Group_Platform;
 
@@ -22,6 +23,8 @@ public class CmsBtPromotionGroupModel  extends BaseMongoModel {
     private String numIid;
 
     private Boolean synFlg;
+
+    private CmsConstants.PlatformStatus platformStatus;
 
     public CmsBtPromotionGroupModel(){
         super();
@@ -104,5 +107,13 @@ public class CmsBtPromotionGroupModel  extends BaseMongoModel {
 
     public void setSynFlg(Boolean synFlg) {
         this.synFlg = synFlg;
+    }
+
+    public CmsConstants.PlatformStatus getPlatformStatus() {
+        return platformStatus;
+    }
+
+    public void setPlatformStatus(CmsConstants.PlatformStatus platformStatus) {
+        this.platformStatus = platformStatus;
     }
 }
