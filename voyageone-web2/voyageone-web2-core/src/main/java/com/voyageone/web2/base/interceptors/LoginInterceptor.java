@@ -1,6 +1,7 @@
 package com.voyageone.web2.base.interceptors;
 
 import com.voyageone.base.exception.SystemException;
+import com.voyageone.common.Constants;
 import com.voyageone.web2.base.BaseConstants;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.stereotype.Component;
@@ -23,6 +24,9 @@ public class LoginInterceptor {
 
         if (user == null)
             throw new SystemException(BaseConstants.MSG_TIMEOUT, "未登录用户或登录超时");
+
+        if (user.getSelChannel() == null)
+            throw new SystemException(BaseConstants.CODE_SEL_CHANNEL, Constants.EmptyString);
 
         return true;
     }
