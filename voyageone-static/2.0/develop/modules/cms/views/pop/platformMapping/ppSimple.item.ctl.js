@@ -4,17 +4,17 @@ define([
     'modules/cms/views/pop/platformMapping/ppPlatformMapping.serv'
 ], function (cms, FieldTypes) {
     'use strict';
-    return cms.controller('simpleMappingPopupController', (function () {
+    return cms.controller('simpleItemMappingPopupController', (function () {
 
         /**
          * Simple Mapping 弹出框的 Controller
-         * @param {SimpleMappingPopupContext} context
+         * @param {SimpleItemMappingPopupContext} context
          * @param $uibModalInstance
          * @param {PopupPlatformMappingService} ppPlatformMappingService
          * @param alert
          * @constructor
          */
-        function SimpleMappingPopupController(context, $uibModalInstance, ppPlatformMappingService, alert) {
+        function SimpleItemMappingPopupController(context, $uibModalInstance, ppPlatformMappingService, alert) {
             this.$uibModalInstance = $uibModalInstance;
             this.context = context;
             this.ppPlatformMappingService = ppPlatformMappingService;
@@ -49,7 +49,7 @@ define([
             };
         }
 
-        SimpleMappingPopupController.prototype = {
+        SimpleItemMappingPopupController.prototype = {
             options: {
                 valueFrom: {
                     'MASTER': {desc: 'MASTER（Product画面->商品详情属性）'},
@@ -96,7 +96,7 @@ define([
             }
         };
 
-        return SimpleMappingPopupController;
+        return SimpleItemMappingPopupController;
 
     })());
 });
