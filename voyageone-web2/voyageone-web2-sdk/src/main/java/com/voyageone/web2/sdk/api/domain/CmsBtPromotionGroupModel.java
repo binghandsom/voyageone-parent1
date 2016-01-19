@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.model;
+package com.voyageone.web2.sdk.api.domain;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.cms.service.model.CmsBtProductModel;
