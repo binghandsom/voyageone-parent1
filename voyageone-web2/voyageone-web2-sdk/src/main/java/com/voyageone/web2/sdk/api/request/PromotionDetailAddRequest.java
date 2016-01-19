@@ -25,7 +25,7 @@ public class PromotionDetailAddRequest extends VoApiRequest<PromotionDetailPutRe
 
     @Override
     public String getApiURLPath() {
-            return "/promotion/detail/add";
+            return "/promotion/detail/insert";
     }
 
     @Override
