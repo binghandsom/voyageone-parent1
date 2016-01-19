@@ -106,7 +106,8 @@ define([
 
                 ppPlatformMapping.complex({
                     mainCategoryId: this.mainCategoryId,
-                    platformCategoryPath: this.category.catFullPath
+                    platformCategoryPath: this.category.catFullPath,
+                    property: property
                 });
 
             }

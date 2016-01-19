@@ -4,9 +4,12 @@
 
 define([
     'cms',
+    'modules/cms/models/ComplexMappingBean',
+    'modules/cms/enums/FieldTypes',
     'modules/cms/views/pop/platformMapping/ppPlatformMapping.serv'
-], function (cms) {
+], function (cms, ComplexMappingBean, FieldTypes) {
     'use strict';
+
     return cms.controller('complexMappingPopupController', (function () {
 
         /**
@@ -14,51 +17,49 @@ define([
          * @param {ComplexMappingPopupContext} context
          * @param $uibModalInstance
          * @param {PopupPlatformMappingService} ppPlatformMappingService
+         * @param alert
          * @constructor
          */
-        function ComplexMappingPopupController(context, $uibModalInstance, ppPlatformMappingService) {
+        function ComplexMappingPopupController(context, $uibModalInstance, ppPlatformMappingService, alert) {
             this.$uibModalInstance = $uibModalInstance;
             this.context = context;
             this.mainCategoryId = this.context.mainCategoryId;
             this.ppPlatformMappingService = ppPlatformMappingService;
+            this.alert = alert;
 
+            this.mainCategoryPath = null;
             this.selected = {
-                valueFrom: this.options.valueFrom.MASTER,
                 value: null
             };
-            this.mainCategoryPath = null;
-            this.options.values = null;
+            this.options = {
+                values: null
+            };
         }
 
         ComplexMappingPopupController.prototype = {
-            options: {
-                valueFrom: {
-                    'MASTER': {desc: 'MASTER（Product画面->商品详情属性）'},
-                    'SKU': {desc: 'SKU（Product画面->SKU属性）'}
-                }
-            },
             init: function () {
+
+                if (this.context.property.type !== FieldTypes.COMPLEX) {
+                    this.alert('当前属性不是 Complex 属性').result.then(function() {
+                        this.cancel();
+                    }.bind(this));
+                    return;
+                }
+
                 this.ppPlatformMappingService.getMainCategoryPath(this.mainCategoryId).then(function (path) {
                     this.mainCategoryPath = path;
                     this.loadValue();
                 }.bind(this));
             },
             loadValue: function () {
-                switch (this.selected.valueFrom) {
-                    case this.options.valueFrom.MASTER:
-                        this.ppPlatformMappingService.getMainCategoryProps(this.mainCategoryId).then(function (props) {
-                            this.options.values = props;
-                        }.bind(this));
-                        break;
-                    case this.options.valueFrom.SKU:
-                        this.ppPlatformMappingService.getMainCategorySkuProps(this.mainCategoryId).then(function (props) {
-                            this.options.values = props;
-                        }.bind(this));
-                        break;
-                }
+                this.ppPlatformMappingService.getMainCategoryPropsWithSku(this.mainCategoryId).then(function (props) {
+                    this.options.values = props;
+                    this.selected.value = props[0];
+                }.bind(this));
             },
             ok: function () {
-                this.cancel();
+                var complexMapping = new ComplexMappingBean(this.context.property.id, this.selected.value.id);
+                this.$uibModalInstance.close(complexMapping);
             },
             cancel: function () {
                 this.$uibModalInstance.dismiss('cancel');

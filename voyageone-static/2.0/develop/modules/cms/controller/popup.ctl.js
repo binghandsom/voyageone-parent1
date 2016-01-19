@@ -337,6 +337,7 @@ define([
              * @typedef {object} ComplexMappingPopupContext
              * @property {string} platformCategoryPath 平台类目路径
              * @property {string} mainCategoryId 主数据类目 ID
+             * @property {Field} property 平台属性
              */
 
             /**

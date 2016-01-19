@@ -22,19 +22,9 @@ define([
              * @param {string} mainCategoryId
              * @returns {Promise.<Field[]>}
              */
-            getMainCategoryProps: function(mainCategoryId) {
+            getMainCategoryPropsWithSku: function(mainCategoryId) {
                 return this.$getMainCategorySchema(mainCategoryId).then(function(mainCategorySchema) {
-                    return mainCategorySchema.fields;
-                });
-            },
-            /**
-             * 获取主数据类目的 SKU 级属性
-             * @param {string} mainCategoryId
-             * @returns {Promise.<Field[]>}
-             */
-            getMainCategorySkuProps: function(mainCategoryId) {
-                return this.$getMainCategorySchema(mainCategoryId).then(function(mainCategorySchema) {
-                    return mainCategorySchema.sku.fields;
+                    return mainCategorySchema.fields.concat([mainCategorySchema.sku]);
                 });
             },
             /**
