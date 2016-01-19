@@ -39,6 +39,16 @@ define([
                 });
             },
             /**
+             * 获取主数据类目的 SKU 级属性
+             * @param {string} mainCategoryId
+             * @returns {Promise.<Field>}
+             */
+            getMainCategorySkuProp: function (mainCategoryId) {
+                return this.$getMainCategorySchema(mainCategoryId).then(function (mainCategorySchema) {
+                    return mainCategorySchema.sku;
+                });
+            },
+            /**
              * 获取主数据类目的类目路径
              * @param {string} mainCategoryId
              * @returns {Promise.<string>}

@@ -21,6 +21,16 @@ define([
             this.alert = alert;
 
             /**
+             * 是否需要(显示)选择项的匹配
+             * @type {boolean}
+             */
+            this.needMappingOptions = false;
+            /**
+             * 平台属性
+             * @type {Field}
+             */
+            this.property = this.context.property;
+            /**
              * 主数据类目 ID
              * @type {string}
              */
@@ -36,6 +46,11 @@ define([
                  * @type {object}
                  */
                 valueFrom: this.options.valueFrom.MASTER,
+                /**
+                 * 当前选中的内容
+                 * @type {Field}
+                 */
+                value: null,
                 /**
                  * 是否是固定值,画面上作为切换的 flag
                  * @type {boolean}
@@ -89,6 +104,10 @@ define([
              */
             loadValue: function () {
 
+                // 先重置画面显示
+                this.needMappingOptions = false;
+
+                // 再根据类型加载
                 switch (this.selected.valueFrom) {
                     case this.options.valueFrom.MASTER:
 
@@ -100,6 +119,13 @@ define([
 
                         break;
                     case this.options.valueFrom.SKU:
+
+                        this.ppPlatformMappingService.getMainCategorySkuProp(this.mainCategoryId).then(function (sku) {
+                            this.options.values = [
+                                {selected: null, props: sku.fields}
+                            ];
+                        }.bind(this));
+
                         break;
                     case this.options.valueFrom.DICT:
                         break;
@@ -117,20 +143,40 @@ define([
              * @param $index 当前更改的 Index
              * @param propGroup 当前更改的属性信息
              */
-            tryLoadNext: function($index, propGroup) {
+            tryLoadNext: function ($index, propGroup) {
 
                 // 先清空后续的下拉绑定
                 this.options.values.splice($index + 1);
 
                 var children = propGroup.selected.fields;
 
-                if (!children || !children.length) return;
+                if (!children || !children.length) {
+                    this.updateSelectedValue();
+                    return;
+                }
 
                 // 如果有, 则添加下一级
                 this.options.values.push({
                     selected: null,
                     props: children
                 });
+                this.updateSelectedValue();
+            },
+            /**
+             * 更新当前选中的值, 并触发下一级绑定
+             * @private
+             */
+            updateSelectedValue: function () {
+                var values = this.options.values;
+                this.selected.value = values[values.length - 1].selected;
+
+                if (this.property.type !== FieldTypes.singleCheck && this.property.type !== FieldTypes.multiCheck)
+                    return;
+
+                this.needMappingOptions = (
+                    this.selected.value.type === FieldTypes.singleCheck
+                    || this.selected.value.type === FieldTypes.multiCheck
+                );
             },
             ok: function () {
                 console.log(this.selected.fixedValue);
