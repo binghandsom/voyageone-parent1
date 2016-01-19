@@ -1,8 +1,9 @@
 define([
     'cms',
+    'modules/cms/enums/FieldTypes',
     'modules/cms/views/pop/platformMapping/ppPlatformMapping.serv',
     'modules/cms/controller/popup.ctl'
-], function (cms) {
+], function (cms, FieldTypes) {
     'use strict';
     return cms.controller('simpleListMappingPopupController', (function () {
 
@@ -13,11 +14,46 @@ define([
             this.ppPlatformMappingService = ppPlatformMappingService;
             this.alert = alert;
 
+            /**
+             * 主数据类目 ID
+             * @type {string}
+             */
+            this.mainCategoryId = this.context.mainCategoryId;
+            /**
+             * 平台属性
+             * @type {Field}
+             */
+            this.property = this.context.property;
+            /**
+             * 一组 RuleWord
+             * @type {RuleWord[]}
+             */
+            this.ruleWords = null;
+            /**
+             * 主数据类目路径
+             * @type {string}
+             */
+            this.mainCategoryPath = null;
         }
 
         SimpleListMappingPopupController.prototype = {
             init: function () {
 
+                switch (this.context.property.type) {
+                    case FieldTypes.complex:
+                    case FieldTypes.multiComplex:
+                        this.alert('当前属性不是 Simple 属性').result.then(function () {
+                            this.cancel();
+                        }.bind(this));
+                        return;
+                }
+
+                this.ppPlatformMappingService.getMainCategoryPath(this.mainCategoryId).then(function (path) {
+                    this.mainCategoryPath = path;
+                }.bind(this));
+            },
+            popup: function(ppPlatformMapping){
+                ppPlatformMapping.simple.item(this.context);
             },
             ok: function () {
 

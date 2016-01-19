@@ -1,8 +1,9 @@
 define([
-    'cms'
-], function (cms) {
+    'cms',
+    'underscore'
+], function (cms, _) {
     'use strict';
-    return cms.service('ppPlatformMappingService', (function(){
+    return cms.service('ppPlatformMappingService', (function () {
 
         function PopupPlatformMappingService(platformMappingService, $q) {
             this.platformMappingService = platformMappingService;
@@ -18,13 +19,23 @@ define([
 
         PopupPlatformMappingService.prototype = {
             /**
-             * 获取主数据类目的属性
+             * 获取主数据类目的属性及 SKU 级属性
              * @param {string} mainCategoryId
              * @returns {Promise.<Field[]>}
              */
-            getMainCategoryPropsWithSku: function(mainCategoryId) {
-                return this.$getMainCategorySchema(mainCategoryId).then(function(mainCategorySchema) {
+            getMainCategoryPropsWithSku: function (mainCategoryId) {
+                return this.$getMainCategorySchema(mainCategoryId).then(function (mainCategorySchema) {
                     return mainCategorySchema.fields.concat([mainCategorySchema.sku]);
+                });
+            },
+            /**
+             * 获取主数据类目属性的简化格式, 只包含 id 和 name
+             * @param {string} mainCategoryId
+             * @returns {Promise.<Field[]>}
+             */
+            getMainCategoryProps: function (mainCategoryId) {
+                return this.$getMainCategorySchema(mainCategoryId).then(function (mainCategorySchema) {
+                    return mainCategorySchema.fields;
                 });
             },
             /**
@@ -32,12 +43,12 @@ define([
              * @param {string} mainCategoryId
              * @returns {Promise.<string>}
              */
-            getMainCategoryPath: function(mainCategoryId) {
-                return this.$getMainCategorySchema(mainCategoryId).then(function(mainCategorySchema) {
+            getMainCategoryPath: function (mainCategoryId) {
+                return this.$getMainCategorySchema(mainCategoryId).then(function (mainCategorySchema) {
                     return mainCategorySchema.catFullPath;
                 });
             },
-            getDict: function() {
+            getDict: function () {
                 // 唯一参数 channel, java 那边可以从 user 获取
             },
             /**
@@ -45,7 +56,7 @@ define([
              * @param {string} mainCategoryId
              * @return {Promise}
              */
-            $getMainCategorySchema: function(mainCategoryId) {
+            $getMainCategorySchema: function (mainCategoryId) {
 
                 var defer = this.$q.defer();
 

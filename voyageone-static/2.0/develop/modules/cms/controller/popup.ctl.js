@@ -112,7 +112,7 @@ define([
                         "templateUrl": "views/pop/platformMapping/ppSimple.item.tpl.html",
                         "controllerUrl": "modules/cms/views/pop/platformMapping/ppSimple.item.ctl",
                         "controller": 'simpleItemMappingPopupController as ctrl',
-                        "size": 'md',
+                        "size": 'lg',
                         "backdrop": "static"
                     }
                 },
