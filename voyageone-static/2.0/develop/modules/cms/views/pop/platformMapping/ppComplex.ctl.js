@@ -39,7 +39,7 @@ define([
         ComplexMappingPopupController.prototype = {
             init: function () {
 
-                if (this.context.property.type !== FieldTypes.COMPLEX) {
+                if (this.context.property.type !== FieldTypes.complex) {
                     this.alert('当前属性不是 Complex 属性').result.then(function() {
                         this.cancel();
                     }.bind(this));
