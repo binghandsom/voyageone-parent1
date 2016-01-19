@@ -6,7 +6,7 @@ import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
 import com.voyageone.web2.sdk.api.request.PromotionDeleteRequest;
 import com.voyageone.web2.sdk.api.request.PromotionsGetRequest;
 import com.voyageone.web2.sdk.api.request.PromotionPutRequest;
-import org.springframework.beans.BeanUtils;
+import com.voyageone.web2.sdk.api.util.SdkBeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -35,7 +35,7 @@ public class CmsPromotionService extends BaseAppService {
 
     public List<CmsBtPromotionModel> queryByCondition(Map<String, Object> conditionParams) {
         PromotionsGetRequest request=new PromotionsGetRequest();
-        BeanUtils.copyProperties(conditionParams,request);
+        SdkBeanUtils.copyProperties(conditionParams, request);
         return voApiClient.execute(request).getCmsBtPromotionModels();
     }
 
