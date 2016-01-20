@@ -58,6 +58,8 @@ public class ProductPropsEditService {
 
     private static final String optionDataSource = "optConfig";
 
+    private static final String completeStatus = "1";
+
     public ProductInfoBean getProductInfo(String channelId, int prodId) throws BusinessException{
 
         ProductInfoBean productInfo = new ProductInfoBean();
@@ -70,19 +72,14 @@ public class ProductPropsEditService {
 
         //商品各种状态.
         ProductInfoBean.ProductStatus productStatus = productInfo.getProductStautsInstance();
-//        if ("true".equals(productValueModel.getFields().getStatus())){
-//            productStatus.setApproveStatus(true);
-//        }else {
-//            productStatus.setApproveStatus(false);
-//        }
         productStatus.setApproveStatus(productValueModel.getFields().getStatus());
 
-        if ("1".equals(productValueModel.getFields().getTranslateStatus())){
+        if (completeStatus.equals(productValueModel.getFields().getTranslateStatus())){
             productStatus.setTranslateStatus(true);
         }else {
             productStatus.setTranslateStatus(false);
         }
-        if ("1".equals(productValueModel.getFields().getEditStatus())){
+        if (completeStatus.equals(productValueModel.getFields().getEditStatus())){
             productStatus.setEditStatus(true);
         }else {
             productStatus.setEditStatus(false);
@@ -314,6 +311,7 @@ public class ProductPropsEditService {
             cnAtts.put(cnAttsMap.get("key"), cnAttsMap.get("value"));
         }
 
+
         CmsBtProductModel_Feed feedModel = new CmsBtProductModel_Feed();
         feedModel.setOrgAtts(orgAtts);
         feedModel.setCnAtts(cnAtts);
@@ -321,14 +319,8 @@ public class ProductPropsEditService {
 
         List<Field> masterFields = SchemaJsonReader.readJsonForList(masterFieldsList);
 
-        // 获取productStatus
-        Map<String,Object> productStatus = new HashMap<String, Object>();
-        if(requestMap.containsKey("productStatus")) {
-            productStatus = (Map<String,Object>)requestMap.get("productStatus");
-        }
-
         // setComplexValue
-        for (Field field: masterFields){
+        for (Field field:masterFields){
 
             if (field instanceof ComplexField){
                 ComplexField complexField = (ComplexField)field;
@@ -337,14 +329,6 @@ public class ProductPropsEditService {
                 setComplexValue(complexFields,complexValue);
             }
 
-            // 更新productStatus的值
-            if ("status".equals(field.getId())) {
-                ((InputField)field).setValue(productStatus.get("approveStatus").toString());
-            } else if ("translateStatus".equals(field.getId())) {
-                ((InputField)field).setValue(productStatus.get("translateStatus").toString());
-            } else if ("editStatus".equals(field.getId())) {
-                ((InputField)field).setValue(productStatus.get("editStatus").toString());
-            }
         }
 
         CmsBtProductModel_Field masterFieldsValue = new CmsBtProductModel_Field();
@@ -427,7 +411,10 @@ public class ProductPropsEditService {
 
     }
 
-
+    /**
+     * complex field值为空时设定默认值.
+     * @param fields
+     */
     private void setDefaultComplexValues(List<Field> fields){
 
         for (Field fieldItem:fields){
@@ -468,7 +455,11 @@ public class ProductPropsEditService {
 
     }
 
-
+    /**
+     * 设定Field 的valueFieldMap.
+     * @param fields
+     * @param complexValueMap
+     */
     private void setDefaultValueFieldMap(List<Field> fields,Map<String,Field> complexValueMap){
 
         for (Field field:fields){
@@ -522,8 +513,6 @@ public class ProductPropsEditService {
         }
     }
 
-
-
     /**
      * 更新product values.
      * @param channelId
@@ -563,10 +552,14 @@ public class ProductPropsEditService {
         updateRequest.setProductModel(productModel);
         updateRequest.setModifier(user);
 
-//        voApiClient.execute(updateRequest);
-
         return productClient.updateProductRetModified(updateRequest);
 
+    }
+
+
+    public String updateProductAll(){
+
+        return null;
     }
 
     /**
