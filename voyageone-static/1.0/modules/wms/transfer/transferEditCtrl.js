@@ -60,6 +60,8 @@ define([
 
         vm.transfer_map_target = "";
 
+        vm.transfer_client_shipments = "";
+
         // 当前的 Transfer
         vm.transfer = {};
 
@@ -127,10 +129,11 @@ define([
         }
 
         function init() {
-            transferService.getStores().then(function (res) {
+            transferService.getConfigs($routeParams.id).then(function (res) {
                 channelStores = res.data.storeList;
                 companyStores = res.data.companyStoreList;
                 storesTo = res.data.companyStoreToList;
+                vm.transfer_client_shipments = res.data.notMatchClientShipmentList;
 
                 if (vm.isAddMode) {
                     vm.transfer = newTransfer();
@@ -248,7 +251,21 @@ define([
                 return;
             }
 
-            reqSubmitTransfer();
+            if (vm.transfer.client_shipment_id == "0") {
+                reqSubmitTransfer();
+            } else {
+                // 有ClientShipment时，数量比对有差异，则出确认框
+                transferService.compareTransfer(vm.transfer).then(function (res) {
+
+                    if (res.compareResult == "1") {
+                        confirm("WMS_ALERT_TRANSFER_COMPARE").then(reqSubmitTransfer);
+                    } else {
+                        reqSubmitTransfer();
+                    }
+                });
+
+            }
+
         }
 
         function acceptPackage() {
@@ -628,7 +645,8 @@ define([
                 transfer_name: "",
                 transfer_from_store: "",
                 transfer_to_store: "",
-                comment: ""
+                comment: "",
+                client_shipment_id : 0
             };
         }
 
