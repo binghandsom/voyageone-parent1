@@ -50,7 +50,7 @@ define([
              */
             this.deleteTransfer = function (transfer_id, modified) {
                 return http.ajaxPost({
-                        transferId: transfer_id,
+                        transferId: transfer_id.toString(),
                         modified: modified
                     },
                     actions.transfer.delete)
@@ -74,7 +74,7 @@ define([
 
                 return $q(function (resolve) {
                     http.ajaxPost({
-                        transferId: transfer_id
+                        transferId: transfer_id.toString()
                     }, actions.transfer.get)
                         .then(function (res) {
                             resolve({
@@ -119,8 +119,14 @@ define([
             /**
              * 获取所有的仓库 和 Type （Edit 页面）
              */
-            this.getStores = function () {
-                return http.ajaxPost(null, actions.transfer.store.all);
+            this.getConfigs = function (transfer_id) {
+                if (!_.isNumber(transfer_id)) {
+                    transfer_id = parseInt(transfer_id);
+                }
+
+                return http.ajaxPost({
+                    transferId: transfer_id.toString()
+                }, actions.transfer.config.all);
             };
 
             /**
@@ -129,7 +135,7 @@ define([
              */
             this.selectPackageItems = function (package_id) {
                 return http.ajaxPost({
-                    package_id: package_id
+                    package_id: package_id.toString()
                 }, actions.transfer.package.item.select).then(function (res) {
                     return res.data; // res.data = PackageItems[]
                 });
@@ -150,7 +156,7 @@ define([
 
                 return $q(function (resolve) {
                     http.ajaxPost({
-                        package_id: package_id,
+                        package_id: package_id.toString(),
                         barcode: code,
                         num: num
                     }, actions.transfer.package.item.add).then(function (res) {
@@ -168,7 +174,7 @@ define([
             this.deletePackage = function (package_id, modified) {
                 return $q(function (resolve) {
                     http.ajaxPost({
-                        package_id: package_id,
+                        package_id: package_id.toString(),
                         modified: modified
                     }, actions.transfer.package.delete).then(function (res) {
                         resolve(res.data);
@@ -185,7 +191,7 @@ define([
             this.reOpenPackage = function (package_id, modified) {
                 return $q(function (resolve) {
                     http.ajaxPost({
-                        package_id: package_id,
+                        package_id: package_id.toString(),
                         modified: modified
                     }, actions.transfer.package.reopen).then(function (res) {
                         resolve(res.data);
@@ -202,7 +208,7 @@ define([
              */
             this.createPackage = function (transfer_id, package_name) {
                 return http.ajaxPost({
-                    transferId: transfer_id,
+                    transferId: transfer_id.toString(),
                     packageName: package_name
                 }, actions.transfer.package.create).then(function (res) {
                     return res.data;
@@ -217,7 +223,7 @@ define([
              */
             this.doClosePackage = function (package_id, modified) {
                 return http.ajaxPost({
-                    package_id: package_id,
+                    package_id: package_id.toString(),
                     modified: modified
                 }, actions.transfer.package.close).then(function (res) {
                     return res.data; // isSuccess
@@ -230,7 +236,7 @@ define([
                 if (!_.isNumber(num)) num = parseInt(num);
 
                 return http.ajaxPost({
-                    package_id: package_id,
+                    package_id: package_id.toString(),
                     barcode: code,
                     num: -num
                 }, actions.transfer.package.item.add).then(function (res) {
@@ -242,14 +248,7 @@ define([
                 return http.ajaxPost({
                         transfer_id: transfer_id
                     },
-                    actions.transfer.package.item.compare)
-
-                    .then(function (res) {
-                        return {
-                            inItems: res.data.inItems,
-                            outItems: res.data.outItems
-                        };
-                    });
+                    actions.transfer.package.item.compare);
             };
 
             /**
@@ -257,6 +256,20 @@ define([
              */
             this.doListInit = function (data, scope) {
                 return http.ajaxPost(data, actions.transfer.init, scope);
+            };
+
+            /**
+             * 比较transfer的数量
+             */
+            this.compareTransfer = function (transfer) {
+                return http.ajaxPost({
+                        transfer: transfer
+                    },
+                    actions.transfer.compare)
+
+                    .then(function (res) {
+                        return res.data;
+                    });
             };
 
         }]);

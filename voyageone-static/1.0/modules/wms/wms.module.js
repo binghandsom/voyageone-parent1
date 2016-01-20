@@ -19,6 +19,7 @@ define(function () {
                 submit: "/wms/transfer/edit/submitTransfer",
                 save: "/wms/transfer/edit/saveTransfer",
                 download: "/wms/transfer/list/download",
+                compare: "/wms/transfer/edit/compareTransfer",
 
                 package: {
                     delete: "/wms/transfer/edit/deletePackage",
@@ -34,8 +35,8 @@ define(function () {
                     }
                 },
 
-                store: {
-                    all: "/wms/transfer/edit/getAllStores"
+                config: {
+                    all: "/wms/transfer/edit/getAllConfigs"
                 }
             },
 
