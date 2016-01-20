@@ -38,14 +38,14 @@ public class PromotionDetailRequestTest {
     public void testAdd() {
 
         PromotionDetailAddRequest request=new PromotionDetailAddRequest();
-        request.setModifier("testor");
-        request.setChannelId("channelt");
+        /*request.setModifier("testor");
+        request.setChannelId("001");
         request.setCartId(1);
-        request.setProductCode("pcode");
+        request.setProductCode("100001");
         request.setPromotionId(1);
         request.setPromotionPrice(1.1);
         request.setTagId(1);
-        request.setTagPath("http://1");
+        request.setTagPath("http://1");*/
 
         processRequest(request, PromotionDetailPutResponse.class);
     }
