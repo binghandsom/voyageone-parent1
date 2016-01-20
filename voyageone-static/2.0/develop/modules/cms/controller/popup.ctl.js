@@ -275,7 +275,7 @@ define([
         }
 
         $scope.openpromotion = openpromotion;
-        function openpromotion(viewSize, cartList,data, fnInitial) {
+        function openpromotion(viewSize, cartList, data, fnInitial) {
             require([popActions.new.controllerUrl], function () {
                 var modalInstance = $modal.open({
                     templateUrl: popActions.new.templateUrl,
@@ -285,14 +285,14 @@ define([
                         items: function () {
                             return data;
                         },
-                        cartList:function(){
+                        cartList: function () {
                             return cartList;
                         }
                     }
                 });
 
-                modalInstance.result.then(function(){
-                    if(fnInitial){
+                modalInstance.result.then(function () {
+                    if (fnInitial) {
                         fnInitial();
                     }
 
@@ -342,6 +342,31 @@ define([
             return openModel(popActions.category, context);
         };
 
+        /**
+         * @typedef {object} Field *部分属性标明
+         * @property {string} type
+         * @property {object[]} options
+         * @property {object[]} rules
+         * @property {string} name
+         * @property {string} id
+         */
+
+        /**
+         * @typedef {object} FieldBean
+         */
+
+        /**
+         * @typedef {object} FeedPropMappingPopupContext
+         * @property {string} feedCategoryPath
+         * @property {string} mainCategoryPath
+         * @property {Field} field
+         * @property {FieldBean} bean
+         */
+
+        /**
+         * @param {FeedPropMappingPopupContext} context
+         * @returns {Promise}
+         */
         $scope.popupFeed = function (context) {
             return openModel(popActions.feed, context);
         };

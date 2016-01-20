@@ -3,6 +3,10 @@ define([
 ], function (WordTypes) {
 
     function TextWord() {
+        /**
+         * @readonly
+         * @type {string}
+         */
         this.wordType = WordTypes.TEXT;
         /**
          * @type {string}
@@ -15,6 +19,10 @@ define([
     }
 
     function DictWord() {
+        /**
+         * @readonly
+         * @type {string}
+         */
         this.wordType = WordTypes.DICT;
         /**
          * @type {string}
@@ -31,6 +39,10 @@ define([
     }
 
     function MasterWord() {
+        /**
+         * @readonly
+         * @type {string}
+         */
         this.wordType = WordTypes.MASTER;
         /**
          * @type {string}
@@ -43,6 +55,10 @@ define([
     }
 
     function FeedCnWord() {
+        /**
+         * @readonly
+         * @type {string}
+         */
         this.wordType = WordTypes.FEED_CN;
         /**
          * @type {string}
@@ -55,6 +71,10 @@ define([
     }
 
     function FeedOrgWord() {
+        /**
+         * @readonly
+         * @type {string}
+         */
         this.wordType = WordTypes.FEED_ORG;
         /**
          * @type {string}
@@ -67,6 +87,10 @@ define([
     }
 
     function SkuWord() {
+        /**
+         * @readonly
+         * @type {string}
+         */
         this.wordType = WordTypes.SKU;
         /**
          * @type {string}
