@@ -26,8 +26,14 @@ public final class WmsUrlConstants {
 
         public static final String SUBMIT = "/wms/transfer/edit/submitTransfer";
 
-        public static final class Store {
-            public static final String ALL = "/wms/transfer/edit/getAllStores";
+        public static final String COMPARE = "/wms/transfer/edit/compareTransfer";
+
+        public static final String DOWNLOAD_CLIENT_SHIPMENT = "/wms/transfer/edit/downloadClientShipment";
+
+        public static final String DOWNLOAD_TRANSFER_COMPARE = "/wms/transfer/edit/downloadTransferCompare";
+
+        public static final class Configs {
+            public static final String ALL = "/wms/transfer/edit/getAllConfigs";
         }
 
         public static final class Package {
