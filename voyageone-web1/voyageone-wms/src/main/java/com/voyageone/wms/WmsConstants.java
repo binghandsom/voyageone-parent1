@@ -155,8 +155,6 @@ public final class WmsConstants {
             }
         }
 
-
-
         // 盘点比对结果报告模板配置
         public final static class StocktakeCompResRpt {
             public final static String TEMPLATE_PATH = "wms.report.template.path";
@@ -173,6 +171,57 @@ public final class WmsConstants {
                 public final static int COLNUM_INVENTORY = 3;
                 public final static int COLNUM_STOCKQTY = 4;
                 public final static int COLNUM_STOCKQTY_OFFSET = 5;
+            }
+        }
+
+        // ClientShipment模板配置
+        public final static class ClientShipment {
+            public final static String TEMPLATE_PATH = "wms.report.template.path";
+            public final static String TEMPLATE_NAME = "ASN.xlsx";
+            public final static String RPT_NAME = "ASN";
+            public final static String RPT_SUFFIX = ".xlsx";
+            public final static String RPT_SHEET_NAME = "ASN";
+            public final static int TEMPLATE_SHEET_NO = 0;
+            public final static int TEMPLATE_FIRSTROW_NO = 2;
+            public final static int COLNUM_MAX = 6;
+            public final static class ASN{
+                public final static int ROW = 0;
+                public final static int COLNUM_FILE_NAME = 1;
+                public final static int COLNUM_TOTAL_QTY = 5;
+            }
+            public final static class Col{
+                public final static int COLNUM_CARTON_NO = 0;
+                public final static int COLNUM_CARTON_QTY = 1;
+                public final static int COLNUM_CLIENT_SKU = 2;
+                public final static int COLNUM_UPC = 3;
+                public final static int COLNUM_SKU = 4;
+                public final static int COLNUM_QTY = 5;
+            }
+        }
+
+        // TransferCompare模板配置
+        public final static class TransferCompare {
+            public final static String TEMPLATE_PATH = "wms.report.template.path";
+            public final static String TEMPLATE_NAME = "transferCompare.xlsx";
+            public final static String RPT_NAME = "transferCompare";
+            public final static String RPT_SUFFIX = ".xlsx";
+            public final static String RPT_SHEET_NAME = "transferCompare";
+            public final static int TEMPLATE_SHEET_NO = 0;
+            public final static int TEMPLATE_FIRSTROW_NO = 2;
+            public final static int COLNUM_MAX = 12;
+            public final static class Col{
+                public final static int COLNUM_NO = 0;
+                public final static int COLNUM_ASN_FILE = 1;
+                public final static int COLNUM_ASN_CLIENT_SKU = 2;
+                public final static int COLNUM_ASN_UPC = 3;
+                public final static int COLNUM_ASN_SKU = 4;
+                public final static int COLNUM_ASN_QTY = 5;
+                public final static int COLNUM_TRANSFER_NAME = 6;
+                public final static int COLNUM_TRANSFER_PO = 7;
+                public final static int COLNUM_TRANSFER_CLIENT_SKU = 8;
+                public final static int COLNUM_TRANSFER_UPC = 9;
+                public final static int COLNUM_TRANSFER_SKU = 10;
+                public final static int COLNUM_TRANSFER_QTY = 11;
             }
         }
 

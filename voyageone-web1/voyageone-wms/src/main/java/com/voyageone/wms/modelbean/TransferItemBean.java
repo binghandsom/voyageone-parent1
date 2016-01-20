@@ -6,9 +6,9 @@ package com.voyageone.wms.modelbean;
  * @author Jonas
  */
 public class TransferItemBean {
-    private int transfer_item_id;
-    private int transfer_id;
-    private int transfer_package_id;
+    private long transfer_item_id;
+    private long transfer_id;
+    private long transfer_package_id;
     private String transfer_barcode;
     private String transfer_sku;
     private int transfer_qty;
@@ -22,27 +22,27 @@ public class TransferItemBean {
     private String modified;
     private String modifier;
 
-    public int getTransfer_item_id() {
+    public long getTransfer_item_id() {
         return transfer_item_id;
     }
 
-    public void setTransfer_item_id(int transfer_item_id) {
+    public void setTransfer_item_id(long transfer_item_id) {
         this.transfer_item_id = transfer_item_id;
     }
 
-    public int getTransfer_id() {
+    public long getTransfer_id() {
         return transfer_id;
     }
 
-    public void setTransfer_id(int transfer_id) {
+    public void setTransfer_id(long transfer_id) {
         this.transfer_id = transfer_id;
     }
 
-    public int getTransfer_package_id() {
+    public long getTransfer_package_id() {
         return transfer_package_id;
     }
 
-    public void setTransfer_package_id(int transfer_package_id) {
+    public void setTransfer_package_id(long transfer_package_id) {
         this.transfer_package_id = transfer_package_id;
     }
 
