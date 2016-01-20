@@ -325,12 +325,15 @@ public class WmsSPThirdWarehouseReportService extends BaseTaskService {
             // 以SKU集计物理库存取得
             List<SPThirdWarehouseReportBean> spThirdWarehouseReports = new ArrayList<SPThirdWarehouseReportBean>();
             try {
+                // 分配仓库
+                String allot_store = ChannelConfigs.getVal1(channel.getOrder_channel_id(), ChannelConfigEnums.Name.allot_store);
                 //'2015-07-01 16:00:00'
                 //'2016-01-05 23:59:59'
                 //spThirdWarehouseReports = createReportDao.getSPThirdWarehouseReportBySKU(channel.getOrder_channel_id(),"2015-07-01 16:00:00","2016-01-05 23:59:59", CodeConstants.Reservation_Status.Open,getTaskName());
-                //spThirdWarehouseReports = createReportDao.getSPThirdWarehouseReportBySKU(channel.getOrder_channel_id(),"2016-01-11 08:00:00","2016-01-13 02:59:59", CodeConstants.Reservation_Status.ShippedCN,getTaskName());
+//                spThirdWarehouseReports = createReportDao.getSPThirdWarehouseReportBySKU(channel.getOrder_channel_id(),"2016-01-14 08:00:00","2016-01-15 02:59:59", CodeConstants.Reservation_Status.Open,allot_store);
+//                spThirdWarehouseReports = createReportDao.getSPThirdWarehouseReportBySKU(channel.getOrder_channel_id(),"2016-01-15 04:00:00","2016-01-15 07:59:59", CodeConstants.Reservation_Status.Open,allot_store);
 
-                spThirdWarehouseReports = createReportDao.getSPThirdWarehouseReportBySKU(channel.getOrder_channel_id(),timeRegion.get(0),timeRegion.get(1), CodeConstants.Reservation_Status.Open,getTaskName());
+                spThirdWarehouseReports = createReportDao.getSPThirdWarehouseReportBySKU(channel.getOrder_channel_id(),timeRegion.get(0),timeRegion.get(1), CodeConstants.Reservation_Status.Open,allot_store);
                 logger.info(format("取得 [ %s ] 条数据", spThirdWarehouseReports.size()));
                 //生成日报文件开始
                 isSuccess = createReportExcel(thirdPartyConfigBean, spThirdWarehouseReports, timeRegion);

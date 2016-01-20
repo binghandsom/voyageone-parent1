@@ -141,17 +141,16 @@ public class CreateReportDao extends BaseDao {
      * @param order_channel_id
      * @param start_created
      * @param end_created
-     * @param task_name
      * @param status
      * @return
      */
-    public List<SPThirdWarehouseReportBean> getSPThirdWarehouseReportBySKU(String order_channel_id,String start_created,String end_created,String status,String task_name) {
+    public List<SPThirdWarehouseReportBean> getSPThirdWarehouseReportBySKU(String order_channel_id,String start_created,String end_created,String status,String allot_store) {
         Map<String, Object> params = new HashMap<>();
         params.put("res_status", status);
         params.put("order_channel_id", order_channel_id);
         params.put("start_created",start_created);
         params.put("end_created",end_created);
-        params.put("task_name",task_name);
+        params.put("allot_store",allot_store);
         return selectList(Constants.DAO_NAME_SPACE_WMS + "wms_selectSPThirdWarehouseReportBySKU", params);
     }
 }
