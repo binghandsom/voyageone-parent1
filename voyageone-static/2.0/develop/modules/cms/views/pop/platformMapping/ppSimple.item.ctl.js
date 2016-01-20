@@ -1,8 +1,10 @@
 define([
     'cms',
+    'underscore',
     'modules/cms/enums/FieldTypes',
+    'modules/cms/models/ruleWords',
     'modules/cms/views/pop/platformMapping/ppPlatformMapping.serv'
-], function (cms, FieldTypes) {
+], function (cms, _, FieldTypes, ruleWords) {
     'use strict';
     return cms.controller('simpleItemMappingPopupController', (function () {
 
@@ -48,7 +50,7 @@ define([
                 valueFrom: this.options.valueFrom.MASTER,
                 /**
                  * 当前选中的内容
-                 * @type {Field}
+                 * @type {Field|null}
                  */
                 value: null,
                 /**
@@ -106,10 +108,11 @@ define([
 
                 // 先重置画面显示
                 this.needMappingOptions = false;
+                var valueFrom = this.options.valueFrom;
 
                 // 再根据类型加载
                 switch (this.selected.valueFrom) {
-                    case this.options.valueFrom.MASTER:
+                    case valueFrom.MASTER:
 
                         this.ppPlatformMappingService.getMainCategoryProps(this.mainCategoryId).then(function (props) {
                             this.options.values = [
@@ -118,7 +121,7 @@ define([
                         }.bind(this));
 
                         break;
-                    case this.options.valueFrom.SKU:
+                    case valueFrom.SKU:
 
                         this.ppPlatformMappingService.getMainCategorySkuProp(this.mainCategoryId).then(function (sku) {
                             this.options.values = [
@@ -127,7 +130,7 @@ define([
                         }.bind(this));
 
                         break;
-                    case this.options.valueFrom.DICT:
+                    case valueFrom.DICT:
 
                         this.ppPlatformMappingService.getDictList().then(function(dictList) {
                             this.options.values = [
@@ -136,9 +139,9 @@ define([
                         }.bind(this));
 
                         break;
-                    case this.options.valueFrom.FEED_CN:
-                    case this.options.valueFrom.FEED_ORG:
-                    case this.options.valueFrom.TEXT:
+                    case valueFrom.FEED_CN:
+                    case valueFrom.FEED_ORG:
+                    case valueFrom.TEXT:
                         this.alert('当前暂时不支持该类型');
                         this.options.values = [];
                         break;
@@ -186,7 +189,67 @@ define([
                 );
             },
             ok: function () {
-                console.log(this.selected);
+                // 准备收网~ 根据画面来说
+                // 先决定用上半边的数据还是下半边的数据
+                this.$uibModalInstance.close(
+                    this.selected.fixedValue
+                        ? this.getTextWord()
+                        : this.getWordByFrom()
+                );
+            },
+            /**
+             * 根据画面结果组装结果
+             * @returns {TextWord}
+             */
+            getTextWord: function(){
+
+                // 这里是下半边
+                // 固定值,即 TextWord
+                var textWord = new ruleWords.TextWord();
+
+                switch (this.property.type) {
+                    case FieldTypes.input:
+                        textWord.value = this.property.value;
+                        break;
+                    case FieldTypes.singleCheck:
+                        textWord.value = this.property.value.value;
+                        break;
+                    case FieldTypes.multiCheck:
+                        // TODO 多选如何保存结果
+                        textWord.value = _.map(this.property.values, function(value) {
+                            return value.value;
+                        });
+                }
+
+                return textWord;
+            },
+            /**
+             * 根据画面结果组装结果
+             * @returns {MasterWord|SkuWord|DictWord}
+             */
+            getWordByFrom: function() {
+
+                var valueFrom = this.options.valueFrom;
+                var word = null;
+
+                // 再根据类型加载
+                switch (this.selected.valueFrom) {
+                    case valueFrom.MASTER:
+                        word = new ruleWords.MasterWord();
+                        word.value = this.selected.value.id;
+                        break;
+                    case valueFrom.SKU:
+                        word = new ruleWords.SkuWord();
+                        word.value = this.selected.value.id;
+                        break;
+                    case valueFrom.DICT:
+                        word = new ruleWords.DictWord();
+                        word.name = this.selected.value.name;
+                        word.expression = null;
+                        break;
+                }
+
+                return word;
             },
             cancel: function () {
                 this.$uibModalInstance.dismiss('cancel');

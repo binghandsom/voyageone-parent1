@@ -51,9 +51,15 @@ define([
                 this.ppPlatformMappingService.getMainCategoryPath(this.mainCategoryId).then(function (path) {
                     this.mainCategoryPath = path;
                 }.bind(this));
+
+                // TODO 加载原有的匹配
+                this.ruleWords = [];
             },
             popup: function(ppPlatformMapping){
-                ppPlatformMapping.simple.item(this.context);
+                // 增加 RuleWord
+                ppPlatformMapping.simple.item(this.context).then(function(word){
+                    this.ruleWords.push(word);
+                }.bind(this));
             },
             ok: function () {
 

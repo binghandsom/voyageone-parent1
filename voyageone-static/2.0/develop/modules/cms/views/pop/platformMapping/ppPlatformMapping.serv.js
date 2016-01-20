@@ -94,6 +94,16 @@ define([
                 return defer.promise;
             },
             /**
+             * 获取平台属性的匹配数据
+             * @param {Field} property
+             * @return {Promise}
+             */
+            getPropMapping: function(property) {
+
+                this.platformMappingService.getPlatformPropMapping();
+
+            },
+            /**
              * @private
              * @param {string} mainCategoryId
              * @return {Promise}

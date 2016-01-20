@@ -21,8 +21,8 @@
                 </thead>
                 <tbody>
                 <tr ng-repeat="ruleWord in ctrl.ruleWords">
-                    <td>MASTER</td>
-                    <td>颜色</td>
+                    <td>{{ruleWord.wordType}}</td>
+                    <td>{{ruleWord.value}}</td>
                     <td class="form-inline">
                         <label><input type="radio" name="radio2"/> 换行</label>
                         <label><input type="radio" name="radio2"/> 空格</label>

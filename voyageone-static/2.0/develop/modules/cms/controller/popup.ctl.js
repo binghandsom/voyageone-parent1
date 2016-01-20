@@ -423,7 +423,7 @@ define([
                 /**
                  * 弹出 Simple 属性的值匹配窗
                  * @param {SimpleItemMappingPopupContext} context
-                 * @returns {Promise}
+                 * @returns {Promise.<RuleWord>}
                  */
                 item: function (context) {
                     return openModel(popActions.platformMapping.simple.item, context);

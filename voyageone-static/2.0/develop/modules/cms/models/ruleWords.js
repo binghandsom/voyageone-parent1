@@ -98,6 +98,10 @@ define([
         this.value = null;
     }
 
+    /**
+     * @class RuleWord
+     */
+
     return {
         TextWord: TextWord,
         DictWord: DictWord,
