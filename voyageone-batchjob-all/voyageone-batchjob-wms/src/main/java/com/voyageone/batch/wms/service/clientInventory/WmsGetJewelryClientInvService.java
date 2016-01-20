@@ -107,7 +107,6 @@ public class WmsGetJewelryClientInvService extends WmsGetClientInvBaseService {
                             log(channel.getFull_name() + "库存插入wms_bt_client_inventory开始");
                             int totalRow = 0, insertRow = 0;
                             for (InventoryItemResSoapenv responseBean : responseBeans) {
-                                log(responseBean.getBody().getInventoryItemListResponse().getGetInventoryItemListResult().getStatus().value());
                                 if (responseBean.getBody().getInventoryItemListResponse().getGetInventoryItemListResult().getStatus().value().equals("Failure")) {
                                     log(channel.getFull_name() + "取得库存失败：" + responseBean.getBody().getInventoryItemListResponse().getGetInventoryItemListResult().getMessage());
                                     logIssue(channel.getFull_name() + "取得库存失败：" + responseBean.getBody().getInventoryItemListResponse().getGetInventoryItemListResult().getMessage());
