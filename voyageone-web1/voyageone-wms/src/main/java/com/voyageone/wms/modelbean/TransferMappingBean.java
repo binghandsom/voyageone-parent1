@@ -6,8 +6,8 @@ package com.voyageone.wms.modelbean;
  * @author Jonas
  */
 public class TransferMappingBean {
-    private int transfer_in_id;
-    private int transfer_out_id;
+    private long transfer_in_id;
+    private long transfer_out_id;
     private boolean mapping_status;
     private boolean active;
     private String created;
@@ -15,19 +15,19 @@ public class TransferMappingBean {
     private String modified;
     private String modifier;
 
-    public int getTransfer_in_id() {
+    public long getTransfer_in_id() {
         return transfer_in_id;
     }
 
-    public void setTransfer_in_id(int transfer_in_id) {
+    public void setTransfer_in_id(long transfer_in_id) {
         this.transfer_in_id = transfer_in_id;
     }
 
-    public int getTransfer_out_id() {
+    public long getTransfer_out_id() {
         return transfer_out_id;
     }
 
-    public void setTransfer_out_id(int transfer_out_id) {
+    public void setTransfer_out_id(long transfer_out_id) {
         this.transfer_out_id = transfer_out_id;
     }
 
