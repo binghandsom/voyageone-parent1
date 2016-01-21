@@ -16,4 +16,64 @@
         FROM voyageone_cms2.cms_mt_dict
         WHERE order_channel_id = #{channel_id}
     </select>
+
+    <select id="cms_mt_dict_selectAll" resultType="com.voyageone.ims.modelbean.DictWordBean">
+        SELECT
+        id,
+        order_channel_id,
+        name,
+        value,
+        created,
+        creater,
+        modified,
+        modifier
+        FROM voyageone_cms2.cms_mt_dict
+        WHERE order_channel_id = #{channel_id}
+        LIMIT #{start}, #{length};
+    </select>
+
+    <select id="cms_mt_dict_selectAllCount" resultType="int">
+        SELECT count(1)
+        FROM voyageone_cms2.cms_mt_dict
+        WHERE order_channel_id = #{channel_id};
+    </select>
+
+    <insert id="cms_mt_dict_insertDict" parameterType="com.voyageone.ims.modelbean.DictWordBean">
+        INSERT INTO voyageone_cms2.cms_mt_dict (order_channel_id, name, value, created, creater, modified, modifier)
+        VALUES (#{order_channel_id}, #{name}, #{value}, NOW(), #{creater}, NOW(), #{modifier})
+    </insert>
+
+    <update id="cms_mt_dict_updateDict" parameterType="com.voyageone.ims.modelbean.DictWordBean">
+        UPDATE voyageone_cms2.cms_mt_dict
+        SET name = #{name}, value = #{value}, modified = NOW(), modifier = #{modifier}
+        WHERE id = #{id} AND modified = #{modified}
+    </update>
+
+    <delete id="cms_mt_dict_deleteDict" parameterType="com.voyageone.ims.modelbean.DictWordBean">
+        DELETE FROM voyageone_cms2.cms_mt_dict
+        WHERE id = #{id}
+    </delete>
+
+    <select id="cms_mt_dict_selectByName" parameterType="com.voyageone.ims.modelbean.DictWordBean" resultType="com.voyageone.ims.modelbean.DictWordBean">
+        SELECT
+        id,
+        order_channel_id,
+        name,
+        value,
+        created,
+        creater,
+        modified,
+        modifier
+        FROM voyageone_cms2.cms_mt_dict
+        WHERE order_channel_id = #{order_channel_id} AND name = #{name}
+    </select>
+
+    <select id="cms_mt_dict_selectSimpleDict" resultType="com.voyageone.ims.modelbean.DictWordBean">
+        SELECT
+        id,
+        order_channel_id,
+        name
+        FROM voyageone_cms2.cms_mt_dict
+        WHERE order_channel_id = #{channel_id}
+    </select>
 </mapper>
