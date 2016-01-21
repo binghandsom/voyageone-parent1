@@ -38,7 +38,12 @@ public class BusinessLogGetRequestTest {
         BusinessLogGetRequest request = new BusinessLogGetRequest();
         request.setProductIds(221);
         request.setErrType(String.valueOf(1));
-        processRequest(request, BusinessLogGetResponse.class);
+        System.out.println(request);
+
+        System.out.println(
+                voApiClient.execute(request)
+        );
+        //processRequest(request, BusinessLogGetResponse.class);
     }
 
 

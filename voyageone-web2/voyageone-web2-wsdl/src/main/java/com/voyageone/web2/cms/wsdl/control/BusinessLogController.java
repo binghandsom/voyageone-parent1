@@ -32,6 +32,7 @@ public class BusinessLogController extends BaseController{
      */
     @RequestMapping("findlist")
     public BusinessLogGetResponse findList(@RequestBody BusinessLogGetRequest request) {
+        System.out.println(request);
         return businessLogService.findList(request);
     }
 
