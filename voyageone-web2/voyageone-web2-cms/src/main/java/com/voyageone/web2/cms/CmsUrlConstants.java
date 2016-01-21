@@ -191,6 +191,8 @@ public interface CmsUrlConstants {
 
             String  UPDATE_PRODUCT_SKU_INFO = "updateProductSkuInfo";
 
+            String UPDATE_PRODUCT_ALL_INFO = "updateProductAllInfo";
+
             String CHANGE_CATEGORY = "changeCategory";
 
             String CONFIRM_CHANGE = "confirmChange";

@@ -35,15 +35,24 @@ public class SkuWordParser {
             } else {
                 plainPropValueObj = getPropValue(evaluationContext, propName);
             }
-            if (plainPropValueObj instanceof String) {
-                return String.valueOf(plainPropValueObj);
-            } else if (plainPropValueObj instanceof  ArrayList) {
+            // 20160120 tom sku级别的数据不一定是string,也可能是数字型 START
+//            if (plainPropValueObj instanceof String) {
+//                return String.valueOf(plainPropValueObj);
+//            } else if (plainPropValueObj instanceof  ArrayList) {
+//                List<String> plainPropValues = (List<String>) plainPropValueObj;
+//                return ExpressionParser.encodeStringArray(plainPropValues);
+//            } else {
+//                logger.error("Sku value must be String or String[]");
+//                return null;
+//            }
+
+            if (plainPropValueObj instanceof  ArrayList) {
                 List<String> plainPropValues = (List<String>) plainPropValueObj;
                 return ExpressionParser.encodeStringArray(plainPropValues);
             } else {
-                logger.error("Sku value must be String or String[]");
-                return null;
+                return plainPropValueObj.toString();
             }
+            // 20160120 tom sku级别的数据不一定是string,也可能是数字型 END
         }
     }
 
