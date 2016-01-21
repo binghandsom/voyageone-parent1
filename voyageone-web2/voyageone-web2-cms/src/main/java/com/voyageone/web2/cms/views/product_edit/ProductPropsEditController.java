@@ -49,7 +49,7 @@ public class ProductPropsEditController extends CmsController{
 
         String user = super.getUser().getUserName();
 
-        String updateTime = productPropsEditService.updateProductMastertInfo(channelId, user, requestMap);
+        String updateTime = productPropsEditService.updateProductMasterInfo(channelId, user, requestMap);
 
         Map<String,Object> updateInfo = new HashMap<>();
 

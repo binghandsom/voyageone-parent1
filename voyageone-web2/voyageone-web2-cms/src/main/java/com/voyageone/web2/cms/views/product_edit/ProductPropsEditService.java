@@ -160,7 +160,7 @@ public class ProductPropsEditService {
      * @param user
      * @param requestMap
      */
-    public String  updateProductMastertInfo(String channelId,String user, Map requestMap){
+    public String updateProductMasterInfo(String channelId, String user, Map requestMap){
 
         List<Map<String,Object>> masterFieldsList = (List<Map<String,Object>>) requestMap.get("masterFields");
 
@@ -184,6 +184,7 @@ public class ProductPropsEditService {
 
         updateRequest.setProductModel(productModel);
         updateRequest.setModifier(user);
+        updateRequest.setModified(requestMap.get("modified").toString());
 
         return productClient.updateProductRetModified(updateRequest);
 
