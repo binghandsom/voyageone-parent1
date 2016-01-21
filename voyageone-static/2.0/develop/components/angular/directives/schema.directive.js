@@ -209,7 +209,7 @@ angular.module('voyageone.angular.directives.schema', [])
             '<th style="min-width: 60px;" class="text-center" translate="TXT_COM_EDIT"></th>' +
             '</tr></thead>' +
             '<tbody><tr ng-repeat="value in vm.$$data.complexValues">' +
-            '<td class="text-left" ng-repeat="field in value.fieldMap"><schema-item data="field" hastip="true" complex="true"></schema-item></td>' +
+            '<td class="text-left" ng-repeat="field in value.fieldMap"><div class="tableLayer"><p ng-if="field.type != \'COMPLEX\'">&nbsp;</p><p><schema-item data="field" hastip="true" complex="true"></schema-item></p></div></td>' +
             '<td style="min-width: 60px;"><button title="{\'BTN_COM_DELETE\' | translate}" class="btn btn-danger btn-xs" ng-click="delField($index)"><i class="fa  fa-trash-o"></i></button></td>' +
             '</tr></tbody>' +
             '</table>');}
@@ -217,7 +217,12 @@ angular.module('voyageone.angular.directives.schema', [])
         // complex
         var templateKey_complex = "voyageone.angular.directives.schemaComplex.tpl.html";
         if (!$templateCache.get(templateKey_complex)) {$templateCache.put(templateKey_complex,
-            '<schema-header ng-repeat="field in vm.$$data.fields" data="field"><schema-item data="field"></schema-item></schema-header>');}
+            '<schema-header ng-repeat="field in vm.$$data.fields" data="field"><schema-item data="field" ></schema-item></schema-header>');}
+
+        // complex
+        var templateKey_multi_in_complex = "voyageone.angular.directives.schemaMultiInComplex.tpl.html";
+        if (!$templateCache.get(templateKey_multi_in_complex)) {$templateCache.put(templateKey_multi_in_complex,
+            '<div ng-repeat="field in vm.$$data.fields"><p ng-bind="field.name"></p><p><schema-item data="field" hastip="true" complex="true"></schema-item></p></div>');}
 
         // multi complex tip
         var templateKey_multiComplex_tip = "voyageone.angular.directives.schemaMultiComplexTip.tpl.html";
@@ -285,7 +290,7 @@ angular.module('voyageone.angular.directives.schema', [])
                             tempHtml = $templateCache.get(templateKey_multiComplex);
                             break;
                         case fieldTypes.COMPLEX:
-                            tempHtml = $templateCache.get(templateKey_complex);
+                            tempHtml = scope.vm.$$complex ? $templateCache.get(templateKey_multi_in_complex) : $templateCache.get(templateKey_complex);
                             break;
                     }
 

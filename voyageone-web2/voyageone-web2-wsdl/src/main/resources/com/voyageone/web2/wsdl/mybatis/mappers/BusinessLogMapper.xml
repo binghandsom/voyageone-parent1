@@ -17,11 +17,16 @@
               and err_type = #{errType}
           </if>
         <if test="productIds != null">
-            and seq in
-            <foreach collection="productIds" item = "seq" open="(" separator="," close=")">
-                #{seq}
+            and product_id in
+            <foreach collection="productIds" item = "product" open="(" separator="," close=")">
+                #{product}
             </foreach>
         </if>
     </select>
+
+    <!-- 根据seq修改状态  status = 1-->
+    <update id="update_businesslog_status_finish" parameterType="Map" >
+        update voyageone_cms2.cms_bt_business_log set status=1 where seq=#{seq} and status=0
+    </update>
 
 </mapper>

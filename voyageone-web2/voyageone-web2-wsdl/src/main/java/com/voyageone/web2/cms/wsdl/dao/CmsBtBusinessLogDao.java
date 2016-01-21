@@ -28,4 +28,13 @@ public class CmsBtBusinessLogDao extends BaseDao {
         return selectList("select_businesslog_By_Condtion", condtionParams);
     }
 
+    /**
+     * 修改处理状态
+     * @param condtionParams params
+     * @return effect count
+     */
+    public int updateStatusFinish(Map<?,?> condtionParams){
+        return updateTemplate.update("update_businesslog_status_finish",condtionParams);
+    }
+
 }

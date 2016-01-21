@@ -83,6 +83,7 @@ public abstract class BaseDao {
 
     /**
      * 组装参数数组
+     *
      * @param parameters k, v 顺序排列的数组，k 为字符串，即参数名，v 为值
      * @return Map
      */
@@ -92,7 +93,7 @@ public abstract class BaseDao {
 
         Map<String, Object> map = new HashMap<>();
 
-        for (int k = 0, v = 1; k < parameters.length; k+=2, v+=2)
+        for (int k = 0, v = 1; k < parameters.length; k += 2, v += 2)
 
             map.put(String.valueOf(parameters[k]), parameters[v]);
 
