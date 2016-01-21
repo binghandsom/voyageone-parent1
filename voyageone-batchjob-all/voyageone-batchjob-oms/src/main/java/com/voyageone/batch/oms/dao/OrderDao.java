@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.voyageone.batch.oms.formbean.*;
 
+import com.voyageone.common.util.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Repository;
@@ -2226,5 +2227,33 @@ public class OrderDao extends BaseDao {
 		}
 
 		return ret;
+	}
+
+	/**
+	 * 根据barcode获得sku
+	 *
+	 * @param orderChannelId
+	 * @param barcode
+	 * @return
+	 */
+	public String getSkuByBarcode(String orderChannelId, String barcode) {
+		Map<String, String> dataMap = new HashMap<String, String>();
+		dataMap.put("orderChannelId", orderChannelId);
+		dataMap.put("barcode", barcode);
+
+		String sku = Constants.EmptyString;
+
+		List<String> skuList = selectList(Constants.DAO_NAME_SPACE_OMS + "wms_bt_item_details_getSkuByBarcode", dataMap);
+		if (skuList != null && skuList.size() > 0) {
+			sku = skuList.get(0);
+		}
+
+		if (StringUtils.isNullOrBlank2(sku)) {
+			sku = barcode;
+
+			logger.info("orderChannelId:" + orderChannelId + " barcode:" + barcode + "'s sku is empty!");
+		}
+
+		return sku;
 	}
 }
