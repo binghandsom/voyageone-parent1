@@ -80,6 +80,11 @@ public class WmsGetCAClientInvService extends WmsGetClientInvBaseService {
                             log(channel.getFull_name() + "库存插入wms_bt_client_inventory开始");
                             int totalRow = 0, insertRow = 0;
                             for (InventoryResSoapenv responseBean : responseBeans) {
+                                if (responseBean.getBody().getFilteredInventoryItemListResponse().getGetFilteredInventoryItemListResult().getStatus().value().equals("Failure")) {
+                                    log(responseBean.getBody().getFilteredInventoryItemListResponse().getGetFilteredInventoryItemListResult().getMessage());
+                                    logIssue(channel.getFull_name() + "取得库存失败：" + responseBean.getBody().getFilteredInventoryItemListResponse().getGetFilteredInventoryItemListResult().getMessage());
+                                    continue;
+                                }
                                 List<InventoryItemResponse> inventoryItemResponseList = responseBean.getBody().getFilteredInventoryItemListResponse().getGetFilteredInventoryItemListResult().getResultData().getInventoryItemResponse();
                                 totalRow = totalRow + inventoryItemResponseList.size();
                                 insertRow = insertRow + insertClientInventory(channelId, inventoryItemResponseList, store_id);

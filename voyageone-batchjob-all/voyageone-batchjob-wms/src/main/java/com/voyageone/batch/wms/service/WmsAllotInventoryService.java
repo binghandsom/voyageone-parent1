@@ -344,11 +344,11 @@ public class WmsAllotInventoryService extends BaseTaskService {
         if (store.getStore_kind().equals(StoreConfigEnums.Kind.VIRTUAL.getId())) {
             storeName = WmsConstants.StoreName.CH;
         }
-        //如果该渠道是境外电商、并且仓库所属在国内的话，设置成TM；
-        else if (ChannelConfigs.getVal1(reservation.getOrder_channel_id(), ChannelConfigEnums.Name.sale_type).equals(ChannelConfigEnums.Sale.CB.getType()) &&
-                store.getStore_location().equals(StoreConfigEnums.Location.CN.getId())) {
-            storeName = WmsConstants.StoreName.CN;
-        }
+//        //如果该渠道是境外电商、并且仓库所属在国内的话，设置成TM；
+//        else if (ChannelConfigs.getVal1(reservation.getOrder_channel_id(), ChannelConfigEnums.Name.sale_type).equals(ChannelConfigEnums.Sale.CB.getType()) &&
+//                store.getStore_location().equals(StoreConfigEnums.Location.CN.getId())) {
+//            storeName = WmsConstants.StoreName.CN;
+//        }
         //以外的场合，设置成仓库ID所属的仓库名称
         else {
             storeName = store.getStore_name();
