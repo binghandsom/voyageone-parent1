@@ -4,7 +4,9 @@ import com.voyageone.web2.cms.wsdl.BaseService;
 import com.voyageone.web2.cms.wsdl.dao.CmsBtBusinessLogDao;
 import com.voyageone.web2.sdk.api.domain.CmsBtBusinessLogModel;
 import com.voyageone.web2.sdk.api.request.BusinessLogGetRequest;
+import com.voyageone.web2.sdk.api.request.BusinessLogUpdateRequest;
 import com.voyageone.web2.sdk.api.response.BusinessLogGetResponse;
+import com.voyageone.web2.sdk.api.response.BusinessLogPutResponse;
 import com.voyageone.web2.sdk.api.util.SdkBeanUtils;
 import org.apache.commons.beanutils.BeanMap;
 import org.apache.commons.beanutils.BeanUtils;
@@ -30,6 +32,13 @@ public class BusinessLogService extends BaseService {
         BusinessLogGetResponse response =new BusinessLogGetResponse();
         response.setCmsBtBusinessLogModels(models);
         response.setTotalCount(Integer.toUnsignedLong(models.size()));
+        return response;
+    }
+
+    public BusinessLogPutResponse updateFinishStatus(BusinessLogUpdateRequest request){
+        request.check();
+        BusinessLogPutResponse response =new BusinessLogPutResponse();
+        response.setModifiedCount(cmsBtBusinessLogDao.updateStatusFinish(new BeanMap(request)));
         return response;
     }
 

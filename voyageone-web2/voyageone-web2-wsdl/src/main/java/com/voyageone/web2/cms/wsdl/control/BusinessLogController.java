@@ -4,8 +4,10 @@ import com.voyageone.web2.cms.wsdl.BaseController;
 import com.voyageone.web2.cms.wsdl.service.BusinessLogService;
 import com.voyageone.web2.cms.wsdl.service.ProductService;
 import com.voyageone.web2.sdk.api.request.BusinessLogGetRequest;
+import com.voyageone.web2.sdk.api.request.BusinessLogUpdateRequest;
 import com.voyageone.web2.sdk.api.request.ProductGetRequest;
 import com.voyageone.web2.sdk.api.response.BusinessLogGetResponse;
+import com.voyageone.web2.sdk.api.response.BusinessLogPutResponse;
 import com.voyageone.web2.sdk.api.response.ProductGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,14 +28,23 @@ public class BusinessLogController extends BaseController{
     private BusinessLogService businessLogService;
 
     /**
-     *
+     * 根据条件查询
      * @param request BusinessLogGetRequest
      * @return BusinessLogGetResponse
      */
     @RequestMapping("findlist")
     public BusinessLogGetResponse findList(@RequestBody BusinessLogGetRequest request) {
-        System.out.println(request);
         return businessLogService.findList(request);
+    }
+
+    /**
+     * 修改状态为finish
+     * @param request BusinessLogUpdateRequest
+     * @return BusinessLogPutResponse
+     */
+    @RequestMapping("updatefinishstatus")
+    public BusinessLogPutResponse updateFinishStatus(@RequestBody BusinessLogUpdateRequest request) {
+        return businessLogService.updateFinishStatus(request);
     }
 
 }
