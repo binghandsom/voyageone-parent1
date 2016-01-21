@@ -108,7 +108,9 @@ define([
                 var context = {
                     mainCategoryId: this.mainCategoryId,
                     platformCategoryPath: this.category.catFullPath,
-                    property: property
+                    platformCategoryId: this.category.catId,
+                    property: property,
+                    cartId: this.cartId
                 };
 
                 switch (property.type) {

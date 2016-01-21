@@ -1,9 +1,11 @@
 define([
     'cms',
     'modules/cms/enums/FieldTypes',
+    'modules/cms/models/SimpleMappingBean',
+    'modules/cms/models/RuleExpression',
     'modules/cms/views/pop/platformMapping/ppPlatformMapping.serv',
     'modules/cms/controller/popup.ctl'
-], function (cms, FieldTypes) {
+], function (cms, FieldTypes, SimpleMappingBean, RuleExpression) {
     'use strict';
     return cms.controller('simpleListMappingPopupController', (function () {
 
@@ -15,13 +17,18 @@ define([
             this.alert = alert;
 
             /**
+             * 平台类目 ID
+             * @type {string}
+             */
+            this.platformCategoryId = this.context.platformCategoryId;
+            /**
              * 主数据类目 ID
              * @type {string}
              */
             this.mainCategoryId = this.context.mainCategoryId;
             /**
              * 平台属性
-             * @type {Field}
+             * @type {WrapField}
              */
             this.property = this.context.property;
             /**
@@ -34,12 +41,18 @@ define([
              * @type {string}
              */
             this.mainCategoryPath = null;
+            /**
+             * 当前属性的匹配
+             * @type {SimpleMappingBean}
+             */
+            this.mapping = null;
         }
 
         SimpleListMappingPopupController.prototype = {
             init: function () {
 
-                switch (this.context.property.type) {
+                // 检查 popup 的支持类型
+                switch (this.property.type) {
                     case FieldTypes.complex:
                     case FieldTypes.multiComplex:
                         this.alert('当前属性不是 Simple 属性').result.then(function () {
@@ -48,12 +61,31 @@ define([
                         return;
                 }
 
+                // 加载主类目路径
                 this.ppPlatformMappingService.getMainCategoryPath(this.mainCategoryId).then(function (path) {
                     this.mainCategoryPath = path;
                 }.bind(this));
 
-                // TODO 加载原有的匹配
-                this.ruleWords = [];
+                // 加载原有的匹配
+                this.ppPlatformMappingService.getPlatformPropertyMapping(
+                    this.property, this.mainCategoryId, this.platformCategoryId, this.context.cartId
+                ).then(function(mapping) {
+
+                    // 如果没拿到, 则创建新的 SimpleMapping
+                    if (!mapping) {
+                        mapping = new SimpleMappingBean();
+                        mapping.platformPropId = this.property.id;
+                    }
+
+                    this.mapping = mapping;
+
+                    if (!mapping.expression) mapping.expression = new RuleExpression();
+
+                    this.ruleWords = (
+                        mapping.expression.ruleWordList || (mapping.expression.ruleWordList = [])
+                    );
+
+                }.bind(this));
             },
             popup: function(ppPlatformMapping){
                 // 增加 RuleWord
@@ -62,7 +94,7 @@ define([
                 }.bind(this));
             },
             ok: function () {
-
+                this.$uibModalInstance.close(this.mapping);
             },
             cancel: function () {
                 this.$uibModalInstance.dismiss('cancel');

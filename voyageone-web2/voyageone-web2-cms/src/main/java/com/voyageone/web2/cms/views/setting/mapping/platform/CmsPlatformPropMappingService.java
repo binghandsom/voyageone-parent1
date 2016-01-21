@@ -88,6 +88,7 @@ public class CmsPlatformPropMappingService extends BaseAppService {
 
     /**
      * 获取主数据类目 Schema
+     *
      * @param categoryId 主数据类目
      * @return CmsMtCategorySchemaModel
      */
@@ -102,6 +103,19 @@ public class CmsPlatformPropMappingService extends BaseAppService {
     public List<CmsMtDictModel> getDictList(UserSessionBean user) {
 
         return dictDao.selectByChannel(user.getSelChannel());
+    }
+
+    /**
+     * 精确获取平台匹配信息
+     *
+     * @param mainCategoryId     主数据类目 ID
+     * @param platformCategoryId 平台类目 ID
+     * @param cartId             平台 ID
+     * @param user               用户
+     * @return 信息模型
+     */
+    public CmsMtPlatformMappingModel getPlatformMapping(String mainCategoryId, String platformCategoryId, Integer cartId, UserSessionBean user) {
+        return platformMappingDao.selectMapping(mainCategoryId, platformCategoryId, cartId, user.getSelChannel());
     }
 
     /**

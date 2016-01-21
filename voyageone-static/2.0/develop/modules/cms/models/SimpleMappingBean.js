@@ -3,8 +3,16 @@ define([
 ], function (MappingTypes) {
 
     /**
+     * @name MappingBean
+     * @class
+     * @description
+     * 各类型 MappingBean 的父类, 位于 com.voyageone.cms.service.bean.MappingBean
+     */
+
+    /**
      * com.voyageone.cms.service.bean.SimpleMappingBean
      * @constructor
+     * @extends {MappingBean}
      */
     function SimpleMappingBean() {
         /**
@@ -18,7 +26,7 @@ define([
          * 表达式
          * @type {RuleExpression}
          */
-        this.expression = expression;
+        this.expression = null;
     }
 
     return SimpleMappingBean;

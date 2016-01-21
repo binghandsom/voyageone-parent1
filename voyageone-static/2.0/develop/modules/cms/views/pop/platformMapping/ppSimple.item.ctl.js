@@ -10,7 +10,7 @@ define([
 
         /**
          * Simple Mapping 弹出框的 Controller
-         * @param {SimpleItemMappingPopupContext} context
+         * @param {SimpleListMappingPopupContext} context
          * @param $uibModalInstance
          * @param {PopupPlatformMappingService} ppPlatformMappingService
          * @param alert
@@ -132,7 +132,7 @@ define([
                         break;
                     case valueFrom.DICT:
 
-                        this.ppPlatformMappingService.getDictList().then(function(dictList) {
+                        this.ppPlatformMappingService.getDictList().then(function (dictList) {
                             this.options.values = [
                                 {selected: null, props: dictList}
                             ];
@@ -201,7 +201,7 @@ define([
              * 根据画面结果组装结果
              * @returns {TextWord}
              */
-            getTextWord: function(){
+            getTextWord: function () {
 
                 // 这里是下半边
                 // 固定值,即 TextWord
@@ -215,10 +215,11 @@ define([
                         textWord.value = this.property.value.value;
                         break;
                     case FieldTypes.multiCheck:
-                        // TODO 多选如何保存结果
-                        textWord.value = _.map(this.property.values, function(value) {
+                        // 多选保存结果
+                        var values = _.map(this.property.values, function (value) {
                             return value.value;
                         });
+                        textWord.value = values.join(',');
                 }
 
                 return textWord;
@@ -227,7 +228,7 @@ define([
              * 根据画面结果组装结果
              * @returns {MasterWord|SkuWord|DictWord}
              */
-            getWordByFrom: function() {
+            getWordByFrom: function () {
 
                 var valueFrom = this.options.valueFrom;
                 var word = null;
@@ -237,6 +238,12 @@ define([
                     case valueFrom.MASTER:
                         word = new ruleWords.MasterWord();
                         word.value = this.selected.value.id;
+
+                        var type = this.selected.value.type;
+
+                        if (type === FieldTypes.singleCheck || type === FieldTypes.multiCheck)
+                            word.extra = this.getExtra();
+
                         break;
                     case valueFrom.SKU:
                         word = new ruleWords.SkuWord();
@@ -250,6 +257,19 @@ define([
                 }
 
                 return word;
+            },
+            /**
+             * 组装选项匹配
+             */
+            getExtra: function () {
+
+                var extra = {};
+
+                _.each(this.selected.value.options, function (option) {
+                    extra[option.value] = option.mapping;
+                });
+
+                return extra;
             },
             cancel: function () {
                 this.$uibModalInstance.dismiss('cancel');

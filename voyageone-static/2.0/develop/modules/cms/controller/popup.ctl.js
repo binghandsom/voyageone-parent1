@@ -343,7 +343,8 @@ define([
         };
 
         /**
-         * @typedef {object} Field *部分属性标明
+         * @class
+         * @name Field
          * @property {string} type
          * @property {object[]} options
          * @property {object[]} rules
@@ -399,7 +400,9 @@ define([
                  * Simple Mapping List 设定弹出框的上下文参数
                  * @typedef {object} SimpleListMappingPopupContext
                  * @property {string} platformCategoryPath 平台类目路径
+                 * @property {string} platformCategoryId 平台类目 ID
                  * @property {string} mainCategoryId 主数据类目 ID
+                 * @property {number} cartId 平台 ID
                  * @property {Field} property 平台属性
                  */
 
@@ -413,16 +416,8 @@ define([
                 },
 
                 /**
-                 * Simple Mapping Item 设定弹出框的上下文参数
-                 * @typedef {object} SimpleItemMappingPopupContext
-                 * @property {string} platformCategoryPath 平台类目路径
-                 * @property {string} mainCategoryId 主数据类目 ID
-                 * @property {Field} property 平台属性
-                 */
-
-                /**
                  * 弹出 Simple 属性的值匹配窗
-                 * @param {SimpleItemMappingPopupContext} context
+                 * @param {SimpleListMappingPopupContext} context
                  * @returns {Promise.<RuleWord>}
                  */
                 item: function (context) {
