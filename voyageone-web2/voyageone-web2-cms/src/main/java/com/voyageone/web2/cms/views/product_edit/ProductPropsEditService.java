@@ -58,6 +58,8 @@ public class ProductPropsEditService {
 
     private static final String optionDataSource = "optConfig";
 
+    private static final String completeStatus = "1";
+
     public ProductInfoBean getProductInfo(String channelId, int prodId) throws BusinessException{
 
         ProductInfoBean productInfo = new ProductInfoBean();
@@ -70,18 +72,14 @@ public class ProductPropsEditService {
 
         //商品各种状态.
         ProductInfoBean.ProductStatus productStatus = productInfo.getProductStautsInstance();
-        if ("true".equals(productValueModel.getFields().getStatus())){
-            productStatus.setApproveStatus(true);
-        }else {
-            productStatus.setApproveStatus(false);
-        }
+        productStatus.setApproveStatus(productValueModel.getFields().getStatus());
 
-        if ("true".equals(productValueModel.getFields().getTranslateStatus())){
+        if (completeStatus.equals(productValueModel.getFields().getTranslateStatus())){
             productStatus.setTranslateStatus(true);
         }else {
             productStatus.setTranslateStatus(false);
         }
-        if ("true".equals(productValueModel.getFields().getEditStatus())){
+        if (completeStatus.equals(productValueModel.getFields().getEditStatus())){
             productStatus.setEditStatus(true);
         }else {
             productStatus.setEditStatus(false);
@@ -413,7 +411,10 @@ public class ProductPropsEditService {
 
     }
 
-
+    /**
+     * complex field值为空时设定默认值.
+     * @param fields
+     */
     private void setDefaultComplexValues(List<Field> fields){
 
         for (Field fieldItem:fields){
@@ -454,7 +455,11 @@ public class ProductPropsEditService {
 
     }
 
-
+    /**
+     * 设定Field 的valueFieldMap.
+     * @param fields
+     * @param complexValueMap
+     */
     private void setDefaultValueFieldMap(List<Field> fields,Map<String,Field> complexValueMap){
 
         for (Field field:fields){
@@ -508,8 +513,6 @@ public class ProductPropsEditService {
         }
     }
 
-
-
     /**
      * 更新product values.
      * @param channelId
@@ -549,10 +552,14 @@ public class ProductPropsEditService {
         updateRequest.setProductModel(productModel);
         updateRequest.setModifier(user);
 
-//        voApiClient.execute(updateRequest);
-
         return productClient.updateProductRetModified(updateRequest);
 
+    }
+
+
+    public String updateProductAll(){
+
+        return null;
     }
 
     /**

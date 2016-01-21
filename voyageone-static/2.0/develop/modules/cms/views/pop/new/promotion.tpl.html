@@ -15,11 +15,11 @@
             <div class="form-group">
                 <label class="col-sm-3 control-label vo_reqfield">活动渠道</label>
                 <div class="col-sm-8">
-                    <label class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId"  ng-required="true"value="20"><span class="fa fa-check"></span> 天猫 </label>
-                    <label class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId" ng-required="true" value="23"><span class="fa fa-check"></span> 天猫国际 </label>
-                    <label class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId" ng-required="true" value="27"><span class="fa fa-check"></span>  聚美</label>
-                    <label class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId" ng-required="true" value="24"><span class="fa fa-check"></span> 京东 </label>
-                    <label class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId" ng-required="true" value="26"><span class="fa fa-check"></span> 京东国际 </label>
+                    <label ng-repeat="cart in cartList" class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId"  ng-required="true" value={{cart.cartId}}><span class="fa fa-check"></span> {{cart.name}} </label>
+                    <!--<label class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId" ng-required="true" value="23"><span class="fa fa-check"></span> 天猫国际 </label>-->
+                    <!--<label class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId" ng-required="true" value="27"><span class="fa fa-check"></span>  聚美</label>-->
+                    <!--<label class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId" ng-required="true" value="24"><span class="fa fa-check"></span> 京东 </label>-->
+                    <!--<label class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId" ng-required="true" value="26"><span class="fa fa-check"></span> 京东国际 </label>-->
                 </div>
             </div><!-- .form-group -->
             <div class="form-group">

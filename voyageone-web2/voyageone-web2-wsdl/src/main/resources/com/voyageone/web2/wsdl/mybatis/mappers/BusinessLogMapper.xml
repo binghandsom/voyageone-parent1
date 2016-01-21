@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.web2.wsdl.sql">
+
+    <!--<resultMap id="CmsBtBusinessLogModel" type="com.voyageone.web2.sdk.api.domain.CmsBtBusinessLogModel"/>
+-->
+    <sql id="fileds">
+	   seq,channel_id channelId,cat_id catId,cart_id cartId,product_name productName,product_id productId,
+	   err_type errType,status,model,code,sku,err_msg errMsg,created,creater,modified,modifier
+	</sql>
+
+    <!-- 根据条件查询 -->
+    <select id="select_businesslog_By_Condtion" resultType="com.voyageone.web2.sdk.api.domain.CmsBtBusinessLogModel" parameterType="Map" >
+        select <include refid="fileds"/> from voyageone_cms2.cms_bt_business_log
+        where status = 0
+          <if test="errType != null and errType != ''">
+              and err_type = #{errType}
+          </if>
+        <if test="productIds != null">
+            and seq in
+            <foreach collection="productIds" item = "seq" open="(" separator="," close=")">
+                #{seq}
+            </foreach>
+        </if>
+    </select>
+
+</mapper>

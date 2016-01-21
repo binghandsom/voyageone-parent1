@@ -287,6 +287,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
 
                     if (isSaveComProps){
 
+                        cmsMtCommonSchemaDao.deleteAll();
                         CmsMtComSchemaModel comSchemaModel = new CmsMtComSchemaModel();
                         comSchemaModel.setFields(comCategorySchema);
                         WriteResult result = cmsMtCommonSchemaDao.insert(comSchemaModel);

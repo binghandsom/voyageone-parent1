@@ -4,9 +4,10 @@
 define([
     'cms',
     'underscore',
+    'modules/cms/enums/FieldTypes',
     'modules/cms/controller/popup.ctl',
     'modules/cms/views/setting/platform_mapping/prop.item.d'
-], function (cms, _) {
+], function (cms, _, FieldTypes) {
     'use strict';
     return cms.controller('platformPropMappingController', (function () {
 
@@ -104,11 +105,22 @@ define([
              */
             popup: function (property, ppPlatformMapping) {
 
-                ppPlatformMapping.complex({
+                var context = {
                     mainCategoryId: this.mainCategoryId,
-                    platformCategoryPath: this.category.catFullPath
-                });
+                    platformCategoryPath: this.category.catFullPath,
+                    property: property
+                };
 
+                switch (property.type) {
+                    case FieldTypes.complex:
+                        ppPlatformMapping.complex(context);
+                        break;
+                    case FieldTypes.multiComplex:
+                        break;
+                    default: // simple ~
+                        ppPlatformMapping.simple.list(context);
+                        break;
+                }
             }
         };
 

@@ -25,6 +25,9 @@ public class Interceptor implements HandlerInterceptor {
     @Autowired
     private LoginInterceptor loginInterceptor;
 
+    @Autowired
+    private ChannelInterceptor channelInterceptor;
+
     /**
      * Intercept the execution of a handler. Called after HandlerMapping determined
      * an appropriate handler object, but before HandlerAdapter invokes the handler.
@@ -38,7 +41,9 @@ public class Interceptor implements HandlerInterceptor {
 
         logger.info(request.getServletPath() + " is start.");
 
-        return loginInterceptor.preHandle(request) && authorizationInterceptor.preHandle(request);
+        return loginInterceptor.preHandle(request)
+            && channelInterceptor.preHandle(request)
+            && authorizationInterceptor.preHandle(request);
     }
 
     /**

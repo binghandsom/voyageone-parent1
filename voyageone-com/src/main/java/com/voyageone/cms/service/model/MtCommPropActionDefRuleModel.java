@@ -1,8 +1,13 @@
 package com.voyageone.cms.service.model;
 
 import com.voyageone.common.configs.Enums.ActionType;
+import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.enums.RuleTypeEnum;
 import com.voyageone.common.masterdate.schema.field.Field;
+import com.voyageone.common.masterdate.schema.field.MultiCheckField;
+import com.voyageone.common.masterdate.schema.field.OptionsField;
+import com.voyageone.common.masterdate.schema.field.SingleCheckField;
+import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.rule.ReadOnlyRule;
 import com.voyageone.common.masterdate.schema.rule.Rule;
 import com.voyageone.common.util.JsonUtil;
@@ -21,6 +26,9 @@ public class MtCommPropActionDefRuleModel {
     private final String IS_DISPLAY = "isDisplay";
     private final String DATASOURCE = "dataSource";
     private final String READONLY = "readOnlyRule";
+    private final String OPTIONS = "options";
+    private final String TEXT = "text";
+    private final String VALUE = "value";
 
     private Map<String, Object> rulMap;
 
@@ -93,6 +101,26 @@ public class MtCommPropActionDefRuleModel {
                     ReadOnlyRule rule = new ReadOnlyRule("true");
                     field.add(rule);
                 }
+            }
+
+            if (rulMap.get(this.OPTIONS) != null && field instanceof OptionsField){
+
+                OptionsField optField = (OptionsField)field;
+
+                List<Map> opts = (List<Map>)rulMap.get(this.OPTIONS);
+
+                List<Option> options = new ArrayList<>();
+
+                for (Map opMap:opts){
+                    Option option = new Option();
+                    option.setDisplayName(opMap.get(this.TEXT).toString());
+                    option.setValue(opMap.get(this.VALUE).toString());
+                    options.add(option);
+
+                }
+
+                optField.setOptions(options);
+
             }
 
         }

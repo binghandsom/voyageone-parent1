@@ -101,11 +101,20 @@ define([
                     "backdrop": "static"
                 },
                 "simple": {
-                    "templateUrl": "views/pop/complexMapping/index.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/complexMapping/index.ctl",
-                    "controller": 'complexMappingPopupController as ctrl',
-                    "size": 'md',
-                    "backdrop": "static"
+                    list: {
+                        "templateUrl": "views/pop/platformMapping/ppSimple.list.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/platformMapping/ppSimple.list.ctl",
+                        "controller": 'simpleListMappingPopupController as ctrl',
+                        "size": 'lg',
+                        "backdrop": "static"
+                    },
+                    item: {
+                        "templateUrl": "views/pop/platformMapping/ppSimple.item.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/platformMapping/ppSimple.item.ctl",
+                        "controller": 'simpleItemMappingPopupController as ctrl',
+                        "size": 'lg',
+                        "backdrop": "static"
+                    }
                 },
                 "multiComplex": {
                     "templateUrl": "views/pop/multiComplexMapping/index.tpl.html",
@@ -173,7 +182,7 @@ define([
                     });
 
                     // 回调主页面的刷新操作
-                    modalInstance.result.then(function(){
+                    modalInstance.result.then(function () {
                         fnInitial();
                     })
 
@@ -207,7 +216,7 @@ define([
                     });
 
                     // 回调主页面的刷新操作
-                    modalInstance.result.then(function(){
+                    modalInstance.result.then(function () {
                         fnInitial();
                     })
                 } else {
@@ -266,7 +275,7 @@ define([
         }
 
         $scope.openpromotion = openpromotion;
-        function openpromotion(viewSize, data, fnInitial) {
+        function openpromotion(viewSize, cartList,data, fnInitial) {
             require([popActions.new.controllerUrl], function () {
                 var modalInstance = $modal.open({
                     templateUrl: popActions.new.templateUrl,
@@ -275,12 +284,18 @@ define([
                     resolve: {
                         items: function () {
                             return data;
+                        },
+                        cartList:function(){
+                            return cartList;
                         }
                     }
                 });
 
                 modalInstance.result.then(function(){
-                    fnInitial();
+                    if(fnInitial){
+                        fnInitial();
+                    }
+
                 })
             });
         }
@@ -341,19 +356,53 @@ define([
              * @typedef {object} ComplexMappingPopupContext
              * @property {string} platformCategoryPath 平台类目路径
              * @property {string} mainCategoryId 主数据类目 ID
+             * @property {Field} property 平台属性
              */
 
             /**
              * 弹出 Complex 属性的值匹配窗
              * @param {ComplexMappingPopupContext} context 上下文参数
-             * @returns {Promise}
+             * @returns {Promise.<ComplexMappingBean>}
              */
             complex: function (context) {
                 return openModel(popActions.platformMapping.complex, context);
             },
 
-            simple: function (context) {
-                return openModel(popActions.platformMapping.simple, context);
+            simple: {
+
+                /**
+                 * Simple Mapping List 设定弹出框的上下文参数
+                 * @typedef {object} SimpleListMappingPopupContext
+                 * @property {string} platformCategoryPath 平台类目路径
+                 * @property {string} mainCategoryId 主数据类目 ID
+                 * @property {Field} property 平台属性
+                 */
+
+                /**
+                 * 弹出 Simple 属性的值匹配窗
+                 * @param {SimpleListMappingPopupContext} context
+                 * @returns {Promise}
+                 */
+                list: function (context) {
+                    return openModel(popActions.platformMapping.simple.list, context);
+                },
+
+                /**
+                 * Simple Mapping Item 设定弹出框的上下文参数
+                 * @typedef {object} SimpleItemMappingPopupContext
+                 * @property {string} platformCategoryPath 平台类目路径
+                 * @property {string} mainCategoryId 主数据类目 ID
+                 * @property {Field} property 平台属性
+                 */
+
+                /**
+                 * 弹出 Simple 属性的值匹配窗
+                 * @param {SimpleItemMappingPopupContext} context
+                 * @returns {Promise}
+                 */
+                item: function (context) {
+                    return openModel(popActions.platformMapping.simple.item, context);
+                }
             },
 
             multiComplex: function (context) {

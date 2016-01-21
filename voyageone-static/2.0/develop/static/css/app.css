@@ -6768,6 +6768,11 @@ input:checked + ol > li {
 .category_ts span{
   color:#e67e22;
 }
+.tableLayer{
+  display: block;
+  margin: 0px;
+  padding: 0px;
+}
 .dropdown_table{
   float:left;
   margin:0px;

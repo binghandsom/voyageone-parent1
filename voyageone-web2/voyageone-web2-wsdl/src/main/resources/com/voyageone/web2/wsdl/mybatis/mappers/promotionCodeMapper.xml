@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.voyageone.web2.cms.sql">
-    <resultMap id="bt_promotion_code_map" extends="bt_promotion_model_map" type="com.voyageone.web2.cms.model.CmsBtPromotionCodeModel" >
+<mapper namespace="com.voyageone.web2.wsdl.sql">
+    <resultMap id="bt_promotion_code_map" extends="bt_promotion_model_map" type="com.voyageone.web2.sdk.api.domain.CmsBtPromotionCodeModel" >
         <result column="sale_price" property="salePrice" jdbcType="DOUBLE" />
         <result column="msrp" property="msrp" jdbcType="DOUBLE" />
         <result column="promotion_price" property="promotionPrice" jdbcType="DOUBLE" />
@@ -79,7 +79,7 @@
             </if>
         </where>
     </select>
-    <insert id="insert_cms_bt_promotion_code" parameterType="com.voyageone.web2.cms.model.CmsBtPromotionCodeModel" >
+    <insert id="insert_cms_bt_promotion_code" parameterType="com.voyageone.web2.sdk.api.domain.CmsBtPromotionCodeModel" >
         insert into voyageone_cms2.cms_bt_promotion_code
         <trim prefix="(" suffix=")" suffixOverrides="," >
             <if test="promotionId != null" >
@@ -186,7 +186,7 @@
             </if>
         </trim>
     </insert>
-    <update id="update_cms_bt_promotion_code" parameterType="com.voyageone.web2.cms.model.CmsBtPromotionCodeModel" >
+    <update id="update_cms_bt_promotion_code" parameterType="com.voyageone.web2.sdk.api.domain.CmsBtPromotionCodeModel" >
         update voyageone_cms2.cms_bt_promotion_code
         <set >
             <if test="promotionId != null" >
@@ -245,7 +245,7 @@
             </if>
         </where>
     </update>
-    <delete id="delete_cms_bt_promotion_code" parameterType="com.voyageone.web2.cms.model.CmsBtPromotionCodeModel">
+    <delete id="delete_cms_bt_promotion_code" parameterType="com.voyageone.web2.sdk.api.domain.CmsBtPromotionCodeModel">
         delete
         from voyageone_cms2.cms_bt_promotion_code
         where

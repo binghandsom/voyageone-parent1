@@ -8,8 +8,9 @@
 
 define([
 	'cms',
-	'underscore'
-],function (cms, _) {
+	'underscore',
+	'modules/cms/enums/Status'
+],function (cms, _, Status) {
 
 	cms.service("productDetailService", productDetailService);
 
@@ -50,6 +51,22 @@ define([
 					sku.SelSkuCarts = SelSkuCarts;
 				});
 
+				// 设置产品状态
+				var status = result.data.productInfo.productStatus.approveStatus;
+
+				if (_.isEqual(status, Status.NEW)
+						|| _.isEqual(status, Status.PENDING)
+						|| _.isEqual(status, Status.READY))
+					result.data.productInfo.productStatus.statusInfo = {
+						isApproved: false,
+						isDisable: false
+					};
+				else
+					result.data.productInfo.productStatus.statusInfo = {
+						isApproved: true,
+						isDisable: true
+					};
+
 				defer.resolve(result);
 			});
 
@@ -61,7 +78,7 @@ define([
 		 * @param formData
 		 * @returns {*|Promise}
          */
-		function updateProductInfo (formData, detailFlag) {
+		function updateProductInfo (formData) {
 
 			var data = {
 				categoryId: formData.categoryId,
@@ -73,8 +90,15 @@ define([
 			};
 
 			// 如果是productDetail更新时传递productStatus
-			if (detailFlag)
-				data.productStatus = formData.productStatus;
+			//if (detailFlag) {
+			//	data.productStatus = {
+			//		approveStatus: (formData.productStatus.statusInfo.isApproved && formData.productStatus.statusInfo.isDisable)
+			//						|| (!formData.productStatus.statusInfo.isApproved && !formData.productStatus.statusInfo.isDisable)
+			//						? formData.productStatus.approveStatus : Status.APPROVED,
+			//		translateStatus: formData.productStatus.translateStatus ? "1" : "0",
+			//		editStatus: formData.productStatus.editStatus ? "1" : "0"
+			//	};
+			//}
 
 			angular.forEach(formData.masterFields, function (field) {
 				if (field.type != "LABEL" && field.isDisplay != 0)
@@ -108,11 +132,29 @@ define([
 		 * @returns {*|Promise.<T>}
          */
 		function updateProductDetail (formData) {
-			return updateProductInfo(formData, true)
-					.then(function (res) {
-						formData.modified = res.data.modified;
-						return updateSkuInfo(formData);
-					})
+
+			var data = {
+				categoryId: formData.categoryId,
+				categoryFullPath: formData.categoryFullPath,
+				productId: formData.productId,
+				modified: formData.modified,
+				masterFields: [],
+				customAttributes: formData.customAttributes,
+				productStatus: {
+					approveStatus: (formData.productStatus.statusInfo.isApproved && formData.productStatus.statusInfo.isDisable)
+					|| (!formData.productStatus.statusInfo.isApproved && !formData.productStatus.statusInfo.isDisable)
+							? formData.productStatus.approveStatus : Status.APPROVED,
+					translateStatus: formData.productStatus.translateStatus ? "1" : "0",
+					editStatus: formData.productStatus.editStatus ? "1" : "0"
+				}
+			};
+
+			angular.forEach(formData.masterFields, function (field) {
+				if (field.type != "LABEL" && field.isDisplay != 0)
+					data.masterFields.push(field);
+			});
+
+			return $productDetailService.updateProductAllInfo(data);
 		}
 
 		/**
