@@ -146,7 +146,8 @@ define([
 							? formData.productStatus.approveStatus : Status.APPROVED,
 					translateStatus: formData.productStatus.translateStatus ? "1" : "0",
 					editStatus: formData.productStatus.editStatus ? "1" : "0"
-				}
+				},
+				skuFields: formData.skuFields
 			};
 
 			angular.forEach(formData.masterFields, function (field) {
