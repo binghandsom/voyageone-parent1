@@ -530,7 +530,7 @@ public class ProductService extends BaseService {
              * execute update
              */
             if (bulkList.size() > 0) {
-                BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
+                BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set",modified);
                 setResultCount(response, bulkWriteResult);
                 //insertProductHistory
                 if (findModel.getFields() != null && findModel.getFields().getStatus() != null

@@ -10,7 +10,7 @@ import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.cms.service.model.CmsBtProductModel_Field;
 import com.voyageone.cms.service.model.CmsBtProductModel_Group_Platform;
 import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
-import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.*;
 import net.minidev.json.JSONObject;
 import org.springframework.stereotype.Repository;
 
@@ -370,8 +370,8 @@ public class CmsBtProductDao extends BaseMongoPartDao {
      * @param key       MongoKey pop,set,push,addToSet
      * @return 运行结果
      */
-    public BulkWriteResult bulkUpdateWithMap(String channelId, List<BulkUpdateModel> bulkList, String modifier, String key) {
-        return bulkUpdateWithMap(channelId, bulkList, modifier, key, false);
+    public BulkWriteResult bulkUpdateWithMap(String channelId, List<BulkUpdateModel> bulkList, String modifier, String key,String... modified) {
+        return bulkUpdateWithMap(channelId, bulkList, modifier, key, false,modified);
     }
 
     /**
@@ -382,7 +382,7 @@ public class CmsBtProductDao extends BaseMongoPartDao {
      * @param key       MongoKey pop,set,push,addToSet
      * @return 运行结果
      */
-    public BulkWriteResult bulkUpdateWithMap(String channelId, List<BulkUpdateModel> bulkList, String modifier, String key, boolean isUpsert) {
+    public BulkWriteResult bulkUpdateWithMap(String channelId, List<BulkUpdateModel> bulkList, String modifier, String key, boolean isUpsert, String... modified) {
         //获取集合名
         DBCollection coll = getDBCollection(channelId);
         BulkWriteOperation bwo = coll.initializeOrderedBulkOperation();
@@ -392,7 +392,14 @@ public class CmsBtProductDao extends BaseMongoPartDao {
         if (modifier != null) {
             modifierObj.append("modifier", modifier);
         }
-        modifierObj.append("modified", DateTimeUtil.getNowTimeStamp());
+        if(modified != null && modified.length > 0){
+
+            modifierObj.append("modified", modified[0]);
+
+        } else {
+            modifierObj.append("modified", DateTimeUtil.getNowTimeStamp());
+        }
+
 
         for (BulkUpdateModel model: bulkList){
 
