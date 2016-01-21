@@ -1,6 +1,5 @@
 package com.voyageone.web2.cms.views.product_edit;
 
-import com.google.gson.JsonObject;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -80,6 +79,23 @@ public class ProductPropsEditController extends CmsController{
         return success(updateInfo);
 
     }
+
+    @RequestMapping(CmsUrlConstants.PRODUCT.EDIT.UPDATE_PRODUCT_ALL_INFO)
+    public AjaxResponse doUpdateProductAllInfo(@RequestBody Map requestMap){
+
+        String channelId = super.getUser().getSelChannelId();
+        String userName = super.getUser().getUserName();
+
+        String updateTime = productPropsEditService.updateProductAllInfo(channelId, userName,requestMap);
+
+        Map<String,Object> updateInfo = new HashMap<>();
+
+        updateInfo.put("modified", updateTime);
+
+        return success(updateInfo);
+
+    }
+
 
     @RequestMapping(CmsUrlConstants.PRODUCT.EDIT.CHANGE_CATEGORY)
     public AjaxResponse doChangeCategory(@RequestBody Map requestMap){
