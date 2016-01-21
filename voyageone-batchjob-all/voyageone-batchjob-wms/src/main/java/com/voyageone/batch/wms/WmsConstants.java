@@ -210,7 +210,7 @@ public interface WmsConstants {
         public static final HashMap<String, String> SALES_ORDER_TITLE = new HashMap<String, String>() {
             {
                 put("SalesType", "销售订单");
-                put("Warehouse", "0501");
+                put("Warehouse", "0503");
                 put("Ordertype", "0");
                 put("Site","01");
             }
@@ -219,7 +219,7 @@ public interface WmsConstants {
         public static final HashMap<String, String> RETURN_TP_TITLE = new HashMap<String, String>() {
             {
                 put("SalesType", "退货订单");
-                put("Warehouse", "0501");
+                put("Warehouse", "0504");
                 put("Ordertype", "1");
                 put("Site","01");
             }
@@ -228,7 +228,7 @@ public interface WmsConstants {
         public static final HashMap<String, String> RETURN_SPALDING_TITLE = new HashMap<String, String>() {
             {
                 put("SalesType", "退货订单");
-                put("Warehouse", "0502");
+                put("Warehouse", "0504");
                 put("Ordertype", "2");
                 put("Site","01");
             }
@@ -250,13 +250,16 @@ public interface WmsConstants {
     final class spaldingReportTitleHead {
         //销售订单标题
         public static final String[] SALES_ORDER_TITLE_HEAD={"OrderType","DocumentID","CustAccount","InventSiteId","InventLocationId",
-                "ShippingDateRequested","E-ComSalesId","ItemId","Size","Qty","SalesPrice","SalesUnit","LineAmount"};
+                "ShippingDateRequested","E-ComSalesId","ItemId","Size","Qty","SalesPrice","SalesUnit","LineAmount","Transcost","Discount"};
 
 
         //退货订单标题
         public static final String[]  RETURN_TP_TITLE_HEAD = {"OrderType","DocumentID","CustAccount","ReasonCode","InventSiteId","InventLocationId",
-                "ShippingDateRequested","E-ComSalesId","ItemId","Size","Qty","SalesPrice","SalesUnit","LineAmount"};
+                "ShippingDateRequested","E-ComSalesId","ItemId","Size","Qty","SalesPrice","SalesUnit","LineAmount","Transcost","Discount"};
     }
+
+
+
 
 
         //斯伯丁日报文件用
@@ -351,6 +354,114 @@ public interface WmsConstants {
         public final static String AREA = "1";
         public final static String INVENTORY = "2";
     }
+
+    /**
+     * 斯伯丁第三方仓库发货日报
+     */
+    public final static class SPThirdWarehouseReportItems {
+        // 模板Sheet
+        public final static int TEMPLATE_SHEET = 0;
+
+        // 增加标准行
+        public final static int OLD_ROWS = 1;
+
+        // 增加起始行数
+        public final static int ADD_START_ROWS = 2;
+
+        // 开始列
+        public final static int Column_Start = 0;
+        // 结束列
+        public final static int Column_End = 15;
+
+        //序号
+        public final static int Column_Index = 0;
+        //付款时间
+        public final static int Column_Order_date_time = 1;
+        //官网订单号
+        public final static int Column_Source_order_id = 2;
+        // 	内部订单号
+        public final static int Column_Order_number = 3;
+        //购买物品
+        public final static int Column_Sku = 4;
+        // 	数量
+        public final static int Column_Qty = 5;
+        // 	物品类型
+        public final static int Column_Product = 6;
+        // 	收货人姓名
+        public final static int Column_Ship_name = 7;
+        // 	手机
+        public final static int Column_Ship_phone = 8;
+        // 	省
+        public final static int Column_Ship_state = 9;
+        // 	市
+        public final static int Column_Ship_city = 10;
+        // 	详细地址
+        public final static int Column_Ship_address = 11;
+        // 	备注
+        public final static int Column_Customer_comments = 12;
+        // 	承运方
+        public final static int Tracking_type = 13;
+        // 	运单号
+        public final static int Tracking_no = 14;
+
+    }
+
+    /**
+     * 斯伯丁第三方仓库发货日报邮件
+     */
+    final class EmailSPThirdWarehouseReport {
+
+        // 邮件名
+        public final static String SUBJECT = "斯伯丁第三方仓库发货日报【%s】 ";
+        // 概要说明
+        public final static String HEAD = "<font color='black'>从%s至%s官网共有%s单需要发货，请按附件中所列订单信息发货，谢谢。</font>";
+
+    }
+
+    /**
+     * SP第三方仓库发货文件错误记录邮件（EmailSpThirdReportErrShipping）
+     */
+    final class EmailSpThirdReportErrShipping {
+
+        // 表格式
+        public final static String TABLE = "<div><span>%s</span>"
+                + "<table><tr>"
+                + "<th></th><th>WebID</th><th>OrderNum</th><th>Sku</th><th>TrackingType</th><th>TrackingNo</th>"
+                + "<th>OrderDateTime</th><th>ErrReason</th>"
+                + "</tr>%s</table></div>";
+        // 行格式
+        public final static String ROW = "<tr>"
+                + "<td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td>"
+                + "<td>%s</td><td>%s</td>"
+                + "</tr>";
+        // 邮件名
+        public final static String SUBJECT = "%s第三方仓库发货文件错误记录一览";
+        // 概要说明
+        public final static String HEAD = "<font color='red'>%s文件中，以下订单数据解析时有错误，请确认</font>";
+        // 件数
+        public final static String COUNT = "订单总数：%s";
+
+    }
+
+
+    /**
+     * SP第三方仓库发货文件错误理由（SpThirdReportErrReason）
+     */
+    final class SpThirdReportErrReason {
+        // 承运方为空
+        public final static String TRACHING_TYPE_NULL = "承运方为空,运单号不为空，数据没有保持一致";
+        // 承运方不是规定的物流公司
+        public final static String TRACHING_TYPE_ERR = "承运方不是规定的物流公司";
+        // 运单号为空
+        public final static String TRACHING_NO_NULL = "运单号为空,承运方不为空，数据没有保持一致";
+        // 运单号中间有空格
+        public final static String TRACHING_NO_ERR = "运单号中间有空格";
+        // 订单不存在
+        public final static String ORDER_NO_ERR = "订单不存在";
+        // 该订单已经有运单号
+        public final static String ClIENT_TRACKING_ERR = "该订单已经有运单号";
+    }
+
 
     //是否有库存
     final class IN_STOCK {

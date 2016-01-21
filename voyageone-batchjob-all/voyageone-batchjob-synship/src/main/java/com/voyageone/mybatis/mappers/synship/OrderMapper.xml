@@ -97,4 +97,24 @@
             order_number = #{order_number}
     </update>
 
+    <!--OMS Order信息取得- -->
+    <resultMap id="ordersInfoMap" type="com.voyageone.batch.synship.modelbean.Order">
+        <result column="source_order_id" property="sourceOrderId"/>
+        <result column="order_number" property="orderNumber"/>
+    </resultMap>
+    <select id = "synShip_SelectOrdersBySourceOrderIdList" parameterType="HashMap" resultMap="ordersInfoMap" >
+        select
+            o.order_number,
+            o.source_order_id
+        from
+            oms_bt_orders o
+        where
+            <if test="sourceOrderIdList != null ">
+                o.source_order_id in
+                <foreach item="item" index="index" collection="sourceOrderIdList" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            and o.order_kind = '0'
+    </select>
 </mapper>

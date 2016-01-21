@@ -2,9 +2,7 @@ package com.voyageone.batch.wms.dao;
 
 import com.voyageone.base.dao.BaseDao;
 import com.voyageone.batch.core.CodeConstants;
-import com.voyageone.batch.wms.modelbean.ClientInventoryBean;
-import com.voyageone.batch.wms.modelbean.SpaldingPriceBean;
-import com.voyageone.batch.wms.modelbean.ThirdReportBean;
+import com.voyageone.batch.wms.modelbean.*;
 import com.voyageone.common.Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,25 +24,16 @@ public class CreateReportDao extends BaseDao {
      *
      * @param cartID
      * @param order_channel_id
-     * @param transfer_status
-     * @param transfer_type
-     * @param transfer_origin
      * @param start_created
      * @param end_created
-     * @param task_name
      * @return List<ThirdReportBean>
      */
-    public List<ThirdReportBean> getVirtualCreateReportData(String cartID,String order_channel_id,String transfer_status,String transfer_type,
-                                                     String transfer_origin,String start_created,String end_created,String task_name) {
+    public List<ThirdReportBean> getVirtualCreateReportData(String cartID,String order_channel_id,String start_created,String end_created) {
         Map<String, String> paramMap = new HashMap<>();
         paramMap.put("cart_id", cartID);
         paramMap.put("order_channel_id", order_channel_id);
-        paramMap.put("transfer_status",transfer_status);
-        paramMap.put("transfer_type",transfer_type);
-        paramMap.put("transfer_origin",transfer_origin);
         paramMap.put("start_created",start_created);
         paramMap.put("end_created",end_created);
-        paramMap.put("task_name",task_name);
 
         return selectList(Constants.DAO_NAME_SPACE_WMS + "wms_getVirtualCreateReportData", paramMap);
     }
@@ -145,5 +134,23 @@ public class CreateReportDao extends BaseDao {
         paramMap.put("order_number",order_number);
 
         return selectList(Constants.DAO_NAME_SPACE_WMS + "wms_getPriceData", paramMap);
+    }
+
+    /**
+     * 以SKU集计斯伯丁第三方仓库发货日报数据
+     * @param order_channel_id
+     * @param start_created
+     * @param end_created
+     * @param status
+     * @return
+     */
+    public List<SPThirdWarehouseReportBean> getSPThirdWarehouseReportBySKU(String order_channel_id,String start_created,String end_created,String status,String allot_store) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("res_status", status);
+        params.put("order_channel_id", order_channel_id);
+        params.put("start_created",start_created);
+        params.put("end_created",end_created);
+        params.put("allot_store",allot_store);
+        return selectList(Constants.DAO_NAME_SPACE_WMS + "wms_selectSPThirdWarehouseReportBySKU", params);
     }
 }

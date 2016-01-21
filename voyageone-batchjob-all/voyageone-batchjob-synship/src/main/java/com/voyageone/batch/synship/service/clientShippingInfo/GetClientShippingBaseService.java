@@ -12,6 +12,7 @@ import com.voyageone.batch.synship.modelbean.ReservationClientBean;
 import com.voyageone.batch.synship.modelbean.TrackingBean;
 import com.voyageone.common.components.channelAdvisor.service.OrderService;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.components.tmall.TbLogisticsService;
 import com.voyageone.common.configs.Enums.CarrierEnums;
 import com.voyageone.common.configs.Enums.PortConfigEnums;
 import com.voyageone.common.configs.beans.OrderChannelBean;
@@ -34,6 +35,10 @@ public abstract class GetClientShippingBaseService extends BaseTaskService {
     OrderService orderService;
 
     @Autowired
+    TbLogisticsService tbLogisticsService;
+
+    @Autowired
+    protected IssueLog issueLog;
     MagentoApiServiceImpl magentoApiServiceImpl;
 
     @Autowired
@@ -41,6 +46,9 @@ public abstract class GetClientShippingBaseService extends BaseTaskService {
 
     @Autowired
     ReservationDao reservationDao;
+
+    @Autowired
+    OrderDao orderDao;
 
     @Autowired
     OrderDao orderDao;

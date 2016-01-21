@@ -76,6 +76,7 @@ public class WmsUploadFileToThirdService extends BaseTaskService {
         }
 
         public void doRun() {
+            ArrayList <String[]> ftpFileNames = new ArrayList <String[]>();
             //JCFtp下载 ， 判断下载文件时间间隔的文件路径设定
             //String filePath = Properties.readValue(WmsConstants.JCFTPCheckTimePathSetting.WMS_FTP_JC_CHECK_STOCK_PATH);
             logger.info(channel.getFull_name() + " WmsUploadFileToThirdJob 开始");
@@ -89,7 +90,9 @@ public class WmsUploadFileToThirdService extends BaseTaskService {
                 }else{
                     for (ThirdPartyConfigBean bean : ftpFilePaths) {
                         //根据配置表生成上传文件名
-                        List<String> ftpFileNames = setUploadFileName(bean);
+                        ftpFileNames = new ArrayList <String[]>();
+                        ftpFileNames =  setUploadFileName(bean);
+                        //List<String> ftpFileNames = setUploadFileName(bean);
                         //没有上传文件名
                         if (ftpFileNames == null || ftpFileNames.size() == 0){
                             //直接报错
@@ -97,9 +100,8 @@ public class WmsUploadFileToThirdService extends BaseTaskService {
                             logIssue(channel.getFull_name() + "上传Ftp文件发生错误：没有设置上传文件名");
                             break;
                         //路径下全部文件上传
-                        }else if( ftpFileNames.size() == 1 &&  ftpFileNames.get(0).equals(fileAll)){
+                        }else if( ftpFileNames.size() == 1 &&  ftpFileNames.get(0)[0].equals(fileAll)){
                             //取得上传路径下所有文件
-                            ftpFileNames = new ArrayList<String>();
                             ftpFileNames =  FileUtils.getFileGroup(bean.getProp_val2());
                         }
                         // 上传文件名取得
@@ -127,9 +129,10 @@ public class WmsUploadFileToThirdService extends BaseTaskService {
          * 根据配置表生成上传文件名
          * @param ftpFileBean    List<ThirdPartyConfigBean>
          */
-        private List<String> setUploadFileName(ThirdPartyConfigBean ftpFileBean) throws Exception{
+        private ArrayList <String[]> setUploadFileName(ThirdPartyConfigBean ftpFileBean) throws Exception{
             logger.info("根据配置表生成上传文件名开始" );
             List<String> uploadFileNames = new ArrayList<String>();
+            ArrayList <String[]> uploadFileNameTypes = new ArrayList <String[]>();
             String strChange = "";
             //有上传文件名
             if (!StringUtils.isNullOrBlank2(ftpFileBean.getProp_val4())) {
@@ -154,9 +157,24 @@ public class WmsUploadFileToThirdService extends BaseTaskService {
                         uploadFileNames.add(fileName);
                     }
                 }
+                //分割上传Flag
+                for(String fileName : uploadFileNames){
+                    String [] fileUploadType = fileName.split(":");
+                    String[] fileUpload = new String[2];
+                    if (fileUploadType.length > 1){
+                        fileUpload[0] = fileUploadType[0];
+                        fileUpload[1] = fileUploadType[1];
+                    //默认为需要上传
+                    }else{
+                        fileUpload[0] = fileUploadType[0];
+                        fileUpload[1] = "1";
+                    }
+                    uploadFileNameTypes.add(fileUpload);
+                }
+
             }
             logger.info("根据配置表生成上传文件名结束" );
-            return uploadFileNames;
+            return uploadFileNameTypes;
         }
 
 
@@ -165,7 +183,7 @@ public class WmsUploadFileToThirdService extends BaseTaskService {
          * @param ftpFileBean    List<ThirdPartyConfigBean>
          * @param ftpFileNames   上传文件名
          */
-        private boolean checkFileUpload(ThirdPartyConfigBean ftpFileBean,List<String> ftpFileNames) throws Exception{
+        private boolean checkFileUpload(ThirdPartyConfigBean ftpFileBean,ArrayList <String[]> ftpFileNames) throws Exception{
             List<String> createFileNames = new ArrayList<String>();
             //有判断用文件路径
             if (!StringUtils.isNullOrBlank2(ftpFileBean.getProp_val1())) {
@@ -181,9 +199,9 @@ public class WmsUploadFileToThirdService extends BaseTaskService {
                     //判断文件内容（已生成文件）和需要上传的文件是否一致
                     int checkFlg = 0;
                     for (String createFileName : createFileNames){
-                        for (String ftpFileName : ftpFileNames) {
+                        for (String[] ftpFileName : ftpFileNames) {
                             //文件名一致
-                            if (createFileName.equals(ftpFileName.substring(0,ftpFileName.lastIndexOf("."))))
+                            if (createFileName.equals(ftpFileName[0].substring(0, ftpFileName[0].lastIndexOf("."))))
                             {
                                 checkFlg = checkFlg + 1;
                                 break;
@@ -237,10 +255,10 @@ public class WmsUploadFileToThirdService extends BaseTaskService {
          * @param localFilePath  本地文件生成路径
          *
          */
-        private boolean checkFileExists(List<String> ftpFileNames,String localFilePath) throws Exception {
+        private boolean checkFileExists(ArrayList <String[]>  ftpFileNames,String localFilePath) throws Exception {
             boolean isSuccess = true;
-            for (String fileName : ftpFileNames) {
-                File oldfile = new File(localFilePath + "/" + fileName);
+            for (String[] fileName : ftpFileNames) {
+                File oldfile = new File(localFilePath + "/" + fileName[0]);
                 if (!oldfile.exists()) {
                     isSuccess = false;
                     break;
@@ -258,7 +276,7 @@ public class WmsUploadFileToThirdService extends BaseTaskService {
          * @param backFilePath   本地文件备份路径
          *
          */
-        private void uploadFileProecss(List<String> ftpFileNames,String ftpFilePath,String localFilePath,String backFilePath) throws Exception {
+        private void uploadFileProecss(ArrayList <String[]>  ftpFileNames,String ftpFilePath,String localFilePath,String backFilePath) throws Exception {
             boolean isSuccess = false;
             String type = ThirdPartyConfigs.getVal1(channel.getOrder_channel_id(), WmsConstants.ftpValues.FTP_TYPE);
 
@@ -312,7 +330,7 @@ public class WmsUploadFileToThirdService extends BaseTaskService {
          * @param localFilePath   本地文件生成路径
          *
          */
-        private boolean uploadFileForFtp(List<String> ftpFileNames,String ftpFilePath,String localFilePath) throws Exception{
+        private boolean uploadFileForFtp(ArrayList <String[]> ftpFileNames,String ftpFilePath,String localFilePath) throws Exception{
             logger.info("向Ftp服务器上传文件开始" );
             boolean isSuccess = false;
             // FtpBean初期化
@@ -329,16 +347,19 @@ public class WmsUploadFileToThirdService extends BaseTaskService {
                     ftpBean.setUpload_localpath(localFilePath);
                     //FTP服务器保存目录设定
                     ftpBean.setUpload_path(ftpFilePath);
-                    for (String fileName : ftpFileNames) {
-                        //上传文件名设定
-                        ftpBean.setUpload_filename(fileName);
-                        //文件流取得
-                        //ftpBean.setUpload_input(new FileInputStream(ftpBean.getUpload_localpath() + "/" + ftpBean.getUpload_filename()));
-                        //上传文件
-                        isSuccess = ftpUtil.uploadFile(ftpBean,ftpClient);
-                        //上传出错不再上传，直接返回
-                        if (isSuccess == false){
-                            break;
+                    for (String[] fileName : ftpFileNames) {
+                        //允许上传的情况
+                        if (fileName[1].equals("1")) {
+                            //上传文件名设定
+                            ftpBean.setUpload_filename(fileName[0]);
+                            //文件流取得
+                            //ftpBean.setUpload_input(new FileInputStream(ftpBean.getUpload_localpath() + "/" + ftpBean.getUpload_filename()));
+                            //上传文件
+                            isSuccess = ftpUtil.uploadFile(ftpBean, ftpClient);
+                            //上传出错不再上传，直接返回
+                            if (isSuccess == false) {
+                                break;
+                            }
                         }
                     }
                 }else{
@@ -365,7 +386,7 @@ public class WmsUploadFileToThirdService extends BaseTaskService {
          * @param localFilePath   本地文件生成路径
          *
          */
-        private boolean uploadFileForSFtp(List<String> ftpFileNames,String ftpFilePath,String localFilePath) {
+        private boolean uploadFileForSFtp(ArrayList <String[]> ftpFileNames,String ftpFilePath,String localFilePath) {
             logger.info("向SFtp服务器上传文件开始" );
             boolean isSuccess = true;
 
@@ -385,13 +406,16 @@ public class WmsUploadFileToThirdService extends BaseTaskService {
                 ftpBean.setUpload_path(ftpFilePath);
                 if (ftpClient != null) {
                     sftpUtil.createDirForSftp(ftpBean.getUpload_path(), ftpClient);
-                    for (String fileName : ftpFileNames) {
-                        //上传文件名设定
-                        ftpBean.setUpload_filename(fileName);
-                        isSuccess = sftpUtil.uploadFileForSFTP(ftpBean, ftpClient);
-                        //上传出错不再上传，直接返回
-                        if (isSuccess == false) {
-                            break;
+                    for (String[] fileName : ftpFileNames) {
+                        //允许上传的情况
+                        if (fileName[1].equals("1")) {
+                            //上传文件名设定
+                            ftpBean.setUpload_filename(fileName[0]);
+                            isSuccess = sftpUtil.uploadFileForSFTP(ftpBean, ftpClient);
+                            //上传出错不再上传，直接返回
+                            if (isSuccess == false) {
+                                break;
+                            }
                         }
                     }
                 }
@@ -423,16 +447,16 @@ public class WmsUploadFileToThirdService extends BaseTaskService {
          * @param ftpFileNames 源文件名称
          * @param bakFilePath 目标文件路径
          */
-        private void moveFile(String srcPath, List<String> ftpFileNames, String bakFilePath) {
+        private void moveFile(String srcPath,ArrayList <String[]> ftpFileNames, String bakFilePath) {
             logger.info("备份文件开始" );
             //移动文件进入备份文件夹
             //Object[] srcFileGroup = FileUtils.getFileGroup(srcFileName, srcPath).toArray();
-            for (String ftpFileName: ftpFileNames) {
-                String bakFileName = ftpFileName.substring(0, ftpFileName.lastIndexOf(".")) + "_" + DateTimeUtil.getNow(DateTimeUtil.DATE_TIME_FORMAT_2) + ftpFileName.substring(ftpFileName.lastIndexOf("."));
-                logger.info("备份文件  " + srcPath + "/" + ftpFileName + "  至  " +  bakFilePath + "/" + bakFileName);
-                FileUtils.copyFile(srcPath + "/" + ftpFileName, bakFilePath + "/" + bakFileName);
-                logger.info("删除文件  " + srcPath + "/" + ftpFileName);
-                FileUtils.delFile(srcPath + "/" + ftpFileName);
+            for (String[] ftpFileName: ftpFileNames) {
+                String bakFileName = ftpFileName[0].substring(0, ftpFileName[0].lastIndexOf(".")) + "_" + DateTimeUtil.getNow(DateTimeUtil.DATE_TIME_FORMAT_2) + ftpFileName[0].substring(ftpFileName[0].lastIndexOf("."));
+                logger.info("备份文件  " + srcPath + "/" + ftpFileName[0] + "  至  " +  bakFilePath + "/" + bakFileName);
+                FileUtils.copyFile(srcPath + "/" + ftpFileName[0], bakFilePath + "/" + bakFileName);
+                logger.info("删除文件  " + srcPath + "/" + ftpFileName[0]);
+                FileUtils.delFile(srcPath + "/" + ftpFileName[0]);
             }
             logger.info("备份文件结束" );
         }
@@ -442,7 +466,7 @@ public class WmsUploadFileToThirdService extends BaseTaskService {
          * @param ftpFilePath    ftpFilePath
          * @param ftpFileNames 源文件名称
          */
-        private void delFileForSFtp(String ftpFilePath,List<String>ftpFileNames) throws Exception {
+        private void delFileForSFtp(String ftpFilePath,ArrayList <String[]>ftpFileNames) throws Exception {
             logger.info("向SFtp服务器删除已上传文件开始" );
             boolean isSuccess = false;
 
@@ -458,9 +482,9 @@ public class WmsUploadFileToThirdService extends BaseTaskService {
                 if (ftpClient != null) {
                     //FTP服务器保存目录设定
                     ftpBean.setDown_remotepath(ftpFilePath);
-                    for (String fileName : ftpFileNames) {
+                    for (String[] fileName : ftpFileNames) {
                         try {
-                            sftpUtil.delOneFile(ftpBean, ftpClient, fileName);
+                            sftpUtil.delOneFile(ftpBean, ftpClient, fileName[0]);
                         }catch (Exception e){
                             logger.error(channel.getFull_name() + "SFtpUtil.delOneFile 出错", e);
                         }
@@ -486,7 +510,7 @@ public class WmsUploadFileToThirdService extends BaseTaskService {
          * @param ftpFileNames 源文件名称
          *
          */
-        private void delFileForFtp(String ftpFilePath,List<String>ftpFileNames) throws Exception{
+        private void delFileForFtp(String ftpFilePath,ArrayList <String[]>ftpFileNames) throws Exception{
             logger.info("向Ftp服务器删除已上传文件开始" );
             // FtpBean初期化
             FtpBean ftpBean;
@@ -499,8 +523,8 @@ public class WmsUploadFileToThirdService extends BaseTaskService {
                 if (ftpClient != null) {
                     //FTP服务器保存目录设定
                     ftpBean.setDown_remotepath(ftpFilePath);
-                    for (String fileName : ftpFileNames) {
-                        ftpUtil.delOneFile(ftpBean, ftpClient, fileName);
+                    for (String[] fileName : ftpFileNames) {
+                        ftpUtil.delOneFile(ftpBean, ftpClient, fileName[0]);
                     }
                 }
             }catch (Exception e){

@@ -7,6 +7,7 @@ import java.util.*;
 import javax.mail.MessagingException;
 
 import com.voyageone.common.configs.Codes;
+import com.voyageone.common.configs.Enums.ShopConfigEnums;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -2618,6 +2619,9 @@ public class OrderInfoImportService {
 		String skus = newOrderInfo.getProductSku();
 		if (!StringUtils.isNullOrBlank2(skus)) {
 
+			// sku转换配置
+			String barcode2Sku = ShopConfigs.getVal1(orderChannelId, cartId, ShopConfigEnums.Name.barcode_2_sku);
+
 			String[] realSkuArray = skus.split(Constants.SPLIT_CHAR_RESOLVE);
 			// 商品名
 			String names = newOrderInfo.getProductName();
@@ -2639,6 +2643,10 @@ public class OrderInfoImportService {
 
 			if (realSkuArray != null && realSkuArray.length > 0) {
 				for (int i = 0; i < realSkuArray.length; i++ ) {
+					// 需要barcode转sku
+					if (Constants.ONE_CHAR.equals(barcode2Sku)) {
+						realSkuArray[i] = getSkuByBarcode(orderChannelId, realSkuArray[i]);
+					}
 
 					String realSku = realSkuArray[i];
 					String realItemPrice = realItemPriceArray[i];
@@ -3838,6 +3846,9 @@ public class OrderInfoImportService {
 		
 		String orderChannelId = newOrderInfo.getOrderChannelId();
 		String cartId = newOrderInfo.getCartId();
+
+		// sku转换配置
+		String barcode2Sku = ShopConfigs.getVal1(orderChannelId, cartId, ShopConfigEnums.Name.barcode_2_sku);
 		
 		String skus = newOrderInfo.getProductSku();
 		if (!StringUtils.isNullOrBlank2(skus)) {
@@ -3863,6 +3874,12 @@ public class OrderInfoImportService {
 				for (int i = 0; i < skuArray.length; i++) {
 					
 					String itemPrice = itemPriceArray[i];
+
+					// 需要barcode转sku
+					if (Constants.ONE_CHAR.equals(barcode2Sku)) {
+						skuArray[i] = getSkuByBarcode(orderChannelId, skuArray[i]);
+					}
+
 					String sku = skuArray[i];
 					sku = transferStr(sku);
 					
@@ -4838,7 +4855,10 @@ public class OrderInfoImportService {
 		
 		String orderChannelId = newOrderInfo.getOrderChannelId();
 		String cartId = newOrderInfo.getCartId();
-		
+
+		// sku转换配置
+		String barcode2Sku = ShopConfigs.getVal1(orderChannelId, cartId, ShopConfigEnums.Name.barcode_2_sku);
+
 		String skus = newOrderInfo.getProductSku();
 		if (!StringUtils.isNullOrBlank2(skus)) {
 			
@@ -4867,6 +4887,12 @@ public class OrderInfoImportService {
 					name = transferStr(name);
 					
 					String itemPrice = itemPriceArray[i];
+
+					// 需要barcode转sku
+					if (Constants.ONE_CHAR.equals(barcode2Sku)) {
+						skuArray[i] = getSkuByBarcode(orderChannelId, skuArray[i]);
+					}
+
 					String sku = skuArray[i];
 					sku = transferStr(sku);
 					
@@ -9110,6 +9136,22 @@ public class OrderInfoImportService {
 		}
 		
 		return realPrice;
+	}
+
+	/**
+	 * 根据barcode获得sku
+	 * @param orderChannelId
+	 * @param barcode
+	 * @return
+	 */
+	private String getSkuByBarcode(String orderChannelId, String barcode) {
+		String sku = "";
+
+		if (!StringUtils.isNullOrBlank2(barcode)) {
+			sku = orderDao.getSkuByBarcode(orderChannelId, barcode);
+		}
+
+		return sku;
 	}
 	
 	public static void main(String[] args) {

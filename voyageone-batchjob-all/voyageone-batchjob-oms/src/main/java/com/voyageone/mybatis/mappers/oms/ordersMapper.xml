@@ -2937,5 +2937,16 @@
 		modified = now()
 		where order_number = #{order_number}
 	</update>
+
+	<!-- 根据barcode获得sku -->
+	<select id="wms_bt_item_details_getSkuByBarcode" parameterType="HashMap" resultType="String">
+		select sku
+		from
+			wms_bt_item_details
+		where
+			order_channel_id = #{orderChannelId}
+			and barcode = #{barcode}
+			and active = 1
+	</select>
 </mapper>
 
