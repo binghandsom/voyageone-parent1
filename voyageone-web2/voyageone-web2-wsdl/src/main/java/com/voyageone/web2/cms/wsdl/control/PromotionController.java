@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.wsdl.control;
 
+import com.voyageone.web2.cms.wsdl.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,13 +17,13 @@ import com.voyageone.web2.sdk.api.response.PromotionsPutResponse;
 /**
  * product Controller
  *
- * @author binbin.gao 16/01/14
+ * @author aooer 16/01/14
  * @version 2.0.0
- * @since. 2.0.0
+ * @since 2.0.0
  */
 @RestController
 @RequestMapping(value = "/rest/promotion", method = RequestMethod.POST)
-public class PromotionController {
+public class PromotionController extends BaseController {
 
 	@Autowired
 	private PromotionService promotionService;

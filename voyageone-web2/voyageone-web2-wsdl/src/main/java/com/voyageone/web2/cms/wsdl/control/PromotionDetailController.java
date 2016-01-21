@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.wsdl.control;
 
+import com.voyageone.web2.cms.wsdl.BaseController;
 import com.voyageone.web2.cms.wsdl.service.PromotionDetailService;
 import com.voyageone.web2.sdk.api.request.PromotionDetailAddRequest;
 import com.voyageone.web2.sdk.api.request.PromotionDetailDeleteRequest;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping(value = "/rest/promotion/detail", method = RequestMethod.POST)
-public class PromotionDetailController {
+public class PromotionDetailController extends BaseController {
 
     @Autowired
     private PromotionDetailService promotionDetailService;
