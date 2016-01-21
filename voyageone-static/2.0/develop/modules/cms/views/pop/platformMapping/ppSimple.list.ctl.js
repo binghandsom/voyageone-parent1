@@ -69,7 +69,7 @@ define([
                 // 加载原有的匹配
                 this.ppPlatformMappingService.getPlatformPropertyMapping(
                     this.property, this.mainCategoryId, this.platformCategoryId, this.context.cartId
-                ).then(function(mapping) {
+                ).then(function (mapping) {
 
                     // 如果没拿到, 则创建新的 SimpleMapping
                     if (!mapping) {
@@ -87,11 +87,34 @@ define([
 
                 }.bind(this));
             },
-            popup: function(ppPlatformMapping){
+            add: function (ppPlatformMapping) {
+                this.context.ruleWord = null;
                 // 增加 RuleWord
-                ppPlatformMapping.simple.item(this.context).then(function(word){
+                ppPlatformMapping.simple.item(this.context).then(function (word) {
                     this.ruleWords.push(word);
                 }.bind(this));
+            },
+            edit: function ($index, ppPlatformMapping) {
+                this.context.ruleWord = this.ruleWords[$index];
+                ppPlatformMapping.simple.item(this.context).then(function (word) {
+                    // 用新的结果替换原结果
+                    this.ruleWords[$index] = word;
+                }.bind(this));
+            },
+            remove: function ($index) {
+                this.ruleWords.splice($index, 1);
+            },
+            moveUp: function ($index) {
+                if ($index < 1) return;
+                var temp = this.ruleWords[$index];
+                this.ruleWords[$index] = this.ruleWords[$index - 1];
+                this.ruleWords[$index - 1] = temp;
+            },
+            moveDown: function ($index) {
+                if ($index + 1 >= this.ruleWords.length) return;
+                var temp = this.ruleWords[$index];
+                this.ruleWords[$index] = this.ruleWords[$index + 1];
+                this.ruleWords[$index + 1] = temp;
             },
             ok: function () {
                 this.$uibModalInstance.close(this.mapping);

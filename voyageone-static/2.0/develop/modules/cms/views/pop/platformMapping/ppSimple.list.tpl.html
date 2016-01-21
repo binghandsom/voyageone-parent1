@@ -9,7 +9,7 @@
     <h5 class="text-vo m-l">-> 平台类目：{{::ctrl.context.platformCategoryPath}}</h5>
 
     <div class="p-l-r">
-        <div class="table-responsive">
+        <div class="table-responsive" ng-controller="popupCtrl">
             <table class="table table-hover">
                 <thead>
                 <tr>
@@ -29,17 +29,17 @@
                         <label><input type="radio" name="radio2"/> 无</label>
                     </td>
                     <td class="form-inline text-right">
-                        <button title="编辑" class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button>
-                        <button title="删除" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button>
-                        <button title="上移" class="btn btn-default btn-xs"><i class="fa fa-arrow-up"></i></button>
-                        <button title="下移" class="btn btn-default btn-xs"><i class="fa fa-arrow-down"></i></button>
+                        <button title="编辑" ng-click="ctrl.edit($index, ppPlatformMapping)" class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button>
+                        <button title="删除" ng-click="ctrl.remove($index)" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button>
+                        <button title="上移" ng-click="ctrl.moveUp($index)" class="btn btn-default btn-xs"><i class="fa fa-arrow-up"></i></button>
+                        <button title="下移" ng-click="ctrl.moveDown($index)" class="btn btn-default btn-xs"><i class="fa fa-arrow-down"></i></button>
                     </td>
                 </tr>
                 </tbody>
             </table>
 
-            <div ng-controller="popupCtrl">
-                <button class="btn btn-sm btn-success btn-addon" ng-click="ctrl.popup(ppPlatformMapping)">
+            <div>
+                <button class="btn btn-sm btn-success btn-addon" ng-click="ctrl.add(ppPlatformMapping)">
                     <i class="fa fa-plus"></i> 添加
                 </button>
             </div>

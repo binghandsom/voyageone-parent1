@@ -25,17 +25,10 @@ define([
          */
         this.wordType = WordTypes.DICT;
         /**
+         * Java 端为 name
          * @type {string}
          */
-        this.name = null;
-        /**
-         * @type {boolean}
-         */
-        this.isUrl = false;
-        /**
-         * @type {RuleExpression}
-         */
-        this.expression = null;
+        this.value = null;
     }
 
     function MasterWord() {

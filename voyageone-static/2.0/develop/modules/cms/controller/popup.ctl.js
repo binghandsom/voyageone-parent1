@@ -398,7 +398,8 @@ define([
 
                 /**
                  * Simple Mapping List 设定弹出框的上下文参数
-                 * @typedef {object} SimpleListMappingPopupContext
+                 * @name SimpleListMappingPopupContext
+                 * @class
                  * @property {string} platformCategoryPath 平台类目路径
                  * @property {string} platformCategoryId 平台类目 ID
                  * @property {string} mainCategoryId 主数据类目 ID
@@ -416,8 +417,15 @@ define([
                 },
 
                 /**
+                 * @name SimpleItemMappingPopupContext
+                 * @class
+                 * @extends SimpleListMappingPopupContext
+                 * @property {RuleWord|null} ruleWord
+                 */
+
+                /**
                  * 弹出 Simple 属性的值匹配窗
-                 * @param {SimpleListMappingPopupContext} context
+                 * @param {SimpleItemMappingPopupContext} context
                  * @returns {Promise.<RuleWord>}
                  */
                 item: function (context) {

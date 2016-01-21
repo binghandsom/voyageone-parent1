@@ -3,14 +3,15 @@ define([
     'underscore',
     'modules/cms/enums/FieldTypes',
     'modules/cms/models/ruleWords',
+    'modules/cms/enums/WordTypes',
     'modules/cms/views/pop/platformMapping/ppPlatformMapping.serv'
-], function (cms, _, FieldTypes, ruleWords) {
+], function (cms, _, FieldTypes, ruleWords, WordTypes) {
     'use strict';
     return cms.controller('simpleItemMappingPopupController', (function () {
 
         /**
          * Simple Mapping 弹出框的 Controller
-         * @param {SimpleListMappingPopupContext} context
+         * @param {SimpleItemMappingPopupContext} context
          * @param $uibModalInstance
          * @param {PopupPlatformMappingService} ppPlatformMappingService
          * @param alert
@@ -42,6 +43,12 @@ define([
              * @type {string}
              */
             this.mainCategoryPath = null;
+            /**
+             * 将编辑的 Word 实例
+             * @type {RuleWord}
+             */
+            this.editingWord = this.context.ruleWord;
+
             this.selected = {
                 /**
                  * 选中的值来源
@@ -59,6 +66,8 @@ define([
                  */
                 fixedValue: false
             };
+
+            this.loadEditing();
         }
 
         SimpleItemMappingPopupController.prototype = {
@@ -124,8 +133,12 @@ define([
                     case valueFrom.SKU:
 
                         this.ppPlatformMappingService.getMainCategorySkuProp(this.mainCategoryId).then(function (sku) {
+                            var selectedId = this.editingWord ? this.editingWord.value : null;
+                            var selectedField = _.find(sku.fields, function(field) {
+                                return field.id === selectedId;
+                            });
                             this.options.values = [
-                                {selected: null, props: sku.fields}
+                                {selected: selectedField, props: sku.fields}
                             ];
                         }.bind(this));
 
@@ -133,8 +146,12 @@ define([
                     case valueFrom.DICT:
 
                         this.ppPlatformMappingService.getDictList().then(function (dictList) {
+                            var selectedName = this.editingWord ? this.editingWord.value : null;
+                            var selectedDict = _.find(dictList, function (dict) {
+                                return dict.name === selectedName;
+                            });
                             this.options.values = [
-                                {selected: null, props: dictList}
+                                {selected: selectedDict, props: dictList}
                             ];
                         }.bind(this));
 
@@ -251,8 +268,7 @@ define([
                         break;
                     case valueFrom.DICT:
                         word = new ruleWords.DictWord();
-                        word.name = this.selected.value.name;
-                        word.expression = null;
+                        word.value = this.selected.value.name;
                         break;
                 }
 
@@ -270,6 +286,54 @@ define([
                 });
 
                 return extra;
+            },
+            loadEditing: function () {
+
+                // 不存在,就使用默认
+                if (!this.editingWord) return;
+
+                var valueFrom = null;
+
+                // 除了 Text 其他的都需要等待 loadValue, 所以在 loadValue 加载值
+
+                switch (this.editingWord.wordType) {
+                    case WordTypes.MASTER:
+                        break;
+                    case WordTypes.FEED_CN:
+                        valueFrom = this.options.valueFrom.FEED_CN;
+                        break;
+                    case WordTypes.FEED_ORG:
+                        valueFrom = this.options.valueFrom.FEED_ORG;
+                        break;
+                    case WordTypes.SKU:
+                        valueFrom = this.options.valueFrom.SKU;
+                        break;
+                    case WordTypes.DICT:
+                        valueFrom = this.options.valueFrom.DICT;
+                        break;
+                    case WordTypes.TEXT:
+                        // 反向加载值...
+                        switch (this.property.type) {
+                            case FieldTypes.input:
+                                this.property.value = this.editingWord.value;
+                                break;
+                            case FieldTypes.singleCheck:
+                                this.property.value = {value: this.editingWord.value};
+                                break;
+                            case FieldTypes.multiCheck:
+                                var values = this.editingWord.value.split(',');
+                                values = _.map(values, function (value) {
+                                    return {value: value};
+                                });
+                                this.property.values = values;
+                        }
+                        this.selected.fixedValue = true;
+                        break;
+                    default:
+                        throw 'Unsupported word type.';
+                }
+
+                if (valueFrom) this.selected.valueFrom = valueFrom;
             },
             cancel: function () {
                 this.$uibModalInstance.dismiss('cancel');
