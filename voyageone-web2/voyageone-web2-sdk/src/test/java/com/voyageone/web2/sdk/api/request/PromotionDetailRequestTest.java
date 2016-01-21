@@ -22,21 +22,10 @@ import java.net.URI;
  * @version 2.0.0
  * @since 2.0.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:applicationContext.xml")
 public class PromotionDetailRequestTest {
-
-    @Autowired
-    VoApiDefaultClient voApiClient;
-
-    @Autowired
-    RestTemplate restTemplate;
-
-    private static final String baseUri = "http://localhost:8080/rest";
 
     @Test
     public void testAdd() {
-
         PromotionDetailAddRequest request=new PromotionDetailAddRequest();
         /*request.setModifier("testor");
         request.setChannelId("001");
@@ -46,8 +35,7 @@ public class PromotionDetailRequestTest {
         request.setPromotionPrice(1.1);
         request.setTagId(1);
         request.setTagPath("http://1");*/
-
-        processRequest(request, PromotionDetailPutResponse.class);
+        ApiTestUtils.RunWithRest(request);
     }
 
     @Test
@@ -55,8 +43,7 @@ public class PromotionDetailRequestTest {
         PromotionDetailUpdateRequest request=new PromotionDetailUpdateRequest();
         /*request.setPromotionCodeModel(promotionCodeModel);
         request.setModifier(operator);*/
-
-        processRequest(request, PromotionDetailPutResponse.class);
+        ApiTestUtils.RunWithRest(request);
     }
 
     @Test
@@ -65,38 +52,8 @@ public class PromotionDetailRequestTest {
         /*request.setPromotionModes(promotionModes);
         request.setChannelId(channelId);
         request.setModifier(operator);*/
-
-        processRequest(request, PromotionDetailPutResponse.class);
+        ApiTestUtils.RunWithRest(request);
     }
 
-    /**
-     * URI 取得
-     *
-     * @return URI
-     */
-    private URI getURI(String apiURLPath) {
-        return URI.create(baseUri + apiURLPath);
-    }
 
-    /**
-     * Request 处理方法
-     *
-     * @param <E> 实际类型
-     *
-     *
-     * @param request 请求体
-     * @param clazz 响应类
-     */
-    private <E> void processRequest(VoApiRequest request, Class<E> clazz) {
-        RequestEntity<VoApiRequest> requestEntity = new RequestEntity<VoApiRequest>(
-                request, request.getHeaders(), request.getHttpMethod(),
-                getURI(request.getApiURLPath()));
-        ResponseEntity<E> responseEntity;
-        try {
-            responseEntity = restTemplate.exchange(requestEntity, clazz);
-            System.out.println(responseEntity);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
 }
