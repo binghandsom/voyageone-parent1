@@ -39,9 +39,9 @@ public class BusinessLogGetRequest extends VoApiRequest<BusinessLogGetResponse>{
         this.productIds = productIds;
     }
 
-    public void setProductIds(Integer... productId) {
+    /*public void setProductIds(Integer... productId) {
         this.productIds = Arrays.asList(productId);
-    }
+    }*/
 
     public String getErrType() {
         return errType;

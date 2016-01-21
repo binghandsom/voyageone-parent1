@@ -1,5 +1,6 @@
 package com.voyageone.web2.sdk.api.request;
 
+import com.jd.open.api.sdk.internal.JSON.JSON;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.VoApiRequest;
 import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
@@ -16,6 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
+import java.util.Arrays;
 
 /**
  * @author aooer 2016/1/20.
@@ -36,9 +38,11 @@ public class BusinessLogGetRequestTest {
     @Test
     public void testSelect() {
         BusinessLogGetRequest request = new BusinessLogGetRequest();
-        request.setProductIds(221);
+        //request.setProductIds(221);
+        request.setProductIds(Arrays.asList(221));
         request.setErrType(String.valueOf(1));
-        System.out.println(request);
+
+        System.out.println(JSON.toString(request));
 
         System.out.println(
                 voApiClient.execute(request)
