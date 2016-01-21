@@ -30,6 +30,34 @@ public class CmsBtBusinessLogModel extends BaseModel{
     /* 1:店铺内分类 2:活动标签 3:货位标签*/
     private String errMsg;
 
+    private Integer groupId;
+    private String groupName;
+    private String errorCode;
+
+    public Integer getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Integer groupId) {
+        this.groupId = groupId;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
+    public String getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(String errorCode) {
+        this.errorCode = errorCode;
+    }
+
     public Integer getSeq() {
         return seq;
     }
