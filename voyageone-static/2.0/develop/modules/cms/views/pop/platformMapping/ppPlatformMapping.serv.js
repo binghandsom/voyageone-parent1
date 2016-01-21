@@ -102,6 +102,58 @@ define([
             },
 
             /**
+             * 根据 masterWord 查找完整字段路径
+             * @param {string} mainCategoryId
+             * @param {MasterWord} masterWord
+             * @return {Promise.<Field[]>}
+             */
+            getPropertyPath: function (mainCategoryId, masterWord) {
+
+                return this.$getMainCategorySchema(mainCategoryId)
+                    .then(function (mainCategorySchema) {
+                        return this.$searchProperty(mainCategorySchema.fields, masterWord.value);
+                    }.bind(this));
+            },
+
+            /**
+             * 搜索主数据属性
+             * @param {Field[]} properties 属性集合
+             * @param {string} propertyId 属性 ID
+             * @returns {Field[]}
+             */
+            $searchProperty: function (properties, propertyId) {
+
+                var result = null;
+
+                _.each(properties, function (property) {
+
+                    if (property.id === propertyId) {
+                        result = [property];
+                        // 找到了, 不用继续
+                        return false;
+                    }
+
+                    // 继续下一个
+                    if (!property.fields || !property.fields.length)
+                        return true;
+
+                    // 在子属性内查找
+                    var childResult = this.$searchProperty(property.fields, propertyId);
+
+                    // 子属性没找到, 继续下一个
+                    if (!childResult) return true;
+
+                    // 找到了, 就把当前的父级别追加进去, 并不再继续
+                    childResult.push(property);
+                    result = childResult;
+                    return false;
+
+                }.bind(this));
+
+                return result;
+            },
+
+            /**
              * @class
              * @name WrapField
              * @extends {Field}
@@ -207,7 +259,6 @@ define([
 
                 if (mapping) {
                     var a = deferred.resolve(mapping);
-                    console.log(a);
                     return deferred.promise;
                 }
 

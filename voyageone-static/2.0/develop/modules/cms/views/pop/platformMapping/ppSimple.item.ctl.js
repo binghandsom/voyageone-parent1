@@ -124,9 +124,28 @@ define([
                     case valueFrom.MASTER:
 
                         this.ppPlatformMappingService.getMainCategoryProps(this.mainCategoryId).then(function (props) {
-                            this.options.values = [
-                                {selected: null, props: props}
-                            ];
+
+                            if (!this.editingWord) {
+                                this.options.values = [
+                                    {selected: null, props: props}
+                                ];
+                                return;
+                            }
+
+                            var values = this.options.values = [];
+
+                            // 如果是编辑, 则搜索选中字段的完整字段路径
+                            this.ppPlatformMappingService.getPropertyPath(this.mainCategoryId, this.editingWord)
+                                .then(function (properties) {
+
+                                    _.each(properties.reverse(), function (property) {
+                                        values.push({selected: property, props: props});
+                                        props = property.fields;
+                                        this.selected.value = property;
+                                    }.bind(this));
+
+                                }.bind(this));
+
                         }.bind(this));
 
                         break;
@@ -134,7 +153,7 @@ define([
 
                         this.ppPlatformMappingService.getMainCategorySkuProp(this.mainCategoryId).then(function (sku) {
                             var selectedId = this.editingWord ? this.editingWord.value : null;
-                            var selectedField = _.find(sku.fields, function(field) {
+                            var selectedField = _.find(sku.fields, function (field) {
                                 return field.id === selectedId;
                             });
                             this.options.values = [
