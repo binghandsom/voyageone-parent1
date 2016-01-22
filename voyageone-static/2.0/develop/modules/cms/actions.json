@@ -59,7 +59,8 @@
         "setPlatformMapping": "setPlatformMapping",
         "getPlatformCategory": "getPlatformCategory",
         "getMainCategorySchema": "getMainCategorySchema",
-        "getDictList": "getDictList"
+        "getDictList": "getDictList",
+        "getPlatformMapping": "getPlatformMapping"
       }
     },
     "pop": {

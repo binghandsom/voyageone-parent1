@@ -84,4 +84,16 @@ public class CmsPlatformMappingController extends CmsController {
     public AjaxResponse getDictList() {
         return success(platformPropMappingService.getDictList(getUser()));
     }
+
+    @RequestMapping(CmsUrlConstants.MAPPING.PLATFORM.GET_PLATFORM_MAPPING)
+    public AjaxResponse getPlatformMapping(@RequestBody Map<String, Object> params) {
+
+        String mainCategoryId = (String) params.get("mainCategoryId");
+
+        String platformCategoryId = (String) params.get("platformCategoryId");
+
+        Integer cartId = (Integer) params.get("cartId");
+
+        return success(platformPropMappingService.getPlatformMapping(mainCategoryId, platformCategoryId, cartId, getUser()));
+    }
 }

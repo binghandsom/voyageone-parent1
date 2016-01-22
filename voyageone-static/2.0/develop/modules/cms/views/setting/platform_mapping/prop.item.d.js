@@ -61,7 +61,7 @@ define([
             link: function ($scope) {
 
                 var property = $scope.property;
-                var parent = $scope.parent;
+                var parent = property.parent = $scope.parent;
 
                 // 计算每个属性的属性
                 property.iconClass = getIconClass(property);

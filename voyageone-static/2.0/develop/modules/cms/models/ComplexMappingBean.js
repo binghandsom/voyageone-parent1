@@ -5,7 +5,8 @@ define([
     /**
      * 构造一个和 Java 端 com.voyageone.cms.service.bean.ComplexMappingBean 一样的实例
      * @constructor
-     * @param {string} platformPropId 1
+     * @extends {MappingBean}
+     * @param {string} platformPropId
      * @param {string} masterPropId
      * @param {MappingBean[]} subMapping
      */
