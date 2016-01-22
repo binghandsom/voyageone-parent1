@@ -18,7 +18,7 @@
               and err_type = #{errType}
           </if>
         <if test="productName != null and productName != ''">
-            and product_name = #{productName}
+            and product_name like CONCAT('%',#{productName},'%' )
         </if>
         <if test="catId != null and catId != ''">
             and cat_id = #{catId}
