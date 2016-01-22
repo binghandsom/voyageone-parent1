@@ -6,7 +6,8 @@
 -->
     <sql id="fileds">
 	   seq,channel_id channelId,cat_id catId,cart_id cartId,product_name productName,product_id productId,
-	   err_type errType,status,model,code,sku,err_msg errMsg,created,creater,modified,modifier
+	   err_type errType,status,model,code,sku,err_msg errMsg,group_id groupId,group_name groupName,
+	   error_code errorCode,created,creater,modified,modifier
 	</sql>
 
     <!-- 根据条件查询 -->

@@ -214,4 +214,24 @@ public interface CmsUrlConstants {
         }
     }
 
+
+    interface DictManage {
+
+        String ROOT = "/cms/dict/manage/";
+
+        String DT_GET_DICT = "dtGetDict";
+
+        String GET_CONST = "getConst";
+
+        String GET_CUSTOMS = "getCustoms";
+
+        String SET_DICT = "setDict";
+
+        String DEL_DICT = "delDict";
+
+        String ADD_DICT = "addDict";
+
+        String GET_DICT_LIST = "getDictList";
+    }
+
 }
