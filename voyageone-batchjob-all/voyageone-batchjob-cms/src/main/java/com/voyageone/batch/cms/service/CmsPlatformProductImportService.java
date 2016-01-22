@@ -58,7 +58,7 @@ public class CmsPlatformProductImportService extends BaseTaskService {
 
         List<Field> fields = SchemaReader.readXmlForList(schema);
 
-        Map<String, Object> fieldMap = new HashMap<>();
+        fieldHashMap fieldMap = new fieldHashMap();
         fields.forEach(field -> {
             fields2Map(field, fieldMap);
         });
@@ -70,7 +70,7 @@ public class CmsPlatformProductImportService extends BaseTaskService {
         String schema = tbProductService.doGetWareInfoItem(numIid, shopBean).getUpdateItemResult();
         List<Field> fields = SchemaReader.readXmlForList(schema);
 
-        Map<String, Object> fieldMap = new HashMap<>();
+        fieldHashMap fieldMap = new fieldHashMap();
         fields.forEach(field -> {
             fields2Map(field, fieldMap);
         });
@@ -97,26 +97,26 @@ public class CmsPlatformProductImportService extends BaseTaskService {
         System.out.println("ok");
     }
 
-    public void fields2Map(Field field,Map<String, Object> fieldMap) {
+    public void fields2Map(Field field,fieldHashMap fieldMap) {
 
         switch (field.getType()) {
             case INPUT:
                 InputField inputField = (InputField) field;
-                fieldMap.put(StringUtils.replaceDot(inputField.getId()), inputField.getDefaultValue());
+                fieldMap.put(inputField.getId(), inputField.getDefaultValue());
                 break;
             case MULTIINPUT:
                 MultiInputField multiInputField = (MultiInputField) field;
-                fieldMap.put(StringUtils.replaceDot(multiInputField.getId()), multiInputField.getDefaultValues());
+                fieldMap.put(multiInputField.getId(), multiInputField.getDefaultValues());
                 break;
             case LABEL:
                 return;
             case SINGLECHECK:
                 SingleCheckField singleCheckField = (SingleCheckField) field;
-                fieldMap.put(StringUtils.replaceDot(singleCheckField.getId()), singleCheckField.getDefaultValue());
+                fieldMap.put(singleCheckField.getId(), singleCheckField.getDefaultValue());
                 break;
             case MULTICHECK:
                 MultiCheckField multiCheckField = (MultiCheckField) field;
-                fieldMap.put(StringUtils.replaceDot(multiCheckField.getId()), multiCheckField.getDefaultValues());
+                fieldMap.put(multiCheckField.getId(), multiCheckField.getDefaultValues());
                 break;
             case COMPLEX:
                 ComplexField complexField = (ComplexField) field;
@@ -125,7 +125,7 @@ public class CmsPlatformProductImportService extends BaseTaskService {
                     for(String fieldId : complexField.getDefaultComplexValue().getFieldKeySet()){
                         values.add(getFieldValue(complexField.getDefaultComplexValue().getValueField(fieldId)));
                     }
-                    fieldMap.put(StringUtils.replaceDot(complexField.getId()), values);
+                    fieldMap.put(complexField.getId(), values);
                 }
                 break;
             case MULTICOMPLEX:
@@ -138,34 +138,34 @@ public class CmsPlatformProductImportService extends BaseTaskService {
                         }
                     }
                 }
-                fieldMap.put(StringUtils.replaceDot(multiComplexField.getId()), multiComplexValues);
+                fieldMap.put(multiComplexField.getId(), multiComplexValues);
                 break;
         }
     }
 
     public Map<String,Object> getFieldValue(Field field) {
-        Map<String,Object> map = new HashMap<>();
+        fieldHashMap map = new fieldHashMap();
         List<String> values;
         switch (field.getType()) {
             case INPUT:
                 InputField inputField = (InputField) field;
-                map.put(StringUtils.replaceDot(inputField.getId()), inputField.getValue());
+                map.put(inputField.getId(), inputField.getValue());
                 break;
             case MULTIINPUT:
                 MultiInputField multiInputField = (MultiInputField) field;
                 values = new ArrayList<>();
                 multiInputField.getValues().forEach(value -> values.add(value.getValue()));
-                map.put(StringUtils.replaceDot(multiInputField.getId()), values);
+                map.put(multiInputField.getId(), values);
                 break;
             case SINGLECHECK:
                 SingleCheckField singleCheckField = (SingleCheckField) field;
-                map.put(StringUtils.replaceDot(singleCheckField.getId()), singleCheckField.getValue().getValue());
+                map.put(singleCheckField.getId(), singleCheckField.getValue().getValue());
                 break;
             case MULTICHECK:
                 MultiCheckField multiCheckField = (MultiCheckField) field;
                 values = new ArrayList<>();
                 multiCheckField.getValues().forEach(value -> values.add(value.getValue()));
-                map.put(StringUtils.replaceDot(multiCheckField.getId()), values);
+                map.put(multiCheckField.getId(), values);
                 break;
             case COMPLEX:
                 ComplexField complexField = (ComplexField) field;
@@ -174,7 +174,7 @@ public class CmsPlatformProductImportService extends BaseTaskService {
                 for (String key : fieldMap.keySet()) {
                     valuesMap.add(getFieldValue(fieldMap.get(key)));
                 }
-                map.put(StringUtils.replaceDot(complexField.getId()), valuesMap);
+                map.put(complexField.getId(), valuesMap);
                 break;
             case MULTICOMPLEX:
                 MultiComplexField multiComplexField = (MultiComplexField) field;
@@ -186,18 +186,18 @@ public class CmsPlatformProductImportService extends BaseTaskService {
                         }
                     }
                 }
-                map.put(StringUtils.replaceDot(multiComplexField.getId()), multiComplexValues);
+                map.put(multiComplexField.getId(), multiComplexValues);
                 break;
         }
         return map;
     }
-    class field<K,V> extends HashMap<K,V>{
+    class fieldHashMap extends HashMap<String,Object>{
         @Override
-        public V put(K key, V value){
+        public Object put(String key, Object value){
             if(value == null){
                 return value;
             }
-            return  super.put((K) StringUtils.replaceDot(key.toString()),value);
+            return  super.put(StringUtils.replaceDot(key),value);
         }
     }
 }
