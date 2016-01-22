@@ -167,7 +167,7 @@ public class SetPriceUtils {
         if (priceReportDatas != null && priceReportDatas.size() > 0){
 
             //订单折扣设定
-//            discount  = Double.valueOf(priceReportDatas.get(0).getDiscount());
+            discount  = Double.valueOf(priceReportDatas.get(0).getDiscount());
 //            if (discount < 0){
 //                discount = 0 - discount;
 //            }
