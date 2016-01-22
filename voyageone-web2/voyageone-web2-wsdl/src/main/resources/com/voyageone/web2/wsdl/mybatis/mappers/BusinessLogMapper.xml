@@ -6,7 +6,7 @@
 -->
     <sql id="fileds">
 	   seq,channel_id channelId,cat_id catId,cart_id cartId,product_name productName,product_id productId,
-	   err_type errType,status,model,code,sku,err_msg errMsg,group_id groupId,group_name groupName,
+	   err_type errType,status,model,code,sku,err_msg errMsg,group_id groupId,group_name groupName,promotion_name promotionName,
 	   error_code errorCode,created,creater,modified,modifier
 	</sql>
 
@@ -17,12 +17,19 @@
           <if test="errType != null and errType != ''">
               and err_type = #{errType}
           </if>
-        <if test="productIds != null">
+        <if test="productName != null and productName != ''">
+            and product_name = #{productName}
+        </if>
+        <if test="cartId > 0">
+            and cart_id = #{cartId}
+        </if>
+        <if test="productIds != null and productIds.size() > 0">
             and product_id in
             <foreach collection="productIds" item = "product" open="(" separator="," close=")">
                 #{product}
             </foreach>
         </if>
+
     </select>
 
     <!-- 根据seq修改状态  status = 1-->

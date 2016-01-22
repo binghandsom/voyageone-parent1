@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.system;
 
+import com.sun.org.apache.xpath.internal.SourceTree;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -11,6 +12,7 @@ import com.voyageone.web2.sdk.api.response.BusinessLogGetResponse;
 import com.voyageone.web2.sdk.api.response.BusinessLogPutResponse;
 import net.minidev.json.JSONObject;
 import org.apache.commons.beanutils.BeanMap;
+import org.apache.poi.ss.formula.functions.T;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,15 +40,34 @@ public class CmsBtBusinessLogController extends CmsController {
     @RequestMapping("getlist")
     public AjaxResponse getCategoryList(@RequestBody Map params) {
         BusinessLogGetRequest request=new BusinessLogGetRequest();
-        String[] productIdstr=params.get("productIds").toString().split(",");
-        List<Integer> productIds=new ArrayList<Integer>();
-        for(String productId:productIdstr){
-            productIds.add(Integer.parseInt(productId));
-        }
-        request.setProductIds(productIds);
-        request.setErrType(params.get("errType").toString());
+        request.setProductIds((ArrayList<Integer>)params.get("productIds"));
+        request.setErrType(vps(params,"errType"));
+        request.setProductName(vps(params,"productName"));
+        request.setCartId(vpi(params,"cartId"));
         BusinessLogGetResponse response=voApiClient.execute(request);
+        System.out.println(response);
         return success(new BeanMap(response));
+    }
+
+    //validate parameter int
+    private int vpi(Map params,String key){
+        try{
+            return validateParameter(params,key,Integer.class);
+        }catch(Exception e){
+            return -1;
+        }
+    }
+
+    //validate parameter string
+    private String vps(Map params,String key){
+        return validateParameter(params,key,String.class);
+    }
+
+    //validate parameter
+    private static <E> E validateParameter(Map params,String key,Class<E> clazz){
+        if(params.get(key)!=null)
+            return (E)params.get(key);
+        return null;
     }
 
     @RequestMapping("updateFinishStatus")
