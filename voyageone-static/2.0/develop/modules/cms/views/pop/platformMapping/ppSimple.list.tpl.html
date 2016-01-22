@@ -20,19 +20,37 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="ruleWord in ctrl.ruleWords">
+                <tr ng-repeat="ruleWord in ctrl.ruleWords" ng-init="endLine = ctrl.lineEnds[$index]">
                     <td>{{ruleWord.wordType}}</td>
                     <td>{{ruleWord.value}}</td>
                     <td class="form-inline">
-                        <label><input type="radio" name="radio2"/> 换行</label>
-                        <label><input type="radio" name="radio2"/> 空格</label>
-                        <label><input type="radio" name="radio2"/> 无</label>
+                        <label><input type="radio"
+                                      ng-change="ctrl.updateLineEnd($index)"
+                                      ng-model="endLine.type"
+                                      ng-value="1" name="{{::'radio2'+ $index}}"/> 换行</label>
+                        <label><input type="radio"
+                                      ng-change="ctrl.updateLineEnd($index)"
+                                      ng-model="endLine.type"
+                                      ng-value="2" name="{{::'radio2'+ $index}}"/> 空格</label>
+                        <label><input type="radio"
+                                      ng-change="ctrl.updateLineEnd($index)"
+                                      ng-model="endLine.type"
+                                      ng-value="3" name="{{::'radio2'+ $index}}"/> 无</label>
                     </td>
                     <td class="form-inline text-right">
-                        <button title="编辑" ng-click="ctrl.edit($index, ppPlatformMapping)" class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button>
-                        <button title="删除" ng-click="ctrl.remove($index)" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button>
-                        <button title="上移" ng-click="ctrl.moveUp($index)" class="btn btn-default btn-xs"><i class="fa fa-arrow-up"></i></button>
-                        <button title="下移" ng-click="ctrl.moveDown($index)" class="btn btn-default btn-xs"><i class="fa fa-arrow-down"></i></button>
+                        <button title="编辑" ng-click="ctrl.edit($index, ppPlatformMapping)"
+                                class="btn btn-success btn-xs">
+                            <i class="fa fa-pencil"></i>
+                        </button>
+                        <button title="删除" ng-click="ctrl.remove($index)" class="btn btn-danger btn-xs">
+                            <i class="fa fa-trash-o"></i>
+                        </button>
+                        <button title="上移" ng-click="ctrl.moveUp($index)" class="btn btn-default btn-xs">
+                            <i class="fa fa-arrow-up"></i>
+                        </button>
+                        <button title="下移" ng-click="ctrl.moveDown($index)" class="btn btn-default btn-xs">
+                            <i class="fa fa-arrow-down"></i>
+                        </button>
                     </td>
                 </tr>
                 </tbody>

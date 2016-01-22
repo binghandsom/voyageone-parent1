@@ -115,12 +115,16 @@ define([
 
                 switch (property.type) {
                     case FieldTypes.complex:
-                        ppPlatformMapping.complex(context);
+                        ppPlatformMapping.complex(context).then(function(complexMappingBean) {
+                            console.log(complexMappingBean);
+                        });
                         break;
                     case FieldTypes.multiComplex:
                         break;
                     default: // simple ~
-                        ppPlatformMapping.simple.list(context);
+                        ppPlatformMapping.simple.list(context).then(function(simpleMappingBean) {
+                            console.log(simpleMappingBean);
+                        });
                         break;
                 }
             }
