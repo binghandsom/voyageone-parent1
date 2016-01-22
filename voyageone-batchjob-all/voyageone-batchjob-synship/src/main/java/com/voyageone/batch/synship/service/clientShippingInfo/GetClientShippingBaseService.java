@@ -51,9 +51,6 @@ public abstract class GetClientShippingBaseService extends BaseTaskService {
     OrderDao orderDao;
 
     @Autowired
-    OrderDao orderDao;
-
-    @Autowired
     TrackingDao trackingDao;
 
     @Override
