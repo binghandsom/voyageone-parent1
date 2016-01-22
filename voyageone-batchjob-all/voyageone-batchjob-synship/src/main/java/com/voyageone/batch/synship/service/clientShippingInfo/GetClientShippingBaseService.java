@@ -38,7 +38,6 @@ public abstract class GetClientShippingBaseService extends BaseTaskService {
     TbLogisticsService tbLogisticsService;
 
     @Autowired
-    protected IssueLog issueLog;
     MagentoApiServiceImpl magentoApiServiceImpl;
 
     @Autowired
