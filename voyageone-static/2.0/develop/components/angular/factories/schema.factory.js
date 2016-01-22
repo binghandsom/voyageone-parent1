@@ -54,7 +54,8 @@ angular.module('voyageone.angular.factories.schema', [])
                 isRequired: false,
                 checkValues: [],
                 tipMsg: [],
-                html: []
+                html: [],
+                notShowEdit: true
             };
 
             this.type = function (value) {
@@ -83,6 +84,10 @@ angular.module('voyageone.angular.factories.schema', [])
 
             this.checkValues = function (value) {
                 return value !== undefined ? _schemaInfo.checkValues.push(value) : _schemaInfo.checkValues;
+            };
+
+            this.notShowEdit = function (value) {
+                return value !== undefined ? _schemaInfo.notShowEdit = value : _schemaInfo.notShowEdit;
             };
 
             this.schemaInfo = function () {
