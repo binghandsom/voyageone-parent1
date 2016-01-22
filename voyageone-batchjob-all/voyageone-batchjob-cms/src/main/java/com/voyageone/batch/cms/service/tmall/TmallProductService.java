@@ -1354,6 +1354,9 @@ public class TmallProductService {
                         styleCode = generateStyleCode(tcb);
                         tmallUploadRunState.setStyle_code(styleCode);
                     }
+                    // 测试代码不要提交 tom start
+                    styleCode = "test." + styleCode;
+                    // 测试代码不要提交 tom end
                     field.setValue(styleCode);
                     logger.debug("tmall style code[" + field.getId() + "]: " + field.getValue());
                     contextBuildFields.addCustomField(field);
@@ -1523,6 +1526,9 @@ public class TmallProductService {
                     }
 
                     Field processField = processFields.get(0);
+                    // 测试代码不要提交 tom START
+                    mainSxProduct.getCmsBtProductModelGroupPlatform().setPlatformActive(CmsConstants.PlatformActive.Instock);
+                    // 测试代码不要提交 tom END
                     CmsConstants.PlatformActive platformActive = mainSxProduct.getCmsBtProductModelGroupPlatform().getPlatformActive();
                     if (platformActive == CmsConstants.PlatformActive.Onsale) {
                         ((SingleCheckField) processField).setValue("0");

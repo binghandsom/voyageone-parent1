@@ -14,7 +14,7 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URI;
 
 /**
- * VoApi测试基类
+ * VoApi测试类
  * 使用：
  * 调用Run(VoApiRequest request)方法，基类提供两种测试方法
  * RunWithRest(),RunWithVoApi()
