@@ -24,6 +24,8 @@ public class BusinessLogGetRequest extends VoApiRequest<BusinessLogGetResponse> 
 
     private Integer cartId;
 
+    private String catId;
+
 
     @Override
     public String getApiURLPath() {
@@ -69,5 +71,13 @@ public class BusinessLogGetRequest extends VoApiRequest<BusinessLogGetResponse> 
 
     public void setCartId(Integer cartId) {
         this.cartId = cartId;
+    }
+
+    public String getCatId() {
+        return catId;
+    }
+
+    public void setCatId(String catId) {
+        this.catId = catId;
     }
 }

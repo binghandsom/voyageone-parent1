@@ -31,6 +31,10 @@
 			jsonStr+="\"errType\":"+"\""+$("#model_errType").val()+"\"";
 			jsonStr+=",";
 		}
+		if($("#model_catId").val()!=-1){
+			jsonStr+="\"catId\":"+"\""+$("#model_catId").val()+"\"";
+			jsonStr+=",";
+		}
 		if(jsonStr.length>2){
 			jsonStr=jsonStr.substr(0,jsonStr.length-1);
 		}
@@ -105,12 +109,13 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label"><a href="#" class="text-u-l" target="_blank">主类目</a></label>
 								<div class="col-sm-9">
-									<select class="form-control">
-										<option value="">珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰</option>
-										<option value="">珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰</option>
-										<option value="">珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰</option>
-										<option value="">珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰</option>
-										<option value="">珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰</option>
+									<select class="form-control" id="model_catId">
+										<option value="-1">All</option>
+										<option value="1">珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰1</option>
+										<option value="2">珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰2</option>
+										<option value="3">珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰3</option>
+										<option value="4">珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰4</option>
+										<option value="5">珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰5</option>
 									</select>
 								</div>
 							</div>

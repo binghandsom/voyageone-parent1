@@ -20,6 +20,9 @@
         <if test="productName != null and productName != ''">
             and product_name = #{productName}
         </if>
+        <if test="catId != null and catId != ''">
+            and cat_id = #{catId}
+        </if>
         <if test="cartId > 0">
             and cart_id = #{cartId}
         </if>
