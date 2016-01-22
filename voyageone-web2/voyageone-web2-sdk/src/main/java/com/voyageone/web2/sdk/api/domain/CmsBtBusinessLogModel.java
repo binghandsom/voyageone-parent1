@@ -15,6 +15,8 @@ public class CmsBtBusinessLogModel extends BaseModel{
     private Integer cartId;
     private String productName;
 
+    private String promotionName;
+
     /* 主商品的product_id*/
     private String productId;
     /* 1:上新错误*/
@@ -152,5 +154,14 @@ public class CmsBtBusinessLogModel extends BaseModel{
 
     public void setErrMsg(String errMsg) {
         this.errMsg = errMsg;
+    }
+
+
+    public String getPromotionName() {
+        return promotionName;
+    }
+
+    public void setPromotionName(String promotionName) {
+        this.promotionName = promotionName;
     }
 }

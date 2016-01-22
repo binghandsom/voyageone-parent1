@@ -3,69 +3,9 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="ctrl.cancel()"><span aria-hidden="true"><i class="fa fa-close"></i></span></button>
         <h5 class="modal-title"><i class="fa fa-crosshairs"></i> 平台值匹配</h5>
     </div>
-    <h5 class="text-vo m-l">Feed类目：Fitness & Sports</h5>
-    <h5 class="m-l">主数据类目：Fitness & Sports</h5>
+    <h5 class="m-l">主数据类目：{{ctrl.mainCategoryPath}}</h5>
+    <h5 class="text-vo m-l">-> 平台类目：{{::ctrl.context.platformCategoryPath}}</h5>
     <div class="p-l-r">
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
-                <tr>
-                    <th>类型</th>
-                    <th>值</th>
-                    <th>在末尾添加</th>
-                    <th class="text-right">Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>MASTER</td>
-                    <td>颜色</td>
-                    <td class="form-inline">
-                        <label class="checkbox-inline c-radio"><input type="radio"/><span class="fa fa-check"></span> 换行</label>
-                        <label class="checkbox-inline c-radio"><input type="radio"/><span class="fa fa-check"></span> 空格</label>
-                        <label class="checkbox-inline c-radio"><input type="radio"/><span class="fa fa-check"></span> 无</label>
-                    </td>
-                    <td class="form-inline text-right">
-                        <button title="编辑" class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button>
-                        <button title="删除" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button>
-                        <button title="上移" class="btn btn-default btn-xs"><i class="fa fa-arrow-up"></i></button>
-                        <button title="下移" class="btn btn-default btn-xs"><i class="fa fa-arrow-down"></i></button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>DICT</td>
-                    <td>详情页描述1</td>
-                    <td class="form-inline">
-                        <label class="checkbox-inline c-radio"><input type="radio"/><span class="fa fa-check"></span> 换行</label>
-                        <label class="checkbox-inline c-radio"><input type="radio"/><span class="fa fa-check"></span> 空格</label>
-                        <label class="checkbox-inline c-radio"><input type="radio"/><span class="fa fa-check"></span> 无</label>
-                    </td>
-                    <td class="form-inline text-right">
-                        <button title="编辑" class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button>
-                        <button title="删除" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button>
-                        <button title="上移" class="btn btn-default btn-xs"><i class="fa fa-arrow-up"></i></button>
-                        <button title="下移" class="btn btn-default btn-xs"><i class="fa fa-arrow-down"></i></button>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>text</td>
-                    <td>30</td>
-                    <td class="form-inline">
-                        <label class="checkbox-inline c-radio"><input type="radio"/><span class="fa fa-check"></span> 换行</label>
-                        <label class="checkbox-inline c-radio"><input type="radio"/><span class="fa fa-check"></span> 空格</label>
-                        <label class="checkbox-inline c-radio"><input type="radio"/><span class="fa fa-check"></span> 无</label>
-                    </td>
-                    <td class="form-inline text-right">
-                        <button title="编辑" class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button>
-                        <button title="删除" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button>
-                        <button title="上移" class="btn btn-default btn-xs"><i class="fa fa-arrow-up"></i></button>
-                        <button title="下移" class="btn btn-default btn-xs"><i class="fa fa-arrow-down"></i></button>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
 
         <div class="table-responsive">
             <table class="table table-hover">

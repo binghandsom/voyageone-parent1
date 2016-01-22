@@ -63,6 +63,8 @@ public interface CmsUrlConstants {
             String GET_MAIN_CATEGORY_SCHEMA = "getMainCategorySchema";
 
             String GET_DICT_LIST = "getDictList";
+
+            String GET_PLATFORM_MAPPING = "getPlatformMapping";
         }
     }
 
