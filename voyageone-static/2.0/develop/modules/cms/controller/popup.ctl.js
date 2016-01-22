@@ -117,9 +117,9 @@ define([
                     }
                 },
                 "multiComplex": {
-                    "templateUrl": "views/pop/multiComplexMapping/index.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/multiComplexMapping/index.ctl",
-                    "controller": 'multiComplexMapping as ctrl',
+                    "templateUrl": "views/pop/platformMapping/multiComplex.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/platformMapping/multiComplex.ctl",
+                    "controller": 'multiComplexMappingPopupController as ctrl',
                     "size": 'lg',
                     "backdrop": "static"
                 }

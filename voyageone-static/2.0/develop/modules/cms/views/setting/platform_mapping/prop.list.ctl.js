@@ -120,6 +120,9 @@ define([
                         });
                         break;
                     case FieldTypes.multiComplex:
+                        ppPlatformMapping.multiComplex(context).then(function(mappingBean) {
+                            console.log(mappingBean);
+                        });
                         break;
                     default: // simple ~
                         ppPlatformMapping.simple.list(context).then(function(simpleMappingBean) {
