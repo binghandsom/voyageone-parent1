@@ -13,12 +13,19 @@ import java.util.List;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class BusinessLogGetRequest extends VoApiRequest<BusinessLogGetResponse>{
+public class BusinessLogGetRequest extends VoApiRequest<BusinessLogGetResponse> {
 
 
     private List<Integer> productIds;
 
     private String errType;
+
+    private String productName;
+
+    private Integer cartId;
+
+    private String catId;
+
 
     @Override
     public String getApiURLPath() {
@@ -27,8 +34,6 @@ public class BusinessLogGetRequest extends VoApiRequest<BusinessLogGetResponse>{
 
     @Override
     public void requestCheck() throws ApiRuleException {
-        RequestUtils.checkNotEmpty("productIds",productIds);
-        RequestUtils.checkNotEmpty("errType",errType);
     }
 
     public List<Integer> getProductIds() {
@@ -49,5 +54,30 @@ public class BusinessLogGetRequest extends VoApiRequest<BusinessLogGetResponse>{
 
     public void setErrType(String errType) {
         this.errType = errType;
+    }
+
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public Integer getCartId() {
+        return cartId;
+    }
+
+    public void setCartId(Integer cartId) {
+        this.cartId = cartId;
+    }
+
+    public String getCatId() {
+        return catId;
+    }
+
+    public void setCatId(String catId) {
+        this.catId = catId;
     }
 }
