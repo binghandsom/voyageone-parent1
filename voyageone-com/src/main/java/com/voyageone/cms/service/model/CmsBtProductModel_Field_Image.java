@@ -17,8 +17,14 @@ public class CmsBtProductModel_Field_Image extends BaseMongoMap<String, Object> 
     public CmsBtProductModel_Field_Image() {
     }
 
-    public CmsBtProductModel_Field_Image(String name) {
-        setAttribute("name", name);
+    public CmsBtProductModel_Field_Image(String key, String name) {
+        // 20160121 tom 结构调整 START
+        // 原本这边定下的名字是name, 但是发现刘耀的主数据的schema里的名字有些是image1, 有些是image2……,
+        // 所以这个name只能作为变量传进来
+//        setAttribute("name", name);
+
+        setAttribute(key, name);
+        // 20160121 tom 结构调整 END
     }
 
     public CmsBtProductModel_Field_Image(Map map) {
@@ -26,11 +32,21 @@ public class CmsBtProductModel_Field_Image extends BaseMongoMap<String, Object> 
     }
 
     public String getName() {
-        return getAttribute("name");
+        // 20160121 tom 结构调整 START
+        // 原本这边定下的名字是name, 但是发现刘耀的主数据的schema里的名字有些是image1, 有些是image2……
+//        return getAttribute("name");
+        return this.get(this.keySet().iterator().next()).toString();
+        // 20160121 tom 结构调整 END
     }
 
-    public void setName(String name) {
-        setAttribute("name", name);
+    public void setName(String key, String name) {
+        // 20160121 tom 结构调整 START
+        // 原本这边定下的名字是name, 但是发现刘耀的主数据的schema里的名字有些是image1, 有些是image2……,
+        // 所以这个name只能作为变量传进来
+//        setAttribute("name", name);
+
+        setAttribute(key, name);
+        // 20160121 tom 结构调整 END
     }
 
 }

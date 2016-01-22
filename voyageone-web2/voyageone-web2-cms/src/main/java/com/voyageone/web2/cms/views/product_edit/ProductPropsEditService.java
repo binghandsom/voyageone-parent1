@@ -152,6 +152,118 @@ public class ProductPropsEditService {
         return productInfo;
     }
 
+
+
+    /**
+     * 更新product values.
+     * @param channelId
+     * @param user
+     * @param requestMap
+     */
+    public String updateProductMasterInfo(String channelId, String user, Map requestMap){
+
+        List<Map<String,Object>> masterFieldsList = (List<Map<String,Object>>) requestMap.get("masterFields");
+
+        Map<String,Object> customAttributesValue =(Map<String,Object>) requestMap.get("customAttributes");
+
+        ProductUpdateRequest updateRequest = new ProductUpdateRequest(channelId);
+        CmsBtProductModel productModel = new CmsBtProductModel(channelId);
+
+        CmsBtProductModel_Feed feedModel = buildCmsBtProductModel_feed(customAttributesValue);
+
+        List<Field> masterFields = buildMasterFields(masterFieldsList);
+
+        CmsBtProductModel_Field masterFieldsValue = buildCmsBtProductModel_field(requestMap, masterFields);
+
+        productModel.setCatId(requestMap.get("categoryId").toString());
+        productModel.setProdId(Long.valueOf(requestMap.get("productId").toString()));
+        productModel.setCatPath(requestMap.get("categoryFullPath").toString());
+        productModel.setFields(masterFieldsValue);
+        productModel.setFeed(feedModel);
+        productModel.setModified(requestMap.get("modified").toString());
+
+        updateRequest.setProductModel(productModel);
+        updateRequest.setModifier(user);
+        updateRequest.setModified(requestMap.get("modified").toString());
+
+        return productClient.updateProductRetModified(updateRequest);
+
+    }
+
+    /**
+     * 更新product values.
+     * @param channelId
+     * @param user
+     * @param categoryId
+     * @param productId
+     * @param categoryFullPath
+     * @param skuFieldMap
+     */
+    public String updateProductSkuInfo(String channelId,String user,String categoryId,Long productId,String modified,String categoryFullPath, Map skuFieldMap){
+
+        ProductUpdateRequest updateRequest = new ProductUpdateRequest(channelId);
+
+        CmsBtProductModel productModel = new CmsBtProductModel(channelId);
+
+        List<CmsBtProductModel_Sku> skuValues = buildCmsBtProductModel_skus(skuFieldMap);
+
+        productModel.setCatId(categoryId);
+        productModel.setProdId(productId);
+        productModel.setCatPath(categoryFullPath);
+        productModel.setSkus(skuValues);
+        productModel.setModified(modified);
+
+        updateRequest.setProductModel(productModel);
+        updateRequest.setModifier(user);
+
+        return productClient.updateProductRetModified(updateRequest);
+
+    }
+
+    /**
+     * 保存全部产品信息.
+     * @param channelId
+     * @param userName
+     * @param requestMap
+     * @return
+     */
+    public String updateProductAllInfo(String channelId,String userName, Map requestMap){
+
+        String categoryId = requestMap.get("categoryId").toString();
+        Long productId = Long.valueOf(requestMap.get("productId").toString());
+        String categoryFullPath = requestMap.get("categoryFullPath").toString();
+        Map skuMap = (Map) requestMap.get("skuFields");
+        String modified = requestMap.get("modified").toString();
+
+        List<Map<String,Object>> masterFieldsList = (List<Map<String,Object>>) requestMap.get("masterFields");
+        Map<String,Object> customAttributesValue =(Map<String,Object>) requestMap.get("customAttributes");
+        List<CmsBtProductModel_Sku> skuValues = buildCmsBtProductModel_skus(skuMap);
+
+        ProductUpdateRequest updateRequest = new ProductUpdateRequest(channelId);
+
+        CmsBtProductModel productModel = new CmsBtProductModel(channelId);
+
+        CmsBtProductModel_Feed feedModel = buildCmsBtProductModel_feed(customAttributesValue);
+
+        List<Field> masterFields = buildMasterFields(masterFieldsList);
+
+        CmsBtProductModel_Field masterFieldsValue = buildCmsBtProductModel_field(requestMap, masterFields);
+
+        productModel.setCatId(categoryId);
+        productModel.setProdId(productId);
+        productModel.setCatPath(categoryFullPath);
+        productModel.setFields(masterFieldsValue);
+        productModel.setFeed(feedModel);
+        productModel.setSkus(skuValues);
+        productModel.setModified(modified);
+
+        updateRequest.setProductModel(productModel);
+        updateRequest.setModifier(userName);
+
+        return productClient.updateProductRetModified(updateRequest);
+
+    }
+
     /**
      * 获取 feed info model.
      * @param channelId
@@ -272,22 +384,83 @@ public class ProductPropsEditService {
         return comSchemaModel;
     }
 
+    /**
+     * 构建CmsBtProductModel_Sku list.
+     * @param skuFieldMap
+     * @return
+     */
+    private List<CmsBtProductModel_Sku> buildCmsBtProductModel_skus(Map skuFieldMap) {
+        Field skuField = SchemaJsonReader.mapToField(skuFieldMap);
+
+        Map<String,Object> skuFieldValueMap = new HashMap<>();
+
+        skuField.getFieldValueToMap(skuFieldValueMap);
+
+        List<Map> skuValuesMap = (List<Map>) skuFieldValueMap.get("sku");
+
+        List<CmsBtProductModel_Sku> skuValues = new ArrayList<>();
+
+        for (Map skuMap:skuValuesMap){
+            CmsBtProductModel_Sku skuModel = new CmsBtProductModel_Sku(skuMap);
+            skuValues.add(skuModel);
+        }
+        return skuValues;
+    }
 
     /**
-     * 更新product values.
-     * @param channelId
-     * @param user
-     * @param requestMap
+     * 构建masterFields.
+     * @param masterFieldsList
+     * @return
      */
-    public String  updateProductMastertInfo(String channelId,String user, Map requestMap){
+    private List<Field> buildMasterFields(List<Map<String, Object>> masterFieldsList) {
 
+        List<Field> masterFields = SchemaJsonReader.readJsonForList(masterFieldsList);
 
+        // setComplexValue
+        for (Field field:masterFields){
 
-        List<Map<String,Object>> masterFieldsList = (List<Map<String,Object>>) requestMap.get("masterFields");
+            if (field instanceof ComplexField){
+                ComplexField complexField = (ComplexField)field;
+                List<Field> complexFields = complexField.getFields();
+                ComplexValue complexValue = complexField.getComplexValue();
+                setComplexValue(complexFields,complexValue);
+            }
 
-        Map<String,Object> customAttributesValue =(Map<String,Object>) requestMap.get("customAttributes");
+        }
 
+        return masterFields;
+    }
+
+    /**
+     * 构建 CmsBtProductModel_Field
+     * @param requestMap
+     * @param masterFields
+     * @return
+     */
+    private CmsBtProductModel_Field buildCmsBtProductModel_field(Map requestMap, List<Field> masterFields) {
+        CmsBtProductModel_Field masterFieldsValue = new CmsBtProductModel_Field();
+
+        if (requestMap.get("productStatus") != null){
+            Map status = (Map) requestMap.get("productStatus");
+            masterFieldsValue.setStatus(status.get("approveStatus").toString());
+            masterFieldsValue.setTranslateStatus(status.get("translateStatus").toString());
+            masterFieldsValue.setEditStatus(status.get("editStatus").toString());
+        }
+
+        Map masterFieldsValueMap = FieldUtil.getFieldsValueToMap(masterFields);
+        masterFieldsValue.putAll(masterFieldsValueMap);
+        return masterFieldsValue;
+    }
+
+    /**
+     * 构建 CmsBtProductModel_feed.
+     * @param customAttributesValue
+     * @return
+     */
+    private CmsBtProductModel_Feed buildCmsBtProductModel_feed(Map<String, Object> customAttributesValue) {
+        CmsBtProductModel_Feed feedModel = new CmsBtProductModel_Feed();
         BaseMongoMap<String, Object> orgAtts = new BaseMongoMap<>();
+        BaseMongoMap<String, Object> cnAtts = new BaseMongoMap<>();
 
         List<String> customIds = new ArrayList<>();
 
@@ -305,56 +478,16 @@ public class ProductPropsEditService {
             }
         }
 
-        BaseMongoMap<String, Object> cnAtts = new BaseMongoMap<>();
         List<Map<String, String>> cnAttsList =(List<Map<String, String>>) customAttributesValue.get("cnAtts");
         for (Map<String, String> cnAttsMap : cnAttsList) {
             cnAtts.put(cnAttsMap.get("key"), cnAttsMap.get("value"));
         }
 
-
-        CmsBtProductModel_Feed feedModel = new CmsBtProductModel_Feed();
         feedModel.setOrgAtts(orgAtts);
         feedModel.setCnAtts(cnAtts);
         feedModel.setCustomIds(customIds);
-
-        List<Field> masterFields = SchemaJsonReader.readJsonForList(masterFieldsList);
-
-        // setComplexValue
-        for (Field field:masterFields){
-
-            if (field instanceof ComplexField){
-                ComplexField complexField = (ComplexField)field;
-                List<Field> complexFields = complexField.getFields();
-                ComplexValue complexValue = complexField.getComplexValue();
-                setComplexValue(complexFields,complexValue);
-            }
-
-        }
-
-        CmsBtProductModel_Field masterFieldsValue = new CmsBtProductModel_Field();
-
-        Map masterFieldsValueMap = FieldUtil.getFieldsValueToMap(masterFields);
-        masterFieldsValue.putAll(masterFieldsValueMap);
-
-
-        ProductUpdateRequest updateRequest = new ProductUpdateRequest(channelId);
-
-        CmsBtProductModel productModel = new CmsBtProductModel(channelId);
-
-        productModel.setCatId(requestMap.get("categoryId").toString());
-        productModel.setProdId(Long.valueOf(requestMap.get("productId").toString()));
-        productModel.setCatPath(requestMap.get("categoryFullPath").toString());
-        productModel.setFields(masterFieldsValue);
-        productModel.setFeed(feedModel);
-        productModel.setModified(requestMap.get("modified").toString());
-
-        updateRequest.setProductModel(productModel);
-        updateRequest.setModifier(user);
-
-        return productClient.updateProductRetModified(updateRequest);
-
+        return feedModel;
     }
-
 
     /**
      * set complex value.
@@ -405,7 +538,6 @@ public class ProductPropsEditService {
                 default:
                     break;
             }
-
 
         }
 
@@ -511,55 +643,6 @@ public class ProductPropsEditService {
             }
 
         }
-    }
-
-    /**
-     * 更新product values.
-     * @param channelId
-     * @param user
-     * @param categoryId
-     * @param productId
-     * @param categoryFullPath
-     * @param skuFieldMap
-     */
-    public String updateProductSkuInfo(String channelId,String user,String categoryId,Long productId,String modified,String categoryFullPath, Map skuFieldMap){
-
-        Field skuField = SchemaJsonReader.mapToField(skuFieldMap);
-
-        Map<String,Object> skuFieldValueMap = new HashMap<>();
-
-        skuField.getFieldValueToMap(skuFieldValueMap);
-
-        List<Map> skuValuesMap = (List<Map>) skuFieldValueMap.get("sku");
-
-        List<CmsBtProductModel_Sku> skuValues = new ArrayList<>();
-
-        for (Map skuMap:skuValuesMap){
-            CmsBtProductModel_Sku skuModel = new CmsBtProductModel_Sku(skuMap);
-            skuValues.add(skuModel);
-        }
-
-        ProductUpdateRequest updateRequest = new ProductUpdateRequest(channelId);
-
-        CmsBtProductModel productModel = new CmsBtProductModel(channelId);
-
-        productModel.setCatId(categoryId);
-        productModel.setProdId(productId);
-        productModel.setCatPath(categoryFullPath);
-        productModel.setSkus(skuValues);
-        productModel.setModified(modified);
-
-        updateRequest.setProductModel(productModel);
-        updateRequest.setModifier(user);
-
-        return productClient.updateProductRetModified(updateRequest);
-
-    }
-
-
-    public String updateProductAll(){
-
-        return null;
     }
 
     /**

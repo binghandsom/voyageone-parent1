@@ -65,32 +65,32 @@ public class CmsProductServiceTest {
         fields.setPriceChange(random.nextInt(1));
 
         List<CmsBtProductModel_Field_Image> images = fields.getImages1();
-        images.add(new CmsBtProductModel_Field_Image("xxxxx-" + random.nextInt(10) + ".jpg"));
-        images.add(new CmsBtProductModel_Field_Image("xxxxx-" + random.nextInt(10) + ".jpg"));
-        images.add(new CmsBtProductModel_Field_Image("xxxxx-" + random.nextInt(10) + ".jpg"));
-        images.add(new CmsBtProductModel_Field_Image("xxxxx-" + random.nextInt(10) + ".jpg"));
-        images.add(new CmsBtProductModel_Field_Image("xxxxx-" + random.nextInt(10) + ".jpg"));
+        images.add(new CmsBtProductModel_Field_Image("image1", "xxxxx-" + random.nextInt(10) + ".jpg"));
+        images.add(new CmsBtProductModel_Field_Image("image1", "xxxxx-" + random.nextInt(10) + ".jpg"));
+        images.add(new CmsBtProductModel_Field_Image("image1", "xxxxx-" + random.nextInt(10) + ".jpg"));
+        images.add(new CmsBtProductModel_Field_Image("image1", "xxxxx-" + random.nextInt(10) + ".jpg"));
+        images.add(new CmsBtProductModel_Field_Image("image1", "xxxxx-" + random.nextInt(10) + ".jpg"));
 
         images = fields.getImages2();
-        images.add(new CmsBtProductModel_Field_Image("yyyyy-" + random.nextInt(10) + ".jpg"));
-        images.add(new CmsBtProductModel_Field_Image("yyyyy-" + random.nextInt(10) + ".jpg"));
-        images.add(new CmsBtProductModel_Field_Image("yyyyy-" + random.nextInt(10) + ".jpg"));
-        images.add(new CmsBtProductModel_Field_Image("yyyyy-" + random.nextInt(10) + ".jpg"));
-        images.add(new CmsBtProductModel_Field_Image("yyyyy-" + random.nextInt(10) + ".jpg"));
+        images.add(new CmsBtProductModel_Field_Image("image1", "yyyyy-" + random.nextInt(10) + ".jpg"));
+        images.add(new CmsBtProductModel_Field_Image("image1", "yyyyy-" + random.nextInt(10) + ".jpg"));
+        images.add(new CmsBtProductModel_Field_Image("image1", "yyyyy-" + random.nextInt(10) + ".jpg"));
+        images.add(new CmsBtProductModel_Field_Image("image1", "yyyyy-" + random.nextInt(10) + ".jpg"));
+        images.add(new CmsBtProductModel_Field_Image("image1", "yyyyy-" + random.nextInt(10) + ".jpg"));
 
         images = fields.getImages3();
-        images.add(new CmsBtProductModel_Field_Image("uuuuu-" + random.nextInt(10) + ".jpg"));
-        images.add(new CmsBtProductModel_Field_Image("uuuuu-" + random.nextInt(10) + ".jpg"));
-        images.add(new CmsBtProductModel_Field_Image("uuuuu-" + random.nextInt(10) + ".jpg"));
-        images.add(new CmsBtProductModel_Field_Image("uuuuu-" + random.nextInt(10) + ".jpg"));
-        images.add(new CmsBtProductModel_Field_Image("uuuuu-" + random.nextInt(10) + ".jpg"));
+        images.add(new CmsBtProductModel_Field_Image("image1", "uuuuu-" + random.nextInt(10) + ".jpg"));
+        images.add(new CmsBtProductModel_Field_Image("image1", "uuuuu-" + random.nextInt(10) + ".jpg"));
+        images.add(new CmsBtProductModel_Field_Image("image1", "uuuuu-" + random.nextInt(10) + ".jpg"));
+        images.add(new CmsBtProductModel_Field_Image("image1", "uuuuu-" + random.nextInt(10) + ".jpg"));
+        images.add(new CmsBtProductModel_Field_Image("image1", "uuuuu-" + random.nextInt(10) + ".jpg"));
 
         images = fields.getImages3();
-        images.add(new CmsBtProductModel_Field_Image("zzzzz-" + random.nextInt(10) + ".jpg"));
-        images.add(new CmsBtProductModel_Field_Image("zzzzz-" + random.nextInt(10) + ".jpg"));
-        images.add(new CmsBtProductModel_Field_Image("zzzzz-" + random.nextInt(10) + ".jpg"));
-        images.add(new CmsBtProductModel_Field_Image("zzzzz-" + random.nextInt(10) + ".jpg"));
-        images.add(new CmsBtProductModel_Field_Image("zzzzz-" + random.nextInt(10) + ".jpg"));
+        images.add(new CmsBtProductModel_Field_Image("image1", "zzzzz-" + random.nextInt(10) + ".jpg"));
+        images.add(new CmsBtProductModel_Field_Image("image1", "zzzzz-" + random.nextInt(10) + ".jpg"));
+        images.add(new CmsBtProductModel_Field_Image("image1", "zzzzz-" + random.nextInt(10) + ".jpg"));
+        images.add(new CmsBtProductModel_Field_Image("image1", "zzzzz-" + random.nextInt(10) + ".jpg"));
+        images.add(new CmsBtProductModel_Field_Image("image1", "zzzzz-" + random.nextInt(10) + ".jpg"));
 
         fields.setLock(index % 2 == 0);
 

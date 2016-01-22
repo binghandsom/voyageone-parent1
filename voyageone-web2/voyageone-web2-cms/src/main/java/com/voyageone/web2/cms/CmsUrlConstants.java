@@ -193,6 +193,8 @@ public interface CmsUrlConstants {
 
             String  UPDATE_PRODUCT_SKU_INFO = "updateProductSkuInfo";
 
+            String UPDATE_PRODUCT_ALL_INFO = "updateProductAllInfo";
+
             String CHANGE_CATEGORY = "changeCategory";
 
             String CONFIRM_CHANGE = "confirmChange";
@@ -212,6 +214,26 @@ public interface CmsUrlConstants {
 
             String SET_MAIN_PRODUCT = "setMainProduct";
         }
+    }
+
+
+    interface DictManage {
+
+        String ROOT = "/cms/dict/manage/";
+
+        String DT_GET_DICT = "dtGetDict";
+
+        String GET_CONST = "getConst";
+
+        String GET_CUSTOMS = "getCustoms";
+
+        String SET_DICT = "setDict";
+
+        String DEL_DICT = "delDict";
+
+        String ADD_DICT = "addDict";
+
+        String GET_DICT_LIST = "getDictList";
     }
 
 }

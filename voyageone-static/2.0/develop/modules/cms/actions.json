@@ -117,6 +117,7 @@
       "getProductInfo":"getProductInfo",
       "updateProductMasterInfo":"updateProductMasterInfo",
       "updateProductSkuInfo":"updateProductSkuInfo",
+      "updateProductAllInfo":"updateProductAllInfo",
       "changeCategory":"changeCategory",
       "confirmChange":"confirmChange",
       "revertCategory":"revertCategory"

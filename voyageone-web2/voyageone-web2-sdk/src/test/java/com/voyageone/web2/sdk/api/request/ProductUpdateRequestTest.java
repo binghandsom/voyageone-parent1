@@ -36,9 +36,9 @@ public class ProductUpdateRequestTest {
         //field
         model.getFields().setColor(model.getFields().getColor() + "1");
         List<CmsBtProductModel_Field_Image> images1 = new ArrayList<>();
-        images1.add(new CmsBtProductModel_Field_Image("aa1.jsp"));
-        images1.add(new CmsBtProductModel_Field_Image("aa2.jsp"));
-        images1.add(new CmsBtProductModel_Field_Image("aa3.jsp"));
+        images1.add(new CmsBtProductModel_Field_Image("image1", "aa1.jsp"));
+        images1.add(new CmsBtProductModel_Field_Image("image1", "aa2.jsp"));
+        images1.add(new CmsBtProductModel_Field_Image("image1", "aa3.jsp"));
         model.getFields().setImages1(images1);
 
         //feed

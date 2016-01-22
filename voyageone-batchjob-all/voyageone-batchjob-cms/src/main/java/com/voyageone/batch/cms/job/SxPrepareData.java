@@ -69,11 +69,11 @@ public class SxPrepareData {
         fields.setLongDesEn("Stud Earrings with Sterling Silver- 详情描述英语" + code);
 
         List<CmsBtProductModel_Field_Image> images = fields.getImages1();
-        images.add(new CmsBtProductModel_Field_Image("DTW68F16_001"));
-        images.add(new CmsBtProductModel_Field_Image("DTW68F16_001_a"));
-        images.add(new CmsBtProductModel_Field_Image("DTW68F16_001_c"));
-        images.add(new CmsBtProductModel_Field_Image("DTW68F16_001_b"));
-        images.add(new CmsBtProductModel_Field_Image("DTW68F16_001_c"));
+        images.add(new CmsBtProductModel_Field_Image("image1", "DTW68F16_001"));
+        images.add(new CmsBtProductModel_Field_Image("image1", "DTW68F16_001_a"));
+        images.add(new CmsBtProductModel_Field_Image("image1", "DTW68F16_001_c"));
+        images.add(new CmsBtProductModel_Field_Image("image1", "DTW68F16_001_b"));
+        images.add(new CmsBtProductModel_Field_Image("image1", "DTW68F16_001_c"));
 
         fields.setPriceSaleSt(500.00);
         fields.setPriceSaleEd(800.00);

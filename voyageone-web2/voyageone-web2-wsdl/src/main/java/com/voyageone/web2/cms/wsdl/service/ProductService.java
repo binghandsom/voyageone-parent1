@@ -442,6 +442,7 @@ public class ProductService extends BaseService {
         VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70007;
         if (!StringUtils.isEmpty(queryStr)) {
             JomgoQuery queryObject = new JomgoQuery();
+            queryObject.setQuery(queryStr);
             queryObject.setProjection("prodId", "modified", "fields.status");
 
             CmsBtProductModel findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);

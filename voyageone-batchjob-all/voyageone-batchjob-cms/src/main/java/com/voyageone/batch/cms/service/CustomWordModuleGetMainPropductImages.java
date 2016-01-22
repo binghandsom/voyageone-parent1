@@ -84,7 +84,7 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
                 return parseResult;
             }
         } //padding图片
-        else if (imageIndex > productImages.size()) {
+        else if (imageIndex >= productImages.size()) {
             RuleExpression paddingExpression = customModuleUserParamGetMainPrductImages.getPaddingExpression();
             String paddingImageKey = expressionParser.parse(paddingExpression, null);
             if (paddingImageKey == null || "".equalsIgnoreCase(paddingImageKey)) {

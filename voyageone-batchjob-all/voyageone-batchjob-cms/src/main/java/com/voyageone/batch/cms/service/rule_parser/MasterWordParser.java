@@ -64,6 +64,12 @@ public class MasterWordParser {
                 if (plainPropValueObj instanceof String) {
                     return extra.get(plainPropValueObj);
                 } else if (plainPropValueObj instanceof  ArrayList) {
+                    // 20160120 tom ims1->ims2升级导致的问题, 增加检查 START
+                    if (((ArrayList) plainPropValueObj).size() == 0) {
+                        // 检查一下, 如果没有值的话, 后面的也不用做了
+                        return null;
+                    }
+                    // 20160120 tom ims1->ims2升级导致的问题, 增加检查 END
                     List<String> plainPropValues = (List<String>) plainPropValueObj;
                     List<String> mappedPropValues = new ArrayList<>();
                     for (String plainPropValue : plainPropValues) {

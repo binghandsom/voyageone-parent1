@@ -18763,7 +18763,7 @@
         "customIds": []
       },
       "productStatus": {
-        "approveStatus": false,
+        "approveStatus": "Approved",
         "translateStatus": false,
         "editStatus": false
       },
