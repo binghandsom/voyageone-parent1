@@ -60,33 +60,32 @@ public class MagentoApiServiceImpl {
 
 		if (StringUtils.isNullOrBlank2(this.orderChannelId)) {
 			this.orderChannelId = orderChannelId;
-
 			// magento api调用 userName
-//		String userName = ThirdPartyConfigs.getVal1(this.orderChannelId, "userName");
-//		// magento api调用 密钥
-//		String apiKey = ThirdPartyConfigs.getVal1(this.orderChannelId, "apiKey");
+			String userName = ThirdPartyConfigs.getVal1(this.orderChannelId, "userName");
+			// magento api调用 密钥
+			String apiKey = ThirdPartyConfigs.getVal1(this.orderChannelId, "apiKey");
 
 			loginParam = new LoginParam();
-//		loginParam.setUsername(userName);
-//		loginParam.setApiKey(apiKey);
-			loginParam.setUsername("juicy_couture");
-			loginParam.setApiKey("abc.123");
+			loginParam.setUsername(userName);
+			loginParam.setApiKey(apiKey);
+//			loginParam.setUsername("juicy_couture");
+//			loginParam.setApiKey("abc.123");
 
-//		loginParam.setUsername("VOYAGEONE_API_USER");
-//		loginParam.setApiKey("hjA=fs2H0n+%PFd,b4wB");
+	//		loginParam.setUsername("VOYAGEONE_API_USER");
+	//		loginParam.setApiKey("hjA=fs2H0n+%PFd,b4wB");
 
-//		String customerId = ThirdPartyConfigs.getVal1(this.orderChannelId, "customerId");
-//		String customerMode = ThirdPartyConfigs.getVal1(this.orderChannelId, "customerMode");
-//		String storeId = ThirdPartyConfigs.getVal1(this.orderChannelId, "storeId");
-//		String webSiteId = ThirdPartyConfigs.getVal1(this.orderChannelId, "webSiteId");
-//		String storeName = ThirdPartyConfigs.getVal1(this.orderChannelId, "storeName");
+			String customerId = ThirdPartyConfigs.getVal1(this.orderChannelId, "customerId");
+			String customerMode = ThirdPartyConfigs.getVal1(this.orderChannelId, "customerMode");
+			String storeId = ThirdPartyConfigs.getVal1(this.orderChannelId, "storeId");
+			String webSiteId = ThirdPartyConfigs.getVal1(this.orderChannelId, "webSiteId");
+			String storeName = ThirdPartyConfigs.getVal1(this.orderChannelId, "storeName");
 
-			String customerId = "20";
-			String customerMode = "customer";
-//		String customerMode = "guest";
-			String storeId = "1";
-			String webSiteId = "1";
-			String storeName = "juicy_cn";
+	//		String customerId = "20";
+	//		String customerMode = "customer";
+	//		String customerMode = "guest";
+	//		String storeId = "1";
+	//		String webSiteId = "1";
+	//		String storeName = "juicy_cn";
 
 			customer = new CustomerBean();
 			customer.setCustomerId(Integer.valueOf(customerId));
@@ -104,11 +103,11 @@ public class MagentoApiServiceImpl {
 	 */
 	private String login() throws Exception {
 		// magento api调用 URL
-//		String url = ThirdPartyConfigs.getVal1(this.orderChannelId, "url");
-		String url = "https://api.juicycouture.asia/api/v2_soap";
+		String url = ThirdPartyConfigs.getVal1(this.orderChannelId, "url");
+//		String url = "https://api.juicycouture.asia/api/v2_soap";
 		stub = new MagentoServiceStub(url);
 //		stub = new MagentoServiceStub("http://www.wmf.com/api/v2_soap");
-		System.setProperty("javax.net.ssl.trustStore", "D:/tmp/trustStore");
+//		System.setProperty("javax.net.ssl.trustStore", "D:/tmp/trustStore");
 		
 		// 登陆
 		LoginResponseParam response = stub.login(loginParam);
