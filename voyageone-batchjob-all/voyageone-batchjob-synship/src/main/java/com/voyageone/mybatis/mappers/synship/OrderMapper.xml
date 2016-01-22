@@ -16,6 +16,87 @@
             order_status = #{before_status}
     </update>
 
+    <!--Order状态更新 -->
+    <update id="synShip_UpdateOrderStatus">
+        UPDATE
+        tt_orders
+        SET
+        order_status = #{status},
+        update_time = now(),
+        update_person = #{task_name}
+        WHERE
+        syn_ship_no = #{syn_ship_no}
+    </update>
+
+    <insert id="oms_bt_notes_insert">
+        insert into
+        oms_bt_notes(
+        type
+        ,numeric_key
+        ,item_number
+        ,alpha_key
+        ,entry_date
+        ,entry_time
+        ,notes
+        ,event
+        ,followup_action
+        ,assigned_to
+        ,completed
+        ,entered_by
+        ,priority
+        ,status
+        ,keywords
+        ,email_out_going
+        ,email_incoming
+        ,parent_type
+        ,parent_key
+        ,file_path
+        ,source_order_id
+        ,created
+        ,modified
+        ,creater
+        ,modifier
+        ) values (
+        '0'
+        ,#{orderNumber}
+        ,0
+        ,' '
+        ,now()
+        ,now()
+        ,#{note}
+        ,''
+        ,''
+        ,''
+        ,''
+        ,#{task_name}
+        ,''
+        ,''
+        ,''
+        ,''
+        ,''
+        ,'0'
+        ,#{orderNumber}
+        ,''
+        ,#{source_order_id}
+        ,now()
+        ,now()
+        ,#{task_name}
+        ,#{task_name}
+        );
+    </insert>
+
+    <!--Order状态更新 -->
+    <update id="oms_UpdateOrderCancelFlg">
+        UPDATE
+        oms_bt_ext_orders
+        SET
+        ext_flg3 = 1,
+        modified = now(),
+        modifier = #{task_name}
+        WHERE
+        order_number = #{order_number}
+    </update>
+
     <!--OMS Order信息取得- -->
     <resultMap id="ordersInfoMap" type="com.voyageone.batch.synship.modelbean.Order">
         <result column="source_order_id" property="sourceOrderId"/>
@@ -23,17 +104,17 @@
     </resultMap>
     <select id = "synShip_SelectOrdersBySourceOrderIdList" parameterType="HashMap" resultMap="ordersInfoMap" >
         select
-            o.order_number,
-            o.source_order_id
+        o.order_number,
+        o.source_order_id
         from
-            oms_bt_orders o
+        oms_bt_orders o
         where
-            <if test="sourceOrderIdList != null ">
-                o.source_order_id in
-                <foreach item="item" index="index" collection="sourceOrderIdList" open="(" separator="," close=")">
-                    #{item}
-                </foreach>
-            </if>
-            and o.order_kind = '0'
+        <if test="sourceOrderIdList != null ">
+            o.source_order_id in
+            <foreach item="item" index="index" collection="sourceOrderIdList" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        and o.order_kind = '0'
     </select>
 </mapper>

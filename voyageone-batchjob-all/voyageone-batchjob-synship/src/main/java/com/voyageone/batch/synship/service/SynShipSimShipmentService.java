@@ -41,6 +41,9 @@ public class SynShipSimShipmentService  extends BaseTaskService {
     ReservationDao reservationDao;
 
     @Autowired
+    OrderDao orderDao;
+
+    @Autowired
     private TransactionRunner transactionRunner;
 
     @Override
@@ -272,6 +275,9 @@ public class SynShipSimShipmentService  extends BaseTaskService {
                             else  if (port.equals(PortConfigEnums.Port.CN.getId())) {
                                 // 更新物品状态
                                 reservationDao.UpdateReservationStatus(clientTracking.getSyn_ship_no(), CodeConstants.Reservation_Status.ShippedCN, "2",getTaskName());
+
+                                // 更新订单状态
+                                orderDao.updateOrderStatus(clientTracking.getSyn_ship_no(), CodeConstants.Reservation_Status.ShippedCN, getTaskName());
 
                                 // 插入物品日志
                                 reservationDao.insertReservationLog(clientTracking.getSyn_ship_no(), "Sim CN Port Shipment", getTaskName());
