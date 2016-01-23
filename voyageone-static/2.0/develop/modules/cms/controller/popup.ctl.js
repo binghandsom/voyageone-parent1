@@ -117,9 +117,9 @@ define([
                     }
                 },
                 "multiComplex": {
-                    "templateUrl": "views/pop/multiComplexMapping/index.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/multiComplexMapping/index.ctl",
-                    "controller": 'multiComplexMapping as ctrl',
+                    "templateUrl": "views/pop/platformMapping/ppMultiComplex.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/platformMapping/ppMultiComplex.ctl",
+                    "controller": 'multiComplexMappingPopupController as ctrl',
                     "size": 'lg',
                     "backdrop": "static"
                 }
@@ -275,7 +275,7 @@ define([
         }
 
         $scope.openpromotion = openpromotion;
-        function openpromotion(viewSize, cartList,data, fnInitial) {
+        function openpromotion(viewSize, cartList, data, fnInitial) {
             require([popActions.new.controllerUrl], function () {
                 var modalInstance = $modal.open({
                     templateUrl: popActions.new.templateUrl,
@@ -285,14 +285,14 @@ define([
                         items: function () {
                             return data;
                         },
-                        cartList:function(){
+                        cartList: function () {
                             return cartList;
                         }
                     }
                 });
 
-                modalInstance.result.then(function(){
-                    if(fnInitial){
+                modalInstance.result.then(function () {
+                    if (fnInitial) {
                         fnInitial();
                     }
 
@@ -342,6 +342,32 @@ define([
             return openModel(popActions.category, context);
         };
 
+        /**
+         * @class
+         * @name Field
+         * @property {string} type
+         * @property {object[]} options
+         * @property {object[]} rules
+         * @property {string} name
+         * @property {string} id
+         */
+
+        /**
+         * @typedef {object} FieldBean
+         */
+
+        /**
+         * @typedef {object} FeedPropMappingPopupContext
+         * @property {string} feedCategoryPath
+         * @property {string} mainCategoryPath
+         * @property {Field} field
+         * @property {FieldBean} bean
+         */
+
+        /**
+         * @param {FeedPropMappingPopupContext} context
+         * @returns {Promise}
+         */
         $scope.popupFeed = function (context) {
             return openModel(popActions.feed, context);
         };
@@ -372,9 +398,12 @@ define([
 
                 /**
                  * Simple Mapping List 设定弹出框的上下文参数
-                 * @typedef {object} SimpleListMappingPopupContext
+                 * @name SimpleListMappingPopupContext
+                 * @class
                  * @property {string} platformCategoryPath 平台类目路径
+                 * @property {string} platformCategoryId 平台类目 ID
                  * @property {string} mainCategoryId 主数据类目 ID
+                 * @property {number} cartId 平台 ID
                  * @property {Field} property 平台属性
                  */
 
@@ -388,17 +417,16 @@ define([
                 },
 
                 /**
-                 * Simple Mapping Item 设定弹出框的上下文参数
-                 * @typedef {object} SimpleItemMappingPopupContext
-                 * @property {string} platformCategoryPath 平台类目路径
-                 * @property {string} mainCategoryId 主数据类目 ID
-                 * @property {Field} property 平台属性
+                 * @name SimpleItemMappingPopupContext
+                 * @class
+                 * @extends SimpleListMappingPopupContext
+                 * @property {RuleWord|null} ruleWord
                  */
 
                 /**
                  * 弹出 Simple 属性的值匹配窗
                  * @param {SimpleItemMappingPopupContext} context
-                 * @returns {Promise}
+                 * @returns {Promise.<RuleWord>}
                  */
                 item: function (context) {
                     return openModel(popActions.platformMapping.simple.item, context);

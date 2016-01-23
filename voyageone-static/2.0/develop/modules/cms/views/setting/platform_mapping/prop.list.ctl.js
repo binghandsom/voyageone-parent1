@@ -108,17 +108,26 @@ define([
                 var context = {
                     mainCategoryId: this.mainCategoryId,
                     platformCategoryPath: this.category.catFullPath,
-                    property: property
+                    platformCategoryId: this.category.catId,
+                    property: property,
+                    cartId: this.cartId
                 };
 
                 switch (property.type) {
                     case FieldTypes.complex:
-                        ppPlatformMapping.complex(context);
+                        ppPlatformMapping.complex(context).then(function(complexMappingBean) {
+                            console.log(complexMappingBean);
+                        });
                         break;
                     case FieldTypes.multiComplex:
+                        ppPlatformMapping.multiComplex(context).then(function(mappingBean) {
+                            console.log(mappingBean);
+                        });
                         break;
                     default: // simple ~
-                        ppPlatformMapping.simple.list(context);
+                        ppPlatformMapping.simple.list(context).then(function(simpleMappingBean) {
+                            console.log(simpleMappingBean);
+                        });
                         break;
                 }
             }
