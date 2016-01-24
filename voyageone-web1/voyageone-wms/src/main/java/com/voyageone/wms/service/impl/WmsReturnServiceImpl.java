@@ -21,6 +21,7 @@ import com.voyageone.core.modelbean.UserSessionBean;
 import com.voyageone.core.util.PageUtil;
 import com.voyageone.wms.WmsCodeConstants;
 import com.voyageone.wms.WmsConstants;
+import com.voyageone.wms.dao.ItemDao;
 import com.voyageone.wms.dao.ReservationDao;
 import com.voyageone.wms.dao.ReservationLogDao;
 import com.voyageone.wms.dao.ReturnDao;
@@ -66,6 +67,9 @@ public class WmsReturnServiceImpl implements WmsReturnService {
 	@Autowired
 	private ReservationDao reservationDao;
 
+	@Autowired
+	private ItemDao itemDao;
+
 //	@Override
 //	public void changeStatus(HttpServletRequest request, HttpServletResponse response, String returnId) {
 //		Map<String, Object> resultMap = new HashMap<>();
@@ -108,6 +112,13 @@ public class WmsReturnServiceImpl implements WmsReturnService {
 
 		List<FormReturn> orderInfo;
 		orderInfo = returnDao.getOrderInfoByOrdNo(formReturn);
+
+		for (FormReturn returnInfo : orderInfo) {
+			// 根据输入的条形码找到对应的UPC
+			String Upc = itemDao.getUPC(returnInfo.getOrder_channel_id(), returnInfo.getBarCode());
+			returnInfo.setUpc(Upc);
+		}
+
 		setDisplayInfo(orderInfo, user);
 
 		resultMap.put("orderInfo", orderInfo);

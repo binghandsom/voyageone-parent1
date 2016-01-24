@@ -18,6 +18,7 @@ import com.voyageone.wms.WmsConstants;
 import com.voyageone.wms.WmsConstants.ReportPickupItems;
 import com.voyageone.wms.WmsConstants.ReportSetting;
 import com.voyageone.wms.WmsMsgConstants;
+import com.voyageone.wms.dao.ItemDao;
 import com.voyageone.wms.dao.ReservationDao;
 import com.voyageone.wms.dao.ReservationLogDao;
 import com.voyageone.wms.dao.TrackingInfoDao;
@@ -62,6 +63,9 @@ public class WmsPickupServiceImpl implements WmsPickupService {
 
     @Autowired
     private TrackingInfoDao trackingInfoDao;
+
+    @Autowired
+    private ItemDao itemDao;
 
     /**
      * 【捡货画面】初始化
@@ -237,8 +241,15 @@ public class WmsPickupServiceImpl implements WmsPickupService {
         // 获取相关渠道
         List<String> orderChannelList = user.getChannelList();
 
+        String Upc = "";
+        if (WmsConstants.ScanType.SCAN.equals(scanMode) && ChannelConfigEnums.Scan.RES.getType().equals(scanType)) {
+            StoreBean store = StoreConfigs.getStore(Long.valueOf(scanStore));
+            // 根据输入的条形码找到对应的UPC
+            Upc = itemDao.getUPC(store.getOrder_channel_id(), scanNo);
+        }
+
         // 取得符合条件的记录
-        List<FormPickupBean> scanInfoListALL = reservationDao.getScanInfo(scanMode, scanType, scanNo, scanStatus, scanStore, channelStoreList, orderChannelList, reserveType);
+        List<FormPickupBean> scanInfoListALL = reservationDao.getScanInfo(scanMode, scanType, scanNo, scanStatus, StringUtils.isNullOrBlank2(Upc)?scanNo:Upc, channelStoreList, orderChannelList, reserveType);
 
         String StatusName = Type.getTypeName(MastType.reservationStatus.getId(),scanStatus);
 

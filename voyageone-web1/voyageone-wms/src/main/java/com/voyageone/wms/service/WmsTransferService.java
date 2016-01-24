@@ -54,6 +54,8 @@ public interface WmsTransferService {
 
     Map<String, Object> compareTransfer(TransferBean transfer);
 
+    Map<String, Object> getSku(TransferItemBean transferItem);
+
     List<TransferItemBean> allItemInTransfer(long transfer_in_id);
 
     List<TransferItemBean> getItemsInPackage(long package_id);

@@ -272,5 +272,23 @@ define([
                     });
             };
 
+            /**
+             * 获取一个 Item的SKU信息
+             * @param packageIitem {number}
+             */
+            this.getSku = function (packageIitem) {
+
+                return http.ajaxPost({
+                        transfer_id: packageIitem.transfer_id.toString(),
+                        transfer_barcode: packageIitem.transfer_barcode.toString(),
+                        transfer_sku: packageIitem.transfer_sku.toString()
+                    },
+                    actions.transfer.package.item.getSku)
+
+                    .then(function (res) {
+                        return res.data;
+                    });
+            };
+
         }]);
 });

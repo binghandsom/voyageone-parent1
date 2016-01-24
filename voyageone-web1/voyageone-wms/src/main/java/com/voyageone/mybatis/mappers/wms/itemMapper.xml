@@ -111,4 +111,29 @@
             item_details_id = #{item_details_id}
         AND modified = #{modified}
     </update>
+
+    <select id="wms_bt_item_details_count_by_upc" resultType="int">
+        SELECT
+          count(1)
+        FROM
+          wms_bt_item_details
+        WHERE
+          order_channel_id = #{order_channel_id}
+        AND barcode = #{barcode}
+    </select>
+
+    <select id="wms_bt_client_sku_getUpc" resultType="string">
+        SELECT
+            client_sku.upc
+        FROM
+          wms_bt_client_sku client_sku
+        WHERE
+          client_sku.order_channel_id = #{order_channel_id}
+        AND client_sku.barcode = #{barcode}
+        AND client_sku.upc != ''
+        AND exists (select 1
+                      from wms_bt_item_details details
+                      where details.order_channel_id = client_sku.order_channel_id
+                      and details.barcode = client_sku.barcode)
+    </select>
 </mapper>

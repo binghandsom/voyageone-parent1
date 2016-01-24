@@ -60,4 +60,19 @@ public class ClientSkuDao extends BaseDao {
     public int insertItem(ClientSkuBean item) {
         return updateTemplate.insert("wms_bt_client_sku_insert", item);
     }
+
+    /**
+     * 取得相关的SKU信息
+     * @param order_channel_id
+     * @param barcode
+     * @return ClientSkuBean
+     */
+    public ClientSkuBean getSkuInfo(String order_channel_id, String barcode) {
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("order_channel_id", order_channel_id);
+        params.put("barcode", barcode);
+
+        return selectOne("wms_bt_client_sku_getSkuInfo", params);
+    }
 }

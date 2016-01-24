@@ -48,6 +48,7 @@ public final class WmsUrlConstants {
             public static final String ADD = "/wms/transfer/edit/addItem";
             public static final String COMPARE = "/wms/transfer/edit/compare";
             public static final String SELECT = "/wms/transfer/edit/getPackageItems";
+            public static final String GETSKU = "/wms/transfer/edit/getSku";
         }
     }
 

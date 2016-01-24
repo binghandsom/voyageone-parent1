@@ -2,6 +2,7 @@ package com.voyageone.wms.dao;
 
 import com.voyageone.base.dao.BaseDao;
 import com.voyageone.common.Constants;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.wms.modelbean.ItemDetailBean;
 import org.springframework.stereotype.Repository;
 
@@ -103,5 +104,33 @@ public class ItemDao extends BaseDao {
     public int updateItemDetailBarcode(ItemDetailBean itemDetailBean) {
 
         return updateTemplate.update("wms_bt_item_details_updateItemDetailBarcode", itemDetailBean);
+    }
+
+    /**
+     * 获取扫描条形码对应的UPC
+     *
+     * @param order_channel_id 渠道 ID
+     * @param barcode
+     * @return List/ ItemDetailBean
+     */
+    public String getUPC(String order_channel_id,String barcode) {
+        Map<String, Object> params = new HashMap<>();
+        String Upc = "";
+
+        params.put("order_channel_id", order_channel_id);
+        params.put("barcode", barcode);
+
+        int UpcCount =  selectOne("wms_bt_item_details_count_by_upc", params);
+
+        // 在ItemDtail表中没有纪录时，再到ClientSku查询
+        if (UpcCount == 0) {
+            Upc  =  selectOne("wms_bt_client_sku_getUpc", params);
+
+            // 没有找到对应UPC时，直接用传入值返回
+            if (StringUtils.isNullOrBlank2(Upc)) {
+                Upc = barcode;
+            }
+        }
+        return Upc;
     }
 }
