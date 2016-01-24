@@ -471,6 +471,10 @@ public class SynShipSimShipmentService  extends BaseTaskService {
         trackingBean.setSent_kd100_poll_count("0");
         trackingBean.setSent_kd100_flg("0");
         trackingBean.setPrint_type("0");
+        // 顺丰时，为了向快递100订阅信息，将打印类型设为1
+        if (trackingBean.getTracking_type().equals("SF")) {
+            trackingBean.setPrint_type("1");
+        }
         trackingBean.setCreate_time(DateTimeUtil.getNow());
         trackingBean.setUpdate_time(DateTimeUtil.getNow());
         trackingBean.setCreate_person(getTaskName());
