@@ -104,14 +104,14 @@ define([
             /**
              * 根据 masterWord 查找完整字段路径
              * @param {string} mainCategoryId
-             * @param {MasterWord} masterWord
+             * @param {string} propertyId
              * @return {Promise.<Field[]>}
              */
-            getPropertyPath: function (mainCategoryId, masterWord) {
+            getPropertyPath: function (mainCategoryId, propertyId) {
 
                 return this.$getMainCategorySchema(mainCategoryId)
                     .then(function (mainCategorySchema) {
-                        return this.$searchProperty(mainCategorySchema.fields, masterWord.value);
+                        return this.$searchProperty(mainCategorySchema.fields, propertyId);
                     }.bind(this));
             },
 

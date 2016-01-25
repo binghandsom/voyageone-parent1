@@ -4,8 +4,9 @@ define([
     'modules/cms/enums/FieldTypes',
     'modules/cms/models/ruleWords',
     'modules/cms/enums/WordTypes',
+    'modules/cms/enums/MappingTypes',
     'modules/cms/views/pop/platformMapping/ppPlatformMapping.serv'
-], function (cms, _, FieldTypes, ruleWords, WordTypes) {
+], function (cms, _, FieldTypes, ruleWords, WordTypes, MappingTypes) {
     'use strict';
     return cms.controller('simpleItemMappingPopupController', (function () {
 
@@ -106,8 +107,52 @@ define([
 
                 this.ppPlatformMappingService.getMainCategoryPath(this.mainCategoryId).then(function (path) {
                     this.mainCategoryPath = path;
-                    // 第一次加载默认数据
+                }.bind(this));
+
+                // 检查父级, 及父级的 Mapping 类型
+                // 如果父级 Mapping 类型是 ComplexMapping 则需要依据父级 loadValue
+                var parent = this.property.parent;
+
+                if (!parent) {
                     this.loadValue();
+                }
+
+                this.ppPlatformMappingService.getPlatformPropertyMapping(
+                    parent, this.mainCategoryId, this.context.platformCategoryId, this.cartId
+                ).then(function (parentMapping) {
+
+                    if (!parentMapping || parentMapping.mappingType !== MappingTypes.complex) {
+                        this.loadValue();
+                        return;
+                    }
+
+                    // TODO 未测试, 需要等待可以保存
+                    // TODO Complex 特殊处理后续继续
+
+                    /*
+                     * 2016-01-22 19:29:03
+                     * 当前情况是不支持 Feed Cn/Org 的. 所以 ComplexMapping 只有 Master.
+                     * 所以子属性只能匹配到 ComplexMapping 对应属性的子属性
+                     * 后续修改时, 请视情况修改这段注释
+                     */
+
+                    this.selected.valueFrom = this.options.valueFrom.MASTER;
+                    this.readonly.valueFrom = true;
+
+                    // 获取主数据属性的 Path
+                    this.ppPlatformMappingService.getPropertyPath(this.mainCategoryId, parentMapping.value)
+                        .then(function (properties) {
+
+                            // 找到 ComplexMapping 指定的属性
+                            // 并设定默认选中
+                            var parentProperty = properties[0];
+
+                            this.loadValue().then(function () {
+                                this.options.values[0].selected = parentProperty;
+                            }.bind(this));
+
+                        }.bind(this));
+
                 }.bind(this));
             },
             /**
@@ -123,7 +168,7 @@ define([
                 switch (this.selected.valueFrom) {
                     case valueFrom.MASTER:
 
-                        this.ppPlatformMappingService.getMainCategoryProps(this.mainCategoryId).then(function (props) {
+                        return this.ppPlatformMappingService.getMainCategoryProps(this.mainCategoryId).then(function (props) {
 
                             if (!this.editingWord) {
                                 this.options.values = [
@@ -135,7 +180,7 @@ define([
                             var values = this.options.values = [];
 
                             // 如果是编辑, 则搜索选中字段的完整字段路径
-                            this.ppPlatformMappingService.getPropertyPath(this.mainCategoryId, this.editingWord)
+                            this.ppPlatformMappingService.getPropertyPath(this.mainCategoryId, this.editingWord.value)
                                 .then(function (properties) {
 
                                     _.each(properties.reverse(), function (property) {
@@ -148,10 +193,9 @@ define([
 
                         }.bind(this));
 
-                        break;
                     case valueFrom.SKU:
 
-                        this.ppPlatformMappingService.getMainCategorySkuProp(this.mainCategoryId).then(function (sku) {
+                        return this.ppPlatformMappingService.getMainCategorySkuProp(this.mainCategoryId).then(function (sku) {
                             var selectedId = this.editingWord ? this.editingWord.value : null;
                             var selectedField = _.find(sku.fields, function (field) {
                                 return field.id === selectedId;
@@ -161,10 +205,9 @@ define([
                             ];
                         }.bind(this));
 
-                        break;
                     case valueFrom.DICT:
 
-                        this.ppPlatformMappingService.getDictList().then(function (dictList) {
+                        return this.ppPlatformMappingService.getDictList().then(function (dictList) {
                             var selectedName = this.editingWord ? this.editingWord.value : null;
                             var selectedDict = _.find(dictList, function (dict) {
                                 return dict.name === selectedName;
@@ -174,13 +217,12 @@ define([
                             ];
                         }.bind(this));
 
-                        break;
                     case valueFrom.FEED_CN:
                     case valueFrom.FEED_ORG:
                     case valueFrom.TEXT:
                         this.alert('当前暂时不支持该类型');
                         this.options.values = [];
-                        break;
+                        return null;
                 }
 
             },
