@@ -73,7 +73,7 @@ public class CmsGetJmMasterServiceTest {
         cat.setCreater("james");
         cat.setModifier("james");
         categorys.add(cat);
-        jmMasterDao.clearJmMaster();
+        //jmMasterDao.clearJmMaster();
         jmCategoryDao.insertJmCategory(categorys);
     }
 }

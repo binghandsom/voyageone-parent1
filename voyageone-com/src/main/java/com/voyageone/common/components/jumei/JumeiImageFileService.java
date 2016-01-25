@@ -4,6 +4,7 @@ import com.voyageone.common.components.jumei.Bean.JmCategoryBean;
 import com.voyageone.common.components.jumei.Bean.JmImageFileBean;
 import com.voyageone.common.components.jumei.base.JmBase;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.JsonUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -23,7 +24,7 @@ public class JumeiImageFileService extends JmBase {
     /**
      * 图片上传至聚美图片空间
      */
-    public void imageFileUpload(ShopBean shopBean, JmImageFileBean fileBean) throws Exception {
+    public String imageFileUpload(ShopBean shopBean, JmImageFileBean fileBean) throws Exception {
         if (fileBean == null) {
             throw new Exception("fileBean not found!");
         }
@@ -37,7 +38,15 @@ public class JumeiImageFileService extends JmBase {
 
         params.put("imgData", fileBean.getBase64Content());
 
-        reqJmApi(shopBean, IMAGWE_UPLOAD, params);
+        String reqResult = reqJmApi(shopBean, IMAGWE_UPLOAD, params);
+        Map<String, Object> resultMap = JsonUtil.jsonToMap(reqResult);
+
+        String result = null;
+        if (resultMap != null && resultMap.containsKey("imgUrl")) {
+            result = (String)resultMap.get("imgUrl");
+        }
+
+        return result;
     }
 
 }
