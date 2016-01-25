@@ -348,7 +348,7 @@ define(function() {
     }
     var templateKey_multiComplex = "voyageone.angular.directives.schemaMultiComplex.tpl.html";
     if (!$templateCache.get(templateKey_multiComplex)) {
-      $templateCache.put(templateKey_multiComplex, '<table class="table text-center">' + "<thead><tr>" + '<th ng-repeat="field in vm.$$data.fields" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" class="text-center" style="min-width: 180px;">{{field.name}}</th>' + '<th style="min-width: 60px;" class="text-center" translate="TXT_COM_EDIT"></th>' + "</tr></thead>" + '<tbody><tr ng-repeat="value in vm.$$data.complexValues">' + '<td class="text-left" ng-repeat="field in value.fieldMap"><div class="tableLayer"><p ng-if="field.type != \'COMPLEX\'">&nbsp;</p><p><schema-item data="field" hastip="true" complex="true"></schema-item></p></div></td>' + '<td style="min-width: 60px;"><button title="{\'BTN_COM_DELETE\' | translate}" class="btn btn-danger btn-xs" ng-click="delField($index)"><i class="fa  fa-trash-o"></i></button></td>' + "</tr></tbody>" + "</table>");
+      $templateCache.put(templateKey_multiComplex, '<table class="table text-center">' + "<thead><tr>" + '<th ng-repeat="field in vm.$$data.fields" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" class="text-center" style="min-width: 180px;">{{field.name}}</th>' + '<th ng-if="!showHtmlData.notShowEdit" style="min-width: 60px;" class="text-center" translate="TXT_COM_EDIT"></th>' + "</tr></thead>" + '<tbody><tr ng-repeat="value in vm.$$data.complexValues">' + '<td class="text-left" ng-repeat="field in value.fieldMap"><div class="tableLayer"><p ng-if="field.type != \'COMPLEX\'">&nbsp;</p><p><schema-item data="field" hastip="true" complex="true"></schema-item></p></div></td>' + '<td ng-if="!showHtmlData.notShowEdit" style="min-width: 60px;"><button title="{\'BTN_COM_DELETE\' | translate}" class="btn btn-danger btn-xs" ng-click="delField($index)"><i class="fa  fa-trash-o"></i></button></td>' + "</tr></tbody>" + "</table>");
     }
     var templateKey_complex = "voyageone.angular.directives.schemaComplex.tpl.html";
     if (!$templateCache.get(templateKey_complex)) {
@@ -372,9 +372,10 @@ define(function() {
       scope: {
         $$data: "=data",
         $$hastip: "=hastip",
-        $$complex: "=complex"
+        $$complex: "=complex",
+        $$notShowEdit: "=notShowEdit"
       },
-      link: function(scope, element, ctrl) {
+      link: function(scope, element, ctrl, attr) {
         scope.$watch("vm.$$data", function() {
           refresh();
         });
@@ -382,6 +383,7 @@ define(function() {
           var schema = new schemaFactory();
           scope.vm.$$from = ctrl;
           schema.name(scope.vm.$$data.id);
+          schema.notShowEdit(scope.vm.$$notShowEdit == undefined ? false : scope.vm.$$notShowEdit);
           _returnType(scope.vm.$$data.type);
           _operateRule(scope.vm.$$data.rules);
           var tempHtml = "";
@@ -1067,7 +1069,8 @@ define(function() {
         isRequired: false,
         checkValues: [],
         tipMsg: [],
-        html: []
+        html: [],
+        notShowEdit: true
       };
       this.type = function(value) {
         return value !== undefined ? _schemaInfo.type = value : _schemaInfo.type;
@@ -1089,6 +1092,9 @@ define(function() {
       };
       this.checkValues = function(value) {
         return value !== undefined ? _schemaInfo.checkValues.push(value) : _schemaInfo.checkValues;
+      };
+      this.notShowEdit = function(value) {
+        return value !== undefined ? _schemaInfo.notShowEdit = value : _schemaInfo.notShowEdit;
       };
       this.schemaInfo = function() {
         return _schemaInfo;
@@ -1415,10 +1421,10 @@ define(function() {
       return currentLang.substr(0, 2);
     }
   };
+  angular.module("voyageone.angular.controllers", [ "voyageone.angular.controllers.datePicker", "voyageone.angular.controllers.selectRows", "voyageone.angular.controllers.showPopover" ]);
   angular.module("voyageone.angular.directives", [ "voyageone.angular.directives.dateModelFormat", "voyageone.angular.directives.enterClick", "voyageone.angular.directives.fileStyle", "voyageone.angular.directives.ifNoRows", "voyageone.angular.directives.uiNav", "voyageone.angular.directives.schema", "voyageone.angular.directives.voption", "voyageone.angular.directives.vpagination", "voyageone.angular.directives.validator" ]);
   angular.module("voyageone.angular.factories", [ "voyageone.angular.factories.dialogs", "voyageone.angular.factories.interceptor", "voyageone.angular.factories.notify", "voyageone.angular.factories.schema", "voyageone.angular.factories.selectRows", "voyageone.angular.factories.vpagination" ]);
   angular.module("voyageone.angular.services", [ "voyageone.angular.services.ajax", "voyageone.angular.services.cookie", "voyageone.angular.services.message", "voyageone.angular.services.permission", "voyageone.angular.services.translate" ]);
-  angular.module("voyageone.angular.controllers", [ "voyageone.angular.controllers.datePicker", "voyageone.angular.controllers.selectRows", "voyageone.angular.controllers.showPopover" ]);
-  return angular.module("voyageone.angular", [ "voyageone.angular.directives", "voyageone.angular.factories", "voyageone.angular.services", "voyageone.angular.controllers" ]);
+  return angular.module("voyageone.angular", [ "voyageone.angular.controllers", "voyageone.angular.directives", "voyageone.angular.factories", "voyageone.angular.services" ]);
 });
 //# sourceMappingURL=voyageone.angular.com.js.map

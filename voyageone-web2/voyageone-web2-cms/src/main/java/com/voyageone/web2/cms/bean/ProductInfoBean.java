@@ -6,6 +6,7 @@ import com.voyageone.cms.service.model.CmsBtProductModel_Field_Image;
 import com.voyageone.common.masterdate.schema.field.Field;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by lewis on 16-1-5.
@@ -36,7 +37,7 @@ public class ProductInfoBean {
     private List<CmsBtProductModel_Field_Image> productImages;
 
     // feed方数据.
-    private CmsBtFeedInfoModel feedInfoModel;
+    private Map<String,String> feedInfoModel;
 
     public ProductStatus getProductStatus() {
         return productStatus;
@@ -110,15 +111,15 @@ public class ProductInfoBean {
         this.productImages = productImages;
     }
 
-    public CmsBtFeedInfoModel getFeedInfoModel() {
+    public Map<String, String> getFeedInfoModel() {
         return feedInfoModel;
     }
 
-    public void setFeedInfoModel(CmsBtFeedInfoModel feedInfoModel) {
+    public void setFeedInfoModel(Map<String, String> feedInfoModel) {
         this.feedInfoModel = feedInfoModel;
     }
 
-    public ProductStatus getProductStautsInstance(){
+    public ProductStatus getProductStatusInstance(){
         return new ProductStatus();
     }
 

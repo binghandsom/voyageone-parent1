@@ -15,6 +15,7 @@ import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.cms.bean.CustomAttributesBean;
 import com.voyageone.web2.cms.bean.ProductInfoBean;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
@@ -71,7 +72,7 @@ public class ProductPropsEditService {
         CmsBtProductModel productValueModel = getProductModel(channelId, prodId);
 
         //商品各种状态.
-        ProductInfoBean.ProductStatus productStatus = productInfo.getProductStautsInstance();
+        ProductInfoBean.ProductStatus productStatus = productInfo.getProductStatusInstance();
         productStatus.setApproveStatus(productValueModel.getFields().getStatus());
 
         if (completeStatus.equals(productValueModel.getFields().getTranslateStatus())){
@@ -89,7 +90,7 @@ public class ProductPropsEditService {
         List<CmsBtProductModel_Field_Image> productImages = productValueModel.getFields().getImages(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE);
 
         // 获取feed方数据.
-        CmsBtFeedInfoModel feedInfoModel = getCmsBtFeedInfoModel(channelId, prodId, productValueModel);
+        Map<String,String> feedInfoModel = getCmsBtFeedInfoModel(channelId, prodId, productValueModel);
 
         // 获取product 对应的 schema
         CmsMtCategorySchemaModel categorySchemaModel = getCmsMtCategorySchemaModel(productValueModel);
@@ -271,7 +272,7 @@ public class ProductPropsEditService {
      * @param productValueModel
      * @return
      */
-    private CmsBtFeedInfoModel getCmsBtFeedInfoModel(String channelId, int prodId, CmsBtProductModel productValueModel) {
+    private Map<String,String> getCmsBtFeedInfoModel(String channelId, int prodId, CmsBtProductModel productValueModel) {
 
         CmsBtFeedInfoModel feedInfoModel = cmsBtFeedInfoDao.selectProductByCode(channelId,productValueModel.getFields().getCode());
 
@@ -282,7 +283,81 @@ public class ProductPropsEditService {
             logger.warn(errMsg);
 
         }
-        return feedInfoModel;
+
+        Map<String,String> feedAttributes = new HashMap<>();
+
+
+        if (!StringUtils.isEmpty(feedInfoModel.getCode())){
+            feedAttributes.put("code",feedInfoModel.getCode());
+        }
+
+        if (!StringUtils.isEmpty(feedInfoModel.getName())){
+            feedAttributes.put("name",feedInfoModel.getName());
+        }
+
+        if (!StringUtils.isEmpty(feedInfoModel.getModel())){
+            feedAttributes.put("model",feedInfoModel.getModel());
+        }
+
+        if (!StringUtils.isEmpty(feedInfoModel.getColor())){
+            feedAttributes.put("color",feedInfoModel.getColor());
+        }
+
+        if (!StringUtils.isEmpty(feedInfoModel.getOrigin())){
+            feedAttributes.put("origin",feedInfoModel.getOrigin());
+        }
+
+        if (!StringUtils.isEmpty(feedInfoModel.getSizeType())){
+            feedAttributes.put("sizeType",feedInfoModel.getSizeType());
+        }
+
+        if (!StringUtils.isEmpty(feedInfoModel.getBrand())){
+            feedAttributes.put("brand",feedInfoModel.getBrand());
+        }
+
+        if (!StringUtils.isEmpty(feedInfoModel.getWeight())){
+            feedAttributes.put("weight",feedInfoModel.getWeight());
+        }
+
+        if (!StringUtils.isEmpty(feedInfoModel.getShort_description())){
+            feedAttributes.put("short_description",feedInfoModel.getShort_description());
+        }
+
+        if (!StringUtils.isEmpty(feedInfoModel.getLong_description())){
+            feedAttributes.put("long_description",feedInfoModel.getLong_description());
+        }
+
+        if (!StringUtils.isEmpty(String.valueOf(feedInfoModel.getUpdFlg()))){
+            feedAttributes.put("updFlg",String.valueOf(feedInfoModel.getUpdFlg()));
+        }
+
+        Map<String,List<String>> attributes = feedInfoModel.getAttribute();
+
+        Map<String,String> attributesMap = new HashMap<>();
+
+        for (Map.Entry<String,List<String>> entry : attributes.entrySet()){
+
+            StringBuilder valueStr = new StringBuilder();
+
+            List<String> values = entry.getValue();
+
+            if (values != null){
+                for (int i=0;i<values.size();i++){
+                    if (i<values.size()-1){
+                        valueStr.append(values.get(i)).append("/");
+                    }else {
+                        valueStr.append(values.get(i));
+                    }
+                }
+            }
+
+            attributesMap.put(entry.getKey(),valueStr.toString());
+
+        }
+
+        feedAttributes.putAll(attributesMap);
+
+        return feedAttributes;
     }
 
     /**
@@ -337,6 +412,8 @@ public class ProductPropsEditService {
             logger.error(errMsg);
             throw new BusinessException(errMsg);
         }
+
+
 
         return schemaModel;
     }

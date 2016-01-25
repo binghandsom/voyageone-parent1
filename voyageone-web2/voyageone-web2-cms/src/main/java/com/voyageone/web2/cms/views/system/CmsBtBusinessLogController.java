@@ -44,8 +44,8 @@ public class CmsBtBusinessLogController extends CmsController {
         request.setErrType(vps(params,"errType"));
         request.setProductName(vps(params,"productName"));
         request.setCartId(vpi(params,"cartId"));
+        request.setCatId(vps(params,"catId"));
         BusinessLogGetResponse response=voApiClient.execute(request);
-        System.out.println(response);
         return success(new BeanMap(response));
     }
 

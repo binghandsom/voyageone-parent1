@@ -692,7 +692,14 @@ public class CmsSetMainPropService extends BaseTaskService {
                     Object attributeValue = null;
 
                     if (SrcType.text.equals(mappingCondition.getType())) {
-                        attributeValue = mappingCondition.getVal();
+                        // 如果是多选框的话,那么就要生成一个数组
+                        if (FieldTypeEnum.MULTICHECK.equals(fieldCurrent.getType())) {
+                            List<String> lst = new ArrayList<>();
+                            lst.add(mappingCondition.getVal());
+                            attributeValue = lst;
+                        } else {
+                            attributeValue = mappingCondition.getVal();
+                        }
                     } else if (SrcType.propFeed.equals(mappingCondition.getType())) {
 
                         if (feed.getAttribute().containsKey(mappingCondition.getVal())) {
