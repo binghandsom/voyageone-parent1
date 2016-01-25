@@ -38,9 +38,9 @@ define([
 
 				// 设定哪些原始feed被添加到custom列表
 				var feedKeys = _returnKeys(res.data.productInfo.customAttributes.orgAtts);
-				result.data.feedKeys = feedKeys;
+				result.data.productInfo.feedKeys = feedKeys;
 				if(res.data.productInfo.feedInfoModel)
-					result.data.productInfo.feedInfoModel.attributeList = _returnNew(res.data.productInfo.feedInfoModel.attributeList, feedKeys);
+					result.data.productInfo.feedInfoModel = _returnNew(res.data.productInfo.feedInfoModel, feedKeys);
 
 				// 设置sku的渠道列表是否被选中
 				angular.forEach(result.data.skus, function (sku) {
@@ -79,7 +79,6 @@ define([
 		 * @returns {*|Promise}
          */
 		function updateProductInfo (formData) {
-
 			var data = {
 				categoryId: formData.categoryId,
 				categoryFullPath: formData.categoryFullPath,
@@ -88,17 +87,6 @@ define([
 				masterFields: [],
 				customAttributes: formData.customAttributes
 			};
-
-			// 如果是productDetail更新时传递productStatus
-			//if (detailFlag) {
-			//	data.productStatus = {
-			//		approveStatus: (formData.productStatus.statusInfo.isApproved && formData.productStatus.statusInfo.isDisable)
-			//						|| (!formData.productStatus.statusInfo.isApproved && !formData.productStatus.statusInfo.isDisable)
-			//						? formData.productStatus.approveStatus : Status.APPROVED,
-			//		translateStatus: formData.productStatus.translateStatus ? "1" : "0",
-			//		editStatus: formData.productStatus.editStatus ? "1" : "0"
-			//	};
-			//}
 
 			angular.forEach(formData.masterFields, function (field) {
 				if (field.type != "LABEL" && field.isDisplay != 0)
