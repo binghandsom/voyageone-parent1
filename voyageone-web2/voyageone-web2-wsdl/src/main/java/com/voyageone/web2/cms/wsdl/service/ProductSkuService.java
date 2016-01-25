@@ -135,7 +135,7 @@ public class ProductSkuService extends BaseService {
         }
 
         if (bulkUpdateList.size() > 0) {
-            BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkUpdateList, null, "$set",request.getModified());
+            BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkUpdateList, null, "$set");
             setResultCount(result, bulkWriteResult);
         }
 
