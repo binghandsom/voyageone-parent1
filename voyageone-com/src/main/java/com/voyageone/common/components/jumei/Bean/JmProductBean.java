@@ -25,9 +25,9 @@ public class JmProductBean extends JmBaseBean {
 
     private String diaoxingImage;
 
-    private List<SpusBean> spus;
+    private List<JmProductBean_Spus> spus;
 
-    private JmDealInfoBean dealInfo;
+    private JmProductBean_DealInfo dealInfo;
 
     public String getProduct_spec_number() {
         return product_spec_number;
@@ -101,19 +101,19 @@ public class JmProductBean extends JmBaseBean {
         this.diaoxingImage = diaoxingImage;
     }
 
-    public List<SpusBean> getSpus() {
+    public List<JmProductBean_Spus> getSpus() {
         return spus;
     }
 
-    public void setSpus(List<SpusBean> spus) {
+    public void setSpus(List<JmProductBean_Spus> spus) {
         this.spus = spus;
     }
 
-    public JmDealInfoBean getDealInfo() {
+    public JmProductBean_DealInfo getDealInfo() {
         return dealInfo;
     }
 
-    public void setDealInfo(JmDealInfoBean dealInfo) {
+    public void setDealInfo(JmProductBean_DealInfo dealInfo) {
         this.dealInfo = dealInfo;
     }
 }

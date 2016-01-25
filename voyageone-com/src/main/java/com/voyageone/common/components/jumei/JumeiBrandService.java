@@ -29,7 +29,6 @@ public class JumeiBrandService extends JmBase {
         }
     }
 
-
     /**
      * 获取全部商品品牌
      */

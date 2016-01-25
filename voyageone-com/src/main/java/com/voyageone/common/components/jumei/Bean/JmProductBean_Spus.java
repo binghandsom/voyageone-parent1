@@ -4,7 +4,7 @@ package com.voyageone.common.components.jumei.Bean;
  * @author james.li on 2016/1/23.
  * @version 2.0.0
  */
-public class SpusBean extends JmBaseBean {
+public class JmProductBean_Spus extends JmBaseBean {
     private String partner_spu_no;
 
     private String upc_code;
@@ -23,7 +23,6 @@ public class SpusBean extends JmBaseBean {
 
     private String verticalImage;
 
-    private SkuInfo skuInfo;
-
+    private JmProductBean_Spus_Sku skuInfo;
 
 }
