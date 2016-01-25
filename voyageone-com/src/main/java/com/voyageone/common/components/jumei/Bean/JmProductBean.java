@@ -1,5 +1,8 @@
 package com.voyageone.common.components.jumei.Bean;
 
+import com.voyageone.common.util.JsonUtil;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -9,6 +12,8 @@ import java.util.List;
 public class JmProductBean extends JmBaseBean {
     private String product_spec_number;
 
+    private Integer jumei_product_id;
+
     private Integer category_v3_4_id;
 
     private Integer brand_id;
@@ -17,13 +22,13 @@ public class JmProductBean extends JmBaseBean {
 
     private String foreign_language_name;
 
-    private String function_ids;
+    private String function_ids = "";
 
     private String normalImage;
 
-    private String verticalImage;
+    private String verticalImage = "";
 
-    private String diaoxingImage;
+    private String diaoxingImage = "";
 
     private List<JmProductBean_Spus> spus;
 
@@ -35,6 +40,14 @@ public class JmProductBean extends JmBaseBean {
 
     public void setProduct_spec_number(String product_spec_number) {
         this.product_spec_number = product_spec_number;
+    }
+
+    public Integer getJumei_product_id() {
+        return jumei_product_id;
+    }
+
+    public void setJumei_product_id(Integer jumei_product_id) {
+        this.jumei_product_id = jumei_product_id;
     }
 
     public Integer getCategory_v3_4_id() {
@@ -115,5 +128,33 @@ public class JmProductBean extends JmBaseBean {
 
     public void setDealInfo(JmProductBean_DealInfo dealInfo) {
         this.dealInfo = dealInfo;
+    }
+
+    public String toJsonStr() {
+        JmProductBean resultBean = new JmProductBean();
+        resultBean.setProduct_spec_number(product_spec_number);
+        resultBean.setCategory_v3_4_id(category_v3_4_id);
+        resultBean.setBrand_id(brand_id);
+        resultBean.setName(name);
+        resultBean.setForeign_language_name(foreign_language_name);
+        resultBean.setFunction_ids(function_ids);
+        resultBean.setNormalImage(normalImage);
+        resultBean.setVerticalImage(verticalImage);
+        resultBean.setDiaoxingImage(diaoxingImage);
+        return JsonUtil.getJsonString(resultBean);
+    }
+
+    public String getSpusString() {
+        return JsonUtil.getJsonString(spus);
+    }
+
+    public String getDealInfoString() {
+        List<JmProductBean_DealInfo> dealInfos = new ArrayList<>();
+        dealInfos.add(dealInfo);
+        return JsonUtil.getJsonString(dealInfos);
+    }
+
+    public void check() {
+
     }
 }

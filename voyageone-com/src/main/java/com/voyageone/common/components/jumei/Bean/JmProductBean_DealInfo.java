@@ -7,6 +7,8 @@ package com.voyageone.common.components.jumei.Bean;
 public class JmProductBean_DealInfo extends JmBaseBean {
     private String partner_deal_id;
 
+    private String jumei_hash_id;
+
     private Long start_time;
 
     private Long end_time;
@@ -45,6 +47,14 @@ public class JmProductBean_DealInfo extends JmBaseBean {
 
     public void setPartner_deal_id(String partner_deal_id) {
         this.partner_deal_id = partner_deal_id;
+    }
+
+    public String getJumei_hash_id() {
+        return jumei_hash_id;
+    }
+
+    public void setJumei_hash_id(String jumei_hash_id) {
+        this.jumei_hash_id = jumei_hash_id;
     }
 
     public Long getStart_time() {
