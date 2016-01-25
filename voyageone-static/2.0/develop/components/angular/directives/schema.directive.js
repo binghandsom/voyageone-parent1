@@ -206,11 +206,11 @@ angular.module('voyageone.angular.directives.schema', [])
             '<thead><tr>' +
                 //'<schema-header ng-repeat="field in vm.$$data.fields" data="field" is-complex="true"></schema-header>' +
             '<th ng-repeat="field in vm.$$data.fields" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" class="text-center" style="min-width: 180px;">{{field.name}}</th>' +
-            '<th style="min-width: 60px;" class="text-center" translate="TXT_COM_EDIT"></th>' +
+            '<th ng-if="!showHtmlData.notShowEdit" style="min-width: 60px;" class="text-center" translate="TXT_COM_EDIT"></th>' +
             '</tr></thead>' +
             '<tbody><tr ng-repeat="value in vm.$$data.complexValues">' +
             '<td class="text-left" ng-repeat="field in value.fieldMap"><div class="tableLayer"><p ng-if="field.type != \'COMPLEX\'">&nbsp;</p><p><schema-item data="field" hastip="true" complex="true"></schema-item></p></div></td>' +
-            '<td style="min-width: 60px;"><button title="{\'BTN_COM_DELETE\' | translate}" class="btn btn-danger btn-xs" ng-click="delField($index)"><i class="fa  fa-trash-o"></i></button></td>' +
+            '<td ng-if="!showHtmlData.notShowEdit" style="min-width: 60px;"><button title="{\'BTN_COM_DELETE\' | translate}" class="btn btn-danger btn-xs" ng-click="delField($index)"><i class="fa  fa-trash-o"></i></button></td>' +
             '</tr></tbody>' +
             '</table>');}
 
@@ -239,9 +239,10 @@ angular.module('voyageone.angular.directives.schema', [])
             scope: {
                 $$data: "=data",
                 $$hastip: "=hastip",
-                $$complex: "=complex"
+                $$complex: "=complex",
+                $$notShowEdit: "=notShowEdit"
             },
-            link: function (scope, element, ctrl) {
+            link: function (scope, element, ctrl, attr) {
 
                 // 监视配置变动
                 scope.$watch('vm.$$data', function () {
@@ -255,6 +256,9 @@ angular.module('voyageone.angular.directives.schema', [])
 
                     // 设置空间name
                     schema.name(scope.vm.$$data.id);
+
+                    // 设置edit是否显示
+                    schema.notShowEdit(scope.vm.$$notShowEdit == undefined ? false : scope.vm.$$notShowEdit);
 
                     _returnType (scope.vm.$$data.type);
                     _operateRule (scope.vm.$$data.rules);
