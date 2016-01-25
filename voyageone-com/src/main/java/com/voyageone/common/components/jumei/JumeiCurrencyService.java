@@ -30,7 +30,6 @@ public class JumeiCurrencyService extends JmBase {
         }
     }
 
-
     /**
      * 获取全部货币信息
      */

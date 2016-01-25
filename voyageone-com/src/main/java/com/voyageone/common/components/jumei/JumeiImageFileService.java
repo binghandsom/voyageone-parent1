@@ -40,7 +40,4 @@ public class JumeiImageFileService extends JmBase {
         reqJmApi(shopBean, IMAGWE_UPLOAD);
     }
 
-
-
-
 }

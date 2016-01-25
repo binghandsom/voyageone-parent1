@@ -18,20 +18,48 @@ public class JumeiCategoryService extends JmBase {
     private static List<JmCategoryBean> categoryListLevel4 = null;
 
     private static String CATEGORY_URL = "/v1/category/query";
+
     /**
-     * 初始化分类
+     * initCategoryListLevel4
      */
     public void initCategoryListLevel4(ShopBean shopBean) throws Exception {
-        Map<String, String> param = new HashMap<>();
-        param.put("level", "4");
-        param.put("fields", "category_id,name,level,parent_category_id");
-        String result = reqJmApi(shopBean, CATEGORY_URL, param);
-        List<JmCategoryBean> categorysList = JsonUtil.jsonToBeanList(result, JmCategoryBean.class);
+        List<JmCategoryBean> categorysList = getCategoryListLevel(shopBean, "4");
         if (categorysList != null) {
             categoryListLevel4 = categorysList;
         } else {
             categoryListLevel4 = new ArrayList<>();
         }
+    }
+    /**
+     * 初始化分类
+     */
+    public List<JmCategoryBean> getCategoryListLevel(ShopBean shopBean, String level) throws Exception {
+        Map<String, String> param = new HashMap<>();
+        param.put("level", level);
+        param.put("fields", "category_id,name,level,parent_category_id");
+        String result = reqJmApi(shopBean, CATEGORY_URL, param);
+        return JsonUtil.jsonToBeanList(result, JmCategoryBean.class);
+    }
+
+    /**
+     * getCategoryListALL
+     */
+    public List<JmCategoryBean> getCategoryListALL(ShopBean shopBean) throws Exception {
+        List<JmCategoryBean> result = new ArrayList<>();
+        for (int i=1; i<=4; i++) {
+            List<JmCategoryBean> categorysList = getCategoryListLevel(shopBean, "4");
+            if (categorysList != null) {
+                result.addAll(categorysList);
+            }
+            if (i == 4) {
+                if (categorysList != null) {
+                    categoryListLevel4 = categorysList;
+                } else {
+                    categoryListLevel4 = new ArrayList<>();
+                }
+            }
+        }
+        return result;
     }
 
 
