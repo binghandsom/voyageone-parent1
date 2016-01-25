@@ -1,6 +1,8 @@
 package com.voyageone.batch.cms.model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class JmBtProductImportModel {
     private Integer seq;
@@ -22,6 +24,10 @@ public class JmBtProductImportModel {
     private String functionIds;
 
     private String synFlg;
+
+    private List<JmBtSkuImportModel> skuImportModelList;
+
+    private JmBtDealImportModel jmBtDealImportModel;
 
     private Date created;
 
@@ -141,5 +147,25 @@ public class JmBtProductImportModel {
 
     public void setModifier(String modifier) {
         this.modifier = modifier == null ? null : modifier.trim();
+    }
+
+    public List<JmBtSkuImportModel> getSkuImportModelList() {
+        if(skuImportModelList == null)
+        {
+            this.skuImportModelList = new ArrayList<>();
+        }
+        return skuImportModelList;
+    }
+
+    public void setSkuImportModelList(List<JmBtSkuImportModel> skuImportModelList) {
+        this.skuImportModelList = skuImportModelList;
+    }
+
+    public JmBtDealImportModel getJmBtDealImportModel() {
+        return jmBtDealImportModel;
+    }
+
+    public void setJmBtDealImportModel(JmBtDealImportModel jmBtDealImportModel) {
+        this.jmBtDealImportModel = jmBtDealImportModel;
     }
 }
