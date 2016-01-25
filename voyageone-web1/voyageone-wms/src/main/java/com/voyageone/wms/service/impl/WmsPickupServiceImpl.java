@@ -249,7 +249,7 @@ public class WmsPickupServiceImpl implements WmsPickupService {
         }
 
         // 取得符合条件的记录
-        List<FormPickupBean> scanInfoListALL = reservationDao.getScanInfo(scanMode, scanType, scanNo, scanStatus, StringUtils.isNullOrBlank2(Upc)?scanNo:Upc, channelStoreList, orderChannelList, reserveType);
+        List<FormPickupBean> scanInfoListALL = reservationDao.getScanInfo(scanMode, scanType, StringUtils.isNullOrBlank2(Upc)?scanNo:Upc, scanStatus, scanStore, channelStoreList, orderChannelList, reserveType);
 
         String StatusName = Type.getTypeName(MastType.reservationStatus.getId(),scanStatus);
 

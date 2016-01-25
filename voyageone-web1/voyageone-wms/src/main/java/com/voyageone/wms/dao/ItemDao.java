@@ -130,6 +130,31 @@ public class ItemDao extends BaseDao {
             if (StringUtils.isNullOrBlank2(Upc)) {
                 Upc = barcode;
             }
+        }else {
+            Upc = barcode;
+        }
+        return Upc;
+    }
+
+    /**
+     * 获取扫描条形码对应的UPC
+     *
+     * @param order_channel_id 渠道 ID
+     * @param barcode
+     * @return List/ ItemDetailBean
+     */
+    public String getClientBarcode(String order_channel_id,String barcode) {
+        Map<String, Object> params = new HashMap<>();
+        String Upc = "";
+
+        params.put("order_channel_id", order_channel_id);
+        params.put("barcode", barcode);
+
+        Upc  =  selectOne("wms_bt_client_sku_getClientBarcode", params);
+
+        // 没有找到对应UPC时，直接用传入值返回
+        if (StringUtils.isNullOrBlank2(Upc)) {
+            Upc = barcode;
         }
         return Upc;
     }

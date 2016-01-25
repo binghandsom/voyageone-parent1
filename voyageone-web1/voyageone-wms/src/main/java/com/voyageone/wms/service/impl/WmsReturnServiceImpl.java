@@ -114,8 +114,8 @@ public class WmsReturnServiceImpl implements WmsReturnService {
 		orderInfo = returnDao.getOrderInfoByOrdNo(formReturn);
 
 		for (FormReturn returnInfo : orderInfo) {
-			// 根据输入的条形码找到对应的UPC
-			String Upc = itemDao.getUPC(returnInfo.getOrder_channel_id(), returnInfo.getBarCode());
+			// 根据输入的条形码找到对应的品牌方条形码
+			String Upc = itemDao.getClientBarcode(returnInfo.getOrder_channel_id(), returnInfo.getBarCode());
 			returnInfo.setUpc(Upc);
 		}
 

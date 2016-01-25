@@ -378,15 +378,15 @@ define([
                 return;
             }
 
-            reqSku(item).then(function (res) {
+            reqSku(vm.transfer,item).then(function (res) {
 
                 reqPrintSKU(res.labelType, res.clientSku,res.Sku,res.Upc);
             });
 
         }
 
-        function reqSku(item) {
-            return transferService.getSku(item);
+        function reqSku(transfer, item) {
+            return transferService.getSku(transfer, item);
         }
 
         function reqPrintSKU(labelType, clientSku, Sku, Upc) {

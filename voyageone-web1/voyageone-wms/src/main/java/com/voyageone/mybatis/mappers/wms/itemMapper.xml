@@ -128,12 +128,25 @@
         FROM
           wms_bt_client_sku client_sku
         WHERE
-          client_sku.order_channel_id = #{order_channel_id}
-        AND client_sku.barcode = #{barcode}
+          client_sku.barcode = #{barcode}
+        <if test="order_channel_id != null and order_channel_id != ''">
+          AND client_sku.order_channel_id = #{order_channel_id}
+        </if>
         AND client_sku.upc != ''
         AND exists (select 1
                       from wms_bt_item_details details
                       where details.order_channel_id = client_sku.order_channel_id
-                      and details.barcode = client_sku.barcode)
+                      and details.barcode = client_sku.upc)
+    </select>
+
+    <select id="wms_bt_client_sku_getClientBarcode" resultType="string">
+        SELECT
+          client_sku.barcode
+        FROM
+          wms_bt_client_sku client_sku
+        WHERE
+          client_sku.order_channel_id = #{order_channel_id}
+        AND client_sku.upc = #{barcode}
+        AND client_sku.upc != ''
     </select>
 </mapper>

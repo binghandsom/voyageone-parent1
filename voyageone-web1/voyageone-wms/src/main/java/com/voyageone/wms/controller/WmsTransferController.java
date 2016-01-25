@@ -328,9 +328,9 @@ public class WmsTransferController extends BaseController {
     @RequestMapping(TransferUrls.Item.GETSKU)
     public void getSku(@RequestBody Map<String, Object> params, HttpServletResponse response) {
 
-        TransferItemBean transferItem =new TransferItemBean();
+        TransferItemMapBean transferItem =new TransferItemMapBean();
 
-        transferItem.setTransfer_id(Long.valueOf((String) params.get("transfer_id")));
+        transferItem.setOrder_channel_id((String) params.get("order_channel_id"));
         transferItem.setTransfer_barcode((String) params.get("transfer_barcode"));
         transferItem.setTransfer_sku((String) params.get("transfer_sku"));
 

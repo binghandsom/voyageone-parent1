@@ -542,7 +542,7 @@ public class WmsTransferServiceImpl implements WmsTransferService {
      * @return List
      */
     @Override
-    public Map<String, Object> getSku(TransferItemBean transferItem) {
+    public Map<String, Object> getSku(TransferItemMapBean transferItem) {
         Map<String, Object> resultMap = new HashMap<>();
 
         String labelType = "0";
@@ -550,14 +550,7 @@ public class WmsTransferServiceImpl implements WmsTransferService {
         String Sku = transferItem.getTransfer_sku();
         String Upc = transferItem.getTransfer_barcode();
 
-        TransferBean transfer = transferDao.getTransfer(transferItem.getTransfer_id());
-
-        if (transferItem != null) {
-            StoreBean store = StoreConfigs.getStore(transfer.getStore_id());
-            labelType = store.getLabel_type();
-        }
-
-        ClientSkuBean clientSkuBean = clientSkuDao.getSkuInfo(transfer.getOrder_channel_id(), transferItem.getTransfer_barcode());
+        ClientSkuBean clientSkuBean = clientSkuDao.getSkuInfo(transferItem.getOrder_channel_id(), transferItem.getTransfer_barcode());
 
         if (clientSkuBean != null) {
             clientSku = clientSkuBean.getItem_code() + " " + clientSkuBean.getColor() + " " + clientSkuBean.getSize();
