@@ -48,10 +48,10 @@ public class JmPicDao extends BaseDao{
 
     /**
      * 修改产品导入状态
-     * @param params 参数
+     * @param imageKey 参数
      * @return effect count
      */
-    public int updateJmProductImportUploaded(Map<String,Object> params){
-        return update(Constants.DAO_NAME_SPACE_CMS + "cms_work_jm_bt_product_import_updateJmProductImport_uploaded", params);
+    public int updateJmProductImportUploaded(String imageKey){
+        return update(Constants.DAO_NAME_SPACE_CMS + "cms_work_jm_bt_product_import_updateJmProductImport_uploaded", imageKey);
     }
 }

@@ -82,14 +82,15 @@ public class CmsUploadJmPicService extends BaseTaskService {
 
         @Override
         public void run() {
-            List<JmPicBean> jmPicBeanList=jmPicDao.getJmPicsByImgKey(imageKey);
-            for (JmPicBean jmPicBean:jmPicBeanList){
-                try {
+            try{
+                List<JmPicBean> jmPicBeanList=jmPicDao.getJmPicsByImgKey(imageKey);
+                for (JmPicBean jmPicBean:jmPicBeanList){
                     String juUrl=jumeiImageFileService.imageFileUpload(shopBean,convertJmPicToImageFileBean(jmPicBean));
                     jmPicDao.updateJmpicUploaded(juUrl,jmPicBean.getSeq());
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
+                jmPicDao.updateJmProductImportUploaded(imageKey);
+            }catch (Exception e) {
+                e.printStackTrace();
             }
         }
         public UploadTask(String imageKey,ShopBean shopBean) {

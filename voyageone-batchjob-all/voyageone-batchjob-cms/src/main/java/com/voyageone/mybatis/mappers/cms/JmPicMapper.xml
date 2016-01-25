@@ -48,13 +48,12 @@
 	</update>
 
 	<!-- 修改产品表图片导入状态 -->
-	<update id="cms_work_jm_bt_product_import_updateJmProductImport_uploaded" parameterType="HashMap">
+	<update id="cms_work_jm_bt_product_import_updateJmProductImport_uploaded" parameterType="String">
 		UPDATE jumei.jm_bt_product_import
 		SET syn_flg = 1,modified = now()
 		WHERE
 		syn_flg = 0
-		AND channel_id =#{channelId}
-		AND product_code =#{productCode}
+		AND product_code =#{imageKey}
 	</update>
 
 </mapper>
