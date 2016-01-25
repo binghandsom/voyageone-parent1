@@ -4,7 +4,7 @@ package com.voyageone.common.components.jumei.Bean;
  * @author james.li on 2016/1/23.
  * @version 2.0.0
  */
-public class DealInfoBean {
+public class JmDealInfoBean {
     private String partner_deal_id;
 
     private Long start_time;
