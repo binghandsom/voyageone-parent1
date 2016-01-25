@@ -1,6 +1,7 @@
 package com.voyageone.batch.cms.model;
 
 import java.util.Date;
+import java.util.List;
 
 public class JmBtDealImportModel {
     private Integer seq;
@@ -28,6 +29,8 @@ public class JmBtDealImportModel {
     private String addressOfProduce;
 
     private String searchMetaTextCustom;
+
+    private Integer synFlg ;
 
     private Date created;
 
@@ -171,5 +174,13 @@ public class JmBtDealImportModel {
 
     public void setModifier(String modifier) {
         this.modifier = modifier == null ? null : modifier.trim();
+    }
+
+    public Integer getSynFlg() {
+        return synFlg;
+    }
+
+    public void setSynFlg(Integer synFlg) {
+        this.synFlg = synFlg;
     }
 }
