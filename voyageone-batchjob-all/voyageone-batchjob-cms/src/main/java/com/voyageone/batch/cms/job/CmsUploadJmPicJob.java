@@ -2,6 +2,8 @@ package com.voyageone.batch.cms.job;
 
 import com.voyageone.batch.base.BaseTaskJob;
 import com.voyageone.batch.base.BaseTaskService;
+import com.voyageone.batch.cms.service.CmsUploadJmPicService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -10,8 +12,11 @@ import org.springframework.stereotype.Component;
  */
 @Component("CmsUploadJmPicJob")
 public class CmsUploadJmPicJob extends BaseTaskJob {
+    @Autowired
+    private CmsUploadJmPicService cmsUploadJmPicService;
+
     @Override
     protected BaseTaskService getTaskService() {
-        return null;
+        return cmsUploadJmPicService;
     }
 }
