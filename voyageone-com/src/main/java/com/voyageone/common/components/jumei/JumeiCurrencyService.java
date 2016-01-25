@@ -4,6 +4,7 @@ import com.voyageone.common.components.jumei.Bean.JmCurrencyBean;
 import com.voyageone.common.components.jumei.base.JmBase;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.JsonUtil;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
 /**
  * Created by chuanyu.laing on 2016/1/25.
  */
+@Service
 public class JumeiCurrencyService extends JmBase {
 
     private static List<JmCurrencyBean> currencys = null;

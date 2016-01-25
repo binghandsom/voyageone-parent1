@@ -5,6 +5,7 @@ import com.voyageone.common.components.jumei.Bean.JmImageFileBean;
 import com.voyageone.common.components.jumei.base.JmBase;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.JsonUtil;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +15,7 @@ import java.util.Map;
 /**
  * Created by chuanyu.laing on 2016/1/25.
  */
+@Service
 public class JumeiImageFileService extends JmBase {
 
     private static List<JmCategoryBean> categoryListLevel4 = null;
