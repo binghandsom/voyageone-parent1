@@ -84,7 +84,7 @@ public class JumeiProductService extends JmBase {
         @SuppressWarnings("unchecked")
         List<Map<String, Object>> categorys = (List<Map<String, Object>>)getValue(resultMap, "categorys");
         if (categorys != null && categorys.size()>0) {
-            Map<String, Object> categoryMap = categorys.get(0);
+            Map<String, Object> categoryMap = categorys.get(categorys.size()-1);
             resultBean.setCategory_v3_4_id((int)categoryMap.get("category_id"));
         }
 
