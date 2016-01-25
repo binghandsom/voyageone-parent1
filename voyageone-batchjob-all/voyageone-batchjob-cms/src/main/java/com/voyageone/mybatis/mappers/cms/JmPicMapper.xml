@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.cms.sql">
+
+	<!-- 获取所有的ImageKey和包含的数量 -->
+	<select id="cms_work_jm_bt_images_getJmPic_ImageKeyGroup" resultType="HashMap">
+			SELECT
+				image_key imageKey,
+				count(1) count
+			FROM
+				jumei.jm_bt_images
+			WHERE
+				syn_flg = 0
+			GROUP BY
+				image_key limit 100
+	</select>
+
+	<!-- 获取imageKey的所有未上传图片 -->
+	<select id="cms_work_jm_bt_images_getJmPics_ByImgKey" parameterType="String" resultType="com.voyageone.batch.cms.bean.JmPicBean">
+		SELECT
+			seq,
+			channel_id channelId,
+			image_key imageKey,
+			image_type imageType,
+			image_type_extend imageTypeExtend,
+			image_index imageIndex,
+			origin_url originUrl,
+			jm_url jmUrl,
+			syn_flg synFlg,
+			created,
+			creater,
+			modified,
+			modifier
+		FROM
+			jumei.jm_bt_images
+		WHERE
+			syn_flg = 0
+		AND image_key =#{imageKey}
+	</select>
+
+	<!-- 修改聚美图片上传状态 -->
+	<update id="cms_work_jm_bt_images_updateJmPic_uploaded" parameterType="HashMap">
+		UPDATE jumei.jm_bt_images
+		SET jm_url=#{jmUrl},syn_flg = 1,modified = now()
+		WHERE
+		syn_flg = 0
+		AND seq = #{seq}
+	</update>
+
+	<!-- 修改产品表图片导入状态 -->
+	<update id="cms_work_jm_bt_product_import_updateJmProductImport_uploaded" parameterType="HashMap">
+		UPDATE jumei.jm_bt_product_import
+		SET syn_flg = 1,modified = now()
+		WHERE
+		syn_flg = 0
+		AND channel_id =#{channelId}
+		AND product_code =#{productCode}
+	</update>
+
+</mapper>
