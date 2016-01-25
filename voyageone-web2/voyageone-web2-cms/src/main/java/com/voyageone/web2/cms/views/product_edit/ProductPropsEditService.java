@@ -214,6 +214,7 @@ public class ProductPropsEditService {
 
         updateRequest.setProductModel(productModel);
         updateRequest.setModifier(user);
+        updateRequest.setModified(modified);
 
         return productClient.updateProductRetModified(updateRequest);
 
