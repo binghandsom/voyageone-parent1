@@ -259,16 +259,16 @@ public class ProductSkuService extends BaseService {
             updatePricesAddBlukUpdateModel(channelId, model, bulkList, logList, modifier);
         }
 
+        // 插入log履历
         if (logList.size()>0) {
             cmsBtPriceLogDao.insertCmsBtPriceLogList(logList);
         }
 
+        // 更新sku价格变更
         if (bulkList.size() > 0) {
             BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
             setResultCount(result, bulkWriteResult);
         }
-
-
 
         return result;
     }
@@ -281,6 +281,7 @@ public class ProductSkuService extends BaseService {
                                                String modifier) {
         VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70007;
 
+        // 取得更新前的sku数据
         HashMap<String, Object> productQueryMap = new HashMap<>();
         CmsBtProductModel findModel;
         JomgoQuery queryObject = new JomgoQuery();
@@ -307,11 +308,14 @@ public class ProductSkuService extends BaseService {
 
         if (model.getSkuPrices() != null && model.getSkuPrices().size()>0) {
 
+            // 循环原始sku列表
             for (CmsBtProductModel_Sku skuModelBefore : findSkuList) {
                 boolean isFindSku = false;
 
+                // 循环变更sku列表
                 for (ProductSkuPriceModel skuModel : model.getSkuPrices()) {
                     if (skuModel.getSkuCode().equals(skuModelBefore.getSkuCode())) {
+                        // 判断价格是否发生变化
                         if (isPriceChanged(skuModelBefore, skuModel)) {
                             CmsBtPriceLogModel cmsBtPriceLogModel = createPriceLogModel(channelId, findModel, skuModel, modifier);
                             logList.add(cmsBtPriceLogModel);
@@ -334,11 +338,11 @@ public class ProductSkuService extends BaseService {
                             }
                             if (skuModel.getPriceRetail() != null) {
                                 updateMap.put("skus.$.priceRetail", skuModel.getPriceRetail());
-                                retailPriceList.add(skuModel.getPriceMsrp());
+                                retailPriceList.add(skuModel.getPriceRetail());
                             }
                             if (skuModel.getPriceSale() != null) {
                                 updateMap.put("skus.$.priceSale", skuModel.getPriceSale());
-                                salePriceList.add(skuModel.getPriceMsrp());
+                                salePriceList.add(skuModel.getPriceSale());
                             }
 
                             if (updateMap.size() > 0) {
@@ -349,20 +353,24 @@ public class ProductSkuService extends BaseService {
                                 bulkList.add(skuUpdateModel);
                             }
                         }
-                        isFindSku = true;
+                        // 如果价格未发生变化,则设置isFindSku标示为true
+                        else {
+                            isFindSku = true;
+                        }
                         break;
                     }
                 }
 
-                if (!isFindSku) {
+                // 如果价格没有没有发生变化则插入当前未变化sku的原始价格
+                if (isFindSku) {
                     if (skuModelBefore.getPriceMsrp() != null) {
                         msrpPriceList.add(skuModelBefore.getPriceMsrp());
                     }
                     if (skuModelBefore.getPriceRetail() != null) {
-                        retailPriceList.add(skuModelBefore.getPriceMsrp());
+                        retailPriceList.add(skuModelBefore.getPriceRetail());
                     }
                     if (skuModelBefore.getPriceSale() != null) {
-                        salePriceList.add(skuModelBefore.getPriceMsrp());
+                        salePriceList.add(skuModelBefore.getPriceSale());
                     }
                 }
             }
@@ -377,7 +385,8 @@ public class ProductSkuService extends BaseService {
         }
 
         //update product price
-        if ((boolean)resultField.get("isChanged")) {
+//        if ((boolean)resultField.get("isChanged")) {
+        if (bulkList.size() > 0) {
 
             if (resultField.get("priceMsrpSt") != null) {
                 productUpdateMap.put("fields.priceMsrpSt", resultField.get("priceMsrpSt"));
