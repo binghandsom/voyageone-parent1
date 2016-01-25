@@ -12,7 +12,7 @@ import java.util.List;
 public class JmProductBean extends JmBaseBean {
     private String product_spec_number;
 
-    private Integer jumei_product_id;
+    private String jumei_product_id;
 
     private Integer category_v3_4_id;
 
@@ -42,11 +42,11 @@ public class JmProductBean extends JmBaseBean {
         this.product_spec_number = product_spec_number;
     }
 
-    public Integer getJumei_product_id() {
+    public String getJumei_product_id() {
         return jumei_product_id;
     }
 
-    public void setJumei_product_id(Integer jumei_product_id) {
+    public void setJumei_product_id(String jumei_product_id) {
         this.jumei_product_id = jumei_product_id;
     }
 
