@@ -35,12 +35,23 @@ public class JumeiCategoryService extends JmBase {
     /**
      * 初始化分类
      */
-    public List<JmCategoryBean> getCategoryListLevel(ShopBean shopBean, String level) throws Exception {
-        Map<String, String> param = new HashMap<>();
-        param.put("level", level);
-        param.put("fields", "category_id,name,level,parent_category_id");
-        String result = reqJmApi(shopBean, CATEGORY_URL, param);
-        return JsonUtil.jsonToBeanList(result, JmCategoryBean.class);
+    public List<JmCategoryBean> getCategoryListLevel(ShopBean shopBean, String level) {
+        List<JmCategoryBean> result = new ArrayList<>();
+        try {
+            int i = 1;
+            while (true) {
+                Map<String, String> param = new HashMap<>();
+                param.put("page", String.valueOf(i));
+                param.put("level", level);
+                param.put("fields", "category_id,name,level,parent_category_id");
+                String reqResult = reqJmApi(shopBean, CATEGORY_URL, param);
+                List<JmCategoryBean> categoryList = JsonUtil.jsonToBeanList(reqResult, JmCategoryBean.class);
+                result.addAll(categoryList);
+                i++;
+            }
+        } catch (Exception ignored) {
+        }
+        return result;
     }
 
     /**
