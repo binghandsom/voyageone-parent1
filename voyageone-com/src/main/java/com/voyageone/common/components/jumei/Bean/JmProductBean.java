@@ -6,7 +6,7 @@ import java.util.List;
  * @author james.li on 2016/1/23.
  * @version 2.0.0
  */
-public class JmProductBean {
+public class JmProductBean extends JmBaseBean {
     private String product_spec_number;
 
     private Integer category_v3_4_id;
