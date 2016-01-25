@@ -63,7 +63,4 @@ public class JumeiBrandService extends JmBase {
         return null;
     }
 
-
-
-
 }

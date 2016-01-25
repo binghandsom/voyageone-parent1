@@ -4,10 +4,8 @@ import com.voyageone.common.components.jumei.Bean.JmCategoryBean;
 import com.voyageone.common.components.jumei.Bean.JmImageFileBean;
 import com.voyageone.common.components.jumei.base.JmBase;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.util.JsonUtil;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +37,7 @@ public class JumeiImageFileService extends JmBase {
 
         params.put("imgData", fileBean.getBase64Content());
 
-        reqJmApi(shopBean, IMAGWE_UPLOAD);
+        reqJmApi(shopBean, IMAGWE_UPLOAD, params);
     }
 
 }

@@ -49,4 +49,6 @@ public abstract class JmBaseBean implements Serializable {
     public void setModifier(String modifier) {
         this.modifier = modifier;
     }
+
+
 }
