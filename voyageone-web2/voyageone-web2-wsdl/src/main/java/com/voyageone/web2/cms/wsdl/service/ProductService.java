@@ -337,6 +337,7 @@ public class ProductService extends BaseService {
 
         if (productCode != null) {
             params.put("code", productCode);
+            params.put("sku", "0");
             isExecute = true;
         } else if (productSkuCode != null) {
             params.put("sku", productSkuCode);

@@ -34,6 +34,7 @@
             log.modifier
         from voyageone_cms2.cms_bt_price_log log
         where log.code = #{code}
+          and log.sku = #{sku}
         order by log.modified desc
         limit #{offset}, #{rows}
     </select>

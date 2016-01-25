@@ -153,8 +153,6 @@ public class ProductPropsEditService {
         return productInfo;
     }
 
-
-
     /**
      * 更新product values.
      * @param channelId
