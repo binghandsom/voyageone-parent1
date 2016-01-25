@@ -1,7 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.cms.sql">
-	<select id="get_jm_upload_product">
+
+	<resultMap id="jmUploadProductResultMap" type="com.voyageone.batch.cms.model.JmBtProductImportModel">
+		<result column="channel_id" property="channelId"/>
+		<result column="product_code" property="productCode" />
+		<result column="product_des" property="productDes" />
+		<result column="category_lv4_id" property="categoryLv4Id" />
+		<result column="brand_id" property="brandId" />
+		<result column="product_name" property="productame" />
+		<result column="foreign_language_name" property="foreignLanguageName" />
+		<result column="function_ids" property="functionIds" />
+		<association property="jmBtDealImportModel"
+					 javaType="com.voyageone.batch.cms.model.JmBtDealImportModel">
+			<result column="channel_id" property="channelId"/>
+			<result column="product_code" property="productCode" />
+			<result column="partner_deal_id" property="partnerDealId" />
+			<result column="start_time" property="startime" />
+			<result column="end_time" property="endTime" />
+			<result column="user_purchase_limit" property="userPurchaseLimit" />
+			<result column="shipping_system_id" property="shippingSystemId" />
+			<result column="product_long_name" property="productLongName" />
+			<result column="product_medium_name" property="productMediumName" />
+			<result column="product_short_name" property="productShortName" />
+			<result column="address_of_produce" property="addressOfProduce" />
+			<result column="search_meta_text_custom" property="searchMetaTextCustom" />
+		</association>
+		<collection property="skuImportModelList" javaType="ArrayList" ofType="com.voyageone.batch.cms.model.JmBtSkuImportModel" >
+			<result column="channel_id" property="channelId"/>
+			<result column="product_code" property="productCode" />
+			<result column="sku" property="sku" jdbcType="VARCHAR" />
+			<result column="upc_code" property="upcCode" jdbcType="VARCHAR" />
+			<result column="abroad_price" property="abroadPrice" jdbcType="DOUBLE" />
+			<result column="deal_price" property="dealPrice" jdbcType="DOUBLE" />
+			<result column="market_price" property="marketPrice" jdbcType="DOUBLE" />
+			<result column="size" property="size" jdbcType="VARCHAR" />
+			<result column="attribute" property="attribute" jdbcType="VARCHAR" />
+		</collection>
+	</resultMap>
+
+	<select id="get_jm_upload_product" resultMap="jmUploadProductResultMap" parameterType="Integer">
 	SELECT
 		t2.*
 	FROM
@@ -14,21 +52,21 @@
 			WHERE
 				a.syn_flg = 1
 			LIMIT 0,
-			200
+			#{count,jdbcType=INTEGER}
 		) t1
 	LEFT JOIN (
 		SELECT
 			a.channel_id,
 			a.product_code,
-			a.prodect_des,
+			a.product_des,
 			a.category_lv4_id,
 			a.brand_id,
 			a.product_name,
 			a.foreign_language_name,
 			a.function_ids,
 			b.partner_deal_id,
-			UNIX_TIMESTAMP(b.start_time) AS start_time,
-			UNIX_TIMESTAMP(b.end_time) AS end_time,
+			b.start_time,
+			b.end_time,
 			b.user_purchase_limit,
 			b.shipping_system_id,
 			b.product_long_name,
@@ -49,6 +87,7 @@
 		AND a.product_code = b.product_code
 		LEFT JOIN jm_bt_sku_import c ON a.channel_id = c.channel_id
 		AND a.product_code = c.product_code
+		where b.syn_flg = 0
 	) t2 ON t1.channel_id = t2.channel_id
 	AND t2.product_code = t1.product_code
 	</select>
