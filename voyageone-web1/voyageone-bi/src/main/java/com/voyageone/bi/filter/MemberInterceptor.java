@@ -53,7 +53,7 @@ public class MemberInterceptor implements HandlerInterceptor {
 			logger.error("用户未登录!");
 			//如果是Ajax请求响应头会有，x-requested-with  
 			if (request.getHeader("x-requested-with") != null && request.getHeader("x-requested-with").equalsIgnoreCase("XMLHttpRequest")){
-				response.setCharacterEncoding("UTF-8");
+				//response.setCharacterEncoding("UTF-8");
 				response.setHeader("sessionstatus", "timeout");//在响应头设置session状态
 				try {
 					HashMap<String,String> res = new HashMap<String,String>();
