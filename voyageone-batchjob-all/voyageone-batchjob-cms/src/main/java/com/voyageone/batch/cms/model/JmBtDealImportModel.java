@@ -30,6 +30,8 @@ public class JmBtDealImportModel {
 
     private String searchMetaTextCustom;
 
+    private String jumeiHashId;
+
     private Integer synFlg ;
 
     private Date created;
@@ -182,5 +184,13 @@ public class JmBtDealImportModel {
 
     public void setSynFlg(Integer synFlg) {
         this.synFlg = synFlg;
+    }
+
+    public String getJumeiHashId() {
+        return jumeiHashId;
+    }
+
+    public void setJumeiHashId(String jumeiHashId) {
+        this.jumeiHashId = jumeiHashId;
     }
 }
