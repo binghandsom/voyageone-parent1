@@ -1,12 +1,14 @@
 package com.voyageone.common.util;
 
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
+
+import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -95,4 +97,89 @@ public final class ImgUtils {
     	
     	return ret;
     }
+
+
+	/**
+	 * Decode string to image
+	 * @param imageString The string to decode
+	 * @return decoded image
+	 */
+	public static BufferedImage decodeToImage(String imageString) throws IOException {
+		BASE64Decoder decoder = new BASE64Decoder();
+		byte[] imageByte = decoder.decodeBuffer(imageString);
+		ByteArrayInputStream bis = new ByteArrayInputStream(imageByte);
+		BufferedImage image = ImageIO.read(bis);
+		bis.close();
+		return image;
+	}
+
+	/**
+	 * Encode image to string
+	 * @param file file
+	 * @return encoded string
+	 */
+	public static String encodeToString(File file) throws IOException {
+		String fileName = file.getName();
+		String type = fileName.substring(fileName.lastIndexOf(".") + 1);
+		BufferedImage image = ImageIO.read(file);
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+		ImageIO.write(image, type, bos);
+		byte[] imageBytes = bos.toByteArray();
+
+		BASE64Encoder encoder = new BASE64Encoder();
+		String imageString = encoder.encode(imageBytes);
+
+		bos.close();
+		return imageString;
+	}
+
+//	/**
+//	 * 获取文件的真实媒体类型。目前只支持JPG, GIF, PNG, BMP四种图片文件。
+//	 *
+//	 * @param bytes 文件字节流
+//	 * @return 媒体类型(MEME TYPE)
+//	 */
+//	public static String getMimeType(byte[] bytes) {
+//		String suffix = getFileSuffix(bytes);
+//		String mimeType;
+//
+//		if ("JPG".equals(suffix)) {
+//			mimeType = "image/jpeg";
+//		} else if ("GIF".equals(suffix)) {
+//			mimeType = "image/gif";
+//		} else if ("PNG".equals(suffix)) {
+//			mimeType = "image/png";
+//		} else if ("BMP".equals(suffix)) {
+//			mimeType = "image/bmp";
+//		}else {
+//			mimeType = "application/octet-stream";
+//		}
+//
+//		return mimeType;
+//	}
+//
+//	/**
+//	 * 获取文件的真实后缀名。目前只支持JPG, GIF, PNG, BMP四种图片文件。
+//	 *
+//	 * @param bytes 文件字节流
+//	 * @return JPG, GIF, PNG or null
+//	 */
+//	public static String getFileSuffix(byte[] bytes) {
+//		if (bytes == null || bytes.length < 10) {
+//			return null;
+//		}
+//
+//		if (bytes[0] == 'G' && bytes[1] == 'I' && bytes[2] == 'F') {
+//			return "GIF";
+//		} else if (bytes[1] == 'P' && bytes[2] == 'N' && bytes[3] == 'G') {
+//			return "PNG";
+//		} else if (bytes[6] == 'J' && bytes[7] == 'F' && bytes[8] == 'I' && bytes[9] == 'F') {
+//			return "JPG";
+//		} else if (bytes[0] == 'B' && bytes[1] == 'M') {
+//			return "BMP";
+//		} else {
+//			return null;
+//		}
+//	}
 }

@@ -1,10 +1,11 @@
 package com.voyageone.common.components.jumei;
 
-import com.voyageone.common.components.jumei.Bean.JmBrand;
+import com.voyageone.common.components.jumei.Bean.JmBrandBean;
 import com.voyageone.common.components.jumei.base.JmBase;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.JsonUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,7 +13,7 @@ import java.util.List;
  */
 public class JumeiBrandService extends JmBase {
 
-    private static List<JmBrand> brands = null;
+    private static List<JmBrandBean> brands = null;
 
     private static String BRAND_URL = "/v1/htBrand/query";
     /**
@@ -20,9 +21,11 @@ public class JumeiBrandService extends JmBase {
      */
     public void initBrands(ShopBean shopBean) throws Exception {
         String result = reqJmApi(shopBean, BRAND_URL);
-        List<JmBrand> brandList = JsonUtil.jsonToBeanList(result, JmBrand.class);
+        List<JmBrandBean> brandList = JsonUtil.jsonToBeanList(result, JmBrandBean.class);
         if (brandList != null) {
             brands = brandList;
+        } else {
+            brands = new ArrayList<>();
         }
     }
 
@@ -30,7 +33,7 @@ public class JumeiBrandService extends JmBase {
     /**
      * 获取全部商品品牌
      */
-    public List<JmBrand> getBrands(ShopBean shopBean) throws Exception {
+    public List<JmBrandBean> getBrands(ShopBean shopBean) throws Exception {
         if (brands == null) {
             initBrands(shopBean);
         }
@@ -38,9 +41,9 @@ public class JumeiBrandService extends JmBase {
     }
 
     /**
-     * 根据名称查找品牌ID
+     * 根据名称查找品牌Model
      */
-    public JmBrand getBrandLikeName(ShopBean shopBean, String name) throws Exception {
+    public JmBrandBean getBrandLikeName(ShopBean shopBean, String name) throws Exception {
         if (name == null) {
             return null;
         }
@@ -49,7 +52,7 @@ public class JumeiBrandService extends JmBase {
             initBrands(shopBean);
         }
 
-        for (JmBrand brand : brands) {
+        for (JmBrandBean brand : brands) {
             if (brand != null && brand.getName() != null
                     && brand.getName().startsWith(name)) {
                 return brand;

@@ -9,19 +9,19 @@ package com.voyageone.common.components.jumei.Bean;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class JmBrand extends JmBaseBean {
+public class JmBrandBean extends JmBaseBean {
 
-    private String id;
+    private Integer id;
 
     private String name;
 
     private String enName;
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
