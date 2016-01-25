@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by sn3 on 2015-07-18.
  */
-public class JmOrderInfo {
+public class JmOrderInfo extends JmBaseBean {
     private String id;
     private String order_sn;
     private String order_id;

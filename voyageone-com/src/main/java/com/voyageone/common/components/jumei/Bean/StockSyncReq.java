@@ -3,7 +3,7 @@ package com.voyageone.common.components.jumei.Bean;
 /**
  * Created by jack on 2016-01-12.
  */
-public class StockSyncReq {
+public class StockSyncReq extends JmBaseBean {
 
     private String businessman_code;
     private String enable_num;
