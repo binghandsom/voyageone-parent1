@@ -36,6 +36,7 @@
 		WHERE
 			syn_flg = 0
 		AND image_key =#{imageKey}
+		ORDER BY imageType DESC
 	</select>
 
 	<!-- 修改聚美图片上传状态 -->
