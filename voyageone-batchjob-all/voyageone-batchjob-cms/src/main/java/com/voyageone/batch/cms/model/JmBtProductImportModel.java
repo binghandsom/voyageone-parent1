@@ -1,0 +1,145 @@
+package com.voyageone.batch.cms.model;
+
+import java.util.Date;
+
+public class JmBtProductImportModel {
+    private Integer seq;
+
+    private String channelId;
+
+    private String productCode;
+
+    private String prodectDes;
+
+    private Integer categoryLv4Id;
+
+    private Integer brandId;
+
+    private String productName;
+
+    private String foreignLanguageName;
+
+    private String functionIds;
+
+    private String synFlg;
+
+    private Date created;
+
+    private String creater;
+
+    private Date modified;
+
+    private String modifier;
+
+    public Integer getSeq() {
+        return seq;
+    }
+
+    public void setSeq(Integer seq) {
+        this.seq = seq;
+    }
+
+    public String getChannelId() {
+        return channelId;
+    }
+
+    public void setChannelId(String channelId) {
+        this.channelId = channelId == null ? null : channelId.trim();
+    }
+
+    public String getProductCode() {
+        return productCode;
+    }
+
+    public void setProductCode(String productCode) {
+        this.productCode = productCode == null ? null : productCode.trim();
+    }
+
+    public String getProdectDes() {
+        return prodectDes;
+    }
+
+    public void setProdectDes(String prodectDes) {
+        this.prodectDes = prodectDes == null ? null : prodectDes.trim();
+    }
+
+    public Integer getCategoryLv4Id() {
+        return categoryLv4Id;
+    }
+
+    public void setCategoryLv4Id(Integer categoryLv4Id) {
+        this.categoryLv4Id = categoryLv4Id;
+    }
+
+    public Integer getBrandId() {
+        return brandId;
+    }
+
+    public void setBrandId(Integer brandId) {
+        this.brandId = brandId;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName == null ? null : productName.trim();
+    }
+
+    public String getForeignLanguageName() {
+        return foreignLanguageName;
+    }
+
+    public void setForeignLanguageName(String foreignLanguageName) {
+        this.foreignLanguageName = foreignLanguageName == null ? null : foreignLanguageName.trim();
+    }
+
+    public String getFunctionIds() {
+        return functionIds;
+    }
+
+    public void setFunctionIds(String functionIds) {
+        this.functionIds = functionIds == null ? null : functionIds.trim();
+    }
+
+    public String getSynFlg() {
+        return synFlg;
+    }
+
+    public void setSynFlg(String synFlg) {
+        this.synFlg = synFlg == null ? null : synFlg.trim();
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+    public String getCreater() {
+        return creater;
+    }
+
+    public void setCreater(String creater) {
+        this.creater = creater == null ? null : creater.trim();
+    }
+
+    public Date getModified() {
+        return modified;
+    }
+
+    public void setModified(Date modified) {
+        this.modified = modified;
+    }
+
+    public String getModifier() {
+        return modifier;
+    }
+
+    public void setModifier(String modifier) {
+        this.modifier = modifier == null ? null : modifier.trim();
+    }
+}

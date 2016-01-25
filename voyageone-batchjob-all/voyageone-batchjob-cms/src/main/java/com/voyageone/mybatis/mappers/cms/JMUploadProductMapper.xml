@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.cms.sql">
+	<select id="get_jm_upload_product">
+	SELECT
+		t2.*
+	FROM
+		(
+			SELECT
+				a.channel_id,
+				a.product_code
+			FROM
+				jm_bt_product_import a
+			WHERE
+				a.syn_flg = 1
+			LIMIT 0,
+			200
+		) t1
+	LEFT JOIN (
+		SELECT
+			a.channel_id,
+			a.product_code,
+			a.prodect_des,
+			a.category_lv4_id,
+			a.brand_id,
+			a.product_name,
+			a.foreign_language_name,
+			a.function_ids,
+			b.partner_deal_id,
+			UNIX_TIMESTAMP(b.start_time) AS start_time,
+			UNIX_TIMESTAMP(b.end_time) AS end_time,
+			b.user_purchase_limit,
+			b.shipping_system_id,
+			b.product_long_name,
+			b.product_medium_name,
+			b.product_short_name,
+			b.address_of_produce,
+			b.search_meta_text_custom,
+			c.sku,
+			c.upc_code,
+			c.abroad_price,
+			c.deal_price,
+			c.market_price,
+			c.size,
+			c.attribute
+		FROM
+			`jm_bt_product_import` a
+		LEFT JOIN jm_bt_deal_import b ON a.channel_id = b.channel_id
+		AND a.product_code = b.product_code
+		LEFT JOIN jm_bt_sku_import c ON a.channel_id = c.channel_id
+		AND a.product_code = c.product_code
+	) t2 ON t1.channel_id = t2.channel_id
+	AND t2.product_code = t1.product_code
+	</select>
+</mapper>
