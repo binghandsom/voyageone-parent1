@@ -6,7 +6,7 @@ import java.util.List;
  * @author james.li on 2016/1/23.
  * @version 2.0.0
  */
-public class ProductBean {
+public class JmProductBean extends JmBaseBean {
     private String product_spec_number;
 
     private Integer category_v3_4_id;
@@ -27,7 +27,7 @@ public class ProductBean {
 
     private List<SpusBean> spus;
 
-    private DealInfoBean dealInfo;
+    private JmDealInfoBean dealInfo;
 
     public String getProduct_spec_number() {
         return product_spec_number;
@@ -109,11 +109,11 @@ public class ProductBean {
         this.spus = spus;
     }
 
-    public DealInfoBean getDealInfo() {
+    public JmDealInfoBean getDealInfo() {
         return dealInfo;
     }
 
-    public void setDealInfo(DealInfoBean dealInfo) {
+    public void setDealInfo(JmDealInfoBean dealInfo) {
         this.dealInfo = dealInfo;
     }
 }

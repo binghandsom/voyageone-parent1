@@ -10,6 +10,7 @@ import com.voyageone.common.util.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -20,6 +21,10 @@ import java.util.TreeMap;
 public class JmBase {
 
     protected Log logger = LogFactory.getLog(getClass());
+
+    protected String reqJmApi(ShopBean shopBean, String api_url) throws Exception {
+        return reqJmApi(shopBean, api_url, new HashMap<>());
+    }
 
     protected String reqJmApi(ShopBean shopBean, String api_url, Map<String, String> params) throws Exception {
 

@@ -3,7 +3,7 @@ package com.voyageone.common.components.jumei.Bean;
 /**
  * Created by sn3 on 2015-07-18.
  */
-public class Receiver_Infos {
+public class Receiver_Infos extends JmBaseBean {
 
     private String receiver_name;
     private String address;
