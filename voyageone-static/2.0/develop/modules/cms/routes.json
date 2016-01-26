@@ -104,7 +104,7 @@
     "hash": "/system/error/management/:type",
     "templateUrl": "views/system/error/management.tpl.html",
     "controllerUrl": "modules/cms/views/system/error/management.ctl"
-  }
+  },
   "cms_dict": {
     "hash": "/cms/dict",
     "templateUrl": "views/dict/dict.list.tpl.html",
