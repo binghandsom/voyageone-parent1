@@ -2,6 +2,7 @@ package com.voyageone.batch.cms.service;
 
 import com.sun.jersey.api.spring.Autowire;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
+import com.voyageone.common.components.jumei.JumeiImageFileService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
