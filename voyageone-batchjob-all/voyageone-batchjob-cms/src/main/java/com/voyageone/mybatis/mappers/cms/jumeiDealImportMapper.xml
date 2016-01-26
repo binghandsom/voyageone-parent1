@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.cms.sql">
+
+    <insert id="jm_bt_deal_import_insert" parameterType="com.voyageone.batch.cms.model.JmBtDealImportModel" >
+        insert into jumei.jm_bt_deal_import
+            (
+              channel_id,
+              product_code,
+
+              start_time,
+              end_time,
+              user_purchase_limit,
+              shipping_system_id,
+              product_long_name,
+              product_medium_name,
+              product_short_name,
+
+              search_meta_text_custom,
+              created,
+              creater,
+              modified,
+              modifier)
+        values
+            (
+              #{channelId,jdbcType=VARCHAR},
+              #{productCode,jdbcType=VARCHAR},
+
+              #{startTime,jdbcType=VARCHAR},
+              #{endTime,jdbcType=VARCHAR},
+              #{userPurchaseLimit,jdbcType=INTEGER},
+              #{shippingSystemId,jdbcType=INTEGER},
+              #{productLongName,jdbcType=VARCHAR},
+              #{productMediumName,jdbcType=VARCHAR},
+              #{productShortName,jdbcType=VARCHAR},
+
+              #{searchMetaTextCustom,jdbcType=VARCHAR},
+              now(),
+              #{creater,jdbcType=VARCHAR},
+              now(),
+              #{modifier,jdbcType=VARCHAR})
+    </insert>
+</mapper>
