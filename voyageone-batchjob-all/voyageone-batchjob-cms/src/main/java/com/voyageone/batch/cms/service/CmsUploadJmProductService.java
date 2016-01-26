@@ -12,6 +12,9 @@ import com.voyageone.common.components.jumei.Bean.JmProductBean_DealInfo;
 import com.voyageone.common.components.jumei.Bean.JmProductBean_Spus;
 import com.voyageone.common.components.jumei.Bean.JmProductBean_Spus_Sku;
 import com.voyageone.common.components.jumei.JumeiProductService;
+import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.configs.ShopConfigs;
 import com.voyageone.common.configs.beans.ShopBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,6 +48,13 @@ public class CmsUploadJmProductService extends BaseTaskService {
 
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
+
+        List<JmBtProductImportModel> jmBtProductImports = getNotUploadProduct(20);
+        ShopBean shopBean = ShopConfigs.getShop(ChannelConfigEnums.Channel.SN.getId(), CartEnums.Cart.JM.getId());
+
+        for (JmBtProductImportModel product:jmBtProductImports){
+            uploadProduct(product,shopBean);
+        }
 
     }
     private List<JmBtProductImportModel> getNotUploadProduct(Integer count) {
@@ -90,7 +100,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
             spu.setUpc_code(jmBtSkuImportModel.getUpcCode());
             spu.setPropery("OTHER");
             spu.setSize(jmBtSkuImportModel.getSize());
-            spu.setAttribute(jmBtSkuImportModel.getAttribute());
+            spu.setAttribute(jmBtProductImport.getAttribute());
             spu.setAbroad_price(jmBtSkuImportModel.getAbroadPrice().toString());
             // todo 价格单位
 //            spu.setArea_code();
@@ -111,7 +121,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
         //dealinfo
         JmBtDealImportModel jmBtDealImportModel = jmBtProductImport.getJmBtDealImportModel();
         JmProductBean_DealInfo jmProductBean_DealInfo = new JmProductBean_DealInfo();
-        jmProductBean_DealInfo.setPartner_deal_id(jmBtDealImportModel.getPartnerDealId());
+        jmProductBean_DealInfo.setPartner_deal_id(jmBtDealImportModel.getDealId());
         jmProductBean_DealInfo.setStart_time(getTime(jmBtDealImportModel.getStartTime()));
         jmProductBean_DealInfo.setEnd_time(getTime(jmBtDealImportModel.getEndTime()));
         jmProductBean_DealInfo.setUser_purchase_limit(jmBtDealImportModel.getUserPurchaseLimit());
@@ -120,7 +130,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
         jmProductBean_DealInfo.setProduct_long_name(jmBtDealImportModel.getProductLongName());
         jmProductBean_DealInfo.setProduct_medium_name(jmBtDealImportModel.getProductMediumName());
         jmProductBean_DealInfo.setProduct_short_name(jmBtDealImportModel.getProductShortName());
-        jmProductBean_DealInfo.setAddress_of_produce(jmBtDealImportModel.getAddressOfProduce());
+        jmProductBean_DealInfo.setAddress_of_produce(jmBtProductImport.getAddressOfProduce());
         jmProductBean_DealInfo.setBefore_date("无");
         jmProductBean_DealInfo.setSuit_people("时尚潮流人士");
         jmProductBean_DealInfo.setSearch_meta_text_custom(jmBtDealImportModel.getSearchMetaTextCustom());

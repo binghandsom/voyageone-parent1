@@ -41,6 +41,21 @@ public final class FileUtils {
     }
 
     /**
+     * @param filePath 文件所在目录
+     * @return 该目录下的文件组
+     * @description filePath下的文件组返回
+     */
+    public static List getFileGroup2(String filePath) {
+        ArrayList<String> fileNameList = new ArrayList<>();
+
+        File file = new File(filePath);
+        for (String fileName : file.list()) {
+                fileNameList.add(fileName);
+        }
+        return fileNameList;
+    }
+
+    /**
      * 复制文件
      * @param srcFile 源文件
      * @param targetFile 目标文件

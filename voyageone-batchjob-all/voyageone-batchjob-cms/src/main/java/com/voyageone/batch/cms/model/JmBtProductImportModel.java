@@ -9,6 +9,12 @@ public class JmBtProductImportModel {
 
     private String channelId;
 
+    private String dealId;
+
+    private String attribute;
+
+    private String addressOfProduce;
+
     private String productCode;
 
     private String productDes;
@@ -61,6 +67,30 @@ public class JmBtProductImportModel {
 
     public void setProductCode(String productCode) {
         this.productCode = productCode == null ? null : productCode.trim();
+    }
+
+    public String getDealId() {
+        return dealId;
+    }
+
+    public void setDealId(String dealId) {
+        this.dealId = dealId;
+    }
+
+    public String getAttribute() {
+        return attribute;
+    }
+
+    public void setAttribute(String attribute) {
+        this.attribute = attribute;
+    }
+
+    public String getAddressOfProduce() {
+        return addressOfProduce;
+    }
+
+    public void setAddressOfProduce(String addressOfProduce) {
+        this.addressOfProduce = addressOfProduce;
     }
 
     public String getProductDes() {

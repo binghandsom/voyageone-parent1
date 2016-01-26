@@ -122,9 +122,35 @@ public final class ImgUtils {
 		String fileName = file.getName();
 		String type = fileName.substring(fileName.lastIndexOf(".") + 1);
 		BufferedImage image = ImageIO.read(file);
+
+		return encodeToString(image, type);
+	}
+
+	/**
+	 * Encode image to string
+	 * @param inputStream inputStream
+	 * @param fileName fileName
+	 * @return encoded string
+	 * @throws IOException
+     */
+	public static String encodeToString(InputStream inputStream, String fileName) throws IOException {
+		String type = fileName.substring(fileName.lastIndexOf(".") + 1);
+		BufferedImage image = ImageIO.read(inputStream);
+
+		return encodeToString(image, type);
+	}
+
+	/**
+	 * Encode image to string
+	 * @param bufferedImage bufferedImage
+	 * @param type type
+	 * @return encoded string
+	 * @throws IOException
+	 */
+	public static String encodeToString(BufferedImage bufferedImage, String type) throws IOException {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
-		ImageIO.write(image, type, bos);
+		ImageIO.write(bufferedImage, type, bos);
 		byte[] imageBytes = bos.toByteArray();
 
 		BASE64Encoder encoder = new BASE64Encoder();

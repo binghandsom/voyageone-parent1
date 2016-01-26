@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.cms.sql">
+
+    <insert id="jm_bt_images_insert" parameterType="com.voyageone.batch.cms.model.JmBtImagesModel" >
+        insert into jumei.jm_bt_images
+            (
+            channel_id,
+            image_key,
+            image_type,
+            image_type_extend,
+            image_index,
+            origin_url,
+            jm_url,
+            syn_flg,
+            created,
+            creater,
+            modified,
+            modifier)
+        values
+          (
+            #{channelId,jdbcType=VARCHAR},
+            #{imageKey,jdbcType=VARCHAR},
+            #{imageType,jdbcType=INTEGER},
+            #{imageTypeExtend,jdbcType=VARCHAR},
+            #{imageIndex,jdbcType=INTEGER},
+            #{originUrl,jdbcType=VARCHAR},
+            #{jmUrl,jdbcType=VARCHAR},
+            #{synFlg,jdbcType=INTEGER},
+            now(),
+            #{creater,jdbcType=VARCHAR},
+            now(),
+            #{modifier,jdbcType=VARCHAR})
+    </insert>
+</mapper>
