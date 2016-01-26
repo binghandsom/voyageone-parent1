@@ -32,4 +32,34 @@
         WHERE
             seq=#{seq}
     </update>
+
+    <insert id="cms_insert_sx_workload" parameterType="com.voyageone.cms.service.model.CmsBtSxWorkloadModel">
+        insert into voyageone_cms2.cms_bt_sx_workload
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            channel_id,
+            group_id,
+            publish_status,
+            created,
+            <if test="creater != null" >
+                creater,
+            </if>
+            modified,
+            <if test="modifier != null" >
+                modifier,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            #{channelId,jdbcType=VARCHAR},
+            #{groupId,jdbcType=INTEGER},
+            #{publishStatus,jdbcType=INTEGER},
+            now(),
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            now(),
+            <if test="modifier != null" >
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
 </mapper>

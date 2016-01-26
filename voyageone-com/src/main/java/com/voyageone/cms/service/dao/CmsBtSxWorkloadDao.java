@@ -13,14 +13,18 @@ import java.util.List;
 @Repository
 public class CmsBtSxWorkloadDao extends BaseDao {
     public List<CmsBtSxWorkloadModel> getSxWorkloadModelWithChannel(int recordCount, String channelId) {
-        return selectList(Constants.DAO_NAME_SPACE_CMS + "cms_select_sx_workload", parameters("record_count", recordCount, "channel_id", channelId));
+        return selectList("cms_select_sx_workload", parameters("record_count", recordCount, "channel_id", channelId));
     }
 
     public List<CmsBtSxWorkloadModel> getSxWorkloadModel(int recordCount) {
-        return selectList(Constants.DAO_NAME_SPACE_CMS + "cms_select_sx_workload", parameters("record_count", recordCount));
+        return selectList("cms_select_sx_workload", parameters("record_count", recordCount));
     }
 
-    public void updateSxWorkloadModel(CmsBtSxWorkloadModel sxWorkloadModel) {
-        update(Constants.DAO_NAME_SPACE_CMS + "cms_update_sx_workload", parameters("seq", sxWorkloadModel.getSeq(), "publish_status", sxWorkloadModel.getPublishStatus()));
+    public void updateSxWorkloadModel(CmsBtSxWorkloadModel model) {
+        update("cms_update_sx_workload", parameters("seq", model.getSeq(), "publish_status", model.getPublishStatus()));
+    }
+
+    public void insertSxWorkloadModel(CmsBtSxWorkloadModel model) {
+        insert("cms_insert_sx_workload", model);
     }
 }
