@@ -122,5 +122,16 @@
       "confirmChange":"confirmChange",
       "revertCategory":"revertCategory"
     }
+  },
+  "DictService": {
+      "root": "/cms/dict/manage/",
+      "dtGetDict" : "dtGetDict",
+      "getConst" : "getConst",
+      "getCustoms" : "getCustoms",
+      "setDict" : "setDict",
+      "delDict" : "delDict",
+      "addDict" : "addDict",
+      "getDictList" : "getDictList",
+      "customs":"getCustoms"
   }
 }

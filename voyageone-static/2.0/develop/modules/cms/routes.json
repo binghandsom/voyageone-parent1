@@ -104,5 +104,15 @@
     "hash": "/system/error_management_con",
     "templateUrl": "views/system/error/management_con.tpl.html",
     "controllerUrl": "modules/cms/views/system/error/management_con.ctl"
+  },
+  "cms_dict": {
+    "hash": "/cms/dict",
+    "templateUrl": "views/dict/dict.list.tpl.html",
+    "controllerUrl": "modules/cms/views/dict/dict.list.ctl"
+  },
+  "cms_dict_item": {
+    "hash": "/cms/dict/item",
+    "templateUrl": "views/dict/dict.item.tpl.html",
+    "controllerUrl": "modules/cms/views/dict/dict.item.ctl"
   }
 }

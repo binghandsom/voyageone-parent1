@@ -134,11 +134,41 @@
   "TXT_PROMOTION_HISTORY": "Promotion History",
   "TXT_DISCOUNT_WORD": "折",
 
+  "TXT_DICT_CUSTOM": "自定义项",
+  "TXT_ABSTRACT": "摘要",
+  "TXT_TH_TYPE": "类型",
+  "TXT_TH_VALUE": "值",
+  "TXT_ACTIONS": "操作",
+  "TXT_SELECT_ONE": "请选择",
+  "TXT_DICT_IS_URL": "需要上传天猫 ？",
+  "TXT_HEAD_DICT": "字典管理",
+  "TXT_MSG_DICT_VAL_TITLE": "值",
+  "TXT_MSG_DICT_VAL_CMS": "CMS",
+  "TXT_MSG_DICT_VAL_MASTER": "主数据",
+  "TXT_MSG_DICT_VAL_DICT": "字典",
+  "TXT_MSG_DICT_VAL_TXT": "文本",
+
+  "TXT_MSG_DICT_UN_VALID_CUS": "提供的自定义内容无效",
+  "TXT_MSG_DICT_NO_CUS": "o(╯□╰)o 麻烦选择一项，并填充参数后，尝试保存。",
+  "TXT_MSG_DICT_CUS_NO_VALUE": "参数 [ {{unValidParamName}} ] 没有设置任何值。",
+  "TXT_MSG_DICT_NO_NAME": "→_→ 你就这么懒，填个名字不行么。",
+  "TXT_MSG_DICT_NO_VALUE": "ㄟ( ▔, ▔ )ㄏ 你不添加个值或者自定义的内容。我是不会让你过去的。",
+  "TXT_MSG_SAVE_SUCCESS":"保存成功",
+  "TXT_MSG_IS_DELETE":"确定要删除吗？",
+  "TXT_MSG_DELETE_SUCCESS": "删除成功",
+  "TXT_MSG_DELETE_FAILED": "删除失败",
+  "TXT_MSG_DICT_VAL_NO_VALUE": "请选择或填写一个内容",
+
   "BTN_CANCEL": "取消 ",
   "BTN_CLEAR": "清空",
   "BTN_SEARCH": "检索",
   "BTN_EXPORT": "导出",
   "BTN_GO": "Go",
   "BTN_SAVE": "保存",
-  "BTN_OK": "Ok"
+  "BTN_OK": "Ok",
+
+  "BTN_NEW_DICT_VALUE": "新增字典值",
+  "BTN_NEW_DICT_CUS_VALUE": "新增自定义",
+  "BTN_SET_PARAM": "修改参数",
+  "BTN_NEW_DICT": "新字典项"
 }
