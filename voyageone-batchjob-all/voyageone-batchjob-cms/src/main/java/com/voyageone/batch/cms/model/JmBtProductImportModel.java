@@ -23,11 +23,17 @@ public class JmBtProductImportModel {
 
     private Integer brandId;
 
+    private String brandName;
+
+    private String sizeType;
+
     private String productName;
 
     private String foreignLanguageName;
 
     private String functionIds;
+
+    private String uploadErrorInfo;
 
     private String synFlg;
 
@@ -207,5 +213,29 @@ public class JmBtProductImportModel {
 
     public void setJmBtDealImportModel(JmBtDealImportModel jmBtDealImportModel) {
         this.jmBtDealImportModel = jmBtDealImportModel;
+    }
+
+    public String getBrandName() {
+        return brandName;
+    }
+
+    public void setBrandName(String brandName) {
+        this.brandName = brandName;
+    }
+
+    public String getSizeType() {
+        return sizeType;
+    }
+
+    public void setSizeType(String sizeType) {
+        this.sizeType = sizeType;
+    }
+
+    public String getUploadErrorInfo() {
+        return uploadErrorInfo;
+    }
+
+    public void setUploadErrorInfo(String uploadErrorInfo) {
+        this.uploadErrorInfo = uploadErrorInfo;
     }
 }
