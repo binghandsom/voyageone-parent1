@@ -26,6 +26,8 @@ import org.springframework.util.CollectionUtils;
 
 import javax.xml.rpc.ServiceException;
 import java.io.*;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -72,6 +74,9 @@ public class CmsUploadJmPicService extends BaseTaskService {
         return "CmsUploadJmPicJob";
     }
 
+    /* 监控上传 */
+    private MonitorUpload monitor=new MonitorUpload();
+
     /**
      * 启动多线程，上传图片
      * @param taskControlList job 配置
@@ -79,10 +84,14 @@ public class CmsUploadJmPicService extends BaseTaskService {
      */
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
-        List<Map<String, String>> jmpickeys= jmPicDao.getJmPicImageKeyGroup();
+        monitor.setTaskStart();
+        List<Map<String, Object>> jmpickeys= jmPicDao.getJmPicImageKeyGroup();
+        monitor.setImageKeyCountMap(jmpickeys);
+        monitor.setTaskName(getTaskName());
+        monitor.setThreadCount(THREAD_COUNT);
         ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
-        for (Map<String,String> picMap:jmpickeys){
-            String imageKey=picMap.get("imageKey");
+        for (Map<String,Object> picMap:jmpickeys){
+            String imageKey=picMap.get("imageKey").toString();
             if(StringUtils.isEmpty(imageKey))
                 continue;
             executor.execute(new UploadTask(imageKey));
@@ -90,6 +99,8 @@ public class CmsUploadJmPicService extends BaseTaskService {
         executor.shutdown();
         while (!executor.isTerminated())
             Thread.sleep(1000);
+        monitor.setTaskEnd();
+        LOG.info(monitor.toString());
     }
 
     /**
@@ -106,14 +117,21 @@ public class CmsUploadJmPicService extends BaseTaskService {
             if(CollectionUtils.isEmpty(jmPicBeanList)){
                 LOG.warn("UploadTask -> run() -> jmPicBeanList为空");
             }else{
+                boolean noError=true;
                 for (JmPicBean jmPicBean:jmPicBeanList){
                     try {
-                        //String juUrl=mockImageFileUpload(shopBean,convertJmPicToImageFileBean(jmPicBean));
-                        String juUrl= jumeiImageFileService.imageFileUpload(SHOPBEAN,convertJmPicToImageFileBean(jmPicBean));
+                        String juUrl=mockImageFileUpload(SHOPBEAN,convertJmPicToImageFileBean(jmPicBean));
+                        //String juUrl= jumeiImageFileService.imageFileUpload(SHOPBEAN,convertJmPicToImageFileBean(jmPicBean));
                         jmPicDao.updateJmpicUploaded(juUrl,jmPicBean.getSeq());
+                        monitor.addSuccsseOne();
                     } catch (Exception e) {
+                        noError=false;
+                        monitor.addErrorOne();
                         LOG.error("UploadTask -> run() -> exception:"+e);
                     }
+                }
+                if(noError){
+                    jmPicDao.updateJmProductImportUploaded(imageKey);
                 }
             }
         }
@@ -218,4 +236,98 @@ public class CmsUploadJmPicService extends BaseTaskService {
         }
     }
 
+    /**
+     * 监控上传任务
+     */
+    private class MonitorUpload{
+
+        /* 任务查询的imageKey,count集合 */
+        private Map<String,Integer> imageKeyCountMap=new HashMap<String,Integer>();
+
+        /* 成功上传的总数 */
+        private Integer successUploadCount=0;
+
+        /* 失败的总数 */
+        private Integer errorUploadCount=0;
+
+        /* 任务名称 */
+        private String taskName;
+
+        /* 任务线程数 */
+        private Integer threadCount;
+
+        /* 任务启动时间 */
+        private long taskStartTime;
+
+        /* 任务结束时间 */
+        private long taskEndTime;
+
+        /* 设置imageKeyCount */
+        public void setImageKeyCountMap(List<Map<String, Object>> jmpickeys) {
+            for(Map<String,Object> map:jmpickeys){
+                imageKeyCountMap.put(map.get("imageKey").toString(),Integer.parseInt(map.get("count").toString()));
+            }
+        }
+
+        /**
+         * 本次需要上传的图片总数，从imageKeyCountMap统计得到
+         * 不应支持外部修改
+         */
+        public Integer getNeedUploadCount() {
+            Assert.notNull(imageKeyCountMap);
+            int needUploadCount=0;
+            for(Map.Entry<String,Integer> entry: imageKeyCountMap.entrySet()){
+                needUploadCount+=entry.getValue();
+            }
+            return needUploadCount;
+        }
+
+        public synchronized void addSuccsseOne() {
+            this.successUploadCount+=1;
+        }
+
+        public synchronized void addErrorOne() {
+            this.errorUploadCount +=1;
+        }
+
+        public String getTaskName() {
+            return taskName;
+        }
+
+        public void setTaskName(String taskName) {
+            this.taskName = taskName;
+        }
+
+        /* 任务耗时 */
+        public long getTaskUsedTime() {
+            return taskEndTime-taskStartTime;
+        }
+
+        /* 私有方法，提供内部方法记录用*/
+        private Date getRecordTime() {
+            return new Date();
+        }
+
+        public void setTaskStart() {
+            this.taskStartTime = System.currentTimeMillis();
+        }
+
+        public void setTaskEnd() {
+            this.taskEndTime = System.currentTimeMillis();
+        }
+
+        public void setThreadCount(Integer threadCount) {
+            this.threadCount = threadCount;
+        }
+
+        /**
+         * 重写toString方法
+         * @return string 监控结果描述
+         */
+        public String toString(){
+            return "\n【"+taskName+"】任务共"+threadCount+"个线程,耗时:"+getTaskUsedTime()+",需要上传图片"+getNeedUploadCount()+"个,实际上传"+successUploadCount+",失败上传"+errorUploadCount
+                    +"\nImgKeyMap详细信息："+imageKeyCountMap
+                    +"\n\t\t****recordTime："+getRecordTime()+" end****";
+        }
+    }
 }
