@@ -7,11 +7,9 @@ import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.cms.CmsConstants;
 import com.voyageone.cms.service.CmsProductLogService;
+import com.voyageone.cms.service.dao.CmsBtSxWorkloadDao;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
-import com.voyageone.cms.service.model.CmsBtProductModel;
-import com.voyageone.cms.service.model.CmsBtProductModel_Feed;
-import com.voyageone.cms.service.model.CmsBtProductModel_Field;
-import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
+import com.voyageone.cms.service.model.*;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.cms.wsdl.BaseService;
@@ -51,6 +49,9 @@ public class ProductService extends BaseService {
 
     @Autowired
     private ProductSkuService productSkuService;
+
+    @Autowired
+    private CmsBtSxWorkloadDao cmsBtSxWorkloadDao;
 
     /**
      * selectOne
@@ -557,15 +558,27 @@ public class ProductService extends BaseService {
              * execute update
              */
             if (bulkList.size() > 0) {
-                BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
-                setResultCount(response, bulkWriteResult);
-                //insertProductHistory
+
                 if (findModel.getFields() != null && findModel.getFields().getStatus() != null
                     && productModel.getFields() != null && productModel.getFields().getStatus() != null) {
+                    //insert　ProductHistory
                     CmsConstants.ProductStatus befStatus = CmsConstants.ProductStatus.valueOf(findModel.getFields().getStatus());
                     CmsConstants.ProductStatus aftStatus = CmsConstants.ProductStatus.valueOf(productModel.getFields().getStatus());
                     insertProductHistory(befStatus, aftStatus, channelId, findModel.getProdId());
+
+                    //insert　SxWorkLoad
+                    String modifier = "0";
+                    if (!StringUtils.isEmpty(request.getModifier())) {
+                        modifier = request.getModifier();
+                    }
+                    insertSxWorkLoad(befStatus, aftStatus, channelId, findModel.getProdId(), modifier);
                 }
+
+                /**
+                 * 更新产品数据
+                 */
+                BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
+                setResultCount(response, bulkWriteResult);
             }
         }
 
@@ -626,7 +639,7 @@ public class ProductService extends BaseService {
      * @param request ProductStatusPutRequest
      * @return ProductGroupsPutResponse
      */
-    public ProductGroupsPutResponse updateStatusProduct(@RequestBody ProductStatusPutRequest  request,String... modified) {
+    public ProductGroupsPutResponse updateStatusProduct(@RequestBody ProductStatusPutRequest  request) {
         ProductGroupsPutResponse response = new ProductGroupsPutResponse();
 
         checkCommRequest(request);
@@ -675,25 +688,62 @@ public class ProductService extends BaseService {
 
             List<BulkUpdateModel> bulkList = new ArrayList<>();
             bulkList.add(model);
-            BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
-            setResultCount(response, bulkWriteResult);
-            //insertProductHistory
+
             if (findModel !=null && findModel.getFields() != null) {
+                //insert　Product　History
                 CmsConstants.ProductStatus befStatus = CmsConstants.ProductStatus.valueOf(findModel.getFields().getStatus());
                 insertProductHistory(befStatus, aftStatus, channelId, findModel.getProdId());
+
+                //insert　SxWorkLoad
+                String modifier = "0";
+                if (!StringUtils.isEmpty(request.getModifier())) {
+                    modifier = request.getModifier();
+                }
+                insertSxWorkLoad(befStatus, aftStatus, channelId, findModel.getProdId(), modifier);
             }
+
+            // 更新产品状态
+            BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
+            setResultCount(response, bulkWriteResult);
         }
 
         return response;
     }
 
 
-    private void insertProductHistory(CmsConstants.ProductStatus befStatus, CmsConstants.ProductStatus aftStatus,
+    private void insertProductHistory(CmsConstants.ProductStatus befStatus,
+                                      CmsConstants.ProductStatus aftStatus,
                                       String channelId, Long productId) {
         if (befStatus != null && aftStatus != null && !befStatus.equals(aftStatus)) {
             if (productId != null) {
                 CmsBtProductModel productModel = cmsBtProductDao.selectProductById(channelId, productId);
                 cmsProductLogService.insertProductHistory(productModel);
+            }
+        }
+    }
+
+    private void insertSxWorkLoad(CmsConstants.ProductStatus befStatus,
+                                  CmsConstants.ProductStatus aftStatus,
+                                  String channelId, Long groupId, String modifier) {
+        if (befStatus != null && aftStatus != null) {
+            boolean isNeed = false;
+            // 从其他状态转为Pending
+            if (befStatus != CmsConstants.ProductStatus.Pending && aftStatus == CmsConstants.ProductStatus.Pending) {
+                isNeed = true;
+            // 从Pending转为其他状态
+            // 在Pending下变更了
+            } else if (befStatus == CmsConstants.ProductStatus.Pending) {
+                isNeed = true;
+            }
+
+            if (isNeed) {
+                CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
+                model.setChannelId(channelId);
+                model.setGroupId(groupId.intValue());
+                model.setPublishStatus(0);
+                model.setCreater(modifier);
+                model.setModifier(modifier);
+                cmsBtSxWorkloadDao.insertSxWorkloadModel(model);
             }
         }
     }
