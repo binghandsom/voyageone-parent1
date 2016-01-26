@@ -29,6 +29,8 @@ public class JmBtProductImportModel {
 
     private JmBtDealImportModel jmBtDealImportModel;
 
+    private String jumeiProductId;
+
     private Date created;
 
     private String creater;
@@ -147,6 +149,14 @@ public class JmBtProductImportModel {
 
     public void setModifier(String modifier) {
         this.modifier = modifier == null ? null : modifier.trim();
+    }
+
+    public String getJumeiProductId() {
+        return jumeiProductId;
+    }
+
+    public void setJumeiProductId(String jumeiProductId) {
+        this.jumeiProductId = jumeiProductId;
     }
 
     public List<JmBtSkuImportModel> getSkuImportModelList() {

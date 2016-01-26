@@ -36,7 +36,7 @@ public class JumeiProductService extends JmBase {
         String reqResult = reqJmApi(shopBean, PRODUCT_NEW, params);
         Map<String, Object> resultMap = JsonUtil.jsonToMap(reqResult);
         product.setProduct_spec_number((String) getValue(resultMap, "product", "product_spec_number"));
-        product.setJumei_product_id((int) getValue(resultMap, "product", "jumei_product_id"));
+        product.setJumei_product_id((String) getValue(resultMap, "product", "jumei_product_id"));
 
         product.getDealInfo().setPartner_deal_id((String) getValue(resultMap, "dealInfo", "partner_deal_id"));
         product.getDealInfo().setPartner_deal_id((String) getValue(resultMap, "dealInfo", "jumei_hash_id"));
@@ -67,6 +67,9 @@ public class JumeiProductService extends JmBase {
 
 
     private static String PRODUCT_GET = "/v1/htProduct/getProductById";
+    /**
+     * 取得商品
+     */
     public JmProductBean getProduct(ShopBean shopBean, String product_id) throws Exception {
         Map<String, String> params = new HashMap<>();
         params.put("product_id", product_id);
@@ -76,7 +79,7 @@ public class JumeiProductService extends JmBase {
         Map<String, Object> resultMap = JsonUtil.jsonToMap(reqResult);
 
         JmProductBean resultBean = new JmProductBean();
-        resultBean.setJumei_product_id((int) getValue(resultMap, "product_id"));
+        resultBean.setJumei_product_id((String) getValue(resultMap, "product_id"));
         resultBean.setName((String) getValue(resultMap, "name"));
         resultBean.setForeign_language_name((String) getValue(resultMap, "foreign_language_name"));
         resultBean.setBrand_id((int) getValue(resultMap, "brand_id"));
