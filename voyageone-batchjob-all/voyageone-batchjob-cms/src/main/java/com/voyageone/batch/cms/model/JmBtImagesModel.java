@@ -29,6 +29,9 @@ public class JmBtImagesModel {
 
     private String modifier;
 
+    // 附加属性 分组记录件数
+    private Integer recCount;
+
     public Integer getSeq() {
         return seq;
     }
@@ -131,5 +134,13 @@ public class JmBtImagesModel {
 
     public void setModifier(String modifier) {
         this.modifier = modifier == null ? null : modifier.trim();
+    }
+
+    public Integer getRecCount() {
+        return recCount;
+    }
+
+    public void setRecCount(Integer recCount) {
+        this.recCount = recCount;
     }
 }

@@ -23,6 +23,8 @@ public class JmBtProductImportModel {
 
     private Integer brandId;
 
+    private String brandName;
+
     private String productName;
 
     private String foreignLanguageName;
@@ -115,6 +117,14 @@ public class JmBtProductImportModel {
 
     public void setBrandId(Integer brandId) {
         this.brandId = brandId;
+    }
+
+    public String getBrandName() {
+        return brandName;
+    }
+
+    public void setBrandName(String brandName) {
+        this.brandName = brandName;
     }
 
     public String getProductName() {
