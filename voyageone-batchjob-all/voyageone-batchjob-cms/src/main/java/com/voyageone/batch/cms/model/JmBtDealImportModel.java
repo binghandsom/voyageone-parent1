@@ -193,4 +193,5 @@ public class JmBtDealImportModel {
     public void setJumeiHashId(String jumeiHashId) {
         this.jumeiHashId = jumeiHashId;
     }
+
 }

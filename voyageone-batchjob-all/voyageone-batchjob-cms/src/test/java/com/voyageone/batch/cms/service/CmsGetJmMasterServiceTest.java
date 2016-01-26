@@ -2,6 +2,7 @@ package com.voyageone.batch.cms.service;
 
 import com.voyageone.batch.cms.dao.JmCategoryDao;
 import com.voyageone.batch.cms.dao.JmMasterDao;
+import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.common.components.jumei.Bean.JmCategoryBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,7 +30,8 @@ public class CmsGetJmMasterServiceTest {
     CmsGetJmMasterService cmsGetJmMasterService;
     @Test
     public void testOnStartup() throws Exception {
-
+        List<TaskControlBean> taskControlList = new ArrayList<>();
+        cmsGetJmMasterService.onStartup(taskControlList);
     }
 
     @Test
