@@ -1,5 +1,6 @@
 package com.voyageone.batch.cms.service;
 
+import com.mysql.jdbc.log.LogFactory;
 import com.sun.org.apache.xpath.internal.SourceTree;
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.cms.bean.JmPicBean;
@@ -16,9 +17,12 @@ import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.configs.beans.ShopConfigBean;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
 import javax.xml.rpc.ServiceException;
 import java.io.*;
@@ -34,6 +38,9 @@ import java.util.concurrent.Executors;
 @Service
 public class CmsUploadJmPicService extends BaseTaskService {
 
+    /* slf4j Log */
+    private static final Logger LOG= LoggerFactory.getLogger(CmsUploadJmPicService.class);
+
     /* 线程总数 */
     private static final int THREAD_COUNT=10;
 
@@ -43,8 +50,17 @@ public class CmsUploadJmPicService extends BaseTaskService {
     /* 聚美dir斜杠分隔符 */
     private static final String SLASH="/";
 
+    /* 获取图片下载流重试次数 */
+    private static final int GET_IMG_INPUTSTREAM_RETRY=5;
+
+    /* SHOPBEAN */
+    private static final ShopBean SHOPBEAN = ShopConfigs.getShop(ChannelConfigEnums.Channel.SN.getId(), CartEnums.Cart.JM.getId());
+
     @Autowired
     private JmPicDao jmPicDao;
+
+    @Autowired
+    private JumeiImageFileService jumeiImageFileService;
 
     @Override
     public SubSystem getSubSystem() {
@@ -65,12 +81,11 @@ public class CmsUploadJmPicService extends BaseTaskService {
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
         List<Map<String, String>> jmpickeys= jmPicDao.getJmPicImageKeyGroup();
         ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
-        ShopBean shopBean = ShopConfigs.getShop(ChannelConfigEnums.Channel.SN.getId(), CartEnums.Cart.JM.getId());
         for (Map<String,String> picMap:jmpickeys){
             String imageKey=picMap.get("imageKey");
             if(StringUtils.isEmpty(imageKey))
                 continue;
-            executor.execute(new UploadTask(imageKey,shopBean));
+            executor.execute(new UploadTask(imageKey));
         }
         executor.shutdown();
         while (!executor.isTerminated())
@@ -81,31 +96,29 @@ public class CmsUploadJmPicService extends BaseTaskService {
      * 上传任务
      */
     private class UploadTask implements Runnable{
-        @Autowired
-        private JumeiImageFileService jumeiImageFileService;
 
         /** image_key (product_code Or brand) */
         private String imageKey;
 
-        private ShopBean shopBean;
-
         @Override
         public void run() {
-            try{
-                List<JmPicBean> jmPicBeanList=jmPicDao.getJmPicsByImgKey(imageKey);
+            List<JmPicBean> jmPicBeanList=jmPicDao.getJmPicsByImgKey(imageKey);
+            if(CollectionUtils.isEmpty(jmPicBeanList)){
+                LOG.warn("UploadTask -> run() -> jmPicBeanList为空");
+            }else{
                 for (JmPicBean jmPicBean:jmPicBeanList){
-                    //String juUrl=mockImageFileUpload(shopBean,convertJmPicToImageFileBean(jmPicBean));
-                    String juUrl=jumeiImageFileService.imageFileUpload(shopBean,convertJmPicToImageFileBean(jmPicBean));
-                    jmPicDao.updateJmpicUploaded(juUrl,jmPicBean.getSeq());
+                    try {
+                        //String juUrl=mockImageFileUpload(shopBean,convertJmPicToImageFileBean(jmPicBean));
+                        String juUrl= jumeiImageFileService.imageFileUpload(SHOPBEAN,convertJmPicToImageFileBean(jmPicBean));
+                        jmPicDao.updateJmpicUploaded(juUrl,jmPicBean.getSeq());
+                    } catch (Exception e) {
+                        LOG.error("UploadTask -> run() -> exception:"+e);
+                    }
                 }
-                jmPicDao.updateJmProductImportUploaded(imageKey);
-            }catch (Exception e) {
-                e.printStackTrace();
             }
         }
-        public UploadTask(String imageKey,ShopBean shopBean) {
+        public UploadTask(String imageKey) {
             this.imageKey = imageKey;
-            this.shopBean = shopBean;
         }
     }
 
@@ -141,16 +154,40 @@ public class CmsUploadJmPicService extends BaseTaskService {
      * 转化bean
      * @param jmPicBean jmPicBean
      * @return JmImageFileBean
-     * @throws IOException
      */
-    private static JmImageFileBean convertJmPicToImageFileBean(JmPicBean jmPicBean) throws IOException {
-        JmImageFileBean jmImageFileBean=new JmImageFileBean();
-        File imageFile=new File(jmPicBean.getOriginUrl());
-        jmImageFileBean.setInputStream(HttpUtils.getInputStream(jmPicBean.getOriginUrl(),null));
-        jmImageFileBean.setDirName(buildDirName(jmPicBean));
-        jmImageFileBean.setImgName(imageFile.getName());
-        jmImageFileBean.setNeedReplace(NEED_REPLACE);
-        return jmImageFileBean;
+    private static JmImageFileBean convertJmPicToImageFileBean(JmPicBean jmPicBean) {
+        try {
+            JmImageFileBean jmImageFileBean=new JmImageFileBean();
+            File imageFile=new File(jmPicBean.getOriginUrl());
+            int retryCount=GET_IMG_INPUTSTREAM_RETRY;
+            InputStream inputStream = getImgInputStream(jmPicBean.getOriginUrl(),retryCount);
+            Assert.notNull(inputStream,"inputStream为null，图片流获取失败！"+jmPicBean.getOriginUrl());
+            jmImageFileBean.setInputStream(HttpUtils.getInputStream(jmPicBean.getOriginUrl(),null));
+            jmImageFileBean.setDirName(buildDirName(jmPicBean));
+            jmImageFileBean.setImgName(imageFile.getName());
+            jmImageFileBean.setNeedReplace(NEED_REPLACE);
+            return jmImageFileBean;
+        } catch (IOException e) {
+            LOG.error("CmsUploadJmPicService -> convertJmPicToImageFileBean() Error:"+e);
+            return null;
+        }
+    }
+
+    /**
+     * 获取网络图片流，遇错重试
+     * @param url imgUrl
+     * @param retry retrycount
+     * @return inputStream
+     */
+    private static InputStream getImgInputStream(String url,int retry){
+        if(retry-->0){
+            try {
+                return HttpUtils.getInputStream(url,null);
+            } catch (Exception e) {
+                getImgInputStream(url,retry);
+            }
+        }
+        return null;
     }
 
     /***
