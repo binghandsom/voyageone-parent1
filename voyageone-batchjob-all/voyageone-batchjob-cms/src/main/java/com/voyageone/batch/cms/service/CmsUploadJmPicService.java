@@ -34,10 +34,13 @@ import java.util.concurrent.Executors;
 @Service
 public class CmsUploadJmPicService extends BaseTaskService {
 
+    /* 线程总数 */
     private static final int THREAD_COUNT=10;
 
+    /* 调用聚美Api相同是否替换 */
     private static final boolean NEED_REPLACE=true;
 
+    /* 聚美dir斜杠分隔符 */
     private static final String SLASH="/";
 
     @Autowired
@@ -53,6 +56,11 @@ public class CmsUploadJmPicService extends BaseTaskService {
         return "CmsUploadJmPicJob";
     }
 
+    /**
+     * 启动多线程，上传图片
+     * @param taskControlList job 配置
+     * @throws Exception
+     */
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
         List<Map<String, String>> jmpickeys= jmPicDao.getJmPicImageKeyGroup();
@@ -73,7 +81,6 @@ public class CmsUploadJmPicService extends BaseTaskService {
      * 上传任务
      */
     private class UploadTask implements Runnable{
-
         @Autowired
         private JumeiImageFileService jumeiImageFileService;
 
@@ -101,6 +108,12 @@ public class CmsUploadJmPicService extends BaseTaskService {
         }
     }
 
+    /**
+     * 转化bean
+     * @param jmPicBean jmPicBean
+     * @return JmImageFileBean
+     * @throws IOException
+     */
     private static JmImageFileBean convertJmPicToImageFileBean(JmPicBean jmPicBean) throws IOException {
         JmImageFileBean jmImageFileBean=new JmImageFileBean();
         File imageFile=new File(jmPicBean.getOriginUrl());
@@ -111,6 +124,11 @@ public class CmsUploadJmPicService extends BaseTaskService {
         return jmImageFileBean;
     }
 
+    /***
+     * 按照规则构造远程路径
+     * @param jmPicBean jmPicBean
+     * @return 远程dir
+     */
     private static String buildDirName(JmPicBean jmPicBean){
         Assert.notNull(jmPicBean);
         checkFiled(jmPicBean.getChannelId(),jmPicBean.getImageKey());
@@ -122,6 +140,10 @@ public class CmsUploadJmPicService extends BaseTaskService {
         return SLASH+jmPicBean.getChannelId()+SLASH+"channel"+SLASH;
     }
 
+    /**
+     * 校验
+     * @param fileds fileds
+     */
     private static void checkFiled(String... fileds){
         for (String filed:fileds){
             if(StringUtils.isEmpty(filed)){
