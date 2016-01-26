@@ -5,6 +5,7 @@ import com.voyageone.batch.core.modelbean.TaskControlBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.SystemProfileValueSource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -27,7 +28,9 @@ public class CmsUploadJmPicServiceTest {
 
     @Test
     public void testOnStartup() throws Exception {
+        long start= System.currentTimeMillis();
         List<TaskControlBean> taskControlList = new ArrayList<>();
         cmsUploadJmPicService.onStartup(taskControlList);
+        System.out.println("耗时："+(System.currentTimeMillis()-start));
     }
 }
