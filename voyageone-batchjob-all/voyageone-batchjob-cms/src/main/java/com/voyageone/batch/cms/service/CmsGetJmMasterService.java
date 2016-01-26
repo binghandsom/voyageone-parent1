@@ -51,6 +51,9 @@ public class CmsGetJmMasterService extends BaseTaskService {
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
         ShopBean shopBean = ShopConfigs.getShop("001", CartEnums.Cart.JM.getId());
+        shopBean.setAppKey("131");
+        shopBean.setSessionKey("7e059a48c30c67d2693be14275c2d3be");
+        shopBean.setAppSecret("0f9e3437ca010f63f2c4f3a216b7f4bc9698f071");
         insertCategory(shopBean);
         insertBrand(shopBean);
 
