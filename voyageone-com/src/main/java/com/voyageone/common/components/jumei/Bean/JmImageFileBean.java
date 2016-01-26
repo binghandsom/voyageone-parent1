@@ -5,6 +5,7 @@ import com.voyageone.common.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * 商家图片文件结构。
@@ -84,7 +85,20 @@ public class JmImageFileBean extends JmBaseBean {
         String result = null;
         if (this.file != null && this.file.exists()) {
             result = ImgUtils.encodeToString(file);
+        }else if(this.inputStream!=null ){
+            result =ImgUtils.encodeToString(inputStream,imgName);
         }
         return result;
+    }
+
+    /** 图片流 */
+    private InputStream inputStream;
+
+    public InputStream getInputStream() {
+        return inputStream;
+    }
+
+    public void setInputStream(InputStream inputStream) {
+        this.inputStream = inputStream;
     }
 }

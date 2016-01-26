@@ -134,6 +134,28 @@ public final class ImgUtils {
 		return imageString;
 	}
 
+	/**
+	 * Encode image to string
+	 * @param inputStream inputStream
+	 * @param fileName fileName
+	 * @return encoded string
+	 * @throws IOException
+     */
+	public static String encodeToString(InputStream inputStream,String fileName) throws IOException {
+		String type = fileName.substring(fileName.lastIndexOf(".") + 1);
+		BufferedImage image = ImageIO.read(inputStream);
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+		ImageIO.write(image, type, bos);
+		byte[] imageBytes = bos.toByteArray();
+
+		BASE64Encoder encoder = new BASE64Encoder();
+		String imageString = encoder.encode(imageBytes);
+
+		bos.close();
+		return imageString;
+	}
+
 //	/**
 //	 * 获取文件的真实媒体类型。目前只支持JPG, GIF, PNG, BMP四种图片文件。
 //	 *

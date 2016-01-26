@@ -14,12 +14,14 @@ import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.ShopConfigs;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.configs.beans.ShopConfigBean;
+import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import java.io.File;
+import javax.xml.rpc.ServiceException;
+import java.io.*;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -99,10 +101,10 @@ public class CmsUploadJmPicService extends BaseTaskService {
         }
     }
 
-    private static JmImageFileBean convertJmPicToImageFileBean(JmPicBean jmPicBean){
+    private static JmImageFileBean convertJmPicToImageFileBean(JmPicBean jmPicBean) throws IOException {
         JmImageFileBean jmImageFileBean=new JmImageFileBean();
         File imageFile=new File(jmPicBean.getOriginUrl());
-        jmImageFileBean.setFile(imageFile);
+        jmImageFileBean.setInputStream(HttpUtils.getInputStream(jmPicBean.getOriginUrl(),null));
         jmImageFileBean.setDirName(buildDirName(jmPicBean));
         jmImageFileBean.setImgName(imageFile.getName());
         jmImageFileBean.setNeedReplace(NEED_REPLACE);
