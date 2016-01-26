@@ -33,6 +33,10 @@ public class DictDao extends BaseDao {
         return insert("cms_mt_dict_insertDict", dictWordBean);
     }
 
+    public int insertDictLog(DictWordBean dictWordBean){
+        return insert("cms_mt_dict_insertDict_log",dictWordBean);
+    }
+
     public int updateDict(DictWordBean dictWordBean) {
         return update("cms_mt_dict_updateDict", dictWordBean);
     }

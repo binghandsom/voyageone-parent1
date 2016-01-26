@@ -98,7 +98,8 @@ public class DictManageService {
         checkDict(dictWordBean);
 
         dictWordBean.setModifier(user.getUserName());
-
+        //插入备份
+        dictDao.insertDictLog(dictWordBean);
         return dictDao.updateDict(dictWordBean);
     }
 
@@ -109,7 +110,8 @@ public class DictManageService {
      * @return 更新结果
      */
     public int delDict(DictWordBean dictWordBean) {
-
+        //插入备份
+        dictDao.insertDictLog(dictWordBean);
         return dictDao.deleteDict(dictWordBean);
     }
 
