@@ -235,7 +235,7 @@ public class CmsPlatformMappingService extends BaseTaskService {
                 mapping = simpleMappingBean;
                 break;
             case COMPLEX:
-            case MULTICOMPLEX:
+
                 ComplexMappingBean complexMappingBean = new ComplexMappingBean();
                 complexMappingBean.setMasterPropId(StringUtils.replaceDot(SearchCommProp(field.getId())));
                 complexMappingBean.setPlatformPropId(field.getId());
@@ -253,6 +253,26 @@ public class CmsPlatformMappingService extends BaseTaskService {
                     subMappings.add(temp);
                 }
                 mapping = complexMappingBean;
+                break;
+            case MULTICOMPLEX:
+                MultiComplexCustomMappingBean multiComplexCustomMappingBean = new MultiComplexCustomMappingBean();
+                multiComplexCustomMappingBean.setPlatformPropId(field.getId());
+                List<MultiComplexCustomMappingValue> multiComplexCustomMappingValues = new ArrayList<>();
+                multiComplexCustomMappingBean.setValues(multiComplexCustomMappingValues);
+
+                List<Field> multiFields = new ArrayList<>();
+                if (field instanceof ComplexField) {
+                    multiFields = ((ComplexField) field).getFields();
+                } else {
+                    multiFields = ((MultiComplexField) field).getFields();
+                }
+                for (Field fd : multiFields) {
+                    MappingBean temp = makeMapping(fd);
+                    MultiComplexCustomMappingValue multiComplexCustomMappingValue = new MultiComplexCustomMappingValue();
+                    multiComplexCustomMappingValue.addSubMapping(temp);
+                    multiComplexCustomMappingValues.add(multiComplexCustomMappingValue);
+                }
+                mapping = multiComplexCustomMappingBean;
                 break;
         }
         return mapping;
