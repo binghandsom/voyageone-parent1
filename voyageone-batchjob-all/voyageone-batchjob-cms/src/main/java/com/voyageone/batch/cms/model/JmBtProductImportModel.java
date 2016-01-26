@@ -11,7 +11,7 @@ public class JmBtProductImportModel {
 
     private String productCode;
 
-    private String prodectDes;
+    private String productDes;
 
     private Integer categoryLv4Id;
 
@@ -61,12 +61,12 @@ public class JmBtProductImportModel {
         this.productCode = productCode == null ? null : productCode.trim();
     }
 
-    public String getProdectDes() {
-        return prodectDes;
+    public String getProductDes() {
+        return productDes;
     }
 
-    public void setProdectDes(String prodectDes) {
-        this.prodectDes = prodectDes == null ? null : prodectDes.trim();
+    public void setProductDes(String productDes) {
+        this.productDes = productDes == null ? null : productDes.trim();
     }
 
     public Integer getCategoryLv4Id() {

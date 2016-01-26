@@ -10,7 +10,7 @@ public class JmBtDealImportModel {
 
     private String productCode;
 
-    private String partnerDealId;
+    private String dealId;
 
     private String startTime;
 
@@ -64,12 +64,12 @@ public class JmBtDealImportModel {
         this.productCode = productCode == null ? null : productCode.trim();
     }
 
-    public String getPartnerDealId() {
-        return partnerDealId;
+    public String getDealId() {
+        return dealId;
     }
 
-    public void setPartnerDealId(String partnerDealId) {
-        this.partnerDealId = partnerDealId == null ? null : partnerDealId.trim();
+    public void setDealId(String dealId) {
+        this.dealId = dealId;
     }
 
     public String getStartTime() {
