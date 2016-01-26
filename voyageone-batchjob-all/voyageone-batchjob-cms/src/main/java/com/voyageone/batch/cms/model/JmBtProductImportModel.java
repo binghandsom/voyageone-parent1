@@ -231,22 +231,6 @@ public class JmBtProductImportModel {
         this.jmBtDealImportModel = jmBtDealImportModel;
     }
 
-    public String getBrandName() {
-        return brandName;
-    }
-
-    public void setBrandName(String brandName) {
-        this.brandName = brandName;
-    }
-
-    public String getSizeType() {
-        return sizeType;
-    }
-
-    public void setSizeType(String sizeType) {
-        this.sizeType = sizeType;
-    }
-
     public String getUploadErrorInfo() {
         return uploadErrorInfo;
     }
