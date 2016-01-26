@@ -21,7 +21,7 @@ public class JmPicDao extends BaseDao{
      * 获取聚美imageKey集合
      * @return list
      */
-    public List<Map<String,String>> getJmPicImageKeyGroup(){
+    public List<Map<String,Object>> getJmPicImageKeyGroup(){
         return selectList(Constants.DAO_NAME_SPACE_CMS + "cms_work_jm_bt_images_getJmPic_ImageKeyGroup");
     }
 
