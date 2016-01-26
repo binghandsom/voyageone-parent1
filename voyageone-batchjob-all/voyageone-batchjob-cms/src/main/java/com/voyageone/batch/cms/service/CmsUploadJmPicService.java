@@ -94,6 +94,7 @@ public class CmsUploadJmPicService extends BaseTaskService {
             try{
                 List<JmPicBean> jmPicBeanList=jmPicDao.getJmPicsByImgKey(imageKey);
                 for (JmPicBean jmPicBean:jmPicBeanList){
+                    //String juUrl=mockImageFileUpload(shopBean,convertJmPicToImageFileBean(jmPicBean));
                     String juUrl=jumeiImageFileService.imageFileUpload(shopBean,convertJmPicToImageFileBean(jmPicBean));
                     jmPicDao.updateJmpicUploaded(juUrl,jmPicBean.getSeq());
                 }
@@ -106,6 +107,34 @@ public class CmsUploadJmPicService extends BaseTaskService {
             this.imageKey = imageKey;
             this.shopBean = shopBean;
         }
+    }
+
+    /**
+     * MOCKTest
+     * mock 图片上传
+     * @param shopBean shopBean
+     * @param fileBean fileBean
+     * @return jm_url
+     * @throws IOException
+     */
+    private static String mockImageFileUpload(ShopBean shopBean, JmImageFileBean fileBean)throws IOException {
+        /* 聚美dir斜杠分隔符 */
+        final String SLASH="/";
+        File file=new File("F:/jumei"+fileBean.getDirName());
+        if(!file.exists()){
+            file.mkdirs();
+        }
+        InputStream inputStream=fileBean.getInputStream();
+        String imgPath="F:/jumei"+fileBean.getDirName()+SLASH+fileBean.getImgName();
+        FileOutputStream fileOutputStream = new FileOutputStream(new File(imgPath));
+        byte[] b = new byte[1024];
+        while((inputStream.read(b)) != -1){
+            fileOutputStream.write(b);
+        }
+        fileOutputStream.flush();
+        fileOutputStream.close();
+        inputStream.close();
+        return imgPath;
     }
 
     /**
@@ -137,7 +166,7 @@ public class CmsUploadJmPicService extends BaseTaskService {
         }else if(jmPicBean.getImageType()<=5){
             return SLASH+jmPicBean.getChannelId()+SLASH+jmPicBean.getPicType()+SLASH+jmPicBean.getImageKey().replace(SLASH,"_")+SLASH+jmPicBean.getImageType();
         }
-        return SLASH+jmPicBean.getChannelId()+SLASH+"channel"+SLASH;
+        return SLASH+jmPicBean.getChannelId()+SLASH+"channel";
     }
 
     /**
