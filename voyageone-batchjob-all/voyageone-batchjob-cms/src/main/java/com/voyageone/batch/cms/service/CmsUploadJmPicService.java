@@ -117,6 +117,7 @@ public class CmsUploadJmPicService extends BaseTaskService {
             if(CollectionUtils.isEmpty(jmPicBeanList)){
                 LOG.warn("UploadTask -> run() -> jmPicBeanList为空");
             }else{
+                boolean noError=true;
                 for (JmPicBean jmPicBean:jmPicBeanList){
                     try {
                         String juUrl=mockImageFileUpload(SHOPBEAN,convertJmPicToImageFileBean(jmPicBean));
@@ -124,9 +125,13 @@ public class CmsUploadJmPicService extends BaseTaskService {
                         jmPicDao.updateJmpicUploaded(juUrl,jmPicBean.getSeq());
                         monitor.addSuccsseOne();
                     } catch (Exception e) {
+                        noError=false;
                         monitor.addErrorOne();
                         LOG.error("UploadTask -> run() -> exception:"+e);
                     }
+                }
+                if(noError){
+                    jmPicDao.updateJmProductImportUploaded(imageKey);
                 }
             }
         }
