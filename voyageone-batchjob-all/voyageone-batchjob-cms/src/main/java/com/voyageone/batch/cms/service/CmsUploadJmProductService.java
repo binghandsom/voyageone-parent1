@@ -1,6 +1,7 @@
 package com.voyageone.batch.cms.service;
 
 import com.voyageone.batch.base.BaseTaskService;
+import com.voyageone.batch.cms.dao.DealImportDao;
 import com.voyageone.batch.cms.dao.JMUploadProductDao;
 import com.voyageone.batch.cms.dao.ProductImportDao;
 import com.voyageone.batch.cms.model.JmBtDealImportModel;
@@ -39,6 +40,9 @@ public class CmsUploadJmProductService extends BaseTaskService {
     private JumeiProductService jumeiProductService;
 
     @Autowired
+    private DealImportDao dealImportDao;
+
+    @Autowired
     private ProductImportDao productImportDao;
 
     @Autowired
@@ -75,10 +79,12 @@ public class CmsUploadJmProductService extends BaseTaskService {
         // 取得上新的数据
         JmProductBean jmProductBean = selfBeanToJmBean(jmBtProductImport);
         // 上新
-//        jumeiProductService.productNewUpload(shopBean, jmProductBean);
+        jumeiProductService.productNewUpload(shopBean, jmProductBean);
 
-//        jmBtProductImport.setJumeiProductId(jmProductBean.getJumei_product_id());
+        jmBtProductImport.setJumeiProductId(jmProductBean.getJumei_product_id());
         jmBtProductImport.getJmBtDealImportModel().setJumeiHashId(jmProductBean.getDealInfo().getJumei_hash_id());
+        jmBtProductImport.getJmBtDealImportModel().setSynFlg(1);
+        jmBtProductImport.getJmBtDealImportModel().setModifier(getTaskName());
         updateFlg(jmBtProductImport);
 
 
@@ -92,17 +98,24 @@ public class CmsUploadJmProductService extends BaseTaskService {
     private void updateFlg(JmBtProductImportModel jmBtProductImport){
         simpleTransaction.openTransaction();
         try {
+            // 把product数据从import表中移动到 product表中
             jmBtProductImport.setModifier(getTaskName());
             if(jmUploadProductDao.updateJMProduct(jmBtProductImport) == 0){
                 jmBtProductImport.setCreater(getTaskName());
                 jmUploadProductDao.insertJMProduct(jmBtProductImport);
             }
 
+            // sku删除 重新查
             jmUploadProductDao.delJMProductSkuByCode(jmBtProductImport.getChannelId(),jmBtProductImport.getProductCode());
             jmUploadProductDao.insertJMProductSkuList(jmBtProductImport.getSkuImportModelList(), getTaskName());
 
+            // 把import表中的flg设为
             jmBtProductImport.setSynFlg("2");
             productImportDao.updateProductImportInfo(jmBtProductImport);
+
+            // 回写JumeiHashId
+            dealImportDao.updateDealImportInfo(jmBtProductImport.getJmBtDealImportModel());
+
         }catch (Exception e){
             simpleTransaction.rollback();
             throw e;
