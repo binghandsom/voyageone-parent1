@@ -29,9 +29,7 @@ public class CmsUploadJmPicServiceTest {
 
     @Test
     public void testOnStartup() throws Exception {
-        long start= System.currentTimeMillis();
         List<TaskControlBean> taskControlList = new ArrayList<>();
         cmsUploadJmPicService.onStartup(taskControlList);
-        System.out.println("耗时："+(System.currentTimeMillis()-start));
     }
 }
