@@ -123,6 +123,22 @@ public class JmBtProductImportModel {
         this.brandId = brandId;
     }
 
+    public String getBrandName() {
+        return brandName;
+    }
+
+    public void setBrandName(String brandName) {
+        this.brandName = brandName;
+    }
+
+    public String getSizeType() {
+        return sizeType;
+    }
+
+    public void setSizeType(String sizeType) {
+        this.sizeType = sizeType;
+    }
+
     public String getProductName() {
         return productName;
     }
