@@ -92,4 +92,183 @@
 	) t2 ON t1.channel_id = t2.channel_id
 	AND t2.product_code = t1.product_code
 	</select>
+
+	<insert id="insert_jm_bt_product" parameterType="com.voyageone.batch.cms.model.JmBtProductImportModel" >
+		insert into jumei.jm_bt_product
+		<trim prefix="(" suffix=")" suffixOverrides="," >
+			<if test="channelId != null" >
+				channel_id,
+			</if>
+			<if test="productCode != null" >
+				product_code,
+			</if>
+			<if test="jumeiProductId != null" >
+				jumei_product_id,
+			</if>
+			<if test="dealId != null" >
+				deal_id,
+			</if>
+			<if test="productDes != null" >
+				product_des,
+			</if>
+			<if test="categoryLv4Id != null" >
+				category_lv4_id,
+			</if>
+			<if test="brandId != null" >
+				brand_id,
+			</if>
+			<if test="productName != null" >
+				product_name,
+			</if>
+			<if test="foreignLanguageName != null" >
+				foreign_language_name,
+			</if>
+			<if test="functionIds != null" >
+				function_ids,
+			</if>
+			<if test="attribute != null" >
+				attribute,
+			</if>
+			<if test="addressOfProduce != null" >
+				address_of_produce,
+			</if>
+				created,
+			<if test="creater != null" >
+				creater,
+			</if>
+				modified,
+			<if test="modifier != null" >
+				modifier,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides="," >
+			<if test="channelId != null" >
+				#{channelId,jdbcType=VARCHAR},
+			</if>
+			<if test="productCode != null" >
+				#{productCode,jdbcType=VARCHAR},
+			</if>
+			<if test="jumeiProductId != null" >
+				#{jumeiProductId,jdbcType=VARCHAR},
+			</if>
+			<if test="dealId != null" >
+				#{dealId,jdbcType=VARCHAR},
+			</if>
+			<if test="productDes != null" >
+				#{productDes,jdbcType=VARCHAR},
+			</if>
+			<if test="categoryLv4Id != null" >
+				#{categoryLv4Id,jdbcType=INTEGER},
+			</if>
+			<if test="brandId != null" >
+				#{brandId,jdbcType=INTEGER},
+			</if>
+			<if test="productName != null" >
+				#{productName,jdbcType=VARCHAR},
+			</if>
+			<if test="foreignLanguageName != null" >
+				#{foreignLanguageName,jdbcType=VARCHAR},
+			</if>
+			<if test="functionIds != null" >
+				#{functionIds,jdbcType=VARCHAR},
+			</if>
+			<if test="attribute != null" >
+				#{attribute,jdbcType=VARCHAR},
+			</if>
+			<if test="addressOfProduce != null" >
+				#{addressOfProduce,jdbcType=VARCHAR},
+			</if>
+				now(),
+			<if test="creater != null" >
+				#{creater,jdbcType=VARCHAR},
+			</if>
+				now(),
+			<if test="modifier != null" >
+				#{modifier,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="update_jm_bt_product" parameterType="com.voyageone.batch.cms.model.JmBtProductImportModel" >
+		update jumei.jm_bt_product
+		<set >
+			<if test="channelId != null" >
+				channel_id = #{channelId,jdbcType=VARCHAR},
+			</if>
+			<if test="productCode != null" >
+				product_code = #{productCode,jdbcType=VARCHAR},
+			</if>
+			<if test="jumeiProductId != null" >
+				jumei_product_id = #{jumeiProductId,jdbcType=VARCHAR},
+			</if>
+			<if test="dealId != null" >
+				deal_id = #{dealId,jdbcType=VARCHAR},
+			</if>
+			<if test="productDes != null" >
+				product_des = #{productDes,jdbcType=VARCHAR},
+			</if>
+			<if test="categoryLv4Id != null" >
+				category_lv4_id = #{categoryLv4Id,jdbcType=INTEGER},
+			</if>
+			<if test="brandId != null" >
+				brand_id = #{brandId,jdbcType=INTEGER},
+			</if>
+			<if test="productName != null" >
+				product_name = #{productName,jdbcType=VARCHAR},
+			</if>
+			<if test="foreignLanguageName != null" >
+				foreign_language_name = #{foreignLanguageName,jdbcType=VARCHAR},
+			</if>
+			<if test="functionIds != null" >
+				function_ids = #{functionIds,jdbcType=VARCHAR},
+			</if>
+			<if test="attribute != null" >
+				attribute = #{attribute,jdbcType=VARCHAR},
+			</if>
+			<if test="addressOfProduce != null" >
+				address_of_produce = #{addressOfProduce,jdbcType=VARCHAR},
+			</if>
+				modified = now(),
+			<if test="modifier != null" >
+				modifier = #{modifier,jdbcType=VARCHAR},
+			</if>
+		</set>
+		<where>
+			<if test="channelId != null" >
+				and channel_id = #{channelId,jdbcType=VARCHAR}
+			</if>
+			<if test="productCode != null" >
+				and product_code = #{productCode,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</update>
+
+	<delete id="delete_jm_bt_sku_by_code" parameterType="HashMap" >
+		delete from jumei.jm_bt_sku
+		where channel_id = #{channelId,jdbcType=VARCHAR}
+		and product_code = #{productCode,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert_skus" parameterType="java.util.ArrayList" >
+		insert into jumei.jm_bt_sku (channel_id, product_code,
+		sku, upc_code, abroad_price,
+		deal_price, market_price, size,
+		hscode, created, creater,
+		modified, modifier)
+		values
+		<foreach collection="list" item="item" index="index"
+				 separator=",">
+		( #{item.channelId,jdbcType=VARCHAR},
+		  #{item.productCode,jdbcType=VARCHAR},
+		  #{item.sku,jdbcType=VARCHAR},
+		  #{item.upcCode,jdbcType=VARCHAR},
+		  #{item.abroadPrice,jdbcType=DOUBLE},
+		  #{item.dealPrice,jdbcType=DOUBLE},
+		  #{item.marketPrice,jdbcType=DOUBLE},
+		  #{item.size,jdbcType=VARCHAR},
+		  #{item.hscode,jdbcType=VARCHAR},
+		  #{item.created,jdbcType=TIMESTAMP},
+		  #{item.creater,jdbcType=VARCHAR},
+		  #{item.modified,jdbcType=TIMESTAMP},
+		  #{item.modifier,jdbcType=VARCHAR})
+		</foreach>
+	</insert>
 </mapper>

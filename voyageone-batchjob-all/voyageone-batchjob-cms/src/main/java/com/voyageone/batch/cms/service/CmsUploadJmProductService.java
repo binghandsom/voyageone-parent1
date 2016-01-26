@@ -2,6 +2,7 @@ package com.voyageone.batch.cms.service;
 
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.cms.dao.JMUploadProductDao;
+import com.voyageone.batch.cms.dao.ProductImportDao;
 import com.voyageone.batch.cms.model.JmBtDealImportModel;
 import com.voyageone.batch.cms.model.JmBtProductImportModel;
 import com.voyageone.batch.cms.model.JmBtSkuImportModel;
@@ -12,6 +13,7 @@ import com.voyageone.common.components.jumei.Bean.JmProductBean_DealInfo;
 import com.voyageone.common.components.jumei.Bean.JmProductBean_Spus;
 import com.voyageone.common.components.jumei.Bean.JmProductBean_Spus_Sku;
 import com.voyageone.common.components.jumei.JumeiProductService;
+import com.voyageone.common.components.transaction.SimpleTransaction;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.ShopConfigs;
@@ -35,6 +37,12 @@ public class CmsUploadJmProductService extends BaseTaskService {
 
     @Autowired
     private JumeiProductService jumeiProductService;
+
+    @Autowired
+    private ProductImportDao productImportDao;
+
+    @Autowired
+    private SimpleTransaction simpleTransaction;
 
     @Override
     public SubSystem getSubSystem() {
@@ -67,13 +75,40 @@ public class CmsUploadJmProductService extends BaseTaskService {
         // 取得上新的数据
         JmProductBean jmProductBean = selfBeanToJmBean(jmBtProductImport);
         // 上新
-        jumeiProductService.productNewUpload(shopBean,jmProductBean);
+//        jumeiProductService.productNewUpload(shopBean, jmProductBean);
 
-        jmBtProductImport.setJumeiProductId(jmProductBean.getJumei_product_id());
+//        jmBtProductImport.setJumeiProductId(jmProductBean.getJumei_product_id());
         jmBtProductImport.getJmBtDealImportModel().setJumeiHashId(jmProductBean.getDealInfo().getJumei_hash_id());
+        updateFlg(jmBtProductImport);
+
 
     }
 
+
+    /**
+     * 更新数据库
+     * @param jmBtProductImport product数据
+     */
+    private void updateFlg(JmBtProductImportModel jmBtProductImport){
+        simpleTransaction.openTransaction();
+        try {
+            jmBtProductImport.setModifier(getTaskName());
+            if(jmUploadProductDao.updateJMProduct(jmBtProductImport) == 0){
+                jmBtProductImport.setCreater(getTaskName());
+                jmUploadProductDao.insertJMProduct(jmBtProductImport);
+            }
+
+            jmUploadProductDao.delJMProductSkuByCode(jmBtProductImport.getChannelId(),jmBtProductImport.getProductCode());
+            jmUploadProductDao.insertJMProductSkuList(jmBtProductImport.getSkuImportModelList(), getTaskName());
+
+            jmBtProductImport.setSynFlg("2");
+            productImportDao.updateProductImportInfo(jmBtProductImport);
+        }catch (Exception e){
+            simpleTransaction.rollback();
+            throw e;
+        }
+        simpleTransaction.commit();
+    }
 
     /**
      * 把我们自己定义的product结构转成JM上新的结构
@@ -94,6 +129,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
 
         // sku
         List<JmProductBean_Spus> spus = new ArrayList<>();
+        jmProductBean.setSpus(spus);
         for (JmBtSkuImportModel jmBtSkuImportModel : jmBtProductImport.getSkuImportModelList()) {
             JmProductBean_Spus spu = new JmProductBean_Spus();
             spu.setPartner_spu_no(jmBtSkuImportModel.getSku());

@@ -28,4 +28,12 @@ public class ProductImportDao extends BaseDao {
 		return isSuccess;
 	}
 
+	/**
+	 * 更新ProductImportModel
+	 * @param jmBtProductImportModel
+	 * @return
+	 */
+	public int updateProductImportInfo(JmBtProductImportModel jmBtProductImportModel){
+		return updateTemplate.update("jm_bt_product_import_update", jmBtProductImportModel);
+	}
 }
