@@ -25,6 +25,8 @@ public class JmBtProductImportModel {
 
     private String brandName;
 
+    private String sizeType;
+
     private String productName;
 
     private String foreignLanguageName;
@@ -125,6 +127,14 @@ public class JmBtProductImportModel {
 
     public void setBrandName(String brandName) {
         this.brandName = brandName;
+    }
+
+    public String getSizeType() {
+        return sizeType;
+    }
+
+    public void setSizeType(String sizeType) {
+        this.sizeType = sizeType;
     }
 
     public String getProductName() {
