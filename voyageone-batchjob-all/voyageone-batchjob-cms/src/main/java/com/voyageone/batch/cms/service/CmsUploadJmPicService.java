@@ -17,6 +17,7 @@ import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.configs.beans.ShopConfigBean;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.StringUtils;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
+import javax.imageio.ImageIO;
 import javax.xml.rpc.ServiceException;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Date;
 import java.util.HashMap;
@@ -148,24 +151,21 @@ public class CmsUploadJmPicService extends BaseTaskService {
      * @return jm_url
      * @throws IOException
      */
-    private static String mockImageFileUpload(ShopBean shopBean, JmImageFileBean fileBean)throws IOException {
-        /* 聚美dir斜杠分隔符 */
-        final String SLASH="/";
+    private static String mockImageFileUpload(ShopBean shopBean, JmImageFileBean fileBean) throws IOException {
         File file=new File("F:/jumei"+fileBean.getDirName());
         if(!file.exists()){
             file.mkdirs();
         }
-        InputStream inputStream=fileBean.getInputStream();
-        String imgPath="F:/jumei"+fileBean.getDirName()+SLASH+fileBean.getImgName();
-        FileOutputStream fileOutputStream = new FileOutputStream(new File(imgPath));
-        byte[] b = new byte[1024];
-        while((inputStream.read(b)) != -1){
-            fileOutputStream.write(b);
+        try {
+            InputStream inputStream=fileBean.getInputStream();
+            Assert.notNull(inputStream);
+            String imgPath="F:/jumei"+fileBean.getDirName()+SLASH+fileBean.getImgName();
+            FileUtils.copyInputStreamToFile(fileBean.getInputStream(),new File(imgPath));
+            return imgPath;
+        } catch (IOException e) {
+            LOG.error("CmsUploadJmPicService -> mockImageFileUpload() Error:"+e);
+            return null;
         }
-        fileOutputStream.flush();
-        fileOutputStream.close();
-        inputStream.close();
-        return imgPath;
     }
 
     /**
@@ -182,13 +182,23 @@ public class CmsUploadJmPicService extends BaseTaskService {
             Assert.notNull(inputStream,"inputStream为null，图片流获取失败！"+jmPicBean.getOriginUrl());
             jmImageFileBean.setInputStream(HttpUtils.getInputStream(jmPicBean.getOriginUrl(),null));
             jmImageFileBean.setDirName(buildDirName(jmPicBean));
-            jmImageFileBean.setImgName(imageFile.getName());
+            jmImageFileBean.setImgName(jmPicBean.getImageKey()+jmPicBean.getImageType()+jmPicBean.getImageIndex()+getPicType(jmPicBean.getOriginUrl()));
             jmImageFileBean.setNeedReplace(NEED_REPLACE);
             return jmImageFileBean;
         } catch (IOException e) {
             LOG.error("CmsUploadJmPicService -> convertJmPicToImageFileBean() Error:"+e);
             return null;
         }
+    }
+
+    /***
+     * 获取图片类型
+     * @param originUrl url
+     * @return type
+     */
+    private static String getPicType(String originUrl) {
+        Assert.notNull(originUrl);
+        return originUrl.substring(originUrl.lastIndexOf("."));
     }
 
     /**
