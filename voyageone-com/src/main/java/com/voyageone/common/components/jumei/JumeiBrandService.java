@@ -17,7 +17,7 @@ public class JumeiBrandService extends JmBase {
 
     private static List<JmBrandBean> brands = null;
 
-    private static String BRAND_URL = "/v1/htBrand/query";
+    private static String BRAND_URL = "v1/htBrand/query";
     /**
      * 初始化品牌
      */

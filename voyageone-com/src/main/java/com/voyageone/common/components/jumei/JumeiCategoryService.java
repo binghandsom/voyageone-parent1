@@ -19,7 +19,7 @@ public class JumeiCategoryService extends JmBase {
 
     private static List<JmCategoryBean> categoryListLevel4 = null;
 
-    private static String CATEGORY_URL = "/v1/category/query";
+    private static String CATEGORY_URL = "v1/category/query";
 
     /**
      * initCategoryListLevel4

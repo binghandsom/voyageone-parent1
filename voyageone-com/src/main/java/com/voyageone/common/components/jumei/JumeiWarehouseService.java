@@ -19,7 +19,7 @@ public class JumeiWarehouseService extends JmBase {
 
     private static List<JmWarehouseBean> warehouses = null;
 
-    private static String WARE_HOUSE_URL = "/v1/htWarehouse/query";
+    private static String WARE_HOUSE_URL = "v1/htWarehouse/query";
     /**
      * 初始化商家仓库
      */

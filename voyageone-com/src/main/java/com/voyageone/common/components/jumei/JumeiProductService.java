@@ -16,7 +16,7 @@ import java.util.Map;
 @Service
 public class JumeiProductService extends JmBase {
 
-    private static String PRODUCT_NEW = "/v1/htProduct/addProductAndDeal";
+    private static String PRODUCT_NEW = "v1/htProduct/addProductAndDeal";
 
     /**
      * 创建商品并同时创建Deal

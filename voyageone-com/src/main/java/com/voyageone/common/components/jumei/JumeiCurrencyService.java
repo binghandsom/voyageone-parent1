@@ -17,7 +17,7 @@ public class JumeiCurrencyService extends JmBase {
 
     private static List<JmCurrencyBean> currencys = null;
 
-    private static String CURRENCY_URL = "/v1/currency/query";
+    private static String CURRENCY_URL = "v1/currency/query";
 
     /**
      * 初始化货币信息
