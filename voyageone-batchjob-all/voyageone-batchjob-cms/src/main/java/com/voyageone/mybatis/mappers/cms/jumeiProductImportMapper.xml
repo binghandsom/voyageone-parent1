@@ -46,6 +46,12 @@
             <if test="brandId != null" >
                 brand_id = #{brandId,jdbcType=INTEGER},
             </if>
+            <if test="brandName != null">
+                brand_name = #{brandName,jdbcType=VARCHAR},
+            </if>
+            <if test="sizeType != null">
+                size_type = #{sizeType,jdbcType=VARCHAR},
+            </if>
             <if test="productName != null" >
                 product_name = #{productName,jdbcType=VARCHAR},
             </if>
@@ -60,6 +66,9 @@
             </if>
             <if test="addressOfProduce != null" >
                 address_of_produce = #{addressOfProduce,jdbcType=VARCHAR},
+            </if>
+            <if test="uploadErrorInfo != null">
+                upload_error_info = #{uploadErrorInfo,jdbcType=VARCHAR},
             </if>
             <if test="synFlg != null" >
                 syn_flg = #{synFlg,jdbcType=VARCHAR},

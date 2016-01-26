@@ -117,6 +117,12 @@
 			<if test="brandId != null" >
 				brand_id,
 			</if>
+			<if test="brandName != null">
+				brand_name,
+			</if>
+			<if test="sizeType != null">
+				size_type,
+			</if>
 			<if test="productName != null" >
 				product_name,
 			</if>
@@ -162,6 +168,12 @@
 			</if>
 			<if test="brandId != null" >
 				#{brandId,jdbcType=INTEGER},
+			</if>
+			<if test="brandName != null">
+				#{brandName,jdbcType=VARCHAR},
+			</if>
+			<if test="sizeType != null">
+				#{sizeType,jdbcType=VARCHAR},
 			</if>
 			<if test="productName != null" >
 				#{productName,jdbcType=VARCHAR},
@@ -211,6 +223,12 @@
 			</if>
 			<if test="brandId != null" >
 				brand_id = #{brandId,jdbcType=INTEGER},
+			</if>
+			<if test="brandName != null">
+				brand_name = #{brandName,jdbcType=VARCHAR},
+			</if>
+			<if test="sizeType != null">
+				size_type = #{sizeType,jdbcType=VARCHAR},
 			</if>
 			<if test="productName != null" >
 				product_name = #{productName,jdbcType=VARCHAR},
@@ -271,4 +289,37 @@
 		  #{item.modifier,jdbcType=VARCHAR})
 		</foreach>
 	</insert>
+	<resultMap id="selectImageResultMap" type="HashMap">
+		<result column="imageType" property="imageType" javaType="java.lang.Integer"/>
+		<collection property="images" javaType="ArrayList" ofType="com.voyageone.batch.cms.bean.JmPicBean" >
+			<result column="channelId" property="channelId"/>
+			<result column="imageKey" property="imageKey" />
+			<result column="imageType" property="imageType" />
+			<result column="imageTypeExtend" property="imageTypeExtend" />
+			<result column="imageIndex" property="imageIndex" />
+			<result column="originUrl" property="originUrl"  />
+			<result column="jmUrl" property="jmUrl"  />
+			<result column="synFlg" property="synFlg" />
+		</collection>
+	</resultMap>
+
+	<select id="select_image" parameterType="HashMap" resultMap="selectImageResultMap">
+		SELECT
+			seq,
+			channel_id as channelId,
+			image_key as imageKey,
+			image_type as imageType,
+			image_type_extend as imageTypeExtend,
+			image_index as imageIndex,
+			origin_url as originUrl,
+			jm_url as jmUrl,
+			syn_flg as synFlg
+		FROM
+			jumei.jm_bt_images
+		WHERE
+			channel_id = #{channelId}
+			and (image_key = #{productCode,jdbcType=VARCHAR} or image_key = #{brand,jdbcType=VARCHAR} or image_type = 7)
+		ORDER BY imageType DESC
+
+	</select>
 </mapper>

@@ -1,6 +1,7 @@
 package com.voyageone.batch.cms.service;
 
 import com.voyageone.batch.base.BaseTaskService;
+import com.voyageone.batch.cms.bean.JmPicBean;
 import com.voyageone.batch.cms.dao.DealImportDao;
 import com.voyageone.batch.cms.dao.JMUploadProductDao;
 import com.voyageone.batch.cms.dao.ProductImportDao;
@@ -26,6 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author james.li on 2016/1/25.
@@ -64,11 +66,12 @@ public class CmsUploadJmProductService extends BaseTaskService {
         List<JmBtProductImportModel> jmBtProductImports = getNotUploadProduct(20);
         ShopBean shopBean = ShopConfigs.getShop(ChannelConfigEnums.Channel.SN.getId(), CartEnums.Cart.JM.getId());
 
-        for (JmBtProductImportModel product:jmBtProductImports){
-            uploadProduct(product,shopBean);
+        for (JmBtProductImportModel product : jmBtProductImports) {
+            uploadProduct(product, shopBean);
         }
 
     }
+
     private List<JmBtProductImportModel> getNotUploadProduct(Integer count) {
         return jmUploadProductDao.getNotUploadProduct(count);
     }
@@ -76,47 +79,71 @@ public class CmsUploadJmProductService extends BaseTaskService {
 
     public void uploadProduct(JmBtProductImportModel jmBtProductImport, ShopBean shopBean) throws Exception {
 
-        // 取得上新的数据
-        JmProductBean jmProductBean = selfBeanToJmBean(jmBtProductImport);
-        // 上新
-        jumeiProductService.productNewUpload(shopBean, jmProductBean);
+        try {
+            // 取得上新的数据
+            JmProductBean jmProductBean = selfBeanToJmBean(jmBtProductImport);
 
-        jmBtProductImport.setJumeiProductId(jmProductBean.getJumei_product_id());
-        jmBtProductImport.getJmBtDealImportModel().setJumeiHashId(jmProductBean.getDealInfo().getJumei_hash_id());
-        jmBtProductImport.getJmBtDealImportModel().setSynFlg(1);
-        jmBtProductImport.getJmBtDealImportModel().setModifier(getTaskName());
-        updateFlg(jmBtProductImport);
+            setImages(jmBtProductImport.getChannelId(),jmBtProductImport.getProductCode(),"puma",jmProductBean);
+            // 上新
+//            jumeiProductService.productNewUpload(shopBean, jmProductBean);
 
-
+            jmBtProductImport.setJumeiProductId(jmProductBean.getJumei_product_id());
+            jmBtProductImport.getJmBtDealImportModel().setJumeiHashId(jmProductBean.getDealInfo().getJumei_hash_id());
+            jmBtProductImport.getJmBtDealImportModel().setSynFlg(1);
+            jmBtProductImport.getJmBtDealImportModel().setModifier(getTaskName());
+            updateFlg(jmBtProductImport);
+        }catch (Exception e){
+            jmBtProductImport.setSynFlg("3");
+            jmBtProductImport.setUploadErrorInfo(e.getMessage());
+            jmBtProductImport.setModifier(getTaskName());
+            productImportDao.updateProductImportInfo(jmBtProductImport);
+        }
     }
 
 
+    private void setImages(String channelId, String productCode, String brand, JmProductBean jmProductBean) {
+        Map<Integer, List<JmPicBean>> imagesMap = jmUploadProductDao.selectImageByCode(channelId, productCode, brand);
+
+        StringBuffer normalImage = new StringBuffer();
+        if (imagesMap.get(1) != null) {
+            imagesMap.get(1).forEach(jmPicBean -> {
+                if(normalImage.length() != 0) {
+                    normalImage.append(",");
+                }
+                normalImage.append(jmPicBean.getJmUrl());
+            });
+        }
+        jmProductBean.setNormalImage(normalImage.toString());
+    }
+
     /**
      * 更新数据库
+     *
      * @param jmBtProductImport product数据
      */
-    private void updateFlg(JmBtProductImportModel jmBtProductImport){
+    private void updateFlg(JmBtProductImportModel jmBtProductImport) {
         simpleTransaction.openTransaction();
         try {
             // 把product数据从import表中移动到 product表中
             jmBtProductImport.setModifier(getTaskName());
-            if(jmUploadProductDao.updateJMProduct(jmBtProductImport) == 0){
+            if (jmUploadProductDao.updateJMProduct(jmBtProductImport) == 0) {
                 jmBtProductImport.setCreater(getTaskName());
                 jmUploadProductDao.insertJMProduct(jmBtProductImport);
             }
 
             // sku删除 重新查
-            jmUploadProductDao.delJMProductSkuByCode(jmBtProductImport.getChannelId(),jmBtProductImport.getProductCode());
+            jmUploadProductDao.delJMProductSkuByCode(jmBtProductImport.getChannelId(), jmBtProductImport.getProductCode());
             jmUploadProductDao.insertJMProductSkuList(jmBtProductImport.getSkuImportModelList(), getTaskName());
 
             // 把import表中的flg设为
             jmBtProductImport.setSynFlg("2");
+            jmBtProductImport.setUploadErrorInfo("");
             productImportDao.updateProductImportInfo(jmBtProductImport);
 
             // 回写JumeiHashId
             dealImportDao.updateDealImportInfo(jmBtProductImport.getJmBtDealImportModel());
 
-        }catch (Exception e){
+        } catch (Exception e) {
             simpleTransaction.rollback();
             throw e;
         }
@@ -125,6 +152,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
 
     /**
      * 把我们自己定义的product结构转成JM上新的结构
+     *
      * @param jmBtProductImport 数据查来的bean
      * @return JM上新的bean
      * @throws Exception
