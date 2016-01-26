@@ -21,7 +21,7 @@ public class JmBtSkuImportModel {
 
     private String size;
 
-    private String attribute;
+    private String hscode;
 
     private Date created;
 
@@ -103,12 +103,12 @@ public class JmBtSkuImportModel {
         this.size = size == null ? null : size.trim();
     }
 
-    public String getAttribute() {
-        return attribute;
+    public String getHscode() {
+        return hscode;
     }
 
-    public void setAttribute(String attribute) {
-        this.attribute = attribute == null ? null : attribute.trim();
+    public void setHscode(String hscode) {
+        this.hscode = hscode;
     }
 
     public Date getCreated() {

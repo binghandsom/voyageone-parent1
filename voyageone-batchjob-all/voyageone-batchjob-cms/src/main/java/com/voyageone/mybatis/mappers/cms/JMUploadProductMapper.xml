@@ -6,24 +6,26 @@
 		<result column="channel_id" property="channelId"/>
 		<result column="product_code" property="productCode" />
 		<result column="product_des" property="productDes" />
+		<result column="deal_id" property="dealId" />
 		<result column="category_lv4_id" property="categoryLv4Id" />
 		<result column="brand_id" property="brandId" />
-		<result column="product_name" property="productame" />
+		<result column="product_name" property="productName" />
 		<result column="foreign_language_name" property="foreignLanguageName" />
 		<result column="function_ids" property="functionIds" />
+		<result column="address_of_produce" property="addressOfProduce" />
+		<result column="attribute" property="attribute" jdbcType="VARCHAR" />
 		<association property="jmBtDealImportModel"
 					 javaType="com.voyageone.batch.cms.model.JmBtDealImportModel">
 			<result column="channel_id" property="channelId"/>
 			<result column="product_code" property="productCode" />
-			<result column="partner_deal_id" property="partnerDealId" />
-			<result column="start_time" property="startime" />
+			<result column="deal_id" property="dealId" />
+			<result column="start_time" property="startTime" />
 			<result column="end_time" property="endTime" />
 			<result column="user_purchase_limit" property="userPurchaseLimit" />
 			<result column="shipping_system_id" property="shippingSystemId" />
 			<result column="product_long_name" property="productLongName" />
 			<result column="product_medium_name" property="productMediumName" />
 			<result column="product_short_name" property="productShortName" />
-			<result column="address_of_produce" property="addressOfProduce" />
 			<result column="search_meta_text_custom" property="searchMetaTextCustom" />
 		</association>
 		<collection property="skuImportModelList" javaType="ArrayList" ofType="com.voyageone.batch.cms.model.JmBtSkuImportModel" >
@@ -35,7 +37,6 @@
 			<result column="deal_price" property="dealPrice" jdbcType="DOUBLE" />
 			<result column="market_price" property="marketPrice" jdbcType="DOUBLE" />
 			<result column="size" property="size" jdbcType="VARCHAR" />
-			<result column="attribute" property="attribute" jdbcType="VARCHAR" />
 		</collection>
 	</resultMap>
 
@@ -48,7 +49,7 @@
 				a.channel_id,
 				a.product_code
 			FROM
-				jm_bt_product_import a
+				jumei.jm_bt_product_import a
 			WHERE
 				a.syn_flg = 1
 			LIMIT 0,
@@ -64,7 +65,9 @@
 			a.product_name,
 			a.foreign_language_name,
 			a.function_ids,
-			b.partner_deal_id,
+			a.address_of_produce,
+			a.deal_id,
+			a.attribute,
 			b.start_time,
 			b.end_time,
 			b.user_purchase_limit,
@@ -72,20 +75,18 @@
 			b.product_long_name,
 			b.product_medium_name,
 			b.product_short_name,
-			b.address_of_produce,
 			b.search_meta_text_custom,
 			c.sku,
 			c.upc_code,
 			c.abroad_price,
 			c.deal_price,
 			c.market_price,
-			c.size,
-			c.attribute
+			c.size
 		FROM
-			`jm_bt_product_import` a
-		LEFT JOIN jm_bt_deal_import b ON a.channel_id = b.channel_id
+			jumei.jm_bt_product_import a
+		LEFT JOIN jumei.jm_bt_deal_import b ON a.channel_id = b.channel_id
 		AND a.product_code = b.product_code
-		LEFT JOIN jm_bt_sku_import c ON a.channel_id = c.channel_id
+		LEFT JOIN jumei.jm_bt_sku_import c ON a.channel_id = c.channel_id
 		AND a.product_code = c.product_code
 		where b.syn_flg = 0
 	) t2 ON t1.channel_id = t2.channel_id
