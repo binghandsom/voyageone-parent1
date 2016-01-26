@@ -106,7 +106,7 @@
 							<td class="mfb-xxt text-left" ng-bind="errorInfo.productName"></td>
 							<td class="mfb-xxt text-left" ng-bind="errorInfo.errorCode"></td>
 							<td class="mfb-xxs text-left" ng-bind="errorInfo.errMsg"></td>
-							<td class="mfb-xxt text-left" ng-bind="errorInfo.created"></td>
+							<td class="mfb-xxt text-left" ng-bind="errorInfo.created | date : 'yyyy-MM-dd hh:mm:ss'"></td>
 							<td class="mfb-xt text-center">
 								<div class="onoffswitch">
 									<input type="checkbox" ng-model="errorInfo.status" name="onoffswitch" ng-change="updateFinishStatus(errorInfo.seq)" class="onoffswitch-checkbox" id="myonoffswitch5">
