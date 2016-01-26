@@ -19,7 +19,7 @@ public class JumeiImageFileService extends JmBase {
 
     private static List<JmCategoryBean> categoryListLevel4 = null;
 
-    private static String IMAGWE_UPLOAD = "/v1/img/upload";
+    private static String IMAGWE_UPLOAD = "v1/img/upload";
 
     /**
      * 图片上传至聚美图片空间
