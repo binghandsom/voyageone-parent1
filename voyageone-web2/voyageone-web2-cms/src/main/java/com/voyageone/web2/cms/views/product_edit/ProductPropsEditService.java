@@ -153,8 +153,6 @@ public class ProductPropsEditService {
         return productInfo;
     }
 
-
-
     /**
      * 更新product values.
      * @param channelId
@@ -216,6 +214,7 @@ public class ProductPropsEditService {
 
         updateRequest.setProductModel(productModel);
         updateRequest.setModifier(user);
+        updateRequest.setModified(modified);
 
         return productClient.updateProductRetModified(updateRequest);
 

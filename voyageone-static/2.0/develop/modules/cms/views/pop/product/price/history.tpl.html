@@ -17,7 +17,8 @@
                             <th class="text-center" translate="TXT_UPDATE_BY"></th>
                         </tr>
                         <tr ng-repeat="list in vm.priceList">
-                            <td>{{list.code}}&nbsp;/&nbsp;{{list.sku}}</td>
+                            <td ng-if="vm.type == 'code'">{{list.code}}</td>
+                            <td ng-if="vm.type == 'sku'">{{list.sku}}</td>
                             <td>{{list.salePrice}}</td>
                             <td>{{list.comment}}</td>
                             <td>{{list.modified}}</td>

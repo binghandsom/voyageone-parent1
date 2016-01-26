@@ -18,6 +18,8 @@ import com.voyageone.web2.cms.wsdl.BaseService;
 import com.voyageone.web2.cms.wsdl.dao.CmsBtPriceLogDao;
 import com.voyageone.web2.sdk.api.VoApiConstants;
 import com.voyageone.web2.sdk.api.domain.CmsBtPriceLogModel;
+import com.voyageone.web2.sdk.api.domain.ProductPriceModel;
+import com.voyageone.web2.sdk.api.domain.ProductSkuPriceModel;
 import com.voyageone.web2.sdk.api.exception.ApiException;
 import com.voyageone.web2.sdk.api.request.*;
 import com.voyageone.web2.sdk.api.response.*;
@@ -335,6 +337,7 @@ public class ProductService extends BaseService {
 
         if (productCode != null) {
             params.put("code", productCode);
+            params.put("sku", "0");
             isExecute = true;
         } else if (productSkuCode != null) {
             params.put("sku", productSkuCode);
@@ -493,6 +496,29 @@ public class ProductService extends BaseService {
              */
             List<CmsBtProductModel_Sku> skus = productModel.getSkus();
             if (skus != null && skus.size() > 0) {
+
+                // 如果sku价格发生变化更新product/model的price
+                ProductUpdatePriceRequest productPriceRequest = new ProductUpdatePriceRequest(channelId);
+                ProductPriceModel model = new ProductPriceModel();
+
+                model.setProductId(findModel.getProdId());
+
+                ProductSkuPriceModel skuPriceModel;
+                // 设置sku的价格.
+                for (CmsBtProductModel_Sku sku : skus) {
+                    skuPriceModel = new ProductSkuPriceModel();
+                    skuPriceModel.setSkuCode(sku.getSkuCode());
+                    skuPriceModel.setPriceMsrp(sku.getPriceMsrp());
+                    skuPriceModel.setPriceRetail(sku.getPriceRetail());
+                    skuPriceModel.setPriceSale(sku.getPriceSale());
+                    model.addSkuPrice(skuPriceModel);
+                }
+
+                productPriceRequest.setModifier(request.getModifier());
+                productPriceRequest.addProductPrices(model);
+                productSkuService.updatePrices(productPriceRequest);
+
+                // 更新sku信息
                 ProductSkusPutRequest skusPutRequest = new ProductSkusPutRequest(channelId);
                 skusPutRequest.setProductId(findModel.getProdId());
                 skusPutRequest.setSkus(skus);
@@ -600,7 +626,7 @@ public class ProductService extends BaseService {
      * @param request ProductStatusPutRequest
      * @return ProductGroupsPutResponse
      */
-    public ProductGroupsPutResponse updateStatusProduct(@RequestBody ProductStatusPutRequest  request) {
+    public ProductGroupsPutResponse updateStatusProduct(@RequestBody ProductStatusPutRequest  request,String... modified) {
         ProductGroupsPutResponse response = new ProductGroupsPutResponse();
 
         checkCommRequest(request);

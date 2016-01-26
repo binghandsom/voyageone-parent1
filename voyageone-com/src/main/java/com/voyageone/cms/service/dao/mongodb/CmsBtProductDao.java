@@ -370,8 +370,8 @@ public class CmsBtProductDao extends BaseMongoPartDao {
      * @param key       MongoKey pop,set,push,addToSet
      * @return 运行结果
      */
-    public BulkWriteResult bulkUpdateWithMap(String channelId, List<BulkUpdateModel> bulkList, String modifier, String key,String... modified) {
-        return bulkUpdateWithMap(channelId, bulkList, modifier, key, false,modified);
+    public BulkWriteResult bulkUpdateWithMap(String channelId, List<BulkUpdateModel> bulkList, String modifier, String key) {
+        return bulkUpdateWithMap(channelId, bulkList, modifier, key, false);
     }
 
     /**
@@ -382,7 +382,7 @@ public class CmsBtProductDao extends BaseMongoPartDao {
      * @param key       MongoKey pop,set,push,addToSet
      * @return 运行结果
      */
-    public BulkWriteResult bulkUpdateWithMap(String channelId, List<BulkUpdateModel> bulkList, String modifier, String key, boolean isUpsert, String... modified) {
+    public BulkWriteResult bulkUpdateWithMap(String channelId, List<BulkUpdateModel> bulkList, String modifier, String key, boolean isUpsert) {
         //获取集合名
         DBCollection coll = getDBCollection(channelId);
         BulkWriteOperation bwo = coll.initializeOrderedBulkOperation();
@@ -392,13 +392,7 @@ public class CmsBtProductDao extends BaseMongoPartDao {
         if (modifier != null) {
             modifierObj.append("modifier", modifier);
         }
-        if(modified != null && modified.length > 0){
-
-            modifierObj.append("modified", modified[0]);
-
-        } else {
-            modifierObj.append("modified", DateTimeUtil.getNowTimeStamp());
-        }
+        //modifierObj.append("modified", DateTimeUtil.getNowTimeStamp());
 
 
         for (BulkUpdateModel model: bulkList){

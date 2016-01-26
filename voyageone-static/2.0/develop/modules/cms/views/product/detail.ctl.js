@@ -61,7 +61,7 @@ define([
             cancelProductCustomInfo: function () {
                 this.productDetails.customAttributes = angular.copy(this.productDetailsCopy.customAttributes);
                 // 恢复到页面初始化的状态
-                this.productDetails.feedInfoModel.attributeList = angular.copy(this.productDetailsCopy.feedInfoModel.attributeList);
+                this.productDetails.feedInfoModel = angular.copy(this.productDetailsCopy.feedInfoModel);
                 // 删除本次被添加的feedeys
                 this.productDetails.feedKeys = angular.copy(this.productDetailsCopy.feedKeys);
             },
@@ -69,7 +69,7 @@ define([
             // 保存sku的变更
             updateSkuInfo: function res() {
                 this.productDetailService.updateSkuInfo(this.productDetails)
-                    .then(function () {
+                    .then(function (res) {
                         this.productDetails.modified = res.data.modified;
                         this.productDetailsCopy = angular.copy(this.productDetails);
                         this.notify.success (this.translate.instant('TXT_COM_UPDATE_SUCCESS'));
@@ -99,7 +99,7 @@ define([
 
             // 从第三方属性中添加feed属性到product自定义中,或者从product自定义中删除feed属性
             addFeedAttrToCustom: function () {
-                _.each(this.productDetails.feedInfoModel.attributeList, function (feedAttr) {
+                _.each(this.productDetails.feedInfoModel, function (feedAttr) {
                     if (feedAttr.selected
                         && !_.contains(this.productDetails.feedKeys, feedAttr.key)) {
                         // 设置被选中英文feed属性
@@ -115,7 +115,7 @@ define([
             // 恢复第三方属性的默认选中
             cancelAddFeedAttrToCustom: function () {
                 // 恢复到页面初始化的状态
-                this.productDetails.feedInfoModel.attributeList = angular.copy(this.productDetailsCopy.feedInfoModel.attributeList);
+                this.productDetails.feedInfoModel = angular.copy(this.productDetailsCopy.feedInfoModel);
                 // 移除本次添加的新feed
                 var feed = this.productDetails.customAttributes;
                 _.each(_.difference(this.productDetails.feedKeys, this.productDetailsCopy.feedKeys), function (key) {
