@@ -130,6 +130,17 @@ public interface CmsUrlConstants {
 
             String UPDATE_CATEGORY_SCHEMA = "updateCategorySchema";
         }
+
+        interface ERROR {
+
+            String ROOT = "/cms/system/error";
+
+            String INIT = "init";
+
+            String SEARCH = "search";
+
+            String UPDATE_FINISH_STATUS = "updateFinishStatus";
+        }
     }
     interface SEARCH {
 

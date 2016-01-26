@@ -6,10 +6,8 @@ import com.voyageone.web2.sdk.api.domain.CmsBtBusinessLogModel;
 import com.voyageone.web2.sdk.api.request.BusinessLogGetRequest;
 import com.voyageone.web2.sdk.api.request.BusinessLogUpdateRequest;
 import com.voyageone.web2.sdk.api.response.BusinessLogGetResponse;
-import com.voyageone.web2.sdk.api.response.BusinessLogPutResponse;
-import com.voyageone.web2.sdk.api.util.SdkBeanUtils;
+import com.voyageone.web2.sdk.api.response.BusinessLogUpdateResponse;
 import org.apache.commons.beanutils.BeanMap;
-import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,13 +29,13 @@ public class BusinessLogService extends BaseService {
         List<CmsBtBusinessLogModel> models=cmsBtBusinessLogDao.findByCondition(new BeanMap(request));
         BusinessLogGetResponse response =new BusinessLogGetResponse();
         response.setCmsBtBusinessLogModels(models);
-        response.setTotalCount(Integer.toUnsignedLong(models.size()));
+        response.setTotalCount(Long.parseLong(String.valueOf(cmsBtBusinessLogDao.findByConditionCnt(new BeanMap(request)))));
         return response;
     }
 
-    public BusinessLogPutResponse updateFinishStatus(BusinessLogUpdateRequest request){
+    public BusinessLogUpdateResponse updateFinishStatus(BusinessLogUpdateRequest request){
         request.check();
-        BusinessLogPutResponse response =new BusinessLogPutResponse();
+        BusinessLogUpdateResponse response =new BusinessLogUpdateResponse();
         response.setModifiedCount(cmsBtBusinessLogDao.updateStatusFinish(new BeanMap(request)));
         return response;
     }

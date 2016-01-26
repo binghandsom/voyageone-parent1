@@ -3,9 +3,7 @@ package com.voyageone.web2.sdk.api.request;
 import com.voyageone.web2.sdk.api.VoApiRequest;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
 import com.voyageone.web2.sdk.api.response.BusinessLogGetResponse;
-import com.voyageone.web2.sdk.api.util.RequestUtils;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -16,16 +14,21 @@ import java.util.List;
 public class BusinessLogGetRequest extends VoApiRequest<BusinessLogGetResponse> {
 
 
-    private List<Integer> productIds;
+    private List<String> codes;
 
     private String errType;
 
     private String productName;
 
-    private Integer cartId;
+    private String channelId;
+
+    private String cartId;
 
     private String catId;
 
+    private Integer offset = 0;
+
+    private Integer rows = 20;
 
     @Override
     public String getApiURLPath() {
@@ -36,26 +39,17 @@ public class BusinessLogGetRequest extends VoApiRequest<BusinessLogGetResponse> 
     public void requestCheck() throws ApiRuleException {
     }
 
-    public List<Integer> getProductIds() {
-        return productIds;
+    public List<String> getCodes() { return codes; }
+
+    public void setCodes(List<String> codes) {
+        this.codes = codes;
     }
 
-    public void setProductIds(List<Integer> productIds) {
-        this.productIds = productIds;
-    }
-
-    /*public void setProductIds(Integer... productId) {
-        this.productIds = Arrays.asList(productId);
-    }*/
-
-    public String getErrType() {
-        return errType;
-    }
+    public String getErrType() { return errType; }
 
     public void setErrType(String errType) {
         this.errType = errType;
     }
-
 
     public String getProductName() {
         return productName;
@@ -65,11 +59,19 @@ public class BusinessLogGetRequest extends VoApiRequest<BusinessLogGetResponse> 
         this.productName = productName;
     }
 
-    public Integer getCartId() {
+    public String getChannelId() {
+        return channelId;
+    }
+
+    public void setChannelId(String channelId) {
+        this.channelId = channelId;
+    }
+
+    public String getCartId() {
         return cartId;
     }
 
-    public void setCartId(Integer cartId) {
+    public void setCartId(String cartId) {
         this.cartId = cartId;
     }
 
@@ -79,5 +81,21 @@ public class BusinessLogGetRequest extends VoApiRequest<BusinessLogGetResponse> 
 
     public void setCatId(String catId) {
         this.catId = catId;
+    }
+
+    public Integer getRows() {
+        return rows;
+    }
+
+    public void setRows(Integer rows) {
+        this.rows = rows;
+    }
+
+    public Integer getOffset() {
+        return offset;
+    }
+
+    public void setOffset(Integer offset) {
+        this.offset = offset;
     }
 }

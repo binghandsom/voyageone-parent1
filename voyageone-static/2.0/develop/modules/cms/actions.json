@@ -121,6 +121,12 @@
       "changeCategory":"changeCategory",
       "confirmChange":"confirmChange",
       "revertCategory":"revertCategory"
+    },
+    "$errorManagementConService": {
+      "root":"/cms/system/error",
+      "init": "init",
+      "search": "search",
+      "updateFinishStatus": "updateFinishStatus"
     }
   }
 }

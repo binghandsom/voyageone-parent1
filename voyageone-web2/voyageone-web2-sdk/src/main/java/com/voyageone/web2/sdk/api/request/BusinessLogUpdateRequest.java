@@ -2,7 +2,7 @@ package com.voyageone.web2.sdk.api.request;
 
 import com.voyageone.web2.sdk.api.VoApiRequest;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
-import com.voyageone.web2.sdk.api.response.BusinessLogPutResponse;
+import com.voyageone.web2.sdk.api.response.BusinessLogUpdateResponse;
 import com.voyageone.web2.sdk.api.util.RequestUtils;
 
 /**
@@ -10,7 +10,7 @@ import com.voyageone.web2.sdk.api.util.RequestUtils;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class BusinessLogUpdateRequest extends VoApiRequest<BusinessLogPutResponse>{
+public class BusinessLogUpdateRequest extends VoApiRequest<BusinessLogUpdateResponse>{
 
     private Integer seq;
 

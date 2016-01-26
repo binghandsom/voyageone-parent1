@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.views.system;
+package com.voyageone.web2.cms.views.system.category;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;

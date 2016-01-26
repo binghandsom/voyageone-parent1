@@ -133,6 +133,18 @@
   "TXT_ISOLATE_QUANTITY": "隔离库存（原始库存）",
   "TXT_PROMOTION_HISTORY": "Promotion History",
   "TXT_DISCOUNT_WORD": "折",
+  "TXT_PLATFORM": "平台类型",
+  "TXT_GROUP_ID": "Group Id",
+  "TXT_GROUP_NAME_NO_COLON": "Group Name",
+  "TXT_PRODUCT_CODE_NO_COLON": "Product Code",
+  "TXT_PRODUCT_NAME_NO_COLON": "Product Name",
+  "TXT_ERROR_CODE": "Error Code",
+  "TXT_ERROR_MESSAGE": "Error Message",
+  "TXT_ERROR_CREATE_TIME": "Error Create Time",
+  "TXT_COMPLETED": "Completed",
+  "TXT_ERROR_TYPE": "Error Type",
+  "TXT_CATEGORY_NO_COLON": "类目",
+
 
   "BTN_CANCEL": "Cancel",
   "BTN_CLEAR": "Clear",
