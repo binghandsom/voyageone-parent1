@@ -312,6 +312,14 @@ public interface WmsConstants {
                 put("XXXXL", "4XL");
                 put("XXXXXL", "5XL");
                 put("OneSize", "");
+                put("1898", "");
+                put("1908", "");
+                put("1919", "");
+                put("1925", "");
+                put("1928", "");
+                put("1949", "");
+                put("1958", "");
+                put("1966", "");
             }
         };
     }
