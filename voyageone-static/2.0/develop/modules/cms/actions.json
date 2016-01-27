@@ -121,6 +121,23 @@
       "changeCategory":"changeCategory",
       "confirmChange":"confirmChange",
       "revertCategory":"revertCategory"
+    },
+    "$errorManagementConService": {
+      "root":"/cms/system/error",
+      "init": "init",
+      "search": "search",
+      "updateFinishStatus": "updateFinishStatus"
     }
+  },
+  "DictService": {
+      "root": "/cms/dict/manage/",
+      "dtGetDict" : "dtGetDict",
+      "getConst" : "getConst",
+      "getCustoms" : "getCustoms",
+      "setDict" : "setDict",
+      "delDict" : "delDict",
+      "addDict" : "addDict",
+      "getDictList" : "getDictList",
+      "customs":"getCustoms"
   }
 }

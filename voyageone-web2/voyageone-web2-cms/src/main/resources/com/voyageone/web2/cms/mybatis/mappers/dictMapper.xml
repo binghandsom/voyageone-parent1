@@ -76,4 +76,9 @@
         FROM voyageone_cms2.cms_mt_dict
         WHERE order_channel_id = #{channel_id}
     </select>
+
+    <insert id="cms_mt_dict_insertDict_log" parameterType="com.voyageone.ims.modelbean.DictWordBean">
+        INSERT INTO voyageone_cms2.cms_mt_dict (dict_id,order_channel_id, name, value, created, creater, modified, modifier)
+        VALUES (#{id},#{order_channel_id}, #{name}, #{value}, NOW(), #{creater}, NOW(), #{modifier})
+    </insert>
 </mapper>

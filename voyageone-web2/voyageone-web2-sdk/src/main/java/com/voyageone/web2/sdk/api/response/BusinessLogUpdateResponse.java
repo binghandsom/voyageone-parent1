@@ -7,5 +7,5 @@ import com.voyageone.web2.sdk.api.VoApiUpdateResponse;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class BusinessLogPutResponse extends VoApiUpdateResponse {
+public class BusinessLogUpdateResponse extends VoApiUpdateResponse {
 }

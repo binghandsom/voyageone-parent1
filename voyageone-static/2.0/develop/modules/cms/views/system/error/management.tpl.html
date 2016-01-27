@@ -1,0 +1,129 @@
+<div class="wrapper-md" ng-init="initialize()">
+	<div class="col-sm-12">
+		<!-- search -->
+		<div class="panel panelPromotion">
+			<div class="container-fluid m-t-sm">
+				<div class="col-sm-12">
+					<div class="col-sm-4">
+						<div class="form-horizontal">
+							<div class="form-group">
+								<label class="col-sm-3 control-label" translate="TXT_PLATFORM"></label>
+								<div class="col-sm-9">
+									<select class="form-control" ng-model="vm.searchInfo.cartId"
+											ng-options="categoryType.cartId as categoryType.name for categoryType in vm.masterData.categoryTypeList">
+										<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label" translate="TXT_CATEGORY_NO_COLON"></label>
+								<div class="col-sm-9">
+									<select class="form-control" ng-model="vm.searchInfo.catId"
+											ng-options="category.catId as category.catPath for category in vm.masterData.categoryList">
+										<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-4">
+						<div class="form-horizontal">
+							<div class="form-group">
+								<label class="col-sm-3 control-label" translate="TXT_PRODUCT_NAME_NO_COLON"></label>
+								<div class="col-sm-9">
+									<input type="text" ng-model="vm.searchInfo.productName" class="form-control">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label" translate="TXT_ERROR_TYPE"></label>
+								<div class="col-sm-9">
+									<select class="form-control" ng-model="vm.searchInfo.errType"
+											ng-options="errorType.value as errorType.name for errorType in vm.masterData.errorTypeList">
+										<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+									</select>
+								</div>
+							</div>
+						</div><!-- .form-group -->
+					</div>
+					<div class="col-sm-4">
+						<div class="form-horizontal">
+							<div class="form-group">
+								<label class="col-sm-3 control-label" translate="TXT_CODE_LIST"></label>
+								<div class="col-sm-8">
+									<textarea class="form-control inherited" rows="4" ng-model="vm.searchInfo.codes"></textarea>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-12 text-center m-b-sm">
+						<div class="form-inline">
+							<button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
+							<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
+						</div><!-- .form-inline -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div><!-- .accordion --><!--/search-->
+
+	<div class="col-sm-12">
+		<div class="box">
+			<div class="box-body">
+				<table class="table table-hover-new">
+					<thead>
+					<tr>
+						<th class="text-center" translate="TXT_SEQ"></th>
+						<th class="text-center" translate="TXT_PROMOTION_NAME"></th>
+						<th class="text-center" translate="TXT_GROUP_ID"></th>
+						<th class="text-center" translate="TXT_GROUP_NAME_NO_COLON"></th>
+						<th class="text-center" translate="TXT_PRODUCT_CODE_NO_COLON"></th>
+						<th class="text-center" translate="TXT_PRODUCT_NAME_NO_COLON"></th>
+						<th class="text-center" translate="TXT_ERROR_CODE"></th>
+						<th class="text-left mfb-xxxs" translate="TXT_ERROR_MESSAGE"></th>
+						<th class="text-center" translate="TXT_ERROR_CREATE_TIME"></th>
+						<th translate="TXT_COMPLETED"></th>
+					</tr>
+					</thead>
+				</table>
+				<div class="col-sm-12 dropdown_table dropdown_table_main" if-no-rows="vm.errorList.length">
+					<table class="table table-hover vo_table vo_models" ng-if="vm.errorList.length">
+						<tbody ng-repeat="errorInfo in vm.errorList">
+						<tr>
+							<td class="text-center" ng-bind="errorInfo.seq"></td>
+							<td class="text-center text-u-l">
+								<a ng-if="errorInfo.promotionId" ng-href="#/promotion/detail/{{errorInfo.promotionId}}" ng-bind="errorInfo.promotionName"></a>
+								<span ng-if="!errorInfo.promotionId" ng-bind="errorInfo.promotionName"></span>
+							</td>
+							<td class="text-center text-u-l">
+								<a ng-if="errorInfo.groupId" ng-href="#/group/list/{{errorInfo.groupId}}" ng-bind="errorInfo.groupId"></a>
+								<span ng-if="!errorInfo.groupId" ng-bind="errorInfo.groupId"></span>
+							</td>
+							<td class="text-center text-u-l" ng-bind="errorInfo.groupName"></td>
+							<td class="text-center text-u-l">
+								<a ng-if="errorInfo.productId" ng-href="#/product/detail/{{errorInfo.productId}}" ng-bind="errorInfo.productCode"></a>
+								<span ng-if="!errorInfo.productId" ng-bind="errorInfo.productCode"></span>
+							</td>
+							<td class="text-center" ng-bind="errorInfo.productName"></td>
+							<td class="text-center" ng-bind="errorInfo.errorCode"></td>
+							<td class="text-left mfb-xxxs" ng-bind="errorInfo.errMsg"></td>
+							<td class="text-center" ng-bind="errorInfo.created"></td>
+							<td>
+								<div class="onoffswitch">
+									<input type="checkbox" ng-model="errorInfo.status" name="onoffswitch" ng-change="updateFinishStatus(errorInfo.seq)" class="onoffswitch-checkbox" id="myonoffswitch5">
+									<label class="onoffswitch-label" for="myonoffswitch5">
+										<span class="onoffswitch-inner"></span>
+										<span class="onoffswitch-switch"></span>
+									</label>
+								</div>
+							</td>
+						</tr>
+						</tbody>
+					</table>
+				</div><!-- .table-responsive -->
+				<div class="col-sm-12 m-t-xs">
+					<vpagination config="vm.errorPageOption"></vpagination>
+				</div>
+			</div><!-- /.box-body -->
+		</div>
+	</div><!-- .col-lg-12 -->
+</div><!-- end .wrapper-md -->

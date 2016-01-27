@@ -2,11 +2,8 @@ package com.voyageone.web2.cms.wsdl.dao;
 
 import com.voyageone.base.dao.BaseDao;
 import com.voyageone.web2.sdk.api.domain.CmsBtBusinessLogModel;
-import com.voyageone.web2.sdk.api.domain.CmsBtPromotionGroupModel;
-import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,20 +18,30 @@ public class CmsBtBusinessLogDao extends BaseDao {
     /**
      * 条件查询
      *
-     * @param condtionParams params
+     * @param conditionParams params
      * @return list
      */
-    public List<CmsBtBusinessLogModel> findByCondition(Map<?, ?> condtionParams) {
-        return selectList("select_businesslog_By_Condtion", condtionParams);
+    public List<CmsBtBusinessLogModel> findByCondition(Map<?, ?> conditionParams) {
+        return selectList("select_business_log_By_Condition", conditionParams);
+    }
+
+    /**
+     * 根据查询条件获得总件数
+     * @param conditionParams
+     * @return
+     */
+    public int findByConditionCnt(Map<?, ?> conditionParams) {
+
+        return selectOne("select_business_log_By_Condition_cnt", conditionParams);
     }
 
     /**
      * 修改处理状态
-     * @param condtionParams params
+     * @param conditionParams params
      * @return effect count
      */
-    public int updateStatusFinish(Map<?,?> condtionParams){
-        return updateTemplate.update("update_businesslog_status_finish",condtionParams);
+    public int updateStatusFinish(Map<?,?> conditionParams){
+        return updateTemplate.update("update_business_log_status_finish",conditionParams);
     }
 
 }

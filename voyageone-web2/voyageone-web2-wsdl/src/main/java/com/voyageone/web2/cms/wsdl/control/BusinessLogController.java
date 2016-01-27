@@ -2,13 +2,10 @@ package com.voyageone.web2.cms.wsdl.control;
 
 import com.voyageone.web2.cms.wsdl.BaseController;
 import com.voyageone.web2.cms.wsdl.service.BusinessLogService;
-import com.voyageone.web2.cms.wsdl.service.ProductService;
 import com.voyageone.web2.sdk.api.request.BusinessLogGetRequest;
 import com.voyageone.web2.sdk.api.request.BusinessLogUpdateRequest;
-import com.voyageone.web2.sdk.api.request.ProductGetRequest;
 import com.voyageone.web2.sdk.api.response.BusinessLogGetResponse;
-import com.voyageone.web2.sdk.api.response.BusinessLogPutResponse;
-import com.voyageone.web2.sdk.api.response.ProductGetResponse;
+import com.voyageone.web2.sdk.api.response.BusinessLogUpdateResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,7 +40,7 @@ public class BusinessLogController extends BaseController{
      * @return BusinessLogPutResponse
      */
     @RequestMapping("updatefinishstatus")
-    public BusinessLogPutResponse updateFinishStatus(@RequestBody BusinessLogUpdateRequest request) {
+    public BusinessLogUpdateResponse updateFinishStatus(@RequestBody BusinessLogUpdateRequest request) {
         return businessLogService.updateFinishStatus(request);
     }
 

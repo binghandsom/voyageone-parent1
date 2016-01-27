@@ -10,55 +10,38 @@ import com.voyageone.base.dao.mysql.BaseModel;
 public class CmsBtBusinessLogModel extends BaseModel{
 
     private Integer seq;
+
     private String channelId;
+
     private String catId;
+
     private Integer cartId;
+
+    private Long groupId;
+
+    private String groupName;
+
+    private Long productId;
+
     private String productName;
+
+    private Long promotionId;
 
     private String promotionName;
 
-    /* 主商品的product_id*/
-    private String productId;
-    /* 1:上新错误*/
-    private Integer errType;
-    /* 0:未处理 1:已处理*/
-    private Integer status;
-    /* 如果错误时，没有model就不要设置*/
     private String model;
-    /* 如果错误时，没有code就不要设置*/
-    private String code;
-    /* 如果错误时，没有sku就不要设置*/
-    private String sku;
-    /* 1:店铺内分类 2:活动标签 3:货位标签*/
-    private String errMsg;
 
-    private Integer groupId;
-    private String groupName;
+    private String code;
+
+    private String sku;
+
+    private Integer errorTypeId;
+
     private String errorCode;
 
-    public Integer getGroupId() {
-        return groupId;
-    }
+    private String errMsg;
 
-    public void setGroupId(Integer groupId) {
-        this.groupId = groupId;
-    }
-
-    public String getGroupName() {
-        return groupName;
-    }
-
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
-    }
-
-    public String getErrorCode() {
-        return errorCode;
-    }
-
-    public void setErrorCode(String errorCode) {
-        this.errorCode = errorCode;
-    }
+    private Boolean status;
 
     public Integer getSeq() {
         return seq;
@@ -92,6 +75,30 @@ public class CmsBtBusinessLogModel extends BaseModel{
         this.cartId = cartId;
     }
 
+    public Long getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
+    public Long getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
+
     public String getProductName() {
         return productName;
     }
@@ -100,28 +107,20 @@ public class CmsBtBusinessLogModel extends BaseModel{
         this.productName = productName;
     }
 
-    public String getProductId() {
-        return productId;
+    public Long getPromotionId() {
+        return promotionId;
     }
 
-    public void setProductId(String productId) {
-        this.productId = productId;
+    public void setPromotionId(Long promotionId) {
+        this.promotionId = promotionId;
     }
 
-    public Integer getErrType() {
-        return errType;
+    public String getPromotionName() {
+        return promotionName;
     }
 
-    public void setErrType(Integer errType) {
-        this.errType = errType;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
+    public void setPromotionName(String promotionName) {
+        this.promotionName = promotionName;
     }
 
     public String getModel() {
@@ -148,6 +147,22 @@ public class CmsBtBusinessLogModel extends BaseModel{
         this.sku = sku;
     }
 
+    public Integer getErrorTypeId() {
+        return errorTypeId;
+    }
+
+    public void setErrorTypeId(Integer errorTypeId) {
+        this.errorTypeId = errorTypeId;
+    }
+
+    public String getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(String errorCode) {
+        this.errorCode = errorCode;
+    }
+
     public String getErrMsg() {
         return errMsg;
     }
@@ -156,12 +171,11 @@ public class CmsBtBusinessLogModel extends BaseModel{
         this.errMsg = errMsg;
     }
 
-
-    public String getPromotionName() {
-        return promotionName;
+    public Boolean getStatus() {
+        return status;
     }
 
-    public void setPromotionName(String promotionName) {
-        this.promotionName = promotionName;
+    public void setStatus(Boolean status) {
+        this.status = status;
     }
 }

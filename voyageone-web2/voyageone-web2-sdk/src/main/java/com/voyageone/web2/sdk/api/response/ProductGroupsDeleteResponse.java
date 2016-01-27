@@ -7,8 +7,7 @@ import java.util.List;
 
 
 /**
- * product groups get response
- * /product/group/selectList
+ * Product Groups Delete response
  * Created on 2015-12-14
  *
  * @author chuanyu.liang
