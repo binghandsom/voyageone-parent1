@@ -111,8 +111,9 @@ public class CmsPlatformPropMappingService extends BaseAppService {
      * 获取当前渠道的所有可用字典
      */
     public List<CmsMtDictModel> getDictList(UserSessionBean user) {
-
-        return dictDao.selectByChannel(user.getSelChannel());
+        Map<String, Object> params = new HashMap<>();
+        params.put("channel_id", user.getSelChannelId());
+        return dictDao.selectByChannel(params);
     }
 
     /**

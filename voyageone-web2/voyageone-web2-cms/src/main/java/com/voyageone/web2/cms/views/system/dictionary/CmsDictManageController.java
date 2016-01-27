@@ -1,22 +1,15 @@
-package com.voyageone.web2.cms.view.dict_edit;
+package com.voyageone.web2.cms.views.system.dictionary;
 
-import com.voyageone.ims.bean.DictMasterPropBean;
-import com.voyageone.ims.enums.CmsFieldEnum.CmsModelEnum;
-import com.voyageone.ims.modelbean.DictWordBean;
 import com.voyageone.web2.base.ajax.AjaxResponse;
-import com.voyageone.web2.base.ajax.dt.DtRequest;
-import com.voyageone.web2.base.ajax.dt.DtResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
-import com.voyageone.web2.cms.model.CustomWord;
+import com.voyageone.web2.cms.model.CmsMtDictModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -26,36 +19,38 @@ import java.util.Map;
  * Created by Jonas on 9/15/15.
  */
 @RestController
-@RequestMapping(value = CmsUrlConstants.DictManage.ROOT, method = RequestMethod.POST)
-public class DictManageController extends CmsController {
+@RequestMapping(value = CmsUrlConstants.SYSTEM.DICTIONARY.ROOT, method = RequestMethod.POST)
+public class CmsDictManageController extends CmsController {
 
     @Autowired
-    private DictManageService dictManageService;
+    private CmsDictManageService dictManageService;
 
-    @RequestMapping(CmsUrlConstants.DictManage.DT_GET_DICT)
-    public AjaxResponse dtGetDict(@RequestBody DtRequest request) {
-
-        DtResponse<List<DictWordBean>> response = dictManageService.dtGetAllDict(request, getUser().getSelChannelId());
-
-        return success(response);
+    @RequestMapping(CmsUrlConstants.SYSTEM.DICTIONARY.INIT)
+    public AjaxResponse init() throws Exception {
+        return success(dictManageService.getMasterData(getUser()));
     }
 
-    @RequestMapping(CmsUrlConstants.DictManage.ADD_DICT)
+    @RequestMapping(CmsUrlConstants.SYSTEM.DICTIONARY.DT_GET_DICT)
+    public AjaxResponse dtGetDict(@RequestBody Map request) {
+        return success(dictManageService.dtGetAllDict(request, getUser().getSelChannelId()));
+    }
+/*
+    @RequestMapping(CmsUrlConstants.SYSTEM.DICTIONARY.ADD_DICT)
     public AjaxResponse addDict(@RequestBody DictWordBean dictWordBean) {
         return success(dictManageService.addDict(dictWordBean, getUser()));
     }
 
-    @RequestMapping(CmsUrlConstants.DictManage.SET_DICT)
+    @RequestMapping(CmsUrlConstants.SYSTEM.DICTIONARY.SET_DICT)
     public AjaxResponse setDict(@RequestBody DictWordBean dictWordBean) {
         return success(dictManageService.setDict(dictWordBean, getUser()));
     }
-
-    @RequestMapping(CmsUrlConstants.DictManage.DEL_DICT)
-    public AjaxResponse delDict(@RequestBody DictWordBean dictWordBean) {
-        return success(dictManageService.delDict(dictWordBean));
+*/
+    @RequestMapping(CmsUrlConstants.SYSTEM.DICTIONARY.DEL_DICT)
+    public AjaxResponse delDict(@RequestBody CmsMtDictModel cmsMtDictModel) {
+        return success(dictManageService.delDict(cmsMtDictModel, getUser()));
     }
-
-    @RequestMapping(CmsUrlConstants.DictManage.GET_CONST)
+/*
+    @RequestMapping(CmsUrlConstants.SYSTEM.DICTIONARY.GET_CONST)
     public AjaxResponse getConst() {
 
         List<CmsModelEnum> cmsValues = dictManageService.getCmsValues();
@@ -69,18 +64,18 @@ public class DictManageController extends CmsController {
         return success(jsonObj);
     }
 
-    @RequestMapping(CmsUrlConstants.DictManage.GET_CUSTOMS)
+    @RequestMapping(CmsUrlConstants.SYSTEM.DICTIONARY.GET_CUSTOMS)
     public AjaxResponse getCustomWords() {
         List<CustomWord> customWords = dictManageService.getCustomWords();
 
         return success(customWords);
     }
 
-    @RequestMapping(CmsUrlConstants.DictManage.GET_DICT_LIST)
+    @RequestMapping(CmsUrlConstants.SYSTEM.DICTIONARY.GET_DICT_LIST)
     public AjaxResponse getDictList() {
         List<DictWordBean> wordBeans = dictManageService.getDictList(getUser().getSelChannelId());
 
         return success(wordBeans);
     }
-
+*/
 }

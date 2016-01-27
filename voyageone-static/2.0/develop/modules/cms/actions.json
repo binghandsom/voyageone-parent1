@@ -129,10 +129,10 @@
       "init": "init",
       "search": "search",
       "updateFinishStatus": "updateFinishStatus"
-    }
-  },
-  "DictService": {
-      "root": "/cms/dict/manage/",
+    },
+    "$dictionaryService": {
+      "root": "/cms/system/dictionary",
+      "init": "init",
       "dtGetDict" : "dtGetDict",
       "getConst" : "getConst",
       "getCustoms" : "getCustoms",
@@ -141,5 +141,6 @@
       "addDict" : "addDict",
       "getDictList" : "getDictList",
       "customs":"getCustoms"
+    }
   }
 }

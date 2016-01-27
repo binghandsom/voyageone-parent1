@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.views.product_edit;
+package com.voyageone.web2.cms.views.product;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;

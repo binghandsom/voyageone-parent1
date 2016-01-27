@@ -12,6 +12,7 @@
   "TXT_COM_CONFIRM": "确认",
   "TXT_COM_MSG_NO_ROWS_SELECT": "请至少选择一条数据...",
   "TXT_COM_UPDATE_SUCCESS": "更新操作成功",
+  "TXT_COM_DELETE_SUCCESS": "删除操作成功",
   "TXT_COM_MSG_SEARCH": "Search...",
   "TXT_COM_EDIT": "Edit",
 
@@ -140,17 +141,20 @@
   "TXT_PRODUCT_NAME_NO_COLON": "Product Name",
   "TXT_ERROR_CODE": "Error Code",
   "TXT_ERROR_MESSAGE": "Error Message",
-  "TXT_ERROR_CREATE_TIME": "Error Create Time",
+  "TXT_CREATE_ON": "Create On",
   "TXT_COMPLETED": "Completed",
   "TXT_ERROR_TYPE": "Error Type",
   "TXT_CATEGORY_NO_COLON": "类目",
+  "TXT_DICTIONARY_MANAGEMENT": "字典管理",
+  "TXT_DICTIONARY_NAME": "Dictionary Name",
+  "TXT_DICTIONARY_COMMENT": "Dictionary Comment",
+  "TXT_ACTION": "Action",
 
 
   "TXT_DICT_CUSTOM": "Custom",
   "TXT_ABSTRACT": "Abstract",
   "TXT_TH_TYPE": "Type",
   "TXT_TH_VALUE": "Value",
-  "TXT_ACTIONS": "Actions",
   "TXT_SELECT_ONE": "Please select one",
   "TXT_DICT_IS_URL": "Need upload to Tmall ?",
   "TXT_HEAD_DICT": "Dict Manage",
@@ -178,6 +182,7 @@
   "BTN_GO": "Go",
   "BTN_SAVE": "Save",
   "BTN_OK": "Ok",
+  "BTN_CREATE": "Create",
 
   "BTN_NEW_DICT_VALUE": "Add dict value",
   "BTN_NEW_DICT_CUS_VALUE": "Add custom value",
