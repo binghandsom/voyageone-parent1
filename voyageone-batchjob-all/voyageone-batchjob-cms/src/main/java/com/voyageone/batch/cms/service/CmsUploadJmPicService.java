@@ -80,7 +80,7 @@ public class CmsUploadJmPicService extends BaseTaskService {
     }
 
     /* 监控上传 */
-    private MonitorUpload monitor=new MonitorUpload();
+    private MonitorUpload monitor=null;
 
     /**
      * 启动多线程，上传图片
@@ -89,6 +89,7 @@ public class CmsUploadJmPicService extends BaseTaskService {
      */
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
+        monitor=new MonitorUpload();
         monitor.setTaskStart();
         List<Map<String, Object>> jmpickeys= jmPicDao.getJmPicImageKeyGroup();
         monitor.setImageKeyCountMap(jmpickeys);
