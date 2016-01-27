@@ -1,13 +1,14 @@
 define([
     'cms',
+    'underscore',
     'modules/cms/enums/FieldTypes',
     'modules/cms/models/SimpleMappingBean',
     'modules/cms/models/RuleExpression',
     'modules/cms/enums/WordTypes',
-    'modules/cms/models/ruleWords',
+    'modules/cms/models/RuleWord',
     'modules/cms/views/pop/platformMapping/ppPlatformMapping.serv',
     'modules/cms/controller/popup.ctl'
-], function (cms, FieldTypes, SimpleMappingBean, RuleExpression, WordTypes, ruleWords) {
+], function (cms, _, FieldTypes, SimpleMappingBean, RuleExpression, WordTypes, RuleWord) {
     'use strict';
     return cms.controller('simpleListMappingPopupController', (function () {
 
@@ -48,7 +49,7 @@ define([
             this.ruleWords = null;
             /**
              * 与 this.ruleWord 平行的行尾配置
-             * @type {TextWord[]}
+             * @type {RuleWord[]}
              */
             this.lineEnds = null;
         }
@@ -165,12 +166,12 @@ define([
 
                 switch (lineEndWord.type) {
                     case 1:
-                        var brWord = new ruleWords.TextWord();
+                        var brWord = new RuleWord(WordTypes.TEXT);
                         brWord.value = '<br/>';
                         lineEndWord.value = brWord;
                         break;
                     case 2:
-                        var spaceWord = new ruleWords.TextWord();
+                        var spaceWord = new RuleWord(WordTypes.TEXT);
                         spaceWord.value = '&nbsp;';
                         lineEndWord.value = spaceWord;
                         break;

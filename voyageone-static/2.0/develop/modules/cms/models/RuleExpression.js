@@ -6,7 +6,7 @@ define(function () {
      */
     function RuleExpression() {
         /**
-         * @type {Array.<TextWord|DictWord|MasterWord|FeedCnWord|FeedOrgWord|SkuWord>}
+         * @type {Array.<RuleWord>}
          */
         this.ruleWordList = null;
     }
