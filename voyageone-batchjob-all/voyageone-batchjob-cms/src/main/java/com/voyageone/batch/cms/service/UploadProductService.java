@@ -4,17 +4,17 @@ import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.cms.bean.SxProductBean;
 import com.voyageone.batch.cms.bean.UpJobParamBean;
 import com.voyageone.batch.cms.dao.CmsBusinessLogDao;
-import com.voyageone.batch.cms.dao.SxWorkloadDao;
 import com.voyageone.batch.cms.enums.PlatformWorkloadStatus;
 import com.voyageone.batch.cms.model.CmsBusinessLogModel;
-import com.voyageone.batch.cms.model.SxWorkloadModel;
 import com.voyageone.batch.cms.bean.WorkLoadBean;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.cms.CmsConstants;
 import com.voyageone.cms.service.CmsProductService;
+import com.voyageone.cms.service.dao.CmsBtSxWorkloadDao;
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.cms.service.model.CmsBtProductModel_Group_Platform;
 import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
+import com.voyageone.cms.service.model.CmsBtSxWorkloadModel;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.util.DateTimeUtil;
 import org.apache.commons.logging.Log;
@@ -34,7 +34,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
     @Autowired
     private UploadWorkloadDispatcher workloadDispatcher;
     @Autowired
-    private SxWorkloadDao sxWorkloadDao;
+    private CmsBtSxWorkloadDao sxWorkloadDao;
     @Autowired
     private CmsBusinessLogDao cmsBusinessLogDao;
 
@@ -46,7 +46,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
     public UploadProductService() {}
 
     public String do_upload() {
-        List<SxWorkloadModel> sxWorkloadModels = sxWorkloadDao.getSxWorkloadModel (PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE);
+        List<CmsBtSxWorkloadModel> sxWorkloadModels = sxWorkloadDao.getSxWorkloadModel (PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE);
         workLoadBeanListMap = buildWorkloadMap(sxWorkloadModels);
         workLoadBeans = workLoadBeanListMap.keySet();
 
@@ -68,10 +68,10 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
      * @return workload和与他相关的SxWorkloadModel的对应关系
      */
     private Map<WorkLoadBean, List<SxProductBean>> buildWorkloadMap
-            (List<SxWorkloadModel> sxWorkloadModels) {
+            (List<CmsBtSxWorkloadModel> sxWorkloadModels) {
 
         Map<WorkLoadBean, List<SxProductBean>> workloadBeanListMap = new HashMap<>();
-        for (SxWorkloadModel sxWorkloadModel : sxWorkloadModels)
+        for (CmsBtSxWorkloadModel sxWorkloadModel : sxWorkloadModels)
         {
             WorkLoadBean workload = new WorkLoadBean();
 
@@ -188,6 +188,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                     codeList.add(cmsBtProductModel.getFields().getCode());
                 }
 
+                assert mainCmsProductModel != null;
                 CmsBtProductModel_Group_Platform mainProductPlatform = mainCmsProductModel.getGroups().getPlatformByGroupId(workLoadBean.getGroupId());
 
                 CmsConstants.PlatformStatus oldPlatformStatus = mainProductPlatform.getPlatformStatus();
@@ -217,7 +218,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                 cmsProductService.bathUpdateWithSXResult(workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id(), workLoadBean.getGroupId(),
                         codeList, workLoadBean.getNumId(), workLoadBean.getProductId(), publishTime, onSaleTime, instockTime, newPlatformStatus);
 
-                SxWorkloadModel sxWorkloadModel = workLoadBean.getSxWorkloadModel();
+                CmsBtSxWorkloadModel sxWorkloadModel = workLoadBean.getSxWorkloadModel();
                 sxWorkloadModel.setPublishStatus(1);
                 sxWorkloadDao.updateSxWorkloadModel(sxWorkloadModel);
                 break;
@@ -271,7 +272,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                 cmsBusinessLogModel.setModified(DateTimeUtil.getNow());
                 cmsBusinessLogDao.insertBusinessLog(cmsBusinessLogModel);
 
-                SxWorkloadModel sxWorkloadModel = workLoadBean.getSxWorkloadModel();
+                CmsBtSxWorkloadModel sxWorkloadModel = workLoadBean.getSxWorkloadModel();
                 sxWorkloadModel.setPublishStatus(2);
                 sxWorkloadDao.updateSxWorkloadModel(sxWorkloadModel);
                 break;
