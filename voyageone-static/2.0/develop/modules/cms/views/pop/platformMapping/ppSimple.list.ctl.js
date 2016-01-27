@@ -12,12 +12,13 @@ define([
     'use strict';
     return cms.controller('simpleListMappingPopupController', (function () {
 
-        function SimpleListMappingPopupController(context, $uibModalInstance, ppPlatformMappingService, alert) {
+        function SimpleListMappingPopupController(context, $uibModalInstance, ppPlatformMappingService, alert, notify) {
 
             this.$uibModalInstance = $uibModalInstance;
             this.context = context;
             this.ppPlatformMappingService = ppPlatformMappingService;
             this.alert = alert;
+            this.notify = notify;
 
             this.maindata = {
                 category: {
@@ -120,22 +121,22 @@ define([
                 var i = 0;
                 var next = null;
                 while (i < words.length) {
-                    next = words[i + 1];
-                    if (next.wordType !== WordTypes.TEXT) {
+                    next = words[++i];
+                    if (!next || next.type !== WordTypes.TEXT) {
                         // 如果这一行不是 Text, 就跳过, 平行的配置指定为 null ,表示"无"
-                        lineEnds[i] = {type: 3, value: null};
+                        lineEnds[i - 1] = {type: 3, value: null};
                         continue;
                     }
 
                     // 命中时, 把这个空格行移动到平行配置中
 
                     if (this.regulars.endWithBr.test(next.value)) {
-                        lineEnds[i] = {type: 1, value: words.splice(1, 1)[0]};
+                        lineEnds[i - 1] = {type: 1, value: words.splice(1, 1)[0]};
                         continue;
                     }
 
                     if (this.regulars.endWithSpace.test(next.value)) {
-                        lineEnds[i] = {type: 2, value: words.splice(1, 1)[0]};
+                        lineEnds[i - 1] = {type: 2, value: words.splice(1, 1)[0]};
                         continue;
                     }
 
@@ -218,9 +219,29 @@ define([
             },
 
             ok: function () {
-                // 最终结束
-                // 解除包装的 ruleWords, 更新到各个位置上
-                this.mapping.expression.ruleWordList = this.unWrapRuleList();
+
+                var simpleMapping = this.simpleMapping;
+                var platform = this.platform;
+                var modal = this.$uibModalInstance;
+                var notify = this.notify;
+
+                simpleMapping.expression.ruleWordList = this.unWrapRuleList();
+
+                this.ppPlatformMappingService
+                    .saveMapping(
+                        this.maindata.category.id,
+                        platform.category.id,
+                        this.context.cartId,
+                        simpleMapping,
+                        platform.property)
+                .then(function(updated){
+                    if (updated)
+                        notify.success('已更新');
+                    else
+                        notify.warning('没有更新任何数据');
+                    modal.close(updated);
+                });
+
                 this.$uibModalInstance.close(this.mapping);
             },
 

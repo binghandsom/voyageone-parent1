@@ -109,9 +109,9 @@ public class CmsPlatformMappingController extends CmsController {
         return success(platformPropMappingService.getMultiComplexFieldMappingType(cartId, platformCategoryId, propertyId));
     }
 
-    @RequestMapping(CmsUrlConstants.MAPPING.PLATFORM.SAVE_COMPLEX_MAPPING)
-    public AjaxResponse saveComplexMapping(@RequestBody PlatformMappingBean mappingBean) throws TopSchemaException {
+    @RequestMapping(CmsUrlConstants.MAPPING.PLATFORM.SAVE_MAPPING)
+    public AjaxResponse saveMapping(@RequestBody PlatformMappingBean mappingBean) throws TopSchemaException {
 
-        return success(platformPropMappingService.saveComplexMapping(mappingBean, getUser()));
+        return success(platformPropMappingService.saveMapping(mappingBean, getUser()));
     }
 }

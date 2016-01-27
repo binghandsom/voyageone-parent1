@@ -8,7 +8,7 @@ define(function () {
         /**
          * @type {string}
          */
-        this.wordType = type;
+        this.type = type;
         /**
          * @type {string}
          */

@@ -117,7 +117,7 @@ define([
                     return;
                 }
 
-                switch (this.ruleWord.wordType) {
+                switch (this.ruleWord.type) {
                     case WordTypes.MASTER:
                         break;
                     case WordTypes.FEED_CN:

@@ -1,6 +1,5 @@
 package com.voyageone.web2.cms.views.setting.mapping.platform;
 
-import com.mongodb.WriteResult;
 import com.taobao.top.schema.exception.TopSchemaException;
 import com.taobao.top.schema.factory.SchemaReader;
 import com.taobao.top.schema.field.ComplexField;
@@ -202,30 +201,29 @@ public class CmsPlatformPropMappingService extends BaseAppService {
     }
 
     /**
-     * 保存一个 Complex Mapping
+     * 保存一个 Mapping
      *
      * @param paramBean 参数模型
      * @param user      用户
      * @return 返回顶层 Mapping 模型
      * @throws TopSchemaException
      */
-    public MappingBean saveComplexMapping(PlatformMappingBean paramBean, UserSessionBean user) throws TopSchemaException {
+    public MappingBean saveMapping(PlatformMappingBean paramBean, UserSessionBean user) throws TopSchemaException {
 
-        if (!(paramBean.getMappingBean() instanceof ComplexMappingBean))
-            throw new BusinessException("Mapping 类型不对, 该方法只能保存 Complex Mapping");
+        MappingBean orgMappingBean = paramBean.getMappingBean();
+
+        if (orgMappingBean == null)
+            throw new BusinessException("没有传递任何 MappingBean");
 
         List<String> mappingPath = paramBean.getMappingPath();
 
         if (mappingPath == null || mappingPath.isEmpty())
             throw new BusinessException("没有 Mapping Path, 不知道该如何更新数据");
 
-        ComplexMappingBean complexMappingBean = (ComplexMappingBean) paramBean.getMappingBean();
-
         CmsMtPlatformMappingModel platformMappingModel = getPlatformMapping(
                 paramBean.getMainCategoryId(), paramBean.getPlatformCategoryId(), paramBean.getCartId(), user
         );
 
-        ComplexMappingBean updatingBean;
         MappingBean mappingBean = searchPropertyMappingByPath(platformMappingModel, paramBean.getMappingPath());
 
         if (mappingBean == null) {
@@ -242,26 +240,35 @@ public class CmsPlatformPropMappingService extends BaseAppService {
 
             // 查找并补全
             mappingBean = fixMappingStruct(platformMappingModel, fieldMap, mappingPath);
-
-            if (!mappingBean.getMappingType().equals(MappingBean.MAPPING_COMPLEX))
-                throw new BusinessException("创建的 Mapping Type 类型不能使用 Complex Mapping");
-
-        } else if (!mappingBean.getMappingType().equals(MappingBean.MAPPING_COMPLEX)) {
-            throw new BusinessException("Mapping Path 指向的不是 Complex Mapping");
         }
 
-        updatingBean = (ComplexMappingBean) mappingBean;
+        if (!mappingBean.getMappingType().equals(orgMappingBean.getMappingType())) {
+            throw new BusinessException("将要更新的和既存的类型不同");
+        }
 
-        updatingBean.setMasterPropId(complexMappingBean.getMasterPropId());
+        updateFinalMapping(mappingBean, orgMappingBean);
 
-        WriteResult result = platformMappingDao.update(platformMappingModel);
-
-        if (result.getN() < 1)
-            return null;
+        platformMappingDao.update(platformMappingModel);
 
         List<String> top = new ArrayList<>();
         top.add(mappingPath.get(mappingPath.size() - 1));
         return searchPropertyMappingByPath(platformMappingModel, top);
+    }
+
+    private void updateFinalMapping(MappingBean old, MappingBean $new) {
+
+        switch (old.getMappingType()) {
+            case MappingBean.MAPPING_SIMPLE:
+                SimpleMappingBean oldSimple = (SimpleMappingBean) old;
+                SimpleMappingBean newSimple = (SimpleMappingBean) $new;
+                oldSimple.setExpression(newSimple.getExpression());
+                break;
+            case MappingBean.MAPPING_COMPLEX:
+                ComplexMappingBean oldComplex = (ComplexMappingBean) old;
+                ComplexMappingBean newComplex = (ComplexMappingBean) $new;
+                oldComplex.setMasterPropId(newComplex.getMasterPropId());
+                break;
+        }
     }
 
     private MappingBean fixMappingStruct(CmsMtPlatformMappingModel platformMappingModel, Map<String, Field> fieldMap,

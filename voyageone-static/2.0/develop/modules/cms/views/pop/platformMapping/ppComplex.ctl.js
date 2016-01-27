@@ -100,7 +100,7 @@ define([
                 var notify = this.notify;
 
                 this.ppPlatformMappingService
-                    .saveComplexMapping(
+                    .saveMapping(
                         this.maindata.category.id,
                         platform.category.id,
                         this.context.cartId,

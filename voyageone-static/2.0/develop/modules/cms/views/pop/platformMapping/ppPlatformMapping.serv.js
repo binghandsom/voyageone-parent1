@@ -77,27 +77,27 @@ define([
             },
 
             /**
-             * 保存一个 Complex Mapping
+             * 保存一个 Mapping
              * @param {string} mainCategoryId 主数据类目 ID
              * @param {string} platformCategoryId 平台类目 ID
              * @param {number} cartId 平台 ID
-             * @param {ComplexMappingBean} complexMapping 将保存的 Mapping
+             * @param {MappingBean} mapping 将保存的 Mapping
              * @param {WrapField} property 平台属性, 用于构造属性的 Path 作为 MappingPath
              * @returns {Promise.<boolean>}
              */
-            saveComplexMapping: function (mainCategoryId, platformCategoryId, cartId, complexMapping, property) {
+            saveMapping: function (mainCategoryId, platformCategoryId, cartId, mapping, property) {
 
                 var mappingPath = [property.id];
-                var parent;
-                while (parent = property.parent) {
-                    mappingPath.push(parent.id);
+                var parent = property;
+                while (parent = parent.parent) {
+                    mappingPath.unshift(parent.id);
                 }
 
-                return this.platformMappingService.$saveComplexMapping({
+                return this.platformMappingService.$saveMapping({
                     mainCategoryId: mainCategoryId,
                     platformCategoryId: platformCategoryId,
                     cartId: cartId,
-                    mappingBean: complexMapping,
+                    mappingBean: mapping,
                     mappingPath: mappingPath
                 }).then(function (res) {
                     // java return top MappingBean
@@ -251,14 +251,14 @@ define([
                     // 不同类型的父级, 需要不同的处理
                     switch (parent.type) {
                         case FieldTypes.complex:
-                            mappings = parentMapping ? parentMapping.subMapping : null;
+                            mappings = parentMapping ? parentMapping.subMappings : null;
                             break;
                         case FieldTypes.multiComplex:
 
                             // 如果是多复杂类型, 有可能返回的是数组
                             switch (parentMapping) {
                                 case MappingTypes.COMPLEX_MAPPING:
-                                    mappings = parentMapping ? parentMapping.subMapping : null;
+                                    mappings = parentMapping ? parentMapping.subMappings : null;
                                     break;
                                 case MappingTypes.MULTI_COMPLEX_MAPPING:
                                     multiMappings = parentMapping;
