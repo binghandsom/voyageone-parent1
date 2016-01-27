@@ -33,7 +33,7 @@ public class JumeiImageFileService extends JmBase {
 
         Map<String, String> params = new HashMap<>();
         params.put("imgName", fileBean.getImgName());
-        params.put("dirName", fileBean.getImgName());
+        params.put("dirName", fileBean.getDirName());
         params.put("needReplace", fileBean.getNeedReplace().toString());
 
         params.put("imgData", fileBean.getBase64Content());
