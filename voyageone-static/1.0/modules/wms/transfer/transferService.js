@@ -276,12 +276,13 @@ define([
              * 获取一个 Item的SKU信息
              * @param packageIitem {number}
              */
-            this.getSku = function (transfer, packageIitem) {
+            this.getSku = function (order_channel_id, transfer_barcode, transfer_sku, type) {
 
                 return http.ajaxPost({
-                        order_channel_id: transfer.order_channel_id.toString(),
-                        transfer_barcode: packageIitem.transfer_barcode.toString(),
-                        transfer_sku: packageIitem.transfer_sku.toString()
+                        order_channel_id: order_channel_id.toString(),
+                        transfer_barcode: transfer_barcode.toString(),
+                        transfer_sku: transfer_sku.toString(),
+                        type:type
                     },
                     actions.transfer.package.item.getSku)
 

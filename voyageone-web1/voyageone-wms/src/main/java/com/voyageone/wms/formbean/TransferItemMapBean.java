@@ -11,11 +11,21 @@ import com.voyageone.wms.modelbean.TransferItemBean;
 public class TransferItemMapBean extends TransferItemBean {
     public String order_channel_id;
 
+    public String type;
+
     public String getOrder_channel_id() {
         return order_channel_id;
     }
 
     public void setOrder_channel_id(String order_channel_id) {
         this.order_channel_id = order_channel_id;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

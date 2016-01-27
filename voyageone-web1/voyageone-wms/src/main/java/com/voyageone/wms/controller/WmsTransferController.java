@@ -333,6 +333,7 @@ public class WmsTransferController extends BaseController {
         transferItem.setOrder_channel_id((String) params.get("order_channel_id"));
         transferItem.setTransfer_barcode((String) params.get("transfer_barcode"));
         transferItem.setTransfer_sku((String) params.get("transfer_sku"));
+        transferItem.setType((String) params.get("type"));
 
         Map<String, Object> result = transferService.getSku(transferItem);
 

@@ -2,6 +2,7 @@ package com.voyageone.wms.service.impl;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.base.exception.SystemException;
+import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.StoreConfigEnums;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
@@ -549,6 +550,7 @@ public class WmsTransferServiceImpl implements WmsTransferService {
         String clientSku = "";
         String Sku = transferItem.getTransfer_sku();
         String Upc = transferItem.getTransfer_barcode();
+        String printSkuLabel = ChannelConfigEnums.Print.YES.getIs();
 
         ClientSkuBean clientSkuBean = clientSkuDao.getSkuInfo(transferItem.getOrder_channel_id(), transferItem.getTransfer_barcode());
 
@@ -557,10 +559,19 @@ public class WmsTransferServiceImpl implements WmsTransferService {
             Upc = clientSkuBean.getUpc();
         }
 
+        // 前台来源是Scan时，判断是否需要自动打印
+        if (transferItem.getType().equals("scan")) {
+            printSkuLabel = ChannelConfigs.getVal1(transferItem.getOrder_channel_id(),ChannelConfigEnums.Name.print_sku_label);
+            if (StringUtils.isNullOrBlank2(printSkuLabel)) {
+                printSkuLabel = ChannelConfigEnums.Print.NO.getIs();
+            }
+        }
+
         resultMap.put("labelType", labelType);
         resultMap.put("clientSku", clientSku);
         resultMap.put("Sku", Sku);
         resultMap.put("Upc", Upc);
+        resultMap.put("printSkuLabel", printSkuLabel);
 
         return resultMap;
     }
