@@ -181,12 +181,12 @@ public class CmsUploadJmPicService extends BaseTaskService {
             int retryCount=GET_IMG_INPUTSTREAM_RETRY;
             InputStream inputStream = getImgInputStream(jmPicBean.getOriginUrl(),retryCount);
             Assert.notNull(inputStream,"inputStream为null，图片流获取失败！"+jmPicBean.getOriginUrl());
-            jmImageFileBean.setInputStream(HttpUtils.getInputStream(jmPicBean.getOriginUrl(),null));
+            jmImageFileBean.setInputStream(inputStream);
             jmImageFileBean.setDirName(buildDirName(jmPicBean));
             jmImageFileBean.setImgName(jmPicBean.getImageKey()+jmPicBean.getImageType()+jmPicBean.getImageIndex()+IMGTYPE);
             jmImageFileBean.setNeedReplace(NEED_REPLACE);
             return jmImageFileBean;
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOG.error("CmsUploadJmPicService -> convertJmPicToImageFileBean() Error:"+e);
             return null;
         }
