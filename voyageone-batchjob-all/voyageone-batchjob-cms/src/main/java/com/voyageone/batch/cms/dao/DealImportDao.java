@@ -29,4 +29,14 @@ public class DealImportDao extends BaseDao {
 		return isSuccess;
 	}
 
+	/**
+	 * 更新JmBtDealImportModel
+	 * @param jmBtDealImportModel
+	 * @return
+	 */
+	public int updateDealImportInfo(JmBtDealImportModel jmBtDealImportModel){
+		int ret = updateTemplate.update("jm_bt_deal_import_update", jmBtDealImportModel);
+		return ret;
+	}
+
 }

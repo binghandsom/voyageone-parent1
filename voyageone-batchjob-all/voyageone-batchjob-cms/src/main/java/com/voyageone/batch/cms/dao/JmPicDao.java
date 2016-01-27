@@ -5,6 +5,7 @@ import com.voyageone.batch.cms.bean.JmPicBean;
 import com.voyageone.common.Constants;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +22,12 @@ public class JmPicDao extends BaseDao{
      * 获取聚美imageKey集合
      * @return list
      */
-    public List<Map<String,String>> getJmPicImageKeyGroup(){
-        return selectList(Constants.DAO_NAME_SPACE_CMS + "cms_work_jm_bt_images_getJmPic_ImageKeyGroup");
+    public List<Map<String,Object>> getJmPicImageKeyGroup(){
+        List<Map<String,Object>> ret = selectList(Constants.DAO_NAME_SPACE_CMS + "cms_work_jm_bt_images_getJmPic_ImageKeyGroup");
+        if(ret == null){
+            ret = new ArrayList<>();
+        }
+        return ret;
     }
 
     /**
@@ -39,10 +44,11 @@ public class JmPicDao extends BaseDao{
      * @param seq seq
      * @return effect count
      */
-    public int updateJmpicUploaded(String jmUrl,Integer seq){
+    public int updateJmpicUploaded(String jmUrl,Integer seq,String modifier){
         Map<String,Object> params=new HashMap<String,Object>();
         params.put("seq",seq);
         params.put("jmUrl",jmUrl);
+        params.put("modifier",modifier);
         return update(Constants.DAO_NAME_SPACE_CMS + "cms_work_jm_bt_images_updateJmPic_uploaded", params);
     }
 
@@ -51,7 +57,10 @@ public class JmPicDao extends BaseDao{
      * @param imageKey 参数
      * @return effect count
      */
-    public int updateJmProductImportUploaded(String imageKey){
-        return update(Constants.DAO_NAME_SPACE_CMS + "cms_work_jm_bt_product_import_updateJmProductImport_uploaded", imageKey);
+    public int updateJmProductImportUploaded(String imageKey,String modifier){
+        Map<String,Object> params=new HashMap<String,Object>();
+        params.put("imageKey",imageKey);
+        params.put("modifier",modifier);
+        return update(Constants.DAO_NAME_SPACE_CMS + "cms_work_jm_bt_product_import_updateJmProductImport_uploaded", params);
     }
 }
