@@ -138,6 +138,7 @@ public class CmsUploadJmPicService extends BaseTaskService {
                 }
                 if(noError){
                     jmPicDao.updateJmProductImportUploaded(imageKey,getTaskName());
+                    monitor.addProductSucessOne();
                 }
             }
         }
@@ -247,11 +248,14 @@ public class CmsUploadJmPicService extends BaseTaskService {
         /* 任务查询的imageKey,count集合 */
         private Map<String,Integer> imageKeyCountMap=new HashMap<String,Integer>();
 
-        /* 成功上传的总数 */
+        /* 成功上传的图片总数 */
         private Integer successUploadCount=0;
 
-        /* 失败的总数 */
+        /* 失败的图片总数 */
         private Integer errorUploadCount=0;
+
+        /* 图片全部上传完成的产品总数 */
+        private Integer productSuccessCount=0;
 
         /* 任务名称 */
         private String taskName;
@@ -293,6 +297,10 @@ public class CmsUploadJmPicService extends BaseTaskService {
             this.errorUploadCount +=1;
         }
 
+        public synchronized void addProductSucessOne(){this.productSuccessCount+=1;}
+
+        public Integer getProductFailedCount(){return imageKeyCountMap.size()-this.productSuccessCount;}
+
         public String getTaskName() {
             return taskName;
         }
@@ -328,8 +336,9 @@ public class CmsUploadJmPicService extends BaseTaskService {
          * @return string 监控结果描述
          */
         public String toString(){
-            return "\n【"+taskName+"】任务共"+threadCount+"个线程,耗时:"+getTaskUsedTime()+",需要上传图片"+getNeedUploadCount()+"个,实际上传"+successUploadCount+",失败上传"+errorUploadCount
-                    +"\nImgKeyMap详细信息："+imageKeyCountMap
+            return "\n【"+taskName+"】任务共"+threadCount+"个线程,耗时:"+getTaskUsedTime()+",需要上传图片"+getNeedUploadCount()+"个,实际上传"+successUploadCount+"个,失败上传"+errorUploadCount
+                    +"个\n已完成图片上传的产品总数："+productSuccessCount+"\t未完全上传完图片的产品总数："+getProductFailedCount()
+                    +"\nImgKeyMap详细信息->总数:"+imageKeyCountMap.size()+"\tDataMap:"+imageKeyCountMap
                     +"\n\t\t****recordTime："+getRecordTime()+" end****";
         }
     }
