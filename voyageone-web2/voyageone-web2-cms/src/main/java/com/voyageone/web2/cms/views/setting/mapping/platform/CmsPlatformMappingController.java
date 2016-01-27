@@ -4,8 +4,12 @@ import com.taobao.top.schema.exception.TopSchemaException;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
+import com.voyageone.web2.cms.bean.setting.mapping.platform.PlatformMappingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
@@ -86,14 +90,28 @@ public class CmsPlatformMappingController extends CmsController {
     }
 
     @RequestMapping(CmsUrlConstants.MAPPING.PLATFORM.GET_PLATFORM_MAPPING)
-    public AjaxResponse getPlatformMapping(@RequestBody Map<String, Object> params) {
+    public AjaxResponse getPlatformMapping(@RequestBody PlatformMappingBean params) {
 
-        String mainCategoryId = (String) params.get("mainCategoryId");
-
-        String platformCategoryId = (String) params.get("platformCategoryId");
-
-        Integer cartId = (Integer) params.get("cartId");
+        String mainCategoryId = params.getMainCategoryId();
+        String platformCategoryId = params.getPlatformCategoryId();
+        Integer cartId = params.getCartId();
 
         return success(platformPropMappingService.getPlatformMapping(mainCategoryId, platformCategoryId, cartId, getUser()));
+    }
+
+    @RequestMapping(CmsUrlConstants.MAPPING.PLATFORM.GET_MAPPING_TYPE)
+    public AjaxResponse getMappingType(@RequestBody Map<String, Object> params) {
+
+        Integer cartId = (Integer) params.get("cartId");
+        String platformCategoryId = (String) params.get("platformCategoryId");
+        String propertyId = (String) params.get("propertyId");
+
+        return success(platformPropMappingService.getMultiComplexFieldMappingType(cartId, platformCategoryId, propertyId));
+    }
+
+    @RequestMapping(CmsUrlConstants.MAPPING.PLATFORM.SAVE_COMPLEX_MAPPING)
+    public AjaxResponse saveComplexMapping(@RequestBody PlatformMappingBean mappingBean) throws TopSchemaException {
+
+        return success(platformPropMappingService.saveComplexMapping(mappingBean, getUser()));
     }
 }

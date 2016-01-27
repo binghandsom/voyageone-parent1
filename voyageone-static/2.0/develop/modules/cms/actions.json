@@ -60,7 +60,9 @@
         "getPlatformCategory": "getPlatformCategory",
         "getMainCategorySchema": "getMainCategorySchema",
         "getDictList": "getDictList",
-        "getPlatformMapping": "getPlatformMapping"
+        "getPlatformMapping": "getPlatformMapping",
+        "getMappingType": "getMappingType",
+        "$saveComplexMapping": "saveComplexMapping"
       }
     },
     "pop": {

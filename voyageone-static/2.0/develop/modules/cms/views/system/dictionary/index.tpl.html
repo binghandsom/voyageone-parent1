@@ -1,0 +1,110 @@
+<div class="wrapper-md" ng-init="initialize()">
+	<div class="col-sm-12">
+		<!-- search -->
+		<div class="panel panelPromotion">
+			<div class="container-fluid m-t-sm">
+				<div class="col-sm-12">
+					<div class="col-sm-3">
+						<div class="form-horizontal">
+							<div class="form-group">
+								<label class="col-sm-3 control-label">平台</label>
+								<div class="col-sm-8">
+									<select class="form-control">
+										<option value="">ALL</option>
+										<option value="">TM</option>
+										<option value="">JD</option>
+										<option value="">JM</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-4">
+						<div class="form-horizontal">
+							<div class="form-group">
+								<label class="col-sm-3 control-label">Dictionary Name</label>
+								<div class="col-sm-8">
+									<input type="text" class="form-control">
+								</div>
+							</div>
+						</div><!-- .form-group -->
+					</div>
+
+					<div class="col-sm-4">
+						<div class="form-inline">
+							<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
+							<button class="btn btn-success"><i class="fa fa-plus"></i> Create</button>
+						</div><!-- .form-inline -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div><!-- .accordion --><!--/search-->
+
+	<div class="col-sm-12">
+		<div class="box">
+			<div class="box-body">
+			<div class="table-responsive">
+				<table class="table table-hover vo_table" style="margin-bottom:0px">
+					<tbody>
+					<tr class="font-bold" style="background:#e67e22;color:#fff">
+						<td class="mfb-xt3 text-center">Seq.</td>
+						<td class="mfb-xxt text-center">Platform</td>
+						<td class="mfb-xxs text-left">Dictionary Name</td>
+						<td class="mfb-xxxxs text-left">Dictionary Comment</td>
+						<td class="mfb-xxt text-center">Dictionary Update Time</td>
+						<td class="mfb-xxt text-center">Dictionary Create Time</td>
+						<td class="mfb-xt text-center">Action</td>
+					</tr>
+					</tbody>
+				</table>
+				<div class="col-sm-12 dropdown_table dropdown_table_main">
+					<table class="table table-hover vo_table tableWordBreak" style="margin-bottom:0px">
+						<tbody>
+						<tr ng-repeat="errorInfo in vm.errorList">
+							<td class="mfb-xt3 text-center">1</td>
+							<td class="mfb-xxt text-center"><span class="badge badge-empty">天猫</span></td>
+							<td class="mfb-xxs text-left text-u-l"><a href="#" target="_blank"> 商品详情画面1</a></td>
+							<td class="mfb-xxxxs text-left">第一部分：带参数的图片</td>
+							<td class="mfb-xxt text-center">2016.1.2</td>
+							<td class="mfb-xxt text-center">2016.1.6</td>
+							<td class="mfb-xt text-center" ng-controller="popupCtrl">
+							<button title="编辑" class="btn btn-success btn-xs" ng-click=""><i class="fa fa-pencil"></i></button>
+							<button title="删除" class="btn btn-danger btn-xs"  ng-click="del(promotion)"><i class="fa  fa-trash-o"></i></button>
+						</td>
+						</tr>
+						<tr ng-repeat="errorInfo in vm.errorList">
+							<td class="mfb-xt3 text-center">2</td>
+							<td class="mfb-xxt text-center"><span class="badge badge-empty">京东</span></td>
+							<td class="mfb-xxs text-left text-u-l"><a href="#" target="_blank"> 商品详情画面1</a></td>
+							<td class="mfb-xxxxs text-left">第一部分：带参数的图片</td>
+							<td class="mfb-xxt text-center">2016.1.2</td>
+							<td class="mfb-xxt text-center">2016.1.6</td>
+							<td class="mfb-xt text-center" ng-controller="popupCtrl">
+								<button title="编辑" class="btn btn-success btn-xs" ng-click=""><i class="fa fa-pencil"></i></button>
+								<button title="删除" class="btn btn-danger btn-xs"  ng-click="del(promotion)"><i class="fa  fa-trash-o"></i></button>
+							</td>
+						</tr>
+						<tr ng-repeat="errorInfo in vm.errorList">
+							<td class="mfb-xt3 text-center">3</td>
+							<td class="mfb-xxt text-center"><span class="badge badge-empty">聚美</span></td>
+							<td class="mfb-xxs text-left text-u-l"><a href="#" target="_blank"> 商品详情画面1</a></td>
+							<td class="mfb-xxxxs text-left">第一部分：带参数的图片</td>
+							<td class="mfb-xxt text-center">2016.1.2</td>
+							<td class="mfb-xxt text-center">2016.1.6</td>
+							<td class="mfb-xt text-center" ng-controller="popupCtrl">
+								<button title="编辑" class="btn btn-success btn-xs" ng-click=""><i class="fa fa-pencil"></i></button>
+								<button title="删除" class="btn btn-danger btn-xs"  ng-click="del(promotion)"><i class="fa  fa-trash-o"></i></button>
+							</td>
+						</tr>
+						</tbody>
+					</table>
+				</div><!-- .table-responsive -->
+			</div>
+			</div><!-- /.box-body -->
+			<div class="m-t-xs">
+				<vpagination config="vm.errorPageOption"></vpagination>
+			</div>
+		</div>
+	</div><!-- .col-lg-12 -->
+</div><!-- end .wrapper-md -->

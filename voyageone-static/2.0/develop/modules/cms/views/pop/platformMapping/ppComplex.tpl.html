@@ -5,8 +5,8 @@
         </button>
         <h5 class="modal-title"><i class="fa fa-crosshairs"></i> Complex 父级属性匹配</h5>
     </div>
-    <h5 class="m-l">主数据类目：{{ctrl.mainCategoryPath}}</h5>
-    <h5 class="text-vo m-l">-> 平台类目：{{::ctrl.context.platformCategoryPath}}</h5>
+    <h5 class="m-l">主数据类目：{{ctrl.maindata.category.path}}</h5>
+    <h5 class="text-vo m-l">-> 平台类目：{{::ctrl.platform.category.path}}</h5>
 
     <div class="p-l-r">
         <form role="form" class="form-horizontal m-r-sm m-l-sm">
@@ -16,8 +16,8 @@
                 </div>
                 <div class="col-sm-9 form-inline">
                     <select class="form-control" title="值选择"
-                            ng-options="f as f.name for f in ctrl.options.values"
-                            ng-model="ctrl.selected.value">
+                            ng-options="f.id as f.name for f in ctrl.options.values"
+                            ng-model="ctrl.complexMapping.masterPropId">
                     </select>
                 </div>
             </div>
