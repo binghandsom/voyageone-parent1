@@ -58,7 +58,7 @@ public class CmsUploadJmPicService extends BaseTaskService {
     private static final int GET_IMG_INPUTSTREAM_RETRY=5;
 
     /* SHOPBEAN */
-    private static final ShopBean SHOPBEAN = ShopConfigs.getShop(ChannelConfigEnums.Channel.SN.getId(), CartEnums.Cart.JM.getId());
+    private static ShopBean SHOPBEAN;
 
     /* 图片后缀 */
     private static final String IMGTYPE=".jpg";
@@ -89,6 +89,7 @@ public class CmsUploadJmPicService extends BaseTaskService {
      */
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
+        SHOPBEAN = ShopConfigs.getShop(ChannelConfigEnums.Channel.SN.getId(), CartEnums.Cart.JM.getId());
         monitor=new MonitorUpload();
         monitor.setTaskStart();
         List<Map<String, Object>> jmpickeys= jmPicDao.getJmPicImageKeyGroup();
@@ -124,8 +125,8 @@ public class CmsUploadJmPicService extends BaseTaskService {
                 boolean noError=true;
                 for (JmPicBean jmPicBean:jmPicBeanList){
                     try {
-                        String juUrl=mockImageFileUpload(SHOPBEAN,convertJmPicToImageFileBean(jmPicBean));
-                        //String juUrl= jumeiImageFileService.imageFileUpload(SHOPBEAN,convertJmPicToImageFileBean(jmPicBean));
+                        //String juUrl=mockImageFileUpload(SHOPBEAN,convertJmPicToImageFileBean(jmPicBean));
+                        String juUrl= jumeiImageFileService.imageFileUpload(SHOPBEAN,convertJmPicToImageFileBean(jmPicBean));
                         jmPicDao.updateJmpicUploaded(juUrl,jmPicBean.getSeq(),getTaskName());
                         monitor.addSuccsseOne();
                     } catch (Exception e) {
