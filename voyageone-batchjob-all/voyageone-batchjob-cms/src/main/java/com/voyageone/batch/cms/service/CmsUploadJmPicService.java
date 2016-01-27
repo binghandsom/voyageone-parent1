@@ -6,7 +6,9 @@ import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.cms.bean.JmPicBean;
 import com.voyageone.batch.cms.dao.ImageDao;
 import com.voyageone.batch.cms.dao.JmPicDao;
+import com.voyageone.batch.core.Enums.TaskControlEnums;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
+import com.voyageone.batch.core.util.TaskControlUtils;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.jumei.Bean.JmImageFileBean;
 import com.voyageone.common.components.jumei.JumeiImageFileService;
@@ -29,10 +31,7 @@ import javax.imageio.ImageIO;
 import javax.xml.rpc.ServiceException;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -47,7 +46,7 @@ public class CmsUploadJmPicService extends BaseTaskService {
     private static final Logger LOG= LoggerFactory.getLogger(CmsUploadJmPicService.class);
 
     /* 线程总数 */
-    private static final int THREAD_COUNT=10;
+    /*private static final int THREAD_COUNT=10;*/
 
     /* 调用聚美Api相同是否替换 */
     private static final boolean NEED_REPLACE=true;
@@ -94,17 +93,15 @@ public class CmsUploadJmPicService extends BaseTaskService {
         List<Map<String, Object>> jmpickeys= jmPicDao.getJmPicImageKeyGroup();
         monitor.setImageKeyCountMap(jmpickeys);
         monitor.setTaskName(getTaskName());
-        monitor.setThreadCount(THREAD_COUNT);
-        ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
+        //monitor.setThreadCount(THREAD_COUNT);
+        List<Runnable> threads = new ArrayList<>();
         for (Map<String,Object> picMap:jmpickeys){
             String imageKey=picMap.get("imageKey").toString();
             if(StringUtils.isEmpty(imageKey))
                 continue;
-            executor.execute(new UploadTask(imageKey));
+            threads.add(new UploadTask(imageKey));
         }
-        executor.shutdown();
-        while (!executor.isTerminated())
-            Thread.sleep(1000);
+        runWithThreadPool(threads, taskControlList);
         monitor.setTaskEnd();
         LOG.info(monitor.toString());
     }
@@ -336,7 +333,7 @@ public class CmsUploadJmPicService extends BaseTaskService {
          * @return string 监控结果描述
          */
         public String toString(){
-            return "\n【"+taskName+"】任务共"+threadCount+"个线程,耗时:"+getTaskUsedTime()+",需要上传图片"+getNeedUploadCount()+"个,实际上传"+successUploadCount+"个,失败上传"+errorUploadCount
+            return "\n【"+taskName+"】任务耗时:"+getTaskUsedTime()+",需要上传图片"+getNeedUploadCount()+"个,实际上传"+successUploadCount+"个,失败上传"+errorUploadCount
                     +"个\n已完成图片上传的产品总数："+productSuccessCount+"\t未完全上传完图片的产品总数："+getProductFailedCount()
                     +"\nImgKeyMap详细信息->总数:"+imageKeyCountMap.size()+"\tDataMap:"+imageKeyCountMap
                     +"\n\t\t****recordTime："+getRecordTime()+" end****";
