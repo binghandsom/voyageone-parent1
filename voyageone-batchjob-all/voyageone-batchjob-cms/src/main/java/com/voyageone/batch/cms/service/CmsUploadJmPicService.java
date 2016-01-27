@@ -6,7 +6,9 @@ import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.cms.bean.JmPicBean;
 import com.voyageone.batch.cms.dao.ImageDao;
 import com.voyageone.batch.cms.dao.JmPicDao;
+import com.voyageone.batch.core.Enums.TaskControlEnums;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
+import com.voyageone.batch.core.util.TaskControlUtils;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.jumei.Bean.JmImageFileBean;
 import com.voyageone.common.components.jumei.JumeiImageFileService;
@@ -17,6 +19,7 @@ import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.configs.beans.ShopConfigBean;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.StringUtils;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +27,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
+import javax.imageio.ImageIO;
 import javax.xml.rpc.ServiceException;
+import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -44,7 +46,7 @@ public class CmsUploadJmPicService extends BaseTaskService {
     private static final Logger LOG= LoggerFactory.getLogger(CmsUploadJmPicService.class);
 
     /* 线程总数 */
-    private static final int THREAD_COUNT=10;
+    /*private static final int THREAD_COUNT=10;*/
 
     /* 调用聚美Api相同是否替换 */
     private static final boolean NEED_REPLACE=true;
@@ -57,6 +59,9 @@ public class CmsUploadJmPicService extends BaseTaskService {
 
     /* SHOPBEAN */
     private static final ShopBean SHOPBEAN = ShopConfigs.getShop(ChannelConfigEnums.Channel.SN.getId(), CartEnums.Cart.JM.getId());
+
+    /* 图片后缀 */
+    private static final String IMGTYPE=".jpg";
 
     @Autowired
     private JmPicDao jmPicDao;
@@ -88,17 +93,15 @@ public class CmsUploadJmPicService extends BaseTaskService {
         List<Map<String, Object>> jmpickeys= jmPicDao.getJmPicImageKeyGroup();
         monitor.setImageKeyCountMap(jmpickeys);
         monitor.setTaskName(getTaskName());
-        monitor.setThreadCount(THREAD_COUNT);
-        ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
+        //monitor.setThreadCount(THREAD_COUNT);
+        List<Runnable> threads = new ArrayList<>();
         for (Map<String,Object> picMap:jmpickeys){
             String imageKey=picMap.get("imageKey").toString();
             if(StringUtils.isEmpty(imageKey))
                 continue;
-            executor.execute(new UploadTask(imageKey));
+            threads.add(new UploadTask(imageKey));
         }
-        executor.shutdown();
-        while (!executor.isTerminated())
-            Thread.sleep(1000);
+        runWithThreadPool(threads, taskControlList);
         monitor.setTaskEnd();
         LOG.info(monitor.toString());
     }
@@ -117,16 +120,22 @@ public class CmsUploadJmPicService extends BaseTaskService {
             if(CollectionUtils.isEmpty(jmPicBeanList)){
                 LOG.warn("UploadTask -> run() -> jmPicBeanList为空");
             }else{
+                boolean noError=true;
                 for (JmPicBean jmPicBean:jmPicBeanList){
                     try {
                         String juUrl=mockImageFileUpload(SHOPBEAN,convertJmPicToImageFileBean(jmPicBean));
                         //String juUrl= jumeiImageFileService.imageFileUpload(SHOPBEAN,convertJmPicToImageFileBean(jmPicBean));
-                        jmPicDao.updateJmpicUploaded(juUrl,jmPicBean.getSeq());
+                        jmPicDao.updateJmpicUploaded(juUrl,jmPicBean.getSeq(),getTaskName());
                         monitor.addSuccsseOne();
                     } catch (Exception e) {
+                        noError=false;
                         monitor.addErrorOne();
                         LOG.error("UploadTask -> run() -> exception:"+e);
                     }
+                }
+                if(noError){
+                    jmPicDao.updateJmProductImportUploaded(imageKey,getTaskName());
+                    monitor.addProductSucessOne();
                 }
             }
         }
@@ -143,24 +152,21 @@ public class CmsUploadJmPicService extends BaseTaskService {
      * @return jm_url
      * @throws IOException
      */
-    private static String mockImageFileUpload(ShopBean shopBean, JmImageFileBean fileBean)throws IOException {
-        /* 聚美dir斜杠分隔符 */
-        final String SLASH="/";
+    private static String mockImageFileUpload(ShopBean shopBean, JmImageFileBean fileBean) throws IOException {
         File file=new File("F:/jumei"+fileBean.getDirName());
         if(!file.exists()){
             file.mkdirs();
         }
-        InputStream inputStream=fileBean.getInputStream();
-        String imgPath="F:/jumei"+fileBean.getDirName()+SLASH+fileBean.getImgName();
-        FileOutputStream fileOutputStream = new FileOutputStream(new File(imgPath));
-        byte[] b = new byte[1024];
-        while((inputStream.read(b)) != -1){
-            fileOutputStream.write(b);
+        try {
+            InputStream inputStream=fileBean.getInputStream();
+            Assert.notNull(inputStream);
+            String imgPath="F:/jumei"+fileBean.getDirName()+SLASH+fileBean.getImgName();
+            FileUtils.copyInputStreamToFile(fileBean.getInputStream(),new File(imgPath));
+            return imgPath;
+        } catch (IOException e) {
+            LOG.error("CmsUploadJmPicService -> mockImageFileUpload() Error:"+e);
+            return null;
         }
-        fileOutputStream.flush();
-        fileOutputStream.close();
-        inputStream.close();
-        return imgPath;
     }
 
     /**
@@ -177,7 +183,7 @@ public class CmsUploadJmPicService extends BaseTaskService {
             Assert.notNull(inputStream,"inputStream为null，图片流获取失败！"+jmPicBean.getOriginUrl());
             jmImageFileBean.setInputStream(HttpUtils.getInputStream(jmPicBean.getOriginUrl(),null));
             jmImageFileBean.setDirName(buildDirName(jmPicBean));
-            jmImageFileBean.setImgName(imageFile.getName());
+            jmImageFileBean.setImgName(jmPicBean.getImageKey()+jmPicBean.getImageType()+jmPicBean.getImageIndex()+IMGTYPE);
             jmImageFileBean.setNeedReplace(NEED_REPLACE);
             return jmImageFileBean;
         } catch (IOException e) {
@@ -239,11 +245,14 @@ public class CmsUploadJmPicService extends BaseTaskService {
         /* 任务查询的imageKey,count集合 */
         private Map<String,Integer> imageKeyCountMap=new HashMap<String,Integer>();
 
-        /* 成功上传的总数 */
+        /* 成功上传的图片总数 */
         private Integer successUploadCount=0;
 
-        /* 失败的总数 */
+        /* 失败的图片总数 */
         private Integer errorUploadCount=0;
+
+        /* 图片全部上传完成的产品总数 */
+        private Integer productSuccessCount=0;
 
         /* 任务名称 */
         private String taskName;
@@ -285,6 +294,10 @@ public class CmsUploadJmPicService extends BaseTaskService {
             this.errorUploadCount +=1;
         }
 
+        public synchronized void addProductSucessOne(){this.productSuccessCount+=1;}
+
+        public Integer getProductFailedCount(){return imageKeyCountMap.size()-this.productSuccessCount;}
+
         public String getTaskName() {
             return taskName;
         }
@@ -320,8 +333,9 @@ public class CmsUploadJmPicService extends BaseTaskService {
          * @return string 监控结果描述
          */
         public String toString(){
-            return "\n【"+taskName+"】任务共"+threadCount+"个线程,耗时:"+getTaskUsedTime()+",需要上传图片"+getNeedUploadCount()+"个,实际上传"+successUploadCount+",失败上传"+errorUploadCount
-                    +"\nImgKeyMap详细信息："+imageKeyCountMap
+            return "\n【"+taskName+"】任务耗时:"+getTaskUsedTime()+",需要上传图片"+getNeedUploadCount()+"个,实际上传"+successUploadCount+"个,失败上传"+errorUploadCount
+                    +"个\n已完成图片上传的产品总数："+productSuccessCount+"\t未完全上传完图片的产品总数："+getProductFailedCount()
+                    +"\nImgKeyMap详细信息->总数:"+imageKeyCountMap.size()+"\tDataMap:"+imageKeyCountMap
                     +"\n\t\t****recordTime："+getRecordTime()+" end****";
         }
     }
