@@ -2,16 +2,18 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.common.sql">
 
-    <select id="select_cms_mt_platform_special_field" resultType="com.voyageone.cms.service.model.CmsMtPlatformSpecialFieldModel" parameterType="com.voyageone.cms.service.model.CmsMtPlatformSpecialFieldModel" >
+    <select id="select_cms_mt_platform_special_field"
+            resultType="com.voyageone.cms.service.model.CmsMtPlatformSpecialFieldModel"
+            parameterType="com.voyageone.cms.service.model.CmsMtPlatformSpecialFieldModel">
         select
-          cartId,
-          catId,
-          fieldId,
-          type,
-          created,
-          creater,
-          modified,
-          modifier
+        cartId,
+        catId,
+        fieldId,
+        type,
+        created,
+        creater,
+        modified,
+        modifier
         from voyageone_cms2.cms_mt_platform_special_field
         <where>
             <if test="cartId != null">
@@ -28,38 +30,40 @@
             </if>
         </where>
     </select>
-    <insert id="insert_cms_mt_platform_special_field" parameterType="com.voyageone.cms.service.model.CmsMtPlatformSpecialFieldModel" >
+    <insert id="insert_cms_mt_platform_special_field"
+            parameterType="com.voyageone.cms.service.model.CmsMtPlatformSpecialFieldModel">
         insert into voyageone_cms2.cms_mt_platform_special_field
-        <trim prefix="(" suffix=")" suffixOverrides="," >
-                cartId,
-                catId,
-                fieldId,
-                type,
-                created,
-            <if test="creater != null" >
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            cartId,
+            catId,
+            fieldId,
+            type,
+            created,
+            <if test="creater != null">
                 creater,
             </if>
-                modified,
-            <if test="modifier != null" >
+            modified,
+            <if test="modifier != null">
                 modifier,
             </if>
         </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides="," >
-                #{cartId,jdbcType=INTEGER},
-                #{catId,jdbcType=VARCHAR},
-                #{fieldId,jdbcType=VARCHAR},
-                #{type,jdbcType=VARCHAR},
-                now(),
-            <if test="creater != null" >
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{cartId,jdbcType=INTEGER},
+            #{catId,jdbcType=VARCHAR},
+            #{fieldId,jdbcType=VARCHAR},
+            #{type,jdbcType=VARCHAR},
+            now(),
+            <if test="creater != null">
                 #{creater,jdbcType=VARCHAR},
             </if>
-               now(),
-            <if test="modifier != null" >
+            now(),
+            <if test="modifier != null">
                 #{modifier,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>
-    <delete id="delete_cms_mt_platform_special_field" parameterType="com.voyageone.cms.service.model.CmsMtPlatformSpecialFieldModel">
+    <delete id="delete_cms_mt_platform_special_field"
+            parameterType="com.voyageone.cms.service.model.CmsMtPlatformSpecialFieldModel">
         delete from voyageone_cms2.cms_mt_platform_special_field
         where
           cartId = #{cartId,jdbcType=INTEGER}
@@ -67,5 +71,13 @@
           and fieldId = #{fieldId,jdbcType=VARCHAR}
           and type = #{type,jdbcType=VARCHAR}
     </delete>
+    <select id="select_cms_mt_platform_special_field_type"
+            parameterType="com.voyageone.cms.service.model.CmsMtPlatformSpecialFieldModel" resultType="string">
+        SELECT type
+        FROM voyageone_cms2.cms_mt_platform_special_field
+        WHERE cartId = #{cartId,jdbcType=INTEGER}
+              AND catId = #{catId,jdbcType=VARCHAR}
+              AND fieldId = #{fieldId,jdbcType=VARCHAR}
+    </select>
 
 </mapper>

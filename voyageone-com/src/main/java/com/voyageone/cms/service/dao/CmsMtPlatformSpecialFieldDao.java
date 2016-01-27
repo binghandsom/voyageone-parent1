@@ -29,4 +29,12 @@ public class CmsMtPlatformSpecialFieldDao extends BaseDao {
     public void delete(CmsMtPlatformSpecialFieldModel model) {
         delete("delete_cms_mt_platform_special_field", model);
     }
+
+    public String selectSpecialMappingType(Integer cartId, String platformCategoryId, String propertyId) {
+        CmsMtPlatformSpecialFieldModel model = new CmsMtPlatformSpecialFieldModel();
+        model.setCartId(cartId);
+        model.setFieldId(propertyId);
+        model.setCatId(platformCategoryId);
+        return selectOne("select_cms_mt_platform_special_field_type", model);
+    }
 }
