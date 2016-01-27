@@ -354,6 +354,15 @@ define([
                         transfer_qty: num
                     });
 
+                    // 采购订单时打印SKU面单（配置化）
+                    if (isPurchaseOrder()) {
+                        reqSku(vm.transfer.order_channel_id, code, sku, "scan").then(function (res) {
+                            if　(res.printSkuLabel == "1") {
+                                reqPrintSKU(res.labelType, res.clientSku, res.Sku, res.Upc);
+                            }
+                        });
+                    }
+
                 });
         }
 
@@ -378,15 +387,15 @@ define([
                 return;
             }
 
-            reqSku(vm.transfer,item).then(function (res) {
+            reqSku(vm.transfer.order_channel_id,item.transfer_barcode,item.transfer_sku,"print").then(function (res) {
 
                 reqPrintSKU(res.labelType, res.clientSku,res.Sku,res.Upc);
             });
 
         }
 
-        function reqSku(transfer, item) {
-            return transferService.getSku(transfer, item);
+        function reqSku(order_channel_id, transfer_barcode, transfer_sku, type) {
+            return transferService.getSku(order_channel_id, transfer_barcode, transfer_sku, type);
         }
 
         function reqPrintSKU(labelType, clientSku, Sku, Upc) {
