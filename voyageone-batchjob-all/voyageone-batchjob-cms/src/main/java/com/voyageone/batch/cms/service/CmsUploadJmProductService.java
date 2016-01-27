@@ -10,6 +10,7 @@ import com.voyageone.batch.cms.model.JmBtDealImportModel;
 import com.voyageone.batch.cms.model.JmBtProductImportModel;
 import com.voyageone.batch.cms.model.JmBtSkuImportModel;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
+import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.jumei.Bean.JmProductBean;
 import com.voyageone.common.components.jumei.Bean.JmProductBean_DealInfo;
@@ -30,6 +31,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author james.li on 2016/1/25.
@@ -52,9 +56,9 @@ public class CmsUploadJmProductService extends BaseTaskService {
     @Autowired
     private SimpleTransaction simpleTransaction;
 
-    private static final String IMG_HTML="<img src=\"%s\" alt=\"\" />";
+    private static final String IMG_HTML = "<img src=\"%s\" alt=\"\" />";
 
-    private static final String DESCRIPTION_USAGE="<div align=\"center\">%s %s <br /></div>";
+    private static final String DESCRIPTION_USAGE = "<div align=\"center\">%s %s <br /></div>";
 
     private static final String DESCRIPTION_IMAGES = "%s<br />";
 
@@ -71,13 +75,25 @@ public class CmsUploadJmProductService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-        List<JmBtProductImportModel> jmBtProductImports = getNotUploadProduct(20);
+        int threadPoolCnt = 10;
+        int limit = 100;
+        for(TaskControlBean taskControlBean: taskControlList){
+            if("ThreadPoolCnt".equalsIgnoreCase(taskControlBean.getCfg_name())){
+                threadPoolCnt=Integer.parseInt(taskControlBean.getCfg_val1());
+            }else if("Limit".equalsIgnoreCase(taskControlBean.getCfg_name())){
+                limit=Integer.parseInt(taskControlBean.getCfg_val1());
+            }
+        }
+        List < JmBtProductImportModel > jmBtProductImports = getNotUploadProduct(limit);
         ShopBean shopBean = ShopConfigs.getShop(ChannelConfigEnums.Channel.SN.getId(), CartEnums.Cart.JM.getId());
 
-        for (JmBtProductImportModel product : jmBtProductImports) {
-            uploadProduct(product, shopBean);
-        }
+        ExecutorService executor = Executors.newFixedThreadPool(threadPoolCnt);
 
+        for (JmBtProductImportModel product : jmBtProductImports) {
+            executor.execute(() -> uploadProduct(product, shopBean));
+        }
+        executor.shutdown();
+        executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
     }
 
     private List<JmBtProductImportModel> getNotUploadProduct(Integer count) {
@@ -85,22 +101,26 @@ public class CmsUploadJmProductService extends BaseTaskService {
     }
 
 
-    public void uploadProduct(JmBtProductImportModel jmBtProductImport, ShopBean shopBean) throws Exception {
+    public void uploadProduct(JmBtProductImportModel jmBtProductImport, ShopBean shopBean) {
 
         try {
+            logger.info(jmBtProductImport.getChannelId() + "|" + jmBtProductImport.getProductCode() + " 聚美上新开始");
             // 取得上新的数据
             JmProductBean jmProductBean = selfBeanToJmBean(jmBtProductImport);
 
-            setImages(jmBtProductImport,jmProductBean);
+            setImages(jmBtProductImport, jmProductBean);
             // 上新
-//            jumeiProductService.productNewUpload(shopBean, jmProductBean);
+            jumeiProductService.productNewUpload(shopBean, jmProductBean);
 
             jmBtProductImport.setJumeiProductId(jmProductBean.getJumei_product_id());
             jmBtProductImport.getJmBtDealImportModel().setJumeiHashId(jmProductBean.getDealInfo().getJumei_hash_id());
             jmBtProductImport.getJmBtDealImportModel().setSynFlg(1);
             jmBtProductImport.getJmBtDealImportModel().setModifier(getTaskName());
             updateFlg(jmBtProductImport);
-        }catch (Exception e){
+            logger.info(jmBtProductImport.getChannelId() + "|" + jmBtProductImport.getProductCode() + " 聚美上新结束");
+        } catch (Exception e) {
+            e.printStackTrace();
+            issueLog.log(e, ErrorType.BatchJob, getSubSystem());
             jmBtProductImport.setSynFlg("3");
             jmBtProductImport.setUploadErrorInfo(e.getMessage());
             jmBtProductImport.setModifier(getTaskName());
@@ -110,19 +130,20 @@ public class CmsUploadJmProductService extends BaseTaskService {
 
 
     private void setImages(JmBtProductImportModel jmBtProductImport, JmProductBean jmProductBean) {
-        Map<Integer, List<JmPicBean>> imagesMap = jmUploadProductDao.selectImageByCode(jmBtProductImport.getChannelId(), jmBtProductImport.getProductCode(), jmBtProductImport.getBrandName());
+        Map<Integer, List<JmPicBean>> imagesMap = jmUploadProductDao.selectImageByCode(jmBtProductImport.getChannelId(), jmBtProductImport.getProductCode(), jmBtProductImport.getBrandName(), jmBtProductImport.getSizeType());
 
         StringBuffer stringBuffer = new StringBuffer();
         List<JmPicBean> pics = imagesMap.get(1);
         //白底方图
         if (pics != null) {
-            for(JmPicBean jmPicBean:pics){
-                if(stringBuffer.length() != 0) {
+            for (JmPicBean jmPicBean : pics) {
+                if (stringBuffer.length() != 0) {
                     stringBuffer.append(",");
                 }
                 stringBuffer.append(jmPicBean.getJmUrl());
-            };
-        }else {
+            }
+            ;
+        } else {
             throw new BusinessException("白底方图不存在");
         }
         jmProductBean.setNormalImage(stringBuffer.toString());
@@ -132,10 +153,10 @@ public class CmsUploadJmProductService extends BaseTaskService {
         stringBuffer = new StringBuffer();
         pics = imagesMap.get(4);
         if (pics != null) {
-            for(JmPicBean jmPicBean:pics){
+            for (JmPicBean jmPicBean : pics) {
                 stringBuffer.append(String.format(IMG_HTML, jmPicBean.getJmUrl()));
             }
-        }else {
+        } else {
             throw new BusinessException("品牌图不存在");
         }
         jmProductBean.getDealInfo().setDescription_properties(stringBuffer.toString());
@@ -144,17 +165,17 @@ public class CmsUploadJmProductService extends BaseTaskService {
         stringBuffer = new StringBuffer();
         pics = imagesMap.get(3);
         if (pics != null) {
-            for(JmPicBean jmPicBean:pics){
+            for (JmPicBean jmPicBean : pics) {
                 stringBuffer.append(String.format(IMG_HTML, jmPicBean.getJmUrl()));
             }
         }
         pics = imagesMap.get(5);
         if (pics != null) {
-            for(JmPicBean jmPicBean:pics){
+            for (JmPicBean jmPicBean : pics) {
                 stringBuffer.append(String.format(IMG_HTML, jmPicBean.getJmUrl()));
             }
         }
-        if(stringBuffer.length()>0) {
+        if (stringBuffer.length() > 0) {
             jmProductBean.getDealInfo().setDescription_usage(String.format(DESCRIPTION_USAGE, jmBtProductImport.getProductDes(), stringBuffer.toString()));
         }
 
@@ -162,13 +183,13 @@ public class CmsUploadJmProductService extends BaseTaskService {
         stringBuffer = new StringBuffer();
         pics = imagesMap.get(2);
         if (pics != null) {
-            for(JmPicBean jmPicBean:pics){
+            for (JmPicBean jmPicBean : pics) {
                 stringBuffer.append(String.format(IMG_HTML, jmPicBean.getJmUrl()));
             }
-        }else {
+        } else {
             throw new BusinessException("产品图不存在");
         }
-        jmProductBean.getDealInfo().setDescription_images(String.format(DESCRIPTION_IMAGES,stringBuffer.toString()));
+        jmProductBean.getDealInfo().setDescription_images(String.format(DESCRIPTION_IMAGES, stringBuffer.toString()));
 
     }
 

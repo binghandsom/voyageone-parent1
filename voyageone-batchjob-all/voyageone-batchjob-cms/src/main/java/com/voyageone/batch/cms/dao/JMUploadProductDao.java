@@ -44,11 +44,12 @@ public class JMUploadProductDao extends BaseDao {
         return updateTemplate.delete("delete_jm_bt_sku_by_code", param);
     }
 
-    public Map<Integer, List<JmPicBean>> selectImageByCode(String channelId, String productCode, String brand) {
+    public Map<Integer, List<JmPicBean>> selectImageByCode(String channelId, String productCode, String brand, String sizeType) {
         Map<String, Object> param = new HashMap<>();
         param.put("channelId", channelId);
         param.put("productCode", productCode);
         param.put("brand", brand);
+        param.put("sizeType", sizeType);
         List<Map<String, Object>> imageMaps = selectList("select_image", param);
         Map<Integer, List<JmPicBean>> reponse = new HashMap<>();
         imageMaps.forEach(stringObjectMap -> {
