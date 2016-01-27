@@ -95,6 +95,11 @@
     "templateUrl": "views/system/category/edit2.tpl.html",
     "controllerUrl": "modules/cms/views/system/category/edit.ctl"
   },
+  "system_dictionary": {
+    "hash": "/system/dictionary",
+    "templateUrl": "views/system/dictionary/index.tpl.html",
+    "controllerUrl": "modules/cms/views/system/dictionary/index.ctl"
+  },
   "system_error_op": {
     "hash": "/system/error/management/:type",
     "templateUrl": "views/system/error/management.tpl.html",
